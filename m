@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-858761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C36FBEBCAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:16:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81AABEBCC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FA13BFCB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B632188E7A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24832FB0AD;
-	Fri, 17 Oct 2025 21:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B27B301025;
+	Fri, 17 Oct 2025 21:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jyk5UvgG"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cVMhyYb7"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B25F354ADF;
-	Fri, 17 Oct 2025 21:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AAE2FB0AD
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760735790; cv=none; b=E3qmDyp/5hLZpT8CgBQEFgOBK69NED4bsdvQRAxLiJk1+m+e7cYwkJEOYcNTZ7Z+ht7yn3oUZIdMAV4PxxmL9Y3ajyH3TMcZRq9U3Rim2+rBHdzPHXfNhvxekgzUZz4ZdWjHgehCanJnCCsQqXuf4KKzPzkWMAjF5ZtFeR3tv24=
+	t=1760736080; cv=none; b=IjVeCL8U86tM1ghyuhipvOZqEUlDZAhpi7RHzWFU/edb7ZMInOQZ0lBW/l4v8SRsLgN4ltBreAzxXyuzhyHz0j84mT7ZL14+F9Q2NxUxARufD8LLB8wMuwDUR7C1VgHANFYyPT6OF7tGzx+khDdY6Ums18A/64zNfE14Aj6j43g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760735790; c=relaxed/simple;
-	bh=WmUPzgLnBG1yK+phNKyl3NvrOgOJI6MjklB6JGxT0UM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZUsoHlvOaOFDD89+lg6+TCQkhOMR2+AdWFvXFuWelaFbC8kd/FPlcINrstegnIuuPevJW99vugg5AiOrzXo9/LsVK1JPYLizHl8TD16DnfYbNKn2a8Q+8Ski+EmV3RMweNsZNPqPZgN84sRR1PGzKAfN62C1bk1ollVP135fKqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jyk5UvgG; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=z/TSXdncORw86OBVqBrpLa3jhePghRL2wLGg8BR64rs=; b=jyk5UvgGnpqpJ22faaWu8az0jN
-	fzsPqmx7CHPl0TvcAqhRedctBUOfw3YQc3NQMjBE9BaFjZM3uVTJrdJbSZT80SoIU9QWLHl9S4HHs
-	qTIfJDhJsFfh4rjIzugu734xFhquJyyycElpMSE9GqGWflUI985CAtJHpss9tUGpLJ8Mfb5XtXqQu
-	liy9R8qa+qfanQtfEs9LAVyuh56fMUbAHKpabwfMEsJyS8IidHtIeQQdzWyUukgnPTpn6EoFnE1sd
-	jnjLJALpqdsPgrJTCkb215cvYc2lrCsoPYz7bD9PkIGVn+e0AQZC/ErBGTj+AEHw6vreEszq8JL34
-	me9cR/9Q==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9roJ-000000091zh-0vcn;
-	Fri, 17 Oct 2025 21:16:27 +0000
-Message-ID: <e4eaf960-b21b-475e-955c-b40f0adbfbf5@infradead.org>
-Date: Fri, 17 Oct 2025 14:16:26 -0700
+	s=arc-20240116; t=1760736080; c=relaxed/simple;
+	bh=T4OYMvTdftxqFeyP56L6EtPT4hQ212hpYAZglMGTiNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRy1vMdgJDeLeZmelLWwxSBugmA40+D7u2I9h5pXOCbmpALj3N6+iF8U/2eSTnAOVZoEDZj4bZQN/JpcayGPUuLDXXtSnG3Bv9AK2R8Txn2gQ2uRMDvesgAnObBWBWnP/1dBSuyLA9XihU+tPkWXtMCn0kDcMYgaC/CvM6UvyT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cVMhyYb7; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 17 Oct 2025 14:21:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760736071;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YrDL0c/M+J3ZU+1YrOf5u7VfSDUST8z9dw2cDkrdgtQ=;
+	b=cVMhyYb7hm2NG2noNVsHxfNZoFjbk7DYfg8bEDXc9k/szYHZqW3C+jIj6+SOEfnqf3XzBT
+	fmGJWza+QDJZTFeIMiFJPnSvZ7lXpsVMhijyqBvUKirYWxPZ88gsco4LplzoQdQ8VI+yCG
+	f/k2OAlWePwj/uG0Ps9Rj0RbLohCGOM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Daniel Sedlak <daniel.sedlak@cdn77.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Tejun Heo <tj@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "David S . Miller" <davem@davemloft.net>, 
+	Matyas Hurtik <matyas.hurtik@cdn77.com>, Simon Horman <horms@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, Wei Wang <weibunny@meta.com>, netdev@vger.kernel.org, 
+	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: net: track network throttling due to memcg memory
+ pressure
+Message-ID: <cyg7k36ohtg3irtz7qqlyzsgh27ewibbsornq6xe2cjw66zsy7@cjpxycqwgigy>
+References: <20251016013116.3093530-1-shakeel.butt@linux.dev>
+ <59163049-5487-45b4-a7aa-521b160fdebd@cdn77.com>
+ <pwy7qfx3afnadkjtemftqyrufhhexpw26srxfeilel5uhbywtt@cjvaean56txc>
+ <209038ea-e4fa-423c-a488-a86194cd5b04@cdn77.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] docs: checkpatch: Drop networking comment style
-To: Brian Norris <briannorris@chromium.org>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Joe Perches <joe@perches.com>, workflows@vger.kernel.org
-References: <20251017203719.1554224-1-briannorris@chromium.org>
- <20251017203719.1554224-2-briannorris@chromium.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251017203719.1554224-2-briannorris@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <209038ea-e4fa-423c-a488-a86194cd5b04@cdn77.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 10/17/25 1:37 PM, Brian Norris wrote:
-> Networking no longer has their own comment style, and checkpatch no
-> longer checks for this.
+On Fri, Oct 17, 2025 at 04:15:18PM +0200, Daniel Sedlak wrote:
+> On 10/16/25 6:02 PM, Shakeel Butt wrote:
+> > On Thu, Oct 16, 2025 at 12:42:19PM +0200, Daniel Sedlak wrote:
+> > > On 10/16/25 3:31 AM, Shakeel Butt wrote:
+> > > I am curious how the future work will unfold. If you need help with future
+> > > developments I can help you, we have hundreds of servers where this
+> > > throttling is happening.
+> > 
+> > I think first thing I would like to know if this patch is a good start
+> > for your use-case of observability and debugging.What else do you need
+> > for sufficient support for your use-case?
 > 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-and for reference:
-
-commit 82b8000c28b5
-Author: Johannes Berg <johannes.berg@intel.com>
-Date:   Mon Aug 19 11:09:43 2024 +0200
-    net: drop special comment style
-
-
-Thanks.
-
-> ---
+> Yes, it is a good start, we can now hook this easily into our monitoring
+> system and detect affected servers more easily.
 > 
-> Changes in v2:
->  * new in v2
+> > I imagine that would be
+> > tracepoints to extract more information on the source of the throttling.
+> > If you don't mind, can you take a stab at that?
 > 
->  Documentation/dev-tools/checkpatch.rst | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-> index d7fe023b3080..dfaad0a279ff 100644
-> --- a/Documentation/dev-tools/checkpatch.rst
-> +++ b/Documentation/dev-tools/checkpatch.rst
-> @@ -465,13 +465,6 @@ Comments
->         * for multi line comments.
->         */
->  
-> -    The networking comment style is a bit different, with the first line
-> -    not empty like the former::
-> -
-> -      /* This is the preferred comment style
-> -       * for files in net/ and drivers/net/
-> -       */
-> -
->      See: https://www.kernel.org/doc/html/latest/process/coding-style.html#commenting
->  
->    **C99_COMMENTS**
+> We have some tracepoints that we have used for debugging this. We would like
+> to upstream them, if that makes sense to you?
 
--- 
-~Randy
+Yes please, send them out.
 
