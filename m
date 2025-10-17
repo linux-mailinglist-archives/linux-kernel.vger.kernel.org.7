@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-858443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601F8BEAD28
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B321BEAB50
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9594E5A4A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C2F1AE03AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D7529CB4D;
-	Fri, 17 Oct 2025 16:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD7F2BEFED;
+	Fri, 17 Oct 2025 16:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="SdZ8/Tg6";
-	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="pwafDzmi"
+	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="dFqX/jqh";
+	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="cSUrRgf+"
 Received: from mail.0la.ch (mail.0la.ch [78.47.82.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B284D29B8E8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34062BE636
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.82.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718494; cv=none; b=UtggMARlNrcOjWHv8nraxZozsrDmahVMhkIk+Y06xvz0lyXIPGgN6RT6CN3kAM+aL1EEEXD4BhqWqxyBVYg5AxzcxQIPpC1BxowH7KYB1+x9eheuxTbpI5lvphNZJrNNjh2CV/T5xuMPmUmDYi5B2cnqWBtknum/Pl1XxPlQPV8=
+	t=1760718503; cv=none; b=WhtZlHxGnTuAh7xrMo64QDL92ZERa03w21mDPT0EiqwjHDMvqo8EqYfvEXGYZKLvPoNV3dCe5iTbpAAJyKC5pPaQUC9xYHtNSGo1Y7xpqIgSoMuvIgJSgjKFOfPv1VCEEWU49aemugED8ET9hmDie2PZUVFQBcLPlIxMeCq27dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718494; c=relaxed/simple;
-	bh=YF3l1u3PmsBLwR+UNxnmRGZzzb51b3VcECXyD5/IGF8=;
+	s=arc-20240116; t=1760718503; c=relaxed/simple;
+	bh=dhxuSs0Eg5RXPqvRYpiWUe7SGMSPIhsS7k2YjYyD3PU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cMYnFPlxoFEteJ0IwS8xqBkG2PbZNRkcEJozS+Z+XS/SQoqfCdlWpavhkFkkmJCDI7Fylq8qavq1+9rfg0RD61cv1XdpLakv3xFad6awTkXFKCJSPl7pNUMVz6TEydRr9P1MMq4w4gYE+l90lSMQLEZVB3y0RWtFfazCpxrXETc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=SdZ8/Tg6; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=pwafDzmi; arc=none smtp.client-ip=78.47.82.197
+	 MIME-Version; b=huN8nn0cwFq/xCAgfr5/+cSv6RXSiJskW/dpyOjCr8LIid51/JqFnl46PuOGE4oWlT6ZzsgNS0OzprXD6OadFyMtuzQM9sbIn1CBVlV+yuhloF4jU7g5soDzKzvcY4GW3v2B/ztMoc2H3faDydfuqEMJJWZeAJcrN+kqW/KbLeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=dFqX/jqh; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=cSUrRgf+; arc=none smtp.client-ip=78.47.82.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lach.pw
 DKIM-Signature: v=1; a=rsa-sha256; s=202502r; d=lach.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1760718484; bh=tkZaVmRUXdPAjuJv58gTfdS
-	fvXH8Wk5tCy/l7rSz2E4=; b=SdZ8/Tg6ZhrAMckZVyASP1JREdO7KvYPiSNbVktIDgwkryrAhb
-	ks7Ex/wcg5RbW/seWTgMf6sxwN/g+NgdQ39UtVn0tE8k7TLVlAYBZOA/nEWSRRM3vchc/9S3afQ
-	CE7WFG9ID258nHZKQFDyoGWrnposCZpb0xDqIrxAvvfOUqgHHyH13IPmkbdmze3l/+FNhl9+nVJ
-	EKRSqOxZWctPm5BsdsQxRuPIwe2bJZA90t2U+WghfGXI3C1DW5psbwPXCkkP2dT/m8By6mDgIGg
-	C1a9J1+KUHBG3zKKX5LUNHw9w8DgXs9w+Ca4K6ilGyCaudw9Pp5ZEOk9+OAlbRpn3YQ==;
+	h=Message-ID:Date:Subject:To:From; t=1760718485; bh=NufhvGOUoGO8cO2DoILbVLI
+	HbV3cGuMJ3y4xsqaQ+zo=; b=dFqX/jqhjM2Xic9smDGCkjeuDc9Rf7mmSsYfpZBYY5W+Fnqqse
+	VHepF+REDFoxAmbSDPtLHxio1J3BmmQGT9P917MeIuuBeSR7p9vIXS5nHwSqLpdrO35IAzqcign
+	+5FeB+82hCjfaWP0IdW5TCh1KD6LMGH5s1PEAm/300EhUOkisGTWh+R5Y3zvM48ts7EChiLuVCL
+	TkcB8L8gnWcg5ONYl4zyAwVjgi25+pjF1y9Ww1dsl2AnIuXkmanabF1kW+AVSSh/+bpxmyCYaqo
+	1Dn/ZGPHAl9b81DWOptY+XF1qycYsoILCqCNFIUWVZTfUABLj0kz77Vx4BiDRqFo5dQ==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202502e; d=lach.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1760718484; bh=tkZaVmRUXdPAjuJv58gTfdS
-	fvXH8Wk5tCy/l7rSz2E4=; b=pwafDzmip/JEI2Frv5sDrI2Jrclax1j2N8a9zBdLUYSDopSNoD
-	+AVcbiYg31S5N0vO9Xto9x/J3ag+6WUWNQBQ==;
+	h=Message-ID:Date:Subject:To:From; t=1760718485; bh=NufhvGOUoGO8cO2DoILbVLI
+	HbV3cGuMJ3y4xsqaQ+zo=; b=cSUrRgf+C4c+M0zvyGZzi1FYQXF0KiF0sYpJbqGQSvgBBSUwo8
+	fZjf9qMETL1SzE2KXDdo3XSwdCem61esjZCg==;
 From: Yaroslav Bolyukin <iam@lach.pw>
 To: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc: Harry Wentland <harry.wentland@amd.com>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Yaroslav Bolyukin <iam@lach.pw>
-Subject: [PATCH v5 3/7] drm/edid: MSO should only be used for non-eDP displays
-Date: Fri, 17 Oct 2025 18:27:32 +0200
-Message-ID: <20251017162736.45368-4-iam@lach.pw>
+Subject: [PATCH v5 4/7] drm/edid: parse DSC DPP passthru support flag for mode VII timings
+Date: Fri, 17 Oct 2025 18:27:33 +0200
+Message-ID: <20251017162736.45368-5-iam@lach.pw>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251017162736.45368-1-iam@lach.pw>
 References: <20251017162736.45368-1-iam@lach.pw>
@@ -73,89 +73,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As per DisplayID v2.1a spec:
-If Offset 06h[2:0] is programmed to 001b (External DisplayPort), this field shallbe cleared to 00b (Not supported).
-
-Ref: https://lore.kernel.org/lkml/3abc1087618c822e5676e67a3ec2e64e506dc5ec@intel.com/
 Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
 ---
- drivers/gpu/drm/drm_displayid_internal.h |  4 +++
- drivers/gpu/drm/drm_edid.c               | 36 +++++++++++++++---------
- 2 files changed, 27 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/drm_displayid_internal.h |  2 ++
+ drivers/gpu/drm/drm_edid.c               | 12 ++++++++----
+ include/drm/drm_modes.h                  | 10 ++++++++++
+ 3 files changed, 20 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/drm_displayid_internal.h
-index 957dd0619f5c..cf02647b41b4 100644
+index cf02647b41b4..8ea20b1c6921 100644
 --- a/drivers/gpu/drm/drm_displayid_internal.h
 +++ b/drivers/gpu/drm/drm_displayid_internal.h
-@@ -142,9 +142,13 @@ struct displayid_formula_timing_block {
- 	struct displayid_formula_timings_9 timings[];
+@@ -97,6 +97,7 @@ struct displayid_header {
+ 	u8 ext_count;
  } __packed;
  
-+#define DISPLAYID_VESA_DP_TYPE		GENMASK(2, 0)
- #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
- #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
++#define DISPLAYID_BLOCK_REV	GENMASK(2, 0)
+ struct displayid_block {
+ 	u8 tag;
+ 	u8 rev;
+@@ -125,6 +126,7 @@ struct displayid_detailed_timings_1 {
+ 	__le16 vsw;
+ } __packed;
  
-+#define DISPLAYID_VESA_DP_TYPE_EDP	0
-+#define DISPLAYID_VESA_DP_TYPE_DP	1
-+
- struct displayid_vesa_vendor_specific_block {
++#define DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT	BIT(3)
+ struct displayid_detailed_timing_block {
  	struct displayid_block base;
- 	u8 oui[3];
+ 	struct displayid_detailed_timings_1 timings[];
 diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 725ae5f9d160..13df2854617c 100644
+index 13df2854617c..a1dc4331c4cb 100644
 --- a/drivers/gpu/drm/drm_edid.c
 +++ b/drivers/gpu/drm/drm_edid.c
-@@ -6530,6 +6530,7 @@ static void drm_parse_vesa_specific_block(struct drm_connector *connector,
- 	struct displayid_vesa_vendor_specific_block *vesa =
- 		(struct displayid_vesa_vendor_specific_block *)block;
- 	struct drm_display_info *info = &connector->display_info;
-+	int dp_type;
+@@ -6789,8 +6789,8 @@ static void update_display_info(struct drm_connector *connector,
+ }
  
- 	if (block->num_bytes < 3) {
- 		drm_dbg_kms(connector->dev,
-@@ -6548,20 +6549,29 @@ static void drm_parse_vesa_specific_block(struct drm_connector *connector,
- 		return;
- 	}
+ static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *dev,
+-							    const struct displayid_detailed_timings_1 *timings,
+-							    bool type_7)
++							    const struct displayid_block *block,
++							    const struct displayid_detailed_timings_1 *timings)
+ {
+ 	struct drm_display_mode *mode;
+ 	unsigned int pixel_clock = (timings->pixel_clock[0] |
+@@ -6806,11 +6806,16 @@ static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *d
+ 	unsigned int vsync_width = le16_to_cpu(timings->vsw) + 1;
+ 	bool hsync_positive = le16_to_cpu(timings->hsync) & (1 << 15);
+ 	bool vsync_positive = le16_to_cpu(timings->vsync) & (1 << 15);
++	bool type_7 = block->tag == DATA_BLOCK_2_TYPE_7_DETAILED_TIMING;
  
--	switch (FIELD_GET(DISPLAYID_VESA_MSO_MODE, vesa->mso)) {
--	default:
--		drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] Reserved MSO mode value\n",
-+	dp_type = FIELD_GET(DISPLAYID_VESA_DP_TYPE, vesa->data_structure_type);
-+	if (dp_type > 1) {
-+		drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] Reserved dp type value\n",
- 			    connector->base.id, connector->name);
--		fallthrough;
--	case 0:
--		info->mso_stream_count = 0;
--		break;
--	case 1:
--		info->mso_stream_count = 2; /* 2 or 4 links */
--		break;
--	case 2:
--		info->mso_stream_count = 4; /* 4 links */
--		break;
-+	}
+ 	mode = drm_mode_create(dev);
+ 	if (!mode)
+ 		return NULL;
+ 
++	if (type_7 && FIELD_GET(DISPLAYID_BLOCK_REV, block->rev) >= 1)
++		mode->dsc_passthrough_timings_support =
++			!!(block->rev & DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT);
 +
-+	/* MSO is not supported for eDP */
-+	if (dp_type != DISPLAYID_VESA_DP_TYPE_EDP) {
-+		switch (FIELD_GET(DISPLAYID_VESA_MSO_MODE, vesa->mso)) {
-+		default:
-+			drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] Reserved MSO mode value\n",
-+				    connector->base.id, connector->name);
-+			fallthrough;
-+		case 0:
-+			info->mso_stream_count = 0;
-+			break;
-+		case 1:
-+			info->mso_stream_count = 2; /* 2 or 4 links */
-+			break;
-+		case 2:
-+			info->mso_stream_count = 4; /* 4 links */
-+			break;
-+		}
- 	}
+ 	/* resolution is kHz for type VII, and 10 kHz for type I */
+ 	mode->clock = type_7 ? pixel_clock : pixel_clock * 10;
+ 	mode->hdisplay = hactive;
+@@ -6843,7 +6848,6 @@ static int add_displayid_detailed_1_modes(struct drm_connector *connector,
+ 	int num_timings;
+ 	struct drm_display_mode *newmode;
+ 	int num_modes = 0;
+-	bool type_7 = block->tag == DATA_BLOCK_2_TYPE_7_DETAILED_TIMING;
+ 	/* blocks must be multiple of 20 bytes length */
+ 	if (block->num_bytes % 20)
+ 		return 0;
+@@ -6852,7 +6856,7 @@ static int add_displayid_detailed_1_modes(struct drm_connector *connector,
+ 	for (i = 0; i < num_timings; i++) {
+ 		struct displayid_detailed_timings_1 *timings = &det->timings[i];
  
- 	if (info->mso_stream_count) {
+-		newmode = drm_mode_displayid_detailed(connector->dev, timings, type_7);
++		newmode = drm_mode_displayid_detailed(connector->dev, block, timings);
+ 		if (!newmode)
+ 			continue;
+ 
+diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
+index b9bb92e4b029..312e5c03af9a 100644
+--- a/include/drm/drm_modes.h
++++ b/include/drm/drm_modes.h
+@@ -417,6 +417,16 @@ struct drm_display_mode {
+ 	 */
+ 	enum hdmi_picture_aspect picture_aspect_ratio;
+ 
++	/**
++	 * @dsc_passthrough_timing_support:
++	 *
++	 * Indicates whether this mode timing descriptor is supported
++	 * with specific target DSC bits per pixel only.
++	 *
++	 * VESA vendor-specific data block shall exist with the relevant
++	 * DSC bits per pixel declaration when this flag is set to true.
++	 */
++	bool dsc_passthrough_timings_support;
+ };
+ 
+ /**
 -- 
 2.51.0
 
