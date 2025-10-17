@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-857903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10C7BE8312
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:58:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6193EBE83CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D96D581229
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACF16E94FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A00A31E0EA;
-	Fri, 17 Oct 2025 10:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F7A328B79;
+	Fri, 17 Oct 2025 10:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tRBDPW4E"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTPJ8dU6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5034E32252E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E4B31AF18;
+	Fri, 17 Oct 2025 10:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760698559; cv=none; b=m7lohHm4rNqwrDqI9JbQP+P9cFkgC24UkBoBAfDGBn+L19YHJ5dDhGaS8rRgA7ROPWoxtIEwIa+P7Tuk6DO6pPew2WHqbZhkHV/sw9mb0xEkjU0ZiD51b5wyqIP9VZef7ap4jedb2q0IPTAl3GwCqDFRUiA8KM4HFwQLUL2KyJ8=
+	t=1760698601; cv=none; b=RsmR4QgxPXCVcxNZnild+Ah8i0gIj/IcIVxCT5qUJlItlQF3yb1BEIVAZWQpkvAeQ+tWG3SK0p3fIJEZ0l4td6L8dXAapI+7GYYOcAa5u/d13CMpYjkkguw9dxdtjq+WsXy55Mvyc2djWJmteGRJ0p9VDq27m6wMfi+Rs559qN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760698559; c=relaxed/simple;
-	bh=QhbR/JjQWPtQ/x1b2TheNvaNWi3shmk+1FrIu7SH6pQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdPhFsXwFYaoD2fuRJZZil3H8H14SYaaoTm/4dpN8LByVzJTp51bfLApVcd08ZpwpH6d3qwbxT5ZPvl/SlCI1fRUV1S1QyA0VnYa8+vW8nxyZLcbuXwIsv1zTES54WoWi6VuraCvXO8pjBt3UXVffRhQ7ZkwbX8/8qlB5jRj/Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tRBDPW4E; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e29d65728so12447955e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 03:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760698556; x=1761303356; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zm39IA4ufngTEzNdFDfCyY58vQQ04XFQ+LhrxSHjP0I=;
-        b=tRBDPW4EERC3ojOuyQ5T8K/1L45lexggVloFbUqgO06yZ401Xs06SpJMqixS3LRM4i
-         gphbPrhJ+9zVz4EgwfEVpqybJA9/cHXvvzqNyyFsCguSX8UHoqZB17fQAYPLfpJJNVmL
-         UaBl3Clpq7TjAKZMsjBEZ7Vrgz6I4jDSDHg8uyIIgpoaI1zK1ZhyVAQ/vy8PMveQgKJi
-         oYKIdtAScOaIfg5oJl6ZNkbQEWWWBfWd3TWyeYjMb8xLbwIank8aZTlfTTxlHiBA2+/c
-         HOMDKTfarZ8GA2wi3oBv3Y3AO6lFWUAF1od4DrhyKE08SITcm40ZG75LewmzMRxxHYux
-         SnNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760698556; x=1761303356;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zm39IA4ufngTEzNdFDfCyY58vQQ04XFQ+LhrxSHjP0I=;
-        b=rFuFEe6rUthV5prLH+buv6xo3/28CrzwH8QWpb4zltTPtfEGf8qZeZpjCKw/b9fBdq
-         QD3mhidIerHietKnxNSh2tClVC+ZYpKfEtNkrSL5j3wTCLKg6VtCFs2j1hOIiqj1lCYD
-         HD8g5YT1AvA8VbVHHAVARRfKqLy8Rsvcv9itKjFB1ZykFjDOoewS4Gs5RQZrZfibXjkD
-         dnQ76cJ5ap2Kq7m6+8E5DyphLPSTEVotpnoUs4gL2vn83W1Rca3duG3syVNEGDJB/Lnf
-         wlm0El9BDih71+MwB8UVVUCs55RXJ66k2qUptPcdJoImZJm36ZLsyBnV6TOTLic/oGI1
-         hjbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzrViDEPLG0kSbkV+ih0YTHAK9jlrOU++qkNuV2viaOzWsQhugqC3V6J1o+AwYm64TS2Unt5xTnv7NR0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUuIHtFUh7lW/TS6BJAMBX+ZNIho3d5JmxpmVODJ4lchbfAhmL
-	hYY1wwTKaDZEnFQup6nPArKTE8xpJw1ojuaR83eGvKEUDO2jiOL3HYkbDa3GmfuZnUg=
-X-Gm-Gg: ASbGnctbgzapo4ET1kA0UKMDVUVfY2yNE18bPvHTG4Zy3l7YZNm8Tsgsio9CYiVWXjt
-	WfzvhHnlza+0dZqpsKm+OwutdljOBLY2mqVU8vN11Gyy3jKGqRo7RIplY9+8vAO0W/69+BkKuAJ
-	uEN6UomEDyM8Rf/rgXSMSxayEv7o24+nZmvWLdOl/F9+vvrgewnJYO9VtfqkU0PpulSe3QRFlV9
-	ZQDdaG0le4RFjoleFavhVe2EKdaJMUrmm1ENuWigysHrcgQ0XNYb6QirvAFetfo+OSnkcby68Wh
-	DVgXnUocHgo8Pv+jMJoTudpXlww0uK/VBtzXvD3ufqoU4CpgsaWmx0ILBTvQnL/1RIWrkwGdHR2
-	OWWwYgU33TxcSsC58yEtcrg5qPDyOSlyMeQrUgKprOPwMXC/m65K1NMSlZ7oejMrtLYquxmnIGQ
-	pSxz/MsorJle8tzWgwaET1xCzBfbWpGK+iv4tcbGlIyCYjvL24CNMW
-X-Google-Smtp-Source: AGHT+IF8gPde+0trw5hh+B8v1QbyRWDt3jn/AE9oBYuoF3drrlJJjQtos2JhgYi0PkWXHZD9B2bx/g==
-X-Received: by 2002:a05:600c:6290:b0:46e:2cfe:971c with SMTP id 5b1f17b1804b1-471177c0f91mr24694175e9.0.1760698555593;
-        Fri, 17 Oct 2025 03:55:55 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47114429679sm73229585e9.8.2025.10.17.03.55.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 03:55:55 -0700 (PDT)
-Message-ID: <19a59be0-9b5f-4a93-bdd6-0592f291dca7@linaro.org>
-Date: Fri, 17 Oct 2025 11:55:52 +0100
+	s=arc-20240116; t=1760698601; c=relaxed/simple;
+	bh=tyA/LHJlFit5K6PqK6XOjstXqHYpybUs0kAPdQMiMhA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=iCvZhqzv2EgtDKsBSVExnSDQ27yF4z8Q2wUP38QFDcGtftNt2qg+IC+liCrwHQwg5qt6n4mGdIiMBknbhqyrZy5giuJwZbwxE7ztyY38f6FuiMFR6uiTdj7S1XB+dohGxga9VbZXyQyCC/TrGI8iWSOCiN7X/5e8xQfvRB8Bo30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTPJ8dU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041D3C4CEE7;
+	Fri, 17 Oct 2025 10:56:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760698600;
+	bh=tyA/LHJlFit5K6PqK6XOjstXqHYpybUs0kAPdQMiMhA=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=VTPJ8dU6WcbYUPcgmJO4eOEz9CbPEBuxfrH3aIvi9nacKFwUZPFn8/nvXF2yDNdSC
+	 Vl7KULH8FxwarRMsXDzCnOamNPN+D70vPR9ttRAwha2OFr4SGEIiDpYpg+85o+fT/l
+	 gXfUNo1lcdXq3zEqHMTmN4uATBQWI+Eo00ePLUBtuTtHoObxaEhqj8/4qsdA/AYazp
+	 ZzHDpdNLsYPQa7KSDhC7fYvU1WA0E/+AWNazWf3zCPJjNGIn24qu85AJy1M5ZARGzf
+	 D3v0sPgfD6OBqEn6R2y88qMgTcw2bxFCAFS9lUyviKm43m5MCX7VZF4aaDGqQe9bqK
+	 Gjf/wdlj9ECLg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] media: qcom: camss: csiphy: Add support for v2.4.0
- two-phase CSIPHY
-To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
- Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251014-add-support-for-camss-on-kaanapali-v2-0-f5745ba2dff9@oss.qualcomm.com>
- <20251014-add-support-for-camss-on-kaanapali-v2-4-f5745ba2dff9@oss.qualcomm.com>
- <059a2e7b-f399-44d9-9f32-cd01e573d954@linaro.org>
- <eb7992e4-f0a8-4266-ac4a-3de7694ac582@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <eb7992e4-f0a8-4266-ac4a-3de7694ac582@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 12:56:34 +0200
+Message-Id: <DDKJK7SXG83N.2YZYITMDGTHP@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+ <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+ <targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+ <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+To: "Zhi Wang" <zhiw@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 1/5] rust/io: factor common I/O helpers into Io trait
+ and specialize Mmio<SIZE>
+References: <20251016210250.15932-1-zhiw@nvidia.com>
+ <20251016210250.15932-2-zhiw@nvidia.com>
+In-Reply-To: <20251016210250.15932-2-zhiw@nvidia.com>
 
-On 17/10/2025 00:10, Vijay Kumar Tumati wrote:
-> 
-> There are three offsets in the picture here wrt the CSIPHY instance base 
-> address
-> 
-> 1. First offset to the common registers of the PHY, 'regs->offset' (that 
-> follows the lane registers)
-> 
-> 2. Second offset to the status registers within the common registers . 
-> This has been historically the same and hard coded 
-> in 'CSIPHY_3PH_CMN_CSI_COMMON_STATUSn' to 0xb0 but this is now changing 
-> on Kaanapali.
-> 
-> 3. Third set of offsets (12, 13, 14 and 15) are to the version registers 
-> within the status registers.
-> 
-> This change merely generalizes the CSIPHY_3PH_CMN_CSI_COMMON_STATUSn 
-> macro for chip sets with different second offset using "regs- 
->  >common_status_offset". There should not be any impact to the other 
-> chip sets, for which it is set to the same 0xb0 in csiphy_init().
-> 
-> Please advise if you still think it requires a patch series for itself 
-> and we can do that. Thanks.
+On Thu Oct 16, 2025 at 11:02 PM CEST, Zhi Wang wrote:
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core=
+/regs/macros.rs
+> index 8058e1696df9..c2a6547d58cd 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -609,7 +609,7 @@ impl $name {
+>              /// Read the register from its address in `io`.
+>              #[inline(always)]
+>              pub(crate) fn read<const SIZE: usize, T>(io: &T) -> Self whe=
+re
+> -                T: ::core::ops::Deref<Target =3D ::kernel::io::Io<SIZE>>=
+,
+> +                T: ::core::ops::Deref<Target =3D ::kernel::io::Mmio<SIZE=
+>>,
 
-This should be a separate patch yes.
+This should be
 
----
-bod
+	T: ::core::ops::Deref<Target =3D I>,
+	I: ::kernel::io::Io<SIZE>,
+
+instead, otherwise register!() only works for MMIO, but it should work for =
+any
+I/O backend.
+
+> +impl<const SIZE: usize> Io<SIZE> for Mmio<SIZE> {
+> +    /// Returns the base address of this mapping.
+> +    #[inline]
+> +    fn addr(&self) -> usize {
+> +        self.0.addr()
+> +    }
+> +
+> +    /// Returns the maximum size of this mapping.
+> +    #[inline]
+> +    fn maxsize(&self) -> usize {
+> +        self.0.maxsize()
+> +    }
+> +}
+
+The I/O trait should contain the corresponding read/write accessors, otherw=
+ise
+we can't easily wire up the register!() macro with arbitrary I/O backends.
+
+I think more specific things, such as relaxed operations can remain MMIO
+specific, but all the {try_}{read,write}{8,16,32,64} accessors should be pa=
+rt of
+the I/O trait.
 
