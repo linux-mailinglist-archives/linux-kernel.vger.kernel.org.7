@@ -1,429 +1,325 @@
-Return-Path: <linux-kernel+bounces-857365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27576BE6A73
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:26:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F583BE69E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0266628117
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:18:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F12C34F8B9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15BB30FC3F;
-	Fri, 17 Oct 2025 06:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398393128A6;
+	Fri, 17 Oct 2025 06:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSLkVvsp"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N8frmyGi";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qvC+hVHU"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B0830F7F5
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760681697; cv=none; b=izBDb5qG80JniouT6LV/+191mCLPRCYZYeN0ka9fSaY/ZooqNDP7xT8HuIUbQeX/ryGL4Hv1H/Y/vPmU144C8SvBi6jq7UL+mD5bgS0xwZeEUN0flFZx7grAh2IP+xXt9Ltfnr8ltE8e9gnpCMIrpgm/oKuD2HQJW3WoQ6Epsl8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760681697; c=relaxed/simple;
-	bh=nAXbuGUbF5/3V17OdO9AY2jgJOIq5emE5S7RRJ+nPYQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=iHpbX9ngyBcXHwf9j4jkffcA/AbtR25xB4ndo3nB2mGUpyaZrE6qpr2d9ujjfvnEU640w8EmAuNlLJU6LgaPauuqFjdAmooUidxcP39NlTZ5LPENC2pgfOCD5c+HP8ZYbAghsnQBCoQRtemAKkEhSHLAz2htH2gmSe66/RdRrrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSLkVvsp; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-79599d65f75so20189746d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:14:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A4F23EABC;
+	Fri, 17 Oct 2025 06:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760681801; cv=fail; b=q1epGN4N+n1VoSYjgsh+IBj8z0unAafLatqu+0w8qnmdHrcCMOpDk2IVM4TgrluBcz+fRAGL05Ytx4FJBXZi/z7jrABHj+T11/ZkJmijGUenm5IaReAH8faKRVNP0wgbeR1XEquh8XurMSLTSIm4rpXn6cgBYvWMVjOgGLllfIg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760681801; c=relaxed/simple;
+	bh=lSclMQDNw8SJ1T7EpwqWtuzO/rCo+XXKppr+9alSu68=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fGnivo8S/O4JuTiTWqICJBiBMCRg5WeLISTzAk7/JUIJ9usB/3Y2pL5/QV8ACotkyubcwtGdKyez7hgg7CmxrCU9uVRbZFBnqT2v0IMFaTZUQFQn+huDpZy+cL0n0VHdY7ZgBPTUxSkrx2IW5G40V/7GQU3ElRa3nOCivRBcEXk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=N8frmyGi; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qvC+hVHU; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GLu5Om001361;
+	Fri, 17 Oct 2025 06:16:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=7j+iIKp0pSFiYa9a
+	a98CKox/LAZfJP3W1UNFFtJxsCw=; b=N8frmyGihx/UliKVBKxKe3x9mSZtr7hW
+	X0/uJw8I/1vGu0QDogPEqyvmWvsVo71ODHPxgXjM7qxArPvcXKJjFCAgs8OrngAt
+	QvU7N6VdHqUUcOugak3NWpIRf7N6tfVIGtruurU6yhS2AO7MmJ15JjGesL/jkG4Z
+	XhELAH7OtFnR7zNBVH0mD4QTa1TNTR1J/IpTLQJi3CXaVSG/2uY8n0LoLygSCRTp
+	HObTEV6rDkJYGt7fJLvFZAYxXi7Py+xaBWH6YFbj+unE+f7R8sMqAJ0+JAm2Yw/7
+	2xQ2Lc0CQDf+G/1ZB+cp+3p6GdrSKJATYQo+AkISh9NedE6UgKzkNQ==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qfss29w9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 Oct 2025 06:16:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59H3rVPP000914;
+	Fri, 17 Oct 2025 06:16:12 GMT
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010036.outbound.protection.outlook.com [52.101.56.36])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49qdpcnsqt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 Oct 2025 06:16:12 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RsfS322yCtXj9EfmGhjVdKf0xZr8bQMo0j4pbgOzZ7dPQCcb0iJ4yT3pdUUzePzakfuz6vsJKFvYHgN2Q+sRW0y9boCUpECSemPBRCeCH3Ar+ooZwyiQRCEPlf4ECzetfowZTtkq/NNCkqd5Q/+6dTWkFVRqIWz3U6qCYdSnfVCHvKOdf4z0HJLamp3ys2GVW+pWI/LLp0/bMbXagLS/uYTCfwsQkFRNBlrQL8Pv7YljCK5JrmQ934l5piu6FT/EDnWz0c50zbk3lFAVdBx8Mck7mYySSiJXpSulttg7oDGfZGNmvjN+c1NSXgcwFjEJ40s7EYBaAet2lEYRs82AAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7j+iIKp0pSFiYa9aa98CKox/LAZfJP3W1UNFFtJxsCw=;
+ b=unbrW+afy0Wh0tU6Ce8TMZMvCDRrxeRHBKDqVEVMSx8a2QG7ruTqlOOW3m5i1oNjRywGnTMI5/av2+9y6oSGjKWonSnfcESqKkDLziH3/SVvLoqjR6VSOtBTJwfgSdmMyWifQLZW9xTBTDIcWnpCLKxhJF9kM+UjqoS8i1JJgZ8pqHZUTcfoRrEv1cctrerRQ3a+nWnqesJ4ejIaheQPCN0XSkwfajyhmO86JKSClVo6eKXKw3Reg7/55v5DCrk2pfg7/eV4CWhyFT7V+AEKu8EcZRZsQue7TYz3eMHgh/P0rtGq3SSGigtaamgLyKTrV6dKfmLtW48vLm9eY/TT2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760681694; x=1761286494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3XeTmm9S0/KH1ozCT5gCMzWfpKyleaB4bZi5LBr8ZU=;
-        b=FSLkVvspA1B/R3/35jG85UMhj/rNwKcprf1TxBkFLPuRmtv737jbt04YdYlVEMVKaZ
-         EIePWhy+lYnAu13mOADMaDG5NI/9RqDJDPmKGv4CTSydHZrt6K9dNi1wY6IJQYjz58tC
-         h6m3/5ham6DXvWAuUGHCX6IrGTE/lm9TAyOHW4v+dgnhUodnUdfqvZC0A4MLscepr3EQ
-         78LMasyGz1WvpAty8zhOx39Me/eGyu7is8K6aSLK75Q1CNnhIp5CVdFaCOXsvPGLM6Od
-         +XCnpg0+fd389poc2555DWq2U9XmCDLihpld1hI36uBK3QTjW7/aRCqNAyDa+Kn5ULfm
-         X0ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760681694; x=1761286494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A3XeTmm9S0/KH1ozCT5gCMzWfpKyleaB4bZi5LBr8ZU=;
-        b=YPbykT8aWv4Y3vUHxQPV4nUNViDmPPYT8FtGno/tEx6SrBYxZvr5IeVwf5z96YMpQ0
-         W5szGnzU5PWHEMmp8eeHf8shAOZ+7lbPIw7EVa9Dyw+R13mQh/GOKClYKkLYk8xKXY04
-         Ibs4/8ZpGoGYcNg+LQ2SHQgBTG52N07UelWZ7zqya8EG+14m7N4acDAUhM5wmGGEpSMk
-         JlNsgalImDDJS1I5zX9Id1P2RQin53bvTCSmQdJdXasewwb2q7Evap3eiXZUQqDU29bo
-         gwbjrwVmwoiqCkpWwj56yI8WkvMhUJ73dxK8aRqjGZ18l42dXSgTbmIXH6eDJGl24BF6
-         Be0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxeHKWDz/jc57WIYB1uh7IB8/tjoIKrZ9tHIr588YtgRTkecf54ZOtQtjlGBQVoozoz/MXn3B1OlOV0ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEvyLQitX7tNRHITWNqlEQryYePnD/kqhN8xcCwRVLRCE+F+k6
-	zvTy4OPA7VnjK31e2isjYu5kpy0YSOsVpHFqTxncoimzfzT+cu3Pgl2nqcQjoBfgQgAfW1f7XoU
-	M8JP5VUeer/w9Kc6+P7rz+VndFqZ10ZI/EJ/A
-X-Gm-Gg: ASbGncuOdyODpOMT7cr9yBvxUCsixUsdqgc8Ntf1oXAdmd7+kcvyMsdzwWLJZujMFN3
-	A5l62Hvp5GI+l4ISG2/mF9Edb2hEqhEC2f7XZAjo3NiAnvs4N4ihcOXH2GWkjE1VB/Mzb3kEq5l
-	gIcAtcTe683Uw8b4mh/WuUPCGMR3cxjW1V7JExDopImaaflKntXTNXJlRGXrO8g2SslKuVoqByL
-	ByWQ2FLjwtNR96kRMfoisICNhfKqAwGulYLz1r+USnaGxylrsAohHUUmZI=
-X-Google-Smtp-Source: AGHT+IEQsufXcIx8Krs6nP/lweJKZeyCsP6WTIz8ZCU++sdGoxXhbDi9ma9j6dV978PF9tqViOzUusF/jmxozJN37yw=
-X-Received: by 2002:a05:6214:e6e:b0:87c:277f:8d38 with SMTP id
- 6a1803df08f44-87c277f8e56mr6327566d6.50.1760681694520; Thu, 16 Oct 2025
- 23:14:54 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7j+iIKp0pSFiYa9aa98CKox/LAZfJP3W1UNFFtJxsCw=;
+ b=qvC+hVHUSPpzFQS9O2YbC36vTgR3xeU0LvAT562m3VhC4AxpoMJX85be+MfoVarU5fP6NWiizVadpNP82TyWlNJCVjbk0LBYNTAWPEvIyTeW+WFZtZlHnDKOXmWN7bMGoTVQXW1RKQIP8IFLIDtZiy4Uq96OnIxdPqEGGPjfOJw=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by SN7PR10MB7045.namprd10.prod.outlook.com (2603:10b6:806:342::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
+ 2025 06:16:08 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
+ 06:16:08 +0000
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Cc: arnd@arndb.de, catalin.marinas@arm.com, will@kernel.org,
+        peterz@infradead.org, akpm@linux-foundation.org, mark.rutland@arm.com,
+        harisokn@amazon.com, cl@gentwo.org, ast@kernel.org, rafael@kernel.org,
+        daniel.lezcano@linaro.org, memxor@gmail.com, zhenglifeng1@huawei.com,
+        xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: [PATCH v7 0/7] barrier: Add smp_cond_load_*_timeout()
+Date: Thu, 16 Oct 2025 23:15:59 -0700
+Message-Id: <20251017061606.455701-1-ankur.a.arora@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0090.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::35) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 17 Oct 2025 16:14:43 +1000
-X-Gm-Features: AS18NWDKSxGl43IaXOFEF1uKosllUK22aaCX2nC5QmqShyKH7WAlzAyiwm_9teQ
-Message-ID: <CAPM=9ty=C+PAgZD44Y_LkUuKkRtLFGffjX9rZX8=fkP0s-8zSg@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.18-rc2
-To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hey Linus,
-
-Weekly pull request, fixes for rc2. As per usual xe/amdgpu are the
-leaders, with some i915 and then a bunch of scattered fixes. There are
-a bunch of stability fixes for some older amdgpu cards, but older than
-yours.
-
-Otherwise, I'm travelling from the middle of next week for the next
-two weekends at least, so Sima has offered to take over fixes for the
-next couple of weeks, I'll be around email at some point if anything
-comes up, but otherwise not much use.
-
-Dave.
-
-drm-fixes-2025-10-17:
-drm fixes for 6.18-rc2
-
-draw:
-- Avoid color truncation
-
-gpuvm:
-- Avoid kernel-doc warning
-
-sched:
-- Avoid double free
-
-i915:
-- Skip GuC communication warning if reset is in progress
-- Couple frontbuffer related fixes
-- Deactivate PSR only on LNL and when selective fetch enabled
-
-xe:
-- Increase global invalidation timeout to handle some workloads
-- Fix NPD while evicting BOs in an array of VM binds
-- Fix resizable BAR to account for possibly needing to move BARs other
-  than the LMEMBAR
-- Fix error handling in xe_migrate_init()
-- Fix atomic fault handling with mixed mappings or if the page is
-  already in VRAM
-- Enable media samplers power gating for platforms before Xe2
-- Fix de-registering exec queue from GuC when unbinding
-- Ensure data migration to system if indicated by madvise with SVM
-- Fix kerneldoc for kunit change
-- Always account for cacheline alignment on migration
-- Drop bogus assertion on eviction
-
-amdgpu:
-- Backlight fix
-- SI fixes
-- CIK fix
-- Make CE support debug only
-- IP discovery fix
-- Ring reset fixes
-- GPUVM fault memory barrier fix
-- Drop unused structures in amdgpu_drm.h
-- JPEG debugfs fix
-- VRAM handling fixes for GPUs without VRAM
-- GC 12 MES fixes
-
-amdkfd:
-- MES fix
-
-ast:
-- Fix display output after reboot
-
-bridge:
-- lt9211: Fix version check
-
-panthor:
-- Fix MCU suspend
-
-qaic:
-- Init bootlog in correct order
-- Treat remaining =3D=3D 0 as error in find_and_map_user_pages()
-- Lock access to DBC request queue
-
-rockchip:
-- vop2: Fix destination size in atomic check
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787=
-:
-
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-10-17
-
-for you to fetch changes up to 62cab426d0e340cd38893227c279705cc9e8416a:
-
-  Merge tag 'drm-xe-fixes-2025-10-16' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-(2025-10-17 09:39:53 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.18-rc2
-
-draw:
-- Avoid color truncation
-
-gpuvm:
-- Avoid kernel-doc warning
-
-sched:
-- Avoid double free
-
-i915:
-- Skip GuC communication warning if reset is in progress
-- Couple frontbuffer related fixes
-- Deactivate PSR only on LNL and when selective fetch enabled
-
-xe:
-- Increase global invalidation timeout to handle some workloads
-- Fix NPD while evicting BOs in an array of VM binds
-- Fix resizable BAR to account for possibly needing to move BARs other
-  than the LMEMBAR
-- Fix error handling in xe_migrate_init()
-- Fix atomic fault handling with mixed mappings or if the page is
-  already in VRAM
-- Enable media samplers power gating for platforms before Xe2
-- Fix de-registering exec queue from GuC when unbinding
-- Ensure data migration to system if indicated by madvise with SVM
-- Fix kerneldoc for kunit change
-- Always account for cacheline alignment on migration
-- Drop bogus assertion on eviction
-
-amdgpu:
-- Backlight fix
-- SI fixes
-- CIK fix
-- Make CE support debug only
-- IP discovery fix
-- Ring reset fixes
-- GPUVM fault memory barrier fix
-- Drop unused structures in amdgpu_drm.h
-- JPEG debugfs fix
-- VRAM handling fixes for GPUs without VRAM
-- GC 12 MES fixes
-
-amdkfd:
-- MES fix
-
-ast:
-- Fix display output after reboot
-
-bridge:
-- lt9211: Fix version check
-
-panthor:
-- Fix MCU suspend
-
-qaic:
-- Init bootlog in correct order
-- Treat remaining =3D=3D 0 as error in find_and_map_user_pages()
-- Lock access to DBC request queue
-
-rockchip:
-- vop2: Fix destination size in atomic check
-
-----------------------------------------------------------------
-Alex Deucher (4):
-      drm/amdgpu: fix handling of harvesting for ip_discovery firmware
-      drm/amdgpu: handle wrap around in reemit handling
-      drm/amdgpu: set an error on all fences from a bad context
-      drm/amdgpu: drop unused structures in amdgpu_drm.h
-
-Alok Tiwari (1):
-      drm/rockchip: vop2: use correct destination rectangle height check
-
-Ankan Biswas (1):
-      drm/gpuvm: Fix kernel-doc warning for drm_gpuvm_map_req.map
-
-Christian K=C3=B6nig (3):
-      drm/amdgpu: remove two invalid BUG_ON()s
-      drm/amdgpu: block CE CS if not explicitely allowed by module option
-      drm/amdgpu: hide VRAM sysfs attributes on GPUs without VRAM
-
-Dave Airlie (4):
-      Merge tag 'drm-intel-fixes-2025-10-16' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-      Merge tag 'amd-drm-fixes-6.18-2025-10-16' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2025-10-16' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'drm-xe-fixes-2025-10-16' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-
-Francesco Valla (1):
-      drm/draw: fix color truncation in drm_draw_fill24
-
-Gui-Dong Han (1):
-      drm/amdgpu: use atomic functions with memory barriers for vm fault in=
-fo
-
-Jeff Hugo (1):
-      accel/qaic: Fix bootlog initialization ordering
-
-Jesse.Zhang (1):
-      drm/amdgpu: Fix NULL pointer dereference in VRAM logic for APU device=
-s
-
-Jonathan Kim (5):
-      drm/amdgpu: fix gfx12 mes packet status return check
-      drm/amdgpu: fix initialization of doorbell array for detect and hang
-      drm/amdgpu: fix hung reset queue array memory allocation
-      drm/amdgpu: enable suspend/resume all for gfx 12
-      drm/amdkfd: fix suspend/resume all calls in mes based eviction path
-
-Jouni H=C3=B6gander (1):
-      drm/i915/psr: Deactivate PSR only on LNL and when selective fetch ena=
-bled
-
-Kenneth Graunke (1):
-      drm/xe: Increase global invalidation timeout to 1000us
-
-Ketil Johnsen (1):
-      drm/panthor: Ensure MCU is disabled on suspend
-
-Lucas De Marchi (1):
-      drm/xe: Move rebar to be done earlier
-
-Marek Vasut (1):
-      drm/bridge: lt9211: Drop check for last nibble of version register
-
-Matt Roper (1):
-      drm/xe/kunit: Fix kerneldoc for parameterized tests
-
-Matthew Auld (2):
-      drm/xe/migrate: don't misalign current bytes
-      drm/xe/evict: drop bogus assert
-
-Matthew Brost (2):
-      drm/xe: Don't allow evicting of BOs in same VM in array of VM binds
-      drm/xe: Handle mixed mappings and existing VRAM on atomic faults
-
-Matthew Schwartz (1):
-      Revert "drm/amd/display: Only restore backlight after
-amdgpu_dm_init or dm_resume"
-
-Pranjal Ramajor Asha Kanojiya (1):
-      accel/qaic: Synchronize access to DBC request queue head & tail point=
-er
-
-Sathishkumar S (1):
-      drm/amdgpu: fix bit shift logic
-
-Shuicheng Lin (1):
-      drm/xe/guc: Check GuC running state before deregistering exec queue
-
-Thomas Hellstr=C3=B6m (2):
-      drm/xe/migrate: Fix an error path
-      drm/xe/svm: Ensure data will be migrated to system if indicated
-by madvise.
-
-Thomas Zimmermann (2):
-      Merge drm/drm-fixes into drm-misc-fixes
-      drm/ast: Blank with VGACR17 sync enable, always clear VGACRB6 sync of=
-f
-
-Timur Krist=C3=B3f (3):
-      drm/amd/pm: Disable MCLK switching on SI at high pixel clocks
-      drm/amd: Disable ASPM on SI
-      drm/amd/powerplay: Fix CIK shutdown temperature
-
-Tvrtko Ursulin (1):
-      drm/sched: Fix potential double free in
-drm_sched_job_add_resv_dependencies
-
-Ville Syrj=C3=A4l=C3=A4 (2):
-      drm/i915/frontbuffer: Move bo refcounting
-intel_frontbuffer_{get,release}()
-      drm/i915/fb: Fix the set_tiling vs. addfb race, again
-
-Vinay Belgaumkar (1):
-      drm/xe: Enable media sampler power gating
-
-Youssef Samir (1):
-      accel/qaic: Treat remaining =3D=3D 0 as error in find_and_map_user_pa=
-ges()
-
-Zhanjun Dong (1):
-      drm/i915/guc: Skip communication warning on reset in progress
-
- drivers/accel/qaic/qaic.h                          |  2 +
- drivers/accel/qaic/qaic_control.c                  |  2 +-
- drivers/accel/qaic/qaic_data.c                     | 12 +++-
- drivers/accel/qaic/qaic_debugfs.c                  |  5 +-
- drivers/accel/qaic/qaic_drv.c                      |  3 +
- drivers/gpu/drm/amd/amdgpu/amdgpu.h                |  1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c   |  5 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |  8 ++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |  7 +++
- drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c      | 18 +++++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  8 ++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c          | 54 +++++++++++++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c           |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c            |  7 ++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c            | 20 +++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_mes.h            |  1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h           |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c           |  4 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c       |  3 +
- drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c             |  2 -
- drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |  2 -
- drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c              |  7 +--
- drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c              |  7 +--
- drivers/gpu/drm/amd/amdgpu/mes_userqueue.c         |  6 +-
- drivers/gpu/drm/amd/amdgpu/mes_v11_0.c             |  8 ++-
- drivers/gpu/drm/amd/amdgpu/mes_v12_0.c             | 15 +++--
- .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  | 73 +++++++-----------=
-----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 12 ++--
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  7 ---
- drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c         |  5 ++
- .../gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c    |  3 +-
- drivers/gpu/drm/ast/ast_mode.c                     | 18 +++---
- drivers/gpu/drm/ast/ast_reg.h                      |  1 +
- drivers/gpu/drm/bridge/lontium-lt9211.c            |  3 +-
- drivers/gpu/drm/drm_draw.c                         |  2 +-
- drivers/gpu/drm/drm_draw_internal.h                |  2 +-
- drivers/gpu/drm/i915/display/intel_fb.c            | 38 +++++------
- drivers/gpu/drm/i915/display/intel_frontbuffer.c   | 10 ++-
- drivers/gpu/drm/i915/display/intel_psr.c           | 12 +++-
- .../gpu/drm/i915/gem/i915_gem_object_frontbuffer.h |  2 -
- drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c          |  9 ++-
- drivers/gpu/drm/panthor/panthor_fw.c               |  1 +
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c       |  2 +-
- drivers/gpu/drm/scheduler/sched_main.c             | 13 ++--
- drivers/gpu/drm/xe/regs/xe_gt_regs.h               |  1 +
- drivers/gpu/drm/xe/tests/xe_pci.c                  |  5 ++
- drivers/gpu/drm/xe/xe_bo_evict.c                   |  8 ---
- drivers/gpu/drm/xe/xe_device.c                     |  2 +-
- drivers/gpu/drm/xe/xe_gt_idle.c                    |  8 +++
- drivers/gpu/drm/xe/xe_guc_submit.c                 | 13 +++-
- drivers/gpu/drm/xe/xe_migrate.c                    |  6 +-
- drivers/gpu/drm/xe/xe_pci.c                        |  2 +
- drivers/gpu/drm/xe/xe_svm.c                        | 17 ++++-
- drivers/gpu/drm/xe/xe_vm.c                         | 32 +++++++---
- drivers/gpu/drm/xe/xe_vm_types.h                   |  1 +
- drivers/gpu/drm/xe/xe_vram.c                       | 34 +++++++---
- drivers/gpu/drm/xe/xe_vram.h                       |  1 +
- include/drm/drm_gpuvm.h                            |  2 +-
- include/uapi/drm/amdgpu_drm.h                      | 21 -------
- 60 files changed, 355 insertions(+), 224 deletions(-)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|SN7PR10MB7045:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d658607-ef98-459b-5dfc-08de0d44a917
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Y9GvRORzAQKdIfCnRs19KQsFGQdjcd7txtNwNGsYuG76eE9rkxhTzYsDMrXd?=
+ =?us-ascii?Q?tow3tlYaqekMJdp/k2wllJKcPicgfSdHK2TvhN9f4XSyGJNsTPCVtMXLWB96?=
+ =?us-ascii?Q?S3wKCUCr/jNrEnXh53lrxOfi35ECA/kQtg8qZxcV1rNwZWuKNmGbJOybL6J9?=
+ =?us-ascii?Q?NVV9eBYb8OaLusDW/dpCGdN9pABDrset/khJ4jv1Zeu7iD0gUn42C5mcqTnd?=
+ =?us-ascii?Q?y3fbwHVFlbGAkAVdSwDRtIiRKRJX+MiwW5FD/ZN7/O5QrXQvzLQZHhibMhnl?=
+ =?us-ascii?Q?ci8n6/NUK2h/pJfwRyP6iZr9CSnuaKN3zGC9qw4N0tAHueATW34e+rrBhP93?=
+ =?us-ascii?Q?azuk63qUlwQNVJHzYRf/EJLLQaGSFyzxFMrfHjGUIYVpKIJf9NAQI2cIpZ2I?=
+ =?us-ascii?Q?uWPFHEqLaXsd/bv9bWJVsejmWYFDXe8ITaoP63oA1q4fqrBMyLTHZKlJLKMu?=
+ =?us-ascii?Q?eQVUvt7SphGoYbPSFi9f1tW+QywgB2An1NjgbamSrEdk//sldoF6Dg6BOEqT?=
+ =?us-ascii?Q?WdCJ/OXiEUR/qKTPXPS7rmM42kPveE1D2Q+6pCKIIaH+/e41LgAH9DbseUPw?=
+ =?us-ascii?Q?L4jhM5H9BIelbIIL1G43SgAYtK4Oj/iJ4EDJceveG/0FSdJprXTnQIW74MKS?=
+ =?us-ascii?Q?a7DtqQuSPwW0lXCm7izQJtVPNL/j2DId5XtKveYH9Ld/F8rMJigIljROG+Ju?=
+ =?us-ascii?Q?kPLr8Gc+83rKzWV0/WlXQQ8b41YM+8tuHHCTVQML9ZJ1CvahUwcLcR+WifHp?=
+ =?us-ascii?Q?uxjARRv22uUNfEwtgBdv8oagmgB0CyRiDj4fOnI2+GiKq3r4jxHH/qh3s3+h?=
+ =?us-ascii?Q?DuI5rA0QnZAqC0HXH73WhBDUCCylR60fmsoUVMFexRuOIDYaXS3vupC6QlIk?=
+ =?us-ascii?Q?nPHRrL9WpPprds6yAPDd2fFTyklY9xD6xokr4j/9YgxPzyYFFY9bEWjgsUlg?=
+ =?us-ascii?Q?a342dAsEvW01OGfaqYVfPFo3B0hzTvEDiVhrecqCn9JzvAaPKA4NckvaND96?=
+ =?us-ascii?Q?zL4GH1rP34dTJ8rfMPNnexiJjFbjf/5gBgTvWqmUUGOSLz4ShmcrNnDtc2zQ?=
+ =?us-ascii?Q?bGcQu0mYs78rmMG1oXi51/TrCKuh2GmrqBEHYcH8aT2v+5leFERSzHBbrZ0y?=
+ =?us-ascii?Q?ft+Iu+LENUcSQ1iBHoQpwRcw0LRGqPcJvIdrjJo3H4Pxg7B/BnV5iN8azdoT?=
+ =?us-ascii?Q?wFKOZc13dkd1MXnvkVDToKbSGD5IlMwCDBBGJ5hFYaFr761ft8dRSP/ZGm5V?=
+ =?us-ascii?Q?2hgA7Sun5Ntjsw5eNUDBbDZYCmOs/u4drMVoyW4yIiqKp8XqbcjWCQSbfl6c?=
+ =?us-ascii?Q?6Sdn++TW6AFxpCIbJn+jKmb2gQz4+MVv6Z66gb4+yZ3JeWu9U6BO96/3NSfn?=
+ =?us-ascii?Q?whCAR+O0oHUw9a5W5Xp5OSdgPaYpyNP6VDHRM+YtyRs9OpQxrZTerqDSUnyA?=
+ =?us-ascii?Q?vQNKEDtSlVw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aBJhHmboglDmfe+DTF0bEeUHLd5oDGSLvPIkSYIUZCWoygGZQxIcIakiB6Ge?=
+ =?us-ascii?Q?+P+2gwULT3gdQSgqMKbcTxdDXNqQ5OzHklAGjdu1bSLSsJUQ6jlCfHy0ErJB?=
+ =?us-ascii?Q?3cw+xhvX78zW/fodRQ4B8uEoHjNTlZjSvn34uh73l82u6W9WdChUGtOPrmBQ?=
+ =?us-ascii?Q?LvbZ8133QTzNCJPyyCRiX3SJA3N7aEk48RZhCgKT4/lteqNLi4Gw0sdhZCmj?=
+ =?us-ascii?Q?q9wJd+doW616cH9QsA6+QV4L6r4E9liOI8wn8LABm68NOnpQmamy86KrA76n?=
+ =?us-ascii?Q?5AAel0NFslVnT2qrdqwwv7kgoo6SMi94VXiaxg5I5NR67SgHarmf1nbQDBbz?=
+ =?us-ascii?Q?G4CiON2bPpt3p/XKuF8EkvHdz57kZlbb97CUbm9traRuuQkuldbbFNVuk7Nd?=
+ =?us-ascii?Q?npu9JAb8OBOZtPRKHEjSOQDRCNx5TNli8s4sfDjABqi+UhQjs3j8jKd+gX+X?=
+ =?us-ascii?Q?HD/UFnaOh/oZU/jIZZQXh2fCFnitj4Ylu24qlro2prEwj6EhmW77lUlVcaz/?=
+ =?us-ascii?Q?CiWlyfvdr4j21cvu/m9HRd/3dsYwg1nCBGj5fsrSTPzA0dNykMfjYbsCQSUN?=
+ =?us-ascii?Q?6jggRSj0dRaK1YX6WNicDPzWFJfuXbeJWb19Zgaf3pYY2W8okeuB4VsgCxMb?=
+ =?us-ascii?Q?CwQCVhYxO6hn95X2v2IA1dQIZrk2SU361Qq+VA3QSdELVq8bGbTjNUMRnBs9?=
+ =?us-ascii?Q?nVryy/iJfPUx3/s/q2MxG7HtQ3tGypgXby3pdPEVIkPkMdemzuYJbGdpB1qL?=
+ =?us-ascii?Q?es0li5RQnqb1AiSq9tINLDkD97kZFtSwNmllA49TPG4TsDZW4uRdcfhU0P7w?=
+ =?us-ascii?Q?whdUzbSaBTdnHXpnIiha6sQMqiNWosNOUcNj/UY5/0Qvqf7OEzb5GMoueixu?=
+ =?us-ascii?Q?2cJ+11jt55K/R0v3UeOaDOYOviBJNP8/JkeuDj8fumUU7Y9jbwznO3kW4Ey/?=
+ =?us-ascii?Q?4TvUVXDKEIegn2TbuVxLej8afHWChnpRYkflEdOKboYBlG5tUORUAzpuh7k0?=
+ =?us-ascii?Q?7ZpZjpqju/IideuOcVqbNm1vQBnSLplew9NXSC5Na7afM+yoJ1w616HbxZ5N?=
+ =?us-ascii?Q?DJee8E6kdSkOzifgEgvV+e8k+5EZE3Zeoy+8SFlUL3RvZg8LElNT0MMsaYHL?=
+ =?us-ascii?Q?waAUSmhDFaDQVq6VSPrdqoxGpYmjvJPdj4SBRyXDbvYt93LMbxrKNUFYGE6d?=
+ =?us-ascii?Q?iwcPAO4I6ARub7XFBs7cSCNXK7pM1PP/T+ozkl2/Zh08iDNMS2d1c49zNmvs?=
+ =?us-ascii?Q?sbo4wwSVfBbktaCkMWCz1AaGq/mG7cMSPI2a/Se/e+QgNCfof8MRwOFydFGC?=
+ =?us-ascii?Q?n3etTfTOQes9pLE0xQ4wMgMPILsy8lQjf+oIWDYvzaNGkjMY8SA7H4lFRk1m?=
+ =?us-ascii?Q?Tj5qnrdlmT70OjG+YhMeuMHAnso4s/SOiEU5UzgFzDzC4xcZzkosEAEF76GF?=
+ =?us-ascii?Q?eq7Xrg+T76/hifg6qsUlZualL3I/yQqwVGbNd3EZO08AXGKgXbZe1nH9qIEL?=
+ =?us-ascii?Q?aKRZO41tYyGiJjCyKYpF3gXwGKroU+k21yiYi5u5gSwYxqv7q0GboQssGJUK?=
+ =?us-ascii?Q?niX1idS4oNJoWWZ7/ZlzjGXNNE7Dh+s2zDSQJc9gBmYtDMDU+VwXItIrOV3J?=
+ =?us-ascii?Q?dA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	muITpvAYm373R5zCLJNVBt5+jQYoZZUM1uxhV1C3/FHbFvFScOnheYRApc5eR3ZV0P5k+LEugOCgjEKcSTUqbmdY62qQwRblW32+YZIJm7jC9YTCzhnRZ4SkBjskCaXELyGrWmwLwHnWiLaFRAU7s8PZls1plVGeZUK9Kheyr6tpL5oHJTF6a8rWLJJqqTAK4vmsxWZ1b0i7FtR3z4htB5B8JLQ4L5GaFNq/b7i167b0ebg3NohrsskZdRJO27vszMami4BOszl6f10FYznPRxDagqxKx5IU7bkaEHtP1juJEheCQSO6NSRvYoXm5RRVHnIV8iSd6ZTgReXv/0wCeaEBttqPgUi2ADQwFfalI+H5rydjRGL1TVT+YFPfPJYrdSpZBN4nq0HwfvJVET1g1ofnUSsVaf247tVBiBW/cW4oe6GGoh59SjWVGYuKXxugIipJJWkR7KN7g41Y4SMlBbmbUEDpnldrjIm+0Quun51t9UxWWb+XZGgKwcf3duSDTmNSOx+1ns+wa95vEMim0l0VjpwZtdcHLPdHhwev6ntDjGoSuFdQ8ZlvIeOpzB4BWzffAqgft409ibVRUVB2yPvZS8qiwRpkZqIKSUtZCi4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d658607-ef98-459b-5dfc-08de0d44a917
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 06:16:08.0586
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nHZnDGVnirk4O4Im5oZrLC9Ox3SUaLdiqx4KR1Lz5qxn0IdeAt8Wg6sgz2GW/CTctJji2SYukEgVq0ufUXti66iumt2gPrKjf3wm/2GRN+s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB7045
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510170045
+X-Proofpoint-GUID: ExPBRJiKF3TGlCfuUBSKrRcL67BMCkEq
+X-Authority-Analysis: v=2.4 cv=APfYzRIR c=1 sm=1 tr=0 ts=68f1df2d cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=vggBfdFIAAAA:8 a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=KKAkSRfTAAAA:8
+ a=pGLkceISAAAA:8 a=QXDmnoQuuVSgSO7tUmQA:9 a=a-qgeE7W1pNrGK8U0ZQC:22
+ a=1CNFftbPRP8L7MoqJWF3:22 a=cvBusfyB2V15izCimMoJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMSBTYWx0ZWRfX00CZSTy70ino
+ BxPXmghQPZx4cQ8YrGJiPG6B7Pn8cia7syW+tRUGEv9z34M69qP+TOlN/jLD1FAkpz+mzEUUQ5P
+ lZhdLEZtLOr5s1WQtGdzoE+dr1Dqd5/Vbv1NcRJ48D7EX/h3jaJ3hD0z1kQaweB7hV5N6C8owna
+ sFOvZoKmbM0wWcV0eHg9uX2dua2Ag+CuzRue1485zzsiti/DsnnCc8QQ8ZcxT6ChgTsMFpwePff
+ Qgplevi8YPASXI46UxWWyLdo6BdYNQ5SX21YmO7VMyJpgwbxK8kFnoZqc8Sve0z+RwxNIPzLczG
+ G5YXA7a0cEF92SY3w2BVTVp4/dkBGMN9KgnXHrthqSonJjLpoYANZxwI1wbtS0eSytTBs9XpBei
+ ysMKRuStYmtO5o7ViTpzrZpTQZ+7IA==
+X-Proofpoint-ORIG-GUID: ExPBRJiKF3TGlCfuUBSKrRcL67BMCkEq
+
+This series adds waited variants of the smp_cond_load() primitives:
+smp_cond_load_relaxed_timeout(), and smp_cond_load_acquire_timeout().
+
+As the name suggests, the new interfaces are meant for contexts where
+you want to wait on a condition variable for a finite duration.  This is
+easy enough to do with a loop around cpu_relax(). However, some
+architectures (ex. arm64) also allow waiting on a cacheline. So, these
+interfaces handle a mixture of spin/wait with a smp_cond_load() thrown
+in.
+
+The interfaces are:
+   smp_cond_load_relaxed_timeout(ptr, cond_expr, time_check_expr)
+   smp_cond_load_acquire_timeout(ptr, cond_expr, time_check_expr)
+
+The added parameter, time_check_expr, determines the bail out condition.
+
+Also add the ancillary interfaces atomic_cond_read_*_timeout(), and
+atomic64_cond_read_*_timeout(), both of which are wrappers around
+smp_cond_load_*_timeout().
+
+Update poll_idle() and resilient queued spinlocks to use these
+interfaces.
+
+Changelog:
+
+  v6 [1]:
+   - fixup missing timeout parameters in atomic64_cond_read_*_timeout()
+   - remove a race between setting of TIF_NEED_RESCHED and the 
+   - dev->poll_time_limit was being set even if we hadn't spent any
+     time waiting. (Comparing against local_clock() would be fine, but
+     I'm using a cheaper check against _TIF_NEED_RESCHED.)
+   (Both from meta-CI bot)
+
+  v5 [2]:
+   - use cpu_poll_relax() instead of cpu_relax().
+   - instead of defining an arm64 specific
+     smp_cond_load_relaxed_timeout(), just define the appropriate
+     cpu_poll_relax().
+   - re-read the target pointer when we exit due to the time-check.
+   - s/SMP_TIMEOUT_SPIN_COUNT/SMP_TIMEOUT_POLL_COUNT/
+   (Suggested by Will Deacon)
+
+   - add atomic_cond_read_*_timeout() and atomic64_cond_read_*_timeout()
+     interfaces.
+   - rqspinlock: use atomic_cond_read_acquire_timeout().
+   - cpuidle: use smp_cond_load_relaxed_tiemout() for polling.
+   (Suggested by Catalin Marinas)
+
+   - rqspinlock: define SMP_TIMEOUT_POLL_COUNT to be 16k for non arm64
+
+  v4 [3]:
+    - naming change 's/timewait/timeout/'
+    - resilient spinlocks: get rid of res_smp_cond_load_acquire_waiting()
+      and fixup use of RES_CHECK_TIMEOUT().
+    (Both suggested by Catalin Marinas)
+
+  v3 [4]:
+    - further interface simplifications (suggested by Catalin Marinas)
+
+  v2 [5]:
+    - simplified the interface (suggested by Catalin Marinas)
+       - get rid of wait_policy, and a multitude of constants
+       - adds a slack parameter
+      This helped remove a fair amount of duplicated code duplication and in hindsight
+      unnecessary constants.
+
+  v1 [6]:
+     - add wait_policy (coarse and fine)
+     - derive spin-count etc at runtime instead of using arbitrary
+       constants.
+
+Haris Okanovic tested v4 of this series with poll_idle()/haltpoll patches. [7]
+
+Any comments appreciated!
+
+Thanks!
+Ankur
+
+ [1] https://lore.kernel.org/lkml/20250911034655.3916002-1-ankur.a.arora@oracle.com/ 
+ [2] https://lore.kernel.org/lkml/20250911034655.3916002-1-ankur.a.arora@oracle.com/ 
+ [3] https://lore.kernel.org/lkml/20250829080735.3598416-1-ankur.a.arora@oracle.com/
+ [4] https://lore.kernel.org/lkml/20250627044805.945491-1-ankur.a.arora@oracle.com/
+ [5] https://lore.kernel.org/lkml/20250502085223.1316925-1-ankur.a.arora@oracle.com/
+ [6] https://lore.kernel.org/lkml/20250203214911.898276-1-ankur.a.arora@oracle.com/
+ [7] https://lore.kernel.org/lkml/2cecbf7fb23ee83a4ce027e1be3f46f97efd585c.camel@amazon.com/
+ 
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: linux-arch@vger.kernel.org
+
+Ankur Arora (7):
+  asm-generic: barrier: Add smp_cond_load_relaxed_timeout()
+  arm64: barrier: Support smp_cond_load_relaxed_timeout()
+  arm64: rqspinlock: Remove private copy of
+    smp_cond_load_acquire_timewait()
+  asm-generic: barrier: Add smp_cond_load_acquire_timeout()
+  atomic: Add atomic_cond_read_*_timeout()
+  rqspinlock: Use smp_cond_load_acquire_timeout()
+  cpuidle/poll_state: Poll via smp_cond_load_relaxed_timeout()
+
+ arch/arm64/include/asm/barrier.h    | 13 +++++
+ arch/arm64/include/asm/rqspinlock.h | 85 -----------------------------
+ drivers/cpuidle/poll_state.c        | 29 +++-------
+ include/asm-generic/barrier.h       | 63 +++++++++++++++++++++
+ include/linux/atomic.h              | 10 ++++
+ kernel/bpf/rqspinlock.c             | 31 +++++------
+ 6 files changed, 108 insertions(+), 123 deletions(-)
+
+-- 
+2.43.5
+
 
