@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-857752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD75BE7D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:43:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E39BE7568
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7835034B7D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C8118841BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8AA2040B6;
-	Fri, 17 Oct 2025 09:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA962D29CF;
+	Fri, 17 Oct 2025 09:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCOAuiz7"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLmqk3p4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B4A221F03
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5382D24A9;
+	Fri, 17 Oct 2025 09:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760694199; cv=none; b=HBr6jmqXUbw3vKjczYte2G/USybupsXQBnpe3BT8XiSrfyR8rh/tREhaFPXUOEbt/qPTGRHzRXzuaYdH8Yq3X3qMc/dd7Kg2RKHLSCFzNzWkN1uiYvmjX13PNTag6JCxIYQQ1CP4Yf7YPS4/9EKAvuVkNaYiEYw/qpkpT/pZNrA=
+	t=1760691789; cv=none; b=GCtr6Sh6bHn6RNSRSBowQj5pSOd8KrLdyfR9uBvt89fxRqE9WPZMhg6u40VvF0JZ8qnjFQtm6AbgRZzdC4oOhbIZlYBK9VeN0v4jd/zzaHAz/h6sPVEsgiM1BR9ufPKnCyzra6sZaiyS8W7Q8ZWeowN+lLE9RRorK7AB/Mq0bv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760694199; c=relaxed/simple;
-	bh=/M7Bnm3gjioI+Av04wQGAmQfU91Qw7IuTFIH55BhMAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bpq8n2YAyn9NkPb1V22hSEud4abtslimUJSa5mhwW1yUhtbpo3NPKNbjKE1yKiNEruF75bgSFzx7ckd8wCN9YElFSzWqtM5NpawfYXJIyJ0I4Uhjp80zNjY6VDFBaAPSdof7iZ/AlyemYV6LayWM+uRtOH7IVNe8nmxWLUd2a+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCOAuiz7; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7835321bc98so1665487b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760694197; x=1761298997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DK/268SDlKo91KyuWt/Uk0juTRvqRZCB2PBwlunHbIo=;
-        b=WCOAuiz7eBnx9liP4aTDwjkG2Mbof5u+glrDE8WoccMy24LBTe2MOqc/TYIpUI/RJp
-         SfMaGMcSsaXofJKnCxrzJO/QUw4uNBETGUZIbi2kPXCPadVbC9Qh2pEspOcfqJLJYMuA
-         GGcR9tR6M9ORr6My8TjWU0yWH/WqgRQK4D4efcMKPGA8g1a8tm56wM2yT65ZTCJDgJdH
-         SUfdpb+yNE6psxjM0+DzXa34Ytqw/4Qpffs9csqS2T9j5e0TwmxFl4rTu4gAZQjHQxKr
-         PXCqAGlpNPSr8KjfY2m1laiLRj0QfpoavaJgjD6w4x2g6b8h5aXcV+bhXKLyd88YQx8O
-         YzFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760694197; x=1761298997;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DK/268SDlKo91KyuWt/Uk0juTRvqRZCB2PBwlunHbIo=;
-        b=CzBF0l8RAQYtzvPFHZzAngLnTX2q2BAhMzFjEkkyaJgzyiA7JVEcg3+6A2hDMSwUvt
-         CoZGnKh4do5sib/vyUd4GB5KYtelCX1+UObibAkcJ+uzF0AfhZJC2JTkXjnVcCPa4pB9
-         EiAeFhaY0qEAVCFYqu8zbN1dcVhLDgtVg2wafsLCwUwKmbWspj1Q2bRz3euDTRresSXH
-         XgkRHTpf9JFhhvqYRx3CYH8InTEFZoc2HfyGOdfNdsuTOiFBqjZjsiHwWIe8cZzgnozE
-         IGeVwh8XV3Q16YFu5ZWtK7ZVPE2lqvLIPuy3VQr/JdcFNgB6Yl2fuX2fpgC5W428LHHw
-         5b3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUk7w/kHZ4mJLcejjk5w9DBEv4n8hZjNAikwfeIzgVR6fOfr4IUCGYtklxPz+Os93wPQjbDpNf9HArd0fY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Y6OA6SWggYVPm5t+KCx6+ES2sS9QIjtxZWHBCHhivNUC0uH1
-	6Y1AVUt/onLrFfM2WUcrniZePC+qjCGO8OShVIqH88qSsGdnd11IkgYr
-X-Gm-Gg: ASbGncvoPC36uqX3iVajURD66KHjUmQFKzJXI+57rfVRqoW19a073tYS+XlQJ0yhqnp
-	59WDk8Xt5mTzlAxmHDgNeukFu4DC6W5i/Uvv2GtFWyITSGSm4cz6xUKROqcf5w71lP6YRlhDeXv
-	ePqNwBI3Khu71NL6KPxE96FrO9F85q8YXQiHkoceQ0BWIg1UtP+Mnz40plwnzhDt2gls5MqCPPo
-	ZcCi1/fVCo8ASa3UiDMDIrStp4Nvj2BtKix8zrFa8oucruKIS5O41bopgw6gssB7ETsuHC6LNco
-	OtA/JYszEtgtzLH9MRuhBJ4R2gsaPNeRPFncdv7u3X1TePXK29g5Epwrwwp9DBVDYSlsQWJNNmf
-	+osnu+l6j+FKjBYoXn52vJCCj1IjhnJXoHuwJVKxWrJpKJ+YABMGpH7Ib+N8fjG+/DIf8ewy6LB
-	uNeS+1CRk3kQ==
-X-Google-Smtp-Source: AGHT+IHVk1UlLvUv11fCrAvl7GZkv39UL14NzeVw04C1QLEJi71IrKA1z/tBFl1eYTam3trbIvNwag==
-X-Received: by 2002:a05:6a20:3d84:b0:2b3:4f2a:d2e9 with SMTP id adf61e73a8af0-334a8515183mr3683681637.9.1760694197461;
-        Fri, 17 Oct 2025 02:43:17 -0700 (PDT)
-Received: from server.. ([103.251.57.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a1394139c8sm9963789b3a.18.2025.10.17.02.43.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 02:43:17 -0700 (PDT)
-From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	richard.weiyang@gmail.com,
-	lkp@intel.com,
-	reddybalavignesh9979@gmail.com,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] samples/vfs: add selftests include path for kselftest.h
-Date: Fri, 17 Oct 2025 14:32:01 +0530
-Message-ID: <20251017090201.317521-1-reddybalavignesh9979@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251016104409.68985-1-reddybalavignesh9979@gmail.com>
-References: <20251016104409.68985-1-reddybalavignesh9979@gmail.com>
+	s=arc-20240116; t=1760691789; c=relaxed/simple;
+	bh=bPgZ4cpiP1tABcgwuwbJw2m9civWGXWh7tG4DMqNTwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e8OWGn3SC2FS64yvQu9aD5mfF/MrLkJeTxHbghfmLNDDEcpRGINuxKn5SKBZQt3so6zPPQxlayY3vlfqrIMCzDycbTAAA45MysF6HiJI4XqxXaLfDJtOLmvMagTmEdsltnrteFQwbA7HZbfhv1Qt6+xotfKvpBK2EaCjgOfMcC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLmqk3p4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD90C4CEE7;
+	Fri, 17 Oct 2025 09:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760691786;
+	bh=bPgZ4cpiP1tABcgwuwbJw2m9civWGXWh7tG4DMqNTwo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CLmqk3p4/UILnJtiv1xEreDtdVXSUn6F1V/Pj7+NzefjzFtX7Yw1JISnL2Ezib7gt
+	 qDeLhs4U/3q7Br9oFercHRzsLDHuhMrEO6jcK7KcbQ826atYfjPBGHy/0J0/A9v66b
+	 4odOu6ls/kqowVkcVffyxAg00W/N2ulWi+bmyYEVRF+4w37SD1PtF1M3GA86kHFx4o
+	 6JRTNe2QNBkVn1/ZeHnb3wM7eNJ5MvnqMj1okl/QwbS9WZ/Oqnhp2YF5Vt0wZhLoEt
+	 lcXz++c60hgniAkQFoRHsri3Hu3+OeA9917e9iBk1WrYfuivssQGPWAh1wMqwGQFjM
+	 qIbEn4TBgOaxQ==
+Message-ID: <256ccf82-f893-42da-890f-6e4494394cb7@kernel.org>
+Date: Fri, 17 Oct 2025 11:03:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] leds: upboard: fix module alias
+To: Thomas Richard <thomas.richard@bootlin.com>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
+References: <20251016-leds-upboard-fix-module-alias-v1-1-be63bafcf250@bootlin.com>
+ <44d6ea9f-8559-464d-ac39-20495375bf0e@kernel.org>
+ <690812a9-2f2c-4a88-b6fb-a3789e931d11@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <690812a9-2f2c-4a88-b6fb-a3789e931d11@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The test-list-all-mounts sample includes pidfd.h from selftests,
-which now uses the centralized kselftest.h include after the
-previous change. Add the selftests directory to the include path
-so the build can find kselftest.h
+On 17/10/2025 11:00, Thomas Richard wrote:
+> On 10/16/25 9:11 PM, Krzysztof Kozlowski wrote:
+>> On 16/10/2025 15:28, Thomas Richard wrote:
+>>> Fix module alias for auto-loading.
+>>
+>> Fix what exactly? It was a completely correct alias. Please describe
+>> here bug (so WHY you are doing this) not what you are doing.
+> 
+> The module alias does not match the cell name defined in the MFD driver,
 
-This fixes a build error reported by the kernel test robot.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510171513.6IWk005g-lkp@intel.com/
+Then this should be clearly explained.
 
-Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
----
- samples/vfs/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+Again: your commit msg should describe the bug, the reasons why you are
+doing it, not just "fix" without telling what is wrong.
 
-diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
-index 6554b73a75c8..9256ca5d762b 100644
---- a/samples/vfs/Makefile
-+++ b/samples/vfs/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- userprogs-always-y += test-fsmount test-statx mountinfo test-list-all-mounts
- 
-+userccflags += -I $(srctree)/tools/testing/selftests/
- userccflags += -I usr/include
--- 
-2.43.0
 
+> so if the driver is built as a module, it is not automatically loaded.
+
+Best regards,
+Krzysztof
 
