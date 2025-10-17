@@ -1,95 +1,70 @@
-Return-Path: <linux-kernel+bounces-857377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88470BE6A28
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:21:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C039BE6AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 35986344A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8AD743B0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EA530FF21;
-	Fri, 17 Oct 2025 06:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="GrJehQx+"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99843115B9;
+	Fri, 17 Oct 2025 06:20:15 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F30E245028;
-	Fri, 17 Oct 2025 06:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1329F3101D5;
+	Fri, 17 Oct 2025 06:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682004; cv=none; b=QRVhiXJwYcwk0zy+VPHUpI8sir7kYeEDVUJtfmUwsCFVyv30BzvLavpm3SR0/gcLMHmElV/zTNloCDXBrcFkLlV2aZ6DJIo8Zcu+F9tan7jZeHNyWAJj/dhyfH1LYGAFn0lmvEjBtJzfb1tE0KC2MMpad6lihKh1XuGN3lKs+SM=
+	t=1760682015; cv=none; b=nvGPeE8ykP6XttQy/oTF4nEbYTWkRlVwEKfCAM7X4UBIyWAz/y54eKBVIGTclIP/g2V7GQpi0LxACV15hw+nxCai0KKCdQMxQtYib7L0R/iYvsJFHdNVzRM9gyE34+aD8Yxf9BvJmFcGSr3Zm2Eat9pgw97yz4j3ofE6VaC7768=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682004; c=relaxed/simple;
-	bh=w8QQNXribYX5HcY6iJuQ08ixXWz62G6VTbiT55NFYU8=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=g+KwshD8008vBB6JeoKxWB1Cs3QKK+jB4QYSGsM/bFsMZmtWVxOD1Dye4FrOQsZSxKZ2s0cCPts2kIQRZH0AciZMxmkWpdZKOsePfQ5YKpklwfiqneydO7G2jE7oXKPkLUAY7SdoQnEZ/UJ2D/pYu1gAXIHdXw5GBt1Ou0gb6bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=GrJehQx+; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1760682000;
-	bh=LuLa4eedzbUwTpnlaZPmlkTyolIBXjzmkHFoMfgfTB4=;
-	h=From:To:In-Reply-To:References:Subject:Date;
-	b=GrJehQx+sir5LqSm5whp4UV/1rcumxx6hSvrVCa2Fp8sbksHf12BtcyNy+RUFWzxj
-	 yNMZ+60tOqqyITTdKfE8bCVdac927tJyq4PwkPjScJxb8d9eEjgKATv9vR9XdRw2zS
-	 jRFAqy+gF/k0j3WxY4sSgIM+01MQz9yHeCH1aH1TOUl1bmmnM4s8YCwzXOrk/lGA1T
-	 pSvsjeKNKtleawZWuq/0ASt3gbcs7JUA/pQhRpUqr4nzAkYiyaU8kVFIxAmoq0OX0R
-	 WDo6zNhPN5+mli9NeEkORugtSF6d3zaX+qEzhExf/aHJAcJNak0n/dQTimSQQ8zFCh
-	 yvAs4Q1Ycl84g==
-Received: from [127.0.1.1] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 12B3A6477A;
-	Fri, 17 Oct 2025 14:19:59 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Fred Chen <fredchen.openbmc@gmail.com>
-In-Reply-To: <20251015143916.1850450-1-fredchen.openbmc@gmail.com>
-References: <20251015143916.1850450-1-fredchen.openbmc@gmail.com>
-Subject: Re: [PATCH v4 0/7] Revise Meta Santabarbara devicetree
-Message-Id: <176068199902.287212.1469611481983268246.b4-ty@codeconstruct.com.au>
-Date: Fri, 17 Oct 2025 16:49:59 +1030
+	s=arc-20240116; t=1760682015; c=relaxed/simple;
+	bh=uGakUfnEI2WHJMDC5Ou1Fjy/MVt0dyqZ03IOtgUdHhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EVTJI3GGTlhaUGEzAan/tUNaynudC6JCHNXkG5OJUnJ8tLn2B1pE2IlreM/tBqSYX/P6Cc7my/Z3CN+HKzuo29vyAvZhl1BLRq7u2AUCwjw3K8si8sLjdtVv+Tu4hmD8DrL4+pLObPEjaXlhYnZJYxf6c7fyipfmuMs7O8k2hPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id B951C227AAA; Fri, 17 Oct 2025 08:20:09 +0200 (CEST)
+Date: Fri, 17 Oct 2025 08:20:08 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 2/3] nvme-pci: unmap MMIO pages with appropriate
+ interface
+Message-ID: <20251017062008.GB402@lst.de>
+References: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com> <20251017-block-with-mmio-v1-2-3f486904db5e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cfd50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017-block-with-mmio-v1-2-3f486904db5e@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, 15 Oct 2025 22:38:56 +0800, Fred Chen wrote:
-> Summary:
-> Revise linux device tree entry related to Meta (Facebook) Santabarbara.
+On Fri, Oct 17, 2025 at 08:31:59AM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Change log
-> v3 -> v4:
->   - add blank lines between nodes for readability
->   - drop changes to already defined LEDs
->   - add gpio name debug-card-mux and FM_MAIN_PWREN_RMC_EN_ISO_R
->   - enable amd apml interface
->   - add eeprom for prot module
-> v2 -> v3:
->   - remove mctp node label
-> v1 -> v2:
->   - add 'bmc_ready_noled' LED and update commit message
->   - add sgpio line name for leak detection
-> v1:
->   - add sensor nodes for extension board
->   - add mctp node for NIC
->   - adjust LED configuration
-> 
-> [...]
+> Block layer maps MMIO memory through dma_map_phys() interface
+> with help of DMA_ATTR_MMIO attribute. There is a need to unmap
+> that memory with the appropriate unmap function, something which
+> wasn't possible before adding new REQ attribute to block layer in
+> previous patch.
 
-Thanks, I've applied this to the BMC tree.
+DMA_ATTR_MMIO only gets set in the following patch as far as I can
+tell.
 
--- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
+The more logical way would be to simply convert to dma_unmap_phys
+here and then add the flag in one go as suggested last round.
 
 
