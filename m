@@ -1,141 +1,91 @@
-Return-Path: <linux-kernel+bounces-859132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB29BECD8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:39:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FE1BECD90
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D3F623084
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:39:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FA254E7B44
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B468D2F90DE;
-	Sat, 18 Oct 2025 10:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9DE2F9DBC;
+	Sat, 18 Oct 2025 10:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Dh7p0h6c"
-Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5gWF2ru"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0863819006B
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2A92F361E;
+	Sat, 18 Oct 2025 10:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760783984; cv=none; b=eGEuT+LvNSQ1hYEIJvh+WS49vCZp9K0mCU7LsmHFAV5qX1ClvcNqveTOCdVvkGi25XR5/+3dFOxj4YcLXhgOXHtdJgpeuKBZM4w2s6QqmUqrYCSWYpPDuEV9fsswK/yRPSH4KHp3xfV+Lo0nDZFZ/FPftQ4IML1QmNdCTrsSefE=
+	t=1760784078; cv=none; b=OC8LX047sbpLxGehzGuRLQQM8YIYZ2tB4m35CNnI/0QIxxbmZfMM1rC8b6dzkyPGmjVmT1y/1Y51Neh6Tk2yPokbZWEsgN4CanwGLjcC4v/G0+vejGWaeqQawlsfv7fgvbpVln+t2hoCbL/7HSemWRqeDXzhg3hBnphtrtQ4a2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760783984; c=relaxed/simple;
-	bh=MkcNgvKvjSSG00mhcQ2qY/2MHLWrUUqHCKHhm5JHgwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J9B5bgArvgWVVLQPOPkMSRlNtFSfXO4lbSJGH0WKXqo6rps9+8IEOgE2AoMfdL5/JLQopBg915qLtL1QVmHAKcUX+dgxItExziy04MohjDzb63wQpylITHcAufz7jYzIK1hcr+d9Ii8D3pvkfn8lWizKzkb6Zl9reKcDp4YwxDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Dh7p0h6c; arc=none smtp.client-ip=113.46.200.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=f+51DM99CEdSFDPj0ZKr0xiXs9AF5iALomLseFpeJs8=;
-	b=Dh7p0h6ckcL1ZyDbAEAtZheChwQS6K8kQGdngk43Q4CA/ahRus3uQRF8JvXdkvLtbx7fuh6AH
-	kFQDQFjiPNvy2ZqGHWGWln9eFQ7iI0xRts2OqA/rzKhTxTwB6vXYgx/XCY+FqDKFoKMjUsfOFMt
-	JZSW+6SMJTSU73JqutAIizE=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4cpdT75xGyzcZyL;
-	Sat, 18 Oct 2025 18:38:35 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5A0E14010D;
-	Sat, 18 Oct 2025 18:39:39 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 18 Oct 2025 18:39:39 +0800
-Message-ID: <e04eb4c8-3344-4a3b-bf00-c9221be5fe86@huawei.com>
-Date: Sat, 18 Oct 2025 18:39:38 +0800
+	s=arc-20240116; t=1760784078; c=relaxed/simple;
+	bh=EJZ7fXdrMVCkRfhK+Ds9/NpbpDHJ4iXEOM1rIVxCtck=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u3bgD/cNlvZ5RnRUt0r2ojzTZS0dhptv0EzuWHRTI0btMYlf4J/ZXRwPY+1K2kJYdgrvUut+yBYWpLHVvsc5GStZbEi6Vz1spG+iBRAjEQ+NEAJgVdcNp13qSqLozVKITZ4+NDHq/YGYkKOhDarGSStlPPTnTyYsG7mppMRsUwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5gWF2ru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 371EAC4CEF8;
+	Sat, 18 Oct 2025 10:41:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760784078;
+	bh=EJZ7fXdrMVCkRfhK+Ds9/NpbpDHJ4iXEOM1rIVxCtck=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s5gWF2runfdVwb3kN8gazRXarEFW/hhVH+7xeXFLVT1L2gybXwz0ZUys2EyUYs32A
+	 42E1HjNnAXlBeXnhHWzWg5oCq0Ivp2nblsUuhrj2dBukmLWCkJyJsZEVJU8sVbD3ye
+	 VPhZGnreBPopAkyBQwZ2DbbqZOSxctUiM7zedGcYiPiYipy2AwKR2kdXpm++gGsi+y
+	 9h9o/g1jy6g/30YBAja6r17pgqVqbLhls39+IqyPvtnDmzqAiWptSuuKLbA0zCKZ3W
+	 5+0yOtBZxyJierG2Q9yEA+nPsDzHU8p+JLDATy7A3ddcU0wXtYrSyJ33w2KQIzImwI
+	 SWQ0/n8l0rG9A==
+Date: Sat, 18 Oct 2025 07:41:09 -0300
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v8 00/24] Split sphinx call logic from docs Makefile
+Message-ID: <20251018074109.33fdb167@sal.lan>
+In-Reply-To: <87cy6l1e2y.fsf@trenco.lwn.net>
+References: <cover.1758196090.git.mchehab+huawei@kernel.org>
+	<87cy6l1e2y.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] iommu: Add io_ptdump debug interface for iommu
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<yangyicong@huawei.com>, <wangzhou1@hisilicon.com>,
-	<prime.zeng@hisilicon.com>, <xuwei5@huawei.com>, <fanghao11@huawei.com>,
-	<jonathan.cameron@huawei.com>, <linuxarm@huawei.com>
-References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
- <20250902161028.GC184112@ziepe.ca>
- <f2720f17-5e81-4f69-aaf5-791b47973178@huawei.com>
- <20250910141547.GD882933@ziepe.ca>
- <bb4c3f0b-06da-46e6-9769-efe3dc00e9fb@huawei.com>
- <20250915162810.GI882933@ziepe.ca>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <20250915162810.GI882933@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Em Fri, 17 Oct 2025 14:13:41 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > Hi Jon,
+> >
+> > v8 contains a bug fix for ./tools/docs/check-variable-fonts.py command
+> > line together with a new --deny-vf argument to it, plus addresses
+> > a couple checkpatch warnings. Only 4 patches changed: patches 1, 2, 4
+> > and 5.  
+> 
+> I have just merged this series, along with the accumulated fixes, into
+> docs-mw; after a month of separate exposure in docs-next, I don't think
+> that there is a lot of benefit in waiting longer.
 
-On 2025/9/16 00:28:10, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Thu, Sep 11, 2025 at 10:08:55PM +0800, Qinxin Xia wrote:
->>
->>
->> On 2025/9/10 22:15:47, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->>> On Wed, Sep 10, 2025 at 11:20:08AM +0800, Qinxin Xia wrote:
->>>> Ok, I see, my colleague Wang Zhou also released a version of io_ptdump
->>>> a long time ago, which is implemented in smmu debugfs. Will recommends that
->>>> io_ptdump be implemented in a way similar to CPU page table dump. Using
->>>> debugfs to expose the data and using format-specific callbacks to implement
->>>> specific data dumps, I'll talk to him about this as well.
->>>
->>> I feel we should have a iommu subsystem debugfs and per-iommu_domain
->>> directories to dump the page tables.
->>>
->>> The smmu debugfs can report what iommu_domains each STE/CD is
->>> referencing.
->>>
->>> This also needs RCU freeing of page table levels as a locking
->>> strategy.
->>
->> Thanks, I'll add RCU in the next version, but there's some
->> confusion,
-> 
-> Please don't, RCU is quite complicated, I don't really want to see
-> attempts to retrofit it into the existing page table code. This is why
-> I've said debugging like this needs to go along with the new iommu pt
-> work to consolidate the page table code.
-> 
->> Do you
->> mean to create a directory for each domain? like：
->>
->> /sys/kernel/debug/io_page_tables/domain_xxxx (xxxx=domain addr)
-> 
-> Something like this could be a reasonable option.
-> 
->> tree domain_xxxx like:
->> domain_xxxx
->> └── group x
->> │ └── device
-> 
-> Though I would probably not include this information..
-> 
-Users could be difficult to map domain to devices, so I think maybe
-we should provide the device information contained in the domain.>> └── 
-DebugFS file: /sys/kernel/debug/io_page_tables
->> └── Operation: Reading this file triggers the entire debug information
->> collection process
-> 
-> I don't think we want to dump every page table in the system in one
-> file.
-> 
->> Do you mean that the interface in io-pgtable-arm.c is directly invoked
->> during the process of obtaining page table information without passing
->> through arm-smmu-v3.c?
-> 
-> Yes, this is what iommu pt brings.
-> 
-> Jason
+Thanks!
 
+> 
+> It still makes me a bit nervous, hopefully all this will work out!
+
+If something breaks, we can fix it ;-)
+
+Placing everything altogether and callable via command line and
+documented IMHO makes the docs build easier to maintain.
+
+Regards,
+Mauro
 
