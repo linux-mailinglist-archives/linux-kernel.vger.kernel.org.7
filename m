@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-859227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B783BED12C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:21:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3431CBED16B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F011019C0329
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:21:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 58A7A34740F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C769F286D60;
-	Sat, 18 Oct 2025 14:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE312F8BC5;
+	Sat, 18 Oct 2025 14:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="dGSENe8K"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ERKKpJZB"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2B231836;
-	Sat, 18 Oct 2025 14:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945D51C28E;
+	Sat, 18 Oct 2025 14:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760797243; cv=none; b=UW1MQ4mHOeym8MscW+g+9yAUTDUHW9YqSMp4JJKrj8AUx4eFDJsl/ad2UODHCiIOUVnQlTEsFDbXz/oBn8Qa7jk+odEj4tRIRIjrFBtAHNgb/urpsZcefmw2PRKS6nY0T+yt8qp60aUBfyn9GKt9LOEcgGW8JEmo3FnQ6/sJ97U=
+	t=1760797329; cv=none; b=eMbwOk7GYbYVIhKt6WpG+D4uWa6ubt7X5mUaZxXHAyXW2YbNFa4zF6MRFLfGfFjYLaL2MinQxGCsL7tEoe2lfgaQZ/GAXEKwhu34y5OcKPU/249uYBw78sF70xCGAv/Ph+PCR4dCIkjBGiv15xTPzc82rVDC36wM9m5y5ozVK2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760797243; c=relaxed/simple;
-	bh=TcTxC7aWOL3F2dwoqNA3hz7SM18cl7z32zpxJPcZOc4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TFEIAIr9LiAhj7Zdckkvxq79H4TK9tNvZLb7JzdXmQLH9H9YxLUg1xEzshqHp3Wi62p+BBxOzyd86/0iSxrwudOqYiDrMDYcdCZulHYjP1P91e9tur5BQRQGjiYYB9Zo1qfOuhlftR8xKAbfPzL+eI1qVp7+gsDmdtZOTdf+7x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=dGSENe8K; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 508FE40B21
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1760797235; bh=2lCCpJN4b+KjkcNYS++aN2uD7Z/WcJhUXmhd22yZzsc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dGSENe8KyZ21nEMZj8VQrp/w9rq5SE/lYly8d8rvKOjN8xGURzJjh2ZrMecYAV2zM
-	 K6I1WZ2u9D9m1UUW/NBlA2/TdIeKHwpUSFDuMD3evFrepdLKNfKW7TH5zBJWjxaA8o
-	 Zo9f3OmSUVPJtDpZxb+GErFUs7uBUlB3T9Yx+JWngNB8+rny+VmDkOo2Jnnh8YLw+g
-	 bRb6tj6mBkIppSTKtVJS9uzxUhmzaVaWzjzW+Z+F++ia2GU+O6Hst8PxXcneMSvtgb
-	 uNyKc7hEifqFBNjq+0agyFgmgzOjhT4TcBet5AtIB5T5N0GOIBMpT/WlKIGoXvLvcu
-	 ghUXtD3qwLrTw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	s=arc-20240116; t=1760797329; c=relaxed/simple;
+	bh=bNCDySUX0gZ9HE/gahHp0G1wmgAlm4IYidL20MOKk7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IK2po3//9jh0BppQ6dKpYaGEV20Ts7Oy8t6whKZQBDYpR7MlJnAFPQRPOBdTVIO/8+NwbfFW5k1ki/w4xmYTzMbzpFYapExUYitClQkPhXdtJns+Ww+pf4Wp/ChVSGe3IfA+g8d2OauZ7JZH7NIX7kEYPhbey4y0O6TMIsQeJ8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ERKKpJZB; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760797318;
+	bh=bNCDySUX0gZ9HE/gahHp0G1wmgAlm4IYidL20MOKk7I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ERKKpJZBAH3rK1Dd56cHB1lbuRiXRpNRdWseOd9tN156YhrfHe9TUSJ8iuA6SPeWO
+	 u/3Zfj2a1f9FcrTZ82yiHGbIZqIWB4zdm180vhyCBCoo5iTj9u9CunGEI6Ib4bVsE2
+	 rHt9GpudFaKLhGYg7RM/29qCjMV5SKCf+hQi+5LCJ6MlJGySwpl+XV8tkTLrGC/5mE
+	 OT2s2buH1BKDOj43y02aE4U3MX1pmjKlX+LLKo6DW8tMVPxUvOdz6hQnhwCOogiUfK
+	 aRleBSk+LZBP0tbBc4kMw57VQqZJNqCRSFC27JqjC7x4nG+4mF0aoRHnZGroAh80Ef
+	 vFWEeXHm2Cqlw==
+Received: from mt.tail9873f4.ts.net (unknown [144.48.130.189])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 508FE40B21;
-	Sat, 18 Oct 2025 14:20:35 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Kernel Tracing
- <linux-trace-kernel@vger.kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>,
- Crystal Wood <crwood@redhat.com>, Gopi Krishna Menon
- <krishnagopi487@gmail.com>
-Subject: Re: [PATCH] Documentation/rtla: rename common_xxx.rst files to
- common_xxx.txt
-In-Reply-To: <aPMqTSbPucoqNhA1@archie.me>
-References: <20251013092719.30780-2-bagasdotme@gmail.com>
- <87zf9pz33e.fsf@trenco.lwn.net> <aPMqTSbPucoqNhA1@archie.me>
-Date: Sat, 18 Oct 2025 08:20:34 -0600
-Message-ID: <87v7kcz3yl.fsf@trenco.lwn.net>
+	(Authenticated sender: usama.anjum)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 03B5617E0CF8;
+	Sat, 18 Oct 2025 16:21:55 +0200 (CEST)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-input@vger.kernel.org
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	superm1@kernel.org
+Subject: [RFC 0/4] PM: Hibernate: Add hibernation cancellation support
+Date: Sat, 18 Oct 2025 19:21:03 +0500
+Message-ID: <20251018142114.897445-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+On a normal laptop/PC, the hibernation takes 15-20 seconds which is
+considerable time. Once hibernation is triggered from command line or by
+some GUI option, the hibernation cannot be cancelled until completed.
+Its not a blocker, but poor user experience.
 
-> On Fri, Oct 17, 2025 at 02:27:01PM -0600, Jonathan Corbet wrote:
->> Bagas Sanjaya <bagasdotme@gmail.com> writes:
->> 
->> > From: Gopi Krishna Menon <krishnagopi487@gmail.com>
->> >
->> > Sphinx reports htmldocs errors:
->> >
->> > Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substitution referenced: "threshold".
->> > Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tool".
->> > Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "thresharg".
->> > Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tracer".
->> > Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substitution referenced: "tracer".
->> > Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substitution referenced: "actionsperf".
->> > Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined substitution referenced: "tool".
->> >
->> > common_*.rst files are snippets that are intended to be included by rtla
->> > docs (rtla*.rst). common_options.rst in particular contains
->> > substitutions which depend on other common_* includes, so building it
->> > independently as reST source results in above errors.
->> >
->> > Rename all common_*.rst files to common_*.txt to prevent Sphinx from
->> > building these snippets as standalone reST source and update all include
->> > references accordingly.
->> 
->> Applied, thanks.
->
-> Shouldn't this more appropriate as a fix for current cycle (6.18)? I see
-> the warnings on Linus's tree, though.
+When power button is pressed during hibernation, it generates interrupt
+and then the event is routed to userspace. If systemd is being used, the
+logind handles these events and performs the specific action.
 
-As a general rule, I don't see warning fixes as being important enough
-to send outside of the merge window; the next cycle isn't that far away.
+During hibernation, the first stage is to freeze the userspace. Hence
+even if the power button is pressed, it doesn't aborts the hibernation
+as user space daemon is frozen.
 
-jon
+My device takes ~19 seconds to hibernate. When I was testing hibernation
+using rtcwake with timeout of 10 seconds, I found out that hibernation
+gets canceled around 10 seconds mark when the interrupt fires.
+
+In this series, the idea is to find a way to cancel the hibernation.
+With this series applied, the hibernation gets cancelled gracefully.
+
+Muhammad Usama Anjum (4):
+  PM: hibernate: export hibernation_in_progress()
+  ACPI: button: Cancel hibernation if button is pressed during
+    hibernation
+  Input: Ignore the KEY_POWER events if hibernation is in progress
+  PM: sleep: clear pm_abort_suspend at suspend
+
+ drivers/acpi/button.c     | 12 +++++++++---
+ drivers/base/power/main.c |  2 ++
+ drivers/input/input.c     |  6 ++++++
+ include/linux/suspend.h   |  2 ++
+ kernel/cpu.c              |  1 +
+ kernel/power/hibernate.c  |  6 +++++-
+ kernel/power/process.c    |  1 +
+ 7 files changed, 26 insertions(+), 4 deletions(-)
+
+-- 
+2.47.3
+
 
