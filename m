@@ -1,110 +1,186 @@
-Return-Path: <linux-kernel+bounces-859198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76ECEBECFE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:51:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7550BECFEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31AA73A3879
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:51:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67B7D4E30C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ABC1E5B64;
-	Sat, 18 Oct 2025 12:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EDB2773F9;
+	Sat, 18 Oct 2025 13:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuvH1QPM"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTHrvA6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189E5274B23
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF572629F;
+	Sat, 18 Oct 2025 13:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760791866; cv=none; b=eo0tKPv9xsGH6eJSjyI7/ymvBDsFg2VUBLoPJAr51YBk5kZAxzf9fWDu02GVGoPg0RHBPZcbRGFiEJmHWjrFh9vHvJL45FXClV6Lmz/xZLsKRhKSoE8dT/YL6CBpTjtV6RcbN7nZYF0iEk6t3Yq6piT1cF6ZLyk7PjaIP4Xd2Cs=
+	t=1760792487; cv=none; b=Yyd+FzpXOEsrcRrniVr2D37qMa28IEwkoE9tD9cdcYXF+5kV4I2AlhyF5yvvxbX2oE/36KPpzJdUZk4yWWGIRtSQHCd1jpWqQ/I10eEOtvhXemBB5iuReX6AU8mnQij08XC9YemjMv47fOkalq9XIufEPh0IR/OTfm0HnbYP+a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760791866; c=relaxed/simple;
-	bh=V0ieA2RnANTRzHxRShpkIoitBOjKt+gysoH7B0foc4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IbeqyvNHDaz5466HpiE1Fp5bqMn2oW4pHfOu/AKyPAgb1R77Z+YJpcLGvB2jPWeP/MqQL+NXG+fTpU8W/1PiFBtHbWhfsaYNxRFfRjB65rMT7Fc0Zm4jQRwKlCQtT9cpMt3AtFEUlx9FxvvkhPxtILX5NwJ+6QFHvOlwhwad6ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuvH1QPM; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-290aaff555eso26758145ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:51:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760791864; x=1761396664; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vexsKddPKfSOzGf6IKpuorb0FSpK13m//qSzSr6o0Qo=;
-        b=HuvH1QPMGhHX0xbDbQ8i4BNDkZKnK5KqQqQnc2cErr/QpeYi4JzgaE04MEy11fcHId
-         NTFwTCqG3kVTOGv4gzKPBLwTOIpsZ7uDehCgNEIF5FH3Ee8bHNXUbWUrrGrUZlIoZMXt
-         8k95xRu0ysJCX86tzd3diN8b27En8vbu6pl4vgEQgivespG/VsTSOfb4itZ+q3paeVr6
-         g3SmEItZ/YkeKIIrJwZTbySmTrRKWQ3ZF7wr8miAD7gOsKw+LiKcqmyFkOfUzMLlVryK
-         gw5NXQJnuTfjAcE4SNUbuXR6Y3jzPOkRFX+w4l3TTZwd1BhAsHsA3leEbxZUaeq2ayKZ
-         BhBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760791864; x=1761396664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vexsKddPKfSOzGf6IKpuorb0FSpK13m//qSzSr6o0Qo=;
-        b=SMTS4w+LqF23mkSp/Id5UXnXinhYd88LUPQ4MCgAjnqLsichoOjMdWrrRwLvO8HzDB
-         6I9yLlld4IenV3gTHSBARqe646hXku9TJaTns/TiwNIpbOuYfxSW1g6bxA96kIc4q31J
-         HVNAKERaa3HInxX2hbrtBlucwKATjoTyl6vcFEY3D2QXNwIvJVHS/sbt5np5+gGRAVw2
-         zFIb/swGaNqkz2Eyh0Ik08gnvwa5+P8p5lLtcpP0zWd/D2rkhHbQvAoDBX26ErzJY5wp
-         QFVZObil7CnF66W012Wd/pwQnqui/LP3sWeTfyfPRnnlLGkzjS3MGV7jvcKQx3knhYBz
-         CfrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjLB4eswmwp+vZ6/FL6HaJ7jcDf7GWtmleBHXzCN2J2JJ9tp8y58xs6hQmQxA560+EHa+9xznnUnpoQEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsuX4/YjylgTDVt9DBaXDyIgHWmIXAV0txF7Xv4KN6/nk6Kam8
-	cTSci52Yd5U59I6cbLdoZabSSjaSrJbYsY7USNslsZBbZ8D6gp92+Q5g
-X-Gm-Gg: ASbGncuzhkO7he2TEZyqSRPBAgobJbANbjdtpUC6WaY3yBA+BEfLPPIZzg9NWMqrgSM
-	YvNaotIUAgHLhefmSEN0LhpWDIHOU9OLqx3daajnudvhf9hj1zv+ged0sS2mLBkPn2XGNkzmIMN
-	ewrxju6lzfVwfEjrYjbynjqQ2zvSLbc7ND/Hylj4tKDDGVjWbiUiNxDSQnrmHZyKSwiukb1uow7
-	KTKjkbbSPJxGm52kk0cw5MYQ16vrtnshWr7IUliitEnvnEIp/vXBG+bCqDpUQY0WObv71dmsFVW
-	4zy0OubnPHA9rAqc/95H13jrqwiMZh8PR9n5vqLhydtxwp/tMtCNFFS6tNJ1fB/nLAiNBQdHYp9
-	/URLPINvMocDuxHBrrqEBCHeBETxWtjiC76kfu9AdbkBf/6Tz+/oqBur/47NG90j4qUDHe8wvUE
-	sjfTRSgUzN4dgvz5uHECtbuMk=
-X-Google-Smtp-Source: AGHT+IGSMaPLmNa5+i+Ae8ZNz30JQlwuaKA6ceTbDUL3cL8yRFO4+dERw6BWu9+r+C/GQRQnRay3tw==
-X-Received: by 2002:a17:902:f70b:b0:283:c950:a76f with SMTP id d9443c01a7336-290cc2f91d2mr93086815ad.43.1760791864324;
-        Sat, 18 Oct 2025 05:51:04 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fed21sm25570345ad.80.2025.10.18.05.51.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 05:51:03 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 18 Oct 2025 05:51:02 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ankan Biswas <spyjetfayed@gmail.com>
-Cc: corbet@lwn.net, skhan@linuxfoundation.org, khalid@kernel.org,
-	david.hunter.linux@gmail.com, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2 3/3] Update maxim-ic.com links to analog.com
-Message-ID: <245e439a-7077-45b0-bd34-78ed0a573a07@roeck-us.net>
-References: <20251017105740.17646-1-spyjetfayed@gmail.com>
- <20251017163501.11285-1-spyjetfayed@gmail.com>
+	s=arc-20240116; t=1760792487; c=relaxed/simple;
+	bh=783LtfgNMc5nKir4bVhfU1gejI7YUBKrlMTWPWtqf/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DxVjJibzMbx0HGhxWZoppWlk4M3Ckb48w4/IN7WC+mEepE54/kNLM7wClUA9z4IqFHNODHJq7uKkX8qF026F6HoLvaxGRdfGtQp+yVMHmGrWJP3ncRpabvTnjaxzAnAvJ8Si80W+YvumcjFD96mdoy+k4k+E99A73hPlhWOCLUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTHrvA6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06158C4CEF8;
+	Sat, 18 Oct 2025 13:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760792487;
+	bh=783LtfgNMc5nKir4bVhfU1gejI7YUBKrlMTWPWtqf/Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lTHrvA6XkVq9N+FMwmL9tI+WW5arQfK4XtN12eO07OQhhO0nwi6aGxhYYpalfnOav
+	 jeklVLJEnyD5cx385lytsypFTDQ/I+MJgE07KBQbZ2veow/EQWAwTORfRCuk6yvhKm
+	 pycvme3csnU3mLMC0miz7BzSeg0RnKcChLl/i+6FqqKF+Oyvk5Zg3oesaFz58mUy/W
+	 yOU7WmW6kvXeQdgwgMMCfNqXyg1DKTQkYsFDAvW9QtttziorKHhYzz0nc87CqWxlA4
+	 ubx2OCq4KVLGrbE0ZfTl8dX/P4o64tO0of579Z5GbNnG78unKxQhiB5dml2hHvttY8
+	 hBU1+bUsDRXOw==
+Date: Sat, 18 Oct 2025 14:01:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
+ ghennadi.procopciuc@oss.nxp.com
+Subject: Re: [PATCH v4 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <20251018140120.0e6132e6@jic23-huawei>
+In-Reply-To: <0ac22118-fd0f-49c0-9aa8-5739925587d2@linaro.org>
+References: <20250919135618.3065608-1-daniel.lezcano@linaro.org>
+	<20250919135618.3065608-3-daniel.lezcano@linaro.org>
+	<20250920102742.4cadb734@jic23-huawei>
+	<0ac22118-fd0f-49c0-9aa8-5739925587d2@linaro.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017163501.11285-1-spyjetfayed@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 10:04:31PM +0530, Ankan Biswas wrote:
-> In 2021, Maxim Integrated was acquired by Analog Devices.
-> maxim-ic.com & maximintegrated.com links redirect to analog.com.
+On Wed, 15 Oct 2025 09:17:40 +0200
+Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+
+> Hi Jonathan,
 > 
-> Update maxim-ic.com & maximintegrated.com links to analog.com links.
+> back to this driver after the merge window ...
 > 
-> Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
+> On 9/20/25 11:27, Jonathan Cameron wrote:
+> > On Fri, 19 Sep 2025 15:56:18 +0200
+> > Daniel Lezcano <daniel.lezcano@linaro.org> wrote:  
+> 
+> [ ... ]
+> 
+> >> +static int nxp_sar_adc_start_conversion(struct nxp_sar_adc *info, bool raw)
+> >> +{
+> >> +	u32 mcr;
+> >> +
+> >> +	mcr = readl(NXP_SAR_ADC_MCR(info->regs));
+> >> +	mcr |= NXP_SAR_ADC_MCR_NSTART;
+> >> +
+> >> +	if (raw)
+> >> +		mcr &= ~NXP_SAR_ADC_MCR_MODE;
+> >> +	else
+> >> +		mcr |= NXP_SAR_ADC_MCR_MODE;  
+> > 
+> > Could use FIELD_MODIFY() for this though saving is minor.
+> > Same applies in various other places in this driver (and
+> > many others!)  
+> 
+> [ ... ]
+> 
+> I gave a try to use the macro FIELD_MODIFY(). Logically, FIELD_GET() 
+> should be used too for consistency. From my POV, the result looks less 
+> readable than the usual annotation but may be I not used to the FIELD_ 
+> usage. Here is a snippet of the changes, do you really want to convert 
+> all the driver ?
 
-Applied.
+I'm not against mixing FIELD_GET/PREP etc with single bit booleans where
+it make sense.  However this was definitely a 'maybe' type of review
+comment for exactly the reasons of inconsistency you've identified.
 
-Thanks,
-Guenter
+> 
+>          mcr = readl(NXP_SAR_ADC_MCR(info->regs));
+> 
+>          /* Return the current state. */
+> -       pwdn = mcr & NXP_SAR_ADC_MCR_PWDN;
+> +       pwdn = FIELD_GET(NXP_SAR_ADC_MCR_PWDN, mcr);
+
+When it's effectively a boolean I'm not fussed if people use FIELD_GET()
+or not. 
+
+> 
+> -       if (enable)
+> -               mcr &= ~NXP_SAR_ADC_MCR_PWDN;
+> -       else
+> -               mcr |= NXP_SAR_ADC_MCR_PWDN;
+> +       /* When the enabled flag is not set, we set the power down bit */
+> +       FIELD_MODIFY(NXP_SAR_ADC_MCR_PWDN, &mcr, !enable);
+If the comment is more necessary than before (I'm not sure it is but
+then I'm more comfortable with these macros than many!) then the modification
+probably doesn't make sense.
+> 
+>          writel(mcr, NXP_SAR_ADC_MCR(info->regs));
+> 
+> This looks ok but then:
+> 
+>   {
+>          u32 msr, ret;
+> 
+> -       ret = readl_poll_timeout(NXP_SAR_ADC_MSR(base), msr, !(msr & 
+> NXP_SAR_ADC_MSR_CALBUSY),
+> +       ret = readl_poll_timeout(NXP_SAR_ADC_MSR(base), msr,
+> +                                !FIELD_GET(NXP_SAR_ADC_MSR_CALBUSY, msr)),
+
+Similar to above, For a simple boolean we don't need to extract
+the value, a shifted bit is fine.  The compiler might sort that out. I've
+never checked.
+
+>                                   NXP_SAR_ADC_WAIT_US,
+>                                   NXP_SAR_ADC_CAL_TIMEOUT_US);
+>          if (ret)
+>                  return ret;
+> 
+> -       if (msr & NXP_SAR_ADC_MSR_CALFAIL) {
+> +       if (FIELD_GET(NXP_SAR_ADC_MSR_CALFAIL, msr)) {
+>                  /*
+>                   * If the calibration fails, the status register bit
+>                   * must be cleared.
+>                   */
+> -               msr &= ~NXP_SAR_ADC_MSR_CALFAIL;
+> +               FIELD_MODIFY(NXP_SAR_ADC_MSR_CALFAIL, &msr, 0x0);
+>                  writel(msr, NXP_SAR_ADC_MSR(base));
+> 
+>                  return -EAGAIN;
+> 
+> [ ... ]
+> 
+>          ceocfr = readl(NXP_SAR_ADC_CEOCFR0(info->regs));
+> -       if (!(ceocfr & NXP_SAR_ADC_EOC_CH(chan)))
+> +
+> +       /* FIELD_GET() can not be used here because EOC_CH is not 
+> constant */
+> +       if (!(NXP_SAR_ADC_EOC_CH(chan) & ceocfr))
+>                  return -EIO;
+> 
+>          cdr = readl(NXP_SAR_ADC_CDR(info->regs, chan));
+> -       if (!(cdr & NXP_SAR_ADC_CDR_VALID))
+> +       if (!(FIELD_GET(NXP_SAR_ADC_CDR_VALID, cdr)))
+>                  return -EIO;
+> 
+> -       return cdr & NXP_SAR_ADC_CDR_CDATA_MASK;
+> +       return FIELD_GET(NXP_SAR_ADC_CDR_CDATA_MASK, cdr);
+>   }
+> 
+> 
+> 
+
 
