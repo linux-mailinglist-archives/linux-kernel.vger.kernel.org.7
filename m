@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-859488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAED3BEDCFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 01:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 341EBBEDD08
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 01:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A17234BFEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA123AFC1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE36A287246;
-	Sat, 18 Oct 2025 23:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE00928507E;
+	Sat, 18 Oct 2025 23:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQMHFoai"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1Ll/2Ns"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E552512E6;
-	Sat, 18 Oct 2025 23:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6B121B185;
+	Sat, 18 Oct 2025 23:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760831074; cv=none; b=L5OjxOnba9lFnQazgoeWWgvHfkFSIChyqngIwTqii/cRzoG2qK5p1MYgr71/VpnIAfrH2DOaPegGaL6BCKS0ROyuB6ObAdtnITdUB7stU4oxpNdH1nkycGhdAvWJkxgZu07oaT93/7Xm4KGs/AWDd0bdtYc3slfCaFAYMA7OOBQ=
+	t=1760831457; cv=none; b=TBHpFagod6QHHM2QfUDGDJPQrSzDo4RApdIOSoiryAijjAEyMirnjSdlLYj8LZwsi5VS8USaPV5JEua9x++DExDtnSxK13h0bZjttYDWHr82OjnWjHLOZcCywqE6awGssTbrQBNYra0w4tRQH4YlJ4no4WQwnZb5cxd3JLeqZxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760831074; c=relaxed/simple;
-	bh=35VEjtJG+w3mU7d4N1pbsg3mXXmtqZ9kwr9H4K6Izd8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZHNW4hHdTuMpfim5NjgC9MDr66cFMtDIJ03NyH5mTxCZgO033WOBO2vFXobRYry6+kq2PMaQjvSS8raJMUiTsypfFmiClbq8y/txE86RTObk4aL2mqSr+imiNnF/R7mK2Y7tmH5STuN2pXig3pTv1LoeNu1CVM0MqCq3Y2Hq8iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQMHFoai; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6B7C4CEF8;
-	Sat, 18 Oct 2025 23:44:32 +0000 (UTC)
+	s=arc-20240116; t=1760831457; c=relaxed/simple;
+	bh=SA+E3sVxRvSOjvIWlF9yPgUikJG0kp9ubF4dG1sYfrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZOY5M6g0QALZwE4fjw5FyXLeTRiAu3OPHIYBALDs9VpRbiVSCZm8TMyAYm/rPntk7f07CBipxI+UfECmOOXHcoKhw/iIfig+gmg8gLcx7COCoKv1AdofT8Nu83/Pfqhe6C1ASBQLyMpkIKpsGJ7tWvDZ8UOS94wjqwE8eBS2iBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1Ll/2Ns; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8B3C4CEF8;
+	Sat, 18 Oct 2025 23:50:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760831073;
-	bh=35VEjtJG+w3mU7d4N1pbsg3mXXmtqZ9kwr9H4K6Izd8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KQMHFoaiTIgSh+HKLZbQjCPMk1pIIO3E0YcELV/2lZGKfCk3XAwiZDCVFCSR8M1dC
-	 VVkzyYgqqNoJlM5vHz6bIZ/ZrJ+99cgdzJsN618gK3bTgKvOQVzFX/EXBaggMtjTzH
-	 At/I/91lyQs7vrCwlN1+qf+zoFmbAASD9ut6A6hrxyaIzCTQXWsNypQpteL2mABjFa
-	 opNIkvkN7YTIyAs5hWe6r7mAQC8vDg2aSkRX4uzUZwbbUouby7+oaohWXGmjmC5TqU
-	 f71rH5H6RvEEnn24CNcnqN9ZVW7BGRSwO+e/rrjp6AV4lbkZqXx4CN39LZRsXDcD79
-	 VZd8s2TvoKvfQ==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Cave-Ayland <mark.caveayland@nutanix.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: 104-idio-16: Define maximum valid register address offset
-Date: Sun, 19 Oct 2025 08:44:09 +0900
-Message-ID: <20251018234411.34877-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <aPPj22GL56sP1gOK@ashevche-desk.local>
-References: <aPPj22GL56sP1gOK@ashevche-desk.local>
+	s=k20201202; t=1760831456;
+	bh=SA+E3sVxRvSOjvIWlF9yPgUikJG0kp9ubF4dG1sYfrc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=U1Ll/2NsJhQ3DYaOeQue0P0okR8fopdF4mlitTEP4pylN0EjSCvPj1GqHLJJJP1Af
+	 /EaiegK/SG9nVr2qIn7KgBMXEpahxZhuI3jDBuoZ7+Jeb0npzGLYa/oSvT+6obPi+i
+	 tgXSkbyp1AB+aI+GfuLPZcMjf4eUo1l/fE7kgxbrNDXeNBd9WM+Po1bl7siyJyjbtu
+	 LBAIo353pOZ6uSzH+WydS4rXhAYKMP7Zsa9BoICC3phEogj/Qg7Xq4nnJCeRwWKV8D
+	 7OrZDMh2tBlYt+F+K8ya5NNm2m0poVHbmCfmYe183FZus7bRkl7wNtnS0F5nHV7BMg
+	 qDQnf7h/BoP+Q==
+Date: Sat, 18 Oct 2025 16:50:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Kory Maincent
+ <kory.maincent@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+ linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
+ <roan@protonic.nl>
+Subject: Re: [PATCH net-next v6 2/5] ethtool: netlink: add
+ ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+Message-ID: <20251018165054.067ab347@kernel.org>
+In-Reply-To: <20251017104732.3575484-3-o.rempel@pengutronix.de>
+References: <20251017104732.3575484-1-o.rempel@pengutronix.de>
+	<20251017104732.3575484-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=838; i=wbg@kernel.org; h=from:subject; bh=35VEjtJG+w3mU7d4N1pbsg3mXXmtqZ9kwr9H4K6Izd8=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBlfVF93+yVfjKjO+Rt53+L6wV5u/p9cnC0ekhm1bge+l S+SszXvKGVhEONikBVTZOk1P3v3wSVVjR8v5m+DmcPKBDKEgYtTAC7yl5Fh1Zk/S1ZN4A784+cb qJ68IH1p9rsTfBFtj9PnsTtYhXgnMjL8Mnglc/hl7GmPx1t2BjyYxsSxX73ukPHGJUn7eX7O1Zn PBwA=
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 18, 2025 at 10:00:43PM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 17, 2025 at 09:58:01AM +0900, William Breathitt Gray wrote:
-> > Attempting to load the 104-idio-16 module fails during regmap
-> > initialization with a return error -EINVAL. This is a result of the
-> > regmap cache failing initialization. Set the idio_16_regmap_config
-> > max_register member to fix this failure.
-> 
-> > Fixes: 2c210c9a34a3 ("gpio: 104-idio-16: Migrate to the regmap API")
-> > Reported-by: Mark Cave-Ayland <mark.caveayland@nutanix.com>
-> > Link: https://lore.kernel.org/r/9b0375fd-235f-4ee1-a7fa-daca296ef6bf@nutanix.com
-> 
-> Link --> Closes ?
+On Fri, 17 Oct 2025 12:47:29 +0200 Oleksij Rempel wrote:
+> +  ===========================================    ======  =========================
+> +  ``ETHTOOL_A_MSE_CAPABILITIES_MAX_AVERAGE_MSE`` uint    max avg_mse scale
+> +  ``ETHTOOL_A_MSE_CAPABILITIES_MAX_PEAK_MSE``    uint    max peak_mse scale
+> +  ``ETHTOOL_A_MSE_CAPABILITIES_REFRESH_RATE_PS`` uint    sample rate (picoseconds)
+> +  ``ETHTOOL_A_MSE_CAPABILITIES_NUM_SYMBOLS``     uint    symbols per HW sample
+> +  ``ETHTOOL_A_MSE_CAPABILITIES_SUPPORTED_CAPS``  bitset  bitmask of
+> +                                                         phy_mse_capability
+> +  ===========================================    ======  =========================
 
-So that link points to a report detailing multiple bugs, but this patch
-only fixes one of those bugs. Is it still appropriate to use Closes in
-this case?
+make htmldocs says:
 
-William Breathitt Gray
+Documentation/networking/kapi:125: ./include/linux/phy.h:910: ERROR: Unexpected indentation.
+Documentation/networking/kapi:125: ./include/linux/phy.h:913: WARNING: Block quote ends without a blank line; unexpected unindent.
+Documentation/networking/ethtool-netlink.rst:2514: ERROR: Malformed table.
 
