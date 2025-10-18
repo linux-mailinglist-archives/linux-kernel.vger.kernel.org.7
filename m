@@ -1,244 +1,198 @@
-Return-Path: <linux-kernel+bounces-859222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CA6BED0CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:57:47 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDFBBED0D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304B319C4599
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:58:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5587E34E19B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F325328727B;
-	Sat, 18 Oct 2025 13:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33791D9A54;
+	Sat, 18 Oct 2025 14:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="q+ShW8gb"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/XQ9qfV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED9D1BC3F;
-	Sat, 18 Oct 2025 13:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7992556E
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 14:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760795861; cv=none; b=NXTM09PZUhH5pnJwgs+xvKDa8pMdqs6vAa4iauhC13JiqQ1wd+dTxv5MSU9UV05GEOuTOy0UV0+hp6buEXCLwpBh+V4YVBgnFnzYxflP4cVC9eCpuI6C1eC+8eqmY8S7qmmuFqJ/W83uIER+HB4grdd1EkGN5iaxg5SB+mijgZM=
+	t=1760796251; cv=none; b=aIiRynQ1KZErPzFe+sC4mPrUL3yUYASMn9WR33zlBsw4lo+wKfHZEQb1BaU7zc+iovKP8SqrGTf1Lzqwvn9lYD1yY1qMRoNUH0Yxm4/nHoEcrHVZaVO5YYxSxC+wEu2ud1Zp7YY+SmqbSgs4Y/dtqx+tET+8NNGL9XO7pYQ4rpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760795861; c=relaxed/simple;
-	bh=+PsrH7NEsfuNdrzjcmyWOTRXzpeDJUVdrs97M5RgAZQ=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=tcFYgD/NeMSPWJVZLX0Foh7BkBrmK7PFZ4Ss5H/lqGTu3Z/0o4Ys4Wq7lPh5U8LZ/KzHiig0veuOHQ4J3dlsA6e5lTHdsYvuSp5Syap1Xwkp+sgTLVw8loeBgx/IZ7iAM3vmPiAVVWyj4/LHlg5v41Iw0NquaeNxm2y7zdN+NAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=q+ShW8gb; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 0CBA540A58;
-	Sat, 18 Oct 2025 15:57:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1760795846; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+8Vwrx25FHbbCKskadf35mdBQsNbpuT/QB9T+nEdcx0=;
-	b=q+ShW8gbZfu5gfnVK8jFNRS8vnV4Z7AKmeulUm+muBQ29LVoue8E0iN1sxtYiLq7xHn2ui
-	2pCS/jVkmcPr1+r642wSQHsBhVUo6wbdkNoD4Axfl/8xP8hmz/aAaW/v+pojVA2q/WoH5y
-	Mqoekiyt0ziBJEVcY6On8YPMalEeBqTdvvsl+weeZJgwbe1d3wiTvQrBvuZBJWctZs5SNZ
-	QcQ9hiwm15K9fRBjTTkSD7e+irY7ILOJfeXHIlFqNJw4oMZ7q/kSywch6SCx3LZ67h8Ink
-	Ga45s9NcNrLeSnQWJOr+Qs5wWZX5ztf6Y/ovekJSfNco5RNWRb/kAYBKxcADLA==
-From: "Dragan Simic" <dsimic@manjaro.org>
-In-Reply-To: <b22425c3-01e0-4d2e-bf78-5db884d4ec38@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-References: <20251017073954.130710-1-cnsztl@gmail.com>
- <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
- <d9d14ce2-2e65-422e-95fb-eb30b128ad90@gmail.com>
- <41154cde-a447-0707-4387-cd3dca90b97d@manjaro.org>
- <CALWfF7K0=J3E-zr41wV-28+SCFkT_so55Aee8BvQsB4KJZy6YQ@mail.gmail.com>
- <47931e9e-09db-3909-4531-dae6869171d7@manjaro.org> <b22425c3-01e0-4d2e-bf78-5db884d4ec38@gmail.com>
-Date: Sat, 18 Oct 2025 15:57:24 +0200
-Cc: "Jimmy Hon" <honyuenkwun@gmail.com>, "Tianling Shen" <cnsztl@gmail.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, "Grzegorz Sterniczuk" <grzegorz@sternicz.uk>, "Jonas Karlman" <jonas@kwiboo.se>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-To: "Hugh Cole-Baker" <sigmaris@gmail.com>
+	s=arc-20240116; t=1760796251; c=relaxed/simple;
+	bh=Vtm3MPedyw4C+ge9A73msiAE8e5tMNJ7EZHFYJAGp6c=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=GavCbb0Z8PeodNjSmKqEG5bEVJv/Mko0ooQT/PXkxX3/Zidpat7Avllc7iWNO8sLt7i/7+g+yRhvJmtkfqfQ7sJO4zFK1Wwao2owNyS/dCyA0GtAVSYqTRmLvMyW1oUb06pstpxIHUpWw+JGpNAZVFrkPMj2GXG9dzQ4iKqQ64I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/XQ9qfV; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760796249; x=1792332249;
+  h=date:from:to:cc:subject:message-id;
+  bh=Vtm3MPedyw4C+ge9A73msiAE8e5tMNJ7EZHFYJAGp6c=;
+  b=W/XQ9qfVNTNm1jRmpMd0ACm9PlGKDESoIOmr3E5X3R/Rv1gI0ck5tzJ9
+   8gh6mI3+uvBqq+8GW7z45LhqsA/zKv0OQy4tOPKmeTUWPCsIFnlO3bCdf
+   l2AMfEyZdQW8K7wqVATPCCeejIQdjWT+Ek6XlApFTRYAlYDcRc5JDrhrG
+   /xHySklw83LgIN/qtHoZGvzhbN9pUTflhUVnC1c3pPc1YgXvnDvjPRJLA
+   ad5rFiGtF+N0EnwWT+6QeP/uv1IDeHgX7EvEfQNtT/q0ujBlwz84k9srr
+   or4/cKDqA/MUT//EJjwd8q7wo9VevVKRJhJZRO/6yeqD/DAhPVS8fsb8W
+   w==;
+X-CSE-ConnectionGUID: IriX2fZKRCaW1BnXTYYJTQ==
+X-CSE-MsgGUID: UnOFFvKYRNqva4LP3P6Flg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63032443"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="63032443"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 07:04:09 -0700
+X-CSE-ConnectionGUID: ZuxsZq4vSPCPdtDzr0QPSw==
+X-CSE-MsgGUID: sspbPXTjSByLc3F/2xViPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="186970319"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 18 Oct 2025 07:04:08 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vA7XM-0008Jt-0y;
+	Sat, 18 Oct 2025 14:04:02 +0000
+Date: Sat, 18 Oct 2025 22:03:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/drivers] BUILD SUCCESS
+ a7f25e00c4c97d4842117fba06b4c6064ba1e354
+Message-ID: <202510182210.NtZW9WEJ-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <de5e8643-49bb-4e0e-45fd-51b25ecf530d@manjaro.org>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
- =?utf-8?q?_rockchip=3A?= fix eMMC corruption on NanoPC-T6 with A3A444 chips
-User-Agent: SOGoMail 5.12.3
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: None
 
-Hello Hugh,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
+branch HEAD: a7f25e00c4c97d4842117fba06b4c6064ba1e354  irqchip/qcom-irq-combiner: Rename driver structure
 
-On Saturday, October 18, 2025 14:14 CEST, Hugh Cole-Baker <sigmaris@gma=
-il.com> wrote:
-> On 18/10/2025 09:30, Dragan Simic wrote:
-> > On Saturday, October 18, 2025 02:42 CEST, Jimmy Hon <honyuenkwun@gm=
-ail.com> wrote:
-> >> On Fri, Oct 17, 2025 at 10:15=E2=80=AFAM Dragan Simic <dsimic@manj=
-aro.org> wrote:
-> >>> On Friday, October 17, 2025 14:08 CEST, Tianling Shen <cnsztl@gma=
-il.com> wrote:
-> >>>> On 2025/10/17 18:25, Dragan Simic wrote:
-> >>>>> On Friday, October 17, 2025 09:39 CEST, Tianling Shen <cnsztl@g=
-mail.com> wrote:
-> >>>>>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
-> >>>>>>
-> >>>>>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O er=
-rors and
-> >>>>>> corruption when using HS400 mode. Downgrade to HS200 mode to e=
-nsure
-> >>>>>> stable operation.
-> >>>>>
-> >>>>> Could you, please, provide more details about the troublesome e=
-MMC
-> >>>>> chip that gets identified as A3A444, i.e. what's the actual bra=
-nd
-> >>>>> and model?  Maybe you could send a picture of it?  It might als=
-o
-> >>>>> help if you'd send the contents of "/sys/class/block/mmcblkX/de=
-vice
-> >>>>> /manfid" from your board (where "X" should equal two).
-> >>>>
-> >>>> Unfortunately I don't have this board nor this eMMC chip.
-> >>>> I got the chip model from my friend, it's FORESEE FEMDNN256G-A3A=
-44,
-> >>>> manfid is 0x0000d6.
-> >>>
-> >>> Thanks for responding and providing the details so quickly!
-> >>>
-> >>>>> I'm asking for that because I'd like to research it a bit furth=
-er,
-> >>>>> if possible, because some other eMMC chips that are also found =
-on
-> >>>>> the NanoPc-T6 seem to work fine in HS400 mode. [1]  It may be t=
-hat
-> >>>>> the A3A444 chip has some issues with the HS400 mode on its own,
-> >>>>> i.e. the observed issues may not be caused by the board.
-> >>>>
-> >>>> Yes, it should be caused by this eMMC chip.
-> >>>
-> >>> I'd suggest that we move forward by "quirking off" the HS400 mode
-> >>> for the FEMDNN256G-A3A44 eMMC chip in the MMC drivers, instead of
-> >>> downgrading the speed of the sdhci interface on the NanoPC-T6.
-> >>>
-> >>> That way, the other similar Foresee eMMC chip that's also found
-> >>> on NanoPC-T6 boards, FEMDNN256G-A3A564, will continue to work in
-> >>> the faster HS400 mode, while the troublesome A3A44 variant will
-> >>> be downgraded to the HS200 globally for everyone's benefit.  It's
-> >>> quite unlikely that the A3A44 variant fails to work reliable in
-> >>> HS400 mode on the NanoPC-T6 only, so quirking it off in the MMC
-> >>> drivers should be a sane and safe choice.
-> >>>
-> >>> If you agree with dropping this patch, I'll be more than happy
-> >>> to implement this HS200 quirk in the MMC drivers.
-> >>>
-> >>> As a note, FEMDNN256G-A3A44 is found in the Rockchip Qualified
-> >>> eMMC Support List v1.84, [2] but the evidence says the opposite,
-> >>> so we should react appropriately by adding this quirk.
-> >>
-> >> When adding the quirk for the A3A44, can we lower the max frequenc=
-y
-> >> and keep the HS400 mode instead?
-> >> That's what the Fedora folks found works [3]. There's more test
-> >> results in Armbian [4]
-> >=20
-> > Are there any I/O performance tests that would prove that lowering
-> > the HS400 frequency to 150 MHz ends up working significantly faster
-> > than dropping the eMMC chip to HS200 mode?
-> >=20
-> > I'm asking that because lowering the frequency looks much more like
-> > there's some issue with the board, rather than the issue being the
-> > eMMC chip's support for HS400 mode.  Thus, a quirk that would lower
-> > the HS400 mode frequency would likely be frowned upon and rejected,
-> > while a quirk that puts the chip into HS200 mode is much cleaner
-> > and has much higher chances to be accepted.
->=20
-> I also have the NanoPC-T6 with one of the A3A444 eMMCs which suffers
-> from I/O errors in the default HS400 mode. These are its details in
-> /sys/block/mmcblk0/device/:
-> manfid: 0x0000d6
-> oemid: 0x0103
-> name: A3A444
-> fwrev: 0x1100000000000000
-> hwrev: 0x0
-> rev: 0x8
+elapsed time: 1456m
 
-Thanks for reporting the same issue with the same board and
-increasing our sample size to two. :)
+configs tested: 106
+configs skipped: 3
 
-> I wasn't sure if I was just unlucky to get a faulty chip, but seeing
-> this thread it seems like a wider issue. On my board, limiting it to
-> HS200 mode gets rid of the I/O errors, and it seems that lowering
-> the frequency to 150MHz also avoids I/O errors.
->=20
-> I did a quick unscientific test with fio; HS400 Enhanced Strobe mode
-> with a 150MHz clock gives slightly better performance than HS200:
->=20
-> HS200 mode:
-> read: IOPS=3D697, BW=3D43.6MiB/s
-> write: IOPS=3D697, BW=3D43.6MiB/s
->=20
-> HS400 mode with 150MHz clock:
-> read: IOPS=3D805, BW=3D50.3MiB/s
-> write: IOPS=3D799, BW=3D50.0MiB/s
->=20
-> so from my perspective, limiting the frequency would be a better fix
-> than disabling HS400 entirely.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Thanks for running these tests!  The measured difference in the
-I/O performance is about 15%, which surely isn't insignificant,
-but IMHO it makes the proposed lowering of the eMMC chip to HS200
-mode fall into the "good safety margin" bracket that I described
-earlier.  I think it's better to sacrifice those 15% to stay on
-the, hopefully, rock-solid side.
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                   randconfig-001-20251017    gcc-8.5.0
+arc                   randconfig-002-20251017    gcc-11.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                         bcm2835_defconfig    clang-22
+arm                          gemini_defconfig    clang-20
+arm                        mvebu_v5_defconfig    gcc-15.1.0
+arm                   randconfig-001-20251017    gcc-15.1.0
+arm                   randconfig-002-20251017    clang-22
+arm                   randconfig-003-20251017    clang-22
+arm                   randconfig-004-20251017    clang-22
+arm                         socfpga_defconfig    gcc-15.1.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20251017    clang-20
+arm64                 randconfig-002-20251017    clang-22
+arm64                 randconfig-003-20251017    gcc-15.1.0
+arm64                 randconfig-004-20251017    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20251017    gcc-15.1.0
+csky                  randconfig-002-20251017    gcc-10.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20251017    clang-22
+hexagon               randconfig-002-20251017    clang-22
+i386        buildonly-randconfig-001-20251017    clang-20
+i386        buildonly-randconfig-002-20251017    clang-20
+i386        buildonly-randconfig-003-20251017    clang-20
+i386        buildonly-randconfig-004-20251017    clang-20
+i386        buildonly-randconfig-005-20251017    clang-20
+i386        buildonly-randconfig-006-20251017    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20251017    gcc-13.4.0
+loongarch             randconfig-002-20251017    clang-18
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20251017    gcc-8.5.0
+nios2                 randconfig-002-20251017    gcc-8.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                  or1klitex_defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20251017    gcc-12.5.0
+parisc                randconfig-002-20251017    gcc-8.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                    amigaone_defconfig    gcc-15.1.0
+powerpc                      pcm030_defconfig    clang-22
+powerpc               randconfig-001-20251017    gcc-14.3.0
+powerpc               randconfig-002-20251017    clang-22
+powerpc               randconfig-003-20251017    gcc-11.5.0
+powerpc                     tqm8540_defconfig    gcc-15.1.0
+powerpc64             randconfig-001-20251017    clang-20
+powerpc64             randconfig-002-20251017    gcc-15.1.0
+powerpc64             randconfig-003-20251017    gcc-15.1.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20251018    gcc-8.5.0
+riscv                 randconfig-002-20251018    clang-22
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-002-20251018    clang-20
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20251018    gcc-13.4.0
+sh                    randconfig-002-20251018    gcc-14.3.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20251018    gcc-11.5.0
+sparc                 randconfig-002-20251018    gcc-13.4.0
+sparc64               randconfig-001-20251018    gcc-8.5.0
+sparc64               randconfig-002-20251018    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                    randconfig-001-20251018    gcc-14
+um                    randconfig-002-20251018    gcc-14
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20251017    gcc-14
+x86_64      buildonly-randconfig-002-20251017    gcc-14
+x86_64      buildonly-randconfig-003-20251017    clang-20
+x86_64      buildonly-randconfig-004-20251017    gcc-14
+x86_64      buildonly-randconfig-005-20251017    clang-20
+x86_64      buildonly-randconfig-006-20251017    clang-20
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
 
-I've been thinking more about the 150 MHz HS400 and HS200 quirks,
-and I'm afraid I'm even more sure that the 150 MHz HS400 quirk
-would be frowned upon and rejected.  See, it does make it look
-like a board-level issue, requiring a board-level fix, instead of
-being a chip-level issue, for which a quirk would be fine.  The
-acceptably low difference in the measured performance levels just
-solidifies such a viewpoint, I'm afraid.
-
-> It could also be of interest that the clock used apparently can't
-> provide an exact 200MHz, e.g. in HS200 mode:
->=20
-> root@t6:~# cat /sys/kernel/debug/mmc0/ios
-> clock:		200000000 Hz
-> actual clock:	187500000 Hz
-> vdd:		18 (3.0 ~ 3.1 V)
-> bus mode:	2 (push-pull)
-> chip select:	0 (don't care)
-> power mode:	2 (on)
-> bus width:	3 (8 bits)
-> timing spec:	9 (mmc HS200)
-> signal voltage:	1 (1.80 V)
-> driver type:	0 (driver type B)
-
-Thanks, that's also something to think about.
-
-> > With all that in mind, if the resulting I/O performance difference
-> > between 150 MHz HS400 and HS200 is within 15-20% or so, I'd highly
-> > recommend that we still go with the HS200 quirk.  It also leaves
-> > us with a nice safety margin, which is always good to have when
-> > such hardware instability issues are worked around in software,
-> > unless detailed eye diagrams, protocol dumps and whatnot can be
-> > pulled and analyzed, in which case the resulting safety margin
-> > can be much slimmer.
-> >=20
-> > Ideally, we'd have a completely different board with the same
-> > Foresee FEMDNN256G-A3A44 eMMC chip to test how reliably its HS400
-> > mode works there, to see is it really up to this eMMC chip or up
-> > to the board design, but I'm afraid we don't have that (easily)
-> > available, so the only remaining option is to work with what's
-> > actually available, which inevitably leads to a certain amount
-> > of guesswork and some compromises.
-> >=20
-> >>> [1] https://github.com/openwrt/openwrt/issues/18844
-> >>> [2] https://dl.radxa.com/rock5/hw/RKeMMCSupportList%20Ver1.84=5F2=
-0240815.pdf
-> >> [3] https://lists.fedoraproject.org/archives/list/kernel@lists.fed=
-oraproject.org/thread/MCSDYDQVOXS5AZMKA7LLY4QX7JXBWPCA/
-> >> [4] https://github.com/armbian/build/pull/8736#issuecomment-338776=
-0536
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
