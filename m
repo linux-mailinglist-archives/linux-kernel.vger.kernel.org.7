@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C46BED322
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C022BED33B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FD564E6D49
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9A03AA1AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9447824293C;
-	Sat, 18 Oct 2025 15:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BB7243387;
+	Sat, 18 Oct 2025 15:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAH3Ne8U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYwvOgcw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9A23958A;
-	Sat, 18 Oct 2025 15:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C28623B0;
+	Sat, 18 Oct 2025 15:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760802961; cv=none; b=Ieg08e9jFeayQiPspi/xPEsXT9jRAmx5bczr/pS0oQCWvpJqOhaf8NvNxnA1fyntrNL4KBGyUKBzBF2+vCHlU+nJgDYeJ/CAW4OmfypUINnirh2YezyS+yNNCPjKXY0K1ajyyBkk1u0EXdlB8LCpI+k54p/jd31LbQp7IlgnZeg=
+	t=1760803143; cv=none; b=unsPuCK4y3vLhn9p+FjI6x5tIWluLtMtV6vQ2lOI/Bz4ctv1ClljHcsdkUhI+PFoWFYyIEXyXkz0E1QARRsbdRy2ADXn7VJQ1urG+LO8YxfmBChHY2rd2awLv0tM6HVVU7Ec7NauJJGu7ieD49LZKipP/+L01o4z7Y5TnjyIUcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760802961; c=relaxed/simple;
-	bh=rANeg7/9tDur3aPT6nLL3Vg3pGWC/QvMvYI+IkkU5QU=;
+	s=arc-20240116; t=1760803143; c=relaxed/simple;
+	bh=zBqa4/8Tj4AzVzBXKTeUBeTopSSEU9qAlM8OsCHmNWA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lIwQ2i80zdaesyEpGvH5khGgIUDshzaQbrDXNn7D/YxnZu9lmKyaorj5A1ZHIfqpO788SDJEQfUPPX+q6zEw/xI7laQT/rIidoNniLz7YDR2vGbLZEYoF7HsWBjFgyizJNGPf/38SP3CXLU9NF3iuk/EN/rFlusQh9GiTnKnfCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAH3Ne8U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C90C4CEF8;
-	Sat, 18 Oct 2025 15:55:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Mw8b06AUHvDOQt7zk41suZlL/4tI7y2mvliHSVIHDvJB1qjX5Zn//GjXZQPd9+FmnTu10frqyX4/d0aykh0ejKjfw5GRel2wGR2xOEC72tH0Ol4Gb6eYLh7UpR99Xth5tSFRb2kO2/0N0ToOihPgUMUSycTMN0VHrRSlRU+0hGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYwvOgcw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEC9C4CEF8;
+	Sat, 18 Oct 2025 15:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760802961;
-	bh=rANeg7/9tDur3aPT6nLL3Vg3pGWC/QvMvYI+IkkU5QU=;
+	s=k20201202; t=1760803142;
+	bh=zBqa4/8Tj4AzVzBXKTeUBeTopSSEU9qAlM8OsCHmNWA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KAH3Ne8UzqQ3HFRkQ4+bxBdpamOTpQ2NnlNq0/lBpJS1y5kOYSlmsOhge9CfEoNXd
-	 yRAHz6a2eLoobNUV59Sb7dHCuSZGiMBveZnyrCvPR232luOM42EzKAGqDfho41xW3B
-	 u9QY9Kk/+JJBMc8WeUmZSbLr09RUo8SSQ2kd7hr4f6XfCYOm4tADQHowZGEqp2lxwh
-	 GLlimW8FNON0j7KXE/lSruJ9v2shClDSJk6232ZVaQlYEFOKS+fCUTCWUd3j0z8xY6
-	 T9+CND2EbZ72l4Wp4B0hRAy2Te06/65OWp/6fRO7VCYfZl0UE3SAilr6B0i/f54tq1
-	 pKQGQYa04TWZw==
-Message-ID: <5fca6d24-b84d-408e-874a-e86b811444fc@kernel.org>
-Date: Sat, 18 Oct 2025 17:55:55 +0200
+	b=RYwvOgcwW5i7OnrOgN+hPy583Hyqy3rN5SqSIMrE96hpjTAfrD+dnLxNFs4OjMVfA
+	 i+mRqPbNwfGrGbv0GZBgy3XccipEWmZwMtRrRgeSaMZ5QOOMpBCD30E8vP1QNZAlKo
+	 C0Emr7JGDsgEd5+KCuSh5zA7GAUiMU77lPoIvCyPSRwEunKIPFndVr0MHDcx12oCj4
+	 Jc7iTfmWyYBgvMZFG7fKVprPoFrqAIJykMhgk74R8LNYv2p/K7jU9kptHhVu0poZZO
+	 VUtGisGIZPgyjozRzvAyprE9YcrwG9HrnAeuL20rmK801b+USDaa2FYkJZWCmiRjTk
+	 VsVtleLeUQPJg==
+Message-ID: <c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org>
+Date: Sat, 18 Oct 2025 17:58:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] i2c: designware: Support of controller with
- IC_EMPTYFIFO_HOLD_MASTER disabled
-To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
+ kaanapali video codec binding
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bod@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org,
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-References: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
- <20251017-i2c-dw-v1-3-7b85b71c7a87@bootlin.com>
+ Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
+ <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,21 +109,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251017-i2c-dw-v1-3-7b85b71c7a87@bootlin.com>
+In-Reply-To: <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 16:59, Benoît Monin wrote:
->  
->  static const struct of_device_id dw_i2c_of_match[] = {
-> -	{ .compatible = "snps,designware-i2c", },
-> -	{ .compatible = "mscc,ocelot-i2c", .data = (void *)MODEL_MSCC_OCELOT },
->  	{ .compatible = "baikal,bt1-sys-i2c", .data = (void *)MODEL_BAIKAL_BT1 },
-> +	{ .compatible = "mobileye,eyeq6lplus-i2c", .data = (void *)NO_EMPTYFIFO_HOLD_MASTER },
-> +	{ .compatible = "mobileye,eyeq7h-i2c", .data = (void *)NO_EMPTYFIFO_HOLD_MASTER },
+On 17/10/2025 16:16, Vikash Garodia wrote:
+> +  clock-names:
+> +    items:
+> +      - const: iface
+> +      - const: core
+> +      - const: vcodec0_core
+> +      - const: iface1
+> +      - const: core_freerun
+> +      - const: vcodec0_core_freerun
+> +      - const: vcodec_bse
+> +      - const: vcodec_vpp0
+> +      - const: vcodec_vpp1
+> +      - const: vcodec_apv
+> +
+> +  dma-coherent: true
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: cpu-cfg
+> +      - const: video-mem
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  iommus:
+> +    minItems: 3
+> +    maxItems: 8
 
-That's not necessary. Don't create duplicated entries, express
-compatibility.
+I don't understand why this is flexible. Make it fixed size and anyway -
+list the items.
+
+I already asked this.
+
+> +
+> +  memory-region:
+> +    minItems: 1
+> +    maxItems: 2
+
+Same comment. I already asked this about iommus.
+
+NAK, we should not repeat the same comment.
 
 Best regards,
 Krzysztof
