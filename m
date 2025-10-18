@@ -1,198 +1,214 @@
-Return-Path: <linux-kernel+bounces-859223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDFBBED0D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:04:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82901BED113
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5587E34E19B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:04:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E565E4E0F7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33791D9A54;
-	Sat, 18 Oct 2025 14:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674281DEFE0;
+	Sat, 18 Oct 2025 14:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/XQ9qfV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h6BbkAoP"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012002.outbound.protection.outlook.com [52.101.43.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7992556E
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 14:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760796251; cv=none; b=aIiRynQ1KZErPzFe+sC4mPrUL3yUYASMn9WR33zlBsw4lo+wKfHZEQb1BaU7zc+iovKP8SqrGTf1Lzqwvn9lYD1yY1qMRoNUH0Yxm4/nHoEcrHVZaVO5YYxSxC+wEu2ud1Zp7YY+SmqbSgs4Y/dtqx+tET+8NNGL9XO7pYQ4rpw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760796251; c=relaxed/simple;
-	bh=Vtm3MPedyw4C+ge9A73msiAE8e5tMNJ7EZHFYJAGp6c=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=GavCbb0Z8PeodNjSmKqEG5bEVJv/Mko0ooQT/PXkxX3/Zidpat7Avllc7iWNO8sLt7i/7+g+yRhvJmtkfqfQ7sJO4zFK1Wwao2owNyS/dCyA0GtAVSYqTRmLvMyW1oUb06pstpxIHUpWw+JGpNAZVFrkPMj2GXG9dzQ4iKqQ64I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/XQ9qfV; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760796249; x=1792332249;
-  h=date:from:to:cc:subject:message-id;
-  bh=Vtm3MPedyw4C+ge9A73msiAE8e5tMNJ7EZHFYJAGp6c=;
-  b=W/XQ9qfVNTNm1jRmpMd0ACm9PlGKDESoIOmr3E5X3R/Rv1gI0ck5tzJ9
-   8gh6mI3+uvBqq+8GW7z45LhqsA/zKv0OQy4tOPKmeTUWPCsIFnlO3bCdf
-   l2AMfEyZdQW8K7wqVATPCCeejIQdjWT+Ek6XlApFTRYAlYDcRc5JDrhrG
-   /xHySklw83LgIN/qtHoZGvzhbN9pUTflhUVnC1c3pPc1YgXvnDvjPRJLA
-   ad5rFiGtF+N0EnwWT+6QeP/uv1IDeHgX7EvEfQNtT/q0ujBlwz84k9srr
-   or4/cKDqA/MUT//EJjwd8q7wo9VevVKRJhJZRO/6yeqD/DAhPVS8fsb8W
-   w==;
-X-CSE-ConnectionGUID: IriX2fZKRCaW1BnXTYYJTQ==
-X-CSE-MsgGUID: UnOFFvKYRNqva4LP3P6Flg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63032443"
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="63032443"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 07:04:09 -0700
-X-CSE-ConnectionGUID: ZuxsZq4vSPCPdtDzr0QPSw==
-X-CSE-MsgGUID: sspbPXTjSByLc3F/2xViPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="186970319"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 18 Oct 2025 07:04:08 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vA7XM-0008Jt-0y;
-	Sat, 18 Oct 2025 14:04:02 +0000
-Date: Sat, 18 Oct 2025 22:03:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/drivers] BUILD SUCCESS
- a7f25e00c4c97d4842117fba06b4c6064ba1e354
-Message-ID: <202510182210.NtZW9WEJ-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F4D13A3F7
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 14:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760796632; cv=fail; b=mHw1iWYk/2kpRTnXTFYfDieaUp915ri7YhTxgtPiE0U4/lVVDQigpXURxQAdzlzsmWucjIyHUZYj8+/wG/uCFUUDJn0lAXB9aotxffbNi3w6pgvOqVu6VCKX8KHmxamsvYBvFc4iybQoWpU9Rc9AvCrwlJWTfUaYlGkaZLtZxk0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760796632; c=relaxed/simple;
+	bh=Ss/0sMeJdC5UND3T95Pldinw8Yx2sUfY9S/N7cx5Mx4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=qqjZS7O5tBm8mwYeLqvnO3E2fZM8y2u7iYHri8/QvMVCoKjjNLvgp7edvl787umbK2X/e/KobygV+THHhb6Syt0U6WlgnKo9vjsAulC6EI0nyj55dBq2Z3VR9xu9Hk3H1VQEJ3s1teGJiLrxueGxpySWz4jblwuSrBq2oVSfqLc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h6BbkAoP; arc=fail smtp.client-ip=52.101.43.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GIpDMG+xVqeKsTo5PkLAbXVJb4u5nT3m77R8n7zGZz/Ps4PB1qFOlYc90HNANmimvkRMrt5+YQ9SXN2pb0ctiPZoRjrRTKoSAM0Gkt1c3GKli950m/ldZa7fUNRpJ4gts0/HQwz0yeSS6ZfOHookr0ipGIXo5feY4N7aOJTKxSiUnrrSVCh4aKXfkqUq3V4f32bN9FbFbF+a2lZ9eUfnL8gPh3hrzw1Cuqd6m02PSEaa4frpZCXSujNUyQKzF7c9f4OE7SFUltGizK4eBnD1uM+B4srEnztnj41nzXr08KYYT4VQObJQWr2nTzMW0XzQEZlm3x4jGz/4NbExHiyEAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TepBbDallWw6fl/9fCfORbqLhV7yA+AK5Rmd/R9OFHA=;
+ b=lNDOghb8yBVhiaWBtynLGWs7h52fGMp6/HaigHVLNXf4/DTNyuWKRR/o1wc9SzEsYwI6M6sbWrwYThWt/qgeyhMAOOROYG54jqhbnooV24yBecUZEQoq8acFxMLWYBZvfLIkr7B951vDUwxg2yrbma3NRYgdVty7rqBQdapge8kgcDr7qW5fteUZ/XtuMq+bzDMt+BAdrfIlKSJk6oC6yuGyMmXJXyzT7w1iNIYxbKak5Wk4FZROwTrj2TQpKOiMzjUqjTUDkDHT/rM3dyqIWsjsyQ4CeUbv+M6fm0dWtFuBkzNG2MP8UgzdU83gDN8JwuuBp2P+BExzRKik3iqTiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TepBbDallWw6fl/9fCfORbqLhV7yA+AK5Rmd/R9OFHA=;
+ b=h6BbkAoPESEbVB3hucN4qId9WF2uSfD1Lmwhl5ptk6t+uqbzcFl7lxfug595c61gqqHa3cUuTh+D83en0XolYfGRj6mj3/dOEGio4mu+bZ4AeJT0Lx0jMTaNIjXKjSTVLZV4gK25C/T7bywVXGCzsaQpzWldvw1FimuiqbxTW0KysNOu1m0grliOFl3QPjwH+z0TNtO5lkGVeDocPtUPhmmoPhyTjr2fOz/A2IAE7r7LGz1QwtCsuNrE/gBAZshTHycj2SN6hth04zq8Ld4Qv/omqzvR5Vn6VGcvRO0h27nY0E3e65GwOXWbDhknIlKj5J9Mxukf1xhzP3OVbAJoTw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DM6PR12MB4337.namprd12.prod.outlook.com (2603:10b6:5:2a9::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Sat, 18 Oct
+ 2025 14:10:25 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9228.014; Sat, 18 Oct 2025
+ 14:10:25 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.19] sched_ext: Allow forcibly picking an scx task
+Date: Sat, 18 Oct 2025 16:10:14 +0200
+Message-ID: <20251018141014.212571-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.51.1.dirty
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI1P293CA0018.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::12) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DM6PR12MB4337:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5ee969d-cacb-4688-ef52-08de0e5014c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DNNWsZ8a2tOazDxPj/RbfDJsrsXjjYJ9lQsnk41K5p4LBkR0QVM5qgCihe7q?=
+ =?us-ascii?Q?G4HvAHjTsXpNp3ZF/Z/EweAbMq+suUfNL7ewpSKq/UEIUTRlV6N6k8he9/v+?=
+ =?us-ascii?Q?NlYzUWRd1F8ooeqfTCv/kcLX4tGFyCAq/EwzR2b521zgIE9VkXxkscMpDRuS?=
+ =?us-ascii?Q?A6TTR8X+NMlcAB9bStHNeXPa4m0/ETrc4/rTdWgrNA0v168K9hDMM4Pgbid6?=
+ =?us-ascii?Q?vskHmgCgQSwQ+yvvf22kkUiHFlwLZHLHE5Srm9isjtRin8xVNUpae1lIM96T?=
+ =?us-ascii?Q?12GSWffS5kWO1tVqDKtPO2LTyczBLkeZrfkpjGQ15N0ioLIbFzBP13BW0Yxr?=
+ =?us-ascii?Q?R8wz57XUzyQQ2BBUfbDpOFvQ9vNr+NXpy0gFoVKdRGqEcRFBQsI6QsuYXM1b?=
+ =?us-ascii?Q?HrcKiDcCigC1KKqOuLY+O+li8t2UOyKw19nRcpHaiJr6Hgv8FcUmHCZRIDyG?=
+ =?us-ascii?Q?cQUqfB1O4JHc//nDQQnia+fDzWeseql88Ak+LZXkq7KechcEhq6hkSdniamu?=
+ =?us-ascii?Q?XmFfobiC06T/GKd8bu5d5lehsDFqQgrVLCQHSPmUzNtl/Eda+659l+W77xBG?=
+ =?us-ascii?Q?IbPyM+fEFcxk2zh1SZqFDkv6F4Oli9ZUrXLYhvFu3CqkvymxqWhB+ZtheH5u?=
+ =?us-ascii?Q?ntF/oYRM9yL6C1MWutLMcS91GfMoLMrUR7TgDY7Ro+4wPhXqwSDPoxLHi4Gn?=
+ =?us-ascii?Q?kamHpMWKMw43hO9ewt2RCkT/h+lFhB2Y3DjJi/VQ19LEDk+YUJ4GBapF0l1b?=
+ =?us-ascii?Q?pbcALg/C+GXbfyBjRQbLMlXMeW3rt0xnpgcd2oBmzWcJz6LXsIlfduk2kmoD?=
+ =?us-ascii?Q?cGTxoXr8hSvU99UkYEIupKA5/CAFcCqEGDSjx6iQS0wL21ILPkOkam1a11M5?=
+ =?us-ascii?Q?x6wjoYpAfueG7bk0+yPUn256AL9iSW8EjK2p82nBP6CZcX5Txvfd3NvYgaLH?=
+ =?us-ascii?Q?iNhnvC120fwuXnpPemzBZ4ii6Dk/ju7r8bCKKPaQHZ5y1f4G+TsMSBqfQBEm?=
+ =?us-ascii?Q?TT05p0mbxGtD7lktjvXUEcsdy+AgKxAsb0Q8338BWqQDqHj/wT2WTW6aPFk5?=
+ =?us-ascii?Q?48SVyQd3MWOK0efKBq4ZnVyJhGaiCf6koPf93L817K1Qm9FoHyrxB4Jkv+Dt?=
+ =?us-ascii?Q?7pEOzxtaPS7tc0HFK9wJap+UU5Dx6h86a9Rzc5EuWiPKFaj5Qpd9NUB/ElJT?=
+ =?us-ascii?Q?2QTsFiSjQpKPM9kd0J6/DOBmn6BqJnqrUlPCvg0wA7HCF5S0bwlw/QyJb0VW?=
+ =?us-ascii?Q?RVjmpe95s45XRfEj3rvFwtRLfJImxaAnm1cn74eZ7Cx6cRatZiLk/qJHN6Go?=
+ =?us-ascii?Q?MkS2aIEgUrsg93dhabr3f6QIug2tT24wgD852DCI2cgQt1tAmqVt9T/aHxRp?=
+ =?us-ascii?Q?Er15ebf66mk+bdZ2tMBgLoMr+vR3XIhlIFwukscFxN/drihJTYfenWAO2Mq6?=
+ =?us-ascii?Q?iu3C6y4nANhFOaVpG1b6n/rq76Xqxac3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WNB6G9LmS5smYrJjt4SPGTIUhzpT+ecj4KDlwiOvn/9zcPVaUlYuySgk9Fb+?=
+ =?us-ascii?Q?jz1MAM6rOxnB6Rafwx9hxdGAHbWARJTNyrHfv90B2jOj1/1Xw2feIqItwlIz?=
+ =?us-ascii?Q?38esHG9XN3QZqihjeIy2apTk24hrXcLUybq/ZjlWM71RqS791a3vi3XaK+7G?=
+ =?us-ascii?Q?yy+tifit8b7aYxw4gWlh2kP4UWdLYLGEGu7U0UPFrjiKYiHB16fbKW+4DZlc?=
+ =?us-ascii?Q?Xetn4vMDiTwGFyyygW0XpB2IpHWxSZhjx2TvF3OoVDD5al5F7VD8m1q0zq3U?=
+ =?us-ascii?Q?uaFldb/dNreJWDHeeVNgQcZY4mo3aC9zNUtY8uCfv73UT4NzPIO2OEmsGiNt?=
+ =?us-ascii?Q?OdjtUjIwi06LE2GSfYdFHcbkZZTpyKSSaxVitWmyUxf+TydeZ7ZNLBLI4Q7k?=
+ =?us-ascii?Q?rpHMjHw9VYezgpBhyXnsuIxDBloi6F+eq1jDx+Zqb3KhxxJQcGu8A4m6wruw?=
+ =?us-ascii?Q?7zxYfvBltKbO84mCnZB35G+gIed/VSfMB3Tcumko5Y0d3eezPnSNeTX1lL+q?=
+ =?us-ascii?Q?KPadHaAFSa2Jk1Z6UsvXxfulqHo6X3a+QAbT7bf3YntPj+SN5b+rN3oPhyoV?=
+ =?us-ascii?Q?OHzZSA8K+7rTzluQcQBTslPtANm6vBevVzcbxyufHTdLrEDaTxULo/yd9oc8?=
+ =?us-ascii?Q?qsaAqHbB2cUGOSVcyAwhcb0X3dnlRVcR6r8oTO9Ja1+ZZ0ihSXTzVBwfZohJ?=
+ =?us-ascii?Q?fwuhNIytwEmwdtOFiJThWRQZd2goAkkaTJ0Ncof47HHsjV+I4MuFuoipiZJV?=
+ =?us-ascii?Q?My3F77rzaNGdn/mw8vwTbZ6pDm9tSt/xK+TsQACpwr3U7zyThVtwR+jW9xUu?=
+ =?us-ascii?Q?VodbUKQCjug2Rgc4uKi7r63KNr2FwsHKyNAkNLmVjgpDVY2Pz7zx6g27V+2q?=
+ =?us-ascii?Q?Zbwtn85uow8+hb2XdXk441oZBFnpx4P5WVp8MjWwcodS1QSBOyFDpLvMVcyU?=
+ =?us-ascii?Q?MqPZg3wWMcA72PnomeVQh8ksCyKoM4nOKqrLniY+zSZNHkxvp2X1k+q8oD2j?=
+ =?us-ascii?Q?/M1EwqVVXy7u+nGi0JxaGFsUymUNhCRf/WIrDJSBae+U2GkvF2j1E9sXbRxh?=
+ =?us-ascii?Q?eNLdjd21O42uxbpvQ9D9baUHQMHq/HWtn7zcqp5sE5e51T/m9rOILzLSES52?=
+ =?us-ascii?Q?CpmV7Pm+BlPJY64e5YMiznVgDtJundNjqHNK2dfxoLpWJf52C+p0bLAxjw/I?=
+ =?us-ascii?Q?jTEawFMGYUHtU1EjGYwkr0w2QpkD0GZrOiNP2QSNa7E3FHyic94ScjcDbpD2?=
+ =?us-ascii?Q?gMWWb+2W/dTMkvBqLfAfYoSZRcP6d12pUwdHtAkPVd+RLIK9Or+w9t0LEC9D?=
+ =?us-ascii?Q?SRiLw+7RuAEx7Jx4kac4ckm5piUzkp7kWhGFINmHorDS59C+4pPb2/7xIRPP?=
+ =?us-ascii?Q?7YizNtzYCEnTS5sEYYkw9UHFFaU1a+YdI5B9mG5m9KwZbq+7K+qjQQNNTbCC?=
+ =?us-ascii?Q?bXDvjVNrJDL7khweveh6luYRhHv138GExE5wlI4wl7R2L++xV0Akq0EPAtFv?=
+ =?us-ascii?Q?jfkyDxtD0+uBDILRstg1ZvWjTIH8LWwR+8S9wMQBi8BMm84u9P5oF3OA0EvR?=
+ =?us-ascii?Q?gfZHNq0xK4M9Mi66+i1bJL6dUm1vOIpGex4pMVZt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5ee969d-cacb-4688-ef52-08de0e5014c4
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2025 14:10:24.9940
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yn8TKRHN05Lsq870WMWTIpO+JOaZo1Yes7hK41khJV5Uv5t4vYlEmSvxjyinCi15ltVghbfu8KjEo5HbsatGFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4337
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-branch HEAD: a7f25e00c4c97d4842117fba06b4c6064ba1e354  irqchip/qcom-irq-combiner: Rename driver structure
+Refactor pick_task_scx() adding a new argument to forcibly pick a
+SCHED_EXT task, ignoring any higher-priority sched class activity.
 
-elapsed time: 1456m
+This refactoring prepares the code for future scenarios, e.g., allowing
+the ext dl_server to force a SCHED_EXT task selection.
 
-configs tested: 106
-configs skipped: 3
+No functional changes.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
+---
+ kernel/sched/ext.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20251017    gcc-8.5.0
-arc                   randconfig-002-20251017    gcc-11.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                         bcm2835_defconfig    clang-22
-arm                          gemini_defconfig    clang-20
-arm                        mvebu_v5_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251017    gcc-15.1.0
-arm                   randconfig-002-20251017    clang-22
-arm                   randconfig-003-20251017    clang-22
-arm                   randconfig-004-20251017    clang-22
-arm                         socfpga_defconfig    gcc-15.1.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251017    clang-20
-arm64                 randconfig-002-20251017    clang-22
-arm64                 randconfig-003-20251017    gcc-15.1.0
-arm64                 randconfig-004-20251017    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251017    gcc-15.1.0
-csky                  randconfig-002-20251017    gcc-10.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20251017    clang-22
-hexagon               randconfig-002-20251017    clang-22
-i386        buildonly-randconfig-001-20251017    clang-20
-i386        buildonly-randconfig-002-20251017    clang-20
-i386        buildonly-randconfig-003-20251017    clang-20
-i386        buildonly-randconfig-004-20251017    clang-20
-i386        buildonly-randconfig-005-20251017    clang-20
-i386        buildonly-randconfig-006-20251017    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20251017    gcc-13.4.0
-loongarch             randconfig-002-20251017    clang-18
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251017    gcc-8.5.0
-nios2                 randconfig-002-20251017    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                  or1klitex_defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251017    gcc-12.5.0
-parisc                randconfig-002-20251017    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                    amigaone_defconfig    gcc-15.1.0
-powerpc                      pcm030_defconfig    clang-22
-powerpc               randconfig-001-20251017    gcc-14.3.0
-powerpc               randconfig-002-20251017    clang-22
-powerpc               randconfig-003-20251017    gcc-11.5.0
-powerpc                     tqm8540_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20251017    clang-20
-powerpc64             randconfig-002-20251017    gcc-15.1.0
-powerpc64             randconfig-003-20251017    gcc-15.1.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20251018    gcc-8.5.0
-riscv                 randconfig-002-20251018    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-002-20251018    clang-20
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20251018    gcc-13.4.0
-sh                    randconfig-002-20251018    gcc-14.3.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251018    gcc-11.5.0
-sparc                 randconfig-002-20251018    gcc-13.4.0
-sparc64               randconfig-001-20251018    gcc-8.5.0
-sparc64               randconfig-002-20251018    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                    randconfig-001-20251018    gcc-14
-um                    randconfig-002-20251018    gcc-14
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251017    gcc-14
-x86_64      buildonly-randconfig-002-20251017    gcc-14
-x86_64      buildonly-randconfig-003-20251017    clang-20
-x86_64      buildonly-randconfig-004-20251017    gcc-14
-x86_64      buildonly-randconfig-005-20251017    clang-20
-x86_64      buildonly-randconfig-006-20251017    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index adff739b396ce..35bc37c7ee199 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -2351,7 +2351,8 @@ static struct task_struct *first_local_task(struct rq *rq)
+ 					struct task_struct, scx.dsq_list.node);
+ }
+ 
+-static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
++static struct task_struct *
++do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
+ {
+ 	struct task_struct *prev = rq->curr;
+ 	bool keep_prev, kick_idle = false;
+@@ -2365,7 +2366,15 @@ static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
+ 
+ 	maybe_queue_balance_callback(rq);
+ 
+-	if (rq_modified_above(rq, &ext_sched_class))
++	/*
++	 * If any higher-priority sched class enqueued a runnable task on
++	 * this rq during balance_one(), abort and return RETRY_TASK, so
++	 * that the scheduler loop can restart.
++	 *
++	 * If @force_scx is true, always try to pick a SCHED_EXT task,
++	 * regardless of any higher-priority sched classes activity.
++	 */
++	if (!force_scx && rq_modified_above(rq, &ext_sched_class))
+ 		return RETRY_TASK;
+ 
+ 	keep_prev = rq->scx.flags & SCX_RQ_BAL_KEEP;
+@@ -2408,6 +2417,11 @@ static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
+ 	return p;
+ }
+ 
++static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
++{
++	return do_pick_task_scx(rq, rf, false);
++}
++
+ #ifdef CONFIG_SCHED_CORE
+ /**
+  * scx_prio_less - Task ordering for core-sched
+-- 
+2.51.1.dirty
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
