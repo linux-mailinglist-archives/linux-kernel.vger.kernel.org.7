@@ -1,133 +1,98 @@
-Return-Path: <linux-kernel+bounces-859459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203C0BEDB81
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:30:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91301BEDB8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 697CF4E5CD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:30:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 074224E1999
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1ED288C2B;
-	Sat, 18 Oct 2025 20:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FBF286D60;
+	Sat, 18 Oct 2025 20:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FToTKl7g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvIn3uZP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC2942050;
-	Sat, 18 Oct 2025 20:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387982441A6;
+	Sat, 18 Oct 2025 20:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760819423; cv=none; b=ZNeHzJjAit7dl9JLH3uX0PYu0mMg83pU3yqz8/b44eba0OjVb12aGUa9lUJuJ141kd9rg5XL7lKzt1wrcQzLTbZnasm1R+wMlgZXuvgLJQVFfj8fPu7Rnh90HEDM2zAXSckvYE2DWASHVEBB7ozarv0EPo9jQATPMjm3gMP0864=
+	t=1760819644; cv=none; b=VDnWhcR08EMoHsBHq1nZmsGQsVMJDO7DnARLtDYkJnI51Uoz+TrxqC04ajoF045YoSOySQGXSiZA5Bbgw39/0gm0doLlVURGjGzVbi05LupuHhrr6ZktaEUefO1io1GpU74xjSkBe0s3JsGMCrL9Ql+q/6mRs6/EbdG1stmQsGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760819423; c=relaxed/simple;
-	bh=oymSkMI4MQyfgGtzTlVx+2QbpBAMoVgBfbG6GjNGQ1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHGFG1EL+Ond4zTiHHisf6Cdb0SFnoVeMhVTm3e6uRvxzLzSuwQI9LOiKtpdVVHLpNYTNbd/gxuhoD2LfB7RqUDmD1hAr5NsL8rDBcQYsJfNgxHPk9stiNF6leKd5pzSGHTEw/XkLEKSugwtN3hT9ogr40Qc50eGNTs+tgY2Bio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FToTKl7g; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760819421; x=1792355421;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oymSkMI4MQyfgGtzTlVx+2QbpBAMoVgBfbG6GjNGQ1c=;
-  b=FToTKl7gkd+Wv1+UPtwVizPeSwz7JabwD3dIAPkhgk3jnYRINmSDTt87
-   eV+VpW8TWz+VQOPGd44uMfazt+v0GqR/Vnw4dIuOeTNH3YIcWBgYX/fpA
-   iazmzrHTvhjDZipmRaj/tsakaats3C1S/xR/NsYkJQvO+1+7u1V4Ead25
-   DkFHyP0SMhOmXFxZSss4z07++JFt8011BFhHP53zBFTHCDFkbN/EBaBtn
-   toVNL+0eIqzgCWtn5dFIXjNIZK+g6O8YVA9ZgKmYgDon5hAwsveHLDfd/
-   FrSTOCPyHvRihkCG0iy7QCl27JFipcs9Yd7GnuO1cCFhdlPECsizBhG8n
-   w==;
-X-CSE-ConnectionGUID: 26vdJaWIRIme7WBrZMymjA==
-X-CSE-MsgGUID: KzZY0nCESbSKnhCLpESQIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66833131"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="66833131"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 13:30:21 -0700
-X-CSE-ConnectionGUID: wFojyqHMSk2ID8aQrenOaw==
-X-CSE-MsgGUID: SsgCYYyxSN2ifsNoFIQrWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="187257235"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 13:30:15 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vADZ5-00000000yE0-19Kc;
-	Sat, 18 Oct 2025 23:30:11 +0300
-Date: Sat, 18 Oct 2025 23:30:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Tarang Raval <tarang.raval@siliconsignals.io>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v4 2/2] media: i2c: add Himax HM1246 image sensor driver
-Message-ID: <aPP40yh7--VGpd0O@ashevche-desk.local>
-References: <20251017-hm1246-v4-0-e3388ea2f08c@emfend.at>
- <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
+	s=arc-20240116; t=1760819644; c=relaxed/simple;
+	bh=qDa8dNRA7HvXBHymxnFXRXDRH7wM3VWNwm2gtCpL+8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K5HXJwHA0PhDguHOZcpFxkSFADjrvprpTjERSSPqmy/laTm6S0QcCVkXml192wodO/6R4QISXlD6r5Go31JRHxDSsZjbG7JQKDZ9pSH7dBkp96ljTXQjaAkvxpSm7fdyuNwOFGGHwp3LmsaK7tv2KaqWYxe/9+WzZZz500WoJfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvIn3uZP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DEDC4CEF8;
+	Sat, 18 Oct 2025 20:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760819643;
+	bh=qDa8dNRA7HvXBHymxnFXRXDRH7wM3VWNwm2gtCpL+8c=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mvIn3uZPhjBYp1aWcR4ekTpznp/TSUpcg9uKf4wiXcWgBCVT3Z7ETE2+qpX5GdgM2
+	 YSKhfr8ajjGXhcFv4Yqrlj9zbRMIqRdtb0KtSKXk9f4ToyUAqFeUSTeAof80z8tMhS
+	 1Uz5XYKW2dvShit2u3Jb65X6MhSsdwSD0V1Ua9tsG6+KL9vwI3gsY8et8mDoTIPL6d
+	 /Zrw7CFLnLxyNt56JqL+JO5Rt4VujtSPrDLkl7cyAv6LoTuurGxYa6J72MJ4tHei0C
+	 D1ZhNJbVIUaxP7ZnHRj9pDlDhSBMomC2UtChqw4IfWNJuuYLlbcujbK2VvtyemB4Pw
+	 gpuDgcVGDOLEw==
+Message-ID: <1431286d-e802-44ab-b40d-86bcfed42e3a@kernel.org>
+Date: Sat, 18 Oct 2025 22:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as reviewer for module support
+To: Aaron Tomlin <atomlin@atomlin.com>, mcgrof@kernel.org,
+ petr.pavlu@suse.com, samitolvanen@google.com
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251018180210.347619-1-atomlin@atomlin.com>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20251018180210.347619-1-atomlin@atomlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 12:49:39PM +0200, Matthias Fend wrote:
-> Add a V4L2 sub-device driver for Himax HM1246 image sensor.
+On 18/10/2025 20.02, Aaron Tomlin wrote:
+> Voluntering as a reviewer for Module support.
 > 
-> The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
-> array size of 1296 x 976. It is programmable through an I2C interface and
-> connected via parallel bus.
+> Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> The sensor has an internal ISP with a complete image processing pipeline
-> including control loops. However, this driver uses the sensor in raw mode
-> and the entire ISP is bypassed.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 545a4776795e..c6c860ccdbef 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17392,6 +17392,7 @@ M:	Luis Chamberlain <mcgrof@kernel.org>
+>  M:	Petr Pavlu <petr.pavlu@suse.com>
+>  M:	Daniel Gomez <da.gomez@kernel.org>
+>  R:	Sami Tolvanen <samitolvanen@google.com>
+> +R:	Aaron Tomlin <atomlin@atomlin.com>
+>  L:	linux-modules@vger.kernel.org
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Maintained
 
-...
+Help is much appreciated.
 
-> +	hm1246->reset_gpio =
-> +		devm_gpiod_get_optional(hm1246->dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(hm1246->reset_gpio))
-> +		return dev_err_probe(hm1246->dev, PTR_ERR(hm1246->reset_gpio),
-> +				     "failed to get reset GPIO\n");
+FYI, I'm currently the one sending PRs to Linus, and I plan to send some of the
+reviewed fixes next week. In addition, by the end of rc3/rc4, we'll be ready to
+merge Andreas' patches with Rust module parameter support, leveraging kdevops
+CI integration.
 
-Rely on the reset-gpio driver instead of this.
+This patch, if/when acked-by the rest of the maintainers, can be merged in any
+of these 2 planned PRs.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Acked-by: Daniel Gomez <da.gomez@samsung.com>
 
