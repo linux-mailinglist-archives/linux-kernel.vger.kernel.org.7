@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-859043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC0CBEC8BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 08:45:17 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61324BEC8C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 08:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4291404D66
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:45:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D7D5B351567
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B605286D5C;
-	Sat, 18 Oct 2025 06:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BBA28467D;
+	Sat, 18 Oct 2025 06:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y+wlj0e1"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZF2JSD0y"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAA62857CF
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 06:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AAC22129F
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 06:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760769909; cv=none; b=CTueLvBR9q4WYvd69TUiRaYLhIs5cZjtfSVuOb2LW1SLfSN7cKD7r/0ibLk3wQAbbsdwCxAYXBncThX5pLL5T/X4skAEa9lDK3JSg1pcOmHn0ZunPDm4Knf4vW2KeNpulzO5H+CjnlS1p+GqVGCQfrFTdFa6WtnjaWeGaST5Tbc=
+	t=1760770177; cv=none; b=XKmJjYHXqrxaAJRx2hF5e89ttwoTo5NDPng1+W8ynGiiTR2xIFBjcV0XywFKJ7a+eqHjRREWX/BC9rgALrHIlCrePRF1GpwOrA+tfvsfZlNzB8oHYHrKCgkBmo0AzosKQ0MXS4I9BB83camVas2aPsAdoi87hybLnHg8YnlBaa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760769909; c=relaxed/simple;
-	bh=83l92vGmnsTeooPFsXEiJR9HzVXaE+jXwSQU0y/tF6U=;
+	s=arc-20240116; t=1760770177; c=relaxed/simple;
+	bh=NjyFIWWiLjNkFVpMIJdFbukfb0uqE8RJDQ6r2TinqO8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EEHoW8Jo0V0T/8rjJ7TpUWekymofonDd7W+1gAY3n7BmKpa4IuR2/1EoW4fZMpVWsqMOm00YYHQLVGbe00DhCQY79u79h4FaA2BTVDz1EqSaT8VAVSWi8EuAwoRrRu8QXcLZQpdK6pBQbQKVCh9QA20qOF7mUE6hb/yBUeT5wGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y+wlj0e1; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=b9HR2QpGtQeKeb8pOjyszMbsBIrOel+/r4nP1pEhSl8UnI/Hvxuu8bM9KRkuRB3ifRxcHZjTN7B33sTejvDusAJZfrqWtqA5pZqIn+zWS6/dcp+kF6xKwJcxt2qlwcBZAE8quvXOHnyDfUpLvsv0AtBpjzoNmCI6/iT4UGQqxts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZF2JSD0y; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59I3QDqO025886
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 06:45:06 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59I35orc023634
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 06:49:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	83l92vGmnsTeooPFsXEiJR9HzVXaE+jXwSQU0y/tF6U=; b=Y+wlj0e174++TBKy
-	yiPDXyDSEQf2U01eo7nHIRKk2r3ZqPud+QcgRX1jUgkOnIQ/e32SqTBVSAmtPTU+
-	HJCilGA67lkzJmVq/fdrDylSkP961OSS7puYG5/D4g4k+5qMyiltnrzI+/GWwfil
-	J5Rqb5Q2vdqTkg3kF7L8j7smmJGSf9XfTUC+qTsZeZWQJYJjC4G0mJLx5IiJu4Uw
-	+FZk1gIVB0/HVSmQrNhYSCx7zwYcr63KCzkH57roKOgGwpi8pNCeK0CRBksLZEvj
-	3OhRig5ztZOEgO3EdjzYgeT9Swwzyj5snnE3O2+devlxNiIqasQ3Q6VFiANcOvcs
-	4WP6xg==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v2yv08me-1
+	NjyFIWWiLjNkFVpMIJdFbukfb0uqE8RJDQ6r2TinqO8=; b=ZF2JSD0ynOnd7HFH
+	txnyqRD8a5lKpNybNzcBvBr9hiukW0Kz76voObJqJOa4VorkBQD9l6r+PvS3eUgQ
+	YpVVGX1a+MAFuuWtHYyc+K0kB4ma4Xs/wB0tJjq3CtDjKU1O50ekaeKI26jOvxyE
+	Wze4Pu0hIvDtyls5rAzsxZFh+0yeKAgPVU2cFI9Vrr0BdpZuSvEM72/GHI0Al5iQ
+	8LOGrXwQDGWo8KitqHqpA96A4N/Pcl8pQskZFbwLC6AHH8RpSAbo6maP8xNXvtfq
+	Ao4fIKKdctXff61HeZP9yLDn6BOSOiQ/tkPS72uerS3WkoTKMoMbaZfO7zABvXdy
+	CvFq9w==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08p8j7h-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 06:45:05 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2909e6471a9so19870425ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:45:05 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 06:49:34 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso1781845a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:49:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760769905; x=1761374705;
+        d=1e100.net; s=20230601; t=1760770173; x=1761374973;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=83l92vGmnsTeooPFsXEiJR9HzVXaE+jXwSQU0y/tF6U=;
-        b=JR9EhiFm9ynTAvQ22SXZj3NUOEWqeh3k0gZm9JNrQVI/dLFZpU/Dvh/ICQ34ZeQqt3
-         aNrZ8mEky+F+GNDZ1YXZZm2eCaG6ehD3HoHsQh1R7mFS2qVsHo2XGreEE9vzmrqdQZEu
-         6ir7+dIssSeKhW8hCU517FH3WsY6lez9UEmP0IMSuUP3f8qvjxpzK0aJmZP3By/qqRRA
-         /Te6wqehy+5iLRXYucvGiHCEN5S8wPoDJed6tMEL4ky1mgmpTJ6lLxq3WdZZ5cVN+M8A
-         9fK2Z/cGxnksdRbes7rHpYgSJ2T79QVKOba0lFti07DEUFxS2BtjESHzs1/7r3dWqOrN
-         synQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMRucjPQUWT2PpsyKHmxfg1zB4Lf4Wv+YGPZAQWexvKoBgtZbZd6IEofqZC7HZJTcy4TgotPgPnhODB7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymmuELj9hL11vKu/K0T7vXudUVCXWFGjUn6ZFhz6xlLNwYiWlC
-	GO2DNfXWVXd+szAJUPE7CHfSZ5oOyRMc0jv8xufqLb64kFv3CJn6djm5+zh0xKdlH6b2StiU5xZ
-	F/cLI385OUyroGsPFAEX7qRcmGol5fXjUBB/Z1+4U97XIfVdUyA1KELPZiQ0dmq2WoDU=
-X-Gm-Gg: ASbGnctXx7l4uHw+2wxJTt1vCOTX3MCPhb+tC37ZmlZkTVG2voL3w7QYUglspOLHzXG
-	DVTsctj+u6uXsfP7Flfzap1oAap+S6MtrrD08mORJbhrzONGilySbI3eWI5FN6aY7dvfXBeg+4A
-	FX6fhTewF7+iHvDiSV2NV1pIrcxbcGUT0Od3gIDeqzd4iECj0W/DtprL1lqawLfMm84z8+GANWT
-	GlzmbAxriefJlAG3bc7Ox00CLxNI7pK/q5nxGQilW5LSl9nhBLfGYOnMqwfGeaiFKExk1SG5DeC
-	fohm/Yv1zaysJqRxQiL5bUreqHGGAaSJPWmXxAgGNCv/Fo5cSMBH7KORDKrVveAZ67EI5UICiOn
-	Tj7cLwZp9pnbaFPJ7cqym1zDYHaSo
-X-Received: by 2002:a17:902:f691:b0:25c:e895:6a75 with SMTP id d9443c01a7336-290ca121a2cmr76756705ad.28.1760769904549;
-        Fri, 17 Oct 2025 23:45:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE46DudyU1Od1eBACT3pMY31QTZQHpLNGdzqT+17P2QerlcjwRKGiUCYVWUl4eUkOU0pL/1g==
-X-Received: by 2002:a17:902:f691:b0:25c:e895:6a75 with SMTP id d9443c01a7336-290ca121a2cmr76756345ad.28.1760769904006;
-        Fri, 17 Oct 2025 23:45:04 -0700 (PDT)
+        bh=NjyFIWWiLjNkFVpMIJdFbukfb0uqE8RJDQ6r2TinqO8=;
+        b=jXPghUnAk9i2dm9LiHKBbfoYNiP4YyCP54378Ko9vly6HdmxJOmZ6Ks3HCkQkaM69V
+         +v1aDIpcW7WcaBPXT1cAwJYgw3PaAJyQZs5sAsUurJeGQ+AJ2mwoUtGnbEzp4aOI5kBe
+         f7JJnwMaf9miUSE62rzKlQbaoGBdJHrNdaWIHZ9CNvJGFzhnMWnjf8fT/KnttbiX8++V
+         Ni+Pc1CN2lvd65M5mLLM/mdM11xaba9iKAFk8aAi5le7VtggZMXlP5PzvOWPYqQm00oI
+         jhorlxoed6SZaaRdKoHzrrGOA9NUXI5eph11SdEergEXHjXkbdAcRpkVjWKXC/h50RUr
+         IbQw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Y5fgH2aT8i+r+wVw+Ac/mLMilYFnkBgrXOuMzeXqjU5GPYXiBVk3RSYLCojNru/5TD45RrB/HpLxP1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSzqgwZCOB50gAFtw8zOn/EagfJhg1bPNfjjwwzOJMH63rAsbO
+	cXgEIGHIhRL8IxSqpeiW5gdBcYS9adWr0O/eUPWDOUiTXUKEyH0ONsy8d2ZqHStf7OhMakoKXAs
+	cIBF8fnxThHSo8Oql9gc5dPndxGcWBwcEQ6IeaAAojFPI+iX8UANW+JY2UAXBiAdYlkw=
+X-Gm-Gg: ASbGnct36BkhwP8/XFTkq62cGswFQrFbp1umyVdKJVO5YHnOqz5xAt7Aeld9/qQtyTB
+	296iUP0xuCXyL5gWpGsqf7U+E80SnSQlKBWVc88FV7OzXQbOZMGbxh/QC5Jv6sx56ztHVqm9zNi
+	vwibizzY9ZSPSydBm3dYi7IAR+5LmnTMzWpm2XxNrw8+r9sCH77t4HQEt6PiGNAvCia+AHxjAa5
+	xwpZj4LDXBhp4daxPYrz3K8Fr6bDRM4Sh06j7h9TPJwiSk8e1Kwc4++RuAqtcnG4d7V1CxZNNOE
+	4nblQpCai3TZ23/FJaiTIgMseviqArcXguX9Zyt8hoCDY31DyVGH9kUSOdat3mBrAM6/wg1ofOM
+	0vofB59/m8eI+azOT97y6jGAj5v63
+X-Received: by 2002:a17:90b:58ae:b0:33b:e034:c1c0 with SMTP id 98e67ed59e1d1-33be034c22fmr4958726a91.23.1760770173584;
+        Fri, 17 Oct 2025 23:49:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLKdYdrSsWt/K0na02/iC7US2cAWuk9uzzLTM/xsMIIzhirt1VKeo3sQKvC5k+1NMY5WSAAw==
+X-Received: by 2002:a17:90b:58ae:b0:33b:e034:c1c0 with SMTP id 98e67ed59e1d1-33be034c22fmr4958662a91.23.1760770173096;
+        Fri, 17 Oct 2025 23:49:33 -0700 (PDT)
 Received: from [192.168.1.14] ([58.84.62.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fcc2e0sm16037715ad.34.2025.10.17.23.44.58
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5ddeb13csm1554574a91.1.2025.10.17.23.49.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 23:45:03 -0700 (PDT)
-Message-ID: <677b59f4-5732-43ad-83af-c670f6fb999d@oss.qualcomm.com>
-Date: Sat, 18 Oct 2025 12:14:57 +0530
+        Fri, 17 Oct 2025 23:49:32 -0700 (PDT)
+Message-ID: <a26d7160-d303-4257-a63a-1e94b61f5331@oss.qualcomm.com>
+Date: Sat, 18 Oct 2025 12:19:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,87 +89,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/2] ufs: ufs-qcom: Disable AHIT before SQ tail update
- to prevent race in MCQ mode
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-        peter.griffin@linaro.org, krzk@kernel.org, peter.wang@mediatek.com,
-        beanhuo@micron.com, quic_nguyenb@quicinc.com, adrian.hunter@intel.com,
-        ebiggers@kernel.org, neil.armstrong@linaro.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+Subject: Re: [PATCH V1 1/2] ufs: core:Add vendor-specific callbacks and update
+ setup_xfer_req interface
+To: Bart Van Assche <bvanassche@acm.org>, mani@kernel.org,
+        alim.akhtar@samsung.com, avri.altman@wdc.com, peter.griffin@linaro.org,
+        krzk@kernel.org, peter.wang@mediatek.com, beanhuo@micron.com,
+        quic_nguyenb@quicinc.com, adrian.hunter@intel.com, ebiggers@kernel.org,
+        neil.armstrong@linaro.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
         quic_nitirawa@quicinc.com
 References: <20251014060406.1420475-1-palash.kambar@oss.qualcomm.com>
- <20251014060406.1420475-3-palash.kambar@oss.qualcomm.com>
- <f2b56041-b418-4ca9-a84a-ac662a850207@acm.org>
- <CAGbPq5dhUXr59U_J3W4haNHughkaiXpnc4kAZWXB0SjPdFQMhg@mail.gmail.com>
- <bb9c7926-4820-4922-a67d-65a6b1bace9a@acm.org>
+ <20251014060406.1420475-2-palash.kambar@oss.qualcomm.com>
+ <d027689e-9c45-4584-ac35-411b74b551a9@acm.org>
 Content-Language: en-US
 From: Palash Kambar <palash.kambar@oss.qualcomm.com>
-In-Reply-To: <bb9c7926-4820-4922-a67d-65a6b1bace9a@acm.org>
+In-Reply-To: <d027689e-9c45-4584-ac35-411b74b551a9@acm.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: yIBCUv5QEftqfl1RYII29rB5y4D3XujV
-X-Proofpoint-GUID: yIBCUv5QEftqfl1RYII29rB5y4D3XujV
-X-Authority-Analysis: v=2.4 cv=f+5FxeyM c=1 sm=1 tr=0 ts=68f33771 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=IrkFCgFlEHDHcOs+Gij41Q==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfXytG0DOLxjdT7
+ nYp64xR9Obou3dizoaaHEwVBWo+js0n7O6VE/ikurez8KeVR23njVB83nh8CV4qDHy9K3Def0oM
+ E6ZmxyGJxxqa7O09veJVaUUlxLJUOb2dY5iZOe4anhKjjbHWVf4VROlhdfidUWtw8cDaihEZu7V
+ D5euRidNAnngtzYMpjZGjCS4TgERvbV2qCYH8X8+itHtWqTURKnQj9tL8h1TPj/kO27joGJQ36F
+ 42sSyE4MnvslAspMbLBC+ZpfCkWaYv1jyI6mLjKbThmaAtkGY998DSVXQD2/cic+Ey9MOGr9y/z
+ y6poemz5khZiG1Om/WgYU/0bqHWtqraAsbdsLBCvr1U8r+IP7B7HJe574Fn999Bbeq3x+3H5QE9
+ OiK/3lDNu/qqQC5Nbcee+SRdJZmQSg==
+X-Proofpoint-GUID: J9DfACJBjA0TmRxC4vqcm46H_V-BqwWX
+X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68f3387e cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=IrkFCgFlEHDHcOs+Gij41Q==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=P3EupyyZPr0bXwnpvzAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX499GlP1j7Wf1
- fbyjHM8CUMGw8YnRDb4MP0fEBEpPxmY9UhVyPki0JK8gxreRQgk0u7ucJ4KOQZcd0Ok9ehnjBat
- 6pgpK1LfKaex6i5wnLfb6Zm/IrbLgmEcqgbrUpvkvZC35BxUJlBaYKyMoBHBWEt2jYeyVsJB/G/
- YbocqroA0KF5RzhY5XbaEhg5k3153V3JDuScx9EMHNQUWC6VzBRaGiNSyDhyOc5lFCKqydvNBBh
- RDVHXt4GAOdsgON6p/toFdSilhUXC0Z8I5YVTiJ4HwK+6WbAwufddkxMO8cB8SlA9AL0fy1jfiw
- /S+w8flWqgXpImElZ1uFVe5SIZl92RhzQ7/3XCMKlGt/D5e1WjCP4sF8zmXjIU15Ic9k7cwTD+o
- wzg4xdhqCiqcQuSeMoDchoAOSI4rnw==
+ a=EUspDBNiAAAA:8 a=zPb30M-LlVYnm6LaiLoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-ORIG-GUID: J9DfACJBjA0TmRxC4vqcm46H_V-BqwWX
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-18_02,2025-10-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- adultscore=0 phishscore=0 bulkscore=0 clxscore=1015 spamscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510180023
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
 
 
-On 10/15/2025 9:15 PM, Bart Van Assche wrote:
-> On 10/15/25 7:08 AM, Palash Kambar wrote:
->> Since AHIT is a hardware-based power-saving feature, disabling it entirely
->> could lead to significant power penalties. Therefore, this patch aims to preserve
->> power efficiency while resolving the race condition.
->> We have tested this change and observed no noticeable performance degradation.
->> Also, adding in RPM callbacks will not solve the power penalty as it autosuspend timer is
->> 3 secs in comparision to AHIT timer which is 5ms.
+On 10/14/2025 9:40 PM, Bart Van Assche wrote:
+> On 10/13/25 11:04 PM, palash.kambar@oss.qualcomm.com wrote:
+>> On QCOM UFSHC V6 in MCQ mode, a race condition exists where simultaneous
+>> data and hibernate commands can cause data commands to be dropped when
+>> the Auto-Hibernate Idle Timer (AHIT) is near expiration.
+>>
+>> To mitigate this, AHIT is disabled before updating the SQ tail pointer,
+>> and re-enabled only when no active commands remain. This prevents
+>> conflicting command sequences from reaching the UniPro layer during
+>> critical timing windows.
+>>
+>> To support this:
+>> - Introduce a new vendor operation `compl_command` to allow vendors to
+>>    handle command completion in a customized manner.
+>> - Update the argument list for the existing `setup_xfer_req` vendor
+>>    operation to align with the updated UFS core interface.
+>> - Modify the Exynos-specific `setup_xfer_req` implementation to match
+>>    the new interface and support the AHIT handling logic.
 >
-> The runtime power management timeout can be modified. Please verify
-> whether the power consumption with AHIT disabled and the runtime power
-> management timeout set to 5 ms is acceptable.
+> Yikes. Please disable AHIT entirely or disable/enable AHIT from inside
+> the runtime power management callbacks rather than inventing a new
+> mechanism for tracking whether any commands are outstanding.
 >
-> Thanks,
+>> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+>> index 568a449e7331..fd771d6c315e 100644
+>> --- a/drivers/ufs/core/ufshcd.c
+>> +++ b/drivers/ufs/core/ufshcd.c
+>> @@ -2383,11 +2383,11 @@ void ufshcd_send_command(struct ufs_hba *hba, unsigned int task_tag,
+>>           memcpy(dest, src, utrd_size);
+>>           ufshcd_inc_sq_tail(hwq);
+>>           spin_unlock(&hwq->sq_lock);
+>> +        hba->vops->setup_xfer_req(hba, lrbp);
 >
-> Bart.
+> What will happen if hba->vops->setup_xfer_req == NULL? Will the above
+> code trigger a kernel crash? 
 
-Thanks for the feedback, Bart. However, I believe setting the runtime suspend delay to 5ms
- might be overly aggressive for the system and may have below side effects:
 
-1. Short autosuspend timeouts can cause the UFS device to enter low-power states even 
-during brief idle periods. This results in resume latency, introducing delays when the 
-device needs to wake up for subsequent operations.
-2. Frequent suspend and resume cycles may disrupt data flow, particularly in workloads
-with bursty or intermittent I/O, leading to performance degradation.
-3. When the autosuspend timer is overly aggressive, the UFS device may repeatedly 
-transition between active and low-power states. These transitions themselves consume power, 
-and if they occur too often, they can offset or even negate the intended power savings.
+Thanks for catching this, will take care of this in next patch set.
 
-Please let me know your thoughts on this.
+>
+>> @@ -5637,6 +5637,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
+>>       }
+>>       cmd = lrbp->cmd;
+>>       if (cmd) {
+>> +        hba->vops->compl_command(hba, lrbp);
+>>           if (unlikely(ufshcd_should_inform_monitor(hba, lrbp)))
+>>               ufshcd_update_monitor(hba, lrbp);
+>>           ufshcd_add_command_trace(hba, task_tag, UFS_CMD_COMP);
+>
+> Yikes. New unconditional indirect function calls in the hot path are not
+> acceptable because these have a negative performance impact. 
+>
+Sure, will take care of this in next patch set.
+
+
+>> @@ -5645,6 +5646,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
+>>           /* Do not touch lrbp after scsi done */
+>>           scsi_done(cmd);
+>>       } else {
+>> +        hba->vops->compl_command(hba, lrbp);
+>>           if (cqe) {
+>>               ocs = le32_to_cpu(cqe->status) & MASK_OCS;
+>>               lrbp->utr_descriptor_ptr->header.ocs = ocs;
+>
+> Same comment here. 
+
+Sure, will take care of this in next patch set.
+
+
+>
+>> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+>> index 70d195179eba..d87276f45e01 100644
+>> --- a/drivers/ufs/host/ufs-exynos.c
+>> +++ b/drivers/ufs/host/ufs-exynos.c
+>> @@ -910,11 +910,15 @@ static int exynos_ufs_post_pwr_mode(struct ufs_hba *hba,
+>>   }
+>>     static void exynos_ufs_specify_nexus_t_xfer_req(struct ufs_hba *hba,
+>> -                        int tag, bool is_scsi_cmd)
+>> +                        struct ufshcd_lrb *lrbp)
+>>   {
+>>       struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+>>       u32 type;
+>> +    int tag;
+>> +    bool is_scsi_cmd;
+>>   +    tag = lrbp->task_tag;
+>> +    is_scsi_cmd = !!lrbp->cmd;
+>>       type =  hci_readl(ufs, HCI_UTRL_NEXUS_TYPE);
+>>         if (is_scsi_cmd)
+>
+> I'm about to remove lrbp->cmd so please don't introduce any new users of
+> this structure member.
+>
+> Bart. 
+
+Sure will update this as per the new change.
+
 
 Regards,
 
-
 Palash K
 
->  
+
 
