@@ -1,79 +1,77 @@
-Return-Path: <linux-kernel+bounces-859444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC581BEDABF
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:38:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D443BEDADD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93A3D4EE05C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:38:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1522E4EE479
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7D325CC79;
-	Sat, 18 Oct 2025 19:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0732836A4;
+	Sat, 18 Oct 2025 19:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TBkY8ims"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdApy55k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E81E32D6;
-	Sat, 18 Oct 2025 19:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FA41EA7D2;
+	Sat, 18 Oct 2025 19:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760816289; cv=none; b=Fj+Ukdx5v6aJza4E3G+6IPlT+SdlcXikAgWhraJ0HlWpzJPo9/eMw+a3cmJwCGyK+V2S9mrXEr9Xrq7Uyqp0ocYs/B6WWR9S+D775c4aK630ALOF3XaxDUAVM5L7Bo9XPPSI9b/m1/EVCw2vPaSQ3d5mWQ+yTPL0nuVHfmqX/bM=
+	t=1760816335; cv=none; b=XcTOV+w6M7AkHZiazcjqhRgFv71RzpdyGCE2UOnR5rfyPOq9JrGeM+E/q2CjM+EjAPDdobKuoVsTrZHiB7K87CjT7n1KdYMAdAesd+FtC0VJK4+ExY6aqOh0in/p4TebzLZYjTNfTvLfYN4RTOqY6dh8vk6D9cpvtBHkdw77rX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760816289; c=relaxed/simple;
-	bh=7NlNetwI7fF5pNrJ9dvbTyrdsC4GvtBuMKlNr/2UEyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BL56FIUdvPlt9b6y6UQSPzsa3qGherWjGy7tNdg+iXtmeIL+LcAFlP00PEKpj9jjmvK85yddSW66AqXceoaBVMV4AAwQOfRQ3m7gOumeu+T2Y6aL/gBRQEPydAM21O3wrH7bomTpw0TZNhzDcMyJVO1MY/SWMR5kbUH/h/hjPIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TBkY8ims; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1760816335; c=relaxed/simple;
+	bh=dRgPhXbTYBGx2ER9ENOAL7OHytDME0q/959WH7mhaUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gbgkYiADcSAxGeQa7HIaGx/7eIBCZBySr1CuH5yHu3x16tzLhankNHqTzJtK3bRppN/gowUK00AUbgCZl8DqcdMS+fAmY4syl8krbNyy8DExAHBVpxaqENGAs9bsssdKLTWWIFUGfmL+T/cGET07ydmAilnx5T2pFhX3CIUsmxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdApy55k; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760816288; x=1792352288;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7NlNetwI7fF5pNrJ9dvbTyrdsC4GvtBuMKlNr/2UEyE=;
-  b=TBkY8imsb9VQ2QRF7tzYAeZVSQXo1JwYv9uGRfHstIG6ZRJx1oS+sIyb
-   clPC2j4SkBuYudQRR0fARXlHqHYnI+Jn+NYxdC1mVOOMIPYhVkvMiAy46
-   T0xdaFz7yJ1qfed0HA00vlIXfcTyObfRXDacLb4ywpT5wjCyh4eS9z+vi
-   l8cRQlGcEVbzTOQb0cMqgKgClDV39l7RRjulXi6qw2HXsJgUDiX7CTpZs
-   wM9LowFVlWBs9417v9bKyi0EFbLxp8VoNlYAvVwEqsYRuIoD1vG8TfQK6
-   TGokA5ASqPO8u+4VU5VG3njfUFS6EHT9nFKqZNDxl6QeoC9TfFiQf+HiF
-   w==;
-X-CSE-ConnectionGUID: 9IdovZchQNi1uW+7CRHGxw==
-X-CSE-MsgGUID: qKI+k2ykSBSSAvdqYfDqSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="85619091"
+  t=1760816333; x=1792352333;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=dRgPhXbTYBGx2ER9ENOAL7OHytDME0q/959WH7mhaUc=;
+  b=bdApy55koKhdTXIK1H8UPDHyENu3zGilHl5PNPghhQJWSsXQq0lauKS+
+   ynkETAb/qezBwoUYXfSiDyFndwSDdS8jAT/2vMLZAk5efMBlbU0D6kImz
+   PacMMIeS1Cxt+X1iJCARTORhsks9YzKZf2FdCKhg8QTOSK4Pw6RMCZwZB
+   Wm3QMCEY/qiXxPwHWcTSon2AKwf0+hTEYeVrbGjLjPefJ56edRM8+BBbS
+   S04AJ8G61YwYxngcarvJ0Ar7xCaDUA5tR9j5smW9Dz3C1xn4Zj1qIw3Cz
+   kW2zCjhDVlHvN2rRN5SuLqUdjIRnYl7FIGvUet3KHzQic3IPXH6rj1qKG
+   g==;
+X-CSE-ConnectionGUID: Evt9i1zySoWoPLZINDDvlA==
+X-CSE-MsgGUID: eZ7SI3GgRV6Y0APMSBN30A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63144954"
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="85619091"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:38:06 -0700
-X-CSE-ConnectionGUID: 2e+cihEERgG8BCyn7NFBog==
-X-CSE-MsgGUID: DJiUfvSLRCa3AUfwXY9iaQ==
+   d="scan'208";a="63144954"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:38:52 -0700
+X-CSE-ConnectionGUID: 5VD2tXH3Tz+X1c52sDcN7g==
+X-CSE-MsgGUID: HQD4fIA/R6eloRTFyTUddw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="182547110"
+   d="scan'208";a="213610114"
 Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:38:04 -0700
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:38:50 -0700
 Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vACkb-00000000xf6-04SJ;
-	Sat, 18 Oct 2025 22:38:01 +0300
-Date: Sat, 18 Oct 2025 22:38:00 +0300
+	id 1vAClM-00000000xfn-0GtY;
+	Sat, 18 Oct 2025 22:38:48 +0300
+Date: Sat, 18 Oct 2025 22:38:47 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Thomas Richard <thomas.richard@bootlin.com>
-Subject: Re: [PATCH] ACPI: property: Fix argument order in
- __acpi_node_get_property_reference()
-Message-ID: <aPPsmKRcB9YKYNGB@ashevche-desk.local>
-References: <20251017100744.71871-1-sunilvl@ventanamicro.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Helge Deller <deller@gmx.de>, Jens Axboe <axboe@kernel.dk>,
+	linux-hardening@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/8] sparc: floppy: Replace deprecated strcpy with
+ strscpy in sun_floppy_init
+Message-ID: <aPPsx9cHwkF8MC1l@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,18 +80,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017100744.71871-1-sunilvl@ventanamicro.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Oct 17, 2025 at 03:37:44PM +0530, Sunil V L wrote:
-> A refactoring bug introduced an argument order mistake in the call to
-> acpi_fwnode_get_reference_args() from __acpi_node_get_property_reference().
-> This caused incorrect behavior when resolving ACPI property references.
-> 
-> Fix the issue by correcting the argument order.
 
-Thanks for a fix which looks good to me,
+On Mon, Sep 22, 2025 at 11:03:52PM +0200, Thorsten Blum wrote:
+> strcpy() is deprecated; use strscpy() instead.
+> 
+> No functional changes intended.
+
+Is this the only one place in floppy (arch) code?
+
+The change itself LGTM,
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 -- 
