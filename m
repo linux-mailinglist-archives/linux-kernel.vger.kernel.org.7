@@ -1,135 +1,212 @@
-Return-Path: <linux-kernel+bounces-859035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE2FBEC85C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE8BEC868
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781876E0F1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C858619A44D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB129267B92;
-	Sat, 18 Oct 2025 05:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZAdy+WS"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2352773DE;
+	Sat, 18 Oct 2025 05:53:36 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7524823EAAB
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F806FBF
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760766730; cv=none; b=PfWP13tSdig+mb5OO6N3rCjHaY5QN3DN2JQZn0ntAqjovCpO/XB+8/oxsMwaEuD1Owisqc1r11vJUn5TKl/H8KhH5fR1uJXjTJGxh0zkAFvtNmbKgtO0bLtERbPTnqms19XLxZUugIwlHrA6/eJY3a7vTbX1AAJw/Z/EAVssp/U=
+	t=1760766816; cv=none; b=lQBmELc/N0BQYXE4eJMK6e08A6kAqNWYbQ65aGKyJR4P5IR22niAC0fSm/eehI3LKsAV/IkIRUEtEBDgcHiS3g/aaq8MUqaP5sFkVjknviiss9ovB+lmA95ifpDFTBE0hQrc0Pc2NytNGn5IOo7lTYAMWernYPGAOdaxVzh3vVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760766730; c=relaxed/simple;
-	bh=eIKgZColoDsxoJovuWfQsmtEvniT3pu5LZJ9r62QCEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=MoidVPKm3vkgPQfDyirYAVQzAG8wlkKOgYj06AcrX6pOboYNMpZ6+La7OIrfRzzESLtDywfdm2fhtmYc6ngGs1Gjem/Bk30MhmNss5XCaDgvaK+5qDonSxyvIEBwW0ezylEuqAfsRhU/hAEXnEaxsfE2Rw2OxLChw8cT6mhojF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZAdy+WS; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so478796666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760766726; x=1761371526; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IkVWF0ngwpu5gjmUkFjpcBqAffFGeLSngYlAxMCWNV0=;
-        b=lZAdy+WSkHRQUXIXpgAXhSFobDE+XeGaG7+SxB+E/eeAdxGAGeINA1qi3Dr4q2jJIH
-         kjdsuomuJLPp8lJsVfQP5KomuCsX1h1+xg/4YyNo5JMgNGjDtnHa3kcAI8DLGitTI2hf
-         qjzqXPkYqwNa01PWhuTvqk1CA9j/3fLAQO6ZLlZsTT1823Yew9YsU88WTwBHshG4tX7k
-         7/T1GutpDPrnkALAzzdUBw8TwTx+yhPHKOq91dixVjC8/i4joGDONkaMlOUaBmRMUBdl
-         +01BQTeEBVzaapfgNI1W66dICFRL+XZNIJ2A5CUpb4ruDHC/MgZ4mrbUqWZwUdOKK8Hl
-         bzvg==
+	s=arc-20240116; t=1760766816; c=relaxed/simple;
+	bh=xzFoZbgpgYfmGrOx265Ju2hE1aOLkx8E4Nv8qZPo2zE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gl96I5nyRjBd2obGLBvjbimM2Ummo0kVaNlaKQGyYXBqrI/mJb9VPtBn6Zo9A9yKaOtWZar5OL2C3KH+g6DkZ761gh+uuBCYPG5QW0FbL9HScJ8WN56Fl0ELA50DJ+yF55tpfFACdmYAEongENruBd/BsSpuN9ud6Yp2gp/Bark=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so263005239f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:53:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760766726; x=1761371526;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+        d=1e100.net; s=20230601; t=1760766814; x=1761371614;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkVWF0ngwpu5gjmUkFjpcBqAffFGeLSngYlAxMCWNV0=;
-        b=aIcS2dY3Oi6qjSDNLhr4RX44217Hm7eJfSg6RDigiBvq2tdqFBuWZ5dk0st6HOxsib
-         VxDAO0hWnwlR62oScKi1P+ZlLEAwHJntD2Co7Q+EcxLPttziZ/zHfOYvM2BaOcOORj9X
-         W//6XZXZgJLQ7Ik7m89UsMDXG73dRKuxo3G/Mi6CLDbQOY5/a8AT6TGgDLpGseaxcyV3
-         eRDdtC6NRtcHPfRgoDO1Neukb5iqTzKRLSTcLL3mebPNxONqyJyO9oTZ3zElfNWhfI1d
-         M6/13T8rCgTB3lgucKbPov8gJOK4AYUQ7QcPynFlLvvIOxh8mFvl2tnoAYPkBRiZ0z/i
-         LcTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLAmHpueFl5jkS12Y0wXRruWxk+3kyFGEGkmCt9nEI0rmLp76Bw1cjs7ait6d3qkS//RSzGM62tV4oQUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybXMgibq18fAQv0XLaNxy4WFn391ksbSUBEzBLzMVq1cLzt6Ns
-	+LNK36swCgupzXE+SxYTGOCLe1imPUMx1RuDD7cx/Kt45JePmhrt10J1OCHjBna/nH3ubvVUcJx
-	ihDNXeSt77Ulc5ay6ww36K/2Ilq3zDkQ=
-X-Gm-Gg: ASbGncvRjzB3eNpD3i09m7d7xthGf0n4c+3tOXZzZoSyv7/gb57noaDLNGXGAR903Ia
-	TfGk0xCnUTWoz9cOrxnH0Oyw0ZeMq2z4cEzDw29WIJLSA22INctYp/o8hHUKcqJj7B/5CAKugP0
-	MRLjKb9mV7nkrGolv4BZHYlcHOUEjktJhqi1mF2JRe5UanSzwYRWmtP/3E42/CMeBiuThS89/GA
-	rfvSsLNsvma+UkJN1kI+e+8y3edMbOQj7exZQmcYkgHLWZRSxCRc6eDbCw=
-X-Google-Smtp-Source: AGHT+IHuqMvBUAMmL2+i6khAnSMhUO84EZpiF6pSY+Ggw9UrirqcHM0DEhpRmnuNAVMZheRxglA2Cg7yTmFpgfufuzs=
-X-Received: by 2002:a17:907:980f:b0:b3c:3c8e:189d with SMTP id
- a640c23a62f3a-b6474b37113mr708732666b.32.1760766725511; Fri, 17 Oct 2025
- 22:52:05 -0700 (PDT)
+        bh=z/GRj617Cfvkfsc2fvmNusGhnDVIoFOb4MtIivd7Oy8=;
+        b=SKp18ErRNoaTYgMnmlcmxJMax5VNxqLzANAObefuqnIJwecsi+cPfGUsKbLwcAVcS/
+         2MfxG8MsTwLAvM1tyhbxdgUZUDdwFI2qvkK72k05kbWxSH5uW8nflL58cbNWkFccBz8p
+         6nzhN2iMC6k7HsM64zzt7XtcXCKJR4FHMN363LATopO9wF+JdRRM87s5jNiZekQrJAHF
+         BNSWtOwzumhLR4IQCT5tVweSIOwsQZRjR6oey5PFaL+ztfndgs6soCAsNv1f8TF1gEJ7
+         oF61SOKHh1bGmekopAkbGLOdwDTh2Vskg51VzevpjPyHgMSRQQgbTGRmJv3eKGKKQ45/
+         Gr/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVY+3YZdC0wwYjD9yMdsR3v/cG18ymtklsCYUcLz4uHI0kqw+1h/Sp8A8nZvmWHSIkJUUv312sMKzQHwdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHyekWqV67rKuqHL154WZkGJ7BMM6PEwdzex2RskjWvtbmnD0z
+	CepmHSaiZYMfhlg5Q5W3lNkULPIsvCBL0ZfLzvajpqWw/6q6LY01+8/REhrPi+qoW9s6LkhvbUu
+	Yte86HGy1YZC5UZWlNkeeJeL5Y/7RiiqWljPyM7yVOFVqLRUIWKyOqt0e8cY=
+X-Google-Smtp-Source: AGHT+IElhltGiLsko8opmZStyEUHbYRepMEk8ZMccaPq7VeXFIuIUakGpUrNkGUrNbHb+mrWW4GUYQ6kYJkcvQEbYH1Ccp4mqfsl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905112736.6401-1-linux.amoon@gmail.com>
-In-Reply-To: <20250905112736.6401-1-linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 18 Oct 2025 11:21:49 +0530
-X-Gm-Features: AS18NWDdHdJKGAdSzak2dkZBd_DEUB1KqNHSK63I8rxE-Co_iHsMbvelUCu7ZEc
-Message-ID: <CANAwSgSYvTJ=8hv_BrrF1v7u3hq5AB_BSfT7wj0-LQF87dQMUQ@mail.gmail.com>
-Subject: Re: [PATCH v1] PCI: dw-rockchip: Simplify regulator setup with devm_regulator_get_enable_optional()
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
-	Hans Zhang <18255117159@163.com>, Wilfred Mallawa <wilfred.mallawa@wdc.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6602:29b3:b0:915:f0:58a3 with SMTP id
+ ca18e2360f4ac-93e76437f51mr751969839f.15.1760766813811; Fri, 17 Oct 2025
+ 22:53:33 -0700 (PDT)
+Date: Fri, 17 Oct 2025 22:53:33 -0700
+In-Reply-To: <6840fdc4.a00a0220.68b4a.000d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f32b5d.050a0220.1186a4.051d.GAE@google.com>
+Subject: Re: [syzbot] [net?] BUG: soft lockup in sys_sendmsg (2)
+From: syzbot <syzbot+4032319a6a907f69e985@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, davem@davemloft.net, dvyukov@google.com, 
+	edumazet@google.com, hdanton@sina.com, horms@kernel.org, jmaloy@redhat.com, 
+	kuba@kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-scsi@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, paulmck@kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
 
-Hi All,
+syzbot has found a reproducer for the following issue on:
 
-On Fri, 5 Sept 2025 at 16:57, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Replace manual get/enable logic with devm_regulator_get_enable_optional()
-> to reduce boilerplate and improve error handling. This devm helper ensures
-> the regulator is enabled during probe and automatically disabled on driver
-> removal. Dropping the vpcie3v3 struct member eliminates redundant state
-> tracking, resulting in cleaner and more maintainable code.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 23 +++++--------------
->  1 file changed, 6 insertions(+), 17 deletions(-)
->
-If we compile the kernel with phy and regulator as modules,
-I observe this message.
+HEAD commit:    bf45a62baffc Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15941de2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd2356106f507975
+dashboard link: https://syzkaller.appspot.com/bug?extid=4032319a6a907f69e985
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1494767c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126fdde2580000
 
-[   25.473960][   T55] platform 3c0800000.pcie: deferred probe
-pending: platform: supplier regulator-vcc3v3-pcie not ready
-[   25.474071][   T55] platform fe0a0000.hdmi: deferred probe pending:
-platform: wait for supplier /i2c@fdd40000/pmic@20/regulators/LDO_REG9
-[   25.474124][   T55] platform regulator-vcc5v0-usb-otg: deferred
-probe pending: reg-fixed-voltage: can't get GPIO
-[   25.474171][   T55] platform fdc20000.syscon:io-domains: deferred
-probe pending: platform: wait for supplier
-/i2c@fdd40000/pmic@20/regulators/SWITCH_REG1
-[   25.474218][   T55] platform cpufreq-dt: deferred probe pending:
-(reason unknown)
-[   25.474264][   T55] platform regulator-vcc3v3-pcie: deferred probe
-pending: reg-fixed-voltage: can't get GPIO
-[   25.474343][   T55] rockchip-pm-domain
-fdd90000.power-management:power-controller: Timed out. Forcing
-sync_state()
-[   37.744968][ T2415] psi: inconsistent task state!
-task=2280:(udev-worker) cpu=1 psi_flags=4 clear=0 set=4
-[   37.849725][   T50] fan53555-regulator 3-001c: FAN53555 Option[12]
-Rev[15] Detected!
-[   37.990008][ T2216] SCSI subsystem initialized
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f0d4874557e9/disk-bf45a62b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0bf44a13b5b2/vmlinux-bf45a62b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/18db8bc9907c/Image-bf45a62b.gz.xz
 
-Thanks
--Anand
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4032319a6a907f69e985@syzkaller.appspotmail.com
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [syz.0.76:6894]
+Modules linked in:
+irq event stamp: 5181
+hardirqs last  enabled at (5180): [<ffff80008b064a14>] irqentry_exit+0xd8/0x108 kernel/entry/common.c:214
+hardirqs last disabled at (5181): [<ffff80008b062af0>] __enter_from_kernel_mode arch/arm64/kernel/entry-common.c:43 [inline]
+hardirqs last disabled at (5181): [<ffff80008b062af0>] enter_from_kernel_mode+0x14/0x34 arch/arm64/kernel/entry-common.c:50
+softirqs last  enabled at (522): [<ffff8000892e0188>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (522): [<ffff8000892e0188>] release_sock+0x14c/0x1ac net/core/sock.c:3735
+softirqs last disabled at (528): [<ffff8000892f4c84>] spin_lock_bh include/linux/spinlock.h:356 [inline]
+softirqs last disabled at (528): [<ffff8000892f4c84>] lock_sock_nested+0x70/0x118 net/core/sock.c:3714
+CPU: 0 UID: 0 PID: 6894 Comm: syz.0.76 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 03400005 (nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : queued_spin_lock_slowpath+0x138/0xaec kernel/locking/qspinlock.c:197
+lr : queued_spin_lock_slowpath+0x144/0xaec kernel/locking/qspinlock.c:197
+sp : ffff8000a1a17600
+x29: ffff8000a1a176a0 x28: 1fffe0001b9124c1 x27: 1fffe000196c6002
+x26: ffff0000cb630000 x25: dfff800000000000 x24: ffff700014342ec4
+x23: 0000000000000001 x22: ffff0000cb630010 x21: ffff0000dc892608
+x20: ffff0000dc892610 x19: ffff0000dc892600 x18: 0000000000000000
+x17: 0000000000000000 x16: ffff800080537d14 x15: 0000000000000001
+x14: 1fffe0001b9124c0 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001b9124c1 x10: dfff800000000000 x9 : 0000000000000000
+x8 : 0000000000000001 x7 : ffff8000892f4c84 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008b0885f8
+x2 : 0000000000000000 x1 : 0000000000000001 x0 : 0000000000000001
+Call trace:
+ __cmpwait_case_8 arch/arm64/include/asm/cmpxchg.h:229 [inline] (P)
+ __cmpwait arch/arm64/include/asm/cmpxchg.h:257 [inline] (P)
+ queued_spin_lock_slowpath+0x138/0xaec kernel/locking/qspinlock.c:197 (P)
+ queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+ do_raw_spin_lock+0x2a8/0x2cc kernel/locking/spinlock_debug.c:116
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:127 [inline]
+ _raw_spin_lock_bh+0x50/0x60 kernel/locking/spinlock.c:178
+ spin_lock_bh include/linux/spinlock.h:356 [inline]
+ lock_sock_nested+0x70/0x118 net/core/sock.c:3714
+ lock_sock include/net/sock.h:1669 [inline]
+ tipc_sendstream+0x50/0x84 net/tipc/socket.c:1545
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg net/socket.c:729 [inline]
+ ____sys_sendmsg+0x490/0x7b8 net/socket.c:2614
+ ___sys_sendmsg+0x204/0x278 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __arm64_sys_sendmsg+0x184/0x238 net/socket.c:2703
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 6895 Comm: syz.0.76 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : should_resched arch/arm64/include/asm/preempt.h:78 [inline]
+pc : __local_bh_enable_ip+0x1f0/0x35c kernel/softirq.c:414
+lr : __local_bh_enable_ip+0x1ec/0x35c kernel/softirq.c:412
+sp : ffff8000a1806210
+x29: ffff8000a1806220 x28: 0000000040613361 x27: ffff8000a18063e0
+x26: ffff0000f25e3b60 x25: dfff800000000000 x24: 0000000000000001
+x23: dfff800000000000 x22: 1fffe000196c63d1 x21: ffff80008ab3e7b8
+x20: 0000000000000201 x19: ffff0000cb631e88 x18: 00000000ffffffff
+x17: ffff800093605000 x16: ffff80008052bc24 x15: 0000000000000001
+x14: 1fffe0001b9124c0 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff800093404c28 x10: 0000000000000003 x9 : 0000000000000000
+x8 : 000000000382547a x7 : ffff80008ab4aee0 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000010
+x2 : 0000000000000002 x1 : ffff80008ee54d8e x0 : ffff80010c40c000
+Call trace:
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline] (P)
+ __local_bh_enable_ip+0x1f0/0x35c kernel/softirq.c:412 (P)
+ __raw_spin_trylock_bh include/linux/spinlock_api_smp.h:177 [inline]
+ _raw_spin_trylock_bh+0x68/0x80 kernel/locking/spinlock.c:146
+ spin_trylock_bh include/linux/spinlock.h:411 [inline]
+ tipc_sk_rcv+0x2f4/0x2294 net/tipc/socket.c:2494
+ tipc_node_xmit+0x18c/0xc9c net/tipc/node.c:1701
+ tipc_node_xmit_skb net/tipc/node.c:1766 [inline]
+ tipc_node_distr_xmit+0x248/0x33c net/tipc/node.c:1781
+ tipc_sk_rcv+0x1df0/0x2294 net/tipc/socket.c:2499
+ tipc_node_xmit+0x18c/0xc9c net/tipc/node.c:1701
+ tipc_sk_push_backlog+0x398/0x744 net/tipc/socket.c:1312
+ tipc_sk_conn_proto_rcv net/tipc/socket.c:1366 [inline]
+ tipc_sk_proto_rcv+0x704/0x12ec net/tipc/socket.c:2156
+ tipc_sk_filter_rcv+0x2524/0x277c net/tipc/socket.c:2350
+ tipc_sk_enqueue net/tipc/socket.c:2443 [inline]
+ tipc_sk_rcv+0x628/0x2294 net/tipc/socket.c:2495
+ tipc_node_xmit+0x18c/0xc9c net/tipc/node.c:1701
+ tipc_node_xmit_skb net/tipc/node.c:1766 [inline]
+ tipc_node_distr_xmit+0x248/0x33c net/tipc/node.c:1781
+ tipc_sk_backlog_rcv+0x164/0x214 net/tipc/socket.c:2410
+ sk_backlog_rcv include/net/sock.h:1150 [inline]
+ __release_sock+0x19c/0x39c net/core/sock.c:3172
+ release_sock+0x60/0x1ac net/core/sock.c:3726
+ sockopt_release_sock net/core/sock.c:1155 [inline]
+ sk_setsockopt+0x2354/0x28ec net/core/sock.c:1668
+ sock_setsockopt+0x68/0x80 net/core/sock.c:1675
+ do_sock_setsockopt+0x19c/0x328 net/socket.c:2340
+ __sys_setsockopt net/socket.c:2369 [inline]
+ __do_sys_setsockopt net/socket.c:2375 [inline]
+ __se_sys_setsockopt net/socket.c:2372 [inline]
+ __arm64_sys_setsockopt+0x170/0x1e0 net/socket.c:2372
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
