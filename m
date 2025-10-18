@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-858990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85097BEC6AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:56:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2A2BEC6C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A961352DEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:56:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E5935352E74
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B722728D83D;
-	Sat, 18 Oct 2025 03:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6652853FD;
+	Sat, 18 Oct 2025 03:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="WJ3eawXd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vXKD/Saf"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Q3GvJEB2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JFsiRHb+"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E5286D40;
-	Sat, 18 Oct 2025 03:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD507288C34;
+	Sat, 18 Oct 2025 03:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760759744; cv=none; b=NIY3Qva0bc88sA/hceUUdO+V1EIT7QNlQ5LVY7pA/XHSYjdfSndnUdf/lEhZYlPNpTmqMRNYYMhjX8TyO3VJBKEfrJ5ReRp1NoKpOyf6IRayGlCuWGMCcsnXoaVqq5xgT2zGkjoq2dIe46DE7cYtwhk3Pt2Yln/QfL0gaGd5BEo=
+	t=1760759746; cv=none; b=K5ndWuV/45oNBnSmPRQ/aLS576OY7WUweyouYhc5Pjuag+Kjb0vuZFLH5a+5P6MvkelNc9sxXV+LksHWBEXcEb/QyOfX7RpqUz2CWzs5x4AMjBAvagpjjukOQndsKCc5WUv7r3pVG8uM3MM86YsRItv0f74XRaLbiridqS4csik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760759744; c=relaxed/simple;
-	bh=9q4ZenqssNuq566mSzIGMWY9TKVglICy5yTYQWSr0Xg=;
+	s=arc-20240116; t=1760759746; c=relaxed/simple;
+	bh=NoQB9jvo/lj/F4d2DrjGprzN8jy2Gy1DaI/zECBTSss=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EJkS23bNcWCt1Uqc+nANPPm9CakBvjoYMB8JPIQKGmYbcJ3m/MRe+BUWJ7izSVIcYn7llJjZ02FFTj7ShzX907wRfZf1mg2v+/HGvBqMRnZlpoBnxXfsQwV6DUR/z2QGesN5DeY+3bDdJV/XQYRt/S96LOHO1rJFPcUqu4XdOKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=WJ3eawXd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vXKD/Saf; arc=none smtp.client-ip=202.12.124.155
+	 MIME-Version; b=hQ/nFAQEZe9X/RODiDg/NCkVkD6hXBSgG2p8TMjlEpyBi9JoW2ZAOoqiQwdf/A0qJlBj584NRjFOcesmKbm7qfkk7bUoPterpTXwoeTFxzTcD2ZUi0Zgd65wLLXKAwNfjuX6bg2etseO29VpWtU3AVyMyAkgEy133vDYO+VQDes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Q3GvJEB2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JFsiRHb+; arc=none smtp.client-ip=202.12.124.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 168F97A0147;
-	Fri, 17 Oct 2025 23:55:42 -0400 (EDT)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id EEC861D0014C;
+	Fri, 17 Oct 2025 23:55:43 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 17 Oct 2025 23:55:42 -0400
+  by phl-compute-04.internal (MEProxy); Fri, 17 Oct 2025 23:55:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1760759741; x=
-	1760846141; bh=dm4H81ZdYiAnyPguz4Bgqq3z9wTH09vJcCXCWxJQJ8Y=; b=W
-	J3eawXd2Sn10e3oevbtewhdQX6zvoVsPhvoppgBu2JraxuK6yD/5ss6xxTt/VymR
-	pnGD1aUUlDnrdZKSOPrFyTOJLIBbg3JiqGywmwY3r/ETfVkrdy3MwBbSVJP8sibm
-	KL2WCzPfpZDTBAVg4jUxOpYlCN6+2En793B7Es2twZwe0/rgRNv7808eRDeMuR3U
-	C02HL7VvN1vBSbbngvs87K2Dqecrb39m/CEW6Hudx87ldca1V0s1g9OIWL1Hb8rp
-	XqtsZiORqw9v36UrkGYPLCD2LB8nMw/qCn1ZuYkh84wAVpt3/OvI3FxAZvgueZTC
-	edSdyrKYYwaWi0hZzR9+g==
+	:reply-to:subject:subject:to:to; s=fm2; t=1760759743; x=
+	1760846143; bh=O1OWHiw1ISX/XiaSgOMO5lUblMBfevYTme7V5wEqPbA=; b=Q
+	3GvJEB2TOTodbuldWv5xNSegMOP8BgIuxjug90YgXoUrBvz7RCZWiW0VnQwA/Lfn
+	ULGPPwUnF1gHYeu2caoULUwVi9rwrNvWGMZuLbYyNvGnxgLWPVrRMp8rE2vfcDAA
+	BVDv9Ehjuf7DUtk0r03Fb61feZDKhw4vizZYuPmbkjiVEythkv3OwVe15CByvpRw
+	nkdA+s+/mGPdvQhnWYOqRYQHdU1NG1Es7WoRznlYl+mZSszkbC+73vx4ukBSSGrG
+	0qb8Nju1lWFSlFhaH/OoyQB2bVDGa2OuNosIXJU2xvVJilxvJzGvrieuaTiU2v7y
+	aFeQ33DTlcyO2nLPZbvYA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1760759741; x=1760846141; bh=d
-	m4H81ZdYiAnyPguz4Bgqq3z9wTH09vJcCXCWxJQJ8Y=; b=vXKD/SafGXwIqQQDF
-	TxTQsOsYXAUc1WhnBY7LAanehod+cIAthAHWczatomusNC2a0ptrd/JbCt48N8uU
-	l+kDrUxveySkz7p5d+H9MtUfxR7kAlZO7hQtubCa5xWKZ1E4N7O08dLFlSLW/inQ
-	0j+8pGxqJ1nArssRHDRs0lxsBVpsDKjf71joWWVlRWB8B8EAszcI0sNTCOyFhbaS
-	vkULi5F/KnSZ3yV+GjbhM9CAflO9avugusf6D4iXaG136q6m1uaGqID3nwnpgbZc
-	sQ1DGCdLC13ncRvAF7qx4iucmHS68gdIxMz37cKfbqxVD0ntHN4lSVOUeh3cn2tW
-	xwamg==
-X-ME-Sender: <xms:vQ_zaFWmLUJjeLmb49thVloP28bp-xaDcP64tpB8O34ng6k-lLwRIw>
-    <xme:vQ_zaFuxzUcprYJwKASP3vp3bkSLHZKkD92e7RwmB_UsWMV1mno_vVve-7qy2xYCR
-    dEspVxXlBIUSQoZNoS_j6P1EfsyYfucWz7nSMfziB2n9k6Bst7DX94>
-X-ME-Received: <xmr:vQ_zaJVPozdTOAyjXkvp9HvfeF3IBaglWryWRRLp0HKrFBj6VJHosk4-4_1fZUxx-KahtU0TpCD_RoEckjPyG_IyzZ15FJLbuI4apxNTGbBetA>
+	:x-me-sender:x-sasl-enc; s=fm2; t=1760759743; x=1760846143; bh=O
+	1OWHiw1ISX/XiaSgOMO5lUblMBfevYTme7V5wEqPbA=; b=JFsiRHb+IeRAUhjTY
+	sbnKSLsbLEhv0fiIdBUBDTgxQPOoGK3gCqiuOt9BY1s+g56ZGk5OWxZRpLNUzkxI
+	hxKYYjIeNp7V+n2Ngz5ExKt5z8Tt7Nfcfn4HVxvAeBAlLw63Dnls01XxBOpU1mkF
+	0G6AVOsAgeY4qthXgKf0I6+MoXW7gCGwjwSrYMdGagbbP1pfkfQ3nx/VKi3P6lgc
+	pFOA/6p3ePKiM8laGWj7m587f7gMGoAwUjEUo1/yC0dp0snbr0mKgiNKR7eCdDl8
+	Wx+MrzD8mQANRvBu+qXH0oc4A+2NSqoLS41okGwZycaffb3By7A+TLgFdJmMJkfd
+	488lw==
+X-ME-Sender: <xms:vw_zaDzOvuXp2ek6C9cpUQilY3HGXREMu-I4_EyR5yUYnK-sXTrEWQ>
+    <xme:vw_zaLY4aXFPe0mcI4tHNNvcFXLzPpdfg20K7peBJoYHbgbCrgDUEs1GOESe7qmcI
+    yTHQL0J-bzkhaKQPftaeN3cjigRCYUNY8kCSPfViwqz0242XlJuFbs>
+X-ME-Received: <xmr:vw_zaFSzW1ypC7AkJJ1NELS70vq3ssrqC2j9SCfz3FqT8h-T4T7S13gR3sSfHwt2LrDDTqyPrKxFix_0e2wa8BGR8kNxabSAkxyTJRrQp5i82A>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedutddvucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
@@ -76,21 +76,21 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedutddvucetufdote
     gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
     rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhouhhnugesvhhgvg
     hrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:vQ_zaAmBk2ArH3ksVWMGGJur7gSoSKk-PAu6dapu3Rpb7_JE5p8LBQ>
-    <xmx:vQ_zaKYU8tS1WLAQ1J-IOyLe-2wJuSyp-RjuoAkERXZlF4eihyzMVw>
-    <xmx:vQ_zaLP8x_8ewuMxy6a6E9wXe57yuJWsQZLMLGGW1Xanq80FOba4CA>
-    <xmx:vQ_zaPafdHGI75E7B62ogdVZpSCzlNzqLeT7cSPC8zhvXlkzk7W60A>
-    <xmx:vQ_zaBLipWL0OwlR-GsdxtPIDJQwdJX8w36WMAfO5nSywGZFYWTJpK96>
+X-ME-Proxy: <xmx:vw_zaFyTx0JIo5jdl5RBzMB4zRG_pFRguEGXuB76VuEiNMVWH9y4og>
+    <xmx:vw_zaP1zGMz1qDUBO2yAZr4UlrLnyQCXsuBJ5HY8rLeS3bjb9iS7VQ>
+    <xmx:vw_zaL6--gqqUhoxBVHDjgspuC6oMbvU5-kqiXZpHsBySg11-6YDtg>
+    <xmx:vw_zaKUgizwdbv9ooDpJUMbCpcgizXDXFHZQeTptpD3HkXA5ML07dw>
+    <xmx:vw_zaIWeZg7iABT5hco4kiBBO2J8tIWREP1L4_quauW97XwdsHfEuOhu>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Oct 2025 23:55:40 -0400 (EDT)
+ 17 Oct 2025 23:55:42 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org,
 	linux-sound@vger.kernel.org
-Subject: [PATCH 3/4] firewire: core: handle device quirk of TASCAM FW-1884/FW-1804/FW-1082
-Date: Sat, 18 Oct 2025 12:55:31 +0900
-Message-ID: <20251018035532.287124-4-o-takashi@sakamocchi.jp>
+Subject: [PATCH 4/4] ALSA: firewire-tascam: reserve resources for transferred isochronous packets at S400
+Date: Sat, 18 Oct 2025 12:55:32 +0900
+Message-ID: <20251018035532.287124-5-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
 References: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
@@ -102,76 +102,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-TASCAM FW-1884/FW-1804/FW-1082 is too lazy to repspond to asynchronous
-request at S400. The asynchronous transaction often results in timeout.
-This is a problematic quirk.
+TASCAM FW-1884/FW-1804/FW-1082 have a quirk that they often freeze when
+receiving isochronous packets at S400. This behaviour is suppressed by a
+new quirk flag added in Linux FireWire core to restrict maximum speed.
+Consequently both of the asynchronous transactions and isochronous
+transmissions are done at S200. However, the device still transfers
+isochronous packet at S400, and the way to indicate the transmission
+speed is not cleared yet.
 
-This commit adds support for the quirk. When identifying the new quirk
-flag, then the transaction speed is configured at S200.
+This commit correctly reserves isochronous resources for the transferred
+packet stream at S400. As a beneficial side effect, the pair of
+isochronous transmissions for FW-1884 fits within the bandwidth capacity
+of the bus.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/core-device.c | 18 +++++++++++++++++-
- include/linux/firewire.h       |  3 +++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ sound/firewire/tascam/tascam-stream.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index 6a5740ed4934..1674de477852 100644
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -571,6 +571,14 @@ static const struct entry_match motu_audio_express_matches[] = {
- 	{ 8, 0x17104800 },
- };
- 
-+static const struct entry_match tascam_fw_series_matches[] = {
-+	{ 1, 0x0300022e },
-+	{ 3, 0x8d000006 },
-+	{ 4, 0xd1000001 },
-+	{ 6, 0x1200022e },
-+	{ 8, 0xd4000004 },
-+};
-+
- static int detect_quirks_by_root_directory(const u32 *root_directory, unsigned int length)
+diff --git a/sound/firewire/tascam/tascam-stream.c b/sound/firewire/tascam/tascam-stream.c
+index 9c8fddd7dee1..4ecd151a46c1 100644
+--- a/sound/firewire/tascam/tascam-stream.c
++++ b/sound/firewire/tascam/tascam-stream.c
+@@ -282,20 +282,22 @@ static int keep_resources(struct snd_tscm *tscm, unsigned int rate,
+ 			  struct amdtp_stream *stream)
  {
- 	static const struct {
-@@ -583,6 +591,11 @@ static int detect_quirks_by_root_directory(const u32 *root_directory, unsigned i
- 			.matches = motu_audio_express_matches,
- 			.match_count = ARRAY_SIZE(motu_audio_express_matches),
- 		},
-+		{
-+			.quirk = FW_DEVICE_QUIRK_UNSTABLE_AT_S400,
-+			.matches = tascam_fw_series_matches,
-+			.match_count = ARRAY_SIZE(tascam_fw_series_matches),
-+		},
- 	};
- 	int quirks = 0;
- 	int i;
-@@ -761,7 +774,10 @@ static int read_config_rom(struct fw_device *device, int generation)
- 	// Just prevent from torn writing/reading.
- 	WRITE_ONCE(device->quirks, quirks);
+ 	struct fw_iso_resources *resources;
++	int speed;
+ 	int err;
  
--	speed = device->node->max_speed;
-+	if (unlikely(quirks & FW_DEVICE_QUIRK_UNSTABLE_AT_S400))
-+		speed = SCODE_200;
-+	else
-+		speed = device->node->max_speed;
+-	if (stream == &tscm->tx_stream)
++	if (stream == &tscm->tx_stream) {
+ 		resources = &tscm->tx_resources;
+-	else
++		speed = fw_parent_device(tscm->unit)->max_speed;
++	} else {
+ 		resources = &tscm->rx_resources;
++		speed = SCODE_400;
++	}
  
- 	// Determine the speed of
- 	//   - devices with link speed less than PHY speed,
-diff --git a/include/linux/firewire.h b/include/linux/firewire.h
-index f1d8734c0ec6..6143b7d28eac 100644
---- a/include/linux/firewire.h
-+++ b/include/linux/firewire.h
-@@ -179,6 +179,9 @@ enum fw_device_quirk {
+ 	err = amdtp_tscm_set_parameters(stream, rate);
+ 	if (err < 0)
+ 		return err;
  
- 	// MOTU Audio Express transfers acknowledge packet with 0x10 for pending state.
- 	FW_DEVICE_QUIRK_ACK_PACKET_WITH_INVALID_PENDING_CODE = BIT(2),
-+
-+	// TASCAM FW-1082/FW-1804/FW-1884 often freezes when receiving S400 packets.
-+	FW_DEVICE_QUIRK_UNSTABLE_AT_S400 = BIT(3),
- };
+-	return fw_iso_resources_allocate(resources,
+-				amdtp_stream_get_max_payload(stream),
+-				fw_parent_device(tscm->unit)->max_speed);
++	return fw_iso_resources_allocate(resources, amdtp_stream_get_max_payload(stream), speed);
+ }
  
- enum fw_device_state {
+ static int init_stream(struct snd_tscm *tscm, struct amdtp_stream *s)
+@@ -455,7 +457,6 @@ int snd_tscm_stream_start_duplex(struct snd_tscm *tscm, unsigned int rate)
+ 	}
+ 
+ 	if (!amdtp_stream_running(&tscm->rx_stream)) {
+-		int spd = fw_parent_device(tscm->unit)->max_speed;
+ 		unsigned int tx_init_skip_cycles;
+ 
+ 		err = set_stream_formats(tscm, rate);
+@@ -466,13 +467,13 @@ int snd_tscm_stream_start_duplex(struct snd_tscm *tscm, unsigned int rate)
+ 		if (err < 0)
+ 			goto error;
+ 
+-		err = amdtp_domain_add_stream(&tscm->domain, &tscm->rx_stream,
+-					      tscm->rx_resources.channel, spd);
++		err = amdtp_domain_add_stream(&tscm->domain, &tscm->rx_stream, tscm->rx_resources.channel,
++					      fw_parent_device(tscm->unit)->max_speed);
+ 		if (err < 0)
+ 			goto error;
+ 
+-		err = amdtp_domain_add_stream(&tscm->domain, &tscm->tx_stream,
+-					      tscm->tx_resources.channel, spd);
++		err = amdtp_domain_add_stream(&tscm->domain, &tscm->tx_stream, tscm->tx_resources.channel,
++					      SCODE_400);
+ 		if (err < 0)
+ 			goto error;
+ 
 -- 
 2.51.0
 
