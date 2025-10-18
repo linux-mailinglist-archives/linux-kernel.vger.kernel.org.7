@@ -1,190 +1,127 @@
-Return-Path: <linux-kernel+bounces-859206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F00BED039
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B07EBED042
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F23034E56F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A2119A80CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9322D47F6;
-	Sat, 18 Oct 2025 13:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85F2D6E62;
+	Sat, 18 Oct 2025 13:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e2PhoXeW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyvs9XEU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB52198E91
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81146192B75;
+	Sat, 18 Oct 2025 13:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760793097; cv=none; b=WJgzyxcpgbDNbCndlw3Z3jsr8+TE8LDlcJz/wU1AO3d1ZknVnBz9nhK6T5ICXVUfu2qS8jAHwgv9U1dMqwgUKWwB7Ww8C7AnTbWTw9JSfTpBQxnndRw7neiwAVexL/CcTSN+lDjkvm6CL+eOIxqNiwhmTOZ1BIqAdA8wxUOy4as=
+	t=1760793228; cv=none; b=Kxz7HZPADkaPRXupbnowShL09zmkp7YwSx9WQ/a6sDHzr4WfShDdiQEVA+/YLncgWMshJ5Kr/7b2p5s0IFY/fxJ0zyUQGOINUFVsavrV5ST+2qUnaqm83kMJs7WC/9weOiHevWJ7Oo1AGr0tsAXPRppc5uxhJeO9irnZKlRdQas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760793097; c=relaxed/simple;
-	bh=uQTvxX50ZJfMiCQOZSLOkiFdQCWCU4TR/M1b9/H4Es4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LknqnTQck5Ks0o/W8gX60ksy8xgu9G0zID/gHg8aZRcLoa7SYjNltBwfW04LEGbtRBNNbCWMxyMa05y4nFa+Nr0SWlHbslRn0Zch+aZPSBYsYVJtnrvuCL6EzZALu0TBPkpehHsfIEEHNrdeHmEk/r1J4B7aAkeVAa1+IJseFWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e2PhoXeW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760793093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JbI+XjGZmYi6Q0RgYQx+mf1W/BhBhNTX2xUtn+SVKxw=;
-	b=e2PhoXeWlXSOXSqOVteLiVTfCe85v4dGtEmY7LcljN0Layf1sKpMS9rG8BweN6rULIirn4
-	x66ZR3cyoCpxXHFNn7JswSiXEfaSNpZP/+2DTtOaxTnLQDsFgEfXAYIaTKLGLbsKMX9HfB
-	lGE5aDVUGx6JrJYSMqQ6c5ba6lzF5cM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-41-y2Uf-UiYNk2BdZzovxydcg-1; Sat,
- 18 Oct 2025 09:11:29 -0400
-X-MC-Unique: y2Uf-UiYNk2BdZzovxydcg-1
-X-Mimecast-MFC-AGG-ID: y2Uf-UiYNk2BdZzovxydcg_1760793087
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED9BB18002C9;
-	Sat, 18 Oct 2025 13:11:26 +0000 (UTC)
-Received: from localhost (unknown [10.22.88.15])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EF1E5180057E;
-	Sat, 18 Oct 2025 13:11:24 +0000 (UTC)
-Date: Sat, 18 Oct 2025 10:11:23 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
- for non-rt
-Message-ID: <aPOR--HRHViqmyQ-@uudg.org>
-References: <aMf1RzZHjdoPNOv_@uudg.org>
- <20250915113812.GB3245006@noisy.programming.kicks-ass.net>
- <20250915123539.GC23082@redhat.com>
- <20250916100953.GG3245006@noisy.programming.kicks-ass.net>
- <20250916113043.GA32038@redhat.com>
- <20251017143944.GB21102@redhat.com>
+	s=arc-20240116; t=1760793228; c=relaxed/simple;
+	bh=JuFZRG8iOfSOpAc7xPmG9DiEYgTsPAwgyHt1Z8cbJ5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k/qBPWSSQVg9TaiJJHUvr6RxtXq+KpEcW+0prE2TFidJPT99vvxxUK9nQbguHACluyd9IZaDK4BkC8kI5m9dt+BFVU9ddbFNzQcQAf8cmLyK9rv5b6KednfMG4voBUw5gBPvcAeGJGdlLUYAO9WM/BCzZZpA60/XY7pA8KX7IRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyvs9XEU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC37C4CEF8;
+	Sat, 18 Oct 2025 13:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760793228;
+	bh=JuFZRG8iOfSOpAc7xPmG9DiEYgTsPAwgyHt1Z8cbJ5E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pyvs9XEU2tZo3/kTQMxCuxKH+2HGYD56fZFH41YzPUM6FpGqWiLOtU4KrUSXBC2QR
+	 VLo0+XN24lw/qVr1sQCw8TeuZfubfE97wqJX0ZE5HKHY3oWcjny6hAvv1SBTC13euL
+	 T8uIsXC5XrDmAdW6t4TncjZB50C4zGOuTReG4MKZCoA7xbq2KzBvU2kb9B7opqLycP
+	 0EvWpXjlRqlKPb2fY3D500a6EeQuvE1s/Yj+S7yEJ/Wo4o+n6UIS6jsEirVB0FKK2q
+	 F1AOuoCKMMi3+Z3VitCmBBQCFsx8RKtBEsbpxZH/1KAfpUNZoV7xIVMyC692pJ/9Se
+	 lAzObkV3KILXg==
+Date: Sat, 18 Oct 2025 14:13:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Axel Haslam <ahaslam@baylibre.com>, nuno.sa@analog.com,
+ dlechner@baylibre.com, andy@kernel.org, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v4 1/1] spi: offload: Add offset parameter
+Message-ID: <20251018141341.3ef2f6b7@jic23-huawei>
+In-Reply-To: <176053044658.105519.915414342804429574.b4-ty@kernel.org>
+References: <cd315e95c0bd8523f00e91c400abcd6a418e5924.1759760519.git.marcelo.schmitt@analog.com>
+	<176053044658.105519.915414342804429574.b4-ty@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017143944.GB21102@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 04:39:45PM +0200, Oleg Nesterov wrote:
-> Peter,
+On Wed, 15 Oct 2025 13:14:06 +0100
+Mark Brown <broonie@kernel.org> wrote:
+
+> On Mon, 06 Oct 2025 11:25:41 -0300, Marcelo Schmitt wrote:
+> > Add an offset parameter that can be passed in the periodic trigger.
+> > This is useful for example when ADC drivers implement a separate periodic
+> > signal to trigger conversion and need offload to read the result with
+> > some delay. While at it, add some documentation to offload periodic trigger
+> > parameters.
+> > 
+> > 
+> > [...]  
 > 
-> So I think that delayed_put_task_struct() has to stay and this means
-> that we have 2 RCU grace periods in the "typical" case when the exiting
-> task without extra references is reaped (or autoreaped if a subthread).
+> Applied to
 > 
-> As I said I won't really argue, but what is your final thought on this?
-> Should we forget this patch from Luis? I'd prefer to restore the !RT
-> exception...
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 > 
-> And another question. Sasha and Greg are going to add 8671bad873eb
-> ("sched: Do not call __put_task_struct() on rt if pi_blocked_on is set")
-> to -stable. Do you think it is fine to backport this commit as is?
-
-I am not aware of any specific RCU fixes that need to be present in order
-for commit 8671bad873eb to work properly on older kernels. That was my initial
-fear when Sasha and Greg mentioned the backport to Stable in August. The
-reference I have is that the deferred __put_task_struct() calls have been
-working for RT on older kernels for quite a while.
-
-Anyway, I asked them to hold because this discussion here was still happening.
-
-If that helps to get the ball moving and sounds reasonable to you all, I could
-propose a STABLE-only patch that isolates the change to RT. Does that make
-sense?
-
-Luis
-
-> Oleg.
+> Thanks!
 > 
-> On 09/16, Oleg Nesterov wrote:
-> >
-> > On 09/16, Peter Zijlstra wrote:
-> > >
-> > > On Mon, Sep 15, 2025 at 02:35:40PM +0200, Oleg Nesterov wrote:
-> > > > On 09/15, Peter Zijlstra wrote:
-> > > > >
-> > > > > Why have !RT behave differently? That is, why isn't this simply a
-> > > > > 'buggy' comment/changelog issue?
-> > > >
-> > > > Well, this was discussed several times, in particular see
-> > > > https://lore.kernel.org/all/CAHk-=whtj+aSYftniMRG4xvFE8dmmYyrqcJyPmzStsfj5w9r=w@mail.gmail.com/
-> > > >
-> > > > And task_struct->rcu_users was introduced to avoid RCU call in put_task_struct() ...
-> > >
-> > > Ah, I forgot about that thing.. Although I had vague memories of that
-> > > argument on rcu_assign_pointer() vs RCU_INIT_POINTER().
-> > >
-> > > > But I won't really argue if you decide to remove this !RT optimization, although
-> > > > I think it would be better to do this in a separate patch.
-> > >
-> > > Right. So when they wanted to remove that preemptible() clause, I was
-> > > like why again do we have this !RT exception at all, and can't we get
-> > > rid of that.
-> > >
-> > > If git isn't confusing me again, this got merged in this cycle. But so
-> > > far no benchmark came and told us this was a bad idea.
-> >
-> > I still think it would be safer to merge this patch from Luis before
-> > v6.17, then possibly remove this special case in a separate patch...
-> >
-> > > So what do we do now... do we restore the !RT exception (so far there
-> > > aren't any numbers to suggest this mattered) or do we let it be for a
-> > > bit and then go and clean things up?
-> >
-> > It is not that simple. Please note that put_task_struct_rcu_user()
-> > delays put(tsk->usage), not free(tsk).
-> >
-> > So for example with this change
-> >
-> > > @@ -305,7 +288,7 @@ void release_task(struct task_struct *p)
-> > >  	if (thread_group_leader(p))
-> > >  		flush_sigqueue(&p->signal->shared_pending);
-> > >
-> > > -	put_task_struct_rcu_user(p);
-> > > +	put_task_struct(p);
-> > >
-> > >  	p = leader;
-> > >  	if (unlikely(zap_leader))
-> >
-> > This code
-> >
-> > 	rcu_read_lock();
-> > 	tsk = find_task_by_vpid(...);
-> > 	if (tsk)
-> > 		get_task_struct(tsk);
-> > 	rcu_read_unlock();
-> >
-> > becomes wrong, get_task_struct(tsk) can increment tsk->usage == 0.
-> >
-> > Oleg.
+> [1/1] spi: offload: Add offset parameter
+>       commit: b83fb1b14c06bdd765903ac852ba20a14e24f227
 > 
----end quoted text---
+Hi Mark,
+
+The patch called out that we are after an immutable branch or similar for this one.
+
+"
+Hello,
+
+This patch adds a small feature that is required for a series improving ad4030
+in the IIO subsystem [1]. Can we have an immutable branch with this patch so
+that it can be used as base for the IIO driver changes?
+
+[1]: https://lore.kernel.org/linux-iio/cover.1758916484.git.marcelo.schmitt@analog.com/
+"
+
+If you can still set that up, much appreciated.
+
+Thanks,
+
+Jonathan
+
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+> 
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+> 
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+> 
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
+> 
+> Thanks,
+> Mark
+> 
 
 
