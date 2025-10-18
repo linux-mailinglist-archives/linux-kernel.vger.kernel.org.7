@@ -1,178 +1,146 @@
-Return-Path: <linux-kernel+bounces-859271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBF0BED30D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:55:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C19CBED319
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A5954E305B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709D819C37A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE9823D7EB;
-	Sat, 18 Oct 2025 15:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA87523F40C;
+	Sat, 18 Oct 2025 15:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mvcnaHVM"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSITN2av"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8538376026
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891576026;
+	Sat, 18 Oct 2025 15:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760802899; cv=none; b=PQ3uhIwk9CGFerdFETDiKmBgFW2Ji2N9OuyHk5vpqXOj3UgF094Qr9VShHJuPpuGV8fSXrH9A7SnLs7tddIoY2eXgpo+mbaVdNDPEpOtJ5zv4k4P2tstiNsrLIvZwoRr72LfyG7HMLXjv8ilBlE8eyUKxLexD1qClBc5jnxk2Ic=
+	t=1760802937; cv=none; b=l9Keq1fQQYbgxwyaW6TXRZ/Q4pgRbGDErC1AMrXUQqwtNWzxKB5SGlMldKKiwGrJPdVidoK1kXaR3oBxvzLvv9Pe4uDotgsepiaagR5DTG8EgMWQpoEufO4stIgN3/rglBHtzuugheUqhDtdU+5GDYalOWtzBuiuQuzdTZIWbW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760802899; c=relaxed/simple;
-	bh=sVKAaHctC1yRYCu4mr97pDNqGs87idnl+/BtC8bpGmA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ocWjGQBcd1r9xMUauVbFXRaf3OP0EWIUnJ8gr55VKha7xaQwZdeR6aRMgIAxy1KU3TRRO3P8VdheC4Fa/6Ha0jXCE1CQhsSKRXAe7430q1mQuMnA4NbFcdpPiJc5AVncHuQTCjeDEP349mhWz1oyHt8uj4wLSYRoxqknvTt3Qdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mvcnaHVM; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290d48e9f1fso108965ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:54:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760802897; x=1761407697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+y/GbuIzwVBXSPgt0IYrlsBZ+dL6ebQsqmjpjt9+kg=;
-        b=mvcnaHVMHKfc9d9+H3ifAZ8zdtX3p+uwxJr7rvMteAJ2lIwyYm7Yy+yQy36Lh4a6U/
-         AL8Gm69JVS0CaxT+HCO3Z+0SPSc6rt9AsCm742PXEePCQ5jU56zqntyVbbU8QCwD7Npa
-         yvOShlf96e3u64iynTndI1x6IU94ZSCVWZDYgCTn9cIHVrh/+N3b7HkqR9q4pz23JrUE
-         HgIPBzb2Qut7llt3r/sNKnlqgdZKZKeeGJUdz12DxrAhcpZJbcyUYfW87nAiJVlvzozg
-         kJ8d2yTgLmbAh2HygWbDCtMcIXLcNQr8UGfzxAmdLWgrBZQYpgLIo50uqLnLqbqLwXt4
-         Eohw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760802897; x=1761407697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v+y/GbuIzwVBXSPgt0IYrlsBZ+dL6ebQsqmjpjt9+kg=;
-        b=fhsq1cTINWprNMDCYIU9P2GXdVBCphMejQf4TfRn+osRGCR9o0Bjda6eygZSYYG4as
-         o6X79MXYrnwcj42sITmNoYmiiB5kSJmNgBaqsZ6uiNg7e8vdDIRPE9NCeBcHYAd16Y0S
-         ai4kAIrrQlCWnzxd47r5Djxlzs0A9bCnvStxamCq4U4wsl8k70Ew/tS9BgAnaDvbFj+6
-         TOCaUsvTGjzOQxr2IQAwVZN+5765UKmS6Caaw9AGS8iTJljxdZGDmmDEbBHebNjyyd4J
-         74WBz85rvw8QGXRkaeYESlIgTfyadrUZUGdkJXZC4CseG0JxsNgbNjc4ON52UBB4x1GT
-         3+UA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9vj/wqKt5VycO48vueiYijC1UJ5HhebFYDbC/g6cKMwo+VNC7o9z8FjbsNZ/rDoKvO9S0ei3ZDZG1J8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtPkK/tZRkO1+YVFGgfcpxOKSB/anZFvDJ/A2J5HlhwO/pFtKK
-	AK27X0k8PJMYKA3vhbiLab0DDIlXHLH2tmae6MQyGTFfvZ7q6V7mLpOY6Ihymn/Yjx/+Dyc+Sza
-	ALAwAaUL/0/Q+4u4vP3bX7xuH7cYOJDlqmem8yJkn
-X-Gm-Gg: ASbGncuqEUyPxiZdWQYTEzw7r5/p/3vKjefLcDMV4dv6jMQwrdNjhDYxbNJCcNqEub9
-	srQxZF7oQP6F/BTtfUZMLYuxUBq8tQ06AmSFgBOnr0zeSHnhpirK/6wbgDehm5CXWhBBdhCj9Q/
-	0ykwt+9B9wY1DFUQjFxJUB7snkgPtso2zuFBxvjZ7NCI6TeUJg4JFvjQ+64XZv6yvYkchcDPX4k
-	INYak1eoWV5RhW5fHG61GyM+jMD38JBonpzEKdsf24eRxy7g+YfHpR5U1tAZeY1Ya6eCL6pg1DU
-	+MvA+HyoTylXKTU1pw==
-X-Google-Smtp-Source: AGHT+IFPG2UyyHX1c0s6kSVXa5NAM5usKNUInL3UiLQme7hcHp+vGKoHFT8nnOpIS0Gk1uoUdPWMm5XNiMZbLUTqhak=
-X-Received: by 2002:a17:903:1b6e:b0:26a:f9c7:f335 with SMTP id
- d9443c01a7336-29088b9f8e1mr16508655ad.9.1760802896066; Sat, 18 Oct 2025
- 08:54:56 -0700 (PDT)
+	s=arc-20240116; t=1760802937; c=relaxed/simple;
+	bh=LPEfYUyGsXVhbHQtIJwDKNX0Ebfd/KMF5lwgnkpKH+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lkNCEIMfxX+AEFAzmIAEcQXsXSnubtVwRtXiyKqhNR4/SJ+0bPnSuZZopONlDMWzDpGgUXq24juuCliHK5aPXXSOQ3sphr46iRIUG90HSLMcZ85NhgYsJJIXRupr+D30EPvCX4DoX9J+800HMB+1d1fhtILLdrVpE1QW1LsjxWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSITN2av; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 236ADC4CEF8;
+	Sat, 18 Oct 2025 15:55:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760802936;
+	bh=LPEfYUyGsXVhbHQtIJwDKNX0Ebfd/KMF5lwgnkpKH+g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nSITN2avlgnNm9s60pbwh4GaaoMjzyYtk78/8wSTFxVL6c/9mbcJB/P6bwKLrAkyG
+	 RHFvbUtwqqZ6/UgNT023fggkMRzFjwLFCjEXNeso9JmetIjeWeCE5+flDRvc2ZZ8VF
+	 TGeu/NeWvz7xjN+Ryku/Th+KDuW8XtkAjY8vORrCkLxUxEMB6yTCpea+S+XpWoDUCd
+	 4+LNOIZAIKmoImAe+GySh3f2bWNu/klIyY8tM0DawBTPV7IyFWfa81ILHqp2hnJqXs
+	 xLf3biQli+HrnyYIQ6FLU9uiKTjnAvk2PstdILS5rZXiLiK5DPKuO4tsD55E0SyVOC
+	 EoBl484tVNI/Q==
+Message-ID: <11711aca-8595-47c5-a16e-1cd990a9a087@kernel.org>
+Date: Sat, 18 Oct 2025 17:55:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
- <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com> <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
- <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com> <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
- <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com> <5b007887-d475-4970-b01d-008631621192@intel.com>
- <CAGtprH-WE2_ADCCqm2uCvuDVbx61PRpcqy-+krq13rss2T_OSg@mail.gmail.com>
-In-Reply-To: <CAGtprH-WE2_ADCCqm2uCvuDVbx61PRpcqy-+krq13rss2T_OSg@mail.gmail.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Sat, 18 Oct 2025 08:54:42 -0700
-X-Gm-Features: AS18NWAv7-VQlOHhgcjY-mnsuUnfCgtHPuKbyOsZGhKoWFpiLhH-j25kFc5xkag
-Message-ID: <CAGtprH_sedWE_MYmfp3z3RKY_Viq1GGV4qiA0H5g2g=W9LwiXA@mail.gmail.com>
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Juergen Gross <jgross@suse.com>, "Reshetova, Elena" <elena.reshetova@intel.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"kas@kernel.org" <kas@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "Chatre, Reinette" <reinette.chatre@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "Williams, Dan J" <dan.j.williams@intel.com>, 
-	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
-	"Gao, Chao" <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>, 
-	"Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: i2c: dw: Add Mobileye I2C controllers
+To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+References: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
+ <20251017-i2c-dw-v1-1-7b85b71c7a87@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251017-i2c-dw-v1-1-7b85b71c7a87@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 2, 2025 at 9:09=E2=80=AFAM Vishal Annapurve <vannapurve@google.=
-com> wrote:
->
-> On Thu, Oct 2, 2025 at 8:06=E2=80=AFAM Dave Hansen <dave.hansen@intel.com=
-> wrote:
-> >
-> > On 10/2/25 00:46, Juergen Gross wrote:
-> > > So lets compare the 2 cases with kdump enabled and disabled in your
-> > > scenario (crash of the host OS):
-> > >
-> > > kdump enabled: No dump can be produced due to the #MC and system is
-> > > rebooted.
-> > >
-> > > kdump disabled: No dump is produced and system is rebooted after cras=
-h.
-> > > > What is the main concern with kdump enabled? I don't see any
-> > > disadvantage with enabling it, just the advantage that in many cases
-> > > a dump will be written.
-> > The disadvantage is that a kernel bug from long ago results in a machin=
-e
-> > check. Machine checks are generally indicative of bad hardware. So the
-> > disadvantage is that someone mistakes the long ago kernel bug for bad
-> > hardware.
-> >
-> > There are two ways of looking at this:
-> >
-> > 1. A theoretically fragile kdump is better than no kdump at all. All of
-> >    the stars would have to align for kdump to _fail_ and we don't think
-> >    that's going to happen often enough to matter.
-> > 2. kdump happens after kernel bugs. The machine checks happen because o=
-f
-> >    kernel bugs. It's not a big stretch to think that, at scale, kdump i=
-s
-> >    going to run in to these #MCs on a regular basis.
->
-> Looking at Elena's response, I would say it's still *a* big stretch
-> for kdump to run into these #MCs on a regular basis as following
-> sequence is needed for problematic scenario:
-> 1) Host OS bug should corrupt TDX private memory with a *partial
-> write*, that is part of kernel memory.
->     -> i.e. PAMT tables, SEPT tables, TD VCPU/VM metadata etc.
->     -> IIUC corruption of guest memory is not a concern as that
-> belongs to userspace.
-> 2) TDX Module/TD shouldn't consume that poisoned memory.
->     -> i.e. no walk of the metadata memory.
-> 3) Host kernel needs to generate a bug that causes an orthogonal panic.
->
-> *partial writes* IIUC need special instructions.
+On 17/10/2025 16:59, Benoît Monin wrote:
+> Add compatible strings for the I2C controllers present in Mobileye
+> Eyeq6Lplus and EyeQ7H SoCs.
+> 
+> Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> index d904191bb0c6e..6d63dc67f7bf0 100644
+> --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> @@ -36,6 +36,8 @@ properties:
+>          const: baikal,bt1-sys-i2c
+>        - items:
+>            - enum:
+> +              - mobileye,eyeq6lplus-i2c
+> +              - mobileye,eyeq7h-i2c
 
-Circling bank on this topic, I would like to iterate a few points:
-1) Google has been running workloads with the series [1] for ~2 years
-now, we haven't seen any issues with kdump functionality across kernel
-bugs, real hardware issues, private memory corruption etc.
-2) IMO rather than disabling kdump because of host kernel bugs
-potentially corrupting private memory, it would be much more useful to
-employ mechanisms like direct map removal to ensure host bugs leading
-to private memory corruption are caught much early on. Disabling kdump
-doesn't help the problem here and just makes it worse for a vast
-majority of other scenarios. On the other hand, enabling kdump doesn't
-make the problem worse than it is.
-   - Host IOMMU mappings should also be ideally restricted to the
-regions that don't overlap with private memory regions.
-3) With DPAMT support [2], the possibility of  the host corrupting
-private memory will reduce for the hosts not running confidential VMs
-at all.
+It seems these are compatible with each other, at least same driver
+match data suggests that, so express it here and in the commit msg.
 
-[1] https://lore.kernel.org/lkml/cover.1727179214.git.kai.huang@intel.com/
-[2] https://lore.kernel.org/kvm/20250918232224.2202592-1-rick.p.edgecombe@i=
-ntel.com/
+Best regards,
+Krzysztof
 
