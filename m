@@ -1,78 +1,90 @@
-Return-Path: <linux-kernel+bounces-859430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5A0BEDA29
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6624CBEDA20
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B76219C2E3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B948119C2C22
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4095450F2;
-	Sat, 18 Oct 2025 19:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A177627B342;
+	Sat, 18 Oct 2025 19:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkIg6/ll"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxbAsI5k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49514275B06;
-	Sat, 18 Oct 2025 19:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E827A28B7EA;
+	Sat, 18 Oct 2025 19:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815393; cv=none; b=ecnnU1lfABYhqh2SRFLcXerOEOYwfI02P2mK1I5ur9T2Ds8xCuzMQ0Spjv+bJfRm8SQHuqt1ec6aZZqxdw0FfKrY5oB42ydRAH0vgunnmZcx0oumaqs2cUmNBV9JzSZ1E89aT78Z7+O51Bs9ukzgxOxpkB6zT6pqX6Cnc2O+Gqs=
+	t=1760815387; cv=none; b=JFOjydrRZW4qrMS9217ryxSgsAe/jOslgaMsDwbcCXbVKS+GoLLNrt2A1taUtiro0zcCjaDQK3npe+BmNojkjmSv/awMjetmsj1XQohghx51GhnAfpLN21jFgjqtJlYXgtRw6UZfkvRsOibH+2vZqkdCFnVR8fxzH37L1U/6xJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815393; c=relaxed/simple;
-	bh=okaLHNChsfatPFsextwxLTnkXUZZn0XdmVRPBuesZG0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EAi0/uds8b2Opxp+bVcJmlDCUnFdDvuveGkpB+G98B3Dc3TGhonwtXB9SSN2haxxnbaCkoSTPul7gSK2sPuiJQ2gvtRB9RbsVNsEMIcjYWk0pu8nfS02jb9dDe5J/VYJ+xfcTN9BTbO0fNfdDTCz24kTaaV1DFbsPzmrVhVe4eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkIg6/ll; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 242DDC4CEF8;
-	Sat, 18 Oct 2025 19:23:13 +0000 (UTC)
+	s=arc-20240116; t=1760815387; c=relaxed/simple;
+	bh=G527dw1m66MJz6fBeaP4BUpuixzJbfu3vAmnIWlkGpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JOs+YGvVCmtRO1qAU/kF8GK0dSi1lYFpHZ45Q5795+ZCl4lGmC4hd8h18vvjXaNNpjW7MiFpsDtKo8bibdUKRm/v4dp6Qm9zR21NdJSQI5VFet/dEOvI960u84mnRIVRGNhs52wMNWgB2AnAcyYtRwCLcnwMWExDh2lbEGZIT3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxbAsI5k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC423C116B1;
+	Sat, 18 Oct 2025 19:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760815393;
-	bh=okaLHNChsfatPFsextwxLTnkXUZZn0XdmVRPBuesZG0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mkIg6/llf7adv5heJFy3Ov0LoZTOITS/Ai+fY8DmEPPOoUy6n8CS18kWj6NyD3DqH
-	 JA+FbD0B0oqkYr5z64jEItRIRE8oFrD92vicS8gtqewci68ziJCJJycnf0LdS6ql8U
-	 wvcTgKqyvgaqg8f+6Vs93nqzMkELz7HpNbYGGBgsZX7Z1dgQAPhQ8WNJaMoExNs5mE
-	 teQ75DTGVaNOdMGTo69LqymTqkI+I/XjUqs13c11w5/+z71IAaU1fzRnl7oVqxgauA
-	 Su3tbP+TchuiE0CjbyxJyncVajxKIQU5wGUQg/BK8XPuPOlTQO1RohcCmjFhKpae63
-	 LbvdGSC5b0Ucw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E4139EFBBA;
-	Sat, 18 Oct 2025 19:22:57 +0000 (UTC)
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aPOB9lMvnrXLf4ZD@kernel.org>
-References: <aPOB9lMvnrXLf4ZD@kernel.org>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aPOB9lMvnrXLf4ZD@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-rc2
-X-PR-Tracked-Commit-Id: dbfdaeb381a49a7bc753d18e2876bc56a15e01cc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 648937f64a09ae4a938a6793f95207d955098038
-Message-Id: <176081537600.3081941.14515189649303697967.pr-tracker-bot@kernel.org>
-Date: Sat, 18 Oct 2025 19:22:56 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Stuart Yoder <stuart.yoder@arm.com>
+	s=k20201202; t=1760815386;
+	bh=G527dw1m66MJz6fBeaP4BUpuixzJbfu3vAmnIWlkGpw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jxbAsI5kstGoKKLkKoSDIk+ax5Vt54jAJWR3A6wp1itxmOXsmOInPs8TMYZCNhZDS
+	 YukThIrJoViSS3IFD3PT2pi+k1oI9Jmwd7R666OgEOOx2sxk3+fHhNy7KwOWm2Nyav
+	 tF0gizEqClIw3WX0Gx3u+mrpimHfoyKQ0DcFbvlFdgl7NIxRN9K1Z/OV89l/7NSLiY
+	 xEXvJoVekGKVXdvgvJmcl1BVjKGLwS5gFUnOgOcVOhG0kIlNnx4oatmpxeLQWsQddB
+	 hvdgVSJuEKu50zgbIe3Fc6ETMAS4ivDPZWX+H2ZAabRa0blRyJyiJ2bsAdbxnNlGnN
+	 5iyA1n8mxOgtg==
+Date: Sat, 18 Oct 2025 20:23:01 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Mario Tesi <martepisa@gmail.com>, linux-iio@vger.kernel.org,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: st_lsm6dsx: Fixed calibrated timestamp calculation
+Message-ID: <20251018202301.2680cc79@jic23-huawei>
+In-Reply-To: <aO_e2DEGsO-kJQFx@lore-desk>
+References: <20251015161619.GA87736@ctocxl9700.cto.st.com>
+	<aO_e2DEGsO-kJQFx@lore-desk>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sat, 18 Oct 2025 15:03:35 +0300:
+On Wed, 15 Oct 2025 19:50:16 +0200
+Lorenzo Bianconi <lorenzo@kernel.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-rc2
+> > The calibrated timestamp is calculated from the nominal value using the
+> > formula:
+> >   ts_gain[ns] =E2=89=88 ts_sensitivity - (ts_trim_coeff * val) / 1000.
+> >=20
+> > The values of ts_sensitivity and ts_trim_coeff are not the same for all
+> > devices, so it is necessary to differentiate them based on the part nam=
+e.
+> > For the correct values please consult the relevant AN.
+> >=20
+> > Signed-off-by: Mario Tesi <mario.tesi@st.com> =20
+>=20
+> Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/648937f64a09ae4a938a6793f95207d955098038
+Fixes tag?  Just reply to this thread with one and I'll pick it up from her=
+e.
+No need for a new version.
 
-Thank you!
+Otherwise seems fine to me.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+
+Jonathan
+
 
