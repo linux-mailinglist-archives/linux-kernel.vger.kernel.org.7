@@ -1,546 +1,548 @@
-Return-Path: <linux-kernel+bounces-859473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4D5BEDC23
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:00:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CB8BEDC2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A77042873D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:00:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE174E1D41
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F482EC554;
-	Sat, 18 Oct 2025 20:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C382826C391;
+	Sat, 18 Oct 2025 21:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="W64INj2R"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P7nCt1lK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7952D9494
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 20:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCC7262FD7
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760821188; cv=none; b=Z/MfWI4t6oz+h+cChDMIs/J6hx3St8lesj0twTNf5iqhYzmB0DV6N1/9cS6tu+ZEQQtYmhcJJUXeT9wFcvW3D6n0u97qQbNDsLxZ3unU+TD2OH9MF8DxmhDxhj10WRaPSml3Lr0JwGyXbpN+s9ujhV2n0Q742LSAQDUz2SaaUXU=
+	t=1760822223; cv=none; b=QaKellDzQMLwUUDRNOI3p1uZNzAg3BgZ7GPkHO46PraUIVdN0N15/87aTTTHyqIzpXuJxImlJcpP5Fq4MUDo7MAWvORswuEEV1q4DpifS+m8OYuPsaF7NNDsNDX3pMmdiMjE1sjau8q/ikUfEuTGalomVgsdad1DmLNsXfvXock=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760821188; c=relaxed/simple;
-	bh=00K7SY/xzk2XbYY8/7EqJfm3XyMmkJdFRkV80Dmcwok=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MfFP/cRUwBDgBoLhHwvY88e7b0631yCWSZ3pe5omp0MlyR5a4PH4fmtbHp25ECGLwhpgaL9LoxoZrDFVrwIQ9SnLhuvy/M+OZSIcelAQaTWzlIxRpo4DtiAMbclcb6DHlkeCmhv6nhaRPk4L7+mbMcaRJzXUwHoxLc4gvpd5jb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=W64INj2R; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id E84CC240105
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 22:59:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760821177; bh=7GdhrqUn9j3e1Hr7wffsr/JxfrNZDDW+UT0c6XSZsGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=W64INj2RHZjI8+6H9+3koo4iQl1baUAolAxu9zkJ7W7BIHWcSNxZ7tH+57q6WQ4ch
-	 asW89vEAuSVw4xF7ElpayYukN3dH4+TXB0BDDVuD8ECIV33ofdlgE/d7/saoNo7ulE
-	 9LzdPxyMe8iB51QBjihlVbPdPg2C65HBiF8xunU5Ioy6L26A+BRWcf8gIsEraNoZzd
-	 D856HkyMhhrGo1hQkdeWVHU0QINuH5enKeZ/jHY26xZNhNJ2JVA9Np9DSqvQPlPoBx
-	 b3s77bDThlEgTzGLFPt83Zb2j6POiUe768bFQ+3st/AuxVyTNJhOa4yhfRVFF1q5IM
-	 gKM36eFBVPzmg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cpvFf6RbHz9rxD;
-	Sat, 18 Oct 2025 22:59:34 +0200 (CEST)
-From: Markus Probst <markus.probst@posteo.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Igor Korotin <igor.korotin.linux@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	kwilczynski@kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	Markus Probst <markus.probst@posteo.de>
-Subject: [PATCH v5 2/2] rust: leds: add basic led classdev abstractions
-Date: Sat, 18 Oct 2025 20:59:36 +0000
-Message-ID: <20251018205912.1528811-3-markus.probst@posteo.de>
-In-Reply-To: <20251018205912.1528811-1-markus.probst@posteo.de>
-References: <20251018205912.1528811-1-markus.probst@posteo.de>
+	s=arc-20240116; t=1760822223; c=relaxed/simple;
+	bh=RSejMAOVCoS47PjU69RoKWtndQOm/8ftxN4IURL/+G0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5yyZyzsFRYHiWfAGQS9B+KsoBc2pE4jn35reAmk0d0XSmOxKYOAcBKR9jWTfjhdPzVzUubKg7MKmtxkNwyXvdJ4oDLfRLuL1hDovHaei4jO8t481k7utBdgPYSVYhcV6d5IgjvgMsZZABMpf0jG6ZplCm7yj5T0hHxJsFlfs+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P7nCt1lK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59IJjdbL011171
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:17:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=vrxfYT8Rg7BR1iZK2D5Bfqse
+	b7Dp1q3QQoYVTBHmaUI=; b=P7nCt1lK854RKmL6G8DimTXTcdOd/BAqw/GLfAIK
+	pcI8vnzt2OsZh80T4VbyUuedYWu56adfK/Xa0yhJCvn/CEGlNLkjw6KW8xXbolGw
+	z14oRZv2hCTuzFF4TfzQMNTVJbpY5xDL1fsWkeuBrEnjxbIgm4sqK0UwlUFOVeJr
+	cZs4k1mPDKpI4J8+LVsnBhCxOCY1G2anCxQIYDkgEIIQieFj5Bs8Jjkio0py7WF/
+	5V2fQUX1E4XnUplclYwOtckiFWvYhzT47+FT6USBMvsrxsfXORVldBFuBQSDdCBK
+	K4MvxaaDXSXmspllOWp1cCC6Ufau9IqYKMb1ZvmPatol5g==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3nf99mb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:17:00 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87c2c9f3058so63833856d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 14:17:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760822219; x=1761427019;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vrxfYT8Rg7BR1iZK2D5Bfqseb7Dp1q3QQoYVTBHmaUI=;
+        b=CfMWMtsYq7QymK2FT95lyas3RP6F22c7gG1u15cbmNG5Myv5JAiKZm+F0Al6a746Pb
+         HaAJJSST1SCZCCjDalwNT9qal1wKSTCVUn0TDaY9mRRA0TE5Un0BDrXinOkW2ZC3PB0G
+         H28PJXXekDQPECSL/Lfwlg50nSqv1+TExM3nouFPj8oM6CZ3A3+X2giW+sDR83m/9oLu
+         h7l6GD1UxEnMW479ySj1tWZztbsrkdUUkoQAv8cRaJZ79rjvDFt3+sKmx8PMWqG82ToP
+         RoTE6lkY8EJ7fQ4Ld527PSj0cnfYsAvnpwrqfILNgayv/vIMGyTaNk8jPegu7G9yq3aP
+         9V4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWyD7h/iqibyIhrjF3s2Y0q/uZtM0yBNy9e86m6A8qbcG6MiTs3Ou9Twd3SF1AsRdyO3ZcOjawX1nzmHRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOVrv1GQuVVZEykKxA5hvnfXJvoEdxO7m2zg8w2mLKFfo/UG2I
+	J4/kvfGJ4+wvHYlabUosFgM2PcYehS2oYNtvjCjSkVW/SumlVy6XkO9WTIIDoZMLP3juzp86tqO
+	zdSWIR4caGZ8ENihMxstP1YRFsTtZKGSs6gMa8ps4wOZaMeRBmv4PQC6FrsqNDr4BTCw=
+X-Gm-Gg: ASbGncs25sRZPjrxKcmzjBVSeoJAdxAeMPDcQNegd8a2YM+Aqrk7zB/Zeuzjt5G2/+t
+	Tl9ZQkU5Si2UkjeUYNYUzX+7hXLSJOToI//Fuh9jgO+g3RQ56xh3zXV9UI/sll8DZo32ancct5g
+	QEc+1UFS6ijv7cW7mkR4xN84VUm/FKJ2+dcRo0KjlYgqPS+Ae+oaDdhVIzTMcf29bAyETp7zUsA
+	W5Q8G2nrF6YMozGfllLE2QQwCtrx04J4Cdw4KD9A+hgWwfXu1HsQaizIQy1H5FpasPeImHbML1J
+	3Cu5RAirGmMC2Fu5wW65+HgUAQfc6fskZCqH2dfZKOxBZdZM20hQFu27l9zsadIPeHAycxdylaG
+	h53Y0d9MoQW82LxUGKQ5DkClcrr9RCsUvOec0WA0ZcaUAzs7GYPMSj0Zt/GIcr8oZEs5zIPk51/
+	vA6eqRdMoZJP8=
+X-Received: by 2002:ac8:5795:0:b0:4e8:b846:d9c with SMTP id d75a77b69052e-4e8b846128bmr19763991cf.39.1760822219199;
+        Sat, 18 Oct 2025 14:16:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhMckk6vv3eZfcCkUZgmjTi4d3z78dKv7YVQm6GKjnzp6ZqtUqwANaCiyEgjQEUuP2X+X8KQ==
+X-Received: by 2002:ac8:5795:0:b0:4e8:b846:d9c with SMTP id d75a77b69052e-4e8b846128bmr19763641cf.39.1760822218592;
+        Sat, 18 Oct 2025 14:16:58 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a91f49basm9074441fa.16.2025.10.18.14.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 14:16:56 -0700 (PDT)
+Date: Sun, 19 Oct 2025 00:16:53 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: federico@izzo.pro
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        nicola@corna.info, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH] drm/msm/dpu: Add DSPP GC driver to provide GAMMA_LUT DRM
+ property
+Message-ID: <5gdqqsl3a33z6aj5yl2hgm5dulkdg4aqbb4k34yrfiyslzeg4j@s3bcgldjs4bp>
+References: <20251018-dpu-add-dspp-gc-driver-v1-1-ed0369214252@izzo.pro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15169; i=markus.probst@posteo.de; h=from:subject; bh=00K7SY/xzk2XbYY8/7EqJfm3XyMmkJdFRkV80Dmcwok=; b=owEBbQKS/ZANAwAIATR2H/jnrUPSAcsmYgBo8/8kDAFFBHvDmoQymUgxBPE2p0VtOx3heb9Xc yyT/HT+RGOJAjMEAAEIAB0WIQSCdBjE9KxY53IwxHM0dh/4561D0gUCaPP/JAAKCRA0dh/4561D 0jo0D/4yQwj/b033A135nynPG8uKr0ZoTp7V8+35v4LjZ9UessVTe8OY8cmTLgZRRJ8TwAUliva A2NwZad7eQJ4QazV18RiSFZUlnh6dNYGPcoWnC3PcZn6MVzIQVbqx+cdfiR45RjCe/RTriCcdnn YBLcmUYZumj+ARn2kWyqDIl+/GbCkCCcoTAj/J3cqalMfu9stn5nY0ie5kjfUrwQuBME/Z3moEc Q8hcoDWsgtnJAaxvnozxdSQ9jt3PE1vlBh1n9aYeTo430Y+oS3WzAHDZRkHDMwTchuAKHqemRVb sOmLq8cfduhr2yK1D8M0MlMsnDR8qhdM3AB0z576ngbyixRyHUsktRvH72yi5oPKlsvT+cnHeaU lcjK4pM8f1yQHyJ+KVG8XZxrs23RSfnV16+ffIZ2EYcth3cIB5uz2sJ4fAW8cty+BJvbHZnwCYe Gx0Pa0In5iMlQdOpGd4+Mt3KSS/XxJhJ/30sRXUqoPQYIkvv/nnNLtflPQSveJkxPcmmWQ/eLwx 7oFl6uZ8BZ9yzkHRpHS4dmshTgIB3gREY256kgxhmVYSJjl3n0FgfHcmjNO7DLAbGUaQYJj/l42 uFjjh5Zvgae5J6+hTkaXm3yjw7xyOMrAkeKYUWf1eCMvylQdIDaPH/VbRWuc9UNgGIsYWdY8fhJ oz9DjbUotasTpag
- ==
-X-Developer-Key: i=markus.probst@posteo.de; a=openpgp; fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
-Content-Transfer-Encoding: 8bit
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018-dpu-add-dspp-gc-driver-v1-1-ed0369214252@izzo.pro>
+X-Proofpoint-ORIG-GUID: vI5sUIZz9xrSxJ0aPWlBPkx07rWFgmGw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNyBTYWx0ZWRfX4b99gdTnFT1N
+ HFe9EgZ/oCUI8wHs0L0pXFvJ6mToBIfFMjIQhTp8rMk2yfQPDttIxE4n69XkaxQlNRvYCAnXSRl
+ T1ek80P0jaHJoBEvQJR5g6qRPjMQU1A1UPogrdFhZk+DDaxJljdCQYkN0I6UqXZKJ6lWbKDhr2M
+ HyrXsC9iBfQgvDMdekFpunKrTkIEybvNpb7em3Vy/fiVMtY64C8C3G+CNZJdpWUYaDWDdNa997y
+ WR+yY7/SW7xPQCXWfkNfkzuPpqdjRdl74+aueKCdGvlj0BX107jh0YwzpIRwvCgZ2i/Ctel6iKS
+ BGxmTc9DrrjXYHlnmZQVqSSlqu2OPkwIn7idEpaVJQBy3WUdaJW8gRCv6tMwmzOM0G1DxGiTjUH
+ GWgKrpQEMJRBiuP/Odtwl2s7l5r/2g==
+X-Proofpoint-GUID: vI5sUIZz9xrSxJ0aPWlBPkx07rWFgmGw
+X-Authority-Analysis: v=2.4 cv=EYjFgfmC c=1 sm=1 tr=0 ts=68f403cc cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=p0WdMEafAAAA:8
+ a=A8Lk8QbXsLJbOl2LSk4A:9 a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+ a=poXaRoVlC6wW9_mwW8W4:22 a=pHzHmUro8NiASowvMSCR:22 a=n87TN5wuljxrRezIQYnT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-18_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180027
 
-Implement the core abstractions needed for led class devices, including:
+On Sat, Oct 18, 2025 at 03:18:29PM +0200, Federico Amedeo Izzo via B4 Relay wrote:
+> From: Federico Amedeo Izzo <federico@izzo.pro>
+> 
+> This patch adds support for DSPP GC block in DPU driver for Qualcomm SoCs.
 
-* `led::LedOps` - the trait for handling leds, including
-  `brightness_set`, `brightness_get` and `blink_set`
+Please see Documentation/processes/submitting-patches.rst. "This patch"
 
-* `led::InitData` - data set for the led class device
+> The driver exposes the GAMMA_LUT DRM property, which is needed to enable
+> night light and basic screen color calibration.
+> 
+> I used LineageOS downstream kernel as a reference and found the LUT
+> format by trial-and-error on OnePlus 6.
 
-* `led::Device` - a safe wrapper around `led_classdev`
+Nice!
 
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
----
- rust/kernel/led.rs | 375 +++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs |   1 +
- 2 files changed, 376 insertions(+)
- create mode 100644 rust/kernel/led.rs
+> 
+> Tested on oneplus-enchilada (sdm845-mainline 6.16-dev) and xiaomi-tissot
+> (msm8953-mainline 6.12/main).
+> 
+> Signed-off-by: Federico Amedeo Izzo <federico@izzo.pro>
+> Tested-by: David Heidelberg <david@ixit.cz>  # Pixel 3 (next-20251018)
+> ---
+> DRM GAMMA_LUT support was missing on sdm845 and other Qualcomm SoCs using
+> DPU for CRTC. This is needed in userspace to enable features like Night
+> Light or basic color calibration.
+> 
+> I wrote this driver to enable Night Light on OnePlus 6, and after the
+> driver was working I found out it applies to the 29 different Qualcomm SoCs
+> that use the DPU display engine, including X1E for laptops.
+> 
+> I used the LineageOS downstream kernel as reference and found the correct 
+> LUT format by trial-and-error on OnePlus 6.
+> 
+> This was my first Linux driver and it's been a great learning
+> experience.
+> 
+> The patch was reviewed by postmarketOS contributors here: 
+> https://gitlab.com/sdm845-mainline/linux/-/merge_requests/137
+> During review the patch was tested successfully on hamoa (X1E).
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c       | 90 ++++++++++++++++++++++----
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c |  4 ++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h |  4 ++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c     |  3 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c    | 56 ++++++++++++++++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h    | 26 ++++++++
+>  6 files changed, 169 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index 4b970a59deaf..f2c97c4ef0af 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -812,12 +812,44 @@ static void _dpu_crtc_get_pcc_coeff(struct drm_crtc_state *state,
+>  	cfg->b.b = CONVERT_S3_15(ctm->matrix[8]);
+>  }
+>  
+> +static void _dpu_crtc_get_gc_lut(struct drm_crtc_state *state,
+> +		struct dpu_hw_gc_lut *gc_lut)
+> +{
+> +	struct drm_color_lut *lut;
+> +	int i;
+> +	u32 val_even, val_odd;
+> +
+> +	memset(gc_lut, 0, sizeof(struct dpu_hw_gc_lut));
+> +
+> +	lut = (struct drm_color_lut *)state->gamma_lut->data;
+> +
+> +	if (!lut)
+> +		return;
+> +
+> +	/* Pack 1024 10-bit entries in 512 32-bit registers */
+> +	for (i = 0; i < PGC_TBL_LEN; i++) {
+> +		val_even = drm_color_lut_extract(lut[i * 2].green, 10);
+> +		val_odd = drm_color_lut_extract(lut[i * 2 + 1].green, 10);
+> +		gc_lut->c0[i] = val_even | (val_odd << 16);
+> +		val_even = drm_color_lut_extract(lut[i * 2].blue, 10);
+> +		val_odd = drm_color_lut_extract(lut[i * 2 + 1].blue, 10);
+> +		gc_lut->c1[i] = val_even | (val_odd << 16);
+> +		val_even = drm_color_lut_extract(lut[i * 2].red, 10);
+> +		val_odd = drm_color_lut_extract(lut[i * 2 + 1].red, 10);
+> +		gc_lut->c2[i] = val_even | (val_odd << 16);
+> +	}
+> +
+> +	/* Disable 8-bit rounding mode */
+> +	gc_lut->flags = 0;
+> +}
+> +
+>  static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
+>  {
+>  	struct drm_crtc_state *state = crtc->state;
+>  	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc->state);
+>  	struct dpu_crtc_mixer *mixer = cstate->mixers;
+>  	struct dpu_hw_pcc_cfg cfg;
+> +	struct dpu_hw_gc_lut *gc_lut;
+>  	struct dpu_hw_ctl *ctl;
+>  	struct dpu_hw_dspp *dspp;
+>  	int i;
+> @@ -830,19 +862,40 @@ static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
+>  		ctl = mixer[i].lm_ctl;
+>  		dspp = mixer[i].hw_dspp;
+>  
+> -		if (!dspp || !dspp->ops.setup_pcc)
+> +		if (!dspp)
+>  			continue;
+>  
+> -		if (!state->ctm) {
+> -			dspp->ops.setup_pcc(dspp, NULL);
+> -		} else {
+> -			_dpu_crtc_get_pcc_coeff(state, &cfg);
+> -			dspp->ops.setup_pcc(dspp, &cfg);
+> +		if (dspp->ops.setup_pcc) {
+> +			if (!state->ctm) {
+> +				dspp->ops.setup_pcc(dspp, NULL);
+> +			} else {
+> +				_dpu_crtc_get_pcc_coeff(state, &cfg);
+> +				dspp->ops.setup_pcc(dspp, &cfg);
+> +			}
+> +
+> +			/* stage config flush mask */
+> +			ctl->ops.update_pending_flush_dspp(ctl,
+> +				mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
+>  		}
+>  
+> -		/* stage config flush mask */
+> -		ctl->ops.update_pending_flush_dspp(ctl,
+> -			mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
+> +		if (dspp->ops.setup_gc) {
+> +			if (!state->gamma_lut) {
+> +				dspp->ops.setup_gc(dspp, NULL);
+> +			} else {
+> +				gc_lut = kzalloc(sizeof(*gc_lut), GFP_KERNEL);
+> +				if (!gc_lut) {
+> +					DRM_ERROR("failed to allocate gc_lut\n");
+> +					continue;
+> +				}
+> +				_dpu_crtc_get_gc_lut(state, gc_lut);
+> +				dspp->ops.setup_gc(dspp, gc_lut);
+> +				kfree(gc_lut);
+> +			}
+> +
+> +			/* stage config flush mask */
+> +			ctl->ops.update_pending_flush_dspp(ctl,
+> +				mixer[i].hw_dspp->idx, DPU_DSPP_GC);
+> +		}
+>  	}
+>  }
+>  
+> @@ -1340,7 +1393,7 @@ static struct msm_display_topology dpu_crtc_get_topology(
+>  	 *
+>  	 * If DSC is enabled, use 2 LMs for 2:2:1 topology
+>  	 *
+> -	 * Add dspps to the reservation requirements if ctm is requested
+> +	 * Add dspps to the reservation requirements if ctm or gamma_lut are requested
+>  	 *
+>  	 * Only hardcode num_lm to 2 for cases where num_intf == 2 and CWB is not
+>  	 * enabled. This is because in cases where CWB is enabled, num_intf will
+> @@ -1359,7 +1412,7 @@ static struct msm_display_topology dpu_crtc_get_topology(
+>  	else
+>  		topology.num_lm = 1;
+>  
+> -	if (crtc_state->ctm)
+> +	if (crtc_state->ctm || crtc_state->gamma_lut)
+>  		topology.num_dspp = topology.num_lm;
+>  
+>  	return topology;
+> @@ -1471,7 +1524,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+>  	bool needs_dirtyfb = dpu_crtc_needs_dirtyfb(crtc_state);
+>  
+>  	/* don't reallocate resources if only ACTIVE has beeen changed */
+> -	if (crtc_state->mode_changed || crtc_state->connectors_changed) {
+> +	if (crtc_state->mode_changed || crtc_state->connectors_changed ||
+> +		crtc_state->color_mgmt_changed) {
 
-diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
-new file mode 100644
-index 000000000000..980d6e512102
---- /dev/null
-+++ b/rust/kernel/led.rs
-@@ -0,0 +1,375 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Abstractions for the leds driver model.
-+//!
-+//! C header: [`include/linux/leds.h`](srctree/include/linux/leds.h)
-+
-+use core::{marker::PhantomData, pin::Pin, ptr::NonNull};
-+
-+use pin_init::{pin_data, pinned_drop, PinInit};
-+
-+use crate::{
-+    build_error, container_of,
-+    device::{self, property::FwNode, Bound, IntoBusDevice},
-+    devres::Devres,
-+    error::{from_result, to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-+    macros::vtable,
-+    str::CStr,
-+    try_pin_init,
-+    types::{ARef, Opaque},
-+};
-+
-+/// The led class device representation.
-+///
-+/// This structure represents the Rust abstraction for a C `struct led_classdev`.
-+#[pin_data(PinnedDrop)]
-+pub struct Device<T: LedOps> {
-+    ops: T,
-+    #[pin]
-+    classdev: Opaque<bindings::led_classdev>,
-+}
-+
-+/// The led init data representation.
-+///
-+/// This structure represents the Rust abstraction for a C `struct led_init_data`.
-+#[derive(Default)]
-+pub struct InitData<'a> {
-+    fwnode: Option<&'a FwNode>,
-+    default_label: Option<&'a CStr>,
-+    devicename: Option<&'a CStr>,
-+    devname_mandatory: bool,
-+}
-+
-+impl InitData<'static> {
-+    /// Creates a new [`InitData`]
-+    pub fn new() -> Self {
-+        Self::default()
-+    }
-+}
-+
-+impl<'a> InitData<'a> {
-+    /// Sets the firmware node
-+    pub fn fwnode<'b, 'c>(self, fwnode: &'b FwNode) -> InitData<'c>
-+    where
-+        'a: 'c,
-+        'b: 'c,
-+    {
-+        InitData {
-+            fwnode: Some(fwnode),
-+            ..self
-+        }
-+    }
-+
-+    /// Sets a default label
-+    pub fn default_label<'b, 'c>(self, label: &'b CStr) -> InitData<'c>
-+    where
-+        'a: 'c,
-+        'b: 'c,
-+    {
-+        InitData {
-+            default_label: Some(label),
-+            ..self
-+        }
-+    }
-+
-+    /// Sets the device name
-+    pub fn devicename<'b, 'c>(self, devicename: &'b CStr) -> InitData<'c>
-+    where
-+        'a: 'c,
-+        'b: 'c,
-+    {
-+        InitData {
-+            devicename: Some(devicename),
-+            ..self
-+        }
-+    }
-+
-+    /// Sets if a device name is mandatory
-+    pub fn devicename_mandatory(self, mandatory: bool) -> Self {
-+        Self {
-+            devname_mandatory: mandatory,
-+
-+            ..self
-+        }
-+    }
-+}
-+
-+/// Trait defining the operations for a LED driver.
-+///
-+/// # Examples
-+///
-+///```
-+/// # use kernel::{
-+/// #     c_str, device, devres::Devres,
-+/// #     error::Result, i2c::I2cClient, led,
-+/// #     macros::vtable, prelude::*,
-+/// # };
-+/// # use core::pin::Pin;
-+///
-+/// struct MyLedOps;
-+///
-+///
-+/// #[vtable]
-+/// impl led::LedOps for MyLedOps {
-+///     type Bus = I2cClient<device::Bound>;
-+///     const BLOCKING: bool = false;
-+///     const MAX_BRIGHTNESS: u32 = 255;
-+///
-+///     fn brightness_set(
-+///         &self,
-+///         _dev: &I2cClient<device::Bound>,
-+///         _brightness: u32
-+///     ) -> Result<()> {
-+///         // Set the brightness for the led here
-+///         Ok(())
-+///     }
-+/// }
-+///
-+/// fn register_my_led(
-+///     parent: &I2cClient<device::Bound>,
-+/// ) -> Result<Pin<KBox<Devres<led::Device<MyLedOps>>>>> {
-+///     KBox::pin_init(led::Device::new(
-+///         parent,
-+///         led::InitData::new()
-+///             .default_label(c_str!("my_led")),
-+///         MyLedOps,
-+///     ), GFP_KERNEL)
-+/// }
-+///```
-+/// Led drivers must implement this trait in order to register and handle a [`Device`].
-+#[vtable]
-+pub trait LedOps: Send + 'static + Sized {
-+    /// The bus device required by the implementation.
-+    #[allow(private_bounds)]
-+    type Bus: IntoBusDevice<Bound>;
-+    /// If set true, [`LedOps::brightness_set`] and [`LedOps::blink_set`] must not sleep
-+    /// and perform the operation immediately.
-+    const BLOCKING: bool;
-+    /// The max brightness level
-+    const MAX_BRIGHTNESS: u32;
-+
-+    /// Sets the brightness level.
-+    ///
-+    /// See also [`LedOps::BLOCKING`]
-+    fn brightness_set(&self, dev: &Self::Bus, brightness: u32) -> Result<()>;
-+
-+    /// Gets the current brightness level.
-+    fn brightness_get(&self, _dev: &Self::Bus) -> u32 {
-+        build_error!(VTABLE_DEFAULT_ERROR)
-+    }
-+
-+    /// Activates hardware accelerated blinking.
-+    ///
-+    /// delays are in milliseconds. If both are zero, a sensible default should be chosen.
-+    /// The caller should adjust the timings in that case and if it can't match the values
-+    /// specified exactly. Setting the brightness to 0 will disable the hardware accelerated
-+    /// blinking.
-+    ///
-+    /// See also [`LedOps::BLOCKING`]
-+    fn blink_set(
-+        &self,
-+        _dev: &Self::Bus,
-+        _delay_on: &mut usize,
-+        _delay_off: &mut usize,
-+    ) -> Result<()> {
-+        build_error!(VTABLE_DEFAULT_ERROR)
-+    }
-+}
-+
-+// SAFETY: A `led::Device` can be unregistered from any thread.
-+unsafe impl<T: LedOps + Send> Send for Device<T> {}
-+
-+// SAFETY: `led::Device` can be shared among threads because all methods of `led::Device`
-+// are thread safe.
-+unsafe impl<T: LedOps + Sync> Sync for Device<T> {}
-+
-+impl<T: LedOps> Device<T> {
-+    /// Registers a new led classdev.
-+    ///
-+    /// The [`Device`] will be unregistered on drop.
-+    pub fn new<'a>(
-+        parent: &'a T::Bus,
-+        init_data: InitData<'a>,
-+        ops: T,
-+    ) -> impl PinInit<Devres<Self>, Error> + 'a {
-+        Devres::new(
-+            parent.as_ref(),
-+            try_pin_init!(Self {
-+                ops,
-+                classdev <- Opaque::try_ffi_init(|ptr: *mut bindings::led_classdev| {
-+                    // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write.
-+                    // `led_classdev` gets fully initialized in-place by
-+                    // `led_classdev_register_ext` including `mutex` and `list_head`.
-+                    unsafe {
-+                        ptr.write(bindings::led_classdev {
-+                            max_brightness: T::MAX_BRIGHTNESS,
-+                            brightness_set: (!T::BLOCKING)
-+                                .then_some(Adapter::<T>::brightness_set_callback),
-+                            brightness_set_blocking: T::BLOCKING
-+                                .then_some(Adapter::<T>::brightness_set_blocking_callback),
-+                            brightness_get: T::HAS_BRIGHTNESS_GET
-+                                .then_some(Adapter::<T>::brightness_get_callback),
-+                            blink_set: T::HAS_BLINK_SET.then_some(Adapter::<T>::blink_set_callback),
-+                            ..bindings::led_classdev::default()
-+                        })
-+                    };
-+
-+                    let fwnode = init_data.fwnode.map(ARef::from);
-+
-+                    let mut init_data = bindings::led_init_data {
-+                        fwnode: fwnode
-+                            .as_ref()
-+                            .map_or(core::ptr::null_mut(), |fwnode| fwnode.as_raw()),
-+                        default_label: init_data
-+                            .default_label
-+                            .map_or(core::ptr::null(), CStr::as_char_ptr),
-+                        devicename: init_data
-+                            .devicename
-+                            .map_or(core::ptr::null(), CStr::as_char_ptr),
-+                        devname_mandatory: init_data.devname_mandatory,
-+                    };
-+
-+                    // SAFETY:
-+                    // - `parent.as_raw()` is guaranteed to be a pointer to a valid `device`
-+                    //    or a null pointer.
-+                    // - `ptr` is guaranteed to be a pointer to an initialized `led_classdev`.
-+                    to_result(unsafe {
-+                        bindings::led_classdev_register_ext(
-+                            parent.as_ref().as_raw(),
-+                            ptr,
-+                            &mut init_data,
-+                        )
-+                    })?;
-+
-+                    core::mem::forget(fwnode); // keep the reference count incremented
-+
-+                    Ok::<_, Error>(())
-+                }),
-+            }),
-+        )
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::Device`.
-+    unsafe fn from_raw<'a>(led_cdev: *mut bindings::led_classdev) -> &'a Self {
-+        // SAFETY: The function's contract guarantees that `led_cdev` points to a `led_classdev`
-+        // field embedded within a valid `led::Device`. `container_of!` can therefore
-+        // safely calculate the address of the containing struct.
-+        unsafe { &*container_of!(Opaque::cast_from(led_cdev), Self, classdev) }
-+    }
-+
-+    fn parent(&self) -> &device::Device<Bound> {
-+        // SAFETY:
-+        // - `self.classdev.get()` is guaranteed to be a valid pointer to `led_classdev`.
-+        unsafe { device::Device::from_raw((*(*self.classdev.get()).dev).parent) }
-+    }
-+}
-+
-+struct Adapter<T: LedOps> {
-+    _p: PhantomData<T>,
-+}
-+
-+impl<T: LedOps> Adapter<T> {
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::Device`.
-+    /// This function is called on setting the brightness of a led.
-+    unsafe extern "C" fn brightness_set_callback(
-+        led_cdev: *mut bindings::led_classdev,
-+        brightness: u32,
-+    ) {
-+        // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+        // `led_classdev` embedded within a `led::Device`.
-+        let classdev = unsafe { Device::<T>::from_raw(led_cdev) };
-+        // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+        let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+        let _ = classdev.ops.brightness_set(parent, brightness);
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::Device`.
-+    /// This function is called on setting the brightness of a led immediately.
-+    unsafe extern "C" fn brightness_set_blocking_callback(
-+        led_cdev: *mut bindings::led_classdev,
-+        brightness: u32,
-+    ) -> i32 {
-+        from_result(|| {
-+            // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+            // `led_classdev` embedded within a `led::Device`.
-+            let classdev = unsafe { Device::<T>::from_raw(led_cdev) };
-+            // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+            let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+            classdev.ops.brightness_set(parent, brightness)?;
-+            Ok(0)
-+        })
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::Device`.
-+    /// This function is called on getting the brightness of a led.
-+    unsafe extern "C" fn brightness_get_callback(led_cdev: *mut bindings::led_classdev) -> u32 {
-+        // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+        // `led_classdev` embedded within a `led::Device`.
-+        let classdev = unsafe { Device::<T>::from_raw(led_cdev) };
-+        // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+        let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+        classdev.ops.brightness_get(parent)
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::Device`.
-+    /// `delay_on` and `delay_off` must be valid pointers to `usize` and have
-+    /// exclusive access for the period of this function.
-+    /// This function is called on enabling hardware accelerated blinking.
-+    unsafe extern "C" fn blink_set_callback(
-+        led_cdev: *mut bindings::led_classdev,
-+        delay_on: *mut usize,
-+        delay_off: *mut usize,
-+    ) -> i32 {
-+        from_result(|| {
-+            // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+            // `led_classdev` embedded within a `led::Device`.
-+            let classdev = unsafe { Device::<T>::from_raw(led_cdev) };
-+            // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+            let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+            classdev.ops.blink_set(
-+                parent,
-+                // SAFETY: The function's contract guarantees that `delay_on` points to a `usize`
-+                // and is exclusive for the period of this function.
-+                unsafe { &mut *delay_on },
-+                // SAFETY: The function's contract guarantees that `delay_off` points to a `usize`
-+                // and is exclusive for the period of this function.
-+                unsafe { &mut *delay_off },
-+            )?;
-+            Ok(0)
-+        })
-+    }
-+}
-+
-+#[pinned_drop]
-+impl<T: LedOps> PinnedDrop for Device<T> {
-+    fn drop(self: Pin<&mut Self>) {
-+        let raw = self.classdev.get();
-+        // SAFETY: The existence of `self` guarantees that `self.classdev.get()` is a pointer to a
-+        // valid `struct led_classdev`.
-+        let dev: &device::Device = unsafe { device::Device::from_raw((*raw).dev) };
-+
-+        let _fwnode = dev
-+            .fwnode()
-+            // SAFETY: the reference count of `fwnode` has previously been
-+            // incremented in `led::Device::new`.
-+            .map(|fwnode| unsafe { ARef::from_raw(NonNull::from(fwnode)) });
-+
-+        // SAFETY: The existence of `self` guarantees that `self.classdev` has previously been
-+        // successfully registered with `led_classdev_register_ext`.
-+        unsafe { bindings::led_classdev_unregister(self.classdev.get()) };
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 8c0070a8029e..a8f49ce78f8d 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -105,6 +105,7 @@
- pub mod jump_label;
- #[cfg(CONFIG_KUNIT)]
- pub mod kunit;
-+pub mod led;
- pub mod list;
- pub mod maple_tree;
- pub mod miscdevice;
+Please align the text to the same column (so that crtc_state are one
+under another one.
+
+>  		rc = dpu_crtc_assign_resources(crtc, crtc_state);
+>  		if (rc < 0)
+>  			return rc;
+> @@ -1831,8 +1885,16 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane,
+>  
+>  	drm_crtc_helper_add(crtc, &dpu_crtc_helper_funcs);
+>  
+> -	if (dpu_kms->catalog->dspp_count)
+> -		drm_crtc_enable_color_mgmt(crtc, 0, true, 0);
+> +	if (dpu_kms->catalog->dspp_count) {
+> +		const struct dpu_dspp_cfg *dspp = &dpu_kms->catalog->dspp[0];
+> +
+> +		if (dspp->sblk->gc.base) {
+> +			drm_mode_crtc_set_gamma_size(crtc, DPU_GAMMA_LUT_SIZE);
+> +			drm_crtc_enable_color_mgmt(crtc, 0, true, DPU_GAMMA_LUT_SIZE);
+> +		} else {
+> +			drm_crtc_enable_color_mgmt(crtc, 0, true, 0);
+> +		}
+> +	}
+>  
+>  	/* save user friendly CRTC name for later */
+>  	snprintf(dpu_crtc->name, DPU_CRTC_NAME_SIZE, "crtc%u", crtc->base.id);
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+> index 6641455c4ec6..8a4b9fc3ac84 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+> @@ -382,11 +382,15 @@ static const struct dpu_lm_sub_blks qcm2290_lm_sblk = {
+>  static const struct dpu_dspp_sub_blks msm8998_dspp_sblk = {
+>  	.pcc = {.name = "pcc", .base = 0x1700,
+>  		.len = 0x90, .version = 0x10007},
+> +	.gc = {.name = "gc", .base = 0x17c0,
+> +		.len = 0x90, .version = 0x10007},
+
+.len = 0x40
+
+>  };
+>  
+>  static const struct dpu_dspp_sub_blks sdm845_dspp_sblk = {
+>  	.pcc = {.name = "pcc", .base = 0x1700,
+>  		.len = 0x90, .version = 0x40000},
+> +	.gc = {.name = "gc", .base = 0x17c0,
+> +		.len = 0x90, .version = 0x40000},
+
+The version is incorrect, see sdm845-sde.dtsi
+
+.len = 0x40
+
+>  };
+>  
+>  static const struct dpu_dspp_sub_blks sm8750_dspp_sblk = {
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+> index f0768f54e9b3..3ea67c1cf5c0 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+> @@ -77,9 +77,11 @@ enum {
+>  /**
+>   * DSPP sub-blocks
+>   * @DPU_DSPP_PCC             Panel color correction block
+> + * @DPU_DSPP_GC              Gamma correction block
+>   */
+>  enum {
+>  	DPU_DSPP_PCC = 0x1,
+> +	DPU_DSPP_GC,
+>  	DPU_DSPP_MAX
+>  };
+>  
+> @@ -314,9 +316,11 @@ struct dpu_lm_sub_blks {
+>  /**
+>   * struct dpu_dspp_sub_blks: Information of DSPP block
+>   * @pcc: pixel color correction block
+> + * @gc: gamma correction block
+>   */
+>  struct dpu_dspp_sub_blks {
+>  	struct dpu_pp_blk pcc;
+> +	struct dpu_pp_blk gc;
+>  };
+>  
+>  struct dpu_pingpong_sub_blks {
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> index ac834db2e4c1..36a497f1d6c1 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> @@ -399,6 +399,9 @@ static void dpu_hw_ctl_update_pending_flush_dspp_sub_blocks(
+>  	case DPU_DSPP_PCC:
+>  		ctx->pending_dspp_flush_mask[dspp - DSPP_0] |= BIT(4);
+>  		break;
+> +	case DPU_DSPP_GC:
+> +		ctx->pending_dspp_flush_mask[dspp - DSPP_0] |= BIT(5);
+> +		break;
+>  	default:
+>  		return;
+>  	}
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
+> index 54b20faa0b69..7bf572379890 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
+> @@ -24,6 +24,18 @@
+>  #define PCC_BLUE_G_OFF 0x24
+>  #define PCC_BLUE_B_OFF 0x30
+>  
+> +/* DSPP_GC */
+> +#define GC_EN BIT(0)
+> +#define GC_DIS 0
+> +#define GC_8B_ROUND_EN BIT(1)
+> +#define GC_LUT_SWAP_OFF 0x1c
+> +#define GC_C0_OFF 0x4
+> +#define GC_C1_OFF 0xC
+
+lowercase the hex
+
+> +#define GC_C2_OFF 0x14
+> +#define GC_C0_INDEX_OFF 0x8
+> +#define GC_C1_INDEX_OFF 0x10
+> +#define GC_C2_INDEX_OFF 0x18
+> +
+>  static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
+>  		struct dpu_hw_pcc_cfg *cfg)
+>  {
+> @@ -63,6 +75,48 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
+>  	DPU_REG_WRITE(&ctx->hw, base, PCC_EN);
+>  }
+>  
+> +static void dpu_setup_dspp_gc(struct dpu_hw_dspp *ctx,
+> +		struct dpu_hw_gc_lut *gc_lut)
+> +{
+> +	int i = 0;
+> +	u32 base, reg;
+> +
+> +	if (!ctx) {
+> +		DRM_ERROR("invalid ctx %pK\n", ctx);
+> +		return;
+> +	}
+> +
+> +	base = ctx->cap->sblk->gc.base;
+> +
+> +	if (!base) {
+> +		DRM_ERROR("invalid ctx %pK gc base 0x%x\n", ctx, base);
+> +		return;
+> +	}
+> +
+> +	if (!gc_lut) {
+> +		DRM_DEBUG_DRIVER("disable gc feature\n");
+> +		DPU_REG_WRITE(&ctx->hw, base, GC_DIS);
+> +		return;
+> +	}
+> +
+> +	reg = 0;
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_C0_INDEX_OFF, reg);
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_C1_INDEX_OFF, reg);
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_C2_INDEX_OFF, reg);
+> +
+> +	for (i = 0; i < PGC_TBL_LEN; i++) {
+> +		DPU_REG_WRITE(&ctx->hw, base + GC_C0_OFF, gc_lut->c0[i]);
+> +		DPU_REG_WRITE(&ctx->hw, base + GC_C1_OFF, gc_lut->c1[i]);
+> +		DPU_REG_WRITE(&ctx->hw, base + GC_C2_OFF, gc_lut->c2[i]);
+> +	}
+> +
+> +	reg = BIT(0);
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_LUT_SWAP_OFF, reg);
+
+inline reg, pleas
+
+> +
+> +	reg = GC_EN | ((gc_lut->flags & PGC_8B_ROUND) ? GC_8B_ROUND_EN : 0);
+> +	DPU_REG_WRITE(&ctx->hw, base, reg);
+> +}
+> +
+>  /**
+>   * dpu_hw_dspp_init() - Initializes the DSPP hw driver object.
+>   * should be called once before accessing every DSPP.
+> @@ -92,6 +146,8 @@ struct dpu_hw_dspp *dpu_hw_dspp_init(struct drm_device *dev,
+>  	c->cap = cfg;
+>  	if (c->cap->sblk->pcc.base)
+>  		c->ops.setup_pcc = dpu_setup_dspp_pcc;
+> +	if (c->cap->sblk->gc.base)
+> +		c->ops.setup_gc = dpu_setup_dspp_gc;
+>  
+>  	return c;
+>  }
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
+> index 45c26cd49fa3..d608f84e9434 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
+> @@ -33,6 +33,25 @@ struct dpu_hw_pcc_cfg {
+>  	struct dpu_hw_pcc_coeff b;
+>  };
+>  
+> +#define DPU_GAMMA_LUT_SIZE 1024
+> +#define PGC_TBL_LEN 512
+> +#define PGC_8B_ROUND (1 << 0)
+
+BIT(0)
+
+> +
+> +/**
+> + * struct dpu_hw_gc_lut - gc lut feature structure
+> + * @flags: flags for the feature values can be:
+> + *         - PGC_8B_ROUND
+> + * @c0: color0 component lut
+> + * @c1: color1 component lut
+> + * @c2: color2 component lut
+> + */
+> +struct dpu_hw_gc_lut {
+> +	__u64 flags;
+> +	__u32 c0[PGC_TBL_LEN];
+> +	__u32 c1[PGC_TBL_LEN];
+> +	__u32 c2[PGC_TBL_LEN];
+> +};
+> +
+>  /**
+>   * struct dpu_hw_dspp_ops - interface to the dspp hardware driver functions
+>   * Caller must call the init function to get the dspp context for each dspp
+> @@ -46,6 +65,13 @@ struct dpu_hw_dspp_ops {
+>  	 */
+>  	void (*setup_pcc)(struct dpu_hw_dspp *ctx, struct dpu_hw_pcc_cfg *cfg);
+>  
+> +	/**
+> +	 * setup_gc - setup dspp gc
+> +	 * @ctx: Pointer to dspp context
+> +	 * @gc_lut: Pointer to lut content
+> +	 */
+> +	void (*setup_gc)(struct dpu_hw_dspp *ctx, struct dpu_hw_gc_lut *gc_lut);
+> +
+>  };
+>  
+>  /**
+> 
+> ---
+> base-commit: 2433b84761658ef123ae683508bc461b07c5b0f0
+> change-id: 20251017-dpu-add-dspp-gc-driver-c5d1c08be770
+> 
+> Best regards,
+> -- 
+> Federico Amedeo Izzo <federico@izzo.pro>
+> 
+> 
+
 -- 
-2.49.1
-
+With best wishes
+Dmitry
 
