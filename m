@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-859003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E52BEC747
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDA2BEC738
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1DA64E99B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:35:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD3024E4F3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7369D2459E1;
-	Sat, 18 Oct 2025 04:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55F323C513;
+	Sat, 18 Oct 2025 04:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWKywFiR"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Te+kOhnY"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E9A1448E0
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 04:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973313C914
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 04:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760762122; cv=none; b=dDsvPadsc7Y9jrMDbv46iuhEaSC1cnTAM2uedbxtXONYiigkrD3lCiHVF6y88nQT9lkI3lEznpLhcyJmmI7mBtFR2VN+CkwyxWlSer4/oIRKdVrjVNR7Umok8Z2UroMpQq7+VaErLNDetgcQ5PQAOzKibbmScJ2iWAM9ItPeaOE=
+	t=1760762093; cv=none; b=GD3Z8xppuenOvFwTkN2mwIGJvajej7ur4eq6CgHdh2cJeZoxE2tqC127De9Tmp8mL21OUR8TO+u0Ncnwq4kTO8WC9HJVpDiB9jG2lvltlNGE+RKX6pa2NMQdr/Uat0V9keJOMQ7LUgSXO8yymJp5aKoTG301RIXo/EVFYV86uW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760762122; c=relaxed/simple;
-	bh=IRlElH/s4TgwQF25W5IbthX1Ni1hpN8zqJF38YL9VDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EmBhTVuaajw/AlfLDo6y6syp1DrLDBhokyYP8DBxFWT3SfzR1R+gNUi2kYLf4Rfvq3J1/iyi+souZfqYt7lTGKdAgqJFjrwKDmxzl/WMzUTkX7bhzy6q69DEqHeszBgTR74c5X/RUSDGv8kbO9CfU4uCwYxxWG3x0jGXdeLUCvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWKywFiR; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1760762093; c=relaxed/simple;
+	bh=GxR14wtXNDXoVG4QYMZdHFm6watYk/xR3Ph2wB/HFgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+pTikgM8j7x7um2cyr7MrCnuPnLyN8Phb9VsL2JZCPkvSmIxYsRk5Gn/0wJ8L/rLKAjCcLGFf3X6ZaHXbbptxtY8pUedzmPRw0EP08+uQQVkc8tqjlF50ywcnuq+/uuOGW3TpxXcP0XoX9MZbJY6lA791iuIycA3ZP8QORCaYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Te+kOhnY; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-279e2554c8fso24762535ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:35:21 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b550a522a49so2112808a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:34:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760762121; x=1761366921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwE+FlafPdFDMuivWnU+BJHVFOy/nLZHlq4G67TTc0k=;
-        b=UWKywFiRFTcbr0WoKz3tq0jYWoWWEFA99sV0VV5grcfrEG9Grf4aalRUNbOa59XBBg
-         93jiaJJiNNLcTumGzmCJWv2GO5fyaa50/drTB5k0NcxQkrgUirR6jHUhu+UgbT2pdKS9
-         3PLWshh367KYrBkcP5qvsYwi50+RHVWBwfFfnjsbbcZ0F89A50J7prgVAz/XDACj51Gu
-         yGeuTY0m6uEOaID0AV4JqFiuV4EFCMR//4bSiaCTg89lG+rAp7jnwUf4xOPPLwaRvLKg
-         1rCohe6nTQjl0VHgodswC2cZIhROm2wyUcD7T8sL0FMEVkCXhRyA2PMkuTitIPrqCE5S
-         pzZg==
+        d=gmail.com; s=20230601; t=1760762091; x=1761366891; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MvkiGnJycOUUb9mLccpGWZ9e0R42gUUGVNQEgcKUgVk=;
+        b=Te+kOhnYivh5nlVMIqnn2sAClZL71svnEaGQx9q0BUedVrLtFuTITJrA4njAzfOh1b
+         GDcaG8Fwzo+tCBgfJ17KsuAJhqNFDA8gAjqXGzLO2/LQsY7DKZosKLeoYkLjW3bCsaJM
+         6++KONnE3gCsDrLcINpyGAXZ4AEGQS5pXKHdwIGNNgi3hxvNV6mLhZ/1UUPYUvMZOHGp
+         yq1YFYleS7756PSxeJd9vSLFqDeAQJSMlGNeWQ8HBfLZaeCsvwdxTuqeyXnwX8v3ePn0
+         CxjKLWOFISHi6Sikez0ftDbTSPm904xFA9S13vJU0vdIll9pGaofa/4eq7WfZb4nlZjg
+         eLFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760762121; x=1761366921;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FwE+FlafPdFDMuivWnU+BJHVFOy/nLZHlq4G67TTc0k=;
-        b=fqpujZ4flkEGzMI1GekkZj9BIV2cr5rEGPDRIdy8b7EZc10amqijChMl6ARZSnCmO8
-         CHi5vIz7wUH7MpThkONyfnfHrs3M2WThruuABoFw6rx6pU8gBnjtjbLYoirusdIy5f0v
-         xl6nJ4Sm8ZVuwhDfbgCpqyQPC/hOA/vAF9FBQtyCTdDDZGQlYMqzbm0zcKivQKD7PgjE
-         O4O8yYdB0VJaziLaFGrofKz2EnUPMtfE8cq7zrHZYS8yFQ/EIfvMCrMMrXn5kRZKiUTB
-         TYdVylQ5CDFSrpgEfTiDLJcVx5s+RxqgZgp5qhCHBRN0cj7o3jruW010jqfqIscXbEib
-         Kc/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3HVlf8Vvem9sOPxba6qRcgJBo6UMt6A82EFLbwE0B1YSqPiSbLykxbL3zU2NcDJi8AHXPgYv9k9TeQUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKm8A+9DkPhABQUBgUb7dSybVB1v3oIenr8LoiCQ9iWZl6kr/X
-	ZIeFRKGccfiCb+pPUrrw/K5lBLki+lqqB5YnBgC++bXEiyKpsC4Eow66
-X-Gm-Gg: ASbGncueRgSz3H3CYAxr8nm8vxm4vfCi6KeldkcQtA+rv5sMa/tGtPvubDtNqF59Jnd
-	V0Qsxtb/TqFcWCZ3r25/9fHDA9Z/TXu9RyMpz9VX0nCHkXKci5xyrlYq/eyc55znsz+yfNTeZOm
-	N5QJ8MHkgSlly6vrcIBRfCft1rHCGqKe/QM1S5BEjS1eb7mrDB8x0OaIbx5iFJao2BAKw5LpyZg
-	5kMlCcJjd7swkHCrb+WvG8uYWRUDgh9c/im7XbVHorQ0ZrPtC0i026CcSstA9j6Z+i2ivERf4bx
-	8P997QesT2/g1sJnyo5+93+MpfW94rYOdn7BiRcd7Hin4i8zoXdjs3R0rT9eR/Kr1d3ZzcqH+ms
-	eoNkPwOAbnrbYr/tp8531RjxQAHJ6K/3E7N9CxI7m0SEqn1+XoLwaFPiLyyVPsbI9ikkq1gxeOk
-	iHZNUXnLLj9zR1onhoHTAhwE2ov6ZicYhzh9sO/JqXD9DHCCW4jIM6x2XH5L2XKcDuq2oo2taRF
-	dmE
-X-Google-Smtp-Source: AGHT+IFjj+JR7R/Q2O8WxGOAy+zB1ukpFPQ6elAKB9VmH+ImOjLf6iOrU+WTRyaZ3nV4hWJdz9cmxA==
-X-Received: by 2002:a17:903:3bc4:b0:290:b131:31dd with SMTP id d9443c01a7336-290c99aa9a0mr69186125ad.0.1760762120750;
-        Fri, 17 Oct 2025 21:35:20 -0700 (PDT)
-Received: from cosmo-ubuntu-2404.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29247218eafsm12167715ad.101.2025.10.17.21.35.18
+        d=1e100.net; s=20230601; t=1760762091; x=1761366891;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MvkiGnJycOUUb9mLccpGWZ9e0R42gUUGVNQEgcKUgVk=;
+        b=N/eMvFcM+SeDqYocqBKKAqCyyfdQFJm934VMbmeGR2bqtdn++tWpzC7+vRjOvDJleX
+         /sAhEQTOKaKg5PuVz1pZScIg33Dq3bndar5cc0cCUp8KQh6VrL/9e33BCmul45frI7y9
+         oX75JTll2mSI/uNcHDHhJO0INpS79tZ5V6Uy6pDbn+5jF9V02Y6XaZKDRX0v2VWPOLO7
+         pkmcySy0/uLO6X9TEyKy3VSmD+o82s8WPJ23YTBV6q+4lLWIHZe0RUJz4LJ5O5szn6vY
+         bZN2EEU0tXoYoIY0sQZ0Z0iVW8oqLwefL71Vy+T/5LHq7Mm0VsM9AAxJwLEApwIsFTeS
+         ulxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX19KjtcZkg3MWGI87m1+MZWtAogqyRMHpojpNCbwYsFxI0HPfforbsG9ib/sEC2p+6txq7a0O89ByMg78=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn5I3wA3m3m5ZWgD+YhxvWNLSAC+g7qpx3E8YK0oncwwBUacIv
+	NQNfLine8K255owuSbfdYE3wguqPW19RG1POVcJMqsf52el9UHTITkT9
+X-Gm-Gg: ASbGncuMjGeKc7eG+VzYNzsFvtPyzv/CRCVy9D6F8DsQmiUsC0+TTfGXsFy8Jf2GSQH
+	dBe4vmRQVvb/3rDzzl/MkdrC5e8rPI1zE/oV5SixdwBaBk0KduRDxmi5KrJ3jD4WkcWYyu5KNtk
+	EkimrP2w84D/Zs/XfqiHVEfOIhA5B5P/PWFqcwFNyBQTnXYICOYlzRvWpRHNMZj2plcQ3inQ9KH
+	wloK64asqq6+Omgq6tvBIyuKhBIF5ZTXIEWfe8QZfli8skIaXSTkVU43tfxT/PzZMPo/9UWp8os
+	baeCHHQWx/DLyKn8Er4M3thUlirCdZkEvBCyUh38ka86+QNouWiFyRa2y1EXWLiDJPVCCv5NqSM
+	/PpYPsPZGKWTlnbI0K5oB6+OsmfAzjHT/rDyps0FMTpP6+lc3AfY5lu9jj9dE302Zfv+P10t7S1
+	jz4rprGYcQtCVonW8m9rXx8PWI2p0Tv29VAhwHI0i40Rh1fmDiPhk=
+X-Google-Smtp-Source: AGHT+IFuzxQOBI65vs3bpYxRhSg0TCMcUgkWO67CR9Y3kZQOPuLiNCx2YD5UCXS09TDtIujDvVhhEg==
+X-Received: by 2002:a17:903:46c8:b0:27e:e77f:57f3 with SMTP id d9443c01a7336-290c9cb613bmr76175445ad.14.1760762091145;
+        Fri, 17 Oct 2025 21:34:51 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:5e2d:c6df:afce:809b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2924700a883sm12500915ad.49.2025.10.17.21.34.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 21:35:20 -0700 (PDT)
-From: Cosmo Chou <chou.cosmo@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	joel@jms.id.au,
-	andrew@codeconstruct.com.au
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	cosmo.chou@quantatw.com,
-	Cosmo Chou <chou.cosmo@gmail.com>
-Subject: [PATCH v2] ARM: dts: aspeed: bletchley: remove WDTRST1 assertion from wdt1
-Date: Sat, 18 Oct 2025 12:33:09 +0800
-Message-ID: <20251018043310.1056032-1-chou.cosmo@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 17 Oct 2025 21:34:50 -0700 (PDT)
+Date: Fri, 17 Oct 2025 21:34:48 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, 
+	krzk+dt@kernel.org, robh@kernel.org, devicetree@vger.kernel.org, 
+	kernel@collabora.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: input: Convert MELFAS MIP4 Touchscreen
+ to DT schema
+Message-ID: <fxbpnzrxbmp3j3urthrvaws2cffjlbt76poareemwbsx4z6oro@tp7dy6qhinlb>
+References: <20251001183809.83472-1-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001183809.83472-1-ariel.dalessandro@collabora.com>
 
-Remove the external signal configuration from wdt1 to prevent the
-WDTRST1 pin from being asserted during watchdog resets.
+On Wed, Oct 01, 2025 at 03:38:09PM -0300, Ariel D'Alessandro wrote:
+> Convert the existing text-based DT bindings for MELFAS MIP4 Touchscreen
+> controller to a DT schema.
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-The WDTRST1 pin was originally configured to reset the TPM during
-watchdog events. However, the pin is incorrectly routed to SRST#
-on the hardware, causing unintended system resets. Since the TPM
-is not currently utilized on this platform, remove the external
-signal configuration to avoid the incorrect reset behavior.
+Applied, thank you.
 
-Signed-off-by: Cosmo Chou <chou.cosmo@gmail.com>
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts
-index 24969c82d05e..abdb1562115a 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts
-@@ -1080,11 +1080,5 @@ pinctrl_gpiov2_unbiased_default: gpiov2 {
- 
- &wdt1 {
- 	status = "okay";
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_wdtrst1_default>;
- 	aspeed,reset-type = "soc";
--	aspeed,external-signal;
--	aspeed,ext-push-pull;
--	aspeed,ext-active-high;
--	aspeed,ext-pulse-duration = <256>;
- };
 -- 
-2.43.0
-
+Dmitry
 
