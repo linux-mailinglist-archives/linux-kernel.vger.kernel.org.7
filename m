@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-859429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36848BEDA41
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:25:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5A0BEDA29
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613B05E492B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B76219C2E3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4492C28312D;
-	Sat, 18 Oct 2025 19:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4095450F2;
+	Sat, 18 Oct 2025 19:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJk0hXth"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkIg6/ll"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C48F288C34;
-	Sat, 18 Oct 2025 19:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49514275B06;
+	Sat, 18 Oct 2025 19:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815390; cv=none; b=SOYAK6YZDcBcykWXThpch9DaXKeXefDfvKpE3GCZJsrpSFGXBEIHf78GKxGhl8QqynDVFvnji1kh0RmVZfKoEm/g2VDzBD74yjlPIeKuYEig+P+SoYph9+6qnb5bidScYXfl8mjIqXnbYcnq1CFF0eb2+oN8mH7phwYTP6nrlcw=
+	t=1760815393; cv=none; b=ecnnU1lfABYhqh2SRFLcXerOEOYwfI02P2mK1I5ur9T2Ds8xCuzMQ0Spjv+bJfRm8SQHuqt1ec6aZZqxdw0FfKrY5oB42ydRAH0vgunnmZcx0oumaqs2cUmNBV9JzSZ1E89aT78Z7+O51Bs9ukzgxOxpkB6zT6pqX6Cnc2O+Gqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815390; c=relaxed/simple;
-	bh=InE4Hu+liqrKpegKA5uPHCMkEelWune79jtS1en73h4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EIC9TYqBLDKSWCjUGZbV/lcs4klCft8NLhSacM3zd9p+rxOZtALmIaTPTnnv9AwNo4yActMQCIcGLP5I28Qm7slu4oS5CsCLFSLb760r4PUSXCwqFVZb8nhZNDgyfI2RJUvLCnjM4tQjdpYvRl35Fumcalvj1XED/Dr2rEQMIxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJk0hXth; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225A7C4CEF9;
-	Sat, 18 Oct 2025 19:23:10 +0000 (UTC)
+	s=arc-20240116; t=1760815393; c=relaxed/simple;
+	bh=okaLHNChsfatPFsextwxLTnkXUZZn0XdmVRPBuesZG0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EAi0/uds8b2Opxp+bVcJmlDCUnFdDvuveGkpB+G98B3Dc3TGhonwtXB9SSN2haxxnbaCkoSTPul7gSK2sPuiJQ2gvtRB9RbsVNsEMIcjYWk0pu8nfS02jb9dDe5J/VYJ+xfcTN9BTbO0fNfdDTCz24kTaaV1DFbsPzmrVhVe4eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkIg6/ll; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 242DDC4CEF8;
+	Sat, 18 Oct 2025 19:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760815390;
-	bh=InE4Hu+liqrKpegKA5uPHCMkEelWune79jtS1en73h4=;
+	s=k20201202; t=1760815393;
+	bh=okaLHNChsfatPFsextwxLTnkXUZZn0XdmVRPBuesZG0=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=jJk0hXthpr+xM+19TYsCYHqKKIJ56Kf37WlGBloY7jFC9factLqHvS5Gn2o4hcByI
-	 LXp+X+0vQDKXYluV3dhNMQO8AQHKzY8ouTUifwUCH81Cqbwrzo9rd+abmmF/e9jE40
-	 FRe7aXCM3Y16WdJ7Tu2zYNFRWl7DziJmZzL5D7RNyXI7JLKrZVMHn3coKQx6azPKJ6
-	 obydAlu/LaR1B4SIoFtlioIBgW6A3GwvJroo7FccNQnipUvwn1YulkGK+ZrB6l0RG8
-	 Thf9rtwikzchejjBSTTPK9qCfpVL2wRJaPKfCDQMEZM5TappQddmrpLMtHkMoKzu1e
-	 RDgYIf6eybthg==
+	b=mkIg6/llf7adv5heJFy3Ov0LoZTOITS/Ai+fY8DmEPPOoUy6n8CS18kWj6NyD3DqH
+	 JA+FbD0B0oqkYr5z64jEItRIRE8oFrD92vicS8gtqewci68ziJCJJycnf0LdS6ql8U
+	 wvcTgKqyvgaqg8f+6Vs93nqzMkELz7HpNbYGGBgsZX7Z1dgQAPhQ8WNJaMoExNs5mE
+	 teQ75DTGVaNOdMGTo69LqymTqkI+I/XjUqs13c11w5/+z71IAaU1fzRnl7oVqxgauA
+	 Su3tbP+TchuiE0CjbyxJyncVajxKIQU5wGUQg/BK8XPuPOlTQO1RohcCmjFhKpae63
+	 LbvdGSC5b0Ucw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7124C39EFBBA;
-	Sat, 18 Oct 2025 19:22:54 +0000 (UTC)
-Subject: Re: [GIT PULL] Compute Express Link (CXL) Fixes for 6.18-rc2
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E4139EFBBA;
+	Sat, 18 Oct 2025 19:22:57 +0000 (UTC)
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18-rc2
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
-References: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
-X-PR-Tracked-List-Id: <linux-cxl.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
-X-PR-Tracked-Commit-Id: a4bbb493a3247ef32f6191fd8b2a0657139f8e08
+In-Reply-To: <aPOB9lMvnrXLf4ZD@kernel.org>
+References: <aPOB9lMvnrXLf4ZD@kernel.org>
+X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aPOB9lMvnrXLf4ZD@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-rc2
+X-PR-Tracked-Commit-Id: dbfdaeb381a49a7bc753d18e2876bc56a15e01cc
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ea0bdf2b945e91137cc465d3833aeb659ba93d79
-Message-Id: <176081537289.3081941.5281546598724773428.pr-tracker-bot@kernel.org>
-Date: Sat, 18 Oct 2025 19:22:52 +0000
-To: Dave Jiang <dave.jiang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield <alison.schofield@intel.com>, Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>
+X-PR-Merge-Commit-Id: 648937f64a09ae4a938a6793f95207d955098038
+Message-Id: <176081537600.3081941.14515189649303697967.pr-tracker-bot@kernel.org>
+Date: Sat, 18 Oct 2025 19:22:56 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Stuart Yoder <stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 17 Oct 2025 09:30:49 -0700:
+The pull request you sent on Sat, 18 Oct 2025 15:03:35 +0300:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-rc2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ea0bdf2b945e91137cc465d3833aeb659ba93d79
+https://git.kernel.org/torvalds/c/648937f64a09ae4a938a6793f95207d955098038
 
 Thank you!
 
