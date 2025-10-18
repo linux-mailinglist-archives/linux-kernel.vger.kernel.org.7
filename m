@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-859096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54BABECC57
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:21:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42746BECC63
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 401D6350470
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18FD624335
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA63288C2B;
-	Sat, 18 Oct 2025 09:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1FE285CB9;
+	Sat, 18 Oct 2025 09:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYnUeqjx"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1eDfeEj"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82B928369D
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8476B287256
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760779279; cv=none; b=oteg4+gQ/jCqGhP0bApkuIwZkZJ/BByoZCJdbhbky+T4a4L/AadxT2sXdnMtEx4W+rSDbhqiTWwYEXg3sIGZi002Sqm9Ri02lnEgUuM4pCWzEuBCDE9wN40Ud8kratFJX6qn9SmXcxzttI2HL2a0GuT7++5lk4aBKL7s4QIRRE8=
+	t=1760779347; cv=none; b=nbu6P//HU34e9gS7JBYcJmWvXuEvw6QEFb0a5sozEkJtn3JS6wimoqtJNBojsEcVc3B9OeJr6+0k2P0Zh0bvCIA8+lVLlgBqWwoqFaJH6aLvmH0vonFbltV5ijErXTQEHSvAHijGTwpMIHuZfMzwR/qJS91JRonTvC4t/FVNVRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760779279; c=relaxed/simple;
-	bh=0Jpj0J+HGWlxpgEJDxw18icymMillm7q98N+m9wVbfg=;
+	s=arc-20240116; t=1760779347; c=relaxed/simple;
+	bh=hhVH8BkTy/gjKD1kTBbZU+bCce00nFxG6odly3zlq+4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yorq6wVHl25EHfOmOb2pLxgOIpOoxn2hPcIypx+JuKFCiFrc1j/+Ee2pFbYDIQbW+h8WORtMj1kqNirafiTh9dPP/XbAAgjgoGinkIM5XLKoxFxmlvioU0D/Qs8dWLbKt4cHJs3awmPvPN7YqIKokUjH70j99gOJAD1G6R+J75c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYnUeqjx; arc=none smtp.client-ip=209.85.214.181
+	 To:Cc:Content-Type; b=VchFq6YSX7wKDJ/7fHkM7crkfMUOPfEqEZ4ZrqOIs6g63GMb9G8KTCHYou6me/FCRU1dsWiiddGEnkr0p/wN+bxl4icU8JwFJEokj2sIWMWDos6fo+GfuYuzY3pBYMs2CU8vGAyGUGBbENhPsFNS0rq6XYejr85tqR8OTpjgnTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1eDfeEj; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27ee41e074dso32724455ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:21:17 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-290cd62acc3so21042605ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760779277; x=1761384077; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760779346; x=1761384146; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0Jpj0J+HGWlxpgEJDxw18icymMillm7q98N+m9wVbfg=;
-        b=hYnUeqjxWo7gqKq4rs/x3BBTM9yb5nsdo9cHcc59dneoIjgUY9Yv9t74rG02ZGWE4f
-         w0dj6Gr1Li++jPHEKCMohqDAsWvm/NX6JWFjt3hO9YI6CsKz9cxs8AV+Y8TlfLLb+iu5
-         1OWn6X/oqBmZSE3a98aYTBgXO+B3nlPmB4D0ZLqW827UzsZTtOsG2fhhr+Uo+RntWCGD
-         AEVeM8Hpd+p3NNfKOZQNiR8KkR7LA2rmfMgJ8oozpL9FPyvhyiStztQu6f44xSdKJicH
-         FuD+qi1nRkctW30oPsNkSQgB4qPz9vklD+5hp9lu8KE3h0mDVIhpID8IJc8D1C9wV57z
-         5RCA==
+        bh=8G9BxEckj/hKiD9YMQD9HVfTYNNFZve6IgS2FIJnpK0=;
+        b=E1eDfeEj2AhBhO/FHJ4Ffl9bH04b//Hltc59h6ZdvLgAK3rZqE8yCB9SrZNetZYZv+
+         yQruB4Ewnx/0vHDdyWVkjhdm+HiMdM1kqRbBmjNxyZ6Nxo2yWYkaEW2jJfYwYeXNZvDL
+         SeddcsCkVZa6PBFGYl9Bj0pcE0gEA/DbtJfi5EOOO2RIylD/pBVt92c362gkXUpvrCgp
+         QPgRC4u17fdXwESTpISTUkdhcqyjjzuIDTjgYCrx0HlUWS+BOqR8mYc7RyKehp+zo6ls
+         GZXnd2OLnWWT0PmPkGQzCogBrN3hJjFwJWzh+UWbn9Nm27iJls7r/hFz1W3kE//p5x/U
+         OKlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760779277; x=1761384077;
+        d=1e100.net; s=20230601; t=1760779346; x=1761384146;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0Jpj0J+HGWlxpgEJDxw18icymMillm7q98N+m9wVbfg=;
-        b=u7aDsboI5mP4BX9tNctEmqdqRz0zreWeoV2rKX30obupf8s5tBTo4+ZRN2eFzsx0Qi
-         1YqLM20LrI+NDL7jlOk/qjSRoaoyst/pS0DKrXJUYaBnq40VzRdtmpF6ADKOtz/D2pC6
-         3Drc9ZboGtV5/QvMR1kFsbIMAtFGGryotqqhVu5SuV6ZbZmJvT43Uh7aYDLXuTXyvZ9U
-         2kh7r5zJB2Mw3CyIKJM8jQjVbxv7UTym37tT9vZtAo4z2xaTZ2allJ643q4TGitUHb+i
-         NrQOozSLRuCSBHk1BDWLNXoiczDv2kXvqaWUgtdio9pDtw/I5Mv2LlxAy4I5D7GtaqtW
-         KTvg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0f8NWFCzkyDdjfaYGctB8qDd5rDTi/dgjbVJB5LPetq6uvSfA0K1HzyQWGwVJzG++60w5F7qDWGShMV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvCEvlbbz0ydW792b5q+YygJ1Xi0WXS9+x1j7Stm9mMiFVXxmz
-	OlrBe0/n7x4fQVFk89Q1w0rtl3haraVS9Vs/v2CICR+ejaSRC4UvyKbSpbQdyhYAGhtFNAOAp32
-	7aLpMoA3SNqeS+hXigmH+WdqXMD5yIEA=
-X-Gm-Gg: ASbGnctBohVTsHKXUjfwzrOSdvU3fISByqpSt5KoXsNnvRyKFDdJ2yrlaFtMKdIITxj
-	axN0Nk6WM+3kMyyEL8oc1Sf9ULPrc0UMNXZTWnzKpHQcJiRI8kzcqLzwXYNciW+cmWCQ8xZk/g4
-	eAELg8vMyJAJcpARNafpjuGhlK8VZXRlh2cOnkjze/SZkE6fToYBDuhsPNLJCPHbSxWir3xH44C
-	sfDs4RXvyCBSU1ukB690wLBAzYlEuH/zkw9egDkN/SDuoTPVQTtzYYBwIklebQAeoPS7z7txhQ0
-	2Q7JoVy4Ajy+vqTbT//Irc0kzkb9zmF6n67vjccblBjwkcfKOOfE/Pvzrsd49SHxc+PI04/qbMo
-	f
-X-Google-Smtp-Source: AGHT+IGV8TX8jiCj1BUJV+Bf4OxHN2PehH7nfk19H5odslvr7a563qqnctR0uh1y3bJRDSwhnrdxOY6MvlqMN5zT7Dg=
-X-Received: by 2002:a17:903:4b07:b0:288:5d07:8a8f with SMTP id
- d9443c01a7336-290c9cd4b60mr68649255ad.24.1760779276996; Sat, 18 Oct 2025
- 02:21:16 -0700 (PDT)
+        bh=8G9BxEckj/hKiD9YMQD9HVfTYNNFZve6IgS2FIJnpK0=;
+        b=NNkWooo3hfpWktZfOQiYH5RbNgyAqA7aeuBcepIlOn2W2OgUGhgyuq4swjgrtiN3Ep
+         3YWCt0W6I4o4Kxli12wfxtajy1TCfESy+GF+RdEg+DMNw767MaeK1F6aqeWAvK+QS+/S
+         cNDhNSkNcn77CSLm4MYqOo+y5cc0y1FgG1eNoQF/l7or7HcAJsEDchcc16s0UvgamnXC
+         5rkl5KTQ74tU+gqijsOfO5rY5oNQXsB0qTPw+Naqgn3MIlGqAl07I2+omKjrqYZu3qJa
+         3dK46QK/rayBZuukWhUv3yrKMLXPGQRpRWbeRtvuMwscrPqR5RJ/R02J0TwyWCXzKOCn
+         0TxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9FeuoTf5L1x0cHpXbb19y9/m5IL0iXPqU9y3MzVhrFVUyx9MbSTpx7634yYnC+0lFhT3jkeeeFkHVSi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTNZWhsLarrItUu8VQcdTXoWwyt+PocPp71qw/U0hfLKXQInJP
+	YAC2sfx0viA0sa+xvt4QWHXjKeqXl9pEKnB3F9BA68BrmAQlPm8APBgx5IbWESO2HR3A/asZ0kV
+	neELGw6aJ2vGEaVu9JnNzbortAM8F2nuW1g==
+X-Gm-Gg: ASbGncuFGlW2AvaaROosR5Ht4I+Y2hvAKJTU5OifP3PsyJonQWkn1c9QyHugiaDfOxj
+	/H7isfrP18413l2ekLNTYlvjJKayUlgBVkaau1L1FuWdIE+dh5YbEc1kqLVDyyEzObPWTy7h7HF
+	h66Bk6keQ/pYSusPd6qzvkjXJ5Xuy3mgdI7zssZKNMh6ZTVuxH2DvtlD/8WcxfBYRpctajCibXt
+	4JIyLw6UsP4NN9lYG9Ex4LegSSj9kLDufJeQmOfULfDKEcEUAkrGwhzWrvncu5i5uS9jUTASlzt
+	LZ6rYOOYtzjkwU9SuGgo39bxAY9luQqbcCykSzE40/DsuaKQKKHazHxflDaWyZ6wgydcoymux4L
+	O
+X-Google-Smtp-Source: AGHT+IEDraNRZq42ZNDrvZOFr/ZhVuZxPKdBOfz5GcwmFXkQIMvrymtjNxBY7OaPdZra3os9hGzTd4YOk5RGIoRB1pc=
+X-Received: by 2002:a17:903:15c7:b0:269:b2ff:5c0e with SMTP id
+ d9443c01a7336-290cbb49964mr84235515ad.46.1760779345803; Sat, 18 Oct 2025
+ 02:22:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913105252.26886-1-opensource206@gmail.com>
- <CAKPKb882DgYB2fZXRDU_y1Xqz6GtFEErvzzET9eOAm=db0ns1g@mail.gmail.com>
- <873C85C5-2BCB-4631-BA18-919CE448A7CE@collabora.com> <CAKPKb88VHwGp-iLMa=zZy3Czq8S8wUd9Zzkicvd4er9OiLg6UQ@mail.gmail.com>
- <8AB96B5A-1A80-4A8F-AE8B-787FF71C5A75@collabora.com>
-In-Reply-To: <8AB96B5A-1A80-4A8F-AE8B-787FF71C5A75@collabora.com>
+References: <20250928054913.7871-1-opensource206@gmail.com> <CAKPKb8_8uQdzNevB4wVpXcRrBr0-rjfvBR=oNNyCCA4yASgK-g@mail.gmail.com>
+In-Reply-To: <CAKPKb8_8uQdzNevB4wVpXcRrBr0-rjfvBR=oNNyCCA4yASgK-g@mail.gmail.com>
 From: opensource india <opensource206@gmail.com>
-Date: Sat, 18 Oct 2025 14:51:05 +0530
-X-Gm-Features: AS18NWD1XKeTKZ31jaRbMn0R_taPKCa1cnrjUYA4av8AH5zKwOnKC7AcJP8OgyA
-Message-ID: <CAKPKb89PJqFr5UTw0C7pQMncm+ZzskQew+mn6p7tXgTNXvEWEQ@mail.gmail.com>
-Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: mchehab@kernel.org, hverkuil@kernel.org, ribalda@chromium.org, 
-	laurent.pinchart@ideasonboard.com, yunkec@google.com, 
-	sakari.ailus@linux.intel.com, james.cowgill@blaize.com, hansg@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Sat, 18 Oct 2025 14:52:14 +0530
+X-Gm-Features: AS18NWA37AT3s44AjDjx0AdSOALzC5N477YH04L3-Zo96vppdITWdCR4HCOVGAo
+Message-ID: <CAKPKb8-JE5W58jQOFSxr74sguoRop=3BH9EsVid-dXyGZkEpCA@mail.gmail.com>
+Subject: Re: [PATCH] drm/vmwgfx: Replace schedule() with schedule_hrtimeout()
+ in fallback wait
+To: zack.rusin@broadcom.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Cc: bcm-kernel-feedback-list@broadcom.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 7, 2025 at 7:20=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
+On Tue, Oct 7, 2025 at 4:21=E2=80=AFPM opensource india <opensource206@gmai=
+l.com> wrote:
 >
->
->
-> > On 7 Oct 2025, at 07:50, opensource india <opensource206@gmail.com> wro=
-te:
+> On Sun, Sep 28, 2025 at 11:19=E2=80=AFAM Pavan Bobba <opensource206@gmail=
+.com> wrote:
 > >
-> > On Sat, Sep 27, 2025 at 2:27=E2=80=AFPM Daniel Almeida
-> > <daniel.almeida@collabora.com> wrote:
-> >>
-> >> Hi, I=E2=80=99ll review this in the coming weeks.
+> > Replace the open-coded polling with schedule() in vmw_fallback_wait()
+> > by schedule_hrtimeout(). The old code wakes up at jiffy granularity and
+> > leads to unnecessary CPU wakeups during fence waits.
 > >
-> > Hi Daneil, did you get a chance to review this?
+> > schedule_hrtimeout() provides high-resolution sleep with finer control,
+> > reducing CPU utilization without affecting fence correctness. For the
+> > non-interruptible case, use schedule_timeout_uninterruptible().
+> >
+> > Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+> > ---
+> >  drivers/gpu/drm/vmwgfx/vmwgfx_irq.c | 16 ++++++----------
+> >  1 file changed, 6 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_irq.c b/drivers/gpu/drm/vmwg=
+fx/vmwgfx_irq.c
+> > index 05773eb394d3..64045b0efafc 100644
+> > --- a/drivers/gpu/drm/vmwgfx/vmwgfx_irq.c
+> > +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_irq.c
+> > @@ -202,16 +202,12 @@ int vmw_fallback_wait(struct vmw_private *dev_pri=
+v,
+> >                 if (lazy)
+> >                         schedule_timeout(1);
+> >                 else if ((++count & 0x0F) =3D=3D 0) {
+> > -                       /**
+> > -                        * FIXME: Use schedule_hr_timeout here for
+> > -                        * newer kernels and lower CPU utilization.
+> > -                        */
+> > -
+> > -                       __set_current_state(TASK_RUNNING);
+> > -                       schedule();
+> > -                       __set_current_state((interruptible) ?
+> > -                                           TASK_INTERRUPTIBLE :
+> > -                                           TASK_UNINTERRUPTIBLE);
+> > +                       ktime_t delta =3D ktime_set(0, NSEC_PER_MSEC);
+> > +
+> > +                       if (interruptible)
+> > +                               schedule_hrtimeout(&delta, HRTIMER_MODE=
+_REL);
+> > +                       else
+> > +                               schedule_timeout_uninterruptible(delta)=
+;
+> >                 }
+> >                 if (interruptible && signal_pending(current)) {
+> >                         ret =3D -ERESTARTSYS;
+> > --
+> > 2.43.0
 > >
 >
-> Not yet.
->
-> =E2=80=94 Daniel
+> anyone please review this patch?
 
-Hi Daniel, is it possible for you to review this in the coming couple of we=
-eks?
+Hi all, can anyone please review this?
 
