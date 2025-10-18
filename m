@@ -1,548 +1,558 @@
-Return-Path: <linux-kernel+bounces-859474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CB8BEDC2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:17:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248B9BEDC3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE174E1D41
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E25C3A5F30
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C382826C391;
-	Sat, 18 Oct 2025 21:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5DE2882B8;
+	Sat, 18 Oct 2025 21:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P7nCt1lK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeNv0H4i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCC7262FD7
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32B3B67A;
+	Sat, 18 Oct 2025 21:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760822223; cv=none; b=QaKellDzQMLwUUDRNOI3p1uZNzAg3BgZ7GPkHO46PraUIVdN0N15/87aTTTHyqIzpXuJxImlJcpP5Fq4MUDo7MAWvORswuEEV1q4DpifS+m8OYuPsaF7NNDsNDX3pMmdiMjE1sjau8q/ikUfEuTGalomVgsdad1DmLNsXfvXock=
+	t=1760823024; cv=none; b=DGm1TwUXEvZE2J70g6MXGLbeWPSb9QIz05NQOBS924FTKCQXUkGoPUawsbwX21jBGzB/7zSotiJY+hofCJi4mP3HbDEZRcu1eicgKtT+oDXpteKxRycAP57CkxqHGKaW4o/TSCiiukiUb4lc/MtuxJwts2ifnugEm9bHUpW6ZZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760822223; c=relaxed/simple;
-	bh=RSejMAOVCoS47PjU69RoKWtndQOm/8ftxN4IURL/+G0=;
+	s=arc-20240116; t=1760823024; c=relaxed/simple;
+	bh=s7LzihUW8g+zk8K+aJ62ksp7yLk7CX3HMP0GLaGgZUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5yyZyzsFRYHiWfAGQS9B+KsoBc2pE4jn35reAmk0d0XSmOxKYOAcBKR9jWTfjhdPzVzUubKg7MKmtxkNwyXvdJ4oDLfRLuL1hDovHaei4jO8t481k7utBdgPYSVYhcV6d5IgjvgMsZZABMpf0jG6ZplCm7yj5T0hHxJsFlfs+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P7nCt1lK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59IJjdbL011171
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:17:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vrxfYT8Rg7BR1iZK2D5Bfqse
-	b7Dp1q3QQoYVTBHmaUI=; b=P7nCt1lK854RKmL6G8DimTXTcdOd/BAqw/GLfAIK
-	pcI8vnzt2OsZh80T4VbyUuedYWu56adfK/Xa0yhJCvn/CEGlNLkjw6KW8xXbolGw
-	z14oRZv2hCTuzFF4TfzQMNTVJbpY5xDL1fsWkeuBrEnjxbIgm4sqK0UwlUFOVeJr
-	cZs4k1mPDKpI4J8+LVsnBhCxOCY1G2anCxQIYDkgEIIQieFj5Bs8Jjkio0py7WF/
-	5V2fQUX1E4XnUplclYwOtckiFWvYhzT47+FT6USBMvsrxsfXORVldBFuBQSDdCBK
-	K4MvxaaDXSXmspllOWp1cCC6Ufau9IqYKMb1ZvmPatol5g==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3nf99mb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:17:00 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87c2c9f3058so63833856d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 14:17:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760822219; x=1761427019;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vrxfYT8Rg7BR1iZK2D5Bfqseb7Dp1q3QQoYVTBHmaUI=;
-        b=CfMWMtsYq7QymK2FT95lyas3RP6F22c7gG1u15cbmNG5Myv5JAiKZm+F0Al6a746Pb
-         HaAJJSST1SCZCCjDalwNT9qal1wKSTCVUn0TDaY9mRRA0TE5Un0BDrXinOkW2ZC3PB0G
-         H28PJXXekDQPECSL/Lfwlg50nSqv1+TExM3nouFPj8oM6CZ3A3+X2giW+sDR83m/9oLu
-         h7l6GD1UxEnMW479ySj1tWZztbsrkdUUkoQAv8cRaJZ79rjvDFt3+sKmx8PMWqG82ToP
-         RoTE6lkY8EJ7fQ4Ld527PSj0cnfYsAvnpwrqfILNgayv/vIMGyTaNk8jPegu7G9yq3aP
-         9V4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWyD7h/iqibyIhrjF3s2Y0q/uZtM0yBNy9e86m6A8qbcG6MiTs3Ou9Twd3SF1AsRdyO3ZcOjawX1nzmHRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOVrv1GQuVVZEykKxA5hvnfXJvoEdxO7m2zg8w2mLKFfo/UG2I
-	J4/kvfGJ4+wvHYlabUosFgM2PcYehS2oYNtvjCjSkVW/SumlVy6XkO9WTIIDoZMLP3juzp86tqO
-	zdSWIR4caGZ8ENihMxstP1YRFsTtZKGSs6gMa8ps4wOZaMeRBmv4PQC6FrsqNDr4BTCw=
-X-Gm-Gg: ASbGncs25sRZPjrxKcmzjBVSeoJAdxAeMPDcQNegd8a2YM+Aqrk7zB/Zeuzjt5G2/+t
-	Tl9ZQkU5Si2UkjeUYNYUzX+7hXLSJOToI//Fuh9jgO+g3RQ56xh3zXV9UI/sll8DZo32ancct5g
-	QEc+1UFS6ijv7cW7mkR4xN84VUm/FKJ2+dcRo0KjlYgqPS+Ae+oaDdhVIzTMcf29bAyETp7zUsA
-	W5Q8G2nrF6YMozGfllLE2QQwCtrx04J4Cdw4KD9A+hgWwfXu1HsQaizIQy1H5FpasPeImHbML1J
-	3Cu5RAirGmMC2Fu5wW65+HgUAQfc6fskZCqH2dfZKOxBZdZM20hQFu27l9zsadIPeHAycxdylaG
-	h53Y0d9MoQW82LxUGKQ5DkClcrr9RCsUvOec0WA0ZcaUAzs7GYPMSj0Zt/GIcr8oZEs5zIPk51/
-	vA6eqRdMoZJP8=
-X-Received: by 2002:ac8:5795:0:b0:4e8:b846:d9c with SMTP id d75a77b69052e-4e8b846128bmr19763991cf.39.1760822219199;
-        Sat, 18 Oct 2025 14:16:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhMckk6vv3eZfcCkUZgmjTi4d3z78dKv7YVQm6GKjnzp6ZqtUqwANaCiyEgjQEUuP2X+X8KQ==
-X-Received: by 2002:ac8:5795:0:b0:4e8:b846:d9c with SMTP id d75a77b69052e-4e8b846128bmr19763641cf.39.1760822218592;
-        Sat, 18 Oct 2025 14:16:58 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a91f49basm9074441fa.16.2025.10.18.14.16.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 14:16:56 -0700 (PDT)
-Date: Sun, 19 Oct 2025 00:16:53 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: federico@izzo.pro
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        nicola@corna.info, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH] drm/msm/dpu: Add DSPP GC driver to provide GAMMA_LUT DRM
- property
-Message-ID: <5gdqqsl3a33z6aj5yl2hgm5dulkdg4aqbb4k34yrfiyslzeg4j@s3bcgldjs4bp>
-References: <20251018-dpu-add-dspp-gc-driver-v1-1-ed0369214252@izzo.pro>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGSWhbdF+FaYG6aauO2oBaPo/kx9lvFiR+LAyyG5szjPi9JtOx/hKkTkZmw6sLCxW33FIX2y3wvZHCzGAGRSRdmeaUL3Y4hjPzUHUGXTHXnesq4ugTbU0abfQaq8c2Ljm/s+eHfYDV2unGNyOxuYSbvE+9inrOb4OzdGoIrWjeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeNv0H4i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C676EC4CEF8;
+	Sat, 18 Oct 2025 21:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760823024;
+	bh=s7LzihUW8g+zk8K+aJ62ksp7yLk7CX3HMP0GLaGgZUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TeNv0H4iWBB5oLZpuRBdGZnQaeneaPvxNgEHSJgOSQlmhZJOxexUzdHbsrIGCM6YH
+	 bp/49K8CYRyZclFHzsqGkQvqq/3Wo43IzKGR+wGBaW8FD6MUE4FtHJcB0tQ8VMd5rA
+	 /bC3NdFTDT/xcgle0Vsfxt9rvZ9Djp33fC6HeQZDy5QMYRw+X1veQeAJl8gid0KwU3
+	 60cc3uvZ/xG+aMBcThXugsQYYbNH/rDkQbwEoxkih5CQv7coaidnpFJi1fwYectZS8
+	 92XhF7x2GGTJ3KwsTPaJrN2kZyCD52YfH+Tgh8aijx3MNCGY9IuFiEKBvv0+KryXon
+	 hHdLVWaV7HagA==
+Date: Sat, 18 Oct 2025 22:30:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Peter Wang <peter.wang@mediatek.com>,
+	Stanley Jhu <chu.stanley@gmail.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	kernel@collabora.com, linux-scsi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: ufs: mediatek,ufs: Add mt8196-ufshci
+ variant
+Message-ID: <20251018-appliance-plus-361abdd09e75@spud>
+References: <20251016-mt8196-ufs-v2-0-c373834c4e7a@collabora.com>
+ <20251016-mt8196-ufs-v2-1-c373834c4e7a@collabora.com>
+ <20251017-remnant-spud-a2a21c2385e6@spud>
+ <118487283.nniJfEyVGO@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="AXLdXHxzimhoRKHO"
+Content-Disposition: inline
+In-Reply-To: <118487283.nniJfEyVGO@workhorse>
+
+
+--AXLdXHxzimhoRKHO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251018-dpu-add-dspp-gc-driver-v1-1-ed0369214252@izzo.pro>
-X-Proofpoint-ORIG-GUID: vI5sUIZz9xrSxJ0aPWlBPkx07rWFgmGw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNyBTYWx0ZWRfX4b99gdTnFT1N
- HFe9EgZ/oCUI8wHs0L0pXFvJ6mToBIfFMjIQhTp8rMk2yfQPDttIxE4n69XkaxQlNRvYCAnXSRl
- T1ek80P0jaHJoBEvQJR5g6qRPjMQU1A1UPogrdFhZk+DDaxJljdCQYkN0I6UqXZKJ6lWbKDhr2M
- HyrXsC9iBfQgvDMdekFpunKrTkIEybvNpb7em3Vy/fiVMtY64C8C3G+CNZJdpWUYaDWDdNa997y
- WR+yY7/SW7xPQCXWfkNfkzuPpqdjRdl74+aueKCdGvlj0BX107jh0YwzpIRwvCgZ2i/Ctel6iKS
- BGxmTc9DrrjXYHlnmZQVqSSlqu2OPkwIn7idEpaVJQBy3WUdaJW8gRCv6tMwmzOM0G1DxGiTjUH
- GWgKrpQEMJRBiuP/Odtwl2s7l5r/2g==
-X-Proofpoint-GUID: vI5sUIZz9xrSxJ0aPWlBPkx07rWFgmGw
-X-Authority-Analysis: v=2.4 cv=EYjFgfmC c=1 sm=1 tr=0 ts=68f403cc cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=p0WdMEafAAAA:8
- a=A8Lk8QbXsLJbOl2LSk4A:9 a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22
- a=poXaRoVlC6wW9_mwW8W4:22 a=pHzHmUro8NiASowvMSCR:22 a=n87TN5wuljxrRezIQYnT:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-18_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180027
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 18, 2025 at 03:18:29PM +0200, Federico Amedeo Izzo via B4 Relay wrote:
-> From: Federico Amedeo Izzo <federico@izzo.pro>
-> 
-> This patch adds support for DSPP GC block in DPU driver for Qualcomm SoCs.
+On Fri, Oct 17, 2025 at 09:02:07PM +0200, Nicolas Frattaroli wrote:
+> On Friday, 17 October 2025 17:42:10 Central European Summer Time Conor Do=
+oley wrote:
+> > On Thu, Oct 16, 2025 at 02:06:43PM +0200, Nicolas Frattaroli wrote:
+> > > The MediaTek MT8196 SoC contains the same UFS host controller interfa=
+ce
+> > > hardware as the MT8195 SoC. Add it as a variant of MT8195, and extend
+> > > its list of allowed clocks, as well as give it the previously absent
+> > > resets property.
+> > >=20
+> > > Also add examples for both MT8195 and the new MT8196, so that the
+> > > binding can be verified against examples for these two variants.
+> > >=20
+> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
+llabora.com>
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> >=20
+> > I provided a review on v1 of this series yesterday, although I think
+> > after this v2 was posted.
+> > https://lore.kernel.org/all/20251016-kettle-clobber-2558d9c709de@spud/
+> > I believe all of my comments still apply.
+>=20
+> thanks for your review, I'll respond to the comments of those here
+> to avoid needlessly bumping the v1 thread.
 
-Please see Documentation/processes/submitting-patches.rst. "This patch"
+Cool, good idea.
 
-> The driver exposes the GAMMA_LUT DRM property, which is needed to enable
-> night light and basic screen color calibration.
-> 
-> I used LineageOS downstream kernel as a reference and found the LUT
-> format by trial-and-error on OnePlus 6.
+> On Thursday, 16 October 2025 18:53:01 Central European Summer Time Conor =
+Dooley wrote:
+> > Hey,
+> >=20
+> > On Tue, Oct 14, 2025 at 05:10:05PM +0200, Nicolas Frattaroli wrote:
+> > > The MediaTek MT8196 SoC contains the same UFS host controller interfa=
+ce
+> > > hardware as the MT8195 SoC. Add it as a variant of MT8195, and extend
+> > > its list of allowed clocks, as well as give it the previously absent
+> > > resets property.
+> > >=20
+> > > Also add examples for both MT8195 and the new MT8196, so that the
+> > > binding can be verified against examples for these two variants.
+> > >=20
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > > ---
+> > >  .../devicetree/bindings/ufs/mediatek,ufs.yaml      | 134 +++++++++++=
+++++++++--
+> > >  1 file changed, 123 insertions(+), 11 deletions(-)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml =
+b/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+> > > index 1dec54fb00f3..070ae0982591 100644
+> > > --- a/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+> > > +++ b/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+> > > @@ -11,18 +11,30 @@ maintainers:
+> > > =20
+> > >  properties:
+> > >    compatible:
+> > > -    enum:
+> > > -      - mediatek,mt8183-ufshci
+> > > -      - mediatek,mt8192-ufshci
+> > > -      - mediatek,mt8195-ufshci
+> > > +    oneOf:
+> > > +      - enum:
+> > > +          - mediatek,mt8183-ufshci
+> > > +          - mediatek,mt8195-ufshci
+> > > +      - items:
+> > > +          - enum:
+> > > +              - mediatek,mt8192-ufshci
+> > > +          - const: mediatek,mt8183-ufshci
+> >=20
+> > It's hard to follow what's going on in this commit.
+> > Firstly, this seems to be some sort of unrelated change that isn't
+> > mentioned in the commit message.
+>=20
+> Sorry about that. Basically, the binding is currently wildly
+> incomplete, and this was my attempt at making it at least partly
+> useful for mainline DTs. You'll note that currently, no complete
+> (i.e. not just SoC dtsi) device tree uses it, and if they did,
+> all would most definitely generate warnings if they used it in a way
+> that actually worked, or silently relied on incomplete descriptions
+> that just happened to work out in practice.
+>=20
+> So I'm being a bit heavy-handed here at untangling things. The
+> compatible changes here are to stop pretending that the mt8195
+> can use the mt8183 as a fallback, as the binding itself would
+> not really agree with that AFAIU. The mt8183 sets the maximum
+> number of clocks to 1, whereas mt8195 sets the minimum to 8.
 
-Nice!
+The binding doesn't allow the 8183 as a fallback for the 8195, so that
+tracks ;)
 
-> 
-> Tested on oneplus-enchilada (sdm845-mainline 6.16-dev) and xiaomi-tissot
-> (msm8953-mainline 6.12/main).
-> 
-> Signed-off-by: Federico Amedeo Izzo <federico@izzo.pro>
-> Tested-by: David Heidelberg <david@ixit.cz>  # Pixel 3 (next-20251018)
-> ---
-> DRM GAMMA_LUT support was missing on sdm845 and other Qualcomm SoCs using
-> DPU for CRTC. This is needed in userspace to enable features like Night
-> Light or basic color calibration.
-> 
-> I wrote this driver to enable Night Light on OnePlus 6, and after the
-> driver was working I found out it applies to the 29 different Qualcomm SoCs
-> that use the DPU display engine, including X1E for laptops.
-> 
-> I used the LineageOS downstream kernel as reference and found the correct 
-> LUT format by trial-and-error on OnePlus 6.
-> 
-> This was my first Linux driver and it's been a great learning
-> experience.
-> 
-> The patch was reviewed by postmarketOS contributors here: 
-> https://gitlab.com/sdm845-mainline/linux/-/merge_requests/137
-> During review the patch was tested successfully on hamoa (X1E).
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c       | 90 ++++++++++++++++++++++----
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c |  4 ++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h |  4 ++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c     |  3 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c    | 56 ++++++++++++++++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h    | 26 ++++++++
->  6 files changed, 169 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 4b970a59deaf..f2c97c4ef0af 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -812,12 +812,44 @@ static void _dpu_crtc_get_pcc_coeff(struct drm_crtc_state *state,
->  	cfg->b.b = CONVERT_S3_15(ctm->matrix[8]);
->  }
->  
-> +static void _dpu_crtc_get_gc_lut(struct drm_crtc_state *state,
-> +		struct dpu_hw_gc_lut *gc_lut)
-> +{
-> +	struct drm_color_lut *lut;
-> +	int i;
-> +	u32 val_even, val_odd;
-> +
-> +	memset(gc_lut, 0, sizeof(struct dpu_hw_gc_lut));
-> +
-> +	lut = (struct drm_color_lut *)state->gamma_lut->data;
-> +
-> +	if (!lut)
-> +		return;
-> +
-> +	/* Pack 1024 10-bit entries in 512 32-bit registers */
-> +	for (i = 0; i < PGC_TBL_LEN; i++) {
-> +		val_even = drm_color_lut_extract(lut[i * 2].green, 10);
-> +		val_odd = drm_color_lut_extract(lut[i * 2 + 1].green, 10);
-> +		gc_lut->c0[i] = val_even | (val_odd << 16);
-> +		val_even = drm_color_lut_extract(lut[i * 2].blue, 10);
-> +		val_odd = drm_color_lut_extract(lut[i * 2 + 1].blue, 10);
-> +		gc_lut->c1[i] = val_even | (val_odd << 16);
-> +		val_even = drm_color_lut_extract(lut[i * 2].red, 10);
-> +		val_odd = drm_color_lut_extract(lut[i * 2 + 1].red, 10);
-> +		gc_lut->c2[i] = val_even | (val_odd << 16);
-> +	}
-> +
-> +	/* Disable 8-bit rounding mode */
-> +	gc_lut->flags = 0;
-> +}
-> +
->  static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
->  {
->  	struct drm_crtc_state *state = crtc->state;
->  	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc->state);
->  	struct dpu_crtc_mixer *mixer = cstate->mixers;
->  	struct dpu_hw_pcc_cfg cfg;
-> +	struct dpu_hw_gc_lut *gc_lut;
->  	struct dpu_hw_ctl *ctl;
->  	struct dpu_hw_dspp *dspp;
->  	int i;
-> @@ -830,19 +862,40 @@ static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
->  		ctl = mixer[i].lm_ctl;
->  		dspp = mixer[i].hw_dspp;
->  
-> -		if (!dspp || !dspp->ops.setup_pcc)
-> +		if (!dspp)
->  			continue;
->  
-> -		if (!state->ctm) {
-> -			dspp->ops.setup_pcc(dspp, NULL);
-> -		} else {
-> -			_dpu_crtc_get_pcc_coeff(state, &cfg);
-> -			dspp->ops.setup_pcc(dspp, &cfg);
-> +		if (dspp->ops.setup_pcc) {
-> +			if (!state->ctm) {
-> +				dspp->ops.setup_pcc(dspp, NULL);
-> +			} else {
-> +				_dpu_crtc_get_pcc_coeff(state, &cfg);
-> +				dspp->ops.setup_pcc(dspp, &cfg);
-> +			}
-> +
-> +			/* stage config flush mask */
-> +			ctl->ops.update_pending_flush_dspp(ctl,
-> +				mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
->  		}
->  
-> -		/* stage config flush mask */
-> -		ctl->ops.update_pending_flush_dspp(ctl,
-> -			mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
-> +		if (dspp->ops.setup_gc) {
-> +			if (!state->gamma_lut) {
-> +				dspp->ops.setup_gc(dspp, NULL);
-> +			} else {
-> +				gc_lut = kzalloc(sizeof(*gc_lut), GFP_KERNEL);
-> +				if (!gc_lut) {
-> +					DRM_ERROR("failed to allocate gc_lut\n");
-> +					continue;
-> +				}
-> +				_dpu_crtc_get_gc_lut(state, gc_lut);
-> +				dspp->ops.setup_gc(dspp, gc_lut);
-> +				kfree(gc_lut);
-> +			}
-> +
-> +			/* stage config flush mask */
-> +			ctl->ops.update_pending_flush_dspp(ctl,
-> +				mixer[i].hw_dspp->idx, DPU_DSPP_GC);
-> +		}
->  	}
->  }
->  
-> @@ -1340,7 +1393,7 @@ static struct msm_display_topology dpu_crtc_get_topology(
->  	 *
->  	 * If DSC is enabled, use 2 LMs for 2:2:1 topology
->  	 *
-> -	 * Add dspps to the reservation requirements if ctm is requested
-> +	 * Add dspps to the reservation requirements if ctm or gamma_lut are requested
->  	 *
->  	 * Only hardcode num_lm to 2 for cases where num_intf == 2 and CWB is not
->  	 * enabled. This is because in cases where CWB is enabled, num_intf will
-> @@ -1359,7 +1412,7 @@ static struct msm_display_topology dpu_crtc_get_topology(
->  	else
->  		topology.num_lm = 1;
->  
-> -	if (crtc_state->ctm)
-> +	if (crtc_state->ctm || crtc_state->gamma_lut)
->  		topology.num_dspp = topology.num_lm;
->  
->  	return topology;
-> @@ -1471,7 +1524,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
->  	bool needs_dirtyfb = dpu_crtc_needs_dirtyfb(crtc_state);
->  
->  	/* don't reallocate resources if only ACTIVE has beeen changed */
-> -	if (crtc_state->mode_changed || crtc_state->connectors_changed) {
-> +	if (crtc_state->mode_changed || crtc_state->connectors_changed ||
-> +		crtc_state->color_mgmt_changed) {
+Really the problem is that the commit subject says that this is adding
+8196, but that's not what the body of the commit actually is. I know you
+mention splitting further down the mail, but what I'd really like to see
+done is one commit that corrects the property situation for the 8195,
+providing whatever justifications you have for the changes - it's okay
+if you don't necessarily have explanations for backed by stuff from docs
+or whatever, if all you have is based on what platforms with the 8195 are
+doing just mention that as why you need to have x-supply or whatever.
+Then add one commit that adds the 8196, which is probably a fairly
+minimal change once the 8195 is corrected.
 
-Please align the text to the same column (so that crtc_state are one
-under another one.
+> > > +      - items:
+> > > +          - enum:
+> > > +              - mediatek,mt8196-ufshci
+> > > +          - const: mediatek,mt8195-ufshci
+> > > =20
+> > >    clocks:
+> > >      minItems: 1
+> > > -    maxItems: 8
+> > > +    maxItems: 16
+> > > =20
+> > >    clock-names:
+> > >      minItems: 1
+> > > -    maxItems: 8
+> > > +    maxItems: 16
+> >=20
+> > Then all devices grow 8 more permitted clocks, despite the wording in
+> > the commit message being 8195 specific. (Hint: you missed maxItems: 8 in
+> > the else)
+>=20
+> Right, thanks, I'll add maxItems to the clock-names property in the else.
+> Though that's already missing.
+>=20
+> > > +
+> > > +  freq-table-hz: true
+> >=20
+> > Then you add this deprecated property, which isn't mentioned in the
+> > commit message and I don't see why a deprecated property is needed.
+>=20
+> I'll rework it to use operating-points-v2 instead. It needs one of
+> the two, or else on mt8196 at least, the hardware locks up.
+>=20
+> I'll still add operating-points-v2 for all SoCs though, if that's
+> okay with you.
 
->  		rc = dpu_crtc_assign_resources(crtc, crtc_state);
->  		if (rc < 0)
->  			return rc;
-> @@ -1831,8 +1885,16 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane,
->  
->  	drm_crtc_helper_add(crtc, &dpu_crtc_helper_funcs);
->  
-> -	if (dpu_kms->catalog->dspp_count)
-> -		drm_crtc_enable_color_mgmt(crtc, 0, true, 0);
-> +	if (dpu_kms->catalog->dspp_count) {
-> +		const struct dpu_dspp_cfg *dspp = &dpu_kms->catalog->dspp[0];
-> +
-> +		if (dspp->sblk->gc.base) {
-> +			drm_mode_crtc_set_gamma_size(crtc, DPU_GAMMA_LUT_SIZE);
-> +			drm_crtc_enable_color_mgmt(crtc, 0, true, DPU_GAMMA_LUT_SIZE);
-> +		} else {
-> +			drm_crtc_enable_color_mgmt(crtc, 0, true, 0);
-> +		}
-> +	}
->  
->  	/* save user friendly CRTC name for later */
->  	snprintf(dpu_crtc->name, DPU_CRTC_NAME_SIZE, "crtc%u", crtc->base.id);
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> index 6641455c4ec6..8a4b9fc3ac84 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> @@ -382,11 +382,15 @@ static const struct dpu_lm_sub_blks qcm2290_lm_sblk = {
->  static const struct dpu_dspp_sub_blks msm8998_dspp_sblk = {
->  	.pcc = {.name = "pcc", .base = 0x1700,
->  		.len = 0x90, .version = 0x10007},
-> +	.gc = {.name = "gc", .base = 0x17c0,
-> +		.len = 0x90, .version = 0x10007},
+Right. I'd accept freq-table-hz if the other devices here have been
+using it all along, but if this is something new - then please use the
+operating-points-v2 property. Looking at the binding example, it looks
+like it does indeed use freq-table-hz, so that's probably justification
+enough to keep doing so.
 
-.len = 0x40
+> > > +
+> > > +  interrupts: true
+> > > =20
+> > >    phys:
+> > >      maxItems: 1
+> > > @@ -30,7 +42,15 @@ properties:
+> > >    reg:
+> > >      maxItems: 1
+> > > =20
+> > > +  resets:
+> > > +    maxItems: 3
+> > > +
+> > > +  reset-names:
+> > > +    maxItems: 3
+> >=20
+> > You cannot use reset-names if you don't define what the names are.
+> > Please provide a items list with descriptions in resets and some
+> > names in reset-names.
+>=20
+> Will do.
+>=20
+> >=20
+> > >    vcc-supply: true
+> > > +  vccq-supply: true
+> > > +  vccq2-supply: true
+> >=20
+> > And then two new supplies that are not mentioned in the commit message,
+> > and again are allowed for all variants. The commit message talks about
+> > extended 8195 features, so this is starting to look like there was some
+> > sort of squashing accident.
+>=20
+> No squashing accident, just me trying to get around having to justify
+> things I cannot justify. I've just checked the MT8195 and MT8196
+> datasheets for their pins, and see that MT8195 has a 1.8V and two 1.2V
+> supplies.
 
->  };
->  
->  static const struct dpu_dspp_sub_blks sdm845_dspp_sblk = {
->  	.pcc = {.name = "pcc", .base = 0x1700,
->  		.len = 0x90, .version = 0x40000},
-> +	.gc = {.name = "gc", .base = 0x17c0,
-> +		.len = 0x90, .version = 0x40000},
+As I said above, if you don't have some documented justification, just
+cite usage or w/e, that's better than not mentioning it at all. If you
+don't work for the vendor (and sometimes, sadly, when you do) it's not
+possible to get complete info.
 
-The version is incorrect, see sdm845-sde.dtsi
+> MT8196 on the other hand has seemingly no 1.8V UFS supply, but two
+> 1.2V supplies and two 0.9V supplies.
+>=20
+> I think MT8195 can use vcc-supply for 1.8V (with the vcc-supply-1p8
+> flag) and vccq-supply/vccq2-supply for 1.2V.
+>=20
+> I suppose MT8196 then gets two 0.9v supply properties to play with in
+> its driver, I'm open to name suqqestions. Vendor uses va09-supply, but
+> that only covers one of the two possible supplies.
+>=20
+> Interestingly, MT8183 has all of 1.8V, 1.2V and 0.9V supplies as
+> well. No duplicates though.
+>=20
+> MT8192 has 1.8V, and two different 1.2V supplies for UFS.
+>=20
+> It's also entirely possible that some other supply rail is used
+> as well for 1.8V operation on MT8196, but I'm not privy to this
+> kind of information.
+>=20
+> So yeah, I'll fix the supply situation, maybe by splitting
+> this into a few separate commits.
 
-.len = 0x40
+My personal opinion is that the best way to do supplies is to match as
+close to possible as the datasheet names for the supply. If that means
+the supply names have to be different between devices, I think the
+more complex binding is better than trying to get the names to somehow
+fit for all devices.
 
->  };
->  
->  static const struct dpu_dspp_sub_blks sm8750_dspp_sblk = {
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> index f0768f54e9b3..3ea67c1cf5c0 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> @@ -77,9 +77,11 @@ enum {
->  /**
->   * DSPP sub-blocks
->   * @DPU_DSPP_PCC             Panel color correction block
-> + * @DPU_DSPP_GC              Gamma correction block
->   */
->  enum {
->  	DPU_DSPP_PCC = 0x1,
-> +	DPU_DSPP_GC,
->  	DPU_DSPP_MAX
->  };
->  
-> @@ -314,9 +316,11 @@ struct dpu_lm_sub_blks {
->  /**
->   * struct dpu_dspp_sub_blks: Information of DSPP block
->   * @pcc: pixel color correction block
-> + * @gc: gamma correction block
->   */
->  struct dpu_dspp_sub_blks {
->  	struct dpu_pp_blk pcc;
-> +	struct dpu_pp_blk gc;
->  };
->  
->  struct dpu_pingpong_sub_blks {
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> index ac834db2e4c1..36a497f1d6c1 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> @@ -399,6 +399,9 @@ static void dpu_hw_ctl_update_pending_flush_dspp_sub_blocks(
->  	case DPU_DSPP_PCC:
->  		ctx->pending_dspp_flush_mask[dspp - DSPP_0] |= BIT(4);
->  		break;
-> +	case DPU_DSPP_GC:
-> +		ctx->pending_dspp_flush_mask[dspp - DSPP_0] |= BIT(5);
-> +		break;
->  	default:
->  		return;
->  	}
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-> index 54b20faa0b69..7bf572379890 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-> @@ -24,6 +24,18 @@
->  #define PCC_BLUE_G_OFF 0x24
->  #define PCC_BLUE_B_OFF 0x30
->  
-> +/* DSPP_GC */
-> +#define GC_EN BIT(0)
-> +#define GC_DIS 0
-> +#define GC_8B_ROUND_EN BIT(1)
-> +#define GC_LUT_SWAP_OFF 0x1c
-> +#define GC_C0_OFF 0x4
-> +#define GC_C1_OFF 0xC
+> > >    mediatek,ufs-disable-mcq:
+> > >      $ref: /schemas/types.yaml#/definitions/flag
+> > > @@ -44,22 +64,19 @@ required:
+> > >    - reg
+> > >    - vcc-supply
+> > > =20
+> > > -unevaluatedProperties: false
+> > > -
+> > >  allOf:
+> > >    - $ref: ufs-common.yaml
+> > > -
+> > >    - if:
+> > >        properties:
+> > >          compatible:
+> > >            contains:
+> > > -            enum:
+> > > -              - mediatek,mt8195-ufshci
+> > > +            const: mediatek,mt8195-ufshci
+> >=20
+> > The commit message says:
+> > | hardware as the MT8195 SoC. Add it as a variant of MT8195, and extend
+> > | its list of allowed clocks, as well as give it the previously absent
+> > | resets property.
+> >=20
+> > I don't know if that's meant to mean that only the new device has 16 and
+> > the 8195 only has 8, or if the 8195 should have had 16 possible clocks
+> > too.
+>=20
+> It looks like MT8195 has crypt_mux, crypt_lp, crypt_perf and ufs_rx_symbo=
+l0
+> and ufs_rx_symbol1. I haven't found any of ufs_sel/ufs_sel_min_src/
+> ufs_sel_max_src analogues yet.
 
-lowercase the hex
+I went and looked at the driver, and the list of clocks it looks up
+don't even match what the binding permits for the 8195 (or any other
+device):
 
-> +#define GC_C2_OFF 0x14
-> +#define GC_C0_INDEX_OFF 0x8
-> +#define GC_C1_INDEX_OFF 0x10
-> +#define GC_C2_INDEX_OFF 0x18
-> +
->  static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
->  		struct dpu_hw_pcc_cfg *cfg)
->  {
-> @@ -63,6 +75,48 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
->  	DPU_REG_WRITE(&ctx->hw, base, PCC_EN);
->  }
->  
-> +static void dpu_setup_dspp_gc(struct dpu_hw_dspp *ctx,
-> +		struct dpu_hw_gc_lut *gc_lut)
-> +{
-> +	int i = 0;
-> +	u32 base, reg;
-> +
-> +	if (!ctx) {
-> +		DRM_ERROR("invalid ctx %pK\n", ctx);
-> +		return;
-> +	}
-> +
-> +	base = ctx->cap->sblk->gc.base;
-> +
-> +	if (!base) {
-> +		DRM_ERROR("invalid ctx %pK gc base 0x%x\n", ctx, base);
-> +		return;
-> +	}
-> +
-> +	if (!gc_lut) {
-> +		DRM_DEBUG_DRIVER("disable gc feature\n");
-> +		DPU_REG_WRITE(&ctx->hw, base, GC_DIS);
-> +		return;
-> +	}
-> +
-> +	reg = 0;
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_C0_INDEX_OFF, reg);
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_C1_INDEX_OFF, reg);
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_C2_INDEX_OFF, reg);
-> +
-> +	for (i = 0; i < PGC_TBL_LEN; i++) {
-> +		DPU_REG_WRITE(&ctx->hw, base + GC_C0_OFF, gc_lut->c0[i]);
-> +		DPU_REG_WRITE(&ctx->hw, base + GC_C1_OFF, gc_lut->c1[i]);
-> +		DPU_REG_WRITE(&ctx->hw, base + GC_C2_OFF, gc_lut->c2[i]);
-> +	}
-> +
-> +	reg = BIT(0);
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_LUT_SWAP_OFF, reg);
+	if (ufs_mtk_init_host_clk(hba, "crypt_mux",
+				  &cfg->clk_crypt_mux))
+		goto disable_caps;
 
-inline reg, pleas
+	if (ufs_mtk_init_host_clk(hba, "crypt_lp",
+				  &cfg->clk_crypt_lp))
+		goto disable_caps;
 
-> +
-> +	reg = GC_EN | ((gc_lut->flags & PGC_8B_ROUND) ? GC_8B_ROUND_EN : 0);
-> +	DPU_REG_WRITE(&ctx->hw, base, reg);
-> +}
-> +
->  /**
->   * dpu_hw_dspp_init() - Initializes the DSPP hw driver object.
->   * should be called once before accessing every DSPP.
-> @@ -92,6 +146,8 @@ struct dpu_hw_dspp *dpu_hw_dspp_init(struct drm_device *dev,
->  	c->cap = cfg;
->  	if (c->cap->sblk->pcc.base)
->  		c->ops.setup_pcc = dpu_setup_dspp_pcc;
-> +	if (c->cap->sblk->gc.base)
-> +		c->ops.setup_gc = dpu_setup_dspp_gc;
->  
->  	return c;
->  }
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
-> index 45c26cd49fa3..d608f84e9434 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
-> @@ -33,6 +33,25 @@ struct dpu_hw_pcc_cfg {
->  	struct dpu_hw_pcc_coeff b;
->  };
->  
-> +#define DPU_GAMMA_LUT_SIZE 1024
-> +#define PGC_TBL_LEN 512
-> +#define PGC_8B_ROUND (1 << 0)
+	if (ufs_mtk_init_host_clk(hba, "crypt_perf",
+				  &cfg->clk_crypt_perf))
+		goto disable_caps;
 
-BIT(0)
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mediatek,mt8195-ufshci
++    then:
++      properties:
++        clocks:
++          minItems: 8
++        clock-names:
++          items:
++            - const: ufs
++            - const: ufs_aes
++            - const: ufs_tick
++            - const: unipro_sysclk
++            - const: unipro_tick
++            - const: unipro_mp_bclk
++            - const: ufs_tx_symbol
++            - const: ufs_mem_sub
 
-> +
-> +/**
-> + * struct dpu_hw_gc_lut - gc lut feature structure
-> + * @flags: flags for the feature values can be:
-> + *         - PGC_8B_ROUND
-> + * @c0: color0 component lut
-> + * @c1: color1 component lut
-> + * @c2: color2 component lut
-> + */
-> +struct dpu_hw_gc_lut {
-> +	__u64 flags;
-> +	__u32 c0[PGC_TBL_LEN];
-> +	__u32 c1[PGC_TBL_LEN];
-> +	__u32 c2[PGC_TBL_LEN];
-> +};
-> +
->  /**
->   * struct dpu_hw_dspp_ops - interface to the dspp hardware driver functions
->   * Caller must call the init function to get the dspp context for each dspp
-> @@ -46,6 +65,13 @@ struct dpu_hw_dspp_ops {
->  	 */
->  	void (*setup_pcc)(struct dpu_hw_dspp *ctx, struct dpu_hw_pcc_cfg *cfg);
->  
-> +	/**
-> +	 * setup_gc - setup dspp gc
-> +	 * @ctx: Pointer to dspp context
-> +	 * @gc_lut: Pointer to lut content
-> +	 */
-> +	void (*setup_gc)(struct dpu_hw_dspp *ctx, struct dpu_hw_gc_lut *gc_lut);
-> +
->  };
->  
->  /**
-> 
-> ---
-> base-commit: 2433b84761658ef123ae683508bc461b07c5b0f0
-> change-id: 20251017-dpu-add-dspp-gc-driver-c5d1c08be770
-> 
-> Best regards,
-> -- 
-> Federico Amedeo Izzo <federico@izzo.pro>
-> 
-> 
+Looks like that series should never have actually been accepted,
+particularly given some of the commentary on it. It's worth noting, that
+there is no ack etc from a devicetree binding maintainer. Telling I
+suppose.
 
--- 
-With best wishes
-Dmitry
+You don't mention this mismatch in your commit message, but you should.
+
+Also makes me wonder why the driver doesn't bother to enable all of
+these clocks either, since the IP must need them for something, right?
+Does the driver even work for 8195?
+
+> Should I in this case order those three last, and then set the minimum
+> number of clocks to 13? Should I not make mt8195 a fallback for mt8196
+> at all?
+
+For fallbacks, mostly think of it as "if the driver probed thinking that
+this was a 8195, would it work correctly"? If you have to make changes
+to a driver written for a 8195 to support clocks that are required on a
+8196, then the devices are not compatible. If the 8196 will function if
+the extra clocks are not enabled, then sure have a fallback. But if you
+need to turn them on, then the devices are not compatible.
+In other words, if the fallback doesn't implement a viable subset of
+features on the new device, then it's not suitable.
+
+As for the 13 v 16 etc, sure order them last. You'll have to be careful
+with how you set up the conditional portion of the binding so that it
+doesn't create impossible constraints, if you decide that a fallback is
+suitable. Obviously, if there's no fallback, cos the extra 3 clocks are
+mandatory, then it'll be much easier to set the conditions up.
+
+> > >      then:
+> > >        properties:
+> > >          clocks:
+> > >            minItems: 8
+> > >          clock-names:
+> > > +          minItems: 8
+> > >            items:
+> > >              - const: ufs
+> > >              - const: ufs_aes
+> > > @@ -69,6 +86,19 @@ allOf:
+> > >              - const: unipro_mp_bclk
+> > >              - const: ufs_tx_symbol
+> > >              - const: ufs_mem_sub
+> > > +            - const: crypt_mux
+> > > +            - const: crypt_lp
+> > > +            - const: crypt_perf
+> > > +            - const: ufs_sel
+> > > +            - const: ufs_sel_min_src
+> > > +            - const: ufs_sel_max_src
+> > > +            - const: ufs_rx_symbol0
+> > > +            - const: ufs_rx_symbol1
+> > > +        reset-names:
+> > > +          items:
+> > > +            - const: unipro_rst
+> > > +            - const: crypto_rst
+> > > +            - const: hci_rst
+> > >      else:
+> > >        properties:
+> > >          clocks:
+> > > @@ -76,6 +106,10 @@ allOf:
+> > >          clock-names:
+> > >            items:
+> > >              - const: ufs
+> > > +        resets: false
+> > > +        reset-names: false
+> > > +
+> > > +unevaluatedProperties: false
+> > > =20
+> > >  examples:
+> > >    - |
+> > > @@ -99,3 +133,81 @@ examples:
+> > >              vcc-supply =3D <&mt_pmic_vemc_ldo_reg>;
+> > >          };
+> > >      };
+> > > +  - |
+> > > +    ufshci@11270000 {
+> > > +        compatible =3D "mediatek,mt8195-ufshci";
+> > > +        reg =3D <0x11270000 0x2300>;
+> > > +        interrupts =3D <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+> > > +        phys =3D <&ufsphy>;
+> > > +        clocks =3D <&infracfg_ao 63>, <&infracfg_ao 64>, <&infracfg_=
+ao 65>,
+> > > +                 <&infracfg_ao 54>, <&infracfg_ao 55>,
+> > > +                 <&infracfg_ao 56>, <&infracfg_ao 90>,
+> > > +                 <&infracfg_ao 93>;
+> > > +        clock-names =3D "ufs", "ufs_aes", "ufs_tick",
+> > > +                      "unipro_sysclk", "unipro_tick",
+> > > +                      "unipro_mp_bclk", "ufs_tx_symbol",
+> > > +                      "ufs_mem_sub";
+> > > +        freq-table-hz =3D <0 0>, <0 0>, <0 0>,
+> > > +                        <0 0>, <0 0>, <0 0>,
+> > > +                        <0 0>, <0 0>;
+> > > +        vcc-supply =3D <&mt6359_vemc_1_ldo_reg>;
+> > > +        mediatek,ufs-disable-mcq;
+> > > +    };
+> > > +  - |
+> > > +    #include <dt-bindings/reset/mediatek,mt8196-resets.h>
+> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +
+> > > +    ufshci@16810000 {
+> > > +        compatible =3D "mediatek,mt8196-ufshci", "mediatek,mt8195-uf=
+shci";
+> > > +        reg =3D <0x16810000 0x2a00>;
+> > > +        interrupts =3D <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>;
+> > > +
+> > > +        clocks =3D <&ufs_ao_clk 6>,
+> > > +                 <&ufs_ao_clk 7>,
+> > > +                 <&clk26m>,
+> > > +                 <&ufs_ao_clk 3>,
+> > > +                 <&clk26m>,
+> > > +                 <&ufs_ao_clk 4>,
+> > > +                 <&ufs_ao_clk 0>,
+> > > +                 <&topckgen 7>,
+> > > +                 <&topckgen 41>,
+> > > +                 <&topckgen 105>,
+> > > +                 <&topckgen 83>,
+> > > +                 <&topckgen 42>,
+> > > +                 <&topckgen 84>,
+> > > +                 <&topckgen 102>,
+> > > +                 <&ufs_ao_clk 1>,
+> > > +                 <&ufs_ao_clk 2>;
+> > > +        clock-names =3D "ufs",
+> > > +                      "ufs_aes",
+> > > +                      "ufs_tick",
+> > > +                      "unipro_sysclk",
+> > > +                      "unipro_tick",
+> > > +                      "unipro_mp_bclk",
+> > > +                      "ufs_tx_symbol",
+> > > +                      "ufs_mem_sub",
+> > > +                      "crypt_mux",
+> > > +                      "crypt_lp",
+> > > +                      "crypt_perf",
+> > > +                      "ufs_sel",
+> > > +                      "ufs_sel_min_src",
+> > > +                      "ufs_sel_max_src",
+> > > +                      "ufs_rx_symbol0",
+> > > +                      "ufs_rx_symbol1";
+> > > +
+> > > +        freq-table-hz =3D <273000000 499200000>, <0 0>, <0 0>, <0 0>=
+, <0 0>,
+> > > +                        <0 0>, <0 0>, <0 0>, <0 0>, <0 0>, <0 0>, <0=
+ 0>, <0 0>,
+> > > +                        <0 0>;
+> > > +
+> > > +        phys =3D <&ufsphy>;
+> > > +
+> > > +        vcc-supply =3D <&mt6363_vemc>;
+> > > +        vccq-supply =3D <&mt6363_vufs12>;
+> > > +        vccq2-supply =3D <&mt6363_vufs18>;
+> > > +
+> > > +        resets =3D <&ufs_ao_clk MT8196_UFSAO_RST1_UFS_UNIPRO>,
+> > > +                 <&ufs_ao_clk MT8196_UFSAO_RST1_UFS_CRYPTO>,
+> > > +                 <&ufs_ao_clk MT8196_UFSAO_RST1_UFSHCI>;
+> > > +        reset-names =3D "unipro_rst", "crypto_rst", "hci_rst";
+> >=20
+> > Putting _rst in the name of a reset is redundant.
+> >=20
+> > pw-bot: changes-requested
+> >=20
+> > Thanks,
+> > Conor.
+> > > +        mediatek,ufs-disable-mcq;
+> > > +    };
+> > >=20
+> >=20
+>=20
+> Thanks for the review, I'll try to get a v3 out next week that
+> addresses these issues and also makes the required adjustments
+> to the drivers.
+
+Cool. TL;DR, just be clear about where things are coming from and please
+try to sort out the 8195 mess in a different patch to the 8196.
+
+Cheers,
+Conor.
+
+--AXLdXHxzimhoRKHO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPQG5QAKCRB4tDGHoIJi
+0iJ4AQC9NAMz6vkFPB/hrp0Z1gRpvjUm9HBgys2zuwrHKHWcMgEApB3NdXe6FiZW
+71oUvDRvJtHjfgGP+IlyqziBBJ1n0QI=
+=2Nnn
+-----END PGP SIGNATURE-----
+
+--AXLdXHxzimhoRKHO--
 
