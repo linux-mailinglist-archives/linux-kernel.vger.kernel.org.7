@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-859034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF218BEC856
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE2FBEC85C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39F96E0AEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781876E0F1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB7E258ECA;
-	Sat, 18 Oct 2025 05:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB129267B92;
+	Sat, 18 Oct 2025 05:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmaLjMen"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZAdy+WS"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65FA23E355
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7524823EAAB
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760766548; cv=none; b=s7zlvgsOv/b4WcQQeck0jdGF+gGQ/227h5Pd9H9DmFxvZHMV5+OoJU/PRAwgWsFLfnOviwwZQgYy/t4fBb7TVEw/EvqTPXl0q61UbifB7dGW8efXNK0HADaVMQYgQ1FUsbgAV8mmd9el3mZKszKKQo9Yh/i0uXa/DPDxLxaG0XE=
+	t=1760766730; cv=none; b=PfWP13tSdig+mb5OO6N3rCjHaY5QN3DN2JQZn0ntAqjovCpO/XB+8/oxsMwaEuD1Owisqc1r11vJUn5TKl/H8KhH5fR1uJXjTJGxh0zkAFvtNmbKgtO0bLtERbPTnqms19XLxZUugIwlHrA6/eJY3a7vTbX1AAJw/Z/EAVssp/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760766548; c=relaxed/simple;
-	bh=1Vv6tHhTnCUCOqqa0sQAoxcLS2MLC5PRxzjfcelt2PM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fqf1T+eRfawn7+5R19X8IRXyy7yut+8/VgEQ42OIdqyy/lDZ2kwPmGl0RWu9IAJSqPpWl8tywNuaa4dN4SDyECC6lhclvhVmjIFq3KLoD+hWyXtcfBTIh1GK8o+DR6/rX+7jzI/gB5wWVVMcSwDIDVGyBp9pJBFckxEvXnXRvt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmaLjMen; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1760766730; c=relaxed/simple;
+	bh=eIKgZColoDsxoJovuWfQsmtEvniT3pu5LZJ9r62QCEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=MoidVPKm3vkgPQfDyirYAVQzAG8wlkKOgYj06AcrX6pOboYNMpZ6+La7OIrfRzzESLtDywfdm2fhtmYc6ngGs1Gjem/Bk30MhmNss5XCaDgvaK+5qDonSxyvIEBwW0ezylEuqAfsRhU/hAEXnEaxsfE2Rw2OxLChw8cT6mhojF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZAdy+WS; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b633b54d05dso1852781a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:49:06 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so478796666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:52:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760766546; x=1761371346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Vv6tHhTnCUCOqqa0sQAoxcLS2MLC5PRxzjfcelt2PM=;
-        b=VmaLjMenvYjtMGE+sxS5Hf7p7iAAvSGw7cJzqDVL/p2IPJeZKtvUzF0KcoChzVwo6R
-         z5BLBWO4ZbUqmguiAGHe2qfyvrmgftjApF3+ecl2YpYcdA9sIOfgjLZwYOlwkaMAq2aI
-         0rQdYzGtD9vSwinVOCE9Iu/gd8lOnzPq+VtqD3Nvk32lPP99GSJbhUtHJGHXqk7OrnzR
-         xrsmRg3scZByh/oy8W+VTtoHX5kDfuO3TA/WmuFbe4aDxenR8VMsqPqYMNFvAOVjtZJY
-         ec664tUkf1l7pfMM0FClgLxEW9AMdamjGiV70ACBtpW1TI9QsfZeWf27CcxDi2kJXjx9
-         rU4A==
+        d=gmail.com; s=20230601; t=1760766726; x=1761371526; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IkVWF0ngwpu5gjmUkFjpcBqAffFGeLSngYlAxMCWNV0=;
+        b=lZAdy+WSkHRQUXIXpgAXhSFobDE+XeGaG7+SxB+E/eeAdxGAGeINA1qi3Dr4q2jJIH
+         kjdsuomuJLPp8lJsVfQP5KomuCsX1h1+xg/4YyNo5JMgNGjDtnHa3kcAI8DLGitTI2hf
+         qjzqXPkYqwNa01PWhuTvqk1CA9j/3fLAQO6ZLlZsTT1823Yew9YsU88WTwBHshG4tX7k
+         7/T1GutpDPrnkALAzzdUBw8TwTx+yhPHKOq91dixVjC8/i4joGDONkaMlOUaBmRMUBdl
+         +01BQTeEBVzaapfgNI1W66dICFRL+XZNIJ2A5CUpb4ruDHC/MgZ4mrbUqWZwUdOKK8Hl
+         bzvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760766546; x=1761371346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Vv6tHhTnCUCOqqa0sQAoxcLS2MLC5PRxzjfcelt2PM=;
-        b=tSalBRk6sVCmhJ3S7SaV15mq3WItjkxh0bpBBMSpVaXidqUBgRKtM2x4oyC5/HEwtb
-         2m1Z+rMA/NzFkmSYJhsihE4IwCqZAcBybzibMXYdPRNtDNnrAp5NOWcXsBXsvjIasNWe
-         tZHTc2vU+XWh7//MLqNyjLVolq6MBBaTdZjGwili3r1eMBtZrmIxLnjqi16uR4f/D5Uq
-         Qvhf8pX9yT7huDEHqD4UDM4z98NkVl5ISJLsLJ3d8a78j/U58NBEJEe0SG8ER48zs4IS
-         uVBsKzn3gjpXCHZ+cF/a8jlVpxwINT3mLz+UskoUNugzKuq8ifIs7lJ4Nb9ArYMClein
-         jKkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUr8bl6kKW+lw6jYQEgmQC1cefs1qzaT7cZjw4Zv5ZKVkAXjfxszLjbhrM7ClRxiaVaX8q2urRkrRQ3IQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVmocCihMFsez8onn9WRHZtIpMKaQtWE7/ReXH4+jO2qBGO1DF
-	BGkPh6X6KxIVI52D969oaQ/THzhT+gP9ZZJBAagXh/Mfc03sULcCEWbL
-X-Gm-Gg: ASbGncvufeGSJkstn+4HfDOTE+6Z5iqN6LpVXkg1/rnQ/3jAYaHCWTtm6ARpxXcglVu
-	Ts1pF5UGW8qj68BzqMPXPZsoXBb2jAC8IB4db+iX/mKYMVABnMqIBsmBIKoiNKvy8iHO7rX5oTq
-	RUDxWDns6wfOTyLvIzXsV5ujrS4O8vvSDLF7IMFY2YOuvObHTpsjpx5U2YL6JU7n4g7yiUeUuKU
-	JtRRGayRagI54zVj1M/3gKgu4Jafy4/iTN056KE4tbanBE1vZ3aHApFGvKEyxbse9Os9IbFnBof
-	PtPGqP0FnyH85fVW2IeJroFb1hJwwoo31ScbZs45ulo97zjwxp4y6OUNzZuv/KAZTb9CQVdU8MF
-	bcJExaU8KpLxJrLJ8T7IScUdLPwpG1o7iZM+vnRR86w83sCLL672cHooxbo+9xJytoSPcD9gbXf
-	Go8rE=
-X-Google-Smtp-Source: AGHT+IEiDLeHEpWWG0W0/Txk7ybCtD0aFk0wRSHlk2Qyr7r4KJqzeEy+3Um8q3Il5qclHZ1JNtVeYQ==
-X-Received: by 2002:a17:903:3bce:b0:269:aba0:f0a7 with SMTP id d9443c01a7336-290c9c8977amr74813915ad.2.1760766545842;
-        Fri, 17 Oct 2025 22:49:05 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fd8fbcsm14454955ad.41.2025.10.17.22.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 22:49:04 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 0C5AA40995BC; Sat, 18 Oct 2025 12:49:01 +0700 (WIB)
-Date: Sat, 18 Oct 2025 12:49:01 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Tracing <linux-trace-kernel@vger.kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>,
-	Crystal Wood <crwood@redhat.com>,
-	Gopi Krishna Menon <krishnagopi487@gmail.com>
-Subject: Re: [PATCH] Documentation/rtla: rename common_xxx.rst files to
- common_xxx.txt
-Message-ID: <aPMqTSbPucoqNhA1@archie.me>
-References: <20251013092719.30780-2-bagasdotme@gmail.com>
- <87zf9pz33e.fsf@trenco.lwn.net>
+        d=1e100.net; s=20230601; t=1760766726; x=1761371526;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IkVWF0ngwpu5gjmUkFjpcBqAffFGeLSngYlAxMCWNV0=;
+        b=aIcS2dY3Oi6qjSDNLhr4RX44217Hm7eJfSg6RDigiBvq2tdqFBuWZ5dk0st6HOxsib
+         VxDAO0hWnwlR62oScKi1P+ZlLEAwHJntD2Co7Q+EcxLPttziZ/zHfOYvM2BaOcOORj9X
+         W//6XZXZgJLQ7Ik7m89UsMDXG73dRKuxo3G/Mi6CLDbQOY5/a8AT6TGgDLpGseaxcyV3
+         eRDdtC6NRtcHPfRgoDO1Neukb5iqTzKRLSTcLL3mebPNxONqyJyO9oTZ3zElfNWhfI1d
+         M6/13T8rCgTB3lgucKbPov8gJOK4AYUQ7QcPynFlLvvIOxh8mFvl2tnoAYPkBRiZ0z/i
+         LcTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLAmHpueFl5jkS12Y0wXRruWxk+3kyFGEGkmCt9nEI0rmLp76Bw1cjs7ait6d3qkS//RSzGM62tV4oQUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybXMgibq18fAQv0XLaNxy4WFn391ksbSUBEzBLzMVq1cLzt6Ns
+	+LNK36swCgupzXE+SxYTGOCLe1imPUMx1RuDD7cx/Kt45JePmhrt10J1OCHjBna/nH3ubvVUcJx
+	ihDNXeSt77Ulc5ay6ww36K/2Ilq3zDkQ=
+X-Gm-Gg: ASbGncvRjzB3eNpD3i09m7d7xthGf0n4c+3tOXZzZoSyv7/gb57noaDLNGXGAR903Ia
+	TfGk0xCnUTWoz9cOrxnH0Oyw0ZeMq2z4cEzDw29WIJLSA22INctYp/o8hHUKcqJj7B/5CAKugP0
+	MRLjKb9mV7nkrGolv4BZHYlcHOUEjktJhqi1mF2JRe5UanSzwYRWmtP/3E42/CMeBiuThS89/GA
+	rfvSsLNsvma+UkJN1kI+e+8y3edMbOQj7exZQmcYkgHLWZRSxCRc6eDbCw=
+X-Google-Smtp-Source: AGHT+IHuqMvBUAMmL2+i6khAnSMhUO84EZpiF6pSY+Ggw9UrirqcHM0DEhpRmnuNAVMZheRxglA2Cg7yTmFpgfufuzs=
+X-Received: by 2002:a17:907:980f:b0:b3c:3c8e:189d with SMTP id
+ a640c23a62f3a-b6474b37113mr708732666b.32.1760766725511; Fri, 17 Oct 2025
+ 22:52:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AA1YS2D2c75ozhj7"
-Content-Disposition: inline
-In-Reply-To: <87zf9pz33e.fsf@trenco.lwn.net>
+References: <20250905112736.6401-1-linux.amoon@gmail.com>
+In-Reply-To: <20250905112736.6401-1-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 18 Oct 2025 11:21:49 +0530
+X-Gm-Features: AS18NWDdHdJKGAdSzak2dkZBd_DEUB1KqNHSK63I8rxE-Co_iHsMbvelUCu7ZEc
+Message-ID: <CANAwSgSYvTJ=8hv_BrrF1v7u3hq5AB_BSfT7wj0-LQF87dQMUQ@mail.gmail.com>
+Subject: Re: [PATCH v1] PCI: dw-rockchip: Simplify regulator setup with devm_regulator_get_enable_optional()
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Hans Zhang <18255117159@163.com>, Wilfred Mallawa <wilfred.mallawa@wdc.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi All,
 
---AA1YS2D2c75ozhj7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 5 Sept 2025 at 16:57, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Replace manual get/enable logic with devm_regulator_get_enable_optional()
+> to reduce boilerplate and improve error handling. This devm helper ensures
+> the regulator is enabled during probe and automatically disabled on driver
+> removal. Dropping the vpcie3v3 struct member eliminates redundant state
+> tracking, resulting in cleaner and more maintainable code.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 23 +++++--------------
+>  1 file changed, 6 insertions(+), 17 deletions(-)
+>
+If we compile the kernel with phy and regulator as modules,
+I observe this message.
 
-On Fri, Oct 17, 2025 at 02:27:01PM -0600, Jonathan Corbet wrote:
-> Bagas Sanjaya <bagasdotme@gmail.com> writes:
->=20
-> > From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> >
-> > Sphinx reports htmldocs errors:
-> >
-> > Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substi=
-tution referenced: "threshold".
-> > Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substi=
-tution referenced: "tool".
-> > Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substi=
-tution referenced: "thresharg".
-> > Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substi=
-tution referenced: "tracer".
-> > Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substi=
-tution referenced: "tracer".
-> > Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substi=
-tution referenced: "actionsperf".
-> > Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined subst=
-itution referenced: "tool".
-> >
-> > common_*.rst files are snippets that are intended to be included by rtla
-> > docs (rtla*.rst). common_options.rst in particular contains
-> > substitutions which depend on other common_* includes, so building it
-> > independently as reST source results in above errors.
-> >
-> > Rename all common_*.rst files to common_*.txt to prevent Sphinx from
-> > building these snippets as standalone reST source and update all include
-> > references accordingly.
->=20
-> Applied, thanks.
+[   25.473960][   T55] platform 3c0800000.pcie: deferred probe
+pending: platform: supplier regulator-vcc3v3-pcie not ready
+[   25.474071][   T55] platform fe0a0000.hdmi: deferred probe pending:
+platform: wait for supplier /i2c@fdd40000/pmic@20/regulators/LDO_REG9
+[   25.474124][   T55] platform regulator-vcc5v0-usb-otg: deferred
+probe pending: reg-fixed-voltage: can't get GPIO
+[   25.474171][   T55] platform fdc20000.syscon:io-domains: deferred
+probe pending: platform: wait for supplier
+/i2c@fdd40000/pmic@20/regulators/SWITCH_REG1
+[   25.474218][   T55] platform cpufreq-dt: deferred probe pending:
+(reason unknown)
+[   25.474264][   T55] platform regulator-vcc3v3-pcie: deferred probe
+pending: reg-fixed-voltage: can't get GPIO
+[   25.474343][   T55] rockchip-pm-domain
+fdd90000.power-management:power-controller: Timed out. Forcing
+sync_state()
+[   37.744968][ T2415] psi: inconsistent task state!
+task=2280:(udev-worker) cpu=1 psi_flags=4 clear=0 set=4
+[   37.849725][   T50] fan53555-regulator 3-001c: FAN53555 Option[12]
+Rev[15] Detected!
+[   37.990008][ T2216] SCSI subsystem initialized
 
-Shouldn't this more appropriate as a fix for current cycle (6.18)? I see
-the warnings on Linus's tree, though.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---AA1YS2D2c75ozhj7
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPMqSQAKCRD2uYlJVVFO
-o4puAP9fICYO7e25rwE88sCE9s3B9E8bGfkqdqV8T+iWzpplOgEAxE7vJYfQ8DHo
-G3ggxu0+rFveZJhSJqd1VejNrPNTQAo=
-=rk8l
------END PGP SIGNATURE-----
-
---AA1YS2D2c75ozhj7--
+Thanks
+-Anand
 
