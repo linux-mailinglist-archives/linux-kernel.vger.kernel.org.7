@@ -1,276 +1,170 @@
-Return-Path: <linux-kernel+bounces-859282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DB4BED35F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:03:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B534BED30A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C422E189ACA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:04:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3AF24E285B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A2E24166C;
-	Sat, 18 Oct 2025 16:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C1123CEF9;
+	Sat, 18 Oct 2025 15:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKF7Si/o"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGBL6jAC"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83701E9906
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 16:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BF51494A8
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760803409; cv=none; b=FPnVT/liDUhBSDOSkf1E2IBP+5zjH0gVaoS+nUhB06KfUjNGjQDV0bVALWcP5HnA/Y83/BfLV0Gh+wLpoH+pUbX/+BjxI+GJ7saBblII08RzEcDoMvFG94FNStRFngvsIinWuu9FBb7+rsEl5y7k1QhkaGiptdgCDBIQEgfmbtY=
+	t=1760802732; cv=none; b=K79mvhNolov93ZFNdS7pkDhTxA+VJ/hnWWhN+fNJQobRv2eagelGpnAMYXNbvY1fLK3EobqeaX87Zmicrn38h5e/APz8nBuHC+lg8Lj1G+/q6RcSysdtYo6p0pPHx3uK7NEr1K7HgFc8Zj4T9pEXBlbEIUEZFhsPIe1tIys2a1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760803409; c=relaxed/simple;
-	bh=AqHCcWojn351gM4lS2LpJMueGLu6kVYRaIe4ZTtmHj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RkLz86FpYs3mkVr0Y6wJiSLjhuL7kQnP6/mkThF9KtIJh9oiDyy0H74kLTbtl2LKFoe2HCEI2aXmGxkUhiwCXaSVmmP9o9LCb07tPSgflHxWBrBi7+8ugFeBpyvsfyQU3yxHFEqQVP8bCTHzrfLB0R6operDPPGjaNBJjURxw58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QKF7Si/o; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b48d8deaef9so582966766b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:03:27 -0700 (PDT)
+	s=arc-20240116; t=1760802732; c=relaxed/simple;
+	bh=jkKNTWqA+dunjGtKp9ONacoSeruZQel4vRKBXYFAQuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tHsRWBGmyChsYsd9lKN0Bc2dlGj/cXHsVUu56yj45BwU5cJreNhwnEn868HoyaQ/RD+G7t5ThZZa0tOvQjad+9/yUcgxuqoDsRbW8UO7EnE+wPLGmS8upg2bh8LaJJwqCd7nkIiaWHELU31UxyelLWmujL+/mFtJdJz5z+J3Pb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DGBL6jAC; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710653ac03so1545375e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:52:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760803406; x=1761408206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3PDE1i70uMuyHnvAFVWfjyIRl/K/1UfDOKuhRPGumqU=;
-        b=QKF7Si/odLOpgeq3BmCPpvM/a9SPbdeTblMmb4wrYyrJTMY+s5Dtqqj5zqpp8bxA/c
-         g1JqMusvRWHMxG8omKmad7fwld03Sfg5fFttIhDE65K2q16NQI9QMpLIX51oXms7/HS6
-         lnyCgNaDeVNWI6Od9CqKFuC6vLVZENC3Bm2RQIbZIVscpt5dy2zBRM8oTtMjG+99cZAw
-         WoyOJXx3u6vrWVQyya40gqOsJO8rbD01HrOVGspPOk5S8vYqP837Yl2oz4trgIL+0y34
-         Q4XAGREjugN6Q3FTNkcvLVybJODK15LwDN5PZWzu1KOGxSK+bNIvXsTzy4a8XY/EIh2h
-         7SOg==
+        d=gmail.com; s=20230601; t=1760802729; x=1761407529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/+d6bg7Je6LSfnCh0eUcN2Abtn61/XzTPi6xEkMU+k=;
+        b=DGBL6jACLgwl494DQhe5JY1zLDo65W2tgEsuSYD/3g75/Z+BnTF2lMF3JtlyuxeTqe
+         wtA4jfXY5R9wrBQJNIA12qwmpZu4janhl0Rk0zCFmXeuobia4Kj8OJ6VEOOTe3Aoar86
+         vctO0l1aR+DuMJ2qzcl6/poLgm0AehkPv3MIu8jHBLqOKlGIQObKtdpmqUBw2KYuEUOh
+         Bzf6VEBJjDdyQWO3UBfPQySe1XJdNJe1OB/kpeGnxR4q7KmhZu5zJEO4Kbux4MZ1BJ5I
+         u8BsS5i/KpfW928PwU9mcP6g9ZuXw//fDm7vmHBj9p+WUTSTze1+sQQH+lVPwKM1NZpC
+         CSeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760803406; x=1761408206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3PDE1i70uMuyHnvAFVWfjyIRl/K/1UfDOKuhRPGumqU=;
-        b=qBoK4Mb/crhICmecjHqdDL0p3kZ1Lvj3ff3wqdl2XirFqZWeSmikDUcRgaNyLGw85S
-         DLOOd+GOrNnBi15xEbF+9ULnscgeswW5IfgHmtkjHVQcLp6A9kLANO2UZHh0qx5c3P5h
-         HzuZLqrj0c1MhbyOT6vHC1KdFEL9Yyw8KXQW6C8LZvq86Dh55KNZC/xD34G381dsnXhS
-         YtrqO3V170hoFZCbqim1AIDqReaNnBbmMGRia1yYzY0lJ4rf0NaHfZ0TQwnfctbPsEru
-         b5Pnu+oxi15YHP5A9itUfnw7VjLH3/0W8Kpv4KJASi+suh1CHAhiLmeFaGHsxnNaY5jj
-         VOig==
-X-Forwarded-Encrypted: i=1; AJvYcCUUA8Pooqz0tLvhJ9ZEp4Bi4cqrw5nG02xnjeRmXP0pTDa1BJ0m6jOMmTSHL6ohG/EyuozDOCarsOlFt/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9OKLDsPf/u8ZKPHr+HgMQlod4pC3mnEzbbNqE8Ref2L0HQ05H
-	wdE4a1zShg4sKxkG3Z+eph56VPqEXs/8UUOO5dS3RitG454dSx6HosfrcKwLp/fsMe/RgBA562k
-	UiOJlCOmc9KGbzR63s7DjW4Np3hWLmTl0F6aTw2WOfg==
-X-Gm-Gg: ASbGncsdMgt/pUT2TqdtpwcDqfMcZrhzf0Et4dwk3xg1oV+abfEX/RbDH9MRIgfSapk
-	15A+mGIulUohenbOaroW+WH22/rsnOzGveWU00VScb1K/vS5QVhEA8umZUf3L/GAPtEDNo5Ib3H
-	JxtHg3dW5gcFZto6cJJFe9Evf5Hu/U8q46XyRukM9xe4peb28yrgnxKqpXEFlrQdlR8W6+YyzDZ
-	Lma/bgPORA1rU6M0TybakMZTH//XzUh9cH8s0uTon041zJSCiZaL2koyfaz0zM4hJyMXiHGUUx9
-	dCpiwUb/xeJJI9JDQQIfieoiYxI=
-X-Google-Smtp-Source: AGHT+IHexk19IgNk6IuP2jV+2x2wF7f0unp4c1GwwYyOBf/8w9heBdr+ysi7d7B9dpzKsMkgpYC1PUK3YyRIdsL9bbA=
-X-Received: by 2002:a17:907:97d4:b0:b2a:10a3:7113 with SMTP id
- a640c23a62f3a-b64725722f3mr807862966b.29.1760803406106; Sat, 18 Oct 2025
- 09:03:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760802729; x=1761407529;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/+d6bg7Je6LSfnCh0eUcN2Abtn61/XzTPi6xEkMU+k=;
+        b=sZPgkxkuO/kBhoqNjKR+CgK0UQvup8lQRLYk6aqh8q3bTrqNI8mQ9wYjzZ0GS5OXKt
+         d6kmjvPBIi2mvl1/Fka7OG1WvmjO2iSaUXJAaqWvaSz8GgrRx1zDbp6/Ur796Nk3ADv9
+         fcEnbmSG5J/MuoWLufKXliek3P1pJzy2ZgtvpJnZVTvi3rgzxiiRLtKZkB2CQ0p6zzlm
+         ECZ1bLI+db1uRpG1+SD6+Axq6aRbuYutwUvphPlhP8g6u/Ich9Ve4l6Yw3SJLx/Taoor
+         T+tMhYH1cf5HD7KL/Bttzpm18IeUMCQuJZqiiIesZM6v8pxtoIyzNkbwm1QkVAQXID9d
+         m3BQ==
+X-Gm-Message-State: AOJu0Ywh54Ss+E+LUz5NT5ibBYMg6nC5iokp7duNFCUz3Fy4VKrfhWDw
+	+g7FN/o9ob+E/Nb/loCFhVRYuUrxv3NXInUoU6ykrzfQoMWM709LKKmj
+X-Gm-Gg: ASbGncsZepmHD5ddjOHLKVMQFkp4Y8gJ/qPMtaIVry6Q/ocxF+64Z/K6VERFD6KINcC
+	dBafefAGZq9LYQr0kb4+xoptxQL38ipdUjyUkNMi4tZbJw1WsKj0DxGzCDWKDDHQORFu13ibepK
+	6AEDASlDd0iOk2xhwpB6yUAwj5lEtYEtU2UwmXzTn7rTV8jup8sG2HHGTIWJJRn9fkDhR31TAN5
+	MUUl96pArRKOSduUk4Mte8QZLGxKLWCcJvwXL4ssTzrrp0+ckvVU7U1opjj80asZ34kdS4KecRi
+	KgJ0lxrrybZCoe9TBTPD8CBgZH94LxmZVmjwb66yhpqzQ1hmjs6sdbcRc5hRTbuRbBbv9QG5oBs
+	IH3O8INjRYdSSiI4cJwa7cdtQq9WkY1IBJroo3vcEYpaUc4YAe7rL/hh6gDvR8avUyEQ723mW3x
+	A/YdYLe1VWxQKW2aYOgMyl
+X-Google-Smtp-Source: AGHT+IFbTEDd0tDgCWfpUzX7d3KQYCRA8fou8NjdDwmZRR71rY4raU6CKiilA4b8HyfDtmg5bF09sQ==
+X-Received: by 2002:a05:600c:4e86:b0:45d:da49:c47d with SMTP id 5b1f17b1804b1-471177c245bmr32622905e9.0.1760802728516;
+        Sat, 18 Oct 2025 08:52:08 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.121.102])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715520d747sm58135015e9.14.2025.10.18.08.52.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Oct 2025 08:52:08 -0700 (PDT)
+Message-ID: <1263c092-d4bc-4d8f-8ef8-2706d337f4c2@gmail.com>
+Date: Sat, 18 Oct 2025 17:52:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-dma-buf-ecc-heap-v8-0-04ce150ea3d9@kernel.org> <CAO_48GGD8sCoQt_qWKqcbg6v7Cyi5U9QsxsvNOcqfkLRqHS7_w@mail.gmail.com>
-In-Reply-To: <CAO_48GGD8sCoQt_qWKqcbg6v7Cyi5U9QsxsvNOcqfkLRqHS7_w@mail.gmail.com>
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Date: Sat, 18 Oct 2025 21:33:14 +0530
-X-Gm-Features: AS18NWCxIWZfRS3hG4C_yzteaWS7C2gP5_aCiLwTRjHCdW6sGbeW-DvFPRdxwEc
-Message-ID: <CAO_48GEXC0FDkeRN57e5Yc=4WCwjh=9pDpZXjowZzEaPPsAd-w@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
-	Mattijs Korpershoek <mkorpershoek@kernel.org>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib: cpu_rmap.c Refactor allocation size calculation in
+ kzalloc()
+To: Shuah Khan <skhan@linuxfoundation.org>, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org
+References: <20250930092327.27848-1-mehdi.benhadjkhelifa@gmail.com>
+ <10082c41-4302-4cb3-a2bf-788e59bad0c8@linuxfoundation.org>
+ <84bf5902-b3e5-4d58-a2a7-f01e15cfe143@gmail.com>
+ <bd60a8e5-f4df-4743-8b56-3d6127906ff2@linuxfoundation.org>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <bd60a8e5-f4df-4743-8b56-3d6127906ff2@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 15 Oct 2025 at 13:53, Sumit Semwal <sumit.semwal@linaro.org> wrote:
->
-> Hi Maxime,
->
-> On Mon, 13 Oct 2025 at 14:05, Maxime Ripard <mripard@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > Here's another attempt at supporting user-space allocations from a
-> > specific carved-out reserved memory region.
->
->
-> Thank you for the series - I think it looks pretty decent, and with
-> Marek's Acked-by for the cma patch [1], I'm inclined to merge it.
->
-> I'll wait till today evening, in case there are any more comments, and
-> then go ahead and merge it.
+On 10/10/25 6:00 PM, Shuah Khan wrote:
+> On 10/9/25 09:16, Mehdi Ben Hadj Khelifa wrote:
+>> On 10/7/25 11:23 PM, Shuah Khan wrote:
+>>
+>>>
+>>> How did you find this problem and how did you test this change?
+> 
+> Bummer - you trimmed the code entirely from the thread. Next time
+> leave it in for context for the discussion.
+> 
+Ah, I saw in other LKMLs that some do delete the code so I thought it 
+was okay. We'll do next time.>> For the first part of your 
+question,After simply referring to
+>> deprecated documentation[1] which states the following:
+> 
+> Looks you forgot to add link to the deprecated documentation[1].
+> It sounds like this is a potential problem without a reproducer.
+> These types of problems made to a critical piece of code require
+> substantial testing.
+> 
 
+Ack, This is the doc that I was referencing: 
+https://docs.kernel.org/process/deprecated.html
+I'm not sure what is exactly demanded in substantial testing.My guess 
+was to do normal testing as I mentionned and add some fault injection to 
+test the change in case of failure and also compare dmesg outputs.I have 
+run selftests for the net subsystem too since my last mail with no sign 
+of regression.Any suggestions on what testing for this case should look 
+like instead or on top of what I did?>> 'For other calculations, please 
+compose the use of the size_mul(),
+>> size_add(), and size_sub() helpers'
+>> Which is about dynamic calculations made inside of kzalloc() and 
+>> kmalloc(). Specifically, the quoted part is talking about calculations 
+>> which can't be simply divided into two parameters referring to the 
+>> number of elements and size per element and in cases where we can't 
+>> use struct_size() too.After that it was a matter of finding code where 
+>> that could be the problem which is the case of the changed code.
+>>
+>> For the second part, As per any patch,I make a copy of all dmesg 
+>> warnings errors critical messages,then I compile install and boot the 
+>> new kernel then check if there is any change or regression in dmesg.
+> 
+> This is a basic boot test which isn't sufficient in this case.
+> 
+>> For this particular change, since it doesn't have any selftests 
+>> because it's in utility library which in my case cpu_rmap is used in 
+>> the networking subsystem, I did some fault injection with a custom 
+>> module to test if in case of overflow it fails safely reporting the 
+>> issue in dmesg which is catched by the __alloc_frozen_pages_noprof() 
+>> function in mm/page_alloc.c and also return a NULL for rmap instead of 
+>> wrapping to a smaller size.
+> 
+> Custom module testing doesn't test this change in a wider scope
+> which is necessary when you are making changes such as these
+> without a reproducer and a way to reproduce. How do you know
+> this change doesn't introduce regressions?
+> 
+My custom module testing specifically tested the change in case of 
+failure which is what the change is for in the first place.The change 
+which deems to be simple in the documentation since we are just wrapping 
+calculations instead of using operators,is just to safe guard 
+calculations that are made inside of kzalloc() so that no unwanted 
+behavior is produced i.e in case of overflow.As I mentionned above,I 
+tested regressions by running selftests for net subsystem with it 
+showing no regressions on top of fault injection mentionned.
+I would like to have more guidance as to what I could do to have more 
+robust testing in this case.> thanks,
+> -- Shuah
 
-Thank you; it's merged to drm-misc-next now.
->
->
-> Best,
-> Sumit.
->
-> >
-> > The initial problem we were discussing was that I'm currently working o=
-n
-> > a platform which has a memory layout with ECC enabled. However, enablin=
-g
-> > the ECC has a number of drawbacks on that platform: lower performance,
-> > increased memory usage, etc. So for things like framebuffers, the
-> > trade-off isn't great and thus there's a memory region with ECC disable=
-d
-> > to allocate from for such use cases.
-> >
-> > After a suggestion from John, I chose to first start using heap
-> > allocations flags to allow for userspace to ask for a particular ECC
-> > setup. This is then backed by a new heap type that runs from reserved
-> > memory chunks flagged as such, and the existing DT properties to specif=
-y
-> > the ECC properties.
-> >
-> > After further discussion, it was considered that flags were not the
-> > right solution, and relying on the names of the heaps would be enough t=
-o
-> > let userspace know the kind of buffer it deals with.
-> >
-> > Thus, even though the uAPI part of it had been dropped in this second
-> > version, we still needed a driver to create heaps out of carved-out mem=
-ory
-> > regions. In addition to the original usecase, a similar driver can be
-> > found in BSPs from most vendors, so I believe it would be a useful
-> > addition to the kernel.
-> >
-> > Some extra discussion with Rob Herring [1] came to the conclusion that
-> > some specific compatible for this is not great either, and as such an
-> > new driver probably isn't called for either.
-> >
-> > Some other discussions we had with John [2] also dropped some hints tha=
-t
-> > multiple CMA heaps might be a good idea, and some vendors seem to do
-> > that too.
-> >
-> > So here's another attempt that doesn't affect the device tree at all an=
-d
-> > will just create a heap for every CMA reserved memory region.
-> >
-> > It also falls nicely into the current plan we have to support cgroups i=
-n
-> > DRM/KMS and v4l2, which is an additional benefit.
-> >
-> > Let me know what you think,
-> > Maxime
-> >
-> > 1: https://lore.kernel.org/all/20250707-cobalt-dingo-of-serenity-dbf92c=
-@houat/
-> > 2: https://lore.kernel.org/all/CANDhNCroe6ZBtN_o=3Dc71kzFFaWK-fF5rCdnr9=
-P5h1sgPOWSGSw@mail.gmail.com/
-> >
-> > Let me know what you think,
-> > Maxime
-> >
-> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > ---
-> > Changes in v8:
-> > - Rebased on top of 6.18-rc1
-> > - Added TJ R-b
-> > - Link to v7: https://lore.kernel.org/r/20250721-dma-buf-ecc-heap-v7-0-=
-031836e1a942@kernel.org
-> >
-> > Changes in v7:
-> > - Invert the logic and register CMA heap from the reserved memory /
-> >   dma contiguous code, instead of iterating over them from the CMA heap=
-.
-> > - Link to v6: https://lore.kernel.org/r/20250709-dma-buf-ecc-heap-v6-0-=
-dac9bf80f35d@kernel.org
-> >
-> > Changes in v6:
-> > - Drop the new driver and allocate a CMA heap for each region now
-> > - Dropped the binding
-> > - Rebased on 6.16-rc5
-> > - Link to v5: https://lore.kernel.org/r/20250617-dma-buf-ecc-heap-v5-0-=
-0abdc5863a4f@kernel.org
-> >
-> > Changes in v5:
-> > - Rebased on 6.16-rc2
-> > - Switch from property to dedicated binding
-> > - Link to v4: https://lore.kernel.org/r/20250520-dma-buf-ecc-heap-v4-1-=
-bd2e1f1bb42c@kernel.org
-> >
-> > Changes in v4:
-> > - Rebased on 6.15-rc7
-> > - Map buffers only when map is actually called, not at allocation time
-> > - Deal with restricted-dma-pool and shared-dma-pool
-> > - Reword Kconfig options
-> > - Properly report dma_map_sgtable failures
-> > - Link to v3: https://lore.kernel.org/r/20250407-dma-buf-ecc-heap-v3-0-=
-97cdd36a5f29@kernel.org
-> >
-> > Changes in v3:
-> > - Reworked global variable patch
-> > - Link to v2: https://lore.kernel.org/r/20250401-dma-buf-ecc-heap-v2-0-=
-043fd006a1af@kernel.org
-> >
-> > Changes in v2:
-> > - Add vmap/vunmap operations
-> > - Drop ECC flags uapi
-> > - Rebase on top of 6.14
-> > - Link to v1: https://lore.kernel.org/r/20240515-dma-buf-ecc-heap-v1-0-=
-54cbbd049511@kernel.org
-> >
-> > ---
-> > Maxime Ripard (5):
-> >       doc: dma-buf: List the heaps by name
-> >       dma-buf: heaps: cma: Register list of CMA regions at boot
-> >       dma: contiguous: Register reusable CMA regions at boot
-> >       dma: contiguous: Reserve default CMA heap
-> >       dma-buf: heaps: cma: Create CMA heap for each CMA reserved region
-> >
-> >  Documentation/userspace-api/dma-buf-heaps.rst | 24 ++++++++------
-> >  MAINTAINERS                                   |  1 +
-> >  drivers/dma-buf/heaps/Kconfig                 | 10 ------
-> >  drivers/dma-buf/heaps/cma_heap.c              | 47 +++++++++++++++++--=
---------
-> >  include/linux/dma-buf/heaps/cma.h             | 16 +++++++++
-> >  kernel/dma/contiguous.c                       | 11 +++++++
-> >  6 files changed, 72 insertions(+), 37 deletions(-)
-> > ---
-> > base-commit: 47633099a672fc7bfe604ef454e4f116e2c954b1
-> > change-id: 20240515-dma-buf-ecc-heap-28a311d2c94e
-> > prerequisite-message-id: <20250610131231.1724627-1-jkangas@redhat.com>
-> > prerequisite-patch-id: bc44be5968feb187f2bc1b8074af7209462b18e7
-> > prerequisite-patch-id: f02a91b723e5ec01fbfedf3c3905218b43d432da
-> > prerequisite-patch-id: e944d0a3e22f2cdf4d3b3906e5603af934696deb
-> >
-> > Best regards,
-> > --
-> > Maxime Ripard <mripard@kernel.org>
-> >
->
->
-> --
-> Thanks and regards,
->
-> Sumit Semwal (he / him)
-> Senior Tech Lead - Android, Platforms and Virtualisation
-> Linaro.org =E2=94=82 Arm Solutions at Light Speed
-
-
-
---=20
-Thanks and regards,
-
-Sumit Semwal (he / him)
-Senior Tech Lead - Android, Platforms and Virtualisation
-Linaro.org =E2=94=82 Arm Solutions at Light Speed
+Regards,
+Mehdi Ben Hadj Khelifa
 
