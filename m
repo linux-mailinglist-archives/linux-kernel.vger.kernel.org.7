@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-859029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B4FBEC82F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165ACBEC83E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F050D4E85C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85EE42713C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7962773D8;
-	Sat, 18 Oct 2025 05:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56F7261B99;
+	Sat, 18 Oct 2025 05:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E4fRehD6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="lYwyveBH"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F761FDE39
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961161F418D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760765658; cv=none; b=lkZs3DX2HN+NhWYWkk9KtNDX7gIhDiHvqVAv1ocYScShOYuMbyOul0vPosgUA0iCQ2sbz+P+eNsjIPfiEekBLGOgcUTImF+lwZGhGBn+oPYbsdsW41HEzg7kshqON0Gq6gfUpMYPMfS5kLMzRVvcEiPs6CFWDtUX9dkDroLTOQI=
+	t=1760766300; cv=none; b=XDuqpo8jFN/4DMQ1VIV70kRTZ/CrqZQSyd/ovpTrcohfdRF/kwhJaE2DwUgJS0WrD59Z1UAPoTcVUgLu+rqqHIPrWMNAK+3KVUCS5oNjR9VJ7EhSK1QQI5CSSk0E2siXYnw6TKqYcBgV5zKBFaqLUEg1v+MTlr5SS4ahrVijAIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760765658; c=relaxed/simple;
-	bh=3wWYRY8lHMFlIsMgMXZz7Ax0r0b6Q3jCNmTO+YYi+UA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CpekgrjQQ0jEAYxJwGRG0158GN4TIuG2YCDJykML2PHNN/LALPuNw1Ts7xHyKgRt1ZyajO9bisuPrpE0p4KJ1XnY2MGYMLy0OLl9H3hQApWDBctvmzw0wrkfgC3vsn/lOW7a6/59mucXwFp0FAbvVZeTWUxJ5ehoZL2zB0eUSG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E4fRehD6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59I4Z7bt005199;
-	Sat, 18 Oct 2025 05:33:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1a2xqC
-	PKn7Yfe3qT3m1xrGTlZho+TG3RTSnggotxZDU=; b=E4fRehD6nrArxKtRSPcC8s
-	XwOgpkALWloeWT2P3I85t1bBmhJpxD3NIcl6cSt3+L/7I1J4wQWHSz0viExo3EPW
-	K250BDFvk/XEyMyo/gDUSC6qvxiqBjieR8lt4TJtroiD3fHCzKyg77f+X22PbS2C
-	PN7omG0hahQGp63OV9kpbCXZvUC1nsrz1Oh5bcSpe+fCuWWQxc+tr7a4VeT1qrhR
-	n0JQbQw7u3FpjhedFcqxvesDfPzGYF+fANqJfDE031uIOqtOhBdJuM6jD8/epfX8
-	uDccN+vAxV2PRrrK/AGk/TT2ogJkMqJ9/RE13ZbUSWgHgt7i4AgBZ2tlQkWUCToQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33erb77-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 18 Oct 2025 05:33:57 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59I5Xvim027400;
-	Sat, 18 Oct 2025 05:33:57 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33erb75-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 18 Oct 2025 05:33:57 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59I3hrIM016742;
-	Sat, 18 Oct 2025 05:33:55 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r32kgt8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 18 Oct 2025 05:33:55 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59I5Xs9T27394348
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 18 Oct 2025 05:33:54 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 827E220043;
-	Sat, 18 Oct 2025 05:33:54 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 75F0A20040;
-	Sat, 18 Oct 2025 05:33:52 +0000 (GMT)
-Received: from li-c439904c-24ed-11b2-a85c-b284a6847472.ibm.com (unknown [9.43.69.229])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 18 Oct 2025 05:33:52 +0000 (GMT)
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Nam Cao <namcao@linutronix.de>
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: Re: [PATCH] powerpc/pseries/msi: Fix NULL pointer dereference at irq domain teardown
-Date: Sat, 18 Oct 2025 11:03:51 +0530
-Message-ID: <176076456872.59904.2831569431349537120.b4-ty@linux.ibm.com>
+	s=arc-20240116; t=1760766300; c=relaxed/simple;
+	bh=rVEc3vaup6uNKVaKbccA2Jq5ARaE2EQ/UBrlOhIYgxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GFAof48TjTAEyScuokvLSNKt2drnuV5sB0ojQAfU/EINW4dRJgXuAXvetC8cs3CvQGBUuFlahmY9rr1MvZCK13qkyIOF98zVx10E0eNxjNySQNtZuo7ZDRswajK38+MhmHWSQl5aVgAqBQPQ9OsvnrM7mzrswmmbNM3KpUazS5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=lYwyveBH; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-26d0fbe238bso19788095ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google; t=1760766298; x=1761371098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z6J7CTQVzJTdpSsBpyYymkd2d5jUSp6/gZICW09ccYI=;
+        b=lYwyveBH8sVSwniXfJCTbX7+LhmUx0v7hGeSSSUk2zvSHiPlJkUQj2rcCixyXdx7n6
+         Pt/uwnuvyimysi9dCMdRsuneBrf6aJRZ3gOdiAka+t2+voXG+nHcWf/6zbXYOOEaZ/O3
+         etJuyrAZwkGbRiFwccXMlHGH95UOWyqR/gjvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760766298; x=1761371098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z6J7CTQVzJTdpSsBpyYymkd2d5jUSp6/gZICW09ccYI=;
+        b=jH6nXIeyb/ArhaR+VqBphphNdtWvl+a6+Ifc5BSB1LO35cM5wC3uvfXu/gF369xXFg
+         SPOGfcdhXxBcWeyJ8ozcztMYbLjWxxAExja4XCEaVqpEN1yodKxCLODJ31grd1XBKhCf
+         deZ1uw70b2hqN7rPbWI/cpXERxYUHY+kdyv1E2iAXCL/xiZCzhppgup7rnaoye+v7A5T
+         qii88Tl2pL1NGkX/lmaZVCGwxvW6rE6TiTlMjEe/TC2K/I2d1eU8CGm43L+abLtETEsm
+         sh/wmkfgTnbAXhOHsTxVcdgvR677TyPvpQdCIInDNOKY71lyUIsEhLn0T2j/Kq4gq/Up
+         Qo9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXEIjThRllbgWLKXxrPbTrNsx+thNWdHAMJGmQMhyu5cd1WDBPYwZfpk7RuoQLiPUKDjB4f3I+J3nbIf7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMHRff3t9f8rOwhG1uraBQikq3i+WnHXhdqRTtKCVQBREF9uU9
+	LHkXyAREKpYVx1cZ4wsbZjnJ0ldq0oAZhUzWHOJZWnU8O73AAdi3WyCW7OStbRf/q0g=
+X-Gm-Gg: ASbGncsaULdV7/GDWA3ilzyeClh3jQzunEoeVFADWVapaxOO+3I/FWa/ACP6dqOvIf4
+	pUbV3I7kWk8Hz2A89sRmp/foPJ9MUjabZk9Tz5Yt6nregVvO+JHMNX6KbKBPd7MDCRIijmJ0ZRB
+	0JTUIT4S2IrJeu19y+bc5CGDti2FEnGqUZfRthmz9lEua2o545fx+W4OA13V3yf8Gs2ZtuZHJud
+	BwNvyssFMstGQrtK9JLuN80RfVaIv4UzGBof9EwHc1Lgifel5DgpY1n0FlmKo1gdoxzqgyBr6kk
+	1of/8sIvPxZyNwp/38Wv5AlhJNgG5Bb2j/NAK+2o1DKO48rG+VdZpU4niuBLxHPjLg8HftmmJf5
+	uSU+cQW21wWqur2MB+70+AeA9k4L9d6PO+SkmLz0yizNKI/LWNIrf53pVoQoYVe/nz3QUBrqlxo
+	71Ab9I7AmNJFNinXgEGXYtRMPicmbHDk16DVjRNecfPXiZ6DAD3kg=
+X-Google-Smtp-Source: AGHT+IHf1Q2t9Le+gs9UNqzy+mF5hSF6zqhbbRPGceW+0BhDH7PF/VO1zXANTCABMZI3hDYV10XUbQ==
+X-Received: by 2002:a17:902:f642:b0:28a:5b8b:1f6b with SMTP id d9443c01a7336-290c9cbbd49mr82013025ad.21.1760766297848;
+        Fri, 17 Oct 2025 22:44:57 -0700 (PDT)
+Received: from shiro (p1391188-ipxg00a01sizuokaden.shizuoka.ocn.ne.jp. [153.222.3.188])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b6a76645c61sm1657222a12.3.2025.10.17.22.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 22:44:57 -0700 (PDT)
+From: Daniel Palmer <daniel@0x0f.com>
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	wuhoipok@gmail.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH 0/3] drm/radeon: fix up some badness when probe fails
+Date: Sat, 18 Oct 2025 14:44:48 +0900
+Message-ID: <20251018054451.259432-1-daniel@0x0f.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251010120307.3281720-1-namcao@linutronix.de>
-References: <20251010120307.3281720-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FMYWBuos c=1 sm=1 tr=0 ts=68f326c5 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=dwpbbf9tRbJM_blNvucA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 6yZP38Vl89LVXNHJjfBlkkslVXp2LRqN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX00aPiBFyr+W6
- WG1fJ47TtpUUnVAfhfra8RUQA3B0SoPDQHhmEWV6msPpW5k+IRtwb3abCIYW/8iyqhDf3IL5m+R
- kHwFgPo/9LSUBEjDoJfGTJ1DP8B0x9TtoDPVk2seqhI5dxYFhHxbcLfbHK4WESe867CBKZOlVR9
- 1TxTCAcC2HTN85lQOhr8vAHOyqW/swQyyeBQhIMt6lSWB3G0aLYPDymYyaesotHZZXpkoyGqCcV
- 1vv+h76Qf37K4LdDScNEYWxhluEqPp//F3JYv84St4GBvvxxNzqqWPQDAYYVjKzHDtfHhhBP72s
- +GdLVwLXPH7PkfD0Q87PyQRmeoOtWj0ouzTkC1IHArWOfnPwW3AtlBp5VNdIARS3Opt6YgQ6NIy
- sThR0QCp+dH1dCNRQbXbK7F+vwILcA==
-X-Proofpoint-ORIG-GUID: VICwb4uCS6y3HdMBRqjtsqusEBH2C9o4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-18_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Fri, 10 Oct 2025 12:03:07 +0000, Nam Cao wrote:
-> pseries_msi_ops_teardown() reads pci_dev* from msi_alloc_info_t. However,
-> pseries_msi_ops_prepare() does not populate this structure, thus it is all
-> zeros. Consequently, pseries_msi_ops_teardown() triggers a NULL pointer
-> dereference crash.
-> 
-> struct pci_dev is available in struct irq_domain. Read it there instead.
-> 
-> [...]
+I have been trying to get a Radeon 9250 running on an Amiga 4000[0].
 
-Applied to powerpc/fixes.
+On that setup it fails to find the BIOS and the probe fails which is
+expected but then a bunch of WARN_ON()s etc are triggered.
 
-[1/1] powerpc/pseries/msi: Fix NULL pointer dereference at irq domain teardown
-      https://git.kernel.org/powerpc/c/ef3e73a917ec7d080e0fb0e4015098a4fb0f1cff
+I though maybe this is "m68k problems" so I bought an old x86 board and
+there if I have a different primary VGA card the BIOS part of the
+probe fails in the same way and the same scary messages[1] are showing
+up in the console.
 
-Thanks
+It seems like the probe failure path wasn't tested when some previous
+cleaning up happened.
+
+I'll fix the issues with not finding the BIOS if the card wasn't
+initialised in the normal x86 way later.
+
+0 - https://lore.kernel.org/lkml/20251007092313.755856-1-daniel@thingy.jp/
+1 - https://gist.github.com/fifteenhex/b971bd62c49383a0558395c62c05ce3b
+
+Daniel Palmer (3):
+  drm/radeon: Clean up pdev->dev instances in probe
+  drm/radeon: Do not kfree() devres managed rdev
+  drm/radeon: Remove calls to drm_put_dev()
+
+ drivers/gpu/drm/radeon/radeon_drv.c | 34 ++++++++---------------------
+ drivers/gpu/drm/radeon/radeon_kms.c |  1 -
+ 2 files changed, 9 insertions(+), 26 deletions(-)
+
+-- 
+2.51.0
+
 
