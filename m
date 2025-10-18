@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-859307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E9ABED45F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688ABBED46E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D574919C220C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA7A5849A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A6B253359;
-	Sat, 18 Oct 2025 17:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966BA23B61A;
+	Sat, 18 Oct 2025 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ne/BL92x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s2W1IKbe"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672CA42065;
-	Sat, 18 Oct 2025 17:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A949824A067
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760807163; cv=none; b=SeDK5J+Jc75ZrALL2ictEN9D+1e2wbV98sorgNICdVWeMFZZ4jIsSRPVET3RMu6f2U0ZbpMq1oANdCnou8+gQVULl4LJZZHV3kBWXhSiQSVl7k/5ouUNS2aRWdIZ7G0qeAxEULruAEEnJTqtlYLnKxgTO2455uJ0WDONAbuhiQg=
+	t=1760807390; cv=none; b=Goa3eykB4v3GT9lhVRnjA6JnRUxpR9M2qWGde3JBKefAHyALQZVuPDtg2eZ9tmP3SEGVqChBfhIxG09Fhm6cKkgosh25sGV2vC8TlmlLaaEgICNFzyC2JCqKdpTKjrY/zRHduw7ps6dPXWYlppXjNytjCb/hLhMRs3K5fHbDulM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760807163; c=relaxed/simple;
-	bh=2x+8nVrwYwA8yCfBJaLAbxeu2GjEiw06hcYzBWsfWaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kpCDbRi1CL98GggJGm6lSC3tnPZTb8nGu9Po3VkUmFk4M0lIxMbxqXc2Bh2jzPaWr3PpbzRN5zEPARZAIn1G5nuRjP5/4+AgoGNoxSWIu7lnkuSY4YoWR/BoLBuP253iKZoQ894XkBLG+eqRiMCyWT6YsoiH6nxC99H4U54F064=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ne/BL92x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAEBC4CEF8;
-	Sat, 18 Oct 2025 17:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760807162;
-	bh=2x+8nVrwYwA8yCfBJaLAbxeu2GjEiw06hcYzBWsfWaw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ne/BL92xXoLlX5oC8Zxa3RfndPNs2+CbW4wirFL6Yc+bB0k0893A4Yr8Hd7E4WwDN
-	 L8pxcvfnyW60imsIqZc7I00X8IXC4eTB/OF1rRC7mBE0ztI0Eqe17zjEyWVgoMKrxK
-	 9p64OEFuUltApFFhRN/HObl3bWXwyoS8HoSXlP/Xm9PQrD/Cp5m7d7ISxjz9EV6Ocg
-	 srINPmuT1Zm9k9j9YXgZuhzEm/w9Njic3582KvOOXmGfHeIjVljBVBe0GzT009sgmU
-	 AGj8Evq2iABNkubLv/y6avRA1PemmrenzvEk3inpciFn05kGm3RdU0XSJ2kj03Y10B
-	 7Aq+WVqphdlJA==
-Message-ID: <884448f6-89bf-49e4-8d1c-e91b666cbe3c@kernel.org>
-Date: Sat, 18 Oct 2025 19:05:57 +0200
+	s=arc-20240116; t=1760807390; c=relaxed/simple;
+	bh=odtCe9zBLcd2KigvnEagfj6Hjlz+S098qgy/zAjyk5g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mEH6C6Cg6+744IAMvZB8JLhjMJISua9H15v9KXTnX/qnWddgfYpGn3xJrYJX3GS34Gu5gDxQchXgmwkyAmS9Ol0OZnDbG4nv2kI7mXFYUYJp5rN3g4KchYMJG4xZ01Jlpt4QPd9sUldiQixak/CoS5piqxpeCkCZHOPfi4AaYwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s2W1IKbe; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e39567579so19032605e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760807387; x=1761412187; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gbgmXbo5t+1RIxOlN8V1tPuxrDnGp84UG4kpKP+4AI=;
+        b=s2W1IKbeLEuX2kkxo9AybDWEDEm5rqNnkDaV/DCZDcr0M6r+aOVdhus7bB83epvYuf
+         CfQos9YRn9xfGKMVJ3dtLfPW/AyRT3U/NAkz+FEHIwuEgELPVWAAqLoHTxd6i0Ay+Frg
+         64BU/nqpOZAiTu4YijG6Wt3rsAnk5/+v55pEJ+icNmkTX6g2MHda3cZmgfXYt+0wQt5s
+         JMMWH7elqV35qJZZmILPEgos39P2n/nEHhzD+SDeEwR7m0dE/0522ChttpOlSoXdgslt
+         45Uj42+Eto2H85xG5oSev9Es3P4neIyc/0LilICNFNdkpU3y+ZFQ0moED2mm8mqZn4v2
+         Tnxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760807387; x=1761412187;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gbgmXbo5t+1RIxOlN8V1tPuxrDnGp84UG4kpKP+4AI=;
+        b=Bpm1/P+cQQ/QblZCkyEbf5r4IFIWK8uvmiXonWTNXWCTNuXwK0TggIA4481Fti6hz/
+         FunayVXfoTBCWhvdJx22iuKyXxpZFE4tjWSOMZezt5HHvU3FCt0u0Z2S0TdRBk+/DVjo
+         rqmyg67PXSzbJiqgCcu2+8zgJUCBAKPt+zYFFnMOzHTUrY94W9qt1G0jv8P3UoBz+ptz
+         yI/7MoeqYctqxgG0vJwAdxJywQPWwp1pEK0K8rnOR4wahm2tZ1AxejsAnw4TEt/RxuLe
+         pEeLzI/44ccqb54r0QPW3pPqV0dGbeOmGQZl5SQHgYot8bOZlaz3sZCudpO4yBG/yEHb
+         VrkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQD/boy3yyf2OBmyG7BgnSShiImPVOM1NWuqgsXR1RhOeKWQasxEFVZsLrLEl050JzeXDfOFgc9UTSKN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1WdI9rVf8lmtfGjKhylBtNb7r7ReTctP1TXVtFvxGqfFx6b5A
+	luSB4nDVpuwkQc06SUaxW690ockq0BmZioRKuKTDNP/4Wz8wacJbt6smjjFMKRHRnqJp9dzYifc
+	yMOIo0GeIkQPi9kGytA==
+X-Google-Smtp-Source: AGHT+IE2qIYxI4Vw1+ECgA1gn5ogbwuagPgH2cctNTftSEDiGSn1/+RvZtZON2v3lqv5N/Nfcs1I9R9CXWA7rAA=
+X-Received: from wmwg2.prod.google.com ([2002:a05:600d:8242:b0:45d:e2f3:c626])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3512:b0:471:12c2:201f with SMTP id 5b1f17b1804b1-471179134f0mr67710035e9.32.1760807387121;
+ Sat, 18 Oct 2025 10:09:47 -0700 (PDT)
+Date: Sat, 18 Oct 2025 17:09:46 +0000
+In-Reply-To: <aPPIL6dl8aYHZr8B@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: soc: samsung: exynos-sysreg: add
- power-domains
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251010-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v2-1-552f5787a3f3@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251010-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v2-1-552f5787a3f3@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com> <aPPIL6dl8aYHZr8B@google.com>
+Message-ID: <aPPJ2qDhxXNh8360@google.com>
+Subject: Re: [PATCH v17 00/11] rust: replace kernel::str::CStr w/ core::ffi::CStr
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 10/10/2025 08:29, André Draszik wrote:
-> On gs101 only, sysreg can be part of a power domain, so we need to
-> allow the relevant property 'power-domains' for the relevant
-> compatibles google,gs101-*-sysreg.
+On Sat, Oct 18, 2025 at 05:02:39PM +0000, Alice Ryhl wrote:
+> On Wed, Oct 15, 2025 at 03:24:30PM -0400, Tamir Duberstein wrote:
+> > This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+> > have omitted Co-authored tags, as the end result is quite different.
+> > 
+> > This series is intended to be taken through rust-next. The final patch
+> > in the series requires some other subsystems' `Acked-by`s:
+> > - drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
+> >   look?
+> > - rust/kernel/device.rs: driver-core. Already acked by gregkh.
+> > - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
+> > - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
+> > - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
+> > 
+> > Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
+> > Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+> > 
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
-> Changes in v2:
-> - limit to gs101 only (Krzysztof)
-> - Link to v1: https://lore.kernel.org/r/20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org
-> ---
->  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
+> You need a few more changes:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+One more:
 
-Best regards,
-Krzysztof
+diff --git a/rust/kernel/drm/ioctl.rs b/rust/kernel/drm/ioctl.rs
+index 69efbdb4c85a..5489961a62ca 100644
+--- a/rust/kernel/drm/ioctl.rs
++++ b/rust/kernel/drm/ioctl.rs
+@@ -156,7 +156,7 @@ macro_rules! declare_drm_ioctls {
+                         Some($cmd)
+                     },
+                     flags: $flags,
+-                    name: $crate::c_str!(::core::stringify!($cmd)).as_char_ptr(),
++                    name: $crate::str::as_char_ptr_in_const_context($crate::c_str!(::core::stringify!($cmd))),
+                 }
+             ),*];
+             ioctls
 
