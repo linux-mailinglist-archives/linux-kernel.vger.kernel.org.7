@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-859476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877CDBEDC45
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:33:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B9EBEDC48
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD5E189E788
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:33:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45BD619A5780
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF57C285C8C;
-	Sat, 18 Oct 2025 21:33:00 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092E423B0;
-	Sat, 18 Oct 2025 21:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332BD284684;
+	Sat, 18 Oct 2025 21:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BhwVx552"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEEDB67A
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760823180; cv=none; b=pcc3APSbJlaAuyP683mNjI8AsLhcOgVfF70hVmZEs2CQGhmi3aExC1mwchg+W8bjAAioWY3kIEoPI8xlAZXA6WwxWOYouUDDI+uqbpohT683ZVHPelP9NxgzRUru8XCE67MO5e3Q9/P9bxL4SbNcTCdFNrjWGLoxHfiyYxxmVss=
+	t=1760823472; cv=none; b=VBzviOqS0o+U0HVTwzZAA3fRuWW2abuG8EUA8O3VSu+03IPlqh+jKq1tIISGOHfx0ANectQK0yCumoTAHIBve8p4UW9IC4lgOjwANwqgCcgYkXG6W7NpklB1GFMKrg3lkySLZ9u20eUXHjykZ9L/+MvNnN06j7h/5AP2fG2wliE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760823180; c=relaxed/simple;
-	bh=ONxbqzhxhsnanjoNPDhprLC2BD84hL7dK3VhhyvFXbI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=NKNUsmouX1Dy0ms8RmPhTJSiRpQz1jQ/T0cGl8rPCVRdYHjz0ipOshFvzHwDlK4uVk/jdfSg3z+gTD7CF1nz5jCsvd8u2A0l24qPv0ditqZ2q8r/kGJwwn6UZ0hTseGZmIXii7JBBn5pH5b9itfVzQklOJU6LVnyZupZJ3ouU4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id E5F9492009C; Sat, 18 Oct 2025 23:32:47 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id D958B92009B;
-	Sat, 18 Oct 2025 22:32:47 +0100 (BST)
-Date: Sat, 18 Oct 2025 22:32:47 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Guenter Roeck <linux@roeck-us.net>, Bjorn Helgaas <bhelgaas@google.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
-In-Reply-To: <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk>
-Message-ID: <alpine.DEB.2.21.2510181605570.39634@angie.orcam.me.uk>
-References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com> <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com> <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net> <aO1sWdliSd03a2WC@alpha.franken.de> <alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk>
- <74ed2ce0-744a-264f-6042-df4bbec0f58e@linux.intel.com> <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1760823472; c=relaxed/simple;
+	bh=IvTEGoV/2rSFtJ0hI+CB0ql47gWapkY2EGZom9D2XoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aIiD3O6eg39fwttjgui8I+RyB7ibYT2Cu8Y1b1fPgfFMBpueXn/wTQnC6Po+LbDEl42SfVK/f/SzA7Yp4aMXC6Xd7nX5ZJch+st83alZ/rHWnYb1/RdfoNeLKh1/PM4FbCTrygxlGviuiMViJ3kXXb57UyNpqfysYUpt8iT1Vac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BhwVx552; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760823470; x=1792359470;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=IvTEGoV/2rSFtJ0hI+CB0ql47gWapkY2EGZom9D2XoM=;
+  b=BhwVx552Ug/ot5wB8hpm0aUmsORbPReZdZzEsLldq58OFTP0m1Sdky9E
+   wTdjtyJ+TOU9Y2rFm2xA04kZsRKL75WNleTM2CBVTbjDFUcmjIH+rSEzB
+   dWOs+5auo/2MCx8pIQs6tTsBfhbSCFR2PUV8aYfc4J71OPvphUlH03wx4
+   JulBPaFjiEfARgVw6EUcgI755f2DPm0hZT1KkvoFM5JAq61d7ydE5cLL5
+   zzbmImoQANFRrRGCjVGE/6VZKHt7F4y5V1D3B88vxHgsB7vaJSm+GhSW3
+   upviPXleCdoxARbAoQN6pD2Z4Jm6igbJk27yr+ixvnMxlOT9YVefIxpon
+   g==;
+X-CSE-ConnectionGUID: Oj2LwPfMSIm916aJ2FflDA==
+X-CSE-MsgGUID: 4g5COsQeTD+1uAPT1URBuw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="85621709"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="85621709"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 14:37:49 -0700
+X-CSE-ConnectionGUID: NPmztDNaR/+vqijKXQzK9w==
+X-CSE-MsgGUID: wNJ6U0hNQ0eu7du/A/KCCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="183024703"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 18 Oct 2025 14:37:47 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAEcT-0008cf-1H;
+	Sat, 18 Oct 2025 21:37:45 +0000
+Date: Sun, 19 Oct 2025 05:36:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Subject: drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning:
+ conversion from 'long unsigned int' to 'short unsigned int' changes value
+ from '261632' to '65024'
+Message-ID: <202510190541.XNb7ePlI-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 14 Oct 2025, Maciej W. Rozycki wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1c64efcb083c48c85227cb4d72ab137feef2cdac
+commit: 5df1d0a08483eff13f0da1cc66883e0bc2cf4fcf eth: fbnic: support FW communication for core dump
+date:   4 weeks ago
+config: powerpc-randconfig-002-20251019 (https://download.01.org/0day-ci/archive/20251019/202510190541.XNb7ePlI-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510190541.XNb7ePlI-lkp@intel.com/reproduce)
 
-> > > As you can see there are holes in the map below 0x100, so e.g. if the bus 
-> > > master IDE I/O space registers (claimed last in the list by `ata_piix') 
-> > > were assigned to 00000030-0000003f, then all hell would break loose.  It 
-> > > is exactly the mapping that happened in the absence of the code piece in 
-> > > question IIRC.
-> > 
-> > Are you sure pci-malta.c has to do anything like this as 
-> > pcibios_align_resource() does lower bound IO resource start addresses if 
-> > PCIBIOS_MIN_IO is set?
-> 
->  Well, PCIBIOS_MIN_IO is never set for Malta and therefore stays at 0.  I 
-> could boot 2.6.11 with the hunk reverted and see what happens, not a big 
-> deal (I should have old GCC somewhere as a kernel such old would surely be 
-> a pain to build with modern GCC).  This stuff was badly broken before 
-> commit ae81aad5c2e1 (and there was support there too for the Atlas board, 
-> a weird one with a Philips SAA9730 southbridge and supporting a subset of 
-> the same CPU core cards as the Malta board does).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510190541.XNb7ePlI-lkp@intel.com/
 
- Well, it is a big deal after all, since I've lost my old CoreLV CPU card
-and the replacement Core74K one is too new for 2.6.x both in terms of the 
-CPU and the system controller.  No doubt with some patching it should be 
-able to get it booted, but it's not worth the effort.
+All warnings (new ones prefixed by >>):
 
- So instead I've just removed the hunk with my most recent compilation and 
-what I've got is:
+   In file included from drivers/net/ethernet/meta/fbnic/fbnic_fw.c:13:
+>> drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning: conversion from 'long unsigned int' to 'short unsigned int' changes value from '261632' to '65024' [-Woverflow]
+      83 | #define TLV_MAX_DATA   (PAGE_SIZE - 512)
+         |                        ^
+   drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:94:43: note: in expansion of macro 'TLV_MAX_DATA'
+      94 | #define FBNIC_TLV_ATTR_RAW_DATA(id) { id, TLV_MAX_DATA, FBNIC_TLV_BINARY }
+         |                                           ^~~~~~~~~~~~
+   drivers/net/ethernet/meta/fbnic/fbnic_fw.c:927:2: note: in expansion of macro 'FBNIC_TLV_ATTR_RAW_DATA'
+     927 |  FBNIC_TLV_ATTR_RAW_DATA(FBNIC_FW_COREDUMP_READ_DATA),
+         |  ^~~~~~~~~~~~~~~~~~~~~~~
 
-ata1: PATA max UDMA/33 cmd 0x1f0 ctl 0x3f6 bmdma 0x30 irq 14 lpm-pol 0
-ata2: PATA max UDMA/33 cmd 0x170 ctl 0x376 bmdma 0x38 irq 15 lpm-pol 0
 
-(notice the 0x30/0x38 bmdma allocations, which just confirms my memory) 
-and then a temporary hang, a couple of more lines printed and the system 
-silently rebooted back into YAMON.
+vim +83 drivers/net/ethernet/meta/fbnic/fbnic_tlv.h
 
- Having configured with ATA and PCNET32 disabled I get this:
+c6203e678cc9a5 Alexander Duyck 2024-07-12  82  
+c6203e678cc9a5 Alexander Duyck 2024-07-12 @83  #define TLV_MAX_DATA			(PAGE_SIZE - 512)
+c6203e678cc9a5 Alexander Duyck 2024-07-12  84  #define FBNIC_TLV_ATTR_ID_UNKNOWN	USHRT_MAX
+c6203e678cc9a5 Alexander Duyck 2024-07-12  85  #define FBNIC_TLV_ATTR_STRING(id, len)	{ id, len, FBNIC_TLV_STRING }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  86  #define FBNIC_TLV_ATTR_FLAG(id)		{ id, 0, FBNIC_TLV_FLAG }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  87  #define FBNIC_TLV_ATTR_U32(id)		{ id, sizeof(u32), FBNIC_TLV_UNSIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  88  #define FBNIC_TLV_ATTR_U64(id)		{ id, sizeof(u64), FBNIC_TLV_UNSIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  89  #define FBNIC_TLV_ATTR_S32(id)		{ id, sizeof(s32), FBNIC_TLV_SIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  90  #define FBNIC_TLV_ATTR_S64(id)		{ id, sizeof(s64), FBNIC_TLV_SIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  91  #define FBNIC_TLV_ATTR_MAC_ADDR(id)	{ id, ETH_ALEN, FBNIC_TLV_BINARY }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  92  #define FBNIC_TLV_ATTR_NESTED(id)	{ id, 0, FBNIC_TLV_NESTED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  93  #define FBNIC_TLV_ATTR_ARRAY(id)	{ id, 0, FBNIC_TLV_ARRAY }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  94  #define FBNIC_TLV_ATTR_RAW_DATA(id)	{ id, TLV_MAX_DATA, FBNIC_TLV_BINARY }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  95  #define FBNIC_TLV_ATTR_LAST		{ FBNIC_TLV_ATTR_ID_UNKNOWN, 0, 0 }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  96  
 
-00000000-00ffffff : MSC PCI I/O
-  00000000-0000001f : 0000:00:0a.2
-  00000020-00000021 : pic1
-  00000030-0000003f : 0000:00:0a.1
-  00000040-0000005f : 0000:00:0b.0
-  00000060-0000006f : i8042
-  00000070-00000077 : rtc0
-  000000a0-000000a1 : pic2
-  00000170-00000177 : 0000:00:0a.1
-  000001f0-000001f7 : 0000:00:0a.1
-  000002f8-000002ff : serial
-  00000376-00000376 : 0000:00:0a.1
-  00000378-0000037a : parport0
-  0000037b-0000037f : parport0
-  000003f6-000003f6 : 0000:00:0a.1
-  000003f8-000003ff : serial
-  00000400-000004ff : 0000:00:13.0
-  00000800-0000087f : 0000:00:12.0
-    00000800-0000087f : defxx
-  00001000-0000103f : 0000:00:0a.3
-  00001100-0000110f : 0000:00:0a.3
+:::::: The code at line 83 was first introduced by commit
+:::::: c6203e678cc9a5bf01ec7ae382851f504870777f eth: fbnic: Add message parsing for FW messages
 
-which does look nasty (although technically correctly shows southbridge 
-resources within the system controller's PCI I/O window).  At least the 
-defxx driver still works with the FDDI network interface at its port I/O 
-assignment so the system boots multiuser NFS-rooted.
+:::::: TO: Alexander Duyck <alexanderduyck@fb.com>
+:::::: CC: Jakub Kicinski <kuba@kernel.org>
 
-  Maciej
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
