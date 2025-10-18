@@ -1,123 +1,160 @@
-Return-Path: <linux-kernel+bounces-858985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849B0BEC69C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:53:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFABFBEC69F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABDD84E4EA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:53:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09A5B4E3E12
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A1027C842;
-	Sat, 18 Oct 2025 03:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2B283FF9;
+	Sat, 18 Oct 2025 03:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="TLNBHNiu"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVcZqKcT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D89263C91
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 03:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95015247DE1;
+	Sat, 18 Oct 2025 03:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760759630; cv=none; b=Yr/BO6Dm6x4D+Unl1XGtkQegg+MUWrE69Sz1bGn3au+srGd16klZl2Q/6Sy7Ih6J78SPlMxcQXA1FHvPnO1RQ9O3KQrTPIWxImoYTl0ES3Tsa66ymVx2kdTX5iIf6YCwAToY5BRGf4qLcgl2zoWEAzTuz9EstbC417rSGES4c04=
+	t=1760759694; cv=none; b=HpQYTqquXrZBYENncO1lqlKzNKUVBMKYBgoqsxaRGebpYIPtAE/kw0If6KsxI83zQhDnNNbEwqJh0x1yEO21LRyukhELtbiiTv1JpiB+Or+vCKauVayz7IIienJdiHfL05EF40sHsVHlXovAJrclA+diceAN1ffrx2JskrBimH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760759630; c=relaxed/simple;
-	bh=uHFmmTjt0vc02+wTfwAteN3orrvhT+UgW5yCHpFvPBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sjozRqEkfIDOZYIZrSiLF1f8twR7ddJIJCW/MyDlEgU04GXVMdyHtA4fIL7ruw5jinkrrIUrgnO8Z9rVaegauZ4hmLQIhMCqaNt05yW2ikjRl2KzLXePCKZaWiapvJSLEGQZEisXli3EfhDBF/zaSXukbJhfjVQYLk7s72c3KUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=TLNBHNiu; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee130237a8so1665904f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1760759625; x=1761364425; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jL0abL7hS1wNxZfx8D6u2myeTv5rkFlq4vfgdvw8ndQ=;
-        b=TLNBHNiuDzl6ihDx3oDoD3+FgWz3OTYecNKL/7eRZmU8p5e872G9S1K2I2bDP3eozK
-         rWAPHCLBXGS7qsMshxRa6YSqTQCWwlFQ4qxkFgCGQRVWAofJYVTj4cjQm4dgv8/WG26O
-         ddFmbD1j/dKQ2HGCoIjChZwe2vaR+LTIDJJRz3jHe08AkWdRNjuzPtuatlEuZatE+OAV
-         jz/QVvOw2X73brhPQoBm5Nkjlo0jKppzlLMwWciye3onbDZDNXJxRkQMv71fCzJ2gtc3
-         XdCvf9JhI3A2AIWmv0tWFhknaju7EPV5k/xtGwqXpHhINL2ikRk9eMzhzyf5Hqsor63s
-         i+zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760759625; x=1761364425;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jL0abL7hS1wNxZfx8D6u2myeTv5rkFlq4vfgdvw8ndQ=;
-        b=FPiwQ9mcSFy2nQBVUJEavhKhWM0aGw3AbncjJzJ1IOM34iuVdFw3usR4HgsuhN0N00
-         TioCowK80+DZmqa06fxaa5elULskgsXU4CpFVeJPdI0wIhdSPEVTYYhmUtBBfWuyeNA3
-         sOiu1VQdh344+yCp/TFdvKLbOoL9KA10lECY4g93TYVYqT3Q+olf1+WFhZ2ogWOj6org
-         3qjRvyB0IM8LlZ2bHjvXIylhrlbWLQkLliqhZP35cwC7LeN4T4OlZaiNshmjSHEZhFM1
-         1FWBR2iyj/YdBX2WhwLF/XU4Gjjbk2YTuBSUkT/LdIvXvNRw3lotWfZsM5ftApBAxJa/
-         1c9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUgeo/PeGLPu4WQYyoVapRTtLFPYRKvxD2TcWaGbt22kb+pE2hDbs2KHACtJMuyc2NnNgyrzbM2AG/gxkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSUBwihlfhShxHFdKqy3hhJu83YY+EVU0wvZbkjI9cwmDzJsAm
-	tQvNYLGv6CHbqOQZ2WGb7fSN+DQvr3ExkjWLkI+XPimSW7t9LrzmcCw=
-X-Gm-Gg: ASbGncuUKffVeyWIzeqA+8xOhx5+xBO02vZzYivJEHmyvZTF3PmJ9JLYHGWjP8l8qLE
-	DUOnmed5L+hLGmf7BAeECH1b71RPIepeBIt2Q2FyYdEV1HRXyaZ2AyQFQlwM6lrrimbpGM7D96z
-	OEhj5M34bJJrS77GO5LbCGNTeY8c+yUxxJSnWrqNbrWpsfEc06UlRfDJXpImrCgFzq2etTo/v8V
-	kjcTzbAY6AJ3wiYoBI5Km9V1RLfj/IrdX3i35pWVip4l+Wmd86O0coUGbLllXX3BTg9nCv/HC9a
-	67EpAubS2aQt5C0UjnaxCgHaeqITUiCzGn5BGgH1NOd1yhUHqFn5mKEU5l3qCorNIMhAauo+T7e
-	M8dc4Camvezf4D5ofoHmU+Av8KcUMwDTJZZTPZbAPKOpkBk/BD7BPHqXNk1pSxBwoqdEFAw3fWU
-	cR4U92GgHVRMP1pfRyCpS+N4+T2jLzxEDzdc16/lmt9k3FsMHJlTZ5
-X-Google-Smtp-Source: AGHT+IG9plhdnHlXZGdT4B+VnjYq+D5C7vfXaHBjqJVVvO96WoRNs1XSe58bAVVYKHVYV0Bzp6AaKg==
-X-Received: by 2002:a05:6000:24c9:b0:426:d549:5861 with SMTP id ffacd0b85a97d-42704e029bcmr4428076f8f.42.1760759624746;
-        Fri, 17 Oct 2025 20:53:44 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b488a.dip0.t-ipconnect.de. [91.43.72.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce06bsm2417213f8f.45.2025.10.17.20.53.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 20:53:44 -0700 (PDT)
-Message-ID: <54f0ab53-309f-4210-98eb-629cfbbab471@googlemail.com>
-Date: Sat, 18 Oct 2025 05:53:43 +0200
+	s=arc-20240116; t=1760759694; c=relaxed/simple;
+	bh=okI3RpJTLrRj1PrupblKZE/45kDzmQjlxy+SRy5hI2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aatsT6q3t6sLN1ZpD4sx9pHwAM5cPAlLNUmeGyHYmcPqKC04J9uaDVX9IKr8olA/jyXRvc6ERCHYq9o5IY2laAxRIaog2AlstT/zn+GmQApp4UN4VD4KSqD+Nhlv3WY2flVtEMbatRQFUP+t+X8uRuxkH9iFxz7KHsmSRNX/XjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVcZqKcT; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760759693; x=1792295693;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=okI3RpJTLrRj1PrupblKZE/45kDzmQjlxy+SRy5hI2c=;
+  b=UVcZqKcT+U1pGxYRoU59hxOsc2CW6I7s9rc1IFp11Ktqx08d/uxtcrDD
+   nO8LeAOSuPQLzhXSJ3J2RRNDTDwA7a85AIKUmtTmswvZpxw7YQiAkX08Y
+   nipc9086raT7SXj/W/PmQZRaw3JWUpZXQcw0dJTS7NcegV2pIntn4UdnZ
+   JxMc44JcC06M5UpxzBy51P3Fi/hHwLY6Gj+m1m0tBFyVMb8GR5muC5CVh
+   i7IhgKn3oTlV0X4Y/wc1rqQm3cd7gCrNPyHpaL0YZpZJjQhXzKWkFRjp7
+   AFyXsSUwHQpR1B3xhAFzR4DGWV0A7GPlM7dWLbNbwqzoxaZ/pZNeE9uCc
+   Q==;
+X-CSE-ConnectionGUID: uGRK606hR7yo24GMjT9fbA==
+X-CSE-MsgGUID: owfeXXZlTt+vXPUNzll7CQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="63017958"
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="63017958"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 20:54:52 -0700
+X-CSE-ConnectionGUID: lfkJnemmRKGrlC6HZMrttw==
+X-CSE-MsgGUID: kKFSxIhlRyyzUPXhaFL+Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="182703077"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 17 Oct 2025 20:54:49 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v9y1m-00082V-1y;
+	Sat, 18 Oct 2025 03:54:46 +0000
+Date: Sat, 18 Oct 2025 11:54:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <202510181107.YiEpGvU3-lkp@intel.com>
+References: <20251017141536.577466-1-kirill@shutemov.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.17 000/371] 6.17.4-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251017145201.780251198@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20251017145201.780251198@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
 
-Am 17.10.2025 um 16:49 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.17.4 release.
-> There are 371 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Kiryl,
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+kernel test robot noticed the following build warnings:
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+[auto build test WARNING on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kiryl-Shutsemau/mm-filemap-Implement-fast-short-reads/20251017-221655
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20251017141536.577466-1-kirill%40shutemov.name
+patch subject: [PATCH] mm/filemap: Implement fast short reads
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20251018/202510181107.YiEpGvU3-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181107.YiEpGvU3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510181107.YiEpGvU3-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   mm/filemap.c: In function 'filemap_read_fast':
+>> mm/filemap.c:2787:1: warning: the frame size of 1048 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+    2787 | }
+         | ^
 
 
-Beste Grüße,
-Peter Schneider
+vim +2787 mm/filemap.c
+
+  2752	
+  2753	static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
+  2754					       ssize_t *already_read)
+  2755	{
+  2756		struct address_space *mapping = iocb->ki_filp->f_mapping;
+  2757		struct file_ra_state *ra = &iocb->ki_filp->f_ra;
+  2758		char buffer[FAST_READ_BUF_SIZE];
+  2759		size_t count;
+  2760	
+  2761		if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
+  2762			return false;
+  2763	
+  2764		if (iov_iter_count(iter) > sizeof(buffer))
+  2765			return false;
+  2766	
+  2767		count = iov_iter_count(iter);
+  2768	
+  2769		/* Let's see if we can just do the read under RCU */
+  2770		rcu_read_lock();
+  2771		count = filemap_read_fast_rcu(mapping, iocb->ki_pos, buffer, count);
+  2772		rcu_read_unlock();
+  2773	
+  2774		if (!count)
+  2775			return false;
+  2776	
+  2777		count = copy_to_iter(buffer, count, iter);
+  2778		if (unlikely(!count))
+  2779			return false;
+  2780	
+  2781		iocb->ki_pos += count;
+  2782		ra->prev_pos = iocb->ki_pos;
+  2783		file_accessed(iocb->ki_filp);
+  2784		*already_read += count;
+  2785	
+  2786		return !iov_iter_count(iter);
+> 2787	}
+  2788	
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
