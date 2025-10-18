@@ -1,108 +1,100 @@
-Return-Path: <linux-kernel+bounces-859243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F393BED1BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:51:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E59BED1CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86B13A2023
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:51:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6031834CBF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1991224728F;
-	Sat, 18 Oct 2025 14:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F64A2BE64F;
+	Sat, 18 Oct 2025 14:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="bDXjbbHv"
-Received: from forward200d.mail.yandex.net (forward200d.mail.yandex.net [178.154.239.221])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RLk795UI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBB8AD51;
-	Sat, 18 Oct 2025 14:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B3A1B423B;
+	Sat, 18 Oct 2025 14:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760799106; cv=none; b=TgjnZtli0cSAPo4dA15+ts7xx9N2YIUU+I+6VGaffK9M7p14nk4/pRXgeqj/zVaLB9KigWW733Bk8DyPJ9WWFv5s45uhwrn3MWoMVoI6nSxvZgGXyxEgAoM20AY9JzR9g5fHxmfNtwDxXFvyIfi4GHaYT3h468NMg+ZvM2ZfCyI=
+	t=1760799213; cv=none; b=ZtPmc3J1mnLJZPl6/K9UqMWOXItXtk1Z9QACgXqYI4pnX2mjJ+jfBTEsCb+1pMzjx2SpZdAZUB6W3K/YXyHICYtGcX7PCFitDvlrGTPJoUAAPJO2YDs3pEYhtpyh4dSXOvrYQB5VjeEOvHcxB4ZCJQ/7i8eCccblj4Oq9Hw13UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760799106; c=relaxed/simple;
-	bh=S1HCkmpQ7+I3nvlUjwOzRvoujXqhhZ/uRZvbLib6gwU=;
-	h=From:To:Subject:MIME-Version:Date:Message-Id:Content-Type; b=iXoKxYusqnGI+b7F9whJCoBDftJv5EpIOWQyww4CkaB/IhAxowFNdlb9dGi5ypTK7QEpru5AFCtqNre757vGP7jsgHq+ga+2+TS2xd7X/DjSmtMyGU/GQLY0RqHVaHSoKw0UUHRcAT4UYEwufQpfQKg+WUcFQq+gV1d3k1aU83g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=bDXjbbHv; arc=none smtp.client-ip=178.154.239.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d103])
-	by forward200d.mail.yandex.net (Yandex) with ESMTPS id DBF0781069;
-	Sat, 18 Oct 2025 17:51:34 +0300 (MSK)
-Received: from mail-nwsmtp-mxback-production-main-74.klg.yp-c.yandex.net (mail-nwsmtp-mxback-production-main-74.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:8240:0:640:d397:0])
-	by forward103d.mail.yandex.net (Yandex) with ESMTPS id 3603EC004F;
-	Sat, 18 Oct 2025 17:51:27 +0300 (MSK)
-Received: from mail.yandex.ru (2a02:6b8:c43:341:0:640:ef0e:0 [2a02:6b8:c43:341:0:640:ef0e:0])
-	by mail-nwsmtp-mxback-production-main-74.klg.yp-c.yandex.net (mxback/Yandex) with HTTPS id qoUfLLMxha60-sG2RjNhD;
-	Sat, 18 Oct 2025 17:51:26 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1760799086; bh=XAgOav7U8f5zHxMigGatzwM+W3jGxhk+oJRplBsCXfA=;
-	h=Message-Id:Date:Subject:To:From;
-	b=bDXjbbHv4PauW3JWjWv/UoeA8aBwcQHS8IcJNa/7YmHinyD+ClAf8PTMWzlivji52
-	 NpgILOPSieXIPtcGYiaEq4uFKn1UsHTHTLxHbb0Yx45AI9YP+v8ooKHWt4QHd2PCM/
-	 IMi2E51SCitiGhyKnpPhpffZiLnqdOQNbg5U2IIU=
-Authentication-Results: mail-nwsmtp-mxback-production-main-74.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by mail-sendbernar-production-main-85.klg.yp-c.yandex.net (sendbernar/Yandex) with HTTPS id 910b34ea3704d116b8d971597378f0b3;
-	Sat, 18 Oct 2025 17:51:25 +0300
-From: =?utf-8?B?0JLQu9Cw0LTQuNGB0LvQsNCyINCa0L7RgNC90LXQtdCy?= <vladosov50@yandex.ru>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"jirislaby@kernel.org" <jirislaby@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: fix tty device index parsing [PATCH v1]
+	s=arc-20240116; t=1760799213; c=relaxed/simple;
+	bh=qa1RCmp5XD+r2YD7uwya/F4rfz6ZyF4Sz1iDHUBFr6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rj6yjWFA4YGA4FZVINGKbmiRhC1zOCZOFrXa6SwgBRlcU1LfkXAplBEkXVgopsn23J9cEVSaC/h4RL8yrdytnCEm587oozhulR09B2zMkcjbe1gpG5akfzVbWdpJ+5pICT1o3oomcQ1hfOLbD72bcvgVIiaOPvGg8LPfoTA0BN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RLk795UI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=IjwECEO8cLj2+B6qGCD3ufgiJC6kdAjaM4X3QYkATeM=; b=RLk795UIV4XtZJvKAKsn7fb1O4
+	PwXC2GO684f6kmFf0M+TcD8E5qnzewNcCkq3deQ0MYA+7iAOO019PKJi4U3PLnpZ8pfOyIL6HE9Tb
+	NKuw9RMP5K2btEHbqVpCmnjU1ITZL0e+pcVSxRfnM6krLkyQD74FDeWtOuKtDjKP8sZg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vA8Iq-00BNjq-6C; Sat, 18 Oct 2025 16:53:04 +0200
+Date: Sat, 18 Oct 2025 16:53:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Frank <Frank.Sae@motor-comm.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next 3/4] net: stmmac: Add glue driver for Motorcomm
+ YT6801 ethernet controller
+Message-ID: <cc564a19-7236-40d4-bf3c-6a24f7d00bec@lunn.ch>
+References: <20251014164746.50696-2-ziyao@disroot.org>
+ <20251014164746.50696-5-ziyao@disroot.org>
+ <f1de6600-4de9-4914-95e6-8cdb3481e364@lunn.ch>
+ <aPJMsNKwBYyrr-W-@pie>
+ <81124574-48ab-4297-9a74-bba7df68b973@lunn.ch>
+ <aPNM1jeKfMPNsO4N@pie>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date: Sat, 18 Oct 2025 21:51:25 +0700
-Message-Id: <105211760797925@mail.yandex.ru>
-Content-Type: multipart/mixed;
-	boundary="----==--bound.799098.37777c8a-89fa-4f8a-9831-51a737989bd8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPNM1jeKfMPNsO4N@pie>
 
+> > I was also wondering about all the other parameters you set. Why have
+> > i not seen any other glue driver with similar code? What makes this
+> > glue driver different?
+> 
+> Most glue drivers are for SoC-integrated IPs, for which
+> stmmac_pltfr_probe() helper could be used to retrieve configuration
+> arguments from devicetree to fill plat_stmmacenet_data. However, YT6801
+> is a PCIe-based controller, and we couldn't rely on devicetree to carry
+> these parameters.
+> 
+> You could find similar parameter setup code in stmmac_pltfr_probe(), and
+> also other glue drivers for PCIe-based controllers, like dwmac-intel.c
+> (intel_mgbe_common_data) and dwmac-loongson.c (loongson_default_data).
 
-------==--bound.799098.37777c8a-89fa-4f8a-9831-51a737989bd8
-Content-Transfer-Encoding: 8bit
-Content-Type: text/html; charset=utf-8
+Is there anything common with these two drivers? One of the problems
+stmmac has had in the past is that glue driver writers just
+copy/paste, rather than refactor other glue drivers to share code.  If
+there is shared code, maybe move it into stmmac_pci.c as helpers?
 
-<div><div>Hello.</div><div>I am sending you the patch which fixes incorrect device index parsing in tty_dev_name_to_number().</div><div><div>Thank you for your time and attention. I am looking forward to any comments or suggestions for improvement.<div><span lang="en">Sorry for any mistakes, this is my first patch.</span><div> </div></div></div></div></div>
-------==--bound.799098.37777c8a-89fa-4f8a-9831-51a737989bd8
-Content-Disposition: attachment;
-	filename="0001-tty-fix-device-index-parsing.patch"
-Content-Transfer-Encoding: base64
-Content-Type: text/x-diff;
-	name="0001-tty-fix-device-index-parsing.patch"
-
-RnJvbSAyOWUwYWUwYjA3M2IzYzU3NmI5OGRmODU1M2IwZWY5ZTI1NWQwYmVjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBWbGFkb3MgS29ybmVldiA8dmxhZG9zb3Y1MEB5YW5kZXgucnU+
-CkRhdGU6IFNhdCwgMTggT2N0IDIwMjUgMjE6MTY6NTAgKzA3MDAKU3ViamVjdDogW1BBVENIXSB0
-dHk6IGZpeCBkZXZpY2UgaW5kZXggcGFyc2luZwpNSU1FLVZlcnNpb246IDEuMApDb250ZW50LVR5
-cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9VVRGLTgKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzog
-OGJpdAoKUHJldmlvdXNseSwgc2VhcmNoZWQgZm9yIHRoZSBmaXJzdCBkaWdpdCBpbiB0aGUgZGV2
-aWNlIG5hbWUgdG8gZGV0ZXJtaW5lCnRoZSBpbmRleC4gVGhpcyBjYXVzZWQgaW5jb3JyZWN0IHBh
-cnNpbmcgZm9yIGRldmljZSBuYW1lcyB0aGF0IGNvbnRhaW4KZGlnaXRzIGJlZm9yZSB0aGUgaW5k
-ZXgsIHN1Y2ggYXMgInR0eUNIOTM0NFVTQjAiIG9yICJ0dHlDSDkzNDRVU0IxMCIuCgpUaGUgbG9n
-aWMgaXMgdXBkYXRlZCB0byBzY2FuIGJhY2t3YXJkcyBmcm9tIHRoZSBlbmQgb2YgdGhlIHN0cmlu
-ZyBhbmQKbG9jYXRlIHRoZSBzdGFydCBvZiB0aGUgbGFzdCBjb250aWd1b3VzIHNlcXVlbmNlIG9m
-IGRpZ2l0cywgZW5zdXJpbmcgdGhlCmNvcnJlY3QgZGV2aWNlIG51bWJlciBpcyBleHRyYWN0ZWQu
-CgpFeGFtcGxlOgogICAgQmVmb3JlOiAidHR5Q0g5MzQ0VVNCMTAiIOKGkiBwYXJzZWQgYXMgIjkz
-NDRVU0IxMCIKICAgIEFmdGVyOiAgInR0eUNIOTM0NFVTQjEwIiDihpIgcGFyc2VkIGFzICIxMCIK
-ClNpZ25lZC1vZmYtYnk6IFZsYWRvcyBLb3JuZWV2IDx2bGFkb3NvdjUwQHlhbmRleC5ydT4KLS0t
-CiBkcml2ZXJzL3R0eS90dHlfaW8uYyB8IDUgKysrLS0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2Vy
-dGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy90dHkvdHR5X2lv
-LmMgYi9kcml2ZXJzL3R0eS90dHlfaW8uYwppbmRleCBlMmQ5MmNmNzBlYjcuLjI1YWE5M2ExNjM0
-OSAxMDA2NDQKLS0tIGEvZHJpdmVycy90dHkvdHR5X2lvLmMKKysrIGIvZHJpdmVycy90dHkvdHR5
-X2lvLmMKQEAgLTMzOCw4ICszMzgsOSBAQCBpbnQgdHR5X2Rldl9uYW1lX3RvX251bWJlcihjb25z
-dCBjaGFyICpuYW1lLCBkZXZfdCAqbnVtYmVyKQogCWludCBpbmRleCwgcHJlZml4X2xlbmd0aCA9
-IDA7CiAJY29uc3QgY2hhciAqc3RyOwogCi0JZm9yIChzdHIgPSBuYW1lOyAqc3RyICYmICFpc2Rp
-Z2l0KCpzdHIpOyBzdHIrKykKLQkJOworCXN0ciA9IG5hbWUgKyBzdHJsZW4obmFtZSk7CisJd2hp
-bGUgKHN0ciA+IG5hbWUgJiYgaXNkaWdpdCgqKHN0ciAtIDEpKSkKKwkJc3RyLS07CiAKIAlpZiAo
-ISpzdHIpCiAJCXJldHVybiAtRUlOVkFMOwotLSAKMi4zNC4xCgo=
-------==--bound.799098.37777c8a-89fa-4f8a-9831-51a737989bd8--
+	Andrew
 
