@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-859426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DA5BEDA0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:22:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABC8BEDA11
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42A654E9449
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40184189E094
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B3228D83D;
-	Sat, 18 Oct 2025 19:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6292D8776;
+	Sat, 18 Oct 2025 19:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyxqqk6E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PJTO+dF0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493EA286D60;
-	Sat, 18 Oct 2025 19:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A682900A8;
+	Sat, 18 Oct 2025 19:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815205; cv=none; b=jcjl0ocM4gmb6DuKmK5JKEcWgsHOeNwgmXSpkscmSKuqTZZDmR5B51yqFgAAchQI6oxdGUb/HtbL5R3fNEP+C4j8o4lotnjPPBva7cvoj9q1x2UjVf8hX0bKbdbgzLIqqP9lFN2F7TO+U4OIMhQGEtNKycxJObsCBdLf39Eb+VY=
+	t=1760815348; cv=none; b=TSOKsiOW8A+3CW82V0tNZV+HOoSvIXtGUNVY1gRRy2YPz9Q3ZSejdTmhvlgqdKleobK+moElhA7C/0WAgy6NUQH9xnKruY6lR69pcovSRZlAhmGGFaYf9FWZL+ZPGtNIPt5E63zJd+iO9m59y0poqlHjk7utaWlSXzYe3dk3kzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815205; c=relaxed/simple;
-	bh=2prTFL/x7SrFpeHp+FU7uC2IAjhEAwSTRFb6SXO0Goo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rmfT9FCmfplhlXiMrU+LI6BBSFdCNIXFDxFdKRo+BrdREwf95hIFI7vunQTZ3qn4qh/uE+6SR8086xviu/LoeCBEM8VNeAhrW/4kZOcENdROXArEB5k8ojGnvImi57k7arUUX8GjKPIC+Vh2UmW+ltwtQQtbNAzcOUHkIBmHKqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyxqqk6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBFBC4CEF9;
-	Sat, 18 Oct 2025 19:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760815204;
-	bh=2prTFL/x7SrFpeHp+FU7uC2IAjhEAwSTRFb6SXO0Goo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iyxqqk6ERMxJilLgsGJ9ipcfHvI8aYMBqvj/vS1hdH8vgczXzFQ5L/g2D6EZVXSsd
-	 mSJ8osZKZmQu9xoQzylFyyGXSBiEK4loejChmKEverNTT5NzaUsc4Vg5lEWpbFyAJv
-	 YCGuC31lPUcunZsCXryiBXjVGJ+CePducHOyiTo7xkZyo/0N/An21pY/eoW0o00vnq
-	 fvF7pQY0FNVjj7accZZFhxSxrWDNbLp04f90vL/PWoSsDdv7SvTdXdzTxv1qnPPT9P
-	 6P+X+9n4xsC8lCulofU+smpK5JDwQbrThOOS5ijLAPYBPJBj2N3kMr7UeNUFY/m0G/
-	 LiHFUdiAp5mjg==
-Date: Sat, 18 Oct 2025 20:19:59 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] iio: imu: st_lsm6dsx: Decouple sensor ODR from
- FIFO batch data rate
-Message-ID: <20251018201959.22a013f8@jic23-huawei>
-In-Reply-To: <20251017164255.1251060-1-flavra@baylibre.com>
-References: <20251017164255.1251060-1-flavra@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760815348; c=relaxed/simple;
+	bh=LyCmdIipytU++1xCmXNYxXqjVJpXEdehmaOhp4HHIBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Hcnw99H1GCKHGqphPLjB0b7ba1ajEh0J4fbn2P4LpJplmxNp1T4Ti5DLHyvty1LMlPRAZbAWXeRRibuUVixM7sr/T2G0uNEFmJFnajTNynHdBdlRU541XhktECV14tvoufD7z61LFuYAuAkOQPx9oCTxC3Q+rlTl7+eEOkopg5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PJTO+dF0; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760815347; x=1792351347;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=LyCmdIipytU++1xCmXNYxXqjVJpXEdehmaOhp4HHIBE=;
+  b=PJTO+dF0HwFWfAsQVTay21pf1ysdXkCZhgVy3g38utTJDrFzQ0IZvyKo
+   O/9QKuMGYrt7sxe4XFWivccTnY/7a3cwpar/RTbTgkOP4L0akeI3NA8tL
+   0+GTqWDixUe/BVtEPq9GLrw1NZuzIkk56BsJf+yCOZ4YnYYzei0yb2dCD
+   ddqSgJFrGlYKTrimwdTZfSMSj3HmVkh++Dw9AMNsMh5E7m7ygy0n9Agqz
+   JivrZopJLooEB5/iL8wEl/55cufp180ISzkuR25U/pXWAmv2n22tkmh1n
+   scIRKoP2JPVWYcka99KZbb0RwD0Keul1utEb5HRqBXQtSfwgfnciH5cZb
+   A==;
+X-CSE-ConnectionGUID: gA2FM40HQgyt7rjV/TxiLQ==
+X-CSE-MsgGUID: sUtyi5moRouaGMX9raASVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62701147"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="62701147"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:22:26 -0700
+X-CSE-ConnectionGUID: mkNigIwrTji+X+IKWE9Hgw==
+X-CSE-MsgGUID: NKxjGwB3Tyq2wUJfdM4r2A==
+X-ExtLoop1: 1
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:22:24 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vACVR-00000000xRU-3VZe;
+	Sat, 18 Oct 2025 22:22:21 +0300
+Date: Sat, 18 Oct 2025 22:22:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jinhui Guo <guojinhui.liam@bytedance.com>
+Cc: mika.westerberg@linux.intel.com, jsd@semihalf.com,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] i2c: designware: Disable SMBus interrupts to prevent
+ storms from mis-configured firmware
+Message-ID: <aPPo7VWm4HyoHSIE@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, 17 Oct 2025 18:42:53 +0200
-Francesco Lavra <flavra@baylibre.com> wrote:
 
-> The rate at which accelerometer or gyroscope sensor samples are fed
-> to the hardware FIFO (batch data rate, or BDR) does not have to
-> coincide with the sensor sampling frequency (output data rate, or
-> ODR); the only requirement is for the BDR to not be greater than
-> the ODR. Having a BDR lower than the ODR is useful in cases where
-> an application requires a high sampling rate for accurate detection
-> of motion events (e.g. wakeup events), but wants to read sensor
-> sample values from the device buffer at a lower data rate (e.g. to
-> minimize the amount of I2C or SPI traffic and the rate of periodic
-> interrupts).
-> This change set amends the st_lsm6dsx IIO driver to support the above
-> use case. The first commit is a trivial fix to the source code comment
-> that indicates what measurement unit is used for the `odr` field of
-> struct st_lsm6ds_sensor, while the second commit introduces a new
-> `hwfifo_odr_mHz` field in the same struct to implement the new functionality.
-> 
-Applied to the togreg branch of iio.git which is initially pushed out as testing
-for the autobuilders to poke at it.
+On Sat, Oct 11, 2025 at 03:30:57PM +0800, Jinhui Guo wrote:
+> When probing the I2C master, disable SMBus interrupts to prevent
+> storms caused by broken firmware mis-configuring IC_SMBUS=1; the
+> handler never services them and a mis-configured SMBUS Master
+> extend-clock timeout can flood the CPU.
 
-Thanks
+...
 
-Jonathan
+>  #define DW_IC_TX_ABRT_SOURCE			0x80
+>  #define DW_IC_ENABLE_STATUS			0x9c
+>  #define DW_IC_CLR_RESTART_DET			0xa8
+> +#define DW_IC_SMBUS_INTR_MASK		0xcc
+
+It seems one TAB too little.
+
+>  #define DW_IC_COMP_PARAM_1			0xf4
+>  #define DW_IC_COMP_VERSION			0xf8
+>  #define DW_IC_SDA_HOLD_MIN_VERS			0x3131312A /* "111*" == v1.11* */
+
+...
+
+The rest LGTM, but let Mika to review.
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
