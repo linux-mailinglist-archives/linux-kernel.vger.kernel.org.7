@@ -1,100 +1,80 @@
-Return-Path: <linux-kernel+bounces-859486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3049FBEDCDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 01:11:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C51FBEDCEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 01:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BB6427B64
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:11:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB6494E2495
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C2D287504;
-	Sat, 18 Oct 2025 23:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0B02857CF;
+	Sat, 18 Oct 2025 23:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BZ6S2Xs4"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l5JYYWYS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E601279DCD
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 23:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5613C1A316E;
+	Sat, 18 Oct 2025 23:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760829091; cv=none; b=XqvOAUgbz99p9jBrm7UqGp5ksJ0FpCApMTrupSTzCevYVpgOjCkTRphwP2UYqx1EiKlQwWVBAhA3uBJWeJCoNNHPzUeNDdhPziiSjtatrdOLoh0fOXWmsHrca2Vp+tdsTk2M0zA11N1yYolQgXhnCEEH6B7pg41YvCDkrK3Wz50=
+	t=1760829807; cv=none; b=pZO9m5yCD5mn3gx4LQkqBEtKtIL1FLovVPEdP5hssTYxZSzlr1szPuzZ/LduTPpXg6I6NkIVjg0e/I6mZT66wFdzi5hw8kvN9mzAZ6OOW/Wau1eO9dFnmypO2SmbKrfY5I3i7Mv84baCPkAGjOz+080nvrALDVoa6CByvMvjiHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760829091; c=relaxed/simple;
-	bh=nlTGgh1j4rnsma37VDwy3XvjnEutOrYN/Saoiw9k0/M=;
+	s=arc-20240116; t=1760829807; c=relaxed/simple;
+	bh=9MLdj9wpJXNrazCJbFGZFgXo0Adj941uIsE+4ls2ZM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aD2SE3btcWW2fBRl3aH0Dp6B0EifQUdmsYu4zCPrLJA1I30de2+wOgoyN40b2tLXwwRIU8vmWVNcNFumItWtgwn0SjvMkb/xBv1lPnQvqs42GbTgfEm6Z30dYasPBv/pfYMtkVDzznXosTg3+OAlu6twKQKgqWqPN5CCxFAeXIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=BZ6S2Xs4; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7c2878bdf27so938528a34.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 16:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1760829088; x=1761433888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nlTGgh1j4rnsma37VDwy3XvjnEutOrYN/Saoiw9k0/M=;
-        b=BZ6S2Xs40U9WQeq7NwydR9GbhQbdvOjDSv4Qbr9KKeCYizlk6xi5vEFooSbU8ymvLl
-         WSBq5lAT1yCWnNc6H16VrjD0JeAdPqqNvYBxmG52hVSP/t1bdV0YhO0yBVZQ+S0wsrpY
-         /QPFLN0zDpppP7ApdEaqJsD1GF7o5OP+bYGjdmMJOGm/Kt6tuFeThxoQFTLzXKtqoWHh
-         CteSEOebSSDXqi99VukwnkUrG/AMT9Obl/oLUprKxkOT9lYdjoQ17DHql8pZX8V6Y37P
-         TrqnH3iTSdnsI1yr9Uoy+JIq0ccrtZoBfQcv+rDIlNoL4H0lhLQyB623WY2d67VJJy9j
-         0TwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760829088; x=1761433888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nlTGgh1j4rnsma37VDwy3XvjnEutOrYN/Saoiw9k0/M=;
-        b=EHYrwHysIIe+ZF5ky4trQ4VHKDqmtevlaPzjW9DOVFVb0DcrhOoRDRP+KqCbhx7Kef
-         kDcb7LVc8vtEHEMEpNIxQhkGShNX+VZpCjfHZ1G/SWGl9MVogStY7PQI/I3gPYygOHET
-         liIis4PWKiEcDP6LvXUP66XbpLv/hrT0nKKorF4nLMH90xgBqg0BB6vokDgdS9LXeEfG
-         5cjaMeeA6nNjpDy6WN0pyPue2ZWoZ/34/mfOZx/M3GITx7/U74KwAh91OoxY5gN4Bg2d
-         XWCWl9Nurki0/fEuF8Hv7w8LtzBUr6ZiQmfnJFmT2oL8fyXoMzJYGx6eaQir1oLUybi3
-         Zt0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0VeMSaXVLt2s5xv0+SPZG2vXat3mZb9bp5xZCRZ0O/Yab1vIdqHiAIWFv2OVVTkfzind27KOvKRRwsAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwWqDywp3bAib8fuagJFfvemyCLrUszgdww9wrXf6hZT+NLhyK
-	wV8j/aDhOohsqIb3WyXE1kI25QVcslESRv8WcLYKQ9Ng4MNgBTjXQx2ACCHaoERmbns=
-X-Gm-Gg: ASbGnctGa6w5kjD0g0Kxd1/Ybj77zdBeoGKI9qkhS/VFR51W9dUhP6DkPZeYjQcs0MM
-	M+hhK2Gz1UMeXkreURjan3g6LUOLNBCWwRzSbpwAAINN2HBv3BATBRtnIj+xPxk4a5NoPhfEO3a
-	Ktt2v9F0b+WTkHI+QU5V12u8NVeLhOcIsRzWLRmGVphvpilTtsHbTmXyWZewsIqAUfLWTYk48/2
-	j0KM3eD4gJgVvxpBTIPnod4C6WG4UBUJp/g+ZBjiyDzRHc/CBk2XYQjXsEr0oq7N/r2r1bvDLh7
-	ZPs14UZgymJ7r5G4kUTkmKQNe4CV54zovQmWNiHr2ziikOW2pGQykjnEq3TWDslJN+NK1B5uVRP
-	WNCNIEIhJ4Q3DgPnU8lmKLUoaWExjGRnDrMIYJ+o3r7Tl0iNLxqYL8FAmV8W/
-X-Google-Smtp-Source: AGHT+IGjutQW9FOpunwPbl54R4lmphJmatLWLrvDMN3YzWlbvrTlVJ+kuMrXHSfrl8ye5jNWMdw9aw==
-X-Received: by 2002:a05:6808:2388:b0:43f:5fc5:e04a with SMTP id 5614622812f47-443a30af9cfmr3465468b6e.31.1760829088069;
-        Sat, 18 Oct 2025 16:11:28 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-651d3f8d640sm899440eaf.20.2025.10.18.16.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 16:11:27 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vAG58-00000001dfK-14RB;
-	Sat, 18 Oct 2025 20:11:26 -0300
-Date: Sat, 18 Oct 2025 20:11:26 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: Lukas Wunner <lukas@wunner.de>, bhelgaas@google.com,
-	alex.williamson@redhat.com, pasha.tatashin@soleen.com,
-	dmatlack@google.com, graf@amazon.com, pratyush@kernel.org,
-	gregkh@linuxfoundation.org, chrisl@kernel.org, rppt@kernel.org,
-	skhawaja@google.com, parav@nvidia.com, saeedm@nvidia.com,
-	kevin.tian@intel.com, jrhilke@google.com, david@redhat.com,
-	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de,
-	junaids@google.com, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 15/21] PCI: Make PCI saved state and capability
- structs public
-Message-ID: <20251018231126.GS3938986@ziepe.ca>
-References: <20251018000713.677779-1-vipinsh@google.com>
- <20251018000713.677779-16-vipinsh@google.com>
- <aPM_DUyyH1KaOerU@wunner.de>
- <20251018223620.GD1034710.vipinsh@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQZBerstGdC9gtXiJPgbKSR3Kqswr9FaEiQb0CVV6fk7zAUFU5/axKXo40q4xtDZVSSkgaaUv/BUBrjZ7/IxMZ5HwlyaaQNpmbCNkPllM0ptwoeBkJn8mGU39FOUCDHK46p8T2kW+2Pk52o0TVuoqRnB5UW5zoj4bdUKecZRhV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l5JYYWYS; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760829805; x=1792365805;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9MLdj9wpJXNrazCJbFGZFgXo0Adj941uIsE+4ls2ZM0=;
+  b=l5JYYWYS8F8N6F2HYj6aRLgCo2QgArSLgbFrg0lvXPKyl3w54ICmZVws
+   TF9jewMB924VFoAUi6V0iqi2oDkC2D104O0Gif95fK8fzfmDTcUSfPqDe
+   fFTQDiDXAK2Uax67dOMeOadGaWr04hoDvrL/QUyX/w91OHDKen689vL6S
+   699q7a7MXv9vyqk5Re/X4BbQ8TONP30jVllm6JGXGO9uQy8DU7nCMFGwj
+   Dp096abbuD+LkCpPL4JUuydlZnQ70x01J5JEbYZPR5VWjpr21seexSwlQ
+   7mzWLA818HzqM42VxhFJCTn/yBxEBRtoenUfT/DLEUEWyqW4d2+BP7fgJ
+   w==;
+X-CSE-ConnectionGUID: 2EJhhfkVT8SRoC79j9cOVQ==
+X-CSE-MsgGUID: qcSP+GC6Q6ioignPD99WKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65621589"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="65621589"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 16:23:25 -0700
+X-CSE-ConnectionGUID: Md/aauc6THu4J5WtQX8jPw==
+X-CSE-MsgGUID: 33V5Xx+lRm+o3dlrbXe5kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="182977975"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Oct 2025 16:23:21 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAGFT-0008gj-1N;
+	Sat, 18 Oct 2025 23:22:42 +0000
+Date: Sun, 19 Oct 2025 07:21:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, sugar.zhang@rock-chips.com, heiko@sntech.de,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, huangtao@rock-chips.com
+Subject: Re: [PATCH v2 3/5] clk: rockchip: Add clock controller for the
+ RV1126B
+Message-ID: <202510190651.YrDKfo1d-lkp@intel.com>
+References: <20251017063107.1606965-4-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,32 +83,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251018223620.GD1034710.vipinsh@google.com>
+In-Reply-To: <20251017063107.1606965-4-zhangqing@rock-chips.com>
 
-On Sat, Oct 18, 2025 at 03:36:20PM -0700, Vipin Sharma wrote:
+Hi Elaine,
 
-> Having __packed in my version of struct, I can build validation like
-> hardcoded offset of members. I can add version number (not added in this
-> series) for checking compatbility in the struct for serialization and
-> deserialization. Overall, it is providing some freedom to how to pass
-> data to next kernel without changing or modifying the PCI state
-> structs.
+kernel test robot noticed the following build errors:
 
-I keep saying this, and this series really strongly shows why, we need
-to have a dedicated header directroy for LUO "ABI" structs. Putting
-this random struct in some random header and then declaring it is part
-of the luo ABI is really bad.
+[auto build test ERROR on rockchip/for-next]
+[also build test ERROR on clk/clk-next linus/master v6.18-rc1 next-20251017]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-All the information in the abi headers needs to have detailed comments
-explaining what it is and so on so people can evaluate if it is
-suitable or not.
+url:    https://github.com/intel-lab-lkp/linux/commits/Elaine-Zhang/clk-rockchip-Implement-rockchip_clk_register_armclk_multi_pll/20251017-180259
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20251017063107.1606965-4-zhangqing%40rock-chips.com
+patch subject: [PATCH v2 3/5] clk: rockchip: Add clock controller for the RV1126B
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20251019/202510190651.YrDKfo1d-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 754ebc6ebb9fb9fbee7aef33478c74ea74949853)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510190651.YrDKfo1d-lkp@intel.com/reproduce)
 
-But, it is also not clear why pci serialization structs should leak
-out of the PCI layer.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510190651.YrDKfo1d-lkp@intel.com/
 
-The design of luo was to allow each layer to contribute its own
-tags/etc to the serialization so there is no reason to have vfio
-piggback on pci structs or something.
+All errors (new ones prefixed by >>):
 
-Jason
+>> ld.lld: error: undefined symbol: rk3576_rst_init
+   >>> referenced by clk-rv1126b.c:1050 (drivers/clk/rockchip/clk-rv1126b.c:1050)
+   >>>               drivers/clk/rockchip/clk-rv1126b.o:(rv1126b_clk_init) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
