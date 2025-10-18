@@ -1,79 +1,95 @@
-Return-Path: <linux-kernel+bounces-859112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C3CBECCE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:53:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A9FBECCF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 561624E65F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:53:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 268354E8E06
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DA52C2369;
-	Sat, 18 Oct 2025 09:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700832868A6;
+	Sat, 18 Oct 2025 09:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVM7dGcE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RzQcs3IZ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8DF1DFF0;
-	Sat, 18 Oct 2025 09:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3773928724D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760781191; cv=none; b=upzu3Upx4gxPbKVFCAPV4LPE7O6sTHXX9q/enz5VbXVYc+OZ8Dd4jXDSVtVghThqSRrTdODC7XUvZiCn4UB/aG2G6GBscGvDS2dxe/lvA4UbYJsvnjf8u1YzZZ6+PNm0UajLILkNgBQk7dleUJ7uZV+/RJpipxStOaHCHEqZjG0=
+	t=1760781210; cv=none; b=YJA5iRIESRfKd38w0DdELs3pi8PB6d3I8gLSq8a1ZasR5W4yS80D896v4i/Hx/klofCTjMLtk0XhzMH+LIiuVnhIe7LV5OMcVT10MYgXBP3SE9+lDoFiaN9q4ciO597KYZb0fONnaB0b8hzIawgGYu3It6G9mN12NtfvJhA0ZW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760781191; c=relaxed/simple;
-	bh=bOSmYzha9caq7PhodKTKcCoPiLt+2LlIcLfZyClR6tI=;
+	s=arc-20240116; t=1760781210; c=relaxed/simple;
+	bh=jLj8RoSgzmMT2RBpQP/RNNqIQpG4p47ETDS+XypecR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ik1bGNWYUbHQW7Go/ew1g5GruNzVTSt3RM+pafF12dGkVDgZCgA7v+jFcobUfBAapEaPffXulzIPAzk0abbvCX45BUjFhMn41ZP+VfIktjSs0ghEr22EAueunjC3Y1OeF/PqLh1Y62o3SX91Z9E/qLSWOsGMWZpmChPWb2NN0Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVM7dGcE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A979DC113D0;
-	Sat, 18 Oct 2025 09:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760781190;
-	bh=bOSmYzha9caq7PhodKTKcCoPiLt+2LlIcLfZyClR6tI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PVM7dGcEYXCuz8kq+FQlif5GkokSxvCHTzAFAGwTnR8/6weD/vKEUQASmePsYFC3h
-	 +euqjGf0PMyAFk0ZJUt5YM7wZxnuKR0UvscN4IWjm71nso3T24TfhImRIqQfyI4ss6
-	 cv+7XmuLUObCGPTep6i88M7y6u+ifbhyfVbe1BHS4zD5ALzPNDk/kx15zhKRwL0t27
-	 dMmFhLM5KTioGdUJieNshqGCPzeMSFbHvJviFEJxzNeYiuG1A5BFkxDb8ilKL2vLrA
-	 8jv3n05kf1if0vj2NPnC/QhhCj3HuD1WtyN73Zhx+EyOOZxPqW3faoSHxWvYSohg6r
-	 KlyEFQZJR/qhA==
-Date: Sat, 18 Oct 2025 12:52:55 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Hocko <mhocko@suse.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-	x86@kernel.org
-Subject: Re: [PATCH v3 05/13] mm: introduce CONFIG_ARCH_LAZY_MMU
-Message-ID: <aPNjd2dg3YN-TZKH@kernel.org>
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-6-kevin.brodsky@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEJCh9GEpZS1hvCdw4NkTAcsikq3BuT6SHEzpJJHBuRkgwJsgqNH8aL0OB7adT0d4+uSynJLPzm4MgpYYy7eQpC0Xv7FSvxP3anPI5TF0Pa8WriK1HOD5iF8uikKASRTsIw3BE3M17Io/7/pn6rU5Zvsu/ly7UVO8E8Qwrc4jno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RzQcs3IZ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4711f156326so12968205e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760781207; x=1761386007; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLcttbn5k16RAKKI+EzOZF6EXsPtXzfzb9zD7Ffua0E=;
+        b=RzQcs3IZNLzsYNNaFFLWAojQdcRTdALXC5Y1Lwt376bv5iIP62cOMiMGGGiZYL8pPL
+         Fks9AwNGse1GdPZ3Um96cYML4qU5NpRq0aY/HEt6skDmm5iyoGUt2yclyGyKHgr0Prmm
+         yP0f78bLLIZaJvMmxQNWA+aXRdAe+LJq7cyKYCdHpZq4/chHidZF5uqyFwnTOCd1Q6qA
+         SHXNTQwXpmcRefdbnuewarZlwKZbxxNlA2ZcYZr/7NwfH0udfkrzBybF4LtAOZ+EXXKr
+         lVgEe1t/44XdB+35G4nWz5jqjUocXfoGWpRik+54ot5eZPCPNBnxCy/lezPPlSaxQelT
+         Je3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760781207; x=1761386007;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YLcttbn5k16RAKKI+EzOZF6EXsPtXzfzb9zD7Ffua0E=;
+        b=Zd17Mw7ZlwRTMY7fd1EOk8p6tAsX5A4OJblLzR4Kuy/4+LXOWKp6XQ8OuZDtguWrIc
+         l00UVl57glaXMh+tAGu7gE1XrF2jxV9bu8yqiy3H6AQZM3OA7Cenaw8WSFDejOKPtGiA
+         b9HuUUQSdf4IjcvrIshwdWVecErDKDQamsfFzTMXFZGiQWpo1PAiclegoVBeQWY9ClR6
+         6LHMTXAWka2V5qTps5j5lLQtgGy3asufK4ohMXiviUklj1VQHss33ZUPVRvK/vu/WEZb
+         Px1ganGGmp6xpnDXpQNgxu1lQWgE+lXqMRPXdrdJaUCdiLVqs3ByIQgX4w6jbOdwbR4w
+         PQvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ+gmKHUFVXai8ZndE9O6lkekINytGsm0EFbYlSoeX+yk0815xhCOc3pRgj/kAR9DomsT5/CVIj1XZs9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuRtuKGoRRjjCN2Pj+fl3riowrYEOHW0rkmkyX++yxfBkHULG0
+	TD3dBTsF4ThIy0rNBgFPjV0CEqBFfCZVW95O0bexY1Wi28qG3BlBF/SJOnJSi1jZXZs=
+X-Gm-Gg: ASbGnctR16bWuu3tujSgHpj2n3U8VWAFEtCGzgPGhZZpn7tF0UvS2EzgAF0KSI9T9Cm
+	426ZE60TvhuiPoq1/thNLOGFn16lgrPZAmZxojmZwePy0O7zpVNqkuKKHLSaJ7E7M+JWOoVqOIy
+	5LNefMRFih0mTHOj4c+HXK/Nf+89D3mKLjCIyD5dCJlOApGW1ytIc4Y0cUoKhIqiyEbiZ/cSSnZ
+	zkYCZ6GNdU/yQ99USAsVBdklOdZUIw0+5s1mwzEEu7VpsOFsHDeNqn6dkIEzMBl+pdazmnTVoWc
+	CioR2fm+Fxytitl9J/hH1Kwj2NV49idPb6n7GMo5LE9qe+9hAFve5RKJpGF57vLCJhVc440NTXP
+	NV/15SGdG/CxLvwM+voIepsq0lGK1/f6KvG7bYNBCGNekVI7K8ybZvk8RjmGB/dnLBQFgOEQoeM
+	1gLUMumlGuotzfZNGF
+X-Google-Smtp-Source: AGHT+IE7qvTI/bg1JlFoj/mWNWosxLYB/3XVkN4l0hbhMw4Lq63sfmg28D78UCq3lmimATW7krx+qA==
+X-Received: by 2002:a05:600c:34d0:b0:471:1717:409 with SMTP id 5b1f17b1804b1-471179071b4mr45155315e9.23.1760781207332;
+        Sat, 18 Oct 2025 02:53:27 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f009a96asm4030365f8f.31.2025.10.18.02.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 02:53:26 -0700 (PDT)
+Date: Sat, 18 Oct 2025 12:53:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	"open list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-omap@vger.kernel.org>,
+	"open list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-pci@vger.kernel.org>,
+	"moderated list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/3] PCI: j721e: Use devm_clk_get_optional_enabled()
+ to get the clock
+Message-ID: <aPNjkzrexmIyQXpT@stanley.mountain>
+References: <20251014113234.44418-1-linux.amoon@gmail.com>
+ <20251014113234.44418-3-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,66 +98,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015082727.2395128-6-kevin.brodsky@arm.com>
+In-Reply-To: <20251014113234.44418-3-linux.amoon@gmail.com>
 
-On Wed, Oct 15, 2025 at 09:27:19AM +0100, Kevin Brodsky wrote:
-> Architectures currently opt in for implementing lazy_mmu helpers by
-> defining __HAVE_ARCH_ENTER_LAZY_MMU_MODE.
-> 
-> In preparation for introducing a generic lazy_mmu layer that will
-> require storage in task_struct, let's switch to a cleaner approach:
-> instead of defining a macro, select a CONFIG option.
-> 
-> This patch introduces CONFIG_ARCH_LAZY_MMU and has each arch select
-> it when it implements lazy_mmu helpers.
-> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is removed and <linux/pgtable.h>
-> relies on the new CONFIG instead.
-> 
-> On x86, lazy_mmu helpers are only implemented if PARAVIRT_XXL is
-> selected. This creates some complications in arch/x86/boot/, because
-> a few files manually undefine PARAVIRT* options. As a result
-> <asm/paravirt.h> does not define the lazy_mmu helpers, but this
-> breaks the build as <linux/pgtable.h> only defines them if
-> !CONFIG_ARCH_LAZY_MMU. There does not seem to be a clean way out of
-> this - let's just undefine that new CONFIG too.
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> ---
-
-...
-
-> @@ -231,7 +231,7 @@ static inline int pmd_dirty(pmd_t pmd)
->   * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
->   * and the mode cannot be used in interrupt context.
->   */
-> -#ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
-> +#ifndef CONFIG_ARCH_LAZY_MMU
->  static inline void arch_enter_lazy_mmu_mode(void) {}
->  static inline void arch_leave_lazy_mmu_mode(void) {}
->  static inline void arch_flush_lazy_mmu_mode(void) {}
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 0e26f4fc8717..2fdcb42ca1a1 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1372,6 +1372,9 @@ config PT_RECLAIM
->  config FIND_NORMAL_PAGE
->  	def_bool n
+On Tue, Oct 14, 2025 at 05:02:28PM +0530, Anand Moon wrote:
+> @@ -630,7 +622,6 @@ static int j721e_pcie_probe(struct platform_device *pdev)
 >  
-> +config ARCH_LAZY_MMU
-> +	bool
-> +
+>  		ret = cdns_pcie_host_setup(rc);
+>  		if (ret < 0) {
+> -			clk_disable_unprepare(pcie->refclk);
+>  			goto err_pcie_setup;
+>  		}
 
-I think a better name would be ARCH_HAS_LAZY_MMU and the config option fits
-better to arch/Kconfig.
+This will introduce a checkpatch warning with checkpatch.pl -f because
+you need to delete the curly braces.
 
->  source "mm/damon/Kconfig"
->  
->  endmenu
-> -- 
-> 2.47.0
-> 
+regards,
+dan carpenter
 
--- 
-Sincerely yours,
-Mike.
 
