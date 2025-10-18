@@ -1,363 +1,126 @@
-Return-Path: <linux-kernel+bounces-859326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F139BED4F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B16FCBED4FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126725E70F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:19:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5929C5E823B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3314A257858;
-	Sat, 18 Oct 2025 17:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BE6259CAF;
+	Sat, 18 Oct 2025 17:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bQmrFy9I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="axR7RU/+"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5586A7263B;
-	Sat, 18 Oct 2025 17:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F77253F3D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760807974; cv=none; b=jWqlgF9Z18UxmdphJKkeR+sjITEqHrpradp61zBXnOtrCkJEaRhduEQmx66zBbGSAc3mXiRtk3pMpBDA+o8vNAcav0YQBHPFIODJywcE7/XOxTE4ESxcg2wm9TLxuOKACezA+yeuqTDHpiE3feVnWDvabmiJQTb7pydIl1qRAYo=
+	t=1760808012; cv=none; b=lbIMQUBQIMC51xkUuNTlnb5DYW3EGFmbwB86sd9e1ScFFncY1EfW/Lh0QsEHBksB8nFa4XXwpIBvWhy7CfQvhUpiTLd2PxZSDklf++eNGuSb/gSdQzB6cZMiUCZdb/PBEMPjJuVNvq6ibUmmKZfsRk5TQbfqvaCoGf88+pD//w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760807974; c=relaxed/simple;
-	bh=44ggbXI4Wg0CVRZ/kNQUDDaRKrHxyjz8crS0k6G7ULI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2T++czWGO8f4z5ADUhK2rTdlVXWL2UuxD6QmsJaLnhYeO7rjRH2igAbTGI7k8bsFczDD5NRcyw48GD2E1yBDMMTkMiveipwQ1euUTQgXO398FYsZFdsUPbTl+/Ftgg3gpGqPue7G/sx+Y+M5OY7rNewUxHyrFx/zsRM1r/MB6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bQmrFy9I; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760807972; x=1792343972;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=44ggbXI4Wg0CVRZ/kNQUDDaRKrHxyjz8crS0k6G7ULI=;
-  b=bQmrFy9IZx+jit14m2FRMhyovKFVqQoV9lsxjATcjt7t8C7bJzUGyCyb
-   sjDUuE3skKz/MLJOE3seI9L7C/XnKAUhL3Kvaprc8PXt4wfrT4Y7PeTgI
-   RPfUQRd4QChc4PDdbMLmr5E1e+kYeYZXA0o60HeKiUHypjpUXXDkZbMYT
-   t617yIMtx7grbOmcgLfJOEfvJ4xZtrkkE3E7gkdKkv/UgiVXw1wHajeSK
-   Ox0lTwT5Yn/25OTxcpBvzRi/1XntPnkOVBIgOueeW7N6kSzEKmyxDp1ff
-   C8tJ0JVC2vZ+3IuVatPHNoy69xQTYN2y+536r0EqfVKmzcsfP18JjwHPH
-   A==;
-X-CSE-ConnectionGUID: EImCxL+uQuCNVRLD7ZgJCg==
-X-CSE-MsgGUID: o4udFhYBSgCl6PzAf+QchA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73277438"
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="73277438"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:19:31 -0700
-X-CSE-ConnectionGUID: dXXE3skNRtmY5S01UkibGw==
-X-CSE-MsgGUID: lnZhR/dwRDiXmAGX9Hup6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="182804630"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 18 Oct 2025 10:19:30 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vAAaV-0008Rz-1R;
-	Sat, 18 Oct 2025 17:19:27 +0000
-Date: Sun, 19 Oct 2025 01:19:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tracing: Allow tracer to add more than 32 options
-Message-ID: <202510190117.rUh1e4k6-lkp@intel.com>
-References: <176071774097.175601.10233017390618260565.stgit@devnote2>
+	s=arc-20240116; t=1760808012; c=relaxed/simple;
+	bh=vg42KvZVt3grWpFEwkoTaxWeHLF6xTh0VHrTgE6DOaQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=icml6YaV85YdBrmsOtltb+FndY5gqyrHeDgs9LoQHXKo0vCqBPi+mbXkw3U+GnidOzPG9lfVSolfwGYtMoAwjNMUrmGDt0KolN18ynMDfJRkA1BFyCOEI0NcTyah7/UT0mHDsCtjETqWdSy14KYys37TF+n9ABKGk47zEVTHwy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=axR7RU/+; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3b1eac8460so62902966b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760808007; x=1761412807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x00T8hSWTvPjR/PV+ewhXMDM1VtYrlavfAoGAuH1srE=;
+        b=axR7RU/+cGPW/Jgs1pfiA0naDKMXwTOHaISJtu96WhpHfbIynBlQ3wKOIqyZFxqypM
+         BSJcYXw6/WbifjO6tP9EWBFs5DCqMOd8BmKKzNULTyY43TsOh+jDa0ZrZ3aPzegdlIee
+         N2W2Z9Vc/Jf3Hasz8Bbstm/MbFPiMPqP7zzjUfL2sv+hXeAERdgprxPwTIr4toGDvHEf
+         SN5C9J2kL++7oXoYEUg2LgR2AB/JzdlHBKw/qyaQMwUKieWCo8oAdmKbzdIt3ocZaOpt
+         1lQShfpZYdWF8A1VtsuSW1B5BDccgSBIZUJTzjEX9kCisQQkUXePZlyt1jXAh3T1wmzT
+         1PBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760808007; x=1761412807;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x00T8hSWTvPjR/PV+ewhXMDM1VtYrlavfAoGAuH1srE=;
+        b=L09+qPphiWCjZ9bBaMLub1i4FRl6fYYEvHxwNXveDm99d03Oz2X2+sANro//aN31Bg
+         fkrbSkEAha3hBLTwls0tw4aZ6dMIazw5h/4XheV975iUOYG6VwYCdgAFlVTHxRIGVv8P
+         I4D90D2iGi78G9YbAUfWKesHW+0+BJHDF8EBJYv/FZB1OJSs5DFQDyM+O1y6N6V4l5v1
+         lv2wHHQn3Mqx7Htr4YTCH5g2R6h9a8Fqpgk+QEfROaS7rRdPRZO16S3T9oNUx1S9gklO
+         JiMimiqv8BV58hQonZ9akvIa8dNYxtdsexMkEDBP9Ck1KVPCwnpUzSyrQCI9sV3Y8frh
+         7/8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWWST70zJ160CHnovBlt0sEwynEebB/QHd9OuJGlRCeySQHK2c//nsM+MgxryPZcVXyJfFQubCh4f6s934=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj0BlYm7ARDtv5Y1vLe+OFFb3Q7y12LCUybWUf7zJagE6nu6lw
+	Dvh45Gf5TX5pUeN2ZZCAZA+MIq2+qDJ13IYxQHy3+pbjlDF5irdYUJyuz6wiT4toTKc=
+X-Gm-Gg: ASbGncvbVxaDMBkVyP5/U6iUKRqukANGJcCOFY1k9ynqx2fAWC+Y1acezdkboM7CGA6
+	AK1AIWdCwi7GImcEbEUULdaehDZrUrnSqOX+wBcgOex3ttZrMTwM+vXLUHIHVbv1zpvjbMSFj+F
+	O7ryHfIOocQvRHY98b2JuYpKS+PcQHdyyTWLtNAClc1IxgQ4s8UzrXZZnue6gQc9M5mqCRq58c7
+	W/0WaSGxSRCeVoTNQiStEygCE7PbdSxLRQD/tI/2xhzrbSMn1micfzT648LBTZAkspAEYR/KzwC
+	6W1CAYughiQ9umM+PgIHtqPJnS1NUfH91NDjLPwWH1M+jOc5YiWCzDF3mucpX3Ho65M4skqaNO5
+	PVEHHNpQTtkNyT/3+L/W24RzmOKUEJLiF8fAT/bCc5bJYCEg+bRwBB4Fm+54b70JLglozA+DegD
+	iXyY02JI+c8efb/Scf
+X-Google-Smtp-Source: AGHT+IFSGq3ZEBbgPdz+Al3sMkuXJaRZsJGuzuIpXqA4Kk0u8lvyKGkeLN15Xp4kSmIuqK8SKTLelA==
+X-Received: by 2002:a17:907:3e1d:b0:b2d:a873:37d with SMTP id a640c23a62f3a-b646f894876mr524393066b.0.1760808007534;
+        Sat, 18 Oct 2025 10:20:07 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da2bc7sm280666466b.16.2025.10.18.10.20.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 10:20:06 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sam Protsenko <semen.protsenko@linaro.org>
+In-Reply-To: <20251013-samsung-clk-pll-simplification-v2-1-b9aab610878c@linaro.org>
+References: <20251013-samsung-clk-pll-simplification-v2-1-b9aab610878c@linaro.org>
+Subject: Re: [PATCH v2] clk: samsung: clk-pll: simplify
+ samsung_pll_lock_wait()
+Message-Id: <176080800602.47136.11869769472487961810.b4-ty@linaro.org>
+Date: Sat, 18 Oct 2025 19:20:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176071774097.175601.10233017390618260565.stgit@devnote2>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.3
 
-Hi Masami,
 
-kernel test robot noticed the following build warnings:
+On Mon, 13 Oct 2025 06:27:16 +0100, André Draszik wrote:
+> readl_relaxed_poll_timeout_atomic() has been updated in 2023 in
+> commit 7349a69cf312 ("iopoll: Do not use timekeeping in
+> read_poll_timeout_atomic()") to avoid usage of timekeeping APIs. It
+> also never used udelay() when no delay was given.
+> 
+> With the implementation avoiding timekeeping APIs, and with a caller
+> not passing a delay, the timeout argument simply becomes a loop
+> counter.
+> 
+> [...]
 
-[auto build test WARNING on trace/for-next]
-[also build test WARNING on linus/master v6.18-rc1 next-20251017]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Applied, thanks!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Allow-tracer-to-add-more-than-32-options/20251018-004104
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/176071774097.175601.10233017390618260565.stgit%40devnote2
-patch subject: [PATCH v4 1/2] tracing: Allow tracer to add more than 32 options
-config: arm-randconfig-r112-20251018 (https://download.01.org/0day-ci/archive/20251019/202510190117.rUh1e4k6-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 754ebc6ebb9fb9fbee7aef33478c74ea74949853)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510190117.rUh1e4k6-lkp@intel.com/reproduce)
+[1/1] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
+      https://git.kernel.org/krzk/linux/c/d669ec6be0b1965c67248407d87c848b1b7c12ae
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510190117.rUh1e4k6-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   kernel/trace/ftrace.c: note: in included file (through kernel/trace/trace_output.h):
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/ftrace.c:1501:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/trace/ftrace.c:1501:9: sparse:    struct ftrace_hash [noderef] __rcu *
-   kernel/trace/ftrace.c:1501:9: sparse:    struct ftrace_hash *
-   kernel/trace/ftrace.c:7839:36: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/trace/ftrace.c:7839:36: sparse:    struct ftrace_ops [noderef] __rcu *
-   kernel/trace/ftrace.c:7839:36: sparse:    struct ftrace_ops *
---
-   kernel/trace/trace_functions.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_printk.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_preemptirq.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_stat.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/pid_list.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_stack.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_output.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/trace_output.c:423:34: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_ADDR'
-   kernel/trace/trace_output.c:436:48: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_OFFSET'
-   kernel/trace/trace_output.c:438:25: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_ADDR'
-   kernel/trace/trace_output.c:572:51: sparse: sparse: undefined identifier 'TRACE_ITER_VERBOSE'
-   kernel/trace/trace_output.c:639:31: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
-   kernel/trace/trace_output.c:650:31: sparse: sparse: undefined identifier 'TRACE_ITER_IRQ_INFO'
-   kernel/trace/trace_output.c:664:52: sparse: sparse: undefined identifier 'TRACE_ITER_VERBOSE'
-   kernel/trace/trace_output.c:1130:22: sparse: sparse: undefined identifier 'TRACE_ITER_PRINT_PARENT'
-   kernel/trace/trace_output.c:1420:31: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_USEROBJ'
---
-   kernel/trace/trace_nop.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_irqsoff.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/trace_irqsoff.c:492:62: sparse: sparse: undefined identifier 'TRACE_ITER_FUNCTION'
-   kernel/trace/trace_irqsoff.c:521:22: sparse: sparse: undefined identifier 'TRACE_ITER_FUNCTION'
-   kernel/trace/trace_irqsoff.c:588:29: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace_irqsoff.c:589:29: sparse: sparse: undefined identifier 'TRACE_ITER_LATENCY_FMT'
-   kernel/trace/trace_irqsoff.c:591:29: sparse: sparse: undefined identifier 'TRACE_ITER_PAUSE_ON_TRACE'
-   kernel/trace/trace_irqsoff.c:611:37: sparse: sparse: undefined identifier 'TRACE_ITER_LATENCY_FMT'
-   kernel/trace/trace_irqsoff.c:612:43: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace_irqsoff.c:613:39: sparse: sparse: undefined identifier 'TRACE_ITER_PAUSE_ON_TRACE'
-   kernel/trace/trace_irqsoff.c:617:29: sparse: sparse: undefined identifier 'TRACE_ITER_LATENCY_FMT'
-   kernel/trace/trace_irqsoff.c:618:29: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace_irqsoff.c:619:29: sparse: sparse: undefined identifier 'TRACE_ITER_PAUSE_ON_TRACE'
---
-   kernel/trace/trace_sched_switch.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_branch.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_export.c: note: in included file (through kernel/trace/trace_output.h):
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_dynevent.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/ring_buffer.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_boot.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/blktrace.c: note: in included file (through kernel/trace/trace_output.h):
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/blktrace.c:1455:43: sparse: sparse: undefined identifier 'TRACE_ITER_VERBOSE'
-   kernel/trace/blktrace.c:1520:45: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/blktrace.c:1522:44: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
---
-   kernel/trace/trace_kdb.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/trace_kdb.c:34:29: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_USEROBJ'
---
-   kernel/trace/trace_kprobe.c: note: in included file (through kernel/trace/trace_dynevent.h):
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/trace_kprobe.c:1587:53: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_OFFSET'
-   kernel/trace/trace_kprobe.c:1617:57: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_OFFSET'
-   kernel/trace/trace_kprobe.c:1622:56: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_OFFSET'
---
-   kernel/trace/trace_events_trigger.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_osnoise.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_probe.c: note: in included file (through kernel/trace/trace_probe.h):
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_events_filter.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
---
-   kernel/trace/trace_events.c: note: in included file (through kernel/trace/trace_output.h):
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/trace_events.c:848:47: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_CMD'
-   kernel/trace/trace_events.c:854:47: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
---
-   kernel/trace/trace.c: note: in included file:
->> kernel/trace/trace.h:1427:27: sparse: sparse: missing identifier in declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: Expected ; at the end of type declaration
-   kernel/trace/trace.h:1427:27: sparse: sparse: got :
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_FUNCTION'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_PRINT_PARENT'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_ANNOTATE'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_CMD'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_IRQ_INFO'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_MARKERS'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_HASH_PTR'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_TRACE_PRINTK'
-   kernel/trace/trace.c:537:24: sparse: sparse: undefined identifier 'TRACE_ITER_COPY_MARKER'
-   kernel/trace/trace.c:561:39: sparse: sparse: undefined identifier 'TRACE_ITER_TRACE_PRINTK'
-   kernel/trace/trace.c:563:28: sparse: sparse: undefined identifier 'TRACE_ITER_TRACE_PRINTK'
-   kernel/trace/trace.c:576:36: sparse: sparse: undefined identifier 'TRACE_ITER_COPY_MARKER'
-   kernel/trace/trace.c:584:29: sparse: sparse: undefined identifier 'TRACE_ITER_COPY_MARKER'
-   kernel/trace/trace.c:1142:33: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:1208:33: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:3487:33: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:3524:43: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:3794:50: sparse: sparse: undefined identifier 'TRACE_ITER_HASH_PTR'
-   kernel/trace/trace.c:4116:29: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
-   kernel/trace/trace.c:4127:29: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
-   kernel/trace/trace.c:4146:63: sparse: sparse: undefined identifier 'TRACE_ITER_PRINT_PARENT'
-   kernel/trace/trace.c:4146:63: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_OFFSET'
-   kernel/trace/trace.c:4146:63: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_ADDR'
-   kernel/trace/trace.c:4200:33: sparse: sparse: undefined identifier 'TRACE_ITER_ANNOTATE'
-   kernel/trace/trace.c:4226:54: sparse: sparse: undefined identifier 'TRACE_ITER_PRINT_PARENT'
-   kernel/trace/trace.c:4226:54: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_OFFSET'
-   kernel/trace/trace.c:4226:54: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_ADDR'
-   kernel/trace/trace.c:4236:31: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/trace.c:4247:39: sparse: sparse: undefined identifier 'TRACE_ITER_FIELDS'
-   kernel/trace/trace.c:4275:31: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/trace.c:4301:31: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/trace.c:4330:31: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/trace.c:4401:39: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:4406:39: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:4411:39: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:4415:27: sparse: sparse: undefined identifier 'TRACE_ITER_BIN'
-   kernel/trace/trace.c:4418:27: sparse: sparse: undefined identifier 'TRACE_ITER_HEX'
-   kernel/trace/trace.c:4421:27: sparse: sparse: undefined identifier 'TRACE_ITER_RAW'
-   kernel/trace/trace.c:4439:33: sparse: sparse: undefined identifier 'TRACE_ITER_VERBOSE'
-   kernel/trace/trace.c:4449:29: sparse: sparse: undefined identifier 'TRACE_ITER_CONTEXT_INFO'
-   kernel/trace/trace.c:4457:37: sparse: sparse: undefined identifier 'TRACE_ITER_VERBOSE'
-   kernel/trace/trace.c:4460:37: sparse: sparse: undefined identifier 'TRACE_ITER_VERBOSE'
-   kernel/trace/trace.c:4461:43: sparse: sparse: undefined identifier 'TRACE_ITER_IRQ_INFO'
-   kernel/trace/trace.c:4685:51: sparse: sparse: undefined identifier 'TRACE_ITER_PAUSE_ON_TRACE'
-   kernel/trace/trace.c:4885:44: sparse: sparse: undefined identifier 'TRACE_ITER_LATENCY_FMT'
-   kernel/trace/trace.c:5212:40: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace.c:5220:22: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
-   kernel/trace/trace.c:5235:21: sparse: sparse: undefined identifier 'TRACE_ITER_TRACE_PRINTK'
-   kernel/trace/trace.c:5254:21: sparse: sparse: undefined identifier 'TRACE_ITER_COPY_MARKER'
-   kernel/trace/trace.c:5262:21: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_CMD'
-   kernel/trace/trace.c:5265:21: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
-   kernel/trace/trace.c:5268:45: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_TGID'
-   kernel/trace/trace.c:5275:21: sparse: sparse: undefined identifier 'TRACE_ITER_EVENT_FORK'
-   kernel/trace/trace.c:5278:21: sparse: sparse: undefined identifier 'TRACE_ITER_FUNC_FORK'
-   kernel/trace/trace.c:5281:21: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace.c:5288:21: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:6548:31: sparse: sparse: undefined identifier 'TRACE_ITER_LATENCY_FMT'
-   kernel/trace/trace.c:6609:31: sparse: sparse: undefined identifier 'TRACE_ITER_BLOCK'
-   kernel/trace/trace.c:7161:31: sparse: sparse: undefined identifier 'TRACE_ITER_STOP_ON_FREE'
-   kernel/trace/trace.c:7264:33: sparse: sparse: undefined identifier 'TRACE_ITER_MARKERS'
-   kernel/trace/trace.c:7345:33: sparse: sparse: undefined identifier 'TRACE_ITER_MARKERS'
-   kernel/trace/trace.c:9332:37: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK'
-   kernel/trace/trace.c:9332:37: sparse: sparse: undefined identifier 'TRACE_ITER_PRINTK_MSGONLY'
-   kernel/trace/trace.c:9332:37: sparse: sparse: undefined identifier 'TRACE_ITER_RECORD_CMD'
-   kernel/trace/trace.c:9655:38: sparse: sparse: undefined identifier 'TRACE_ITER_OVERWRITE'
-   kernel/trace/trace.c:9848:55: sparse: sparse: undefined identifier 'TRACE_ITER_EVENT_FORK'
-   kernel/trace/trace.c:9848:55: sparse: sparse: undefined identifier 'TRACE_ITER_FUNC_FORK'
-   kernel/trace/trace.c:9848:55: sparse: sparse: undefined identifier 'TRACE_ITER_TRACE_PRINTK'
-   kernel/trace/trace.c:9848:55: sparse: sparse: undefined identifier 'TRACE_ITER_COPY_MARKER'
-   kernel/trace/trace.c:10017:32: sparse: sparse: undefined identifier 'TRACE_ITER_EVENT_FORK'
-   kernel/trace/trace.c:10017:32: sparse: sparse: undefined identifier 'TRACE_ITER_FUNC_FORK'
-   kernel/trace/trace.c:10017:32: sparse: sparse: undefined identifier 'TRACE_ITER_TRACE_PRINTK'
-   kernel/trace/trace.c:10017:32: sparse: sparse: undefined identifier 'TRACE_ITER_COPY_MARKER'
-   kernel/trace/trace.c:10609:41: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_USEROBJ'
-   kernel/trace/trace.c:10612:29: sparse: sparse: undefined identifier 'TRACE_ITER_SYM_USEROBJ'
-   kernel/trace/trace.c:454:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/trace/trace.c:454:9: sparse:    struct trace_export [noderef] __rcu *
-   kernel/trace/trace.c:454:9: sparse:    struct trace_export *
-   kernel/trace/trace.c:469:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/trace/trace.c:469:9: sparse:    struct trace_export [noderef] __rcu *
-   kernel/trace/trace.c:469:9: sparse:    struct trace_export *
-   kernel/trace/trace.c:3081:33: sparse: sparse: undefined identifier 'TRACE_ITER_STACKTRACE'
-
-vim +1427 kernel/trace/trace.h
-
-  1426	
-> 1427	enum trace_iterator_flags : uint64_t { TRACE_FLAGS };
-  1428	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
