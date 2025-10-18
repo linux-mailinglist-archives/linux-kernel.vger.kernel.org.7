@@ -1,141 +1,272 @@
-Return-Path: <linux-kernel+bounces-859298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC17ABED402
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:43:01 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833C6BED40B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73AC73B79AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:43:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B753734CC64
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7347824BC0A;
-	Sat, 18 Oct 2025 16:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7133F25179A;
+	Sat, 18 Oct 2025 16:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ia5x9eK0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8fhWr2m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D421946C8;
-	Sat, 18 Oct 2025 16:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92A323BD06;
+	Sat, 18 Oct 2025 16:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760805774; cv=none; b=dY8OJj+jhjLGfu9E+uKrC6dXG5Q1zYQKFepQm17l72j9p2dxn5RoGQ9UDsqUZ8p96CMzcYtHaRcQ5PgrsyoK8iyfXv8UKpsSNkuPopndmSrS80PBzBMg79z+94bE9jP+tJoaTWEM9Asz/rhgabEZe8wL3MMUG6OJyKvfX8IkUGo=
+	t=1760806075; cv=none; b=L4GWE2+fPN5dymwP+v3ci1IAaNGN2MyLtnYSKYaosBNyOjiF7nzm1ER/cx1FqcyCk1EkNxmMItQDO/2UVNv7/0BHZKAA40LITHs6CkdhDiAYE2wjVqS/Cm85ZEVG1kvpzDFnb9OgAfgHTjNdLLuWG/lfyjQrerZ7jtbvzrVqcrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760805774; c=relaxed/simple;
-	bh=G0XzJL821EhQY/XyujmweCqTwNsKpaQN25Bw4l3r+6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gwKdGDZ9K5s2qGFwyLuwsuTBv6XbJghi5sXm/tRDnMllYo6F01IpZ2yuvtcpMq4H0G/tvOgDcJOmr9/NmO1iky758Y1s5/nKvAIhKpHaajhw6/GPAhmibIuiy5DV2t0RAhzGNJop6qxA/o1kIl5xxRYcZw+Emnlg2GtzE1pOLCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ia5x9eK0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89551C4CEF9;
-	Sat, 18 Oct 2025 16:42:51 +0000 (UTC)
+	s=arc-20240116; t=1760806075; c=relaxed/simple;
+	bh=/OfKplk/YJMdO1k7++AFVXGanGrA383wjf6lPLlTvV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DOE+4sR8uAEMUEqesGZEmfjngVPrAed3rysuq62vvAnF9EFMNrcXSlVRI1etqCEykF/NkGGIlEIs86MB4p4TOpsOtR7TxaleaJkZanT7EU/YcI7X9poFWLeu5Rm1cyHVZVtpD7OP7TFdSzHKT4wE4X0m2SAR+gZcLuXrd66cCW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8fhWr2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D008C4CEF8;
+	Sat, 18 Oct 2025 16:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760805774;
-	bh=G0XzJL821EhQY/XyujmweCqTwNsKpaQN25Bw4l3r+6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ia5x9eK03xpolTiDEn6fQvHoIehsB3D7on3cTn9q3DSRxNF21/XcCU3jed37DUntC
-	 SL6U9GpXJY2FiNTLAJp9xdfqTmz6Fq8hjFXO14l4LSFt21rAXPZ8+azh9PHhD9ZBVV
-	 GkW2okZ9D+oRgycriro4+hdxDrvVJOpAa7bysQ3KEDLoN8L1de+7Ts8JH/6jAOY4rQ
-	 MrZ+a5zh7hU2KpHFg59uvVQM2/8/oI9JXcSiAbs7oFUn//ejiDwL5JROdkjS8lOUTy
-	 6Izrw+Px2wApWCAtDnQL3K3NEI90E5SXGZMufd8URr1FPdD+SJ2ETY2OUG7qI1LK9T
-	 lS+qrnLYw8nCg==
-Message-ID: <5e3a0317-31b2-43f1-9a4b-b66447a6044d@kernel.org>
-Date: Sat, 18 Oct 2025 18:42:49 +0200
+	s=k20201202; t=1760806075;
+	bh=/OfKplk/YJMdO1k7++AFVXGanGrA383wjf6lPLlTvV0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T8fhWr2mwWc9N7W2L+iwIhU/rRaz4SBMY6214Er8WUtLMsGqtIlVhIcNv84i0TQhJ
+	 sIk9oSk2s4Lz8mg8TPdq0AoyJz11y2prkgLSclTCHgObLauBuV4A8ZzFk9mmhebkKI
+	 NS65PmjdRQak+pgm5ubyD/fX6qXjDlVn2YccDWvq5IHdUSc50z3LJF816ivBzBo091
+	 aVgJGj/hGIwBnlcCoCMEeLADdMp66hbtnizl0rSJNme53igCLSKU/hZiG/d1vVHA4Q
+	 nEX496HpWaDU7TpYqqmvvsQ3w5Xm8Hbr9Sr5sXy0rZVpsnxZ1y5uoqY9pk02zNz0SQ
+	 fYGiHTkctho4Q==
+Date: Sat, 18 Oct 2025 17:47:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
+ marcelo.schmitt1@gmail.com, vassilisamir@gmail.com, salah.triki@gmail.com,
+ skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH v2 2/2] iio: pressure: adp810: Add driver for adp810
+ sensor
+Message-ID: <20251018174746.4a76af1d@jic23-huawei>
+In-Reply-To: <0b72866f4e5ac28c78f6d683a1ca659a4239b68e.1760374257.git.akhilesh@ee.iitb.ac.in>
+References: <cover.1760374257.git.akhilesh@ee.iitb.ac.in>
+	<0b72866f4e5ac28c78f6d683a1ca659a4239b68e.1760374257.git.akhilesh@ee.iitb.ac.in>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 1/2] dt-bindings: memory: mediatek: Add SMI reset and
- clamp for MT8188
-To: Friday Yang <friday.yang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250917120724.8650-1-friday.yang@mediatek.com>
- <20250917120724.8650-2-friday.yang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250917120724.8650-2-friday.yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 17/09/2025 14:07, Friday Yang wrote:
-> Add 'resets' and 'reset-names' properties for SMI LARBs to support
-> SMI reset operations.
+On Mon, 13 Oct 2025 22:32:35 +0530
+Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
 
-Not informative...
-
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
-> index 2e7fac4b5094..fc5feb2eac1f 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
-> @@ -70,6 +70,12 @@ properties:
->      description: the hardware id of this larb. It's only required when this
->        hardware id is not consecutive from its M4U point of view.
+> Add driver for Aosong adp810 differential pressure and temperature sensor.
+> This sensor provides an I2C interface for reading data.
+> Calculate CRC of the data received using standard crc8 library to verify
+> data integrity.
 > 
-> +  resets:
-> +    maxItems: 1
+> Tested on TI am62x sk board with sensor connected at i2c-2.
+> 
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+
+A few comments inline and it seems your rebase when wrong and you've
+picked up unrelated build file changes.
+
+Thanks
+
+Jonathan
+
+> diff --git a/drivers/iio/pressure/Makefile b/drivers/iio/pressure/Makefile
+> index 6482288e07ee..a21443e992b9 100644
+> --- a/drivers/iio/pressure/Makefile
+> +++ b/drivers/iio/pressure/Makefile
+> @@ -5,6 +5,7 @@
+>  
+>  # When adding new entries keep the list in alphabetical order
+>  obj-$(CONFIG_ABP060MG) += abp060mg.o
+> +obj-$(CONFIG_ADP810) += adp810.o
+>  obj-$(CONFIG_ROHM_BM1390) += rohm-bm1390.o
+>  obj-$(CONFIG_BMP280) += bmp280.o
+>  bmp280-objs := bmp280-core.o bmp280-regmap.o
+> @@ -15,6 +16,7 @@ obj-$(CONFIG_DPS310) += dps310.o
+>  obj-$(CONFIG_IIO_CROS_EC_BARO) += cros_ec_baro.o
+>  obj-$(CONFIG_HID_SENSOR_PRESS)   += hid-sensor-press.o
+>  obj-$(CONFIG_HP03) += hp03.o
+> +obj-$(CONFIG_HP206C) += hp206c.o
+>  obj-$(CONFIG_HSC030PA) += hsc030pa.o
+>  obj-$(CONFIG_HSC030PA_I2C) += hsc030pa_i2c.o
+>  obj-$(CONFIG_HSC030PA_SPI) += hsc030pa_spi.o
+> @@ -34,11 +36,9 @@ obj-$(CONFIG_SDP500) += sdp500.o
+>  obj-$(CONFIG_IIO_ST_PRESS) += st_pressure.o
+>  st_pressure-y := st_pressure_core.o
+>  st_pressure-$(CONFIG_IIO_BUFFER) += st_pressure_buffer.o
+> +obj-$(CONFIG_IIO_ST_PRESS_I2C) += st_pressure_i2c.o
+> +obj-$(CONFIG_IIO_ST_PRESS_SPI) += st_pressure_spi.o
+>  obj-$(CONFIG_T5403) += t5403.o
+> -obj-$(CONFIG_HP206C) += hp206c.o
+
+Rebase gone wrong I assume.  
+
+>  obj-$(CONFIG_ZPA2326) += zpa2326.o
+>  obj-$(CONFIG_ZPA2326_I2C) += zpa2326_i2c.o
+>  obj-$(CONFIG_ZPA2326_SPI) += zpa2326_spi.o
+> -
+> -obj-$(CONFIG_IIO_ST_PRESS_I2C) += st_pressure_i2c.o
+> -obj-$(CONFIG_IIO_ST_PRESS_SPI) += st_pressure_spi.o
+> diff --git a/drivers/iio/pressure/adp810.c b/drivers/iio/pressure/adp810.c
+> new file mode 100644
+> index 000000000000..c2f3b5f7a1f9
+> --- /dev/null
+> +++ b/drivers/iio/pressure/adp810.c
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2025 Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> + *
+> + * Driver for adp810 pressure and temperature sensor
+> + * Datasheet:
+> + *   https://aosong.com/userfiles/files/media/Datasheet%20ADP810-Digital.pdf
+> + */
 > +
-> +  reset-names:
-> +    const: larb
+> +#include <linux/crc8.h>
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/unaligned.h>
+This is a very small set of includes.  Please follow include what you use (IWYU)
+principles (loosely - there are a few headers that never make sense to include
+directly).  So I'd definitely expect things like mutex.h here.
+dev_printk.h etc.
 
-Is the reset valid for all existing devices as well? Commit msg does not
-explain that... it is pretty useless - you say what you did. We see that
-from the diff. Explain something not obvious.
+> +
+> +#include <linux/iio/iio.h>
+
+> +
+> +static int adp810_measure(struct adp810_data *data, struct adp810_read_buf *buf)
+> +{
+> +	struct i2c_client *client = data->client;
+> +	struct device *dev = &client->dev;
+> +	int ret;
+> +	u16 trig_cmd = ADP810_TRIGGER_COMMAND;
+> +
+> +	/* Send trigger to the sensor for measurement */
+> +	ret = i2c_master_send(client, (char *)&trig_cmd, sizeof(u16));
+
+sizeof(trig_cmd)
+
+I think it is vanishingly unlikely to matter but in theory i2c_master_send()
+could return 1 and only one byte made it to device.
+So it's common to have 
+	if (ret < 0)...
+		....
+	if (ret != sizeof(trig_cmd))
+		....
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "Error sending trigger command\n");
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Wait for the sensor to acquire data. As per datasheet section 5.3.1,
+> +	 * wait for at least 10ms before reading measurements from the sensor.
+> +	 */
+> +	msleep(ADP810_MEASURE_LATENCY_MS);
+> +
+> +	/* Read sensor values */
+> +	ret = i2c_master_recv(client, (char *)buf, sizeof(*buf));
+> +	if (ret < 0) {
+
+Same potential issue for short reads as for the write above.
+
+I don't recall seeing anything to say we either got full length or
+error code but maybe that changed at somepoint to make this interface easier to use.
 
 
+> +		dev_err(dev, "Error reading from sensor\n");
+> +		return ret;
+> +	}
+> +
+> +	/* CRC checks */
+> +	crc8_populate_msb(crc_table, ADP810_CRC8_POLYNOMIAL);
+> +	if (buf->dp_crc != crc8(crc_table, (u8 *)&buf->dp, 0x2, CRC8_INIT_VALUE)) {
+> +		dev_err(dev, "CRC error for pressure\n");
+> +		return -EIO;
+> +	}
+> +
+> +	if (buf->tmp_crc != crc8(crc_table, (u8 *)&buf->tmp, 0x2, CRC8_INIT_VALUE)) {
+> +		dev_err(dev, "CRC error for temperature\n");
+> +		return -EIO;
+> +	}
+> +
+> +	if (buf->sf_crc != crc8(crc_table, (u8 *)&buf->sf, 0x2, CRC8_INIT_VALUE)) {
+> +		dev_err(dev, "CRC error for scale\n");
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int adp810_read_raw(struct iio_dev *indio_dev,
+> +			   struct iio_chan_spec const *chan,
+> +			   int *val, int *val2, long mask)
+> +{
+> +	struct adp810_data *data = iio_priv(indio_dev);
+> +	struct device *dev = &data->client->dev;
+> +	struct adp810_read_buf buf = {0};
 
-Best regards,
-Krzysztof
+Not a big thing but slight preference for { }.
+It's a messy thing wrt to the c spec which never talked about holes
+and this construct until recently.  However the kernel has build tests
+that verify that all compilers will zero the holes with the { }
+syntax and that is what the C standards folk have put in the spec now
+as meaning whole structure including holes.
+
+> +	int ret;
+> +
+> +	scoped_guard(mutex, &data->lock) {
+> +		ret = adp810_measure(data, &buf);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to read from device\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		switch (chan->type) {
+> +		case IIO_PRESSURE:
+> +			*val = get_unaligned_be16(&buf.dp);
+> +			return IIO_VAL_INT;
+> +		case IIO_TEMP:
+> +			*val = get_unaligned_be16(&buf.tmp);
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	case IIO_CHAN_INFO_SCALE:
+> +		switch (chan->type) {
+> +		case IIO_PRESSURE:
+> +			*val = get_unaligned_be16(&buf.sf);
+> +			return IIO_VAL_INT;
+> +		case IIO_TEMP:
+> +			*val = 200;
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+
 
