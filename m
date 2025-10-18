@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5792BED3FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC17ABED402
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9669C3BED89
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73AC73B79AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D313824DD09;
-	Sat, 18 Oct 2025 16:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7347824BC0A;
+	Sat, 18 Oct 2025 16:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQBxPNay"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ia5x9eK0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A327244677;
-	Sat, 18 Oct 2025 16:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D421946C8;
+	Sat, 18 Oct 2025 16:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760805713; cv=none; b=C+LCb0HwQ10cEGZGNuCcYgTnsiMpYVLvbV/jputO4HPEADZM3WuFgZwm4qQoYE+5XLHDbDELDcCtN33xq/ZW2sYrTZomzL88UedgZoIofn/023HPBPXFkhHrRdx+e/fF8a0lqFW/nrvt7PsNyGZke7EQxVzJhQlfwVt9eoio5W4=
+	t=1760805774; cv=none; b=dY8OJj+jhjLGfu9E+uKrC6dXG5Q1zYQKFepQm17l72j9p2dxn5RoGQ9UDsqUZ8p96CMzcYtHaRcQ5PgrsyoK8iyfXv8UKpsSNkuPopndmSrS80PBzBMg79z+94bE9jP+tJoaTWEM9Asz/rhgabEZe8wL3MMUG6OJyKvfX8IkUGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760805713; c=relaxed/simple;
-	bh=9XUH/pepW+9cSzDCW1n5DSyLv9Nd5iUWj0ClbTRm0wM=;
+	s=arc-20240116; t=1760805774; c=relaxed/simple;
+	bh=G0XzJL821EhQY/XyujmweCqTwNsKpaQN25Bw4l3r+6U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xr3O+fgaQsa/1pV+UWtqCnhvnqcwT4TmZHvfzg7iKul4dOAbKalvolsGUWpKICAXrSppsHi9j9a9mAysDt82C0WQ8/vWgfADYPB/zW/FWFj/BFEPN8DGjroO2rdJ1kpxDkwqdmJ8HDGShkxLaMVyJ3Xm+4rT8GJzOC1xrvlO4J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQBxPNay; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC5FC4CEF8;
-	Sat, 18 Oct 2025 16:41:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=gwKdGDZ9K5s2qGFwyLuwsuTBv6XbJghi5sXm/tRDnMllYo6F01IpZ2yuvtcpMq4H0G/tvOgDcJOmr9/NmO1iky758Y1s5/nKvAIhKpHaajhw6/GPAhmibIuiy5DV2t0RAhzGNJop6qxA/o1kIl5xxRYcZw+Emnlg2GtzE1pOLCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ia5x9eK0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89551C4CEF9;
+	Sat, 18 Oct 2025 16:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760805712;
-	bh=9XUH/pepW+9cSzDCW1n5DSyLv9Nd5iUWj0ClbTRm0wM=;
+	s=k20201202; t=1760805774;
+	bh=G0XzJL821EhQY/XyujmweCqTwNsKpaQN25Bw4l3r+6U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AQBxPNayGrBhGg3wPKntI2TlPUmd2t5H16KiWvB/lZIy1EcSpdIVWks8qlwD0+zWa
-	 eJNM3xayDg/x0lGWNGqVlyjq1Fstdo369MgXOUe52H8epbNZ5225oO0QLfUbHCQDBc
-	 KlHVS9dkb+SHYkyCDj2cCnTs0UDhhzDD0yfJuUVG7RygyvU9CSFL7gKP51Ejh9v9Dk
-	 2hQuFt5n/G2quXPsHDIZknFfXhdfiDdvNdH/uuU55356erMN6AgR+NdZbHgKmT7SJA
-	 9oZjTnYpRz9vXfEITyqEQoia0jjWFv4ZO+2WI020cX3N2iEvS8JZMoeGo0pAnMx0ct
-	 JH3XsmMNqu3TA==
-Message-ID: <3ecf0545-513f-4a84-9772-f6cecc50f48b@kernel.org>
-Date: Sat, 18 Oct 2025 18:41:48 +0200
+	b=ia5x9eK03xpolTiDEn6fQvHoIehsB3D7on3cTn9q3DSRxNF21/XcCU3jed37DUntC
+	 SL6U9GpXJY2FiNTLAJp9xdfqTmz6Fq8hjFXO14l4LSFt21rAXPZ8+azh9PHhD9ZBVV
+	 GkW2okZ9D+oRgycriro4+hdxDrvVJOpAa7bysQ3KEDLoN8L1de+7Ts8JH/6jAOY4rQ
+	 MrZ+a5zh7hU2KpHFg59uvVQM2/8/oI9JXcSiAbs7oFUn//ejiDwL5JROdkjS8lOUTy
+	 6Izrw+Px2wApWCAtDnQL3K3NEI90E5SXGZMufd8URr1FPdD+SJ2ETY2OUG7qI1LK9T
+	 lS+qrnLYw8nCg==
+Message-ID: <5e3a0317-31b2-43f1-9a4b-b66447a6044d@kernel.org>
+Date: Sat, 18 Oct 2025 18:42:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/2] memory: mtk-smi: mt8188: Add SMI reset and clamp
+Subject: Re: [PATCH v11 1/2] dt-bindings: memory: mediatek: Add SMI reset and
+ clamp for MT8188
 To: Friday Yang <friday.yang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>,
  Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Matthias Brugger <matthias.bgg@gmail.com>,
@@ -59,7 +60,7 @@ Cc: linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20250917120724.8650-1-friday.yang@mediatek.com>
- <20250917120724.8650-3-friday.yang@mediatek.com>
+ <20250917120724.8650-2-friday.yang@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,66 +106,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250917120724.8650-3-friday.yang@mediatek.com>
+In-Reply-To: <20250917120724.8650-2-friday.yang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 17/09/2025 14:07, Friday Yang wrote:
->  static int mtk_smi_device_link_common(struct device *dev, struct device **com_dev)
->  {
->  	struct platform_device *smi_com_pdev;
-> @@ -638,6 +711,46 @@ static int mtk_smi_dts_clk_init(struct device *dev, struct mtk_smi *smi,
->  	return ret;
->  }
+> Add 'resets' and 'reset-names' properties for SMI LARBs to support
+> SMI reset operations.
+
+Not informative...
+
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+> index 2e7fac4b5094..fc5feb2eac1f 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+> @@ -70,6 +70,12 @@ properties:
+>      description: the hardware id of this larb. It's only required when this
+>        hardware id is not consecutive from its M4U point of view.
 > 
-> +static int mtk_smi_larb_parse_syscon(struct mtk_smi_larb *larb, int larbid)
-> +{
-> +	struct device *dev = larb->dev;
-> +	const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
-> +	int ret;
+> +  resets:
+> +    maxItems: 1
 > +
-> +	larb->smi_comm_in_port_id = larb_gen->clamp_port[larbid];
-> +	larb->smi_comm_syscon = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +								"mediatek,smi");
+> +  reset-names:
+> +    const: larb
 
-The code already parses this phandle (in other place). Why do you need
-second time?
-
-> +	if (IS_ERR(larb->smi_comm_syscon)) {
-> +		ret = PTR_ERR(larb->smi_comm_syscon);
-> +		larb->smi_comm_syscon = NULL;
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to get smi syscon for larb %d\n", larbid);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int mtk_smi_larb_parse_reset(struct mtk_smi_larb *larb)
-> +{
-> +	struct device *dev = larb->dev;
-> +	int ret;
-> +
-> +	larb->rst_con = devm_reset_control_get_exclusive(dev, "larb");
-> +	if (IS_ERR(larb->rst_con))
-> +		return dev_err_probe(dev, PTR_ERR(larb->rst_con),
-> +				     "Failed to get reset controller\n");
+Is the reset valid for all existing devices as well? Commit msg does not
+explain that... it is pretty useless - you say what you did. We see that
+from the diff. Explain something not obvious.
 
 
-This looks like ABI break. Aren't all devices affected?
 
-> +
-> +	larb->nb.notifier_call = mtk_smi_genpd_callback;
-> +	ret = dev_pm_genpd_add_notifier(dev, &larb->nb);
-> +	if (ret) {
-> +		larb->nb.notifier_call = NULL;
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to add genpd callback\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
 Best regards,
 Krzysztof
 
