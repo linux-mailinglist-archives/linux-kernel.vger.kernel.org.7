@@ -1,80 +1,97 @@
-Return-Path: <linux-kernel+bounces-859458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B491BEDB7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:12:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203C0BEDB81
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0501D4E5A8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:12:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 697CF4E5CD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A93286D40;
-	Sat, 18 Oct 2025 20:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1ED288C2B;
+	Sat, 18 Oct 2025 20:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ld0lNl8G"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FToTKl7g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B2C126BF7;
-	Sat, 18 Oct 2025 20:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC2942050;
+	Sat, 18 Oct 2025 20:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760818370; cv=none; b=t6CHA3rDOINhHPyG+tdGK3oRKh+zJUz2ItOudDo/G7lM1xR5NUc9/boWXu6hfFa4WKAfs2jbzbR1/IcyAZ/JM+WyvsNF++8fz6PwLUi/nZV/ZsKy8sQbXlG3k2krJJT4hjZKz5eK4FPxTYZfytCcqNLg9lJ9d//DDeraU2fR1pM=
+	t=1760819423; cv=none; b=ZNeHzJjAit7dl9JLH3uX0PYu0mMg83pU3yqz8/b44eba0OjVb12aGUa9lUJuJ141kd9rg5XL7lKzt1wrcQzLTbZnasm1R+wMlgZXuvgLJQVFfj8fPu7Rnh90HEDM2zAXSckvYE2DWASHVEBB7ozarv0EPo9jQATPMjm3gMP0864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760818370; c=relaxed/simple;
-	bh=zjfMEN40yxBxgYdbiW3L9ZafDw65ED4ckQ7ShXbibQE=;
+	s=arc-20240116; t=1760819423; c=relaxed/simple;
+	bh=oymSkMI4MQyfgGtzTlVx+2QbpBAMoVgBfbG6GjNGQ1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qO6rK1MaeZl4k7DwSfsC0TImZzGfm7AUZrBJO/SPfIIRxRX8uQlvFKHj7in0yi7Dcws1FDd9ZIpSWJf3iIRsOJzgLplMtjV2DtNfMeQMvjMdKzU4tfgrDk20eDawBzN+kDD02pJ8wbocQ+5TGCwDWS2y4Hqyf3FXCI+YRo9knzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ld0lNl8G; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHGFG1EL+Ond4zTiHHisf6Cdb0SFnoVeMhVTm3e6uRvxzLzSuwQI9LOiKtpdVVHLpNYTNbd/gxuhoD2LfB7RqUDmD1hAr5NsL8rDBcQYsJfNgxHPk9stiNF6leKd5pzSGHTEw/XkLEKSugwtN3hT9ogr40Qc50eGNTs+tgY2Bio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FToTKl7g; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760818368; x=1792354368;
+  t=1760819421; x=1792355421;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=zjfMEN40yxBxgYdbiW3L9ZafDw65ED4ckQ7ShXbibQE=;
-  b=ld0lNl8GfGUMFa+Gxqc2RhWz2mdP/ArnHn+d8CFGngDjx1OjiLP6rC4O
-   6GIeD6SmCTBgLhopW3HN6mJ5LNR14vSP/EYQ4QcMsLnJpmG89RVtPkNHB
-   XOv1HMDy/yhfEriyyNPTyO7E/Qai9AecUghFESf8R48+vpGeM9HEqU2GB
-   2fQxPPjTYbiQxm77TTeZ56pjK5A7QuMcsA+7zxDnrt3xK6NvSrSd3/cAD
-   vU9TX8ZOXLB6zW79M/PyPJm9uXB0E7pwHSNlwP26GdV0rdkjunh5xl0dC
-   MOXA7QTlTC0aEfJ1qw/8z48wlKhR36pXpkUJaBlsSV0MdFrcfNnHEVxU9
-   g==;
-X-CSE-ConnectionGUID: RziuIPiHSUif5/gkEolBgQ==
-X-CSE-MsgGUID: Dt/UfglFRj++z4U5tAK88Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73281478"
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="73281478"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 13:12:48 -0700
-X-CSE-ConnectionGUID: fvS71f8zQiyxlwE4bM+6kQ==
-X-CSE-MsgGUID: qdmKID63QFWBuCMLuNqxlg==
+  bh=oymSkMI4MQyfgGtzTlVx+2QbpBAMoVgBfbG6GjNGQ1c=;
+  b=FToTKl7gkd+Wv1+UPtwVizPeSwz7JabwD3dIAPkhgk3jnYRINmSDTt87
+   eV+VpW8TWz+VQOPGd44uMfazt+v0GqR/Vnw4dIuOeTNH3YIcWBgYX/fpA
+   iazmzrHTvhjDZipmRaj/tsakaats3C1S/xR/NsYkJQvO+1+7u1V4Ead25
+   DkFHyP0SMhOmXFxZSss4z07++JFt8011BFhHP53zBFTHCDFkbN/EBaBtn
+   toVNL+0eIqzgCWtn5dFIXjNIZK+g6O8YVA9ZgKmYgDon5hAwsveHLDfd/
+   FrSTOCPyHvRihkCG0iy7QCl27JFipcs9Yd7GnuO1cCFhdlPECsizBhG8n
+   w==;
+X-CSE-ConnectionGUID: 26vdJaWIRIme7WBrZMymjA==
+X-CSE-MsgGUID: KzZY0nCESbSKnhCLpESQIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66833131"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="66833131"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 13:30:21 -0700
+X-CSE-ConnectionGUID: wFojyqHMSk2ID8aQrenOaw==
+X-CSE-MsgGUID: SsgCYYyxSN2ifsNoFIQrWw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="182824703"
+   d="scan'208";a="187257235"
 Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 13:12:45 -0700
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 13:30:15 -0700
 Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vADI9-00000000y3B-26QC;
-	Sat, 18 Oct 2025 23:12:41 +0300
-Date: Sat, 18 Oct 2025 23:12:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	krzk+dt@kernel.org, linux-iio@vger.kernel.org, s32@nxp.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	chester62515@gmail.com, mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com
-Subject: Re: [PATCH v5 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-Message-ID: <aPP0uVZu1T7tTQGo@ashevche-desk.local>
-References: <20251017164238.1908585-1-daniel.lezcano@linaro.org>
- <20251017164238.1908585-3-daniel.lezcano@linaro.org>
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vADZ5-00000000yE0-19Kc;
+	Sat, 18 Oct 2025 23:30:11 +0300
+Date: Sat, 18 Oct 2025 23:30:11 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v4 2/2] media: i2c: add Himax HM1246 image sensor driver
+Message-ID: <aPP40yh7--VGpd0O@ashevche-desk.local>
+References: <20251017-hm1246-v4-0-e3388ea2f08c@emfend.at>
+ <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,101 +100,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017164238.1908585-3-daniel.lezcano@linaro.org>
+In-Reply-To: <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Oct 17, 2025 at 06:42:38PM +0200, Daniel Lezcano wrote:
-> From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+On Fri, Oct 17, 2025 at 12:49:39PM +0200, Matthias Fend wrote:
+> Add a V4L2 sub-device driver for Himax HM1246 image sensor.
 > 
-> The NXP S32G2 and S32G3 platforms integrate a successive approximation
-> register (SAR) ADC. Two instances are available, each providing 8
-> multiplexed input channels with 12-bit resolution. The conversion rate
-> is up to 1 Msps depending on the configuration and sampling window.
+> The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
+> array size of 1296 x 976. It is programmable through an I2C interface and
+> connected via parallel bus.
 > 
-> The SAR ADC supports raw, buffer, and trigger modes. It can operate
-> in both single-shot and continuous conversion modes, with optional
-> hardware triggering through the cross-trigger unit (CTU) or external
-> events. An internal prescaler allows adjusting the sampling clock,
-> while per-channel programmable sampling times provide fine-grained
-> trade-offs between accuracy and latency. Automatic calibration is
-> performed at probe time to minimize offset and gain errors.
-> 
-> The driver is derived from the BSP implementation and has been partly
-> rewritten to comply with upstream requirements. For this reason, all
-> contributors are listed as co-developers, while the author refers to
-> the initial BSP driver file creator.
-> 
-> All modes have been validated on the S32G274-RDB2 platform using an
-> externally generated square wave captured by the ADC. Tests covered
-> buffered streaming via IIO, trigger synchronization, and accuracy
-> verification against a precision laboratory signal source.
+> The sensor has an internal ISP with a complete image processing pipeline
+> including control loops. However, this driver uses the sensor in raw mode
+> and the entire ISP is bypassed.
 
 ...
 
-> +#include <linux/circ_buf.h>
+> +	hm1246->reset_gpio =
+> +		devm_gpiod_get_optional(hm1246->dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(hm1246->reset_gpio))
+> +		return dev_err_probe(hm1246->dev, PTR_ERR(hm1246->reset_gpio),
+> +				     "failed to get reset GPIO\n");
 
-Why not kfifo?
-
-...
-
-> +#define NXP_SAR_ADC_IIO_BUFF_SZ		(NXP_SAR_ADC_NR_CHANNELS + (sizeof(u64) / sizeof(u16)))
-
-Hmm... Don't we have some macros so we can avoid this kind of hard coding?
-
-...
-
-> +	ndelay(div64_u64(NSEC_PER_SEC, clk_get_rate(info->clk)) * 80U);
-
-Do you need those 'U':s? clk_get_rate() already returns unsigned value of the
-same or higher rank than int. No?
-
-...
-
-> +static int nxp_sar_adc_start_conversion(struct nxp_sar_adc *info, bool raw)
-> +{
-> +	u32 mcr;
-> +
-> +	mcr = readl(NXP_SAR_ADC_MCR(info->regs));
-> +
-> +	FIELD_MODIFY(NXP_SAR_ADC_MCR_NSTART, &mcr, 0x1);
-> +	FIELD_MODIFY(NXP_SAR_ADC_MCR_MODE, &mcr, !raw);
-
-!raw, which is boolean, as a parameter to FIELD_MODIFY() seems a bit odd to me,
-perhaps simple
-
-	raw ? 0 : 1
-
-would work better?
-
-(Note, optimizer of the complier will avoid any branching)
-
-> +	writel(mcr, NXP_SAR_ADC_MCR(info->regs));
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	dma_samples = (u32 *)dma_buf->buf;
-
-Is it aligned properly for this type of casting?
-
-...
-
-> +	dmaengine_tx_status(info->dma_chan, info->cookie, &state);
-
-No return value check?
-
-...
-
-> +static const struct nxp_sar_adc_data s32g2_sar_adc_data = {
-> +	.vref_mV = 1800,
-> +	.model = "s32g2-sar-adc"
-
-Keep a trailing comma as here it's not a termination member.
-
-> +};
+Rely on the reset-gpio driver instead of this.
 
 -- 
 With Best Regards,
