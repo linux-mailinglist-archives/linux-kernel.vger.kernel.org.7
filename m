@@ -1,160 +1,151 @@
-Return-Path: <linux-kernel+bounces-859018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29094BEC7C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:47:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBCCBEC7C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9638D1AA52CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:47:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D1B94EC2CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEDF265620;
-	Sat, 18 Oct 2025 04:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HS4FFp+B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0B423183A;
-	Sat, 18 Oct 2025 04:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C764265620;
+	Sat, 18 Oct 2025 04:47:09 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5874D1F584C;
+	Sat, 18 Oct 2025 04:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760762837; cv=none; b=q3LGJIRBx2CItqO7vkLhldAR67sXoeCoTH/OXjq9cI298ewyIxtRF5OEJU+J7f8h9cZRJFkusb5qahsZ9zba1XS+N6EmgiyUx1KbeYFtVPp4ErWv+9T0yPnJ0x9OQ4ayt1b4wco+Hm4R57sxSqUSwmg0txrXzg2c3Fp3fyLk3mc=
+	t=1760762828; cv=none; b=dJ9KOIChX/fkQdUrb1iqpXNgkhYZ1WexAGBbF0MfEjvoBXlVFvj0VXrPTySFO/MIfgz1Tn/DdYGe4gXmWQUp6V6YK38R9TFR+WRP49+5pSCZlkIsP88lidXsFlcHNZnOPUg0+8E6CeaR9szXpmvWMFv24aP/FN4ShJOMNm26cvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760762837; c=relaxed/simple;
-	bh=VxEiGxEpqNGiOxmfppZ5EdKGKFhkf4LgSqXDCj9LQJI=;
+	s=arc-20240116; t=1760762828; c=relaxed/simple;
+	bh=y2x9f3aQVzHRpfAEf9bRNga9mO3Bh7q0jzvdlTL+hA4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVJSQ6wUUlenBX32Zz/LxnybZiBQJ4b0InQpvywCu9Ym8KoqmvwMStkda5uqiUxZoyAQVIlCzKSziRVBQdP1E7fsS7wplip4UvU72C4+HfmATuQSmBQKLJXSr+rFkpZ87cJZ8b0/MB2x6fBMgeIec6rEis/H7h/aBrNuZXYRQpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HS4FFp+B; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760762836; x=1792298836;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VxEiGxEpqNGiOxmfppZ5EdKGKFhkf4LgSqXDCj9LQJI=;
-  b=HS4FFp+BPstNggTCYPup1KB5q4k0d/X8qv+Mm1IFOQ5vvG9ZatnAzEGd
-   GEjAZJF/QZdQQq0oKrjshhxwDgvdL2QPTkHQ3rggUhmfq9S2CRpgHVUWE
-   lCeubUGT3EtYx8mfpSxvROnH0MKXOkLw8jOYeWivI96aXbPvOAhCyXMcm
-   XSuky9AnmkaYgiSxZef8l2ZA0eWq/K0gQkEtKUbd3d5k5KDjOEsZUnYgu
-   iOijAMksYmudcX8ScSBwY2uQJGdkgHXRhT1VFwaKUehLXdfWxSYFLs/3x
-   C0igwbCK+ugdjkrgXg6/uhjNzaob3aYBeIf54pcx9m5ZyPrEo9FM7haNr
-   Q==;
-X-CSE-ConnectionGUID: CB+NSmYWQ7umclSENi6gAg==
-X-CSE-MsgGUID: sNMYC//JSx+j6aHaiSVjjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="62887613"
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="62887613"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 21:47:15 -0700
-X-CSE-ConnectionGUID: l+D+wMBVRre07wjM8mJ+OQ==
-X-CSE-MsgGUID: u/osHsXdTsqLlmkLee4BKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="182445076"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 17 Oct 2025 21:47:12 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9yqM-00084J-1K;
-	Sat, 18 Oct 2025 04:47:04 +0000
-Date: Sat, 18 Oct 2025 12:46:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <202510181215.jcL2gJMQ-lkp@intel.com>
-References: <20251017141536.577466-1-kirill@shutemov.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSSebBlZqnF2JeMGVcpeJrkXRk/xy2PfGtOpGjYs08kxvTNtZUcDGeWnUZraRBm3PSWtMPDRt11XD+Ecb/lvBLV0BDRK6n6+/UsS7aKbzTmT20Kohp+rblxQ9SwseG+vl0wd06oVrvsIIdPcC0XaCiLtFCaUJvZDloPdIVPGt10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-11-68f31bc3fadd
+Date: Sat, 18 Oct 2025 13:46:53 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
+	kuba@kernel.org, pabeni@redhat.com, davem@davemloft.net,
+	edumazet@google.com, horms@kernel.org, hawk@kernel.org,
+	ilias.apalodimas@linaro.org, sdf@fomichev.me, dw@davidwei.uk,
+	ap420073@gmail.com, dtatulea@nvidia.com, toke@redhat.com,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, kernel_team@skhynix.com,
+	max.byungchul.park@gmail.com
+Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
+ confirm its usage as pp for net_iov
+Message-ID: <20251018044653.GA66683@system.software.com>
+References: <20251016063657.81064-1-byungchul@sk.com>
+ <20251016072132.GA19434@system.software.com>
+ <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com>
+ <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXC9ZZnke5h6c8ZBvMf81qs/lFh8XPNcyaL
+	Oau2MVqsvtvPZjHnfAuLxc5dzxktXs1Yy2bx9Ngjdos97duZLR71n2Cz6G35zWzxrvUci8WF
+	bX2sFpd3zWGzuDCxl9Xi2AIxi2+n3zBaXJ25i8ni0uFHLA7CHltW3mTyuDZjIovHjX2nmDx2
+	zrrL7rFgU6nH5bOlHptWdbJ53Lm2h82jt/kdm8f7fVfZPD5vkgvgjuKySUnNySxLLdK3S+DK
+	WPFcteCBaMXCK1PYGhhbBLsYOTgkBEwk3i5k72LkBDNffLnDChJmEVCVWHa1ECTMJqAucePG
+	T2YQW0RAU2LJvolAJVwczAK7mCX6rl1h7GJk5xAWyJN4ZgzSyStgIbHotSJIhZDAPUaJbzev
+	gbXyCghKnJz5hAXEZgYa+WfeJWaQemYBaYnl/zggwvISzVtng5VzCgRKrNg7hRHEFhVQljiw
+	7TgTyEwJgUPsEnvmL2SFuFhS4uCKGywTGAVnIVkxC8mKWQgrZiFZsYCRZRWjUGZeWW5iZo6J
+	XkZlXmaFXnJ+7iZGYLwuq/0TvYPx04XgQ4wCHIxKPLwWMz9lCLEmlhVX5h5ilOBgVhLhZSj4
+	kCHEm5JYWZValB9fVJqTWnyIUZqDRUmc1+hbeYqQQHpiSWp2ampBahFMlomDU6qBMfJns19/
+	8uRlB9pMfp5mSfsWJlWRFD3XUiHz1ffJ3JkWOQbNZ3Se+B3ewBzIsWXa4Qzp60e3Rhbt2Pqv
+	V6/ui3Zrg6Fa/FvrV8Hix1aUiUifebvg4J/dAmHdk541Op1n+bhLZ/KaGr+HvW//nYk4eceO
+	7/lu2QffHqY2B2+UXF+n+a310p97CUosxRmJhlrMRcWJAEKmOxrTAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsXC5WfdrHtI+nOGwcRrVharf1RY/FzznMli
+	zqptjBar7/azWcw538JisXPXc0aLVzPWslk8PfaI3WJP+3Zmi0f9J9gselt+M1u8az3HYnF4
+	7klWiwvb+lgtLu+aw2ZxYWIvq8WxBWIW306/YbS4OnMXk8Wlw49YHEQ8tqy8yeRxbcZEFo8b
+	+04xeeycdZfdY8GmUo/LZ0s9Nq3qZPO4c20Pm0dv8zs2j/f7rrJ5LH7xgcnj8ya5AJ4oLpuU
+	1JzMstQifbsErowVz1ULHohWLLwyha2BsUWwi5GTQ0LAROLFlzusXYwcHCwCqhLLrhaChNkE
+	1CVu3PjJDGKLCGhKLNk3EaiEi4NZYBezRN+1K4xdjOwcwgJ5Es+MQTp5BSwkFr1WBKkQErjH
+	KPHt5jWwVl4BQYmTM5+wgNjMQCP/zLvEDFLPLCAtsfwfB0RYXqJ562ywck6BQIkVe6cwgtii
+	AsoSB7YdZ5rAyDcLyaRZSCbNQpg0C8mkBYwsqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQLj
+	b1ntn4k7GL9cdj/EKMDBqMTDu0PjU4YQa2JZcWXuIUYJDmYlEV6Ggg8ZQrwpiZVVqUX58UWl
+	OanFhxilOViUxHm9wlMThATSE0tSs1NTC1KLYLJMHJxSDYy3r75I3x514BHbf3GO/Zxx0V7J
+	//8fV22fVft3lRA714/vWt1yipfZdr/WrHCKXMuw4elL3X9z7k2/ccXi/L1rghcFgyVEJUxf
+	sx3mPTbzmbjX2Xmm329fC3r+qd/CuVXFi8kvd+PXrV/caydab1x2J+r31ZjgwB7RfPHya4Es
+	7Z45mRdmr96kxFKckWioxVxUnAgAhTkI7bsCAAA=
+X-CFilter-Loop: Reflected
 
-Hi Kiryl,
+On Fri, Oct 17, 2025 at 08:13:14AM -0700, Mina Almasry wrote:
+> On Fri, Oct 17, 2025 at 5:32 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >
+> > On 10/16/25 08:21, Byungchul Park wrote:
+> > > On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
+> > >> ->pp_magic field in struct page is current used to identify if a page
+> > >> belongs to a page pool.  However, ->pp_magic will be removed and page
+> > >> type bit in struct page e.g. PGTY_netpp should be used for that purpose.
+> > >>
+> > >> As a preparation, the check for net_iov, that is not page-backed, should
+> > >> avoid using ->pp_magic since net_iov doens't have to do with page type.
+> > >> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
+> > >> page pool, by making sure nmdesc->pp is NULL otherwise.
+> > >>
+> > >> For page-backed netmem, just leave unchanged as is, while for net_iov,
+> > >> make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for the
+> > >> check.
+> > >
+> > > IIRC,
+> > >
+> > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+> >
+> > Pointing out a problem in a patch with a fix doesn't qualify to
+> > me as "suggested-by", you don't need to worry about that.
+> >
+> > Did you get the PGTY bits merged? There is some uneasiness about
+> > this patch as it does nothing good by itself, it'd be much better
+> > to have it in a series finalising the page_pool conversion. And
+> > I don't think it simplify merging anyhow, hmm?
+> >
+> 
+> +1 honestly.
+> 
+> If you want to 'extract the networking bits' into its own patch,  let
+> it be a patch series where this is a patch doing pre-work, and the
+> next patches in the series are adding the page_flag.
 
-kernel test robot noticed the following build warnings:
+Okay.  Then is it possible that one for mm tree and the other for
+net-next in the same patch series?  I've never tried patches that way.
 
-[auto build test WARNING on akpm-mm/mm-everything]
+> I don't want added netmem_is_net_iov checks unnecessarily tbh. These
+> checks are bad and only used when absolutely necessary, so let the
+> patch series that adds them also do something useful (i.e. add the
+> page flag), if possible. But I honestly think this patch was almost
+> good as-is:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kiryl-Shutsemau/mm-filemap-Implement-fast-short-reads/20251017-221655
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251017141536.577466-1-kirill%40shutemov.name
-patch subject: [PATCH] mm/filemap: Implement fast short reads
-config: i386-defconfig (https://download.01.org/0day-ci/archive/20251018/202510181215.jcL2gJMQ-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181215.jcL2gJMQ-lkp@intel.com/reproduce)
+Hm.. but the following patch includes both networking changes and mm
+changes.  Jakub thinks it should go to mm and I don't know how Andrew
+thinks it should be.  It's not clear even to me.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510181215.jcL2gJMQ-lkp@intel.com/
+That's why I splitted it into two, and this is the networking part, and
+I will post the mm part to mm folks later.  Any suggestions?
 
-All warnings (new ones prefixed by >>):
+	Byungchul
 
->> mm/filemap.c:2753:22: warning: stack frame size (1096) exceeds limit (1024) in 'filemap_read_fast' [-Wframe-larger-than]
-    2753 | static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
-         |                      ^
-   1 warning generated.
-
-
-vim +/filemap_read_fast +2753 mm/filemap.c
-
-  2752	
-> 2753	static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
-  2754					       ssize_t *already_read)
-  2755	{
-  2756		struct address_space *mapping = iocb->ki_filp->f_mapping;
-  2757		struct file_ra_state *ra = &iocb->ki_filp->f_ra;
-  2758		char buffer[FAST_READ_BUF_SIZE];
-  2759		size_t count;
-  2760	
-  2761		if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
-  2762			return false;
-  2763	
-  2764		if (iov_iter_count(iter) > sizeof(buffer))
-  2765			return false;
-  2766	
-  2767		count = iov_iter_count(iter);
-  2768	
-  2769		/* Let's see if we can just do the read under RCU */
-  2770		rcu_read_lock();
-  2771		count = filemap_read_fast_rcu(mapping, iocb->ki_pos, buffer, count);
-  2772		rcu_read_unlock();
-  2773	
-  2774		if (!count)
-  2775			return false;
-  2776	
-  2777		count = copy_to_iter(buffer, count, iter);
-  2778		if (unlikely(!count))
-  2779			return false;
-  2780	
-  2781		iocb->ki_pos += count;
-  2782		ra->prev_pos = iocb->ki_pos;
-  2783		file_accessed(iocb->ki_filp);
-  2784		*already_read += count;
-  2785	
-  2786		return !iov_iter_count(iter);
-  2787	}
-  2788	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> https://lore.kernel.org/all/20250729110210.48313-1-byungchul@sk.com/
+> 
+> You just need to address Jakub's review comments and resubmit? Not
+> sure why we want to split, but if you want let it be a patch series
+> that does something useful.
+> 
+> --
+> Thanks,
+> Mina
 
