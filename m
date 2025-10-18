@@ -1,124 +1,166 @@
-Return-Path: <linux-kernel+bounces-859403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4EBBED87B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:12:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11DCBEDB3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42F7427782
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:12:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FB2C4E5057
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D57F27B4FA;
-	Sat, 18 Oct 2025 19:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FE6286D63;
+	Sat, 18 Oct 2025 20:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fh0DnTYv"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="Y8VDkfBz"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131277263B
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 19:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BF21E51EA
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 20:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760814750; cv=none; b=lTtJdeh/6h+sjT27gWV6KmMpWlDb8mIKMKvvGwCOZukYnpIOcDfl2NbmIwkHlusFvOIxUz6Pt4UM/V+UoJ0ZrQk88qoNZ2QQR8PpgnnufBshDR7ZEp4rP2/9Q1zBybEhfZ0g859WnVNvfwoTTFf6KqfD03BEoyORJiZLGEJ5VUM=
+	t=1760818063; cv=none; b=lDxSnkp9o78v8ovHvzV+eTDP0agF+epmsNfXnQ62Gz52LtAgEpoaIUHyZtfWjGRaOZj1F2fc4yJ2qHqR4wJCqQvOEEjhop2xRL+8ZS21eHfVDIcWTjIhbcNPcoVaFtJ9y8HZp7ouF21g/89ZsbKEpiRuOyFwgqLmiNbT2T5nbzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760814750; c=relaxed/simple;
-	bh=Cpgrt5SbcQFH2dEyWj8y2+kKTm0J/7DumNlggph2KeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nk89j5yVpxwqdQqHK5wl2FacuIGt5kWCt69DRvWuXGvnpNYxhJ9cAZrtVS7MyPxQg8Qp1Lso8m6xsfDkgxyJasPxktyLWBwuPmUJyGWjoI3Pcp6TJImC8II35tA9kzRCiNMRGaRih/pdal2csOp11bEevlpC/yAseHQfqttp+Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fh0DnTYv; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e610dc064so641245e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:12:28 -0700 (PDT)
+	s=arc-20240116; t=1760818063; c=relaxed/simple;
+	bh=tpkmTrj9yvJP77GUvZDq7eaApIWSV6MeSWRkmJu8+5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NN5VYRFGtXQpqyyC/sTQK/apuVLcQ//vKxOw5Y/ELYGLJ6JzqUNN6hYqsAwLBL9k+RUgNUh7U0WExv4B8My3ghJ9kc5U8Ufz6Mytvy2qcVuCLb9L4wVxhgx5dqRC6cvEVY3wlW5vvcqRN7oYYoGwogyACP0nfqFfYYtDU1imtyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=Y8VDkfBz; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63605f6f64eso2695325d50.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 13:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760814747; x=1761419547; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uenq9zUN4jnOACfiis104z+6oR/uGp0g0fP3KoqPQzk=;
-        b=fh0DnTYvZsc2Z0JSBo8/cuXdVKen3WABf0wpyfUhY8MdrvN9+s22t4h94MpL/KupHK
-         xql5tdOyPmBJw24ATXuHk+bkuznKQf01777oW2m6I5+T4iUPYeMt05mYHIlpLg+LHQT/
-         Xuz+rStQsGU4MxXAg7MjsxU1Ybq/2gZx7rMCxyH93823XjzGxNkVE3etRVWaxMKYes1k
-         9iEtoNyFgdbi02hVVlLH0vFSqvs4sqOePH1Fv05ckzAv10Mizfky3/EACxwJRUIpYoGG
-         q6Y6Y8cCKLKWwkHB/az1U+h5PTEtE2XQlbjF0FfYcY0s8UJYPpwCD14DfUjIvDParDkD
-         bOiw==
+        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1760818060; x=1761422860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ucpvAeUqe9rF0WcERnFwmxp6mxNyXUwA/gyiOAOR/Lg=;
+        b=Y8VDkfBznsBGm3b+UNBas5gCu0yaOY2PiaqFMVKRFBJ4LfHqxMIFhQk4Q9dbmMqaXS
+         ClUrLmzR4YY108w+7IX48XzblVCM9T8/Xe58wxmv5exlVM/7x/1nttkBqecwswcrUrL3
+         z5EF0JkBfIbivrtDdBi0vvIkxPJSW887ZrrvFoF5HP8nPb+/L0wkTO52W/7eUsXzW6K5
+         2QuRfa/uTSeolKMQZmivHOH0hdHgAfjoUkkcEHojJighobWVskvXX0JtsKpsdL1vw83a
+         ZlqQamsAJwzhfwU3yKaATly88OkGy6FA3RDxjK098m2oFmumivG1Ha8WfAJYbEh6ZrXG
+         RLoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760814747; x=1761419547;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uenq9zUN4jnOACfiis104z+6oR/uGp0g0fP3KoqPQzk=;
-        b=OngvudJ2is5s5VEnEWdVIQpf+6fSrS6URsitNbsRWPsiplDBnOgDBS6+hzWxvF44i1
-         L9nLRnTdnHu8iIrUCSph9hh3o9QvWIunWxb5CN9viWidd+rhDJZA2tyeKTvMsWiUtdM+
-         I4oBkM+y7nVWml88s2jx/ZBqD+vvr14RJs2dYzobxKQHRAgZl+MVHXrBs2FccT/8OX0g
-         iDejljAdJFw9mRCCc2wHDtPBJPYeLLWgSy+i4JV8ZnI2/lR3N0vPEHXgC0kLkugRaqAQ
-         JUo/PO7kHUNce9eq6cUI97Omiq2U2yJSxrYz2MoE0woCBG6MYcPlmp3OWyS9AHj9Mwmg
-         BH2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdtodvDoB0pIG1u22SzXf5uBctl2MiWpP6dK83oTvSaquB06AA3Fc3VnC8Plrg0pItvIcQT9N++Cg0keo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaUGPcv45SQQGuWIvy64diDbAeXlvfuljUH4cqZUqqILpdA7ig
-	ympA0cM4i1p+JXQVU8lw5ZtM6agOnmyGvydMBO10K4CP8PIEBEQhDz8u
-X-Gm-Gg: ASbGnctJPCHe7ZwxBMPl+z7dZ00u2y444N8jExYSQoZ8QFiZeovGCCsngF4DHMQsTfk
-	Saf8GGbPsoyrkqBW1xsZDFc/bo7/yMb/3o8cJeWbmwlxYD9WVMuKc9wjO07BM1HvTLqxnzkUGAI
-	SCjuUKeNFsccQQT0zlL48VIWyF6P8emazkE6fY/pFhXlyhFG95vpC+5YX5HMMdh+Lu6zLzkTeFr
-	Nz0NDmI1dYt3Xvs0/FCs4G6Um7lKXT11G5TWSPVEb+d4ltcPHdBYzlWymcnOgGRfurP8ofR9A+H
-	fv/fo6MU75g6MhxUj68UbcUMrouebecKqYG2To7A0HnddciTSwGceZ398lHSIlj74/C2LbEjpra
-	WjcRGcfj0ztW/P70doITigD7EGiy9fKiygmtntfDPdFjJnfaSaxtEcePzdaR8Kq0bYA04TfZMXu
-	8loQcY
-X-Google-Smtp-Source: AGHT+IFeotg3SOqozCDeGAvqxPUt+glB8XDCNwLIM43/UO8gAjt8ouXK8ko6Vt+aDxAZJHhJtcwrow==
-X-Received: by 2002:a05:600c:3515:b0:471:152a:e57d with SMTP id 5b1f17b1804b1-47117914193mr32306685e9.3.1760814747218;
-        Sat, 18 Oct 2025 12:12:27 -0700 (PDT)
-Received: from bhk ([165.50.121.102])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3acfsm6406354f8f.14.2025.10.18.12.12.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 12:12:26 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: akpm@linux-foundation.org,
-	urezki@gmail.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	khalid@kernel.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH] mm/vmalloc: Use kmalloc_array() instead of kmalloc()
-Date: Sat, 18 Oct 2025 21:11:48 +0100
-Message-ID: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
+        d=1e100.net; s=20230601; t=1760818060; x=1761422860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ucpvAeUqe9rF0WcERnFwmxp6mxNyXUwA/gyiOAOR/Lg=;
+        b=cjl3RF8IFVSyYO4wuh3L+fj1RJUQpbCNb3luG6VzshQPKwLbWzvL62uekhf+cg751u
+         2F2NbxPt+4fy3Susfvl/X/MUuCHQOttXTw6A/+6vaPPsOhAafnaOxUd74e4KyN+71UER
+         SL7+FGZWy3FBxrw1RLylu0uXNLjJ7wdbvS54RIKGt/5he118htppF1EJ/L14ZohetV2A
+         Jzi+KhnW21jM16ft/Zz8bn6H4Msk9mBUJtseohLsxjBChxZQVagUirZ+bP1b7DDRZSyw
+         E3q4NBRozXU7GdrLYiq/BZ5Ke2t+k0G3uWUpTogP5e6GA7LVMoAjXR7Pm+14VD0uk6TB
+         JoAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEsjzoYhgntDzI1OWdfMZv+qBTOG1SnVR/1X39vudrilTQMY8+C53PrapMPn1C/+ObDF703upaRUjuCB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvgChZ/LayK2JJBjaXrdOgeYJXcKia0/eEY57IVNrQZo0pgja0
+	nXuA0zLLCIUVUTVLKKgYh7+Rbq3Qfv5IfiTcJqKNQhMeAVofakyNJam/LUbKNn2+KetvuxDUDTO
+	d8qP+/967RYee0nRzaONVuc4Nhg+WGjJOhIRni7okEc3tk4CdjTcJkwA=
+X-Gm-Gg: ASbGnctF9xAW+SnoNhwX4/IvV1DAWnud6EjbcyuLuktMSRboZRWHO0LhUoZ706YMAXo
+	6jiF3iCJ1iCzjvIFu9KPFkJgUvBUhvbhdKrrWHt+XMj/mOkCKll1J9xNUtdCjG+gdX5sccQIW6s
+	9JtTHuhdDna7lTMv1asNpoa4LhAV/qsInTRB2UbGSegYRVgps6zjkP45+VsqHwoBr0toeH0HUDv
+	DgUZPzMTAHZXmADBOd9CNWDfxnRarTeXkKBlhliQZqKR28sFJzia59AcIynZIQ=
+X-Google-Smtp-Source: AGHT+IGOl8H82Sx/wGP3Lk4LzvH69LpdZ72JdsN8VVV+1bEc2glqYTC2G/fZkSILyr+uLFJgb3nxX3nvD/2iHwRIYZk=
+X-Received: by 2002:a05:690e:12c7:b0:633:a96a:fdd3 with SMTP id
+ 956f58d0204a3-63e1617af6fmr7232645d50.16.1760818060518; Sat, 18 Oct 2025
+ 13:07:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251018141014.212571-1-arighi@nvidia.com>
+In-Reply-To: <20251018141014.212571-1-arighi@nvidia.com>
+From: Emil Tsalapatis <linux-lists@etsalapatis.com>
+Date: Sat, 18 Oct 2025 16:07:29 -0400
+X-Gm-Features: AS18NWC4Bp-6A72bzOw_BYBQDAYmAgQUippkjZIGTYkjtfhqPFshTDYgUD4ccyg
+Message-ID: <CABFh=a55MGEVxuBg9mtZob5GbacPk_2EjXLDdjKMJmVhF6d7Sw@mail.gmail.com>
+Subject: Re: [PATCH sched_ext/for-6.19] sched_ext: Allow forcibly picking an
+ scx task
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
+	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The number of NUMA nodes (nr_node_ids) is bounded, so overflow is not a
-practical concern here. However, using kmalloc_array() better reflects the
-intent to allocate an array of unsigned ints, and improves consistency with
-other NUMA-related allocations.
+On Sat, Oct 18, 2025 at 10:10=E2=80=AFAM Andrea Righi <arighi@nvidia.com> w=
+rote:
+>
+> Refactor pick_task_scx() adding a new argument to forcibly pick a
+> SCHED_EXT task, ignoring any higher-priority sched class activity.
+>
+> This refactoring prepares the code for future scenarios, e.g., allowing
+> the ext dl_server to force a SCHED_EXT task selection.
+>
+> No functional changes.
+>
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
 
-No functional change intended.
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
----
- mm/vmalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 798b2ed21e46..697bc171b013 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -5055,7 +5055,7 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
- 	unsigned int *counters;
- 
- 	if (IS_ENABLED(CONFIG_NUMA))
--		counters = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
-+		counters = kmalloc_array(nr_node_ids, sizeof(unsigned int), GFP_KERNEL);
- 
- 	for_each_vmap_node(vn) {
- 		spin_lock(&vn->busy.lock);
--- 
-2.51.1.dirty
-
+>  kernel/sched/ext.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index adff739b396ce..35bc37c7ee199 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -2351,7 +2351,8 @@ static struct task_struct *first_local_task(struct =
+rq *rq)
+>                                         struct task_struct, scx.dsq_list.=
+node);
+>  }
+>
+> -static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags =
+*rf)
+> +static struct task_struct *
+> +do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
+>  {
+>         struct task_struct *prev =3D rq->curr;
+>         bool keep_prev, kick_idle =3D false;
+> @@ -2365,7 +2366,15 @@ static struct task_struct *pick_task_scx(struct rq=
+ *rq, struct rq_flags *rf)
+>
+>         maybe_queue_balance_callback(rq);
+>
+> -       if (rq_modified_above(rq, &ext_sched_class))
+> +       /*
+> +        * If any higher-priority sched class enqueued a runnable task on
+> +        * this rq during balance_one(), abort and return RETRY_TASK, so
+> +        * that the scheduler loop can restart.
+> +        *
+> +        * If @force_scx is true, always try to pick a SCHED_EXT task,
+> +        * regardless of any higher-priority sched classes activity.
+> +        */
+> +       if (!force_scx && rq_modified_above(rq, &ext_sched_class))
+>                 return RETRY_TASK;
+>
+>         keep_prev =3D rq->scx.flags & SCX_RQ_BAL_KEEP;
+> @@ -2408,6 +2417,11 @@ static struct task_struct *pick_task_scx(struct rq=
+ *rq, struct rq_flags *rf)
+>         return p;
+>  }
+>
+> +static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags =
+*rf)
+> +{
+> +       return do_pick_task_scx(rq, rf, false);
+> +}
+> +
+>  #ifdef CONFIG_SCHED_CORE
+>  /**
+>   * scx_prio_less - Task ordering for core-sched
+> --
+> 2.51.1.dirty
+>
+>
 
