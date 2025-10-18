@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-859364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D92BED626
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:46:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CF4BED628
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 44CFC34D6BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87840189AE57
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139832609D0;
-	Sat, 18 Oct 2025 17:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4418E280CE5;
+	Sat, 18 Oct 2025 17:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Te+AWMYG"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiUSbTna"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448F826D4C0
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB942773CB
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760809543; cv=none; b=icyFbuz27Y9/gXCbKqPcEKMXkK6TOCLyy+Rnbz1NzmaCA8aVfXKXlPreKaaz3S9osTpOg7GbKPepxiiWt/RWSnLzJ9ldMfe7LgdwFrKfxWOTwiBraWKNR9FteYRZINcd3i/wLxOU4W1Ubn7FepGA5pc64QQgiv2O7avE2gljMNU=
+	t=1760809546; cv=none; b=phTeQsXGUo+vXZAbJbtJCzjzKlK7N0yL3BPV5KM/jR4x8Zz/Rc/jn0JtloaKhJHSNhI4grTDHyBjRYvM5GvU5rXt+7qEGu95rSZeNWk/kU/osKcbC+JHF7nG9CYZhHEgRRoYobbU+h1fMUUll+MXilHnXUwjzpkvuTw2wcyl5pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760809543; c=relaxed/simple;
-	bh=6FtTg88GY2fWPari0/xVYIFZl0LtyM/QigeE2PMN1js=;
+	s=arc-20240116; t=1760809546; c=relaxed/simple;
+	bh=872/2/9eITdb9tB+ajd4McXNzNIKi7XLnXFm8ifjokI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EgEFCx6e6WYqaFFzJLnJrSte8GWJBv61yOE5qd9Ylv2QEpq1GC2PoSrf3ob5E1AvGNwPQUvm0tdnZ7XhjZS3mbv1jE/W6vZGfrN+jUxqrDMflvmVdlQFe4VPn7+gHcpNgjKYubrwfqT1k5GxcULKqV1v/CO9rx9LJtyFAAXQ39s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Te+AWMYG; arc=none smtp.client-ip=209.85.222.176
+	 In-Reply-To:To:Cc; b=P7VmC39PSHzBvJC/a9D7KNrEAwbN/+AuRAxkKn9yp9xMq6rDgEPe8ATVjvh/W35H2dr+ariCwR3tM8cMDA+HC5MsAczG/nlGSTFZKeSIkn4X8WWVUP3F0mXu0JNnmdXCNi7KXI0sHP38m+F79Eg+y/gtVOV9th0MdlJJw2vC7eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiUSbTna; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-88e525f912fso459711185a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:45:40 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8901a7d171bso370095785a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:45:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760809540; x=1761414340; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760809543; x=1761414343; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y+vXAMQTTWEmkUojbXBO1de8JWN1eVf43j81u3Bw1Rg=;
-        b=Te+AWMYGSj4tmHOYBRMWH/F8IboP3Q+fCgELD0AZlUws+krH6RV8Uny5ukxQz3qZ1G
-         zDbf1wBO+WHp8uZTMxsS1tloD6Z/UZKm08XpSXPUBaGSTWS7u0A/wKUyjqmTY6QeXlES
-         gzGcPUk7ptrtj9pZGf6snFqyXY+xKP+nXh1Hqoo+v9OsfjizFEz+LOTrsuj5r1IN73hm
-         J2BbU41AcaAyLeo/vKhZ9bKj6HSUWrfbqY6szDlYK8JlSZCimx7J2ATI3auenrdl9xgg
-         7BSCJckw7gML719L6q9z9T7wBnIylAoeWwm7oeLl6AYbo5xBeP0fkGGG8o/yYj7GVhHu
-         1Wlg==
+        bh=WxxD2K5FdBz/EnZVjAulq7wLhETf3uBIbeo+/VSTI5o=;
+        b=PiUSbTnawi0Y2gAOle6WmnfWCMP15/NZEFmhoWZ/P8IE/4TCxmGjSoi53OpB/Yl7Lo
+         /Zswgw8ol5/9UeFvKlNkHdyWX81ZKlWnsSmTb9/L9ttW3D+7oojqWaXLXBm5IuaTAWAZ
+         zzx7mr2BpUeRb+HK/FjLv/xzNThgx2XnCClmTyRlPo6/twf/ocjqFQWg1IUcESd8hnVP
+         m1S44t3z4VO+iQ9fuLTi03/HdihgxNiTi9JqOcYIdKACT2i21syOexoVSijXEAZWEM/w
+         TBLUaURZjJI2t4IhEj9sagARG3zDp0VCz56QWREA0Z1RqrYl7Pz/sZAalkncJcCLNSGL
+         xVsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760809540; x=1761414340;
+        d=1e100.net; s=20230601; t=1760809543; x=1761414343;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y+vXAMQTTWEmkUojbXBO1de8JWN1eVf43j81u3Bw1Rg=;
-        b=I8dFvOx8eO0e8BWkwC8eJ8EapNjotA/xnOFqxAje/157lzKXQXs4WBY1FbAM6a5iji
-         jphKB43M9aJN8Gj92RoC4c+0/eT0/ULc9iKlS7DR2xpt+Fw97fkl8EhkSZFBH+PCmLm0
-         erC5enJV+CvvKYwoLDV9U7Fvn1cT4hz+qOCB5ERQ16yj/BRZMUNs1J9+RKpPCjq03nOY
-         DW01g4AIhLmh2nGV/8lXwRFE0/H4/hNT1tiW65aciyxmM6oG791wEwLcHsapXsKcEqFl
-         S1m90ATgwKtwPJK+yQ4Fg0fOhC6STrAq9/ztzCDVBCwOHpcRz7kbvkxaDEEa32lFkDhr
-         i9Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/jS3MfI+JFmXv9Sf+phNPEt57EtXXyZKrgW6Ii4mLUqM+sRTgRIVk0hrn0Y4v2z7rl1im7FvPM0UMjtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMAYMzIvT5IhSLnScIW0egKjB1aJwGFLna/VP6xDYOgfKS50t2
-	P4vIwcyFtJMvrgoClhgI2OybQOSB+7xg5VOSPfD7iELVZW7fMQ+HRVIF
-X-Gm-Gg: ASbGncts0NyxNlYp8jLLWMjWFSYHniAAtrulsVWLT4lz/V+20EeD/Ym1LNsCYNkwUsF
-	acoMo0XH5d7Pm9aH8ltF/JbqUKz4YaiEdz/V3IqSGNmGtkQkYr0gNOHFUEAnP37rY9hiRcjWtp3
-	4bdaEtKWeZ6wE219r8oD2XNFoeHOtQCThLa1Jsg0P5t8fvABeyue4Qfsz/5oncDlGlM5MyQ98WJ
-	tGjWn8f00pYuAUkWXBtQ+vL0KG6Rxow9rQAIxwLRi53FprzxMGJO3X411WcfCEdq4AjZ3U2Ita3
-	oUjBMuGOkb0M1qjfvL3udx/y79+oy9Tn5M7Rvv+7DT4wVQW7dXSUL6iU/uF3mD0FoVS74fYmyk8
-	cKYOafRzqpD+NmQQi9WEQEDWS8wX3xSSi+kO7rBToHjuH8622yCbeiy2H5Q/YB5KSntC+wHv9vA
-	1/blN+gMlWw1t4duTZjq7NBFURHMqSfvj2UGDF+lfsPVvcwZ9lBg62Cf49eIdY782fIsnTCwk04
-	q0VX2tJwqVt22sIhQ4U/u9Z5/tdGDicQEBTrM6iWT0kTxhEq2o3
-X-Google-Smtp-Source: AGHT+IF2b+xiML9xjqA23uk9sgK2DYeECM9Ckm8gu0/pdYUA9bmcAEH6Tg4P0+oRe/HNA9P52OxDww==
-X-Received: by 2002:a05:620a:f04:b0:88e:991e:cf2a with SMTP id af79cd13be357-890709e6bbfmr1147502985a.44.1760809539813;
-        Sat, 18 Oct 2025 10:45:39 -0700 (PDT)
+        bh=WxxD2K5FdBz/EnZVjAulq7wLhETf3uBIbeo+/VSTI5o=;
+        b=NGuRQ4riMTG2oYLQcFCf3XQczF7A0n0RqoFTN+T3orZXg9BWyqWAdLiid3zCIwyfqm
+         OxuxNeSuVt+yB4YRU3Vci+7Ezw17/Hoyy8j2ekRRbxvkkzBZ4TXrncMuYOAPuxK/ABCX
+         zFXm9tjUB+tUpiKUu5OkSSr8ToMpd02iMtSLLLE+aeWJrA7K9ArLT8DHRniM3uFBoCp5
+         iW/Aa5CBef012yh9Egpn7ONpj1SXMHgV2jjCty4z+AuuWRkDHDbaA5GAdkBFle9gFx9M
+         +5TKDNbwMneNe3neA0VaIkC6ndBLTXblwuNeFCjcwK+TdNCXBkBtFos2/0rSqDjlkPRM
+         WPrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUevlLFDK+KJVbEGmyW/WpsYerOLBaQITwyLbRT6qMWrk6YUgYrDISbBeulMFjik6+5yBGatk5r6xjB5Us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwoxabZ0l5fzZJWmR3QOv90XHNCdr81L/XyX3jSRYpbYjAEtD9
+	fBDGNtrzMSfDvnIQKjQzvibtk4+OpO97gpA2td/KoQWACVFrzPfq9WWq
+X-Gm-Gg: ASbGncs4LP/OYw9SVHNs/DFo3nvSsYpURyYj4GIQAuo6dLg33ENyvbMbjUaKGyOKHjh
+	5KY6HDBjoErKVl2zblOpK+Yi9H7BH5ilftY3vK0Lx+y3jJBAmmbcxXj3SMa2TOUO8mvR/IRS7cm
+	ohEIjI4q1Bfmj7SY+bM5y1g78bAq20JMBKXWF1EkG5WSZnW9sKJG8GfM4djb6EvKeKHyQ75AuOI
+	SiDx+CQHERWgOoVR7mR6knB3vDhFGpaZSOOUrZnUxQXDTRQXPVGFqwEj3lDr2OfpOwQ1xyEt/sg
+	/MsCH2RtKhS9PirPSkkynvyI93YZ3jweQuimOimtZrOq1/cb4iV5IJr8p6w+FFApjWBgU+miDXt
+	k/IfPt4KYbsQkHgzTcNA0E97XutUoBrDo3lW+1fvERnqURW3A8eoYSQp2jLReK+Q2KhbWxoA98O
+	a0E51VxOY9Uv8DrhezW5Xw+7vnFvZei3GSNnQHWgWkwY+cP+bepfRqr2EvG4HAZw33kbOptTh1i
+	mJ0IWUumjh0LnoVvMZh0GNpdzT/1DNaHIlMQLnTFD6yZR9uaYA/A8OK+sU6le4=
+X-Google-Smtp-Source: AGHT+IFKKdVLl3mAPx5GW1O57JDFIbYY3aQNyGp5ohShtikkzbyW7xTlAHv9ByPokofKb8ncQ992Dw==
+X-Received: by 2002:a05:620a:28d0:b0:891:7def:94a5 with SMTP id af79cd13be357-8917def9615mr601979985a.89.1760809543355;
+        Sat, 18 Oct 2025 10:45:43 -0700 (PDT)
 Received: from 117.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:1948:1052:f1e9:e23a])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8ab114132sm20445161cf.40.2025.10.18.10.45.35
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8ab114132sm20445161cf.40.2025.10.18.10.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 10:45:38 -0700 (PDT)
+        Sat, 18 Oct 2025 10:45:42 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 18 Oct 2025 13:45:13 -0400
-Subject: [PATCH v18 02/16] rust_binder: remove trailing comma
+Date: Sat, 18 Oct 2025 13:45:14 -0400
+Subject: [PATCH v18 03/16] rust_binder: use `kernel::fmt`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251018-cstr-core-v18-2-ef3d02760804@gmail.com>
+Message-Id: <20251018-cstr-core-v18-3-ef3d02760804@gmail.com>
 References: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 In-Reply-To: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -124,39 +124,51 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1760809526; l=981;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760809526; l=1195;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=6FtTg88GY2fWPari0/xVYIFZl0LtyM/QigeE2PMN1js=;
+ bh=872/2/9eITdb9tB+ajd4McXNzNIKi7XLnXFm8ifjokI=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QDmUAuND6Y30l5/wiMpkJH4TDC04JmcQb3JxiK1A28k2upCho1xt+vnLZy55U4tUVIHHZi0W9Xs
- LsFR1ERakPA4=
+ QNpeE2O2veZx/WAQcXn2BPsuVFmwejvaIZ814PGVaIzTcLISv+9UjXgL3SnRuXBWt3P0YjfBZ5X
+ ySAtgUYGZcgw=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-This prepares for a later commit in which we introduce a custom
-formatting macro; that macro doesn't handle trailing commas so just
-remove this one.
+Reduce coupling to implementation details of the formatting machinery by
+avoiding direct use for `core`'s formatting traits and macros.
+
+This backslid in commit eafedbc7c050 ("rust_binder: add Rust Binder
+driver").
 
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- drivers/android/binder/process.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/android/binder/error.rs | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-index f13a747e784c..d8111c990f21 100644
---- a/drivers/android/binder/process.rs
-+++ b/drivers/android/binder/process.rs
-@@ -596,7 +596,7 @@ pub(crate) fn debug_print(&self, m: &SeqFile, ctx: &Context, print_all: bool) ->
-                     "  ref {}: desc {} {}node {debug_id} s {strong} w {weak}",
-                     r.debug_id,
-                     r.handle,
--                    if dead { "dead " } else { "" },
-+                    if dead { "dead " } else { "" }
-                 );
-             }
-         }
+diff --git a/drivers/android/binder/error.rs b/drivers/android/binder/error.rs
+index 9921827267d0..b24497cfa292 100644
+--- a/drivers/android/binder/error.rs
++++ b/drivers/android/binder/error.rs
+@@ -2,6 +2,7 @@
+ 
+ // Copyright (C) 2025 Google LLC.
+ 
++use kernel::fmt;
+ use kernel::prelude::*;
+ 
+ use crate::defs::*;
+@@ -76,8 +77,8 @@ fn from(_: kernel::alloc::AllocError) -> Self {
+     }
+ }
+ 
+-impl core::fmt::Debug for BinderError {
+-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++impl fmt::Debug for BinderError {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         match self.reply {
+             BR_FAILED_REPLY => match self.source.as_ref() {
+                 Some(source) => f
 
 -- 
 2.51.1
