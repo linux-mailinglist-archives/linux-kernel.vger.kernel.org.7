@@ -1,164 +1,200 @@
-Return-Path: <linux-kernel+bounces-859022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A83BEC7FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:08:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0A7BEC801
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64FC64E46ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:08:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E1A54E25EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1526D26F2B8;
-	Sat, 18 Oct 2025 05:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BAC267B92;
+	Sat, 18 Oct 2025 05:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BaZG2Fg0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="gxRv7ar+"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09961E32B7
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA2C230D1E
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760764119; cv=none; b=bVxFEbXyrnU0g4AbZ3LWs7O8M01ypxNEMKu0bAPZlFiaAz8AkT/4dsTvJSpGnRytSadoRPHvOTjQaMRvwLs4q2TrtkAwzwkeNL4COxrQiB1/CVRcmL9Vk2+7x/trzZ4jDWs7+dvtXgp+QlQsEQlpuLI3FPFXh1DsLQBfWaRKkTQ=
+	t=1760764335; cv=none; b=JROk89H8uOR+wB4bwRJskOry6O0nevNv/E4cBbsZxkfNnhfXJJ/y5qKRoaM05lBTFJ9hn68iucChnLPxWIr/5T8fUpcMNkbFYLGsvGCdluCig6HZ1T82ShAdnncH/0Is7HXXGzeG6wleRA91IFMnu/CQ9G/i8HOoW+HdZ/fPzJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760764119; c=relaxed/simple;
-	bh=2vwmMK7vKk+2Uqpd3qlXNXx/Ocde/9oWTYy78ZUHsnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IatdawPceyejlfcP8M5bAKqe6tBRnnGGH5yIeejH95AVXvkh25Sk10DCbeYmQ4s61OLlgVacEoIQpmjjQhtsIYHibDxA0rx4HxPdipVgQMvye+W+WVWi7QQQuOeomTStD1fUdXgDv6HvuY7OYgjtfiaxGfLkfuT5E005dBPdYFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BaZG2Fg0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59I4ldvw022380
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:08:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YFRfKHwNm/v/YfwSW1zeQumv
-	JtVkPxZgZB7VyLM7YLU=; b=BaZG2Fg0D1KFGuIgHwuLjMlJt5q3iuphyXPi8t5J
-	ltXZa/KFT81qf9IiLvx/g08r7OW3KDxvkUJlTRlz7EO2YIgFAVBld2GmyjZg8FKQ
-	hzWRYYdPXDVQBw6FKx2FM8lObSZHcyjgVJKiE6hdWntzN5+WPonajEsvqPY01ozx
-	i7auYX9+qZcAnLHrLsVFSC80MW8fXL+mhHTZdGQ/25OPGSMLKLMCeCLl9f8RvaNk
-	huAwgNL0cMa7zUMfcVdfFCBrak1o4JgksDARLODRU3XVsGt4qcWqSuxCKvS3QyB/
-	40+zufNdZML9mMqfAtDQUztzg9vx0vjT7JZOYMMmF86MAw==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v46980wr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:08:37 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-33c6140336eso2177056a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:08:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760764116; x=1761368916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YFRfKHwNm/v/YfwSW1zeQumvJtVkPxZgZB7VyLM7YLU=;
-        b=H10YCpAulgfilkMs8IJXTAeudLdjzJjEkINiP9PPDxwOegouH9maZqI7oL1ZDvH87X
-         Tiw/dhqMSv6yRmL/EJ4Hh+nnxKFPt6M7lxZTbKJ1og+EDn92B4d1X3TzbwkGZuwUaJVk
-         9FRSCIUXI6/V/Y/rjjxQvSpey6uy7w6URbJH3GSTSRn6taCMTny0jhI3VUcTpRWn1yL+
-         LLF99iBlnxughUV3qL6hI5PDmI+zz3U7XgvM1OmvDpBsYImUHaIJay3crV7Klde8YVmg
-         IuNUdNL6Ge91sFlGod1DRkBjR5lBWmP7B1SByJkhhoSfXaWsmEGqvFADmAA9iBd49Lfh
-         JHvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3HI8ejjgzYY1sF+cwn8mwy54DKFfHKoVfLbfo34WkZCii/OOoryM1b8xAe7HPxbL/JbDleh3wOLa9EuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHcpg6T3QY5+FVvK72WnTZ8afESse0zCoff2cCN/sQqPeLbDAh
-	5mqNWg7ZI1PAfMAL1LVJ95tAr2D9hsnPMkr93AbNdAirzAYdpjYlyqL37Bsa+JwdT5wedZ/RMwg
-	ANeNy5imB2QVFeudbnEffTnltQiq4onmllGhbaxtdUa4DlrnaAtg49NjgLeyBjy4CCkU=
-X-Gm-Gg: ASbGncsDGKsfWjOdy/Cq9F5yVb1Xv2GhI7IxbIa+msOL2u2HcCnRsK4ell8ceF25Ubm
-	vr3rslwiWeB6IZ2/wr2o0MXJ1v+BzMXqDTMfeC7LacDiZOHZ31kTkTCAZzgaJJBSz2Jh1KJhq8F
-	kqa+bd8jVStkUBnDFRa+dIhAuIhiDeAHeOnW2DdArEiToVPqShftNiPS8aBD4NAnQHcHTyWeAq+
-	5KKj2ZGW9rjUQISlv1SAj9/uBI3VstrcE6c1fOTsnwM0hA9vFbFZ5YQujGCX4VDyVBl/B0Z54dw
-	l0Mxl5Uw2lF//4oM9cMw1s+wpDD9F2Cc946tY429miRCmN7cDS8FiEEUpCXStlfjCP0Jd1z8WtF
-	ml6cTOky2RYqBCM5Nd2kEdDbzRjiPu6s93SYGoLIXAJdchw==
-X-Received: by 2002:a17:90b:4f:b0:330:6c5a:4af4 with SMTP id 98e67ed59e1d1-33bcf93fbd3mr8844249a91.35.1760764116150;
-        Fri, 17 Oct 2025 22:08:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnsOvzqMJgakJpAFi012zqe+RaSnCnO9z16vlR2YEX88fpBKQknf9LBuyAwqHvhkV7oX6kWA==
-X-Received: by 2002:a17:90b:4f:b0:330:6c5a:4af4 with SMTP id 98e67ed59e1d1-33bcf93fbd3mr8844211a91.35.1760764115714;
-        Fri, 17 Oct 2025 22:08:35 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5de2f933sm1263261a91.11.2025.10.17.22.08.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 22:08:35 -0700 (PDT)
-Date: Fri, 17 Oct 2025 22:08:33 -0700
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/6] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Add
- Kaanapali compatible
-Message-ID: <aPMg0f+PaT4xscGE@hu-qianyu-lv.qualcomm.com>
-References: <20251015-kaanapali-pcie-upstream-v2-0-84fa7ea638a1@oss.qualcomm.com>
- <20251015-kaanapali-pcie-upstream-v2-2-84fa7ea638a1@oss.qualcomm.com>
- <32a14a2e-f61e-422a-ae77-f60ea44581eb@kernel.org>
- <61b7d2d6-6c53-4934-a2eb-8d92b50e0405@kernel.org>
+	s=arc-20240116; t=1760764335; c=relaxed/simple;
+	bh=JKlZ6mq1MHRF27crq/H/Z6OaHYvWdAyiTQoS/n8gsTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FBRW6VEr7RDr9klxBYVCl5NPKY4/gkXRDeWp/a/y/YzgJtBo0Jwk9SCupf7iX+jSX/rt4BLTy7WlONKohNFpj4Mq9D8unNaIVi1ilTP9Uj5mQnHZMlKue5SCYei7YwIstFzpES3muoRH4Mf03ZL7JtMRqbCmfsPqhE1dh8ifAtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=gxRv7ar+; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=G+XeId9fVeKy2mjwtAJkSYjpdvOc4ElmCgO/h9WTUQk=; t=1760764333;
+	x=1761196333; b=gxRv7ar+1CjKeZ5cVPQqP9X+Pj/vVBTQul71L6Sr7cs36pFd58HCqNdfq+cQV
+	fkDOYh1swuYcgOYpHAVGsrAhdFOnZMPEhn1yu2rN4zHOJMtuGA19X9uQoaDoFx4fUPuq6akPKA4cw
+	QqScyNbLm0gzC2ZQ0k7K6+7VLjL6s+Pp58Q/ANpOMns6Ew3ktTpDqc7O32c8p7bus0XTbGKBqz4si
+	mTGa1LRM/yqbpiBllgfrc1EpD7e95eui/ZrXw4M2tOyIUV9aEP9tjW/rmYhi0Nao6jBKV3/bnx6/T
+	yNNDjzsYfZiPr+0+pOCxYkCGO0G3/WdMiyHIM6g/Qa4hQGHtlw==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1v9zEY-0000Io-2k;
+	Sat, 18 Oct 2025 07:12:03 +0200
+Message-ID: <c1d395c6-2d3b-4504-befe-6e67c7ed96fc@leemhuis.info>
+Date: Sat, 18 Oct 2025 07:12:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <61b7d2d6-6c53-4934-a2eb-8d92b50e0405@kernel.org>
-X-Proofpoint-ORIG-GUID: BLq8T1Ts3r3EJ5X0Nv5tdYRbGuTp5yru
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMiBTYWx0ZWRfXzu3N+WWY4qU0
- 5Fw220WbxrTv0cfpiwQOmIbz2DFCmzkZOFp0wYAprtdHl6k25pAwAZAktYAYsSln/tA+qc3YBM4
- ao4b4sSgV7CaPYPlkfGiC5iin0FUrye80qLRSqP1LEHSlBdxHKgj7RSuMOOPb5L+Q70ByIHAfng
- 5M7VgC1TcZs76tDbiJZJJOR1e/WSXnr1+m/q0QYGQC2Rv0L8EF3t7uZUrdQ7LFUlSvjD+ihtOyW
- ib+uuv+/R1CtS3L2FIcvX2Ko8OEaeV/CSRiKgf0hKylEQEisCtS1BI0JQ47pvnCIwbI51f8hsC/
- IL8V1c8RvOtHaQeoUPtoWBmP6Wadiev7lFbpN0zqRh3cDCKse6Rt7VvUeTMtuPP7hm8AWZIwIwg
- S0cIin3Fyjdj6QSDfgCJScvsOyP5OA==
-X-Authority-Analysis: v=2.4 cv=U8qfzOru c=1 sm=1 tr=0 ts=68f320d5 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=BVIdy884nh2c1f4nCNkA:9 a=CjuIK1q_8ugA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: BLq8T1Ts3r3EJ5X0Nv5tdYRbGuTp5yru
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-18_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180032
+User-Agent: Mozilla Thunderbird
+Subject: Re: tools build: Fix fixdep dependencies
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arthur Marsh
+ <arthur.marsh@internode.on.net>, x86@kernel.org
+References: <176060840507.709179.15363439615733763867.tip-bot2@tip-bot2>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 MEK4
+In-Reply-To: <176060840507.709179.15363439615733763867.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760764333;5d9cf6ca;
+X-HE-SMSGID: 1v9zEY-0000Io-2k
 
-On Fri, Oct 17, 2025 at 07:00:32AM +0200, Krzysztof Kozlowski wrote:
-> On 17/10/2025 06:47, Krzysztof Kozlowski wrote:
-> > On 15/10/2025 12:27, Qiang Yu wrote:
-> >> Document compatible for the QMP PCIe PHY on Kaanapali platform.
-> >>
-> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > 
-> > 
-> > Don't mix independent patches from different subsystems into one
-> > patchset. You only make it difficult for the maintainers.
-> > 
-> > Really, really pay attention how your work should present itself to the
-> > maintainers.
+On 10/16/25 11:53, tip-bot2 for Josh Poimboeuf wrote:
+> The following commit has been merged into the objtool/core branch of tip:
+> 
+> Commit-ID:     a808a2b35f66658e6c49dc98b55a33fa1079fe72
+> Gitweb:        https://git.kernel.org/tip/a808a2b35f66658e6c49dc98b55a33fa1079fe72
+> Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+> AuthorDate:    Sun, 02 Mar 2025 17:01:42 -08:00
+> Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
+> CommitterDate: Tue, 14 Oct 2025 14:45:20 -07:00
+> 
+> tools build: Fix fixdep dependencies
+> 
+> The tools version of fixdep has broken dependencies.  It doesn't get
+> rebuilt if the host compiler or headers change.
 
-Ohk, I also mixed phy and controller patches for glymur, will note this.
+My daily -next rebuilds based on the Fedora rawhide srpm failed due to
+this patch while building perf:
 
-- Qiang Yu
-> > 
-> > 
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+make[4]: *** No rule to make target '/builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/perf/libsubcmd/fixdep'.  Stop.
+make[3]: *** [/builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/build/Makefile.include:15: fixdep] Error 2
+make[2]: *** [Makefile.perf:981: /builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/perf/libsubcmd/libsubcmd.a] Error 2
+make[2]: *** Waiting for unfinished jobs....
+
+Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/09700031-next-next-all/builder-live.log.gz
+
+Happened on ppc64 and s390x, too (and likely on x86_64, too, but that
+failed earlier during the build due to an unrelated problem).
+
+Reverting this change fixed the problem.
+
+Ciao, Thorsten
+
+ 
+> Build fixdep with the tools kbuild infrastructure, so fixdep runs on
+> itself.  Due to the recursive dependency, its dependency file is
+> incomplete the very first time it gets built.  In that case build it a
+> second time to achieve fixdep inception.
 > 
+> Reported-by: Arthur Marsh <arthur.marsh@internode.on.net>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  tools/build/Build    |  2 ++
+>  tools/build/Makefile | 23 +++++++++++++++++++++--
+>  2 files changed, 23 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/build/Build
 > 
-> And please adjust and rebase on top of patch below:
-> 20251017045919.34599-2-krzysztof.kozlowski@linaro.org
+> diff --git a/tools/build/Build b/tools/build/Build
+> new file mode 100644
+> index 0000000..1c7e598
+> --- /dev/null
+> +++ b/tools/build/Build
+> @@ -0,0 +1,2 @@
+> +hostprogs	:= fixdep
+> +fixdep-y	:= fixdep.o
+> diff --git a/tools/build/Makefile b/tools/build/Makefile
+> index 63ef218..a5b3c29 100644
+> --- a/tools/build/Makefile
+> +++ b/tools/build/Makefile
+> @@ -37,5 +37,24 @@ ifneq ($(wildcard $(TMP_O)),)
+>  	$(Q)$(MAKE) -C feature OUTPUT=$(TMP_O) clean >/dev/null
+>  endif
+>  
+> -$(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+> -	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+> +include $(srctree)/tools/build/Makefile.include
+> +
+> +FIXDEP		:= $(OUTPUT)fixdep
+> +FIXDEP_IN	:= $(OUTPUT)fixdep-in.o
+> +
+> +# To track fixdep's dependencies properly, fixdep needs to run on itself.
+> +# Build it twice the first time.
+> +$(FIXDEP_IN): FORCE
+> +	$(Q)if [ ! -f $(FIXDEP) ]; then						\
+> +		$(MAKE) $(build)=fixdep HOSTCFLAGS="$(KBUILD_HOSTCFLAGS)";	\
+> +		rm -f $(FIXDEP).o;						\
+> +	fi
+> +	$(Q)$(MAKE) $(build)=fixdep HOSTCFLAGS="$(KBUILD_HOSTCFLAGS)"
+> +
+> +
+> +$(FIXDEP): $(FIXDEP_IN)
+> +	$(QUIET_LINK)$(HOSTCC) $(FIXDEP_IN) $(KBUILD_HOSTLDFLAGS) -o $@
+> +
+> +FORCE:
+> +
+> +.PHONY: FORCE
 > 
-> Best regards,
-> Krzysztof
+
 
