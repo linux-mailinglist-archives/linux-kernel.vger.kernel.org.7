@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-859190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4310BECFA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:41:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99051BECFB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5475E605D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:41:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0ADFC4E687C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8641B4F1F;
-	Sat, 18 Oct 2025 12:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1777027A130;
+	Sat, 18 Oct 2025 12:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qpn441VN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+iQ3KKb"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8989C22DF99
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC921E511
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760791305; cv=none; b=m8W9SBti+Zo4Y7hgy7jd6OZC4V6mGIi9Q70vZJItKby9N8o3mYhLn39UarrX+Xb7fVmUPo17e4M/rl0U5/wbSdA4fxMGEAmPJ4Y+njx+PN4LNVdxNdcmCU8tuu2GJlydM5m+eDgWg26iVY3BMuGXg4NEdo0GWfWDRB3uv0nH4BA=
+	t=1760791568; cv=none; b=V0Oa/dQgJPPdxqXBeD063WC+74hFF7lJKwlXjFhs7QZZGVWKAJQPBLrdi5MRPbGdiojljvVagBxep9KIxbrpZXJ0BEmHj26xol62YxMvP3z5r5R0nAom9EEMegigN7xAduwGTDxMFZLY8bDJqqEvVe6ZqulqxXOWpeZTY1cwjSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760791305; c=relaxed/simple;
-	bh=o5/KluPyDYMIfPuQR1eQtRpQrDwQ7T9vUVmdxk9m9wc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UI5oxFhDGRU2R/ki61Z6082QyENfdHBmixKwsEN2xe5V9cHHGNHhDY/jo1dFHLDurykR2DeLKLddwm9mRLnozkY/MTyHK+QckSqpisOL3+NOCpSSpjrYFRP7fNRzsNgux1puZqwZr6HUvyA87NXiiIjJP6AhHlMRuHTFk9mIcD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qpn441VN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3635BC116D0
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760791305;
-	bh=o5/KluPyDYMIfPuQR1eQtRpQrDwQ7T9vUVmdxk9m9wc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Qpn441VNTg2VtymDXh2X94PNXx3mvLqXXr01ZOQPqpUP7j61xawFZfzPE5eXQHUsP
-	 hAeSauUNIkiWYIgG1f3hEHexG8OjtOgHbwNUwOqO4Ywxt0p1PMaItPDN46WjLnyjiy
-	 oCqDRl7a3WkHmZTLszODKaGtrm/f/D6f6GNrEUyjkqkdJr7A4f1qLh1ZVfEY8xM44e
-	 w3Ime5OEIxQigo51Y6gl6C2bj9NhS947XJW7JOPJpIFpwwIw+hWnuqYidpTq14WiKF
-	 23jxccobsphmkcFE70b4YwAistGJ526jvt5BzTOiuvkLKKxWOTqt+x+nPsiHR0lVA9
-	 x0pP/xoagGlLw==
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c27951fcbeso890818a34.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:41:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX+CywE78yK73wmvQIpJuZJvbMfaY9bx6ZfTlZuOGXs8ROt8zIUYsRVAlfFbDwflYbCrkIMdh3pLx64NHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycfCE2MmSkv0+r/RJDzUQd1Mybu3PEuei3EI3jC8JqFKccX5ud
-	w609vTaJvxKXmwcLjbTsEmq3B/uuEKMQVznaFqz+rzPH1RqS/1vPDEsBVW22XdYZmWBSYgO0xnQ
-	bMwGuTI7OmvgNO2oADwgFXIQkLKVOfGc=
-X-Google-Smtp-Source: AGHT+IF65O7rOIYSYlXVS6Ib09prkwoOJViL4sucslIQQ1hqRL9pmkkrOdS9mEVlCSlY17xb7cT0eRyc8zQETZSzUo8=
-X-Received: by 2002:a05:6808:1907:b0:438:1c76:d40 with SMTP id
- 5614622812f47-443a2ee2568mr3275130b6e.4.1760791304507; Sat, 18 Oct 2025
- 05:41:44 -0700 (PDT)
+	s=arc-20240116; t=1760791568; c=relaxed/simple;
+	bh=ipty/4H7+5rl8fNwSsr6VwqgKEA4Cfr81uIfdpGBaNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rxCDZL5vIUTPk2Z0qmqrELxW6/RcoxxYtK9s9BYO3+EWWyOQ9oO+Ugeb/td+3ibTybXaMYSQX8u1MybDs/Nn+ZS9BpwKWW5w12mDuHEzg3Rdjd9Q3kRMYDGyGx08eelVllshtV/s0aRPzTMjg550lEgjWsWDV+WOjVCPCTAs49I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+iQ3KKb; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-471b80b994bso5099715e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760791565; x=1761396365; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NRDae27n+EW9z3sFe7xVTYXCCUSru9GSplX7TwKn6SY=;
+        b=B+iQ3KKbmm1KZlOPqFChHlqemLiRtnQiEhR/8JrouYBcjfkly0BvvfwmXEw/FILIjh
+         BJ2NpApym07/4fE+eXQLmZtEIPyZYMyUa+GnLJO3Qn9rIe89icMWILkZVndb4DpkytKc
+         qy4EM24zMdBs5Znmtp9vclB9A9cVp8G92drMAR2+QrwjOexh8R5q1GThSxnq6tv5kEAY
+         VnZZ9Hk9bs35dbiwI8sNtmqfB9pW6pwLFXXRJk9ypEhPwKfCgb1u1Ofhr91HguQWaha0
+         lU3RjtVMO8D6mrm5cVFF6ZcXrwgRCgEG595tWTcKIE2odU5Q2b6kyFCKpuifsYcuRC1l
+         n8RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760791565; x=1761396365;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRDae27n+EW9z3sFe7xVTYXCCUSru9GSplX7TwKn6SY=;
+        b=gsIZk3+h5/ZyGnrit2YuHw/XnOhnz7MuaX6q1moQReAlAXH7S+qY/M8dCtzdRor1oG
+         8uFozBEDtEN2abOeYivpLbkPKX+6BIfKuBOyi2GDrbVOihB7pA8f39Vz5S+fWT/l//aS
+         uCbMJ2V9NxAbD81lWzsqT1spNod/ySfEbW51vpCFDX100rzrSL1ozxumZ54+bFCSTlqq
+         c7zQryZZEDD9AIrVlaJAUBdq62Rxn4mVTq9pt10j92ouqWSD7d/gXsXI1vsHqylpOF5v
+         cG2k60WvbOON18nzGNkc1BvJ0iulJkUy8c9+teCXiuj31SySeOcTrCBRB7Z+yTmtMR/1
+         u+Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbIeH1lkyV7yza70MLdu9YJYJI4HqstwOd76CD1BY+XxIoEV1j9WvEzLAmYhtKQGwHvTvSCLBrYH8poNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylTgmdaUu48IAC8fmp+AUBUCqjaAmnF3H6cwJYR/G+RIgmXH64
+	bHingEDNl9HkvJmJ30Zu1lRdd0lZFTu2DDkd9yRf3W2YNRtV4FV1q1SKezCPuA==
+X-Gm-Gg: ASbGncsV0kDkgzArUVGOzNkQSRopBpo0QEzWatKOLg4EXGttIugLVj1fh5mmzh07ZQC
+	93A2P2BHZXb3dr7o7tfSWQ24QSNC920khelg1SfaL7E9Iqc8ifb6acwhNwmXHetOqabnWoEaobo
+	fEuWvxjAoiD0gjUSq/N3Fhq632KSgfYY5roH3WLtxxaHQuiMjykrCRJHdV9SN2B2C9oeqWFQZB/
+	IiDRCsP6an4/+fTR3t/5MVli3GgBEB+e96HqCk4/0TadKMh2OZNJktlDL2ao1JmLU1aOaes4s8k
+	bAXEfVEvytewsVcrR+S/xrXbvccJKJ1YvGVQFv/IjKINQQCqOig1/Eok/0o05rNnp++KjdQzTWj
+	WwapSJBpMOsmCGlrP9ytgRjomxb+brywzBY8UCghn1lx2ltsoyjDLzNikOQlWVsQDiyPx6x0Wj/
+	aWBAwN0X2rbZeWy2u0ZsQzs09cHHYuKDc3PIeDCJiQKSSbpSPifWAXoQG8P+8=
+X-Google-Smtp-Source: AGHT+IFyFnknhz6DJpA/W+HnNJLeyvUwLECQ2dA/m7ZFwdVON8k8RALCON4xRrvUX069kqPawyiTZw==
+X-Received: by 2002:a05:600c:3b83:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-47117925171mr75159735e9.34.1760791564682;
+        Sat, 18 Oct 2025 05:46:04 -0700 (PDT)
+Received: from ?IPV6:2001:861:3385:e20:2acd:89a8:83d9:4be5? ([2001:861:3385:e20:2acd:89a8:83d9:4be5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711c487dfesm106194605e9.17.2025.10.18.05.46.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Oct 2025 05:46:03 -0700 (PDT)
+Message-ID: <3f97061a-4156-469e-b062-d6f7e68d4ad8@gmail.com>
+Date: Sat, 18 Oct 2025 14:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013193028.89570-1-mrout@redhat.com> <20251014053608.pwlnexeh7mwjrvsc@lcpd911>
- <fdac8d84f266ba85d517542bdad0592bdc33b95d.camel@redhat.com>
-In-Reply-To: <fdac8d84f266ba85d517542bdad0592bdc33b95d.camel@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 18 Oct 2025 14:41:29 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iLCcCpiBqgQM=GcEAnQvZxgbtMy+bWGrWDQEikYOgC=Q@mail.gmail.com>
-X-Gm-Features: AS18NWBhSRjY-f9IMuTmjtqqcA4jUMMI_QfRGQ6tJS1UDAc9Sk2pfDPrZAvpdNw
-Message-ID: <CAJZ5v0iLCcCpiBqgQM=GcEAnQvZxgbtMy+bWGrWDQEikYOgC=Q@mail.gmail.com>
-Subject: Re: [PATCH] PM: console: Fix memory allocation error handling in pm_vt_switch_required()
-To: Lyude Paul <lyude@redhat.com>, Malaya Kumar Rout <mrout@redhat.com>
-Cc: Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org, malayarout91@gmail.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] drm/sti: hda: add bridge before attaching
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com>
+ <20251003-b4-drm-bridge-alloc-add-before-attach-v1-1-92fb40d27704@bootlin.com>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
+In-Reply-To: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-1-92fb40d27704@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 6:54=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
-:
->
-> On Tue, 2025-10-14 at 11:06 +0530, Dhruva Gole wrote:
-> > Btw you can't include a R-by tag in the very first revision of the
-> > patch. This needs to come from Lyude on a public mailing list and only
-> > then can it be picked up.
->
-> JFYI - I don't know how consistent this is across subsystems. I do usuall=
-y
-> post my R-bys on mailing lists, but it's not unheard of/unusual for folks=
- to
-> pass R-bs through means other then mailing lists (like IRC).
 
-IMV, they should be on a public record.
 
-> Regardless, happy to post it again:
->
-> Reviewed-by: Lyude Paul <lyude@redhat.com>
+Le 03/10/2025 à 10:59, Luca Ceresoli a écrit :
+> DRM bridges should be always added to the global bridge list before being
+> attached.
+> 
+> Link: https://lore.kernel.org/all/20250709-sophisticated-loon-of-rain-6ccdd8@houat/
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+Hi Luca,
 
-Patch applied as 6.19 material, thanks!
+Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+
+Best regards,
+Raphaël>
+
 
