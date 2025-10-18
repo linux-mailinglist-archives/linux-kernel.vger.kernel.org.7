@@ -1,96 +1,80 @@
-Return-Path: <linux-kernel+bounces-859130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82ADABECD72
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99963BECD78
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B5188D48A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E20F1897370
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653802ECE92;
-	Sat, 18 Oct 2025 10:22:43 +0000 (UTC)
-Received: from mail2.mroth.net (mail2.mroth.net [138.201.95.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B472F3C28;
+	Sat, 18 Oct 2025 10:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="uakC5jdb"
+Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB36D2F28E2;
-	Sat, 18 Oct 2025 10:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.201.95.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C032F2607;
+	Sat, 18 Oct 2025 10:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760782953; cv=none; b=pSDxh7ZC03IEPapojGqEJHZ3yJzIuER2zDK/fcmIoLeQPgPVu+LYYgEwYl6/VhD1hyilIyHGQjv+B//XwKvdrNllhetpQ8Cff2ZQJwTZQVtyOimr/xUgvDvBXCxRjmlTMqkZC3MJbjJpDne4AQOeqIccJsE0qfB2vATrOu2Z+rU=
+	t=1760783009; cv=none; b=f5Ou5mM747sKxMvsOvBWrsJY4LhXId/fFuJFP/N9ILFaf+vNtV2p6rfv2UPcEM5/4Xh5Dr3J9/OHtiprpV9By4q6cj0gKLLQjlFOvOhde6JeZZumnekXvF8yeAaMnliifhDEKRB7mfAGNyYNp+Wo8+5AHIyZ7DKdgQCWwOIROI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760782953; c=relaxed/simple;
-	bh=erETI8DD7TGV3bXnNGNOcX54bZm+clWFdGy76BY89no=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q7I6JCwRjRLv/MidenyNmE++jpL7q0IyAAh6CojhGE31pvQKW5uPnPpay5PP+x2blviEcLvMHR+8RYTjQ2rnngyuKtQoKh8zEGuO6tvNS5bLlJa2AiNOsCJHQf1SY37v42fZP0rpu6SKeaIW8saoSJ1oyvGiO6fi37xekSDO+V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mroth.net; spf=pass smtp.mailfrom=mroth.net; arc=none smtp.client-ip=138.201.95.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mroth.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mroth.net
-Received: from pc1.home (unknown [IPv6:2001:9e8:a25b:70f1:365e:50e3:e235:ca15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail2.mroth.net (Postfix) with ESMTPSA id 44D883F2;
-	Sat, 18 Oct 2025 12:14:51 +0200 (CEST)
-From: Michael Roth <mail@mroth.net>
-To: linus.walleij@linaro.org
-Cc: brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Roth <mail@mroth.net>
-Subject: [PATCH] gpio: pca953x: clarify log messages about auto increment feature
-Date: Sat, 18 Oct 2025 12:14:04 +0200
-Message-Id: <20251018101404.3630905-1-mail@mroth.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760783009; c=relaxed/simple;
+	bh=tHkAd3d04Br1yWxsSbGdG5sMfa7iGWufQVq92X1HAPE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OU5t+4GvQq1iV69pf3B5+fP4bbprQX+mlVlIPnuGw7al7PxpJD9b+n5UINKB161sy8o9036509SChxY4COl+q6m6mD69tgI94pTTfFUUPLxWWvhVfVe2UkiAyDztLa6vDE0IXW7N7JTsUmXvBtvFrED1AwsUjG14bKur18uLyc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=uakC5jdb; arc=none smtp.client-ip=91.227.220.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
+Date: Sat, 18 Oct 2025 12:17:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
+	s=202107; t=1760782627;
+	bh=tHkAd3d04Br1yWxsSbGdG5sMfa7iGWufQVq92X1HAPE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
+	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
+	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
+	b=uakC5jdbueC/JpspD7WHhnYz1cveatChek8pqoCRHgcHfxXu/3HPfoDqI/9SYuIWX
+	 223hZi3l6jv+wb3D1VtViW+nyi+4PHnJXXg1aya+brXq51scZNzB25VYFZa5A8blid
+	 bpx+jnyQFbHFI8H5+RYJAYBqZs29458tsLx0RGbf2KhY/3mMb68IomsokfqJc9EqdP
+	 AHqazTOQZ1EvEeYXDGUTxRl6Rhf6TyJMXfueo21HD9cCfkJ2JB+bFHbYPBuKeEv1ux
+	 tvqGS8+Hd1j5coNSNwmMwn32iSNjOntsT2MKIa1SBTgXOSh7EiTC5aRDYQLw5zJ4ml
+	 MzuIbmZ4SzJcQ==
+From: Markus Reichelt <lkt+2023@mareichelt.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.17 000/371] 6.17.4-rc1 review
+Message-ID: <20251018101706.GA3227@pc21.mareichelt.com>
+Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251017145201.780251198@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017145201.780251198@linuxfoundation.org>
 
-The probe messages currently print "using AI" and "using no AI",
-which can be confusing to users unfamiliar with the datasheet term.
+* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-Clarify these by spelling out "auto increment", which is the meaning
-of the AI bit described in the register map.
+> This is the start of the stable review cycle for the 6.17.4 release.
+> There are 371 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
+> Anything received after that time might be too late.
 
-No functional change, only clearer log wording and matching comment
-update.
+Hi Greg
 
-Signed-off-by: Michael Roth <mail@mroth.net>
----
- drivers/gpio/gpio-pca953x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+6.17.4-rc1 compiles on x86_64 (Xeon E5-1620 v2, Slackware64-15.0),
+and boots & runs on x86_64 (AMD Ryzen 5 7520U, Slackware64-current).
+No regressions observed.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index b46927f55..360c14f69 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -306,7 +306,7 @@ static inline u8 pca953x_get_bit_mask(struct pca953x_chip *chip, unsigned int of
-  *     Interrupt mask register		0x40 + 5 * bank_size	RW
-  *     Interrupt status register	0x40 + 6 * bank_size	R
-  *
-- * - Registers with bit 0x80 set, the AI bit
-+ * - Registers with bit 0x80 set, the AI bit (auto increment)
-  *   The bit is cleared and the registers fall into one of the
-  *   categories above.
-  */
-@@ -1203,10 +1203,10 @@ static int pca953x_probe(struct i2c_client *client)
- 	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
- 
- 	if (NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
--		dev_info(dev, "using AI\n");
-+		dev_info(dev, "using auto increment\n");
- 		regmap_config = &pca953x_ai_i2c_regmap;
- 	} else {
--		dev_info(dev, "using no AI\n");
-+		dev_info(dev, "using no auto increment\n");
- 		regmap_config = &pca953x_i2c_regmap;
- 	}
- 
--- 
-2.34.1
-
+Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
