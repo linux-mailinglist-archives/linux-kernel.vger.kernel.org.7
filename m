@@ -1,159 +1,158 @@
-Return-Path: <linux-kernel+bounces-859394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C53BED7E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBC3BED7FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2923419C07E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A316F405B9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE2027703A;
-	Sat, 18 Oct 2025 18:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD62627A12D;
+	Sat, 18 Oct 2025 18:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="j5IHt1vC"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LcfooaHr"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1CE1E9906;
-	Sat, 18 Oct 2025 18:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE5C21CA0D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 18:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760812963; cv=none; b=FOw734M2ugepDcy8BYkgWu0BSdIZy2ExjKkclL6RSTlql3ZJGKAKYCZf0VHpa0aiYM3hZPCM3R/S6NUU+IxO7IY7PeD08WeNZv1vPFaA/uBKfXPPwOAGuou4hbGRpTNLhwfy1o6guY7N6vsRwtj3504fTJyE0x0e51BQoRBdTks=
+	t=1760813751; cv=none; b=NbqjdtLiUkKEvXMTGTGUQIuOEBt248qCDN40rd0Biy5fppWNp1ys5VLfGTIRZvN+E+w9yNJJBLqK8v3S2KH+0joM3eyupEg8SEhoY2LLlRBearWpT9FfmqUTKjmv/jcXkNCk5E1XOUb96WW1tXZLfBuZDwAeD48KdfDk+RWY3Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760812963; c=relaxed/simple;
-	bh=6fpb0nwTttUDBQPYQISAGcgKDy1G4Hi4Cf6QVh8fq18=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=D33KfyUQOTsUrXku9bFDGlNdSVKCbDVpgfMf6u0OrMB4wHwUcrnePV8pP5YhqZyPPNd0ZW0z3iUSIYZ0PP/VIS800BbbGjeP6NEo4bsBaHkuUDUju5CMq5JDKeN3j5hyjFiTBUnO4wWMEDEsnzCYc3EmUlzh27w3jhhGacZ9sjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=j5IHt1vC; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760812939; x=1761417739; i=markus.elfring@web.de;
-	bh=6fpb0nwTttUDBQPYQISAGcgKDy1G4Hi4Cf6QVh8fq18=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=j5IHt1vCIQM8ZY5WGQeVk1OsCj/d6XSZhuGp/QPvRHCLbhcuAiUO1XeHOLbaDcg3
-	 cEuAthnwEzdclpLeaoIgtPyzSY/RleSkC8QuI5s4T/Dp3ZeVnj7OYPpEwqeJshRVO
-	 9S3m9WpCZkTUgNLrPWrT+BMuU8SYC0rv5yamt28/4UxzWjkFi6JcAx1Pp2UFlDOqt
-	 xw8xfbCR3Eja9TSwNhoi/9HQwqJIz/1rOECXEUcW5NEA+r01mEKmuQM+nl38cmaaj
-	 XeZWtppLzp+zHIp1WIRgjUfbK1GXt/vQhHwsBLZQB8EI8fJRNITmkl4E7HTq1eQ6o
-	 OlsIzHQuyNp42kZiBA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.233]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mi4yz-1uWA6U0mqv-00joyA; Sat, 18
- Oct 2025 20:42:19 +0200
-Message-ID: <441b1b8f-5fcf-4908-aadc-2fc16f559fb0@web.de>
-Date: Sat, 18 Oct 2025 20:42:16 +0200
+	s=arc-20240116; t=1760813751; c=relaxed/simple;
+	bh=KnqOHVF7mxydtC1tf2E/ukwvy4QzPm/w1bnmxxXfVq0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qq2tsHN2HQ+kWeHm5JfSYFc1Rzb2u03lC3vSUNIyWR0mMJ7CRSeHDSrGmQ8KSX++bLeejDEgu5rdSKhI/eROwE8ZbPQ7w5XdWwytZqyriozSTzE2af6nuhmIYec9bDBoxCHEP0oIBvKOd7tHv3P/SPeJhzx4GVMVRa0a7g3SNzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LcfooaHr; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c3c7d3d53so2397562a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 11:55:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760813746; x=1761418546; darn=vger.kernel.org;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KnqOHVF7mxydtC1tf2E/ukwvy4QzPm/w1bnmxxXfVq0=;
+        b=LcfooaHr6vgoKGNrJyM3ioJ8lZETXYSK//m1J6tFXJ8KdeTS+BF8JGtPOTuELNSCuv
+         YEj+NcVMTZIIQPLZW8s8SaDSkEV6EboTw2NepXCBhVQGtcGdnzodLcuv8/9LHem1NzOu
+         XcaJD8zkGykLKo/MIeuyDCCMdtojlxedMje8OrCD61v8tCXHeU+x+Fgyw8KX2CGbqxp7
+         NfPpL95ecTAdRoDFfmoj5IBPzfpMjtVvvNW9tZ2De+968Z2I2LxgZ+c6VxSjPE/PrkCQ
+         izW9rP4K/P4jFQEf2i7gtncZ+N9KzZkNy3860evs4zcwkUNKylxnTrhiSiYyMRc9h7nP
+         xV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760813746; x=1761418546;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KnqOHVF7mxydtC1tf2E/ukwvy4QzPm/w1bnmxxXfVq0=;
+        b=l2U3SgzVYbXBL+C+cgPn1Kgcexsl1vswmRCpnJBT7bDZ+qlP3AooHoEJeYGH+33zwt
+         hlDMUxCKhaUAImgfLnueRyjYTfqZzg1wQ0gmb/se55Ji+aT+bHNzCnOn3Ejw2nXzI9GD
+         kS1tvjeISVxmeWmtK14U3mNSrUX/Vp2n274Aus4K1Ag6IrxN+8+x4QmCplXON9fYUQDD
+         s9Tlmy77JqG9iyRv81+tPPtKQ151c6u6WWnQGI+PCcsSWT3vjjzi6EfeBplNJA/+H+2w
+         jddkHiabFjyQ/MLPb4YDQD5Lc8qpMuuT9vn4f+SHO9QA+DEuP/9m0nv8swNQSvTe60hc
+         36JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhsDEqAMZ3FcaLXxhMkSH04oVb6dTRvmyC6x7mnfS36ortxrlFWaaSKtoakUzWKI3KQiEFZ44TxFZb7vI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB3ylQGg/t//7oH+G/I7Okf+6eIcUXIvg/tmJAF42qumviy6PU
+	rHOkVBzlEtXAFWWpD0Jm8LccgXWYJ+5buem1F3YnpVWkcH0M61+IOuXlyqThbL4qSxk=
+X-Gm-Gg: ASbGncvJzQR1mxyzK6hf+I94TNIf+YZ2mpavwG8vF7h42uz/D6tno02IrkprydG3Dyl
+	BNrDBZe4suxT5+aHA7YdydsQtBapBHOtMy+dOX9csUnAVPhHUtTWoh91K8g5/bXSqPoeHcCmBAl
+	HTkpcdicGF/Pij1f0Yj1jlqkLGDHQVhehJToaHpXc1zC/u6nMrjN1A1Mp7ZQgNAbcaa+isywaAN
+	zFIPaSwZExU0oxzgQS8nMMzsl3HMXDVPbx5QK1iETnqr0ro2RsGQMfZx7L0GeSKlvPItvzltz+R
+	jwS8+WCqbQHmMqHIJ4tXpShoFFTaFAxKcJ3eJqYOHzUu/rqqThJWLS4r3lL2jxNKHNuR9o8cpAy
+	EX3J60P7yt/Mh+EwaVmTs76EN+ziVqri62gPhdRm+qs8y9ddX1CxiJgsOLOZ0PtORIcy6MEpwh8
+	zrhNpEgYX/sCJ3aiES2Q7QN6qCPTlUniYLEIdqK6e9vgGRb0FmZaG6
+X-Google-Smtp-Source: AGHT+IFq3EZn9lNvjOiy5AW8Eyzrqv6jxyoa+a9idWvwFRf2zmWDAQd+B8XvHOKyUYsr6SZa2QCzrQ==
+X-Received: by 2002:a05:6402:278a:b0:628:7716:357c with SMTP id 4fb4d7f45d1cf-63c1f6e513fmr6997724a12.25.1760813746464;
+        Sat, 18 Oct 2025 11:55:46 -0700 (PDT)
+Received: from [10.203.83.237] (mob-176-247-37-226.net.vodafone.it. [176.247.37.226])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c58320842sm1444915a12.22.2025.10.18.11.55.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 11:55:45 -0700 (PDT)
+Message-ID: <41f72463394e5e9110f5c889049e9592d3a8efa8.camel@baylibre.com>
+Subject: Re: [PATCH] iio: imu: st_lsm6dsx: fix array size for
+ st_lsm6dsx_settings fields
+From: Francesco Lavra <flavra@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron
+ <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 18 Oct 2025 20:55:40 +0200
+In-Reply-To: <aPPOu431u8MPUN0p@smile.fi.intel.com>
+References: <20251017173208.1261990-1-flavra@baylibre.com>
+	 <aPPOu431u8MPUN0p@smile.fi.intel.com>
+Organization: BayLibre
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-a6v3PjjMJW06K0heS6lu"
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: chenxiaosong@kylinos.cn, linux-cifs@vger.kernel.org,
- Namjae Jeon <linkinjeon@kernel.org>, Namjae Jeon <linkinjeon@samba.org>,
- Steve French <sfrench@samba.org>, Steve French <smfrench@gmail.com>
-Cc: chenxiaosong.chenxiaosong@linux.dev, LKML <linux-kernel@vger.kernel.org>
-References: <20251017104613.3094031-1-chenxiaosong.chenxiaosong@linux.dev>
-Subject: Re: [PATCH v2 0/6] smb/server: fix return values of
- smb2_0_server_cmds proc
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251017104613.3094031-1-chenxiaosong.chenxiaosong@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+
+
+--=-a6v3PjjMJW06K0heS6lu
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Xd+gYBBn0Lom1AodwHwy9FFinLJPuWcF+qXgHTzOcqFJlc9DKuy
- 9yRnVW+nRwr0g1YyVWyE+D/A8OtOBv3Tf1rZ036TFbscWatRiGc2ZNEgVNPmx+S6gYVo6WY
- MAURRL9QKwB9R86Q/ySea4apEo7NkAoB5WNz6BUz9LGN3hlLTPI8o/xgFIVekESz9xuX8D5
- ZfePYSzoYj9eElZbcaC8Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uJRs+3aZtow=;oil6YLSNquBHDSxW2L2F5eiAorD
- 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
- iDl54udpOQ/8bfKmcXoisT1qUni2Aijqjwg=
 
-> These functions should return error code when an error occurs,
-> then __process_request() will print the error messages.
+On Sat, 2025-10-18 at 20:30 +0300, Andy Shevchenko wrote:
+> On Fri, Oct 17, 2025 at 07:32:08PM +0200, Francesco Lavra wrote:
+> > The `decimator` and `batch` fields of struct st_lsm6dsx_settings
+> > are arrays indexed by sensor type, not by sensor hardware
+> > identifier; moreover, the `batch` field is only used for the
+> > accelerometer and gyroscope.
+> > Change the array size for `decimator` from ST_LSM6DSX_MAX_ID to
+> > ST_LSM6DSX_ID_MAX, and change the array size for `batch` from
+> > ST_LSM6DSX_MAX_ID to 2; move the enum st_lsm6dsx_sensor_id
+> > definition so that the ST_LSM6DSX_ID_MAX value is usable within
+> > the struct st_lsm6dsx_settings definition.
+>=20
+> ...
+>=20
+> > +enum st_lsm6dsx_sensor_id {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ST_LSM6DSX_ID_GYRO,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ST_LSM6DSX_ID_ACC,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ST_LSM6DSX_ID_EXT0,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ST_LSM6DSX_ID_EXT1,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ST_LSM6DSX_ID_EXT2,
+>=20
+>=20
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ST_LSM6DSX_ID_MAX,
+>=20
+> Is it a termination entry? (Looks like that to me) Can we drop trailing
+> comma
+> while at it?
 
-You propose to correct some questionable implementation details.
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.18-rc1#n605
+Yes, it's a termination entry, I will drop the trailing comma.
 
-Regards,
-Markus
+> > +};
+
+--=-a6v3PjjMJW06K0heS6lu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmjz4qwACgkQ7fE7c86U
+Nl9mSgv+NJB88dUdy9TmKxhAapf8e+6vde+0VNX2XFNvWqi62if1oagntf1sRFUg
+7Ynwb7vvH1y/B4/I/Ef/irknoq4rg5ZwWf7q+SWu7ZtSQ0uaZWJXivibn0154Xhe
+wAsrpitQDFoYh//P47sq5ANBdrKIGXYGpXxm3TjXJkva0dnl6uG0Mfs3J6bDbf0P
+ycvEtGtF41RmF5v6diBkEDImt4Je0YYw8eLRWxlqPZDqs9BiYhcn8C78ReZuQ9WS
+YBLK+3nFWQk5Yi/E/Ol8iD4nGcAgvKlU4JnU/CAoKjSzhmgi3/59g+smIkFfthSe
+/eofoMUPY+rlQUK/HPBuHQpR08ItZYn+Nl7pJRc93y6xGVUTjIpJvihDAGZHZTTu
+prpQnxhfStDC25NxEb+0I/856DJnsJb/hR/lZaRBSA7Oa7nHBzwKHM9oHGGeAYEs
+07dbrQvG1KcvCDXq17Q5Ut0fpSHr/V3vbRuXu2HqXan0aFyr4zfr8v/xpo2oZqud
+zf9bO42B
+=+zej
+-----END PGP SIGNATURE-----
+
+--=-a6v3PjjMJW06K0heS6lu--
 
