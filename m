@@ -1,146 +1,195 @@
-Return-Path: <linux-kernel+bounces-859272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C19CBED319
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C481BED325
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709D819C37A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2933BCD8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA87523F40C;
-	Sat, 18 Oct 2025 15:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC8523D7EB;
+	Sat, 18 Oct 2025 15:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSITN2av"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lSmz/FPs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891576026;
-	Sat, 18 Oct 2025 15:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283BB23CEF9;
+	Sat, 18 Oct 2025 15:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760802937; cv=none; b=l9Keq1fQQYbgxwyaW6TXRZ/Q4pgRbGDErC1AMrXUQqwtNWzxKB5SGlMldKKiwGrJPdVidoK1kXaR3oBxvzLvv9Pe4uDotgsepiaagR5DTG8EgMWQpoEufO4stIgN3/rglBHtzuugheUqhDtdU+5GDYalOWtzBuiuQuzdTZIWbW4=
+	t=1760802966; cv=none; b=rwB7BA9+HBMUx3gRUMRlEtJASNVCVLTAOes0OHg+tZcWdTHG/E3ch979qEMCFGm8zcd2XK+oA2oyTgXzsT5prvH8yszfPzlDqdgZ5M5ktioRi8TflZHuOOp3OmC12J/HQpdAjobiduKfIxoTzUjKyaS52UeJQhloywAF85+6cIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760802937; c=relaxed/simple;
-	bh=LPEfYUyGsXVhbHQtIJwDKNX0Ebfd/KMF5lwgnkpKH+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lkNCEIMfxX+AEFAzmIAEcQXsXSnubtVwRtXiyKqhNR4/SJ+0bPnSuZZopONlDMWzDpGgUXq24juuCliHK5aPXXSOQ3sphr46iRIUG90HSLMcZ85NhgYsJJIXRupr+D30EPvCX4DoX9J+800HMB+1d1fhtILLdrVpE1QW1LsjxWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSITN2av; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 236ADC4CEF8;
-	Sat, 18 Oct 2025 15:55:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760802936;
-	bh=LPEfYUyGsXVhbHQtIJwDKNX0Ebfd/KMF5lwgnkpKH+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nSITN2avlgnNm9s60pbwh4GaaoMjzyYtk78/8wSTFxVL6c/9mbcJB/P6bwKLrAkyG
-	 RHFvbUtwqqZ6/UgNT023fggkMRzFjwLFCjEXNeso9JmetIjeWeCE5+flDRvc2ZZ8VF
-	 TGeu/NeWvz7xjN+Ryku/Th+KDuW8XtkAjY8vORrCkLxUxEMB6yTCpea+S+XpWoDUCd
-	 4+LNOIZAIKmoImAe+GySh3f2bWNu/klIyY8tM0DawBTPV7IyFWfa81ILHqp2hnJqXs
-	 xLf3biQli+HrnyYIQ6FLU9uiKTjnAvk2PstdILS5rZXiLiK5DPKuO4tsD55E0SyVOC
-	 EoBl484tVNI/Q==
-Message-ID: <11711aca-8595-47c5-a16e-1cd990a9a087@kernel.org>
-Date: Sat, 18 Oct 2025 17:55:29 +0200
+	s=arc-20240116; t=1760802966; c=relaxed/simple;
+	bh=1gVJ8CjsGwA0FTk/Tm3gXx44AUXg3U1s1eJGlpVlkHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/hpauvaNIJ0yJofL6DSPLcZoCKsCR+gZyee2f+8W7k/haKJgb+6WPFWPLYSnO4nHae3bz/GgIVM92X1iWoMXvX0S8rrEIqcz+jJmgsxaX+XgJusxihIZZ7EDvGjtsD8NUkIbON2bFyR3cb/z5uow6jjXLkWmw/NQdnLmSTuj3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lSmz/FPs; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760802961; x=1792338961;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1gVJ8CjsGwA0FTk/Tm3gXx44AUXg3U1s1eJGlpVlkHM=;
+  b=lSmz/FPs3OkFsVXcTcvRi3K4Nc5Szi2yGYe8RxvAHCdfIb36+hGUdr5c
+   +enJsDQ/7lFqjl0ac9QVfeRUkOrCY/EfmSEUXgJhFszwVjJlDOamF9HCv
+   tH9LTN1dzES/IXOF7mRwrKiNtK1WArg4kHTH6OQZv0SpWStDxlZKO+gNx
+   QbtxGZnpXbGw8ermIG6fAal6WWcxadpD5rqVvF56lXzAxtF8D1EoRjZCP
+   KH+IFmp9Q/3WPjNJBDXStQ1FOaI+O60O+f0rPxkZXLpTMFgBYxf3YaUJ8
+   y1+LriXVr0HUAbFp1GuL9y2pdclTTAkZZi7gF/s4FmUlyLY3JIktByjVi
+   Q==;
+X-CSE-ConnectionGUID: BdqSWhomRXqAUjLWvfbc5Q==
+X-CSE-MsgGUID: HwWy5QTgTqWP3R664kslEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65611004"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="65611004"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 08:56:01 -0700
+X-CSE-ConnectionGUID: I4TNBVbjTM+FEQOJ8MGs+Q==
+X-CSE-MsgGUID: IsFoQzfXSWehBMmDnrDCzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="182985402"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 18 Oct 2025 08:55:56 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vA9Hd-0008Nl-1H;
+	Sat, 18 Oct 2025 15:55:53 +0000
+Date: Sat, 18 Oct 2025 23:55:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+Message-ID: <202510182350.57sb54Rm-lkp@intel.com>
+References: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: i2c: dw: Add Mobileye I2C controllers
-To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-References: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
- <20251017-i2c-dw-v1-1-7b85b71c7a87@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251017-i2c-dw-v1-1-7b85b71c7a87@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
 
-On 17/10/2025 16:59, Benoît Monin wrote:
-> Add compatible strings for the I2C controllers present in Mobileye
-> Eyeq6Lplus and EyeQ7H SoCs.
-> 
-> Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-> index d904191bb0c6e..6d63dc67f7bf0 100644
-> --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-> @@ -36,6 +36,8 @@ properties:
->          const: baikal,bt1-sys-i2c
->        - items:
->            - enum:
-> +              - mobileye,eyeq6lplus-i2c
-> +              - mobileye,eyeq7h-i2c
+Hi Laurentiu,
 
-It seems these are compatible with each other, at least same driver
-match data suggests that, so express it here and in the commit msg.
+kernel test robot noticed the following build errors:
 
-Best regards,
-Krzysztof
+[auto build test ERROR on pza/reset/next]
+[also build test ERROR on abelvesa/clk/imx abelvesa/for-next linus/master v6.18-rc1 next-20251017]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Laurentiu-Mihalcea/reset-imx8mp-audiomix-Fix-bad-mask-values/20251017-192620
+base:   https://git.pengutronix.de/git/pza/linux reset/next
+patch link:    https://lore.kernel.org/r/20251017112025.11997-4-laurentiumihalcea111%40gmail.com
+patch subject: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20251018/202510182350.57sb54Rm-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510182350.57sb54Rm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510182350.57sb54Rm-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/imx/clk-imx8ulp-sim-lpav.c: In function 'clk_imx8ulp_sim_lpav_aux_reset_release':
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:52:9: error: implicit declaration of function 'kfree' [-Wimplicit-function-declaration]
+      52 |         kfree(adev);
+         |         ^~~~~
+   drivers/clk/imx/clk-imx8ulp-sim-lpav.c: In function 'clk_imx8ulp_sim_lpav_register_aux_reset':
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:65:16: error: cleanup argument not a function
+      65 |         struct auxiliary_device *adev __free(kfree) = NULL;
+         |                ^~~~~~~~~~~~~~~~
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:16: error: implicit declaration of function 'kzalloc' [-Wimplicit-function-declaration]
+      68 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+         |                ^~~~~~~
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:14: error: assignment to 'struct auxiliary_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+      68 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+         |              ^
+
+
+vim +/kfree +52 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
+
+    46	
+    47	#ifdef CONFIG_RESET_CONTROLLER
+    48	static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device *dev)
+    49	{
+    50		struct auxiliary_device *adev = to_auxiliary_dev(dev);
+    51	
+  > 52		kfree(adev);
+    53	}
+    54	
+    55	static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data)
+    56	{
+    57		struct auxiliary_device *adev = data;
+    58	
+    59		auxiliary_device_delete(adev);
+    60		auxiliary_device_uninit(adev);
+    61	}
+    62	
+    63	static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
+    64	{
+  > 65		struct auxiliary_device *adev __free(kfree) = NULL;
+    66		int ret;
+    67	
+  > 68		adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+    69		if (!adev)
+    70			return -ENOMEM;
+    71	
+    72		adev->name = "reset";
+    73		adev->dev.parent = &pdev->dev;
+    74		adev->dev.release = clk_imx8ulp_sim_lpav_aux_reset_release;
+    75	
+    76		ret = auxiliary_device_init(adev);
+    77		if (ret) {
+    78			dev_err(&pdev->dev, "failed to initialize aux dev\n");
+    79			return ret;
+    80		}
+    81	
+    82		ret = auxiliary_device_add(adev);
+    83		if (ret) {
+    84			auxiliary_device_uninit(adev);
+    85			dev_err(&pdev->dev, "failed to add aux dev\n");
+    86			return ret;
+    87		}
+    88	
+    89		return devm_add_action_or_reset(&pdev->dev,
+    90						clk_imx8ulp_sim_lpav_unregister_aux_reset,
+    91						no_free_ptr(adev));
+    92	}
+    93	#else
+    94	static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
+    95	{
+    96		return 0;
+    97	}
+    98	#endif /* CONFIG_RESET_CONTROLLER */
+    99	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
