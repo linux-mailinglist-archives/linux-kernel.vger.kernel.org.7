@@ -1,161 +1,154 @@
-Return-Path: <linux-kernel+bounces-859108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E19BECCB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11ADCBECCB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AFA1A65C1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911CB624ACA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4DF2D94B8;
-	Sat, 18 Oct 2025 09:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822A8288525;
+	Sat, 18 Oct 2025 09:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sH6cxA06"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lv1gDrZ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751E1448E3;
-	Sat, 18 Oct 2025 09:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5142620E4;
+	Sat, 18 Oct 2025 09:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760780023; cv=none; b=CEzuAyTk3qnsSbo1NjnkeJd21cS2me8ktC7LnY7CzslZmDNbfSAJ5TqZz5roeO7D6evdU1JcA/EGKzVATZzUz0CKY2nU4pFcD3f2Nf00I2iExkH1QgIVHv7wyQfg92rJ9Juy+NUyp7UXdmr6qbwYPbwbVt6YA8ykYOU+FIlP1Hg=
+	t=1760780022; cv=none; b=V7+I0ZpRXx1svbzpNiCes6vtXDAhQ0eIHsC+hjznwLMWTrefQoG1UuPxyeanNHhYSDDcrWBylczWi4oS0/r2yB2Na3jx1kd4NJG3+lxpdV2dbGcgvukItTu8/Pe3e+AWOwj97smnsS2dhniUzVNVlT/dgsg56k+hd6j8azrtte0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760780023; c=relaxed/simple;
-	bh=vyrEA9Xn7+fTNF+uNpgdCwGsRJedwepAfqXbZwl9tKw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=TT3wpqamCZln1BNIHTrNLndrl1dNX2pQbnio7t/ngQKzDUYd/5foFeV0hdGZqwMh3zGgwD7UqlQQB8yV6WCI1dPdSmxUZLT0A6uXGZxzBcdJwVS19lxkVXSM5p7djYI/arBbwe/Z2W9o1KQDwWJ0sCoH52luWwuAgIAjnUQ9I6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sH6cxA06; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760780015; x=1761384815; i=markus.elfring@web.de;
-	bh=vyrEA9Xn7+fTNF+uNpgdCwGsRJedwepAfqXbZwl9tKw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sH6cxA06/4h0nBgx7PIiuqPYQ2YLlEBmQ4vp7jpuM7gkweLy7QK1V0LVWPs3JImt
-	 KoTv/uvemRE4Z+UlFG1v/KHNUhfyAbc4mbVyGJa45b/X1vMNMrDSFJr6w7HR2aGhb
-	 B/+f08JXsnuGrvxg3db9zI6Sj1g3tCPOOVzZnd7b3b/Sz1Or7jOcEXzsFxpDfJfJT
-	 prav6btJtCzr1GVKlod3kGsEBTi0cbTbZnKqz49KJ00XBc3XAGERwfo3wY7iUckQ7
-	 sXU+iz9OwYubrb3+VVC8b4Pl0v/7eAyVoyTVS6xaOonvGhReNwMDQ+30Och3ju5MT
-	 8lwpgRS3ro9ZBxPw9A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.233]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N7xaT-1u5Jdc1NuF-00yR2p; Sat, 18
- Oct 2025 11:33:35 +0200
-Message-ID: <0b35a3d9-1d56-48e2-87b4-0672739228cb@web.de>
-Date: Sat, 18 Oct 2025 11:33:33 +0200
+	s=arc-20240116; t=1760780022; c=relaxed/simple;
+	bh=SyWZ/X1HeimDJIqB36pL4lX+V8efNvJBhXHvgyur5vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5IOcxwNFXitfAyr+bJjJ9FL5uToFT3UfQVbps0Ovfc86qISFegQo0TuvlXRfED0AiDQMU1n/7oIz5fmFqO2Aamicc54vxl8PUa4lTeNRU+8gNmzWViBl16i20Bbx3MjV2QYT/xN57AGoHG4ZlFhr+5BjxvoDlheLZmP2WrFvi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lv1gDrZ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F590C4CEF8;
+	Sat, 18 Oct 2025 09:33:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760780022;
+	bh=SyWZ/X1HeimDJIqB36pL4lX+V8efNvJBhXHvgyur5vw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lv1gDrZ28P0Cl3sVkOQMaAY2tLB06f1ASVwUqcbd7F+R2nedSwjhIn9FTw4kciNLf
+	 B8zwHhvI8NrlCUJuQPY4CVxfGdx2yOnEMq0blaV0qLmd71rvE2N9X0J+Xgmtai6ot0
+	 9YIUiefsm2OJgQLiBp2RRSfjz0odnbjnxTRmRPrl7BAboSfqzSXvjq76cDaxG2PATr
+	 pcLO0CeqhRvC/v1PsWcqCq732uLniQutx4JV3AFA066M0yqbhqu1Tz3qKSeTaxWKSa
+	 7qgVo65AmF44Zv9eKpsMh4Hb4AIuRFEM4HjFPETMHjTNbjD4A7/hp3sZFIZ7brkiC8
+	 odGNL4I5bDKlg==
+Date: Sat, 18 Oct 2025 11:33:39 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Francesco Lavra <flavra@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: st_lsm6dsx: fix array size for
+ st_lsm6dsx_settings fields
+Message-ID: <aPNe89G5mNxhMEbo@lore-desk>
+References: <20251017173208.1261990-1-flavra@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20251014113234.44418-3-linux.amoon@gmail.com>
-Subject: Re: [PATCH 2/3] PCI: j721e: Use devm_clk_get_optional_enabled() to
- get the clock
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251014113234.44418-3-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qMSeJ7rw5cSv6CJV"
+Content-Disposition: inline
+In-Reply-To: <20251017173208.1261990-1-flavra@baylibre.com>
+
+
+--qMSeJ7rw5cSv6CJV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:frkmSHrrCRc2PlwZbdSNiHlxfazUtn29V6HusRn4PyAKpa6yiuf
- geDvTXIHj+kpYFFv2/FykwKqqCsuGXekp0aipJBWQUD+kARyw8zBBjuSG/tfsN5N3OD4tjO
- BplH9rHFr0lYYlVVK6r6Z/TVAqsd4g6TfBJWWGkbttN0yR1WY6JYSu482izILzoY+PpotVP
- scvDT5bI0ZWwlumq19q+Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RkC044W13ck=;rEVaV1CwHnFD93z53WkOl41LXtf
- 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
 
-> Use devm_clk_get_optional_enabled() helper instead of calling
-> devm_clk_get_optional() and then clk_prepare_enable(). It simplifies
-> the error handling and makes the code more compact. =E2=80=A6
+> The `decimator` and `batch` fields of struct st_lsm6dsx_settings
+> are arrays indexed by sensor type, not by sensor hardware
+> identifier; moreover, the `batch` field is only used for the
+> accelerometer and gyroscope.
+> Change the array size for `decimator` from ST_LSM6DSX_MAX_ID to
+> ST_LSM6DSX_ID_MAX, and change the array size for `batch` from
+> ST_LSM6DSX_MAX_ID to 2; move the enum st_lsm6dsx_sensor_id
+> definition so that the ST_LSM6DSX_ID_MAX value is usable within
+> the struct st_lsm6dsx_settings definition.
+>=20
+> Fixes: 801a6e0af0c6c ("iio: imu: st_lsm6dsx: add support to LSM6DSO")
+> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
 
-Can this information be sufficient so that the subsequent two sentences
-may be omitted from such a change description?
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-Regards,
-Markus
+> ---
+>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st=
+_lsm6dsx/st_lsm6dsx.h
+> index 3cd520bdec46..a4f558899767 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+> @@ -252,6 +252,15 @@ struct st_lsm6dsx_event_settings {
+>  	u8 wakeup_src_x_mask;
+>  };
+> =20
+> +enum st_lsm6dsx_sensor_id {
+> +	ST_LSM6DSX_ID_GYRO,
+> +	ST_LSM6DSX_ID_ACC,
+> +	ST_LSM6DSX_ID_EXT0,
+> +	ST_LSM6DSX_ID_EXT1,
+> +	ST_LSM6DSX_ID_EXT2,
+> +	ST_LSM6DSX_ID_MAX,
+> +};
+> +
+>  enum st_lsm6dsx_ext_sensor_id {
+>  	ST_LSM6DSX_ID_MAGN,
+>  };
+> @@ -337,23 +346,14 @@ struct st_lsm6dsx_settings {
+>  	struct st_lsm6dsx_odr_table_entry odr_table[2];
+>  	struct st_lsm6dsx_samples_to_discard samples_to_discard[2];
+>  	struct st_lsm6dsx_fs_table_entry fs_table[2];
+> -	struct st_lsm6dsx_reg decimator[ST_LSM6DSX_MAX_ID];
+> -	struct st_lsm6dsx_reg batch[ST_LSM6DSX_MAX_ID];
+> +	struct st_lsm6dsx_reg decimator[ST_LSM6DSX_ID_MAX];
+> +	struct st_lsm6dsx_reg batch[2];
+>  	struct st_lsm6dsx_fifo_ops fifo_ops;
+>  	struct st_lsm6dsx_hw_ts_settings ts_settings;
+>  	struct st_lsm6dsx_shub_settings shub_settings;
+>  	struct st_lsm6dsx_event_settings event_settings;
+>  };
+> =20
+> -enum st_lsm6dsx_sensor_id {
+> -	ST_LSM6DSX_ID_GYRO,
+> -	ST_LSM6DSX_ID_ACC,
+> -	ST_LSM6DSX_ID_EXT0,
+> -	ST_LSM6DSX_ID_EXT1,
+> -	ST_LSM6DSX_ID_EXT2,
+> -	ST_LSM6DSX_ID_MAX,
+> -};
+> -
+>  enum st_lsm6dsx_fifo_mode {
+>  	ST_LSM6DSX_FIFO_BYPASS =3D 0x0,
+>  	ST_LSM6DSX_FIFO_CONT =3D 0x6,
+> --=20
+> 2.39.5
+>=20
+
+--qMSeJ7rw5cSv6CJV
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaPNe8wAKCRA6cBh0uS2t
+rOt7APsF2vUunuaXfc9x9FSpXNkU2ROeoiSBlvzIpuT0co9ElQD/Xh1Cuxi1v74B
+vdHvg/Pe1Gz1lSaXoyJq02h5iciyggI=
+=skr4
+-----END PGP SIGNATURE-----
+
+--qMSeJ7rw5cSv6CJV--
 
