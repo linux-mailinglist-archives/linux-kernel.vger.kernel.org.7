@@ -1,160 +1,143 @@
-Return-Path: <linux-kernel+bounces-858986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFABFBEC69F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8CFBEC6A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09A5B4E3E12
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA52421A6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2B283FF9;
-	Sat, 18 Oct 2025 03:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8D5283FF9;
+	Sat, 18 Oct 2025 03:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVcZqKcT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="u0LLiaZr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jNua1nw8"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95015247DE1;
-	Sat, 18 Oct 2025 03:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF53209F5A;
+	Sat, 18 Oct 2025 03:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760759694; cv=none; b=HpQYTqquXrZBYENncO1lqlKzNKUVBMKYBgoqsxaRGebpYIPtAE/kw0If6KsxI83zQhDnNNbEwqJh0x1yEO21LRyukhELtbiiTv1JpiB+Or+vCKauVayz7IIienJdiHfL05EF40sHsVHlXovAJrclA+diceAN1ffrx2JskrBimH8=
+	t=1760759740; cv=none; b=C/ZowaKDOWHgBK5w0U1YBR3tKt1x9rjlxsEcF1jj4zYcIkcGXeYYfSEoSofE8Of3E70hY7jM/KTXsVec0JgK3lKzofJvTQXJ0lYUDg4UfXVfbRDQjY50MIvJi8AmOYh+Pm7SPIqJSWH/LqBtlF5KESlcBdy0jZN7sKMAIDUaxXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760759694; c=relaxed/simple;
-	bh=okI3RpJTLrRj1PrupblKZE/45kDzmQjlxy+SRy5hI2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aatsT6q3t6sLN1ZpD4sx9pHwAM5cPAlLNUmeGyHYmcPqKC04J9uaDVX9IKr8olA/jyXRvc6ERCHYq9o5IY2laAxRIaog2AlstT/zn+GmQApp4UN4VD4KSqD+Nhlv3WY2flVtEMbatRQFUP+t+X8uRuxkH9iFxz7KHsmSRNX/XjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVcZqKcT; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760759693; x=1792295693;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=okI3RpJTLrRj1PrupblKZE/45kDzmQjlxy+SRy5hI2c=;
-  b=UVcZqKcT+U1pGxYRoU59hxOsc2CW6I7s9rc1IFp11Ktqx08d/uxtcrDD
-   nO8LeAOSuPQLzhXSJ3J2RRNDTDwA7a85AIKUmtTmswvZpxw7YQiAkX08Y
-   nipc9086raT7SXj/W/PmQZRaw3JWUpZXQcw0dJTS7NcegV2pIntn4UdnZ
-   JxMc44JcC06M5UpxzBy51P3Fi/hHwLY6Gj+m1m0tBFyVMb8GR5muC5CVh
-   i7IhgKn3oTlV0X4Y/wc1rqQm3cd7gCrNPyHpaL0YZpZJjQhXzKWkFRjp7
-   AFyXsSUwHQpR1B3xhAFzR4DGWV0A7GPlM7dWLbNbwqzoxaZ/pZNeE9uCc
-   Q==;
-X-CSE-ConnectionGUID: uGRK606hR7yo24GMjT9fbA==
-X-CSE-MsgGUID: owfeXXZlTt+vXPUNzll7CQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="63017958"
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="63017958"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 20:54:52 -0700
-X-CSE-ConnectionGUID: lfkJnemmRKGrlC6HZMrttw==
-X-CSE-MsgGUID: kKFSxIhlRyyzUPXhaFL+Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="182703077"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 17 Oct 2025 20:54:49 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9y1m-00082V-1y;
-	Sat, 18 Oct 2025 03:54:46 +0000
-Date: Sat, 18 Oct 2025 11:54:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <202510181107.YiEpGvU3-lkp@intel.com>
-References: <20251017141536.577466-1-kirill@shutemov.name>
+	s=arc-20240116; t=1760759740; c=relaxed/simple;
+	bh=rRJKlDURKVC29REYcxOnJWnJ1HmvYNGQdBqH38oT5zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QAds5wIISHlGXK67NJxnnK09BegNl1dvqE9+HTkbdXZOeOhfPilyT1n0d3eZqPoKhGto1+JkGC46lmzvG3rA6LhcXRH3ahZdbEIDf9vhAzc3fGaTyXl9hx/wTRXk36nmg29KTbdQ4D1yhAzppx6Peto+xSP1UeBRdTWc4WPlfiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=u0LLiaZr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jNua1nw8; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B056C7A011C;
+	Fri, 17 Oct 2025 23:55:36 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 17 Oct 2025 23:55:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm2; t=1760759736; x=1760846136; bh=vI3U9j0VFu
+	AbqN5rE+fJwknXiqz2vQ8pUtVy5buredg=; b=u0LLiaZrM3huXszIXn8bdyCoId
+	IPew8ZWgh6odijkwRm192CqTy30g8r12glmDh5E71Kw/snZhp7PSbWUaBhb+UY8Q
+	3MiKkJyttAIQ6s+zU3YfcDBpEsQCbOo15vVZ6pUDc1JA7XHzBqQi135FWhhZgbKf
+	0ymHRaPfMIIG6EgYKWCwVk01ZvE1ellLslEwvg1QhIq61XVEj+dr/gliReAJHIiR
+	bBv11b7GNMPOjr9rGtMvdFU+XieCFhvgrTUPHPcjGkr+b+ee6lsqPWC9cEYStNcp
+	TLLJChT9iw3gj4WBavvsRTi0z3ggp3BUz4+cldpScqqeTOwhizUmHez2ylEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760759736; x=1760846136; bh=vI3U9j0VFuAbqN5rE+fJwknXiqz2vQ8pUtV
+	y5buredg=; b=jNua1nw8J7zjolNIVMtgCctZ9THXwezPmTEhBZyTCbigwIYZrkB
+	29bJAKuJ0W0G4oq4DvdHsjl2dtg1yWHbIf/0xciIZIRU5HVw2SVibk8xzRmJ3b18
+	B76diUJmHXlQCHLdjwML13sQ2l+LGTQS2GWx7pAP/y6W5IxTV1ss/lzDinaoDOCV
+	o7SS7YcuS3zluLwxyXxfIPOLQJWXkhD8qrf0K74xvliv16riGp8NdbMTsPcUHRHc
+	xdY8opTA4zP1ed6uIP0gFsOv3DLyjMPg40t6dm85lHGybATQRBt93Ag5MYAv8se5
+	ORnST1O5IUBf8Pru7fAA1YoPpdESXrd65+g==
+X-ME-Sender: <xms:uA_zaJBYHX4Dcon_xIOXF4aUPnUeMKv5pQoagaVsHyr42eg1oOitTg>
+    <xme:uA_zaHqWYZ-6fUJdlOFEwsGqfsKmJ02cuhbBPTV7-mXKfSR40It_CLPOmF9xIx7i9
+    RPe81A7FNbsdh0mi2DXeKtqXQpjkI0fLfZBq1oNB6CAFSrKP4vKJS0>
+X-ME-Received: <xmr:uA_zaMi3CXy7-I4ymRQQwO10ipc6xFcJ4PWbPPkjJqZ3AExPpPobc4KPUVm7IbwP6wSe8oTB7J39PCOEWa3YkMaPsNN_dtK-Oc8WZ9kp_kNAFA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedutddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffveekud
+    fhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrg
+    hmohgttghhihdrjhhppdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvg
+    hfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhouhhnugesvhhgvghrrd
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:uA_zaMCwz8pH0vhuQKJQmE3AgAvyjB-SzVn6BRGbvS0NlWtxUM3oTA>
+    <xmx:uA_zaJHPJNJQEFqybFmQ4eusH4hPZD854JynpcgwTNPneNEc717cjA>
+    <xmx:uA_zaMK09Hz_sfRfT5Vi2kzEJGw-IBtMPYIvus7qddWTt08ycHk_Iw>
+    <xmx:uA_zaFl4sJqaPJoo68b8ItReOkA00kuqjWhYuUmrZ_LDBlkm_n_DwQ>
+    <xmx:uA_zaGnFfNpd-2F75l5mXx2Vqa4nmCXPQ4SanMC8pjaceXE_3dftDBR9>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 Oct 2025 23:55:34 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 0/4] firewire: core: handle TASCAM FW-1884/FW-1804/FW-1082 quirk
+Date: Sat, 18 Oct 2025 12:55:28 +0900
+Message-ID: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
+Content-Transfer-Encoding: 8bit
 
-Hi Kiryl,
+Hi,
 
-kernel test robot noticed the following build warnings:
+In 2003, TEAC Corporation had released FW-1884/FW-1804/FW-1082 in its
+TASCAM brand. These devices are already supported by a driver in ALSA
+firewire stack, but they have an interoperability issue related to
+the speed of asynchronous transactions and isochronous transmissions.
+When operating at the speed described in configuration ROM, they are
+too lazy to respond, and eventually frozen.
 
-[auto build test WARNING on akpm-mm/mm-everything]
+The most likely cause of this issue is a mismatch in the gap count
+between the initiators and receivers. Theoretically, this can be
+resolved by transmitting phy configuration packets to optimize gap count.
+Nevertheless, this approach has proven ineffective, suggesting that the
+device firmware may contain a bug causing the issue.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kiryl-Shutsemau/mm-filemap-Implement-fast-short-reads/20251017-221655
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251017141536.577466-1-kirill%40shutemov.name
-patch subject: [PATCH] mm/filemap: Implement fast short reads
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20251018/202510181107.YiEpGvU3-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181107.YiEpGvU3-lkp@intel.com/reproduce)
+From my experience, these devices operate more reliably at lower
+transaction and transmission speeds, which provides a practical
+mitigation.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510181107.YiEpGvU3-lkp@intel.com/
+This patch series addresses the interoperability issue. The core function
+of Linux FireWire subsystem is changed to read the entire configuration
+ROM at the lowest speed (S100), and to identify these devices based on its
+contents. Once identified, their maximum speed is limited to S200. The
+ALSA driver then performs asynchronous requests and isochronous
+transmission at that speed to prevent device freezes.
 
-All warnings (new ones prefixed by >>):
+Takashi Sakamoto (4):
+  firewire: core: code refactoring to compute transaction speed
+  firewire: core: determine transaction speed after detecting quirks
+  firewire: core: handle device quirk of TASCAM FW-1884/FW-1804/FW-1082
+  ALSA: firewire-tascam: reserve resources for transferred isochronous
+    packets at S400
 
-   mm/filemap.c: In function 'filemap_read_fast':
->> mm/filemap.c:2787:1: warning: the frame size of 1048 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-    2787 | }
-         | ^
+ drivers/firewire/core-device.c        | 86 +++++++++++++++------------
+ include/linux/firewire.h              |  3 +
+ sound/firewire/tascam/tascam-stream.c | 21 +++----
+ 3 files changed, 63 insertions(+), 47 deletions(-)
 
 
-vim +2787 mm/filemap.c
-
-  2752	
-  2753	static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
-  2754					       ssize_t *already_read)
-  2755	{
-  2756		struct address_space *mapping = iocb->ki_filp->f_mapping;
-  2757		struct file_ra_state *ra = &iocb->ki_filp->f_ra;
-  2758		char buffer[FAST_READ_BUF_SIZE];
-  2759		size_t count;
-  2760	
-  2761		if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
-  2762			return false;
-  2763	
-  2764		if (iov_iter_count(iter) > sizeof(buffer))
-  2765			return false;
-  2766	
-  2767		count = iov_iter_count(iter);
-  2768	
-  2769		/* Let's see if we can just do the read under RCU */
-  2770		rcu_read_lock();
-  2771		count = filemap_read_fast_rcu(mapping, iocb->ki_pos, buffer, count);
-  2772		rcu_read_unlock();
-  2773	
-  2774		if (!count)
-  2775			return false;
-  2776	
-  2777		count = copy_to_iter(buffer, count, iter);
-  2778		if (unlikely(!count))
-  2779			return false;
-  2780	
-  2781		iocb->ki_pos += count;
-  2782		ra->prev_pos = iocb->ki_pos;
-  2783		file_accessed(iocb->ki_filp);
-  2784		*already_read += count;
-  2785	
-  2786		return !iov_iter_count(iter);
-> 2787	}
-  2788	
-
+base-commit: 15f9610fc96ac6fd2844e63f7bf5a0b08e1c31c8
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
 
