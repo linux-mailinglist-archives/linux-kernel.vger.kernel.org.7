@@ -1,206 +1,101 @@
-Return-Path: <linux-kernel+bounces-859306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A4CBED453
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD298BED465
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE12419C21E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48993B7CCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB4F257824;
-	Sat, 18 Oct 2025 17:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515CC1D618C;
+	Sat, 18 Oct 2025 17:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rGtkPBlN"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=josie.lol header.i=@josie.lol header.b="Y75QYPhZ"
+Received: from mail-108-mta119.mxroute.com (mail-108-mta119.mxroute.com [136.175.108.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC14B243956
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4DC4A3E
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760806964; cv=none; b=lBIpeR1wadYA7M/oLiLJXa+PgrmJcKQd1B3ymnxyx3ZY7f3LWekHpV5aO9UyH4ahxozEV+2ZTHmU/GBU8vjT2Ea6+BUhITmD4Ru7XVujjXdF5gLN0OKRSuA9ULLi3CcMPpz1PwcY+jip+nnCNpi9OZcljn6aiygPuKqQyLOFxNo=
+	t=1760807376; cv=none; b=Nrfi/h0YEUNo6Lcj346kor0ztubEg9q2yYKMePb5MLylG626cjLFruW5NPNEn5wljtCbHy7o9pn1mhVIA9y3Rb1GQDykxAPG2ruZm42TxF/zY1Xe+fBElFgrlodzSH2xFF6yWonCsc3A/T6E76yLqplOdwrtZq9OgJNMcjOnC04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760806964; c=relaxed/simple;
-	bh=K56Is2wx7UmVl17dRBrxY8Gx8J2Mj6XdngEuoaXN7is=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=D3UWJ9MOq5KtfZl/OlUShuVUW9I779RZOSY3+PvRMZ5YpblWxQFXDK8HZ8M85HPynkczuLqPK8FC5ehjhiD67hy+7mY0me7//egJpFV4BzuyVTmhiOluUBTxpz2w+ZIsU0E1N25HSujFagMpNteO2gyPOKtTsNEmxCqBfae4sKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rGtkPBlN; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-470fd49f185so23618335e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760806960; x=1761411760; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcEJMCPQNzNn4Sg/+enW3pY+1OtQDQh0FQ7gWamWR/8=;
-        b=rGtkPBlN65O/kO3nzZtauLZkBypZOGJZIqDcUrEkhvS8CQRrxy/5q3tnCqekG19lHT
-         WqTNFbv0ABQXBB6nylY850gDZN6gpr39hgg1dSb2xaEzWABV7fk4WOr6uKcS9LZMHtEF
-         R9+nbcXyrG24VEY02vb4opXaHorFhxu0+pOYKO8aT5nXjEWzeDmN8S+8PiZDazX4CK6Z
-         +eroFQ2h/4AHTYMJoAWfIrTpL3Uo/wc/DngP8G9iBSU1uRaCB+nQC9n3bXho0W8wOSqs
-         dU/JIJY/7e6qDGroeSwe8MwYRcv2FXCQX7fQkb/MfAlE/bpSjGa0lKOeNrTmYoG/A7k9
-         4aoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760806960; x=1761411760;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcEJMCPQNzNn4Sg/+enW3pY+1OtQDQh0FQ7gWamWR/8=;
-        b=jJNb6AkwI0puRdqMoAlnlurDBdrFoaetw+NM3k/y5aaMn52D5JdKVPMHIY4pSuVdn2
-         roWpPWH8H6s/wt1QBMFwc+Yp5f722hqHbOemXUAl3ljhLyziBVIX6Zr6/1ECY1mHHIk7
-         Mvn9FfvXcrQxz6koDFUiXZtlJttntY2+eEpz9qRmU5pryQYy1HYhlVz5qO1zp2St3sFZ
-         hUfmC3mS6tp4SlClH8VS2BAuc/jTUApvTzt6HrtHarCxgQ+xDU98Ns4ainGk5kVy+miA
-         YCZcSqpNpKkKUWYCAOC9Vz41tg6v4qvUgu/WgyxbTYCRKSVxKp/H/ZY+vPxK2bnPcUwU
-         lCmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmLvFbEz4Yl2bSfMQNKPVH4fo/VPnfqVzcKbTFcypRAb5zNRkC7K3ZPFpIFW2TmWH5MsJNLbMsptY8UbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+6TXtGGIPUkjtKmhjPZG1VY9Onn0ZbiCLTBKxHdDdt21yj3UQ
-	N/G8U49YLS7USbypi9Cekra/pQDcIqIhBaGZ5JKvZecefTdKNMKNF+BzBfOPWHf80BlrgTsac12
-	0wcZsFT++XYFHWm7yTw==
-X-Google-Smtp-Source: AGHT+IG+XONBGTsyrZA2w5nXoym2WOeMmXEjzuALKqECWR/nae42PSy1vCNDSBfzkw7eA04iBiPKoZnTCFnDy3g=
-X-Received: from wmwo28.prod.google.com ([2002:a05:600d:439c:b0:46e:6605:3ac2])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600d:6357:b0:46e:1a07:7bd5 with SMTP id 5b1f17b1804b1-47160987501mr15825585e9.29.1760806960228;
- Sat, 18 Oct 2025 10:02:40 -0700 (PDT)
-Date: Sat, 18 Oct 2025 17:02:39 +0000
-In-Reply-To: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
+	s=arc-20240116; t=1760807376; c=relaxed/simple;
+	bh=H3Ubg91H6s5TLhsNIssX3o/9x0rZWJ9XP6oHZcSgkzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VSVbl1uYf94wf3dJ6yB+zcvHy90YYdFnzjgukNHeIDCcXu97hYR3dIQ+1dvdgU/5hXrVRcOETPvWt5BByvpc6K4ggU+MrmccyLd6cN3IVvEjUX2DRrvgisqb/V41YItMRqeLfv6UyVFRZuBVtBqAnwwfxP22fF0FN9DXb+aBcGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=josie.lol; spf=pass smtp.mailfrom=josie.lol; dkim=pass (2048-bit key) header.d=josie.lol header.i=@josie.lol header.b=Y75QYPhZ; arc=none smtp.client-ip=136.175.108.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=josie.lol
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=josie.lol
+Received: from filter006.mxroute.com ([140.82.40.27] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta119.mxroute.com (ZoneMTA) with ESMTPSA id 199f84788af000c217.004
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Sat, 18 Oct 2025 17:04:21 +0000
+X-Zone-Loop: 0fae5856f7c4a581f1fb56948374179680f2bf078941
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=josie.lol;
+	s=x; h=Content-Transfer-Encoding:MIME-Version:Date:Subject:Cc:To:From:Sender:
+	Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References;
+	bh=czPLsVnnob4wEuO1VYDim5CWL4iqX/jfBfFcX+qk1oA=; b=Y75QYPhZdMhhH/QJcgGAkvHXhf
+	SN8wY5VjlhHvk3m+yJ2tKwT5SMpnAHI7FC9K62+GZVL1e+VsvL0Ra+EmqPMn3b7CrlB7cbSFm9V+c
+	JoHN+cEyznGgMc+cnoNa9eQ3k3pDjBD5a18H8Wff1Tg/izKwrWDA8YD5FHWD16HHORhIJ/2BrSP6J
+	tYWv/S0dJL/8ujrSC3ipGu5IAeefZ05XlRweFAkzQE49LGrOgEbXlpQgJA7Jx7MYWPgy6Yf5Fi/4J
+	DbmZo9W1FSaps7CRrfgs9WhrG/p3Z70r7mPnxLyKiteXnpoqgZsOFBKx1TTxqrxr/fFoeNb0NgujY
+	7UVmvTKQ==;
+From: Josephine Pfeiffer <hi@josie.lol>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] arm64: ptdump: use seq_puts() in pt_dump_seq_puts() macro
+Date: Sat, 18 Oct 2025 19:04:16 +0200
+Message-ID: <20251018170416.3355249-1-hi@josie.lol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
-Message-ID: <aPPIL6dl8aYHZr8B@google.com>
-Subject: Re: [PATCH v17 00/11] rust: replace kernel::str::CStr w/ core::ffi::CStr
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Id: hi@josie.lol
 
-On Wed, Oct 15, 2025 at 03:24:30PM -0400, Tamir Duberstein wrote:
-> This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
-> have omitted Co-authored tags, as the end result is quite different.
-> 
-> This series is intended to be taken through rust-next. The final patch
-> in the series requires some other subsystems' `Acked-by`s:
-> - drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
->   look?
-> - rust/kernel/device.rs: driver-core. Already acked by gregkh.
-> - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
-> - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
-> - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
-> 
-> Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+The pt_dump_seq_puts() macro incorrectly uses seq_printf() instead of
+seq_puts(). This is both a performance issue and conceptually wrong,
+as the macro name suggests plain string output (puts) but the
+implementation uses formatted output (printf).
 
-You need a few more changes:
+All call sites pass constant strings without format specifiers, so
+using seq_printf() adds unnecessary overhead for format string parsing.
 
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index 1e6c8c42fb3a..c1cfaeaa36a2 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -136,7 +136,7 @@ impl Clk {
-         ///
-         /// [`clk_get`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_get
-         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
--            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
-+            let con_id = name.map_or(ptr::null(), |n| n.as_char_ptr());
+This bug was introduced in commit ae5d1cf358a5 ("arm64: dump: Make the
+page table dumping seq_file optional") in 2016, where seq_puts() was
+replaced with a new pt_dump_seq_puts() macro that mistakenly used
+seq_printf().
+
+Fixes: ae5d1cf358a5 ("arm64: dump: Make the page table dumping seq_file optional")
+Signed-off-by: Josephine Pfeiffer <hi@josie.lol>
+---
+ arch/arm64/mm/ptdump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+index ab9899ca1e5f..a35fcd62bf75 100644
+--- a/arch/arm64/mm/ptdump.c
++++ b/arch/arm64/mm/ptdump.c
+@@ -35,7 +35,7 @@
+ #define pt_dump_seq_puts(m, fmt)	\
+ ({					\
+ 	if (m)				\
+-		seq_printf(m, fmt);	\
++		seq_puts(m, fmt);	\
+ })
  
-             // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
-             //
-@@ -304,7 +304,7 @@ impl OptionalClk {
-         /// [`clk_get_optional`]:
-         /// https://docs.kernel.org/core-api/kernel-api.html#c.clk_get_optional
-         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
--            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
-+            let con_id = name.map_or(ptr::null(), |n| n.as_char_ptr());
- 
-             // SAFETY: It is safe to call [`clk_get_optional`] for a valid device pointer.
-             //
-diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
-index 10f1547ca9f1..466fb7f40762 100644
---- a/rust/kernel/configfs.rs
-+++ b/rust/kernel/configfs.rs
-@@ -157,7 +157,7 @@ pub fn new(
-                     unsafe {
-                         bindings::config_group_init_type_name(
-                             &mut (*place.get()).su_group,
--                            name.as_ptr(),
-+                            name.as_char_ptr(),
-                             item_type.as_ptr(),
-                         )
-                     };
-diff --git a/rust/kernel/debugfs/entry.rs b/rust/kernel/debugfs/entry.rs
-index f99402cd3ba0..5de0ebc27198 100644
---- a/rust/kernel/debugfs/entry.rs
-+++ b/rust/kernel/debugfs/entry.rs
-@@ -2,8 +2,7 @@
- // Copyright (C) 2025 Google LLC.
- 
- use crate::debugfs::file_ops::FileOps;
--use crate::ffi::c_void;
--use crate::str::CStr;
-+use crate::prelude::*;
- use crate::sync::Arc;
- use core::marker::PhantomData;
- 
-diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-index b55a201e5029..65a4eb096cae 100644
---- a/rust/kernel/regulator.rs
-+++ b/rust/kernel/regulator.rs
-@@ -84,7 +84,7 @@ pub struct Error<State: RegulatorState> {
- pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
-     // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
-     // string.
--    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
-+    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_char_ptr()) })
- }
- 
- /// Same as [`devm_enable`], but calls `devm_regulator_get_enable_optional`
-@@ -102,7 +102,9 @@ pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
- pub fn devm_enable_optional(dev: &Device<Bound>, name: &CStr) -> Result {
-     // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
-     // string.
--    to_result(unsafe { bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_ptr()) })
-+    to_result(unsafe {
-+        bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_char_ptr())
-+    })
- }
- 
- /// A `struct regulator` abstraction.
-@@ -268,7 +270,8 @@ pub fn get_voltage(&self) -> Result<Voltage> {
-     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> {
-         // SAFETY: It is safe to call `regulator_get()`, on a device pointer
-         // received from the C code.
--        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
-+        let inner =
-+            from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_char_ptr()) })?;
- 
-         // SAFETY: We can safely trust `inner` to be a pointer to a valid
-         // regulator if `ERR_PTR` was not returned.
+ static const struct ptdump_prot_bits pte_bits[] = {
 -- 
+2.51.1.dirty
+
 
