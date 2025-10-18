@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-858988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8F2BEC6B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:56:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FEEBEC6BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77AB9422601
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:55:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD75E4F1F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64AC2868A9;
-	Sat, 18 Oct 2025 03:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3B52882A1;
+	Sat, 18 Oct 2025 03:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="aUTkoMUf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bz6JrJtL"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="asld1cgw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WiafUUXt"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D771247DE1;
-	Sat, 18 Oct 2025 03:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C1E283FCD;
+	Sat, 18 Oct 2025 03:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760759741; cv=none; b=oCZSkyTltgSCP8NgE+I2lEZ4tX382g78k693olRqTqvF+vjOFAIW0a20JmV0bB5bRNsnXZBLQSp4xqXLx3kIvvP/5QglPFutbZmFBnjon9YDc26L/fnje+flBsOqJ+B+K8Kx3IDpG7pXRw6uj9WTJoA/Afj6u9eoh1JMTWSHyjU=
+	t=1760759743; cv=none; b=m9rlOqFY8YwI7jfOOWLi57fLqxm7U4TbvJwF9qxEytqHrRH0//1ptwivXP61+GWlFb06VhnJOcFpy1adr4LQUaco958NHHobGIXL4swsy0pMuTSAu9JM3vS88RGdrLXPgmAPivwCNAA7h9i53ad5MmiR/tfcfgle5SweWlIPpR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760759741; c=relaxed/simple;
-	bh=1KjPBXpllrt7gQWTe0vVJMze3JSCqr4z7wLJC/BXbP0=;
+	s=arc-20240116; t=1760759743; c=relaxed/simple;
+	bh=E6hanbGQUZFTn7iDKfN/WIfwn073f0TH4F1/RRVmj24=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kx5dWoEaqLe4M0FI1olt4KbEj/Ha3GgofFhhzkYRvilX69EP953swalccG89ArUOYajagGz0smm3p6lzaCw/j/V0c1vyX0KXDflgbJxyw1uL2KyYqWfyrY0QJ1wJHk1TQG5XZnlm+nNfHiLQnveIo58CVfFNuM6Z721UdS9qIaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=aUTkoMUf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bz6JrJtL; arc=none smtp.client-ip=202.12.124.148
+	 MIME-Version; b=qmrIkdGfXPzqHHEfIyp24OycJ1HhyumYM4gXN8Qa5GONAnsDIvWRSMl1AHzPRBv17U8JPGQS9hMbjHHVHCoNooBd8/sNXq15chivNpwO74YTbDOr+gEbolLa3T5B+pThJ7XEWGN65/NZ4ig4XnkeLddLBYfhS5eWRfqWHfdCBaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=asld1cgw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WiafUUXt; arc=none smtp.client-ip=202.12.124.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7B4991D00151;
-	Fri, 17 Oct 2025 23:55:38 -0400 (EDT)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 5A3647A0140;
+	Fri, 17 Oct 2025 23:55:40 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Fri, 17 Oct 2025 23:55:38 -0400
+  by phl-compute-01.internal (MEProxy); Fri, 17 Oct 2025 23:55:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1760759738; x=
-	1760846138; bh=7hcYwfBrFq5jZc04hPPfE2gQ2RHVPgydmNVwQVUfXMM=; b=a
-	UTkoMUfTLOtktLwlIWR8tes62PHTRtO8rr6071xdk/gxvKnyyUtmzeB9qn3QdeRq
-	KUPUt3T6eOTqiuvGSOD3eL5lmTq2mJXs71BmLfMS+uE3aNH7C9rOQavFCB/rvFlL
-	5mrhLwdQSW84P9erhW5/a8aauTsJpxbom6DAOaistaA/YJfXWpCd7wi/tjuIo/jc
-	50ybN6NIJHLMuLDnBvNIK1Rdj022Nt+YZ8WR0LaRTrUOblTY0bHP3R4ujlzhUXZJ
-	tsoGCW4OlLiS0bksXqKXYLIVEjYtUyvE+ClXavAdsp3i4k7z6WfZUFID6rxo7noO
-	Y/AX6MK8OCruERLeRK0YA==
+	:reply-to:subject:subject:to:to; s=fm2; t=1760759740; x=
+	1760846140; bh=yGRLVQuJIrWSADXY2lmb05uJei7Ja3Kf7eceuATqL44=; b=a
+	sld1cgwe3nm/t5hVjfdXsZRcUZKW7J7KiUmfzWaFGfE/9VFELTRyurBiHvUojG8N
+	Tszm0X2kAxlcHhs2/19cV2SF/31X+12y5gZZV+UmpO+qpKkpHVN91fo/Vg1N9UEZ
+	aPK/fVcYBeSNFMLSQOnJmfggnhJ43LNIDP5DrlHoHAFnDS5eCEQH7jSyPc1h46m/
+	pgA8VgBeYp5SeLTLIntzFITRXbJBYCVfyIh7skO7Fs2Q80vWvTyliYmRk1g9nQL3
+	ekezbiGddkP3k2Zfn3NJsuZ1CGW8oEdQ6ZNI0mNrO+WkDvxqgramKdxl7HsKzMhN
+	JFy/ZpH+dhobvL0APM4yg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1760759738; x=1760846138; bh=7
-	hcYwfBrFq5jZc04hPPfE2gQ2RHVPgydmNVwQVUfXMM=; b=Bz6JrJtLa5/Kkb2aI
-	Nl0NbnQ7ok1WcO3mqXJm7j4vp4uw/brWUBXR4qqqmGI/I/A1qRaR/fbXpt/L/ujJ
-	dR7gaGaIVT+un3x0Jg5DtaB8UJut9X9re7Q55Fofi15uL95zhTK4KGneCu5oGDMS
-	A30fHZrcs87F3AmqK/gvL6KTylJA5NP1iDQChwEBoWHj5w9FbjudIXf3Cyr9lCbD
-	4ofa25sKU7MkEWnqg/NSHuTzuLB8eQITYeh6yp85O7teHdwAfvdl5cL/T9l+ZCr4
-	GB9kuD3dLACzSZzlhu/VlJdC1QekSZbqRyDnpUvSq3ZVzzBaViFvb6cT5xpFle2L
-	Uchng==
-X-ME-Sender: <xms:ug_zaOMbnj5Vllodk4gFVgCom6BJwdbOZqiDFoAr3fgZ6vfpK14goQ>
-    <xme:ug_zaNFSNVAS6YFrjK02JWYzehpcKBL9PpBFMoTadVhD-Vz_zslkUBWOt3FF8HfHU
-    s6GUexZv7eKX_XwrrZuDDsDe952OiZ9iTRkH_qvuLiitTil_e2JHWJj>
-X-ME-Received: <xmr:ug_zaNMSmxMi6B47JJtYVJPGysY_7iqyT2KkbLpv_-f4U82u7A6aSUAmXpb_jnGFaKvfqCNGTSMJnfKwHLhZI2veUGYzINRrMWDISoHn7m9Uog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedutdefucetufdoteggodetrf
+	:x-me-sender:x-sasl-enc; s=fm2; t=1760759740; x=1760846140; bh=y
+	GRLVQuJIrWSADXY2lmb05uJei7Ja3Kf7eceuATqL44=; b=WiafUUXt0pTbhRXpF
+	Li3sQ5MvsqLO+w43amhexhcfBVG/5IxTMMkBWvZ1M58Djv23dEi0VA2sM4MCsODq
+	WI6p/i8wfuHtT4iJiwcfkB1eWzxrF0Yc43+3ipJNgtmldnkWt+1HjpwjXAx+OGo/
+	7be8XnViIwW/+lz4cvpc1RKIkinGcGtuoLI/h0/W0IXgsCdDTKwHjM4DWbZatf5X
+	pmujMaxu7UYnjFxIdBGzazNI1cB309PsNaARbaN54/D+71aHfzGmBp59FKENFjgA
+	6k3HaePPRBFwHMK50ed9YHfwD251xV4lsHXzIy3YK4NC92b1qkOIAzxprTVZ4jrE
+	n2tdw==
+X-ME-Sender: <xms:uw_zaIw1qdvdAQepF7JvSy2cjwQ80CohLnxys00XxGPPOicb9c8swg>
+    <xme:uw_zaMYVyVwTEvtEO1OzB0hch4pi0YUkUjGmL99Dn4um8HAJuGS6SmOMo0G_gxSjV
+    Zd8ZBd_ZYkBzeNOE3_MLfMf8b9SBuuRrAvGbjNQh71WywXhPqJHk0w>
+X-ME-Received: <xmr:uw_zaCQziV-Ggo3NKlGokP5kA8BT2NYUa3cEI5WQSUXNM-gqmtLyeI6FyP5NdDsr-WH0UKf4N7k6KiUCPTEC13cAixNWcYFhW26BJSO3pILezg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedutddvucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
     ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
@@ -76,21 +76,21 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedutdefucetufdote
     gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
     rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhouhhnugesvhhgvg
     hrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:ug_zaG9Wo2P3HH0zkkv2xDns6ppX1bF8dpQOo10O37-g5NlnmNiSBw>
-    <xmx:ug_zaBSVcYq0Mf5Q9UXZjhejYKRdolaIafDusC-X1zudU3snMGbHHA>
-    <xmx:ug_zaIl_3J3SovSS2xeGOGhxndm8ttnnGfZUlWuLXHDC2V1Ckq0F5w>
-    <xmx:ug_zaBSZBF-RKxtrSUubI-51xgosASibQ8mYCtxjus7s6UBG1-xjUw>
-    <xmx:ug_zaLgToIpYiDjEf1svl1YVJTejKCxG2JzF1rXpCiJeXLTbuZN49bgP>
+X-ME-Proxy: <xmx:uw_zaOzeu7Gq35gDSUYytUnVi6MxvDFuSAnQ_q0FQgxcqS01gZUKnw>
+    <xmx:vA_zaE0AwA5Zkzz9Hw3Lkg0EoNocnogLY5RJoV-QJ0Cw5wPzyP1QYQ>
+    <xmx:vA_zaM5cIa4vz_bVWg2eZCLqVTCGLDAgEtJ-f3pkwHUotMbvF6tsmg>
+    <xmx:vA_zaHXNvvwUx495HNrrb601Yvk80glJQ8hnnSzCcqBzC_CCncwoNw>
+    <xmx:vA_zaBVQSZ-QQbms4nbWPU6IAlczDBpZoqzYuFAc_q1hEP9fwepFxzlm>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Oct 2025 23:55:37 -0400 (EDT)
+ 17 Oct 2025 23:55:38 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org,
 	linux-sound@vger.kernel.org
-Subject: [PATCH 1/4] firewire: core: code refactoring to compute transaction speed
-Date: Sat, 18 Oct 2025 12:55:29 +0900
-Message-ID: <20251018035532.287124-2-o-takashi@sakamocchi.jp>
+Subject: [PATCH 2/4] firewire: core: determine transaction speed after detecting quirks
+Date: Sat, 18 Oct 2025 12:55:30 +0900
+Message-ID: <20251018035532.287124-3-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
 References: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
@@ -102,132 +102,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit refactors the helper function to read the content of
-configuration ROM with the passed speed.
+Current implementation determines the maximum transaction speed supported
+by the target device after reading bus information block of configuration
+ROM. The read operations for root directory block are then performed at
+the determined speed. However, some devices have quirks that cause issues
+when transactions are performed at the determined speed.
+
+In the first place, all devices are required to support the lowest speed
+(S100) and must respond successfully to any read request within the
+configuration ROM space. Therefore it is safe to postpone speed
+determination until the entire configuration ROM has been read.
+
+This commit moves the speed determination after reading root directory.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/core-device.c | 35 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ drivers/firewire/core-device.c | 53 ++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index 33ce4cd357ed..c698d4ced7d7 100644
+index c698d4ced7d7..6a5740ed4934 100644
 --- a/drivers/firewire/core-device.c
 +++ b/drivers/firewire/core-device.c
-@@ -605,8 +605,7 @@ static int detect_quirks_by_root_directory(const u32 *root_directory, unsigned i
- 	return quirks;
- }
- 
--static int read_rom(struct fw_device *device,
--		    int generation, int index, u32 *data)
-+static int read_rom(struct fw_device *device, int generation, int speed, int index, u32 *data)
- {
- 	u64 offset = (CSR_REGISTER_BASE | CSR_CONFIG_ROM) + index * 4;
- 	int i, rcode;
-@@ -617,7 +616,7 @@ static int read_rom(struct fw_device *device,
- 	for (i = 10; i < 100; i += 10) {
- 		rcode = fw_run_transaction(device->card,
- 				TCODE_READ_QUADLET_REQUEST, device->node_id,
--				generation, device->max_speed, offset, data, 4);
-+				generation, speed, offset, data, 4);
- 		if (rcode != RCODE_BUSY)
- 			break;
- 		msleep(i);
-@@ -644,7 +643,7 @@ static int read_config_rom(struct fw_device *device, int generation)
- 	const u32 *old_rom, *new_rom;
- 	u32 *rom, *stack;
- 	u32 sp, key;
--	int i, end, length, ret;
-+	int i, end, length, ret, speed;
- 	int quirks;
- 
- 	rom = kmalloc(sizeof(*rom) * MAX_CONFIG_ROM_SIZE +
-@@ -655,11 +654,11 @@ static int read_config_rom(struct fw_device *device, int generation)
- 	stack = &rom[MAX_CONFIG_ROM_SIZE];
- 	memset(rom, 0, sizeof(*rom) * MAX_CONFIG_ROM_SIZE);
- 
--	device->max_speed = SCODE_100;
-+	speed = SCODE_100;
- 
- 	/* First read the bus info block. */
- 	for (i = 0; i < 5; i++) {
--		ret = read_rom(device, generation, i, &rom[i]);
-+		ret = read_rom(device, generation, speed, i, &rom[i]);
- 		if (ret != RCODE_COMPLETE)
- 			goto out;
- 		/*
-@@ -681,7 +680,7 @@ static int read_config_rom(struct fw_device *device, int generation)
+@@ -680,32 +680,6 @@ static int read_config_rom(struct fw_device *device, int generation)
  	// Just prevent from torn writing/reading.
  	WRITE_ONCE(device->quirks, quirks);
  
--	device->max_speed = device->node->max_speed;
-+	speed = device->node->max_speed;
- 
+-	speed = device->node->max_speed;
+-
+-	/*
+-	 * Determine the speed of
+-	 *   - devices with link speed less than PHY speed,
+-	 *   - devices with 1394b PHY (unless only connected to 1394a PHYs),
+-	 *   - all devices if there are 1394b repeaters.
+-	 * Note, we cannot use the bus info block's link_spd as starting point
+-	 * because some buggy firmwares set it lower than necessary and because
+-	 * 1394-1995 nodes do not have the field.
+-	 */
+-	if ((rom[2] & 0x7) < speed || speed == SCODE_BETA || card->beta_repeaters_present) {
+-		u32 dummy;
+-
+-		/* for S1600 and S3200 */
+-		if (speed == SCODE_BETA)
+-			speed = card->link_speed;
+-
+-		while (speed > SCODE_100) {
+-			if (read_rom(device, generation, speed, 0, &dummy) ==
+-			    RCODE_COMPLETE)
+-				break;
+-			--speed;
+-		}
+-	}
+-
  	/*
- 	 * Determine the speed of
-@@ -692,20 +691,18 @@ static int read_config_rom(struct fw_device *device, int generation)
- 	 * because some buggy firmwares set it lower than necessary and because
- 	 * 1394-1995 nodes do not have the field.
- 	 */
--	if ((rom[2] & 0x7) < device->max_speed ||
--	    device->max_speed == SCODE_BETA ||
--	    card->beta_repeaters_present) {
-+	if ((rom[2] & 0x7) < speed || speed == SCODE_BETA || card->beta_repeaters_present) {
- 		u32 dummy;
- 
- 		/* for S1600 and S3200 */
--		if (device->max_speed == SCODE_BETA)
--			device->max_speed = card->link_speed;
-+		if (speed == SCODE_BETA)
-+			speed = card->link_speed;
- 
--		while (device->max_speed > SCODE_100) {
--			if (read_rom(device, generation, 0, &dummy) ==
-+		while (speed > SCODE_100) {
-+			if (read_rom(device, generation, speed, 0, &dummy) ==
- 			    RCODE_COMPLETE)
- 				break;
--			device->max_speed--;
-+			--speed;
- 		}
- 	}
- 
-@@ -734,7 +731,7 @@ static int read_config_rom(struct fw_device *device, int generation)
- 		}
- 
- 		/* Read header quadlet for the block to get the length. */
--		ret = read_rom(device, generation, i, &rom[i]);
-+		ret = read_rom(device, generation, speed, i, &rom[i]);
- 		if (ret != RCODE_COMPLETE)
- 			goto out;
- 		end = i + (rom[i] >> 16) + 1;
-@@ -758,7 +755,7 @@ static int read_config_rom(struct fw_device *device, int generation)
- 		 * it references another block, and push it in that case.
- 		 */
- 		for (; i < end; i++) {
--			ret = read_rom(device, generation, i, &rom[i]);
-+			ret = read_rom(device, generation, speed, i, &rom[i]);
- 			if (ret != RCODE_COMPLETE)
- 				goto out;
- 
-@@ -785,6 +782,8 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 	 * Now parse the config rom.  The config rom is a recursive
+ 	 * directory structure so we parse it using a stack of
+@@ -782,13 +756,36 @@ static int read_config_rom(struct fw_device *device, int generation)
  			length = i;
  	}
  
-+	device->max_speed = speed;
-+
+-	device->max_speed = speed;
+-
  	quirks |= detect_quirks_by_root_directory(rom + ROOT_DIR_OFFSET, length - ROOT_DIR_OFFSET);
  
  	// Just prevent from torn writing/reading.
-@@ -1234,7 +1233,7 @@ static int reread_config_rom(struct fw_device *device, int generation,
- 	int i, rcode;
+ 	WRITE_ONCE(device->quirks, quirks);
  
- 	for (i = 0; i < 6; i++) {
--		rcode = read_rom(device, generation, i, &q);
-+		rcode = read_rom(device, generation, device->max_speed, i, &q);
- 		if (rcode != RCODE_COMPLETE)
- 			return rcode;
- 
++	speed = device->node->max_speed;
++
++	// Determine the speed of
++	//   - devices with link speed less than PHY speed,
++	//   - devices with 1394b PHY (unless only connected to 1394a PHYs),
++	//   - all devices if there are 1394b repeaters.
++	// Note, we cannot use the bus info block's link_spd as starting point because some buggy
++	// firmwares set it lower than necessary and because 1394-1995 nodes do not have the field.
++	if ((rom[2] & 0x7) < speed || speed == SCODE_BETA || card->beta_repeaters_present) {
++		u32 dummy;
++
++		// for S1600 and S3200.
++		if (speed == SCODE_BETA)
++			speed = card->link_speed;
++
++		while (speed > SCODE_100) {
++			if (read_rom(device, generation, speed, 0, &dummy) ==
++			    RCODE_COMPLETE)
++				break;
++			--speed;
++		}
++	}
++
++	device->max_speed = speed;
++
+ 	old_rom = device->config_rom;
+ 	new_rom = kmemdup(rom, length * 4, GFP_KERNEL);
+ 	if (new_rom == NULL) {
 -- 
 2.51.0
 
