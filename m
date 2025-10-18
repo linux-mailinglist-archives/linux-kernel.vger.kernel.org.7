@@ -1,114 +1,138 @@
-Return-Path: <linux-kernel+bounces-859300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA34BED411
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:50:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B91BED41A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C1A54E5216
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:50:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6ABBF34B7DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A292512E6;
-	Sat, 18 Oct 2025 16:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753CC2517AF;
+	Sat, 18 Oct 2025 16:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYtZSTuo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLTMPtNM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4166E22F772;
-	Sat, 18 Oct 2025 16:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C184C4A3E;
+	Sat, 18 Oct 2025 16:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760806196; cv=none; b=sK4O8EIpC/4a14nSrDg/vBOLdjlt9G0OVkIQYzkdpUka6VwxR7ZrA2TkxbHMXCORDx/DrRJwoBGQwSfhPtBfKqsxeLJItTxgmFGUDYbHfBuGfzyQgL/Wprl4vfL4h7gOFq2DNnW8Q2g4v6IAGv6kRSK/tADemT1f1gGr9HTerhw=
+	t=1760806250; cv=none; b=IjF4Ogy2mtOXQLbkclhSfowr33nEybxUNs9pUPeeP1G22BEKMOZObYFR851v5Rb+9HeHV2/qPJBbDt64RlE7ssSp1xo/Z7QRP7SDBboA6xU3cyOS5pebkQtw/nwy3+6Ub6eTddtShNmZCvrJFaOYwm/P33isw6rf6yrnvcOyNSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760806196; c=relaxed/simple;
-	bh=f8gC70FCc5N3kSFrstUNj4iCHhGav7+nLwm07B2ZIKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NrF35+6P9gTHYjDSMJNNQpCMKyhzv4tG2BlqIV1SZ2lPcondfn7mkhBWAyWiurr06szbbRCEopcFePUwt0Xd9pAyDf1JJmD/zAGCY7mmMvoJq5ygWSDIDX+P4YV7SXyPm78JebyI3/7LOuroXDssKt+9p79/4FEdKi7nvRzaIqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYtZSTuo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 743FFC4CEF8;
-	Sat, 18 Oct 2025 16:49:54 +0000 (UTC)
+	s=arc-20240116; t=1760806250; c=relaxed/simple;
+	bh=zwWgqI+OvE4zI08V7mXmQ7zQ8brvkoj9JjjUwiSA2P0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PbvhJGoXraCNuGqwBG7QIODMoFR10FjzfWM6uD8shPWj2dvuVHcfue/9pDuekqeuG0UoBRlqSvpqtMAsduh0ICiOQozjYH6GMtIIorveUuBIrgCz5j61LDubDJWPYqnonJqzYjo5KX6VP5B0WLf9dLTf1fgVw7WNeGmPT+fK4wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLTMPtNM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B40C4CEF8;
+	Sat, 18 Oct 2025 16:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760806195;
-	bh=f8gC70FCc5N3kSFrstUNj4iCHhGav7+nLwm07B2ZIKE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cYtZSTuoITaYKdjbYKGiySiEWUMvyOUpd/TShUe+ihBLavej7snj0KL2XoA4uT8Z7
-	 Jxuov4r5G360nzymB+6OPLVE6KsauahOIHbEiUU9v81aOvXUW79ENGxyuq5lU30y9N
-	 BSYBTq3xBtsscwunUuP4GQfHA+qlgH4dijpuK0qCyE/R2G3QfsExLtavouBSEG+dY+
-	 E1CnO+A0Yh2YOEiBqpNyIuWBVVkHA+pv5JoJL6jdyDp/LcvNntuFb12WHG7B9wn3xj
-	 B217zuaalBt9mAzDPWNj/rL3Be6/UPRPNeoVVlri3kGZWvo/Ptj2eWlpWs6EoH1rQb
-	 bh/+Crsjpau3Q==
-Date: Sat, 18 Oct 2025 17:49:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel test
- robot <lkp@intel.com>
-Subject: Re: [PATCH v2] iio: adc: ti_am335x_adc: Limit step_avg to valid
- range for gcc complains
-Message-ID: <20251018174949.36946cd9@jic23-huawei>
-In-Reply-To: <d5e5e8cbbc9354ca1dd4745253df6cde07822325.1760433015.git.xiaopei01@kylinos.cn>
-References: <d5e5e8cbbc9354ca1dd4745253df6cde07822325.1760433015.git.xiaopei01@kylinos.cn>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1760806249;
+	bh=zwWgqI+OvE4zI08V7mXmQ7zQ8brvkoj9JjjUwiSA2P0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NLTMPtNMOSdnlqzWW1aNl2EF/LT6KYQPDgJ2V4lbS6EpXXJ+DmNHrA0cNfjsRjtCD
+	 KE0yvBaanehUFPEep/WsO2F4mHzx4RVQDp3ZbrxKPbHiE2ucA7UZysDdSiplPBEb2Q
+	 SqBPx07Eou7Az80DtN+JfBWhbX+sw1/B2jWWn5LbNQq53VenCtaSZo+4g/ZUkXEKgD
+	 Q40DO8IvF23aV6gi/uSW/crpgrqAJuw321CYxOy7nJ1BvxxfbYuoVyHKAhr3LNqM+G
+	 3C1abHJ5lT0n3KL7P9fljWrvjvfaux7DNS1dE9qo8CmyyMQBm1O2a0ceLRqokn/RON
+	 CsaUZTcG6y+mQ==
+Message-ID: <febca3a6-9681-4dc5-b254-e011df85a38c@kernel.org>
+Date: Sat, 18 Oct 2025 18:50:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: soc: samsung: exynos-pmu: allow
+ mipi-phy subnode for Exynos7 PMU
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250928-exynos7870-drm-dts-v3-0-bb7d8e570860@disroot.org>
+ <20250928-exynos7870-drm-dts-v3-2-bb7d8e570860@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250928-exynos7870-drm-dts-v3-2-bb7d8e570860@disroot.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 14 Oct 2025 17:12:50 +0800
-Pei Xiao <xiaopei01@kylinos.cn> wrote:
-
-> FIELD_PREP() checks that a value fits into the available bitfield, add a
-> check for step_avg to fix gcc complains.
+On 28/09/2025 19:56, Kaustabh Chakraborty wrote:
+> Add Exynos7's PMU compatible to the list of nodes which allow a MIPI
+> PHY driver. This helps defining the phy node on SoC DTSIs such as
+> exynos7870's as it has a compatibility fallback on Exynos7's PMU (and
+> others in future if support is added).
 > 
-> which gcc complains about:
->   drivers/iio/adc/ti_am335x_adc.c: In function 'tiadc_step_config':
->   include/linux/compiler_types.h:572:38: error: call to
-> '__compiletime_assert_491' declared with attribute error: FIELD_PREP: value
-> too large for the field include/linux/mfd/ti_am335x_tscadc.h:58:29: note:
-> in expansion of macro 'FIELD_PREP'
->     #define STEPCONFIG_AVG(val) FIELD_PREP(GENMASK(4, 2), (val))
->                                 ^~~~~~~~~~
-> drivers/iio/adc/ti_am335x_adc.c:127:17: note: in expansion of macro 'STEPCONFIG_AVG'
-> 	stepconfig = STEPCONFIG_AVG(ffs(adc_dev->step_avg[i]) - 1)
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510102117.Jqxrw1vF-lkp@intel.com/
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-Given it is a false positive warning I've not queued this up as a fix, but
-rather for the next merge window.  If people think it is more urgent that that
-then reply to let me know.
-
-Applied to the togreg branch of iio.git and pushed out as testing to see if
-we get an autobuilder warnings.
-
-Thanks,
-
-Jonathan
-
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
-> changes in v2: use '<=',adc_dev->step_avg[i]'s max value is STEPCONFIG_AVG_16
-> ---
->  drivers/iio/adc/ti_am335x_adc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
-> index 99f274adc870..a1a28584de93 100644
-> --- a/drivers/iio/adc/ti_am335x_adc.c
-> +++ b/drivers/iio/adc/ti_am335x_adc.c
-> @@ -123,7 +123,7 @@ static void tiadc_step_config(struct iio_dev *indio_dev)
->  
->  		chan = adc_dev->channel_line[i];
->  
-> -		if (adc_dev->step_avg[i])
-> +		if (adc_dev->step_avg[i] && adc_dev->step_avg[i] <= STEPCONFIG_AVG_16)
->  			stepconfig = STEPCONFIG_AVG(ffs(adc_dev->step_avg[i]) - 1) |
->  				     STEPCONFIG_FIFO1;
->  		else
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> index f0fb24156da9b8980dcfd5339ae75f12a71cf6d6..9293c5eeaaedf1704a48c19226d35d183d34fcd1 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> @@ -172,6 +172,7 @@ allOf:
+>                - samsung,exynos5250-pmu
+>                - samsung,exynos5420-pmu
+>                - samsung,exynos5433-pmu
+> +              - samsung,exynos7-pmu
 
+This should be rather exynos7870, unless you are sure that all devices
+compatible with exynos7 (see the binding) have it. If that's the case,
+please add such details to commit msg, e.g. which devices have it,
+except exynos7870.
+
+Best regards,
+Krzysztof
 
