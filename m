@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-859437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF52BEDA71
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:29:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C429BEDA7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A72119C1E27
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:29:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 789174E8AE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080032848BB;
-	Sat, 18 Oct 2025 19:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC0D27E1D7;
+	Sat, 18 Oct 2025 19:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZTkFSwGR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GmjSKpoH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4AD1D618C;
-	Sat, 18 Oct 2025 19:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D571EA7D2;
+	Sat, 18 Oct 2025 19:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815756; cv=none; b=aJlSczgNm8J/5tIBtSNNNzNN6mjzWbMhROjkCa54+G6hvnOicSHa5ds1MZ2B4FQZdZtzhZ+d7c7x9iTdlhJAo/HFmXaHKha0L2TrnP0RC4Ab42SxeW1wFL0zLIPFwqrJa0Zd9NsAFvNJZgxP1XEepraNwIfKmn1Z/GYvegEqSLc=
+	t=1760815822; cv=none; b=NA+E7MgqJyqMu1mKFEAbQ7HkhMQI3PnltMid2wIhCN9n1NbiYg18Kn+wJl+I40euiyqpFtcyp3t7iJ4IKk0+v8jRyCsPhGz3Pg7BnYh0YgibkfQhR8d+kYf/Oqtm2fXhYjjygS6p+kbSdW4zqnaTTO/DR7rlzul9oQUQH2jnK6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815756; c=relaxed/simple;
-	bh=F4LIk+jkm6W3jPjl02rMXdfHGcgnHt5kO4c3gZniHPs=;
+	s=arc-20240116; t=1760815822; c=relaxed/simple;
+	bh=Te2nZ0oEObsS/v6p5DTbuHeyiExqTwAbCG9MPQyDdjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=chMuB+SX1B/kHwM/5jqrEu40n52+Yjf4SH/UfuBkDbb1cAec22jIHtz43wNKM7U1mOTFjS4zHXCV5AfmmlFOEuBf3lEJNElPHpQ9arZE1k8aEIfPbX/ZXBx6i5M8VGE/ic7y5K7lgKCvkBstZzz5H9HGlYd6/q6aKAAfKFL/JwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZTkFSwGR; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Disposition; b=kiZEsrpN3pgRFgCt5t5ZiszmxJKISCiwl934wNwqUyZrjVegHWw/rKdmcWlDigXYLuLNMBXRfuXLJL6Sjmz9Zt/o9WHTUAKJqEzpJeKKCCA2Z//ijtFTkwVrcVoj3vGpo17Y6nIY2MPxl2/YlODSEkzuZdHdNZ0zPlS95dpwZ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GmjSKpoH; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760815756; x=1792351756;
+  t=1760815821; x=1792351821;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=F4LIk+jkm6W3jPjl02rMXdfHGcgnHt5kO4c3gZniHPs=;
-  b=ZTkFSwGRrB8OtXj06o9hqeUqQhqjKys7oTHBwXxuGL/a/SBQDfmOH7V1
-   HC4lWtiqui2JzfbKeWRcjAQ9ZLiV163PdcLdfaghfmzgz8khQ928RiErb
-   u7eJjjWwP6x4TrqXy6MzxpESISmreH6jMnhu2Aifsd7DnndQCD+fVlkgD
-   Q++tmIPrk2Jkp5ks0J7ml8T+dsYT82RaCQg0A/WyZluuaRaGmA+d8+wYx
-   X2hwDmVqYg6WOdMIhh3IayB/co6IN+6+3xDuGzd2czpO9WipRVCIBYp3f
-   SYb8jKuz/FY7skRrr8ZxJfwRnMDJ/R+ZW2soq3+aPlPCf8TlNMOQpMhaX
-   w==;
-X-CSE-ConnectionGUID: GGMrRYadSOaa3aZWsFPidw==
-X-CSE-MsgGUID: K7itmjRmQVmGqLSyj2xvVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62914992"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62914992"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:29:15 -0700
-X-CSE-ConnectionGUID: cWemEssqRnOJ4cNJ38TGCA==
-X-CSE-MsgGUID: +cyA2ftIQuSg4VdjQFp5wA==
+  bh=Te2nZ0oEObsS/v6p5DTbuHeyiExqTwAbCG9MPQyDdjA=;
+  b=GmjSKpoH/a5s5LaqCegBx9pKukA9vV2lQLq1MW4umZKb+XJYM2rhCziP
+   roVWKiFlnejkamdw3rRGkmZ0zNkrx2BTtreVn0WKbVfyAAYqjxaGe/n1p
+   GN36cTrCM7nY5McOKAWgEUpuuiV6PajDIXptxSzm+/E4ZB1T9nI1XJ+5o
+   luqKjGWAdxnaN8R6dxL3Pvu1l1XeKsBsdXZX+drE4+CdODoscEU9eExL4
+   SLAtvC0TmqhXqx1MZ8mDp3i8TzW1ycr0QWm2316TxYNgkWDnr3uK2EcBx
+   eO8mmQVPfok7GmON1hYghpVdfTtImaPjJBfOJbVj4bRt7wfoc379fLo02
+   A==;
+X-CSE-ConnectionGUID: nm+QFIY4SF+qBaDCMhl8uw==
+X-CSE-MsgGUID: jk2b2IqBQxWLC7XdVItiCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62209271"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="62209271"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:30:20 -0700
+X-CSE-ConnectionGUID: q7ZRlu7UTJqqA1DbsYmARg==
+X-CSE-MsgGUID: Vu5vx8+1RHu2OgbewwJIQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="213969835"
+   d="scan'208";a="188087098"
 Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:29:11 -0700
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:30:17 -0700
 Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vACc0-00000000xXh-1YTV;
-	Sat, 18 Oct 2025 22:29:08 +0300
-Date: Sat, 18 Oct 2025 22:29:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/9] software node: increase the reference of the swnode
- by its fwnode
-Message-ID: <aPPqhI7KQMnidFc5@ashevche-desk.local>
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vACd4-00000000xYO-1p2c;
+	Sat, 18 Oct 2025 22:30:14 +0300
+Date: Sat, 18 Oct 2025 22:30:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 4/4] regulator: ltm8054: Support output current limit
+ control
+Message-ID: <aPPqxsU43npNC_v0@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,13 +88,26 @@ Content-Disposition: inline
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Oct 06, 2025 at 03:00:17PM +0200, Bartosz Golaszewski wrote:
+On Thu, Sep 25, 2025 at 09:54:19AM +0200, Romain Gantois wrote:
+> On Tuesday, 16 September 2025 16:27:25 CEST Romain Gantois wrote:
+> > On Tuesday, 16 September 2025 15:19:16 CEST Andy Shevchenko wrote:
+> > > On Tue, Sep 16, 2025 at 12:24:09PM +0200, Romain Gantois wrote:
+...
+> > > > CTL pin voltage */ +	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_V;
+> > > > +	do_div(vdac_uV, priv->max_uA);
+> > > > +
+> > > > +	dev_dbg(&rdev->dev,
+> > > > +		"Setting current limit to %duA, CTL pin to %duV\n", min_uA,
+> > > > (int)vdac_uV);
+> > > 
+> > > Why casting?
+> > 
+> > This one is indeed unnecessary.
 > 
-> Once we allow software nodes to reference other kinds of firmware nodes,
-> the node in args will no longer necessarily be a software node so bump
-> its reference count using its fwnode interface.
+> My mistake, this cast is required to avoid a compiler warning;
 
-Same remark, add a comment or expand a kernel doc, if exists, to cover this nuance.
+THen provide a proper specifier instead. Casting in printf() is in 99.9% cases
+just a pure mistake.
 
 -- 
 With Best Regards,
