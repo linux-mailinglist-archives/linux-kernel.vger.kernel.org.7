@@ -1,74 +1,102 @@
-Return-Path: <linux-kernel+bounces-859238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDDDBED189
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:24:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A77BED135
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E98B34EA9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:24:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32C284E1C5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400572D8370;
-	Sat, 18 Oct 2025 14:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992A81A9F91;
+	Sat, 18 Oct 2025 14:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HVOXcCeC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U33tU0ss"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E02C2FBE04;
-	Sat, 18 Oct 2025 14:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3991DE4FB
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 14:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760797333; cv=none; b=PRe48qgidWTbWX3tqn6flp2/Z8gk+sAijEOBefxP4hMmadMfn8EmwEfPG4xBt8l5xqesu6bNTMJtJCnnsJj8HjwRlp5Igq215QqYOwLUPcUziiZodThr5z5T3PO6IcaDSQbd7F+V8OER0K7/190RVRNq2SSpXdWeqeZF7X1G2oY=
+	t=1760797298; cv=none; b=Erec9wAasNqGD9x3BkeeG93OIv1n9WgxiHYOm5hPiRtZNAuHjHkrZfxWssX7jWONXKgt2hi926fSAbsvW0eDP05w0VhouWQKucUCskdhDmVVJLTTxiSRWoB3I9Y76uS/5qYCxOwkzhrnt4XB6i1aQ7HjZ8hJ1I6NBPHFyTbSWV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760797333; c=relaxed/simple;
-	bh=t/dFdhvyuz66Bza7SgTKVPfg4WTopgWxJbZsaxCOTOg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WhsjhItCyin0NZeB8+gsIpABLrIonvdKNSQeWRriq6MoMLdbLT05APCf1CWWdddZvz3WxZsVo1S2+iBZ8Kd70BqUT1CbJApkMskz8Rg0msrPr3CdV8gCJVkSrVhOXT1AgCeOc/i/gHEv5karyDgwarRDat0XMh7W6O9KZmYWdrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HVOXcCeC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760797329;
-	bh=t/dFdhvyuz66Bza7SgTKVPfg4WTopgWxJbZsaxCOTOg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HVOXcCeC6R/8O24N4CWmc9cPxh/HOTY8T1lEZ56rfwNuZNV6qkVt4g5QkcXOYOu13
-	 m3ZEBuNIinO/as+SRtiGyRaV6hnWp00IVPUiolKC1so4lJX4eHNkQHQnrtXn41Ef+s
-	 SPcH5K/tEEs9Rl+8UWFzCfWzfv7Av0JRwMUs5+ymv2hzn4Wc0ASK1sbfJnuhg26QSi
-	 rYhIyLIjYHVWkWoJBg7a1XVBYJC4TybxeSBZmr1nro2QZuGNN/HQtk8F74s6Yxyckw
-	 GfpocVSnk3Hzp4DxqSmG6wQIl+8H7+x390IT05vW9omPPUHPsTHrRVzXVAGwbdKfdB
-	 YiZiy1/E87TZA==
-Received: from mt.tail9873f4.ts.net (unknown [144.48.130.189])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3786A17E13F2;
-	Sat, 18 Oct 2025 16:22:07 +0200 (CEST)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1760797298; c=relaxed/simple;
+	bh=UFACQNUcFGNUr3LbQlJ73ptXjK7M7y+BaajbPTYSAJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZL7n1cj1QVoYViNAJssfZ/l4cu7hdkmKtJXlRNu7YO9i9xYs2uiSGtykP0WP8amsBVI9iMbz64568PgzaO7oL4MeslGoJ6NoebHU2fWiI3Q5W7JoQmWybodp6IIEY4NovVbyazbXAJuZPddH5IyfitiDNRggmTKeyeq6Pb4CI3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U33tU0ss; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-793021f348fso2686913b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 07:21:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760797297; x=1761402097; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wdkh50aQpwH1ME0yDbaQNHLQF1BCMimilG3lPugeXHw=;
+        b=U33tU0ssJpu6X3LCm9p+k1g4w+oJNg1Upb/ixdRFZIBm4yRi3sgo3Nu60N0dePr2eT
+         7JpSHXZ2kNeEDvRgsnL8+arbGuUBBQLtUvqcTxRGt78kJpGVXbTiE9m5vTKP5ZOlrumE
+         rLC1d8B7d0lfy2Hs0JXV85aV8BqBNgwoHfUk64qxPRTMvGtn1zE01OynS8Ie/rhHGjIJ
+         cLSTUAbqJK8gPuGE+MrIHhAiNq+oulUbddLifPqhX/BQnDcw7s2jlkIcGaCe/eC76uXm
+         faD8LkBQn03tq/PebNzbvZdHg0wL2Es+1ItlCBDy9HSW+rStQJ5KL3GQwCE0ru50V4qM
+         hbEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760797297; x=1761402097;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wdkh50aQpwH1ME0yDbaQNHLQF1BCMimilG3lPugeXHw=;
+        b=U+ECePDlWyEWKyoPA36SLgKMVLldaGe2zCdGDWJbYdfsm6DEWdz8YooHVISz1s3kQj
+         8gZNykEj+z8KGZnVMHNbfCyIBhfpmd799/SXyl7vcOiM22seQSRn52mkvYXemBenmdJ4
+         V8ND4tq7icdYENx5/4B1nmXqLDVxESRKH1UZ7xlUJftFVH0OekWVPfvg55uH0ZK6ygj3
+         /nqeQN9HxYi4l3NT1I3jrnWUngQ4BBgHwLfBDqFkKUDZAFjPRSdR5DnjUhHeFuRd0MV/
+         IT7P7rbYFrMMSOVT1sDEQ3NdP/w0u7jSWEdE6c3x+Vl+sk5sWGzjvbuntZ1Z7FIQxTAM
+         p9FA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdK6Ca64+IjWgruo0soGVEOl5W0w44NTFS6oBozy6YG59Xpj3ofXmrO3TTXSTBWWheCJLOZ3x29TIO0xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3bFh9tH5qFjeTcAxvUGixInHaTVJnzNh6wvt5nqU8Ro0zcRAU
+	iF+Kpnl0wiojIHFbXoQyRv01Reu4BHeOP/TJdqBmpfGq1JIuGUJP5mJM
+X-Gm-Gg: ASbGnctqWx6CKaZgHSjgNA/Pv0nIOwB8j/K0YEwWJC8l7NylSZoMJPEvD/T39XjM9gX
+	fGBGmks435KTzkLh+G7wxamz7D14CVvzUI7mH1B9uzGh4qZxHcSk8XI3Qdz3i0MH24BDpo5aB4T
+	hZDfoV9bIeS6KtIdN4xUcDmNJynDZBqGf8/9W0tCtsJbE/qIXYIRApyAcK0+JWYDsPPymfEuUZp
+	BdfiOTtjzVb9oOAAKFTEgcR+Yf3L3lQ7filwxSL55KyEVaWWxfq3t+2CsBBRpfM6xkLXPwtO/zf
+	omEqoGWNXp7twnioW1RIBwKXV9QPGoaCHZN2vbgBRBwVZj+zcnK5X3S3eD8zrpgJiQ1nMQ99TmD
+	ng4uCTxVylaP///2JolIEFKM53Qoi9Nsp9hXfntlgKBuwv0osprYGoR4DSXjFmTvo3vSvh+zJ7m
+	mP
+X-Google-Smtp-Source: AGHT+IFwjUau4e7L7ur+mPitSfhfWL2QhmxUZ49vo3pktk9QgW3ghR615Qec4S+Rounyw7PCrdwbOA==
+X-Received: by 2002:a05:6a21:6da1:b0:324:b245:bb8e with SMTP id adf61e73a8af0-334a856e811mr11163187637.26.1760797296653;
+        Sat, 18 Oct 2025 07:21:36 -0700 (PDT)
+Received: from 7950hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a23010d818sm2913589b3a.53.2025.10.18.07.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 07:21:36 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: ast@kernel.org,
+	jolsa@kernel.org
+Cc: daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	leon.hwang@linux.dev,
+	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	superm1@kernel.org
-Subject: [RFC 4/4] PM: sleep: clear pm_abort_suspend at suspend
-Date: Sat, 18 Oct 2025 19:21:07 +0500
-Message-ID: <20251018142114.897445-5-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251018142114.897445-1-usama.anjum@collabora.com>
-References: <20251018142114.897445-1-usama.anjum@collabora.com>
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH RFC bpf-next 0/5] bpf: tracing session supporting
+Date: Sat, 18 Oct 2025 22:21:19 +0800
+Message-ID: <20251018142124.783206-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,88 +105,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Clear pm_abort_suspend counter in case a wakeup is detected during
-hibernation process. If this counter isn't reset, it'll affect the
-next hibernation cycle and next time hibernation will not happen as
-pm_abort_suspend is still positive.
+Sometimes, we need to hook both the entry and exit of a function with
+TRACING. Therefore, we need define a FENTRY and a FEXIT for the target
+function, which is not convenient.
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/base/power/main.c | 2 ++
- kernel/cpu.c              | 1 +
- kernel/power/hibernate.c  | 5 ++++-
- kernel/power/process.c    | 1 +
- 4 files changed, 8 insertions(+), 1 deletion(-)
+Therefore, we add a tracing session support for TRACING. Generally
+speaking, it's similar to kprobe session, which can hook both the entry
+and exit of a function with a single BPF program. Meanwhile, it can also
+control the execution of the fexit with the return value of the fentry.
+session cookie is not supported yet, and I'm not sure if it's necessary.
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index bcfb170baca63..481744e7d9688 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1627,6 +1627,7 @@ static void device_suspend_late(struct device *dev, pm_message_t state, bool asy
- 		goto Complete;
- 
- 	if (pm_wakeup_pending()) {
-+		pm_wakeup_clear(0);
- 		WRITE_ONCE(async_error, -EBUSY);
- 		goto Complete;
- 	}
-@@ -1872,6 +1873,7 @@ static void device_suspend(struct device *dev, pm_message_t state, bool async)
- 
- 	if (pm_wakeup_pending()) {
- 		dev->power.direct_complete = false;
-+		pm_wakeup_clear(0);
- 		WRITE_ONCE(async_error, -EBUSY);
- 		goto Complete;
- 	}
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index db9f6c539b28c..74c9f6b4947dd 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1921,6 +1921,7 @@ int freeze_secondary_cpus(int primary)
- 
- 		if (pm_wakeup_pending()) {
- 			pr_info("Wakeup pending. Abort CPU freeze\n");
-+			pm_wakeup_clear(0);
- 			error = -EBUSY;
- 			break;
- 		}
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index aadf82f57e868..1a4a5c3c64970 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -350,8 +350,10 @@ static int create_image(int platform_mode)
- 		goto Enable_irqs;
- 	}
- 
--	if (hibernation_test(TEST_CORE) || pm_wakeup_pending())
-+	if (hibernation_test(TEST_CORE) || pm_wakeup_pending()) {
-+		pm_wakeup_clear(0);
- 		goto Power_up;
-+	}
- 
- 	in_suspend = 1;
- 	save_processor_state();
-@@ -661,6 +663,7 @@ int hibernation_platform_enter(void)
- 		goto Enable_irqs;
- 
- 	if (pm_wakeup_pending()) {
-+		pm_wakeup_clear(0);
- 		error = -EAGAIN;
- 		goto Power_up;
- 	}
-diff --git a/kernel/power/process.c b/kernel/power/process.c
-index 8ff68ebaa1e08..7a278e049940c 100644
---- a/kernel/power/process.c
-+++ b/kernel/power/process.c
-@@ -67,6 +67,7 @@ static int try_to_freeze_tasks(bool user_only)
- 			break;
- 
- 		if (pm_wakeup_pending()) {
-+			pm_wakeup_clear(0);
- 			wakeup = true;
- 			break;
- 		}
+For now, only x86_64 is supported. Other architectures will be supported
+later.
+
+Menglong Dong (5):
+  bpf: add tracing session support
+  bpf: add kfunc bpf_tracing_is_exit for TRACE_SESSION
+  bpf,x86: add tracing session supporting for x86_64
+  libbpf: add support for tracing session
+  selftests/bpf: add testcases for tracing session
+
+ arch/arm64/net/bpf_jit_comp.c                 |   3 +
+ arch/loongarch/net/bpf_jit.c                  |   3 +
+ arch/powerpc/net/bpf_jit_comp.c               |   3 +
+ arch/riscv/net/bpf_jit_comp64.c               |   3 +
+ arch/s390/net/bpf_jit_comp.c                  |   3 +
+ arch/x86/net/bpf_jit_comp.c                   | 115 ++++++++++-
+ include/linux/bpf.h                           |   1 +
+ include/uapi/linux/bpf.h                      |   1 +
+ kernel/bpf/btf.c                              |   2 +
+ kernel/bpf/syscall.c                          |   2 +
+ kernel/bpf/trampoline.c                       |   5 +-
+ kernel/bpf/verifier.c                         |  17 +-
+ kernel/trace/bpf_trace.c                      |  43 ++++-
+ net/bpf/test_run.c                            |   1 +
+ net/core/bpf_sk_storage.c                     |   1 +
+ tools/bpf/bpftool/common.c                    |   1 +
+ tools/include/uapi/linux/bpf.h                |   1 +
+ tools/lib/bpf/bpf.c                           |   2 +
+ tools/lib/bpf/libbpf.c                        |   3 +
+ .../selftests/bpf/prog_tests/fsession_test.c  | 132 +++++++++++++
+ .../selftests/bpf/progs/fsession_test.c       | 178 ++++++++++++++++++
+ 21 files changed, 511 insertions(+), 9 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fsession_test.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fsession_test.c
+
 -- 
-2.47.3
+2.51.0
 
 
