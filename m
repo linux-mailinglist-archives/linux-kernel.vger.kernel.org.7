@@ -1,237 +1,138 @@
-Return-Path: <linux-kernel+bounces-859264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81F1BED299
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC439BED2A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 84FAC34DC2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:32:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ACC5234DD9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBDA221DB1;
-	Sat, 18 Oct 2025 15:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ADudj/tG"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4211E22576E;
+	Sat, 18 Oct 2025 15:35:10 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8004220687
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A68F354AEE
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760801538; cv=none; b=gaNxMbaI5hdj7hZzZ4N5O7Pmt21hYN+GD/4v0Vh+0yJf8/ZSOzOZRozYQOgxCCSrt2fXNZlqVqdyErlgrSxHizYzBz54cvrB6HrT1v3hq5HN5YSRQ1ftAxr926fIWgwMMSSs4bEdYdmTdSfdv54u5+BjXK9VBxOIwUOKWbtYYlE=
+	t=1760801709; cv=none; b=nDX6L4SrEaQ+D6ZmnTYbtU6bjPHhYq6Irfd8bi9nK6nWWYH8lBIIesTcShbnYW84GY81hrnmMbgFrTvseVfgL3GfHyekP9QoLPqrfT1ADBws9FO8tV39vNmSzkdQSEYzVH9IwyzUkbhUBpoA8AOYQ0yq8DlqsLr+mopJGxZXjS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760801538; c=relaxed/simple;
-	bh=FkkE+E0KCZbN9pPmPAsIge+ER3LeTZ59UTmWbQqcSik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCvdzSeiaV+BsRFQFIP42Xk6329dlsCvg7Uc51siBNx/lhuORDKsloWTHkEWqjLlBP9ofuyWj4Sq053hGbNGgWCkC4ovilQmLi2lJoKYph/m+dZq8Plu3Egy74GGtxTPHsA5jx47trzgUgy1el0nAkwnvgyIbZHsJv8Bk4FfDv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=ADudj/tG; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63bea08a326so3984026a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760801534; x=1761406334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9VsDvzwluOWLRYb/lK+lEAn58q7ZQz+5TWTRfSTNft4=;
-        b=ADudj/tGpYFC4+/R3btD8jyWK8QUF4l/RcX9mWl+KrkphvlmTdYxgnrdGB4M7vuT9V
-         USsW4NUIevX/zyLTmwMvhDUOV6mW6LiL4nddlo5zaTKeDJLtJcvVkvJxwREL1119gZgT
-         TZGDKcIy+kWI5tusuOLbnMvUHLMMd7WxgN8So47B9rqEqUoBZaxb+TafFiKQOEKrk/4H
-         CoRHy7CE2Al+2rCEx1NJ1GDi/CHVI6XNPer8zS1CBD8LzFvato5BeBlroDIrSQL4FGGO
-         Qi+Xj3+T0z72Yfy10QIgCXsWj1JSDTwof71OJKsRoNN0N1ATse6IDOq/GFvhckr94ZcB
-         pPLA==
+	s=arc-20240116; t=1760801709; c=relaxed/simple;
+	bh=IR8ajtBRjRXYTpTxGxpisOBVKOIv6iBNlN54bjj+wqs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ANoK9fI/XHkmeVXiqwdZ8oPK1qLKO3LVnHUB4PPQCY3aeuk4T9VUv2LQhmtltx+DQAV+JlS+8CIR59pLeaE2fJtmclysrK3cwywKG7zeOvdUiDpzULpEsj1qFO+EUu3VLnL0pbEV5svTsE7yut9/RsdGcfauKdyNm2noQQLNoXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e7ece2ff4so425355639f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:35:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760801534; x=1761406334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9VsDvzwluOWLRYb/lK+lEAn58q7ZQz+5TWTRfSTNft4=;
-        b=CAiA75vvykSqGyeaQt7AUrYo4gzqA/jgkSMSWFgnZXDxtmUurUxH6u5F26pSp4tRe+
-         25dSb20TUZKWF8UQoyvAqymOI2BfP6hUV8Q4lXINiUqGpdEG4pj5P9FMtRZbsTphTHN9
-         Zqkkf0usA2gpW8Fm3J+XJTUIzE0NnmL6vq+Yt1dusrYAZBBm3Dd7g1wrurmqHPUmsF/Y
-         mYgcU0CIwGx6C7VgAOIDkLmVFpy8vh3r9sgsLP/975HFYMIJS0EUofgOBtnUrsdzu6Sa
-         noVWJb3wasPWCAcUhpTTyvVMU81EPk77PLVy5dfJpvajtzzqEgWSNs6aCSIetebnqMgu
-         lMRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVe+eDv8Caji6MDeHo5rHxZMXid6TGjwuYN1lLHyL0TjnQdN5yJOfts8eG/EvV0CatcRSI/abOPDFqg5qI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGElrFhK/EN4Hmq3QPu1QhUyu/V/pYMeS5sk1zSmI9nbX9unyj
-	abaer6854DNOxByZSDWzAXNJwFuqU63tmMSgqKt9UA24aUiuLBLTFRnjmYmxSF7sDXOpPyj85Yb
-	O+e0aEHgeC+PU4rhnt1HuRZwSyvhakLjv83XRSYRs/w==
-X-Gm-Gg: ASbGnctrT+92uCp96rHa0qozPmt/r/yozVnVBxn9DO15C4tc/XGvVpS9N1rfaIc/ioz
-	Yni7OGPRlCy6bUfABR2QPrF3fSmzuYVESfVQSCxitFswx9fiNISduOkSrC+DjPNiaE4PDsSnG+4
-	5KJLPLaeXKMfpXXCSeDKeJc9L43/wz1uxhM4SKmlzoTAE3+9GgpEisrmMG85UEkiMyBRmVIersS
-	yZp4XLEPXluh1SrjC3VaqquwqzQ9511FdXjVKYV8M4fx0y6pQ2SxWWnoLOsipZbW6PtDysiePFX
-	udX3exY7GOH3SecQ
-X-Google-Smtp-Source: AGHT+IF3cipF6bc/oqKvCyt+BiwXJFIE1+mPSjPv6l90gLXlAbCAIy8PMbygYaIUPYg1G8/+J8KtWKzhzNqhtzHIHeY=
-X-Received: by 2002:a50:c949:0:b0:637:e271:8071 with SMTP id
- 4fb4d7f45d1cf-63c1f6d5dd8mr5412618a12.27.1760801534100; Sat, 18 Oct 2025
- 08:32:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760801703; x=1761406503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+lVIxpu5egdc6nyJOmk5bTwYilCvcr30Ix3idtjl/w0=;
+        b=fVhY5xCoO3TiREiqj4b6Dyh4ZueFqj1mEU1rxBE2EI2KDei3WJm21mWeuKsowE9oZ6
+         ynNd9FbRjKAxO+wKHC7Ix4IhltfcfkiJYurkOIU3OuMG2RIhPLEmArYbW6PhmnICIq4L
+         qCF1sIbc8urx14qxcqgoc7yFNqi+wlkX8IUX1Srt5AmhYE9O+W05EuKAjSJVBfB/3DQE
+         dRjdwHGCQGy305yKpMPG3YbPgloZ7p4jU7HDLt/PfN/OlnDbdAzHfNFz4+PRMaIigL3S
+         vJvuLnk3HRuYHZdqh4X7dPjO5R55G3GF46DmcoDJqQUx96NrulS4HuFG9JAiq0neYMUK
+         ZQ1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUgh8QkJ8geyurb3r6VNGju9npZGku+7vIX4fiHLeCnJ8FHgF3l84FIBJp6JEBbrlQcjpvEe0n7RIQ68Fg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAbi4bwVO166+c8Vf1PvGNDJdMmd2OI9BLLl4U+99TKOtOF5T
+	PZap6YN7y32cOGFpzH7DRfT7lbpID3t5nsTvKODTZiE4NMMAojcVEUrWc+276Z57q5OCq0/kEu9
+	aAeZ60LLDAXIi8P/3FlRFMpMys+SYeCBWgMIkzRKBiyPpawkKF/tNCYT5PxI=
+X-Google-Smtp-Source: AGHT+IHPPrOn7MaPqFDkCC5qdGIp1AcGiHlf4izcbCz8LcUaIcABH8BpzsjQ7qV5b4gyMVRnFchevb810z3CQIOJBITWi+rh+f33
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015053121.3978358-1-pasha.tatashin@soleen.com>
- <20251015053121.3978358-2-pasha.tatashin@soleen.com> <aO9ZiERHff7vQiBL@kernel.org>
- <CA+CK2bA5Eyz6TUMTy3pa5HBvZ7KkiHX3EHn17T=d6LX_X5i3bg@mail.gmail.com> <aPEqDfajAlNnhoeN@kernel.org>
-In-Reply-To: <aPEqDfajAlNnhoeN@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sat, 18 Oct 2025 11:31:37 -0400
-X-Gm-Features: AS18NWAgHFUQgLd3GmKT5ixSVjoVgRSpizTftBZSz0idzsJU9vI8LHQCq5QGRPk
-Message-ID: <CA+CK2bDkc9POgvZpHFWzTsbic6UjExU+YN5SO=D-ODaHQRMTFQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
+X-Received: by 2002:a05:6e02:1c22:b0:430:ab29:e75b with SMTP id
+ e9e14a558f8ab-430c52bed72mr118264845ab.17.1760801703269; Sat, 18 Oct 2025
+ 08:35:03 -0700 (PDT)
+Date: Sat, 18 Oct 2025 08:35:03 -0700
+In-Reply-To: <20251018151148.411120-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f3b3a7.050a0220.1186a4.0520.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (3)
+From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 1:23=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Wed, Oct 15, 2025 at 08:36:25AM -0400, Pasha Tatashin wrote:
-> > > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > > > ---
-> > > >  kernel/liveupdate/Kconfig                   | 15 ++++++++++
-> > >
-> > > Feels like kernel/liveupdate/Makefile change is missing
-> >
-> > It's not, we already have KEXEC_HANDOVER_DEBUGFS that pulls in
-> > kexec_handover_debug.c
-> >
-> > That debug file contains KHO debugfs and debug code. The debug code
-> > adds KEXEC_HANDOVER_DEBUGFS as a dependency, which I think is
-> > appropriate for a debug build.
-> >
-> > However, I do not like ugly ifdefs in .c, so perhaps, we should have tw=
-o files:
-> > kexec_handover_debugfs.c for debugfs and kexec_handover_debug.c ? What
-> > do you think?
-> >
-> > > >  kernel/liveupdate/kexec_handover.c          | 32 +++++++++++++++++=
-+---
-> > > >  kernel/liveupdate/kexec_handover_debug.c    | 18 ++++++++++++
-> > > >  kernel/liveupdate/kexec_handover_internal.h |  9 ++++++
-> > > >  4 files changed, 70 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> > > > index 522b9f74d605..d119f4f3f4b1 100644
-> > > > --- a/kernel/liveupdate/Kconfig
-> > > > +++ b/kernel/liveupdate/Kconfig
-> > > > @@ -27,4 +27,19 @@ config KEXEC_HANDOVER_DEBUGFS
-> > > >         Also, enables inspecting the KHO fdt trees with the debugfs=
- binary
-> > > >         blobs.
-> > > >
-> > > > +config KEXEC_HANDOVER_DEBUG
-> > > > +     bool "Enable Kexec Handover debug checks"
-> > > > +     depends on KEXEC_HANDOVER_DEBUGFS
-> > > > +     help
-> > > > +       This option enables extra sanity checks for the Kexec Hando=
-ver
-> > > > +       subsystem.
-> > > > +
-> > > > +       These checks verify that neither preserved memory regions n=
-or KHO's
-> > > > +       internal metadata are allocated from within a KHO scratch a=
-rea.
-> > > > +       An overlap can lead to memory corruption during a subsequen=
-t kexec
-> > > > +       operation.
-> > > > +
-> > > > +       If an overlap is detected, the kernel will print a warning =
-and the
-> > > > +       offending operation will fail. This should only be enabled =
-for
-> > > > +       debugging purposes due to runtime overhead.
-> > > >  endmenu
-> > > > diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate=
-/kexec_handover.c
-> > > > index 5da21f1510cc..ef1e6f7a234b 100644
-> > > > --- a/kernel/liveupdate/kexec_handover.c
-> > > > +++ b/kernel/liveupdate/kexec_handover.c
-> > > > @@ -141,6 +141,11 @@ static void *xa_load_or_alloc(struct xarray *x=
-a, unsigned long index, size_t sz)
-> > > >       if (!elm)
-> > > >               return ERR_PTR(-ENOMEM);
-> > > >
-> > > > +     if (WARN_ON(kho_scratch_overlap(virt_to_phys(elm), sz))) {
-> > > > +             kfree(elm);
-> > >
-> > > I think __free() cleanup would be better than this.
-> >
-> > Sorry, not sure what do you mean. kfree() is already is in this
-> > function in case of failure.
->
-> There's __free(kfree) cleanup function defined in include/linux/cleanup.h
-> that ensures that on return from a function resources are not leaked.
-> With kfree we could do something like
->
->         void *elm __free(kfree) =3D NULL;
->
->         if (error)
->                 return ERR_PTR(errno);
->
->         return no_free_ptr(elm);
->
-> There's no __free() definition for free_page() though :(
->
-> The second best IMHO is to use goto for error handling rather than free()
-> inside if (error).
+Hello,
 
-Makes sense, let me try to get it done. I actually like what cleanup.h prov=
-ides.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in __ext4_journal_stop
 
->
-> > > > +             return ERR_PTR(-EINVAL);
-> > > > +     }
-> > > > +
-> > > >       res =3D xa_cmpxchg(xa, index, NULL, elm, GFP_KERNEL);
-> > > >       if (xa_is_err(res))
-> > > >               res =3D ERR_PTR(xa_err(res));
-> > > > @@ -354,7 +359,13 @@ static struct khoser_mem_chunk *new_chunk(stru=
-ct khoser_mem_chunk *cur_chunk,
-> > > >
-> > > >       chunk =3D kzalloc(PAGE_SIZE, GFP_KERNEL);
-> > > >       if (!chunk)
-> > > > -             return NULL;
-> > > > +             return ERR_PTR(-ENOMEM);
-> > >
-> > > I don't think it's important to return -errno here, it's not that it'=
-s
-> > > called from a syscall and we need to set errno for the userspace.
-> > > BTW, the same applies to xa_load_or_alloc() IMO.
-> >
-> > HM, but they are very different errors: ENOMEM, the KHO user can try
-> > again after more memory is available, but the new -EINVAL return from
-> > this function tells the caller that there is something broken in the
-> > system, and using KHO is futile until this bug is fixed.
->
-> Do you really see the callers handling this differently?
-> And we already have WARN_ON() because something is broken in the system.
+------------[ cut here ]------------
+kernel BUG at fs/ext4/ext4_jbd2.c:54!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 7268 Comm: syz.3.141 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ext4_put_nojournal fs/ext4/ext4_jbd2.c:54 [inline]
+RIP: 0010:__ext4_journal_stop+0x191/0x1a0 fs/ext4/ext4_jbd2.c:126
+Code: e8 e4 3e 50 ff e9 f8 fe ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 10 ff ff ff e8 ba ee b5 ff e9 06 ff ff ff e8 c0 3e 50 ff 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000b107840 EFLAGS: 00010293
+RAX: ffffffff826f6420 RBX: 0000000000000000 RCX: ffff88802e085ac0
+RDX: 0000000000000000 RSI: 0000000000000361 RDI: ffffffff8d5e2286
+RBP: ffffc9000b107968 R08: ffffea000175b077 R09: 1ffffd40002eb60e
+R10: dffffc0000000000 R11: fffff940002eb60f R12: 0000000000000078
+R13: 0000000000000361 R14: ffffffff8d5e2286 R15: ffff888074bb6bc8
+FS:  00007ff117be16c0(0000) GS:ffff88812646b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555564fe588 CR3: 00000000546e9000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ ext4_write_inline_data_end+0x7a9/0xab0 fs/ext4/inline.c:865
+ generic_perform_write+0x62a/0x900 mm/filemap.c:4263
+ ext4_buffered_write_iter+0xce/0x3a0 fs/ext4/file.c:299
+ ext4_file_write_iter+0x298/0x1bc0 fs/ext4/file.c:-1
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5c9/0xb30 fs/read_write.c:686
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff116d8eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff117be1038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ff116fe5fa0 RCX: 00007ff116d8eec9
+RDX: 0000000000000078 RSI: 0000200000000600 RDI: 0000000000000005
+RBP: 00007ff116e11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ff116fe6038 R14: 00007ff116fe5fa0 R15: 00007ffd5125ed68
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ext4_put_nojournal fs/ext4/ext4_jbd2.c:54 [inline]
+RIP: 0010:__ext4_journal_stop+0x191/0x1a0 fs/ext4/ext4_jbd2.c:126
+Code: e8 e4 3e 50 ff e9 f8 fe ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 10 ff ff ff e8 ba ee b5 ff e9 06 ff ff ff e8 c0 3e 50 ff 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000b107840 EFLAGS: 00010293
+RAX: ffffffff826f6420 RBX: 0000000000000000 RCX: ffff88802e085ac0
+RDX: 0000000000000000 RSI: 0000000000000361 RDI: ffffffff8d5e2286
+RBP: ffffc9000b107968 R08: ffffea000175b077 R09: 1ffffd40002eb60e
+R10: dffffc0000000000 R11: fffff940002eb60f R12: 0000000000000078
+R13: 0000000000000361 R14: ffffffff8d5e2286 R15: ffff888074bb6bc8
+FS:  00007ff117be16c0(0000) GS:ffff88812636b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555593914808 CR3: 00000000546e9000 CR4: 0000000000350ef0
 
-Maybe, also maybe for some self-tests. I think it is more consistent
-to return PTR_ERR() based on other code in this file (i.e.
-xa_load_or_alloc() already uses it). Let's keep it.
 
->
-> > > > +
-> > > > +     if (WARN_ON(kho_scratch_overlap(virt_to_phys(chunk), PAGE_SIZ=
-E))) {
-> > > > +             kfree(chunk);
-> > > > +             return ERR_PTR(-EINVAL);
-> > > > +     }
-> > > > +
->
-> --
-> Sincerely yours,
-> Mike.
+Tested on:
+
+commit:         f406055c Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173b2b04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=308983f9c02338e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b5767c580000
+
 
