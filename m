@@ -1,137 +1,142 @@
-Return-Path: <linux-kernel+bounces-859265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205FFBED2A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:33:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68AABED1A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE42819A6F08
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:33:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5ED054E4BB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A92722D7B6;
-	Sat, 18 Oct 2025 15:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qz2XzfAx"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C1E2877CD;
+	Sat, 18 Oct 2025 14:42:50 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37FD354AEE
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738E91C28E;
+	Sat, 18 Oct 2025 14:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760801606; cv=none; b=kJNHIS8bijsLuUmsR6T0P/fFg0G6FpGe59RCeKmGt7RuEzQ0cWfCdSm+1BCmNT68bgfL+/RUBGWIZXzMw/aC0WuYB2CBQzfJw+xXoC9XmWG+E5GhZZ2+xO1W9C5m0B+dnzn6/7Z8UVwQ7n/sTkW4ydbULJyURh4tjansNERXI9U=
+	t=1760798570; cv=none; b=DWFLgLSTPMnnCVQDejABNj2DZ/0I37Sx4s5HHJxpq7T+c5/i9KFGeJ58EcJ2ojhZ3nXrwXcgDTC4t1hqoDbV96nS2m8RMgru0z3avBxIRpxEXCr5g2ZvQY9wceWW/GoDvtRX7it3izlKS/li2mruJoae/ZF4fMr5XMNfj0mBpRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760801606; c=relaxed/simple;
-	bh=Qc5FDyxe5YWtLm0XuQFXvXeE2CU4zdKg88u3qvubN2Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q7U2jK9K2tyCIixpRbgtEZIFAdS6U/IXJQbG6kaBRtGiHdUW3L2Nr9Xq6RctAb93ZDSj+gDzZLB4CMx4HPL88fKuByEMoYtn9Gp5Kpf3vlTJjZLvrWcqbqZTpcVRcF1pnpD9G8S3sBHWYE7Af3mNa5Gm4iRNxytogMnmZ2x5YSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qz2XzfAx; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-58affa66f2bso3583249e87.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760801603; x=1761406403; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JI8wqflBoJeSVeIoguEa5qYxvXUp8LZtN2UpxTSv8wU=;
-        b=Qz2XzfAxHxhw/R0P99YCKttOMDBl4ikZHNa+7AUDea64Y2/0DjgCp3UG4avEurdW68
-         DjX4aBuM0HkYO/fW+3ITsZ2gLfoApRLoj32FO255H9J+rgdLb/6rl+vF0aAy2qd/VtOj
-         HXh+xjADbCDf+WLkQaZIiiElRLTmD4aeG+Az+KJzwrA0PyAuulxlZuZ/q5dln6Ea8L9Y
-         jv/xo+8z2r3ztbRQAmoXxqvhwnG+z7q6yoDN5EsT/buxvNLjJpGlPHl1gsdeocfkQA/u
-         6K3YKa9gTA4o1kI90yBAusyCBbmtgPOnKck7h5j47Fi46sz71bguYzpw3Qj0ulfUa4Bx
-         LKVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760801603; x=1761406403;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JI8wqflBoJeSVeIoguEa5qYxvXUp8LZtN2UpxTSv8wU=;
-        b=KfV5ibRv9QF4gngel25JH7O6uSePoT0grvHOBJ/mJU6bPfyYOy3HtLcphjfRZu3Onx
-         /eXGtVZ50zoiieM3ARTefii8uzKLyUCFkVURIcqdfYFiZChIDPaiAzL2OsbglvFGTqeY
-         Bqfl7fJgRwp24/asMj+aXdv1bhnUbq60KmQAKWd2oGLG4apBrrao8ZCBti/I/XfQHMXe
-         Lt4dxJ31HhzQMaflKyWwi8p1b9cyTN9rwYhvjxrvhCPf4XkbTtL82NoEORQc+cr+iepl
-         n7b85D8xP7fGB239winT4FS1uBmsRBiuBUwsVFtJDLmrB48tw/TGPEsWrISJcLs09uLU
-         pAig==
-X-Forwarded-Encrypted: i=1; AJvYcCV+p4BwEW91D5UHrxukfoEsTs6vcuAbqemUr0/hadjA/ZI899Re5Y91OfB7seR43nwzsJtQK4j7tH7VkmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/diCsPS710aTBNZ7hSQz8mP8zf6G5TDg02bXHvxYJIhfhzZmT
-	DTcMZnNMaTC9W47fPCwwlR+yTaQejn6chBcr3+rPfmHYx9HI91hU2oTF
-X-Gm-Gg: ASbGnctMZFMpwvwN2i22DVXSwa52e2/OSy3bw/d4FNrSNdgMSFSfPOXQ7sQzmVvw2TT
-	FOGsZUNp4cOEUDKwXV8B9+Zb2OpQINiZ1/CIU7m7NnRd7Xa6XpyNmltmHdVxVKmYzsZYe52ShNO
-	DQDIDE/12Ss6pUdAoWXD/fdSnt2WfPNXe9U02lCGVdhAKMHlg2034JV2knYhVAmTXbB9ixXylbi
-	BN/Z9BwTiKTeER+Tun1Y0GHdfPJOpeXvodWk4Jde9afKC4/mr2JgbkUDH2u2hgC3/C4vdbjL/lj
-	n1rsuxzCvsSdwbt3H4S6nnfrUNZvHFgoKnn2epY5UOVdZc9RXpFuLgpfMcX7tM+091RtEuMerE3
-	6zYIHxCMOJfrPZVcbqAn/KLDCq+p1ooZQSqFF8R5nJN7PC7LrnrZlxM/Uc6fTJMwuaZFnTI9HUP
-	gPlQrPcChydWQjm/dm4pPahBLuKHwGhaQZx2QFpOsVzG6e+Dygn+iUuM2BYDwEK5qq
-X-Google-Smtp-Source: AGHT+IHNJGLhJHT1HKOGPxf4DSdDJIV4Mlmc7c1/MsjKbF5l/T+nMmFrzXfeEG2XR7zYb9PwANEW8w==
-X-Received: by 2002:a05:6512:1154:b0:591:c379:69d0 with SMTP id 2adb3069b0e04-591d850d2e6mr2429125e87.5.1760801602965;
-        Sat, 18 Oct 2025 08:33:22 -0700 (PDT)
-Received: from localhost (public-nat-13.vpngate.v4.open.ad.jp. [219.100.37.245])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def272d0sm836014e87.108.2025.10.18.08.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 08:33:22 -0700 (PDT)
-From: Vladimir Lypak <vladimir.lypak@gmail.com>
-Date: Sat, 18 Oct 2025 14:33:43 +0000
-Subject: [PATCH 6/6] drm/msm/dpu: Disable broken YUV on QSEED2 hardware
+	s=arc-20240116; t=1760798570; c=relaxed/simple;
+	bh=Yiokp8AOA5MBIRRXxZYT3h+Zvsu/4zjHnYtyy0zJE7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/UDq4gk9/kVO1jTJ4FjNUp6aymyA4AFAB8WIq9iK75ZKY5Mrq05D0jfVsD/QYyBVskyER+SMF0xPOuVjyjAmTYChwe99R0NkwgWMYlQH8PY1WCkgbTcyfcbSPByO2zR8+YcNtYFw5vjcW5LuyRoecWQukVpbki2D3Oej33a20w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz19t1760798552t654e3757
+X-QQ-Originating-IP: hsCyHceUJdBsC2HmerHfDa/gauk7WW3wy8RM1wqSyZI=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 18 Oct 2025 22:42:30 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16127192191837545862
+Date: Sat, 18 Oct 2025 22:42:30 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	horms@kernel.org, corbet@lwn.net, andrew+netdev@lunn.ch,
+	danishanwar@ti.com, vadim.fedorenko@linux.dev,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v14 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <F5F360A04D1E1CAA+20251018144230.GA4362@nic-Precision-5820-Tower>
+References: <20251014072711.13448-1-dong100@mucse.com>
+ <20251014072711.13448-4-dong100@mucse.com>
+ <20251017170703.3c2dba37@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251018-b4-dpu-fixes-v1-6-1852278064d0@gmail.com>
-References: <20251017-b4-dpu-fixes-v1-0-40ce5993eeb6@gmail.com>
-In-Reply-To: <20251017-b4-dpu-fixes-v1-0-40ce5993eeb6@gmail.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Kalyan Thota <quic_kalyant@quicinc.com>, 
- Vinod Polimera <quic_vpolimer@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Vladimir Lypak <vladimir.lypak@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017170703.3c2dba37@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz3a-1
+X-QQ-XMAILINFO: Ob047hH1itO57d3RtzjpdoVn7PaYRVnU9L3cRxvoQtYJhUC5rlAPJ8xH
+	xyJIP1/dZsahx5E3zgFoV54KT/gp9UE8FfnfhDB0F3OYgGQh++nPgC3KwQOUJx8YSZk53EQ
+	l4j7xcUXj6jbcwpw5x6x07HW6cLbj/YqvxvPoEzxKtWzszUyHtCGfoFgTn/WPt6SIEqUpAF
+	saAjUrAA9tf3aMnPqxACKTLm6ZFVBCkXSZJz7EbYa46D6aKf+NF/RNGZkhSgnGBM0T9ybsv
+	h31ck7GXkFHCuk9RhtIvePNXLJnkskMWu7huUsCLEiinozLj1ja6SWiRaOZhjbBSXERTxym
+	jhGmYdMQZ2gNSUwM5o3x45ByU5p/W/STzk2yEPGGhUAm2hUFan8wQ+GqAUHnn/DeALyrYxS
+	hRM3QLavRofzmN0EJ+Iptuaa3C6yiCXg2FJJZ8/KYgwim1Q7dkc2bhMB33olmvNKlQBou2H
+	h2FZ1smWqft1BOFFSTt9LaS8R+nZpSeUPNz/C9wPSTsZUmWWozQzLs/n+48t+tFGD66CJj/
+	jpjyd9SJFA5BbnRKmzRY2MebPlSgktod38qqS08cXFgixDxskdMAqIF0/hMTmyv8pu6pnei
+	xpoiWeo5fjplC+Ql6oVZxPgV1IDe5hXlMhDnLVTpg3ZRPwxGRku9J5FR3Vsk/aTItsTE8X8
+	U/tgU1bJW8K+mQ9brO0eyfEm7sa2jYIIcWXvlTp/C8zA8UYxvbSrk27V+lhtu4+KxEyuYNe
+	O8M1c65yYtsOY1Q/XZNF6bN6+xsznYNRdJOLKybLzqqgTcnzFGElCAPdT8rgm2ZhwI5Y/Um
+	mDxsLm6bTBwTQF7yMf+Tt6Ka57d3Z+Sw65KZ/eoNMynJQjTtNmZcmTsOQjaiq4LMiGEs6N6
+	Pp9CjhUPEq4tOSTb1vbPcmfpE5ifwGQMX9Jcj0wb5T7fagjwW4zCZOmGG9c2LOkeQG5UZ/C
+	ywcxLOXk9Z0NTgJjbRc8FcVnnky57M6PcJoXChF5TfXLBrd8qVAp47at4tQga4fmBypD742
+	9f94Ki19OYiYtXWuMc
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-YUV formats on this hardware needs scaling for chroma planes. However it
-is not implemented for QSEED2 which breaks display pipeline if YUV format
-is used (causing partial and corrupted output with PPDONE timeouts).
-This patch temporarily disables YUV by switching affected sub-block to
-RGB only format list.
+Hi, Jakub:
 
-Fixes: daf9a92daeb8 ("drm/msm/dpu: Add support for MSM8996")
-Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Oct 17, 2025 at 05:07:03PM -0700, Jakub Kicinski wrote:
+> On Tue, 14 Oct 2025 15:27:09 +0800 Dong Yibo wrote:
+> > +struct mucse_mbx_stats {
+> > +	u32 msgs_tx; /* Number of messages sent from PF to fw */
+> > +	u32 msgs_rx; /* Number of messages received from fw to PF */
+> > +	u32 acks; /* Number of ACKs received from firmware */
+> > +	u32 reqs; /* Number of requests sent to firmware */
+> > +};
+> 
+> Probably no point adding these stats until you can expose them to the
+> user..
+> 
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-index 6641455c4ec6a2d082644f1488ea5f5605ccc208..9f8d1bba9139a7e09ee321cf1b6f30f96890918f 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-@@ -267,8 +267,8 @@ static const u32 wb2_formats_rgb_yuv[] = {
- 		.base = 0x200, .len = 0xa0,}, \
- 	.csc_blk = {.name = "csc", \
- 		.base = 0x320, .len = 0x100,}, \
--	.format_list = plane_formats_yuv, \
--	.num_formats = ARRAY_SIZE(plane_formats_yuv), \
-+	.format_list = plane_formats, \
-+	.num_formats = ARRAY_SIZE(plane_formats), \
- 	.rotation_cfg = NULL, \
- 	}
- 
+Ok, I will remove this for this patch.
 
--- 
-2.51.0
+By the way, I think there is a similar situation in patch5 (about
+tx_dropped), just bellow:
+
++ * rnpgbe_xmit_frame - Send a skb to driver
++ * @skb: skb structure to be sent
++ * @netdev: network interface device structure
++ *
++ * Return: NETDEV_TX_OK
++ **/
++static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
++				     struct net_device *netdev)
++{
++	struct mucse *mucse = netdev_priv(netdev);
++
++	dev_kfree_skb_any(skb);
++	mucse->stats.tx_dropped++;
++
++	return NETDEV_TX_OK;
++}
+
+tx_dropped stats is sugguested by MD Danish Anwar <danishanwar@ti.com> here:
+https://lore.kernel.org/netdev/94eeae65-0e4b-45ef-a9c0-6bc8d37ae789@ti.com/
+----
+> +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> +				     struct net_device *netdev)
+> +{
+> +		dev_kfree_skb_any(skb);
+> +		return NETDEV_TX_OK;
+> +}
+
+Extra indentation on these two lines. Also, the function just drops all
+packets without any actual transmission. This should at least increment
+the drop counter statistics.
+----
+
+And update to my own stats here:
+https://lore.kernel.org/netdev/20250923181639.6755cca4@kernel.org/
+
+And I am not sure how to deal with it since 'mucse->stats.tx_dropped' is
+not exposed to the user just like mbx_stats.
+Please give me some sugguestion, thanks.
+
 
 
