@@ -1,109 +1,96 @@
-Return-Path: <linux-kernel+bounces-859141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E701EBECDCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:54:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF18BECDEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148433B55A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7E758637A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19982FB973;
-	Sat, 18 Oct 2025 10:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC8A2FE587;
+	Sat, 18 Oct 2025 10:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyoxoJ8z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Ty3x/OQf";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="6gnXh+Or"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBF32288F7;
-	Sat, 18 Oct 2025 10:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A552FB973;
+	Sat, 18 Oct 2025 10:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760784842; cv=none; b=KYO2P3Y6kL/gzZ7VZES0TBrTGc2P5F3v9aEQUp6z/OrfaDYAg7CSWIb/3kO5DDe73Yrpla0HoOVUHQU2QhqaBOL7nIqSz5SxWUmq76KJy4MDCie/RWqLHs5EWgjFUinaiKwSBmdBOAS17YYrdm1t5BVPf4bHWqNLInF1bTZDaBA=
+	t=1760785064; cv=none; b=kyk277920G9U8GPYt7qy5FHmJ1V0S6X3PEVO/aIpIrw4V6YLSd2CsMFheGRiXbk6xSawjKBOcFbmi4jsVp+sppGaL59Q7RREVQNPNK/Vvvnn5q+Sq8kkfJC+6uPrCNHkqdAfwF1+Qgeqvft9sqpFOw5IBviwWZ2UUUojmQYxn24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760784842; c=relaxed/simple;
-	bh=1Z/hD03YVImB7lanZMyt3QIb8DmJkGRNAKcbP5nojF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RvX4LALJTT5xwPdPLgAjCVD64XbU7PIrc7fVfC8f8kiVZ/4Iv6B03In4ik8Pos6a0RpJWQz0yTDpG0sS/2CTdaurDWNHH9sFwvTBbpXlHJNzTO+huYm4Gf4rfgTuefL07KTUwQWu1IV0m5xGm64s8PjAkGa4+dRJ6gp70hWFeeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyoxoJ8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FB1C4CEF8;
-	Sat, 18 Oct 2025 10:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760784841;
-	bh=1Z/hD03YVImB7lanZMyt3QIb8DmJkGRNAKcbP5nojF4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NyoxoJ8zTUl+FmqSBpVMegFKlDK24FWQFMCglpdnl8XOPOh1N3l4SoKrd6Z+BmqLf
-	 rVx7k/g+2Gqz4N+U+0Cijmlj3Nv79BsanLViFNZA0vXOtlkXBCTtUxqBQr8/KwxJQD
-	 C6TCfCRonMUP7Qxiqd8YJ/OcHvlJJZAKLBQpx7FBFRELx6RIKZIKPdNNcF6ocTf4hF
-	 2Jv1ZmHHUrZ/7wRj+qvkk7axxPCiUQO1XgCqiUY9n8l1UbJ9dHcu2PIxgEID4d4z4J
-	 3b1TrEBVkVkjIqkZWlitJyS3WpSY+ZuCqGbQMaPShiTlJG7R0t8Vot8CiVJQT9Mwkr
-	 URGpSDGi//+hw==
-Date: Sat, 18 Oct 2025 07:53:52 -0300
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 00/23] Fix media uAPI cross references
-Message-ID: <20251018075352.4f65fc94@sal.lan>
-In-Reply-To: <87h5vx1ebc.fsf@trenco.lwn.net>
-References: <cover.1759329363.git.mchehab+huawei@kernel.org>
-	<87h5vx1ebc.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760785064; c=relaxed/simple;
+	bh=fDyg/KkB0zb8PdJ8NL8ySCQTKaLa46KOSW3JNHaeRkQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i8QQMB1HTmHPBEzeQEmDvlm9DGJwYvSFJ1v7iMeCJM7sxgZ4zqEgQE5kDtcWv87zwJhnBC8BkGhysaVF2rSZLtMUciXrDOc3ixvi7mdvZ6wbpdRSjElg8T3t38RxCTHi+iASUYX2/n/jskDm3sM86G5aTir6WC1m2sKDL+Kxyxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Ty3x/OQf; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=6gnXh+Or; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1760785050; bh=1MQIWBdEAkWMsNAJ3IYhQND
+	wGFpSfJYJXx6kNBrIIuM=; b=Ty3x/OQfpkDOkKQ5BYjiUJ7lwFOsvoL7xwGGWJGxur5LAlh4Wn
+	T+OMvNN/2epfYL1r1vTTItFbdg5ksvOEIN0mD8GxYYci5dRXEKzyChKr3nRVtXKvgep6+qevmNy
+	HymzBp8Fod3All9JKyFJ14Mv0b5JfZdPO5SqHuo+jr9O57PG12w0c7RUkMhWoli9TLXlkrslEaK
+	5Y6P3GV5VoXJAcJnEfMYblJYll+5mQxAZ2utxnP/CDyUhSKpsJwhOUt2aT5oSBJ1mN16B0TeJan
+	/OYqkTFR1PF+oAxEaPBYz8oK5FfWqUMwNy6ybP/+ZahzcpUdTnp/EMJrbeiSiYBqi3A==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1760785050; bh=1MQIWBdEAkWMsNAJ3IYhQND
+	wGFpSfJYJXx6kNBrIIuM=; b=6gnXh+Or/3tSk0y9Y2RMQN0+JkPCcSLy4MublKBNdBMCcwATKy
+	D2q3Vx2U3P/RHY89mf8WPx3+0vhBnRrkrfCw==;
+From: Nickolay Goppen <setotau@mainlining.org>
+Subject: [PATCH 0/2] Add SDM660 cDSP support
+Date: Sat, 18 Oct 2025 13:57:27 +0300
+Message-Id: <20251018-qcom-sdm660-cdsp-v1-0-042e283db29b@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJdy82gC/x3MQQqAIBBA0avErBvQQLOuEi1Ep5qFVg5EEN09a
+ fkW/z8gVJgExuaBQhcL77lCtw2EzeeVkGM1dKozWmmHZ9gTSkzWKgxRDjSDj8Y623vtoGZHoYX
+ vfznN7/sBHouYhWIAAAA=
+X-Change-ID: 20251018-qcom-sdm660-cdsp-59ad56867a18
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nickolay Goppen <setotau@mainlining.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760785049; l=655;
+ i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
+ bh=fDyg/KkB0zb8PdJ8NL8ySCQTKaLa46KOSW3JNHaeRkQ=;
+ b=im+iPPlrSkcf70FHlbLaaMWJ2QiSY5VM84lU/xUz7TLYWRQe6dW5EmZGn02ItjYRtrU4izgXg
+ vJBFOSaMYInADv52qxAHG6J54NmNcZrN74aEFhvs4ycppdfRtrnfnSV
+X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-Hi Jon,
+This series adds an ability to load and boot the cDSP remoteproc
+found in the SDM660 SoC
 
-Em Fri, 17 Oct 2025 14:08:39 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+---
+Nickolay Goppen (2):
+      dt-bindings: remoteproc: qcom: adsp: Add SDM660 CDSP compatible
+      remoteproc: qcom: pas: Add support for SDM660 CDSP
 
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> 
-> > In the past, media used Docbook to generate documentation, together
-> > with some logic to ensure that cross-references would match the
-> > actual defined uAPI.
-> >
-> > The rationale is that we wanted to automatically check for uAPI
-> > documentation gaps.
-> >
-> > The same logic was migrated to Sphinx. Back then, broken links
-> > were reported. However, recent versions of it and/or changes at
-> > conf.py disabled such checks.
-> >
-> > The result is that several symbols are now not cross-referenced,
-> > and we don't get warnings anymore when something breaks.
-> >
-> > This series consist on 2 parts:
-> >
-> > Part 1: extra patches to parse_data_structs.py and kernel_include.py;
-> > Part 2: media documentation fixes.
-> >
-> > I'm not sure what's the best strategy to merge it, as some patches
-> > belong to doc while others are media. So, they can be merged on
-> > either one of the tree, or split on two series and merged in
-> > separate or even being merged via a PR applied on both trees.
-> >
-> > IMO, the latter is the better strategy.  
-> 
-> OK, this series has been applied to -rc1 and is available in my
-> media-uapi branch.  I've also merged it into docs-next.
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 2 ++
+ drivers/remoteproc/qcom_q6v5_pas.c                          | 1 +
+ 2 files changed, 3 insertions(+)
+---
+base-commit: 93f3bab4310d4ff73027cc4f87174284d4977acf
+change-id: 20251018-qcom-sdm660-cdsp-59ad56867a18
 
-Thanks!
+Best regards,
+-- 
+Nickolay Goppen <setotau@mainlining.org>
 
-Merged on media-committers next branch as well:
-
-	https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/8652359fc004cbadbf0e95692c1472caac6260c2
-> 
-> Thanks,
-> 
-> jon
 
