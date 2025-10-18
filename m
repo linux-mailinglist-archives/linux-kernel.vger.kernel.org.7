@@ -1,133 +1,96 @@
-Return-Path: <linux-kernel+bounces-859189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810EDBECF9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4310BECFA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E97A034D8C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5475E605D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2860326D4CD;
-	Sat, 18 Oct 2025 12:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8641B4F1F;
+	Sat, 18 Oct 2025 12:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wp7t0Tsc"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qpn441VN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40881720
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8989C22DF99
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760790909; cv=none; b=OgVM5IUNH7fRzEXpLTdn3GFSMsqeQVKwlq7G6Vi2xT7bL1kOhDKoBk85QMKA+LeVfZ+ZH0IIXNfhCBeinV2Azsq/XKkQAId5nV9plPDI9ATYT9qmEvnY2fTZ2va64zZUauGkkt9RcHBbX1RvzfRuYbh77tvzpIoz7ELjE5YB43g=
+	t=1760791305; cv=none; b=m8W9SBti+Zo4Y7hgy7jd6OZC4V6mGIi9Q70vZJItKby9N8o3mYhLn39UarrX+Xb7fVmUPo17e4M/rl0U5/wbSdA4fxMGEAmPJ4Y+njx+PN4LNVdxNdcmCU8tuu2GJlydM5m+eDgWg26iVY3BMuGXg4NEdo0GWfWDRB3uv0nH4BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760790909; c=relaxed/simple;
-	bh=zubtkUp2yt3JEr+8+Hl4KpwF7FbZB+OQgzpUVKT1W0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvM1nxy87akuerNHY2yFU9rmKk2Gs6PcZ4WXydn/d+35Hv9n3FCq5FsPxyJmha561EAQgosJgzQk1EODUSgWvUQ/ilcGBmnvWCcFCF97uQnDCbKGqqvFIng5+LRMAFnrh0VVJDc9tJfCD/vR5pl5uo4Ty4cA0BaR0yfAR+3gHOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wp7t0Tsc; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-267facf9b58so19741985ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760790907; x=1761395707; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LWHTNJbyaS31DH5v4N3tc7dWchDlomjozkszGkRyjQQ=;
-        b=Wp7t0TscZzG3OeM19q2Mi4JyrsoEt5fbq7vdBt1XpmYo10h2bhXLVhBiBwgJpE2Eva
-         EweYphIWtZYXXUECcmOORgKnsbYcOr7H8VPj/vRQFs69brxNFRAr5fumf1SH2c9rbeNl
-         aJdWHDKkEire33uG2pAwfZf5ER1L44iR/3co1Pb3QOXn8/99VnvDNGMrVFsWXjY4gQvM
-         WjsXPscT2ZBhMsIKpMxMPE1Q26w0BJnDv3pPU8oJFw9oACdrMUx7ookFbRiE9rfBidiu
-         25RyrtRSjTnon13bG7aH9P2jQqZN2AaTRn0/ev+YZiWTvsYN5AH/+6n4ndMmtlm276Z+
-         tvvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760790907; x=1761395707;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LWHTNJbyaS31DH5v4N3tc7dWchDlomjozkszGkRyjQQ=;
-        b=ejLzSQKy0a8ATS+b9uCXF3mnl1hT8GzRxjMy2Am2BU5utd8y+9CskULGnyyobq6lUQ
-         jNxh3TwHKrwxuHFvUYD+rZZyPS9sNNGbJ8zA4wUDKHvRbhloyBnANy10B1yQXVqlfVBE
-         Sym88hwSWGGBY1EayaS2mM43Gy4zXNG9t5TwEdZvzLOpOdXICRs9cszycW6OgAq+um0p
-         iS50eDCeaEtAVFSAiYZC5ZbArBMrb73ArBAQ98+bDN6l8Y634wAhKOGyKBUX7QUcK815
-         TS8t4sO2OO9icuchceYYR8TKds4kFN7gZvE4oBA/wFhPNryMcRojvNgR0HYmaY3vJ/Sg
-         87qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhjrjHEWEn/piz4BICh5ek2LeXz0G05PSSVWCXpI81X/NyceLgimLMAkkDXMJ8X1ljxtCfYEMNghXmBcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO2bvGYC+kJgs23Bb4MP8WRynS0bqtM4aZzXugK7WA9Kb8B/lZ
-	khZ3I4TtfYE14XwIKJah15XV9n9MJ+Uwxk2wdNYyvfTMqxs7oKu11I73
-X-Gm-Gg: ASbGncvmyaDgt+FqVnxzAffckZqj7MbCKnQDuz5fHilOPpWirn3jfr+gxMxgwbPjZ8V
-	qUrbtwW4hB8d6wpMxKtzWpEnEjdLo3EV94k06Ku20MQqIyDquVPMN7broRlqlIzkFXHWI6jLPsa
-	Tpui5NOq9aNyROUPxJ3sd+G9zTGOrhbcSwps1sc0FCBW3ykPx7VsV6TO4sZRegkepE+dpkCfWTV
-	kqtXweFELNAPzyzjqdTt9zLz3D7KkaG/ggQ0YjSl30/4OZT3scOtwAbcdMRoaKwXG+aFDQmLEv1
-	wavsxa5WQHcK87dpXwD+/Ui9/kyjgpUu0EycoFXAGR36xZem5nSxqvIvkkdrcYv2JRfZ1JCGaRI
-	eExlr9FH/64eFz4D5vEI/XOAheoRg06FMhnD1zKXU5JJLvliFAGu22zvoYMAj29RHooQXHAO14A
-	Od3MvbcpjSJBqi
-X-Google-Smtp-Source: AGHT+IH0Isbj1cOmj9B6RLl67WZWl/f5gDxBFTYoh/GDd4p0sblT1uv6SbNNW/CZV0z6mtaOmb0YQA==
-X-Received: by 2002:a17:903:3d0d:b0:268:1034:ac8b with SMTP id d9443c01a7336-290d14e83cemr79158005ad.26.1760790906505;
-        Sat, 18 Oct 2025 05:35:06 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d7e41sm25467105ad.57.2025.10.18.05.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 05:35:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 18 Oct 2025 05:35:04 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, "Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] MIPS: Malta: Use pcibios_align_resource() to
- block io range
-Message-ID: <8cdedbc4-4073-44a5-8ebf-2c8aa9da702c@roeck-us.net>
-References: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1760791305; c=relaxed/simple;
+	bh=o5/KluPyDYMIfPuQR1eQtRpQrDwQ7T9vUVmdxk9m9wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UI5oxFhDGRU2R/ki61Z6082QyENfdHBmixKwsEN2xe5V9cHHGNHhDY/jo1dFHLDurykR2DeLKLddwm9mRLnozkY/MTyHK+QckSqpisOL3+NOCpSSpjrYFRP7fNRzsNgux1puZqwZr6HUvyA87NXiiIjJP6AhHlMRuHTFk9mIcD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qpn441VN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3635BC116D0
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:41:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760791305;
+	bh=o5/KluPyDYMIfPuQR1eQtRpQrDwQ7T9vUVmdxk9m9wc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Qpn441VNTg2VtymDXh2X94PNXx3mvLqXXr01ZOQPqpUP7j61xawFZfzPE5eXQHUsP
+	 hAeSauUNIkiWYIgG1f3hEHexG8OjtOgHbwNUwOqO4Ywxt0p1PMaItPDN46WjLnyjiy
+	 oCqDRl7a3WkHmZTLszODKaGtrm/f/D6f6GNrEUyjkqkdJr7A4f1qLh1ZVfEY8xM44e
+	 w3Ime5OEIxQigo51Y6gl6C2bj9NhS947XJW7JOPJpIFpwwIw+hWnuqYidpTq14WiKF
+	 23jxccobsphmkcFE70b4YwAistGJ526jvt5BzTOiuvkLKKxWOTqt+x+nPsiHR0lVA9
+	 x0pP/xoagGlLw==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c27951fcbeso890818a34.3
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:41:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX+CywE78yK73wmvQIpJuZJvbMfaY9bx6ZfTlZuOGXs8ROt8zIUYsRVAlfFbDwflYbCrkIMdh3pLx64NHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycfCE2MmSkv0+r/RJDzUQd1Mybu3PEuei3EI3jC8JqFKccX5ud
+	w609vTaJvxKXmwcLjbTsEmq3B/uuEKMQVznaFqz+rzPH1RqS/1vPDEsBVW22XdYZmWBSYgO0xnQ
+	bMwGuTI7OmvgNO2oADwgFXIQkLKVOfGc=
+X-Google-Smtp-Source: AGHT+IF65O7rOIYSYlXVS6Ib09prkwoOJViL4sucslIQQ1hqRL9pmkkrOdS9mEVlCSlY17xb7cT0eRyc8zQETZSzUo8=
+X-Received: by 2002:a05:6808:1907:b0:438:1c76:d40 with SMTP id
+ 5614622812f47-443a2ee2568mr3275130b6e.4.1760791304507; Sat, 18 Oct 2025
+ 05:41:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
+References: <20251013193028.89570-1-mrout@redhat.com> <20251014053608.pwlnexeh7mwjrvsc@lcpd911>
+ <fdac8d84f266ba85d517542bdad0592bdc33b95d.camel@redhat.com>
+In-Reply-To: <fdac8d84f266ba85d517542bdad0592bdc33b95d.camel@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 18 Oct 2025 14:41:29 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iLCcCpiBqgQM=GcEAnQvZxgbtMy+bWGrWDQEikYOgC=Q@mail.gmail.com>
+X-Gm-Features: AS18NWBhSRjY-f9IMuTmjtqqcA4jUMMI_QfRGQ6tJS1UDAc9Sk2pfDPrZAvpdNw
+Message-ID: <CAJZ5v0iLCcCpiBqgQM=GcEAnQvZxgbtMy+bWGrWDQEikYOgC=Q@mail.gmail.com>
+Subject: Re: [PATCH] PM: console: Fix memory allocation error handling in pm_vt_switch_required()
+To: Lyude Paul <lyude@redhat.com>, Malaya Kumar Rout <mrout@redhat.com>
+Cc: Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org, malayarout91@gmail.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 02:09:03PM +0300, Ilpo Järvinen wrote:
-> According to Maciej W. Rozycki <macro@orcam.me.uk>, the
-> mips_pcibios_init() for malta adjusts root bus IO resource start
-> address to prevent interfering with PIIX4 I/O cycle decoding. Adjusting
-> lower bound leaves PIIX4 IO resources outside of the root bus resource
-> and assign_fixed_resource_on_bus() does not link the resources into the
-> resource tree.
-> 
-> Prior to commit ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-> the arch specific pcibios_enable_resources() did not check if the
-> resources were assigned which diverges from what PCI core checks,
-> effectively hiding the PIIX4 IO resources were not properly within the
-> resource tree. After starting to use pcibios_enable_resources() from
-> PCI core, enabling PIIX4 fails:
-> 
-> ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
-> ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
-> 
-> MIPS PCI code already has support for enforcing lower bounds using
-> PCIBIOS_MIN_IO in pcibios_align_resource() without altering the IO
-> window start address itself. Make malta PCI code too to use
-> PCIBIOS_MIN_IO.
-> 
-> Fixes: ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-> Fixes: aa0980b80908 ("Fixes for system controllers for Atlas/Malta core cards.")
-> Link: https://lore.kernel.org/linux-pci/9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net/
-> Link: https://lore.kernel.org/linux-pci/alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk/
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+On Tue, Oct 14, 2025 at 6:54=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> On Tue, 2025-10-14 at 11:06 +0530, Dhruva Gole wrote:
+> > Btw you can't include a R-by tag in the very first revision of the
+> > patch. This needs to come from Lyude on a public mailing list and only
+> > then can it be picked up.
+>
+> JFYI - I don't know how consistent this is across subsystems. I do usuall=
+y
+> post my R-bys on mailing lists, but it's not unheard of/unusual for folks=
+ to
+> pass R-bs through means other then mailing lists (like IRC).
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+IMV, they should be on a public record.
 
-Guenter
+> Regardless, happy to post it again:
+>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+
+Patch applied as 6.19 material, thanks!
 
