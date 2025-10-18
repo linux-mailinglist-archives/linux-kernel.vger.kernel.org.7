@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-859477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B9EBEDC48
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA34CBEDB9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45BD619A5780
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948B45E65A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332BD284684;
-	Sat, 18 Oct 2025 21:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB3A2D661E;
+	Sat, 18 Oct 2025 20:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BhwVx552"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dohBeJ7n"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEEDB67A
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C68627B327
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 20:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760823472; cv=none; b=VBzviOqS0o+U0HVTwzZAA3fRuWW2abuG8EUA8O3VSu+03IPlqh+jKq1tIISGOHfx0ANectQK0yCumoTAHIBve8p4UW9IC4lgOjwANwqgCcgYkXG6W7NpklB1GFMKrg3lkySLZ9u20eUXHjykZ9L/+MvNnN06j7h/5AP2fG2wliE=
+	t=1760819927; cv=none; b=jGLCQ4DEUV2eCG7jb/04Df0HDFCnTa6MUv6c5G1oI2g4+NgGdhG3RkBWtiw/+tpGeTfjvlJHTazhuI77cnR9fn/ETcXOOs31gExzmMjkQJGxf8Ru7HHqmwtbI6TdM7YSETO5OBuvUrnNnggEygd1oPistrqkIr6BLzS6qkr3ZwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760823472; c=relaxed/simple;
-	bh=IvTEGoV/2rSFtJ0hI+CB0ql47gWapkY2EGZom9D2XoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aIiD3O6eg39fwttjgui8I+RyB7ibYT2Cu8Y1b1fPgfFMBpueXn/wTQnC6Po+LbDEl42SfVK/f/SzA7Yp4aMXC6Xd7nX5ZJch+st83alZ/rHWnYb1/RdfoNeLKh1/PM4FbCTrygxlGviuiMViJ3kXXb57UyNpqfysYUpt8iT1Vac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BhwVx552; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760823470; x=1792359470;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=IvTEGoV/2rSFtJ0hI+CB0ql47gWapkY2EGZom9D2XoM=;
-  b=BhwVx552Ug/ot5wB8hpm0aUmsORbPReZdZzEsLldq58OFTP0m1Sdky9E
-   wTdjtyJ+TOU9Y2rFm2xA04kZsRKL75WNleTM2CBVTbjDFUcmjIH+rSEzB
-   dWOs+5auo/2MCx8pIQs6tTsBfhbSCFR2PUV8aYfc4J71OPvphUlH03wx4
-   JulBPaFjiEfARgVw6EUcgI755f2DPm0hZT1KkvoFM5JAq61d7ydE5cLL5
-   zzbmImoQANFRrRGCjVGE/6VZKHt7F4y5V1D3B88vxHgsB7vaJSm+GhSW3
-   upviPXleCdoxARbAoQN6pD2Z4Jm6igbJk27yr+ixvnMxlOT9YVefIxpon
-   g==;
-X-CSE-ConnectionGUID: Oj2LwPfMSIm916aJ2FflDA==
-X-CSE-MsgGUID: 4g5COsQeTD+1uAPT1URBuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="85621709"
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="85621709"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 14:37:49 -0700
-X-CSE-ConnectionGUID: NPmztDNaR/+vqijKXQzK9w==
-X-CSE-MsgGUID: wNJ6U0hNQ0eu7du/A/KCCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="183024703"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 18 Oct 2025 14:37:47 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vAEcT-0008cf-1H;
-	Sat, 18 Oct 2025 21:37:45 +0000
-Date: Sun, 19 Oct 2025 05:36:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Subject: drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning:
- conversion from 'long unsigned int' to 'short unsigned int' changes value
- from '261632' to '65024'
-Message-ID: <202510190541.XNb7ePlI-lkp@intel.com>
+	s=arc-20240116; t=1760819927; c=relaxed/simple;
+	bh=gXiDaLZ91cP4YS9lUPTJFUZXlsCNeyjYE1dKNW2Lj2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Df93nWugAoDJVrgY875sRBfh3BZFXwLXQChZPIIQeaO3fywnN10ByLsq9K3fV8pLBW4Mgf2eOZDuU7WC/XTS4xiJSlQ1T+K2o2gCsqryHx+wB0ntWML/3Q0S1kMpgt29tyfIzPe+jBCKDaK7ygZaHyJD5STSL8q23zVjYImaTpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dohBeJ7n; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47107a9928cso1751065e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 13:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760819924; x=1761424724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x9i40smiRcDxizYgBMawCBNl5T4msgfFadm8b+kPK2g=;
+        b=dohBeJ7nL4S2Q+Jrktq35YgWasEijVNyfNuXa9fhkjzwk7n37uc1hJxRgFPy+k8MPG
+         TSCYd+i+uM777C2cs6B4b73JsgCpmSmYe/HCGlDmUvrlLhSvDbj/ADklJhOohkRS1UpD
+         sN+8YGKF62AlCFgpLmxqhpZNhk79JQyB7Cw3wjyruO/ul7gc8/2q1iGLebF3GUSi0RWI
+         T4/XRllU9LX+ULFXMP/a3aFolXEkizw52QrFpQyZuF8KQOnSc9/b8mfi8dyAmfe3+Tx4
+         ClqNQzA15IupqB9PwsVkTaHrWlQCry+Q/0hQp4ekmoPBZoRagUpDwr+G+zkQjM8UN8rY
+         JtRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760819924; x=1761424724;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x9i40smiRcDxizYgBMawCBNl5T4msgfFadm8b+kPK2g=;
+        b=wr3nnmlSxl0pSRdLRbv/VeyUpHvx2Qe+hkbbHYSZAvw0mn2lYPWcMmXSKjYHFfZ/35
+         /UZvRDpetsd1EGjt6yUze9lpaCJlP1SWMXarB4AOmoZt7zovv174CSImhk/Du+RsUj1x
+         bgar0neLSRsuiZtcCJwyjpsARwR12vXdUGWzd9VXp3wgOwxI3jFDiQ/PIaco5JxGP2QS
+         tr4rqcClNAcrDO92M8h+Sl/raTwt5uwu1PjQ3//TnC4QjdaMC1ivUV8x3j6xBjyn9pdb
+         Lk+Rr7Mna8wm7zKGTORlipbPyoBp6dKZQDplwDxUe0y50LtCx684jctzNwu++A2C0zro
+         HNgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+nC2UvR+a2ENd5pwTx2h+pyDd5V3Yb2UF/MS2C722qt7578MmddtS6YoFJvgqKa14c41DF/6wB83l9fU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkCFUTA2hmZvgnPcTxqbxxnD9iv7GkcXFHVgqajRNdxWG3QJwr
+	qH9mG5MQT1FdqEcbyzVdbZG3tZD+ChJjcyn51M4aSO0CUj9hmxIp6DiL
+X-Gm-Gg: ASbGncs1BV9gjqcB2mYv5gfsB1Ns6l/kNd3eM5oXO1GVNY3U5iXMGzIIgLxvAJ3zyf8
+	u4tmLdVMdydHNYVHDmtA3BF0r4OPSm85jNoYw8+HZAdetQ3u62bMrGIVwRlcwkbfd7WD0B0aW3G
+	qr7F1n7Q1hu82UssFPdZ9Oc6h25r8gXvpFY8w/rtlzf6lsHx7g3kJQjPQil3TU6SqHECI8dadB2
+	FPLzazAUNDx3J0SEJTB1mwtDdI/4ZimQf98L6OiwnPFeiTNvhk/3CFpoJskEpxORbrBkElou3/k
+	WOaw52PDL5Bk+BIsRGgEk8eyeFDGb4FIg5qGPB3YBQaCltzaPVMHhBiqvjGGDs8HzTEZblr94xA
+	7yO2vZYk3VOD+7JIA8wFKl/xwDdoR5tbgBKo6+Fhm0/DXyL0WVeGZ9yasa5Yw/Jq1/Q+Ms7BY2G
+	sRe7XdZ6iEIpbceuM=
+X-Google-Smtp-Source: AGHT+IHI0fmt4JmUe22K1u4pN/SrFRoF9/x8jnxN9nc1hal9Xk8KmftD9LhBWGubiIcbdw640e+xFw==
+X-Received: by 2002:a05:600c:3149:b0:471:161b:4244 with SMTP id 5b1f17b1804b1-4711792a696mr32181475e9.5.1760819923502;
+        Sat, 18 Oct 2025 13:38:43 -0700 (PDT)
+Received: from bhk ([165.50.121.102])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710e8037aasm80372765e9.2.2025.10.18.13.38.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 13:38:43 -0700 (PDT)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH] blk-mq: use struct_size() in kmalloc()
+Date: Sat, 18 Oct 2025 22:38:13 +0100
+Message-ID: <20251018213831.260055-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   1c64efcb083c48c85227cb4d72ab137feef2cdac
-commit: 5df1d0a08483eff13f0da1cc66883e0bc2cf4fcf eth: fbnic: support FW communication for core dump
-date:   4 weeks ago
-config: powerpc-randconfig-002-20251019 (https://download.01.org/0day-ci/archive/20251019/202510190541.XNb7ePlI-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510190541.XNb7ePlI-lkp@intel.com/reproduce)
+Change struct size calculation to use struct_size()
+to align with new recommended practices[1] which quotes:
+"Another common case to avoid is calculating the size of a structure with
+a trailing array of others structures, as in:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510190541.XNb7ePlI-lkp@intel.com/
+header = kzalloc(sizeof(*header) + count * sizeof(*header->item),
+                 GFP_KERNEL);
 
-All warnings (new ones prefixed by >>):
+Instead, use the helper:
 
-   In file included from drivers/net/ethernet/meta/fbnic/fbnic_fw.c:13:
->> drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning: conversion from 'long unsigned int' to 'short unsigned int' changes value from '261632' to '65024' [-Woverflow]
-      83 | #define TLV_MAX_DATA   (PAGE_SIZE - 512)
-         |                        ^
-   drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:94:43: note: in expansion of macro 'TLV_MAX_DATA'
-      94 | #define FBNIC_TLV_ATTR_RAW_DATA(id) { id, TLV_MAX_DATA, FBNIC_TLV_BINARY }
-         |                                           ^~~~~~~~~~~~
-   drivers/net/ethernet/meta/fbnic/fbnic_fw.c:927:2: note: in expansion of macro 'FBNIC_TLV_ATTR_RAW_DATA'
-     927 |  FBNIC_TLV_ATTR_RAW_DATA(FBNIC_FW_COREDUMP_READ_DATA),
-         |  ^~~~~~~~~~~~~~~~~~~~~~~
+header = kzalloc(struct_size(header, item, count), GFP_KERNEL);"
 
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+ block/blk-mq-sched.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-vim +83 drivers/net/ethernet/meta/fbnic/fbnic_tlv.h
-
-c6203e678cc9a5 Alexander Duyck 2024-07-12  82  
-c6203e678cc9a5 Alexander Duyck 2024-07-12 @83  #define TLV_MAX_DATA			(PAGE_SIZE - 512)
-c6203e678cc9a5 Alexander Duyck 2024-07-12  84  #define FBNIC_TLV_ATTR_ID_UNKNOWN	USHRT_MAX
-c6203e678cc9a5 Alexander Duyck 2024-07-12  85  #define FBNIC_TLV_ATTR_STRING(id, len)	{ id, len, FBNIC_TLV_STRING }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  86  #define FBNIC_TLV_ATTR_FLAG(id)		{ id, 0, FBNIC_TLV_FLAG }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  87  #define FBNIC_TLV_ATTR_U32(id)		{ id, sizeof(u32), FBNIC_TLV_UNSIGNED }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  88  #define FBNIC_TLV_ATTR_U64(id)		{ id, sizeof(u64), FBNIC_TLV_UNSIGNED }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  89  #define FBNIC_TLV_ATTR_S32(id)		{ id, sizeof(s32), FBNIC_TLV_SIGNED }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  90  #define FBNIC_TLV_ATTR_S64(id)		{ id, sizeof(s64), FBNIC_TLV_SIGNED }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  91  #define FBNIC_TLV_ATTR_MAC_ADDR(id)	{ id, ETH_ALEN, FBNIC_TLV_BINARY }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  92  #define FBNIC_TLV_ATTR_NESTED(id)	{ id, 0, FBNIC_TLV_NESTED }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  93  #define FBNIC_TLV_ATTR_ARRAY(id)	{ id, 0, FBNIC_TLV_ARRAY }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  94  #define FBNIC_TLV_ATTR_RAW_DATA(id)	{ id, TLV_MAX_DATA, FBNIC_TLV_BINARY }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  95  #define FBNIC_TLV_ATTR_LAST		{ FBNIC_TLV_ATTR_ID_UNKNOWN, 0, 0 }
-c6203e678cc9a5 Alexander Duyck 2024-07-12  96  
-
-:::::: The code at line 83 was first introduced by commit
-:::::: c6203e678cc9a5bf01ec7ae382851f504870777f eth: fbnic: Add message parsing for FW messages
-
-:::::: TO: Alexander Duyck <alexanderduyck@fb.com>
-:::::: CC: Jakub Kicinski <kuba@kernel.org>
-
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index e0bed16485c3..97b69fbe26f6 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -466,8 +466,7 @@ struct elevator_tags *blk_mq_alloc_sched_tags(struct blk_mq_tag_set *set,
+ 	else
+ 		nr_tags = nr_hw_queues;
+ 
+-	et = kmalloc(sizeof(struct elevator_tags) +
+-			nr_tags * sizeof(struct blk_mq_tags *), gfp);
++	et = kmalloc(struct_size(et, tags, nr_tags), gfp);
+ 	if (!et)
+ 		return NULL;
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.1.dirty
+
 
