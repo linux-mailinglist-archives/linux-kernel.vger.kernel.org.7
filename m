@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-858960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744B4BEC58A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F27BEC58D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA4CD4E5D1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E3A19A7558
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E699224336D;
-	Sat, 18 Oct 2025 02:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A68242D99;
+	Sat, 18 Oct 2025 02:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bRBpL8hd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="oC0JFe3r"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78579134CB;
-	Sat, 18 Oct 2025 02:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF5C86352
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760755140; cv=none; b=egqp2lc0Pcca7cwZ+/U8VZ4IQs8ISOb+TC0YNfdpsklRVu2ER8rQQ9llnz8X15902Q8m+JMY+QWb+VlcZWk4Of3dwDAW/2O9VzdXWVALPOuZYaIY7wzDVPnsueoJURoH6DNz3uQm4gyJv9cVNDpRYA2m4Fqi6mzBP5T57b//nok=
+	t=1760755221; cv=none; b=E3rqm1gcz2QSwOrB7EwvrV8DHedXMQ+NJFYK3d/4QDjDSeJiUyyj03vV+8Bb1FMoNlGjHOz4FNPidAwvm6rEVx9wrF7JJGahPhe4T6s7eO9Zhoj5k5f6CzL9bW57Y+eLuIHrCglN4r0iUemRhapeNXHDx017qSQBpYoKNArq7og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760755140; c=relaxed/simple;
-	bh=/ZPmH4lYkHsggufwvRdkbwQ+doZooO3d11W3wHF8eTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYMl5iC3iakbLV6Ow33t7lGeS9L34z9bqyn6ozkpQtq61qcmSf/nGs07Z2P/uCdfKsII3yqQgOEVka1QX8VRLBjRj1lVY90WzfwiJJ0ydOlw3yH+CMtBODc3uLZXUZRbVOkfI21r/uqaNAPWdoCOVqxpDhfOrcfn+fbeETtQ+WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bRBpL8hd; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760755138; x=1792291138;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/ZPmH4lYkHsggufwvRdkbwQ+doZooO3d11W3wHF8eTQ=;
-  b=bRBpL8hddjgwYu0MivnHWEwwFi/f5KefZDTNiFm8oLKC53IrEOcuF91E
-   DWKSSqT/EnTZI+/YLvBJv78XLyQgjqh7GBFg4iJC4jOxFz2+mWkaZdGrg
-   Bs9HpecmoRogN0/TDUYF/I5VbI8mXIMcPGn6FtTK+ArYyAZTcCHGn8MUk
-   Aow8i4jw14MSbAmcXiCBTbQbW5q5GgQ5jMQLQm92H/p0ezDWLErFpNIHD
-   8OtfFAucbvJ0GC7m2zPXeZt6m2Oi3bGM1A81/9D5JiU7ucTRh5W8XGv62
-   nn4rJLX4Zv9VofTrjal61t0xOoA8z9ZoepgR43tga1ryYVUm/M0k9fykF
-   g==;
-X-CSE-ConnectionGUID: j4VdCiv2TDSWeLonYfk2kQ==
-X-CSE-MsgGUID: BfG8O2pOSbqruQsCsENpjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="62002275"
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="62002275"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 19:38:58 -0700
-X-CSE-ConnectionGUID: 2DnvxapsRK+7j8rtICLRzg==
-X-CSE-MsgGUID: GxiTUOrDQKmJFNciETW/fA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="182064327"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 17 Oct 2025 19:38:54 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9wqI-00080Z-2r;
-	Sat, 18 Oct 2025 02:38:50 +0000
-Date: Sat, 18 Oct 2025 10:38:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <202510181054.Fmf1S18u-lkp@intel.com>
-References: <20251017141536.577466-1-kirill@shutemov.name>
+	s=arc-20240116; t=1760755221; c=relaxed/simple;
+	bh=zd6tQBowptX4m4Mw6QRX5estg4n4hoBoi1Dfssm20GQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bBpyKxX/svBJdGmob1geUjesh4hvY6uYVl55dVtRo3ML04mD13yu8rl7lR27LhhEwyf80dqmk4ic7KJU/NPoGlgRejithM0ZvjCW2UiZWKfXx6rAhMuvD25g0YNiz/a/Q5+i1Lioqlt8JJ7N3YE4BThXazJ3bsWpKhJ8w1uTsIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=oC0JFe3r; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-87c167c0389so39287686d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 19:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1760755219; x=1761360019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Dus8AFvubYCo2Iz75kl/mYsJ0os8tXO5WjEduobHi4=;
+        b=oC0JFe3rGSMj9T1J0hmVSZSKMAV23Aa7KGoZH+aTeTEifjJQRMBmF3OB9OQxDZ8nGv
+         7qcx2LqrXBdrO1YFi6wpmlvGnaEL3lzmInYdN+GEkb286mTyxbvBr5/Da5jF48OYdCOa
+         qnHckrOEGVEBdbdBFeIFqVdl0MRS4TCwbp2Q3UAV1/CW1haELZ/Ng1aTKdyu1sRySrTp
+         c45MCuLH2CLKYR7NLSCHm++U8zWZNIpCEP37BL7PDlnQxWWpiDV7dWBBbx4SFoofVT5o
+         GS2u0uAron3BfutQ7LwQ/pwgp5V8csWxcAEZoGnQulLMqRtgEamdX8Z9pOwIh/r9VPuO
+         67AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760755219; x=1761360019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Dus8AFvubYCo2Iz75kl/mYsJ0os8tXO5WjEduobHi4=;
+        b=iu2pXh1Y+LhJz3R16WEaOi/tIMjR9llyFEZhaSbkckTe39ic5RPe0iZ8Lt+5faDHF1
+         jugwo8o04kIKYuZgMARlbe1IBppr12mUx4xTKxb6wJOyz9iRrB1AM7MXKwb8Ri6FeXJ8
+         ruu/lQ5bU6adcyOc7iT6aZHPvfN4sGTCsB+Fqk0atnJ4fGnJsbdJ5u4S6vNBxvx9u5Sp
+         ssDUNtJFv6hiDVjzAelAQn2gvy+duTSbGnxNNyzl1NuUo6mcB7bqw6y3A3qjWTCx25HI
+         wF5DAOhU+6rnPinoiNsNrhyeuqP6zcfjVO4Wj7kPdSjUklm4QCHGxXeKPgS8IocA2d+S
+         vbrQ==
+X-Gm-Message-State: AOJu0YyQVIj7LVmBNS+iljv6GG6g24bS3cDjDiBvMqxuZn+lqiCWnldL
+	utt7PrcHLVUSdns1q5+sopv199SmnDGrAs6d3prvvJEP+vxe4oZtB7qA2LpX41RWhfY=
+X-Gm-Gg: ASbGnctg/yfsCSlRRC15DjFxVKBYB4vfNmRbgfAoXsaKYBImRrtqd1TimspvnGZli13
+	tECyAF6gq6T/NdAP0yDu3OSIWo5bazit8oQf9nAtE3aj6+vXUC/XE+46MfRmvAA+SE62xOJcnLO
+	3JLq7gLedG9w9q4t2imSm3ld6/BZ9QezPxexL7Hz4yCKTIMxAz0ncWukZHN/i9eb8gIdxFxBZbk
+	a70/Exkbt+v5v7Wf9S3MeulWXLEQ+gPNtrR6JkB7KKUnYpZ0E5g0bfM1niO8BjXNvZNknDjjnoK
+	a7RIelG6PYQdDn4nrTRSWK0A18jyvRP47jHJEmbeo6u+3IMUIJu+b+fTqsxemPFr+CWG8Y9ru7l
+	GWD7dLQ44qFvR567RwIxEPoPOMm2biPkS1zpcHXAqwlHuLJwYGb4GsEi4Y/lQ0kaGub81mJQUr8
+	TiztuYThTfNSI9pFrgRZyRAnTF6TkW5Sq3mcgdSIgva87i6yGT2A8+NCEHwOURD8PV
+X-Google-Smtp-Source: AGHT+IHa5CVoc9R4UCxsuyKubgfsAJamI5eRYeedq2Gpyju8Cu94PfvkOYi04haInndEP2HJ/gEVdA==
+X-Received: by 2002:a05:6214:5985:b0:87c:2111:ad4e with SMTP id 6a1803df08f44-87c2111b136mr72178006d6.8.1760755219062;
+        Fri, 17 Oct 2025 19:40:19 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf51fcd39sm9355186d6.6.2025.10.17.19.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 19:40:18 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	peterz@infradead.org,
+	mario.limonciello@amd.com,
+	riel@surriel.com,
+	yazen.ghannam@amd.com,
+	me@mixaill.net,
+	kai.huang@intel.com,
+	sandipan.das@amd.com,
+	darwi@linutronix.de,
+	stable@vger.kernel.org
+Subject: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an error.
+Date: Fri, 17 Oct 2025 22:40:10 -0400
+Message-ID: <20251018024010.4112396-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
+Content-Transfer-Encoding: 8bit
 
-Hi Kiryl,
+Under unknown conditions, Zen5 chips running rdseed can produce
+(val=0,CF=1) over 10% of the time (when rdseed is successful).
+CF=1 indicates success, while val=0 is typically only produced
+when rdseed fails (CF=0).
 
-kernel test robot noticed the following build errors:
+This suggests there is a bug which causes rdseed to silently fail.
 
-[auto build test ERROR on akpm-mm/mm-everything]
+This was reproduced reliably by launching 2-threads per available
+core, 1-thread per for hamming on RDSEED, and 1-thread per core
+collectively eating and hammering on ~90% of memory.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kiryl-Shutsemau/mm-filemap-Implement-fast-short-reads/20251017-221655
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251017141536.577466-1-kirill%40shutemov.name
-patch subject: [PATCH] mm/filemap: Implement fast short reads
-config: riscv-randconfig-001-20251018 (https://download.01.org/0day-ci/archive/20251018/202510181054.Fmf1S18u-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181054.Fmf1S18u-lkp@intel.com/reproduce)
+This was observed on more than 1 Zen5 model, so it should be disabled
+for all of Zen5 until/unless a comprehensive blacklist can be built.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510181054.Fmf1S18u-lkp@intel.com/
+Cc: stable@vger.kernel.org
+Signed-off-by: Gregory Price <gourry@gourry.net>
+---
+ arch/x86/kernel/cpu/amd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/sched.h:45,
-                    from include/linux/rcupdate.h:27,
-                    from include/linux/rculist.h:11,
-                    from include/linux/dcache.h:8,
-                    from include/linux/fs.h:9,
-                    from fs/inode.c:7:
-   fs/inode.c: In function '__address_space_init_once':
->> fs/inode.c:486:28: error: invalid type argument of '->' (have 'struct xarray')
-              &mapping->i_pages->xa_lock);
-                               ^~
-   include/linux/seqlock_types.h:57:26: note: in definition of macro '__SEQ_LOCK'
-    #define __SEQ_LOCK(expr) expr
-                             ^~~~
-   include/linux/seqlock.h:131:42: note: in expansion of macro 'seqcount_LOCKNAME_init'
-    #define seqcount_spinlock_init(s, lock)  seqcount_LOCKNAME_init(s, lock, spinlock)
-                                             ^~~~~~~~~~~~~~~~~~~~~~
-   fs/inode.c:485:2: note: in expansion of macro 'seqcount_spinlock_init'
-     seqcount_spinlock_init(&mapping->i_pages_delete_seqcnt,
-     ^~~~~~~~~~~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
-   Depends on [n]: BINFMT_ELF [=n] && ELF_CORE [=n]
-   Selected by [y]:
-   - RISCV [=y]
-
-
-vim +486 fs/inode.c
-
-   481	
-   482	static void __address_space_init_once(struct address_space *mapping)
-   483	{
-   484		xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
-   485		seqcount_spinlock_init(&mapping->i_pages_delete_seqcnt,
- > 486				       &mapping->i_pages->xa_lock);
-   487		init_rwsem(&mapping->i_mmap_rwsem);
-   488		INIT_LIST_HEAD(&mapping->i_private_list);
-   489		spin_lock_init(&mapping->i_private_lock);
-   490		mapping->i_mmap = RB_ROOT_CACHED;
-   491	}
-   492	
-
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 5398db4dedb4..1af30518d3e7 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1037,6 +1037,10 @@ static void init_amd_zen4(struct cpuinfo_x86 *c)
+ 
+ static void init_amd_zen5(struct cpuinfo_x86 *c)
+ {
++	/* Disable RDSEED on AMD Turin because of an error. */
++	clear_cpu_cap(c, X86_FEATURE_RDSEED);
++	msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
++	pr_emerg("RDSEED is not reliable on this platform; disabling.\n");
+ }
+ 
+ static void init_amd(struct cpuinfo_x86 *c)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
 
