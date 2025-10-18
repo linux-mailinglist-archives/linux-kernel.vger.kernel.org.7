@@ -1,124 +1,242 @@
-Return-Path: <linux-kernel+bounces-858904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0503BEC308
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C22BEC338
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D32E74F0633
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:45:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BA404EF072
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C726D7DA66;
-	Sat, 18 Oct 2025 00:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399EF158874;
+	Sat, 18 Oct 2025 01:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QsxsN5NH"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OiJdhpzV"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012046.outbound.protection.outlook.com [52.101.43.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542F13B2A0
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 00:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760748341; cv=none; b=dBY6OvgcLfteu5VDvIy0kMTx2ByHCnnaWTNhDR5BFjeAOr7+5jZ6RyL4BW6JnM1jdwCZqiZhinsmYGL8H8RI5nGjkbgBXrSoji8SME90DlQwJfWMnCeAhHL88MFTk3hoy8KncoiStY8ISXIndj4yZt3StLNuW+S6zc7aqIx4dTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760748341; c=relaxed/simple;
-	bh=lLlH5s59nYXoff3V5w7MB5vjZvxauckcZwYn0IdVOIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NPMfROckgEYAF5MbgU/wLvQXKl3iJgKFLr/sOy87dd+HYCG+79iDoM5t9jrk/SNe7oOQSEpaJuB6Wv8FzR7PYTebRjKf3dY15fxNLnfBd6snUiSjt2Jw8tPTyjb56ojIr8Ogs5Y60z+bW8DHCHF5PjQo9sKMGnk9UIZtPYkPwck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QsxsN5NH; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-42d857dcf92so10585795ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1760748338; x=1761353138; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CtaDUW02iUUQ1t4dCWqp4SISu2Hc4QtPf6jVY1/LtYs=;
-        b=QsxsN5NHVRF+GvUKHMP7lfa+3evHwCoLGcW3inwEgLT14sqaaXqfw3ycJ1jCa+N/tF
-         qU6vSI2QsenZeBjNeIe/PLa8QhnxTiRPVOgsDT7WJuzhigmsq+OhhYRzYhmhOT84Z1MB
-         2AiXLNVESaCKn7b6I+JLhrh7toGlqXYRVEAAw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760748338; x=1761353138;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CtaDUW02iUUQ1t4dCWqp4SISu2Hc4QtPf6jVY1/LtYs=;
-        b=sINBUuYk9At94xGqPdm76fySTEf/F/JDN1+KxHMtzpJF2UTW+GwptryCgk0rBmZ+AK
-         F8pFIoHo4BCIq7+GeJk1UjOr3IghCdIudpBuG4u6qzsgsgxkr3trrRKTb+CG+2AKjgwy
-         1uKvVRz4pDCDgtlwksfG5TZL5a8WzW338RhFB9wKpjjEsyn5yj0lddtCXMLJLprkdcp9
-         joJyVJi6YYlFWHkEj8OceUaDT8gRNdqXlIzvaKsLeiLdeGYBFDjdWovgjR0gABeW2uKV
-         jv77DlxA7n28t8OWXUzNw3wGzHLLn5bD+xY49oJ0LRuw9u1XIr+LfHTGFkazCjukollp
-         5vOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXr5yuwH9qfeQQLX+INxiufC8zLZLE2acloGFQjlsnjLJedXcHsPAu96+8Qd/puc7CfJhcBRNP7E/IrEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn4IrwO6SRZr58Mtv+XQRNpj+xV/37sdsYZfEdV9HZ+DGysjnZ
-	ipOWxiPPgxCU0qhWAwvzVEulv1DTR+6MocjPiHV28eEIH/r2cFQts1ugJRrzNgAFxB8=
-X-Gm-Gg: ASbGncuArKv3EiY6jIQfeGqph+RvE3LWz1Gh+kRcKQlBVpSKBxcmOOx+KF186Vbbatp
-	IYSaosD+Tj0nVcpIjzL5NVfLiOwmLfUgyfgOLDwAlUp0fgpn46EgZDMfxE3D/kPh38+a3b8ySz4
-	pj3mmmIvtvfAbPoFsOGznvcE+ZjhFw53+6N1Ore9KJujwV7n4DcaLKeEWDfFRQK9umQ4uhh5r8i
-	EDYgx1S7TkFDlfVrGvEKmruWvsj83kWh6KWLPNZ5EahahAEgOrZ8qN8+28RM1iakfWXwUc+s80B
-	vWPigfpP41FiUuRL5IAVCp9gZ/X4VlzPQTVk0zYLWmSTrafHp1RdUPi4WNw7K2RODlnm0XZ8L6E
-	86pMmdynJWRwz/odZHAbHmvn0J/rlqefv8MerB0897xEwUD/8sKEyK9MSXB/Z+YmT1eeYA7Er11
-	i9RF1li61foIgsPWoHc+zG09R1T+Tza5pGnQ==
-X-Google-Smtp-Source: AGHT+IEmcHTne11ARqkxlAT/n2gIYyAQRzz477vLz0vdj43VMGWBnukSxF91rbE6R3Bm6WP++4meow==
-X-Received: by 2002:a05:6e02:2307:b0:42f:a60a:8538 with SMTP id e9e14a558f8ab-430c52b5afemr68440605ab.16.1760748338318;
-        Fri, 17 Oct 2025 17:45:38 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a97406d7sm409328173.34.2025.10.17.17.45.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 17:45:37 -0700 (PDT)
-Message-ID: <90e26028-e9b9-4c22-9bfe-b039327b2912@linuxfoundation.org>
-Date: Fri, 17 Oct 2025 18:45:36 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C4522F01;
+	Sat, 18 Oct 2025 01:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760749296; cv=fail; b=LSCn7kn6GaUIZyGwJU3jxg7boOvvW89MIjubtzntSbTBPkWe42bXfpYDq6/aanEki+wEEvwhmMg0wMiLdD1qaHpn2A+kvVB9Ub0nDEOz5GrtXxrD0CVsYPMdVXfMQF1LuxlhimjcERg1u+SZAOM3LYSmleddCKoLFFpxo3lSkGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760749296; c=relaxed/simple;
+	bh=5qwM0KgrYzVBp3hyxH/z20KINa/Yfbs9VtWjdfjY6Fs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tInNYiK7UfRZI4VRelA3g387Z5HGuPbPNcPcPlPDUltpb0iM8gubtf9XlECP8ZLmY2jgkksk9gJUT2KwR4VM1L88C5orh5VWHAk3NQx7W5HONXGT28zip5oyAH8GWxsEtSXIxq0A9qRf1DN7pp0n/TbTQuqX8cxKMK4lAwJwYr0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OiJdhpzV; arc=fail smtp.client-ip=52.101.43.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qr9njaXTcEqu/fn0HNxBgpYglVnPRbEoRkpbIMwnkJ/UaQvbrns/A0KXi9BZ98oacp3muA7Kmo7vVXs5f6rhP0MiqBspM2RMv4F1biKHBDfIwpryWu7xzkufftb6Ddipr/AnO4PMBEvzb1vpJZzRx0myz9X9wJYxOu1KtAaRwdTOfI7k1kV7aMjlS42QkEefLC7eAxgNwd5C+0ueFqnFmZ2mU9eNb/sdjFJuXs3vU2QXfOe1EzkoA1uzOLQFXvA8NkQr5Zla3KDAzems6kOAY45vpWtHYhhIHBiamI+pmEqPfZfyy9JmZJBDxJ/L0LGpYa3LO20UqFOIWZMqKOj59g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k9KNn77qdX8ETulhX0OKpS5QrnBNsmJlREMvRgvS7U4=;
+ b=j09Kw3XmEBKCKX8EyPBGgHGEmlhDroL/IeENP/P1Dxycn4ZvrKkMSrYnVeHFM/j/esxFb8mHCW3REVOu8rFx0zXXS1SKClRAweGNHm1pM4HROalsnWDDfVGvrUcxFt4jcZRr43is6jlKgWNhLvy7nlpNaNZMHC8ehKoUh/bkHQMO6CRpoakt76/Hh1VcgXl2XNU41vRvlmezgYSFaVzlGqamAEYKqSxCLO/a8Fe63THLSSNEgvB5QahbtJp27yBB8ye2LpLwyWlmxfcJa1dqFOwWAZWVRN9hRQIvrkPK+bmPkageHrBcPxkeJDQkX0P5qhNyLutsC2Rd/UGwut/2fg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k9KNn77qdX8ETulhX0OKpS5QrnBNsmJlREMvRgvS7U4=;
+ b=OiJdhpzVi9ulTdbNa/Eyj1kXPyXKRCmfnQMme8W5qbgfKZdWI4Os++Zt94LYlN4wZTj0dovduRQQTrh+KTCiTnkzfh3ZVlNJSWpKKyptJjkhQuGU2SyW02DZpK7s2VjUgDdieQo17vCzilyNiyu35IF9HQTRwChCd9HqAr2Z7O9jZlCnL9P1Lu8n/UVsKWwD4l/fGbRnZ2JOlQwfoU+tRZUgMpBCQsKRgRX6udhlPg+Nb7PHwxN8h9cdumOfrN9T7dev2LycDgNW6BMeXYOyHbrqyYFdlY/0P8qabmqIG0DD2vVAD6+9en5hkLMWqjYOgtfblm600RAm0GH0NLU4qQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
+ CH8PR12MB9768.namprd12.prod.outlook.com (2603:10b6:610:260::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.11; Sat, 18 Oct 2025 01:01:32 +0000
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2%6]) with mapi id 15.20.9228.011; Sat, 18 Oct 2025
+ 01:01:31 +0000
+Message-ID: <df84f19d-ff8e-47fd-94ac-8ea5bb6a01f4@nvidia.com>
+Date: Fri, 17 Oct 2025 18:01:28 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/29] arm_mpam: Add basic mpam driver
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+Content-Language: en-US
+From: Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <20251017185645.26604-1-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0389.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::34) To DM6PR12MB2667.namprd12.prod.outlook.com
+ (2603:10b6:5:42::28)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/276] 5.15.195-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20251017145142.382145055@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20251017145142.382145055@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|CH8PR12MB9768:EE_
+X-MS-Office365-Filtering-Correlation-Id: cab101e7-ce7c-4ee8-5306-08de0de1e030
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|1800799024|376014|7053199007|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UWx1T3hsUWxsWktqUTZydU4xd0VRRzA0ZE5nL2E5c0l4RkdVTURGN201WXNH?=
+ =?utf-8?B?UGlqanBhUFhHVVVCM01vdm02NXFJQWtNbUhpV2t4Q0dLNDMwU2dWdy9MWmVD?=
+ =?utf-8?B?UEkrc0tOYmd2K29vTG9ka2EvRjJwYXduVzNSSzFRUmptY2hha3VTak5vRUpn?=
+ =?utf-8?B?ckJMMlRUVUVUOS9pd0lWdnVyZHA1b3RwblBSYzVNUnc3eEJ5NFFWdVR2VmRK?=
+ =?utf-8?B?MUVSY0M3UHlyZVh3UldseVN5MTdsalNsUk9MUWdhK3JHT3l4eHg2ZUhmK2RQ?=
+ =?utf-8?B?UlFXRFJLaE1mSjFRNnJ5MTE2WWw1NDRUeWxObklvenJ5RkVYQllQbGl3bW1H?=
+ =?utf-8?B?V2hGUlBvNjN3V0N0TUVlZ2w5ZSswWjRCUUY2YzlmNzJFQWVHZnhXZEs2dHBG?=
+ =?utf-8?B?cEJzUWg5dXNnRGJlWXJNN0htb3NVSDBPakdhZ2MvTk1SUUtmTlBEWk1mWHJW?=
+ =?utf-8?B?S3BsWVNtMVRhejFNajV2cnFqcEJDc0VwY0xiSGd4cHJuZTFPTWdXeWFQVnMv?=
+ =?utf-8?B?RzNWWHRiOGxYVzZ3a0FVakFMazhsZ01tL2VpU0JyMm8zT3lNR1hrTDdTR2JL?=
+ =?utf-8?B?SUJwd2dlZjVoSkFzVGlEWUhCemNaZjBZdVdyVkhDN0RVVHBlTSt4bWtoVnZx?=
+ =?utf-8?B?cVkyTEZYWHVIbWlSdWpFbFVJbGJGWG1Jci83MWhHdlZmdFIrY3QvdGp5Vzlp?=
+ =?utf-8?B?S2tEQzdvVUVwNXV1UitJdUVkbGFZUjhxUmhaMm9xdmRYSmlZOFFUNXZPUWh0?=
+ =?utf-8?B?SGZXb01BZ3p5SDRMYUxlQ29Hazcxc2JsL1NjSVE5UGhqUC9uNHpSeFZXdDlE?=
+ =?utf-8?B?NE10ZllISHEvUkJtSGRiVjVLcUt5Q0Q4bGhoaVdwYlIwUEJaaDd1R0RxdHY2?=
+ =?utf-8?B?SVVyWUZPMXF1OUEybzRiRTNoTCtCL3laNWRUNG92bE1RTXlVV1NMSUNiM1Ev?=
+ =?utf-8?B?N2lVdlkvbVhIZExUdzdCOUlHZzNzOXVESytLOWlkSzludVZEVVhlanhLTjh3?=
+ =?utf-8?B?SkRrLzRLcXcxVEg1Vy9TVzBJeklzaFlGNm5KY1RmWmtoTkxNMGc4bTcvd2Rk?=
+ =?utf-8?B?VDdaaXozNWJQYldGUStRU011VG5VcGR0YU90OU1VTXUrR0JSdFlLK0R3MVpq?=
+ =?utf-8?B?aUorNkZONFM5SHBCeVBJMWlIcThiQStkN2JZMjBldmtVMEd2akZTOStlUi9F?=
+ =?utf-8?B?REpwZFIzMUovQk10VHNORk9RR2M4VUpycWVUeHNFd1MrSWs2ODN1RURySlM5?=
+ =?utf-8?B?TVJ4ZkQ0YmdCUy9SUG9maDFTT0ZzSlZDUkxncldVU3pOdXBJQm83Rmx4ZHpY?=
+ =?utf-8?B?emlTSTJzUHRHRWszaElmd2V1ZVlmSTRSWXY2TFZHUUtoV3huZU4vK1I1cjlK?=
+ =?utf-8?B?N0p5RWNpMGRHZVRrRWdZZDNNZGExVndacDUxQTRHQ1NleGduU0VjSDN0WmpH?=
+ =?utf-8?B?MGsrQ29CQ1dKNTJyU1AxeW9Gd2NwR2VtaXpoWDUzeXRMRXAxL1lndjRqV29Z?=
+ =?utf-8?B?OTlsSW1Tb1JlL2pRRUJpd3BxS21KYlMydzRLUm9zOW9uWkZnTW55TlNDOFFF?=
+ =?utf-8?B?UTlOdk9WU1QzSFlCTU1MVmZkREV1bEIwTEJXazMzcmlpaFBrM2RjSDl4Wlg4?=
+ =?utf-8?B?Y2RzQ0k4bDRHRVhhQWdNNC8zSktDRCtqaExOSzV5MC9FaWRaN0V0MUxKMzZZ?=
+ =?utf-8?B?VUJtejZKOXBSUTd1dXJzeHJRb3ppVCswblc1Nitwb1NuY2RoKzBVYmkzcGw3?=
+ =?utf-8?B?UUFCYnM3UlZreFFiZ3EybjN2cnpvWkp6bjBsQ3BVVXNValpRS084N0J1SDlD?=
+ =?utf-8?B?aGFEbHRoODZ6R2diL3JKc2tMT21GejdKSXRXcWJ0bXhLdS9CSWRkUHAveU9o?=
+ =?utf-8?B?RlJyTlNaaVJxVlI0Sjh0SU5HZzVDZHJ3eVJ0U0RPNjBXcGtGK2dVcUpreE8z?=
+ =?utf-8?Q?POTvuN8eCqSHI561tYWF+98oc0dfkbVc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(7053199007)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YXpaYnNtQUxDaXBxK2dtL2VQZHNSL1ZpMmFmbzM2MzB2NURDNGJUSk5MNWxU?=
+ =?utf-8?B?TStTcmFQa2NuOWUwUlUzRHhEQkRCR21LdUFRazNmTGNjODA4Z0tORXVSY0t1?=
+ =?utf-8?B?WVlkam5vNmc2Q0RIUllQc3R3a1E5cjVGanlxRjE5blVXZWxXOVV2NVRoSWpl?=
+ =?utf-8?B?VE1WT3YxTmlNZUlKRUNWVUxITkhuWWpNUTREb1pvOW9tK1lCNVNZM01iUlRI?=
+ =?utf-8?B?VUEydUtPc2Z2OW8xUWFQY0xZNmVwN2QwWm5Rb2pDd0djdlhLdkdzOFdsbmc3?=
+ =?utf-8?B?S3VjRmdwV1ROL2tMVjF6OFhLVEtTdWI0dkJkK2hFY3RCWTNuRkpGaTR4TTZm?=
+ =?utf-8?B?QXlFc0I5R1FHeFJTYzNpdVg5NnNYRjVZSHViSVVsdXdqY1h6U3Y2cThMc3Jk?=
+ =?utf-8?B?QzVKNUQ1QzRsOG5hR3JKdGJuUlVpSHRScTZYWjRJa1FnbEM4MXpNNFJDZW9E?=
+ =?utf-8?B?dDZ5UHBsa3ZLRUJScWdSY3BBVGN1WXFUTkRPN3NuWXhWVE9TS242c2RIZ3hi?=
+ =?utf-8?B?bUlpbEtZeWQ1N2pycmVKV0w2UGNqNlhwRjVFNlIwVGUvUklwS0xZNFRsQlVw?=
+ =?utf-8?B?QXlwYWZGWTlacXNaZEpiRElQMXJwK0xOSlAzZmt5b29xZmU4VDRGbUNlOVhm?=
+ =?utf-8?B?aXU4anJWbklCck8rUGtlL1JabW9zb1I3Y1dSYlJyaWFrSFE2bHVYeS9Nb3l4?=
+ =?utf-8?B?bXZ5dzlkVWFDMmV0NWJaVkx2QXptTDBHRGhWazhBUTRaa1J0TldDMzNWYzl4?=
+ =?utf-8?B?MUYyNmdERnBpQWhRK0QxVG9xVHFhOE5HSE1pbzR2dk9ZNXNrbDBHamY4bUhv?=
+ =?utf-8?B?Q1I4ZHloSTFycUgvRGdOWDJlZVg1VmFqMmFYdUNoa3RWSzN1UElKTUFKSzc4?=
+ =?utf-8?B?eTB4Nk5qQk8vWGtobndiRDEycjJra3V3VTZNdkdCb05uM2JHMXNTZzJUZVRi?=
+ =?utf-8?B?dktsTDg0bGc0b21NUU9lRWxIRFM0d0ZMdWVnT21Jc21PS0NudzJEYUg2SHg2?=
+ =?utf-8?B?TVhzUktLalZRb3dtTCtWck9KNk1vRUNzbFRnUzJ0ZXg1NkhvRGU0TjlKd2Vy?=
+ =?utf-8?B?aDZuVEE4NzBYUlNSN3JIUXBYbmVmY2hGT09NWFNWcGk5TGU4SUxvbzUyZ2t4?=
+ =?utf-8?B?bjd5Ry9oQzBrUmVsNTA3eXJUQ2xkUkp3TmNoc2t1RE9XRUZYblFadFRZczRX?=
+ =?utf-8?B?cHFUSEJmR0kxZCtlQUFSSjBBWGtCeHlQOHFwUSt0RXZwRU5Ed2NybnNCaC9K?=
+ =?utf-8?B?YkRiTWxSNkdsaUlpdWxJMWhGcFROdjRlUXpreXpWVTVCcnlza2Zldm0rTkpU?=
+ =?utf-8?B?ZnJodTFUWEpaZGRDWFEzdGhKMU00c2I4b3d6UXg3MW1LQ2xKZm5OM3l4UUpi?=
+ =?utf-8?B?NUladXRmTm44YnZNK1I2U3BleW9ESXd5UWlFWGsrTTBkUnB5cHgxcWhKdFVF?=
+ =?utf-8?B?ZC8yWEZFRmVLdUpubzQyZ05HOTZVTitOQXRyTGFpOUo3S3Zra2c3Z050cUhG?=
+ =?utf-8?B?UjJwZXRLSWw0TklOV2daSEkrV1NTd1YwK1lZOC9vWG9hV2xWWlR6ZWQwd1RQ?=
+ =?utf-8?B?QUthdlJSTUUxYTE2YTRGSmV2WldhUy9FMkxjdzRBTTRNSkZWWTlTemF2d2No?=
+ =?utf-8?B?b21oanZmZXVLWlJLVllhV0lMTW1Ja1NYajV3UWNFcXhwTk4yaWtxUEFSeUtO?=
+ =?utf-8?B?K04rT2s5N05RdlNsbzNTZTBVQTJIZkp2a3RwZkdJd1lIQ0JMcGg0SG9Xcnho?=
+ =?utf-8?B?cnZjV2FlczRKdGNjRlN2WW5HRmhmUUtJNTVrOWtwVXplbXdMZThTd3VLMnZi?=
+ =?utf-8?B?eHBjLytMcGJGbXVtMjhMTFhoNGlqWW0zUFQxVCtFZ3RhaXQrQlNaTnl5MXI4?=
+ =?utf-8?B?Q0ZaQjlRT0o1ak1kdW1SRG9sNUMwYWNmWTlkSmNMa0V6cUg5cGJaTFo2LzFs?=
+ =?utf-8?B?YmQrK3JLcThPN09qQk95RnJYL1hUbDhCUGY5WUJpL0o4QmFYams2SmpiOWJ0?=
+ =?utf-8?B?WjBGajRHQ2tFWnRQeVNrNFVGclVERnBDQi92SVgxTHF0aTd6d1BPWWNtRzVh?=
+ =?utf-8?B?bVRCUDBoOXlIaHJhWFMyc3E5U0FBRCt0N1ZGNWR0aUhveVB1VWpKM3N5VFpl?=
+ =?utf-8?Q?S2kKKkTW898QARoIls4yVTdaV?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cab101e7-ce7c-4ee8-5306-08de0de1e030
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2025 01:01:31.5025
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pg8b99B1hva7HiVfImsZNJ8Ql1Lnro4bLFa2wFdH+oyHMIp1GVQIWlsY0HXq6x4+3c1oatrx0b3BvDxdaNfI1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9768
 
-On 10/17/25 08:51, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.195 release.
-> There are 276 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.195-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+On 10/17/25 11:56, James Morse wrote:
+> Hello,
+> 
+> A slew of minor changes, nothing really sticks out.
+> Changes are noted on each patch.
+> 
+> ~
+> 
+> This is just enough MPAM driver for ACPI. DT got ripped out. If you need DT
+> support - please share your DTS so the DT folk know the binding is what is
+> needed.
 
-thanks,
--- Shuah
+[SNIP]
+
+> This series is based on v6.18-rc4, and can be retrieved from:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/driver/v3
+> 
+> The rest of the driver can be found here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/snapshot/v6.18-rc1
+> 
+> What is MPAM? Set your time-machine to 2020:
+> https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+
+In case you build/test the mpam/snapshot/v6.18-rc1 branch, need to apply 
+the following patch. After applying this patch, this series and the rest
+of the drivers run successfully on my machine.
+
+diff --git a/drivers/resctrl/mpam_internal.h 
+b/drivers/resctrl/mpam_internal.h
+index f890d1381af6..132d29e53ae9 100644
+--- a/drivers/resctrl/mpam_internal.h
++++ b/drivers/resctrl/mpam_internal.h
+@@ -645,6 +645,11 @@ static inline void
+mpam_resctrl_teardown_class(struct mpam_class *class) { }
+   #define MPAMF_IIDR_VARIANT    GENMASK(19, 16)
+   #define MPAMF_IIDR_PRODUCTID    GENMASK(31, 20)
+
++#define MPAMF_IIDR_IMPLEMENTER_SHIFT    0
++#define MPAMF_IIDR_REVISION_SHIFT    12
++#define MPAMF_IIDR_VARIANT_SHIFT    16
++#define MPAMF_IIDR_PRODUCTID_SHIFT    20
++
+   /* MPAMF_AIDR - MPAM architecture ID register */
+   #define MPAMF_AIDR_ARCH_MINOR_REV    GENMASK(3, 0)
+   #define MPAMF_AIDR_ARCH_MAJOR_REV    GENMASK(7, 4)
+
+[SNIP]
+
+Thanks.
+
+-Fenghua
 
