@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-858860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C87BEC0FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:00:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D922BEC10F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552B21AA7DF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:00:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE33B4EB452
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEE61B4247;
-	Sat, 18 Oct 2025 00:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689A52D6E53;
+	Sat, 18 Oct 2025 00:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8Qyqzti"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XD4mczsl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF7F10F1;
-	Sat, 18 Oct 2025 00:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDE1335BA;
+	Sat, 18 Oct 2025 00:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760745629; cv=none; b=fPtumw+suU0aShdlncH97mpNaE2UZ6mfuBzBbEjMs5JIAp90j5Fz/eX6+8BLDsP7ZgJ4zYjxc1aIk7hwdvLj6y4aIBfx5sryEbUlBS4Fdob0HfHDCOLYarfNLl0aLEH8rxAle887XZldFBG3jEz80UQ4SNf488xHCiPYRcbYc9w=
+	t=1760745631; cv=none; b=FDqfy654pRcwA9Wl9hoh5MHMTsvd4PrstxwbAca3qsoca5DX6UuWnhq+lKeuCrZmEldcsZKc2ckrLU5pNNyIszUZSBPBUR4Ky8vk0Fi5u+uVL2blVpwj+4tqcgnuACouCluKBCjL8Xtj4Z3rJPnRUu/JNMH7xBUqfOXR/t50DTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760745629; c=relaxed/simple;
-	bh=YnM6EsfCCpRhahIOYEdZz+Cepq+/DrNPJAmLfhIdVdo=;
+	s=arc-20240116; t=1760745631; c=relaxed/simple;
+	bh=Y9jEbxvXW1zlR7DvYBO+PFoOwd8tSJ68hgpMl+Ypi0U=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VTBxDU3byYtZOZZd4eAhZ/eHRZC8QTdyIB+9beOyuakQTa4vAp/D+TdzfFdZQ+n2YRr+BVm6fucKeZBhHYKYcqRrxElf613R/SEqncE86s4Gs53gd+OQlXfoEV1Q+dkvx9/PIhV+DpwbfHZuEynqiM227jLjLcJoL9j0QmV51LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8Qyqzti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77602C4CEE7;
-	Sat, 18 Oct 2025 00:00:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=HKtfamyioulNRzMy3TfdYza6gz1cbs5cudunutl4hnZfxdWoN5MSh+wD4G98RMl0xLC5UzxFhx9F6w7sm9mjRtjbkFqKXFczOZqXDpftBRXKXOIAYthvrKGfOB4LC1MJwDofpZzSGR7Af1fZOQzdT+e8A9GMZKw6vGZi2MeHMpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XD4mczsl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416A4C4CEE7;
+	Sat, 18 Oct 2025 00:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760745628;
-	bh=YnM6EsfCCpRhahIOYEdZz+Cepq+/DrNPJAmLfhIdVdo=;
+	s=k20201202; t=1760745631;
+	bh=Y9jEbxvXW1zlR7DvYBO+PFoOwd8tSJ68hgpMl+Ypi0U=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=p8QyqztikcGDnt4V48n5bsdohG6hV9tAJn8wegNqi2hKOF5LLNGpxlPGFy5jE1xFd
-	 aAdnFqtZTFT7jTGCUKcN7u/cSrOcKHsadRGO0PyGOKu0t6xOA8T9jXiJG7E7NVMhhU
-	 zSvo42H6mIpROGLL/N17AMw65KJoWZuCXSesfDhehp0aNfm6Z6xbTBSlxdbTMK6n4U
-	 jgfX1G8578IBCKDllc5PV/SDwbIFLxLZxarYSMKZCKPePmlwKVBdgrJCobzP3qJZb3
-	 QvZ+ckzIowa+jn9iR2Iddf+CfJQNoguPaiNMltvuiP81qo9AgsI1Dh3segqeKGafBg
-	 T4R7SB/JqClFQ==
+	b=XD4mczslteMoZ0OYnURSnmHRK3R5bBOZKVlquxONANYyM7fNwX6eoo/WJeHIiw+/F
+	 8Vk8DYYSjywmCwKEWDWStNlK58qNrgdS9K+9BivzUmQ1rMG7MtaU0iJIgM9HYKyFl6
+	 IprgnaY8xNYQ3scM8GD2J401Q9ktdhfXEHQskG8a37AgUzTXn7h5FbNXznQyhbXeTt
+	 113uePDdVdBUQF+26sXf0sYQVLjQeWBnyHWM+chXLVj2vsoxVh2hv3OmIb3kzmRGMW
+	 DnzinpP1fCh6l6tHSjGl+LiPD1AfMjZOMAMYjQym/WNx+uf0GZEV02vXiHTiz0VpN+
+	 C7DwHnRy6m7CA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EA839EFA61;
-	Sat, 18 Oct 2025 00:00:13 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB34439EFA61;
+	Sat, 18 Oct 2025 00:00:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net: enetc: correct the value of
- ENETC_RXB_TRUESIZE
+Subject: Re: [PATCH net v2] Documentation: net: net_failover: Separate
+ cloud-ifupdown-helper and reattach-vf.sh code blocks marker
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176074561201.2830883.6352222282006424716.git-patchwork-notify@kernel.org>
-Date: Sat, 18 Oct 2025 00:00:12 +0000
-References: <20251016080131.3127122-1-wei.fang@nxp.com>
-In-Reply-To: <20251016080131.3127122-1-wei.fang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, Frank.Li@nxp.com, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <176074561449.2830883.10548185381553170961.git-patchwork-notify@kernel.org>
+Date: Sat, 18 Oct 2025 00:00:14 +0000
+References: <20251016093936.29442-2-bagasdotme@gmail.com>
+In-Reply-To: <20251016093936.29442-2-bagasdotme@gmail.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, sridhar.samudrala@intel.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ corbet@lwn.net, krikku@gmail.com, vasudev@copyninja.info
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 16 Oct 2025 16:01:31 +0800 you wrote:
-> The ENETC RX ring uses the page halves flipping mechanism, each page is
-> split into two halves for the RX ring to use. And ENETC_RXB_TRUESIZE is
-> defined to 2048 to indicate the size of half a page. However, the page
-> size is configurable, for ARM64 platform, PAGE_SIZE is default to 4K,
-> but it could be configured to 16K or 64K.
+On Thu, 16 Oct 2025 16:39:37 +0700 you wrote:
+> cloud-ifupdown-helper patch and reattach-vf.sh script are rendered in
+> htmldocs output as normal paragraphs instead of literal code blocks
+> due to missing separator from respective code block marker. Add it.
 > 
-> When PAGE_SIZE is set to 16K or 64K, ENETC_RXB_TRUESIZE is not correct,
-> and the RX ring will always use the first half of the page. This is not
-> consistent with the description in the relevant kernel doc and commit
-> messages.
+> Fixes: 738baea4970b ("Documentation: networking: net_failover: Fix documentation")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
-    https://git.kernel.org/netdev/net/c/e59bc32df2e9
+  - [net,v2] Documentation: net: net_failover: Separate cloud-ifupdown-helper and reattach-vf.sh code blocks marker
+    https://git.kernel.org/netdev/net/c/cb74f8c95250
 
 You are awesome, thank you!
 -- 
