@@ -1,302 +1,177 @@
-Return-Path: <linux-kernel+bounces-859134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F04BECD99
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4956BECDA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA0E234FD03
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3318B18959EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD332F9DAD;
-	Sat, 18 Oct 2025 10:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AF02F90D5;
+	Sat, 18 Oct 2025 10:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GeTFPecj"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AFB8Nax6"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203842F90D5
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672C22F361C;
+	Sat, 18 Oct 2025 10:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760784165; cv=none; b=FIVB/W6rFkSMf1LHTNI8pn0fgIaNLJPceDN8otZxZUTjIdmS0ufhXn6cXPuNdn3qSkYTUBJJKrIT4Q7FSh8QkLPo2ElSYIrfiPsAJgnpnJCwEUMjFy6fH1rBpHPiM97x5RXxgMxmadaMJ1oJhLNZ/TOS6HJXwBJ1S4MHIpE04Fc=
+	t=1760784213; cv=none; b=FRHy6UEH7NsYZMAnWSoKKvAkYPiIgcAW10XvQbj8ebwAe8sUOqRVXUM/PlqYZMlRXrx30fRxCfbHxdQI8+hj4LOfhCIbTYzGWe4gzi313tiBsdEu5OuN/an6Ni/mtdny2EYfhh+mRplCoAI696A9uof1PyWfAkQYDAVMnStOJe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760784165; c=relaxed/simple;
-	bh=eujZEm26QNomQ0uZsPlsJhjB6dXoxCoQV/63rJ+xGzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XbMtI9C4i0bw8760CkfNXbe7lZ8Lr51/oRLlpsViDb9eDZvSpNzKnkqcd9x7IPAen3tP1GA0l76ne31F5tqv/dPyssIs6+PNFX+Dt00s4bFrSJXi3XTODUZk4gWykrW/f72oFDsj26JmTR59PGnJ90z4CQOwIutW4QKHCY/Vrnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GeTFPecj; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b6a0a7f3a47so2530823a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 03:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760784163; x=1761388963; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VKtCJR7APuqaYl6bh3Ms7NkEOrtscFZrf4VBLleXnTg=;
-        b=GeTFPecjlx/di6r08ytrMbzemmrjXaCZ03OFRAlWUTSPrS9foXp3N/iY70c7MZwg+v
-         wSlPcnsQyUtlnjjDwKmupJpRmwZ8D0pIrV2/y/UWHYbnKum8YWo8/j4jPJVNhSQ9f4wE
-         /5cywRxR7C4tmxfK6OrBtwR/XYg3XXjqzknUqCCc+03kDK8V933C0m6wvAmJwZGgDTa4
-         P/knCM2WLsegD4uZvKuBpjNHIZYwkS7HKZtFadPPp5uSY5LG+nvGKDWLliDRm5yt6pT7
-         /dBZT0tTEabP51SxntHGwIVZvdeuAqWvEDOFlleahgc9i/dyjeIVULEKhgdai8bfFFtf
-         NLKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760784163; x=1761388963;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VKtCJR7APuqaYl6bh3Ms7NkEOrtscFZrf4VBLleXnTg=;
-        b=hsNsun0rGcNc89u5yBqEy3Wu6HUHe6UqhtscUU1wXb7FaAWa8LkxQMcFfz6wYUN+zF
-         80RGLPw1Bhysjz722iPGM/KPj94bnY+SKpuvSUfgT8IhGov3b8JLIuu/yDcdu4JHWpTt
-         0EdjaaCSrgcmwT49ii6o4SzV/VRITKK3SiahTdPwGGKqF+fgMIgtjwlZ7BxlruUYUQQi
-         yT0r6EzjdII5gjlFSIevo0mpN8uOUyskN6h6Q76gdCFd7Bs4fHTNy6rYRPBiE9+MiZTo
-         VvKl9RdDHuZyqinkeKYzCyL444nf7e0Nx2QsoPHDyf5xzQEYNhQ88mInidL8360u7jr4
-         NWpw==
-X-Forwarded-Encrypted: i=1; AJvYcCULEyoeXR5fqAoOL5/xihcbAogxzGk0WA/Uhj+69bFi9AxKo5lhDWEdNBuXwTwZI+vDRIFdvgLNN+i4DPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWT2jchYXLyym+zMcHTon2ZscGTICDG9hOGMFh0xHXgUu4f0cJ
-	gwu9M9In9RZ3RDikfSXHNAbbA6Arx0TO8e0Oa9d2iMNRFcV0r3aknPBV3uMUJEqotzdBagYAF1w
-	o8P9SmgyOpIK5ulE+lSp9rFKs3/eiOaPbEFG0ni6Phg==
-X-Gm-Gg: ASbGncsDVnO1CAuFKtKw/MTQey778divPlDZMjqY5Rm1nVrsgeCRSUoPftTkrpnbhvb
-	XgiTTuyCDyODLy64XvO/kJqdo0rz3DTfmfHK7RwyNDnXqDTdoeaob75X1NV6eAI1VayIkWTjZQq
-	10lMQnfwNnzwmzq+OvUXm6lIqGG9tHgeCHmGM+g8aHtcH/asS4XauzJWWbySAVTfLvNddBaSdQQ
-	UTwE9aJXTIBp2FLe5pRGKJYBMi8vx9ufkBpZlJex8em1HLQpfddIaQZc2wjo5aQ8fzOj0oso4fM
-	75cadbrPSt77Z6MeIL47FH4gKoBDrL6FJc6F2jlBwK8aEIHrXvLQJHHGlkw=
-X-Google-Smtp-Source: AGHT+IG4l8FY9Rly63iVwkF4ND9jy7VhkbE+KZiG23qYJct2RnQ0jxSB1oZo571w+5Hbj98wxOCUhpezndZy+8OOhOc=
-X-Received: by 2002:a17:903:2309:b0:262:9c4:5470 with SMTP id
- d9443c01a7336-290caf85241mr87472235ad.28.1760784163263; Sat, 18 Oct 2025
- 03:42:43 -0700 (PDT)
+	s=arc-20240116; t=1760784213; c=relaxed/simple;
+	bh=Cj5TdjUsS0EuT58+fP3IwvcNEQ4u8+NuX9SIP5iv/ZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MDxWrJ9q1g2YBgv497LjZ+sgFFWp8YqXmxJvTMz42e60rA+R/37QcfKmHu7ABDmI0AKJPeFTMFl11H2ue8x9rQ3fXLmRitbNrUd+NtYTjRX7UAaRzaO3YvogW5x+GEELjfa4drlfEXX13RTdN8P4biKTZRpF1O+w7nOok0AgmJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AFB8Nax6; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760784177; x=1761388977; i=markus.elfring@web.de;
+	bh=cn18gVEv8LUVX5SOWaN3l+0XFDVqIgAa7PHNiyYdPz4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=AFB8Nax6FtWLuRVj+nsHEQ+z/ML7//Q0vDQUqhI6VyqI6415SForIroMBVO4ivex
+	 4mAqTpih4R570kXovzbwxzQQfrS/KUREkRKTgoKRe4r+suL6xjle3WniE6Bneodx0
+	 8zQrFwICbGMTCb7wQF0k9g9FfEbHRpb3DwjwxVB407n5BkvfySxqZFnnq3/UeqT+n
+	 nqB5heu9+aL7L0ZHyo9pU5GhZEeM5/euoOm0e2UHzITZBDUsHtMCRyU83+NZf9Bd5
+	 icVcdSncNFV9iyI/G1wBJzGNzCKLrsG/S+oQ42ZSieLi1qYGu56UkEinDavQCabub
+	 yvTAgHDmVbHYUNyOFg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.233]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuF8x-1uMLzo2bPx-011EfC; Sat, 18
+ Oct 2025 12:42:57 +0200
+Message-ID: <cf656a57-bb2f-447e-ac6c-0ab118606dc9@web.de>
+Date: Sat, 18 Oct 2025 12:42:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017145134.710337454@linuxfoundation.org>
-In-Reply-To: <20251017145134.710337454@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 18 Oct 2025 16:12:31 +0530
-X-Gm-Features: AS18NWC1tQ1llFX7LULrRrpUFjdOIk2jZcXVw-IyC4sFHqzmRTWSi7dadzfwsO0
-Message-ID: <CA+G9fYvQMwxB2LHpZPkQ7nUDkVw6LbMnpRif=tq_A0K69aiGVA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/201] 6.6.113-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, linux-s390@vger.kernel.org, 
-	Peter Oberparleiter <oberpar@linux.ibm.com>, Vineeth Vijayan <vneethv@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] PCI: j721e: Propagate dev_err_probe return value
+To: Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20251014113234.44418-2-linux.amoon@gmail.com>
+ <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
+ <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1lIM1h5WLjuYfsMemPwgtC/4pl1bjIrYBTed8hKPBz4TXvf6OQu
+ 6UNChvXyR7fIoOLzDg4PMaeZSAqWgCpzBCzlCtBLLMuuOd+Xy9FOQ4fToDJMt5F361wJ599
+ 7BsTRipmslb55SF0DIua1M0SzmlmyHBmolxoX3zdgcIo0/ncP0Qmjk7lK9B9dIsyS3GOR4T
+ 3kMBXhNj/6W2bdqPDkbdA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:q3LJM0LNTFo=;wcDgREHGski+81RTw2KTX8OaFoA
+ pcMjKbHL3TbX2DGWoL0NXyKBp6EsFtVo6+VXPl3ue60/ogfXtxiObjR07nZ6+8DdBgfZdCTb7
+ gpXeXpyImM3+WLtMyTeb0jYMGnF6ZRsAqUQlb86e1Ptnv8KQuBzpq2XnHc89gF6yNpnYT/up7
+ XDeVMnbFciQmXy2IWCeW4gTKqwPLTC91McM2cME/YUsNY7LkGFfOWTDVYKCpxSw9TOZIPpFR6
+ hkARKpcXlmS2D90EtXMbvBBR9/bUKUL4yEH7+CEerg6Ljqr0Y+T2udn0a6uWbOZ3OF1z1rLVB
+ D720qYhRUiFgfChU1xmDBlNObaSNMRkZnPBzk5rCZYV8a6WaJnX13xSRUXL0IiC6DYQ3L48D4
+ mUQRokpIYGD649/yldSaOYdQOv+N9TIJoQsJmm3UX8nQCBzOuDcYYM+Fs3St16AHB4D7amzuC
+ nG+W19aK/h34rmeC9x4OEMOnDHlTt/D8buC8P6fyA5SG5YNYU2IB3y3k8iOkqhz3Oo93twH7C
+ uNXH9dh8U10BD3HL0YNA0pQ+NyYI6aL9gcWi7l2t39j632kfIn0oBQlmFBgm8385KVJxLc6jz
+ 8juslSdFCY/95MDcBa8jeGONzyxtOa8fCi9NHSWF/MJoBiaC1NFgIgCrI9ibQ8QtDK+gFZfhd
+ GEryQoMttfVQUbLkzsyBmC9VPRmxSMWPb/6rxmV6FlH37KhFmpVbdW6tjxQAzZq7+d67mGfuT
+ WAUBMvidSnXBenE/oZDAR8CB+5eP4VpohJ7SsWXogYH+C9ZK/RJmNenErC6Tz4wSF0KmaHojm
+ iP0+RXBtjAK/+Ue82nPhp7CZPtUJ0VQeiRgk2XOy5Sxr+vhtdIcSgYWarnGiLlnuIH/nZPviA
+ e85kOlO59eBIqj93IqxMEAuPFYQz4FC7GaW1GGVM/kVq2Umw+VXPzC+D286ZXzF3fTbN1QpuQ
+ AsqYrSZ3Efjf6HV81Gtz/lEZvdEJe76/+WHwyEhHgG+8kUrC2EyJ8GZQIoyKAnW/jdzjbFPX6
+ 84Q3viVfaIAULNbf7YF2JEEegLMC0C6a0/owvZH/ga5OllCGh0T64rFdMECLLf4Sy5K6a9lm3
+ qhix9Sc2ZruZi5a+K2SH0zsBPej7U/DYattRepVDO8fXEqa2nc+OY33OTk0Acw1yffBftUjhS
+ rvGyZMORuob2OcdCYxA3/Pd264oh7+DXyGDTa5+zVtlhJOb8RJw5yEct1fWckTsiMBkiLatil
+ lqHwIS6Vt8RkrfsZPtIDx3OEP5O1F81O71V4GT5Ovyj7CNY+x9BVF1nlq7q44P403YdA8ZVLf
+ U/i7NyFFH5rp4LRqyEF/7gkm7S5d1dwGnUeR3eN1FxbC3TKFI0g0qjrOj66DIik0EeH8YkYHl
+ jGxnaOJKOtQ4/3DzQArVfr26yK6Gacu0Y4hizElH804iOVG6k3598/ghZclLG/q35UYlOlJhB
+ 3U1B3YOBk/wLW99+6Pf4OY6hmyos9v8k/MLf7zG/LjfcClMR6gh9gMDrB72gqG47PPseb9QBk
+ DAl3UpQelUT/UFqHGH2LhPXybqv6+kjbKFfREo2215jwZ15mNDpzsEkDj0C/leEwGJeOi4/Fi
+ lK1n9wbY861KGL1+fSmYKCIYEAkmj+8rpQpkdj/1WWSqurk+/uYV4uihmL4YgHAL3BySryOdX
+ Yr/Exw4Kn+B4fl/jqLuCMueQ6e58BTPFxMHyOeEK1D3orIo2k3G9HY1HPpAfTk5WJBK51ig2T
+ kY8boU3jl36098YO8uatoTSlSvCLzJBZ5CzDgPcsMXIuynrQmA5CK5WdJM2ZZzaXn9H9B7VEi
+ x4D3Y7v8ib04VH0WzFeE6KyC9ZgjIgIPPv4k9HW+FHAdhGb5UoTSiRTjNnHxun4s8U/STqG6y
+ HL40KLZqcCuATOni3SfEpJRHPxF6WKCXImwOUQAg1Hsv6AO0fzMrzIQKtKOCCDu+Kl4GywdU8
+ /28vOyegY65cQ/0ot40pf4Ej6uAtyjv9EwD1Ei2E0kFoSp2jIDd6I97ZdRBPKDEQSoEqITIlF
+ Mkpjwx3Y0ocjhrUhljI9gz8rzTBV55sv1buG1ON78bXHHbRUbHw07s1VQ2MTDr9r/HWnMxnq0
+ Vin7gr7rM2ejMp+Vpjx79SgHapTll4Q+ycBEwvsGV/AUOyuPks/gByNzRk4lMML+hdfaox5Yu
+ xIsIOztbEhKh/UQs26xwgdG8uwNYplFlP0NX1FxadkO5EqmbmKv95GVAgI1rfbpE0gDwhldsg
+ q3C0bYBXaDGk3WxZHqvzVCbwBhnAnO00q4IbDlSIkg0Oai59cIdEubFR02sXHuPyUPxr1AAR7
+ dSh+JF/cQFT1CwHup+Npkxt1pMu/q9EgJiIoBjCyWRnYwoZqLeT4Eo6OYYeBvJG5YGIm2ntB6
+ HyWMtzOYoDqS+73AIX05DVDJNzV1JfKBamkjSm3cWlXBrBftF+8lBVsiL6BMAuv/j1j8OSzwM
+ ey2kevunDcoUeGvito+XWD6jOO8Z6V2evZx4v1tBT0h0r7wS++LJjOt465D9nesWdvpQAZY7g
+ tI+pG4W9dxy83ymQEX/IDcOs4XgLmpHvQFlOYxRWuEBH4hlvVSZbNn+roCfZ4lYd5PujcheH8
+ n+KsQY2n4BsouUetmwp8uZ+UFbUIJzuM04nUmM7LaUH4cffGgd5ryu8yK80YUYLUt2cehFsJA
+ mq+dDlJFYpKRtOk1s2hE4G4uLa+oEUfMXs2CsvRcQoBRvgwn0cKxgU3NDrFEtU9s2MAChTb7y
+ 32yzTL/eP1gANWV9wg6wx6ALqiEbo/7wL+/JAayvpXEBm07pzlKwjoscqgQWaTx8z7EsEQCM5
+ wS1C+bVQ0VRJNhO24IWJIAU94GbaujVolTc7jKk5N6trWfM/08iNscR1Nkv8xe9Y1089WnKfG
+ LH4TygnCnU/qCb/bqvoRm0dwxTtdbcCWot4QklpYUQkWG0O4jQ+tnmWCVjcHxZ/j70QX0HFHu
+ iyVaRleGdTBt3CP1avV4kKLBJoiwdXwb2+VE7qjNJv6yP8FmDkKd2sBfq9sOw6GoGATErSvTP
+ c1FiUiWMYPIoi7Osgwr5jSVJtl6cH7v5/5TQGsq8FaID8W6TUl9VJGE2xPu9mJ4/Bth6cWyJa
+ laT2+J7EV+S5GCEdFxteohmJjTrlZ7e/YCwO69f5xSdKxKGoM4rlIhT+yVOHpynCcYFL7TRoQ
+ PlUCBoFMOXh7YyxCqvtfA1jE/DXUa33ajewE9RtLY+TRDu9ad5QOC9DAufRCqvgm1qOSUDkuu
+ Iov0Edwrd5VExiyIMehFJ9lXajfcqBv/35eQuN973pYbilkoF2vh42nFugKSPhc+Hg3M+Opez
+ ytkfE3n81IWq40MMReePXVRcH3i0fqzcXdc2aHqgLnA2URejHtdlfuWJ7kjmdo9KOQa66B8LO
+ 3Y0tCVMV/H4I1wm/Y13YbeMw03dXw3RN3kgdMCAIGvrDX1BwCOArhJlU2WsM1W5RP3jxAC6eG
+ p2R4n9OZbfc6D6qk5V+FxhPhXiIQZrG1LYzRnF9zSBagNQqFR8FgQCkTSXxfus82zq66RPIWU
+ B/HbIGF8VHViHMvcOVM20FvAOywrsfIpHMu11jjxdpCbZsR18h8eRFkvZwoR/44RENXPgzy5z
+ AH3FbcVR0m6gGjdx1FvAgzrwxEbRnH+OSqE1MILSK2wSjfgeH/D5HTQQga0rTL6O00g86uVWS
+ g3k6qFvmEvz2jGHMumGsoZzeabrAAQydSHC2Ik1lWMcMpgaHjvMK+QIFYfJQ1igx1pfpKlrLA
+ qKYrF+TMccYTHSTxum4C/XkUrrbP83l/q9cu3Q4wkECPA5AB4xl5MjliCFWQYBe1htp+zLHo+
+ qvUMNpH62M5BOsqrqCUR8RfJqhHhdJHOr+78tRE3q+GzKIQEHON9ck7LF2KTf0Q2fImwVoYAk
+ g7y0wmZaBJ/qtXDH8JTSsrhWPcBgwnYhjTPipjrOraGIy5hidqcug30+Gmg+/2N8FMTRV1Z9V
+ QfidMreRrnTJXDnlJ0C6qLn8nvxsfO3n0ZqOENaMfyCbq9fkaCcs6wdsjP12XCyb/7RIn/7VI
+ Jl0FRK3RbNrQrYjfJDbzLgvHzjPeB+LwIhnxouN3w4E7WZEuIli7qHFKQjU4OlrHxHa5iZpkm
+ zUyYYa/hVaHKeUWkkmX6o1crlNXq7gG0F3IALkp4K9VwDGM/RcIY2unFQ1DCmfAVpAPGMcQq+
+ DgNTRdJ8B3nqAgr//8Yt97Wxo6t9PV0WNPYP8cNVpkBm6C/zcXRhY1je3RrWRzyOBW0FvYIWy
+ uGzZi0YYHlI/dwsevjz+FtTOVjwdVVeSzqy6Fz4cyGhkOnieLrIiPLFCymy4uBoojm2AR5fKT
+ lEFSaUQoTpoOlXw0EksoyHvR2v+3FOcdFtrAoVTyjSCyaJ7g1TWGfPygwW86QOrsjBKRelinb
+ J/hB9INVUTpMdyNHW98+D9rMvzsD+dHm1PImA3vUgU/U99aXObs+J5WgQqSiA1IybtaxR8VjE
+ AJ6seR68mFyj47BlGTWUPd5ztxkHp5P8IN4vgh124RWaMx4G8iBwaJw/rb/a9f+WyKvN4HGQW
+ 05WpwO9gKTLt2r5ZN2yKabDIE5CjmHwLeEt0pws4NTjm+stETfIhOd6iCmJxC7kzmvbY072Tu
+ 2TZalpPrG/KSDDqR6/KqlDszR7KDJBEx8qvi4fHApyQNWuYtUsLf2hgsF7wzCyl14fGchuAk3
+ XHo6mriyCKaq4s6UF6dwbY73m+lTB+7wvdXftuKhCsERdxx6036Wmx4RoL3hvXRLDQV64p2q5
+ rLiEAAd5VLwgnhV9dCOabj2IKKL3i/+h/VyT3DjhEMiwq0Au7ufLJiKnCfW9iZ4XKx5V+IWe0
+ P1R8HzrQQezm3OiVdxdfPMp+T93pXWi3NS3kA6iIkIVYctjlQbSNHvo/pIpyxWUoLn2RYKzUw
+ vSXZ6fqr5nl19aY/no7oOZS+mcP3s0ZwCOyg8Iwvc6tyfYSKs2n9DkkUEd/FKXt7ww/L3X9wE
+ ABUICcnqhgYJZg==
 
-On Fri, 17 Oct 2025 at 20:34, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.113 release.
-> There are 201 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.113-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+>> I propose to take another source code transformation approach better in=
+to account.
+>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/core.c#L50=
+31-L5075
+>>
+>> Example:
+>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/pci/controller/=
+cadence/pci-j721e.c#L444-L636
+>>
+>>         ret =3D dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie), =
+"Failed to init phy\n");
+>>         if (ret)
+>>                 goto err_get_sync;
+>>
+> No, the correct code ensures that dev_err_probe() is only called when
+> an actual error
+> has occurred, providing a clear and accurate log entry. =E2=80=A6
 
+Where do you see undesirable technical differences?
 
-The S390 builds failed on stable-rc 6.6.113-rc1 with gcc-14, gcc-8
-and clang-21 due to following build warnings / errors.
-
-This reported regressions also found on
-  - 5.15.195-rc1
-  - 6.1.157-rc1
-
-### Build error:
-drivers/s390/cio/device.c: In function 'purge_fn':
-drivers/s390/cio/device.c:1325:23: error: passing argument 1 of
-'spin_lock_irq' from incompatible pointer type
-[-Wincompatible-pointer-types]
- 1325 |         spin_lock_irq(&sch->lock);
-      |                       ^~~~~~~~~~
-      |                       |
-      |                       spinlock_t ** {aka struct spinlock **}
-In file included from drivers/s390/cio/device.c:16:
-include/linux/spinlock.h:374:55: note: expected 'spinlock_t *' {aka
-'struct spinlock *'} but argument is of type 'spinlock_t **' {aka
-'struct spinlock **'}
-  374 | static __always_inline void spin_lock_irq(spinlock_t *lock)
-      |                                           ~~~~~~~~~~~~^~~~
-drivers/s390/cio/device.c:1348:25: error: passing argument 1 of
-'spin_unlock_irq' from incompatible pointer type
-[-Wincompatible-pointer-types]
- 1348 |         spin_unlock_irq(&sch->lock);
-      |                         ^~~~~~~~~~
-      |                         |
-      |                         spinlock_t ** {aka struct spinlock **}
-include/linux/spinlock.h:399:57: note: expected 'spinlock_t *' {aka
-'struct spinlock *'} but argument is of type 'spinlock_t **' {aka
-'struct spinlock **'}
-  399 | static __always_inline void spin_unlock_irq(spinlock_t *lock)
-      |                                             ~~~~~~~~~~~~^~~~
-make[6]: *** [scripts/Makefile.build:243: drivers/s390/cio/device.o] Error 1
-
-### Suspecting patches
-Suspecting commit,
-
-  s390/cio: Update purge function to unregister the unused subchannels
-  [ Upstream commit 9daa5a8795865f9a3c93d8d1066785b07ded6073 ]
-
-Build regressions: 6.6.113-rc1: s390/cio/device.c:1325:23: error:
-passing argument 1 of 'spin_lock_irq' from incompatible pointer type
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* Build log: https://storage.tuxsuite.com/public/linaro/lkft/builds/34COEeJlCgnu1mnSirBqlyQrqiL/build.log
-* Build details:
-https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.6.y/v6.6.112-202-gef9fd03595ef/log-parser-build-kernel/gcc-compiler-_drivers_s_cio_device_c_error_passing_argument_of_spin_lock_irq_from_incompatible_pointer_type/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/34COEeJlCgnu1mnSirBqlyQrqiL
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34COEeJlCgnu1mnSirBqlyQrqiL/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/34COEeJlCgnu1mnSirBqlyQrqiL/config
-
-### Steps to reproduce
- - tuxmake --runtime podman --target-arch s390 --toolchain gcc-12
---kconfig defconfig
-
-
-## Build
-* kernel: 6.6.113-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: ef9fd03595ef20d45159b484886170cccb77e879
-* git describe: v6.6.112-202-gef9fd03595ef
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.112-202-gef9fd03595ef
-
-## Test Regressions (compared to v6.6.111-197-g07c1c4215e92)
-* s390, build
-  - clang-21-allnoconfig
-  - clang-21-tinyconfig
-  - clang-nightly-allnoconfig
-  - clang-nightly-tinyconfig
-  - gcc-14-allnoconfig
-  - gcc-14-tinyconfig
-  - gcc-8-allnoconfig
-  - gcc-8-tinyconfig
-
-## Metric Regressions (compared to v6.6.111-197-g07c1c4215e92)
-
-## Test Fixes (compared to v6.6.111-197-g07c1c4215e92)
-
-## Metric Fixes (compared to v6.6.111-197-g07c1c4215e92)
-
-## Test result summary
-total: 120291, pass: 100081, fail: 4386, skip: 15390, xfail: 434
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 128 passed, 1 failed
-* arm64: 44 total, 40 passed, 4 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 15 total, 14 passed, 1 failed
-* s390: 14 total, 0 passed, 14 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 37 total, 34 passed, 3 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Regards,
+Markus
 
