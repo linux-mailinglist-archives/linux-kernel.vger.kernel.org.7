@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-859396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED034BED803
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:56:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A2ABED80F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCED54E21A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:56:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B4874E4E66
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB0024293C;
-	Sat, 18 Oct 2025 18:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F6525F99F;
+	Sat, 18 Oct 2025 19:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LZb1EmDJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kfhvQ2tf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9971021CA0D;
-	Sat, 18 Oct 2025 18:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9271EF363;
+	Sat, 18 Oct 2025 19:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760813781; cv=none; b=Y94ajsriheoz8GLa+VbtNQhEMH+vWZAMM9XrDDZWEuPJbzO5DKjVqfZ09kKuV3srzkO2NS9YuKtCnOvxyJ5edX63ZScvir/aV47SMQ5zMchkIG+Op64yNNV32WR1uIMuIDmcvx74Fz3bsIR/tdUCHIMEX9QMuc4TxglRlSUhGaA=
+	t=1760814051; cv=none; b=KxDCsJyYziKTwCyguuGvriOywf4f2/7jYS2MXcAT0lBeMQaEguhzoHkUyyV9eiCHbF4lS/+fJ4WRD5+zfSdOeJB9sTD3CaOrAwNaaMFtWOUf7/SjG0CQfa768LWalCs9dc6/+MsJzN/tqzI2w80sEG2SYn3ZSr3ZU3cZcRWP6Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760813781; c=relaxed/simple;
-	bh=jAFFX9re57CbcGmY/anw6g9Xgwh+ZfQ2CdQT+K3Wmq8=;
+	s=arc-20240116; t=1760814051; c=relaxed/simple;
+	bh=2424lkxqVqVcCWvrSYaYBR5ZLHZgG6xuHymm+xrpt38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0eK8xtg3iJ0nJOLSXoyzUSpj34FzjsStFST1U2R6SvYa2ONiR7sK9pvLzleDQhGxk73w82W+0GqDy6Io4lLs37Q24Kf9Ef1e0Vv7ldiPtJ35RKtCq4qQTaCX3xfVW/WrQGM1q4IkzurXyltAtuDCsCee63V99XD2gSN6gbF83s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LZb1EmDJ; arc=none smtp.client-ip=198.175.65.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEKChWx2Psy8nFVdfX5+9U7lrvjycdjze0K/1KFUX+NJdhtIlUpJi+uljrhaIsJdumrE1qSEYdsDMstHJur1psIhk4Bt8YiG2EsfTDI8sxOLNYWPCaKrAg6oxxoOf3FG2cngkFFVy/yq/iUCInv45Nq+4EvM/j3nca52W2qIogo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kfhvQ2tf; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760813778; x=1792349778;
+  t=1760814049; x=1792350049;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jAFFX9re57CbcGmY/anw6g9Xgwh+ZfQ2CdQT+K3Wmq8=;
-  b=LZb1EmDJEhMXmP2cmVI8hhZTIp6McTRu1DmPNhRrfYzOIwWfUVowQSzv
-   bEZz4q7eVtkSMoqjFfCvrykvdV4Wzf8TO/l/RuhAk28ktN/OZpcVa3dzt
-   nHHg9ymGy5iiJ+eJzm8DIYXl9TEJdDFF4OcYop3GkvSy4jmmkI+bua23g
-   73pooFFpWQs81NRQxDalcuZzJN2DCOoevTlg7TH0wdIxCqShS33O7SxGG
-   QaScGyF+mDpFcss2S2/gdFl783SOOd+nxWXnI313NJXdfJMhXVWWYZyFa
-   44G/QDFOgjkqqJRkzSuKwGLZryXyj9O54p7Z9sVIb0Gz5+FRFHr2x8WAG
+   mime-version:in-reply-to;
+  bh=2424lkxqVqVcCWvrSYaYBR5ZLHZgG6xuHymm+xrpt38=;
+  b=kfhvQ2tfAkhfc6pKoq1XkSFzTOV7E66P2ZdC/riUuChuaRevtS1TvG7s
+   rkp3H7ll+nG3hsRFq3xZN48d1FoZzne0xVyIJGPnnB6CBKziKGMKEZypi
+   SOFyfxfNsHyEHTsDfcplFtslNSmtdrhLh+t9AMCt40oKPtL9VKaNZLBBq
+   3k4NXob3EZk0ayOQN1HVrJMqXK0lc3wzsgfnodQWrMxAiUsvKBfY5LCR8
+   SjpP1nkTxEJdAlhkFCZKkO0pfLtsYeeCnsbyWcgv1Zv3EFEq8AzC+nhbS
+   TxvuG+FqSGVU3lY1aAdbNUhhQncUL4ZuMIUo3+qHtlbwot9O4LFjSNUR5
    Q==;
-X-CSE-ConnectionGUID: QlWqOqmLSZ6OfN6wWiQ3UA==
-X-CSE-MsgGUID: 3uWGVFuRQV+9ke+iUmMTvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73279642"
+X-CSE-ConnectionGUID: cJiJjzs6SHyJ76j6irjj4Q==
+X-CSE-MsgGUID: 50XcSHm9QT6AW6AynIc9kA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80435716"
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="73279642"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 11:56:18 -0700
-X-CSE-ConnectionGUID: mQQxhz5RSsePe5MgmLpYUQ==
-X-CSE-MsgGUID: r/bTuVqmRUulbMLDhAalqA==
+   d="scan'208";a="80435716"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:00:49 -0700
+X-CSE-ConnectionGUID: Ry0YH5O6RBCK7CPjrrYbXA==
+X-CSE-MsgGUID: Xwolx4EpRJWNShptZSJkaA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="213966635"
+   d="scan'208";a="213605488"
 Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 11:56:15 -0700
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:00:47 -0700
 Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vAC69-00000000x6Y-0o2t;
-	Sat, 18 Oct 2025 21:56:13 +0300
-Date: Sat, 18 Oct 2025 21:56:12 +0300
+	id 1vACAW-00000000x9v-0MjN;
+	Sat, 18 Oct 2025 22:00:44 +0300
+Date: Sat, 18 Oct 2025 22:00:43 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Peng Zhang <zhangpeng.00@bytedance.com>, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	songmuchun@bytedance.com,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	buytenh@arista.com
-Subject: Re: [PATCH] serial: 8250: always disable IRQ during THRE test
-Message-ID: <aPPizEp9w3gcwa0H@ashevche-desk.local>
-References: <20251014114727.1186-1-zhangpeng.00@bytedance.com>
- <94d19d6d-5bb5-4156-8499-0be3d227f478@bytedance.com>
- <0eb4c357-aafd-42bd-a4fd-687a91831bf4@kernel.org>
+To: William Breathitt Gray <wbg@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Cave-Ayland <mark.caveayland@nutanix.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] gpio: 104-idio-16: Define maximum valid register
+ address offset
+Message-ID: <aPPj22GL56sP1gOK@ashevche-desk.local>
+References: <20251017-fix-gpio-idio-16-regmap-v1-0-a7c71080f740@kernel.org>
+ <20251017-fix-gpio-idio-16-regmap-v1-1-a7c71080f740@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0eb4c357-aafd-42bd-a4fd-687a91831bf4@kernel.org>
+In-Reply-To: <20251017-fix-gpio-idio-16-regmap-v1-1-a7c71080f740@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 15, 2025 at 05:49:34PM +0200, Jiri Slaby wrote:
-> On 14. 10. 25, 14:19, Peng Zhang wrote:
-> > 在 2025/10/14 19:47, Peng Zhang 写道:
-> > > commit 039d4926379b ("serial: 8250: Toggle IER bits on only after irq
-> > > has been set up") moved IRQ setup before the THRE test, so the interrupt
-> > > handler can run during the test and race with its IIR reads. This can
-> > > produce wrong THRE test results and cause spurious registration of the
-> > > serial8250_backup_timeout timer. Unconditionally disable the IRQ for the
-> > > short duration of the test and re-enable it afterwards to avoid the race.
+On Fri, Oct 17, 2025 at 09:58:01AM +0900, William Breathitt Gray wrote:
+> Attempting to load the 104-idio-16 module fails during regmap
+> initialization with a return error -EINVAL. This is a result of the
+> regmap cache failing initialization. Set the idio_16_regmap_config
+> max_register member to fix this failure.
 
-...
+> Fixes: 2c210c9a34a3 ("gpio: 104-idio-16: Migrate to the regmap API")
+> Reported-by: Mark Cave-Ayland <mark.caveayland@nutanix.com>
+> Link: https://lore.kernel.org/r/9b0375fd-235f-4ee1-a7fa-daca296ef6bf@nutanix.com
 
-> > > --- a/drivers/tty/serial/8250/8250_port.c
-> > > +++ b/drivers/tty/serial/8250/8250_port.c
-> > > @@ -2147,8 +2147,7 @@ static void serial8250_THRE_test(struct
-> > > uart_port *port)
-> > >       if (up->port.flags & UPF_NO_THRE_TEST)
-> > >           return;
-> > > -    if (port->irqflags & IRQF_SHARED)
-> > > -        disable_irq_nosync(port->irq);
-> > > +    disable_irq_nosync(port->irq);
-> > disable_irq_nosync() may need to be changed to disable_irq() to prevent
-> > interrupts that are currently being handled.
-> 
-> Make sense to me. Care to Cc the people from 039d4926379b next time, so that
-> they can comment?
-
-Thanks for sharing, Jiri!
-
-The above commit message is unclear about the scope (HW wise) of the problem.
-Is this only appears on a certain platform or on a wide range of
-8250-compatible devices?
-
-If this is only about a single platform, perhaps it needs a simple
-UPF_NO_THRE_TEST flag to be set?
-
-Otherwise, I think the above mentioned commit missed to explain the case of
-the delayed THRE test. Brief look at the code doesn't reveal a problem to me:
-the THRE test and timer backup is for Tx, and if we got already an interrupt
-before THRE test it either Rx, so no timer is involved, or Tx on the platforms
-that do _not_ need this backup solution. Ilpo, am I right?
+Link --> Closes ?
 
 -- 
 With Best Regards,
