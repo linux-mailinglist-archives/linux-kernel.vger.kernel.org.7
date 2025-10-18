@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-858982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF66BEC684
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EABBEC690
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BFC84EDE95
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C24A6E58E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EC024DCFD;
-	Sat, 18 Oct 2025 03:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D22737F3;
+	Sat, 18 Oct 2025 03:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMcGH68m"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b="MYBKEFOT"
+Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E382D1DFCB
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 03:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BFB26E6E4
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 03:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760758267; cv=none; b=cstLafnxJ11QPJ59eUVilMy4ScxcWks8gI6pZbx/qcPLEBOzDClsSYgR3PsOdb4aOZ2JOBJ+eBUwtsnG3XZYMKu6eN/8OIzM/4RZ3EnWzSeB89jnJut2hMGWPD78UvpwQ8uqJhscCBozpF2p3gRiCZq/xhFW4H85p63bYwauU/s=
+	t=1760759042; cv=none; b=unGGxIlyjaRL0eB5Yn3JJC8mmv+M3Q7Ps7zhywjwHyVt4d9Qx63yAw12+nnldsMfuGmYaK1RtWYqQh2os3eHvjpxc6N1Wnmp+4soMU2HKzoMLCsQ3pMovAxToT1WrpzowNejPV38D4CksfqUiF/35Tu2Dx2rbole5ozApGSLiuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760758267; c=relaxed/simple;
-	bh=+10+GeTAtzffLGH8zcKVrCr0sCkofSw5csfm87HIomc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=giDnj90A0XHF97rj4Q2g0x9q9zhJJuQfV5RrmQBeRqxMKIIg3u7/xA+bj5B47p+Am7sjxaFefyKwEY6FZaW0xKJGba8YfyA7vB+XkCtyBqLV9EcDP3i+fMyo+qhtrpHIxl3/+sAjiIGscfJ3251ksRyUzK4eSD8N2v/xs7xy1Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMcGH68m; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33bc2178d6aso1545655a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760758264; x=1761363064; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v6vOeL0Ti9p0IbinEayIS2aVQiUiE4kHXsDaP64c+YY=;
-        b=fMcGH68m1sJqGtwHQ+pYV+VsTY7UM8Dwby7tLA2VuZuCSoC0oSmurMprWz+5vuUtAY
-         O9OYI0D3MbFsePEueWQ5+/nWIfZ5mYRBEsYEJvr5pRpJGoM7vtR5QsrvPe+33nWjultG
-         hHqQjX4KO5M1x2l2TeXEF7WofQ7Ws3dS4tfBmp/1YbjGcbfb3Snw1+mxHNCv5Vusztab
-         XX9FE428wXVWcRMw5F7uWBGeRY0Svuz1XTrzGmjILBSnZIprsMoWr3u3rZeqGI5m50xA
-         5TdtLZClsRPTBGf4cyIxI23GKLmHS66uGzjJUxtanwEVTHVueMcbu0wWVn+FXPwZ57vB
-         eeEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760758264; x=1761363064;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6vOeL0Ti9p0IbinEayIS2aVQiUiE4kHXsDaP64c+YY=;
-        b=JSWWeIVRTqLxBal4+J4fBwgWlCH31TFmeAUIkqzcKhJvcjySu2sv9arjolzUDodCRp
-         QGtyOT5IK9F6F/8RmOq/8droaQp160qkbcyrgBzsNc81+8Qiq3EmH7qd8mlK3GJVWvH1
-         1B1jSxA+AtMeVAsvpIIvxP9Y4Db8TKoSj3pB0JTPcKs5oOqpya+3dgXK3y0WUn+lcK7F
-         Y+Oj1FtphNid6QS6b0pSDZMrOBtP0WSNeKBMdRFIlq4wtk5JMwP5kXF+vRA3/HvLkrBH
-         DZzNtvg9Sj7CS9ulpTcQSKqTmTrC+fopHNd9xuw7ZiLi3OGmv/iCs8U4NfZlGWT11AEO
-         Ni+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXF9iaZ5nU+Y4V2/9+zEqxi2uWcn9S8DTJDUnQs5huEFx99Hd+vtomOVHfbYFOC0lt03HWfGgdxS+ivpQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYg0Roi2n+iO1lQxxwgbfHfOhgoNK2xKX6mBTolzCNkJ+53mvU
-	j42Tu6vo37bGZn/uIFe38VRDVUVmBoYBwmDxi6/Z3+BbLhlbRbgvZVG/
-X-Gm-Gg: ASbGncs4qXfnYPpoafOJS39NTQeHpTQ4Frs6fAPUAG64aXHpiKINkR2FXkfhmIR/MG7
-	Jhozl0mrN5tAvD1j4Vf+sm2E5m3qYID3YHNv8wMZ2sN0gXPv+BdRssaDM5h8dm9/8TbNmW8ngDh
-	5KKnSt0dIbKYHpKmxJHKK2oXX577tNg13XeOHkySUb3BG7RhXj4Bw2KUWJOvsRpuMuV5+DBdXnK
-	bTdjY7FsNX3hBEYfqqE0qvLb9UP0pxNU+Dmg+uA/SjlKgx3pn2cnNhbWU9BL/2kC5AiNaAUSXtZ
-	oDKrf8O3mC9qhdqn2xAQd7voqFZx2lGGUiL40fhT0gdmj1a0k7fIHIXAKxyNfi1LzMp1xOoUizq
-	qLofsarXgxE9Zko7VcpSIGBCo9QUG+kO3h7fdIJJIb4nmGwsDPEyxVHOrzIvXj8Dc6Br5zJqZuM
-	oddvHlPDpHjbW3mBuAaEYXKG6iI9W1QhES/rTUnxmHYt2ZW3PG+Hpg
-X-Google-Smtp-Source: AGHT+IF2jhP8EBwcp7ssUhyFGBfyHgpvEdDxNhJAUMzEUUmdrL/VUU+PTz7bDljFsV81pHEH+14dIA==
-X-Received: by 2002:a17:90b:498f:b0:33b:cfac:21d1 with SMTP id 98e67ed59e1d1-33bcfac21e6mr6838380a91.32.1760758264085;
-        Fri, 17 Oct 2025 20:31:04 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bae113eb3sm3899336a91.2.2025.10.17.20.31.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 20:31:03 -0700 (PDT)
-Message-ID: <201bd632-344c-4a89-8870-6cfd2f3bac13@gmail.com>
-Date: Fri, 17 Oct 2025 20:31:03 -0700
+	s=arc-20240116; t=1760759042; c=relaxed/simple;
+	bh=QUvK43uEdjp4VgrEbeSeV/3sAkcsewJcyFAAteaMPL8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MAS6Gnm1ZhUo4sBpKpcleGrFRtL2e6f4murtWcMK866E/O/yhmwS1Id0JWgiPcJ2I+fxvqcOF/3C6jz4UZ9HLR5LoG3nHCq+6zQuDRzpJ55JkANtOe4DnK/HDR4YECswl72rVO2zB2RfY9aVwFgkidDBAa+H9nthM9JTupVtmnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com; spf=pass smtp.mailfrom=joelselvaraj.com; dkim=pass (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b=MYBKEFOT; arc=none smtp.client-ip=57.129.93.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelselvaraj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=joelselvaraj.com;
+	s=protonmail3; t=1760759024; x=1761018224;
+	bh=QUvK43uEdjp4VgrEbeSeV/3sAkcsewJcyFAAteaMPL8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=MYBKEFOTulr7k4atKLGtbTazwgyQyOzwgxJNoO5VPW1L8mlcfNXOsRBI3EKeGxeAC
+	 X6pjklk0eWWFemYdVQgkvgcUcGfa8ks6Gtk/KaLltGGznvVi2dJxfu+fPbO1qifQ1I
+	 rvabCdNzC8izkTuuleXrmUBNB2e6YZ5+NoioC5HycjWuYWnCiUr+jIr+aiFsjTXwDs
+	 w9jGhO0bdCBnswuseFXUkxivmaCiTV/yzUldp0hbrxFP0c68LOiOtn58+SVcuVMcpz
+	 SlVn0zmr9SAUlEEvCq5yQ1q2uH2girHmImKuDDidsVw3bleOTxxH9+zFiUpgLaInU7
+	 2OxRqVO61r5vQ==
+Date: Sat, 18 Oct 2025 03:43:39 +0000
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+From: Joel Selvaraj <foss@joelselvaraj.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-shift-axolotl: fix touchscreen properties
+Message-ID: <2a014801-e1ef-47fa-b067-9b566b9d523e@joelselvaraj.com>
+In-Reply-To: <8fd387f5-5b4c-48ea-aa3e-f453ddd5b159@oss.qualcomm.com>
+References: <20250919-shift-axolotl-fix-touchscreen-dts-v1-1-60e26ad4e038@joelselvaraj.com> <8a5eecdd-d80f-4955-8ab7-cf6fd991a3b7@oss.qualcomm.com> <267eb29d-b506-43df-9380-3d79798c772c@joelselvaraj.com> <8fd387f5-5b4c-48ea-aa3e-f453ddd5b159@oss.qualcomm.com>
+Feedback-ID: 113812696:user:proton
+X-Pm-Message-ID: 265feb92edfb20b0e6fde8ba253ef90a0d453330
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 6.12 000/277] 6.12.54-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251017145147.138822285@linuxfoundation.org>
-Content-Language: en-US
-In-Reply-To: <20251017145147.138822285@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/17/25 07:50, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.54 release.
-> There are 277 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.54-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Konrad Dybcio,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On 10/17/25 4:57 AM, Konrad Dybcio wrote:
+>>> All the changes look good given your commit message, but you dropped
+>>> this wakeup-source property without explanation. It's fine to do so
+>>> if it's intended, but please mention it if so
+>>
+>> In reference to the touchscreen/edt-ft5x06.c driver which is used here,
+>> I am bit confused how wakeup-source works. Does specifying wakeup-source
+>> in dts automatically makes "device_may_wakeup(dev)" return true, even if
+>> device_init_wakeup is NOT configured in the driver? I noticed some
+>> drivers do:
+>>
+>> device_init_wakeup(dev,device_property_read_bool(dev, "wakeup-source"));
+>>
+>> but the edt-ft5x06 driver doesnt do the init, but directly checks for
+>> may_wakeup in suspend/resume.
+>>
+>> Few scenarios based on the driver code and my understanding:
+>> 1. if device_may_wakeup will return true when wakeup-source is
+>> specified, I probably want to just remove it, because irq and regulator
+>> is not disabled during suspend and this will likely cause power drain.
+>=20
+> I think this may be the case
+>=20
+>> 2. The driver has an option to specify wake-gpio. In which case, the
+>> touchscreen is put in some low power hibernate mode with irq and
+>> regulators still enabled. But the touchscreen controller used in this
+>> device doesn't seem to have support for a wake-gpio (atleast based on
+>> downstream code). So that is not an option.
+>=20
+> IIRC Shift was pretty open about development collaboration.. maybe you
+> could reach out to them to confirm on schematics that the GPIO is
+> absent?
+>=20
+>> 3. if device_may_wakeup will always return false since
+>> device_init_wakeup is not configured and since no wake-gpio is
+>> available, the irq and regulators will be disabled during suspend.
+>> Therefore, the device will not wake up from sleep even if wakeup-source
+>> is specified as the irq is not going to be triggered.
+>>
+>> So probably no point in specifying wakeup-source either way I think? But
+>> I am not sure which of these explanation is correct and thus not sure
+>> what to mention in the v2 patch commit message. Also, there is a
+>> possibility I am not understanding something. A little help from someone
+>> will be very nice and sorry if I am obviously missing something.
+>=20
+> I think this is intended for things like double-tap-to-wake, which
+> obviously need some hw backing if you don't want to just keep the
+> touchscreen online at "full power" 24/7
+>=20
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Yeah. I think I will remove the wakeup-source for now to avoid potential=20
+battery drain. Once I get more info on wake-gpio/low-power mode and test=20
+with users that tap-to-wake work as expected, it will be added. For now,=20
+this is not something expected to be working. Will send a v2 with=20
+updated commit message.
+
+Thank you,
+Joel Selvaraj
+
+> Konrad
+
+
 
