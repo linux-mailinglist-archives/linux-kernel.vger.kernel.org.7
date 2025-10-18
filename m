@@ -1,112 +1,78 @@
-Return-Path: <linux-kernel+bounces-859427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABC8BEDA11
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36848BEDA41
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40184189E094
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613B05E492B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6292D8776;
-	Sat, 18 Oct 2025 19:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4492C28312D;
+	Sat, 18 Oct 2025 19:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PJTO+dF0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJk0hXth"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A682900A8;
-	Sat, 18 Oct 2025 19:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C48F288C34;
+	Sat, 18 Oct 2025 19:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815348; cv=none; b=TSOKsiOW8A+3CW82V0tNZV+HOoSvIXtGUNVY1gRRy2YPz9Q3ZSejdTmhvlgqdKleobK+moElhA7C/0WAgy6NUQH9xnKruY6lR69pcovSRZlAhmGGFaYf9FWZL+ZPGtNIPt5E63zJd+iO9m59y0poqlHjk7utaWlSXzYe3dk3kzM=
+	t=1760815390; cv=none; b=SOYAK6YZDcBcykWXThpch9DaXKeXefDfvKpE3GCZJsrpSFGXBEIHf78GKxGhl8QqynDVFvnji1kh0RmVZfKoEm/g2VDzBD74yjlPIeKuYEig+P+SoYph9+6qnb5bidScYXfl8mjIqXnbYcnq1CFF0eb2+oN8mH7phwYTP6nrlcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815348; c=relaxed/simple;
-	bh=LyCmdIipytU++1xCmXNYxXqjVJpXEdehmaOhp4HHIBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Hcnw99H1GCKHGqphPLjB0b7ba1ajEh0J4fbn2P4LpJplmxNp1T4Ti5DLHyvty1LMlPRAZbAWXeRRibuUVixM7sr/T2G0uNEFmJFnajTNynHdBdlRU541XhktECV14tvoufD7z61LFuYAuAkOQPx9oCTxC3Q+rlTl7+eEOkopg5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PJTO+dF0; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760815347; x=1792351347;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=LyCmdIipytU++1xCmXNYxXqjVJpXEdehmaOhp4HHIBE=;
-  b=PJTO+dF0HwFWfAsQVTay21pf1ysdXkCZhgVy3g38utTJDrFzQ0IZvyKo
-   O/9QKuMGYrt7sxe4XFWivccTnY/7a3cwpar/RTbTgkOP4L0akeI3NA8tL
-   0+GTqWDixUe/BVtEPq9GLrw1NZuzIkk56BsJf+yCOZ4YnYYzei0yb2dCD
-   ddqSgJFrGlYKTrimwdTZfSMSj3HmVkh++Dw9AMNsMh5E7m7ygy0n9Agqz
-   JivrZopJLooEB5/iL8wEl/55cufp180ISzkuR25U/pXWAmv2n22tkmh1n
-   scIRKoP2JPVWYcka99KZbb0RwD0Keul1utEb5HRqBXQtSfwgfnciH5cZb
-   A==;
-X-CSE-ConnectionGUID: gA2FM40HQgyt7rjV/TxiLQ==
-X-CSE-MsgGUID: sUtyi5moRouaGMX9raASVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62701147"
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="62701147"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:22:26 -0700
-X-CSE-ConnectionGUID: mkNigIwrTji+X+IKWE9Hgw==
-X-CSE-MsgGUID: NKxjGwB3Tyq2wUJfdM4r2A==
-X-ExtLoop1: 1
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 12:22:24 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vACVR-00000000xRU-3VZe;
-	Sat, 18 Oct 2025 22:22:21 +0300
-Date: Sat, 18 Oct 2025 22:22:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jinhui Guo <guojinhui.liam@bytedance.com>
-Cc: mika.westerberg@linux.intel.com, jsd@semihalf.com,
-	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] i2c: designware: Disable SMBus interrupts to prevent
- storms from mis-configured firmware
-Message-ID: <aPPo7VWm4HyoHSIE@ashevche-desk.local>
+	s=arc-20240116; t=1760815390; c=relaxed/simple;
+	bh=InE4Hu+liqrKpegKA5uPHCMkEelWune79jtS1en73h4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EIC9TYqBLDKSWCjUGZbV/lcs4klCft8NLhSacM3zd9p+rxOZtALmIaTPTnnv9AwNo4yActMQCIcGLP5I28Qm7slu4oS5CsCLFSLb760r4PUSXCwqFVZb8nhZNDgyfI2RJUvLCnjM4tQjdpYvRl35Fumcalvj1XED/Dr2rEQMIxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJk0hXth; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225A7C4CEF9;
+	Sat, 18 Oct 2025 19:23:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760815390;
+	bh=InE4Hu+liqrKpegKA5uPHCMkEelWune79jtS1en73h4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=jJk0hXthpr+xM+19TYsCYHqKKIJ56Kf37WlGBloY7jFC9factLqHvS5Gn2o4hcByI
+	 LXp+X+0vQDKXYluV3dhNMQO8AQHKzY8ouTUifwUCH81Cqbwrzo9rd+abmmF/e9jE40
+	 FRe7aXCM3Y16WdJ7Tu2zYNFRWl7DziJmZzL5D7RNyXI7JLKrZVMHn3coKQx6azPKJ6
+	 obydAlu/LaR1B4SIoFtlioIBgW6A3GwvJroo7FccNQnipUvwn1YulkGK+ZrB6l0RG8
+	 Thf9rtwikzchejjBSTTPK9qCfpVL2wRJaPKfCDQMEZM5TappQddmrpLMtHkMoKzu1e
+	 RDgYIf6eybthg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7124C39EFBBA;
+	Sat, 18 Oct 2025 19:22:54 +0000 (UTC)
+Subject: Re: [GIT PULL] Compute Express Link (CXL) Fixes for 6.18-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
+References: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
+X-PR-Tracked-List-Id: <linux-cxl.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
+X-PR-Tracked-Commit-Id: a4bbb493a3247ef32f6191fd8b2a0657139f8e08
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ea0bdf2b945e91137cc465d3833aeb659ba93d79
+Message-Id: <176081537289.3081941.5281546598724773428.pr-tracker-bot@kernel.org>
+Date: Sat, 18 Oct 2025 19:22:52 +0000
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield <alison.schofield@intel.com>, Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+The pull request you sent on Fri, 17 Oct 2025 09:30:49 -0700:
 
-On Sat, Oct 11, 2025 at 03:30:57PM +0800, Jinhui Guo wrote:
-> When probing the I2C master, disable SMBus interrupts to prevent
-> storms caused by broken firmware mis-configuring IC_SMBUS=1; the
-> handler never services them and a mis-configured SMBUS Master
-> extend-clock timeout can flood the CPU.
+> git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
 
-...
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ea0bdf2b945e91137cc465d3833aeb659ba93d79
 
->  #define DW_IC_TX_ABRT_SOURCE			0x80
->  #define DW_IC_ENABLE_STATUS			0x9c
->  #define DW_IC_CLR_RESTART_DET			0xa8
-> +#define DW_IC_SMBUS_INTR_MASK		0xcc
-
-It seems one TAB too little.
-
->  #define DW_IC_COMP_PARAM_1			0xf4
->  #define DW_IC_COMP_VERSION			0xf8
->  #define DW_IC_SDA_HOLD_MIN_VERS			0x3131312A /* "111*" == v1.11* */
-
-...
-
-The rest LGTM, but let Mika to review.
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thank you!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
