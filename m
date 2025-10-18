@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-859177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB799BECF51
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:14:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC922BECF4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C74586BD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:13:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 140FE4ECA4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887A42FD7A0;
-	Sat, 18 Oct 2025 12:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799332FFDFF;
+	Sat, 18 Oct 2025 12:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1JkyaYD"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JF8UIsYV"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341052FB99F
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272482FCBF5
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760789533; cv=none; b=mH7OTYmW9MnChKQ+hDr+MN0nIfmpNLfv7EpiYxM834GANryMdGy6lWGZ/n9sQwfPtTtuMEbR7mSChyEO/aDwinSN0Y6il86C+HA4usdpWQsGtQPeoUni6X1qU+tosxI1Zg8sQLvL/azpGL1P1FFtd+U5nH9quy21VmyNzFWxmSo=
+	t=1760789535; cv=none; b=jqjvaIzAZARk/mVWO13d9PE3QByweBvESbAOHmNKneWvk8cq1733dZerPqp9ZpLU2PnYdCDfl6DSk0ehrYKJ2vOK/mDl1wzAWQ+BRsLRgOTTnvWOyN2aSbER67JWiN5QoInkEzZTiDiaW3Y4Bu4KAspAWR7m0/41yd1LUKDXe9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760789533; c=relaxed/simple;
-	bh=3i5hN70EkS+R2vT407APeWIAYo0I/+m93+hR8moAbAg=;
+	s=arc-20240116; t=1760789535; c=relaxed/simple;
+	bh=+kJN5PezJ0QH+/KdewVY3pE+HvTakZByw4n/oGasQtU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j79cUOlNeuiEH1jwdWH3P1Swho9iIAtfeNi8ygipyoQGYCB3+1IEbUqU5UqqYNBmB+V5qx0VU/e437c1N0esJW84QNNAiuXq/11DlCJVvL/IQ2mtJzc+u5AbQn/NIPGcgxgIqZuO5vCXjIkINFSZSzyeb+ThSM/yjjYfPcO/sCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X1JkyaYD; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=I5+Qs80044tGz+A5DXGIi+UWfIPlWV9IQjRkRE1cdsWYPApkq7oTFU8IAyNmFAc3iKNkBQLdoO1ybj6/HcjHVG69kzxS2o26fCe90QseN1We5vnsPhi13P5VwSpA6HHHkC86OQnCnZA4/clAbwma6Q/ALmDn9y0A9qgUJCq13HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JF8UIsYV; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4271234b49cso140087f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:12:12 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4710653ac03so1515475e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760789530; x=1761394330; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760789532; x=1761394332; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yj2U7Ks4Aai4rP5FlRiq75b6DNk0shSZ9f9hco/FDQo=;
-        b=X1JkyaYDVQu6ShFZGoHAiHQF2ZYFHMyZ45VDNxgmq28xPHHUcIKNDsTVwmkxtjuTwU
-         He/7BPEJV25YUifJMaHY3DqGZmSLbiIQwEodx2qlBIt380FBIA4czrIzcdJad+WkAkM6
-         UhbxVXd6BC2/7kdOZ7pbjRvykPFqYzWmkuy4hywMjWVUwfQRbISB11wg0cwDk4GFgsz/
-         Ld70ARbakhoA72ph7dYhf5z8jsaTWJE0Cs2HaUkx8Eg+eBVkPozbSQq1c2KsYe0DnOxO
-         +GIN2NeC7JRC6VUj3qBuaD1cNUwqQf7EZEsSQcxsAocTbIttG2xBU0WyC/DoR5kn0wwz
-         tZgw==
+        bh=61jDuhX++0mCBZApihfwIySM8ZNRnay0trJ/aGXtPcM=;
+        b=JF8UIsYVtFaLoiGmpVFSLqos8AUBeS+MbVHPZpm0bsaGgAfRTgxkIcCyVOPulXM00k
+         Lz2AJI4U2/+ayvVJs2NUCWFgYHO5i9TjzXmAdYMplvtW1K9tk6rGMd7LCmfgWGNQLKJp
+         7k1iwQIeG/NfuuXeL/habIsYwxQgRRWwW635vOPJ78m5+y8IV343Y5CcG+A/sd0bXBrS
+         y081/uPii5JP+qjw9AWwvZn+MakEpfQqTvt2tuwB7f/8mlBo8OR5BLuwB5/Nv9eW9mml
+         P1/fedQPfAGZ6Nh0rrKvemUn1jaHTvnJRN0ChDqpMnGko+VEjj+ybqknqEZnB5oZrYo2
+         /LBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760789530; x=1761394330;
+        d=1e100.net; s=20230601; t=1760789532; x=1761394332;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Yj2U7Ks4Aai4rP5FlRiq75b6DNk0shSZ9f9hco/FDQo=;
-        b=S7KVkOR4BemDLm48V6swpgmMbmZwzv6HCCYXvbHSGoWcvp7PCN1k+Qw8I0s9idM5zM
-         h+AL594zLu2HBPJo7ZwgNww/ByYZGy2th3CAun1yMzHG/s2XV4sMozV/U/yi548b5MFW
-         3V04vX/0fQgmGxBEQilR2Wp0Zqth3IaWsLJlQO+MG4SemhEI7kzXqVre76fjaDL4eHWJ
-         Ye2zgExKKyStHak2op9o7rN7SeBAhT0GT13D+FwmriiPN9oRDIMMKZU96QXBRnrAUveC
-         2g+zfsYYfiVI67WCJvHfcFdvOaT64xd7aam1fZfl3NAG0Pnp9edwxBwYZItwPzcb+n2Y
-         HlBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmqdti3TA2k3PIzi7Cik+G4Zp7oVSL+2p0G1cfNZw8xHIgF1k8569eGkT69FTC9mhx098HPB2Lj4qWidY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGV4pEwz8tKXc6lOgedVjk46Y5USI97QB1c9aUvCQ5yxSkGyMg
-	QEIdSjFTUE7VffDn/zk5OnC7Ym8HSHNd90bNf2AMonVTgvz804UutmMJ
-X-Gm-Gg: ASbGnctdEiUR4WvAD6HrY1748xth7o2/uFL+4nB2et3hy2x+yGjyqbgHdIKL5KR42yN
-	W6arT1bkgFdE+58t5ecPHTQO7LEyj+bYQ2SimnLWZVhS/X3PJohIM3sKFo+rZI/KN1h7If6nnzU
-	LbvJeICHRYGuNNeU6PmbDI4SS3ozPA9R9J4+NChvYTRX1x6ad3bv2ps3clXbClMImUnuHrwZkS3
-	6t5OH7P2HWTjwEf4qULQDdg6PrRpyd3rx1OJO6D4VnUG9SsBJnVR51wXA3J0SVLzwqHjb8Ld2pb
-	KZCcgqNI4AJGp/shC77BUGeuRw11n/i1J/6EJHvRgJgDKvUnLHZdSeJSmj2ouHH+gobdEDzS+/C
-	2AMqt37zP4AgvCfPpNxLTdmuyx1Y/pcsyzUfN9AVoi0ZyzpHEJrqX+FLcvkkKtUB+AkuPbYF76a
-	+XtS1lz9NxCY5GC6IIV3UIT12PGgAS7+apjyboEuBBst2uTWAmeLA=
-X-Google-Smtp-Source: AGHT+IEBdyKtF2N2KL9lmNfwqEGlADXNFa9DsShem0CkpLr8AuBNYJQxf6N3vylc+U/0FgLDa4AAyg==
-X-Received: by 2002:a05:600c:3149:b0:471:161b:4244 with SMTP id 5b1f17b1804b1-4711792a696mr28075605e9.5.1760789530237;
-        Sat, 18 Oct 2025 05:12:10 -0700 (PDT)
+        bh=61jDuhX++0mCBZApihfwIySM8ZNRnay0trJ/aGXtPcM=;
+        b=nUoXO+1U0Vyqi4BblxfMICFkeuDihka70TbbyoTzvTBRph0NZ7TuGoRwNYg6zt60V8
+         IvQkTxRNDUhxcDizg2Oq2+mSVWsv8QRNDT4wrXI/HTd4FiMQ7Jkhsy+i8mBtiXCxXJEW
+         8JpDEFLWelnx0UE/IT9b4S93bJV6kvQyKIzhE+tJDOwhEv15N+kVoeSCb0xbwQb+x3Q8
+         av0bA5eD3G5kX8N1CPyETEm6NWeO+FmKfBSXLJHlb9cOYCnILLbutyvE0+1Zouff0Qiu
+         gBhGO5Bk0XFEyA5ww1IOWXue7badjqfYN+lSu5TACUHc5O0t5oO3fvcPPKfzFc9h1Y2X
+         jKLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXV03LIfV9VwrzReTzTOyyljC9YZuazEZEIWJvAEGW0S4NXHKmb6PJoP5t1zTFN2Cezk07UfRtZ66SXJmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy0KHMB53MjZF8urXSxWtY2i1As2ijg//5yO7yVBO5OxgxlvpX
+	TAenI3Er1A3Do/8s73x5MKv1xGlhcO2bGQYnkWZ+5EWGOTbRO68O8c2s
+X-Gm-Gg: ASbGncs+FJsOZDCpWALh/Yf4XRH4PwFd3Bi01V8aAcF+FNIkXb5cJRbWjgRARepWHlK
+	MCb+4qrVdSuThukZ4rX9bKFpnJDrkMmOsFXzG7Fi0HnlIdhgvFgJ5cG1pHjwn4hAG3FXg/gR/UI
+	Ep6xKIBI2kR4VbKt7VtLdK7kfdqk82hk5yuy0xaMH4DX8kXX9RbCcazBsIOhfvUXuJNuCoUXCtt
+	Ok9hVmwFxz6ddz+FSXsNlMQ+7R6xiWfB0eS7aWvhxWkyjam8O7697JwK7AYK1szkt97o5aDPDK0
+	kX1K9x/Nn3+uQ7VDRwsXaOAz152nv5dS5jZtAfbri/yIEEP9iVsTidTesdGozsuj07EqkVRBdLc
+	iNN194DjAa8Y9IwlhGtwDVlW8WzJgNt2c6Rfq5BhY7SvN/PqdX4q+duBV/vq0Rk+lQyvlcsSIUZ
+	a8vdKq1SrH8oZI5rhvuRiWBF/kPjnrz4zO3OmiQmAf
+X-Google-Smtp-Source: AGHT+IGlMnguu1Red8qhAnT6PJQ1lgcFmM+xa7XuGc93PNnZOuj+hJG6gEn0AGzlcZZjZ5KiraKN+A==
+X-Received: by 2002:a05:600c:3515:b0:471:152a:e57d with SMTP id 5b1f17b1804b1-47117914193mr28693965e9.3.1760789532118;
+        Sat, 18 Oct 2025 05:12:12 -0700 (PDT)
 Received: from localhost.localdomain (84-74-0-139.dclient.hispeed.ch. [84.74.0.139])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f19sm4763812f8f.9.2025.10.18.05.12.09
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f19sm4763812f8f.9.2025.10.18.05.12.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 05:12:09 -0700 (PDT)
+        Sat, 18 Oct 2025 05:12:11 -0700 (PDT)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -88,10 +88,10 @@ Cc: arnd@arndb.de,
 	tien.fong.chee@altera.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Subject: [PATCH v7 09/11] ARM: dts: socfpga: removal of generic PE1 dts
-Date: Sat, 18 Oct 2025 12:11:53 +0000
-Message-Id: <20251018121155.7743-10-l.rubusch@gmail.com>
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v7 10/11] dt-bindings: altera: removal of generic PE1 dts
+Date: Sat, 18 Oct 2025 12:11:54 +0000
+Message-Id: <20251018121155.7743-11-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251018121155.7743-1-l.rubusch@gmail.com>
 References: <20251018121155.7743-1-l.rubusch@gmail.com>
@@ -103,97 +103,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the older socfpga_arria10_mercury_pe1.dts, since it is duplicate,
-the hardware is covered by the combination of Enclustra's .dtsi files.
+Remove the binding for the generic Mercury+ AA1 on PE1 carrier board.
 
-The older .dts was limited to only the case of having an Enclustra
-Mercury+ AA1 on a Mercury+ PE1 base board, booting from sdmmc. This
-functionality is provided also by the generic Enclustra dtsi and dts
-files, in particular socfpga_arria10_mercury_aa1_pe1_sdmmc.dts. Since
-both .dts files cover the same, the older one is to e replaced in
-favor of the more modularized approach.
+The removed Mercury+ AA1 on PE1 carrier board is just a particular
+setup case, which is actually replaced by the set of generic Mercury+
+AA1 combinations patch.
+
+In other words a combination of a Mercury+ AA1 on a PE1 base board,
+with boot mode SD card is already covered by the generic AA1
+combinations. There is no further reason to keep this particular case
+now in a redundantly. Thus the redundant DT setup is removed.
 
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Acked-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/intel/socfpga/Makefile      |  1 -
- .../socfpga/socfpga_arria10_mercury_pe1.dts   | 55 -------------------
- 2 files changed, 56 deletions(-)
- delete mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
+ Documentation/devicetree/bindings/arm/altera.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/intel/socfpga/Makefile b/arch/arm/boot/dts/intel/socfpga/Makefile
-index 7f69a0355ea5..73a912ec6d95 100644
---- a/arch/arm/boot/dts/intel/socfpga/Makefile
-+++ b/arch/arm/boot/dts/intel/socfpga/Makefile
-@@ -2,7 +2,6 @@
- dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += \
- 	socfpga_arria5_socdk.dtb \
- 	socfpga_arria10_chameleonv3.dtb \
--	socfpga_arria10_mercury_pe1.dtb \
- 	socfpga_arria10_socdk_nand.dtb \
- 	socfpga_arria10_socdk_qspi.dtb \
- 	socfpga_arria10_socdk_sdmmc.dtb \
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
-deleted file mode 100644
-index cf533f76a9fd..000000000000
---- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
-+++ /dev/null
-@@ -1,55 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright 2023 Steffen Trumtrar <kernel@pengutronix.de>
-- */
--/dts-v1/;
--#include "socfpga_arria10_mercury_aa1.dtsi"
--
--/ {
--	model = "Enclustra Mercury+ PE1";
--	compatible = "enclustra,mercury-pe1", "enclustra,mercury-aa1",
--		     "altr,socfpga-arria10", "altr,socfpga";
--
--	aliases {
--		ethernet0 = &gmac0;
--		serial0 = &uart0;
--		serial1 = &uart1;
--	};
--};
--
--&gmac0 {
--	status = "okay";
--};
--
--&gpio0 {
--	status = "okay";
--};
--
--&gpio1 {
--	status = "okay";
--};
--
--&gpio2 {
--	status = "okay";
--};
--
--&i2c1 {
--	status = "okay";
--};
--
--&mmc {
--	status = "okay";
--};
--
--&uart0 {
--	status = "okay";
--};
--
--&uart1 {
--	status = "okay";
--};
--
--&usb0 {
--	status = "okay";
--	dr_mode = "host";
--};
+diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
+index 227665d0016f..db61537b7115 100644
+--- a/Documentation/devicetree/bindings/arm/altera.yaml
++++ b/Documentation/devicetree/bindings/arm/altera.yaml
+@@ -34,7 +34,6 @@ properties:
+               - enclustra,mercury-aa1-pe1
+               - enclustra,mercury-aa1-pe3
+               - enclustra,mercury-aa1-st1
+-              - enclustra,mercury-pe1
+               - google,chameleon-v3
+           - const: enclustra,mercury-aa1
+           - const: altr,socfpga-arria10
 -- 
 2.39.5
 
