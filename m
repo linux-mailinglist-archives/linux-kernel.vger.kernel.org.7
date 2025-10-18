@@ -1,158 +1,121 @@
-Return-Path: <linux-kernel+bounces-858891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE9BBEC232
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD12BEC281
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8341AE17F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA1C4278FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AE425782A;
-	Sat, 18 Oct 2025 00:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCB1D271;
+	Sat, 18 Oct 2025 00:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HmVv89H6"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="O7vmoUN1"
+Received: from mail3-164.sinamail.sina.com.cn (mail3-164.sinamail.sina.com.cn [202.108.3.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB2A24E4C3
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 00:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE931388
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 00:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760746082; cv=none; b=iakOqEQkmpABXV2GdmQzCXxvk2TgdOyET+6CNOeDSVJg7p2hSVb4iGWiI/K3MP1sYbHRvxlDcqLxCrg1d0XHsmSZ42dA29/7Y09M7MnhzE8/6Ej9GEL3WFPFQN8A8pG72xGfsYD5vBESEmDrBh8QFxeS4lb8cFVFlWZ4pCJM04o=
+	t=1760746694; cv=none; b=l4MGXX6xH585t/ORtNin77ZF47fnw5DHuZxOW7l04FuQTEeuRnm+VZL6BhadF9WVW4QddW0juGg2qVyv/YvPkcEPYTVVD4JlY+Udwq5kcChwowePsFwJP99t4gdIzE11EYTgWl6dR5hoPvCqU7zdYkbHttUbOf39/Kee+h8k8iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760746082; c=relaxed/simple;
-	bh=AadBcH6XuFUx3o/uyM4DKBt13sMey6ABFLv07q0/8bs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l92qTMBwNYiaLvLyzSTCwu9sBtF2UeTlgrUWvLdczkqqgDSV9ILJusJMmuZydjgYo73Vzp3T0pF9wQSzBbzSboYdj6UfKrqyQJgUzvGJjiwrRMz/WwNeygdzS8eLTkri5Ioah/tPK0kLClHCwT8XA0p4LmcNepmfV4bYqjYoQFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HmVv89H6; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b632471eda1so2191191a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760746080; x=1761350880; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wf0V49FB2cemzthaMtFIU/EunA9kfJDBrs1ERauwF5c=;
-        b=HmVv89H6ag/Qjal6jKnudJV076pe8pdNfdacsyF/qqidCkLPbYJLAOef/hhR85QBRb
-         lOAbqn90v8jNs78lWIBwom7ceWAsdd41xE+TSnD4iq5+vsvUy3/J+3pM1STK4tMvl/tT
-         X6ZF5ZiIgwUgTdI5q1GA9jWmWwhe8nBzyrqPU85q1YTQCeFU2/RGDfYS9/9uK0poSJio
-         FCX0zwsW6B2ZoJu+IUitB0wLLMfrI1kzDzwW0Bhj9v/phQfrRzGCTOgbRNkQtt310g2D
-         qKeO9yhNfKjoH69dNQ/6GZSZq46ICoXb7lZjb9qf2mVs1oSPHWVFJa01P00Tnjk+i2kt
-         ca2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760746080; x=1761350880;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wf0V49FB2cemzthaMtFIU/EunA9kfJDBrs1ERauwF5c=;
-        b=hcqUt85iKwWdhhlRqVF/h5i0XEnfShquGcdajpSb5YQWov0VUVsPYYwXXkEibI1qT5
-         455xitXcvqVmxIFh2Fas/Eo6niaV6FNQhRrsi6uS2PPzliQGfHZ7kC78bKjBdhHhvYgp
-         X01aGiEiKlftlwKIdFCdmxTM7kj+A8aKKw4iadkDcmZacJvhuoproAWOWIT71c7cQNcs
-         dSfihUXDdOO7sOZnOjXCcvj6Xw1allrMpMrQ0CVqEIc833MrcwDq3Ndtu7vkP6b7mNRY
-         QvCKG8XaFQK2SkNrj0OjKTBo27nwRAzuryKZ3CSLZLwTNicqpKsPRvf1sed+ez8e93o2
-         NbgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6p7ToW7PPOJUsABGYPugBqHZ4koltBOUQJ9nS2vkosWuKu0alRhLwF5xzFxwHl0euNpPnSP0TqEBTlNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwWXB3bHzmN7P6BTgYgE9arB8gL7TqNI++gdeUMkGi69oyoVkJ
-	aO4JERMyOQWjRZZGEVtGj//K/zSS/EONwBV5ccXqJtk05eDvE07vziO+V422XJCMy47f1L1BnVU
-	/5xvCMtnvJg==
-X-Google-Smtp-Source: AGHT+IH3PSOfb25TFSyUmjh3MfKE86e6WefuP65fW8Nk0BjyxdVOlYJQBG/sYV/zeL2CFmcYNYIQrzD32GyP
-X-Received: from pjbfs17.prod.google.com ([2002:a17:90a:f291:b0:32e:bcc3:ea8e])
- (user=vipinsh job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3c8e:b0:334:9c41:bdcb
- with SMTP id adf61e73a8af0-334a86445ddmr6954433637.58.1760746080171; Fri, 17
- Oct 2025 17:08:00 -0700 (PDT)
-Date: Fri, 17 Oct 2025 17:07:13 -0700
-In-Reply-To: <20251018000713.677779-1-vipinsh@google.com>
+	s=arc-20240116; t=1760746694; c=relaxed/simple;
+	bh=nMCcOH3LsvFDiSoSwVzn+bMl8JggwFCUIc5JCRh1UnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QJ/16XXEq5gzKJni1odkmA7mgR8nU4Ulx0INODZ13GrAN6RGib5zZdjp+7Y7vR+ZJ9HHBtQyuq4xLg9KFM5X9quChWESEKTBAjPBRhAKTdnTdadJYkYE0ld5wvx5CzB1Gku8dixgH+3fPvtmBM7Fauz0Wn0oPF3qm1aiyUPHaNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=O7vmoUN1; arc=none smtp.client-ip=202.108.3.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1760746688;
+	bh=6abL2+5TdRDXHj5K2UZsVchQ0aAKfL1TRVZ/hY0u6/U=;
+	h=From:Subject:Date:Message-ID;
+	b=O7vmoUN1EMEsOh3Td6Mt+4/0GBcE/HJLkblsfn1AzbRmgA7vJg9EygWIRyUAUaGhR
+	 E428z5Ewd6P99jY62cEqNNUEpsfoM2X/KlC4udQV1RZKGk55WKFLz7lq+Ja3bpbTAt
+	 nGalcilPzQBQNuV8tldm3ijlLoQYG8zNRGfa95QM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68F2DC9500004450; Sat, 18 Oct 2025 08:17:27 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1788674456905
+X-SMAIL-UIID: 626E1FBE367746C6AA11BA8380028A8E-20251018-081727-1
+From: Hillf Danton <hdanton@sina.com>
+To: Samuel Wu <wusamuel@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+	kernel-team@android.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
+Date: Sat, 18 Oct 2025 08:17:12 +0800
+Message-ID: <20251018001715.8621-1-hdanton@sina.com>
+In-Reply-To: <20251017233907.2305303-1-wusamuel@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251018000713.677779-1-vipinsh@google.com>
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251018000713.677779-22-vipinsh@google.com>
-Subject: [RFC PATCH 21/21] vfio: selftests: Validate vconfig preservation of
- VFIO PCI device during live update
-From: Vipin Sharma <vipinsh@google.com>
-To: bhelgaas@google.com, alex.williamson@redhat.com, pasha.tatashin@soleen.com, 
-	dmatlack@google.com, jgg@ziepe.ca, graf@amazon.com
-Cc: pratyush@kernel.org, gregkh@linuxfoundation.org, chrisl@kernel.org, 
-	rppt@kernel.org, skhawaja@google.com, parav@nvidia.com, saeedm@nvidia.com, 
-	kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
-	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
-	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Vipin Sharma <vipinsh@google.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Test preservation of a VFIO PCI device virtual config (vconfig in struct
-vfio_pci_core_device{}) during the live update. Write some random data
-to PCI_INTERRUPT_LINE register which is virtualized by VFIO and verify
-that the same data is read after kexec.
+On Fri, 17 Oct 2025 23:39:06 +0000 Samuel Wu wrote:
+> +/**
+> + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
+> + *
+> + * Return 0 on successful file system sync, otherwise returns -EBUSY if file
+> + * system sync was aborted.
+> + */
+> +int pm_sleep_fs_sync(void)
+> +{
+> +	bool need_pm_sleep_fs_sync_requeue;
+> +	unsigned long flags;
+> +
+> +	do {
+> +		spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> +		reinit_completion(&pm_sleep_fs_sync_complete);
 
-Certain bits in the config space are virtualized by VFIO, so write to
-them don't go to the device PCI config instead they are stored in
-memory. After live update, vconfig should have the value same as prior
-to kexec, which means vconfig should be saved in KHO and later retrieved
-to restore the device.
-
-Signed-off-by: Vipin Sharma <vipinsh@google.com>
----
- .../testing/selftests/vfio/vfio_pci_liveupdate_test.c  | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/tools/testing/selftests/vfio/vfio_pci_liveupdate_test.c b/tools/testing/selftests/vfio/vfio_pci_liveupdate_test.c
-index 9fd0061348e0..2d80fdcb1ef7 100644
---- a/tools/testing/selftests/vfio/vfio_pci_liveupdate_test.c
-+++ b/tools/testing/selftests/vfio/vfio_pci_liveupdate_test.c
-@@ -15,12 +15,14 @@
- 
- #define SESSION_NAME "multi_file_session"
- #define TOKEN 1234
-+#define RANDOM_DATA 0x12
- 
- static void run_pre_kexec(int luo_fd, const char *bdf)
- {
- 	struct vfio_pci_device *device;
- 	int session_fd;
- 	u16 command;
-+	u8 data;
- 
- 	device = vfio_pci_device_init(bdf, "iommufd");
- 
-@@ -30,6 +32,10 @@ static void run_pre_kexec(int luo_fd, const char *bdf)
- 	vfio_pci_config_writew(device, PCI_COMMAND,
- 			       command | PCI_COMMAND_MASTER);
- 
-+	vfio_pci_config_writeb(device, PCI_INTERRUPT_LINE, RANDOM_DATA);
-+	data = vfio_pci_config_readb(device, PCI_INTERRUPT_LINE);
-+	VFIO_ASSERT_EQ(data, RANDOM_DATA);
-+
- 	session_fd = luo_create_session(luo_fd, SESSION_NAME);
- 	VFIO_ASSERT_GE(session_fd, 0, "Failed to create session %s",
- 		       SESSION_NAME);
-@@ -51,6 +57,7 @@ static void run_post_kexec(int luo_fd, const char *bdf)
- 	int vfio_fd;
- 	struct vfio_pci_device *device;
- 	u16 command;
-+	u8 data;
- 
- 
- 	session_fd = luo_retrieve_session(luo_fd, SESSION_NAME);
-@@ -74,6 +81,9 @@ static void run_post_kexec(int luo_fd, const char *bdf)
- 
- 	command = vfio_pci_config_readw(device, PCI_COMMAND);
- 	VFIO_ASSERT_TRUE(command & PCI_COMMAND_MASTER);
-+
-+	data = vfio_pci_config_readb(device, PCI_INTERRUPT_LINE);
-+	VFIO_ASSERT_EQ(data, RANDOM_DATA);
- 	vfio_pci_device_cleanup(device);
- }
- 
--- 
-2.51.0.858.gf9c4a03a3a-goog
-
+Given difficulty following up here, can you specify why reinit is needed?
+> +		/*
+> +		 * Handle the case where a sleep immediately follows a previous
+> +		 * sleep that was aborted during fs_sync. In this case, wait for
+> +		 * the previous filesystem sync to finish. Then do another
+> +		 * filesystem sync so any subsequent filesystem changes are
+> +		 * synced before sleeping.
+> +		 */
+> +		if (pm_sleep_fs_sync_queued) {
+> +			need_pm_sleep_fs_sync_requeue = true;
+> +		} else {
+> +			need_pm_sleep_fs_sync_requeue = false;
+> +			pm_sleep_fs_sync_queued = true;
+> +			schedule_work(&sync_filesystems);
+> +		}
+> +		spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> +
+> +		/*
+> +		 * Completion is triggered by fs_sync finishing or an abort sleep
+> +		 * signal, whichever comes first
+> +		 */
+> +		wait_for_completion(&pm_sleep_fs_sync_complete);
+> +		if (pm_wakeup_pending())
+> +			return -EBUSY;
+> +	} while (need_pm_sleep_fs_sync_requeue);
+> +
+> +	return 0;
+> +}
+> +
 
