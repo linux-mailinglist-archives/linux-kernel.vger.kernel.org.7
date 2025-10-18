@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-859159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F68BECEA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:27:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACC8BECEA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2652A4EA0F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:27:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A102F4EA3AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B882777FC;
-	Sat, 18 Oct 2025 11:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D0925A324;
+	Sat, 18 Oct 2025 11:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="4BPOaSG2"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW2IQCE1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF8E1ADC7E;
-	Sat, 18 Oct 2025 11:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90D61643B;
+	Sat, 18 Oct 2025 11:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760786867; cv=none; b=gUMTX8VuxyoPj2n2gGla3vEMgP8JUgcKHaCkraPgFZxrY0yzDD+BIZ9RY7xOkbXBqd1F7emEL2qQJyzJMIJjoYcwSJF6+qCsM3ZBF5dRTDhpBhgiG3CRH0SuTzKhDwNzcIXgIeTvSjKgYQCf53ZgcbP98uxQBX/jZkG1RLpmw+0=
+	t=1760786937; cv=none; b=RNcmWvCMiH05PeS0Zg6RZzDkGj4K1HlHuUrQqXPIVVDub9RvsVNVvi5cdFpRIR6ZrIALOfWCsghvnUWfHuen7CfVwzLQfOxIk0wmZqnXMDTht5MgveXriecjA7tZYvnPdKsyc+YN02Kt9/fsHOghoNvlBZ+vbH9x5loTDDATYs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760786867; c=relaxed/simple;
-	bh=jcOMAGkiUb+fuS17tYJmBIE8jMkbwbWbcDpVYAnxhoM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NSsAQEXPgBulaUDZ3aRroVmurxXSrhRujKadaHACa3ok2sAFPPhWcgQbxpzD6z/k5hm7MIvgiuSex+C16Y5bvUPEQ0N9dPikDUTyTy8bTYAn1jIaep5kfPk2Uphykb/G+2uFfEDeJK9YQYtxM1xR/PD4Hzne4PYdplTDiG+p1Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=4BPOaSG2; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=xB+eplaRL5bHHA3zfec6b5b4SIuM+3ZPPxwvvx0ulNI=;
-	b=4BPOaSG2ULqT62OBPuJSSgyUQEYDTXqDjJJZnn3dg7Kj6rz8AVKtm6j8LGshUqhyZ1mCaWp1s
-	vqQUq3K/A5BHY0vafTrIGix8SPvgevHVt/ANNfzxwycAa7e8h2ffa8DVNydZSidyUuF/sFy5ORG
-	HOpaKHBcr9+nOMSOkCuk2aI=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cpfYL04YWz1prQN;
-	Sat, 18 Oct 2025 19:27:18 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8CF54180487;
-	Sat, 18 Oct 2025 19:27:40 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 18 Oct 2025 19:27:40 +0800
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 18 Oct 2025 19:27:39 +0800
-From: Chenghai Huang <huangchenghai2@huawei.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>, <qianweili@huawei.com>,
-	<wangzhou1@hisilicon.com>, <fanghao11@huawei.com>, <nieweiqiang@huawei.com>
-Subject: [PATCH] crypto: hisilicon/qm - restore original qos values
-Date: Sat, 18 Oct 2025 19:27:39 +0800
-Message-ID: <20251018112739.3220154-1-huangchenghai2@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1760786937; c=relaxed/simple;
+	bh=UQxc6ViLFlVFF78U6caoncGViFhdBPvdRP4aRqaYZZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggJPur7x7nWxJty5dzrBLjm6cwiB+ML88bYqJvflJYCXKdFDxBSPsrleOpq2xx/hq7RSE9utB+heFWccfdLm2cD533NabLd8uvT4+u4+dXwmTtivCHXtAWjidqapTN84YrpYGM5l5WRx5wPVBUqw9vhD2ZNBr5amQSfXg9Tm22Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW2IQCE1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D08E7C4CEF8;
+	Sat, 18 Oct 2025 11:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760786937;
+	bh=UQxc6ViLFlVFF78U6caoncGViFhdBPvdRP4aRqaYZZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gW2IQCE17ZSMXILNO0KY9j3ov9YF7prSlKeEn16guhf3rqqXtyCWZ4W8k679RbtNd
+	 NInj34dATy561e2LzlHipBX3CNhB9q1jL7G73wgm3R/rKsQHW0iArdWgokS5EuXqp3
+	 3GmKch5gEsINE4T9Ej3XnUacQpJKddWPnmVTGgy5Z/2u3H53T7a/ZMf8V/QnbHcN9C
+	 iNl5bkFeE9S0ZXFN6FyZ26u+lWKk3zSvKVJbnRl8qLEe/dzwcc/xE6Y4p3ccjBDLV2
+	 JsdgR2AeRQA7KSJeyvuJsULrFDQivDqmGpqQdN0CxCpqk4//yde9910eqE5QoTngpX
+	 whhl0mfguxtWg==
+Date: Sat, 18 Oct 2025 14:28:53 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	sudeep.holla@arm.com, Prachotan.Bathi@arm.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm_crb: Add idle support for the Arm FF-A start method
+Message-ID: <aPN59bwcUrieMACf@kernel.org>
+References: <20250825205943.1225599-1-stuart.yoder@arm.com>
+ <aKzcaaXGQyLfDPrf@kernel.org>
+ <9227d35b-40d6-4faf-910d-ee7de9bbc094@arm.com>
+ <aKzoaWeJOh5W0M6J@kernel.org>
+ <91d8e71a-7013-43d7-9d04-9a191fed50e9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91d8e71a-7013-43d7-9d04-9a191fed50e9@arm.com>
 
-From: nieweiqiang <nieweiqiang@huawei.com>
+On Wed, Oct 15, 2025 at 05:22:53PM -0500, Stuart Yoder wrote:
+> 
+> 
+> On 8/25/25 5:49 PM, Jarkko Sakkinen wrote:
+> > On Mon, Aug 25, 2025 at 05:19:34PM -0500, Stuart Yoder wrote:
+> > > 
+> > > 
+> > > On 8/25/25 4:58 PM, Jarkko Sakkinen wrote:
+> > > > On Mon, Aug 25, 2025 at 03:59:43PM -0500, Stuart Yoder wrote:
+> > > > > According to the CRB over FF-A specification [1], a TPM that implements
+> > > > > the ABI must comply with the TCG PTP specification. This requires support
+> > > > > for the Idle and Ready states.
+> > > > > 
+> > > > > This patch implements CRB control area requests for goIdle and
+> > > > > cmdReady on FF-A based TPMs.
+> > > > > 
+> > > > > The FF-A message used to notify the TPM of CRB updates includes a
+> > > > > locality parameter, which provides a hint to the TPM about which
+> > > > > locality modified the CRB.  This patch adds a locality parameter
+> > > > > to __crb_go_idle() and __crb_cmd_ready() to support this.
+> > > > > 
+> > > > > [1] https://developer.arm.com/documentation/den0138/latest/
+> > > > > 
+> > > > > Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+> > > > 
+> > > > Perhaps a dummy question but is this "QEMU testable"? I know how
+> > > > to bind swtpm to QEMU and make it appear as CRB device on x86-64.
+> > > > 
+> > > > I don't see much testing happening with these ARM CRB patches,
+> > > > and if that works in the first palce  I could probably add
+> > > > a new board target to my BR2_EXTERNAL [1].
+> > > > 
+> > > > I can of course do "negative testing' i.e. that these don't
+> > > > break x86 ;-)
+> > > 
+> > > Unfortunately this is not currently testable on QEMU.  We are using
+> > > the Arm FVP [1], which is also a machine emulator, with the firmware
+> > > stack and an fTPM running in TrustZone.  The firmware, fTPM, etc are
+> > > not all publicly available yet, but everything is based on open
+> > > source projects and the intent is that all the components needed do
+> > > test this on FVP will be available at some point.
+> > > 
+> > > There is nothing fundamental that would prevent this from running
+> > > on QEMU, but just a fair amount of integration and possibly firmware
+> > > work.
+> > 
+> > OK, it's cool and the patch looks totally fine and I can
+> > "hallucinate it" so:
+> > 
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> Hi Jarkko,
+> 
+> It looks like this patch did not make it into 6.18.  I wanted to make
+> sure it didn't get lost.  Will it be queued up for 6.19?
 
-When the new qos valus setting fails, restore to
-the original qos values.
+Totally my fault, sorry. There was a bit shuffling with TCG_TPM2_HMAC and
+some other things, and this one slipped over :-/
 
-Fixes: 72b010dc33b9 ("crypto: hisilicon/qm - supports writing QoS int the host")
-Signed-off-by: nieweiqiang <nieweiqiang@huawei.com>
-Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
----
- drivers/crypto/hisilicon/qm.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Since it is non-intrusive despite not a bug fix,  I think I can put out
+-rc2 pull request to Linus, and see if he sees this acceptable.
 
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index a5b96adf2d1e..30e44cfb57ee 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -3678,6 +3678,7 @@ static void qm_clear_vft_config(struct hisi_qm *qm)
- static int qm_func_shaper_enable(struct hisi_qm *qm, u32 fun_index, u32 qos)
- {
- 	struct device *dev = &qm->pdev->dev;
-+	struct qm_shaper_factor t_factor;
- 	u32 ir = qos * QM_QOS_RATE;
- 	int ret, total_vfs, i;
- 
-@@ -3685,6 +3686,7 @@ static int qm_func_shaper_enable(struct hisi_qm *qm, u32 fun_index, u32 qos)
- 	if (fun_index > total_vfs)
- 		return -EINVAL;
- 
-+	memcpy(&t_factor, &qm->factor[fun_index], sizeof(t_factor));
- 	qm->factor[fun_index].func_qos = qos;
- 
- 	ret = qm_get_shaper_para(ir, &qm->factor[fun_index]);
-@@ -3698,11 +3700,21 @@ static int qm_func_shaper_enable(struct hisi_qm *qm, u32 fun_index, u32 qos)
- 		ret = qm_set_vft_common(qm, SHAPER_VFT, fun_index, i, 1);
- 		if (ret) {
- 			dev_err(dev, "type: %d, failed to set shaper vft!\n", i);
--			return -EINVAL;
-+			goto back_func_qos;
- 		}
- 	}
- 
- 	return 0;
-+
-+back_func_qos:
-+	memcpy(&qm->factor[fun_index], &t_factor, sizeof(t_factor));
-+	for (i--; i >= ALG_TYPE_0; i--) {
-+		ret = qm_set_vft_common(qm, SHAPER_VFT, fun_index, i, 1);
-+		if (ret)
-+			dev_err(dev, "failed to restore shaper vft during rollback!\n");
-+	}
-+
-+	return -EINVAL;
- }
- 
- static u32 qm_get_shaper_vft_qos(struct hisi_qm *qm, u32 fun_index)
--- 
-2.33.0
+> 
+> Thanks,
+> Stuart
 
+BR, Jarkko
 
