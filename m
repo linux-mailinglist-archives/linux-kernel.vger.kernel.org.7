@@ -1,218 +1,462 @@
-Return-Path: <linux-kernel+bounces-858921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BD2BEC407
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:56:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B2ABEC416
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F2ED4E5C37
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816BB624987
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA7F1FDA92;
-	Sat, 18 Oct 2025 01:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE7B178372;
+	Sat, 18 Oct 2025 01:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="qOx3Unoe"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012025.outbound.protection.outlook.com [40.107.200.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gl7rQ7At"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13C1A9F97;
-	Sat, 18 Oct 2025 01:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760752603; cv=fail; b=IfhYeenl6bgM74sRq/Y+2fWApl3MbSxEF7M5+yO12DFKiWPUSt45ApCS47GDmXNP3jOQ9MGXhgsmPy2wwt65XidV3kbK+cqIx81kfTqSn9K9M39clkEgdPDkfBJx7h2Ws7pKYqrWqwPPYM5U5qO0QQnQzaR8pzHPsf0r07XCx5Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760752603; c=relaxed/simple;
-	bh=gZ58gUht+ebGtlvvf8+lfELFDjeEWZciDyjdkg7D8Xs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=m/5kgybmfC0b8eYU2vnTovD+R8TXn2/J9tWZPRDHiOezt7MLJ55rFka/nH4lSpUOdnweffW/pCM0zGZHRoP6QDb5oz3Lri4YHpP7OeVviOAl9bfBxVfe116XdgFVrZOi2CNmAOyT5s0Cle8TKEgyjOU2qwKTf0lwrsvJiSuVysQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=qOx3Unoe; arc=fail smtp.client-ip=40.107.200.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TWS4G28PjZn/FELUJcFx6FS0Zb9Ut+H7tR7T+dkPIrVAWPTxEeYyEz9Bw+LAxDMeXc4ti3x7QPfPZW2/xfEm4mrfh2udhKVpBSgH3bEYvNxGU+VzmLHZer4SoXKEyYT1lfLd9ghycqcsSA/zEMvyyKiJDQjKYuu3W0qjM713Bgka1JN1Bsty6xoKTRYekkfSb7kPv7FQOCsDEs0PkUL01u1OmlLOlkNPXJC3mjcLu0YsqS9O3kHOHGrnarmS6+uebcJyZXiR4mtHOA0sWEAqGNxW08uslBswc4xpD9+9vfZTv6yG0khZYSBaeVaa1s8U+fCPY90xQ3A/W7WqTIjTeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eJ7vLXmWgn8vJcqynIHeEbIIGTPqyr7tXPu+2AlTh6E=;
- b=zI8eiu/ImJXCn7h/MjbhTei0np+W9goLwjAapmQ2r0AQFJH4BwTUgdTOAF8KLVW1UZd+6XabGV82Cbl5HR9Bmrcuw9IaPg8qWZK2YtOKvh6guEysB6gMQivUoAbWtsYRk2N17ccpQOEBzMUt+pOtjzV9+jwLXaj8kV20qXgdKHOBJXuXrXHLWCW2SuUCVirgxcwRIsWerSJ12e4j4HYc/hUbNr9Gg3rHvT50SYVL1MQo1lwlQcpKpeqt7UdmuWFqaCubH/aKtTdTqMQoJ1tFBG9Fj5VYeCtdTqbq3XC2QgooQHDwPs3g/nUu3XACaqUvTxVGHeuA/0XeW/9aftRFkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eJ7vLXmWgn8vJcqynIHeEbIIGTPqyr7tXPu+2AlTh6E=;
- b=qOx3Unoe+NKGCp5mndA1VJ5J/HoovQAHwNAVFLMTxvdEmPkaLdzqoKTd0lgss9K2V9WvcF2wf9rHfW4o9vCe2DSlMyXP7886OxzDYcAjcuL5AUPhlckXhiR2cWlAwxTB6trj2e1YqCVmcr5dXYUhmfsJeJgWzNwy3QSWCHj40mrZ72mewDF0mvoDngnNuG0S04ZixRaSw2Gy7zsa8bjO38LobhhInBTB9J7OFLfZ3PB3AHpDvOmRBMqNOetc7LpNIdS4FWuG93Bl8dDNEZ7E4iDQRHhKZRRLJ7d3G7SefSFLYUAFwS6ZQkbutKQ0A155Yca4LqUKGTta01BpRixtyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from DM6PR03MB5371.namprd03.prod.outlook.com (2603:10b6:5:24c::21)
- by DM4PR03MB6142.namprd03.prod.outlook.com (2603:10b6:5:395::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.14; Sat, 18 Oct
- 2025 01:56:40 +0000
-Received: from DM6PR03MB5371.namprd03.prod.outlook.com
- ([fe80::8d3c:c90d:40c:7076]) by DM6PR03MB5371.namprd03.prod.outlook.com
- ([fe80::8d3c:c90d:40c:7076%4]) with mapi id 15.20.9228.009; Sat, 18 Oct 2025
- 01:56:40 +0000
-Message-ID: <e45a8124-ace8-40bf-b55f-56dc8fbe6987@altera.com>
-Date: Sat, 18 Oct 2025 07:26:30 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 1/3] net: stmmac: vlan: Disable 802.1AD tag
- insertion offload
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <Jose.Abreu@synopsys.com>,
- Rohan G Thomas <rohan.g.thomas@intel.com>,
- Boon Khai Ng <boon.khai.ng@altera.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
- <20251017-qbv-fixes-v3-1-d3a42e32646a@altera.com>
- <aPI5pBXnh5X7OXtG@shell.armlinux.org.uk>
-Content-Language: en-US
-From: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-In-Reply-To: <aPI5pBXnh5X7OXtG@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0074.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::7) To DM6PR03MB5371.namprd03.prod.outlook.com
- (2603:10b6:5:24c::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081AB6FBF
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 01:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760752679; cv=none; b=ZFwA+TIU8eLt3zeIIuHBO6MNS8lqn2gwUIgxWIXJNKQnqy07rVHHSadtmePhPM8LwQPJv5hXUyURL2c9S7diD84MZ9GXfNSksFjLvV8SZL+L1DOyu8GTRYaC9tiIu5gCT5WpyFAFreWLkXWzoKHtajp2rOB4QLebJE2YcjfRX+o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760752679; c=relaxed/simple;
+	bh=Ho2SHS2E2MVqN9wUGa7rTXnD96uvFgXOxTPBJBIQiTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eDXm/UPcCjeC43DtPRQOwtuWFv0bKL1+Gmtj/fnWFTAaC8c5jLvXDHT8JPupjy/Qvzonw0QuAwVPAjOTd8VZLLwcjIvnCKOh7QF/BHtuaHeekJ0PwiD5fIvo0oSs3g2u0WSzgaebTrLGlSICLxxUaOzVaVX/XBTrjiRe22MlLzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gl7rQ7At; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-29091d29fc8so25847375ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760752676; x=1761357476; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OR7SYwQRtzskkeOXnHRhHVxuRyKmOsqIEhczVOG12Hc=;
+        b=Gl7rQ7AtI5nJT8zgocCipM48Pr7NKh1O0WDkO05zU8oMWj0iOQQ2CUx9FOF58aYYqF
+         GOcF3vQQzD7ltRweFfc6Sygn1BACZmlU/QT2TOl93b/4FsOG9JRGMMsMmQ66vb2noymU
+         heKHMndBvsTLUY/8GFxa9ajvqFbt03hEG8st36wZRpuqB8P6BfkTCAnxup1K+ocQ3dtK
+         fwvw3lZ++m+sP9c28FuHucqYSBr8ZFxRwP7WLpTSl56Q0yjy64Fl3Lwa2QmovFTMv7Sh
+         klSYE+Je9mnibS10D//kfRTkYPdlQ7zZlfZOIxYCwOhwXfTsvjbCs6JiRmgwo1dWWflX
+         c/rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760752676; x=1761357476;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OR7SYwQRtzskkeOXnHRhHVxuRyKmOsqIEhczVOG12Hc=;
+        b=JcOb19o4FPnBcxY7FsLS7uMxDUKtZQdS31IzLa5ItfaVmmGuGOGSci7yrp3QBwwMq4
+         ldpPkEG9N16y7bGjcPwp90UOQeBRwYsIsLOZ5GxrsF9udYgCc97eLWhpXBJz4ugM0ZM1
+         QqIuczkgGtplbjT6QyQMBa4X3KBYm7mY9uNqeoIPmmubRLS2UXVFSzd3t7z+iCpbOT6g
+         zmFpqEc6KILft03AuGIr9vXkSV8zfZs3TTFtlIiFL9IfF6Dpw/F6N6dHwafXIHX8Ivdv
+         wd+apfN/n94CMLM1MdM9Rk9yw44f7pAf9apGB7hMCzqoWlSVwdtuhdh5jRAOz10mLlnO
+         006A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUyvrml7k9sj4x0DvSnjwO7cbRYyucHs4ZyCuiEsOytjIF1TiiaQbY96Sg4AO5dcGDTvgK95vRH869NCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTRP0gAd0yKpquC4S/GslVli+4dDLgXciKlDbBLXsUTawSbH7B
+	93XMJ8jCrcOW1TrBLy3/lQ2X6GkA+FhV3JDaLoxeLh/TNz0t5KPboOeM
+X-Gm-Gg: ASbGncvZETB+aWH1/33Hsa3VMkCxADdOzH8GmtkUSLC7Ca2kmDmu9tSg6TIgfqLEHJh
+	na4kjMcHxWI+iZWt9wpUBFWGgXpei/acnxXCU8pC9f7+rE1h9hZYA/cRszxxY9G2TxMZGW4712o
+	UKdwdHR8iwgl3Hin2lC9QInD96yZV9Y8CdiW0lQxl6QWg0bFFEPZdWOI81zw3Ixv417Q1NsfJpc
+	xHIvUNmzjVG9ojyYfenSf+3T2n4+qCpSDV/IsDMocxU3F0VDKDj6QeSiQZ3CEgeEot1rakK+cWB
+	RECSBBpxnC+YwMNpU7vzPLC/VL0QSjewbG+O8tpn6ngCqohFA6datxp6jTkS/Zn34k4RBoxyd91
+	HffZpEJHKVOsJT6FGDlJqD248hmMlPR+Uhh6IWXPeCIWFOh68DHBAbwX3cn1twCjKIK6soiKfpk
+	dkglkJN6TYRHoYS/psQXTPSdgIAw==
+X-Google-Smtp-Source: AGHT+IGr7hQJglqbsDpFuKNKXDwX5ZLNouo1QzwFT/9yJ+YW8LhAuSEzpizcOquH/Jjrr4pzh6sL3g==
+X-Received: by 2002:a17:902:d584:b0:290:bd1b:cb3d with SMTP id d9443c01a7336-290c9ce67c0mr74311645ad.27.1760752676182;
+        Fri, 17 Oct 2025 18:57:56 -0700 (PDT)
+Received: from [10.0.2.15] ([157.50.200.140])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292469104edsm9666895ad.0.2025.10.17.18.57.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 18:57:55 -0700 (PDT)
+Message-ID: <702c4ad7-508b-42de-9dc3-40e4a0fe7bd7@gmail.com>
+Date: Sat, 18 Oct 2025 07:27:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR03MB5371:EE_|DM4PR03MB6142:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22ad59b5-3213-4316-1c16-08de0de99459
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1kzUVJ4LzFOZmtjdURtQW5SYy9oc0lmSDBLNXJSZk1lc3lBUFlJeElQQUtN?=
- =?utf-8?B?SkRPakVjUTAwZExVUDFSNGM3UFFTS2xScDVCNlZSRnk1Qnc3cHNpbDErZmdM?=
- =?utf-8?B?d01mZ0tVNTFBcjNhUFowOEc0bVlZWmlDN2gzd1krRlNBQXNPZW80eXRrUDA3?=
- =?utf-8?B?NjNlS3FSQXc0ZGMxM0FvU0JiUU52cndJQ3dNbXlFWjJQK3M1VEsvTGNESm5Y?=
- =?utf-8?B?Y3g3RWVGTFFXckF6cHV3OXR3cGpkWTQvY29WOVNaSnVSOVBzOTQzam12U0V6?=
- =?utf-8?B?R2JWam1haURSK1RFNFg3R1NxdXlpRE83a1djOXZQR3pUbmYraVZRV2ZHUENL?=
- =?utf-8?B?Sk0xbExuciszV211L1ZkWXAvUFVzeWkra1drSWN3RkRJRWE5VjMrcnZSRUEr?=
- =?utf-8?B?cGRLOUVROWlyRTVZbW9HRU9IZjRUQnBNbk41UEN3ZDlsUTNNRjN0VHBpKy81?=
- =?utf-8?B?N0MrZGN2MkxiZElQemJSY2JqdW8yRWFOc1gzbjNHNGxmZ3NJNVpWVEs3N0RC?=
- =?utf-8?B?TmZmL3IwTXhTVkRRUmJWQ0lrSXg3Nkl2M1BVci9WdnpxRWxEakVRZGlCM21W?=
- =?utf-8?B?YmRYWGN3MVBIU1pOWkhMdUxLYUZ4Z3l6QVBPeHc0U1FqVHJqdVhJZ0dGN3Iw?=
- =?utf-8?B?WFFrSEVVOFdWMVJRbHQ2M3BqdWM0UXUrS2pBMU93TVRzWk9YeFJxbUNlSGwv?=
- =?utf-8?B?aUZ5d2VhYlpWY3hLb3B6RG0wUG15cE5lZjRlcm9xMHh3L0xSa1A2RTI5cXJK?=
- =?utf-8?B?Y2R0NHAvYTM5dnp1WkdXQWZDd1Z1dyt3R2RVOUpUNEVVTVlNYWtNMXpmYWhZ?=
- =?utf-8?B?eSt1NXU4RzE4dUV0T1dlZERFMnRESEp2NGxvK1Fnb2hLKzB5RVFIeklCc0dX?=
- =?utf-8?B?cHUzcTdGL3RqT2tNMVBBR1VZVW1Da1FTb3FtZDJlRk1iRU9qSUJWMHJpdGdG?=
- =?utf-8?B?UWZMcmc3d1AxQTFNdi9pZGNIa052MjZaY3paQ1RQUERqVTJFL3lhSHh6VHpl?=
- =?utf-8?B?dW02Tm5qeDZrZDU0bEhBL0VHYk9sK2ltK0hiK1hwWUM2c3gyYk9Db2k0QXZF?=
- =?utf-8?B?K1ltQ0dLZVJDNGg2N2pEajJ4c28vMmgzWVNOUHh4b3JBTnJSbHZnbkE0U2Fl?=
- =?utf-8?B?Y01YT1pyZXliUG0wT2htWEpZcXRsVW5rc2w1VG1hZVhka2NQTWIreEoxSGJk?=
- =?utf-8?B?L21JamVGMUp0dUh3eXVUWkowWXNpZ0plYUdwMVNLaXc2d1dtOXc0bHUvMGd4?=
- =?utf-8?B?c1ppOUt1WnBBdVNyaVF0SkNSYkI3OG1zL21PT3NHNDlVcmVWL0F1a1pzK0M3?=
- =?utf-8?B?S3FSNEtULzlKNi92RGpXWG1tZXp2WnVrN0tTVXdSNVdLa1RIQTM2cVZpSGUx?=
- =?utf-8?B?U2x0SkY0TTFrYitTd0JlWW5hN240TDErNHlPcElJS2RiN2pQUXMxb1dhcy9R?=
- =?utf-8?B?TnBxWlJsMjZoRFljOFpNV2UvRlV5ZGNxZXFZZi9vT2ZNd3dqMXp2THVkellZ?=
- =?utf-8?B?SUNUOGIvWEJyUEN3aUNKN2x6RHFqcHk0LzdpQjQ3MlJhbU1NOXU1anFXRXRh?=
- =?utf-8?B?ZmtTVXNtNG4vV2NFQ1BQdVdTRURXV3FQYU9Id3V2NHZYa0RhckNIUlZsRzJz?=
- =?utf-8?B?ZWRxa2VpditYREl3SzZEV0pkQmM4M1pJek52aE90eW1mbG9aeDBBRGlTWWlU?=
- =?utf-8?B?Wjh3M29jN2NjdTJySVZvY1JCK29Wd0RPeC82L1V5WmIxYkhGbjBJYUx4bFVM?=
- =?utf-8?B?a0dSbEdvU1V2MngvakRINytJYlZvN2ZKUkd5ZjJ6TXUvKzNSOVVuU2FiRXdy?=
- =?utf-8?B?b2h3NHBPa2ZDb0hpQ0hQcmpWaStpNWxhMzB3b1B0dGlOU2ZONElDR1dlb2NH?=
- =?utf-8?B?T3YrODRnSjgwdE9EZzNBUjczR1hOd0Vnb0dhbE5VUXVqMFFJcHpkckx3TUJC?=
- =?utf-8?Q?kPOEmxb94AlVfl6Y1K/zvbWNZ5W+mvuO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB5371.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M2pMaXlPaVBWR3lGZHA2bis5cUNzU1dKWmNHSjN0VHNQUFgrK1d6OHI3YWhm?=
- =?utf-8?B?NzA3YVVDTUpzd3BrbjU3QjNSYnRVT040L0RzbTJwMUFrKzRpWlQ5RDl4aUJG?=
- =?utf-8?B?VzZuYjRDWXhKUVpaOFZoOE5mR1lnRzZiUHloRURDYTk0S2tFR2dnTmNyaWFs?=
- =?utf-8?B?d0g0SVVOOS9PNTRKVDBsMDFxcTh0c2l0MUR6Z3FRTFFQQUZLZndKdDJRdHk4?=
- =?utf-8?B?QU9DcHZzV2JLU25tMFJITFlOK0RmWjA4TWppR1FFZWthRHk1WHBPNDRCd3Q3?=
- =?utf-8?B?a2ZPNVlNU3BKQWF4VC9DclRESm4xcEk4VVRhVWVPT3htUy92NmswT2pQRDNL?=
- =?utf-8?B?elBrSllIRjJsZEFLaHQ5ZzZGcnNEdXZTQVlFZ1JnQklDZyttSTRIVWdid3Vx?=
- =?utf-8?B?TGZ3YVY4eUJ6MW1hNFFudFJEVXhueUdRc0N5RzhaVnBPY2EzYjNwcHBRbGdp?=
- =?utf-8?B?OGt1Rk9BYjNtOG5RQTBNdDk3eVR6T2dINlpiSEhBZVA1RW9YV0Z0aGZoU291?=
- =?utf-8?B?UWpnQkd2enRhZmxJS0NJZnArYmhsQ05TQjdHMkZHQkpGTkJYdjdMMHBXRFF4?=
- =?utf-8?B?VVV6bWJpdURHSkpZZ0FtMG9aVWlKRzdtVFpjOFNVUU5OWnVaUWJTbDI0TWFi?=
- =?utf-8?B?RitzNnhpdXEybHpHN3phSEc0RmZHcFVzcUtBUTl3QzlVUnNTL0JyNVpaYXlx?=
- =?utf-8?B?b0xOak9Wc3dnOU5iSHJLanlvMWNYVjlyOEpFNTZRUmRYZVBUaVhHQUY5SGYz?=
- =?utf-8?B?MFVBclBjOWJtcEdYM3g3TWdjZnUxU0hnbk1DazRYaFYrSmtpRnpSNVpsWDFs?=
- =?utf-8?B?S3lsNlBnQmhXOEFLemtLdHk2ZFUyQy9jS1Q5NUJlODZEbkNhTXRFakRPMWdm?=
- =?utf-8?B?ZWxpdmQvZ1lLVGZVS2NSVW5vV09OOWUrQUFncCt0SVU3dzhNMnJhNE5RandP?=
- =?utf-8?B?YU1JaUJZbjFCdlZtcG1tQ2s3ZlJsOHArYVNqYnovUG40R2szNWF1TmJ6WHMv?=
- =?utf-8?B?d2xibXpnUGN0bWQ2dk9neUNrS2NhMDhJN2M3YVNjb055QnJxM2g5VkNuY2hs?=
- =?utf-8?B?WDlnUnJlZldFdHRnWjVGNFZRcmxIRnlCbXBsSFVKdlRVcjh1VWIxRlVGallu?=
- =?utf-8?B?T3FycCtnb2RNRUZmaUtzalh4dzcxa0tMMDFGVThhY2pwTnRURyszSHBLdFUv?=
- =?utf-8?B?bEY1R0hZekdUYUNtUERVbHZFY3dPRk93UEdiOVE0NWltYnVJeEhHSU50SlEv?=
- =?utf-8?B?RWh1cUZWclZ0d1A3SUhBcFJpRFdGdzhZY0VVQXBjZWFwUGdNZGNnaExvdVBQ?=
- =?utf-8?B?M0o5cHhsaXB0djNxTDFZRnZZbU45OFl6THFmcnRWaWUrMDlBamJlZnJKQmNW?=
- =?utf-8?B?YXQ0cDBqQzVLV0NSSFR2Wktnb1hROXZkakVRUllUV3oxbklxRjRRWWJXemUz?=
- =?utf-8?B?OFUzaHVNY1EyM21pVnlETWJRK1NZUkhXVnE0VDcyaWJ2MlZCbEFaZlM0UG1z?=
- =?utf-8?B?Rjk0alppc3pSQVlRS1FtSmlmejdKczhKMFF6bkt2L1BlZlh5eEJlR2lxL01j?=
- =?utf-8?B?QUZ6Mms2YVdFZUhxUUZ6Mm5MMStveUthS2w5a0lhUXByNzhPanZrL2lBQTk0?=
- =?utf-8?B?RlRDZkpBb3h1L1pDQnZkejk5VHZFcTRtWUNRNlpveXhNWVZiWEJCU3JicUMr?=
- =?utf-8?B?QkpqcEIrQ0RVTHBJOXFrSFhGcktlL0w1MmtRMFpaK1R2MUpQY1ZqRmVCNzFl?=
- =?utf-8?B?UHRNb20zYjNLcU04TnZ0b1RBS0E0U1ZMRU9GSVFCa1V2WGZOSk51QlJTUnZU?=
- =?utf-8?B?UGRVeElvUzd2ZlZYY0EyQ3ByOFF4cXMrQ1c5d3JhejRLRGIyTjdkZ3Z5L1d4?=
- =?utf-8?B?THFrTEdrOCtVV0pmZ3p6cmlseS9iOG5SQTRWbERIcXlydGt3WCtCdnpmaU9z?=
- =?utf-8?B?UDhUSkJrTW5RVHZaS1o3MWhBTFZoRTV4QTVkdE9ob3l2d0FtK2Y1MGlpbkgv?=
- =?utf-8?B?VUp2SUl0clVSWWxPL2tldnBSUU9XaGR6RzJEOVk4aTk1ZmwyT0hyUmc4Qjlv?=
- =?utf-8?B?aXdKUFJsVTlDa3YvOXNJa0V6NXRYNWhFcUViSUN3NWxLT1JaSGU4WmhvSStW?=
- =?utf-8?B?SmlPNnVyYmRPRmd1ZXB1OEJ1eXJKTU05MnllMWtFY2NqTktUaStvZUIrcWUr?=
- =?utf-8?B?akE9PQ==?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22ad59b5-3213-4316-1c16-08de0de99459
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB5371.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2025 01:56:40.2781
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DNAyS5Wil8GolZOedC7P36w+2XcX6lq6vQNT4NznWvmesXQ6E6yHcziw+oriwcXx4oeHb+jLtvPbhuIsi75aNSoEYGZnRoY6dnPR7k6IbSY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR03MB6142
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: ilpo.jarvinen@linux.intel.com, bhelgaas@google.com, kw@linux.com,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ lucas.demarchi@intel.com, rafael.j.wysocki@intel.com,
+ Manivannan Sadhasivam <mani@kernel.org>
+References: <20251017185246.GA1040948@bhelgaas>
+Content-Language: en-US
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <20251017185246.GA1040948@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Russell,
-
-On 10/17/2025 6:12 PM, Russell King (Oracle) wrote:
-> On Fri, Oct 17, 2025 at 02:11:19PM +0800, Rohan G Thomas via B4 Relay wrote:
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->> index 650d75b73e0b0ecd02d35dd5d6a8742d45188c47..dedaaef3208bfadc105961029f79d0d26c3289d8 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->> @@ -4089,18 +4089,11 @@ static int stmmac_release(struct net_device *dev)
->>   static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
->>   			       struct stmmac_tx_queue *tx_q)
->>   {
->> -	u16 tag = 0x0, inner_tag = 0x0;
->> -	u32 inner_type = 0x0;
->> +	u16 tag = 0x0;
->>   	struct dma_desc *p;
+On 18/10/25 00:22, Bjorn Helgaas wrote:
+> On Fri, Oct 17, 2025 at 11:52:58PM +0530, Bhanu Seshu Kumar Valluri wrote:
+>> Hi,
+>>
+>> I want to report that this PATCH also break PCI RC port on TI-AM64-EVM.
+>>
+>> I did git bisect and it pointed to the a43ac325c7cb ("PCI: Set up bridge resources earlier")
+>>
+>> Happy to help if any testing or logs are required.
 > 
-> #include <stdnetdevcodeformat.h> - Please maintain reverse christmas-
-> tree order.
-
-Thanks for pointing this out. I'll fix the declaration order in the next 
-revision.
-
+> Thanks for the report!  Can you test this patch?
 > 
-> I haven't yet referred to the databook, so there may be more comments
-> coming next week.
+>   https://patch.msgid.link/20251014163602.17138-1-ilpo.jarvinen@linux.intel.com
 > 
+> That patch is queued up as
+> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=469276c06aff
+> and should appear in v6.18-rc2 on Sunday if all goes well.
+> 
+> If that doesn't work, let us know and we'll debug this further.
 
-Sure! Will wait for your feedback before sending the next revision.
+I applied above patch on top of commit f406055cb18c ("Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux")
 
-Best Regards,
-Rohan
+Did pci rescan and run kselftest (pci_endpoint_test). It is working.
+
+Thanks for the patch.
+
+Happy to help if any testing or logs are required.
+
+[logs are as pasted below]
+
+root@am64xx-evm:~# echo 1 > /sys/bus/pci/rescan
+[   37.938991] pci 0000:01:00.0: [104c:b010] type 00 class 0xff0000 PCIe Endpoint
+[   37.946384] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x0000ffff]
+[   37.952430] pci 0000:01:00.0: BAR 1 [mem 0x00000000-0x000001ff]
+[   37.958471] pci 0000:01:00.0: BAR 2 [mem 0x00000000-0x000003ff]
+[   37.964499] pci 0000:01:00.0: BAR 3 [mem 0x00000000-0x00003fff]
+[   37.970601] pci 0000:01:00.0: BAR 4 [mem 0x00000000-0x0001ffff]
+[   37.976673] pci 0000:01:00.0: BAR 5 [mem 0x00000000-0x000fffff]
+[   37.983157] pci 0000:01:00.0: supports D1
+[   37.987241] pci 0000:01:00.0: PME# supported from D0 D1 D3hot
+[   37.999527] pci 0000:01:00.0: ASPM: DT platform, enabling L0s-up L0s-dw L1 ASPM-L1.1 ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
+[   38.010392] pci 0000:01:00.0: ASPM: DT platform, enabling ClockPM
+[   38.016760] pcieport 0000:00:00.0: bridge window [mem 0x68100000-0x682fffff]: assigned
+[   38.024940] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: assigned
+[   38.031906] pci 0000:01:00.0: BAR 4 [mem 0x68200000-0x6821ffff]: assigned
+[   38.038769] pci 0000:01:00.0: BAR 0 [mem 0x68220000-0x6822ffff]: assigned
+[   38.045849] pci 0000:01:00.0: BAR 3 [mem 0x68230000-0x68233fff]: assigned
+[   38.052804] pci 0000:01:00.0: BAR 2 [mem 0x68234000-0x682343ff]: assigned
+[   38.059832] pci 0000:01:00.0: BAR 1 [mem 0x68234400-0x682345ff]: assigned
+[   38.067507] pcieport 0000:00:00.0: of_irq_parse_pci: failed with rc=-22
+[   38.074329] pci-endpoint-test 0000:01:00.0: enabling device (0000 -> 0002)
+
+--------------------------------------------------------------------------------------------------------
+
+root@am64xx-evm:~# ./pci_endpoint_test -T LEGACY_IRQ_TEST
+TAP version 13
+1..16
+# Starting 16 tests from 10 test cases.
+#  RUN           pci_ep_bar.BAR0.BAR_TEST ...
+#            OK  pci_ep_bar.BAR0.BAR_TEST
+ok 1 pci_ep_bar.BAR0.BAR_TEST
+#  RUN           pci_ep_bar.BAR1.BAR_TEST ...
+#            OK  pci_ep_bar.BAR1.BAR_TEST
+ok 2 pci_ep_bar.BAR1.BAR_TEST
+#  RUN           pci_ep_bar.BAR2.BAR_TEST ...
+#            OK  pci_ep_bar.BAR2.BAR_TEST
+ok 3 pci_ep_bar.BAR2.BAR_TEST
+#  RUN           pci_ep_bar.BAR3.BAR_TEST ...
+#            OK  pci_ep_bar.BAR3.BAR_TEST
+ok 4 pci_ep_bar.BAR3.BAR_TEST
+#  RUN           pci_ep_bar.BAR4.BAR_TEST ...
+#            OK  pci_ep_bar.BAR4.BAR_TEST
+ok 5 pci_ep_bar.BAR4.BAR_TEST
+#  RUN           pci_ep_bar.BAR5.BAR_TEST ...
+#            OK  pci_ep_bar.BAR5.BAR_TEST
+ok 6 pci_ep_bar.BAR5.BAR_TEST
+#  RUN           pci_ep_basic.CONSECUTIVE_BAR_TEST ...
+#            OK  pci_ep_basic.CONSECUTIVE_BAR_TEST
+ok 7 pci_ep_basic.CONSECUTIVE_BAR_TEST
+#  RUN           pci_ep_basic.MSI_TEST ...
+#            OK  pci_ep_basic.MSI_TEST
+ok 8 pci_ep_basic.MSI_TEST
+#  RUN           pci_ep_basic.MSIX_TEST ...
+#            OK  pci_ep_basic.MSIX_TEST
+ok 9 pci_ep_basic.MSIX_TEST
+#  RUN           pci_ep_data_transfer.memcpy.READ_TEST ...
+#            OK  pci_ep_data_transfer.memcpy.READ_TEST
+ok 10 pci_ep_data_transfer.memcpy.READ_TEST
+#  RUN           pci_ep_data_transfer.memcpy.WRITE_TEST ...
+#            OK  pci_ep_data_transfer.memcpy.WRITE_TEST
+ok 11 pci_ep_data_transfer.memcpy.WRITE_TEST
+#  RUN           pci_ep_data_transfer.memcpy.COPY_TEST ...
+#            OK  pci_ep_data_transfer.memcpy.COPY_TEST
+ok 12 pci_ep_data_transfer.memcpy.COPY_TEST
+#  RUN           pci_ep_data_transfer.dma.READ_TEST ...
+#            OK  pci_ep_data_transfer.dma.READ_TEST
+ok 13 pci_ep_data_transfer.dma.READ_TEST
+#  RUN           pci_ep_data_transfer.dma.WRITE_TEST ...
+#            OK  pci_ep_data_transfer.dma.WRITE_TEST
+ok 14 pci_ep_data_transfer.dma.WRITE_TEST
+#  RUN           pci_ep_data_transfer.dma.COPY_TEST ...
+#            OK  pci_ep_data_transfer.dma.COPY_TEST
+ok 15 pci_ep_data_transfer.dma.COPY_TEST
+#  RUN           pcie_ep_doorbell.DOORBELL_TEST ...
+#            OK  pcie_ep_doorbell.DOORBELL_TEST
+ok 16 pcie_ep_doorbell.DOORBELL_TEST
+# PASSED: 16 / 16 tests passed.
+# Totals: pass:16 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+------------------------------------------------------------------------------------------
+
+root@am64xx-evm:~# lspci -vv
+00:00.0 PCI bridge: Texas Instruments Device b010 (prog-if 00 [Normal decode])
+        Control: I/O- Mem- BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0
+        Interrupt: pin A routed to IRQ 506
+        Region 0: Memory at <unassigned> (64-bit, prefetchable) [disabled]
+        Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
+        I/O behind bridge: [disabled]
+        Memory behind bridge: [disabled]
+        Prefetchable memory behind bridge: [disabled]
+        Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- <SERR- <PERR-
+        BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- FastB2B-
+                PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
+        Capabilities: [80] Power Management version 3
+                Flags: PMEClk- DSI- D1+ D2- AuxCurrent=0mA PME(D0+,D1+,D2-,D3hot+,D3cold-)
+                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+        Capabilities: [90] MSI: Enable+ Count=1/1 Maskable+ 64bit+
+                Address: 0000000001000000  Data: 0000
+                Masking: 00000000  Pending: 00000000
+        Capabilities: [b0] MSI-X: Enable- Count=1 Masked-
+                Vector table: BAR=0 offset=00000000
+                PBA: BAR=0 offset=00000008
+        Capabilities: [c0] Express (v2) Root Port (Slot+), MSI 00
+                DevCap: MaxPayload 128 bytes, PhantFunc 0
+                        ExtTag- RBE+
+                DevCtl: CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
+                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr- TransPend-
+                LnkCap: Port #0, Speed 5GT/s, Width x1, ASPM L1, Exit Latency L1 <8us
+                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
+                LnkCtl: ASPM Disabled; RCB 64 bytes, Disabled- CommClk-
+                        ExtSynch- ClockPM- AutWidDis- BWInt+ AutBWInt+
+                LnkSta: Speed 5GT/s (ok), Width x1 (ok)
+                        TrErr- Train- SlotClk- DLActive- BWMgmt- ABWMgmt+
+                SltCap: AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd- HotPlug- Surprise-
+                        Slot #0, PowerLimit 0.000W; Interlock- NoCompl-
+                SltCtl: Enable: AttnBtn- PwrFlt- MRL- PresDet- CmdCplt- HPIrq- LinkChg-
+                        Control: AttnInd Off, PwrInd Off, Power+ Interlock-
+                SltSta: Status: AttnBtn- PowerFlt- MRL+ CmdCplt- PresDet- Interlock-
+                        Changed: MRL- PresDet- LinkState-
+                RootCap: CRSVisible-
+                RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal- PMEIntEna+ CRSVisible-
+                RootSta: PME ReqID 0000, PMEStatus- PMEPending-
+                DevCap2: Completion Timeout: Range B, TimeoutDis+ NROPrPrP- LTR+
+                         10BitTagComp- 10BitTagReq- OBFF Via message, ExtFmt+ EETLPPrefix+, MaxEETLPPrefixes 1
+                         EmergencyPowerReduction Not Supported, EmergencyPowerReductionInit-
+                         FRS- LN System CLS Not Supported, TPHComp- ExtTPHComp- ARIFwd-
+                         AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
+                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- LTR+ OBFF Disabled, ARIFwd-
+                         AtomicOpsCtl: ReqEn- EgressBlck-
+                LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink- Retimer- 2Retimers- DRS-
+                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
+                         Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+                         Compliance De-emphasis: -6dB
+                LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete- EqualizationPhase1-
+                         EqualizationPhase2- EqualizationPhase3- LinkEqualizationRequest-
+                         Retimer- 2Retimers- CrosslinkRes: unsupported
+        Capabilities: [100 v2] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr+
+                AERCap: First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
+                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+                HeaderLog: 00000000 00000000 00000000 00000000
+                RootCmd: CERptEn+ NFERptEn+ FERptEn+
+                RootSta: CERcvd- MultCERcvd- UERcvd- MultUERcvd-
+                         FirstFatal- NonFatalMsg- FatalMsg- IntMsg 0
+                ErrorSrc: ERR_COR: 0000 ERR_FATAL/NONFATAL: 0000
+        Capabilities: [150 v1] Device Serial Number 00-00-00-00-00-00-00-00
+        Capabilities: [300 v1] Secondary PCI Express
+                LnkCtl3: LnkEquIntrruptEn- PerformEqu-
+                LaneErrStat: 0
+        Capabilities: [4c0 v1] Virtual Channel
+                Caps:   LPEVC=0 RefClk=100ns PATEntryBits=1
+                Arb:    Fixed- WRR32- WRR64- WRR128-
+                Ctrl:   ArbSelect=Fixed
+                Status: InProgress-
+                VC0:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+                        Status: NegoPending- InProgress-
+                VC1:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable- ID=1 ArbSelect=Fixed TC/VC=00
+                        Status: NegoPending- InProgress-
+                VC2:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable- ID=2 ArbSelect=Fixed TC/VC=00
+                        Status: NegoPending- InProgress-
+                VC3:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable- ID=3 ArbSelect=Fixed TC/VC=00
+                        Status: NegoPending- InProgress-
+        Capabilities: [900 v1] L1 PM Substates
+                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+                          PortCommonModeRestoreTime=255us PortTPowerOnTime=26us
+                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+                           T_CommonMode=255us LTR1.2_Threshold=287744ns
+                L1SubCtl2: T_PwrOn=26us
+        Capabilities: [a20 v1] Precision Time Measurement
+                PTMCap: Requester:- Responder:+ Root:+
+                PTMClockGranularity: 4ns
+                PTMControl: Enabled:- RootSelected:-
+                PTMEffectiveGranularity: Unknown
+        Kernel driver in use: pcieport
+
+01:00.0 Unassigned class [ff00]: Texas Instruments Device b010
+        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0
+        Interrupt: pin A routed to IRQ 533
+        Region 0: Memory at 68220000 (32-bit, non-prefetchable) [size=64K]
+        Region 1: Memory at 68234400 (32-bit, non-prefetchable) [size=512]
+        Region 2: Memory at 68234000 (32-bit, non-prefetchable) [size=1K]
+        Region 3: Memory at 68230000 (32-bit, non-prefetchable) [size=16K]
+        Region 4: Memory at 68200000 (32-bit, non-prefetchable) [size=128K]
+        Region 5: Memory at 68100000 (32-bit, non-prefetchable) [size=1M]
+        Capabilities: [80] Power Management version 3
+                Flags: PMEClk- DSI- D1+ D2- AuxCurrent=0mA PME(D0+,D1+,D2-,D3hot+,D3cold-)
+                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+        Capabilities: [90] MSI: Enable+ Count=32/32 Maskable- 64bit+
+                Address: 0000000001000400  Data: 0000
+        Capabilities: [b0] MSI-X: Enable- Count=2048 Masked-
+                Vector table: BAR=0 offset=00000080
+                PBA: BAR=0 offset=00008080
+        Capabilities: [c0] Express (v2) Endpoint, MSI 00
+                DevCap: MaxPayload 128 bytes, PhantFunc 0, Latency L0s <1us, L1 <1us
+                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset+ SlotPowerLimit 0.000W
+                DevCtl: CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
+                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+ FLReset-
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr- TransPend-
+                LnkCap: Port #0, Speed 5GT/s, Width x1, ASPM L1, Exit Latency L1 <8us
+                        ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
+                LnkCtl: ASPM Disabled; RCB 64 bytes, Disabled- CommClk-
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 5GT/s (ok), Width x1 (ok)
+                        TrErr- Train- SlotClk- DLActive- BWMgmt- ABWMgmt-
+                DevCap2: Completion Timeout: Range B, TimeoutDis+ NROPrPrP- LTR+
+                         10BitTagComp- 10BitTagReq- OBFF Via message, ExtFmt+ EETLPPrefix+, MaxEETLPPrefixes 1
+                         EmergencyPowerReduction Not Supported, EmergencyPowerReductionInit-
+                         FRS- TPHComp- ExtTPHComp-
+                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
+                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- LTR+ OBFF Disabled,
+                         AtomicOpsCtl: ReqEn-
+                LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink- Retimer- 2Retimers- DRS-
+                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
+                         Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+                         Compliance De-emphasis: -6dB
+                LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete- EqualizationPhase1-
+                         EqualizationPhase2- EqualizationPhase3- LinkEqualizationRequest-
+                         Retimer- 2Retimers- CrosslinkRes: unsupported
+        Capabilities: [100 v2] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr+
+                AERCap: First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
+                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+                HeaderLog: 00000000 00000000 00000000 00000000
+        Capabilities: [150 v1] Device Serial Number 00-00-00-00-00-00-00-00
+        Capabilities: [160 v1] Power Budgeting <?>
+        Capabilities: [1b8 v1] Latency Tolerance Reporting
+                Max snoop latency: 0ns
+                Max no snoop latency: 0ns
+        Capabilities: [1c0 v1] Dynamic Power Allocation <?>
+        Capabilities: [300 v1] Secondary PCI Express
+                LnkCtl3: LnkEquIntrruptEn- PerformEqu-
+                LaneErrStat: 0
+        Capabilities: [400 v1] Vendor Specific Information: ID=0001 Rev=1 Len=010 <?>
+        Capabilities: [440 v1] Process Address Space ID (PASID)
+                PASIDCap: Exec+ Priv+, Max PASID Width: 14
+                PASIDCtl: Enable- Exec- Priv-
+        Capabilities: [4c0 v1] Virtual Channel
+                Caps:   LPEVC=0 RefClk=100ns PATEntryBits=1
+                Arb:    Fixed- WRR32- WRR64- WRR128-
+                Ctrl:   ArbSelect=Fixed
+                Status: InProgress-
+                VC0:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+                        Status: NegoPending- InProgress-
+                VC1:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable- ID=1 ArbSelect=Fixed TC/VC=00
+                        Status: NegoPending- InProgress-
+                VC2:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable- ID=2 ArbSelect=Fixed TC/VC=00
+                        Status: NegoPending- InProgress-
+                VC3:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable- ID=3 ArbSelect=Fixed TC/VC=00
+                        Status: NegoPending- InProgress-
+        Capabilities: [900 v1] L1 PM Substates
+                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+                          PortCommonModeRestoreTime=255us PortTPowerOnTime=26us
+                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+                           T_CommonMode=0us LTR1.2_Threshold=287744ns
+                L1SubCtl2: T_PwrOn=26us
+        Capabilities: [a20 v1] Precision Time Measurement
+                PTMCap: Requester:+ Responder:- Root:-
+                PTMClockGranularity: Unimplemented
+                PTMControl: Enabled:- RootSelected:-
+                PTMEffectiveGranularity: Unknown
+        Kernel driver in use: pci-endpoint-test
+
+Regards
+Bhanu Seshu Kumar Valluri 
+> 
+>> echo 1 > /sys/bus/pci/rescan
+>> [   37.170389] pci 0000:01:00.0: [104c:b010] type 00 class 0xff0000 PCIe Endpoint
+>> [   37.177781] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x0000ffff]
+>> [   37.183808] pci 0000:01:00.0: BAR 1 [mem 0x00000000-0x000001ff]
+>> [   37.189843] pci 0000:01:00.0: BAR 2 [mem 0x00000000-0x000003ff]
+>> [   37.195802] pci 0000:01:00.0: BAR 3 [mem 0x00000000-0x00003fff]
+>> [   37.201768] pci 0000:01:00.0: BAR 4 [mem 0x00000000-0x0001ffff]
+>> [   37.207715] pci 0000:01:00.0: BAR 5 [mem 0x00000000-0x000fffff]
+>> [   37.214040] pci 0000:01:00.0: supports D1
+>> [   37.218083] pci 0000:01:00.0: PME# supported from D0 D1 D3hot
+>> [   37.231890] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: assigned
+>> [   37.242890] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: can't assign; no space
+>> [   37.251216] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: failed to assign
+>> [   37.258309] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: can't assign; no space
+>> [   37.265851] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: failed to assign
+>> [   37.272896] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: can't assign; no space
+>> [   37.280439] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: failed to assign
+>> [   37.287459] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: can't assign; no space
+>> [   37.294986] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: failed to assign
+>> [   37.302011] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: can't assign; no space
+>> [   37.309536] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: failed to assign
+>> [   37.316595] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: releasing
+>> [   37.323541] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: assigned
+>> [   37.330400] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: can't assign; no space
+>> [   37.337956] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: failed to assign
+>> [   37.344960] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: can't assign; no space
+>> [   37.352550] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: failed to assign
+>> [   37.359578] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: can't assign; no space
+>> [   37.367152] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: failed to assign
+>> [   37.374192] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: can't assign; no space
+>> [   37.381709] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: failed to assign
+>> [   37.388720] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: can't assign; no space
+>> [   37.396246] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: failed to assign
+>> [   37.403795] pcieport 0000:00:00.0: of_irq_parse_pci: failed with rc=-22
+>> [   37.410513] pci-endpoint-test 0000:01:00.0: enabling device (0000 -> 0002)
+>> [   37.417796] pci-endpoint-test 0000:01:00.0: Cannot perform PCI test without BAR0
+
+
 
