@@ -1,131 +1,110 @@
-Return-Path: <linux-kernel+bounces-859020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC48BEC7E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFC4BEC7EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40DFC4E4A6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:55:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16E864E2411
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8856326738D;
-	Sat, 18 Oct 2025 04:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FBD155389;
+	Sat, 18 Oct 2025 04:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aW3+E4dH"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t4Xkd0iH"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A926FBF
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 04:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFE51A255C
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 04:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760763319; cv=none; b=svLU4SyLa6hAOAANsQr9NDfjtRokkeVnWRRMf0BNzARF0sdZq9kyD14+JNbWJhwIK9XhvqXCq7n8/gq49zH5XQGAoGc08PFgThphnznzqT8mYIkP/X5jGGY+lJzzWKI1m9jCp+h5VvYH8F0vIGS5C8EkMsq3mc36AyoOfN4u7H4=
+	t=1760763566; cv=none; b=hVnclveMjrRszYEbuuUOh9FZLvzJJ9hlocfZQ8th8y4q7EJBO1B/DhP2u+Mb2uodhMGciOyULVcrrZgTaHHvRAtlukBTAr9tHRkIxtb+AkolnAjMpEuN6YH/Enx4Luz4zw++qgwTJdczU7LTuwhbEpiGVmSAHGe9TDokRAwTVak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760763319; c=relaxed/simple;
-	bh=ylW2XE//NO5FaS2GRo3y6bDQ5bXrKLQ1fYi38QPF9Mg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GzX/wgT3TlrpSf0MzVOX8aJJWtVGCNN4If2iFUxpN0/HIq4Eh3hVwOOIWxgvERAzRQrqBxoyRn5EMFmEFkB7MTXGr/YDA6OAmNtjHxL4h3Xc/YvAK123LKRUXLA9lczOZz3HJCndyAwWYeKi3/2ESOYfHTbtvQvgJADEzMduj50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aW3+E4dH; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso1136934f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:55:17 -0700 (PDT)
+	s=arc-20240116; t=1760763566; c=relaxed/simple;
+	bh=IUZFOQeuI3yCpqc7n7wK2+nBiCoxcsO0N/ZUQHofi9A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=FiKc/1jnJiFL+s8zioKDPOL4upWA6t7D5Qu+3MSYghsEdm9bGiJzRy4zA1eCkXuKy/LxxRPCP+ccti4vJhjf0QaKGm4z3IzE//k/AM9CPIXgCMuGbQJEni8I8KF0d5gjSA/HRTi6BIsjOjfL2I4pQgty/6tjJer6cIlzJUpNfME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t4Xkd0iH; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso1746412a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:59:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760763316; x=1761368116; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lev9x6dFfmdCM6nU9lvB+aId3gAOWip6By2m8dIzqR0=;
-        b=aW3+E4dHSrakor4dnozLsjQIlv8RN/iSsLbT3RO9FZxm/6x8ysPes4d74J9PQ0bQX0
-         0D1Ntro1d7gW9B69OndpZw0CwIIG6xm+xNVWKWPpVMgirzCGTtBZf5Y7V0vbMcp5iS/C
-         93Iy7KOOrg9g4nEjFnKyY/M59KXTlee0CaVwYUPhERI0o/e53pnu7wvRVoHLd74bi6pW
-         J1EggmDni+0Ws3Igh9uniwfjuomlsUs/g76O4uJgBnx66AdtTt3v+6v5+hJAul+8q6LD
-         Jbns83QWDNe4Ay8YrQDyDuj2qYMbPGYSsfiz9VnebaeGptMzFyMaylCFGnK8C/prL84u
-         gIXA==
+        d=google.com; s=20230601; t=1760763564; x=1761368364; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vkcjNV+lg/qMB7XR1dlSgtqiUT8Il7EIrwR559XmCkM=;
+        b=t4Xkd0iHTmOOstZf4rOp16HLVWC7AGe016AowcVFa57VJfCYqeUoF64BgAjJXUgC4F
+         Q4t7sdQcCgcfwKX1hA4GOTZ6NJVeDsqazSnEoWR6HoWKXZgh2CWB0IykbWaoHM/gepbF
+         oeSnww6pY+ucVVvJfiFW4EbWADkR4xq5yIwgEtBtHGF7wH42VHjzaocVgk06Bhp0AncU
+         lHf4XVYSjHJ3LUNU8+FpE/zMduls6imZeUa5lpB7sSGmeJ496Scxbp1PHB1zBRuScaAr
+         jccQjKVpeDI7S5sL+CDbve0oTsjLej3CEqxtSbDD2P6pIvJ0VWC9u61M9AGEPnE5W4nn
+         h4nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760763316; x=1761368116;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Lev9x6dFfmdCM6nU9lvB+aId3gAOWip6By2m8dIzqR0=;
-        b=DQrXa2rdbONmXnm3vVLIIF2xRgzdd8grQvgvylmawqgBpzp6lMZWQb1F8km9hf2zLP
-         tNFgg1ypum+yOZH90FcaafuhO5RA44c2b2z8oMft7EL7o+GThq+Sogc+Ljexe+CPmnb1
-         WiovquHW41m4ojPx7MB63eyWXInZ7rOjclpp7vpQJ3+sGrEcq5yn3WR7Jzy6LTt9LDEU
-         gw47JdtKdw8RQIuwwo6oJ56M5DyWJV9qNtPXygQrkmzx2cjIiS+bXA/KHIeJSrWg/mm3
-         ju+x895HcQ9FxellvEyQoUdXaTKOiH3wHfodVDkcZrY/oADmpps3tnCVXLHP/9ly6ucT
-         VhJg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8QAZw7BtU70ubNt0Y70K8KurymOtmbnJ12kBQCDPT8gvAGgeAMmEvEMnvI+F1zyDz1Q22uSTkzK8yFjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDDMztJSEFhZmuYbXRQm2qqjeMYhmi38ZMG653P5UiY53iileg
-	nckBHhXOgtgjoApN9Hn8zysuGKPIWbYNVKnpOd3rWbus1L3ziJcc+4qtdHDLdHG56qAYVVcNbEU
-	2EtQ6
-X-Gm-Gg: ASbGncvET0AgTCiZj4CopWD4hDSZ5Qvnj0YUsZL8ie5crDU56U4OiD3f/iOxkAEwBk1
-	PV7xK9hbWKceTyLhDsN5IiMGIzqxg41rihQI8v7EwUxrK00xuQrDujZras9EyeuHh8RJhzRmd5M
-	2IsPyy0xHCtVtwyQXaUwH+3Ao7CMDB9kG8+Vgsm1QVSUlnebiG5m8QH2UqjZRCG3npfdP5WJ3gC
-	enyOc/H8hdtqPe6U4z6zQkTInu+NS46K5UZzDWdKdXNr1nPXhwq7b6ZePOWLix0HXlm6aHKWisE
-	qXUxRAQF2iMvrfDg4H04rkuf9ttzuKBGNzoxLI0JhTV+yMHsERsjqaNHCvE7L1y1vRfWiw9il16
-	irE0G4zInBX0pJ6+eGD0rBkOsbzeaIwmq0xd/dBrUNbMPHTKYGAftRTNjPcWmWpH+VJqIsbNkBx
-	DPLHQ7VeSMXIihQg==
-X-Google-Smtp-Source: AGHT+IGQ2PwsTgBVhX4BIKplCiN6Fm8dEPVQVzbBaqOMGQ2re1g52F54o1ZfdXxv+FuOtuW57XJ50A==
-X-Received: by 2002:a05:6000:188e:b0:428:3c66:a022 with SMTP id ffacd0b85a97d-4283c66a3a1mr577628f8f.40.1760763316335;
-        Fri, 17 Oct 2025 21:55:16 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:a618:4d7b:922:a98f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a993sm2706026f8f.24.2025.10.17.21.55.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 21:55:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760763564; x=1761368364;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vkcjNV+lg/qMB7XR1dlSgtqiUT8Il7EIrwR559XmCkM=;
+        b=qyD+yccrTWh6u7zQXv+6cpviX6Fvfi3C08+rENpKGpAXn7epk6v3B7J6twIOm3/MxQ
+         KoEujB+nWIksbB9X60OTzlyLvupqPuU+VX93FFd2bB6KR8vbsrGaMVh6zZQV6aO71x99
+         ozpMptqb3/uDK1AF1ubTDIfOE/cTrorXhd0keduzHDFlX26NtT0WhbgJjwFrqPwwUrMY
+         4ijkmVU7w3bLyV/34XhByH3MYGDqIdA3miAzMve6mbhMAHGwyOcT43L9hfJ+/K+cYRsF
+         UNRways3Q4DvLT8N472hmzNvloN1TkfRTNxI70NoSxtxX7pN33Ao+Sb+wLEtrUgrgofj
+         cafA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNCM/RNzWNX586bIdsmuDz7JbPQ6Eumm9pDgBnIvvEqcUIxDKE5jcLW1a4DhZmmefl7v662d7B96jP7qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2vc3d6ERI3EkgVDqrfyyRnRHGJBEm/DkmHZAxtnXcidUgSo64
+	H8udrgKHY3C9RGzBB9FxJj9R/rsQB9yUQMsW/S+HF/RTwq667MJx8urGXJcEyYwvBIVpQHCXvcr
+	NwZ+a6oTmNQ==
+X-Google-Smtp-Source: AGHT+IFbctGvWW7cWWpUbK4gP5ZmVYuUzv9u9IHygP/MBkIa+mrhQm2gwwrDgcf5CKToet4IvqfjzNTA+2/v
+X-Received: from pgbcm13.prod.google.com ([2002:a05:6a02:a0d:b0:b55:135:7cb9])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:12cb:b0:334:a322:f326
+ with SMTP id adf61e73a8af0-334a86070cdmr8832156637.28.1760763564485; Fri, 17
+ Oct 2025 21:59:24 -0700 (PDT)
+Date: Fri, 17 Oct 2025 21:59:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 18 Oct 2025 05:55:14 +0100
-Message-Id: <DDL6I3XL46VX.XHDZ5GTAJK09@linaro.org>
-Cc: <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
- <srini@kernel.org>, <linux-sound@vger.kernel.org>, <m.facchin@arduino.cc>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH 0/9] ASoC: qcom: q6dsp: fixes and updates
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>,
- <broonie@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251018045902.21665-1-irogers@google.com>
+Subject: [PATCH v1] perf trace: Don't synthesize mmaps unless callchains are enabled
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed Oct 15, 2025 at 2:17 PM BST, Srinivas Kandagatla wrote:
-> This patchset has 4 fixes and some enhancements to the Elite DSP driver
-> support.
-> Fixes includes=20
-> 	- setting correct flags for expected behaviour of appl_ptr
-> 	- fix closing of copp instances
-> 	- fix buffer alignment.
-> 	- fix state checks before closing asm stream
-> Enhancements include:
-> 	- adding q6asm_get_hw_pointer and ack callback support
->
-> There is another set of updates comming soon, which will add support
-> for early memory mapping and few more modules support in audioreach.
->
-> Srinivas Kandagatla (9):
->   ASoC: qcom: q6apm-dai: set flags to reflect correct operation of
->     appl_ptr
->   ASoC: qcom: q6adm: the the copp device only during last instance
->   ASoC: qcom: qdsp6: q6asm-dai: set 10 ms period and buffer alignment.
->   ASoC: qcom: q6asm-dai: perform correct state check before closing
->   ASoC: qcom: q6asm: handle the responses after closing
->   ASoC: qcom: q6asm-dai: schedule all available frames to avoid dsp
->     under-runs
->   ASoC: qcom: q6asm: add q6asm_get_hw_pointer
->   ASoC: qcom: q6asm-dai: use q6asm_get_hw_pointer
->   ASoC: qcom: q6asm: set runtime correctly for each stream
+Synthesizing mmaps in perf trace is unnecessary unless call chains are
+being generated.
 
-I am currently testing this series, so far looks good but
-I'd like to test it on one more different board.
-I'll also have few minor comments later.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/builtin-trace.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Alexey
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c607f39b8c8b..a743bda294bd 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2005,7 +2005,9 @@ static int trace__symbols_init(struct trace *trace, int argc, const char **argv,
+ 
+ 	err = __machine__synthesize_threads(trace->host, &trace->tool, &trace->opts.target,
+ 					    evlist->core.threads, trace__tool_process,
+-					    true, false, 1);
++					    /*needs_mmap=*/callchain_param.enabled,
++					    /*mmap_data=*/false,
++					    /*nr_threads_synthesize=*/1);
+ out:
+ 	if (err) {
+ 		perf_env__exit(&trace->host_env);
+-- 
+2.51.0.858.gf9c4a03a3a-goog
+
 
