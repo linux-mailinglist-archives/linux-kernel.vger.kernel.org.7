@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-859262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A6EBED290
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025F9BED293
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F8F44E183B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A04E4071C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14137226CF9;
-	Sat, 18 Oct 2025 15:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF62B1E9915;
+	Sat, 18 Oct 2025 15:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="R+2LR/ps"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tfv6nP16"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17A25464D
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8AE40855
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760801331; cv=none; b=oVm7mhCOaesKcWEfE3Dgn2HUq9PzbmfNQi6ZGCadhzizqAcjQMZTV7QaKv0DP6zhYIUZFZE7s20wcKO/fe56L5Qx2jZGGQDxDqbgYzYy4rYQOQk5L3f2DqvH61qApTCbyTb6ga1FJHuEepftyvi9hPjeOjptTFp4NGFcXt6jC1s=
+	t=1760801365; cv=none; b=at3YUNWYLHz8+73OUfLhkPMfk9xo56c6mqwxagLigWtNUhJdsHSLh7CQ1Jw6zQ9uxWDdXI8ZxSS/iXQJDjv4GSpO5IBZDgfXaZyIpSdtGdA/jAwVo2oOJ+7bm2y4eB12f+28DtMp4lD7Gk5q3jM/gWSXFS14CAsDunp3mq1YsDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760801331; c=relaxed/simple;
-	bh=Jp9qkiE962EqU6AuwTutKC7YuQQ5b1pauuoLKIDWLOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Peb1NYwDhwdSAI9HUiusUX08R/ucQJmKXDglWDE3tcdWP6fIoL9BgBAkhnbCfW0kPlhGM8ifnZ4nehznQS1QcA1Z1haJtXeYAlpHSqaSGVI0NiKEOBFjpBSDMsr26LfbK1UUs+DOIGuOuX5RN+QJdU0p8rcKVIxS7/dGgAPJf44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=R+2LR/ps; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c489f1e6cso1531588a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:28:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760801328; x=1761406128; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jp9qkiE962EqU6AuwTutKC7YuQQ5b1pauuoLKIDWLOA=;
-        b=R+2LR/psxUR8y/nMybdUNZLtDGmVeVO0lTySF+1grod7fQgCk/SLqbD+ZGw8MZfgjU
-         8pvDFxV5x1GC7iREGB3Hbz/0QIY/LggFAXHZJwuR3mZO14Zs9ijl2MxCVYRyYOVdNiwL
-         ZZ+bDIlbeK5aXQ8Lm3OZFOZP+uAYRO9v9ozIwTkPtEE9/FMfvN7CCRY2DpipFYhYHqiB
-         Pu47SorntMYwq1f/A1Req17yif1WG+TxzmTQ2QxLcJ7NTnf4nZ/59+lW6amXi1ryIJvV
-         jmSYk92kgvB6vS0Ucc7lWL69XuLedpa+kCzEm4Isv8/EqoA98U/sigh+CTbkbP7NR50T
-         LguQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760801328; x=1761406128;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jp9qkiE962EqU6AuwTutKC7YuQQ5b1pauuoLKIDWLOA=;
-        b=gnoTPIkl9ls4hxGOIgbnobIAXDKE0pntiJJqD3jIvxaUsqtoryOtoW0W8PGbR/eLS2
-         rK1eASNkWUA6cjTPszCjigAQFYfMuVx3yE2Sam7nt66RBoOhyb5UjpbvTjmGkPuBLrAk
-         grsdCHB1M48pzNzz/RfrBO37OruGjfNndhN04+UV+upodk0o9SaKt/p4zt/nF8hPxaEg
-         gn85ARNumzSiiF0hCYcG+OYCRNuYQ/oUegwFbaUuFfUxUw2sZWbbWGP87sIOI++QkAHI
-         juGLnhjAoSb4J6GsH81PNzBHJHDyzWpVxruFsGcxcWeLLCX/As5MjCz9gb3KuVVBe2qf
-         uNZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKixLKfmDWF2bi2M99CkdeafqFxPaWK3bWOcMf92iu02hejU5HmnYCp9I0zRNXymrqrq3LaegDVZsEMwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBfYrL8buD+kO9q3VEf6BslEm4zm2aZ3zq3J0a3WCnWnvBlQph
-	sZw1G0tVP2xKrr8qxvxaRJecZQY6FUoGdJ3bHrymbbZb8aXo5RLUBx5UkwU4hQK216CdpLdVBWK
-	r+k2JN0i3naKTTx9SVPMkMZ0tyTnM/DS4xsS/1zdm8Q==
-X-Gm-Gg: ASbGncux71PBeuuclwskVQcdO+zngwdk9jpRvXgUQkU0Ro4c+8a3YyBGS0juZCBamEH
-	y4UNIN3JG3xL5Wth2rGRBeY79Y5WH7JsfYfN92sZujqLPTQ4nfIQLoJTH0PNIbo81jlBcdsx2Rc
-	5n139w8V/g88YnULhE+Pd1A5qyI8ae8gVGMWycmjP1RcyknSQ7o7opcEeaQZF8GVGkp8kMDJwVN
-	+0gvT+Oo+prWqgHXAVLqd7a0ME2xxcCCwN+OQul1JPaX4nppDLl6PVwWwyIC7jaLQaH8gNDqeXR
-	yQYCyd8K6GqLKrsd
-X-Google-Smtp-Source: AGHT+IGD+GIZ6cxCDQx+cpZ1B+6x/CWUhSAiqtZJo+SqncV9lu3xa66p7nHm+gyAAx9koD78PZnXe2MMWr42HEQvxQw=
-X-Received: by 2002:a05:6402:2713:b0:639:e5da:637e with SMTP id
- 4fb4d7f45d1cf-63c1e1f212fmr6981739a12.6.1760801328092; Sat, 18 Oct 2025
- 08:28:48 -0700 (PDT)
+	s=arc-20240116; t=1760801365; c=relaxed/simple;
+	bh=aGsiT+V6Af9IOKmzo6tDnZ7vcWlPUgv8hlpeRpgwVew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bc9Se4eMzizWnuUNrMwXQDyxsCnmEK/NwZphbsLK8m0IK5hYDiwsU3Eml9yGiTCkFWy5EoOXWQmoAetUycrBa98SyRtcfzA6LsCIQ17ulXFkclS9fHu32HAVAL7W9uwOHp2KyJCiP/EfVlMA/e3/UFyDlz/kfYyYwIl71vpAktM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tfv6nP16; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C55C4CEF8;
+	Sat, 18 Oct 2025 15:29:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760801364;
+	bh=aGsiT+V6Af9IOKmzo6tDnZ7vcWlPUgv8hlpeRpgwVew=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tfv6nP16oLGIfP2RIBEsZqW0+9FCPoiJWdDuUnJ8O2EJboTiUC1197TDlK+Zf12gq
+	 M6NOIm+eyy3eA9OUc+/dZeK9bGiFUAjD1zZXTDN+pYdOH9LhYQPtXXHK34UXMya8Wg
+	 p48ys1JD1FTbu7HHFsdZJl8h/RQapc3NHFiWDnzUWB4ZYmsOT/v2PUDJKAiisWNP4W
+	 gWAdDu0QpqXQuN7wXMV5L1MN6yc+qPiLRtEqOPFlGJl+CNEbkdOEhtL1ycxoLqeE2u
+	 5u/ZT6n0MVpsFXdJaPEcbRvM3I9s52XTamNcgtxtejs3DR1VgsE/Pbpe8oqswHaEeZ
+	 6dG48mHf2U+Zw==
+Message-ID: <7897e76b-813d-489a-8954-70291da0d9e0@kernel.org>
+Date: Sat, 18 Oct 2025 17:29:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015053121.3978358-1-pasha.tatashin@soleen.com>
- <20251015053121.3978358-2-pasha.tatashin@soleen.com> <aO9ZiERHff7vQiBL@kernel.org>
- <CA+CK2bA5Eyz6TUMTy3pa5HBvZ7KkiHX3EHn17T=d6LX_X5i3bg@mail.gmail.com>
-In-Reply-To: <CA+CK2bA5Eyz6TUMTy3pa5HBvZ7KkiHX3EHn17T=d6LX_X5i3bg@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sat, 18 Oct 2025 11:28:11 -0400
-X-Gm-Features: AS18NWC5SixWaTv6tISYyRfabBu0M2TA5NSlq-EJV7berBAV8wLpo3xmXCWe7Kw
-Message-ID: <CA+CK2bA=g3r7V92NCYZDWNKPguCM5EYdroqHxEH2YxUy68iDyg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: officially expand maintainership team
+To: Arnd Bergmann <arnd@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Drew Fustini <fustini@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20251017143302.1776953-1-arnd@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251017143302.1776953-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > Can't we check this in __kho_preseve_order() and not duplicate the code?
->
-> Yes, that is possible, I will move it in the next version.
+On 17/10/2025 16:32, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Since Olof moved on from the soc tree maintenance, Arnd has mainly taken
+> care of the day-to-day activities around the SoC tree by himself, which
+> is generally not a good setup.
+> 
+> Krzysztof, Linus and Alexandre have volunteered to become co-maintainers
+> of the SoC tree, with the plan of taking turns to do merges and reviews
+> to spread the workload. In addition, Drew joins as another reviewer.
+> 
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Drew Fustini <fustini@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Actually, I decided against this. The check might be expensive
-depending on how sparse scratch area. Why make it even more expensive
-for kho_preserve_pages() case, which might be calling
-__kho_preserve_order() multiple times.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Pasha
+Best regards,
+Krzysztof
 
