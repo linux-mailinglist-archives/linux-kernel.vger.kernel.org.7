@@ -1,120 +1,72 @@
-Return-Path: <linux-kernel+bounces-858910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDAEBEC386
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:30:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88549BEC38C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE66419C68D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:31:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 33B0E354218
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEC51D130E;
-	Sat, 18 Oct 2025 01:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlRSz5Py"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4322F1DEFE0;
+	Sat, 18 Oct 2025 01:31:30 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1959D7483;
-	Sat, 18 Oct 2025 01:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596D9126C17;
+	Sat, 18 Oct 2025 01:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760751036; cv=none; b=sSnbKZgZ+rBPjduQE696v99s6OVta8/5XBDJrf2dVms24C1bOVDgroNpXH9aEEBttnZi0rFWf66udxdz6pFWWz3wOv9jkfF/FpXuwhGpIrjvYXAuXfPdqy2joQlkk2Gmv2/wBi1x4g+KYPpepsIMEahJo72gP41g2qcXICFaZm8=
+	t=1760751089; cv=none; b=N2yDfLn/HFe3Vuij439Lt9KO9qhAs4TSZGKPVodQ06RH7FH9ITxqKKtdZNUWr81S+4h7njVpMkFedKI4fKn8tFAQOhOwJ6oVgbgNk9bsap3QkTU3ZXHLJ5Cg7aJd4tzDw3Vsw3/WNv3qIVbewsOU68yW2nlze4FYd419+Z46voY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760751036; c=relaxed/simple;
-	bh=yvXh8dFfVhycZCM8AlezE+Kqf0fr5Jvv71aDbDtE73U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=F4lmndUVI4XjVPdoZHIfioj9//Ia18QSpC/J/XL0lal1mtZTtL6FIDIiIFoYNGtFwOnEB0e7m+Iy1hbmP1nvuV/7vqEky7OZ/x6L6gE8mpELo/hDn36Mrog7LCf3sSVi7wr9hDIZLZCJ5iydb0evkfzl5cv2iEU1V7hOjl/EybM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlRSz5Py; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F865C4CEE7;
-	Sat, 18 Oct 2025 01:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760751035;
-	bh=yvXh8dFfVhycZCM8AlezE+Kqf0fr5Jvv71aDbDtE73U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GlRSz5PyCdm3o2x5pcSEcZIDubHRc07LQtVacLRVlPrdclacFogSWJTCPwnUjzWGn
-	 i+8HBgj+DQMff3FVIIqZ0lGG0SGbrGYF9CPs9snFNH1kVdwBz7Fr+GZO8DZhVD0E1F
-	 QjHExCibl0kGoL2ct0xnbPvtpmtyAg3PopO2FTg+yLEKV/dkrBtpEPe/3Yp0du7Sce
-	 KaXhL1p5r2R+FNimTq5yjMEaBSYfIWF729eFe2vDb+M/OherYOG2rS+8VSlQChSkaa
-	 DVSaVg239cXbIW1NvZG/4u3GbllS0iN1M8D+Pddi5OXy9BxQ81RSX2sN+gTMHi04Zi
-	 urXiULb7K1kTQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D4D39EFA60;
-	Sat, 18 Oct 2025 01:30:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760751089; c=relaxed/simple;
+	bh=jVgd9xIpvYLv/agHOy6+SNyn5rSLqBCQfxjIHngMCpE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FAD+ffzE/YsvVMp2kiUL2HTU3tquVfn0FeneN/dr050WjrRfCt6nQAFNgXSdX9vylM6h6VsrNxWktrSqe4F6BBXDFiH4M9bIiAKCM0MWlEHS6l4ujrnpmtqWy2x9y1ZnV9TtnLA+1j1KkeTktThuUOES/fwZtaYpqgu7Ptd5PkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id A2B3787960;
+	Sat, 18 Oct 2025 01:31:26 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id 4CDAF20025;
+	Sat, 18 Oct 2025 01:31:24 +0000 (UTC)
+Message-ID: <56f8e40af81a425784cc7f4b9f52038b8369a6d7.camel@perches.com>
+Subject: Re: [PATCH v2 1/2] docs: checkpatch: Align block comment style
+From: Joe Perches <joe@perches.com>
+To: Brian Norris <briannorris@chromium.org>, Dwaipayan Ray	
+ <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap
+	 <rdunlap@infradead.org>, workflows@vger.kernel.org
+Date: Fri, 17 Oct 2025 18:31:17 -0700
+In-Reply-To: <20251017203719.1554224-1-briannorris@chromium.org>
+References: <20251017203719.1554224-1-briannorris@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/11] net: dsa: lantiq_gswip: clean up and
- improve
- VLAN handling
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176075101901.2849208.2117673296114679336.git-patchwork-notify@kernel.org>
-Date: Sat, 18 Oct 2025 01:30:19 +0000
-References: <cover.1760566491.git.daniel@makrotopia.org>
-In-Reply-To: <cover.1760566491.git.daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: hauke@hauke-m.de, andrew@lunn.ch, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- andreas.schirm@siemens.com, lukas.stockmann@siemens.com,
- alexander.sverdlin@siemens.com, peter.christen@siemens.com,
- ajayaraman@maxlinear.com, bxu@maxlinear.com, lxu@maxlinear.com,
- jpovazanec@maxlinear.com, fchan@maxlinear.com, yweng@maxlinear.com,
- lrosu@maxlinear.com, john@phrozen.org
+X-Rspamd-Queue-Id: 4CDAF20025
+X-Stat-Signature: 7kyh6fu5dtxfbjtrd541yoar7dem8fpb
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX183EUSH/kjwdzjsKSKYPP/EWyXCuX/uUCA=
+X-HE-Tag: 1760751084-403119
+X-HE-Meta: U2FsdGVkX18PFh0EDy4eHBdRU6mdjxbelwAvSIXsFZI0dWLaDCcscFTpNNpoeknZjgDOxO0IMzrZmeZfTgzkoh2bvihQHlP7lZgjukA1CvdByjBWZ4034Lsr8erkX6iy00YjVLoe8jCeM0AhL7/OfmEYqViL1zwMlNdc9PyDY2aosaixk8AUaAyPKJInZAsw9WDMm0DlSp9U9Zlz3yaqcr61hXzqJB7qJYnrnapz8pJ3rpfZ8tijmg2XMKJehiYBCaNs52w2yGvwUKM820V8melBWrg8xWFHVF2P1gUEqm0Dyg4Gh10xhd9tzPcjAG3a
 
-Hello:
+On Fri, 2025-10-17 at 13:37 -0700, Brian Norris wrote:
+> Ironically, the block style comments in the checkpatch documentation are
+> not aligned properly. Correct that.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+<snort>  Thanks.
 
-On Wed, 15 Oct 2025 23:31:51 +0100 you wrote:
-> Hi all,
-> 
-> This series was developed by Vladimir Oltean to improve and clean up the
-> VLAN handling logic in the Lantiq GSWIP DSA driver.
-> 
-> As Vladimir currently doesn't have the availability to take care of the
-> submission process, we agreed that I would send the patches on his
-> behalf.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,01/11] net: dsa: lantiq_gswip: support bridge FDB entries on the CPU port
-    https://git.kernel.org/netdev/net-next/c/e29bbd73ad71
-  - [net-next,02/11] net: dsa: lantiq_gswip: define VLAN ID 0 constant
-    https://git.kernel.org/netdev/net-next/c/92790e6c11a8
-  - [net-next,03/11] net: dsa: lantiq_gswip: remove duplicate assignment to vlan_mapping.val[0]
-    https://git.kernel.org/netdev/net-next/c/8f5c71e44413
-  - [net-next,04/11] net: dsa: lantiq_gswip: merge gswip_vlan_add_unaware() and gswip_vlan_add_aware()
-    https://git.kernel.org/netdev/net-next/c/b92068755ee0
-  - [net-next,05/11] net: dsa: lantiq_gswip: remove legacy configure_vlan_while_not_filtering option
-    https://git.kernel.org/netdev/net-next/c/21c3237c60c3
-  - [net-next,06/11] net: dsa: lantiq_gswip: permit dynamic changes to VLAN filtering state
-    https://git.kernel.org/netdev/net-next/c/ab3ce58559d6
-  - [net-next,07/11] net: dsa: lantiq_gswip: disallow changes to privately set up VID 0
-    https://git.kernel.org/netdev/net-next/c/96a91e6eeb4d
-  - [net-next,08/11] net: dsa: lantiq_gswip: remove vlan_aware and pvid arguments from gswip_vlan_remove()
-    https://git.kernel.org/netdev/net-next/c/7ed1965f1010
-  - [net-next,09/11] net: dsa: lantiq_gswip: put a more descriptive error print in gswip_vlan_remove()
-    https://git.kernel.org/netdev/net-next/c/a57627626636
-  - [net-next,10/11] net: dsa: lantiq_gswip: drop untagged on VLAN-aware bridge ports with no PVID
-    https://git.kernel.org/netdev/net-next/c/3bb500caf656
-  - [net-next,11/11] net: dsa: lantiq_gswip: treat VID 0 like the PVID
-    https://git.kernel.org/netdev/net-next/c/1f89ed0ebf26
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+And for the deletion too.
+I didn't know about that changed.
 
