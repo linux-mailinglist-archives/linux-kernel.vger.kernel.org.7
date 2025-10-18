@@ -1,161 +1,163 @@
-Return-Path: <linux-kernel+bounces-859065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29162BEC98E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C29BEC996
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF3A1A6484D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2C7405674
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28642877D2;
-	Sat, 18 Oct 2025 07:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9827527A900;
+	Sat, 18 Oct 2025 07:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rf0OR0T+"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y2qR6SgL"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20128354AEB
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 07:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF862282EB
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 07:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760773405; cv=none; b=lF+x6Fo+tZmvAt3BfqsZ123T4IEQTY1lGg1TGhaxR0aoICgliaSMWoYALWbtq0Tbq+tGOl879WYCh6FbXUfebt6WPa+8J2TdHUCs6BIevReZHe8zV8pLqnDtJgMJI39n11c1LCqTiwJDCOwD8oiCxsyrPwb55a/E6GWoy5aAvII=
+	t=1760773913; cv=none; b=eqcUBHSahsJxs6LADu9Utypybtitqmgiq2xZVyaDOiefJRYx5P4YYgkDpH8BZ1kZYKvkdybnAVKdYLF9l1kMk8jYnVXZvFPfFEiGtpf878e0VPElMai8ZxaJuFzyGFVKVI/qJX+/1mKAnh2Y38Rfit6BplA6BxehAbH7zNmXLW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760773405; c=relaxed/simple;
-	bh=F6o5xuD/rEaG0v6EJNW/4wJ09DXvQktJ9h7IiFVRojI=;
+	s=arc-20240116; t=1760773913; c=relaxed/simple;
+	bh=YDaatv130rfc9YWd+DrPk6GZoVEeS24QutfZ+cuZR60=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mW0vEP9gtSrv7Eg58FbY4qm8thtWeTgzLNUquaQna3S+RrPV5uorjalKdS7wkOmIsVSWRNvppeVqa8WzidcFGRqBXbdZPZAqrPxL0/Ku0nK3aar27l83jFiJjUU2NF0IUWYXZkkP3EAlPyEV7Jrn1nB4FkijmX5cdx8BlIXNhI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rf0OR0T+; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 5F8B34E41159;
-	Sat, 18 Oct 2025 07:43:20 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 20D6B6069D;
-	Sat, 18 Oct 2025 07:43:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F3132102F2343;
-	Sat, 18 Oct 2025 09:42:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760773399; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=BrMMsk9VBVt4yUp2jMiSJe8MPMPTFyVYedP9FgMnb7c=;
-	b=Rf0OR0T+dhtzVXq5CsJLvyo9tJp01jc+xfMcYMVyaVUy1ovb41EuvzSdNJh3q8MwMYLLOg
-	eRH6oNPSnc/lvTnpjLdcSYqrpAO+I/eulSqZ5TBSJosUm+bjArDm4Mqvfa9JsYFSNs+pOn
-	WDZuotNyTSJV+ODF9R7bMIzK0NCJAN8xQvsL+DN3ZsDaTZebx0kpWuwIwqVy13ITQnjBvX
-	P85z/GtqPJ3bw7jVNB0JKdHwWKerNHfBrN3AuduHhy4UocMx1H5pddfrOScVGCaEskhLmD
-	WvLtSpoOdsIK3Zwz0lDnx+kDriDemgk08RCAQWo4AmjSlApxCsxWE0hzsoFuJw==
-Message-ID: <d40cbc17-22fa-4829-8eb0-e9fd26fc54b1@bootlin.com>
-Date: Sat, 18 Oct 2025 09:42:57 +0200
+	 In-Reply-To:Content-Type; b=pebyKQTCUb4OBg4m46Z1JeJjmc2ED7xdwC5Xj3vfED3EHGxVd2xk2YG+6EqX5a/no3ggrB0eTezmaLiR75IJx/i/LEBl8YzD7QhLKBiTHkrhL92Samqg5gIO4DI6vseJfr6hCJYwJGYfytMthp8uiTgMMS3wIttHKvCWygUclYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y2qR6SgL; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <abd75aed-9ff2-4e6d-8fec-2b118264efa9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760773898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UzIpLxhpXHd7W2m8i5xoFIEHI3nftwPx3RFrt+zivx4=;
+	b=Y2qR6SgLX/fevxvhax5l9j1nNiPMyAzIjswtZ/PyI81C4v9mK2TYwh/cGOx+r8/PD575cP
+	vitqOxHpHWSIzpZLxeUAdGLJM6bCqNLwnJBf+o9RFFeqoGY6q5+qrIuuZhs7G4kAsmvxPR
+	1WK48uBsFzLbfw89fu9B2z4A+aLy83s=
+Date: Sat, 18 Oct 2025 15:51:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/3] net: stmmac: Allow supporting coarse
- adjustment mode
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
- <20251015102725.1297985-3-maxime.chevallier@bootlin.com>
- <20251017182358.42f76387@kernel.org>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251017182358.42f76387@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [RFC PATCH bpf-next v2 2/2] bpf: Pass external callchain entry to
+ get_perf_callchain
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Song Liu <song@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+References: <20251014100128.2721104-1-chen.dylane@linux.dev>
+ <20251014100128.2721104-3-chen.dylane@linux.dev> <aO4-jAA5RIUY2yxc@krava>
+ <CAADnVQLoF49pu8CT81FV1ddvysQzvYT4UO1P21fVxnafnO5vrQ@mail.gmail.com>
+ <CAEf4BzbAt_3co0s-+DspnHuJryG2DKPLP9OwsN0bWWnbd5zsmQ@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4BzbAt_3co0s-+DspnHuJryG2DKPLP9OwsN0bWWnbd5zsmQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jakub,
-
-On 18/10/2025 03:23, Jakub Kicinski wrote:
-> On Wed, 15 Oct 2025 12:27:22 +0200 Maxime Chevallier wrote:
->> The DWMAC1000 supports 2 timestamping configurations to configure how
->> frequency adjustments are made to the ptp_clock, as well as the reported
->> timestamp values.
+在 2025/10/17 04:39, Andrii Nakryiko 写道:
+> On Tue, Oct 14, 2025 at 8:02 AM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
 >>
->> There was a previous attempt at upstreaming support for configuring this
->> mode by Olivier Dautricourt and Julien Beraud a few years back [1]
->>
->> In a nutshell, the timestamping can be either set in fine mode or in
->> coarse mode.
->>
->> In fine mode, which is the default, we use the overflow of an accumulator to
->> trigger frequency adjustments, but by doing so we lose precision on the
->> timetamps that are produced by the timestamping unit. The main drawback
->> is that the sub-second increment value, used to generate timestamps, can't be
->> set to lower than (2 / ptp_clock_freq).
->>
->> The "fine" qualification comes from the frequent frequency adjustments we are
->> able to do, which is perfect for a PTP follower usecase.
->>
->> In Coarse mode, we don't do frequency adjustments based on an
->> accumulator overflow. We can therefore have very fine subsecond
->> increment values, allowing for better timestamping precision. However
->> this mode works best when the ptp clock frequency is adjusted based on
->> an external signal, such as a PPS input produced by a GPS clock. This
->> mode is therefore perfect for a Grand-master usecase.
->>
->> We therefore attempt to map these 2 modes with the newly introduced
->> hwtimestamp qualifiers (precise and approx).
->>
->> Precise mode is mapped to stmmac fine mode, and is the expected default,
->> suitable for all cases and perfect for follower mode
->>
->> Approx mode is mapped to coarse mode, suitable for Grand-master.
+>> On Tue, Oct 14, 2025 at 5:14 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+>>>
+>>> On Tue, Oct 14, 2025 at 06:01:28PM +0800, Tao Chen wrote:
+>>>> As Alexei noted, get_perf_callchain() return values may be reused
+>>>> if a task is preempted after the BPF program enters migrate disable
+>>>> mode. Drawing on the per-cpu design of bpf_perf_callchain_entries,
+>>>> stack-allocated memory of bpf_perf_callchain_entry is used here.
+>>>>
+>>>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>>>> ---
+>>>>   kernel/bpf/stackmap.c | 19 +++++++++++--------
+>>>>   1 file changed, 11 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+>>>> index 94e46b7f340..acd72c021c0 100644
+>>>> --- a/kernel/bpf/stackmap.c
+>>>> +++ b/kernel/bpf/stackmap.c
+>>>> @@ -31,6 +31,11 @@ struct bpf_stack_map {
+>>>>        struct stack_map_bucket *buckets[] __counted_by(n_buckets);
+>>>>   };
+>>>>
+>>>> +struct bpf_perf_callchain_entry {
+>>>> +     u64 nr;
+>>>> +     u64 ip[PERF_MAX_STACK_DEPTH];
+>>>> +};
+>>>> +
 > 
-> I failed to understand what this device does and what the problem is :(
+> we shouldn't introduce another type, there is perf_callchain_entry in
+> linux/perf_event.h, what's the problem with using that?
+
+perf_callchain_entry uses flexible array, DEFINE_PER_CPU seems do not
+create buffer for this, for ease of use, the size of the ip array has 
+been explicitly defined.
+
+struct perf_callchain_entry {
+         u64                             nr;
+         u64                             ip[]; /* 
+/proc/sys/kernel/perf_event_max_stack */
+};
+
 > 
-> What is your ptp_clock_freq? Isn't it around 50MHz typically? 
-> So 2 / ptp_freq is 40nsec (?), not too bad?
-
-That's not too bad indeed, but it makes a difference when acting as
-Grand Master, especially in this case because you don't need to
-perform clock adjustments (it's sync'd through PPS in), so we might
-as well take this opportunity to improve the TS.
-
+>>>>   static inline bool stack_map_use_build_id(struct bpf_map *map)
+>>>>   {
+>>>>        return (map->map_flags & BPF_F_STACK_BUILD_ID);
+>>>> @@ -305,6 +310,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>>>>        bool user = flags & BPF_F_USER_STACK;
+>>>>        struct perf_callchain_entry *trace;
+>>>>        bool kernel = !user;
+>>>> +     struct bpf_perf_callchain_entry entry = { 0 };
+>>>
+>>> so IIUC having entries on stack we do not need to do preempt_disable
+>>> you had in the previous version, right?
+>>>
+>>> I saw Andrii's justification to have this on the stack, I think it's
+>>> fine, but does it have to be initialized? it seems that only used
+>>> entries are copied to map
+>>
+>> No. We're not adding 1k stack consumption.
 > 
-> My recollection of the idea behind that timestamping providers
-> was that you can configure different filters for different providers.
-> IOW that you'd be able to say:
->  - [precise] Rx stamp PTP packets 
->  -  [approx] Rx stamp all packets
-> not that you'd configure precision of one piece of HW..
+> Right, and I thought we concluded as much last time, so it's a bit
+> surprising to see this in this patch.
+> 
 
-So far it looks like only one provider is enabled at a given time, my
-understanding was that the qualifier would be used in case there
-are multiple timestampers on the data path, to select the better one
-(e.g. a PHY that supports TS, a MAC that supports TS, we use the 
-best out of the two).
+Ok, I feel like I'm missing some context from our previous exchange.
 
-However I agree with your comments, that's exactly the kind of feedback
-I was looking for. This work has been tried several times now each
-time with a different uAPI path, I'm OK to consider that this is out
-of the scope of the hwprov feature.
+> Tao, you should go with 3 entries per CPU used in a stack-like
+> fashion. And then passing that entry into get_perf_callchain() (to
+> avoid one extra copy).
+>
 
-> If the HW really needs it, just lob a devlink param at it?
+Got it. It is more clearer, will change it in v3.
 
-I'm totally OK with that. I'm not well versed into devlink, working mostly with
-embedded devices with simple-ish NICs, most of them don't use devlink. Let me
-give it a try then :)
-
-Thanks for taking a look at this,
-
-Maxime
+>>
+>> pw-bot: cr
 
 
+-- 
+Best Regards
+Tao Chen
 
