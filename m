@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-859016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B530ABEC7BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29094BEC7C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 06:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A1254E8C62
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9638D1AA52CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD4323C513;
-	Sat, 18 Oct 2025 04:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEDF265620;
+	Sat, 18 Oct 2025 04:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRjtxvm1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HS4FFp+B"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95719155389
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 04:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0B423183A;
+	Sat, 18 Oct 2025 04:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760762667; cv=none; b=fmZnCG8PKk/YPu6xq+V8iJT7LMjyFc3+gEWjae29Mdjo7mr6fGruP+PTIt6TDMREFK6B//BMrTtysg1Wv2k6jmGJuWGMMri8xZF/obPCBN0/rin/05Tm3fab2o9UVH/44pF6mWclYfab5hAJF/a9rbiTMdh//vyw99PK/sxQ8Sg=
+	t=1760762837; cv=none; b=q3LGJIRBx2CItqO7vkLhldAR67sXoeCoTH/OXjq9cI298ewyIxtRF5OEJU+J7f8h9cZRJFkusb5qahsZ9zba1XS+N6EmgiyUx1KbeYFtVPp4ErWv+9T0yPnJ0x9OQ4ayt1b4wco+Hm4R57sxSqUSwmg0txrXzg2c3Fp3fyLk3mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760762667; c=relaxed/simple;
-	bh=zgIRzuUwDzGeV5kGKxjvmikUrn9RTJaSbDu/EBvWMjs=;
+	s=arc-20240116; t=1760762837; c=relaxed/simple;
+	bh=VxEiGxEpqNGiOxmfppZ5EdKGKFhkf4LgSqXDCj9LQJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xozpv2L7XyAfam9v5uozPFAqxvKZoJvhhgpegWu35Xj+U1J9r6u1zkTQsiKH+V0pbLbaDCXbLUPUgNfq9YHgK1bEvBHZAA6SwkYD+P+OGA74BwsKvLbt0ga0X/pQjV5uiQtrWAcSC4ne8oxFNG1V9/rDtf6P0X1el4I5PlXcR08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRjtxvm1; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-290cd62acc3so19525525ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760762666; x=1761367466; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SuILH4c7j8uvSEqVjgWyUNFQrtvem938kCvyRi5rc+c=;
-        b=bRjtxvm16Qgcx6DyKv4JBN28U9QXYvWXM+iTNSdog4oaqNb6DWaY0cqXxT88gp+wMJ
-         hCmkfCnJqC31U7J++XStfpYWrMIfeEUvcAgUODaoJkvJSqA+otrozqfb6sBZ1I1HhoJa
-         gT0SF+O7VM3aP8f31C5wVoxkeGxaLy54i8WtR9MQi9lGqFL7LRmO2IIsP+WxaHkt/4mH
-         QizGfDEpqaMuUd84ZB0Em21AxdXYJtvT5GxkOeqntcE2LQJdrMhoGwhxtGXV8f5u9RYi
-         PAhJmZuqic7PetCjbv76N6CJguVpAG8APMO3UMR+03A8DMYGYq+jY8ARPFUxtMFQJKf8
-         0ixQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760762666; x=1761367466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SuILH4c7j8uvSEqVjgWyUNFQrtvem938kCvyRi5rc+c=;
-        b=cyl/uHBYVgeObX64cSFjmzrtObIybNIgHlrRJKtZVjSP6/BmQJw/4XxzKnvf0Z5wLq
-         LpNnCkhpI6H7GbudRJtygH2dmCwvjVE++0S714tQcK4hO9I35lYTqbtxrS2UNWpbnidQ
-         AIyaiOuxO1KwODvWjDdQs+jSxUQdWBZPugA4y12rwI87A3EP7ibO5K9u1mO3ZqOrQD9b
-         fOVBFiQoT1e69sMKcBWVw/dD7CZSDNumTlKkZuI3UwCgSKXvTVIw/0SnngIhwTMQf/yj
-         fhQpMdcMTQ6bLbFb/cvLO8madfbibzBomxh7xveQxEASpSsQ+dZ84VYtJObx0UMlR/6J
-         GWTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfSONsP0fc9fkWCgPYD5zciKaDSS1qk+7nlQSV93yVAGw26d9XZVf9F2kPmok81NVE2KFRG7H2fA9texE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwjYrrk5zBhhKUYQk5fsRGCH7yy9TGqV5W+YFgy6pgMVrRKFXh
-	/X5C2KCv4dhYAOITTzOTK0jz79XuYG4//DcO7TP/F1WY0FVlaaB+zV76
-X-Gm-Gg: ASbGncsi6zErMcmLX+Vw9/ChqSUJrruGT9OQhS7z/Of7i0//XPXQkrWhtUfGeKsF2ff
-	ffjp7ZrpZ4+EUbOkbbwpblyt/31kg7tOIeMzGAlQ3fg40XHXnTul4hsVR4XS6g1gTZ0WrD0DSqY
-	WALaHOLcmOmp2nmX8xDz4UBec4Clj8nr65J3sli3O8UcGMJn4UJG2Ctb0J/nV6tDEzs8yAKgw54
-	TYY2gDWC8EmhtyR4Wn0eXAkFJ0ThAOgSJQjuE+nSIkSjqsBZwEYrkikrbRz4/QHJkaAtZLimM+O
-	ffe/fa+4KVsW/BXfi9n4l0k1+Kxpk6pp4uRA3g20uzftdO1NgWIBg9tQ3XHN1NpmsxlYl48B5MT
-	4VfWE1DzTHUFIO3GFRD/eRy28FNJeqJpmQXwHG0UZcMFUqm6Gfr6UA6C3FL50E6LTkX5DM8PqH6
-	2CTgmHEurYTJwU33Izvi/Gtsc8OBbPAOuXseJG5sw19KvcFAKRHog=
-X-Google-Smtp-Source: AGHT+IEsreobuN+rTRpyEDgvOSmHbZIJ9FhttENFg1rytWVj5SG3+BeLHeuRVjMn2qy9jnjk61l2gA==
-X-Received: by 2002:a17:903:b4f:b0:25b:a5fc:8664 with SMTP id d9443c01a7336-290cbe2c382mr51666355ad.51.1760762665736;
-        Fri, 17 Oct 2025 21:44:25 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:5e2d:c6df:afce:809b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebcf06sm12742835ad.24.2025.10.17.21.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 21:44:25 -0700 (PDT)
-Date: Fri, 17 Oct 2025 21:44:22 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, 
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] Input: Remove dev_err_probe() if error is -ENOMEM
-Message-ID: <aqm2v3527whfx4mttsrebm36wuexux2ufssignjdt5wkhwocrk@ynzhqww4aul3>
-References: <20250822034751.244248-1-zhao.xichao@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVJSQ6wUUlenBX32Zz/LxnybZiBQJ4b0InQpvywCu9Ym8KoqmvwMStkda5uqiUxZoyAQVIlCzKSziRVBQdP1E7fsS7wplip4UvU72C4+HfmATuQSmBQKLJXSr+rFkpZ87cJZ8b0/MB2x6fBMgeIec6rEis/H7h/aBrNuZXYRQpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HS4FFp+B; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760762836; x=1792298836;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VxEiGxEpqNGiOxmfppZ5EdKGKFhkf4LgSqXDCj9LQJI=;
+  b=HS4FFp+BPstNggTCYPup1KB5q4k0d/X8qv+Mm1IFOQ5vvG9ZatnAzEGd
+   GEjAZJF/QZdQQq0oKrjshhxwDgvdL2QPTkHQ3rggUhmfq9S2CRpgHVUWE
+   lCeubUGT3EtYx8mfpSxvROnH0MKXOkLw8jOYeWivI96aXbPvOAhCyXMcm
+   XSuky9AnmkaYgiSxZef8l2ZA0eWq/K0gQkEtKUbd3d5k5KDjOEsZUnYgu
+   iOijAMksYmudcX8ScSBwY2uQJGdkgHXRhT1VFwaKUehLXdfWxSYFLs/3x
+   C0igwbCK+ugdjkrgXg6/uhjNzaob3aYBeIf54pcx9m5ZyPrEo9FM7haNr
+   Q==;
+X-CSE-ConnectionGUID: CB+NSmYWQ7umclSENi6gAg==
+X-CSE-MsgGUID: sNMYC//JSx+j6aHaiSVjjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="62887613"
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="62887613"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 21:47:15 -0700
+X-CSE-ConnectionGUID: l+D+wMBVRre07wjM8mJ+OQ==
+X-CSE-MsgGUID: u/osHsXdTsqLlmkLee4BKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="182445076"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 17 Oct 2025 21:47:12 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v9yqM-00084J-1K;
+	Sat, 18 Oct 2025 04:47:04 +0000
+Date: Sat, 18 Oct 2025 12:46:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <202510181215.jcL2gJMQ-lkp@intel.com>
+References: <20251017141536.577466-1-kirill@shutemov.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,17 +85,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822034751.244248-1-zhao.xichao@vivo.com>
+In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
 
-On Fri, Aug 22, 2025 at 11:47:47AM +0800, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> Therefore, remove the useless call to dev_err_probe(), and just
-> return the value instead.
+Hi Kiryl,
 
-Adjusted the subjects and applied the lot, thank you.
+kernel test robot noticed the following build warnings:
 
-Thanks.
+[auto build test WARNING on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kiryl-Shutsemau/mm-filemap-Implement-fast-short-reads/20251017-221655
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20251017141536.577466-1-kirill%40shutemov.name
+patch subject: [PATCH] mm/filemap: Implement fast short reads
+config: i386-defconfig (https://download.01.org/0day-ci/archive/20251018/202510181215.jcL2gJMQ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181215.jcL2gJMQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510181215.jcL2gJMQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/filemap.c:2753:22: warning: stack frame size (1096) exceeds limit (1024) in 'filemap_read_fast' [-Wframe-larger-than]
+    2753 | static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
+         |                      ^
+   1 warning generated.
+
+
+vim +/filemap_read_fast +2753 mm/filemap.c
+
+  2752	
+> 2753	static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
+  2754					       ssize_t *already_read)
+  2755	{
+  2756		struct address_space *mapping = iocb->ki_filp->f_mapping;
+  2757		struct file_ra_state *ra = &iocb->ki_filp->f_ra;
+  2758		char buffer[FAST_READ_BUF_SIZE];
+  2759		size_t count;
+  2760	
+  2761		if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
+  2762			return false;
+  2763	
+  2764		if (iov_iter_count(iter) > sizeof(buffer))
+  2765			return false;
+  2766	
+  2767		count = iov_iter_count(iter);
+  2768	
+  2769		/* Let's see if we can just do the read under RCU */
+  2770		rcu_read_lock();
+  2771		count = filemap_read_fast_rcu(mapping, iocb->ki_pos, buffer, count);
+  2772		rcu_read_unlock();
+  2773	
+  2774		if (!count)
+  2775			return false;
+  2776	
+  2777		count = copy_to_iter(buffer, count, iter);
+  2778		if (unlikely(!count))
+  2779			return false;
+  2780	
+  2781		iocb->ki_pos += count;
+  2782		ra->prev_pos = iocb->ki_pos;
+  2783		file_accessed(iocb->ki_filp);
+  2784		*already_read += count;
+  2785	
+  2786		return !iov_iter_count(iter);
+  2787	}
+  2788	
 
 -- 
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
