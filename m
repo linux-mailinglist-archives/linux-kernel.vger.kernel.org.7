@@ -1,172 +1,188 @@
-Return-Path: <linux-kernel+bounces-859100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9FABECC7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:26:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AE9BECCA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E581896FAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B5036243E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78542287510;
-	Sat, 18 Oct 2025 09:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEBA28466C;
+	Sat, 18 Oct 2025 09:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IlqmmEAC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="v50TmCcY"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4488428467D
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3E92512DE
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760779584; cv=none; b=YFbb3Pq3mklcRTp8Hc3oNOhdAToU5eN9Yz/Rmvk8CD2wcKfrbAqOvJcozAOWwJ+fmo+AsIl8/gW9h5fbQM6iEPiXwr0UhP1LMAPNlM9Ot3NVuzr10oh20Qq60W4KvwHUMxeuCrv7y6iZ+N3zF3u/DcS6WyhEyahgV90yF/EKjnc=
+	t=1760779965; cv=none; b=sB7qacLkTRFomwCSihjbC0cHYN9P42bQeoSFOdH0SHS6Ao6ecqK2B/0GPsTbMl+NtyzLNX/Z7GzLmbuuqO1JaCiU73pXB+Ivs2MbEapibOOYhVYC1FdRmNJIhm2Y23Vxwfot7HDb7MjiuzLMYlODkQYA4AurB1X/Z0IsXS176PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760779584; c=relaxed/simple;
-	bh=wMpDMGFQKHxy/NBZclNn31ED1l+VBENotPXsGz0x/mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUqni0uqIbt/tiARImgr1GbJJgwbnNED/odI6E8itKUE9h4/4Km0yHguSiqF2OvbTf2FfjDJOMHCZPa08Xyrgx/TTkvhZXIZj2LEj+qhcZgTcwmMnUsrk6AIZRSFI/HsjzS9fXgq+m7qrsNm71IQhycx1mbJULGtFfrEkX5hsHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IlqmmEAC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59I80BEu010895
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:26:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6xho3cRc1k8Fcl9SOaVvv0V5Pp02f2XuzfHvj1N+8zA=; b=IlqmmEAC+79o/PR4
-	t33mL4xh7Qw9kJJcWFCUT+VrkxA12XFKRHeomVcfTRjgPIj3IUsTzD8nm8Br/26M
-	gzr3eXL6hW2XCDkg8mL+wtT9V0wyduhVb/Vsl26DGwH4e+bug0GsbL4/O+yYf3Oz
-	11rs9bJ3uC5zF7XRzALOnWdntxeeO/ioj3UQyOeccwtayaZhLMUlRyhV4X7WMpjv
-	IPSaAJHU0HkG8mrq+QnAENtamqsgLHpI5yYUTxaJ1mMZGJlyvQsnDMU02nBLOm+Z
-	ltBM/O9IFekUSDJyNHcP9UPJQ4K05wf+HrxvwVsCCOb0QIfp5HtLfBslRYp8DSQn
-	IiLRWg==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v4698bfu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:26:22 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33be01bcda8so1548942a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:26:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760779582; x=1761384382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xho3cRc1k8Fcl9SOaVvv0V5Pp02f2XuzfHvj1N+8zA=;
-        b=rZ6725csPhF5OHRXDLKKFrIZApAPbKfx/tSq61oXakrCJzfJlfmf7Ymc/cIuQIetdg
-         tAwZAzBHJwW0FV/p1YZV6GxY7tiAVlZ0jB8s6n2UdgiAQlBG7A4TxyANOtgCexq+92Os
-         W3RBk4sEFPpMngQnqTEicRI/xqdatWEy0b/xXCIqIIjOuWaFcJvzqwPlxi0gpLFcn40T
-         uCnDuNkIoqwnZQ+hbhQsSpbi7OMSjEwOnVKdaCNr/UiaXlMAIduxyAGFa0dTEOXGQFwc
-         W4dPily2e550jISsBvJZbKw5c+9jDLzG0Z+EAYfn0UEVH7KZLPy4WJzTqH/S6AnAEELk
-         yzYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUylKpxheOwx3nv/8c4NU5gSaKnqoVJC5YzVi4anMU6BQu+C0vcXdNoaYVdIN9eTvJafHjGfw81b5+Bd+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSf49umlsuGHbr3q9Q7CXOFuFgppY4snC2yKbEJSlHoJEyN/e9
-	qP5DcyXLpayORG7Tay9QQv1X0OU4ws4n7iwS/dj5OSjF4UIAnoEsm0PAHEv2AyIyUr5UxH7IYVS
-	MMH8/sOr8SD8i0fnUO5wMzG+b7G9aimdiMu6ACqLPJFrRWuVPmpt9FaVudl9S8HiLrP4=
-X-Gm-Gg: ASbGncu48uCkK2cE8LuNe0fRuoWg58W3ixiTImWOia1uMZq4A9Qh4uRjubI9nMsSUFi
-	UtADbeNCAI8TZ+rv3fC/nQcF173sNFwjLSm/QhyebYGi26P6iwqxwg2xi9dERtAVdB/TyxAt2wj
-	Cdcr/jlEfezTTZnXsZ3AlMXVTYbtKyQrl5qOcGWOZ9BdqEo6VqTs4SnAK3KG81+ao1SaJMGNfTr
-	f5td78ojby/biGvJ0hjHdos3Ek0TKeBkPvXN7HEH009782KPsuWH1Ot0cM2Lh/pZthgw0x01Hot
-	SYlsNHp3mXC+gKEYcHcyAf0c8yKF3ZuJEBFWqr6/Ogle2IQKYod/OjedZEJGjTrt15trYNZAJgU
-	i2ZxHjuxBqxO30mz1GrjaIgjZEBtGiVWBPl0=
-X-Received: by 2002:a17:90b:3f10:b0:330:84dc:d11b with SMTP id 98e67ed59e1d1-33bcf8e4e19mr8048569a91.18.1760779581487;
-        Sat, 18 Oct 2025 02:26:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEmESriWFcZzGmtgits2npnFUdruZMy0sc09C2Q2PskZmtfwvW+rj7fVvru8J0S883ilZfAg==
-X-Received: by 2002:a17:90b:3f10:b0:330:84dc:d11b with SMTP id 98e67ed59e1d1-33bcf8e4e19mr8048549a91.18.1760779581053;
-        Sat, 18 Oct 2025 02:26:21 -0700 (PDT)
-Received: from [192.168.29.113] ([49.43.226.255])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5df9351fsm1952642a91.16.2025.10.18.02.26.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Oct 2025 02:26:20 -0700 (PDT)
-Message-ID: <26537629-ec3f-42c5-a1d9-ae0a8566c871@oss.qualcomm.com>
-Date: Sat, 18 Oct 2025 14:56:16 +0530
+	s=arc-20240116; t=1760779965; c=relaxed/simple;
+	bh=6zqFy0yOQYaM3ba/ZqW5nko4lKjakH5c4aABB4ez9d4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t1rgVQOBRNxpr83y9GwUzAtZkzwCHIcaRr5+BBIpGX3ZUylDieLRIhXi6jobZxxfAAMlmnoJL5j6jRE0ctUDVWuEQv4jlAr9cxQILGKNByMNq65ivbNe3WBZhCLJ4bknlIGQVN1E5jqI1ziK90ZkQMyBVHGwB19dcCpFHcFj2r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=v50TmCcY; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 9121 invoked from network); 18 Oct 2025 11:32:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1760779955; bh=DFC7NfFRKKc2OZCx5rozLzXsNMg4boTyF7qGSrJ9Fms=;
+          h=From:To:Cc:Subject;
+          b=v50TmCcYLsOW9mE6E34NPv6YN3UjprgvEIAcntA1TI0KTJN85N0WdtT9eURJfyQiK
+           b2KNDpxgTzJKQfd5/gKGu66rK/1tNpqIQB+muplW9XILOQBY/rMSMpGJ3OTENk5/yj
+           ApdBgGt7/6qv8Mx7t9Zewonc/lvnNPMAKT4aPsPvuHZOeEVoAzSfMwAcepVmylKTdN
+           S9LEudO6CQ9SoNQSZM32+sTh//N2+JZyyBGrTrWhMvzJr/eq4XHkRPI9Oc1VZarszZ
+           ALXVr+Mpmh6MCMULuMgUsAO8WeqVaPGeVI2W5FGGQS55IPKXxOjrRdobMD/gs6mw2W
+           GXoHt65w7I44g==
+Received: from 83.24.149.147.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.149.147])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <wim@linux-watchdog.org>; 18 Oct 2025 11:32:35 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	hauke@hauke-m.de,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Aleksander Jan Bajkowski <olek2@wp.pl>
+Subject: [PATCH v2] dt-bindings: watchdog: lantiq,wdt: convert bindings to dtschema
+Date: Sat, 18 Oct 2025 11:29:06 +0200
+Message-ID: <20251018093229.291419-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] PCI: dwc: Fix ECAM enablement when used with vendor
- drivers
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam
- <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Ron Economos <re@w6rz.net>
-References: <20251017215817.GA1047160@bhelgaas>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20251017215817.GA1047160@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: myhLU4cx0h-_NLbBQMtuQjK4B7wKKYL4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMiBTYWx0ZWRfXywW8Kk9OTzYH
- LNu+Ec8Kc9h1WGU+fT87M3Q5wA1JAM8IhubSZLcg9R1OQusm8EVmG1h1gDg44e5j61O7hDQve+W
- GlW/FBY362sRtOPZN8M0JR+H8iqtuopkWIa31OYYrPpfuOQC2n6WD7AJZO6fvQXTYSIaJWaYiyu
- 9M9Y5xRBaRo2m8mQbB9IVkL2ZTT8bcu+BcpCzVN4oAROW6ys6AKY4Z/EkkIUTnTrMZgNTLfblLe
- Kyo5BseFrP6Aj4GWCSFo9aYJM5HUcd7Elw+/MxnMWZtZsUX1E1YcBK97d0naqp+67WgMDNJF9iV
- D+zur8ZE4ZvPce/ypKGJoMI1eyfruxzY11+zitx05lEgOVEj/LVJjVkvp9Kl/mauYx18dO4vgHr
- S4RJSvovDr4xqaBYrJrcNi8rT+F7Fg==
-X-Authority-Analysis: v=2.4 cv=U8qfzOru c=1 sm=1 tr=0 ts=68f35d3e cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=r8OtbAjNO6w9l/f+plF4pQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=DmEVpG1DHoo6bZaV9IIA:9 a=QEXdDO2ut3YA:10
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-GUID: myhLU4cx0h-_NLbBQMtuQjK4B7wKKYL4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-18_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180032
+Content-Transfer-Encoding: 8bit
+X-WP-DKIM-Status: good (id: wp.pl)                                                      
+X-WP-MailID: 738e6f299d59bcc5da0efebb1916b069
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [8eME]                               
 
+Convert the Lantiq WDT Watchdog bindings to yaml format.
 
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+v2:
+- requirement of lantiq,rcu is now expressed as a schema 
+---
+ .../bindings/watchdog/lantiq,wdt.yaml         | 63 +++++++++++++++++++
+ .../bindings/watchdog/lantiq-wdt.txt          | 24 -------
+ 2 files changed, 63 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/lantiq-wdt.txt
 
-On 10/18/2025 3:28 AM, Bjorn Helgaas wrote:
-> On Fri, Oct 17, 2025 at 05:10:52PM +0530, Krishna Chaitanya Chundru wrote:
->> This series addresses issues with ECAM enablement in the DesignWare PCIe
->> host controller when used with vendor drivers that rely on the DBI base
->> for internal accesses.
->>
->> The first patch fixes the ECAM logic by introducing a custom PCI ops
->> implementation that avoids overwriting the DBI base, ensuring compatibility
->> with vendor drivers that expect a stable DBI address.
->>
->> The second patch reverts Qualcomm-specific ECAM preparation logic that
->> is no longer needed due to the updated design.
->>
->> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> ---
->> Krishna Chaitanya Chundru (2):
->>        PCI: dwc: Fix ECAM enablement when used with vendor drivers
->>        PCI: dwc: qcom: Revert "PCI: qcom: Prepare for the DWC ECAM enablement"
->>
->>   drivers/pci/controller/dwc/pcie-designware-host.c | 28 ++++++++--
->>   drivers/pci/controller/dwc/pcie-qcom.c            | 68 -----------------------
->>   2 files changed, 24 insertions(+), 72 deletions(-)
->> ---
->> base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
->> change-id: 20251015-ecam_fix-641d1d5ed71d
-> 
-> I hope we can remove the assumption that the root bus is bus 0, but in
-Yes we can remove this assumption.
-> the meantime I added these to pci/for-linus so we can build and test
-> them.
-> 
-> They're after the pci-v6.18-fixes-2 tag I just asked Linus to pull, so
-> they won't be in v6.18-rc2, but should make it for -rc3.
-> 
-Thanks Bjorn.
+diff --git a/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml b/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+new file mode 100644
+index 000000000000..204e16be2a79
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/lantiq,wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Lantiq WTD watchdog
++
++maintainers:
++  - Hauke Mehrtens <hauke@hauke-m.de>
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - lantiq,falcon-wdt
++          - lantiq,wdt
++          - lantiq,xrx100-wdt
++      - items:
++          - enum:
++              - lantiq,xrx200-wdt
++              - lantiq,xrx300-wdt
++          - const: lantiq,xrx100-wdt
++
++  reg:
++    maxItems: 1
++
++  lantiq,rcu:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Phandle to the RCU syscon node
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: lantiq,xrx100-wdt
++    then:
++      required:
++        - lantiq,rcu
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: lantiq,falcon-wdt
++    then:
++      required:
++        - lantiq,rcu
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    watchdog@803f0 {
++        compatible = "lantiq,xrx200-wdt", "lantiq,xrx100-wdt";
++        reg = <0x803f0 0x10>;
++
++        lantiq,rcu = <&rcu0>;
++    };
+diff --git a/Documentation/devicetree/bindings/watchdog/lantiq-wdt.txt b/Documentation/devicetree/bindings/watchdog/lantiq-wdt.txt
+deleted file mode 100644
+index 18d4d8302702..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/lantiq-wdt.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-Lantiq WTD watchdog binding
+-============================
+-
+-This describes the binding of the Lantiq watchdog driver.
+-
+--------------------------------------------------------------------------------
+-Required properties:
+-- compatible		: Should be one of
+-				"lantiq,wdt"
+-				"lantiq,xrx100-wdt"
+-				"lantiq,xrx200-wdt", "lantiq,xrx100-wdt"
+-				"lantiq,falcon-wdt"
+-- reg			: Address of the watchdog block
+-- lantiq,rcu		: A phandle to the RCU syscon (required for
+-			  "lantiq,falcon-wdt" and "lantiq,xrx100-wdt")
+-
+--------------------------------------------------------------------------------
+-Example for the watchdog on the xRX200 SoCs:
+-		watchdog@803f0 {
+-			compatible = "lantiq,xrx200-wdt", "lantiq,xrx100-wdt";
+-			reg = <0x803f0 0x10>;
+-
+-			lantiq,rcu = <&rcu0>;
+-		};
+-- 
+2.47.3
 
-- Krishna Chaitanya.
-> Bjorn
 
