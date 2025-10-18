@@ -1,200 +1,140 @@
-Return-Path: <linux-kernel+bounces-859023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0A7BEC801
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:12:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86752BEC805
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E1A54E25EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E369919C5DD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BAC267B92;
-	Sat, 18 Oct 2025 05:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84141A0BE0;
+	Sat, 18 Oct 2025 05:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="gxRv7ar+"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0FgaumR"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA2C230D1E
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A071917F1
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760764335; cv=none; b=JROk89H8uOR+wB4bwRJskOry6O0nevNv/E4cBbsZxkfNnhfXJJ/y5qKRoaM05lBTFJ9hn68iucChnLPxWIr/5T8fUpcMNkbFYLGsvGCdluCig6HZ1T82ShAdnncH/0Is7HXXGzeG6wleRA91IFMnu/CQ9G/i8HOoW+HdZ/fPzJc=
+	t=1760764791; cv=none; b=SysbYGyz0VZ76w1KZOA2RlUrD65vTQkFnzyc+IUi4K9iqG4umlCSwJATybM+BGvfJKS7uVHu5xYecy6WEPL3Ulu5rSpht4U6xqYbLnQGzXjL9oh0eVzUIYpeVf10+Vfl6VTcYZ5UiXbWUlz7ly8J7piGtzK5IlbkDnfpo0CTovM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760764335; c=relaxed/simple;
-	bh=JKlZ6mq1MHRF27crq/H/Z6OaHYvWdAyiTQoS/n8gsTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBRW6VEr7RDr9klxBYVCl5NPKY4/gkXRDeWp/a/y/YzgJtBo0Jwk9SCupf7iX+jSX/rt4BLTy7WlONKohNFpj4Mq9D8unNaIVi1ilTP9Uj5mQnHZMlKue5SCYei7YwIstFzpES3muoRH4Mf03ZL7JtMRqbCmfsPqhE1dh8ifAtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=gxRv7ar+; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=G+XeId9fVeKy2mjwtAJkSYjpdvOc4ElmCgO/h9WTUQk=; t=1760764333;
-	x=1761196333; b=gxRv7ar+1CjKeZ5cVPQqP9X+Pj/vVBTQul71L6Sr7cs36pFd58HCqNdfq+cQV
-	fkDOYh1swuYcgOYpHAVGsrAhdFOnZMPEhn1yu2rN4zHOJMtuGA19X9uQoaDoFx4fUPuq6akPKA4cw
-	QqScyNbLm0gzC2ZQ0k7K6+7VLjL6s+Pp58Q/ANpOMns6Ew3ktTpDqc7O32c8p7bus0XTbGKBqz4si
-	mTGa1LRM/yqbpiBllgfrc1EpD7e95eui/ZrXw4M2tOyIUV9aEP9tjW/rmYhi0Nao6jBKV3/bnx6/T
-	yNNDjzsYfZiPr+0+pOCxYkCGO0G3/WdMiyHIM6g/Qa4hQGHtlw==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1v9zEY-0000Io-2k;
-	Sat, 18 Oct 2025 07:12:03 +0200
-Message-ID: <c1d395c6-2d3b-4504-befe-6e67c7ed96fc@leemhuis.info>
-Date: Sat, 18 Oct 2025 07:12:02 +0200
+	s=arc-20240116; t=1760764791; c=relaxed/simple;
+	bh=m9Q3wCPB0ojOMK2Varp7yF7jF6NgI0u/1w2UonBZYmM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=baXZQHXEPwZ202SZ2xryItKoeFeDe0zFZdoD4+TyNlvx6n62kWYeTLcdFFajpIDU/z9dTxMmY+/s8fNVnjC5soMdcigbzxCj4KaLQxiRXhthepvB1FYtRq8pFQKIfg6IrgJ3IlFdQe0y4Adfw2Ce7Yi9rXPFYhNR3/H/bE26lDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0FgaumR; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-87c237eca60so22423996d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760764789; x=1761369589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZogXjcOIkSnlm6m1dI9qrbTyG/Vvh6qq2QtKDAWZ9F4=;
+        b=X0FgaumRDZh+kg+rkLaYfXBA+Uc92IpnIvhAV1pP9+az1ld95nDPJKIOOJB3Ta/txc
+         DyjWvXwq56gWvDkKIMkped7uMZvbQFpxNF7p2Q3aXLOZDsIFCHr3maCt8K/6S8beBG1+
+         FrBOYEXPk2bqY3lFwUcdlUXfZHDK8u9q5w0+aI3J503yifiKrsOdQ1PqeV9moE7JR3a2
+         VFdEztYsEbxSGyP/DNQ5ctXBkKZXfQgM0iF3aVvPwlo200Z7ga0oDCbnw4GkJM/FapxQ
+         ynHn2Wc0HSwMFiS9wtwyUQE5iNumbP4d0WMOPBGNTTDzG73a+itSWmeh/tT89Ryj3fCT
+         2+Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760764789; x=1761369589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZogXjcOIkSnlm6m1dI9qrbTyG/Vvh6qq2QtKDAWZ9F4=;
+        b=jcX3AXo6HPUCbN1eWmWODMdIHbaxaOhJhrw6f+5jTCLpGJ7wLCnOmHxO8pvAwdj3qq
+         aXLfHJ+Z6mgHqwDPtllosqe1L57aPtj++zazUvC2SAEJUqQq+LYjPw3PU99XoXZgrtFY
+         V6GSeeK6cLUha2x4QUlxXt+0GT+cRyoY68rPD6dfoA1mq324uscwiCxu0vrcJfqo+E7p
+         2egXUmEyHtiO6+cP+fndLyP+vSoWbQBhrZSm0CG8Sfi2FJx7m5cY8LzzjEp5QoZGtxNc
+         71hlGyMsheCD1RqVUXQgKc62+ZyOhlPmA8l/E5QJHWALnGRHPFcCIIj1SHoQ3N/nlSyF
+         gLCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoH1xvrgpVBBntqrvRzZbhNIbQ0nHkIk2Uuzjb1P+gUtargx21BDSo3PtDEmY39V4+IDIm/Mh58dwGUP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywvOhRMvPIMn7L1oa/Vge240YWRPGO73/P0GuGhz76FyeGa78G
+	nOp3ZmlOMF7AgISXD7a6j8A39P53e9bYlzKVKHYPTJPqIMm78tPo0OyZGTQR7XNBdupwbOp0JDD
+	jAYuvxst8D+GWL2zRpEouVqZOqD35bjw=
+X-Gm-Gg: ASbGnctPqTNQkaAEAEknwiO0AufZpGpaDE3suE6Uxp74CEeekm4FAOuE7C0jnY+Xlk7
+	N3HvRGBd8cDwLVv+drE20mRCVaB/X/Ehcs706vjLbAVp8GwzXDFpjQpdEeWQmNYGcEUpECkTLjS
+	bQR5vxCyvw/vmuo16xRKezvW/owUCvGG8bS4Z37eKxxJz3tQSViiYnK/SGVArMwA1JD/aEx2OIQ
+	R8orqG4b792E3ABJmwNtiuxXgQKkdQkF0fzZo2Dpr96CmKTfxnCURr2UUsuX4iwc0CJft4gUjby
+	9NDv
+X-Google-Smtp-Source: AGHT+IHhSo84IPocM9veFr1T8h8TCcjVP2GqaH2UgQmyQF5cTThsv1inzPHCl7GpEyOCHDd+u1vl/TmG8y+dcznfJ3Y=
+X-Received: by 2002:a05:6214:d4c:b0:787:8e43:5761 with SMTP id
+ 6a1803df08f44-87c2081dfdbmr84963416d6.56.1760764788714; Fri, 17 Oct 2025
+ 22:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: tools build: Fix fixdep dependencies
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Arthur Marsh
- <arthur.marsh@internode.on.net>, x86@kernel.org
-References: <176060840507.709179.15363439615733763867.tip-bot2@tip-bot2>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 MEK4
-In-Reply-To: <176060840507.709179.15363439615733763867.tip-bot2@tip-bot2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760764333;5d9cf6ca;
-X-HE-SMSGID: 1v9zEY-0000Io-2k
+References: <20251018045902.21665-1-irogers@google.com>
+In-Reply-To: <20251018045902.21665-1-irogers@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Fri, 17 Oct 2025 22:19:37 -0700
+X-Gm-Features: AS18NWDzgNuxVyTAzbzE5rLpbz_CXvPxcUXsFNspFB4ai4PPU3p4_sGq25mvINY
+Message-ID: <CAH0uvohAneSDaXoDfNdOhg8Osnk4AYye4B59zhS=NaGj4upM5A@mail.gmail.com>
+Subject: Re: [PATCH v1] perf trace: Don't synthesize mmaps unless callchains
+ are enabled
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/16/25 11:53, tip-bot2 for Josh Poimboeuf wrote:
-> The following commit has been merged into the objtool/core branch of tip:
-> 
-> Commit-ID:     a808a2b35f66658e6c49dc98b55a33fa1079fe72
-> Gitweb:        https://git.kernel.org/tip/a808a2b35f66658e6c49dc98b55a33fa1079fe72
-> Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-> AuthorDate:    Sun, 02 Mar 2025 17:01:42 -08:00
-> Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-> CommitterDate: Tue, 14 Oct 2025 14:45:20 -07:00
-> 
-> tools build: Fix fixdep dependencies
-> 
-> The tools version of fixdep has broken dependencies.  It doesn't get
-> rebuilt if the host compiler or headers change.
+Hi Ian,
 
-My daily -next rebuilds based on the Fedora rawhide srpm failed due to
-this patch while building perf:
+(It's been a while, forgot to switch on plain text mode)
 
-make[4]: *** No rule to make target '/builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/perf/libsubcmd/fixdep'.  Stop.
-make[3]: *** [/builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/build/Makefile.include:15: fixdep] Error 2
-make[2]: *** [Makefile.perf:981: /builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/perf/libsubcmd/libsubcmd.a] Error 2
-make[2]: *** Waiting for unfinished jobs....
+On Fri, Oct 17, 2025 at 9:59=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Synthesizing mmaps in perf trace is unnecessary unless call chains are
+> being generated.
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/09700031-next-next-all/builder-live.log.gz
+Acked-by: Howard Chu <howardchu95@gmail.com>
 
-Happened on ppc64 and s390x, too (and likely on x86_64, too, but that
-failed earlier during the build due to an unrelated problem).
+Thanks,
+Howard
 
-Reverting this change fixed the problem.
-
-Ciao, Thorsten
-
- 
-> Build fixdep with the tools kbuild infrastructure, so fixdep runs on
-> itself.  Due to the recursive dependency, its dependency file is
-> incomplete the very first time it gets built.  In that case build it a
-> second time to achieve fixdep inception.
-> 
-> Reported-by: Arthur Marsh <arthur.marsh@internode.on.net>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 > ---
->  tools/build/Build    |  2 ++
->  tools/build/Makefile | 23 +++++++++++++++++++++--
->  2 files changed, 23 insertions(+), 2 deletions(-)
->  create mode 100644 tools/build/Build
-> 
-> diff --git a/tools/build/Build b/tools/build/Build
-> new file mode 100644
-> index 0000000..1c7e598
-> --- /dev/null
-> +++ b/tools/build/Build
-> @@ -0,0 +1,2 @@
-> +hostprogs	:= fixdep
-> +fixdep-y	:= fixdep.o
-> diff --git a/tools/build/Makefile b/tools/build/Makefile
-> index 63ef218..a5b3c29 100644
-> --- a/tools/build/Makefile
-> +++ b/tools/build/Makefile
-> @@ -37,5 +37,24 @@ ifneq ($(wildcard $(TMP_O)),)
->  	$(Q)$(MAKE) -C feature OUTPUT=$(TMP_O) clean >/dev/null
->  endif
->  
-> -$(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
-> -	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
-> +include $(srctree)/tools/build/Makefile.include
-> +
-> +FIXDEP		:= $(OUTPUT)fixdep
-> +FIXDEP_IN	:= $(OUTPUT)fixdep-in.o
-> +
-> +# To track fixdep's dependencies properly, fixdep needs to run on itself.
-> +# Build it twice the first time.
-> +$(FIXDEP_IN): FORCE
-> +	$(Q)if [ ! -f $(FIXDEP) ]; then						\
-> +		$(MAKE) $(build)=fixdep HOSTCFLAGS="$(KBUILD_HOSTCFLAGS)";	\
-> +		rm -f $(FIXDEP).o;						\
-> +	fi
-> +	$(Q)$(MAKE) $(build)=fixdep HOSTCFLAGS="$(KBUILD_HOSTCFLAGS)"
-> +
-> +
-> +$(FIXDEP): $(FIXDEP_IN)
-> +	$(QUIET_LINK)$(HOSTCC) $(FIXDEP_IN) $(KBUILD_HOSTLDFLAGS) -o $@
-> +
-> +FORCE:
-> +
-> +.PHONY: FORCE
-> 
-
+>  tools/perf/builtin-trace.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index c607f39b8c8b..a743bda294bd 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2005,7 +2005,9 @@ static int trace__symbols_init(struct trace *trace,=
+ int argc, const char **argv,
+>
+>         err =3D __machine__synthesize_threads(trace->host, &trace->tool, =
+&trace->opts.target,
+>                                             evlist->core.threads, trace__=
+tool_process,
+> -                                           true, false, 1);
+> +                                           /*needs_mmap=3D*/callchain_pa=
+ram.enabled,
+> +                                           /*mmap_data=3D*/false,
+> +                                           /*nr_threads_synthesize=3D*/1=
+);
+>  out:
+>         if (err) {
+>                 perf_env__exit(&trace->host_env);
+> --
+> 2.51.0.858.gf9c4a03a3a-goog
+>
+>
 
