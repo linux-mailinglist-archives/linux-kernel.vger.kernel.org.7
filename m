@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-859058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E45DBEC94B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E61E1BEC957
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D013B92FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8B13BCF3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 07:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B5B287265;
-	Sat, 18 Oct 2025 07:25:34 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AC82874F0;
+	Sat, 18 Oct 2025 07:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2RlZkBuG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ABD21638D;
-	Sat, 18 Oct 2025 07:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25051DDC1B;
+	Sat, 18 Oct 2025 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760772334; cv=none; b=Uhsl3ud44Wva4tyO+2VksR/sCndUQgpk+qiYwnl5eFsifpwMS9QVqV8ouOzvQePHZE47QWk4OjOdfFEtD5D0wYzyuHQTBqN86Nw0wGya5u+w+qNtGeUWD2p4svNQMMjHA87GN6KrdLCNdey9thM0s0Ga89O/WDORWYq3ofQGAqg=
+	t=1760772514; cv=none; b=K7jUu5FJOEt2d9MGBfHzkfx4oiTygwdmxEzaPyEYcNPC/PcEz3c1986FJBc6jaALe6EEOjA6oEgP7s9clk9yfsokBaxZz8tGFKDf32Dy2dNkDkZ5K3bo9+STKT+oDfDkkW/AHm7LKTBf1PzHdEewd2HW2O45Yu/JUjUJLFMeGrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760772334; c=relaxed/simple;
-	bh=XDiBP8Fuj3d5Tfbxqxx+Fleg1DmKibLl/hZGEiRDXCM=;
+	s=arc-20240116; t=1760772514; c=relaxed/simple;
+	bh=GpS9zGqd7lcQg/F5/TWJMpxLxBq4OCOjore8c7iRkTw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ro1/JYI7kAfyrEc2856bamtvMRzfBN4GzskgLy7AI2U4WrAF8z1FxSSMlJOk/Z0u3cMOh1W9dZ2Es35E2h4C6d49aWOmih+1D8RvFmxq0xJETioohrr4X4mHMj4hK8pEdsZJ8lB0tKBmhoht7PBGwwBruK8IJtTxHKFOgOtfkcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id BCB6F200C2CC;
-	Sat, 18 Oct 2025 09:25:30 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A6D4B4A12; Sat, 18 Oct 2025 09:25:30 +0200 (CEST)
-Date: Sat, 18 Oct 2025 09:25:30 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: bhelgaas@google.com, alex.williamson@redhat.com,
-	pasha.tatashin@soleen.com, dmatlack@google.com, jgg@ziepe.ca,
-	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
-	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com,
-	parav@nvidia.com, saeedm@nvidia.com, kevin.tian@intel.com,
-	jrhilke@google.com, david@redhat.com, jgowans@amazon.com,
-	dwmw2@infradead.org, epetron@amazon.de, junaids@google.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 16/21] vfio/pci: Save and restore the PCI state of
- the VFIO device
-Message-ID: <aPNA6q-i2GWTl0-A@wunner.de>
-References: <20251018000713.677779-1-vipinsh@google.com>
- <20251018000713.677779-17-vipinsh@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ltrJqbQTdX0WZF67dqekEXyQ/aPFt6/6llt1dCZBwzdB7HB+Cpi1XZh/1xRu6tL0FJpoU0BiujsEduqUqdLrgtrArz9PmPOoq3voqvW91G6spVxIWaWy3vne4QgPIqCrONYAXTDs4a/7w5+SwDQ0OODGI0Y8PO6RK0foEZJiy2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2RlZkBuG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6507C4CEF8;
+	Sat, 18 Oct 2025 07:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760772514;
+	bh=GpS9zGqd7lcQg/F5/TWJMpxLxBq4OCOjore8c7iRkTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2RlZkBuGK2EsXr8GnsodI2nIke7X6wG8/ai8k1paHJ9QlpbMqQJfEc64W6jQMMwS3
+	 /+LwbGTMBZrfIrkMmggac5r3hRBATHE7HIGCTxekWdqJbiCu6d4UwMB/RsKY+qGEli
+	 z6y8kOIFCH3ytikEVr9xW8wEAlLtZ6o/OFFU4KyA=
+Date: Sat, 18 Oct 2025 09:28:31 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jameson Thies <jthies@google.com>
+Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+	bleung@chromium.org, akuchynski@chromium.org,
+	abhishekpandit@chromium.org, sebastian.reichel@collabora.com,
+	kenny@panix.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when
+ disconnected
+Message-ID: <2025101812-jaybird-radiantly-ec27@gregkh>
+References: <20251017223053.2415243-1-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,31 +57,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251018000713.677779-17-vipinsh@google.com>
+In-Reply-To: <20251017223053.2415243-1-jthies@google.com>
 
-On Fri, Oct 17, 2025 at 05:07:08PM -0700, Vipin Sharma wrote:
-> Save and restore the PCI state of the VFIO device which in the normal
-> flow is recorded by VFIO when the device FD is opened for the first time
-> and then reapplied to PCI device when the last opened device FD is
-> closed.
+On Fri, Oct 17, 2025 at 10:30:53PM +0000, Jameson Thies wrote:
+> The ucsi_psy_get_current_max function defaults to 0.1A when it is not
+> clear how much current the partner device can support. But this does
+> not check the port is connected, and will report 0.1A max current when
+> nothing is connected. Update ucsi_psy_get_current_max to report 0A when
+> there is no connection.
 > 
-> Introduce "_ser" version of the struct pci_saved_state{} and struct
-> pci_cap_saved_data{} to serialized saved PCI state for liveupdate. Store
-> PCI state in VFIO in a separate folio as the size is indeterministic at
-> build time to reserve space in struct vfio_pci_core_device_ser{}.
+> v2 changes:
+> - added cc stable tag to commit message
 
-Unfortunately this commit message is of the type "summarize the code
-changes without explaining the reason for these changes".
+Note, as per the documentation, this needs to go below the --- line.
 
-Comparing the pci_saved_state_ser and pci_cap_saved_data_ser structs
-which you're introducing here with the existing pci_saved_state and
-pci_cap_saved_data structs, the only difference seems to be that
-you're adding __packed to your new structs.  Is that all?  Is that
-the only reason why these structs need to be duplicated?  Maybe
-it would make more sense to add __packed to the existing structs,
-though the gain seems minimal.
+thanks,
 
-Thanks,
-
-Lukas
+greg k-h
 
