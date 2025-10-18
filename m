@@ -1,126 +1,141 @@
-Return-Path: <linux-kernel+bounces-859129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC53BECD63
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:22:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB29BECD8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D09F4ED03D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:22:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D3F623084
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A911C2EB875;
-	Sat, 18 Oct 2025 10:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B468D2F90DE;
+	Sat, 18 Oct 2025 10:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="NnkaYQSV"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Dh7p0h6c"
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755112F12B5;
-	Sat, 18 Oct 2025 10:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0863819006B
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760782834; cv=none; b=MJpoC8m5QPGhilpbfy4YUAldMH1zAlYupBtNUoXySGMGTaEIoKqlG8Z0yQRydKxV+tUj6IWgHgBcJw5bmt7dKIrQVKqn7eMpk1QGtHgWWHtiOEirl0ueVNQWJSeJaT8qBi0hn8q/Z7pUZqf/YReD/jf/Iw42S0fhfyO75YnGaxo=
+	t=1760783984; cv=none; b=eGEuT+LvNSQ1hYEIJvh+WS49vCZp9K0mCU7LsmHFAV5qX1ClvcNqveTOCdVvkGi25XR5/+3dFOxj4YcLXhgOXHtdJgpeuKBZM4w2s6QqmUqrYCSWYpPDuEV9fsswK/yRPSH4KHp3xfV+Lo0nDZFZ/FPftQ4IML1QmNdCTrsSefE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760782834; c=relaxed/simple;
-	bh=vfkNCxmZ3FfbFVLnGdM0fIjyjQ/J2HoPeEIo/zeXWkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O9Y8PY00xaGFVoJFiIAe3AC5HItkWJnawCyXBEAMdlVOAvbL/tm2d/VJHHR22scz69Lo+LavVSHIRxvLp8N7FmJVc4Tm3LX95pVkqVmnzpzJbdoGOMQRIsFqgA+kPci5NsLsjfD+BVvOVGBA6LVphGHqIcWarytEqAvweSnX+Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=NnkaYQSV; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id 51488BDFB8;
-	Sat, 18 Oct 2025 13:20:25 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id DB904BDDC7;
-	Sat, 18 Oct 2025 13:20:24 +0300 (EEST)
-Received: from antheas-z13 (x5996a8de.customers.hiper-net.dk [89.150.168.222])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id B59D91FC4B1;
-	Sat, 18 Oct 2025 13:20:22 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760782824;
-	bh=QiRO9WlHDWgo9VPXQOmXp8+aYWrSrjdksndf9lPZtzA=; h=From:To:Subject;
-	b=NnkaYQSVPdE3vLg2B01zDdZky8SModwLJZyIgEw7sr30B8v7sgxlihFS3CnMnvf9Z
-	 uvaSoxOVGrC4HXZnsdnbCqg2sVte5ANjm+vWZPmNEw+/dy2RaXGwLyhmfZ+Va9tBGu
-	 Lv5vVv/mAJeE5CiiCJz25/Z1FE0l4YsVgct/xXc924SuDU/e2nLK5TNKdmsMRsNpAR
-	 gS2/IxJsLmJxcLDN+LYLkOISXS4O6weWGdcY+euU7ebV7kbezfbg9BUB1/gtXDg57L
-	 BCZ9NzU8IYgWl4W3rCe54hpF7OJohiwhLWPFTSHPdomEwlw31AetVVEoFOeDWyXASZ
-	 OhyCaTvKeGtlQ==
-Authentication-Results: linux3247.grserver.gr;
-	spf=pass (sender IP is 89.150.168.222) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Denis Benato <benato.denis96@gmail.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v7 9/9] HID: asus: add support for the asus-wmi brightness
- handler
-Date: Sat, 18 Oct 2025 12:17:59 +0200
-Message-ID: <20251018101759.4089-10-lkml@antheas.dev>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251018101759.4089-1-lkml@antheas.dev>
-References: <20251018101759.4089-1-lkml@antheas.dev>
+	s=arc-20240116; t=1760783984; c=relaxed/simple;
+	bh=MkcNgvKvjSSG00mhcQ2qY/2MHLWrUUqHCKHhm5JHgwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J9B5bgArvgWVVLQPOPkMSRlNtFSfXO4lbSJGH0WKXqo6rps9+8IEOgE2AoMfdL5/JLQopBg915qLtL1QVmHAKcUX+dgxItExziy04MohjDzb63wQpylITHcAufz7jYzIK1hcr+d9Ii8D3pvkfn8lWizKzkb6Zl9reKcDp4YwxDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Dh7p0h6c; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=f+51DM99CEdSFDPj0ZKr0xiXs9AF5iALomLseFpeJs8=;
+	b=Dh7p0h6ckcL1ZyDbAEAtZheChwQS6K8kQGdngk43Q4CA/ahRus3uQRF8JvXdkvLtbx7fuh6AH
+	kFQDQFjiPNvy2ZqGHWGWln9eFQ7iI0xRts2OqA/rzKhTxTwB6vXYgx/XCY+FqDKFoKMjUsfOFMt
+	JZSW+6SMJTSU73JqutAIizE=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4cpdT75xGyzcZyL;
+	Sat, 18 Oct 2025 18:38:35 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id B5A0E14010D;
+	Sat, 18 Oct 2025 18:39:39 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 18 Oct 2025 18:39:39 +0800
+Message-ID: <e04eb4c8-3344-4a3b-bf00-c9221be5fe86@huawei.com>
+Date: Sat, 18 Oct 2025 18:39:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] iommu: Add io_ptdump debug interface for iommu
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<yangyicong@huawei.com>, <wangzhou1@hisilicon.com>,
+	<prime.zeng@hisilicon.com>, <xuwei5@huawei.com>, <fanghao11@huawei.com>,
+	<jonathan.cameron@huawei.com>, <linuxarm@huawei.com>
+References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
+ <20250902161028.GC184112@ziepe.ca>
+ <f2720f17-5e81-4f69-aaf5-791b47973178@huawei.com>
+ <20250910141547.GD882933@ziepe.ca>
+ <bb4c3f0b-06da-46e6-9769-efe3dc00e9fb@huawei.com>
+ <20250915162810.GI882933@ziepe.ca>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <20250915162810.GI882933@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <176078282453.1199146.7999947917705390951@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-If the asus-wmi brightness handler is available, send the
-keyboard brightness events to it instead of passing them
-to userspace. If it is not, fall back to sending them to it.
 
-Reviewed-by: Luke D. Jones <luke@ljones.dev>
-Tested-by: Luke D. Jones <luke@ljones.dev>
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/hid/hid-asus.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 96cff7690987..c2c25825cb42 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -324,6 +324,17 @@ static int asus_event(struct hid_device *hdev, struct hid_field *field,
- 			 usage->hid & HID_USAGE);
- 	}
- 
-+	if (usage->type == EV_KEY && value) {
-+		switch (usage->code) {
-+		case KEY_KBDILLUMUP:
-+			return !asus_hid_event(ASUS_EV_BRTUP);
-+		case KEY_KBDILLUMDOWN:
-+			return !asus_hid_event(ASUS_EV_BRTDOWN);
-+		case KEY_KBDILLUMTOGGLE:
-+			return !asus_hid_event(ASUS_EV_BRTTOGGLE);
-+		}
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.51.0
-
+On 2025/9/16 00:28:10, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Thu, Sep 11, 2025 at 10:08:55PM +0800, Qinxin Xia wrote:
+>>
+>>
+>> On 2025/9/10 22:15:47, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>>> On Wed, Sep 10, 2025 at 11:20:08AM +0800, Qinxin Xia wrote:
+>>>> Ok, I see, my colleague Wang Zhou also released a version of io_ptdump
+>>>> a long time ago, which is implemented in smmu debugfs. Will recommends that
+>>>> io_ptdump be implemented in a way similar to CPU page table dump. Using
+>>>> debugfs to expose the data and using format-specific callbacks to implement
+>>>> specific data dumps, I'll talk to him about this as well.
+>>>
+>>> I feel we should have a iommu subsystem debugfs and per-iommu_domain
+>>> directories to dump the page tables.
+>>>
+>>> The smmu debugfs can report what iommu_domains each STE/CD is
+>>> referencing.
+>>>
+>>> This also needs RCU freeing of page table levels as a locking
+>>> strategy.
+>>
+>> Thanks, I'll add RCU in the next version, but there's some
+>> confusion,
+> 
+> Please don't, RCU is quite complicated, I don't really want to see
+> attempts to retrofit it into the existing page table code. This is why
+> I've said debugging like this needs to go along with the new iommu pt
+> work to consolidate the page table code.
+> 
+>> Do you
+>> mean to create a directory for each domain? like：
+>>
+>> /sys/kernel/debug/io_page_tables/domain_xxxx (xxxx=domain addr)
+> 
+> Something like this could be a reasonable option.
+> 
+>> tree domain_xxxx like:
+>> domain_xxxx
+>> └── group x
+>> │ └── device
+> 
+> Though I would probably not include this information..
+> 
+Users could be difficult to map domain to devices, so I think maybe
+we should provide the device information contained in the domain.>> └── 
+DebugFS file: /sys/kernel/debug/io_page_tables
+>> └── Operation: Reading this file triggers the entire debug information
+>> collection process
+> 
+> I don't think we want to dump every page table in the system in one
+> file.
+> 
+>> Do you mean that the interface in io-pgtable-arm.c is directly invoked
+>> during the process of obtaining page table information without passing
+>> through arm-smmu-v3.c?
+> 
+> Yes, this is what iommu pt brings.
+> 
+> Jason
 
 
