@@ -1,129 +1,185 @@
-Return-Path: <linux-kernel+bounces-859462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA34CBEDB9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499A7BEDC51
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948B45E65A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:38:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AAB19A57EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB3A2D661E;
-	Sat, 18 Oct 2025 20:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dohBeJ7n"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C68627B327
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 20:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6C1285CAE;
+	Sat, 18 Oct 2025 21:38:35 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A711EE7B9;
+	Sat, 18 Oct 2025 21:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760819927; cv=none; b=jGLCQ4DEUV2eCG7jb/04Df0HDFCnTa6MUv6c5G1oI2g4+NgGdhG3RkBWtiw/+tpGeTfjvlJHTazhuI77cnR9fn/ETcXOOs31gExzmMjkQJGxf8Ru7HHqmwtbI6TdM7YSETO5OBuvUrnNnggEygd1oPistrqkIr6BLzS6qkr3ZwA=
+	t=1760823515; cv=none; b=j1yJ7ZEgfC7PdjRk+dTKURVPCSMYKHrl6NQBLn8qzxlaFvKXq1xadKCx01YbaXzwmo1hajP82x+UTv4o4IIT5K2yPE2TDC7hIGB8SdUfZQcTTW2Pznv1dqj9mPIyP4n3K/0hgV6DuNvQjxEtKM7EV6V5djnHcxZ/rsQiuEwsWKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760819927; c=relaxed/simple;
-	bh=gXiDaLZ91cP4YS9lUPTJFUZXlsCNeyjYE1dKNW2Lj2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Df93nWugAoDJVrgY875sRBfh3BZFXwLXQChZPIIQeaO3fywnN10ByLsq9K3fV8pLBW4Mgf2eOZDuU7WC/XTS4xiJSlQ1T+K2o2gCsqryHx+wB0ntWML/3Q0S1kMpgt29tyfIzPe+jBCKDaK7ygZaHyJD5STSL8q23zVjYImaTpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dohBeJ7n; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47107a9928cso1751065e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 13:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760819924; x=1761424724; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9i40smiRcDxizYgBMawCBNl5T4msgfFadm8b+kPK2g=;
-        b=dohBeJ7nL4S2Q+Jrktq35YgWasEijVNyfNuXa9fhkjzwk7n37uc1hJxRgFPy+k8MPG
-         TSCYd+i+uM777C2cs6B4b73JsgCpmSmYe/HCGlDmUvrlLhSvDbj/ADklJhOohkRS1UpD
-         sN+8YGKF62AlCFgpLmxqhpZNhk79JQyB7Cw3wjyruO/ul7gc8/2q1iGLebF3GUSi0RWI
-         T4/XRllU9LX+ULFXMP/a3aFolXEkizw52QrFpQyZuF8KQOnSc9/b8mfi8dyAmfe3+Tx4
-         ClqNQzA15IupqB9PwsVkTaHrWlQCry+Q/0hQp4ekmoPBZoRagUpDwr+G+zkQjM8UN8rY
-         JtRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760819924; x=1761424724;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x9i40smiRcDxizYgBMawCBNl5T4msgfFadm8b+kPK2g=;
-        b=wr3nnmlSxl0pSRdLRbv/VeyUpHvx2Qe+hkbbHYSZAvw0mn2lYPWcMmXSKjYHFfZ/35
-         /UZvRDpetsd1EGjt6yUze9lpaCJlP1SWMXarB4AOmoZt7zovv174CSImhk/Du+RsUj1x
-         bgar0neLSRsuiZtcCJwyjpsARwR12vXdUGWzd9VXp3wgOwxI3jFDiQ/PIaco5JxGP2QS
-         tr4rqcClNAcrDO92M8h+Sl/raTwt5uwu1PjQ3//TnC4QjdaMC1ivUV8x3j6xBjyn9pdb
-         Lk+Rr7Mna8wm7zKGTORlipbPyoBp6dKZQDplwDxUe0y50LtCx684jctzNwu++A2C0zro
-         HNgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+nC2UvR+a2ENd5pwTx2h+pyDd5V3Yb2UF/MS2C722qt7578MmddtS6YoFJvgqKa14c41DF/6wB83l9fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkCFUTA2hmZvgnPcTxqbxxnD9iv7GkcXFHVgqajRNdxWG3QJwr
-	qH9mG5MQT1FdqEcbyzVdbZG3tZD+ChJjcyn51M4aSO0CUj9hmxIp6DiL
-X-Gm-Gg: ASbGncs1BV9gjqcB2mYv5gfsB1Ns6l/kNd3eM5oXO1GVNY3U5iXMGzIIgLxvAJ3zyf8
-	u4tmLdVMdydHNYVHDmtA3BF0r4OPSm85jNoYw8+HZAdetQ3u62bMrGIVwRlcwkbfd7WD0B0aW3G
-	qr7F1n7Q1hu82UssFPdZ9Oc6h25r8gXvpFY8w/rtlzf6lsHx7g3kJQjPQil3TU6SqHECI8dadB2
-	FPLzazAUNDx3J0SEJTB1mwtDdI/4ZimQf98L6OiwnPFeiTNvhk/3CFpoJskEpxORbrBkElou3/k
-	WOaw52PDL5Bk+BIsRGgEk8eyeFDGb4FIg5qGPB3YBQaCltzaPVMHhBiqvjGGDs8HzTEZblr94xA
-	7yO2vZYk3VOD+7JIA8wFKl/xwDdoR5tbgBKo6+Fhm0/DXyL0WVeGZ9yasa5Yw/Jq1/Q+Ms7BY2G
-	sRe7XdZ6iEIpbceuM=
-X-Google-Smtp-Source: AGHT+IHI0fmt4JmUe22K1u4pN/SrFRoF9/x8jnxN9nc1hal9Xk8KmftD9LhBWGubiIcbdw640e+xFw==
-X-Received: by 2002:a05:600c:3149:b0:471:161b:4244 with SMTP id 5b1f17b1804b1-4711792a696mr32181475e9.5.1760819923502;
-        Sat, 18 Oct 2025 13:38:43 -0700 (PDT)
-Received: from bhk ([165.50.121.102])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710e8037aasm80372765e9.2.2025.10.18.13.38.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 13:38:43 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH] blk-mq: use struct_size() in kmalloc()
-Date: Sat, 18 Oct 2025 22:38:13 +0100
-Message-ID: <20251018213831.260055-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
+	s=arc-20240116; t=1760823515; c=relaxed/simple;
+	bh=mMSO7OTeeJdmp6XTr2PDyhayshJv0eZcc/JJkB1qmcI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Z420HOmojXWxnK3VMeMSb5OZltLJbxWagOK3fzVpBIpNAEF1ysa4+N8d76Z1QXM4eLt5Akc6BiFh+H/3fPfyVE1zQTFB1EbFBxGwP/HeaVAzk45S+FRzVDrVKBzXoKoZcMef0r4/O0E12u8ohtkQFQHvdiy0NLzSvYp3AaHhr2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 1751B92009C; Sat, 18 Oct 2025 23:38:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 1110D92009B;
+	Sat, 18 Oct 2025 22:38:31 +0100 (BST)
+Date: Sat, 18 Oct 2025 22:38:30 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+cc: linux-pci@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] MIPS: Malta: Use pcibios_align_resource() to
+ block io range
+In-Reply-To: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.2510181744400.39634@angie.orcam.me.uk>
+References: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Change struct size calculation to use struct_size()
-to align with new recommended practices[1] which quotes:
-"Another common case to avoid is calculating the size of a structure with
-a trailing array of others structures, as in:
+On Fri, 17 Oct 2025, Ilpo Järvinen wrote:
 
-header = kzalloc(sizeof(*header) + count * sizeof(*header->item),
-                 GFP_KERNEL);
+> According to Maciej W. Rozycki <macro@orcam.me.uk>, the
+> mips_pcibios_init() for malta adjusts root bus IO resource start
+> address to prevent interfering with PIIX4 I/O cycle decoding. Adjusting
+> lower bound leaves PIIX4 IO resources outside of the root bus resource
+> and assign_fixed_resource_on_bus() does not link the resources into the
+> resource tree.
 
-Instead, use the helper:
+ As mentioned in the other reply resource assignments such as:
 
-header = kzalloc(struct_size(header, item, count), GFP_KERNEL);"
+00000000-00ffffff : MSC PCI I/O
+  00000000-0000001f : 0000:00:0a.2
+  00000020-00000021 : pic1
+  00000030-0000003f : 0000:00:0a.1
+  00000040-0000005f : 0000:00:0b.0
+  00000060-0000006f : i8042
+  00000070-00000077 : rtc0
+  000000a0-000000a1 : pic2
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
----
- block/blk-mq-sched.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+otherwise result, which -- unsurprisingly -- break things.
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index e0bed16485c3..97b69fbe26f6 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -466,8 +466,7 @@ struct elevator_tags *blk_mq_alloc_sched_tags(struct blk_mq_tag_set *set,
- 	else
- 		nr_tags = nr_hw_queues;
- 
--	et = kmalloc(sizeof(struct elevator_tags) +
--			nr_tags * sizeof(struct blk_mq_tags *), gfp);
-+	et = kmalloc(struct_size(et, tags, nr_tags), gfp);
- 	if (!et)
- 		return NULL;
- 
--- 
-2.51.1.dirty
+> Prior to commit ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
+> the arch specific pcibios_enable_resources() did not check if the
+> resources were assigned which diverges from what PCI core checks,
+> effectively hiding the PIIX4 IO resources were not properly within the
+> resource tree. After starting to use pcibios_enable_resources() from
+> PCI core, enabling PIIX4 fails:
+> 
+> ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
+> ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
+> 
+> MIPS PCI code already has support for enforcing lower bounds using
+> PCIBIOS_MIN_IO in pcibios_align_resource() without altering the IO
+> window start address itself. Make malta PCI code too to use
+> PCIBIOS_MIN_IO.
 
+ So this does bring the ATA interface back to life:
+
+ ata_piix 0000:00:0a.1: assign IRQ: got 0
+-ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
+-ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
++scsi host0: ata_piix
++scsi host1: ata_piix
++ata1: PATA max UDMA/33 cmd 0x1f0 ctl 0x3f6 bmdma 0x1800 irq 14 lpm-pol 0
++ata2: PATA max UDMA/33 cmd 0x170 ctl 0x376 bmdma 0x1808 irq 15 lpm-pol 0
+[...]
++ata2.00: CFA: ST625211CF, 3.04, max UDMA/33
++ata2.00: 4883760 sectors, multi 0: LBA
+[...]
++scsi 1:0:0:0: Direct-Access     ATA      ST625211CF       3.04 PQ: 0 ANSI: 5
++sd 1:0:0:0: [sda] 4883760 512-byte logical blocks: (2.50 GB/2.33 GiB)
++sd 1:0:0:0: [sda] Write Protect is off
++sd 1:0:0:0: [sda] Mode Sense: 00 3a 00 00
++sd 1:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
++sd 1:0:0:0: [sda] Preferred minimum I/O size 512 bytes
+
+and also brings PS/2 interfaces, which weren't there before for whatever 
+reason given that they are not PCI devices:
+
++serio: i8042 KBD port at 0x60,0x64 irq 1
++serio: i8042 AUX port at 0x60,0x64 irq 12
+
+though I guess hardly anyone has ever used these ports with the Malta (it 
+does have actual connectors).
+
+ However it also takes some resource reservations away:
+
+-00000000-0000001f : dma1
+-00000020-00000021 : pic1
+-00000040-0000005f : timer
+-00000060-0000006f : keyboard
+-00000070-00000077 : rtc0
+-00000080-0000008f : dma page reg
+-000000a0-000000a1 : pic2
+-000000c0-000000df : dma2
+-00000170-00000177 : ata_piix
+-000001f0-000001f7 : ata_piix
+-000002f8-000002ff : serial
+-00000376-00000376 : ata_piix
+-00000378-0000037a : parport0
+-0000037b-0000037f : parport0
+-000003f2-000003f2 : floppy
+-000003f4-000003f5 : floppy
+-000003f6-000003f6 : ata_piix
+-000003f7-000003f7 : floppy
+-000003f8-000003ff : serial
+-00001000-00ffffff : MSC PCI I/O
++00000000-00ffffff : MSC PCI I/O
++  00000020-00000021 : pic1
++  00000060-0000006f : i8042
++  00000070-00000077 : rtc0
++  000000a0-000000a1 : pic2
++  00000170-00000177 : 0000:00:0a.1
++    00000170-00000177 : ata_piix
++  000001f0-000001f7 : 0000:00:0a.1
++    000001f0-000001f7 : ata_piix
++  000002f8-000002ff : serial
++  00000376-00000376 : 0000:00:0a.1
++    00000376-00000376 : ata_piix
++  00000378-0000037a : parport0
++  0000037b-0000037f : parport0
++  000003f2-000003f2 : floppy
++  000003f4-000003f5 : floppy
++  000003f6-000003f6 : 0000:00:0a.1
++    000003f6-000003f6 : ata_piix
++  000003f7-000003f7 : floppy
++  000003f8-000003ff : serial
+   00001000-0000103f : 0000:00:0a.3
+   00001040-0000105f : 0000:00:0a.2
+     00001040-0000105f : uhci_hcd
+
+-- as you can see the PIT timer resource and ISA DMA registers (used by 
+the SuperIO devices, such as the FDD) are now gone.  I'm concerned about 
+it even though it seems to have no visible impact on system operation.
+
+ All in all this change does fix a serious regression and therefore:
+
+Tested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+
+however I think the missing resource reservations need to be investigated.
+
+> Fixes: aa0980b80908 ("Fixes for system controllers for Atlas/Malta core cards.")
+
+ I don't think it's correct to refer this here; things worked just fine up 
+to ae81aad5c2e1 even if via different means and backporting blindly could 
+be dangerous.  It might be worth mentioning somewhere in the text though.
+
+  Maciej
 
