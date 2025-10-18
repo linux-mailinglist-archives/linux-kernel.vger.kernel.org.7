@@ -1,176 +1,223 @@
-Return-Path: <linux-kernel+bounces-859163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE697BECEC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:41:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8252BECECC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B9B5E833C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:41:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C12074E62FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7152877D2;
-	Sat, 18 Oct 2025 11:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87AB21A434;
+	Sat, 18 Oct 2025 11:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RD0oRDFL"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NP+doxyO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DBD1ADC7E;
-	Sat, 18 Oct 2025 11:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B3B1EE033
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 11:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760787668; cv=none; b=XsdlfnkuCIOheBB7gCiINglKN3epZtd070sV4c/jT17/tYpyo65/G7T7VFjqlgjxBXDwuhD7ZQyo6XYAFF88glHLzVQagLXkn+U0KbcAnm8QtkVjkBBb9u/JjWyzhhSpgCTRpIW+ulbgK7ReOeoFDENW6J0M62G8wxI3uB9D4nw=
+	t=1760788009; cv=none; b=ugq8WnpPlJxsEjS2O6ji/JfkVgg9Tl3l7AMJTIBGrtvUXmFMi/+tGJB0Np+BnBhqRgWgOlPNOdH/U7EI7pnna4EMa2DNXrN8rQR3bzvNnNBkL9DZrhhu/8bfHzId7vPvoV6rtzi/WmdnGOqlMQv2pkECupN9RrUYSkGXlqFp/2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760787668; c=relaxed/simple;
-	bh=LiDlH8BrVQvz8trw9QM3KlEdCPM3TO/pVTGoFjDAUuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaCAHnucwwkaUBgt47grWtKGAOiSBlHoDwzGwPyKQXsVBeQHX64OD5A5jCPRwvVfzBzPdi3QuRSbdKlZq9VaixcmpIQvXqX54t9TIET2rHnzoTRIyXIXau0Rd7o3dr6kRrvgVvir2V4H+TlN6hhI+0h3hfXY3Bl1Z8pBJdbYtYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RD0oRDFL; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760787647; x=1761392447; i=markus.elfring@web.de;
-	bh=rFRibB9Qt7JGgXkVO4Hx93pWdntl56FRy/NNmI1KJYY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=RD0oRDFLAVyJeAgEg2Z5lc/gyefM4fY0NPlf0v3UEyDMR0zJn1hktmDx+BuezQPh
-	 Ubuz3Y1rcdlGYrpGUVOTlt8KEbS2fmuH/A4Fk4DSJ/DYU5oPXegLpBFyoEoKtSwsY
-	 fQsBcyiQD9NQ/rXi4fTJK71hD+EKg8QiiRNhp+srUlZmWcImsiARpUmC7sqXVFi+Z
-	 vRCOqEpVevdMoOwMdGtp1p41FrP+edSgAmJbvFyX3T8J637bt7n17nBulMWwVhtoY
-	 CqK8MPkIGh+G/yilR1S5FOeD+7Ru33v1O07IvYQwFyytM0bZfREtqMRqTw6KEWbH6
-	 m2fKhOpUHdfcq//a1A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.233]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MT7aP-1um33g2kNr-00Kkq5; Sat, 18
- Oct 2025 13:40:47 +0200
-Message-ID: <b39e1a7d-1505-4f26-aa6c-c18a151be8ab@web.de>
-Date: Sat, 18 Oct 2025 13:40:45 +0200
+	s=arc-20240116; t=1760788009; c=relaxed/simple;
+	bh=6CXt2WoBSPpYfzMJB6wZKfudaHXk53V5XAwPHxMaOTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PIKs3nRACRiC/7uaWT+WhtZ8sI/cuczr/OjLDkf3NLVA8hTKRuk8p+Ocrb0j9ZJ25pjDjGfdYUuks+CR50KRrcX/nXQ2LylzeUh/BBy8WFIELkFWnx0kGEBpKK9dyksQDLmn5k+XZih2ihqRYLJKozVj/Rd0nyeEn9N09hCpC2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NP+doxyO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F20C113D0
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 11:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760788008;
+	bh=6CXt2WoBSPpYfzMJB6wZKfudaHXk53V5XAwPHxMaOTg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NP+doxyOFh8geMbWu6V6rQfrgFZugRcPByNIqly9NlvCocpXH1JKkZX+HPvHhIhwH
+	 I5wBcWlIsK0aDHWBB5NioWwhFruGwxXeO/UhxiEEUOA8WWvAw2cOK2e71nPLuVGJMj
+	 era0GYf/35HzIKqNRDXDJ7ycJ2kCR/fKmaVCHY4h01CgVQPelBz1xxkPzPrCvx1WDC
+	 BWaezMCMoTZ9pwjl3VJO2AAEmh96NZ8vQPu3lo3/IMs4bfZ0bCrAdpUZYaOdz0/DcF
+	 4u+2CZnHQp+bqcshM1Ko1oGoSKlct3YG3mGMQDVOZyMEp7B/boFakRlMp21cJzVuKk
+	 31lNFSmeuXHXg==
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-4439f1cb764so1383956b6e.3
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 04:46:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWX0hSBnq2CsMUDEhE3KXXcbnuogh+dWvKXGATdAqFQaO8ejzDMH7k0kM5ckKm17NuY7B5ZDYT2ILCtuRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAKqOMgGbNyPWlliNK7C3u+E/MA6D2Ag/WpWxSUwALloiLDSUA
+	XMapTzhbSNRoXHNP/7ihbFWk/gSBs+EHzB2ZtxitTM5BzUJKHYMR4Y829ebfQzZY7TFA2hr+LJ3
+	0M2YAK34l/DtivIqwGMdoNfwZjfY/XA4=
+X-Google-Smtp-Source: AGHT+IGfmDQSfPbSYs8f803/Sl+JWn2jNXGcu/ypNvsXEKv+bABRyWjZp/y8ntX1+XwoEUJruD4K0WbHHsX4U3IBiKA=
+X-Received: by 2002:a05:6808:219a:b0:43f:648b:dcb2 with SMTP id
+ 5614622812f47-443a2ec98camr3165318b6e.8.1760788007954; Sat, 18 Oct 2025
+ 04:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [1/3] PCI: j721e: Propagate dev_err_probe return value
-To: Anand Moon <linux.amoon@gmail.com>, cocci@inria.fr,
- linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <20251014113234.44418-2-linux.amoon@gmail.com>
- <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
- <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:brUrWs3f1wRlvb50xsoJvVd5EaCNX6rLdO+gQJ+rCOePPXiZu9s
- mQzVRW3tHeyUJ8GLTZOHmIVAiBP3LT1soBbrApPJbXg9C9aO26IjY0RdGZLuALcXxfvapQo
- iXhix1wfpm+VcEAHfiYBsG9TmZbmKQ7onDPKdgA3BY4PrF/w1QXQeEYujiTYQGPdYu2bqzJ
- zcqXxxhljGxr3oHGgCZ3A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BcQRwCXMQJQ=;3e10CcDiOryBiF/b1jz+Xz04tYX
- 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
- 8X2DXg6pFFj0GJklbujzG5O5X+6OEOyVKBQ=
+References: <4687373.LvFx2qVVIh@rafael.j.wysocki> <5f0aa630-b30a-44c4-a52c-e08179cd3bf9@arm.com>
+ <CAJZ5v0gBtv0bpK2swkc6D0AmanpKAvqO53dgRp2e7p9cWAM3TA@mail.gmail.com> <28ecb23b-ecee-409a-9771-24f801081d07@arm.com>
+In-Reply-To: <28ecb23b-ecee-409a-9771-24f801081d07@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 18 Oct 2025 13:46:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jMoEVUaYYPx6EtHFxsg6TF-QtDWJGrasGK7C2C+JxOFw@mail.gmail.com>
+X-Gm-Features: AS18NWBrzzr4jet5h9WoMnvad54yvwS2xgqwfndHEk8wWuGlEhh4-XYopiEH4QI
+Message-ID: <CAJZ5v0jMoEVUaYYPx6EtHFxsg6TF-QtDWJGrasGK7C2C+JxOFw@mail.gmail.com>
+Subject: Re: [PATCH v1] cpuidle: governors: menu: Predict longer idle time
+ when in doubt
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Tomasz Figa <tfiga@chromium.org>, 
+	Doug Smythies <dsmythies@telus.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> How do you think about to achieve such a source code variant also with the help of
->> the semantic patch language (Coccinelle software)?
-> I do not have any idea about this.
+On Fri, Oct 17, 2025 at 8:37=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 10/17/25 10:39, Rafael J. Wysocki wrote:
+> > On Fri, Oct 17, 2025 at 10:22=E2=80=AFAM Christian Loehle
+> > <christian.loehle@arm.com> wrote:
+> >>
+> >> On 10/16/25 17:25, Rafael J. Wysocki wrote:
+> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>
+> >>> It is reported that commit 85975daeaa4d ("cpuidle: menu: Avoid discar=
+ding
+> >>> useful information") led to a performance regression on Intel Jasper =
+Lake
+> >>> systems because it reduced the time spent by CPUs in idle state C7 wh=
+ich
+> >>> is correlated to the maximum frequency the CPUs can get to because of=
+ an
+> >>> average running power limit [1].
+> >>> [snip]
+> >> [snip]
+> >> Anyway, the patch makes sense, let me run some tests and get back.
+> >
+> > Thanks!
+>
+> Unfortunately this patch regresses my tests about as much as a revert of
+> 85975daeaa4d would.
+> (menu-1 is $SUBJECT, menu-m current mainline, menu-r mainline with
+> 85975daeaa4d reverted):
+>
+>
+> device   gov     iter    iops    idles   idle_misses     idle_miss_ratio =
+        belows  aboves
+> mmcblk1         menu-1  0       1523    402522  119988  0.298   98552   2=
+1436
+> mmcblk1         menu-1  1       1481    395766  118596  0.300   97640   2=
+0956
+> mmcblk1         menu-1  2       1503    396560  117876  0.297   97506   2=
+0370
+> mmcblk1         menu-m  0       2355    703732  22275   0.032   2628    1=
+9647
+> mmcblk1         menu-m  1       2359    637522  24815   0.039   4075    2=
+0740
+> mmcblk1         menu-m  2       2356    706980  23836   0.034   3208    2=
+0628
+> mmcblk1         menu-r  0       1490    388180  118294  0.305   97871   2=
+0423
+> mmcblk1         menu-r  1       1498    393402  119984  0.305   99187   2=
+0797
+> mmcblk1         menu-r  2       1462    388597  119504  0.308   98640   2=
+0864
+> mmcblk2         menu-1  0       3303    503938  170251  0.338   150276  1=
+9975
+> mmcblk2         menu-1  1       3310    480508  132132  0.275   114398  1=
+7734
+> mmcblk2         menu-1  2       3554    466884  113659  0.243   95841   1=
+7818
+> mmcblk2         menu-m  0       5746    706262  24618   0.035   3802    2=
+0816
+> mmcblk2         menu-m  1       5741    727174  24152   0.033   3737    2=
+0415
+> mmcblk2         menu-m  2       5777    836940  12424   0.015   335     1=
+2089
+> mmcblk2         menu-r  0       3241    463112  133052  0.287   114616  1=
+8436
+> mmcblk2         menu-r  1       3551    422006  100494  0.238   82425   1=
+8069
+> mmcblk2         menu-r  2       3523    508542  140085  0.275   122880  1=
+7205
+> nvme0n1         menu-1  0       5407    436834  74314   0.170   54133   2=
+0181
+> nvme0n1         menu-1  1       5763    459510  72673   0.158   51530   2=
+1143
+> nvme0n1         menu-1  2       6266    489570  78651   0.161   58609   2=
+0042
+> nvme0n1         menu-m  0       10786   767740  23840   0.031   2855    2=
+0985
+> nvme0n1         menu-m  1       10586   757540  23612   0.031   2933    2=
+0679
+> nvme0n1         menu-m  2       11805   834012  23528   0.028   2768    2=
+0760
+> nvme0n1         menu-r  0       5323    431906  77426   0.179   56166   2=
+1260
+> nvme0n1         menu-r  1       5484    438142  76033   0.174   55956   2=
+0077
+> nvme0n1         menu-r  2       5353    428826  77024   0.180   57016   2=
+0008
+> sda     menu-1  0       972     444116  149643  0.337   129023  20620
+> sda     menu-1  1       954     557068  176479  0.317   159092  17387
+> sda     menu-1  2       878     540360  196405  0.363   176792  19613
+> sda     menu-m  0       1634    1017918         29614   0.029   8587    2=
+1027
+> sda     menu-m  1       1622    878140  25323   0.029   8238    17085
+> sda     menu-m  2       1632    1027167         28798   0.028   8428    2=
+0370
+> sda     menu-r  0       918     531112  188314  0.355   168375  19939
+> sda     menu-r  1       924     521378  185727  0.356   165327  20400
+> sda     menu-r  2       880     529146  196391  0.371   176908  19483
+> nullb0  menu-1  0       101419  88988   23923   0.269   3080    20843
+> nullb0  menu-1  1       101610  88484   23678   0.268   2821    20857
+> nullb0  menu-1  2       101369  89336   23711   0.265   2795    20916
+> nullb0  menu-m  0       101696  88698   23860   0.269   2910    20950
+> nullb0  menu-m  1       101103  88120   23294   0.264   3295    19999
+> nullb0  menu-m  2       101880  86676   22730   0.262   2709    20021
+> nullb0  menu-r  0       101856  87742   23493   0.268   3204    20289
+> nullb0  menu-r  1       101514  89070   23653   0.266   2848    20805
+> nullb0  menu-r  2       101754  86318   23163   0.268   3229    19934
+> mtdblock3       menu-1  0       163     350284  115149  0.329   97166   1=
+7983
+> mtdblock3       menu-1  1       179     315948  99038   0.313   78243   2=
+0795
+> mtdblock3       menu-1  2       134     481584  160754  0.334   144150  1=
+6604
+> mtdblock3       menu-m  0       215     410034  70261   0.171   55445   1=
+4816
+> mtdblock3       menu-m  1       205     570150  109273  0.192   90189   1=
+9084
+> mtdblock3       menu-m  2       252     866616  23492   0.027   9717    1=
+3775
+> mtdblock3       menu-r  0       132     467365  161835  0.346   144056  1=
+7779
+> mtdblock3       menu-r  1       164     348682  117704  0.338   97859   1=
+9845
+> mtdblock3       menu-r  2       132     483300  165179  0.342   147164  1=
+8015
 
-Can another source code search pattern (like the following) trigger further
-development considerations?
+Well, this means that in the majority of cases the maximum sample idle
+time is so large that UINT_MAX may as well be returned instead.
 
-@display@
-expression dev, e, x;
-@@
- if (e)
- {
- ... when != e = x
-*   dev_err_probe(dev, e, ...);
- ...
- }
+The possible correlation between idle power and the max OPP a CPU can
+get to has not been taken into account in cpuidle directly so far, but
+it clearly isn't true that using shallow idle states more often always
+improves performance.  It may hurt performance too.
 
+Actually, this possible correlation appears to have a broader impact,
+as it may affect CAS and EAS at least in principle, so it may be
+advisable to allocate some time for discussing it during upcoming
+conferences.
 
-Regards,
-Markus
+At this point I'm inclined to revert commit 85975daeaa4d because
+anything else would be clearly artificial and likely ineffective at
+least in some cases.
+
+The systems that enjoyed better performance after that commit can
+switch over to teo and continue to enjoy it and everybody else still
+using menu should be able to continue to do so.
 
