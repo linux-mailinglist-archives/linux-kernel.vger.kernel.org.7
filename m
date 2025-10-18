@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-858879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20F5BEC1C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BABBEC1CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA69A4E3B42
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501411AE02C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5E5208D0;
-	Sat, 18 Oct 2025 00:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EFC1FE47B;
+	Sat, 18 Oct 2025 00:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G4MJr3Te"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fxbC1Xqn"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498221DDC1B
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 00:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C29B1E492D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 00:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760746061; cv=none; b=n6WNnLxLOe24LhjT/uIhPwcglDCfNAf9gyEEC8bJ5Y1WsUQAT9E49HInjwRwHrAsCHeR3xZMGuH5ZhYIIYPFJv+jvLBGAShIivm3jcukUPekFfU/QYXR9tYVOnMxoN874EZqbMqNUrzKQtdzGwTCfD8a8Z5/K5U7PRk5fh8dR/0=
+	t=1760746063; cv=none; b=keKHBwCgbqgW1VED/j79B3+VePEJuhbL73C0qa2jiJVCdVl8/rxSLObDWpn5NrnCt/INO61NsCUXuR2WqE9LWc+LuQZ2rOB/dtyQ1IbzJ40b3CjyfxiFr4K580cEk/7X+YXE9zlSox5bCy+p3eHbGh4X382+4rNFdLjvO1ri+7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760746061; c=relaxed/simple;
-	bh=V76LbfI6Ajfy7OIRb8JcXF9vRsTvCVLWBlvUz+UEmyg=;
+	s=arc-20240116; t=1760746063; c=relaxed/simple;
+	bh=+K5j39XpTNwLHlWGtorRqscxgPOaq/a9DZ3eNvEVcAo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=a8PQLWS9hkCynBLd8j+yh33x5w3Twh+moEbBy/8Ixn1j61JSKYGrEQIGC7i/sOVnl8jfJeViEzRfbMEdEfzei8tZOjqwy3tRTNL5WOVmY47Lv392zSnPW8aHxdZHEN5rB7z8t7k9Etgk18QTw2WTUs8Up6F0saVbxtdePel2l58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G4MJr3Te; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=sQ1H3M/k8Uy8bkxy25ZCDs0fdE37vrpeGdZlHD7CYZ0cIgzcT4pSXlxb10pTwBluQc5IO+Ty/XV++7HwVBLkt5lxBH/opAmSq/J4++6UKi6cL6RGXOxABLJ4Df6t55BX2YmZyst4yXL7BsPt5RCwr4E90fyXQKb5zsKBM9umXMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fxbC1Xqn; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2697410e7f9so62953645ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:07:39 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so2314684a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760746059; x=1761350859; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760746060; x=1761350860; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GaQ2mjvzcYnMnP1cm0axc8iEarDnxUhNwXsWFDf7Cg4=;
-        b=G4MJr3Tef5Amf3FG17p+7c4g/NBzHmwxyZsXr+P8rDwbgd0ogtRFXOHzZ3y8jdLMP2
-         bQpIMmnBeUwnrmag100OIhfyB/K37VIMvuC9vEF1OKQAAmGYCuZS31CvbmJDgzJta+yx
-         Aqtox1IkRo8Ce4A8ILiyYR6euo/OQ30eY8PHUcqw0pOSNS9sh0gBlDdndjBKNoSR2SIT
-         mQunujn5/z+zngMmSwaKCL+MyCQ+mxCxEPTcjjhqj4b9tGsYy8Of+qRolMVw49L2elNy
-         kHt/LcNFB9Q7lpdqIPEZBQuoPeRTcqT3VGlnKXd12DiIsVTdbxXoSpdSKsbS3lZNkQiT
-         DP0Q==
+        bh=qnxsirzJmf+9oD/SWVkkILfWOZE9umducoMflFiqRpQ=;
+        b=fxbC1Xqn8W1nVGvBqnvR20qwKq5qnLQ7aKJXzkOlzYZMbt8jbveKl6biOBHq4yu4/c
+         8fSeul/cLUVKsf8FnwMDV2zPCoMVM0tb8nRHdZZ2Lm2ntYPrO/A2OwuyDKLx7q7Sb43n
+         sIJCqSTOm5LtNtzC+DUYgQQ6kvBER55r01PS3e4AVbGOQL1wilCSfz8sxP5AU4gXr2++
+         lN2Ps/Uka90b/x5r+ZSoFs2Hj3O7uzrpWL9hApP2QKRal/YXRK5XpNx91bjfHABZgDdj
+         SbJQ3AVBw/2SvSl0eQj81AWWsfpNzEsTwQUOEwYGRWkeCKTAt3IV+d1ZYbCt/Qj+Mgzp
+         D6Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760746059; x=1761350859;
+        d=1e100.net; s=20230601; t=1760746060; x=1761350860;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GaQ2mjvzcYnMnP1cm0axc8iEarDnxUhNwXsWFDf7Cg4=;
-        b=PFxY4iw4pdplRM+OQUWApE+chPkKyR3I7UJHcgJGkVJfODdchhV/NKv1GC8NNGrDeE
-         yyoNOTa1fbkczdAZAqz8SbJwXjSUlAP9J3rJoSoxfR65dpqmuPJ8u2mRajhGGiVXgkTk
-         64Ngyh0CYTryp9U/8IE6MMI15TIY0RfMaUJTK1Zq77Jtj6NS2NYEoA6CY8BnAi8s34kz
-         7xHdid4ayEQU64fwFrzKs4eGaSK6nDIDyKOptQZH10FXbD2lus1ogkz2wa651pVaEtTp
-         2ZhyZnofNJV8rQ8HDgTfClqdW/K1Ja9W+N0X0UvqQ9KoRvl+ulOalwN8uRrZ51CJdahD
-         y1Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwoQeKNVwEziMgR1Ejle/vAA/fy4s6tym7GCPdM2HQevwDtosOjgh4s/ZGsFZwYDnjSVpw8DM8XJUckcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ2SrOtf8mTkUsmp31P1dKYysF6g8POuG5HIP5B5yLawTR+DqH
-	2NRD8t4ggeQ0MQy0cvcsI2DnTBXMk5vClJwiwM5wVIWBxF1mnZ5IIQZB6A+5Co0JQO5howsbDlz
-	CajRR9UXirw==
-X-Google-Smtp-Source: AGHT+IF9dj9Clef1an1TtVMDSsqxw8xp26H//zMhQIxwHrxbjHJhb8hDM1WzMLrsR8CmCfH4zUTMov9736X/
-X-Received: from plri16.prod.google.com ([2002:a17:903:32d0:b0:268:11e:8271])
- (user=vipinsh job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cf0b:b0:24c:cb60:f6f0
- with SMTP id d9443c01a7336-290cb66025amr69035715ad.58.1760746058804; Fri, 17
- Oct 2025 17:07:38 -0700 (PDT)
-Date: Fri, 17 Oct 2025 17:07:01 -0700
+        bh=qnxsirzJmf+9oD/SWVkkILfWOZE9umducoMflFiqRpQ=;
+        b=N93grbJmJnJDrhYiHYYNfncAmhc54MsTjsdpTqtJEJxzH9MaGOHU084WtX29/EJqUC
+         gJvbrCuRq2zM4USdzxgJTEpm7nbgqy9kucas9dZmWPrSQV/7Y+EOWKzk1+S0nAj/lj/Q
+         sM8deNEwecCLRCzfy2aZpa/Mo2DQBVnZ1iLPvJMXu744icIv6eLchTXyXBCD95vwgiNc
+         +SLC70bOu5WTBJFPgAAmTAKGPvwKZR5TuoMgUGuk3L/zjmGpPIckyx3cDV09Peh0iA00
+         vA/Z+cF/xvpiue0HIYUAQ1cmtm0eFe4uUTqL2jxk8FJuJS3RbrTdlfNq5XoBnJ4nq6LE
+         eVJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqXdhGBzHhAEvhlRxBuLFWTZAUoL84DSQefk15tEvuxLP5MJWiagEic7lCvsZbZ37ZMJzkH9WoGuSMIUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0drZBjq8XjBaRxUspB1IW4+L/pXYAi61F/veSKWczF+rfcgiD
+	CvXVAMkLyzhFmcexc/DNBLjkTxCgMPEaLUI4vxSNM2Tmf9EM7jwtv8zhrYCV+6Uc37hd9t64fVO
+	mCNFb9mTdMg==
+X-Google-Smtp-Source: AGHT+IEDeX1KBK/211Sloe9HHYyIrse9Vb0jW4j/mlSMb7ebaIyHdLdJhj4WQAl1ftyT6/JHbLuQi37Ll112
+X-Received: from pjbku18.prod.google.com ([2002:a17:90b:2192:b0:33b:a383:f4df])
+ (user=vipinsh job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d85:b0:330:4a1d:223c
+ with SMTP id 98e67ed59e1d1-33bcf87f421mr6072321a91.15.1760746060452; Fri, 17
+ Oct 2025 17:07:40 -0700 (PDT)
+Date: Fri, 17 Oct 2025 17:07:02 -0700
 In-Reply-To: <20251018000713.677779-1-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251018000713.677779-1-vipinsh@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251018000713.677779-10-vipinsh@google.com>
-Subject: [RFC PATCH 09/21] vfio/pci: Add Live Update finish callback implementation
+Message-ID: <20251018000713.677779-11-vipinsh@google.com>
+Subject: [RFC PATCH 10/21] PCI: Add option to skip Bus Master Enable reset
+ during kexec
 From: Vipin Sharma <vipinsh@google.com>
 To: bhelgaas@google.com, alex.williamson@redhat.com, pasha.tatashin@soleen.com, 
 	dmatlack@google.com, jgg@ziepe.ca, graf@amazon.com
@@ -87,65 +88,52 @@ Cc: pratyush@kernel.org, gregkh@linuxfoundation.org, chrisl@kernel.org,
 	Vipin Sharma <vipinsh@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add finish() callback implentation in LUO file handler to free restored
-folio. Reset the VFIO device if it is not reclaimed by userspace.
+Add bit field 'skip_kexec_clear_master' to struct pci_dev{}. Skip
+clearing Bus Master Enable bit on PCI device during kexec reboot.
+
+Devices preserved using live update might be performing a DMA
+transaction during kexec. Skipping clearing this bit allows a device to
+continue DMA while live update is in progress.
 
 Signed-off-by: Vipin Sharma <vipinsh@google.com>
 ---
- drivers/vfio/pci/vfio_pci_liveupdate.c | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/pci/pci-driver.c | 6 ++++--
+ include/linux/pci.h      | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_liveupdate.c b/drivers/vfio/pci/vfio_pci_liveupdate.c
-index cb3ff097afbf..8e0ee01127b3 100644
---- a/drivers/vfio/pci/vfio_pci_liveupdate.c
-+++ b/drivers/vfio/pci/vfio_pci_liveupdate.c
-@@ -82,6 +82,38 @@ static int match_bdf(struct device *device, const void *bdf)
- 	return *(u16 *)bdf == pci_dev_id(vdev->pdev);
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 302d61783f6c..6aab358dc27a 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -513,11 +513,13 @@ static void pci_device_shutdown(struct device *dev)
+ 	/*
+ 	 * If this is a kexec reboot, turn off Bus Master bit on the
+ 	 * device to tell it to not continue to do DMA. Don't touch
+-	 * devices in D3cold or unknown states.
++	 * devices in D3cold or unknown states. Don't clear the bit
++	 * if device has explicitly asked to skip it.
+ 	 * If it is not a kexec reboot, firmware will hit the PCI
+ 	 * devices with big hammer and stop their DMA any way.
+ 	 */
+-	if (kexec_in_progress && (pci_dev->current_state <= PCI_D3hot))
++	if (kexec_in_progress && (pci_dev->current_state <= PCI_D3hot) &&
++	    !pci_dev->skip_kexec_clear_master)
+ 		pci_clear_master(pci_dev);
  }
  
-+static void vfio_pci_liveupdate_finish(struct liveupdate_file_handler *handler,
-+				       struct file *file, u64 data, bool reclaimed)
-+{
-+	struct vfio_pci_core_device_ser *ser;
-+	struct vfio_pci_core_device *vdev;
-+	struct vfio_device *device;
-+	struct folio *folio;
-+
-+	if (reclaimed) {
-+		folio = virt_to_folio(phys_to_virt(data));
-+		goto out_folio_put;
-+	} else {
-+		folio = kho_restore_folio(data);
-+	}
-+
-+	if (!folio)
-+		return;
-+
-+	ser = folio_address(folio);
-+
-+	device = vfio_find_device_in_cdev_class(&ser->bdf, match_bdf);
-+	if (!device)
-+		goto out_folio_put;
-+
-+	vdev = container_of(device, struct vfio_pci_core_device, vdev);
-+	pci_try_reset_function(vdev->pdev);
-+	put_device(&device->device);
-+
-+out_folio_put:
-+	folio_put(folio);
-+}
-+
- static int vfio_pci_liveupdate_retrieve(struct liveupdate_file_handler *handler,
- 					u64 data, struct file **file)
- {
-@@ -156,6 +188,7 @@ static bool vfio_pci_liveupdate_can_preserve(struct liveupdate_file_handler *han
- static const struct liveupdate_file_ops vfio_pci_luo_fops = {
- 	.prepare = vfio_pci_liveupdate_prepare,
- 	.cancel = vfio_pci_liveupdate_cancel,
-+	.finish = vfio_pci_liveupdate_finish,
- 	.retrieve = vfio_pci_liveupdate_retrieve,
- 	.can_preserve = vfio_pci_liveupdate_can_preserve,
- 	.owner = THIS_MODULE,
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index d1fdf81fbe1e..8ce2d4528193 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -400,6 +400,8 @@ struct pci_dev {
+ 						   decoding during BAR sizing */
+ 	unsigned int	wakeup_prepared:1;
+ 	unsigned int	skip_bus_pm:1;	/* Internal: Skip bus-level PM */
++	unsigned int 	skip_kexec_clear_master:1; /* Don't clear the Bus Master
++						      Enable bit on kexec reboot */
+ 	unsigned int	ignore_hotplug:1;	/* Ignore hotplug events */
+ 	unsigned int	hotplug_user_indicators:1; /* SlotCtl indicators
+ 						      controlled exclusively by
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
