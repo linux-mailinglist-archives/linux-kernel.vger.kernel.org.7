@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C0DBED2CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:42:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F9CBED2F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D145019A760B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3E763BC0B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1A323B63F;
-	Sat, 18 Oct 2025 15:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4CD23F40C;
+	Sat, 18 Oct 2025 15:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaEJk2ic"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVjJAsYn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593B1A3166;
-	Sat, 18 Oct 2025 15:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C6C22A4F6;
+	Sat, 18 Oct 2025 15:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760802142; cv=none; b=WB5AeSGKX3/Vy+JRaGMX2UvnCict8Vnk0KhCr2LBdfjxCmP6akBZNN2XfAfW6qTv9NsKITLwNxStYRshb57nhTxpYt47ApgDaEf/iayabsXv62a2TEnwP/VTPKvr1EP/U1nWPb1cGch6VeE5sXNsiTadFKOBj6PYFfKzzb3datE=
+	t=1760802487; cv=none; b=N82IlXYl1FzwLS3MdZM8XYKdk7Emh/yO5o+9mrFc3md3GaZGWLDFPhLP/V9EP736yoLxldXXN+7NpHztNQqoo/BMk10Y3uMGuzLz4xhT1lMxbjxZjs2fzP3mtHo7I6cX/XGqxz6Zv0eCU93XmEqBfNDQ9r1nOUBJh6NQwaQCCiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760802142; c=relaxed/simple;
-	bh=HkWILJ2yd/VihT5ULCTr+2bVnGrwXH+CkiVS34eVfUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BcbwoSRxOQf6YxMlBCg2TQmDNV2y+0YL3bSk2KYIlPW9L5CqkUh5QXooUqnJqkl37f/bt0glOPc+tsTNNpZWZJOLgFwLtYZCz0XTcIQ0p2F6h5tmWTDQPfrKmh55vr1GrQuuYE+K0CYW8MIh8g4CaQ/0hpE3pi8jpm3/pAW4TPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaEJk2ic; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B25C4CEF8;
-	Sat, 18 Oct 2025 15:42:19 +0000 (UTC)
+	s=arc-20240116; t=1760802487; c=relaxed/simple;
+	bh=uWpgtJP0YNgQKbW0W4SOynO/zeJGsLOB4hD//kdY9lI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Yi659J33TthZaIlvtpXKG717afZ7AkehrXr7sP4Xof60MDk0oSvX/tbaYzgrQZgloEnxVqDnkA/8Ut8kQb483xWklOOu31vMYPjPTBVp8sAGuA+521O8kDfXVwOBRkMPrjYU2asio+Qaa+UKOpsJusohkkBtiWEAenPwtINgrFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVjJAsYn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21342C4CEF9;
+	Sat, 18 Oct 2025 15:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760802142;
-	bh=HkWILJ2yd/VihT5ULCTr+2bVnGrwXH+CkiVS34eVfUE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SaEJk2icE0ORBSK9KSnNvvyfzQx3dN+BxWApfQsFg9IBtK7ozLYARWQTEz33+yadG
-	 qEHD01oBZs9Fa+bqkCwL7oYiUggVkd/+Qhgj7Jwgd0Ky9k+3+IxquYQ8d5ZxD0f6bx
-	 /bODVpSJTb03tnm4OScW7Z6m0rl4S3hw3YU+J4S0AR2V1VDMwK6K5vkFB3cuYOanRN
-	 gRCw+ApokVTTsp4LsRws/tShDWRdh29KWb/6X71BQnUHuDBEzWX+p+MdyDrvsilbpy
-	 9ssect+mz8byfjA+iSkBLeDWn0yuSJtAxUTBRnipgFfhBh6aaK+SoELOqAgyze+2fy
-	 DzxVRMSvKbGVA==
-Message-ID: <57f5083a-cfe3-4a2a-9d0b-fa953b8db52e@kernel.org>
-Date: Sat, 18 Oct 2025 17:42:17 +0200
+	s=k20201202; t=1760802486;
+	bh=uWpgtJP0YNgQKbW0W4SOynO/zeJGsLOB4hD//kdY9lI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=WVjJAsYnK50+OmDWMpm447pSJuu+0PM8ZmSA+OU+8zPlI1EzxYtjju36RCkHI4gbb
+	 Hbnz/+w1fEBo89md7DVekAOLwhPpooibsFZ2qGEFglCYD5fJJJhwP9zuAbYQPTeD6I
+	 8Q+1+PemyT0TEj5nFdGbrEC8/e5XDtSCu+eO9hNW+/AXw6yrIA0Z5e9ao5sqirY+UG
+	 a+t0V9FoUvjj9X04G7KtgXsuGxX80Tpehaf4Qmty7by/Ym0jmi3aVGEe7pp30Rq4r8
+	 Ekt87OhoGyVe7i6k5qK1nDqRY2o868sh7RswvStcr3HC4LfqH4I8Q+yO5ZCaW48AkF
+	 jEkauT/Y3Aciw==
+Message-ID: <6215c723-aeb2-4ef5-940a-a70806c1576f@kernel.org>
+Date: Sat, 18 Oct 2025 17:48:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: adsp: Add SDM660 CDSP
- compatible
-To: Nickolay Goppen <setotau@mainlining.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+Subject: Re: [PATCH v2] dt-bindings: watchdog: lantiq,wdt: convert bindings to
+ dtschema
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, wim@linux-watchdog.org,
+ linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, hauke@hauke-m.de, linux-watchdog@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251018-qcom-sdm660-cdsp-v1-0-042e283db29b@mainlining.org>
- <20251018-qcom-sdm660-cdsp-v1-1-042e283db29b@mainlining.org>
+References: <20251018093229.291419-1-olek2@wp.pl>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,36 +101,103 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251018-qcom-sdm660-cdsp-v1-1-042e283db29b@mainlining.org>
+In-Reply-To: <20251018093229.291419-1-olek2@wp.pl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/10/2025 12:57, Nickolay Goppen wrote:
-> Add compatible for the compute DSP remoteproc found in SDM660.
+On 18/10/2025 11:29, Aleksander Jan Bajkowski wrote:
+> Convert the Lantiq WDT Watchdog bindings to yaml format.
 > 
-> Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 > ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> v2:
+> - requirement of lantiq,rcu is now expressed as a schema 
+> ---
+>  .../bindings/watchdog/lantiq,wdt.yaml         | 63 +++++++++++++++++++
+>  .../bindings/watchdog/lantiq-wdt.txt          | 24 -------
+>  2 files changed, 63 insertions(+), 24 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/lantiq-wdt.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-> index 661c2b425da3..19d16c97d8a4 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-> @@ -24,6 +24,7 @@ properties:
->        - qcom,msm8998-adsp-pas
->        - qcom,msm8998-slpi-pas
->        - qcom,sdm660-adsp-pas
-> +      - qcom,sdm660-cdsp-pas
->        - qcom,sdm845-adsp-pas
->        - qcom,sdm845-cdsp-pas
->        - qcom,sdm845-slpi-pas
-> @@ -178,6 +179,7 @@ allOf:
->                - qcom,msm8998-adsp-pas
->                - qcom,msm8998-slpi-pas
->                - qcom,sdm660-adsp-pas
+> diff --git a/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml b/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+> new file mode 100644
+> index 000000000000..204e16be2a79
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/watchdog/lantiq,wdt.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/watchdog/lantiq,wdt.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lantiq WTD watchdog
+> +
+> +maintainers:
+> +  - Hauke Mehrtens <hauke@hauke-m.de>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - lantiq,falcon-wdt
+> +          - lantiq,wdt
+> +          - lantiq,xrx100-wdt
+> +      - items:
+> +          - enum:
+> +              - lantiq,xrx200-wdt
+> +              - lantiq,xrx300-wdt
 
-Where is the constrain for everything else? clocks, interrupts and domains?
+
+This wasn't in the old binding. Any change from pure conversion has to
+be explained WHY in the commit msg.
+
+What is more - it does not exist. You cannot just stuff here new
+compatibles and call it "conversion". Conversion from dev/null into new
+compatible?
+
+> +          - const: lantiq,xrx100-wdt
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  lantiq,rcu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Phandle to the RCU syscon node
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: lantiq,xrx100-wdt
+> +    then:
+> +      required:
+> +        - lantiq,rcu
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: lantiq,falcon-wdt
+
+
+That's just enum in previous contains.
+
+> +    then:
+> +      required:
+> +        - lantiq,rcu
+
+
+Missing ref to watchdog. Otherwise why do you have unevaluatedProperties?
+> +
+> +unevaluatedProperties: false
+
+
+
 
 Best regards,
 Krzysztof
