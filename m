@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-859276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74014BED341
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:01:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54992BED347
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 18:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF2840150B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B8181893859
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 16:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C31B22F772;
-	Sat, 18 Oct 2025 16:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA15244691;
+	Sat, 18 Oct 2025 16:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bX+SerO+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ivk5aZFw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB691153BE9
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 16:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D8C23F417;
+	Sat, 18 Oct 2025 16:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760803305; cv=none; b=uBigTocacjOyk4Hzi3TNCWwrkmfDnAZtcMU+4sQMdYKOzsl6DY7OS4ddmVb8OhEVYAA4ZFFNPX/EzzduAtP1XxHWJdM29Y5xlesKcxrasADozmhZuKBcxzFqwFKJULjdCWxVFArLaRotjweTXCqpj9npJpa4h45K+ddQEkSk90g=
+	t=1760803307; cv=none; b=oE5+RGVpFoNDfpsM8aihP+NYiDuXOMtiioy/Bl2XmbZSoh53SUCaeBDBaTUM2YRXFfrjO789StIJsn2SaVJQGr/8IxwdCYhQN0b81/uvKDe2NkLqCNGmTeW80a1fQPye2OjtdsD1g/+yJbSFCQnDq7oX4lBR+EMeebe/m7+Og64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760803305; c=relaxed/simple;
-	bh=14MmDG9UhGu/qABnEIMl0mpUbYr7HbIkZDefzRziZBI=;
+	s=arc-20240116; t=1760803307; c=relaxed/simple;
+	bh=xdGzVFaydhp9qU3Eq9iqFsHM3rixK5o6FO97hISarJU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GIKCuabJRkDxWJkWop61RKFj1zQv3AwBhJANAxlBP7YUZPUqq+k+l7Kd0O4SEJJsOTSDIKmSLtZyXHYwqofcVjTWhZC3geOoitB+ETntv3MysFFjkGssO9CFFLcXma0ejIzHF/51CAMem5GjzWcdMkCN1tVybBbQVe71TwRk2jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bX+SerO+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B83C4CEF8;
-	Sat, 18 Oct 2025 16:01:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=StHdmBGk2IcDwo+N4nrn6X+2tdMm3gObyk2bZcfcryfjc2W7ZPrApLL5ztYU2JtAWlMgBE7unDsbYpeZWL826LfeUmTm+6UXzm3VwFpqxpONMvEbDqK04Bb8xo/acJ3bPq/HcoGS2hqpKrPqVv+lOIsml64nA/uSpUAmvx7yxVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ivk5aZFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA949C4CEF8;
+	Sat, 18 Oct 2025 16:01:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760803305;
-	bh=14MmDG9UhGu/qABnEIMl0mpUbYr7HbIkZDefzRziZBI=;
+	s=k20201202; t=1760803306;
+	bh=xdGzVFaydhp9qU3Eq9iqFsHM3rixK5o6FO97hISarJU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bX+SerO+NfFijq7MNVOtPcAS9jsbQpe1GSMkow8wKPqFRZpfmofX+UiOd9v5R74lV
-	 un6tQMSOLaWlE1SB35VpBD6AQXN2mQiRhXHKsPyuIJyY1IIN3O9Uzany18bO53l6WO
-	 7WZf0deXTTZTAK1h+gGf3roxEDTv3Qn8C0s6cHRQY3dgH+kUTerWj7oSELXYwcgFJN
-	 2T7zfbyR0ev8iLWDT6JOQT03ncWTSWFwwlgqmGPn589VJnKOW2YUSeC1Kqlj7WsD6a
-	 qCt8PxVPp0gGRLulCkn6dlGLIRN//tBrR0KME6n1ses3xpW4B0/8lxe5DVQGHTmVQd
-	 gpXXw39ZKvp/g==
+	b=Ivk5aZFwr1PqelJFYqIiLan7RNwSpRgCvimVwLWbZPPSsTaynAydgtRg34dHe4JoM
+	 0OwpoyJB7yuUIYJLSmWXNSbyyOhMIMM+afBQjI9TNZ0Kel5Ib5t9m9Gi6yAUHVZtH/
+	 ezkYhR4FTfzPvoS7yuW8naeqhECKHkctRYhNUnrmxGTTG8DzBhUgdq+aDW5yjs8C7F
+	 dZvke3PXtXRdttUu8eP5CmfNmGrSOU+Mo/K43UQ6EyEcn/1U4zJXV7pQbNARwTuVF3
+	 nr+8I/7k/xyHQj4W2ceUCFZuZZIylEYp+KtAa7xwF1aaFT+vAlwhS8HHptl7Z/iK5o
+	 nY9GmDEUs1ZEQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE24439EFBB7;
-	Sat, 18 Oct 2025 16:01:29 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E1C39EFBB7;
+	Sat, 18 Oct 2025 16:01:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: Register IPI IRQs with unique names
+Subject: Re: [PATCH] ACPI: RIMT: Fix unused function warnings when
+ CONFIG_IOMMU_API is disabled
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <176080328851.3028979.9102914786827075477.git-patchwork-notify@kernel.org>
-Date: Sat, 18 Oct 2025 16:01:28 +0000
-References: <20251016003244.3910332-1-samuel.holland@sifive.com>
-In-Reply-To: <20251016003244.3910332-1-samuel.holland@sifive.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com, pjw@kernel.org,
- aou@eecs.berkeley.edu, alex@ghiti.fr, conor.dooley@microchip.com,
- jassisinghbrar@gmail.com, valentina.fernandezalanis@microchip.com,
- cuiyunhui@bytedance.com, linux-kernel@vger.kernel.org
+ <176080328974.3028979.2139175941358455786.git-patchwork-notify@kernel.org>
+Date: Sat, 18 Oct 2025 16:01:29 +0000
+References: <20251013181947.261759-1-sunilvl@ventanamicro.com>
+In-Reply-To: <20251013181947.261759-1-sunilvl@ventanamicro.com>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu, lkp@intel.com,
+ alex@ghiti.fr, rafael@kernel.org, joerg.roedel@amd.com, palmer@dabbelt.com,
+ anup@brainfault.org, pjw@kernel.org, lenb@kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Paul Walmsley <pjw@kernel.org>:
 
-On Wed, 15 Oct 2025 17:32:05 -0700 you wrote:
-> This allows different IPIs to be distinguished in tracing output.
+On Mon, 13 Oct 2025 23:49:47 +0530 you wrote:
+> When CONFIG_IOMMU_API is disabled, some functions defined outside its
+> conditional scope become unused, triggering compiler warnings reported
+> by the kernel test robot.
 > 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
+> Move these function definitions inside the #ifdef CONFIG_IOMMU_API block
+> to prevent unused function warnings when the configuration is disabled.
 > 
->  arch/riscv/kernel/smp.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+> [...]
 
 Here is the summary with links:
-  - riscv: Register IPI IRQs with unique names
-    https://git.kernel.org/riscv/c/223bfc4d403c
+  - ACPI: RIMT: Fix unused function warnings when CONFIG_IOMMU_API is disabled
+    https://git.kernel.org/riscv/c/e7b969cbe302
 
 You are awesome, thank you!
 -- 
