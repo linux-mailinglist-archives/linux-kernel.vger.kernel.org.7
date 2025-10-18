@@ -1,255 +1,122 @@
-Return-Path: <linux-kernel+bounces-859218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B355BED09A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:38:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EAEBED09D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AEC25E2573
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:38:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 136084E574A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 13:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D7F2D837B;
-	Sat, 18 Oct 2025 13:38:20 +0000 (UTC)
-Received: from smtps.ntu.edu.tw (smtps.ntu.edu.tw [140.112.2.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519EC1F03F3;
+	Sat, 18 Oct 2025 13:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="S9nEUs4N"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8B71D9A54
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 13:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.112.2.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E17354AE6
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 13:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760794700; cv=none; b=R9gK+k4Pg3J8EANem9HBjGCLmOUwCebbXQ28ONdilWJI/zLX5n6CzsUnhfM7/PZOkkuopZF1gPPAUfc/7ZjEvYwkwKeqyci80m+xKVDjL5ED0zZFzcq4uQyraiEwB+R82tXGt3IN49nsVsArJm02flYzNyx0Z2HGh6w2GitvEhc=
+	t=1760794784; cv=none; b=tFWHw5ETPn14sm4itOwqJgosyzXTdepR5xl5zDgk33OmY4tdZyEWsrE1SsQhlQ0Eef/jApVTzJ/cypnY7GAA/xFSMtRApg4y7H2EATNeb+3W2OPDptT/8BwOn3w9phcgjjpJW5UZIE0gFAMVbvsO78F7TA0T4fo/Q4CuvaUnBA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760794700; c=relaxed/simple;
-	bh=MoKzB1vv5bboPLAXL+wOillAA6bpS7SYdS28c/mlde4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m+9ONree7+1/vwqB+lUvJ7O7WhVn0fpdYgIwteiwVA6jslS4v9hkIRVJd4BX7Nd6yHHlDURHPlrrilFzZccpuFxbhBpwnXFJLwZ9pxIqGkJrLoKhwjglywMuOTks1d/YAxgvtyrZ+9KgIA6vJVwrz16wkYiAB0lwWqfv19nPVzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw; spf=pass smtp.mailfrom=ntu.edu.tw; arc=none smtp.client-ip=140.112.2.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ntu.edu.tw
-Received: from x415ea.. (unknown [101.14.4.245])
+	s=arc-20240116; t=1760794784; c=relaxed/simple;
+	bh=p0C77Nd7KvIBramBla8WgAMcw9im3Ctj5VQVoENhwcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HQxB26bQ7kpFgyKI8U89FmpSHMNVyd/SQqZ13E6r8XNKo78neq/BuuWNQ3wg9TriLoqxG3OKtaFQIoVN7YVkRtg+S1bo9fPbIC75o4IXDSUPPPzcPI+jHT/U9Byk2orJPfdXRPZzOCiEzeghdup64b9ZeUNxxOpeUvrUcZesdpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=S9nEUs4N; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 551B940E00DE;
+	Sat, 18 Oct 2025 13:39:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Pwy_tiXwsbNA; Sat, 18 Oct 2025 13:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760794772; bh=blpkbXc5mYYks+Zk2jeu902rTTc7pq37MlmIFyhYZhw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S9nEUs4N8r4G7lkXp+0rhsQhlH9AZMyCgeaj7OH9mxPsWGSa8uWKJNe6Z2TzMl11N
+	 NnYrl1m5N3mpZGPjhuVgl2VqIRG563q3qHMS7eQHbh1iAT4WD6Tt4jM5uAPcZ1yDuM
+	 aYjign0R/ZYHVrCTpvsedMxze2Tvmo9GZrM9pctSfNg90/cfam06JIw7nNNmCutOV8
+	 hSNvr6+zZ9gk8jNbNxInbyfm3mT2CtLma0bw0ROK++s32abXolESHDK0u+fJGw9zMV
+	 A+9F8dhDFICZFs0br9VlUJFZ9ulY6tviL+0HVnTin3Ikttb2ZTH5mXgoBw84zLgF+m
+	 JjYy11haeJPu9alDWscWts+RRZqIKi/5R3ms4gYfsH54HAdHAOU2U9phbXw0jxke7M
+	 IlyXGHDHrDoSNZ83vYnQK2fLpvz6K1cpHo4cgQBwO/kP1mevpGf+zyxv1hCuMsIMXk
+	 XW1hzEMQFiEHCQMKRtQQQ6DKWy+Yb6noWtTtnpItpfDSjFeXgAMUwuSbthdyQ05MZR
+	 7ikVEhbR98Kdon6/i3J1Rn9uNn4uWMffI7BFpQBXwQ3WWf7PXghp7+MsxqnKkJyL99
+	 NmudJQT5KOlZ0k//iyc4eC0SM9B7fFv0AMhvZji2W+XMi3oiA+RtLhP6EpG4uxCsa8
+	 APNUX1A6wE5RA61tCeergjxc=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtps.ntu.edu.tw (Postfix) with ESMTPSA id 8B5EE34F4C;
-	Sat, 18 Oct 2025 21:38:07 +0800 (CST)
-From: Bill Tsui <b10902118@ntu.edu.tw>
-To: oleg@redhat.com,
-	catalin.marinas@arm.com,
-	will@kernel.org
-Cc: nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Bill Tsui <b10902118@ntu.edu.tw>
-Subject: [PATCH v4 1/1] arm64: ptrace: fix hw_break_set() to set addr and ctrl together
-Date: Sat, 18 Oct 2025 21:37:31 +0800
-Message-ID: <20251018133731.42505-2-b10902118@ntu.edu.tw>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251018133731.42505-1-b10902118@ntu.edu.tw>
-References: <20251016154401.35799-1-b10902118@ntu.edu.tw>
- <20251018133731.42505-1-b10902118@ntu.edu.tw>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 05C3C40E015B;
+	Sat, 18 Oct 2025 13:39:19 +0000 (UTC)
+Date: Sat, 18 Oct 2025 15:39:13 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 01/56] Documentation/admin-guide: Add documentation
+Message-ID: <20251018133913.GHaPOYgR0YNlz-KexS@fat_crate.local>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-2-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251013143444.3999-2-david.kaplan@amd.com>
 
-This patch fixes the failure of PTRACE_SETREGSET when setting a hardware
-breakpoint on a non-4-byte aligned address with a valid control to a
-32-bit tracee. The issue was discovered while testing LLDB.
+On Mon, Oct 13, 2025 at 09:33:49AM -0500, David Kaplan wrote:
+> +Move Policy To Userspace
+> +^^^^^^^^^^^^^^^^^^^^^^^^
+> +
+> +Mitigation choices are related to the security policy and posture of the system.
+> +Most mitigations are only necessary on shared, multi-user systems if untrusted
+> +code may be run on the system, such as through untrusted userspace or untrusted
+> +virtual machines.  The kernel may not know how the system will be used on boot,
+									^^^^^^^^^^
 
-Link: https://github.com/llvm/llvm-project/pull/152284
+"after it has been booted" I'd say.
 
-The failure happens because hw_break_set() checks and sets the breakpoint
-address and control separately. This can result in an check failure when
-it first validates the address to be set with old control.
+> +and therefore must adopt a strong security posture for safety.
+> +
+> +With dynamic mitigations, userspace can re-select mitigations once the needs of
+> +the system can be determined and more policy information is available.
+> +
+> +Mitigation Testing
+> +^^^^^^^^^^^^^^^^^^
+> +
+> +Dynamic mitigation support makes it easy to toggle individual mitigations or
+> +choose between different mitigation options without the expense of a reboot or
+> +kexec.  This may be useful when evaluating the performance of various
+> +mitigation options.  It can also be useful for performing bug fixes without a
 
-For example, the control are initialized with breakpoint length of 4.
-Combining with a non-4-byte aligned address would cross a 4-byte boundary,
-which is invalid. However, the user-provided control may actually specify a
-length of 1, which should be valid.
+"for fixing bugs in the mitigations themselves" - simpler
 
-The fix is to set the address and control together. This is supported
-by modify_user_hw_breakpoint(), the function that sets and checks
-breakpoints. The original implementation wrap this function to
-ptrace_hbp_set_addr() and ptrace_hbp_set_ctrl() for 32-bit API
-PTRACE_SETHBPREGS simply because it can only modify one register (address
-or control) per call. For the 64-bit PTRACE_SETREGSET API, this
-restriction does not apply, so a new helper function ptrace_hbp_set() was
-added to set both in a single call to modify_user_hw_breakpoint().
+> +reboot, in case a particular mitigation is undesired or buggy.
 
-Then ptrace_hbp_set_addr() and ptrace_hbp_set_ctrl() are only used by
-compat_ptrace_hbp_set(), so moved into CONFIG_COMPAT block and renamed
-with prefix compat_.
-
-For reference, the check is in
-	arch/arm64/kernel/hw_breakpoint.c:hw_breakpoint_arch_parse()
-which is called via:
-	modify_user_hw_breakpoint()
-	-> modify_user_hw_breakpoint_check()
-	-> hw_breakpoint_parse()
-	-> hw_breakpoint_arch_parse()
-
-Signed-off-by: Bill Tsui <b10902118@ntu.edu.tw>
----
- arch/arm64/kernel/ptrace.c | 90 ++++++++++++++++++++++++--------------
- 1 file changed, 58 insertions(+), 32 deletions(-)
-
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 4b001121c72d..c8caf4e0805e 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -421,10 +421,11 @@ static struct perf_event *ptrace_hbp_get_initialised_bp(unsigned int note_type,
- 	return bp;
- }
- 
--static int ptrace_hbp_set_ctrl(unsigned int note_type,
--			       struct task_struct *tsk,
--			       unsigned long idx,
--			       u32 uctrl)
-+/* Set the address and control together for non-compat ptrace */
-+static int ptrace_hbp_set(unsigned int note_type,
-+				   struct task_struct *tsk,
-+				   unsigned long idx,
-+				   u64 addr, u32 uctrl)
- {
- 	int err;
- 	struct perf_event *bp;
-@@ -438,6 +439,8 @@ static int ptrace_hbp_set_ctrl(unsigned int note_type,
- 	}
- 
- 	attr = bp->attr;
-+	attr.bp_addr = addr;
-+
- 	decode_ctrl_reg(uctrl, &ctrl);
- 	err = ptrace_hbp_fill_attr_ctrl(note_type, ctrl, &attr);
- 	if (err)
-@@ -446,27 +449,6 @@ static int ptrace_hbp_set_ctrl(unsigned int note_type,
- 	return modify_user_hw_breakpoint(bp, &attr);
- }
- 
--static int ptrace_hbp_set_addr(unsigned int note_type,
--			       struct task_struct *tsk,
--			       unsigned long idx,
--			       u64 addr)
--{
--	int err;
--	struct perf_event *bp;
--	struct perf_event_attr attr;
--
--	bp = ptrace_hbp_get_initialised_bp(note_type, tsk, idx);
--	if (IS_ERR(bp)) {
--		err = PTR_ERR(bp);
--		return err;
--	}
--
--	attr = bp->attr;
--	attr.bp_addr = addr;
--	err = modify_user_hw_breakpoint(bp, &attr);
--	return err;
--}
--
- #define PTRACE_HBP_ADDR_SZ	sizeof(u64)
- #define PTRACE_HBP_CTRL_SZ	sizeof(u32)
- #define PTRACE_HBP_PAD_SZ	sizeof(u32)
-@@ -524,9 +506,6 @@ static int hw_break_set(struct task_struct *target,
- 			return -EINVAL;
- 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &addr,
- 					 offset, offset + PTRACE_HBP_ADDR_SZ);
--		if (ret)
--			return ret;
--		ret = ptrace_hbp_set_addr(note_type, target, idx, addr);
- 		if (ret)
- 			return ret;
- 		offset += PTRACE_HBP_ADDR_SZ;
-@@ -537,10 +516,11 @@ static int hw_break_set(struct task_struct *target,
- 					 offset, offset + PTRACE_HBP_CTRL_SZ);
- 		if (ret)
- 			return ret;
--		ret = ptrace_hbp_set_ctrl(note_type, target, idx, ctrl);
-+		offset += PTRACE_HBP_CTRL_SZ;
-+
-+		ret = ptrace_hbp_set(note_type, target, idx, addr, ctrl);
- 		if (ret)
- 			return ret;
--		offset += PTRACE_HBP_CTRL_SZ;
- 
- 		user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
- 					  offset, offset + PTRACE_HBP_PAD_SZ);
-@@ -2139,6 +2119,52 @@ static int compat_ptrace_hbp_get(unsigned int note_type,
- 	return err;
- }
- 
-+static int compat_ptrace_hbp_set_ctrl(unsigned int note_type,
-+			       struct task_struct *tsk,
-+			       unsigned long idx,
-+			       u32 uctrl)
-+{
-+	int err;
-+	struct perf_event *bp;
-+	struct perf_event_attr attr;
-+	struct arch_hw_breakpoint_ctrl ctrl;
-+
-+	bp = ptrace_hbp_get_initialised_bp(note_type, tsk, idx);
-+	if (IS_ERR(bp)) {
-+		err = PTR_ERR(bp);
-+		return err;
-+	}
-+
-+	attr = bp->attr;
-+	decode_ctrl_reg(uctrl, &ctrl);
-+	err = ptrace_hbp_fill_attr_ctrl(note_type, ctrl, &attr);
-+	if (err)
-+		return err;
-+
-+	return modify_user_hw_breakpoint(bp, &attr);
-+}
-+
-+static int compat_ptrace_hbp_set_addr(unsigned int note_type,
-+			       struct task_struct *tsk,
-+			       unsigned long idx,
-+			       u64 addr)
-+{
-+	int err;
-+	struct perf_event *bp;
-+	struct perf_event_attr attr;
-+
-+	bp = ptrace_hbp_get_initialised_bp(note_type, tsk, idx);
-+	if (IS_ERR(bp)) {
-+		err = PTR_ERR(bp);
-+		return err;
-+	}
-+
-+	attr = bp->attr;
-+	attr.bp_addr = addr;
-+	err = modify_user_hw_breakpoint(bp, &attr);
-+	return err;
-+}
-+
- static int compat_ptrace_hbp_set(unsigned int note_type,
- 				 struct task_struct *tsk,
- 				 compat_long_t num,
-@@ -2151,10 +2177,10 @@ static int compat_ptrace_hbp_set(unsigned int note_type,
- 
- 	if (num & 1) {
- 		addr = *kdata;
--		err = ptrace_hbp_set_addr(note_type, tsk, idx, addr);
-+		err = compat_ptrace_hbp_set_addr(note_type, tsk, idx, addr);
- 	} else {
- 		ctrl = *kdata;
--		err = ptrace_hbp_set_ctrl(note_type, tsk, idx, ctrl);
-+		err = compat_ptrace_hbp_set_ctrl(note_type, tsk, idx, ctrl);
- 	}
- 
- 	return err;
 -- 
-2.51.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
