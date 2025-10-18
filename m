@@ -1,128 +1,174 @@
-Return-Path: <linux-kernel+bounces-859377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF26ABED703
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:57:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26A8BED706
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48FB319A60F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:57:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8895B4E1B11
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD3425FA05;
-	Sat, 18 Oct 2025 17:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708F2571D8;
+	Sat, 18 Oct 2025 17:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cDC0AuJG"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFaK/fFu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E94A1FE46D
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23321FE46D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 17:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760810234; cv=none; b=HLSf3LRkat4SEFLvDl5GJ3Ne3BgcyDIoRK7FtZbLww34kGIiROOyN5hdoQgIuzR1Was6gtSLgkT+7rnHiuX7lT9Xq+15O+qNs12WsqTfPePbX62o6eqhVLV7uiERfgO2cO6B5A/phDzuaVub3hoGQ2PbUQAF2xd50EJRB4g0/Xk=
+	t=1760810386; cv=none; b=mCK2Q5LbnCRWPYyOw8a3ebGqMSHG7cKNk3j+eZxopXmsrOvntwFuwyhj7gme9giCYOjc1l6N5Rik9CfWnhJ7XYue+6ZYl0v76erClDLuyW5zY9MeXb6ESOpNcnvwL5sEMVKh01Rb1+jUfIkgEEzifwAsPfvKxw3gjsIM3vX/MDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760810234; c=relaxed/simple;
-	bh=+0NDnqm96mv6VJBmnJDP9J8W2eqsuwjSNKSIB/4f6gE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CV5tz4q1bh2gXTPAZTkFBS4vJ1o5daWKWMqhiygEiqe+LFi3fUJvZJLRwTxcuR0fOq7hw+0svakIfH76WoSWvvVrWYW8VpjQOdvhdxw0BgG7bnlmzjRXa98qThftsdpr2ZXcLOQbX7j5wb66M6Uky/zf8c2fRWQcxXak8pS5ozc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cDC0AuJG; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3b27b50090so525821066b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1760810228; x=1761415028; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lrPVFS9Dd045lBN8JzZ3YytOba9ttGQFMrMdfscWZIk=;
-        b=cDC0AuJGl1a8D21yMBkKbAK8MchGlKLnx9LDwZ9bqqL1sR86VB6CFKFneF2yJZHpLU
-         7/bjEata07kKP5i9unEaRz/Gq9u+CDx2XZ762W1Lc347r5/9BTq3jA2gPj5UvRRosaED
-         txD94f66kmTwT7EavXqrUfuTAET5qpQipCn00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760810228; x=1761415028;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lrPVFS9Dd045lBN8JzZ3YytOba9ttGQFMrMdfscWZIk=;
-        b=JdLc+EE9qPVpuT7mPblbb+MC6sR7jthmUubiTQwuvji7AqQhd5OwEEgQrEQ/Zg/lq5
-         pkKhcHskXA1UfD+XtAgbgQYEGh3Ks70+BI4IN1wX4/csqdOFyaP6hSjcxf1bMfvwD+L0
-         cb6zcvjLEv0xQLZdSfIfTmIdEsY6cCYHq+nJX2y+Dz0RaKdyvIHuYYg7mQHujARD5Fi5
-         FkBlzVXSPRkiO4oasPcm31tajIsVy4B6JDtBvc8l7IFJj0a7zIrzNGPzVkJKQWmjjlH+
-         qyckt4T+u0QPZMqfKfFEiKdhK2WBS7WI3fSgYk8T9b/SHz2r4ldhc0rLGRA6NIZqMmFe
-         M8+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVZlRcqqh2qMB76BK2oRh+75oMP+DyXh5OT74kgoND4waUo0gHtQhgY9wlhQv/ptWehCvhAQ7Ev/26FHl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6vBbB1oZf6kNsA3AwQGbe7wOcIcDTybogQGLSlOw9jBwqhuXr
-	hI7ddOXiGgVElxPpvDr3oCoMGrUEUGhI7CJtoreJUJIKQ+ZwcoT+10ls9Kag28h/uSsAiPFqLzG
-	Gu99h7P0=
-X-Gm-Gg: ASbGncs5DSSGNVBtxG24Q0n8w5Im6iajNgaWCrmj11RNNVvNs0mAq3ecg6JccRbSszZ
-	gfxJphZ920rH7b10qZXtLsoGerfMFo2NVL+bTmJweJAnQFGgSnNxShKzjafEmdbqoT3wRKQ3gWO
-	2EJMIq40BeVhSoKE2qms3hjHXNLgaxwnI9BsKGmrlsdQJ+9IORatIx6fFM7FackfpjL5BR+u1Uc
-	JTLj4o87y7nLloB5pHnPlC4lLLHMSuPAyuQ50xdYBeRyAbwByHQiJi+oQZDcXUbKZJY7Pa1IGIq
-	eKvZ7b2jUIo7DF4/0RiP3wFnuTF5E0Jwg/ssBnbFg7RKLZxzNPCBNc+FxYoy3wDg13h8aDZpSFK
-	Q8u+adAilx4SzRW+SgGWDUdYdis6PybVpKpd45MeiFLKsha8oMmZT3yoFdw0fUUvKunYSvcQJ4S
-	KeL106dK8KjA/8SW+T12B93chl10JfI5anH5YRWTAMNVoLsoXCuaHuSm7U0HD63gJfoqjhxyw=
-X-Google-Smtp-Source: AGHT+IEIKFy/G6JRj4E+JagJkGq3IYhf0bI8sLUmjK63hIBffLaBV3zMlf/20bJSJDdxGn2M1VQWqg==
-X-Received: by 2002:a17:907:86ab:b0:b48:730:dbaf with SMTP id a640c23a62f3a-b6473245792mr845375966b.25.1760810228220;
-        Sat, 18 Oct 2025 10:57:08 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65ebc48eedsm287758366b.79.2025.10.18.10.57.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Oct 2025 10:57:06 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c2d72581fso2634988a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:57:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXdqP7WvM5ubeQIU4Br1+K1QYhBJvVC2zQeEDoKH34AIQapU566YbAc5CY+kNl3qtx55nLmU984hWe0CJs=@vger.kernel.org
-X-Received: by 2002:a05:6402:524c:b0:639:1ee3:4e83 with SMTP id
- 4fb4d7f45d1cf-63c1f64f094mr7116093a12.8.1760810225989; Sat, 18 Oct 2025
- 10:57:05 -0700 (PDT)
+	s=arc-20240116; t=1760810386; c=relaxed/simple;
+	bh=BbV03NsBXX5OJ9htFnHtVePUGG3rfU9XY/re9DAiuaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Js/rTvCY+b6wYGkPpqiSmN8hgxLWfdxOzTEnv7JN5hErZeS0/M0XMQtNarx+DUY1fGgPy/eGdVeq5bpHjSKEYFMNHzDfyEeKT+5jt5dneOrIOXIA43KgbFe3DSPMRyU9Qku9WIEmkq19I0oPVnjw2RFe4YkqyAb3uo+hycqUHpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFaK/fFu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4A7C4CEF8;
+	Sat, 18 Oct 2025 17:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760810386;
+	bh=BbV03NsBXX5OJ9htFnHtVePUGG3rfU9XY/re9DAiuaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hFaK/fFu1J6TjJFYjVfXaPI0hOPdiGti95Nbs4owUH3M4QRMw4F6+z431BPZZXI0Z
+	 KYsmhheTcaM4UL/e3Nirgobp7h6OWLCAbtpU8nuqD+siA1PohVt3r2nu0iNJ05vzHJ
+	 HwceSOpePInSDjNKbQa/gJ4xGzjXTV88r4LpgO2nRWgQgSIGkbRAnVHR7UP+37C2pb
+	 RNF2vWXjLLWkoTKYvZRasHSH0pcnt4sWSKWz9ugqh8TfR5078VCRWezFOBtv+ERomV
+	 IJDyelyvwleqtkTU2QeJNVJbTtDHnAL1nRVioT+QCU5Lodei/HV5v7oeWvQ9YdBkoA
+	 waQa8GDeViieA==
+Message-ID: <e0d09eb8-a53f-4dce-a858-8852cf8695d2@kernel.org>
+Date: Sat, 18 Oct 2025 19:59:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017141536.577466-1-kirill@shutemov.name>
-In-Reply-To: <20251017141536.577466-1-kirill@shutemov.name>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 18 Oct 2025 07:56:48 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgijo0ThKoYZeypuZb2YHCL_3vdyzjALnONdQoubRmN3A@mail.gmail.com>
-X-Gm-Features: AS18NWBhMhgs4_s15aKV87bAatc3jK6By6Ho8BjAuIc9dhonJUNbnDV1fLJr0qc
-Message-ID: <CAHk-=wgijo0ThKoYZeypuZb2YHCL_3vdyzjALnONdQoubRmN3A@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kiryl Shutsemau <kas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] mm, vc_screen: move __free() handler that frees a
+ page to a common header
+To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Brendan Jackman <jackmanb@google.com>,
+ David Hildenbrand <david@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251018093002.3660549-1-rppt@kernel.org>
+ <20251018093002.3660549-2-rppt@kernel.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20251018093002.3660549-2-rppt@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 17 Oct 2025 at 04:15, Kiryl Shutsemau <kirill@shutemov.name> wrote:
->
-> To address this issue, introduce i_pages_delete_seqcnt, which increments
-> each time a folio is deleted from the page cache and implement a modified
-> page cache lookup protocol for short reads:
+On 18. 10. 25, 11:30, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> vc_screen defines __free() handler that frees a page using free_page().
+> Move that definition to include/linux/gfp.h next to free_page() and
+> rename it from free_page_ptr to free_page.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>   drivers/tty/vt/vc_screen.c | 6 ++----
+>   include/linux/gfp.h        | 2 ++
+>   2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
+> index c814644ef4ee..d2029f029de6 100644
+> --- a/drivers/tty/vt/vc_screen.c
+> +++ b/drivers/tty/vt/vc_screen.c
+> @@ -53,8 +53,6 @@
+>   #define HEADER_SIZE	4u
+>   #define CON_BUF_SIZE (IS_ENABLED(CONFIG_BASE_SMALL) ? 256 : PAGE_SIZE)
+>   
+> -DEFINE_FREE(free_page_ptr, void *, if (_T) free_page((unsigned long)_T));
+> -
+>   /*
+>    * Our minor space:
+>    *
+> @@ -371,7 +369,7 @@ vcs_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+>   	loff_t pos;
+>   	bool viewed, attr, uni_mode;
+>   
+> -	char *con_buf __free(free_page_ptr) = (char *)__get_free_page(GFP_KERNEL);
+> +	char *con_buf __free(free_page) = (char *)__get_free_page(GFP_KERNEL);
+>   	if (!con_buf)
+>   		return -ENOMEM;
+>   
+> @@ -596,7 +594,7 @@ vcs_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+>   	if (use_unicode(inode))
+>   		return -EOPNOTSUPP;
+>   
+> -	char *con_buf __free(free_page_ptr) = (char *)__get_free_page(GFP_KERNEL);
+> +	char *con_buf __free(free_page) = (char *)__get_free_page(GFP_KERNEL);
+>   	if (!con_buf)
+>   		return -ENOMEM;
+>   
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index f46b066c7661..ee3f27046667 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -385,6 +385,8 @@ extern void free_pages(unsigned long addr, unsigned int order);
+>   #define __free_page(page) __free_pages((page), 0)
+>   #define free_page(addr) free_pages((addr), 0)
+>   
+> +DEFINE_FREE(free_page, unsigned long, if (!IS_ERR_OR_NULL(_T)) free_page(_T));
 
-So this patch looks good to me, but to avoid the stack size warnings,
-let's just make FAST_READ_BUF_SIZE be 768 bytes or something like
-that, not the full 1k.
+This IMO breaks the build at this point, right? Makes sense after 3/3, 
+though.
 
-It really shouldn't make much of a difference, and we do have that
-stack size limit check for a reason.
-
-And obviously
-
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> +       seqcount_spinlock_init(&mapping->i_pages_delete_seqcnt,
-> +                              &mapping->i_pages->xa_lock);
-
-will need to use '&mapping->i_pages.xa_lock', since mapping->i_pages
-is the embedded xarray, not a pointer to it.
-
-But I do think the patch looks quite good.
-
-               Linus
+-- 
+js
+suse labs
 
