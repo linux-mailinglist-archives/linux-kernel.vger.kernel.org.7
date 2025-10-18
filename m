@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-858866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A252FBEC12A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:05:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC280BEC133
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90651421FD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80EE84241DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D684B4C98;
-	Sat, 18 Oct 2025 00:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tvRVTBeM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E3D4C98;
+	Sat, 18 Oct 2025 00:06:01 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3501F3C17;
-	Sat, 18 Oct 2025 00:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A49354AF8;
+	Sat, 18 Oct 2025 00:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760745926; cv=none; b=Z0bz+7dE9zkcIkjAk0M9i/3Sc0s6UaAiDQvvLw761bvukipVGbblL7cJeISjYZKiixdehpvkBNtacPtZdL4t5J50oGHNWcAM7uGn/wGVzf4NWvpQM1Sw3A0nB/sRmjHChQC6nJiAy958LlKsgHW/5vRdtlG2gWZfkgOYL7Fneok=
+	t=1760745961; cv=none; b=dFKANRRzbhjtX+pd9Sydr1TJf8ZpDtxhcuHoh2eqXpMHCNGul+ixxs4lopmdSTH6SykDlCeChBaQzTEc/nYCx69jhAtHuR319qo9hW1/g/AmUiwHBbbQLRyC18laO1kgsQSOs+OOxF7VmpmUgmqHMBavo8RPnF7mNaeFm0NX5Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760745926; c=relaxed/simple;
-	bh=WOIXD2aj1erNpVG0tSFDsLzoqQwtXekv2ZjXklHIzZI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Wzl64rA2NX3xwscxGbjrm00ESRJBTG/Ju893XeEl1GyKM08RdASzQUlIRnNi6zkoqtWtWKufKH/OyWzXTs+qJ3NsPJpMkvDsOVOcI7bRnY63Lay00XXrrd37yIWuTln21w592ahAwtr/LH2Zqqfk2QOKksYe/Mv4p58s3x5VhoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tvRVTBeM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0EBC4CEE7;
-	Sat, 18 Oct 2025 00:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760745925;
-	bh=WOIXD2aj1erNpVG0tSFDsLzoqQwtXekv2ZjXklHIzZI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tvRVTBeMogOKBZQEioCVJqqQwNHuhkgvhmb+ufpuFWlzMbv59merChNVUQK3M73fV
-	 JAuZ65tYuEfU1ZZ4M33bDFyg9kZzEyry/10c10cCVADBBfjlpT7zRvCW9due+1xxL8
-	 uFVHVnzws9L9aFv1gkuCgeBSBWhQ4DtC0oPMX10A=
-Date: Fri, 17 Oct 2025 17:05:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Zi Yan <ziy@nvidia.com>, Wei Yang <richard.weiyang@gmail.com>,
- linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
- kernel@pankajraghav.com,
- syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com, mcgrof@kernel.org,
- nao.horiguchi@gmail.com, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain
- <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Lance Yang
- <lance.yang@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 1/3] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-Message-Id: <20251017170524.34cccc084f58d3996ff70c8a@linux-foundation.org>
-In-Reply-To: <557fd56d-1a4c-4c65-8db6-34546c9ce8be@lucifer.local>
-References: <20251016033452.125479-1-ziy@nvidia.com>
-	<20251016033452.125479-2-ziy@nvidia.com>
-	<20251016073154.6vfydmo6lnvgyuzz@master>
-	<49BBF89F-C185-4991-B0BB-7CE7AC8130EA@nvidia.com>
-	<20251016135924.6390f12b04ead41d977102ec@linux-foundation.org>
-	<E88B5579-DE01-4F33-B666-CC29F32EEF70@nvidia.com>
-	<16b10383-1d3a-428c-918a-3bbf1f9f495d@lucifer.local>
-	<9567b456-5656-4a48-a826-332417d76585@lucifer.local>
-	<FEFDFFAF-63BD-463A-B8B2-D2B2744DEE2F@nvidia.com>
-	<557fd56d-1a4c-4c65-8db6-34546c9ce8be@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760745961; c=relaxed/simple;
+	bh=cvYny5yQsHJFubeXGJElbL68TJTK+OiH5rxfRGrAUuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k12Erfzxrw+Ub314sdm3cPp6VmV34JPeUkDaltW5pjhl6SFRAxZdWKlKhEjgHJcZgSQQ0uUXMv2Jnm1DDTk3o9ifyIYyRH/2u6A8K1i4dphtTaaWewCygi2ItU58FUuVxqAUyAEBg0zHrsUxTCWdM3Dfb+2Cuy3AT1X+qKSDWgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.147.23])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id C82DD341FD5;
+	Sat, 18 Oct 2025 00:05:58 +0000 (UTC)
+Date: Sat, 18 Oct 2025 08:05:48 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
+	netdev@vger.kernel.org, sophgo@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH] net: stmmac: dwmac-sophgo: Add phy interface filter
+Message-ID: <20251018000548-GYA1481334@gentoo.org>
+References: <20251017011802.523140-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017011802.523140-1-inochiama@gmail.com>
 
-On Fri, 17 Oct 2025 15:32:13 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Hi Inochi,
 
-> > it. I will hold on sending new version of this patchset until either you or
-> > Andrew give me a clear guidance on how to send this patchset.
+On 09:18 Fri 17 Oct     , Inochi Amaoto wrote:
+> As the SG2042 has an internal rx delay, the delay should be remove
+                                                     s/remove/removed/
+> when init the mac, otherwise the phy will be misconfigurated.
+s/init/initialize/
 > 
-> I mean if you want to delay resending this until the hotfix is sorted out then
-> just reply to 0/3 saying 'please drop this until that patch is merged'.
+> Fixes: 543009e2d4cd ("net: stmmac: dwmac-sophgo: Add support for Sophgo SG2042 SoC")
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Tested-by: Han Gao <rabenda.cn@gmail.com>
+> ---
+>  .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 25 ++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
 > 
-> Otherwise it looks live.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> index 3b7947a7a7ba..b2dee1399eb0 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> @@ -7,6 +7,7 @@
+> 
+>  #include <linux/clk.h>
+>  #include <linux/module.h>
+> +#include <linux/property.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/platform_device.h>
+> 
+> @@ -29,8 +30,23 @@ static int sophgo_sg2044_dwmac_init(struct platform_device *pdev,
+>  	return 0;
+>  }
+> 
+> +static int sophgo_sg2042_set_mode(struct plat_stmmacenet_data *plat_dat)
+> +{
+> +	switch (plat_dat->phy_interface) {
+> +	case PHY_INTERFACE_MODE_RGMII_ID:
+> +		plat_dat->phy_interface = PHY_INTERFACE_MODE_RGMII_TXID;
+> +		return 0;
+> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> +		plat_dat->phy_interface = PHY_INTERFACE_MODE_RGMII;
+> +		return 0;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  static int sophgo_dwmac_probe(struct platform_device *pdev)
+>  {
+> +	int (*plat_set_mode)(struct plat_stmmacenet_data *plat_dat);
+>  	struct plat_stmmacenet_data *plat_dat;
+>  	struct stmmac_resources stmmac_res;
+>  	struct device *dev = &pdev->dev;
+> @@ -50,11 +66,18 @@ static int sophgo_dwmac_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+> 
+> +	plat_set_mode = device_get_match_data(&pdev->dev);
+> +	if (plat_set_mode) {
+> +		ret = plat_set_mode(plat_dat);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	return stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
+>  }
+> 
+>  static const struct of_device_id sophgo_dwmac_match[] = {
+> -	{ .compatible = "sophgo,sg2042-dwmac" },
+> +	{ .compatible = "sophgo,sg2042-dwmac", .data = sophgo_sg2042_set_mode },
+I'd personally prefer to introduce a flag for this, it would be more readable and
+maintainable, something like
+struct sophgo_dwmac_compitable_data {
+	bool has_internal_rx_delay;
+}
 
-Yeah, hotfixes come first and separately please.  A hotfix will hit
-mainline in a week or so.  Whether or not they are cc:stable.  The
-not-hotfix material won't hit mainline for as long as two months!
-
-So mixing hotfixes with next-merge-window patches is to be avoided.
-
-Note that a "hotfix" may or may not be cc:stable - it depends on
-whether the Fixes: commit was present in earlier kernel releases.
+then.
+	if (data->has_internal_rx_delay)
+		sophgo_sg2042_set_mode(..)
 
 
-Actually, if a developer has a hotfix as well as a bunch of
-next-merge-window material then it's really best to send the hotfix
-only.  Hold off on the next-merge-window material so the hotfix gets
-standalone testing.  Because it's possible that the next-merge-window
-material accidentally fixes an issue in the hotfix.
+>  	{ .compatible = "sophgo,sg2044-dwmac" },
+>  	{ /* sentinel */ }
+>  };
+> --
+> 2.51.0
+> 
 
-(otoh the hotfixes *will* get that standalone testing from people who
-test Linus-latest, but it's bad of us to depend on that!)
-
-I regularly get patchsets which mix hotfixes (sometimes cc:stable) with
-next-merge-window material.  Pretty often the hotfix isn't very urgent
-so I'll say screwit and merge it all as-is, after adding a cc:stable. 
-The hotfix will get merged and backported eventually.
-
-I hope that nobody really needs to worry much about all this stuff.
-Juggling patch priority and timing is what akpms are for.
-
+-- 
+Yixun Lan (dlan)
 
