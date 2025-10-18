@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-859468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B592BEDBC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFEFBEDBD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1581C19C1B8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1817D189B865
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6324F2EBBB0;
-	Sat, 18 Oct 2025 20:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9AA28506C;
+	Sat, 18 Oct 2025 20:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tz4vjciH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="S8RVQB9g"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF36A2DC32A;
-	Sat, 18 Oct 2025 20:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005F9354AD4;
+	Sat, 18 Oct 2025 20:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760820293; cv=none; b=tHdMQEfA/d/aS3h58MJegir9uAnNYZa66+PrgtZ2KQpyrIGervHOnzypwqlivwtZcWgBvcM6RQgmNIT2jSMjqMblCmeB3HiaoRbCjXqZr9iNXNOJKW6HhfBFZGF7w0NO41Medr6evK059V1eGpjOVEC2Etlu9PRWG4aslzZhI1s=
+	t=1760820629; cv=none; b=gRl0+lhNiMQO9ZuU8758a030e2bVB1faaG3+HWXXUIN237/tJxO0N4CRDxsUJzYI6PxL1V8aguLlSJvzoER1sLBSSizMTj1be94hEw1s17YQNFmXm0GW4MkqBqUG8ATBVd3GjsRONZsH7/dSgql9cafgQOQWeHdGHu/kPRLlL6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760820293; c=relaxed/simple;
-	bh=mizIUChAFsqpIHY6nU9Fx3Ot5p8OeQz4ge3WLnGs1IU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WF2Jsdnf6hlSUDONhr2T0pWsCVoQBmxMyJiUEENMj0gLyVZ0Ra8UtqMeGDiuzOhMBnUbg/PIWEE89WPtulVHZgn/EcFRBrZ1D7aLybOnOjAgqH0nANsAH/rBcewc+MwHTpfvhw3CS3Zp7PbgqvRU3LC1uiu6YiUYJlc3NLR0mXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tz4vjciH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35164C116D0;
-	Sat, 18 Oct 2025 20:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760820293;
-	bh=mizIUChAFsqpIHY6nU9Fx3Ot5p8OeQz4ge3WLnGs1IU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Tz4vjciHPBEgfaX0+unXfY0pbZzsgdubL0xREO960MitKSNo2qjvSeprQbr0KDQDa
-	 ppYb90xfdAuxt9ZFBXz7sY6oAPlkEXN3li/QaiuGOqm42LMPxif5zkfCYsy2oXMjqx
-	 +Mlc0NS27oc3EM5T3Zr0Vp9JJRWo69rdYMo7RLYvBK1Av71FctMfjRe0jMvEphocwL
-	 UETH5IWUq0i4A1qRLJsrHI6M47syyAaAsUjMQDTa+5V3Bl/PFFw2bEA1TgVxPI2LNv
-	 JXvdJuDg+nAapHXSGEnkMYIaisS5+hoC20rx2jKjVlA9tnC+4J1wsx5vfD0aFl9rC1
-	 xy0HB2Ep75THQ==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bijan Tabatabai <bijan311@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 4/4] selftests/damon/sysfs: add obsolete_target test
-Date: Sat, 18 Oct 2025 13:44:45 -0700
-Message-ID: <20251018204448.8906-5-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251018204448.8906-1-sj@kernel.org>
-References: <20251018204448.8906-1-sj@kernel.org>
+	s=arc-20240116; t=1760820629; c=relaxed/simple;
+	bh=C20+hjWvZwhIHkR+40TDuko+jAUIyKW54m5q3JcgMqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvOZV0RyJOlqQMw6Rm0bD03v19MYNJ5WM28p6MGDxCb1jyjYlOrMdn6XrTW39T5d/Xi4FGz7Qf7O9yb6cCUzk3rgopxqCRLK8GJkRK6sja3J98K654Lv0Ws6keivRNvgS1BXgSCXk5rsWYgtjHFor+YRVX2UmwRX9HZqXGHVdYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=S8RVQB9g; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HZVFyQFH/N6BlbXZw7Nya2jm1NlFu/aT9k9hJeAWYd0=; b=S8RVQB9gc5V85YTnJ25mLHH2Vs
+	jYcPLDoDMEB7wJ3GereehfiJA/tHV9Qc71uSKDF4TlPs8FyhXlcyaUoJeUPZvlz6Y5JdQoX+Zhr+r
+	RVmVRq0wk05pUUXtc+J/P39mOXEN0XPmRT7ibqUkCTOk9rcM3BewqOYeBBrylj6u7A9uoowpHa5o3
+	Azqt2pju1pTzqbWHNYythB3qFjEh+M+rzQSEuX++nmhDN1RnCdfXLybWNYJSJuJow+KFvo+9qSYcY
+	kUew1Zpz4oNZttZXiC3p1WzmZjUcNMjGH72MEDReMLkZnFqKZTiKDlJUd8ZcMACGg5XA+as8/OW/K
+	ukzTLkjw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50152)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vADsJ-000000000i9-1B5b;
+	Sat, 18 Oct 2025 21:50:03 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vADsA-000000005aS-0gvN;
+	Sat, 18 Oct 2025 21:49:54 +0100
+Date: Sat, 18 Oct 2025 21:49:54 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
+	netdev@vger.kernel.org, sophgo@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH] net: stmmac: dwmac-sophgo: Add phy interface filter
+Message-ID: <aPP9cjzwihca-h6C@shell.armlinux.org.uk>
+References: <20251017011802.523140-1-inochiama@gmail.com>
+ <34fcc4cd-cd3d-418a-8d06-7426d2514dee@lunn.ch>
+ <i5prc7y4fxt3krghgvs7buyfkwwulxnsc2oagbwdjx4tbqjqls@fx4nkkyz6tdt>
+ <c16e53f9-f506-41e8-b3c6-cc3bdb1843e1@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c16e53f9-f506-41e8-b3c6-cc3bdb1843e1@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-A new DAMON sysfs file for pin-point target removal, namely
-obsolete_target, has been added.  Add a test for the functionality.  It
-starts DAMON with three monitoring target processes, mark one in the
-middle as obsolete, commit it, and confirm the internal DAMON status is
-updated to remove the target in the middle.
+On Sat, Oct 18, 2025 at 10:38:17PM +0200, Andrew Lunn wrote:
+> On Sat, Oct 18, 2025 at 08:42:07AM +0800, Inochi Amaoto wrote:
+> > On Fri, Oct 17, 2025 at 08:16:17PM +0200, Andrew Lunn wrote:
+> > > On Fri, Oct 17, 2025 at 09:18:01AM +0800, Inochi Amaoto wrote:
+> > > > As the SG2042 has an internal rx delay, the delay should be remove
+> > > > when init the mac, otherwise the phy will be misconfigurated.
+> > > 
+> > > Are there any in tree DT blobs using invalid phy-modes? In theory,
+> > > they should not work, but sometimes there is other magic going on. I
+> > > just want to make sure this is not going to cause a regression.
+> > > 
+> > 
+> > I see no SG2042 board using invalid phy-modes. Only rgmii-id is used,
+> > which is vaild.
+> 
+> Great, thanks for checking.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- tools/testing/selftests/damon/sysfs.py | 37 ++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+Hang on. Is this right?
 
-diff --git a/tools/testing/selftests/damon/sysfs.py b/tools/testing/selftests/damon/sysfs.py
-index fd8d3698326e..b34aea0a6775 100755
---- a/tools/testing/selftests/damon/sysfs.py
-+++ b/tools/testing/selftests/damon/sysfs.py
-@@ -279,5 +279,42 @@ def main():
- 
-     kdamonds.stop()
- 
-+    # test obsolete_target.
-+    proc1 = subprocess.Popen(['sh'], stdout=subprocess.PIPE,
-+                             stderr=subprocess.PIPE)
-+    proc2 = subprocess.Popen(['sh'], stdout=subprocess.PIPE,
-+                             stderr=subprocess.PIPE)
-+    proc3 = subprocess.Popen(['sh'], stdout=subprocess.PIPE,
-+                             stderr=subprocess.PIPE)
-+    kdamonds = _damon_sysfs.Kdamonds(
-+            [_damon_sysfs.Kdamond(
-+                contexts=[_damon_sysfs.DamonCtx(
-+                    ops='vaddr',
-+                    targets=[
-+                        _damon_sysfs.DamonTarget(pid=proc1.pid),
-+                        _damon_sysfs.DamonTarget(pid=proc2.pid),
-+                        _damon_sysfs.DamonTarget(pid=proc3.pid),
-+                        ],
-+                    schemes=[_damon_sysfs.Damos()],
-+                    )])])
-+    err = kdamonds.start()
-+    if err is not None:
-+        print('kdamond start failed: %s' % err)
-+        exit(1)
-+    kdamonds.kdamonds[0].contexts[0].targets[1].obsolete = True
-+    kdamonds.kdamonds[0].commit()
-+
-+    status, err = dump_damon_status_dict(kdamonds.kdamonds[0].pid)
-+    if err is not None:
-+        print(err)
-+        kdamonds.stop()
-+        exit(1)
-+
-+    del kdamonds.kdamonds[0].contexts[0].targets[1]
-+
-+    assert_ctxs_committed(kdamonds.kdamonds[0].contexts, status['contexts'])
-+
-+    kdamonds.stop()
-+
- if __name__ == '__main__':
-     main()
+The commit says that SG2042 has an internal receive delay. This is
+presumably the MAC side.
+
+To work around that, you map rgmii-id to rgmii-txid for the PHY, to
+prevent the PHY from enabling its receive-side clock delay.
+
+It seems to me that you're saying that rgmii-rxid and rgmii-id
+should not be used with these MACs, and you're fixing up to remove
+the receive-side delay.
+
+"rgmii-id" doesn't mean "there is a delay _somewhere_ in the system".
+It's supposed to mean that the PHY should add delays on both tx and
+rx paths.
+
+Confused.
+
 -- 
-2.47.3
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
