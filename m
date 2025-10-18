@@ -1,185 +1,149 @@
-Return-Path: <linux-kernel+bounces-859478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499A7BEDC51
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 23:38:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F1FBEDC63
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 00:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AAB19A57EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:39:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 141E34E219F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6C1285CAE;
-	Sat, 18 Oct 2025 21:38:35 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A711EE7B9;
-	Sat, 18 Oct 2025 21:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1C2877E9;
+	Sat, 18 Oct 2025 22:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XqAhIbmV"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B242566E9
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 22:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760823515; cv=none; b=j1yJ7ZEgfC7PdjRk+dTKURVPCSMYKHrl6NQBLn8qzxlaFvKXq1xadKCx01YbaXzwmo1hajP82x+UTv4o4IIT5K2yPE2TDC7hIGB8SdUfZQcTTW2Pznv1dqj9mPIyP4n3K/0hgV6DuNvQjxEtKM7EV6V5djnHcxZ/rsQiuEwsWKo=
+	t=1760825958; cv=none; b=HUzUgdnv1m5pkgT2BwE3B+x0QrCNkIqHf1voGIseoN6o6uHsffyXcvycPCA6EX/XU15ljmF25HoDMgpWClE7AebF0DV/uUtzD/dj/UJoE4KN6zFs/GFExC3U2RkxOm18YhgH3jyv4me3SqVQAWqHUqE5+o/wt4+h5uU+aJe4SO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760823515; c=relaxed/simple;
-	bh=mMSO7OTeeJdmp6XTr2PDyhayshJv0eZcc/JJkB1qmcI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Z420HOmojXWxnK3VMeMSb5OZltLJbxWagOK3fzVpBIpNAEF1ysa4+N8d76Z1QXM4eLt5Akc6BiFh+H/3fPfyVE1zQTFB1EbFBxGwP/HeaVAzk45S+FRzVDrVKBzXoKoZcMef0r4/O0E12u8ohtkQFQHvdiy0NLzSvYp3AaHhr2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 1751B92009C; Sat, 18 Oct 2025 23:38:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 1110D92009B;
-	Sat, 18 Oct 2025 22:38:31 +0100 (BST)
-Date: Sat, 18 Oct 2025 22:38:30 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: linux-pci@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Bjorn Helgaas <bhelgaas@google.com>, linux-mips@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] MIPS: Malta: Use pcibios_align_resource() to
- block io range
-In-Reply-To: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2510181744400.39634@angie.orcam.me.uk>
-References: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1760825958; c=relaxed/simple;
+	bh=JlKaawplRif18Nf9EUoPulaOPmERcSHsfxRqy+XDXJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TEkorYlR/2fLKUfzgyuuEb9wSpbT+VLadFUi+WKcvgbaKpx1P+gcBqRo4mAw/I3wPWNcE+k97eCc8l4zEnhmV+t7jFcmgY+RfISMyQeWgWN7QKcjYTldOSFJGJwG1KXp2N5KCOeMFB5En7IT3U8Nonp/pAPTD9seO0i4kHQ5LLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XqAhIbmV; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d67abd215so153545ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:19:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760825957; x=1761430757; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xqo7yNFtggFSEzPqHQOFVfXHu2D1vZdxkr8I2A3MgfE=;
+        b=XqAhIbmVkmact6RhjHTVufMtBw159dsQ9wR52u5a98jegnlGl3YffITbI8ci6c14z0
+         UqPbAslyZyREHMwFzfqil3Kbz+ilz0PxoKBCzttIJtkMB1DnsVQN1fP7TsqrUwi2A5XR
+         uMNFVWy08UJ2ncZ9kjuXaaa2JnHfFhBJ8/W0Nd3NtDCY83gEhLEypQR693NbDhtyVlYV
+         txDJn3lXVC+4x9xhEcOCyaiQuqGiz4U203QIvp5KMZNMESyIbGUWkx8cnbilkb20Omdr
+         vDeD9adGAPs57AsvRIHJOISSNr2sdNTxgbAPdZ+/zqnUrr46kmEaeSzLrnY7pyVtxP6F
+         LL4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760825957; x=1761430757;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xqo7yNFtggFSEzPqHQOFVfXHu2D1vZdxkr8I2A3MgfE=;
+        b=gASpl3d1HWZUTQVUye3VZQfmGZhHBrL1NoUWZ18NxIdKIcJPZ8fX54C4S6ZVrOkaYH
+         igocBJRAVlk6YCa97X+rp8QFOM4gKbCUn1e0dT5Vz9Hlznx1ulaVhITN3F3mIGAHT35w
+         dPrkztHVYvqQFoRFudp0ZaCLYeikApilGxRJ5rqodOK+H1HqaLVqfQ5pGzVqmb+AUk89
+         rL2nLF1EjSYal5o0zVtHF33ec2YFZCNguz3MwguZ1KcqZwmnb6eP5qzLs8gLYYxJBq0m
+         g/+WPLjkXI0HnnXzeJz4whnTPbFlzbXiiY8eP8feEPaywNcAnuWoXfSxBZ/HE02MmLKJ
+         ND2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVGkWzRIdwSLTu4/gAzU7xfT2QGbMHszvXXq0xpTbJHm8aNAJRMpZUr8DyGG/EM1sh7VQLhJdIfYIK5nQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQIWhp1MilGyC7Ttzw+zX14jHoJgrTCbisUfdobdwuXrzkyVUC
+	pleZkvb3z42yZoRA9lKq4Vx5UJsPxDQ+lFK4PztRqxX6qfSwf3GWpX1hk0iB/Fka1A==
+X-Gm-Gg: ASbGnctcr4hN6QMCo/XwARshqGg65u9o0bD2ces7ribCDsyBmwP0tkraaV31kTBf3OG
+	W5rjbEZ/toS4ArMzuUevE+pXu4tpk5tyoIU1EVec1IrjD+V9TPZXHiGOBeFoBNsEqN4oxVKjfYU
+	d8DIGiaZfGJatmH5I8XxfpO9MNwKUsiy66y9VdoDxPqlbj4yNkZ/YAuvJNvjHW3zl4WghHA2+v0
+	vhYkodEAiUWheg3QdF0I2Vt7rkrBVllLnWEFrrSP67qCs4zQqMTyTD5D4Q6y8e5IPlf1RUTRV/k
+	+g+vawq9ZHvNreRh6Ew27f4cmqUNjQLdXPzeSwIIHS9spWSa2YViPqqZcIdnwMt8Fno7Y5Fg3GN
+	6UFY7d9kkcdpAWfWfgPnOy9zx30F1APHWvhh9unTraUo/y2xgb+4MFLev0Sh9Kd+QmvqD7cU/RD
+	B/aVOiM+j/nA4QHj8gp02gZ+Hjt0TQupwMccsw
+X-Google-Smtp-Source: AGHT+IHNOSRoOYuo0/rydKUY7NRTeMMzgSZT/HjwIBsuJ//tdfpp1kxrb6bUECWA8HoYT4POGrda/w==
+X-Received: by 2002:a17:902:ce0a:b0:292:64ec:e0f with SMTP id d9443c01a7336-29264ec0f7emr836085ad.6.1760825956380;
+        Sat, 18 Oct 2025 15:19:16 -0700 (PDT)
+Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29247223a3csm35204555ad.112.2025.10.18.15.19.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Oct 2025 15:19:15 -0700 (PDT)
+Date: Sat, 18 Oct 2025 15:19:11 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: bhelgaas@google.com, alex.williamson@redhat.com,
+	pasha.tatashin@soleen.com, dmatlack@google.com, jgg@ziepe.ca,
+	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
+	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com,
+	parav@nvidia.com, saeedm@nvidia.com, kevin.tian@intel.com,
+	jrhilke@google.com, david@redhat.com, jgowans@amazon.com,
+	dwmw2@infradead.org, epetron@amazon.de, junaids@google.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 11/21] vfio/pci: Skip clearing bus master on live
+ update device during kexec
+Message-ID: <20251018221911.GC1034710.vipinsh@google.com>
+References: <20251018000713.677779-1-vipinsh@google.com>
+ <20251018000713.677779-12-vipinsh@google.com>
+ <aPM9Eie71YsJKdak@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPM9Eie71YsJKdak@wunner.de>
 
-On Fri, 17 Oct 2025, Ilpo Järvinen wrote:
-
-> According to Maciej W. Rozycki <macro@orcam.me.uk>, the
-> mips_pcibios_init() for malta adjusts root bus IO resource start
-> address to prevent interfering with PIIX4 I/O cycle decoding. Adjusting
-> lower bound leaves PIIX4 IO resources outside of the root bus resource
-> and assign_fixed_resource_on_bus() does not link the resources into the
-> resource tree.
-
- As mentioned in the other reply resource assignments such as:
-
-00000000-00ffffff : MSC PCI I/O
-  00000000-0000001f : 0000:00:0a.2
-  00000020-00000021 : pic1
-  00000030-0000003f : 0000:00:0a.1
-  00000040-0000005f : 0000:00:0b.0
-  00000060-0000006f : i8042
-  00000070-00000077 : rtc0
-  000000a0-000000a1 : pic2
-
-otherwise result, which -- unsurprisingly -- break things.
-
-> Prior to commit ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-> the arch specific pcibios_enable_resources() did not check if the
-> resources were assigned which diverges from what PCI core checks,
-> effectively hiding the PIIX4 IO resources were not properly within the
-> resource tree. After starting to use pcibios_enable_resources() from
-> PCI core, enabling PIIX4 fails:
+On 2025-10-18 09:09:06, Lukas Wunner wrote:
+> On Fri, Oct 17, 2025 at 05:07:03PM -0700, Vipin Sharma wrote:
+> > Set skip_kexec_clear_master on live update prepare() so that the device
+> > participating in live update can continue to perform DMA during kexec
+> > phase.
 > 
-> ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
-> ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
+> Instead of introducing the skip_kexec_clear_master flag,
+> could you introduce a function to check whether a device
+> participates in live update and call that in pci_device_shutdown()?
 > 
-> MIPS PCI code already has support for enforcing lower bounds using
-> PCIBIOS_MIN_IO in pcibios_align_resource() without altering the IO
-> window start address itself. Make malta PCI code too to use
-> PCIBIOS_MIN_IO.
+> I think that would be cleaner.  Otherwise someone reading
+> the code has to chase down the meaning of skip_kexec_clear_master,
+> i.e. search for places where the bit is set.
 
- So this does bring the ATA interface back to life:
+That is one way to do it. In our internal implementation we have an API
+which checks for the device participation in the live update, similar to
+what you have suggested.
 
- ata_piix 0000:00:0a.1: assign IRQ: got 0
--ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
--ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
-+scsi host0: ata_piix
-+scsi host1: ata_piix
-+ata1: PATA max UDMA/33 cmd 0x1f0 ctl 0x3f6 bmdma 0x1800 irq 14 lpm-pol 0
-+ata2: PATA max UDMA/33 cmd 0x170 ctl 0x376 bmdma 0x1808 irq 15 lpm-pol 0
-[...]
-+ata2.00: CFA: ST625211CF, 3.04, max UDMA/33
-+ata2.00: 4883760 sectors, multi 0: LBA
-[...]
-+scsi 1:0:0:0: Direct-Access     ATA      ST625211CF       3.04 PQ: 0 ANSI: 5
-+sd 1:0:0:0: [sda] 4883760 512-byte logical blocks: (2.50 GB/2.33 GiB)
-+sd 1:0:0:0: [sda] Write Protect is off
-+sd 1:0:0:0: [sda] Mode Sense: 00 3a 00 00
-+sd 1:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
-+sd 1:0:0:0: [sda] Preferred minimum I/O size 512 bytes
+The PCI series posted by Chris [1] is providing a different way to know
+the live update particpation of device. There pci_dev has a new struct
+which contains particpation information.
 
-and also brings PS/2 interfaces, which weren't there before for whatever 
-reason given that they are not PCI devices:
+In this VFIO series, my intention is to make minimal changes to PCI or
+any other subsystem. I opted for a simple variable to check what device
+should do during kexec reboot.
 
-+serio: i8042 KBD port at 0x60,0x64 irq 1
-+serio: i8042 AUX port at 0x60,0x64 irq 12
+My hunch is that we will end up needing some state information in the
+struct pci_dev{} which denotes device participation and whatever that
+ends up being, we can use that here.
 
-though I guess hardly anyone has ever used these ports with the Malta (it 
-does have actual connectors).
+[1] https://lore.kernel.org/linux-pci/20250916-luo-pci-v2-0-c494053c3c08@kernel.org/
+>
+> When the device is unbound from vfio-pci, don't you have to
+> clear the skip_kexec_clear_master flag?  I'm not seeing this
+> in your patches but maybe I'm missing something.  That problem
+> would solve itself if you follow the suggestion above.
 
- However it also takes some resource reservations away:
+VFIO subsystem blocks removal from vfio-pci if there is still a
+reference to device (references are increased/decreased when device is
+opened/closed, check vfio_unregister_group_dev()). LUO also do fget on
+the VFIO FD which means we will not get closed callback on the VFIO FD
+until that reference is dropped besides the opened file in userspace.
 
--00000000-0000001f : dma1
--00000020-00000021 : pic1
--00000040-0000005f : timer
--00000060-0000006f : keyboard
--00000070-00000077 : rtc0
--00000080-0000008f : dma page reg
--000000a0-000000a1 : pic2
--000000c0-000000df : dma2
--00000170-00000177 : ata_piix
--000001f0-000001f7 : ata_piix
--000002f8-000002ff : serial
--00000376-00000376 : ata_piix
--00000378-0000037a : parport0
--0000037b-0000037f : parport0
--000003f2-000003f2 : floppy
--000003f4-000003f5 : floppy
--000003f6-000003f6 : ata_piix
--000003f7-000003f7 : floppy
--000003f8-000003ff : serial
--00001000-00ffffff : MSC PCI I/O
-+00000000-00ffffff : MSC PCI I/O
-+  00000020-00000021 : pic1
-+  00000060-0000006f : i8042
-+  00000070-00000077 : rtc0
-+  000000a0-000000a1 : pic2
-+  00000170-00000177 : 0000:00:0a.1
-+    00000170-00000177 : ata_piix
-+  000001f0-000001f7 : 0000:00:0a.1
-+    000001f0-000001f7 : ata_piix
-+  000002f8-000002ff : serial
-+  00000376-00000376 : 0000:00:0a.1
-+    00000376-00000376 : ata_piix
-+  00000378-0000037a : parport0
-+  0000037b-0000037f : parport0
-+  000003f2-000003f2 : floppy
-+  000003f4-000003f5 : floppy
-+  000003f6-000003f6 : 0000:00:0a.1
-+    000003f6-000003f6 : ata_piix
-+  000003f7-000003f7 : floppy
-+  000003f8-000003ff : serial
-   00001000-0000103f : 0000:00:0a.3
-   00001040-0000105f : 0000:00:0a.2
-     00001040-0000105f : uhci_hcd
-
--- as you can see the PIT timer resource and ISA DMA registers (used by 
-the SuperIO devices, such as the FDD) are now gone.  I'm concerned about 
-it even though it seems to have no visible impact on system operation.
-
- All in all this change does fix a serious regression and therefore:
-
-Tested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-
-however I think the missing resource reservations need to be investigated.
-
-> Fixes: aa0980b80908 ("Fixes for system controllers for Atlas/Malta core cards.")
-
- I don't think it's correct to refer this here; things worked just fine up 
-to ae81aad5c2e1 even if via different means and backporting blindly could 
-be dangerous.  It might be worth mentioning somewhere in the text though.
-
-  Maciej
+So, prior to kexec, luo will drop reference only if live update cancel
+happens and that is the time we are resetting this flag in this patch
+series. 
 
