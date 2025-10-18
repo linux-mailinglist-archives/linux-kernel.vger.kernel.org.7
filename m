@@ -1,175 +1,85 @@
-Return-Path: <linux-kernel+bounces-859081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3A2BECACD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F01BECAD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45D83B6383
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 08:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF52442139E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 08:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0BA2EB868;
-	Sat, 18 Oct 2025 08:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013C72EB86C;
+	Sat, 18 Oct 2025 08:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="AD5XR7Nm"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+YXrvq1"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571E7287510;
-	Sat, 18 Oct 2025 08:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FD73BB5A
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 08:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760777224; cv=none; b=oBaikFfB7FN2aE6PjU4ecoVH6jIjlCRyk0Wv+ow28VUs5GgffBY5+LhdfuBNUgmI3G3qx4fBp+VDVU/rkyUbLIlzFxM8QB7503ocmnEOjxexD5YbI9euFEPfPoworOS1ZG+Fl0Wi8fRP0ivhJIiJ8xx8vTUmLMp1P9N9vI3jUic=
+	t=1760777318; cv=none; b=IjK+SHS9fBSX46d9UskPoW8IV3T2xQJkDkpZIuYNPuKbr2eRzRVpn6FbLhif6RPiWhwqUlEq7mhuGckVyzQQYCso5jm+nSKuLNlkW358ykV9lwth60HzWWqFyjPQtVu//41WFfbdNPamFPPHFq8+gTEDfMPnBdFnxPFIc9V7U28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760777224; c=relaxed/simple;
-	bh=fw6L8ACEjG8b3uUVswZemuK0fXowd7Gbu+ZmHZX7/ew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LLCpWyP59eSTQnWBy6ZDhMVjXNr8owwcHLy9AZ27Nl3aKMTbB1iqnzxxKGfPw8zP79OUFmqIac99oA5yuln0VJncn6K/lBoLmtZj/kmxkNj9JuwwlPXwLWp/H6wJqpR4wDOMaoorIi7QuN52tQ5CXSko1zrWDjrLKhY1EzSPnAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=AD5XR7Nm; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=PtXeoyMbEb3nG99AFaMa2rNFJ1WX4VazwCqad42ukB8=;
-	b=AD5XR7NmSD71grdrmY7EqMR7hVnfBjEGjLO/Sn5nWEGBbnS3ZCsHvokz8iNNa8zYKy9/+j/PE
-	hk2ALKCefi0mTib91JeeloNYzPxN4DEKO+rPT4UbOzKZ55lxbTgqqDcU4DZd4sJNyvnYb9/uqHf
-	jlx3exQ0zEZsGJKliLGJLh0=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cpZzq0xH6zLlVc;
-	Sat, 18 Oct 2025 16:46:31 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3EC951A016C;
-	Sat, 18 Oct 2025 16:46:53 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 18 Oct 2025 16:46:52 +0800
-Message-ID: <9ce597a0-9df4-4c92-913b-ca75fc028972@huawei.com>
-Date: Sat, 18 Oct 2025 16:46:52 +0800
+	s=arc-20240116; t=1760777318; c=relaxed/simple;
+	bh=krVQ/wnpCDpBBy+ZH1VvhMN0FqIcllfCgJaAQCKemmw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=gJnxzz4CRqbTl5NFeKGBSAcgxCV3osVoWBQHnnQ+zMjIbfTpLuYDkkuJPSYkK71MfENDgD5IYEzgfMS83QCf862re9BEnehEVN4ucrrnfhGc9S/mwEhbCZYXRIRqyalEbBBCWiPmaPN/Af7GAI9DcC8P3xA13FpSxWuT1KOg/2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+YXrvq1; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-92ec93a8ae4so63343241.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 01:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760777316; x=1761382116; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=krVQ/wnpCDpBBy+ZH1VvhMN0FqIcllfCgJaAQCKemmw=;
+        b=h+YXrvq120n70r73zXKdOn86Gptfmet3C2xNR6vi2VfdQRHsw8ZbCx/3+mczysQuXY
+         3I0pHfzDXEc2vU4Gy8OYgjYeZNFFvRfSWf+A+7bTh9+m7g00EUAahtNYgxgSnXU4iZjc
+         wM+/U6Md90qsgW3H6jUfghACI2iIt+5NA5fZ80x2acjWqNHCp6Dc1jIqXe3Fpz9eDUTD
+         /8KKSwPMDiiLRydp4dkmvf+LlHrgbfQ2qLbSeO8nEdsu4AGp8SbibSAssajsXvWMofxu
+         DkXfJ2fJ8EwPlPuHitrk1ZFEYRusmWrCsqFZKXvajA7VDHEf/r7e6T8pqZRbB7ltEI8o
+         bhsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760777316; x=1761382116;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=krVQ/wnpCDpBBy+ZH1VvhMN0FqIcllfCgJaAQCKemmw=;
+        b=mD25vL06ZzVVexB9rBAw2cDmIcohXEYAsu2HGh07z9ZeY8cuZNuhZESkozsjWSnhor
+         Zrp1by1Zsv/iM7AlihRFGsx+FnAR0dHY5WI/fp+dHcpkOLpaQyPzxj20H2tJ25y5uSNd
+         4HH6fvMccC49MMfRnKtDkkLMDab2bwE7gv9Zj4pZrSEwyOj3L3wHCDa+EaguLMlwPjl+
+         u4HjMEWnAOOtJZGzDy+nqWmreMtezdmuM0WPeq6Tj2k3sN3uHAiAzoL1N2IUmBo5W+Jo
+         jwb6BYnafmEHdCtbefkqnO/wuyI+n2HntV9HcfZMTn9Q/j8RB3+KLG/TwKQFT7vs5mFs
+         2QTg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4w4SU0TtiINAgkpSDaT3fhVFQzKyWakIzvFaUme1MFBKomsTrCI432THlzLaCCgxMMHyjy4Tm4XbEfOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6mvTq319iKXVW4/NlfuWz354kcIJkN83ScwCsooh28vNTB/5z
+	6t5E2/R9U1BK9Jn2t8BhCTT3NcKGdHXQzBbkkOadeeH3vRqkIIQkjw4ThbgIWbM9Bif1TE2pcgR
+	A+H7iWRh36rsN+ji0l4C9oC9GXbYnbDw=
+X-Gm-Gg: ASbGnctqkxRDo0CkVQ5LL3Z7tQvfuTdxDGNY1M7r8ls6JO+jZYyT2TNw5ZhJ0bgPZ6/
+	7wTS/8x4zAntig1rHi8qEnNt/pyEULP3Rh/v8fQtWshJ8pLlxflBAFrmqz0L7yba/obQ01VzQ4n
+	l3JuUQkMxecmYh+YgzHVR6fU/TIebuoBWuppbMbRRTQDR6FUuRZ6kp7J6tYSq34OANPKTbFljiX
+	+GK52+iXDiXvQxyNTU/gNsB83t0pj1M0YywJt6hmhGKIxoaRmXxWVH0l3TGNtx3GpGDNEEf
+X-Google-Smtp-Source: AGHT+IH+35tkoNkDZi4Kfek0sHfIGm6qquzzBqilO88Ji27d0+BF3jHiGdftot4dUKA6gHYqHTNj90YoNLdNHjUPtCk=
+X-Received: by 2002:a05:6102:3a0b:b0:5d4:460:8e6f with SMTP id
+ ada2fe7eead31-5d7dd55eedbmr1141234137.1.1760777315808; Sat, 18 Oct 2025
+ 01:48:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/4] iommu: Add IOMMU_DEBUG_PAGEALLOC sanitizer
-To: Mostafa Saleh <smostafa@google.com>, <linux-mm@kvack.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>
-CC: <corbet@lwn.net>, <joro@8bytes.org>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <akpm@linux-foundation.org>, <vbabka@suse.cz>,
-	<surenb@google.com>, <mhocko@suse.com>, <jackmanb@google.com>,
-	<hannes@cmpxchg.org>, <ziy@nvidia.com>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <rppt@kernel.org>
-References: <20251003173229.1533640-1-smostafa@google.com>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <20251003173229.1533640-1-smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+From: Christian <christiansantoslima21@gmail.com>
+Date: Sat, 18 Oct 2025 05:48:25 -0300
+X-Gm-Features: AS18NWBorZOBAkGsNXDT1dJcGL99kDvhxs1VBNaQlHzRAkXFiimDIYkW6xXq1i4
+Message-ID: <CABm2a9ebHfFNatSAsjSCTmRYBa1UeuhnDj8nZtGnKWXiCXOpHw@mail.gmail.com>
+Subject: How to start contributing?
+To: clm@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-在 2025/10/4 1:32, Mostafa Saleh 写道:
-> Overview
-> --------
-> This patch series introduces a new debugging feature,
-> IOMMU_DEBUG_PAGEALLOC, designed to catch DMA use-after-free bugs
-> and IOMMU mapping leaks from buggy drivers.
-> 
-> The kernel has powerful sanitizers like KASAN and DEBUG_PAGEALLOC
-> for catching CPU-side memory corruption. However, there is limited
-> runtime sanitization for DMA mappings managed by the IOMMU. A buggy
-> driver can free a page while it is still mapped for DMA, leading to
-> memory corruption or use-after-free vulnerabilities when that page is
-> reallocated and used for a different purpose.
-> 
-> Inspired by DEBUG_PAGEALLOC, this sanitizer tracks IOMMU mappings on a
-> per-page basis, as it’s not possible to unmap the pages, because it
-> requires to lock and walk all domains on every kernel free, instead we
-> rely on page_ext to add an IOMMU-specific mapping reference count for
-> each page.
-> And on each page allocated/freed from the kernel we simply check the
-> count and WARN if it is not zero.
-> 
-> Concurrency
-> -----------
-> By design this check is racy where one caller can map pages just after
-> the check, which can lead to false negatives.
-> In my opinion this is acceptable for sanitizers (for ex KCSAN have
-> that property).
-> Otherwise we have to implement locks in iommu_map/unmap for all domains
-> which is not favourable even for a debug feature.
-> The sanitizer only guarantees that the refcount itself doesn’t get
-> corrupted using atomics. And there are no false positives.
-> 
-> CPU vs IOMMU Page Size
-> ----------------------
-> IOMMUs can use different page sizes and which can be non-homogeneous;
-> not even all of them have the same page size.
-> 
-> To solve this, the refcount is always incremented and decremented in
-> units of the smallest page size supported by the IOMMU domain. This
-> ensures the accounting remains consistent regardless of the size of
-> the map or unmap operation, otherwise double counting can happen.
-> 
-> Testing & Performance
-> ---------------------
-> This was tested on Morello with Arm64 + SMMUv3
-> Also I booted RockPi-4b with Rockchip IOMMU.
-> Did some tests on Qemu including different SMMUv3/CPU page size (arm64).
-> 
-> I also ran dma_map_benchmark on Morello:
-> 
-> echo dma_map_benchmark > /sys/bus/pci/devices/0000\:06\:00.0/driver_override
-> echo 0000:06:00.0 >  /sys/bus/pci/devices/0000\:06\:00.0/driver/unbind
-> echo 0000:06:00.0 > /sys/bus/pci/drivers/dma_map_benchmark/bind
-> ./dma_map_bechmark -t $threads -g $nr_pages
-> 
-> CONFIG refers to "CONFIG_IOMMU_DEBUG_PAGEALLOC"
-> cmdline refer to "iommu.debug_pagealloc"
-> Numbers are (map latency)/(unmap latency), lower is better.
-> 
-> 			CONFIG=n    CONFIG=y    CONFIG=y
-> 			            cmdline=0   cmdline=1
-> 4K - 1 thread		0.1/0.6     0.1/0.6     0.1/0.7
-> 4K - 4 threads		0.1/1.0     0.1/1.1     0.1/1.1
-> 1M - 1 thread		0.8/21.2    0.8/21.2    5.6/42.5
-> 1M - 4 threads		1.1/46.3    1.1/46.1    5.9/45.5
-> 
-> Thanks,
-> Mostafa
-> 
-> Mostafa Saleh (4):
->    drivers/iommu: Add page_ext for IOMMU_DEBUG_PAGEALLOC
->    drivers/iommu: Add calls for iommu debug
->    drivers/iommu-debug: Track IOMMU pages
->    drivers/iommu-debug: Check state of mapped/unmapped kernel memory
-> 
->   .../admin-guide/kernel-parameters.txt         |   6 +
->   drivers/iommu/Kconfig                         |  14 ++
->   drivers/iommu/Makefile                        |   1 +
->   drivers/iommu/iommu-debug.c                   | 160 ++++++++++++++++++
->   drivers/iommu/iommu.c                         |  21 ++-
->   include/linux/iommu-debug.h                   |  24 +++
->   include/linux/mm.h                            |   7 +
->   mm/page_ext.c                                 |   4 +
->   8 files changed, 235 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/iommu/iommu-debug.c
->   create mode 100644 include/linux/iommu-debug.h
-> 
-Hi,
-
-I have tested the patch on kunpeng 920 and it works as expected.
-
-Tested-by: Qinxin Xia <xiaqinxin@huawei.com>
-
-Thanks,
-Qinxin Xia
-
+Hi, I would like to start contributing to BTRFS and I would like to
+know if you have something like "Good First Issue" for newcomers?
 
