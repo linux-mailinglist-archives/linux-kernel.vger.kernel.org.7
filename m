@@ -1,231 +1,130 @@
-Return-Path: <linux-kernel+bounces-859260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB74BED281
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91483BED28A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BE0C4E75AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:21:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 817F04E8411
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 15:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6559E22A4EB;
-	Sat, 18 Oct 2025 15:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DY3MXu2r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A852236F0;
+	Sat, 18 Oct 2025 15:23:30 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D6421CFEF;
-	Sat, 18 Oct 2025 15:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184FE221DB1
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 15:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760800881; cv=none; b=NQG0mR3ujKz7xZBaFrZLP0dcPJtwGC8hjicjzmsRUV20M+vLLdwthZxL9tdN88qJTopjzu5a1SWHthV5qdTJUuQBpKSN2fLOc+inwcqwiyxa5iToL4yZgeQkNOehek4PyI3q/pC4o4ZdAYgBp4+UfZqI9xJX3cJA97QAa0w4W4M=
+	t=1760801009; cv=none; b=eLWy7mtatq5GZdT/d06MMVLss9pccxpCbGtf6z4SfHEnlsPteKjRsasjOjT0lk9bRlvX7QWxsWmnwDtEWzMSwK7QFjsF90H4DTjpioPR822WjxtjgTJlmzzFSdSckFK0QsxT/BwBX8X0tkQ4CyQlILaZlQZeMTUN/c04L5ue8eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760800881; c=relaxed/simple;
-	bh=vVYZl4oCLGwM7SQGP//U+44wtpZOiDFyOu33ohtCr0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dJclOGhXCwL/GnHO0+FYAMf56THivJHjkoGX+A2GFDQfegZqesgnz34vq3YZj/BHn6RBGTlK9qPB6E4l7SSaM4DuXgTv8kONGZV/ODbToZeDcjPcnMQSAdIWxoWpvq2MXG++FipWnmNzPWKLJX15MAE5I8Wf/XnmoUHa5uFEzC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DY3MXu2r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A70D3C4CEF8;
-	Sat, 18 Oct 2025 15:21:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760800880;
-	bh=vVYZl4oCLGwM7SQGP//U+44wtpZOiDFyOu33ohtCr0E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DY3MXu2r0KYyVn2cLnp7wVLtb7YgesBYzYVYeu9Sr9VELnZCcds6AwnUbUhJy7qNo
-	 cQf9numgiNhd7IfTcL0h8/FtyhCvnk67DfsKd6DhITjx4K1krWVr2LHcc/fcS75ga0
-	 fP0wLRRZyBIpB/mlE8Ulr12xbbvbBRwcrp7ste4RUS30Gf1plu81WcJpW7agdIe3YW
-	 rlib9LNwnCOWkmxNX9yNf3q3X385/mCd5AYDW3soo1rvvc9tzClZNw6iPL5UA+NO/C
-	 QYxeSRqXlYVxjAyq9tHUCfm2amnWQRrSXtWfSHBG8prKAsyjQLAJ0LGEpeRDCB0eCS
-	 6n0PhnDbUPmnA==
-Date: Sat, 18 Oct 2025 16:21:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 2/7] docs: iio: New docs for ad4062 driver
-Message-ID: <20251018162113.002d92f7@jic23-huawei>
-In-Reply-To: <20251013-staging-ad4062-v1-2-0f8ce7fef50c@analog.com>
-References: <20251013-staging-ad4062-v1-0-0f8ce7fef50c@analog.com>
-	<20251013-staging-ad4062-v1-2-0f8ce7fef50c@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760801009; c=relaxed/simple;
+	bh=qmzfsmqRRfV1AgSEIfIAc2Amfkf1IbHGW6j/smMTuqE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3jgX/F9Og4980VZ092n/geHkmXJc+WSbx/X0aLWuD/e6L3ZwDMFXgLf9y0m6axG3piTEvkOLo+JPuXKLgHt4NMXqlVSsBGqJZJzremj3cgYCT9KC/D6ZIH1x/AQAGc0ItLC6NIxiRXxysBU6p4v7C3R9PuqRiDLNmePIr3vuUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5af3a1b8ac3611f0a38c85956e01ac42-20251018
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP, DN_TRUSTED
+	SRC_TRUSTED, SA_UNTRUSTED, SA_LOWREP, SA_EXISTED, SN_UNTRUSTED
+	SN_LOWREP, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:9657a6c6-2841-4262-824e-3fefe3e87ff4,IP:10,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:40
+X-CID-INFO: VERSION:1.3.6,REQID:9657a6c6-2841-4262-824e-3fefe3e87ff4,IP:10,URL
+	:0,TC:0,Content:0,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:40
+X-CID-META: VersionHash:a9d874c,CLOUDID:cb43a231f1e62819d6fbbce3c9e6b51f,BulkI
+	D:2510182147173C9T6SOE,BulkQuantity:3,Recheck:0,SF:19|25|45|66|72|78|102|8
+	50,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 5af3a1b8ac3611f0a38c85956e01ac42-20251018
+X-User: hehuiwen@kylinos.cn
+Received: from localhost.localdomain [(220.202.195.150)] by mailgw.kylinos.cn
+	(envelope-from <hehuiwen@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 555464057; Sat, 18 Oct 2025 23:23:10 +0800
+From: Huiwen He <hehuiwen@kylinos.cn>
+To: Liam.Howlett@oracle.com
+Cc: aliceryhl@google.com,
+	andrewjballance@gmail.com,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Huiwen He <hehuiwen@kylinos.cn>
+Subject: [PATCH] maple_tree: Fix potential NULL pointer dereference if mas_pop_node() fails
+Date: Sat, 18 Oct 2025 23:23:05 +0800
+Message-ID: <20251018152305.1612722-1-hehuiwen@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 13 Oct 2025 09:28:00 +0200
-Jorge Marques <jorge.marques@analog.com> wrote:
+mas_pop_node() may return NULL when memory allocation fails or when
+mas->sheaf is invalid. Several callers of mas_pop_node() did not check
+the return value and directly dereferenced the pointer, which could
+lead to a NULL pointer dereference and kernel crash.
 
-> This adds a new page to document how to use the ad4062 ADC driver.
-> 
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
-Hi Jorge,
+Fixes: 54a611b60590 ("maple_tree: add mas_pop_node() helper")
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+---
+ lib/maple_tree.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Various comments inline.
-
-Thanks,
-
-Jonathan
-
-> ---
->  Documentation/iio/ad4062.rst | 89 ++++++++++++++++++++++++++++++++++++++++++++
->  MAINTAINERS                  |  1 +
->  2 files changed, 90 insertions(+)
-> 
-> diff --git a/Documentation/iio/ad4062.rst b/Documentation/iio/ad4062.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b486d7fe1916d2963c94581be3696cf58d51ca48
-> --- /dev/null
-> +++ b/Documentation/iio/ad4062.rst
-> @@ -0,0 +1,89 @@
-> +.. SPDX-License-Identifier: GPL-2.0-only
-> +
-> +=============
-> +AD4062 driver
-> +=============
-> +
-> +ADC driver for Analog Devices Inc. AD4060/AD4062 devices. The module name is
-> +``ad4062``.
-> +
-> +Supported devices
-> +=================
-> +
-> +The following chips are supported by this driver:
-> +
-> +* `AD4060 <https://www.analog.com/AD4060>`_
-> +* `AD4062 <https://www.analog.com/AD4062>`_
-> +
-> +Wiring modes
-> +============
-> +
-> +The ADC is interfaced through an I3C bus, and contains two programmable GPIOs.
-This raises a question on whether it makes sense for the binding to support providing
-gpios from the start (as alternative to interrupts).  Seems like the two pins
-are completely interchangeable so one might well be 'left' for use by some other
-device that needs a gpio pin.
-
-I don't mind that much if we want to leave the binding support for that for later
-but in the ideal case we'd have it from the start (even if the driver doesn't
-support it until we have a user).
-
-> +
-> +The ADC convert-start happens on the SDA rising edge of the I3C stop (P) bit
-> +at the end of the read command.
-> +
-> +The two programmable GPIOS are optional and have a role assigned if present in
-> +the devicetree:
-> +
-> +- GP1: Is assigned the role of Data Ready signal.
-
-I assume that's only the case if GP1 is provided?  If GP0 is the only one
-we should allow use that for data ready.  As long as the DT allows that it is
-permissible for the driver to not do so for now.
-
-> +
-> +Device attributes
-> +=================
-> +
-> +The ADC contains only one channel with following attributes:
-> +
-> +.. list-table:: Channel attributes
-> +   :header-rows: 1
-> +
-> +   * - Attribute
-> +     - Description
-> +   * - ``in_voltage_calibscale``
-> +     - Sets the scale factor to multiply the raw value.
-That's confusing.  This should be hardware 'tweak' to compensate for
-calibration or similar.  The text doesn't make it clear where that multiply
-is happening. Sounds too much like _scale.
-
-> +   * - ``in_voltage_oversampling_ratio``
-> +     - Sets device's burst averaging mode to over sample using the
-> +       internal sample rate. Value 1 disable the burst averaging mode.
-> +   * - ``in_voltage_oversampling_ratio_available``
-> +     - List of available oversampling values.
-> +   * - ``in_voltage_raw``
-> +     - Returns the raw ADC voltage value.
-> +   * - ``in_voltage_scale``
-> +     - Returs the channel scale in reference to the reference voltage
-
-Spell check needed.  Also this describes why it might take different values
-but not the bit users care about which is the standard ABI thing of
-Real value in mV = _raw * _scale 
-
-> +       ``ref-supply``.
-> +
-> +Also contain the following device attributes:
-> +
-> +.. list-table:: Device attributes
-> +   :header-rows: 1
-> +
-> +   * - Attribute
-> +     - Description
-> +   * - ``samling_frequency``
-
-Check these.. sampling_frequency.
-
-> +     - Sets the sets the device internal sample rate, used in the burst
-> +       averaging mode.
-
-It's not use otherwise?  That's unusual ABI.  I'd expect it to give
-the right value at least when burst mode isn't used. Or is burst mode
-the only way we do buffered capture?
-
-> +   * - ``sampling_frequency_available``
-> +     - Lists the available device internal sample rates.
-> +
-> +Interrupts
-> +==========
-> +
-> +The interrupts are mapped through the ``interrupt-names`` and ``interrupts``
-> +properties.
-> +
-> +The ``interrupt-names`` ``gp1`` entry sets the role of Data Ready signal.
-> +If it is not present, the driver fallback to enabling the same role as an
-> +I3C IBI.
-
-It feels like it should be easy to use the other GPO pin in this case if that
-is present. 
-
-> +
-> +Low-power mode
-> +==============
-> +
-> +The device enters low-power mode on idle to save power. Enabling an event puts
-> +the device out of the low-power since the ADC autonomously samples to assert
-> +the event condition.
-> +
-> +Unimplemented features
-> +======================
-> +
-> +- Monitor mode
-> +- Trigger mode
-> +- Averaging mode
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index afbfaeba5387b9fbfa9bf1443a059c47dd596d45..ce012c6c719023d3c0355676a335a55d92cf424c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1405,6 +1405,7 @@ M:	Jorge Marques <jorge.marques@analog.com>
->  S:	Supported
->  W:	https://ez.analog.com/linux-software-drivers
->  F:	Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
-> +F:	Documentation/iio/ad4062.rst
->  
->  ANALOG DEVICES INC AD4080 DRIVER
->  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
-> 
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 39bb779cb311..524e1cfb4439 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -3085,6 +3085,9 @@ static inline void mas_root_expand(struct ma_state *mas, void *entry)
+ 	int slot = 0;
+ 
+ 	node = mas_pop_node(mas);
++	if (unlikely(!node))
++		return;
++
+ 	pivots = ma_pivots(node, type);
+ 	slots = ma_slots(node, type);
+ 	node->parent = ma_parent_ptr(mas_tree_parent(mas));
+@@ -3367,6 +3370,9 @@ static inline void mas_new_root(struct ma_state *mas, void *entry)
+ 	}
+ 
+ 	node = mas_pop_node(mas);
++	if (unlikely(!node))
++		return;
++
+ 	pivots = ma_pivots(node, type);
+ 	slots = ma_slots(node, type);
+ 	node->parent = ma_parent_ptr(mas_tree_parent(mas));
+@@ -3506,6 +3512,9 @@ static inline void mas_wr_node_store(struct ma_wr_state *wr_mas,
+ 		newnode = &reuse;
+ 	}
+ 
++	if (unlikely(!newnode))
++		return;
++
+ 	newnode->parent = mas_mn(mas)->parent;
+ 	dst_pivots = ma_pivots(newnode, wr_mas->type);
+ 	dst_slots = ma_slots(newnode, wr_mas->type);
+-- 
+2.43.0
 
 
