@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-859193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765C4BECFBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:46:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34B2BECFC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 14:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E4B94EAF4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39B6B19C61A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB11827A900;
-	Sat, 18 Oct 2025 12:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC6B27B4FA;
+	Sat, 18 Oct 2025 12:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwBsGlES"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoGC6DwV"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6670E1E511
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D5827877D
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 12:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760791601; cv=none; b=Reh4YEzO7kJk+m01VCDAzSQ8Er6tiT7kJ5voAtvV7C8IDwzhxLUpTpLegzkC7BGxZ+sqYjWdPdkQNEDbMczjOm3M8CUHTBhtCSsMwyZQyF2csC8/qmHwk8FI+MWmy76lZZcYJpkfiP8/wZLayz8IakLHXivru44Zzvqpxp1g+UY=
+	t=1760791614; cv=none; b=gFWulZ8r5H+rOzsKJn0X9d0HA5BRkWvfZ/3120hlebNCONUA/Pl3ryZBQPxqLU/CTvcOzgfMPNiqcMHC3K/Jz/CvK7VCz2M8uFQl6pKyWAGGIKBHayV0FLM1970y5NE/nQwT3AosXrh1t7INIu1zXnW5f9EiQIYVZVrT6paRXMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760791601; c=relaxed/simple;
-	bh=9SHJU52Ukj3vS5n8j3mN94TcvuvNdEkAm/urmcspB2M=;
+	s=arc-20240116; t=1760791614; c=relaxed/simple;
+	bh=Gs8DaJlPwpW15lfb/H5juDARFqslXLd1KCuuHPo2maA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJJGCIYdRCXUp9wAA1FG0obFKAMi+8HDrjuJFJauxGtujba42wIWmLk0jj+ta+207goxRcz/RmFXCiDwPe4TGivYUy49xraPig4Sl/Zwa6EQuuH10WUDw62rWXMWAGrphk5XUuTkdhQMTQ2r7Ff+hVHsLK5w4tswMsMlWJHqtr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwBsGlES; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:Content-Type; b=b41m0DxoGIuj1sKWfG0EKfrFvFXF5D4BUI/NKqns57n4bWxku3juilatksurmhOhOVuqF7Zudr0c7pkY/JaKaIMbGdPsFeyCB7HhbosnpvXRU4WuEX7oINkee0ly+8cV+1YhI9VrmZIMr1Rh9cQgh/F8V8PlYgWGPlDd000NMNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoGC6DwV; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-471076f819bso22928445e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:46:39 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-426ed6f4db5so2189205f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 05:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760791598; x=1761396398; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760791611; x=1761396411; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=InrI7Nfp1NYd+ZIKEO2xbQ29jEdwIZK3y4xYlXvgeH0=;
-        b=YwBsGlESyjTuOFhel+miJnIrWbHolRQxbcM6fMHgOJHd307ke5mNlMILPkpEdK/+41
-         0+1HxyM4zvcvAI3FhrKJrqaEKry2PgbS7Kj1HQaaMMzPuv1744FFhsV0veG7xabBsH0k
-         dqKeCjGbGno91ZHJTFmBVq3ckfyU83cfEU39cV+gWftAl4Misxz9STRgnCVhpVS/Lxn0
-         q3Y27GiZy10Ojxl3o8Tp8A96AQ2OXTOLGjvRN2hBHEjJUPkM3dOpdooLyE3zSCZzKimn
-         9r5pXDJqnzTfg1tmw21RCkXmbArPPEUPOHHxLl+2c8YImAYfmBMrj1n9bvLn2d9nvBai
-         NOvA==
+        bh=IwINcystRjoGvSWPk32ya6bCmX4nJsdTWZ/ZarypZXM=;
+        b=EoGC6DwVZWKxPW+81u6Nh9XEqcpLNKmh0tIMXXaKKBXyyWWQQaocmPU3u52otrVIII
+         GmkU5bW9xjSwqrLJI76JJUbecZ0eIgWF8N2iPEAHpdYNsht17hQa8VYQ0hiwcsz3CfyO
+         dhcFQzxSN6yUYznEHHn11YwhkQNzr3kpSghv6oIb3Ux993jYc8JJGHySQYLktXRs3ODT
+         WV4I2dv1Yjz4tF7lz3HPN1WtZ6MZ+ITmdPtXdX7FI/l7v6lktcLpHzBwDmSj8noY/xAf
+         1PyC3A2YkWdcsWZkAoePxewG7NKoKg2brEc8jzIhzV1a0J1nxHoB4+MdaEvpDGHNLpH+
+         1jPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760791598; x=1761396398;
+        d=1e100.net; s=20230601; t=1760791611; x=1761396411;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=InrI7Nfp1NYd+ZIKEO2xbQ29jEdwIZK3y4xYlXvgeH0=;
-        b=r4+qUJ5TQH/z6pjiL7fjsGZ083pXpCpS/ptgUYdPpVomHtZsATv7Hpiyp3+NM2RTWg
-         LfrBZN376lYozJ0LZQ7ZNxs2secIAaII2g3dMukVpQWAh9+lD8buU7+Rdbng9phRwH7j
-         1vcZ2UpraEAIm1itqfYl6EAp18Fh+bm1pRBHTatbgvPpQo7zvH42z7h/9em/Lyi8r2+E
-         8hbkKUpQ3SPNuoAk8Vgzp2rtmdFaXs4vGBOS8ZE5FUJLtpwV/y4w0dlVcYSlXeiySZcF
-         dQmgWOSmkfF2QdyOJxJSVgUWeV3TRWesMxoqZycxEakMhozc8ndRbFfhtbWJSjG2IhWc
-         +c+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWudKftRxOqFwVBBVl1WXxJ9yMiVZaO6hJWRuh8Au0RN75ANSPTrTD9DA7mUL2Vl9AxmBObOWvOcXpHAT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKYoZNKifHEKBKpYPpM6CLctzyaoA1YQkRRqFDIvZ+oA8akXCK
-	uigxUmcMoK/c4XCGdqcDrdR5DhJ5CraGsirO9buyMzs8fc8w4fDhh9Wg
-X-Gm-Gg: ASbGncvOiKQEJ7D8NUdjzXqDlSQ9YDf8NVp0zOTJmAlInMCi06UekJdnVYr4HCECerf
-	5j6dfwOY4SmtZ3SoNzC8rvFmHM0QTf6Jm4Jhrx+/UzhPHXaXUeH4f6ctsAKyWy9NicO0xphItDH
-	INOWquNU6ybQ07cZ2HsWsuwpzBZFptQSr9eTlJIGqfcg56N+A5vJiDu1aaE2JndNw/829hrRyuM
-	8ZwG3wzi1Am+HdAsC7JB9yL9qwwPHWQsqxQsvT0RSrV59U8VvC+CeAv529radrF5wD82O4cmvAe
-	PnFa5fLPy7oPXYUzK4jxWCboc/O1T+s5sYvBuAZueVKKxTnKo2SPYt0tMYNcI3FRTJsnEoEjW1m
-	1SNB3hasbXEbcEUCrYYAOtoqbVxMzF7sKXKsE7979fARiX/lxcnywJhJof/oNVFlOcx+m95e3Nn
-	wwMgs5Nhwzxa05H3HXMcf+48Tk0xlNhaWdE4MlQqCGnxU/QP4jZBcYnPGWsSY=
-X-Google-Smtp-Source: AGHT+IENxpeW+lY77m0+5KTzVSjMas6cNGY59trgXHqIQUrSp7xcHqXWQxlyCxX/qR2myN3RoqtoKA==
-X-Received: by 2002:a05:600c:3581:b0:45d:d5df:ab2d with SMTP id 5b1f17b1804b1-4711790bf23mr51028465e9.26.1760791597612;
-        Sat, 18 Oct 2025 05:46:37 -0700 (PDT)
+        bh=IwINcystRjoGvSWPk32ya6bCmX4nJsdTWZ/ZarypZXM=;
+        b=ASVDn7kgOndvPxcSnp2v0esNqz0Fk813lwbokbKK/UUJMX8U7eui7ik6Vnv28P/iuC
+         h3oOn5mhHcmq4GTxsxoBHdcAGU1WpB7KAnpmbsQ5yJjeu8DYVch74JxSomuosCyIgHCL
+         GNLEDkFz9xoGg6vylgm6I3xmfQhFqIlDofoWWzjqVJLxD3jEAQ8kTpUzePJsMOBrV1jU
+         JZrVvIe3QYKd4MorJTX+aSFNGn+lGDrckxam1DImSpgqMKHoGCVswrBP6JiwHdhLxcMV
+         ErXJinCcmdxILpm2WEGV1jdyqXcz9r3RTEkY/zeKFsJMfo87DKCJdsF5odWAnkeVqVp9
+         ZRaw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+bBFRrm0axgSPeEIlp6Bqz0ZJm7k3yeqEI+NTaO3EOD+MHVQqZtfbNDVjlLfgWurdLNqVizKlEoiF0fU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/D609jGGp6JBH3WT0nFlZhOXlaBo+eVJwYQKXUIqrhL4531Ur
+	NTgkkfkw2ok7V4W6qqjHo8Zp5TnUD4Y9BrLFO0qTbOti1JPp855wm9YW
+X-Gm-Gg: ASbGnctDiU6w4WNoq6Awoc4M401V9k7v0w1STRVnnrusqpB0leRtMkwkDs7zk/mjEOG
+	CuQtZdlYIw0SxdIKiWdMoUecqYgccoHQDB4nfZ428IwcaLWkJsmRwj5VNpQnvuu15sSrnK1K8pi
+	AAXlb0J0jzJliJI+z0QzmBYbhTa7whn1p18P0JFhk2tfZqnMJBrps9fyF6MdR9ORFMBv9Xl60EK
+	UASrwBSqArML5wCzAGt/ddjyVAv21C6HyLH2L/zbqFPcfxYu/aTdeh6JUk0PdbkE0AjORZtsBS2
+	oSNl+U4g8nNmTJDbtaJDowxzm8aGFFsqdc6qX8fBlOR+3cgQuWBKNH5Zuv7j1T1wrB0v1SXtnp/
+	yX+PnxyrrkvADfixl4f5ZUQBu5uszG8thN6QvrVC2lF3VR3M7E7fTt4pdf/GWF5xr6Xd2OU64cS
+	yRCMUe7QouYXIyzsmbdI/R7UaacocI+gJN2XvOP28pbQ1k/1gqvQedNGzSSJs=
+X-Google-Smtp-Source: AGHT+IF5RJYLSmA+oH07tnmvmsNyWmRsGcHhrDvL8wpjhULq8NfGc4GpnDL/KGS4NnlMtDmLKBwXmw==
+X-Received: by 2002:a05:6000:4586:b0:425:6fb5:2add with SMTP id ffacd0b85a97d-426fb7bba0dmr5569895f8f.19.1760791611546;
+        Sat, 18 Oct 2025 05:46:51 -0700 (PDT)
 Received: from ?IPV6:2001:861:3385:e20:2acd:89a8:83d9:4be5? ([2001:861:3385:e20:2acd:89a8:83d9:4be5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce3e2sm4754007f8f.47.2025.10.18.05.46.36
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9f71sm4781988f8f.37.2025.10.18.05.46.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Oct 2025 05:46:36 -0700 (PDT)
-Message-ID: <ba6e494d-d318-4cf2-8ff0-c29100099dad@gmail.com>
-Date: Sat, 18 Oct 2025 14:46:35 +0200
+        Sat, 18 Oct 2025 05:46:51 -0700 (PDT)
+Message-ID: <a822d284-f2a2-40f8-987a-6e2f70a22fcf@gmail.com>
+Date: Sat, 18 Oct 2025 14:46:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] drm/bridge: document that adding a bridge is
- mandatory before attach
+Subject: Re: [PATCH 4/4] drm/bridge: add warning for bridges attached without
+ being added
 To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
  Alain Volmat <alain.volmat@foss.st.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -97,28 +97,34 @@ Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 References: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-0-92fb40d27704@bootlin.com>
- <20251003-b4-drm-bridge-alloc-add-before-attach-v1-3-92fb40d27704@bootlin.com>
+ <20251003-b4-drm-bridge-alloc-add-before-attach-v1-4-92fb40d27704@bootlin.com>
 Content-Language: en-US, fr
 From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
-In-Reply-To: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-3-92fb40d27704@bootlin.com>
+In-Reply-To: <20251003-b4-drm-bridge-alloc-add-before-attach-v1-4-92fb40d27704@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
 Le 03/10/2025 à 10:59, Luca Ceresoli a écrit :
-> At the moment it's not documented that you need to add a bridge before
-> attaching it. Clarify that.
+> DRM bridges must be added before they are attached. Add a warning to catch
+> violations.
 > 
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
+> The warning is based on the bridge not being part of any list, so it will
+> trigger if the bridge is being attached without ever having been added.
+> 
+> It won't catch cases of bridges attached after having been added and then
+> removed, because in that case the bridge will be in
+> bridge_lingering_list. However such a case is both more demanding to detect
+> and less likely to happen, so it can be left unchecked, at least for now.
+> 
 > Link: https://lore.kernel.org/all/20250709-sophisticated-loon-of-rain-6ccdd8@houat/
 > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > ---
-Hi Luca,
 
 Reviewed-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 
 Best regards,
-Raphaël
+Raphaël>
 
 
