@@ -1,177 +1,210 @@
-Return-Path: <linux-kernel+bounces-859117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F13FBECD05
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:07:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B39BECD08
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 12:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E0B42074D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7FA19A76DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 10:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DCA28935A;
-	Sat, 18 Oct 2025 10:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EBC2874FF;
+	Sat, 18 Oct 2025 10:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct+f/T++"
-Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUA8iLUP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBAE1A316E
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 10:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F31285C8C;
+	Sat, 18 Oct 2025 10:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760782028; cv=none; b=j3J0HxKLW9lgXHHJ81GFmGronPFDHfGREFQCjlhJmQuTqACdnjLz3XkklYiIGCCPhlFFF3z7hoJW7+KvnlvKngvjBOjitK7pc9xOubQpzeJMYjtFxKtPwZ5ATVIbw9ZfFEmbIIMO/yMcvgk/1JPlucufxJ1uI9DGdOlN2vMZVS0=
+	t=1760782215; cv=none; b=GJQF1Fa5D/91fa/adZmQ3TpXuFJGJJmaqC1DtVtyVOsfeSz13el2s8UU6CJiKGJbrqlQqsAAAKf03mr1wAXqOBaD8u0hmaZOM2x2cW6PsIl5BCK4AMsmU3GrfzaQMDf9mSWsMO+hu/HOuYmcc2QQn6bHJhPMmKqrYiC0u2skkBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760782028; c=relaxed/simple;
-	bh=StMtoQKqnTAn/VlpQqpHFb1tATeG5mv9KfOCi8F+X50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hNcepewF/DEKT5oTLVa/dJYPr46l2AFkWQUFRhsJSa4APH5XcJR2lkWZOzZV190SYD+tIMGk/F37Q3oTS0SHZDczCM3L/ptRUtbJDTw4DYuxxo2gxpfcO35S1amr3AXt1kDSyPYG4O20D+V1XFD+3WE9mhBSJGEPLip6Q7dVVQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ct+f/T++; arc=none smtp.client-ip=209.85.208.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-36a6a39752bso25949341fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 03:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760782023; x=1761386823; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dkJVC9CNMdTa5Ykb5ei44ed8gNrJ3sy5T6W8MBNGp2U=;
-        b=ct+f/T++QotVFi563fAbmpgAgJ2OMDY4cbI9WnZ3T5CqHEJsudD2Le6t1/L+1qnHQR
-         /POmXSW50RZ1fhlog+16f/vhGyMfcMfV6JMrp9H9FEwHz+q2+2C2mfSHpS8f8RY56xw4
-         q0qo3sAlxu/cXj+116q7b3BIXG3574ATu+EaRqvvCu+smaSmdSO4n3uyH0aRPj6aYnXh
-         IsqUiLL0xtDy/nhipXLPV+D5Po6VeyfVWiBPgZfeqa52J4lUbG2A7dTl8/Kxp+sNzQ9c
-         5vH1AxjPjmQ4lzZBriAOn8OevwKJfC2hsKNZiNAISOoeBpvyDm+UH5893TIyVv3s/I9r
-         BC6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760782023; x=1761386823;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dkJVC9CNMdTa5Ykb5ei44ed8gNrJ3sy5T6W8MBNGp2U=;
-        b=stPJp5CxEaPixrTdyaON+Bw0iiLpexU6OLogUA6QjjpTdBDPjQoFiTxM0L+rxNGZI3
-         I4ClGymJpo1ddfLzB8MZCAWsNwnjLjkoEs+M45oQIivKFNluwSWi06qxC/wv+fDOcVtd
-         5GSiVOqbnTkXoC2YHEXDuAT5sOYR7zAbQzNCgVUNvbgEZMOg2MW+OvXzetAAoSfNqKKQ
-         6B7aRL+Te9E0GbpyizferKmOV0ujMpfmjJlXBxd37PFqYlyA1aexK83JbrPRv2OxkEGr
-         MKvw63OMhIMPTCYi4S15m160bcfFXRS0IDQkFLnZPH924O3BAyFTmttHvhnb+yJMLEhj
-         0MuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXobhlfmcOuZiZfCgY0P5q2K3fXq0k71axHxhs44ieuRsDRrwB1FEJKa1kDCJu45M1ajMxsao6v08CZXVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3x8/FuvgmRy4RHA5/3Xyw7h1yQ0j+qBLNzyK9pHAz40YJsPMI
-	rWw5hiyrJotaTm7+hyusWCP48M2V4hmXzw6F/qNm6awOm10fAk7zA/zwJ6Lc6K3wT5OxD3BRhKZ
-	Y3XiHw0OXXLgumj01f31EEqH7M5bfm1A=
-X-Gm-Gg: ASbGncvOka/8eRN9yF+5Za+aqcvRcVpoXP3wKjJAOlag1rYMn8jNZ4reuWPZdqzoQos
-	ctqK0Jype6zpC0IufmaSLFf3ZJF6gNC+Sio8YSbiJ9NwWJwRFx2YKGqdOZUQD2IikXZN84FQFCC
-	AeqPIqsZLzxV9UERmFxEO5cYCw0IG1u+TOI1+Y6lSClNAKgiJPueXuYBgp8J/Hngo1pdbeoZm5P
-	JoY/23dAw8U5/L4lJlgQdmmt0mGyze4n5SbE7tzyN3BukXXDg8KG4XcSGyT
-X-Google-Smtp-Source: AGHT+IHeUhcGNwmxU8KQ4UMn+oU0vFSF2dwjsM3hcbX8xOl6yc4VRwbW9q4Go0ZMD7Z9wgeXyxMH2VDt5AjqrKAlx4g=
-X-Received: by 2002:a05:651c:2209:b0:35e:8756:ecee with SMTP id
- 38308e7fff4ca-377979401b8mr20694351fa.21.1760782023240; Sat, 18 Oct 2025
- 03:07:03 -0700 (PDT)
+	s=arc-20240116; t=1760782215; c=relaxed/simple;
+	bh=9GBDpmBli+4dcWpzmocu7ImRqmP28MXZDVF3ALI9+KA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQNilGMgLU31ZgbkQhPBl+SBXvFtwYGSRalrIHKpCQ9sbQ2jIiQKRpLIyerY9tijnfN07ZuEVjyQOH3Oil6sLOtSuz/sjNndxZLqO6ch0AHIYGK9cfR4iL2fj0voYjS7q4mlDyx7BzurbU9T3cefV/8pVLopLIwvck6yFY0cuP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUA8iLUP; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760782212; x=1792318212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9GBDpmBli+4dcWpzmocu7ImRqmP28MXZDVF3ALI9+KA=;
+  b=UUA8iLUP0B7j3Z9RzaXfMLd41V4dJ/q9G8qtYG8lk1GCaJmMYhSXfSW0
+   1m/o+LUiHQIkptumv57Bl+rGf1gKG43m3pAUsmPBkdNoiJBwp/PUGWF3k
+   Fgx9f/cVPvZj74gHpD+9ftHgdkeHKVxBjnlxG9Nv0kbdzlRt7vlIlydQO
+   F5T5oCHkOhiQwk6/bL8v+WoPE9FEc+yv/H639hekNXgr1xePlswKIn8ua
+   H2UV59zPt8dq345IfQpzEI2updf7qEwPcimkJGSc577mS2LgQiLS68Dhj
+   V8zcmD2XS6bAEP0Pk8WztnILVHNZ9TM5D5S7DuOT7O5/pzEiz5BnbbsOK
+   A==;
+X-CSE-ConnectionGUID: GL+2bkMHTWOr/MKo5okJAQ==
+X-CSE-MsgGUID: 9NU55yt2S/amoHluJyh1hw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="88454461"
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="88454461"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 03:10:11 -0700
+X-CSE-ConnectionGUID: UbMZ9dhURbW2f9VQVxfeMw==
+X-CSE-MsgGUID: +Qkb8nJXR9eb6S0mUfIq2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="206649296"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 18 Oct 2025 03:10:11 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vA3t3-0008D7-0D;
+	Sat, 18 Oct 2025 10:10:09 +0000
+Date: Sat, 18 Oct 2025 18:10:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tracing: Allow tracer to add more than 32 options
+Message-ID: <202510181711.rxbGAQu7-lkp@intel.com>
+References: <176071774097.175601.10233017390618260565.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910084316.356169-1-hupu.gm@gmail.com> <1081f8ca-3c1b-46fe-a7d4-31303e5e2298@arm.com>
- <CADHxFxQTGRHuu82YK25UCcF2NCxyU_HrFik-jKY23eUMTfft7Q@mail.gmail.com>
- <CADHxFxT_x-GanuxSrWP+tvEC87bf=z+ZkwSBnwomU282MJx0sg@mail.gmail.com> <CADHxFxTUvx4VvOizfhg7jeyenN7m+YX9Oro+ndPQ1sr_Y3d1Ag@mail.gmail.com>
-In-Reply-To: <CADHxFxTUvx4VvOizfhg7jeyenN7m+YX9Oro+ndPQ1sr_Y3d1Ag@mail.gmail.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Sat, 18 Oct 2025 18:06:51 +0800
-X-Gm-Features: AS18NWAo7pU82kENimkWc_7IJ9bT0t3VlmSE1HtxPLDA1cua8DSdnb5756opuuA
-Message-ID: <CADHxFxS6nmF1wzuEDyoFgj7XppkheW=SN4ygnMUYwf_qnoUCAg@mail.gmail.com>
-Subject: Re: [RESEND][RFC] sched: Introduce removed.load_sum for precise load propagation
-To: Pierre Gondois <pierre.gondois@arm.com>, vincent.guittot@linaro.org
-Cc: peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
-	rostedt@goodmis.org, dietmar.eggemann@arm.com, vschneid@redhat.com, 
-	bsegall@google.com, linux-kernel@vger.kernel.org, mgorman@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176071774097.175601.10233017390618260565.stgit@devnote2>
 
-RESEND AGAIN !
+Hi Masami,
 
-On Wed, Oct 15, 2025 at 3:20=E2=80=AFPM hupu <hupu.gm@gmail.com> wrote:
->
-> Hi Vincent Guittot, Pierre Gondois, and fellow maintainers,
->
-> This PATCH has been pending for several days without any feedback.
-> Please allow me to RESEND this as a gentle reminder.
->
-> Thanks,
-> hupu
->
->
-> On Sat, Oct 11, 2025 at 10:27=E2=80=AFAM hupu <hupu.gm@gmail.com> wrote:
-> >
-> > Hi Pierre Gondois,
-> > Just wanted to mention a small detail that=E2=80=99s easy to miss.
-> >
-> > On Fri, Oct 10, 2025 at 7:37=E2=80=AFPM hupu <hupu.gm@gmail.com> wrote:
-> > > > It is possible to compute load_sum value without the runnable_signa=
-l, cf.
-> > > > 40f5aa4c5eae ("sched/pelt: Fix attach_entity_load_avg() corner case=
-")
-> > > > https://lore.kernel.org/all/20220414090229.342-1-kuyo.chang@mediate=
-k.com/T/#u
-> > > >
-> > > > I.e.:
-> > > > +       se->avg.load_sum =3D se->avg.load_avg * divider;
-> > > > +       if (se_weight(se) < se->avg.load_sum)
-> > > > +               se->avg.load_sum =3D div_u64(se->avg.load_sum, se_w=
-eight(se));
-> > > > +       else
-> > > > +               se->avg.load_sum =3D 1;
-> > > >
-> > > > As a side note, as a counterpart of the above patch, the lower the =
-niceness,
-> > > > the lower the weight (in sched_prio_to_weight[]) and the lower the =
-task
-> > > > load signal.
-> > > > This means that the unweighted load_sum value looses granularity.
-> > > > E.g.:
-> > > > A task with weight=3D15 can have load_avg values in [0:15]. So all =
-the values
-> > > > for load_sum in the range [X * (47742/15) : (X + 1) * (47742/15)]
-> > > > are floored to load_avg=3DX, but load_sum is not reset when computi=
-ng
-> > > > load_avg.
-> > > > attach_entity_load_avg() however resets load_sum to X * (47742/15).
-> > > >
-> > >
-> > > From a mathematical perspective, deriving load_sum from load_avg is
-> > > indeed feasible.
-> > >
-> > > However, as you pointed out, integer arithmetic may introduce
-> > > significant quantization errors, particularly for tasks with low
-> > > weights.
-> > >
-> > > For instance, if a task=E2=80=99s weight is 15 and its load_sum value=
-s are
-> > > 3183 and 6364 respectively, both would result in the same load_avg =
-=3D 1
-> > > under this method =E2=80=94 resulting in an error of 6364 - 3183 =3D =
-3181. This
-> > > error increases as the task=E2=80=99s weight decreases.
-> > >
-> > > Therefore, I believe that recomputing the propagated load_sum from
-> > > load_avg within update_cfs_rq_load_avg() is not an ideal approach.
-> > > Instead, my proposal is to record the load_sum of dequeued tasks
-> > > directly in cfs_rq->removed, rather than inferring it indirectly from
-> > > other signals such as runnable_sum or load_avg.
-> > >
-> >
-> > In addition, weight is a historical variable that may change over time
-> > due to dynamic priority adjustments. Therefore, reconstructing
-> > load_sum from load_avg using the current se_weight(se) in
-> > update_cfs_rq_load_avg() may be wrong, as it mixes values computed
-> > under different weight conditions.
-> >
-> > So, I believe directly recording each entity=E2=80=99s load_sum at dequ=
-eue
-> > time offers a more accurate and consistent approach.
-> >
-> > Thanks,
-> > hupu
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on trace/for-next]
+[also build test ERROR on linus/master v6.18-rc1 next-20251017]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Allow-tracer-to-add-more-than-32-options/20251018-004104
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/176071774097.175601.10233017390618260565.stgit%40devnote2
+patch subject: [PATCH v4 1/2] tracing: Allow tracer to add more than 32 options
+config: parisc-randconfig-001-20251018 (https://download.01.org/0day-ci/archive/20251018/202510181711.rxbGAQu7-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181711.rxbGAQu7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510181711.rxbGAQu7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/trace/trace_probe.h:31,
+                    from kernel/trace/trace_events_synth.c:20:
+   kernel/trace/trace.h:1427:27: error: expected identifier or '(' before ':' token
+    1427 | enum trace_iterator_flags : uint64_t { TRACE_FLAGS };
+         |                           ^
+   kernel/trace/trace_events_synth.c: In function 'print_synth_event':
+>> kernel/trace/trace_events_synth.c:362:31: error: 'TRACE_ITER_VERBOSE' undeclared (first use in this function); did you mean 'TRACE_ITER_VERBOSE_BIT'?
+     362 |   if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
+         |                               ^~~~~~~~~~~~~~~~~~
+         |                               TRACE_ITER_VERBOSE_BIT
+   kernel/trace/trace_events_synth.c:362:31: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +362 kernel/trace/trace_events_synth.c
+
+726721a51838e3 Tom Zanussi             2020-05-28  337  
+726721a51838e3 Tom Zanussi             2020-05-28  338  static enum print_line_t print_synth_event(struct trace_iterator *iter,
+726721a51838e3 Tom Zanussi             2020-05-28  339  					   int flags,
+726721a51838e3 Tom Zanussi             2020-05-28  340  					   struct trace_event *event)
+726721a51838e3 Tom Zanussi             2020-05-28  341  {
+726721a51838e3 Tom Zanussi             2020-05-28  342  	struct trace_array *tr = iter->tr;
+726721a51838e3 Tom Zanussi             2020-05-28  343  	struct trace_seq *s = &iter->seq;
+726721a51838e3 Tom Zanussi             2020-05-28  344  	struct synth_trace_event *entry;
+726721a51838e3 Tom Zanussi             2020-05-28  345  	struct synth_event *se;
+887f92e09ef34a Sven Schnelle           2023-08-16  346  	unsigned int i, j, n_u64;
+726721a51838e3 Tom Zanussi             2020-05-28  347  	char print_fmt[32];
+726721a51838e3 Tom Zanussi             2020-05-28  348  	const char *fmt;
+726721a51838e3 Tom Zanussi             2020-05-28  349  
+726721a51838e3 Tom Zanussi             2020-05-28  350  	entry = (struct synth_trace_event *)iter->ent;
+726721a51838e3 Tom Zanussi             2020-05-28  351  	se = container_of(event, struct synth_event, call.event);
+726721a51838e3 Tom Zanussi             2020-05-28  352  
+726721a51838e3 Tom Zanussi             2020-05-28  353  	trace_seq_printf(s, "%s: ", se->name);
+726721a51838e3 Tom Zanussi             2020-05-28  354  
+726721a51838e3 Tom Zanussi             2020-05-28  355  	for (i = 0, n_u64 = 0; i < se->n_fields; i++) {
+726721a51838e3 Tom Zanussi             2020-05-28  356  		if (trace_seq_has_overflowed(s))
+726721a51838e3 Tom Zanussi             2020-05-28  357  			goto end;
+726721a51838e3 Tom Zanussi             2020-05-28  358  
+726721a51838e3 Tom Zanussi             2020-05-28  359  		fmt = synth_field_fmt(se->fields[i]->type);
+726721a51838e3 Tom Zanussi             2020-05-28  360  
+726721a51838e3 Tom Zanussi             2020-05-28  361  		/* parameter types */
+726721a51838e3 Tom Zanussi             2020-05-28 @362  		if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
+726721a51838e3 Tom Zanussi             2020-05-28  363  			trace_seq_printf(s, "%s ", fmt);
+726721a51838e3 Tom Zanussi             2020-05-28  364  
+726721a51838e3 Tom Zanussi             2020-05-28  365  		snprintf(print_fmt, sizeof(print_fmt), "%%s=%s%%s", fmt);
+726721a51838e3 Tom Zanussi             2020-05-28  366  
+726721a51838e3 Tom Zanussi             2020-05-28  367  		/* parameter values */
+726721a51838e3 Tom Zanussi             2020-05-28  368  		if (se->fields[i]->is_string) {
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  369  			if (se->fields[i]->is_dynamic) {
+ddeea494a16f32 Sven Schnelle           2023-08-16  370  				union trace_synth_field *data = &entry->fields[n_u64];
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  371  
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  372  				trace_seq_printf(s, print_fmt, se->fields[i]->name,
+ddeea494a16f32 Sven Schnelle           2023-08-16  373  						 (char *)entry + data->as_dynamic.offset,
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  374  						 i == se->n_fields - 1 ? "" : " ");
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  375  				n_u64++;
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  376  			} else {
+726721a51838e3 Tom Zanussi             2020-05-28  377  				trace_seq_printf(s, print_fmt, se->fields[i]->name,
+8db4d6bfbbf920 Steven Rostedt (VMware  2020-10-04  378) 						 STR_VAR_LEN_MAX,
+ddeea494a16f32 Sven Schnelle           2023-08-16  379  						 (char *)&entry->fields[n_u64].as_u64,
+726721a51838e3 Tom Zanussi             2020-05-28  380  						 i == se->n_fields - 1 ? "" : " ");
+726721a51838e3 Tom Zanussi             2020-05-28  381  				n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
+bd82631d7ccdc8 Tom Zanussi             2020-10-04  382  			}
+00cf3d672a9dd4 Steven Rostedt (Google  2023-01-17  383) 		} else if (se->fields[i]->is_stack) {
+ddeea494a16f32 Sven Schnelle           2023-08-16  384  			union trace_synth_field *data = &entry->fields[n_u64];
+887f92e09ef34a Sven Schnelle           2023-08-16  385  			unsigned long *p = (void *)entry + data->as_dynamic.offset;
+00cf3d672a9dd4 Steven Rostedt (Google  2023-01-17  386) 
+00cf3d672a9dd4 Steven Rostedt (Google  2023-01-17  387) 			trace_seq_printf(s, "%s=STACK:\n", se->fields[i]->name);
+887f92e09ef34a Sven Schnelle           2023-08-16  388  			for (j = 1; j < data->as_dynamic.len / sizeof(long); j++)
+887f92e09ef34a Sven Schnelle           2023-08-16  389  				trace_seq_printf(s, "=> %pS\n", (void *)p[j]);
+00cf3d672a9dd4 Steven Rostedt (Google  2023-01-17  390) 			n_u64++;
+726721a51838e3 Tom Zanussi             2020-05-28  391  		} else {
+726721a51838e3 Tom Zanussi             2020-05-28  392  			struct trace_print_flags __flags[] = {
+726721a51838e3 Tom Zanussi             2020-05-28  393  			    __def_gfpflag_names, {-1, NULL} };
+726721a51838e3 Tom Zanussi             2020-05-28  394  			char *space = (i == se->n_fields - 1 ? "" : " ");
+726721a51838e3 Tom Zanussi             2020-05-28  395  
+726721a51838e3 Tom Zanussi             2020-05-28  396  			print_synth_event_num_val(s, print_fmt,
+726721a51838e3 Tom Zanussi             2020-05-28  397  						  se->fields[i]->name,
+726721a51838e3 Tom Zanussi             2020-05-28  398  						  se->fields[i]->size,
+ddeea494a16f32 Sven Schnelle           2023-08-16  399  						  &entry->fields[n_u64],
+726721a51838e3 Tom Zanussi             2020-05-28  400  						  space);
+726721a51838e3 Tom Zanussi             2020-05-28  401  
+726721a51838e3 Tom Zanussi             2020-05-28  402  			if (strcmp(se->fields[i]->type, "gfp_t") == 0) {
+726721a51838e3 Tom Zanussi             2020-05-28  403  				trace_seq_puts(s, " (");
+726721a51838e3 Tom Zanussi             2020-05-28  404  				trace_print_flags_seq(s, "|",
+ddeea494a16f32 Sven Schnelle           2023-08-16  405  						      entry->fields[n_u64].as_u64,
+726721a51838e3 Tom Zanussi             2020-05-28  406  						      __flags);
+726721a51838e3 Tom Zanussi             2020-05-28  407  				trace_seq_putc(s, ')');
+726721a51838e3 Tom Zanussi             2020-05-28  408  			}
+726721a51838e3 Tom Zanussi             2020-05-28  409  			n_u64++;
+726721a51838e3 Tom Zanussi             2020-05-28  410  		}
+726721a51838e3 Tom Zanussi             2020-05-28  411  	}
+726721a51838e3 Tom Zanussi             2020-05-28  412  end:
+726721a51838e3 Tom Zanussi             2020-05-28  413  	trace_seq_putc(s, '\n');
+726721a51838e3 Tom Zanussi             2020-05-28  414  
+726721a51838e3 Tom Zanussi             2020-05-28  415  	return trace_handle_return(s);
+726721a51838e3 Tom Zanussi             2020-05-28  416  }
+726721a51838e3 Tom Zanussi             2020-05-28  417  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
