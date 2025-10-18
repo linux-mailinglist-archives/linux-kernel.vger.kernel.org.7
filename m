@@ -1,90 +1,79 @@
-Return-Path: <linux-kernel+bounces-859428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6624CBEDA20
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B431BEDA2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B948119C2C22
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA4A19C2ECC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A177627B342;
-	Sat, 18 Oct 2025 19:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB0E286D4E;
+	Sat, 18 Oct 2025 19:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxbAsI5k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSeTxti3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E827A28B7EA;
-	Sat, 18 Oct 2025 19:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2130827FB1E;
+	Sat, 18 Oct 2025 19:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815387; cv=none; b=JFOjydrRZW4qrMS9217ryxSgsAe/jOslgaMsDwbcCXbVKS+GoLLNrt2A1taUtiro0zcCjaDQK3npe+BmNojkjmSv/awMjetmsj1XQohghx51GhnAfpLN21jFgjqtJlYXgtRw6UZfkvRsOibH+2vZqkdCFnVR8fxzH37L1U/6xJU=
+	t=1760815420; cv=none; b=pUZkKEblVSz9k0hK08MRzW7/kK7Oh1ROkV5+gFe7UZeDMgPvNvxsXRFD/ykb8c5srOLtcCFDMH4Y32zpIUglaxDRD4YI3hlcITqxTnuQn4ehkNeiRWdMVbwEAjF9o6nBIP/TOkDsvcex4DdJFtr0EcxmXsU7IQw3RCtpAI0Oeuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815387; c=relaxed/simple;
-	bh=G527dw1m66MJz6fBeaP4BUpuixzJbfu3vAmnIWlkGpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JOs+YGvVCmtRO1qAU/kF8GK0dSi1lYFpHZ45Q5795+ZCl4lGmC4hd8h18vvjXaNNpjW7MiFpsDtKo8bibdUKRm/v4dp6Qm9zR21NdJSQI5VFet/dEOvI960u84mnRIVRGNhs52wMNWgB2AnAcyYtRwCLcnwMWExDh2lbEGZIT3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxbAsI5k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC423C116B1;
-	Sat, 18 Oct 2025 19:23:04 +0000 (UTC)
+	s=arc-20240116; t=1760815420; c=relaxed/simple;
+	bh=VF/EbsDCqwtMdwNPnKEv9Lk8Ut5LI3ZvijyCg0oo7Bw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZYVtLGM3bWi7QB2WVoY+qenCsHgPxlTE5X26jj8PqhBD9TbNMUwSwZVEzqjgpxBNUkjgM3XnEw5w9AHAvzchN216/lgcpasxvCAuxbbskElYohPuLSqxDfDZwhKjrG1DNvz+fAzQFQHyV4F9dfQGZ5dDBbn3BPo83nVVNf2KF/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSeTxti3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA948C4CEF8;
+	Sat, 18 Oct 2025 19:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760815386;
-	bh=G527dw1m66MJz6fBeaP4BUpuixzJbfu3vAmnIWlkGpw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jxbAsI5kstGoKKLkKoSDIk+ax5Vt54jAJWR3A6wp1itxmOXsmOInPs8TMYZCNhZDS
-	 YukThIrJoViSS3IFD3PT2pi+k1oI9Jmwd7R666OgEOOx2sxk3+fHhNy7KwOWm2Nyav
-	 tF0gizEqClIw3WX0Gx3u+mrpimHfoyKQ0DcFbvlFdgl7NIxRN9K1Z/OV89l/7NSLiY
-	 xEXvJoVekGKVXdvgvJmcl1BVjKGLwS5gFUnOgOcVOhG0kIlNnx4oatmpxeLQWsQddB
-	 hvdgVSJuEKu50zgbIe3Fc6ETMAS4ivDPZWX+H2ZAabRa0blRyJyiJ2bsAdbxnNlGnN
-	 5iyA1n8mxOgtg==
-Date: Sat, 18 Oct 2025 20:23:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Mario Tesi <martepisa@gmail.com>, linux-iio@vger.kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: st_lsm6dsx: Fixed calibrated timestamp calculation
-Message-ID: <20251018202301.2680cc79@jic23-huawei>
-In-Reply-To: <aO_e2DEGsO-kJQFx@lore-desk>
-References: <20251015161619.GA87736@ctocxl9700.cto.st.com>
-	<aO_e2DEGsO-kJQFx@lore-desk>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1760815420;
+	bh=VF/EbsDCqwtMdwNPnKEv9Lk8Ut5LI3ZvijyCg0oo7Bw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VSeTxti3+EA75XU7Aax5GGnaL1Im/iDJo0AQ6szpI+Tku9TyExruYSCTFHo3L1Jd1
+	 rEg8q7W92kEwkdSA/ABts35dbeIVA8M3DZbA+k84N53UbCqJLN7T7Dzl6GgBXA7wBg
+	 ifduDcN9IBSuCDwJ5vJhXhGwhW3+BrqBnyBjpkPXKC73ZG6OvlLNK9QWvaVc33jUlz
+	 B1THCDZ92dqLMArDLbjSu7ELhP4L0cd0U0TozuI7gsZ5VwcTx4O9hhTdnU6x2ozpYK
+	 4rFDAOjEvIWuSlBZSzs2gRVMAS0mrLhFy3BP/6kFmLUSgB8ZNns4yMWZQxW7OoiABg
+	 eD2Q16LLp+N+g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3422439EFBBA;
+	Sat, 18 Oct 2025 19:23:24 +0000 (UTC)
+Subject: Re: [GIT PULL] PCI fixes for v6.18
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20251017171810.GA1035665@bhelgaas>
+References: <20251017171810.GA1035665@bhelgaas>
+X-PR-Tracked-List-Id: <linux-pci.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20251017171810.GA1035665@bhelgaas>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.18-fixes-2
+X-PR-Tracked-Commit-Id: a78835b86a4414230e4cf9a9f16d22302cdb8388
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e67bb0da332c6058b29a9c46cc4035647d049a0c
+Message-Id: <176081540276.3081941.11954692418093019502.pr-tracker-bot@kernel.org>
+Date: Sat, 18 Oct 2025 19:23:22 +0000
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Hans Zhang <18255117159@163.com>, Sasha Levin <sashal@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Val Packett <val@packett.cool>, Guenter Roeck <linux@roeck-us.net>, Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Kenneth Crudup <kenny@panix.com>, Genes Lists <lists@sapience.com>, Todd Brandt <todd.e.brandt@intel.com>, Oliver Hartkopp <socketcan@hartkopp.net>, =?utf-8?B?SGVydsOp?= <herve@dxcv.net>, Mario Limonciello <superm1@kernel.org>, Eric Biggers <ebiggers@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Nirmal Patel <nirmal.patel@linux.intel.com>, Jonathan Derrick <jonathan.derrick@linux.dev>, Chen Wang <unicorn_wang@outlook.com>, Yixun Lan <dlan@gentoo.org>, 
+ Longbin Li <looong.bin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 15 Oct 2025 19:50:16 +0200
-Lorenzo Bianconi <lorenzo@kernel.org> wrote:
+The pull request you sent on Fri, 17 Oct 2025 12:18:10 -0500:
 
-> > The calibrated timestamp is calculated from the nominal value using the
-> > formula:
-> >   ts_gain[ns] =E2=89=88 ts_sensitivity - (ts_trim_coeff * val) / 1000.
-> >=20
-> > The values of ts_sensitivity and ts_trim_coeff are not the same for all
-> > devices, so it is necessary to differentiate them based on the part nam=
-e.
-> > For the correct values please consult the relevant AN.
-> >=20
-> > Signed-off-by: Mario Tesi <mario.tesi@st.com> =20
->=20
-> Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.18-fixes-2
 
-Fixes tag?  Just reply to this thread with one and I'll pick it up from her=
-e.
-No need for a new version.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e67bb0da332c6058b29a9c46cc4035647d049a0c
 
-Otherwise seems fine to me.
+Thank you!
 
-Thanks,
-
-Jonathan
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
