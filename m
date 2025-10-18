@@ -1,179 +1,136 @@
-Return-Path: <linux-kernel+bounces-859094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C0EBECC45
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29323BECC11
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 11:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F20D44E8992
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661CB5E6562
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 09:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1FD2868A2;
-	Sat, 18 Oct 2025 09:20:07 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79699354AC2;
-	Sat, 18 Oct 2025 09:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2902EBB8A;
+	Sat, 18 Oct 2025 09:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQNVCMjD"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB002848BE
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 09:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760779207; cv=none; b=OtQXUNukYE2qW5x2gEJhgNtd/T7K2ge+hY8WgAc3VIAnGZkp9tq2pq73Xhy4lipqccjA/1a/5gsy6ghQo4KomEu9fWii5ux8darHWWXJoaR4/uPgYuf/85aqBJxIaqSVEXSnjKauoUKpu71G8DKLTImYbYaRJG2RrLmMbw3YG9A=
+	t=1760778351; cv=none; b=kJLWRTseMmOIdOzTG0aJNkqcyvjXutTVW15lAVQPVWSSv1frOVL8rveah1cTAVPJKEAhtV4AbYfWI37//QIM5evEXZVeQJQKg5Gy8gVlymvHsvgHAGzrdPTRo5uxpTXiJjWYCdvSyG37FP/ZzjpqiHAbCi9H4t7hilujlXUYjok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760779207; c=relaxed/simple;
-	bh=Js3Sv/xG8mYjoHec+OB1wgclcQpEP3pJbcpRQXSFxB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pm2lnFn5lUtn1vUnscaSHxD62/OM9PxQrKBkjxfP6vIaUyOOrkfQaol0y8cDxS5L0d8lPjbxI1LTZqLRkpX2GriGy6Yc30G/SRZmeFNpmvrZOG3I4m2dOQ0x+SPE3LY7f26209fbtP3uWeEvJRJC+Qi1sso4tdEgoe0WUQrw2iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cpbJ13kd9z9sSC;
-	Sat, 18 Oct 2025 11:00:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id HJxa1yDcQJwG; Sat, 18 Oct 2025 11:00:33 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cpbJ12blgz9sS8;
-	Sat, 18 Oct 2025 11:00:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 468C38B765;
-	Sat, 18 Oct 2025 11:00:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 0rhQCqUhMXYB; Sat, 18 Oct 2025 11:00:33 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4BD6D8B764;
-	Sat, 18 Oct 2025 11:00:32 +0200 (CEST)
-Message-ID: <f2e43e3f-b4fc-4ebd-b6ae-7e610b2ea164@csgroup.eu>
-Date: Sat, 18 Oct 2025 11:00:32 +0200
+	s=arc-20240116; t=1760778351; c=relaxed/simple;
+	bh=zMwAxL4eSaShVuEFgCEzSnNitMi745qrXYTua1HCAfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WYtk5Te1piuTyxpMaQzGmaRvQuBuaMExdKnk2IcU7528PhErYhajdIIlL/QjT5MH0eSYjiJV3cEVwBBx0uIW9mg638pfYfiWhVEUbyp2FGdlJFP5mMaS4JYUNOQj2SrboXUXD3HmqAFxSFBjL3M8W622M0D70EUug/k6ivjh1mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQNVCMjD; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63c523864caso638973a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760778348; x=1761383148; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6z6CG4Bzykdg3VlQO62kpKPKIN5Ed0HvWERMlLp9z1M=;
+        b=AQNVCMjDhsiMoRIEKbUiUuY5x8HbHETJfFUQFW7ffMMjMMH6J3P8lSaLnq5BMl1KKv
+         ZQ4+nEzo4c6k4ZqZOiMlv/Ny1uEu/X9+iMZRP6ty7FkO/zDjxld+kXKsI9uZj2MvKOfO
+         HO88bI9cIiSyrh1ID7Aq48qiNvTN+le63qtRpTUDuhrK1eCBMpKiP9Ke+nY4TXSqKB4C
+         OxPrQsnEeQaKZ9Tu+ztOOgTqF+/jAZcx6w72uXOJ0eQH45FdR3zcSMiDnXJRtRpnjYK+
+         p7P62puVSFz4MMU2y7L3tK1Z/LiVdylPqvF76S9dZL9KLJL0mAyizcyUMEsStEXPRkcb
+         c/JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760778348; x=1761383148;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6z6CG4Bzykdg3VlQO62kpKPKIN5Ed0HvWERMlLp9z1M=;
+        b=HOMt7mdbLEGvCrOCe2wa15laLc/fGJJa9jEcrnmRKrdjIpA54BcmEJ79Ys2tOI7HE5
+         SImPFkrVTf+WNCElLCFv4zKQfXtiCNp2JxslwYeHYcTDYo4GE4vLf57jkOIy0xT073D0
+         BP4+cNIKFTMPK+qJyj3d1BhpSmJ3sbR6qSAI4lsNyygp5rBhfaVIWJibG5lgPCuMWZvX
+         VzmrEMdCXAfW0MRgFKOm6MyYxehpzPLJhPZwFhf5Xnz7Q9ZkdybHyxXdw0zBHdHd2QDV
+         1i8rVKQ5+1M6ZQ2ZWpdq/XUh2fvvdXRlHLUnGJ/f1k7WBgA0/4LpIXvhVnYkJPbPBr9m
+         TDZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWreGFUyRRxx+BVsKLCPwl6B1OkT5Cm+C5Pmc5Ps4Y4nZIttB81b/ktXMPxIsjwgSVcsPYuZIGu+8DkNBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0gYhHrK/obqmCsgy4pPa//jlD230QXlOpS5pPqBgX3KE7mzFi
+	SpU903U1T0+NGb8MOx0B95feSwgkUzu3pP7QS+fWluSiSvu91ncv7IZriWrEtZ89mH9SQ26g/y7
+	nRiOucyHY3HsUqn0HSrypnkVdWoDEHp0=
+X-Gm-Gg: ASbGnct2wm3y3jqWiKLO/qc+8sFnaKJJewFBgcWRPyq9e5I9uLz8EHLOsYZR3C+GED2
+	x4n7erEhsXoXh0PpdboZrfMClMfzwGpH3Q5Q0Afa0shglhNGsTHe3oJytwybmlQkk9eCuegJ2jA
+	QFqUc6svurLWoJeAt/5XoPdJymp5oLrkarGsudLuzf12ZTJhstxBODxNfImFGgq7mJoZMXDl5bQ
+	EsmpMZPaRmOczCs8yHMH+I7MkjC3zqdEYIwNel+43rJ4A8kX3jH8gNUUJg=
+X-Google-Smtp-Source: AGHT+IEhR89+OlZnqrJ1xToJ35S4hHteVi05MGdBYp0FB9E+H5DwaPu0w+LV/8y6BXwE5xnOmNRU6JE04b6xtGtpRL0=
+X-Received: by 2002:a05:6402:4504:b0:63b:f48d:cf4a with SMTP id
+ 4fb4d7f45d1cf-63c1f578eaamr5362961a12.0.1760778348106; Sat, 18 Oct 2025
+ 02:05:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/17] arm64/sha3: Rename conflicting functions
-To: David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@kernel.org>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel
- <ardb@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
- Stephan Mueller <smueller@chronox.de>, Lukas Wunner <lukas@wunner.de>,
- Ignat Korchagin <ignat@cloudflare.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-References: <20251017144311.817771-1-dhowells@redhat.com>
- <20251017144311.817771-3-dhowells@redhat.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20251017144311.817771-3-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251018061127.7352-1-linux.amoon@gmail.com> <071f563c-6d09-46ea-870b-a51e0522bfad@web.de>
+In-Reply-To: <071f563c-6d09-46ea-870b-a51e0522bfad@web.de>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 18 Oct 2025 14:35:31 +0530
+X-Gm-Features: AS18NWDj5t4J8Su9s5gXUOjbXZcv8D1D0shD_oUkWVHtMigAOGJ_VaoJUxZoA-o
+Message-ID: <CANAwSgQEqv2a1MGkGtj8CpXSKOXv=_wV3afOgn=iri7uqnj1bw@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rockchip: Propagate dev_err_probe return value
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Markus,
 
+On Sat, 18 Oct 2025 at 13:09, Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> > Ensure that the return value from dev_err_probe() is consistently assigned
+> > back to return in all error paths within rockchip_pcie_init_port()
+> > function. This ensures the original error code are propagation for
+> > debugging.
+>
+> I find the change description improvable.
+>
+Ok, is this ok?
 
-Le 17/10/2025 à 16:42, David Howells a écrit :
-> Rename the arm64 sha3_* functions to have an "arm64_" prefix to avoid
-> conflict with generic code.
+When using the dev_err_probe() helper function in rockchip_pcie_init_port(),
+ensure its return value is consistently assigned to the return variable. This
+guarantees that the original error code, whether it's a specific error
+or -EPROBE_DEFER,
+is correctly propagated up the call stack for proper error handling
+and debugging.
 
-Same comment as previous patch, the functions are static, why would they 
-conflict with generic code ?
+>
+> Would an other source code variant become more desirable?
+> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/core.c#L5031-L5075
+>
+>         err = dev_err_probe(dev,
+>                             reset_control_bulk_assert(ROCKCHIP_NUM_CORE_RSTS, rockchip->core_rsts),
+>                             "Couldn't assert Core resets\n");
+>         if (err)
+>                 goto err_exit_phy;
+No, the correct code ensures that dev_err_probe() is only called when
+an actual error has
+occurred, providing a clear and accurate log entry. For deferred probe
+(-EPROBE_DEFER),
+it will correctly log at a debug level, as intended for that scenario.
+For other errors, it will provide
+a standard error message.
+>
+>
+> Regards,
+> Markus
 
-Also generic code doesn't have such functions at the moment, are they 
-added by a follow patch ?
-
-Christophe
-
-
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Eric Biggers <ebiggers@kernel.org>
-> cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> cc: Ard Biesheuvel <ardb@kernel.org>
-> cc: Catalin Marinas <catalin.marinas@arm.com>
-> cc: Will Deacon <will@kernel.org>
-> cc: Herbert Xu <herbert@gondor.apana.org.au>
-> cc: Stephan Mueller <smueller@chronox.de>
-> cc: linux-crypto@vger.kernel.org
-> cc: linux-arm-kernel@lists.infradead.org
-> ---
->   arch/arm64/crypto/sha3-ce-glue.c | 22 +++++++++++-----------
->   1 file changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/crypto/sha3-ce-glue.c b/arch/arm64/crypto/sha3-ce-glue.c
-> index b4f1001046c9..426d8044535a 100644
-> --- a/arch/arm64/crypto/sha3-ce-glue.c
-> +++ b/arch/arm64/crypto/sha3-ce-glue.c
-> @@ -31,7 +31,7 @@ MODULE_ALIAS_CRYPTO("sha3-512");
->   asmlinkage int sha3_ce_transform(u64 *st, const u8 *data, int blocks,
->   				 int md_len);
->   
-> -static int sha3_update(struct shash_desc *desc, const u8 *data,
-> +static int arm64_sha3_update(struct shash_desc *desc, const u8 *data,
->   		       unsigned int len)
->   {
->   	struct sha3_state *sctx = shash_desc_ctx(desc);
-> @@ -55,8 +55,8 @@ static int sha3_update(struct shash_desc *desc, const u8 *data,
->   	return len;
->   }
->   
-> -static int sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
-> -		      u8 *out)
-> +static int arm64_sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
-> +			    u8 *out)
->   {
->   	struct sha3_state *sctx = shash_desc_ctx(desc);
->   	struct crypto_shash *tfm = desc->tfm;
-> @@ -90,8 +90,8 @@ static int sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
->   static struct shash_alg algs[] = { {
->   	.digestsize		= SHA3_224_DIGEST_SIZE,
->   	.init			= crypto_sha3_init,
-> -	.update			= sha3_update,
-> -	.finup			= sha3_finup,
-> +	.update			= arm64_sha3_update,
-> +	.finup			= arm64_sha3_finup,
->   	.descsize		= SHA3_STATE_SIZE,
->   	.base.cra_name		= "sha3-224",
->   	.base.cra_driver_name	= "sha3-224-ce",
-> @@ -102,8 +102,8 @@ static struct shash_alg algs[] = { {
->   }, {
->   	.digestsize		= SHA3_256_DIGEST_SIZE,
->   	.init			= crypto_sha3_init,
-> -	.update			= sha3_update,
-> -	.finup			= sha3_finup,
-> +	.update			= arm64_sha3_update,
-> +	.finup			= arm64_sha3_finup,
->   	.descsize		= SHA3_STATE_SIZE,
->   	.base.cra_name		= "sha3-256",
->   	.base.cra_driver_name	= "sha3-256-ce",
-> @@ -114,8 +114,8 @@ static struct shash_alg algs[] = { {
->   }, {
->   	.digestsize		= SHA3_384_DIGEST_SIZE,
->   	.init			= crypto_sha3_init,
-> -	.update			= sha3_update,
-> -	.finup			= sha3_finup,
-> +	.update			= arm64_sha3_update,
-> +	.finup			= arm64_sha3_finup,
->   	.descsize		= SHA3_STATE_SIZE,
->   	.base.cra_name		= "sha3-384",
->   	.base.cra_driver_name	= "sha3-384-ce",
-> @@ -126,8 +126,8 @@ static struct shash_alg algs[] = { {
->   }, {
->   	.digestsize		= SHA3_512_DIGEST_SIZE,
->   	.init			= crypto_sha3_init,
-> -	.update			= sha3_update,
-> -	.finup			= sha3_finup,
-> +	.update			= arm64_sha3_update,
-> +	.finup			= arm64_sha3_finup,
->   	.descsize		= SHA3_STATE_SIZE,
->   	.base.cra_name		= "sha3-512",
->   	.base.cra_driver_name	= "sha3-512-ce",
-> 
-> 
-
+Thanks
+-Anand
 
