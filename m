@@ -1,186 +1,585 @@
-Return-Path: <linux-kernel+bounces-859452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50E9BEDB1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 21:58:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FD7BEDB29
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 22:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85CD64E25C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C066519A6A8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 20:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C64A28688D;
-	Sat, 18 Oct 2025 19:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068DE2C21E8;
+	Sat, 18 Oct 2025 20:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PvS1b0V8"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ejlQvqtC"
+Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176C11E51EA
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 19:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823D5277C9A;
+	Sat, 18 Oct 2025 19:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.34.181.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760817533; cv=none; b=ktWJObNU1M8ZoIwLKcfX5tTpLDTvmDi9LUk8bkDRGKiHp/t9iYJEkoPurdjlOK6wgXtQzObCmzU2TUeHaMaOGXxo4RriKDHcGl7mwtqA0n7QT7zt4fbc8Wgdc0h1R/Me/6nufaOkOH+XmN2eTQRWa/TcMMjcGiLvpjSh3kMjhdA=
+	t=1760817598; cv=none; b=ggCOsRf39KYsROOPLeloZODi6tWjcTd9R3iJmPSYGGhV71y+Dl4tHeySXFVhNueWM0NU2HSUZPhSNdxG8BsyizcE/ufNmsfT5X4hMeVra1jvVPZnG+WwULTsOoyAJb4+iV3Z670hZ+DCLTJfedsfW+o9ZdXdyr27+HW3LyPHtPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760817533; c=relaxed/simple;
-	bh=xVKfd1veqpJZpq8rjw+tfHez0zGUxzC0qPUQVJRQyVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUZJyVs89Z3KJiRosKrXDb9rxijjOf4JjKAxQB1h9zQ6o9tOLJ0upYU4u0FFqbVIjjSjG/mL8MWudKdr/wud667Y1qUmpVnlvW6b6UFyVRfGvLit9a0oI9GpV7Ta9eXxDonc6Xs0VGOikwmQqz1uAU3r0I2Bbydl1c5noIuKbcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PvS1b0V8; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2f8X4O+RUN/lM3mSmCBS9J9+Sn/0NyyGaY17wDnTykw=; b=PvS1b0V8Rv4mYHpukqhfbKe2+m
-	Np27gaF9T3zWftN56Nf1DZ5bcEqP/aF4M0d1Qx3CNhkFM1mOvWfbJXMLoTfXjSpRoj4E5b3ZWdvLG
-	1l3ShtnFZ4ByJLj/HQkY/HBYic3BgiaxvKcfwWQ3D5BE9nCPx9CDnPsHgF423bwaBhW7N2fELZsUF
-	MA5kthfKX0jyWwpTKBHp8mLMfiu1x5Lfi+hvTINui0cOLPAFjFezKefvxwN7L90a2iUJpHbx2N8Ea
-	JIxscLZN779SHc7ge7M4TCOD5cpqq1P9j3sjlxGSRvY6gxddSL0Bv8A8QBRhZRFOmQpaAl94enczd
-	DABjJDvg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vAD3U-00000008YsL-13BP;
-	Sat, 18 Oct 2025 19:58:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C919530036B; Sat, 18 Oct 2025 21:57:30 +0200 (CEST)
-Date: Sat, 18 Oct 2025 21:57:30 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Phil Auld <pauld@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Shizhao Chen <shichen@redhat.com>, linux-kernel@vger.kernel.org,
-	Omar Sandoval <osandov@fb.com>, Xuewen Yan <xuewen.yan@unisoc.com>
-Subject: Re: sched: update_entity_lag does not handle corner case with task
- in PI chain
-Message-ID: <20251018195730.GJ3419281@noisy.programming.kicks-ass.net>
-References: <aPN7XBJbGhdWJDb2@uudg.org>
+	s=arc-20240116; t=1760817598; c=relaxed/simple;
+	bh=bMV20D65SQY2T5+vRg8Qz5xebhjMdjI0P1Ep0l7Sirg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=loW/iLZ8BVZwl7fAXMDcabYPQI219rIBbrduIYBes8hnIQ5bySt+pV/qAyoduJ0afcCMK3JMeRGOPKD5AWg2sMekJkZ5cC/wtKzEBePb65Zamru6McfTrDuCbSiRhYp3yttuy6D0S03bemtZLsNL31CP9jYLUykpCZR3M1RKYwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ejlQvqtC; arc=none smtp.client-ip=52.34.181.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1760817596; x=1792353596;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sEYdbCmseZgzNgUq/qO65kcsC90lv2jjfE41BXg79O0=;
+  b=ejlQvqtClOX7gRWZ2jDp9jQiPWKlWWAyxfwONJe/fZGCPRE9WJqU9WUK
+   6pGeGvhrmMS+TxYf69wLWUtcLN80p6wJOVHeuEjDBZmXhM7saNrogbhCY
+   mOSOzlEjQ2ThlYrB6b9cqqAsbMx8vtTiQk91xghu/Jqebo7jhExt+1vyq
+   vgy8RdXtvlXYuZegfYPH4xoVIxKv4vCedPsr2qIGfvW3zNT7EJEz7M5XF
+   xiNI5fFMYaqdM1TXkV/hZzpW+0QaF4sAbEfozmMeAbVgpfUtnEtcwcY88
+   3RJIW+Fy8VUSuQeQph5ButI9ix5DJp/6NaCBsS5pjI9xexz7hsL7ForiZ
+   Q==;
+X-CSE-ConnectionGUID: B8e9Z53URZGiJYgR/wmpLw==
+X-CSE-MsgGUID: sNPGVj6HR/uPqsJ6gHt1xg==
+X-IronPort-AV: E=Sophos;i="6.18,263,1751241600"; 
+   d="scan'208";a="5144657"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 19:59:54 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:10134]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.56.234:2525] with esmtp (Farcaster)
+ id 3afe7262-b5b9-4d6d-8904-b41b36d4b890; Sat, 18 Oct 2025 19:59:54 +0000 (UTC)
+X-Farcaster-Flow-ID: 3afe7262-b5b9-4d6d-8904-b41b36d4b890
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Sat, 18 Oct 2025 19:59:53 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Sat, 18 Oct 2025
+ 19:59:51 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: <stf_xl@wp.pl>, <helmut.schaa@googlemail.com>, <kvalo@codeaurora.org>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <linux-wireless@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<gregkh@linuxfoundation.org>, <stable@vger.kernel.org>, <nathan@kernel.org>,
+	<farbere@amazon.com>
+CC: "Jason A. Donenfeld" <Jason@zx2c4.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Kalle Valo <kvalo@kernel.org>, "Naresh
+ Kamboju" <naresh.kamboju@linaro.org>
+Subject: [PATCH 5.10.y] wifi: rt2x00: use explicitly signed or unsigned types
+Date: Sat, 18 Oct 2025 19:59:35 +0000
+Message-ID: <20251018195945.18825-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPN7XBJbGhdWJDb2@uudg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D037UWC001.ant.amazon.com (10.13.139.197) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Sat, Oct 18, 2025 at 08:34:52AM -0300, Luis Claudio R. Goncalves wrote:
-> Hello!
-> 
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
 
-> While running sched_group_migration test from CKI repository[1], which
+commit 66063033f77e10b985258126a97573f84bb8d3b4 upstream.
 
-What's a CKI ?
+On some platforms, `char` is unsigned, but this driver, for the most
+part, assumed it was signed. In other places, it uses `char` to mean an
+unsigned number, but only in cases when the values are small. And in
+still other places, `char` is used as a boolean. Put an end to this
+confusion by declaring explicit types, depending on the context.
 
-> migrates tasks between cpusets, Shizhao Chen reports hitting the warning
-> in update_entity_lag():
-> 
->     WARN_ON_ONCE(!se->on_rq);
-> 
-> In short, update_entity_lag() is acting on a task that is waiting on a lock,
-> sleeping, with both on_rq and se->on_rq equal to zero.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stanislaw Gruszka <stf_xl@wp.pl>
+Cc: Helmut Schaa <helmut.schaa@googlemail.com>
+Cc: Kalle Valo <kvalo@kernel.org>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+Signed-off-by: Kalle Valo <kvalo@kernel.org>
+Link: https://lore.kernel.org/r/20221019155541.3410813-1-Jason@zx2c4.com
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Eliav Farber <farbere@amazon.com>
+---
+This backport is required to fix build errors on an arm64 server when building with allmodconfig.
+The build failures were introduced after backporting:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/commit/queue-5.10?id=37c71b96ff37b6a069569841b1baa51be72299b2
 
-You can't get to where you are with p->on_rq being zero.
+The original commit in the mainline branch is:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/net/wireless/ralink/rt2x00/rt2800lib.c?h=v6.18-rc1&id=66063033f77e10b985258126a97573f84bb8d3b4
 
-> When a stalled RCU grace period occurs, rcu_boost_kthread() is called. If an
-> rt_mutex is involved in the process, rt_mutex_setprio() is called and may
-> eventually walk down a Priority Inheritance chain, adjusting the priorities
-> of the waiters in the chain. In such cases update_entity_lag() may be called.
-> 
-> What is the expected behavior for this case, to bail out of update_entity_lag()
-> or avoid calling the function entirely?
-> 
-> 
-> --[ Additional Notes:
-> 
-> Reproducing the Problem:
-> 
->   - Install sched_group_migration[1] and run it on a loop.
->     (while : ;  do runtest.sh; done)
->   - In my experience, running the test with 4 CPUs reproduces the problem
->     within 15 minutes. Setting "nr_cpus=4 max_cpus=4" on boot does the trick.
-> 
-> 
-> The scenario below is a simplification of the cases I observed while
-> investigating the problem:
-> 
->     CPUn					CPUx
-> 
->     task01 has rcu-state lock
->     contends on another lock		
->     (goes to sleep)
->     --> on_rq=0 se.on_rq=0
-> 					rcub/x contends on rcu-state lock
-> 					  rcu_boost_kthread()
-> 					    rt_set_prio()
-> 					      update_entity_lag(task01->se)
-> 					        WARNING()
+This fix already exists in 5.15.y:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/net/wireless/ralink/rt2x00/rt2800lib.c?h=v5.15.194&id=2d3cef3d7a5df260a14a6679c4aca0c97e570ee5
+…but is missing in 5.10.y.
 
-There is a whole lot wrong with this, firstly there is no rt_set_prio()
-function, and update_entity_lag() isn't directly called by it.
-Additionally, you should never get to update_entity_lag() if !p->on_rq,
-see below:
 
-> [ 1805.450470] ------------[ cut here ]------------
-> [ 1805.450474] WARNING: CPU: 2 PID: 19 at kernel/sched/fair.c:697 update_entity_lag+0x5b/0x70
-> [ 1805.463366] Modules linked in: intel_rapl_msr intel_rapl_common intel_uncore_frequency intel_uncore_frequency_common skx_edac skx_edac_common nfit libnvdimm x86_pkg_temp_th
-> ermal intel_powerclamp coretemp kvm_intel kvm platform_profile dell_wmi sparse_keymap rfkill irqbypass iTCO_wdt video mgag200 rapl iTCO_vendor_support dell_smbios ipmi_ssif in
-> tel_cstate vfat dcdbas wmi_bmof intel_uncore dell_wmi_descriptor pcspkr fat i2c_algo_bit lpc_ich mei_me i2c_i801 i2c_smbus mei intel_pch_thermal ipmi_si acpi_power_meter acpi_
-> ipmi ipmi_devintf ipmi_msghandler sg fuse loop xfs sd_mod i40e ghash_clmulni_intel libie libie_adminq ahci libahci tg3 libata wmi sunrpc dm_mirror dm_region_hash dm_log dm_mod
->  nfnetlink
-> [ 1805.525160] CPU: 2 UID: 0 PID: 19 Comm: rcub/0 Kdump: loaded Not tainted 6.17.1-rt5 #1 PREEMPT_RT 
-> [ 1805.534113] Hardware name: Dell Inc. PowerEdge R440/0WKGTH, BIOS 2.21.1 03/07/2024
-> [ 1805.541678] RIP: 0010:update_entity_lag+0x5b/0x70
-> [ 1805.546385] Code: 42 f8 48 81 3b 00 00 10 00 75 23 48 89 fa 48 f7 da 48 39 ea 48 0f 4c d5 48 39 fd 48 0f 4d d7 48 89 53 78 5b 5d c3 cc cc cc cc <0f> 0b eb b1 48 89 de e8 b9
->  8c ff ff 48 89 c7 eb d0 0f 1f 40 00 90
-> [ 1805.565130] RSP: 0000:ffffcc9e802f7b90 EFLAGS: 00010046
-> [ 1805.570358] RAX: 0000000000000000 RBX: ffff8959080c0080 RCX: 0000000000000000
-> [ 1805.577488] RDX: 0000000000000000 RSI: ffff8959080c0080 RDI: ffff895592cc1c00
-> [ 1805.584622] RBP: ffff895592cc1c00 R08: 0000000000008800 R09: 0000000000000000
-> [ 1805.591756] R10: 0000000000000001 R11: 0000000000200b20 R12: 000000000000000e
-> [ 1805.598886] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> [ 1805.606020] FS:  0000000000000000(0000) GS:ffff895947da2000(0000) knlGS:0000000000000000
-> [ 1805.614107] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 1805.619853] CR2: 00007f655816ed40 CR3: 00000004ab854006 CR4: 00000000007726f0
-> [ 1805.626985] PKRU: 55555554
-> [ 1805.629696] Call Trace:
-> [ 1805.632150]  <TASK>
-> [ 1805.634258]  dequeue_entity+0x90/0x4f0
-> [ 1805.638012]  dequeue_entities+0xc9/0x6b0
-> [ 1805.641935]  dequeue_task_fair+0x8a/0x190
-> [ 1805.645949]  ? sched_clock+0x10/0x30
-> [ 1805.649527]  rt_mutex_setprio+0x318/0x4b0
+The error encountered during the build:
 
-So we have:
+In file included from <command-line>:
+In function ‘rt2800_txpower_to_dev’,
+    inlined from ‘rt2800_config_channel’ at drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4022:25:
+././include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+././include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
+  290 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+././include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+./include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+./include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+./include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
+  218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
+      |                                    ^~~~~~~~~~~~~~~
+drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
+ 3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+      |                        ^~~~~~~
+In function ‘rt2800_txpower_to_dev’,
+    inlined from ‘rt2800_config_channel’ at drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4024:25:
+././include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+././include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
+  290 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+././include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+./include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+./include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+./include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
+  218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
+      |                                    ^~~~~~~~~~~~~~~
+drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
+ 3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+      |                        ^~~~~~~
+In function ‘rt2800_txpower_to_dev’,
+    inlined from ‘rt2800_config_channel’ at drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4028:4:
+././include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+././include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
+  290 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+././include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+./include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+./include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+./include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
+  218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
+      |                                    ^~~~~~~~~~~~~~~
+drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
+ 3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+      |                        ^~~~~~~
+make[5]: *** [scripts/Makefile.build:286: drivers/net/wireless/ralink/rt2x00/rt2800lib.o] Error 1
+make[4]: *** [scripts/Makefile.build:503: drivers/net/wireless/ralink/rt2x00] Error 2
+make[3]: *** [scripts/Makefile.build:503: drivers/net/wireless/ralink] Error 2
+make[2]: *** [scripts/Makefile.build:503: drivers/net/wireless] Error 2
+make[1]: *** [scripts/Makefile.build:503: drivers/net] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1851: drivers] Error 2
+make: *** Waiting for unfinished jobs....
+  CC [M]  kernel/kheaders.o
 
-rt_mutex_setprio()
 
-  rq = __task_rq_lock(p, ..); // this asserts p->pi_lock is held
+ .../net/wireless/ralink/rt2x00/rt2400pci.c    |  8 ++---
+ .../net/wireless/ralink/rt2x00/rt2400pci.h    |  2 +-
+ .../net/wireless/ralink/rt2x00/rt2500pci.c    |  8 ++---
+ .../net/wireless/ralink/rt2x00/rt2500pci.h    |  2 +-
+ .../net/wireless/ralink/rt2x00/rt2500usb.c    |  8 ++---
+ .../net/wireless/ralink/rt2x00/rt2500usb.h    |  2 +-
+ .../net/wireless/ralink/rt2x00/rt2800lib.c    | 36 +++++++++----------
+ .../net/wireless/ralink/rt2x00/rt2800lib.h    |  8 ++---
+ .../net/wireless/ralink/rt2x00/rt2x00usb.c    |  6 ++--
+ drivers/net/wireless/ralink/rt2x00/rt61pci.c  |  4 +--
+ drivers/net/wireless/ralink/rt2x00/rt61pci.h  |  2 +-
+ drivers/net/wireless/ralink/rt2x00/rt73usb.c  |  4 +--
+ drivers/net/wireless/ralink/rt2x00/rt73usb.h  |  2 +-
+ 13 files changed, 46 insertions(+), 46 deletions(-)
 
-  ...
-
-  queued = task_on_rq_queued(rq); // basically reads p->on_rq
-  running = task_current_donor()
-  if (queued)
-    dequeue_task(rq, p, queue_flags);
-      dequeue_task_fair()
-        dequeue_entities()
-	  dequeue_entity()
-	    update_entity_lag()
-	      WARN_ON_ONCE(se->on_rq);
-
-So the only way to get here is if: rq->on_rq is in fact !0 *and*
-se->on_rq is zero.
-
-And I'm not at all sure how one would get into such a state.
-
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2400pci.c b/drivers/net/wireless/ralink/rt2x00/rt2400pci.c
+index 8f860c14da58..1520785c3ddb 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2400pci.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2400pci.c
+@@ -1023,9 +1023,9 @@ static int rt2400pci_set_state(struct rt2x00_dev *rt2x00dev,
+ {
+ 	u32 reg, reg2;
+ 	unsigned int i;
+-	char put_to_sleep;
+-	char bbp_state;
+-	char rf_state;
++	bool put_to_sleep;
++	u8 bbp_state;
++	u8 rf_state;
+ 
+ 	put_to_sleep = (state != STATE_AWAKE);
+ 
+@@ -1561,7 +1561,7 @@ static int rt2400pci_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
+ {
+ 	struct hw_mode_spec *spec = &rt2x00dev->spec;
+ 	struct channel_info *info;
+-	char *tx_power;
++	u8 *tx_power;
+ 	unsigned int i;
+ 
+ 	/*
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2400pci.h b/drivers/net/wireless/ralink/rt2x00/rt2400pci.h
+index b8187b6de143..979d5fd8babf 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2400pci.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2400pci.h
+@@ -939,7 +939,7 @@
+ #define DEFAULT_TXPOWER	39
+ 
+ #define __CLAMP_TX(__txpower) \
+-	clamp_t(char, (__txpower), MIN_TXPOWER, MAX_TXPOWER)
++	clamp_t(u8, (__txpower), MIN_TXPOWER, MAX_TXPOWER)
+ 
+ #define TXPOWER_FROM_DEV(__txpower) \
+ 	((__CLAMP_TX(__txpower) - MAX_TXPOWER) + MIN_TXPOWER)
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2500pci.c b/drivers/net/wireless/ralink/rt2x00/rt2500pci.c
+index e940443c52ad..1be535c74917 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2500pci.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2500pci.c
+@@ -1176,9 +1176,9 @@ static int rt2500pci_set_state(struct rt2x00_dev *rt2x00dev,
+ {
+ 	u32 reg, reg2;
+ 	unsigned int i;
+-	char put_to_sleep;
+-	char bbp_state;
+-	char rf_state;
++	bool put_to_sleep;
++	u8 bbp_state;
++	u8 rf_state;
+ 
+ 	put_to_sleep = (state != STATE_AWAKE);
+ 
+@@ -1856,7 +1856,7 @@ static int rt2500pci_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
+ {
+ 	struct hw_mode_spec *spec = &rt2x00dev->spec;
+ 	struct channel_info *info;
+-	char *tx_power;
++	u8 *tx_power;
+ 	unsigned int i;
+ 
+ 	/*
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2500pci.h b/drivers/net/wireless/ralink/rt2x00/rt2500pci.h
+index 7e64aee2a172..ba362675c52c 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2500pci.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2500pci.h
+@@ -1219,6 +1219,6 @@
+ 	(((u8)(__txpower)) > MAX_TXPOWER) ? DEFAULT_TXPOWER : (__txpower)
+ 
+ #define TXPOWER_TO_DEV(__txpower) \
+-	clamp_t(char, __txpower, MIN_TXPOWER, MAX_TXPOWER)
++	clamp_t(u8, __txpower, MIN_TXPOWER, MAX_TXPOWER)
+ 
+ #endif /* RT2500PCI_H */
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2500usb.c b/drivers/net/wireless/ralink/rt2x00/rt2500usb.c
+index fce05fc88aaf..6d12e3879a90 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2500usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2500usb.c
+@@ -984,9 +984,9 @@ static int rt2500usb_set_state(struct rt2x00_dev *rt2x00dev,
+ 	u16 reg;
+ 	u16 reg2;
+ 	unsigned int i;
+-	char put_to_sleep;
+-	char bbp_state;
+-	char rf_state;
++	bool put_to_sleep;
++	u8 bbp_state;
++	u8 rf_state;
+ 
+ 	put_to_sleep = (state != STATE_AWAKE);
+ 
+@@ -1663,7 +1663,7 @@ static int rt2500usb_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
+ {
+ 	struct hw_mode_spec *spec = &rt2x00dev->spec;
+ 	struct channel_info *info;
+-	char *tx_power;
++	u8 *tx_power;
+ 	unsigned int i;
+ 
+ 	/*
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2500usb.h b/drivers/net/wireless/ralink/rt2x00/rt2500usb.h
+index 0c070288a140..746f0e950b76 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2500usb.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2500usb.h
+@@ -839,6 +839,6 @@
+ 	(((u8)(__txpower)) > MAX_TXPOWER) ? DEFAULT_TXPOWER : (__txpower)
+ 
+ #define TXPOWER_TO_DEV(__txpower) \
+-	clamp_t(char, __txpower, MIN_TXPOWER, MAX_TXPOWER)
++	clamp_t(u8, __txpower, MIN_TXPOWER, MAX_TXPOWER)
+ 
+ #endif /* RT2500USB_H */
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+index 4bdd3a95f2d2..adea793c6a76 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+@@ -3297,10 +3297,10 @@ static void rt2800_config_channel_rf53xx(struct rt2x00_dev *rt2x00dev,
+ 	if (rt2x00_has_cap_bt_coexist(rt2x00dev)) {
+ 		if (rt2x00_rt_rev_gte(rt2x00dev, RT5390, REV_RT5390F)) {
+ 			/* r55/r59 value array of channel 1~14 */
+-			static const char r55_bt_rev[] = {0x83, 0x83,
++			static const u8 r55_bt_rev[] = {0x83, 0x83,
+ 				0x83, 0x73, 0x73, 0x63, 0x53, 0x53,
+ 				0x53, 0x43, 0x43, 0x43, 0x43, 0x43};
+-			static const char r59_bt_rev[] = {0x0e, 0x0e,
++			static const u8 r59_bt_rev[] = {0x0e, 0x0e,
+ 				0x0e, 0x0e, 0x0e, 0x0b, 0x0a, 0x09,
+ 				0x07, 0x07, 0x07, 0x07, 0x07, 0x07};
+ 
+@@ -3309,7 +3309,7 @@ static void rt2800_config_channel_rf53xx(struct rt2x00_dev *rt2x00dev,
+ 			rt2800_rfcsr_write(rt2x00dev, 59,
+ 					   r59_bt_rev[idx]);
+ 		} else {
+-			static const char r59_bt[] = {0x8b, 0x8b, 0x8b,
++			static const u8 r59_bt[] = {0x8b, 0x8b, 0x8b,
+ 				0x8b, 0x8b, 0x8b, 0x8b, 0x8a, 0x89,
+ 				0x88, 0x88, 0x86, 0x85, 0x84};
+ 
+@@ -3317,10 +3317,10 @@ static void rt2800_config_channel_rf53xx(struct rt2x00_dev *rt2x00dev,
+ 		}
+ 	} else {
+ 		if (rt2x00_rt_rev_gte(rt2x00dev, RT5390, REV_RT5390F)) {
+-			static const char r55_nonbt_rev[] = {0x23, 0x23,
++			static const u8 r55_nonbt_rev[] = {0x23, 0x23,
+ 				0x23, 0x23, 0x13, 0x13, 0x03, 0x03,
+ 				0x03, 0x03, 0x03, 0x03, 0x03, 0x03};
+-			static const char r59_nonbt_rev[] = {0x07, 0x07,
++			static const u8 r59_nonbt_rev[] = {0x07, 0x07,
+ 				0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 				0x07, 0x07, 0x06, 0x05, 0x04, 0x04};
+ 
+@@ -3331,14 +3331,14 @@ static void rt2800_config_channel_rf53xx(struct rt2x00_dev *rt2x00dev,
+ 		} else if (rt2x00_rt(rt2x00dev, RT5390) ||
+ 			   rt2x00_rt(rt2x00dev, RT5392) ||
+ 			   rt2x00_rt(rt2x00dev, RT6352)) {
+-			static const char r59_non_bt[] = {0x8f, 0x8f,
++			static const u8 r59_non_bt[] = {0x8f, 0x8f,
+ 				0x8f, 0x8f, 0x8f, 0x8f, 0x8f, 0x8d,
+ 				0x8a, 0x88, 0x88, 0x87, 0x87, 0x86};
+ 
+ 			rt2800_rfcsr_write(rt2x00dev, 59,
+ 					   r59_non_bt[idx]);
+ 		} else if (rt2x00_rt(rt2x00dev, RT5350)) {
+-			static const char r59_non_bt[] = {0x0b, 0x0b,
++			static const u8 r59_non_bt[] = {0x0b, 0x0b,
+ 				0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0a,
+ 				0x0a, 0x09, 0x08, 0x07, 0x07, 0x06};
+ 
+@@ -3961,23 +3961,23 @@ static void rt2800_iq_calibrate(struct rt2x00_dev *rt2x00dev, int channel)
+ 	rt2800_bbp_write(rt2x00dev, 159, cal != 0xff ? cal : 0);
+ }
+ 
+-static char rt2800_txpower_to_dev(struct rt2x00_dev *rt2x00dev,
++static s8 rt2800_txpower_to_dev(struct rt2x00_dev *rt2x00dev,
+ 				  unsigned int channel,
+-				  char txpower)
++				  s8 txpower)
+ {
+ 	if (rt2x00_rt(rt2x00dev, RT3593) ||
+ 	    rt2x00_rt(rt2x00dev, RT3883))
+ 		txpower = rt2x00_get_field8(txpower, EEPROM_TXPOWER_ALC);
+ 
+ 	if (channel <= 14)
+-		return clamp_t(char, txpower, MIN_G_TXPOWER, MAX_G_TXPOWER);
++		return clamp_t(s8, txpower, MIN_G_TXPOWER, MAX_G_TXPOWER);
+ 
+ 	if (rt2x00_rt(rt2x00dev, RT3593) ||
+ 	    rt2x00_rt(rt2x00dev, RT3883))
+-		return clamp_t(char, txpower, MIN_A_TXPOWER_3593,
++		return clamp_t(s8, txpower, MIN_A_TXPOWER_3593,
+ 			       MAX_A_TXPOWER_3593);
+ 	else
+-		return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
++		return clamp_t(s8, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+ }
+ 
+ static void rt3883_bbp_adjust(struct rt2x00_dev *rt2x00dev,
+@@ -8473,11 +8473,11 @@ static int rt2800_rf_lp_config(struct rt2x00_dev *rt2x00dev, bool btxcal)
+ 	return 0;
+ }
+ 
+-static char rt2800_lp_tx_filter_bw_cal(struct rt2x00_dev *rt2x00dev)
++static s8 rt2800_lp_tx_filter_bw_cal(struct rt2x00_dev *rt2x00dev)
+ {
+ 	unsigned int cnt;
+ 	u8 bbp_val;
+-	char cal_val;
++	s8 cal_val;
+ 
+ 	rt2800_bbp_dcoc_write(rt2x00dev, 0, 0x82);
+ 
+@@ -8509,7 +8509,7 @@ static void rt2800_bw_filter_calibration(struct rt2x00_dev *rt2x00dev,
+ 	u8 rx_filter_target_20m = 0x27, rx_filter_target_40m = 0x31;
+ 	int loop = 0, is_ht40, cnt;
+ 	u8 bbp_val, rf_val;
+-	char cal_r32_init, cal_r32_val, cal_diff;
++	s8 cal_r32_init, cal_r32_val, cal_diff;
+ 	u8 saverfb5r00, saverfb5r01, saverfb5r03, saverfb5r04, saverfb5r05;
+ 	u8 saverfb5r06, saverfb5r07;
+ 	u8 saverfb5r08, saverfb5r17, saverfb5r18, saverfb5r19, saverfb5r20;
+@@ -9960,9 +9960,9 @@ static int rt2800_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
+ {
+ 	struct hw_mode_spec *spec = &rt2x00dev->spec;
+ 	struct channel_info *info;
+-	char *default_power1;
+-	char *default_power2;
+-	char *default_power3;
++	s8 *default_power1;
++	s8 *default_power2;
++	s8 *default_power3;
+ 	unsigned int i, tx_chains, rx_chains;
+ 	u32 reg;
+ 
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.h b/drivers/net/wireless/ralink/rt2x00/rt2800lib.h
+index 1139405c0ebb..6928f352f631 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.h
+@@ -22,10 +22,10 @@
+ struct rt2800_drv_data {
+ 	u8 calibration_bw20;
+ 	u8 calibration_bw40;
+-	char rx_calibration_bw20;
+-	char rx_calibration_bw40;
+-	char tx_calibration_bw20;
+-	char tx_calibration_bw40;
++	s8 rx_calibration_bw20;
++	s8 rx_calibration_bw40;
++	s8 tx_calibration_bw20;
++	s8 tx_calibration_bw40;
+ 	u8 bbp25;
+ 	u8 bbp26;
+ 	u8 txmixer_gain_24g;
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
+index 74c3d8cb3100..8b3c90231110 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
+@@ -117,12 +117,12 @@ int rt2x00usb_vendor_request_buff(struct rt2x00_dev *rt2x00dev,
+ 				  const u16 buffer_length)
+ {
+ 	int status = 0;
+-	unsigned char *tb;
++	u8 *tb;
+ 	u16 off, len, bsize;
+ 
+ 	mutex_lock(&rt2x00dev->csr_mutex);
+ 
+-	tb  = (char *)buffer;
++	tb  = (u8 *)buffer;
+ 	off = offset;
+ 	len = buffer_length;
+ 	while (len && !status) {
+@@ -215,7 +215,7 @@ void rt2x00usb_register_read_async(struct rt2x00_dev *rt2x00dev,
+ 	rd->cr.wLength = cpu_to_le16(sizeof(u32));
+ 
+ 	usb_fill_control_urb(urb, usb_dev, usb_rcvctrlpipe(usb_dev, 0),
+-			     (unsigned char *)(&rd->cr), &rd->reg, sizeof(rd->reg),
++			     (u8 *)(&rd->cr), &rd->reg, sizeof(rd->reg),
+ 			     rt2x00usb_register_read_async_cb, rd);
+ 	usb_anchor_urb(urb, rt2x00dev->anchor);
+ 	if (usb_submit_urb(urb, GFP_ATOMIC) < 0) {
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt61pci.c b/drivers/net/wireless/ralink/rt2x00/rt61pci.c
+index 02da5dd37ddd..d04761c32a5d 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt61pci.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt61pci.c
+@@ -1709,7 +1709,7 @@ static int rt61pci_set_state(struct rt2x00_dev *rt2x00dev, enum dev_state state)
+ {
+ 	u32 reg, reg2;
+ 	unsigned int i;
+-	char put_to_sleep;
++	bool put_to_sleep;
+ 
+ 	put_to_sleep = (state != STATE_AWAKE);
+ 
+@@ -2656,7 +2656,7 @@ static int rt61pci_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
+ {
+ 	struct hw_mode_spec *spec = &rt2x00dev->spec;
+ 	struct channel_info *info;
+-	char *tx_power;
++	u8 *tx_power;
+ 	unsigned int i;
+ 
+ 	/*
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt61pci.h b/drivers/net/wireless/ralink/rt2x00/rt61pci.h
+index 5f208ad509bd..d72d0ffd1127 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt61pci.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt61pci.h
+@@ -1484,6 +1484,6 @@ struct hw_pairwise_ta_entry {
+ 	(((u8)(__txpower)) > MAX_TXPOWER) ? DEFAULT_TXPOWER : (__txpower)
+ 
+ #define TXPOWER_TO_DEV(__txpower) \
+-	clamp_t(char, __txpower, MIN_TXPOWER, MAX_TXPOWER)
++	clamp_t(u8, __txpower, MIN_TXPOWER, MAX_TXPOWER)
+ 
+ #endif /* RT61PCI_H */
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt73usb.c b/drivers/net/wireless/ralink/rt2x00/rt73usb.c
+index e69793773d87..32f6d689bd36 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt73usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt73usb.c
+@@ -1378,7 +1378,7 @@ static int rt73usb_set_state(struct rt2x00_dev *rt2x00dev, enum dev_state state)
+ {
+ 	u32 reg, reg2;
+ 	unsigned int i;
+-	char put_to_sleep;
++	bool put_to_sleep;
+ 
+ 	put_to_sleep = (state != STATE_AWAKE);
+ 
+@@ -2090,7 +2090,7 @@ static int rt73usb_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
+ {
+ 	struct hw_mode_spec *spec = &rt2x00dev->spec;
+ 	struct channel_info *info;
+-	char *tx_power;
++	u8 *tx_power;
+ 	unsigned int i;
+ 
+ 	/*
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt73usb.h b/drivers/net/wireless/ralink/rt2x00/rt73usb.h
+index 1b56d285c34b..bb0a68516c08 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt73usb.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt73usb.h
+@@ -1063,6 +1063,6 @@ struct hw_pairwise_ta_entry {
+ 	(((u8)(__txpower)) > MAX_TXPOWER) ? DEFAULT_TXPOWER : (__txpower)
+ 
+ #define TXPOWER_TO_DEV(__txpower) \
+-	clamp_t(char, __txpower, MIN_TXPOWER, MAX_TXPOWER)
++	clamp_t(u8, __txpower, MIN_TXPOWER, MAX_TXPOWER)
+ 
+ #endif /* RT73USB_H */
+-- 
+2.47.3
 
 
