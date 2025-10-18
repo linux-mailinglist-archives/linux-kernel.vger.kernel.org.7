@@ -1,168 +1,125 @@
-Return-Path: <linux-kernel+bounces-858977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515E4BEC657
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:09:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF86BBEC65D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 05:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D9F1A6037E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:10:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1F004EA6A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 03:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A84283151;
-	Sat, 18 Oct 2025 03:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F44280325;
+	Sat, 18 Oct 2025 03:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFw0Se3q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKSmcG0f"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D8E227B9F;
-	Sat, 18 Oct 2025 03:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFD6277819
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 03:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760756984; cv=none; b=WXH6FbXg+MSjhhftH6Z7JfS3agC7xI1n7rM5XLl2PVAdDo6lfxKiJVnE38izJdsmna3Bd3klwFm6MnpiMekqBsMgiZUQqrxJ1LTcNcccsEUnX+c3EQ2GyKFdLuRL0xSAcEBKlm/LNO8d84jx7Z6elFHijhpnuV+xRQCgqMC7FdY=
+	t=1760757031; cv=none; b=QsL0QJ+kDYrTo7w43S8R3xERFmxCKDlGq5QJTrn8GqC3fH8iwS9e5z32kXbI71ywcXSOF7YTV2UFLL3HDwx6ALRijvB5lrZLs/yL0Nq8J512SmT+VkNQZjSbKj9TCkWnYhvNfsd+LdSQ/IpN9yQ6Cvp0Q1Wy0pEuhK3MT4BaEgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760756984; c=relaxed/simple;
-	bh=cAbL/jQfyCOvRUIap1HBDBc5t3iLUklL4p/zWiQTiuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=coy9qfUWSszXDTYtsGq/pH/WXCdJ4PAdDybXW0mB/8FrjNkw06/S/bDm3IWzo85DcteVfBobEK589i1PQZGkzDRdAvSjj+BWcxEJx0ohaDLfdR6FMK8E5gW16K9CKLHpfkAmRYTfTaLILdpMA2fv0nrTDiXoAeCxvtwZZwSqfwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vFw0Se3q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000C9C4CEE7;
-	Sat, 18 Oct 2025 03:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760756984;
-	bh=cAbL/jQfyCOvRUIap1HBDBc5t3iLUklL4p/zWiQTiuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vFw0Se3qNXJGfdK1PfBZMx8EYs+tw2TpuMo5cxBHh9YdVk9MHPe50p6P/lDUdP0eT
-	 yh4vYcsVUM89Ays7DRpWCtSJ959pzM0kyO27vpdackytSe5E3HKVITKPAdiwEIZMgn
-	 I+8RGd1XWZ6aJHVbprbGHYrTcrA6JgKHPv7gYFr83rrdeFJVCAq8k9ALMntOTlEAUo
-	 W49h0QLL+9HQjB+7gKnQWEsmXKLhegdHYXHNS9FBKxHeXNRIR32m6JGb90cBpyyBGs
-	 3P+g+VeawijLwb910weFGum5PkOnJ1B++gxYAh+1oYXqyeE75VeCGcEMmkwT9GUKRu
-	 HSex7vUAMXRPw==
-Date: Sat, 18 Oct 2025 08:39:27 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Ron Economos <re@w6rz.net>
-Subject: Re: [PATCH 1/2] PCI: dwc: Fix ECAM enablement when used with vendor
- drivers
-Message-ID: <mtxez55p4hfvtmhcnwtxeetzqxydyq5e4g5zsdhytxpzgvgeqn@s7asinok5l22>
-References: <20251017-ecam_fix-v1-1-f6faa3d0edf3@oss.qualcomm.com>
- <20251017191005.GA1041995@bhelgaas>
+	s=arc-20240116; t=1760757031; c=relaxed/simple;
+	bh=CJQ76v/E/PHDdYgbR8fro6XXoFI3bbatRfKPbnF54mk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uKWtIAc3apPPx0YezoiR7TDlUMBJTGlbkCJk9K5Rh7mTXZqnSyMhmSWXGE5ANX4EWAHHTpjGfs9H1MU6ELi14LX8SE6sj3UtEzRn9rVjG85eSSul9Gf7V7EwAjnVKNHgoFSdpN8jMS4OI/WqYH5bHgB5S9Pqhiph92/3yjE7M1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NKSmcG0f; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so1535162a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760757028; x=1761361828; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Jf3FR3Gwahm6tMjH47zEEF5nx3T+VLl5Q8klA7mB664=;
+        b=NKSmcG0fKsXM1aZj1emCJEwyQVrNtKpTfRZuIbjgXWefdOCQPh5ajic1TAkl3JuW1e
+         Hf2dpEKkz/PPV0aA69MYyJp7cVaIZ9slgVXDpJ4qYBM1sarKygzNRXAJ+brY8POOYbz3
+         ism5rzEJypVbSGmI6AN11aXimcvlmWmGktLjcN4MV6JK4tFRrPw0HXi6kUZ/qi8RbY+J
+         +u0oJ5tKHsVyEOi3rVME1ncLPz9QOwc7BR1c5chGBD54uqqupeJu768W3QCB6t29iCXm
+         3SgJnRiU9gWwXGtRYbXi0KMiJtiuiJWQXhFCS98C2S7w5ihT2gXTCNAIYf2hadzetgH3
+         I+pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760757028; x=1761361828;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jf3FR3Gwahm6tMjH47zEEF5nx3T+VLl5Q8klA7mB664=;
+        b=s6V2CXqZW1pENHCh8lHrxz/wLWOVk3I49A1FaAv9ANxSaeHPij7Zf9CXGm00U+8lAG
+         FaZgLBof6x3z2LOodufpUiv01+brgNL3UZh3apl1mA2AuM9R92kqQd+q4FInRmSZ7KCP
+         /iUI/HYrw5gpdGH8qb5Hc6Kxo3UtXYZHEcS3hL0I9Va2qA0qAKAN62ZABWyhXbwrZPY1
+         72vwxxB8AWkHOpMl6jYFvfWWHD204gTKzCXdwOYE32kmy3F/aCiO8xG8oB83we4I14re
+         fPP4mBJ/bXJx4ZlCwCJuJwb2Bcg2ZixNIQ3XgtegjtR7gM/YlCK8QZ0tsE64xAbvfCi1
+         +6rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWB9puc5EMX5BBUK1+avj12qo0TO+jkp09bOPQRJ8+4batHlPaKPxvx/D0hvz8Y/9kS/A41rDXF3/9618=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX+009AJt64FkTLAL+w621F4pMX1d3irgA6w9XJ6RSZekIDh2H
+	Ksf1tDNTZkChKs3InoyvWUe7QIE9d1Ruek+BfLkRMqKmIRoTXaU0SdvY
+X-Gm-Gg: ASbGncsnOPmtkmWlnlC5j5Fm+HX1/XiyKmYpjalbWBegw1q5o0TgduFu7SYgksDqIgj
+	kgssXPSfcF/4Zg2XFibdTrwhrdUrjyTPn6mXfePZaeJaUJ+1lOxRnKejf75mNiIJ/PHRTfcvO+u
+	f6dYYoVBKcKPi9Px7cN2v3Waw2wroek65SArKG40+EqZ2524/utzry1hGc/oz4z1wUkjI4TpBlr
+	POGQvhfRRK+lS6B6toXqXVSVjJF8m6QSBOVASk4F8aW1OMwvg1mzFj+yzxOzhN8YYvofEhkom6E
+	/qzckfBYgiXajk7oghBHZ4qBFPlo2RSGAVai7qBosVQWSZ7AwY9qM6US2VKwFfQ0cUsnSssAtcy
+	KYzpMEnu1Z5tUIRDg2Pso2LHZKkfsR5Z80H3hTpmqzkW+KWlzsDJ9d+bWQ2F7oAWZjXS0ehY5LO
+	JIPmbjTU87Zzrdgp/wjsicCZZzVjTngohYKkvCIcRfkKXLMcafsNyY
+X-Google-Smtp-Source: AGHT+IEhbwIAKfabrUVIFmF5c3f4H0tzASZNULyMLnrkF3+58Kx389FBrjyRdsSR1s0BEE1Eo4vI4g==
+X-Received: by 2002:a17:902:e549:b0:28e:756c:707e with SMTP id d9443c01a7336-290caf846e1mr76225645ad.33.1760757027966;
+        Fri, 17 Oct 2025 20:10:27 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5868sm10321445ad.60.2025.10.17.20.10.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 20:10:27 -0700 (PDT)
+Message-ID: <a7fa59d4-7c81-407b-bd1b-d6910f647443@gmail.com>
+Date: Fri, 17 Oct 2025 20:10:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251017191005.GA1041995@bhelgaas>
+User-Agent: Mozilla Thunderbird
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 6.1 000/168] 6.1.157-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251017145129.000176255@linuxfoundation.org>
+Content-Language: en-US
+In-Reply-To: <20251017145129.000176255@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 02:10:05PM -0500, Bjorn Helgaas wrote:
-> On Fri, Oct 17, 2025 at 05:10:53PM +0530, Krishna Chaitanya Chundru wrote:
-> > When the vendor configuration space is 256MB aligned, the DesignWare
-> > PCIe host driver enables ECAM access and sets the DBI base to the dw_pcie_ecam_conf_map_busstart
-> > of the config space. This causes vendor drivers to incorrectly program
-> > iATU regions, as they rely on the DBI address for internal accesses.
-> > 
-> > To fix this, avoid overwriting the DBI base when ECAM is enabled.
-> > Instead, introduce a custom ECAM PCI ops implementation that accesses
-> > the DBI region directly for bus 0 and uses ECAM for other buses.
-> > 
-> > Fixes: f6fd357f7afb ("PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'")
-> > Reported-by: Ron Economos <re@w6rz.net>
-> > Closes: https://lore.kernel.org/all/eac81c57-1164-4d74-a1b4-6f353c577731@w6rz.net/
-> > Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
-> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-designware-host.c | 28 +++++++++++++++++++----
-> >  1 file changed, 24 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > index 20c9333bcb1c4812e2fd96047a49944574df1e6f..e92513c5bda51bde3a7157033ddbd73afa370d78 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > @@ -23,6 +23,7 @@
-> >  #include "pcie-designware.h"
-> >  
-> >  static struct pci_ops dw_pcie_ops;
-> > +static struct pci_ops dw_pcie_ecam_ops;
-> >  static struct pci_ops dw_child_pcie_ops;
-> >  
-> >  #define DW_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS		| \
-> > @@ -471,9 +472,6 @@ static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *re
-> >  	if (IS_ERR(pp->cfg))
-> >  		return PTR_ERR(pp->cfg);
-> >  
-> > -	pci->dbi_base = pp->cfg->win;
-> > -	pci->dbi_phys_addr = res->start;
-> > -
-> >  	return 0;
-> >  }
-> >  
-> > @@ -529,7 +527,7 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
-> >  		if (ret)
-> >  			return ret;
-> >  
-> > -		pp->bridge->ops = (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
-> > +		pp->bridge->ops = &dw_pcie_ecam_ops;
-> >  		pp->bridge->sysdata = pp->cfg;
-> >  		pp->cfg->priv = pp;
-> >  	} else {
-> > @@ -842,12 +840,34 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
-> >  }
-> >  EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
-> >  
-> > +static void __iomem *dw_pcie_ecam_conf_map_bus(struct pci_bus *bus, unsigned int devfn, int where)
-> > +{
-> > +	struct pci_config_window *cfg = bus->sysdata;
-> > +	struct dw_pcie_rp *pp = cfg->priv;
-> > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > +	unsigned int busn = bus->number;
-> > +
-> > +	if (busn > 0)
-> > +		return pci_ecam_map_bus(bus, devfn, where);
+On 10/17/25 07:51, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.157 release.
+> There are 168 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Is there a way to avoid the "root bus is bus 00" assumption here?  It
-> looks like something like this might work (it inverts the condition
-> to take care of the root bus special case first):
+> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
+> Anything received after that time might be too late.
 > 
->   if (bus == pp->bridge->bus) {
->     if (PCI_SLOT(devfn) > 0)
->       return NULL;
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.157-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
->     return pci->dbi_base + where;
->   }
+> thanks,
 > 
->   return pci_ecam_map_bus(bus, devfn, where);
-> 
+> greg k-h
 
-I guess it will work.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> > +	if (PCI_SLOT(devfn) > 0)
-> > +		return NULL;
-> 
-> This essentially says only one function (00.0) can be on the root bus.
-> I assume that someday that will be relaxed and there may be multiple
-> Root Ports and maybe RCiEPs on the root bus, so it would be nice if we
-> didn't have to have this check.
-> 
-> What happens without it?  Does the IP return the ~0 data that the PCI
-> core would interpret as "there's no device here"?
-> 
-
-I hope the read returns ~0, but the idea is to catch the invalid access before
-trying to read/write. In case of multi Root Port design, I don't think we have a
-way to identify it. So maybe it is safe to remove this check.
-
-- Mani
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-மணிவண்ணன் சதாசிவம்
+Florian
 
