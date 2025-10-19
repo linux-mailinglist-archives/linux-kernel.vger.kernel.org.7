@@ -1,70 +1,75 @@
-Return-Path: <linux-kernel+bounces-859491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380DCBEDD18
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:05:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5C4BEDD4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A66C634B6F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 00:05:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16FD24E2FC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 00:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8DDB67E;
-	Sun, 19 Oct 2025 00:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2414149C41;
+	Sun, 19 Oct 2025 00:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AcN5Xqb1"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jdeFTVj6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882BE1373;
-	Sun, 19 Oct 2025 00:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0E2433AD
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 00:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760832292; cv=none; b=H4YfrTCq9HkHScBz52/KtK+xXtgjUBFBWvb5vU/VeZLEmrOSl1xA09umYg0sGwHmWobsQhUGkl5Y+ESFILH1iLNWCC3rRVNqY/TB3zpRxVTf72mRRv5FdUdxYuLzY2/l7rB6qkF5OWY+qHzxhZExeUkQWsiFIJFz0QURj+ptUiE=
+	t=1760833070; cv=none; b=ZkFh/RfWJ13giWtvyLi+YVNdLyxo0+9kljwYZG7pjbvBLUkC3h4nEJhGMKlcvphLJfVxp8MdpNRDFgsOWAWJcYA3kcmu1QGs+ybaipA482Jwjw4P+K+C6C0GraPafBUkZKZEf50jt/2gLD0jxTxlYl2eR0ifIbhUhc4LXBGAjXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760832292; c=relaxed/simple;
-	bh=NIlHXsTrn95hUwIwQiqLjVMv/ZLorBcbB6zrOrzvKRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azlLtUvIldOUCNdMWB+Oarka9+d9b0tA9s4MGjCLArulDOHl6wnYz+nChXHlBIvapq/sg/2GUSAKEYWmCD1zBfYF/YGiCZnN6r399oUkorQwuReLX2MYdgqR3IE929Zt3nLutYYwb6WM4cWSO03ZyvsZq82z2VDlekfHDvetnNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=AcN5Xqb1; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=rz0DjI9FG3R+Vf1dNEL5GbVU6jXA/C1j8hwA+dUf/6I=; b=AcN5Xqb1JNtWQtEk5ZUe7Vs44j
-	z6+QascX8RZXSMzyNmZzlFs0g6XLvpMzTZ0U8eTgVmWGTWkCOapk0xir30PnWmjZ3UOLRQTKoWVuS
-	ukLu99pJOm6qI3+yfv+f7nNyf4DISn160d2zMZr8VTYh9aVfCTZXUGhortzxREz4zatY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vAGu2-00BP9M-KF; Sun, 19 Oct 2025 02:04:02 +0200
-Date: Sun, 19 Oct 2025 02:04:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
-	netdev@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] net: stmmac: dwmac-sophgo: Add phy interface filter
-Message-ID: <370d13b7-bba8-449d-9050-e0719d20b57c@lunn.ch>
-References: <20251017011802.523140-1-inochiama@gmail.com>
- <34fcc4cd-cd3d-418a-8d06-7426d2514dee@lunn.ch>
- <i5prc7y4fxt3krghgvs7buyfkwwulxnsc2oagbwdjx4tbqjqls@fx4nkkyz6tdt>
- <c16e53f9-f506-41e8-b3c6-cc3bdb1843e1@lunn.ch>
- <aPP9cjzwihca-h6C@shell.armlinux.org.uk>
+	s=arc-20240116; t=1760833070; c=relaxed/simple;
+	bh=6YtHTN8JelBYMBjlGGZa5b66hk89NZ8oV757l4sx5rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ouNhrg8oNd8GSecJ0noOJFTZIplFd5Sor87rwhvgyotl5/6+TAK2tGxSF0tDFEdDjmaobKMIoZ/fbsVZz2hOdw8JVcolUxw2d+ZCvizky11h3hOBwLxU9Q4rbjFlt6J3EednfvS+I8gFMyAcJKxdRKHMp1dR+ayuC66qwAnNLZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jdeFTVj6; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760833068; x=1792369068;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=6YtHTN8JelBYMBjlGGZa5b66hk89NZ8oV757l4sx5rw=;
+  b=jdeFTVj6y2+eCRsKsjuDfJuAkt8+KwbLi2NuC+3txjkdxBtaWznpBNek
+   acjxDj9+sjm0QBBU6QfAR9ax28jxODY5sfywVAf/JkBzBvME6hePxpQQJ
+   3lxMSDoRnAVJDdXHdT4CQ94naBRWdvkCTEDXxP4AhAL0lpqnSLQaVH1OP
+   PF0BE/60NywTapJg4sMTPMcddPhfDSuykS3O8ZgiaWFYiiAC3HlYDy/ec
+   Z224kXnkd/mYJw93pSVBBKZPD7MAMSXbBthyezmzgxuCGHNBQhabzdXrj
+   aHZmiC9V4ePiJkWdYh9wRAER1w5gTXIbJwQn0t0wFUVxVZPgjw06hFv4E
+   w==;
+X-CSE-ConnectionGUID: /pqxawfWQ8mUVATJqMfYdQ==
+X-CSE-MsgGUID: haDZ00ruTg+9og/MjzuuPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88474315"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="88474315"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 17:17:48 -0700
+X-CSE-ConnectionGUID: 89UPFPtkTe2sp2zu+qXINw==
+X-CSE-MsgGUID: ZMG2vYG5S+qbzEJNEEIpWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="183517395"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 18 Oct 2025 17:17:46 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAH7I-0008iT-18;
+	Sun, 19 Oct 2025 00:17:44 +0000
+Date: Sun, 19 Oct 2025 08:17:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Lee Trager <lee@trager.us>,
+	Simon Horman <horms@kernel.org>
+Subject: drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning:
+ conversion from 'long unsigned int' to 'u16' {aka 'short unsigned int'}
+ changes value from '261632' to '65024'
+Message-ID: <202510190832.3SQkTCHe-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,25 +78,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPP9cjzwihca-h6C@shell.armlinux.org.uk>
 
-> "rgmii-id" doesn't mean "there is a delay _somewhere_ in the system".
-> It's supposed to mean that the PHY should add delays on both tx and
-> rx paths.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1c64efcb083c48c85227cb4d72ab137feef2cdac
+commit: 005a54722e9d493be58405a77f2a444e06f03be0 eth: fbnic: add FW health reporter
+date:   4 weeks ago
+config: powerpc-randconfig-002-20251019 (https://download.01.org/0day-ci/archive/20251019/202510190832.3SQkTCHe-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510190832.3SQkTCHe-lkp@intel.com/reproduce)
 
-When passed to the PHY it means that.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510190832.3SQkTCHe-lkp@intel.com/
 
-However, DT describes the hardware, the PCB. "rgmii-id" means the PCB
-does not provide the delays. So the MAC/PHY combination needs to add
-the delays. We normally have the PHY provide the delays, so the
-phy-mode is normally passed straight to the PHY. However, if the MAC
-is adding a delay, which it is in this case, in one direction and
-cannot be turned off, the value passed to the PHY needs to reflect
-this, to avoid double delays.
+All warnings (new ones prefixed by >>):
 
-And because the MAC delay cannot be turned off, it means there are PCB
-designs which don't work, double delays. So it would be nice not to
-list them in the binding.
+   In file included from drivers/net/ethernet/meta/fbnic/fbnic_devlink.c:12:
+   drivers/net/ethernet/meta/fbnic/fbnic_devlink.c: In function 'fbnic_fw_reporter_dump':
+>> drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning: conversion from 'long unsigned int' to 'u16' {aka 'short unsigned int'} changes value from '261632' to '65024' [-Woverflow]
+      83 | #define TLV_MAX_DATA   (PAGE_SIZE - 512)
+         |                        ^
+   drivers/net/ethernet/meta/fbnic/fbnic_devlink.c:429:31: note: in expansion of macro 'TLV_MAX_DATA'
+     429 |  fw_cmpl->u.coredump.stride = TLV_MAX_DATA;
+         |                               ^~~~~~~~~~~~
 
-	Andrew
+
+vim +83 drivers/net/ethernet/meta/fbnic/fbnic_tlv.h
+
+c6203e678cc9a5 Alexander Duyck 2024-07-12  82  
+c6203e678cc9a5 Alexander Duyck 2024-07-12 @83  #define TLV_MAX_DATA			(PAGE_SIZE - 512)
+c6203e678cc9a5 Alexander Duyck 2024-07-12  84  #define FBNIC_TLV_ATTR_ID_UNKNOWN	USHRT_MAX
+c6203e678cc9a5 Alexander Duyck 2024-07-12  85  #define FBNIC_TLV_ATTR_STRING(id, len)	{ id, len, FBNIC_TLV_STRING }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  86  #define FBNIC_TLV_ATTR_FLAG(id)		{ id, 0, FBNIC_TLV_FLAG }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  87  #define FBNIC_TLV_ATTR_U32(id)		{ id, sizeof(u32), FBNIC_TLV_UNSIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  88  #define FBNIC_TLV_ATTR_U64(id)		{ id, sizeof(u64), FBNIC_TLV_UNSIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  89  #define FBNIC_TLV_ATTR_S32(id)		{ id, sizeof(s32), FBNIC_TLV_SIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  90  #define FBNIC_TLV_ATTR_S64(id)		{ id, sizeof(s64), FBNIC_TLV_SIGNED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  91  #define FBNIC_TLV_ATTR_MAC_ADDR(id)	{ id, ETH_ALEN, FBNIC_TLV_BINARY }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  92  #define FBNIC_TLV_ATTR_NESTED(id)	{ id, 0, FBNIC_TLV_NESTED }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  93  #define FBNIC_TLV_ATTR_ARRAY(id)	{ id, 0, FBNIC_TLV_ARRAY }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  94  #define FBNIC_TLV_ATTR_RAW_DATA(id)	{ id, TLV_MAX_DATA, FBNIC_TLV_BINARY }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  95  #define FBNIC_TLV_ATTR_LAST		{ FBNIC_TLV_ATTR_ID_UNKNOWN, 0, 0 }
+c6203e678cc9a5 Alexander Duyck 2024-07-12  96  
+
+:::::: The code at line 83 was first introduced by commit
+:::::: c6203e678cc9a5bf01ec7ae382851f504870777f eth: fbnic: Add message parsing for FW messages
+
+:::::: TO: Alexander Duyck <alexanderduyck@fb.com>
+:::::: CC: Jakub Kicinski <kuba@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
