@@ -1,195 +1,121 @@
-Return-Path: <linux-kernel+bounces-859660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BA6BEE398
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 414B5BEE3A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E47189CCF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:13:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E9E189CE74
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293C22E7160;
-	Sun, 19 Oct 2025 11:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC752E7F21;
+	Sun, 19 Oct 2025 11:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dPL6RzAy"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="U3rP289B"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ECF2E62BE;
-	Sun, 19 Oct 2025 11:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09742E7BAE
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760872353; cv=none; b=LmNjIXJNrrs1Wlj3MG44qctNow5uXUHU7QcUW+IKUvs/uP7oz+5zEud8SsL1TohObd7Wh409cV7Q7nIFhbr4SIPzWOOkVU/9KWemPsX/J4hTgujEQQ8uUelk9bPaCiNajOFCb73qwtyDVhGuy7DNHgeyTm34uCwlSoUmZS3X0d0=
+	t=1760872358; cv=none; b=aB/RXkSRizRXj0tCyNgAkEI4MZcpO3ZUNPAPFTFpwMNWCwYSLjdwXcBxJqpm+va/Es4adTq4HYWl6soaZUYBnl3LVtLpH9qR5f/OSy+N1rR5l9R5zF3w619squE22KwNBMuYQltCpvh9OQPo1z/nYayuLPtRzIo3lgdD3XmLAWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760872353; c=relaxed/simple;
-	bh=1paPyNj04xoI6ha9hU/vt29fUuulXWhJpWDYQejClt8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kkN32MfD6DBhqoW+L97BAmCx/JdNxJSZybW+8Qtu5EU8vQe37qWcBwP+WBEsDIiz5PDk+ZAILAE0M+qpl3bAEFX9QNeEzfjXktRHot7YCnQYYDVLYqaqEXpxtATiezjqV51ufCxqZk1T7RC7wRCmJou0UvDH+goEzEgkQx7QJj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dPL6RzAy; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760872334; x=1761477134; i=markus.elfring@web.de;
-	bh=QF+J3sTNdj7X3xzkQck6o9geEOA7NGWyFJ0esyAMLGc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dPL6RzAykKO9vyz2kyLRmH4l/aNDWk0AYkBlNc4daCXDHw11m0juyn1Bz0hTa4Ch
-	 WoG0Z4AKjtl+N86V5d+WdCyr9oxIFqXlN77CucKKCv7egH85Gz2lpMxdK58+l1uFJ
-	 V0G7oTPySzoGeEoZGygTGk5fTMY4iCALiohQ8dXdTxPnJVRGZzAMAQTQT5bRZZiAR
-	 +VdcCpH/3QTz8EPXcgE58v3wCZPUThwMkCVmkSCp/4b/GfDSIZ08RfwkNIu/bJTPk
-	 ctXLi7okxX6vT2I6kYRDLCOmFHor2l36Ua41+pJ0ZFKCc72ESTAbbNJC7gp/eCHvZ
-	 Nwi3TPw5uX9jrTEnvg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.180]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mv3Yg-1uJR8f3mL2-01243O; Sun, 19
- Oct 2025 13:12:13 +0200
-Message-ID: <55920694-04e2-480f-a67c-c0dc1604a4b8@web.de>
-Date: Sun, 19 Oct 2025 13:12:12 +0200
+	s=arc-20240116; t=1760872358; c=relaxed/simple;
+	bh=5H9+f+IXwNdydqF9WxzN9iOcTldOlZRpbj48xToX24c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZUNwujBWNEmXW3lR5/YnpxSLlx0vZDRltRoRd8qHMJ5QHeMmkPK4LcsZm0XCg/FDFViMtizURSPLyOYUhW5xevTCMsmBxo0IoXKOA+tnoKEG6KY7gp2nIEeoloq6FOAAsnzc/yj6VGbgxZZ1JJ9bsQEKJFVWGdmrTlLDK3Bz9BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=U3rP289B; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CEF6440E01AB;
+	Sun, 19 Oct 2025 11:12:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id VSP2PJmw_0nR; Sun, 19 Oct 2025 11:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760872348; bh=lorrIr802DcgwSEvme1zKMxqrzK2kOtBY4mFQ+Q/cQI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=U3rP289BtkRYPTXokjraM25iupAseMBA17xrhap4ubsY8vwlKnJHraZN3BBGxDxyW
+	 WSnkkiP6kOMWGsnimAK5sq+riUADOs9kIaARpxSWOXFQdZi/K5cTH/9t1ky5O5vi+j
+	 LB/7tJOC7L7FRcjPqet+lWE8zoQpICo/bubhr6Q5Wnt5GuL+k80ZWreFNPlBJTk4bU
+	 mp6qJPJbtFZ6g2h97gY4GQBXZmIP6gurJUzavjltitNdi/p60AlizjS8QEaWlwTeUy
+	 aoLM85s7J5o3l8qlm/H1mn+0tMFfKmDxdhYGs68Yqkt1Ypf8OkYJ2ZIfHLWbrwx+vz
+	 VHlj7DNawI0AkinpSXWuWBYyCPJx16TusEkCV7r7ypOY8uSbbzzjOvAc5O9k+xtopp
+	 yVPFEL+Drb0l2q3Bn+ZKMeByg2jKNr4kUBI7vG/ypTuzQn9BXgLdm/DtvB7/ej++OV
+	 knxtZIqOW5OHp0BMpYJqmEmEdhsaQ4scioJmVFPIMyOULoYAPXT9q1JmVGZC1jJpVY
+	 DRHfMb2erQBNyso0ala+td2rOfKHyZT+8/C2/eddivMbB3OLPKgPivNtXmnk841zf2
+	 ZhQS2CBXskx3dMmaNDiD/CzHM7b1ZBhaApz/+U+p/mFMpo8naCOwcacmUcS4U2hmIv
+	 +MnuUYtqkh8tDWYgY98tb9as=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2FE3E40E016E;
+	Sun, 19 Oct 2025 11:12:25 +0000 (UTC)
+Date: Sun, 19 Oct 2025 13:12:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] perf/urgent for v6.18-rc2
+Message-ID: <20251019111222.GAaPTHlvJPUC-U56Z0@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [1/3] PCI: j721e: Propagate dev_err_probe return value
-To: Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
- linux-omap@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <20251014113234.44418-2-linux.amoon@gmail.com>
- <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
- <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
- <cf656a57-bb2f-447e-ac6c-0ab118606dc9@web.de>
- <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
-Content-Language: en-GB, de-DE
-In-Reply-To: <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JP+0ZCKMYOjR8aO1oTsJPEz86qXToNlpnCsO4IX9JCEs5JYrmBp
- 2dL/tnFt2kFigzJ8jLxDdT4BGjU6hRSc4N1vuNhrNRioQr9krKPE7AN/QVieicESqyC+sb5
- wReBFp6p4ti7pWpQWBn+9nRjSPsQ2jWTbnMQ2SRaXgaYun7xENwJAh81nQUfHCIPOKtkwqR
- wR5wWfcsg8NNOPxxS1JWA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yrJ98Oku78I=;qkEjbJmoDEDsERfZ28/Ij7VzFZQ
- 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
- oxyUAAV8S7dKZ3bEbh8LnaowA1fg3CaTN2o=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
->>>> I propose to take another source code transformation approach better =
-into account.
->>>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/core.c#L=
-5031-L5075
->>>>
->>>> Example:
->>>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/pci/controlle=
-r/cadence/pci-j721e.c#L444-L636
->>>>
->>>>         ret =3D dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie)=
-, "Failed to init phy\n");
->>>>         if (ret)
->>>>                 goto err_get_sync;
->>>>
->>> No, the correct code ensures that dev_err_probe() is only called when
->>> an actual error
->>> has occurred, providing a clear and accurate log entry. =E2=80=A6
->>
->> Where do you see undesirable technical differences?
->=20
-> The primary issue I wanted to confirm was the function execution order.
+Hi Linus,
 
-The desired control flow can be clarified in some ways.
+please pull the perf/urgent lineup for v6.18-rc2.
+
+Thx.
+
+---
+
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/perf_urgent_for_v6.18_rc2
+
+for you to fetch changes up to fa4f4bae893fbce8a3edfff1ab7ece0c01dc1328:
+
+  perf/core: Fix MMAP2 event device with backing files (2025-10-14 10:38:10 +0200)
+
+----------------------------------------------------------------
+- Make sure perf reporting works correctly in setups using overlayfs or FUSE
+
+- Move the uprobe optimization to a better location logically
+
+----------------------------------------------------------------
+Adrian Hunter (3):
+      perf/core: Fix address filter match with backing files
+      perf/core: Fix MMAP event path names with backing files
+      perf/core: Fix MMAP2 event device with backing files
+
+Jiri Olsa (1):
+      uprobe: Move arch_uprobe_optimize right after handlers execution
+
+ kernel/events/core.c    | 8 ++++----
+ kernel/events/uprobes.c | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
 
-> since cdns_pcie_init_phy within dev_err_probe function
+-- 
+Regards/Gruss,
+    Boris.
 
-One function should be executed before its return value will be directly p=
-assed
-to a subsequent function call, shouldn't it?
-
-
-> If other developers agree with the approach, I will modify this in a
-> separate patch
-
-There might be special coding style preferences involved (for a while).
-
-Regards,
-Markus
+https://people.kernel.org/tglx/notes-about-netiquette
 
