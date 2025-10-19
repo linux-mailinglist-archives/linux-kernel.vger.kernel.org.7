@@ -1,171 +1,168 @@
-Return-Path: <linux-kernel+bounces-859890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFC8BEEE5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA22ABEEE6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 266FF4E2E7E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4E93A4D1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D277C24729C;
-	Sun, 19 Oct 2025 23:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D1024291E;
+	Sun, 19 Oct 2025 23:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=alibaba-inc.com header.i=@alibaba-inc.com header.b="Y2WERlrf"
-Received: from out0-208.mail.aliyun.com (out0-208.mail.aliyun.com [140.205.0.208])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="EBetrH7M"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C652261B92;
-	Sun, 19 Oct 2025 23:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1995723E229;
+	Sun, 19 Oct 2025 23:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760914814; cv=none; b=X0YRA6fvUQcJr+LgZjgMTpNW8D74fq9PEiHxKl5oxViEGdCBfZCZtzm7lFYwvSdsUFMdZavNPiQWZamU5JFQ8NuBrg7A9VthEmuu976lik/IdQq2j/2o61sTLAtWnWODXlATDZP8cwMb4HN4ksYkIbYBSJDieWlIpgrZkjg0xdI=
+	t=1760914839; cv=none; b=uxGgtT135bjnd0dr4ozh/9JzhuKJI9SpCN4eIX8HLSd00im5FpUJ3s6Fq0iI4RaizLXpTjvOHNMmJpARGdUcCGhpOuQugbGB5UbzFbjj5DkDSPNRutxiDKvy6T2/0LfR4hq4lwvdsn05OcojL69mWwTVvQdRN64h7Wr5hFaPqUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760914814; c=relaxed/simple;
-	bh=2Rc+WjMFgglehJ3tiZmcIoep0JXsYpE2ZGazherNKT0=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:References:
-	 In-Reply-To:Content-Type; b=YFtLmaLUFhGSMaIfYxjiYtMlhxnyG0c7GJh+pgqkQuS9ck5a4n+2+5JVrgyfqzCKixv5eZXjXKnc6aEa237qHZgGLhiFg4K1Ku2baAfAhkNBTn7eUXnHPxko+r65p8XSHFFUFDpDQWzdb4GxbMey+KRur4/4kYa6x4ZnA2enD3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alibaba-inc.com; spf=pass smtp.mailfrom=alibaba-inc.com; dkim=pass (1024-bit key) header.d=alibaba-inc.com header.i=@alibaba-inc.com header.b=Y2WERlrf; arc=none smtp.client-ip=140.205.0.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alibaba-inc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alibaba-inc.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=alibaba-inc.com; s=default;
-	t=1760914807; h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type;
-	bh=2Rc+WjMFgglehJ3tiZmcIoep0JXsYpE2ZGazherNKT0=;
-	b=Y2WERlrfSOVf6KBAoKJ49bqtaowiki18K5sZPDDO6lquiKPVkS752Kfna4KQqNJU8W0uPn3OZGArZgdFJnG5Sfm29nqX5jqczxaxE7ejWkuYtNbGiEcQk9e7UmUMHQ62TGH3tNvK1T1BId+E7GjjxOQGlQZd9z2rM6AZGHRfxI0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045128091;MF=peng.yu@alibaba-inc.com;NM=1;PH=DW;RN=6;SR=0;TI=W4_0.2.3_21250D26_1760913373001_o7001c147d;
-Received: from WS-web (peng.yu@alibaba-inc.com[W4_0.2.3_21250D26_1760913373001_o7001c147d] cluster:ay29) at Mon, 20 Oct 2025 07:00:07 +0800
-Date: Mon, 20 Oct 2025 07:00:07 +0800
-From: "=?UTF-8?B?WVUsIFBlbmc=?=" <peng.yu@alibaba-inc.com>
-To: "Eric Dumazet" <edumazet@google.com>,
-  "Peng Yu" <yupeng0921@gmail.com>
-Cc: "ncardwell" <ncardwell@google.com>,
-  "kuniyu" <kuniyu@google.com>,
-  "netdev" <netdev@vger.kernel.org>,
-  "linux-kernel" <linux-kernel@vger.kernel.org>
-Reply-To: "=?UTF-8?B?WVUsIFBlbmc=?=" <peng.yu@alibaba-inc.com>
-Message-ID: <befd947e-8725-4637-8fac-6a364b0b4df0.peng.yu@alibaba-inc.com>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gbmV0OiBzZXQgaXNfY3duZF9saW1pdGVkIHdoZW4gdGhlIHNtYWxsIHF1?=
-  =?UTF-8?B?ZXVlIGNoZWNrIGZhaWxz?=
-X-Mailer: [Alimail-Mailagent revision 560][W4_0.2.3][null][Chrome]
+	s=arc-20240116; t=1760914839; c=relaxed/simple;
+	bh=+NhEcWg4u0nKsTNjVJnm6EV0ePgVBJTd5Cm9zyp0Adc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MmKztpafpHMK7Pv7xdwI1vWHm9fZJ48481UiR3NDVdINZJX5e1jVL3VYYjv4snamPgsWQ+zaiS4Rt9vTN/tgZOqzC590krCClOTm/Hrn/AY2qXSCmIJkVNMdky8o9+4VvZzNWwi9AOIKV6jbxazvaHAnQHIu9up84R0A38XpPuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=EBetrH7M; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1760914827;
+	bh=YL+/KBVBt7ybXFRGcP41DFJKQfuf10A0qEbi6RFqyFg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=EBetrH7Mpg1i1zFMo8JaQBs+Cjt3hHOhLBkGvVSs7waTLYIOzg9cqMNtrXUZAOat7
+	 zJ6rFaO2+KA/ZfRSDelAVV5cxNxEfrycVHUI2CFYGZD7Ch9+/IWskmiCxCwukNem8F
+	 kPTVGo3/XVioCSuH67PQZZ2g1yW2DO2UQiHCf3I8/e56hejAHIGNjEVj0rI4rISro+
+	 v2C8BN0ZR9tVobn3cUyCLbBKF47AqKlXWyabKdhiEXCD5r4NN84ic+0Q7Wn5RYmFsn
+	 JwKp9Eipxql3mS9Ut+hwivy5RLaCu9IezcvHUCFkyA+LCdt27GTR5DluXFH6cSx011
+	 KpY+zwcV3Impg==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0C68E6CA42;
+	Mon, 20 Oct 2025 07:00:17 +0800 (AWST)
+Message-ID: <13566a08eeaed313ad789abcae1920d9b00483b0.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from
+ round_rate() to determine_rate()
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Brian Masney <bmasney@redhat.com>, Iwona Winiarska
+	 <iwona.winiarska@intel.com>, Joel Stanley <joel@jms.id.au>, Maxime Ripard
+	 <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 20 Oct 2025 09:30:16 +1030
+In-Reply-To: <2025101721-twiddling-huskiness-4852@gregkh>
+References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
+	 <aMatZAX6eFI1RmDH@redhat.com>
+	 <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
+	 <aPEZSY6RC-UVclxN@redhat.com>
+	 <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
+	 <2025101759-runner-landing-374b@gregkh>
+	 <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
+	 <2025101721-twiddling-huskiness-4852@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20251019170016.138561-1-peng.yu@alibaba-inc.com>,<CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com>
-x-aliyun-mail-creator: W4_0.2.3_null_Ny4TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoNy44LjEwLVJlbGVhc2UuODAwMTUpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8xNjI4NDg3OTcwNzAwIDJuZFR5cGUvZXhjbHVzaXZlIEFyY2hpdGVjdHVyZS94ODZfNjQgT3JnYW5pemF0aW9uL2V4Y2x1c2l2ZV9kaW5ndGFsa18yMTAwMQ==Gs
-In-Reply-To: <CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
 
-SSB0aGluayB3ZSBrbm93IHRoZSByb290IGNhdXNlIGluIHRoZSBkcml2ZXIuIFdlIGFyZSB1c2lu
-ZyB0aGUKdmlydGlvX25ldCBkcml2ZXIuIFdlIGZvdW5kIHRoYXQgdGhlIGlzc3VlIGhhcHBlbnMg
-YWZ0ZXIgdGhpcyBkcml2ZXIKY29tbWl0OgoKYjkyZjFlNjc1MWE2IHZpcnRpby1uZXQ6IHRyYW5z
-bWl0IG5hcGkKCkFjY29yZGluZyB0byBvdXIgdGVzdCwgdGhlIGlzc3VlIHdpbGwgaGFwcGVuIGlm
-IHdlIGFwcGx5IGJlbG93IGNoYW5nZToKCgogc3RhdGljIGludCB4bWl0X3NrYihzdHJ1Y3Qgc2Vu
-ZF9xdWV1ZSAqc3EsIHN0cnVjdCBza19idWZmICpza2IpCiB7CiAgICAgICAgc3RydWN0IHZpcnRp
-b19uZXRfaGRyX21yZ19yeGJ1ZiAqaGRyOwpAQCAtMTEzMCw2ICsxMTc0LDcgQEAgc3RhdGljIG5l
-dGRldl90eF90IHN0YXJ0X3htaXQoc3RydWN0IHNrX2J1ZmYgKnNrYiwgc3RydWN0IG5ldF9kZXZp
-Y2UgKmRldikKICAgICAgICBpbnQgZXJyOwogICAgICAgIHN0cnVjdCBuZXRkZXZfcXVldWUgKnR4
-cSA9IG5ldGRldl9nZXRfdHhfcXVldWUoZGV2LCBxbnVtKTsKICAgICAgICBib29sIGtpY2sgPSAh
-c2tiLT54bWl0X21vcmU7CisgICAgICAgYm9vbCB1c2VfbmFwaSA9IHNxLT5uYXBpLndlaWdodDsK
-CiAgICAgICAgLyogRnJlZSB1cCBhbnkgcGVuZGluZyBvbGQgYnVmZmVycyBiZWZvcmUgcXVldWVp
-bmcgbmV3IG9uZXMuICovCiAgICAgICAgZnJlZV9vbGRfeG1pdF9za2JzKHNxKTsKQEAgLTExNTIs
-OCArMTE5NywxMCBAQCBzdGF0aWMgbmV0ZGV2X3R4X3Qgc3RhcnRfeG1pdChzdHJ1Y3Qgc2tfYnVm
-ZiAqc2tiLCBzdHJ1Y3QgbmV0X2RldmljZSAqZGV2KQogICAgICAgIH0KCiAgICAgICAgLyogRG9u
-J3Qgd2FpdCB1cCBmb3IgdHJhbnNtaXR0ZWQgc2ticyB0byBiZSBmcmVlZC4gKi8KLSAgICAgICBz
-a2Jfb3JwaGFuKHNrYik7Ci0gICAgICAgbmZfcmVzZXQoc2tiKTsKKyAgICAgICBpZiAoIXVzZV9u
-YXBpKSB7CisgICAgICAgICAgICAgICBza2Jfb3JwaGFuKHNrYik7CisgICAgICAgICAgICAgICBu
-Zl9yZXNldChza2IpOworICAgICAgIH0KCgpCZWZvcmUgdGhpcyBjaGFuZ2UsIHRoZSBkcml2ZXIg
-d2lsbCBpbnZva2Ugc2tiX29ycGhhbiBpbW1lZGlhdGVseSB3aGVuCml0IHJlY2VpdmVzIGEgc2ti
-LCB0aGVuIHRoZSB0Y3AgbGF5ZXIgd2lsbCBkZWNyZWFzZSB0aGUgd21lbV9hbGxvYy4KVGh1cyB0
-aGUgc21hbGwgcXVldWUgY2hlY2sgd29uJ3QgZmFpbC4gQWZ0ZXIgYXBwbHlpbmcgdGhpcyBjaGFu
-Z2UsIHRoZQp2aXJ0aW9fbmV0IGRyaXZlciB3aWxsIHRlbGwgdGNwIGxheWVyIHRvIGRlY3JlYXNl
-IHRoZSB3bWVtX2FsbG9jIHdoZW4KdGhlIHNrcCBpcyByZWFsbHkgc2VudCBvdXQuCklmIHdlIHNl
-dCB1c2VfbmFwaSB0byBmYWxzZSwgdGhlIHZpcnRpb19uZXQgZHJpdmVyIHdpbGwgaW52b2tlCnNr
-Yl9vcnBoYW4gaW1tZWRpYXRlbHkgYXMgYmVmb3JlLCB0aGVuIHRoZSBpc3N1ZSB3b24ndCBoYXBw
-ZW4uCkJ1dCBpbnZva2luZyBza2Jfb3JwaGFuIGluIHN0YXJ0X3htaXQgbG9va3MgbGlrZSBhIHdv
-cmthcm91bmQgdG8gbWUsCkknbSBub3Qgc3VyZSBpZiB3ZSBzaG91bGQgcm9sbGJhY2sgdGhpcyBj
-aGFuZ2UuICBUaGUgc21hbGwgcXVldWUgY2hlY2sKYW5kIGN3bmQgd2luZG93IHdvdWxkIGNvbWUg
-aW50byBhIGtpbmQgb2YgImRlYWQgbG9jayIgc2l0dWF0aW9uIHRvIG1lLApzbyBJIHN1cHBvc2Ug
-d2Ugc2hvdWxkIGZpeCB0aGF0ICJkZWFkIGxvY2siLiAgSWYgeW91IGJlbGlldmUgd2UKc2hvdWxk
-bid0IGNoYW5nZSBUQ1AgbGF5ZXIgZm9yIHRoaXMgaXNzdWUsIG1heSBJIGtub3cgdGhlIGNvcnJl
-Y3QKZGlyZWN0aW9uIHRvIHJlc29sdmUgdGhpcyBpc3N1ZT8gU2hvdWxkIHdlIG1vZGlmeSB0aGUg
-dmlydGlvX25ldApkcml2ZXIsIGxldCBpdCBhbHdheXMgaW52b2tlIHNrYl9vcnBoYW4gYXMgYmVm
-b3JlPwpBcyBhIHdvcmthcm91bmQsIHdlIHNldCB0aGUgdmlydGlvX25ldCBtb2R1bGUgcGFyYW1l
-dGVyIG5hcGlfdHggdG8KZmFsc2UsIHRoZW4gdGhlIHVzZV9uYXBpIHdvdWxkIGJlIGZhbHNlIHRv
-by4gVGh1cyB0aGUgaXNzdWUgd29uJ3QKaGFwcGVuLiBCdXQgd2UgaW5kZWVkIHdhbnQgdG8gZW5h
-YmxlIG5hcGlfdHgsIHNvIG1heSBJIGtub3cgd2hhdCdzCnlvdXIgc3VnZ2VzdGlvbiBhYm91dCB0
-aGlzIGlzc3VlPwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpGcm9tOkVyaWMgRHVtYXpldCA8ZWR1bWF6ZXRAZ29vZ2xl
-LmNvbT4KU2VuZCBUaW1lOjIwMjUgT2N0LiAyMCAoTW9uLikgMDE6NDMKVG86UGVuZyBZdTx5dXBl
-bmcwOTIxQGdtYWlsLmNvbT4KQ0M6bmNhcmR3ZWxsPG5jYXJkd2VsbEBnb29nbGUuY29tPjsga3Vu
-aXl1PGt1bml5dUBnb29nbGUuY29tPjsgbmV0ZGV2PG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc+OyAi
-bGludXgta2VybmVsIjxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgUGVuZyBZVTxwZW5n
-Lnl1QGFsaWJhYmEtaW5jLmNvbT4KU3ViamVjdDpSZTogW1BBVENIXSBuZXQ6IHNldCBpc19jd25k
-X2xpbWl0ZWQgd2hlbiB0aGUgc21hbGwgcXVldWUgY2hlY2sgZmFpbHMKCgpPbiBTdW4sIE9jdCAx
-OSwgMjAyNSBhdCAxMDowMCBBTSBQZW5nIFl1IDx5dXBlbmcwOTIxQGdtYWlsLmNvbT4gd3JvdGU6
-Cj4KPiBUaGUgbGltaXQgb2YgdGhlIHNtYWxsIHF1ZXVlIGNoZWNrIGlzIGNhbGN1bGF0ZWQgZnJv
-bSB0aGUgcGFjaW5nIHJhdGUsCj4gdGhlIHBhY2luZyByYXRlIGlzIGNhbGN1bGF0ZWQgZnJvbSB0
-aGUgY3duZC4gSWYgdGhlIGN3bmQgaXMgc21hbGwsCj4gdGhlIHNtYWxsIHF1ZXVlIGNoZWNrIG1h
-eSBmYWlsLgo+IFdoZW4gdGhlIHNhbWxsIHF1ZXVlIGNoZWNrIGZhaWxzLCB0aGUgdGNwIGxheWVy
-IHdpbGwgc2VuZCBsZXNzCj4gcGFja2FnZXMsIHRoZW4gdGhlIHRjcF9pc19jd25kX2xpbWl0ZWQg
-d291bGQgYWxyZWF5cyByZXR1cm4gZmFsc2UsCj4gdGhlbiB0aGUgY3duZCB3b3VsZCBoYXZlIG5v
-IGNoYW5jZSB0byBnZXQgdXBkYXRlZC4KPiBUaGUgY3duZCBoYXMgbm8gY2hhbmNlIHRvIGdldCB1
-cGRhdGVkLCBpdCBrZWVwcyBzbWFsbCwgdGhlbiB0aGUgcGFjaW5nCj4gcmF0ZSBrZWVwcyBzbWFs
-bCwgYW5kIHRoZSBsaW1pdCBvZiB0aGUgc21hbGwgcXVldWUgY2hlY2sga2VlcHMgc21hbGwsCj4g
-dGhlbiB0aGUgc21hbGwgcXVldWUgY2hlY2sgd291bGQgYWx3YXlzIGZhaWwuCj4gSXQgaXMgYSBr
-aW5kIG9mIGRlYWQgbG9jaywgd2hlbiBhIHRjcCBmbG93IGNvbWVzIGludG8gdGhpcyBzaXR1YXRp
-b24sCj4gaXQncyB0aHJvdWdocHV0IHdvdWxkIGJlIHZlcnkgc21hbGwsIG9idmlvdXNseSBsZXNz
-IHRoZW4gdGhlIGNvcnJlY3QKPiB0aHJvdWdocHV0IGl0IHNob3VsZCBoYXZlLgo+IFdlIHNldCBp
-c19jd25kX2xpbWl0ZWQgdG8gdHJ1ZSB3aGVuIHRoZSBzbWFsbCBxdWV1ZSBjaGVjayBmYWlscywg
-dGhlbgo+IHRoZSBjd25kIHdvdWxkIGhhdmUgYSBjaGFuY2UgdG8gZ2V0IHVwZGF0ZWQsIHRoZW4g
-d2UgY2FuIGJyZWFrIHRoaXMKPiBkZWFkbG9jay4KPgo+IEJlbG93IHNzIG91dHB1dCBzaG93cyB0
-aGlzIGlzc3VlOgo+Cj4gc2ttZW06KHIwLHJiMTMxMDcyLAo+IHQ3NzEyLCA8LS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tIHdtZW1fYWxsb2MgPSA3NzEyCj4gdGIyNDM3MTIsZjIxMjgsdzIx
-OTA1NixvMCxibDAsZDApCj4gdHMgc2FjayBjdWJpYyB3c2NhbGU6NywxMCBydG86MjI0IHJ0dDoy
-My4zNjQvMC4wMTkgYXRvOjQwIG1zczoxNDQ4Cj4gcG10dTo4NTAwIHJjdm1zczo1MzYgYWR2bXNz
-Ojg0NDgKPiBjd25kOjI4IDwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gY3duZD0yOAo+
-IGJ5dGVzX3NlbnQ6MjE2NjIwOCBieXRlc19hY2tlZDoyMTQ4ODMyIGJ5dGVzX3JlY2VpdmVkOjM3
-Cj4gc2Vnc19vdXQ6MTQ5NyBzZWdzX2luOjc1MSBkYXRhX3NlZ3Nfb3V0OjE0OTYgZGF0YV9zZWdz
-X2luOjEKPiBzZW5kIDEzODgyNTU0YnBzIGxhc3RzbmQ6NyBsYXN0cmN2OjI5OTIgbGFzdGFjazo3
-Cj4gcGFjaW5nX3JhdGUgMjc3NjQyMTZicHMgPC0tLS0tLS0tLS0tLS0tLS0tLS0tLSBwYWNpbmdf
-cmF0ZT0yNzc2NDIxNmJwcwo+IGRlbGl2ZXJ5X3JhdGUgNTc4NjY4OGJwcyBkZWxpdmVyZWQ6MTQ4
-NSBidXN5OjI5OTFtcyB1bmFja2VkOjEyCj4gcmN2X3NwYWNlOjU3MDg4IHJjdl9zc3RocmVzaDo1
-NzA4OCBub3RzZW50OjE4ODI0MAo+IG1pbnJ0dDoyMy4zMTkgc25kX3duZDo1NzA4OAo+Cj4gbGlt
-aXQ9KDI3NzY0MjE2IC8gOCkgLyAxMDI0ID0gMzM4OSA8IDc3MTIKPiBTbyB0aGUgc2FtbGwgcXVl
-dWUgY2hlY2sgZmFpbHMuIFdoZW4gaXQgaGFwcGVucywgdGhlIHRocm91Z2hwdXQgaXMKPiBvYnZp
-b3VzbHkgbGVzcyB0aGFuIHRoZSBub3JtYWwgc2l0dWF0aW9uLgo+Cj4gQnkgc2V0dGluZyB0aGUg
-dGNwX2lzX2N3bmRfbGltaXRlZCB0byB0cnVlIHdoZW4gdGhlIHNtYWxsIHF1ZXVlIGNoZWNrCj4g
-ZmFpbGVkLCB3ZSBjYW4gYXZvaWQgdGhpcyBpc3N1ZSwgdGhlIGN3bmQgY291bGQgaW5jcmVhc2Ug
-dG8gYSByZWFzb25hbGJlCj4gc2l6ZSwgaW4gbXkgdGVzdCBlbnZpcm9ubWVudCwgaXQgaXMgYWJv
-dXQgNDAwMC4gVGhlbiB0aGUgc21hbGwgcXVldWUKPiBjaGVjayB3b24ndCBmYWlsLgoKCj4KPiBT
-aWduZWQtb2ZmLWJ5OiBQZW5nIFl1IDxwZW5nLnl1QGFsaWJhYmEtaW5jLmNvbT4KPiAtLS0KPsKg
-IG5ldC9pcHY0L3RjcF9vdXRwdXQuYyB8IDQgKysrLQo+wqAgMSBmaWxlIGNoYW5nZWQsIDMgaW5z
-ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+Cj4gZGlmZiAtLWdpdCBhL25ldC9pcHY0L3RjcF9v
-dXRwdXQuYyBiL25ldC9pcHY0L3RjcF9vdXRwdXQuYwo+IGluZGV4IGI5NGVmYjMwNTBkMi4uOGM3
-MGFjZjNhMDYwIDEwMDY0NAo+IC0tLSBhL25ldC9pcHY0L3RjcF9vdXRwdXQuYwo+ICsrKyBiL25l
-dC9pcHY0L3RjcF9vdXRwdXQuYwo+IEBAIC0yOTg1LDggKzI5ODUsMTAgQEAgc3RhdGljIGJvb2wg
-dGNwX3dyaXRlX3htaXQoc3RydWN0IHNvY2sgKnNrLCB1bnNpZ25lZCBpbnQgbXNzX25vdywgaW50
-IG5vbmFnbGUsCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgdW5saWtlbHkodHNvX2Zy
-YWdtZW50KHNrLCBza2IsIGxpbWl0LCBtc3Nfbm93LCBnZnApKSkKPiDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKPgo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgaWYg
-KHRjcF9zbWFsbF9xdWV1ZV9jaGVjayhzaywgc2tiLCAwKSkKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIGlmICh0Y3Bfc21hbGxfcXVldWVfY2hlY2soc2ssIHNrYiwgMCkpIHsKPiArIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlzX2N3bmRfbGltaXRlZCA9IHRydWU7Cj4gwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7Cj4gKyDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCB9Cj4KPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAvKiBBcmdoLCB3ZSBoaXQgYW4gZW1w
-dHkgc2tiKCksIHByZXN1bWFibHkgYSB0aHJlYWQKPsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-ICogaXMgc2xlZXBpbmcgaW4gc2VuZG1zZygpL3NrX3N0cmVhbV93YWl0X21lbW9yeSgpLgo+IC0t
-Cj4gMi40Ny4zCgpTb3JyeSB0aGlzIG1ha2VzIG5vIHNlbnNlIHRvIG1lLsKgIENXTkRfTElNSVRF
-RCBzaG91bGQgbm90IGJlIGhpamFja2VkLgoKU29tZXRoaW5nIGVsc2UgaXMgcHJldmVudGluZyB5
-b3VyIGZsb3dzIHRvIGdldCB0byBub21pbmFsIHNwZWVkLApiZWNhdXNlIHdlIGhhdmUgbm90IHNl
-ZW4gYW55dGhpbmcgbGlrZSB0aGF0LgoKSXQgaXMgcHJvYmFibHkgYSBkcml2ZXIgaXNzdWUgb3Ig
-YSByZWNlaXZlIHNpZGUgaXNzdWUgOiBJbnN0ZWFkIG9mCnRyeWluZyB0byB3b3JrIGFyb3VuZCB0
-aGUgaXNzdWUsIHBsZWFzZSByb290IGNhdXNlIGl0Lgo=
+On Fri, 2025-10-17 at 09:43 +0200, Greg Kroah-Hartman wrote:
+> On Fri, Oct 17, 2025 at 05:57:44PM +1030, Andrew Jeffery wrote:
+> > On Fri, 2025-10-17 at 08:41 +0200, Greg Kroah-Hartman wrote:
+> > > On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
+> > > > Hi Greg,
+> > > >=20
+> > > > On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
+> > > > > Hi Andrew and Iwona,
+> > > > >=20
+> > > > > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
+> > > > > > Hi Brian,
+> > > > > >=20
+> > > > > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
+> > > > > > > Hi Iwona, Joel, and Andrew,
+> > > > > > >=20
+> > > > > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
+> > > > > > > > The round_rate() clk ops is deprecated, so migrate this
+> > > > > > > > driver from
+> > > > > > > > round_rate() to determine_rate() using the Coccinelle
+> > > > > > > > semantic patch
+> > > > > > > > appended to the "under-the-cut" portion of the patch.
+> > > > > > > >=20
+> > > > > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
+> > > > > > >=20
+> > > > > > > Would it be possible to get this picked up for v6.18? I'd
+> > > > > > > like to remove
+> > > > > > > this API from drivers/clk in v6.19.
+> > > > > >=20
+> > > > > > My (strong) preference is that Iwona applies it, but I'll keep
+> > > > > > an eye
+> > > > > > out for any unusual delays.
+> > > > >=20
+> > > > > This patch wasn't picked up for v6.18. Any chance this can get
+> > > > > picked up
+> > > > > now for v6.19?
+> > > > >=20
+> > > > > I'm hoping to get this merged so that we can remove the
+> > > > > round_rate() clk
+> > > > > op from the clk core. The clk maintainer (Stephen) mentioned this
+> > > > > work
+> > > > > in his last pull to Linus.
+> > > > >=20
+> > > > > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@ke=
+rnel.org/
+> > > >=20
+> > > > Are you happy to pick this up directly in Iwona's absence?
+> > >=20
+> > > Why me?
+> >=20
+> > I figured that would be sensible since Iwona historically sent you PRs
+> > for the PECI subsystem.
+>=20
+> I did not remember that, sorry.
+>=20
+
+No worries.
+
+> =C2=A0 The MAINTAINERS file does not mention
+> this at all, and it lists many other maintainers that should be able to
+> take this patch:
+> 	$ ./scripts/get_maintainer.pl=C2=A0 drivers/peci/controller/peci-aspeed.=
+c
+> 	Iwona Winiarska <iwona.winiarska@intel.com> (maintainer:ASPEED PECI CONT=
+ROLLER)
+> 	Joel Stanley <joel@jms.id.au> (maintainer:ARM/ASPEED MACHINE SUPPORT)
+> 	Andrew Jeffery <andrew@codeconstruct.com.au> (maintainer:ARM/ASPEED MACH=
+INE SUPPORT)
+
+Iwona currently appears unresponsive, as mentioned. Joel's stepped back
+from maintaining the ASPEED bits as of earlier this year; I worked with
+him to add myself as a maintainer there, hence the last entry, and now
+getting in touch with you.
+
+I can apply the patch and send you a PR if that helps, if Iwona doesn't
+respond in the mean time.
+
+Andrew
+
+> 	linux-aspeed@lists.ozlabs.org=C2=A0(moderated list:ASPEED PECI CONTROLLE=
+R)
+> 	openbmc@lists.ozlabs.org=C2=A0(moderated list:ASPEED PECI CONTROLLER)
+> 	linux-arm-kernel@lists.infradead.org=C2=A0(moderated list:ARM/ASPEED MAC=
+HINE SUPPORT)
+> 	linux-kernel@vger.kernel.org=C2=A0(open list)
+> 	ASPEED PECI CONTROLLER status: Supported
+> 	PECI SUBSYSTEM status: Supported
+> 	ARM/ASPEED MACHINE SUPPORT status: Supported
+>=20
+> thanks,
+>=20
+> greg k-h
 
