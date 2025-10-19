@@ -1,197 +1,113 @@
-Return-Path: <linux-kernel+bounces-859640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFF6BEE2E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:19:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C411ABEE2E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16EEB3B3811
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF9C3B35E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1692E427C;
-	Sun, 19 Oct 2025 10:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AE82E4274;
+	Sun, 19 Oct 2025 10:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKoJY09c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOCDcxVb"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCC1226CF0;
-	Sun, 19 Oct 2025 10:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB3629D288
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760869156; cv=none; b=fbL7c6DwrszfB2c0IIOgLNUT2CYf1BNUjYf2pTnFUP9kllDvRxw+qB2Wg7aCOmwuFQiGFr7uEHoqTz/sssnErLZWD3AdtvRqHVrxdqmoj5xXJAwte+iUFgFC5m+UzJrxWLvKD5daxQRbFrXMea1jHvwk9aeFNlUFuXd9vshW3Aw=
+	t=1760869186; cv=none; b=aEoH88jEf0eTlKJh4gApSDu4kJco5aiMMsDtAD8DI+pzmBl41sq0xGWZsuMzPo7C+q3aXT5JuTqyjpSge9N68+0BlNMT9iKWo2VEZ9Zxu/PNvXuigekeX3hjGzqEmF0FXLC4yAXvMUdHDKvsGxr8diqqv0Hsdx2QJIq3qHMkPJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760869156; c=relaxed/simple;
-	bh=zn/OlHAE8sHCqC3BJqgGMiH8F04MC2heZp4kXhJaObg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fIasLeb/1vJIvy8neHgMm5nsEyNBUV9C7Foxh9yDNHnDOrE5dN95iJev0LMrZCwD54hleyQ/zPfMPrxH+XiftbyMVQnaDcrS83vbPgTVyYo6pXkg66DK1SQ/my2eAp8rkfdvLSBrgVZH348jOa/uA+bYZOio0Ia6L9NyJ6wkZ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKoJY09c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD5F7C4CEE7;
-	Sun, 19 Oct 2025 10:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760869155;
-	bh=zn/OlHAE8sHCqC3BJqgGMiH8F04MC2heZp4kXhJaObg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MKoJY09cMaVovykS2UtNMvPdOEwHwiCPUVwbwEZuwZcSJ7GM6k5oHEhC61KDAmDIA
-	 BIlpHoEfLH+qZF8ooQRpOF3dolT2t4edjgUmpd+ipK04sqC0EvFCi3fyyIaCBTgSG3
-	 9I+W1vXef78wr1+J2rTsXeEY9i7ME9/VfQDV4eySQZxhHwPU6vO356NlWcX9LUnRXX
-	 KqjGC+ARYYwDv6ZkzJFoebcA2Lefndy5aNN66gtsQRiz6gt+XZYNDmwdytiJcbCm65
-	 aedQiYhvP//SPittdOEsPSqjcD2O7mhdf/7xRYV7Og7P5pGi+iSFcxd9h9ZFtR5moH
-	 xhZDi4HIkkhxw==
-Message-ID: <cb173df9-4c70-4619-b36d-8e99272551b6@kernel.org>
-Date: Sun, 19 Oct 2025 12:19:09 +0200
+	s=arc-20240116; t=1760869186; c=relaxed/simple;
+	bh=AvSMkWBk2P+bf9T9tvFUkUXa08IIJOiWTUuacIDeoek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I1cmUaZ3Zjyh3uXUbsIarVxE93vtzgYLO74EpundH6Qf9fd+9089f22JRdlo3Dx/yGEH+ViGzcEqE3iMiqWfNW+SP2//O5ivxuJ4cldNv96z4ei81hQJAOKIvNmO3Y87G62ebWOvPTveP+i9PwcFJS8gwT4wh2ETeB4XDAhE2jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOCDcxVb; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c1a0d6315so5814815a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 03:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760869183; x=1761473983; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AvSMkWBk2P+bf9T9tvFUkUXa08IIJOiWTUuacIDeoek=;
+        b=hOCDcxVbWlR+j2joArLp3enyz2A3go+Zq6vCnX7gJs1YVRl4rOlRSyUY17Um5JUy3n
+         XNGtPNq2Ys8IaSluyuNZt8eIqse2TSFHq6deSlTUiKDyRbq+IhELanpPCLJEt5kA9nBG
+         sm/dIJTlLRaWfn7Y+dUoYdWJdTg62VRgXUQikrrDcI+OslQVn+FPpsHasnzL/pkSQYEH
+         grbnsQWsHmuH/IBrjErGF13Zpuqzc/8c6ucNxdsksyCHV6Bljwd45gpYJ8mu6BRvX3vQ
+         B5O8SdxC78oMTjdGaqaSWzzudVqcyGUna8eWUagrzENye7SglKgLWlsyzHg7FW/JawFv
+         fOWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760869183; x=1761473983;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AvSMkWBk2P+bf9T9tvFUkUXa08IIJOiWTUuacIDeoek=;
+        b=aFZzmgSPoop3POIB22VbyCWLHhKbken3UylcI6iUbYnWeEVTpZo0jXWByPFR8k1trn
+         uoUGiwBJYgqoqWoQZ56Pw3Hae9uciPd5ArFw0360/2+nUvdaBsqeFZe/eh1WbCCWTijR
+         CY9y8PGU/pU9FwR1uP88Gx+JKcFoW8x6YURkaAc7cvCaQ4mD1gFKW8w2miAZ7nx4aCmi
+         i/8y47ypfLSQwWjzIp2ZwqggkgouXnrh/ezq1ewtgqbUn5XlCCbeEC6rlJRzELhGUeG+
+         5EGLHzxhsLCx5VF1ddgg14S9t0ZSynjBeY8OYmnvibJIO7cjVPKzn1VtWcrlmTsV+QAy
+         jnzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXW+soUnXW8F0SV/lHCEudsZBewc/BzTPxx6iClg5AaXsQnKnnGgWcuzl33qnGGGSjrWGhmBdZzLK+tGuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTBNmZmVQWhmVY5eHn0vG0livB7beokWglTyTLnMdtX8SmSQNB
+	2TY79P3G9PFR49VSMDaYx4r9mEClZmvbK/YHSeZvRiz6EXIQGnNjrejf1T9MYvGGEGZReTynJNA
+	U2G62A1u7nza4gxGc01qLmduCMp2FW8I=
+X-Gm-Gg: ASbGncswRAOTuZdQt93C4YrP9gmPjqeEGdxzwBtdNH8zgOZi+7BU1b8o3XktFKosSBE
+	OcViJqajyM8jkIi8FrMV1zM/plD70R2WI+qFfPPx6GLZVce0xhoWtVwE37AHmGEad4GjC4EJEfO
+	heRLjdqIm4zHSWuk+80xKvkEsgDYEF6vihiO18BGWu791zSiIDYVIxyj+78QK4q96T8yOWmgmjH
+	+nlO7ETCf5ykPUEkvwX2MzKiYV9F0PipcwVAmVKGMXEZiGG9/FnoBIjvJZUaUj+GTo47w==
+X-Google-Smtp-Source: AGHT+IHJ1tnb98CMoVnwt5Oq2sMdy3alKsHrj5KesBOi1LOMklAyV4xT7dnJUZXb8MKel/MUWFEzehg9HP3NPFtujCE=
+X-Received: by 2002:a05:6402:1e95:b0:63b:f3a9:f5f1 with SMTP id
+ 4fb4d7f45d1cf-63c1f633eebmr9023808a12.14.1760869182751; Sun, 19 Oct 2025
+ 03:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: ufs: mediatek,ufs: add MT8195
- compatible and update clock nodes
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
- "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "bvanassche@acm.org" <bvanassche@acm.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- =?UTF-8?B?TWFjcGF1bCBMaW4gKOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "macpaul@gmail.com" <macpaul@gmail.com>,
- =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- =?UTF-8?B?QmVhciBXYW5nICjokKnljp/mg5/lvrcp?= <bear.wang@mediatek.com>,
- =?UTF-8?B?UmFtYXggTG8gKOe+heaYjumBoCk=?= <Ramax.Lo@mediatek.com>
-References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
- <20250722085721.2062657-3-macpaul.lin@mediatek.com>
- <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
- <438077d191833bb4f628b2c6da3b86b3ecfb40e6.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <438077d191833bb4f628b2c6da3b86b3ecfb40e6.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <7b153f5f-fbec-4434-8d07-155b0f1161b3@wanadoo.fr>
+ <03a8fd58-cce5-4b84-adef-6cec235c582b@web.de> <CANAwSgRv6J864HF4Qqab_6qq96=8oKn0aHT5WjypUykgTJFmzw@mail.gmail.com>
+ <e88cb990-bf11-40f7-9c71-b14614fe53bf@web.de>
+In-Reply-To: <e88cb990-bf11-40f7-9c71-b14614fe53bf@web.de>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sun, 19 Oct 2025 15:49:28 +0530
+X-Gm-Features: AS18NWC9ThuvYuttzm6oV6rgSMF7z_2qt5iRg3jbf-_Yb9XXNlpi814XZb8xxY0
+Message-ID: <CANAwSgQmpJGo1SYDOmDQ39Fx5UH3_v857qiJpVCcxqUK=_V0Gg@mail.gmail.com>
+Subject: Re: PCI/pwrctrl: Propagate dev_err_probe return value
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, linux-pci@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 23/07/2025 11:41, Peter Wang (王信友) wrote:
->> Please, look at my old submission, which actually fixes the
->> compatibles other than
->> adding the right clocks for all UFS controllers in MediaTek
->> platforms.
->>
->> https://lore.kernel.org/all/20240612074309.50278-1-angelogioacchino.delregno@collabora.com/
->>
-> 
-> Hi Angelo,
-> 
-> The clock architecture may vary depending on the platform.
-> These clock patch look good to me.
-> 
-> 
->> I want to take the occasion to remind everyone that my fixes were
->> discarded because
->> the MediaTek UFS driver maintainer wants to keep the low quality of
->> the driver in
->> favor of easier downstream porting - which is *not* in any way
->> adhering to quality
->> standards that the Linux community deserves.
->>
->> Cheers,
->> Angelo
-> 
-> I want to clarify that I am not opposing this in order to keep the 
-> low quality of the driver for the sake of easier downstream porting.
+Hi Markus,
 
-You did.
+On Sun, 19 Oct 2025 at 14:26, Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> >> How does this view fit to the commit ab81f2f79c683c94bac622aafafbe8232e547159
+> >> ("PCI/pwrctrl: Fix double cleanup on devm_add_action_or_reset() failure")
+> >> from 2025-08-13?
+> >>
+> > Thank you for your guidance. My previous understanding was incorrect.
+>
+> Will an adjusted software understanding influence further collateral evolutions?
+>
+I will try to be more correct and improve myself.
+Sorry for the inconvenience,
 
-You wrote very clearly here:
-https://lore.kernel.org/all/eb47587159484abca8e6d65dddcf0844822ce99f.camel@mediatek.com/
+> Regards,
+> Markus
 
-"In addition, it will require MediaTek to put in extra
-effort to migrate the kernel. "
-
-
-Also you wrote:
-"The role of MediaTek UFS maintainer is not suitable to be handed over
-to someone outside of MediaTek."
-
-https://lore.kernel.org/all/ce0f9785f8f488010cd81adbbdb5ac07742fc988.camel@mediatek.com/
-
-Holy molly, you really wrote this!
-
-That's completely unacceptable. You don't understand how upstream
-development works and you push your downstream narrative which for us
-does not matter. You also object community led efforts, because you
-apparently want to control the upstream process.
-
-That is red flag.
-
-I think you should step down from maintainer position and find more
-suitable person, who is willing to work with the community, or rethink
-how upstream process works and understand that your downstream goals do
-not matter completely.
-
-I will be watching closely this and if situation does not improve, I
-believe we should mark the driver orphaned until we find maintainer
-caring about community, not about corporate goals.
-
-Best regards,
-Krzysztof
+Thanks
+-Anand
 
