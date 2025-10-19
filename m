@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-859559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F758BEDF4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:50:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C06BEDF4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C11189EF58
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284F53AE8E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BC2225791;
-	Sun, 19 Oct 2025 06:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0062236E0;
+	Sun, 19 Oct 2025 06:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cl0KoSN2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbiKJwY7"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2865178372;
-	Sun, 19 Oct 2025 06:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708C0178372
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 06:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760856631; cv=none; b=K/78XNAKiDzDOooJcNp6Eu7AipUYBG1kPLI8N/p5Cza3u1FLaw2JLMT5Zo8BYIUgv2wrfJXIekPQJ4MKhqrHKYxeHu2n5PKjQi/v1gR9tQPp1p0HCXWMQh93jRWQwhafmjrxGk3HtW7t1K2WNNouBp355Vl+DkRC1mW8enY/ZJE=
+	t=1760856648; cv=none; b=dHIeXO3xvJ3c/emx3s96/rMjv53iezQXkOaWC9rLhFGyIVi8i+p8DKCttfpk1kWuxfpLJXbSwbJXwfW9U1nVfqsmG7La+BO/zhPzP/PJ886SDqkEuw0Zo4ZPIXRF+G5BkFnz1kiekonXWLxn+k7/PGu+tlKtwJqYDr0NswvNut0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760856631; c=relaxed/simple;
-	bh=EdgpjTa5vPTpdpYEzLk3B3e9bf5d6qYFWAfS+EwNqnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XiUeVLimD7Xq4wSNC3HT1XLtnTbynNPLVCwp5kXj5tnPfO2LiZS7Aq3Hwcs9tAOrM4NxzNwsFxaGc+bDR/nSuaoZCEWPzZS0KK5z/1IrC2OiPCslTQ4AtyUyXJrOlkgO0X0N3i/BwgXUfIqBbW8d97EvWjh0wtDx/lsiuCVDo6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cl0KoSN2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F25C4CEE7;
-	Sun, 19 Oct 2025 06:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760856630;
-	bh=EdgpjTa5vPTpdpYEzLk3B3e9bf5d6qYFWAfS+EwNqnE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cl0KoSN24WldfEYSRSfu5lozmGJAVE9xioGE6C+PBBseYSuE/7hgf2KbKvxu1nAfq
-	 +AnxTaK9VaE7xdn62r2Zk9oFnNMs7lSpecdggsfr9Z5mfbyraggVUnrWZwla30ASHd
-	 TTQUKVBXbjDXmyKfOdXMojvKQKorenot/jpefXad8wpoUyJQ/gWBwcSUSTx6MlFUkq
-	 O4BqR0RMnSAfMnvUpkN7wKJhQIsaUmfqwAekVS20NwyN/940rzzKb69Mu6Ni7vQrxn
-	 4PzVEO7y+ixH5H5iambi/6vum/20jOqyGoZB3A2tTRPyBtt8DjbzWrov4g4xwvEbN2
-	 ljhF5KLlm27vA==
-Date: Sun, 19 Oct 2025 02:50:21 -0400
-From: Guo Ren <guoren@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, linux-alpha@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 03/17] csky: Add __attribute_const__ to ffs()-family
- implementations
-Message-ID: <aPSKLRnWUAVSGQjF@gmail.com>
-References: <20250804163910.work.929-kees@kernel.org>
- <20250804164417.1612371-3-kees@kernel.org>
+	s=arc-20240116; t=1760856648; c=relaxed/simple;
+	bh=1lodjNJ9Ek6ngeCfRkksgVPFQSfWNwPjyu77UdFn6W8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ERliPPB41rbsoOLZVYtYO8KSG367x5g8aJ0snP70HTfPzrfipal9jmOuUa5d6bAQX3Qnb9Qka/3SQxTve0JOFTzR/2ch2kvUw3zvGTU83yF9rKUihh9TvdEvlOLdS5YYUXH/EnLo1UtcVZ8zg4G0gMp87DH1uUscSTJSytzx8VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbiKJwY7; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7f7835f4478so36449846d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 23:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760856646; x=1761461446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GDmF9mCsRe+/orhrJpq4zaFbeDKWdgz9gWT21V8JpDg=;
+        b=BbiKJwY7hUC8xFNM0LNKG+tyvcb/JqZ4WzyF+Ba7GeD3kx6SInaij9X36Qcg1VdOvR
+         BP0drj8UKCwO2LmJaU50ur+iclU91DUGtvLgkYRlvZa4KtH+E1ZHMEIQrrSUoQd2eKik
+         Z3qpIGkGVoc+AXJyAR1yEzxlFCcAJM9NPCi2QRtHcO3iBlRvRYOZDx3pzZO64ZVJJHBZ
+         4alT06nVhNLiYW8eAEhFId4conBH0tQvbY/LMueuD3ruSE7d/IPbMgiC4MhOLWFmw3Lp
+         ke+11gAmoLqN2T+zxbOC+GKmLSQQbd12v6vCx/8DBW4xs205MK0ATVCaBdxTPpnuBp1G
+         v/rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760856646; x=1761461446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GDmF9mCsRe+/orhrJpq4zaFbeDKWdgz9gWT21V8JpDg=;
+        b=eM1teHFxnUVKNhHJKYkHnj+jVyo/CKwF/RnJDgGO+YpU2a0cOTN6V0u5uQTt15dt/n
+         Sl6JEkn5g8cHZ6fPwtFBtIDzHG2An0AcBVhMFtTZ9Wxy6qTnDZaP4bCUploiGGpjQnVB
+         PWTypWbgA6Pl13SxLjbk18jH3V/iX92J+Hap98DvkSgjnEdUbEYxDwBjEA3D7byvOdi1
+         i4+Nay1f05MFueVIvicM0g9k/IXr9wZxvuZb8jQYTtHCl4qtgDHfJb1Wduu3AhtaRg5A
+         MKQDlcvB6Pkk4Ijhly2JBvTGOTlSE7JjZtlJ6NKYmrqXzuz3QiwHyk9aKCpBEw3E58dN
+         ZXxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWURgUdFNNwzjsQ15OK7lApIH5ZGTQsL/DIpmuer18ykqe5h16oUJyLyO+d38rY2bSDGC6P8LYgc79GvQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgbcBzoMiZ346PvS8aKZdpqqOzk34tUi6ru7nGmiLR4ep+DEBo
+	nOtU63BoJK7XpR6BZv/rqxXQz9GgB0QptYnYAsaUQZvnpnC6f87PL2Dk+SQfgyucmiXVzU+MYcq
+	dabKMbkJl5Ekd71q/2a19y7ESSqBfGkw=
+X-Gm-Gg: ASbGncsOQI0trYltByN8tPiYxxi0JT2sl3EZblPt9oYQ5uwZYs7b+L1Es0XIa3GYsRZ
+	IQg5LgE2nMqVDPzHh4vrJGeEkBx2R7RPC+M1jxSzrSgWoiOfV4wcU09u1C9ncR/aaQd8xI9dXGt
+	eIfV9s0c0eOpkCy1Epm0jEyybiR8vljg1A8wVKlokqoFrwBk24U6y42/qGw5T/zN9fE8vjpFbOC
+	3ECMJ+fceyB5TzjZgbdYl9HmsD7lE0Zd5F3p3AjQq8kz8av0iB0dIC3zprQ2FJrfNW+gg==
+X-Google-Smtp-Source: AGHT+IEt5bL2PcGYOYONXJi4ns4YMSAsym6wWvejiLT7LX5IhL6HhqBCB/b7LCit93xy+9OOIg4Wy3uDx9Pgyf/kHaQ=
+X-Received: by 2002:ad4:5e88:0:b0:786:2d5e:fdf1 with SMTP id
+ 6a1803df08f44-87c2054aef1mr141871656d6.2.1760856646293; Sat, 18 Oct 2025
+ 23:50:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804164417.1612371-3-kees@kernel.org>
+References: <20251016222228.2926870-1-irogers@google.com> <aPRTQLcOBtHiTGms@google.com>
+In-Reply-To: <aPRTQLcOBtHiTGms@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Sat, 18 Oct 2025 23:50:35 -0700
+X-Gm-Features: AS18NWDFYnve9mYzqBDbDeR0ITEVqQiRu_NlyXjXqlKYXvzOaOkWEbrHH9ylBrU
+Message-ID: <CAH0uvohtoVR=iXNwJWYXXgnt4LLWCMheSt66Hnx5hq=QB0KU3w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] perf ilist: Don't display deprecated events
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Gautam Menghani <gautam@linux.ibm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 04, 2025 at 09:43:59AM -0700, Kees Cook wrote:
-> While tracking down a problem where constant expressions used by
-> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
-> initializer was convincing the compiler that it couldn't track the state
-> of the prior statically initialized value. Tracing this down found that
-> ffs() was used in the initializer macro, but since it wasn't marked with
-> __attribute__const__, the compiler had to assume the function might
-> change variable states as a side-effect (which is not true for ffs(),
-> which provides deterministic math results).
-> 
-> Add missing __attribute_const__ annotations to C-SKY's implementations of
-> ffs(), __ffs(), fls(), and __fls() functions. These are pure mathematical
-> functions that always return the same result for the same input with no
-> side effects, making them eligible for compiler optimization.
-LGTM.
+Hi Namhyung,
 
-Acked-by: Guo Ren <guoren@kernel.org>
+On Sat, Oct 18, 2025 at 7:56=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Ian,
+>
+> On Thu, Oct 16, 2025 at 03:22:26PM -0700, Ian Rogers wrote:
+> > Unsupported legacy events are flagged as deprecated. Don't display
+> > these events in ilist as they won't open and there are over 1,000
+> > legacy cache events.
+>
+> Off-topic, any chance to integrate this into a perf command?
+> It'd be convenient if we can call this like `perf list --interactive`
+> or some other way.
 
-> 
-> Build tested ARCH=csky defconfig with GCC csky-linux 15.1.0.
-> 
-> Link: https://github.com/KSPP/linux/issues/364 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  arch/csky/include/asm/bitops.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/csky/include/asm/bitops.h b/arch/csky/include/asm/bitops.h
-> index 72e1b2aa29a0..80d67eee6e86 100644
-> --- a/arch/csky/include/asm/bitops.h
-> +++ b/arch/csky/include/asm/bitops.h
-> @@ -9,7 +9,7 @@
->  /*
->   * asm-generic/bitops/ffs.h
->   */
-> -static inline int ffs(int x)
-> +static inline __attribute_const__ int ffs(int x)
->  {
->  	if (!x)
->  		return 0;
-> @@ -26,7 +26,7 @@ static inline int ffs(int x)
->  /*
->   * asm-generic/bitops/__ffs.h
->   */
-> -static __always_inline unsigned long __ffs(unsigned long x)
-> +static __always_inline __attribute_const__ unsigned long __ffs(unsigned long x)
->  {
->  	asm volatile (
->  		"brev %0\n"
-> @@ -39,7 +39,7 @@ static __always_inline unsigned long __ffs(unsigned long x)
->  /*
->   * asm-generic/bitops/fls.h
->   */
-> -static __always_inline int fls(unsigned int x)
-> +static __always_inline __attribute_const__ int fls(unsigned int x)
->  {
->  	asm volatile(
->  		"ff1 %0\n"
-> @@ -52,7 +52,7 @@ static __always_inline int fls(unsigned int x)
->  /*
->   * asm-generic/bitops/__fls.h
->   */
-> -static __always_inline unsigned long __fls(unsigned long x)
-> +static __always_inline __attribute_const__ unsigned long __fls(unsigned long x)
->  {
->  	return fls(x) - 1;
->  }
-> -- 
-> 2.34.1
-> 
-> 
+You have my vote, user-friendliness is important.
+I think Ian mentioned that the major drawback is the difficulty of
+forwarding arguments passed to the ilist.py program. A random thought:
+perf is known for binding everything under a single command, but to
+make scripting more flexible, perhaps some Bash scripts added to
+.bashrc could be considered. After all, perf is fundamentally a
+command-line tool.
+
+Thanks,
+Howard
+
+>
+> Thanks,
+> Namhyung
+>
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/python/ilist.py | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
+> > index 9d6465c60df3..69005a88872e 100755
+> > --- a/tools/perf/python/ilist.py
+> > +++ b/tools/perf/python/ilist.py
+> > @@ -439,6 +439,8 @@ class IListApp(App):
+> >                  pmu_node =3D pmus.add(pmu_name)
+> >                  try:
+> >                      for event in sorted(pmu.events(), key=3Dlambda x: =
+x["name"]):
+> > +                        if "deprecated" in event:
+> > +                            continue
+> >                          if "name" in event:
+> >                              e =3D event["name"].lower()
+> >                              if "alias" in event:
+> > --
+> > 2.51.0.858.gf9c4a03a3a-goog
+> >
 
