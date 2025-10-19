@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-859542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59830BEDEE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:17:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60631BEDEEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860F43E3544
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:17:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 357E54E62C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473271369B4;
-	Sun, 19 Oct 2025 06:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2908522B5AD;
+	Sun, 19 Oct 2025 06:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTs5NCmG"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBPpnrxb"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D403F221FA4
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 06:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D489F226D17
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 06:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760854617; cv=none; b=rgrpqxcWPkDr7uhiZo4RKnhzyoPEPp2vvEWKO2a9fGxZgh8KaG2SA9PTvZFeGKyvWBgpJGRzgCgLKIRSuyoS3nVIB+e5guOJVsRLsYxLqJsUn75zcHESvkLPAJlpeYRrJJ/XNGldxYCJ2nr9rwPlellUMikRDiU2mqUGBx1WyoQ=
+	t=1760854619; cv=none; b=PNSverXZdF2rmT+yIi1jjNIANTUdzoUXz/U1UgfP3TaqCTHLYJdLf+2g6dzM7a2qs+ifH2cgHYU4t+QptkhF5m9FB3ujNtzv/+0GBUaYdtTLvu1lNtXERCmWYvAAfekT6l2nyYmEsV2OK6oNPFF7pJ5qpybxP9k2XlefRJtJuII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760854617; c=relaxed/simple;
-	bh=/fZ+pcXFI/bLxQ2mFY1Xp+wMUpBp0gh4E6urJggyENw=;
+	s=arc-20240116; t=1760854619; c=relaxed/simple;
+	bh=lhrblwAj2S8u50W6se7xH46F0vsfn85WIorx/b5ZeLw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eb1JJsQwGJmwt76NnP1x4q9FOZSp7mY+za/xq7NBu6LgmBwmnBCie6r4D1vJSxWLJxMGY8wjujGi+8qL6BtcJ/TE2YDm4+iOnNbv/9XCvDS3hgHDdm57snbMQaT/7ERtGmzJzYopqj4AP3b/JID1ZWyV+r2O0yyydg3iD8k5thk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTs5NCmG; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=b6x6bt6CnpOmWLJ5ydJsJotbkeWCt1FY27nJbRYIPv7JS8YexHCzCgSqFGbbJNQiSLZR/kTQ0gsv0jFvv4U6YaqM5+5GYSser0ryYZ76zK5tvfK95gBJa/qQ91Rs1voP5FX8PzrWQxm/anzjKSQfrVWkLNZJBKUbE2E8/UEur+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBPpnrxb; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a23208a0c2so647172b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 23:16:55 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-290cd62acc3so27174135ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 23:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760854615; x=1761459415; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760854617; x=1761459417; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dIeDgxZ048HUq/QptiVsvTSq/SH6NNfnJz16wRbfAOg=;
-        b=NTs5NCmGn/IyX2LDox8xLC6vQnJCuIsjHZL4i3woSESB9nSG+632KfcZqu3aPZ/Fpc
-         zo1FC8Bzye2tsL+GCQgCkr3WR/JuR27gCBz9ehGwq1QLcmvQXagivAmqgZo/CSy5FrDq
-         ps8/8HddKDFx6nVkpEcJm7V91EFYCNGjh9m2k1BRYIiJJjAXzO0avQf6Ew3ZD+/37hiu
-         PxGCpUhC2IYnUQrnoTLTQgkbabnAiJ0U6yHqNIugZU5XIjbLX24nh+cG3gmvPo2S1j0L
-         t6jUDhlkKBXRL3pu5oeRIE/BIgvGEEmO/b85/lB05x78bnU0DkQ66HYspqrMK1rHA/C1
-         q4KQ==
+        bh=Ex4M6nG0U6c9sFi4kmswWQOXivj8cIJW5ADLbJTHFZo=;
+        b=QBPpnrxbB3z2OqHb0Sw2e5EEZxEsphENZpjNxyHWgdV8cc4TwWYQ20I4Z3BIkTCUFW
+         m2mgL72OdA/ZEOnj5X8QTtnHhhX+Lw0ib7q3iUffkyWcbFavItGUVM5M/4knT+tgJnaY
+         7hCLB+7p2mzsLSAshvXjrikvvD6sv73El8Vsh3us6O8kxble1ylZLAIH4vUYNUJB5Pf8
+         kUeZVNL9TR/q9HjrBRuVJ3qOh8wWutXs1RWogdoGi+IQ42P4ZrmpNXA4xs3mfHUByyH/
+         EYgp2R2WvFPipxsnb7Kz4G1BxuDghT99kZklV/VmJHv/TdceclsL7iQ9lLZ4zzKScWVP
+         bDGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760854615; x=1761459415;
+        d=1e100.net; s=20230601; t=1760854617; x=1761459417;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dIeDgxZ048HUq/QptiVsvTSq/SH6NNfnJz16wRbfAOg=;
-        b=qUEXPuDmarR6AMJcWKAx7nlitd7nhhoLlLeX++EkmBCL1tmv256wVqtMTgtFsbKrp7
-         4XgkWqG8Aaen0JsaypIXFQKySF/nopSiBYZe6IzvuSm2COQCTkQH0bGNYFXvwHXTl2Zg
-         4Kb4+NYJBzrRzY5qwhIBDdodQKRpqnoaa7eCpupvblxUCq81F9PCTF/rHsc3JfLMJe5u
-         QhrwwKPNgKVTrSpzFlu1YMufiabGk3WQXy2/50rrfTfrQRku2DHWWtAG5VrP2OMhF1h2
-         gIuDAiaeC3H+qPF37403zBHCi4ZUF4ypW0rBGjiPz181Z6TWlUVrf1NXZD/ySE9vfYPI
-         BWDQ==
-X-Gm-Message-State: AOJu0YzLCncR0iJh6pdsroZ9ZWB3UX1asT/gZDFeo5kJTqOr5eTyiMSF
-	nMo/OCQjLRktFDAI/6PLZgQ9bf8PjnHPlo+09T89f7JvBLgETBbANeyWJr0JtQ==
-X-Gm-Gg: ASbGncueeQZ4Pu5kopmQ+/bfxz9+Je7ezsECaXPVNASbHNF8G0cMy2nlVdn57ezvqLN
-	kX30Fn5zPiDEHKccG1esUhUwFxgRkH61H1cIFx2r3TC7GjocOpfFVxXciCyhZfhmxOSfzNur2PD
-	WQVR5jQCXXrJzkwQjhvdAgleWeZV30x3+LWf+KA0Gtkp+1QV0NCrsvXODqI+PFD554UA8/S9WfJ
-	JW6nTWMtkpZq3faduOQz+0d5bkoAkoifbbwVOeu1V9WmyTALC87q8q6RxW9djHpZm7t4ImZhnMe
-	ZNRMpgtAQexbSSHjgUBLG/rErN5AgFZlRFgkZIIKXm+lWezYLYDKQogD9M+pHEeh2tNg14+xAlA
-	KO9ieQdGafB1LgbISFe35hmzJFWkbgP9BeFtAHdw4M0gE4i6Mh8loHQEnB0oN19yFzch0vBEUTD
-	HjKE/gc0oI5qP5eWk=
-X-Google-Smtp-Source: AGHT+IG0OBW7fmiA2YniV8ymtG2+sPiHKCxBMdY5eWEb2qkoBgohPShQvQn2sQ3XNKwAIyFsb9Df0A==
-X-Received: by 2002:a05:6300:4cc:20b0:334:b4ad:154b with SMTP id adf61e73a8af0-334b4ad168fmr5911026637.27.1760854614800;
-        Sat, 18 Oct 2025 23:16:54 -0700 (PDT)
+        bh=Ex4M6nG0U6c9sFi4kmswWQOXivj8cIJW5ADLbJTHFZo=;
+        b=rHzY1S9gz8bu0jV5pqJ2CnuA+C8LcNwJMT09kfFWBR16WHmDvOV0Z4xQwck7a8GY0a
+         3RD0et3MC4vckOb3VQGXgBs81D93WK1XM9PhCNoQrPfag7G+Hk3B6MtA5Rg9f1oCyNpS
+         irJVD/iCCEUW46Qxw7O8L8xfvAnjutxxluiTMrU6hQMEWK7c6/luLtmF3GlUawKnkqS0
+         Q6wzSedzoAqRBLHXHekxVy/wMO8aH52O7DNl8ZaCWWQMVkMkiQHBjhwQu0t5Wc5rgKDN
+         6yqfCzeeIHpM5DPrMy5PPmkExB5PfIZTfiezvsc24HV70DdVYQ09OIup1PY4E2NgGizk
+         WrPQ==
+X-Gm-Message-State: AOJu0YyxhRXEm96BKwAHDAG/Knblfs4J2KZ9oCq24SCIYfAsHXzw+vTM
+	3NoIf4NSRApgFr4UleucmGV/Jo8hMeJvfbFH0pt7Ad6iiXyu+qn+ZAYXo5xjLw==
+X-Gm-Gg: ASbGncvP1WMRyPlfk1+XgUlzNpjfBoxYE+u4nhhsWKxPk3wIgVl7PeztR6kloA4bHMn
+	/jAlAM5FDuIn2kKxjBwCqooZRN9oKs42dLctO8lKXYySuqvH0i/My7fNU92TbxSgOYFz73x1OwL
+	4gAjE5rr+nD6AYc1v0yYmhQpPl09Oh9SmRrTC7F5RqdpVyuh+/uYHd9adeeua4U11PCJlpfXkR+
+	uaTRpLuCyunGshSFUoGI8Yps6mONdZ42cWuuZKajuUhge85HTpve35ijLvBrpdQnzvCDts4ytoq
+	4QGMOEWnu1TGILKZFJSlfE0i/mvJH4lrvnWpAC6692S68iW94sT4lMdQUdjptUOmUhValaKTMXX
+	LHv13TTFyrqw/JyCe64FXlbZ3hFXJcSpVPQMdHEvXqVpORbLuap2YCk3FaO/utZOJbbwxxJlcOG
+	KqIQ2V
+X-Google-Smtp-Source: AGHT+IEdPOvrEIcU1/OzXiLpdHh1uco8zhVpvekF8s3i7IZl2imw6bwzc3Kl4EuPcI0uzTvVtI4atA==
+X-Received: by 2002:a17:902:d508:b0:28a:2e51:9272 with SMTP id d9443c01a7336-290cbc3f200mr124673875ad.48.1760854616812;
+        Sat, 18 Oct 2025 23:16:56 -0700 (PDT)
 Received: from pop-os.. ([2601:647:6881:9060:bc87:d8fe:3e55:7ffb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b6f302sm4332032a12.38.2025.10.18.23.16.53
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b6f302sm4332032a12.38.2025.10.18.23.16.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 23:16:54 -0700 (PDT)
+        Sat, 18 Oct 2025 23:16:56 -0700 (PDT)
 From: Cong Wang <xiyou.wangcong@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: jiri@resnulli.us,
@@ -86,9 +86,9 @@ Cc: jiri@resnulli.us,
 	Changyuan Lyu <changyuanl@google.com>,
 	kexec@lists.infradead.org,
 	linux-mm@kvack.org
-Subject: [RFC Patch v2 03/16] multikernel: Introduce basic multikernel subsystem infrastructure
-Date: Sat, 18 Oct 2025 23:16:17 -0700
-Message-Id: <20251019061631.2235405-4-xiyou.wangcong@gmail.com>
+Subject: [RFC Patch v2 04/16] x86: Introduce MULTIKERNEL_VECTOR for inter-kernel communication
+Date: Sat, 18 Oct 2025 23:16:18 -0700
+Message-Id: <20251019061631.2235405-5-xiyou.wangcong@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251019061631.2235405-1-xiyou.wangcong@gmail.com>
 References: <20251019061631.2235405-1-xiyou.wangcong@gmail.com>
@@ -102,116 +102,91 @@ Content-Transfer-Encoding: 8bit
 
 From: Cong Wang <cwang@multikernel.io>
 
-This commit introduces:
+This patch adds a dedicated IPI vector (0xea) for multikernel
+communication, enabling different kernel instances running on
+separate CPUs to send interrupts to each other.
 
-* Configuration infrastructure (kernel/multikernel/Kconfig) that adds
-  CONFIG_MULTIKERNEL option depending on KEXEC_CORE, it will provide kernfs
-  interface for multikernel instance management, device tree based
-  resource management, physical memory pool allocation, and kexec integration.
+The implementation includes:
 
-* Core initialization module (kernel/multikernel/core.c) that provides
-  basic subsystem initialization using subsys_initcall() to ensure
-  multikernel support is initialized after core kernel subsystems.
+- MULTIKERNEL_VECTOR definition at interrupt vector 0xea
+- IDT entry declaration and registration for sysvec_multikernel
+- Interrupt handler sysvec_multikernel() with proper APIC EOI
+  and IRQ statistics tracking
+- Placeholder generic_multikernel_interrupt() function for
+  extensible multikernel interrupt handling
 
-This foundational commit establishes the basic framework that subsequent
-patches will build upon to implement the full multikernel functionality.
+This vector provides the foundational interrupt mechanism required
+for implementing inter-kernel communication protocols in multikernel
+environments, where heterogeneous kernel instances coordinate while
+maintaining CPU-level isolation.
 
 Signed-off-by: Cong Wang <cwang@multikernel.io>
 ---
- kernel/Kconfig.kexec        |  2 ++
- kernel/Makefile             |  1 +
- kernel/multikernel/Kconfig  | 20 ++++++++++++++++++++
- kernel/multikernel/Makefile |  6 ++++++
- kernel/multikernel/core.c   | 17 +++++++++++++++++
- 5 files changed, 46 insertions(+)
- create mode 100644 kernel/multikernel/Kconfig
- create mode 100644 kernel/multikernel/Makefile
- create mode 100644 kernel/multikernel/core.c
+ arch/x86/include/asm/idtentry.h    | 3 +++
+ arch/x86/include/asm/irq_vectors.h | 1 +
+ arch/x86/kernel/idt.c              | 3 +++
+ arch/x86/kernel/smp.c              | 8 ++++++++
+ 4 files changed, 15 insertions(+)
 
-diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-index 422270d64820..e0fbd7e9af43 100644
---- a/kernel/Kconfig.kexec
-+++ b/kernel/Kconfig.kexec
-@@ -194,4 +194,6 @@ config CRASH_MAX_MEMORY_RANGES
- 	  the computation behind the value provided through the
- 	  /sys/kernel/crash_elfcorehdr_size attribute.
+diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
+index abd637e54e94..d2c3f1ca481a 100644
+--- a/arch/x86/include/asm/idtentry.h
++++ b/arch/x86/include/asm/idtentry.h
+@@ -703,6 +703,9 @@ DECLARE_IDTENTRY(RESCHEDULE_VECTOR,			sysvec_reschedule_ipi);
+ DECLARE_IDTENTRY_SYSVEC(REBOOT_VECTOR,			sysvec_reboot);
+ DECLARE_IDTENTRY_SYSVEC(CALL_FUNCTION_SINGLE_VECTOR,	sysvec_call_function_single);
+ DECLARE_IDTENTRY_SYSVEC(CALL_FUNCTION_VECTOR,		sysvec_call_function);
++# ifdef CONFIG_MULTIKERNEL
++DECLARE_IDTENTRY_SYSVEC(MULTIKERNEL_VECTOR,			sysvec_multikernel);
++# endif
+ #else
+ # define fred_sysvec_reschedule_ipi			NULL
+ # define fred_sysvec_reboot				NULL
+diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
+index 47051871b436..478e2e2d188a 100644
+--- a/arch/x86/include/asm/irq_vectors.h
++++ b/arch/x86/include/asm/irq_vectors.h
+@@ -102,6 +102,7 @@
+  * the host kernel.
+  */
+ #define POSTED_MSI_NOTIFICATION_VECTOR	0xeb
++#define MULTIKERNEL_VECTOR		0xea
  
-+source "kernel/multikernel/Kconfig"
-+
- endmenu
-diff --git a/kernel/Makefile b/kernel/Makefile
-index df3dd8291bb6..017ed567f86a 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -56,6 +56,7 @@ obj-y += dma/
- obj-y += entry/
- obj-y += unwind/
- obj-$(CONFIG_MODULES) += module/
-+obj-$(CONFIG_MULTIKERNEL) += multikernel/
+ #define NR_VECTORS			 256
  
- obj-$(CONFIG_KCMP) += kcmp.o
- obj-$(CONFIG_FREEZER) += freezer.o
-diff --git a/kernel/multikernel/Kconfig b/kernel/multikernel/Kconfig
-new file mode 100644
-index 000000000000..0e61fd2e505a
---- /dev/null
-+++ b/kernel/multikernel/Kconfig
-@@ -0,0 +1,20 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Multikernel configuration
-+#
-+
-+config MULTIKERNEL
-+	bool "Multikernel support"
-+	depends on KEXEC_CORE
-+	help
-+	  Enable multikernel support, which allows running multiple kernel
-+	  instances simultaneously with resource isolation and inter-kernel
-+	  communication capabilities.
-+
-+	  This feature provides:
-+	  - Sysfs interface for multikernel instance management
-+	  - Device tree based resource specification
-+	  - Memory pool management for kernel instances
-+	  - Integration with kexec for kernel loading
-+
-+	  If unsure, say N.
-diff --git a/kernel/multikernel/Makefile b/kernel/multikernel/Makefile
-new file mode 100644
-index 000000000000..950bace927a0
---- /dev/null
-+++ b/kernel/multikernel/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Makefile for multikernel support
-+#
-+
-+obj-y += core.o
-diff --git a/kernel/multikernel/core.c b/kernel/multikernel/core.c
-new file mode 100644
-index 000000000000..218424d59cc3
---- /dev/null
-+++ b/kernel/multikernel/core.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 Multikernel Technologies, Inc. All rights reserved
-+ */
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/multikernel.h>
-+
-+static int __init multikernel_init(void)
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index f445bec516a0..5e6d03bb18b5 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -135,6 +135,9 @@ static const __initconst struct idt_data apic_idts[] = {
+ 	INTG(RESCHEDULE_VECTOR,			asm_sysvec_reschedule_ipi),
+ 	INTG(CALL_FUNCTION_VECTOR,		asm_sysvec_call_function),
+ 	INTG(CALL_FUNCTION_SINGLE_VECTOR,	asm_sysvec_call_function_single),
++#ifdef CONFIG_MULTIKERNEL
++	INTG(MULTIKERNEL_VECTOR,		asm_sysvec_multikernel),
++#endif
+ 	INTG(REBOOT_VECTOR,			asm_sysvec_reboot),
+ #endif
+ 
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
+index b014e6d229f9..59658fcd9037 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -272,6 +272,14 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_call_function_single)
+ 	trace_call_function_single_exit(CALL_FUNCTION_SINGLE_VECTOR);
+ }
+ 
++#ifdef CONFIG_MULTIKERNEL
++DEFINE_IDTENTRY_SYSVEC(sysvec_multikernel)
 +{
-+	pr_info("Multikernel support initialized\n");
-+	return 0;
++	apic_eoi();
++	inc_irq_stat(irq_call_count);
 +}
++#endif /* CONFIG_MULTIKERNEL */
 +
-+/* Initialize multikernel after core kernel subsystems are ready */
-+subsys_initcall(multikernel_init);
+ static int __init nonmi_ipi_setup(char *str)
+ {
+ 	smp_no_nmi_ipi = true;
 -- 
 2.34.1
 
