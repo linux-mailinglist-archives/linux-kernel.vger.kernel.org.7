@@ -1,99 +1,151 @@
-Return-Path: <linux-kernel+bounces-859598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086D6BEE0DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:45:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1CABEE10A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 244F44E5D0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334C63E3328
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1FB27280F;
-	Sun, 19 Oct 2025 08:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E5229E0F6;
+	Sun, 19 Oct 2025 08:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJrmSMf0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IJVgo4VR"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8414A29D29F;
-	Sun, 19 Oct 2025 08:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FB011713
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760863508; cv=none; b=vBIsy0kJJWjZU1aIxRP79tebNKbZ98yJ9iiSOA3IBD12Yfek+zXx2yrMOnnOvO1/XOQW8ly7z9iysDrO2AXDaIfA+ZkFcbzihgyA+lA0xwxXMhYjFRfJYqSKPz3OnE5QNyBlbsVaQ8ItSmuYot76zKiXxREXyn4mqesMwEdG9BQ=
+	t=1760863559; cv=none; b=Qdp2BmfwINHAFtLgSzFP2wWmQ7RyFfY+9wMto5UtDhCot9al9aazat5TauJ1FQq2O2Y0Rs0cgPK6KGFYV7Ra4IlVaowkUw+tIzw+ARBKsUMYX3Qb7vMlZXfg42BMpDtjhVTLZam1Ocwa/kCw5y7qSjNWk4y1qF8Ss14Vj9uqRH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760863508; c=relaxed/simple;
-	bh=XNsXfptiTPBzXfAOv2YWIKUVvn2h8DGBaJd5ic+km+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rA1mq5p2JBeaocyUxnIoLijgw1LdcfTF4hxEsKPmo0rY2/aDopAMUsrJMLa67zDx1PcjvV3nxAHG5/kZv5boH09yBC/Z95VePdoB7khGRjpQzMLXL5zCAQblX6N3fIMt7DIT4TGsulDpar8ACN6A46KGy3uhET40Olv+uVCul3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJrmSMf0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0F4C4CEE7;
-	Sun, 19 Oct 2025 08:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760863503;
-	bh=XNsXfptiTPBzXfAOv2YWIKUVvn2h8DGBaJd5ic+km+0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YJrmSMf0PGl5tG9QMwvuvHHctsml3uuXMmiSAQzPt0t3V+6qRJBpXuEV7IZQ4GcjX
-	 v76zTOALiuWrBVZT1GlPUcYwOMYlwZ2ONCk0WHtslhY8GWYSpteLcA47HNe6wt3hV6
-	 TB1jVdObQwr5Al0YU6dI+rerG7bU5HiRuSP0BPbQYbrkKqZyMwgkUCQ2xc2xcNZb2F
-	 4YVOm9sooJa51TaGVaZ9hX/gc/vLECc5DVag0q7rAYPtP1gSA9G3oGOypry9oSQwrd
-	 VD1sab9aXGBkO8QhxxwjeEzhfuTqtzwwm8munjgAigNwHlP7Grm+TUvIHxeb566FTP
-	 /pE44YU38popw==
-Date: Sun, 19 Oct 2025 09:44:58 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Linus Walleij <linus.walleij@linaro.org>,
- David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: qcom-vadc-common: fix vadc_scale_fn_type
- kernel-doc
-Message-ID: <20251019094458.141971a7@jic23-huawei>
-In-Reply-To: <20251017070728.1637804-1-rdunlap@infradead.org>
-References: <20251017070728.1637804-1-rdunlap@infradead.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760863559; c=relaxed/simple;
+	bh=Y0pWpuDrYmI4OMUjMbc/jTMaeVXhpIIYiTNqLlufnk8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=AouKCD7B4PYp+TEvCaKjkYAPW5/4wCD7WKjpBwNN/lDKwG40HBRpackqlFHLSYeE7HN4jnoUDMlf9XAiP01+SAeI5fxivBlEUKgIJms0mVVaZnFqP0waUKxfIUcVON58LlMFC6P8LOOqVtq5b0JaWG+Lby3bPoFR/nMl/ozsM/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IJVgo4VR; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id DCCA71A1502;
+	Sun, 19 Oct 2025 08:45:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B06B3606D5;
+	Sun, 19 Oct 2025 08:45:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6FBC1102F238D;
+	Sun, 19 Oct 2025 10:45:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760863543; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Jyv8Ny3eYcuzCA4QCGmdA/mqKgQJfhy3966PAg5VYa4=;
+	b=IJVgo4VRUdHkSOpbpwbI4i3XQUiKYBTZbjOnqcTfBFPYwedIkVoTNmOoOLwUNgNqslwEpl
+	HoNbo4pVnSZtX0VkqX7Ztqd9rvSv4nn3E9r41u3YWvBLY7CS1ys2HSmtC0Ua0l4Zy9V5oG
+	yFX0WhKjsXmmAaeoEuYOVx7zcv1Y0KWm09SdA2cbpgjgObfBNxAXW/zHL+0w5SK/O2sEm2
+	vGeo0SLjcN+hZWGLDT3w9+ZaVSYEXXEte+8Zsv5Hs5DGFMJufsz3POym+NFXp0niX1upx/
+	ZQG/jSrBhI6FItdxYjf4zN586DDvBw7SPY9prcBP7uFVjrJUg9g5EQBsY0SmvA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 19 Oct 2025 10:45:28 +0200
+Message-Id: <DDM60XIK0NUQ.S2QMK9E7HQ2U@bootlin.com>
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Eduard
+ Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
+ Song" <yonghong.song@linux.dev>, "John Fastabend"
+ <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
+ <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
+ <bastien.curutchet@bootlin.com>, <bpf@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Martin KaFai Lau" <martin.lau@linux.dev>,
+ =?utf-8?b?QWxleGlzIExvdGhvcsOpIChlQlBGIEZvdW5kYXRpb24p?=
+ <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH bpf-next 4/5] selftests/bpf: integrate test_tc_tunnel.sh
+ tests into test_progs
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com>
+ <20251017-tc_tunnel-v1-4-2d86808d86b2@bootlin.com>
+ <2477894b-3325-4bc2-9d3c-a066b3cbb8f6@linux.dev>
+In-Reply-To: <2477894b-3325-4bc2-9d3c-a066b3cbb8f6@linux.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 17 Oct 2025 00:07:27 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
+Hello Martin,
 
-> Fix multiple warnings in enum vadc_scale_fn_type by adding a leading
-> '@' to the kernel-doc descriptions.
-> 
-> Fixed 14 warnings in this one enum, such as:
-> Warning: include/linux/iio/adc/qcom-vadc-common.h:123 Enum value
->  'SCALE_DEFAULT' not described in enum 'vadc_scale_fn_type'
-> Warning: ../include/linux/iio/adc/qcom-vadc-common.h:123 Enum value
->  'SCALE_THERM_100K_PULLUP' not described in enum 'vadc_scale_fn_type'
-> Warning: ../include/linux/iio/adc/qcom-vadc-common.h:123 Enum value
->  'SCALE_PMIC_THERM' not described in enum 'vadc_scale_fn_type'
-> 
-> Also prevent the warning on SCALE_HW_CALIB_INVALID by marking it
-> "private:" so that kernel-doc notation is not needed for it.
-> 
-> This leaves only one warning here, which I don't know the
-> appropriate description of:
-> qcom-vadc-common.h:125: warning: Enum value
->  'SCALE_HW_CALIB_PMIC_THERM_PM7' not described in enum 'vadc_scale_fn_type'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Thanks for cleaning this up. Hopefully someone else will follow up
-with the description for the missing one.
+On Sat Oct 18, 2025 at 2:18 AM CEST, Martin KaFai Lau wrote:
+> On 10/17/25 7:29 AM, Alexis Lothor=C3=A9 (eBPF Foundation) wrote:
+>> The test_tc_tunnel.sh script checks that a large variety of tunneling
+>> mechanisms handled by the kernel can be handled as well by eBPF
+>> programs. While this test shares similarities with test_tunnel.c (which
+>> is already integrated in test_progs), those are testing slightly
+>> different things:
+>> - test_tunnel.c creates a tunnel interface, and then get and set tunnel
+>>    keys in packet metadata, from BPF programs.
+>> - test_tc_tunnels.sh manually parses/crafts packets content
+>>=20
+>> Bring the tests covered by test_tc_tunnel.sh into the test_progs
+>> framework, by creating a dedicated test_tc_tunnel.sh. This new test
+>> defines a "generic" runner which, for each test configuration:
+>> - will bring the relevant veth pair, each of those isolated in a
+>>    dedicated namespace
+>> - will check that traffic will fail if there is only an encapsulating
+>>    program attached to one veth egress
+>> - will check that traffic succeed if we enable some decapsulation module
+>>    on kernel side
+>> - will check that traffic still succeeds if we replace the kernel
+>>    decapsulation with some eBPF ingress decapsulation.
+>>=20
+>> Example of the new test execution:
+>>=20
+>>    # ./test_progs -a tc_tunnel
+>>    #447/1   tc_tunnel/ipip_none:OK
+>>    #447/2   tc_tunnel/ipip6_none:OK
+>>    #447/3   tc_tunnel/ip6tnl_none:OK
+>>    #447/4   tc_tunnel/sit_none:OK
+>>    #447/5   tc_tunnel/vxlan_eth:OK
+>>    #447/6   tc_tunnel/ip6vxlan_eth:OK
+>>    #447/7   tc_tunnel/gre_none:OK
+>>    #447/8   tc_tunnel/gre_eth:OK
+>>    #447/9   tc_tunnel/gre_mpls:OK
+>>    #447/10  tc_tunnel/ip6gre_none:OK
+>>    #447/11  tc_tunnel/ip6gre_eth:OK
+>>    #447/12  tc_tunnel/ip6gre_mpls:OK
+>>    #447/13  tc_tunnel/udp_none:OK
+>>    #447/14  tc_tunnel/udp_eth:OK
+>>    #447/15  tc_tunnel/udp_mpls:OK
+>>    #447/16  tc_tunnel/ip6udp_none:OK
+>>    #447/17  tc_tunnel/ip6udp_eth:OK
+>>    #447/18  tc_tunnel/ip6udp_mpls:OK
+>>    #447     tc_tunnel:OK
+>>    Summary: 1/18 PASSED, 0 SKIPPED, 0 FAILED
+>
+> Thanks for working on this!
 
-Applied,
+Thanks for the prompt and detailed review !
+>
+> One high level comment is to minimize switching netns to make the test=20
+> easier to follow.
 
-Jonathan
+Yeah, all the NS switches make the overall setup a bit tedious. I'll give a
+try to your suggestions and see if we can reduce the number of NS
+open/close pairs.
 
+Alexis
 
-> 
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
