@@ -1,184 +1,84 @@
-Return-Path: <linux-kernel+bounces-859767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94ECCBEE81E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:03:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E58BBEE82E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CE2BB344CE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:03:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49674EAADD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2152EBB80;
-	Sun, 19 Oct 2025 15:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9C62EB87B;
+	Sun, 19 Oct 2025 15:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQwT8yy+"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YCb3pyJw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055B02EAB6C
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 15:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE692EB861;
+	Sun, 19 Oct 2025 15:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760886175; cv=none; b=N66F8RcQrt0MPQF5poSsQp58O45VWSr7QLGSvBONZIYV/rHOKG6QX+cgiAKglc+Gk4wRo0ZX1NwfKzyqSjxjXBikLAl72mvQ3RK3pHvZkQo4W67c2uv8MtuivUt0gA1DACGNTQGvOvQFE1jyQB9fVmF0/Iq7SUumN0yZraK8OXk=
+	t=1760886215; cv=none; b=dZhcnwDOnShEoqgn+jToU2j5cON4KtqEsduFQuE2mriNzgCnnl0Dw/FqTmFqwfPXSq8g10Bskq9/duK+XVFjCn+tfgD+i3C2vEZAjQwVIFXycwHXNnxdZktUSHxXmiKLiX4HwDem/kObHfgN2HuufwnWJlQcF8z8/eAPHFVWo7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760886175; c=relaxed/simple;
-	bh=thfAJOE7VvV2d0iq3uuYmkecASflPVIVOrCkHSWAP0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OTa20M+SCZSZHpl4xaBc/l6ngXq2v04jciCugfrmdHOnThPbqCuclG7MtnIY0NHBqYeGtJaUeYtV6nDgm41r8ypyCuWPEQ270IhPEDIZRqW+QwWvsznbC1fQCmFKutWGhYez9HqGleieAZEiFGddhPlVkRhofscrtKGk+2v8ycY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQwT8yy+; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b609a32a9b6so2014746a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760886172; x=1761490972; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=z8sB9nRGtypw1eEej1buMuUePw14QOxaqC7fWlM0wc4=;
-        b=NQwT8yy+WU1QVmbS+8y2R68Jlf3dW2vuTfjCbxB5rQMqwQOFURYoT8FHzacVm2zmkS
-         c8iYn9ygO/jK53l4Xxmg6R8FIlXvsIg5Tg1wGD1fdfXLdOjoH5bgOZmt12q4HlU+2rrR
-         KPa/KF1R6p10zD9DssU3YnekBmR7iz4vymx6EFZ1BZlqFaQZElWm4Z1IfZCvLwGdQShC
-         VmHZIoLPbFv+Vz0Fd4f91xaGrOfN1uUu0vvDcW84RWE+wMn3t7VqXynX+7FeMEMJHcXQ
-         rYCiz/wF5M6n0YqDNqlUcFX//WlOGwc1oVLQBrdzlzVJOaynPq2HJL4KvZw6RDk440Wq
-         OMrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760886172; x=1761490972;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z8sB9nRGtypw1eEej1buMuUePw14QOxaqC7fWlM0wc4=;
-        b=NZuqCH1cKcn5KuATRK+XAs7i7Hb16SLdUyvphibUCj3YRDCI87KJUEtUSTUd1RhRCo
-         p+7DDYsBwezKYtTdoGnGwF4SS/0a9hNruUi/Lp92cN6U6wvJIHGYq14P8GU7HBiAVDUn
-         ObTjpEAc/3qse72anSmY4eVK52tXlGxVehHglAC8BAu4wlVUJGeu8L5O0YE1bwpsdpVc
-         Q7wc64K0gOXNqJflig/njdkDOyR4W2JOLjVSZJqWANKmBPksK7JVJgX2MGl+sbSMzkIi
-         m8TOsnsnO8EoTpq+FCgQ/ppJi0FOfge5cZLbFCXlv7YGAOYFKhGZjpi49c7O348HBid+
-         A68Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVw/A0hK2cDcjYC9mtnXMZNhZOd4qdziYnelLISJCidr3kt5aHU3sshi6wnkEuFI9BTWe0MFHT+NXa0hIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnDLYLJ9Aqxmp4jxIcsfR7/r6DSNoZza1hkdks6T63aOtxFzZc
-	IBX7oBciNvUiGHjxrEXpltWkQFVudNAtuhR1oStam2POr1+8bagOf678
-X-Gm-Gg: ASbGncs7hIfTuJq2wXRyXLSS5QSV6op0Zw+ZjGo6u+iaxWGuIlY8eGUDHWSk/PMOA/f
-	qm+q80KXwK1lKrStS2HnN8hRyiC+j5lH+CkfWoj3B2jJIaYslhxevNSDMMwjdDDFc9rADD7guxa
-	pcCFCE/41ehmZ45xZIBrkPrNfm5Gl/j+2nAprK3EPhDA9tzA3LIhPzcMNiKnGjujFEMb9aWA7xZ
-	krLIwkeNZ0H0SGqY0nV9j7mndL5eBIxmW80N3N2bxZjEeGPYp6rifUoM6nOQb8aTTbz8WJs6rlg
-	z+sAx2n4qKFE6C5FYrSNyZ9HdOWup9RCWHu1KZCr3tSpEIK/vPRveITmtMMJt0kDT+0F5RXfLor
-	ybpxsB/wSTrNV1Dh2cMcHHJGcVv3lS3Nez2+b6X34CRuSKkX8h6BGqUg5LELxQXguqpCMVOXfOI
-	Sx/mI9BOIxAVaMNH8MEdSPSeNuEnflthXnxsBI4DAj16zSzSox
-X-Google-Smtp-Source: AGHT+IE+nG9GGkTpmIQrHyKApNJgVKecmEYim0JEEJhW2H5jA2ig/9w5Qg5pcWTNC+Hq+ReKrls+jg==
-X-Received: by 2002:a17:902:c942:b0:290:c5c8:9419 with SMTP id d9443c01a7336-290cb65b8e4mr124763045ad.48.1760886172156;
-        Sun, 19 Oct 2025 08:02:52 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fdc0desm55409025ad.47.2025.10.19.08.02.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Oct 2025 08:02:51 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e4193c55-e2fa-4689-aae7-b0520909127d@roeck-us.net>
-Date: Sun, 19 Oct 2025 08:02:49 -0700
+	s=arc-20240116; t=1760886215; c=relaxed/simple;
+	bh=CvUdrAhJKrAFPUNmEfVgBrHXrqkfuXKEui6HESMt9gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D22CDUN7uQF5ZJ7HcRBj8rAfQIMR0EwngYgdLaeCO/fvdmK3xrGwKNT81c4i9F3fTlRnmHVfBYMLmJBR1/9/gu1V1n2DB5sry+wM8KbP+YHL/aiQ6GQyg8NBdLFLMOmSFcu61hZHbjzja72ZgCWy3R8lwohytqet1SQcq77RIMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=YCb3pyJw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C015C4CEF1;
+	Sun, 19 Oct 2025 15:03:33 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YCb3pyJw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1760886208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jir822fJVXvlFL1pNOJ9mf5/pCTgHfz0MI2r7sxik9s=;
+	b=YCb3pyJw9PTsualD3YKs1UTSHYeVss1rYlK6EUPUxqfqb2QS9dOJHNCOLB64NY3Bjd+zhp
+	ncMsXdgBHYZuIY0hjF7i61ytYmSlKahfU9p0Wy4sfF6C3IMclpYyVqrPiR0FQxChK0G+fJ
+	BWLWbKuckw00Wc5YxzAAyc2ThTnVY6A=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id bc093c64 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sun, 19 Oct 2025 15:03:28 +0000 (UTC)
+Date: Sun, 19 Oct 2025 17:03:25 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Gregory Price <gourry@gourry.net>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
+	darwi@linutronix.de, stable@vger.kernel.org
+Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an
+ error.
+Message-ID: <aPT9vUT7Hcrkh6_l@zx2c4.com>
+References: <20251018024010.4112396-1-gourry@gourry.net>
+ <20251018100314.GAaPNl4ngomUnreTbZ@fat_crate.local>
+ <aPT5rnbfP5efmo4I@zx2c4.com>
+ <20251019150027.GAaPT9Cz6NjB9S2d2a@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Adding support for Microchip PAC1711
-To: Jonathan Cameron <jic23@kernel.org>,
- Ariana Lazar <ariana.lazar@microchip.com>
-Cc: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20251015-pac1711-v1-0-976949e36367@microchip.com>
- <20251019113146.74c3f236@jic23-huawei>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20251019113146.74c3f236@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251019150027.GAaPT9Cz6NjB9S2d2a@fat_crate.local>
 
-On 10/19/25 03:31, Jonathan Cameron wrote:
-> On Wed, 15 Oct 2025 13:12:14 +0300
-> Ariana Lazar <ariana.lazar@microchip.com> wrote:
+On Sun, Oct 19, 2025 at 05:00:27PM +0200, Borislav Petkov wrote:
+> On Sun, Oct 19, 2025 at 04:46:06PM +0200, Jason A. Donenfeld wrote:
+> > While your team is checking into this, I'd be most interested to know
+> > one way or the other whether this affects RDRAND too.
 > 
->> The PAC1711 product is a single-channel power monitor with accumulator.
->> The device uses 12-bit resolution for voltage and current measurements and
->> 24 bits power calculations. The accumulator register (56-bit) could
->> accumulate power (energy), current (Coulomb counter) or voltage.
->>
->> PAC1711 measures up to 42V Full-Scale Range.
-> 
-> Hi Ariana,
-> 
-> For devices like this where the datasheet explicitly calls out usecases in
-> power monitoring e.g. for "Portable and Embedded Computing" (amongst other
-> things) there is always a question to answer wrt to whether the correct
-> place to support them in Linux is in hwmon or IIO. Note that, whilst this
-> has long been an informal policy I've become more strict on this after some
-> concerns were raised in the last cycle - the presence of similar devices
-> in IIO isn't necessarily a sign that was the right choice, but it is worth
-> looking at the history of those divers as it may provide more insight into
-> why they are in IIO.
-> 
-> To address that we ask that:
-> 1) Drivers for this sort of potentially borderline device are +CC to hwmon
->     list and maintainers
-> 2) A justification for IIO making more sense is included. That can be
->     based on what cannot be supported in hwmon (high speed capture being
->     a typical item - that doesn't seem to apply here as it's only 200 sample/sec)
-> 
-> Anyhow, I've +CC relevant folk so if you can reply with that info here then
-> that would be great.
-> 
-This should really be a hardware monitoring driver.
+> No it doesn't, AFAIK. The only one affected is the 32-bit or 16-bit dest
+> operand version of RDSEED. Again, AFAIK.
 
-Guenter
+Oh good. So on 64-bit kernels, the impact to random.c is zilch.
 
+Jason
 
