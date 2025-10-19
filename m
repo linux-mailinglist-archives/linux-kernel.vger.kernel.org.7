@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-859737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF6ABEE74B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ABBBEE754
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 920454E5D8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:39:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E44FD4E40E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7BC2EACEF;
-	Sun, 19 Oct 2025 14:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2842EA49E;
+	Sun, 19 Oct 2025 14:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz32l1gj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3q9VIdg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909C72E8B97;
-	Sun, 19 Oct 2025 14:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE11B523A;
+	Sun, 19 Oct 2025 14:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760884767; cv=none; b=WOSS0VAmp3Uhe4ZwE5KjUyhAIATBwKz586CaNlK5BAiHfP5lC5B4h7WNw19X0sZ5mg1tmxjgDip0ujk2+IdmLzWE44mg1sMeFEDPouwmiIqZDib7SlbqrtwZnHQs6oPfdQxmz4pBLIl1jY1AeCyOUamLlqcGdNVt6xvPVLp+DmA=
+	t=1760884837; cv=none; b=IBIih//d0w+GZv/4WrIhhgxyRni0THDIx6PDMVLWDiZFW2NrqwpLu1DioMFYdvnlo4FSH+Or+l6d+xCQCf/12lh0vdd+wJ4oiZmmn9fsRcBVNFXmEwd4Mg3hyS/u44GH08RJMDnvmjR/V9OGzbTfs1qOQd89bWjaySFzkzbZubU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760884767; c=relaxed/simple;
-	bh=k8SgdX+4WQZcd/KvW7GuWuY+44AL9e/LFxE4enNPF/w=;
+	s=arc-20240116; t=1760884837; c=relaxed/simple;
+	bh=OToiYPWcf9HfMtkOEssugJbZhagD9pCuP/win/Rr5Zo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5r+fCZKnYdqWnSFU7d2YiihLj83Mb0iPJnvh/tohaX4y6uz+wd26AxXYARBWtCagDGuzP2FxkhIpMS6tciIdBt580LSnU9uZHNJaCsFNwCLXALMZtL1d5741x/N1QKYxCqHqb2rOTnutOpbfb1aZf+7NONbHhICaJbKf9yg534=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iz32l1gj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3E3C4CEE7;
-	Sun, 19 Oct 2025 14:39:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FRHX11kvU791tmHYYZyBhjYDoaW5PW2HUWg2POoT5nnNV3a6WEOIa4dUAwaauKZN+JrUfZiTY98ikJ5kjSHDY7+BFXC/bpYbsxOkODbgD7/D/CD2KHM0oIIM5TMMNEKaVCAmcOC8SN8VEU0kvGHCpp0dOgOgmmY8F9a2HTNB/+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3q9VIdg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4EE6C4CEE7;
+	Sun, 19 Oct 2025 14:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760884767;
-	bh=k8SgdX+4WQZcd/KvW7GuWuY+44AL9e/LFxE4enNPF/w=;
+	s=k20201202; t=1760884837;
+	bh=OToiYPWcf9HfMtkOEssugJbZhagD9pCuP/win/Rr5Zo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iz32l1gj11nSsLBQQ6ZRYd0G2cr/U8u0H3UMsuBZjZQfqZ/6SID4oii6BPuBUf33y
-	 AmpNkzRU/dMurcZvMdZ/4T6x0gGOt7LXucso1P+vngrMBPz9VIhPPXGIyDfmuruU2z
-	 iU9gmJnjDSs1bX/sorjSaI2jCbGeQhEKtdn4SRXs/LXRUWTipkQZp9Ewqhtj6s+gJU
-	 IMHexoOCnw5EhIQNsGSH1C6fn4EDHtuwzmDeII8B5HSLneMSMmOkxbWWHPocIK6gVh
-	 HVICvy5ceiPvxWVjT0OMhywWbSlIX37PdxOHClYzMa2LRJb6n23jTFFgmZpCGyPqXG
-	 634858wCFP82Q==
-Date: Sun, 19 Oct 2025 17:39:20 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "longwei (I)" <longwei27@huawei.com>
-Cc: Alexander Graf <graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"hewenliang (C)" <hewenliang4@huawei.com>
-Subject: Re: [PATCH] kho: debugfs: Fix finalize interface documentation
-Message-ID: <aPT4GBc8FW8P6kxW@kernel.org>
-References: <fe693f4d-80c7-4d1f-9430-3ab9c8165df0@huawei.com>
+	b=P3q9VIdgXIXmsW1jqkUgZJGBaD2eCGSMV5zSXpMzk1830RVIvkHj16oYU3jUI4pkP
+	 O+0GmVrAxb6HjjZDbP8hIGx36Lpxrw+jLFT2StHxyhqCwIEJz+FaHiHmmO7nJPbxv6
+	 EQ0qYPwoFOvm9pYgConDUrkycf0oEHWpFaC0eFtNT/Eruh8na4Bn53kChCDrw+LQZg
+	 9XW7bMejJfI/q4HtN+m4GshwVlix3GmzQ6OTOdf7K5iOPpWXuwfmbsI8o5kP3LXfQi
+	 vdOePQNfA8xbCKhaJT1btsY2P69RbQ2xYxLHphB+KS211UEpx2Lf+0m7YsiHBH4VKf
+	 hgvGXJnHRj5/g==
+Date: Sun, 19 Oct 2025 17:40:31 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 1/3] blk-mq-dma: migrate to dma_map_phys instead of
+ map_page
+Message-ID: <20251019144031.GK6199@unreal>
+References: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com>
+ <20251017-block-with-mmio-v1-1-3f486904db5e@nvidia.com>
+ <20251017061848.GA402@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,48 +60,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe693f4d-80c7-4d1f-9430-3ab9c8165df0@huawei.com>
+In-Reply-To: <20251017061848.GA402@lst.de>
 
-On Fri, Oct 17, 2025 at 06:21:49PM +0800, longwei (I) wrote:
-> From 91c2b24855d55fef0e8919b2d39216d5c9aad558 Mon Sep 17 00:00:00 2001
-> From: Long Wei <longwei27@huawei.com>
-> Date: Wed, 15 Oct 2025 19:58:39 +0800
-> Subject: [PATCH]kho: debugfs: Fix finalize interface documentation
+On Fri, Oct 17, 2025 at 08:18:48AM +0200, Christoph Hellwig wrote:
+> On Fri, Oct 17, 2025 at 08:31:58AM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > After introduction of dma_map_phys(), there is no need to convert
+> > from physical address to struct page in order to map page. So let's
+> > use it directly.
+> > 
+> > Reviewed-by: Keith Busch <kbusch@kernel.org>
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Correct the error in the KHO documentation: 
-> when removing the KHO finalization phase, it is necessary 
-> to execute echo 0 > /sys/kernel/debug/kho/out/finalize
-> instead of echo 0 > /sys/kernel/debug/kho/out/active.
-> Fix it.
-> 
-> Signed-off-by: Long Wei <longwei27@huawei.com>
+> You forgot to pick up my review from last round.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+I'm sorry that I missed your Reviewed-by tag.
 
-> ---
->  Documentation/admin-guide/mm/kho.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/kho.rst b/Documentation/admin-guide/mm/kho.rst
-> index 6dc18ed4b..2eda33865 100644
-> --- a/Documentation/admin-guide/mm/kho.rst
-> +++ b/Documentation/admin-guide/mm/kho.rst
-> @@ -57,7 +57,7 @@ Abort a KHO exec
->  
->  You can move the system out of KHO finalization phase again by calling ::
->  
-> -  $ echo 0 > /sys/kernel/debug/kho/out/active
-> +  $ echo 0 > /sys/kernel/debug/kho/out/finalize
->  
->  After this command, the KHO FDT is no longer available in
->  ``/sys/kernel/debug/kho/out/fdt``.
-> -- 
-> 2.43.0
-> 
-> 
-> 
-
--- 
-Sincerely yours,
-Mike.
+Thanks
 
