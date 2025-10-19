@@ -1,116 +1,100 @@
-Return-Path: <linux-kernel+bounces-859729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654AEBEE701
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E257BEE707
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7445420D46
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:24:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08FC1889864
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E542EB5A4;
-	Sun, 19 Oct 2025 14:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194FE2EAB7A;
+	Sun, 19 Oct 2025 14:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkzaMCYJ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKpuBT2f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5977B2EAB7A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D6C1373
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760883884; cv=none; b=gn1IQDPtQvQ35oZFEqzixAWYTXXbARCjWU6a403ULSCGrKD8HdoPCFRP5TsRXtWDW89bu//2rrukv5RuRm8LIr5p0gWiJfYEBEYvt9SxICfGR/Azyxx+kFv+teWi6437UhZdccLQiK6pV7RvjXFJ5hgT4YO4x8WxsQL4NINXIJY=
+	t=1760883925; cv=none; b=VCJzVDeRXYrUqqmt1FnxoSKoiFdi29HOtYbrpc8Wkf19nwgK944czdw41FRUYyXrXFucXtSK3fY5dt9L9vxAF3CkL2sdOI/hbWi/CNVObI0KZFpyoN9/8/yvsZ9Ky39BN+sZx1e1NogQunfbMFV/N/T5q7PmHfjpmkMjf79ZAiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760883884; c=relaxed/simple;
-	bh=UBQ3CI2i/Vqkyp+P3nK/BsPqKNSMijENxAcB6e9vYzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n8WVMlCxRZ00MgVpghwFK2Ydb/QI2q4XaHcUTJhqAL3MswuqOCRFkKUROc4i2KVtbLUyiPXaZb1VUu2inv/RAW19thNeogkwpdXgwR9AGJ3zxvxh+2B5iS3lGRfXmGOkcqdS3Z467tjynsoN27z/Qv99FckLOhpcI5o0AYI0e2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkzaMCYJ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5818de29d15so4225957e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760883880; x=1761488680; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Rk93k1ljwyghSN33Atl9hvNPZmj6zeAwyQjoSPxOYU=;
-        b=dkzaMCYJ7ykWAh7f5a0/7HfC1AWJ55LZAq99M1IqhKOY2u+OI2tN+Op0w99GNPhC2b
-         ky6PjFGrMTHI8sDYu7egnFgOX9VRWCjJix7L47Q0F/YaGZvo/drHryjsuR3QLMk6Uf+g
-         iud7kC8UatVGjq43T6G6EMZUwhS5JJdB8oFp6tcyqNxTqBjv1mvd4uYVKCQmbeOwJNUE
-         K3pZpA1hDdwL5W630R9Qe1fos2Z6QcyQE59xzWLfgpkNRvYsC9DZzXzE7Cbybj827o6/
-         LYA9GOUTxdMgtLHIjFFXP2y87e61M0+AdTEBm9eaV3n/2gEsCExcT6kyrzCddiPQpR12
-         qpTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760883880; x=1761488680;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Rk93k1ljwyghSN33Atl9hvNPZmj6zeAwyQjoSPxOYU=;
-        b=N4ekGobH1S5IHSXWMpDwKoEEfYAKFKtaWempqfBlz4UXefOjfq5vTAE+3UHmpCPdXE
-         2pp6M46kuBpvyZvsck+ij9ddlJG1LCzp4zgm+Rdcf2bsh2d3vAQPc9JE8CzwKuoqypLZ
-         1AnMCYPWl/6oCgIBL9WyaK6O/GzPd6GaQJQNbThj7FyS5JmqI3WP+1Hy1lBEp0tBOcgF
-         KyJDtXHtuSrlr0l7fDWjah6GWhgaXwuORUdS9OzhFyDrefgdUrPV70hyrGCbnwQoFK5Y
-         HL/Du0FpqaIl2ixWYhTuOzqmUoonMPhr+hZmQEe+eEJZthmLS+W+Q4Xu4W6jGPA2w7n4
-         +enQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpbGZ+Fpwd+gj/CT5TgWKBAqp0IdHk+bQ2HJBUosRXWQVq89XqG5Dv5rvZgT1lZb+7j6cvfMphmyEtho0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFga8+a3tnvTvbfNenbZXRwov6qXMcGM+R1USvbN7D8gbri3Jl
-	gsn5xSw7iejftgebFXMe6wIpp1/bVM+enCdN2yEm7X1JM0T+p10h20J6
-X-Gm-Gg: ASbGncujX15kj46dG3obOGB5ufdTXDH8lOK8fqSu9BzMj4H8RMhjmmO2csL7Oy5BcYR
-	UsAaCNvhLdyg66ECgWNmiZm48lpf91a+gprZ8S0hBda8qZQDCM0/onmPNl553Ccz+Qg2nwjI1mC
-	KkIapHJ7UdGvLirV5f/IJMRL1/JeA0cuyb/+vA7aeoyyzg6jeGJqGC+RnyUQdKcCrTGs/xkTd1O
-	fZ6m3jSRhwJjMBQuoAs+WtcyP2JVqGEORcMAKCNVY0FiD+DIDRdDTgdixLtrEh/tOrgg/Op6AzB
-	6Nn79TYnEdvuXFI2CYiQHsHSKbHGjqk6/2PBrZ4Ns8O7kuJr/h5Rl1bVTVPF3VGHIVjDOzcEAfz
-	dr6VF31+pwE2Oz1yTNnxuV7pyRUjlQH1rX6u0WgI2CHZiZN/ptS6GC7DI551IBIWlB4Z31J4Fw3
-	vhFCY/7u5Aj32k
-X-Google-Smtp-Source: AGHT+IH2ftzTuRheyla/6S9FsuGwyDIul5Lq8UOJqEvJlweJ2mNm9Rk7iuIHqgSTe76z8e1m61a0kA==
-X-Received: by 2002:a05:6512:1188:b0:580:dda2:5318 with SMTP id 2adb3069b0e04-591d8533db7mr3421013e87.8.1760883880143;
-        Sun, 19 Oct 2025 07:24:40 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deec0944sm1591331e87.36.2025.10.19.07.24.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Oct 2025 07:24:39 -0700 (PDT)
-Message-ID: <3df51774-9774-40e6-ae65-7621bdce0f91@gmail.com>
-Date: Sun, 19 Oct 2025 16:24:38 +0200
+	s=arc-20240116; t=1760883925; c=relaxed/simple;
+	bh=oHOlqf0ywPUIIQS7WIZUje1x82l1+22hMmrNrvGvwGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPJxBvahCxodpnOf3JP+gGBI0R/Udo9hLzQAZcJnJ7IDe6zcyMBTWtcHrYo6wt3x9sGIaLFcfaEHhW6TTRoino/IyKfnTSuc/8Epuy8k90Bfi2fzpZzj4+hSmCgRK6p+0bw8PFir1oy2ggg8jh0ALjthWkDx30aCjbeJPKhd5Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKpuBT2f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D1C4CEE7;
+	Sun, 19 Oct 2025 14:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760883925;
+	bh=oHOlqf0ywPUIIQS7WIZUje1x82l1+22hMmrNrvGvwGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XKpuBT2f9kk33TvypeW9ldST7Hx+ke6eyMKL7CXXKkBNYCFVsMsYMIlidiWX0yD+1
+	 fURdxuvGxYJBAN2NpLvaJr3Rbf4WCCjghI3WS9xfmbhr7/csh2qannr6Vg8g8TbFnq
+	 o+p6Dx+xUgKLMik70ES3zq57BBhVOhBg/KcCrIaYubdEkSk8o/ulb8ZxOcBrNge6R3
+	 5feDRZ0+u/Iu8j+Fp7FtaXtH2YBD6u1EfdtTTTqRCRGv9huCTAyV4mOfor++d06TtO
+	 fUy2SaejLi7EVR1NgTRBQYhld3G3WZYHARe5OVXFrvuOCC1+gtz4zvL8KCV3VArjas
+	 BzYecLrFNq3rQ==
+Date: Sun, 19 Oct 2025 17:25:16 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
+Message-ID: <aPT0zNMZqt89cIXH@kernel.org>
+References: <20251018093002.3660549-1-rppt@kernel.org>
+ <aPQxN7-FeFB6vTuv@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] leds: Add a virtual LED driver for groups of
-To: Jonathan Brophy <professorjonny98@gmail.com>, lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>,
- Jonathan Brophy <professor_jonny@hotmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <20251019092331.49531-1-professorjonny98@gmail.com>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <20251019092331.49531-1-professorjonny98@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPQxN7-FeFB6vTuv@casper.infradead.org>
 
-Hi Jonathan,
-
-On 10/19/25 11:23, Jonathan Brophy wrote:
-> From: Jonathan Brophy <professor_jonny@hotmail.com>
+On Sun, Oct 19, 2025 at 01:30:47AM +0100, Matthew Wilcox wrote:
+> On Sat, Oct 18, 2025 at 12:29:59PM +0300, Mike Rapoport wrote:
+> > Vast majority of allocations that use get_free_pages() and its derivatives
+> > cast the returned unsigned long to a pointer and then cast it back to
+> > unsigned long when freeing the memory.
+> > 
+> > These castings are useless and only obfuscate the code.
+> > 
+> > Make get_free_pages() and friends return 'void *' and free_pages() accept
+> > 'void *' as its address parameter.
 > 
-> Introduce a new driver that implements virtual LED groups,
-> aggregating multiple monochromatic LEDs into virtual groups and providing
-> priority-based control for concurrent state management.
+> No.  Linus has rejected this change before.  I can't find it now, it was
+> a long time ago. 
 
-Aren't you trying to reinvent LED trigger mechanism?
+If it was a long time ago, he might not object it now.
+
+> Most of them shouldn't be using get_free_pages() at all, they should be
+> using kmalloc().
+
+Don't know if most but some of them could. Still, we'd have a bunch of
+get_free_pages() users with needless castings.
+And converting callers that should use kmalloc() is a long and tedious
+process, while here we get an API improvement in a single automated change.
 
 -- 
-Best regards,
-Jacek Anaszewski
-
+Sincerely yours,
+Mike.
 
