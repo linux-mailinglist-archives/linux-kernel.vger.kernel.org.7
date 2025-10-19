@@ -1,122 +1,419 @@
-Return-Path: <linux-kernel+bounces-859839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0423BEEB9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:01:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642A1BEEBA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9CA3BD26C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:01:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32E2C4E431F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8AF2E54CC;
-	Sun, 19 Oct 2025 19:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8471632DD;
+	Sun, 19 Oct 2025 19:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQsLGpmC"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="3d3YEfJ9"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A911F03D8
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FE413DDAE
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760900486; cv=none; b=UUOw9Hn5SN4IgffStODPSWxyU0370CQysdDDVUIigfRHSaxbEZFE1OrtXADpjkZ/h+FwcpX/IRGPSNAxUAao0/Bj9hMvtrBc/E3OdBpdphypU5kSA4pk6TvHRE/jfqRe/KFEGaK1SOcwD/no7A+Mq1mU9nQR34R8ZMFyxVmA3rQ=
+	t=1760900676; cv=none; b=hi3o54AT/+5UgcLykobi+VoEcy7Jjc6wQEE3bbe++bQxPK/Wgv/TLeRtTwp4k13Gx2KDnhnZB7qaXlwglYKnCtjoqiePraiv2GmaWMBeV9VhNuRQzmw6bPA8/0K0TsnaR9I2sLL6sDHW/vGWLrUwnW9o3BgrRTD9sEee74C0gu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760900486; c=relaxed/simple;
-	bh=N6oBlf88V+X4V5N7lbg0Z2/a2FgY0X2uO4yeWGr/fH4=;
+	s=arc-20240116; t=1760900676; c=relaxed/simple;
+	bh=BpRp6fgEgQJuVGW3a0ocxmCp7ucLIm4d1XmPkFqcwOk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hNWH0nFeQIUfY6s+QgSHGTTIvzehoszo+th+HZIh4SDZGViIKkrAG5OF2eH3hvlUmpNdqqCnYK/bsuEPJX39T/9a3VTGPhVq9C8WrTgfb2R0DDROWsk99ACsv4nm/NR/cEglDU/GZ9FSon5WjjI328H8EYVPTgGjIqWerc0WhbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQsLGpmC; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33d758c9d34so117888a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 12:01:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=HBA/S07cxMuMNHh47WWilotbAJv2wtYOAhFP6hWgOQ+ZzozB8z9eQJCAQRg2POIcQfsiyaJITIZ/famJTXEel+JaEgeDw6Z4jkMB7pK/fHz/Nc5I+Kq3ezlRbcCXRTKNlKcz/W+nhetcGdAJAc2FgCrwpw35RvoXDgnJqKyZI7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=3d3YEfJ9; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-783fa3af3bdso21094557b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 12:04:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760900484; x=1761505284; darn=vger.kernel.org;
+        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1760900673; x=1761505473; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0EJ7gzHyhyTuLiaSvoYLggBrx/bbuMIAVpkTav441jk=;
-        b=aQsLGpmCdv4WcIoXK630QD0WMYCRFVHE+CFTs9LfjIK7h0LnYloDSnUtqQCyHc3jg1
-         2SrkhSVah/04BB9puD11J0YtkieVUdxQ4qLxF01IHCxTcKc2FMjmSvcm23Bvc9g8o5Pg
-         gasxOq/lKhIRpCnvvzKmEgYZKvjY6FpSFGgl7g8guPlVcEKranZVxDd2nRLwWrntKBwm
-         NC//4F50fV3VggQf2NYkH6LGGD1XuWSOfHhMEmv65zft0moGjMCBGXb/5dnAn+o7JKjS
-         tTp2tFGzTJ1C+hJM/lDiuwHyN6kE1Q27kpOsR3PYb+v4TdDbokoNBuzVUrSbYgsLd73l
-         lJvw==
+        bh=MeYCvC20ICozsgTwQqf2izmvTctGrn01AWEb3/XCnqw=;
+        b=3d3YEfJ9aJR5UWXek2i1ZVHUGsP9lP/ggG3hseHIhXB9Q2cLE/eiK07jLrcqjaASdq
+         2kofFpkMo6BEqnARkMCwVEVR5n6chMsibmTgPxrhfEafwXhNp2DAn1b6itnDB6OPFrLi
+         C9ExutbDZkY0wlHX2qPdx2fGg2olYe5Z2Kv7Ks6ZMghGKzW1z3rinihKCjrwkccQrlkK
+         C/58ZzPpSGavipFGGw89Lix1vVbS8tGB398+u8zLX+GCBfFLFg/iPt8jM+qaORvJ8foJ
+         CFfptkb9kHkkH0z7F13qghyOAp3/ItcciggZTVaizFH33qEwPzkRnjPBwnGwEXEIH0TF
+         yZAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760900484; x=1761505284;
+        d=1e100.net; s=20230601; t=1760900673; x=1761505473;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0EJ7gzHyhyTuLiaSvoYLggBrx/bbuMIAVpkTav441jk=;
-        b=hQ06l5WYkuEsI2rPPKZFCHduzs46MMTMxhnbeP2Faye/Du7+yVrsjR4D7hbNRSHy9g
-         449K3cpjKrJ1oP2Eqp6u4L1MA9kOm7nac1tR1mlUn7lh/IFOJ5w7yc3wxG73X3AzoYC5
-         nndLYSI3/Pi/0SLn2n4+ROUWX9jSIhXVn2eSv2wl3Q0pE6LvOcJTRqJx0a4OE2zD2Uqn
-         c6WFtCPjCI/QQO/uF6Hr/TYobayyYe6yZWye/vMOsVF9TKahKqPhQahuzWrPCdm/RBkQ
-         i7v0EymFSXeiwqHx3AvKY2CuJ+jlNm57Xefs7prTUxWZsNC6xHhaSkNmBYeH91USvf7U
-         jr0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUL8pudagfHzOxzP51zn+Bz/ygSNesDSbCm8SaTtagRuFxrDt5yBIeCd/FsuhkNDW298Q6IGOTBHwHGsbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUvZ4cGxLYVwalOLFK2NITAbwudLfo61e8njKcz3yJYaOdUhfi
-	zCstShT6vehf/em65TuLvIF/fCUQby0C56Uy8VgVnSwV1WsWBirizmgJF0zA8HSAjAcZhiqG4G4
-	4XXbX9izYVJG+WCeliYubKnhK/Zvt+bI=
-X-Gm-Gg: ASbGncvEWs+iI0p4AZ0MGvuA6UHck3SSguGxfeCGyQgma2uo7WhI/bkSABq0D6MA63n
-	O2jyeHOw2nAFTws9t2OTnTWeZuy6tN7SXwhHKrEhuDuoxBfNTTQx9P3kVMLiHshkXsIk9iedL/H
-	TdmbO1i2bj9wSTXU1IVS0MXd/PUpwONuu01OfI0GaesuPlsR+49Y0U++c3P433YavRTZNoFP49X
-	XfWzyjQw9LBN514nUO3yNhk7mGAn9mgAerehF5wXOCAS1lXgG6t5Kg08yEAELTb4K3D7GWLMVya
-	HC66TVbJ+gWUo8Sk43HfBHYhQGIvCI4ZYEo4lWHVynW+JpMm52Uc0+oe3/czp/3YapVF4gv9yvg
-	E1Kc=
-X-Google-Smtp-Source: AGHT+IH01Zp7Kv3YR610YIrHBC7qgKnb4bJrOZJOKSp2IPxLyP7uL/gDGXWoA6wL1HkkjvVFr8A00rAVeHz/QkcsVMc=
-X-Received: by 2002:a17:902:f550:b0:274:506d:7fe5 with SMTP id
- d9443c01a7336-290c9cfec04mr77331165ad.4.1760900484175; Sun, 19 Oct 2025
- 12:01:24 -0700 (PDT)
+        bh=MeYCvC20ICozsgTwQqf2izmvTctGrn01AWEb3/XCnqw=;
+        b=lsa6///mRkfF1WtGNBII7dG0D1X6Hec6MQdmE/aLjuQNlJCjjI3/rCiofwf4e8w06X
+         zvJs6EnDXNqZxAI/r+OxSe49ZDuFnKb+38HIvYzLRuzKluhMEFVGPTw7sYdH3c6WaJ/7
+         B0+ocPZGqyXMUKEdkCzE/v8jWuslFyMiM1Mjm6ZiKqgi+dWREe6ymbjQiPcLsv79Xaoh
+         eUDUUz5qZtOVA/iPLrrtwLxTmJOfGQmvwRB7FCy0zh0djNW7R0KRlRUdLFtF1Io+/qGN
+         W+y0e3MoAc+0GWrc29qptg+NQaLnla3LXPQWB/WzOjAXKjLIRujzW10+JCfRspABEeaL
+         2Xmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMAkpA8xWdAD7pycQgODdZuDLh3zz8/02NvZOFM6j0qCsHxRm9WwR+vnJvk5xebfB3hW2oLRuFy4D2HFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynYiFzS11aD0xPaq7E0Oao0bVlX9nksHJeL0KqbxpzkyAhhOH9
+	Wb3nmAhXecQaQ5UVzJCA6IQLNKoORIOnF5fTe4GFeTcy5hFakVYZTsBbhmWsiWqWex63A/lotHt
+	7vrlT4tQbe3vbW1qZUw3wnqm++IH+YnSrgDLAOLykSQ==
+X-Gm-Gg: ASbGnctrDYbVXa10owPbRMc0qRiHIaoYAbZJ3WmKxp5TP+s57+19Y099sLITQCUSdxB
+	RxwrHUNDtH3XGBUem6ONU6wnJdsjtLOrpF4RHn9JegK90ZkyLTn7lQlTg6xWg0U8YvnUCfPbPtz
+	u+rMCc4vxx2xc92+afJvVnBtHBQkah6MV8FZsOIhJeOVJr5Eb0drzgrtiWKYLB9N8Iqs/QZ8aJ4
+	ujdam8K5/5YsGhVT9SIjoSxGU5gVo8SStIqvV6SHwphS9sGgfwSK3AHi0G9J5U=
+X-Google-Smtp-Source: AGHT+IER9KulLoujMk2GEbTzX3NN7vIbveUsxcHTAqM55q0WXEH/l6DxMF/VhDwwNIq1+MDih3R7dyO0bS7rvmSbtgE=
+X-Received: by 2002:a05:690e:408b:b0:63e:2284:83c6 with SMTP id
+ 956f58d0204a3-63e22848539mr6620905d50.49.1760900672686; Sun, 19 Oct 2025
+ 12:04:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016232118.1419895-1-ojeda@kernel.org>
-In-Reply-To: <20251016232118.1419895-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 19 Oct 2025 21:01:12 +0200
-X-Gm-Features: AS18NWDyESJna8eLVVdolUWQrhFdWWW4rqvJ2M-P6m9yEz3NGpLoYYFNiU5MU9E
-Message-ID: <CANiq72nFr0rfNpGfXGMrRVnvGtk0RdeLowvF1MciJbhbTQwLxQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: bitmap: fix formatting
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Burak Emir <bqe@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Yury Norov <yury.norov@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20251017093214.70029-1-arighi@nvidia.com> <20251017093214.70029-14-arighi@nvidia.com>
+In-Reply-To: <20251017093214.70029-14-arighi@nvidia.com>
+From: Emil Tsalapatis <linux-lists@etsalapatis.com>
+Date: Sun, 19 Oct 2025 15:04:22 -0400
+X-Gm-Features: AS18NWDx67qGjf5v9glUm72CG0k0R38tXMBBhQDUtWSKsUuHHmtNZ9AKmos4kEI
+Message-ID: <CABFh=a578RNXxjtze1TxAcPBkx9_M58qBc=6E4o-uFJx0DB4Jg@mail.gmail.com>
+Subject: Re: [PATCH 13/14] selftests/sched_ext: Add test for sched_ext dl_server
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>, 
+	David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>, 
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 1:21=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Fri, Oct 17, 2025 at 5:38=E2=80=AFAM Andrea Righi <arighi@nvidia.com> wr=
+ote:
 >
-> We do our best to keep the repository `rustfmt`-clean, thus run the tool
-> to fix the formatting issue.
+> Add a selftest to validate the correct behavior of the deadline server
+> for the ext_sched_class.
 >
-> Link: https://docs.kernel.org/rust/coding-guidelines.html#style-formattin=
-g
-> Link: https://rust-for-linux.com/contributing#submit-checklist-addendum
-> Fixes: 0f5878834d6c ("rust: bitmap: clean Rust 1.92.0 `unused_unsafe` war=
-ning")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> [ Joel: Replaced occurences of CFS in the test with EXT. ]
+>
+> Co-developed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 > ---
-> This one will go on top of:
+
+Nits listed below, but otherwise:
+Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
+
+Code review aside, on my VM the test alternates between 4.81% and 5.20% for=
+ me
+so it's working as expected.
+
+>  tools/testing/selftests/sched_ext/Makefile    |   1 +
+>  .../selftests/sched_ext/rt_stall.bpf.c        |  23 ++
+>  tools/testing/selftests/sched_ext/rt_stall.c  | 214 ++++++++++++++++++
+>  3 files changed, 238 insertions(+)
+>  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
+>  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
 >
->     https://lore.kernel.org/rust-for-linux/20251010174351.948650-1-ojeda@=
-kernel.org/
+> diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/s=
+elftests/sched_ext/Makefile
+> index 5fe45f9c5f8fd..c9255d1499b6e 100644
+> --- a/tools/testing/selftests/sched_ext/Makefile
+> +++ b/tools/testing/selftests/sched_ext/Makefile
+> @@ -183,6 +183,7 @@ auto-test-targets :=3D                        \
+>         select_cpu_dispatch_bad_dsq     \
+>         select_cpu_dispatch_dbl_dsp     \
+>         select_cpu_vtime                \
+> +       rt_stall                        \
+>         test_example                    \
+>
+>  testcase-targets :=3D $(addsuffix .o,$(addprefix $(SCXOBJ_DIR)/,$(auto-t=
+est-targets)))
+> diff --git a/tools/testing/selftests/sched_ext/rt_stall.bpf.c b/tools/tes=
+ting/selftests/sched_ext/rt_stall.bpf.c
+> new file mode 100644
+> index 0000000000000..80086779dd1eb
+> --- /dev/null
+> +++ b/tools/testing/selftests/sched_ext/rt_stall.bpf.c
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * A scheduler that verified if RT tasks can stall SCHED_EXT tasks.
+> + *
+> + * Copyright (c) 2025 NVIDIA Corporation.
+> + */
+> +
+> +#include <scx/common.bpf.h>
+> +
+> +char _license[] SEC("license") =3D "GPL";
+> +
+> +UEI_DEFINE(uei);
+> +
+> +void BPF_STRUCT_OPS(rt_stall_exit, struct scx_exit_info *ei)
+> +{
+> +       UEI_RECORD(uei, ei);
+> +}
+> +
+> +SEC(".struct_ops.link")
+> +struct sched_ext_ops rt_stall_ops =3D {
+> +       .exit                   =3D (void *)rt_stall_exit,
+> +       .name                   =3D "rt_stall",
+> +};
+> diff --git a/tools/testing/selftests/sched_ext/rt_stall.c b/tools/testing=
+/selftests/sched_ext/rt_stall.c
+> new file mode 100644
+> index 0000000000000..e9a0def9ee323
+> --- /dev/null
+> +++ b/tools/testing/selftests/sched_ext/rt_stall.c
+> @@ -0,0 +1,214 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 NVIDIA Corporation.
+> + */
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <sched.h>
+> +#include <sys/prctl.h>
+> +#include <sys/types.h>
+> +#include <sys/wait.h>
+> +#include <time.h>
+> +#include <linux/sched.h>
+> +#include <signal.h>
+> +#include <bpf/bpf.h>
+> +#include <scx/common.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include "rt_stall.bpf.skel.h"
+> +#include "scx_test.h"
+> +#include "../kselftest.h"
+> +
+> +#define CORE_ID                0       /* CPU to pin tasks to */
+> +#define RUN_TIME        5      /* How long to run the test in seconds */
+> +
+> +/* Simple busy-wait function for test tasks */
+> +static void process_func(void)
+> +{
+> +       while (1) {
+> +               /* Busy wait */
+> +               for (volatile unsigned long i =3D 0; i < 10000000UL; i++)
+> +                       ;
+> +       }
+> +}
+> +
+> +/* Set CPU affinity to a specific core */
+> +static void set_affinity(int cpu)
+> +{
+> +       cpu_set_t mask;
+> +
+> +       CPU_ZERO(&mask);
+> +       CPU_SET(cpu, &mask);
+> +       if (sched_setaffinity(0, sizeof(mask), &mask) !=3D 0) {
+> +               perror("sched_setaffinity");
+> +               exit(EXIT_FAILURE);
+> +       }
+> +}
+> +
+> +/* Set task scheduling policy and priority */
+> +static void set_sched(int policy, int priority)
+> +{
+> +       struct sched_param param;
+> +
+> +       param.sched_priority =3D priority;
+> +       if (sched_setscheduler(0, policy, &param) !=3D 0) {
+> +               perror("sched_setscheduler");
+> +               exit(EXIT_FAILURE);
+> +       }
+> +}
+> +
+> +/* Get process runtime from /proc/<pid>/stat */
+> +static float get_process_runtime(int pid)
+> +{
+> +       char path[256];
+> +       FILE *file;
+> +       long utime, stime;
+> +       int fields;
+> +
+> +       snprintf(path, sizeof(path), "/proc/%d/stat", pid);
+> +       file =3D fopen(path, "r");
+> +       if (file =3D=3D NULL) {
+> +               perror("Failed to open stat file");
+> +               return -1;
+> +       }
+> +
+> +       /* Skip the first 13 fields and read the 14th and 15th */
+> +       fields =3D fscanf(file,
+> +                       "%*d %*s %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u =
+%*u %lu %lu",
+> +                       &utime, &stime);
+> +       fclose(file);
+> +
+> +       if (fields !=3D 2) {
+> +               fprintf(stderr, "Failed to read stat file\n");
+> +               return -1;
+> +       }
+> +
+> +       /* Calculate the total time spent in the process */
+> +       long total_time =3D utime + stime;
+> +       long ticks_per_second =3D sysconf(_SC_CLK_TCK);
+> +       float runtime_seconds =3D total_time * 1.0 / ticks_per_second;
+> +
+> +       return runtime_seconds;
+> +}
+> +
+> +static enum scx_test_status setup(void **ctx)
+> +{
+> +       struct rt_stall *skel;
+> +
+> +       skel =3D rt_stall__open();
+> +       SCX_FAIL_IF(!skel, "Failed to open");
+> +       SCX_ENUM_INIT(skel);
+> +       SCX_FAIL_IF(rt_stall__load(skel), "Failed to load skel");
+> +
+> +       *ctx =3D skel;
+> +
+> +       return SCX_TEST_PASS;
+> +}
+> +
+> +static bool sched_stress_test(void)
+> +{
+> +       float cfs_runtime, rt_runtime, actual_ratio;
+> +       int cfs_pid, rt_pid;
 
-For completeness: I applied this one together with the others and they
-got merged by Linus. The tree is now again `rustfmt`-clean.
+I think it should be cfs_pid -> ext_pid, cfs_runtime -> ext_runtime
 
-Thanks!
+> +       float expected_min_ratio =3D 0.04; /* 4% */
 
-Cheers,
-Miguel
+Maybe add a comment that explains the 4% value? As in, we're expecting
+it to be around 5% so 0.04 accounts for values close enough but
+below < 5%.
+
+> +
+> +       ksft_print_header();
+> +       ksft_set_plan(1);
+> +
+> +       /* Create and set up a EXT task */
+> +       cfs_pid =3D fork();
+> +       if (cfs_pid =3D=3D 0) {
+> +               set_affinity(CORE_ID);
+> +               process_func();
+> +               exit(0);
+> +       } else if (cfs_pid < 0) {
+> +               perror("fork for EXT task");
+> +               ksft_exit_fail();
+> +       }
+> +
+> +       /* Create an RT task */
+> +       rt_pid =3D fork();
+> +       if (rt_pid =3D=3D 0) {
+> +               set_affinity(CORE_ID);
+> +               set_sched(SCHED_FIFO, 50);
+> +               process_func();
+> +               exit(0);
+> +       } else if (rt_pid < 0) {
+> +               perror("fork for RT task");
+> +               ksft_exit_fail();
+> +       }
+> +
+> +       /* Let the processes run for the specified time */
+> +       sleep(RUN_TIME);
+> +
+> +       /* Get runtime for the EXT task */
+> +       cfs_runtime =3D get_process_runtime(cfs_pid);
+> +       if (cfs_runtime !=3D -1)
+> +               ksft_print_msg("Runtime of EXT task (PID %d) is %f second=
+s\n",
+> +                              cfs_pid, cfs_runtime);
+> +       else
+> +               ksft_exit_fail_msg("Error getting runtime for EXT task (P=
+ID %d)\n", cfs_pid);
+> +
+> +       /* Get runtime for the RT task */
+> +       rt_runtime =3D get_process_runtime(rt_pid);
+> +       if (rt_runtime !=3D -1)
+> +               ksft_print_msg("Runtime of RT task (PID %d) is %f seconds=
+\n", rt_pid, rt_runtime);
+> +       else
+> +               ksft_exit_fail_msg("Error getting runtime for RT task (PI=
+D %d)\n", rt_pid);
+> +
+
+Minor, but why not
+
+if (rt_runtime =3D=3D -1)
+        ksft_exit_fail_msg("Error getting runtime for RT task (PID
+%d)\n", rt_pid);
+ksft_print_msg("Runtime of RT task (PID %d) is %f seconds\n", rt_pid,
+rt_runtime);
+
+since ksft_exit_fail_msg never returns?
+
+> +       /* Kill the processes */
+> +       kill(cfs_pid, SIGKILL);
+> +       kill(rt_pid, SIGKILL);
+> +       waitpid(cfs_pid, NULL, 0);
+> +       waitpid(rt_pid, NULL, 0);
+> +
+> +       /* Verify that the scx task got enough runtime */
+> +       actual_ratio =3D cfs_runtime / (cfs_runtime + rt_runtime);
+> +       ksft_print_msg("EXT task got %.2f%% of total runtime\n", actual_r=
+atio * 100);
+> +
+> +       if (actual_ratio >=3D expected_min_ratio) {
+> +               ksft_test_result_pass("PASS: EXT task got more than %.2f%=
+% of runtime\n",
+> +                                     expected_min_ratio * 100);
+> +               return true;
+> +       }
+> +       ksft_test_result_fail("FAIL: EXT task got less than %.2f%% of run=
+time\n",
+> +                             expected_min_ratio * 100);
+> +       return false;
+> +}
+> +
+> +static enum scx_test_status run(void *ctx)
+> +{
+> +       struct rt_stall *skel =3D ctx;
+> +       struct bpf_link *link;
+> +       bool res;
+> +
+> +       link =3D bpf_map__attach_struct_ops(skel->maps.rt_stall_ops);
+> +       SCX_FAIL_IF(!link, "Failed to attach scheduler");
+> +
+> +       res =3D sched_stress_test();
+> +
+> +       SCX_EQ(skel->data->uei.kind, EXIT_KIND(SCX_EXIT_NONE));
+> +       bpf_link__destroy(link);
+> +
+> +       if (!res)
+> +               ksft_exit_fail();
+> +
+> +       return SCX_TEST_PASS;
+> +}
+> +
+> +static void cleanup(void *ctx)
+> +{
+> +       struct rt_stall *skel =3D ctx;
+> +
+> +       rt_stall__destroy(skel);
+> +}
+> +
+> +struct scx_test rt_stall =3D {
+> +       .name =3D "rt_stall",
+> +       .description =3D "Verify that RT tasks cannot stall SCHED_EXT tas=
+ks",
+> +       .setup =3D setup,
+> +       .run =3D run,
+> +       .cleanup =3D cleanup,
+> +};
+> +REGISTER_SCX_TEST(&rt_stall)
+> --
+> 2.51.0
+>
+>
 
