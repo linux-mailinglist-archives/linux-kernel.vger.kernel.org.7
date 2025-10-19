@@ -1,106 +1,97 @@
-Return-Path: <linux-kernel+bounces-859852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A8ABEEC49
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 22:29:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56010BEEC4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 22:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1715348C85
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEBB51898ACC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6522EACEE;
-	Sun, 19 Oct 2025 20:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AE2221D96;
+	Sun, 19 Oct 2025 20:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JGJLSJ6D"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TrsUfLnW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pXBHoDel"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1A31A9F8C;
-	Sun, 19 Oct 2025 20:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411A4220698
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760905763; cv=none; b=pSGX7LZYM/fZmJOzwuXDm3YPhlp/6Ljgb9BxSytQPSjCTmXbW6qRdPwJlFk7Qw/KjU5PreAcJyEsWIG83kwYfgQDBZXy5+Wi3CYG5WD5Tgq9HO9rrr2AbvwglYjk72Qsi6tFqYdE6/0ivvf0ILKf+bdYr+RItx3D1ehGKlQ8oaI=
+	t=1760905979; cv=none; b=ls549l1q8lPKoUQDAIG4RBTfLR+axK55ChT7+vbSLUM5QInkAGdziIj0yqwsr8ZOHO4kSIcfLiX9Iaz1noLVIpbL6uBCZbX3nLAzcm+V9EXH+Sm2TbntgYqyW2Wgq+rv1FZdVuf78EOEO2ExF+lER8sdRV0xrcXEm3q8Tt10pHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760905763; c=relaxed/simple;
-	bh=3IsmnWo+gFJ4C+hLpr84M09tZ033rGB0XupraGs34DY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZnGzhRxnMu6iGI+2PbwstN1PJXk3FUU1jKZFgc3eeRe2evIYCEBoGPN/WsbjJIiDakVtj0XvGZ64DxJijSV0Zg2MVZLfk1c9hjzr0haGpPKh+JpLPwJxkbR1NIbqZLS+OvP4t03EHq4hbEdJpgXGJaAZPdv7Aob0HCq6CLyDAvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JGJLSJ6D; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1760905758;
-	bh=XSrKlNx8+9ME+z5X84FoB/9JWe+09T0Rv/c7oO3TlFY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JGJLSJ6DnNWwsOVD8I5l0D20/Av02wqtpDZt0/ExZbqPXbBAXGk1LsiaGE0m0GJ9Z
-	 kGNLuxJ9jL5cdZ16GTqS1ER+Q2fV9BSWm5uvNkaqWSeBTlfG0O9AQnFONB+sHCi4LK
-	 SZYVXT803t1KAfF/oWGu+/JXaVL7/nCbY6A5ypVexFhKuQXdYXkPIgMD/3Bl+nj5Ar
-	 wmFWd26hqFJQW601JdogqlyPI8Xz6rPefMRrCTmLRTX9vfkYdBfKz7tNMb3UoUC5OX
-	 p69m66jOq5pGAU3ounnVZEtoBQToY7jqWD7akckK/vuhgLfGHNjV0yBxJ6MIx+Frpw
-	 4HRTVI9H58YSw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqVXG3h7Rz4wBJ;
-	Mon, 20 Oct 2025 07:29:18 +1100 (AEDT)
-Date: Mon, 20 Oct 2025 07:29:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the vfs-brauner tree
-Message-ID: <20251020072918.00f2e12e@canb.auug.org.au>
+	s=arc-20240116; t=1760905979; c=relaxed/simple;
+	bh=M46DAMpFg9erMnI3iAG1NlfTiFTXJJ1gkg8xpNq/6T4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X/BqjWZXIgKL8ol67ooVbc1vwVIyKZjOUnRnrsnQY13yyEYGHik2zCu5krTYHrbpl2uPjxgckuNb8Rcu3u6wvPGu45ItSxWy6gj/g7OxookS1qBf3S/kYzwLuR8r93rxaSHrftj5hTTYnB7UqMYq0TNKNoiTR38Osi5ZDnUqgfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TrsUfLnW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pXBHoDel; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760905969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9/6cp3d1pt/fAhE33yIlBlIeD2BPu+PjAbaWRkKVcE=;
+	b=TrsUfLnWhft5KsNJGBnLRQlOkT5qGxsrkKWBp2ONDeYh8I11Rx6UfuFPFt1QFgW+1BKDTJ
+	pTttFVLHH8RrFOWfur8MQH/zkbGw9rvuxBmals6p1EmKjbTH/hK5cy/CYOLNsN2bSG6HrC
+	zIv03ndsBT9lYYhrD7RS7l5pzf3/Ma2hqx7XlTgXD86wpyddAwQhQh/DhhMMN10qUg05rM
+	LG3Yl+bGwUsFGsccXioeXQhZYLxjK/BVWw73rrH64mxZGz2L5L1zpj6dCiQVjq0wpUB0rf
+	QEmYW9ej/TEQE9J/TVVo94I+jDj7CxNyJzoWhnuQAvXvy++cOzXMy9ZfXUd1Jg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760905969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9/6cp3d1pt/fAhE33yIlBlIeD2BPu+PjAbaWRkKVcE=;
+	b=pXBHoDelLaJ8Ue34ff9cuEsOjZU1NmGhggnd0ir9fXeUeJASeRMlSYOU/vR/Q0UcbqFF0k
+	xhODFPI01ctqMNDQ==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
+ <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
+ <tim.c.chen@intel.com>, TCMalloc Team <tcmalloc-eng@google.com>
+Subject: Re: [patch 06/19] sched/mmcid: Prevent pointless work in
+ mm_update_cpus_allowed()
+In-Reply-To: <20251017181911.GR1386988@noisy.programming.kicks-ass.net>
+References: <20251015164952.694882104@linutronix.de>
+ <20251015172834.694547089@linutronix.de>
+ <20251017111223.GD4067720@noisy.programming.kicks-ass.net>
+ <87y0p9zo9y.ffs@tglx>
+ <20251017175853.GH3419281@noisy.programming.kicks-ass.net>
+ <20251017181911.GR1386988@noisy.programming.kicks-ass.net>
+Date: Sun, 19 Oct 2025 22:32:47 +0200
+Message-ID: <87jz0qzl74.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/j9tV8=2mSXZ0EaSnnR/0XJT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/j9tV8=2mSXZ0EaSnnR/0XJT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 17 2025 at 20:19, Peter Zijlstra wrote:
+> On Fri, Oct 17, 2025 at 07:58:53PM +0200, Peter Zijlstra wrote:
+>> Same is true when you offline a CPU come to think of it.
+>> 
+>> Same is true if the cpumask is sparse.
+>> 
+>> Anyway, just saying, checking against nr_cpu_ids might not be the best
+>> shortcut here.
+>
+> Put another way, nr_cpus_allowed == nr_cpu_ids only work when none of
+> the masks involved have holes. The moment anything {possible, present,
+> online} has holes in, it goes sideways.
 
-Hi all,
+You're right. I was too narrowly focussed on the normal x86 case, where
+nr_cpu_ids == num_possible_cpus ....
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
-
-  13549bd48bbf ("fs: WQ_PERCPU added to alloc_workqueue users")
-  d33fa88429c5 ("fs: replace use of system_wq with system_percpu_wq")
-  08621f25a268 ("fs: replace use of system_unbound_wq with system_dfl_wq")
-
-These are commits
-
-  69635d7f4b34 ("fs: WQ_PERCPU added to alloc_workqueue users")
-  4ef64db06061 ("fs: replace use of system_wq with system_percpu_wq")
-  7a4f92d39f66 ("fs: replace use of system_unbound_wq with system_dfl_wq")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/j9tV8=2mSXZ0EaSnnR/0XJT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1Sh4ACgkQAVBC80lX
-0GxLOQf/bTKXRRh+ra01PjpTMNxfTvmhMWZoB2OUm7iNKP7tfZcdSW+vdjmwLmwi
-QAuzKbkozxdo7lxCa2xFE+1+D2olGf5zacpAd61B3frImZcb9nNc6COF3xCbT6dk
-F/M8Jk2Il18qU/0MFKVU1KVAs9bmcyIYbCKCvMZ+NILSr+s8dB7YvQQo/dMZ87T7
-LXixl8Vl/2Egz8it74r920gK3Vykhsq6qKMqa2NmL7YA50zbsFKTDzTCYPh/7drF
-acTZC078inSCreJXpu2fqR8V/8hSEnIi7cvgn0yyLU478lC0tENVUf7n/G1p7i75
-DJ0BBP+0sQeU6Mv9taXNDXzAOheAQg==
-=LnTW
------END PGP SIGNATURE-----
-
---Sig_/j9tV8=2mSXZ0EaSnnR/0XJT--
+Let me think about that.
 
