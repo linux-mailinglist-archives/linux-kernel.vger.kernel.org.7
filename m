@@ -1,143 +1,256 @@
-Return-Path: <linux-kernel+bounces-859650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DE3BEE33E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:41:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D274BEE347
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFB43B9D55
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:41:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0DE24E80FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A1B2E5B32;
-	Sun, 19 Oct 2025 10:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3203E2E5D17;
+	Sun, 19 Oct 2025 10:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="imx2nrju"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHTuC4WQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD46A22A817;
-	Sun, 19 Oct 2025 10:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB3F1096F;
+	Sun, 19 Oct 2025 10:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760870465; cv=none; b=cC44I1Pu2cJaGP4po7tA7fthD8dFFCiR/CbEFXPbkKdiJvnskotZW0ztrwlZUXZyz51+9zojCDmBeDvgxMV3WVqF7kdgiuD7dVQuEOialvfAkFupB2nM0TTEGXm/ztFk5w5YF4JVvLAIH32vaomrWpe5ppayIQJbPOcLlI0kKwg=
+	t=1760870599; cv=none; b=qcfqbNTSx8Y29QB8KvUzZvrbjPP6mx4YWEOfJmUhODICcAXIXzy6MbkDKfRUJaegv3YOYUkDbAHrzgpmtGS1FWUQun8zNAFRilY7gcbsW0WvZKprLq60/VIbzyYlHk5RnIRnjqYM9lLIV5iVU3WkMdfIKoLUx5FLJEd/Y7JEwjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760870465; c=relaxed/simple;
-	bh=VSp2e5+pgoU9UclwQEAiSvie/P2W0BgKPz8f8u2EAFs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mysh4zMlMngmu/yCOs2/JiiS/GbaPZDWkcvJVBMRKV71o1rv/sK18QnRL4ZH8XwrjXQoh70Trzk74KMXD6SEgTVBCWj15x9FTkMut/jQS2iZlM59aIXiBU+IZsyHUQNyb19caSrsKj+mszE9OSdq1nwcZzDr9v/VOHsZOwkmHgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=imx2nrju; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59JAeFfJ664942;
-	Sun, 19 Oct 2025 05:40:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760870415;
-	bh=Q//6LQDm5vvBeQ9sEBAivNXMI2ny/HhHL/pL6Pvb2as=;
-	h=From:To:CC:Subject:Date;
-	b=imx2nrjuEIBCXItftYb7HVyHMShrMl3U1cRkvmm+hCYKpTVwvsYID6ZWemyGF98VZ
-	 lt1+g7EBc1jBVEb73Wj7LsLoOVn8wbAt5UsakuEUPZecGDKWsauymehXI6HKRL1bm5
-	 WlzuJ8E/+S8f96kXsgtPKj5YejGM+THcAwNQkOU4=
-Received: from DFLE200.ent.ti.com (dfle200.ent.ti.com [10.64.6.58])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59JAeEXI3821906
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 19 Oct 2025 05:40:14 -0500
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 19 Oct
- 2025 05:40:14 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sun, 19 Oct 2025 05:40:14 -0500
-Received: from psdkl-workstation0.dhcp.ti.com (psdkl-workstation0.dhcp.ti.com [172.24.234.127])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59JAeANM113965;
-	Sun, 19 Oct 2025 05:40:11 -0500
-From: Aniket Limaye <a-limaye@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
-        <gehariprasath@ti.com>, Aniket Limaye <a-limaye@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j784s4: Fix I2C pinmux pull configuration
-Date: Sun, 19 Oct 2025 16:09:19 +0530
-Message-ID: <20251019103938.276062-1-a-limaye@ti.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760870599; c=relaxed/simple;
+	bh=ReKXrr9r7h2qgLlV4rBFc1pz80CDKazOX1YmPfRP0zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SDCLwO/RKP4WEgbEyZAjU44da38tSb9nftNoss3/nTR3XwSJsNEvEQbwr1h7FLG0U1fX5mQITDtrNui01GZujnpRh1omsDEcJzg2/Ccfi0JmAhDn+4+dRTyqPiEC+TfeFU289X38EJNipfXrZPfwYsgKzu3w8gVslzKB8a3pJJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHTuC4WQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D019C113D0;
+	Sun, 19 Oct 2025 10:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760870598;
+	bh=ReKXrr9r7h2qgLlV4rBFc1pz80CDKazOX1YmPfRP0zE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QHTuC4WQ3nPIs/LNeUSwFm9aRw9QREE0Qe0wXKlZ42vh6SPIK1UchgmsfbU7ULiD4
+	 mV4P1E0Gap7xCqBzsKMLsp/vPiSvCdnfkPIDHKVrmyc4Ka59FGWR48ykkKc3KXg5/K
+	 BBhTV/pp06WuHh7+d4bW/hTi+WcYTA7Ite66cvBhM+Yowrnyut7WDQmnbJvK8GeVT2
+	 17BOcaTcwXSgeV17UXnCBvb6sIWw/fG+pcrCg0i7DdEQjSoZ1iBybqEwiGJcKEuIyv
+	 1x7XKvZKO2wOuEaIR1HV31bM28km0KthurKyKQkr7bjs1Imm4p8LXl6AzWJGoYPWyq
+	 fsm9yttz+by1w==
+Message-ID: <4aae2f80-3b05-4583-a1c0-6b711fe3b879@kernel.org>
+Date: Sun, 19 Oct 2025 12:43:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: leds: Add virtualcolor group dt
+ bindings documentation.
+To: Jonathan Brophy <professorjonny98@gmail.com>, lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>,
+ Jonathan Brophy <professor_jonny@hotmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org
+References: <20251019092331.49531-1-professorjonny98@gmail.com>
+ <20251019092331.49531-3-professorjonny98@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251019092331.49531-3-professorjonny98@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The I2C pins for some of the instances on J784S4/J742S2/AM69 are
-configured as PIN_INPUT_PULLUP while these pins are open-drain type and
-do not support internal pull-ups [0][1][2]. The pullup configuration
-bits in the corresponding padconfig registers are reserved and any
-writes to them have no effect and readback checks on those bits fail.
+On 19/10/2025 11:23, Jonathan Brophy wrote:
+> From: Jonathan Brophy <professor_jonny@hotmail.com>
+> 
+> Add device tree binding documentation for the virtual LED group driver
+> that implements virtual LED groups by aggregating multiple monochromatic
+> LEDs
+> 
+> Bindings for the virtual driver are not describing hardware LEDs they
+> describe virtual devices made from groups of hardware LEDs created from an array
+> of LED phandles.
 
-Update the pinmux settings to use PIN_INPUT instead of PIN_INPUT_PULLUP
-to reflect the correct hardware behaviour.
 
-[0]: https://www.ti.com/lit/gpn/tda4ah-q1 (J784S4 Datasheet: Table 5-1. Pin Attributes)
-[1]: https://www.ti.com/lit/gpn/tda4ape-q1 (J742S2 Datasheet: Table 5-1. Pin Attributes)
-[2]: https://www.ti.com/lit/gpn/am69a (AM69 Datasheet: Table 5-1. Pin Attributes)
+Don't describe DT syntax, but hardware. Phandles are not important here.
+How the board, system looks like? What are you achieving here?
 
-Signed-off-by: Aniket Limaye <a-limaye@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am69-sk.dts                   | 8 ++++----
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> Normally the device tree is used to describe hardware not virtual hardware
+> but it is particularly useful in situations where you require an LED to be a
+> specific color by mixing primary colors, such as multi element multi color LEDs
+> to be operated from a device tree binding.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-index 5896e57b5b9e..0e2d12cb051d 100644
---- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-@@ -236,8 +236,8 @@ J784S4_IOPAD(0x0d4, PIN_OUTPUT, 11) /* (AN38) SPI0_CLK.UART8_TXD */
- 
- 	main_i2c0_pins_default: main-i2c0-default-pins {
- 		pinctrl-single,pins = <
--			J784S4_IOPAD(0x0e0, PIN_INPUT_PULLUP, 0) /* (AN36) I2C0_SCL */
--			J784S4_IOPAD(0x0e4, PIN_INPUT_PULLUP, 0) /* (AP37) I2C0_SDA */
-+			J784S4_IOPAD(0x0e0, PIN_INPUT, 0) /* (AN36) I2C0_SCL */
-+			J784S4_IOPAD(0x0e4, PIN_INPUT, 0) /* (AP37) I2C0_SDA */
- 		>;
- 	};
- 
-@@ -416,8 +416,8 @@ J784S4_WKUP_IOPAD(0x088, PIN_OUTPUT, 0) /* (J37) WKUP_GPIO0_12.MCU_UART0_TXD */
- 
- 	mcu_i2c0_pins_default: mcu-i2c0-default-pins {
- 		pinctrl-single,pins = <
--			J784S4_WKUP_IOPAD(0x0a0, PIN_INPUT_PULLUP, 0) /* (M35) MCU_I2C0_SCL */
--			J784S4_WKUP_IOPAD(0x0a4, PIN_INPUT_PULLUP, 0) /* (G34) MCU_I2C0_SDA */
-+			J784S4_WKUP_IOPAD(0x0a0, PIN_INPUT, 0) /* (M35) MCU_I2C0_SCL */
-+			J784S4_WKUP_IOPAD(0x0a4, PIN_INPUT, 0) /* (G34) MCU_I2C0_SDA */
- 		>;
- 	};
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index 419c1a70e028..2834f0a8bbee 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -270,8 +270,8 @@ J784S4_IOPAD(0x0d4, PIN_OUTPUT, 11) /* (AN38) SPI0_CLK.UART8_TXD */
- 
- 	main_i2c0_pins_default: main-i2c0-default-pins {
- 		pinctrl-single,pins = <
--			J784S4_IOPAD(0x0e0, PIN_INPUT_PULLUP, 0) /* (AN36) I2C0_SCL */
--			J784S4_IOPAD(0x0e4, PIN_INPUT_PULLUP, 0) /* (AP37) I2C0_SDA */
-+			J784S4_IOPAD(0x0e0, PIN_INPUT, 0) /* (AN36) I2C0_SCL */
-+			J784S4_IOPAD(0x0e4, PIN_INPUT, 0) /* (AP37) I2C0_SDA */
- 		>;
- 	};
- 
--- 
-2.51.0
 
+Please describe the hardware and usecase, and then say how existing
+bindings cannot cover it so binding solves that use case. Write concise,
+yet informative statements. We all now how DT works, this you do not
+have to explain to us.
+
+But we need to know WHY we want this code.
+
+> 
+> It also becomes useful with multiple LEDs operating the same indicator such as
+> ring of light indicators where the LEDs are driven From different GPIO outputs
+> unifying the control that can give basic indication during system startup,
+> shutdown upgrade etc...
+> 
+> co-developed-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+> Signed-off-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+> Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>
+> ---
+>  .../leds/leds-group-virtualcolor.yaml         | 110 ++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml b/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml
+> new file mode 100644
+> index 000000000000..f638bdd4d65e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +title: virtualcolor LED group driver
+> +maintainers:
+> +  - Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+> +description: |
+> +  Implements virtual LED groups by aggregating multiple monochromatic LEDs.
+> +  Provides priority-based control for managing concurrent LED activation requests,
+> +  ensuring only the highest-priority LED state is active at any given time.
+> +properties:
+> +  compatible:
+> +    const: leds-group-virtualcolor
+> +  '#address-cells':
+> +    const: 1
+> +  '#size-cells':
+> +    const: 0
+> +patternProperties:
+> +  "^virtual":
+> +    $ref: leds-class-virtualcolor.yaml#
+> +required:
+> +  - compatible
+> +additionalProperties: false
+> +examples:
+> +  - |
+
+
+Totally corrupted patch.
+
+I don't understand the changes. Please start from scratch from latest
+reviewed binding or example schema.
+
+
+
+> +    #include <dt-bindings/leds/common.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    led-controller {
+> +        compatible = "gpio-leds";
+> +        led_red: led_red {
+> +            gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+> +            default-state = "off";
+> +        };
+> +        led_green: led_green {
+> +            gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+> +            default-state = "off";
+> +        };
+> +        led_blue: led_blue {
+> +            gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+> +            default-state = "off";
+> +        };
+> +    };
+> +
+> +    pwm-led-controller {
+> +        compatible = "pwm-leds";
+> +
+> +        led_1: led-1 {
+> +            color = <LED_COLOR_ID_RED>;
+> +            pwms = <&twl_pwm 0 7812500>;
+> +        };
+> +
+> +        led_2: led-2 {
+> +            color = <LED_COLOR_ID_GREEN>;
+> +            pwms = <&twl_pwmled 0 7812500>;
+> +        };
+> +
+> +        led_3: led-3 {
+> +            color = <LED_COLOR_ID_RED>;
+> +            pwms = <&twl_pwm 0 7812500>;
+> +        };
+> +
+> +        led_4: led-4 {
+> +            color = <LED_COLOR_ID_GREEN>;
+> +            pwms = <&twl_pwmled 0 7812500>;
+> +        };
+> +
+> +    };
+> +
+> +    virtual-led-controller {
+> +        compatible = "leds-group-virtualcolor";
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        virtual_red@0 {
+
+
+Follow DTS coding style.
+
+
+
+Best regards,
+Krzysztof
 
