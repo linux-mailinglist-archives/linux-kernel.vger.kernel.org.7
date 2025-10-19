@@ -1,213 +1,127 @@
-Return-Path: <linux-kernel+bounces-859594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B10DBEE0BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7612BEE0C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0797E189A20F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FEAB189B5EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C974529D276;
-	Sun, 19 Oct 2025 08:33:31 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3209E29DB64;
+	Sun, 19 Oct 2025 08:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HaLYBw7c"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CAE29CB3A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346401E832A
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760862811; cv=none; b=qfY4hFwmW8teuXRVwobh3QsgshV3FRdmNe2uydfiu8xhN32ksAl5zfAmz7X5sTvOpUK2hp69SGcMfVZf6ODh2q6WDoDNN++C0pyM4yJGpIbBLBaX77DOmI0o7n0QGCimJB3z8HfBb72k30fhM1tTtdikiPSvKmbriNVaEPmCmgY=
+	t=1760863147; cv=none; b=BBjkX8Ejh06aw9KiG56/1unPYXSvSA7Vzj997enldhmOYImKmeUGY25uOC5XzpE6gjgVQ+oN0Fh0wYnCxBBg4O9FoMGylxJ1lVgv0VgBsIH/GCuC5f+hV6HvrixD28+zJrNszma62fOpLf5JqEshfKjgaOVJT1i81eM3eQ93EEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760862811; c=relaxed/simple;
-	bh=R+OYe+QE2MzZ1LQPfmsKrjbz2yVZS/QtUsqHWnkQDIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nSiwXSi6+udGcBtnQvG/TREEB16YL33B/3DhUwRV+MzRICkyzyngIIlnHZ/bYdVqlyTHeeVnPAvnsXqxRFhBXxG+bfwQzUJwJgh/tYlToiHQt9WfCAZVA1PfRlxBEIo1NZDEEkbd2AAU58iKUABvJyK68o0IfNqMnySN+XOCFew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59J8XJjU046805;
-	Sun, 19 Oct 2025 17:33:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59J8XIKi046802
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 19 Oct 2025 17:33:18 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <76a62d90-d13f-4657-8a38-2a07abc83c65@I-love.SAKURA.ne.jp>
-Date: Sun, 19 Oct 2025 17:33:18 +0900
+	s=arc-20240116; t=1760863147; c=relaxed/simple;
+	bh=mEnjwgJfQJ0O71tpE2SqslOlsardtAe/nQ4bMnmTnKg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j+7ijyQrpCADNDdKImfqjP3erhGPyZiHCAYfv23T/Fw2ScD7W53wytXpf5iemKmt90pzRDHWRoJreDt5En+LtAcXd6qjUppQJPkcz35HLIW+VfecKv22RIKFeGzCAmn2eCasQOHhZzBKtEfZ4LLdD0qW1aOeKLUQ/i+o59fMqO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HaLYBw7c; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-782e93932ffso2916526b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760863145; x=1761467945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1O1qFjTaYa3YKr1wUK2qwfX5whhrXvdDystRg7bIkb8=;
+        b=HaLYBw7cU+RhWFf5SNkDBftCG9/fuvcdi14+vf7N1LUrVwhlqar8jpS2e8a94p/8AE
+         UP2uy4OYnm3wWYtaVTbV0Q/nMxMXEQsljLxZ94Osl5fqkoUSu9CiEnlDUToTb7xUSVEl
+         NYhiAtwV56ExkcInE4b88KmzkG/+GjW9ZjWMZ95WucAlFKmKsp+xZJCNf8SthMrYj+b/
+         uAe9c5iCQWNqKqc7uetsu0skll3nfbvfCnipNH0K297ESd5a78tn7rHbsI9U1JeCgpNk
+         xL1kMcoPoestGvHMGK5WQnleRcelfzArCeXNg1unLctdkbu4ZvlrdjKsjXIQQgEzxK6U
+         I4Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760863145; x=1761467945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1O1qFjTaYa3YKr1wUK2qwfX5whhrXvdDystRg7bIkb8=;
+        b=XU4DptVzZeo/87tJbCz7YKf2I/aIKYRmIUt48bZQupKIqrjMiuc+QU4hL4FK3HSMt1
+         NNDxAqqjwVSdbbpP/BzYhLF5tlbDWyPBSSxgINaqlhpS7C/ot1NSDrPo9IHR1b0Tc1fR
+         VYGT+9d+Ni0SbWzu255l3ZcPj0YVPcekeLCJ0kGri7j9vumnvUuDdeyg8G6Si/9p7zpM
+         bBNen5ZGv5nAonRznLkwq5Eu7LK0KgTKrvaKhAK9uA6WP+YMKTIbsrsbdxkYeWQwGqFN
+         4nIRHjN5RtUcziJEZ+JALjKqsnkAIw0W+AZdGfLJcwXtsF2cuOaMI1Qn/DHd7tBBwMnh
+         YIcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgEPGVO9zykDsvL7Joo1HDt7PH+zSrKfWawphe/B6CHURrkN4xDM4JOLNQHLqVQKKRAKgIar0042iy/xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0vCjgKwycapvWqXWLsRmDMIGyqN9m0brStyg6+EAuqrXvU322
+	24/9W8OIaRnAWpUMUDmZucDyr82KdTpZ8UuMjN02X/o/66nvngIvRJCU
+X-Gm-Gg: ASbGncv/at0XhNwKUMZvvNf8YPUTctkUpYYS0st+TXu4twFGip1XSQwhh7oHD+2Nb40
+	NrVJQK0M+IQ8Bh7UZLLvbaeL6NknVVaKDVOq1Zmd8IWCubRJcwKlJRdpR02y+LyOZpsAmuBIOty
+	4tj5geq+RkYwdUxP1M2WTR20Ph/8FljfVzt+70ygLu/Sqc2yRQp1LjDyivb7EtxuWxN6jsSXb6r
+	xNHn16bzAYS6b0VtNnN7YPkdpzeykKFt9EQREXajNhrn4XedBkJe6+aoo537QDtBT0G+hg5cop1
+	k87QnaqU21+J5dcYipBRPyNQgopoLvYd3js2Au4l9P7Ko/wCKfKxAlTUPR+rfxxPUMclZmUD92c
+	WQQB00NhBr8/y5rONFLcMhRIMiXD6crDExgLq47/ISVywKCTlx3QSxUu/UtO0gr7Fyk+3lRemZH
+	L8JdrLlLjMXD4ynZOtKw==
+X-Google-Smtp-Source: AGHT+IG0nj3JfGbvrdQsQygdR1y3JLnopGBbMcwuKfE0iF7oNqWVFfy3kIP6nViup8Myx5gaNy6aHg==
+X-Received: by 2002:aa7:8096:0:b0:7a2:218c:962d with SMTP id d2e1a72fcca58-7a2218c974fmr7021815b3a.3.1760863145378;
+        Sun, 19 Oct 2025 01:39:05 -0700 (PDT)
+Received: from crl-3.node2.local ([125.63.65.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a230122380sm4864516b3a.77.2025.10.19.01.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 01:39:04 -0700 (PDT)
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+To: clm@fb.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	Kriish Sharma <kriish.sharma2006@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] btrfs: initialize folios to NULL in compress_file_range()
+Date: Sun, 19 Oct 2025 08:36:47 +0000
+Message-Id: <20251019083647.2096733-1-kriish.sharma2006@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
-To: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <66fbae37.050a0220.6bad9.0050.GAE@google.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <66fbae37.050a0220.6bad9.0050.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Transfer-Encoding: 8bit
 
-#syz test
+The variable 'folios' may be used uninitialized when jumping to cleanup
+labels, triggering the following clang warning:
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 699c15db28a8..71c1cb792e2d 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5956,7 +5956,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
- 		return ERR_CAST(bdev_file);
- 
- 	journal = jbd2_journal_init_dev(file_bdev(bdev_file), sb->s_bdev, j_start,
--					j_len, sb->s_blocksize);
-+					j_len, sb->s_blocksize, EXT4_SUPER_MAGIC);
- 	if (IS_ERR(journal)) {
- 		ext4_msg(sb, KERN_ERR, "failed to create device journal");
- 		errno = PTR_ERR(journal);
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index d480b94117cd..2f4fbd74cf76 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1517,11 +1517,13 @@ static int journal_load_superblock(journal_t *journal)
-  * superblock and initialize the journal_t object.
-  */
- 
--static journal_t *journal_init_common(struct block_device *bdev,
--			struct block_device *fs_dev,
--			unsigned long long start, int len, int blocksize)
-+static journal_t *journal_init_common(struct block_device *bdev, struct block_device *fs_dev,
-+				      unsigned long long start, int len, int blocksize,
-+				      unsigned long fsmagic)
- {
--	static struct lock_class_key jbd2_trans_commit_key;
-+	static struct lock_class_key jbd2_trans_commit_key_ext4;
-+	static struct lock_class_key jbd2_trans_commit_key_ocfs2;
-+	static struct lock_class_key jbd2_trans_commit_key_unknown;
- 	journal_t *journal;
- 	int err;
- 	int n;
-@@ -1547,20 +1549,49 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	init_waitqueue_head(&journal->j_wait_updates);
- 	init_waitqueue_head(&journal->j_wait_reserved);
- 	init_waitqueue_head(&journal->j_fc_wait);
--	mutex_init(&journal->j_abort_mutex);
--	mutex_init(&journal->j_barrier);
--	mutex_init(&journal->j_checkpoint_mutex);
--	spin_lock_init(&journal->j_revoke_lock);
--	spin_lock_init(&journal->j_list_lock);
--	spin_lock_init(&journal->j_history_lock);
--	rwlock_init(&journal->j_state_lock);
-+	if (IS_ENABLED(CONFIG_LOCKDEP) && IS_ENABLED(CONFIG_EXT4_FS) &&
-+	    fsmagic == EXT4_SUPER_MAGIC) {
-+		mutex_init(&journal->j_abort_mutex);
-+		mutex_init(&journal->j_barrier);
-+		mutex_init(&journal->j_checkpoint_mutex);
-+		spin_lock_init(&journal->j_revoke_lock);
-+		spin_lock_init(&journal->j_list_lock);
-+		spin_lock_init(&journal->j_history_lock);
-+		rwlock_init(&journal->j_state_lock);
-+	} else if (IS_ENABLED(CONFIG_LOCKDEP) && IS_ENABLED(CONFIG_OCFS2_FS) &&
-+		   fsmagic == OCFS2_SUPER_MAGIC) {
-+		mutex_init(&journal->j_abort_mutex);
-+		mutex_init(&journal->j_barrier);
-+		mutex_init(&journal->j_checkpoint_mutex);
-+		spin_lock_init(&journal->j_revoke_lock);
-+		spin_lock_init(&journal->j_list_lock);
-+		spin_lock_init(&journal->j_history_lock);
-+		rwlock_init(&journal->j_state_lock);
-+	} else {
-+		mutex_init(&journal->j_abort_mutex);
-+		mutex_init(&journal->j_barrier);
-+		mutex_init(&journal->j_checkpoint_mutex);
-+		spin_lock_init(&journal->j_revoke_lock);
-+		spin_lock_init(&journal->j_list_lock);
-+		spin_lock_init(&journal->j_history_lock);
-+		rwlock_init(&journal->j_state_lock);
-+	}
- 
- 	journal->j_commit_interval = (HZ * JBD2_DEFAULT_MAX_COMMIT_AGE);
- 	journal->j_min_batch_time = 0;
- 	journal->j_max_batch_time = 15000; /* 15ms */
- 	atomic_set(&journal->j_reserved_credits, 0);
--	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
--			 &jbd2_trans_commit_key, 0);
-+	if (IS_ENABLED(CONFIG_LOCKDEP) && IS_ENABLED(CONFIG_EXT4_FS) &&
-+	    fsmagic == EXT4_SUPER_MAGIC)
-+		lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle_ext4",
-+				 &jbd2_trans_commit_key_ext4, 0);
-+	else if (IS_ENABLED(CONFIG_LOCKDEP) && IS_ENABLED(CONFIG_OCFS2_FS) &&
-+		 fsmagic == OCFS2_SUPER_MAGIC)
-+		lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle_ocfs2",
-+				 &jbd2_trans_commit_key_ocfs2, 0);
-+	else
-+		lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle_unknown",
-+				 &jbd2_trans_commit_key_unknown, 0);
- 
- 	/* The journal is marked for error until we succeed with recovery! */
- 	journal->j_flags = JBD2_ABORT;
-@@ -1631,6 +1662,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
-  *  @start: Block nr Start of journal.
-  *  @len:  Length of the journal in blocks.
-  *  @blocksize: blocksize of journalling device
-+ *  @fsmagic: filesystem magic number for lockdep annotation
-  *
-  *  Returns: a newly created journal_t *
-  *
-@@ -1638,13 +1670,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
-  *  range of blocks on an arbitrary block device.
-  *
-  */
--journal_t *jbd2_journal_init_dev(struct block_device *bdev,
--			struct block_device *fs_dev,
--			unsigned long long start, int len, int blocksize)
-+journal_t *jbd2_journal_init_dev(struct block_device *bdev, struct block_device *fs_dev,
-+				 unsigned long long start, int len, int blocksize,
-+				 unsigned long fsmagic)
- {
- 	journal_t *journal;
- 
--	journal = journal_init_common(bdev, fs_dev, start, len, blocksize);
-+	journal = journal_init_common(bdev, fs_dev, start, len, blocksize, fsmagic);
- 	if (IS_ERR(journal))
- 		return ERR_CAST(journal);
- 
-@@ -1682,8 +1714,8 @@ journal_t *jbd2_journal_init_inode(struct inode *inode)
- 		  inode->i_sb->s_blocksize_bits, inode->i_sb->s_blocksize);
- 
- 	journal = journal_init_common(inode->i_sb->s_bdev, inode->i_sb->s_bdev,
--			blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
--			inode->i_sb->s_blocksize);
-+				      blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
-+				      inode->i_sb->s_blocksize, inode->i_sb->s_magic);
- 	if (IS_ERR(journal))
- 		return ERR_CAST(journal);
- 
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 43b9297fe8a7..a5d6f6ae5a35 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1523,9 +1523,9 @@ extern void	 jbd2_journal_unlock_updates (journal_t *);
- 
- void jbd2_journal_wait_updates(journal_t *);
- 
--extern journal_t * jbd2_journal_init_dev(struct block_device *bdev,
--				struct block_device *fs_dev,
--				unsigned long long start, int len, int bsize);
-+extern journal_t * jbd2_journal_init_dev(struct block_device *bdev, struct block_device *fs_dev,
-+					 unsigned long long start, int len, int bsize,
-+					 unsigned long fsmagic);
- extern journal_t * jbd2_journal_init_inode (struct inode *);
- extern int	   jbd2_journal_update_format (journal_t *);
- extern int	   jbd2_journal_check_used_features
+  fs/btrfs/inode.c:874:6: warning: variable 'folios' is used uninitialized
+  whenever 'if' condition is true
+
+Initialize 'folios' to NULL to ensure the cleanup path is safe and to
+silence the compiler warning.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510171743.VQ6yA0Uu-lkp@intel.com/
+Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+---
+ fs/btrfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index d726bcdacf6b..54903e17338f 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -862,7 +862,7 @@ static void compress_file_range(struct btrfs_work *work)
+ 	u64 actual_end;
+ 	u64 i_size;
+ 	int ret = 0;
+-	struct folio **folios;
++	struct folio **folios = NULL;
+ 	unsigned long nr_folios;
+ 	unsigned long total_compressed = 0;
+ 	unsigned long total_in = 0;
+-- 
+2.34.1
 
 
