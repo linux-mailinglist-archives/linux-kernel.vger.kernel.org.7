@@ -1,180 +1,270 @@
-Return-Path: <linux-kernel+bounces-859678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4651BEE429
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:57:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A43BEE42C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E22114E90CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AA0402734
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1472E7637;
-	Sun, 19 Oct 2025 11:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090E12E2EEF;
+	Sun, 19 Oct 2025 11:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lVoVWAA7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCwmP/RT"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BD622A1D5
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4626C22A1D5
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760875041; cv=none; b=uNgiAJZ53z+U7GdIVN4drHYa7DH6Y57l9DYltAKiN9kU4OBy6EE24x86HJ7FtIy/X70qlsigj0EOtc4pk2gE1biSELMh3fX5m+Df2GDY/qJw4BUyd+8KxTwGthEVT5nRASr2UWnsexsN56g4qEEQ+hsLX15XMrpRLAXW5MO2K8o=
+	t=1760875055; cv=none; b=AV57shuAuFQ+P2x+YQT+/PoH/ihtt9ZbAdJaytr/jzMsSV6kcgZf6n5Vpj1ncGXVgJGeOZpKCzXsp3Tw3h+qV3J6UmFs8r3xMm48v3p+DGIY66NXKRum7ztr7sGjSo3HYHfRlXEM/ZlAa8b9Ko8gUYQE87yJBpMizqceqtZ9/KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760875041; c=relaxed/simple;
-	bh=uDfMWTWeRD+ipeRnmX1KcRU97w67iC3Ok/q8BFKqbdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsZM1/wXH+oLuFGbl6RnoDjocE5BEob+wvPmhlx80MmW8mlMIGib9siosY3MB23ov4HYC4CR4iWLxZD8bVRaAcnS41q+R4AYB67uD2+JC+Z+REcVrB7lCi7qqHJeOOqaY2jPom5w6j9y/AXJdBiRWPcSVoT9L3cNYiZ/+XvKiAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lVoVWAA7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JAahhC020381
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:57:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=fGQ0MOLcCnQuGNFEws8tSgmj
-	Y6Cq/DDB5jiuxcA7h9E=; b=lVoVWAA707Wxc31l/VYGNTxdteth2GASXjMSBSdy
-	+zoc+/PCElxn2YJnsllNtvhJmh28jb33bTb9sYU2NBMcWV/rzUITNI6g+GidLXEe
-	AdSNGUi5kwcSeulH2s5IHbgyN/AfR/t+9Pxrixs42WGQ7VYlbkZ7JyoqWkhCTWhB
-	ZjuvIGKsAayNOthmF3gubpaan1ODBJSpQPWvb25PfXcMn5bHqZbscUvVcEvFK8ID
-	jmqBEg4BtNflagzLYxhz4sjSx9ID6BDMo0xVXK83JXTj3z5D3Nezl/H2I/ohLVwM
-	c1cLG2ffTJu5gLu/5Y6VPTc6KhDGxAoEw9V4CbW/exAoPg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1usafgf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:57:18 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c1ed305b4so98062036d6.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 04:57:18 -0700 (PDT)
+	s=arc-20240116; t=1760875055; c=relaxed/simple;
+	bh=2EmecCtEqlb5wSaa9tOcwvaTQd0L0dQSZIOSVmA+sik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HzGfBMs9G+F66dQK4lJev3t3bgCDrh0/FiJJh/6dFJkloGSxUyoMhDsDza4cJmbVDxSk4mGA/bsU+leESunEMt79gAOlz0+RKQuVBhBy/yKBeh1UdQyJp4RqC8KgEP79mh//uCs2ygtbOoki+L6VeAP2jiY2yaRqvUAlWxcATRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCwmP/RT; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so18672805e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 04:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760875051; x=1761479851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CFyJz4TGbBiB8xKgL30elmXo6maKrPja2K5Egv8H5yA=;
+        b=eCwmP/RTxmbK5jTPhUyTZLoVPT12MTQtcil2PhfY5omyZeILbBAk430E1z4k9Zgm1y
+         r5hz68ydGohDlliRfQs8gFQs/zbUojLnU+TeeoBxWIuG+xq7fEbhGfCIKRNq4z/0hivX
+         x0UtVIa0CFvH/rEXmmoChKvyMcx4vaZi95Xx+SYB2YO6Hw63nZABNy84LP7HFpki34qQ
+         4i7ASjHyWQPz6aw5rE4u8ySFqALwFcQM6cjHfZQpllktg3DUiJicPPyCsRarIoxk9j+h
+         LgfE86iQdxcKbCBkqm622sKo2WWdwR4rVS/4PngkE9OwXsG9ndepORfvuPvV51GbPZ7i
+         BAOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760875037; x=1761479837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fGQ0MOLcCnQuGNFEws8tSgmjY6Cq/DDB5jiuxcA7h9E=;
-        b=EQJIk7D0Vlkh5tEBekJkRQRMyOwg4676yGc6zrTXHhoS1EZ4k7HPhzxWsMsVzGcp4Q
-         Ow8BlOMNsYPO4oWvC7Eg2NDNrwIB6aiQMagwl2LQwTBDYrBbB7FaNaPYyBO1h0Jf4pK1
-         4sR2oXTsBtY1zSlb6nzBeelySK1p+jtmJwQg5/RlhArTqZsc8pymczrY3W4oAvncKLf7
-         KnkLRTMd5FLwvaSaLnyJj+xcVElDCRLR9182tOiXX7ncB2QRBr9RXjJbS8p8T49Te7fS
-         9C0wMUOxKJC8QD3iWsrgGnNb2v1HpbXDRfDWHe4UIqhwE3A6Kc1gqOCOLE4b+10MPDf/
-         Ihwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5z/mtyXX/JsrSN0vbNQUvNKkc8TAaXES13f4h6y4e79DfgOIWIMyWxlbWzMd/gk5+JOwk2bEvlnL+xks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdMRNPL9RZo0x9V0e4MfaTfETAnP2zInrgNslEUE7dp5zEOtYQ
-	hvv3SyXJBHmjaegf2I/OYYp5RHAFgN6S7W6t+Thny3/Z5W3J/Pax/WL8VdqLC84h9f+63qc69cE
-	JPubAl4Ykc2o4kplrTdy/QSSuZgEOqyHh6R2micODKJFNPwQ0vTmZOgS9+4p79d5rY6I=
-X-Gm-Gg: ASbGnctTQ5ggENrFJP89tb63oQjtkMNRbfWOrnZ2uXJXt9ENRLdKDyBqd6k61Ag3nNk
-	qrN7SYPV+mdizORitl3ozXQmgxdGk1QXTTv9EO1UZyYPkvraMCLTFlHijxeoGsDgBPXf34EXC/g
-	JmGPmWJSqCBjPqXQFDuhp2L693Gq+XU1hOJkhN0BAjOuh0ENOPMzvwWs0E1eNj/64ZI8xe7lPGe
-	fIJDkxW6Hr63/Dl6XKK12zniMo1Z27XaUBB4Lt1B8aZLv21P08lt4/v1sF3dXr9n87OFF9NvtBI
-	zPNOK4x+q7CZO7HghW4Q6vqXif2aW3KbbTCa/ef59rY0uBxxaHwjQ7G7uAiTUoJ9/1cms9+gXFV
-	TzFvIkCp/920gyjE31ZtLxx8fPRvMvkTLBkcXgCw4fZpMHvxP1w4/ruZ0g9p/6OLxpSv1GQXWiG
-	8JbpedUGC8Sz0=
-X-Received: by 2002:ac8:5883:0:b0:4e8:abe4:9d38 with SMTP id d75a77b69052e-4e8abe4a39emr77390891cf.41.1760875037438;
-        Sun, 19 Oct 2025 04:57:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGX+YQp615nB1m9e4OBBL2rDPwe9z4DG6TaUYbaoSrZe/rJKku24BCoQyPFtL21NMa605kdaw==
-X-Received: by 2002:ac8:5883:0:b0:4e8:abe4:9d38 with SMTP id d75a77b69052e-4e8abe4a39emr77390621cf.41.1760875036915;
-        Sun, 19 Oct 2025 04:57:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeaff12sm1501803e87.34.2025.10.19.04.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 04:57:15 -0700 (PDT)
-Date: Sun, 19 Oct 2025 14:57:13 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_SM_TCSRCC_8750 from m to
- y
-Message-ID: <s2u4wktoi26b5yjfl52j4y53r2bgtwsryacjd22smidl4kbtsj@ahiqbwgrcpif>
-References: <20251017-update_defconfig_tcsrcc_sm8750-v1-1-34b1b47a0bda@oss.qualcomm.com>
- <30390038-0f90-48a4-befe-475cf88ba1fb@kernel.org>
- <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1760875051; x=1761479851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CFyJz4TGbBiB8xKgL30elmXo6maKrPja2K5Egv8H5yA=;
+        b=MaKlmntAILNrSnMOlIcUbVMEH7rTf5Jcq4G7jXmJFhQ9sYHKAz8zPJCKJ5r8k8Oo2a
+         C79B3xA5O7m+GKTMpxuonQ2VpIJWxcZApKRsOB6QDFKbpyhMf7BvtdvVZDmlZ6RfcQjK
+         8fHJ9pX4xAj4pbHg1EO5+irNl3eHYt7K7aYtdsUhJxkbhbv/yN6vokoQtjdfhiY8S5Pu
+         vGndRgd9krpl50j5mGg97Sq7d0o06w2SAMXDETSiUkQNavysbs3XW1/8FT9CzRZaLuEL
+         Xiyl+yeXmy7o16oncpxbK0nAswnHblv/1cDB1jK4NT+lPkbimKUYnbTlw3cNnoYgeXl3
+         OgJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0p/8fpNrxGGxDO7KM2DLQblW3gjXFTgIEfIr5KDgwa8OF1Zw8kIZWXzqultnixz8GMusIWXKU1nDsW5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDDv4AgyfcDZBs+LX0MU5uDciDQcwL71lTB6aqvMFdbmVp6CIG
+	oFbvX06OgibJhkch4uxsTjpyzUZidmRCFy+lHGMtUvy75Bn5WCIgn/o+
+X-Gm-Gg: ASbGncsSo9ACX/wDa9BCji5LITJ9LTEaRbSQhob1z4AVj9zaktlJSwdXuh9Xcxr8lq6
+	QRpgQ+pb7onnVt6xI9ZxvvGEWrAWfWaL70BFtiS5rZb5FmuqST/ixMeTAVUgo4I11x1Cg6xMNZw
+	LAMk/cBEMlRCdTIvUdV7CskhlrDRQQZZ5vjnLJPMPoYkvulAFYfSzpVobajdyx8ddPVATGJfxYo
+	cSiBsTKhNAp6M1Zw7hsvbcBsr6wYPkgAkRZK4wkl9ftal5Z/8TbnXd/oTa0ArYF726laGO6XR/i
+	7vnY9yDfbLoeXgbdmqy17QMV/G2A0Qheg4ecWZLiqDswFkgaXejKR3AhG3IUYq+YMfvFEQbWqZE
+	KxPFNjsbllGxQdt4lhYLspNx4YRtk24FP25O10ueMR5tc5uB0UK8yZNJru4sATM3ZRephHW0QBD
+	9P0vE1zkLlZ1ou74IxVPBtKWat+lZym2FU6e1rHdzurH8n5aUGV2Be2qpD38l9fwN9ass=
+X-Google-Smtp-Source: AGHT+IHvDD+ifAg+17oqux4wEgOfVHaOlLPFxtbGdrBBFjTGnfI9PU8wWphxIaLJLYGzyWFboM6Djg==
+X-Received: by 2002:a05:600c:548a:b0:471:669:e95d with SMTP id 5b1f17b1804b1-4711787dcc8mr62020415e9.12.1760875051305;
+        Sun, 19 Oct 2025 04:57:31 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:acc:bb60:756b:64e3:20ef:1d08? ([2a01:e0a:acc:bb60:756b:64e3:20ef:1d08])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471529598c9sm91035475e9.5.2025.10.19.04.57.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 04:57:30 -0700 (PDT)
+Message-ID: <72cfbe83-e587-441e-abfb-b50155a326ab@gmail.com>
+Date: Sun, 19 Oct 2025 13:57:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: WKG8HwAZy-MQMY86RbrV_513dWJ1rnhG
-X-Proofpoint-GUID: WKG8HwAZy-MQMY86RbrV_513dWJ1rnhG
-X-Authority-Analysis: v=2.4 cv=XuT3+FF9 c=1 sm=1 tr=0 ts=68f4d21e cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7rlisPeBpEk40MJsvS0A:9
- a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNCBTYWx0ZWRfX8meAWBTN7CPE
- 5UTG1iFfaxMfkeI6qAKbBHcrtxfEZAK/eUIoK6stknKnxR0PM7kpSeVmiu/7CMInVbiaXcIw1lR
- +8380guViyM70h/E9uZpb7EcxPUlmadhFnamcgha3DQXj9EGz2Y6SnkJCl0KmAcIp5eNeK7rO/I
- GKEmhgV3gif84vBT/eCUoHkw2SrCoHrmZXFFbsG7ndQ0ASsC69nfm+U9Fh/RFfi+ShesDHglw9I
- 4uQfHCToSL5649Y0IPHg//eVsxAtb1jYghr2e+kUUkR/4EQ5fXu9/7aDCcVdKqenAWw/O+Ws5v9
- 1fyVjjLSQ6FkFJQQz7LcxfSptUOkxa2ZWMleKgceG0mqe8ya4a8Fglm2W2kDaEjNeF+N+1AW3xN
- pRs5qdGVG7qwfArOk3CV+vXw82PP7w==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-19_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 malwarescore=0 bulkscore=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180014
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nova-core: Solve mentions of `CoherentAllocation`
+ improvements [COHA]
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org
+References: <20251015194936.121586-1-delcastillodelarosadaniel@gmail.com>
+ <DDK7N52VX059.202D7SPGFV8A9@nvidia.com>
+Content-Language: en-US
+From: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+In-Reply-To: <DDK7N52VX059.202D7SPGFV8A9@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 10:46:43AM +0530, Taniya Das wrote:
-> 
-> 
-> On 10/17/2025 10:00 AM, Krzysztof Kozlowski wrote:
-> > On 16/10/2025 20:53, Taniya Das wrote:
-> >> The TCSR clock controller is required  during boot to provide the ref
-> >> clocks to the UFS controller. Setting CONFIG_SM_TCSRCC_8750 to y ensures
-> >> the UFS driver successfully probe and initialize the device.
-> >>
-> >> Without this change, the UFS subsystem fails to mount as a usable file
-> >> system during boot.
-> > 
-> > 
-> > That's not what I observed. UFS works fine, especially that it is a
-> > module, so no, this is not a desired change and explanation is not only
-> > insufficient but actually incorrect.
-> > 
-> 
-> Krzysztof, on Pakala MTP we are observing the below issue and it
-> requires the module of tscrcc to be loaded explicitly. This patch also
-> aligns to how it is on all other targets.
-> 
-> /soc@0/phy@1d80000: Failed to get clk index: 2 ret: -517
-> [   10.496570] ufshcd-qcom 1d84000.ufs: freq-table-hz property not specified
-> [   10.503660] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> find vdd-hba-supply regulator, assuming enabled
-> [   10.514548] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> find vccq2-supply regulator, assuming enabled
-> [   10.565955] platform 1d80000.phy: deferred probe pending: (reason
-> unknown)
-> [   10.573078] platform 1d84000.ufs: deferred probe pending:
-> ufshcd-qcom: ufshcd_pltfrm_init() failed
+Hi Alexandre,
 
-This will also require you to set CONFIG_SCSI_UFS_QCOM=y (=m in
-defconfig), CONFIG_PHY_QCOM_QMP_UFS=y (also =m in defconfig), etc. So, I
-doubt that you are using defconfig as is. Please extend your
-configuration in order to pick this module.
+Thanks for your comments!
 
-Note, defconfig is supposed to be used by multiple platforms and
-multiple defice. As sych we can't enable all bootable devices. It is
-expected that the users either change their configuration or use
-initramfs. Only "working console" is expected to be working with the
-defconfig and that's only because systemd doesn't reopen /dev/console
-after probing modules. If it were, we could have moved all pinctrl,
-interconnect and other similar drivers to =m in order to make the
-footprint smaller for other platforms.
 
--- 
-With best wishes
-Dmitry
+
+On 10/17/25 03:36, Alexandre Courbot wrote:
+> On Thu Oct 16, 2025 at 4:49 AM JST, Daniel del Castillo wrote:
+>> This patch solves the existing mentions of COHA, a task
+>> in the Nova task list about improving the `CoherentAllocation` API.
+>> I confirmed by talking to Alexandre Courbot, that the reading/writing
+>> methods in `CoherentAllocation` can never be safe, so
+>> this patch doesn't actually change `CoherentAllocation`, but rather
+>> tries to solve the existing references to [COHA].
+> 
+> This mention of background discussions should be in the comment part of
+> your commit (below the `---`).
+
+Noted, will do for the next version of the patch.
+
+>>
+>> Signed-off-by: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+>> ---
+>>  drivers/gpu/nova-core/dma.rs            |  20 ++---
+>>  drivers/gpu/nova-core/firmware/fwsec.rs | 104 ++++++++++--------------
+>>  2 files changed, 50 insertions(+), 74 deletions(-)
+>>
+>> diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
+>> index 94f44bcfd748..639a99cf72c4 100644
+>> --- a/drivers/gpu/nova-core/dma.rs
+>> +++ b/drivers/gpu/nova-core/dma.rs
+>> @@ -25,21 +25,11 @@ pub(crate) fn new(dev: &device::Device<device::Bound>, len: usize) -> Result<Sel
+>>      }
+>>  
+>>      pub(crate) fn from_data(dev: &device::Device<device::Bound>, data: &[u8]) -> Result<Self> {
+>> -        Self::new(dev, data.len()).map(|mut dma_obj| {
+>> -            // TODO[COHA]: replace with `CoherentAllocation::write()` once available.
+>> -            // SAFETY:
+>> -            // - `dma_obj`'s size is at least `data.len()`.
+>> -            // - We have just created this object and there is no other user at this stage.
+>> -            unsafe {
+>> -                core::ptr::copy_nonoverlapping(
+>> -                    data.as_ptr(),
+>> -                    dma_obj.dma.start_ptr_mut(),
+>> -                    data.len(),
+>> -                );
+>> -            }
+>> -
+>> -            dma_obj
+>> -        })
+>> +        let mut dma_obj = Self::new(dev, data.len())?;
+>> +        // SAFETY: We have just created this object and there is no other user at this stage.
+>> +        unsafe { dma_obj.write(data, 0)? };
+>> +
+>> +        Ok(dma_obj)
+> 
+> Can you preserve the use of `map`? This removes the need for the
+> temporary variable.
+> 
+
+Sure.> <snip>
+>>  /// The FWSEC microcode, extracted from the BIOS and to be run on the GSP falcon.
+>> @@ -260,32 +245,38 @@ fn new_fwsec(dev: &Device<device::Bound>, bios: &Vbios, cmd: FwsecCommand) -> Re
+>>  
+>>          // Find the DMEM mapper section in the firmware.
+>>          for i in 0..hdr.entry_count as usize {
+>> -            let app: &FalconAppifV1 =
+>>              // SAFETY: we have exclusive access to `dma_object`.
+>> -            unsafe {
+>> +            let app: &FalconAppifV1 = unsafe {
+>>                  transmute(
+>>                      &dma_object,
+>> -                    hdr_offset + hdr.header_size as usize + i * hdr.entry_size as usize
+>> +                    hdr_offset + hdr.header_size as usize + i * hdr.entry_size as usize,
+>>                  )
+>>              }?;
+>>  
+>>              if app.id != NVFW_FALCON_APPIF_ID_DMEMMAPPER {
+>>                  continue;
+>>              }
+>> +            let dmem_base = app.dmem_base;
+>>  
+>>              // SAFETY: we have exclusive access to `dma_object`.
+>>              let dmem_mapper: &mut FalconAppifDmemmapperV3 = unsafe {
+>> -                transmute_mut(
+>> -                    &mut dma_object,
+>> -                    (desc.imem_load_size + app.dmem_base) as usize,
+>> -                )
+>> +                transmute_mut(&mut dma_object, (desc.imem_load_size + dmem_base) as usize)
+>>              }?;
+>>  
+>> +            dmem_mapper.init_cmd = match cmd {
+>> +                FwsecCommand::Frts {
+>> +                    frts_addr: _,
+>> +                    frts_size: _,
+> 
+> Can the `{ .. }` syntax be used here?
+> 
+Yes! I didn't remember that syntax.
+
+
+>> +                } => NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS,
+>> +                FwsecCommand::Sb => NVFW_FALCON_APPIF_DMEMMAPPER_CMD_SB,
+>> +            };
+>> +            let cmd_in_buffer_offset = dmem_mapper.cmd_in_buffer_offset;
+>> +
+>>              // SAFETY: we have exclusive access to `dma_object`.
+>>              let frts_cmd: &mut FrtsCmd = unsafe {
+>>                  transmute_mut(
+>>                      &mut dma_object,
+>> -                    (desc.imem_load_size + dmem_mapper.cmd_in_buffer_offset) as usize,
+>> +                    (desc.imem_load_size + cmd_in_buffer_offset) as usize,
+>>                  )
+>>              }?;
+>>  
+>> @@ -296,24 +287,19 @@ fn new_fwsec(dev: &Device<device::Bound>, bios: &Vbios, cmd: FwsecCommand) -> Re
+>>                  size: 0,
+>>                  flags: 2,
+>>              };
+>> -
+>> -            dmem_mapper.init_cmd = match cmd {
+>> -                FwsecCommand::Frts {
+>> -                    frts_addr,
+>> -                    frts_size,
+>> -                } => {
+>> -                    frts_cmd.frts_region = FrtsRegion {
+>> -                        ver: 1,
+>> -                        hdr: size_of::<FrtsRegion>() as u32,
+>> -                        addr: (frts_addr >> 12) as u32,
+>> -                        size: (frts_size >> 12) as u32,
+>> -                        ftype: NVFW_FRTS_CMD_REGION_TYPE_FB,
+>> -                    };
+>> -
+>> -                    NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS
+>> -                }
+>> -                FwsecCommand::Sb => NVFW_FALCON_APPIF_DMEMMAPPER_CMD_SB,
+>> -            };
+>> +            if let FwsecCommand::Frts {
+>> +                frts_addr,
+>> +                frts_size,
+>> +            } = cmd
+>> +            {
+>> +                frts_cmd.frts_region = FrtsRegion {
+>> +                    ver: 1,
+>> +                    hdr: size_of::<FrtsRegion>() as u32,
+>> +                    addr: (frts_addr >> 12) as u32,
+>> +                    size: (frts_size >> 12) as u32,
+>> +                    ftype: NVFW_FRTS_CMD_REGION_TYPE_FB,
+>> +                };
+>> +            }
+> 
+> I liked that the original code updated both `init_cmd` and `frts_region`
+> in the same match block. I understand it might be difficult to preserve
+> due to the borrowing rules, but can you try to preserve it if that's
+> possible at all?
+
+I agree it was nicer. I tried to preserve it, but I don't see a way to
+do it cleanly, as I can't keep both mutable references at the same time.
+What I could do is only check `cmd` once, set `init_cmd` and store an
+`Option<FrtsRegion>` that I will later use to set `frts_region` if it's
+not `None`. Let me know if you prefer that.
+
+Cheers,
+Daniel
+
 
