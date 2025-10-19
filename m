@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-859510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43967BEDDE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077A2BEDDEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60F8189FEEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:56:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D2718A028D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 03:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8567B1F5825;
-	Sun, 19 Oct 2025 02:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4901F5825;
+	Sun, 19 Oct 2025 03:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARI5C4Uh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XJIOxvrb"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AA71E2858;
-	Sun, 19 Oct 2025 02:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF07354AFF;
+	Sun, 19 Oct 2025 03:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760842567; cv=none; b=pG9ZczXkvkwZc8zd238KYpcWGjjp1cDEQYsiRNScHk5JTkbSwc9zC07MvbrtrACkoftB+J8K5Y0YboCg5GnhRyqk+1pa2MX+tB9MHdNSmKy8czUgo98fP1aF28NEUTgfop/mmAzRnFUo5+2Wtxp6sdlApYvyQDnj48J/JgFd6XM=
+	t=1760843135; cv=none; b=rx89sG+L7mkYEQ/ioJHV52uzSBjkMj+OzPYHRaB6hYtNf3cX/U+Z+CVlyCC9lb++0Tc/IZjT7sFOW7KapiBq/s/8qpGE3RC6ccvP3y/72Y2FOF6SyXkxuDc6XzQWxgfow4zcuvmNbf0GAtQMiC/DnI/MOnFYbiD9OqvyJbarPXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760842567; c=relaxed/simple;
-	bh=ay42bV262rs5q+lQqZEqOICDEow6lIlHBZK9FmNFG0M=;
+	s=arc-20240116; t=1760843135; c=relaxed/simple;
+	bh=+uOoL1vlxxpS/45krQtIWa2qVyqOXUtLHu9Rd543pCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZwORshCFj8VS19w2iIlWx9LYGJnbOPRLEmnt8BUZAVBpIyAYU1w+Ay9ivK8b2GjvEhp5xDNZB794jk8tCVdX3MAv8ZvQxAbA3dMF9mj+dyTqDIZG2QvtgQ7YC7OdetDmTC+B0v1AD/xgLHCYzXy1c/ZLFULKgvydkGZ/mDWYYis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARI5C4Uh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A60C4CEF8;
-	Sun, 19 Oct 2025 02:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760842565;
-	bh=ay42bV262rs5q+lQqZEqOICDEow6lIlHBZK9FmNFG0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ARI5C4UhGMciK7IPR70DYN0PY4CBPNOw/X20qj7OpeKMPeXASMbej4T1y3wXBl0Tn
-	 s/hCF4tKyBMKInDvVKqPpAnqknZDpe7tpBStlrO2BXPFDbhdk+pvMr4j8eHYP+osOJ
-	 gA6/ivpI4yhg6IO8jXshqB/TdXhjNPbqKufYPJYSfJiMQoGpO/IIyfkWy/7IPe0h1a
-	 6/2BZs9YhkvonhluIva3rAl7apqFeu2QJU/C1RsYIxzSeGPYH86JQ9BrE68KaUBaPE
-	 80J9XwtJwvAa1xZEDmJB3LI2reB2K3zFKPMtOx/HzsGrwN6f4Y+ypaW/KECNEfz/wf
-	 6Tti4f49r9uMg==
-Date: Sun, 19 Oct 2025 11:56:00 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] perf ilist: Don't display deprecated events
-Message-ID: <aPRTQLcOBtHiTGms@google.com>
-References: <20251016222228.2926870-1-irogers@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifh429jFYyk/qzd9BZ/7gJbOScAa3jz0223dkfRHYoU882z0rCYy+NmKJIfUX1+KrPiVjbsF3RAdPVy3dIUnafPpsF8q/Hf6z4TGy85S4OKNdy8G0u+v9mlB/s3T0b9rWuMcETGHjMWD96MHCRDdPd6oBawimiro+lieyFsE/ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XJIOxvrb; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 66EAB2609F;
+	Sun, 19 Oct 2025 05:05:24 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id gSLwu857owtb; Sun, 19 Oct 2025 05:05:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1760843123; bh=+uOoL1vlxxpS/45krQtIWa2qVyqOXUtLHu9Rd543pCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XJIOxvrb8FBUhmDA92mtUgGu+jh3ZgHMJcM0byW1uWAcZkv5fb6cjr7aOz8iwUIEQ
+	 Qi8Omcvm8FzH8NyUoZ277tMoZbdBSy8U/EWv3g8+lgbGlocdxJUVlo3Yj4VXisGVIj
+	 eaF+tmwIKvEBhSjgA9TQ0hmB2lZWio44IRT8QVHeuoPS6dQUIaM2ELK3MCZNljnUBp
+	 DCpmQjXhd3k1QyiPdXKhJFzL8Wg8i55hBLmKid2GddR5AO2JnwUlyJAAkmRMhfGvqx
+	 OmRv4Vw4ShrOp2Bx1AsVjdPdt3fe2DJqBwl/AZUON3x0D+SaL2J9sxx5jRl0Mm6F/V
+	 KLX7151SP580w==
+Date: Sun, 19 Oct 2025 03:05:03 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Frank <Frank.Sae@motor-comm.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next 3/4] net: stmmac: Add glue driver for Motorcomm
+ YT6801 ethernet controller
+Message-ID: <aPRVTvANvwLPrBnG@pie>
+References: <20251014164746.50696-2-ziyao@disroot.org>
+ <20251014164746.50696-5-ziyao@disroot.org>
+ <f1de6600-4de9-4914-95e6-8cdb3481e364@lunn.ch>
+ <aPJMsNKwBYyrr-W-@pie>
+ <81124574-48ab-4297-9a74-bba7df68b973@lunn.ch>
+ <aPNM1jeKfMPNsO4N@pie>
+ <cc564a19-7236-40d4-bf3c-6a24f7d00bec@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016222228.2926870-1-irogers@google.com>
+In-Reply-To: <cc564a19-7236-40d4-bf3c-6a24f7d00bec@lunn.ch>
 
-Hi Ian,
-
-On Thu, Oct 16, 2025 at 03:22:26PM -0700, Ian Rogers wrote:
-> Unsupported legacy events are flagged as deprecated. Don't display
-> these events in ilist as they won't open and there are over 1,000
-> legacy cache events.
-
-Off-topic, any chance to integrate this into a perf command?
-It'd be convenient if we can call this like `perf list --interactive`
-or some other way.
-
-Thanks,
-Namhyung
-
+On Sat, Oct 18, 2025 at 04:53:04PM +0200, Andrew Lunn wrote:
+> > > I was also wondering about all the other parameters you set. Why have
+> > > i not seen any other glue driver with similar code? What makes this
+> > > glue driver different?
+> > 
+> > Most glue drivers are for SoC-integrated IPs, for which
+> > stmmac_pltfr_probe() helper could be used to retrieve configuration
+> > arguments from devicetree to fill plat_stmmacenet_data. However, YT6801
+> > is a PCIe-based controller, and we couldn't rely on devicetree to carry
+> > these parameters.
+> > 
+> > You could find similar parameter setup code in stmmac_pltfr_probe(), and
+> > also other glue drivers for PCIe-based controllers, like dwmac-intel.c
+> > (intel_mgbe_common_data) and dwmac-loongson.c (loongson_default_data).
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/python/ilist.py | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
-> index 9d6465c60df3..69005a88872e 100755
-> --- a/tools/perf/python/ilist.py
-> +++ b/tools/perf/python/ilist.py
-> @@ -439,6 +439,8 @@ class IListApp(App):
->                  pmu_node = pmus.add(pmu_name)
->                  try:
->                      for event in sorted(pmu.events(), key=lambda x: x["name"]):
-> +                        if "deprecated" in event:
-> +                            continue
->                          if "name" in event:
->                              e = event["name"].lower()
->                              if "alias" in event:
-> -- 
-> 2.51.0.858.gf9c4a03a3a-goog
-> 
+> Is there anything common with these two drivers? One of the problems
+> stmmac has had in the past is that glue driver writers just
+> copy/paste, rather than refactor other glue drivers to share code.  If
+> there is shared code, maybe move it into stmmac_pci.c as helpers?
+
+I don't think there's code that could be shared. Parameters configured
+in plat(.{dma_cfg,axi}) are mostly hardware-details and dependent on
+synthesis parameters, making them repeat less across drivers, e.g.
+dwmac-loongson.c configures no AXI parameter, while
+intel_mgbe_common_data() configures axi_blen as up to 16, but the
+motorcomm controller is capable of burst length up to 32.
+
+Another example is the rx/tx queue number (plat.{rx,tx}_queues_to_use),
+which even varies among different controllers supported by dwmac-intel.c
+
+Maybe the most common part among these argument setup routines is the
+allocation of plat_stmmacenet_data and its members, but I doubt whether
+extracting this part out as a routine helps much for maintenance.
+
+But outside of plat_stmmacenet_data setup code, there is some code
+duplicated across PCIe controller drivers and could be effectively
+re-used. dwmac-intel.c, dwmac-loongson.c and stmmac_pci.c have the
+same implementation for platform suspend/resume routines
+(plat_stmmacenet_data.{suspend,resume}). I could send a series to
+extract this part out, and re-use the common routine in the motorcomm
+glue driver as well, though we still need to define a new function to
+addtionally deassert EPHY_RESET.
+
+> 	Andrew
+
+Best regards.
+Yao Zi
 
