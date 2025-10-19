@@ -1,159 +1,106 @@
-Return-Path: <linux-kernel+bounces-859790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9EE5BEE99E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64419BEE9A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15A5A4E8A21
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A263BDFDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9B72EC542;
-	Sun, 19 Oct 2025 16:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C39E2EC554;
+	Sun, 19 Oct 2025 16:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="YSQqmBdB"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSzKmNV5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A54354ACB;
-	Sun, 19 Oct 2025 16:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1C538F80;
+	Sun, 19 Oct 2025 16:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760889989; cv=none; b=BodusD2CuKkKqMXCcTMQDquKdtcvGpoJi3S3DPvuZ6rt4pvzjzpJnyTa4UBvZi3SdJkj3/qfa0mHvtV9MFMaI9hBDSmg5V+EvXv2myVuHVhw4oavHWVkSGIury0H62UpRiya8jQSOUN8qdJU5DX1sw6gCks+/ok6oy990pvKDVY=
+	t=1760890146; cv=none; b=SINB1ywf05x3BzC74TfcONR38H7AVgs3rlYneHRt/yzZIf/lhJuGCnhLiIIesvTPYwAUHo8IP4zSqTOaDeXjpJU2anj0WjkNowkDzLvkRUBY16VJib9HAYUkg4YsGxji+3nvD/l0VCnbGeWqXk4MxjqHcRZKD7ok3Vqr7w8fivI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760889989; c=relaxed/simple;
-	bh=u3kZSbKNkPCt3OL2ozQGD9V/5zpA5+QbIEqPM9ZOqb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fKuSZ9+Wszv0V6IgctfMxG3axgUF0sGa+y6P15aDU2tTo73HvONfatrzazW++qkr0x2k2cRVFXzwB3DTJivaKp9eqqHBMas0T40CDvP3x93woeSmVRUAWVDsyyoYH9RmVDIGHprcRX+iQSFXHWO36tMAiFvPA535Zjo01RGCNGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=YSQqmBdB; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=AHfKA9U4Qc/kfoVyXIAwIin/0PHtcEBFmI2qkbJlwas=; b=YSQqmBdBp6Cnqio5Q494KslAOs
-	4IwGfKAEq3Yx1gDBSm40vA7TITFzwpl7tzPQiEk9pf91Qljfll83vZg7bFt7U76ye5LcZPZcQihYm
-	rMD+Tm67OaIlxTr+A/J08+ujbQhWSUCniipMMiuOza4Uk5++DBGDynN1uY8xCwi9U84b8/6uex+U2
-	j1wvM7P2YQ7FdQ2dRqlRQoRuMiBSYlHJdZeaT9guLiLTmGrhTfKaKQg3CDVXMApOXZdpL2H7g9MrW
-	EJZfKmepspjCiTWqBBKcPOA0c8/SBZ5P2LDmeCerFlB05cvK3DpuzBCfgIg5pJvMP4BB0Z6X46ldl
-	sRFA5eAA==;
-Received: from i53875a28.versanet.de ([83.135.90.40] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vAVv4-0001nY-Qi; Sun, 19 Oct 2025 18:06:06 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- David Petry <petry103@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- David Petry <petry103@gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Enable second HDMI output on CM3588
-Date: Sun, 19 Oct 2025 18:06:05 +0200
-Message-ID: <6801712.G0QQBjFxQf@diego>
-In-Reply-To: <20251019142053.11047-1-petry103@gmail.com>
-References: <20251019142053.11047-1-petry103@gmail.com>
+	s=arc-20240116; t=1760890146; c=relaxed/simple;
+	bh=FoS+s2SLs1a/86XBAZ0WcyxTGfRjJzC9vcvuY3cy8s8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cSwkQSm2xdqjn9s0nNpHq5EhkOZ8S4ClXTrIBuux/YNiuz5x8n3eu4O1MgF1aeaaR6JLOGoj4lKCoKzrMzyfRPIgejCSscUEIGRxJo+znzVHSfAt36mhvU47k5GxLKnIEcevuKyVFyVLWOBVxMPCsh2va9N717fkPD9Pc9TDN4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSzKmNV5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DBDC4CEE7;
+	Sun, 19 Oct 2025 16:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760890142;
+	bh=FoS+s2SLs1a/86XBAZ0WcyxTGfRjJzC9vcvuY3cy8s8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kSzKmNV5nZZpQE35pdj80lOCp8LM4F4tJMzwcpamC1HM52wkXYj5fLUcd+p3kVjBb
+	 H9zyohTNWdHko6sau+nG5V8NJVBRbCDuj7QdrTmDmT/+frTTFCH5saLdVwqFxuiG9C
+	 5KjqDIXvyu0UR+iaE+j5m/eGaNmZC6Taq/AqPskpLfKM2/SttDYS2ZHb2lIV0DFm8y
+	 1Ht+Jp1r0WGLuCUiyOk3Nv/PxFcFdzgBc1O2VEBB7It2bVWAZWksZrEDNNwKw4YziX
+	 VsAIr5Xz7HtzOyspCEZY7Gp0FGe/ReIR0/KcDt+VTfW2phqG6uA3/hiOA6EDjOxo5k
+	 9jJVKfLjD9mWQ==
+Date: Sun, 19 Oct 2025 09:07:29 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH 01/10] lib/crypto: blake2s: Adjust parameter order of
+ blake2s()
+Message-ID: <20251019160729.GA1604@sol>
+References: <20251018043106.375964-1-ebiggers@kernel.org>
+ <20251018043106.375964-2-ebiggers@kernel.org>
+ <aPT3dImhaI6Dpqs7@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPT3dImhaI6Dpqs7@zx2c4.com>
 
-Hi David,
+On Sun, Oct 19, 2025 at 04:36:36PM +0200, Jason A. Donenfeld wrote:
+> On Fri, Oct 17, 2025 at 09:30:57PM -0700, Eric Biggers wrote:
+> > Reorder the parameters of blake2s() from (out, in, key, outlen, inlen,
+> > keylen) to (key, keylen, in, inlen, out, outlen).
+> 
+> No objections to putting the size next to the argument. That makes
+> sense. But the order really should be:
+> 
+>     out, outlen, in, inlen, key, keylen
+> 
+> in order to match normal APIs that output data. The output argument goes
+> first. The input argument goes next. Auxiliary information goes after.
 
-Am Sonntag, 19. Oktober 2025, 16:20:53 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb David Petry:
-> Enable the second HDMI output port found on FriendlyElec CM3588 and CM3588
+In general, both conventions are common.  But in the other hashing
+functions in the kernel, we've been using output last.  I'd like to
+prioritize making it consistent with:
 
-the decription sounds like you're referencing two boards, but the change
-itself only touches one. Is there a 2nd patch missing or does the wording
-above need improvement?
+    md5()
+    sha1()
+    sha224()
+    sha256()
+    sha384()
+    sha512()
+    hmac_md5()
+    hmac_sha1()
+    hmac_sha224()
+    hmac_sha256()
+    hmac_sha384()
+    hmac_sha512()
+    hmac_md5_usingrawkey()
+    hmac_sha1_usingrawkey()
+    hmac_sha224_usingrawkey()
+    hmac_sha256_usingrawkey()
+    hmac_sha384_usingrawkey()
+    hmac_sha512_usingrawkey()
+    crypto_shash_finup()
+    crypto_shash_digest()
+    crypto_shash_tfm_digest()
+    [and the SHA-3 functions in David's patchset]
 
-Thanks
-Heiko
-
->=20
-> Signed-off-by: David Petry <petry103@gmail.com>
-> ---
->  .../rk3588-friendlyelec-cm3588-nas.dts        | 38 +++++++++++++++++++
->  1 file changed, 38 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.=
-dts b/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts
-> index 5fbbeb6f5a935..10a7d3691a26f 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts
-> @@ -101,6 +101,17 @@ hdmi0_con_in: endpoint {
->  		};
->  	};
-> =20
-> +	hdmi1-con {
-> +		compatible =3D "hdmi-connector";
-> +		type =3D "a";
-> +
-> +		port {
-> +			hdmi1_con_in: endpoint {
-> +				remote-endpoint =3D <&hdmi1_out_con>;
-> +			};
-> +		};
-> +	};
-> +
->  	ir-receiver {
->  		compatible =3D "gpio-ir-receiver";
->  		gpios =3D <&gpio0 RK_PD4 GPIO_ACTIVE_LOW>;
-> @@ -335,6 +346,22 @@ hdmi0_out_con: endpoint {
->  	};
->  };
-> =20
-> +&hdmi1 {
-> +	status =3D "okay";
-> +};
-> +
-> +&hdmi1_in {
-> +	hdmi1_in_vp1: endpoint {
-> +		remote-endpoint =3D <&vp1_out_hdmi1>;
-> +	};
-> +};
-> +
-> +&hdmi1_out {
-> +	hdmi1_out_con: endpoint {
-> +		remote-endpoint =3D <&hdmi1_con_in>;
-> +	};
-> +};
-> +
->  &hdmi_receiver_cma {
->  	status =3D "okay";
->  };
-> @@ -350,6 +377,10 @@ &hdptxphy0 {
->  	status =3D "okay";
->  };
-> =20
-> +&hdptxphy1 {
-> +	status =3D "okay";
-> +};
-> +
->  /* Connected to MIPI-DSI0 */
->  &i2c5 {
->  	pinctrl-names =3D "default";
-> @@ -840,3 +871,10 @@ vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
->  		remote-endpoint =3D <&hdmi0_in_vp0>;
->  	};
->  };
-> +
-> +&vp1 {
-> +	vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
-> +		reg =3D <ROCKCHIP_VOP2_EP_HDMI1>;
-> +		remote-endpoint =3D <&hdmi1_in_vp1>;
-> +	};
-> +};
->=20
-
-
-
-
+- Eric
 
