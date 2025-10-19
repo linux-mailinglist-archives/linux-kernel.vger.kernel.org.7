@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-859844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBDEBEEBBD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:18:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65751BEEBC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2D03BF9D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:18:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B73AD4E6C93
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B79224AEF;
-	Sun, 19 Oct 2025 19:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514502288F7;
+	Sun, 19 Oct 2025 19:18:25 +0000 (UTC)
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA9354AE4;
-	Sun, 19 Oct 2025 19:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FB91F1517;
+	Sun, 19 Oct 2025 19:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760901493; cv=none; b=IWkjgICD7EG3422bnCOKOtTb+K1068nz1THp17EpU1/9LBJ40GYxgn8vQxAHDObkTLfZFmCPBRtkuIShJaz1jjNFH668uol7sOhxPBmmj2Hkbg9psOcmt+Ov7KSrox8Fl/++L4n+q1JY4leRRxEc6KU+O7g5FGHf3gn0H2MmQZU=
+	t=1760901504; cv=none; b=Dww8cns5BC6d0dNxSVbe2FwImqGmg20a1pS+dzaHeT4MKX9cXy2PyhIq0s8xYdOXHaMfn+qskUpx6dLOCYYhJXPQ6Ay13wYl15NL4MTNox6NX7L2xVfQQlgQk8QbyOvMgLwQKRPN+Y+6W8P3suyf9PD5n3JjH2Jw8nXmA4ORUFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760901493; c=relaxed/simple;
-	bh=AbZFXn6kwETMJW8cChbyTo9aH5d5PaR1eTrbogoSfWs=;
+	s=arc-20240116; t=1760901504; c=relaxed/simple;
+	bh=P9mKEoh5Li1NdU6vReTugEXGJWFzP5Gs2NLQrMhAWHk=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C7W0rjfWPA0XTG40ZsnAryTRbeWO3joIOozceeMqOUiEDEvAcLy47fefquO/WYtrmlD/SBKgXSpqZFF58hFPCJw+OIObY7Wl0cetSd34tJ+c6NTcAtvciyeVTwH4Jg1s1avyfGkRCSb0T3mTCrBnoB52Pj4gdMbsu8/miZTsat8=
+	 MIME-Version:Content-Type; b=nCAfRkNwJR/J4i0j8hItaaO9CLz0z4/1rB4rVK5mWwBFCnvv3phyCJu8yU7N4vMyrzmR8AAuvu+AJa8ufCwA8RB+aN+4LjaaewLyZ+ybcZdjAkDTo/UAkT4UysPYAfIN+hdtFd69yKR+wvBRJ7tGmdnWeWQtE9owMty/s1VFICc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
@@ -33,21 +33,21 @@ Received: from mop.sam.mop (2.8.3.0.0.0.0.0.0.0.0.0.0.0.0.0.a.5.c.d.c.d.9.1.0.b.
 	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sam)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id B58B4340F14;
-	Sun, 19 Oct 2025 19:18:10 +0000 (UTC)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id AE112340F14;
+	Sun, 19 Oct 2025 19:18:21 +0000 (UTC)
 From: Sam James <sam@gentoo.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Andreas Larsson <andreas@gaisler.com>,  Stian Halseth <stian@itx.no>,
-  sparclinux@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sparc: don't reference obsolete termio struct for TC*
+To: Richard Henderson <richard.henderson@linaro.org>
+Cc: Matt Turner <mattst88@gmail.com>,  Stian Halseth <stian@itx.no>,  Magnus
+ Lindholm <linmag7@gmail.com>,  linux-alpha@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alpha: don't reference obsolete termio struct for TC*
  constants
-In-Reply-To: <e11ecaf723594bf01c66fc5c80c25bda0621f34f.1759359616.git.sam@gentoo.org>
+In-Reply-To: <99f1a93cf8cd4f0ece8611be2860677084663aac.1759359610.git.sam@gentoo.org>
 Organization: Gentoo
 References: <99f1a93cf8cd4f0ece8611be2860677084663aac.1759359610.git.sam@gentoo.org>
-	<e11ecaf723594bf01c66fc5c80c25bda0621f34f.1759359616.git.sam@gentoo.org>
 User-Agent: mu4e 1.12.13; emacs 31.0.50
-Date: Sun, 19 Oct 2025 20:18:06 +0100
-Message-ID: <87ecqyaefl.fsf@gentoo.org>
+Date: Sun, 19 Oct 2025 20:18:18 +0100
+Message-ID: <875xcaaef9.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,34 +68,35 @@ Sam James <sam@gentoo.org> writes:
 > Link: https://bugs.gentoo.org/961769
 > Link: https://bugs.gentoo.org/962600
 > Co-authored-by: Stian Halseth <stian@itx.no>
+> Co-authored-by: Magnus Lindholm <linmag7@gmail.com>
 > Signed-off-by: Sam James <sam@gentoo.org>
 > ---
-> v3: Fix constants.
+> v3: Fix constants per Magnus.
 > v2: Fix title.
->
->  arch/sparc/include/uapi/asm/ioctls.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
 
 Ping.
 
 >
-> diff --git a/arch/sparc/include/uapi/asm/ioctls.h b/arch/sparc/include/uapi/asm/ioctls.h
-> index 7fd2f5873c9e7..f26befbf690fb 100644
-> --- a/arch/sparc/include/uapi/asm/ioctls.h
-> +++ b/arch/sparc/include/uapi/asm/ioctls.h
-> @@ -5,10 +5,10 @@
->  #include <asm/ioctl.h>
+>  arch/alpha/include/uapi/asm/ioctls.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/alpha/include/uapi/asm/ioctls.h b/arch/alpha/include/uapi/asm/ioctls.h
+> index 971311605288f..a09d04b49cc65 100644
+> --- a/arch/alpha/include/uapi/asm/ioctls.h
+> +++ b/arch/alpha/include/uapi/asm/ioctls.h
+> @@ -23,10 +23,10 @@
+>  #define TCSETSW		_IOW('t', 21, struct termios)
+>  #define TCSETSF		_IOW('t', 22, struct termios)
 >  
->  /* Big T */
-> -#define TCGETA		_IOR('T', 1, struct termio)
-> -#define TCSETA		_IOW('T', 2, struct termio)
-> -#define TCSETAW		_IOW('T', 3, struct termio)
-> -#define TCSETAF		_IOW('T', 4, struct termio)
-> +#define TCGETA          0x40125401
-> +#define TCSETA          0x80125402
-> +#define TCSETAW         0x80125403
-> +#define TCSETAF         0x80125404
->  #define TCSBRK		_IO('T', 5)
->  #define TCXONC		_IO('T', 6)
->  #define TCFLSH		_IO('T', 7)
+> -#define TCGETA		_IOR('t', 23, struct termio)
+> -#define TCSETA		_IOW('t', 24, struct termio)
+> -#define TCSETAW		_IOW('t', 25, struct termio)
+> -#define TCSETAF		_IOW('t', 28, struct termio)
+> +#define TCGETA          0x40127417
+> +#define TCSETA          0x80127418
+> +#define TCSETAW         0x80127419
+> +#define TCSETAF         0x8012741c
+>  
+>  #define TCSBRK		_IO('t', 29)
+>  #define TCXONC		_IO('t', 30)
 
