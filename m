@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C388BEE292
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:04:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424BBBEE29B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 639BF4E4805
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:04:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14E084E1BED
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415522E54DE;
-	Sun, 19 Oct 2025 10:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6942E5B1B;
+	Sun, 19 Oct 2025 10:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="In29qi3z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu8kUuTP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207121EE019;
-	Sun, 19 Oct 2025 10:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5332E1EE019;
+	Sun, 19 Oct 2025 10:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760868239; cv=none; b=oV7gRY1Oex1w/Vw9s2YXtP+EHW7Vodwgt45hFYL1y1DCxHD0W9ZMiwHiqx6l+Jbg5bMK41/eYDGvCWoYZLO7MzO24OFrx1R0EwgtAjJTpyTEq/Qqkkk4jeVGqyAu392/VvAzlnLChc2M/NbvjcdQJ0CzGCXslhZFg/a66RdALX4=
+	t=1760868277; cv=none; b=ohFCLf6obIqcaHayZvkA8KE0TLpyL5iPycKI2zqB+mSbfEhbiZmoMHDOtePvU8O4xopRWqJKDKlq0GO9f/xe1qAHkTiuuPj/dPfuZNaa7fuk58PO9LjNKvCfHE6PriOFhYTlRTwsurBcOz41kWL+mHxe9TVUQH5CXSzYQ+wpaEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760868239; c=relaxed/simple;
-	bh=y6N4OVCBgMamWcwFizLrQmToD6eC9fiNXocvZf5m3CY=;
+	s=arc-20240116; t=1760868277; c=relaxed/simple;
+	bh=K5bIOHqo4e4+v9JFw9VR8FYJWSsf4cxoBgG8icLWWIU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=arriiTMowwPbJQoJ+jQ4kJJQxz4AFj/jS2Gt/iJyfICTBKCjpWvB3zA1h+xZ+fiB6TmMAXC8Zu8pMca2JuPlgpcy2+DfwD/9YVY8elG4AFe5Pe59qT/PH4iB2kzAFvl5r8LEs9jFeoMPenettT87jb8APdg61uEA8kYrYOgRr4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=In29qi3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80702C4CEE7;
-	Sun, 19 Oct 2025 10:03:54 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=EcFgo/ddIhVzAlIB0AnLhjpbPuyMpvPlN6kxqp4ddsbFMIwg8Kil21GnBFgNRYCjMaYkxH9kAx+HBi1YhV7emL94xBtmMvH4a7E3I9oAJasStytkK3TEOlKpFDJt1+9QRZcfoazvys+d5b967/emHD+u/rnUTckyXHrn3ZWK5D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu8kUuTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853F1C116C6;
+	Sun, 19 Oct 2025 10:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760868238;
-	bh=y6N4OVCBgMamWcwFizLrQmToD6eC9fiNXocvZf5m3CY=;
+	s=k20201202; t=1760868276;
+	bh=K5bIOHqo4e4+v9JFw9VR8FYJWSsf4cxoBgG8icLWWIU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=In29qi3z0rBMtHAkJwncS/drzsoqgYMQVyLcNJ1aYeFpGOv/QtnUujmASFqxvXMjW
-	 WIsZ2QR1q9EyuMq1z/K28VeHyI4xx+USHYrbY2Gki6minkGXQKieECU9r1oJ0OajZD
-	 4o9CxnyNLjMw4sEY8tWZ3ej9wrcnC/7RIXIan1IDCFsBwl48jYbMa2yW3k9ff7MjsT
-	 oaazzO9pDGbpGQEHmp/Q4HrDk9uUvQGvHaqtFvwRac2lgZ2NXE0RQB7iBBwoyAR7TP
-	 TUVwfDsYAxYqfX1PaeLuGYjJeDzNaF0sYn7ksLfoCOsNXkC/XUs+1zHLLtCHugq5ur
-	 r2ccp4TpkX1eQ==
-Message-ID: <f45b3490-0cb3-4a3f-88e1-1f5b462e8088@kernel.org>
-Date: Sun, 19 Oct 2025 12:03:52 +0200
+	b=hu8kUuTP8G2bym5uquQb23frtqpM9s5kephneD5NwmnrA4u3r68L5W63bzFHEGbii
+	 L3+Mja+AasARH8lj2JkjkVSKLyQAUcEIZwQ8iUwHODa1w1GEhuSzMisPjiiN05F5AA
+	 gO2nBYYRnSSQVxzE5CinWzILsFFiPf2Pb2L1v4WbTTr74Y38JNaudZJmRzzY1ByjZe
+	 USYG+j6y1+0Z2QJy6bTfW2HsJDeaTDSAVpFBBGa7gno216k7k7Su2fPI8fhvzOsQ1v
+	 jnfvoxXKcJbTWmcsZDMkkBGIi/IOLqMKiUB8nGsbY1Y6RuKGUTFF5aT+/sxx0qMrXa
+	 jPM/p1Wj1CL7w==
+Message-ID: <d7cea4d7-52ce-42b5-a1b8-452998351630@kernel.org>
+Date: Sun, 19 Oct 2025 12:04:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,19 +50,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+To: Frank Li <Frank.li@nxp.com>,
+ Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
  Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
 References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
  <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+ <aPJTquVc8zl727bC@lizhi-Precision-Tower-5810>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,19 +110,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+In-Reply-To: <aPJTquVc8zl727bC@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 13:20, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On 17/10/2025 16:33, Frank Li wrote:
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/imx8ulp-clock.h>
+>> +
+>> +    clock-controller@2da50000 {
 > 
-> Add documentation for i.MX8ULP's SIM LPAV module.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
+> Maybe mfd is better, this is clock, reset and mux controller actually.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+There is no such hardware term as mfd.
 
 Best regards,
 Krzysztof
