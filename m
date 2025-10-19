@@ -1,144 +1,84 @@
-Return-Path: <linux-kernel+bounces-859797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863D1BEEA09
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:27:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72579BEEA1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 332E0348D38
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F87189A760
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9AD2ED858;
-	Sun, 19 Oct 2025 16:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985882E9753;
+	Sun, 19 Oct 2025 16:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="quII/I8W";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="SsNsrm1c"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoZUXiWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C3A38F80;
-	Sun, 19 Oct 2025 16:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E845B18DB1E;
+	Sun, 19 Oct 2025 16:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760891246; cv=none; b=u2dTOYWSZ4TLXUMqpsAWAqEa/TUAF3a2GMAarAkJDkV4RUSUdOmLLuF1iXDyxX+dSDJ0LPYo7t9Oy6RAHt1OPHYBWahfY3SYuLqNjZwS12zDE3/Qt5gzkJ+7Fv+/5Df1NFnCAEfdVMObh1Ixhoob+9OLRP2Aq32gkEUX4Apc6eI=
+	t=1760891663; cv=none; b=JtIdAnzlI1KP1dVIbgD2W1Dy7zi9o9iqFrhMHx+388xOaYIauG7Yf3IxmjSW6vg4uhogKHPvOtm8Tt5jWHg7/tjpR42ACqhV9nkpaxv3itxfOQWJ/LvJFgXWFwa0whLFxIYLeqRtdAxTSGywf91OktMAlpo+Q5hFFlhaVdG4oEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760891246; c=relaxed/simple;
-	bh=gvzql2bTV8SYhn9R991aVWWFpHJeBNeGZXGgR2zVwCo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NLckzll5aXrwmCJF2n3SgAs6llXgumUdh0gcN2b55HdtiPEzVeUBfbvIyOUk37/ie7/g+7UHxtlD/eGFmN1rvMbc5hzeEws8e4m7cJ0ZmRtp3Xq0JVMxYyAqgVjjsld1l4rJ+TA14wQEccPmQFo6R5lezHOOslLwWh6qNk1Kq4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=quII/I8W; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=SsNsrm1c; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1760891235; bh=DjOGkHv09MNig9lChj2MRHO
-	fB6H7BBMERm2AgemVQTY=; b=quII/I8Wnd6OTa+0kA0k35jiyDgT4W7RBKV/vXL6XzYnUvURg/
-	8OJOqXpgGVjH6N98oSC3APZbB2aIhyAD0BH+F2mxkD5YcX7L0/IzVrbe3/kQMeZuGseLb+kQIJ9
-	5xo1kEMdKCHlCFGIj6Eh0QxrUxUTuYH7FsOaLLhgNv1C3yZvnB4ZMB9NeZobCNMWPlDEYqGpNds
-	WYqdi+CWvvupLy77+KBAAuOTtB+QazovlHNNKHN4uEjXKhMO0nAD0xDJJaZ4iTFJbX5roSdxA6t
-	WLtd6ITOd6arZRzTn8iJrU+rJRNtT5eelH9JyMlmLpIAE5jcqKDj/o8t+QxzKtoFFtQ==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1760891235; bh=DjOGkHv09MNig9lChj2MRHO
-	fB6H7BBMERm2AgemVQTY=; b=SsNsrm1cjB5vctcc4S5gHzjxq9IkKYp0+4iDPzol1HsVKLelGR
-	+6UHbV2SChPA83W3ssoXpxlhcwXd8zC+ngCw==;
-From: Nickolay Goppen <setotau@mainlining.org>
-Date: Sun, 19 Oct 2025 19:27:07 +0300
-Subject: [PATCH 2/2] arm64: dts: qcom: sdm630: Add FastRPC nodes to ADSP
+	s=arc-20240116; t=1760891663; c=relaxed/simple;
+	bh=/NRRdUmhRaH39Ejf4m2sUH6ftZqYfftBYvCOeLeAB+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcA7IBKR6xM0HJ/860tjDe/2KEqiuQn1FQ0A1GbkzRImVUYjyP8eCKnS684cARjk+jWr4amf/HTCuARqmXorsmgVUpbLOdTqCaUJi4QXycjIqiPIbjtuO5VZrsN0lTmhybY0vxQ6RVb9KT2LE3F3vOosoTg84oO+2kmmiGze5pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoZUXiWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332D9C4CEE7;
+	Sun, 19 Oct 2025 16:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760891661;
+	bh=/NRRdUmhRaH39Ejf4m2sUH6ftZqYfftBYvCOeLeAB+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uoZUXiWmUFW10a1JTRZpdih6o4vHlP6bLJG6+06VXJktkSRm5Cd1TCmTxS16rNd3r
+	 ALWQjIRSV0xCsBZEgp/pOMiuYIm8CFcgfzYYWFPjb4Nlx9f91YPKQdbnXnZPJ7Awdt
+	 GGsuTRrvl8QYJGVpKaOH4muF2nAt0BVsJpCdyay7gdd2r/qC7ct6zdwfMc1HF4ELBU
+	 TubNBemLY6OZIWcDwHOLWFmlDg/38Nhg///DHb4PkvMqBn35EwzpwTl2Rti+H5cw6q
+	 Ci8iYFVrH1ttyCOQcvjnOEOs9Z3G4rHqYVpkYpsdNg9COpzB/0XFwcT5W6VEGN71Qq
+	 EfSnAFK+zQuoA==
+Date: Sun, 19 Oct 2025 09:32:49 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH 07/10] lib/crypto: arm/blake2b: Migrate optimized code
+ into library
+Message-ID: <20251019163249.GD1604@sol>
+References: <20251018043106.375964-1-ebiggers@kernel.org>
+ <20251018043106.375964-8-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251019-qcom-sdm660-cdsp-adsp-dts-v1-2-9ab5f2865a6e@mainlining.org>
-References: <20251019-qcom-sdm660-cdsp-adsp-dts-v1-0-9ab5f2865a6e@mainlining.org>
-In-Reply-To: <20251019-qcom-sdm660-cdsp-adsp-dts-v1-0-9ab5f2865a6e@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, Nickolay Goppen <setotau@mainlining.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760891233; l=1756;
- i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
- bh=gvzql2bTV8SYhn9R991aVWWFpHJeBNeGZXGgR2zVwCo=;
- b=noeZpMdGgzrzNxxH4/uOt6Ae+w3JkFPhdUIiP9khF0M3lLIkkFkv1umLxaBJEhNZcOucrj7lW
- dBv5zbkMkRgBd7tGaHyEGHxK7k8irtp5qbXc7/dZqKSgnfVt7qe+haD
-X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
- pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018043106.375964-8-ebiggers@kernel.org>
 
-This includes:
- * Add missing vote clock and GDSC to lpass_smmu
- * Add FastRPC subnode with compute-cb subnodes to ADSP node
+On Fri, Oct 17, 2025 at 09:31:03PM -0700, Eric Biggers wrote:
+> diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+> index f863417b16817..5c9a933928188 100644
+> --- a/lib/crypto/Makefile
+> +++ b/lib/crypto/Makefile
+> @@ -34,10 +34,11 @@ obj-$(CONFIG_CRYPTO_LIB_GF128MUL)		+= gf128mul.o
+>  obj-$(CONFIG_CRYPTO_LIB_BLAKE2B) += libblake2b.o
+>  libblake2b-y := blake2b.o
+>  CFLAGS_blake2b.o := -Wframe-larger-than=4096 #  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105930
+>  ifeq ($(CONFIG_CRYPTO_LIB_BLAKE2B_ARCH),y)
+>  CFLAGS_blake2b.o += -I$(src)/$(SRCARCH)
+> +obj-$(CONFIG_ARM) += arm/blake2b-neon-core.o
+>  endif # CONFIG_CRYPTO_LIB_BLAKE2B_ARCH
 
-Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
----
- arch/arm64/boot/dts/qcom/sdm630.dtsi | 38 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Correction: it should be
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-index a6a1933229b9..2764666714e6 100644
---- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-@@ -1217,6 +1217,11 @@ lpass_smmu: iommu@5100000 {
- 			reg = <0x05100000 0x40000>;
- 			#iommu-cells = <1>;
- 
-+			clocks = <&gcc GCC_HLOS1_VOTE_LPASS_ADSP_SMMU_CLK>;
-+			clock-names = "bus";
-+
-+			power-domains = <&gcc HLOS1_VOTE_LPASS_ADSP_GDSC>;
-+
- 			#global-interrupts = <2>;
- 			interrupts =
- 				<GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-@@ -2337,6 +2342,39 @@ q6routing: routing {
- 						};
- 					};
- 				};
-+
-+				fastrpc {
-+					compatible = "qcom,fastrpc";
-+					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "adsp";
-+					qcom,non-secure-domain;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					compute-cb@1 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <1>;
-+						iommus = <&lpass_smmu 3>;
-+					};
-+
-+					compute-cb@2 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <2>;
-+						iommus = <&lpass_smmu 7>;
-+					};
-+
-+					compute-cb@3 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <3>;
-+						iommus = <&lpass_smmu 8>;
-+					};
-+
-+					compute-cb@4 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <4>;
-+						iommus = <&lpass_smmu 9>;
-+					};
-+				};
- 			};
- 		};
- 
+    libblake2b-$(CONFIG_ARM) += arm/blake2b-neon-core.o
 
--- 
-2.51.1
-
+- Eric
 
