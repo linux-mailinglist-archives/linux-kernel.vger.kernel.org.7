@@ -1,140 +1,183 @@
-Return-Path: <linux-kernel+bounces-859638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD37BEE2D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:16:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC35BEE2D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7505189C29E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:16:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DD50C3434AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FAB2E5D32;
-	Sun, 19 Oct 2025 10:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058D92DFA3E;
+	Sun, 19 Oct 2025 10:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RORhZ9RV"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yx/SF+vO"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A54286412
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B7B1C2324
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760868976; cv=none; b=LEvIGSoiJcnM8Z4eraWCczCgEMoYrIWAAgr1ndifkXwFn+X9Ks95lhEae8KBi8+FJ42fn8R5oIRk6VLwblI2M5Sen1ynvOgAIa+IM+5c05vgpIb/GTGpTigGxyiIagXy6rtlv06UnHB6XTOF6GAYEgWiITrkuED+EVdkzbvLpqk=
+	t=1760869074; cv=none; b=JgnG0C5E8QiF4o15B4+vhSf1qyFujM+9qW2RLgr3vjYNebC/+9PhRljNj3igSXqY+NV0k2xP14Y4TwXizIzhVo2Ruohs+VwQ3xo5CYhJk5+yLZuEJt3nx+Gx3kGWy5bd+11XAKWkcm238aYIV8IlBdDzrycfgeNKVFMamMhFkc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760868976; c=relaxed/simple;
-	bh=Y08tXfyNPYZyI02pzti3KblHd6VvVvbdphmuQCznqJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cd+9294G14t2c5g+ShE7dalobWUzvdUvoF/VFxC1EBXFQoe5LH73j2ywRjXhCxHFTDOrgQYCFw3rpwS40BOKWfgzoInFcWsgxvFHT8RMxNaVqGB7CVXyi2KWSuJYJVIIYZ313kiSH63PiCGjoPRSQ+X1hHfpZ0m2ZWGL5Z0w80Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RORhZ9RV; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1760869074; c=relaxed/simple;
+	bh=NIBudYuoPuHUT5EhBUxqS3lYcOq1lQSbyJ+t7t88OZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HqTWqb7Wqt23WDXTgw9vP+uD3352YZoSnw2efv+dP7ztehk7IbImEh/kS8V+7X+518+ZiGqKQa59tAquVxMWlZpTWwtYH2CnY0279ap1gRDQMemyQcx1vU9KJWMHvCkxdfhugxsa01oIkeHlan4gzXM4PTIJ5X2eEv9yptWeh88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yx/SF+vO; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62fc0b7bf62so5127637a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 03:16:14 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ece1102998so2933555f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 03:17:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760868973; x=1761473773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760869071; x=1761473871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d9u83kC+rt7nZCWulip1b6xtkpKKymTmDmInRZDupgQ=;
-        b=RORhZ9RVQjE/eG+e8iqUd1Nz4wVVxWisUfjM1Amqx130yHRgfY0VC/r98RDcMMLjDt
-         i1eAO10C5GhNXRG/qAZt8hPjKQP65u6TqH/JuU6RoWu762mM2PeP2eWJHjkoCJBD+l1B
-         f8Rl27M8YQoJc7J9BadURA9utXknvLaOIOxYhe0yu5/oFRm5/w0blknUnj1F75GLE+zm
-         hlG+yjO3MZIQjTGhe0swuUGsKQ6feF5HVhKYXXaLD93RoBiBprOHFG3Sc3IGD/RqsucR
-         1wmc6ACTaxNdIuVvdAu0vWjzgM9t+zEiGY5QdUj2FUjyUaY+syKM0u+teJLznhFdK4Xk
-         ItNQ==
+        bh=0pujRAFNF+M5FPftuQoiuNZvJ6K+8t69UrOSME69oUQ=;
+        b=Yx/SF+vO0pAwzzCNYtmTrUf3gHQzyY9sCHi+dVYDfcdmNYwlbUV7bNGuFbu2zwjXjv
+         9FAUosYnI65FAjc2Zryyl5mjwhoQuviwDpFtHgJxePkuO7E+Sh46zXGfLMccaFoNobm2
+         M6NtYtRvjkjT+XB5UneiXoBpZOOnIw7fIJCwFwegG+qIRlgj5YKfGow8RX0FY3QoucCK
+         DGw1/uvke8GEDsLnS3cdDXMglwN5FEXjzoq/iwT9PDRyEU2jO770WdKJQ9A1RdV7CdWu
+         t155bk6bKoZQ2c/EHdH6D+7Rwb1+XZ/2frTOitk7K3YDBoetHbfVcfyYK4VHOkb63Ji6
+         kWdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760868973; x=1761473773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760869071; x=1761473871;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d9u83kC+rt7nZCWulip1b6xtkpKKymTmDmInRZDupgQ=;
-        b=NFH3j1+ECj3j+s3qShEehdufvQHuuChkmV5TnVnQBVhw1ax9lQa/oBaJ+XawnJxguE
-         b9ilUz+Gb//4Dis1/Xj0DL+Fu8d3TemahUmD1sNNsjGpccs6TZ17D0pS+lBpL7EO51qF
-         q7Pmw9k+he8ROnA9cSC2x4KEvycRkqMkTOQ574j/QNZt/ux/1FU5Yyh7uRMAIBL9/hfC
-         ZqRiaLSQMFGbBV3L7p7jC5Khyf9fFbT9mEYgPrT04B5YW+HCOFkvTahq71flb8doUNEA
-         0D2Q1AlZ9H8Afd4oZETk8CB437tGcq8OhdyQNJUSkT1cM/Cr2ZRvsMaDQjH9yu9Xuamj
-         3YfA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1VerpnmTmjMr3IiQvrq9elY4zHuXVzefYRGbTGvaH9qGvxZmclIU9TFiX0Na62r/zLFBCgAS4ku8FsMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCOFWDYb2FGRHlu18sOeSjSOIqt5vlyHxKqL4aUuBBjmQ832h+
-	t2WQe0HfmPAE0R406LTffBGbyatYveWD7uy6uo2NscX51+apV8lYU6Aw77jhXVQ3S5tMPNvT4cm
-	lHKvv9yQ+tKCJrY+e33SkADZLZItEBT8=
-X-Gm-Gg: ASbGnctk8uXSjXP2vNIGMF9I2NEA3cAe2Lu3ObSuLAj1WGCOvLcTDbXvkbdMUHZvoBV
-	tnexrsmNtXuIBliyr1NwixmKm6cTrx4N9GOGJtz9mopsnnHP5BXa9u/kDujPoXuO48O2Y/kck0U
-	+qfXAnMi1f+rsVzRuDyaxZhn2d16qcr+rKvdHMWueqhjy1t1lIDDpBHw+WLGDGOKDWKp3NYyRk3
-	D45kt3tprAvdwtaBnjx99wNnupuSKNi5jZgej45m/YwUTLle2BK8y1oU2QAH1mOVXYqHw==
-X-Google-Smtp-Source: AGHT+IHF5j3FxHGqGSMc6gTJFWS25mlgIJJ+B9ZAQH84yMytfrS9hAu85pLm9QkNmBBzhedGsITk+O2Ty5GQr/NWr/Y=
-X-Received: by 2002:a05:6402:3492:b0:633:7017:fcc1 with SMTP id
- 4fb4d7f45d1cf-63c1f6458b6mr9014013a12.14.1760868972724; Sun, 19 Oct 2025
- 03:16:12 -0700 (PDT)
+        bh=0pujRAFNF+M5FPftuQoiuNZvJ6K+8t69UrOSME69oUQ=;
+        b=I0fD7RvyIRMb7nSFPQBfsXfUTw6QKwNQufbbROOMX1W8C5KuOBLDjit2/KWTE9NLgG
+         ZRlkTZYFVfsc4T8pBhAijsk/pb8aHkZ+DAnYSAoExpZuS8Vm6mRCQQSVDfm9bOKXkbsm
+         kO1tWpeGhHp7UkwIHvB2MpEkRbdyEvyWiayam1jYWZG8Do3JikXL5jnt7Dr2Mx3DpIZZ
+         wuD933nWGRQXpuFuUh4vMAdDid4prFx4vOBcp3SPiYfDCyp7m82kG2ZQKZ4JrO442FYN
+         GIuCYZHuuD8YLN8+TcCjFln6aBr3rGfacfCTo4tDuz/Zsmdl96VLMzejMVn5iA4uWyb9
+         HaRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUOcgIxYzI5Ome/YnIj5yQN3x+mwXbz8zZmvysqrKYu66M1WzF+6qVpEZczNehTuiUdtXxfxdNMHXwYB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIUY9gVVfsCTSoLXUj6xAObiArgvZW5QxKn41zmSyW/Q7Lwfug
+	rMTEZfnwJb39wYTJdSWY7RQ4J/DDk2EaK9JNPgak3NyKRkjy8PqosQoM
+X-Gm-Gg: ASbGncs+xoh2ANafmhY7lwEtbHZV0iRhVUwGkxTH0M1VngIxmLgGcuEWc08yxYYRQSB
+	qZvTltwaFQDBdu6K2EdTjRM470tDqZhhOmr9+RGycC2gV3q9iqExUpwNG04+74IV7oJsh/3qoMj
+	xJjQXOC5GlC4MbZtPMCmFid9WAv/nbFHfgjG/TS/+aelGOySBXwH9QbUKB6fIZ0IEeWT3NxvnZi
+	+xfZFc5Oe6bUx4C6WZHAGkFnOjffcZoY46ComIlKzEeYP9ZDTpjJPcqKW8tsCo3Gb8/NeTyHOGJ
+	zgzphC8mLi33nw6nB5Q/dUiTmbIEAZj1uzdt2hYqV4ICABGsI/LT4Ry+YfPtzdx13k13QtbuTUW
+	33dWUkVCpAQSAYE8Ukqz7lJovQO5QQQYB0rZuZJ6ErMt/uiKHHpjlASoTUVULRrBLiCwiTcX4qj
+	J3trDls4PSNpL83Mvl8QH895KiNExBuQR8V2mWbom1Mgh5Rd+LpVFp7EIfb7Vb2/k=
+X-Google-Smtp-Source: AGHT+IHDWHxR+eS5W2I+moYmguRID8F3W2lMveOL7qKksf7E5SF+DVjocrInHwcfFTvpD/FPS2znDg==
+X-Received: by 2002:a05:600c:4e8e:b0:471:a98:99a6 with SMTP id 5b1f17b1804b1-4711789b11emr66402495e9.11.1760869070857;
+        Sun, 19 Oct 2025 03:17:50 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711c487dfesm152925745e9.17.2025.10.19.03.17.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 03:17:50 -0700 (PDT)
+Date: Sun, 19 Oct 2025 11:17:48 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Kevin Locke <kevin@kevinlocke.name>
+Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
+ Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
+Message-ID: <20251019111748.3d5ac8d9@pumpkin>
+In-Reply-To: <aPLC_HdznsRcJbjk@kevinlocke.name>
+References: <20251016214707.5c3d373b@pumpkin>
+	<a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
+	<20251017151256.111f2669@pumpkin>
+	<aPLC_HdznsRcJbjk@kevinlocke.name>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014113234.44418-2-linux.amoon@gmail.com> <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
- <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com> <cf656a57-bb2f-447e-ac6c-0ab118606dc9@web.de>
-In-Reply-To: <cf656a57-bb2f-447e-ac6c-0ab118606dc9@web.de>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sun, 19 Oct 2025 15:45:58 +0530
-X-Gm-Features: AS18NWDvRsVHc0V4iNWmDuNrhP4ZScJhRSS4H0sOBjz9i6y50fgIVE5YKoNz78A
-Message-ID: <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] PCI: j721e: Propagate dev_err_probe return value
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Markus, Vignesh,
+On Fri, 17 Oct 2025 16:28:12 -0600
+Kevin Locke <kevin@kevinlocke.name> wrote:
 
-On Sat, 18 Oct 2025 at 16:12, Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> >> I propose to take another source code transformation approach better i=
-nto account.
-> >> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/core.c#L5=
-031-L5075
-> >>
-> >> Example:
-> >> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/pci/controller=
-/cadence/pci-j721e.c#L444-L636
-> >>
-> >>         ret =3D dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie),=
- "Failed to init phy\n");
-> >>         if (ret)
-> >>                 goto err_get_sync;
-> >>
-> > No, the correct code ensures that dev_err_probe() is only called when
-> > an actual error
-> > has occurred, providing a clear and accurate log entry. =E2=80=A6
->
-> Where do you see undesirable technical differences?
+> On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:
+> > On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:  
+> >> Remove the "x" suffixes which unnecessarily complicate the code.  
+> > 
+> > The problems arise when $1 is (say) "-x", a simple LR parser will treat
+> > [ -x = -x ] as a check for the file "=" being executable and then give
+> > a syntax error for the second -x.
+> > I can't imagine why shellcheck should warn about a leading x (or any other
+> > character) provided field splitting is disabled (eg by "").
+> > The leading x has definitely been needed in the past.  
+> 
+> Yep, it definitely has been.  The rationale on the wiki is that it's
+> not necessary for modern shells (and presumably that it unnecessarily
+> complicates the code): https://www.shellcheck.net/wiki/SC2268
+> However, it notes Zsh had issues as recently as 2015, which is not as
+> old as I would have expected.
 
-The primary issue I wanted to confirm was the function execution order.
-since cdns_pcie_init_phy within dev_err_probe function
+It doesn't really make much difference to the shell.
+I really doubt you'll notice any difference in the time it takes to run.
 
-If other developers agree with the approach, I will modify this in a
-separate patch
+> 
+> > POSIX does require the three argument 'test' look for the middle argument
+> > being an operator - but there might be historic shells that don't so that.
+> > OTOH you are probably looking for code from the early 1980s!
+> > But the POSIX spec (last time I read it) does point out the problems
+> > with arbitrary strings being treated as operators causing complex expressions
+> > be mis-parsed - which a leading x fixes.  
+> 
+> Good point.  I just reread it and can confirm that the current version
+> still notes issues mitigated by the X prefix with "historical shells"
+> and with greater than 4 argument cases:
+> https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
 
-As Dan Carpenter pointed out - " Wait, no, this doesn't make sense.
-It's just assigning ret to itself."
+The fact that the 'greater than 4 argument case' can still require
+a prefix character might be considered enough to make adding one all the
+time 'good practise' even though it (probably) isn't actually needed.
 
-This patch seems irrelevant to me as the return value gets propagated
-to the error path.
-Sorry for the noise. Let's drop these changes.
+While I wouldn't error not having a prefix, generating an error when
+there is one seems wrong.
 
-Since I don't have this hardware for testing, I will verify it on
-another available device.
->
-> Regards,
-> Markus
+What does shellcheck do with [ "$a" = "$b" -o "$c" = "$d" ] ?
+Or even [ "$a" "$b" "$c" "$d" "$e" "$f "$g" ] ??
 
-Thanks
--Anand
+> 
+> >> I think they are safe to
+> >> remove to clean up the code a bit.  Here's a patch to do just that,
+> >> which can be applied on top of my previous patch.
+> >> 
+> >> Since -o is an XSI extension to POSIX, I've stuck with ||, but I think
+> >> you are right that x would not be required in that case either.  
+> > 
+> > I'm not sure there are any common shells that don't support -o and -a.
+> > They get used quite a lot.
+> > I'm pretty sure they were supported by the pre-POSIX System-V shells
+> > (or the /bin/[ program they ran).  
+> 
+> You are probably right.  I still remember when Debian policy allowed
+> them and posh added support in 2007/2008:
+> https://lists.debian.org/debian-devel/2006/11/msg00710.html
+> (I was corrected by Clint Adams about -a and -o being XSI extensions
+> some years before then when I noted posh lacked support, which is
+> probably why I still remember it.)
+> 
+> I find && and || more readable, but I'm open to changing it if you
+> feel strongly.
+
+They get parsed entirely differently and are likely to be measurably slower.
+Just FYI I tend not to use 'if' statements at all, just (eg):
+	[ a = b ] && echo a == b
+
+> Do I understand correctly that you are in favor of using the x prefix?
+> I have a slight preference for leaving it off, but I'm open to adding
+> it if you (or others) feel strongly.
+
+I wouldn't take them out and consider shellcheck wrong, but the suffix
+were just stupid.
+
+	David
+
+> Thanks for the interesting discussion,
+> Kevin
+
 
