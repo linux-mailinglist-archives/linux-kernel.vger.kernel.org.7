@@ -1,196 +1,225 @@
-Return-Path: <linux-kernel+bounces-859583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A676BEE01B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:58:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34863BEE038
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97549189E70B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:58:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A814A4E305A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEAC23506A;
-	Sun, 19 Oct 2025 07:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E032022F177;
+	Sun, 19 Oct 2025 08:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBxVUYZW"
-Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jWH/HZBi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EB022ACE3
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945431096F
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760860664; cv=none; b=D2RsPCJ5RrJ/6ZKkw8cl1N57fc+ha3izR37rOFI4XAMu9NVzINov3f02bVBG7GR45bchFrUwl5eVqfnaBB4sUrS90TqQm/1tmbgOdpRr+vdL2jim2d04gz4+kYtZIPzuLWk9Y2kEN0l3FDfnmNtdvBBfDc0RIRfVLgRTENtUgPQ=
+	t=1760860939; cv=none; b=ucfVTC9g1K9yvhOo/z5rUn0+DhchLrOFRyLOGJ1aR16qDOmIqEAqV+7jEcg4bbYYC128TqKHMRzF2+yutpuIiTojv9PUvvRyUqA7+NQpEExR+gWQIeBVpfZchbA3lxFLX7Jqgf401XiR7jBYy7VZS8P9Pk8SJFUm1PIBBi2WRnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760860664; c=relaxed/simple;
-	bh=ZeXiHDdkFTyro4m7D8rDRiv+zdFWHvj8rUH/gYwzb8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZMRB8nYIya071MqJvHwlGvV9CNq0mOJBz1DYTh2DRa2W7rIBWTrx5G/Yia/rOb7q/gqYFMelCN+qmc6QQv9AOBpLv483mRzkkVZ5XaKerkC4Njcx7R4xfXuKCotGBLpk8zkEY/9tM5g9ID4ctWlAQa/gurrA+hf344/2IYaaG90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gBxVUYZW; arc=none smtp.client-ip=209.85.208.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-36a448c8aa2so28606201fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 00:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760860660; x=1761465460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SrZ+RYXA/gbsIxlipZ39/D3iY8XlMP2fmr07JQCelQo=;
-        b=gBxVUYZWUODalB7m5eGxDnApG808Hm5kr8A0WMvQq5n2TFPfEZqHbRUmt82n8EHfAm
-         xW7mAjoBSzJR8VgX149TKIPpFxUurIJMbw0AkcErp7weg6fr6Owv7n2shsS4g4S7xVS4
-         MNm2uytdX/ktpCREAP6gf7X304Bs3T77vSNRwYrffEDlmNd1Zn4OGqzan+3zKWY4xxkF
-         CLN2TSO+eaIhUTCU0gT68spxC6gtcssraFZAOpbtt7TH3uQi95niqBvEy6WycrOvqj7s
-         uojZeiCeTNb/X6GzHpvqdjYCht2Wfp40V0IkHHsWmQ3wkKWp2GoKR+AFsbJXj0BTy0A/
-         bPTA==
+	s=arc-20240116; t=1760860939; c=relaxed/simple;
+	bh=IhkNdhV1hTAXKq74opsigwyH+OgEAhY4flHRuC9QW9s=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GB4XHI/ky5qr+pfGmK7nEPWnGW94UVy6blIhRdN+Bkx6fZ3gqsQgeiZdfYuIVB6A9Sv7q6bGVagtH9Fis5QBpLuuUBQ5qIxTiO7iO2yjdWsXPtCRalgfd/MJz6212vMngnP64Jb9tdqKLRt0uCmx5U1jJ3mMZFwEUzh6QOYBlio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jWH/HZBi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59J4ulcM031595
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:02:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=PCu0f4HoNX7
+	caVYPLTD2PG4lkgiTCB9Bw+ris27XvNs=; b=jWH/HZBioTNnNbZLKnZuw6hhCP0
+	7cHT8I5DO1jk/q4JLcPhxPEzYbIcwbW6vMT0XDrg1t1bpaOZzA9909N1dl5Xz9mK
+	0hiBVwwvowpmaJGUXF9aGklsSrowfN7c4BQ6R7iipwWGXUTD2eVD/j4/6IHrB++G
+	0JlDNiLNx+cWFSyXWpPm4/tTXhXA4ocitX0kLnb3VIEsV19oBPRFrn0rhoPleWJn
+	APvwwOnYMquD3JHIiFtcWizTVlSoIDRBrhLNwymKgTSzTk0XYaRk3Xx0QTUlt3Dh
+	B9awR4tIohWO+ExAnjP9PvzvPNptlhaUYbL+OrJrlpC+w2il/ZSDER00tOA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v2gdt39c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:02:16 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-871614ad3efso1214330585a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:02:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760860660; x=1761465460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760860935; x=1761465735;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SrZ+RYXA/gbsIxlipZ39/D3iY8XlMP2fmr07JQCelQo=;
-        b=TuWBtNH/oAVQPotrDiBU4zbRs5bHYQsjodLqbfdMHTO2d8kkWMZ9fy+4oYJInsUsK0
-         EIKz5nbz2Wr6yrLhganCG4Qihem2si949fOr7lPErvSEJMoBsPnfn3CSp2uWIZPqoIMm
-         l40Z6bKcg3X7cBQ2drft88QnVofcu0/FvBn4F9yvedm4+vLlclFArxWp93X6g+CRLOWQ
-         MHAOMw7U6yJXmK3Jaip72gl0cM9G0Zx6DwUsMGmDGeblsqq48Kpio7DPxpcymSWmOsVF
-         CoWIPgvUtIF3iNalsrbIorD5PSR921/xRjEo8yq7V0hPKo3FtEzJEbS7L8H4fjFbtTEL
-         3f1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXNf2dfbh0cHVtbdnpcx2blw6jwrXHhS7zOSDPSCKJr1isJlhf510OLA/szkJ7cWxqvamvT9rnELS63nK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzScan2RFyLv2Gm8g5y9tvpdQkO2tHXbtjGan3xJrsED7ZoWmna
-	naRvh6Tv3hSlJgrBh6ryYVdoNve4azg17FyxXWq030e4VDZahNFbjeDrxCSIsLhlLzvWn/XNw4U
-	9xVGHOadztFcSjwx1z/16ErrSIGUufNc=
-X-Gm-Gg: ASbGncvCSHsFpylDHqmsdRB3EvqqoZbnJdjLKNYx+ijYFmFYIBIuw/vOkLys9BTnQXW
-	JUBWgfy/ipd4NA05yrwN4j06bXqPTO4zN8Ef6xH6WxAlEA4wmCU3yjqdWwH9p0p2O7OYqr3EI5n
-	H3a12ArNxo4ACuHm9PT2cKgVXMJDvaPhBXgbjplLRihXvCKdcQrZ2IGTsQ7WtODJ/vtwg+pe3O/
-	8YXSsivNhM8CEkvA/EUMGKnWALRR+IS5nNRv1dmfgXjJ+OEexXPMwh18fnMwoaQ/NHloHE=
-X-Google-Smtp-Source: AGHT+IGxfcc5l5KQQOWN0RevjKY3b/BSjYrwRUYSA2YjiFwjMNuumeoghswiBLAvt25WHNXlgwxVkQW8W/HLrpgsLmM=
-X-Received: by 2002:a2e:a553:0:b0:372:99ba:c28e with SMTP id
- 38308e7fff4ca-37797a7483bmr26383751fa.36.1760860659906; Sun, 19 Oct 2025
- 00:57:39 -0700 (PDT)
+        bh=PCu0f4HoNX7caVYPLTD2PG4lkgiTCB9Bw+ris27XvNs=;
+        b=cGZm9sUrEmK4W+KDF99edp7rrAJ9Yt2HyYrJh+lVxKvO1wAhBUJXaliDf1LGPu5+Fm
+         eqrJlJSQ16zkHzWTrC7lDeCXSyRkrE++QjPM64ooHVmGBwQZ8bDaSmhnrvRUwdxl0KyY
+         ky/bRupJ8rqUv6vxwBZ2N/KXJbfKsN2gI4YsZKtraCzt/TcizgTJR+f2mnhtTu0Iiqoa
+         +f4d4tI+fVcmDP7ONXHLL8ZUW8fVW0WxPkNrxPfThhm52EGQniBlOLRHX9Hb3L+dTkvV
+         GBGKg2nIzc8v71K4ihPQ38gyuuQ3+nAbSCBB35qNKewvay4h/9t6/BuHGAkd3UvYw8lS
+         l+FA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmkRLOGr0mOcOW8rIvH1PpgI6IJo/4v/Lq6ZZfKh7QP3zbzDea7qlwGEmpudT7hgUZC7fIJD12+o1EpyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt98tvooP3ggKMb8xEJ3Oxn6xQhq3xCHVq88anrrm0QCuQDZF7
+	o6vaqUuSNqKZPgQn596szRZlgat1LxiVV+lBbEXSg76rqh4HaXZKWaPCz8fEbD1hxzJC6UC4uOS
+	pBMdI5e+s6YKNN7HTn5gR63Hnj08KbO/+ITkKjun1a5+f2Yhujy71k7Ry4Cr5MmvT8gA=
+X-Gm-Gg: ASbGncvFNKlTHOAVbArloJ/iXoncZypX5vvnt4LCAbEhK9MUKTtvYTtMgICuU8sdUES
+	quet8tuWqFztrbBEHsTzPi2n8IYXtuhI7ikt4zcfX1iRfTv+R65KDbb0DooCWoPcL0ye6m0kogT
+	nrsqJsbSdM1PiOIvtKX+CENQGieRFIPial2UahwrButThv/4z3BlbaNU9wuj8dU5EhSgzXUcHu5
+	m4jUjWxpEVvA8R4cOuBs9m9ZHz0vIS8N09HBJ/sOXyqbnQGEpIv+nzpcV2F3WzEiOj321M3RlHG
+	sx2xJDhgMohP5VOZiqLMnKoIFqghKalctv7Xx1fxLP7Ew1InXWd5iQjDKe3+5Tq4tYMH7N+7K5i
+	6RkzKSP1kVZ6kBfrQJ9Hx/8ngPPDLD3eeFr5ekL6gkCW9B6GanoCFys/waQHUn6tTqVZLFccunM
+	s1JnIGjHZQ7vI=
+X-Received: by 2002:a05:622a:1a87:b0:4e8:a359:b798 with SMTP id d75a77b69052e-4e8a359be46mr88922511cf.67.1760860935530;
+        Sun, 19 Oct 2025 01:02:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1eVAe3sKqBxqT4zkB9fpGbudrcKFbHhI0WnnRPaKtVd0Wn3A5JdSj2juSSn+NQSfKGzlVYw==
+X-Received: by 2002:a05:622a:1a87:b0:4e8:a359:b798 with SMTP id d75a77b69052e-4e8a359be46mr88922131cf.67.1760860935059;
+        Sun, 19 Oct 2025 01:02:15 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def1695fsm1353170e87.61.2025.10.19.01.02.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 01:02:14 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vishnu Reddy <quic_bvisredd@quicinc.com>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Subject: [PATCH 1/2] media: iris: sort out common register definitions
+Date: Sun, 19 Oct 2025 10:59:01 +0300
+Message-ID: <20251019080212.142623-3-dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <0251017-knp_video-v2-5-f568ce1a4be3@oss.qualcomm.com>
+References: <0251017-knp_video-v2-5-f568ce1a4be3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013080609.2070555-1-hupu.gm@gmail.com> <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
- <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
- <20251013161429.GE77665@e132581.arm.com> <CADHxFxQg2ZKwLEOa6wic_KP49PRBp=hF=cY16aVmR0O0pa8ZkA@mail.gmail.com>
- <20251015093037.GA109737@e132581.arm.com> <CADHxFxQyOBurB0LB9qRdc3DEDNU+vatqOybNdcizPnWZngiPZg@mail.gmail.com>
- <CADHxFxS3kDeSM7NvZHbdoOyqxzzcKeAc1xzr=q_f+T96G9preA@mail.gmail.com> <aPRNSgunb8K9boWx@google.com>
-In-Reply-To: <aPRNSgunb8K9boWx@google.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Sun, 19 Oct 2025 15:57:27 +0800
-X-Gm-Features: AS18NWAg9-jBAfSX3OHLuzE-MfKsHu3RnTMDUGFD5GkY6E_1R4r3CDQEfYZw9GA
-Message-ID: <CADHxFxQ5ph5P+ihVw2Qm-f1T-OFUQziyc8fi-k+q3-YgL-XCMw@mail.gmail.com>
-Subject: Re: [RFC] perf build: Allow passing extra Clang flags via EXTRA_CLANG_FLAGS
-To: Namhyung Kim <namhyung@kernel.org>, Leo Yan <leo.yan@arm.com>, 
-	Ian Rogers <irogers@google.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	adrian.hunter@intel.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
-	morbo@google.com, justinstitt@google.com, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMCBTYWx0ZWRfXyX57/l5To9+b
+ MoRq2QnTbaWI66/6oMb/30ArJELuEi0XuaSCCIyB13RdIHNB/4YG4Wooz0W5p0Oym7UdekIV04c
+ EyGke1fiQKf59N0F0jzMk5tnA2iST1j0IiZ0yV4RTzno8IAqMFJin1cGvY7eCP4foczpjwhBldm
+ Odl5v1//bx05rIYLgeP1STYG7fMedwjzdsbloueC1jKhN0buQD3KY+dpT3Sp1In4HWuICyDZReY
+ tIBLizhmpw2W2RKalMhDrfJrm9zUiQH3VKCy+RSrjE9LBFgT37d+vQPhgr/bFx+YWmx2r5aJ12O
+ eGUfL8wReVSGmWZ2kD5d1lF7YALQ1IE6NYIydX2LJ8ygfliX6GiTHiVGUN/FAnZ1rMEYQmbE72/
+ e9e5XJk3tSpn1teKPpGLLdla3ynbZA==
+X-Authority-Analysis: v=2.4 cv=KqFAGGWN c=1 sm=1 tr=0 ts=68f49b08 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=zaoXWFKIo8GWO-w5zvgA:9
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: 2jTyTAETBetuEwgAEkUmMdUYECthC09L
+X-Proofpoint-ORIG-GUID: 2jTyTAETBetuEwgAEkUmMdUYECthC09L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-19_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180020
 
-Hi Namhyung,
-Thanks for your reply.
+In order to make it easier to modify the file, sort the definitions
+by the register base and then by the offset. Also move bits definitions
+next to the registers which they describe (as it was done before).
 
-On Sun, Oct 19, 2025 at 10:30=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> Hello,
->
-> On Sat, Oct 18, 2025 at 06:05:03PM +0800, hupu wrote:
-> > Hi Leo, Ian, and fellow maintainers.
-> >
-> > On Wed, Oct 15, 2025 at 7:47=E2=80=AFPM hupu <hupu.gm@gmail.com> wrote:
-> > >
-> > > Hi Leo,
-> > > Thank you for your reply.
-> > >
-> > > On Wed, Oct 15, 2025 at 5:30=E2=80=AFPM Leo Yan <leo.yan@arm.com> wro=
-te:
-> > > >
-> > > > Have you installed the GCC cross packages ?
-> > > >
-> > > >  $ sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-> > > >  $ sudo apt-get install libc6-dev-aarch64-cross linux-libc-dev-aarc=
-h64-cross
-> > > >  $ sudo apt-get install libc6-dev-arm64-cross linux-libc-dev-arm64-=
-cross
-> > > >
-> > > > My understanding is arm64 cross compilation tries to find headers i=
-n the
-> > > > path /usr/aarch64-linux-gnu/include/ (I confirmed this on Ubuntu/De=
-bian
-> > > > distros).  After install GCC cross packages, the headers should app=
-ear
-> > > > in the folder.
-> > > >
-> > >
-> > > I hadn=E2=80=99t installed the packages you mentioned earlier, but af=
-ter
-> > > running the installation commands you provided, I was indeed able to
-> > > successfully build perf.
-> > >
-> > > In fact, I=E2=80=99m currently working on creating an SDK package, wh=
-ich
-> > > includes a cross-toolchain that I built myself using crosstool-NG. My
-> > > initial idea was to install certain third-party libraries (such as th=
-e
-> > > packages you mentioned) into the cross-toolchain=E2=80=99s sysroot di=
-rectory.
-> > > With this approach, even when developing on different host machines,
-> > > we could simply specify the header search path (pointing to the
-> > > cross-toolchain=E2=80=99s sysroot directory) during compilation, and =
-the build
-> > > should succeed without requiring any additional package installation
-> > > on the system.
-> > >
-> > > Based on this, I think allowing users to extend some options via
-> > > EXTRA_CLANG_FLAGS could be a flexible way to handle such cases.
-> > > However, this is just my personal thought and might not be entirely
-> > > correct, so I=E2=80=99d like to hear your advice.
-> > >
-> >
-> >
-> > Although installing the GCC cross packages allows me to build perf
-> > successfully, I still prefer to be able to pass additional Clang flags
-> > via EXTRA_CLANG_FLAGS, as this approach feels more flexible to me.
-> >
-> > I look forward to continuing the discussion on this topic.
->
-> Doesn't EXTRA_CFLAGS work for you?
->
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
 
+Vikash, I have dropped these patches from SC7280 patchseries as they are
+no longer required. If the series gets resent, please feel free to pick
+these two patches in or to squash them into the corresponding patch.
 
-I=E2=80=99ve tried using EXTRA_CFLAGS and confirm that it doesn=E2=80=99t w=
-ork. When I
-build perf with the following command, it still reports errors:
-  make perf ARCH=3D$ARCH CROSS_COMPILE=3D$CROSS_COMPILE
-EXTRA_CFLAGS=3D"--sysroot=3D$SYSROOT"
+---
 
-In fact, by checking the code in tools/perf/Makefile.perf, we can see
-that the EXTRA_CFLAGS variable is not passed to Clang at all:
+ .../qcom/iris/iris_vpu_register_defines.h     | 47 +++++++++++--------
+ 1 file changed, 28 insertions(+), 19 deletions(-)
 
-$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vmlinu=
-x.h
-$(QUIET_CLANG)$(CLANG) -g -O2 -fno-stack-protector --target=3Dbpf \
-  $(CLANG_OPTIONS) $(BPF_INCLUDE) $(TOOLS_UAPI_INCLUDE) \
-  -include $(OUTPUT)PERF-VERSION-FILE -include util/bpf_skel/perf_version.h=
- \
-  -c $(filter util/bpf_skel/%.bpf.c,$^) -o $@
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h b/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h
+index 6474f561c8dc..1c3ff6cab343 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h
++++ b/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h
+@@ -7,40 +7,49 @@
+ #define __IRIS_VPU_REGISTER_DEFINES_H__
+ 
+ #define VCODEC_BASE_OFFS			0x00000000
++#define AON_MVP_NOC_RESET			0x0001F000
+ #define CPU_BASE_OFFS				0x000A0000
+ #define WRAPPER_BASE_OFFS			0x000B0000
+-#define AON_BASE_OFFS				0x000E0000
+ #define WRAPPER_TZ_BASE_OFFS			0x000C0000
+-#define AON_MVP_NOC_RESET			0x0001F000
++#define AON_BASE_OFFS				0x000E0000
+ 
+-#define CPU_CS_BASE_OFFS			(CPU_BASE_OFFS)
++#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
+ 
+-#define WRAPPER_CORE_POWER_STATUS		(WRAPPER_BASE_OFFS + 0x80)
+-#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+-#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
+-#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
+-#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
+-#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+-#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+-#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
+-#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
+-#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
+ #define AON_WRAPPER_MVP_NOC_RESET_REQ		(AON_MVP_NOC_RESET + 0x000)
++
+ #define AON_WRAPPER_MVP_NOC_RESET_ACK		(AON_MVP_NOC_RESET + 0x004)
+-#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
+-#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
+-#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
+ 
++#define CPU_CS_BASE_OFFS			(CPU_BASE_OFFS)
++
++#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
+ #define CORE_BRIDGE_SW_RESET			BIT(0)
+ #define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
++
++#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
+ #define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
+ #define MSK_CORE_POWER_ON			BIT(1)
+-#define CTL_AXI_CLK_HALT			BIT(0)
+-#define CTL_CLK_HALT				BIT(1)
++
++#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
++#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
++#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+ #define REQ_POWER_DOWN_PREP			BIT(0)
+-#define RESET_HIGH				BIT(0)
++
++#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+ #define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
+ #define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
+ #define NOC_LPI_STATUS_ACTIVE			BIT(2) /* Indicates the NOC is active */
+ 
++#define WRAPPER_CORE_POWER_STATUS		(WRAPPER_BASE_OFFS + 0x80)
++#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
++
++#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
++#define CTL_AXI_CLK_HALT			BIT(0)
++#define CTL_CLK_HALT				BIT(1)
++
++#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
++#define RESET_HIGH				BIT(0)
++
++#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
++#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
++
+ #endif
+-- 
+2.47.3
 
-
-As shown above, EXTRA_CFLAGS only affects the GCC cross-compilation
-process and has no impact on the Clang build process.
-That=E2=80=99s why I proposed introducing an EXTRA_CLANG_FLAGS variable to
-provide a way to control Clang=E2=80=99s compilation behavior more flexibly=
-.
-
-Thanks,
-hupu
 
