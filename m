@@ -1,94 +1,65 @@
-Return-Path: <linux-kernel+bounces-859715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578D2BEE657
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:59:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A33BEE66D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1127240824A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43AB33B2982
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C2B2EA75E;
-	Sun, 19 Oct 2025 13:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780592E9741;
+	Sun, 19 Oct 2025 14:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uyqw95y/"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=josie.lol header.i=@josie.lol header.b="E9CGrULu"
+Received: from mail-108-mta246.mxroute.com (mail-108-mta246.mxroute.com [136.175.108.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882F01514E4
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 13:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B94229CB4D
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760882391; cv=none; b=VCdn2iFd7HzKTA50Pc8ecT76xmF4fM1PKhVAJr4OR2org+KkTCl8nsAWf0AWDpmwXJSR2PsCLS3UYkGK9x1/riLQbf2yhvjvhtX84Ck94WMX0sLg19LJQvS7GcjYh2NXkj4FXOdt0TYM0sHGpNnrWNxrFKhVZ5koSt4W8EkJ+a0=
+	t=1760883158; cv=none; b=T0nAc9BuZXJ3Zc8tT47D3Xd5AAU7hoC5FTr326csiv2WBkl6P76CsJSm/wL7fGZUfBMeLSHh/qFkC0RPgZItxFwFsTS2bRe3Q3x2g38HITZO1YaOsJXLDIXI4iF9Lbp69vo9k1R/eZUIAHigiDGFqjZc9NequEbNUNSJaJL0AW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760882391; c=relaxed/simple;
-	bh=zUtbLDy2uvin1t6B5rhoy0/MeRjeuBSxqlz3kP0hk2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A/jEi4NKbxtpXeEK4VZgzHSJHNJFhFusYCRVIk4nC06wmECrfQvTHFElE5iv88sV8IR/KrFyDvWCgBbw+w0EZI0Dj0HD2innP5HbQT2KGSTPVYMzVlZAHsnKs/F+Rc+kx5kVmo725j4TCdz8nk5zNBU1y2LsAIrWeZlX/NT8qlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uyqw95y/; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b5dfff01511so94648666b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 06:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760882388; x=1761487188; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IpzQRX6WX639uhyZU+I8IkskcZk9DHNRhRlL05G9pLA=;
-        b=Uyqw95y/4jnqkEsUUOYq2pXeAbuGc2WeU1L1MMC5U83Xm59dkGS5IVtk/jiRgQhYp/
-         MEkmv13QffwTmBbN9S3/2EIU04e4yXlbAKk5Ujt7ya0u29NUJO3Dsp/5Ta8AJA493vdy
-         Ve2MBMfCI4qbOjkLLPZVhMYlFtkyyr0oHyVT5uvAeaAn2o8iJ24/xwinG15a82hh1AW+
-         AsAJSwvk4okXY5MTnhtxcCCN+RHrNGM0x81fDwBGgXHiTOwzZ589wdttCc59GJ6RAeSM
-         VetopmYma1F1dxAgM3Oyj19rE7wEMlTPgbjeD1GcHFTQ1lt5A6YIRBi9eoEBbyyfS2lF
-         td4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760882388; x=1761487188;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IpzQRX6WX639uhyZU+I8IkskcZk9DHNRhRlL05G9pLA=;
-        b=l05ondre7pIgIIeo4r51UMOEIdwLiMf6zsbIfvyPj2iNPMQLVbAidkO/wAgi5hChDv
-         N2SkD1nYYh6zySW3KzrmmwZQI+a4rgjvjIqkGYaixo+oebIlhXG7IbrlK083Tk3yHDPV
-         16moJ+YBTXw5087RkLQLOawiu8QAG409GNJAiqjoTHfYmME64M56dUHcsXc3x9+mcUn0
-         rZ7LrrQlumb/OSPwvNy6whFou9uUXR3QO2fWVWST1wuFk64Z7LvI8+4+UYr56LqkOI5J
-         A8bBbDeVoYaHt4IUJAwiYeLtHyy2ZegYeNb375Tp6s+6ISPlo3fJrCJPnzD6lC3E6Vtu
-         ih9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQk4DFwGGsp8hYu28wXTf3HBQedCGx2S3giWAJE5ExXs+0e6iEZKobudik0n9DVbfx0dczUB8XzdGihEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytFH7qkF/nOQ9FRQ3ddhnL0kdkS5emhhAq9EGr0DfeM107Jni2
-	KGPeHxY1l9154uL//NwDJlnDbhgj+VBj6Xiz2rgCfWrJoUP3eGLb74Nr
-X-Gm-Gg: ASbGncuuuvVRhaDAhmwYNAR4U590818gXUiiWf4LuKEnSTptVl5nmyphspbYHNHABZI
-	sqRzggZPlWfTJVGOKIM1YX47Aa5BOlhVDfaGPAv5qwXeJ7qIB74V7LVZ5018xWcW0anAVnjb2Ti
-	330htFgYXmReCLfVQxn3z9np/ByeFRW5QNzCc5JataIZLtU+a/eMTERyimHxCPwONwEmgYMakpq
-	4pojvs4MX1TJVLq+G9kYuZZB9LHBuHg0yvtnn0SqAz+W8xya/Q3w1HkIgzXXvxJmXFG/RkD1irx
-	idrm4/XpSqGZetNC4nVsFIcx5tSADpFal1CFbGueENRJnOvsUW0iCZtehgLJR3F1ud/OofsZOTm
-	/rE18yW9bfZEd4pAlJtfSUyenKwDqizfiDnG4s5f7krB2/mE/780xbf5nScLjLikCGmJcY3fqwN
-	YWpDbN
-X-Google-Smtp-Source: AGHT+IGKsrS2Ps3uAG4Ijn1Z/Ftl6Ae/MX6Mq06xwDMBoDY2q0splxnviYgwXvJO0FFabIICGi4lTw==
-X-Received: by 2002:a17:907:9708:b0:b04:2d89:5d3a with SMTP id a640c23a62f3a-b6475505d94mr636158166b.7.1760882387324;
-        Sun, 19 Oct 2025 06:59:47 -0700 (PDT)
-Received: from bhk ([165.50.121.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da25c9sm520425966b.11.2025.10.19.06.59.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 06:59:46 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: javierm@redhat.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH] drm/solomon: Use kmalloc_array() instead of kmalloc()
-Date: Sun, 19 Oct 2025 15:58:56 +0100
-Message-ID: <20251019145927.167544-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
+	s=arc-20240116; t=1760883158; c=relaxed/simple;
+	bh=EGX01b6TK7OfS7IcNWP2f4mwVX7pWI0Pjy4oWLAb674=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QR/YwAOQGMsHayT/ZDSES82P5cHeJXh3rQc1ZxxkrNh3jud8CH7y8ywYVAeuJFR4y1QYWgClFenvq+RwWhVZ3Nb2osjUoxXBGVt2TceFm//d5WEn8GYgbFJMNc6SDd1l+799ZTZ/0j1QYgWM54SaapqzA9VTYmM5H+BvTwiGzmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=josie.lol; spf=pass smtp.mailfrom=josie.lol; dkim=pass (2048-bit key) header.d=josie.lol header.i=@josie.lol header.b=E9CGrULu; arc=none smtp.client-ip=136.175.108.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=josie.lol
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=josie.lol
+Received: from filter006.mxroute.com ([140.82.40.27] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta246.mxroute.com (ZoneMTA) with ESMTPSA id 199fccbd41f000c217.007
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Sun, 19 Oct 2025 14:07:20 +0000
+X-Zone-Loop: bb1e2a7d1b63c83a20ecd86471ec80d718977e9d0c0d
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=josie.lol;
+	s=x; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=I5RRsJW7XpZuyNBeXBTBqrOkEelaownoQQBDEYaX6f4=; b=E9CGrU
+	Lu0NY226G8P7NHYpq/fZRxuKhXJsooFPsw+Iqc96Aw3hdVyCROh3OYOXKpskEMHrK6p1cuOcni05Y
+	b88S0jj6OL1eRvSQddJ1PCIMc9Az36U00MWSl8FdDQm5N6Vt4C4Zr9mhfxTiSJYsn+Fxp/IV38pV5
+	8r7O2ZjHSWrUzonOQ/JDSc0gIgbxpCq7P/XClC5VHdLCKWnHusRpqggGKQt9gwApn9V+gzPUF+ZUx
+	pLB9QrB65dRu+hnICBw3QxW4vyIXfz0Nb8j8bp6hoAgU6hpBC7b0+Be6BNBwshIOf2wdtGo3pyX1/
+	OgmC+bJ6BU5Hj1iz3b7rBD2u0Irg==;
+From: Josephine Pfeiffer <hi@josie.lol>
+To: pjw@kernel.org
+Cc: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] riscv: ptdump: use seq_puts() in pt_dump_seq_puts() macro
+Date: Sun, 19 Oct 2025 16:07:11 +0200
+Message-ID: <20251019140711.63664-1-hi@josie.lol>
+In-Reply-To: <2eaeaa69-b2cf-3a3a-0239-2aefcaa836aa@kernel.org>
+References: <2eaeaa69-b2cf-3a3a-0239-2aefcaa836aa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,51 +67,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Id: hi@josie.lol
 
-Replace kmalloc() with kmalloc_array() in several places to correctly
-handle array allocations and benefit from built-in overflow checking.
-This prevents potential integer overflows[1] when computing allocation
-sizes from width, height, pitch, or page values.
+On Sat, 18 Oct 2025, Paul Walmsley wrote:
 
-[1]:https://docs.kernel.org/process/deprecated.html
+> Hard to accept that it's a performance issue.  But I think you're right
+> that generating a newline should be done with seq_puts().
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
----
- drivers/gpu/drm/solomon/ssd130x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Fair point. I'll drop that from the commit message.
 
-diff --git a/drivers/gpu/drm/solomon/ssd130x.c b/drivers/gpu/drm/solomon/ssd130x.c
-index eec43d1a5595..0ce630861d34 100644
---- a/drivers/gpu/drm/solomon/ssd130x.c
-+++ b/drivers/gpu/drm/solomon/ssd130x.c
-@@ -1498,7 +1498,7 @@ static int ssd130x_crtc_atomic_check(struct drm_crtc *crtc,
- 	if (ret)
- 		return ret;
- 
--	ssd130x_state->data_array = kmalloc(ssd130x->width * pages, GFP_KERNEL);
-+	ssd130x_state->data_array = kmalloc_array(pages, ssd130x->width, GFP_KERNEL);
- 	if (!ssd130x_state->data_array)
- 		return -ENOMEM;
- 
-@@ -1519,7 +1519,7 @@ static int ssd132x_crtc_atomic_check(struct drm_crtc *crtc,
- 	if (ret)
- 		return ret;
- 
--	ssd130x_state->data_array = kmalloc(columns * ssd130x->height, GFP_KERNEL);
-+	ssd130x_state->data_array = kmalloc_array(ssd130x->height, columns, GFP_KERNEL);
- 	if (!ssd130x_state->data_array)
- 		return -ENOMEM;
- 
-@@ -1546,7 +1546,7 @@ static int ssd133x_crtc_atomic_check(struct drm_crtc *crtc,
- 
- 	pitch = drm_format_info_min_pitch(fi, 0, ssd130x->width);
- 
--	ssd130x_state->data_array = kmalloc(pitch * ssd130x->height, GFP_KERNEL);
-+	ssd130x_state->data_array = kmalloc_array(ssd130x->height, pitch, GFP_KERNEL);
- 	if (!ssd130x_state->data_array)
- 		return -ENOMEM;
- 
--- 
-2.51.1.dirty
+> A better fix would seem to be to just get rid of pt_dump_seq_puts().  It's
+> only used once in arch/riscv.
+>
+> Taking a broader view, both pt_dump_seq_puts() and pt_dump_seq_printf()
+> look completely pointless.  Is there any argument for keeping them?
 
+Good question. I investigated the git history and current usage:
+
+The macros were introduced in commit ae5d1cf358a5 ("arm64: dump: Make the
+page table dumping seq_file optional") to support passing NULL for the
+seq_file parameter. This is used by ptdump_check_wx() for CONFIG_DEBUG_WX,
+where the kernel walks page tables to check for writable+executable pages
+without outputting anything to userspace.
+
+All four architectures use this pattern in ptdump_check_wx():
+
+  arch/arm64/mm/ptdump.c:341:         .seq = NULL,
+  arch/arm/mm/dump.c:456:             .seq = NULL,
+  arch/riscv/mm/ptdump.c:378:         .seq = NULL,
+  arch/s390/mm/dump_pagetables.c:197: .seq = NULL,
+
+However, you're right that the utility of these macros varies:
+
+Usage of pt_dump_seq_puts():
+- arm64: 1 use
+- ARM: 0 uses
+- riscv: 1 use
+- s390: 3 uses
+
+Note: ARM defines pt_dump_seq_puts() but never uses it - that macro
+could be removed entirely.
+
+Usage of pt_dump_seq_printf():
+- arm64: 6 uses
+- ARM: 7 uses
+- riscv: 6 uses
+- s390: 5 uses
+
+For RISC-V specifically, I agree the single use of pt_dump_seq_puts()
+could be replaced with an inline conditional. For pt_dump_seq_printf(),
+the macro does save some repetition (6 uses vs 1 macro definition).
+
+pt_dump_seq_printf() could also be questioned - removing it means 20+
+inline conditionals across all architectures. I focused on the minimal
+fix, but happy to tackle the larger refactor if preferred.
+
+Would you prefer:
+
+Option A) Remove pt_dump_seq_puts() entirely from riscv and replace the
+single use with:
+  if (st->seq)
+    seq_puts(st->seq, "\n");
+
+Option B) Keep the macro for consistency with other architectures, but
+fix the bug
+
+I'm happy to send a v2 with either approach. If Option A, I could also
+propose similar cleanups for arm64 (1 use) as a follow-up.
+
+Thanks for the review!
 
