@@ -1,168 +1,151 @@
-Return-Path: <linux-kernel+bounces-859891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA22ABEEE6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:00:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FBFBEEE82
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4E93A4D1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:00:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA8C14E3EF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D1024291E;
-	Sun, 19 Oct 2025 23:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4841225C6E2;
+	Sun, 19 Oct 2025 23:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="EBetrH7M"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fB6efVB/"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1995723E229;
-	Sun, 19 Oct 2025 23:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3A62586C7
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 23:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760914839; cv=none; b=uxGgtT135bjnd0dr4ozh/9JzhuKJI9SpCN4eIX8HLSd00im5FpUJ3s6Fq0iI4RaizLXpTjvOHNMmJpARGdUcCGhpOuQugbGB5UbzFbjj5DkDSPNRutxiDKvy6T2/0LfR4hq4lwvdsn05OcojL69mWwTVvQdRN64h7Wr5hFaPqUY=
+	t=1760915061; cv=none; b=eO/cmh+PGeLBudOHGd9m97O8EKpmIIqibQT7CginhQhvInYpChmt2Zy32MWukytRH1guSFHan5/JKDcJa56HfD35Bi1vKeXMr3OD9mFhDWKox1klLCbB4S1ZnCJfwXCNNxG2joIiqzurVUAz1A2//lJ+OY4NGFGWJiuDi/wSn1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760914839; c=relaxed/simple;
-	bh=+NhEcWg4u0nKsTNjVJnm6EV0ePgVBJTd5Cm9zyp0Adc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MmKztpafpHMK7Pv7xdwI1vWHm9fZJ48481UiR3NDVdINZJX5e1jVL3VYYjv4snamPgsWQ+zaiS4Rt9vTN/tgZOqzC590krCClOTm/Hrn/AY2qXSCmIJkVNMdky8o9+4VvZzNWwi9AOIKV6jbxazvaHAnQHIu9up84R0A38XpPuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=EBetrH7M; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1760915061; c=relaxed/simple;
+	bh=AnqY+dCYnc8UF5OuQ+qs8apE1qzRi+JPuhlLZjOnIyQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EsuH4vXAx0K1/HPKeq1VC9Vw3JqF+6icv+RegRrvBTI438tLfxmKw0ipcHyvAGfeVRprPfarud+ejuTzxeY5KE2d3eW+Pz79gfUONrcaV3egEscI/7tMOZlBlvAk832e893+xP6zGU+qHNZNjmZOiyGo0lUpulYo0XaGhyeHcCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fB6efVB/; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-339d7c401d8so968041a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1760914827;
-	bh=YL+/KBVBt7ybXFRGcP41DFJKQfuf10A0qEbi6RFqyFg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=EBetrH7Mpg1i1zFMo8JaQBs+Cjt3hHOhLBkGvVSs7waTLYIOzg9cqMNtrXUZAOat7
-	 zJ6rFaO2+KA/ZfRSDelAVV5cxNxEfrycVHUI2CFYGZD7Ch9+/IWskmiCxCwukNem8F
-	 kPTVGo3/XVioCSuH67PQZZ2g1yW2DO2UQiHCf3I8/e56hejAHIGNjEVj0rI4rISro+
-	 v2C8BN0ZR9tVobn3cUyCLbBKF47AqKlXWyabKdhiEXCD5r4NN84ic+0Q7Wn5RYmFsn
-	 JwKp9Eipxql3mS9Ut+hwivy5RLaCu9IezcvHUCFkyA+LCdt27GTR5DluXFH6cSx011
-	 KpY+zwcV3Impg==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0C68E6CA42;
-	Mon, 20 Oct 2025 07:00:17 +0800 (AWST)
-Message-ID: <13566a08eeaed313ad789abcae1920d9b00483b0.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from
- round_rate() to determine_rate()
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Brian Masney <bmasney@redhat.com>, Iwona Winiarska
-	 <iwona.winiarska@intel.com>, Joel Stanley <joel@jms.id.au>, Maxime Ripard
-	 <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 20 Oct 2025 09:30:16 +1030
-In-Reply-To: <2025101721-twiddling-huskiness-4852@gregkh>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
-	 <aMatZAX6eFI1RmDH@redhat.com>
-	 <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
-	 <aPEZSY6RC-UVclxN@redhat.com>
-	 <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
-	 <2025101759-runner-landing-374b@gregkh>
-	 <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
-	 <2025101721-twiddling-huskiness-4852@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+        d=gmail.com; s=20230601; t=1760915058; x=1761519858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eOEeh6O4RXrjCbdM/YQb/OmkajAlxiTKW4cEYv2MTfU=;
+        b=fB6efVB/wMyoqtlHGiJA1Zoqf5c2xXR5EucDsSKcRvWwn3fOcOPtHd+2vcTfjHZuqH
+         l21nJfMQ8BbDIRhG5GOgS+6Uh9hFcKzP103UOZTb8/i7g93CShsDLYBYALas67zYGQeR
+         aF4O+RF95yyILPtpbP6fd0fjlbQOv7VEyEVB1KNYrGb60LAuvlFx1OF/RePoKrp/CFMg
+         +fwpYyimAt56Ck2PP13t4pNKFaokYcFlrNPFfgW/9ZSffUNceWe6qVD/WlihyPlw1aip
+         EDd/w3Twyez8kJqFJN1osB7vFoFlKrJZqrNm+uIdD2f/IfHogIdVPwt+1J7PwumjFyI1
+         BNog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760915058; x=1761519858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eOEeh6O4RXrjCbdM/YQb/OmkajAlxiTKW4cEYv2MTfU=;
+        b=speBMTju2Wc0IpD/hKOiUt0lXrzS/zjzjRY83Gx+AZNnWjM1spqgWNGH0L+oX2fs+/
+         bMvRZv+qQbZFLoXboRYHYs/Cj6oB9u/WKYtW2/aBaQJZ1EZMfmXrPn6fPZ9RESI5KYau
+         Y/Dx9DB33DuPMuiWWJVND1LS+tre4mbOH7Lg+c4CJ3Z9F8qhjfXzuiSM5JlyZduXtFRL
+         dd2nD1zqsa05KhQ7NGkkDlPbI9pfCK+RWKvODA3PKYtlKUJMtAZ/wuelCyIS1L1VJ9Qi
+         PXSa0EQVV2UnYj/P3HtxrCFYbmBlzuEPq+8r2zHTz85d7vyFVTYGu3YjIpGGoMEpGp/0
+         N5WA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZU4DGvZt7++ZeS+aqbrWuWRm8AeBf+wErbov6xvG7Z+A+7Oi4VEyT1mIwjK838+QTjhNxrsWNUHkOsos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDl/lrvAo8nKRwJ2Klmw3VjgtYvPCoKoO6hR/H3EDh4mXGSMJE
+	MiJdNLLiMOkYeFGzDyeH6PCy6q9M1hI6h/8MtiCdiSPeWcwlCg8UFynb/ukI1cobokP95FTpk8j
+	z1th4/NgR+rlzSWHVqdvOLYMROY3EfhM=
+X-Gm-Gg: ASbGnctgKpq0TBJBT+MlDIdaKOs9k38VhaPemSblxa9yZsYs7nUo7b1QZeycWvDYFy1
+	eP6GF2WgtLX4vS8vr9bzS0jgqJDD6qkzzD7fgD71yRHKMHlL4JbH43bHOcmYMEIrvAQGGOd7f6W
+	aYUqLjyPjFQ58ZnAx9zfSJk+Z6gu5i9u6k9fnXw5sYzSs78k3ymdbRO9naoRBFLvxDJCDZIwAgA
+	6LgB+q72Rbk6muAjlvMsQwXu68CZ5m+mYi8Uh0SJTftpP40RWkh7eBzSQw5YeWiRIxQmUitl0Bn
+	SHZW/mLMUpblAbaUyN48I7g4xPjJtcc5RIfvAF+oIw//t8bYw/+mU8VIDNlZ54ywZe66FRMQCQW
+	K3SeLnN/3nckbtA==
+X-Google-Smtp-Source: AGHT+IEHoe7IdB8Fn4blPj1kZr2k1PDvwkLeFqEjMadUT99xbKyU7kwS9dgklhgQJkFrx7iKJ+XmLkdzgYdk7hZ0y1w=
+X-Received: by 2002:a17:903:b8b:b0:290:c5c5:57eb with SMTP id
+ d9443c01a7336-290c9d2dd08mr74335675ad.3.1760915057866; Sun, 19 Oct 2025
+ 16:04:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
+In-Reply-To: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 20 Oct 2025 01:04:05 +0200
+X-Gm-Features: AS18NWBk6jlJf0RifcBoOPS6BkMb0c8T8AQmrZIWVCq_Mep36ZL7bfRUqV3fx64
+Message-ID: <CANiq72moW2VULd6EMQe9X4d1S+ftOG4Mcpp2_+V6zG7xVXj+qg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v18 00/16] rust: replace kernel::str::CStr w/ core::ffi::CStr
+To: Tamir Duberstein <tamird@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-fsdevel@vger.kernel.org, llvm@lists.linux.dev, 
+	Tamir Duberstein <tamird@gmail.com>, Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-10-17 at 09:43 +0200, Greg Kroah-Hartman wrote:
-> On Fri, Oct 17, 2025 at 05:57:44PM +1030, Andrew Jeffery wrote:
-> > On Fri, 2025-10-17 at 08:41 +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
-> > > > Hi Greg,
-> > > >=20
-> > > > On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
-> > > > > Hi Andrew and Iwona,
-> > > > >=20
-> > > > > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
-> > > > > > Hi Brian,
-> > > > > >=20
-> > > > > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> > > > > > > Hi Iwona, Joel, and Andrew,
-> > > > > > >=20
-> > > > > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
-> > > > > > > > The round_rate() clk ops is deprecated, so migrate this
-> > > > > > > > driver from
-> > > > > > > > round_rate() to determine_rate() using the Coccinelle
-> > > > > > > > semantic patch
-> > > > > > > > appended to the "under-the-cut" portion of the patch.
-> > > > > > > >=20
-> > > > > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > > > > > >=20
-> > > > > > > Would it be possible to get this picked up for v6.18? I'd
-> > > > > > > like to remove
-> > > > > > > this API from drivers/clk in v6.19.
-> > > > > >=20
-> > > > > > My (strong) preference is that Iwona applies it, but I'll keep
-> > > > > > an eye
-> > > > > > out for any unusual delays.
-> > > > >=20
-> > > > > This patch wasn't picked up for v6.18. Any chance this can get
-> > > > > picked up
-> > > > > now for v6.19?
-> > > > >=20
-> > > > > I'm hoping to get this merged so that we can remove the
-> > > > > round_rate() clk
-> > > > > op from the clk core. The clk maintainer (Stephen) mentioned this
-> > > > > work
-> > > > > in his last pull to Linus.
-> > > > >=20
-> > > > > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@ke=
-rnel.org/
-> > > >=20
-> > > > Are you happy to pick this up directly in Iwona's absence?
-> > >=20
-> > > Why me?
-> >=20
-> > I figured that would be sensible since Iwona historically sent you PRs
-> > for the PECI subsystem.
->=20
-> I did not remember that, sorry.
->=20
+On Sat, Oct 18, 2025 at 9:16=E2=80=AFPM Tamir Duberstein <tamird@kernel.org=
+> wrote:
+>
+> This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+> have omitted Co-authored tags, as the end result is quite different.
+>
+> This series is intended to be taken through rust-next. The final patch
+> in the series requires some other subsystems' `Acked-by`s:
+> - drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
+>   look?
+> - rust/kernel/device.rs: driver-core. Already acked by gregkh.
+> - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
+> - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
+> - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
+>
+> Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vador=
+ovsky@protonmail.com/t/#u [0]
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-No worries.
+Tentatively applied to see how it goes in linux-next, but I will
+rebase for -rc2, so tags are very welcome!
 
-> =C2=A0 The MAINTAINERS file does not mention
-> this at all, and it lists many other maintainers that should be able to
-> take this patch:
-> 	$ ./scripts/get_maintainer.pl=C2=A0 drivers/peci/controller/peci-aspeed.=
-c
-> 	Iwona Winiarska <iwona.winiarska@intel.com> (maintainer:ASPEED PECI CONT=
-ROLLER)
-> 	Joel Stanley <joel@jms.id.au> (maintainer:ARM/ASPEED MACHINE SUPPORT)
-> 	Andrew Jeffery <andrew@codeconstruct.com.au> (maintainer:ARM/ASPEED MACH=
-INE SUPPORT)
+    [ Move safety comment below to support older Clippy. - Miguel ]
 
-Iwona currently appears unresponsive, as mentioned. Joel's stepped back
-from maintaining the ASPEED bits as of earlier this year; I worked with
-him to add myself as a maintainer there, hence the last entry, and now
-getting in touch with you.
+I included the additional patch I just sent. In addition, there is a
+`>` typo on the `Deref` commits -- I didn't fix it to avoid adding a
+note everywhere.
 
-I can apply the patch and send you a PR if that helps, if Iwona doesn't
-respond in the mean time.
+Thanks everyone!
 
-Andrew
-
-> 	linux-aspeed@lists.ozlabs.org=C2=A0(moderated list:ASPEED PECI CONTROLLE=
-R)
-> 	openbmc@lists.ozlabs.org=C2=A0(moderated list:ASPEED PECI CONTROLLER)
-> 	linux-arm-kernel@lists.infradead.org=C2=A0(moderated list:ARM/ASPEED MAC=
-HINE SUPPORT)
-> 	linux-kernel@vger.kernel.org=C2=A0(open list)
-> 	ASPEED PECI CONTROLLER status: Supported
-> 	PECI SUBSYSTEM status: Supported
-> 	ARM/ASPEED MACHINE SUPPORT status: Supported
->=20
-> thanks,
->=20
-> greg k-h
+Cheers,
+Miguel
 
