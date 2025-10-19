@@ -1,83 +1,101 @@
-Return-Path: <linux-kernel+bounces-859667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AC7BEE3CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:43:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4617BEE3D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 374D14E3ABD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894A94003F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D8F2E7162;
-	Sun, 19 Oct 2025 11:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACnkAzvd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0AD2E62A8;
-	Sun, 19 Oct 2025 11:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1372E3B11;
+	Sun, 19 Oct 2025 11:49:11 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4533C0C;
+	Sun, 19 Oct 2025 11:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760874185; cv=none; b=ZpFqKfeVjIdhEQ90Kta1UOKxnkcEiT8XVB9uP85AVKBjyvu5v2AuHmu3OS4DN/uhFWdUzwieSHBbvkNbcanRTnxjNN23+x1htFiMFwricqaQMiJzi6S20GUXb+l2kOKp24SF9nQuc+2Fr+xtc67ZOmwdc88jSlif2vpzg3/9D8M=
+	t=1760874550; cv=none; b=GYSY0Ct7vHXUWuBvV2fo+h9plzyLHt9ddYMNfpKVOCtA9ZtQi0EkZ4MHRhSw+c13Wt5qlnoNiLnRHw8cTXDZy6ZZ1u3y0ROrB0Od2Ui71XkaqbLB+p4Lm7qzQCHDy51VJi+/oXUsUJKP0w8eX3B7LhQanQp1NVQlQFNDK0cpnOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760874185; c=relaxed/simple;
-	bh=sxIdf2TDihjjUe+ar/Lb0guj0iRhwTOQoqVwsaF/Uuc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AvC/ok72f2cnvPi1TAAzS2U+jYD8OcueIOzU3nVimGZP5WAHgLgpeOi2g45OnzeliKmK6sxoyMA9AE5L29T+T0fNY8+KY4Jwko63OSV+M7zOvVGCtMSrORvV/Ywt18RZgW2+WEHO2dQNy2duCuJQWFeMWMMwPcfUNGmhrzwcOAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACnkAzvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96938C4CEE7;
-	Sun, 19 Oct 2025 11:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760874184;
-	bh=sxIdf2TDihjjUe+ar/Lb0guj0iRhwTOQoqVwsaF/Uuc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ACnkAzvdqqGZAsQAUYjSrKqbrR1S6WsFEEwY5Xc9z3t0j7Se+JRWz7STVBtxRH07H
-	 1VmttEcoilmHHgs0t8ADAJiqHHUMOEwBz1pYPeVTe3I2WbUj45M2FdTC8U/dNevSHz
-	 0BF7CE+7Wrvw7wBVXxh1di17pMdXhpewKrh7gEPUipbZ8Q+5gD4eSvwi0UrdglWyfO
-	 CfOe2MJX2cUK8lZWqbpasoEE4cXoB/gV1QJGMOXPnGKBbpPWoIRQudXp6RzQBxwJQz
-	 02y9aWRbzHVlprlA+O5sl+x/3j8egVVEqwob3S1Oz6CGFpyoy3HQ5aYpmg0+tbqkHj
-	 5y1x4sFFIffVg==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
- Shuhao Fu <sfual@cse.ust.hk>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <aOh1le4YqtYwj-hH@osx.local>
-References: <aOh1le4YqtYwj-hH@osx.local>
-Subject: Re: [PATCH v2] RDMA/uverbs: fix umem release in
- UVERBS_METHOD_CQ_CREATE
-Message-Id: <176087418063.150745.13749475166152366151.b4-ty@kernel.org>
-Date: Sun, 19 Oct 2025 07:43:00 -0400
+	s=arc-20240116; t=1760874550; c=relaxed/simple;
+	bh=fgxfdA2VOsxH4LmxpL2Sqq2FCHp4vCTvZ0akuFgZbdk=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=gv2uL+S7JWpH0u8GiQOr++cZvNpaetVbFL3XYIqZGKNtoJCeHPN1fnZK2qGiVQ2/+oiZM7WXDZmKkACV2L5PHyLTwVM0V8Vw8lwZPqJQj4XggzPs1X583yjvQqiymqXyO9AEdnMCtxPk3WbYcfVJ7uJpMYfk68E5b4m9XVzyPPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id C82B392009C; Sun, 19 Oct 2025 13:49:02 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id B87D192009B;
+	Sun, 19 Oct 2025 12:49:02 +0100 (BST)
+Date: Sun, 19 Oct 2025 12:49:02 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: Marco Crivellari <marco.crivellari@suse.com>, 
+    Frederic Weisbecker <frederic@kernel.org>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: Fix whitespace damage in r4k_wait from VS timer fix
+Message-ID: <alpine.DEB.2.21.2510191229030.39634@angie.orcam.me.uk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain; charset=US-ASCII
 
+Remove stray spaces/tabs introduced with commit 56651128e2fb ("MIPS: Fix 
+idle VS timer enqueue") and add missing indentation for a branch delay 
+slot.
 
-On Fri, 10 Oct 2025 10:55:17 +0800, Shuhao Fu wrote:
-> In `UVERBS_METHOD_CQ_CREATE`, umem should be released if anything goes
-> wrong. Currently, if `create_cq_umem` fails, umem would not be
-> released or referenced, causing a possible leak.
-> 
-> In this patch, we release umem at `UVERBS_METHOD_CQ_CREATE`, the driver
-> should not release umem if it returns an error code.
-> 
-> [...]
+Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
+---
+It would have been caught, for the most issues, with:
 
-Applied, thanks!
+whitespace = indent-with-non-tab,space-before-tab,trailing-space
 
-[1/1] RDMA/uverbs: fix umem release in UVERBS_METHOD_CQ_CREATE
-      https://git.kernel.org/rdma/rdma/c/d8713158faad0f
+in git configuration.  Is there a way to get it propagated with checkouts?
+---
+ arch/mips/kernel/genex.S |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
-
+linux-mips-idle-vs-timer-format.diff
+Index: linux-macro/arch/mips/kernel/genex.S
+===================================================================
+--- linux-macro.orig/arch/mips/kernel/genex.S
++++ linux-macro/arch/mips/kernel/genex.S
+@@ -109,7 +109,7 @@ NESTED(except_vec3_r4000, 0, sp)
+ 	.align	5
+ LEAF(r4k_wait)
+ 	/* Keep the ISA bit clear for calculations on local labels here. */
+-0:	.fill 	0
++0:	.fill	0
+ 	/* Start of idle interrupt region. */
+ 	local_irq_enable
+ 	/*
+@@ -121,7 +121,7 @@ LEAF(r4k_wait)
+ 	 */
+ 1:	.fill	0
+ 	/* The R2 EI/EHB sequence takes 8 bytes, otherwise pad up.  */
+-	.if		1b - 0b > 32
++	.if	1b - 0b > 32
+ 	.error	"overlong idle interrupt region"
+ 	.elseif	1b - 0b > 8
+ 	.align	4
+@@ -146,10 +146,10 @@ LEAF(r4k_wait)
+ 	MFC0	k0, CP0_EPC
+ 	/* Subtract/add 2 to let the ISA bit propagate through the mask.  */
+ 	PTR_LA	k1, r4k_wait_insn - 2
+-	ori 	k0, r4k_wait_idle_size - 2
++	ori	k0, r4k_wait_idle_size - 2
+ 	.set	noreorder
+ 	bne	k0, k1, \handler
+-	PTR_ADDIU 	k0, r4k_wait_exit - r4k_wait_insn + 2
++	 PTR_ADDIU	k0, r4k_wait_exit - r4k_wait_insn + 2
+ 	.set	reorder
+ 	MTC0	k0, CP0_EPC
+ 	.set pop
 
