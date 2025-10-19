@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-859507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9D9BEDDD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:31:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD099BEDDE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22053BD589
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:31:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72AF04E18FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C767205E25;
-	Sun, 19 Oct 2025 02:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68E21EDA3C;
+	Sun, 19 Oct 2025 02:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVaSgUga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jVh0cqPA"
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EB61E492A;
-	Sun, 19 Oct 2025 02:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22481C6FE8;
+	Sun, 19 Oct 2025 02:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760841041; cv=none; b=aVrOdGgWfe5Ld6qKPQc/n5LmgMnq0N5c+zfeEvY57sIkKhd2CQVeXHaftwYqhr4FANZeBxb/AANuBNps2OnY/3e5YUgjenvIU7uIafBflBUnZuNwGNiuUuVV1fWgXsO6+50URp7NH9kAMaBMhmi2/PPGDkN7Ew4dnUbBJVOZ8pI=
+	t=1760841566; cv=none; b=PsqHTcaT8JYy09lS0Jr3RCB1wHHGMiNYmNYDyTRR77thikkkZ4FS5pTyGKPuw5la+ELbqX16TwZZALN7eVrMWxT1kMOZXYEF/zymATzcJp3w5O8urRskvjZWKnal7MRmZkSJmIvycVQV4X+dKtcNCpP/RzOnPqYAfdMxs069WxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760841041; c=relaxed/simple;
-	bh=ljwOH8bw9vDLCgJ0tLC/SZkVGwzd5vMvvBEpIPMtamc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQCEKeC8Lp8XDpEtVgLaqo7i22Nr2XKiNuejwBk5iNyjXw7+gnRe3ZMgut6g0ac4elKKlQpCKcvPfgp82OabKl0AgEwGLAQ9e9Aau83uuo0zM8xZzlLmE51RyScy+MAtPO1R9xh7Pd8EBi9MPM9Q/5LKEr9FnKFgIEfQqHB+t6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVaSgUga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D39AC116C6;
-	Sun, 19 Oct 2025 02:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760841040;
-	bh=ljwOH8bw9vDLCgJ0tLC/SZkVGwzd5vMvvBEpIPMtamc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dVaSgUganfDxsd+8KG7fKBjFWA3STLMvQSlff/ouNrRgzt68rLQoBXcqdzB3m3OHj
-	 hqpPoY6hv6iC4A9JRN93lNSm/371VZG44xpcnD0L0O0CKFFPvXn21U5a5nzF7TyQxK
-	 Uwv7BesJqy1HUcHhbX2PywOruXYTvpNDLlbMeASdiK1Q4Gk7R1nu2NFYrCuv3uun1X
-	 fO+46rKaDlaJC2wuFZcKwhOjLFw7l7u+sw5T+UdiAets3jQdKHrDN4Njj3nMZ29VQE
-	 Z3U1J5RNk0FD/5SraU8HQtk/E3ixsT305zCcMTlbmZCWhlY1GFyoCfX68FvCcH3EZC
-	 YCR6ogu84G4yA==
-Date: Sun, 19 Oct 2025 11:30:34 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: hupu <hupu.gm@gmail.com>
-Cc: Leo Yan <leo.yan@arm.com>, Ian Rogers <irogers@google.com>,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com, nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	justinstitt@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RFC] perf build: Allow passing extra Clang flags via
- EXTRA_CLANG_FLAGS
-Message-ID: <aPRNSgunb8K9boWx@google.com>
-References: <20251013080609.2070555-1-hupu.gm@gmail.com>
- <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
- <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
- <20251013161429.GE77665@e132581.arm.com>
- <CADHxFxQg2ZKwLEOa6wic_KP49PRBp=hF=cY16aVmR0O0pa8ZkA@mail.gmail.com>
- <20251015093037.GA109737@e132581.arm.com>
- <CADHxFxQyOBurB0LB9qRdc3DEDNU+vatqOybNdcizPnWZngiPZg@mail.gmail.com>
- <CADHxFxS3kDeSM7NvZHbdoOyqxzzcKeAc1xzr=q_f+T96G9preA@mail.gmail.com>
+	s=arc-20240116; t=1760841566; c=relaxed/simple;
+	bh=sCtsbj6s9oWOlzyh+nVvunK7ciprDxlQlO5meosER2g=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=aPzJ4+AgE3ssqrfuLMDu/ijRJ4gV2BbBxSTV0Umha15lY6r4PUJetuoH7brokc4gOQj+KM+bZsvkOQ0Z4Q146nGS4stQtcXMKJhMcpyJkLkvpNGmYBKIUgODfF2m1CUh09Iv8jThhjB3ZFDmbfF8NXdVfY2vFgAC9QkhiiJjZyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jVh0cqPA; arc=none smtp.client-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1760841253; bh=gfJdpZg6Mj7jnPrEFI526WVKOg9mgU+VkBgk5IUIq98=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=jVh0cqPATNBEAWRQ98psdQ9aEZ7S8+pcVMqIbMjUytle0Huo1TPEG/lQaN1yD1ort
+	 BctcRQi+IuHJNbLuCk/93KeOwjUGRVVAJNq0TnRX28giQJGghkLBRMXfAEKbPdBGjN
+	 AoOQAMGykuRkhFExeL5OkAF5wltuhf0A6wOmb14w=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 88B06417; Sun, 19 Oct 2025 10:34:11 +0800
+X-QQ-mid: xmsmtpt1760841251t29lg3kol
+Message-ID: <tencent_57525DE2DDF41911CFDB8DF525A08D9D9207@qq.com>
+X-QQ-XMAILINFO: MrK54zaStYC/mP5UifaMTcP2S/rcYU8ZKdmkuw0SyrrjBp0Mljn4X0BD9pjcdZ
+	 V364lhPTMJOJ8WcE7hnLRf+KCVtRM9Z7eYC/+FP5yh9ILVn6Gf0BVoV/KoQOe3hcN4ss0H2ub+0/
+	 VzxbYa8anVhr8MDthz4eXcr3iWahklvlWYzFWtNF3pcaQ8+s67b3u/jd5PImBmPd4UpA6lB+IYKC
+	 xqLQdxNg7at/28NtH9+pFQOjh7uVAJQIO/oyhcnPPCB49wPWiakyHQFkeOezSypDoqfsp8rd+Exw
+	 tAnFgucY6exr8w+Ngex5NKBBNo2GF1F9R1hy2xE9h6WAV40p+EO54b+bJBZ+Y804xdWXz1Ljr+CR
+	 VPsNN7NEQtjEbnxbzdBeqlwsB3hGrrlPoJeTbMlCY/2rsW50HxuKnvc8SsqAy2em7wMB+RqTdZM6
+	 Yck568bCYiS3sBKSC6eGmRe+uWnSaNo+P98Rr41Mn0xzYaUae4lTyuBidT6o1hJGduK9aiFMDJoO
+	 ylqUnMcofhYUMvnHeMh3mvtyAQHVvXragcJNiXKvCxEbIjF8Qre7NeK7tCXreKGBRmKWcD9+K2Fe
+	 6iip3GyJEEhKBXRXLr6xWXcGhsD6RaJqHG2IpdrY2nwvmzMRx7yIX/Nn3ov6PpUFgwG080Y6EfsT
+	 PJEPhDFoD2o/QYwQDIxxrKU1djE227JwOF8UcnZ/Q5S/cM+YrlXaEcypN+ai2MiBp92NJgAF0zvq
+	 0WWqn7wp9VuqZf5uF6Glrbm87OG3qisMwo6NrFYB7zHy7WAfTRJeQ1r9+eO7hHiPyG0PIh1ujAXR
+	 UniNiv3IGTOoYRh1fzxVbPyuX2GsTFoDiLKTihx2ad8b0logZbY4Oj4cCLxdnfOGwrkiH30ON67U
+	 MOSprYV58WHbw6p9f4lqdFmi0Nnmoq0tmkoPU6gGOr/AyJ+v2a0Ve9NHWhJjjO6T+39V7PCooMAU
+	 tzq/gUBsmHe67geXG+bJMaG9DblDrATkHZkFkFE2tKcg0BfV5nFUkqB28bNCKW
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	herbert@gondor.apana.org.au,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	steffen.klassert@secunet.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] key: No support for family zero
+Date: Sun, 19 Oct 2025 10:34:11 +0800
+X-OQ-MSGID: <20251019023410.2613678-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
+References: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADHxFxS3kDeSM7NvZHbdoOyqxzzcKeAc1xzr=q_f+T96G9preA@mail.gmail.com>
 
-Hello,
+When setting the extended skb data for sadb_x_ipsecrequest, the requested
+extended data size exceeds the allocated skb data length, triggering the
+reported bug.
 
-On Sat, Oct 18, 2025 at 06:05:03PM +0800, hupu wrote:
-> Hi Leo, Ian, and fellow maintainers.
-> 
-> On Wed, Oct 15, 2025 at 7:47 PM hupu <hupu.gm@gmail.com> wrote:
-> >
-> > Hi Leo,
-> > Thank you for your reply.
-> >
-> > On Wed, Oct 15, 2025 at 5:30 PM Leo Yan <leo.yan@arm.com> wrote:
-> > >
-> > > Have you installed the GCC cross packages ?
-> > >
-> > >  $ sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-> > >  $ sudo apt-get install libc6-dev-aarch64-cross linux-libc-dev-aarch64-cross
-> > >  $ sudo apt-get install libc6-dev-arm64-cross linux-libc-dev-arm64-cross
-> > >
-> > > My understanding is arm64 cross compilation tries to find headers in the
-> > > path /usr/aarch64-linux-gnu/include/ (I confirmed this on Ubuntu/Debian
-> > > distros).  After install GCC cross packages, the headers should appear
-> > > in the folder.
-> > >
-> >
-> > I hadn’t installed the packages you mentioned earlier, but after
-> > running the installation commands you provided, I was indeed able to
-> > successfully build perf.
-> >
-> > In fact, I’m currently working on creating an SDK package, which
-> > includes a cross-toolchain that I built myself using crosstool-NG. My
-> > initial idea was to install certain third-party libraries (such as the
-> > packages you mentioned) into the cross-toolchain’s sysroot directory.
-> > With this approach, even when developing on different host machines,
-> > we could simply specify the header search path (pointing to the
-> > cross-toolchain’s sysroot directory) during compilation, and the build
-> > should succeed without requiring any additional package installation
-> > on the system.
-> >
-> > Based on this, I think allowing users to extend some options via
-> > EXTRA_CLANG_FLAGS could be a flexible way to handle such cases.
-> > However, this is just my personal thought and might not be entirely
-> > correct, so I’d like to hear your advice.
-> >
-> 
-> 
-> Although installing the GCC cross packages allows me to build perf
-> successfully, I still prefer to be able to pass additional Clang flags
-> via EXTRA_CLANG_FLAGS, as this approach feels more flexible to me.
-> 
-> I look forward to continuing the discussion on this topic.
+Because family only supports AF_INET and AF_INET6, other values will cause
+pfkey_sockaddr_fill() to fail, which in turn causes set_ipsecrequest() to
+fail.
 
-Doesn't EXTRA_CFLAGS work for you?
+Therefore, a workaround is available here: using a family value of 0 to
+resolve the issue of excessively large extended data length.
 
-Thanks,
-Namhyung
+syzbot reported:
+kernel BUG at net/core/skbuff.c:212!
+Call Trace:
+ skb_over_panic net/core/skbuff.c:217 [inline]
+ skb_put+0x159/0x210 net/core/skbuff.c:2583
+ skb_put_zero include/linux/skbuff.h:2788 [inline]
+ set_ipsecrequest+0x73/0x680 net/key/af_key.c:3532
+
+Fixes: 08de61beab8a ("[PFKEYV2]: Extension for dynamic update of endpoint address(es)")
+Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ net/key/af_key.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 2ebde0352245..e658c129b38f 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3526,6 +3526,9 @@ static int set_ipsecrequest(struct sk_buff *skb,
+ 	int socklen = pfkey_sockaddr_len(family);
+ 	int size_req;
+ 
++	if (!family)
++		return -EINVAL;
++
+ 	size_req = sizeof(struct sadb_x_ipsecrequest) +
+ 		   pfkey_sockaddr_pair_size(family);
+ 
+-- 
+2.43.0
 
 
