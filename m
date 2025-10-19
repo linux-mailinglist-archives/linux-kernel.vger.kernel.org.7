@@ -1,264 +1,298 @@
-Return-Path: <linux-kernel+bounces-859513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D420BEDDFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:22:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7969EBEDDFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC6C14E18DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 03:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A841D189DAC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 03:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E58218FDDB;
-	Sun, 19 Oct 2025 03:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99F81E51EE;
+	Sun, 19 Oct 2025 03:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="APZ4rTfj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftIne4Es"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB4D2746A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 03:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760844114; cv=pass; b=NldXAQ0pCXm38JL47RLtPbD2XjHrAFBmPZ1xaqSk8djN38RX7kuJdVkUmZn+o0aThJj1EXGqIpTXmqJ/3tBjKaRYt+O4CPQEuKE4RvNGLvzr5hYo9MkZsdmlB6BOYpkvsdduE2pOq3uDYe/t9l0PxmxUsOXsxGR9Ua6lity/JFI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760844114; c=relaxed/simple;
-	bh=0AkUllaGXQW4e9eNENj8XjPMhkSfiKfmXg8WFJ2M9yQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xty0mI7HLxsYGQZESQvD1wxMM/2YmVKPMPe737596dQtVseS0dWCFGOzj9MLygtlEg3qkRXbteCjFsR4aT9+70RHmbMki5U8JYPA/J0hK90nHpr5MULL3U1fLZmlOd7Vw85VUwbGRvmtN8oLL5YZJ2yVn0y0g4orDNADonSMp4I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=APZ4rTfj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760844087; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fH80gG061avHGiyTa618ah/UfxB6retbLtFkF7tY5araEKOojK8d1Q2TPD0T53v8YcXtIWMw+lMamPkbhTDeQhvsMEBXEw/oMvYqTYO3zmTvB2BHWGVEPBWzETRrqYAZLU8fZxK5xgWLpY1mT+R2SvunJjnpWEy8JHmbPI/ZhCI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760844087; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8UcSv47mpQFVhZhBI1Nn1HoYOfQBzRy+jFgw/PUy79Y=; 
-	b=L+b7XzJNgAhPK6M6JfwT8PM0mfa1kYX1Umo9IRadWM0SEA5DvKyYKVyPI0GLO/gxccvyjph9WUR+RCvv+RCd3Y3U7G7lUWAGM/6fofD+dAoz2rGs995x/w25hD+Y69tG7KSiBuKpbLImG2C+8bHsEtOjLaxPO3ruE20PqEwHBQg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760844087;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=8UcSv47mpQFVhZhBI1Nn1HoYOfQBzRy+jFgw/PUy79Y=;
-	b=APZ4rTfjpAcZUDmsMMbPzTUEmVfy1wddr3xBR5urRgMdR2b4HQj9g86+UitQjw9q
-	uUQKllTExTHfI2HSpoSakvpTPQaGMs4aUdiS3KXF4j/r3iuuomRh144ku1WzU7N4Vy7
-	FqEsapDpCiWof5RkAjiNeY41FQJqGSMqZ8GBSTSo=
-Received: by mx.zohomail.com with SMTPS id 1760844085033866.671906076843;
-	Sat, 18 Oct 2025 20:21:25 -0700 (PDT)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Steven Price <steven.price@arm.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH] drm/panthor: Support partial unmaps of huge pages
-Date: Sun, 19 Oct 2025 04:19:42 +0100
-Message-ID: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40B7354ADF;
+	Sun, 19 Oct 2025 03:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760844677; cv=none; b=ugHGcKcH4ZWIY7Pr3Fo8XsmM7O+HpCa4VNcvOxQC0PJHGPMYN7r0c0EgjOzfvvGquVuJEEsm40AGhtG4oDveAnyaOKQBcXJ6ndRBaTLKjPrne4iBOpvzrhxNOFytM5/1O7VIRtb6DNRXMnDBq7YK+wr25zw+2n2L84GrnvressI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760844677; c=relaxed/simple;
+	bh=PbPLlMvxrklVX9l1sAAvi0vcgVaGPNJsD9UiZyuMJ84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRTZSsP5uOLixVcDmyKRi4gIcKTzrndlAVaXUHewsW7sBhUYm50m3cZah48Rap5kIqr6Ky11chjgpfWDt7kp/iNdFuHeGRFKPEvORrSZE3rGSImxSTIcESi1AAetY5l2xrHSFT9vXnX+9KxOG0wgLZkXiCckjWsGolwfyijxATY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftIne4Es; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E54F6C4CEF9;
+	Sun, 19 Oct 2025 03:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760844676;
+	bh=PbPLlMvxrklVX9l1sAAvi0vcgVaGPNJsD9UiZyuMJ84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ftIne4EseL0ptTn7ujtrOFhW4Zie0D3hb/7cHXDdI2CDe5Wc2gKd2T3l+aUfTa7Zv
+	 Hy4o68gvaWxlTpZZWYXYMryaXuHiwmaitjM3FM96n9xnuTe/DYS/uSjdHaRmN5lF/R
+	 CfqmEesck441zVCFVQ7klWRl7mIxy5zZy2AglCejT8CkD3fpJARofPbk++EhvrE2ho
+	 KvibBcxB5YnUJnaOauUxO1aQX3F3nrYzmswP6l2M0t/wX2gO8PR96v8ZKOgKJA3Z20
+	 Yp5/4a/WiAJYPZFBAcLH/hFSyUNsy6ez4TDm6cPu203bB36aM2lRB0blXasXd25dru
+	 MwDb/1gGEfE8g==
+Date: Sun, 19 Oct 2025 12:31:09 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Li, Tianyou" <tianyou.li@intel.com>
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>, wangyang.guo@intel.com,
+	pan.deng@intel.com, zhiguo.zhou@intel.com, jiebin.sun@intel.com,
+	thomas.falcon@intel.com, dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf tools annotate: fix a crash when annotate the
+ same symbol with 's' and 'T'
+Message-ID: <aPRbfdU92XRLR-2N@google.com>
+References: <baea1e93-5e30-404e-8a5d-8b1d20cf8761@linaro.org>
+ <20251015172017.2115213-1-tianyou.li@intel.com>
+ <4151e2e4-b7df-4c04-b038-71ff2612ee8d@linaro.org>
+ <db33a977-c712-48b7-9be1-83721b23635f@intel.com>
+ <046f1441-bc18-44e0-9bd0-f98a62ebbf9b@linaro.org>
+ <9f843a5b-4fa1-4abf-9c4b-1e5433ab9704@intel.com>
+ <9f33a736-ad3f-426c-93db-b5acca34e5f1@linaro.org>
+ <9dd7ecce-dd4f-47a1-a7ad-bb48da8c21f2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9dd7ecce-dd4f-47a1-a7ad-bb48da8c21f2@intel.com>
 
-Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
-behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+Hello,
 
-In the case of Panthor, that means an attempt to run a VM_BIND unmap
-operation on a memory region whose start address and size aren't 2MiB
-aligned, in the event it intersects with a huge page, would lead to ARM
-IOMMU management code to fail and a warning being raised.
+On Fri, Oct 17, 2025 at 12:04:42AM +0800, Li, Tianyou wrote:
+> 
+> On 10/16/2025 11:18 PM, James Clark wrote:
+> > 
+> > 
+> > On 16/10/2025 4:04 pm, Li, Tianyou wrote:
+> > > 
+> > > On 10/16/2025 9:06 PM, James Clark wrote:
+> > > > 
+> > > > 
+> > > > On 16/10/2025 4:36 am, Li, Tianyou wrote:
+> > > > > Hi James,
+> > > > > 
+> > > > > Thanks for your time to review. Please see my comments inlined.
+> > > > > 
+> > > > > Regards,
+> > > > > 
+> > > > > Tianyou
+> > > > > 
+> > > > > On 10/16/2025 1:30 AM, James Clark wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On 15/10/2025 6:20 pm, Tianyou Li wrote:
+> > > > > > > When perf report with annotation for a symbol, press
+> > > > > > > 's' and 'T', then exit
+> > > > > > > the annotate browser. Once annotate the same symbol,
+> > > > > > > the annotate browser
+> > > > > > > will crash.
+> > > > > > > 
+> > > > > > > The browser.arch was required to be correctly updated when data type
+> > > > > > > feature was enabled by 'T'. Usually it was
+> > > > > > > initialized by symbol__annotate2
+> > > > > > > function. If a symbol has already been correctly
+> > > > > > > annotated at the first
+> > > > > > > time, it should not call the symbol__annotate2
+> > > > > > > function again, thus the
+> > > > > > > browser.arch will not get initialized. Then at the
+> > > > > > > second time to show the
+> > > > > > > annotate browser, the data type needs to be
+> > > > > > > displayed but the browser.arch
+> > > > > > > is empty.
+> > > > > > > 
+> > > > > > > Stack trace as below:
+> > > > > > > 
+> > > > > > > Perf: Segmentation fault
+> > > > > > > -------- backtrace --------
+> > > > > > >      #0 0x55d365 in ui__signal_backtrace setup.c:0
+> > > > > > >      #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
+> > > > > > >      #2 0x570f08 in arch__is perf[570f08]
+> > > > > > >      #3 0x562186 in annotate_get_insn_location perf[562186]
+> > > > > > >      #4 0x562626 in __hist_entry__get_data_type annotate.c:0
+> > > > > > >      #5 0x56476d in annotation_line__write perf[56476d]
+> > > > > > >      #6 0x54e2db in annotate_browser__write annotate.c:0
+> > > > > > >      #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
+> > > > > > >      #8 0x54dc9e in annotate_browser__refresh annotate.c:0
+> > > > > > >      #9 0x54c03d in __ui_browser__refresh browser.c:0
+> > > > > > >      #10 0x54ccf8 in ui_browser__run perf[54ccf8]
+> > > > > > >      #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
+> > > > > > >      #12 0x552293 in do_annotate hists.c:0
+> > > > > > >      #13 0x55941c in evsel__hists_browse hists.c:0
+> > > > > > >      #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
+> > > > > > >      #15 0x42ff02 in cmd_report perf[42ff02]
+> > > > > > >      #16 0x494008 in run_builtin perf.c:0
+> > > > > > >      #17 0x494305 in handle_internal_command perf.c:0
+> > > > > > >      #18 0x410547 in main perf[410547]
+> > > > > > >      #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
+> > > > > > >      #20 0x7f5ff1a29680 in
+> > > > > > > __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
+> > > > > > >      #21 0x410b75 in _start perf[410b75]
+> > > > > > > 
+> > > > > > > Fixes: 1d4374afd000 ("perf annotate: Add 'T' hot key
+> > > > > > > to toggle data type display")
+> > > > > > > Reviewed-by: James Clark <james.clark@linaro.org>
+> > > > > > > Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+> > > > > > > ---
+> > > > > > >   tools/perf/ui/browsers/annotate.c | 3 +++
+> > > > > > >   tools/perf/util/annotate.c        | 2 +-
+> > > > > > >   tools/perf/util/annotate.h        | 2 ++
+> > > > > > >   3 files changed, 6 insertions(+), 1 deletion(-)
+> > > > > > > 
+> > > > > > > diff --git a/tools/perf/ui/browsers/annotate.c
+> > > > > > > b/tools/perf/ui/ browsers/annotate.c
+> > > > > > > index 8fe699f98542..3b27ef1e8490 100644
+> > > > > > > --- a/tools/perf/ui/browsers/annotate.c
+> > > > > > > +++ b/tools/perf/ui/browsers/annotate.c
+> > > > > > > @@ -1161,6 +1161,9 @@ int
+> > > > > > > __hist_entry__tui_annotate(struct hist_entry *he,
+> > > > > > > struct map_symbol *ms,
+> > > > > > >               if (!annotation__has_source(notes))
+> > > > > > >                   ui__warning("Annotation has no source code.");
+> > > > > > >           }
+> > > > > > > +    } else if (evsel__get_arch(evsel, &browser.arch)) {
+> > > > > > > +        ui__error("Couldn't get architecture for
+> > > > > > > event '%s'", evsel- >name);
+> > > > > > > +        return -1;
+> > > > > > >       }
+> > > > > > 
+> > > > > > symbol_annotate() only fails for negative return values
+> > > > > > of evsel__get_arch(), but evsel__get_arch() has at least
+> > > > > > two positive error return values.
+> > > > > > 
+> > > > > > If symbol_annotate() is wrong and it should be != 0 like
+> > > > > > you have, then maybe symbol_annotate() should be fixed
+> > > > > > in another commit in the same patchset as this one.
+> > > > > > Otherwise you have two calls to the same thing right
+> > > > > > next to each other that handle errors differently.
+> > > > > 
+> > > > > 
+> > > > > Thanks James. I will give a try on handling the error
+> > > > > message with symbol__strerror_disassemble. I am conservative
+> > > > > to change the code in symbol_annotate, agreed it should be
+> > > > > considered in another patch. Would like to focus this
+> > > > > particular issue and get it fixed properly. Thanks.
+> > > > > 
+> > > > > 
+> > > > 
+> > > > Looks like there was a misunderstanding. I'm not saying that the
+> > > > error is _reported_ differently, it's that the condition that
+> > > > triggers the error is different.
+> > > > 
+> > > > symbol__annotate():
+> > > > 
+> > > >   err = evsel__get_arch(evsel, &arch);
+> > > >   if (err < 0)
+> > > >       return err;
+> > > > 
+> > > > You added:
+> > > > 
+> > > >   if (evsel__get_arch(evsel, &browser.arch))
+> > > >      ...
+> > > > 
+> > > > evsel__get_arch() returns positive error values (and maybe also
+> > > > negative?), so "< 0" behaves differently to "!= 0".
+> > > > 
+> > > > You either have to assume that "< 0" is correct and not change
+> > > > it, but then you have to also check the return value in the same
+> > > > way. Or if by doing "!= 0" you're implying that
+> > > > symbol__annotate() is wrong to do "< 0", then you should fix it
+> > > > now to not leave __hist_entry__tui_annotate() doing the same
+> > > > thing two different ways at different times.
+> > > > 
+> > > Thanks James. I looked at the code of symbol__annotate, and noticed
+> > > the if (err<0) statement. I did not mean to change the code in
+> > > symbol__annotate because I did not understand why it handled the
+> > > error code that way. The positive return value of evsel__get_arch
+> > > indicates some error happens, eg in arm__annotate_init, so I use the
+> > > symbol__strerror_disassemble function to handle both positive and
+> > > negative error code.
+> > > 
+> > > I do agree we should check the error code of evsel__get_arch, but I
+> > > am hesitate to touch the code which I am not sure the consequences.
+> > > I agree it may deserve another patch but not in this patchset if we
+> > > have clear answers on why "<0" is not correct, or we have a case to
+> > > break the current code as a evidence. Thanks.
+> > > 
+> > > 
+> > > Regards,
+> > > 
+> > > Tianyou
+> > > 
+> > 
+> > It may take a little bit of effort to follow the code and look at the
+> > git blame to see what happened, but it's really not going to be that
+> > hard.
+> 
+> Truly appreciated for your instant response, and the suggestions about
+> 'Fixes' tag, return value handling etc. I do check the git history about the
+> code "<0", I still did not quite understand the reason of handling it in
+> that way.
 
-Presently, and for lack of a better alternative, it's best to have
-Panthor handle partial unmaps at the driver level, by unmapping entire
-huge pages and remapping the difference between them and the requested
-unmap region.
+Looks like I just overlooked the error handling when I factored out the
+function.  Please feel free to update symbol__annotate() to check != 0.
 
-This could change in the future when the VM_BIND uAPI is expanded to
-enforce huge page alignment and map/unmap operational constraints that
-render this code unnecessary.
+> 
+> 
+> > 
+> > You're basically suggesting to add code that (when expanded) does this:
+> > 
+> >   if (first_run) {
+> >      if (do_important_thing() < 0)
+> >         return err;
+> >   } else { // second run
+> >      if (do_important_thing() != 0)
+> >         return err;
+> >   }
+> > 
+> > It's not going to help anyone who looks at it in the future. It's going
+> > to make future refactors of evsel__get_arch() more difficult, and
+> > without knowing why it's like that, it's possibly introducing another
+> > bug.
+> > 
+> 
+> I am suggesting to focus on the 'else' part. If that part of code is
+> correct, then we might need to consider another patch for the "<0" code. I
+> am eager for the answer as well.
+> 
+> 
+> > It surely has to be consistent otherwise it doesn't make sense. And if
+> > you sent a patch that did "< 0" I would still say "but it can return
+> > positive errors, so the new code isn't right".
+> > I did suggest in the beginning to not check the error at all and add a
+> > comment saying it must succeed at that point because it's already done
+> > once before, but that's not very defensive and it doesn't fix the other
+> > possible bug.
+> > 
+> 
+> Yes. I am not so sure 'must succeed' could be a right assumption, or for
+> safety it's better to check the error code.
 
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
- 1 file changed, 126 insertions(+), 3 deletions(-)
+Agreed.  Anyway I can confirm that this patch fixed the crash.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 2d041a2e75e9..f9d200e57c04 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
- 	return 0;
- }
- 
-+static bool
-+is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
-+			   const struct drm_gpuva_op_map *op,
-+			   u64 unmap_start, u64 unmap_range,
-+			   u64 sz2m_prev, u64 sz2m_next)
-+{
-+	size_t pgcount, pgsize;
-+	const struct page *pg;
-+	pgoff_t bo_offset;
-+
-+	if (op->va.addr < unmap_vma->base.va.addr) {
-+		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
-+		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
-+		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
-+		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
-+
-+	} else {
-+		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
-+			+ unmap_vma->base.gem.offset;
-+		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
-+		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
-+		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
-+	}
-+
-+	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
-+
-+	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
-+	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
-+	    unmap_vma->base.va.range >= sz2m_next)
-+		return true;
-+
-+	return false;
-+}
-+
-+struct remap_params {
-+	u64 prev_unmap_start, prev_unmap_range;
-+	u64 prev_remap_start, prev_remap_range;
-+	u64 next_unmap_start, next_unmap_range;
-+	u64 next_remap_start, next_remap_range;
-+	u64 unmap_start, unmap_range;
-+};
-+
-+static struct remap_params
-+get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
-+			const struct panthor_vma *unmap_vma)
-+{
-+	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
-+	struct remap_params params = {0};
-+
-+	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
-+
-+	if (op->prev) {
-+		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
-+		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
-+
-+		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
-+					       unmap_range, sz2m_prev, sz2m_next)) {
-+			params.prev_unmap_start = sz2m_prev;
-+			params.prev_unmap_range = SZ_2M;
-+			params.prev_remap_start = sz2m_prev;
-+			params.prev_remap_range = unmap_start & (SZ_2M - 1);
-+
-+			u64 diff = min(sz2m_next - unmap_start, unmap_range);
-+
-+			unmap_range -= diff;
-+			unmap_start += diff;
-+		}
-+	}
-+
-+	if (op->next) {
-+		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
-+		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
-+
-+		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
-+					       unmap_range, sz2m_prev, sz2m_next)) {
-+			if (unmap_range) {
-+				params.next_unmap_start = sz2m_prev;
-+				params.next_unmap_range = SZ_2M;
-+				unmap_range -= op->next->va.addr & (SZ_2M - 1);
-+			}
-+
-+			params.next_remap_start = op->next->va.addr;
-+			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
-+		}
-+	}
-+
-+	params.unmap_start = unmap_start;
-+	params.unmap_range = unmap_range;
-+
-+	return params;
-+}
-+
- static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
- 				       void *priv)
- {
-@@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
- 	struct panthor_vm *vm = priv;
- 	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
- 	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
--	u64 unmap_start, unmap_range;
-+	struct remap_params params;
- 	int ret;
- 
--	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
--	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
-+	/*
-+	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
-+	 * so when a partial unmap is requested, we must first unmap the entire huge
-+	 * page and then remap the difference between the huge page minus the requested
-+	 * unmap region. Calculating the right offsets and ranges for the different unmap
-+	 * and map operations is the responsibility of the following function.
-+	 */
-+	params = get_map_unmap_intervals(&op->remap, unmap_vma);
-+
-+	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
- 	if (ret)
- 		return ret;
- 
- 	if (op->remap.prev) {
-+		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
-+					     params.prev_unmap_range);
-+		if (ret)
-+			return ret;
-+		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
-+					   flags_to_prot(unmap_vma->flags),
-+					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
-+					   op->remap.prev->gem.offset, params.prev_remap_range);
-+		if (ret)
-+			return ret;
-+
- 		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
- 		panthor_vma_init(prev_vma, unmap_vma->flags);
- 	}
- 
- 	if (op->remap.next) {
-+		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
-+					     params.next_unmap_range);
-+		if (ret)
-+			return ret;
-+
-+		ret = panthor_vm_map_pages(vm, params.next_remap_start,
-+					   flags_to_prot(unmap_vma->flags),
-+					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
-+					   op->remap.next->gem.offset, params.next_remap_range);
-+		if (ret)
-+			return ret;
-+
- 		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
- 		panthor_vma_init(next_vma, unmap_vma->flags);
- 	}
+Tested-by: Namhyung Kim <namhyung@kernel.org>
 
-base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
-prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
--- 
-2.51.0
-
+Thanks,
+Namhyung
 
