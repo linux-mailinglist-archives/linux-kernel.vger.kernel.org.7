@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-859626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D71BEE255
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:30:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F49BEE267
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E5AD6349F8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B2A3A4CD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13B62E2DDD;
-	Sun, 19 Oct 2025 09:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47762E2F03;
+	Sun, 19 Oct 2025 09:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiTneN9M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mwB3Lsqh"
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8932066DE;
-	Sun, 19 Oct 2025 09:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FED23371B;
+	Sun, 19 Oct 2025 09:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760866194; cv=none; b=rfdIbdseh3DQdOyTcwpP/riiijpW0Xr9AIPmqyLn1Vg+tbIK6ZCogRYpgioP23QxnfEKkLEa8fGhJKggmOSeK9QZvRT0LUvTmD/TvTIcBziVFhYHXboi8FKppkNLYUBLI2VOxv+H7fop4b77XomeCe9U8IQs+7S/1utoihZVVX8=
+	t=1760866533; cv=none; b=R32wCps3+QDKV85ojd055E+K17Pmtjy2gZ+epDVsZcrsnrWJE237p8oxHOFALOuhR3Q03qHuqOdKJZNfI8Uex0k3kQP2KZEwR4RDAUnF+nODfVzmienH92G/+pzG6vDUy0GPlmH7+tsfAOkdFYx1qGOpUvDlhrUpwKpFqf6tfZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760866194; c=relaxed/simple;
-	bh=cEmiAejCUSeYDb1o32TLK/cNCU4eQV59ADHywcriXb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h3qlyCoAVGph0nNMdrU9ih4+ntzokGin3RjpJ4dvMPYGAQEixkx88fhZm+wMYg+GdGM5FlB1+w1o6mD2P5ej5OGIQgyaypQnBIkjmuwPUe9INJYl9rK3eylm+USofvNo8+/YE+giZxwcSLlK1OYQaga57/L8rvjwZUur0TNm+tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiTneN9M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C19C4CEE7;
-	Sun, 19 Oct 2025 09:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760866193;
-	bh=cEmiAejCUSeYDb1o32TLK/cNCU4eQV59ADHywcriXb0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iiTneN9MUhgUQCpYId0iMaFP3eHHAykQ2vKUT5mFuscc10O0Y5ZHUgwxoMAJOvver
-	 cuvr8mzYmZoGoAnDDiuhrnjZ39mUoK9t5WUQzoTWL7mEfR+mvbFOSje44nvrTrgwDH
-	 ZHCxLbRvqEvXu8tpebrkQOzcjo3r1pILJOrpzmKWzFGGecbhTLHFFlWRcLpQzu54qk
-	 etLyu2Mzvfcthj/kqatFcpfsr5ux7tLpdKZZIZ/jR9MfBfkNwUAIS6fWuXTLCLJ/Tv
-	 78WTcims63I1MzYyxglZ/vfSf5w30o9ptTJo23FVffc6UrBGjv0inHX/flcgJp5K6O
-	 fUmzhYUKaWslg==
-Message-ID: <67bff695-48ef-4b06-a434-aa5844f8d9c4@kernel.org>
-Date: Sun, 19 Oct 2025 11:29:48 +0200
+	s=arc-20240116; t=1760866533; c=relaxed/simple;
+	bh=I7swA7Kt4/jMt+Zzvms1ZaGrKcdm/2I2tslhysy+6OE=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=M5dTk5dYWO7qLEVlkE2NJGsEiPdDModTM9insf0Sd+XXKpQwqOcI2eOhjpeeasM5UHSmTzpNknib7Qwz/gkB6cRky3+IAcp7UtTTLuk6WSqj55EL6Rdn3omPtj4m6yhiTtCa9IkCngGOZVv2HOfu+U6lxK1+cKi5DVg8HBgKUNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mwB3Lsqh; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id APouva5KKnE4gAPouvkY2J; Sun, 19 Oct 2025 11:35:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1760866523;
+	bh=QYUchmJA4dda+MYsvmqTYxjZthKW6suHT9ouFeAZf80=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=mwB3LsqhkmNftbKCmNY/ha8dkzSi/b9ZFDd3uKU2alAS6MEbtEvJ8tS289RxHl70M
+	 0V6dDjBaAtXoHi/0DQZccUMrbQWnM674Ky6OdIpQwkniMkyJDDYPnczWsR47SmMCcV
+	 XeHiPpkeeOgSyQQ+pU3f5I2fAo+7QXUnwK+eVTAP1RpTUd0zhI+ugFnFJM2xB7ZAc5
+	 mKxiWuNyt4EoMu1lQbkrQYrn8ePag0AQYXNDO1Mceqa1v5j5eFR6vF0hHThzfS1axI
+	 SnHvkb7CemnTbzK+k6po6w2WtyFkWq+OycQZBrwpLS23oSbOWv1WZzdaZ4fAkBur0N
+	 caKHAdTHMSiDQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 19 Oct 2025 11:35:23 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <d18e8155-fa2a-4976-a3c1-7327117148d7@wanadoo.fr>
+Date: Sun, 19 Oct 2025 11:35:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +57,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
- support
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
- claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de
-Cc: linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20251019092106.5737-1-ovidiu.panait.rb@renesas.com>
- <20251019092106.5737-3-ovidiu.panait.rb@renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251019092106.5737-3-ovidiu.panait.rb@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] drm/msm/dpu: Add DSPP GC driver to provide GAMMA_LUT
+ DRM property
+References: <20251019-dpu-add-dspp-gc-driver-v2-1-30c8cb79cb17@izzo.pro>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+To: devnull+federico.izzo.pro@kernel.org
+Cc: abhinav.kumar@linux.dev, agx@sigxcpu.org, airlied@gmail.com,
+ david@ixit.cz, dri-devel@lists.freedesktop.org, federico@izzo.pro,
+ freedreno@lists.freedesktop.org, jesszhan0024@gmail.com,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lumag@kernel.org, marijn.suijten@somainline.org, nicola@corna.info,
+ phone-devel@vger.kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+ simona@ffwll.ch, ~postmarketos/upstreaming@lists.sr.ht
+In-Reply-To: <20251019-dpu-add-dspp-gc-driver-v2-1-30c8cb79cb17@izzo.pro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 19/10/2025 11:21, Ovidiu Panait wrote:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g057-rtca3
-> +    then:
-> +      properties:
-> +        resets:
-> +          items:
-> +            - description: RTC reset
+Le 19/10/2025 à 11:16, Federico Amedeo Izzo via B4 Relay a écrit :
+> From: Federico Amedeo Izzo <federico-3FKkmSgw/TI@public.gmane.org>
+> 
+> Add support for DSPP GC block in DPU driver for Qualcomm SoCs.
+> Expose the GAMMA_LUT DRM property, which is needed to enable
+> night light and basic screen color calibration.
+> 
+> I used LineageOS downstream kernel as a reference and found the LUT
+> format by trial-and-error on OnePlus 6.
+> 
+> Tested on oneplus-enchilada (sdm845-mainline 6.16-dev) and xiaomi-tissot
+> (msm8953-mainline 6.12/main).
+> 
+> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>  # Pixel 3 (next-20251018)
+> Tested-by: Guido Günther <agx-wGvLLbajjwFAfugRpC6u6w@public.gmane.org> # on sdm845-shift-axolotl
+> Signed-off-by: Federico Amedeo Izzo <federico-3FKkmSgw/TI@public.gmane.org>
+> ---
+> DRM GAMMA_LUT support was missing on sdm845 and other Qualcomm SoCs using
+> DPU for CRTC. This is needed in userspace to enable features like Night
+> Light or basic color calibration.
+> 
+> I wrote this driver to enable Night Light on OnePlus 6, and after the
+> driver was working I found out it applies to the 29 different Qualcomm SoCs
+> that use the DPU display engine, including X1E for laptops.
+> 
+> I used the LineageOS downstream kernel as reference and found the correct
+> LUT format by trial-and-error on OnePlus 6.
+> 
+> This was my first Linux driver and it's been a great learning
+> experience.
+> 
+> The patch was reviewed by postmarketOS contributors here:
+> https://gitlab.com/sdm845-mainline/linux/-/merge_requests/137
+> During review the patch was tested successfully on hamoa (X1E).
+> ---
 
-So this is a completely different type of reset than VBATTB from earlier
-device?
+Hi,
 
-> +            - description: Reset for the RTEST registers
+...
+
+> @@ -830,19 +862,40 @@ static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
+>   		ctl = mixer[i].lm_ctl;
+>   		dspp = mixer[i].hw_dspp;
+>   
+> -		if (!dspp || !dspp->ops.setup_pcc)
+> +		if (!dspp)
+>   			continue;
+>   
+> -		if (!state->ctm) {
+> -			dspp->ops.setup_pcc(dspp, NULL);
+> -		} else {
+> -			_dpu_crtc_get_pcc_coeff(state, &cfg);
+> -			dspp->ops.setup_pcc(dspp, &cfg);
+> +		if (dspp->ops.setup_pcc) {
+> +			if (!state->ctm) {
+> +				dspp->ops.setup_pcc(dspp, NULL);
+> +			} else {
+> +				_dpu_crtc_get_pcc_coeff(state, &cfg);
+> +				dspp->ops.setup_pcc(dspp, &cfg);
+> +			}
 > +
+> +			/* stage config flush mask */
+> +			ctl->ops.update_pending_flush_dspp(ctl,
+> +				mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
+>   		}
+>   
+> -		/* stage config flush mask */
+> -		ctl->ops.update_pending_flush_dspp(ctl,
+> -			mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
+> +		if (dspp->ops.setup_gc) {
+> +			if (!state->gamma_lut) {
+> +				dspp->ops.setup_gc(dspp, NULL);
+> +			} else {
+> +				gc_lut = kzalloc(sizeof(*gc_lut), GFP_KERNEL);
 
-Best regards,
-Krzysztof
+The memory is already cleared in _dpu_crtc_get_gc_lut().
+Eiher this could be changed into kmalloc(), or the memset in 
+_dpu_crtc_get_gc_lut() could be removed.
+
+> +				if (!gc_lut) {
+> +					DRM_ERROR("failed to allocate gc_lut\n");
+
+usually,message related to memory allocation errors are not needed, 
+because things are already verbose in such a case.
+
+> +					continue;
+> +				}
+> +				_dpu_crtc_get_gc_lut(state, gc_lut);
+> +				dspp->ops.setup_gc(dspp, gc_lut);
+> +				kfree(gc_lut);
+> +			}
+> +
+> +			/* stage config flush mask */
+> +			ctl->ops.update_pending_flush_dspp(ctl,
+> +				mixer[i].hw_dspp->idx, DPU_DSPP_GC);
+> +		}
+>   	}
+>   }
+
+...
+
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
+> index 54b20faa0b69..7ebe7d8a5382 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
+
+...
+
+> @@ -63,6 +75,47 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
+>   	DPU_REG_WRITE(&ctx->hw, base, PCC_EN);
+>   }
+>   
+> +static void dpu_setup_dspp_gc(struct dpu_hw_dspp *ctx,
+> +		struct dpu_hw_gc_lut *gc_lut)
+> +{
+> +	int i = 0;
+> +	u32 base, reg;
+> +
+> +	if (!ctx) {
+> +		DRM_ERROR("invalid ctx %pK\n", ctx);
+
+ctx is known to be NULL here. So the message can be simplified.
+
+> +		return;
+> +	}
+> +
+> +	base = ctx->cap->sblk->gc.base;
+> +
+> +	if (!base) {
+> +		DRM_ERROR("invalid ctx %pK gc base 0x%x\n", ctx, base);
+
+base is known to be NULL here. So the message can be simplified.
+
+> +		return;
+> +	}
+> +
+> +	if (!gc_lut) {
+> +		DRM_DEBUG_DRIVER("disable gc feature\n");
+> +		DPU_REG_WRITE(&ctx->hw, base, GC_DIS);
+> +		return;
+> +	}
+> +
+> +	reg = 0;
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_C0_INDEX_OFF, reg);
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_C1_INDEX_OFF, reg);
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_C2_INDEX_OFF, reg);
+
+Why not using 0 explicitly, instead of using reg here?
+
+> +
+> +	for (i = 0; i < PGC_TBL_LEN; i++) {
+> +		DPU_REG_WRITE(&ctx->hw, base + GC_C0_OFF, gc_lut->c0[i]);
+> +		DPU_REG_WRITE(&ctx->hw, base + GC_C1_OFF, gc_lut->c1[i]);
+> +		DPU_REG_WRITE(&ctx->hw, base + GC_C2_OFF, gc_lut->c2[i]);
+> +	}
+> +
+> +	DPU_REG_WRITE(&ctx->hw, base + GC_LUT_SWAP_OFF, BIT(0));
+> +
+> +	reg = GC_EN | ((gc_lut->flags & PGC_8B_ROUND) ? GC_8B_ROUND_EN : 0);
+> +	DPU_REG_WRITE(&ctx->hw, base, reg);
+> +}
+
+...
+
+CJ
 
