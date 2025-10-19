@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-859631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEC8BEE27D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:51:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C388BEE292
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C7C3E2789
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:51:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 639BF4E4805
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F030F29D281;
-	Sun, 19 Oct 2025 09:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415522E54DE;
+	Sun, 19 Oct 2025 10:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YM5Bfmmd"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="In29qi3z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5112E041A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207121EE019;
+	Sun, 19 Oct 2025 10:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760867507; cv=none; b=FhM2KTzK9aatnTaCwUMJwtF4B4SXxO+L3xIbr/luD2Hj9jT953rWh5bzXngVK9tzdWzQd+IJLCeYuz+DJvIQk0wwqjJw3Jl2drG34o9+Ay22DImOds9GA96dItXwM0xMqai5BIBI30+wcDN335rLZTma6Ofg6bX856f17eQ2fO0=
+	t=1760868239; cv=none; b=oV7gRY1Oex1w/Vw9s2YXtP+EHW7Vodwgt45hFYL1y1DCxHD0W9ZMiwHiqx6l+Jbg5bMK41/eYDGvCWoYZLO7MzO24OFrx1R0EwgtAjJTpyTEq/Qqkkk4jeVGqyAu392/VvAzlnLChc2M/NbvjcdQJ0CzGCXslhZFg/a66RdALX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760867507; c=relaxed/simple;
-	bh=StQ6hiSS/ddwlsO576uA8gheOyDnzmZgNCzeCn8v2yw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lUEPd+zgDLb6POMn/ff+1D3FYAWGZddy5A7JDbJ96GAOaws2TGmOQxAQboQAiL7A3DCY+xncF4chMXJ28TrM8Omk9QexnP0nA+aKXZR3/VS5bTZMELTnUTQEXttkECPENlFgWdBHUXUTr/KzFPuitGOBBde+uQcAfdSDALxRm5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YM5Bfmmd; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57a960fe78fso4488310e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 02:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760867504; x=1761472304; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F+DYglWBDI71zz/BrQNEMs/n8cMj7C4w9i31aDwg9uA=;
-        b=YM5BfmmdTm2crHm8SpTJyauU9zRwRagmBQqLeWCceklsUcmzPE0Vr8Vc73lg9AFwNo
-         pVwccn2jPjXAcWv+7hiZEbCsQ1yjk8WPGUROnB+wtjp4QSCDAwRR9x+Iw7gS6T+bpFC8
-         9iFmRizSQFiA1ydoffF7E72BmmTEhlV8XeBGI6d6A35wSYGWIYuILCOe1/x8nH7cr8io
-         UggGwrzmlCftW1nYXTuUp8z9opLhGwh6gJLVjYj7uAqHc7eCSFzX3GVE94+g4uyCUFrG
-         XjsUOYh41RyNAVsulpIdALjzALEGGk7/fs9fm0ZPMGsR2G7apU3nzMw2bN+jf7zEew87
-         wQYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760867504; x=1761472304;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F+DYglWBDI71zz/BrQNEMs/n8cMj7C4w9i31aDwg9uA=;
-        b=WtJ0YuO38gKjzv2gGsXYiNMjjmiwSKBw03MDXElmlN4KrXZTlxC4eHK9fMkH9LoZ+b
-         nhCexCc+XIE8f5+6tPg46lHZLn9EYhMJcQxGIBPPvu6whmS47UvP87H3vIyCc9l1xv6D
-         Mo3k0/Iu5NvjD9q3jkyKY27Ryce2Y4uyzMqD/OxliGKptg6W43USZbCo3l2kmfXd5O0K
-         6TWlPA3iePjX+oo2lxwTDVn5qVlI5q95MWNrcTkD9nk4Vkkzezep7hmUj2sQJJsHpvCo
-         kSSQSUcIb7xfuQ0/Wg4KwEywMIQC1743oXKCJ1VYdZgyEvTkvvOh9KIBB4jWSoLYg1Aw
-         o53w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1D5a6+kjgvm2OOMWG1wmc7MQLPC2e+17Ijtq5SnxB1u/H4+lp0nXHLur45iGonuQH9FoumpYCpIcwJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6PZXMWzKROzk2H9HHh61oJbxM5OyGCl01kNi/AkdYNMND6cvy
-	aV15+Uhn7VK7WUD7QIyNJDUtF1srrxqL3gsw9JMCAXQq5t/DuO6pYLBO
-X-Gm-Gg: ASbGnctL2gJMzQJWWqNacZ5vxTfEK7SvV/PXvCIwdE76qGFhM4CXj3+psv0QncB2lCE
-	oCoLr47qaEX02aV2k8zxMWeW97sPdrTZEVLGw/spmSXZKoCIuwP63HAh2biiUqXZ/xLDdu/DRZG
-	8cIahfeG2iheH6C4BskjP+v+5GkAgKMNddZVPqw8wFBjA7qx96qUgQRLWe+I8oZpWszYM9LoD81
-	kq4A8WXey7G56ieTkdLSN6thiMrQSFbY3IWnoAYRBU+nDkhAiQgm71Xq5t+B2jPiIdbyNcXhVkw
-	29Zay/Bb6EkraaN/bkh9R1eN65buaMmuWWo56Pv0DVwBRXc9uopBxZ8SsFxPxd3grWdgyzMdxSi
-	iXKo3bLtKB264QXUWxt15ZjvfaZonkIFnOJ4SEvYoYjrfdbmtKPzs9fRH1XXfJhFruHMX+x+8et
-	p3
-X-Google-Smtp-Source: AGHT+IEk7oK3CvYkCqvLOZMVwW2h+hwBO81K6lyYByY9eQ+fsQlUxRuRCe5/anMAeziBgkE5R5Avug==
-X-Received: by 2002:a05:6512:39c2:b0:591:d120:1094 with SMTP id 2adb3069b0e04-591d8577799mr2641550e87.33.1760867503501;
-        Sun, 19 Oct 2025 02:51:43 -0700 (PDT)
-Received: from NB-6746.. ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeaf49bsm1425739e87.28.2025.10.19.02.51.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 02:51:42 -0700 (PDT)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: a.shimko.dev@gmail.com,
-	andriy.shevchenko@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	stable@vger.kernel.org
-Subject: [PATCH v3] serial: 8250_dw: handle reset control deassert error
-Date: Sun, 19 Oct 2025 12:51:31 +0300
-Message-ID: <20251019095131.252848-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025101902-puritan-thrift-b2d4@gregkh>
-References: <2025101902-puritan-thrift-b2d4@gregkh>
+	s=arc-20240116; t=1760868239; c=relaxed/simple;
+	bh=y6N4OVCBgMamWcwFizLrQmToD6eC9fiNXocvZf5m3CY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=arriiTMowwPbJQoJ+jQ4kJJQxz4AFj/jS2Gt/iJyfICTBKCjpWvB3zA1h+xZ+fiB6TmMAXC8Zu8pMca2JuPlgpcy2+DfwD/9YVY8elG4AFe5Pe59qT/PH4iB2kzAFvl5r8LEs9jFeoMPenettT87jb8APdg61uEA8kYrYOgRr4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=In29qi3z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80702C4CEE7;
+	Sun, 19 Oct 2025 10:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760868238;
+	bh=y6N4OVCBgMamWcwFizLrQmToD6eC9fiNXocvZf5m3CY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=In29qi3z0rBMtHAkJwncS/drzsoqgYMQVyLcNJ1aYeFpGOv/QtnUujmASFqxvXMjW
+	 WIsZ2QR1q9EyuMq1z/K28VeHyI4xx+USHYrbY2Gki6minkGXQKieECU9r1oJ0OajZD
+	 4o9CxnyNLjMw4sEY8tWZ3ej9wrcnC/7RIXIan1IDCFsBwl48jYbMa2yW3k9ff7MjsT
+	 oaazzO9pDGbpGQEHmp/Q4HrDk9uUvQGvHaqtFvwRac2lgZ2NXE0RQB7iBBwoyAR7TP
+	 TUVwfDsYAxYqfX1PaeLuGYjJeDzNaF0sYn7ksLfoCOsNXkC/XUs+1zHLLtCHugq5ur
+	 r2ccp4TpkX1eQ==
+Message-ID: <f45b3490-0cb3-4a3f-88e1-1f5b462e8088@kernel.org>
+Date: Sun, 19 Oct 2025 12:03:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Check the return value of reset_control_deassert() in the probe
-function to prevent continuing probe when reset deassertion fails.
+On 17/10/2025 13:20, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Add documentation for i.MX8ULP's SIM LPAV module.
+> 
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
 
-Previously, reset_control_deassert() was called without checking its
-return value, which could lead to probe continuing even when the
-device reset wasn't properly deasserted.
-
-The fix checks the return value and returns an error with dev_err_probe()
-if reset deassertion fails, providing better error handling and
-diagnostics.
-
-Fixes: acbdad8dd1ab ("serial: 8250_dw: simplify optional reset handling")
-Cc: stable@vger.kernel.org
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
-Hi,
-
-Done.
-
-Thank you!
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
-Artem Shimko
-
-ChangeLog:
-  v1:
-    * https://lore.kernel.org/all/20251009081309.2021600-1-a.shimko.dev@gmail.com/T/#u
-  v2:
-    * https://lore.kernel.org/all/20251019085325.250657-1-a.shimko.dev@gmail.com/
-  v3:
-  	* Add Cc: stable@vger.kernel.org
-
- drivers/tty/serial/8250/8250_dw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index a53ba04d9770..710ae4d40aec 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -635,7 +635,9 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (IS_ERR(data->rst))
- 		return PTR_ERR(data->rst);
- 
--	reset_control_deassert(data->rst);
-+	err = reset_control_deassert(data->rst);
-+	if (err)
-+		return dev_err_probe(dev, err, "failed to deassert resets\n");
- 
- 	err = devm_add_action_or_reset(dev, dw8250_reset_control_assert, data->rst);
- 	if (err)
--- 
-2.43.0
-
+Krzysztof
 
