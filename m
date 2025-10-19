@@ -1,82 +1,59 @@
-Return-Path: <linux-kernel+bounces-859867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2B6BEED0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D58BEEBF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 22:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D18A1348743
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18653BC8BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DA1236A8B;
-	Sun, 19 Oct 2025 21:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256FA202960;
+	Sun, 19 Oct 2025 20:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DDWPScIP"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OMVoWoFp"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CFC1EC01B;
-	Sun, 19 Oct 2025 21:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674861E50E
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760908406; cv=none; b=NCIYlJJQYiqSQnKAjlTePiVmEOfGylwngAq6qD8q1t3g84vFQHcHpgb0MJB0l/jWAbFOnBf2oOyYsVVI/dEDenQsrhzsdaZ/2QKpM4rjLSiIBJ/54SIUh7v4re3P9e56+SZiB9L66NNOxGw3lkz/+f0j3+6FQDg6UJQX8c0Tw7g=
+	t=1760904886; cv=none; b=N5gV6CBAU0DTzPxLjMziMOXjl4Ec2HddwjsasDLPaK82ep9gCKh0byuRIyBGiOQiZaVb49OKwKib2CcAQXIVDpMmEqvSxTLuuidfP0TGH5RGpaOufsTa3fs0GYTQHO1lM/IrWuvMe7Xg4asBWUPrbZAvkF2tSt/AeV8W0vigvdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760908406; c=relaxed/simple;
-	bh=rKU3wfp00zH31DRNz1Mh0mNwIR482llTBRDZfGJqW2E=;
+	s=arc-20240116; t=1760904886; c=relaxed/simple;
+	bh=Smi3JGM7i6MLP8+zjjFBRReqt3xd8cOsh+gh2lbqjeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bk+cPkXnOMuGfECp9BD+5lewMrg7AExSxTKk8a3foMB8hmiK8Fuqj3ZVcDuU/0R5eGbghYJoic2sl5SMw7LbxBITA/OLJZmKQOHe2TZmMqQBxmanlRdvxgFT3A/zN5iyU11/n69jYLq0timLCcLSoOglmIUAvJBcdyFfY/moC4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DDWPScIP; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJt/eYuc0yO+fHxm/OGwpe+f3eIOpuS1bjb90VPEF5IgMWuUHAExRP9KFzLyXyNhaYtE3rMjKk2eZhauCcB81jFFW7hnk6dNz71olX9sklMK3jWu27zrDUPqTDGOv5v65zUYkHXKwi7vP1+zVmbezqquMK+DLNPoUaAFbUtTYus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OMVoWoFp; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eenAxMjIeldA+zxHFfckTsl9LnonghykutSollA6fAQ=; b=DDWPScIPLCw0DfEas9sSnrqwnl
-	924rKv9Y9u9qfoZfas7/Qr6FGRpBUxS8BnyqKUFxCoUBMOkOonczyDrjqwiCB5Pb7araz8LK81dnf
-	FI3wZOhObn3NQBuReVlAfSSLuXoFgeOHOjX1wBwyc4YWhT5G5oJeGESzQq8EDq1kC/CERg0rqqSXd
-	Dc8MmjXY7lztAYxEDIWIEXa+ydtzMt0vpvDF+Aq3m4EYZPcyTuyZrcHxDMg1JdOaUqhrcWWLPMc28
-	CY4e5PkiqYHcPvlnGh5LhOcNRkETqSFJUF9tFEhdVZlakgKKv8mP6TLEhRwycx/zLuxhvhUZMy5Og
-	teXOzw5A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38750)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vAahy-000000001Ws-1Xwg;
-	Sun, 19 Oct 2025 22:12:54 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vAPeu-0000000068f-3P1z;
-	Sun, 19 Oct 2025 10:25:00 +0100
-Date: Sun, 19 Oct 2025 10:25:00 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
-	netdev@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] net: stmmac: dwmac-sophgo: Add phy interface filter
-Message-ID: <aPSubO4tJjN_ns-t@shell.armlinux.org.uk>
-References: <20251017011802.523140-1-inochiama@gmail.com>
- <34fcc4cd-cd3d-418a-8d06-7426d2514dee@lunn.ch>
- <i5prc7y4fxt3krghgvs7buyfkwwulxnsc2oagbwdjx4tbqjqls@fx4nkkyz6tdt>
- <c16e53f9-f506-41e8-b3c6-cc3bdb1843e1@lunn.ch>
- <aPP9cjzwihca-h6C@shell.armlinux.org.uk>
- <370d13b7-bba8-449d-9050-e0719d20b57c@lunn.ch>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KQE2WMICXol8M7tcsnsAvEN3DKCYGmwZMsLRsgncwyY=; b=OMVoWoFpW/R8ekxshETeb2sT/V
+	RsAxgDDDV0SiymSoaeihOaQQG8eGnDWqr9E7fxZ8gK2qFk/wuGAPkURSImtaLkx9+IPxVuLnwa4Hx
+	jSO4M+MhzQcLKdTwzmj66CWbnvrXbmSWA8G6MPJaYTSYNLpdzSZE8fHFjyEjGUJIFfKmSFQ2YB9Zf
+	6dUvw/lOoCl5r4pm8/3GcX+lKKj6KzHRNVUgoJ/Am0b90aRY9GPaJ6peTQiqJS0nlLWYpopHT9lMX
+	j68+JvC02RRijOvzq2BbeUk+bu0NutbX7k7bXVtRbApwNm9/L0zuBAWxTnyCZJ1r2xCHellOSpYj6
+	nmsyfNZA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vAZnV-00000003E9q-12RS;
+	Sun, 19 Oct 2025 20:14:33 +0000
+Date: Sun, 19 Oct 2025 21:14:33 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Huiwen He <hehuiwen@kylinos.cn>
+Cc: markus.elfring@web.de, Liam.Howlett@oracle.com, aliceryhl@google.com,
+	andrewjballance@gmail.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, maple-tree@lists.infradead.org
+Subject: Re: [PATCH] maple_tree: Fix potential NULL pointer dereference if
+ mas_pop_node() fails
+Message-ID: <aPVGqRKFcI1SjZdk@casper.infradead.org>
+References: <9092f8af-72d9-472e-8d5c-f950c8ce782d@web.de>
+ <20251019114916.1618642-1-hehuiwen@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,64 +62,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <370d13b7-bba8-449d-9050-e0719d20b57c@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20251019114916.1618642-1-hehuiwen@kylinos.cn>
 
-On Sun, Oct 19, 2025 at 02:04:02AM +0200, Andrew Lunn wrote:
-> > "rgmii-id" doesn't mean "there is a delay _somewhere_ in the system".
-> > It's supposed to mean that the PHY should add delays on both tx and
-> > rx paths.
+On Sun, Oct 19, 2025 at 07:49:16PM +0800, Huiwen He wrote:
+> Hi Markus,
 > 
-> When passed to the PHY it means that.
-> 
-> However, DT describes the hardware, the PCB. "rgmii-id" means the PCB
-> does not provide the delays. So the MAC/PHY combination needs to add
-> the delays. We normally have the PHY provide the delays, so the
-> phy-mode is normally passed straight to the PHY. However, if the MAC
-> is adding a delay, which it is in this case, in one direction and
-> cannot be turned off, the value passed to the PHY needs to reflect
-> this, to avoid double delays.
-> 
-> And because the MAC delay cannot be turned off, it means there are PCB
-> designs which don't work, double delays. So it would be nice not to
-> list them in the binding.
+> Thanks for your suggestion.
+> The commit description could be improved to better follow the imperative style.
+> I'll update it in the later version (maybe v2). 
 
-Well, I find this confusing. I'd suggest there needs to be common code
-to deal with it so we can stop thinking about it, and just push everyone
-towards using the common code.
-
-phy_interface_t phy_fix_phy_mode_for_mac_delays(phy_interface_t interface,
-						bool mac_txid, bool mac_rxid)
-{
-	if (!phy_interface_mode_is_rgmii(interface))
-		return interface;
-
-	if (mac_txid && mac_rxid) {
-		if (interface == PHY_INTERFACE_MODE_RGMII_ID)
-			return PHY_INTERFACE_MODE_RGMII;
-		return PHY_INTERFACE_MODE_NA;
-	}
-
-	if (mac_txid) {
-		if (interface == PHY_INTERFACE_MODE_RGMII_ID)
-			return PHY_INTERFACE_MODE_RGMII_RXID;
-		if (interface == PHY_INTERFACE_MODE_RGMII_TXID)
-			return PHY_INTERFACE_MODE_RGMII;
-		return PHY_INTERFACE_MODE_NA;
-	}
-
-	if (mac_rxid) {
-		if (interface == PHY_INTERFACE_MODE_RGMII_ID)
-			return PHY_INTERFACE_MODE_RGMII_TXID;
-		if (interface == PHY_INTERFACE_MODE_RGMII_RXID)
-			return PHY_INTERFACE_MODE_RGMII;
-		return PHY_INTERFACE_MODE_NA;
-	}
-
-	return interface;
-}
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Do not send a v2 until somebody has a substantive comment.  I suspect
+that what you are doing here is wrong, but I lack the understanding to
+explain why it is wrong.
 
