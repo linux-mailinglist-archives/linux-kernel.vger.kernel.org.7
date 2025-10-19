@@ -1,227 +1,126 @@
-Return-Path: <linux-kernel+bounces-859774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1936BEE84C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:08:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA2BBEE673
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C30F04E93CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5055518946F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5B32EAD18;
-	Sun, 19 Oct 2025 15:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4CF2EA47C;
+	Sun, 19 Oct 2025 14:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFkeUTdu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AcX7YUcg"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E912A1CF;
-	Sun, 19 Oct 2025 15:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1E52EAB6A
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760886528; cv=none; b=uF99jg5D6geupWRPhQfxb8KNIaLv3Nz39GF+N0+xdCojUJhSjxwT7ZGSbJYhmdyV8B9jZ4hxqwTRKpHcXyGrFyibaiphNKKvrG1IVlGulLRx9J1oomrk6MOPlb5HahK+TU7MgRUJpSUM9WM0lEGmezASET3wfPFZm7MuXRrI+lI=
+	t=1760883182; cv=none; b=Wa8DWxG5MeCPew9FRzm+KgtS9dsfkvPLLJT4OMQRIW7igieSqA1VF4ZdKD4S/wjGXqdnIOPe0X/tYkDXs4dc9cRtNXaYUqMqhQGIGn+CY/J5TViC2BuJsJR6yIXZFpb3nlopSda5NwMimqh8cjEZhCnQEwtzJ7YiyufQPzDAFlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760886528; c=relaxed/simple;
-	bh=kTauBeDoTqIQz3NxrorvMMaU0rVxHo/z/FhTS23ebJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mo39N9XBI4ViA2fYLUGCP4y5+JVKnBORZNcsU3XriyGCdyoGiHd/cmgRl1DhR6SZNvWKJ3wJDcOJzAIjoSDVbFUVd1IG5S5GZY1hYAlVPi4vmbBVlPfbpnzETxP4Fkf72BIwCHjTRCln54udfrGFY9RQ+CHugPzucvgSx4RKI4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFkeUTdu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF62CC4CEE7;
-	Sun, 19 Oct 2025 15:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760886528;
-	bh=kTauBeDoTqIQz3NxrorvMMaU0rVxHo/z/FhTS23ebJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SFkeUTduqPWU0avJTtFPkGsRKVFcPOBcbnbKE+M46qxoyD9O5/qKsMT/NBcOoPpsZ
-	 u98CZX0J+sOA2zePt6Gf5g9mCcPYeCgUdEiB6l0SX3Xlc5We+6l1FufO1HG5yqNXzX
-	 CHD7nGnDM8h4MxvLaU6zzDlddkQ8UX/jTOruRLMoe/u0QMMGSDS0sBA+4O5RnyIOml
-	 8Q2QDHKyblrCGUK75aK24+CYQAK0uNA7KhP/WddiNiX/3dxHW6fRJXqePJzs/9Zmvk
-	 EJOOLMM7IQYXatPnGTn8CkEmHMxHp7kKlFZ63os1beAAzYD5Xu3X8rf8lLAX61jNDh
-	 yRHMGO8wofQpA==
-Date: Sun, 19 Oct 2025 23:08:29 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Message-ID: <aPT-7TTgW_Xop99j@tzungbi-laptop>
-References: <20251016054204.1523139-1-tzungbi@kernel.org>
- <20251016054204.1523139-6-tzungbi@kernel.org>
- <20251016123149.GA88213@nvidia.com>
- <aPGryj-V5PQZRtoI@google.com>
- <20251017134916.GK3901471@nvidia.com>
- <aPJp3hP44n96Rug9@tzungbi-laptop>
- <20251017162116.GA316284@nvidia.com>
+	s=arc-20240116; t=1760883182; c=relaxed/simple;
+	bh=OZvVTykIlBRbaETtgtNoTHwKA/K3IweojPWLke2286k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=afvL2oPrmq4P6s4ChnZC5Ph6eOeVcV9NzOWN0OkN6PHvcwvsC+yOkjnMgLN2oDEN9OoaJrXlDa61xEzV5Swg1Gr5clf3QT7fBVF05K56SNU5k2ZO7uPLcKu0UlOLj9b7RcE8eDzlNeAODolqPi9ixD8Zt7jLcmywycfCYcj32eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AcX7YUcg; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b5dfff01511so94985366b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:13:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760883179; x=1761487979; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OLOKqWlJM+Qls3gDoxvAM4+OyQdsVVtIrTMnLe6+7Bg=;
+        b=AcX7YUcgQKcN39VuQ44MW1z+n6n5TKL5PGDe6uGiUQ30jwBS6PnFkX2X1HiSF+fhx2
+         fYQsL20mmKFi5tTXXHyJonKoSCwybgH/UmQwbHIbYZSzhSr/OFoN8/1aPjloS40N0Lnd
+         V8/IJuZzPPrP7FRW90DZizCJdSCBwKpEGltQE9ElxfUiNdzua+M5d4Q5JSI1ToJS6ltk
+         hM2TCe+r61H3bOHK7yFsi4CF2dhzxv56rIsl19ytqrtR/Z42XjBPoHCwL65KB/Lv3Cpz
+         gIe1SSacnzTcBU/5jErLKSFWdR5ruaZ7gUaoCriWDT7pTTulS5zwYNLpe1LTYgiYcjkH
+         5aGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760883179; x=1761487979;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OLOKqWlJM+Qls3gDoxvAM4+OyQdsVVtIrTMnLe6+7Bg=;
+        b=efvhj7B+hV+boaZJjVaXDKYEoGGMOP1CVdz5rwGZoOiM39T9gQGzGtJ0TxrTAw5zlz
+         5V2dg2tc10laakGDRcb4+1f7Z1UJ/I/2g8HaUkXzUue4oxEUR4k+am+P/9S0yvZbfd6P
+         40wJtCsox95fulWdYyPr+AQTLcw+/FWrewRH3Fcpt72/vPWrmcugKKgKhbqmv69pfqky
+         BMMwf4JiGq/N96sPLByMB+UDpitaZu8vbV+3aBPsM8ZABgnoyw5b+CkKvBqDUs/p+PLX
+         mqJ27XlNd4V7gD7iIg6T0FW2H2qaaeZ22ijmndYwCKSeuVJP/Xe7tVNsogtFzT/S/dMC
+         60Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5KLT1WS+a1QnKYF4DQSMEJflag6SPpHZYfrxuqHOZSbbeGt0ubvv8GuNPF+D7sEl8ni8oqntQZY/ysn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Tg2S7qoEa2hgtQSj108myg8kqgks6KWqBCIIB85gobmI474M
+	zGOLei70ArbXYa/sVF+eFm+xRbDD7d+F3iojmkVREw+LxBnn+ek/kAty
+X-Gm-Gg: ASbGncsPNsiDBeuF0F0nsLdk2i/y/8nBqIUZCjjGWYoAMmCO6THJsxbHa+MwDwZzr7i
+	CS3y3ecDndOY+9j313U//9cHYjl3t+ZnTGpIipFY4tyULtnMmH+e8i+qHzIfC2B0SwlJqUxL8g/
+	AQhP3SPAEwmPjK3bT0aqO/oeJOTuPnRlwFfeLRnFi/ulmA5tIsjpEM3JHw0cDu36H8BKYwCXA5N
+	Wj3pUyPbv6JSdjgmQ8HRfs1LSiXmmn+D10FIRH0byqL8HoAEWOpwsiN9ziAmCMcDIrC+tQ04zDb
+	yW0+gAjvUWEQmrehV1k9ouug0BT5rfZIgwU4aDSsb/zi6zlnczNbulfXc59Slic24joQNNgcStX
+	DjWWsxjl2E/jzIGm3jSbW0IRqoUvllYmk14q6G9mcLHGrhq5OCtW8VofGh/zyWbbO5F3vzup6AR
+	nyGRsc
+X-Google-Smtp-Source: AGHT+IF6kFqxZjmdvkiQmumLp5yXtfBfsGWcBoAvxoX6/vIZKFSk3vlT0KQXPw3Y30vQ7ooRKt1BnA==
+X-Received: by 2002:a05:6402:2681:b0:634:52c3:20f5 with SMTP id 4fb4d7f45d1cf-63c1f5738aamr5377085a12.0.1760883178967;
+        Sun, 19 Oct 2025 07:12:58 -0700 (PDT)
+Received: from bhk ([165.50.121.102])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4949bfd3sm4212111a12.41.2025.10.19.07.12.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 07:12:58 -0700 (PDT)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: lanzano.alex@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
+Date: Sun, 19 Oct 2025 16:12:28 +0100
+Message-ID: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017162116.GA316284@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 01:21:16PM -0300, Jason Gunthorpe wrote:
-> On Sat, Oct 18, 2025 at 12:07:58AM +0800, Tzung-Bi Shih wrote:
-> > > This is already properly lifetime controlled!
-> > > 
-> > > It *HAS* to be, and even your patches are assuming it by blindly
-> > > reaching into the parent's memory!
-> > > 
-> > > +	misc->rps[0] = ec->ec_dev->revocable_provider;
-> > > 
-> > > If the parent driver has been racily unbound at this point the
-> > > ec->ec_dev is already a UAF!
-> > 
-> > Not really, it uses the fact that the caller is from probe().  I think the
-> > driver can't be unbound when it is still in probe().
-> 
-> Right, but that's my point you are already relying on driver binding
-> lifetime rules to make your access valid. You should continue to rely
-> on that and fix the lack of synchronous remove to fix the bug.
+Replace kmalloc() with kmalloc_array() to correctly
+handle array allocations and benefit from built-in overflow checking[1].
 
-I think what you're looking for is something similar to the following
-patches.
+[1]:https://docs.kernel.org/process/deprecated.html
 
-- Instead of having a real resource to protect with revocable, use the
-  subsystem device itself as a virtual resource.  Revoke the virtual
-  resource when unregistering the device from the subsystem.
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+ drivers/gpu/drm/tiny/repaper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Exit earlier if the virtual resource is NULL (i.e. the subsystem device
-  has been unregistered) in the file operation wrappers.
-
-By doing so, we don't need to provide a misc_deregister_sync() which could
-probably maintain a list of opening files in miscdevice and handle with all
-opening files when unregistering.  The device unbound is free to go and
-doesn't need to wait for closing or interrupting all opening files.
-
-
-diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-index 27078541489f..bc4d249c4d0f 100644
---- a/drivers/char/misc.c
-+++ b/drivers/char/misc.c
-@@ -173,8 +175,12 @@ static int misc_open(struct inode *inode, struct file *file)
-         */
-        file->private_data = c;
+diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
+index 4824f863fdba..290132c24ff9 100644
+--- a/drivers/gpu/drm/tiny/repaper.c
++++ b/drivers/gpu/drm/tiny/repaper.c
+@@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct drm_framebuffer *fb, const struct iosys_map *
+ 	DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+ 		  epd->factored_stage_time);
  
--       err = 0;
-        replace_fops(file, new_fops);
-+
-+       err = fs_revocable_replace(c->rp, file);
-+       if (err)
-+               goto fail;
-+
-        if (file->f_op->open)
-                err = file->f_op->open(inode, file);
- fail:
-@@ -234,6 +240,10 @@ int misc_register(struct miscdevice *misc)
-                return -EINVAL;
-        }
- 
-+       misc->rp = revocable_provider_alloc(misc);
-+       if (!misc->rp)
-+               return -ENOMEM;
-+
-        INIT_LIST_HEAD(&misc->list);
- 
-        mutex_lock(&misc_mtx);
-@@ -291,6 +291,8 @@ EXPORT_SYMBOL(misc_register);
+-	buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
++	buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
+ 	if (!buf) {
+ 		ret = -ENOMEM;
+ 		goto out_exit;
+-- 
+2.51.1.dirty
 
- void misc_deregister(struct miscdevice *misc)
- {
-+       revocable_provider_revoke(misc->rp);
-+
-        mutex_lock(&misc_mtx);
-        list_del_init(&misc->list);
-        device_destroy(&misc_class, MKDEV(MISC_MAJOR, misc->minor));
-
-diff --git a/fs/fs_revocable.c b/fs/fs_revocable.c
-new file mode 100644
-...
-+struct fs_revocable_replacement {
-+       struct revocable *rev;
-+       const struct file_operations *orig_fops;
-+       struct file_operations fops;
-+};
-+
-+static ssize_t fs_revocable_read(struct file *filp, char __user *buffer,
-+                                size_t length, loff_t *offset)
-+{
-+       void *any;
-+       struct fs_revocable_replacement *rr = filp->f_rr;
-+
-+       REVOCABLE_TRY_ACCESS_WITH(rr->rev, any) {
-+               if (!any)
-+                       return -ENODEV;
-+               return rr->orig_fops->read(filp, buffer, length, offset);
-+       }
-+}
-...
-+int fs_revocable_replace(struct revocable_provider *rp, struct file *filp)
-+{
-+       struct fs_revocable_replacement *rr;
-+
-+       rr = kzalloc(sizeof(*rr), GFP_KERNEL);
-+       if (!rr)
-+               return -ENOMEM;
-+
-+       rr->rev = revocable_alloc(rp);
-+       if (!rr->rev)
-+               goto free_rr;
-+
-+       rr->orig_fops = filp->f_op;
-+       memcpy(&rr->fops, filp->f_op, sizeof(rr->fops));
-+       rr->fops.release = fs_revocable_release;
-+
-+       if (rr->fops.read)
-+               rr->fops.read = fs_revocable_read;
-+       if (rr->fops.poll)
-+               rr->fops.poll = fs_revocable_poll;
-+       if (rr->fops.unlocked_ioctl)
-+               rr->fops.unlocked_ioctl = fs_revocable_unlocked_ioctl;
-+
-+       filp->f_rr = rr;
-+       filp->f_op = &rr->fops;
-+       return 0;
-+free_rr:
-+       kfree(rr);
-+       return -ENOMEM;
-+}
-+EXPORT_SYMBOL_GPL(fs_revocable_replace);
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a6de8d93838d..163496a5df6c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1066,6 +1066,7 @@ struct file {
-                freeptr_t               f_freeptr;
-        };
-        /* --- cacheline 3 boundary (192 bytes) --- */
-+       struct fs_revocable_replacement *f_rr;
- } __randomize_layout
-   __attribute__((aligned(4))); /* lest something weird decides that 2 is OK */
-
-diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
-index aca911687bd5..c98b97f84c07 100644
---- a/include/linux/miscdevice.h
-+++ b/include/linux/miscdevice.h
-@@ -94,6 +94,7 @@ struct miscdevice  {
-        const struct attribute_group **groups;
-        const char *nodename;
-        umode_t mode;
-+       struct revocable_provider *rp;
- };
 
