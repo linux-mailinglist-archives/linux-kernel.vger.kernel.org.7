@@ -1,108 +1,146 @@
-Return-Path: <linux-kernel+bounces-859874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968D5BEED91
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:31:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6807BEEDA3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB741895E3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:31:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D4154E6B5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A8230BFD;
-	Sun, 19 Oct 2025 21:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F468238D32;
+	Sun, 19 Oct 2025 21:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cb0RkHD8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcBgCSzH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D14A1A23AC;
-	Sun, 19 Oct 2025 21:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCF1E25E3;
+	Sun, 19 Oct 2025 21:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760909454; cv=none; b=WcEPdlb1wFJf+v+TfV/nWsWMSccEzcT3S/qqZz6n3JVxXepCFHDWt1hsLNTUN2BEQPXDMmgI3j0gz4bZiTUrQWdat2hmT5U2SY7OsEowwVHnBCu8Y2nvXkHiDJxMoVFXwAOZayZCrfUVU17CGceo5ZbI9eOId346pAoNgeps7KE=
+	t=1760909482; cv=none; b=BsPNEhxzX0DkfRjLa0v8PIOgjR30oAMWIXdHCrmrUiX/62uFJzrWPnn5qVi/WghfkI4nadyJ1pLTbOXW5LlmUK9Vm2hIMo7Kga/RtzqXfxhZ928gQgXhBO/270+Z0w/FedTAmc95rZLiW8mz4WeJOuwFr7Mu5TvJ03gLYpQz10s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760909454; c=relaxed/simple;
-	bh=m0vXu58JOKSuo9W/oLeUSC+huzWMxxj//eOu9kjvm0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HzjR3jbvggDENF24O4EVhv4wrypnYNhO8t8fBggWt1h5PpW9cd0k0GNIICX89TgB4IrNjWv6EJRmW6vAi4C8MF93lPq5/j2O3OT+tPOZ87wnVrUWxNhCwW2/EPcJbbK4iH2eMPYArWhCCNr9OSqqcK3AUVLne2pwNb7OIus9dB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cb0RkHD8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=U4SNFq6tMm7n2I4cn3XDh+JH8DxlPT8XDtklL//DXuo=; b=Cb0RkHD8WsowqdjTkBTyv0KEP7
-	Eo8PQQvckC9exKYK9MFEmAGmNixSr8W7J0rWZq7vip3DPHf5WO+21Eg+U/f7YaOX7rdvefqgkx7sA
-	9pBCzkDtHAWw5lCDOzhvp/tBlUintL2VcqIQ1QkZxlL48Xwegvy/kIkkKlu2aPbbLOFuXygwFAwsP
-	UKbyi6omyb/Yq5m19GXBsoTaewmwhFE67fH67qG5hq+ox5BqlmPPa4RiSE9CFy4ekdSukLm3Soafx
-	Tzl63cX6n74BWKw/78/rJ7MZQT0sNprO//aBeCFDb7vRkWC7hjywuRF0AYjkte1FCk2LuK4CAoZqR
-	Rg4Pe7oA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vAazJ-0000000BSnE-3k2P;
-	Sun, 19 Oct 2025 21:30:49 +0000
-Message-ID: <ba148c36-8778-425e-8c94-35ebd708fc80@infradead.org>
-Date: Sun, 19 Oct 2025 14:30:48 -0700
+	s=arc-20240116; t=1760909482; c=relaxed/simple;
+	bh=sApG3ZbJWTksJqIVkodaBxHNS4Hr0anMh4n685JAKh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=A587zlBMqhjdJ5maAPOoGm4n53v/QP5aef7qHkL4g+ezYTMUBataeFOIik38jxs3CirawcNueCQzuIZJbTL6ba9zmShGu3N1oxPDhnl950a7QXCmKgX68kkERlXP6gJirExPNowi1h5FSwKMX7gfyX1+XaWwUDT2zNKNTnCg4i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcBgCSzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC02AC4CEE7;
+	Sun, 19 Oct 2025 21:31:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760909481;
+	bh=sApG3ZbJWTksJqIVkodaBxHNS4Hr0anMh4n685JAKh0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IcBgCSzHByUTg0KSFE2YM1558TixTmxwF02MD0Ww3VADciu/Lgk9WrbXSXsGsOcaC
+	 v6kMEo34mZA0JLdIPDM43OncXFjvRLZLRwVW7vZr7fMYiZgAndiThkdqHZg5bAjnpC
+	 94jwtQi5u8uivbJ/4fvAOYbSXhEt/PxHcW8V6BdzK0MWoXpKbXOunAy3ffRXj7R1M6
+	 dnsL/PYJUOmW7BfALr3gW9l/dimBr5iaveWEIDvnxLR0wsLf1XI3GeetXX1sqjLHb6
+	 Bv5r/a7HIE0buC/WueXJh7mVyIA3XNlCEAZ9ktEMuAVTaUiKBm2F727HQEcgVsHa4Z
+	 TYLOgNQsBVxGA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: tamird@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Liam.Howlett@oracle.com,
+	a.hindborg@kernel.org,
+	airlied@gmail.com,
+	aliceryhl@google.com,
+	arve@android.com,
+	axboe@kernel.dk,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	cmllamas@google.com,
+	dri-devel@lists.freedesktop.org,
+	gary@garyguo.net,
+	jack@suse.cz,
+	joelagnelf@nvidia.com,
+	justinstitt@google.com,
+	kwilczynski@kernel.org,
+	leitao@debian.org,
+	lgirdwood@gmail.com,
+	linux-block@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	llvm@lists.linux.dev,
+	longman@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	lossin@kernel.org,
+	maco@android.com,
+	mcgrof@kernel.org,
+	mingo@redhat.com,
+	mmaurer@google.com,
+	morbo@google.com,
+	mturquette@baylibre.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	nm@ti.com,
+	peterz@infradead.org,
+	russ.weight@linux.dev,
+	rust-for-linux@vger.kernel.org,
+	sboyd@kernel.org,
+	simona@ffwll.ch,
+	surenb@google.com,
+	tamird@gmail.com,
+	tkjos@android.com,
+	tmgross@umich.edu,
+	urezki@gmail.com,
+	vbabka@suse.cz,
+	vireshk@kernel.org,
+	viro@zeniv.linux.org.uk,
+	will@kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] samples: rust: debugfs: use `core::ffi::CStr` method names
+Date: Sun, 19 Oct 2025 23:30:49 +0200
+Message-ID: <20251019213049.2060970-1-ojeda@kernel.org>
+In-Reply-To: <20251018-cstr-core-v18-7-9378a54385f8@gmail.com>
+References: <20251018-cstr-core-v18-7-9378a54385f8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: ktap: fix minor typos in ktap.rst file
-To: Clint George <clintbgeorge@gmail.com>, corbet@lwn.net
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251019202053.285723-1-clintbgeorge@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251019202053.285723-1-clintbgeorge@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Prepare for `core::ffi::CStr` taking the place of `kernel::str::CStr` by
+avoiding methods that only exist on the latter.
 
-On 10/19/25 1:20 PM, Clint George wrote:
-> Fix couple of grammar and spelling issues such as:
-> diagnosic -> diagnostic
-> Cuurently accepted directives -> The currently accepted directives
-> It's website and specification -> Its website and specification
+This backslid in commit d4a5d397c7fb ("samples: rust: Add scoped debugfs
+sample driver").
 
-Is that last comment backwards?
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ samples/rust/rust_debugfs_scoped.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> This patch aims to correct these issue and enhance the existing
-> documentation.
-> 
-> Signed-off-by: Clint George <clintbgeorge@gmail.com>
-> ---
->  Documentation/dev-tools/ktap.rst | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/dev-tools/ktap.rst b/Documentation/dev-tools/ktap.rst
-> index a9810bed5..155d792cf 100644
-> --- a/Documentation/dev-tools/ktap.rst
-> +++ b/Documentation/dev-tools/ktap.rst
-> @@ -5,7 +5,7 @@ The Kernel Test Anything Protocol (KTAP), version 1
->  ===================================================
->  
->  TAP, or the Test Anything Protocol is a format for specifying test results used
-> -by a number of projects. Its website and specification are found at this `link
-> +by a number of projects. It's website and specification are found at this `link
+diff --git a/samples/rust/rust_debugfs_scoped.rs b/samples/rust/rust_debugfs_scoped.rs
+index b0c4e76b123e..eb870e9986b8 100644
+--- a/samples/rust/rust_debugfs_scoped.rs
++++ b/samples/rust/rust_debugfs_scoped.rs
+@@ -38,7 +38,7 @@ fn remove_file_write(
+     mod_data
+         .devices
+         .lock()
+-        .retain(|device| device.name.as_bytes() != to_remove.as_bytes());
++        .retain(|device| device.name.to_bytes() != to_remove.to_bytes());
+     Ok(())
+ }
+ 
 
-The '-' original line is correct.
-
->  <https://testanything.org/>`_. The Linux Kernel largely uses TAP output for test
->  results. However, Kernel testing frameworks have special needs for test results
->  which don't align with the original TAP specification. Thus, a "Kernel TAP"
-
-The other changes are OK.
-
+base-commit: b214b442f2fa78aad04ebe1b5cad2c1d94120cb7
 -- 
-~Randy
+2.51.0
 
 
