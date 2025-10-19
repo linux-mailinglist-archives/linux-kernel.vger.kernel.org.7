@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-859540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E332BEDEE3
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:17:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91255BEDEE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAE9B4E33A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22403E34AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7261B224AF9;
-	Sun, 19 Oct 2025 06:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BC12264DC;
+	Sun, 19 Oct 2025 06:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVSTEDQ+"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jO9rORjb"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7751E5714
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 06:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045BC223708
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 06:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760854613; cv=none; b=XsvpTPPalzimQH0ABBffeXo+LASNg2HXisq/Fvf78QlxTDo7FEgOriMJ+HxPgdcfduIGIWUVTrR7qIOJAksoJZQv+hK+5EWRhVW2Am3SPDPfelBOfnwWaV+EwhRrptsDpHWsOB1xOpHJq7R6lwGb/Axyrdx1uVV9P+MZcnHdztA=
+	t=1760854615; cv=none; b=P8UTAmDtQYXzHbL6JogJ8tw+VDucogyiLGZ6RdhNpgNDiX/82gpa1x1kY2i74s2f0jQ1w1UZa2lRLxMM88dxSUEepefcYO74XmJUyRpCEvNGmkbbYhvBlUZF9kY24KpvocQ0CwrAGSmgbWvpNBWWaFNyj3FmOuDxRZx74esaAxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760854613; c=relaxed/simple;
-	bh=BWUhz8s+BF4DrRAqzD8ON5ZEWppXeJUkPjd8F35jANk=;
+	s=arc-20240116; t=1760854615; c=relaxed/simple;
+	bh=Y6BSxQK/bRtvwmKkvr/519Z5ZWUtrzi7VdNf3rEHT4I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=luM6TcuUMMQSd40AEwLnrhlvzIwD/nuobOl3U/TeCpNOYy0DhKPa2mrUUZV/WLRcoEWXtG3IF+sZWaTSEIP8M4K20omhYsXNBSSNeUJ26hXjwqaxi0tAAO70vpVizWjp7heddsq2w0S2FopfKM0Fx0XlWzbeoh/vCAX4j8NZERs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVSTEDQ+; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=gV5xZWfwmT8qqAWbor5lAmV3/Vx7sHbeMzI0faa1RYHwMxCdGubbEsLIA5EXgKvNK7KNCJjFWj1dDtZhP6fAzkBRNNp3L79TEbd+xizSZdL0cx//S2hOVPgpwJgFmFOXMSHxBBSCZV9LlsnpXnvoPw/MSxXbYQiXaELfbLNazMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jO9rORjb; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-782e93932ffso2877763b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 23:16:51 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-791c287c10dso2611438b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 23:16:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760854610; x=1761459410; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760854613; x=1761459413; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ASOuu0vLLkYA4SCgQcRVW0CFmaVqIaRDuU0cccUVqmU=;
-        b=IVSTEDQ+gvyLd2puwr9Pn2M7DNBbi588D+ez6dmwZcUdXZzQgqcQOONmQtaMqUoEt+
-         cmQ+J+8YLcWZUkZi4clJ/WF3R90/wEl9d8mRIYt5fFVpyBfPsaMiKX1tmwZq6XwhmmEw
-         3h62Vud/uLQQfSGG65nn1A1MGgWEzxm9PZ/vFrBsG6bEUsObQ0kuFE6BkFxKy/a+16Up
-         A5Wz+g90Q3Sw1MOfA/kT4BSB2Xa9ApaVBTMwtMEpTWpdIHdyua8Nm336mZjREd8fs7Ac
-         I1XAQMZz4IINmea0Rl4dp6AcQtCwPTLl8jeChBP2Pr/2jAH4H0ca3e3ary+P8PEdEioT
-         MF2w==
+        bh=prNKwNoW/o7QdDt+USGhOL8192M663R67x3ATS043tI=;
+        b=jO9rORjb850Lq2vDDm7k2lDvUwUgtewCO3yEGhdGTvqYS06kwGBIBoqN3gGYI4cZZj
+         +y+sS5jWpdI899pIKoEvhynUcnWMV51UL/hDqn4O9cvIhZTKfBc4dNEzx9jlL7SP0Jk6
+         XI9KK8/T66XeUw8BotxFPcX6pDVwvP4xkTUpr4roW82QyTh1x6ONLZZiOQiHFD5AiUsQ
+         dJHoDgtPjY9yOWS+gyCMNe7OeSCyErNJOSNYFZ6+mnqHNXc28tIgc2EKRwCMho9cSIcO
+         zknCA7TA5AfCJpYXmcTldpOGEAQkeoPNu2HM4ccQlFz2L3GnYN9qTEsdNZP2A7YC/Vtc
+         krKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760854610; x=1761459410;
+        d=1e100.net; s=20230601; t=1760854613; x=1761459413;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ASOuu0vLLkYA4SCgQcRVW0CFmaVqIaRDuU0cccUVqmU=;
-        b=GWFfPOdm56y4WEdGGf49+WzilFjrtNMZOzDo224UiBeeq3BfPBQAS1Ird/sANUOA6O
-         bhcGfvpnLOgAPZMj4aRmHbfkyaB/rzzlukIXn9PTv4X1BPT4aoHlQ6cLXRHsGvav0mPn
-         V9iHPO1zwkPf5q92zoR3VNLHeUnw5HySSlbb8dHqCYcTmwZbRtl/xq09SyumeqRWRXdh
-         /+9scJzMod0JXdvx+rpoFXfbl1FrBav33xboJZFgx5QqCopOTv7OVBI3K7X0EJTeWpP6
-         EBaz3S9sXxJ1Godeq1/h32NM9xErHLpwDBE4gjwL0VdryWSHiEB5UrvAbnz7Qdxiwybj
-         XQUw==
-X-Gm-Message-State: AOJu0YxZROtzvhFlrdjnoBr9Quke7YOSIaA8vlWZtkx524NAtW8Tu8Eu
-	ubLOjSGIpfKsNqPl2aodaia76L+1R35nD/a2tLinLaF4G7NCqKTGGIei5Kpgow==
-X-Gm-Gg: ASbGncsWd+Q3AzBCa394DVdS7x8y+fK9z8jiC/nDyogPNlOuvqumUU+/3hGY7LjHczV
-	VGXHSJwiq6sEnGB9XMBDNiCGcLhQiq/Uaebf3ijOl1vSOHwYS1FZiz9NfaGBrApJJ7St2hlekVa
-	XIThuCZBn8MkWMg6fzn3w0AYhylJ3I4P6nX6V0sXoB+0oE3KxIPfeu5lzF9Lycwqm9/PJECFTUH
-	hbPb/Z92wwS7mIElYLwwAh575/IP5TFkP2baPyX/cI1VwF/uoCvVJqhgxV46MaopkwPezrfKm4R
-	y5gPMZH96vwIBmanjKIGPbxe3NIIPkeS+heU8K8urs23sIo8y5j4WcjqYeCGiHAg2ppuQ24/n+y
-	8Rj+HKduzySmUV3c7RtEvvCnB8DKxwjMe4hRvrRTKkgFhvbFR1rrI3bncoeX/VW54Gml+ifx3X7
-	QVRgxl
-X-Google-Smtp-Source: AGHT+IHcUYO9o6/V8YsIgbXToAumR6ZpDXIuRlYfIC0ZEiQ0uD3wnq9KGJNzH0DhGnF60uXtoY0gew==
-X-Received: by 2002:a05:6a20:6a07:b0:334:9f87:17e8 with SMTP id adf61e73a8af0-334a8610a1emr11564376637.38.1760854610412;
-        Sat, 18 Oct 2025 23:16:50 -0700 (PDT)
+        bh=prNKwNoW/o7QdDt+USGhOL8192M663R67x3ATS043tI=;
+        b=aJiBy1TDzaypXT+zTNEje50R3B2N5stz1O9Jj/MUVuC1w4FnTtnLFu2dnqwzamKgjW
+         kM4KfYheJEoIXPMd5Qf6AK3RANd1PSP2CQa75HL7Iv5Lpf3r21AAQvFdLbhvWrtgfYix
+         JlBdEwGytZsWGwUDvDSJ3QAv4qTxJ7QxqQFCm889rG4vJp2b/w5HCBKQW2FN0ixti//j
+         vGx+TCiwTXaPKj8znmFFPoiqJ55Fs6S4tu5PgCs8Yw7TGtOa35KOGcnfQ0gAG7NztHvw
+         BgHueA1GvFU/RIZoHDewwB9pT2rlt14fD23v4S3LWzEp+MozbsP8H2uRICxrYRU4z5ra
+         QpRw==
+X-Gm-Message-State: AOJu0YyiRVCEtkSojhj0Z0jryWWccn9aMqEC7nYvVbTctAFrUHi4ABVQ
+	KHUQ5mkKlTPKatyw0O80roZiDS/SHM4I/Y2mIFtPA/nEnZxnVlDfhGdI8Bk6gA==
+X-Gm-Gg: ASbGncu7EPeJzAcbW/ePqONbqWq5f3z6zEFr0T9KguwZ+HM07tAEYyzFT1DmWwjX04G
+	ny3f2C2Bj/9jri53Q1At9+/0nZwDOGVL2EhFoHx2dV683BHm661HfHU1XWK69GV3ythltsUZcX/
+	niDR5PIJKtthohTjX70ARHpwg0ospgB+B4/RBTckH0eE4zjPSUL9ArvFf93TXoTGX9VgoRXoXaV
+	+M8jiBgD32OkzlmjEcsUKHitRD+G4/DGHsRXNWxbjFScuoNcxtaa++Jq0b882Ptp7r/VDgGwuni
+	3yZYX3LyXFEGpYvrFh5kkRTvNkn3ME+O8NqIoGb/BgdfR1WqCa/JZdmYXl0z7zHrtTk2mOhEnSo
+	3J1KQgUUUFMcnrkwedcD8DiFol+lbhoCQsCCY14fkHaq0AZvPX1K6PAQqMNt2msP06m5tEaKiOG
+	eGb1iw
+X-Google-Smtp-Source: AGHT+IF3iJEpvfQRjbbiVSzFlW8Wp4NdWQUwUHN2mBuAd5E7S5xjZeCB+W391MmJtvpZ60a/UAkSrA==
+X-Received: by 2002:a05:6a20:158a:b0:2ff:3752:8388 with SMTP id adf61e73a8af0-334a86108f0mr11968019637.32.1760854612860;
+        Sat, 18 Oct 2025 23:16:52 -0700 (PDT)
 Received: from pop-os.. ([2601:647:6881:9060:bc87:d8fe:3e55:7ffb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b6f302sm4332032a12.38.2025.10.18.23.16.49
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b6f302sm4332032a12.38.2025.10.18.23.16.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 23:16:49 -0700 (PDT)
+        Sat, 18 Oct 2025 23:16:52 -0700 (PDT)
 From: Cong Wang <xiyou.wangcong@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: jiri@resnulli.us,
@@ -86,9 +86,9 @@ Cc: jiri@resnulli.us,
 	Changyuan Lyu <changyuanl@google.com>,
 	kexec@lists.infradead.org,
 	linux-mm@kvack.org
-Subject: [RFC Patch v2 01/16] kexec: Introduce multikernel support via kexec
-Date: Sat, 18 Oct 2025 23:16:15 -0700
-Message-Id: <20251019061631.2235405-2-xiyou.wangcong@gmail.com>
+Subject: [RFC Patch v2 02/16] x86: Introduce SMP INIT trampoline for multikernel CPU bootstrap
+Date: Sat, 18 Oct 2025 23:16:16 -0700
+Message-Id: <20251019061631.2235405-3-xiyou.wangcong@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251019061631.2235405-1-xiyou.wangcong@gmail.com>
 References: <20251019061631.2235405-1-xiyou.wangcong@gmail.com>
@@ -102,402 +102,520 @@ Content-Transfer-Encoding: 8bit
 
 From: Cong Wang <cwang@multikernel.io>
 
-This patch extends the kexec subsystem to support multikernel
-functionality, allowing different kernel instances to be loaded and
-executed on specific CPUs. The implementation introduces:
+This patch introduces a dedicated trampoline mechanism for booting
+secondary CPUs with different kernel instances in multikernel mode.
+The implementation provides:
 
-- New KEXEC_TYPE_MULTIKERNEL type and KEXEC_MULTIKERNEL flag
+- New trampoline_64_bsp.S assembly code for real-mode to long-mode
+  transition when launching kernels on secondary CPUs
+- Trampoline memory allocation and setup in low memory (<1MB) for
+  real-mode execution compatibility
+- Page table construction for identity mapping during CPU bootstrap
+- Integration with existing multikernel kexec infrastructure
 
-- multikernel_kick_ap() function for CPU-specific kernel booting
+The trampoline handles the complete CPU initialization sequence from
+16-bit real mode through 32-bit protected mode to 64-bit long mode,
+setting up appropriate GDT, page tables, and control registers before
+jumping to the target kernel entry point without resetting the whole
+system or the running kernel.
 
-- LINUX_REBOOT_CMD_MULTIKERNEL reboot command with CPU parameter
-
-- Specialized segment loading for multikernel images using memremap
-
-- Integration with existing kexec infrastructure while bypassing
-  standard machine_kexec_prepare() for avoiding resets
-
-The multikernel_kexec() function validates CPU availability and uses
-the existing kexec image start address to boot the target CPU with
-a different kernel instance. This enables heterogeneous computing
-scenarios where different CPUs can run specialized kernel variants.
+Note: This implementation uses legacy assembly-based trampoline code
+and should be migrated to C-based x86 trampoline in future updates.
 
 Signed-off-by: Cong Wang <cwang@multikernel.io>
 ---
- arch/x86/include/asm/smp.h  |   1 +
- arch/x86/kernel/smpboot.c   | 104 ++++++++++++++++++++++++++++++++++
- include/linux/kexec.h       |   6 +-
- include/uapi/linux/kexec.h  |   1 +
- include/uapi/linux/reboot.h |   2 +-
- kernel/kexec_core.c         | 109 ++++++++++++++++++++++++++++++++++++
- kernel/reboot.c             |  10 ++++
- 7 files changed, 230 insertions(+), 3 deletions(-)
+ arch/x86/kernel/Makefile            |   1 +
+ arch/x86/kernel/head64.c            |   5 +
+ arch/x86/kernel/setup.c             |   3 +
+ arch/x86/kernel/smpboot.c           |  85 ++++++--
+ arch/x86/kernel/trampoline_64_bsp.S | 288 ++++++++++++++++++++++++++++
+ arch/x86/kernel/vmlinux.lds.S       |   6 +
+ 6 files changed, 373 insertions(+), 15 deletions(-)
+ create mode 100644 arch/x86/kernel/trampoline_64_bsp.S
 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index 22bfebe6776d..1a59fd0de759 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -107,6 +107,7 @@ void native_smp_prepare_cpus(unsigned int max_cpus);
- void native_smp_cpus_done(unsigned int max_cpus);
- int common_cpu_up(unsigned int cpunum, struct task_struct *tidle);
- int native_kick_ap(unsigned int cpu, struct task_struct *tidle);
-+int multikernel_kick_ap(unsigned int cpu, unsigned long kernel_start_address);
- int native_cpu_disable(void);
- void __noreturn hlt_play_dead(void);
- void native_play_dead(void);
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index bc184dd38d99..49ff8272c888 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -50,6 +50,7 @@ CFLAGS_irq.o := -I $(src)/../include/asm/trace
+ 
+ obj-y			+= head_$(BITS).o
+ obj-y			+= head$(BITS).o
++obj-y			+= trampoline_64_bsp.o
+ obj-y			+= ebda.o
+ obj-y			+= platform-quirks.o
+ obj-y			+= process_$(BITS).o signal.o signal_$(BITS).o
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index fd28b53dbac5..60005472facb 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -219,6 +219,9 @@ static void __init copy_bootdata(char *real_mode_data)
+ 	sme_unmap_bootdata(real_mode_data);
+ }
+ 
++unsigned long orig_boot_params;
++EXPORT_SYMBOL(orig_boot_params);
++
+ asmlinkage __visible void __init __noreturn x86_64_start_kernel(char * real_mode_data)
+ {
+ 	/*
+@@ -288,6 +291,8 @@ asmlinkage __visible void __init __noreturn x86_64_start_kernel(char * real_mode
+ 	/* set init_top_pgt kernel high mapping*/
+ 	init_top_pgt[511] = early_top_pgt[511];
+ 
++	orig_boot_params = (unsigned long) real_mode_data;
++
+ 	x86_64_start_reservations(real_mode_data);
+ }
+ 
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 1b2edd07a3e1..8342c4e46bad 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -877,6 +877,8 @@ static void __init x86_report_nx(void)
+  * Note: On x86_64, fixmaps are ready for use even before this is called.
+  */
+ 
++extern void __init setup_trampolines_bsp(void);
++
+ void __init setup_arch(char **cmdline_p)
+ {
+ #ifdef CONFIG_X86_32
+@@ -1103,6 +1105,7 @@ void __init setup_arch(char **cmdline_p)
+ 			(max_pfn_mapped<<PAGE_SHIFT) - 1);
+ #endif
+ 
++	setup_trampolines_bsp();
+ 	/*
+ 	 * Find free memory for the real mode trampoline and place it there. If
+ 	 * there is not enough free memory under 1M, on EFI-enabled systems
 diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index eb289abece23..7b27fdc1d169 100644
+index 7b27fdc1d169..9dea0477fda6 100644
 --- a/arch/x86/kernel/smpboot.c
 +++ b/arch/x86/kernel/smpboot.c
-@@ -833,6 +833,72 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+@@ -833,27 +833,46 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
  	return 0;
  }
  
-+// must be locked by cpus_read_lock()
-+static int do_multikernel_boot_cpu(u32 apicid, int cpu, unsigned long kernel_start_address)
++extern void __init setup_trampolines_bsp(void);
++extern unsigned long orig_boot_params;
++
++unsigned char *x86_trampoline_bsp_base;
++
++extern const unsigned char trampoline_data_bsp[];
++extern const unsigned char trampoline_status_bsp[];
++extern const unsigned char x86_trampoline_bsp_start [];
++extern const unsigned char x86_trampoline_bsp_end   [];
++extern unsigned long kernel_phys_addr;
++extern unsigned long boot_params_phys_addr;
++
++#define TRAMPOLINE_SYM_BSP(x)                                           \
++        ((void *)(x86_trampoline_bsp_base +                                     \
++                  ((const unsigned char *)(x) - trampoline_data_bsp)))
++
++/* Address of the SMP trampoline */
++static inline unsigned long trampoline_bsp_address(void)
 +{
-+	unsigned long start_ip = real_mode_header->trampoline_start;
-+	int ret;
++        return virt_to_phys(TRAMPOLINE_SYM_BSP(trampoline_data_bsp));
++}
++
+ // must be locked by cpus_read_lock()
+ static int do_multikernel_boot_cpu(u32 apicid, int cpu, unsigned long kernel_start_address)
+ {
+-	unsigned long start_ip = real_mode_header->trampoline_start;
++	unsigned long start_ip;
+ 	int ret;
+ 
+-	pr_info("do_multikernel_boot_cpu(apicid=%u, cpu=%u, kernel_start_address=%lx)\n", apicid, cpu, kernel_start_address);
+-#ifdef CONFIG_X86_64
+-	/* If 64-bit wakeup method exists, use the 64-bit mode trampoline IP */
+-	if (apic->wakeup_secondary_cpu_64)
+-		start_ip = real_mode_header->trampoline_start64;
+-#endif
+-	//initial_code = (unsigned long)start_secondary;
+-	initial_code = (unsigned long)kernel_start_address;
++	/* Multikernel -- set physical address where kernel has been copied.
++           Note that this needs to be written to the location where the
++           trampoline was copied, not to the location within the original
++           kernel itself. */
++        unsigned long *kernel_virt_addr = TRAMPOLINE_SYM_BSP(&kernel_phys_addr);
+ 
+-	if (IS_ENABLED(CONFIG_X86_32)) {
+-		early_gdt_descr.address = (unsigned long)get_cpu_gdt_rw(cpu);
+-		//initial_stack  = idle->thread.sp;
+-	} else if (!(smpboot_control & STARTUP_PARALLEL_MASK)) {
+-		smpboot_control = cpu;
+-	}
++        *kernel_virt_addr = kernel_start_address;
++
++        /* start_ip had better be page-aligned! */
++        start_ip = trampoline_bsp_address();
 +
 +	pr_info("do_multikernel_boot_cpu(apicid=%u, cpu=%u, kernel_start_address=%lx)\n", apicid, cpu, kernel_start_address);
-+#ifdef CONFIG_X86_64
-+	/* If 64-bit wakeup method exists, use the 64-bit mode trampoline IP */
-+	if (apic->wakeup_secondary_cpu_64)
-+		start_ip = real_mode_header->trampoline_start64;
-+#endif
-+	//initial_code = (unsigned long)start_secondary;
-+	initial_code = (unsigned long)kernel_start_address;
+ 
+ 	/* Skip init_espfix_ap(cpu); */
+ 
+@@ -897,6 +916,9 @@ static int do_multikernel_boot_cpu(u32 apicid, int cpu, unsigned long kernel_sta
+ 	/* If the wakeup mechanism failed, cleanup the warm reset vector */
+ 	if (ret)
+ 		arch_cpuhp_cleanup_kick_cpu(cpu);
 +
-+	if (IS_ENABLED(CONFIG_X86_32)) {
-+		early_gdt_descr.address = (unsigned long)get_cpu_gdt_rw(cpu);
-+		//initial_stack  = idle->thread.sp;
-+	} else if (!(smpboot_control & STARTUP_PARALLEL_MASK)) {
-+		smpboot_control = cpu;
-+	}
-+
-+	/* Skip init_espfix_ap(cpu); */
-+
-+	/* Skip announce_cpu(cpu, apicid); */
-+
-+	/*
-+	 * This grunge runs the startup process for
-+	 * the targeted processor.
-+	 */
-+	if (x86_platform.legacy.warm_reset) {
-+
-+		pr_debug("Setting warm reset code and vector.\n");
-+
-+		smpboot_setup_warm_reset_vector(start_ip);
-+		/*
-+		 * Be paranoid about clearing APIC errors.
-+		*/
-+		if (APIC_INTEGRATED(boot_cpu_apic_version)) {
-+			apic_write(APIC_ESR, 0);
-+			apic_read(APIC_ESR);
-+		}
-+	}
-+
-+	smp_mb();
-+
-+	/*
-+	 * Wake up a CPU in difference cases:
-+	 * - Use a method from the APIC driver if one defined, with wakeup
-+	 *   straight to 64-bit mode preferred over wakeup to RM.
-+	 * Otherwise,
-+	 * - Use an INIT boot APIC message
-+	 */
-+	if (apic->wakeup_secondary_cpu_64)
-+		ret = apic->wakeup_secondary_cpu_64(apicid, start_ip, cpu);
-+	else if (apic->wakeup_secondary_cpu)
-+		ret = apic->wakeup_secondary_cpu(apicid, start_ip, cpu);
-+	else
-+		ret = wakeup_secondary_cpu_via_init(apicid, start_ip, cpu);
-+
-+	pr_info("do_multikernel_boot_cpu end\n");
-+	/* If the wakeup mechanism failed, cleanup the warm reset vector */
-+	if (ret)
-+		arch_cpuhp_cleanup_kick_cpu(cpu);
-+	return ret;
-+}
- /*
-  * NOTE - on most systems this is a PHYSICAL apic ID, but on multiquad
-  * (ie clustered apic addressing mode), this is a LOGICAL apic ID.
-@@ -905,6 +971,44 @@ static int do_boot_cpu(u32 apicid, unsigned int cpu, struct task_struct *idle)
++        /* mark "stuck" area as not stuck */
++        *(volatile u32 *)TRAMPOLINE_SYM_BSP(trampoline_status_bsp) = 0;
  	return ret;
  }
+ /*
+@@ -1008,6 +1030,39 @@ int multikernel_kick_ap(unsigned int cpu, unsigned long kernel_start_address)
+ 	return err;
+ }
  
-+// must be locked by cpus_read_lock()
-+int multikernel_kick_ap(unsigned int cpu, unsigned long kernel_start_address)
++void __init setup_trampolines_bsp(void)
 +{
-+	u32 apicid = apic->cpu_present_to_apicid(cpu);
-+	int err;
++        phys_addr_t mem;
++        size_t size = PAGE_ALIGN(x86_trampoline_bsp_end - x86_trampoline_bsp_start);
 +
-+	lockdep_assert_irqs_enabled();
++        /* Has to be in very low memory so we can execute real-mode AP code. */
++        mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, 1<<20);
++        if (!mem)
++                panic("Cannot allocate trampoline\n");
 +
-+	pr_info("++++++++++++++++++++=_---CPU UP  %u\n", cpu);
++        x86_trampoline_bsp_base = __va(mem);
++        memblock_reserve(mem, mem + size);
 +
-+	if (apicid == BAD_APICID || !apic_id_valid(apicid)) {
-+		pr_err("CPU %u has invalid APIC ID %x. Aborting bringup\n", cpu, apicid);
-+		return -EINVAL;
-+	}
++        printk(KERN_DEBUG "Base memory trampoline BSP at [%p] %llx size %zu\n",
++               x86_trampoline_bsp_base, (unsigned long long)mem, size);
 +
-+	if (!test_bit(apicid, phys_cpu_present_map)) {
-+		pr_err("CPU %u APIC ID %x is not present. Aborting bringup\n", cpu, apicid);
-+		return -EINVAL;
-+	}
++        //if (!mklinux_boot) {
++                memcpy(x86_trampoline_bsp_base, trampoline_data_bsp, size);
 +
-+	/*
-+	 * Save current MTRR state in case it was changed since early boot
-+	 * (e.g. by the ACPI SMI) to initialize new CPUs with MTRRs in sync:
-+	 */
-+	mtrr_save_state();
-+
-+	/* the FPU context is blank, nobody can own it */
-+	per_cpu(fpu_fpregs_owner_ctx, cpu) = NULL;
-+	/* skip common_cpu_up(cpu, tidle); */
-+
-+	err = do_multikernel_boot_cpu(apicid, cpu, kernel_start_address);
-+	if (err)
-+		pr_err("do_multikernel_boot_cpu failed(%d) to wakeup CPU#%u\n", err, cpu);
-+
-+	return err;
++        //} else {
++        //        printk("Multikernel boot: BSP trampoline will NOT be copied\n");
++        //}
 +}
 +
++static int __init configure_trampolines_bsp(void)
++{
++        size_t size = PAGE_ALIGN(x86_trampoline_bsp_end - x86_trampoline_bsp_start);
 +
++        set_memory_x((unsigned long)x86_trampoline_bsp_base, size >> PAGE_SHIFT);
++        return 0;
++}
++
++arch_initcall(configure_trampolines_bsp);
+ 
  int native_kick_ap(unsigned int cpu, struct task_struct *tidle)
  {
- 	u32 apicid = apic->cpu_present_to_apicid(cpu);
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index ff7e231b0485..edf64bc98ed5 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -358,9 +358,10 @@ struct kimage {
- 	unsigned long control_page;
- 
- 	/* Flags to indicate special processing */
--	unsigned int type : 1;
-+	unsigned int type : 2;
- #define KEXEC_TYPE_DEFAULT 0
- #define KEXEC_TYPE_CRASH   1
-+#define KEXEC_TYPE_MULTIKERNEL 2
- 	unsigned int preserve_context : 1;
- 	/* If set, we are using file mode kexec syscall */
- 	unsigned int file_mode:1;
-@@ -437,6 +438,7 @@ extern void machine_kexec(struct kimage *image);
- extern int machine_kexec_prepare(struct kimage *image);
- extern void machine_kexec_cleanup(struct kimage *image);
- extern int kernel_kexec(void);
-+extern int multikernel_kexec(int cpu);
- extern struct page *kimage_alloc_control_pages(struct kimage *image,
- 						unsigned int order);
- 
-@@ -458,7 +460,7 @@ bool kexec_load_permitted(int kexec_image_type);
- #define KEXEC_FLAGS    (KEXEC_ON_CRASH | KEXEC_UPDATE_ELFCOREHDR | KEXEC_CRASH_HOTPLUG_SUPPORT)
- #else
- #define KEXEC_FLAGS    (KEXEC_ON_CRASH | KEXEC_PRESERVE_CONTEXT | KEXEC_UPDATE_ELFCOREHDR | \
--			KEXEC_CRASH_HOTPLUG_SUPPORT)
-+			KEXEC_CRASH_HOTPLUG_SUPPORT | KEXEC_MULTIKERNEL)
- #endif
- 
- /* List of defined/legal kexec file flags */
-diff --git a/include/uapi/linux/kexec.h b/include/uapi/linux/kexec.h
-index 55749cb0b81d..346e0ff4e663 100644
---- a/include/uapi/linux/kexec.h
-+++ b/include/uapi/linux/kexec.h
-@@ -14,6 +14,7 @@
- #define KEXEC_PRESERVE_CONTEXT	0x00000002
- #define KEXEC_UPDATE_ELFCOREHDR	0x00000004
- #define KEXEC_CRASH_HOTPLUG_SUPPORT 0x00000008
-+#define KEXEC_MULTIKERNEL	0x00000010
- #define KEXEC_ARCH_MASK		0xffff0000
- 
- /*
-diff --git a/include/uapi/linux/reboot.h b/include/uapi/linux/reboot.h
-index 58e64398efc5..aac2f2f94a98 100644
---- a/include/uapi/linux/reboot.h
-+++ b/include/uapi/linux/reboot.h
-@@ -34,7 +34,7 @@
- #define	LINUX_REBOOT_CMD_RESTART2	0xA1B2C3D4
- #define	LINUX_REBOOT_CMD_SW_SUSPEND	0xD000FCE2
- #define	LINUX_REBOOT_CMD_KEXEC		0x45584543
--
-+#define	LINUX_REBOOT_CMD_MULTIKERNEL	0x4D4B4C49
- 
- 
- #endif /* _UAPI_LINUX_REBOOT_H */
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index fa00b239c5d9..7d89d00e2cde 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -41,6 +41,7 @@
- #include <linux/objtool.h>
- #include <linux/kmsg_dump.h>
- #include <linux/dma-map-ops.h>
-+#include <linux/memblock.h>
- 
- #include <asm/page.h>
- #include <asm/sections.h>
-@@ -942,6 +943,84 @@ static int kimage_load_crash_segment(struct kimage *image, int idx)
- }
- #endif
- 
-+static int kimage_load_multikernel_segment(struct kimage *image, int idx)
-+{
-+	/* For multikernel we simply copy the data from
-+	 * user space to it's destination.
-+	 * We do things a page at a time for the sake of kmap.
+diff --git a/arch/x86/kernel/trampoline_64_bsp.S b/arch/x86/kernel/trampoline_64_bsp.S
+new file mode 100644
+index 000000000000..0bd2a971a973
+--- /dev/null
++++ b/arch/x86/kernel/trampoline_64_bsp.S
+@@ -0,0 +1,288 @@
++/*
++ *
++ *	Derived from Setup.S by Linus Torvalds, then derived from Popcorn Linux
++ *
++ *	4 Jan 1997 Michael Chastain: changed to gnu as.
++ *	15 Sept 2005 Eric Biederman: 64bit PIC support
++ *
++ *	Entry: CS:IP point to the start of our code, we are 
++ *	in real mode with no stack, but the rest of the 
++ *	trampoline page to make our stack and everything else
++ *	is a mystery.
++ *
++ *	On entry to trampoline_data, the processor is in real mode
++ *	with 16-bit addressing and 16-bit data.  CS has some value
++ *	and IP is zero.  Thus, data addresses need to be absolute
++ *	(no relocation) and are taken with regard to r_base.
++ *
++ *	With the addition of trampoline_level4_pgt this code can
++ *	now enter a 64bit kernel that lives at arbitrary 64bit
++ *	physical addresses.
++ *
++ *	If you work on this file, check the object module with objdump
++ *	--full-contents --reloc to make sure there are no relocation
++ *	entries.
++ */
++
++#include <linux/linkage.h>
++#include <linux/init.h>
++#include <asm/pgtable_types.h>
++#include <asm/page_types.h>
++#include <asm/msr.h>
++#include <asm/segment.h>
++#include <asm/processor-flags.h>
++
++	.section ".x86_trampoline_bsp","a"
++	.balign PAGE_SIZE
++	.code16
++
++SYM_CODE_START(trampoline_data_bsp)
++bsp_base = .
++	cli			# We should be safe anyway
++	wbinvd
++	mov	%cs, %ax	# Code and data in the same place
++	mov	%ax, %ds
++	mov	%ax, %es
++	mov	%ax, %ss
++
++
++	movl	$0xA5A5A5A5, trampoline_status_bsp - bsp_base
++				# write marker for master knows we're running
++
++					# Setup stack
++	movw	$(trampoline_stack_bsp_end - bsp_base), %sp
++
++	# call	verify_cpu		# Verify the cpu supports long mode
++	# testl   %eax, %eax		# Check for return code
++	# jnz	no_longmode_bsp
++
++	mov	%cs, %ax
++	movzx	%ax, %esi		# Find the 32bit trampoline location
++	shll	$4, %esi
++
++					# Fixup the absolute vectors
++	leal	(startup_32_bsp - bsp_base)(%esi), %eax
++	movl	%eax, startup_32_vector_bsp - bsp_base
++	leal	(startup_64_bsp - bsp_base)(%esi), %eax
++	movl	%eax, startup_64_vector_bsp - bsp_base
++	leal	(tgdt_bsp - bsp_base)(%esi), %eax
++	movl	%eax, (tgdt_bsp + 2 - bsp_base)
++
++	/*
++	 * GDT tables in non default location kernel can be beyond 16MB and
++	 * lgdt will not be able to load the address as in real mode default
++	 * operand size is 16bit. Use lgdtl instead to force operand size
++	 * to 32 bit.
 +	 */
-+	struct kexec_segment *segment = &image->segment[idx];
-+	unsigned long maddr;
-+	size_t ubytes, mbytes;
-+	int result;
-+	unsigned char __user *buf = NULL;
-+	unsigned char *kbuf = NULL;
 +
-+	result = 0;
-+	if (image->file_mode)
-+		kbuf = segment->kbuf;
-+	else
-+		buf = segment->buf;
-+	ubytes = segment->bufsz;
-+	mbytes = segment->memsz;
-+	maddr = segment->mem;
-+	pr_info("Loading multikernel segment: mem=0x%lx, memsz=0x%zu, buf=0x%px, bufsz=0x%zu\n",
-+		maddr, mbytes, buf, ubytes);
-+	while (mbytes) {
-+		char *ptr;
-+		size_t uchunk, mchunk;
-+		unsigned long page_addr = maddr & PAGE_MASK;
-+		unsigned long page_offset = maddr & ~PAGE_MASK;
++	lidtl	tidt_bsp - bsp_base	# load idt with 0, 0
++	lgdtl	tgdt_bsp - bsp_base	# load gdt with whatever is appropriate
 +
-+		/* Use memremap to map the physical address */
-+		ptr = memremap(page_addr, PAGE_SIZE, MEMREMAP_WB);
-+		if (!ptr) {
-+			pr_err("Failed to memremap memory at 0x%lx\n", page_addr);
-+			result = -ENOMEM;
-+			goto out;
-+		}
++	mov	$X86_CR0_PE, %ax	# protected mode (PE) bit
++	lmsw	%ax			# into protected mode
 +
-+		/* Adjust pointer to the offset within the page */
-+		ptr += page_offset;
++	# flush prefetch and jump to startup_32
++	ljmpl	*(startup_32_vector_bsp - bsp_base)
++SYM_CODE_END(trampoline_data_bsp)
 +
-+		/* Calculate chunk sizes */
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE - page_offset);
-+		uchunk = min(ubytes, mchunk);
++	.code32
++	.balign 4
++startup_32_bsp:
 +
-+		/* Zero the trailing part of the page if needed */
-+		if (mchunk > uchunk) {
-+			/* Zero the trailing part of the page */
-+			memset(ptr + uchunk, 0, mchunk - uchunk);
-+		}
++	cli
++        movl    $(__KERNEL_DS), %eax
++        movl    %eax, %ds
++        movl    %eax, %es
++        movl    %eax, %ss
 +
-+		if (uchunk) {
-+			/* For file based kexec, source pages are in kernel memory */
-+			if (image->file_mode)
-+				memcpy(ptr, kbuf, uchunk);
-+			else
-+				result = copy_from_user(ptr, buf, uchunk);
-+			ubytes -= uchunk;
-+			if (image->file_mode)
-+				kbuf += uchunk;
-+			else
-+				buf += uchunk;
-+		}
++	/* Load new GDT with the 64bit segments using 32bit descriptor.
++	 * The new GDT labels the entire address space as 64-bit, so we
++	 * can switch into long mode later. */
++        leal    (gdt_bsp_64 - bsp_base)(%esi), %eax
++        movl    %eax, (gdt_bsp_64 - bsp_base + 2)(%esi)
++        lgdt    (gdt_bsp_64 - bsp_base)(%esi)
 +
-+		/* Clean up */
-+		memunmap(ptr - page_offset);
-+		if (result) {
-+			result = -EFAULT;
-+			goto out;
-+		}
-+		maddr  += mchunk;
-+		mbytes -= mchunk;
++	/* Enable PAE mode.  Note that this does not actually take effect
++	 * until paging is enabled */
++	movl	%cr4, %eax
++        orl     $(X86_CR4_PAE), %eax
++        movl    %eax, %cr4
 +
-+		cond_resched();
-+	}
-+out:
-+	return result;
-+}
++        /* Initialize Page tables to 0 */
++	leal    (pgtable_bsp - bsp_base)(%esi), %edi
++	xorl    %eax, %eax
++        movl    $((4096*6)/4), %ecx
++        rep     stosl
 +
- int kimage_load_segment(struct kimage *image, int idx)
- {
- 	int result = -ENOMEM;
-@@ -955,6 +1034,9 @@ int kimage_load_segment(struct kimage *image, int idx)
- 		result = kimage_load_crash_segment(image, idx);
- 		break;
- #endif
-+	case KEXEC_TYPE_MULTIKERNEL:
-+		result = kimage_load_multikernel_segment(image, idx);
-+		break;
- 	}
++        /* Build Level 4 */
++        leal    (pgtable_bsp - bsp_base)(%esi), %edi
++        leal    0x1007 (%edi), %eax
++        movl    %eax, 0(%edi)
++
++        /* Build Level 3 */
++        leal    (pgtable_bsp - bsp_base + 0x1000)(%esi), %edi
++        leal    0x1007(%edi), %eax
++        movl    $4, %ecx
++1:      movl    %eax, 0x00(%edi)
++        addl    $0x00001000, %eax
++        addl    $8, %edi
++        decl    %ecx
++        jnz     1b
++
++        /* Build Level 2 */
++        leal    (pgtable_bsp - bsp_base + 0x2000)(%esi), %edi
++        movl    $0x00000183, %eax
++        movl    $2048, %ecx
++1:      movl    %eax, 0(%edi)
++        addl    $0x00200000, %eax
++        addl    $8, %edi
++        decl    %ecx
++        jnz     1b
++
++        /* Enable the boot page tables */
++        leal    (pgtable_bsp - bsp_base)(%esi), %eax
++        movl    %eax, %cr3
++
++        /* Enable Long mode in EFER (Extended Feature Enable Register) */
++        movl    $MSR_EFER, %ecx
++        rdmsr
++        btsl    $_EFER_LME, %eax
++        wrmsr
++
++        /*
++         * Setup for the jump to 64bit mode
++         *
++         * When the jump is performend we will be in long mode but
++         * in 32bit compatibility mode with EFER.LME = 1, CS.L = 0, CS.D = 1
++         * (and in turn EFER.LMA = 1).  To jump into 64bit mode we use
++         * the new gdt/idt that has __KERNEL_CS with CS.L = 1.
++         * We place all of the values on our mini stack so lret can
++         * used to perform that far jump.
++         */
++        pushl   $__KERNEL_CS
++        leal    (startup_64_bsp - bsp_base)(%esi), %eax
++        pushl   %eax
++
++	/* Enter paged protected Mode, activating Long Mode */
++        movl    $(X86_CR0_PG | X86_CR0_PE), %eax /* Enable Paging and Protected mode */
++        movl    %eax, %cr0
++
++	/* Jump from 32bit compatibility mode into 64bit mode. */
++        lret
++
++	.code64
++	.balign 4
++startup_64_bsp:
++
++	/* Get physical address of boot_params structure */
++	movq    (boot_params_phys_addr - bsp_base)(%rsi), %r15
++
++	/* Load kernel address into register */
++	movq    (kernel_phys_addr - bsp_base)(%rsi), %r14
++
++	/* Check whether the kernel is in the 4 GB we mapped already,
++	 * and if not, add an additional mapping */
++	movq	$0xffffffff00000000, %r8
++	testq	%r8, %r14
++	je	2f
++
++	/* If we got here, we need to identity-map an additional 1 GB */
++	
++	/* Mask off to figure out what our directory pointer should be */
++	movq	%r14, %r13
++	movq	$0xffffffffc0000000, %r12
++	andq	%r12, %r13
++
++	/* Set our PDPTE */
++	movq	%r13, %r11
++	shrq	$(30-3), %r11
++	leaq    (pgtable_bsp - bsp_base + 0x1000)(%rsi), %rdi
++	addq	%r11, %rdi
++	leaq	(pgtable_extra_bsp - bsp_base + 0x7)(%rsi), %rax
++	movq	%rax, 0(%rdi)
++
++	/* Populate the page directory */
++	leaq    (pgtable_extra_bsp - bsp_base)(%rsi), %rdi
++	movq    $0x00000183, %rax
++	addq	%r13, %rax
++	movq    $512, %rcx
++1:      movq    %rax, 0(%rdi)
++	addq    $0x00200000, %rax
++	addq    $8, %rdi
++	decq    %rcx
++	jnz     1b
++
++	/* Set esi to point to the boot_params structure */
++2:	movq	%r15, %rsi
++	jmp	*%r14
++
++	.align 8
++SYM_DATA(boot_params_phys_addr, .quad  0)
++
++	.align 8
++SYM_DATA(kernel_phys_addr, .quad  0)
++
++	.code16
++	.balign 4
++	# Careful these need to be in the same 64K segment as the above;
++tidt_bsp:
++	.word	0			# idt limit = 0
++	.word	0, 0			# idt base = 0L
++
++	# Duplicate the global descriptor table
++	# so the kernel can live anywhere
++	.balign 4
++tgdt_bsp:
++	.short	tgdt_bsp_end - tgdt_bsp		# gdt limit
++	.long	tgdt_bsp - bsp_base
++	.short 0
++	.quad	0x00cf9b000000ffff	# __KERNEL32_CS
++	.quad	0x00af9b000000ffff	# __KERNEL_CS
++	.quad	0x00cf93000000ffff	# __KERNEL_DS
++tgdt_bsp_end:
++
++	.code64
++	.balign 4
++gdt_bsp_64:
++        .word   gdt_bsp_64_end - gdt_bsp_64
++        .long   gdt_bsp_64 - bsp_base
++        .word   0
++        .quad   0x0000000000000000      /* NULL descriptor */
++        .quad   0x00af9a000000ffff      /* __KERNEL_CS */
++        .quad   0x00cf92000000ffff      /* __KERNEL_DS */
++        .quad   0x0080890000000000      /* TS descriptor */
++        .quad   0x0000000000000000      /* TS continued */
++gdt_bsp_64_end:
++
++	.code16
++	.balign 4
++startup_32_vector_bsp:
++	.long	startup_32_bsp - bsp_base
++	.word	__KERNEL32_CS, 0
++
++	.balign 4
++startup_64_vector_bsp:
++	.long	startup_64_bsp - bsp_base
++	.word	__KERNEL_CS, 0
++
++	.balign 4
++SYM_DATA(trampoline_status_bsp, .long	0)
++
++	.balign 4
++SYM_DATA(trampoline_location, .quad   0)
++
++trampoline_stack_bsp:
++	.fill 512,8,0
++trampoline_stack_bsp_end:
++
++SYM_DATA(trampoline_bsp_end)
++
++/*
++ * Space for page tables (not in .bss so not zeroed)
++ */
++        .balign 4096
++pgtable_bsp:
++        .fill 6*4096, 1, 0
++pgtable_extra_bsp:
++	.fill 1*4096, 1, 0
++
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index d7af4a64c211..38e16ed2b3fb 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -228,6 +228,12 @@ SECTIONS
  
- 	return result;
-@@ -1229,3 +1311,30 @@ int kernel_kexec(void)
- 	kexec_unlock();
- 	return error;
- }
-+
-+int multikernel_kexec(int cpu)
-+{
-+	int rc;
-+
-+	pr_info("multikernel kexec: cpu %d\n", cpu);
-+
-+	if (cpu_online(cpu)) {
-+		pr_err("The CPU is currently running with this kernel instance.");
-+		return -EBUSY;
-+	}
-+
-+	if (!kexec_trylock())
-+		return -EBUSY;
-+	if (!kexec_image) {
-+		rc = -EINVAL;
-+		goto unlock;
-+	}
-+
-+	cpus_read_lock();
-+	rc = multikernel_kick_ap(cpu, kexec_image->start);
-+	cpus_read_unlock();
-+
-+unlock:
-+	kexec_unlock();
-+	return rc;
-+}
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index ec087827c85c..f3ac703c4695 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -717,6 +717,10 @@ EXPORT_SYMBOL_GPL(kernel_power_off);
+ 	INIT_DATA_SECTION(16)
  
- DEFINE_MUTEX(system_transition_mutex);
- 
-+struct multikernel_boot_args {
-+	int cpu;
-+};
++         .x86_trampoline_bsp : AT(ADDR(.x86_trampoline_bsp) - LOAD_OFFSET) {
++                x86_trampoline_bsp_start = .;
++                *(.x86_trampoline_bsp)
++                x86_trampoline_bsp_end = .;
++        }
 +
- /*
-  * Reboot system call: for obvious reasons only root may call it,
-  * and even root needs to set up some magic numbers in the registers
-@@ -729,6 +733,7 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
- 		void __user *, arg)
- {
- 	struct pid_namespace *pid_ns = task_active_pid_ns(current);
-+	struct multikernel_boot_args boot_args;
- 	char buffer[256];
- 	int ret = 0;
- 
-@@ -799,6 +804,11 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
- 	case LINUX_REBOOT_CMD_KEXEC:
- 		ret = kernel_kexec();
- 		break;
-+	case LINUX_REBOOT_CMD_MULTIKERNEL:
-+		if (copy_from_user(&boot_args, arg, sizeof(boot_args)))
-+			return -EFAULT;
-+		ret = multikernel_kexec(boot_args.cpu);
-+		break;
- #endif
- 
- #ifdef CONFIG_HIBERNATION
+ 	.x86_cpu_dev.init : AT(ADDR(.x86_cpu_dev.init) - LOAD_OFFSET) {
+ 		__x86_cpu_dev_start = .;
+ 		*(.x86_cpu_dev.init)
 -- 
 2.34.1
 
