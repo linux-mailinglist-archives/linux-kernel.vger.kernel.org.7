@@ -1,100 +1,78 @@
-Return-Path: <linux-kernel+bounces-859516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B73BEDE0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A385BEDE1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06FF73E4769
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F737189DE86
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3851EF0B0;
-	Sun, 19 Oct 2025 04:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F691E51E0;
+	Sun, 19 Oct 2025 04:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XVWZ7fwi"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BAJ1lka+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A91135950
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 04:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7534C481CD;
+	Sun, 19 Oct 2025 04:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760846910; cv=none; b=VmiHrpZPMRd1dsNPDcCgzCSc0z218FE3lVjzUvX7c7aI0/S+OQ0/gm4VQgn4KzuKNWLY3cLjceA2CVpqf/pyJ0jCcipkxpRdc38m2yRI6dtvq/NwpPIc4iwPyLockqe/jBTu1lzcCOF5evZqcsV9CJkeOhSxJb5KBhB9josDEiY=
+	t=1760847568; cv=none; b=eTGXMkECBr5V/CZKJAPIFHcA/kD+Xc3EldChccfJ6jq+lqP25OrVhx1LPqVLKHrHxTxbL2YpZ4tYDesk/YPYbxXVGX3WBSBOaceu/e+HTYipWH4mgBSqSBdEOeACq8ys2gqPMLY0BYuvGXeZGHSbTk8qNlpW8q0kR1MrHJzUFGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760846910; c=relaxed/simple;
-	bh=PYQScSZOYoE1QyTJBk6buoc5qNLZZCr+32xrpVAzVuU=;
+	s=arc-20240116; t=1760847568; c=relaxed/simple;
+	bh=L1J/APi5QttnPnJDvU3/Cl6rl7Byi4rAM1I+p19t5bI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCekSEL7MASuw7btwpXT91NHMVcWYOqdi7vRKx+U6+1K4OeMG4CdIGM88zx0I7KaxVM3qs0OZk/gGt//FPUDeg/Htz79oMXlSbnv2Vk0ynmV5IVy06ndDEOREUKSvFa/V49rJfvpzfOYOzztpWn3jR4dOZTnpYCK43ZPCL909ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XVWZ7fwi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59J3Xd9A032378
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 04:08:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=eXtIl7gx2a3Jyse1CDj/YUds
-	dckxFLnn5liYk/3DXnQ=; b=XVWZ7fwiNdHgJNJA672XFIDVSSDeXZsLaXAdgl4M
-	zCHJrfEgm8LrYeUW330MrzQwl9M+tTIK3iP62ylNyAiih2Q8lqrICU4NGQ0aNEZg
-	fBg6VzLx8Mjr4xJqnvKna3Xz6mzOsoOCHKk0X4fQPC6G72sl+X4EBIpQoVVNAfAb
-	d/OBzlHz9JiGXXKeual49iQZnFnMbx67EolgQ9kq4XtHma93DecF8XByHabxEe93
-	a0qldw06+YOTeTvz3yy4vNO1FcMnAyhBKSUHdwIZWLLBQK8PCVkheivK4BEwrgIK
-	J1CBZsKbH8olCx74m0LWXdCJrubXyL2gKFb/Sz20PRpw2g==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v0kfa189-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 04:08:26 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-797ab35807eso147406016d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 21:08:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760846905; x=1761451705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eXtIl7gx2a3Jyse1CDj/YUdsdckxFLnn5liYk/3DXnQ=;
-        b=We+gf932+wTthQ25Ni4uDEuRuPBnnSRPUdGni7tsUv5fxl3SbPehzFwHqAE4usHtdC
-         5cCsoN1pcK7uvcdeFxEnv47psZP0Iml61zXYgkhxayVM9ZrYSYLgnwrU5kr7cSVtwMeR
-         DfK/oM9mbUfG+zxU+nkaQhHjYEf5pkPGlPg8Nk64PxrZhD9Q+/pN6NqV9K6wZXmGrS0E
-         VV1Wy8pXJGC04yb7ZysdZG2RRxFWK+RaHmEq+Mo3+IlRhQHnrX3kYexMYPNVQRyej/dG
-         W9KIhaAQxuRs7+wpkvDNik0XQ1BxJwhvk3Kg9iqERSKk6Qtg8JXFzSv4B4+uashRwlar
-         O/BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGdkLYMS2YR6BybIjdHqEUXhikz1BttjZxot6slPwOtLGs5Lbji6rMpb3JsEo6gSXbQ//6ZDT3uSLU/1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnwqW3aSDnvKsQGZAGMkWIKRv+HvnHjSW4//W+SFyfQ18b+HOh
-	Pw2lHbGOKHMPuohnfCa3IhynUjHww6SFQ2DL66cL+H0v2KfIr75BfwHzOsxan9d9Q/I9eRMuwMD
-	FvoxhfOvf84N8NLHpWdQVgdGqFDgrV6cwhhqgl5Wc4STgp6Wmohvqkl6fLw6hSJl3Ltk=
-X-Gm-Gg: ASbGnctNElEBGaIjvVFp+s0EEqhUI1fzVhINvuDE81mtOz4aqO3nSbtrzReFwTTHLyB
-	+ShW5Ah2eA2i5jADcSGTrb0inN0wHfN0Oi260+g0yKWs1m93t6os0XQAso9fRO9eE97GEDchgv8
-	mQkjYIYnYsYNfinUDVBg+ZsgtErggxdnPo1osSixamf/wc205lvGdX1hWWBv5mYCwJSVPCmRs2B
-	qp18Ue4ozeTdJwZnqQdNlvBDmBNYC2vgkfBYFQoIdakLsL+EnoHvZ9gT6rBcXlQlSzRpB1bX0+P
-	1kvxFEze9hd96JUbAZRrHKMPZeFqADmSu2n93S84R7scdMmD6jDPflJtQ7aH5Yxk2eOWej34PZ9
-	KkCq2tuC7SENUGGvWZcoRPWR62HiGWEJ6cpNINqfiBTyjDtm74DGZMH7nAnMqZKl3uAHglS1P50
-	eK+RiKzyLlSws=
-X-Received: by 2002:a05:622a:1793:b0:4e8:b4c8:3fe2 with SMTP id d75a77b69052e-4e8b4c8412fmr34739541cf.11.1760846905199;
-        Sat, 18 Oct 2025 21:08:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwjpMQMP09kJ0jfxgHAqYveaQLqrlnJM2EpETyDsZGjRJiaYgkp4Ad4myb57SXe9M/dpx8/Q==
-X-Received: by 2002:a05:622a:1793:b0:4e8:b4c8:3fe2 with SMTP id d75a77b69052e-4e8b4c8412fmr34739361cf.11.1760846904593;
-        Sat, 18 Oct 2025 21:08:24 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def16b31sm1225608e87.60.2025.10.18.21.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 21:08:23 -0700 (PDT)
-Date: Sun, 19 Oct 2025 07:08:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
-        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] ASoC: codecs: va-macro: Clean up on error path in
- probe()
-Message-ID: <oghgx6bzhcd3uoju2exzijoe7titw5kuhyk5g6hx7rdcgjsvmv@fvsefyhkeaui>
-References: <aPMyw_ryay9LA5SW@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PR7pcfn3X/MIqVA/MZXuJvmFjP9nvOLil3d9HsP3Ln8qHKT9yCeZRhPm+pLQLfFpACxdUpLfxwWB1o5p6uxOvqQclTFkLrilcA9P0eLrDkILBrkjrtUsg0P1U52EbVbaqTlBqooaVmuyBlSH469qCJugpMbFFwCLHD1ZeWoyi6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BAJ1lka+; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760847567; x=1792383567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L1J/APi5QttnPnJDvU3/Cl6rl7Byi4rAM1I+p19t5bI=;
+  b=BAJ1lka+U9k5bFJTKzoSuvf8i39T6Ved9cWPw1m9dJZwzNi6NmMs9WY0
+   oS2750Kv3+9vVNTY/9L68JF1obXaZKnaAKF16ABvNittg4KQCSWevmDIg
+   npFNRMZRL/sE0QJ/RdNO589KkkypOoyfX6zDLHfA8hSrDSDH/n3oL44n5
+   DIRZaJoaj21D0J7PCutgDpOd9xmCMM83S8PckAy/t9lJCsfpM5c6RrB2h
+   9DxSU0S1qfDJo7vU+4xlhV+zHR3u3lWTD1GGQUY4PoWId9iaSJYzGWrqx
+   d9xD3mHlyVgq/OZ1+lwtWFt/fAPXotrRXPlQlM5sZDjbHECCP1X7d8rcW
+   A==;
+X-CSE-ConnectionGUID: CKLwiWMeRTKnHabYMc+vmg==
+X-CSE-MsgGUID: EFq0N+PfSSqKjAgAjd8e1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74449074"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="74449074"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 21:19:26 -0700
+X-CSE-ConnectionGUID: G59J5ty4SeK0DrIS7JPd0A==
+X-CSE-MsgGUID: mKQtaGNZRe2UbEBOWR5E7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="183075634"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 18 Oct 2025 21:19:23 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAKt7-0008pR-09;
+	Sun, 19 Oct 2025 04:19:21 +0000
+Date: Sun, 19 Oct 2025 12:18:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+	broonie@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, perex@perex.cz, tiwai@suse.com,
+	srini@kernel.org, alexey.klimov@linaro.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH 12/12] ASoC: qcom: q6asm: Use guard() for spin locks
+Message-ID: <202510191117.BTexj8De-lkp@intel.com>
+References: <20251017085307.4325-13-srinivas.kandagatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,44 +81,183 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPMyw_ryay9LA5SW@stanley.mountain>
-X-Authority-Analysis: v=2.4 cv=E6LAZKdl c=1 sm=1 tr=0 ts=68f4643a cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=ebUXpRROGgZ4PK-tThsA:9 a=CjuIK1q_8ugA:10 a=zgiPjhLxNE0A:10
- a=1HOtulTD9v-eNWfpl4qZ:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: C5ckz_pswCczIZoRQyl-XXp6E8U1PCaD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMiBTYWx0ZWRfX2b3tOto04Xat
- JgWrpzTIBJQd957zl1WLXjusPWdn/YOELj649L25MIhOSa5iAPJ98/0Jz2IBfbrkFsfGBUCaL41
- hUKK4ppnPEZudcZ0H9UXFbQY9uHL5cPJ9VYkDzijuDglfmEPgDd96UWTwCWTStz3Aw6M2U2RtpE
- SAS28T5iNVWOImrq8P/CD1UdaZgej3IkBYx/mpWr6ZdkQ90I+ZkH3ciNVVKc7lhaEUSYWM8LiaC
- zgNieyS6xuwacScwHLLEc7B6lRSBd8AAF+VOHoKJ9dDJn4yHX9iXISlFRS1cRhrGQ/hHBtLbQAW
- iQnw80636lio4jaZ9NA90jk4AOn/+zt+VO9CthWg+ln3uMMfayc3euMNkPAaxJ6WaJl4blFR3EL
- AbPtyCWNFoy5R7Xon2ogy3zwU2MpEQ==
-X-Proofpoint-GUID: C5ckz_pswCczIZoRQyl-XXp6E8U1PCaD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-19_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- phishscore=0 impostorscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180002
+In-Reply-To: <20251017085307.4325-13-srinivas.kandagatla@oss.qualcomm.com>
 
-On Sat, Oct 18, 2025 at 09:25:07AM +0300, Dan Carpenter wrote:
-> Do some clean up before returning the error code.
-> 
-> Fixes: 281c97376cfc ("ASoC: codecs: va-macro: Rework version checking")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  sound/soc/codecs/lpass-va-macro.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Hi Srinivas,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on broonie-sound/for-next]
+[also build test ERROR on linus/master v6.18-rc1 next-20251017]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Srinivas-Kandagatla/ASoC-qdsp6-q6asm-do-not-sleep-while-atomic/20251017-170114
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20251017085307.4325-13-srinivas.kandagatla%40oss.qualcomm.com
+patch subject: [PATCH 12/12] ASoC: qcom: q6asm: Use guard() for spin locks
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20251019/202510191117.BTexj8De-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510191117.BTexj8De-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510191117.BTexj8De-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   sound/soc/qcom/qdsp6/q6asm.c: In function 'q6asm_stream_callback':
+>> sound/soc/qcom/qdsp6/q6asm.c:687:41: error: 'struct audio_port_data' has no member named 'hw_ptr'
+     687 |                         atomic_set(&port->hw_ptr, token + 1);
+         |                                         ^~
+
+
+vim +687 sound/soc/qcom/qdsp6/q6asm.c
+
+   590	
+   591	static int32_t q6asm_stream_callback(struct apr_device *adev,
+   592					     struct apr_resp_pkt *data,
+   593					     int session_id)
+   594	{
+   595		struct q6asm *q6asm = dev_get_drvdata(&adev->dev);
+   596		struct aprv2_ibasic_rsp_result_t *result;
+   597		struct apr_hdr *hdr = &data->hdr;
+   598		struct audio_port_data *port;
+   599		struct audio_client *ac;
+   600		uint32_t client_event = 0;
+   601		int ret = 0;
+   602	
+   603		ac = q6asm_get_audio_client(q6asm, session_id);
+   604		if (!ac)/* Audio client might already be freed by now */
+   605			return 0;
+   606	
+   607		result = data->payload;
+   608	
+   609		switch (hdr->opcode) {
+   610		case APR_BASIC_RSP_RESULT:
+   611			switch (result->opcode) {
+   612			case ASM_SESSION_CMD_PAUSE:
+   613				client_event = ASM_CLIENT_EVENT_CMD_PAUSE_DONE;
+   614				break;
+   615			case ASM_SESSION_CMD_SUSPEND:
+   616				client_event = ASM_CLIENT_EVENT_CMD_SUSPEND_DONE;
+   617				break;
+   618			case ASM_STREAM_CMD_FLUSH:
+   619				client_event = ASM_CLIENT_EVENT_CMD_FLUSH_DONE;
+   620				break;
+   621			case ASM_SESSION_CMD_RUN_V2:
+   622				client_event = ASM_CLIENT_EVENT_CMD_RUN_DONE;
+   623				break;
+   624			case ASM_STREAM_CMD_CLOSE:
+   625				client_event = ASM_CLIENT_EVENT_CMD_CLOSE_DONE;
+   626				break;
+   627			case ASM_STREAM_CMD_FLUSH_READBUFS:
+   628				client_event = ASM_CLIENT_EVENT_CMD_OUT_FLUSH_DONE;
+   629				break;
+   630			case ASM_STREAM_CMD_OPEN_WRITE_V3:
+   631			case ASM_STREAM_CMD_OPEN_READ_V3:
+   632			case ASM_STREAM_CMD_OPEN_READWRITE_V2:
+   633			case ASM_STREAM_CMD_SET_ENCDEC_PARAM:
+   634			case ASM_DATA_CMD_MEDIA_FMT_UPDATE_V2:
+   635			case ASM_DATA_CMD_REMOVE_INITIAL_SILENCE:
+   636			case ASM_DATA_CMD_REMOVE_TRAILING_SILENCE:
+   637				if (result->status != 0) {
+   638					dev_err(ac->dev,
+   639						"cmd = 0x%x returned error = 0x%x\n",
+   640						result->opcode, result->status);
+   641					ac->result = *result;
+   642					wake_up(&ac->cmd_wait);
+   643					ret = 0;
+   644					goto done;
+   645				}
+   646				break;
+   647			default:
+   648				dev_err(ac->dev, "command[0x%x] not expecting rsp\n",
+   649					result->opcode);
+   650				break;
+   651			}
+   652	
+   653			ac->result = *result;
+   654			wake_up(&ac->cmd_wait);
+   655	
+   656			if (ac->cb)
+   657				ac->cb(client_event, hdr->token,
+   658				       data->payload, ac->priv);
+   659	
+   660			ret = 0;
+   661			goto done;
+   662	
+   663		case ASM_DATA_EVENT_WRITE_DONE_V2:
+   664			client_event = ASM_CLIENT_EVENT_DATA_WRITE_DONE;
+   665			if (ac->io_mode & ASM_SYNC_IO_MODE) {
+   666				phys_addr_t phys;
+   667				int token = hdr->token & ASM_WRITE_TOKEN_MASK;
+   668	
+   669				guard(spinlock_irqsave)(&ac->lock);
+   670	
+   671				port =  &ac->port[SNDRV_PCM_STREAM_PLAYBACK];
+   672	
+   673				if (!port->buf) {
+   674					ret = 0;
+   675					goto done;
+   676				}
+   677	
+   678				phys = port->buf[token].phys;
+   679	
+   680				if (lower_32_bits(phys) != result->opcode ||
+   681				    upper_32_bits(phys) != result->status) {
+   682					dev_err(ac->dev, "Expected addr %pa\n",
+   683						&port->buf[token].phys);
+   684					ret = -EINVAL;
+   685					goto done;
+   686				}
+ > 687				atomic_set(&port->hw_ptr, token + 1);
+   688			}
+   689			break;
+   690		case ASM_DATA_EVENT_READ_DONE_V2:
+   691			client_event = ASM_CLIENT_EVENT_DATA_READ_DONE;
+   692			if (ac->io_mode & ASM_SYNC_IO_MODE) {
+   693				struct asm_data_cmd_read_v2_done *done = data->payload;
+   694				phys_addr_t phys;
+   695	
+   696				guard(spinlock_irqsave)(&ac->lock);
+   697				port =  &ac->port[SNDRV_PCM_STREAM_CAPTURE];
+   698				if (!port->buf) {
+   699					ret = 0;
+   700					goto done;
+   701				}
+   702	
+   703				phys = port->buf[hdr->token].phys;
+   704	
+   705				if (upper_32_bits(phys) != done->buf_addr_msw ||
+   706				    lower_32_bits(phys) != done->buf_addr_lsw) {
+   707					dev_err(ac->dev, "Expected addr %pa %08x-%08x\n",
+   708						&port->buf[hdr->token].phys,
+   709						done->buf_addr_lsw,
+   710						done->buf_addr_msw);
+   711					ret = -EINVAL;
+   712					goto done;
+   713				}
+   714			}
+   715	
+   716			break;
+   717		case ASM_DATA_EVENT_RENDERED_EOS:
+   718			client_event = ASM_CLIENT_EVENT_CMD_EOS_DONE;
+   719			break;
+   720		}
+   721	
+   722		if (ac->cb)
+   723			ac->cb(client_event, hdr->token, data->payload, ac->priv);
+   724	
+   725	done:
+   726		kref_put(&ac->refcount, q6asm_audio_client_release);
+   727		return ret;
+   728	}
+   729	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
