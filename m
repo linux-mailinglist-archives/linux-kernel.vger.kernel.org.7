@@ -1,218 +1,176 @@
-Return-Path: <linux-kernel+bounces-859530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90378BEDE6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:21:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC9DBEDE7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5634A3E56A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:21:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A20C234AAB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F0B22126C;
-	Sun, 19 Oct 2025 05:21:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABBD21D3DF;
+	Sun, 19 Oct 2025 05:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dnxPFkQe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48F91ADC97
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 05:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E1F10A1E;
+	Sun, 19 Oct 2025 05:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760851265; cv=none; b=dNUwWEUy8+t9aSWCyY2VhxiPmelp+sKUZvdqC6y880hjA+hpT1boUuAB+Rth2dxtswW+Q3ToOco9qUNiTSoAHUGArTrAI0JibdLqtoBhBvLWkcZ/rB1K88rEwLp7ZbpAU7nbeUbvSy/TVh5Z7lK+S4oMNM0LfZJmYvr3aKJ9fT8=
+	t=1760851923; cv=none; b=hleb9Y0D11DyZX1i3tq7SYch1/6tpfrHmoYH5PgEvmkYDzkzJw3N9QUYTOxXp2Wbxpv5bMkc1e/77DLDor4weeMxmkUvCvMMHSPWbc5Oj4Pu6TEXxBsZ7IKpagkjr9GEiNaLgho6VYi7iAGtVYujcqCrm08ReGlSQcy5ofeeIE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760851265; c=relaxed/simple;
-	bh=hQaHikWcVr2i7ZAH1RrJiLpW9x6EFM0CftXG8wfoV3w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ERVe+A0HhVA5toztqdvYbGIQogB+rNKNQyNSoqELEyZuFx02RKv0mUYYiJwwxBtyLU7OQ9MJon9+jFzRFOeBwNqVVqYoPfxUS65bd3W+7KRyfs7m97XVp7ajh5fCOzzVDWECjPD1a72XYPGA2HRWlfJBufXNiqmpLN0FAC4JyXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e7ece2ff4so559435039f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 22:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760851263; x=1761456063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uhzhcHUwo4ZyompuCoZqx2j3/YltPabeKiRa2l7zjes=;
-        b=Slho5DCmR0kRMpz06scO40uS5zPL9AeSrZl0qYCCz7gTLfBCzp6V+aUGnznq9t9yLX
-         JbX/n8ye6z4LWlyXbXJRjpUBPjHjDNTjGlcSvmw1lABsvlgSf0/9k8IPMHrd/c1XzYml
-         gmlJtI0kSmfl9qoiLoTJU7KmKlmJ4k2pj/56yZJhA6RKa3M5IctlejXmN01PSC54acTh
-         9ZvTnu2d7gbLAkjWDs/WngVgRTYFbTIhOPdQ0ciUl1HaZTrsq4jp40dLxswhE02ANBmm
-         XTCuoAlGodEO3Yl6NrKB7PKQr5tY/V3Q7INR/xhmT6zrWO2/dnUTFpphRNY0rJbUueHo
-         epsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlLDDRUhPCMaEaX3OPmq1LKOGX6tYI5IFkSJt/J7uMi+lPizcuUsRp7WLnhXdUm0jp09jHL8JdYPagozY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTTaKG1zNXNUsdUh60bqbm1vCyrFVH+cY+Tg1oBS8YyrOpIzDe
-	mcjow4Q/ZgLbIPRMbFg6vjJxAgZ+EBw15KHDvDs5GBnvJ5FV6Ry3aEjG05ThKa4Htz3RwsEs0AW
-	cO9CfcN6zpYaRK9E8jPZbeTeQ2Nzu1u6Ymp+tUOjptaclwf3prqc6+9SzLXc=
-X-Google-Smtp-Source: AGHT+IFuKYukxdLm/ppJg+C4mWBSwZpcLCiKXhLDI9Rn/aF9zGghOTi/S4VNihhWa9fjAeCDcj97w7AsKQUnxIbU5WruXjlyHZ07
+	s=arc-20240116; t=1760851923; c=relaxed/simple;
+	bh=bWGsBC58nVw/sxl2Hx9QNQsauG04QZleHom4h2dfg0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=am5uZw2LlsI8bnKypnZQXNa0FPtrv8wWqj7URTVWGY0+7MJVuj3HAb95i+bBuGt363TPFUysrSYGfs7hw5bEkM/yXf3AHvGwvOf5svxuCMmZ5eIAHGqxVIAMWxSqYC2jPKK+pgsRNsMEDgt1O1x/sdjmKoure6UhhRSrt8Nik6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dnxPFkQe; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760851921; x=1792387921;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bWGsBC58nVw/sxl2Hx9QNQsauG04QZleHom4h2dfg0U=;
+  b=dnxPFkQeKZfos0LNkiNDzbhWDj7cUAVKNeE6WTwL9Y3K+6ktDaiqU51T
+   mSVt73TJ6Teds8yomYX8IkREFoAg0HRi2hYq/t/UnPe7ZNiPzrbkglFpQ
+   TNZBP5jZfDHAUX4w7alTqy6oa/1z/8qzzAhDYiqa9CFpDBn0bkilK6zrx
+   UtaNTDVzBneOSfTDDnDBZFejWZEVU87Y/Cl7mrCvU+r2KBrnZzULZ3xO2
+   zThXwqaCAGpQAmh5yN2NWQCkcBWFKlp8iHBp5pdCihgv4sKUiWlHUkSwp
+   bc+Zw5RZ9NegF1mZnLF8BqvvpgOJH0alVI90b7jACgvUQI2AWm3MqDdbO
+   w==;
+X-CSE-ConnectionGUID: 04F/9wcrRR6XWaZOmJpHzA==
+X-CSE-MsgGUID: ljyPhI3USpWcUOerfRNT0Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65629434"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="65629434"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 22:32:00 -0700
+X-CSE-ConnectionGUID: XocagptQREO66ibi0urNnA==
+X-CSE-MsgGUID: FCeZMkrnTHOQr5UUKBE7mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="220213467"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 18 Oct 2025 22:31:57 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAM1F-0008s9-3C;
+	Sun, 19 Oct 2025 05:31:51 +0000
+Date: Sun, 19 Oct 2025 13:30:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, sugar.zhang@rock-chips.com, heiko@sntech.de,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com
+Subject: Re: [PATCH v2 3/5] clk: rockchip: Add clock controller for the
+ RV1126B
+Message-ID: <202510191337.86OcUAWo-lkp@intel.com>
+References: <20251017063107.1606965-4-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:489:b0:93e:2f4c:97be with SMTP id
- ca18e2360f4ac-93e7642f8e7mr1520982939f.15.1760851263078; Sat, 18 Oct 2025
- 22:21:03 -0700 (PDT)
-Date: Sat, 18 Oct 2025 22:21:03 -0700
-In-Reply-To: <u5ck7lywwa3aa54w2wnfftzqfch3pr6eguayue5ljvsneefd5x@swt7jxbxaeur>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f4753f.a70a0220.205af.0011.GAE@google.com>
-Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in nr_add_node
-From: syzbot <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	listout@listout.xyz, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017063107.1606965-4-zhangqing@rock-chips.com>
 
-Hello,
+Hi Elaine,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in nr_add_node
+kernel test robot noticed the following build errors:
 
-==================================================================
-BUG: KASAN: slab-use-after-free in nr_add_node+0x25e5/0x2c10 net/netrom/nr_route.c:249
-Read of size 4 at addr ffff88805466ddb0 by task syz.1.4225/15237
+[auto build test ERROR on rockchip/for-next]
+[also build test ERROR on clk/clk-next pza/reset/next linus/master v6.18-rc1 next-20251017]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-CPU: 2 UID: 0 PID: 15237 Comm: syz.1.4225 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- nr_add_node+0x25e5/0x2c10 net/netrom/nr_route.c:249
- nr_rt_ioctl+0x11b7/0x29b0 net/netrom/nr_route.c:653
- nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x118/0x280 net/socket.c:1254
- sock_ioctl+0x227/0x6b0 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4229d8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f422ac41038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f4229fe5fa0 RCX: 00007f4229d8efc9
-RDX: 0000200000000280 RSI: 000000000000890b RDI: 0000000000000004
-RBP: 00007f4229e11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f4229fe6038 R14: 00007f4229fe5fa0 R15: 00007ffe9d4efb98
- </TASK>
+url:    https://github.com/intel-lab-lkp/linux/commits/Elaine-Zhang/clk-rockchip-Implement-rockchip_clk_register_armclk_multi_pll/20251017-180259
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20251017063107.1606965-4-zhangqing%40rock-chips.com
+patch subject: [PATCH v2 3/5] clk: rockchip: Add clock controller for the RV1126B
+config: arm-multi_v7_defconfig (https://download.01.org/0day-ci/archive/20251019/202510191337.86OcUAWo-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510191337.86OcUAWo-lkp@intel.com/reproduce)
 
-Allocated by task 15224:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
- kasan_save_track+0x14/0x30 mm/kasan/common.c:77
- poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:417
- kmalloc_noprof include/linux/slab.h:957 [inline]
- nr_add_node+0xe4e/0x2c10 net/netrom/nr_route.c:146
- nr_rt_ioctl+0x11b7/0x29b0 net/netrom/nr_route.c:653
- nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x118/0x280 net/socket.c:1254
- sock_ioctl+0x227/0x6b0 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510191337.86OcUAWo-lkp@intel.com/
 
-Freed by task 15237:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
- kasan_save_track+0x14/0x30 mm/kasan/common.c:77
- __kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x5f/0x80 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:234 [inline]
- slab_free_hook mm/slub.c:2530 [inline]
- slab_free mm/slub.c:6619 [inline]
- kfree+0x2b8/0x6d0 mm/slub.c:6826
- nr_neigh_put include/net/netrom.h:143 [inline]
- nr_neigh_put include/net/netrom.h:137 [inline]
- nr_add_node+0x23c3/0x2c10 net/netrom/nr_route.c:246
- nr_rt_ioctl+0x11b7/0x29b0 net/netrom/nr_route.c:653
- nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x118/0x280 net/socket.c:1254
- sock_ioctl+0x227/0x6b0 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+All errors (new ones prefixed by >>):
 
-The buggy address belongs to the object at ffff88805466dd80
- which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 48 bytes inside of
- freed 64-byte region [ffff88805466dd80, ffff88805466ddc0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5466d
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801b4428c0 ffffea0000867b00 dead000000000004
-raw: 0000000000000000 0000000000200020 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5345, tgid 5345 (udevd), ts 58557594470, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1850
- prep_new_page mm/page_alloc.c:1858 [inline]
- get_page_from_freelist+0x10a3/0x3a30 mm/page_alloc.c:3884
- __alloc_frozen_pages_noprof+0x25f/0x2470 mm/page_alloc.c:5183
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:3046 [inline]
- allocate_slab mm/slub.c:3219 [inline]
- new_slab+0x24a/0x360 mm/slub.c:3273
- ___slab_alloc+0xdc4/0x1ae0 mm/slub.c:4643
- __slab_alloc.constprop.0+0x63/0x110 mm/slub.c:4762
- __slab_alloc_node mm/slub.c:4838 [inline]
- slab_alloc_node mm/slub.c:5260 [inline]
- __do_kmalloc_node mm/slub.c:5633 [inline]
- __kmalloc_noprof+0x501/0x880 mm/slub.c:5646
- kmalloc_noprof include/linux/slab.h:961 [inline]
- kzalloc_noprof include/linux/slab.h:1094 [inline]
- tomoyo_encode2+0x100/0x3e0 security/tomoyo/realpath.c:45
- tomoyo_encode+0x29/0x50 security/tomoyo/realpath.c:80
- tomoyo_realpath_from_path+0x18f/0x6e0 security/tomoyo/realpath.c:283
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_check_open_permission+0x2ab/0x3c0 security/tomoyo/file.c:771
- tomoyo_file_open+0x6b/0x90 security/tomoyo/tomoyo.c:334
- security_file_open+0x84/0x1e0 security/security.c:3183
- do_dentry_open+0x596/0x1530 fs/open.c:942
- vfs_open+0x82/0x3f0 fs/open.c:1097
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff88805466dc80: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
- ffff88805466dd00: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
->ffff88805466dd80: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                                     ^
- ffff88805466de00: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
- ffff88805466de80: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
-==================================================================
+   arm-linux-gnueabi-ld: drivers/clk/rockchip/clk-rv1126b.o: in function `rv1126b_clk_init':
+>> drivers/clk/rockchip/clk-rv1126b.c:1050:(.init.text+0xc8): undefined reference to `rk3576_rst_init'
 
 
-Tested on:
+vim +1050 drivers/clk/rockchip/clk-rv1126b.c
 
-commit:         1c64efcb Merge tag 'rust-rustfmt' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a8bde2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=2860e75836a08b172755
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13e20de2580000
+  1012	
+  1013	static struct rockchip_clk_branch rv1126b_armclk __initdata =
+  1014		MUX(ARMCLK, "armclk", mux_armclk_p, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+  1015				RV1126B_CORECLKSEL_CON(0), 1, 1, MFLAGS);
+  1016	
+  1017	static void __init rv1126b_clk_init(struct device_node *np)
+  1018	{
+  1019		struct rockchip_clk_provider *ctx;
+  1020		void __iomem *reg_base;
+  1021		unsigned long clk_nr_clks;
+  1022	
+  1023		clk_nr_clks = rockchip_clk_find_max_clk_id(rv1126b_clk_branches,
+  1024							   ARRAY_SIZE(rv1126b_clk_branches)) + 1;
+  1025	
+  1026		reg_base = of_iomap(np, 0);
+  1027		if (!reg_base) {
+  1028			pr_err("%s: could not map cru region\n", __func__);
+  1029			return;
+  1030		}
+  1031	
+  1032		ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
+  1033		if (IS_ERR(ctx)) {
+  1034			pr_err("%s: rockchip clk init failed\n", __func__);
+  1035			iounmap(reg_base);
+  1036			return;
+  1037		}
+  1038	
+  1039		rockchip_clk_register_plls(ctx, rv1126b_pll_clks,
+  1040					   ARRAY_SIZE(rv1126b_pll_clks),
+  1041					   RV1126B_GRF_SOC_STATUS0);
+  1042	
+  1043		rockchip_clk_register_branches(ctx, rv1126b_clk_branches,
+  1044					       ARRAY_SIZE(rv1126b_clk_branches));
+  1045	
+  1046		rockchip_clk_register_armclk_multi_pll(ctx, &rv1126b_armclk,
+  1047						       rv1126b_cpuclk_rates,
+  1048						       ARRAY_SIZE(rv1126b_cpuclk_rates));
+  1049	
+> 1050		rk3576_rst_init(np, reg_base);
+  1051	
+  1052		rockchip_register_restart_notifier(ctx, RV1126B_GLB_SRST_FST, NULL);
+  1053	
+  1054		rockchip_clk_of_add_provider(np, ctx);
+  1055	
+  1056		/* pvtpll src init */
+  1057		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_CORECLKSEL_CON(0));
+  1058		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_NPUCLKSEL_CON(0));
+  1059		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VICLKSEL_CON(0));
+  1060		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VEPUCLKSEL_CON(0));
+  1061		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VCPCLKSEL_CON(0));
+  1062	}
+  1063	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
