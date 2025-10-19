@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-859781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553BFBEE8EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:43:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023EDBEE8F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F44189C431
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:43:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A06554E1822
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8C82EBBAC;
-	Sun, 19 Oct 2025 15:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7F42E8882;
+	Sun, 19 Oct 2025 15:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pXn38SEP"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="yupk4sHB"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E355E7082D
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 15:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AB922B8B0
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 15:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760888604; cv=none; b=OTg63T5qVepA93AYt8qbot6nNcgrA+yQjv9oksE+0O1hjih2LrzSfyQLuebS5k2ZnOxKgkY8Z454t8rAzvDnqoj5Sy16AZZNl1sx34GviSa5e4ube6wkXmcBNZOBVqK6EPpAa5lobrQ96WujG/1IVT7Nj3rixMuX+kvd/Gqemwo=
+	t=1760889217; cv=none; b=sM/2goZfCO+RmU+4x63JEgJvvutitpxlclXrOcieMv0Olz805bjNqcrbNNYvCf+bHZ4M42gf22i/n1uCLNgTZc/Xv3JbgQ4YDhTWiwZkclLr2DBSxActFHodfuLOUk+yfxxtGMe6krgWsQppqetdziKWx+dcp/aP/Olu64bTOu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760888604; c=relaxed/simple;
-	bh=zOgFDFMH+2xwjTfGmnxCyniM7hXdqEvlv4hRW9M9HWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8cUukbBeXPhuikdJ8ER/S9RDQGU1PoMry0WSeqNcT6kvcKn4d2PnC3CMkkGxmck+eaVOiyR49T6wsXzZH9aiLDnODeGXI9TwQJTnMu5S8Bx8KwcaIh05uw+rhjuABSmsnJi4rgGAoD/PwA1ne+npAq7/F2T95+0+LOgYFwaIQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pXn38SEP; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710683a644so31975255e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760888601; x=1761493401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUr/HT5GdfdpAP+uGAqN8uEBQXKUdVxJBVCEqLCwkic=;
-        b=pXn38SEPxeaImqEtFhztomjO0LuSkNW4TRqiS9Y+sS/I+Mf30jFdCxIuqpYhkxpxoc
-         gNbGi4vpdbNP3hfKPa5MnkdXTCJ8+pKkACIDNJ1CIOowdPA9Qe2O6R3AKOuTemgYZJpe
-         hj9Ko+5QeYkXy+XPEZu0qr3R8pmXtM7sts3ym3yIvCxKhFGVsiBwEZErDyMmq3q49X59
-         WGIDomYG6hTX7nexZV4Nul2gO438STbNmVfca4Xw4b83b5BQp0q8n9Zc/8SZ1YKVepEy
-         dLrSYbv4a2vyc0Cs97WJlDo0LtodHMSsC5rJkIiDXBHOBhZviziycp7itYlCuy2H75fR
-         RCjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760888601; x=1761493401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EUr/HT5GdfdpAP+uGAqN8uEBQXKUdVxJBVCEqLCwkic=;
-        b=Kpo1jvl0xwbvqsol+JvQZ/PrNDghMlzQAuR7Y/6a80O4oWPbs9M5LvxmpMRyBdPBYx
-         7Y2JSh0yUt9TwLl2co3yptDAiAOMyX22+MPkg8ooY4KbYUjGGnmQfj/v0v9sjPW/BiFP
-         kxa4eqNTgBocCu4ySh7JXEAw9nDb5ZaFMFG5759F/Zny6tEAKh9JrihFkz00Lh4rKh+F
-         m5r2OrjMsQ5hTeFAwCc/MoGsuMxBnvS3DJrcIkKKDjkIF+FXYpdWrkIRn1Cxm8F93MYv
-         Ux0Yjf0ReFhaYBdBW/BROj1Q+M8hRG1j4CQjhtZLG2yayhIQFMqq2cC/BbZOToCqOC6v
-         jV/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWRBWooiz7nMls2Agrbpf4gwMiSAO8/n90bLFlUvFq/wTtcxYZ2+iTCPVt8126bcsA/Dg6fvE+2/0BU2Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznd35WEd2UqHKclmKjkh+0PpxbEadQyP2S9qoUc/WCovuWL3Uw
-	kSOFALJmXQ4Hd3SDHrjIDCSLI0x+Hc/jme5U2OzqEBrmtxsI1a16rzcL6sMEVaXiHcA=
-X-Gm-Gg: ASbGncuIcpcqjjblxeCVZIAFqjPbGVQTeK67S8B8nh9DzgG7Dl5uBQCeJ+/UcEw8UGW
-	8SjKH923VWOBoONOKSphJqXZpml8svm6UBrH6PriLz44mu0xrAzja1LCxv7uwrc0RZY6yoJlbjI
-	0o+4YwaAcgjGYFs1AGcabnsH4i6WVI8xDo+MAEnAebOFXFV18ak9bgH6Wyo9C+ZbJ2QMdF3oK3a
-	DI0SGqMZUSJt8OGzLCK6bobjUhNA/lMyFbYjuo2246Ak03PqIK0xK2+t+peBeKQglVQzn6hEyLg
-	azOMzL7Bo3U8qA8s6x/rg/XflpVCMuPHBqWhGSYq5/1Tzof4z89HDre4XzIvwvdMGI+32R3YJYm
-	+EkVevA1S6CdmKhZr19mXGxc0eSgNuvAq8afa4Aq2iarmnrHnfBF860/D1+6B2P7qZYp5bVMONv
-	DtYJ1n3SU=
-X-Google-Smtp-Source: AGHT+IGJaFTKBG1axeoh5yYjZyMcN1++OBgdmC7QlvOy86QSdbXxx0ZA+KHhVZA7w26vZD2Y0J/nug==
-X-Received: by 2002:a05:600c:c0d2:20b0:471:704:64f3 with SMTP id 5b1f17b1804b1-471098fe592mr88225155e9.2.1760888601212;
-        Sun, 19 Oct 2025 08:43:21 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c900asm188000445e9.16.2025.10.19.08.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 08:43:20 -0700 (PDT)
-Date: Sun, 19 Oct 2025 18:43:19 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 3/3] clk: qcom: gcc-glymur: Remove 85.71 MHz USB4 master
- clock frequency
-Message-ID: <yr6vld475g7lkqjr53tnyllkdvm2zyclifwpm5ljlhg353dbsd@jy5yycwmf4nm>
-References: <20251010-topic-gcc_usb4_unused_freq-v1-0-4be5e77d2307@oss.qualcomm.com>
- <20251010-topic-gcc_usb4_unused_freq-v1-3-4be5e77d2307@oss.qualcomm.com>
+	s=arc-20240116; t=1760889217; c=relaxed/simple;
+	bh=7l7+12vQYvSeBq2K5mDS3VblcW6ZAMVLD6keL9mR3Rs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=NCtst8rT65vZFOcnTHkO/hfWKMvvvjscW4fK6kLhLoGE6n6AZr9urfRDOVZ2rOr+jwKi3FHIIMFAIYdKt9j236MTlQQtrxM834Z0UOsC0GWktSQ5nDbg+NTKPngXhtnSLmkxvGajjIk+Z3SCjeFS7F9KElxW2A3p3cTItVLVXQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=yupk4sHB; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 3996 invoked from network); 19 Oct 2025 17:53:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1760889200; bh=x6WS4gSSC3cojCRavBWi/OUmPz/su/Y/sBe19ZDjBWE=;
+          h=From:To:Subject;
+          b=yupk4sHBX13usKKR0MDf4qQStF4MPIXIO+VA7RorDCUj06lUA/TBVTYQJGIJZuuCo
+           e0Vb1SYDh7LjFfbS+bndEFkJnY29BlqgkZB7IdEd81B4VGeuOrBq/yehGpmIETXAu5
+           QQ+LKnfdgeG4SFZzS9oZH9qgrX3Deia3rbjOq3I9qXom4/yhNsCmfave45ojIJhZ3+
+           gg9DonnA4F/7XBoYqKMuGP8hZ30NswO4LhZDSm5xeeZeD7xr8Qu4lAOxKh/R9iAJmd
+           xl8vGZA6jui6tZQrf9pk0p0DXUkvjxB7QW4iyyZtjXDingwE11gM75dq+ntA+W63KN
+           28h6eOIJGhzEg==
+Received: from 83.24.149.147.ipv4.supernova.orange.pl (HELO laptop-olek.home) (olek2@wp.pl@[83.24.149.147])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <nbd@nbd.name>; 19 Oct 2025 17:53:20 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	howard-yh.hsu@mediatek.com,
+	StanleyYP.Wang@mediatek.com,
+	rosenp@gmail.com,
+	luoxueqin@kylinos.cn,
+	chad@monroe.io,
+	olek2@wp.pl,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921, mt7981 and mt7986
+Date: Sun, 19 Oct 2025 17:51:55 +0200
+Message-ID: <20251019155316.3537185-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010-topic-gcc_usb4_unused_freq-v1-3-4be5e77d2307@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 20b9a344b7368db3f41473995158abfd
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [UcNU]                               
 
-On 25-10-10 12:24:52, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The USB4 HPG says this frequency remains unused, remove it from the
-> frequency table to avoid any misunderstandings.
-> 
-> The reason it's unused seems to be that the lower RPMh level required
-> to support it (LOW_SVS) is not enough for other pieces of the pipeline
-> which require SVS, which in turn is enough to support a faster, 175-ish
-> MHz rate.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Supports IPv4 and IPv6 TCP + UDP
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+In various tests between MT7986 and Intel BE200, I observed a performance
+boost ranging from 2 to 12%, with an average of 5.5%.
+
+I did the tests on the MT7915, MT7981, MT7986, and MT7921 variants. The
+MT7922, MT7925, and MT799x are untouched for now and still have
+checksumming disabled.
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+[rebased and resolved conflicts]
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+ drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c | 5 +++++
+ drivers/net/wireless/mediatek/mt76/mt7915/init.c     | 3 ++-
+ drivers/net/wireless/mediatek/mt76/mt792x_core.c     | 3 +++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c b/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c
+index 0db00efe88b0..e31b3e7e2038 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c
+@@ -372,6 +372,9 @@ mt76_connac2_mac_write_txwi_8023(__le32 *txwi, struct sk_buff *skb,
+ 		wmm = sta->wme;
+ 	}
+ 
++	val = FIELD_PREP(MT_TXD0_ETH_TYPE_OFFSET, 10);
++	txwi[0] |= cpu_to_le32(val);
++
+ 	val = FIELD_PREP(MT_TXD1_HDR_FORMAT, MT_HDR_FORMAT_802_3) |
+ 	      FIELD_PREP(MT_TXD1_TID, tid);
+ 
+@@ -391,6 +394,8 @@ mt76_connac2_mac_write_txwi_8023(__le32 *txwi, struct sk_buff *skb,
+ 
+ 	val = FIELD_PREP(MT_TXD7_TYPE, fc_type) |
+ 	      FIELD_PREP(MT_TXD7_SUB_TYPE, fc_stype);
++	if (skb->ip_summed == CHECKSUM_PARTIAL)
++		val |= MT_TXD7_IP_SUM | MT_TXD7_UDP_TCP_SUM;
+ 
+ 	txwi[7] |= cpu_to_le32(val);
+ }
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+index 5ea8b46e092e..a3bab240afb7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+@@ -359,7 +359,8 @@ mt7915_init_wiphy(struct mt7915_phy *phy)
+ 	hw->queues = 4;
+ 	hw->max_rx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_HE;
+ 	hw->max_tx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_HE;
+-	hw->netdev_features = NETIF_F_RXCSUM;
++	hw->netdev_features = NETIF_F_RXCSUM |
++			      NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
+ 
+ 	if (mtk_wed_device_active(&mdev->mmio.wed))
+ 		hw->netdev_features |= NETIF_F_HW_TC;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt792x_core.c b/drivers/net/wireless/mediatek/mt76/mt792x_core.c
+index c0e56541a954..fe138d2e8e62 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt792x_core.c
++++ b/drivers/net/wireless/mediatek/mt76/mt792x_core.c
+@@ -632,6 +632,9 @@ int mt792x_init_wiphy(struct ieee80211_hw *hw)
+ 	}
+ 	hw->netdev_features = NETIF_F_RXCSUM;
+ 
++	if (is_mt7921(&dev->mt76))
++		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
++
+ 	hw->radiotap_timestamp.units_pos =
+ 		IEEE80211_RADIOTAP_TIMESTAMP_UNIT_US;
+ 
+-- 
+2.47.3
+
 
