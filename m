@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424BBBEE29B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:04:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358B8BEE2A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14E084E1BED
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6E0C1899A9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6942E5B1B;
-	Sun, 19 Oct 2025 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD082E54DE;
+	Sun, 19 Oct 2025 10:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu8kUuTP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ9E4kFY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5332E1EE019;
-	Sun, 19 Oct 2025 10:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727281EE019;
+	Sun, 19 Oct 2025 10:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760868277; cv=none; b=ohFCLf6obIqcaHayZvkA8KE0TLpyL5iPycKI2zqB+mSbfEhbiZmoMHDOtePvU8O4xopRWqJKDKlq0GO9f/xe1qAHkTiuuPj/dPfuZNaa7fuk58PO9LjNKvCfHE6PriOFhYTlRTwsurBcOz41kWL+mHxe9TVUQH5CXSzYQ+wpaEw=
+	t=1760868334; cv=none; b=hPKbR8JrGuvtm5nMv4ECu86RXonDL8AcPkATuY4IW4lNgnRS1i5V2AF35KCLndH2QP4COLQupetQVhCS6dk/oWoCJNhdKAs5nk+dyohPkefnSkDD+pLByj6dX+EPOuKfyDqgIRQId1ks1rvKajoL6Y7KhXIxSHJEQBYv6OD9gqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760868277; c=relaxed/simple;
-	bh=K5bIOHqo4e4+v9JFw9VR8FYJWSsf4cxoBgG8icLWWIU=;
+	s=arc-20240116; t=1760868334; c=relaxed/simple;
+	bh=8/6MAIRp7ORV3+JDXdvVgqS6cXx7rt5drIEAxCcTDRQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EcFgo/ddIhVzAlIB0AnLhjpbPuyMpvPlN6kxqp4ddsbFMIwg8Kil21GnBFgNRYCjMaYkxH9kAx+HBi1YhV7emL94xBtmMvH4a7E3I9oAJasStytkK3TEOlKpFDJt1+9QRZcfoazvys+d5b967/emHD+u/rnUTckyXHrn3ZWK5D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu8kUuTP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853F1C116C6;
-	Sun, 19 Oct 2025 10:04:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SMvNVZ2xGwX+ZnhydbSj0xD8IjQIKDnxHcs9l8qqCQqxqsidOIeWq4PuRiq93pP2/fuObx8hwYT8/6vVEYPpZcPykQ/A7eeP3SUqRC8vnjA3+lHGP+pw8QcsmEoNXlVLt/9XxfNfeP+4KEyNnN6af9YHXxVC3OFC8dOaRTf90xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ9E4kFY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C27AC4CEE7;
+	Sun, 19 Oct 2025 10:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760868276;
-	bh=K5bIOHqo4e4+v9JFw9VR8FYJWSsf4cxoBgG8icLWWIU=;
+	s=k20201202; t=1760868333;
+	bh=8/6MAIRp7ORV3+JDXdvVgqS6cXx7rt5drIEAxCcTDRQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hu8kUuTP8G2bym5uquQb23frtqpM9s5kephneD5NwmnrA4u3r68L5W63bzFHEGbii
-	 L3+Mja+AasARH8lj2JkjkVSKLyQAUcEIZwQ8iUwHODa1w1GEhuSzMisPjiiN05F5AA
-	 gO2nBYYRnSSQVxzE5CinWzILsFFiPf2Pb2L1v4WbTTr74Y38JNaudZJmRzzY1ByjZe
-	 USYG+j6y1+0Z2QJy6bTfW2HsJDeaTDSAVpFBBGa7gno216k7k7Su2fPI8fhvzOsQ1v
-	 jnfvoxXKcJbTWmcsZDMkkBGIi/IOLqMKiUB8nGsbY1Y6RuKGUTFF5aT+/sxx0qMrXa
-	 jPM/p1Wj1CL7w==
-Message-ID: <d7cea4d7-52ce-42b5-a1b8-452998351630@kernel.org>
-Date: Sun, 19 Oct 2025 12:04:30 +0200
+	b=SQ9E4kFYblZrraQ6lpIruO73LafeBj1Ly66IJthQYFy8IB9gmfMI9ZGemn6lpncHB
+	 lIXm9y9JJ2AM4JQLDauFQ0SG6/RPR3rK9eM/VkKogKRzk4kqmU2b8fOnxqHeVbytkX
+	 3yL7XiumkVvBaBTcpu2D3PaZ3FJsuoeTBOh8UkvbxpFiKi+d9kstuSGWUJGflyggCb
+	 udDMiDj8rm6borsYevqHakua6W8axclEeaj3t2hGcBJgllpkCXWOUZqjjTV72Vn5OO
+	 Wk8axnoctkBcIfKn3iohe4PA8qZTbrOhIb7AaPH52I1YzHJptoFnV1nt4Mi9+mvjDI
+	 p2qL+mDNVb/3A==
+Message-ID: <cdecae8a-7fb9-4ac2-a412-1a18c4783ffa@kernel.org>
+Date: Sun, 19 Oct 2025 12:05:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +64,7 @@ Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
 References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
  <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
- <aPJTquVc8zl727bC@lizhi-Precision-Tower-5810>
+ <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,21 +110,73 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aPJTquVc8zl727bC@lizhi-Precision-Tower-5810>
+In-Reply-To: <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 16:33, Frank Li wrote:
+On 17/10/2025 16:59, Frank Li wrote:
+> On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> Add documentation for i.MX8ULP's SIM LPAV module.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
+>>  include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
+>>  .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
+>>  3 files changed, 93 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>>  create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>> new file mode 100644
+>> index 000000000000..fb3b9028a4c3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>> @@ -0,0 +1,72 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/imx8ulp-clock.h>
+>> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
 >> +
->> +    clock-controller@2da50000 {
+>> +maintainers:
+>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> +
+>> +description:
+>> +  The i.MX8ULP LPAV subsystem contains a block control module known as
+>> +  SIM LPAV, which offers functionalities such as clock gating or reset
+>> +  line assertion/de-assertion.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: fsl,imx8ulp-sim-lpav
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 3
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: lpav_bus
+>> +      - const: hifi_core
+>> +      - const: hifi_plat
 > 
-> Maybe mfd is better, this is clock, reset and mux controller actually.
+> dt prefer use -
 
-There is no such hardware term as mfd.
+
+I don't think we ever expressed such preference. Where did you find it?
+
+
+> lpav-bus, ...
+Then just "bus" or "apb".
+
+
 
 Best regards,
 Krzysztof
