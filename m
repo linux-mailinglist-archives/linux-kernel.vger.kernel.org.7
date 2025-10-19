@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-859859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B5FBEEC7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 22:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F44BEECAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E299B18998DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDF383E44B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B30522E3E9;
-	Sun, 19 Oct 2025 20:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E657322F14D;
+	Sun, 19 Oct 2025 21:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBueZTyA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="3EfDGUcJ"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61CF3F9FB;
-	Sun, 19 Oct 2025 20:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760907555; cv=none; b=T3mEFLomEfPJiRkXOgb1zBglkjru3pmYGWGX+vI28EpkqAu2aWtgJ+a3NLcq+8PzCL/YA1b0ZKw/154U1pGWAQAgfwF56x2n5gnXIPeYc4U8zp8Ga+xAuRydh/hTWtnRpMkzWDStilOIxssCxqrkWOob9HYm9/GiiCZfQbmM300=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760907555; c=relaxed/simple;
-	bh=lhhtb+7Ex+xa4d8TMKrKG9ZmklCP6ybs+OY4TKXN4x8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zt0jQOaV2WZeb89UiS25BGQ83mtv5VVSc6oVnN3Ezqpk9JY24NCequtc9RYDMjWGqsJy9t2poCnVFX3D9Wbc9eyBI7to/JCVaXd2j4z++H/fD24/bSFrCQmoTinQiXLkBzoERm79hfNmrEAZCbyw1MFtHhTd1oOCx0Gk2PBuKcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBueZTyA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E15C4CEE7;
-	Sun, 19 Oct 2025 20:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760907554;
-	bh=lhhtb+7Ex+xa4d8TMKrKG9ZmklCP6ybs+OY4TKXN4x8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pBueZTyAn4/t8Xk4w48pv7BUQkjV0MZCNLaGmrgPGGeR1tyMYkFkW1ShG4PVVMfF+
-	 MDxPAeAnrzcLTW55GmY45EN0CsxOAp09uw9j3ShS9qOQRln95iku5FK8F5J30iWc6h
-	 aq87PiRkH2OuN7ZFXUSt5HYUhpnQcJj0kRXXf6RiiHqiohqErcn2AKMVbD9FuEkhWJ
-	 wvN1x51caoIxLAY4zOZNpQ1R00Q3g/fmTNOTXcDR1uIWHai4eo2K/aH6sdlbnrs1JW
-	 93b7M6qKpwVQGCJoyKyXmIjaOw57ymCgLIbWes2oNqt+1IqGFAtji2oqNwl+pRBDtS
-	 Ek6E3J3MEAxrw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vAaUi-0000000FJfb-0hz5;
-	Sun, 19 Oct 2025 20:59:12 +0000
-Date: Sun, 19 Oct 2025 21:59:11 +0100
-Message-ID: <86sefewqu8.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the kvm-arm tree
-In-Reply-To: <20251020075102.4f6df4fb@canb.auug.org.au>
-References: <20251020075102.4f6df4fb@canb.auug.org.au>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45141FDE31;
+	Sun, 19 Oct 2025 21:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760907926; cv=pass; b=aGRutF68w3mKZvzGZw6JiAu1Nm5iB+D2u4ohqHic/8d+6IsuxtAR35OTRZ/2u2C51AaIQMnGCdj6PFP8MXY5IZ8LL+UVHcqjh8hG4P6Pa2f323/7kkx1JLvicx7R7BUnJOJNiE1hN4/0zupvsRXYaztPVe0n//tWts7ImWAXDTw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760907926; c=relaxed/simple;
+	bh=txACjwaUzBVY3wLm9CvZT7NkXrqceAPHbh2LMaKOu/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X61r26ZFKSt8KM/Qud6Pze9i88gCgb1JqyQbpBQnlKLpxKQO03zEiZD4SLMWsMnrOvhpl9JZi+RYTWFxhuh3qjaso+XPCwQjhHgTalHYrdBn1Z9zx9fPMkmDPWoVKc5NCOA7EFABh5vIPFF7HhNwmWvjl3WcUF6plH+CPD0M0DI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=3EfDGUcJ; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+ARC-Seal: i=1; a=rsa-sha256; t=1760907900; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lrhlo+kGo7oby/Z5wDSTUMc1YHSz3Ark/HwP4xuk4VFX6UbeP3zygYTC+HVyYN1NZkf0beDjCwrMk94PNhCiJGH3aMvJwK1NR6LE8D0RNC2Z5APBDb5s6Zh1q/cEPxvS/8ROs10GzT0MFVvgJ9FcyLd5BK7LmJ51mD9Aru+i9Mg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760907900; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6Njnw7G8Orn4l/ZWInCB405wGlDyGLm/gxg0rgtVJ2E=; 
+	b=MmhBMEMGfDLGn7/PLrCjQBuL/k+fGRfBl/WCf1StbqCd9zZ7iu5GnOyEjrIzWv6k3bDhGbkOP8Cuao8kJB7RMLf9qp4Ap1UIy7WM7mjEZMH2TMum1sZkmJhNmadUtjRqGJc0ybaZxRhM8M1bng3ezD+7HmY7FZGQRbzQHavT9ts=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760907900;
+	s=zmail; d=rong.moe; i=i@rong.moe;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=6Njnw7G8Orn4l/ZWInCB405wGlDyGLm/gxg0rgtVJ2E=;
+	b=3EfDGUcJEXu3NcF5F5tZ/B7jRTq0Qs99q//mMQDxOSkV0DayjJcqkcZ4xRDRoQkq
+	xN9nh7pHylk3xoCoHNPM2w5Dloymy/S66+QWflbHx82IIr9J8rLMa/GOd5NtHlCwAXv
+	lc22eZeBqQGbmh9t7qwWSWYjJ/9cZOj0B9r0C5WE=
+Received: by mx.zohomail.com with SMTPS id 1760907895751125.9137726191351;
+	Sun, 19 Oct 2025 14:04:55 -0700 (PDT)
+From: Rong Zhang <i@rong.moe>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Rong Zhang <i@rong.moe>,
+	Guenter Roeck <linux@roeck-us.net>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH 0/6] platform/x86: lenovo-wmi-{capdata,other}: Add HWMON for fan speed
+Date: Mon, 20 Oct 2025 05:04:43 +0800
+Message-ID: <20251019210450.88830-1-i@rong.moe>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, cdall@cs.columbia.edu, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sun, 19 Oct 2025 21:51:02 +0100,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> Hi all,
-> 
-> The following commits are also in Linus Torvalds' tree as different
-> commits (but the same patches):
-> 
->   34f46fecfe96 ("KVM: arm64: selftests: Track width of timer counter as "int", not "uint64_t"")
->   0c5bc849fd76 ("KVM: arm64: selftests: Test effective value of HCR_EL2.AMO")
->   fcaa3f59fda3 ("KVM: arm64: Use the in-context stage-1 in __kvm_find_s1_desc_le
->   5bd5d7d43a92 ("KVM: arm64: nv: Don't advance PC when pending an SVE exception")
->   eea94a0ea55d ("KVM: arm64: nv: Don't treat ZCR_EL2 as a 'mapped' register")
-> 
-> these are commits
-> 
->   cb49b7b8622e ("KVM: arm64: selftests: Track width of timer counter as "int", not "uint64_t"")
->   890c608b4d5e ("KVM: arm64: selftests: Test effective value of HCR_EL2.AMO")
->   a46c09b382ee ("KVM: arm64: Use the in-context stage-1 in __kvm_find_s1_desc_level()")
->   9a1950f97741 ("KVM: arm64: nv: Don't advance PC when pending an SVE exception")
->   ed25dcfbc432 ("KVM: arm64: nv: Don't treat ZCR_EL2 as a 'mapped' register")
-> 
-> in Linus' tree.
+Lenovo WMI Other Mode interface also supports querying or setting fan
+speed RPM. This capability is decribed by LENOVO_CAPABILITY_DATA_00.
+Besides, LENOVO_FAN_TEST_DATA provides reference data for self-test of
+cooling fans, including minimum and maximum fan speed RPM.
 
-Ah, thanks for the heads up, I forgot to drop those. Now fixed.
+This patchset turns lenovo-wmi-capdata01 into a unified driver (now
+named lenovo-wmi-capdata) for LENOVO_CAPABILITY_DATA_{00,01} and
+LENOVO_FAN_TEST_DATA; then adds HWMON support for lenovo-wmi-other:
 
-Cheers,
+ - fanX_enable: enable/disable the fan (tunable)
+ - fanX_input: current RPM
+ - fanX_max: maximum RPM
+ - fanX_min: minimum RPM
+ - fanX_target: target RPM (tunable)
 
-	M.
+This implementation doesn't require all capability data to be available,
+and is capable to expose interfaces accordingly:
 
+ - Having LENOVO_CAPABILITY_DATA_00: exposes fanX_{enable,input,target}
+ - Having LENOVO_CAPABILITY_DATA_01: exposes firmware_attributes
+ - Having LENOVO_FAN_TEST_DATA: exposes fanX_{max,min}
+
+Rong Zhang (6):
+  platform/x86: Rename lenovo-wmi-capdata01 to lenovo-wmi-capdata
+  platform/x86: lenovo-wmi-{capdata,other}: Support multiple Capability
+    Data
+  platform/x86: lenovo-wmi-capdata: Add support for Capability Data 00
+  platform/x86: lenovo-wmi-other: Add HWMON for fan speed RPM
+  platform/x86: lenovo-wmi-capdata: Add support for Fan Test Data
+  platform/x86: lenovo-wmi-other: Report min/max RPM and hide dummy fans
+
+ .../wmi/devices/lenovo-wmi-other.rst          |  32 +
+ drivers/platform/x86/lenovo/Kconfig           |   5 +-
+ drivers/platform/x86/lenovo/Makefile          |   2 +-
+ drivers/platform/x86/lenovo/wmi-capdata.c     | 545 ++++++++++++++++++
+ drivers/platform/x86/lenovo/wmi-capdata.h     |  46 ++
+ drivers/platform/x86/lenovo/wmi-capdata01.c   | 302 ----------
+ drivers/platform/x86/lenovo/wmi-capdata01.h   |  25 -
+ drivers/platform/x86/lenovo/wmi-other.c       | 422 +++++++++++++-
+ 8 files changed, 1028 insertions(+), 351 deletions(-)
+ create mode 100644 drivers/platform/x86/lenovo/wmi-capdata.c
+ create mode 100644 drivers/platform/x86/lenovo/wmi-capdata.h
+ delete mode 100644 drivers/platform/x86/lenovo/wmi-capdata01.c
+ delete mode 100644 drivers/platform/x86/lenovo/wmi-capdata01.h
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-Without deviation from the norm, progress is not possible.
+2.51.0
+
 
