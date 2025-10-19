@@ -1,126 +1,231 @@
-Return-Path: <linux-kernel+bounces-859719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA2BBEE673
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:13:08 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD66BEE8B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5055518946F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:13:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CD593451C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4CF2EA47C;
-	Sun, 19 Oct 2025 14:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFFE2EB857;
+	Sun, 19 Oct 2025 15:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AcX7YUcg"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTsYY+Bw"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1E52EAB6A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30281CEADB
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 15:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760883182; cv=none; b=Wa8DWxG5MeCPew9FRzm+KgtS9dsfkvPLLJT4OMQRIW7igieSqA1VF4ZdKD4S/wjGXqdnIOPe0X/tYkDXs4dc9cRtNXaYUqMqhQGIGn+CY/J5TViC2BuJsJR6yIXZFpb3nlopSda5NwMimqh8cjEZhCnQEwtzJ7YiyufQPzDAFlo=
+	t=1760887379; cv=none; b=oSi3ygV2uL4h10PY8a4M1inQ0ii8g17bJBSueKg/fYiBb6O0qyFxuBSAGQ/r5+yl6ePbIiiqbCSFbpHTXNn/YXQE0VlZtt0y4U/R9yN+M6VyWJELN7paM9EcVPTvjQaqc/eYh+upA60sCOAY1u2lp+WJ8KVZSC+53sMrYN3680Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760883182; c=relaxed/simple;
-	bh=OZvVTykIlBRbaETtgtNoTHwKA/K3IweojPWLke2286k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=afvL2oPrmq4P6s4ChnZC5Ph6eOeVcV9NzOWN0OkN6PHvcwvsC+yOkjnMgLN2oDEN9OoaJrXlDa61xEzV5Swg1Gr5clf3QT7fBVF05K56SNU5k2ZO7uPLcKu0UlOLj9b7RcE8eDzlNeAODolqPi9ixD8Zt7jLcmywycfCYcj32eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AcX7YUcg; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1760887379; c=relaxed/simple;
+	bh=Zz92a5a6F3OLN4+cHI8/iueNB31Pm2/6LWIwcBhXKnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WlKNfI3v8xaebdsJmml+m9Mtj1xcw9JQSL1g35O1wEXPXd1bjZz/WkxLjgQW/hvPSR+d8DsmO/PpXK/U8Y3OY5lF4e15x5/sPgvvl+UP/6D0aSK6xNZ3KsDDX0pHA99FNzMmg+AueavgOeYrt/BCn3oMRSq1oQpwleCGhOZyIhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTsYY+Bw; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b5dfff01511so94985366b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:13:00 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63bf76fc9faso6438435a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:22:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760883179; x=1761487979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLOKqWlJM+Qls3gDoxvAM4+OyQdsVVtIrTMnLe6+7Bg=;
-        b=AcX7YUcgQKcN39VuQ44MW1z+n6n5TKL5PGDe6uGiUQ30jwBS6PnFkX2X1HiSF+fhx2
-         fYQsL20mmKFi5tTXXHyJonKoSCwybgH/UmQwbHIbYZSzhSr/OFoN8/1aPjloS40N0Lnd
-         V8/IJuZzPPrP7FRW90DZizCJdSCBwKpEGltQE9ElxfUiNdzua+M5d4Q5JSI1ToJS6ltk
-         hM2TCe+r61H3bOHK7yFsi4CF2dhzxv56rIsl19ytqrtR/Z42XjBPoHCwL65KB/Lv3Cpz
-         gIe1SSacnzTcBU/5jErLKSFWdR5ruaZ7gUaoCriWDT7pTTulS5zwYNLpe1LTYgiYcjkH
-         5aGw==
+        d=gmail.com; s=20230601; t=1760887375; x=1761492175; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSnXD2Zmi5qJWzsOosYUwmf0Z7kdjKXL81lyMDVKmyQ=;
+        b=OTsYY+BwGJRW8zzGrbilunkGAF3yO78SXa5QmbRZW4uI7gG3HJSNb0InZxcYGVwbXC
+         TwuT+guAJFLYZK9CjDvVv9LNg+GXyvGNuYNQ50ncmWEfIx2RzImzA7SaEKo4BxNNTEt0
+         8tCXS8PhCPApLY1h6HdE4merOQwxR8hKnlUWtxFX97yrs0g33g1BtWnCorH/JDw6dVli
+         ktXsuB6bu1JzwSqom4k7f94ODvcw/jBbWptD1Y/Zdl4eOovh5GewJVCo46lj/YwvNYGe
+         p2U0WnGv3ypZ4TkwYMF37Bl+tItnaFtF8YCU+E1xqzUHHXuqtc8gumjo+PTHtSFVnyTJ
+         ahEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760883179; x=1761487979;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760887375; x=1761492175;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OLOKqWlJM+Qls3gDoxvAM4+OyQdsVVtIrTMnLe6+7Bg=;
-        b=efvhj7B+hV+boaZJjVaXDKYEoGGMOP1CVdz5rwGZoOiM39T9gQGzGtJ0TxrTAw5zlz
-         5V2dg2tc10laakGDRcb4+1f7Z1UJ/I/2g8HaUkXzUue4oxEUR4k+am+P/9S0yvZbfd6P
-         40wJtCsox95fulWdYyPr+AQTLcw+/FWrewRH3Fcpt72/vPWrmcugKKgKhbqmv69pfqky
-         BMMwf4JiGq/N96sPLByMB+UDpitaZu8vbV+3aBPsM8ZABgnoyw5b+CkKvBqDUs/p+PLX
-         mqJ27XlNd4V7gD7iIg6T0FW2H2qaaeZ22ijmndYwCKSeuVJP/Xe7tVNsogtFzT/S/dMC
-         60Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5KLT1WS+a1QnKYF4DQSMEJflag6SPpHZYfrxuqHOZSbbeGt0ubvv8GuNPF+D7sEl8ni8oqntQZY/ysn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Tg2S7qoEa2hgtQSj108myg8kqgks6KWqBCIIB85gobmI474M
-	zGOLei70ArbXYa/sVF+eFm+xRbDD7d+F3iojmkVREw+LxBnn+ek/kAty
-X-Gm-Gg: ASbGncsPNsiDBeuF0F0nsLdk2i/y/8nBqIUZCjjGWYoAMmCO6THJsxbHa+MwDwZzr7i
-	CS3y3ecDndOY+9j313U//9cHYjl3t+ZnTGpIipFY4tyULtnMmH+e8i+qHzIfC2B0SwlJqUxL8g/
-	AQhP3SPAEwmPjK3bT0aqO/oeJOTuPnRlwFfeLRnFi/ulmA5tIsjpEM3JHw0cDu36H8BKYwCXA5N
-	Wj3pUyPbv6JSdjgmQ8HRfs1LSiXmmn+D10FIRH0byqL8HoAEWOpwsiN9ziAmCMcDIrC+tQ04zDb
-	yW0+gAjvUWEQmrehV1k9ouug0BT5rfZIgwU4aDSsb/zi6zlnczNbulfXc59Slic24joQNNgcStX
-	DjWWsxjl2E/jzIGm3jSbW0IRqoUvllYmk14q6G9mcLHGrhq5OCtW8VofGh/zyWbbO5F3vzup6AR
-	nyGRsc
-X-Google-Smtp-Source: AGHT+IF6kFqxZjmdvkiQmumLp5yXtfBfsGWcBoAvxoX6/vIZKFSk3vlT0KQXPw3Y30vQ7ooRKt1BnA==
-X-Received: by 2002:a05:6402:2681:b0:634:52c3:20f5 with SMTP id 4fb4d7f45d1cf-63c1f5738aamr5377085a12.0.1760883178967;
-        Sun, 19 Oct 2025 07:12:58 -0700 (PDT)
-Received: from bhk ([165.50.121.102])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4949bfd3sm4212111a12.41.2025.10.19.07.12.57
+        bh=MSnXD2Zmi5qJWzsOosYUwmf0Z7kdjKXL81lyMDVKmyQ=;
+        b=ikfJaSc0917a7fKZkFY+kG+gCO121ADykTgMmL45xvwSH3k/qVehhmMZ5Yvqx5Nsu5
+         aYbJlsndQWTKNVHsbClB8VY5fT/bLT3hX+AtuspXGi0oiR/GkYDzefun9GUqZoEUKdKA
+         uQauz2hhDBBC0odX1X/JRV6DBBLgoK3NkTVYwZXS4LkSWgjOdaQIPbyb+kPRQysoPCxe
+         pGSawfcXIpBejFODA17QIrgOZ8zPftlA23Xomu8gI4g36HQS/7wcaFUPAr78meav/6Gl
+         PHPg/Boo4/k7SKipDu1UyS8MEwukPLMrHHomLI/55/Kij0f5N9VDDX95jbfgAKZvJD1L
+         B+9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDw5hfLoqcZLKoqXWRoZYFQuTzC62XnOthVJsuCDGXLV5KOIstC650q+A2TLQgtSIS4DPkmNABHucPn1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkMtsg0cw3R6SXPkfuCRcG5roJNle/jNaRz59uyh8mqC+QyM04
+	+laoJ8EQh0M+cZ4KxWHOCoD3vwa+skNsDu29awJ5O+cGmm+E8uF46u/g
+X-Gm-Gg: ASbGncsCArNQ1XrYVx/rJC3ONQIjUBqFIucBe0s/gXeleDNgr0AkA1yS6bX7M6xVF8+
+	P8xwXL7wEW1w1DSmglCcWDxtFqnEgnSO9bJljf6OlNnXt7UVHLBQIsobZo6Hxa/xDqsD9GW+cP3
+	b3n5O/Fg6Z6V3n6a7TpfyLoxNgnsIONRFyCJs8HUYe+94aW6hIsD9CkljRLzJBc1aO6f/+OyMmL
+	38sjqdc65UM1cVcy+K4oBEW5BwgwTDbRXWT/9HirmJKRcr2/3B/wSXtZ3tFOKJKnjwuExI480V5
+	O3m9Ha4JNChunymTprnLcmwH3NXPT3hkJzXaGHh/TM7gcpJ/gLX3PHbbiLuQ4prC7x4yIlf5J0R
+	zpk7wAZieymTE5f6zIH+rzc+0By2XvetL5fj1fu7qWVw0sgswxEQT44otDic4f+dYmEYHPsDKvA
+	pLlCiZIAa1PmM09iRGnvisdJU+A9JPVyclcz8A+VltVv3F
+X-Google-Smtp-Source: AGHT+IHuFocc8BNakcfqGS1AHLgn/UuD0B8nQBSuq2pBaAorx95IiaLxFMLNHjUTaIEuqZHKWnp/Lw==
+X-Received: by 2002:a05:6402:2713:b0:62e:e5b3:6388 with SMTP id 4fb4d7f45d1cf-63c1f6b4d48mr10629131a12.19.1760887374833;
+        Sun, 19 Oct 2025 08:22:54 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4945f1ffsm4441882a12.31.2025.10.19.08.22.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 07:12:58 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: lanzano.alex@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
-Date: Sun, 19 Oct 2025 16:12:28 +0100
-Message-ID: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
+        Sun, 19 Oct 2025 08:22:53 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id DB8A7BE2EE7; Sun, 19 Oct 2025 17:22:52 +0200 (CEST)
+Date: Sun, 19 Oct 2025 17:22:52 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: stable <stable@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>, Zhixu Liu <zhixu.liu@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Please backport commit 00d95fcc4dee ("docs: kdoc: handle the
+ obsolescensce of docutils.ErrorString()") to v6.17.y
+Message-ID: <aPUCTJx5uepKVuM9@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8V4LYA5lItWc3kMQ"
+Content-Disposition: inline
 
-Replace kmalloc() with kmalloc_array() to correctly
-handle array allocations and benefit from built-in overflow checking[1].
 
-[1]:https://docs.kernel.org/process/deprecated.html
+--8V4LYA5lItWc3kMQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Hi
+
+When people update docutils to 0.22, then the Documentation build will
+start failing as documented with the commit 00d95fcc4dee ("docs: kdoc:
+handle the obsolescensce of docutils.ErrorString()").
+
+So it would be nice if people can still build the documenation with
+newer versions (was for instance relevant for Debian unstable for
+building the 6.17.y based packages): https://bugs.debian.org/1118100
+
+Thus can you please backport 00d95fcc4dee ("docs: kdoc: handle the
+obsolescensce of docutils.ErrorString()") down to 6.17.y stable
+series? The commit does not apply cleanly so adding a backport for it.
+
+Actually it would be nice to go further back, but I just tested as
+well 6.12.y and there due to missing faccc0ec64e1 ("docs:
+sphinx/kernel_abi: adjust coding style") there are more work.
+
+faccc0ec64e1 ("docs: sphinx/kernel_abi: adjust coding style") should
+be applicable but I'm not sure if you want to support that. Jonathan
+what would you think?
+
+Regards,
+Salvatore
+
+--8V4LYA5lItWc3kMQ
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-docs-kdoc-handle-the-obsolescensce-of-docutils.Error.patch"
+
+From c2ce9e6de0a3dfea99de08af7b5eef5c983e76c8 Mon Sep 17 00:00:00 2001
+From: Jonathan Corbet <corbet@lwn.net>
+Date: Tue, 9 Sep 2025 13:35:37 -0600
+Subject: [PATCH] docs: kdoc: handle the obsolescensce of
+ docutils.ErrorString()
+
+commit 00d95fcc4dee66dfb6980de6f2973b32f973a1eb upstream.
+
+The ErrorString() and SafeString() docutils functions were helpers meant to
+ease the handling of encodings during the Python 3 transition.  There is no
+real need for them after Python 3.6, and docutils 0.22 removes them,
+breaking the docs build
+
+Handle this by just injecting our own one-liner version of ErrorString(),
+and removing the sole SafeString() call entirely.
+
+Reported-by: Zhixu Liu <zhixu.liu@gmail.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Message-ID: <87ldmnv2pi.fsf@trenco.lwn.net>
+[Salvatore Bonaccorso: Backport to v6.17.y for context changes in
+Documentation/sphinx/kernel_include.py with major refactorings for the v6.18
+development cycle]
+Signed-off-by: Salvatore Bonaccorso <carnil@debian.org>
 ---
- drivers/gpu/drm/tiny/repaper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/sphinx/kernel_feat.py         | 4 +++-
+ Documentation/sphinx/kernel_include.py      | 6 ++++--
+ Documentation/sphinx/maintainers_include.py | 4 +++-
+ 3 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
-index 4824f863fdba..290132c24ff9 100644
---- a/drivers/gpu/drm/tiny/repaper.c
-+++ b/drivers/gpu/drm/tiny/repaper.c
-@@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct drm_framebuffer *fb, const struct iosys_map *
- 	DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
- 		  epd->factored_stage_time);
+diff --git a/Documentation/sphinx/kernel_feat.py b/Documentation/sphinx/kernel_feat.py
+index e3a51867f27b..aaac76892ceb 100644
+--- a/Documentation/sphinx/kernel_feat.py
++++ b/Documentation/sphinx/kernel_feat.py
+@@ -40,9 +40,11 @@ import sys
+ from docutils import nodes, statemachine
+ from docutils.statemachine import ViewList
+ from docutils.parsers.rst import directives, Directive
+-from docutils.utils.error_reporting import ErrorString
+ from sphinx.util.docutils import switch_source_input
  
--	buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
-+	buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
- 	if (!buf) {
- 		ret = -ENOMEM;
- 		goto out_exit;
++def ErrorString(exc):  # Shamelessly stolen from docutils
++    return f'{exc.__class__.__name}: {exc}'
++
+ __version__  = '1.0'
+ 
+ def setup(app):
+diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
+index 1e566e87ebcd..641e81c58a8c 100755
+--- a/Documentation/sphinx/kernel_include.py
++++ b/Documentation/sphinx/kernel_include.py
+@@ -35,13 +35,15 @@
+ import os.path
+ 
+ from docutils import io, nodes, statemachine
+-from docutils.utils.error_reporting import SafeString, ErrorString
+ from docutils.parsers.rst import directives
+ from docutils.parsers.rst.directives.body import CodeBlock, NumberLines
+ from docutils.parsers.rst.directives.misc import Include
+ 
+ __version__  = '1.0'
+ 
++def ErrorString(exc):  # Shamelessly stolen from docutils
++    return f'{exc.__class__.__name}: {exc}'
++
+ # ==============================================================================
+ def setup(app):
+ # ==============================================================================
+@@ -112,7 +114,7 @@ class KernelInclude(Include):
+             raise self.severe('Problems with "%s" directive path:\n'
+                               'Cannot encode input file path "%s" '
+                               '(wrong locale?).' %
+-                              (self.name, SafeString(path)))
++                              (self.name, path))
+         except IOError as error:
+             raise self.severe('Problems with "%s" directive path:\n%s.' %
+                       (self.name, ErrorString(error)))
+diff --git a/Documentation/sphinx/maintainers_include.py b/Documentation/sphinx/maintainers_include.py
+index d31cff867436..519ad18685b2 100755
+--- a/Documentation/sphinx/maintainers_include.py
++++ b/Documentation/sphinx/maintainers_include.py
+@@ -22,10 +22,12 @@ import re
+ import os.path
+ 
+ from docutils import statemachine
+-from docutils.utils.error_reporting import ErrorString
+ from docutils.parsers.rst import Directive
+ from docutils.parsers.rst.directives.misc import Include
+ 
++def ErrorString(exc):  # Shamelessly stolen from docutils
++    return f'{exc.__class__.__name}: {exc}'
++
+ __version__  = '1.0'
+ 
+ def setup(app):
 -- 
-2.51.1.dirty
+2.51.0
 
+
+--8V4LYA5lItWc3kMQ--
 
