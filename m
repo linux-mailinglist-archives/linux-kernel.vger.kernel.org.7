@@ -1,203 +1,167 @@
-Return-Path: <linux-kernel+bounces-859590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE800BEE09B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:20:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE682BEE0A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF4754E1F9F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:20:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52C6A4E4C73
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B702B22FE15;
-	Sun, 19 Oct 2025 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R86NUg/G"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C299F22541C;
+	Sun, 19 Oct 2025 08:24:33 +0000 (UTC)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DC81096F
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A61354AF6
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760861999; cv=none; b=pdwhYhCXEHaBfiY226uZa6/LRGjv0prPqIDKf20oWpbl++6AbAju+4425LAa2Lo0KdtVYRdY5YK3+pGuDh9x9fm+CgSDQsmsr2/fnM9wr0DJOHp/5t7FIb5O3P3+rmpOHP9LlSDPstdv7/TG33C4CwrLe+IMUZ6UczZd+cCpi7w=
+	t=1760862273; cv=none; b=BQ39aNLQ2J58Hrroav+uYLKI9tTBU5sgYIO3tpGqxxuTLYnx9wSDu87tdwJxWjLaG4HWeijpguoT1d78AxulI0xf0xaRD3OubzW7KtqgcUReus/7Zp8jzBMCuceP6OcHe23atwS4VCjUvNfLq+byZnlkRUjO+ym5MCFOs6fZhMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760861999; c=relaxed/simple;
-	bh=TiA0y5gktErT5lt5edVPgPFmEhKkiZW7SslzyMlEg58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSYj1vBiHpwjWKqDgb60c8gde9DZgRURru8qNXXKEAkCvGdrwk4q0I9zAfcWSSkHqU3uQ6r8G4koOox+2L05t6U/Wl8JfqvvnvWpeMUBCaJTCuL4nP3t3GwyyPxFSv6579OakKAw0syF6zTf2BspVBIUKfh4lesxBr9VXQ9+87M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R86NUg/G; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1760862273; c=relaxed/simple;
+	bh=u/sO7vOpFHkZEAJ7Yrx1elkkxXoxzXW8I8m2lrzhxZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdkZ507eu5lG0WVmxS8QTBvwu9+cLptP+8cbrIsbhUgJH07RvKsQ8GsbwMBE9/QbuTLsyYv23OA8MqLk8y9WQa8D/S/6cIGYzynMFB+h0BG+GhsLRmoApeIl2R4HMuql1cWYIOxGPH6MljJDMnTyDfFPceXEVE+LgGXUsG9Ps+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b660019ac2aso291097566b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760861996; x=1761466796; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hzAnCEb80QifK9acVK1YEWu5S4rWy7O2ChI/IhFvLrQ=;
-        b=R86NUg/GjvDWMzZiHmoebEbVk9BG3mqSsUBp7j0KtQ+1QJgcl1IU++SV5t1qljAYNr
-         XbypAS2KcBpCqs6FvnHTSJYFUcYAhpYDTAKfmIrHjLfILlilP9tBZofWXRhdF+f3RgVa
-         ObT2bAHC/NN/5yO49QG0Uvq0ze32NbG7VJY4RH8ARL8xRwo5iuxruKR8W37D2g7I2Jtt
-         R/+EiF9lP1ivQHoTleNDfzRKoP+Tb/KPxjaBp8wEImWAqxasVLYx2MzHeQ82WgM2xgeQ
-         B3BV3C1Cx2ZtVyDLhgOcn7k2BJU61lh5uCM8fvWG0Sk2WGpvqSEhVsXrEEgj+KLUExf/
-         We5w==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-58b025fce96so2967024e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:24:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760861996; x=1761466796;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hzAnCEb80QifK9acVK1YEWu5S4rWy7O2ChI/IhFvLrQ=;
-        b=BgezrU0LZqjPXbI4TvreBtCBDoVbpIP3vAX4Pzg6gQZMZy8GmQCeuOK3JdRU6C6Osh
-         rl2ultPehqKoN/WTZShDAOHrXV98QwZ6HEIRrIGFZzSRhE2nGEYR1e7nmOH6ddNvS1YJ
-         YMefNiZjH68inMV4QWdx0N6/gN1AQUOTl6XAjwJod/ZrFZBkTcQX1KJzpNcURELBBWb+
-         KNPwKNCf0PCrBvSInoH4g8uI9i0jFFhmEwaCqEUHNe0g4V60QwAa1JeaxHkr1nnJ2pgn
-         o5GhF5f0QIK11ReNdGIkZ+xsFclKOOp6fWBREe9XmtKwPjpyMMfQh74WSjThFlP6MIl6
-         aPxA==
-X-Gm-Message-State: AOJu0YxkXCFt0XgKEfHbgV29YBl+u3xB3b1xNb9ir8dfmOBHleKjqOta
-	ahNJjL1mp5e5Ybg598DYmwXSQHgU9ClrBuYGVtnU/Xu0KxPi9gjZx+S1
-X-Gm-Gg: ASbGncvrc1CTy57D+gQHKc08uRs/I6jL5iB0gNw0Z3Rrwlok/sp4JCr1vhpVe/JbG/z
-	tHyLxVoIcMkWkG8rciv7HtF67ndYg5KuuJmdjDk+22Sr89bK0x5ZFwNTzBTan/D9gCX7n8rbr5M
-	gmH1GQMc4dYUeGjv+xAU1K9ES3CyReSUHFkcyuu6ki6l42ko6M/jLtdDJOdsfEwbG4ZQBFC/V3v
-	5W9ezzEFI3QJINQs25xpZNtSzQxfDy7/dijHCijcLd8q11RKtJRezVGP8Qxagnw3wIkbKY/56SA
-	96cc5Zyqs65CfZeuKZAP/1U+AhPgqncTIZg/0Dr3HVR3Yom3cwQ/Pj0/dTeZrvfXd2d4Pf8lOVk
-	QHDSyD3U5U4MCa5dcebQe+zGx2LKWRDnyTavn3rS1K/MgWIMRdepw+6Zc6i61fq322V4cdShIZz
-	PQMhg=
-X-Google-Smtp-Source: AGHT+IGe2bSS2UoD1lk0Xxfgzd8YXhfUNUOT8b22z2p6gAASSaXv1SkNEJLCq1pmMcg1S7iCxcQ1kQ==
-X-Received: by 2002:a17:906:c145:b0:b57:78fa:db48 with SMTP id a640c23a62f3a-b6474f185a3mr1028142366b.51.1760861995556;
-        Sun, 19 Oct 2025 01:19:55 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65ebb499dasm457209766b.73.2025.10.19.01.19.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 19 Oct 2025 01:19:55 -0700 (PDT)
-Date: Sun, 19 Oct 2025 08:19:54 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Balbir Singh <balbirs@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-mm@kvack.org, akpm@linux-foundation.org,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Ralph Campbell <rcampbell@nvidia.com>,
-	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Francois Dugast <francois.dugast@intel.com>
-Subject: Re: [v7 11/16] mm/migrate_device: add THP splitting during migration
-Message-ID: <20251019081954.luz3mp5ghdhii3vr@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251001065707.920170-1-balbirs@nvidia.com>
- <20251001065707.920170-12-balbirs@nvidia.com>
+        d=1e100.net; s=20230601; t=1760862269; x=1761467069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FMwNP3my/AAtkqEoi875nhGGuoIYGuPvqPRBJ3G+A9w=;
+        b=Yca2N102fXyIXNe75tjPL37w4VUi+K0SWvWCHmq4kvR2VkBxlUbD5Qz097toU+/rL0
+         dszhFnPBmGQHp/AnDl4ZSVqKiGRLr2T0yaNghCa4ApP6pVQWMuKG+YLimIo7C65oQSTm
+         Gsj93rQk860Cd/OhPgaZ6upbRGUOhFu8IdlHxx6LlDW8xC6V0Clhmr23ehHTSH6AUrvw
+         gzB7QBxMdvpBjSSmWJQ0WRy2Pxl6CL+/uOQqQfaCap3XopGsfkIyO26dEA4kU43Rm7ow
+         0klyumb+5dwst5hNc+wlEf/zJJ05kPlU3atK24VVGtHPbdlurOOoaZAETV4TlNd+19D8
+         I7DA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7VjXF7kUZpibeKLMWTen+tOLyVrGD/+MoQxKHuL+zmlLWPkOw2q5/I/YjIO+frngi6/hiIiXdCy3jUfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZQCRRIZChzSfv6lhD46Tq7KpdhcbLlnsIcuYJbHQOWfcbzWrF
+	+Sq0MB93yu5mlN8qI4+pGaBOVqzXGP5vnN8M8aVVX/sR4V9nsaNvGqLWDYiiPLxk
+X-Gm-Gg: ASbGncu2xDcVKh1AZUA/NLS6Q7d+3GIr2NEZijTKnDg0/A4XptnCKtNTr7SChE2VESA
+	Ai/ty4KPakNuJHcNfSbpeVkZnzM5kogjpNBGxldh8GQ0XUNw+847Zlj039JRskQMoyA1OC95Imv
+	Co3Ea3vTePlnPmrhTFjlYonUBavqpUFnjWzPDStdwrFkXCKvDjolshEgJr7I1Z+5khcc+k4lWtl
+	f3zarhWatF4j+O29KJ7XRRU5JnLHYNVx5/dyMyd+7DRuOgyPN6JUD+OUK11dGvSeb++BbHZJVVR
+	g3SFtGb1WIzDYPGpp4SCfeInwUYPBXUA1EFTdEltiOIwlNWg6Lvlj0RyvzG4tnQxy/oBPyGzfZd
+	CAxv6MCdToh+M5QNm+jJT92QYuN02QclxUJIq2XAxREAOsdIGZIteNe70oS2qd9GWKHvXkZi3Yc
+	lZcONH74E2npfZ3r3eLYqQzPQvncf5HycBuVAQq4lVb6M=
+X-Google-Smtp-Source: AGHT+IEYDd11VKwx/OzxaOzJwyfFTZbc/Y/XFJXSY99wkbv+dXrE1jQtlt1HOAAd3TkYmliAjWFLQQ==
+X-Received: by 2002:a05:6512:39c3:b0:58b:a:d043 with SMTP id 2adb3069b0e04-591d84fcaf0mr3322796e87.17.1760862268703;
+        Sun, 19 Oct 2025 01:24:28 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def25a1csm1357767e87.105.2025.10.19.01.24.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 01:24:28 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-36c0b946cb5so26449031fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:24:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJhEv5s0MQhR8cF55HIWcodYovpi5nuhEeyUk8PrL+aQXShPIsKuopMqFDk0zostQ2P4yB4MV1n58LeJk=@vger.kernel.org
+X-Received: by 2002:a2e:bd86:0:b0:36b:f63:2785 with SMTP id
+ 38308e7fff4ca-37797a09b5emr26596581fa.27.1760862268372; Sun, 19 Oct 2025
+ 01:24:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001065707.920170-12-balbirs@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-5-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-5-jernej.skrabec@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 19 Oct 2025 16:24:13 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64_HXub5SZn8U2=Smi_XheyK5-k-ycwR19wmboEvub3Rg@mail.gmail.com>
+X-Gm-Features: AS18NWD0jnxz1Ue42cbwTGa97ilz_J4ZeWnbXU3EI3BU7YNx8yeEWNSRMp4bPA8
+Message-ID: <CAGb2v64_HXub5SZn8U2=Smi_XheyK5-k-ycwR19wmboEvub3Rg@mail.gmail.com>
+Subject: Re: [PATCH 04/30] drm/sun4i: ui_layer: Move check from update to
+ check callback
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025 at 04:57:02PM +1000, Balbir Singh wrote:
-[...]
-> static int __folio_split(struct folio *folio, unsigned int new_order,
-> 		struct page *split_at, struct page *lock_at,
->-		struct list_head *list, bool uniform_split)
->+		struct list_head *list, bool uniform_split, bool unmapped)
-> {
-> 	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
-> 	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
->@@ -3765,13 +3757,15 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> 		 * is taken to serialise against parallel split or collapse
-> 		 * operations.
-> 		 */
->-		anon_vma = folio_get_anon_vma(folio);
->-		if (!anon_vma) {
->-			ret = -EBUSY;
->-			goto out;
->+		if (!unmapped) {
->+			anon_vma = folio_get_anon_vma(folio);
->+			if (!anon_vma) {
->+				ret = -EBUSY;
->+				goto out;
->+			}
->+			anon_vma_lock_write(anon_vma);
-> 		}
-> 		mapping = NULL;
->-		anon_vma_lock_write(anon_vma);
-> 	} else {
-> 		unsigned int min_order;
-> 		gfp_t gfp;
->@@ -3838,7 +3832,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> 		goto out_unlock;
-> 	}
-> 
->-	unmap_folio(folio);
->+	if (!unmapped)
->+		unmap_folio(folio);
-> 
-> 	/* block interrupt reentry in xa_lock and spinlock */
-> 	local_irq_disable();
->@@ -3925,10 +3920,13 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> 
-> 			next = folio_next(new_folio);
-> 
->+			zone_device_private_split_cb(folio, new_folio);
->+
-> 			expected_refs = folio_expected_ref_count(new_folio) + 1;
-> 			folio_ref_unfreeze(new_folio, expected_refs);
-> 
->-			lru_add_split_folio(folio, new_folio, lruvec, list);
->+			if (!unmapped)
->+				lru_add_split_folio(folio, new_folio, lruvec, list);
-> 
-> 			/*
-> 			 * Anonymous folio with swap cache.
->@@ -3959,6 +3957,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> 			__filemap_remove_folio(new_folio, NULL);
-> 			folio_put_refs(new_folio, nr_pages);
-> 		}
->+
->+		zone_device_private_split_cb(folio, NULL);
-> 		/*
-> 		 * Unfreeze @folio only after all page cache entries, which
-> 		 * used to point to it, have been updated with new folios.
->@@ -3982,6 +3982,9 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> 
-> 	local_irq_enable();
-> 
->+	if (unmapped)
->+		return ret;
+On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> DRM requires that all checks are done in atomic_check callback. Move
+> one check from atomic_commit to atomic_update callback.
 
-As the comment of __folio_split() and __split_huge_page_to_list_to_order()
-mentioned:
+                                  ^ atomic_check?
 
-  * The large folio must be locked
-  * After splitting, the after-split folio containing @lock_at remains locked
+Otherwise the commit message seems self-contradictory.
 
-But here we seems to change the prerequisites.
+Once fixed,
 
-Hmm.. I am not sure this is correct.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
->+
-> 	if (nr_shmem_dropped)
-> 		shmem_uncharge(mapping->host, nr_shmem_dropped);
-> 
-
--- 
-Wei Yang
-Help you, Help me
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun=
+4i/sun8i_ui_layer.c
+> index 9b786e5c7f3c..fce7b265c5d8 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+> @@ -134,16 +134,11 @@ static int sun8i_ui_layer_update_formats(struct sun=
+8i_mixer *mixer, int channel,
+>         struct drm_plane_state *state =3D plane->state;
+>         const struct drm_format_info *fmt;
+>         u32 val, ch_base, hw_fmt;
+> -       int ret;
+>
+>         ch_base =3D sun8i_channel_base(mixer, channel);
+>
+>         fmt =3D state->fb->format;
+> -       ret =3D sun8i_mixer_drm_format_to_hw(fmt->format, &hw_fmt);
+> -       if (ret || fmt->is_yuv) {
+> -               DRM_DEBUG_DRIVER("Invalid format\n");
+> -               return -EINVAL;
+> -       }
+> +       sun8i_mixer_drm_format_to_hw(fmt->format, &hw_fmt);
+>
+>         val =3D hw_fmt << SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_OFFSET;
+>         regmap_update_bits(mixer->engine.regs,
+> @@ -201,7 +196,9 @@ static int sun8i_ui_layer_atomic_check(struct drm_pla=
+ne *plane,
+>         struct sun8i_layer *layer =3D plane_to_sun8i_layer(plane);
+>         struct drm_crtc *crtc =3D new_plane_state->crtc;
+>         struct drm_crtc_state *crtc_state;
+> -       int min_scale, max_scale;
+> +       const struct drm_format_info *fmt;
+> +       int min_scale, max_scale, ret;
+> +       u32 hw_fmt;
+>
+>         if (!crtc)
+>                 return 0;
+> @@ -211,6 +208,13 @@ static int sun8i_ui_layer_atomic_check(struct drm_pl=
+ane *plane,
+>         if (WARN_ON(!crtc_state))
+>                 return -EINVAL;
+>
+> +       fmt =3D new_plane_state->fb->format;
+> +       ret =3D sun8i_mixer_drm_format_to_hw(fmt->format, &hw_fmt);
+> +       if (ret || fmt->is_yuv) {
+> +               DRM_DEBUG_DRIVER("Invalid plane format\n");
+> +               return -EINVAL;
+> +       }
+> +
+>         min_scale =3D DRM_PLANE_NO_SCALING;
+>         max_scale =3D DRM_PLANE_NO_SCALING;
+>
+> --
+> 2.51.0
+>
+>
 
