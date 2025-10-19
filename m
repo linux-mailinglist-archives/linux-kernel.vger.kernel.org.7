@@ -1,135 +1,153 @@
-Return-Path: <linux-kernel+bounces-859658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F16BEE383
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B415BEE38C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3F2C4E4FEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC383189B918
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB72E542B;
-	Sun, 19 Oct 2025 11:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F1A2E62C3;
+	Sun, 19 Oct 2025 11:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WGMUgZUg"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bwgf/HkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C46F23816A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB95F21638D;
+	Sun, 19 Oct 2025 11:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760871942; cv=none; b=mucSTuKkgZJ2nKnTxez2i3RlKcWysNKsN6kd9prxXPkhKMvI1yHIkY+ApOf1rnX7Vzo7gDMb0bzoyR1Ss/f//CmjQ4soFZFYMQOYta1RIVdsOLbpaDzgznBTx3PBeKpo5OQiuwX6DOPUS+aDVed0vWYDZHQ7Nnc0gRF4X+iDXUs=
+	t=1760872141; cv=none; b=rtEXdULO6fCt3WX8I6WvGzcfchdhHrmASqF76hkBwbt61DbJV6ac/YpBZJx2qotVOSP/0lhKlC/dzluml7xuuJdJVzgMryx3J4kApKahQCx/VjwZGEbKx1O9L9/2L479dSiWIY+tv8UNPSuuUJ1jcu4nc/PUOy39K44WL8XmhhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760871942; c=relaxed/simple;
-	bh=mtppI3GbvGPYGuvfggEn77JfbO5GpD7vmhaWxV6f9mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Y4+gsJp7rgrkS2hzm5S4HDQlEpEyymsZf9XWCsT4twf4N0+eJkVz8iw45Py+6sORK31Y/CBialegDc/1TlaunqVhgAOboeOpz+xkNEuOgclXQrZuR75i6l5VFxPwa2nzQY5R+QgFU7Y0OUcJ9fUu7Ym9FF37iI/Q9k1gOhyl0so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WGMUgZUg; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BC75840E016D;
-	Sun, 19 Oct 2025 11:05:29 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id xeqCWeU5drBr; Sun, 19 Oct 2025 11:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760871923; bh=Nc88c/F5pSROWALM8RaKBBRpvx6fbBnNjh6nyxvR64k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WGMUgZUgv5TdknuZ8oH+p67qLb74GcABWTbS7F8FyYZsOLKv8yUCLBC4nMYD9h9bi
-	 BCZHaZC2coALW9rXBBrW/Zmwb/OoP4KryvrS39TYXe83F0/gvTt73lj7i8N9rt9F+y
-	 lob1y6GRdRZS2GMjJs1NhGLRVP+4Hqxo7ELGlrfauwIGjFlUW/HjIlMzfwFzZLmYHv
-	 cKfY0evJDqq4VVF+1sudRT6XiwVFGA6/Zv6NuWbSASACKcR87cmYzvWtmKoXxhaEeV
-	 WujFnONcE4W31Fipk+mOPMZRxFDDzwz9nI60aDiYZJ2pUvqsYoVfQ4slIfyP62KBDT
-	 DNDPQpBYjxLPocC8XpMJA6TqmqSkF65fwAPeijxlRi0BmPRdW5RprBb0Hx5xeO+E98
-	 EQEh27NXBolaLL0sdoS3id1cqrToDq18ZeK2keoBhpBKfQhFQNjtbdspWchb3Mx98n
-	 mo3zp0Sba+MzLwtaELrYf6VQMIVjCyqdHkBfUXQEOleRi51M2QJKfAM29IGDhnwDr6
-	 uJfweFj3ViXMOlvDu4cVnOJnkk24DpysXvFkOXWDLXP48I02nVldl040DtXcu4TDhx
-	 b/KuH57CUNSF65W//UqXSOPD3insrdC4Nq6qSIsqiE54L8ZsfyaoN2pQY/1DACgAab
-	 SX8/2M26WKnUEVPaGg8mnawQ=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6F1BB40E00DE;
-	Sun, 19 Oct 2025 11:05:20 +0000 (UTC)
-Date: Sun, 19 Oct 2025 13:05:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/urgent for v6.18-rc2
-Message-ID: <20251019110512.GAaPTF6LixGcvVysQ7@fat_crate.local>
+	s=arc-20240116; t=1760872141; c=relaxed/simple;
+	bh=8i9FdePFrtBrXAb51G3I5Acpt+dTF5XDFaehuqxByeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OnqOOFGt2sGqMw+GrWU/frEzNN2PHS3b7Eohs+9maH0TgKfL0v/dgvFuCihPar+HoWhkQAmEDCmyK8uzWD3UuVjMxydS1OKeu9a7y1ktZwGW1JrFCZfT99Xtt/DSO1GLafkcRuPc2DggyX0qAIul7jRX2lKPivhcq10IaMnerUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bwgf/HkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60317C4CEE7;
+	Sun, 19 Oct 2025 11:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760872141;
+	bh=8i9FdePFrtBrXAb51G3I5Acpt+dTF5XDFaehuqxByeA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bwgf/HkA6nlh0T86b8rzCaTrsyhr1S4RYIhPhkoDbBKaZmMeRN5VfZcewRvavgce/
+	 INi+h8xDOxPNb0fszdyZNj/QZ8Myh3mCYSkvbvUTXYkm1BOTmyWlfDXClTZdeHIdTc
+	 Ag4j5uBEGarAc8cuVeDaPRFz1u1+YOZfS22vwCH17L4HUcDPPhNoMr7lfgMeCUvBMb
+	 qokJLBBAbs4o7x/1b5L2F5A5lCLKCVnIXERE5v+UWkwR5pN3C++4inXvCJm9JNwLLV
+	 jBB50wFqaC8q3zagT6IiZLJiuY8UKIWavoPsFPgZpdZQ/7OAvpzyC+izkMLfMh13YP
+	 +fWtK3qnnqXzg==
+Date: Sun, 19 Oct 2025 12:08:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: <Jianping.Shen@de.bosch.com>
+Cc: <lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
+ <marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <Christian.Lorenz3@de.bosch.com>, <Ulrike.Frauendorf@de.bosch.com>,
+ <Kai.Dolde@de.bosch.com>
+Subject: Re: [PATCH v5 0/2] iio: imu: smi330: add bosch smi330 driver
+Message-ID: <20251019120854.45583b24@jic23-huawei>
+In-Reply-To: <20251012185826.13abef25@jic23-huawei>
+References: <20251009153149.5162-1-Jianping.Shen@de.bosch.com>
+	<20251012185826.13abef25@jic23-huawei>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On Sun, 12 Oct 2025 18:58:26 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-please pull the x86/urgent lineup for v6.18-rc2.
+> On Thu, 9 Oct 2025 17:31:47 +0200
+> <Jianping.Shen@de.bosch.com> wrote:
+> 
+> > From: Jianping Shen <Jianping.Shen@de.bosch.com>
+> > 
+> > Add the iio driver for bosch imu smi330. The smi330 is a combined
+> > three axis angular rate and three axis acceleration sensor module.
+> > This driver provides raw data access for each axis through sysfs, 
+> > and tiggered buffer for continuous sampling.
+> > 
+> > dt-bindings:
+> > v1 -> v2
+> >     - Add missing type to drive-open-drain
+> >     - Adapt description of drive-open-drain
+> > 
+> > v2 -> v3
+> >     - No Changes
+> > 
+> > v3 -> v4
+> >     - No Changes
+> > 
+> > v4 -> v5
+> >     - No Changes
+> > 
+> > imu driver:
+> > v1 -> v2
+> >     - Strip back to a more minimal initial driver
+> > 
+> > v2 -> v3
+> >     - reorganize the driver as 1 core module, 1 I2C module, and 1 SPI module.
+> >     - remove build time INT pin choice
+> >     - change temperature channel definition
+> >     - improved reading data from sensor
+> >     - simplified timestamp acquisition
+> >     - some other minor finding fixes
+> > 
+> > v3 -> v4
+> >     - move #define from header to c file
+> >     - add sanity check to i2c message size
+> >     - use available_scan_masks to simplfy the copying data to buffer (dependent on [PATCH RFT] iio: Fix core buffer demux failure to account for unwanted channels at tail)
+> >     - allow setting output data rate for acc and gyro separately
+> >     - some other minor finding fixes
+> > 
+> > v3 -> v5
+> >     - fix kernel test robot finding
+> >     - some other minor finding fixes  
+> Fixes on top once a patch is applied. I 'might' merge them down or I might
+> decide to keep them separate. That normally depends on the state of my tree and
+> what else is going on.
+> 
+> This change log is also not informative enough.  Should say what the robot
+> reported and what you did to fix it.  Also give a lot more detail on those
+> other minor fixes.
+> 
+> Anyhow, I'll wait for the fixes as separate patches.
 
-Thx.
+The lack of a fix patch (as requested) is blocking me pushing my tree
+out for linux-next to pick up.
 
----
+As such I have rebased to drop the original patch and merged this one.
+Hopefully that won't cause any other developers significant pain. It
+is only something I considered doing at all because I was holding my
+tree waiting for this fix and so it was only out as testing (which I
+tell no one to rely on remaining stable!)
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+Please take this into account in future.  If we'd been near the end of the cycle
+I'd have reverted your driver and told you to resend it next kernel
+cycle and you would have been back 3 months.  Note I considered reverting
+your series and waiting on the requested fix patch but decided to let it go
+this time.
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+So this version is now pushed out as testing.
 
-are available in the Git repository at:
+Thanks,
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.18_rc2
+Jonathan
 
-for you to fetch changes up to e6416c2dfe23c9a6fec881fda22ebb9ae486cfc5:
+> 
+> Thanks,
+> 
+> Jonathan
+> 
 
-  x86/CPU/AMD: Prevent reset reasons from being retained across reboot (2025-10-15 21:38:06 +0200)
-
-----------------------------------------------------------------
-- Reset the why-the-system-rebooted register on AMD to avoid stale bits
-  remaining from previous boots
-
-- Add a missing barrier in the TLB flushing code to prevent erroneously not
-  flushing a TLB generation
-
-- Make sure cpa_flush() does not overshoot when computing the end range of
-  a flush region
-
-- Fix resctrl bandwidth counting on AMD systems when the amount of monitoring
-  groups created exceeds the number the hardware can track
-
-----------------------------------------------------------------
-Babu Moger (1):
-      x86/resctrl: Fix miscount of bandwidth event when reactivating previously unavailable RMID
-
-Ingo Molnar (1):
-      x86/mm: Fix SMP ordering in switch_mm_irqs_off()
-
-Rik van Riel (1):
-      x86/mm: Fix overflow in __cpa_addr()
-
-Rong Zhang (1):
-      x86/CPU/AMD: Prevent reset reasons from being retained across reboot
-
- arch/x86/kernel/cpu/amd.c             | 16 ++++++++++++++--
- arch/x86/kernel/cpu/resctrl/monitor.c | 14 ++++++++++----
- arch/x86/mm/pat/set_memory.c          |  2 +-
- arch/x86/mm/tlb.c                     | 24 ++++++++++++++++++++++--
- 4 files changed, 47 insertions(+), 9 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
