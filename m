@@ -1,298 +1,194 @@
-Return-Path: <linux-kernel+bounces-859611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9715FBEE1A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44537BEE1A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79D964E68CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:13:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD757189DCEB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EF12E03EC;
-	Sun, 19 Oct 2025 09:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uS+5M1Qe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243C0126C17;
+	Sun, 19 Oct 2025 09:13:38 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E071429BDB6;
-	Sun, 19 Oct 2025 09:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FB21DE4C4
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760865192; cv=none; b=tby6CutwP5fPpWhcLxE7knZDDF29gbodVO6D6m0vUPiHh6tE7CQIRIBiQxmBSQpiBYGYE0LPLEM7UI76EgjghmFm9fagDPLsBsuGm9U55Ma7AHoYuSOgAuWjn8fAi1XpvsVxtPGEpGOyH5cgzYjI9MdU4RN+nIDpK7TQak2WELs=
+	t=1760865217; cv=none; b=dYLkT1DKFWDT+Y8OqCrc5NO0saLYjUs+EhzNo/CC5LzJyyvJrhbtCh4wImMSdlULd7adCQZpeGjTLB1WHLjBxo0FWknU7wXmAglwiyBH8mw/KmswJ+DxAY6f/qRSnzMdMJidElDEiU29TRN/SW8NHA/pWYfo9jgBXBp6W8WuRwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760865192; c=relaxed/simple;
-	bh=cS2664aPb+EmVIid19f3kzZfKdifj4f7Pzq4bzCqEdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C9oDIsripI/ZYFsM8LHUesnGJXz9ivPtTF6M4S5r5eWjjlM+Na/OMgo02ovSnn7FDmlFjbjs7evzYpjCglUFzeOvdkOPiu5UVrO75Jd6LchbJNdzhWhqUq7CaFZNlSRgnM7KNKK0oaogEeZv2AGFoXcYDMVtxuZCG7E6/Uy+L9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uS+5M1Qe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D906C4CEE7;
-	Sun, 19 Oct 2025 09:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760865190;
-	bh=cS2664aPb+EmVIid19f3kzZfKdifj4f7Pzq4bzCqEdI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uS+5M1QeR6d0fvKMMVJIx4KJo8wpoKJWjEP6AmnxDbiGlCrSTU11/k2Xt1MzDI1CK
-	 eKc5gp/lPLJa0Y/1ZETKYLIoUvDCQmWt7yfXNIMAILV5tZ14r9RE6Ib5QH9ey+3uG4
-	 76PPa4/5QZqnbZDNOFK/E4mQRdAAWiU3jFJdoGzCpfzpZysDE7uveTFtZ6ty3BYlYx
-	 S7IVioorvHJr6rW1iA0lsKVHo3QVgNUxWkBccNxLh8r9w1w6brpuvRZ7gG4i0CaHO+
-	 W98jlBDe0OcYrCT5f/QN7WwKxFkQRwr84n245Wk5cGktQhSxqcWBKJYR4ghVOywqaP
-	 bUP6EGKN1hFQg==
-Message-ID: <8f3f4874-2e82-473e-87bd-e3bd58089b90@kernel.org>
-Date: Sun, 19 Oct 2025 11:13:03 +0200
+	s=arc-20240116; t=1760865217; c=relaxed/simple;
+	bh=suqT4dDmdOOVurOBiFqZVxsm2O3zT6CRdaYbbgTnbUI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rmIVnB+gfdFkAjexgvR7swFfjVGZ/ZxutXe3vr0vo79TAg7rs1VhLHDuFR4NHRPtAh123fLk+OVF5BQuKWa+1sKD149wcXEqDTgiKb0TJSCS/qYT5aFQIh2c7vF0KoJF6+YUo2dKPHX11mbbBwWl6XmUpbsCltMxV7XXEs8+mOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430db5635d6so2958275ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 02:13:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760865215; x=1761470015;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PNybqyDOAzWhDRx2d5SkmVYwuuYPyIcWTu7XfaT2bNk=;
+        b=Y3VslYaTfDTgig44gVrJD1j+92dLNJudS50u/I5lcget3YcIgA0ZthOE2PlnJfYFY4
+         dcw8UZxQ83MiZemXcHe6HZ+YsZszzWQ+BkhP3FiRM0S3UBNGdu1SVPzpE1Ut5jJJmYsP
+         g7pLcWjYUG7tXnxUze1rrm2BoxlYS89EVNY5kf77UzE3QYG3p8ZUMLLWg2B2uyJqPKs9
+         wDt2CZR3LZtijEdi+VJk3/3ljZjNfDiMffTHQOrD+5eOYXtSNx4X/YbywY2SJf37o8cE
+         fGRZ6sZH4O1Rlu36QkI6VGgURPuK5rrz/6HfEndboYrHNe+vhy6ep8NHJngz7HcZ7qea
+         9CZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1R8KIicCKr06VugjrOvY2OQi3pOv2io3LsLvcO/siB79KHIkcncQDVgAPIXrgtEV1RX/mlKxIvCue76U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9bKTQZ9f2BZia37Gh4fvQGMnDDvChff1ANbu+A4acRBCL/YzW
+	+lfghNx4Ky5cEeES1t7HzzrAO2YDG2POAo/lTrZwosxwDYiTqd4RhpGJPdM6z4PuTiYkrpeYRQT
+	LP8qDFG3DTGfg+uR3j+ymWCTUmqDgGH3/qn4Qv7Nr6iHNsPNCbO5UbYJnvyc=
+X-Google-Smtp-Source: AGHT+IEyblhAPbkA7AgZV8rggV0n7/0jXjcig/5pAVScLXiI5DyyfP9YqVi/9rd1YtVRGlzU7c9R9ql596DXPR4RHWNK5igF4NW1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] dt-bindings: display/msm/gmu: Document A612 RGMU
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
- <20251017-qcs615-spin-2-v1-3-0baa44f80905@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251017-qcs615-spin-2-v1-3-0baa44f80905@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:17c8:b0:430:ae26:7c28 with SMTP id
+ e9e14a558f8ab-430c524cea2mr158942935ab.1.1760865214996; Sun, 19 Oct 2025
+ 02:13:34 -0700 (PDT)
+Date: Sun, 19 Oct 2025 02:13:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f4abbe.050a0220.1186a4.052a.GAE@google.com>
+Subject: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill (3)
+From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/10/2025 19:08, Akhil P Oommen wrote:
-> RGMU a.k.a Reduced Graphics Management Unit is a small state machine
-> with the sole purpose of providing IFPC (Inter Frame Power Collapse)
-> support. Compared to GMU, it doesn't manage GPU clock, voltage
-> scaling, bw voting or any other functionalities. All it does is detect
-> an idle GPU and toggle the GDSC switch. As it doesn't access DDR space,
-> it doesn't require iommu.
-> 
-> So far, only Adreno 612 GPU has an RGMU core. Document RGMU in the GMU's
-> schema.
-> 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/display/msm/gmu.yaml       | 98 +++++++++++++++++-----
->  1 file changed, 79 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-> index afc1879357440c137cadeb2d9a74ae8459570a25..a262d41755f09f21f607bf7a1fd567f386595f39 100644
-> --- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-> @@ -26,6 +26,9 @@ properties:
->        - items:
->            - pattern: '^qcom,adreno-gmu-x[1-9][0-9][0-9]\.[0-9]$'
->            - const: qcom,adreno-gmu
-> +      - items:
-> +          - const: qcom,adreno-rgmu-612.0
-> +          - const: qcom,adreno-rgmu
->        - const: qcom,adreno-gmu-wrapper
->  
->    reg:
-> @@ -45,24 +48,30 @@ properties:
->      maxItems: 7
->  
->    interrupts:
-> -    items:
-> -      - description: GMU HFI interrupt
-> -      - description: GMU interrupt
+Hello,
 
+syzbot found the following issue on:
 
-Both stay, just explain what is the first interrupt. You should not drop
-descriptions here. Look at every other binding - of course except that
-terrible Adreno GPU which is anti-example.
+HEAD commit:    9b332cece987 Merge tag 'nfsd-6.18-1' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=107b85e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-> +    minItems: 2
-> +    maxItems: 2
->  
->    interrupt-names:
-> -    items:
-> -      - const: hfi
-> -      - const: gmu
-> +    oneOf:
-> +      - items:
-> +          - const: hfi
-> +            description: GMU HFI interrupt
+Unfortunately, I don't have any reproducer for this issue yet.
 
-No, descriptions never go to xxx-names, but to xxx.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-9b332cec.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/512c0375bad7/vmlinux-9b332cec.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/458c8c31cc7b/bzImage-9b332cec.xz
 
-> +          - const: gmu
-> +            description: GMU interrupt
-> +      - items:
-> +          - const: oob
-> +            description: GMU OOB interrupt
-> +          - const: gmu
-> +            description: GMU interrupt
-> +
->  
->    power-domains:
-> -    items:
-> -      - description: CX power domain
-> -      - description: GX power domain
-> +    minItems: 2
-> +    maxItems: 3
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
 
-No.
-
->  
->    power-domain-names:
-> -    items:
-> -      - const: cx
-> -      - const: gx
-> +    minItems: 2
-> +    maxItems: 3
+loop0: detected capacity change from 0 to 32768
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+Oops: divide error: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5318 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
+Code: 34 1a 49 81 c6 50 01 00 00 45 0f b7 3f 49 83 c5 02 4c 89 e8 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 eb 03 00 00 44 89 f8 31 d2 <66> 41 f7 75 00 0f b7 d8 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0
+RSP: 0018:ffffc9000fd362a0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000100000
+RDX: 0000000000000000 RSI: 00000000000010fe RDI: 00000000000010ff
+RBP: ffffc9000fd363a8 R08: 00313050554f5247 R09: 00313050554f5247
+R10: dffffc0000000000 R11: ffffed100a449001 R12: dffffc0000000000
+R13: ffff8880334dc2c2 R14: ffff888052248150 R15: 0000000000000000
+FS:  00007f73479876c0(0000) GS:ffff88808d301000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000000 CR3: 000000004280a000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ ocfs2_block_group_alloc_discontig fs/ocfs2/suballoc.c:634 [inline]
+ ocfs2_block_group_alloc fs/ocfs2/suballoc.c:703 [inline]
+ ocfs2_reserve_suballoc_bits+0x20a6/0x4640 fs/ocfs2/suballoc.c:834
+ ocfs2_reserve_new_metadata_blocks+0x403/0x940 fs/ocfs2/suballoc.c:984
+ ocfs2_expand_inline_dir fs/ocfs2/dir.c:2845 [inline]
+ ocfs2_extend_dir+0xc76/0x4870 fs/ocfs2/dir.c:3207
+ ocfs2_prepare_dir_for_insert+0x2fe8/0x5450 fs/ocfs2/dir.c:4312
+ ocfs2_mknod+0x819/0x2050 fs/ocfs2/namei.c:297
+ ocfs2_create+0x1a5/0x440 fs/ocfs2/namei.c:676
+ vfs_create+0x24e/0x400 fs/namei.c:3493
+ do_mknodat+0x3c6/0x4d0 fs/namei.c:4372
+ __do_sys_mknod fs/namei.c:4405 [inline]
+ __se_sys_mknod fs/namei.c:4403 [inline]
+ __x64_sys_mknod+0x8c/0xa0 fs/namei.c:4403
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7346b8eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7347987038 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+RAX: ffffffffffffffda RBX: 00007f7346de5fa0 RCX: 00007f7346b8eec9
+RDX: 0000000000000700 RSI: 0000000000000000 RDI: 0000200000000000
+RBP: 00007f7346c11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7346de6038 R14: 00007f7346de5fa0 R15: 00007fff09db6038
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
+Code: 34 1a 49 81 c6 50 01 00 00 45 0f b7 3f 49 83 c5 02 4c 89 e8 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 eb 03 00 00 44 89 f8 31 d2 <66> 41 f7 75 00 0f b7 d8 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0
+RSP: 0018:ffffc9000fd362a0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000100000
+RDX: 0000000000000000 RSI: 00000000000010fe RDI: 00000000000010ff
+RBP: ffffc9000fd363a8 R08: 00313050554f5247 R09: 00313050554f5247
+R10: dffffc0000000000 R11: ffffed100a449001 R12: dffffc0000000000
+R13: ffff8880334dc2c2 R14: ffff888052248150 R15: 0000000000000000
+FS:  00007f73479876c0(0000) GS:ffff88808d301000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000000 CR3: 000000004280a000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	34 1a                	xor    $0x1a,%al
+   2:	49 81 c6 50 01 00 00 	add    $0x150,%r14
+   9:	45 0f b7 3f          	movzwl (%r15),%r15d
+   d:	49 83 c5 02          	add    $0x2,%r13
+  11:	4c 89 e8             	mov    %r13,%rax
+  14:	48 c1 e8 03          	shr    $0x3,%rax
+  18:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
+  1d:	84 c0                	test   %al,%al
+  1f:	0f 85 eb 03 00 00    	jne    0x410
+  25:	44 89 f8             	mov    %r15d,%eax
+  28:	31 d2                	xor    %edx,%edx
+* 2a:	66 41 f7 75 00       	divw   0x0(%r13) <-- trapping instruction
+  2f:	0f b7 d8             	movzwl %ax,%ebx
+  32:	4c 89 f0             	mov    %r14,%rax
+  35:	48 c1 e8 03          	shr    $0x3,%rax
+  39:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
+  3e:	84 c0                	test   %al,%al
 
 
-No. Why?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->  
->    iommus:
->      maxItems: 1
-> @@ -86,6 +95,44 @@ required:
->  additionalProperties: false
->  
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,adreno-rgmu-612.0
-> +    then:
-> +      properties:
-> +        reg:
-> +          items:
-> +            - description: Core RGMU registers
-> +        reg-names:
-> +          items:
-> +            - const: gmu
-> +        clocks:
-> +          items:
-> +            - description: GMU clock
-> +            - description: GPU CX clock
-> +            - description: GPU AXI clock
-> +            - description: GPU MEMNOC clock
-> +            - description: GPU SMMU vote clock
-> +        clock-names:
-> +          items:
-> +            - const: gmu
-> +            - const: cxo
-> +            - const: axi
-> +            - const: memnoc
-> +            - const: smmu_vote
-> +        power-domains:
-> +          items:
-> +            - description: CX power domain
-> +            - description: GX power domain
-> +            - description: VDD_CX power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: cx
-> +            - const: gx
-> +            - const: vdd_cx
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-This does not make even sense. Why did you remove the the common list
-from  power-domain-names?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -313,13 +360,26 @@ allOf:
->            items:
->              - const: gmu
->      else:
-> -      required:
-> -        - clocks
-> -        - clock-names
-> -        - interrupts
-> -        - interrupt-names
-> -        - iommus
-> -        - operating-points-v2
-> +      if:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              const: qcom,adreno-rgmu
-> +      then:
-> +        required:
-> +          - clocks
-> +          - clock-names
-> +          - interrupts
-> +          - interrupt-names
-> +          - operating-points-v2
-> +      else:
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-No. Don't nest multiple ifs.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> +        required:
-> +          - clocks
-> +          - clock-names
-> +          - interrupts
-> +          - interrupt-names
-> +          - iommus
-> +          - operating-points-v2
->  
->  examples:
->    - |
-> 
-
-
-Best regards,
-Krzysztof
+If you want to undo deduplication, reply with:
+#syz undup
 
