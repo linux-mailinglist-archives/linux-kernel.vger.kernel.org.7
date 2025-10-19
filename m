@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-859600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11E3BEE116
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABECABEE13A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93C744E3300
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97754E6CAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7955C29BDB6;
-	Sun, 19 Oct 2025 08:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQvv/Is0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363DF29DB65;
+	Sun, 19 Oct 2025 08:51:43 +0000 (UTC)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA5A930;
-	Sun, 19 Oct 2025 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B875526F296
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760863736; cv=none; b=WA8H7f1Vbb4ueQ4OTlwtuQgjcPDKZeZAF7sGIcTERccbK+l7uwoL1q1lk/96ucltyTOvnnzj4634MentWJkl7lbk0YPceN43oCymXTqgkslt60y6IuR+BLgRmcM8mSe87IXaKH6qrUQZDCjmTtp0FD48hEFLgHLu4ROEm4A8Be0=
+	t=1760863902; cv=none; b=Eg8mj+0FEx4S87noz4D/SHaT9NQ50K3n+uyaTy4spt+YxEbWuw+p92GR7tahT9DThLBhTnZkTFloKEQAGxjQNVuUX0RcHId4d0MmmZ6Z35XVOznx6n8tYSAIQ0uxMItBxUcmOOQiqpkx6hW83D9t60w1/HZFz+daK1MmHbELZ/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760863736; c=relaxed/simple;
-	bh=rs7ILBWWDaHVFHhFR6/j1ZRqcnL3VjLz0/Wuu11GHBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A244wOJBESt4buW3HSAySbleA8MCQPVirCA0SQGV8pq2Wd/oMujhx35Z01m+vIznKvCd1OSyHI1DQ/OIfq5W8fg3X0hUtTIlt631VW2n2AWXiGbJakoFuMWNxmqfpgHj2p6uTt4i02/Kp+5kKaouANshBbrR+pT2gPgoEtEJkBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQvv/Is0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78843C4CEE7;
-	Sun, 19 Oct 2025 08:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760863736;
-	bh=rs7ILBWWDaHVFHhFR6/j1ZRqcnL3VjLz0/Wuu11GHBk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YQvv/Is055c1LhfGFXsCLLRCr5WQKAX1y7RFVsdH15mYJHJ42K3Aij0Tw+kRA7iJM
-	 edsHAyfCG1/XcFraBevIavyqoCxsWjS85TFaWVpQuh4vgP6cxjQI4P6U07fDMiZZg/
-	 54RR2DXzZHHXO38r+DhGCfCyZtpWbH6FpXain0/mfHGmFyAOX+DAZ4x+MChO266Ezl
-	 d0uuG+u7cuqIusH85he/DJJr3BCwaLBDprMNeGYb/AzwSF38rvAaujChBIlgRJXsBG
-	 /ZYkmCMgSfgpZJn8lQ4YNylI3kK9CFRuogc7Up3PIgR51D88Pzlqob90JjWQ9nkgw8
-	 6qtDlAixwrNjA==
-Date: Sun, 19 Oct 2025 09:48:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dimitri Fedrau via B4 Relay
- <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Cc: dimitri.fedrau@liebherr.com, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Li peiyu <579lpy@gmail.com>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Dimitri Fedrau
- <dima.fedrau@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Lesiak
- <chris.lesiak@licorbio.com>
-Subject: Re: [PATCH v4 0/2] iio: humditiy: hdc3020: fix units
-Message-ID: <20251019094849.0b904e2c@jic23-huawei>
-In-Reply-To: <20251016-hdc3020-units-fix-v4-0-2d9e9f33c7b1@liebherr.com>
-References: <20251016-hdc3020-units-fix-v4-0-2d9e9f33c7b1@liebherr.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760863902; c=relaxed/simple;
+	bh=XqqRnamX48XVhgy/cSJowCbYmZ8Q51GIp96qBAj+mSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gE22z8d66Few06X4+uUTzywj9Njct7lbY2UP0GKnexEPkj9S8FqqkPqwPyKHaOtDRL59YcWdzlXWU8cSD4bQnKVRJRC5q29iFhLxp/T/KZDsflotX1KH0DSifA7/xlU0IYvnJ53E3MDI4rbz17Iu4ODE/zK+k+w5lXlYY5zuNeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-58b025fce96so2975705e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:51:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760863897; x=1761468697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XqqRnamX48XVhgy/cSJowCbYmZ8Q51GIp96qBAj+mSU=;
+        b=OXxPqluWNZt1oB2P7RYwdQaGoGru2kqnzYJulaPFGCAWBrvepiUkc8tDtMNE4UQdXD
+         Noz+Rg/cPbSUX8QEsb30fm5q9NJ1gKPEJz48vPb1u/Fagr+Jk0DnduMcmFNF7IyzuOOt
+         JoOtHUuJtk2z1EWIfjPS1/MoI7O7ZPXEKU9QMAEt6XfzGeUTPXidpXco8gZeZ9bU6UrW
+         U/0/Sbnwl1L61eLTOekk6KOGTPWZd0MrgU4OLT8Qoi7JpyFilQQ4TjUSjUpLwz2YuZG0
+         zGMjrkpaL6aMPuiDEbiId/gFkNh5o73mLCfjFJa5KQ//tT7ysWt0WNIul1KO6nDbDrld
+         qzeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh/fXt8Q93R1PmR/i3pUeMsqhCDZQuv7dPe55lXqyTq/AgWuDObQLgPiXl/prGnGdldRGlfP/NoEMYaCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz15MrHS4CtFZiuqDQosYMY1EgAqeMTvOcVAUePTRrYKwYqpCXe
+	kr0fMr0n6jLp3El8fI31kStLWh5cpDDtBmSeZF+eykG47fP9imDHEjujQEZ68/4J
+X-Gm-Gg: ASbGncsyVqccruxuZUQCLsOMNEdMMcTqhiSk3+r/IokUe4rwf/33iemW5YRFyPTuq6Q
+	IgH7m5Z7d8iBqEiCSZWF4K7vQXxulAxMzSVtz466emCGrdgv6tKpbBsINKhk0TDpL8oweGSJGxc
+	L6OPHDEqo3WlhjOFqEvbx0p5LwbIsIbnufbE0bQf9qKwEDGrRqI+i4NPMN5Oq89Xiy0C5gXYOvd
+	9qDdtdEjg8BLK8Im9X/MT7t6+tEivFejkPhorI9gxHa3jsvz/pA4Z5+Ng9QeuPx8+Lcjs3CvewB
+	2WBZrQvGQTUyaDndRacKnP1d2V10tMjWBdYzm3Un7AZ1bu6CuBnZeC1XQvkM6sLHi7w9nbHeT1r
+	ytnFUUij8JVnKAYV599z8Lct7+hjy4r99FkaKMzUfIUeynDJiSdUR9RZBjel5shT7t5gsqfS061
+	vmPl0LsyrF9HSi7eXX/2NHOY4xTg2JGPbE
+X-Google-Smtp-Source: AGHT+IHHu84O3sFT3D4gsWUm3XvJ8yBpRg2ljJucKNAt6y6vynlU4K6xJrfA+ucPwLH0rnFrfIrK9A==
+X-Received: by 2002:a05:6512:3e10:b0:57b:66c1:3a48 with SMTP id 2adb3069b0e04-591d8552b74mr2796479e87.34.1760863897238;
+        Sun, 19 Oct 2025 01:51:37 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def1b763sm1393096e87.88.2025.10.19.01.51.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 01:51:37 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-36a6a3974fdso35234841fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:51:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlR1DX9V5ljb1clu+lS48G5FOrVs2jlqxM6FCAQ9v6wE31SrUrrtOxuHmqN9cJIRTSZAUfLgirRiJ+K4I=@vger.kernel.org
+X-Received: by 2002:a05:651c:988:b0:337:e0e1:d11e with SMTP id
+ 38308e7fff4ca-377978ab8d6mr27450931fa.18.1760863896800; Sun, 19 Oct 2025
+ 01:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-7-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-7-jernej.skrabec@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 19 Oct 2025 16:51:23 +0800
+X-Gmail-Original-Message-ID: <CAGb2v661kowYSSNYJ5Bb05mRFJR7pZFym95Oyj7-R5kkPrzNzw@mail.gmail.com>
+X-Gm-Features: AS18NWDXIVTjeyhWFEjy65wFSPD-aqsq49LxTr6pJCNafi4Ajfc1OGiZzxQr0Ms
+Message-ID: <CAGb2v661kowYSSNYJ5Bb05mRFJR7pZFym95Oyj7-R5kkPrzNzw@mail.gmail.com>
+Subject: Re: [PATCH 06/30] drm/sun4i: layers: Make atomic commit functions void
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 16 Oct 2025 07:20:37 +0200
-Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org> wrote:
+On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> Functions called by atomic_commit callback should not fail. None of them
+> actually returns error, so make them void.
+>
+> No functional change.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-> Fix units to milli degree celsius and milli percent for temperature
-> respectively relative humidity measurements and thresholds.
-> 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Hi Dimitri,
-
-I think this covers the last bits of feedback so I'll queue it up in the
-fixes-togreg branch of iio.git.  I'll probably not send a pull request
-for that for a few more days though so there is still time for additional
-feedback.
-
-Also marked for stable.
-
-Thanks
-
-Jonathan
-
-> ---
-> Changes in v4:
-> - Add explicit formula into comments of hdc3020_thresh_get_temp and
->   hdc3020_thresh_get_hum
-> - Add explicit division by 5 into calculations in hdc3020_thresh_get_temp
->   and hdc3020_thresh_get_hum
-> - Link to v3: https://lore.kernel.org/r/20251013-hdc3020-units-fix-v3-0-b21fab32b882@liebherr.com
-> 
-> Changes in v3:
-> - Fix verbose comment for define HDC3020_THRESH_FRACTION (Javier)
-> - Embed prescale into define HDC3020_THRESH_FRACTION to make the division
->   by 5 calculation in threshold calculations explicit. (Andy)
-> - Add resulting units into comments again in hdc3020_thresh_get_temp and
->   hdc3020_thresh_get_hum (Andy)
-> - Link to v2: https://lore.kernel.org/r/20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com
-> 
-> Changes in v2:
-> - Added explanation what is wrong at the moment into commit msg
-> - Added define HDC3020_THRESH_FRACTION and comment at the beginning of the
->   code.
-> - Use MILLI for instead of hardcoded 1000.
-> - Link to v1: https://lore.kernel.org/r/20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com
-> 
-> ---
-> Dimitri Fedrau (2):
->       iio: humditiy: hdc3020: fix units for temperature and humidity measurement
->       iio: humditiy: hdc3020: fix units for thresholds and hysteresis
-> 
->  drivers/iio/humidity/hdc3020.c | 73 +++++++++++++++++++++++++-----------------
->  1 file changed, 43 insertions(+), 30 deletions(-)
-> ---
-> base-commit: 875e7d357a7f2e77a7f3fc4759d0aa0872c33027
-> change-id: 20250820-hdc3020-units-fix-91edbb8ccd07
-> 
-> Best regards,
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
