@@ -1,65 +1,53 @@
-Return-Path: <linux-kernel+bounces-859703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638B6BEE5BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:56:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED932BEE5CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C6794E724C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6594F1897973
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAA92EA729;
-	Sun, 19 Oct 2025 12:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C582E8B63;
+	Sun, 19 Oct 2025 13:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="le5Oghbv"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.43])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="tvf+zT1N"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37522EA474;
-	Sun, 19 Oct 2025 12:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CDE2DFF04;
+	Sun, 19 Oct 2025 13:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760878565; cv=none; b=qq+SFoWBdT28mVTTPkphlZG3PB5ymfPcX0peqA8mXRwYyYgcYloJH9O0tGKftwZfSrBi3X/Ic/ltW48/BNaMIbHKxAsd9hjGKmz159ZvXBtoa0leTDaZFpHmg70L7Li0S5qJYtByXUkltcDouG7HPSThI2IFwKHHyQKZ0XI1f2M=
+	t=1760878975; cv=none; b=Z7JMtThbtnXLDaXYJ5JPEimzyRRtPr34WclCHb6hrRtXl6g0m0kUKKhYYBUIWDbA0p4xxY1Jyv9PFu7JqZ+3ddr+RvSqWORiy68jJjqKVOGpeFC+RNAkS2zgv7o8cUSnK+238W5qrUGuNeds1+T2CI92X7A4rMqV7MrBnQvz260=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760878565; c=relaxed/simple;
-	bh=L99iwiGRSsMMaZ4qJbP5ThO0hitHjHgjeBtbP7eow0g=;
+	s=arc-20240116; t=1760878975; c=relaxed/simple;
+	bh=6/arUFZB+ck4HdPzRgmi7Wf58u/t6ioWgo9X39ub7gQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JzAhxqPKcrsRwXKOkLiBBZs8Qz10mY9oN4pokDIlsjFl6h6lGK0yYaRiypq55lXa9pdEEwZjmK8vYxbahS2RFD0E8zP4AfxD990pZjdN0S/A8DWCMQBaczZBO1PBrRi0UNI4SIusdqCDBKutOAmKLRabmjgFZzf6YBRr0L0tfq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=le5Oghbv; arc=none smtp.client-ip=43.163.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1760878251;
-	bh=oztK+0pOpjsgj+fyUmrVDHpObsG8G9CDzExjQnJ4fQI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=le5OghbvF718IyzPp8XJ5PuBg/ZmqikQ17fKo3nAZgdLE7yQhw2GGTsa1u7WjbiOo
-	 QkPc1Md3ckz8cUPVgrAqxHVrjk6K+GWPF+W7CXMlhKNqYiDxrjEqMFQtarDt9F2Baf
-	 vHjx/0qTfgWEy2WDZpz8UoXc4gB/dGyuNbNPi6F0=
-Received: from [198.18.0.1] ([171.223.89.76])
-	by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
-	id CB1924D7; Sun, 19 Oct 2025 20:50:49 +0800
-X-QQ-mid: xmsmtpt1760878249tsaurhgks
-Message-ID: <tencent_F25AF0A47F3182B368AB6AD234AC81D9DB06@qq.com>
-X-QQ-XMAILINFO: MF2s0TKt0BDQyTs4be0pMO1y30Zp12xs/PdjKj3gx6F8hXqLAgXmuOWjYEZrcf
-	 LWfCECx5VxTO7IuVSCrr5Xq2g+5i03978tPHBkj58FVm3+Pm66tzeRZKQ95Zi6xb6LUsuPmvshJC
-	 T5NF7gNFUyUT4hjcCIdMmuRLRmJH5fgNv6Qy2cNVHT84BljaH1/mYUdkGN9o9oSst8q3Gvzwi1P+
-	 0piae209Lkulv3V4hnDoTnabyVTWxlKkPDWu8DzXuNmHBociKBOPcC/HY+GBpmgBN8UMFc2TGEde
-	 UsWK3qNDvDRJX1fhCA1wK3Rcwxli+O0rtonyVIJ8lIaTVviFP5eutlKd6P2h8CAxnbQq06H1CLE/
-	 YhUg8rD3u4MWlT+7R6uGjFXaWbCYgirEmhoXGClQIbY97Ql2h2CrFjMQ70vElGylMSblRYiSoRG7
-	 yfSlbhn7MEBwbfH33SHE3bAwyJFIrV0+PNYlK6t18YsWr3xC1MFqWF5V6G/pB+dtetdgD1wNnEaj
-	 FcSv19U4mTbZpw/1ktIcwrmNbazzgypgyZvQf7UAQsw8qTRgOaUns1uBaClkKXHv9eJ9kgiZ+osu
-	 0vuWWwCzPncenNOARHopndIOeADWFJO6eza8Bj3UQ0H7JZMWRLcuFfnWktAQ2wSb3HvGQvu9YidQ
-	 QEDNiM9DMYPJaUAdXfTsezZle69qshMHD8/wCmsHId+dHXfB+/QV0xBuTNx9oVVtaC6aABsnZXcD
-	 f8WNR8rCeHOh8qlNgReRi44WdZI8fZVBlgDPueP08qF7z2Jdl9b9ZFhkbEg3XRC4QeGleqxD2VI3
-	 g8d2ReVm4JmoplmIZ/n+67PnS4Z9z9Mrm0FxzfE6bnaMD1WICxzWTsfgvWKddtWzZdRt8F49fJWU
-	 WmFyGrq6+Bzu/hDPZCncq0jzgJl6Z0E7xo0AiRAAC59zIrsBDQhYk3lX5cII+Vul1mt8sm308ShV
-	 DXHRA/rZLfd4assW/nMS068Ns60ZTlRX92c5bEeLBpoX4WE0Ovq/ge4rIjB3SQejpUozRt/Dq8Se
-	 zfGNQbrSuL5oAcq5cG9PTZJGhmFFlkxKNBj47l+sT9Sk/C4kW2I7EZgYfazLI=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-OQ-MSGID: <a8f312b7-a752-40bd-b2bd-47baaf0f0187@foxmail.com>
-Date: Sun, 19 Oct 2025 20:50:49 +0800
+	 In-Reply-To:Content-Type; b=r3fgkM3JmbJFB/FAnyrIAgQUF3XPbajN5y3JIRuwBFn+bFQ6ggjXMLtVec5URkHB8LZJhxiF76tkL4b9agQz/aAF7IKUMOe2zq0y9Lradu1dp+69Q11jBDymLZXHL9bjxlrm8sB5Y62yzrbk6SYJvhBJ2WEbUruNv1fOoDpJ5jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=tvf+zT1N; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [192.168.88.180] (ip-94-112-34-59.bb.vodafone.cz [94.112.34.59])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id AC92453410E2;
+	Sun, 19 Oct 2025 15:02:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1760878959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HazG/CZLUTbYRlZ/LTEIH/AN94H6zw0ncXedJNPlhVg=;
+	b=tvf+zT1NDvXTQJLUxrwd4x4SaiARtFkSdMo6A9YkybtDNAeXRZ+LTQFdmOKCS7wAkbKrJ0
+	BE6P+TH52u8W4s9aCXc8EdlIKwuWcuH9s7U5h4BqopK+flNxIXYLZFENfwyn1rsB/Lrtyk
+	bXo+17s+ea99k+cnFThd8NBuSW0Mvi0=
+Message-ID: <1eff5dd7-5229-4ee3-9856-ae61b4c82f9d@ixit.cz>
+Date: Sun, 19 Oct 2025 15:02:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,97 +55,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] USB: serial: option: add UNISOC(Spreadtrum) UIS7720
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_0066A06B7D93DDC53FCE20AD3149F8B01908@qq.com>
- <2025101907-living-zipping-3894@gregkh>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for Pixel 3 and Pixel 3
+ XL
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Pundir <amit.pundir@linaro.org>, Casey Connolly <casey@connolly.tech>,
+ Joel Selvaraj <foss@joelselvaraj.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <20251005-pixel-3-v1-0-ab8b85f6133f@ixit.cz>
+ <20251005-pixel-3-v1-2-ab8b85f6133f@ixit.cz>
+ <n4xims4y5sssqxkchg2tikc7idkzds5ru7ayidcgxdfx77je2d@qo34qucbebnn>
+ <a5da8d40-f194-4fed-9118-037bd39ebe2e@ixit.cz>
+ <st7oizyyih3fnsi7jgcp47pl7s6n3gz2rdcv7iryftol3bqvxk@buam77hiqnl6>
 Content-Language: en-US
-From: Renjun Wang <renjunw0@foxmail.com>
-In-Reply-To: <2025101907-living-zipping-3894@gregkh>
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <st7oizyyih3fnsi7jgcp47pl7s6n3gz2rdcv7iryftol3bqvxk@buam77hiqnl6>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Greg,
-
-On 10/19/25 19:16, Greg KH wrote:
-> On Sun, Oct 19, 2025 at 06:44:38PM +0800, Renjun Wang wrote:
->> Add support for UNISOC(Spreadtrum) UIS7720(A7720) module.
+On 19/10/2025 13:51, Dmitry Baryshkov wrote:
+> On Fri, Oct 17, 2025 at 06:59:14PM +0200, David Heidelberg wrote:
+>> On 06/10/2025 00:03, Dmitry Baryshkov wrote:
+>>> On Sun, Oct 05, 2025 at 03:16:29PM +0200, David Heidelberg via B4 Relay wrote:
+>>>> From: David Heidelberg <david@ixit.cz>
+>>>>
+>>>> This adds initial device tree support for the following phones:
+>>>>
+>>>>    - Google Pixel 3 (blueline)
+>>>>    - Google Pixel 3 XL (crosshatch)
+>>>
+>>> Great to finally see it being submitted!
+>>>
+>>>>
+>>>> Both phone boards use the same identifiers and differ only slightly
+>>>> in their connected peripherals.
+>>>>
+>>>> Supported functionality includes:
+>>>>    - Debug UART
+>>>>    - UFS
+>>>>    - Charger
+>>>>    - USB-C (peripheral mode)
+>>>>    - Display (Pixel 3 only)
+>>>
+>>> No remoteprocs / IPA / GPU / Venus / WiFi / BT? The firmware is
+>>> accessible to download from Google and it can be further repackaged (but
+>>> not redistributed). See [1], [2].
+>>>
+>>> The phones share all firmware except for the bdwlan, so hopefully you
+>>> can add 'Google/blueline/foo.mbn' to the common file.
 >>
->> T:  Bus=05 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  5 Spd=480 MxCh= 0
->> D:  Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
->> P:  Vendor=1782 ProdID=4064 Rev=04.04
->> S:  Manufacturer=Unisoc-phone
->> S:  Product=Unisoc-phone
->> S:  SerialNumber=0123456789ABCDEF
->> C:  #Ifs= 9 Cfg#= 1 Atr=c0 MxPwr=500mA
->> I:  If#= 0 Alt= 0 #EPs= 1 Cls=e0(wlcon) Sub=01 Prot=03 Driver=rndis_host
->> E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
->> I:  If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
->> E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
->> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
->> E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
->> E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
->> E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
->> E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
->> E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> I:  If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
->> E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
->> E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+>> Would it be acceptable to use path format qcom/sdm845/$codename/ e.g.
+>> qcom/sdm845/blueline as it's used elsewhere?
+> 
+> We have settled on qcom/SoC/Vendor/device/ long ago. Could you please
+> follow? All upstream Qualcomm devices follow this approach.
+
+Sure, in next version it's done! Would you be open if I sent changes to 
+the existing firmware paths for sdm845 firmwares?
+
+Thank you
+
+> 
+> bdwlan should be sent to ath10k ML:
+> https://wireless.docs.kernel.org/en/latest/en/users/drivers/ath10k/boardfiles.html
+> 
+>> As I'm looking at the Google scripts, I assume both blueline/crosshatch use
+>> same firmware (which makes sense, as only the battery and display is
+>> different).
 >>
->> 0&1: RNDIS, 2: LOG, 3: DIAG, 4&5: AT Ports, 6&7: AT2 Ports, 8: ADB
+>> David
 >>
->> Signed-off-by: Renjun Wang <renjunw0@foxmail.com>
->> ---
->>   drivers/usb/serial/option.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
->> index 62e984d20e59..667de914a5eb 100644
->> --- a/drivers/usb/serial/option.c
->> +++ b/drivers/usb/serial/option.c
->> @@ -619,6 +619,7 @@ static void option_instat_callback(struct urb *urb);
->>   #define TOZED_PRODUCT_LT70C			0x4055
->>   /* Luat Air72*U series based on UNISOC UIS8910 uses UNISOC's vendor ID */
->>   #define LUAT_PRODUCT_AIR720U			0x4e00
->> +#define UNISOC_PRODUCT_UIS7720			0x4064
-> Shouldn't this be in sorted order?
->
-> thanks,
->
-> greg k-h
+> 
 
-I think it is not needed for this. As the information got from UNISOC 
-official website,
-
-these three products are  applied for different solutions(catalogs). 
-UIS8910 is applied for
-
-industrial IoT solutions[1] with 28nm process, and UIS7720 is applied 
-for smart cockpit
-
-solutions[2] with 6nm process.
-
-[1] https://www.unisoc.com/en/solution/IndustryInternectUS/8910DM
-
-[2] https://www.unisoc.com/en/solution/IGCockpitSolutionUS/A7720
-
-
-Best Regards,
-
-Renjun Wang
+-- 
+David Heidelberg
 
 
