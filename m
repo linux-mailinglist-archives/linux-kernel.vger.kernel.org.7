@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-859577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736A5BEDFF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:57:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8B9BEE006
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7D5B4E1918
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:57:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 843004E7F20
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C1A235045;
-	Sun, 19 Oct 2025 07:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5866122A7E0;
+	Sun, 19 Oct 2025 07:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TSHWvnFy"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eYD1yL3y"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C843622F74D
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C854E23371B
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760860622; cv=none; b=W56jWeVd5rnjP0ulgUQdfGkaokLPIwH5qOuNXfPL/dQZMdbuRTWYQWFhiMd/7GKapVx0MfX8AB6sDDWzqE87DheK9piaM0PAY+fJRorkf8tdAbn3u44daTB7QnVFhSoJVnwXrgQM1nVvwkSelIwenEY60Y/lwz3UAbrgmLlpu74=
+	t=1760860624; cv=none; b=cqb/FYGdimbo8v+at2ddbYPPBoi5kREgqkHOPTwQVMGsUud29EQU3fqJHSLdz8X2fZHV8gG52Rgt7MnF88cisOHTUyOktz1JOHY9RQ6eUfupfqYc/UkJd3njqo5NKrXE8sYny9bh5DoCNjB6SRJMIO3B+Q5Y47+LgqCi9qb0s0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760860622; c=relaxed/simple;
-	bh=ldL9oE1EfZtAElQ9+XdqptYGe8dQAepD7NU7eZWefTg=;
+	s=arc-20240116; t=1760860624; c=relaxed/simple;
+	bh=QlGdzJciH1h4gz5Q1SzqSd8IKkSpeYMEZtL7i2pFW/A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OaB2Lhe6rLDyGLgNWKIJDs0xyKUj9vKqAxuc9kuWfXGYoHLZUmHjqDZ637QxI1CR90Xe2a/N0yDbUrTEoI+jUbvHppVt62Q+TCy9lv/Zldoev2C/PyObHZ+IsCO1j8y/ETp2JDe1jHoKdd7gpWgH67nqFhWDoRqFV/CQHCrQuaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TSHWvnFy; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=dP1Z/rOX+NVSivtBEfKIj2tbonsd7SmYrXhuPOsFGl+fqXIVL52xqfkQ9ZE+FYFlmiGPC09dCGBnzd5k6VX/EYTdteQCLI7hiUGvQYb1hsO7hTVnf2d2Jb6a1NRopZLmtLep3H8km38qxal1Et7LM+WJKZRslbmlyMMFolqgmKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eYD1yL3y; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59J6gN2f002342
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:57:00 GMT
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59J3NVR3003367
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:57:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9sFi95zbIL6V8R4aDxrgHCEKkWfw05sk4v9zJGzSxic=; b=TSHWvnFy6bucr1QB
-	hv73IVe1GeodSDe7CwOBz7zhb8R2pq6fDsLaPb65l83rApoGsZg+temsxMr/YNO4
-	5KeyXWSBr6eV2B+zbUf7EyyzStWrmUtpm15gEcF9+l+D8ETisqEAwPvx1lyOElZk
-	Rk5kd5MWv1xzqPO3ltkoeNoz1r6M6hRXMTlI/0t31kUBbSjiXWoNDRDsmly9ORmJ
-	dlIJCIaWc8SQvcbDff1tDWmjrxA4Rg/G8zVrUMkEkyHRTvx+CMWtQasgJPGvMJxh
-	oDbhUlMv6I3e8jo8P9TXl0ZL2BDJrH0EbxZGCXWDDObbjofDj2HnzC15VBp3Y/hh
-	j7Jtsw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v42k1vu1-1
+	p9c7rVUQ+8XQDwfJNgLXJyZIItXH+75/qbByZsGVfLU=; b=eYD1yL3yeg0p1FPL
+	QHVsiuOImEeGI2T+ihBXdOEdMWtNNlVDg6iS+DDbp18wBQQUtbrbtUTHf5x5+LJY
+	MxKa0meoG2iu+WrfXVF0rmOFZZpTsTeI/EF6UrsM7MKrZXsAA82XOBAq1QcrMS9s
+	t0OZwu0DJ3L+CMU8u/tb4WJA/pPShu6MpbTQs5MyyxLBpyjZ9rsPqXbKazYUHvSc
+	Qs9K43gN3JQEQi5/ux1yY3mzwfKOykjJnzbK6X6AFR9A0m18u34LcVpFg5dNZKN4
+	fQPk1+kQyHbNjudmZdDB0nqYN6VKOYE7bpwPJigv94ZW8++jlKC046qhVajkjfwV
+	xJuRWA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3nf9xdu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:56:59 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c247591ddso83697856d6.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 00:56:59 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:57:02 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87c1558a74aso168733506d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 00:57:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760860618; x=1761465418;
+        d=1e100.net; s=20230601; t=1760860620; x=1761465420;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9sFi95zbIL6V8R4aDxrgHCEKkWfw05sk4v9zJGzSxic=;
-        b=a6AEUjlbS5QirQ+wZUE452xxgY6fKSVgXOFSt56N1Zs2H9CAaUW/lMGr211ZjYlfbN
-         R1TjXvQLkZrpIuvgWgvzu8LOnqtq9gkPdtuFJsDKmfLOdXEtGr+1YRka+JIlP2+iFX2C
-         xdAQMoXTMFTIt2a1IipOI/G0m189yecZOma3tgq16eVAXN0MvoE3eesvabJa5g4DNgvp
-         /gnYEYEOSyyxEclMnuJtcvM5N5Vst74Bm+ClypB9yTPt+L3VLG39Mjmj1nr4pNpWDcmB
-         flaoNt4hLhBnSMMVUcsM3TyIFNFAwmTunyqyfM1NOhPoEwDfpEDMm+L1U/5+/12fSKYS
-         tsUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaPDa7EoT9tF9bKlzm65jDD5z8wg5r1QGuMvr9yAxFkngULADWTRAEpROZjtC1O05nJZPKjvYJ2g2PrVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQKWM90DbIsgbnAMDMTE9VqDCgGY4zFEs3UzmL+mNO80VBD+LI
-	jNOxfbegdNKxt1kqfsVP0KaXVNhKQeydOBwfzWktUltfVuJ9NSr9OVB/fnvCZSE3484u3ICgK/o
-	TZkrw/nWJ4Df9rGP84NsYFp721G6fXZRWrOY8JcNB2EP3qngyMZ4PkcEI7d8cvfTiTlQ=
-X-Gm-Gg: ASbGncu5XeGE8g7esUVtzgKgunYO/7eGf2ulhw7FGy3m4kcslzONEBBwOVUSUM5GJ2U
-	hLuQq7rvEHkHYhimS9oVTJlgyWe2heegknZrgx3nL+xIPEaHAV3jHg6hTJUd1kU+qOEanSH8VW2
-	VDdgv0bC0aL+nV9nDWUNyHElczzbQMiU7sjKO9FYnU49IyRrEnvN60aOkK/o5C3hZlcRMqTYDle
-	EP2iOFleGCvinQhz4dW0VWXrLD98g7Cx2/2m998k1v/yO6XNNDz9hFtlpvmgvbIubQjCNI3m1lB
-	/wBLu9M0vV4FKEA80dLJLOhBXgaBnor/kHDzgeKMwFld0jFDp1GVzF4Rku7Df9ajT7hxI9quVCt
-	X5U0+Rvqm8ZTG88yupitMGoQzFhXQblwTLlu427ucEQqQ+c7s+fCZFEnZDhjmSL73TB5Kml2AGG
-	ZnDoSSRd9y2sY=
-X-Received: by 2002:a05:622a:1492:b0:4e8:9704:7c83 with SMTP id d75a77b69052e-4e89d1fb9eemr122031021cf.14.1760860618378;
-        Sun, 19 Oct 2025 00:56:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoUwsBVTbVSq1ZnvMoPl2qAM7/2X/maYXG5jy1Td8s9rFPfC/tSWqOtBZjW+m2yGB/AZOm5Q==
-X-Received: by 2002:a05:622a:1492:b0:4e8:9704:7c83 with SMTP id d75a77b69052e-4e89d1fb9eemr122030851cf.14.1760860617914;
-        Sun, 19 Oct 2025 00:56:57 -0700 (PDT)
+        bh=p9c7rVUQ+8XQDwfJNgLXJyZIItXH+75/qbByZsGVfLU=;
+        b=h7l9zuCaP2JCzFvQjnUhJLLBMW2iggyDm9noHc9Bm5NTqb7Pchl/UUprkvBSAZnXBJ
+         AmXUGSB/0wzUYNP+tqkLWjxbp3QTShOtH6+JSQuvA45ZevC24oQs6JJw2y+qrau3W7ey
+         AqeIB09hg8nCAo9wvGc1qSluaYeeL+NAnWypvVLy3ixnIP407kaB8w4A31lVrRR0R7wY
+         ii9PEqOyxTVFuuupl9MRuLkJTmBT09qOpB1X8xbzDf7QjXlLYmULWbOiS8JFyah38vk2
+         qBowtzWBysJYmccLoVnjmYJWfiQcaZUIr8a67k8GqJTuuqy2+aG5JU96AntezUuzCx2Q
+         PKCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgKTvhPNjGxjprEOH75Drj158C7cHClTJrv0+dVbn7X46LE1OK6AWT+2QgDgoUzbvOiHd60FGiYAQFQhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp7LXAGUbQGdfbXYPAQih3VBkaY39gNdDX+3pttBnEx9VazaTL
+	cDmrAgIQcFh8eh5ZtCehITiWZA2tUrEYpIpvCs2axY5VLTk6dtdXYRv1V+HF1adQaWigz/rF2TG
+	sjlmafM2LPpMv6oNWRT0mIapzRQVd/7rgCZKttI04QdF5O5DER+7yTpvYcXABUapKG1pm8JeQha
+	0=
+X-Gm-Gg: ASbGncuTSSkZDfaO2mSTSRSa9cO2Qr7SgGsUO/1Zk/JuY8a34m8Inh3tvUySwu2jKD6
+	XlpFT6maOMXRuzjRjEXKwS45pvLS6TYWTg8ZKEcqQpafLjTfYtT375mfZ7lduIAOsKaWqenXMjd
+	GBA5D1F3ZxCacZYKgVTbbDiLBEULFl7gN8jKNXv7EjgCcpswGEylvH4x+LpmIxlDvMeNWnsKH3P
+	bzw7Cpur9sMJLb3hrtwncM+0F/JyT93AreVI6N4B1SWaMMJyYMk2qjtDchUbJA1rnLczgEifXyn
+	3lYFUZKxNmElmz1ABK1qTc0+zOKBkbDxAhwn/qdk7XSoG8/DNiXh+ufFTe5Lh6AVxMOiXm33D7K
+	rCNk/ybHHzquKwCcM6V7kOXBDKZYThbySZmfoVwMgiXCnl/mg+7wNYjObDJ8gDFifWGVuzRT3qM
+	iEdUCykTSWD58=
+X-Received: by 2002:a05:622a:11c6:b0:4e8:9c58:3283 with SMTP id d75a77b69052e-4e89d2976d2mr149921651cf.33.1760860620471;
+        Sun, 19 Oct 2025 00:57:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBT/JGLHhnA0pOKRiG1vcO25nwlo8WWyYXAEig0c5KOlC4TxFjLNtH3p4yEXMlLHugw2n/WQ==
+X-Received: by 2002:a05:622a:11c6:b0:4e8:9c58:3283 with SMTP id d75a77b69052e-4e89d2976d2mr149921491cf.33.1760860620046;
+        Sun, 19 Oct 2025 00:57:00 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeaf4cesm1357027e87.30.2025.10.19.00.56.55
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeaf4cesm1357027e87.30.2025.10.19.00.56.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 00:56:56 -0700 (PDT)
+        Sun, 19 Oct 2025 00:56:58 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Sun, 19 Oct 2025 10:56:48 +0300
-Subject: [PATCH v4 1/6] media: iris: turn platform caps into constants
+Date: Sun, 19 Oct 2025 10:56:49 +0300
+Subject: [PATCH v4 2/6] media: iris: turn platform data into constants
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +93,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251019-iris-sc7280-v4-1-ee6dcee6e741@oss.qualcomm.com>
+Message-Id: <20251019-iris-sc7280-v4-2-ee6dcee6e741@oss.qualcomm.com>
 References: <20251019-iris-sc7280-v4-0-ee6dcee6e741@oss.qualcomm.com>
 In-Reply-To: <20251019-iris-sc7280-v4-0-ee6dcee6e741@oss.qualcomm.com>
 To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
@@ -105,42 +106,42 @@ Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5023;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4328;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=ldL9oE1EfZtAElQ9+XdqptYGe8dQAepD7NU7eZWefTg=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBo9JnDV5rfPEOB0okpTrdiYR93+p6wO1DWKasqW
- GNAHOYCHh+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaPSZwwAKCRCLPIo+Aiko
- 1XqJB/9W//9yBpFWe/ZIXG8wk2DcbmLXxa0NJyrEJgNgABKUgBI5lf26RUARp7o/p+1MSHy203A
- +dXdANWjHQahHq2FGsdzvX3e/TPN6RzJmP6tIfpfVtKRtp0181MXvaHtLi43yLMeVBKhfDMK6FK
- vJshOiGUPNHt0z+QnOhlMvLSp02dzS29VWKwZsTVAp0RGN5bxTezxHVnRVARrDZ62b3af5984/B
- h1M315dTdKbl+o4XaooJZ/zQdMtPlhI2ZgtXbJxWXVz45HNFSwc8JXKNLV4iygkklKtxNORrX+T
- hufpbB9E13yV07xEfi3sgajB8fwXQcvjAh8yVsRQZ2fV7P3N
+ bh=QlGdzJciH1h4gz5Q1SzqSd8IKkSpeYMEZtL7i2pFW/A=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBo9JnDFE1Kbou+2TUTGrtA4wh8atM7aEdFOLKXd
+ UaBUgXEBi+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaPSZwwAKCRCLPIo+Aiko
+ 1YBPB/4rCALg7iHH73KsSaCsSpsxPyN3NVo105FoTcDHiHe41tCxf+mTxb9yBZdC7BM1lu+xFxF
+ 1t2leMeL8woyXZJCccmKfWf342dinXfqBYzqVazjz7zHWzWB49FcuZkZRZR19pettzSEamWIiH9
+ 8a21yS3fVkrhVXQPf+3cpurKai832ATFs83Fi8MHqi7eFhkE4QG+4HV+jpLjri4wJR1/FQgajeq
+ T1MYNWT34zP6LN+wH7Pof2yuNmR4fssTRaNhMepScYlO5K0f64gUMupVTldg+C6lHHuwfCwrxqP
+ g1JonHNwl/VyLFSpiMwWj3na8NHWAJXt1zRBMsIJVyl9E+1p
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: wFmae6ifWRaD-QtXY1jBBH08Ccs0_mlz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMSBTYWx0ZWRfX4oYFHXGz+di3
- VQFTW/BpFE2zV9PPNRLQVFbtMz9sr7s1Am9JSnrPnFnNj6D+9IISKcZ04tc9RJ4MXkUHKRAYmPF
- ci8TDFHa6xm5ha8tmpFeW6kv6uN6spr/qKkTuhWHSTl0W+Gp6+S3BYn4I20pHTl1THpefrzIhUe
- N3S643rjbSQMANpMn+SCUd9V+izmN2rIUZgABrGQlp3vXhqoOG/IYZMy48lFOhTP2HThIPyyBqO
- 1m3vnHC3T+paeDOPkKGXyy7VjJsSEBQFsWObiqK/e3nBKIoFrl7qh5wnC7s59+kSdrxygeACucX
- bq8nivhYOpKhdDPepJfUp5cThDVvwEBqfRK//AeKovxy4u7ep163C5T9o2eGF3hSPktVLjxQfQI
- cIX0Jc+ox7B//93Ply4hLi1Bp802gA==
-X-Authority-Analysis: v=2.4 cv=QYNrf8bv c=1 sm=1 tr=0 ts=68f499cb cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Proofpoint-ORIG-GUID: 8xw1tBiC0hcDlCbXNP5syByY0b-Ue_zz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNyBTYWx0ZWRfX7L6xV2zZNIH+
+ aJvSBplbvAvDVGTehWeZbUR9FDgVJebDBQggHfwrrPaDf6j/Sp2ibhnMqDTjRuFkXv1AyoTICVL
+ yWrho7btBz/SHIS12U0bsybcgQ88C3w5o8wZCNrP95MHBpgWLwgJxu7zHiXqhqhNmmqCBy2y0Mp
+ aY8506v9Hx+7i8I3kGhj/GjZRvdHkHGlhK1Xpci72hLweaGoUqHfdoseeHoh4tAjUz4Q2EOVXsn
+ MFWoTN6DvIBpX1JRhIOkwmZVJHTVvdtw5sFS/NxHjjz7kP4bUa7xqNrQc7hu3MVipEryK7MJ5jK
+ cdANo+1W7oMGRyGZtbxQn+BKSwlrmMkHK74LTOw88Yj+KnedMWzGe3F6J325V0AV+UVAINrYWce
+ 00GE8TdSzeFPNDEXdJDQ2oxtW0TtrA==
+X-Proofpoint-GUID: 8xw1tBiC0hcDlCbXNP5syByY0b-Ue_zz
+X-Authority-Analysis: v=2.4 cv=EYjFgfmC c=1 sm=1 tr=0 ts=68f499ce cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=4lT8O_Qwe5KXetiC_XUA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=vHBkZ3WG4vhFy3QD8MgA:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
  a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: wFmae6ifWRaD-QtXY1jBBH08Ccs0_mlz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-19_03,2025-10-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180031
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180027
 
-Make all struct platform_inst_fw_cap instances constant, they are not
+Make all struct iris_platform_data instances constant, they are not
 modified at runtime.
 
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
@@ -148,108 +149,85 @@ Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
 Reviewed-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/media/platform/qcom/iris/iris_ctrls.c            | 2 +-
- drivers/media/platform/qcom/iris/iris_platform_common.h  | 4 ++--
- drivers/media/platform/qcom/iris/iris_platform_gen2.c    | 4 ++--
- drivers/media/platform/qcom/iris/iris_platform_qcs8300.h | 4 ++--
- drivers/media/platform/qcom/iris/iris_platform_sm8250.c  | 4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/media/platform/qcom/iris/iris_platform_common.h | 10 +++++-----
+ drivers/media/platform/qcom/iris/iris_platform_gen2.c   |  8 ++++----
+ drivers/media/platform/qcom/iris/iris_platform_sm8250.c |  2 +-
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-index 754a5ad718bc37630bb861012301df7a2e7342a1..9da050aa1f7ce8152dfa46a706e2c27adfb5d6ce 100644
---- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-+++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-@@ -301,7 +301,7 @@ int iris_ctrls_init(struct iris_inst *inst)
- 
- void iris_session_init_caps(struct iris_core *core)
- {
--	struct platform_inst_fw_cap *caps;
-+	const struct platform_inst_fw_cap *caps;
- 	u32 i, num_cap, cap_id;
- 
- 	caps = core->iris_platform_data->inst_fw_caps_dec;
 diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index 58d05e0a112eed25faea027a34c719c89d6c3897..17ed86bf78bb3b0bc3f0862253fba6505ac3d164 100644
+index 17ed86bf78bb3b0bc3f0862253fba6505ac3d164..5ffc1874e8c6362b1c650e912c230e9c4e3bd160 100644
 --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
 +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -215,9 +215,9 @@ struct iris_platform_data {
- 	const char *fwname;
- 	u32 pas_id;
- 	struct platform_inst_caps *inst_caps;
--	struct platform_inst_fw_cap *inst_fw_caps_dec;
-+	const struct platform_inst_fw_cap *inst_fw_caps_dec;
- 	u32 inst_fw_caps_dec_size;
--	struct platform_inst_fw_cap *inst_fw_caps_enc;
-+	const struct platform_inst_fw_cap *inst_fw_caps_enc;
- 	u32 inst_fw_caps_enc_size;
- 	struct tz_cp_config *tz_cp_config_data;
- 	u32 core_arch;
+@@ -41,11 +41,11 @@ enum pipe_type {
+ 	PIPE_4 = 4,
+ };
+ 
+-extern struct iris_platform_data qcs8300_data;
+-extern struct iris_platform_data sm8250_data;
+-extern struct iris_platform_data sm8550_data;
+-extern struct iris_platform_data sm8650_data;
+-extern struct iris_platform_data sm8750_data;
++extern const struct iris_platform_data qcs8300_data;
++extern const struct iris_platform_data sm8250_data;
++extern const struct iris_platform_data sm8550_data;
++extern const struct iris_platform_data sm8650_data;
++extern const struct iris_platform_data sm8750_data;
+ 
+ enum platform_clk_type {
+ 	IRIS_AXI_CLK, /* AXI0 in case of platforms with multiple AXI clocks */
 diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-index 36d69cc73986b74534a2912524c8553970fd862e..cbf38e13f89e5c4c46e759fbb86777854d751552 100644
+index cbf38e13f89e5c4c46e759fbb86777854d751552..b444e816355624bca8248cce9da7adcd7caf6c5b 100644
 --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
 +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-@@ -19,7 +19,7 @@
- #define VIDEO_ARCH_LX 1
- #define BITRATE_MAX				245000000
- 
--static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
-+static const struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
- 	{
- 		.cap_id = PROFILE_H264,
- 		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
-@@ -203,7 +203,7 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
- 	},
+@@ -737,7 +737,7 @@ static const u32 sm8550_enc_op_int_buf_tbl[] = {
+ 	BUF_SCRATCH_2,
  };
  
--static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
-+static const struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
- 	{
- 		.cap_id = PROFILE_H264,
- 		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
-index 35ea0efade73caa687d300779c5b1dc3b17a0128..87517361a1cf4b6fe53b8a1483188670df52c7e7 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
-@@ -5,7 +5,7 @@
- 
- #define BITRATE_MAX				245000000
- 
--static struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
-+static const struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
- 	{
- 		.cap_id = PROFILE_H264,
- 		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
-@@ -189,7 +189,7 @@ static struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
- 	},
+-struct iris_platform_data sm8550_data = {
++const struct iris_platform_data sm8550_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+@@ -827,7 +827,7 @@ struct iris_platform_data sm8550_data = {
+  * - controller_rst_tbl to sm8650_controller_reset_table
+  * - fwname to "qcom/vpu/vpu33_p4.mbn"
+  */
+-struct iris_platform_data sm8650_data = {
++const struct iris_platform_data sm8650_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+@@ -912,7 +912,7 @@ struct iris_platform_data sm8650_data = {
+ 	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
  };
  
--static struct platform_inst_fw_cap inst_fw_cap_qcs8300_enc[] = {
-+static const struct platform_inst_fw_cap inst_fw_cap_qcs8300_enc[] = {
- 	{
- 		.cap_id = PROFILE_H264,
- 		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
+-struct iris_platform_data sm8750_data = {
++const struct iris_platform_data sm8750_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+@@ -998,7 +998,7 @@ struct iris_platform_data sm8750_data = {
+  * - inst_caps to platform_inst_cap_qcs8300
+  * - inst_fw_caps to inst_fw_cap_qcs8300
+  */
+-struct iris_platform_data qcs8300_data = {
++const struct iris_platform_data qcs8300_data = {
+ 	.get_instance = iris_hfi_gen2_get_instance,
+ 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
 diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-index 16486284f8acccf6a95a27f6003e885226e28f4d..e29cba993fde922b579eb7e5a59ae34bb46f9f0f 100644
+index e29cba993fde922b579eb7e5a59ae34bb46f9f0f..66a5bdd24d8a0e98b0554a019438bf4caa1dc43c 100644
 --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
 +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-@@ -17,7 +17,7 @@
- #define BITRATE_PEAK_DEFAULT	(BITRATE_DEFAULT * 2)
- #define BITRATE_STEP		100
- 
--static struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
-+static const struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
- 	{
- 		.cap_id = PIPE,
- 		.min = PIPE_1,
-@@ -38,7 +38,7 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
- 	},
+@@ -314,7 +314,7 @@ static const u32 sm8250_enc_ip_int_buf_tbl[] = {
+ 	BUF_SCRATCH_2,
  };
  
--static struct platform_inst_fw_cap inst_fw_cap_sm8250_enc[] = {
-+static const struct platform_inst_fw_cap inst_fw_cap_sm8250_enc[] = {
- 	{
- 		.cap_id = STAGE,
- 		.min = STAGE_1,
+-struct iris_platform_data sm8250_data = {
++const struct iris_platform_data sm8250_data = {
+ 	.get_instance = iris_hfi_gen1_get_instance,
+ 	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
+ 	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
 
 -- 
 2.47.3
