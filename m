@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-859572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51202BEDFC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:44:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AC6BEDFD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668B03E7136
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:44:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A24234E503D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCA5221554;
-	Sun, 19 Oct 2025 07:44:25 +0000 (UTC)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF24922D7B5;
+	Sun, 19 Oct 2025 07:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oupI/KhT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6248415278E
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254461BC3F;
+	Sun, 19 Oct 2025 07:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760859865; cv=none; b=cEiL2tF5X8rI1yWaqjTfkG9q0DeqTFetl9OHklshLyF8+Po7cNCCs4BzOEZ2JY+KL4FGzhx/Jbtm9UC7XfLz3+17untv0VonIfk8mr47Q35Y81biT1RTTlPLouzkIrYWWndXVv6gNedB62RZ8chrelvTC41SylCyGqeTo9q78PE=
+	t=1760860256; cv=none; b=VBDyIGWo1csUYSeJOZJhfLQvh9JuubXt61VcsRdEn9/m9HKaOFXj9Zj44bAiGk7d3EbUrHZakpWItx6+jM/BUMM+CczorvAJzKG6YhSSmesus6lfxDfucQAQ8+xpfIxZM2OYsn5RUMHgzqks218y66HBhg3a/6e/pAPTNwQ1oiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760859865; c=relaxed/simple;
-	bh=VDyEXvhcMjHGVLUO7kySkl3Qfnll/RHQf72z6TXt0us=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=swcENlzOGDZMBacHj/4DrxW6Sr22xc3HDRxh64N+pTs53iiSRAamk0qoj60MGvktM+tNX7SwWNHe1e6O2Yo1yEtkuR0Z10/PUqtjKjsUxuP2iM+WZK5c02QTgaT5gy2Jmjt/wA/rbaX8NbH2ZxcJ/3MCOP4OAkLP66juOVBhA2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57f1b88354eso3750313e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 00:44:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760859858; x=1761464658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VDyEXvhcMjHGVLUO7kySkl3Qfnll/RHQf72z6TXt0us=;
-        b=XYjl94pIFzXdCH8q85PZzM33FXS6F8RHNvPrDBnsgBgY1z0D8vE+bbM32zyz87NFny
-         dTAov47U3pfpZTTDtr9+ZySpIcGiTcnXJosvOZbpR3BQvU0ve6v+TgTNjL3UteE8BxZX
-         rJM6yPgNcrjXaZOh8aN/iLd1jWuf4jKUtgZ6T8n5ltPR4ApQ17/3Q4ITWPTCk8fH9RqX
-         UiiVD7NfXm8R5rmw/x8xDwMcp1n+LzDnEwmfFFdeOIjqabdCdy6aQ9POq4KoaamwPcFq
-         R0F3kI6wtQRUcTFyu6ZR9Lu7w8W0M7T/uFZYTY8epriOwRFPR+PERZPXR6q0DvEHUx9U
-         u9VA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFjjdPUoCZ2gShc+kWaWEhvLft0JnY2Zb9GaguD6R5Z/f0coiGuxlChGsR8UpQJ7rkVYd8zV1heYjcSBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEFs4F4+AU2eFMmE7/O/uiNKsJNyoVTRkegoT9DWvkfwF/1z3o
-	r+pdNHMHdsX44bYhMF9jgbCHUZwHA8dUzWYQEQfpUT6CViLs01+g4BUcXmTY7dtj
-X-Gm-Gg: ASbGnctMvsPJhsLCSemb/cE0G2s+78CFbiYJiSWXzNB3TDTA5+8RnjlqI7XSpqV2MPC
-	XFNQibagc/zndp+5cBxdejH/xreHgL+9cTEp1JcyqScL84CmDEakhwrDSMzD1Pcn/IPSXRZ8PLp
-	9qV4VQDTEZpMVzSyVTaZd8pYJVVdgc3V6P+y5L11IVdAN/g19lSF9rQRpyuj2QVmV6V07VElt9s
-	JtH3wxCJnGS0NnP71pdFfejtqIBrEcj1nSjB3TI86msko+hEOuXy5VJ1SZbNEw9yUogvAsixsBC
-	v74GRLepL3+Z/1ruOGnTejBaEWRP4yBjEwLI3T5qhOFQ7YZIZxMX6+/aJdtjxsDm5UgrZFWoy/9
-	NjNtthSTV5lk+0/4sdJq4e3hVk8lji8ajv5WnQ4MLj60P60t1imKMu9nENf2a8cx5HXP62JPAVg
-	D2j7qrB8c00Wqx2DGR1+eHFEWHxcDu6gWq
-X-Google-Smtp-Source: AGHT+IEpVg69VouDkKxIfNj7Prs7ahHd0ToCNn9ewAgZt4C3XdO9S7PEGzIkbuX0Oe1jmyVac5DzOw==
-X-Received: by 2002:ac2:4e0b:0:b0:57b:a770:6d7e with SMTP id 2adb3069b0e04-591d84e3982mr3097169e87.10.1760859857466;
-        Sun, 19 Oct 2025 00:44:17 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeafef3sm1339727e87.33.2025.10.19.00.44.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Oct 2025 00:44:17 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-36d77de259bso24962841fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 00:44:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWmg7sbgC/EZowr6nNP/+IGdSjbfjswT/RWV62sNpkYXL4vbqxBL45usoUQ8C08NqXJAcESN92pvnTPnII=@vger.kernel.org
-X-Received: by 2002:a2e:9a0d:0:b0:362:b98f:edec with SMTP id
- 38308e7fff4ca-37797a28204mr31528471fa.23.1760859856735; Sun, 19 Oct 2025
- 00:44:16 -0700 (PDT)
+	s=arc-20240116; t=1760860256; c=relaxed/simple;
+	bh=GvSwkt6lVhTuWJEGylfxc7FJevt6hW5T4Sb4DHwzf2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Voar2lJfJHU87lH9qOvcSwcoptlxAA/M8x1wItkz5mbTJko3Ea1GkcsrBbFZAWQ1gUkhWaYkuqyO2BKxtS1rldy6+mDTNMY0VKWXj5360WeX/p8kHp4r+K7ZDcKv/nDDiqmO2frPcIfp1ymWZ/tJcrFEJikw9KNb0jkS90gikY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oupI/KhT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF48BC4CEE7;
+	Sun, 19 Oct 2025 07:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760860255;
+	bh=GvSwkt6lVhTuWJEGylfxc7FJevt6hW5T4Sb4DHwzf2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oupI/KhTlAO0V5ekScpTFkt6LTzwqjcDdEAptHCJfbfOX50VMYIgpfj7Dgnl/7a8Y
+	 JtMg0CQv/Tm4Kxc2qSyPasjwBoMS1R9MOa9SoVJZyCvecoEIhH8jXLkomSvNV5LH3B
+	 ZDvloFS4CuKDyVasgMUIOH5QutikeiHC9m7AbAbibFbmlX0AB/GkL0HRZWSfziihB0
+	 Ke0prlyiZG5A7iGDc4r+zlmHqXTELEERkde0ZUF1VnOnjDcIuMQKV470uLcK6AAOnX
+	 4uIANP2UvKV8PMdhcam8pCXWYDb5j+UG4goOSCmwm21exxehwASL1AG+wx90y31s6X
+	 ddUo9yzV/llZw==
+Date: Sun, 19 Oct 2025 13:20:36 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v1 3/5] PCI: tegra: Use readl_poll_timeout() for link
+ status polling
+Message-ID: <ose3ww7me26byqwsyk33tipylkx3kolnc3mjwrlmjwsmza2zf3@os7lkt4svaqi>
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-4-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-4-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-4-jernej.skrabec@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 19 Oct 2025 15:44:03 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64QDvw_rQN3v+zPLp8YBcfQBZvOBenKQQ__g7P=kLkucw@mail.gmail.com>
-X-Gm-Features: AS18NWA8cc21pStw1TYls77Vg9dX4gj_1oPuVNMT5dpbk_Fef3dnnMNukJyo070
-Message-ID: <CAGb2v64QDvw_rQN3v+zPLp8YBcfQBZvOBenKQQ__g7P=kLkucw@mail.gmail.com>
-Subject: Re: [PATCH 03/30] drm/sun4i: de2: Initialize layer fields earlier
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250926072905.126737-4-linux.amoon@gmail.com>
 
-On Mon, Oct 13, 2025 at 3:23=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> drm_universal_plane_init() can already call some callbacks, like
-> format_mod_supported, during initialization. Because of that, fields
-> should be initialized beforehand.
+On Fri, Sep 26, 2025 at 12:57:44PM +0530, Anand Moon wrote:
+> Replace the manual `do-while` polling loops with the readl_poll_timeout()
+> helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
+> during link bring-up. This simplifies the code by removing the open-coded
+> timeout logic in favor of the standard, more robust iopoll framework.
+> The change improves readability and reduces code duplication.
+> 
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> v1: dropped the include  <linux/iopoll.h> header file.
+> ---
+>  drivers/pci/controller/pci-tegra.c | 37 +++++++++++-------------------
+>  1 file changed, 14 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 07a61d902eae..b0056818a203 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2169,37 +2169,28 @@ static bool tegra_pcie_port_check_link(struct tegra_pcie_port *port)
+>  	value |= RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
+>  	writel(value, port->base + RP_PRIV_MISC);
+>  
+> -	do {
+> -		unsigned int timeout = TEGRA_PCIE_LINKUP_TIMEOUT;
+> +	while (retries--) {
+> +		int err;
+>  
+> -		do {
+> -			value = readl(port->base + RP_VEND_XP);
+> -
+> -			if (value & RP_VEND_XP_DL_UP)
+> -				break;
+> -
+> -			usleep_range(1000, 2000);
+> -		} while (--timeout);
+> -
+> -		if (!timeout) {
+> +		err = readl_poll_timeout(port->base + RP_VEND_XP, value,
+> +					 value & RP_VEND_XP_DL_UP,
+> +					 1000,
 
-I think fields should always be initialized before any structure is
-passed off to another function.
+The delay between the iterations had range of (1000, 2000), now it will become
+(250, 1000). How can you ensure that this delay is sufficient?
 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+- Mani
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+-- 
+மணிவண்ணன் சதாசிவம்
 
