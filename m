@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95F2BEEA4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:51:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A55BEEA54
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A66974EAFE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38F13B19FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E442EBB9B;
-	Sun, 19 Oct 2025 16:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADC32E1F13;
+	Sun, 19 Oct 2025 16:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8ukShRh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBO8wUWY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA74C1D63D8;
-	Sun, 19 Oct 2025 16:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4557536B;
+	Sun, 19 Oct 2025 16:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760892651; cv=none; b=CgVskSy6Ki5/y3drRDgEB5kg+pdmZB4mVEGfFJb/ixubiMyWwfBdJrz7ShkwIbVcTOdTtUrvQMvWsm6J4FWiafGhPuMUFMDYUfzmwFC35eeFlRkgoFqrl+2MiopIKZOgpXA5JY7LEqxf0ldpEKBKrq8aaEc8/Nt8CIoYfw+BbwM=
+	t=1760892743; cv=none; b=sPY5TziplzFM7j99EmQ2Syzt+Ng5Y+w5xvD7cwiSb/gPlNpVIe/ERqUdOMmPe7p1CUjcPrE/LNTaCqSj1GOK5jvxFEDRNKVG44W4WBP7deBMO98FLwgR/ZSzAIVlxrJjTwUVv9KafFnJ7l9/tGwf/hHL1k4QWVBToGmbpQkL2FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760892651; c=relaxed/simple;
-	bh=D8IOfkJIFuCmakZ8zwJubM8ycAYWmXIGTJLnWYh2HZ0=;
+	s=arc-20240116; t=1760892743; c=relaxed/simple;
+	bh=iC2JnoyFPZTH+6RHQk2aI6S4dkacuBcn+z3P0Tadx+E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIfFaBaPHJSuDjQ0d8E+Osc/dfHwkgn6vNvSG7x77E7dL+lmxStOfWDGQ0loZmHJ6j9YFpZ2P2B1hGWebo/mzGIvzj5nah8b1omcVHHZJO1c57yD+JydXNlpVa+kO4hUiTGOFlZIuc3RUChiMEubWZJjjm8x3kwOlMBXjJUFYKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8ukShRh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8449CC4CEE7;
-	Sun, 19 Oct 2025 16:50:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ByojJRtwzMmn++7wBE5nqo/uTyD7w3OKUVOtWcZGV/CxsRR1OlGDSElrPhSMAKk5jla6BRLh9Stop6Agn1zUbhVsxs7/pwWDm8kiIerRtwX1VrW6OkFEJNJRSEfSOcgbJeOkOUR2+DZ8FkyaD2hfhAWhfzob1lwfUW141smpl30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBO8wUWY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B10C4CEE7;
+	Sun, 19 Oct 2025 16:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760892651;
-	bh=D8IOfkJIFuCmakZ8zwJubM8ycAYWmXIGTJLnWYh2HZ0=;
+	s=k20201202; t=1760892742;
+	bh=iC2JnoyFPZTH+6RHQk2aI6S4dkacuBcn+z3P0Tadx+E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i8ukShRh4rDoIWmy/eeDesOkfvi6x/onQFM9FMUInyqJi5iCdwSUThGnQACgNdX2X
-	 ZbzReqkUeiyHMh2lvG+Ox41rX4M8eqPlnmzTz2ZkvcNc0gmemdB/HpAAwgcvZk8GjE
-	 OIkQr229Sm9CL/RzFlF0DeUxEJ10OlMlobqBD83oyH6i2Z2/RqNgnSDSNq8AWxy/DE
-	 M+y719B67qxiSViXEeCwPdxZ/CBXNWAE2+v7xKQReopRmP6QR1Vz3TrsYxme8XkNJ3
-	 5we8xjfjajmwn+2F92/e0lDzuow0G6Hn8vs9GbBIJcv1Yj1XeFK9t1IfJt+x3HAKR8
-	 4eqzTAruSWIvQ==
-Message-ID: <af73c70b-7180-427d-9f52-558685093613@kernel.org>
-Date: Sun, 19 Oct 2025 18:50:46 +0200
+	b=cBO8wUWYwkzmQNPxSyIko83RDdfnZRaYxhNHxRc4fJsO5LUrLNi8FrBKP6+08Nii9
+	 ULYt7ZxrNMcQE2xR23Vv1hObiLPaq5+9pXrfYRPiVZYYMTKKpiYBqDpFV78/ibB1rV
+	 VLZ908tqiYzVNjW72CODDbIe2IomQgAOnz3KXtp5Lut995d/J9qkyQSXUZKShKzpo3
+	 ZZlMVpm//FQwwYsWFtHbe6Bk/wHGUwNI15+SFlhRuqpFsOyEuJkwhmlojMpKI7hEx7
+	 kVq10mTCGALfO7T6+xwUpCo31Y2F+YbDCOoMUxhFvALWJKJWb7uZ3gOgb7GqV3ZvDJ
+	 Jk7xvXLeDtlkg==
+Message-ID: <9b2be593-8fc6-4089-bbb2-b8c496b1b2a4@kernel.org>
+Date: Sun, 19 Oct 2025 18:52:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: remoteproc: qcom: adsp: Add SDM660
- CDSP compatible
-To: Nickolay Goppen <setotau@mainlining.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
-References: <20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org>
- <20251019-qcom-sdm660-cdsp-v2-2-0d3bcb468de0@mainlining.org>
+Subject: Re: [PATCH v3 1/3] arm64: dts: nuvoton: fix warning and nodes order
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au,
+ venture@google.com, yuenn@google.com, benjaminfair@google.com,
+ openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250925200625.573902-1-tmaimon77@gmail.com>
+ <20250925200625.573902-2-tmaimon77@gmail.com>
+ <cc23d41d-6a5e-44d7-ad4b-1b39566dbce8@kernel.org>
+ <CAP6Zq1i7repVa1oAVpyZxWw12-dv0MrVbkfXoqCKga+rp7=8LQ@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,17 +105,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251019-qcom-sdm660-cdsp-v2-2-0d3bcb468de0@mainlining.org>
+In-Reply-To: <CAP6Zq1i7repVa1oAVpyZxWw12-dv0MrVbkfXoqCKga+rp7=8LQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/10/2025 16:20, Nickolay Goppen wrote:
-> Add compatible for the compute DSP remoteproc found in SDM660.
+On 19/10/2025 16:30, Tomer Maimon wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
-> ---
+> Thanks for your comments
+> 
+> On Sun, 19 Oct 2025 at 13:35, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 25/09/2025 22:06, Tomer Maimon wrote:
+>>> Fix the warning in the gcr and timer nodes, and modify nodes order by
+>>
+>> What warning?
+> This warning that I got from Andrew mail
+> [I] 0 andrew@heihei ~/s/k/l/o/build.arm64.default ((00e2ab2e))> make
+> CHECK_DTBS=y nuvoton/nuvoton-npcm845-evb.dtb
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>   DTC [C] arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb
+> /home/andrew/src/
+> kernel.org/linux/origin/build.arm64.default/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb:
+> / (nuvoton,npcm845-evb): memory@0: 'device_type' is a required property
+>         from schema $id: http://devicetree.org/schemas/memory.yaml#
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Commit msg should explain that. See git history how to add such
+information to the commit msg.
+
+Anyway, all other comments stay valid and I expect improved/different fixes.
+
+You don't sprinkle random compatibles because someone or something told
+you, right?
 
 Best regards,
 Krzysztof
