@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-859682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA63ABEE44E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:02:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F7EBEE452
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC58E4E7209
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:02:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E13402726
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196CF2D0C63;
-	Sun, 19 Oct 2025 12:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B1123EA8F;
+	Sun, 19 Oct 2025 12:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="di5lqBUV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut2gTsCQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A976366;
-	Sun, 19 Oct 2025 12:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048552620D2;
+	Sun, 19 Oct 2025 12:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760875355; cv=none; b=m05KfdJ7yITNt9K9uOw8wk7OVQSOGwdkZ0DdkiJ7OEFn7zPMp5T5aYAv6xBkGQVqDlyY4ZVjcyXJ4FM3pxrAqt52ZdO+q3BRKA91+bir/WSRJXDzBnH8hc+HcyJim/SOp35cffj5kFEumeXJF1l09w/CTJbth86wX6XkVHqmBf8=
+	t=1760875389; cv=none; b=rzyFegf+TdV9321ZGi//0IlbwAoRQMfyVOB3u3hCArZp+HIcsJ5cmJ7+KLoWHYNKnkPjzQDfjQD4ITnOR3yQ2DLeewl5gLx5xeikVqHHUfCJL8lzXLOAuc9umoccSty+vGBk8CMTLH1JswViK9v+F4vfNNnmn1tuiZCziWc5AlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760875355; c=relaxed/simple;
-	bh=0IuCpk9UxBeR+C9BHxVRSSL+EJ0KV/W4DsG0DkKDkSI=;
+	s=arc-20240116; t=1760875389; c=relaxed/simple;
+	bh=UTBipG2N3uJpJm9CwyryseA7CzD9lAULhEu0lVKREpE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WriEqZCKD1T6ZlN9IAzs0PkhPM72HmuZQQsI/i1j1AjnWp7ndBy9gOLTuJ+ZAM7gGaNesqQ7iYFg7OKbzMft2e/aSXt43ib7nHpLTVSlV6Trj7oDxGQRcLs+Qf3ZZrib4WFk95WFV7iwNZjCOytoPzmaizcQIynNOBLK9rSgYdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=di5lqBUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85973C4CEE7;
-	Sun, 19 Oct 2025 12:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760875355;
-	bh=0IuCpk9UxBeR+C9BHxVRSSL+EJ0KV/W4DsG0DkKDkSI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbFEQKt18dadiuQl3OPrXmzHVaUy8hPoQrToTvgnENIwfaB5tBBlKGfyLlHiE0sUA/02f9MGRlGbGx/e3LQveOiyVAiJYx8r9tKhgbPHTvt0j5vEh3UTP5nq8+jfedGGniYee7dEZIQMin7lDvz8iNXcPVfuWonh3OE+co1Unzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ut2gTsCQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E1AC4CEE7;
+	Sun, 19 Oct 2025 12:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760875388;
+	bh=UTBipG2N3uJpJm9CwyryseA7CzD9lAULhEu0lVKREpE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=di5lqBUVapMsNjAmHde4l/1zbpAPQ0Y9jbgnJMb6MfVVfsqnWGxpkLuvxF7ykFsJS
-	 YEK7RZM8EkxwYS75qQlM4pp3yfQzz4zvsUBgT8eeGEh0ynbVS8miL9U9AEfjcBNcWN
-	 UM6MeUxrWgPLxACiTW6GzYlGxlWEegXzaBKrnW0o=
-Date: Sun, 19 Oct 2025 14:02:32 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ron Economos <re@w6rz.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 6.17 000/371] 6.17.4-rc1 review
-Message-ID: <2025101933-utensil-campfire-75f8@gregkh>
-References: <20251017145201.780251198@linuxfoundation.org>
- <90bc04ea-e7ec-49b9-ae6e-d0e2c85bbf96@w6rz.net>
+	b=Ut2gTsCQ3+iJZn+/fMcxG+QwcudI+T/+SdV/g9L04YE8J/aT7g+tik43KBI/aM4Ce
+	 OvkxaPFQpzusHz4sIecRNxkZDfZg4sDtS6z4vcPw7fSAM64VCdvwAOgWZaNDQkGMMp
+	 W5MmUKVBh/KxiFr3mzAQYr5QwMSRafuvc8C6hBRxq54MIlNFE8OX/MupL6x21OpDRI
+	 qqDSUkFvwLW5lJY/Elco/mfI4mioXCc+D/2yiB0gMYHUNZVS+cH0fEAZ5pjrAKRmDB
+	 qO7k0vZi/Iqcwt57o6IBBGhj/BuzM1OWgK+GE0iZOVvQg4kEOm4PThfEW6Laj1UCBJ
+	 X12WFpyJyDE/A==
+Date: Sun, 19 Oct 2025 15:03:04 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Frank Li <Frank.Li@nxp.com>, Robin Murphy <robin.murphy@arm.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] dma_mapping: Add auto cleanup support
+Message-ID: <20251019120304.GG6199@unreal>
+References: <CGME20251010185046eucas1p26868b540b74a96e36943066216525bed@eucas1p2.samsung.com>
+ <20251010-dmamap_cleanup-v1-0-ec5bc14e82c4@nxp.com>
+ <f3fba346-6fdd-4b0e-9414-087a12772a6a@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,51 +66,168 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <90bc04ea-e7ec-49b9-ae6e-d0e2c85bbf96@w6rz.net>
+In-Reply-To: <f3fba346-6fdd-4b0e-9414-087a12772a6a@samsung.com>
 
-On Fri, Oct 17, 2025 at 04:04:23PM -0700, Ron Economos wrote:
-> On 10/17/25 07:49, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.17.4 release.
-> > There are 371 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.4-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+On Tue, Oct 14, 2025 at 07:54:46AM +0200, Marek Szyprowski wrote:
+> Hi
 > 
-> Build fails for RISC-V with:
+> On 10.10.2025 20:50, Frank Li wrote:
+> > There are many below pattern
+> >
+> > 	fun()
+> > 	{
+> > 		...
+> > 		dma_map_single();
+> > 		if (dma_mapping_error)
+> > 			goto err1;
+> >
+> > 		dmaengine_prep_slave_single()
+> > 		if (...)
+> > 			goto err2
+> >
+> > 		dmaengine_submit()
+> > 		if (...)
+> > 			goto err3
+> >
+> > 		wait_for_completion_timeout()
+> > 		if (...)
+> > 			goto err4
+> >
+> > 	err4:
+> > 	err3:
+> > 	err2:
+> > 		dma_umap_single();
+> > 	err1:
+> > 	}
+> >
+> > Use cleanup can simple error handle like guard(), such as guard(mutex).
+> > or __free(kfree) = kmalloc.
+> >
+> > But dma_umap_single() need more argurements. So situation below complex.
+> >
+> > It need pack argurments list into structure.
+> >
+> > 	#define __DEFINE_GUARD_CLASS(_name, _return_type, _list_class_fields)   \
+> > 	typedef struct {                                                \
+> > 	       	 _return_type ret;                                       \
+> > 	        bool    okay;                                           \
+> > 	        struct  {                                               \
+> > 	                __REMOVE(_list_class_fields);                   \
+> > 	        } args;                                                 \
+> > 	} class_##_name##_t;
+> >
+> > So save all arugments to it.
+> >
+> > __DEFINE_GUARD_CLASS(dma_map_single, dma_addr_t, (struct device *dev; void *ptr; size_t size; enum dma_data_direction dir)
+> > will expand to
+> >
+> > 	struct {
+> > 		dma_addr_t ret;
+> > 		bool	okay;
+> > 		struct {
+> > 			struct device *dev;
+> > 			void *ptr;
+> > 			size_t size;
+> > 			enum dma_data_direction dir;
+> > 		}
+> > 	}
+> >
+> > So cleanup function can use saved argurement.
+> >
+> > The above fun will be
+> >
+> > 	fun()
+> > 	{
+> > 		CLASS(dma_map_single, dma)(dev, ...);
+> >
+> > 		...
+> > 		if (...)
+> > 			return err;
+> > 	}
+> >
+> > if funtion return, which need keep map,
+> >
+> > 	submit()
+> > 	{
+> > 		dma_map_single();
+> > 		...
+> > 		dmaengine_submit();
+> > 		if (...)
+> > 			goto err1
+> > 		return;
+> >
+> > 	goto err1:
+> > 		dma_umap_single();
+> > 	}
+> >
+> > Macro retain_and_empty() will clean varible to avoid unmap.
+> >
+> >          ({                                  \
+> >                  __auto_type __ptr = &(t); typeof(t) empty= {};   \
+> >                  __auto_type __val = *__ptr; \
+> >                  __ptr->okay = 0;        \
+> >                  __val.ret;              \
+> >          })
+> >
+> > So
+> >
+> > 	submit()
+> > 	{
+> >         		CLASS(dma_map_single, dma)(dev,...;
+> >
+> > 	        ...
+> > 	        dmaengine_submit();
+> > 		if (...)
+> > 			return err;
+> >
+> > 		//before return;
+> >
+> > 		retain_and_empty(dma)
+> > 	}
+> >
+> > This series just show how to hanndle many agurement at resource alloc/free
+> > functions. Only show dma_map_single. If the over all method is acceptable.
+> > I will more define for dma mapping functions.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > 
-> In file included from ./include/linux/pgtable.h:6,
->                  from ./include/linux/mm.h:31,
->                  from arch/riscv/kernel/asm-offsets.c:8:
-> ./arch/riscv/include/asm/pgtable.h:963:21: error: redefinition of
-> 'pudp_huge_get_and_clear'
->   963 | static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
->       |                     ^~~~~~~~~~~~~~~~~~~~~~~
-> ./arch/riscv/include/asm/pgtable.h:946:21: note: previous definition of
-> 'pudp_huge_get_and_clear' with type 'pud_t(struct mm_struct *, long unsigned
-> int,  pud_t *)'
->   946 | static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
->       |                     ^~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Reverting 06536c4857271eeb19d76dbb4af989e2654a94e0 riscv: use an atomic xchg
-> in pudp_huge_get_and_clear() fixes the build.
-> 
-> The problem is that this patch was already applied to 6.17 just before
-> release, so the function pudp_huge_get_and_clear() ends up being duplicated
-> in the file.
+> This looks fine from the DMA-mapping API perspective. I think we should 
+> also get some feedback from Peter, who authored most of the __cleanup() 
+> based infrastructure, so I've added him to the recipients list.
 
-Thanks, I'll go drop this patch now, thanks.
+I may represent minority here, but patch "i2c: lpi2c: Use auto cleanup
+for dma_map_single()" looks completely unreadable after this change.
 
-greg k-h
+It is perfectly valid to use __cleanup() for simple and scoped things
+like kmalloc, but DMA API is much complicated than that.
+
+Thanks
+
+> 
+> 
+> > ---
+> > Frank Li (3):
+> >        cleanup: Add DEFINE_GUARD_ARGS_CLASS macro for resource alloc/free functions with multiple arguments
+> >        dma-mapping: Add auto cleanup support dma_map_single()
+> >        i2c: lpi2c: Use auto cleanup for dma_map_single()
+> >
+> >   drivers/i2c/busses/i2c-imx-lpi2c.c | 13 ++++---
+> >   include/linux/cleanup.h            | 73 ++++++++++++++++++++++++++++++++++++++
+> >   include/linux/dma-mapping.h        |  8 +++++
+> >   3 files changed, 87 insertions(+), 7 deletions(-)
+> > ---
+> > base-commit: 7c3ba4249a3604477ea9c077e10089ba7ddcaa03
+> > change-id: 20251008-dmamap_cleanup-d0a7f0525a3d
+> >
+> > Best regards,
+> > --
+> > Frank Li <Frank.Li@nxp.com>
+> >
+> >
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
+> 
 
