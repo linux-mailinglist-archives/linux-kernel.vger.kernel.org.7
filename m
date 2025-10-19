@@ -1,141 +1,103 @@
-Return-Path: <linux-kernel+bounces-859680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C3DBEE43E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 13:58:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FA6BEE442
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96803402545
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:58:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 162174E42F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3CA2E6CBF;
-	Sun, 19 Oct 2025 11:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DB82727ED;
+	Sun, 19 Oct 2025 12:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YQsfyzlB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZawG/+Ue"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC42022A1D5;
-	Sun, 19 Oct 2025 11:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA4D366;
+	Sun, 19 Oct 2025 12:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760875109; cv=none; b=eDr37Rf7ck9ZLTsGEa/e+LIw1WqpEATLJcnF4ye3BK0BTjRcUA03iJKwAUgZ4nsswBQ+1jyCSPnFGyLio1yL6tjoM8qa2DjnNXYhJ5UxBH1xeL000T+l4QgXBVe2pbCixImJrkl3DFrCUKvLAKZFqPueEZczmGtfdg36pw5uQ4A=
+	t=1760875269; cv=none; b=eix0MTV8GnCJZ01pjpL3UoNoB83Fd4Nskndqv274FIOwQJtwASDugWlZJsrT+Zn3ksp6bv7m4bnb1wloX+0Xlxy3b2fYfwrhWrqlFGzhzSeEYArimB666FBNndFSphPxVu4jyJtgZZs7gLhEtTi9SG+MqyDEsc6WWf5vr6f1A3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760875109; c=relaxed/simple;
-	bh=0tmg8uZi4aZuDPodcrxuOJU3I+GvuE1KL7HO4B2nsk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FE5rC41CJKE8m4IkijFi9hHRX24DvvHMVQ/8CtIcv1qeZKdA1a6aQHsGV+ftke87a7TRPDwH8gfiAsGSg+C6C+cXuXRkZQofa5hPOBNae6RKndc7k3QxkC5wleHptOIv1+q9Ca2woCaM0PD9p6BwiY2D+DRzaavdeIy6RkzjVNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YQsfyzlB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7BDEC4CEE7;
-	Sun, 19 Oct 2025 11:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760875108;
-	bh=0tmg8uZi4aZuDPodcrxuOJU3I+GvuE1KL7HO4B2nsk8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YQsfyzlBG+nqVKW+L0aVKbX41CErPbxLDcp1qu9kX9eIeIbGH7YuETkjXSDrOO4Jg
-	 r3K/gGazP1N40mqyz4q0l1ddtdcwDaHdq2YhGQiKIc790aBYStKv+C6MOz5ri4a8CS
-	 h3QKdmUdZS2BcdBLO5m2HJx4/49H31zSRkcMH2+Y=
-Date: Sun, 19 Oct 2025 13:58:25 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: [PATCH 5.15 000/276] 5.15.195-rc1 review
-Message-ID: <2025101906-spinner-neutron-0a9a@gregkh>
-References: <20251017145142.382145055@linuxfoundation.org>
- <CA+G9fYvRHXOJUfKqxj9MNA1ax1i2xCrazh0x9b3QvrXLm+N+qQ@mail.gmail.com>
+	s=arc-20240116; t=1760875269; c=relaxed/simple;
+	bh=wLrFfQpwX5AUQ4Kj9Hwv9ZUGP6NnwzbpnRrBBpfemSg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=oX2/yHb57hnbw/7LS/QNQrhDh2D99fL1F+Nwh8YfvcvaVXLUXdeLr3OjvLYjTRQMoy71V4Ueu+ZDIXD2XsWXVzjNlu8UflzHjLVTjVNgjzCqOGbX23t6TlaUgOdQN5E/fBzjdbbsZ5Pi1eX4p3WtyqqT8pk/K9k+XoT23/bp4GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZawG/+Ue; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5288FC4CEE7;
+	Sun, 19 Oct 2025 12:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760875268;
+	bh=wLrFfQpwX5AUQ4Kj9Hwv9ZUGP6NnwzbpnRrBBpfemSg=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=ZawG/+UeDCjvxPz3IEiLT2VWNi/cjkgmnXahV+otzDknn6x9tOZLVvidi9fOq2gmz
+	 fEPLc6j5nVSYJF8W0FIKM2NnwSc8V+O80LChD5RbOpfF8slDA5t1et3G553I3RSqes
+	 93/xNBk1/i4VhCzLAwmV6QjsPzW3gpAyVYRFchq62kEcnZvD4cAgPlKbDYaHEpXQ38
+	 ZqRuD1UfpolvZ+vXbTcm0Ab/GGuZZK/2juma2tSNxPyRwkZ0J5hgFe+S8EzyDfwsuR
+	 QovunS3QcRU9vMrz4BuS8Dw6B6zC6TwCLPB+lAqo5Zmdur2Jvw/sViqGG7rlcUHyq9
+	 LVNdyBefpdX9Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYvRHXOJUfKqxj9MNA1ax1i2xCrazh0x9b3QvrXLm+N+qQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 19 Oct 2025 14:01:03 +0200
+Message-Id: <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org>
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
+References: <20251003222729.322059-1-dakr@kernel.org>
+ <20251003222729.322059-4-dakr@kernel.org> <aPI9tNoh0I3KGDjl@google.com>
+ <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
+ <DDKOLD1897SY.84W93E6L8ITR@kernel.org> <aPSzE7DpA7DxTHmm@google.com>
+In-Reply-To: <aPSzE7DpA7DxTHmm@google.com>
 
-On Sat, Oct 18, 2025 at 02:38:46PM +0530, Naresh Kamboju wrote:
-> On Fri, 17 Oct 2025 at 21:16, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.15.195 release.
-> > There are 276 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.195-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> The S390 build failed on stable-rc 5.15.195-rc1 with gcc-12, gcc-8
-> and clang-21 due to following build warnings / errors.
-> 
-> ### Build error:
-> drivers/s390/cio/device.c: In function 'purge_fn':
-> drivers/s390/cio/device.c:1330:23: error: passing argument 1 of
-> 'spin_lock_irq' from incompatible pointer type
-> [-Werror=incompatible-pointer-types]
->  1330 |         spin_lock_irq(&sch->lock);
->       |                       ^~~~~~~~~~
->       |                       |
->       |                       spinlock_t ** {aka struct spinlock **}
-> In file included from drivers/s390/cio/device.c:16:
-> include/linux/spinlock.h:387:55: note: expected 'spinlock_t *' {aka
-> 'struct spinlock *'} but argument is of type 'spinlock_t **' {aka
-> 'struct spinlock **'}
->   387 | static __always_inline void spin_lock_irq(spinlock_t *lock)
->       |                                           ~~~~~~~~~~~~^~~~
-> drivers/s390/cio/device.c:1353:25: error: passing argument 1 of
-> 'spin_unlock_irq' from incompatible pointer type
-> [-Werror=incompatible-pointer-types]
->  1353 |         spin_unlock_irq(&sch->lock);
->       |                         ^~~~~~~~~~
->       |                         |
->       |                         spinlock_t ** {aka struct spinlock **}
-> include/linux/spinlock.h:412:57: note: expected 'spinlock_t *' {aka
-> 'struct spinlock *'} but argument is of type 'spinlock_t **' {aka
-> 'struct spinlock **'}
->   412 | static __always_inline void spin_unlock_irq(spinlock_t *lock)
->       |                                             ~~~~~~~~~~~~^~~~
-> cc1: some warnings being treated as errors
-> make[3]: *** [scripts/Makefile.build:289: drivers/s390/cio/device.o] Error 1
-> 
-> ### Suspecting patches
-> Suspecting commit,
-> 
->   s390/cio: Update purge function to unregister the unused subchannels
->   [ Upstream commit 9daa5a8795865f9a3c93d8d1066785b07ded6073 ]
-> 
-> 
-> Build regressions: 5.15.195-rc1: S390: cio/device.c:1330:23: error:
-> passing argument 1 of 'spin_lock_irq' from incompatible pointer type
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On Sun Oct 19, 2025 at 11:44 AM CEST, Alice Ryhl wrote:
+> On Fri, Oct 17, 2025 at 04:53:09PM +0200, Danilo Krummrich wrote:
+>> On Fri Oct 17, 2025 at 4:37 PM CEST, Danilo Krummrich wrote:
+>> > The reason I went with a trait is because that's consistent within the=
+ file.
+>> >
+>> > Otherwise, I don't mind one or the other. If we always want to use a s=
+truct, I'm
+>> > fine with that. :)
+>>=20
+>> Actually, there's another reason I forgot about since I sent the series.=
+ :)
+>>=20
+>> We need it because we derive it from blanket implementations:
+>>=20
+>> 	impl<T: BinaryWriter + Sync> BinaryReadFile<T> for T
+>> 	impl<T: BinaryReader + Sync> BinaryWriteFile<T> for T
+>> 	impl<T: BinaryWriter + BinaryReader + Sync> BinaryReadWriteFile<T> for =
+T
+>
+> You can still use a struct:
+>
+> struct BinaryWriterVtable<T: BinaryWriter + Sync>;
+>
+> impl<T: BinaryWriter + Sync> BinaryWriterVtable<T> {
+>     const VTABLE: bindings::foo =3D ...;
+> }
 
-Thanks for the report, I'll go drop this from all 3 queues now.
+Yeah, but do we get something for adding yet another type in this case?
 
-greg k-h
+Another point to consider is if we want a more generic fops abstraction typ=
+e.
+
+In any case, I'd like to add this as good first issue for the whole file to=
+ be
+changed accordingly.
 
