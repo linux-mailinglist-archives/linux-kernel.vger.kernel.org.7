@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-859804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A55BEEA54
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:52:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCB9BEEA5A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38F13B19FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A75189A1DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADC32E1F13;
-	Sun, 19 Oct 2025 16:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAE121D3DF;
+	Sun, 19 Oct 2025 16:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBO8wUWY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SU6ljADE"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4557536B;
-	Sun, 19 Oct 2025 16:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863661D63D8
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760892743; cv=none; b=sPY5TziplzFM7j99EmQ2Syzt+Ng5Y+w5xvD7cwiSb/gPlNpVIe/ERqUdOMmPe7p1CUjcPrE/LNTaCqSj1GOK5jvxFEDRNKVG44W4WBP7deBMO98FLwgR/ZSzAIVlxrJjTwUVv9KafFnJ7l9/tGwf/hHL1k4QWVBToGmbpQkL2FI=
+	t=1760892788; cv=none; b=Lm/EKRxdOwjlr4A69k343nrDmYu+MaMQb7pbq76G2oiQ13+v+J36eknRSvNTYiZ76BwHfC/r3oqui9ADQYP9nddWyCcy00WU2Yll65UqNH4vmYz3KM+ri+wNn0sjTnqhOeAMEvI6gcqKqv1rDd9tWzVA0ti03uLwl19A6ySWleA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760892743; c=relaxed/simple;
-	bh=iC2JnoyFPZTH+6RHQk2aI6S4dkacuBcn+z3P0Tadx+E=;
+	s=arc-20240116; t=1760892788; c=relaxed/simple;
+	bh=23EUBdHfMCYXpMwbyS2We3vtYQnfwSeqUa4lZN381hM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ByojJRtwzMmn++7wBE5nqo/uTyD7w3OKUVOtWcZGV/CxsRR1OlGDSElrPhSMAKk5jla6BRLh9Stop6Agn1zUbhVsxs7/pwWDm8kiIerRtwX1VrW6OkFEJNJRSEfSOcgbJeOkOUR2+DZ8FkyaD2hfhAWhfzob1lwfUW141smpl30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBO8wUWY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B10C4CEE7;
-	Sun, 19 Oct 2025 16:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760892742;
-	bh=iC2JnoyFPZTH+6RHQk2aI6S4dkacuBcn+z3P0Tadx+E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cBO8wUWYwkzmQNPxSyIko83RDdfnZRaYxhNHxRc4fJsO5LUrLNi8FrBKP6+08Nii9
-	 ULYt7ZxrNMcQE2xR23Vv1hObiLPaq5+9pXrfYRPiVZYYMTKKpiYBqDpFV78/ibB1rV
-	 VLZ908tqiYzVNjW72CODDbIe2IomQgAOnz3KXtp5Lut995d/J9qkyQSXUZKShKzpo3
-	 ZZlMVpm//FQwwYsWFtHbe6Bk/wHGUwNI15+SFlhRuqpFsOyEuJkwhmlojMpKI7hEx7
-	 kVq10mTCGALfO7T6+xwUpCo31Y2F+YbDCOoMUxhFvALWJKJWb7uZ3gOgb7GqV3ZvDJ
-	 Jk7xvXLeDtlkg==
-Message-ID: <9b2be593-8fc6-4089-bbb2-b8c496b1b2a4@kernel.org>
-Date: Sun, 19 Oct 2025 18:52:18 +0200
+	 In-Reply-To:Content-Type; b=BNWUaiTSR6yvwAJuysBVoUBQnRjD9vvuHrXz6sgSNGuVjvjvSM4u0vz/2lz3ViaMPrVe0VFQNuzl8rzJ+ILrzqfYXBDEXZVRuvbm72nYaC3Yv98/FdA5jMBUciZAgBFUyfd/sKarJWb9KMQSY55t0BUwWNTEtKNe4kp9E9XpmwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SU6ljADE; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42421b1514fso2247232f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760892784; x=1761497584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lbE6SCAQLzcg1gjx8GxCzgHZU4xUelZa5R3v9DxdFi0=;
+        b=SU6ljADE8iQu+TJWQlf3PV2vazc0XasUs10Qzfvg+XCG3S2c0KzYfcFCbuI9qhFbQY
+         JtngcR5k4if/2K/BgWMRuPwZIbJvBdrCGGzokG09ar1aiD4XUSLHO+aaqA4WrwAbL9go
+         /zZpzhvdJCZ9btjhSJu9YYm/M4TxqspbRSjsRPcKPOOfUiUty2X1CfSu4sJjaYhP99PN
+         nXDt2SXhDstaDYhkYKf8OCa4OLbI/3kO9Cc9HeE4cx9jGALLF5sUEwlsqb3lKtJk6dw/
+         ExzFZMTvJz3tNry2aKTeg5XrIAppdhaxiyLffzxxl8uAKrR2F8A/KM5oJQ+SLbCImUuN
+         CKWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760892784; x=1761497584;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lbE6SCAQLzcg1gjx8GxCzgHZU4xUelZa5R3v9DxdFi0=;
+        b=d1kmKSwhApMknKFmR6o6XRtzW292Iye+T8Rm9wbxNDcBsyawLDBrCii9xI7sMV4lXw
+         BgKMoLG9eEJ4F/M7ptpSj6sSnzUEUoES4i5zbiv3SvbyP2LMSJMgwT6TxFX5YFhmeYlE
+         Ewl8SVDfoFaAuba7+vyjq9GyRWxaCLNRZG0C1awUWdRkUC87ugNAXCmJLLchCO/B1Gwf
+         GTOKU2DVA7gga8a32PSIIxcPLyRh7U9leZV1ZU3kxDJ7wSAP64LM823icwFVJaD259Qb
+         lKBlR3+yiUGsj6teGB7Y9jI+d5M4mZfF2bdBDdpyXkghedxSdXFQHkPSXytSv6tKPws+
+         IR3A==
+X-Gm-Message-State: AOJu0YyzZJMx/Uq0Bbr2nfnzII3soRbSVfEr+VZIFwitV+7GCYJo47jH
+	+Umt1eg0Wb2a8jSPhygV690t749ja24xQVppkXj5fowwF9D0jIGNcrhD
+X-Gm-Gg: ASbGncs7DJ+d3lfWiu17RbdpOPsCU9hhYyBwgheQUWGpBY65DwcfVf8BNWakDOHpzBd
+	mJd83jERM37TL6V+BJhcyW1oODU/BlaPDQ59qvDvWqE2HEoi2JH/uQwS5jSimmMkZwo8Cq4c6U0
+	jDtr2GDSLmkYPuZFubb8V2qTjAHL7nwKJAiIvCB40WSBQHHTmsJfAytpvZ/ugo9RUPdsVzqMGDu
+	PIwE8y2YoYeDOe6W4tT57JlZjyyunPFm5zzFjSlsZZ+URBe4TZltiBuhxQOTORO5PSZ1MpY3hK4
+	WjcDyxksfk+wuThwxzfTiTsmbGlNbJRxr2wVBt2Bm1aok6PR08Q/AHQZlk0B6XgQOXtBmOyFEdJ
+	5Iu+TAT7NxCKAeod7NefbIQAm56gCiCa3+t81FKCkLHwdgu+14SjaSB/87FEfLrluaxD+gDnyF0
+	xwqoJwIEK7oa29zg==
+X-Google-Smtp-Source: AGHT+IHa+tYM7+bEYoZ/dHQ9a5gV6wMN8mOtIgaA0FkEaB0SKxokCb+se5AtNQGAf1lro1XNmBpTzQ==
+X-Received: by 2002:a05:6000:26cc:b0:425:7c1b:9344 with SMTP id ffacd0b85a97d-42704da4f10mr7060131f8f.15.1760892783416;
+        Sun, 19 Oct 2025 09:53:03 -0700 (PDT)
+Received: from [192.168.1.121] ([176.206.100.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce08asm10971289f8f.44.2025.10.19.09.53.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 09:53:02 -0700 (PDT)
+Message-ID: <78f9c831-0c0c-4497-9a77-0380e27cc616@gmail.com>
+Date: Sun, 19 Oct 2025 18:53:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,96 +81,282 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] arm64: dts: nuvoton: fix warning and nodes order
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250925200625.573902-1-tmaimon77@gmail.com>
- <20250925200625.573902-2-tmaimon77@gmail.com>
- <cc23d41d-6a5e-44d7-ad4b-1b39566dbce8@kernel.org>
- <CAP6Zq1i7repVa1oAVpyZxWw12-dv0MrVbkfXoqCKga+rp7=8LQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAP6Zq1i7repVa1oAVpyZxWw12-dv0MrVbkfXoqCKga+rp7=8LQ@mail.gmail.com>
+Subject: Re: [PATCH v14 5/9] platform/x86: asus-armoury: add core count
+ control
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mario Limonciello <superm1@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>, "Luke D . Jones" <luke@ljones.dev>
+Cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
+ Alok Tiwari <alok.a.tiwari@oracle.com>,
+ Derek John Clark <derekjohn.clark@gmail.com>,
+ Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
+References: <20251015014736.1402045-1-benato.denis96@gmail.com>
+ <20251015014736.1402045-6-benato.denis96@gmail.com>
+ <25bd0c90-2de0-ef66-c18d-661180b71fd4@linux.intel.com>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <25bd0c90-2de0-ef66-c18d-661180b71fd4@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/10/2025 16:30, Tomer Maimon wrote:
-> Hi Krzysztof,
-> 
-> Thanks for your comments
-> 
-> On Sun, 19 Oct 2025 at 13:35, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+On 10/17/25 14:48, Ilpo Järvinen wrote:
+> On Wed, 15 Oct 2025, Denis Benato wrote:
+>
+>> From: "Luke D. Jones" <luke@ljones.dev>
 >>
->> On 25/09/2025 22:06, Tomer Maimon wrote:
->>> Fix the warning in the gcr and timer nodes, and modify nodes order by
+>> Implement Intel core enablement under the asus-armoury module using the
+>> fw_attributes class.
 >>
->> What warning?
-> This warning that I got from Andrew mail
-> [I] 0 andrew@heihei ~/s/k/l/o/build.arm64.default ((00e2ab2e))> make
-> CHECK_DTBS=y nuvoton/nuvoton-npcm845-evb.dtb
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->   DTC [C] arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb
-> /home/andrew/src/
-> kernel.org/linux/origin/build.arm64.default/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb:
-> / (nuvoton,npcm845-evb): memory@0: 'device_type' is a required property
->         from schema $id: http://devicetree.org/schemas/memory.yaml#
+>> This allows users to enable or disable preformance or efficiency cores
+>> depending on their requirements. After change a reboot is required.
+>>
+>> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+>> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+>> ---
+>>  drivers/platform/x86/asus-armoury.c        | 258 ++++++++++++++++++++-
+>>  drivers/platform/x86/asus-armoury.h        |  28 +++
+>>  include/linux/platform_data/x86/asus-wmi.h |   5 +
+>>  3 files changed, 290 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+>> index 3b49a27e397d..3d963025d84e 100644
+>> --- a/drivers/platform/x86/asus-armoury.c
+>> +++ b/drivers/platform/x86/asus-armoury.c
+>> @@ -45,13 +45,49 @@
+>>  #define ASUS_MINI_LED_2024_STRONG 0x01
+>>  #define ASUS_MINI_LED_2024_OFF    0x02
+>>  
+>> +#define ASUS_POWER_CORE_MASK	GENMASK(15, 8)
+>> +#define ASUS_PERF_CORE_MASK		GENMASK(7, 0)
+>> +
+>> +enum cpu_core_type {
+>> +	CPU_CORE_PERF = 0,
+>> +	CPU_CORE_POWER,
+>> +};
+>> +
+>> +enum cpu_core_value {
+>> +	CPU_CORE_DEFAULT = 0,
+> This could be mapped in the sysfs _show function as there's no real 
+> backing value for it.
 
+It is also used in a store function called by both _stores and
+I wouldn't like the idea of transforming it in a u32 given
+the importance of data to be correct in this specific interface.
 
-Commit msg should explain that. See git history how to add such
-information to the commit msg.
+The last thing I want is making device unbootable because
+I missed a CPU_CORE_PERF vs CPU_CORE_POWER or because
+I misremember while changing the code that CORE_PERF means
+performance and CORE_POWER means efficiency
+(and it took me a minute to get this spelled right in this email).
 
-Anyway, all other comments stay valid and I expect improved/different fixes.
+>> +	CPU_CORE_MIN,
+>> +	CPU_CORE_MAX,
+>> +	CPU_CORE_CURRENT,
+>> +};
+>> +
+>> +#define CPU_PERF_CORE_COUNT_MIN 4
+>> +#define CPU_POWR_CORE_COUNT_MIN 0
+>> +
+>> +/* Tunables provided by ASUS for gaming laptops */
+>> +struct cpu_cores {
+>> +	u32 cur_perf_cores;
+>> +	u32 min_perf_cores;
+>> +	u32 max_perf_cores;
+>> +	u32 cur_power_cores;
+>> +	u32 min_power_cores;
+>> +	u32 max_power_cores;
+>> +};
+>> +
+>>  static struct asus_armoury_priv {
+>>  	struct device *fw_attr_dev;
+>>  	struct kset *fw_attr_kset;
+>>  
+>> +	struct cpu_cores *cpu_cores;
+>>  	u32 mini_led_dev_id;
+>>  	u32 gpu_mux_dev_id;
+>> -} asus_armoury;
+>> +	/*
+>> +	 * Mutex to prevent big/little core count changes writing to same
+>> +	 * endpoint at the same time. Must lock during attr store.
+>> +	 */
+>> +	struct mutex cpu_core_mutex;
+>> +} asus_armoury = {
+>> +	.cpu_core_mutex = __MUTEX_INITIALIZER(asus_armoury.cpu_core_mutex)
+>> +};
+>>  
+>>  struct fw_attrs_group {
+>>  	bool pending_reboot;
+>> @@ -93,6 +129,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+>>  static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+>>  {
+>>  	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+>> +	       !strcmp(attr->attr.name, "cores_performance") ||
+>> +	       !strcmp(attr->attr.name, "cores_efficiency") ||
+>>  	       !strcmp(attr->attr.name, "panel_hd_mode");
+>>  }
+>>  
+>> @@ -171,6 +209,12 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
+>>  	return sysfs_emit(buf, "enumeration\n");
+>>  }
+>>  
+>> +static ssize_t int_type_show(struct kobject *kobj, struct kobj_attribute *attr,
+>> +			     char *buf)
+>> +{
+>> +	return sysfs_emit(buf, "integer\n");
+>> +}
+>> +
+>>  /* Mini-LED mode **************************************************************/
+>>  static ssize_t mini_led_mode_current_value_show(struct kobject *kobj,
+>>  						struct kobj_attribute *attr, char *buf)
+>> @@ -474,6 +518,207 @@ static ssize_t apu_mem_possible_values_show(struct kobject *kobj, struct kobj_at
+>>  }
+>>  ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM (in GB) for the APU to use");
+>>  
+>> +static int init_max_cpu_cores(void)
+>> +{
+>> +	u32 cores;
+>> +	int err;
+>> +
+>> +	asus_armoury.cpu_cores = kzalloc(sizeof(struct cpu_cores), GFP_KERNEL);
+>> +	if (!asus_armoury.cpu_cores)
+>> +		return -ENOMEM;
+>> +
+>> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	if ((cores & ASUS_WMI_DSTS_PRESENCE_BIT) == 0) {
+>> +		pr_err("ACPI does not support CPU core count control\n");
+>> +		err = -ENODEV;
+>> +		goto init_max_cpu_cores_err;
+> Please use __free() and return immediately.
+>
+> Only assign from local variable to asus_armoury.cpu_cores with 
+> no_free_ptr() at the end.
+>
+>> +	}
+>> +
+>> +	asus_armoury.cpu_cores->max_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
+>> +	asus_armoury.cpu_cores->max_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
+>> +
+>> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
+>> +	if (err) {
+>> +		pr_err("Could not get CPU core count: error %d\n", err);
+>> +		goto init_max_cpu_cores_err;
+>> +	}
+>> +
+>> +	asus_armoury.cpu_cores->cur_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
+>> +	asus_armoury.cpu_cores->cur_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
+>> +
+>> +	asus_armoury.cpu_cores->min_perf_cores = CPU_PERF_CORE_COUNT_MIN;
+>> +	asus_armoury.cpu_cores->min_power_cores = CPU_POWR_CORE_COUNT_MIN;
+> Should these be bounds checked with max?
+>
+>> +	return 0;
+>> +
+>> +init_max_cpu_cores_err:
+>> +	kfree(asus_armoury.cpu_cores);
+>> +	return err;
+>> +}
+>> +
+>> +static ssize_t cores_value_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf,
+>> +				enum cpu_core_type core_type, enum cpu_core_value core_value)
+>> +{
+>> +	u32 cores;
+>> +
+>> +	switch (core_value) {
+>> +	case CPU_CORE_DEFAULT:
+>> +	case CPU_CORE_MAX:
+>> +		if (core_type == CPU_CORE_PERF)
+>> +			return sysfs_emit(buf, "%u\n",
+>> +					  asus_armoury.cpu_cores->max_perf_cores);
+>> +		else
+>> +			return sysfs_emit(buf, "%u\n",
+>> +					  asus_armoury.cpu_cores->max_power_cores);
+>> +	case CPU_CORE_MIN:
+>> +		if (core_type == CPU_CORE_PERF)
+>> +			return sysfs_emit(buf, "%u\n",
+>> +					  asus_armoury.cpu_cores->min_perf_cores);
+>> +		else
+>> +			return sysfs_emit(buf, "%u\n",
+>> +					  asus_armoury.cpu_cores->min_power_cores);
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	if (core_type == CPU_CORE_PERF)
+>> +		cores = asus_armoury.cpu_cores->cur_perf_cores;
+>> +	else
+>> +		cores = asus_armoury.cpu_cores->cur_power_cores;
+> Why isn't this inside the switch?? The logic in this function looks very 
+> mixed up.
+>
+> If I'd be you, I'd consider converting the asus_armoury.cpu_cores to a 
+> multi-dimensional array. It would make this just bounds checks and one 
+> line to get the data.
+>
+>> +	return sysfs_emit(buf, "%u\n", cores);
+>> +}
+>> +
+>> +static ssize_t cores_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
+>> +					 const char *buf, enum cpu_core_type core_type)
+>> +{
+>> +	u32 new_cores, perf_cores, power_cores, out_val, min, max;
+>> +	int result, err;
+>> +
+>> +	result = kstrtou32(buf, 10, &new_cores);
+>> +	if (result)
+>> +		return result;
+>> +
+>> +	scoped_guard(mutex, &asus_armoury.cpu_core_mutex) {
+>> +		if (core_type == CPU_CORE_PERF) {
+>> +			perf_cores = new_cores;
+>> +			power_cores = asus_armoury.cpu_cores->cur_power_cores;
+>> +			min = asus_armoury.cpu_cores->min_perf_cores;
+>> +			max = asus_armoury.cpu_cores->max_perf_cores;
+>> +		} else {
+>> +			perf_cores = asus_armoury.cpu_cores->cur_perf_cores;
+>> +			power_cores = new_cores;
+>> +			min = asus_armoury.cpu_cores->min_power_cores;
+>> +			max = asus_armoury.cpu_cores->max_power_cores;
+>> +		}
+>> +
+>> +		if (new_cores < min || new_cores > max)
+>> +			return -EINVAL;
+>> +
+>> +		out_val = FIELD_PREP(ASUS_PERF_CORE_MASK, perf_cores) |
+>> +			FIELD_PREP(ASUS_POWER_CORE_MASK, power_cores);
+>> +
+>> +		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, out_val, &result);
+>> +		if (err) {
+>> +			pr_warn("Failed to set CPU core count: %d\n", err);
+>> +			return err;
+>> +		}
+>> +
+>> +		if (result > 1) {
+>> +			pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
+>> +			return -EIO;
+>> +		}
+>> +	}
+>> +
+>> +	pr_info("CPU core count changed, reboot required\n");
+> This interface has a problematic behavior. If user wants to adjust both 
+> core counts one after another (without reboot in between), the new value 
+> of the first core count will be overwritten on the second store.
+>
+> You might have to store also the value that will be used after the next 
+> boot to solve it but how the divergence should be presented to user is 
+> another question to which I don't have a good answer.
+>
+> This seems a more general problem, that is, how to represent values which 
+> are only enacted after booting (current vs to-be-current) as it doesn't 
+> fit to the current, min, max, possible_values, type model.
+>
+>
+I will propose a possible solution in v15 very soon that will hopefully
+satisfy both kernel requirements and safety requirements.
 
-You don't sprinkle random compatibles because someone or something told
-you, right?
-
-Best regards,
-Krzysztof
+Thank you,
+Denis
 
