@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-859586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9877BEE05E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:11:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1B5BEE082
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96B69189CD42
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99042189EB2E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C0122ACE3;
-	Sun, 19 Oct 2025 08:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccTdEhIo"
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDE0225416;
+	Sun, 19 Oct 2025 08:15:31 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2719D22836C
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C0715278E;
+	Sun, 19 Oct 2025 08:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760861464; cv=none; b=bCRGXCcRUIWnSA5hoo61HVJFxhBAS2V5XqgL5NvzLviv2aiwErKhOZOVfzdpSozUVujlH77eoCubilVjTME0Ic3vHTpoz9fBpuhxTV9u/RSFcqblB6k09MPuuOEXTKrRBeyb/Wx9rUU+6A/dqiW7rDXniT9BjOEgk7TBRegmm3M=
+	t=1760861731; cv=none; b=GFvTopzionBHHGJV9ltapW63H369fqFxuSeaq91vOM1hQmznkFdHTlZb9jSxYSfqv74EUEJ2AlShg6uYiXGUVgSlOlkeSkPYX4w9M58WFQeBZVbFwcpHdUTr92QknKzxFRN2z7iphkbfLDvCcOUVX46MLFluPH3JvPyVvkWecQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760861464; c=relaxed/simple;
-	bh=0JD5EhU3dMvt2TzDGGngYx4VWjKCENlPlTrXXievwr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hJm9VnC0K0rJxXUkvx8veGGyn3W+wTE3l2gYqtGQ0ybm5JBtQbPjtaxH2B/JFfQEDDu6QEfJH6PkSlTZUO1V4BVwtWPhfnZ/+z/IFwiwVX9ouZCjKmQwOSC2BN1plExZLpluZYWKVNfULnx3jTYP8z7+1G79BdzeLfsDwqPbNvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccTdEhIo; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-6353e91a04aso3531565d50.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 01:11:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760861461; x=1761466261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0JD5EhU3dMvt2TzDGGngYx4VWjKCENlPlTrXXievwr0=;
-        b=ccTdEhIopdhypwI8L3JBil5M4STne8SmRaQFfCBM02l9LkTDCeY07VksMZS734XIYW
-         fSr9E0vMaFgWvM5hpUfvHCdQwXqN1rLdg7uGpCmcE1a8p73wsSFiGM9KgaCUVorU2bB4
-         QXlk0k/rKjfCpslj0HWJBncYE9y9o12Mjtf9KUBJxsuzUFBzDISvTP/UdlOzuowk2O9I
-         i6m0bPW8oTEyUXCgLGFGHisuLGD8VhQ1MKnYlEu61P8OxgXOJsE/nO9c7FNSYyLg97yE
-         4ySn5cXO9k6TDK22f8AGkED3Ks52VuOYFicnSfjIjvJlszMjZfsukHxg61ULY8iC4TUN
-         9kxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760861461; x=1761466261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0JD5EhU3dMvt2TzDGGngYx4VWjKCENlPlTrXXievwr0=;
-        b=TBKY8OWbGdZVQoE1LG1rLVvPie0NwI1YKRwDZaRXShwXyr/3QlOu08gtToRJxtslYs
-         ueAjFMOZTaJE+Lsk6E1wJcpjZTT0WAiVij1AN0LUUKzUmgec6MYnb6W86Y8yf9/uS5Uy
-         8fWBq+3coqhW6BPatdWaf5B5uO5SfXfPCWfX2AIbYnl0snYIxUtKHiM+U6IT8i6SB1YR
-         Wu0F5GclHMDzdzdofqYVPqgr5v+cKga9zbvd5Y2dOgMYGDA1qkGDaBZGyLWKG0Q+zbjY
-         pXTFoT9u1GFE+il3hzmJDAk45gIMhUAbqDgYXSqcicrji1NveN5ZexxYbNUEH0xl24rl
-         lhKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUS20XWVxu7Ob2goelA8UgsCPjtr9810+qVdko6anVeYkTobN2irO2d1jyZPBPaL9HIgzKrgLGVot55014=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtGvmCIAx1iEBe+UfFKmkuLGNmj7vECnMQ4oKX7sCemIqGuc9G
-	637FSiC2hrxVWkro5gRZ2OIrH4VEe/wYPOaY6elJXVF5KMv1Tdcca5qzfDQxEAZ1t1jWVsejJib
-	Gwk9gyQKotoqifbGyHbj8L6Ygtgnlkjg=
-X-Gm-Gg: ASbGncuprGpuWBHNQ7gi1CeGm+YfhhmiWRMY2yabBI5gfRSTuZIFvxGLqLgcBbsKel1
-	UlaxRFyUBCzYDYoDQHLafXMwpmHIxySp/w0QJIGViPPHqp8VjBd2ShLfjBeISCdn78nNK7yjhJa
-	yTalHaY7xcDN2LV/R2U6NeRIJp8edGTs6KeLsHKSAhxst1HFIGXVZmg+pd7RMCddA3vka4+9IDs
-	7Ql5UuTWA64nTAgt0CIk6VaLr3UE/QT4XoivwkSP9sPbWmpdQgSB6CsyvDLul8LTaI5uZ5dxOo=
-X-Google-Smtp-Source: AGHT+IEDp/usYEtVSaz10lwwm2/rh8YYcBuxag2F0nuBjSfSMoio/EijPl9t2f1PGKCDHr/mRoxnx6oC2CKJ7h3r2Ic=
-X-Received: by 2002:a05:690c:31e:b0:782:9037:1491 with SMTP id
- 00721157ae682-7837780ba2dmr109813007b3.42.1760861461100; Sun, 19 Oct 2025
- 01:11:01 -0700 (PDT)
+	s=arc-20240116; t=1760861731; c=relaxed/simple;
+	bh=aX/H9n97rQbaScCyEvKZw1ydUai9eBgQOEtmq1PJbiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEHjF+FR2NNHg72D55ndyL1dvu+qMMqhoIL3SCs/L7CnixfRq7+sFknGEeMlGLUKBCNuR8SWs97UJb/jLZQvXnUzR8NfwAlxmgcqRPD6JyhSyMzisiBRIFvOnoHX2y9rxFecs4+pUFzmAe3o1Fnxcl8ZKwUNY3D8p+s3FpSnA28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id E146F2009194;
+	Sun, 19 Oct 2025 10:15:19 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id C3FB74A12; Sun, 19 Oct 2025 10:15:19 +0200 (CEST)
+Date: Sun, 19 Oct 2025 10:15:19 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: bhelgaas@google.com, alex.williamson@redhat.com,
+	pasha.tatashin@soleen.com, dmatlack@google.com, jgg@ziepe.ca,
+	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
+	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com,
+	parav@nvidia.com, saeedm@nvidia.com, kevin.tian@intel.com,
+	jrhilke@google.com, david@redhat.com, jgowans@amazon.com,
+	dwmw2@infradead.org, epetron@amazon.de, junaids@google.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 15/21] PCI: Make PCI saved state and capability
+ structs public
+Message-ID: <aPSeF_QiUWnhKIma@wunner.de>
+References: <20251018000713.677779-1-vipinsh@google.com>
+ <20251018000713.677779-16-vipinsh@google.com>
+ <aPM_DUyyH1KaOerU@wunner.de>
+ <20251018223620.GD1034710.vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202010844.144356-16-ebiggers@kernel.org> <20251019060845.553414-1-safinaskar@gmail.com>
-In-Reply-To: <20251019060845.553414-1-safinaskar@gmail.com>
-From: Askar Safin <safinaskar@gmail.com>
-Date: Sun, 19 Oct 2025 11:10:25 +0300
-X-Gm-Features: AS18NWAhDVf2aU8hB0qWERPwO9zi-ils_dPukaoQchmqqRauvEb3B93Zz-69KFg
-Message-ID: <CAPnZJGAb7AM4p=HdsDhYcANCzD8=gpGjuP4wYfr2utLp3WMSNQ@mail.gmail.com>
-Subject: Re: [PATCH v4 15/19] lib/crc32: make crc32c() go directly to lib
-To: ebiggers@kernel.org
-Cc: ardb@kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018223620.GD1034710.vipinsh@google.com>
 
-On Sun, Oct 19, 2025 at 9:09=E2=80=AFAM Askar Safin <safinaskar@gmail.com> =
-wrote:
->
-> Eric Biggers <ebiggers@kernel.org>:
-> > Now that the lower level __crc32c_le() library function is optimized fo=
-r
->
-> This patch (i. e. 38a9a5121c3b ("lib/crc32: make crc32c() go directly to =
-lib"))
-> solves actual bug I found in practice. So, please, backport it
-> to stable kernels.
+On Sat, Oct 18, 2025 at 03:36:20PM -0700, Vipin Sharma wrote:
+> On 2025-10-18 09:17:33, Lukas Wunner wrote:
+> > On Fri, Oct 17, 2025 at 05:07:07PM -0700, Vipin Sharma wrote:
+> > > Move struct pci_saved_state{} and struct pci_cap_saved_data{} to
+> > > linux/pci.h so that they are available to code outside of the PCI core.
+> > > 
+> > > These structs will be used in subsequent commits to serialize and
+> > > deserialize PCI state across Live Update.
+> > 
+> > That's not sufficient as a justification to make these public in my view.
+> > 
+> > There are already pci_store_saved_state() and pci_load_saved_state()
+> > helpers to serialize PCI state.  Why do you need anything more?
+> > (Honest question.)
+> 
+> In LUO ecosystem, currently,  we do not have a solid solution to do
+> proper serialization/deserialization of structs along with versioning
+> between different kernel versions. This work is still being discussed.
+> 
+> Here, I created separate structs (exactly same as the original one) to
+> have little bit control on what gets saved in serialized state and
+> correctly gets deserialized after kexec.
+> 
+> For example, if I am using existing structs and not creating my own
+> structs then I cannot just do a blind memcpy() between whole of the PCI state
+> prior to kexec to PCI state after the kexec. In the new kernel
+> layout might have changed like addition or removal of a field.
 
-Oops. I just noticed that this patch removes module "libcrc32c".
-And this breaks build for Debian kernel v6.12.48.
-Previously I tested minimal build using "make localmodconfig".
-Now I tried full build of Debian kernel using "dpkg-buildpackage".
-And it failed, because some of Debian files reference "libcrc32c",
-which is not available.
+The last time we changed those structs was in 2013 by fd0f7f73ca96.
+So changes are extremely rare.
 
-So, please, don't backport this patch to stable kernels.
-I'm sorry.
+What could change in theory is the layout of the individual
+capabilities (the data[] in struct pci_cap_saved_data).
+E.g. maybe we decide that we need to save an additional register.
+But that's also rare.  Normally we add all the mutable registers
+when a new capability is supported and have no need to amend that
+afterwards.
 
+So I think you're preparing for an eventuality that's very unlikely
+to happen.  Question is whether that justifies the additional
+complexity and duplication.  (Probably not.)
 
+Note that struct pci_cap_saved_state was made private in 2021 by
+f0ab00174eb7.  We try to prevent other subsystems or drivers fiddling
+with structures internal to the PCI core.  For LUO to find acceptance,
+it needs to respect subsystems' desire to keep private what's private
+and it needs to be as non-intrusive as possible.  If necessary,
+helpers needed by LUO (e.g. to determine the size of saved PCI state)
+should probably live in the PCI core and be #ifdef'ed to LUO being enabled.
 
---=20
-Askar Safin
+Thanks,
+
+Lukas
 
