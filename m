@@ -1,133 +1,187 @@
-Return-Path: <linux-kernel+bounces-859512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077A2BEDDEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC9EBEDDEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D2718A028D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 03:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6324E3A3296
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 03:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4901F5825;
-	Sun, 19 Oct 2025 03:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667BD1EF09B;
+	Sun, 19 Oct 2025 03:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XJIOxvrb"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cl7Bx6o1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF07354AFF;
-	Sun, 19 Oct 2025 03:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B033D354AFF;
+	Sun, 19 Oct 2025 03:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760843135; cv=none; b=rx89sG+L7mkYEQ/ioJHV52uzSBjkMj+OzPYHRaB6hYtNf3cX/U+Z+CVlyCC9lb++0Tc/IZjT7sFOW7KapiBq/s/8qpGE3RC6ccvP3y/72Y2FOF6SyXkxuDc6XzQWxgfow4zcuvmNbf0GAtQMiC/DnI/MOnFYbiD9OqvyJbarPXI=
+	t=1760843123; cv=none; b=tegnNGFqFiSj6/8UPEe8hYgjqlzM2at8vk3hWLCxe8cgIUdFAjz+5GxwOHlArX0WwkKGyISW+3icimUzkd1CoQ63sByS/RX6cV/yGhCrCOnKrYj+kdDzaqmB/0PcuNq6zECGHeKjlBO9n6ZFfXI/x+6YHth7JaNxo0591/nl65k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760843135; c=relaxed/simple;
-	bh=+uOoL1vlxxpS/45krQtIWa2qVyqOXUtLHu9Rd543pCY=;
+	s=arc-20240116; t=1760843123; c=relaxed/simple;
+	bh=9o9O9kFzULuQMA47+02lmYPnOnyhKOLV0LUaGS8NwHE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifh429jFYyk/qzd9BZ/7gJbOScAa3jz0223dkfRHYoU882z0rCYy+NmKJIfUX1+KrPiVjbsF3RAdPVy3dIUnafPpsF8q/Hf6z4TGy85S4OKNdy8G0u+v9mlB/s3T0b9rWuMcETGHjMWD96MHCRDdPd6oBawimiro+lieyFsE/ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XJIOxvrb; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 66EAB2609F;
-	Sun, 19 Oct 2025 05:05:24 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id gSLwu857owtb; Sun, 19 Oct 2025 05:05:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1760843123; bh=+uOoL1vlxxpS/45krQtIWa2qVyqOXUtLHu9Rd543pCY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XJIOxvrb8FBUhmDA92mtUgGu+jh3ZgHMJcM0byW1uWAcZkv5fb6cjr7aOz8iwUIEQ
-	 Qi8Omcvm8FzH8NyUoZ277tMoZbdBSy8U/EWv3g8+lgbGlocdxJUVlo3Yj4VXisGVIj
-	 eaF+tmwIKvEBhSjgA9TQ0hmB2lZWio44IRT8QVHeuoPS6dQUIaM2ELK3MCZNljnUBp
-	 DCpmQjXhd3k1QyiPdXKhJFzL8Wg8i55hBLmKid2GddR5AO2JnwUlyJAAkmRMhfGvqx
-	 OmRv4Vw4ShrOp2Bx1AsVjdPdt3fe2DJqBwl/AZUON3x0D+SaL2J9sxx5jRl0Mm6F/V
-	 KLX7151SP580w==
-Date: Sun, 19 Oct 2025 03:05:03 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Frank <Frank.Sae@motor-comm.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
-	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] net: stmmac: Add glue driver for Motorcomm
- YT6801 ethernet controller
-Message-ID: <aPRVTvANvwLPrBnG@pie>
-References: <20251014164746.50696-2-ziyao@disroot.org>
- <20251014164746.50696-5-ziyao@disroot.org>
- <f1de6600-4de9-4914-95e6-8cdb3481e364@lunn.ch>
- <aPJMsNKwBYyrr-W-@pie>
- <81124574-48ab-4297-9a74-bba7df68b973@lunn.ch>
- <aPNM1jeKfMPNsO4N@pie>
- <cc564a19-7236-40d4-bf3c-6a24f7d00bec@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J41frGGx1paEEuUjN5jQpWb74JgBNQ8EXgPPq967uc16mCpdeaAmmdFo2+NOOrfvd4AwGaUdMHq78elnxRXVAST2ufFjpy5UNMmB+Utd4sX/kZ/6/KpLEEtLegLvzh31DGeSEu4faD3ZW9n6q9Pd2b+Bl4PzxlaWqEOImdvYpI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cl7Bx6o1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD4BC4CEFE;
+	Sun, 19 Oct 2025 03:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760843123;
+	bh=9o9O9kFzULuQMA47+02lmYPnOnyhKOLV0LUaGS8NwHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cl7Bx6o1/F98Aq1CkDwk0bIGZ0yxz507ZMsuE3tySTDPmzvG/ZaQoeSbCMcVmZsXd
+	 4r9tIz9obvfLbnVUn8vyHFBrExuBXXELCt/9JUl/2iAkl/1VGb+BVfCNAyW+M11+C9
+	 vlXJL8EoiyFtfzrcii+AVF5yn96pz2K6HDDOzTnTK6AbTkPyJLKG63CPD5S0SG2q5z
+	 E9DExdAGRssYts3XL4l3RE3NPqCm/GDfrdYDfspKzuAJHn5GbJItcNcxtjp/BMYZLQ
+	 bqnJAd4gyqds2mHy1c9GFLMv863TKip323zsLGuP+YCTXubdn69ja4CxMWrO3el+s9
+	 NnS6mpVNQYPJQ==
+Date: Sun, 19 Oct 2025 12:05:17 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: tanze <tanze@kylinos.cn>
+Cc: james.clark@linaro.org, leo.yan@linux.dev, irogers@google.com,
+	john.g.garry@oracle.com, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	graham.woodward@arm.com, mike.leach@linaro.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>
+Subject: Re: [PATCH v2] perf arm_spe: Add a macro definition to handle offset
+ value
+Message-ID: <aPRVbfadB0mCGP4t@google.com>
+References: <20251016083019.27935-1-tanze@kylinos.cn>
+ <20251017021540.45930-1-tanze@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cc564a19-7236-40d4-bf3c-6a24f7d00bec@lunn.ch>
+In-Reply-To: <20251017021540.45930-1-tanze@kylinos.cn>
 
-On Sat, Oct 18, 2025 at 04:53:04PM +0200, Andrew Lunn wrote:
-> > > I was also wondering about all the other parameters you set. Why have
-> > > i not seen any other glue driver with similar code? What makes this
-> > > glue driver different?
-> > 
-> > Most glue drivers are for SoC-integrated IPs, for which
-> > stmmac_pltfr_probe() helper could be used to retrieve configuration
-> > arguments from devicetree to fill plat_stmmacenet_data. However, YT6801
-> > is a PCIe-based controller, and we couldn't rely on devicetree to carry
-> > these parameters.
-> > 
-> > You could find similar parameter setup code in stmmac_pltfr_probe(), and
-> > also other glue drivers for PCIe-based controllers, like dwmac-intel.c
-> > (intel_mgbe_common_data) and dwmac-loongson.c (loongson_default_data).
+Hello,
+
+On Fri, Oct 17, 2025 at 10:15:40AM +0800, tanze wrote:
+> Add a macro definition SPE_SYNTH_ID_OFFSET to handle the offset value
+> and improve readability.
 > 
-> Is there anything common with these two drivers? One of the problems
-> stmmac has had in the past is that glue driver writers just
-> copy/paste, rather than refactor other glue drivers to share code.  If
-> there is shared code, maybe move it into stmmac_pci.c as helpers?
+> Signed-off-by: tanze <tanze@kylinos.cn>
 
-I don't think there's code that could be shared. Parameters configured
-in plat(.{dma_cfg,axi}) are mostly hardware-details and dependent on
-synthesis parameters, making them repeat less across drivers, e.g.
-dwmac-loongson.c configures no AXI parameter, while
-intel_mgbe_common_data() configures axi_blen as up to 16, but the
-motorcomm controller is capable of burst length up to 32.
+I'm adding relevant folks to CC.
 
-Another example is the rx/tx queue number (plat.{rx,tx}_queues_to_use),
-which even varies among different controllers supported by dwmac-intel.c
+Thanks,
+Namhyung
 
-Maybe the most common part among these argument setup routines is the
-allocation of plat_stmmacenet_data and its members, but I doubt whether
-extracting this part out as a routine helps much for maintenance.
-
-But outside of plat_stmmacenet_data setup code, there is some code
-duplicated across PCIe controller drivers and could be effectively
-re-used. dwmac-intel.c, dwmac-loongson.c and stmmac_pci.c have the
-same implementation for platform suspend/resume routines
-(plat_stmmacenet_data.{suspend,resume}). I could send a series to
-extract this part out, and re-use the common routine in the motorcomm
-glue driver as well, though we still need to define a new function to
-addtionally deassert EPHY_RESET.
-
-> 	Andrew
-
-Best regards.
-Yao Zi
+> ---
+> Hi, Leo Yan
+> 
+> Thank you for your guidance and suggestions. I have made revisions according to your requirements. 
+> Do you have any further suggestions?
+> ---
+> Changes in v2:
+> - Migrate the macro definitions to the synthetic-events.h file
+> - Add modifications to other source files that use the offset value
+> ---
+>  tools/perf/util/arm-spe.c          | 2 +-
+>  tools/perf/util/cs-etm.c           | 2 +-
+>  tools/perf/util/intel-bts.c        | 2 +-
+>  tools/perf/util/intel-pt.c         | 2 +-
+>  tools/perf/util/powerpc-vpadtl.c   | 3 ++-
+>  tools/perf/util/synthetic-events.h | 2 ++
+>  6 files changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> index 71be979f5077..b082cb1666a6 100644
+> --- a/tools/perf/util/arm-spe.c
+> +++ b/tools/perf/util/arm-spe.c
+> @@ -1732,7 +1732,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
+>  	attr.sample_period = spe->synth_opts.period;
+>  
+>  	/* create new id val to be a fixed offset from evsel id */
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
+>  
+>  	if (!id)
+>  		id = 1;
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index 30f4bb3e7fa3..46902f7b69f1 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -1726,7 +1726,7 @@ static int cs_etm__synth_events(struct cs_etm_auxtrace *etm,
+>  	attr.read_format = evsel->core.attr.read_format;
+>  
+>  	/* create new id val to be a fixed offset from evsel id */
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
+>  
+>  	if (!id)
+>  		id = 1;
+> diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+> index 3625c6224750..98b928eca724 100644
+> --- a/tools/perf/util/intel-bts.c
+> +++ b/tools/perf/util/intel-bts.c
+> @@ -777,7 +777,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
+>  	attr.sample_id_all = evsel->core.attr.sample_id_all;
+>  	attr.read_format = evsel->core.attr.read_format;
+>  
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
+>  	if (!id)
+>  		id = 1;
+>  
+> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> index 9b1011fe4826..4fb9600a7369 100644
+> --- a/tools/perf/util/intel-pt.c
+> +++ b/tools/perf/util/intel-pt.c
+> @@ -3987,7 +3987,7 @@ static int intel_pt_synth_events(struct intel_pt *pt,
+>  	attr.sample_id_all = evsel->core.attr.sample_id_all;
+>  	attr.read_format = evsel->core.attr.read_format;
+>  
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
+>  	if (!id)
+>  		id = 1;
+>  
+> diff --git a/tools/perf/util/powerpc-vpadtl.c b/tools/perf/util/powerpc-vpadtl.c
+> index 39a3fb3f1330..5ce5d2bf4c6c 100644
+> --- a/tools/perf/util/powerpc-vpadtl.c
+> +++ b/tools/perf/util/powerpc-vpadtl.c
+> @@ -15,6 +15,7 @@
+>  #include "powerpc-vpadtl.h"
+>  #include "sample.h"
+>  #include "tool.h"
+> +#include "util/synthetic-events.h"
+>  
+>  /*
+>   * Structure to save the auxtrace queue
+> @@ -656,7 +657,7 @@ powerpc_vpadtl_synth_events(struct powerpc_vpadtl *vpa, struct perf_session *ses
+>  	attr.config = PERF_SYNTH_POWERPC_VPA_DTL;
+>  
+>  	/* create new id val to be a fixed offset from evsel id */
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
+>  	if (!id)
+>  		id = 1;
+>  
+> diff --git a/tools/perf/util/synthetic-events.h b/tools/perf/util/synthetic-events.h
+> index ee29615d68e5..c8a1fe7a3fa4 100644
+> --- a/tools/perf/util/synthetic-events.h
+> +++ b/tools/perf/util/synthetic-events.h
+> @@ -39,6 +39,8 @@ enum perf_record_synth {
+>  };
+>  #define PERF_SYNTH_ALL  (PERF_SYNTH_MAX - 1)
+>  
+> +#define PERF_SYNTH_EVENT_ID_OFFSET	(1000000000ULL)
+> +
+>  int parse_synth_opt(char *str);
+>  
+>  typedef int (*perf_event__handler_t)(const struct perf_tool *tool, union perf_event *event,
+> -- 
+> 2.25.1
+> 
 
