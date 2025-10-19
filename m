@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-859599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1CABEE10A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:46:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11E3BEE116
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334C63E3328
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:46:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93C744E3300
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E5229E0F6;
-	Sun, 19 Oct 2025 08:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7955C29BDB6;
+	Sun, 19 Oct 2025 08:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IJVgo4VR"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQvv/Is0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FB011713
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA5A930;
+	Sun, 19 Oct 2025 08:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760863559; cv=none; b=Qdp2BmfwINHAFtLgSzFP2wWmQ7RyFfY+9wMto5UtDhCot9al9aazat5TauJ1FQq2O2Y0Rs0cgPK6KGFYV7Ra4IlVaowkUw+tIzw+ARBKsUMYX3Qb7vMlZXfg42BMpDtjhVTLZam1Ocwa/kCw5y7qSjNWk4y1qF8Ss14Vj9uqRH4=
+	t=1760863736; cv=none; b=WA8H7f1Vbb4ueQ4OTlwtuQgjcPDKZeZAF7sGIcTERccbK+l7uwoL1q1lk/96ucltyTOvnnzj4634MentWJkl7lbk0YPceN43oCymXTqgkslt60y6IuR+BLgRmcM8mSe87IXaKH6qrUQZDCjmTtp0FD48hEFLgHLu4ROEm4A8Be0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760863559; c=relaxed/simple;
-	bh=Y0pWpuDrYmI4OMUjMbc/jTMaeVXhpIIYiTNqLlufnk8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=AouKCD7B4PYp+TEvCaKjkYAPW5/4wCD7WKjpBwNN/lDKwG40HBRpackqlFHLSYeE7HN4jnoUDMlf9XAiP01+SAeI5fxivBlEUKgIJms0mVVaZnFqP0waUKxfIUcVON58LlMFC6P8LOOqVtq5b0JaWG+Lby3bPoFR/nMl/ozsM/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IJVgo4VR; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id DCCA71A1502;
-	Sun, 19 Oct 2025 08:45:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B06B3606D5;
-	Sun, 19 Oct 2025 08:45:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6FBC1102F238D;
-	Sun, 19 Oct 2025 10:45:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760863543; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Jyv8Ny3eYcuzCA4QCGmdA/mqKgQJfhy3966PAg5VYa4=;
-	b=IJVgo4VRUdHkSOpbpwbI4i3XQUiKYBTZbjOnqcTfBFPYwedIkVoTNmOoOLwUNgNqslwEpl
-	HoNbo4pVnSZtX0VkqX7Ztqd9rvSv4nn3E9r41u3YWvBLY7CS1ys2HSmtC0Ua0l4Zy9V5oG
-	yFX0WhKjsXmmAaeoEuYOVx7zcv1Y0KWm09SdA2cbpgjgObfBNxAXW/zHL+0w5SK/O2sEm2
-	vGeo0SLjcN+hZWGLDT3w9+ZaVSYEXXEte+8Zsv5Hs5DGFMJufsz3POym+NFXp0niX1upx/
-	ZQG/jSrBhI6FItdxYjf4zN586DDvBw7SPY9prcBP7uFVjrJUg9g5EQBsY0SmvA==
+	s=arc-20240116; t=1760863736; c=relaxed/simple;
+	bh=rs7ILBWWDaHVFHhFR6/j1ZRqcnL3VjLz0/Wuu11GHBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A244wOJBESt4buW3HSAySbleA8MCQPVirCA0SQGV8pq2Wd/oMujhx35Z01m+vIznKvCd1OSyHI1DQ/OIfq5W8fg3X0hUtTIlt631VW2n2AWXiGbJakoFuMWNxmqfpgHj2p6uTt4i02/Kp+5kKaouANshBbrR+pT2gPgoEtEJkBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQvv/Is0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78843C4CEE7;
+	Sun, 19 Oct 2025 08:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760863736;
+	bh=rs7ILBWWDaHVFHhFR6/j1ZRqcnL3VjLz0/Wuu11GHBk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YQvv/Is055c1LhfGFXsCLLRCr5WQKAX1y7RFVsdH15mYJHJ42K3Aij0Tw+kRA7iJM
+	 edsHAyfCG1/XcFraBevIavyqoCxsWjS85TFaWVpQuh4vgP6cxjQI4P6U07fDMiZZg/
+	 54RR2DXzZHHXO38r+DhGCfCyZtpWbH6FpXain0/mfHGmFyAOX+DAZ4x+MChO266Ezl
+	 d0uuG+u7cuqIusH85he/DJJr3BCwaLBDprMNeGYb/AzwSF38rvAaujChBIlgRJXsBG
+	 /ZYkmCMgSfgpZJn8lQ4YNylI3kK9CFRuogc7Up3PIgR51D88Pzlqob90JjWQ9nkgw8
+	 6qtDlAixwrNjA==
+Date: Sun, 19 Oct 2025 09:48:49 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dimitri Fedrau via B4 Relay
+ <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Cc: dimitri.fedrau@liebherr.com, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Li peiyu <579lpy@gmail.com>, David
+ Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Dimitri Fedrau
+ <dima.fedrau@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Lesiak
+ <chris.lesiak@licorbio.com>
+Subject: Re: [PATCH v4 0/2] iio: humditiy: hdc3020: fix units
+Message-ID: <20251019094849.0b904e2c@jic23-huawei>
+In-Reply-To: <20251016-hdc3020-units-fix-v4-0-2d9e9f33c7b1@liebherr.com>
+References: <20251016-hdc3020-units-fix-v4-0-2d9e9f33c7b1@liebherr.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 19 Oct 2025 10:45:28 +0200
-Message-Id: <DDM60XIK0NUQ.S2QMK9E7HQ2U@bootlin.com>
-Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
- <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Eduard
- Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
- Song" <yonghong.song@linux.dev>, "John Fastabend"
- <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
- Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
- <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
- <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
- <bastien.curutchet@bootlin.com>, <bpf@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-To: "Martin KaFai Lau" <martin.lau@linux.dev>,
- =?utf-8?b?QWxleGlzIExvdGhvcsOpIChlQlBGIEZvdW5kYXRpb24p?=
- <alexis.lothore@bootlin.com>
-Subject: Re: [PATCH bpf-next 4/5] selftests/bpf: integrate test_tc_tunnel.sh
- tests into test_progs
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com>
- <20251017-tc_tunnel-v1-4-2d86808d86b2@bootlin.com>
- <2477894b-3325-4bc2-9d3c-a066b3cbb8f6@linux.dev>
-In-Reply-To: <2477894b-3325-4bc2-9d3c-a066b3cbb8f6@linux.dev>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello Martin,
+On Thu, 16 Oct 2025 07:20:37 +0200
+Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org> wrote:
 
-On Sat Oct 18, 2025 at 2:18 AM CEST, Martin KaFai Lau wrote:
-> On 10/17/25 7:29 AM, Alexis Lothor=C3=A9 (eBPF Foundation) wrote:
->> The test_tc_tunnel.sh script checks that a large variety of tunneling
->> mechanisms handled by the kernel can be handled as well by eBPF
->> programs. While this test shares similarities with test_tunnel.c (which
->> is already integrated in test_progs), those are testing slightly
->> different things:
->> - test_tunnel.c creates a tunnel interface, and then get and set tunnel
->>    keys in packet metadata, from BPF programs.
->> - test_tc_tunnels.sh manually parses/crafts packets content
->>=20
->> Bring the tests covered by test_tc_tunnel.sh into the test_progs
->> framework, by creating a dedicated test_tc_tunnel.sh. This new test
->> defines a "generic" runner which, for each test configuration:
->> - will bring the relevant veth pair, each of those isolated in a
->>    dedicated namespace
->> - will check that traffic will fail if there is only an encapsulating
->>    program attached to one veth egress
->> - will check that traffic succeed if we enable some decapsulation module
->>    on kernel side
->> - will check that traffic still succeeds if we replace the kernel
->>    decapsulation with some eBPF ingress decapsulation.
->>=20
->> Example of the new test execution:
->>=20
->>    # ./test_progs -a tc_tunnel
->>    #447/1   tc_tunnel/ipip_none:OK
->>    #447/2   tc_tunnel/ipip6_none:OK
->>    #447/3   tc_tunnel/ip6tnl_none:OK
->>    #447/4   tc_tunnel/sit_none:OK
->>    #447/5   tc_tunnel/vxlan_eth:OK
->>    #447/6   tc_tunnel/ip6vxlan_eth:OK
->>    #447/7   tc_tunnel/gre_none:OK
->>    #447/8   tc_tunnel/gre_eth:OK
->>    #447/9   tc_tunnel/gre_mpls:OK
->>    #447/10  tc_tunnel/ip6gre_none:OK
->>    #447/11  tc_tunnel/ip6gre_eth:OK
->>    #447/12  tc_tunnel/ip6gre_mpls:OK
->>    #447/13  tc_tunnel/udp_none:OK
->>    #447/14  tc_tunnel/udp_eth:OK
->>    #447/15  tc_tunnel/udp_mpls:OK
->>    #447/16  tc_tunnel/ip6udp_none:OK
->>    #447/17  tc_tunnel/ip6udp_eth:OK
->>    #447/18  tc_tunnel/ip6udp_mpls:OK
->>    #447     tc_tunnel:OK
->>    Summary: 1/18 PASSED, 0 SKIPPED, 0 FAILED
->
-> Thanks for working on this!
+> Fix units to milli degree celsius and milli percent for temperature
+> respectively relative humidity measurements and thresholds.
+> 
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Hi Dimitri,
 
-Thanks for the prompt and detailed review !
->
-> One high level comment is to minimize switching netns to make the test=20
-> easier to follow.
+I think this covers the last bits of feedback so I'll queue it up in the
+fixes-togreg branch of iio.git.  I'll probably not send a pull request
+for that for a few more days though so there is still time for additional
+feedback.
 
-Yeah, all the NS switches make the overall setup a bit tedious. I'll give a
-try to your suggestions and see if we can reduce the number of NS
-open/close pairs.
+Also marked for stable.
 
-Alexis
+Thanks
 
---=20
-Alexis Lothor=C3=A9, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Jonathan
+
+> ---
+> Changes in v4:
+> - Add explicit formula into comments of hdc3020_thresh_get_temp and
+>   hdc3020_thresh_get_hum
+> - Add explicit division by 5 into calculations in hdc3020_thresh_get_temp
+>   and hdc3020_thresh_get_hum
+> - Link to v3: https://lore.kernel.org/r/20251013-hdc3020-units-fix-v3-0-b21fab32b882@liebherr.com
+> 
+> Changes in v3:
+> - Fix verbose comment for define HDC3020_THRESH_FRACTION (Javier)
+> - Embed prescale into define HDC3020_THRESH_FRACTION to make the division
+>   by 5 calculation in threshold calculations explicit. (Andy)
+> - Add resulting units into comments again in hdc3020_thresh_get_temp and
+>   hdc3020_thresh_get_hum (Andy)
+> - Link to v2: https://lore.kernel.org/r/20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com
+> 
+> Changes in v2:
+> - Added explanation what is wrong at the moment into commit msg
+> - Added define HDC3020_THRESH_FRACTION and comment at the beginning of the
+>   code.
+> - Use MILLI for instead of hardcoded 1000.
+> - Link to v1: https://lore.kernel.org/r/20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com
+> 
+> ---
+> Dimitri Fedrau (2):
+>       iio: humditiy: hdc3020: fix units for temperature and humidity measurement
+>       iio: humditiy: hdc3020: fix units for thresholds and hysteresis
+> 
+>  drivers/iio/humidity/hdc3020.c | 73 +++++++++++++++++++++++++-----------------
+>  1 file changed, 43 insertions(+), 30 deletions(-)
+> ---
+> base-commit: 875e7d357a7f2e77a7f3fc4759d0aa0872c33027
+> change-id: 20250820-hdc3020-units-fix-91edbb8ccd07
+> 
+> Best regards,
 
 
