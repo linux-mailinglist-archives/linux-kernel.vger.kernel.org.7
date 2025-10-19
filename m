@@ -1,201 +1,99 @@
-Return-Path: <linux-kernel+bounces-859759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA639BEE7DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:55:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478E2BEE7FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E810349DD1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:55:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E1D05349ED6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A20E2EDD63;
-	Sun, 19 Oct 2025 14:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A30209F5A;
+	Sun, 19 Oct 2025 15:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eVrfCPYb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DTC+qFup"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC16E2EBBAC
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88222EB5BA;
+	Sun, 19 Oct 2025 15:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760885623; cv=none; b=c6JfwB7PDwtH7Oj3o7znggweu/UzrVV6hUfFpiz99DHRB1SbRckYHo8oVykn2qASLo04mBAY3qpSUJ5OMyKOyxJrzDEchdJenEsBwMMV5lC6WPjSWx6KJ0Prj9xAydHKIHo7o3PtkUkiFMIRhqZNx7d3rCgese3bqr+VpoOGQQs=
+	t=1760886063; cv=none; b=jnLfzbZQHTxnALynaiG1sJsIf6mVN397VDRTLsFETTNL2DBoDflO3f7ry5bcYBBCIWGf8JWqNg3RFU1ELpXARSN5jpSH1Md+403rAGJvVe6MZBTPfG/F8XNgYNcvGmYf1xp//Hwg3LXdAS1FQZ2mVjUUsTquDsuhD2sIQ/oMEXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760885623; c=relaxed/simple;
-	bh=v+DNIJKC7LVTEFir6s+qL5nG6oYv9UZBgPlGapUsziw=;
+	s=arc-20240116; t=1760886063; c=relaxed/simple;
+	bh=ERpdBZXbOKHRORKHDoHzqpE80WYPkhj8DksuV/L9QtQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J7kVaD8NrY78EaxBQUlKsbQJOMb7Ko2hfydlTJhtcSVM8bppxLs6MfkH9XFHIsheVrWMM+6nCSJPHJ8vWYm4veB6kFgGJorQCLoiKRpxzRPM+4GD5+E5ais5RgCS7i27CJ1Rgf8JA/Nykc7webWu4mvNJxSPdDyPsZMd35J01bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eVrfCPYb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JBd3BM013566
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:53:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=A24maVFATESsTlySoqTQhxy7
-	kngNIH/LwnVSqaac+uw=; b=eVrfCPYbRz/fMbWC1ppsBPH4Sgwf2vftsGKpSwmO
-	R4loZ0N2FOSYWhCh7NTUmxYRXVc8Z9G36vfEe7TOSSCU/1L17yGoQK5e3TEgt+o0
-	AZisXhWb1r94l1v5nMqv7PhgjQxU0bIQ/S00TfIFD+KSYZscHV2sIACHOJkxQKh+
-	JWkEbrC2hyDDrGGCxBB+W/uNwwQ31lhNr+al72GgxRxnSPRB/pNCe1/GlfVcui74
-	CWdIdCIy7RNztMGx38Puib7dGhw4q/uv2AROR/SmpLSBrAjGUyCOFyRy5V6Q5niB
-	kZxgOzViuCge83M9615W6VISstmn7wyaMd5IvgLxHiM+QQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v0kfasfr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:53:40 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-84a3a7ac082so1260676185a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:53:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760885620; x=1761490420;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A24maVFATESsTlySoqTQhxy7kngNIH/LwnVSqaac+uw=;
-        b=Ph6BomrkUZSsjqnfYdcGbdC7kGP0sbdWQjAYk9I5ZnkiMVDJgY7efkXbtnmgMDdQeo
-         zMhYLnD7u5OYUovcFti137oSd6dHroERDcQq5cs73gOAAqq66GH5MHMopioMbt1MPKcF
-         UQ95ttg4bSToUa5ge84QSscRWngijVEslVKDvrXdb/Hqa8heopwAOJ6Y40XRV0FX0aUP
-         27/UHEMpuZzGTkzRlvLLsgzkNE7gd2vLwkYr2AapLqi4DcFYZX2lguy0aYPvFh/k6yCj
-         kqU1sBT6tmudCC0EMchrvYHzAeAJhTcxgQP2lzsDyllSs7B0fPx6XvhNI/OeKgUr6CCK
-         Dv6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhLj2+gbCX/wBnQwFQjXJYrSuCQ5p3K4c+zaHehm8nFUdv/HPO0oMKFhc7sW5XSYSYT4Alj7CPyAY3/WM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz3mCUv31VHZCiUg7MlpoHtovjXskxrnyijj9cYR5kRYbciaSU
-	EnT+0K/b7iMb94rpszO7qN+IUfPM5pnCENfRtqPZxOgVhwZ7bORy37sMY+n040+MKYhIG7Kv33l
-	oDT//Zq4guYgBPeZQLQGd/ZUymlhcwh+GYvSb8sdcp5sw84z9T/1JC116oH/GkE8uMwI=
-X-Gm-Gg: ASbGncsH2RAWp3bJo66RfD/vBwq45aBDw1RcWSWCtbhBVqVryn8Knew5tAn5rYBT0PM
-	wRAZDlx4y9gB8bEyZHQiOKopldvnyI/2QvbERyEQzFBKr/GU7v2hPYZWTXny6KywC20WQkSi25F
-	iWiVCBRYJalCUxVTxu4zwZz/3LrcCCo3+UM934i3kypAkaqOrNUYoIq/VrQIZ4bgO3jWRrJyXMS
-	YIvwdQl3weHvFbK74pUIIrFXFAYR3b3Lmzt5JlTJGPKUoY2I1zlRDrWzqG4ESjHp0dhgz6GUnjl
-	DY0tLylh39yPOXQvZHMcE8ADb6nSu7j2eXMbHOSdifa1+zwGt2reQ7gxmzpmbdlWOSgAfciFiDo
-	+lk22XTfpdAoKiOusitSgujlLUZymk9dSlHKJGtnwHq6lGT0/7floqze4rae8m39IGXNcSj2IGQ
-	k0xYoAueg+O0I=
-X-Received: by 2002:ac8:5710:0:b0:4e0:24c5:5137 with SMTP id d75a77b69052e-4e89d3627e4mr138238631cf.51.1760885619630;
-        Sun, 19 Oct 2025 07:53:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHly3/EfmiSEOivc1I/hknQKtS52LSHutywrccRSqCRSmyWqUn16HN5RNyUGYetTlLKDXSZhA==
-X-Received: by 2002:ac8:5710:0:b0:4e0:24c5:5137 with SMTP id d75a77b69052e-4e89d3627e4mr138238361cf.51.1760885619115;
-        Sun, 19 Oct 2025 07:53:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a95789f1sm13418781fa.41.2025.10.19.07.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 07:53:38 -0700 (PDT)
-Date: Sun, 19 Oct 2025 17:53:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: David Heidelberg <david@ixit.cz>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Casey Connolly <casey@connolly.tech>,
-        Joel Selvaraj <foss@joelselvaraj.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for Pixel 3 and Pixel
- 3 XL
-Message-ID: <r6icx36qpns6sf6btjtjssmjsmkmcvtgq4jyo5yeiect5j6tlu@pe6kfmdaxlbh>
-References: <20251005-pixel-3-v1-0-ab8b85f6133f@ixit.cz>
- <20251005-pixel-3-v1-2-ab8b85f6133f@ixit.cz>
- <n4xims4y5sssqxkchg2tikc7idkzds5ru7ayidcgxdfx77je2d@qo34qucbebnn>
- <a5da8d40-f194-4fed-9118-037bd39ebe2e@ixit.cz>
- <st7oizyyih3fnsi7jgcp47pl7s6n3gz2rdcv7iryftol3bqvxk@buam77hiqnl6>
- <1eff5dd7-5229-4ee3-9856-ae61b4c82f9d@ixit.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ToSrlaN/c/KRtnjJfFbmdzTbLVcwe8z//ycexZ7LYNs8Iq+k/M8Sw2Gwv0ViOY0iyOcdP2LwaJ48EYYXO8xT5sR36eqjaGq5TBEwXZlJmpAYizTUyRlOCrZlNYYKsSvuLfLLEqbcJY8qhp3gZuHLazktXqOkvVox14rnXONWA58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DTC+qFup; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 36CCF40E01C9;
+	Sun, 19 Oct 2025 15:00:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8p0j1AeYx9Y6; Sun, 19 Oct 2025 15:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760886052; bh=niiA8qTdHn4Ejho1StSCe2+DNkLDCk5uog83mTPodsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTC+qFupq2mMy15nDgXoPEurcG4fU6UnfeUnoJg/QUvnTkgJcD0kG3u/8yny5Dj+c
+	 1MZUA86THCHZ0R1hYxlRLsBgZ2u119PlRDBWlAG9y+Ni+6PKrJ/+aKsfghP0gQjTYL
+	 SF8A96qBkAUJ1L91QFVYzVz1VHPCCfCks5lbMpM/zEdKx6NWIRWVBM8ujkzy0cjYdU
+	 VnJmUgTVhOHkHdN7to1f2PhffQy7SmTs6O/mXGIDDoqxC2fZpkD4RchMa91DkStpHF
+	 PAkG0MNvpNKOzl2R+kznxkPorISeCnAPSmo8Z9XjMYtGLW6jPWJ5NliaPlB3+B+OaD
+	 w3ZFosJCvkD41P/M0IUex0aB1kGn2ar8gklfqDNc5nNpyvGrOnAyIfUNG3Fk5DYix3
+	 My0Y8mqkABs1yO6CSzaK6bawYLIG9SokCVU6AkJR+5HV7BLs17RzgWGsUQqm6L4uPE
+	 x6eh+p+CkWd8H2kOfc3qS+yG4R5VS75zTFHsrsQFmREj4RB1u2k3Wf1+2ANHWdgGib
+	 iZmF8GgYe2kCrjsMtUnqVVZOaEtaUTjM05j/7SlXEr0141YdbIZAUi5Uf3JOJcT+/j
+	 JzdXZDj+KHwE6G9gO8gX0UELmpkhPgd6u9VyCPnWhoMIc2uqxn48f9r5nFepzg1sCS
+	 umCQazXcJMkifPsOEbxpcU/o=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8896440E01F9;
+	Sun, 19 Oct 2025 15:00:35 +0000 (UTC)
+Date: Sun, 19 Oct 2025 17:00:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Gregory Price <gourry@gourry.net>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
+	darwi@linutronix.de, stable@vger.kernel.org
+Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an
+ error.
+Message-ID: <20251019150027.GAaPT9Cz6NjB9S2d2a@fat_crate.local>
+References: <20251018024010.4112396-1-gourry@gourry.net>
+ <20251018100314.GAaPNl4ngomUnreTbZ@fat_crate.local>
+ <aPT5rnbfP5efmo4I@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1eff5dd7-5229-4ee3-9856-ae61b4c82f9d@ixit.cz>
-X-Authority-Analysis: v=2.4 cv=E6LAZKdl c=1 sm=1 tr=0 ts=68f4fb75 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8
- a=hOZ6dJPvPovaWAsPY_MA:9 a=CjuIK1q_8ugA:10 a=dK5gKXOJidcA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: NzyJfd_BZnFqxxHOx8rYv5hGr5KZlBpW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMiBTYWx0ZWRfX6GdkhTSncbTI
- qqBfOAmt24bFSgO7lXXsDTqknYU6hDN18ZDFd8tSm0OdK9EJl9ncLy7WDSEShQH/PsAQ8acPf71
- 7cIcLVoQlxC1ToEetovJH6fttAGOrlo4qagGJv89TjVIgupakNU9ZBHnKLW/BOTOtUpUVX/V2AU
- Ae/74wjCZHOai4VMRHnXuPzT//zW4OtBzdMlG/P5EugfkcqiECtOEa3aH/8xbsaHo6hv3ZWNJwj
- BH0O8wuMXOZOu8dESM8RiSp2jMjt07lbdJt51BYdXvEqF+3haG1CRvNtV0QNdmOIp07SQqX6052
- ZDMlBFpIwFFip5U0uRw1J7c4AMxeGyIRUrsaVutDfL/fcYgmxBHvOC/qUH5Cy4W+mSZjOxe8UcJ
- uUGzTAVfl1JWrgJjI62isVxUzKTsBA==
-X-Proofpoint-GUID: NzyJfd_BZnFqxxHOx8rYv5hGr5KZlBpW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-19_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- phishscore=0 impostorscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180002
+In-Reply-To: <aPT5rnbfP5efmo4I@zx2c4.com>
 
-On Sun, Oct 19, 2025 at 03:02:36PM +0200, David Heidelberg wrote:
-> On 19/10/2025 13:51, Dmitry Baryshkov wrote:
-> > On Fri, Oct 17, 2025 at 06:59:14PM +0200, David Heidelberg wrote:
-> > > On 06/10/2025 00:03, Dmitry Baryshkov wrote:
-> > > > On Sun, Oct 05, 2025 at 03:16:29PM +0200, David Heidelberg via B4 Relay wrote:
-> > > > > From: David Heidelberg <david@ixit.cz>
-> > > > > 
-> > > > > This adds initial device tree support for the following phones:
-> > > > > 
-> > > > >    - Google Pixel 3 (blueline)
-> > > > >    - Google Pixel 3 XL (crosshatch)
-> > > > 
-> > > > Great to finally see it being submitted!
-> > > > 
-> > > > > 
-> > > > > Both phone boards use the same identifiers and differ only slightly
-> > > > > in their connected peripherals.
-> > > > > 
-> > > > > Supported functionality includes:
-> > > > >    - Debug UART
-> > > > >    - UFS
-> > > > >    - Charger
-> > > > >    - USB-C (peripheral mode)
-> > > > >    - Display (Pixel 3 only)
-> > > > 
-> > > > No remoteprocs / IPA / GPU / Venus / WiFi / BT? The firmware is
-> > > > accessible to download from Google and it can be further repackaged (but
-> > > > not redistributed). See [1], [2].
-> > > > 
-> > > > The phones share all firmware except for the bdwlan, so hopefully you
-> > > > can add 'Google/blueline/foo.mbn' to the common file.
-> > > 
-> > > Would it be acceptable to use path format qcom/sdm845/$codename/ e.g.
-> > > qcom/sdm845/blueline as it's used elsewhere?
-> > 
-> > We have settled on qcom/SoC/Vendor/device/ long ago. Could you please
-> > follow? All upstream Qualcomm devices follow this approach.
-> 
-> Sure, in next version it's done! Would you be open if I sent changes to the
-> existing firmware paths for sdm845 firmwares?
+On Sun, Oct 19, 2025 at 04:46:06PM +0200, Jason A. Donenfeld wrote:
+> While your team is checking into this, I'd be most interested to know
+> one way or the other whether this affects RDRAND too.
 
-Yes, please.
-
-> 
-> Thank you
-> 
-> > 
-> > bdwlan should be sent to ath10k ML:
-> > https://wireless.docs.kernel.org/en/latest/en/users/drivers/ath10k/boardfiles.html
-> > 
-> > > As I'm looking at the Google scripts, I assume both blueline/crosshatch use
-> > > same firmware (which makes sense, as only the battery and display is
-> > > different).
-> > > 
-> > > David
-> > > 
-> > 
-> 
-> -- 
-> David Heidelberg
-> 
+No it doesn't, AFAIK. The only one affected is the 32-bit or 16-bit dest
+operand version of RDSEED. Again, AFAIK.
 
 -- 
-With best wishes
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
