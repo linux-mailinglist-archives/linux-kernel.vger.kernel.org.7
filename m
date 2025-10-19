@@ -1,129 +1,401 @@
-Return-Path: <linux-kernel+bounces-859830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD69BEEB3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5D5BEEB4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC811899DA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC431896D32
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799A32253B0;
-	Sun, 19 Oct 2025 18:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8644826B761;
+	Sun, 19 Oct 2025 18:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="CPwIRTr1"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LYCCA6sg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EBC57C9F;
-	Sun, 19 Oct 2025 18:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760897961; cv=none; b=lCkE9KhySwz44M6xRjk9966u1Jh+yXGJpDIo0SImIbcX1uz/hm3gdVSaS323H42IeOpOH2j/k9Tfoog0nLyqAwzNQJE7HyWuniv0l4hkulkIw3JHPIRKpyx+5YqsDoV8rAGhPzBcoZzjnqUVEjJT2HR3ysdKBhlWJw/BsAvsL8k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760897961; c=relaxed/simple;
-	bh=d11pgiUBlTDSn8XZdaFMt+akqhMwov8Yt4HpY3gvaug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=to2rUhBQ62UvNDMFzMp/4sKcwZfJH/gH1bGb9dKNN3Iwgc7nH0XW64ANkEppuysCGEmfxqlByJOEs1MA6Kl99RqTKJlrqETpKirQMb1PM009XEj01VMPnSdf3mGWo8PIzXvUWjl5GfGrEduMm0y6pf/WsTYMrj/zuk4k7DGBwxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=CPwIRTr1; arc=none smtp.client-ip=148.163.129.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id A656A28007A;
-	Sun, 19 Oct 2025 18:19:13 +0000 (UTC)
-Received: from [192.168.1.23] (unknown [98.97.32.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail3.candelatech.com (Postfix) with ESMTPSA id E397F13C2B0;
-	Sun, 19 Oct 2025 11:18:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com E397F13C2B0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-	s=default; t=1760897951;
-	bh=d11pgiUBlTDSn8XZdaFMt+akqhMwov8Yt4HpY3gvaug=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=CPwIRTr17+B4Oc/3SpOvEJQmGN4mblNpDjM7OrDyawykWCqxg7OeBOsRFglJxBO6K
-	 Gu3w3XNR2LkSscHWH6uU+HhBhWGBAU+drpjW/yhi1gmHnv3BuGO41JQA+X6+WUMB9+
-	 4tYFRD4F/5PoWKtFxvc9A5Fkj1nkoLjaNXpGGXzs=
-Message-ID: <4f75bb90-25ee-4312-b4b1-3faf0249b05a@candelatech.com>
-Date: Sun, 19 Oct 2025 11:18:50 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50687354AF9
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760898432; cv=fail; b=fcSvbGedhqUFdzkBwjj5J26HlIHOjHyl+uu9i3E2p88bmVQFwRxWVWbBL3YzwnFbpcMc8ijOVmemOpc+mFa0uhjRYtrg/KQBMUMc3/IRgeTAArLl8gUPVPw5glqk3dI7FIYBgBATEnoB2J3IFis8Q3TgBWhvlM8Mi6gQosaSXBY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760898432; c=relaxed/simple;
+	bh=LcQjMjLNo6ki3fnGsSLTxuiP42e8t7pteg2/nH3YjpY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rDc38UqkOFMAX1GZ+fF/lxLAl1lKR+wU09JTd/5gK/49ins5q/stxrVK4ZFa+9OICzl0RfFmfAy7axlLaJDRB6TbEfU9wrXIb/3JfRGeJCIBvADeuks8BTwFX4fNygmYnvWTlmqSuI2NCskP8CSphR9aEkQC1Bc9ztgVXgZxoBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LYCCA6sg; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760898430; x=1792434430;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=LcQjMjLNo6ki3fnGsSLTxuiP42e8t7pteg2/nH3YjpY=;
+  b=LYCCA6sggWk0BvfxEUxPR5ah0ED4x3HrBL2CAZQAH2FY3igtFJQnKSHs
+   /2TRkuY4FrWrjMvuuQTOgcsM/GywgR2D2118YycuEBSukqyvLoKTH39hM
+   +GUPFG4xKOOA5h45sY5uA+WG0Md7ogIxV+66ayoAPUV+UMHnf8nnx9ca3
+   ZpppBVntF/yvyOI2m9fB7ITcfKgW3ib9PY/2PV1mq3PDI1ki21ENmD5Fk
+   foRyVTrq82lrDAwvYlIfnWqN6275RvcoSZtzE0oHyRBD1RBXkYSRY5yEs
+   4eVt1KUdI0paV456YoC0O89FMWobnn6OrBbujIleBtole5Q2Qvg63cBf5
+   g==;
+X-CSE-ConnectionGUID: ZaM0R+jKQVuY1y0b9ZWFSA==
+X-CSE-MsgGUID: su9ccM8oRLenvDt8Dgu9dQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="73324548"
+X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
+   d="scan'208";a="73324548"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 11:27:07 -0700
+X-CSE-ConnectionGUID: n49ZzVx+Qemj9JQMdHVPSg==
+X-CSE-MsgGUID: cSsQgSfQSZG05BAebhNBXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
+   d="scan'208";a="187583303"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 11:27:06 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 19 Oct 2025 11:27:04 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Sun, 19 Oct 2025 11:27:04 -0700
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.0) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 19 Oct 2025 11:27:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AiRz8+AE0WeaAL+pQ30nNrSmID7FqmkzznOLb/sw/QBRWzHFS8tq9lm2tNcHA3pBL/S8GiVQgi56I2L5negUrT2ZVHzZ+CyRhX/Iytese7CIFclJjNZG7eAD1bftVjeMiXr35usy2WPNeZOxO9G8mWim8hMKHkoZJmqj8LX1vY5SxFzIzIoOnLVii9MzoXx+NRDzxTT8Rd2zFOePv0cz/8GEI8Xuq9WSDuqp8gXvyAWvv1LA2PT4uDrJGyKGiTeGzEacMr3QSGwHvw+suj29P9DCAvFOsnqFRisSrAGCbHl/URoDjxcU90PdKIVBMvuq5NL3XfSg0bUnDD5KOpSuGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lKEs0jIWDrBVhkWUUALwEDJM0ZoYmG1LpTJ1UIDvII4=;
+ b=gVR5q2bqGQ0PdAfbfToXUWFLwvkRssQzoMzjgr8Iq4Xek0BzWQfAh7+wPzqh3M8RHehX0MrSsO0vz4qIL8d3P4dXPYwkMgUhHWe/FQyYXAG/GpXaMkxjzkQmeuyF09ezdEdzCHEOysbXTX4gWgjmLu+XZU+qYb6hl2GrEFXypn7RrcPw776UaM2cO4FJftv9bxPX+RmmtnEbgx1VaSOFa8bng0zGNZjMZTRZ7VOpx7WEeIHb57aeM8ZxonFZ/fWJ1GnTM334bq9uskMHk1w9jczoGBg5sAFwNt+33IlOqBIzT63V/WZnrOtTsEiWpXiI7njRsZLdy0+ZPP3+GkddqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ0PR11MB4845.namprd11.prod.outlook.com (2603:10b6:a03:2d1::10)
+ by MN0PR11MB6033.namprd11.prod.outlook.com (2603:10b6:208:374::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Sun, 19 Oct
+ 2025 18:27:01 +0000
+Received: from SJ0PR11MB4845.namprd11.prod.outlook.com
+ ([fe80::8900:d137:e757:ac9f]) by SJ0PR11MB4845.namprd11.prod.outlook.com
+ ([fe80::8900:d137:e757:ac9f%3]) with mapi id 15.20.9228.015; Sun, 19 Oct 2025
+ 18:27:01 +0000
+Date: Sun, 19 Oct 2025 21:26:55 +0300
+From: Imre Deak <imre.deak@intel.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+CC: <dri-devel@lists.freedesktop.org>, <intel-xe@lists.freedesktop.org>,
+	<intel-gfx@lists.freedesktop.org>, Simona Vetter <simona@ffwll.ch>, "David
+ Airlie" <airlied@gmail.com>, <tursulin@ursulin.net>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<jani.nikula@linux.intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, <alok.a.tiwarilinux@gmail.com>, Ville
+ =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [bug-report] i915 DMC assert crash on HDMI hotplug
+Message-ID: <aPUtb50BDUOgSg8N@ideak-desk>
+Reply-To: <imre.deak@intel.com>
+References: <33db45cc-c007-4a72-9303-7690d6818e73@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <33db45cc-c007-4a72-9303-7690d6818e73@oracle.com>
+X-ClientProxiedBy: DUZPR01CA0219.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b4::16) To SJ0PR11MB4845.namprd11.prod.outlook.com
+ (2603:10b6:a03:2d1::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921,
- mt7981 and mt7986
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, nbd@nbd.name, lorenzo@kernel.org,
- ryder.lee@mediatek.com, shayne.chen@mediatek.com, sean.wang@mediatek.com,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- howard-yh.hsu@mediatek.com, StanleyYP.Wang@mediatek.com, rosenp@gmail.com,
- luoxueqin@kylinos.cn, chad@monroe.io, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20251019155316.3537185-1-olek2@wp.pl>
- <fa7befd5-b2c7-4277-ad57-a1577216ba83@candelatech.com>
- <5a529d81-fb4e-4e7a-a132-3b76d26c3696@wp.pl>
-Content-Language: en-MW
-From: Ben Greear <greearb@candelatech.com>
-Organization: Candela Technologies
-In-Reply-To: <5a529d81-fb4e-4e7a-a132-3b76d26c3696@wp.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MDID: 1760897955-ofoHgPYxUDkh
-X-PPE-STACK: {"stack":"us5"}
-X-MDID-O:
- us5;ut7;1760897955;ofoHgPYxUDkh;<greearb@candelatech.com>;d5c215dcae166280e85b20da571dd1ee
-X-PPE-TRUSTED: V=1;DIR=OUT;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB4845:EE_|MN0PR11MB6033:EE_
+X-MS-Office365-Filtering-Correlation-Id: fcae181f-5205-47f0-f883-08de0f3d18b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|10070799003|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?oZaLApPXjcJswTPW1dOjj96Cn7cuGcvbgU4qmwgByyjT4ORr2iM8RRCTH5Qm?=
+ =?us-ascii?Q?NaCEG2kdEWzNyLty6tzJBHp+bKWE00KyPu7qKCS8s/Vm2QCNuZjiLkpr/B+r?=
+ =?us-ascii?Q?APzB9wog45VJAdOBPa7kuGvzsMgiorQoUl8TA2gZe5XZYbZlugrsteHXewtS?=
+ =?us-ascii?Q?+db+WaT/BLrWuyhZregkYUvmTIIp+6q2E+SEQ2l71uV2IV8S1XUlCG2Bpuis?=
+ =?us-ascii?Q?7YfW3cb3KvCRYD0I5aEA4YJNbJtwdqH1hTmadAPeKJUC4KTKzQihdjJATCVs?=
+ =?us-ascii?Q?nq/1GDn1fvvfKg3OfeGsxirgkBJNL2tcVg931AZwxK1rz2SZCMc4jz4rh8T2?=
+ =?us-ascii?Q?e0GKxKk7bKRsG1uwqWV5p+Min56AOxpP8V3xTmjNg4fbCvutbdsYqEXHYF11?=
+ =?us-ascii?Q?PEHjQXxfk3U7gy5HaH+n1Q1JP5Vrqs/OlFBC34cgE4mN3lLi916UDr3hqosd?=
+ =?us-ascii?Q?h1mQGcfh1jyKl8FRiysQs6ViiE3TPY+UsxFyL4kOg2Yma6PbBLCPiHQABioy?=
+ =?us-ascii?Q?z2nJ6VEcV8nTU70cnaTDyTBY/IHed3db4IgMOhEsHzpsjDDXzfreyhFFpJMP?=
+ =?us-ascii?Q?hvX2JGnLaK4qMO5/2aHx6SYeyS7Ay0NGibYcC0bvno4b2FErfONPpwlULz5F?=
+ =?us-ascii?Q?Sgi4SVJp5wXYBuLYWBiNrAh1bN0FOFpX1wCyn5Cg3vP4yZUSw0ip71FVYBoC?=
+ =?us-ascii?Q?FcJ76/jTBvTPq5l+Ent7cY+UAFn0xh/OypYPq0ZnwMBV5ammB9oBP+4p+kP9?=
+ =?us-ascii?Q?LrAbgUETCD+2t9wDcBLNaar9SSlQTJjXYGxXD0g0uxNBBiDW/lJc0yxKQqL+?=
+ =?us-ascii?Q?z15gpwMNOyXgPcM7el7TXFDGXnjSb9IDBHiU4jzjLTbFpWIkwUeNDvKsfnL/?=
+ =?us-ascii?Q?PD9ixQvOAjchr6HfnmDi63PxfKALlA3El8jnQVmatS2LZfT6cdhVybjVf/xK?=
+ =?us-ascii?Q?wMy9nPA0TEEwEzYUA2tN8Bq8LfhzdICjXaYaMSjki8eOMRH3zi0F86I/7rw3?=
+ =?us-ascii?Q?LClEwHnwYPFmlHqgeUC5eQHE4WwknTTmQqI82gTKrNunUcazJbZiQ3yjlbb9?=
+ =?us-ascii?Q?tXtPSjGqF0gt+TqLvIMPQxXdlIEmNhqtM+7Z4JfhhNisvJnd0y4VWqaik9dS?=
+ =?us-ascii?Q?UJ4+Vy0YSgu89fxY4rs05r+k07+4+mONiI8rBLUODMSlBvT0XZ1kwLaM12bj?=
+ =?us-ascii?Q?75wa7w9cNv/8AxPdPTWd/uzzV6JdnQ3e72WLnmVGfYFYgiqYzECgye2uIk97?=
+ =?us-ascii?Q?4g/eg6qwo7E8MzURdVuZ8LNlGeABJbyJLx2ONC+fvlLLpDWw3d0klt+TRcXn?=
+ =?us-ascii?Q?i5SGAOdgu8JaC3vqqG7ta8S7jsum04BtBVGFd4mypoTBUzA60NXptu36Bza+?=
+ =?us-ascii?Q?DK1ks2jlXU2Bk2llsAFihTjH13ppsWrcG0S3FXW2IFQtPlS8+Q=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB4845.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?axU3wnPZlhs7Ci5iKa4Vhql9iG5EGUvN4dpvhh7oJyDmOGmJMiVvzeyBTKQC?=
+ =?us-ascii?Q?bs8gxcfE4yNuUxIDGl53aDaJcfsOB8jfH11dlSOYZui08y3d82S6bL5hjCBt?=
+ =?us-ascii?Q?BS8piTXb2JTb06aoyeVL9f1pILn1z6Ll0hBE/kkUlB+IUHTCNO/zb7TeAmSI?=
+ =?us-ascii?Q?uigrx4WUJ2i42r7zMDZviKka5H+myNrGBTjeTlHQijkRb5WlR8SjyQMObW/A?=
+ =?us-ascii?Q?QIhdTSiAgPXZIU0R0oOv5Wwc8ZQjFyBa+d8pi7ZcSYOHXzI8HnjCYi/Jh0yJ?=
+ =?us-ascii?Q?TtZqPw6GAy50Hj08vhhVixsNJJJ5tFCAa0JlH25ikf9FjcWpqfBXueNp6PWM?=
+ =?us-ascii?Q?/No9JCqrRCuCPkisI1ykUasiROWHvhUpWn3AlzbNeKYKJb5WwPdO/PQKCZp4?=
+ =?us-ascii?Q?zZid+r1gXIg3ZySdSoWveANeJwXakHSlAblfYS4j3gbJliBesPtIcTBLdKf1?=
+ =?us-ascii?Q?qME+MJaBNqjDFSkTpcKlgsp/6OGgaBXDMegF5aBlMqUprveNWXSoim68Nc8R?=
+ =?us-ascii?Q?HlliuY2QuMCsDfJlw0cj0MJlYBlrfIKkKPZFrN26vWpVwlk4bTn1CIICS+zr?=
+ =?us-ascii?Q?Fb9NfZO9dsI+qI+iuGZ9s2wgBxuK9KFwExniccYxqYyZDXyteKNK/njxfY6x?=
+ =?us-ascii?Q?iqvUApKFmKJprBKC8njth9X5jNLZ4sXbnjPdY3ivXxHmgAjwHUVRhOSD2XQa?=
+ =?us-ascii?Q?Nnd787I/nEFThpkK47xN9zVWEarz8qo/41TCq6ocEO5jZ6fklburM5ze1kSQ?=
+ =?us-ascii?Q?3Ne6HEDS0Pvhv8b/YWhZa0E1dR4QzBpMHpP+V9UU4agyJoaEwKhkovUf5RA/?=
+ =?us-ascii?Q?HJ7pFFs2vcZN26C9fh235mw7wyBNCRPrSU47y4CUlAk0Zu1XpkpDd+urTu0l?=
+ =?us-ascii?Q?C6Bcx7ag/m8xJafKa7EJjqzl2T6uEOBi7ttc+t3pcdvUfJXJfYS0MPC4/ZyA?=
+ =?us-ascii?Q?9yRXMePMZADJ+2P1JdsUaEY3gFFA3ofWqDH2a0LO0yfZ1O7Ykui7uau4/KGK?=
+ =?us-ascii?Q?ZPnlkfF4EHL72YptGmpLH977ntgxtJvnNxEhyG2l4KRS+3EknoPE0Q31o7NT?=
+ =?us-ascii?Q?ypKv0RBLjFa1frVVf/u2nRbS1eRx2xyEsiVoilwHq+Tc9KzIRUlxyBLr/fPY?=
+ =?us-ascii?Q?U8Gs00rlvR7E6cPZY2OHRZKDI+1hzNF/+cI6iNE7k9yYQU5e46vhqVhPNKV8?=
+ =?us-ascii?Q?bNeTKqfUBrv45oOs0xQOTSC/JYxWuCKNeTDCtqTCfKB/lpZagjQmPpdmn5zu?=
+ =?us-ascii?Q?rXgHw3UusA4mkNlJmRPYFEdaOCCLdl3oMRv57oeLO+q6UE0Gy4qyNngpXI+E?=
+ =?us-ascii?Q?x+Qm8rzqPd94ejmCLijLFhznCx75IDXN+PxoC0dN2ls0aY7Yhpm+0pzczieW?=
+ =?us-ascii?Q?I3zttmkze5608NkNy2VFI8JK9fYZ5aPnM/x6OD7EzSl93CN9OIKb551WRSFA?=
+ =?us-ascii?Q?TvxkB9/d+cEeH9gCweZCyedLKzAVhdkW7RZsNrgArw7M7mn9vbDocghGazOH?=
+ =?us-ascii?Q?SPUsc7ikn43qk2YaV5WP7QXQFo/ZpeN/FQR4+/qGtVIiQ9KWg84KNnF35/wE?=
+ =?us-ascii?Q?il1r4wGCwHRfDpjXGr/wuSWGD48+I6fZyhzgvzcF7UkW3sZigCDxNXDHnMMM?=
+ =?us-ascii?Q?QTQWF2EMl+QwdP16Ck5i5lMEODOXwwENcJYZucBLnBcy?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcae181f-5205-47f0-f883-08de0f3d18b7
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB4845.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2025 18:27:01.7739
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5s5DlUR7jgoXGsT219KijGYzQwnj1y2bGHRzcWjPxDxJIVRsyi7bMV7RUoGHLxP2dcJ++rr3pzMMS8n5SVPrgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6033
+X-OriginatorOrg: intel.com
 
-On 10/19/25 09:43, Aleksander Jan Bajkowski wrote:
-> Hi Ben,
+On Sun, Oct 19, 2025 at 07:51:08PM +0530, ALOK TIWARI wrote:
+> Hi,
 > 
-> On 10/19/25 18:26, Ben Greear wrote:
->> On 10/19/25 08:51, Aleksander Jan Bajkowski wrote:
->>> Supports IPv4 and IPv6 TCP + UDP
->>>
->>> In various tests between MT7986 and Intel BE200, I observed a performance
->>> boost ranging from 2 to 12%, with an average of 5.5%.
->>>
->>> I did the tests on the MT7915, MT7981, MT7986, and MT7921 variants. The
->>> MT7922, MT7925, and MT799x are untouched for now and still have
->>> checksumming disabled.
->>
->> At least with  7996, tcp csum only worked on the first few vdevs
->> created in our testing, so we had to add logic to disable that flag
->> on subsequent vdevs.
->>
->> Have you tried creating a bunch of station and/or vap vdevs to see if
->> all of them can still transmit TCP traffic?
->>
->>
-> Thanks for the useful information. On all tested devices, I had a single
-> AP configured per device. I will try to create several APs for each device.
-
-We can try it out as well.
-
-> I also have a router with MT7996. A quick test shows that checksum
-> offload doesn't work on this router. MT7996 is visible in the system
-> as a single DBDC device. I have 3 APs configured there. Each on a
-> separate band (2.4/5/6 GHz).
+> On a Lenovo 12TECTO1WW HW (BIOS M5HKT1DA), the i915 DRM driver triggers a
+> DMC firmware assertion
+> when connecting or disconnecting an HDMI display. The GPU firmware (DMC)
+> registers show incorrect
+> values, causing assert_dmc_loaded() to warn in intel_dmc.c.
 > 
-> Best regards,
-> Aleksander
+> This occurs on kernel 6.18-rc1 and appears related to DMC power and hotplug
+> handling.
+> 
+> Kernel: 6.18.0-rc1
 
-We have it working on 7996, but the patch is tangled in some other changes we made
-with how wcid and such are allocated.  We are still cleaning and testing patches
-on top of Felix's tree, should have something to post sometime soon.
+This looks like
+https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/15153
 
-Thanks,
-Ben
+Could you attach a dmesg log to the above ticket booting with the
+drm.debug=0xe kernel parameter and reproducing the problem?
 
--- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
-
+> 
+> ---
+> 
+> [  130.665424] audit: type=1326 audit(1760882657.655:78): auid=1001 uid=1001
+> gid=1001 ses=3 subj=snap.snapd-desktop-integration.snapd-desktop-integration
+> pid=2408 comm="snapd-desktop-i"
+> exe="/snap/snapd-desktop-integration/315/usr/bin/snapd-desktop-integration"
+> sig=0 arch=c000003e syscall=203 compat=0 ip=0x7e4ba6bc4531 code=0x50000
+> [  131.287051] nvme nvme0: using unchecked data buffer
+> intel_dmcintel_dmc[  218.492264] ------------[ cut here ]------------
+> [  218.492268] i915 0000:00:02.0: [drm] DMC 0 mmio[5]/0x8f03c incorrect
+> (expected 0x30100, current 0x0)
+> [  218.492292] WARNING: CPU: 6 PID: 409 at
+> drivers/gpu/drm/i915/display/intel_dmc.c:645 assert_dmc_loaded+0x2c1/0x420
+> [i915]
+> [  218.492455] Modules linked in: rfcomm ccm cmac algif_hash algif_skcipher
+> af_alg xe snd_hda_codec_intelhdmi drm_gpuvm drm_gpusvm_helper
+> snd_hda_codec_alc269 gpu_sched snd_hda_scodec_component drm_ttm_helper
+> snd_hda_codec_realtek_lib drm_exec snd_hda_codec_generic drm_suballoc_helper
+> intel_uncore_frequency intel_uncore_frequency_common i915 snd_hda_intel
+> snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic
+> soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common
+> snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda
+> snd_hda_codec_hdmi soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof
+> iwlmvm snd_sof_utils snd_soc_acpi_intel_match bnep
+> snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_acpi
+> soundwire_bus x86_pkg_temp_thermal snd_soc_sdca intel_powerclamp mac80211
+> crc8 snd_soc_avs snd_soc_hda_codec snd_hda_ext_core snd_hda_codec coretemp
+> kvm_intel snd_hda_core snd_intel_dspcfg snd_intel_sdw_acpi snd_hwdep
+> snd_soc_core kvm libarc4 snd_compress iwlwifi ac97_bus
+> [  218.492496]  snd_pcm_dmaengine snd_pcm snd_seq_midi snd_seq_midi_event
+> snd_rawmidi binfmt_misc snd_seq cmdlinepart processor_thermal_device_pci
+> btusb processor_thermal_device spi_nor snd_seq_device btmtk
+> processor_thermal_wt_hint drm_buddy platform_temperature_control snd_timer
+> btrtl irqbypass ttm processor_thermal_soc_slider polyval_clmulni
+> nls_iso8859_1 ghash_clmulni_intel platform_profile btbcm aesni_intel
+> mei_hdcp think_lmi processor_thermal_rfim btintel mei_pxp rapl snd
+> intel_rapl_msr processor_thermal_rapl cfg80211 bluetooth
+> firmware_attributes_class input_leds drm_display_helper intel_cstate mtd
+> mei_me joydev wmi_bmof intel_rapl_common soundcore cec ecdh_generic
+> processor_thermal_wt_req ecc mei rc_core processor_thermal_power_floor
+> intel_pmc_core i2c_algo_bit processor_thermal_mbox pmt_telemetry
+> pmt_discovery pmt_class intel_pmc_ssram_telemetry int3400_thermal
+> int3403_thermal intel_vsec acpi_thermal_rel int340x_thermal_zone acpi_pad
+> acpi_tad mac_hid sch_fq_codel msr parport_pc ppdev lp parport efi_pstore
+> [  218.492543]  autofs4 btrfs blake2b_generic raid10 raid456
+> async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq
+> raid1 raid0 hid_generic usbhid nvme i2c_i801 e1000e nvme_core hid i2c_mux
+> nvme_keyring i2c_smbus ahci spi_intel_pci nvme_auth spi_intel libahci hkdf
+> video wmi
+> [  218.492563] CPU: 6 UID: 0 PID: 409 Comm: kworker/u32:8 Not tainted
+> 6.18.0-rc1 #3 PREEMPT(voluntary)
+> [  218.492566] Hardware name: LENOVO 12TECTO1WW/3355, BIOS M5HKT1DA
+> 06/17/2025
+> [  218.492568] Workqueue: events_unbound intel_display_power_put_async_work
+> [i915]
+> [  218.492706] RIP: 0010:assert_dmc_loaded+0x2c1/0x420 [i915]
+> [  218.492840] Code: 55 a8 e8 52 2d 9c cf 44 8b 45 cc 8b 4d bc 45 89 e9 48
+> 89 c6 8b 45 c8 48 8b 55 a8 48 c7 c7 28 7e db c1 50 41 56 e8 9f 19 e4 ce <0f>
+> 0b 58 5a e9 92 fe ff ff 48 8b 17 eb c6 48 8b 3b 48 85 ff 74 04
+> [  218.492842] RSP: 0018:ffffd04682ff7c48 EFLAGS: 00010246
+> [  218.492844] RAX: 0000000000000000 RBX: ffff8ef885a22000 RCX:
+> 0000000000000000
+> [  218.492845] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+> 0000000000000000
+> [  218.492846] RBP: ffffd04682ff7cb0 R08: 0000000000000000 R09:
+> 0000000000000000
+> [  218.492847] R10: 0000000000000000 R11: 0000000000000000 R12:
+> 0000000000000000
+> [  218.492848] R13: 000000000008f03c R14: 0000000000030100 R15:
+> 0000000000000005
+> [  218.492850] FS:  0000000000000000(0000) GS:ffff8efc32794000(0000)
+> knlGS:0000000000000000
+> [  218.492851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  218.492852] CR2: 000075deec01b098 CR3: 00000001fba40006 CR4:
+> 0000000000f72ef0
+> [  218.492854] PKRU: 55555554
+> [  218.492855] Call Trace:
+> [  218.492856]  <TASK>
+> [  218.492860]  assert_main_dmc_loaded+0x10/0x20 [i915]
+> [  218.492990]  skl_enable_dc6+0xad/0x230 [i915]
+> [  218.493113]  gen9_dc_off_power_well_disable+0xb8/0xd0 [i915]
+> [  218.493244]  intel_power_well_disable+0x67/0x80 [i915]
+> [  218.493394]  intel_power_well_put+0x4b/0xc0 [i915]
+> [  218.493523]  __intel_display_power_put_domain+0xc7/0x1d0 [i915]
+> [  218.493649]  release_async_put_domains+0x5b/0x90 [i915]
+> [  218.493774]  intel_display_power_put_async_work+0x6b/0x170 [i915]
+> [  218.493896]  process_one_work+0x1a1/0x3f0
+> [  218.493901]  worker_thread+0x2ba/0x3d0
+> [  218.493904]  kthread+0x107/0x220
+> [  218.493906]  ? __pfx_worker_thread+0x10/0x10
+> [  218.493908]  ? __pfx_kthread+0x10/0x10
+> [  218.493910]  ret_from_fork+0x202/0x230
+> [  218.493912]  ? __pfx_kthread+0x10/0x10
+> [  218.493914]  ret_from_fork_asm+0x1a/0x30
+> [  218.493918]  </TASK>
+> [  218.493919] ---[ end trace 0000000000000000 ]---
+> [  218.493921] ------------[ cut here ]------------
+> [  218.493921] i915 0000:00:02.0: [drm] DMC 0 mmio[6]/0x8f00c incorrect
+> (expected 0x40b8408c, current 0x0)
+> [  218.493937] WARNING: CPU: 6 PID: 409 at
+> drivers/gpu/drm/i915/display/intel_dmc.c:645 assert_dmc_loaded+0x2c1/0x420
+> [i915]
+> [  218.494063] Modules linked in: rfcomm ccm cmac algif_hash algif_skcipher
+> af_alg xe snd_hda_codec_intelhdmi drm_gpuvm drm_gpusvm_helper
+> snd_hda_codec_alc269 gpu_sched snd_hda_scodec_component drm_ttm_helper
+> snd_hda_codec_realtek_lib drm_exec snd_hda_codec_generic drm_suballoc_helper
+> intel_uncore_frequency intel_uncore_frequency_common i915 snd_hda_intel
+> snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic
+> soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common
+> snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda
+> snd_hda_codec_hdmi soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof
+> iwlmvm snd_sof_utils snd_soc_acpi_intel_match bnep
+> snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_acpi
+> soundwire_bus x86_pkg_temp_thermal snd_soc_sdca intel_powerclamp mac80211
+> crc8 snd_soc_avs snd_soc_hda_codec snd_hda_ext_core snd_hda_codec coretemp
+> kvm_intel snd_hda_core snd_intel_dspcfg snd_intel_sdw_acpi snd_hwdep
+> snd_soc_core kvm libarc4 snd_compress iwlwifi ac97_bus
+> [  218.494101]  snd_pcm_dmaengine snd_pcm snd_seq_midi snd_seq_midi_event
+> snd_rawmidi binfmt_misc snd_seq cmdlinepart processor_thermal_device_pci
+> btusb processor_thermal_device spi_nor snd_seq_device btmtk
+> processor_thermal_wt_hint drm_buddy platform_temperature_control snd_timer
+> btrtl irqbypass ttm processor_thermal_soc_slider polyval_clmulni
+> nls_iso8859_1 ghash_clmulni_intel platform_profile btbcm aesni_intel
+> mei_hdcp think_lmi processor_thermal_rfim btintel mei_pxp rapl snd
+> intel_rapl_msr processor_thermal_rapl cfg80211 bluetooth
+> firmware_attributes_class input_leds drm_display_helper intel_cstate mtd
+> mei_me joydev wmi_bmof intel_rapl_common soundcore cec ecdh_generic
+> processor_thermal_wt_req ecc mei rc_core processor_thermal_power_floor
+> intel_pmc_core i2c_algo_bit processor_thermal_mbox pmt_telemetry
+> pmt_discovery pmt_class intel_pmc_ssram_telemetry int3400_thermal
+> int3403_thermal intel_vsec acpi_thermal_rel int340x_thermal_zone acpi_pad
+> acpi_tad mac_hid sch_fq_codel msr parport_pc ppdev lp parport efi_pstore
+> [  218.494145]  autofs4 btrfs blake2b_generic raid10 raid456
+> async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq
+> raid1 raid0 hid_generic usbhid nvme i2c_i801 e1000e nvme_core hid i2c_mux
+> nvme_keyring i2c_smbus ahci spi_intel_pci nvme_auth spi_intel libahci hkdf
+> video wmi
+> [  218.494165] CPU: 6 UID: 0 PID: 409 Comm: kworker/u32:8 Tainted: G    W
+> 6.18.0-rc1 #3 PREEMPT(voluntary)
+> [  218.494168] Tainted: [W]=WARN
+> [  218.494169] Hardware name: LENOVO 12TECTO1WW/3355, BIOS M5HKT1DA
+> 06/17/2025
+> [  218.494170] Workqueue: events_unbound intel_display_power_put_async_work
+> [i915]
+> [  218.494309] RIP: 0010:assert_dmc_loaded+0x2c1/0x420 [i915]
+> [  218.494435] Code: 55 a8 e8 52 2d 9c cf 44 8b 45 cc 8b 4d bc 45 89 e9 48
+> 89 c6 8b 45 c8 48 8b 55 a8 48 c7 c7 28 7e db c1 50 41 56 e8 9f 19 e4 ce <0f>
+> 0b 58 5a e9 92 fe ff ff 48 8b 17 eb c6 48 8b 3b 48 85 ff 74 04
+> [  218.494437] RSP: 0018:ffffd04682ff7c48 EFLAGS: 00010246
+> [  218.494439] RAX: 0000000000000000 RBX: ffff8ef885a22000 RCX:
+> 0000000000000000
+> [  218.494440] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+> 0000000000000000
+> [  218.494441] RBP: ffffd04682ff7cb0 R08: 0000000000000000 R09:
+> 0000000000000000
+> [  218.494442] R10: 0000000000000000 R11: 0000000000000000 R12:
+> 0000000000000000
+> [  218.494443] R13: 000000000008f00c R14: 0000000040b8408c R15:
+> 0000000000000006
+> [  218.494444] FS:  0000000000000000(0000) GS:ffff8efc32794000(0000)
+> knlGS:0000000000000000
+> [  218.494446] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  218.494447] CR2: 000075deec01b098 CR3: 00000001fba40006 CR4:
+> 0000000000f72ef0
+> [  218.494448] PKRU: 55555554
+> [  218.494449] Call Trace:
+> [  218.494450]  <TASK>
+> [  218.494452]  assert_main_dmc_loaded+0x10/0x20 [i915]
+> [  218.494572]  skl_enable_dc6+0xad/0x230 [i915]
+> [  218.494667]  gen9_dc_off_power_well_disable+0xb8/0xd0 [i915]
+> [  218.494757]  intel_power_well_disable+0x67/0x80 [i915]
+> [  218.494845]  intel_power_well_put+0x4b/0xc0 [i915]
+> [  218.494930]  __intel_display_power_put_domain+0xc7/0x1d0 [i915]
+> [  218.495015]  release_async_put_domains+0x5b/0x90 [i915]
+> [  218.495099]  intel_display_power_put_async_work+0x6b/0x170 [i915]
+> [  218.495181]  process_one_work+0x1a1/0x3f0
+> [  218.495184]  worker_thread+0x2ba/0x3d0
+> [  218.495185]  kthread+0x107/0x220
+> [  218.495187]  ? __pfx_worker_thread+0x10/0x10
+> [  218.495189]  ? __pfx_kthread+0x10/0x10
+> [  218.495190]  ret_from_fork+0x202/0x230
+> [  218.495191]  ? __pfx_kthread+0x10/0x10
+> [  218.495192]  ret_from_fork_asm+0x1a/0x30
+> [  218.495195]  </TASK>
+> [  218.495195] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> Thanks,
+> Alok
 
