@@ -1,176 +1,201 @@
-Return-Path: <linux-kernel+bounces-859531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC9DBEDE7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:32:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73604BEDE81
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A20C234AAB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:32:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D9234E26D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 05:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABBD21D3DF;
-	Sun, 19 Oct 2025 05:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7C821CC79;
+	Sun, 19 Oct 2025 05:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dnxPFkQe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E1F10A1E;
-	Sun, 19 Oct 2025 05:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GG+IKFTF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BC120D4E9
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 05:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760851923; cv=none; b=hleb9Y0D11DyZX1i3tq7SYch1/6tpfrHmoYH5PgEvmkYDzkzJw3N9QUYTOxXp2Wbxpv5bMkc1e/77DLDor4weeMxmkUvCvMMHSPWbc5Oj4Pu6TEXxBsZ7IKpagkjr9GEiNaLgho6VYi7iAGtVYujcqCrm08ReGlSQcy5ofeeIE4=
+	t=1760851958; cv=none; b=TWfN4xeE78pLZoVOJroj9RHPeW0nWJ4dSPlg7w4M6TLEbgGj/vkp40lrj3M2nC8rm84fySjBeMH0FI6iYTZoy1k6rl2tygmnDPTtL2GVWA/I59X3Z5Y1Ax8jMka2PIlQELmTm+Ei2/D/yCH+qCfhLnYkeV+/kyqSPNJ2jwsgTu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760851923; c=relaxed/simple;
-	bh=bWGsBC58nVw/sxl2Hx9QNQsauG04QZleHom4h2dfg0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=am5uZw2LlsI8bnKypnZQXNa0FPtrv8wWqj7URTVWGY0+7MJVuj3HAb95i+bBuGt363TPFUysrSYGfs7hw5bEkM/yXf3AHvGwvOf5svxuCMmZ5eIAHGqxVIAMWxSqYC2jPKK+pgsRNsMEDgt1O1x/sdjmKoure6UhhRSrt8Nik6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dnxPFkQe; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760851921; x=1792387921;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bWGsBC58nVw/sxl2Hx9QNQsauG04QZleHom4h2dfg0U=;
-  b=dnxPFkQeKZfos0LNkiNDzbhWDj7cUAVKNeE6WTwL9Y3K+6ktDaiqU51T
-   mSVt73TJ6Teds8yomYX8IkREFoAg0HRi2hYq/t/UnPe7ZNiPzrbkglFpQ
-   TNZBP5jZfDHAUX4w7alTqy6oa/1z/8qzzAhDYiqa9CFpDBn0bkilK6zrx
-   UtaNTDVzBneOSfTDDnDBZFejWZEVU87Y/Cl7mrCvU+r2KBrnZzULZ3xO2
-   zThXwqaCAGpQAmh5yN2NWQCkcBWFKlp8iHBp5pdCihgv4sKUiWlHUkSwp
-   bc+Zw5RZ9NegF1mZnLF8BqvvpgOJH0alVI90b7jACgvUQI2AWm3MqDdbO
-   w==;
-X-CSE-ConnectionGUID: 04F/9wcrRR6XWaZOmJpHzA==
-X-CSE-MsgGUID: ljyPhI3USpWcUOerfRNT0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65629434"
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="65629434"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 22:32:00 -0700
-X-CSE-ConnectionGUID: XocagptQREO66ibi0urNnA==
-X-CSE-MsgGUID: FCeZMkrnTHOQr5UUKBE7mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="220213467"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 18 Oct 2025 22:31:57 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vAM1F-0008s9-3C;
-	Sun, 19 Oct 2025 05:31:51 +0000
-Date: Sun, 19 Oct 2025 13:30:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, sugar.zhang@rock-chips.com, heiko@sntech.de,
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com
-Subject: Re: [PATCH v2 3/5] clk: rockchip: Add clock controller for the
- RV1126B
-Message-ID: <202510191337.86OcUAWo-lkp@intel.com>
-References: <20251017063107.1606965-4-zhangqing@rock-chips.com>
+	s=arc-20240116; t=1760851958; c=relaxed/simple;
+	bh=auvBzOHy8mqDxDox8yVlPg29HCGxPLPcO6/REPYPsEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WdJ6rwflfBeu8Y1WX3H9HRHrb64v+ZyN/+M8QrkGY4+1+abdtdnYOd97LvlQVnQhcQirOP0yuZnfoy9OG05C7UqGlYuX8twkBp/d3tFBcYfunI/m3CayMxFql4CvIRhtngFHpf73qEDCNrqb2xIz+gsXSgj3crdftKHNSMeP8qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GG+IKFTF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.11.42])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A620320145B6;
+	Sat, 18 Oct 2025 22:32:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A620320145B6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760851950;
+	bh=zvjRO3+lNPqmC2L9Fk1X5NWMcmOrpzqKtgUxpYAXtZU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GG+IKFTFl+IbTwk9/qoxkHu0oChT1BD0uuhMHFe85aO9krgLNC7C3D9KXTYpeWpTk
+	 PkiJt0dAVeC16YuoGLzbJ0uQOBx7e0aV7ZNX+kElN3g4Vwae4vX3t1/hBxmGlPPl2M
+	 yW/ONpZp7yqHNRXC7jQFwiyiceJ6XYxiW2Vkv/Yc=
+Date: Sat, 18 Oct 2025 22:32:28 -0700
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Jason Gunthorpe
+ <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Nicolin Chen
+ <nicolinc@nvidia.com>, Zhang Yu <zhangyu1@linux.microsoft.com>, Jean
+ Philippe-Brucker <jean-philippe@linaro.org>, Alexander Grest
+ <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH 2/2] iommu/arm-smmu-v3: Improve CMDQ lock fairness and
+ efficiency
+Message-ID: <20251018223228.00005eff@linux.microsoft.com>
+In-Reply-To: <aPIiuLj9c4IJlmIn@google.com>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+	<20250924175438.7450-3-jacob.pan@linux.microsoft.com>
+	<aPIiuLj9c4IJlmIn@google.com>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017063107.1606965-4-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Elaine,
+On Fri, 17 Oct 2025 11:04:24 +0000
+Mostafa Saleh <smostafa@google.com> wrote:
 
-kernel test robot noticed the following build errors:
+> On Wed, Sep 24, 2025 at 10:54:38AM -0700, Jacob Pan wrote:
+> > From: Alexander Grest <Alexander.Grest@microsoft.com>
+> > 
+> > The SMMU CMDQ lock is highly contentious when there are multiple
+> > CPUs issuing commands on an architecture with small queue sizes e.g
+> > 256 entries.
+> > 
+> > The lock has the following states:
+> >  - 0:		Unlocked  
+> >  - >0:		Shared lock held with count  
+> >  - INT_MIN+N:	Exclusive lock held, where N is the # of
+> > shared waiters
+> >  - INT_MIN:	Exclusive lock held, no shared waiters
+> > 
+> > When multiple CPUs are polling for space in the queue, they attempt
+> > to grab the exclusive lock to update the cons pointer from the
+> > hardware. If they fail to get the lock, they will spin until either
+> > the cons pointer is updated by another CPU.
+> > 
+> > The current code allows the possibility of shared lock starvation
+> > if there is a constant stream of CPUs trying to grab the exclusive
+> > lock. This leads to severe latency issues and soft lockups.
+> > 
+> > To mitigate this, we release the exclusive lock by only clearing
+> > the sign bit while retaining the shared lock waiter count as a way
+> > to avoid starving the shared lock waiters.
+> > 
+> > Also deleted cmpxchg loop while trying to acquire the shared lock
+> > as it is not needed. The waiters can see the positive lock count
+> > and proceed immediately after the exclusive lock is released.
+> > 
+> > Exclusive lock is not starved in that submitters will try exclusive
+> > lock first when new spaces become available.
+> > 
+> > In a staged test where 32 CPUs issue SVA invalidations
+> > simultaneously on a system with a 256 entry queue, the madvise
+> > (MADV_DONTNEED) latency dropped by 50% with this patch and without
+> > soft lockups.
+> > 
+> > Signed-off-by: Alexander Grest <Alexander.Grest@microsoft.com>
+> > Signed-off-by: Jacob Pan <jacob.pan@linux.microsoft.com>
+> > ---
+> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 24
+> > ++++++++++++--------- 1 file changed, 14 insertions(+), 10
+> > deletions(-)
+> > 
+> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c index
+> > 9b63525c13bb..9b7c01b731df 100644 ---
+> > a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c +++
+> > b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c @@ -481,20 +481,19 @@
+> > static void arm_smmu_cmdq_skip_err(struct arm_smmu_device *smmu) */
+> >  static void arm_smmu_cmdq_shared_lock(struct arm_smmu_cmdq *cmdq)
+> >  {
+> > -	int val;
+> > -
+> >  	/*
+> > -	 * We can try to avoid the cmpxchg() loop by simply
+> > incrementing the
+> > -	 * lock counter. When held in exclusive state, the lock
+> > counter is set
+> > -	 * to INT_MIN so these increments won't hurt as the value
+> > will remain
+> > -	 * negative.
+> > +	 * We can simply increment the lock counter. When held in
+> > exclusive
+> > +	 * state, the lock counter is set to INT_MIN so these
+> > increments won't
+> > +	 * hurt as the value will remain negative. This will also
+> > signal the
+> > +	 * exclusive locker that there are shared waiters. Once
+> > the exclusive
+> > +	 * locker releases the lock, the sign bit will be cleared
+> > and our
+> > +	 * increment will make the lock counter positive, allowing
+> > us to
+> > +	 * proceed.
+> >  	 */
+> >  	if (atomic_fetch_inc_relaxed(&cmdq->lock) >= 0)
+> >  		return;
+> >  
+> > -	do {
+> > -		val = atomic_cond_read_relaxed(&cmdq->lock, VAL >=
+> > 0);
+> > -	} while (atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1)
+> > != val);
+> > +	atomic_cond_read_relaxed(&cmdq->lock, VAL >= 0);  
+> 
+> I think that should be "VAL > 0", as it is guaranteed that we hold
+> the shared lock at this point.
+> 
+Indeed, will do.
 
-[auto build test ERROR on rockchip/for-next]
-[also build test ERROR on clk/clk-next pza/reset/next linus/master v6.18-rc1 next-20251017]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Though there is no functional difference since we did inc already, VAL
+will never be 0 when it comes to this line.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Elaine-Zhang/clk-rockchip-Implement-rockchip_clk_register_armclk_multi_pll/20251017-180259
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/20251017063107.1606965-4-zhangqing%40rock-chips.com
-patch subject: [PATCH v2 3/5] clk: rockchip: Add clock controller for the RV1126B
-config: arm-multi_v7_defconfig (https://download.01.org/0day-ci/archive/20251019/202510191337.86OcUAWo-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251019/202510191337.86OcUAWo-lkp@intel.com/reproduce)
+> Otherwise,
+> Reviewed-by: Mostafa Saleh <smostafa@google.com>
+> 
+> Thanks,
+> Mostafa
+> 
+> >  }
+> >  
+> >  static void arm_smmu_cmdq_shared_unlock(struct arm_smmu_cmdq *cmdq)
+> > @@ -521,9 +520,14 @@ static bool
+> > arm_smmu_cmdq_shared_tryunlock(struct arm_smmu_cmdq *cmdq)
+> > __ret;
+> > 	\ }) 
+> > +/*
+> > + * Only clear the sign bit when releasing the exclusive lock this
+> > will
+> > + * allow any shared_lock() waiters to proceed without the
+> > possibility
+> > + * of entering the exclusive lock in a tight loop.
+> > + */
+> >  #define arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq,
+> > flags)		\ ({
+> > 				\
+> > -	atomic_set_release(&cmdq->lock, 0);
+> > 	\
+> > +	atomic_fetch_and_release(~INT_MIN, &cmdq->lock);
+> > 			\ local_irq_restore(flags);
+> > 			\ })
+> >  
+> > -- 
+> > 2.43.0
+> >   
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510191337.86OcUAWo-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arm-linux-gnueabi-ld: drivers/clk/rockchip/clk-rv1126b.o: in function `rv1126b_clk_init':
->> drivers/clk/rockchip/clk-rv1126b.c:1050:(.init.text+0xc8): undefined reference to `rk3576_rst_init'
-
-
-vim +1050 drivers/clk/rockchip/clk-rv1126b.c
-
-  1012	
-  1013	static struct rockchip_clk_branch rv1126b_armclk __initdata =
-  1014		MUX(ARMCLK, "armclk", mux_armclk_p, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
-  1015				RV1126B_CORECLKSEL_CON(0), 1, 1, MFLAGS);
-  1016	
-  1017	static void __init rv1126b_clk_init(struct device_node *np)
-  1018	{
-  1019		struct rockchip_clk_provider *ctx;
-  1020		void __iomem *reg_base;
-  1021		unsigned long clk_nr_clks;
-  1022	
-  1023		clk_nr_clks = rockchip_clk_find_max_clk_id(rv1126b_clk_branches,
-  1024							   ARRAY_SIZE(rv1126b_clk_branches)) + 1;
-  1025	
-  1026		reg_base = of_iomap(np, 0);
-  1027		if (!reg_base) {
-  1028			pr_err("%s: could not map cru region\n", __func__);
-  1029			return;
-  1030		}
-  1031	
-  1032		ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
-  1033		if (IS_ERR(ctx)) {
-  1034			pr_err("%s: rockchip clk init failed\n", __func__);
-  1035			iounmap(reg_base);
-  1036			return;
-  1037		}
-  1038	
-  1039		rockchip_clk_register_plls(ctx, rv1126b_pll_clks,
-  1040					   ARRAY_SIZE(rv1126b_pll_clks),
-  1041					   RV1126B_GRF_SOC_STATUS0);
-  1042	
-  1043		rockchip_clk_register_branches(ctx, rv1126b_clk_branches,
-  1044					       ARRAY_SIZE(rv1126b_clk_branches));
-  1045	
-  1046		rockchip_clk_register_armclk_multi_pll(ctx, &rv1126b_armclk,
-  1047						       rv1126b_cpuclk_rates,
-  1048						       ARRAY_SIZE(rv1126b_cpuclk_rates));
-  1049	
-> 1050		rk3576_rst_init(np, reg_base);
-  1051	
-  1052		rockchip_register_restart_notifier(ctx, RV1126B_GLB_SRST_FST, NULL);
-  1053	
-  1054		rockchip_clk_of_add_provider(np, ctx);
-  1055	
-  1056		/* pvtpll src init */
-  1057		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_CORECLKSEL_CON(0));
-  1058		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_NPUCLKSEL_CON(0));
-  1059		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VICLKSEL_CON(0));
-  1060		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VEPUCLKSEL_CON(0));
-  1061		writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VCPCLKSEL_CON(0));
-  1062	}
-  1063	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
