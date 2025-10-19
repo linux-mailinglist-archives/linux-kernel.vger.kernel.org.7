@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-859791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64419BEE9A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:09:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC69ABEE9B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A263BDFDF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:09:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 158E4349810
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C39E2EC554;
-	Sun, 19 Oct 2025 16:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CD32EC09C;
+	Sun, 19 Oct 2025 16:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSzKmNV5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGjOPPP3"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1C538F80;
-	Sun, 19 Oct 2025 16:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C98A1A00F0
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760890146; cv=none; b=SINB1ywf05x3BzC74TfcONR38H7AVgs3rlYneHRt/yzZIf/lhJuGCnhLiIIesvTPYwAUHo8IP4zSqTOaDeXjpJU2anj0WjkNowkDzLvkRUBY16VJib9HAYUkg4YsGxji+3nvD/l0VCnbGeWqXk4MxjqHcRZKD7ok3Vqr7w8fivI=
+	t=1760890569; cv=none; b=R7mLjdo7O+Xmke1T1aAW8X+LTHVEybc6RkyuAV2xQK8hXnBfv0E7pJfBSIG7e8HdK7//kLohHfY4oG2momEnjl61PhwBIqhmFCN/J2928ALgDMpmj6Gai8kSottdaOz5WLs9HVMvukT/Na8C2gdcek8q3msubBMwn9loXAjNg28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760890146; c=relaxed/simple;
-	bh=FoS+s2SLs1a/86XBAZ0WcyxTGfRjJzC9vcvuY3cy8s8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSwkQSm2xdqjn9s0nNpHq5EhkOZ8S4ClXTrIBuux/YNiuz5x8n3eu4O1MgF1aeaaR6JLOGoj4lKCoKzrMzyfRPIgejCSscUEIGRxJo+znzVHSfAt36mhvU47k5GxLKnIEcevuKyVFyVLWOBVxMPCsh2va9N717fkPD9Pc9TDN4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSzKmNV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DBDC4CEE7;
-	Sun, 19 Oct 2025 16:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760890142;
-	bh=FoS+s2SLs1a/86XBAZ0WcyxTGfRjJzC9vcvuY3cy8s8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kSzKmNV5nZZpQE35pdj80lOCp8LM4F4tJMzwcpamC1HM52wkXYj5fLUcd+p3kVjBb
-	 H9zyohTNWdHko6sau+nG5V8NJVBRbCDuj7QdrTmDmT/+frTTFCH5saLdVwqFxuiG9C
-	 5KjqDIXvyu0UR+iaE+j5m/eGaNmZC6Taq/AqPskpLfKM2/SttDYS2ZHb2lIV0DFm8y
-	 1Ht+Jp1r0WGLuCUiyOk3Nv/PxFcFdzgBc1O2VEBB7It2bVWAZWksZrEDNNwKw4YziX
-	 VsAIr5Xz7HtzOyspCEZY7Gp0FGe/ReIR0/KcDt+VTfW2phqG6uA3/hiOA6EDjOxo5k
-	 9jJVKfLjD9mWQ==
-Date: Sun, 19 Oct 2025 09:07:29 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH 01/10] lib/crypto: blake2s: Adjust parameter order of
- blake2s()
-Message-ID: <20251019160729.GA1604@sol>
-References: <20251018043106.375964-1-ebiggers@kernel.org>
- <20251018043106.375964-2-ebiggers@kernel.org>
- <aPT3dImhaI6Dpqs7@zx2c4.com>
+	s=arc-20240116; t=1760890569; c=relaxed/simple;
+	bh=w65OdgmpV8I1cxj2sfq4rK12q9mD/l6u6jCluPLlwTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gb2l8bqc69rgy+L5alfQlvyV90O+iXxEq3KU5XKHS1DMoVBujg/1tIuniZVnSjdSzGNa5opql+eS2Op0t7Ak69RbMm4YRw1xA5bB1p9w02i5LQ9p/ojZarwx758lGJfds9xhYb3fgiFIELSEA2OBCCEPBWWGvlEsxJ76KGxVMEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGjOPPP3; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63e11347fd9so3329907d50.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760890566; x=1761495366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w65OdgmpV8I1cxj2sfq4rK12q9mD/l6u6jCluPLlwTY=;
+        b=kGjOPPP3AV4B15oNWUCh7zjCvw1lMZxc8GWcUcYppse9Tmq0p9m5dEEqeOh4hDgt+6
+         /U8YQXEAb+Oh4B3Iwycd2esArczN3zTEW8zGLdmFUdIiFHxQnfm6mFIk/rsnQaSRxm9V
+         XyKIBb1EpGzuMX0m+VYww5SehqGqwf2L1zToNiBNNp0IMY+YJALiPgoSRjiXVsgiIRQ4
+         5V+LdS1AupKh1LVlChSCR/RN+xxWQpiVAwfAnJ8LbaknNmuf0jGfp1sxSqTKpKzll3MI
+         HQutE1Wcnaa2JEdO64lPH3Q/e4F3UMhL1wq0cou3TetKULGj0YaMuGNahwZJwTEmXHS/
+         EyzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760890566; x=1761495366;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w65OdgmpV8I1cxj2sfq4rK12q9mD/l6u6jCluPLlwTY=;
+        b=hpptVmVWUzPFgB3mQ71OO0ZUVOKae+RLfk8qCwby5365M8q3KKTpQ/IcOqjN/IywM/
+         EKqFzFlysA9cDzdxeZuLSwldJ7zjOk/rcNBekslUlFPswzfuXNhDQ7e9K5AdTDXBUXbt
+         L33OwVunscfOB5oyc7PjcdzUpUN/rbSRmdylq0ngZ03Qc79YBF2ZtP6r9AbtYZr846D8
+         YUum1TEnvcLr8zLd3o5CU5huDnnJpNEpRyv/LxpUac8mEiRhEtnb76rVgNbBVBFz3rGD
+         46jKTemw5GFVpIOTMJ/rP6I6zN18UxspuZQjf+x87q7VH5PADU+U/JBniomhcCGFwTt3
+         PQwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU780nYQVqBE8B6Bul2V8sWiabPEV/gwJIEM27LhMK6GOmYG9jL7oRdNDcyLVAW9kWv8gCz7THI18LJK/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0+Zn6pr4qMNKvvHeBXaISh3vSorNDFveMCzrju0vKQFyi0uba
+	Sko0xJ+Zn/lGSeTNyXXEN+36zZF8st03+vNhvn8oJ4cxAzPdS2fLook8oBwf+EbM
+X-Gm-Gg: ASbGncuvAHj8FT0CK+wiVYZR4qGPOrF8KTroQJslR5Ilwex0BUeTKhVEyNM/j74GOyI
+	EG5pVsQVHrBFvR4FqnkxExP7C1Zy849sxYppoIMay+wpwNdR9pi99R72pUPUlPbD4S9Kqr3zccT
+	A8zwWo7wBleEd69KUvCJXYwduBXGYmhSgVoqN9gXI5hm6WC/+jPJr9ZGd1WZgT8sV8m5aLhcKDV
+	g5Te9tvtwuh/JWKmD17k99DihNpY+ulxCTuIUb2Qvt/ve/W12kTUEZ+izZFJVMJgmDP4rGdgmTf
+	EnZ/k5ARjMVj3i0pukr2B+QFDsE4rOxBEni+4hIe+b/7iec4WXp324djBerkRcdBcgmf2OwPYX5
+	VkuNLHpgqvBhXf89080aJexLzk9m+SsFLx63DeWEGGD/v+2WVc/B2nenqtzD3ISL0NBeUbN1x9X
+	PuoL2P3ParHX1EhsQsTIctyr7GBZVfEkY8zC7wiWNeVfWVW20WDwLCiSQYhNQ=
+X-Google-Smtp-Source: AGHT+IElWfzAepNqK3LlpQymTFB+dnzq6dId0s4n8cc9tbggmQJHdM08XYTf6C3f7CI5MrGaIVI7tg==
+X-Received: by 2002:a05:690e:168c:b0:63c:f5a6:f30f with SMTP id 956f58d0204a3-63e1626157bmr8254979d50.57.1760890566174;
+        Sun, 19 Oct 2025 09:16:06 -0700 (PDT)
+Received: from localhost (104-48-214-220.lightspeed.snantx.sbcglobal.net. [104.48.214.220])
+        by smtp.gmail.com with UTF8SMTPSA id 956f58d0204a3-63e266bc09csm1738354d50.11.2025.10.19.09.16.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 09:16:05 -0700 (PDT)
+From: Steev Klimaszewski <threeway@gmail.com>
+To: devnull+federico.izzo.pro@kernel.org
+Cc: abhinav.kumar@linux.dev,
+	agx@sigxcpu.org,
+	airlied@gmail.com,
+	david@ixit.cz,
+	dri-devel@lists.freedesktop.org,
+	federico@izzo.pro,
+	freedreno@lists.freedesktop.org,
+	jesszhan0024@gmail.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lumag@kernel.org,
+	marijn.suijten@somainline.org,
+	nicola@corna.info,
+	phone-devel@vger.kernel.org,
+	robin.clark@oss.qualcomm.com,
+	sean@poorly.run,
+	simona@ffwll.ch,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Steev Klimaszewski <threeway@gmail.com>
+Subject: Re: [PATCH v3] drm/msm/dpu: Add DSPP GC driver to provide GAMMA_LUT DRM property
+Date: Sun, 19 Oct 2025 11:15:59 -0500
+Message-ID: <20251019161559.6731-1-threeway@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251019-dpu-add-dspp-gc-driver-v3-1-840491934e56@izzo.pro>
+References: <20251019-dpu-add-dspp-gc-driver-v3-1-840491934e56@izzo.pro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPT3dImhaI6Dpqs7@zx2c4.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 19, 2025 at 04:36:36PM +0200, Jason A. Donenfeld wrote:
-> On Fri, Oct 17, 2025 at 09:30:57PM -0700, Eric Biggers wrote:
-> > Reorder the parameters of blake2s() from (out, in, key, outlen, inlen,
-> > keylen) to (key, keylen, in, inlen, out, outlen).
-> 
-> No objections to putting the size next to the argument. That makes
-> sense. But the order really should be:
-> 
->     out, outlen, in, inlen, key, keylen
-> 
-> in order to match normal APIs that output data. The output argument goes
-> first. The input argument goes next. Auxiliary information goes after.
+Hi Federico,
 
-In general, both conventions are common.  But in the other hashing
-functions in the kernel, we've been using output last.  I'd like to
-prioritize making it consistent with:
+With this patch applied this also works on the Thinkpad X13s (SC8280XP), thank
+you for this, I know a lot of end users have been asking about this for quite a
+long time, so nice to see that we might finally get it.
 
-    md5()
-    sha1()
-    sha224()
-    sha256()
-    sha384()
-    sha512()
-    hmac_md5()
-    hmac_sha1()
-    hmac_sha224()
-    hmac_sha256()
-    hmac_sha384()
-    hmac_sha512()
-    hmac_md5_usingrawkey()
-    hmac_sha1_usingrawkey()
-    hmac_sha224_usingrawkey()
-    hmac_sha256_usingrawkey()
-    hmac_sha384_usingrawkey()
-    hmac_sha512_usingrawkey()
-    crypto_shash_finup()
-    crypto_shash_digest()
-    crypto_shash_tfm_digest()
-    [and the SHA-3 functions in David's patchset]
+Tested-by: Steev Klimaszewski <threeway@gmail.com>
 
-- Eric
+-- steev
 
