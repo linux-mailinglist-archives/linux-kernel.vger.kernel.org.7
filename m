@@ -1,160 +1,161 @@
-Return-Path: <linux-kernel+bounces-859789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF15DBEE985
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:02:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55E9BEE834
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C5124E037A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:02:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E85B74EA9F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 15:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05ED2EC0A0;
-	Sun, 19 Oct 2025 16:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574FE2EB876;
+	Sun, 19 Oct 2025 15:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A60wrfVL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BnPXyELs"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898502EBB9C
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B074635966
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 15:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760889753; cv=none; b=iF5+S9MR24uArRx4oKNzl/TmsbhEjSuhX8F129uXMkfdSRoq2wre8Plp9uPpijWZR1h6vU7w/YCVbMjtlZTIPtQk5OXBhdsM5A6VZt9V253+X+UkNZSNbz2dYQWk8nK7VduT02c/VPfCY3EAhG4tSN+a6BHvbmUSwpT3HgllQ7M=
+	t=1760886235; cv=none; b=uA1//fCfDBpt4rRWEsCTSaQgl8Y0g5X8ZupwxUJT97zAET1HJjuJLufZGdK8fBZiM1rm5IgoGxjcRZnFF0cfxvW9CntA9nJJuIZvTmac2QqLuagD9GCbKMQCpdaY9hiHJprXZ/MjuYXbG4GJsOykMiU2QIfgFlcTMfqPRaEpbls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760889753; c=relaxed/simple;
-	bh=+xf9X2P4LBJXHBq+W5F0WMYPtUAcqU/5yUdWFR8RWg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8vIIxWyi5AqAojSUjhOgyTR8eYnVGbDu99q87/MngPRcxPD/nKewONmvy+KpxRKOFCweMukZCZNdFUDuj2KmREd/rI6fsuq7VR28zUUpGYrtJmMnBV1z/aL017mFiMidv/VYVH4nDfsRFynIfrmNU9hQv41i7y+JTchj/M4O9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A60wrfVL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59J8PqjZ022238
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:02:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yrSgxSLSjug2hqzstf5hGIeQ
-	dvScIsYA26L3fjhfwUQ=; b=A60wrfVL9zZXiJo1IpYz5nSiXDhJggSOBHOpZkcc
-	tlEyseTYqS/ksvdbaDIM4xqXhH0AI8SNEg5poSQa6MnO0U3gkv0/wHZ+LW401cjl
-	TbpqwHrALb3oAEU3qn8lDhxRWU6UjE4aA0EP7S7HhCQ95vm0ShrjGSygZnkV8DfV
-	u/1b75DmFFnSSN7r4zNkl5rIOQexFxo47+aLiFttYBRZrGcB7lugIdY6BdlEwmIm
-	LVu9DQpsYbPjUFdm8qtASQ8ptQKYjFfAIVun/PdmA3OcU46mVZNAH6SlHqa/kAyy
-	xkh0MQo9VfIfM5eqvPM/87ayI4rlCiexYTCfrN7WlcCNqQ==
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27htpj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:02:30 +0000 (GMT)
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-932cb539eceso352987241.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:02:30 -0700 (PDT)
+	s=arc-20240116; t=1760886235; c=relaxed/simple;
+	bh=vBM/xIZ40/SjaB/zXEdhYY+kJhrkNTuMgWw0XXXBvfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HAULKoTyTTnF2hDw2X3deIrBVi/jfPtuuYhdgXBKReYeD7aAFxwDsTkY+KwN0KZbT5WDkSlAXd6uZRvpjnzLrb5CBX/UIaO7FkNfw0U8+dswD8gBpcw/H4YI2E/rrLK498M6n+ZecGcxKEl6yPDYhvjuoTV+v0s0Ir4Ts6buqQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BnPXyELs; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3c76f3703cso57271366b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 08:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760886231; x=1761491031; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/9udsA3BE7foY00QqPjtJbwYeXlQDHSIpbrDLCZLLAM=;
+        b=BnPXyELsFu8uWP68XGAcEIT9aSvJkdHhTg3rxbSqqz5Ovakc46M5S02Xgnu0p22oCa
+         L6daE1KVVFUxRtwhXh6qnRWfayZhUYC6JWw5S554Z0Uj907ldQeGrp0YZRSpJOuebzyW
+         mKjgkVQLAQyyf9AQhSc+Rs46jwZaK0AC32KLYjLzw+WXaBbsyqluBArP/JD/FlQSzq3Z
+         kLlnAX7RY/y9G4VBzJBb3VLHXvLWAmVLfWJNhIaRVNGLEvNP9p1ugzMHH1Qll+/SUJcn
+         nWeWI2ZiG5Ceu3ZHuApAlNe1zc8scvbxF53W5ZKuMSxnLqq9h5P2UbV0xuZ7+XPBu5KS
+         3gEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760889749; x=1761494549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yrSgxSLSjug2hqzstf5hGIeQdvScIsYA26L3fjhfwUQ=;
-        b=oD07Kfski+uXwkAkZLeJJwapdi9ygyWjra2iz5tDboTOjbQ/wshpMMi8y1Y+YJt3ho
-         +w4R+L7Lm9Z65X//iWNu+KPF19nSQhczelC1cpdhryKU0fe05IrR6Orn/kP98YoFMQAW
-         jDp4trT+KCUiHVkpf5oJ8XtAEIZjoAtW2bQXleXTzq6N/tJV7y20HCCXIAOzXLEIwx1u
-         4oABdsusSUHE9dFbGCs64TL3xy9R1CG1JRvxbVsdh5mI4jWQa2rNz1eIcHYNYCCcxK+n
-         DO6atoDTw0pZYSGmFkqwH5oghKmWi+PI3BSCeo3COZg1ZfdU1yEinaEBXFF2L9SSYvKq
-         pQkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzOFa/iLE27WbfqJFEDPbuNmPYsB5DsooWCRxChzVJgXzrAhCN6T0aL9qkB87pFrLIygKBB8Wry7EDaRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf4LyEFTECmHeO0K9pSHREnnwjF7JFGfoeq+5RLgA8Ue+tB8Go
-	KpOVTq76lg2sChb1u58+w9TKEijeSB/YLuBHoLPl26uTI2tPRvyYWAZcvJLwCy5hn1+z2LN8fzI
-	NJ3y/MywxVjWv+WxOTJz9RKfsaMOUZt6cGVqpllQ06V83D5tdLVXd2JsY1XhDZsl5Mmw=
-X-Gm-Gg: ASbGncsUYAFABybjaCswZhex9hk+tkfWtz6ircP2kdmPccBO0k25Td3Wkml6epSeD8C
-	b/UwBFD+nB9Gt2ga3tdHeK9YOXufZA94CXY406sbXIJIpOzZHNVKpIpJl8nL7jqsX6m36etRJam
-	PuAfD3/UWih2tOyfMLHs94k8D7UQMaDeIT+ud6/nL5CidGS0JtRZ81EgzK3zmmWH2hjbx4ovs0A
-	s+ONhy/mGJt9/vPnjFWbd7m1OiCp+Gmzb/t3g9vaVFFNlk3EMhRdh0hcCjS2xvuXjq5EuJStxNX
-	3Pyr3Zyt+ZJamSh58E+cOsb4BChM/IUqeHh7yAHqrj+mblap6nBDIlD4jr5sjiqpeEToCCL/FZN
-	zFSPXcvjD4nFMYVEATkQL0ybgELaOqp8YAcLAhq9tObzecr24gpbom2Pf8ch/I3z0y/XAZbH1FF
-	DWRi4FO/tN8pw=
-X-Received: by 2002:a05:6122:3d05:b0:54a:8cfe:193e with SMTP id 71dfb90a1353d-5564ee5fc31mr2779091e0c.5.1760889749460;
-        Sun, 19 Oct 2025 09:02:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGX12e9u2jTwAw/ohWphMrO/Z/+CwpFfiWoBiRqZoykAWDjj50XtmQqV9+4tCn2aAkVSr9v8A==
-X-Received: by 2002:a05:6122:3d05:b0:54a:8cfe:193e with SMTP id 71dfb90a1353d-5564ee5fc31mr2779046e0c.5.1760889748963;
-        Sun, 19 Oct 2025 09:02:28 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a9578a51sm14051151fa.42.2025.10.19.09.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 09:02:27 -0700 (PDT)
-Date: Sun, 19 Oct 2025 19:02:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: xiangxu.yin@oss.qualcomm.com
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com
-Subject: Re: [PATCH v4 2/3] arm64: dts: qcom: Add DisplayPort and QMP USB3DP
- PHY for SM6150
-Message-ID: <aruuyvtzi2notuxdoi6mk45y3zybu7dpttpteqrektszkhh4hw@uipxhhy5nar4>
-References: <20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com>
- <20251015-add-displayport-support-to-qcs615-devicetree-v4-2-aa2cb8470e9d@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1760886231; x=1761491031;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9udsA3BE7foY00QqPjtJbwYeXlQDHSIpbrDLCZLLAM=;
+        b=rFXch4b7OeaiHTaZpvw9BKraNCJaEfRGYDbWb3G4/1d5t/Tx0UY7vpa8RppTVl16Y1
+         ZPusSzJwYps//Bc5q1SEJilsJSMnVSe1o1lHpYtp+yxnQHzz2g+CpVM1aBNyz0x1wFZL
+         e010YwEj5ZkjWP7W05UCdvrnJnpQUU/Lh+XPfbQAgagCylXzHgIpyM2oqbHZTaqHgUzX
+         Le0MzgTFYXzzd8owfHDA8m1SPtYGAEDdF8JP6ODhWWANHUAjMvcpOj3pkVgPIBlbdmYx
+         RU2HTo+GonYzFYH8hxtBNA5lpsGgsWABx0+D5G5S6B9vFlDig18MOcHh3eAWEkixKSBY
+         +B5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUn0VtbXWlDDG+ivlnJQUIg0MjwPWqQOn6EJge+PDo0FSupdL81ves8ykJy+1OwUvkvr5bk7ecgq8nj+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwniwstqvFOFBM4/eUdNmjXRjRFQyNXjUueUiPDlaZSg6tvBUv5
+	i1hGgu6z/9FQa+GzlLkEurBsNRpDv7U4UIEMdmx3uXAAqFSy5nILPhP7
+X-Gm-Gg: ASbGncuVoPxkXLr4YtpT+VxX/MtIMW0wAOIEB07pBUVoEgRI6mQKomz2r/GdpmaBlvD
+	HYQmBNoeQ5pGfNuMJWn8D3ht217DIkGbAOA8hZiZ8JnbBaTZlM86S1dS8IWTu5QwwimJIryD0+r
+	4sFwMt0fNuLQCR6s1RCrwEQAKsa1x28PRC2f97Y31tm+mc5rl1ebSq7Ugrk0d57KaiAMxEGxmYn
+	xy+LZ+KoL1b2U2l9SpBUYkkYHdXDVVSoQ2Vz2DlbAx8v0PFZWzppmZA7F8J01zGXx+s3ZE0D9D/
+	b3OB+5MlZQF3uLqIsDktXlJKlJ6t6kcB9xTi7Z8onIGtXiEeCqZGXcp9LZKN8+36CariirMZl3T
+	IvMzveRFt2HPGr701G1BOZkhUDdrg6E/2AJ2jeiUJVxEn2Hi7gfGP8FyDQfG1Fy1tqt1fZzRl8X
+	gWfLGrAh/X9HlM+HRR+KtR
+X-Google-Smtp-Source: AGHT+IH6TluHuNvwOnAVvgBjwGA0zfWFt6b5AZGTbaDmowoHujtKj2lEr/TiFV0djG0kgxyb8b/vig==
+X-Received: by 2002:a05:6402:2751:b0:634:4e0:8377 with SMTP id 4fb4d7f45d1cf-63c1f634390mr5314959a12.2.1760886230847;
+        Sun, 19 Oct 2025 08:03:50 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.121.102])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48a92961sm4345576a12.8.2025.10.19.08.03.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 08:03:50 -0700 (PDT)
+Message-ID: <d072dfe7-e0e9-49f6-89ed-25d194035e3b@gmail.com>
+Date: Sun, 19 Oct 2025 17:03:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015-add-displayport-support-to-qcs615-devicetree-v4-2-aa2cb8470e9d@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX/XrQvZk5titx
- EnSuA682t2cHE9SEUl5Yvo5K3h3J5vIC44IkPTZsyBTe6jWnASVFJYfd05I8uB5O3DtW8ZtkvWD
- eEIwlHh6qbeLEV2VYZWyxRkWNdWKS10wyZRLbxJwWGl0uV0LZ3rrQn7TsNc88r4lVeKaTXIw5ov
- w00ajR2ur07h/+J6yXt3yKhLpxV8VAFkS/tDGTYjBCAhJBe4jF0oAw0pk3QoiNzG/SxH7QtH5Dd
- 96lXyX6LHjfFiRsFG7WVyMog3H5ddkr8cnD7nIZSyk0Aypd6OJfekHYjQxfuzOewI0dXam71a83
- YiUTuKkLfZ6E+9NXsYH1yyk37rXlm7xMbK7DnnHQvOm7tRZn4cpGiPNR0W0+vsU0yGiVSAC3mVm
- OxALyRLM6hB+HvWj9ca5KgeyYObdRQ==
-X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f50b96 cx=c_pps
- a=ULNsgckmlI/WJG3HAyAuOQ==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=jqVs4JzIjkIIVyEy1LMA:9 a=CjuIK1q_8ugA:10 a=1WsBpfsz9X-RYQiigVTh:22
-X-Proofpoint-GUID: aQhPOyhwhClAjGcN3fYScbinTzNJVz_n
-X-Proofpoint-ORIG-GUID: aQhPOyhwhClAjGcN3fYScbinTzNJVz_n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-19_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510180018
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ Greg KH <gregkh@linuxfoundation.org>
+Cc: lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
+ <2025101910-dipper-suburb-1755@gregkh>
+ <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 09:53:19AM +0800, Xiangxu Yin via B4 Relay wrote:
-> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+On 10/19/25 3:47 PM, Thomas Zimmermann wrote:
+> Hi
 > 
-> Introduce DisplayPort controller node and associated QMP USB3-DP PHY
-> for SM6150 SoC. Add data-lanes property to the DP endpoint and update
-> clock assignments for proper DP integration.
+> Am 19.10.25 um 16:34 schrieb Greg KH:
+>> On Sun, Oct 19, 2025 at 04:12:28PM +0100, Mehdi Ben Hadj Khelifa wrote:
+>>> Replace kmalloc() with kmalloc_array() to correctly
+>>> handle array allocations and benefit from built-in overflow checking[1].
+>>>
+>>> [1]:https://docs.kernel.org/process/deprecated.html
+>>>
+>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>> ---
+>>>   drivers/gpu/drm/tiny/repaper.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/ 
+>>> repaper.c
+>>> index 4824f863fdba..290132c24ff9 100644
+>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>> @@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct 
+>>> drm_framebuffer *fb, const struct iosys_map *
+>>>       DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>             epd->factored_stage_time);
+>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>> +    buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
+>> This isn't an array, so this function change doesn't seem to make much
+>> sense, right?  The size should have already been checked earlier in the
+>> call change to be correct.
+Yes,I was intending to say framebuffer but I was working on another 
+similar patch simultaneously so I reused same words by mistake. Thanks 
+for clarifying that.>
+> Yes, we've recently received plenty of these pointless changes. The 
+> correct code would compute the number of bytes per pixel using 
+> drm_format_info_min_pitch() and multiply with fb->height. The latter 
+> could (maybe) use kmalloc_array(). It would still not be an array in the 
+> common sense.
 > 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm6150.dtsi | 113 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 111 insertions(+), 2 deletions(-)
+Thanks for the review and suggestion.I will be sending a v2 patch with 
+the recommended code change.
+
+Best Regards,
+Mehdi Ben Hadj Khelifa> Best regards
+> Thomas
 > 
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> -- 
+> -- 
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
 
