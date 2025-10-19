@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-859609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D95BBEE18B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2493BEE18E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B87C4E6019
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481161898164
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946662E03E6;
-	Sun, 19 Oct 2025 09:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7832DFF18;
+	Sun, 19 Oct 2025 09:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4Ewit2a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="A3RfW2Rw"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7D9433B3;
-	Sun, 19 Oct 2025 09:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03925126C17;
+	Sun, 19 Oct 2025 09:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760865016; cv=none; b=Es0tt1QAa1f8RFxxRLYI7esBn3I2dk2cOVewCtnnisPo/iQzz49EbkAC/uruLzU9aJ3B+oRXYNIJEtbmRDCgqKMfsjYBTNvIUZxmAsU+HhS5RcflFvqCvksqtnKDH2gECciXwHx6gw0WP0CaNuMcIOXJHoNx3Fy664Z1dxO4UUE=
+	t=1760865179; cv=none; b=qn3GbW8SEaa1C4JnuFBA+JyNuG/0632xMey+Rz8U43EhcCf5EidKoVGke72xM8u7JChNhCCHeu8XkdBfQF8xFgqzDgK5Eu5PWdmWHrLacLv5Bkm1eFu3ez9JB/MAOROB/S0tVoGm+dbeYXdTrKp2VH1gckvCrs5NymiO3ASZqx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760865016; c=relaxed/simple;
-	bh=3shpPgiWLn2oVdcGJeEmeZTcZOfIHxZnlQlHZPS7LBE=;
+	s=arc-20240116; t=1760865179; c=relaxed/simple;
+	bh=iWOig4kQf4kFb3TIgEFkR+kYFpVNh6IkDXuVegFDu+Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q2mEo/Qk/SuslrcA1m44is9c8jbMQ88Mu/YWYGaIOZIoFEQ0SIk9fyZaJCiuTpRDO/iliPvYlIvt0r9oDOvMmbu8vHUXJyKoxFUlfprNmyijEErvB//8UoZHzXOG/9avq6ue+/4uymZGZYARiJZ0vv0L+TzakSAzopNRrlkmUGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4Ewit2a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 929B9C4CEE7;
-	Sun, 19 Oct 2025 09:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760865016;
-	bh=3shpPgiWLn2oVdcGJeEmeZTcZOfIHxZnlQlHZPS7LBE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H4Ewit2avuAceStAVppeXRiHyJYYTFEJIU1dLBd8NeToxy2hSxqBv4TQGGqrFzVrb
-	 3N2OXz3iJaU8WcOEVqHD3Ijij3gXzJ7Nd1Uml3iuE331cEkSXuEd0Jtu/gvqsQ7SBH
-	 q0eJRo4X91d2rdkup/yte+Y/tTt+7qbj4he+C6j3DKmXIr5W0Tkw5DC3L3vw9ewJmA
-	 NqIwo5JaIfCTqVc4NGGigvePHhOsuGD/rd/GA/OTCphYPgVmk8qnx7q0PQroRZ0Exy
-	 ly0+CGuxYx/y2E2CPx+Ro3688W/lZw0D8Vdh3EdC7/lr4N3cskuZOlwZyC7ZiWV4TM
-	 EXNKb6miJ6b9g==
-Message-ID: <811c728c-e2c9-462d-9c7a-dd79a683e301@kernel.org>
-Date: Sun, 19 Oct 2025 11:10:09 +0200
+	 In-Reply-To:Content-Type; b=d1uRgU3v0ORT/eG75OKOWXAgimCoZ6FSqT9ft9MnzHfTnjtZYY0UUqlRwL9/UFoRmKNUrR42xXM4/DQjMoRV0aGWmWz3Lqx1VoxJVC0ConYxNP5bb/tS9w4ciX7vs6UxdSFJqfB+8ZqVaDB/kCc9T1D5dotYNzG+PlQX3emg9pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=A3RfW2Rw; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1760865167; x=1761469967; i=quwenruo.btrfs@gmx.com;
+	bh=GLpCzEK3VAHXP99FoKwHy4oEZ+27F/EgdYjsk/uj3as=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=A3RfW2Rwdg6G+s8gpEJSflnmbpP1TdDTjwXTsQSD4h9cMSXWofJ0lDDyz3JxG39p
+	 eV50UKjWVBfgRNe71rncmbi6yTiJxs3LjaoqQQ/SPLN9zXU5osPfqIVAy1Va5M6R6
+	 p7JQkCGKJHe5mwDmPAbrob5cctBH8VFwg0Z2Iz2B9ao6Bc1HAsXWA9C/kc9i/4/kR
+	 ppjPmw9uJzHGEFFVUvm0YUWK02K4c9SciSiX3zLXR4WhDt00WmYiyu+so9czGHBy0
+	 L5/tFbxkrqjdxNQ5a6YxG3SIv94RLklLveQAIFMaGh4Ss7Y+6doE0uiOppdYBieHj
+	 c654PDfvY0o9yO8yAw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mr9Bu-1uNJHc3gD0-00bimj; Sun, 19
+ Oct 2025 11:12:47 +0200
+Message-ID: <97fc4d4c-2142-45f3-b1a9-4b4f3bd3d21c@gmx.com>
+Date: Sun, 19 Oct 2025 19:42:40 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,139 +57,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: display/msm: gpu: Document A612 GPU
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
- <20251017-qcs615-spin-2-v1-2-0baa44f80905@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] btrfs: initialize folios to NULL in compress_file_range()
+To: Kriish Sharma <kriish.sharma2006@gmail.com>, clm@fb.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ kernel test robot <lkp@intel.com>
+References: <20251019083647.2096733-1-kriish.sharma2006@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251017-qcs615-spin-2-v1-2-0baa44f80905@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20251019083647.2096733-1-kriish.sharma2006@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yAzRKbn2OjlFv8bQwSPNEns7jPUXps9iRwsfwjFyqL6pcxL9Vse
+ I7zJ5cEF6QjZ7Q461/nsIPX785pmFGU4Ro7k2rgMxZxs78FNoWpzg37A0FTGfPIxm0uKdTg
+ /SJz0ePn17UbGoURFSqw2McY1Q9ION8A41bIwOmcX3+IZ/ydZGjlKW98EfdA44z5FNrSSJq
+ fbq2KwyKdfsumSD+lCW6g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GcN28E0sl0E=;QeVSlq1b5f0x0P+x/3te+MF9q1T
+ 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
+ 3kSvw==
 
-On 17/10/2025 19:08, Akhil P Oommen wrote:
-> A612 GPU has a new IP called RGMU (Reduced Graphics Management Unit)
-> which replaces GMU. But it doesn't do clock or voltage scaling. So we
-> need the gpu core clock in the GPU node along with the power domain to
-> do clock and voltage scaling from the kernel. Update the bindings to
-> describe this GPU.
-> 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+
+
+=E5=9C=A8 2025/10/19 19:06, Kriish Sharma =E5=86=99=E9=81=93:
+> The variable 'folios' may be used uninitialized when jumping to cleanup
+> labels, triggering the following clang warning:
+>=20
+>    fs/btrfs/inode.c:874:6: warning: variable 'folios' is used uninitiali=
+zed
+>    whenever 'if' condition is true
+>=20
+> Initialize 'folios' to NULL to ensure the cleanup path is safe and to
+> silence the compiler warning.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510171743.VQ6yA0Uu-lkp@=
+intel.com/
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+
+Before the LKP report it's already fixed in the for-next branch.
+
 > ---
->  .../devicetree/bindings/display/msm/gpu.yaml       | 31 ++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-> index 3696b083e353031a496a1f299d8f373270ca562d..efc529e82bc198e7c3c89a5eecb6f929960a8de9 100644
-> --- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-> @@ -45,11 +45,11 @@ properties:
->            - const: amd,imageon
->  
->    clocks:
-> -    minItems: 2
-> +    minItems: 1
->      maxItems: 7
->  
->    clock-names:
-> -    minItems: 2
-> +    minItems: 1
->      maxItems: 7
->  
->    reg:
-> @@ -388,6 +388,33 @@ allOf:
->        required:
->          - clocks
->          - clock-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,adreno-612.0
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
+>   fs/btrfs/inode.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index d726bcdacf6b..54903e17338f 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -862,7 +862,7 @@ static void compress_file_range(struct btrfs_work *w=
+ork)
+>   	u64 actual_end;
+>   	u64 i_size;
+>   	int ret =3D 0;
+> -	struct folio **folios;
+> +	struct folio **folios =3D NULL;
+>   	unsigned long nr_folios;
+>   	unsigned long total_compressed =3D 0;
+>   	unsigned long total_in =3D 0;
 
-Drop, it's implied.
-
-
-> +          maxItems: 1
-> +
-> +        clock-names:
-> +          items:
-> +            - const: core
-> +              description: GPU Core clock
-> +
-
-Missing constraint for 'reg'.
-
-> +        reg-names:
-> +          minItems: 1
-
-Drop. MMIO range is not flexible.
-
-> +          items:
-> +            - const: kgsl_3d0_reg_memory
-> +            - const: cx_dbgc
-> +
-Best regards,
-Krzysztof
 
