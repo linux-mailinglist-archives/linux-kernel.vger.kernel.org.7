@@ -1,151 +1,157 @@
-Return-Path: <linux-kernel+bounces-859892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FBFBEEE82
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F358BEEE85
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA8C14E3EF7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:04:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ABDE3E4393
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 23:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4841225C6E2;
-	Sun, 19 Oct 2025 23:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C550262FDC;
+	Sun, 19 Oct 2025 23:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fB6efVB/"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t3dqTKHG"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3A62586C7
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 23:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D89261B92
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 23:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760915061; cv=none; b=eO/cmh+PGeLBudOHGd9m97O8EKpmIIqibQT7CginhQhvInYpChmt2Zy32MWukytRH1guSFHan5/JKDcJa56HfD35Bi1vKeXMr3OD9mFhDWKox1klLCbB4S1ZnCJfwXCNNxG2joIiqzurVUAz1A2//lJ+OY4NGFGWJiuDi/wSn1w=
+	t=1760915071; cv=none; b=esJvyvvfZF8pdswzhj6kywNLVXX+nT01s61YRHV/Va13PqxFIKqT5vOyJ7mEE0VCsVrEZMqAgZLNG4qOi+1Sujmbwtof4wnrdEN9+nzt7IOrHU8osJlqyDNO8+XNPCt5ieKZhCqVYl7myjlDUMSCBMqx/ne6HIl51xBdKSroags=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760915061; c=relaxed/simple;
-	bh=AnqY+dCYnc8UF5OuQ+qs8apE1qzRi+JPuhlLZjOnIyQ=;
+	s=arc-20240116; t=1760915071; c=relaxed/simple;
+	bh=e9xtSDiNYg+DNrvVVti65ywV5UyHZvvlWtLFm7e5TE4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EsuH4vXAx0K1/HPKeq1VC9Vw3JqF+6icv+RegRrvBTI438tLfxmKw0ipcHyvAGfeVRprPfarud+ejuTzxeY5KE2d3eW+Pz79gfUONrcaV3egEscI/7tMOZlBlvAk832e893+xP6zGU+qHNZNjmZOiyGo0lUpulYo0XaGhyeHcCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fB6efVB/; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-339d7c401d8so968041a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:04:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=eCY964ZXmvtAOUZ11TotX/3ugHZMz57y45j60qA/VTtIzOC5UDe5Uhf3itHvxO4IByUdwMFbZSctNYCkn41tnwxeRZFN5CX/DcDSWA2+Ayh2CGuWrlGAIAwZo7LdZUiLFjz9CCNWKqaqalvT1k3EkjjFobAuLLcs2yN75Y8TTQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t3dqTKHG; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290da96b37fso226845ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760915058; x=1761519858; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760915069; x=1761519869; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eOEeh6O4RXrjCbdM/YQb/OmkajAlxiTKW4cEYv2MTfU=;
-        b=fB6efVB/wMyoqtlHGiJA1Zoqf5c2xXR5EucDsSKcRvWwn3fOcOPtHd+2vcTfjHZuqH
-         l21nJfMQ8BbDIRhG5GOgS+6Uh9hFcKzP103UOZTb8/i7g93CShsDLYBYALas67zYGQeR
-         aF4O+RF95yyILPtpbP6fd0fjlbQOv7VEyEVB1KNYrGb60LAuvlFx1OF/RePoKrp/CFMg
-         +fwpYyimAt56Ck2PP13t4pNKFaokYcFlrNPFfgW/9ZSffUNceWe6qVD/WlihyPlw1aip
-         EDd/w3Twyez8kJqFJN1osB7vFoFlKrJZqrNm+uIdD2f/IfHogIdVPwt+1J7PwumjFyI1
-         BNog==
+        bh=VtIwbbtQZ22ksMvGjX6G4k0g6OAJbt4lX9wIiRbTpkY=;
+        b=t3dqTKHGuj/v1xo75SDLUHys/xFMVQgfhPaHq4ikR1tkDOJD1nPF/lF0ej4JnGkI7Z
+         5kVqVRoRFaEIFUFazDfpZWD0skK7RECeUnjz1ODsnHJGjsOAslQ1H2xv8qGXjqUcyY2J
+         ROPcU5LQCd1WwoVuzDnH4y9otW2dCD2avLUa7HcwXQuuTw8zBO6R7jps3TyuXzjrWGMP
+         YRXwmkQaCSE/WVNDILCAz2Dfi2ly71Qu8nm5+aaCIInlGjQcMyLUHcJnGLfq79lHXeBo
+         FwzPUrdkhgc5iclHJsCeBk1Y7rEpz0Wtzli8HkNTq/gdoTzK+U9rMUypK8ntX5ScbKns
+         hMcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760915058; x=1761519858;
+        d=1e100.net; s=20230601; t=1760915069; x=1761519869;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eOEeh6O4RXrjCbdM/YQb/OmkajAlxiTKW4cEYv2MTfU=;
-        b=speBMTju2Wc0IpD/hKOiUt0lXrzS/zjzjRY83Gx+AZNnWjM1spqgWNGH0L+oX2fs+/
-         bMvRZv+qQbZFLoXboRYHYs/Cj6oB9u/WKYtW2/aBaQJZ1EZMfmXrPn6fPZ9RESI5KYau
-         Y/Dx9DB33DuPMuiWWJVND1LS+tre4mbOH7Lg+c4CJ3Z9F8qhjfXzuiSM5JlyZduXtFRL
-         dd2nD1zqsa05KhQ7NGkkDlPbI9pfCK+RWKvODA3PKYtlKUJMtAZ/wuelCyIS1L1VJ9Qi
-         PXSa0EQVV2UnYj/P3HtxrCFYbmBlzuEPq+8r2zHTz85d7vyFVTYGu3YjIpGGoMEpGp/0
-         N5WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZU4DGvZt7++ZeS+aqbrWuWRm8AeBf+wErbov6xvG7Z+A+7Oi4VEyT1mIwjK838+QTjhNxrsWNUHkOsos=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDl/lrvAo8nKRwJ2Klmw3VjgtYvPCoKoO6hR/H3EDh4mXGSMJE
-	MiJdNLLiMOkYeFGzDyeH6PCy6q9M1hI6h/8MtiCdiSPeWcwlCg8UFynb/ukI1cobokP95FTpk8j
-	z1th4/NgR+rlzSWHVqdvOLYMROY3EfhM=
-X-Gm-Gg: ASbGnctgKpq0TBJBT+MlDIdaKOs9k38VhaPemSblxa9yZsYs7nUo7b1QZeycWvDYFy1
-	eP6GF2WgtLX4vS8vr9bzS0jgqJDD6qkzzD7fgD71yRHKMHlL4JbH43bHOcmYMEIrvAQGGOd7f6W
-	aYUqLjyPjFQ58ZnAx9zfSJk+Z6gu5i9u6k9fnXw5sYzSs78k3ymdbRO9naoRBFLvxDJCDZIwAgA
-	6LgB+q72Rbk6muAjlvMsQwXu68CZ5m+mYi8Uh0SJTftpP40RWkh7eBzSQw5YeWiRIxQmUitl0Bn
-	SHZW/mLMUpblAbaUyN48I7g4xPjJtcc5RIfvAF+oIw//t8bYw/+mU8VIDNlZ54ywZe66FRMQCQW
-	K3SeLnN/3nckbtA==
-X-Google-Smtp-Source: AGHT+IEHoe7IdB8Fn4blPj1kZr2k1PDvwkLeFqEjMadUT99xbKyU7kwS9dgklhgQJkFrx7iKJ+XmLkdzgYdk7hZ0y1w=
-X-Received: by 2002:a17:903:b8b:b0:290:c5c5:57eb with SMTP id
- d9443c01a7336-290c9d2dd08mr74335675ad.3.1760915057866; Sun, 19 Oct 2025
- 16:04:17 -0700 (PDT)
+        bh=VtIwbbtQZ22ksMvGjX6G4k0g6OAJbt4lX9wIiRbTpkY=;
+        b=UEN0xgKTjJkpP3LbHY6IFQ5jefbSD5j316/jHtV4KpdxMx2RRGtBYtu2y0RSmuyiSd
+         9mtTeTqf4CiLC44FUbH3xaOl7wgE//Mv0vMGQ/p8T5DwfLZyboUNKgQDkZS2WEj6AaM4
+         kb+asjsnToRfRoXPwyTfedtK1qNv9MeLnDVtjec5a66OP58GyPpm5ysl2PQ7tw2P2hPe
+         sjFxfHB5yn5ENzJ7R0nt5iucdt+jw7ChL3IbIVimlf9RmHfAHIJMx1KgMHxcNnBJt2Co
+         DuXXxfdpL3fa/hS1AGILgyRcxns/ZXCODz73ZkoXjFSi1+ceW0MU+z9iuOTsVIAVqaNc
+         aOXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDIkQckKz9TiyonzDAWWHBc4ptSPWH1H4XrnCG9fEp3J8UQEGywVSxybuygYr4oSSNaCZChPDorKAo/S8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyoW6jDsyUoKafU+Y83bNj7kYvYAOvWppx5Bdf3UyRB9QYkgVj
+	5PEusemSGZ6iDEu8LgaXV8NthFHuHlXNvz1beboiFHggZ3EGOzusFhH6x7Zb8wJtUloKfaIZfBB
+	Cf3VVlVz5b8XdO1epW8JJgaL4pEDoAisGyxueb+um
+X-Gm-Gg: ASbGncsuu7ro/CZzEyhtPNcbvmxDBUAR8dBAPENfvN5ssn/Z5fdoOQCCukfi3YjkCZf
+	Po003bSQEoA4JSuASvcP8jQ9X40HEZXy099+QrYwMvK8UC7eRDzfb6F/ETFnAUobKWwvGh8jRx1
+	fgdxq9bkvo8zs1LLmHX34xv8BWyZmY5fYaTEAsWmlRFh0kk4gaEQE0QJrjN+6yYDEDCvz4xzYdf
+	wqnIJAnMBx/FSgykM96sB6/aHEcpEOprxVINYz0Xh7bK1HFnxvcNV8dYv30mf0wOCX0BZo=
+X-Google-Smtp-Source: AGHT+IF9yBT/ZwnpY3KzH5KBTz6AKdIa/kZ/Sj5ndS3FHOcw0TJENKL1Nucn1cYklbiHJR/s6+zUFaChmGa8DfjFiEE=
+X-Received: by 2002:a17:903:388c:b0:265:e66:6c10 with SMTP id
+ d9443c01a7336-2908790f0c5mr22070155ad.4.1760915069394; Sun, 19 Oct 2025
+ 16:04:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
-In-Reply-To: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 20 Oct 2025 01:04:05 +0200
-X-Gm-Features: AS18NWBk6jlJf0RifcBoOPS6BkMb0c8T8AQmrZIWVCq_Mep36ZL7bfRUqV3fx64
-Message-ID: <CANiq72moW2VULd6EMQe9X4d1S+ftOG4Mcpp2_+V6zG7xVXj+qg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v18 00/16] rust: replace kernel::str::CStr w/ core::ffi::CStr
-To: Tamir Duberstein <tamird@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-fsdevel@vger.kernel.org, llvm@lists.linux.dev, 
-	Tamir Duberstein <tamird@gmail.com>, Matthew Maurer <mmaurer@google.com>
+References: <20251016222228.2926870-1-irogers@google.com> <aPRTQLcOBtHiTGms@google.com>
+ <CAH0uvohtoVR=iXNwJWYXXgnt4LLWCMheSt66Hnx5hq=QB0KU3w@mail.gmail.com>
+In-Reply-To: <CAH0uvohtoVR=iXNwJWYXXgnt4LLWCMheSt66Hnx5hq=QB0KU3w@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 19 Oct 2025 16:04:17 -0700
+X-Gm-Features: AS18NWDEC7Vnh7xzfyEGkb8GoYCR5suU_v90J29I9PtusCfj_VaIEJaCEohdgZw
+Message-ID: <CAP-5=fWDqE8SYfOLZkg_0=4Ayx6E7O+h7uUp4NDeCFkiN4b7-w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] perf ilist: Don't display deprecated events
+To: Howard Chu <howardchu95@gmail.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Gautam Menghani <gautam@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 18, 2025 at 9:16=E2=80=AFPM Tamir Duberstein <tamird@kernel.org=
+On Sat, Oct 18, 2025 at 11:50=E2=80=AFPM Howard Chu <howardchu95@gmail.com>=
+ wrote:
+>
+> Hi Namhyung,
+>
+> On Sat, Oct 18, 2025 at 7:56=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
 > wrote:
+> >
+> > Hi Ian,
+> >
+> > On Thu, Oct 16, 2025 at 03:22:26PM -0700, Ian Rogers wrote:
+> > > Unsupported legacy events are flagged as deprecated. Don't display
+> > > these events in ilist as they won't open and there are over 1,000
+> > > legacy cache events.
+> >
+> > Off-topic, any chance to integrate this into a perf command?
+> > It'd be convenient if we can call this like `perf list --interactive`
+> > or some other way.
 >
-> This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
-> have omitted Co-authored tags, as the end result is quite different.
->
-> This series is intended to be taken through rust-next. The final patch
-> in the series requires some other subsystems' `Acked-by`s:
-> - drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
->   look?
-> - rust/kernel/device.rs: driver-core. Already acked by gregkh.
-> - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
-> - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
-> - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
->
-> Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vador=
-ovsky@protonmail.com/t/#u [0]
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> You have my vote, user-friendliness is important.
+> I think Ian mentioned that the major drawback is the difficulty of
+> forwarding arguments passed to the ilist.py program. A random thought:
+> perf is known for binding everything under a single command, but to
+> make scripting more flexible, perhaps some Bash scripts added to
+> .bashrc could be considered. After all, perf is fundamentally a
+> command-line tool.
 
-Tentatively applied to see how it goes in linux-next, but I will
-rebase for -rc2, so tags are very welcome!
+Thanks Howard and Namhyung,
 
-    [ Move safety comment below to support older Clippy. - Miguel ]
+I think Arnaldo also raised this in the past.  My thought on how to do
+this is to build in to `perf script`:
 
-I included the additional patch I just sent. In addition, there is a
-`>` typo on the `Deref` commits -- I didn't fix it to avoid adding a
-note everywhere.
+1) `perf script` currently uses libpython and then exposes a
+trace_start, trace_end and process_event method. When building the
+flamegraph work the only place that textual can run is in trace_end as
+it needs to run on the main python thread. This means we can't do
+incremental loading of data files while textual is showing the data as
+perf wants to be the main thread. So step 1 is to create a python
+version of the trace_start, trace_end and process_event callbacks. To
+do this something like the session API needs wrapping or writing in
+python. I'm not sure I'd keep the API the same as the C one. It'd be
+interesting to think of async file processing. It'd be nice to make
+the generation of strings.. in the event lazier. We could start with
+the existing API though, and then migrate to something more complex
+later.
 
-Thanks everyone!
+2) Once we have a session like API in python we can convert the
+existing `perf script` commands to be standalone tools similar to
+ilist. So we can convert all the existing tools to be standalone.
 
-Cheers,
-Miguel
+3) Once we have standalone versions of the `perf script` scripts then
+we can have `perf script` just exec the commands. The install step can
+install the scripts like it currently does and we can move ilist into
+the scripts location.
+
+4) Once we run python things as tools in their own right we can
+deprecate the libpython stuff, probably make it a build opt-in thing,
+etc. It seems hard to delete unused features, like libbfd, from the
+codebase. We did merge a patch deprecating libperl as a step in this
+direction.
+
+Thanks,
+Ian
 
