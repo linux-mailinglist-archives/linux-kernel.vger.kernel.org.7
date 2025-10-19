@@ -1,168 +1,123 @@
-Return-Path: <linux-kernel+bounces-859827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D6ABEEB28
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 522A4BEEB2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEAC3E3C86
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 042C53E3CE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C0527A12D;
-	Sun, 19 Oct 2025 18:09:51 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D841354AF5;
-	Sun, 19 Oct 2025 18:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244672E2F14;
+	Sun, 19 Oct 2025 18:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="VtVGybfY"
+Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D553315B971;
+	Sun, 19 Oct 2025 18:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760897391; cv=none; b=en4bDw8u67fOR0Bppi0wXziIQSRa4NpuKR26hk3Y0xw0mxVfq1/Oc7KSNHlzfhT4zK4EH8P0zsaHpHLK3UuP+fn46NFZtTFygo80SLKtHTOwjfDJuXhX7mA2z9UW0t+sLBOd/EyXF7WiaMQqJQDvoR1F4bipI1Vw4aqMDO7L38k=
+	t=1760897413; cv=none; b=g5t1nuK6pDjsTNzDXowNa4a/avYAeokkYP7NojA3pFdfRr0ADBWQ/sY9jy591v88OFl8Qa1w25X5t5+dLmj3oRj4CVO3d5IAzwB6HkMsa0CXq4rjZSF9KRkTdv9E0V5twUeBpWxYKC+9EnMOMryFUBVM9ufc0Ri1Rsk/TEQMAbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760897391; c=relaxed/simple;
-	bh=1s/E+4UuhXkmpiQSP7u/Fxy40AeWIe7gKB/kBft+5ME=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuCzA2SMOoabQAwAo975rk15lLl9riW06tDOUQx3+1VJu5AVfAq6mZNjazGLIrroI4pFrSvbZ4803NFC3Qe9kORmgozjEe3+QCaKfFCw8wlCA61v/H3R8S/mGI8PGPmjeCS1XdwBcWZnPp/37Shv4g1eWnDw6OBT2R0aEjWzRHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: wkTttOjoScKQXhFD8jWnEQ==
-X-CSE-MsgGUID: dVEc255bTBmKVO+lcYOyXA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2025 03:09:46 +0900
-Received: from localhost.localdomain (unknown [10.226.92.26])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1F2D44040E4E;
-	Mon, 20 Oct 2025 03:09:43 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3] memory: renesas-rpc-if: Add suspend/resume support
-Date: Sun, 19 Oct 2025 19:09:38 +0100
-Message-ID: <20251019180940.157088-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760897413; c=relaxed/simple;
+	bh=WjTcD2YR8AGyqKpV036AzUTE8zrH4rstRTSX0VAYPh8=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=A3KgmF/8SJemtSQYT03dLXakXnEZoqsazKZnZfHVyYU4+9EbDLv6p/JZzwrhXddsII3TUb3R05xojhsCTm7QHrnbH9lDdcWdeS8qC5GmMvlKNbamDLbRSkoEwP1qcZTGZgcTNfSMRuzwDKp5JxR1SG7qeVK2V5uiiiPjp9Z6e6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=VtVGybfY; arc=none smtp.client-ip=142.132.176.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 4684640A58;
+	Sun, 19 Oct 2025 20:09:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
+	t=1760897402; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ERRtoG7bB418wgjyE9jDggkfu2QPAbzjTsBuPu44/cA=;
+	b=VtVGybfY5fuB19L+2yb0xkzW1Ddf2ptzniOmXG98nENyurifzlZGRSMOGmOBOcD6SteVZG
+	gm7eoN3oiKzyiLIAkrNryM5s2iWKpuLNQoglrmoT2jDE3sx/FNRfXAYU5KckAwevx3G6yR
+	pRwplGe3bcp2d30R2QOBIMLcPhVpVTD6dRvS7g9FwvR8DdYSz4+8zv6uhEVCuIhXgs/wS4
+	7Kv7iUfw1vhNO7JAfMFvGA0P96U4e2CYvpFNtG0wGCIINxoEkr5/b0bkLn6vSaqzBY/Hkq
+	h4Ki5L4PC6QnTmnQiLacZoiWxsBwXAj+I5uroQrE9LvEVAkLx9NggaFoIDIP5w==
+From: "Dragan Simic" <dsimic@manjaro.org>
+In-Reply-To: <CANAwSgTZa7PXBuyh9EdDOXCNuCTOHGsJz18pSjP6WUN8sOaqTQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+References: <20251017073954.130710-1-cnsztl@gmail.com> <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
+ <d9d14ce2-2e65-422e-95fb-eb30b128ad90@gmail.com> <41154cde-a447-0707-4387-cd3dca90b97d@manjaro.org>
+ <CALWfF7K0=J3E-zr41wV-28+SCFkT_so55Aee8BvQsB4KJZy6YQ@mail.gmail.com>
+ <47931e9e-09db-3909-4531-dae6869171d7@manjaro.org> <b22425c3-01e0-4d2e-bf78-5db884d4ec38@gmail.com>
+ <de5e8643-49bb-4e0e-45fd-51b25ecf530d@manjaro.org> <CANAwSgTZa7PXBuyh9EdDOXCNuCTOHGsJz18pSjP6WUN8sOaqTQ@mail.gmail.com>
+Date: Sun, 19 Oct 2025 20:09:59 +0200
+Cc: "Hugh Cole-Baker" <sigmaris@gmail.com>, "Jimmy Hon" <honyuenkwun@gmail.com>, "Tianling Shen" <cnsztl@gmail.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, "Grzegorz Sterniczuk" <grzegorz@sternicz.uk>, "Jonas Karlman" <jonas@kwiboo.se>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+To: "Anand Moon" <linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <047fe2b8-0f94-0f0f-5964-b65844834706@manjaro.org>
+Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
+ =?utf-8?q?_rockchip=3A?= fix eMMC corruption on NanoPC-T6 with A3A444 chips
+User-Agent: SOGoMail 5.12.3
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: None
 
-On RZ/G3E using PSCI, s2ram powers down the SoC. Add suspend/resume
-callbacks to control spi/spix2 clocks.
+Hello Anand,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * Updated spix2_clk and spi_clk to optional.
- * Dropped rpc->info->type from suspend/resume callbacks.
-v1->v2:
- * Updated error messages in rpcif_resume().
----
- drivers/memory/renesas-rpc-if.c | 58 +++++++++++++++++++++++++--------
- 1 file changed, 45 insertions(+), 13 deletions(-)
+On Sunday, October 19, 2025 19:25 CEST, Anand Moon <linux.amoon@gmail.c=
+om> wrote:
+> Would you consider the following patch?
+>=20
+> As per the Rockchip RK3588S SoC Technical Reference Manual (TRM) Part=
+ 1,
+> chapter 21.6, Interface Description, the eMMC signals require careful=
+ handling
+> to ensure signal integrity.
+>=20
+> I2C2=5FSCL=5FM2 I/O EMMC=5FRSTN/I2C2=5FSCL=5FM2/UART5=5FRTSN=5FM1/GPI=
+O2=5FA3=5Fd
+> BUS=5FIOC=5FGPIO2A=5FIOMUX=5FSEL=5FL[15:12]=3D0x9
+> I2C2=5FSDA=5FM2 I/O EMMC=5FDATA=5FSTROBE/I2C2=5FSDA=5FM2/UART5=5FCTSN=
+=5FM1/GPIO2=5FA2=5Fd
+> BUS=5FIOC=5FGPIO2A=5FIOMUX=5FSEL=5FL[11:8]=3D0x9
+>=20
+> $ git diff .
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base-pinctrl.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3588-base-pinctrl.dtsi
+> index 6584d73660f6..f60a1d8be0ef 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-base-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-base-pinctrl.dtsi
+> @@ -327,7 +327,7 @@ emmc {
+>                 emmc=5Frstnout: emmc-rstnout {
+>                         rockchip,pins =3D
+>                                 /* emmc=5Frstn */
+> -                               <2 RK=5FPA3 1 &pcfg=5Fpull=5Fnone>;
+> +                               <2 RK=5FPA3 1 &pcfg=5Fpull=5Fdown=5Fd=
+rv=5Flevel=5F2>;
+>                 };
+>=20
+>                 /omit-if-no-ref/
+> @@ -369,7 +369,7 @@ emmc=5Fcmd: emmc-cmd {
+>                 emmc=5Fdata=5Fstrobe: emmc-data-strobe {
+>                         rockchip,pins =3D
+>                                 /* emmc=5Fdata=5Fstrobe */
+> -                               <2 RK=5FPA2 1 &pcfg=5Fpull=5Fdown>;
+> +                               <2 RK=5FPA2 1 &pcfg=5Fpull=5Fdown=5Fd=
+rv=5Flevel=5F2>;
+>                 };
+>         };
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 4a417b693080..58ccc1c02e90 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -67,6 +67,8 @@ struct rpcif_priv {
- 	void __iomem *dirmap;
- 	struct regmap *regmap;
- 	struct reset_control *rstc;
-+	struct clk *spi_clk;
-+	struct clk *spix2_clk;
- 	struct platform_device *vdev;
- 	size_t size;
- 	const struct rpcif_info *info;
-@@ -1024,19 +1026,15 @@ static int rpcif_probe(struct platform_device *pdev)
- 	 * flash write failure. So, enable these clocks during probe() and
- 	 * disable it in remove().
- 	 */
--	if (rpc->info->type == XSPI_RZ_G3E) {
--		struct clk *spi_clk;
--
--		spi_clk = devm_clk_get_enabled(dev, "spix2");
--		if (IS_ERR(spi_clk))
--			return dev_err_probe(dev, PTR_ERR(spi_clk),
--					     "cannot get enabled spix2 clk\n");
--
--		spi_clk = devm_clk_get_enabled(dev, "spi");
--		if (IS_ERR(spi_clk))
--			return dev_err_probe(dev, PTR_ERR(spi_clk),
--					     "cannot get enabled spi clk\n");
--	}
-+	rpc->spix2_clk = devm_clk_get_optional_enabled(dev, "spix2");
-+	if (IS_ERR(rpc->spix2_clk))
-+		return dev_err_probe(dev, PTR_ERR(rpc->spix2_clk),
-+				     "cannot get enabled spix2 clk\n");
-+
-+	rpc->spi_clk = devm_clk_get_optional_enabled(dev, "spi");
-+	if (IS_ERR(rpc->spi_clk))
-+		return dev_err_probe(dev, PTR_ERR(rpc->spi_clk),
-+				     "cannot get enabled spi clk\n");
- 
- 	vdev = platform_device_alloc(name, pdev->id);
- 	if (!vdev)
-@@ -1063,6 +1061,37 @@ static void rpcif_remove(struct platform_device *pdev)
- 	platform_device_unregister(rpc->vdev);
- }
- 
-+static int rpcif_suspend(struct device *dev)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(rpc->spi_clk);
-+	clk_disable_unprepare(rpc->spix2_clk);
-+
-+	return 0;
-+}
-+
-+static int rpcif_resume(struct device *dev)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(rpc->spix2_clk);
-+	if (ret) {
-+		dev_err(dev, "failed to enable spix2 clock: %pe\n", ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(rpc->spi_clk);
-+	if (ret) {
-+		clk_disable_unprepare(rpc->spix2_clk);
-+		dev_err(dev, "failed to enable spi clock: %pe\n", ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct rpcif_impl rpcif_impl = {
- 	.hw_init = rpcif_hw_init_impl,
- 	.prepare = rpcif_prepare_impl,
-@@ -1125,12 +1154,15 @@ static const struct of_device_id rpcif_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rpcif_of_match);
- 
-+static DEFINE_SIMPLE_DEV_PM_OPS(rpcif_pm_ops, rpcif_suspend, rpcif_resume);
-+
- static struct platform_driver rpcif_driver = {
- 	.probe	= rpcif_probe,
- 	.remove = rpcif_remove,
- 	.driver = {
- 		.name =	"rpc-if",
- 		.of_match_table = rpcif_of_match,
-+		.pm = pm_sleep_ptr(&rpcif_pm_ops),
- 	},
- };
- module_platform_driver(rpcif_driver);
--- 
-2.43.0
+Frankly, I'm not really sure how would such changes do something
+good regarding the eMMC signal integrity?  In general, signal
+integrity depends mostly on the routing of the PCB traces, which
+is purely hardware design.  Sure, termination of data lines also
+plays a significant role, but that surely isn't at play here.
+
+Moreover, the eMMC RSTn line is already pulled high to VCCIO in
+the reference RK3588 design, so pulling it down in the SoC itself
+would be pretty much wrong thing to do.
 
 
