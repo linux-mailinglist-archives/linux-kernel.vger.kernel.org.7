@@ -1,362 +1,159 @@
-Return-Path: <linux-kernel+bounces-859805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCB9BEEA5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:53:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F038FBEEA63
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A75189A1DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96980189A1F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAE121D3DF;
-	Sun, 19 Oct 2025 16:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55FA1F4C8E;
+	Sun, 19 Oct 2025 17:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SU6ljADE"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XR4ermD3"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863661D63D8
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 16:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4897282EB
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 17:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760892788; cv=none; b=Lm/EKRxdOwjlr4A69k343nrDmYu+MaMQb7pbq76G2oiQ13+v+J36eknRSvNTYiZ76BwHfC/r3oqui9ADQYP9nddWyCcy00WU2Yll65UqNH4vmYz3KM+ri+wNn0sjTnqhOeAMEvI6gcqKqv1rDd9tWzVA0ti03uLwl19A6ySWleA=
+	t=1760893243; cv=none; b=iPyMcOio2yRi/IZPa04lQEZKJTSEPkTV7FWFLLa63P/+P9BLYS84+zW3cj5EL4QU9dX9FU6GMMBFloxWeOylEiJFUFLImd9iQmPnnDjH/AVCV48ultZuHDKvKvEXu8khiIDwPs2mS1SMvtax2nui60SRoumzNIYLqLTuvqACG2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760892788; c=relaxed/simple;
-	bh=23EUBdHfMCYXpMwbyS2We3vtYQnfwSeqUa4lZN381hM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BNWUaiTSR6yvwAJuysBVoUBQnRjD9vvuHrXz6sgSNGuVjvjvSM4u0vz/2lz3ViaMPrVe0VFQNuzl8rzJ+ILrzqfYXBDEXZVRuvbm72nYaC3Yv98/FdA5jMBUciZAgBFUyfd/sKarJWb9KMQSY55t0BUwWNTEtKNe4kp9E9XpmwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SU6ljADE; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1760893243; c=relaxed/simple;
+	bh=PjDgNxlVxpxvR/toQXufEhgWxKZPOIL82AgrEwXPxEw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PKy1TzviFJIXTeytj4mpMc6QCNPJQFCjvS6/zI20Fbi/EgGsRjHIOdcLZ79ECGv3rqDvmaSjfWQ1WKrjxWHMnSj7AhJ9gkOUYYb9TLg/DWFJc41e0hVtmy8oSI7eAbT9KPNcmw1lhiRDDYl6N94IxIV/VcKkHczZv8yg10J2XKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XR4ermD3; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42421b1514fso2247232f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:53:05 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7f04816589bso577410685a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:00:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760892784; x=1761497584; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lbE6SCAQLzcg1gjx8GxCzgHZU4xUelZa5R3v9DxdFi0=;
-        b=SU6ljADE8iQu+TJWQlf3PV2vazc0XasUs10Qzfvg+XCG3S2c0KzYfcFCbuI9qhFbQY
-         JtngcR5k4if/2K/BgWMRuPwZIbJvBdrCGGzokG09ar1aiD4XUSLHO+aaqA4WrwAbL9go
-         /zZpzhvdJCZ9btjhSJu9YYm/M4TxqspbRSjsRPcKPOOfUiUty2X1CfSu4sJjaYhP99PN
-         nXDt2SXhDstaDYhkYKf8OCa4OLbI/3kO9Cc9HeE4cx9jGALLF5sUEwlsqb3lKtJk6dw/
-         ExzFZMTvJz3tNry2aKTeg5XrIAppdhaxiyLffzxxl8uAKrR2F8A/KM5oJQ+SLbCImUuN
-         CKWA==
+        d=gmail.com; s=20230601; t=1760893240; x=1761498040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1WbXALuGbpcuO9t7Qwi5yHTQM+NY8K1Dfz/3nuG1pE=;
+        b=XR4ermD3fHK61ZGdIi6YEf7r0voAQtO13H6y17xAT3uYM7LMw6rvDylJMe1AONK2q8
+         kg6OIFClDNJqNW4/3RNFqpG3tovbqpuu7LcRpwwi3s3C8W4JoH3eCP0W9oyZv5IHESGh
+         sWUdiwgDGL7hNpN4VZvl6sMG8HGMMiDIXtwPgiQ7St3jnt0u1Pc/Vr+08o9fjPoma17c
+         INFc+TS3RQ/XAgN1iCqvH0ehhi311/TIpyUWFNP4QmmAJ26IUsYfdBWEzcC93YUAQHUH
+         llGxPxN9DpsinJ/6iII16BMObVvaSuch74vDYW72V/HgeBvrgwxyeBlQbm5LfePpN3/E
+         dXLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760892784; x=1761497584;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lbE6SCAQLzcg1gjx8GxCzgHZU4xUelZa5R3v9DxdFi0=;
-        b=d1kmKSwhApMknKFmR6o6XRtzW292Iye+T8Rm9wbxNDcBsyawLDBrCii9xI7sMV4lXw
-         BgKMoLG9eEJ4F/M7ptpSj6sSnzUEUoES4i5zbiv3SvbyP2LMSJMgwT6TxFX5YFhmeYlE
-         Ewl8SVDfoFaAuba7+vyjq9GyRWxaCLNRZG0C1awUWdRkUC87ugNAXCmJLLchCO/B1Gwf
-         GTOKU2DVA7gga8a32PSIIxcPLyRh7U9leZV1ZU3kxDJ7wSAP64LM823icwFVJaD259Qb
-         lKBlR3+yiUGsj6teGB7Y9jI+d5M4mZfF2bdBDdpyXkghedxSdXFQHkPSXytSv6tKPws+
-         IR3A==
-X-Gm-Message-State: AOJu0YyzZJMx/Uq0Bbr2nfnzII3soRbSVfEr+VZIFwitV+7GCYJo47jH
-	+Umt1eg0Wb2a8jSPhygV690t749ja24xQVppkXj5fowwF9D0jIGNcrhD
-X-Gm-Gg: ASbGncs7DJ+d3lfWiu17RbdpOPsCU9hhYyBwgheQUWGpBY65DwcfVf8BNWakDOHpzBd
-	mJd83jERM37TL6V+BJhcyW1oODU/BlaPDQ59qvDvWqE2HEoi2JH/uQwS5jSimmMkZwo8Cq4c6U0
-	jDtr2GDSLmkYPuZFubb8V2qTjAHL7nwKJAiIvCB40WSBQHHTmsJfAytpvZ/ugo9RUPdsVzqMGDu
-	PIwE8y2YoYeDOe6W4tT57JlZjyyunPFm5zzFjSlsZZ+URBe4TZltiBuhxQOTORO5PSZ1MpY3hK4
-	WjcDyxksfk+wuThwxzfTiTsmbGlNbJRxr2wVBt2Bm1aok6PR08Q/AHQZlk0B6XgQOXtBmOyFEdJ
-	5Iu+TAT7NxCKAeod7NefbIQAm56gCiCa3+t81FKCkLHwdgu+14SjaSB/87FEfLrluaxD+gDnyF0
-	xwqoJwIEK7oa29zg==
-X-Google-Smtp-Source: AGHT+IHa+tYM7+bEYoZ/dHQ9a5gV6wMN8mOtIgaA0FkEaB0SKxokCb+se5AtNQGAf1lro1XNmBpTzQ==
-X-Received: by 2002:a05:6000:26cc:b0:425:7c1b:9344 with SMTP id ffacd0b85a97d-42704da4f10mr7060131f8f.15.1760892783416;
-        Sun, 19 Oct 2025 09:53:03 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce08asm10971289f8f.44.2025.10.19.09.53.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Oct 2025 09:53:02 -0700 (PDT)
-Message-ID: <78f9c831-0c0c-4497-9a77-0380e27cc616@gmail.com>
-Date: Sun, 19 Oct 2025 18:53:01 +0200
+        d=1e100.net; s=20230601; t=1760893240; x=1761498040;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L1WbXALuGbpcuO9t7Qwi5yHTQM+NY8K1Dfz/3nuG1pE=;
+        b=WVRAhr3f1rCG/2lJUcbOqSrhKVuLaUXexjkspiSr/r1/kI3YaDl4FTUL7zxd/1ovLf
+         eSefgX+kHJUTIrYNxJ80ZYSJw5F5NiOMmgoZUozKIoaWpf6RZcDFNvZ1F1Fj6+SS3oCu
+         wFNVlCkqIne5zkAkXz9OQyYS/OCNfmJwWPPtTLKnELjNdPtoVtF0VaSGsMjUDdq5IkPz
+         nxTljD6+h8itUfj4v6d1qYaOl2nQummMamCWhTUwSsnjo+ZuJ2J1hQcxk5Uc6geR826d
+         AdsLcMqIpcduMm4O/2PDgM530NIMnCeskf8RaueqCHmCcy2GwoboGnWS18WeAnOAS312
+         B6oA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyt0lzRm3utXRFVlkLw9Fth5fRVHGrnRpWlPQ2u/CgylQwJwzAIOO8TNH0SX/ffpway/wf28SU6FXnT2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8ehNUAnz/pe3W73DiEm2z+NDiEtKSlGfFAjYxpKxDVUNOHzNn
+	X45UC2DcpuDk+xDHum1J9FFjb5WgpZl63b7bDTJVwm796roYsyl+CZjA
+X-Gm-Gg: ASbGncuMrwQmT5NowwGJZKB+XkH2TG+r3DUJglSJNuBSGTGBjdDbxhtxcGLrbOuiWWz
+	2vo4tAOB/xsI6txoMvMKicT3Guti9IykbmCfGgeKAvVAHc5oF/tBN5NwNGmQQQOFoqWXijZmvp7
+	ZOBIKCbfkkWVZiMKZVw3+YSbRLqS8r35LoLR3jDrAdkDGjKY905yyr/rp9hb0zgiPmyJrNxNxeZ
+	SxxmLOaVPi3W707s0/ptAmIrA9WEgOoSDvoW4YzvzI1kyOplgJtMslqCX8bm9cVb+hifHSWLJtP
+	q0l9uAN0Ku2DvMFyqgWVTuzku/IAplhfKMbt9xjoFqNM5YqsySfDKovnYCPwSk5LxY4tzkZ59Rp
+	wIX3i8Z7g/rKAZLXSO2VwZ+85CQ5rvJ2I3WctZdeDGlfAAifv7ipz8E8wItTVoOikijpa25zHF5
+	s8eUB0JTj838+xvA==
+X-Google-Smtp-Source: AGHT+IF4pq4PxQqmtKO4E4OsIVb1+IunUUBbkT5Zf3jvPepuTm4doaYmgj46bpXYCtJDfNkY/xDyDQ==
+X-Received: by 2002:a05:620a:46a9:b0:891:9b1b:2792 with SMTP id af79cd13be357-8919b1b283emr942055785a.81.1760893240464;
+        Sun, 19 Oct 2025 10:00:40 -0700 (PDT)
+Received: from localhost.localdomain ([47.85.44.99])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cefba740sm384446285a.29.2025.10.19.10.00.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 10:00:39 -0700 (PDT)
+From: Peng Yu <yupeng0921@gmail.com>
+X-Google-Original-From: Peng Yu <peng.yu@alibaba-inc.com>
+To: edumazet@google.com,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Peng Yu <peng.yu@alibaba-inc.com>
+Subject: [PATCH] net: set is_cwnd_limited when the small queue check fails
+Date: Mon, 20 Oct 2025 01:00:16 +0800
+Message-ID: <20251019170016.138561-1-peng.yu@alibaba-inc.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 5/9] platform/x86: asus-armoury: add core count
- control
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Mario Limonciello <superm1@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- Mark Pearson <mpearson-lenovo@squebb.ca>, "Luke D . Jones" <luke@ljones.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
- Alok Tiwari <alok.a.tiwari@oracle.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
-References: <20251015014736.1402045-1-benato.denis96@gmail.com>
- <20251015014736.1402045-6-benato.denis96@gmail.com>
- <25bd0c90-2de0-ef66-c18d-661180b71fd4@linux.intel.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <25bd0c90-2de0-ef66-c18d-661180b71fd4@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+The limit of the small queue check is calculated from the pacing rate,
+the pacing rate is calculated from the cwnd. If the cwnd is small,
+the small queue check may fail.
+When the samll queue check fails, the tcp layer will send less
+packages, then the tcp_is_cwnd_limited would alreays return false,
+then the cwnd would have no chance to get updated.
+The cwnd has no chance to get updated, it keeps small, then the pacing
+rate keeps small, and the limit of the small queue check keeps small,
+then the small queue check would always fail.
+It is a kind of dead lock, when a tcp flow comes into this situation,
+it's throughput would be very small, obviously less then the correct
+throughput it should have.
+We set is_cwnd_limited to true when the small queue check fails, then
+the cwnd would have a chance to get updated, then we can break this
+deadlock.
 
-On 10/17/25 14:48, Ilpo Järvinen wrote:
-> On Wed, 15 Oct 2025, Denis Benato wrote:
->
->> From: "Luke D. Jones" <luke@ljones.dev>
->>
->> Implement Intel core enablement under the asus-armoury module using the
->> fw_attributes class.
->>
->> This allows users to enable or disable preformance or efficiency cores
->> depending on their requirements. After change a reboot is required.
->>
->> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
->> Signed-off-by: Luke D. Jones <luke@ljones.dev>
->> ---
->>  drivers/platform/x86/asus-armoury.c        | 258 ++++++++++++++++++++-
->>  drivers/platform/x86/asus-armoury.h        |  28 +++
->>  include/linux/platform_data/x86/asus-wmi.h |   5 +
->>  3 files changed, 290 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
->> index 3b49a27e397d..3d963025d84e 100644
->> --- a/drivers/platform/x86/asus-armoury.c
->> +++ b/drivers/platform/x86/asus-armoury.c
->> @@ -45,13 +45,49 @@
->>  #define ASUS_MINI_LED_2024_STRONG 0x01
->>  #define ASUS_MINI_LED_2024_OFF    0x02
->>  
->> +#define ASUS_POWER_CORE_MASK	GENMASK(15, 8)
->> +#define ASUS_PERF_CORE_MASK		GENMASK(7, 0)
->> +
->> +enum cpu_core_type {
->> +	CPU_CORE_PERF = 0,
->> +	CPU_CORE_POWER,
->> +};
->> +
->> +enum cpu_core_value {
->> +	CPU_CORE_DEFAULT = 0,
-> This could be mapped in the sysfs _show function as there's no real 
-> backing value for it.
+Below ss output shows this issue:
 
-It is also used in a store function called by both _stores and
-I wouldn't like the idea of transforming it in a u32 given
-the importance of data to be correct in this specific interface.
+skmem:(r0,rb131072,
+t7712, <------------------------------ wmem_alloc = 7712
+tb243712,f2128,w219056,o0,bl0,d0)
+ts sack cubic wscale:7,10 rto:224 rtt:23.364/0.019 ato:40 mss:1448
+pmtu:8500 rcvmss:536 advmss:8448
+cwnd:28 <------------------------------ cwnd=28
+bytes_sent:2166208 bytes_acked:2148832 bytes_received:37
+segs_out:1497 segs_in:751 data_segs_out:1496 data_segs_in:1
+send 13882554bps lastsnd:7 lastrcv:2992 lastack:7
+pacing_rate 27764216bps <--------------------- pacing_rate=27764216bps
+delivery_rate 5786688bps delivered:1485 busy:2991ms unacked:12
+rcv_space:57088 rcv_ssthresh:57088 notsent:188240
+minrtt:23.319 snd_wnd:57088
 
-The last thing I want is making device unbootable because
-I missed a CPU_CORE_PERF vs CPU_CORE_POWER or because
-I misremember while changing the code that CORE_PERF means
-performance and CORE_POWER means efficiency
-(and it took me a minute to get this spelled right in this email).
+limit=(27764216 / 8) / 1024 = 3389 < 7712
+So the samll queue check fails. When it happens, the throughput is
+obviously less than the normal situation.
 
->> +	CPU_CORE_MIN,
->> +	CPU_CORE_MAX,
->> +	CPU_CORE_CURRENT,
->> +};
->> +
->> +#define CPU_PERF_CORE_COUNT_MIN 4
->> +#define CPU_POWR_CORE_COUNT_MIN 0
->> +
->> +/* Tunables provided by ASUS for gaming laptops */
->> +struct cpu_cores {
->> +	u32 cur_perf_cores;
->> +	u32 min_perf_cores;
->> +	u32 max_perf_cores;
->> +	u32 cur_power_cores;
->> +	u32 min_power_cores;
->> +	u32 max_power_cores;
->> +};
->> +
->>  static struct asus_armoury_priv {
->>  	struct device *fw_attr_dev;
->>  	struct kset *fw_attr_kset;
->>  
->> +	struct cpu_cores *cpu_cores;
->>  	u32 mini_led_dev_id;
->>  	u32 gpu_mux_dev_id;
->> -} asus_armoury;
->> +	/*
->> +	 * Mutex to prevent big/little core count changes writing to same
->> +	 * endpoint at the same time. Must lock during attr store.
->> +	 */
->> +	struct mutex cpu_core_mutex;
->> +} asus_armoury = {
->> +	.cpu_core_mutex = __MUTEX_INITIALIZER(asus_armoury.cpu_core_mutex)
->> +};
->>  
->>  struct fw_attrs_group {
->>  	bool pending_reboot;
->> @@ -93,6 +129,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
->>  static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
->>  {
->>  	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
->> +	       !strcmp(attr->attr.name, "cores_performance") ||
->> +	       !strcmp(attr->attr.name, "cores_efficiency") ||
->>  	       !strcmp(attr->attr.name, "panel_hd_mode");
->>  }
->>  
->> @@ -171,6 +209,12 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
->>  	return sysfs_emit(buf, "enumeration\n");
->>  }
->>  
->> +static ssize_t int_type_show(struct kobject *kobj, struct kobj_attribute *attr,
->> +			     char *buf)
->> +{
->> +	return sysfs_emit(buf, "integer\n");
->> +}
->> +
->>  /* Mini-LED mode **************************************************************/
->>  static ssize_t mini_led_mode_current_value_show(struct kobject *kobj,
->>  						struct kobj_attribute *attr, char *buf)
->> @@ -474,6 +518,207 @@ static ssize_t apu_mem_possible_values_show(struct kobject *kobj, struct kobj_at
->>  }
->>  ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM (in GB) for the APU to use");
->>  
->> +static int init_max_cpu_cores(void)
->> +{
->> +	u32 cores;
->> +	int err;
->> +
->> +	asus_armoury.cpu_cores = kzalloc(sizeof(struct cpu_cores), GFP_KERNEL);
->> +	if (!asus_armoury.cpu_cores)
->> +		return -ENOMEM;
->> +
->> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores);
->> +	if (err)
->> +		return err;
->> +
->> +	if ((cores & ASUS_WMI_DSTS_PRESENCE_BIT) == 0) {
->> +		pr_err("ACPI does not support CPU core count control\n");
->> +		err = -ENODEV;
->> +		goto init_max_cpu_cores_err;
-> Please use __free() and return immediately.
->
-> Only assign from local variable to asus_armoury.cpu_cores with 
-> no_free_ptr() at the end.
->
->> +	}
->> +
->> +	asus_armoury.cpu_cores->max_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
->> +	asus_armoury.cpu_cores->max_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
->> +
->> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
->> +	if (err) {
->> +		pr_err("Could not get CPU core count: error %d\n", err);
->> +		goto init_max_cpu_cores_err;
->> +	}
->> +
->> +	asus_armoury.cpu_cores->cur_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
->> +	asus_armoury.cpu_cores->cur_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
->> +
->> +	asus_armoury.cpu_cores->min_perf_cores = CPU_PERF_CORE_COUNT_MIN;
->> +	asus_armoury.cpu_cores->min_power_cores = CPU_POWR_CORE_COUNT_MIN;
-> Should these be bounds checked with max?
->
->> +	return 0;
->> +
->> +init_max_cpu_cores_err:
->> +	kfree(asus_armoury.cpu_cores);
->> +	return err;
->> +}
->> +
->> +static ssize_t cores_value_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf,
->> +				enum cpu_core_type core_type, enum cpu_core_value core_value)
->> +{
->> +	u32 cores;
->> +
->> +	switch (core_value) {
->> +	case CPU_CORE_DEFAULT:
->> +	case CPU_CORE_MAX:
->> +		if (core_type == CPU_CORE_PERF)
->> +			return sysfs_emit(buf, "%u\n",
->> +					  asus_armoury.cpu_cores->max_perf_cores);
->> +		else
->> +			return sysfs_emit(buf, "%u\n",
->> +					  asus_armoury.cpu_cores->max_power_cores);
->> +	case CPU_CORE_MIN:
->> +		if (core_type == CPU_CORE_PERF)
->> +			return sysfs_emit(buf, "%u\n",
->> +					  asus_armoury.cpu_cores->min_perf_cores);
->> +		else
->> +			return sysfs_emit(buf, "%u\n",
->> +					  asus_armoury.cpu_cores->min_power_cores);
->> +	default:
->> +		break;
->> +	}
->> +
->> +	if (core_type == CPU_CORE_PERF)
->> +		cores = asus_armoury.cpu_cores->cur_perf_cores;
->> +	else
->> +		cores = asus_armoury.cpu_cores->cur_power_cores;
-> Why isn't this inside the switch?? The logic in this function looks very 
-> mixed up.
->
-> If I'd be you, I'd consider converting the asus_armoury.cpu_cores to a 
-> multi-dimensional array. It would make this just bounds checks and one 
-> line to get the data.
->
->> +	return sysfs_emit(buf, "%u\n", cores);
->> +}
->> +
->> +static ssize_t cores_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
->> +					 const char *buf, enum cpu_core_type core_type)
->> +{
->> +	u32 new_cores, perf_cores, power_cores, out_val, min, max;
->> +	int result, err;
->> +
->> +	result = kstrtou32(buf, 10, &new_cores);
->> +	if (result)
->> +		return result;
->> +
->> +	scoped_guard(mutex, &asus_armoury.cpu_core_mutex) {
->> +		if (core_type == CPU_CORE_PERF) {
->> +			perf_cores = new_cores;
->> +			power_cores = asus_armoury.cpu_cores->cur_power_cores;
->> +			min = asus_armoury.cpu_cores->min_perf_cores;
->> +			max = asus_armoury.cpu_cores->max_perf_cores;
->> +		} else {
->> +			perf_cores = asus_armoury.cpu_cores->cur_perf_cores;
->> +			power_cores = new_cores;
->> +			min = asus_armoury.cpu_cores->min_power_cores;
->> +			max = asus_armoury.cpu_cores->max_power_cores;
->> +		}
->> +
->> +		if (new_cores < min || new_cores > max)
->> +			return -EINVAL;
->> +
->> +		out_val = FIELD_PREP(ASUS_PERF_CORE_MASK, perf_cores) |
->> +			FIELD_PREP(ASUS_POWER_CORE_MASK, power_cores);
->> +
->> +		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, out_val, &result);
->> +		if (err) {
->> +			pr_warn("Failed to set CPU core count: %d\n", err);
->> +			return err;
->> +		}
->> +
->> +		if (result > 1) {
->> +			pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
->> +			return -EIO;
->> +		}
->> +	}
->> +
->> +	pr_info("CPU core count changed, reboot required\n");
-> This interface has a problematic behavior. If user wants to adjust both 
-> core counts one after another (without reboot in between), the new value 
-> of the first core count will be overwritten on the second store.
->
-> You might have to store also the value that will be used after the next 
-> boot to solve it but how the divergence should be presented to user is 
-> another question to which I don't have a good answer.
->
-> This seems a more general problem, that is, how to represent values which 
-> are only enacted after booting (current vs to-be-current) as it doesn't 
-> fit to the current, min, max, possible_values, type model.
->
->
-I will propose a possible solution in v15 very soon that will hopefully
-satisfy both kernel requirements and safety requirements.
+By setting the tcp_is_cwnd_limited to true when the small queue check
+failed, we can avoid this issue, the cwnd could increase to a reasonalbe
+size, in my test environment, it is about 4000. Then the small queue
+check won't fail.
 
-Thank you,
-Denis
+Signed-off-by: Peng Yu <peng.yu@alibaba-inc.com>
+---
+ net/ipv4/tcp_output.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index b94efb3050d2..8c70acf3a060 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -2985,8 +2985,10 @@ static bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
+ 		    unlikely(tso_fragment(sk, skb, limit, mss_now, gfp)))
+ 			break;
+ 
+-		if (tcp_small_queue_check(sk, skb, 0))
++		if (tcp_small_queue_check(sk, skb, 0)) {
++			is_cwnd_limited = true;
+ 			break;
++		}
+ 
+ 		/* Argh, we hit an empty skb(), presumably a thread
+ 		 * is sleeping in sendmsg()/sk_stream_wait_memory().
+-- 
+2.47.3
+
 
