@@ -1,142 +1,259 @@
-Return-Path: <linux-kernel+bounces-859503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C211BEDDAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:02:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1184FBEDDB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 04:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E1618A1E33
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:03:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B21B14E1ADE
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 02:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D2C1DE3DC;
-	Sun, 19 Oct 2025 02:02:49 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAA21E1DF0;
+	Sun, 19 Oct 2025 02:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MSZ/LYOY"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E23A137750;
-	Sun, 19 Oct 2025 02:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEED1369B4
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 02:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760839369; cv=none; b=fnEhiMcFjo7F03d7dXYzlWx36k6r39e1PwVGu7q4Pc7M62FwnHB36ewiVVu4rLWykY1/o4AXTUVZFTf0yzmjFKGxKGKo8YnObzf661LusamCYf4UF8f+1SoX3Ht9hpE9x7JlOfsckupTxxrr8z8gf1MTLBNbBUHo8sTQnjeNcDM=
+	t=1760839437; cv=none; b=XAC5YwIeJYfevzu5/+aDchLrYXWn2aj66l20+gNY7a6WViFRad0F/IUWv2dmUKRDV9BMnp/jpSNbsao/1sUlEepDiI6zM05laPPxSnypTGc1lSv4AF3gYt3lYq8ylFC9vzPIX16KdF65JDqfgvqT02DgmKSN7OUhm+2/TT4qDus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760839369; c=relaxed/simple;
-	bh=x2EO3W9+QwWgfWMo+S/1DHswU5yldySvuI6dvcu1C4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSKEkBJy4ht8SR3DYJD6bcux/9OlfePYrZGF4p32nJvG+EAJlSI8BuhPGQrxn8itZkFRQIfrUQ1ifGdHgXm3Neq/otH+QHgC9/HqpWdkaNlxsW8RSutOkDXYkf1mxhzIqi1zasgxz4Z2adcqyPOxfKq8EPMITewAFnlpMPpHARI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vAIke-000000005VK-0PXI;
-	Sun, 19 Oct 2025 02:02:28 +0000
-Date: Sun, 19 Oct 2025 03:02:24 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Yu Jiaoliang <yujiaoliang@vivo.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Changqi Hu <changqi.hu@mediatek.com>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Steven Liu <steven.liu@mediatek.com>,
-	John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3] serial: 8250_mtk: Enable baud clock and manage in
- runtime PM
-Message-ID: <aPRGsKGDrYlyoTje@makrotopia.org>
-References: <de5197ccc31e1dab0965cabcc11ca92e67246cf6.1758058441.git.daniel@makrotopia.org>
- <939cea9e-d7bd-4a13-b462-17e483f61e4c@gmail.com>
+	s=arc-20240116; t=1760839437; c=relaxed/simple;
+	bh=DnvOKalVAVTmP151v/ZOmkEW3cLfcyqfzYbgYMRFUtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aEvW6Atq/czY1fedKeKbPu+81mjpRR/bnYiRS5nuy1rh+6A+FC4y1RKUYKC4x73DzCPkt1tfxkb+iMGAuw/faJd5NCW/aLaunhll0q5qWFfPNhw85qvMSzDXfJtJ1SfIImbKm6X6+2gtmLmI/ZIFWXx9Bpv2HF7SV8ji+qkJFlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MSZ/LYOY; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760839422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wZyruvAclY3XxcYUgR0c6gPD3I5WTfaEJbImoUXKt9o=;
+	b=MSZ/LYOYqKz/xl0FKiuovLN+VhzedBMrN8knRkbEugO2Nq4D2r6rWq0ofe+lAvhLCUnWCj
+	47GCtPelO7PehfBd7dDS3i5+C5yC64hyicB6GQVWJPVSesHi5NYp3L6ImUvz8q9s9sMhcV
+	TeM6rxCe7UhUIQT4OepNoO64XC7vIAs=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: ast@kernel.org, jolsa@kernel.org, Menglong Dong <menglong8.dong@gmail.com>
+Cc: daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH RFC bpf-next 3/5] bpf,x86: add tracing session supporting for
+ x86_64
+Date: Sun, 19 Oct 2025 10:03:31 +0800
+Message-ID: <12764740.O9o76ZdvQC@7950hx>
+In-Reply-To: <20251018142124.783206-4-dongml2@chinatelecom.cn>
+References:
+ <20251018142124.783206-1-dongml2@chinatelecom.cn>
+ <20251018142124.783206-4-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <939cea9e-d7bd-4a13-b462-17e483f61e4c@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
+
+On 2025/10/18 22:21, Menglong Dong wrote:
+> Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_session_entry and
+> invoke_bpf_session_exit is introduced for this purpose.
+> 
+> In invoke_bpf_session_entry(), we will check if the return value of the
+> fentry is 0, and clear the corresponding flag if not. And in
+> invoke_bpf_session_exit(), we will check if the corresponding flag is
+> set. If not set, the fexit will be skipped.
+> 
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> Co-developed-by: Leon Hwang <leon.hwang@linux.dev>
+> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+> ---
+>  arch/x86/net/bpf_jit_comp.c | 115 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 114 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+> index d4c93d9e73e4..0586b96ed529 100644
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -3108,6 +3108,97 @@ static int invoke_bpf_mod_ret(const struct btf_func_model *m, u8 **pprog,
+>  	return 0;
+>  }
+>  
+> +static int invoke_bpf_session_entry(const struct btf_func_model *m, u8 **pprog,
+> +				    struct bpf_tramp_links *tl, int stack_size,
+> +				    int run_ctx_off, int session_off,
+> +				    void *image, void *rw_image)
+> +{
+> +	u64 session_flags;
+> +	u8 *prog = *pprog;
+> +	u8 *jmp_insn;
+> +	int i;
+> +
+> +	/* clear the session flags:
+> +	 *
+> +	 *   xor rax, rax
+> +	 *   mov QWORD PTR [rbp - session_off], rax
+> +	 */
+> +	EMIT3(0x48, 0x31, 0xC0);
+> +	emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -session_off);
+> +
+> +	for (i = 0; i < tl->nr_links; i++) {
+> +		if (invoke_bpf_prog(m, &prog, tl->links[i], stack_size, run_ctx_off, true,
+> +				    image, rw_image))
+> +			return -EINVAL;
+> +
+> +		/* fentry prog stored return value into [rbp - 8]. Emit:
+> +		 * if (*(u64 *)(rbp - 8) !=  0)
+> +		 *	*(u64 *)(rbp - session_off) |= (1 << (i + 1));
+> +		 */
+> +		/* cmp QWORD PTR [rbp - 0x8], 0x0 */
+> +		EMIT4(0x48, 0x83, 0x7d, 0xf8); EMIT1(0x00);
+> +		/* emit 2 nops that will be replaced with JE insn */
+> +		jmp_insn = prog;
+> +		emit_nops(&prog, 2);
+> +
+> +		session_flags = (1ULL << (i + 1));
+> +		/* mov rax, $session_flags */
+> +		emit_mov_imm64(&prog, BPF_REG_0, session_flags >> 32, (u32) session_flags);
+> +		/* or QWORD PTR [rbp - session_off], rax */
+> +		EMIT2(0x48, 0x09);
+> +		emit_insn_suffix(&prog, BPF_REG_FP, BPF_REG_0, -session_off);
+> +
+> +		jmp_insn[0] = X86_JE;
+> +		jmp_insn[1] = prog - jmp_insn - 2;
+> +	}
+> +
+> +	*pprog = prog;
+> +	return 0;
+> +}
+> +
+> +static int invoke_bpf_session_exit(const struct btf_func_model *m, u8 **pprog,
+> +				   struct bpf_tramp_links *tl, int stack_size,
+> +				   int run_ctx_off, int session_off,
+> +				   void *image, void *rw_image)
+> +{
+> +	u64 session_flags;
+> +	u8 *prog = *pprog;
+> +	u8 *jmp_insn;
+> +	int i;
+> +
+> +	/* set the bpf_trace_is_exit flag to the session flags */
+> +	/* mov rax, 1 */
+> +	emit_mov_imm32(&prog, false, BPF_REG_0, 1);
+> +	/* or QWORD PTR [rbp - session_off], rax */
+> +	EMIT2(0x48, 0x09);
+> +	emit_insn_suffix(&prog, BPF_REG_FP, BPF_REG_0, -session_off);
+> +
+> +	for (i = 0; i < tl->nr_links; i++) {
+> +		/* check if (1 << (i+1)) is set in the session flags, and
+> +		 * skip the execution of the fexit program if it is.
+> +		 */
+> +		session_flags = 1ULL << (i + 1);
+> +		/* mov rax, $session_flags */
+> +		emit_mov_imm64(&prog, BPF_REG_1, session_flags >> 32, (u32) session_flags);
+> +		/* test QWORD PTR [rbp - session_off], rax */
+> +		EMIT2(0x48, 0x85);
+> +		emit_insn_suffix(&prog, BPF_REG_FP, BPF_REG_1, -session_off);
+> +		/* emit 2 nops that will be replaced with JE insn */
+> +		jmp_insn = prog;
+> +		emit_nops(&prog, 2);
+> +
+> +		if (invoke_bpf_prog(m, &prog, tl->links[i], stack_size, run_ctx_off, false,
+> +				    image, rw_image))
+> +			return -EINVAL;
+> +
+> +		jmp_insn[0] = X86_JNE;
+> +		jmp_insn[1] = prog - jmp_insn - 2;
+> +	}
+> +
+> +	*pprog = prog;
+> +	return 0;
+> +}
+> +
+>  /* mov rax, qword ptr [rbp - rounded_stack_depth - 8] */
+>  #define LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack)	\
+>  	__LOAD_TCC_PTR(-round_up(stack, 8) - 8)
+> @@ -3179,8 +3270,10 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+>  					 void *func_addr)
+>  {
+>  	int i, ret, nr_regs = m->nr_args, stack_size = 0;
+> -	int regs_off, nregs_off, ip_off, run_ctx_off, arg_stack_off, rbx_off;
+> +	int regs_off, nregs_off, session_off, ip_off, run_ctx_off,
+> +	    arg_stack_off, rbx_off;
+>  	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+> +	struct bpf_tramp_links *session = &tlinks[BPF_TRAMP_SESSION];
+>  	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
+>  	struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
+>  	void *orig_call = func_addr;
+> @@ -3222,6 +3315,8 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+>  	 *
+>  	 * RBP - nregs_off [ regs count	     ]  always
+>  	 *
+> +	 * RBP - session_off [ session flags ] tracing session
+> +	 *
+>  	 * RBP - ip_off    [ traced function ]  BPF_TRAMP_F_IP_ARG flag
+>  	 *
+>  	 * RBP - rbx_off   [ rbx value       ]  always
+> @@ -3246,6 +3341,8 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+>  	/* regs count  */
+>  	stack_size += 8;
+>  	nregs_off = stack_size;
+> +	stack_size += 8;
+> +	session_off = stack_size;
+
+Oops, this break bpf_get_func_ip(), which will get the ip with ctx[-2].
+I'll introduce a "bpf_get_func_ip_proto_tracing_session" to fix it.
+
+>  
+>  	if (flags & BPF_TRAMP_F_IP_ARG)
+>  		stack_size += 8; /* room for IP address argument */
+> @@ -3345,6 +3442,13 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+>  			return -EINVAL;
+>  	}
+>  
+> +	if (session->nr_links) {
+> +		if (invoke_bpf_session_entry(m, &prog, session, regs_off,
+> +					     run_ctx_off, session_off,
+> +					     image, rw_image))
+> +			return -EINVAL;
+> +	}
+> +
+>  	if (fmod_ret->nr_links) {
+>  		branches = kcalloc(fmod_ret->nr_links, sizeof(u8 *),
+>  				   GFP_KERNEL);
+> @@ -3409,6 +3513,15 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+>  		}
+>  	}
+>  
+> +	if (session->nr_links) {
+> +		if (invoke_bpf_session_exit(m, &prog, session, regs_off,
+> +					    run_ctx_off, session_off,
+> +					    image, rw_image)) {
+> +			ret = -EINVAL;
+> +			goto cleanup;
+> +		}
+> +	}
+> +
+>  	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+>  		restore_regs(m, &prog, regs_off);
+>  
+> 
 
 
-On Wed, Sep 17, 2025 at 12:00:57PM +0200, Matthias Brugger wrote:
-> On 16/09/2025 23:37, Daniel Golle wrote:
-> > Some MediaTek SoCs got a gated UART baud clock, which currently gets
-> > disabled as the clk subsystem believes it would be unused. This results in
-> > the uart freezing right after "clk: Disabling unused clocks" on those
-> > platforms.
-> > 
-> > Request the baud clock to be prepared and enabled during probe, and to
-> > restore run-time power management capabilities to what it was before commit
-> > e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock
-> > management") disable and unprepare the baud clock when suspending the UART,
-> > prepare and enable it again when resuming it.
-> > 
-> > Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
-> 
-> Most of the issues from this commit are already fixed in
-> b6c7ff2693ddc ("serial: 8250_mtk: Simplify clock sequencing and runtime PM")
-> which is more or less a revert of e32a83c70cf9.
-> 
-> I think we should add
-> Fixes: b6c7ff2693ddc ("serial: 8250_mtk: Simplify clock sequencing and runtime PM")
-> here as well. It's a fix of a fix :)
-
-Just a friendly ping about this patch :)
-Should I resend the patch with the added Fixes:-tag? Or can it be merged
-including the tag added my Matthias without a resend?
 
 
-> 
-> Regards,
-> Matthias
-> 
-> 
-> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > ---
-> > v3: squash into single patch
-> > v2: add managing run-time PM in dedicated patch
-> > 
-> >   drivers/tty/serial/8250/8250_mtk.c | 6 ++++--
-> >   1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-> > index b44de2ed7413..5875a7b9b4b1 100644
-> > --- a/drivers/tty/serial/8250/8250_mtk.c
-> > +++ b/drivers/tty/serial/8250/8250_mtk.c
-> > @@ -435,6 +435,7 @@ static int __maybe_unused mtk8250_runtime_suspend(struct device *dev)
-> >   	while
-> >   		(serial_in(up, MTK_UART_DEBUG0));
-> > +	clk_disable_unprepare(data->uart_clk);
-> >   	clk_disable_unprepare(data->bus_clk);
-> >   	return 0;
-> > @@ -445,6 +446,7 @@ static int __maybe_unused mtk8250_runtime_resume(struct device *dev)
-> >   	struct mtk8250_data *data = dev_get_drvdata(dev);
-> >   	clk_prepare_enable(data->bus_clk);
-> > +	clk_prepare_enable(data->uart_clk);
-> >   	return 0;
-> >   }
-> > @@ -475,13 +477,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
-> >   	int dmacnt;
-> >   #endif
-> > -	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
-> > +	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
-> >   	if (IS_ERR(data->uart_clk)) {
-> >   		/*
-> >   		 * For compatibility with older device trees try unnamed
-> >   		 * clk when no baud clk can be found.
-> >   		 */
-> > -		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
-> > +		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> >   		if (IS_ERR(data->uart_clk)) {
-> >   			dev_warn(&pdev->dev, "Can't get uart clock\n");
-> >   			return PTR_ERR(data->uart_clk);
-> 
 
