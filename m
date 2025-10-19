@@ -1,94 +1,141 @@
-Return-Path: <linux-kernel+bounces-859558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853BFBEDF28
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:46:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F758BEDF4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 08:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E0BD734AE3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C11189EF58
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 06:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016D5223705;
-	Sun, 19 Oct 2025 06:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BC2225791;
+	Sun, 19 Oct 2025 06:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMqNhywC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cl0KoSN2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53190178372;
-	Sun, 19 Oct 2025 06:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2865178372;
+	Sun, 19 Oct 2025 06:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760856408; cv=none; b=sXCVBd//OUisGTh2CbsIuO+D34H0+PI1BHT5bu6vipK/XIpG815dENEhYys9X+wrJ2KcAlTD7b/4Obive4Dgqe5EiyhDRxgRwzKAlOyW7TKTtyvzcp+osFnmBXPsV59XuR405sPcjLNci2bGYQoj5AHUXmIAo7gyfaLLbEtrlcM=
+	t=1760856631; cv=none; b=K/78XNAKiDzDOooJcNp6Eu7AipUYBG1kPLI8N/p5Cza3u1FLaw2JLMT5Zo8BYIUgv2wrfJXIekPQJ4MKhqrHKYxeHu2n5PKjQi/v1gR9tQPp1p0HCXWMQh93jRWQwhafmjrxGk3HtW7t1K2WNNouBp355Vl+DkRC1mW8enY/ZJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760856408; c=relaxed/simple;
-	bh=+a+2hCN0GD5orS5JrZMFWqnSdCPfMOObGECdOlF/YN8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jvUhqdbuW1TCW9LbsV8aleKPg5czFHVro4w3WxxiqmvZJixS1MqWGO+ZjCgaEQBv+aiqsXQ02/2iBLQtTIcu2sDwT8o9mIdcNvalOjjgiuaYkaQcWCkZ9iq14wHp9Vwuuo1m9zH49p++P8iiv6qKL9zpWVOeEZ5o7AcWmpiS+aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMqNhywC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AEBC4CEE7;
-	Sun, 19 Oct 2025 06:46:38 +0000 (UTC)
+	s=arc-20240116; t=1760856631; c=relaxed/simple;
+	bh=EdgpjTa5vPTpdpYEzLk3B3e9bf5d6qYFWAfS+EwNqnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XiUeVLimD7Xq4wSNC3HT1XLtnTbynNPLVCwp5kXj5tnPfO2LiZS7Aq3Hwcs9tAOrM4NxzNwsFxaGc+bDR/nSuaoZCEWPzZS0KK5z/1IrC2OiPCslTQ4AtyUyXJrOlkgO0X0N3i/BwgXUfIqBbW8d97EvWjh0wtDx/lsiuCVDo6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cl0KoSN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F25C4CEE7;
+	Sun, 19 Oct 2025 06:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760856408;
-	bh=+a+2hCN0GD5orS5JrZMFWqnSdCPfMOObGECdOlF/YN8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=TMqNhywCW0j0gr+EVC6Q8qsF30M2Gyvdxr11ywRpofXBeFofDxgeupde2Zp2j0hag
-	 PU3jp4JzMkkaDx07u16quNHT0hyGYr2GVQsGJloGcoyOON29mN1E3tQVeRlcVYP8wI
-	 1LHai7ybNXEMzZ9+F0/A3IEa5+Br/LLChYULjhDGs6ySp5JLF5gs+FuK97gV7m5cZg
-	 4H5JHZbJ1Gidk9EB/BxiuDcyPza9Lh4O1Fr4IxVmk+12xte/wWWJgXQh0Sy/mAdvN2
-	 pkp6MXFgt+U3uEoTmgS1nctWpJJnfasbbFsfUvFzj+XY8AcB8SYd3XjTnFyCCZ5eR0
-	 9+6y5b/x0xR6g==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Shawn Lin <shawn.lin@rock-chips.com>, Simon Xue <xxm@rock-chips.com>, 
- Yao Zi <ziyao@disroot.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>, 
- Chukun Pan <amadeus@jmu.edu.cn>
-In-Reply-To: <20250918153057.56023-1-ziyao@disroot.org>
-References: <20250918153057.56023-1-ziyao@disroot.org>
-Subject: Re: (subset) [PATCH v2 0/3] Add PCIe Gen2x1 controller support for
- RK3528
-Message-Id: <176085639822.11982.1205401883779675228.b4-ty@kernel.org>
-Date: Sun, 19 Oct 2025 12:16:38 +0530
+	s=k20201202; t=1760856630;
+	bh=EdgpjTa5vPTpdpYEzLk3B3e9bf5d6qYFWAfS+EwNqnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cl0KoSN24WldfEYSRSfu5lozmGJAVE9xioGE6C+PBBseYSuE/7hgf2KbKvxu1nAfq
+	 +AnxTaK9VaE7xdn62r2Zk9oFnNMs7lSpecdggsfr9Z5mfbyraggVUnrWZwla30ASHd
+	 TTQUKVBXbjDXmyKfOdXMojvKQKorenot/jpefXad8wpoUyJQ/gWBwcSUSTx6MlFUkq
+	 O4BqR0RMnSAfMnvUpkN7wKJhQIsaUmfqwAekVS20NwyN/940rzzKb69Mu6Ni7vQrxn
+	 4PzVEO7y+ixH5H5iambi/6vum/20jOqyGoZB3A2tTRPyBtt8DjbzWrov4g4xwvEbN2
+	 ljhF5KLlm27vA==
+Date: Sun, 19 Oct 2025 02:50:21 -0400
+From: Guo Ren <guoren@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, linux-alpha@vger.kernel.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 03/17] csky: Add __attribute_const__ to ffs()-family
+ implementations
+Message-ID: <aPSKLRnWUAVSGQjF@gmail.com>
+References: <20250804163910.work.929-kees@kernel.org>
+ <20250804164417.1612371-3-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804164417.1612371-3-kees@kernel.org>
 
-
-On Thu, 18 Sep 2025 15:30:54 +0000, Yao Zi wrote:
-> Rockchip RK3528 ships one PCIe Gen2x1 controller that operates in RC
-> mode only. The SoC doesn't provide a separate MSI controller, thus the
-> one integrated in designware PCIe IP must be used. This series documents
-> the PCIe controller in dt-binding and describes it in the SoC devicetree.
+On Mon, Aug 04, 2025 at 09:43:59AM -0700, Kees Cook wrote:
+> While tracking down a problem where constant expressions used by
+> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
+> initializer was convincing the compiler that it couldn't track the state
+> of the prior statically initialized value. Tracing this down found that
+> ffs() was used in the initializer macro, but since it wasn't marked with
+> __attribute__const__, the compiler had to assume the function might
+> change variable states as a side-effect (which is not true for ffs(),
+> which provides deterministic math results).
 > 
-> Radxa E20C board is used for testing, whose LAN GbE port is provided
-> through an RTL8111H chip connected to PCIe controller. Its devicetree
-> is adjusted to enable the controller, and IPERF3 shows the interface
-> runs at full-speed. A typical result looks like
+> Add missing __attribute_const__ annotations to C-SKY's implementations of
+> ffs(), __ffs(), fls(), and __fls() functions. These are pure mathematical
+> functions that always return the same result for the same input with no
+> side effects, making them eligible for compiler optimization.
+LGTM.
+
+Acked-by: Guo Ren <guoren@kernel.org>
+
 > 
-> [...]
-
-Applied, thanks!
-
-[1/3] dt-bindings: PCI: dwc: rockchip: Add RK3528 variant
-      commit: dfbf19c47a01eda5df4d476d64a273e1188ea5a1
-
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+> Build tested ARCH=csky defconfig with GCC csky-linux 15.1.0.
+> 
+> Link: https://github.com/KSPP/linux/issues/364 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  arch/csky/include/asm/bitops.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/csky/include/asm/bitops.h b/arch/csky/include/asm/bitops.h
+> index 72e1b2aa29a0..80d67eee6e86 100644
+> --- a/arch/csky/include/asm/bitops.h
+> +++ b/arch/csky/include/asm/bitops.h
+> @@ -9,7 +9,7 @@
+>  /*
+>   * asm-generic/bitops/ffs.h
+>   */
+> -static inline int ffs(int x)
+> +static inline __attribute_const__ int ffs(int x)
+>  {
+>  	if (!x)
+>  		return 0;
+> @@ -26,7 +26,7 @@ static inline int ffs(int x)
+>  /*
+>   * asm-generic/bitops/__ffs.h
+>   */
+> -static __always_inline unsigned long __ffs(unsigned long x)
+> +static __always_inline __attribute_const__ unsigned long __ffs(unsigned long x)
+>  {
+>  	asm volatile (
+>  		"brev %0\n"
+> @@ -39,7 +39,7 @@ static __always_inline unsigned long __ffs(unsigned long x)
+>  /*
+>   * asm-generic/bitops/fls.h
+>   */
+> -static __always_inline int fls(unsigned int x)
+> +static __always_inline __attribute_const__ int fls(unsigned int x)
+>  {
+>  	asm volatile(
+>  		"ff1 %0\n"
+> @@ -52,7 +52,7 @@ static __always_inline int fls(unsigned int x)
+>  /*
+>   * asm-generic/bitops/__fls.h
+>   */
+> -static __always_inline unsigned long __fls(unsigned long x)
+> +static __always_inline __attribute_const__ unsigned long __fls(unsigned long x)
+>  {
+>  	return fls(x) - 1;
+>  }
+> -- 
+> 2.34.1
+> 
+> 
 
