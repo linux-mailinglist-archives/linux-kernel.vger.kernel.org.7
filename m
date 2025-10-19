@@ -1,242 +1,114 @@
-Return-Path: <linux-kernel+bounces-859627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F49BEE267
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:35:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446D0BEE26D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 11:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B2A3A4CD4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19391899B61
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47762E2F03;
-	Sun, 19 Oct 2025 09:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93242E2EE7;
+	Sun, 19 Oct 2025 09:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mwB3Lsqh"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnCfDbKX"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FED23371B;
-	Sun, 19 Oct 2025 09:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED501E5B64
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 09:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760866533; cv=none; b=R32wCps3+QDKV85ojd055E+K17Pmtjy2gZ+epDVsZcrsnrWJE237p8oxHOFALOuhR3Q03qHuqOdKJZNfI8Uex0k3kQP2KZEwR4RDAUnF+nODfVzmienH92G/+pzG6vDUy0GPlmH7+tsfAOkdFYx1qGOpUvDlhrUpwKpFqf6tfZE=
+	t=1760866956; cv=none; b=inLH7bQ+npfp+wXjaje0akIT1fMDmkldFLNl/ndjwE9Ttmco/QcPijMYxYdHsIG8M96XQ9rVy27Vk5p6tY/TnGQS6cIPgvu9kfgMGGulR+3hLpKftv75Oo0XAAiYH7Wnuo2XoV/87NqSr0mgZVu4r0hYXrwnQhf5PWnCiL5EmRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760866533; c=relaxed/simple;
-	bh=I7swA7Kt4/jMt+Zzvms1ZaGrKcdm/2I2tslhysy+6OE=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=M5dTk5dYWO7qLEVlkE2NJGsEiPdDModTM9insf0Sd+XXKpQwqOcI2eOhjpeeasM5UHSmTzpNknib7Qwz/gkB6cRky3+IAcp7UtTTLuk6WSqj55EL6Rdn3omPtj4m6yhiTtCa9IkCngGOZVv2HOfu+U6lxK1+cKi5DVg8HBgKUNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mwB3Lsqh; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id APouva5KKnE4gAPouvkY2J; Sun, 19 Oct 2025 11:35:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1760866523;
-	bh=QYUchmJA4dda+MYsvmqTYxjZthKW6suHT9ouFeAZf80=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=mwB3LsqhkmNftbKCmNY/ha8dkzSi/b9ZFDd3uKU2alAS6MEbtEvJ8tS289RxHl70M
-	 0V6dDjBaAtXoHi/0DQZccUMrbQWnM674Ky6OdIpQwkniMkyJDDYPnczWsR47SmMCcV
-	 XeHiPpkeeOgSyQQ+pU3f5I2fAo+7QXUnwK+eVTAP1RpTUd0zhI+ugFnFJM2xB7ZAc5
-	 mKxiWuNyt4EoMu1lQbkrQYrn8ePag0AQYXNDO1Mceqa1v5j5eFR6vF0hHThzfS1axI
-	 SnHvkb7CemnTbzK+k6po6w2WtyFkWq+OycQZBrwpLS23oSbOWv1WZzdaZ4fAkBur0N
-	 caKHAdTHMSiDQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 19 Oct 2025 11:35:23 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <d18e8155-fa2a-4976-a3c1-7327117148d7@wanadoo.fr>
-Date: Sun, 19 Oct 2025 11:35:19 +0200
+	s=arc-20240116; t=1760866956; c=relaxed/simple;
+	bh=BJkZeQJHCDAh/1wDzr79J7l2UMRsy3tnRyrME1bv0+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JAwT8avMV520L70DGTYFfdQRZVE4bhsztW1rFLI19QrIzIWHB3CVfPQBuduc6/hUMN/xA/ieYu4I736WejO3vkPtPeAqvZ1WRSFIQDBvkq5645BZJRmmOAFSqWGbgUP3ipOSjepmpE/h8oMv/1gO+iUroTgINXnCQh6roqQELTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bnCfDbKX; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59066761388so4446739e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 02:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760866952; x=1761471752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BJkZeQJHCDAh/1wDzr79J7l2UMRsy3tnRyrME1bv0+8=;
+        b=bnCfDbKX0veZx2ytEp/gcAyp437Y8Uv35dJ9vguZMGlvztF3lufh4817u+DWGWufR7
+         dxBR97TxLQ5cCqzalZrnBbqJ7/Tfzwp6N714Q3VH/sv4CZ6HXtuTURiE36lU8ZrPZmoI
+         Lun+Phvn0xGJxbH+uphQ+UCQEqXR0ZxN99Hiszsixwq98a3v1blq7HCkGRLmiB/W0d+0
+         lGScC/XnGkDNcaM9doqFLTHxmP5n2NnPuoH1HKLHpaMcnPyvwjgzusgVpUCsE8M6fKyv
+         DIL5P8W+BfUOgKs6E+tuZiUBncCPWjsG2gKnuUwiVeDhQLuotmMT1dn5a1ZwP9/tc4CL
+         rvjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760866952; x=1761471752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BJkZeQJHCDAh/1wDzr79J7l2UMRsy3tnRyrME1bv0+8=;
+        b=LP4OisdCopli3JFyQkUU7CYDbu92NJ1DDfJ9QjvcaFbSBxw1Gb4ji+b93VaN63XAg/
+         El3qGG8iBaUBqk7f+64+ZDD6Q/HGyYr/hQBU3E7Ap8WD6WmNBGILwnnQtJ6C4T97RTcW
+         xZHc8anFmyaK0AyHgubeGwoS8g7ADoWXnix8+HvFim+BM4eQG4MD69qwxc3Y8GZ574+L
+         xlDoXVrhKm8qDipdRuZNWDqm4TuHQRgATF1fj7gqmr4dxRCjThhwWmryTpKk/fi1wNgR
+         y7xaf+N7KvOD2mu0Ir+rjDCSlmp5X+4y1ZGpuKzeLnLl+D7z+C0W9i6udJezmyv5tN50
+         M54Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWMKrGbStAFp7obKxd3UnTmm2ikYzh7FW/oURaiVWBeuC3oeAo2LMwbzVXDs4tqxCtkwQqOn2XIKfaBCUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynD5/vAWQqhLgmrCYzphA8K4suNv6KcdGWaEyh+Cn504vHEA2J
+	fAfYk3L5N1H9IvIhK/cKXiicRw8cQGgvO9MCzsFuo7N6/lK1QlaUghIdK7vXGRrU5zUzagC8TG1
+	XSZZ7qMoa5tT69IAJN5j/SxBOEq0IkvQ=
+X-Gm-Gg: ASbGncvZmdwgvmg4wPi+dEziUb3cwET4KVa2sVPrplrBNxNqkun9+7UeIKL8Op3brkn
+	JWipOZLVPjl2Mw8z4EmXoS/bMDTS4A/cyRuUEPjO4E2fL9M2XXLGWlihKGJXJbA9tSBxBvUgwpW
+	WnsXxPiiaIPZfAwPsPw4tmQ/1VLNZrEOW+HRg3+4jbjU1tNvGRI5OMX2slUSXvg68JPyNnB+7G0
+	Kv3iLOdgIt+kV+/K2LHVGOVWjKvaB2FZV+gRJiR3HZu4LT9lZsWFKc9GhOdJINI2MY5Vm889HQP
+	DXQ1auJAV/zHTpRPHA==
+X-Google-Smtp-Source: AGHT+IHRGUjSudRV2+iLzSpcC41cE/KbP4fHngDZHFyswv0L6Igvp4+PdxJ8FqjuwD7xavvcTfDAYgk+D5KDG/l6kNc=
+X-Received: by 2002:a05:6512:3e26:b0:57e:3273:93a7 with SMTP id
+ 2adb3069b0e04-591d0d595a3mr4131060e87.21.1760866951430; Sun, 19 Oct 2025
+ 02:42:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/msm/dpu: Add DSPP GC driver to provide GAMMA_LUT
- DRM property
-References: <20251019-dpu-add-dspp-gc-driver-v2-1-30c8cb79cb17@izzo.pro>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-To: devnull+federico.izzo.pro@kernel.org
-Cc: abhinav.kumar@linux.dev, agx@sigxcpu.org, airlied@gmail.com,
- david@ixit.cz, dri-devel@lists.freedesktop.org, federico@izzo.pro,
- freedreno@lists.freedesktop.org, jesszhan0024@gmail.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- lumag@kernel.org, marijn.suijten@somainline.org, nicola@corna.info,
- phone-devel@vger.kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
- simona@ffwll.ch, ~postmarketos/upstreaming@lists.sr.ht
-In-Reply-To: <20251019-dpu-add-dspp-gc-driver-v2-1-30c8cb79cb17@izzo.pro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251018053029.226506-1-hsukrut3@gmail.com> <c2e85681-7ce8-43e3-ba08-63f8b854c8c7@gmail.com>
+In-Reply-To: <c2e85681-7ce8-43e3-ba08-63f8b854c8c7@gmail.com>
+From: sukrut heroorkar <hsukrut3@gmail.com>
+Date: Sun, 19 Oct 2025 15:12:18 +0530
+X-Gm-Features: AS18NWC_eW-N0hWCemabsbKCneSKDXwgneQOnEzszGH7ffCqdynN8G-JRg8wcVE
+Message-ID: <CAHCkknr6o_9zO+DYRaf-W7C46r17JUf2MFnPLm1dik=ei=LxcA@mail.gmail.com>
+Subject: Re: [PATCH] jfs: validate budmin to prevent shift-out-of-bounds in dbAllocAG()
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: Dave Kleikamp <shaggy@kernel.org>, Rand Deeb <rand.sec96@gmail.com>, 
+	Edward Adam Davis <eadavis@qq.com>, Ghanshyam Agrawal <ghanshyam1898@gmail.com>, 
+	Nihar Chaithanya <niharchaithanya@gmail.com>, Vasiliy Kovalev <kovalev@altlinux.org>, 
+	Arnaud Lecomte <contact@arnaud-lcm.com>, 
+	"open list:JFS FILESYSTEM" <jfs-discussion@lists.sourceforge.net>, 
+	open list <linux-kernel@vger.kernel.org>, skhan@linux.foundation.org, 
+	syzbot+4b717071f1eecb2972df@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 19/10/2025 à 11:16, Federico Amedeo Izzo via B4 Relay a écrit :
-> From: Federico Amedeo Izzo <federico-3FKkmSgw/TI@public.gmane.org>
-> 
-> Add support for DSPP GC block in DPU driver for Qualcomm SoCs.
-> Expose the GAMMA_LUT DRM property, which is needed to enable
-> night light and basic screen color calibration.
-> 
-> I used LineageOS downstream kernel as a reference and found the LUT
-> format by trial-and-error on OnePlus 6.
-> 
-> Tested on oneplus-enchilada (sdm845-mainline 6.16-dev) and xiaomi-tissot
-> (msm8953-mainline 6.12/main).
-> 
-> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>  # Pixel 3 (next-20251018)
-> Tested-by: Guido Günther <agx-wGvLLbajjwFAfugRpC6u6w@public.gmane.org> # on sdm845-shift-axolotl
-> Signed-off-by: Federico Amedeo Izzo <federico-3FKkmSgw/TI@public.gmane.org>
-> ---
-> DRM GAMMA_LUT support was missing on sdm845 and other Qualcomm SoCs using
-> DPU for CRTC. This is needed in userspace to enable features like Night
-> Light or basic color calibration.
-> 
-> I wrote this driver to enable Night Light on OnePlus 6, and after the
-> driver was working I found out it applies to the 29 different Qualcomm SoCs
-> that use the DPU display engine, including X1E for laptops.
-> 
-> I used the LineageOS downstream kernel as reference and found the correct
-> LUT format by trial-and-error on OnePlus 6.
-> 
-> This was my first Linux driver and it's been a great learning
-> experience.
-> 
-> The patch was reviewed by postmarketOS contributors here:
-> https://gitlab.com/sdm845-mainline/linux/-/merge_requests/137
-> During review the patch was tested successfully on hamoa (X1E).
-> ---
-
-Hi,
-
-...
-
-> @@ -830,19 +862,40 @@ static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
->   		ctl = mixer[i].lm_ctl;
->   		dspp = mixer[i].hw_dspp;
->   
-> -		if (!dspp || !dspp->ops.setup_pcc)
-> +		if (!dspp)
->   			continue;
->   
-> -		if (!state->ctm) {
-> -			dspp->ops.setup_pcc(dspp, NULL);
-> -		} else {
-> -			_dpu_crtc_get_pcc_coeff(state, &cfg);
-> -			dspp->ops.setup_pcc(dspp, &cfg);
-> +		if (dspp->ops.setup_pcc) {
-> +			if (!state->ctm) {
-> +				dspp->ops.setup_pcc(dspp, NULL);
-> +			} else {
-> +				_dpu_crtc_get_pcc_coeff(state, &cfg);
-> +				dspp->ops.setup_pcc(dspp, &cfg);
-> +			}
-> +
-> +			/* stage config flush mask */
-> +			ctl->ops.update_pending_flush_dspp(ctl,
-> +				mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
->   		}
->   
-> -		/* stage config flush mask */
-> -		ctl->ops.update_pending_flush_dspp(ctl,
-> -			mixer[i].hw_dspp->idx, DPU_DSPP_PCC);
-> +		if (dspp->ops.setup_gc) {
-> +			if (!state->gamma_lut) {
-> +				dspp->ops.setup_gc(dspp, NULL);
-> +			} else {
-> +				gc_lut = kzalloc(sizeof(*gc_lut), GFP_KERNEL);
-
-The memory is already cleared in _dpu_crtc_get_gc_lut().
-Eiher this could be changed into kmalloc(), or the memset in 
-_dpu_crtc_get_gc_lut() could be removed.
-
-> +				if (!gc_lut) {
-> +					DRM_ERROR("failed to allocate gc_lut\n");
-
-usually,message related to memory allocation errors are not needed, 
-because things are already verbose in such a case.
-
-> +					continue;
-> +				}
-> +				_dpu_crtc_get_gc_lut(state, gc_lut);
-> +				dspp->ops.setup_gc(dspp, gc_lut);
-> +				kfree(gc_lut);
-> +			}
-> +
-> +			/* stage config flush mask */
-> +			ctl->ops.update_pending_flush_dspp(ctl,
-> +				mixer[i].hw_dspp->idx, DPU_DSPP_GC);
-> +		}
->   	}
->   }
-
-...
-
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-> index 54b20faa0b69..7ebe7d8a5382 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-
-...
-
-> @@ -63,6 +75,47 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
->   	DPU_REG_WRITE(&ctx->hw, base, PCC_EN);
->   }
->   
-> +static void dpu_setup_dspp_gc(struct dpu_hw_dspp *ctx,
-> +		struct dpu_hw_gc_lut *gc_lut)
-> +{
-> +	int i = 0;
-> +	u32 base, reg;
-> +
-> +	if (!ctx) {
-> +		DRM_ERROR("invalid ctx %pK\n", ctx);
-
-ctx is known to be NULL here. So the message can be simplified.
-
-> +		return;
-> +	}
-> +
-> +	base = ctx->cap->sblk->gc.base;
-> +
-> +	if (!base) {
-> +		DRM_ERROR("invalid ctx %pK gc base 0x%x\n", ctx, base);
-
-base is known to be NULL here. So the message can be simplified.
-
-> +		return;
-> +	}
-> +
-> +	if (!gc_lut) {
-> +		DRM_DEBUG_DRIVER("disable gc feature\n");
-> +		DPU_REG_WRITE(&ctx->hw, base, GC_DIS);
-> +		return;
-> +	}
-> +
-> +	reg = 0;
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_C0_INDEX_OFF, reg);
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_C1_INDEX_OFF, reg);
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_C2_INDEX_OFF, reg);
-
-Why not using 0 explicitly, instead of using reg here?
-
-> +
-> +	for (i = 0; i < PGC_TBL_LEN; i++) {
-> +		DPU_REG_WRITE(&ctx->hw, base + GC_C0_OFF, gc_lut->c0[i]);
-> +		DPU_REG_WRITE(&ctx->hw, base + GC_C1_OFF, gc_lut->c1[i]);
-> +		DPU_REG_WRITE(&ctx->hw, base + GC_C2_OFF, gc_lut->c2[i]);
-> +	}
-> +
-> +	DPU_REG_WRITE(&ctx->hw, base + GC_LUT_SWAP_OFF, BIT(0));
-> +
-> +	reg = GC_EN | ((gc_lut->flags & PGC_8B_ROUND) ? GC_8B_ROUND_EN : 0);
-> +	DPU_REG_WRITE(&ctx->hw, base, reg);
-> +}
-
-...
-
-CJ
+Hi David,
+On Sun, Oct 19, 2025 at 12:50=E2=80=AFAM David Hunter
+<david.hunter.linux@gmail.com> wrote:
+>
+> On 10/18/25 01:30, Sukrut Heroorkar wrote:
+> > Tested-by: syzbot+4b717071f1eecb2972df@syzkaller.appspotmail.com
+>
+>
+> Hey Sukrut,
+>
+> Did you do any other testing other than syzbot testing?
+I also used the C reproducer to test my fix locally with QEMU and it
+no longer triggers error. Do you recommend any
+other tests? Please let me know.
+Thanks,
+Sukrut.
+> Thanks,
+> David Hunter
 
