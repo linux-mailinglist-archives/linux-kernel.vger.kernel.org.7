@@ -1,97 +1,182 @@
-Return-Path: <linux-kernel+bounces-859823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32401BEEB09
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEF9BEEB12
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52C23B6532
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0C23BEEF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D25121171B;
-	Sun, 19 Oct 2025 17:47:00 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635BB27CB35;
+	Sun, 19 Oct 2025 17:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FUFuNjog"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1BB18FDDB;
-	Sun, 19 Oct 2025 17:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2DE1A3029
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 17:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760896019; cv=none; b=AlK6LnFGx0yxhdyoJ6PTboWM/P3vvo7b8wPUdl3aAYjy2zUHPiQtSLwXDkSu9gBODe874Q5v5N8urvWQm6FLFnOvBq7ECt4LzxFYsRmLPTjClnVD2jbVyU7poYnbhHG7qL1+KtM1N8TsjOEt6BPLR8mlfYL0jfkV8znAszxvch4=
+	t=1760896714; cv=none; b=sPhDMJREtYJcaktTkYc16Rlf8N8orRElrrG2cTHI0js+q54hhu3C3z3/+AWGROZrqZJg33QRuecBJ+PKZXRjmmC1cQLdeDqAMq/Le+hxbKxoLruiaatupKoX6OEWaVIaI3KQxzKZk8duYLRD7bXuTG9FvVFe+mAeNin7GH2uRrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760896019; c=relaxed/simple;
-	bh=iBrjG+mJpNWJvcAM9eoZJjaPCJi7C0ctS5AIbIXK6QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YBrN/AQcm7d+eZxvzATvDs+VtT2zBlJbWRE2/uYuX4zXd9xoXv1XPKORVzB6Hs0kFawh/j9qGFrQVgUgrCQJDSg4TkogVmfn/Kjlszj9gZiumj5kpfnvxBKAD1HQYXJ4BjA/bJVt6bgQA7e4fHRomIsK22uqHD8lib0i5bfAGUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 6946613B6F8;
-	Sun, 19 Oct 2025 17:46:49 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id D81F520015;
-	Sun, 19 Oct 2025 17:46:47 +0000 (UTC)
-Date: Sun, 19 Oct 2025 13:46:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] tracing: Allow tracer to add more than 32
- options
-Message-ID: <20251019134646.6d6f683d@batman.local.home>
-In-Reply-To: <20251018000130.aa69bd5b6670715b1c52d387@kernel.org>
-References: <175918528341.65920.10238038992631012350.stgit@devnote2>
-	<175918529300.65920.15856373929947126262.stgit@devnote2>
-	<20251015172020.5966beaf@gandalf.local.home>
-	<20251018000130.aa69bd5b6670715b1c52d387@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760896714; c=relaxed/simple;
+	bh=xd84/EziHyX69SaM1ABHRo3Wwwki8W2RnXA46/CTO00=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cAFQM2NehP7ZJVOPxESTqGfE0RyY77yrXZSBxJ7fazw31plwf+geY9JOv9GaRoliCnU3rAtFizNuMgFP0QCTDhl8svN9PA4IuJLj7XO/gneUBB7RhcFIFeh4n2xezGyECjsVUjPEH8HInGJ4ejDstgWMtD1IlOeK8sg+4cHyOXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FUFuNjog; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8608f72582eso240002185a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760896712; x=1761501512; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0btjzCMKFinilr5hRrdOuQk9kLMqF4vdkTKBHDIdNSA=;
+        b=FUFuNjogy8kxVuYdiPhUKAdlnaHAiorulsZNapWfM910im83BYjsnPCzcdNu0Pc+fF
+         oBiwzWVduXuGXSgvG1IvyLbsXlvWsunLBlDrCOjn7XVYRKzq0x7VC4YGpokQXO5Z/YfX
+         sWM38BVBEg53fUFNLm3oGET9YByp15u/soRTuFJW8KdvOERQttaXFjWICpfdXGd6SsqJ
+         Cji9QZlMQ4rys7M1UdisO/Vm0QznG8nAxY42WLlvYN00qWwKqMrPTGBJt9FwMmvkPkxY
+         uJ2Yh5eTrIm6UoHlPohtcxDwgOtMvQ3HC36dkFv8N3bhInkiGpi4x6rgZ1B7Xqe/dLlZ
+         fUhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760896712; x=1761501512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0btjzCMKFinilr5hRrdOuQk9kLMqF4vdkTKBHDIdNSA=;
+        b=uXe1kV/O8EXOV4x9+ljuopSN7I+HTDWZV/owS3M43FzMztVcwGeTtK7Etx+MeCN9ky
+         5EULhxl61YDHSOEf3CmUzd7cBZpyPvD4s5T2sKFz10Ibx0kxBIO1eSeLPGOJTKJfmX8b
+         04p8XobPPOUllka7vVzG3rE5KC+UYqaxrOYKU41MUM5KaZvpezMkWAo1H7Y9pPZofuQd
+         YmB8oFQU+JZYbEYgRHRWwKdfjknn9jeNjed3V1wYcv6RTvM76ntkmvnuS3VIgRU5uTbo
+         REJPYV5pgCC4EE3FXBdbcA6w5CW+CUry0+TPMcBdn2IihfIb1XfG3MBLlI/zdPtb/BD4
+         N6mg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbjaWBdgqxEuMklSlNoSs205vLqrT3rFm3jXHHyMptDvRxUln79mFSPqzZFZJ9W9IWemDpEV7QxOuiObM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMFxfLBOvmuyTPDmsBlw000JopQgqBFxWN8F7YjRLhswdtswrC
+	LD3lzx5ElzyFHYdegIkMZ6vQMco2QAsw/9MG4SZA9ZdotNHZaSsFBgR0bWlt2/MLynq1CsmDvpF
+	pPhUSBbl3Frlm3ftlqWtkO1u1GfuFr8FCZeoFiBYQ
+X-Gm-Gg: ASbGncsYNQK0LHGeMRrK5sB/V3jMFr+Pp2Vv22D7wIj8z4Avo1AUfld9qyzNVobN7xf
+	fHZiqbsdQkhrsyncW3KypuRNpO6WzyILrkbokILsru10+228pFJPjpnPANlvRsqcrKEPi4SoyvM
+	P7xmdlbRyAIfY8wq9hWOrVzdMw3HXQoNi9ZzB/G9tI6JrWcYZL/DGSSVS/X9sTIQrdmWDpgOV/x
+	g+omh878si7nTTE0I8962fCnqnHQ3DOwQpVMuFrFyLqDsn/zINBLQA8Hvp9
+X-Google-Smtp-Source: AGHT+IHW6B4+M9UITCoNNiNhOgr5XfE1v4R26PC4bxYTk+kKNLU85HD+VHad52UdnSyXi39ZQAokqaZOIKyEQeh4dV8=
+X-Received: by 2002:a05:622a:110e:b0:4e8:a9a2:4d50 with SMTP id
+ d75a77b69052e-4e8a9a25039mr124312201cf.41.1760896711577; Sun, 19 Oct 2025
+ 10:58:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 4nky5dtycpti38in66aecbg6ctrdkbkt
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: D81F520015
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/xTXzLG1bigaj/8ief4UXLMYw1TgiDtqI=
-X-HE-Tag: 1760896007-974800
-X-HE-Meta: U2FsdGVkX18Rq9DtklkLlXJJaE4ju4AQ85IvNzblxh6lj6yjIHV3wnzXOqzqcvF0TfoCRckQsZcHtI9X1gSvoox0gwSxGPWFk+bcK92ZahMOcCrS9JHkcYQGLyMAJvaBnms1Clc66K5hK/I+BliUIHzKD4ZRKKQ6mg+FfoJCOo0VCjPRPr/7PJbOWpsHkcpiJ7EcTeF6MRVMDsF3ektyZDP+ltbbj3HOvMQ2STsUWzaDNfAqnRQ9vZAXe34Jgyfn5HCgUvb8XGgbJ1ONRBTzOllQdJNkfhyUhxSF5ZjhugL7xvCr2MEJZS9xN7IkHy/wYFsI4ldAnSh7zldxe0kp1eZBQ+IihPnrxvTp6YUu+Oqd2/NTjzUMJ3lA2PTkdsPOmjR+GRrMYZgT6Ac7r7gmwA==
+References: <20251019170016.138561-1-peng.yu@alibaba-inc.com> <CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com>
+In-Reply-To: <CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Sun, 19 Oct 2025 10:58:20 -0700
+X-Gm-Features: AS18NWDqKi6K-NqLZEmsIBJ4Bbam4b59iIv_1EQ8veJMiqjxrscHap4wAaUF3b4
+Message-ID: <CANn89i+xW+mwY=Y5_r7RPEavq63PjMAwek91+19VQLFnRYrR8g@mail.gmail.com>
+Subject: Re: [PATCH] net: set is_cwnd_limited when the small queue check fails
+To: Peng Yu <yupeng0921@gmail.com>
+Cc: ncardwell@google.com, kuniyu@google.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peng Yu <peng.yu@alibaba-inc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 18 Oct 2025 00:01:30 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Sun, Oct 19, 2025 at 10:43=E2=80=AFAM Eric Dumazet <edumazet@google.com>=
+ wrote:
+>
+> On Sun, Oct 19, 2025 at 10:00=E2=80=AFAM Peng Yu <yupeng0921@gmail.com> w=
+rote:
+> >
+> > The limit of the small queue check is calculated from the pacing rate,
+> > the pacing rate is calculated from the cwnd. If the cwnd is small,
+> > the small queue check may fail.
+> > When the samll queue check fails, the tcp layer will send less
+> > packages, then the tcp_is_cwnd_limited would alreays return false,
+> > then the cwnd would have no chance to get updated.
+> > The cwnd has no chance to get updated, it keeps small, then the pacing
+> > rate keeps small, and the limit of the small queue check keeps small,
+> > then the small queue check would always fail.
+> > It is a kind of dead lock, when a tcp flow comes into this situation,
+> > it's throughput would be very small, obviously less then the correct
+> > throughput it should have.
+> > We set is_cwnd_limited to true when the small queue check fails, then
+> > the cwnd would have a chance to get updated, then we can break this
+> > deadlock.
+> >
+> > Below ss output shows this issue:
+> >
+> > skmem:(r0,rb131072,
+> > t7712, <------------------------------ wmem_alloc =3D 7712
+> > tb243712,f2128,w219056,o0,bl0,d0)
+> > ts sack cubic wscale:7,10 rto:224 rtt:23.364/0.019 ato:40 mss:1448
+> > pmtu:8500 rcvmss:536 advmss:8448
+> > cwnd:28 <------------------------------ cwnd=3D28
+> > bytes_sent:2166208 bytes_acked:2148832 bytes_received:37
+> > segs_out:1497 segs_in:751 data_segs_out:1496 data_segs_in:1
+> > send 13882554bps lastsnd:7 lastrcv:2992 lastack:7
+> > pacing_rate 27764216bps <--------------------- pacing_rate=3D27764216bp=
+s
+> > delivery_rate 5786688bps delivered:1485 busy:2991ms unacked:12
+> > rcv_space:57088 rcv_ssthresh:57088 notsent:188240
+> > minrtt:23.319 snd_wnd:57088
+> >
+> > limit=3D(27764216 / 8) / 1024 =3D 3389 < 7712
+> > So the samll queue check fails. When it happens, the throughput is
+> > obviously less than the normal situation.
+> >
+> > By setting the tcp_is_cwnd_limited to true when the small queue check
+> > failed, we can avoid this issue, the cwnd could increase to a reasonalb=
+e
+> > size, in my test environment, it is about 4000. Then the small queue
+> > check won't fail.
+>
+>
+> >
+> > Signed-off-by: Peng Yu <peng.yu@alibaba-inc.com>
+> > ---
+> >  net/ipv4/tcp_output.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+> > index b94efb3050d2..8c70acf3a060 100644
+> > --- a/net/ipv4/tcp_output.c
+> > +++ b/net/ipv4/tcp_output.c
+> > @@ -2985,8 +2985,10 @@ static bool tcp_write_xmit(struct sock *sk, unsi=
+gned int mss_now, int nonagle,
+> >                     unlikely(tso_fragment(sk, skb, limit, mss_now, gfp)=
+))
+> >                         break;
+> >
+> > -               if (tcp_small_queue_check(sk, skb, 0))
+> > +               if (tcp_small_queue_check(sk, skb, 0)) {
+> > +                       is_cwnd_limited =3D true;
+> >                         break;
+> > +               }
+> >
+> >                 /* Argh, we hit an empty skb(), presumably a thread
+> >                  * is sleeping in sendmsg()/sk_stream_wait_memory().
+> > --
+> > 2.47.3
+>
+> Sorry this makes no sense to me.  CWND_LIMITED should not be hijacked.
+>
+> Something else is preventing your flows to get to nominal speed,
+> because we have not seen anything like that.
+>
+> It is probably a driver issue or a receive side issue : Instead of
+> trying to work around the issue, please root cause it.
 
-> On Wed, 15 Oct 2025 17:20:20 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> I could not find any other enum64 usage, so I doubt it is
-> available. (Does it depend on compiler?)
-> It seems C23 standard support it...
 
-Bah, I thought I saw it used, but it appears it's BPF that does
-something special.
+ BTW we recently fixed a bug in tcp_tso_should_defer()
 
+Make sure to try a kernel with this fix ?
 
-> 
-> > 
-> > Not to mention, using const u64 requires saving these numbers in an address
-> > and referencing them, instead of doing it inlined in text. That is, using
-> > u64 instead of enum64 is both slower and wastes more memory.  
-> 
-> Yeah, I expected that the compiler could easily optimize correctly, but
-> maybe not?
-
-I doubt it. The values are exported to be allowed to be used in other
-files, so I doubt it can optimize it.
-
-The only thing I can think of is to unravel the enum into a bunch of
-#defines, that have the bit shifts.
-
--- Steve
+295ce1eb36ae47dc862d6c8a1012618a25516208 tcp: fix
+tcp_tso_should_defer() vs large RTT
 
