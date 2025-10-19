@@ -1,100 +1,202 @@
-Return-Path: <linux-kernel+bounces-859730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E257BEE707
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:25:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F392BBEE713
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08FC1889864
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EFF421423
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194FE2EAB7A;
-	Sun, 19 Oct 2025 14:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72FC2EB5BA;
+	Sun, 19 Oct 2025 14:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKpuBT2f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MP03uqEj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D6C1373
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162CF2459EA;
+	Sun, 19 Oct 2025 14:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760883925; cv=none; b=VCJzVDeRXYrUqqmt1FnxoSKoiFdi29HOtYbrpc8Wkf19nwgK944czdw41FRUYyXrXFucXtSK3fY5dt9L9vxAF3CkL2sdOI/hbWi/CNVObI0KZFpyoN9/8/yvsZ9Ky39BN+sZx1e1NogQunfbMFV/N/T5q7PmHfjpmkMjf79ZAiU=
+	t=1760884128; cv=none; b=uuje19fGo6gsunfKZX4qwT2ZefmT1Gm1QG4pq/JBY5Vb0j1uV2UrFAscFe+76adm4d3gXEbY5aL4Z8fzjTH90sIzKY2oLTORdNAohwciWEGbATr+OciaD6NGllazg0PSNypZ9/N1loTh4+1TdUYq3r3IRSNjD1vPneXmf2YPZig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760883925; c=relaxed/simple;
-	bh=oHOlqf0ywPUIIQS7WIZUje1x82l1+22hMmrNrvGvwGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPJxBvahCxodpnOf3JP+gGBI0R/Udo9hLzQAZcJnJ7IDe6zcyMBTWtcHrYo6wt3x9sGIaLFcfaEHhW6TTRoino/IyKfnTSuc/8Epuy8k90Bfi2fzpZzj4+hSmCgRK6p+0bw8PFir1oy2ggg8jh0ALjthWkDx30aCjbeJPKhd5Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKpuBT2f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D1C4CEE7;
-	Sun, 19 Oct 2025 14:25:19 +0000 (UTC)
+	s=arc-20240116; t=1760884128; c=relaxed/simple;
+	bh=2Lk3VteT5ZUYtGV3L7w6wKgSGuoqrZ/lGhL+exIXDm8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=Cc8IFpNXVqlSEP9dMgyjZwMJehP0YGanSKe0P+61FC3S4dpZqPLzi+CsytLqjvp0UZ9dwbzEjxc+CtZ4rBPECe2y0bmT4m/RjJrVLiUP95ctmTM+jnJKAMmVY9p2jpEeC5o1w2Ks2cvTDzafhx/H34NuoGb3GdqQM2N3tlIFxI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MP03uqEj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4830C4CEE7;
+	Sun, 19 Oct 2025 14:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760883925;
-	bh=oHOlqf0ywPUIIQS7WIZUje1x82l1+22hMmrNrvGvwGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKpuBT2f9kk33TvypeW9ldST7Hx+ke6eyMKL7CXXKkBNYCFVsMsYMIlidiWX0yD+1
-	 fURdxuvGxYJBAN2NpLvaJr3Rbf4WCCjghI3WS9xfmbhr7/csh2qannr6Vg8g8TbFnq
-	 o+p6Dx+xUgKLMik70ES3zq57BBhVOhBg/KcCrIaYubdEkSk8o/ulb8ZxOcBrNge6R3
-	 5feDRZ0+u/Iu8j+Fp7FtaXtH2YBD6u1EfdtTTTqRCRGv9huCTAyV4mOfor++d06TtO
-	 fUy2SaejLi7EVR1NgTRBQYhld3G3WZYHARe5OVXFrvuOCC1+gtz4zvL8KCV3VArjas
-	 BzYecLrFNq3rQ==
-Date: Sun, 19 Oct 2025 17:25:16 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
-Message-ID: <aPT0zNMZqt89cIXH@kernel.org>
-References: <20251018093002.3660549-1-rppt@kernel.org>
- <aPQxN7-FeFB6vTuv@casper.infradead.org>
+	s=k20201202; t=1760884127;
+	bh=2Lk3VteT5ZUYtGV3L7w6wKgSGuoqrZ/lGhL+exIXDm8=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=MP03uqEjX3dT3tNfORhl0l847PRKqtZ5CKZZ6jtJVg/gObj2g3axOfyuXJAOL/CCd
+	 6et/er0QZsqeHeYSpFjj4gs7GCC/aN27fEpcA19izrrOOWBG6ctcuB4LNj6bo/64A+
+	 sLqp8CaLTIL7U1AU7IiuLT2oy/5MyqMyseRFgC1e54qOl27t6crh33k2F03oekgIWB
+	 SqylejnRdM1buwwgRTLQxtvicZHCu+9a2mLXT0EUTFLlyOuOYnn2gMZJsSK0+q8HLQ
+	 +bHhisezI8jZ+1eNnQnFqoNFtxSfVA2NgUUI9onNLltSFLTzrn+lhexkX0rX3mrp8x
+	 bDxQ2guleBZ2g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPQxN7-FeFB6vTuv@casper.infradead.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 19 Oct 2025 16:28:40 +0200
+Message-Id: <DDMDBPDZHN6G.KI90E7ZWWX39@kernel.org>
+To: "Markus Probst" <markus.probst@posteo.de>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v5 1/2] rust: Add trait to convert a device reference to
+ a bus device reference
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, "Igor Korotin"
+ <igor.korotin.linux@gmail.com>, "Lee Jones" <lee@kernel.org>, "Pavel
+ Machek" <pavel@kernel.org>, "Dave Ertman" <david.m.ertman@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, "Leon Romanovsky" <leon@kernel.org>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+ <linux-leds@vger.kernel.org>
+References: <20251018205912.1528811-1-markus.probst@posteo.de>
+ <20251018205912.1528811-2-markus.probst@posteo.de>
+In-Reply-To: <20251018205912.1528811-2-markus.probst@posteo.de>
 
-On Sun, Oct 19, 2025 at 01:30:47AM +0100, Matthew Wilcox wrote:
-> On Sat, Oct 18, 2025 at 12:29:59PM +0300, Mike Rapoport wrote:
-> > Vast majority of allocations that use get_free_pages() and its derivatives
-> > cast the returned unsigned long to a pointer and then cast it back to
-> > unsigned long when freeing the memory.
-> > 
-> > These castings are useless and only obfuscate the code.
-> > 
-> > Make get_free_pages() and friends return 'void *' and free_pages() accept
-> > 'void *' as its address parameter.
-> 
-> No.  Linus has rejected this change before.  I can't find it now, it was
-> a long time ago. 
+On Sat Oct 18, 2025 at 10:59 PM CEST, Markus Probst wrote:
+> Implement the `IntoBusDevice` trait for converting a `Device` reference t=
+o a
+> bus device reference for all bus devices. `Device` implements this trait =
+as a
+> fallback.
+>
+> The `IntoBusDevice` trait allows abstractions to provide the bus device i=
+n
+> class device callbacks.
+>
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> ---
+>  rust/kernel/auxiliary.rs |  7 +++++++
+>  rust/kernel/device.rs    | 41 ++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/i2c.rs       |  7 +++++++
 
-If it was a long time ago, he might not object it now.
+i2c is not upstream yet, hence it should not be part of this patch. Instead=
+ you
+should include the platform bus though.
 
-> Most of them shouldn't be using get_free_pages() at all, they should be
-> using kmalloc().
+>  rust/kernel/pci.rs       |  7 +++++++
+>  rust/kernel/usb.rs       |  6 ++++++
+>  5 files changed, 68 insertions(+)
+>
+> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+> index e11848bbf206..dea24265f549 100644
+> --- a/rust/kernel/auxiliary.rs
+> +++ b/rust/kernel/auxiliary.rs
+> @@ -15,6 +15,7 @@
+>  };
+>  use core::{
+>      marker::PhantomData,
+> +    mem::offset_of,
+>      ptr::{addr_of_mut, NonNull},
+>  };
+> =20
+> @@ -239,6 +240,12 @@ extern "C" fn release(dev: *mut bindings::device) {
+>      }
+>  }
+> =20
+> +// SAFETY: `auxilary::Device` is a transparent wrapper of `struct auxili=
+ary_device`.
+> +// The offset is guaranteed to point to a valid device field inside `aux=
+ilary::Device`.
+> +unsafe impl<Ctx: device::DeviceContext> device::IntoBusDevice<Ctx> for D=
+evice<Ctx> {
+> +    const OFFSET: usize =3D offset_of!(bindings::auxiliary_device, dev);
+> +}
+> +
+>  // SAFETY: `Device` is a transparent wrapper of a type that doesn't depe=
+nd on `Device`'s generic
+>  // argument.
+>  kernel::impl_device_context_deref!(unsafe { Device });
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index 1321e6f0b53c..5527854a195f 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -511,6 +511,47 @@ impl DeviceContext for Core {}
+>  impl DeviceContext for CoreInternal {}
+>  impl DeviceContext for Normal {}
+> =20
+> +/// Bus devices can implement this trait to allow abstractions to provid=
+e the bus device in
+> +/// class device callbacks.
+> +///
+> +/// # Safety
+> +///
+> +/// `IntoBusDevice::OFFSET` must be a offset to a device field in the im=
+plemented struct.
 
-Don't know if most but some of them could. Still, we'd have a bunch of
-get_free_pages() users with needless castings.
-And converting callers that should use kmalloc() is a long and tedious
-process, while here we get an API improvement in a single automated change.
+I think we should also require that this must only be implemented by bus de=
+vice
+types.
 
--- 
-Sincerely yours,
-Mike.
+> +pub(crate) unsafe trait IntoBusDevice<Ctx: DeviceContext>:
+> +    AsRef<Device<Ctx>>
+
+We should probably name this AsBusDevice.
+
+> +{
+> +    /// The relative offset to the device field.
+> +    ///
+> +    /// Use `offset_of!(bindings, field)` macro to avoid breakage.
+> +    const OFFSET: usize;
+> +
+> +    /// Convert a reference to [`Device`] into `Self`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `dev` must be contained in `Self`.
+> +    unsafe fn from_device(dev: &Device<Ctx>) -> &Self
+
+As mentioned in the other thread, my concern remains that this could be abu=
+sed
+by drivers.
+
+For now the trait is pub(crate), but with the new build system coming soon,
+we're able to split things out of the kernel crate, and hence bus abstracti=
+ons
+and driver-core code may end up in different crates requiring this to becom=
+e
+public.
+
+We should at least document that this must not be used by drivers and is
+intended for bus and class device abstractions only.
+
+> +    where
+> +        Self: Sized,
+> +    {
+> +        let raw =3D dev.as_raw();
+> +        // SAFETY: `raw - Self::OFFSET` is guaranteed by the safety requ=
+irements
+> +        // to be a valid pointer to `Self`.
+> +        unsafe { &*raw.byte_sub(Self::OFFSET).cast::<Self>() }
+> +    }
+> +}
+> +
+> +// SAFETY: `Device` is a transparent wrapper of `device`.
+> +unsafe impl<Ctx: DeviceContext> IntoBusDevice<Ctx> for Device<Ctx> {
+> +    const OFFSET: usize =3D 0;
+> +}
+
+A generic device is not guaranteed to be a bus device. Also, I don't see a
+reason why class device abstractions would want to work with a generic devi=
+ce
+rather than the actual bus device parent. Hence, let's drop this impl.
 
