@@ -1,228 +1,265 @@
-Return-Path: <linux-kernel+bounces-859717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20C7BEE66A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:12:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73989BEE6AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED1B3BE148
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:12:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02CB04E5095
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61632E8DF0;
-	Sun, 19 Oct 2025 14:12:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528942EB5D4;
+	Sun, 19 Oct 2025 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QF1ZKDnx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DED1684B0
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ADB21FF4A;
+	Sun, 19 Oct 2025 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760883125; cv=none; b=u4y0uoQKl12Y94Ims4KYE3I8VTNjJyPX/HYA+86AOlxszwr5HRf18dRvI3MiKZaiI1DQHhclXib/r2dXPXvjk8gtC4PaO1O4Kmpn/IRErqOoTAdxNwUthlcWk47Rs5i8NcokKj8iExCjPV7pUp3Mq0/+4isPqaZyNEB4qDrEom0=
+	t=1760883482; cv=none; b=EZNw2BONiz5vC6C7e2eLYwMmQC+bKs9HJGQea+NQ/okbl+sjV1VCIQkI474RH/lq3Z8ljU9EhI6l+E3+YWHr4WwtNDdGxT/zB7DjiTWJ+ne+WNlbw7r7lYyd4TKrLALZa5texs+DxHSOWJfrggPau5q1FlRo1J/4Wgj5qZgK3zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760883125; c=relaxed/simple;
-	bh=DoYKogX2JLtTnKfeeu0Qtgk4cy2dtBYnDlV9TPMC3Z4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IrSr//O4XZRKqJLVJVvgVU6qx9QP5DlvhEgQvVqiwRxbY5mlEBLfM/ZY2YaLUMSCcbU21z0wn4lQopx8f4qMO/Dwhzbn2r9vG3nAPOJZiN+ZPVoIcc9O8Zp817X7rL5mZIYLASWyWSCobMgjvqXjq0MO2RsfqdeYnuqd8WvvGos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c6b6ce73so78143355ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:12:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760883122; x=1761487922;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=79E6Qv/AgVxKQT+O8kVqakRwLr+Wq5BB41vvUirlAEc=;
-        b=ZEyUAw+beX0rr5jNzWbqmAuZqAycblFcyLRfoCna6Zs6ASR4o1EASWtyjWeGcrKyqx
-         jOmgWn47sf0SwxswJSNJ72uu63bI6X36RGN22JV+B94+0JRh/oQ5O2RJWTUEp+2hDqhO
-         3+gmlYmjW5dQIa2RaJfHGg9fN6VSCDwspZ3qU2yxfiaE7/dwbGU4JOvIBya3njDEdbf/
-         N7m/yFX5YmHm6QZKXWBxaSpjpyMIP312F/K3QJcmi38yIAST3CPcU3UweNMNsd2XKZjs
-         hgoLf8krpLnpNeaeoADmfba2IILwSrKqTGusl8VXiLgUdwNTbt4U3/E84eRyFs9nGf0M
-         7UKw==
-X-Gm-Message-State: AOJu0YyGSpCb7ipfrYICYflyFwtZND93LXdeXloZzlUCGvJAHTBG/ICD
-	7Mbu9vCBA5i0D94TcU1rjpThqoETYksXXX3Ns9nu1b6O4BC4wrutPsNapI+eMvG0fnyJtcfIY5y
-	3yHRvui35aH0Okv4I9kbrO0zgh3EJ8E9x9Fz6N23udD3VS1Kj3yK9YO0iNx8=
-X-Google-Smtp-Source: AGHT+IFWf+2DQxPpLvCJDTLU0FcvzkDy6aULk337uWAPAReHruv6zd6N+txvoPZPG6PzuhwOPyN3tKD96Rg10a8O6rKQ1z0JPMQG
+	s=arc-20240116; t=1760883482; c=relaxed/simple;
+	bh=vrXYWgR9uRU087VqRnV8tgrLtFPdV6Vnal19D1rVo54=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QgV43f7IxtFx2Dr9H+AdpPHR5YTRZ6aqlHJOj7rqbuvwFadpQsXqseUD6BCkrgNuL05Rsp8N7eoD5F32aon9meNlDwk8h/g078mR/67k5PgAcrPYL8EI8YOO15t6Zfqmj9gyndiLqMR1JR+uv2NJBtsesmAobQwnQrm4E3ZVtRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QF1ZKDnx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4A9C4CEF1;
+	Sun, 19 Oct 2025 14:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760883481;
+	bh=vrXYWgR9uRU087VqRnV8tgrLtFPdV6Vnal19D1rVo54=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=QF1ZKDnxd73pRqQR7fHMSgXJzLeanlq55VKyJWjm+0STwYP7h3AxYHM6lzRpQCGm1
+	 isRI5p6IR079g/3PRTYsHr3YdqFhD9T8tf25p2XSB+1LHBLGN0I8SgRh3ikY9hjM67
+	 s6Gbd5ULzegNjHzQ1Argu1kgyNceGHfm0/IYG4pux1jWZ7cCvhCaYbAJy05xhA0m5+
+	 ez63bSonpbET7olGhMqeKPdk5Tigs8ec7jz8RyoYsy/90jkEmiieRwGmoCDZEQqWfn
+	 SXYA78GLhkz1tzM+ftBtwh5RR6nmD84zHBede93+kklPKu/PCMGPNlXUKPj6apOWkP
+	 9ouqrF99hc9DA==
+Message-ID: <1e009577aaae1af56dc66dadcfc05caf5d4c6b72.camel@kernel.org>
+Subject: Re: [PATCH v2 00/11] vfs: recall-only directory delegations for
+ knfsd
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Chuck Lever	 <chuck.lever@oracle.com>, Alexander Aring
+ <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,  Paulo
+ Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM	 <bharathsm@microsoft.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>,
+ Tyler Hicks <code@tyhicks.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, Namjae
+ Jeon <linkinjeon@kernel.org>, Steve French	 <smfrench@gmail.com>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
+ <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, 	samba-technical@lists.samba.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Sun, 19 Oct 2025 10:17:57 -0400
+In-Reply-To: <176074466364.1793333.7771684363912648120@noble.neil.brown.name>
+References: <20251017-dir-deleg-ro-v2-0-8c8f6dd23c8b@kernel.org>
+	 <176074466364.1793333.7771684363912648120@noble.neil.brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c5:b0:430:b7c4:6617 with SMTP id
- e9e14a558f8ab-430c527bc80mr158372395ab.15.1760883122523; Sun, 19 Oct 2025
- 07:12:02 -0700 (PDT)
-Date: Sun, 19 Oct 2025 07:12:02 -0700
-In-Reply-To: <c5cfbnfdsztbsqq4g2po4aruqzgxssx7rlnqtxojw2aafjyfpx@qwvgxpbdixmj>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f4f1b2.050a0220.1be48.0002.GAE@google.com>
-Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in nr_add_node
-From: syzbot <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Sat, 2025-10-18 at 10:44 +1100, NeilBrown wrote:
+> On Fri, 17 Oct 2025, Jeff Layton wrote:
+> > A smaller variation of the v1 patchset that I posted earlier this week.
+> > Neil's review inspired me to get rid of the lm_may_setlease operation
+> > and to do the conflict resolution internally inside of nfsd. That means
+> > a smaller VFS-layer change, and an overall reduction in code.
+> >=20
+> > This patchset adds support for directory delegations to nfsd. This
+> > version only supports recallable delegations. There is no CB_NOTIFY
+> > support yet. I have patches for those, but we've decided to add that
+> > support in a later kernel once we get some experience with this part.
+> > Anna is working on the client-side pieces.
+> >=20
+> > It would be great if we could get into linux-next soon so that it can b=
+e
+> > merged for v6.19. Christian, could you pick up the vfs/filelock patches=
+,
+> > and Chuck pick up the nfsd patches?
+> >=20
+> > Thanks!
+> > Jeff
+> >=20
+> > [1]: https://lore.kernel.org/all/20240315-dir-deleg-v1-0-a1d6209a3654@k=
+ernel.org/
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> > Changes in v2:
+> > - handle lease conflict resolution inside of nfsd
+> > - drop the lm_may_setlease lock_manager operation
+> > - just add extra argument to vfs_create() instead of creating wrapper
+> > - don't allocate fsnotify_mark for open directories
+> > - Link to v1: https://lore.kernel.org/r/20251013-dir-deleg-ro-v1-0-4067=
+80a70e5e@kernel.org
+> >=20
+> > ---
+> > Jeff Layton (11):
+> >       filelock: push the S_ISREG check down to ->setlease handlers
+> >       vfs: add try_break_deleg calls for parents to vfs_{link,rename,un=
+link}
+> >       vfs: allow mkdir to wait for delegation break on parent
+> >       vfs: allow rmdir to wait for delegation break on parent
+> >       vfs: break parent dir delegations in open(..., O_CREAT) codepath
+> >       vfs: make vfs_create break delegations on parent directory
+> >       vfs: make vfs_mknod break delegations on parent directory
+> >       filelock: lift the ban on directory leases in generic_setlease
+> >       nfsd: allow filecache to hold S_IFDIR files
+> >       nfsd: allow DELEGRETURN on directories
+> >       nfsd: wire up GET_DIR_DELEGATION handling
+>=20
+> vfs_symlink() is missing from the updated APIs.  Surely that needs to be
+> able to wait for a delegation to break.
+>=20
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in nr_add_node
+Ouch! That's a major oversight. I'll fix that up.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in nr_add_node+0x2b65/0x2bd0 net/netrom/nr_route.c:249
-Read of size 4 at addr ffff8880265a73b0 by task syz.0.5221/17351
-
-CPU: 0 UID: 0 PID: 17351 Comm: syz.0.5221 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- nr_add_node+0x2b65/0x2bd0 net/netrom/nr_route.c:249
- nr_rt_ioctl+0x11b7/0x29b0 net/netrom/nr_route.c:652
- nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x118/0x280 net/socket.c:1254
- sock_ioctl+0x227/0x6b0 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff9fdb8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff9fe9f1038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ff9fdde5fa0 RCX: 00007ff9fdb8efc9
-RDX: 0000200000000280 RSI: 000000000000890b RDI: 0000000000000004
-RBP: 00007ff9fdc11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ff9fdde6038 R14: 00007ff9fdde5fa0 R15: 00007ffd8e5d4ad8
- </TASK>
-
-Allocated by task 17330:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
- kasan_save_track+0x14/0x30 mm/kasan/common.c:77
- poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:417
- kmalloc_noprof include/linux/slab.h:957 [inline]
- nr_add_node+0xe4e/0x2bd0 net/netrom/nr_route.c:146
- nr_rt_ioctl+0x11b7/0x29b0 net/netrom/nr_route.c:652
- nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x118/0x280 net/socket.c:1254
- sock_ioctl+0x227/0x6b0 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 17351:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
- kasan_save_track+0x14/0x30 mm/kasan/common.c:77
- __kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x5f/0x80 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:234 [inline]
- slab_free_hook mm/slub.c:2530 [inline]
- slab_free mm/slub.c:6619 [inline]
- kfree+0x2b8/0x6d0 mm/slub.c:6826
- nr_neigh_put include/net/netrom.h:143 [inline]
- nr_neigh_put include/net/netrom.h:137 [inline]
- nr_add_node+0x2389/0x2bd0 net/netrom/nr_route.c:247
- nr_rt_ioctl+0x11b7/0x29b0 net/netrom/nr_route.c:652
- nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x118/0x280 net/socket.c:1254
- sock_ioctl+0x227/0x6b0 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl fs/ioctl.c:583 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880265a7380
- which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 48 bytes inside of
- freed 64-byte region [ffff8880265a7380, ffff8880265a73c0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x265a7
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801b4428c0 ffffea0000b7abc0 dead000000000004
-raw: 0000000000000000 0000000000200020 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 132, tgid 132 (kworker/0:2), ts 9597767021, free_ts 8864964788
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1850
- prep_new_page mm/page_alloc.c:1858 [inline]
- get_page_from_freelist+0x10a3/0x3a30 mm/page_alloc.c:3884
- __alloc_frozen_pages_noprof+0x25f/0x2470 mm/page_alloc.c:5183
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:3046 [inline]
- allocate_slab mm/slub.c:3219 [inline]
- new_slab+0x24a/0x360 mm/slub.c:3273
- ___slab_alloc+0xdc4/0x1ae0 mm/slub.c:4643
- __slab_alloc.constprop.0+0x63/0x110 mm/slub.c:4762
- __slab_alloc_node mm/slub.c:4838 [inline]
- slab_alloc_node mm/slub.c:5260 [inline]
- __do_kmalloc_node mm/slub.c:5633 [inline]
- __kmalloc_noprof+0x501/0x880 mm/slub.c:5646
- kmalloc_noprof include/linux/slab.h:961 [inline]
- kmalloc_array_noprof include/linux/slab.h:1003 [inline]
- drm_atomic_state_init+0x17b/0x320 drivers/gpu/drm/drm_atomic.c:137
- drm_atomic_state_alloc drivers/gpu/drm/drm_atomic.c:176 [inline]
- drm_atomic_state_alloc+0xd3/0x120 drivers/gpu/drm/drm_atomic.c:166
- drm_atomic_helper_dirtyfb+0xc8/0x780 drivers/gpu/drm/drm_damage_helper.c:128
- drm_fbdev_shmem_helper_fb_dirty+0x1cc/0x340 drivers/gpu/drm/drm_fbdev_shmem.c:118
- drm_fb_helper_fb_dirty drivers/gpu/drm/drm_fb_helper.c:380 [inline]
- drm_fb_helper_damage_work+0x27e/0x5f0 drivers/gpu/drm/drm_fb_helper.c:403
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
- process_scheduled_works kernel/workqueue.c:3346 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
- kthread+0x3c5/0x780 kernel/kthread.c:463
-page last free pid 10 tgid 10 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1394 [inline]
- __free_frozen_pages+0x7df/0x1160 mm/page_alloc.c:2906
- vfree+0x1fd/0xb50 mm/vmalloc.c:3440
- delayed_vfree_work+0x56/0x70 mm/vmalloc.c:3359
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
- process_scheduled_works kernel/workqueue.c:3346 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff8880265a7280: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff8880265a7300: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
->ffff8880265a7380: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                                     ^
- ffff8880265a7400: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff8880265a7480: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-==================================================================
+> vfs_mkobj() maybe does too, but I could easily turn a blind eye to that.
+>=20
+> I haven't looked properly at the last patch but all the other could have
+>  Reviewed-by: NeilBrown <neil@brown.name>
+>=20
+> once the vfs_symlink() omission is fixed.
+>=20
+> NeilBrown
 
 
-Tested on:
+Chuck found a couple of potential leaks in there so those will also
+need to be fixed. As I was writing some xfstests for the VFS pieces, I
+found another problem too:
 
-commit:         1c64efcb Merge tag 'rust-rustfmt' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=135d0de2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=2860e75836a08b172755
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14bd03cd980000
+Currently the F_SETLEASE API sets FL_LEASE leases, but the new
+delegation breaks that this set adds don't break FL_LEASE leases, since
+these are FL_DELEG leases.
 
+This distinction is mostly due to historical reasons. Leases were added
+first (for Samba oplocks), but didn't break on metadata changes. When
+Bruce added delegations, he wanted to ensure that the lease API didn't
+suddenly change behavior.
+
+I see several potential options to fix this:
+
+1/ The simplest is to just make the F_SETLEASE command set FL_DELEG
+leases when the inode is a directory. That makes for a messy userland
+interface where files get FL_LEASE objects, but directories get
+FL_DELEG. I think that will be less useful for userland.
+
+2/ Don't expose this to userland at all (yet?), and just keep returning
+EINVAL on attempts to set a lease on a directory. The downside there is
+that this would require us to use nfsd for testing this functionality.
+Less people will do that than would if it were an xfstest that ran on
+most local filesystems. I do have some pynfs tests though which could
+help cover the gap.
+
+3/ Add new F_SETDELEG/F_GETDELEG fcntl() commands. The nice thing about
+this is that it would also allow us to add a flags field to these
+commands. The later patches that add CB_NOTIFY support add the ability
+to ignore certain types of delegation break events. This option would
+allow us to expose that functionality to userland too. NFS Ganesha and
+Samba, for example, could make use of this.
+
+#3 wouldn't be too difficult (aside from having to update the
+manpages), so I kind of like that idea.
+
+Thoughts?
+--=20
+Jeff Layton <jlayton@kernel.org>
 
