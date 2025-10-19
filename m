@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-859841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D241FBEEBAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:16:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBDEBEEBBD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 041154E6852
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2D03BF9D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3946A2EC0A0;
-	Sun, 19 Oct 2025 19:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="o/nclKGb"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B79224AEF;
+	Sun, 19 Oct 2025 19:18:14 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306DA18C031;
-	Sun, 19 Oct 2025 19:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA9354AE4;
+	Sun, 19 Oct 2025 19:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760901360; cv=none; b=U8heva3T533/UT2K3cmymDB1pnhUOdWq4rwT23Pe1WI2H4mgQOyc3mTvfMEj8n9qPK1CAmDqDerA1OyThvp2WWj1ZbmaHdyDvBRP1cid89JkOouIvW/+MWTqPG7WPz9JcsE0EWiEcgQWx5pZLB5cNcDkQtTO/bD1GymvmcXWHUE=
+	t=1760901493; cv=none; b=IWkjgICD7EG3422bnCOKOtTb+K1068nz1THp17EpU1/9LBJ40GYxgn8vQxAHDObkTLfZFmCPBRtkuIShJaz1jjNFH668uol7sOhxPBmmj2Hkbg9psOcmt+Ov7KSrox8Fl/++L4n+q1JY4leRRxEc6KU+O7g5FGHf3gn0H2MmQZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760901360; c=relaxed/simple;
-	bh=Y9GgmEyc5Wg0fWh/eWHm5KItK+TqZsc+ZvBB/IwReG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SxRlgKeXb3QMOqmw6rj3KCYwWazNQaat7p/IAdCEbkuqb107L6WUtcsOXvSrbNX/7e1+DJphp+jgrrx7cWqs3ocpVXyIiGhVRj1nIb5KgZwdx5ubchzHQwLqc7CQdwds+8TsGEgzhlLxVNJfbqcIMxlOuKifiO+KNg0wgT+BWRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=o/nclKGb; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=jsbgxAIW3+VtBZE8+kihXqhKNM21Kl+yhCyplWWqqu0=; b=o/nclKGbU1y5rwLZQnsDfSG8Nt
-	4gQlIFRCYq5Te3kku9DRYHVuUe+ElaWDSGtMt14RPxOqybLixZYz9KRYCUhG9wByvKNYxmWAzvJZj
-	0MRbPhseHnSxofYEkwdiS13n3b1pugY7jceHjpNPyLx94K6bByUiqC8Z0fD1K9qdGVBerwtzm/U5S
-	PlxQXoVnURcKiGSoPTx778e26Jk/wvdKsdlCMkRDGLBrsxVZ5gMysmfSFOuhvDlCuaQh4gc+NHH/h
-	JZYJ+iMxqhsV3QHPOykU7OAYX4QqA+s5JszKvMbsMKWyDjobeSnT0mWqZx9RFGq7cgJezLJKmiauZ
-	49P5772w==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1vAYsK-00DYBh-31;
-	Sun, 19 Oct 2025 21:15:28 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org (open list:RISC-V ARCHITECTURE:Keyword:riscv),
-	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit)
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-	linux-pm@vger.kernel.org (open list:SYSTEM RESET/SHUTDOWN DRIVERS),
-	linux-riscv@lists.infradead.org (open list:RISC-V SPACEMIT SoC Support),
-	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support)
-Subject: [PATCH v2 2/2] mfd: simple-mfd-i2c: add a reboot cell for the SpacemiT P1 chip
-Date: Sun, 19 Oct 2025 21:14:13 +0200
-Message-ID: <20251019191519.3898095-3-aurelien@aurel32.net>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251019191519.3898095-1-aurelien@aurel32.net>
-References: <20251019191519.3898095-1-aurelien@aurel32.net>
+	s=arc-20240116; t=1760901493; c=relaxed/simple;
+	bh=AbZFXn6kwETMJW8cChbyTo9aH5d5PaR1eTrbogoSfWs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C7W0rjfWPA0XTG40ZsnAryTRbeWO3joIOozceeMqOUiEDEvAcLy47fefquO/WYtrmlD/SBKgXSpqZFF58hFPCJw+OIObY7Wl0cetSd34tJ+c6NTcAtvciyeVTwH4Jg1s1avyfGkRCSb0T3mTCrBnoB52Pj4gdMbsu8/miZTsat8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from mop.sam.mop (2.8.3.0.0.0.0.0.0.0.0.0.0.0.0.0.a.5.c.d.c.d.9.1.0.b.8.0.1.0.0.2.ip6.arpa [IPv6:2001:8b0:19dc:dc5a::382])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sam)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id B58B4340F14;
+	Sun, 19 Oct 2025 19:18:10 +0000 (UTC)
+From: Sam James <sam@gentoo.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Andreas Larsson <andreas@gaisler.com>,  Stian Halseth <stian@itx.no>,
+  sparclinux@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sparc: don't reference obsolete termio struct for TC*
+ constants
+In-Reply-To: <e11ecaf723594bf01c66fc5c80c25bda0621f34f.1759359616.git.sam@gentoo.org>
+Organization: Gentoo
+References: <99f1a93cf8cd4f0ece8611be2860677084663aac.1759359610.git.sam@gentoo.org>
+	<e11ecaf723594bf01c66fc5c80c25bda0621f34f.1759359616.git.sam@gentoo.org>
+User-Agent: mu4e 1.12.13; emacs 31.0.50
+Date: Sun, 19 Oct 2025 20:18:06 +0100
+Message-ID: <87ecqyaefl.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Add a "spacemit-p1-reboot" cell for the SpacemiT P1 chip.
+Sam James <sam@gentoo.org> writes:
 
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
----
-v2:
- - Rebase onto v6.18-rc1    
+> Similar in nature to ab107276607af90b13a5994997e19b7b9731e251. glibc-2.42
+> drops the legacy termio struct, but the ioctls.h header still defines some
+> TC* constants in terms of termio (via sizeof). Hardcode the values instead.
+>
+> This fixes building Python for example, which falls over like:
+>   ./Modules/termios.c:1119:16: error: invalid application of 'sizeof' to incomplete type 'struct termio'
+>
+> Link: https://bugs.gentoo.org/961769
+> Link: https://bugs.gentoo.org/962600
+> Co-authored-by: Stian Halseth <stian@itx.no>
+> Signed-off-by: Sam James <sam@gentoo.org>
+> ---
+> v3: Fix constants.
+> v2: Fix title.
+>
+>  arch/sparc/include/uapi/asm/ioctls.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
- drivers/mfd/simple-mfd-i2c.c | 1 +
- 1 file changed, 1 insertion(+)
+Ping.
 
-diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-index 0a607a1e3ca1d..542d378cdcd1f 100644
---- a/drivers/mfd/simple-mfd-i2c.c
-+++ b/drivers/mfd/simple-mfd-i2c.c
-@@ -99,6 +99,7 @@ static const struct regmap_config spacemit_p1_regmap_config = {
- };
- 
- static const struct mfd_cell spacemit_p1_cells[] = {
-+	{ .name = "spacemit-p1-reboot", },
- 	{ .name = "spacemit-p1-regulator", },
- 	{ .name = "spacemit-p1-rtc", },
- };
--- 
-2.47.2
-
+>
+> diff --git a/arch/sparc/include/uapi/asm/ioctls.h b/arch/sparc/include/uapi/asm/ioctls.h
+> index 7fd2f5873c9e7..f26befbf690fb 100644
+> --- a/arch/sparc/include/uapi/asm/ioctls.h
+> +++ b/arch/sparc/include/uapi/asm/ioctls.h
+> @@ -5,10 +5,10 @@
+>  #include <asm/ioctl.h>
+>  
+>  /* Big T */
+> -#define TCGETA		_IOR('T', 1, struct termio)
+> -#define TCSETA		_IOW('T', 2, struct termio)
+> -#define TCSETAW		_IOW('T', 3, struct termio)
+> -#define TCSETAF		_IOW('T', 4, struct termio)
+> +#define TCGETA          0x40125401
+> +#define TCSETA          0x80125402
+> +#define TCSETAW         0x80125403
+> +#define TCSETAF         0x80125404
+>  #define TCSBRK		_IO('T', 5)
+>  #define TCXONC		_IO('T', 6)
+>  #define TCFLSH		_IO('T', 7)
 
