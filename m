@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-859645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2FFBEE311
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:32:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCEBBEE31A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C12A44E7AB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:32:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAD6D4E84FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312352E5B32;
-	Sun, 19 Oct 2025 10:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A202E5406;
+	Sun, 19 Oct 2025 10:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPvX8yC+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLdMyMFr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3BD28134F;
-	Sun, 19 Oct 2025 10:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274C423EA84;
+	Sun, 19 Oct 2025 10:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760869946; cv=none; b=lHj9qoFM2a2+kL4BUmIRjenGTa50GwHlastjzMjH0icjaAZOh0Z5MjXQgmdCzHGKNMRLfj/dFF+RRrHsNKObIyzXtxdbcFciOaZoWDVfjHT2g2WkS8cWVZ1uNJl1Y4oHwFz1Ry714bzb5SEGJmdSsp/h0oe9Vo5q6Lr7T13nnsE=
+	t=1760870122; cv=none; b=e149HbaB2tr73XkNdZc7Go6HIbc2Czq5KlHzrdkFPDyDyk0RBS46apKVIJMQ3CIe6kOrv/mCqljUMkvwNs1TagL2ZA/u1FRemo0VEj1Qf6yqvCcXbkjY+r/vRkPbocpDorKtyju04JXXY+IdFntjPXE7iBVS0pzVChkcUgCWLqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760869946; c=relaxed/simple;
-	bh=HsnA0V1K7u/VLaGTI4sVyWNO9Q11lDZxBXaiG9XmRFY=;
+	s=arc-20240116; t=1760870122; c=relaxed/simple;
+	bh=cxIdtaRg/BtmdZgED9HMaz+Haxk1Imc5akjd84XESrQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KZXbrWbOyqr2vJTpdRybZQJht9NaSSEd0Ay68CzUv+j4tulJ2XzeFq/UzeQl926QKwT3HPK/LSh9X38icxC+CfIuPA+CPeOn/zdB1o21d8y4By80hmDTWn4t2IUzTzxTx4pZDdScDDNd/iAYg3GZp54GT0ArIw4mqS/fMt9hpYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPvX8yC+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0501C4CEE7;
-	Sun, 19 Oct 2025 10:32:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SE3mJEcx1THyAyOEE1Mst+NtWD69zKMIiGilApcTK3PHmQO9mx3P1P3DUb8GB3M8fT+CRsdsPPjFywA2JcahgEPrhk1RFNHhe7EfFAW6hheH1K3DzCbrrDZIR3YBF0GTj7MDdLBD+X7pqjBnE1atRk6lRu37Vecp6WHq1IBViro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLdMyMFr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76893C4CEE7;
+	Sun, 19 Oct 2025 10:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760869946;
-	bh=HsnA0V1K7u/VLaGTI4sVyWNO9Q11lDZxBXaiG9XmRFY=;
+	s=k20201202; t=1760870121;
+	bh=cxIdtaRg/BtmdZgED9HMaz+Haxk1Imc5akjd84XESrQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pPvX8yC+1K69D8JyqADoJGIih6NLqxTS+4Wy3wBkqwuSF3rMubM5lTwXbZjl8AtP6
-	 s6Jnh03EzBManpI1zT+50bmbWDUymYp4izq4JsQUmtaWlpMAJbV3v/Z3afqNSEj0uu
-	 0i/jofuXzb0Nw+8GAtUv0jaY7UxlVLFDR/0uUVGzCwYJcMxdOdwc8yVHFA1IXzg4me
-	 553fK8qKgB+BAQhVUywgy5oKN496iiBcM8YwlA+HgScQNBbhFqIZ6JNTmvg5Tj1TYT
-	 bsjHiGS7IFBRT1MlZsP6V8+1r6r1E3AKfnrsjAe0Cei7Qrjz9Sxiab3XT/O9sB4Lz+
-	 XdWwyfRrWj0hA==
-Message-ID: <71c6d7e4-0565-4444-a28e-b3432e209373@kernel.org>
-Date: Sun, 19 Oct 2025 12:32:20 +0200
+	b=ZLdMyMFr5LDHZLCZ+Yq//1tvroBQwEIOO+TZ1q44CNhlCjfSYi2zhf4uGN9297++h
+	 ZqguTP0r6A9FE5MQ+zfUjr5+rTA0+CA8USrsv/ugY6K6g0c9Hkw+8xnP3NyN6vML9G
+	 rhWG6Wpc3L1bbRnCV57evr9sn8RF1BKokjcbKuzt4fd/QrfzGeZau8zQu54eMQKVZK
+	 ISoUVvFyjSK/4VKVrytg2i2LBqcsQYzVDkZovaK4IE0mfRPyQGinNkeeu89MVsuieH
+	 ULVRAxMvjKia6kNvzyUprxHH5/KRkhi+V5Z6NdtK/O3Xq97n1tY+d1528gZgOo6TVz
+	 npF66jfDo5NDw==
+Message-ID: <cc23d41d-6a5e-44d7-ad4b-1b39566dbce8@kernel.org>
+Date: Sun, 19 Oct 2025 12:35:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/11] ASoC: dt-bindings: sound: cirrus: cs530x: Add
- cs530x variants
-To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>,
- Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
- Jaroslav Kysela <perex@perex.cz>, David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
- devicetree@vger.kernel.org
-References: <20251017161543.214235-1-vitalyr@opensource.cirrus.com>
- <20251017161543.214235-7-vitalyr@opensource.cirrus.com>
+Subject: Re: [PATCH v3 1/3] arm64: dts: nuvoton: fix warning and nodes order
+To: Tomer Maimon <tmaimon77@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
+ joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com
+Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250925200625.573902-1-tmaimon77@gmail.com>
+ <20250925200625.573902-2-tmaimon77@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,43 +102,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251017161543.214235-7-vitalyr@opensource.cirrus.com>
+In-Reply-To: <20250925200625.573902-2-tmaimon77@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 18:15, Vitaly Rodionov wrote:
-> This patch adds additional cs530x family variants.
+On 25/09/2025 22:06, Tomer Maimon wrote:
+> Fix the warning in the gcr and timer nodes, and modify nodes order by
+
+What warning?
+
+> ascending unit address.
+
+Why are you combining multiple issues into one commit. No. Read
+submitting patches how to organize your work.
+
 > 
-> cirrus,cs4282 - high-performance, 32-bit resolution, stereo CODEC
-> cirrus,cs4302 - high performance stereo DAC, 2 channels
-> cirrus,cs4304 - high performance stereo DAC, 4 channels
-> cirrus,cs4308 - high performance stereo DAC, 8 channels
-> 
-> Signed-off-by: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
->  Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 35 +++++++++----------
+>  1 file changed, 17 insertions(+), 18 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
-> index 9582eb8eb418..90a5cea0632d 100644
-> --- a/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
-> +++ b/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
-> @@ -22,6 +22,10 @@ properties:
->        - cirrus,cs5302
->        - cirrus,cs5304
->        - cirrus,cs5308
-> +      - cirrus,cs4282
-> +      - cirrus,cs4302
-> +      - cirrus,cs4304
-> +      - cirrus,cs4308
+> diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> index 24133528b8e9..a43514f624c0 100644
+> --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> @@ -18,7 +18,7 @@ soc {
+>  		ranges;
+>  
+>  		gcr: system-controller@f0800000 {
+> -			compatible = "nuvoton,npcm845-gcr", "syscon";
+> +			compatible = "nuvoton,npcm845-gcr", "syscon", "simple-mfd";
 
-I asked about fixing this at v1. You ignored it. Then I reminded this at
-v3. You sent v4 still ignoring my comment.
+This makes no sense. No children here.
 
-I don't know what to do more.
-
-NAK
-
+>  			reg = <0x0 0xf0800000 0x0 0x1000>;
+>  		};
+>  
 Best regards,
 Krzysztof
 
