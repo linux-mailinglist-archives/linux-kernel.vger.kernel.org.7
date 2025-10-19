@@ -1,158 +1,129 @@
-Return-Path: <linux-kernel+bounces-859829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51761BEEB34
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD69BEEB3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AFF64348F0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC811899DA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA142E54BB;
-	Sun, 19 Oct 2025 18:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799A32253B0;
+	Sun, 19 Oct 2025 18:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="OWs4dy4Q"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="CPwIRTr1"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E714E1E0DD8
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EBC57C9F;
+	Sun, 19 Oct 2025 18:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760897675; cv=none; b=J6DQiKwzWvfwp/vD2yLaVLCY4nHqLhWUpbb4R8N7nNy9e+KSCI32nuq1BE+kWfPuuXLHSZx55WTUlcqZIzuPQY52j1Q8xVeO/2UYCj4sn3gcXBkOpDWukW1l6UpxDDVOCkvmLBVMyTbktMP4NLy0JGzw9RNF6mFw5qXg329sorY=
+	t=1760897961; cv=none; b=lCkE9KhySwz44M6xRjk9966u1Jh+yXGJpDIo0SImIbcX1uz/hm3gdVSaS323H42IeOpOH2j/k9Tfoog0nLyqAwzNQJE7HyWuniv0l4hkulkIw3JHPIRKpyx+5YqsDoV8rAGhPzBcoZzjnqUVEjJT2HR3ysdKBhlWJw/BsAvsL8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760897675; c=relaxed/simple;
-	bh=OWtMsh2PHY7TNTIpoc9gwrfTC7Jvnu9TYnZe5lQxTZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EeUYcr30e0xZd8y+cscX92AD8xADJyg/jzV8BZeKIfdrrILuKxsicFAJySdOTQA7Nw/dMqKSxC/cjJEexjKCz3FXJMrveoDt9iYvOuM4+LEedjESZWWsJ9pdVevhtUVfxURM5Ew5+N9O47x0pkLtmm/c4ONXih7rDWW5CuJm/C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=OWs4dy4Q; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33bda2306c5so2400418a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1760897673; x=1761502473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IaENTQgKFPGammTZmywdQK3pf3FhrMcENBDsOJC4YvY=;
-        b=OWs4dy4QeR6XTePSvJuyrmM80uiOBPdwNIpFx/EeF2TRi7o+yJ42pF1DQO8+ARyKsq
-         ip5ZYsD0gNonRq/QA2qfGH6i6uXJI8HOHgoqzStpICpbM4KP+N3tVLLfE+NfnmEYkXj/
-         75q184H2FNnZVaDHKnesyMN9+qmZGU2zyeMD8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760897673; x=1761502473;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IaENTQgKFPGammTZmywdQK3pf3FhrMcENBDsOJC4YvY=;
-        b=dNyrYaA2Fh1u9Iaa26C6iDUbWQLg5BlESSB5eqQkEpDHUjx26NpSivm0ssGx1rePGH
-         lTNJAqj5nfSZU/OexOtOrRE8dtYtjA0LHVp2xPm8WhPh3oLl3gAZmr4Zz6kM7CJXUHOx
-         XwNBsPrKGtu7WCQAYQ2A/V9UMXJCE4LgMT5tkPtlMtgm46Dkt44IMbZp5uh80Xo0WSvp
-         IYjKUk2kDKTv9A7STlJTpoIgpA8F0uDbsghu8tHE2sjGDdNX/sUCv351TMg0gMkyuSI4
-         iO25kTgxm1ci3gs8RRo4jTKYHQo28Np2/FmJaYHKtGgkfihDV0CDADSVGEi4Bu/rXdPz
-         H6tA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZhC0ASP6YDLOsG3rf4YR+dvqaVei6idOZeCEB9DHStH47Gyqw9ksgJOO/XHnbKX5B565XH3qurOD3KPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxEl9EQpzYciTnA7+lWlRqiIjN82rlazeKz0aCOr0l6/194nwr
-	GUflNQBwPRAsfI/mCL3jGN9nFTZkc7bUcifg38wJohVkTV8GHKVXewPXkJculqi8cpk=
-X-Gm-Gg: ASbGncujHfsIAxlGLhfj8dvg4vXU6sb727+mjNla2SnLROu/QT7fDSrdvVzu74Q1QzY
-	ntvLExziq4zfIeMd5xx2G6ZYCwi5dCbED7tjTK+TuwXH40Lg2a52UJ6GFB3er0/HSbq77AlybC4
-	xSP82o8Mgj9vr+6wbg0bWsHDQs8mqZjo7mVIbALRYIomRybjEUr9JL6Pzalxu89aUEDrXN5l7BE
-	Eptqt+LnnRoiWXAXPC3PQJl5dj7cN/cZ/6T8U12O3fABi321ymYlrYIEDbUEtgzUuTWu6DcRucW
-	KmO/NXiNhIk1dVI1e+5nEQkR2JKs9ZbDfFX8kpTasrTyt8XWO1g4bAxEUXfdCetoX+GjKBZvZUH
-	YhoS29YgdYatCjgsHr+h2Oc6Sh4/7Fl2UtT5to9OZP4HdxsBf3WMLRGlE/gZZJDtUA5qVe+N8e8
-	a0j3g11HNiKqepTH7gGg1osWCNnw8cs2E/comEEcYV4nZsSg==
-X-Google-Smtp-Source: AGHT+IHzvUrSCJm2EvmnIvQwP7xjuydc12UxhQNsagqenju0dOYpSJfg4ontGV6/TgRQJcjd0gFp9Q==
-X-Received: by 2002:a17:90b:3d8a:b0:32b:6820:6509 with SMTP id 98e67ed59e1d1-33bcf8748b5mr13820446a91.9.1760897673018;
-        Sun, 19 Oct 2025 11:14:33 -0700 (PDT)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([110.226.181.49])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5de2f94esm5882328a91.13.2025.10.19.11.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 11:14:32 -0700 (PDT)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: netdev@vger.kernel.org
-Cc: david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.add,
-	shuah@kernel.org,
-	steffen.klassert@secunet.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	shinta.sugimoto@ericsson.com,
-	yoshfuji@linux-ipv6.org,
-	nakam@linux-ipv6.org,
-	linux-kernel@vger.kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-Subject: [PATCH] net: key: Validate address family in set_ipsecrequest()
-Date: Sun, 19 Oct 2025 23:44:21 +0530
-Message-Id: <20251019181421.107668-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760897961; c=relaxed/simple;
+	bh=d11pgiUBlTDSn8XZdaFMt+akqhMwov8Yt4HpY3gvaug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=to2rUhBQ62UvNDMFzMp/4sKcwZfJH/gH1bGb9dKNN3Iwgc7nH0XW64ANkEppuysCGEmfxqlByJOEs1MA6Kl99RqTKJlrqETpKirQMb1PM009XEj01VMPnSdf3mGWo8PIzXvUWjl5GfGrEduMm0y6pf/WsTYMrj/zuk4k7DGBwxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=CPwIRTr1; arc=none smtp.client-ip=148.163.129.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id A656A28007A;
+	Sun, 19 Oct 2025 18:19:13 +0000 (UTC)
+Received: from [192.168.1.23] (unknown [98.97.32.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id E397F13C2B0;
+	Sun, 19 Oct 2025 11:18:53 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com E397F13C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1760897951;
+	bh=d11pgiUBlTDSn8XZdaFMt+akqhMwov8Yt4HpY3gvaug=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=CPwIRTr17+B4Oc/3SpOvEJQmGN4mblNpDjM7OrDyawykWCqxg7OeBOsRFglJxBO6K
+	 Gu3w3XNR2LkSscHWH6uU+HhBhWGBAU+drpjW/yhi1gmHnv3BuGO41JQA+X6+WUMB9+
+	 4tYFRD4F/5PoWKtFxvc9A5Fkj1nkoLjaNXpGGXzs=
+Message-ID: <4f75bb90-25ee-4312-b4b1-3faf0249b05a@candelatech.com>
+Date: Sun, 19 Oct 2025 11:18:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921,
+ mt7981 and mt7986
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, nbd@nbd.name, lorenzo@kernel.org,
+ ryder.lee@mediatek.com, shayne.chen@mediatek.com, sean.wang@mediatek.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ howard-yh.hsu@mediatek.com, StanleyYP.Wang@mediatek.com, rosenp@gmail.com,
+ luoxueqin@kylinos.cn, chad@monroe.io, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20251019155316.3537185-1-olek2@wp.pl>
+ <fa7befd5-b2c7-4277-ad57-a1577216ba83@candelatech.com>
+ <5a529d81-fb4e-4e7a-a132-3b76d26c3696@wp.pl>
+Content-Language: en-MW
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <5a529d81-fb4e-4e7a-a132-3b76d26c3696@wp.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-MDID: 1760897955-ofoHgPYxUDkh
+X-PPE-STACK: {"stack":"us5"}
+X-MDID-O:
+ us5;ut7;1760897955;ofoHgPYxUDkh;<greearb@candelatech.com>;d5c215dcae166280e85b20da571dd1ee
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+On 10/19/25 09:43, Aleksander Jan Bajkowski wrote:
+> Hi Ben,
+> 
+> On 10/19/25 18:26, Ben Greear wrote:
+>> On 10/19/25 08:51, Aleksander Jan Bajkowski wrote:
+>>> Supports IPv4 and IPv6 TCP + UDP
+>>>
+>>> In various tests between MT7986 and Intel BE200, I observed a performance
+>>> boost ranging from 2 to 12%, with an average of 5.5%.
+>>>
+>>> I did the tests on the MT7915, MT7981, MT7986, and MT7921 variants. The
+>>> MT7922, MT7925, and MT799x are untouched for now and still have
+>>> checksumming disabled.
+>>
+>> At least with  7996, tcp csum only worked on the first few vdevs
+>> created in our testing, so we had to add logic to disable that flag
+>> on subsequent vdevs.
+>>
+>> Have you tried creating a bunch of station and/or vap vdevs to see if
+>> all of them can still transmit TCP traffic?
+>>
+>>
+> Thanks for the useful information. On all tested devices, I had a single
+> AP configured per device. I will try to create several APs for each device.
 
-syzbot reported a kernel BUG in set_ipsecrequest() due to an
-skb_over_panic when processing XFRM_MSG_MIGRATE messages.
+We can try it out as well.
 
-The root cause is that set_ipsecrequest() does not validate the
-address family parameter before using it to calculate buffer sizes.
-When an unsupported family value (such as 0) is passed,
-pfkey_sockaddr_len() returns 0, leading to incorrect size calculations.
+> I also have a router with MT7996. A quick test shows that checksum
+> offload doesn't work on this router. MT7996 is visible in the system
+> as a single DBDC device. I have 3 APs configured there. Each on a
+> separate band (2.4/5/6 GHz).
+> 
+> Best regards,
+> Aleksander
 
-In pfkey_send_migrate(), the buffer size is calculated based on
-pfkey_sockaddr_pair_size(), which uses pfkey_sockaddr_len(). When
-family=0, this returns 0, so only sizeof(struct sadb_x_ipsecrequest)
-(16 bytes) is allocated per entry. However, set_ipsecrequest() is
-called multiple times in a loop (once for old_family, once for
-new_family, for each migration bundle), repeatedly calling skb_put_zero()
-with 16 bytes each time.
+We have it working on 7996, but the patch is tangled in some other changes we made
+with how wcid and such are allocated.  We are still cleaning and testing patches
+on top of Felix's tree, should have something to post sometime soon.
 
-This causes the tail pointer to exceed the end pointer of the skb,
-triggering skb_over_panic:
-  tail: 0x188 (392 bytes)
-  end:  0x180 (384 bytes)
+Thanks,
+Ben
 
-Fix this by validating that pfkey_sockaddr_len() returns a non-zero
-value before proceeding with buffer operations. This ensures proper
-size calculations and prevents buffer overflow. Checking socklen
-instead of just family==0 provides comprehensive validation for all
-unsupported address families.
-
-Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-Fixes: 08de61beab8a ("[PFKEYV2]: Extension for dynamic update of endpoint address(es)")
-
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
----
- net/key/af_key.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 2ebde0352245..713344c594d4 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3526,6 +3526,10 @@ static int set_ipsecrequest(struct sk_buff *skb,
- 	int socklen = pfkey_sockaddr_len(family);
- 	int size_req;
- 
-+	/* Reject invalid/unsupported address families */
-+	if (!socklen)
-+		return -EINVAL;
-+
- 	size_req = sizeof(struct sadb_x_ipsecrequest) +
- 		   pfkey_sockaddr_pair_size(family);
- 
 -- 
-2.34.1
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
 
 
