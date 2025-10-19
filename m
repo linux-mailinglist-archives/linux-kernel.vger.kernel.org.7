@@ -1,167 +1,127 @@
-Return-Path: <linux-kernel+bounces-859568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F30BEDFB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A25BEDFDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 09:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B9D189E194
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986293AE54B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 07:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C532226D16;
-	Sun, 19 Oct 2025 07:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCA322A7E0;
+	Sun, 19 Oct 2025 07:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oysZ12Tn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MFWD2+/P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF1FF9E8;
-	Sun, 19 Oct 2025 07:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2531A22128B
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 07:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760859125; cv=none; b=DcoE8VyAIuYQlv76wpFsDMaxnw1mGJ7UYj9kZnPTz8Ih3E9VU/4RWAnEoIrLA3C5MBJrp7dMQmvzK6cB0NlArE9QMqvXqM/vJMw1MkuSqsDaoAgLZZUTv4/Z6PwwOEZtYXle6vAuejBpF43lM2ncIC3DKMptN1e+PQ3mU8BWNXA=
+	t=1760860546; cv=none; b=JQ8Rcgdh2RL1x/ElXUtJdqfsyhquhd+LOFS5OJhGHZgkvcqVSeOUNbjbr2zm6NPEHMhaN95YmkgzAnTNFIdJBPgptr9d0VDDjYNpiJI7zm1udKzrYTehS66CNKXKpLG53/34b89reOjGElye3O3ReYmpNQtpMZ6y5zafudnkOgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760859125; c=relaxed/simple;
-	bh=Q5WZijcRsjXr1RWFkwdQADczeQBWeDR34cnzsxqPN0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIzsBiwk5ptVzzTeEBK0joHG0SP/rF0BIRHa97nCcb+06HYPNerzBVyBIkfP/RohCRqwGZ4RelPEwFonCrQDOIpSF9lajFLUIblKqTH1KwrEzztNDnV+qRDSt2XUQ/O/jSMHyCgYHGCnF+dLSZV8K9WeI23QeKBolzPVy6YDcJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oysZ12Tn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF52DC4CEE7;
-	Sun, 19 Oct 2025 07:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760859123;
-	bh=Q5WZijcRsjXr1RWFkwdQADczeQBWeDR34cnzsxqPN0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oysZ12Tnrxw8qCzJaaW5FvHJsX9RECC9QhUHD4trdla7ylQC1SGPQ9dxBvbwfh4AB
-	 EZuq9TNoFGZKeRbBH5MmkMv3fcI3RkZjkGjXSDd3+cdi4WsjG0b2rv96lVjbHCAhko
-	 KmEaHXcJCviGKhdxY00RrIu2XmkcpgHioxyHCVaYgG7yjyq+cuSpKV6+xGOI73Pm/g
-	 lyAcuHPLAav9ye31NNhcKtGXM8Y4UMZvwgwXL7b2aMfSzjNPIpxbseiRy60DFPUNlb
-	 ktnUvzx6DG1m9szD4Ci9xy3LYv/BIuwrz+O+2qj57v5bPxfRwJ+1CXFQ4bTuhKnZ4Z
-	 aDQTsk24cusQQ==
-Date: Sun, 19 Oct 2025 13:01:44 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, 
-	Jianjun Wang <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, upstream@airoha.com
-Subject: Re: [PATCH v5 5/5] PCI: mediatek: add support for Airoha AN7583 SoC
-Message-ID: <hjyhso2sqgyq4ymzqg6pmjfrfncla24zwsev2mfinolmclm3ih@sol2yoapbykq>
-References: <20251012205900.5948-1-ansuelsmth@gmail.com>
- <20251012205900.5948-6-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1760860546; c=relaxed/simple;
+	bh=GZ8HyRlR9zTf/bfRs5/LkOfkUPaPv/tTrbDB099Lg2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lu6ET8ktQacDvA+7kZuMiQDfgTcPxuvnw9CztPGkdK/Vv7GgZMQuoOVGUXgqaZOlZO1SzlPCqZCUrBPzCnrBkVCgn5Cm7n3vYlJYNrvNbvY242p1ch8QAhOb405CJDv3jXPR3EI+6VMo+5cI3dLEdghxsQJhVjUME6im2ePSElg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MFWD2+/P; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760860545; x=1792396545;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GZ8HyRlR9zTf/bfRs5/LkOfkUPaPv/tTrbDB099Lg2w=;
+  b=MFWD2+/PtMQIqqhtjjJ7h0UH4vBvIiKmkCPBEQQn2N264fMibk1i4ccz
+   zU2F9kyJcuVGzLbZUSmBaGzFTO0evE4YOuL3Ctk481rI+fZiR/SqZWOBf
+   gJY5Gr2DmAiSzVA3Hd/G+FWudC+yNb/KysF44nW/sVnNaQoENIcjOnTRS
+   FVTQYI7PhMG3HZieOLAJFT612xbllP1QopBlei5k+TPluxU1aAza+i0rD
+   F11I0XbPWXq9gB0iwrfKPgEGASNzq5E1iHjboH0OLf/Wr0ZgdecodW00c
+   Wp5HsgviGKjnzd8b2t8Xkf3QyJms7N6Bt8AyKglLiQe728co1AIsv24se
+   Q==;
+X-CSE-ConnectionGUID: NZHgDfpRSMSBUa5ohl67MQ==
+X-CSE-MsgGUID: vq3TLArnT8a0OtYiHB0y7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88484496"
+X-IronPort-AV: E=Sophos;i="6.19,240,1754982000"; 
+   d="scan'208";a="88484496"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 00:55:44 -0700
+X-CSE-ConnectionGUID: 9uUyh6S0T02mVAPXRXWRmg==
+X-CSE-MsgGUID: UOMLILG8SiyTQElDUz43Zw==
+X-ExtLoop1: 1
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 00:55:43 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [char-misc] mei: txe: fix initialization order
+Date: Sun, 19 Oct 2025 10:36:59 +0300
+Message-ID: <20251019073659.2646791-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251012205900.5948-6-ansuelsmth@gmail.com>
 
-On Sun, Oct 12, 2025 at 10:56:59PM +0200, Christian Marangi wrote:
-> Add support for the second PCIe Root Complex present on Airoha AN7583
-> SoC.
-> 
-> This is based on the Mediatek Gen1/2 PCIe driver and similar to Gen3
-> also require workaround for the reset signals.
-> 
-> Introduce a new flag to skip having to reset signals and also introduce
-> some additional logic to configure the PBUS registers required for
-> Airoha SoC.
-> 
-> While at it, also add additional info on the PERST# Signal delay
-> comments and use dedicated macro.
-> 
+The mei_register() should move before the mei_start() for hook
+on class device to work.
+Same change was implemented in mei-me, missed from mei-txe.
 
-This belongs to a separate patch which should come before this one.
+Fixes: 7704e6be4ed2 ("mei: hook mei_device on class device")
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+---
+ drivers/misc/mei/pci-txe.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 92 ++++++++++++++++++++------
->  1 file changed, 70 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index 1678461e56d3..3340c005da4b 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -148,6 +148,7 @@ enum mtk_pcie_flags {
->  	NO_MSI = BIT(2), /* Bridge has no MSI support, and relies on an
->  			  * external block
->  			  */
-> +	SKIP_PCIE_RSTB	= BIT(3), /* Skip calling RSTB bits on PCIe probe */
->  };
->  
->  /**
-> @@ -684,28 +685,32 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  		regmap_update_bits(pcie->cfg, PCIE_SYS_CFG_V2, val, val);
->  	}
->  
-> -	/* Assert all reset signals */
-> -	writel(0, port->base + PCIE_RST_CTRL);
-> -
-> -	/*
-> -	 * Enable PCIe link down reset, if link status changed from link up to
-> -	 * link down, this will reset MAC control registers and configuration
-> -	 * space.
-> -	 */
-> -	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
-> -
-> -	/*
-> -	 * Described in PCIe CEM specification sections 2.2 (PERST# Signal) and
-> -	 * 2.2.1 (Initial Power-Up (G3 to S0)). The deassertion of PERST# should
-> -	 * be delayed 100ms (TPVPERL) for the power and clock to become stable.
-> -	 */
-> -	msleep(100);
-> -
-> -	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
-> -	val = readl(port->base + PCIE_RST_CTRL);
-> -	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
-> -	       PCIE_MAC_SRSTB | PCIE_CRSTB;
-> -	writel(val, port->base + PCIE_RST_CTRL);
-> +	if (!(soc->flags & SKIP_PCIE_RSTB)) {
-> +		/* Assert all reset signals */
-> +		writel(0, port->base + PCIE_RST_CTRL);
-> +
-> +		/*
-> +		 * Enable PCIe link down reset, if link status changed from
-> +		 * link up to link down, this will reset MAC control registers
-> +		 * and configuration space.
-> +		 */
-> +		writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
-> +
-> +		/*
-> +		 * Described in PCIe CEM specification revision 3.0 sections
-> +		 * 2.2 (PERST# Signal) and 2.2.1 (Initial Power-Up (G3 to S0)).
-> +		 *
-> +		 * The deassertion of PERST# should be delayed 100ms (TPVPERL)
-> +		 * for the power and clock to become stable.
-
-You can drop the comments since PCIE_T_PVPERL_MS definition has them.
-
-> +		 */
-> +		msleep(PCIE_T_PVPERL_MS);
-> +
-> +		/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
-> +		val = readl(port->base + PCIE_RST_CTRL);
-> +		val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
-> +		       PCIE_MAC_SRSTB | PCIE_CRSTB;
-> +		writel(val, port->base + PCIE_RST_CTRL);
-
-If PCIE_LINKDOWN_RST_EN corresponds to PERST# signal, then it should be
-deasserted only after the power and REFCLK are stable. But I'm not sure what the
-above PCIE_RST_CTRL setting is doing. If it somehow affects either power or
-REFCLK, then it should come before PCIE_LINKDOWN_RST_EN.
-
-- Mani
-
+diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
+index c9eb5c5393e4..06b55a891c6b 100644
+--- a/drivers/misc/mei/pci-txe.c
++++ b/drivers/misc/mei/pci-txe.c
+@@ -109,19 +109,19 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto end;
+ 	}
+ 
++	err = mei_register(dev, &pdev->dev);
++	if (err)
++		goto release_irq;
++
+ 	if (mei_start(dev)) {
+ 		dev_err(&pdev->dev, "init hw failure.\n");
+ 		err = -ENODEV;
+-		goto release_irq;
++		goto deregister;
+ 	}
+ 
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, MEI_TXI_RPM_TIMEOUT);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 
+-	err = mei_register(dev, &pdev->dev);
+-	if (err)
+-		goto stop;
+-
+ 	pci_set_drvdata(pdev, dev);
+ 
+ 	/*
+@@ -144,8 +144,8 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	return 0;
+ 
+-stop:
+-	mei_stop(dev);
++deregister:
++	mei_deregister(dev);
+ release_irq:
+ 	mei_cancel_work(dev);
+ 	mei_disable_interrupts(dev);
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
