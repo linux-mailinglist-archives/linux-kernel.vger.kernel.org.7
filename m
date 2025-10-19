@@ -1,183 +1,197 @@
-Return-Path: <linux-kernel+bounces-859639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC35BEE2D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:18:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFF6BEE2E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 12:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DD50C3434AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16EEB3B3811
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 10:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058D92DFA3E;
-	Sun, 19 Oct 2025 10:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1692E427C;
+	Sun, 19 Oct 2025 10:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yx/SF+vO"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKoJY09c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B7B1C2324
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCC1226CF0;
+	Sun, 19 Oct 2025 10:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760869074; cv=none; b=JgnG0C5E8QiF4o15B4+vhSf1qyFujM+9qW2RLgr3vjYNebC/+9PhRljNj3igSXqY+NV0k2xP14Y4TwXizIzhVo2Ruohs+VwQ3xo5CYhJk5+yLZuEJt3nx+Gx3kGWy5bd+11XAKWkcm238aYIV8IlBdDzrycfgeNKVFMamMhFkc8=
+	t=1760869156; cv=none; b=fbL7c6DwrszfB2c0IIOgLNUT2CYf1BNUjYf2pTnFUP9kllDvRxw+qB2Wg7aCOmwuFQiGFr7uEHoqTz/sssnErLZWD3AdtvRqHVrxdqmoj5xXJAwte+iUFgFC5m+UzJrxWLvKD5daxQRbFrXMea1jHvwk9aeFNlUFuXd9vshW3Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760869074; c=relaxed/simple;
-	bh=NIBudYuoPuHUT5EhBUxqS3lYcOq1lQSbyJ+t7t88OZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HqTWqb7Wqt23WDXTgw9vP+uD3352YZoSnw2efv+dP7ztehk7IbImEh/kS8V+7X+518+ZiGqKQa59tAquVxMWlZpTWwtYH2CnY0279ap1gRDQMemyQcx1vU9KJWMHvCkxdfhugxsa01oIkeHlan4gzXM4PTIJ5X2eEv9yptWeh88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yx/SF+vO; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ece1102998so2933555f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 03:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760869071; x=1761473871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0pujRAFNF+M5FPftuQoiuNZvJ6K+8t69UrOSME69oUQ=;
-        b=Yx/SF+vO0pAwzzCNYtmTrUf3gHQzyY9sCHi+dVYDfcdmNYwlbUV7bNGuFbu2zwjXjv
-         9FAUosYnI65FAjc2Zryyl5mjwhoQuviwDpFtHgJxePkuO7E+Sh46zXGfLMccaFoNobm2
-         M6NtYtRvjkjT+XB5UneiXoBpZOOnIw7fIJCwFwegG+qIRlgj5YKfGow8RX0FY3QoucCK
-         DGw1/uvke8GEDsLnS3cdDXMglwN5FEXjzoq/iwT9PDRyEU2jO770WdKJQ9A1RdV7CdWu
-         t155bk6bKoZQ2c/EHdH6D+7Rwb1+XZ/2frTOitk7K3YDBoetHbfVcfyYK4VHOkb63Ji6
-         kWdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760869071; x=1761473871;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0pujRAFNF+M5FPftuQoiuNZvJ6K+8t69UrOSME69oUQ=;
-        b=I0fD7RvyIRMb7nSFPQBfsXfUTw6QKwNQufbbROOMX1W8C5KuOBLDjit2/KWTE9NLgG
-         ZRlkTZYFVfsc4T8pBhAijsk/pb8aHkZ+DAnYSAoExpZuS8Vm6mRCQQSVDfm9bOKXkbsm
-         kO1tWpeGhHp7UkwIHvB2MpEkRbdyEvyWiayam1jYWZG8Do3JikXL5jnt7Dr2Mx3DpIZZ
-         wuD933nWGRQXpuFuUh4vMAdDid4prFx4vOBcp3SPiYfDCyp7m82kG2ZQKZ4JrO442FYN
-         GIuCYZHuuD8YLN8+TcCjFln6aBr3rGfacfCTo4tDuz/Zsmdl96VLMzejMVn5iA4uWyb9
-         HaRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUOcgIxYzI5Ome/YnIj5yQN3x+mwXbz8zZmvysqrKYu66M1WzF+6qVpEZczNehTuiUdtXxfxdNMHXwYB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIUY9gVVfsCTSoLXUj6xAObiArgvZW5QxKn41zmSyW/Q7Lwfug
-	rMTEZfnwJb39wYTJdSWY7RQ4J/DDk2EaK9JNPgak3NyKRkjy8PqosQoM
-X-Gm-Gg: ASbGncs+xoh2ANafmhY7lwEtbHZV0iRhVUwGkxTH0M1VngIxmLgGcuEWc08yxYYRQSB
-	qZvTltwaFQDBdu6K2EdTjRM470tDqZhhOmr9+RGycC2gV3q9iqExUpwNG04+74IV7oJsh/3qoMj
-	xJjQXOC5GlC4MbZtPMCmFid9WAv/nbFHfgjG/TS/+aelGOySBXwH9QbUKB6fIZ0IEeWT3NxvnZi
-	+xfZFc5Oe6bUx4C6WZHAGkFnOjffcZoY46ComIlKzEeYP9ZDTpjJPcqKW8tsCo3Gb8/NeTyHOGJ
-	zgzphC8mLi33nw6nB5Q/dUiTmbIEAZj1uzdt2hYqV4ICABGsI/LT4Ry+YfPtzdx13k13QtbuTUW
-	33dWUkVCpAQSAYE8Ukqz7lJovQO5QQQYB0rZuZJ6ErMt/uiKHHpjlASoTUVULRrBLiCwiTcX4qj
-	J3trDls4PSNpL83Mvl8QH895KiNExBuQR8V2mWbom1Mgh5Rd+LpVFp7EIfb7Vb2/k=
-X-Google-Smtp-Source: AGHT+IHDWHxR+eS5W2I+moYmguRID8F3W2lMveOL7qKksf7E5SF+DVjocrInHwcfFTvpD/FPS2znDg==
-X-Received: by 2002:a05:600c:4e8e:b0:471:a98:99a6 with SMTP id 5b1f17b1804b1-4711789b11emr66402495e9.11.1760869070857;
-        Sun, 19 Oct 2025 03:17:50 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711c487dfesm152925745e9.17.2025.10.19.03.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 03:17:50 -0700 (PDT)
-Date: Sun, 19 Oct 2025 11:17:48 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Kevin Locke <kevin@kevinlocke.name>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
- Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
-Message-ID: <20251019111748.3d5ac8d9@pumpkin>
-In-Reply-To: <aPLC_HdznsRcJbjk@kevinlocke.name>
-References: <20251016214707.5c3d373b@pumpkin>
-	<a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
-	<20251017151256.111f2669@pumpkin>
-	<aPLC_HdznsRcJbjk@kevinlocke.name>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1760869156; c=relaxed/simple;
+	bh=zn/OlHAE8sHCqC3BJqgGMiH8F04MC2heZp4kXhJaObg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fIasLeb/1vJIvy8neHgMm5nsEyNBUV9C7Foxh9yDNHnDOrE5dN95iJev0LMrZCwD54hleyQ/zPfMPrxH+XiftbyMVQnaDcrS83vbPgTVyYo6pXkg66DK1SQ/my2eAp8rkfdvLSBrgVZH348jOa/uA+bYZOio0Ia6L9NyJ6wkZ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKoJY09c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD5F7C4CEE7;
+	Sun, 19 Oct 2025 10:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760869155;
+	bh=zn/OlHAE8sHCqC3BJqgGMiH8F04MC2heZp4kXhJaObg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MKoJY09cMaVovykS2UtNMvPdOEwHwiCPUVwbwEZuwZcSJ7GM6k5oHEhC61KDAmDIA
+	 BIlpHoEfLH+qZF8ooQRpOF3dolT2t4edjgUmpd+ipK04sqC0EvFCi3fyyIaCBTgSG3
+	 9I+W1vXef78wr1+J2rTsXeEY9i7ME9/VfQDV4eySQZxhHwPU6vO356NlWcX9LUnRXX
+	 KqjGC+ARYYwDv6ZkzJFoebcA2Lefndy5aNN66gtsQRiz6gt+XZYNDmwdytiJcbCm65
+	 aedQiYhvP//SPittdOEsPSqjcD2O7mhdf/7xRYV7Og7P5pGi+iSFcxd9h9ZFtR5moH
+	 xhZDi4HIkkhxw==
+Message-ID: <cb173df9-4c70-4619-b36d-8e99272551b6@kernel.org>
+Date: Sun, 19 Oct 2025 12:19:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: ufs: mediatek,ufs: add MT8195
+ compatible and update clock nodes
+To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+ "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "bvanassche@acm.org" <bvanassche@acm.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ =?UTF-8?B?TWFjcGF1bCBMaW4gKOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "macpaul@gmail.com" <macpaul@gmail.com>,
+ =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ =?UTF-8?B?QmVhciBXYW5nICjokKnljp/mg5/lvrcp?= <bear.wang@mediatek.com>,
+ =?UTF-8?B?UmFtYXggTG8gKOe+heaYjumBoCk=?= <Ramax.Lo@mediatek.com>
+References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
+ <20250722085721.2062657-3-macpaul.lin@mediatek.com>
+ <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
+ <438077d191833bb4f628b2c6da3b86b3ecfb40e6.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <438077d191833bb4f628b2c6da3b86b3ecfb40e6.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 17 Oct 2025 16:28:12 -0600
-Kevin Locke <kevin@kevinlocke.name> wrote:
-
-> On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:
-> > On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:  
-> >> Remove the "x" suffixes which unnecessarily complicate the code.  
-> > 
-> > The problems arise when $1 is (say) "-x", a simple LR parser will treat
-> > [ -x = -x ] as a check for the file "=" being executable and then give
-> > a syntax error for the second -x.
-> > I can't imagine why shellcheck should warn about a leading x (or any other
-> > character) provided field splitting is disabled (eg by "").
-> > The leading x has definitely been needed in the past.  
+On 23/07/2025 11:41, Peter Wang (王信友) wrote:
+>> Please, look at my old submission, which actually fixes the
+>> compatibles other than
+>> adding the right clocks for all UFS controllers in MediaTek
+>> platforms.
+>>
+>> https://lore.kernel.org/all/20240612074309.50278-1-angelogioacchino.delregno@collabora.com/
+>>
 > 
-> Yep, it definitely has been.  The rationale on the wiki is that it's
-> not necessary for modern shells (and presumably that it unnecessarily
-> complicates the code): https://www.shellcheck.net/wiki/SC2268
-> However, it notes Zsh had issues as recently as 2015, which is not as
-> old as I would have expected.
-
-It doesn't really make much difference to the shell.
-I really doubt you'll notice any difference in the time it takes to run.
-
+> Hi Angelo,
 > 
-> > POSIX does require the three argument 'test' look for the middle argument
-> > being an operator - but there might be historic shells that don't so that.
-> > OTOH you are probably looking for code from the early 1980s!
-> > But the POSIX spec (last time I read it) does point out the problems
-> > with arbitrary strings being treated as operators causing complex expressions
-> > be mis-parsed - which a leading x fixes.  
+> The clock architecture may vary depending on the platform.
+> These clock patch look good to me.
 > 
-> Good point.  I just reread it and can confirm that the current version
-> still notes issues mitigated by the X prefix with "historical shells"
-> and with greater than 4 argument cases:
-> https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
-
-The fact that the 'greater than 4 argument case' can still require
-a prefix character might be considered enough to make adding one all the
-time 'good practise' even though it (probably) isn't actually needed.
-
-While I wouldn't error not having a prefix, generating an error when
-there is one seems wrong.
-
-What does shellcheck do with [ "$a" = "$b" -o "$c" = "$d" ] ?
-Or even [ "$a" "$b" "$c" "$d" "$e" "$f "$g" ] ??
-
 > 
-> >> I think they are safe to
-> >> remove to clean up the code a bit.  Here's a patch to do just that,
-> >> which can be applied on top of my previous patch.
-> >> 
-> >> Since -o is an XSI extension to POSIX, I've stuck with ||, but I think
-> >> you are right that x would not be required in that case either.  
-> > 
-> > I'm not sure there are any common shells that don't support -o and -a.
-> > They get used quite a lot.
-> > I'm pretty sure they were supported by the pre-POSIX System-V shells
-> > (or the /bin/[ program they ran).  
+>> I want to take the occasion to remind everyone that my fixes were
+>> discarded because
+>> the MediaTek UFS driver maintainer wants to keep the low quality of
+>> the driver in
+>> favor of easier downstream porting - which is *not* in any way
+>> adhering to quality
+>> standards that the Linux community deserves.
+>>
+>> Cheers,
+>> Angelo
 > 
-> You are probably right.  I still remember when Debian policy allowed
-> them and posh added support in 2007/2008:
-> https://lists.debian.org/debian-devel/2006/11/msg00710.html
-> (I was corrected by Clint Adams about -a and -o being XSI extensions
-> some years before then when I noted posh lacked support, which is
-> probably why I still remember it.)
-> 
-> I find && and || more readable, but I'm open to changing it if you
-> feel strongly.
+> I want to clarify that I am not opposing this in order to keep the 
+> low quality of the driver for the sake of easier downstream porting.
 
-They get parsed entirely differently and are likely to be measurably slower.
-Just FYI I tend not to use 'if' statements at all, just (eg):
-	[ a = b ] && echo a == b
+You did.
 
-> Do I understand correctly that you are in favor of using the x prefix?
-> I have a slight preference for leaving it off, but I'm open to adding
-> it if you (or others) feel strongly.
+You wrote very clearly here:
+https://lore.kernel.org/all/eb47587159484abca8e6d65dddcf0844822ce99f.camel@mediatek.com/
 
-I wouldn't take them out and consider shellcheck wrong, but the suffix
-were just stupid.
+"In addition, it will require MediaTek to put in extra
+effort to migrate the kernel. "
 
-	David
 
-> Thanks for the interesting discussion,
-> Kevin
+Also you wrote:
+"The role of MediaTek UFS maintainer is not suitable to be handed over
+to someone outside of MediaTek."
 
+https://lore.kernel.org/all/ce0f9785f8f488010cd81adbbdb5ac07742fc988.camel@mediatek.com/
+
+Holy molly, you really wrote this!
+
+That's completely unacceptable. You don't understand how upstream
+development works and you push your downstream narrative which for us
+does not matter. You also object community led efforts, because you
+apparently want to control the upstream process.
+
+That is red flag.
+
+I think you should step down from maintainer position and find more
+suitable person, who is willing to work with the community, or rethink
+how upstream process works and understand that your downstream goals do
+not matter completely.
+
+I will be watching closely this and if situation does not improve, I
+believe we should mark the driver orphaned until we find maintainer
+caring about community, not about corporate goals.
+
+Best regards,
+Krzysztof
 
