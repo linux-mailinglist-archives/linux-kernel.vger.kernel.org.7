@@ -1,193 +1,109 @@
-Return-Path: <linux-kernel+bounces-859846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2F2BEEBC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 21:20:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45B7BEEB98
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 20:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 758F84E2010
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A28E3BD065
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2F92288F7;
-	Sun, 19 Oct 2025 19:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031E22EC54A;
+	Sun, 19 Oct 2025 18:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Zu89BxtU"
-Received: from sonic316-54.consmr.mail.gq1.yahoo.com (sonic316-54.consmr.mail.gq1.yahoo.com [98.137.69.30])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ff+dH/WY"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C48354AE4
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6FE2EB86E
+	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760901614; cv=none; b=R1PMBE0w2TPRXnG2iMUlyVyhydocreWVzpp8148cBwQaDtMncaM9IXyg9eRpqeX1iD3lXm9EL1FNkJs7okk2Zc/QPoicknJeIxJVT4/SuVLWaCH7R2wIFQ6gTGjaWZYWDYFinlqiMfQp6+++WRAqSvbo33WzoG6oDzS60ELaKV4=
+	t=1760900377; cv=none; b=F48h5N2dt5kHG8WoEfntZdTXRd4vPl4kC7J/EFcpYcmcpXIUn6Hh9h/bnj/OB0PWHjG6CODXds7TOrWx7cuB18kADvxlBze6VL/nQrIQ5RbmF6wgIzSzIlHoOvMxL508+o7n+BRnjNJ9jMAemXNOOrrZphOfDJIL8xzWfxgpXRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760901614; c=relaxed/simple;
-	bh=PXReM+TD59LE92KgViZWcS2SQNZnXlAtv4rJN/14Kr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=OcvXUwKU1pKY8XeDhRRyJiH2V70itzw0vgP2qPdc7YW0JZvEHKYZ9Egt2VY6nTv58ikSXQDwKy94g9LD4gCzPDtcaam8i+lRZlPjZN5UO7UidF6XALzQyMLJNG8I+D5MFg5QxOCOALNEiDEe4G0RNNy3MXR28oFgFKvhjkVOjXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Zu89BxtU; arc=none smtp.client-ip=98.137.69.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1760901604; bh=YHPBx3499LOsnw+xWczKHUVNbwb3wogW8BPwpY/euag=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=Zu89BxtUxghOMc0D9AlSmizFP4by4l0oBvmvQqw8If7BrviNb17vkIDOuVVlFqcEUckK/3xfZUPXJfUPRPvmGOtJU7zSEaRoJRI4govpn3oiX+E136JYk23fexdIa14FaeUdyCkVsZEtqtPmUhi162NBdL/ueR3VHQMaww/GYKtMZF66kW4yguKQaQpsQJFLSjbNWQ43v0H8Qhbw5D2YZc1ab+UuVs3rER5dAFELiGME6UASI6OMO01U/hBCMvYxDh7Ce0j4hCvyGlp52bm9vHQ3lZizSvTyVhXk1P2DlZtn1kInXHp5+alDIH1b1oCpbggRear26wOnUyZ1DUx1XQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760901604; bh=2O3MSnLiH8hsAulVT7vBRcmNqr23jXXU2RF3Nzg+IKK=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=tg3c/ZRAbwMZozExpMSiXvNbTFuBYtBclCmjdmINNpitWNI/S4tt4hvjW2VYiHnc17TqWN6VkTVSxEqt/80iZNS3goARqWYooByvuTg94xJ74rv/v1wwZC51Pznh3mbuA0B3AkENR0zTeNmml6SWvHHWhb7HCNSkkdhYF/dLUJoQKvHdNe8otIaGTOtjIz2hAHt4bQYwi613/2WDyLBiip45I4TwTpb19xqg0QMpB9bklU5incErbVyNu2Vl3e99JfJKoTzxh6pKmlRjK9Bh00N2n32r4Q9g3FsWw/xapdPe3LWPSUEbHCTPUvnAUDOl4pqIFbfTdmm/mIcpNGXm7Q==
-X-YMail-OSG: LgNV5DMVM1kH1cp.M3z9M91NI6p6fSKvh5UAqHiF3sjAl7W4P_KRG0tdCc.mknU
- 5IeK6.rnKjrpkfA3eJ_wxDJM3pGkIwubweVAN1knQOKOLHO9DqgOxUGgHcHe2E2RllbmgQ5RCUB_
- HLEMIXZuHgAIWoNhSFmXNot1WvUfoce3W5aKfe7HrbdmKeMd8AkrV8UvBlGcwYV_s44tFe6_hlGR
- IUw2mM5ht3kqKDafZIt28tLTS1_8WtQb9dSpFO4rYJQ0V9XvuJq2lHTuQ5GMHZTTczItQKkJXjr5
- Z6NysMPwC_9TOeVvi4s3JpsvPNesHed3EQ7AwTHBfMYBmRcM4H1WMFDMlvOE.nfvO3tWER0yaIQ.
- urOSlCAWT3PmMybg25.GugffkZqnZaCaAX8CNjI0enX6Vmq3mNE6oPjRyLe7mBsavXqzrWjkHrLV
- E1.FcxwKXkBq3jeoPgdxcJ5tbMotNb0MVEZ7AeD1qmjSUDWtIurJr9bCS0vmq_p48VPiUNVXzZxg
- VNX6YyeFYiMzQ7Pmj0JDAS4eSzRJ8P0YJvDymClhSeLxfJ4h1K_OacdOckc4ZpjsHC_xmEozuSOo
- R81P4NaNo2VFhqXGDd1obZtK6EaqOewdArRswAHKBGnS62PWiJu_Xq_.Av2qtZyz4z_969nacDhM
- .EJE7n2L9yl3Ydr.7UOufDda7tYZVvzLoMik1Tk9ndrILa6L41fbMK3fdqsNRhz4OqP11Y.LqdQQ
- e7Fsbq8ImkEBgLlPn1t0lpIQOU74rQYnF0dKiNnxPDFrXI_61N72jDC08Zwzy9.dKCVFHBXZzBkz
- CQiUUcb7dHC8yIcY.ZuVtKeqrdTfudOB69wb_iW_EQMckqHK0ID9dFwWHRSA6H0XvY_c.sIPrrou
- JNiKnNXWJKE6wFCTZBW.oBb5hJ6Nz7yhhZfiZcNmoRHmdaimHuCN3EZuj5lsFlGinH8ZX_vdTOQ4
- 8bczbFoPJ_kZ__tEQfPtXNo4KQQJWR._jvU_1.Awp0TYYU8I8vdgsXslM_ZRImPgsKY66wBdvwyv
- Ub13p0T_xUjdRaJDpR_ZtJsS5FWBNer8_YSloFZ6B0FzuQB.dS893gL2zzdhWpqnTHvWIMEazm_G
- iJ3llmlLIlx2y9VSf8JtTav3IE7L4qbEJelIJUymG7ZKOtp1J6OyMBSMkVMV0hE_lXcsU2NcU56P
- zdfs9GEJaLxe15e4myRly7wH.WOBWnxFqyUz4CREs.YjaOYkUmEAwNRwuymdIRBvRRN49o.fGau2
- zjqtb9jdMzjUb2lMXQg74ZdX2Frx.4HTll7Ja9HM2vLL5479r_HU.R0QJ120cxpw.EpymYKSZJ92
- Fz3DnWqln.6yoCZyN8EMH7_DNCVqL3Td6tDsFhiB9wGutFjq6h8CT0WXpPuH5pyZEV.RMllz8MvM
- B7xRKi7mdhDs.isDAS9wkSFDwug0d3TZftFeCsgDTxOUS3LjcGR5H9CnrQ7Jn2m8tfDuQcNL3DAM
- KRI79AhMHt4GVirKZvvYhPU7yQAvQFD_esmaBDB2hxTHv8AEy2_hCRZubXsxLjXDbmsrD0oGQVWG
- AXY3nOfzVRIOKUVK5x8hKxJ_n4fCurEoFaBIQs.Es2HzpRFTZBgDZej_xL8wGFcVSaWxk92vryDY
- uXV4FvZEHeLoHubpn.7y6ZZWgIJXORi5vHO8iLqKCY3xn9WHgI1_76TUeFc.YU.S_UKmnLjwxdMm
- dJd_P6POH0a6XlCjxklIhh.7loxNlUabdflh6yXRncokiyCvyGyHbE1mVqL9fPfSikgaKxRgOtDG
- LMheq5hryVDrzmSxCGUqaaqN1aenZ4.huEbXdxw53C1bBXfub8vSbjimECzCEaiD0UVzjVFJaYzj
- v8Yvvnm_QG6h24SGanWadNCIjOupSh6GfvZl8jRHZjeHUh1pLwib263iwHu0gl28reMaN0w3r0mz
- PUOB6vJY7bNYtAsFgIbIaAOi8UceIlzF_ar9cFTIetQzRrCp3vVhukRAOGCYQoG8YP_TGrZM5VyA
- a5EJfjlwetINU8kwcT7HpKjiDOpHk1tgsNT.PVY2OT4JsylrRQmmuAB7cqwRI49DyoAxFMP5HnGA
- hSqTU01tZwQMyKHuoStAYoEnNFKw_hk2WOkfewNmLWCnnFaOewtjAcoeIzRXXwdSYrHYEieAQBtL
- IKE3cWvJ.frjN00nPInwcNOLj7DbWGkI5xn6.SRen.xV8OCtQLUfbZnN8uHYO0iq2fttfHuwVrbH
- jiajLwin5kSJI4cecHTIhoZl00iSnGxPY1UM_qkGd
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: d59c9510-0251-42a6-92ae-8953e64a1015
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Sun, 19 Oct 2025 19:20:04 +0000
-Received: by hermes--production-ir2-cdb597784-phg5h (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b23e1a914437bdc8f5bc6926d5f840c3;
-          Sun, 19 Oct 2025 18:59:46 +0000 (UTC)
-From: Ruben Wauters <rubenru09@aol.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Ruben Wauters <rubenru09@aol.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/gud: rearrange gud_probe() to prepare for function splitting
-Date: Sun, 19 Oct 2025 19:53:48 +0100
-Message-ID: <20251019185642.14266-2-rubenru09@aol.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760900377; c=relaxed/simple;
+	bh=nj/PwdyUHa3EdM3zA/zRNjpb3Mt3Z/MnFk71LgogL/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGljpsfKEl+MDSxjVdec7V0dP4mcOkytbfYDpNPTrf1LKSz156GHlHH6b9wU1pWOtrSY+mm9egLXcZadcePyNxnoIQy2FN7y19Giq/wwMeRjOOC9AmB14HT9qXfAP8iqjNguWL1jQj9PkGcLb79UpSXj769sC7G7nbHCc/laG4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ff+dH/WY; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2699ef1b4e3so6136635ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 11:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760900375; x=1761505175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nj/PwdyUHa3EdM3zA/zRNjpb3Mt3Z/MnFk71LgogL/Y=;
+        b=Ff+dH/WYrF7SlOTBPXwcBru0i1f7ilZrA+ixLMb4+Go0yhP4lG5/0/cek+wndzCs3l
+         gn10Ms4HRaNjJxvxDnHOXXRJSuCAHQ9wFaVvXYNv2l8IvFFoD1mRGUb8reQrhMGRqbQr
+         2A9YI34DmaAUjsTviffyEcOguEMlkWK/9EBuKhFVMvYI1zivlDZ411v4Qmi1pMmLwoen
+         8x1Lfldx15SCFxAU9W8rmZtA+JBzdns6VwTARMkvKaLkE/oGOHdsrCa++x/t7AH+4a/m
+         IasM+KsCbVMSXQSi4DIn1CvaB2kLK7HFUM1QKslGAX6arGlz+mC8mhLy2atFhbC9TFn9
+         bB8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760900375; x=1761505175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nj/PwdyUHa3EdM3zA/zRNjpb3Mt3Z/MnFk71LgogL/Y=;
+        b=SBZDhhdY1qCBB4SBMihnCrNdUMWQZ+scUESzOQxHZ96NuTG0YKvZGMxtrM4q1/NC2b
+         YdChg0IrcSKWm/Q+dNei5lhjn9cL+55HYMBQm/ocB9/syJg4RCs4i5ZDCN3ehZ00G9sj
+         +jXCD5Y3T35mo1VRoBJBDCAstwWEUEaEEnDTgpGRabjfhDLV4Xdci1ZV9LUcML3ER6RK
+         3gqwlKdEdCJ1GG5sCy9WCPm3d464VLz8ZqVe2KCxGFt3uoAJarpXgIx46vxA9gDZvZDO
+         IZIVAgpMxau1T54e0cKmR59y+YcnfsabALeF4focWS9y2AWMJPTLfR/xu0wpVf/ezmmS
+         3UeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUodCY86eNihoO+7L8aPFYtOHW9Z86wLS6K58/QktaLbJm6nNpYQzUmLJDQjVloljW0n0I+AlkwwkZBunM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqr0nVbqP7kEVDNJQn4Md/uh9K3WJ4nZCgO4+98kuVqNMQh7cc
+	hCbxBzX97YpeABThLXjIJF8bsYaRfdUviBfiEyvz9vKoHGm/rXbo6yhPws53/axSsj5wd+V/h2S
+	nWVKwYOAZjkyJg8FQy/neYKImtKI+Si4=
+X-Gm-Gg: ASbGnct6an6n9M/yPnRoCs1TGJe7QtKdtImW4ZXs96wu1vF9Dh9R7EKQ6kDbbeBxEVr
+	pQm3yLRICdIWb7P8gScjVbJKPvFY7QucHnDoJ9DY1hOf1tprzk8QEZpZ/K3rDPm0S9bRMcw/GVM
+	RUuVMAO3MAjaoTlw4L3q/L3AdeEXewZnLrbMibD5muae9dIGNCSxV2fMck2H2DdBe8yw+cNXReo
+	e8tfXia5DIslhhnBvVxC8MtilB2EbLWW3AbkmBVihcKOaPHvigsyrSQHiOmmh3giQIsz8T8yfNL
+	JTYRpk+iqdUqn7Jt63uwfRiacvDTJyCMHyfsX1VRUaFZ1GM+FWc8FEIR2kKbYdmkXDCziCVG3YN
+	ltjMjjWu+JZoFMA==
+X-Google-Smtp-Source: AGHT+IFUNFNsgIHwngvFwlMG8aMEOLjZJdhe4E9fo3Ad+ao+mbyr4xKCUfGHRwuRI7LG09H3cfLrVwORSg5QxYsl3ks=
+X-Received: by 2002:a17:903:3d0f:b0:274:944f:9d84 with SMTP id
+ d9443c01a7336-290ccaccc47mr69411885ad.11.1760900375198; Sun, 19 Oct 2025
+ 11:59:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20251019185642.14266-2-rubenru09.ref@aol.com>
+References: <20251016231350.1418501-1-ojeda@kernel.org> <2025101758-mystified-prideful-8016@gregkh>
+In-Reply-To: <2025101758-mystified-prideful-8016@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 19 Oct 2025 20:59:22 +0200
+X-Gm-Features: AS18NWB0V0r9stVsy6SHvBBPktKhMWz1R1H5p861HWbvzNbwfaAR3voM0H57gac
+Message-ID: <CANiq72nXw4+HesrgNqJjTy6Ji=pVqUMzx7GDO+6U9VYWezTt6Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: usb: fix formatting
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, linux-usb@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-gud_prove() is currently very large and does many things, including
-pipeline setup and feature detection, as well as having USB functions.
+On Fri, Oct 17, 2025 at 7:42=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> I don't rebase my public trees, so I'll queue this up after your changes
+> land.
 
-This patch re-orders the code in gud_probe() to make it more organised
-and easier to split apart in the future.
+They landed in mainline, so Linus' tree is again `rustfmt`-clean.
 
-Signed-off-by: Ruben Wauters <rubenru09@aol.com>
----
-I wanted to move mode config to just before pipeline init, however mode
-config is edited in feature detection so I was unsure how to go about it
-exactly.
-Further untangling of this may be required before splitting it out
----
- drivers/gpu/drm/gud/gud_drv.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+Thanks!
 
-diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-index b7345c8d823d..583f7f8f4c00 100644
---- a/drivers/gpu/drm/gud/gud_drv.c
-+++ b/drivers/gpu/drm/gud/gud_drv.c
-@@ -463,10 +463,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		return PTR_ERR(gdrm);
- 
- 	drm = &gdrm->drm;
--	drm->mode_config.funcs = &gud_mode_config_funcs;
--	ret = drmm_mode_config_init(drm);
--	if (ret)
--		return ret;
- 
- 	gdrm->flags = le32_to_cpu(desc.flags);
- 	gdrm->compression = desc.compression & GUD_COMPRESSION_LZ4;
-@@ -483,11 +479,18 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	if (ret)
- 		return ret;
- 
-+	/* Mode config init*/
-+	ret = drmm_mode_config_init(drm);
-+	if (ret)
-+		return ret;
-+
- 	drm->mode_config.min_width = le32_to_cpu(desc.min_width);
- 	drm->mode_config.max_width = le32_to_cpu(desc.max_width);
- 	drm->mode_config.min_height = le32_to_cpu(desc.min_height);
- 	drm->mode_config.max_height = le32_to_cpu(desc.max_height);
-+	drm->mode_config.funcs = &gud_mode_config_funcs;
- 
-+	/*Format init*/
- 	formats_dev = devm_kmalloc(dev, GUD_FORMATS_MAX_NUM, GFP_KERNEL);
- 	/* Add room for emulated XRGB8888 */
- 	formats = devm_kmalloc_array(dev, GUD_FORMATS_MAX_NUM + 1, sizeof(*formats), GFP_KERNEL);
-@@ -587,6 +590,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 			return -ENOMEM;
- 	}
- 
-+	/*Pipeline init*/
- 	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
- 				       &gud_plane_funcs,
- 				       formats, num_formats,
-@@ -598,15 +602,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
- 	drm_plane_enable_fb_damage_clips(&gdrm->plane);
- 
--	devm_kfree(dev, formats);
--	devm_kfree(dev, formats_dev);
--
--	ret = gud_get_properties(gdrm);
--	if (ret) {
--		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
--		return ret;
--	}
--
- 	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
- 					&gud_crtc_funcs, NULL);
- 	if (ret)
-@@ -621,6 +616,13 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	}
- 
- 	drm_mode_config_reset(drm);
-+	drm_kms_helper_poll_init(drm);
-+
-+	ret = gud_get_properties(gdrm);
-+	if (ret) {
-+		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
-+		return ret;
-+	}
- 
- 	usb_set_intfdata(intf, gdrm);
- 
-@@ -638,7 +640,8 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	if (ret)
- 		return ret;
- 
--	drm_kms_helper_poll_init(drm);
-+	devm_kfree(dev, formats);
-+	devm_kfree(dev, formats_dev);
- 
- 	drm_client_setup(drm, NULL);
- 
--- 
-2.51.0
-
+Cheers,
+Miguel
 
