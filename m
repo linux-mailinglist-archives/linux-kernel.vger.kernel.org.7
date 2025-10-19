@@ -1,120 +1,180 @@
-Return-Path: <linux-kernel+bounces-859793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DFEBEE9DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:25:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA66FBEE9EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6213F189B690
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:25:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81B0A4EABC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55AA2ECD3A;
-	Sun, 19 Oct 2025 16:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9F42ECD23;
+	Sun, 19 Oct 2025 16:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2EokHRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VpV87QNB"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E851A00F0;
-	Sun, 19 Oct 2025 16:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733372EBB93;
+	Sun, 19 Oct 2025 16:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760891120; cv=none; b=XHqLF6dvRtksg/rpYaCpQd0wvqWfyKJgzRoZOqo5spJ4Cn/TkCZgTu6JzpGpBu0J1SKlNei0ueCrHDOMqGwoUKzWBCBz3S9ZE0auTv0slrLqXDj6EYOZyyn3TRcK+xmuf68aD9XzkJ/k2fOaQu7wV9hIHvFwVkoglY1/dUjCpeE=
+	t=1760891144; cv=none; b=MmIN/6LkNQq+kYDPw8CuA9tYmQ0BmzjPTGdRdQvsZ7N9z66+9q2ffi5zaIo4M4gQ9134NL/IJPAGxJSR0xl8U4Ta2u8F+cRtYd8+eMnq7OUNQsqGGUbHoC6HlV/3wnjKckmIqV6U8k9jEhx/oHauxhFmIIsaYFpSGMYMwFuuZdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760891120; c=relaxed/simple;
-	bh=AqeDRU1eKSmQXUiCZ7pwi0Bd8BGGXBM48O4Ou5Xs+sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ny8OD4gi8nAij93+qSPZ92ytYCmvNp2te+9feN52PBmDlCrgJ1LDdj5X2hGC62awAnItnCA0/a6WPJfjeS0Obn/cuF4G9jS+9seTkI2xHvvDm9V2UN3sxVdmY/T5nBWmWwbDG3Y/jYnCrBraz4hwbcw1tiUMrGiFXEDLdfNHHNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2EokHRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7610C4CEE7;
-	Sun, 19 Oct 2025 16:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760891119;
-	bh=AqeDRU1eKSmQXUiCZ7pwi0Bd8BGGXBM48O4Ou5Xs+sw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2EokHRLd68kZBeDRRdhxJ1rDW2elFlh8EnkyaTJnHSCfqkoujh7BohpZc68H407D
-	 6bUXmBrNoq7Ww0jTMF1QQwGeMEpfXz0BrGd0k+T8PJbgWDRrKfDcnhwumf2RRZV3Tp
-	 M1nqa0cZRI89OYqyvuvRWeFwctcqJgDf9nK43gHk2G3mRl3usq7ey6ziFEp5oxVwef
-	 8ha/lyEniLuE2fegL9ApZJO+lst38G6OUrwAE6O/NFZ/Mz1YaBFZd+ociss1pkQv9d
-	 0MzWPAoBwoLUZ5+ACw5ohULeXVrjB6+3sdA7UiNPKC79wDn4zGf7+6LA7UKkZ5vUk5
-	 GbYsQCDUj5ADg==
-Date: Sun, 19 Oct 2025 09:23:46 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: ardb@kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
-	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 15/19] lib/crc32: make crc32c() go directly to lib
-Message-ID: <20251019162346.GB1604@sol>
-References: <20241202010844.144356-16-ebiggers@kernel.org>
- <20251019060845.553414-1-safinaskar@gmail.com>
- <CAPnZJGAb7AM4p=HdsDhYcANCzD8=gpGjuP4wYfr2utLp3WMSNQ@mail.gmail.com>
+	s=arc-20240116; t=1760891144; c=relaxed/simple;
+	bh=PwnNJ7VG2VCadOZ2lJxq1NhOWg3V7ScJ5VyVLdN2i8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VDeLdDX5chFNXbn+T+ZA+OHLEkXF56Cjnfye8Hef7hv1F9n+sjbZW7i10FxLCP82IONKVCBkIdtJSHZ+LOCOj/I+bimdVceod0JOo2PgQS+ZBs2sOOy3/Wfs+5NVFr5GiXSSNzIKKAZuEiUskwKwlhSJGPm1O51gH+qV3WgFDus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VpV87QNB; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760891129; x=1761495929; i=markus.elfring@web.de;
+	bh=PwnNJ7VG2VCadOZ2lJxq1NhOWg3V7ScJ5VyVLdN2i8s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VpV87QNBXdcP7KJ5Ydjq15z0b7m7UvTl3eaDu1VYlbmJ737/3wIKa+G9HqrXsx50
+	 ue18NJ4WXYsCsdiJu5WLBygRRRQopyQqoDy4vn0J/mfrub8iQJu/2r6LbVn5L9CQB
+	 GEQ+t1ZOGmUdw/UEpCER5ECojO/VVKg9G9afuW036Il7fXVixigCnP+TTab5eUO5X
+	 NwI3/bOFSlhRguWRmODEWoIXwmM6dsL9l2hTS6ghj8YBjjx+lOzvC1o0CrZa8F0VW
+	 3x7tcAm0vQwFwJGQiVa/b+CIz/uz9TYf73Rfy6Ma1kpqzAVV4zH9Uy3fejOs3pZ3X
+	 Mto5n769afwQxiaO9w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.180]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MovjQ-1uPwNr3Ysw-00gWxQ; Sun, 19
+ Oct 2025 18:25:29 +0200
+Message-ID: <fe93e337-7d8e-4b82-b187-b5a67b627544@web.de>
+Date: Sun, 19 Oct 2025 18:25:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPnZJGAb7AM4p=HdsDhYcANCzD8=gpGjuP4wYfr2utLp3WMSNQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [1/3] PCI: j721e: Propagate dev_err_probe return value
+To: Anand Moon <linux.amoon@gmail.com>, cocci@inria.fr,
+ kernel-janitors@vger.kernel.org
+Cc: linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>
+References: <20251014113234.44418-2-linux.amoon@gmail.com>
+ <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
+ <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:umLVQJpIYGS2+HeShb6AnbRIlX4jVAsM0N686gdXuV69BTJ1sHo
+ ClvWmWlXilkiAjxPd0bgRxjIqzQUg5Y6VRAjRcPndrg8BL9igrGjPjOSUQ6Uh+IjhZ6sYlV
+ s2W8IY56Kh32rfuVtsHQLVoywvflUGRn/ccAz9sR9vIz+J5W9Dv90BTlhv9gm+9zQ9/6tgl
+ VrkgIHUHK9EeadmLUGj3A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:E+vRZbEifN8=;3GPNTm5dJYrlVOpuzv3N0+SoRyc
+ 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
+ yYxJ/ZSB/CZB5XbxAXrtp1r19Rh5kvnAUf4=
 
-On Sun, Oct 19, 2025 at 11:10:25AM +0300, Askar Safin wrote:
-> On Sun, Oct 19, 2025 at 9:09 AM Askar Safin <safinaskar@gmail.com> wrote:
-> >
-> > Eric Biggers <ebiggers@kernel.org>:
-> > > Now that the lower level __crc32c_le() library function is optimized for
-> >
-> > This patch (i. e. 38a9a5121c3b ("lib/crc32: make crc32c() go directly to lib"))
-> > solves actual bug I found in practice. So, please, backport it
-> > to stable kernels.
-> 
-> Oops. I just noticed that this patch removes module "libcrc32c".
-> And this breaks build for Debian kernel v6.12.48.
-> Previously I tested minimal build using "make localmodconfig".
-> Now I tried full build of Debian kernel using "dpkg-buildpackage".
-> And it failed, because some of Debian files reference "libcrc32c",
-> which is not available.
-> 
-> So, please, don't backport this patch to stable kernels.
-> I'm sorry.
+>> How do you think about to achieve such a source code variant also with =
+the help of
+>> the semantic patch language (Coccinelle software)?
+> I do not have any idea about this.
 
-Right, this commit simplified the CRC library design by removing the
-libcrc32c module.  initramfs build scripts that hard-coded the addition
-of libcrc32c.ko into the ramdisk (which I don't think was ever necessary
-in the first place, though it did used to be useful to hard-code some of
-the *other* CRC modules like crc32c-intel) had to be updated to remove
-it.  It looks like Debian did indeed do that, and they updated it in
-https://salsa.debian.org/kernel-team/linux/-/commit/6c242c647f84bfdbdc22a6a758fa59da4e941a10#1251f9400a85485d275e1709758350aa098709a8
+Your software understanding evolved into another direction.
 
-As for your original problem, I'd glad to see that the simplified design
-is preventing problems.  There's an issue with backporting this commit
-alone, though.  This was patch 15 of a 19-patch series for a good
-reason: the CRC-32C implementation in lib/ wasn't architecture-optimized
-until after patches 1-14 of this series.  Backporting this commit alone
-would make crc32c() no longer utilize architecture-optimized code.
+Can the following source code search pattern represent discussed developme=
+nt concerns
+in a succinct way?
 
-Now, it already didn't do so reliably (and this patch series fixed
-that).  However, backporting this commit alone would make it never do
-so.  So it would regress performance in some cases.
+@display@
+expression dev, e;
+@@
+*e =3D dev_err_probe(dev, e, ...)
 
-Since the errors you're actually getting are:
 
-    [   19.619731] Invalid ELF header magic: != ELF
-    modprobe: can't load module libcrc32c (kernel/lib/libcrc32c.ko.xz): unknown symbol in module, or unknown parameter
+The evaluation of such a tiny SmPL script can point out that 14 source fil=
+es
+of the software =E2=80=9CLinux next-20251017=E2=80=9D contain correspondin=
+g update candidates.
+Will any adjustments become helpful also at these places?
 
-I do have to wonder if this is actually a busybox bug or
-misconfiguration, where it's passing a compressed module to the kernel
-without decompressing it?  And removing the module just hid the problem.
-
-- Eric
+Regards,
+Markus
 
