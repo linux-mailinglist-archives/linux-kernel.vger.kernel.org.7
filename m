@@ -1,168 +1,103 @@
-Return-Path: <linux-kernel+bounces-859795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D909BEE9FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:27:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4E1BEEA03
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 18:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8D73B3F15
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:27:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C7BD9349638
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E1E2EC0AE;
-	Sun, 19 Oct 2025 16:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98482ECE9F;
+	Sun, 19 Oct 2025 16:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="clqctUPT"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="LTF6yo0y";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="IdtVmqoC"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0499824676A;
-	Sun, 19 Oct 2025 16:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB4F2ECE85;
+	Sun, 19 Oct 2025 16:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760891239; cv=none; b=P6HHZwdu3tyG8EDIU24V0rDNogqSLQ03TBrnDuIxuTe4lTcB1rR3Fr0SJkejcy0nV8NEq9lyna9HvyD8q1jU1UEXPRYqL2CYoBp0H6/a0/YL8We5yQPZfYccEX1LL3CDOl6y7kh36K/Kmt1hEUOQhyeVVpn6kJtfVU+5L218/g8=
+	t=1760891244; cv=none; b=m9Lt1ur7hsjYc/QWECJkWs5Gdurmh0laZm9+oTX6cxASIX8HGFjR4adBhz0WgPbGhYU0azNd7/sFpN3cMITiS6PiMr6JC6LnHqJ+bwpBEKrqf6OhLVhH7qb0QST7KSe4okebMwlS9l14j0Y/PGNtk3weUDSp+R2ejGEuu7uTsw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760891239; c=relaxed/simple;
-	bh=BJmOPFG38eK0SQjYH7HJARC0SJdnqD67ngX0T+67GTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DvY778phf88nqxXW7xTaJMp8QoeybImdXMa+mKoEylo1feS/B49/abi3d4hKXn6jg9r4rcpTJfSG2ZI2qJDHuV0Sl4hiX+jsW0R1V3WnHyeFHiOaaoxWrhovErcS5JbkrBstWw9//tR/LtAL4zysAnNabC04gVkBdqD2VDGrOSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=clqctUPT; arc=none smtp.client-ip=148.163.129.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id B5E5FC00063;
-	Sun, 19 Oct 2025 16:27:04 +0000 (UTC)
-Received: from [192.168.1.23] (unknown [98.97.32.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail3.candelatech.com (Postfix) with ESMTPSA id 9D2B513C2B0;
-	Sun, 19 Oct 2025 09:26:44 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 9D2B513C2B0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-	s=default; t=1760891222;
-	bh=BJmOPFG38eK0SQjYH7HJARC0SJdnqD67ngX0T+67GTA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=clqctUPTKzP1E+Q6/vsaq33wdwavDRqx0lN7mQQg3rVaeGoQ7ttwFl0FFv9KkQdYh
-	 F6oSDhZPdku7Wcrqr4ercqiQPlc15qFsoPOMMHl51T0U4WHKUBbI65JV8WF8tN/pAs
-	 VeT9Dv2x2qqBfNKV19u3z0j6PUgMXdDrl26MnGZc=
-Message-ID: <fa7befd5-b2c7-4277-ad57-a1577216ba83@candelatech.com>
-Date: Sun, 19 Oct 2025 09:26:41 -0700
+	s=arc-20240116; t=1760891244; c=relaxed/simple;
+	bh=BQ9IFJKbESKzjwKtQB3OgNBpaLL0lRHeebGjF1hqPEM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=N6fZAWLt957KwZF91TDxm+mFei5NEbuGIyMzGJ49S9e1qlokfpQ5+w0fCKuo186f9qflGoIUTe5HPeRBDyZQGeOt8BNsQD4OlnJarWQgCArvLVWi8jTPRwiwAXQwORAgcZu/KM/yy8aHOOQX77Uce1SUb8C2LkSxFBBRqgO+i8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=LTF6yo0y; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=IdtVmqoC; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1760891234; bh=w0QWjLgqUUCHSyCq5XlwrWc
+	zRcUMNVXdkhnMa3UOQ50=; b=LTF6yo0yn80JyuiLERwcVqAqsIY4D0KHmLCXnfDEdb33ri6otp
+	+y9yIF14F4T5PweTpUnF30Vf8dkFqFXWPDa+DgSvh0X62YQa5tGgEhdBQoN5OtAY02O3PpHT3DJ
+	gJ5cFXJbmN6ddPGGbMrpGrNX1DsEk1ymosPfy+nc1++y5xSHOgBl1ODpHGgckJTyPtu37ZCCSTx
+	QKKuZ2NZWcHLissdWMWtOumyreDPJRq0CpzHO1kOwFc0UA2P9LLEktplhMLMTl79qQnHHh70T0X
+	AeXZHAs8tAyNbnaKdZzJY/EIgXBHcv/zxoyQ6u3KLeuOgverK7sz3E/x7FNFuwjOVrg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1760891234; bh=w0QWjLgqUUCHSyCq5XlwrWc
+	zRcUMNVXdkhnMa3UOQ50=; b=IdtVmqoCo398ORp5qLy7n8M7MuHSmxdUTQyBAbBHZUN0RCWzs0
+	DDvO4lJ3K/jaRP/jJ3YlBqliuhe6NAN+S1Aw==;
+From: Nickolay Goppen <setotau@mainlining.org>
+Subject: [PATCH 0/2] arm64: dts: qcom: Add support for SDM660 CDSP and ADSP
+ FastRPC
+Date: Sun, 19 Oct 2025 19:27:05 +0300
+Message-Id: <20251019-qcom-sdm660-cdsp-adsp-dts-v1-0-9ab5f2865a6e@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921,
- mt7981 and mt7986
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, nbd@nbd.name, lorenzo@kernel.org,
- ryder.lee@mediatek.com, shayne.chen@mediatek.com, sean.wang@mediatek.com,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- howard-yh.hsu@mediatek.com, StanleyYP.Wang@mediatek.com, rosenp@gmail.com,
- luoxueqin@kylinos.cn, chad@monroe.io, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20251019155316.3537185-1-olek2@wp.pl>
-Content-Language: en-MW
-From: Ben Greear <greearb@candelatech.com>
-Organization: Candela Technologies
-In-Reply-To: <20251019155316.3537185-1-olek2@wp.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-MDID: 1760891226-AlOZrs4LaPdf
-X-PPE-STACK: {"stack":"us5"}
-X-MDID-O:
- us5;ut7;1760891226;AlOZrs4LaPdf;<greearb@candelatech.com>;d5c215dcae166280e85b20da571dd1ee
-X-PPE-TRUSTED: V=1;DIR=OUT;
+X-B4-Tracking: v=1; b=H4sIAFkR9WgC/2WNyQrCMBRFfyVkbSBTM/2KdJFRs+hgUotQ+u+mV
+ nDh5sK5vHfuBmssOVZowAZLXHPN09iAXAD0dzveIsqhMaSYdgQTjR5+GlANgxAY+VBnZI8IS0U
+ qWeeExIypCNv/XGLKr4/72p9c4uPZJpaz/C0Y8PWrf3+nbeiEEtISZVZ6mJ2tEbW7IS8GaJaYs
+ 44zggNPSTJMpfc8KUkkp4oHrqW0PsF+39/EGOOm7wAAAA==
+X-Change-ID: 20251019-qcom-sdm660-cdsp-adsp-dts-8fabb670338e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, Nickolay Goppen <setotau@mainlining.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760891233; l=985;
+ i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
+ bh=BQ9IFJKbESKzjwKtQB3OgNBpaLL0lRHeebGjF1hqPEM=;
+ b=cZCTb/Ux8XMQy/3l3CkoSZjY0xE2rcvYrNmHKcb7BS9PMMqMjpMIcPtl641wunLMx3DCutuHA
+ at3rk7TVfDrC8cjIruNYaYCHCcxd18a8X8cFXYWpijSBjBDqohjq9qS
+X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-On 10/19/25 08:51, Aleksander Jan Bajkowski wrote:
-> Supports IPv4 and IPv6 TCP + UDP
-> 
-> In various tests between MT7986 and Intel BE200, I observed a performance
-> boost ranging from 2 to 12%, with an average of 5.5%.
-> 
-> I did the tests on the MT7915, MT7981, MT7986, and MT7921 variants. The
-> MT7922, MT7925, and MT799x are untouched for now and still have
-> checksumming disabled.
+This series adds support for SDM660 CDSP remoteproc and also adds
+FastRPC support for ADSP.
 
-At least with  7996, tcp csum only worked on the first few vdevs
-created in our testing, so we had to add logic to disable that flag
-on subsequent vdevs.
+Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+---
+Nickolay Goppen (2):
+      arm64: dts: qcom: sdm630/660: Add CDSP-related nodes
+      arm64: dts: qcom: sdm630: Add FastRPC nodes to ADSP
 
-Have you tried creating a bunch of station and/or vap vdevs to see if
-all of them can still transmit TCP traffic?
+ arch/arm64/boot/dts/qcom/sdm630.dtsi |  40 ++++++++-
+ arch/arm64/boot/dts/qcom/sdm636.dtsi |  14 ++++
+ arch/arm64/boot/dts/qcom/sdm660.dtsi | 152 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 205 insertions(+), 1 deletion(-)
+---
+base-commit: 93f3bab4310d4ff73027cc4f87174284d4977acf
+change-id: 20251019-qcom-sdm660-cdsp-adsp-dts-8fabb670338e
+prerequisite-change-id: 20251018-qcom-sdm660-cdsp-59ad56867a18:v2
+prerequisite-patch-id: a8c9703aec1663b8226556ba1770bd6c5b4ef060
+prerequisite-patch-id: 5a49b179c69e045e8003f28e8ef0e6e003c0064a
+prerequisite-patch-id: dd158e1214a7e73ac0a8f1da9d3face61ad7d5bd
 
-Thanks,
-Ben
-
-
-> 
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> [rebased and resolved conflicts]
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
-> ---
->   drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c | 5 +++++
->   drivers/net/wireless/mediatek/mt76/mt7915/init.c     | 3 ++-
->   drivers/net/wireless/mediatek/mt76/mt792x_core.c     | 3 +++
->   3 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c b/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c
-> index 0db00efe88b0..e31b3e7e2038 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c
-> @@ -372,6 +372,9 @@ mt76_connac2_mac_write_txwi_8023(__le32 *txwi, struct sk_buff *skb,
->   		wmm = sta->wme;
->   	}
->   
-> +	val = FIELD_PREP(MT_TXD0_ETH_TYPE_OFFSET, 10);
-> +	txwi[0] |= cpu_to_le32(val);
-> +
->   	val = FIELD_PREP(MT_TXD1_HDR_FORMAT, MT_HDR_FORMAT_802_3) |
->   	      FIELD_PREP(MT_TXD1_TID, tid);
->   
-> @@ -391,6 +394,8 @@ mt76_connac2_mac_write_txwi_8023(__le32 *txwi, struct sk_buff *skb,
->   
->   	val = FIELD_PREP(MT_TXD7_TYPE, fc_type) |
->   	      FIELD_PREP(MT_TXD7_SUB_TYPE, fc_stype);
-> +	if (skb->ip_summed == CHECKSUM_PARTIAL)
-> +		val |= MT_TXD7_IP_SUM | MT_TXD7_UDP_TCP_SUM;
->   
->   	txwi[7] |= cpu_to_le32(val);
->   }
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-> index 5ea8b46e092e..a3bab240afb7 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-> @@ -359,7 +359,8 @@ mt7915_init_wiphy(struct mt7915_phy *phy)
->   	hw->queues = 4;
->   	hw->max_rx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_HE;
->   	hw->max_tx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_HE;
-> -	hw->netdev_features = NETIF_F_RXCSUM;
-> +	hw->netdev_features = NETIF_F_RXCSUM |
-> +			      NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
->   
->   	if (mtk_wed_device_active(&mdev->mmio.wed))
->   		hw->netdev_features |= NETIF_F_HW_TC;
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt792x_core.c b/drivers/net/wireless/mediatek/mt76/mt792x_core.c
-> index c0e56541a954..fe138d2e8e62 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt792x_core.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt792x_core.c
-> @@ -632,6 +632,9 @@ int mt792x_init_wiphy(struct ieee80211_hw *hw)
->   	}
->   	hw->netdev_features = NETIF_F_RXCSUM;
->   
-> +	if (is_mt7921(&dev->mt76))
-> +		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-> +
->   	hw->radiotap_timestamp.units_pos =
->   		IEEE80211_RADIOTAP_TIMESTAMP_UNIT_US;
->   
-
+Best regards,
 -- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+Nickolay Goppen <setotau@mainlining.org>
 
 
