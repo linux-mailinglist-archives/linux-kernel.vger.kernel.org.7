@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-859761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35350BEE7EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:55:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D4EBEE7E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 16:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AFC6D349DF5
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CF2189AB38
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 14:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A782EBB80;
-	Sun, 19 Oct 2025 14:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C7F2EBDEB;
+	Sun, 19 Oct 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="HvLCDDOx"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UhuGRoKI"
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DE72EB86A
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 14:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6DC2EB5C8;
+	Sun, 19 Oct 2025 14:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760885658; cv=none; b=jpzQ23kdUsCaPqrKrgIQCGgPgDHqUF44Yq0i3rDDnb3yZ8j4yF4MT17Q6rq8uMriCrFAPu6/7fxSFnhDqcUn+oQJc6AKeo8yWCsfxixks/CYvxP25H9AM7VQrgflecjWcbBr44qAEmugQiK/55Glj+FWQsC/8mv7DJYkH4ufWg4=
+	t=1760885644; cv=none; b=qBzJGRGLHI32bI5jaGPBnXVxc7CmOK0qAebO4BKnvjnBIUc3PEduKQ/sdH2GPa97BjHS2p5X6kO5OqtKTnUSEJX73/9BbGpdgAIqCXWw8OZeVkI8aj8n2KRYhgXD12/u3xG6hrWVjxByFRShuXvn/f7QpAdMBy4X3NgKTGD4qGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760885658; c=relaxed/simple;
-	bh=d8Pg8R6x1/+u9bA7hzs8YDo6dejzJbgbgCiliVrbRa8=;
+	s=arc-20240116; t=1760885644; c=relaxed/simple;
+	bh=Fcy3UiOvMV1v627YIH3VVJY+mYw0xwJqHjOMyS0Hb/0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jr6+QGi/0neCg3d0j3WkIJQt1BfeXAukEgVan9LBF+qjMggRH7YnoA9P0TBjxqZ2NwaKCuJTprp5lCfPm9ZENn/2+7WjHty6zkhP87lypwh+sn7qZJMExwdMcRaCX1wMvQHyAO8t9ySa8x+/jaIEad21JczLvJoi6he51Jk+wqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=HvLCDDOx; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1760885656;
- bh=qSqIvRJaVaOD2FEuoL8TgkWRa8SKjL48NnFIM4Gn36w=;
- b=HvLCDDOxfoI6KE1hVe4pL0dVSIURHh8GJWMW+DFTvdNyB50bsOOsvU4LpcSjrDMB87/2eQrbL
- C3H+YI/j0uWO07Qx0ak9YOY803EB9q1MMwuZQSOX2AhSHNX7wIdzHSllfv7dUToPYkxJROAlIjf
- 0n/wzp9XTVvNZ6OLmt4fp69u3yjNLhhYsgmgYygPtMOwspzmXmicaTk0bJ/G7m09L0xHNZsMCRm
- 0vbCzZB2rxYl53d73YaURF73t3+CNklEdMs8UXW632o9p5nkBB7uhe2AL68WlzRlqWOx5xuMG+h
- iEflwOaaU5w0O/R1RKFSi9TT7ZVI+injU0CwztfdP22Q==
-X-Forward-Email-ID: 68f4f9393ada90b94ba980e5
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.3.0
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <ff1765b0-ad78-4bdb-94fa-c58456358781@kwiboo.se>
-Date: Sun, 19 Oct 2025 16:44:03 +0200
+	 In-Reply-To:Content-Type; b=cIVDL7LDot3fCojWP8XIUOVLNrqRzG+gR8uPbJxF/OP75yShXQO59pC1VdsyoTh/8HBe86JaYsz8pRqHoEv7QFgdENG1gJiMGWKeN5NZeg9hqaKX9zcc3xJtMN9T2DKhJY8Q6wYu3YqqUbIRK/LghyXrKX+oOrNYlbQgZAlbTKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UhuGRoKI; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id AUebvZVGoUjXQAUebvcVLF; Sun, 19 Oct 2025 16:45:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1760885103;
+	bh=GdesLHGEaV1JBZuqmJbDS/jaBfHZjxT8ElBdzLC3Tqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=UhuGRoKIJrtlw0wUNoGko+gmYwvyO2Ue7rnSET3mQKJWF7PgHrnsQBQIm5ntnnAks
+	 Uubj6NYKVxBD8HHQvM8NEchfP4xsXSjehpzipA2S0JRY4AfXTZO6L2zTjTrQn/P6oC
+	 hWQpEJaDjzdnQ4pPZ90dzpXL79Ttiv+FA1vYtKdxnLD+whQBjsmhZ/Y2wjWc8uFphj
+	 zV/ce3i10/gDpU327tMMz9w/1m6FtQxiXTP0sdSSlqqR5RWvRCMoyNZUmVk4aeUVp/
+	 2ovcvr1cciV0tL0U4xhoqAx6+mfy6RzRH0MXo9tBYcequ07bul60gPvjXDca6K+/vI
+	 F7rB+ZwD8sIzA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 19 Oct 2025 16:45:03 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <26975dab-9631-4661-aaf4-afa213104a13@wanadoo.fr>
+Date: Sun, 19 Oct 2025 16:45:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,99 +57,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] phy: rockchip: inno-usb2: Add support for RK3528
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Jianwei Zheng <jianwei.zheng@rock-chips.com>
-References: <20250723122323.2344916-1-jonas@kwiboo.se>
- <20250723122323.2344916-6-jonas@kwiboo.se> <aJtip49r8R3-2XXi@vaman>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <aJtip49r8R3-2XXi@vaman>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/3] PCI: j721e: Propagate dev_err_probe return value
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20251014113234.44418-2-linux.amoon@gmail.com>
+ <a2cefc72-de44-4a23-92d2-44b58c8c13fe@web.de>
+ <CANAwSgTtaAtCxtF+DGS-Ay4O3_9JMwk-fJ27yoijhWWbF2URrg@mail.gmail.com>
+ <cf656a57-bb2f-447e-ac6c-0ab118606dc9@web.de>
+ <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <CANAwSgT0jSQ3pFR3MQo-ENziqrm=yn-rFBTdHegmknMeFd44OQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Vinod,
-
-On 8/12/2025 5:49 PM, Vinod Koul wrote:
-> On 23-07-25, 12:23, Jonas Karlman wrote:
->> From: Jianwei Zheng <jianwei.zheng@rock-chips.com>
+Le 19/10/2025 à 12:15, Anand Moon a écrit :
+> Hi Markus, Vignesh,
 > 
-> Please do not send encrypted emails over public mail lists
+> On Sat, 18 Oct 2025 at 16:12, Markus Elfring <Markus.Elfring@web.de> wrote:
+>>
+>>>> I propose to take another source code transformation approach better into account.
+>>>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/core.c#L5031-L5075
+>>>>
+>>>> Example:
+>>>> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/pci/controller/cadence/pci-j721e.c#L444-L636
+>>>>
+>>>>          ret = dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie), "Failed to init phy\n");
+>>>>          if (ret)
+>>>>                  goto err_get_sync;
+>>>>
+>>> No, the correct code ensures that dev_err_probe() is only called when
+>>> an actual error
+>>> has occurred, providing a clear and accurate log entry. …
+>>
+>> Where do you see undesirable technical differences?
 > 
->>
->> The RK3528 has a single USB2PHY with a otg and host port.
->>
->> Add support for the RK3528 variant of USB2PHY.
->>
->> PHY tuning for RK3528:
->>
->> - Turn off differential receiver in suspend mode to save power
->>   consumption.
->>
->> - Set HS eye-height to 400mV instead of default 450mV.
->>
->> - Choose the Tx fs/ls data as linestate from TX driver for otg port
->>   which uses dwc3 controller to improve fs/ls devices compatibility with
->>   long cables.
->>
->> This is based on vendor kernel linux-stan-6.1-rkr5 tag.
->>
->> Signed-off-by: Jianwei Zheng <jianwei.zheng@rock-chips.com>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> ---
->>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 74 +++++++++++++++++++
->>  1 file changed, 74 insertions(+)
->>
->> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
->> index cd1a02b990ef..b8950d9f9e97 100644
->> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
->> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
->> @@ -1507,6 +1507,28 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
->>  				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
->>  }
->>  
->> +static int rk3528_usb2phy_tuning(struct rockchip_usb2phy *rphy)
->> +{
->> +	int ret = 0;
+> The primary issue I wanted to confirm was the function execution order.
+> since cdns_pcie_init_phy within dev_err_probe function
 > 
-> Superfluous init
+> If other developers agree with the approach, I will modify this in a
+> separate patch
 
-I would think it make it much clearer to init to zero because we are
-bitwise OR return values from the following calls.
+This other approach is just broken.
+
+Using:
+	ret = dev_err_probe(dev, cdns_pcie_init_phy(dev, cdns_pcie), "Failed to 
+init phy\n");
+
+1) is hard to read and understand.
+
+2) would log an error message even if 0 is returned. This is just wrong.
+
+2 good reasons not to do such things.
+
+
+You should ignore people that are already ignored by most people on 
+these lists.
+
+CJ
 
 > 
->> +
->> +	/* Turn off otg port differential receiver in suspend mode */
->> +	ret |= regmap_write(rphy->phy_base, 0x30, BIT(18) | 0x0000);
->> +
->> +	/* Turn off host port differential receiver in suspend mode */
->> +	ret |= regmap_write(rphy->phy_base, 0x430, BIT(18) | 0x0000);
->> +
->> +	/* Set otg port HS eye height to 400mv (default is 450mv) */
->> +	ret |= regmap_write(rphy->phy_base, 0x30, GENMASK(22, 20) | 0x0000);
->> +
->> +	/* Set host port HS eye height to 400mv (default is 450mv) */
->> +	ret |= regmap_write(rphy->phy_base, 0x430, GENMASK(22, 20) | 0x0000);
->> +
->> +	/* Choose the Tx fs/ls data as linestate from TX driver for otg port */
->> +	ret |= regmap_write(rphy->phy_base, 0x94, GENMASK(22, 19) | 0x0018);
+> As Dan Carpenter pointed out - " Wait, no, this doesn't make sense.
+> It's just assigning ret to itself."
+
+Yes, Dan is right.
+
 > 
-> No error checking?
+> This patch seems irrelevant to me as the return value gets propagated
+> to the error path.
+> Sorry for the noise. Let's drop these changes.
+> 
+> Since I don't have this hardware for testing, I will verify it on
+> another available device.
+>>
+>> Regards,
+>> Markus
+> 
+> Thanks
+> -Anand
+> 
+> 
 
-Error checking is happening in the function calling this internal ops.
-
-Similar to the other tuning ops in this driver it does not matter
-exactly what fails, the use of |= is there to help simplify the function
-and for the caller to just error out if any of the write fails.
-
-I will shortly send a v2 without changing anything in this patch.
-
-Regards,
-Jonas
 
