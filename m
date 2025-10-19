@@ -1,168 +1,148 @@
-Return-Path: <linux-kernel+bounces-859820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C0BBEEAEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:43:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A23BEEAF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AA521893122
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F89018931CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1429121CC47;
-	Sun, 19 Oct 2025 17:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEA32144C9;
+	Sun, 19 Oct 2025 17:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0BPkeeK2"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JSKNgFr8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3771F0E32
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 17:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FB8CA6F;
+	Sun, 19 Oct 2025 17:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760895822; cv=none; b=Czsqy6oLQaghzi19xzbyQ9IHSDMwSg4Za659BugX24OwWpXc3XRGcFawQqaPZeJIeJcOM+fYPbzfFtkjzWZPYuLm4WmIUgON+S01eNVRV2CeGmg+JFZgwE5xnQWbhY1OXX8LlazTWaBUE+OqOzTT6DM5y9+Q/JMWfowjrvoD2bk=
+	t=1760895942; cv=none; b=fQpkmF0SaHJZjlFW6MaRri+2u8ODm6hwNi5JeQiFDjj4JFLBpQNOdPhcz1iJI6yvLsAr82DK/fWrp/eXd2FVQu/kyITntDJg4DhxPpYcf0WBLQg+9x8BbTXmhkKBGFCCQ6XcVNIUY6F0Et2mwZ1tErb0AEAECFqf9AtiE0cVicY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760895822; c=relaxed/simple;
-	bh=NBxTjOq1rphtkq9ZGwMMLSzy8hPiIAv5nUCpEuG+srQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uH/4N+FyCVhV/DCcWzs+hECk7P8fKHdeTpRFSPGZlPDVz1Ow3983wWMXSb8f+Huzt+VGDLx6xt3epgyo7olVr25ddVU8/sJFANwtqkdLmBQcv+tqeGQPuQ0kE/HgGkq11yO3deGGpDRMhUqZWtH1KiYIBfWFDUTLwcetR+JhLQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0BPkeeK2; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-87c1f3f4373so72154566d6.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760895820; x=1761500620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uC2oktoAuA/UwIup+5BKUv+Ff5r+vqavOtTCSaxD56c=;
-        b=0BPkeeK25oyp62dUj9ZKIbD/BlSl3HqyNZDikQPepW28DBYQSajV4qPAXztFpg2zrs
-         0xobVOOSzHdM8aUMsgInFSPboyg/mZEQe+WL1B47lLFrQfRwLtt2t8s58B0XtKNEAfIv
-         WsY5Ay/XPE8N5PNAwfpPHSiwa1g7pXnqlIX8lMVFfQgF9e1VYJIdH+zDCGA7c3IC0Zmj
-         YNKWtDpY1NMtwfEjTARf6lcJJdT/qEUItlBTXmOMxavFZuCNSecVwOwS2veiEijRLutI
-         3yTMx9JxSovcJTqsuXQ7Fc0BEIzRCfHn4Ucak1xVnGhAhPLLob0oimUz+u9/HA+4Tsox
-         10cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760895820; x=1761500620;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uC2oktoAuA/UwIup+5BKUv+Ff5r+vqavOtTCSaxD56c=;
-        b=gpog8omD6ftoFvPdKOnVS0AOdNBuHBLUsKglL8WwX1KfBV2IEv0zhSGwyZZU8ulfFP
-         qR4VLOI3sIPiIcLeyxcafHLwJuqL7+At3u6ey9zYd/nTs83GRhaOzuALmXEvu1O855vg
-         oYYL+8U18SofxpR8QiLaCJqRekUE8+e64DWeyaVGkOZfeFij56sq5gTZE0UI75gJ4w14
-         0YGscb8P/s6mBeQxP7UdjzKrAgQVgMOfjkG4LvLxfPKA2KVSXAPwIY61XJ2JuNMhlyuM
-         +vwFFrgo4foG5AAle8iEPcugrVRGvlYeSFAUuTj6907Chww0sOY1aYFZLf0Re0mLEsUy
-         So8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWnqx1MYeDk584xQEdedC9UQm9Mpv6J9+P3/9a659+zdwvsDASgzyBj6jZp10Qmi0lVYkJQGe5xN5niZrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOWWgU/nqQ/AVgjdkZzLhhv0ZSMt7C7rIwnWoxvR+rWiMkGVNU
-	BL7e9V8i+/HW26Xkw6SAb8pXboKjYAKzaiZQaIW/BJ/avKRBtoHJl2b2A+F6UjubogwcJhRDNPT
-	8v/acFRBkowh7EY1ePwZYa7TEhaVVi1eibMJJ2t8f
-X-Gm-Gg: ASbGncv5qwKYBwoqBtrx47rXUhLCQSrL4+GNYi5Y2eaNyNfLtJ/QCRI/FxCQVxgdrQ5
-	OWDsudVkSQMACaD3eJwSvVozrh+BUtiXTeG24R2reciZuZbqQ7BEZ5fcCOEMKmPEaM5gXTsH5P3
-	2d2BbMBSIHVEcGn9CbWvyOWOQ3e6ZYWKjhbpm5PPcXMo52rWuq/QKrg382E+v0KxQubqQG+3whK
-	icJFxBGXdBFYRs224vE6uYIQWhPLJjDrhZlW+uYYG+m8IeDzDJFwcQm5DQL
-X-Google-Smtp-Source: AGHT+IFsVI8ca5DhUITgYh4VP54SltgZVBPy9yV+UacuNN8tlTVmEdOFLjduDw/AeORei3lobDwst5nXoKGw8M1vKcQ=
-X-Received: by 2002:a05:622a:1482:b0:4e8:99f5:e331 with SMTP id
- d75a77b69052e-4e89d3891a8mr126498661cf.60.1760895819282; Sun, 19 Oct 2025
- 10:43:39 -0700 (PDT)
+	s=arc-20240116; t=1760895942; c=relaxed/simple;
+	bh=PT5edAvGs2FKCeBZ2dl7OCjjziNGJmQxLTxQAcMOLvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lu/Fjj0C18e/6epRWwXTCPW0e3f3n20ANn9yAloxisPUAXbFvr1PDgJScn/AZbB1uB5q8Q8tnf6wewraWppXEFqSfLeSTZW+nBySEyhcpE4TyxAGIkCT5TO85wTOK98z+9xPhBblN/hsGlfb4Q+Kj1LcXGLR7a0B6w1GzoG2sA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JSKNgFr8; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760895940; x=1792431940;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PT5edAvGs2FKCeBZ2dl7OCjjziNGJmQxLTxQAcMOLvs=;
+  b=JSKNgFr8ohKPknjgTQ9KPC/vgp66gFg/bLeRN4NAolf5s+eaKwOeqA6r
+   eF9ukp2RdMDsBaykjvJIYLaHBjamLDJNtLx6Q2IAEMvqQFUR6VmKVko3v
+   ITyR/T4uQjk25EEFL9vrsp4VKjopfK0eVJrXDM2bm+TvxL8r9gb/IAqrl
+   BviaZY4MHvcSs7markaEg1r7pBjRvIt7RqgzqC1P5xLUzZ35xH6qUKUNX
+   AUvAJ5C9uih1wtiIpHUhddLnpakwkabNT+b9mQAGq4CxqS9u03LtUXlLa
+   4h3nbaf7qGTU04LE4tyHEBGqC2sBLWsyAeSeVAeMM5UPtzF4R2vc3H+Hs
+   A==;
+X-CSE-ConnectionGUID: BVR8ciLEQFmzyoLRBxTTPw==
+X-CSE-MsgGUID: TXMa7HZRQvWTnrliZfuAOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="73705967"
+X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
+   d="scan'208";a="73705967"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 10:45:39 -0700
+X-CSE-ConnectionGUID: 0JZCniWVT4KAkMJjgpid2Q==
+X-CSE-MsgGUID: /WMS/oibQKCeZobeH9y1bg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
+   d="scan'208";a="183177175"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 19 Oct 2025 10:45:34 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAXSx-0009F7-0G;
+	Sun, 19 Oct 2025 17:45:32 +0000
+Date: Mon, 20 Oct 2025 01:45:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, nbd@nbd.name,
+	lorenzo@kernel.org, ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	howard-yh.hsu@mediatek.com, StanleyYP.Wang@mediatek.com,
+	rosenp@gmail.com, luoxueqin@kylinos.cn, chad@monroe.io,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921,
+ mt7981 and mt7986
+Message-ID: <202510200105.T000lujD-lkp@intel.com>
+References: <20251019155316.3537185-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251019170016.138561-1-peng.yu@alibaba-inc.com>
-In-Reply-To: <20251019170016.138561-1-peng.yu@alibaba-inc.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sun, 19 Oct 2025 10:43:28 -0700
-X-Gm-Features: AS18NWAmmbau-vvPnXqP2Xed52k2q_aefTZRH7y6JzClnIDf5qiToP7YQGMZXQ4
-Message-ID: <CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com>
-Subject: Re: [PATCH] net: set is_cwnd_limited when the small queue check fails
-To: Peng Yu <yupeng0921@gmail.com>
-Cc: ncardwell@google.com, kuniyu@google.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Peng Yu <peng.yu@alibaba-inc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251019155316.3537185-1-olek2@wp.pl>
 
-On Sun, Oct 19, 2025 at 10:00=E2=80=AFAM Peng Yu <yupeng0921@gmail.com> wro=
-te:
->
-> The limit of the small queue check is calculated from the pacing rate,
-> the pacing rate is calculated from the cwnd. If the cwnd is small,
-> the small queue check may fail.
-> When the samll queue check fails, the tcp layer will send less
-> packages, then the tcp_is_cwnd_limited would alreays return false,
-> then the cwnd would have no chance to get updated.
-> The cwnd has no chance to get updated, it keeps small, then the pacing
-> rate keeps small, and the limit of the small queue check keeps small,
-> then the small queue check would always fail.
-> It is a kind of dead lock, when a tcp flow comes into this situation,
-> it's throughput would be very small, obviously less then the correct
-> throughput it should have.
-> We set is_cwnd_limited to true when the small queue check fails, then
-> the cwnd would have a chance to get updated, then we can break this
-> deadlock.
->
-> Below ss output shows this issue:
->
-> skmem:(r0,rb131072,
-> t7712, <------------------------------ wmem_alloc =3D 7712
-> tb243712,f2128,w219056,o0,bl0,d0)
-> ts sack cubic wscale:7,10 rto:224 rtt:23.364/0.019 ato:40 mss:1448
-> pmtu:8500 rcvmss:536 advmss:8448
-> cwnd:28 <------------------------------ cwnd=3D28
-> bytes_sent:2166208 bytes_acked:2148832 bytes_received:37
-> segs_out:1497 segs_in:751 data_segs_out:1496 data_segs_in:1
-> send 13882554bps lastsnd:7 lastrcv:2992 lastack:7
-> pacing_rate 27764216bps <--------------------- pacing_rate=3D27764216bps
-> delivery_rate 5786688bps delivered:1485 busy:2991ms unacked:12
-> rcv_space:57088 rcv_ssthresh:57088 notsent:188240
-> minrtt:23.319 snd_wnd:57088
->
-> limit=3D(27764216 / 8) / 1024 =3D 3389 < 7712
-> So the samll queue check fails. When it happens, the throughput is
-> obviously less than the normal situation.
->
-> By setting the tcp_is_cwnd_limited to true when the small queue check
-> failed, we can avoid this issue, the cwnd could increase to a reasonalbe
-> size, in my test environment, it is about 4000. Then the small queue
-> check won't fail.
+Hi Aleksander,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on wireless-next/main]
+[also build test WARNING on wireless/main linus/master v6.18-rc1 next-20251017]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Aleksander-Jan-Bajkowski/wifi-mt76-add-tx-checksum-offload-for-mt7915-mt7921-mt7981-and-mt7986/20251019-235515
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+patch link:    https://lore.kernel.org/r/20251019155316.3537185-1-olek2%40wp.pl
+patch subject: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921, mt7981 and mt7986
+config: i386-buildonly-randconfig-003-20251019 (https://download.01.org/0day-ci/archive/20251020/202510200105.T000lujD-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251020/202510200105.T000lujD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510200105.T000lujD-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/skbuff.h:29,
+                    from drivers/net/wireless/mediatek/mt76/mt76.h:12,
+                    from drivers/net/wireless/mediatek/mt76/mt76_connac.h:7,
+                    from drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h:7,
+                    from drivers/net/wireless/mediatek/mt76/mt792x.h:10,
+                    from drivers/net/wireless/mediatek/mt76/mt792x_core.c:7:
+   drivers/net/wireless/mediatek/mt76/mt792x_core.c: In function 'mt792x_init_wiphy':
+>> include/linux/netdev_features.h:104:33: warning: statement with no effect [-Wunused-value]
+     104 | #define __NETIF_F_BIT(bit)      ((netdev_features_t)1 << (bit))
+         |                                 ^
+   include/linux/netdev_features.h:105:33: note: in expansion of macro '__NETIF_F_BIT'
+     105 | #define __NETIF_F(name)         __NETIF_F_BIT(NETIF_F_##name##_BIT)
+         |                                 ^~~~~~~~~~~~~
+   include/linux/netdev_features.h:119:33: note: in expansion of macro '__NETIF_F'
+     119 | #define NETIF_F_IP_CSUM         __NETIF_F(IP_CSUM)
+         |                                 ^~~~~~~~~
+   drivers/net/wireless/mediatek/mt76/mt792x_core.c:636:17: note: in expansion of macro 'NETIF_F_IP_CSUM'
+     636 |                 NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
+         |                 ^~~~~~~~~~~~~~~
 
 
->
-> Signed-off-by: Peng Yu <peng.yu@alibaba-inc.com>
-> ---
->  net/ipv4/tcp_output.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> index b94efb3050d2..8c70acf3a060 100644
-> --- a/net/ipv4/tcp_output.c
-> +++ b/net/ipv4/tcp_output.c
-> @@ -2985,8 +2985,10 @@ static bool tcp_write_xmit(struct sock *sk, unsign=
-ed int mss_now, int nonagle,
->                     unlikely(tso_fragment(sk, skb, limit, mss_now, gfp)))
->                         break;
->
-> -               if (tcp_small_queue_check(sk, skb, 0))
-> +               if (tcp_small_queue_check(sk, skb, 0)) {
-> +                       is_cwnd_limited =3D true;
->                         break;
-> +               }
->
->                 /* Argh, we hit an empty skb(), presumably a thread
->                  * is sleeping in sendmsg()/sk_stream_wait_memory().
-> --
-> 2.47.3
+vim +104 include/linux/netdev_features.h
 
-Sorry this makes no sense to me.  CWND_LIMITED should not be hijacked.
+a19f2a6df28e0c Michał Mirosław 2011-11-15  102  
+a19f2a6df28e0c Michał Mirosław 2011-11-15  103  /* copy'n'paste compression ;) */
+a19f2a6df28e0c Michał Mirosław 2011-11-15 @104  #define __NETIF_F_BIT(bit)	((netdev_features_t)1 << (bit))
+a19f2a6df28e0c Michał Mirosław 2011-11-15  105  #define __NETIF_F(name)		__NETIF_F_BIT(NETIF_F_##name##_BIT)
+a19f2a6df28e0c Michał Mirosław 2011-11-15  106  
 
-Something else is preventing your flows to get to nominal speed,
-because we have not seen anything like that.
-
-It is probably a driver issue or a receive side issue : Instead of
-trying to work around the issue, please root cause it.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
