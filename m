@@ -1,261 +1,147 @@
-Return-Path: <linux-kernel+bounces-859811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A38BEEA84
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:10:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEAA9BEEA99
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 19:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68F394E2682
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BB53E519E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Oct 2025 17:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB721FDE31;
-	Sun, 19 Oct 2025 17:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB7020C488;
+	Sun, 19 Oct 2025 17:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dZVAU+N/"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5rPwysQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715C718D658
-	for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 17:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC99190473;
+	Sun, 19 Oct 2025 17:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760893811; cv=none; b=Mnixh3N2eAB0s0EJgFLX7Z5ERtyyym6YlhoNiebm5hUdJ33C5r9ny8Wo79jSBRbyOn04YiI0LCUZsrP+1dfz7LnnCFo9RxnpZWcfyMCJEm/q59atInok1fOe0G40MNKQkeFqKHSMSwT+LOquJlIwKgTufUNTkgoYr5yjl3ksTEI=
+	t=1760893906; cv=none; b=fjw6L6G4AsYejGBucmIARuoaFJcvJx1oOPDf39p1+Y/XA8FHBcNaugSwKgrfseQf3cTLfFbnJkQQK4xgLCnrWNxRpYnZdISn9Pc3q65ldm0S7J7veFGWJMyjaeYgINFDN2E7c5x8mZgbCOvFPWiuD5m9QEyG4ExJHYyWy7ox3UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760893811; c=relaxed/simple;
-	bh=axv3IynF8jD/qtMrGTIUiuxEKdXGiWyUXpW8zuyjiTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YSJ0E6AAMwTHYjfTFa2NFdQRV+tJMrsimxTfAa/QsyorP/B3r3FiEz42gjjH5YffpYVkWut8iIZIutdfZDCEC+5KBmgMPaG4yMLJLqkNLS2i8HqMjB3nXUGCQCiEdkUXj4m5QFYgFnXc63PpDWLoHzKI2QiauifPil0h+3svqZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dZVAU+N/; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-290a3a4c7ecso38469565ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 10:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760893806; x=1761498606; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kw8cZwIOPrVIgejN5sHE4Bw2UxALtEM7IC+3mySrS9A=;
-        b=dZVAU+N/y2139Mo6xgei5j+/BrRC0oenaI3PdmMRalt5sPx1SoOZ73muAgjP2TvmK9
-         523ZDIsFArar9O/9G1Qr1HNFhAmKh2SsTuUaCh/AG75G9ajRfOTVCgwcylnrXf4+CBDN
-         qpF9OdZHmKezSFuQgqmDRyikpyHiAO3zdfor4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760893806; x=1761498606;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kw8cZwIOPrVIgejN5sHE4Bw2UxALtEM7IC+3mySrS9A=;
-        b=wa8qsEDlara3GBjtXf2b44R88E4aP92E7NUPk3+1y/kkD5nyKnFsBiZUd2HJz45nha
-         RQ/YbGNi6PJm1KN3LX1wFauDXk5AADuPoADPYjng72wX37m53OtLOhiH7lTfIkzohWJA
-         /UCm9JO+zwMU2qKXk9oD8xjHov4KLIbzjak1b8Z8INyFoVhqI7BO9YcvSFn9Nabk/iNF
-         wWQ6bsIzmE1b2Rnw5XpN6pbS0VoYs93Xs8ahdJ7TbOhtkVprK16aOjnzizhuA1C2s1XO
-         A6gtp5AgSLSLfLg1DNLCBOMB5TaAr6QakyH1aGAmEBstG5Pi+FO1xAOznIMXyByMBJpZ
-         F4HA==
-X-Gm-Message-State: AOJu0YweGSwCX8hygCjn9NPdfX9VLCKeHFh4wqaFpxfgSHvANV7/wmHG
-	B0fMn7CXC4YNmLqhw92TOh3mkaurU8KAEp+bewb2vrwVafIL1lYBRKj0eyU0Re8XqfpEcisfiE0
-	VyXQ=
-X-Gm-Gg: ASbGncuml5qkO2Hx/GlmGV6LelhtXRZzXhbmTXoLTvnoIE98+q3+qN5JkfeC3H0hqXb
-	oCFRPxQNVQT/r9ufGYducJSxGq8K3/fwWQ/b+wUS0KO8/GpoUGN39qwFVBZxv+T/ZfsL+2X6FyN
-	oRMrvEos65XzGyZqth4ZyPtoju3mGJZpclfp5BuVLeKIrYLycTqsgL3vrzg16+sLOKgdi8JRtBb
-	qwU0EbDKz1+Dp0dcQOtp5daliSNzHtyAMFnolav9t5de9odJ4d+YhKFbocvUesKqV14DgPMuBFY
-	11LEPJGGK9KNwj2eTfzEkivn6GNMaGYs+gkPqz3cLx3d59pGtw9kfwTdkpRZ9/OE6IHnMBdjTK7
-	ABzybEk+Dx2ApYxB75p/Ax+Cl+zjV0a3uTdr+qrBzGcAyp06ueJ8gjjBQJHOB/pflpc2LxStiej
-	GmlhfJrIqgNil0D9rxKwS+06TuvVVdhPWuokH06p7qm0NROtRwqNDSU3Z2Y7/PRyfs4Mc8b+6vA
-	V6sDzCN
-X-Google-Smtp-Source: AGHT+IGKb+CPS36m7qbjY80HNVBuhh0qqpwxjQVrHeJkI77/8o6qntbEGsx2SiZgeZCIKkbmEUms+w==
-X-Received: by 2002:a17:902:f706:b0:269:6e73:b90a with SMTP id d9443c01a7336-290c9ca6b11mr119133815ad.15.1760893805940;
-        Sun, 19 Oct 2025 10:10:05 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:28c6:96de:a138:88c0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2924721980bsm57079245ad.110.2025.10.19.10.10.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 10:10:04 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Chant <achant@google.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Francesco Valla <francesco@valla.it>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Jeff Xu <jeffxu@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [PATCH] init/main.c: Wrap long kernel cmdline when printing to logs
-Date: Sun, 19 Oct 2025 10:06:14 -0700
-Message-ID: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+	s=arc-20240116; t=1760893906; c=relaxed/simple;
+	bh=pGSeByPyjXU0xF/GT6nI9BVPEVJ+TrjfUe8CJ/Y5sO4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MC8sn4WJAMNx56B12E/PE69DklfvYGh6eNpzUFbOjN8Oy7qaw9gvF5PtwhMEm5b6TxZS/nekJvhL7MX37ZGsj9qRTgl5EPO3RWsZPmtHwYm3QsMFk5Ob1skrgxt27Fs5eFVHmWRg/bTnOdAl+3veTNDSM4PiTGcJ31b/1iWMax8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5rPwysQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282FCC4CEE7;
+	Sun, 19 Oct 2025 17:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760893905;
+	bh=pGSeByPyjXU0xF/GT6nI9BVPEVJ+TrjfUe8CJ/Y5sO4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h5rPwysQfQG1dM5SNU2O0ilf16LNEq3O5m+hOE+UZ0Jzn2OVfmwCcwLVIe0zZc94h
+	 XJbYhXvbLLqpY9d1otkGjlutVBoLOf1mj6AoIanXTirrDWfHI1qI9x83/56YNF6KkZ
+	 yzfVN5LV90itVII7jZ+tnrnee/8ZJZURdF/qIaKp5YOVniPJjQEzU9/j9c7pA/sG05
+	 ozqeYF5IY/lfhPta+FiDH7lxmiyCzSAVmurCK6/AmKfnusWIu4BUn+04UngPXldvOp
+	 zhIXUFHxIzHXqGUVbJHpRWq5FwPtzFzBNffRUWxZpEZIUg+pQvASZ1mTlKDvxR2Ayr
+	 OSZGpDI2S65BA==
+Message-ID: <13d1491a-2c5a-467d-bd55-01c0603a4b81@kernel.org>
+Date: Sun, 19 Oct 2025 19:11:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] arm64: dts: qcom: Add DisplayPort and QMP USB3DP
+ PHY for SM6150
+To: xiangxu.yin@oss.qualcomm.com, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, fange.zhang@oss.qualcomm.com,
+ yongxing.mou@oss.qualcomm.com, li.liu@oss.qualcomm.com
+References: <20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com>
+ <20251015-add-displayport-support-to-qcs615-devicetree-v4-2-aa2cb8470e9d@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251015-add-displayport-support-to-qcs615-devicetree-v4-2-aa2cb8470e9d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The kernel cmdline length is allowed to be longer than what printk can
-handle. When this happens the cmdline that's printed to the kernel
-ring buffer at bootup is cutoff and some kernel cmdline options are
-"hidden" from the logs. This undercuts the usefulness of the log
-message.
+On 15/10/2025 03:53, Xiangxu Yin via B4 Relay wrote:
+> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> 
+> Introduce DisplayPort controller node and associated QMP USB3-DP PHY
+> for SM6150 SoC. Add data-lanes property to the DP endpoint and update
+> clock assignments for proper DP integration.
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6150.dtsi | 113 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 111 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm6150.dtsi b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> index 6128d8c48f9c0807ac488ddac3b2377678e8f8c3..36a536cef99a095938f3e18a9b5e7825308ca426 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> @@ -17,6 +17,7 @@
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/power/qcom,rpmhpd.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> +#include <dt-bindings/phy/phy-qcom-qmp.h>
 
-Add wrapping to the printout. Allow wrapping to be set lower by a
-Kconfig knob "CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN". By default, the
-wrapping is set to 1021 characters, which is measured to be the
-current maximum that pr_notice() can handle. Anyone whose cmdline
-isn't being cut off today should see no difference in log output.
 
-Wrapping is based on spaces, ignoring quotes. All lines are prefixed
-with "Kernel command line: " and lines that are not the last line have
-a " \" suffix added to them. The prefix and suffix count towards the
-line length for wrapping purposes. The ideal length will be exceeded
-if no appropriate place to wrap is found.
+This is ordered, don't break it.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
 
- init/Kconfig | 10 +++++++
- init/main.c  | 83 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 92 insertions(+), 1 deletion(-)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index cab3ad28ca49..905b2ece4127 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1512,6 +1512,16 @@ config BOOT_CONFIG_EMBED_FILE
- 	  This bootconfig will be used if there is no initrd or no other
- 	  bootconfig in the initrd.
- 
-+config CMDLINE_LOG_WRAP_IDEAL_LEN
-+	int "Length to try to wrap the cmdline when logged at boot"
-+	default 1021
-+	range 40 1021
-+	help
-+	  At boot time, the kernel command line is logged to the console.
-+	  It will attempt to be wrapped at this many characters. If there
-+	  are more than this many non-space characters in a row, log lines
-+	  may exceed this ideal maximum length.
-+
- config INITRAMFS_PRESERVE_MTIME
- 	bool "Preserve cpio archive mtimes in initramfs"
- 	depends on BLK_DEV_INITRD
-diff --git a/init/main.c b/init/main.c
-index 07a3116811c5..0adc1575a2cb 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -906,6 +906,87 @@ static void __init early_numa_node_init(void)
- #endif
- }
- 
-+#define KERNEL_CMDLINE_PREFIX		"Kernel command line: "
-+#define KERNEL_CMDLINE_PREFIX_LEN	(sizeof(KERNEL_CMDLINE_PREFIX) - 1)
-+#define KERNEL_CMDLINE_CONTINUATION	" \\"
-+#define KERNEL_CMDLINE_CONTINUATION_LEN	(sizeof(KERNEL_CMDLINE_CONTINUATION) - 1)
-+
-+#define IDEAL_CMDLINE_LEN		(CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN - \
-+					 KERNEL_CMDLINE_PREFIX_LEN)
-+#define IDEAL_CMDLINE_SPLIT_LEN		(IDEAL_CMDLINE_LEN - KERNEL_CMDLINE_CONTINUATION_LEN)
-+
-+/**
-+ * print_kernel_cmdline() - Print the kernel cmdline with wrapping.
-+ * @cmdline: The cmdline to print.
-+ *
-+ * Print the kernel command line, trying to wrap based on the Kconfig knob
-+ * CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN.
-+ *
-+ * Wrapping is based on spaces, ignoring quotes. All lines are prefixed
-+ * with "Kernel command line: " and lines that are not the last line have
-+ * a " \" suffix added to them. The prefix and suffix count towards the
-+ * line length for wrapping purposes. The ideal length will be exceeded
-+ * if no appropriate place to wrap is found.
-+ *
-+ * Example output if CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN is 40:
-+ *   Kernel command line: loglevel=7 \
-+ *   Kernel command line: init=/sbin/init \
-+ *   Kernel command line: root=PARTUUID=8c3efc1a-768b-6642-8d0c-89eb782f19f0/PARTNROFF=1 \
-+ *   Kernel command line: rootwait ro \
-+ *   Kernel command line: my_quoted_arg="The \
-+ *   Kernel command line: quick brown fox \
-+ *   Kernel command line: jumps over the \
-+ *   Kernel command line: lazy dog."
-+ */
-+static void print_kernel_cmdline(const char *cmdline)
-+{
-+	size_t len = strlen(cmdline);
-+
-+	while (len > IDEAL_CMDLINE_LEN) {
-+		const char *first_space;
-+		const char *prev_cutoff;
-+		const char *cutoff;
-+		int to_print;
-+		size_t used;
-+
-+		/* Find the last ' ' that wouldn't make the line too long */
-+		prev_cutoff = NULL;
-+		cutoff = cmdline;
-+		while (true) {
-+			cutoff = strchr(cutoff + 1, ' ');
-+			if (!cutoff || cutoff - cmdline > IDEAL_CMDLINE_SPLIT_LEN)
-+				break;
-+			prev_cutoff = cutoff;
-+		}
-+		if (prev_cutoff)
-+			cutoff = prev_cutoff;
-+		else if (!cutoff)
-+			break;
-+
-+		/* Find the beginning and end of the string of spaces */
-+		first_space = cutoff;
-+		while (first_space > cmdline && first_space[-1] == ' ')
-+			first_space--;
-+		to_print = first_space - cmdline;
-+		while (*cutoff == ' ')
-+			cutoff++;
-+		used = cutoff - cmdline;
-+
-+		/* If the whole string is used, break and do the final printout */
-+		if (len == used)
-+			break;
-+
-+		if (to_print)
-+			pr_notice("%s%.*s%s\n", KERNEL_CMDLINE_PREFIX,
-+				  to_print, cmdline, KERNEL_CMDLINE_CONTINUATION);
-+
-+		len -= used;
-+		cmdline += used;
-+	}
-+	if (len)
-+		pr_notice("%s%s\n", KERNEL_CMDLINE_PREFIX, cmdline);
-+}
-+
- asmlinkage __visible __init __no_sanitize_address __noreturn __no_stack_protector
- void start_kernel(void)
- {
-@@ -942,7 +1023,7 @@ void start_kernel(void)
- 	early_numa_node_init();
- 	boot_cpu_hotplug_init();
- 
--	pr_notice("Kernel command line: %s\n", saved_command_line);
-+	print_kernel_cmdline(saved_command_line);
- 	/* parameters may set static keys */
- 	parse_early_param();
- 	after_dashes = parse_args("Booting kernel",
--- 
-2.51.0.858.gf9c4a03a3a-goog
-
+Best regards,
+Krzysztof
 
