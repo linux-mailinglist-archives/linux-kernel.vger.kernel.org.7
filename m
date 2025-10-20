@@ -1,152 +1,94 @@
-Return-Path: <linux-kernel+bounces-860990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E139BF1873
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:26:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E18BF1879
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E3604F49BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:26:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C2564F3319
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC434313E37;
-	Mon, 20 Oct 2025 13:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="eDj4jx0l"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6FF246798
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8D73168E8;
+	Mon, 20 Oct 2025 13:26:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394B12C21E4;
+	Mon, 20 Oct 2025 13:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760966758; cv=none; b=R+o1vxr+U8U3JUdNTRJVXHsTz0FnuYjX3wCXZ1daDSpn7NavmzsqY/0N7+xJHaa1BoDnVNEr+b8Dw8C9VYHtA3merlhsW39TFThLJdQ0nPkURTV6iEMp+t94NFBdAX4hTG0QVA+CTTkLi6SMimWIAVb6E8w04JNHaiaXXkAluc4=
+	t=1760966784; cv=none; b=STglET3r/45/qg6cXSRhLlLPmjWRR6cDJlCUFWGwv7D5hggB7gy4JWqt/6521Z9VIacWwP9wZrIdlHK2hYGEoqCm1IzXp1XLguq6SNvbpZQRX4RZah3vvYUxzxadS/14CN1VbbUkktP35yeSo7gvZt3/Psj5r6diR5fCk69SqKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760966758; c=relaxed/simple;
-	bh=afxofr23i2UunU9Mu8zAdRO6/oYE0i1SJgKY92RYS3k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M0WyxP4LPQYuVgj8qswSI71tKnqhM/gAt5FLdo7OzVtUb/Z6QmgE2/droYIkj3NWk29FZ2NcwcfFO/WVdNtsMydg/8tcWKac4jBEKDCLDfM6NeGZl+BEtV9WnR2NjhVcxWZewTh3DjrZJbcLK5GR/fvopip4O2Q7Q7gmXFc3PXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=eDj4jx0l; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id BE7B5689384;
-	Mon, 20 Oct 2025 15:25:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1760966754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7j+ezeSL9kyg5i4/UFTinMbqW8dftUcX92kqRCzKLE=;
-	b=eDj4jx0l7zX8+gtIUz/rlf/FJd24ll/fIYwnqV9P3x+roA0EcZx88TOUT5rsqV2HrT0T+t
-	XxAxL957pH9dkqc5LV4eP0lW0YwniOiXgAotpCL1rJXNrEuJXT9aLCdtMYcfWlJSyWbCnJ
-	jo9EKdjbTglFQbwqV4K+BuZQFDPxxXm/DaFqw2XH1rTxpM46p71YU8vVvbf6mjm3zwS8zD
-	L2/sNPCI4CXWWWCypeJ/ZlRn9iM8QI4qWNGH1bTBtuAzQidjr2gNkbsvVRmRxUr/6gB5uZ
-	BR2IXKDngI4ZGxPT5GPy7uTX4Ek8JDF1mvnRvagalj+lEzzwFTf1SRdIYgeCrQ==
-Message-ID: <6bf0198d6e67a67e9f72fd27de86d65dc926d041.camel@svanheule.net>
-Subject: Re: [RFC PATCH 1/2] gpio: regmap: Force writes for aliased data regs
-From: Sander Vanheule <sander@svanheule.net>
-To: Michael Walle <mwalle@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>,  Bartosz Golaszewski	 <brgl@bgdev.pl>,
- linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Mon, 20 Oct 2025 15:25:53 +0200
-In-Reply-To: <DDN63XH3EQ2Q.1BKBHJTQQASHO@kernel.org>
-References: <20251020115636.55417-1-sander@svanheule.net>
-	 <20251020115636.55417-2-sander@svanheule.net>
-	 <DDN63XH3EQ2Q.1BKBHJTQQASHO@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760966784; c=relaxed/simple;
+	bh=9pkFy8AP2oanktC2W2BpgOATkWktZC12uTFM201uEPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gUNHlIJRnmLUjkMxEc74ayi1ETQw40jbKR5n8trcebRM/BIt6y5btTzcrRtqjNl+zIbsj8XlwyXeWlgjX3GQOpLI3SruA5q2+buOOwdQoxNCof5YcyjVWYaQPBtqx9s8bdb5L7AKoENKk+SAaQWf9RpVm8xfbRv8R3QGpJgHx6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA6321063;
+	Mon, 20 Oct 2025 06:26:14 -0700 (PDT)
+Received: from [10.1.31.45] (e127648.arm.com [10.1.31.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F74C3F66E;
+	Mon, 20 Oct 2025 06:26:19 -0700 (PDT)
+Message-ID: <67335454-6657-42d2-bf98-d1df1b58baa6@arm.com>
+Date: Mon, 20 Oct 2025 14:26:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/14] selftests/sched_ext: Add test for sched_ext
+ dl_server
+To: Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-14-arighi@nvidia.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20251017093214.70029-14-arighi@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Michael,
+On 10/17/25 10:26, Andrea Righi wrote:
+> Add a selftest to validate the correct behavior of the deadline server
+> for the ext_sched_class.
+> 
+> [ Joel: Replaced occurences of CFS in the test with EXT. ]
+> 
+> Co-developed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
+>  tools/testing/selftests/sched_ext/Makefile    |   1 +
+>  .../selftests/sched_ext/rt_stall.bpf.c        |  23 ++
+>  tools/testing/selftests/sched_ext/rt_stall.c  | 214 ++++++++++++++++++
+>  3 files changed, 238 insertions(+)
+>  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
+>  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
 
-On Mon, 2025-10-20 at 15:02 +0200, Michael Walle wrote:
-> Hi Sander,
->=20
-> On Mon Oct 20, 2025 at 1:56 PM CEST, Sander Vanheule wrote:
-> > GPIO chips often have data input and output fields aliased to the same
-> > offset. Since gpio-regmap performs a value update before the direction
-> > update (to prevent glitches), a pin currently configured as input may
-> > cause regmap_update_bits() to not perform a write.
-> >=20
-> > This may cause unexpected line states when the current input state
-> > equals the requested output state:
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OUT=C2=A0=C2=A0 IN=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 OUT
-> > =C2=A0=C2=A0=C2=A0 DIR ''''''\...|.../''''''
-> >=20
-> > =C2=A0=C2=A0=C2=A0 pin ....../'''|'''\......
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 (1) (2) (3)
-> >=20
-> > =C2=A0=C2=A0=C2=A0 1. Line was configurad as out-low, but is reconfigur=
-ed to input.
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 External logic results in high val=
-ue.
-> > =C2=A0=C2=A0=C2=A0 2. Set output value high. regmap_update_bits() sees =
-the value is
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 already high and discards the regi=
-ster write.
-> > =C2=A0=C2=A0=C2=A0 3. Line is switched to output, maintaining the stale=
- output config
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (low) instead of the requested con=
-fig (high).
-> >=20
-> > By switching to regmap_write_bits(), a write of the requested output
-> > value can be forced, irrespective of the read state. Do this only for
-> > aliased registers, so the more efficient regmap_update_bits() can still
-> > be used for distinct registers.
->=20
-> Have you looked at the .volatile_reg callback of the regmap api?
-> You might use the same heuristics, i.e. .reg_dat_base =3D=3D .reg_set_bas=
-e
-> to implement that callback. That way you'd just have to
-> (unconditionally) set that callback in gpio_regmap_register() and
-> regmap should take care of the rest.
 
-Maybe I'm missing something here, but I'm not sure what difference that wou=
-ld
-make. .volatile_reg is part of the regmap config, so when gpio_regmap_regis=
-ter()
-is called, the regmap has already been created. We can't change the
-.volatile_reg callback (and we shouldn't, it's up to the user to define it)=
-.
+Does this pass consistently for you?
+For a loop of 1000 runs I'm getting total runtime numbers for the EXT task of:
 
-FWIW, I did test this with a regmap config that marks the aliased data regi=
-sters
-as volatile. The issue isn't that an invalid cache is being read. The probl=
-em is
-that writes are being optimized away when they shouldn't:
+   0.000 -    0.261 |  (7)
+   0.261 -    0.522 | ###### (86)
+   0.522 -    4.437 |  (0)
+   4.437 -    4.698 |  (1)
+   4.698 -    4.959 | ################### (257)
+   4.959 -    5.220 | ################################################## (649)
 
-   1. Read register from hardware (volatile) or cache (non-volatile).
-   2. Update bits in mask to requested value
-   3. Write updated value to hardware if:
-         A. This is a forced write (i.e. regmap_write_bits), or
-         B. The updated value differs from the original.
-
-Marking the register as volatile doesn't change the behavior, only the sour=
-ce of
-the initial value _regmap_update_bits() uses. Step 3B is the problematic on=
-e
-when using regmap_update_bits(). Per the diagram above, the comparison may
-happen against an input value differing from the (invisible) output state, =
-which
-would hide the state change.
-
-Best,
-Sander
+I'll try to see what's going wrong here...
 
