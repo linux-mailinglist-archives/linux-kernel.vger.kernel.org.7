@@ -1,90 +1,129 @@
-Return-Path: <linux-kernel+bounces-860853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE30BF1266
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:26:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFF1BF1287
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9BE34F45FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:26:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07D594F3E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E434F3126DF;
-	Mon, 20 Oct 2025 12:26:17 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4414831282E;
+	Mon, 20 Oct 2025 12:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KQhiungt"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7D430F53E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDF22F549E;
+	Mon, 20 Oct 2025 12:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760963172; cv=none; b=cRVo0aDtf1DXkuelKY3zxgyg2/w/Ci7/N+cZuGjcf1ZdR0g7ePf/Culrjyeq8m3Nk3zG7fhSOO7mM3VNxd2lzMXQEl2VMTqFQXsPHxLjr0GSMwd2Ra1FJhYmu9EttsYpndp8Ol6stjkr3aIiSdVWRH3PxkRMKi1kJqD9QFpWEDY=
+	t=1760963237; cv=none; b=e2v19sLf0CvcZBlyp3WGLMvZluvk1hqpfhO29w6LNbsulC1kbsoXKSgkESo33uDY3z50PSnWCRmEShImgDMfIafV2pZYBMfYjE0nDY2RoHpuRCEKU6ZBnv9HLe0W7q68e38zAdVxctODL7eUcusRcluOsn3LEE/BLHy9iVyoi8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760963172; c=relaxed/simple;
-	bh=phGJj3RgceRPqvLEhmuHYt6Xs/IlhcLpo7DLHPfSHTU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iz5vMOAM6lwn7VJlitsO/nuxZhzXEDnTgJrUnKFbpPIiobQ+z/4Bc39kNTQctPvQ3i2xma+8p+Y2Eae+dFk/62+Bwk52CxapCaRs7liFspp9z1T+ePy31sCptfgYDcxh/Mq36HHc4aAQuRhl4F8JrY43lp8CTB54Dk4pAYzUPG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430da49fcbbso14313415ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:26:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760963163; x=1761567963;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RPwyJ6zNa+Ilffcb2jxcjrBpiDHQo/NJyrIQpPWyVc=;
-        b=ake0JuD13NSE7NL5NcvpLv0LkZsOV/eroaGytHdOd8wKPic1H2FP327MRYMyrClC0H
-         E92PM+rBW5W4EP9q4jS7iXukAfsPbuNjEP+u7D+vfocjyYHrBiDikDsPXhr40q7ZhT7F
-         gMIsllSBEMS+kzUoH2/l4Fqp0SmAKio1JM0NMv7lb7B0NPLDe8nnBpqp8WggvYdXUi7+
-         cU3sxia/wsOKsN6SiyWprnjiSL6SVyfaH9jHj7bLzhRV77EdCCdzIJ5JdXXtekFHHhXy
-         5wV8ZvvQY4VIOpHeY0MkZEEhfdYpVO1Zzj6xqykQaIrIJianaE9h3oqKD11pkP/gkdCj
-         LJwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl3jfF9nO/ILzXLjxBA2tSG91WiRgvXDl4wRlZuUqlU71f2Q9GZSsFD28H26Piq4/VrJ0tvGJiGBa0G/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwedqsSenj6dQ9+MLs+WKoRLZTe1isF555V4dc1Qavo0TnnuUc8
-	TYevtIhpRAAezzCipwikUJDe8TC0HvaqUoIfNpLFqK4F46rxooes+ZDT6/JdFRQVKaHaOnsWQfP
-	x/kccOq066bG+nxZ4T7vaR6HQ2prUsShnM83vO3xrBsz1o83ugtPbDhDkOTY=
-X-Google-Smtp-Source: AGHT+IFhXiAIcAqfy99ebruXdCEa/SBzSACo6L2+82Ibn7dHTxDMg6NCkkB444vB6/ZJc5vtm3ClNG5w24iLSEnx/iS4Vl5BUBSb
+	s=arc-20240116; t=1760963237; c=relaxed/simple;
+	bh=FWqTuU31olvHn7Eaizpk8jtM+MU3rAxvnzWUJUzSqAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcbasST5a9TcTg4zWz0dqOhXY2NWoOqso+zeIA7wta9RCSy/8+gRntvQ/lEMjSI+2BQahxSt5vCUQ4XOU6JrpS0sRQ9ol2wS0sJWpPR2+DWmH/wgmXAM5PpE+37pyjr0mrtlUyJBFAKXpgvtbWk03HMMXzSjwcwEV7FLgfkzsP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KQhiungt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jdaQM4uR5JLsKGA0oS0VASYRTZKdaGisbnRnH43EfLY=; b=KQhiungt0DOFTC/2vEdmUu5RdM
+	IjizyZW3KhQexecpWhn1JKycVRVYWQTJ9G7l/7owVKfDlpqNGVtDnwK8xwsjX6I64YK5ejanAY0FB
+	zzX4HHOKjNYa4wCLEeTShJPyzXTrVdkNr6T+/TruAVmGzKfuVYgSNuwpcWQwRtB1xfAiScls8jaTF
+	CtGh0RsnHpRzgHMaS7buG481FDfyI7wa7CD/qzHH4+SgPejuNG/LF4EmwQHr8caZKTi5KEcUFoY9W
+	z+5GpLZZYb6wF0dThq4Fmcc6GulKZn6HurCZW1AoO7vNphT4pMFJzXHY8iCTyrAiXmSBWSKpPvYGt
+	H76pYSOw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vAoyc-0000000DPQg-3mdN;
+	Mon, 20 Oct 2025 12:27:02 +0000
+Date: Mon, 20 Oct 2025 05:27:02 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/9] PCI/P2PDMA: Separate the mmap() support from the
+ core logic
+Message-ID: <aPYqliGwJTcZznSX@infradead.org>
+References: <cover.1760368250.git.leon@kernel.org>
+ <1044f7aa09836d63de964d4eb6e646b3071c1fdb.1760368250.git.leon@kernel.org>
+ <aPHibioUFZV8Wnd1@infradead.org>
+ <20251017115320.GF3901471@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c22:b0:430:adcd:37df with SMTP id
- e9e14a558f8ab-430c52b5b37mr199573665ab.18.1760963163149; Mon, 20 Oct 2025
- 05:26:03 -0700 (PDT)
-Date: Mon, 20 Oct 2025 05:26:03 -0700
-In-Reply-To: <20251020112553.2345296-1-wangliang74@huawei.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f62a5b.050a0220.91a22.0447.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
-From: syzbot <syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com, wangliang74@huawei.com, 
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017115320.GF3901471@nvidia.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hello,
+On Fri, Oct 17, 2025 at 08:53:20AM -0300, Jason Gunthorpe wrote:
+> On Thu, Oct 16, 2025 at 11:30:06PM -0700, Christoph Hellwig wrote:
+> > On Mon, Oct 13, 2025 at 06:26:03PM +0300, Leon Romanovsky wrote:
+> > > The DMA API now has a new flow, and has gained phys_addr_t support, so
+> > > it no longer needs struct pages to perform P2P mapping.
+> > 
+> > That's news to me.  All the pci_p2pdma_map_state machinery is still
+> > based on pgmaps and thus pages.
+> 
+> We had this discussion already three months ago:
+> 
+> https://lore.kernel.org/all/20250729131502.GJ36037@nvidia.com/
+> 
+> These couple patches make the core pci_p2pdma_map_state machinery work
+> on struct p2pdma_provider, and pgmap is just one way to get a
+> p2pdma_provider *
+> 
+> The struct page paths through pgmap go page->pgmap->mem to get
+> p2pdma_provider.
+> 
+> The non-struct page paths just have a p2pdma_provider * without a
+> pgmap. In this series VFIO uses
+> 
+> +	*provider = pcim_p2pdma_provider(pdev, bar);
+> 
+> To get the provider for a specific BAR.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+And what protects that life time?  I've not seen anyone actually
+building the proper lifetime management.  And if someone did the patches
+need to clearly point to that.
 
-Reported-by: syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com
-Tested-by: syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com
+> I think I've answered this three times now - for DMABUF the DMABUF
+> invalidation scheme is used to control the lifetime and no DMA mapping
+> outlives the provider, and the provider doesn't outlive the driver.
 
-Tested on:
+How?
 
-commit:         ffff5c8f net: phy: realtek: fix rtl8221b-vm-cg name
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=11573c58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=999eb23467f83f9bf9bf
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15159734580000
+> Obviously you cannot use the new p2provider mechanism without some
+> kind of protection against use after hot unplug, but it doesn't have
+> to be struct page based.
 
-Note: testing is done by a robot and is best-effort only.
+And how does this interact with everyone else expecting pgmap based
+lifetime management.
+
 
