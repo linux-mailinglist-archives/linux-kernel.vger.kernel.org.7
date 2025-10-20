@@ -1,132 +1,193 @@
-Return-Path: <linux-kernel+bounces-860516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCCDBF04DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02D8BF04E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5C8F189B855
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594FF189B8BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CD723C8A0;
-	Mon, 20 Oct 2025 09:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AD42ECE95;
+	Mon, 20 Oct 2025 09:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DU44KOEC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KORLSnZG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F4A18FC86;
-	Mon, 20 Oct 2025 09:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF0C239E79;
+	Mon, 20 Oct 2025 09:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953761; cv=none; b=Zg+PDJG3QWC1sXVuhri7Sp6SA3pKGIHvlNF6NPJfLsZUnu/WRv4yl7hPQTCsWrWyJNpJk4M8j6Tu+M+Vg1VpOCdUdbYqrcQoSZtJM136RhYYkYCIY9qrWdp9tFq/pOWUsZ6syQ1xcxMnBtbE/Tez8HUDwX7C7WLXSovptVN9yjY=
+	t=1760953774; cv=none; b=oxG6kg/JXktLee5tiAghqA55e8cUDMY6akR3Wc5cnQjks38N52VyQtzLEP0savNS4yfmyAWZTdIE6f0WmX8BILKiJm6PVEpzSrWuyTt6DPDHqN+4oHVRgBY7w2tZDOrjKihb9D7iSj0qVH0QwxuMWKLlqF/nZRpN0C7RHOrk4f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953761; c=relaxed/simple;
-	bh=rY/ExjFftFDDfWSv0SQkHYyd2IdhRXA45VozZtzHka8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=XWfUNJYTjuDNKnm1MTxTg/LtNx8MXIPeNov8hfK6o96+MDwHDbsJNmG/OfHwJY94u7FVJqHo8PJfWIxb2XuPEy68l5wNNR21QkyuJVCLYeSOwggVTNBykIMJ1jd9tKoAj2j3aLEqAK5DziST6XbKQhDOqrz01QDSPi2IVB3R1qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DU44KOEC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5965C4CEF9;
-	Mon, 20 Oct 2025 09:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760953761;
-	bh=rY/ExjFftFDDfWSv0SQkHYyd2IdhRXA45VozZtzHka8=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=DU44KOECbzAOPXTVRKloPNpamKj2IcG+d8xgIRA7p9CmGuvwxZn0Fh7TL/GZzzXJu
-	 Th3fY5jK6X4FieCg08u2Wt+lxXGziU6zv8I7jTjMULBMah/tva/x9CbRIdK/JEJ5Yj
-	 RXNnaJkJqNcusgROd75MGXwnww8dnGHyyVU2VnnDTAGUVOAtAExO6Pr9aWRmpNcfuq
-	 SBY1DXoxEAim0yVOeGpVyKMIOFXvisIKQLji4w+ekw0PnsLpslLYmohiXv4Z2VdaaO
-	 CCovoBEYx6+HKx190GsgWkjmW7jBKSvL0/qWWUdpLCDeU0ZJivIG49Twu2wfhDOpmQ
-	 7JUOs0J3HqOng==
+	s=arc-20240116; t=1760953774; c=relaxed/simple;
+	bh=IFMa8J4BmSP1xDkcLMdkDieSTWmOeb/WK7h22yGsHts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOOiva6SpTVTLFed5tTajOkZFTbZP/u+4FYAVPUXpwvnV9VZhk3yrJN22c34DNQ2PVUD9WVw+s6r1KUSha2VFJnPmFr1LekDRey/RxAF+Rs0X+vJTsdnehaXJl9QLnApooFNQXPkXEH4oS0gPXGR8X/QgnvFNbaqQBNC/ZeZoW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KORLSnZG; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760953772; x=1792489772;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IFMa8J4BmSP1xDkcLMdkDieSTWmOeb/WK7h22yGsHts=;
+  b=KORLSnZGIHs/aUjBMUVjZI6mMYdQ6MqnT2i/JYRF8gfRqITtpYCYztp4
+   h4MoN8BU/TMMRMU7GfoMa3Y9JNwF62tAPN9BlxxGAW0ynDvzhyjn/HdQv
+   +8ErzMTxXfhL9zWi6y7FXjupaT8E03NOFYC+yMQ0kv6E0oib/UKyTF+/H
+   BfSR0FcEy9hb3O8mGkVJCPVphU6PalH9LNydkvLiKMj5qhAAX4ZTe9mfQ
+   fshDiqlUCmN9wOgxqpEu24g/tUxH2fpRgXZV9uE2hlKlwfGBnnnCoBGDS
+   CTPwChY0cYjjqOXVqp2aqI15za5n/0CvCp3uPmYmzmy4Pu+YQO5iASPgt
+   g==;
+X-CSE-ConnectionGUID: Vr6vVxNnTF2CMIZGdrvjHg==
+X-CSE-MsgGUID: oCb6J91jQKuiWrAJHYWGQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="80506113"
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="80506113"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 02:49:32 -0700
+X-CSE-ConnectionGUID: EWWHbbtLR2+5nMBBpCh4PQ==
+X-CSE-MsgGUID: UML7sHo4Qk2dcuXbG7eECQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="188581319"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.112])
+  by fmviesa004.fm.intel.com with SMTP; 20 Oct 2025 02:49:28 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 20 Oct 2025 12:49:27 +0300
+Date: Mon, 20 Oct 2025 12:49:27 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+	Jack Pham <jack.pham@oss.qualcomm.com>,
+	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 2/3] usb: typec: ps883x: Rework ps883x_set()
+Message-ID: <aPYFpzD6sklAvywa@kuha.fi.intel.com>
+References: <20251014-topic-ps883x_usb4-v1-0-e6adb1a4296e@oss.qualcomm.com>
+ <20251014-topic-ps883x_usb4-v1-2-e6adb1a4296e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Oct 2025 11:49:17 +0200
-Message-Id: <DDN20C4Z22X3.2ML01WB1HRDRI@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <mmaurer@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-References: <20251003222729.322059-1-dakr@kernel.org>
- <20251003222729.322059-4-dakr@kernel.org> <aPI9tNoh0I3KGDjl@google.com>
- <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
- <DDKOLD1897SY.84W93E6L8ITR@kernel.org> <aPSzE7DpA7DxTHmm@google.com>
- <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org> <aPXu0FWUrbxyemPq@google.com>
- <DDN1TL0WE895.1R5Z8AR975ZJH@kernel.org>
- <CAH5fLgjw4cZ3Y3Z60v8Wtp1EsR3AjyopJBE-UzZH5H3qkFrWmQ@mail.gmail.com>
-In-Reply-To: <CAH5fLgjw4cZ3Y3Z60v8Wtp1EsR3AjyopJBE-UzZH5H3qkFrWmQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-topic-ps883x_usb4-v1-2-e6adb1a4296e@oss.qualcomm.com>
 
-On Mon Oct 20, 2025 at 11:42 AM CEST, Alice Ryhl wrote:
-> On Mon, Oct 20, 2025 at 11:40=E2=80=AFAM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
->>
->> On Mon Oct 20, 2025 at 10:12 AM CEST, Alice Ryhl wrote:
->> > On Sun, Oct 19, 2025 at 02:01:03PM +0200, Danilo Krummrich wrote:
->> >> On Sun Oct 19, 2025 at 11:44 AM CEST, Alice Ryhl wrote:
->> >> > On Fri, Oct 17, 2025 at 04:53:09PM +0200, Danilo Krummrich wrote:
->> >> >> On Fri Oct 17, 2025 at 4:37 PM CEST, Danilo Krummrich wrote:
->> >> >> > The reason I went with a trait is because that's consistent with=
-in the file.
->> >> >> >
->> >> >> > Otherwise, I don't mind one or the other. If we always want to u=
-se a struct, I'm
->> >> >> > fine with that. :)
->> >> >>
->> >> >> Actually, there's another reason I forgot about since I sent the s=
-eries. :)
->> >> >>
->> >> >> We need it because we derive it from blanket implementations:
->> >> >>
->> >> >>   impl<T: BinaryWriter + Sync> BinaryReadFile<T> for T
->> >> >>   impl<T: BinaryReader + Sync> BinaryWriteFile<T> for T
->> >> >>   impl<T: BinaryWriter + BinaryReader + Sync> BinaryReadWriteFile<=
-T> for T
->> >> >
->> >> > You can still use a struct:
->> >> >
->> >> > struct BinaryWriterVtable<T: BinaryWriter + Sync>;
->> >> >
->> >> > impl<T: BinaryWriter + Sync> BinaryWriterVtable<T> {
->> >> >     const VTABLE: bindings::foo =3D ...;
->> >> > }
->> >>
->> >> Yeah, but do we get something for adding yet another type in this cas=
-e?
->> >>
->> >> Another point to consider is if we want a more generic fops abstracti=
-on type.
->> >>
->> >> In any case, I'd like to add this as good first issue for the whole f=
-ile to be
->> >> changed accordingly.
->> >
->> > Yes, keep it as-is for consistency with the rest of the file, even if
->> > the file is inconsistent with the rest of `kernel`. Please go ahead an=
-d
->> > file a good-first-issue for this.
->>
->> Before doing so, can you please answer the question above? While I'm all=
- for
->> consistency, in this specific case it seems we'd need another indirectio=
-n for
->> that. And I'm not convinced that's an improvement.
->
-> The choice is between adding a new type or a new trait. There's no
-> intrinsic advantage to choosing either one, but the rest of `kernel`
-> chose "new type" over "new trait", so it makes sense to be consistent.
+On Tue, Oct 14, 2025 at 06:06:46PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> In preparation to extend it with new alt/USB modes, rework the code a
+> bit by changing the flow into a pair of switch statements.
+> 
+> Reviewed-by: Jack Pham <jack.pham@oss.qualcomm.com>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-My hesitation came from the assumption that we'd need another type (additio=
-nal
-to the existing trait). But we can indeed replace it, so that's fine.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  drivers/usb/typec/mux/ps883x.c | 71 ++++++++++++++++++++++--------------------
+>  1 file changed, 37 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
+> index 68f172df7be3..72f1e737ca4b 100644
+> --- a/drivers/usb/typec/mux/ps883x.c
+> +++ b/drivers/usb/typec/mux/ps883x.c
+> @@ -99,44 +99,47 @@ static int ps883x_set(struct ps883x_retimer *retimer, struct typec_retimer_state
+>  	int cfg1 = 0x00;
+>  	int cfg2 = 0x00;
+>  
+> -	if (retimer->orientation == TYPEC_ORIENTATION_NONE ||
+> -	    state->mode == TYPEC_STATE_SAFE) {
+> -		return ps883x_configure(retimer, cfg0, cfg1, cfg2);
+> -	}
+> -
+> -	if (state->alt && state->alt->svid != USB_TYPEC_DP_SID)
+> -		return -EINVAL;
+> -
+>  	if (retimer->orientation == TYPEC_ORIENTATION_REVERSE)
+>  		cfg0 |= CONN_STATUS_0_ORIENTATION_REVERSED;
+>  
+> -	switch (state->mode) {
+> -	case TYPEC_STATE_USB:
+> -		cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+> -		break;
+> +	if (state->alt) {
+> +		switch (state->alt->svid) {
+> +		case USB_TYPEC_DP_SID:
+> +			cfg1 |= CONN_STATUS_1_DP_CONNECTED |
+> +				CONN_STATUS_1_DP_HPD_LEVEL;
+>  
+> -	case TYPEC_DP_STATE_C:
+> -		cfg1 = CONN_STATUS_1_DP_CONNECTED |
+> -		       CONN_STATUS_1_DP_SINK_REQUESTED |
+> -		       CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D |
+> -		       CONN_STATUS_1_DP_HPD_LEVEL;
+> -		break;
+> -
+> -	case TYPEC_DP_STATE_D:
+> -		cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+> -		cfg1 = CONN_STATUS_1_DP_CONNECTED |
+> -		       CONN_STATUS_1_DP_SINK_REQUESTED |
+> -		       CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D |
+> -		       CONN_STATUS_1_DP_HPD_LEVEL;
+> -		break;
+> -
+> -	case TYPEC_DP_STATE_E:
+> -		cfg1 = CONN_STATUS_1_DP_CONNECTED |
+> -		       CONN_STATUS_1_DP_HPD_LEVEL;
+> -		break;
+> -
+> -	default:
+> -		return -EOPNOTSUPP;
+> +			switch (state->mode)  {
+> +			case TYPEC_DP_STATE_C:
+> +				cfg1 |= CONN_STATUS_1_DP_SINK_REQUESTED |
+> +					CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D;
+> +				fallthrough;
+> +			case TYPEC_DP_STATE_D:
+> +				cfg1 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+> +				break;
+> +			default: /* MODE_E */
+> +				break;
+> +			}
+> +			break;
+> +		default:
+> +			dev_err(&retimer->client->dev, "Got unsupported SID: 0x%x\n",
+> +				state->alt->svid);
+> +			return -EOPNOTSUPP;
+> +		}
+> +	} else {
+> +		switch (state->mode) {
+> +		case TYPEC_STATE_SAFE:
+> +		/* USB2 pins don't even go through this chip */
+> +		case TYPEC_MODE_USB2:
+> +			break;
+> +		case TYPEC_STATE_USB:
+> +		case TYPEC_MODE_USB3:
+> +			cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+> +			break;
+> +		default:
+> +			dev_err(&retimer->client->dev, "Got unsupported mode: %lu\n",
+> +				state->mode);
+> +			return -EOPNOTSUPP;
+> +		}
+>  	}
+>  
+>  	return ps883x_configure(retimer, cfg0, cfg1, cfg2);
+> 
+> -- 
+> 2.51.0
+
+-- 
+heikki
 
