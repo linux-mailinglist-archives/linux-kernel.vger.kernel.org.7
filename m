@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-860066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58716BEF3AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78E4BEF3B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125D53ADC0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F63D1893F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1260B1A76DE;
-	Mon, 20 Oct 2025 04:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B232BE7D7;
+	Mon, 20 Oct 2025 04:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="GbzV8td/"
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIOghvpT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348598460;
-	Mon, 20 Oct 2025 04:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3F629D270;
+	Mon, 20 Oct 2025 04:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760933752; cv=none; b=pAHLmNtIFcfvxsOMyKH9YXDNvZTwrhvNBHG/FdzwHLy7DRAqhuQKp68L3ogaQbShJUMOSlsi5dKxoxKYgBnPFQbhQ7fX9EtbzbSFV+WEivhAcitvyZGEktiDwxoYFJPe2NIWZkFpFLkr+9nP5+EpscO4uCfgeayt/0bv/3M4VDw=
+	t=1760933813; cv=none; b=YpCZsl4HH+TK+8lPlrEGQjJmQHutq8I8Sd4kSLuWH89CFeIrMFCbV3IQlCKNi/6QzPZNdKqvSjrWX/wMKD1MP7xZcN1byaVYTpo8y9nTnqh38fOQ2ZYGf5bdLWZ9oeDSrXjcQrc6SsdbPZynPaY862z35NiELu08qV4CPiwzCf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760933752; c=relaxed/simple;
-	bh=JtO8PeCa2PKlgR0i89nAa+GKUcEDAU/+N45DOg5MU/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cFO+EnFTrP84Yu9Q3ZJLT/TMFi5fWcm378dtuE6j/aw0/GZ06arypWgwkzNKDsn9f/NIzUe5Ne2MRmGphgRTBMcP4mRcPFwZbth/yToD4nbfg+zxiadQv6KiFK74CCgHuk09+8O7IhJi6+nkPKLMuKj/LIr6CmbWlKnZ7qGAylw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=GbzV8td/; arc=none smtp.client-ip=113.46.200.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=4bztEUw24D7GJwcXXrpnWAsggCfD+kMyHqNEIvLAwyI=;
-	b=GbzV8td/lb81gfw2C64wmVNB3qfpNKyPqwdi8uCBsvm6F/Ua4jDhDqTTgFl3aCyFCsIYBgCAT
-	+4rjNeDZnmgSPMKzD7R49u2xcvjl8N70gkatsBh1ZIdPGdJu8g9VTIClkS4su3tBsr1yILxmWNz
-	QrV1gS7kUNCGzFNvUdpg6+M=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4cqhsx4KkJz1K97v;
-	Mon, 20 Oct 2025 12:15:17 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 270FD1A016C;
-	Mon, 20 Oct 2025 12:15:40 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 20 Oct 2025 12:15:39 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
- 2025 12:15:39 +0800
-Message-ID: <ceb9f28b-c935-476b-bd67-a5a9da9989f6@huawei.com>
-Date: Mon, 20 Oct 2025 12:15:38 +0800
+	s=arc-20240116; t=1760933813; c=relaxed/simple;
+	bh=VSw1Tt3KHFlv77P9gugt1YJuYopNoKHPw/Gf/Hm1sm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVY0+lcH0mZjzOZFzuMeQqHNkDT5cN6gzIYkRSlFVV6DwnuM1L/omWsRQU2HMwrWRovJJX4VVVYsExlXk2y6M0qfPUBYZAoyzKjrzwRTfHIwtM+L/JK0cUdoQh9EGDB3cfT50iRI+hpIRcSOjDi1nGQ7x3pdweyRt/S1ys5dF1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIOghvpT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DACC4CEF9;
+	Mon, 20 Oct 2025 04:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760933813;
+	bh=VSw1Tt3KHFlv77P9gugt1YJuYopNoKHPw/Gf/Hm1sm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vIOghvpTo35l5zKJsO9PxB0p542CN92M/uNgRWQDN0qoT9dHdxfHRUf0iNtK0+a/t
+	 boZ8E2/w5PjmXV5bXeWNvnkQhwHqiiNmuBcjr1Ltbny/hATCmNqFujXqeO8O9pc3Vh
+	 uVuhoMhKCrzrvgpTJZIKx1haZs6+x52sEdREChSGdHofPAOmyC+uR49E28XqwZOPoG
+	 hKG72hk9C+V2UcetgV74MAze79wnyPLsa2PtpC5dPNq6mB9L8PVCKP9z5HdFjlvD0f
+	 Kdl43iQ2Z/uZBhj6UclDmSOxFlEf+8IPZwpnWkvJjzGdxnTsmOUtVf5mRvMlp0LJT6
+	 5SS8FjhdrvOtw==
+Date: Mon, 20 Oct 2025 13:16:46 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: hupu <hupu.gm@gmail.com>
+Cc: acme@kernel.org, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, irogers@google.com,
+	jolsa@kernel.org, justinstitt@google.com, leo.yan@arm.com,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mark.rutland@arm.com, mingo@redhat.com, morbo@google.com,
+	nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
+	peterz@infradead.org
+Subject: Re: [PATCH] perf build: Support passing extra Clang options via
+ EXTRA_BPF_FLAGS
+Message-ID: <aPW3rilb8DtFDIMC@google.com>
+References: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
+ <20251020024049.6877-1-hupu.gm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] mailbox: pcc: Initialize SHMEM before binding the
- channel with the client
-To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Adam Young <admiyo@os.amperecomputing.com>, Robbie King
-	<robbiek@xsightlabs.com>, Jassi Brar <jassisinghbrar@gmail.com>, "Cristian
- Marussi" <cristian.marussi@arm.com>
-References: <20251016-pcc_mb_updates-v1-0-0fba69616f69@arm.com>
- <20251016-pcc_mb_updates-v1-5-0fba69616f69@arm.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20251016-pcc_mb_updates-v1-5-0fba69616f69@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251020024049.6877-1-hupu.gm@gmail.com>
 
+On Mon, Oct 20, 2025 at 10:40:49AM +0800, hupu wrote:
+> When cross-compiling perf with BPF enabled, Clang is invoked during the
+> build. Some cross-compilation environments require additional compiler
+> options, such as `--sysroot` or custom include paths.
+> 
+> This patch introduces a new Make variable, `EXTRA_BPF_FLAGS`. During BPF
+> skeleton builds, it appends user-provided options to `CLANG_OPTIONS`,
+> allowing extra Clang flags to be set without modifying Makefile.perf
+> directly.
+> 
+> Example usage:
+>     EXTRA_BPF_FLAGS="--sysroot=$SYSROOT"
+>     make perf ARCH="$ARCH" EXTRA_BPF_FLAGS="$EXTRA_BPF_FLAGS"
 
-在 2025/10/17 3:08, Sudeep Holla 写道:
-> The PCC channel's shared memory region must be set up before the
-> mailbox controller binds the channel with the client, as the binding
-> process may trigger client operations like startup() that may rely on
-> SHMEM being initialized.
->
-> Reorder the setup sequence to ensure the shared memory is ready before
-> binding. Initialize and map the PCC shared memory (SHMEM) prior to
-> calling mbox_bind_client() so that clients never observe an uninitialized
-> or NULL SHMEM during bind-time callbacks or early use in startup().
->
-> This makes the PCC mailbox channel bring-up order consistent and
-> eliminates a race between SHMEM setup and client binding.
+Why not just:
 
-I don't think this race exists. The above reason is enough.
+  make perf ARCH="arm64" EXTRA_BPF_FLAGS="--sysroot=..."
 
-This patch should be for patch 6/6, right?
+> 
+> Change history:
+>   v2:
+>     - Rename EXTRA_CLANG_FLAGS to EXTRA_BPF_FLAGS
+>     - Update commit message
+>   v1:
+>     - Introduce EXTRA_CLANG_FLAGS to allow passing extra Clang options
+> 
+> Signed-off-by: hupu <hupu.gm@gmail.com>
 
->
-> This will be needed in channel startup to clear/acknowledge any pending
-> interrupts before enabling them.
->
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: lihuisong@huawei.com
+Leo, are you ok with this?
+
 > ---
->   drivers/mailbox/pcc.c | 18 ++++++++++--------
->   1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 33bd2d05704b..2829ec51b47f 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -378,18 +378,20 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+>  tools/perf/Makefile.perf | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index 47c906b807ef..f1f2efdbab8c 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -1249,6 +1249,11 @@ else
+>  	$(Q)cp "$(VMLINUX_H)" $@
+>  endif
+>  
+> +# Allow users to specify additional Clang options (e.g. --sysroot)
+> +# when cross-compiling BPF skeletons, enabling more flexible
+> +# build configurations.
 
->
+Can you please move this comment or add new one at the top of the file
+along with EXTRA_CFLAGS?
+
+Thanks,
+Namhyung
+
+> +CLANG_OPTIONS += $(EXTRA_BPF_FLAGS)
+> +
+>  $(SKEL_TMP_OUT)/%.bpf.o: $(OUTPUT)PERF-VERSION-FILE util/bpf_skel/perf_version.h | $(SKEL_TMP_OUT)
+>  $(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vmlinux.h
+>  	$(QUIET_CLANG)$(CLANG) -g -O2 -fno-stack-protector --target=bpf \
+> -- 
+> 2.43.0
+> 
 
