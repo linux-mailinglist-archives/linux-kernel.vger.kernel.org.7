@@ -1,89 +1,178 @@
-Return-Path: <linux-kernel+bounces-860657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66E5BF0A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A34BF0A3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C18B188DAF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:42:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B7F1882520
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C112ECE92;
-	Mon, 20 Oct 2025 10:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D163A2F7AA6;
+	Mon, 20 Oct 2025 10:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zl4Jb5px"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTCqGzXr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A97F2F6173;
-	Mon, 20 Oct 2025 10:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6B31F5437;
+	Mon, 20 Oct 2025 10:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956923; cv=none; b=M8C5pWFcGXmLOcn7o5uBks2JNGH8S8Lmdyer2Fm7Z1bzfSFlwqsF9mHl4oxWls55BbHlh0QX30b0M1/dZ0hozp9ihb87VAc1o74bx42E9EPVNG48xuW+MoBmVolZftwIZS/NzfZGgu+3GgictnBanZkP+KWotcttaspCke0c7ac=
+	t=1760957081; cv=none; b=lltfcdkqcHG0tFfjVEcSK2D3dvlPykm0tAcBXs8G/dGZmOzvQrQiUmlDFWmoNKsIMH30frMyw9e6KypiMIwxuSLi4nrj0AXwJwV5H5czSnFPElmf4pwIFhwNpSLaUdrHDtB+eT6xWae2DFPlVBToF5h8oIz2xsfUkc3tip0pTVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956923; c=relaxed/simple;
-	bh=y88yYtIPcaKLSXHBMpyAJOyLtM4yqPgxQ5m4nmmLOt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rv8SqM6itEy14a8axpVphZWb5am93YINzw2Mvnu/FnZByfJfSDQWfv6HFEJWLVukXXVspSvnepLbuhj0iLhbvfCDH7i9PAbDlAb9FNF+FGV7MpR0OUTTz2q2DLqHo3/u27Ca3tD0iHdCWw4c0CWxsvyMRwX53e12VKfF3X2OUBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zl4Jb5px; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF49C116B1;
-	Mon, 20 Oct 2025 10:42:02 +0000 (UTC)
+	s=arc-20240116; t=1760957081; c=relaxed/simple;
+	bh=F4Dp7ZQIagEZfQkEK+NkPAeOo1rKX2a9BXZpkTkzXrw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LlyEQO2fq4jyqk5EWjYkhhWaN4T9uV6fo1/b7kTYA+malQgNqYDLTstQUFMpcRB2nR/jHeX7yLFYI50v/4ZqhuzaK2Hle9i/NhsJbHgaxlWeDExVIs3Y+efp1Cs+z51zvM0+0Z63FhpvCLgh0ff42jKng2RwoLs/zjlZKt2AH7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTCqGzXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B50BCC4CEF9;
+	Mon, 20 Oct 2025 10:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760956923;
-	bh=y88yYtIPcaKLSXHBMpyAJOyLtM4yqPgxQ5m4nmmLOt8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zl4Jb5pxnPEcz+uK0jeCu2YANwi9b1R3aLdth2hh2VBk5w310sxGKnJV6I/KVz/gm
-	 JGM2jZ0GYDpQNaGfvoFVKKg29WL/gVsIGjHQyyD3dM01n1cJ0QApF+wOaIEw8zYN1B
-	 vNNChZ2ndEQC3PegGl9+yAV50B+W9TYzU38legl9hbpashEOVFJ/sJE/C2D6KMmThc
-	 psrQEfoqHw+Fz3tJbUs2eSN3PHEbMHk+PRh5f2B2lrF5+yQyp8jNhr9zec3C7ufZOg
-	 AeNBPcDLUITnlrn7TZdbfpBKGi9I1iAxGJ8zFmUnuBxPWm4bJov/iEdJRZY4ZIS0xE
-	 bH7itmnJ4ewAA==
-Date: Mon, 20 Oct 2025 12:42:00 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: display: msm: Document the Glymur
- Mobile Display SubSystem
-Message-ID: <20251020-swinging-herring-of-coffee-adfdea@kuoka>
-References: <20251014-glymur-display-v2-0-ff935e2f88c5@linaro.org>
- <20251014-glymur-display-v2-1-ff935e2f88c5@linaro.org>
+	s=k20201202; t=1760957080;
+	bh=F4Dp7ZQIagEZfQkEK+NkPAeOo1rKX2a9BXZpkTkzXrw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RTCqGzXrb5mTsz3/Zn76S8LARLm9j6Pg/fZkrU34o9O2onyjXZnrSKqJx/mWr2TL6
+	 NE6q1q2dqWH4yJ/r5rpP70fmac6CdlJUr+CtrtGNYgQ37YROh0hPthK98+dmdEOYfs
+	 y59tOsZsJ7AXpr5MkumOQN2ofAUHZx/X/t7ZK/XVxrPWejYJCkpE4qnnmcQ/NZi8aM
+	 9FfthxwSbaVrxal4GK6HL5WJuS62WYnkOmEbPd1/7kB/EhypdhHRybsAclTUgMlhg9
+	 QyW465poC92pV9OEep/1bZys6B/OnXElD1hrbJ12JBtupvGnJxOXsWYrZf9xGtagHa
+	 UFtR4Ay7fvJEQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vAnNW-0000000FSrX-16MA;
+	Mon, 20 Oct 2025 10:44:38 +0000
+Date: Mon, 20 Oct 2025 11:44:37 +0100
+Message-ID: <86qzuxx36y.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Mark\
+ Rutland" <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J.\
+ Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"Saravana\
+ Kannan" <saravanak@google.com>,
+	Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau
+	<j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark
+	<james.clark@linaro.org>
+Subject: Re: [PATCH v3 04/26] platform: Add firmware-agnostic irq and affinity retrieval interface
+In-Reply-To: <20251009180351.00000d3d@huawei.com>
+References: <20250922082833.2038905-1-maz@kernel.org>
+	<20250922082833.2038905-5-maz@kernel.org>
+	<20251009180351.00000d3d@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251014-glymur-display-v2-1-ff935e2f88c5@linaro.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Oct 14, 2025 at 03:38:26PM +0300, Abel Vesa wrote:
-> Add MDSS/MDP display subsystem for Qualcomm Glymur SoC, which is
-> is 2 minor version increase compared to SM8750.
+On Thu, 09 Oct 2025 18:03:51 +0100,
+Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+> 
+> On Mon, 22 Sep 2025 09:28:11 +0100
+> Marc Zyngier <maz@kernel.org> wrote:
+> 
+> > Expand platform_get_irq_optional() to also return an affinity if
+> > available, renaming it to platform_get_irq_affinity() in the
+> > process.
+> > 
+> > platform_get_irq_optional() is preserved with its current semantics
+> > by calling into the new helper with a NULL affinity pointer.
+> > 
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> 
+> Maybe a breadcrumb of a comment for those of us who can't be bothered
+> to figure out why this needs the ifndef CONFIG_SPARC?
 
-This suggests that at least some of the compatibles listed in the
-binding would be compatible with SM8750. None of them are, so I find the
-message confusing.
+The main issue is that SPARC, despite using OpenFirmware, does not use
+the OF infrastructure (which is basically DT only). This means that
+SPARC has its own firmware interface and parses interrupts its own
+way, storing them as archdata in the device. Sad state of things,
+unfortunately.
+
+> Otherwise a question on whether it's worth spinning a fwnode.h handler
+> to hide away the fwnode type in get_irq_affinity.
+> I think not given the complexity already there for the platform device
+> irq stuff, but thought I'd mention it.
+
+I don't think it'd be worth the hassle at this stage. The platform
+code is already a weird mix of DT and ACPI, without any clear
+delineation.
+
+If we wanted to do something useful, we'd split that into generic code
+on one side (the actual Linux platform device code), and the firmware
+specific backend. The main problem is to find a common abstraction,
+and ISTR that people found that rather hard, hence the current state.
 
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  .../bindings/display/msm/qcom,glymur-mdss.yaml     | 264 +++++++++++++++++++++
->  1 file changed, 264 insertions(+)
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Best regards,
-Krzysztof
+Thanks for that.
 
+> > ---
+> >  drivers/base/platform.c         | 60 +++++++++++++++++++++++++++------
+> >  include/linux/platform_device.h |  2 ++
+> >  2 files changed, 52 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > index 09450349cf323..3a058f63ef0d3 100644
+> > --- a/drivers/base/platform.c
+> > +++ b/drivers/base/platform.c
+> > @@ -150,25 +150,37 @@ devm_platform_ioremap_resource_byname(struct platform_device *pdev,
+> >  EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
+> >  #endif /* CONFIG_HAS_IOMEM */
+> >  
+> > +static const struct cpumask *get_irq_affinity(struct platform_device *dev,
+> > +					      unsigned int num)
+> > +{
+> > +	const struct cpumask *mask = NULL;
+> > +#ifndef CONFIG_SPARC
+> > +	struct fwnode_handle *fwnode = dev_fwnode(&dev->dev);
+> > +
+> > +	if (is_of_node(fwnode))
+> > +		mask = of_irq_get_affinity(to_of_node(fwnode), num);
+> > +	else if (is_acpi_device_node(fwnode))
+> > +		mask = acpi_irq_get_affinity(ACPI_HANDLE_FWNODE(fwnode), num);
+> 
+> Not sure how useful it will be more generally, but maybe use fwnode.h and
+> appropriate callback rather than opencoding here?
+> 
+> Mind you the extra handling in existing platform_get_irq_optional()
+> for corner cases doesn't really fit with that model.
+
+Indeed, and I find that fwnode.h is currently completely
+FW-independent.  I'd rather keep it that way and not expose these
+shenanigans outside of the support code *unless* we have a good reason
+to do so.
+
+Cheers,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
