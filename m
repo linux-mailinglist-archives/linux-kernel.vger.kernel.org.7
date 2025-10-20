@@ -1,128 +1,167 @@
-Return-Path: <linux-kernel+bounces-860097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA388BEF4FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:50:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238C9BEF501
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C5E3E0A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A0F3E1272
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277602C0278;
-	Mon, 20 Oct 2025 04:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1F62C026A;
+	Mon, 20 Oct 2025 04:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiEoW+mR"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOsBGZT+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82A5287253
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6DA29A326
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760935807; cv=none; b=jnC4Q5NOkcpdEtgZC/OV2PavEgeBJsvnbJ4AQvdBxDmx7BZzIG7TK1sEkzYNlVnVobptt3E0jil2WgVC6IqXHIoinvh+cNWx3qqqTA3eDMQZRWlpmPdU7dHXUsMrmkHCeYnAVJKqZRly4MtdRZaWr7QJ8SV3SEKc5tyQoQfitXM=
+	t=1760935946; cv=none; b=jTgZFymShm4u6R8QDttSETtA/5DN+AjNTfcPHN/O4lCZaUJJUjmD7tDLE0oNCrWgo3iq4icfDQ8W5HO9UgC7avFkBeUDtPqJG6gtRXOWJ5xxKmxPQFRWEVsbiudfqUIdeTQNISo9Fo8n6hBD7yG1/xkpcbiPT31Rg6NKbL7HKcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760935807; c=relaxed/simple;
-	bh=im8TptqOKTACThJRbjpoq/Ap97qCFdNDCLeY9N2Fplo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UiwwB9YisFjF77a8mXswdfXuXdvprchmOelqoLgJWno3lsclVNYru2io0bIdaEo+LUozWV5UTwXTP5BatIuRPGIH4iN0HtSnsUUQt34+Ch3DkVt0Kyfgr3O2bC0rW/DOTYjamrdVQIsgBs8kPSFs8eIBDr22YgntO2qLMzASF0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiEoW+mR; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-782bfd0a977so2857121b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760935804; x=1761540604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5yrib05gMjW351Vqcc315s4iU/oaqX4kqgiXM4x8fb8=;
-        b=BiEoW+mRnXS7eUJep1gqqfwL5r1RvNfz7jS7mfpK8hLucMqRxGTwTFOOU++HbG3hSc
-         1ZYMEjtJ63I5yMhstGGShMWHIQRGowid7YHhvacT77Nma6K1IfGEehvqU4Yt7nxutaaD
-         nnZu+nmngj0w0opv6TUWXeWLF32/gu2M7FKCoFREqgqtlwZYFkXp9XlvdP7ssIJoykMa
-         AgGLQ+gqLII2oXDDoTwPiCOeoBUf2LOFI7RupGX9FzkHGhRkbIMXQlC2dMDNejReXOQq
-         HQ15ZDiEFkvxJuonGJgeCmSvkdeWMCyHQzlhm4Mx0pk+4K13uHldDvQ9F4l9XFeOLfGO
-         hhEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760935804; x=1761540604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5yrib05gMjW351Vqcc315s4iU/oaqX4kqgiXM4x8fb8=;
-        b=qDaaie38n4O0vdR/LNJwMoXGvQREb9U8/b2G/ixVFy6DZ/T37nXHLozvm7oF1hUiaW
-         rnY0miWMhQBb8SY3hBRsbMCPBKR6oX7OcyKoxlkVSjlG7g4SlyWiyUnxzbCzJdMTf8gA
-         9fYwoMFg/wn5kT4x3G0oml+vPQ3dDFQKPx1t8XBtBkzEQKCdYjvzzMPSc0qHq63EYnft
-         4uq1Pn4MTE5GYnohBP+pnIuTBAmYU6etQoVTkOFyj3wdgeHYM17ADvrMnoi9bQsdWEpf
-         O/5p4gJbQa+y/M8+YfA5F8yKjb+lWQaa7xPwEcgUsQeeUu60ojdcbog2HSX8F7APsWXO
-         P/xA==
-X-Gm-Message-State: AOJu0Yyko80mXee7rj2HCNRmjdOsjvCnX/+gN+yEUx3DfnnEc1uMQoHf
-	EaLwu+cw+7MsD9djbONGY3XWWwyeJ2abxZA6EIXjPp7ROL+nDPfwsWYTSo0N4dSy
-X-Gm-Gg: ASbGnctYqt+rTgXwZyMN8laiF08quDpWNnh6Xzuoq6UutOkL7nDTD1nlMwvAzqDNbeD
-	enAomSzacc6Y5EADtP9lVJ99zzn9S8KBOznMgcUIFd5NcN1reSblxpCSlLgkq13AUHH6fk6kq8F
-	5NUHqmnAEq/WhScr9LpYc0YgaCc8fAKjI+5JUyiaxJ+eKoAVFeR9eOeLCFFJMYrOfpnwkWFV1wV
-	KUG2eXiCuY6BT6U8Fv66pMEbKEyDSvUpL+iMa+W5UxE/Umy9nTGMk8Z58bzkNk9GsiXccMExVcZ
-	BGMKejlkHbWdeHM4R3nfJ/U1dhWMeY1YVIhQ6tQ2U4DNwH7WRp1YAVl6ukPrQWC/iLRkRVnhCL7
-	1Euy2CImbM6jBQqaqjAFEvcjoS+0D65oUG1XM9sWf1qtTrvZNRH/IBS8lDlMLrn2OS1yYCSyrax
-	5gEzchshdUq13pZA==
-X-Google-Smtp-Source: AGHT+IF61t4CBl41HaeKPrbb13q/MIse+rZVhP7zh+kIUADNetjtDhSymCvedTsDdoF1wGwNjkcrQg==
-X-Received: by 2002:a05:6a20:7344:b0:309:48d8:cf0a with SMTP id adf61e73a8af0-334a8649ed5mr16272776637.54.1760935803784;
-        Sun, 19 Oct 2025 21:50:03 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b36188sm6681007a12.27.2025.10.19.21.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 21:50:03 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 0156D4209E4C; Mon, 20 Oct 2025 11:50:00 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Baoquan He <bhe@redhat.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH mm-unstable] vmalloc: Separate gfp_mask adjunctive parentheses in __vmalloc_node_noprof() kernel-doc comment
-Date: Mon, 20 Oct 2025 11:49:33 +0700
-Message-ID: <20251020044933.15222-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
+	s=arc-20240116; t=1760935946; c=relaxed/simple;
+	bh=RWX85HMxsmO4/qLMChtm+VThVZ1Cx193U1PHAy0oFJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DtZX7Y4FZiTjBOnlZu54YAKzGmhsb/J4ijySpVcCynBo8iq2Xvs3aZbYLswZSAJmTh6V2DtDO9toxo3KC6VBJpbnq8XxRCYr83wFUBR+Pfyj4wo/sTadol/VodRis5GqwR2yWXkJ/JfpH1CfRYmIo3KjzHLwF9RcHHI3F08Nw3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOsBGZT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC5AC4AF09
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760935945;
+	bh=RWX85HMxsmO4/qLMChtm+VThVZ1Cx193U1PHAy0oFJw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TOsBGZT+I1W0wrrvYHr3mdXPuh+Z/54Gaw2QtQLLD8iZvxmFLJ4dWHSYcUkGPdenY
+	 M6C27NzO6slsjXF8OvG5paAaxy2kNpTfYbW5iW3uS7svBw3hqL/BffmnnSt5FpQ1CC
+	 2ICywg6QYXpNYR1up7ikDogWFRsQuGtGKLdzQo1TLjmZ7pT8EIOfmOo3rIDfy8ZHlr
+	 k1zUQ/hZLOOz65c9wRdymvztuegZ8TLz+Z6PFmm07++cuPyhOb89/I8qXsf8AbqVIc
+	 0yh6SJ+SgGWMDbr7U+GOc8CLDPvJ8qhWLHoeGPpyz57N9UhPZ+7eSwD5neZSuYcxYN
+	 q9kFMw14u/XwQ==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c4f1e7243so2406612a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:52:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWauE3yfaDuAnfIPh1bwsEbDpc0q+BhIPZd50D28s9N2HAc4/eGTP5Egh1liPLyvVJtCWX5jUw7J9XaBXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFs6DcFAy1qgLOhhmat9OrAYY9dLxZ9Vl3AkgtkzxK8tA1Mo6c
+	p/9hBT2JEq48MguhCOGCrL5hL8kCcQE1W9gfofU2Ygv6p7+Vck/tVRHrHCPThEe1l/NLQ3H1vLB
+	ZQiuHxe3wF1eKX3EyhisgKdmZ0tSmY0o=
+X-Google-Smtp-Source: AGHT+IGHItkbPi2ADrDcBHUrAbdp4PQwF/p+LMbhlO3lJlhBqp6g5qUXzx5qbuxQUk2bPrnJGC45VJF26C0WQ1a/jHY=
+X-Received: by 2002:a05:6402:40c5:b0:63c:1e95:dd4c with SMTP id
+ 4fb4d7f45d1cf-63c1f6cea34mr11794026a12.27.1760935944345; Sun, 19 Oct 2025
+ 21:52:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1344; i=bagasdotme@gmail.com; h=from:subject; bh=im8TptqOKTACThJRbjpoq/Ap97qCFdNDCLeY9N2Fplo=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlf973ivbO37Y7K7W/dR9LuWDZov/Zv327AV56n3J47p cx3rdTpjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzkVyvD/9CJsq277tqHZDy8 svey9H3GApFU7cgZD+56zHV6sDaaIYHhn/KrW/naqf6T2jc/ebL0/ZHuygdSN1Q4PXv3h1+P4vW 14wQA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev> <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 20 Oct 2025 13:52:12 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
+X-Gm-Features: AS18NWC9rJ3BCkasTR-zLLGiCjygRe0e8WsJ37JjLpFH4ojEp1UX1W0MBYorK_A
+Message-ID: <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/22] smb: move some duplicate definitions to common/smb2pdu.h
+To: chenxiaosong.chenxiaosong@linux.dev
+Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
+	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
+	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
+	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sphinx reports htmldocs warning on __vmalloc_node() comment:
-
-Documentation/core-api/mm-api:52: ./mm/vmalloc.c:4036: WARNING: Inline strong start-string without end-string. [docutils]
-
-Fix it by separating adjunctive parentheses from preceding gfp_mask
-formatting markup.
-
-Fixes: 32904ba6f5ef ("vmalloc: update __vmalloc_node_noprof() documentation")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20251020134902.3a11107e@canb.auug.org.au/
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- mm/vmalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index e207ca64a688ee..091a07f6d92524 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -4034,7 +4034,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
-  * Allocate enough pages to cover @size from the page level allocator with
-  * @gfp_mask flags.  Map them into contiguous kernel virtual space.
-  *
-- * Semantics of @gfp_mask(including reclaim/retry modifiers such as
-+ * Semantics of @gfp_mask (including reclaim/retry modifiers such as
-  * __GFP_NOFAIL) are the same as in __vmalloc_node_range_noprof().
-  *
-  * Return: pointer to the allocated memory or %NULL on error
--- 
-An old man doll... just what I always wanted! - Clara
-
+On Tue, Oct 14, 2025 at 4:21=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
+v> wrote:
+>
+> From: ZhangGuoDong <zhangguodong@kylinos.cn>
+>
+> In order to maintain the code more easily, move duplicate definitions to
+> new common header file.
+>
+> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+> ---
+>  fs/smb/client/smb2pdu.h | 24 +++---------------------
+>  fs/smb/common/smb2pdu.h | 24 ++++++++++++++++++++++++
+>  fs/smb/server/smb2pdu.c |  8 ++++----
+>  fs/smb/server/smb2pdu.h | 17 -----------------
+>  4 files changed, 31 insertions(+), 42 deletions(-)
+>
+> diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+> index 101024f8f725..c013560bcfa1 100644
+> --- a/fs/smb/client/smb2pdu.h
+> +++ b/fs/smb/client/smb2pdu.h
+> @@ -135,11 +135,9 @@ struct share_redirect_error_context_rsp {
+>
+>
+>  /* See MS-SMB2 2.2.13.2.11 */
+> -/* Flags */
+> -#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
+>  struct durable_context_v2 {
+>         __le32 Timeout;
+> -       __le32 Flags;
+> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+>         __u64 Reserved;
+>         __u8 CreateGuid[16];
+>  } __packed;
+> @@ -157,13 +155,13 @@ struct durable_reconnect_context_v2 {
+>                 __u64 VolatileFileId;
+>         } Fid;
+>         __u8 CreateGuid[16];
+> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
+> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+>  } __packed;
+>
+>  /* See MS-SMB2 2.2.14.2.12 */
+>  struct durable_reconnect_context_v2_rsp {
+>         __le32 Timeout;
+> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
+> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
+>  } __packed;
+>
+>  struct create_durable_handle_reconnect_v2 {
+> @@ -263,22 +261,6 @@ struct network_resiliency_req {
+>  } __packed;
+>  /* There is no buffer for the response ie no struct network_resiliency_r=
+sp */
+>
+> -#define RSS_CAPABLE    cpu_to_le32(0x00000001)
+> -#define RDMA_CAPABLE   cpu_to_le32(0x00000002)
+> -
+> -#define INTERNETWORK   cpu_to_le16(0x0002)
+> -#define INTERNETWORKV6 cpu_to_le16(0x0017)
+> -
+> -struct network_interface_info_ioctl_rsp {
+> -       __le32 Next; /* next interface. zero if this is last one */
+> -       __le32 IfIndex;
+> -       __le32 Capability; /* RSS or RDMA Capable */
+> -       __le32 Reserved;
+> -       __le64 LinkSpeed;
+> -       __le16 Family;
+> -       __u8 Buffer[126];
+> -} __packed;
+> -
+>  struct iface_info_ipv4 {
+>         __be16 Port;
+>         __be32 IPv4Address;
+> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+> index f79a5165a7cc..25e8ece283c4 100644
+> --- a/fs/smb/common/smb2pdu.h
+> +++ b/fs/smb/common/smb2pdu.h
+> @@ -1290,6 +1290,10 @@ struct create_mxac_req {
+>         __le64 Timestamp;
+>  } __packed;
+>
+> +/* See MS-SMB2 2.2.13.2.11 and MS-SMB2 2.2.13.2.12 and MS-SMB2 2.2.14.2.=
+12 */
+> +/* Flags */
+> +#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
+I prefer moving it when the durable handle structures are moved to
+/common later.
+Thanks.
 
