@@ -1,102 +1,104 @@
-Return-Path: <linux-kernel+bounces-861266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49116BF237B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:51:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C55BF238A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E99B934DEE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:51:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B5C64E8BB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A2F2765E2;
-	Mon, 20 Oct 2025 15:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8862773CC;
+	Mon, 20 Oct 2025 15:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rl6jrsIr"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0K46jPwF"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4225275AFD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54D8275B1A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975485; cv=none; b=fUc3uosRCjkNVlVZLuESwpEKZDFaE62cT784F22MINletoenYAY6VQ4P/yzfFnRZhe4kMBSvS+Tl0GzCc7Dz+avPTb12GLcubZhqWEajT67JzxkPbQBbMWLNzeTWArET7KCwdL1ejRIagTshveUvGcbqVK8w7mkXPRERq8X/1T0=
+	t=1760975501; cv=none; b=XmSs6ICC2/fRI/fq9031YeyDGraiSEIWFw/ofWNSmRVBweyr/tO+ufC+f56HuCEotkvvz0sC73AmJDBuEgn6ku6L6qgOniLrG6ym80ODEiz0Ld4kTxzOpvaW1iXam87ImEgMQ89EtoreOZpYwZRYEqrx6SwuktHmzIMFrWi+nU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975485; c=relaxed/simple;
-	bh=r6hW6C8nu1blcYXCTHjsVd9dGnFnuGkfu1pr50KdNOE=;
+	s=arc-20240116; t=1760975501; c=relaxed/simple;
+	bh=CKoBgkqf/XEfME922InMtGklfFRfPcNzmQcSSx+gDg8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HmnEU13jwhrfJdPQyYHXQXq2gwpKiZ5Piq/D0XLip2SutGNhwNbgS8cL0+jWcWbkxODDIqYr3KfufwUSTERIn/2djwXLXioLQtGOD9gbQsqcURU3m6fMX4hlEkMdmay/cRE40mFRVH7M6ZSLSNxKJDG3Q7BdRqFHQ+8JVk0sCM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rl6jrsIr; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=cJeLcNd9cyMQGKea0FvPizvYqOmpyG1b+W7XoGEcTamMDe2HL9jiXXh+zeLJTP17tVSJlhtBhgcAZUS8Lf3I96+q/6pSM5UuRJG4rpsJsmO8UGVv+0VksdVD/n8Acs79kX4rusr71qcygmy1DVqKnzKM4IbNkhCnk2jvNeduNu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0K46jPwF; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-277f0ea6ee6so49229705ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:51:23 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33baef12edaso4135841a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760975483; x=1761580283; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760975499; x=1761580299; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U0BnniMqbZE4aAUiItvL6YB9ZDrqDRkHOgLhpY4+LF0=;
-        b=rl6jrsIrw958+RrTmf/+OIhiYnOOD97+yRXZbnHwxpcKD66PFkHMZdR86RGoPfyWUM
-         iv47ShbC9aumbirgt7/ZpQax3yXSn77Yx3bEy7mLUGIJOOWtwJjnVshKS91LYFv6644Y
-         Efq9RG0wT36liHKCnrqqfwz0Zvvbj1t+L6bfR5y+9bbGCwb7GChNieWrJ6cxXyp+BvRz
-         aO1+eto1xhv8UHtCu+7FkkOCveQ+U1dE/pNwcaorRi1gmxhhEYgfSRvH/JhBoZOvS60C
-         CX1n4KjdIvQIMxBvUMqGSeD4dem6PG5u6r09SnRyv78yoa5SX2lhgq2ZuSWUTLNk5fp7
-         WCgA==
+        bh=cYUu49s1qQu/J7CEp2f/HidgNr2LRMkTfT3HoRdnoms=;
+        b=0K46jPwF974WQhvq5bndoVHH/S6nY67HfxhVScQV7sBtz8O27UPpZnvKD/GbJhVpn1
+         jTdVBxKyHG85ZRkFR50aJyI1rVJKbDx5qEj+sfhiwIv4rMMIM8jA2WVBhFQefeIDn2Ig
+         aZZXtkaFnOHG2YaF8FENj1LQGXMjBoeyTkBiMR42FmVSS0Gy9G14Yw7yxOu8nl+fO5D+
+         r7xc8glAjz2am9RRH7Cvk3cNocefXyFbFbwB4aW7dB9foxoN0H3bSS01frX7aHOlGkKp
+         Z6J53PNfx0CxGhdsPtFcNxXJfa+EbhP2ryw5ju/rbaFuvFEHnInIAIaCz2+BNpUhNTuc
+         2QOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760975483; x=1761580283;
+        d=1e100.net; s=20230601; t=1760975499; x=1761580299;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U0BnniMqbZE4aAUiItvL6YB9ZDrqDRkHOgLhpY4+LF0=;
-        b=gxWtC/Z4jEJZHaU0WoZKzQuR/17v82qnWHQztXqQKV0Kfw89NhamFfiVvyn1A+t9c/
-         GgxJV4zXFmM3FDHvVObBzMZ2SC3RIETplpPPy0xtgUeroyBqh2mGTiknNzGkargSjP0N
-         6n7MXWeS+F75fI0IF7w712j3j5ZantCbu8+n4L74a9csCZu1Ms3RNkILZ4Rwgcl2gZAn
-         AQBlPyjQcKgxwBFk0fnn8/F6hqEfRstZRpZfnbhIq0GLIoKBF5IGixiqGGxFycFnIeKR
-         KTeoJVVM7Kc9R6GpnES+J4Ak/iNNcH48zWk8L8nCm+Cansj7Tj7FBPu3u/ttaPMyXeYw
-         YyiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnJZ/U+kw3Cye0KoCaNBM0ztrAuDu/mh9SjOSMGp4trY8+KoMg2PObJcp3kq29giz/vXQ2R708W7UTNFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAYbr5rdRvq+lvKdu1kpswlPlfr5QtK2pVLSSl+tZVB6ZXhvqR
-	gJWc3k3q1KTpuGNzhz4hPWIDXCJO3Pn/hiMYMT/HhirlG9/tbfqlyJ5JUGjCCGAtElB1Tgg6QiK
-	b+VizDw==
-X-Google-Smtp-Source: AGHT+IHCsYty/WB1qu/x0cvmAiHv88kmNMjvq8wPjCLHxhUiPz1nl9CMQsyuwyu1MUqyQD15VEkJEy6oYl0=
-X-Received: from plau4.prod.google.com ([2002:a17:903:3044:b0:248:7db1:3800])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cec3:b0:290:a8fe:24d4
- with SMTP id d9443c01a7336-290cb661a74mr172657735ad.50.1760975483046; Mon, 20
- Oct 2025 08:51:23 -0700 (PDT)
-Date: Mon, 20 Oct 2025 08:51:21 -0700
-In-Reply-To: <176055117173.1528469.2261818917462419157.b4-ty@google.com>
+        bh=cYUu49s1qQu/J7CEp2f/HidgNr2LRMkTfT3HoRdnoms=;
+        b=VgitWCf0SGZoDKgrITBmywCauViTRj7mbDJExKdaJGAp0PK3yNoXnbqSoQs6QwYsQ5
+         o79dAF40QDBIiFqJyHzdgDZr8GRMTXcAH04usO00hQoVIRB6smWbuBXl8TxXLU8LEbo7
+         Yot0FXl6+larD9RyVf8QOIB7gaoFwu1hMSL4+FjUu6fGOnxKQPxGccvPbF9snY9v/hZp
+         YjYffCYRXH/YhBuaoyjScEfdeRc7vL07ZcTqjRXzZi1NGN05MOuLzQQsZYO2rNQCH8xR
+         lGoK1etJszhUpRyi8UyTYpaLiJR0luJkZyn2FNGUkkc8bQa8s3NYfka7/ddaL4Lwyhyf
+         55WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXloYQTbL2ZBzm1T+iWS3zAVgQb7KrHnH9TxFQuPKHlFBZEbiiiSdbq4AOw79rozTG4b9QCDbCFMnQ2mDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM3NpNdktGOiuNf6J4S40x2NcxA1Pd+yL3xYCjjY5zQX9+/SSe
+	yFgB+cUAJ+xpfD1mjLjuMRNmBkukMGgY5uMJpl3Xa+5NJBJVvNdbAlrnVF6WwH62X04c/QWASHy
+	jBQorsA==
+X-Google-Smtp-Source: AGHT+IEmHzJuE6dE4nrX5KbKswTjRN4AmO6OE3CoX4/WcyLoexCBYoVpnD8cbgW3LeQsrjZci0AAX2Zf2ag=
+X-Received: from pjbqd13.prod.google.com ([2002:a17:90b:3ccd:b0:339:e59f:e26])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d44:b0:32b:ca6f:1245
+ with SMTP id 98e67ed59e1d1-33bcf85b2ebmr16254869a91.5.1760975499241; Mon, 20
+ Oct 2025 08:51:39 -0700 (PDT)
+Date: Mon, 20 Oct 2025 08:51:37 -0700
+In-Reply-To: <176055115910.1528299.15660583671377559341.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251007222733.349460-1-seanjc@google.com> <176055117173.1528469.2261818917462419157.b4-ty@google.com>
-Message-ID: <aPZaeU1PGQFkUSHE@google.com>
-Subject: Re: [PATCH] KVM: guest_memfd: Drop a superfluous local var in kvm_gmem_fault_user_mapping()
+References: <20251012071607.17646-1-shivankg@amd.com> <176055115910.1528299.15660583671377559341.b4-ty@google.com>
+Message-ID: <aPZaiQR6jVTKkHY5@google.com>
+Subject: Re: [PATCH V3 kvm-x86/gmem 1/2] KVM: guest_memfd: move
+ kvm_gmem_get_index() and use in kvm_gmem_prepare_folio()
 From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: pbonzini@redhat.com, Shivank Garg <shivankg@amd.com>
+Cc: david@redhat.com, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 
 On Wed, Oct 15, 2025, Sean Christopherson wrote:
-> On Tue, 07 Oct 2025 15:27:33 -0700, Sean Christopherson wrote:
-> > Drop the local "int err" that's buried in the middle guest_memfd's user
-> > fault handler to avoid the potential for variable shadowing, e.g. if an
-> > "err" variable were also declared at function scope.
+> On Sun, 12 Oct 2025 07:16:06 +0000, Shivank Garg wrote:
+> > Move kvm_gmem_get_index() to the top of the file so that it can be used
+> > in kvm_gmem_prepare_folio() to replace the open-coded calculation.
 > > 
 > > No functional change intended.
-> > 
-> > 
-> > [...]
 > 
 > Applied to kvm-x86 gmem, thanks!
 > 
-> [1/1] KVM: guest_memfd: Drop a superfluous local var in kvm_gmem_fault_user_mapping()
->       https://github.com/kvm-x86/linux/commit/c1168f24b444
+> [1/2] KVM: guest_memfd: move kvm_gmem_get_index() and use in kvm_gmem_prepare_folio()
+>       https://github.com/kvm-x86/linux/commit/6cae60a1f507
+> [2/2] KVM: guest_memfd: remove redundant gmem variable initialization
+>       https://github.com/kvm-x86/linux/commit/54eb8ea478b1
 
-FYI, I rebased this onto 6.18-rc2 to avoid a silly merge.  New hash:
+FYI, I rebased these onto 6.18-rc2 to avoid a silly merge.  New hashes:
 
-[1/1] KVM: guest_memfd: Drop a superfluous local var in kvm_gmem_fault_user_mapping()
-      https://github.com/kvm-x86/linux/commit/5f3e10797ab8
+[1/2] KVM: guest_memfd: move kvm_gmem_get_index() and use in kvm_gmem_prepare_folio()
+      https://github.com/kvm-x86/linux/commit/049e560d4f47
+[2/2] KVM: guest_memfd: remove redundant gmem variable initialization
+      https://github.com/kvm-x86/linux/commit/3f1078a445d9
 
