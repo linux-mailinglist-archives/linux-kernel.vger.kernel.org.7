@@ -1,239 +1,125 @@
-Return-Path: <linux-kernel+bounces-860316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52CEBEFD50
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:11:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E3EBEFD56
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24EE83E67D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AE93AAD80
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDAD2E92C7;
-	Mon, 20 Oct 2025 08:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172E92E9EA7;
+	Mon, 20 Oct 2025 08:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bDq9v8Om"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hpxZilQG"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9F01CEAD6;
-	Mon, 20 Oct 2025 08:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF292DF156
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947811; cv=none; b=pSZ156Y3xK4hUyEPR7k/SzIjHhXvL9KusqdVPFlbsvA/jdjXQDksTSVKrdub0X+OUiGcllDKe+TjRiiXHHR4juZynku0cr3I8eLlRtP+bB9JhiWy9KuorVIo0j/EnFLGkdvGF9sVacnPouvsiWVF8M2u3atTIWqXLx64H6InpEo=
+	t=1760947925; cv=none; b=NifpivlZquD9YJnT6XrThZLNs/9BBII1AT26RYRECcEO31EZ/AScr7eprnGlhP5fyyfH5RvkyJFPO/vHgIkUnFo4EG1cBgwqry8XUNymdpBLwyPuZwYDH3dDUV/E8k+9yNEqA76h8vK3lLxfi3+ss3Qj7dblt3Pk30KCaU37cho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947811; c=relaxed/simple;
-	bh=4iTaVkDVhtqNyH1zPiNke9J2lhCuLxffwy/MAYaW6jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ML3Sm1cwxREl/Rc3yQuaHCeN02Xvcfb38ralSBD0s66RDCW50ZWaJL3ZSDjVMX3qpYd/4ag0fLif1UEoINeLpgxQNmsjW/1cd6/YGznsvwJ/7wBcQ5R2TPPU7uOX1pSrgQOVHeEv+5fk4m3rbTgiMVA2sYVwxbb7wzLRUFUzbKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bDq9v8Om; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 86690E01;
-	Mon, 20 Oct 2025 10:08:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760947700;
-	bh=4iTaVkDVhtqNyH1zPiNke9J2lhCuLxffwy/MAYaW6jg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bDq9v8OmBd8NMgmv/AVhWufA9zEPAt03EEofP3nB8gL5ziak6gTLDnogdbUkz1REJ
-	 AnFFeU7D/Rzswq3Xp878D/Qwu5FVi0Tu6k5ylEcT/PSyQmN/aSss+UZWZ9Hv+an0nz
-	 qSm5o+QsyH6WWhrK9M7jq9GhneRzmc96/o+EVpAg=
-Date: Mon, 20 Oct 2025 10:09:59 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Michael Riesch <michael.riesch@collabora.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Antoine Bouyer <antoine.bouyer@nxp.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 4/8] media: Documentation: uapi: Add V4L2 ISP
- documentation
-Message-ID: <bprg66hg3xoetosl7dwt2rcs6mpcksfalymmyidla6qvdrnm7u@fpn6237j25ir>
-References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
- <20251014-extensible-parameters-validation-v7-4-6628bed5ca98@ideasonboard.com>
- <e82e7c1d-b4ac-49a0-9b76-d101395c7040@collabora.com>
+	s=arc-20240116; t=1760947925; c=relaxed/simple;
+	bh=ZoL14bgyedgpZA+5RpW1L1FIqwFscmzUrdyV0NBRSbM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Zui+41rk6pLenEZkHWTWyQnypKRgmn6juzqL9khcnjHxv5khH0sGFi40Qrca89zBeCvijFF7EGUdIti4v0eCnpYX/94A/m4XEr10zEJv/Qurr1AnUh+RuEXgLH11cff3WQD/mJ4MqgDWWcSCF3Ak3cHI0cyUCQnJqNExoabWIxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hpxZilQG; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b548c516b79so469814166b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760947922; x=1761552722; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWJe7MZ8jwnEzwPjrfM3Hh8XieA1FNQV7aYyw1otPCc=;
+        b=hpxZilQG+U7mIjok/Pj94mJitsin9uyOktIOgRW5KLpSnA5eXEwF68WnioQnpT0dDZ
+         wJn1uGw/brpwVfkFOq7U6APsHMMRUcq+rNj6pttsPHEubiVLnFxMRv+U8eMRAeGTNHih
+         ZvUXH9VlmRPUZy3B+s2tq6WzpQYdM0be/vDxs0Pp/2e0Panv5zve+erw0nDnq21buqGu
+         5sVGdS/Unv3T3E6Ze+zcd5dGhkLvVT7q3BNEJRqEi4qOMDvyfRKvU/61/aZvx/KWvkPm
+         bpCSgYmBum0gge2U1YTp0Zum3QuiB75NafT6R7OEUm0o/Nd3g6hRSv8oKxi+Ycc0dYsH
+         WtOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760947922; x=1761552722;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWJe7MZ8jwnEzwPjrfM3Hh8XieA1FNQV7aYyw1otPCc=;
+        b=dABHMEEpVe3A4zXHkrKUJ4WWXf3fc25/6rG8Rx3WAFPU+l5vRpYcBc09NHJDwOwlKl
+         Xob/yXr6Bf1j8wnllwsmMk5MjO3toXT4q3gyzhPeb0S+Y5YWxoge/t2NOBOZ7vH/YfQA
+         0sViKPofffXUd7rqqpBFeb63gUxGAJWM+Y1VQkO7d2ib91QdfJ6CfHZTYlm4sW+E/awI
+         Q7HS6Z+/95x9gPihLO/SbL/7Lwq7Snyrm/ZxRTVG17oekzKMO4mLO1Bkc8UH2YS45CJg
+         GPYe8KRV+NK+43EzhNXJFp/gKgrLC7RsEOSe3547Reds+rHNrHZYo42iPgh0NgwpxaU4
+         Fi7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXUJOB2NAtlJk1D7v4ZifjY3smsn01CdghB1s9go61fu+jv1yoiKe9ivp3w4xRsDOnSI4+tKk3yzAK7f4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjaTU4UekQwkJwzo3g2rNtadP4YCFTv6b2kgqJGQqTlaVphRgq
+	BwI6npdzL7C+5xPRye/rmtdRk/goIwR0UnWgifWIXZF7UIEpYwYHg8XtCZ9YgzrPPQXqU/CvY+J
+	9Z//WfwXbCH9/UJ32Bg==
+X-Google-Smtp-Source: AGHT+IFU4/q/yrXzjompL2chxjZ/4cPYB/Mf5R5QHtThbKc/LpszZ+WmdtWzUgy8PhR/q3XKqv4iuEvIjH5lVHs=
+X-Received: from ejbbs25.prod.google.com ([2002:a17:906:d1d9:b0:b3c:bf08:ba90])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:906:c113:b0:afe:764d:6b22 with SMTP id a640c23a62f3a-b6472d5bc0cmr1290270066b.9.1760947921904;
+ Mon, 20 Oct 2025 01:12:01 -0700 (PDT)
+Date: Mon, 20 Oct 2025 08:12:00 +0000
+In-Reply-To: <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e82e7c1d-b4ac-49a0-9b76-d101395c7040@collabora.com>
+Mime-Version: 1.0
+References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-4-dakr@kernel.org>
+ <aPI9tNoh0I3KGDjl@google.com> <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
+ <DDKOLD1897SY.84W93E6L8ITR@kernel.org> <aPSzE7DpA7DxTHmm@google.com> <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org>
+Message-ID: <aPXu0FWUrbxyemPq@google.com>
+Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi Michael
-
-  thanks for review. I took all comments in but..
-
-
-On Tue, Oct 14, 2025 at 11:23:29AM +0200, Michael Riesch wrote:
-> Hi Jacopo,
->
-> Thanks for your efforts!
->
-> On 10/14/25 10:00, Jacopo Mondi wrote:
-> > [...]
-> > +
-> > +The uAPI/ABI problem
-> > +--------------------
-> > +
-> > +By upstreaming the metadata formats that describe the parameters and statistics
-> > +buffers layout, driver developers make them part of the Linux kernel ABI. As it
-> > +sometimes happens for most peripherals in Linux, ISP drivers development is
-> > +often an iterative process, where sometimes not all the hardware features are
-> > +supported in the first version that lands in the kernel, and some parts of the
-> > +interface have to later be modified for bug-fixes or improvements.
->
-> Suggestion:
->
-> As for most peripherals, ISP driver development in Linux is often an
-> iterative process, in which not all of the hardware features are
-> supported in the first version. The support for them and/or bug fixes
-> may land in the kernel at a later stage.
->
-> > +
-> > +If any later bug-fix/improvement requires changes to the metadata formats,
->
-> s/bug-fix/bug fix
->
-> > +this is considered an ABI-breakage that is strictly forbidden by the Linux
->
-> s/ABI-breakage/ABI breakage
->
-> > +kernel policies. For this reason, any change in the ISP parameters and
-> > +statistics buffer layout would require defining a new metadata format.
-> > +
-> > +For these reasons Video4Linux2 has introduced support for generic ISP parameters
-> > +and statistics data types, designed with the goal of being:
-> > +
-> > +- Extensible: new features can be added later on without breaking the existing
-> > +  interface
-> > +- Versioned: different versions of the format can be defined without
-> > +  breaking the existing interface
-> > +
-> > +ISP configuration
-> > +=================
-> > +
-> > +Before the introduction of generic formats
-> > +------------------------------------------
-> > +
-> > +Metadata cature formats that describe ISP configuration parameters were most
->
-> s/cature/capture
->
-> s/most the time/"most of the time" or "typically" or "usually" or
-> "normally"?
->
-> > +the time realized by defining C structures that reflect the ISP registers layout
-> > +and gets populated by userspace before queueing the buffer to the ISP. Each
->
-> s/gets/get
->
-> > +C structure usually corresponds to one ISP *processing block*, with each block
-> > +implementing one of the ISP supported features.
-> > +
-> > +The number of supported ISP blocks, the layout of their configuration data are
-> > +fixed by the format definition, incurring the in the above described uAPI/uABI
-> > +problems.
->
-> incurring the described uAPI/ABI problems described above.
->
-
-.. this one, for which I think the correct form is
-
- > +The number of supported ISP blocks, the layout of their configuration data are
- > +fixed by the format definition, incurring in the above described uAPI/uABI
- > +problem.
-
-Thanks
-  j
-
-> > +
-> > +Generic ISP parameters
-> > +----------------------
-> > +
-> > +The generic ISP configuration parameters format is realized by a defining a
-> > +single C structure that contains an header, followed by a binary buffer where
->
-> s/an header/a header
->
-> > +userspace programs a variable number of ISP configuration data block, one for
-> > +each supported ISP feature.
-> > +
-> > +The :c:type:`v4l2_isp_params_buffer` structure defines the parameters buffer
-> > +header which is followed by a binary buffer of ISP configuration parameters.
-> > +Userspace shall correctly populate the buffer header with the versioning
-> > +information and with the size (in bytes) of the binary data buffer where it will
-> > +store the ISP blocks configuration.
-> > +
-> > +Each *ISP configuration block* is preceded by an header implemented by the
-> > +:c:type:`v4l2_isp_params_block_header` structure, followed by the configuration
-> > +parameters for that specific block, defined by the ISP driver specific data
-> > +types.
-> > +
-> > +Userspace applications are responsible for correctly populating each block's
-> > +header fields (type, flags and size) and the block-specific parameters.
-> > +
-> > +ISP Block enabling, disabling and configuration
-> > +-----------------------------------------------
-> > +
-> > +When userspace wants to configure and enable an ISP block it shall fully
-> > +populate the block configuration and set the V4L2_ISP_PARAMS_FL_BLOCK_ENABLE
-> > +bit in the block header's `flags` field.
-> > +
-> > +When userspace simply wants to disable an ISP block the
-> > +V4L2_ISP_PARAMS_FL_BLOCK_DISABLE bit should be set in block header's `flags`
-> > +field. Drivers accept a configuration parameters block with no additional
-> > +data after the header in this case.
-> > +
-> > +If the configuration of an already active ISP block has to be updated,
-> > +userspace shall fully populate the ISP block parameters and omit setting the
-> > +V4L2_ISP_PARAMS_FL_BLOCK_ENABLE and V4L2_ISP_PARAMS_FL_BLOCK_DISABLE bits in the
-> > +header's `flags` field.
-> > +
-> > +Setting both the V4L2_ISP_PARAMS_FL_BLOCK_ENABLE and
-> > +V4L2_ISP_PARAMS_FL_BLOCK_DISABLE bits in the flags field is not allowed and not
-> > +accepted.
-> > +
-> > +Any further extension to the parameters layout that happens after the ISP driver
-> > +has been merged in Linux can be implemented by adding new blocks definition
-> > +without invalidating the existing ones.
-> > +
-> > +ISP statistics
-> > +==============
-> > +
-> > +Support for generic statistics format is not yet implemented in Video4Linux2.
-> > +
-> > +V4L2 ISP uAPI data types
-> > +========================
-> > +
-> > +.. kernel-doc:: include/uapi/linux/media/v4l2-isp.h
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index e9ac834d212f88222437e8d806800b2516d44f01..340353334299cd5eebf1f72132b7e91b6f5fdbfe 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -26857,6 +26857,7 @@ V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
-> >  M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >  L:	linux-media@vger.kernel.org
-> >  S:	Maintained
-> > +F:	Documentation/userspace-api/media/v4l/v4l2-isp.rst
-> >  F:	include/uapi/linux/media/v4l2-isp.h
+On Sun, Oct 19, 2025 at 02:01:03PM +0200, Danilo Krummrich wrote:
+> On Sun Oct 19, 2025 at 11:44 AM CEST, Alice Ryhl wrote:
+> > On Fri, Oct 17, 2025 at 04:53:09PM +0200, Danilo Krummrich wrote:
+> >> On Fri Oct 17, 2025 at 4:37 PM CEST, Danilo Krummrich wrote:
+> >> > The reason I went with a trait is because that's consistent within the file.
+> >> >
+> >> > Otherwise, I don't mind one or the other. If we always want to use a struct, I'm
+> >> > fine with that. :)
+> >> 
+> >> Actually, there's another reason I forgot about since I sent the series. :)
+> >> 
+> >> We need it because we derive it from blanket implementations:
+> >> 
+> >> 	impl<T: BinaryWriter + Sync> BinaryReadFile<T> for T
+> >> 	impl<T: BinaryReader + Sync> BinaryWriteFile<T> for T
+> >> 	impl<T: BinaryWriter + BinaryReader + Sync> BinaryReadWriteFile<T> for T
 > >
-> >  VF610 NAND DRIVER
+> > You can still use a struct:
 > >
->
->
-> With the comments above addressed,
->
-> Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
->
-> Thanks and best regards,
-> Michael
->
->
+> > struct BinaryWriterVtable<T: BinaryWriter + Sync>;
+> >
+> > impl<T: BinaryWriter + Sync> BinaryWriterVtable<T> {
+> >     const VTABLE: bindings::foo = ...;
+> > }
+> 
+> Yeah, but do we get something for adding yet another type in this case?
+> 
+> Another point to consider is if we want a more generic fops abstraction type.
+> 
+> In any case, I'd like to add this as good first issue for the whole file to be
+> changed accordingly.
+
+Yes, keep it as-is for consistency with the rest of the file, even if
+the file is inconsistent with the rest of `kernel`. Please go ahead and
+file a good-first-issue for this.
+
+Alice
 
