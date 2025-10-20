@@ -1,190 +1,160 @@
-Return-Path: <linux-kernel+bounces-860444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85E9BF0248
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:22:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5ADBF0254
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3BB934A95B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596F63A4FEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C61D2BEFED;
-	Mon, 20 Oct 2025 09:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CDC2E7BBC;
+	Mon, 20 Oct 2025 09:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="MFLtLtL6"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013012.outbound.protection.outlook.com [40.107.162.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRFehkgk"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F392E9754
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952147; cv=fail; b=QBbTqfGRJP3TyjkAZriSY85CY/akqTuVbtkunz+/SfSN/4c3WT+YrLIkP45jZ9eU//+Hz1EOMc+y1Igc3arh2H2KHrxx37KHy4By+9qmVJGKjUx/u+8vxexHfa/s1EVV7EPYPNY20SFELgTitcFiMQ9lgcCIp6f4GIQ0a0BByk0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952147; c=relaxed/simple;
-	bh=LPW6qkj250XxXlxrP45bClE8SddNYONiGXk6CWrmiq8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=U1k+8A4JLpeuimS0mL8f3n0ll7+OEsCbXfmB4ZW9IT5hz69+OLO5U/wj400XL7jupJ9ZaHaJ+4VLi7ynzdkSK8+VC4aa0PZ273A1Sx02yVWqJFtZrb1378/OJ/8XwifLc6etd+7wH0iTqmpD3PgcvewgyfYbNPgbd1g8eqTC5x0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=MFLtLtL6; arc=fail smtp.client-ip=40.107.162.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pNX3WAGa7ihTnzvmzV9MlVWuXjeqIhUluACyrtVEqp7YBsuMkBI+K1z38JyNiSwn8P+6168G8WFYiPn56SBoPEo3LlgYhXadfx5/TBG377atDErTE3I4FmgXgduRpzTbMkjGMbhoOkPuLk018LnhTU6XagUo9FYjvGT5uL5VvN7JDI73PgGzfXBULqXDfiiPQmIgGVuTDppMImqmROpFg+GYHo/ij2aIrer4DtDx2sAdFf0slA1GWdW7qq6OOAARw2mdpBaEoQ/Ljnq6eS4LpvrLKev6sNOL7YK6lvMbwLlqNrfbsC2jaxUnPgW6pc4zS/6MqGcBUouf69H1pAO/dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GlTGd2OEm56mOieRZbSG7HwjRIxn1xZjgIE0qiIkoHA=;
- b=mpms0bgZLfcR7ln7GsHdvW1ctEcKeC2G565HR5A3XUzpxt0CRmKkZnbHs2VcWVVHZ2Yk8q0Ff26Z0bkZaSUDlXdUsz3U60W46JGs0mTNFm+Sx1/TICnjaRIIxEdLdQo+UFFokUwl2AYGBYj4eLr5g6yIWlWRcPJwJt38jAonr+5Uld2V823QNHFlfIXgYrOzFM36wYBxw+bSaRoEErL2XoPy60ytMfl9qpzVR0Qxzg5m57fLV4eDpFt8gPOZF2/FamoRIVWP1j+IUh/LyivRkjNOn9Qd0ulgTN6F/mm0TnDNp5OeOF1KSWfMZd2WI+PinSp2jByuDGejmF9ECzNmow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GlTGd2OEm56mOieRZbSG7HwjRIxn1xZjgIE0qiIkoHA=;
- b=MFLtLtL6HdeYNnMbiGJyu2Wh0Yz44Mwk6cJEh1yRmlDtZ0VVGlXdwcX0x0SWXCJ8ay8LbOSD7Pcw9yG84NYAzaodeiPcAQ10GqqU3bhWy5+B+NYhYrAsRkcLslPr5KYYIH9PXhnFPm2xG0R4fHnWFmL+6xySae/8yOIsm3NIhRI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by PA6PR04MB11803.eurprd04.prod.outlook.com (2603:10a6:102:523::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 09:22:19 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1%6]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 09:22:19 +0000
-Message-ID: <64b79330-5168-4aa5-9485-0e9b34578d24@cherry.de>
-Date: Mon, 20 Oct 2025 11:22:17 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix indentation on rk3399 haikou
- demo dtso
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20251020091139.3652738-1-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20251020091139.3652738-1-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0037.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4a::21) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733792F1FCD
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760952185; cv=none; b=jOHfpKKXq4zlMiwVi6sESpTeb6nhFmuXLH/8UokgE/vSP0gSbeSpbCKYg+X+meCealP2c1/cYWbU5nIbWnfe6p69LnUfxr1QgcTU93WLefp3MZlTJj/JEF0rfXA7TphrSBMhU/wmRp7H/M/NbH2HGasF8zHiAE/1Cr0lvSWmyk4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760952185; c=relaxed/simple;
+	bh=hMFzAE+u+nASc8Ayen4g5l9uc68xWJVxUvqNMCpeXuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+OCepCwZ+vSqoppKHc/Qd0V380vqdp4n9HZCWC5xA6+04kU0AfuTJeSOz5rcsBhKE63YhgPa7jwszMPF7HpIl2JrGKAkQSETxQGKXYjtH1fmFZq53FtdanSo2EjBI1p8831JlqMZRGX2T+VmFMnGMF40VRFSvV3tGcu03rrLEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kRFehkgk; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46b303f755aso42711415e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760952182; x=1761556982; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cdA6CsjifSV/CpZyjz8ziwjcjaEoS8UMM+9gCn6fwe8=;
+        b=kRFehkgkfKCrEw/sHFVwfJ2FHr7wsdeWHSIchATr2vbQ5HRlgSJ+70P8hG4b1t24hr
+         m9/Mk85Fgr7IoqG2q/crW/BJH4bjRHBe5UWKGfbdvdIfECAEZuvN/tKBy9OxsZn193/P
+         rJKzVB/uanWu813YvHohLNrejGD++WeSrxRHdc3yBeQKkLdZ1wH5Uz0/LwHa5XlSctcF
+         8awHmjkm+hVR3Up8anjZSV5f+zxspOmvEQYDiQztbtBVP2y8Jl97izGNlwwez3Tz7nBo
+         Ve0Debc/kKQfa69Hm5Txrj+IUimJirPJLNJpBcpHYmYpVHW7vbGL2q1WMJiEwtekYi7g
+         XcsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760952182; x=1761556982;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cdA6CsjifSV/CpZyjz8ziwjcjaEoS8UMM+9gCn6fwe8=;
+        b=QtovHPomHGghq+eMkQDQ1DYH5GETavGBYQuM32iXFxDd+4+k3QPJcHeZKYJr+GW52k
+         /sM9CUTKxZVP5WvujOc0GkYJjU5t6kw/sYcbS0q5G+PINqpoRXszIcq4vGq5shVMDcwx
+         YMWvSitHp7uPqSqkEiDkgZHh8co2/wihgJeUgAoHbImnxgKyXGDWSUHp3KIMvC2Eeg69
+         8siGUUC/CAyWpkrOgJ19qByO5lMEHY8G+yuzAiKnPBgaDx34k/n1I0XPXjrDlmwk7ja7
+         xuIm8nXcHqUYkX22DH3DdEMn43nyAELzfWlL8nnOnJS7zBxzZbCK3VvF7to+Cypt0lSU
+         LWNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgKWlysetjFVBUcaL5uM1ZiifEt5vHFj98nbpJ5SarHZ4FVlGxEOGk6MWYmsib3oy+q7I6+K6FngnHHBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhvu8zwk/DzSrEt2v9eN0zpdPg8/CYbZDIsZDrkrRg7WbiUxVZ
+	V/fYdS7HJ1IzAMZzMvWKOKmpVTtC5ueMZiuFmRMb0uwsLz8+j3GR+AJ8kywMPtCtoto=
+X-Gm-Gg: ASbGncvEvakNTzlXqAqYsWAJbF7ef9L8KrDJN8nlwCLLeYCcvHIt/qJ0vQmxIzIlrbp
+	605Ddre77l+e3nFuf8H7hK66HgQvGhOQ8HX70W2eo72AKjMh3VGR0gXXRxQQHN1jW6DHb88/YFa
+	ND0A9g2JPl32mvZWPMawSTXAihGIb3vFzerLRYjZwK3rc71jgJq2wEAuNa9SzbJxxM7zL2rNlcU
+	DZqBODUSE3Gx/3IPf2dGhd/O3irvHMUS4h9/p2sWcM3a4h7aadnEcKuWNO0ImQKBpcVknr4u54w
+	4nupOWh80TvgfNzsj2NOJw6ybOGjm15NlBCnKly2YOrTgf1xdk2e+3KNYLzfJJIi+9DLRJWalRY
+	6ISl4g4tTqEe/qCdAAPKXDXnLh4HWdLv32ARTzWxYWkcS2qCaHFQjcLfvqez9qN5OvAzkR9ZCur
+	H1HStq15Wdpsa640EZFJyn
+X-Google-Smtp-Source: AGHT+IHNJzL0kQawtKy3fF4ivQKWG3FizlSZ82gu6HDNZ3hRrmE0LPQKVq82Mev6dpQnwG8Un0IyIw==
+X-Received: by 2002:a05:600c:3b03:b0:46e:330a:1762 with SMTP id 5b1f17b1804b1-471179079dfmr98103875e9.22.1760952181601;
+        Mon, 20 Oct 2025 02:23:01 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:363f:e987:7dd1:4f47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47152959b55sm139906525e9.6.2025.10.20.02.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 02:23:01 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:22:56 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: iommu: qcom_iommu: Allow 'tbu' clock
+Message-ID: <aPX_cKtial56AgvU@linaro.org>
+References: <20251015-topic-qciommu_bindings_fix-v2-1-a0f3c705d0f3@oss.qualcomm.com>
+ <8e7a145e-6871-4974-ae19-40699747803b@arm.com>
+ <56fcl2ip6ecu4inig7ecpjt7qrsdt6sehkrzrk6joysbp6tea7@4xdgxhhe3aso>
+ <38c3bf97-4b69-4450-9e23-32ece07e38dc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PA6PR04MB11803:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7c56b3e-560b-4e66-adf7-08de0fba2aaa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eVFhU093Q0VHTGVHLzZaaW9Oc1l5L2ltc2QydExhem9BdHE5ZmJiUHd3S3J4?=
- =?utf-8?B?L09wdVdzTm4wQWl4WERvdmZ4TlBpUVVhbjJaQ1QxcXB1RGYzdWI2azhpck1y?=
- =?utf-8?B?U2J5cDRjSExhb2ZOVmloTVZoZ2Y5NnJRSEI0ajkxWjZySVlESnZmOUNIV2ln?=
- =?utf-8?B?ZzFwNllyL0tmWlRiQ0F3OXJWbmFlVWdTSTR0Sk9wcDNPSEdlcjBvM2pPaUtp?=
- =?utf-8?B?ZWtRQzk0aERCVi9qTnkreFlBTHF3M2pDWkp6K2NEYy9ZZi9vYzcrWTVmNGlR?=
- =?utf-8?B?QktqeEpHRVdLd3BXeS9vL2hlVWY4dEJLdkxBT1dMSnpTTzg4SkFaa0pwU2Zl?=
- =?utf-8?B?dnpSSnlqelJtZ01CNkdVN041T1lpNVZxOC93dndQaFlWZ3JWSzZoUGhWeG1Q?=
- =?utf-8?B?V2R6VVcvaU5SL0tVMmd6aG5xQkRuUWtVSmM4S1l0YWZhSFkweit0cnA4T1Z2?=
- =?utf-8?B?Q0NtQzVLNFRUZndzM3NBZDg3aHNXRVVhMFNud0doaW15d29xTE5DUzFVWW5V?=
- =?utf-8?B?ekN4TU5mWTZmTWlRUWdxZ1BqUE1sUVhUQmN0eXdLUFVkRm82NlhvTlhTczFG?=
- =?utf-8?B?RmR2Z2tlSHp2Umc2MHBybHh4ZUpZTTZHd01CTlNKeUFaVmdyOEUrNFdNS0dp?=
- =?utf-8?B?RE5YNGlTaStBblZDMWlvUjgvZlhSOGt3cXZnWnhpQmFsUDJxd3dVRlU1d293?=
- =?utf-8?B?dlZuL1pxbXk1d3JpZHVyekV1VEhxOGtmci9CeG5IU1dBWG5FejJlQlBKa2lH?=
- =?utf-8?B?TDdiRG40NFJEUE5WZjMwdCt3SzJjK0VPV3hWaDhyeUVQYm9YcUFDZjdJRDY4?=
- =?utf-8?B?RW00ODF4YmtHbWVLOFJaOG5CdmVRQVhtckhwbWRuSytjb0NPemtwTGJoQTZH?=
- =?utf-8?B?NWI1T1dJbVo4MUNQdHFFemtieXIwSnVvbW92RHZuQzdNYkNSL3cwNk9IcnM5?=
- =?utf-8?B?ZFVFMG1QVDNKREJlL21nbUxmd2xMem91eTlQZHdhK1lvN04reVV4ZkZKRWpF?=
- =?utf-8?B?UFZvVVhkSXNTVC9XOVh5dVlraTVlUStYaWRpcGppKzBkTzFwVEZmSFhUNmRW?=
- =?utf-8?B?cmx6TFhtaDhJUEZrRnNIcmxma0FURU4yKzVMbUJZZWRuRUFlNWlZak4zaDlW?=
- =?utf-8?B?S0lxcm5rSzExR1ZHa01YKzUzR1NPZ0w0aktBR2VUYnEyTXd2d0pMRFdrSVlv?=
- =?utf-8?B?bXBHUmZ1VUlScDNUOXJ5SStIRWpKaUNXZG9zQUpjMDZ5SEZYQ0p4by9EL01T?=
- =?utf-8?B?NkN0WkNiajlFTEcwek1qdXY1dmFDVzFXVUorcS94emVxdkFBQ3JCUXIvMXhw?=
- =?utf-8?B?Rys0amxkQVJ5anhJdFpCN0hLYkYwSzRya3R1dEZUOGJTb25nM1NCbFlHNU5Z?=
- =?utf-8?B?VHI1VlAxUkVzVUt6OEJLZGpvTytEeHRaeHZyVTN4OGdrMnZLNXVZWW5Cblc3?=
- =?utf-8?B?RmdPZUIwL2VHVkVzRitBZ0FBcWtXcDdJdFF1Nmw4Z0RnTTV4TUR5R09qWUVW?=
- =?utf-8?B?WkQyejN0MnpJMGlQRFBxZTBTTldpQUVBZzJjcVA4NjMzaFVkUWUrbzZXVm9o?=
- =?utf-8?B?NXBnVk15UDdzSmxvV0wyY01oQm9UTk5NaGF2ZjZ4ZEhwUWQveGlOcWQvZEMv?=
- =?utf-8?B?RVYxS2pXYTBPNklvSkFmaGI5ejVIckE3T3R4dzF1UklXamJzODRCNGk1RG5Q?=
- =?utf-8?B?Q0pMK1VjdzNjSE9jRTduYmloZUgwckdqZWsvRTQ0aWpITUNVNUtxamVuMngz?=
- =?utf-8?B?elMxRGRDM0RHS0JjbC9ETnFGQVQ5UCt3NHU0SWpvYTdDWE4zU05GcHhpb0tD?=
- =?utf-8?B?MmkwdWpvVVp5K2FVQm4xM2laODl2YWtYV0NoL3k1N09KSWV0OWFadEs2Q2cx?=
- =?utf-8?B?ZDROeUViS0hVL1hycENJaHJUa1IrWkRqL1d2QTBxZ0luWlNPeWVxNmhvZXYx?=
- =?utf-8?Q?M/4UO51CqBE9PoKmaEE1P+y1LQXJBDyL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RU1Bam1oM1NRb3hZZ2ZHMnZ5eElIUzcvNWdrOWdORlNvUE1SQzFnY1B1OWZZ?=
- =?utf-8?B?aDBXNnVQT20rT1JKQmxRS2RWdkduaFlOK05LTTdOWFBNNkg1SmZML2lWMyt3?=
- =?utf-8?B?eHUzRmNKNlJtSmE4MWp4cFBpSXpGZW1PMExHT1VKN2NJWGdXaDhmYzlTQUxw?=
- =?utf-8?B?TkZuNEFPaHFCQktjWWtWTnFkSTJENEVRaUJjNE14d0J1SFhRTExDKzMvNzZ0?=
- =?utf-8?B?MjF0aWk4TzhQeTN5TUJQMkw4Myt1Wm5MRTBaZ09xc3hIWXJ1TzJINjlsTTM4?=
- =?utf-8?B?aUZ0TkNBQlF5K1hDY0VZUk04UXlGaFRlNmllWnVwYWJyaUpqWTRwck52VGxr?=
- =?utf-8?B?RDV2eFhkWXJSQlRkK2VFVjRTQ3E1Z0hDR3UzekpNL3JRcUt0aHpOSlZTWFox?=
- =?utf-8?B?d2JyNXFwMFVqSXg1ZlhINjZZQ3ZpQWlVVXREc1NhVENtMGx1RTVTT1k1WlN0?=
- =?utf-8?B?bEs3cXhXRVBmK0M5OExxK3ZVWHM5eWFNK3RWWDNhTDQ1MUxmbkFtMTl6RWpI?=
- =?utf-8?B?dkh1L3BsS1JtNGVHZWhPakFFNFVyZXg0RFcxSCtrTGVQV3dvRVJRK0VNTnhl?=
- =?utf-8?B?MEVqL1NnMUNNaXNjcnVoZzRBdTROVW04NXRyMTQra3hmdHF3dlUxcE1YQXhQ?=
- =?utf-8?B?ZHp1NW1yTTZUK0ZIMzBQaHdaSGRsc3IxU1FuODgwUW9SV2grbXNEM09vS05P?=
- =?utf-8?B?VVhsRFRNU3JFVktBbExNczB3SkoyNE5RbnA3QW9paCtEZVRaSlRwanF2dndh?=
- =?utf-8?B?ZU9wU0VmNllodEJNQjUzendEU3BJMGtzYUtOaWozSGQ3OU81c004N3ROYWJB?=
- =?utf-8?B?NWtXekdDSnQ3YVV0bWlmaTZoV2VmaWVMWlRkVDhGSEFrMVFGRzc4d21EUDgy?=
- =?utf-8?B?VGhxUU01T2xKZ0g5bjJ6Rm43T3BJcWxTV3NucEJOUVpYSE9IZVMyNCtVSldn?=
- =?utf-8?B?b2dWUEhVTFhoRVY3RkpzS2dqWWl4VVJzT1NFMkUzTGhCVC9kVFFVdURrSWtR?=
- =?utf-8?B?Slh3MW1PUFVReWt5VmdSdFJWcE5jUFFuUlhZS3Y4UjJ1c1VWK0xRYlBpSUcw?=
- =?utf-8?B?OC8xNXlTYmhDWkRVdXJobzJXczRsMWhHZG1mODBBOUVTMk1QeHNOQS91UmRF?=
- =?utf-8?B?aklPL3duYllYVUo1UVVUZUcveWs0MUpKZ2p3emVsOWE4bW1QWmJ3ZXR2Wnl5?=
- =?utf-8?B?djR6VkcrZlltNzl1UFB6bFJ1WE1DOEdIUjNqdjJIVVRlUGlWaDFkY1pneWtF?=
- =?utf-8?B?S1IyNjZENVBZaVRjaW9HUXN1TGt5VjFvd2MvMmZjOTUrdCtWRDlHTmwreXRC?=
- =?utf-8?B?RWkycmpJOEdXY2FvbllkZUVuTmxSYVhPVHBrb3NtVEZLM0I5dmdrc0o2dzV6?=
- =?utf-8?B?czRmNjZCcm5kNFAveU1KNzU1Y2JqTTQ0ZmlrUnJPOWZwbkQwZ1J6eGJWUHBx?=
- =?utf-8?B?b2MvYnVQWmg5akZUcldXbGU4TWtJblQ5eUNwOGNLUmJCRjcvL3A1WEVoWEF3?=
- =?utf-8?B?UzlIL2phZjNTRzkxMXQ4b1hTTEFjNldkSlJ0ak1TU3lULzUrajg4R1NIaEdw?=
- =?utf-8?B?YTVScHVmUHFoVnVDTUUyaW9tNHpUM3lQdkxNUC9GeCtWaHF0bXRrdGt4WXM5?=
- =?utf-8?B?UFZpc2xoZGFLLytXVUZSbUdhZ04rR3FoY1AxZ3ZKWk1ZbGVySkVQL0JLdUZD?=
- =?utf-8?B?Zm9RYm92RWliRlQxMzJsZ3owVFd0eWVhTWxETWZTT0xSSE9DclAybFMwdTMv?=
- =?utf-8?B?eXlpbnRlenBRaHdzUHZ1WWFvdEduTHMrYVUvRWljakk2WHZnY1B3VVNwcG5Y?=
- =?utf-8?B?MTlocEZ2N1FWSUlsRDRsU1J2aE15SjV0TUNjN1B0ZzdWbnc1dDZvODRVUGhV?=
- =?utf-8?B?NnZNei92SnNPMXRIZG5sUWxYV1VxQlNBMXVCdlh5Ri9KWXNoZHpXSU1pT01o?=
- =?utf-8?B?UHpOZDFIRElralY0dUdOWHJCaTBLNjJ6OVkyMDZtMG5CMXdJZ2RweW1OTnI1?=
- =?utf-8?B?YUVCUmxUUTFYNGcrL0Jlc3o3OUQyVndveXJZUFc5dm1nYlNZSkIwSWNvbFRI?=
- =?utf-8?B?eUphclRCRVFNNkcwd1hweHd4SGZBT3RHbG4zY09lQmV6dCtKeXhCYXJHQUZC?=
- =?utf-8?B?OUN4eVcyQVF0dnV6U3Zzd1UwQ29EUythWmJaV2RTNG5lNWNwL1luSUdRN1k0?=
- =?utf-8?B?dmc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7c56b3e-560b-4e66-adf7-08de0fba2aaa
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 09:22:18.9148
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 82VHfkZ7nTfeyyNPY6fW5h1MBzA1ZhJlezef3bbwe2p1f+22bfIwhfkrMdIE8+EuqrQb67Pt+qdAfp3yPYZzXCt2SM+lRTcMNlxzOT/UI8M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR04MB11803
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38c3bf97-4b69-4450-9e23-32ece07e38dc@oss.qualcomm.com>
 
-Hi Heiko,
-
-On 10/20/25 11:11 AM, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+On Thu, Oct 16, 2025 at 10:09:58AM +0200, Konrad Dybcio wrote:
+> On 10/15/25 10:10 PM, Dmitry Baryshkov wrote:
+> > On Wed, Oct 15, 2025 at 05:48:05PM +0100, Robin Murphy wrote:
+> >> On 2025-10-15 5:41 pm, Konrad Dybcio wrote:
+> >>> From: Konrad Dybcio <konrad.dybcio@linaro.org>
+> >>>
+> >>> Some IOMMUs on some platforms (there doesn't seem to be a good denominator
+> > 
+> > It would be nice to provide some examples here.
+> > 
+> >>> for this) require the presence of a third clock, specifically for
+> >>> accessing the IOMMU's Translation Buffer Unit (TBU). Allow it.
+> >>
+> >> Hmmm, but isn't the only thing that accesses TBUs the consumer of the
+> >> qcom,tbu binding, which already has its own clock?
+> > 
+> > qcom,tbu is only defined for normal arm,mmu-500 platforms. Here Konrad
+> > is fixing the older and more obscure Qualcomm virtual MMU device.
 > 
-> The regulator-cam-dovdd-1v8 uses spaces for indentation, where it should
-> use tabs. Fix this.
+> (for context: this touches upon 2014-ish platforms)
 > 
-> Fixes: 066a69db9db3 ("arm64: dts: rockchip: add overlay for RK3399 Puma Haikou Video Demo adapter")
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> I checked the address map of the physical MMU500 that lies underneath
+> this virtual impl and it doesn't fully expose the same registers that
+> the modern ones do, I only see PWR_STATUS.
+> 
+> The BSP kernels for those oldies don't seem to have a notion of a TBU
+> either, except for toggling clocks that contain "_TBU" in their name
+> at both the IOMMU device and some DMA-capable multimedia blocks, which
+> I suppose makes some sense..
+> 
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+On MSM8939 for the &gpu_iommu, the "tbu" clock isn't listed for
+accessing the TBU registers, it's necessary to avoid timeouts during TLB
+flushes. See Qualcomm Snapdragon 410E Processor (APQ8016E) Technical
+Reference Manual, SMMU chapter, section "8.8.3.1.2 Clock gating":
 
-Thanks!
-Quentin
+  Clock gating programming guide
+
+    For APPS TCU/TBU (TBU to TCU interface is asynchronous)
+    Software should turn ON clock to APPS TCU
+      - During APPS TCU register programming sequence
+
+    For GPU TCU/TBU (TBU to TCU interface is synchronous)
+    Software should turn ON clock to GPU TBU
+      - During GPU TLB invalidation sequence <=====================
+    Software should turn ON clock to GPU TCU
+      - During GPU TCU register programming sequence
+      - While GPU master clock is Active
+
+Might be worth clarifying this in the commit message. It was also
+mentioned in commit 5bc1cf1466f6 ("iommu/qcom: add optional 'tbu' clock
+for TLB invalidate") (not sure why that commit didn't adjust the
+bindings...).
+
+Thanks,
+Stephan
 
