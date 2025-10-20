@@ -1,139 +1,93 @@
-Return-Path: <linux-kernel+bounces-861213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A98BF215F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:26:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4607BF2158
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B30884F7B97
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D0E18A7E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48308245014;
-	Mon, 20 Oct 2025 15:24:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFE4148830
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AAB264628;
+	Mon, 20 Oct 2025 15:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KEuwc5vx"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012CD21C17D;
+	Mon, 20 Oct 2025 15:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973881; cv=none; b=ISjZtiGC8GZmFAPGgyTmrkvVDCMLM0ymhHkbXPTtOoe6Ka4wH+BJIE9JW5c5Lt/wn2Eh2osm9hMJTfCK506eByPGK10DwsD6Jr1tWK4JeUvJn7ZiGVMi/kl1U5PUCWo7dgQDT+52jaCVrNwSB0GAhQEq2kIHwjaqoUkS65P3Z9o=
+	t=1760973912; cv=none; b=HHbYABIZyJZiOs1XxOgefKAd5/Z2P25pqbfX0JSpsNH47sBVpffyCnjJwRuUTA0QS9lJm/l+Z/GBrdvAIPrv0e0dfqHmKHE/LQdfzZ2w5jicVBYrmp3fxNUqeOO6YXFFrj/TNW0zamBE0klld7hrhmIOsDHinYA3IjMFsqGLBt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973881; c=relaxed/simple;
-	bh=k1cnJl76gghokC/OSDt5Bfpinf5+i+Zat+vTFHvC43o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bBzZte4Wu7W0DiMq7l25uB+8nr3KXMg08JEqld/NGTrx6ClkHTLM4BQ+UaJfSTeKAOTlxXDgcSlUjUGKm7lPFWSM8WAFR+ih63pyUz+P4TqjmOqRmcfqV6sW3/LEfsC/EXYWO05AbLeVWEswGJ1jjeFztaLv5xB7sZnjRcaHzUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4396B1063;
-	Mon, 20 Oct 2025 08:24:31 -0700 (PDT)
-Received: from [10.57.36.117] (unknown [10.57.36.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A5F13F66E;
-	Mon, 20 Oct 2025 08:24:38 -0700 (PDT)
-Message-ID: <0cecb6d8-7c8c-4b93-b35e-d085f9f0fcee@arm.com>
-Date: Mon, 20 Oct 2025 16:24:36 +0100
+	s=arc-20240116; t=1760973912; c=relaxed/simple;
+	bh=bZHdXbGliS471bJEVtaICQs2UgcPF+D+TEtPHJ82sJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cbemll6AhNOhh8olDbGi+EG0uBpVQ23xjG7GoyYltnEMRwq4phYUHDIATDTydEtnmNHfMLXaHg8g5KSq9sRJpgJxrHHbpcjJokuB7a9dk4NyO1mIB8smXet8c0PFnEOZdhux2bC+6XcF7CWXkPpxkSzx6KoPOfmUvzwvG70DP/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KEuwc5vx; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=NmhX4kAAyfaAWBf9jg1TYvPxGghx+4HQ1uSQaHLqzz0=; b=KEuwc5vx/e6kDEjIO3rjrixtnS
+	oqjdbr/vo4yVqGp59A2by8CYFxZoL23j0lzT4clDJAMncPvYCSxDZebw6BwxtY3SJuleFJ40yfxHD
+	50TkE9YPx/uEnARb4ZftLhNxCch5Wjn9oScTeVAC73WMcl95ZfWH5kH5IA4e20rKdeq4xL6ASKQKF
+	PMhXftWXTaBDCuoB64xF96KhTSj6uwimGeBs9mvweMhcp3bKrDf+hi1i5ZOPgTaGm+xenwS2Qy5YL
+	1BGdjO4tMg9fY+32av1W3BwDaV9SEE5yYoyx1TrwXaH6B9zAeZHAHq2dV+JOps/M1hPexpCpOM4zG
+	NYARyCog==;
+Received: from [212.111.240.218] (helo=phil.guestnet.ukdd.de)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vArkZ-0002qD-Sn; Mon, 20 Oct 2025 17:24:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Fred Bloggs <f.blogs@napier.co.nz>,
+	Hsun Lai <i@chainsx.cn>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
+Date: Mon, 20 Oct 2025 17:24:41 +0200
+Message-ID: <176097387775.44471.9315562892075549326.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <0601AB836AE5F348+20251014021623.286121-2-i@chainsx.cn>
+References: <0601AB836AE5F348+20251014021623.286121-2-i@chainsx.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/12] Some Panfrost fixes and improvements
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com
-References: <20251019145225.3621989-1-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251019145225.3621989-1-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 19/10/2025 15:52, Adrián Larumbe wrote:
-> This is v7 of https://lore.kernel.org/dri-devel/20251015000930.356073-1-adrian.larumbe@collabora.com/
-> 
-> This patch series is a collection of minor fixes and improvements I came up
-> with while working on driver related stuff.
 
-Merged to drm-misc-next.
+On Tue, 14 Oct 2025 10:16:13 +0800, Hsun Lai wrote:
+> This documents 100ASK DShanPi A1 which is a SBC based on RK3576 SoC.
+> 
+> Link: https://wiki.dshanpi.org/en/docs/DshanPi-A1/intro/
+> 
+> 
 
-> 
-> Changelog:
->  v7:
->   - Fixed bug when handling AS number allocation. In case of error and early
->   bail-out, AS lock was being left in held state. This was uncovered by smart.
->   - Added new R-b tags.
->  v6:
->   - Don't optimise page range walk in the event of a double MMU fault
->   - Handle some minots and minor style changes
->   - Rebase patch series onto latest drm-misc-next
->  v5:
->  - Move devfreq record keeping further down job submission function to
->  keep busy count balanced in case of an early bail-out.
->  - In MMU page fault ISR, bail out when sgt for 2MiB page is not assigned,
->  rather than when the page array is populated. Add new commit for this.
->  - Add commit with myself as a new Panfrost maintainer
-> 
->  v4:
->   - Rebased older patch series onto latest drm-misc-next
->   - Added patch for renaming JM functions to reflect their actual role
->   - Fixed treatment of error code in perfcnt when enabling sample buffer AS
-> 
->  v3:
->   - Minor convenience fixes to patches 3 and 4 in the series
->   - Move unmapping of maped range of BO to the function's error path
->   in case of BO mapping failure, also for putting BO's pages
->   - Split patch 6/8 into two: one makes sure the Job IRQ enablement mask
->   isn't recalculated at every device reset and uses the same expression
->   everywhere in the driver, and another one that breaks the enablement
->   function into two stages.
-> 
->  v2:
->   - Removed commit that provided an explicit fence cleanup function
->   - Added commit for removing unused Panfrost device structure member
->   - Refactored how optional job interrupt reenabling during reset is handled
->   - Make the way errors and successful return values are delivered from inside
->    panfrost_mmu_as_get more according to standard.
->   - Simplify unmapping of already mapped area when mapping the pages of a BO
->   - Fixing management of runtime-PM reference counts when failing HW job submission.
-> 
-> Adrián Larumbe (12):
->   drm/panfrost: Replace DRM driver allocation method with newer one
->   drm/panfrost: Handle inexistent GPU during probe
->   drm/panfrost: Handle job HW submit errors
->   drm/panfrost: Handle error when allocating AS number
->   drm/panfrost: Check sgt to know whether pages are already mapped
->   drm/panfrost: Handle page mapping failure
->   drm/panfrost: Don't rework job IRQ enable mask in the enable path
->   drm/panfrost: Make re-enabling job interrupts at device reset optional
->   drm/panfrost: Add forward declaration and types header
->   drm/panfrost: Remove unused device property
->   drm/panfrost: Rename panfrost_job functions to reflect real role
->   MAINTAINERS: Panfrost: Add Steven Price and Adrian Larumbe
-> 
->  MAINTAINERS                                   |   3 +-
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c   |   4 +-
->  drivers/gpu/drm/panfrost/panfrost_device.c    |  68 +++++----
->  drivers/gpu/drm/panfrost/panfrost_device.h    |  13 +-
->  drivers/gpu/drm/panfrost/panfrost_drv.c       |  78 ++++------
->  drivers/gpu/drm/panfrost/panfrost_dump.c      |   8 +-
->  drivers/gpu/drm/panfrost/panfrost_gem.c       |   8 +-
->  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   4 +-
->  drivers/gpu/drm/panfrost/panfrost_gpu.c       |  64 ++++----
->  drivers/gpu/drm/panfrost/panfrost_job.c       | 139 +++++++++---------
->  drivers/gpu/drm/panfrost/panfrost_job.h       |  15 +-
->  drivers/gpu/drm/panfrost/panfrost_mmu.c       | 114 +++++++++-----
->  drivers/gpu/drm/panfrost/panfrost_mmu.h       |   3 +-
->  drivers/gpu/drm/panfrost/panfrost_perfcnt.c   |  26 ++--
->  14 files changed, 303 insertions(+), 244 deletions(-)
-> 
-> 
-> base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
-> --
-> 2.51.0
+Applied, thanks!
 
+[1/2] dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
+      commit: ff29a83cda0f6eebb57d14f0a6456e3d1e5dc7c3
+[2/2] arm64: dts: rockchip: add DTs for 100ASK DShanPi A1
+      commit: d809417c5a4012feb4379cd1767549b3568906e3
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
