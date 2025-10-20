@@ -1,235 +1,101 @@
-Return-Path: <linux-kernel+bounces-861101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C166BF1CCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:19:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B0DBF1CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B33DF4F6373
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:18:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C62D4347604
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3AE32779B;
-	Mon, 20 Oct 2025 14:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9770B320CC3;
+	Mon, 20 Oct 2025 14:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ixUr9Y4S"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNPVEWPZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EC6326D70
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBB425A328;
+	Mon, 20 Oct 2025 14:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969858; cv=none; b=XXcK1G7Tj4q/W/HaZAad4l2dZ00DUpxz43UvpaLMKdSydVLnhTKNYR0qm+11SgJFDaRzACcIYIEJLOBh2u5X2kFGMf+l7VjSMCEmLsAuqRC5eCH+4GWdRL2dc/LSKnRlqZ2s8WBpd4nVIAePAAS+4I/ogNh8tDHnEGIq8gJd8/s=
+	t=1760969913; cv=none; b=srXjPVXttThxwTbQjV6WsVvDdM/3V7VKvOXbGVknlCoOktK7u7qrDfZlTIjrKwBh9mbGl3ViPYsxqZNFe6JS3hL0DtZPoUoXoLEGOwc2AncHi94/RdnG3rUK/hUC0Y9Ea7pG8VMzzL4PSiT5uGj0CF4Nz/uhdfyZJCeHHe8BJrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969858; c=relaxed/simple;
-	bh=TCMur3W305UYpjzmNzxUmoJ7pqZkPL+65/d3pRVJ+8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XBXOvn4BB9v6gCwl0LQJtWU0so7oEf3375Fer7XwSFumYxqPYzWEDrQafFFOjdVuLMzPs9YRklEysijw1LQzBkBDwUttGTM+t8faEGlv5Q8LMgJWNkb9x6xiSYJC7w6ZiGznYisYH86SQhn6naJVWkAWfNd9e85N4k7H5Hij6Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ixUr9Y4S; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-37777912136so42141511fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760969854; x=1761574654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fGaC808GWK5LvOXihoY32Hd24hri1xoqdM6UgzacKUw=;
-        b=ixUr9Y4Sh6v6YYTOQawMpC/lJfrwXd/gWXfFqlgPz2/9ItwKXVtTUCLjaDlAyezL4Q
-         nJy0UhPcpre2dq00g4uOpiY84GSqiqXJhLYCFYvwzV4tajLpe1q4ZadayYNensp6YfgE
-         khlwmOpt6VGgj+aL3uvRNlHgYb4paXpEZhTKz9Ea56f9475HWmNZEMXf/tb7hgj5aR+Y
-         /QQtqj4q//K/Sa+KfmhHZJr4XfQqKftwIQuEuHJr+ltBAcs47Qko6bNK7mg9au2IyUdc
-         vDM27JMIXtLzb2n0Nm0vMTbL58CtqVM8Y0Kmygpl8tplghWxDitWMDlJHGXYS+7yGG+z
-         kRMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760969854; x=1761574654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fGaC808GWK5LvOXihoY32Hd24hri1xoqdM6UgzacKUw=;
-        b=XAYEIsnWpbFAcjrTDMGy8dqgIvCvQERZHFr8tNxTHXg3NFGUYmZrU8qiwdnZ3XuRAE
-         9sPjO3OePnDbjyxkSyynI9n1h/5BLFsuqJ5EX8qFarByBkn7zKujcFuONiUEm0sdzeAK
-         J0QzAMlT5/a+/aK96/DU/JsWMLiTeU+kSWZMDcFnX1Iun8gik+Jpy1rYduI+QB82ZiQ/
-         XH4RjPC7PW55DbBHUdSn19ai4Py7XPIe3PjFYmjqdirVVez8hd1hL1nBG0nkx9bAyeyU
-         J/cdzPp6YKhhDxubkq67pLl14k5SLGN+oHRNQQmmjR30xBOGVixXD8Z7vKz9JQ8GKXk6
-         KZ5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnxW885Oitk+Cu9+1hS896ZsUpn0Aj63e+qfweXpsXA7SH+y02myY7YidP0u5UXakxXjx57fio3RgC/bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNwrJUkGIg0KdshjtjNTFN0GmFGBCs4/i1PZ9FcHYYAHgAjVHu
-	UmizhxeigC5gy66lcM1iaT9YGOJVtbLm3OhZwqtyUff96vgR05gs8uC++J9l7jLm6n/yRSKYPD/
-	gs6fk
-X-Gm-Gg: ASbGncva0OxzgEN5pn6dL32fm26ec9QG8E+MPDJsf79mYxNQO4h2JiYPQQ++I92a0kW
-	qFY9nQkdZ+RO1j+twvqlpXBgazVLzM4DAe0fPSy0LERkyh8NNI/acyt94oB29MquuyJtwD2/1WK
-	r2j+yxUh9sz46uAahouKrpUhnFqXzebvalKjoZPIUzJbKwotpeEDjaWlkPz6bm6xF9dKK3xQxdJ
-	QPPshriYjlCW4skvWSplQdYMrLxgZr/3eMu+b1iNNOVhZcgNSetuY5rM/kZhKyuvqyUWH0xow8Q
-	t1zmuymFVMEcxsoisygvbL7Sd06UBK/5O92sbPCp9MNB5llsx+yD9DC1QtkdIyGV08p5jPX4SpS
-	yAaKOiwXytgzSkPofKey99io9xKr3N4hxkqLhFgRwpAM3cuNp8LUZHhXPQGzuCBAuY1WopGox+z
-	mf7wh6EfD1VX0g+XCbGKzzvrLeZe/44oMggAjkIgIQaiGwv3qt2g0x/PwpMtxj
-X-Google-Smtp-Source: AGHT+IHq+N7kJam9BA4Q2VZUWH3bExEE+I696f8s201sUzMH8M2RHkReQkfdKWnv543fHUx9gbKhQg==
-X-Received: by 2002:a05:651c:2343:20b0:377:c5b7:7bbd with SMTP id 38308e7fff4ca-377c5b77c4emr4089701fa.15.1760969853955;
-        Mon, 20 Oct 2025 07:17:33 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a950a284sm20797191fa.36.2025.10.20.07.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 07:17:33 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 2/2] pmdomain: Extend the genpd governor for CPUs to account for IPIs
-Date: Mon, 20 Oct 2025 16:17:12 +0200
-Message-ID: <20251020141718.150919-3-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251020141718.150919-1-ulf.hansson@linaro.org>
-References: <20251020141718.150919-1-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1760969913; c=relaxed/simple;
+	bh=8HJxbzJJnrOiosib5efl2b2t4vbzloiJMAS1tH7HNGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s1/7iot62d4QkyHyBKaetVkwIewSgU15qReIBDzbyQVsV4wdAw40H53tLzdrkQVi5v2vPK/msRKHoS47WzMAALbrs9V2kn5XUKkJT2RGj222D9TuKCfD5Dm5WW83eenk2uMUAxh+qYBp8BA21MAPxTQl0RE2T1hYi8BjtuYLu+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNPVEWPZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C92EC4CEF9;
+	Mon, 20 Oct 2025 14:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760969912;
+	bh=8HJxbzJJnrOiosib5efl2b2t4vbzloiJMAS1tH7HNGA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CNPVEWPZqyulQz0P8V+Wl+/qSuQyIc8aPOGqvRyLzDAOBEMGzUJ15W7TqYUX+7I13
+	 oHvoPpnPae5MlcMlSuMXvjxdVmwONf/2Uhh02wmejh4Bgbnmrl/1XIfa8ZsPSFcqjX
+	 vQmJQ2u1A8wU7TwpqXVSKWkgv1zwOnT6xfDo9Ezhx4Ma9TEmCrsqeB6PclqFWrQNIZ
+	 y+0CxD2xtYPJJHJNDCZ5094fH9klXNwPBd4e0jyKqNoL1SaICC1Rxd4ruPr83Pc5Mr
+	 YJmXk7n3onwisVhBA2ThQKYC8jd3Anj1MczlQyKqpXlJkYQHyAza7GoGL2Yasp9fje
+	 63uQ66WhkwK2w==
+Message-ID: <3bad6983-b412-4386-931c-4eca3ed54da3@kernel.org>
+Date: Mon, 20 Oct 2025 16:18:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: bitmap: add MAX_LEN and NO_ALLOC_MAX_LEN
+ constants
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Yury Norov <yury.norov@gmail.com>, =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?=
+ <arve@android.com>, Todd Kjos <tkjos@android.com>,
+ Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>,
+ Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251020-binder-bitmap-v1-0-879bec9cddc1@google.com>
+ <20251020-binder-bitmap-v1-1-879bec9cddc1@google.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251020-binder-bitmap-v1-1-879bec9cddc1@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the genpd governor for CPUs, tries to select the most optimal
-idlestate for a group of CPUs managed in a PM domain, it fails far too
-often.
+On 10/20/25 3:33 PM, Alice Ryhl wrote:
+> To avoid hard-coding these values in drivers, define constants for them
+> that drivers can reference.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-On a Dragonboard 410c, which is an arm64 based platform with 4 CPUs
-in one cluster that is using PSCI OS-initiated mode, we can observe that we
-often fail when trying to enter the selected idlestate. This is certainly a
-suboptimal behaviour that leads to many unnecessary requests being sent to
-the PSCI FW.
+Yes, please! :)
 
-A simple dd operation that reads from the eMMC, to generate some IRQs and
-I/O handling helps us to understand the problem, while also monitoring the
-rejected counters in debugfs for the corresponding idlestates of the genpd
-in question.
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
- Menu governor:
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             1451           437        91         149        0
-S1             65194          558        149        172        0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.562698 seconds, 140.3MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             2694           1073       265        892        1
-S1             74567          829        561        790        0
+> @@ -238,11 +244,11 @@ pub fn new(nbits: usize, flags: Flags) -> Result<Self, AllocError> {
+>                  nbits,
+>              });
+>          }
+> -        if nbits > i32::MAX.try_into().unwrap() {
+> +        if nbits > Self::MAX_LEN {
+>              return Err(AllocError);
+>          }
+>          let nbits_u32 = u32::try_from(nbits).unwrap();
 
- The dd completed in ~3.6 seconds and rejects increased with 586.
+Can we also get rid of this please? :)
 
- Teo governor:
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             4976           2096       392        1721       2
-S1             160661         1893       1309       1904       0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.543225 seconds, 141.1MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             5192           2194       433        1830       2
-S1             167677         2891       3184       4729       0
-
- The dd completed in ~3.6 seconds and rejects increased with 1916.
-
-The main reason to the above problem is pending IPIs for one of the CPUs
-that is affected by the idlestate that the genpd governor selected. This
-leads to that the PSCI FW refuses to enter it. To improve the behaviour,
-let's start to take into account pending IPIs for CPUs in the genpd
-governor, hence we fallback to use the shallower per CPU idlestate.
-
- Re-testing with this change shows a significant improved behaviour.
-
- - Menu governor:
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             2556           878        19         368        1
-S1             69974          596        10         152        0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.522010 seconds, 142.0MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             3360           1320       28         819        1
-S1             70168          710        11         267        0
-
- The dd completed in ~3.5 seconds and rejects increased with 10.
-
- - Teo governor
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             5145           1861       39         938        1
-S1             188887         3117       51         1975       0
-dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
-524288000 bytes (500.0MB) copied, 3.653100 seconds, 136.9MB/s
-cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             5260           1923       42         1002       1
-S1             190849         4033       52         2892       0
-
- The dd completed in ~3.7 seconds and rejects increased with 4.
-
-Note that, the rejected counters in genpd are also being accumulated in the
-rejected counters that are managed by cpuidle, yet on a per CPU idlestates
-basis. Comparing these counters before/after this change, through cpuidle's
-sysfs interface shows the similar improvements.
-
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-
-Changes in v2:
-	- Use the new name of the helper function.
-	- Re-test and update the statistics in the commit message.
-
----
- drivers/pmdomain/governor.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain/governor.c
-index 39359811a930..ed2ce9b6f8d1 100644
---- a/drivers/pmdomain/governor.c
-+++ b/drivers/pmdomain/governor.c
-@@ -404,15 +404,21 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
- 		if ((idle_duration_ns >= (genpd->states[i].residency_ns +
- 		    genpd->states[i].power_off_latency_ns)) &&
- 		    (global_constraint >= (genpd->states[i].power_on_latency_ns +
--		    genpd->states[i].power_off_latency_ns))) {
--			genpd->state_idx = i;
--			genpd->gd->last_enter = now;
--			genpd->gd->reflect_residency = true;
--			return true;
--		}
-+		    genpd->states[i].power_off_latency_ns)))
-+			break;
-+
- 	} while (--i >= 0);
- 
--	return false;
-+	if (i < 0)
-+		return false;
-+
-+	if (cpus_may_have_pending_ipi(genpd->cpus))
-+		return false;
-+
-+	genpd->state_idx = i;
-+	genpd->gd->last_enter = now;
-+	genpd->gd->reflect_residency = true;
-+	return true;
- }
- 
- struct dev_power_governor pm_domain_cpu_gov = {
--- 
-2.43.0
-
+> -        // SAFETY: `BITS_PER_LONG < nbits` and `nbits <= i32::MAX`.
+> +        // SAFETY: `BITS_PER_LONG < nbits` and `nbits <= MAX_LEN`.
+>          let ptr = unsafe { bindings::bitmap_zalloc(nbits_u32, flags.as_raw()) };
+>          let ptr = NonNull::new(ptr).ok_or(AllocError)?;
+>          // INVARIANT: `ptr` returned by C `bitmap_zalloc` and `nbits` checked.
 
