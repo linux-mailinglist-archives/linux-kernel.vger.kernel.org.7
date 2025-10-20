@@ -1,144 +1,138 @@
-Return-Path: <linux-kernel+bounces-860364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D18BEFF52
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9503BBEFF94
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 648064EFD44
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2453AC2E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDBE2EC086;
-	Mon, 20 Oct 2025 08:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523812EC087;
+	Mon, 20 Oct 2025 08:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="Hz510bjN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJb24mQ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D67754763;
-	Mon, 20 Oct 2025 08:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949078; cv=pass; b=JPRsB6lX+Ty1/Fd5PAOQynw5dyRwOy2Al55ZQryZJ3sDPy70ap4PEoucE3bhnz+PN1PFTjH5eB96YuZuKXslkBBdJB+T2Bclby8LoahonlMHTotTu2e29Rp/80QpAQg7Nx37dMSqKTxKVDozOiSTuKkraA3eN3C9a2tfAo08H6M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949078; c=relaxed/simple;
-	bh=GxDW6HUYxD1XUJYrmVdYCf0aaVS7E0xLMcKwUuyGJy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oxAdGVnfb9AzqEgk49Vrnv6tkE8HP5CQI1Bbtwg/uJxyIixy5Pg5Xqk1/FxogNRND6UuUIbEkIz2vZeXb/miZKdGFS9INDsWYp8iE447DfotO4+sqXS3W3rpnc0iQeHa8Unho6zvj4Ip0pKtwZaFNoEatqcVk0N08VEpD8ZilWU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=Hz510bjN; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760949065; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fuGrOvO5gEcKfcaA5DfZD5Td/6duZ3meJlYvUUXHuNfZKtTAwGDtB+TclWhyfkzwT4l+P2tbuB9Kq1VNxJKE9gR8lTpt4qHIPikrC/XrkgU1tcaA8TX6DSoR6fGwH8lavbzavY4jSArjD0WJnzavv4K4vOrnHYFTC3r6QfW65Ek=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760949065; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=i2q52bXAKqn7gOfHhudM0m7RKKiSLxsHofXnBnnwlZU=; 
-	b=KC2+fpAA6gHyMSH2GNoleqoGqhL4o+OBU/vqP83vsGm5ubPjm1q87zkXiDqWjMUMDPdPd00ZmYDa5TkDIhAkE0CBw2cSe4IQQc1AVTiRhc1mf2fVK44azU758p4uXkLxfzZhgNKjvUTOmcs8iwYTiwheZWg9OsDeJx/rt9ItZ7k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760949064;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=i2q52bXAKqn7gOfHhudM0m7RKKiSLxsHofXnBnnwlZU=;
-	b=Hz510bjNICHwjJ9c9WlvE/kJMH/Vcs2NB9XaFCoLdwYtqJv8TvSBJrvIKPIaHGFo
-	LLAU4P7dHA0HWaAuzhwCsF6HbOHPiTlr5xuqhs7uuvhZOZ411VAGmLxQ2ifF6ileenm
-	o0oPb/tY08JYjFPheFXr8xI4tDzLbzvm/LUOQALo=
-Received: by mx.zohomail.com with SMTPS id 1760949062626473.4112073699241;
-	Mon, 20 Oct 2025 01:31:02 -0700 (PDT)
-Message-ID: <258b9036-697d-48b2-91d6-5fb8ea2f1350@collabora.com>
-Date: Mon, 20 Oct 2025 10:30:59 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A360D2C0261;
+	Mon, 20 Oct 2025 08:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760949090; cv=none; b=TLgf3z1sfWLP/KOGZv7DHQKd1qX/o6fv21DA2BpYxpmOXWTcSFKMrLVK0jXQTQHEgg+0kg+wCgMPMQ5czvR5LbnRT/rqIia6fAL7njduRuOt8xtNN2vH4WJRJvkv6NvAet4qqmpR9v3xNSj4UtqjlIpERX7zvaNGriEB/50BSXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760949090; c=relaxed/simple;
+	bh=p+lVEvzAjUBlk7C1+v1sV9NpurMDFd6D+E2N5di3OWs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VYjqQLXGLTQ9QSgipKhxTt2YLyqbK4kUXZRyNYCmhgq+dbt+l6SaazRvUyjY3YTYCt7Kg1jEFdWliBCEOlMs+r4mFyTtOgNdmN70DpMaqgkQngd+3DTLtfyA/C/5rEnwix1TrPXDK9gCeFDWANfUO1NqUW2hMG0oV6JYCd0GW2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJb24mQ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2D2C4CEF9;
+	Mon, 20 Oct 2025 08:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760949090;
+	bh=p+lVEvzAjUBlk7C1+v1sV9NpurMDFd6D+E2N5di3OWs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SJb24mQ7FlYx1WBTxPVxREIlxWtAa6f3W+H3UzZHqJV0IIM9+VOswuEk+gtKadVgm
+	 Ghq5wuXApC5LduxNom3Zdv4xWoFzcvpF0LXd0t3hLLNLlCJO/cX/tHgOkji8b1ZLC9
+	 dsKHyxRTjGIdn74dEv+ryysfPpFOQ/uI4Tsc2FjcpwQkmyd2D2BLRCoNvlXksSWrOg
+	 YWvsv1Py5EE4Loao6bo5H4o/OmOCy21VmVWiFC43hMCBYnTMbx1LqOs3qRXRBZqCPg
+	 AcPaKSk5r5mpM5BIET4WqvqTK5pweCojw6qrOtqNOMTlWbdCKbAfmHxV6UddF61LVd
+	 JUj0/1QDyDIqA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 20 Oct 2025 10:31:22 +0200
+Subject: [PATCH] arm64: dts: qcom: lemans: Align ethernet
+ interconnect-names with schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
- legacy fileio is active
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
- Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
-References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
- <20251016111154.993949-1-m.szyprowski@samsung.com>
- <36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
- <84133573-986d-4cc8-8147-246f0da34640@samsung.com>
- <1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
- <21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
- <642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251020-topic-lemans_eth_dt-v1-1-25f4532addb2@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAFnz9WgC/x3MTQqAIBBA4avErBPU/qCrRIjplANlohJBdPek5
+ bd474GEkTDBWD0Q8aJEpy8QdQXGab8hI1sMkstOcMlZPgMZtuOhfVKYnbKZaTk0ol1a7HoOpQw
+ RV7r/6zS/7wdcoZJkZQAAAA==
+X-Change-ID: 20251020-topic-lemans_eth_dt-a27314b4e560
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760949086; l=2255;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=rlZmiaYIIXnZ7mveupmWym6yKp8wCMMkO1+lzDo7VR0=;
+ b=VaFwg+p5GkkyWYzKFIqSYHBcytGXZTjIdwYfB6QuQ31WifE90qicYzSrECQDrB2GD5RUIm2uI
+ RWtHKBk2xorANv+bwfBaMIFo8l2lFeUiyGsPSFwECwRlZqjoVBfv/33
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Le 20/10/2025 à 10:21, Marek Szyprowski a écrit :
-> On 20.10.2025 09:48, Benjamin Gaignard wrote:
->> Le 20/10/2025 à 09:39, Hans Verkuil a écrit :
->>> On 20/10/2025 09:34, Marek Szyprowski wrote:
->>>> On 20.10.2025 09:11, Benjamin Gaignard wrote:
->>>>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
->>>>>> create_bufs and remove_bufs ioctl calls manipulate queue internal
->>>>>> buffer
->>>>>> list, potentially overwriting some pointers used by the legacy fileio
->>>>>> access mode. Simply forbid those calls when fileio is active to
->>>>>> protect
->>>>>> internal queue state between subsequent read/write calls.
->>>>> Hi Marek,
->>>>>
->>>>> I may be wrong but using fileio API and create/remove API at the same
->>>>> time
->>>>> sound incorrect from application point of view, right ? If that not
->>>>> the
->>>>> case maybe we should also add a test in v4l2-compliance.
->>>> Definitely that's incorrect and v4l2-core must forbid such calls. The
->>>> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending
->>>> v4l2-compliance tools is probably a good idea.
->>> Yes, please! A patch is welcome.
->>>
->>>    I also wonder if its a
->>>> good time to add a kernel option to completely disable legacy fileio
->>>> access mode, as it is not really needed for most of the systems
->>>> nowadays.
->>> No, that will break applications. Using read() is very common (and
->>> convenient!)
->>> for MPEG encoders such as the cx18 driver.
->>>
->>> The fileio code is not blocking any new development, it's just there
->>> for those
->>> drivers were it makes sense.
->>>
->>> Regards,
->>>
->>>      Hans
->> I wonder if this patch in useful because when calling
->> vb2_ioctl_create_bufs()
->> it already check in vb2_verify_memory_type() if fileio is used or not.
-> Frankly speaking the original report I got was about mixing fileio with
-> vb2_ioctl_remove_bufs and that case is indeed not protected.
->
-> While analyzing that I've inspected a symmetrical ioctl
-> (vb2_ioctl_create_bufs), but it looks I've I missed that a check is in
-> vb2_verify_memory_type(). I will remove it in v2 then.
+Reshuffle the entries to match the expected order.
 
-To keep vb2_ioctl_remove_bufs() symmetrical to vb2_ioctl_create_bufs()
-we should do in vb2_ioctl_remove_bufs() something like :
-res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
-instead of vdev->queue->type != d->type.
+Fixes the following warnings:
 
-This way we test fileio too.
+(qcom,sa8775p-ethqos): interconnect-names:0: 'cpu-mac' was expected
+(qcom,sa8775p-ethqos): interconnect-names:1: 'mac-mem' was expected
 
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/lemans.dtsi | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
->
-> Best regards
+diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+index cf685cb186ed..979fb557e9e3 100644
+--- a/arch/arm64/boot/dts/qcom/lemans.dtsi
++++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+@@ -6812,11 +6812,12 @@ ethernet1: ethernet@23000000 {
+ 				      "ptp_ref",
+ 				      "phyaux";
+ 
+-			interconnects = <&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
+-					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+-					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+-					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>;
+-			interconnect-names = "mac-mem", "cpu-mac";
++			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>,
++					<&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++			interconnect-names = "cpu-mac",
++					     "mac-mem";
+ 
+ 			power-domains = <&gcc EMAC1_GDSC>;
+ 
+@@ -6853,11 +6854,12 @@ ethernet0: ethernet@23040000 {
+ 				      "ptp_ref",
+ 				      "phyaux";
+ 
+-			interconnects = <&aggre1_noc MASTER_EMAC QCOM_ICC_TAG_ALWAYS
+-					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+-					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+-					 &config_noc SLAVE_EMAC_CFG QCOM_ICC_TAG_ALWAYS>;
+-			interconnect-names = "mac-mem", "cpu-mac";
++			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++					 &config_noc SLAVE_EMAC_CFG QCOM_ICC_TAG_ALWAYS>,
++					<&aggre1_noc MASTER_EMAC QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++			interconnect-names = "cpu-mac",
++					     "mac-mem";
+ 
+ 			power-domains = <&gcc EMAC0_GDSC>;
+ 
+
+---
+base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
+change-id: 20251020-topic-lemans_eth_dt-a27314b4e560
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
