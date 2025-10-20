@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-860842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09D8BF11DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB18ABF121E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF2E24F3BD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C36518964A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4163112B4;
-	Mon, 20 Oct 2025 12:19:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9C7303A27;
-	Mon, 20 Oct 2025 12:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1863230F555;
+	Mon, 20 Oct 2025 12:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="ED+T8UAU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T4U+6ceh"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6E5228CB8;
+	Mon, 20 Oct 2025 12:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760962794; cv=none; b=SF5yXY27zwdAxWfUWAkqhjxUW0+s2wfX9vsCRrMDHz/drJvpd63oFpV8pJXYJm0EWfDV6A7Ditgae3hSUnN6il29tFOX8C5VRUgiprW7UFpD+Rt6I8UodhU3afxxAAfr5qfeFc5ydNsVy0bEmFm3TNBapa04f7VS+MkLUu44MC4=
+	t=1760962814; cv=none; b=e27V5x8jyvv718+GzsGGEZCrAOg5u/JlgNwGxFZnLnCQ67+JlwWbHlUkDc/pFFGckb5voEqSlAcu5lCSNy/B0g5sl3n93nvSvBl4rZTzdzLBF3oro0bYRLC8HzIRsj+F65isPNub2lFUNKrgAuBF9Za50xmWcRH/0ZFVhfYPx8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760962794; c=relaxed/simple;
-	bh=xiucUNFP5MWuohojeRMYflL1g5SM9B4vl+aqFxwQbHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gjp1USBcqhX2XLYjEFTAg4wXdOomWIr4JhFb4ovzNHMsy5fteAPnMti4AIcUs2s3Ux0aJTz6MlWOKksXZNbVKOJ4+K6m9KkmIbIJCOScnhSueYTlA2ToqKkGydi7Rss/VuMljZM/kMiHvyaQF4uUwY48etIPcUNa3yU71H7zt6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2EF421007;
-	Mon, 20 Oct 2025 05:19:44 -0700 (PDT)
-Received: from [10.1.26.49] (e132430.arm.com [10.1.26.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A55443F63F;
-	Mon, 20 Oct 2025 05:19:48 -0700 (PDT)
-Message-ID: <8d15e5a6-e80a-4707-a43a-4cbb6d810222@arm.com>
-Date: Mon, 20 Oct 2025 13:19:46 +0100
+	s=arc-20240116; t=1760962814; c=relaxed/simple;
+	bh=0EcbDveXf0J+xVodzGLLy9+lLNXsm0t/s0zfqzuvq3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwUdOcFCGLLXf/EL9SUHkQNpAMhibl9dKXpTqUv2Ddylw1BNgpwlyDa9NgPxUTVdntlScj2XBuvbllSBwsjhIIdNHzT0aWoz+CQC7yAD80WtpW35psjJFUT9TrqoUS4BI79QaehRRoIXoOCf8CZaIYwvx1SKooAXoZHBDLFxV6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=ED+T8UAU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T4U+6ceh; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 99F201D000CA;
+	Mon, 20 Oct 2025 08:20:08 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Mon, 20 Oct 2025 08:20:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1760962808; x=
+	1761049208; bh=PKh5Wl/ZPsV5XtmPQ2Ms9jV5CN2xEptRs8u2MKhw23w=; b=E
+	D+T8UAUrWD/x+DVDvC7EPYajI2dDyiz8AkSko8OAln+UykMgPt5fuYLoDsSGJKnT
+	+Ejh3hxbvRzhOKZQiAfyxUckcJf/no1mk0kLFS0fghox/T9Nz5un70SSftYmK5U1
+	8kIFZSS/KpDjSYt68B8FQRfO7uTxLymuoV1LmFN+1cvwW2mqs0unYUOyCGqWroa6
+	LBLJm7Jk6lKQ5xDG0iAbzwd/8e3e8ZMwKuYaY/4UHLusfYAT/9s7kdx3THQOtJHj
+	mcxGR8PnnmqziDkjbAs1v7lKha1pUeV/55ex757mzEMrOkv6ObxPu95Fud6dPZwj
+	fiZ2kwl2kbUK3lkJEbZGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760962808; x=1761049208; bh=PKh5Wl/ZPsV5XtmPQ2Ms9jV5CN2xEptRs8u
+	2MKhw23w=; b=T4U+6cehyaccwKMCqqOUlBYyN8zJMWoETTrERIJ1CPSL8qRnEqb
+	BETIBGkcpLZ8pCYF+ZX0C2ca1drFF8HO3qCEAJvmidUCc6+z444yBYYd8ziZuVFO
+	cI7yDGQ9DY/apJn/sY1rsrWJkdYkIdJeVmQvgPik3b67JSRcbCglgD5vKJKne6of
+	swmO/tAZQkDra9S22VvFRTPK1+cMNVsLZTv8X2KzOM8T2Vanrt4jTTM/Q3uVlEIq
+	PA6eQt7O6YvP1Bga39H21dbskmQMA/7TJ5f1lFQCzVodYNHAix9qYctdFKown0D3
+	iXzkkk3QNUxCuG4jtSMYmN2B4CTmL9QbTeA==
+X-ME-Sender: <xms:9ij2aNwfEnVUSNuIL8lzOUEZdlbWFQfhx6f0e56gkcXCjAzR8KR7VQ>
+    <xme:9ij2aHpNXM-VRKiqdQFq7H64cnFN0CJBX244RUE45bdIRGgpzsvTY3zNV-KuVrhEE
+    RBqZDbcAFCC7uQqEwKzAbcr5Zk33MyxPiHIjSXxazLotPaXLLAFdw>
+X-ME-Received: <xmr:9ij2aNc4Jx0PL3XpP5TWOiHDCznpPmZ6C8AGZDxVNRtm69SBzMZKh_V25glO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeejkedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepgefhffdtvedugfekffejvdeiieelhfetffeffefghedvvefhjeejvdek
+    feelgefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdr
+    nhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopeifrghnghhlihgrnhhgjeegsehhuhgrfigvihdrtghomhdprhgtphhtthhopehshiii
+    sghothdoleellegvsgdvfeegieejfhekfehflegsfhelsghfsehshiiikhgrlhhlvghrrd
+    grphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepshihiihkrghllhgvrhdqsghu
+    ghhssehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehsthgvfhhfvghnrd
+    hklhgrshhsvghrthesshgvtghunhgvthdrtghomhdprhgtphhtthhopehhvghrsggvrhht
+    sehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtohepuggrvhgvmhesug
+    grvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgv
+    rdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hprggsvghnihesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:9ij2aKqBX5ou8PP1r3YJsseRT_Ld4TIzT2jxg2Cpnis6sv2BKodRQQ>
+    <xmx:9ij2aHn2CxLSybvvPZLEb7BKtP8VepZbo_-gF9HSz2Ed_Yk4Z8d6kw>
+    <xmx:9ij2aLQav8c31lXf1exrMOs4-etGTUsPTatDDrecmTzptzPUnXxfdQ>
+    <xmx:9ij2aNaGL9WWSgPgI7bCcV53D0Ot8ISBA-HDJPPovXDN7r3Nl2yi_Q>
+    <xmx:-Cj2aI4Mcir2SaysmhdY1HLuneWvudHYWTNBtIRExGkKQekcNPkgBHDh>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 Oct 2025 08:20:05 -0400 (EDT)
+Date: Mon, 20 Oct 2025 14:20:03 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com, steffen.klassert@secunet.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yuehaibing@huawei.com,
+	zhangchangzhong@huawei.com
+Subject: Re: [PATCH net] Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
+Message-ID: <aPYo8wGLna44_57b@krikkit>
+References: <20251020112553.2345296-1-wangliang74@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/13] tracing: Check for printable characters when
- printing field dyn strings
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>,
- Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ian Rogers <irogers@google.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>
-References: <20251015173214.760495866@kernel.org>
- <20251015173550.062240695@kernel.org>
-Content-Language: en-US
-From: Douglas Raillard <douglas.raillard@arm.com>
-In-Reply-To: <20251015173550.062240695@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251020112553.2345296-1-wangliang74@huawei.com>
 
-Hi Steve,
+2025-10-20, 19:25:53 +0800, Wang Liang wrote:
+> #syz test
 
-On 15-10-2025 18:32, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> When the "fields" option is enabled, it prints each trace event field
-> based on its type. But a dynamic array and a dynamic string can both have
-> a "char *" type. Printing it as a string can cause escape characters to be
-> printed and mess up the output of the trace.
+I've already sent
+https://lore.kernel.org/all/15c383b3491b6ecedc98380e9db5b23f826a4857.1760610268.git.sd@queasysnail.net/
+which should address this issue (and the other report in
+xfrm6_tunnel_net_exit).
 
-We faced the same issue when converting trace.dat to other formats that distinguish
-between a byte buffer and an actual string. The current solution we have is to
-reserve "char []" for actual string and use "u8 []"/"uint8_t []" for byte buffers.
-
-Obviously it does not solve the problem for existing events but that could be worth
-establishing a convention like that for new code and support it in trace_output.c ?
-Most uses of trace data beyond direct printing would require knowing the data schema
-from the header info, so value-based criteria are typically not suitable for that.
-
-> For dynamic strings, test if there are any non-printable characters, and
-> if so, print both the string with the non printable characters as '.', and
-> the print the hex value of the array.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->   kernel/trace/trace_output.c | 27 +++++++++++++++++++++++++--
->   1 file changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index 97db0b0ccf3e..718b255b6fd8 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -950,7 +950,9 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
->   	int offset;
->   	int len;
->   	int ret;
-> +	int i;
->   	void *pos;
-> +	char *str;
->   
->   	list_for_each_entry_reverse(field, head, link) {
->   		trace_seq_printf(&iter->seq, " %s=", field->name);
-> @@ -977,8 +979,29 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
->   				trace_seq_puts(&iter->seq, "<OVERFLOW>");
->   				break;
->   			}
-> -			pos = (void *)iter->ent + offset;
-> -			trace_seq_printf(&iter->seq, "%.*s", len, (char *)pos);
-> +			str = (char *)iter->ent + offset;
-> +			/* Check if there's any non printable strings */
-> +			for (i = 0; i < len; i++) {
-> +				if (str[i] && !(isascii(str[i]) && isprint(str[i])))
-> +					break;
-> +			}
-> +			if (i < len) {
-> +				for (i = 0; i < len; i++) {
-> +					if (isascii(str[i]) && isprint(str[i]))
-> +						trace_seq_putc(&iter->seq, str[i]);
-> +					else
-> +						trace_seq_putc(&iter->seq, '.');
-> +				}
-> +				trace_seq_puts(&iter->seq, " (");
-> +				for (i = 0; i < len; i++) {
-> +					if (i)
-> +						trace_seq_putc(&iter->seq, ':');
-> +					trace_seq_printf(&iter->seq, "%02x", str[i]);
-> +				}
-> +				trace_seq_putc(&iter->seq, ')');
-> +			} else {
-> +				trace_seq_printf(&iter->seq, "%.*s", len, str);
-> +			}
->   			break;
->   		case FILTER_PTR_STRING:
->   			if (!iter->fmt_size)
-
---
-
-Douglas
+-- 
+Sabrina
 
