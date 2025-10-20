@@ -1,456 +1,200 @@
-Return-Path: <linux-kernel+bounces-861355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BCFBF2826
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:48:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E3FBF282C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF455426991
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:47:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E6518870E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8244330B3C;
-	Mon, 20 Oct 2025 16:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F1E32ED5E;
+	Mon, 20 Oct 2025 16:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qdrc+UKg"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYg53VZA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A6B330D20
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535CE27E071;
+	Mon, 20 Oct 2025 16:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760978816; cv=none; b=ZEVqbSXnqq4GLGXA4Y3Hn6CTy+vixWdNfh/Bj7bbp/QVZxUrl9nSulpcpL8fNtq5lxOSU3E0c0OuKeRqx8gQo5ZDA6ME0OI2WDVPdNiSRgrtEkn9TSul9FsvBAcdD538XYUtlo8YXP/hXyrpsBCbNpzorNZ/mJCirS6G4/4IJeQ=
+	t=1760978928; cv=none; b=TYRSPMU/eh12jsUNDMyPdSeeq9AJFwupxWbaJ8MyAY2c5yNUKP0mEpNOtE1xfm0nE9WF/6AY9zz5XQuF5/dYGZHU16f38LM9P8++TwbjwImrGezFMZk2g17F9kWreDKXN695OcdI3Z3VA3T4h9jp6hYOWgRifqGDDNQVPyFkIdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760978816; c=relaxed/simple;
-	bh=vG3+Go6UC5T7FOBaderERe8+6lxEQmMeFglvzrhIA0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NWwik6V8xQHOlyz1GRWECPGoPxDS781u+WA27Z/zRc9Zbny+c03USsDds7PizhloHCOBOlf5l/CgZLMN9YQDYcdx4BbntT69y+s6cQ1MK8XbKpAmN1eJgla76QjcgaE4k9mLCGGqb6NrFw41LOH5/x3RDhpsq4HBUZIsZpYOvsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qdrc+UKg; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760978811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fYNgGs1ndibKH788F5dG/PgeEGnQ7wEDq1gqnEleHTQ=;
-	b=qdrc+UKg5SEvMpkMLZvr0psEkT5nIypk6UmvnhNB+PEUwmZGJM7YYWSSuD4nlFdl6qfzEc
-	GfhYrGzpwbzeDsjntq4g3+9XVUxYG0K+piV+sw+gpcwVkWtRfG73V6mkoyzq4UsUpmpvRU
-	Gs4KIgI0jA1S01K/Old2DEnSdGcnozQ=
-From: Leon Hwang <leon.hwang@linux.dev>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	andrii@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
+	s=arc-20240116; t=1760978928; c=relaxed/simple;
+	bh=zYqoYCQe4K7XudfmeVGpZr7tdm5vBdoL/LEBbTTO5iU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fiZL34bV/43eY/MATVnnq9KjAR0lbBjYYaPCzPWWClkXoAt5mwfABtqmL5SrEGk17xnXcThCTcSlzKTgZ0YNCKCkHFfnAVPGqoIkLxkCCAKOpfNCg0EUoBRjVOHQ8xYtjF7bzYWKal1QG+APBUHkmbHK7ke2StgCKeluJ/YOasg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYg53VZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B245AC4CEF9;
+	Mon, 20 Oct 2025 16:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760978926;
+	bh=zYqoYCQe4K7XudfmeVGpZr7tdm5vBdoL/LEBbTTO5iU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dYg53VZAhN66E9XaBivc4JKX9/Sl92OsDM3o6ol9TGgJPfP0P/GsFMc22z1RtQtnt
+	 AdwdaC/WHquIcTzfheRpQ9XYtPMyWIdx/IZ+MjE+JUXg2/q9ggKsvvmskeyKNgu5jD
+	 p+RlWVRQ7lLItITmNpGAIXRDBXtZtpNVKvJiGdLf8BfX7RFTaYKfl/67WQNtjp+ZHq
+	 aER2ncF7Y+XwMuEAv4vMrNC5HhyMlMpyna3kBdCCZ24IQIkShnupcx38AG/Q+o2yrv
+	 xmHZp/muQvnP4hPCic6dRy8T6B9uhVIuq2Bm7Il4Dczr45dqY/iqK/UTdVevwea6hm
+	 mN7I0dKh1Nd9g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vAt3s-0000000Fa00-1car;
+	Mon, 20 Oct 2025 16:48:44 +0000
+Date: Mon, 20 Oct 2025 17:48:43 +0100
+Message-ID: <86jz0pwmc4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
 	linux-kernel@vger.kernel.org,
-	kernel-patches-bot@fb.com,
-	Leon Hwang <leon.hwang@linux.dev>
-Subject: [PATCH bpf v2 4/4] selftests/bpf: Add tests to verify no memleak when updating hash and cgrp storage maps
-Date: Tue, 21 Oct 2025 00:46:08 +0800
-Message-ID: <20251020164608.20536-5-leon.hwang@linux.dev>
-In-Reply-To: <20251020164608.20536-1-leon.hwang@linux.dev>
-References: <20251020164608.20536-1-leon.hwang@linux.dev>
+	kvmarm@lists.linux.dev,
+	kasan-dev@googlegroups.com,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC PATCH 06/16] arm64/insn: always inline aarch64_insn_gen_movewide()
+In-Reply-To: <20250923174903.76283-7-ada.coupriediaz@arm.com>
+References: <20250923174903.76283-1-ada.coupriediaz@arm.com>
+	<20250923174903.76283-7-ada.coupriediaz@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ada.coupriediaz@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, ardb@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, kasan-dev@googlegroups.com, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Add tests to verify that updating hash and local storage maps does not
-leak memory when BPF_KPTR_REF objects are involved.
+On Tue, 23 Sep 2025 18:48:53 +0100,
+Ada Couprie Diaz <ada.coupriediaz@arm.com> wrote:
+> 
+> As it is always called with an explicit movewide type, we can
+> check for its validity at compile time and remove the runtime error print.
+> 
+> The other error prints cannot be verified at compile time, but should not
+> occur in practice and will still lead to a fault BRK, so remove them.
+> 
+> This makes `aarch64_insn_gen_movewide()` safe for inlining
+> and usage from patching callbacks, as both
+> `aarch64_insn_encode_register()` and `aarch64_insn_encode_immediate()`
+> have been made safe in previous commits.
+> 
+> Signed-off-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> ---
+>  arch/arm64/include/asm/insn.h | 58 ++++++++++++++++++++++++++++++++---
+>  arch/arm64/lib/insn.c         | 56 ---------------------------------
+>  2 files changed, 54 insertions(+), 60 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+> index 5f5f6a125b4e..5a25e311717f 100644
+> --- a/arch/arm64/include/asm/insn.h
+> +++ b/arch/arm64/include/asm/insn.h
+> @@ -624,6 +624,8 @@ static __always_inline bool aarch64_get_imm_shift_mask(
+>  #define ADR_IMM_LOSHIFT		29
+>  #define ADR_IMM_HISHIFT		5
+>  
+> +#define AARCH64_INSN_SF_BIT	BIT(31)
+> +
+>  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
+>  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
+>  
+> @@ -796,10 +798,58 @@ u32 aarch64_insn_gen_bitfield(enum aarch64_insn_register dst,
+>  			      int immr, int imms,
+>  			      enum aarch64_insn_variant variant,
+>  			      enum aarch64_insn_bitfield_type type);
+> -u32 aarch64_insn_gen_movewide(enum aarch64_insn_register dst,
+> -			      int imm, int shift,
+> -			      enum aarch64_insn_variant variant,
+> -			      enum aarch64_insn_movewide_type type);
+> +
+> +static __always_inline u32 aarch64_insn_gen_movewide(
+> +				 enum aarch64_insn_register dst,
+> +				 int imm, int shift,
+> +				 enum aarch64_insn_variant variant,
+> +				 enum aarch64_insn_movewide_type type)
 
-The tests perform the following steps:
+nit: I personally find this definition style pretty unreadable, and
+would rather see the "static __always_inline" stuff put on a line of
+its own:
 
-1. Call update_elem() to insert an initial value.
-2. Use bpf_refcount_acquire() to increment the refcount.
-3. Store the node pointer in the map value.
-4. Add the node to a linked list.
-5. Probe-read the refcount and verify it is *2*.
-6. Call update_elem() again to trigger refcount decrement.
-7. Probe-read the refcount and verify it is *1*.
+static __always_inline
+u32 aarch64_insn_gen_movewide(enum aarch64_insn_register dst,
+			      int imm, int shift,
+			      enum aarch64_insn_variant variant,
+			      enum aarch64_insn_movewide_type type)
 
-Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
----
- .../bpf/prog_tests/refcounted_kptr.c          | 167 +++++++++++++++++-
- .../selftests/bpf/progs/refcounted_kptr.c     | 160 +++++++++++++++++
- 2 files changed, 326 insertions(+), 1 deletion(-)
+But again, that's a personal preference, nothing else.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-index d6bd5e16e6372..83a59c68e70cb 100644
---- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-+++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-@@ -3,7 +3,7 @@
- 
- #include <test_progs.h>
- #include <network_helpers.h>
--
-+#include "cgroup_helpers.h"
- #include "refcounted_kptr.skel.h"
- #include "refcounted_kptr_fail.skel.h"
- 
-@@ -44,3 +44,168 @@ void test_refcounted_kptr_wrong_owner(void)
- 	ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
- 	refcounted_kptr__destroy(skel);
- }
-+
-+static void test_refcnt_leak(void *values, size_t values_sz, u64 flags, struct bpf_map *map,
-+			     struct bpf_program *prog_leak, struct bpf_program *prog_check)
-+{
-+	int ret, fd, key = 0;
-+	LIBBPF_OPTS(bpf_test_run_opts, opts,
-+		    .data_in = &pkt_v4,
-+		    .data_size_in = sizeof(pkt_v4),
-+		    .repeat = 1,
-+	);
-+
-+	ret = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, flags);
-+	if (!ASSERT_OK(ret, "bpf_map__update_elem init"))
-+		return;
-+
-+	fd = bpf_program__fd(prog_leak);
-+	ret = bpf_prog_test_run_opts(fd, &opts);
-+	if (!ASSERT_OK(ret, "test_run_opts"))
-+		return;
-+	if (!ASSERT_EQ(opts.retval, 2, "retval refcount"))
-+		return;
-+
-+	ret = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, flags);
-+	if (!ASSERT_OK(ret, "bpf_map__update_elem dec refcount"))
-+		return;
-+
-+	fd = bpf_program__fd(prog_check);
-+	ret = bpf_prog_test_run_opts(fd, &opts);
-+	ASSERT_OK(ret, "test_run_opts");
-+	ASSERT_EQ(opts.retval, 1, "retval");
-+}
-+
-+static void test_percpu_hash_refcount_leak(void)
-+{
-+	struct refcounted_kptr *skel;
-+	size_t values_sz;
-+	u64 *values;
-+	int cpu_nr;
-+
-+	cpu_nr = libbpf_num_possible_cpus();
-+	if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
-+		return;
-+
-+	values = calloc(cpu_nr, sizeof(u64));
-+	if (!ASSERT_OK_PTR(values, "calloc values"))
-+		return;
-+
-+	skel = refcounted_kptr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
-+		free(values);
-+		return;
-+	}
-+
-+	values_sz = cpu_nr * sizeof(u64);
-+	memset(values, 0, values_sz);
-+
-+	test_refcnt_leak(values, values_sz, 0, skel->maps.pcpu_hash,
-+			 skel->progs.pcpu_hash_refcount_leak,
-+			 skel->progs.check_pcpu_hash_refcount);
-+
-+	refcounted_kptr__destroy(skel);
-+	free(values);
-+}
-+
-+struct lock_map_value {
-+	u64 kptr;
-+	struct bpf_spin_lock lock;
-+	int value;
-+};
-+
-+static void test_hash_lock_refcount_leak(void)
-+{
-+	struct lock_map_value value = {};
-+	struct refcounted_kptr *skel;
-+
-+	skel = refcounted_kptr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load"))
-+		return;
-+
-+	test_refcnt_leak(&value, sizeof(value), BPF_F_LOCK, skel->maps.lock_hash,
-+			 skel->progs.hash_lock_refcount_leak,
-+			 skel->progs.check_hash_lock_refcount);
-+
-+	refcounted_kptr__destroy(skel);
-+}
-+
-+static void test_cgroup_storage_lock_refcount_leak(void)
-+{
-+	int server_fd = -1, client_fd = -1;
-+	struct lock_map_value value = {};
-+	struct refcounted_kptr *skel;
-+	u64 flags = BPF_F_LOCK;
-+	struct bpf_link *link;
-+	struct bpf_map *map;
-+	int cgroup, err;
-+
-+	cgroup = test__join_cgroup("/cg_refcount_leak");
-+	if (!ASSERT_GE(cgroup, 0, "test__join_cgroup"))
-+		return;
-+
-+	skel = refcounted_kptr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load"))
-+		goto out;
-+
-+	link = bpf_program__attach_cgroup(skel->progs.cgroup_storage_refcount_leak, cgroup);
-+	if (!ASSERT_OK_PTR(link, "bpf_program__attach_cgroup"))
-+		goto out;
-+	skel->links.cgroup_storage_refcount_leak = link;
-+
-+	server_fd = start_server(AF_INET6, SOCK_STREAM, "::1", 0, 0);
-+	if (!ASSERT_GE(server_fd, 0, "start_server"))
-+		goto out;
-+
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_GE(client_fd, 0, "connect_to_fd"))
-+		goto out;
-+
-+	map = skel->maps.cgrp_strg;
-+	err = bpf_map__lookup_elem(map, &cgroup, sizeof(cgroup), &value, sizeof(value), flags);
-+	if (!ASSERT_OK(err, "bpf_map__lookup_elem"))
-+		goto out;
-+
-+	ASSERT_EQ(value.value, 2, "refcount");
-+
-+	err = bpf_map__update_elem(map, &cgroup, sizeof(cgroup), &value, sizeof(value), flags);
-+	if (!ASSERT_OK(err, "bpf_map__update_elem"))
-+		goto out;
-+
-+	err = bpf_link__detach(skel->links.cgroup_storage_refcount_leak);
-+	if (!ASSERT_OK(err, "bpf_link__detach"))
-+		goto out;
-+
-+	link = bpf_program__attach(skel->progs.check_cgroup_storage_refcount);
-+	if (!ASSERT_OK_PTR(link, "bpf_program__attach"))
-+		goto out;
-+	skel->links.check_cgroup_storage_refcount = link;
-+
-+	close(client_fd);
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_GE(client_fd, 0, "connect_to_fd"))
-+		goto out;
-+
-+	err = bpf_map__lookup_elem(map, &cgroup, sizeof(cgroup), &value, sizeof(value), flags);
-+	if (!ASSERT_OK(err, "bpf_map__lookup_elem"))
-+		goto out;
-+
-+	ASSERT_EQ(value.value, 1, "refcount");
-+out:
-+	close(cgroup);
-+	refcounted_kptr__destroy(skel);
-+	if (client_fd >= 0)
-+		close(client_fd);
-+	if (server_fd >= 0)
-+		close(server_fd);
-+}
-+
-+void test_kptr_refcount_leak(void)
-+{
-+	if (test__start_subtest("percpu_hash_refcount_leak"))
-+		test_percpu_hash_refcount_leak();
-+	if (test__start_subtest("hash_lock_refcount_leak"))
-+		test_hash_lock_refcount_leak();
-+	if (test__start_subtest("cgroup_storage_lock_refcount_leak"))
-+		test_cgroup_storage_lock_refcount_leak();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-index 893a4fdb4b6e9..09efae9537c9b 100644
---- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-+++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-@@ -7,6 +7,7 @@
- #include <bpf/bpf_core_read.h>
- #include "bpf_misc.h"
- #include "bpf_experimental.h"
-+#include "bpf_tracing_net.h"
- 
- extern void bpf_rcu_read_lock(void) __ksym;
- extern void bpf_rcu_read_unlock(void) __ksym;
-@@ -568,4 +569,163 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
- 	return 0;
- }
- 
-+private(leak) u64 ref;
-+
-+static u32 probe_read_refcount(void)
-+{
-+	u32 refcnt;
-+
-+	bpf_probe_read_kernel(&refcnt, sizeof(refcnt), (void *) ref);
-+	return refcnt;
-+}
-+
-+static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
-+			    struct node_data __kptr **node)
-+{
-+	struct node_data *n, *m;
-+
-+	n = bpf_obj_new(typeof(*n));
-+	if (!n)
-+		return -1;
-+
-+	m = bpf_refcount_acquire(n);
-+	n = bpf_kptr_xchg(node, n);
-+	if (n) {
-+		bpf_obj_drop(n);
-+		bpf_obj_drop(m);
-+		return -2;
-+	}
-+
-+	bpf_spin_lock(lock);
-+	bpf_list_push_front(head, &m->l);
-+	ref = (u64)(void *) &m->ref;
-+	bpf_spin_unlock(lock);
-+	return probe_read_refcount();
-+}
-+
-+static void *__lookup_map(void *map)
-+{
-+	int key = 0;
-+
-+	return bpf_map_lookup_elem(map, &key);
-+}
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_HASH);
-+	__type(key, int);
-+	__type(value, struct map_value);
-+	__uint(max_entries, 1);
-+} pcpu_hash SEC(".maps");
-+
-+SEC("tc")
-+int pcpu_hash_refcount_leak(void *ctx)
-+{
-+	struct map_value *v;
-+
-+	v = __lookup_map(&pcpu_hash);
-+	if (!v)
-+		return 0;
-+
-+	return __insert_in_list(&head, &lock, &v->node);
-+}
-+
-+SEC("tc")
-+int check_pcpu_hash_refcount(void *ctx)
-+{
-+	return probe_read_refcount();
-+}
-+
-+struct lock_map_value {
-+	struct node_data __kptr *node;
-+	struct bpf_spin_lock lock;
-+	int value;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, int);
-+	__type(value, struct lock_map_value);
-+	__uint(max_entries, 1);
-+} lock_hash SEC(".maps");
-+
-+SEC("tc")
-+int hash_lock_refcount_leak(void *ctx)
-+{
-+	struct lock_map_value *v;
-+
-+	v = __lookup_map(&lock_hash);
-+	if (!v)
-+		return 0;
-+
-+	bpf_spin_lock(&v->lock);
-+	v->value = 42;
-+	bpf_spin_unlock(&v->lock);
-+	return __insert_in_list(&head, &lock, &v->node);
-+}
-+
-+SEC("tc")
-+int check_hash_lock_refcount(void *ctx)
-+{
-+	return probe_read_refcount();
-+}
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_CGRP_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, struct lock_map_value);
-+} cgrp_strg SEC(".maps");
-+
-+SEC("cgroup/connect6")
-+int cgroup_storage_refcount_leak(struct bpf_sock_addr *ctx)
-+{
-+	struct lock_map_value *v;
-+	struct tcp_sock *tsk;
-+	struct bpf_sock *sk;
-+	u32 refcnt;
-+
-+	if (ctx->family != AF_INET6 || ctx->user_family != AF_INET6)
-+		return 1;
-+
-+	sk = ctx->sk;
-+	if (!sk)
-+		return 1;
-+
-+	tsk = bpf_skc_to_tcp_sock(sk);
-+	if (!tsk)
-+		return 1;
-+
-+	v = bpf_cgrp_storage_get(&cgrp_strg, tsk->inet_conn.icsk_inet.sk.sk_cgrp_data.cgroup, 0,
-+				 BPF_LOCAL_STORAGE_GET_F_CREATE);
-+	if (!v)
-+		return 1;
-+
-+	refcnt = __insert_in_list(&head, &lock, &v->node);
-+	bpf_spin_lock(&v->lock);
-+	v->value = refcnt;
-+	bpf_spin_unlock(&v->lock);
-+	return 1;
-+}
-+
-+SEC("fexit/inet_stream_connect")
-+int BPF_PROG(check_cgroup_storage_refcount, struct socket *sock, struct sockaddr *uaddr, int addr_len,
-+	     int flags)
-+{
-+	struct lock_map_value *v;
-+	u32 refcnt;
-+
-+	if (uaddr->sa_family != AF_INET6)
-+		return 0;
-+
-+	v = bpf_cgrp_storage_get(&cgrp_strg, sock->sk->sk_cgrp_data.cgroup, 0, 0);
-+	if (!v)
-+		return 0;
-+
-+	refcnt = probe_read_refcount();
-+	bpf_spin_lock(&v->lock);
-+	v->value = refcnt;
-+	bpf_spin_unlock(&v->lock);
-+	return 0;
-+}
-+
- char _license[] SEC("license") = "GPL";
+> +{
+> +	compiletime_assert(type >=  AARCH64_INSN_MOVEWIDE_ZERO &&
+> +		type <= AARCH64_INSN_MOVEWIDE_INVERSE, "unknown movewide encoding");
+> +	u32 insn;
+> +
+> +	switch (type) {
+> +	case AARCH64_INSN_MOVEWIDE_ZERO:
+> +		insn = aarch64_insn_get_movz_value();
+> +		break;
+> +	case AARCH64_INSN_MOVEWIDE_KEEP:
+> +		insn = aarch64_insn_get_movk_value();
+> +		break;
+> +	case AARCH64_INSN_MOVEWIDE_INVERSE:
+> +		insn = aarch64_insn_get_movn_value();
+> +		break;
+> +	default:
+> +		return AARCH64_BREAK_FAULT;
+
+Similar request to one of the previous patches: since you can check
+the validity at compile time, place it in the default: case, and drop
+the return statement.
+
+> +	}
+> +
+> +	if (imm & ~(SZ_64K - 1)) {
+> +		return AARCH64_BREAK_FAULT;
+> +	}
+> +
+> +	switch (variant) {
+> +	case AARCH64_INSN_VARIANT_32BIT:
+> +		if (shift != 0 && shift != 16) {
+> +			return AARCH64_BREAK_FAULT;
+> +		}
+> +		break;
+> +	case AARCH64_INSN_VARIANT_64BIT:
+> +		insn |= AARCH64_INSN_SF_BIT;
+> +		if (shift != 0 && shift != 16 && shift != 32 && shift != 48) {
+> +			return AARCH64_BREAK_FAULT;
+> +		}
+> +		break;
+> +	default:
+> +		return AARCH64_BREAK_FAULT;
+
+You could also check the variant.
+
+Thanks,
+
+	M.
+
 -- 
-2.51.0
-
+Without deviation from the norm, progress is not possible.
 
