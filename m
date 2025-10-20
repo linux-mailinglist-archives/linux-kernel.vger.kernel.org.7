@@ -1,137 +1,221 @@
-Return-Path: <linux-kernel+bounces-861342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC53EBF2771
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:36:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C0DBF25D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 226924F76DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:36:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1200B4F8021
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272562882DB;
-	Mon, 20 Oct 2025 16:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469C7285CA4;
+	Mon, 20 Oct 2025 16:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="Ulc9ql3W"
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DpW983TR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C84D19F115;
-	Mon, 20 Oct 2025 16:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C931A00CE;
+	Mon, 20 Oct 2025 16:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760978178; cv=none; b=pu7FcVlUDU3ebZSxFNvlMMypv4kfTFScCUkxG6l2YXqrxmElQEvTtTRJsZ3T1zyLViQxudPlvWRi9VHfI/NO2iMd9fxwN1nevoIe9CcohV9rw5RJOkD3Yk4Dr8PVkN0ReWOhUfqrAYBuXl8lcQtDlQT+UdKraKJIJ+ilvRh18jE=
+	t=1760977220; cv=none; b=LMwYP5YLBalU+8+V3MTpG3srHctgfjXxJ/lBkfhPOWsExSWUCo+pghZApkoWPDqis+DnHdQ4346qp6JPpvLQwyaQklaoBYguu27hrZkoTIuDEGwtjTJn64OI+gG5btR5Cp+094YE7mupcbbF9+iY9gaEOac69nEMEgocZv/D8dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760978178; c=relaxed/simple;
-	bh=5Yz4poMQ4hJfWftp7RReVT/QPwWQOElygIWtcrn3u+Y=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=ik878JN0rJijx3ySYX0OBYMxi1D1+aRDb53gNPqNfLEARtfLF1U2LxsMZHuIBqf5XNeiwIR5u+daerRuxiKPgQMVwYVirjHa/AfhIjV+15Jc1Yms2tOUypZpvb3rcM1EghzFORoouffTQo4uxklcuDbZIVdqqeCttM+CS1BWo60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=Ulc9ql3W; arc=none smtp.client-ip=91.198.224.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [194.37.255.9] (helo=mxout.expurgate.net)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=9402dab0bf=fe@dev.tdt.de>)
-	id 1vAsaq-004xxe-KQ; Mon, 20 Oct 2025 18:18:44 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <fe@dev.tdt.de>)
-	id 1vAsap-00BKck-S0; Mon, 20 Oct 2025 18:18:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
-	s=z1-selector1; t=1760977123;
-	bh=Yu2p380KLTbVGoNddtvW9SeuUUz8wZq6pTgRY3DcFbg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ulc9ql3Wqs46QKQyGgef+/RO0jDSjkiKvTO5d/KFJQ0fcSnI5R/0cK+2oI+kUhnMl
-	 V3hr2jfNCPuXVBMSEtUf1VXRJbVElz9kXf+BdmCJ6damlp+SDs7d0fR3D8JdN0Zbjd
-	 kLPsaMYoltUz+ffBVcErXxp68EzqfeRod8/hONYL9UB2ISBFTruYGUdh1Ysv/IvQpW
-	 AM/UD3yWudCmxuNKzYC0ez3Pvo2AGc1TAySzrZMkK7w6tdcvAYmhRcI9OdrR2tYd1M
-	 0ow1YHrpioUI11h9lM5ypOwUAY/hwNfrWK1QsH4J4HcOAnBDy3bEVl4X8+NLMubc8G
-	 HRZDrjIKWcJkA==
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 55B06240045;
-	Mon, 20 Oct 2025 18:18:43 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 390DF240040;
-	Mon, 20 Oct 2025 18:18:43 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id DC84326D9A;
-	Mon, 20 Oct 2025 18:18:42 +0200 (CEST)
+	s=arc-20240116; t=1760977220; c=relaxed/simple;
+	bh=KyW2o+Tj9sebaDNyh1EThKqKgscZxyrq2W+eHFrQOgk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uBkaWHTwIbRuLSymQK/n4Er21mwIsRlYLP02Qv8LXJoDG1OL2Hgu5ry8638FwCyr28X5uJRBcVO5dS+iPDS5Gcfy4NPL9uVNo6Kkfs8vcQAomZm6WMnGHPrD3n+mPOgjjhuCGRtFMgkqjs/8UaJpHJrqUVri08StufQDAa3p1h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DpW983TR; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760977219; x=1792513219;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=KyW2o+Tj9sebaDNyh1EThKqKgscZxyrq2W+eHFrQOgk=;
+  b=DpW983TR6ueUVqwIFxSQqoCpPhLUDhmXCgn3XhgX5o3GlIp0IXD9egGH
+   VvTEG1Ya42L1ho4+d6KlxDvGHvE8h2q7fCQtwvbTA3omyy97CLaEaPBCR
+   zw4hWGmqnDzNleUgfl2JVtRRXRe4BUef5b69wepBTS5RtveDVFtEIwiuJ
+   bd+GsP1ULuNIEIpolnkkmdUEvndpD9w4Npr3beNWvd1Zj4Jssyyfwgsxy
+   4/gDe8L9aQ0gbHykXhBO1+7K0U14FKGKSpfeqwTJfKxwvRbLAMeEQGUlx
+   OVi/Ilfpfx2Wt6Dhz50izYnJjrJNJ/0sAhhzFa6+EHULgrBtQcC0O9jkN
+   Q==;
+X-CSE-ConnectionGUID: 778CSw9zQkmuuofMCmTajQ==
+X-CSE-MsgGUID: FAhrmyhmQ7eoUO2gWIpsbg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63134988"
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="63134988"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:20:19 -0700
+X-CSE-ConnectionGUID: Jjc3xpeZQduSfzcVUyMMzA==
+X-CSE-MsgGUID: pJOdJr1JRNq9XsLDFww+Fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="213982188"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.76])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:20:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 20 Oct 2025 19:20:10 +0300 (EEST)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+    Linux-Renesas <linux-renesas-soc@vger.kernel.or>
+Subject: Re: [PATCH 0/3] PCI & resource: Make coalescing host bridge windows
+ safer
+In-Reply-To: <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com>
+Message-ID: <89a20c14-dd0f-22ae-d998-da511a94664a@linux.intel.com>
+References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com> <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 20 Oct 2025 18:18:42 +0200
-From: Florian Eckert <fe@dev.tdt.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	kumaravel.thiagarajan@microchip.com, pnewman@connecttech.com,
-	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
-	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
-	macro@orcam.me.uk, schnelle@linux.ibm.com,
-	Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_pcilib: Replace deprecated PCI functions
-In-Reply-To: <aPX15a2Zv9b_wM3u@smile.fi.intel.com>
-References: <aPPreT00iiTDzJwG@ashevche-desk.local>
- <84ad1b3070a8374ec20f06588fab9f86@dev.tdt.de>
- <aPX15a2Zv9b_wM3u@smile.fi.intel.com>
-Message-ID: <e018879d65948462984da19e53cb610a@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate-ID: 151534::1760977124-99414F3F-B3016A52/0/0
-X-purgate: clean
+Content-Type: multipart/mixed; boundary="8323328-499737811-1760977210=:976"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-499737811-1760977210=:976
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Mon, 20 Oct 2025, Geert Uytterhoeven wrote:
+> On Fri, 10 Oct 2025 at 16:42, Ilpo J=C3=A4rvinen
+> <ilpo.jarvinen@linux.intel.com> wrote:
+> > Here's a series for Geert to test if this fixes the improper coalescing
+> > of resources as was experienced with the pci_add_resource() change (I
+> > know the breaking change was pulled before 6.18 main PR but I'd want to
+> > retry it later once the known issues have been addressed). The expected
+> > result is there'll be two adjacent host bridge resources in the
+> > resource tree as the different name should disallow coalescing them
+> > together, and therefore BAR0 has a window into which it belongs to.
+> >
+> > Generic info for the series:
+> >
+> > PCI host bridge windows were coalesced in place into one of the structs
+> > on the resources list. The host bridge window coalescing code does not
+> > know who holds references and still needs the struct resource it's
+> > coalescing from/to so it is safer to perform coalescing into entirely
+> > a new struct resource instead and leave the old resource addresses as
+> > they were.
+> >
+> > The checks when coalescing is allowed are also made stricter so that
+> > only resources that have identical the metadata can be coalesced.
+> >
+> > As a bonus, there's also a bit of framework to easily create kunit
+> > tests for resource tree functions (beyond just resource_coalesce()).
+> >
+> > Ilpo J=C3=A4rvinen (3):
+> >   PCI: Refactor host bridge window coalescing loop to use prev
+> >   PCI: Do not coalesce host bridge resource structs in place
+> >   resource, kunit: add test case for resource_coalesce()
+>=20
+> Thanks for your series!
+>=20
+> I have applied this on top of commit 06b77d5647a4d6a7 ("PCI:
+> Mark resources IORESOURCE_UNSET when outside bridge windows"), and
+> gave it a a try on Koelsch (R-Car M2-W).
+
+So the pci_bus_add_resource() patch to rcar_pci_probe() was not included?
+No coalescing would be attempted without that change.
+
+With the pci_bus_add_resource() patch, the resource name is different, I=20
+think, so even then it should abort coalescing the ranges with this=20
+series.
+
+> Impact on dmesg (for the first PCI/USB) instance:
+>=20
+>      pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
+>      pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
+> -> 0x00ee080000
+>      pci-rcar-gen2 ee090000.pci: PCI: revision 11
+>      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+>      pci_bus 0000:00: root bus resource [bus 00]
+>      pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
+>      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
+> PCI endpoint
+>     -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]: no initial
+> claim (no window)
+>      pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
+>     -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
+> initial claim (no window)
+>      pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
+>      pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
+> PCI endpoint
+>     -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
+> claim (no window)
+>      pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
+>      pci 0000:00:01.0: supports D1 D2
+>      pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
+>      pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
+> PCI endpoint
+>     -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
+> claim (no window)
+>      pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
+>      pci 0000:00:02.0: supports D1 D2
+>      pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
+>      PCI: bus0: Fast back to back transfers disabled
+>      pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
+>      pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
+>      pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
+>      pci 0000:00:01.0: enabling device (0140 -> 0142)
+>      pci 0000:00:02.0: enabling device (0140 -> 0142)
+>=20
+> I.e. the "no initial claim (no window)" messages introduced by commit
+> 06b77d5647a4d6a7 are no longer seen.
+
+Is that perhaps again because of pci_dbg() vs pci_info()?
+
+> The BARs still show "mem size <n>" instead of the "mem <start>-<end>"
+> before commit 06b77d5647a4d6a7, though.
+
+To me this looks like UNSET was still set for these resources. Missing the=
+=20
+pci_bus_add_resource() patch would explain that and if the pci_dbg()=20
+wasn't printed, it would explain both symptoms.
+
+Once these questions are resolved, I'll ask Rob what is the preferred=20
+solution here, a) driver doing pci_bus_add_resource() or b) including it=20
+into the DT ranges (if we could fix the ranges).
+
+We likely need to go with a) to preserve backwards compatibility but I=20
+also want to understand how those ranges are supposed to be used if we=20
+wouldn't have historical baggage.
 
 
+(I appreciate following through even if the original series is now=20
+reverted!)
 
-On 2025-10-20 10:42, Andy Shevchenko wrote:
-> On Mon, Oct 20, 2025 at 08:47:16AM +0200, Florian Eckert wrote:
->> On 2025-10-18 21:33, Andy Shevchenko wrote:
->> > On Tue, Sep 30, 2025 at 09:27:43AM +0200, Florian Eckert wrote:
-> 
-> ...
-> 
->> > > +	if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
->> >
->> > Dunno if this is included already in Linux Next, but here is room for
->> > improvement.
->> 
->> I followed the code in the 'serial8250_pci_setup_port()' [1] function.
->> The same pattern is used there [2].
-> 
-> I see. So if we want to amend that, it should be done separately.
+> This series has not impact on /proc/iomem, or on the output of
+> "lspci -v" (commit 06b77d5647a4d6a7 also had no impact here).
+> I.e. the part of /proc/iomem related to the first PCI/USB instance
+> still looks like:
+>=20
+>     ee080000-ee08ffff : pci@ee090000
+>       ee080000-ee080fff : 0000:00:01.0
+>         ee080000-ee080fff : ohci_hcd
+>       ee081000-ee0810ff : 0000:00:02.0
+>         ee081000-ee0810ff : ehci_hcd
+>     ee090000-ee090bff : ee090000.pci pci@ee090000
+>
+> I hope this matches your expectation.s
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+>=20
 
-If that's the case, then I'm done with this patchset, right?
-I do not have to send a v3?
+--=20
+ i.
 
-> 
->> > The problem with the above code is it (wrongly?) checks for bit and not
->> > for the resource type. OTOH I don't remember if 64-bit version requires
->> > the IORESOURCE_MEM to be set along with that.
->> 
->> Do you mean the function 'platform_get_resource()' [3]? This is a 
->> platform
->> device function?
-> 
-> I mean that the IORESOURCE_MEM and IORESOURCE_MEM_64 are separate bit 
-> flags in
-> struct resource::flags. Checking on one might not imply the other be 
-> set,
-> however brief look at the sources shows that _MEM_64 is supposed to be 
-> set on
-> top of _MEM.
-
-Okay, I understand.
-
----
-Best regards
-
-Florian
+--8323328-499737811-1760977210=:976--
 
