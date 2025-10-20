@@ -1,220 +1,208 @@
-Return-Path: <linux-kernel+bounces-861181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2DF6BF1FFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:07:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1C2BF1FF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 468E14E2E57
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:07:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41D5A34CE2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1CE252917;
-	Mon, 20 Oct 2025 15:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D7A234964;
+	Mon, 20 Oct 2025 15:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=michaelestner@web.de header.b="KzzXpjOF"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pqn/fnM0"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B9924467E;
-	Mon, 20 Oct 2025 15:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B446123E320
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972803; cv=none; b=u4iqedB0OA8IBxk/Chv1dcg3waD1zgwE2sSzmIsHQh+WEGP+NiB0RNfQXRO0RHrY0/k1NAoTTn/7UqrdOMqAQ3/Ys9jqeH4G6H9fHGoQjcQxPiG+jXk/aVH3DC+tU+Zup+7XntjIcd0gXfh5NOZ19hmBc6+am82VK9ClNiS3PKA=
+	t=1760972795; cv=none; b=salppPQRg36zixmDcmRFFAns31o0GwGYPXdHf48Ee0naHe7g3bcKn9u05Phz1y57Rf6gHhskmKKP/yK4ZK3+9DwvMK4I5tPh66VR2ovQkG7+2rGiPA/HwbudFX4Z+S0rIM4iPCCY5QMCr2Nwc3yCDXrpjcmiORv57eZ5YUcE6e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972803; c=relaxed/simple;
-	bh=2jMSVJTF1poRh0K19N7YblJFrFzergqpXQmoiiRaqds=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WGi96hoWprXRedp7j0CHAXuU0yGdL6+BiqyHZSAx+scPGAKprOXJRMvSt4ayCOAe9HkVLYXcLomyQksRW6TmIAKesjTik6V2WbY6pFqLyyG5PEGVtYHQpsCAF2cPBNo+bL5CAAAp27YuLR7kT8qj8SZC0KeCqeqMfys/AEVIDIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=michaelestner@web.de header.b=KzzXpjOF; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760972794; x=1761577594; i=michaelestner@web.de;
-	bh=53b3mHSERYf36/M5MmU49S1ikzeUcWhVTXTyu7ud/eo=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KzzXpjOFvOhjydE6W37FPu+Y9zYIbQxpTfFs3SAnYdq80YIXAztCDEdgLrPYeZWk
-	 Ozwi1CEUniqdod7Dg5PmrNvm48/hWjlJyteTT7cbdQVFZrZeg3c0k3SqFQLSzmH8g
-	 MhEEerwAXdbIgNQLPGT1sEZcLZqEMoN7g2qMP0oHm8PIQNKZW1vsDPtCj4fpdf/DJ
-	 6lJFvQduLHHPm/rMG6Lfo61yVixxR6gz3TA0UBUYNbZwjfAgghGsBLSPsd6aPLmaF
-	 QDvaf8lvR3Qblc5HaTlURoYDrBBM7i0f4WSoKIyguupXk2PcwsmWCE90doUWGl8sB
-	 KLqPYY1G01JyjFejtw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from del01453.ebgroup.elektrobit.com ([165.85.213.15]) by
- smtp.web.de (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1McIkg-1uct5q036C-00jIEf; Mon, 20 Oct 2025 17:06:34 +0200
-From: Michael Estner <michaelestner@web.de>
-To: linux-media@vger.kernel.org
-Cc: Michael Estner <michaelestner@web.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH]: USB cx231xx: Remove unused var assignment
-Date: Mon, 20 Oct 2025 17:06:14 +0200
-Message-Id: <20251020150616.994029-1-michaelestner@web.de>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760972795; c=relaxed/simple;
+	bh=FrryWqBbuARohpRluL/ICuSe+pBmE9OhN0+uJdxAJFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LaAoV17wGZDsFab0RBDcMpD1Ej2nqLQD6NyQ4kz/x3W87okwRyNIQh5yN0FEOxlBkLlesPIidIRPBwwswwCsV93oDF/WBEvdrUgYLYbqRppwpgS+vA7HKwkr6mG+yd4Ntokn7SIGblpNiK/xZSG2rb0mkIsI/C1ovacxi5vj4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pqn/fnM0; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so4080682b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760972793; x=1761577593; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pEYAPg0/9P8i0AqXf9KQgQ5ijvrv79Y+WAS0UJoYxic=;
+        b=Pqn/fnM07J3pKFqJMB4PIPbsyd1mAWOY+G1Swkl7AGC0Gk0GvndxVU/dI8c9swv23Q
+         ekLnfxa9NXWDYjtJSNlGgv9cHAh1C+MPU49nR3vO2xhOPX8qavCfpPl78H7Dektpl+w2
+         ZGwGaBgbEbqc5ntp4SQArsUev9tUgR2PuMpoj+MJJD5V3OgBbLJKDaTJXnZFTDxRVfol
+         eK1BxKh/0pwYVbH2zEJgbi9XTUlurudNYT/xQgqx4KMBVnvGg7nZSx48AU2anVL68RK3
+         PHcUX/XjtZZ/AFdBmWemxfO/lWxOJMHZK0IGp9TFO2Ia7T8AOeP8VMk2BWmUwYrSe/CI
+         6kZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760972793; x=1761577593;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pEYAPg0/9P8i0AqXf9KQgQ5ijvrv79Y+WAS0UJoYxic=;
+        b=cHSGB9t3Bt2W7yfn7bWnx+YjGyvHE+A6DXWpSPo2DKCywFXZcowmeUDgYMox2QrXZR
+         cQcPwRhxWWMWojUqKN1xxy1aA8sPRyTX19pjLw2i+ym7w6cnTSoRd8lSs0EPw2le6WBb
+         F84dLIG7qzc2ZvrvzmCrKEJ4OMlnIO+Ilj37Mh9eTXnftYLCd+t4XQAg6B7fKKAsi/Un
+         1UHPgbol5PK8BnwJsnWKDXwJu2PHaRsIEEXDqu9t3aO9f1YiM7Ptyd1iFCX6v2R3LWnW
+         WeSQ3hkf3r70r582YVHZQfXOno1daeOIvoXp8JKqgXGbsfmyhYaJuIHy7D6eNCbUF5m5
+         NGcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUd5Mbx0+pBo2Ws2Fl3W6Y7VYdiDkyhseRCQAHpT59YI9Rnc7+GSnmoLv21r4LicB3aVHRgIzzQJyTS21Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW4Ejxeg+w6KNHlVXQm333FClmMpOW+Rn+D68NGPRouomjY0X+
+	2p9V0zsZbQnD9YJABEHtKxvdy0bXvPAIgTQvcOb3vtG1DiLt2tiFUSCeW8XNig==
+X-Gm-Gg: ASbGncvixCTLiSUS+2bGaA7HJZWVeLTAlU7Xc6I+oQYfsWtoh5hfv9/CQllPsHXvoZm
+	qEh21Myj7p+ZBlr3oRgZEY+ZVIUyVMq+cYmmHykkx0kxdbmZO6yhi6wL6a5TNnjJG38lnMcDThl
+	AW4Bu47S411ilQ1NqTm5K/GdOG5Xyzmez41Jtfi15NdrWURqPDJHG5k9y5RYzqnRQHptHVHbVGZ
+	lRynwTDqZ6kouNaHhhkf3RPaKHonobTjWVHd02254JXte0mv6F6Peuvy193Ou/BU0UkIwxH0Bco
+	QXZCC+nsfx0hVWBAJVn6HlQxpY1ENR2HT2HsZzZXZyqxqTOsjv9iLwm3Ls3IoVpaiajltFv4SAf
+	LzXAXd/9Hq18CqL1Xqimg/38myUwA96qExUO2h35vDVcwrq7zgGiQDAR9Yi36QGHB80DcB2tkcD
+	QFKRA=
+X-Google-Smtp-Source: AGHT+IG4hAvaiT9qMc124aUjhAwGQoPr0u9gLyEZ2Bp4eQLu89aAOxbW8d4Nq6BNuCuodFW2fP8ZXg==
+X-Received: by 2002:a05:6a00:2ea1:b0:793:522:b8fb with SMTP id d2e1a72fcca58-7a220aaf9e8mr14700226b3a.25.1760972792539;
+        Mon, 20 Oct 2025 08:06:32 -0700 (PDT)
+Received: from daniel.. ([221.218.137.209])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a230121f96sm8577259b3a.76.2025.10.20.08.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 08:06:32 -0700 (PDT)
+From: jinji zhong <jinji.z.zhong@gmail.com>
+To: ziy@nvidia.com
+Cc: akpm@linux-foundation.org,
+	feng.han@honor.com,
+	hannes@cmpxchg.org,
+	jackmanb@google.com,
+	jinji.z.zhong@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	liulu.liu@honor.com,
+	mhocko@suse.com,
+	surenb@google.com,
+	vbabka@suse.cz,
+	zhongjinji@honor.com
+Subject: Re: [PATCH v0] mm/page_alloc: Cleanup for __del_page_from_free_list()
+Date: Mon, 20 Oct 2025 15:06:25 +0000
+Message-ID: <20251020150626.2296-1-jinji.z.zhong@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <7B0DF4ED-FBB8-48E5-95B7-4C32B645F4A6@nvidia.com>
+References: <7B0DF4ED-FBB8-48E5-95B7-4C32B645F4A6@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+4Y9RJTtCLI5ecauLq1NF6yAJVGP6P/IiRG5rcmwiDBPpn74WPR
- 91PEqHu9ZZc1lFWJNTnmVLZskAbm/fHGTnrBn0kIY01pZxslvNUas2mOSVrenIqyYRELYwf
- SjshuwdiK1TlMP7TmAsmgMbxvCwPpvN4S81M/d64H/ff4tBSCQSGQ8Kv1VhnBlFkVALmuAW
- 8ugDUfc73Q3YAgc7XVZLQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bLPsQNX71II=;U1mQveNQkaBzFoRxt46BADjuNFe
- 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Remove unused variable assignments.
-  The status variable has multiple assignments which are overwritten
-  before used once. With this patch this unnecessary variable assignments
-  get removed.
+>On 1 Oct 2025, at 0:38, jinji zhong wrote:
+>
+>>> On 30 Sep 2025, at 9:55, Vlastimil Babka wrote:
+>>
+>>>> On 9/25/25 10:50, zhongjinji wrote:
+>>>>> It is unnecessary to set page->private in __del_page_from_free_list().
+>>>>>
+>>>>> If the page is about to be allocated, page->private will be cleared by
+>>>>> post_alloc_hook() before the page is handed out. If the page is expanded
+>>>>> or merged, page->private will be reset by set_buddy_order, and no one
+>>>>> will retrieve the page's buddy_order without the PageBuddy flag being set.
+>>>>> If the page is isolated, it will also reset page->private when it
+>>>>> succeeds.
+>>>>
+>>>> Seems correct.
+>>
+>>> This means high order free pages will have head[2N].private set to a non-zero
+>>> value, where head[N*2].private is 1, head[N*(2^2)].private is 2, ...
+>>> head[N*(2^M)].private is M and head[0].private is the actual free page order.
+>>> If such a high order free page is used as high order folio, it should be fine.
+>>> But if user allocates a non-compound high order page and uses split_page()
+>>> to get a list of order-0 pages from this high order page, some pages will
+>>> have non zero private. I wonder if these users are prepared for that.
+>>
+>> Having non-empty page->private in tail pages of non-compound high-order
+>> pages is not an issue, as pages from the pcp lists never guarantee their
+>> initial state. If ensuring empty page->private for tail pages is required,
+>
+>Sure. But is it because all page allocation users return used pages with
 
-* I got the issues out of the report from:
-  https://scan7.scan.coverity.com/#/project-view/55309/11354
-  The exact findings are:
-  * Issue=3D1226885
-  * Issue=3D1226861
-  * Issue=3D1226879
-  * Issue=3D1226878
-  * Issue=3D1226866
+Some users [2] do not reset the private back to 0. When the page is a tail
+page, the non-zero private value will persist until the page is split.
 
-Signed-off-by: Michael Estner <michaelestner@web.de>
-=2D--
- drivers/media/usb/cx231xx/cx231xx-avcore.c | 8 --------
- 1 file changed, 8 deletions(-)
+>->private set back to 0? And can all page allocation users handle non-zero
+>->private? Otherwise, it can cause subtle bugs.
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-avcore.c b/drivers/media/us=
-b/cx231xx/cx231xx-avcore.c
-index 1cfec76b72f3..d268d988123e 100644
-=2D-- a/drivers/media/usb/cx231xx/cx231xx-avcore.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-avcore.c
-@@ -760,7 +760,6 @@ int cx231xx_set_decoder_video_input(struct cx231xx *de=
-v,
-=20
- 		status =3D vid_blk_write_word(dev, AFE_CTRL, value);
-=20
--		status =3D cx231xx_afe_set_mode(dev, AFE_MODE_BASEBAND);
- 		break;
- 	case CX231XX_VMUX_TELEVISION:
- 	case CX231XX_VMUX_CABLE:
-@@ -910,8 +909,6 @@ int cx231xx_set_decoder_video_input(struct cx231xx *de=
-v,
- 			if (dev->tuner_type =3D=3D TUNER_NXP_TDA18271) {
- 				status =3D vid_blk_read_word(dev, PIN_CTRL,
- 				 &value);
--				status =3D vid_blk_write_word(dev, PIN_CTRL,
--				 (value & 0xFFFFFFEF));
- 			}
-=20
- 			break;
-@@ -1092,7 +1089,6 @@ int cx231xx_set_audio_input(struct cx231xx *dev, u8 =
-input)
- 		ainput =3D AUDIO_INPUT_TUNER_TV;
- 		break;
- 	case CX231XX_AMUX_LINE_IN:
--		status =3D cx231xx_i2s_blk_set_audio_input(dev, input);
- 		ainput =3D AUDIO_INPUT_LINE;
- 		break;
- 	default:
-@@ -1865,8 +1861,6 @@ int cx231xx_dif_set_standard(struct cx231xx *dev, u3=
-2 standard)
- 						0x1befbf06);
- 		status =3D vid_blk_write_word(dev, DIF_SRC_GAIN_CONTROL,
- 						0x000035e8);
--		status =3D vid_blk_write_word(dev, DIF_SOFT_RST_CTRL_REVB,
--						0x00000000);
- 		/* Save the Spec Inversion value */
- 		dif_misc_ctrl_value &=3D FLD_DIF_SPEC_INV;
- 		dif_misc_ctrl_value |=3D 0x3A0A3F10;
-@@ -2702,8 +2696,6 @@ int cx231xx_set_gpio_value(struct cx231xx *dev, int =
-pin_number, int pin_value)
- 		/* It was in input mode */
- 		value =3D dev->gpio_dir | (1 << pin_number);
- 		dev->gpio_dir =3D value;
--		status =3D cx231xx_set_gpio_bit(dev, dev->gpio_dir,
--					      dev->gpio_val);
- 	}
-=20
- 	if (pin_value =3D=3D 0)
-=2D-=20
-2.34.1
+Yes, you are right. Some users(like swapfile [1]) cannot handle non-zero private.
 
+>> we should handle this in prep_new_page(), similar to the approach taken in
+>> prep_compound_page().
+>>
+>>> For example, kernel/events/ring_buffer.c does it. In its comment, it says
+>>> “set its first page's private to this order; !PagePrivate(page) means it's
+>>> just a normal page.”
+>>> (see https://elixir.bootlin.com/linux/v6.17/source/kernel/events/ring_buffer.c#L634)
+>>
+>> PagePrivate is a flag in page->flags that indicates page->private is
+>> already in use. While PageBuddy serves a similar purpose, it additionally
+>> signifies that the page is part of the buddy system.
+>
+>OK. You mean ->private will never be used if PagePrivate is not set
+>in ring buffer code?
+
+In the ring buffer code, it only uses the private field of the head page,
+but I recently found that the swapfile [1] is assuming page->private is zero,
+even if the page is a tail page, which seems a bit dangerous. Adding this
+patch will make this situation worse.
+
+link: https://elixir.bootlin.com/linux/v6.17/source/mm/swapfile.c#L3745 [1]
+link: https://elixir.bootlin.com/linux/v6.17/source/mm/swapfile.c#L3887 [2]
+
+>If you are confident about it is OK to make some pages’ ->private not being
+>zero at allocation, I am not going to block the patch.
+>
+>>
+>>> I wonder if non zero page->private would cause any issue there.
+>>
+>>> Maybe split_page() should set all page->private to 0.
+>>
+>>> Let me know if I get anything wrong.
+>>
+>>>>
+>>>>> Since __del_page_from_free_list() is a hot path in the kernel, it would be
+>>>>> better to remove the unnecessary set_page_private().
+>>>>>
+>>>>> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+>>>>
+>>>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+>>>>
+>>>>> ---
+>>>>>  mm/page_alloc.c | 1 -
+>>>>>  1 file changed, 1 deletion(-)
+>>>>>
+>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>>> index d1d037f97c5f..1999eb7e7c14 100644
+>>>>> --- a/mm/page_alloc.c
+>>>>> +++ b/mm/page_alloc.c
+>>>>> @@ -868,7 +868,6 @@ static inline void __del_page_from_free_list(struct page *page, struct zone *zon
+>>>>>
+>>>>>  	list_del(&page->buddy_list);
+>>>>>  	__ClearPageBuddy(page);
+>>>>> -	set_page_private(page, 0);
+>>>>>  	zone->free_area[order].nr_free--;
+>>>>>
+>>>>>  	if (order >= pageblock_order && !is_migrate_isolate(migratetype))
+>>
+>>
+>>> Best Regards,
+>>> Yan, Zi
+>
+>
+>Best Regards,
+>Yan, Zi
 
