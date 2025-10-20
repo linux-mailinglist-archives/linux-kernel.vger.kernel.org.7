@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-860044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06BFBEF319
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:34:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AA3BEF322
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D730189925F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:34:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76A3D4E9D64
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA702BD5B2;
-	Mon, 20 Oct 2025 03:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBD42BDC1B;
+	Mon, 20 Oct 2025 03:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLLlUaZ/"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2GItnPj"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4BE29DB65
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B79D2BDC15
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760931247; cv=none; b=OMv4TJYXN36zS6nPy4oRCAf15yxEyNnNBUMmk64okl8QIy0AlnhSZeIH6sGtD0J4DAJWkHOhc5QqQe3Pq4Iw55VCEo5xRba8iuHjEtWFSjeD89MNLZ/Zl6s6XUBszfs9r0iXD1c+9BTt0zyjlTqtXCSo3aLoA1A6o+bq2bUPbLQ=
+	t=1760931257; cv=none; b=I/FLaUGcWGX4/4Prb+JozscR2yGJGw+KvYoH/UuwwV2DjmUAbC6je2oMh4sUKGfcSFZ8W20u7w51EM8cmDpWX9X1kBpxh/ptlJmLPTg2Nmn3Z1Rtt5u9jYRy5MOaTU9d/7wo2+Vkq8K7dnCvBTh6UiA4TM+VO2mq8syhee4BJeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760931247; c=relaxed/simple;
-	bh=ubONa7ropRcOUm568w5bPPTu9W0xpzaxAOWU/R0wKy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hoSMeOHIQbPcD3xDH87HEqLmX08KywyWVsQd6dOVGbTXoDpFxtGQRsL04nDf7Kj3z5OMn1XFXKbzDGfmLF7wD7RLByDTgkb9nqbTcA9gOqqjXuznaKKn18q2zHz/yYxZXnSYVox/+TcXweNxa3EjQGF/0Q8aVQskw/Ae63YfMMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLLlUaZ/; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1760931257; c=relaxed/simple;
+	bh=dgpNPFFxsdIAjczNzjU4PLG/4kOomJBC5GhTApKNwOw=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TULRr0Muy0Ws3scu9915tyxzEab0U+H3YyYL9NydVjwiToA5hjpPJuEcj7C+rw3KPPBuMDmbHxsZnLXXrZMfKAXK+rgrf6IEkG18/HlVcAVoyREKhovV3tRBjeHiKCQsF3S+YeMaXnSqOHkg/YAjQCOTA8dnxM74fyWXZLz/uX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2GItnPj; arc=none smtp.client-ip=209.85.160.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7810289cd4bso3749458b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:34:05 -0700 (PDT)
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3c9b1b8ccb1so236313fac.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760931245; x=1761536045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e9KCGk0JC3CTk5iIZQYbC1DgG/1ZW9eR1AJEbPiuOW0=;
-        b=XLLlUaZ/gc5cPikZoKIpw+1TRZ9tNhl7I7xfmjpB4ygJmBH8vz1TczHOaqGKmeBb3E
-         /Du6uwAOnuG8jW9x5NpzkHqWU7MDMx68Y6W30GWI3UgVZbRFTM2ve29tWHuIsnuRrhsI
-         uq1W/GQAv6v5X3w+JEn6H67gNrYiH+G/JzcDx/GpPDQuyU5CCFw09wpphVNDA4ao02RU
-         Fmt/gWQzgdnbanrMasK2RxPl9Xi2CHhuHFWh5KMtnPrJWNixBfIt1EdLIFU0SmAiu86v
-         NhZMEKt80MoZIXatn2nz8FF1KO1hRGfuEWWzJ505rCY/x1DJtIv6XyqnXW9p8/H5OdUT
-         erag==
+        d=gmail.com; s=20230601; t=1760931255; x=1761536055; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7rSqoF1bhRIMRZ/Ngttka/3cr36QgYmwYc1FwmVj14E=;
+        b=B2GItnPj9ePFIyy1NV6ebkSdW4JfsI9guXfrDaE5F+udd2xe8lgafWxFQZyAytAQjG
+         enucN3+yuoMKehfdGc5RK8GTNrkJnpdev0x11tnLneZ5iB42AqCjurWBmKE+iePu4n85
+         lReHhBLku2K3Solh5iebdXjiHDKTlUzf9RJqqqehedOn6WHSLwBytbpl2qUAb9OvgrXe
+         P5MNd68X/Tuf1VEzYjnFJrDbbMue81BjeDKRnQDECHP9hrx5zj+Gp+3bcPzjywVWj5yv
+         AwXqJshWBfG7H/rHoTCWYzhoBgbeFjmOa/m5rx+1lfh2f0JGBLQYIr5i/XGTmfKVr7rO
+         /M0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760931245; x=1761536045;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e9KCGk0JC3CTk5iIZQYbC1DgG/1ZW9eR1AJEbPiuOW0=;
-        b=GBHEr48SpSw5Qh4ybBE1tFJrh5KPdNUyrSerADDi+vwma+VrhrwY7NJtXpZ1fbgkyx
-         jBu4SNOfkLGfBaQc5cUEb9LRiPjMiE3fSXPEGWX9Nn1hxFTCWUo7vJSJY1K4Z5n80maP
-         cwb2W7ChiOlSKI7x8HAuaJlNPQspP2qucmSTZ+0Lexwo4Q0Z3dSut2l6G6bN+1WBis87
-         35wSbDy6o0ZVJzG9c/wZKWiTGFE6XHORNWeC1ixTN3FgHXfzXW4n3kzgz4fzj15xY26x
-         OAhN9PzBh9vkiiBvpv0A4scxyLoSoN25zdEEM7y1j3ZIDQmvZIMOjqveJ5sCZtPbw1IR
-         7XSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwO7fPNhGcKXgacgAgfznlMtsHJkAn+6mnasnSx2DnjF7dXTfzm/jl9gyWpdAeau643D+GBbtt03dF1IQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhekRIHMzqXNMAMXvfiO32w58gbDNXdUDaJ7FFM7EDw3+ywtjZ
-	uZzirhzNrgKgaqCFIw14MoVrSY/LevTxF6T+qwhFX/AuRW0hsd1GQ29S
-X-Gm-Gg: ASbGncslm2bfNTlvPrvtbr+HPI7JiZu82xx1kLzKXW+y9tN04xD51mnZG6rd5XtIJcQ
-	LvjF+pQge3AIfe5u9zaw4nhpn385NUYQwVdfEVSjuTDThmy6Nl6TE4YJ5BWdAjBxpcO45T7I+lw
-	IUcq2waZPo+j3PEqdVs+GbpWAowt4rD5kXD7lRdSGaQvr9mStsF4+iw6FjlMBl3T/aYn/9toP8H
-	xwA2ASiOdLw9O7BJkcFqQQGmVss7kuHQxVnk/jB5m8A9B+W813jyEbqJbaOpJ0wNyhcndsDyE2f
-	eGaTgWo4MFXVDl9VylU8o9tYmGfmznFunKTrC9HcclnjOX06C2K876IVQ2xLRsPoUdoE/i25veJ
-	QNFQ8PKWaxtDT28/r7ypSJdMZwqFaZd3slNjp9rsbWx8PlZvyvNxsApymOm+OJxT2MGK1/qozzW
-	E37Dst/8qi2XAIPQ==
-X-Google-Smtp-Source: AGHT+IE3Iwg4NUHF6OYx4wb4cVhQ7Cs6qD/ZwCO1Ze/O5Ksvhac9AtWKMOgaiXSa0ybeYFo8/3pCWg==
-X-Received: by 2002:a05:6a21:328c:b0:334:8239:56dc with SMTP id adf61e73a8af0-334a8650107mr15007720637.56.1760931244502;
-        Sun, 19 Oct 2025 20:34:04 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b59d0csm6330782a12.30.2025.10.19.20.34.03
+        d=1e100.net; s=20230601; t=1760931255; x=1761536055;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7rSqoF1bhRIMRZ/Ngttka/3cr36QgYmwYc1FwmVj14E=;
+        b=KtsTs8Me98TYcqmqyWbQkEWjhqUKgVugwgJLQ5/chOkkjZBPct3rrWU1D0v1VMmBbs
+         4eM/prFlLL7bb0VnIPDj/WsRFrGbZDd9S723heVQc12oMyu+mBswk5cx1IMQb8ZRoK8x
+         YfvHHJBToVXy1srf441+3J46n2p96M6IVFxU2zBfVDK43FKVNDFphcn5XRx9rW18vOZk
+         FEi7ogD71t0tuw4ZtzYeyrkg+fPg+1tWMBbWw/tQBtJ+nnczFsNDn+f4xi2QiQ+9tUK+
+         grU82o+BcJRrtASgcGKmFd9QpG2RHu6bldQq/RZ+uFfw1TQ4tqaxdRymzPDlhBTuaYK4
+         iMfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsPyqyJj3qu//fjjRk6pWloCL6CT07TIkPr9aJzeS22rM71zRwKWFCROfBmqA7C1qmcd4W8WbZKArIyxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzItunpLI0Bx7Wmt2WwgOrRVCw9yR/ZhkCodH7S7xvBuLbA63Xj
+	NcKRXtN9PInxetvUSO61xUdbkRKW3bd6tmFJ+ugG6beqNP+hQjehb7iU
+X-Gm-Gg: ASbGnctkEnhciHgFP+ROjBj0FE/5HZd+/NdPWoI35jSIYiUxWuADw4DWjWb7hp3Iczq
+	zHtbXp70888X1Q8+SRNpRRgsgzPI/orJMjoWlVQrY6r7Nvxvni2DAhK0gLdUxeZfkCpLLHeB+Ys
+	/TfrRPfcF44PYdEO3/7HbbvNScKBFqbSRCkuYOTLRpw1UYw3nU/jUZiTD7VQmWPo7zI19gFpyvm
+	dkSxmFugxyQx0l+WyU81pEhSxF0NlR6dpjYfLQi6ii/eAiuFNgeGP9m9mUG7F3BuSZCHZ569cxL
+	SpLEA62TojTs1LaXpMnBsjUKb2jFSKP9l+CuinfrAeCK0a8O1JtbPKckwfIT5oFtw6CUjtgBkQP
+	M26Kdtz9aAdr4dG1UxQQckKDZT3wUX9Oawbvv/7Hu0eYEoAgZgzS6qRsxDsB228u9FWtl4gUaBB
+	4mzX5Z2Q+dRWVZtVO1B4/s
+X-Google-Smtp-Source: AGHT+IE9q9Mk98lP6hBRl0yUU492JUXYJJQ2DgdO+Y4L3lDypf5RtaLyuDaSNhzNdoqOYTgHdrMLwA==
+X-Received: by 2002:a05:6870:2b12:b0:331:9036:6151 with SMTP id 586e51a60fabf-3c98cf43502mr5122705fac.4.1760931255070;
+        Sun, 19 Oct 2025 20:34:15 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3c9aefc51c7sm1878073fac.8.2025.10.19.20.34.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 20:34:03 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7AAE641E481B; Mon, 20 Oct 2025 10:34:01 +0700 (WIB)
-Date: Mon, 20 Oct 2025 10:34:01 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Linux Crypto List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the crypto tree
-Message-ID: <aPWtqT17TiqKTibG@archie.me>
-References: <20251020135339.5df5ec50@canb.auug.org.au>
+        Sun, 19 Oct 2025 20:34:13 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: u.kleine-koenig@baylibre.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	unicorn_wang@outlook.com,
+	conor+dt@kernel.org,
+	rabenda.cn@gmail.com,
+	inochiama@gmail.com,
+	krzk+dt@kernel.org,
+	mani@kernel.org,
+	liujingqi@lanxincomputing.com,
+	palmer@dabbelt.com,
+	pjw@kernel.org,
+	robh@kernel.org,
+	tglx@linutronix.de,
+	sycamoremoon376@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com
+Subject: [PATCH 2/4] riscv: sophgo: dts: enable PCIe for PioneerBox
+Date: Mon, 20 Oct 2025 11:34:05 +0800
+Message-Id: <ec474c5eefb79626dd6a4d65454da9109aaf2f4d.1760929111.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1760929111.git.unicorn_wang@outlook.com>
+References: <cover.1760929111.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8rjPh9wMhciqOQRv"
-Content-Disposition: inline
-In-Reply-To: <20251020135339.5df5ec50@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
 
+From: Chen Wang <unicorn_wang@outlook.com>
 
---8rjPh9wMhciqOQRv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Enable PCIe controllers for PioneerBox, which uses SG2042 SoC.
 
-On Mon, Oct 20, 2025 at 01:53:39PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the crypto tree, today's linux-next build (htmldocs)
-> produced this warning:
->=20
-> Documentation/security/keys/trusted-encrypted.rst:18: ERROR: Unexpected i=
-ndentation. [docutils]
-> Documentation/security/keys/trusted-encrypted.rst:19: WARNING: Block quot=
-e ends without a blank line; unexpected unindent. [docutils]
->=20
-> Introduced by commit
->=20
->   95c46f40aac4 ("docs: trusted-encrypted: trusted-keys as protected keys")
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Fixed by [1].
+diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+index ef3a602172b1..c4d5f8d7d4ad 100644
+--- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
++++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+@@ -128,6 +128,18 @@ uart0-rx-pins {
+ 	};
+ };
+ 
++&pcie_rc0 {
++	status = "okay";
++};
++
++&pcie_rc2 {
++	status = "okay";
++};
++
++&pcie_rc3 {
++	status = "okay";
++};
++
+ &sd {
+ 	pinctrl-0 = <&sd_cfg>;
+ 	pinctrl-names = "default";
+-- 
+2.34.1
 
-Thanks.
-
-[1]: https://lore.kernel.org/linux-doc/20251017181135.354411-1-krishnagopi4=
-87@gmail.com/
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---8rjPh9wMhciqOQRv
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPWtnwAKCRD2uYlJVVFO
-o6V8AP9EERIgzNXWepKUt/dJ+FI1xiL7XrKtxTO+dHX/XlNmhwEA8F+VLcrlw4CM
-RD8IRaGDSenpZ7Pw8YJ1mpqsnKVGDAQ=
-=4Xco
------END PGP SIGNATURE-----
-
---8rjPh9wMhciqOQRv--
 
