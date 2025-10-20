@@ -1,56 +1,96 @@
-Return-Path: <linux-kernel+bounces-861868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A66BF3DC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:13:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22491BF3DF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 832644FE5DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E184718A7261
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2FE2F069E;
-	Mon, 20 Oct 2025 22:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FB12EE263;
+	Mon, 20 Oct 2025 22:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLuBXQuV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmDaECqO"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0453EA8D;
-	Mon, 20 Oct 2025 22:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E962F0692
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760998347; cv=none; b=J1kFOwv3giABhd5+8QcWQ9GMjfqM+1S8kuImqhPVivvXweoOOMGQVst7cwJG7cFDblU4lBFrASxPsJ8+Nlk0hOFWXMpKipq0UQFJCWDsLz26Zt6k5b1PWu0AbmkP6Uk7ii041HxMvd95FYcVNPn0g3/A3lJmJOaeedORhgCfg1M=
+	t=1760998669; cv=none; b=pHMBmclm7mASZXYlQ6RSbO0JWGrZuBe9HCRJIF5hGv2RGnJGTr/8NFI7pBZ7xl1EpcGmvRzaOtKVJyZ4cCYw2XQahQ+5JcFRjxMrYs50K3v9cY6OYc0kaFHs2rOJHTGuJeMcjhq8yNCHzHgR26FgBvEFbzR6D/p5Zo8Mn9Js3P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760998347; c=relaxed/simple;
-	bh=IsXcIouzgz4wUiJybXRjXsiqCJLbVl38YFCNfwbmYSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ATvfFaHVyas2HPHMN7fmZj9T972t2m0cQgRLq85GMa1DNmEYW+uoJE5KioafknUO2HpAD84XG2fZjaLBdpfAV3UoC0aqcdd3Oy4GMH4BBewuSZQMYe39wnnm9z9O3kv+o5c6Qy2l7iLhWAzmRDFIFHlRHnj00POM6JhTMVAcLBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLuBXQuV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20B2C4CEFB;
-	Mon, 20 Oct 2025 22:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760998346;
-	bh=IsXcIouzgz4wUiJybXRjXsiqCJLbVl38YFCNfwbmYSM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OLuBXQuVqv4Q0CXR+aktQPwREcoe2KINO0W8J0kcZNxkVCZJcmxzyldbLpRxSu2lP
-	 d7OOp5Ip0LhslgUowkD75NEoCs2wNdw0D9BILt1gBcAf521rfa0c9THM1HQdGRMWwL
-	 sPnIxL7tEkG0Oe+c+YXxRpXukATfmUiuhgXwGTEH/JwCz1FSPmduHbAKAyLlQ7Iei4
-	 JMF8kvw+UqV59guyzNh1c5Wnk7Ye0Dvg2SlMhu8FDFlVhqrtJ5jywhp3KENAMd1b/P
-	 nLv7EuDpDsukTjCN5nZ4d/EDd5L2MSRq7PyyWN9kpKR+szTx5olR66ALO0PwvuHg/L
-	 LulWGiaKz6eqA==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	linux-rockchip@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-Date: Mon, 20 Oct 2025 17:12:07 -0500
-Message-ID: <20251020221217.1164153-1-helgaas@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760998669; c=relaxed/simple;
+	bh=dqLUTQtrogMRwD9T7RlSJAgfRt1ty6J00kuax1CPyrE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=djF17LmBB5gp6Y6nL1wB58Vel94s6z6PJZJ7aHXEp3UuwxuGnXvKFNu3PKNcVyFJ7uFAARWQicXyjznv/kWrk89afu2vPJ4uJYTAFhpSgr8/Y9yEQu/GNYGWfbLA5vKdn/fZkM0dxpj075qTrc8yiWjvnsTbu7PuVxByl30OG5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmDaECqO; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso4343948b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760998666; x=1761603466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYe+HLToSqnPHzo5qQ3tUxhmTMS46tnuV2MTLktf5XM=;
+        b=DmDaECqOQd4vbeCuFm41tPsPlLsjRJQ6CXxm8Ic+R82IpNghG/Fd5dGm0lWV1iaO0p
+         f/RClxZi86YylYLfflL1CCnWc9aHE26Hzggfd2l0ttljsC/3tmcpo5yTy+Gvc9eYduVv
+         0fFCmDeKk6L40865vxqEOupcqvmBgkxBOItGH6xlzIB42uSraY5mzQ/wqt3zGKiJ0KIn
+         NLeW57e9mesHnacHnulAsMuKTw3K3pGimVdmrxFUOpXankxSJjCcYsH5yn2S8LT5oGeK
+         9DhZEqG4ML2pKI82LR26mbZhF2Z6dpT2k+vhK0tDmk2UrGbh+b8mb+Q711z9DVSXHoE1
+         qeWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760998666; x=1761603466;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZYe+HLToSqnPHzo5qQ3tUxhmTMS46tnuV2MTLktf5XM=;
+        b=TlU2lcrS/dgr1sfTr0YEqMKntBJffXfsIVRCHq9wjlGD0JOXIDOXAJT9s0tuPkSlYt
+         qdQatnmohWPcXWszFO1b4WNJewLFzW9Z5M9yCYBd8AG3uPdpJDJGCnrl0FB5uZrGJFfd
+         PLA2qOBIJLNUF91q80a6UhVB0ktLUbxH6DA+LS0UIUEIYB2IFR4QnkHI/Mkfe8sBAdh8
+         lslZW4sM9+NVj2LePk6gex6wVoxhrnMMYm/4DBBzmlfNXuLFZ2M5YYcqgFsRnniG0Lim
+         0HWu671IRvZGXqanvGNand++jy6GtWuqeRWJQm0qOQt0zlJIcVd9JOJ6Ea+r1KosgyLy
+         BJyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXX/lhYLllEBT+ouNCI2yAIQbV8YikzpKuCach/s2Ilg1gqPrf3movMGElHLkKrd1x1go65Ls/phGPgd6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzer8ol9JIpAOP1gn3W+1oADOar4loiw6uI/yVUSnjpVIBsJaWJ
+	BtcMzMa5j683Grwq7FIaOPtu4lB4kuVTTTuctYqiZKZa20XiddzJ8QJ5
+X-Gm-Gg: ASbGncu91ELGSSZMg/8/8EdUNloChLiAt/XBoAYAwkGcUsWx1Y8qg62SmJn1hpayv1D
+	bAvHhcRZ9QYRFOV46R8wQkQWcZOwkg4qOgHR3W7dVs0AsyvNSPtanElwggqOAS5FLxV4fxNIp0u
+	MeznRIvGrLmP9i1DT66IZxmBcVYHdgCTbNrqX9JYt/EilVN5fgWGeFRqHRVnjsyqGTvTtHVm02C
+	29r2OZMSqIuRsAW+xY0W0iOsXToPi/2sBShA5BRq3BAS/tAQfL6vfgns90IoFPk73jfH2Ez/e/d
+	vZ5527OEywMLdzvOjjVGc/k6HNN2thm7cief7dCRzQGccYfHgZHdf5gDB3lrKd8IZacnKywd5Ym
+	iUkPcpzKVbpSbM4tf+sFc36z68XpE4+xkWB/UYSAPpa0u9POhdenBKMYs63ancO/Lrhm4k6ESSU
+	SOW68L9s1T6Y/o3F/puLAQF+CBF7p8riKlyhUe0yyoYmJDlsak3EqEhXaNi5ya67FEPvkUYV2J
+X-Google-Smtp-Source: AGHT+IEwAV1H1jekOCC4ydVC+dRMSVyEabfMHN/K6LLVUceoYcZR+5J3fPFE3xeXZJ8nexnAecjFUA==
+X-Received: by 2002:a05:6a00:94c3:b0:792:2dd9:d8e9 with SMTP id d2e1a72fcca58-7a2208fe6camr19226459b3a.4.1760998666322;
+        Mon, 20 Oct 2025 15:17:46 -0700 (PDT)
+Received: from linux-dev.dhcp4.washington.edu ([205.175.106.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff15985sm9617030b3a.5.2025.10.20.15.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 15:17:45 -0700 (PDT)
+From: Aditya Gollamudi <adigollamudi@gmail.com>
+To: mingo@redhat.com
+Cc: adigollamudi@gmail.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kernel/sched: removed unused *cpumask ptr in kernel/sched/sched.h
+Date: Mon, 20 Oct 2025 15:17:28 -0700
+Message-Id: <20251020221728.177983-1-adigollamudi@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251020220601.176639-1-adigollamudi@gmail.com>
+References: <20251020220601.176639-1-adigollamudi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,103 +99,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+From: Adi Gollamudi <adigollamudi@gmail.com>
 
-f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
-platforms") enabled Clock Power Management and L1 Substates, but that
-caused regressions because these features depend on CLKREQ#, and not all
-devices and form factors support it.
+v2: fix formatting and style errors found by checkpatch.pl. no actual functional changes
 
-Enable only ASPM L0s and L1, and only when both ends of the link advertise
-support for them.
+v1: remove use of cpumask ptr initialized at the top of the mm_cid_get() function to nothing.
+remove initialization of cpumask ptr in the same function, "cpumask = mm_cidmask(mm);" because
+it is not used later.
 
-Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
-Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
-Reported-by: FUKAUMI Naoki <naoki@radxa.com>
-Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+Signed-off-by: Adi Gollamudi <adigollamudi@gmail.com>
 ---
+ kernel/sched/sched.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-Mani, not sure what you think we should do here.  Here's a stab at it as a
-strawman and in case anybody can test it.
-
-Not sure about the message log message.  Maybe OK for testing, but might be
-overly verbose ultimately.
-
----
- drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
- 1 file changed, 9 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 7cc8281e7011..dbc74cc85bcb 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -243,8 +243,7 @@ struct pcie_link_state {
- 	/* Clock PM state */
- 	u32 clkpm_capable:1;		/* Clock PM capable? */
- 	u32 clkpm_enabled:1;		/* Current Clock PM state */
--	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
--					   override */
-+	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
- 	u32 clkpm_disable:1;		/* Clock PM disabled */
- };
- 
-@@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
- 	pcie_set_clkpm_nocheck(link, enable);
- }
- 
--static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
--						   int enabled)
--{
--	struct pci_dev *pdev = link->downstream;
--
--	/* For devicetree platforms, enable ClockPM by default */
--	if (of_have_populated_dt() && !enabled) {
--		link->clkpm_default = 1;
--		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
--	}
--}
--
- static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index be9745d104f7..d5d943681bf8 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3710,11 +3710,9 @@ static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
+ 			     struct mm_struct *mm)
  {
- 	int capable = 1, enabled = 1;
-@@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
- 	}
- 	link->clkpm_enabled = enabled;
- 	link->clkpm_default = enabled;
--	pcie_clkpm_override_default_link_state(link, enabled);
- 	link->clkpm_capable = capable;
- 	link->clkpm_disable = blacklist ? 1 : 0;
- }
-@@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
- 	struct pci_dev *pdev = link->downstream;
- 	u32 override;
- 
--	/* For devicetree platforms, enable all ASPM states by default */
-+	/* For devicetree platforms, enable L0s and L1 by default */
- 	if (of_have_populated_dt()) {
--		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
-+		if (link->aspm_support & PCIE_LINK_STATE_L0S)
-+			link->aspm_default |= PCIE_LINK_STATE_L0S;
-+		if (link->aspm_support & PCIE_LINK_STATE_L1)
-+			link->aspm_default |= PCIE_LINK_STATE_L1;
- 		override = link->aspm_default & ~link->aspm_enabled;
- 		if (override)
--			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
--				 FLAG(override, L0S_UP, " L0s-up"),
--				 FLAG(override, L0S_DW, " L0s-dw"),
--				 FLAG(override, L1, " L1"),
--				 FLAG(override, L1_1, " ASPM-L1.1"),
--				 FLAG(override, L1_2, " ASPM-L1.2"),
--				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
--				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
-+			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
-+				 FLAG(override, L0S, " L0s"),
-+				 FLAG(override, L1, " L1"));
- 	}
- }
- 
--- 
-2.43.0
+ 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
+-	struct cpumask *cpumask;
+ 	int cid;
+
+ 	lockdep_assert_rq_held(rq);
+-	cpumask = mm_cidmask(mm);
+ 	cid = __this_cpu_read(pcpu_cid->cid);
+ 	if (mm_cid_is_valid(cid)) {
+ 		mm_cid_snapshot_time(rq, mm);
+--
+2.34.1
 
 
