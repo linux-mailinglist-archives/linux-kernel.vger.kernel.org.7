@@ -1,142 +1,94 @@
-Return-Path: <linux-kernel+bounces-861040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34EFBF19DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:48:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD12DBF1A09
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287954238A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB653E83FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229D631DD82;
-	Mon, 20 Oct 2025 13:47:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6ED2C21F7;
-	Mon, 20 Oct 2025 13:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8EA31A57C;
+	Mon, 20 Oct 2025 13:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WJ8eYV1y"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDCF31A049;
+	Mon, 20 Oct 2025 13:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760968060; cv=none; b=nSg8Lijp8sLeEjWxEmaCyScYtv0gvEeHIx1OOc/0R/jQEdJK8anyVgSk9K+V646jMQWzxsCnHoNdlAgfIa05PRDbKlGADH2BsK1cx8L7ANQO4cVHjA+a8a0Fl/7N/hOkipfgi7gDXWqVQJz0fgZ5mtbarxjCpudqtSyVzEEhsL8=
+	t=1760968104; cv=none; b=PU21hIediDivEjtT/OcYH/GoJ+T6K3xMlE+MaZ1SmLldLefieT83XBUe+VNfNAcG/KV/XZBZgkkhg4ICMnWACBrYpVE/ieTcGS8xJij4FVhVYWdXb3PzInu/vybSWslCYKInn5anBgceyoAOXeH13OFzgvyKazQQuObwu37RznE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760968060; c=relaxed/simple;
-	bh=7xW28T3apWZwrY81wJCRu3IdXgTZGX/t1f963bLJQoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eKYxnZVpuEFDxzFKkvmp6pHCSAdVQIkBCy8zmz/ZFhtqwhxLtr2ED3/u8ujrv6Eh148GgT4AcDmqF9y7FLO/v0ZNVZn291bWGd7NLlxK2+XjxtovGntzaN+eON7+WN1EdaqR1o3UU0Xw3Z8Fh8CMUKsUKnKMmQOmmBxcrOBJDoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FCBA16A3;
-	Mon, 20 Oct 2025 06:47:30 -0700 (PDT)
-Received: from [10.57.36.117] (unknown [10.57.36.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF81F3F66E;
-	Mon, 20 Oct 2025 06:47:32 -0700 (PDT)
-Message-ID: <ef6434a9-cde5-4d68-a3a3-1873ba7912d3@arm.com>
-Date: Mon, 20 Oct 2025 14:47:30 +0100
+	s=arc-20240116; t=1760968104; c=relaxed/simple;
+	bh=DQF4I5gIK8XfB7Z4MneVuPussMd9G6jFx9CvKqts1iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpbiiyY0DRZLez1ow4sESx70ebqei4TC83tjlO56TARfw3Wg8kzQ9lr7gpJysGZnqVzVZy1Q+wuBeRXi+Q54VcJ3wFNu6TBtjeyei4uK5n9DvmlPv8naHCxvZw9Qe6n+HdpCIjbDSBJ/RsTBlsPNrqQs83BXoDyZVwDvdvwQIM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WJ8eYV1y; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C903040E016E;
+	Mon, 20 Oct 2025 13:48:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MhVNxkJfbrga; Mon, 20 Oct 2025 13:48:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760968089; bh=GzIRxm1SBVAAETsnzXUiJdfSRkI9bRYohsmtfZRZM78=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WJ8eYV1yT59n8bo6PbK6sgKMnpn2aCdEiVpjtwoRGUGFcH895EJD2U3IRVkmpcGrA
+	 RuZw9RiGSlgaRIKEwRxxXLUzVgyzD04rdjYwIFSdmmsTYl4ypXWclUyGujLkc4Uo/o
+	 0McIm8JfZp5Vw3BXapbajdysziqr32VLIlo/wH8OHmN8U52s5ZGfh8CgO2JJTc5bTn
+	 9zKGw7LJUMnCche5P7nauVN5DfK5QfpFOZSeVk2zEVZxX9TXzEWRnjnOF6XAmAO6hP
+	 xUHUWyI66cWaht4MrO1uFMDQbiVIHlwzjpc7fP28YYBwOlZOMrc+ywB7C/1z16c5Ya
+	 4kK61KNShF6hYMGewSvXS3gJLZ56AyZs2/IvNyLUfl0jYSNTf3O5dP0bVdabczlQvk
+	 BMp/PeHPon0OHOw68t3JwvgBJhUImS0GGo9ePpb15kRk6a2i14xVLZj72qcChfBxFW
+	 zTUO0/Dovn5sxpDBGiQ/Auhn2u56O8ftYcRibm7SHJEbh/QJwvgN9lSNYYcM+z5PBe
+	 P6nLY4Xp+E8mMAwqzaUUXnhaV5oqqyorL+fSHraVBBMYPdk4BESky6RhS3w7t2axXs
+	 5gKULesMob+DYopXRe/GEd00JCVdbpTgFZHksxAaDpOP+4PT4TsvX0Chlazu70Lsmv
+	 idlsJDUpkXrOtGzQpU4y9Hvg=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6298A40E00DE;
+	Mon, 20 Oct 2025 13:48:05 +0000 (UTC)
+Date: Mon, 20 Oct 2025 15:47:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] EDAC/amd64: Generate ctl_name string at runtime
+Message-ID: <20251020134756.GIaPY9jAoeEcBp95-k@fat_crate.local>
+References: <20251013173632.1449366-1-avadhut.naik@amd.com>
+ <20251013173632.1449366-2-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/5] drm/panthor: Use existing OPP table if present
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
- <20251017-mt8196-gpufreq-v8-4-98fc1cc566a1@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251017-mt8196-gpufreq-v8-4-98fc1cc566a1@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251013173632.1449366-2-avadhut.naik@amd.com>
 
-On 17/10/2025 16:31, Nicolas Frattaroli wrote:
-> On SoCs where the GPU's power-domain is in charge of setting performance
-> levels, the OPP table of the GPU node will have already been populated
-> during said power-domain's attach_dev operation.
-> 
-> To avoid initialising an OPP table twice, only set the OPP regulator and
-> the OPPs from DT if there's no OPP table present.
-> 
-> Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+On Mon, Oct 13, 2025 at 05:30:40PM +0000, Avadhut Naik wrote:
+> +#define MAX_CTL_NAMELEN	20
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+Any particular reason for the 20?
 
-> ---
->  drivers/gpu/drm/panthor/panthor_devfreq.c | 32 ++++++++++++++++++++++---------
->  1 file changed, 23 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> index a6dca599f0a5..ec63e27f4883 100644
-> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> @@ -141,6 +141,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  	struct thermal_cooling_device *cooling;
->  	struct device *dev = ptdev->base.dev;
->  	struct panthor_devfreq *pdevfreq;
-> +	struct opp_table *table;
->  	struct dev_pm_opp *opp;
->  	unsigned long cur_freq;
->  	unsigned long freq = ULONG_MAX;
-> @@ -152,17 +153,30 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  
->  	ptdev->devfreq = pdevfreq;
->  
-> -	ret = devm_pm_opp_set_regulators(dev, reg_names);
-> -	if (ret && ret != -ENODEV) {
-> -		if (ret != -EPROBE_DEFER)
-> -			DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
-> -		return ret;
-> +	/*
-> +	 * The power domain associated with the GPU may have already added an
-> +	 * OPP table, complete with OPPs, as part of the platform bus
-> +	 * initialization. If this is the case, the power domain is in charge of
-> +	 * also controlling the performance, with a set_performance callback.
-> +	 * Only add a new OPP table from DT if there isn't such a table present
-> +	 * already.
-> +	 */
-> +	table = dev_pm_opp_get_opp_table(dev);
-> +	if (IS_ERR_OR_NULL(table)) {
-> +		ret = devm_pm_opp_set_regulators(dev, reg_names);
-> +		if (ret && ret != -ENODEV) {
-> +			if (ret != -EPROBE_DEFER)
-> +				DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
-> +			return ret;
-> +		}
-> +
-> +		ret = devm_pm_opp_of_add_table(dev);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		dev_pm_opp_put_opp_table(table);
->  	}
->  
-> -	ret = devm_pm_opp_of_add_table(dev);
-> -	if (ret)
-> -		return ret;
-> -
->  	spin_lock_init(&pdevfreq->lock);
->  
->  	panthor_devfreq_reset(pdevfreq);
-> 
+AFAICT, the longest string is "K8 revE or earlier" which is 18 so 19 with the
+'\0'...
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
