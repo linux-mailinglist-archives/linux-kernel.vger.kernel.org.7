@@ -1,170 +1,102 @@
-Return-Path: <linux-kernel+bounces-859999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB26DBEF1DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:44:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D131BEF1E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6158418964D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:45:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 488794E901F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579B529B233;
-	Mon, 20 Oct 2025 02:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD8026B760;
+	Mon, 20 Oct 2025 02:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IkeTO4tK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QLGLIkeD"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B042E946A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2F57E0FF;
+	Mon, 20 Oct 2025 02:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760928288; cv=none; b=tH/mCgQU+ubTy7CoHZxUALCu/RpUbyKUSL4lkA46UOGTpY1CKHqyMmUYXqIpIhFiIUrUqBZ9coCv1TRjxlQexylS3rTD+Y/I2dq8pXV48csgTrVrMDCWrU7aKTrZz8s55YyAYV5B5xdoMWXi+fDkowIJRoRMeGcjUmQoQQbNIds=
+	t=1760928323; cv=none; b=TMg2OG/i3HQzJF21H+FPcEjUJFlGbhE8nF6uOn7Q78DJaVOTAm4B3CjTyo4+lRmzlzxdRbxiuNL182RunGqiDPsoEKi/H6EHuoprHyWrRsjdZpf4M4g+tUxlOigARAT2HiIQmGIzDvbjx8dDLJUoV2yGzlWrY+BzjKb395UH2uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760928288; c=relaxed/simple;
-	bh=5bQKbY2DylLFEXOHKBtfcRedLyoCVXF6XoiqTmmPX0E=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ATr2Mw4F8GheVzncKNUL2KSTK+ghLrTJTIy9ohUyYkoUJVSb7M3rAWWdrjBv1liWQVzyNkfLgSjlhTnOyW+SxcjbHdUf7Kld0yJW//QtWD7WG2E8Q/noL82hE25pJxVxDpPU+6ly5LJB0mF1uVyYscIh2lbixqYFokLSol2PP1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IkeTO4tK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760928285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QKlkcVagNs0Ydw0UKqIhnLpn3p9SPMohEVtDmAXbYgE=;
-	b=IkeTO4tKjRtiEdKwZ8DpYs/okPhxD6ADmCHRi0Xl18CrswtgzikCKn0NluVwRdNf53Z1mX
-	f7wyNIlg6nhEi1BooQMRomKNFOGMrqWWh8pCEcPw2YTelLl7k86wAEihdPe0ur73LQOU6L
-	CsgLsGo9t36rjrezwCOj92XARUmkdFo=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-fNYsaYeHOKqY4XOc3Sxk1w-1; Sun, 19 Oct 2025 22:44:44 -0400
-X-MC-Unique: fNYsaYeHOKqY4XOc3Sxk1w-1
-X-Mimecast-MFC-AGG-ID: fNYsaYeHOKqY4XOc3Sxk1w_1760928284
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8906059f6b2so2412993985a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:44:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760928284; x=1761533084;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QKlkcVagNs0Ydw0UKqIhnLpn3p9SPMohEVtDmAXbYgE=;
-        b=YD9ngHLnJ9R+BjpUrXXQrSy7QoynUoYKAoVk0hDnlbYisRhL4PYAI5/01A6GLKTQPY
-         hzLT3LvLPJrEL2Y1kvuP1VHzFfyWbxd8T8qaWwFoA64Udv7ifRw++3G5WalhCNtO5WDx
-         U9OYkqfVKu7mgatBVnlhtE6WF705Q+DtKv860QYC1Q4awdBAX3bCs9IdvGpFeVxN+W8B
-         8W9o8X9jHrNiknkNqU32FOmLEuTKRDZD5Mrdhpnv4FSa1gTEcOLkGSL6wjLWkcJGzpP0
-         ncSttJlrD2LH8/I6pU0AbhGU7SVxZGDySOQrk7JNwR9ZhiZcZGKSk/E3huPiNIB30BxE
-         7YuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+RWh25DTCjHnxkFzEdMGGFT9D2mVNrCugGLlN4aJo2OjyuDXSDnAA4WkrQ9yd7wP4x+lDioOVxph3CpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySSYGCMYvHk1mfPNL3qjXwE56yY+ubRoynMe3ZvDn1T9eWw/VI
-	G2Tfd/kJhR8Wq8NKlArVJU8vCd4mSKR5vRZrw7Zs/UrzNIfFS1mAVpKwosoctOcuWzdBitfbp6l
-	8F+kNNPnTgt71HZLGR5FnlqbZAqLIZrIwpFUn92cfbWd8PzME0g7A/0sHmVCl6RJZlg==
-X-Gm-Gg: ASbGncujC5v9v+pf8RF3hQCQXCJ58He5HhgKue6/KsnXn2PTFlXE+GnziKAicmIw42C
-	mXPbHw2MUlG25+Ho/VY/ycqJnczxUX7cIM8XCy+LhVSdOFMnkmY0oTQjhsn+I/oGJ7MyCm15q06
-	GPJ+q58Xp+lpIztYL9HvrZe1ZzxTV8dxjH+s/t0pdOsdKZYGNPC3mXSUHQAt87fMuaAsC2XeraX
-	jbB/yHxlpLUDZ1vwcHgp6YQZ4LnmaxF/Epi5qeaHObkx1Taxf9uK+gEopv2Rxs3MoqfqhkRaPdo
-	yHXRQNMRidahpIlwlEp1iqXJRPY2iDJS4yPTU98RL9FOOacInqS8wS7bWsFTagn/qN9oYsB62gr
-	nW0UIgOQwVQHt43MOa7QabxRv4tyAFvTt+yXt79uDNjbiTA==
-X-Received: by 2002:a05:620a:1984:b0:84f:f3bb:e464 with SMTP id af79cd13be357-8906fd1953cmr1596427385a.50.1760928283885;
-        Sun, 19 Oct 2025 19:44:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVTUNR70q2Q+iuc8GL/oArje+Kg/LrBETtdWS9ljvnBQCOftYPlzMqYclVKvy5AADdaCK9Ng==
-X-Received: by 2002:a05:620a:1984:b0:84f:f3bb:e464 with SMTP id af79cd13be357-8906fd1953cmr1596425285a.50.1760928283426;
-        Sun, 19 Oct 2025 19:44:43 -0700 (PDT)
-Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cfb57f1dsm467941385a.62.2025.10.19.19.44.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Oct 2025 19:44:42 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <85e776e6-110e-4c04-88b7-93059db8f74c@redhat.com>
-Date: Sun, 19 Oct 2025 22:44:41 -0400
+	s=arc-20240116; t=1760928323; c=relaxed/simple;
+	bh=s8VkByx8xHrckqHyNH60vbCSjBYDsOwme3OBp4Uzpbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tSjP/0UkHtfE1TgoNXTemrKA/htDOWIM6JfAxn6vyjgmGcZ1a6HZGNHkqKzZNTBXOP4N9N+5zDy9j6CUHq52xm9I89lT/UrUFrmemny3U7ByBWG0itdVahtgfsz0gIDd+Hx1NaiaquHEfHSxUgbkwvum7zdd7ojOUeKNeMsqAXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QLGLIkeD; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1760928318;
+	bh=8RARKvph0luG+8QetcLMljgsGxPDDnzOLyFJtyDmky4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QLGLIkeDVHNjhFYGTpI9E4Eomxmd3Ht1mDOjHiv1pcQMKFGDrV+O/KG0KsRw/k/fY
+	 l/pdenxQQRhHeq0VtcQ8ABJraIBGim4OATkaVbCjEMZn/bEufWxM0GaYtpyYdNoqjX
+	 DloB9BZjcPIOlB1YvD7foALd8USiid9li0v5GbkCV6ucPKlNAtEeA4qpf3HIqeLY3A
+	 yOSNCjMYg+eel5DY3AhQmaaqPjqgQ5uuSNK8h9YjCOOHhhcvUjWNbL70V+2UG7MZyv
+	 MLpG6n2PCpSYVn6lcSe2wshZ6ZnbmIrGsULw0omAKeiesoRi1pTrjVhY1bnU29EqiH
+	 7Yvy/xNrFC3Sg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqft62JGdz4wB4;
+	Mon, 20 Oct 2025 13:45:18 +1100 (AEDT)
+Date: Mon, 20 Oct 2025 13:45:17 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan He <bhe@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm-unstable tree
+Message-ID: <20251020134517.795a133d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 06/16] cpuset: introduce
- local_partition_enable()
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
- <20250928071306.3797436-7-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20250928071306.3797436-7-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/_K1a0xfQKhKBQ+c3.FQeHWo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 9/28/25 3:12 AM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> The partition_enable() function introduced in the previous patch can be
-> reused to enable local partitions.
->
-> First, partition_enable() was enhanced to support local partition enabling
-> by properly handling parent's nr_subparts counter and adding notification
-> operations.
->
-> Then, the local_partition_enable() function is introduced, which factors
-> out the local partition enablement logic from
-> update_parent_effective_cpumask(). After passing local partition validation
-> checks, it delegates to partition_enable() to complete the partition setup.
->
-> This refactoring creates a clear separation between local and remote
-> partition operations while maintaining code reuse through the shared
-> partition_enable() infrastructure.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 111 +++++++++++++++++++++++++++--------------
->   1 file changed, 74 insertions(+), 37 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 0e2f95daf459..154992cdfe9a 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1539,6 +1539,7 @@ static void partition_enable(struct cpuset *cs, struct cpuset *parent,
->   				 int new_prs, struct cpumask *new_excpus)
->   {
->   	bool isolcpus_updated;
-> +	int old_prs;
->   
->   	lockdep_assert_held(&cpuset_mutex);
->   	WARN_ON_ONCE(new_prs <= 0);
-> @@ -1547,15 +1548,21 @@ static void partition_enable(struct cpuset *cs, struct cpuset *parent,
->   	if (cs->partition_root_state == new_prs)
->   		return;
->   
-> +	old_prs = cs->partition_root_state;
->   	spin_lock_irq(&callback_lock);
->   	/* enable partition should only add exclusive cpus */
->   	isolcpus_updated = partition_xcpus_add(new_prs, parent, new_excpus);
-> -	list_add(&cs->remote_sibling, &remote_children);
-> +	/* enable remote partition */
-> +	if (!parent)
-> +		list_add(&cs->remote_sibling, &remote_children);
-> +	else if (!is_partition_valid(cs))
-> +		parent->nr_subparts += 1;
->   	cpumask_copy(cs->effective_xcpus, new_excpus);
->   	partition_state_update(cs, new_prs, PERR_NONE);
->   	spin_unlock_irq(&callback_lock);
->   	update_unbound_workqueue_cpumask(isolcpus_updated);
->   	cpuset_force_rebuild();
-> +	notify_partition_change(cs, old_prs);
->   }
+--Sig_/_K1a0xfQKhKBQ+c3.FQeHWo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-As commented in an earlier patch, the partition_enable() chnage should 
-be moved there.
+Hi all,
 
+After merging the mm-unstable tree, today's linux-next build (htmldocs)
+produced this warning:
+
+Documentation/admin-guide/mm/index.rst:24: WARNING: toctree contains refere=
+nce to nonexisting document 'admin-guide/mm/swap_numa' [toc.not_readable]
+
+Introduced by commit
+
+  9e1d0b5b7f28 ("mm/swap: do not choose swap device according to numa node")
+
+--=20
 Cheers,
-Longman
+Stephen Rothwell
 
+--Sig_/_K1a0xfQKhKBQ+c3.FQeHWo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1oj0ACgkQAVBC80lX
+0Gy28gf/Ywa4c2IbumURWjuFyNc40FP57Yi7ltDjRvcVBLRTF0Zgh0QpkaLkjzNq
+NtDAs/6rGHOv3IdijXpptJdkggtua3aMTAmN12h5DYUWWRexvUSQkyaS/qm49jNW
+2rzMOhCWkO7G3dJ0O4+DDol15kRccJj6UPlOoZBlFtE8D7uRprfvxZ9npPp7vpzG
+Rs7YxgIXeqey2fyvIAvBkXxY/M9uw/PstCLzvzSXJNKh4u9ALLLJCXqFqWKk7nTY
+cOyrOFo3wRDYZEHswcCtr3VAzE1otFrV+CFaGd3HiqDyMmfTFIiquD8LSxK7FqN9
+ABvqxv53qcgbul+UwMgprZR+Tcp6qA==
+=hGaP
+-----END PGP SIGNATURE-----
+
+--Sig_/_K1a0xfQKhKBQ+c3.FQeHWo--
 
