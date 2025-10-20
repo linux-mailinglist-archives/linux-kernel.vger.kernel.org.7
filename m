@@ -1,162 +1,140 @@
-Return-Path: <linux-kernel+bounces-861857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02385BF3D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:10:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7037BF3DB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BB974F8118
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:10:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DD424FE49B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB57D2F0669;
-	Mon, 20 Oct 2025 22:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E292F25F3;
+	Mon, 20 Oct 2025 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ShBPe1qQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="JWcFYVad"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAC82EFD80;
-	Mon, 20 Oct 2025 22:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234322E7F11
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760998185; cv=none; b=AgzsKGPV5RqgE6xEb1vJUKi5AfN66wDH+MUc9RL8ieLB7dPdzYqR0s9zdohnsORiapIokY4k6LYE2PnyZzy6EdKfqjQIk70P3u1ijYTZVKRnkAiRIf1whvaOzHmhUgnt3eDpYiKGWOifOFPazQrNHocgXv46DeQ4bpiwmja8nSg=
+	t=1760998237; cv=none; b=QRAt0st8nQkMMKGM3m2+4Zm/G1ILuI6jx/e4nQlFpSz4QpnuTcyLlS5wL4tptAqO2P6912gAtMn6mrjYnGo0kqtCFaktqOFTXbDwzBfo4Pc5UjuNKbiUmnXXoSaUJZzwMpaA4H4F2Q75CeCHz1Pm1yLqBVaxU0IUPwfnDiv5Ico=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760998185; c=relaxed/simple;
-	bh=nlqSPPd+cTW53p798pcLtF/1icYvQ43dC5dy4j3mZcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l/Taa5OoSkvdciLktLIcaSnA2gb9eXiiFzu0pdQIUKni39aYpgm0zBpIfB+emfmxfCMvLO+N5XCFdEc45/bCeaVtwT+cUBXTAwlyq2fdSamP5Jh8FyrAgwpjPqcWdK3lz037dflE6S4tcCSXd23CaMvqTWjPDBBJdrPBXYfq4SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ShBPe1qQ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760998184; x=1792534184;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nlqSPPd+cTW53p798pcLtF/1icYvQ43dC5dy4j3mZcY=;
-  b=ShBPe1qQ9RPuKqjpEJsfnQWdrRguM67lorOpqnamqsHIjIfsPr/Mvc3A
-   wQ0f8XMrpDa+gitV9UtRh+U6Z7SAKQYez5I3WXPaQCCw0YA2AwLuttyJB
-   PHVCCgmBU8Uoenr5xiMTpJcZHhGZxSRYDJxjWT51Uxcx7gnhpuJFvCVcF
-   /Ctm1OvxHjDPjjQGWZUUHxAO5M5wL0uJymIb71q2k/Atq7sOVWE2eiz3P
-   o2NV293HoNdempidiXg9bIleS1VjXv+DG7H0iyHFaNMFPOS5nw8mC2Kl2
-   awUVifbWl/GfuKFqiuiX8VsIW6zH0UIHHw3i62KZPZS8tiwEAMToE3Usy
-   g==;
-X-CSE-ConnectionGUID: hPs+yldVThKNZzUgm3JF6A==
-X-CSE-MsgGUID: ybI8khkYRMyQROWsuKmEPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80746789"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="80746789"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 15:09:43 -0700
-X-CSE-ConnectionGUID: y64OigoNR/O6hGjIJu0QGA==
-X-CSE-MsgGUID: KQXIJjrVSLCcIZBw5PB+qQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="182625060"
-Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.108.101]) ([10.125.108.101])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 15:09:42 -0700
-Message-ID: <225134fd-033f-4d63-b88c-772179054694@intel.com>
-Date: Mon, 20 Oct 2025 15:09:41 -0700
+	s=arc-20240116; t=1760998237; c=relaxed/simple;
+	bh=ilx2DzwdWn0Eb7pbCFulmV8VsnS7KdZoAGThUj0Ef9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqJVreaaoN7hOfeQYJVcir27ercvmeDDacuUrc0tqRYyaowsB5rrAPEbG7PsqRTY1nUrfAN6fzVxX/smKNh9eDl3UGS2k3fahZ0RSY8RZvbPDPbj/Q385/NnZB2CzHVcjNAqekWUAEnwCSUw4ipOWhxhaVLq5es6Namu5KGRwA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=JWcFYVad; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so9262674a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1760998233; x=1761603033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ilx2DzwdWn0Eb7pbCFulmV8VsnS7KdZoAGThUj0Ef9U=;
+        b=JWcFYVadt93YK7TOMy9LFnWbvObqk56tdaxiF6kzSqONWZfZ3rSPVf3TK3N4/AwBO+
+         pFxCx25zD/CXjIso7elAKENpgGBWpzVvwYZCJNDVQfjbK/FwZYyztBJw1zzbhPxIv2B3
+         ZfxEZVJ3xI6qUH8LODXMN02rJJJ7PluEjYQbsHrprn4kKprYA0VxgVw8bLeAv0W7QNsz
+         bh9MjNnqdmbxNUyIcaS74iTvQiGVBk/CW4qii6ibh8+ltp52tVefzDD9t2S8SUMhCw5X
+         jQat3tf43fY80Gj8Vf8wGhEi0jNqxzpsXvdVfuM5PpQ3kEOz3duFroJ/HNsw0+tRc6GT
+         O/CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760998233; x=1761603033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ilx2DzwdWn0Eb7pbCFulmV8VsnS7KdZoAGThUj0Ef9U=;
+        b=P+eRLqA22EJYArY7v9WYXiPN0UvyBJWLz946kI20IsSifHDE3B/ysEbcSHCmawr0Ze
+         iX4XtvxV2ST2JoaUZbNGzqaplsoQJGHIYMUg6Yzjwg0jwAA60U6dRlJSe+Cbz/13Y2ip
+         QJVHgzO++kBcfkfxE1L61p3u0/H6nWQxSsCNney8HqLRZ2Zm3B1O+aHTo3L/D6+Z1WDH
+         N3Sc/n4gt1edMEXtgqW0RynC5Q3RTqsPC2rK7gbB1FokrMqWH6dJ9FYNCOn7cERDuE3b
+         DL8SjhDZxkDigmKn3IGApZ0Q08SU9o92ulNTNFQGQd6FS0wt+YZkSN5CqIm2zycZkEV3
+         RbQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQHhGutuuoMoCXk8Dx00037mA4gZXFDimu8V93Zd6NLZaHr/KjnvuDka4+B1wsRqvLr9BVp5qVVdO9pcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVXNs+0KqeGj8v5YJLmbl2pLiRPDRQtInRFIr28HPfVOaoN4iu
+	C/LtT8wZ1tPoeB02uvjiD/d0/TD9C1CdtluT/FVKdZEGHatO+2MwUyXuNIAN7dTdPCjBLugIZXb
+	KkgoGVfaBDOw+WDJ3+j4IzvFy0XvrTrE7Uy6wy6GY/Q==
+X-Gm-Gg: ASbGncvjPhmtKsAlSgfFpLZlvRF3r9EysUKmIDTn3f/Bd9gMn/QWDRjiRSyEPDxuZ/4
+	RubVYFGkQNoIJmEzVJwjPUqbOnZlSwLB8mKZFPovCPCtATAY0vN5ZG3L1AfdmhTcnFlNmb6NYGd
+	6gT204BTsomlmLkDan8f5wUvXWQGHplHl0JP+JnUydVmQmZIySNrc7tCYbQrSScNr2LfZhi1k6G
+	NlfngG0+/Ug/aaiGIQ2KYEpwXdWpObx2T8TtZMZnXGBME7Y+D5VwiB4ICpRQ8I29bnz
+X-Google-Smtp-Source: AGHT+IHXgN2A3la0YJxyyXqBd0MasNf9JRFf1RqDDAA3OQ+yqvWzJtnk8lJzn/WVj6Q3Gweop1jcYJMwQr5SF/i4N7Y=
+X-Received: by 2002:a05:6402:518c:b0:63c:5eef:c8eb with SMTP id
+ 4fb4d7f45d1cf-63c5eefccb8mr7887864a12.31.1760998233475; Mon, 20 Oct 2025
+ 15:10:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/its: use Sapphire Rapids+ feature to opt out
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Jon Kohler <jon@nutanix.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
- <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Brian Gerst <brgerst@gmail.com>, Brendan Jackman <jackmanb@google.com>,
- "Ahmed S. Darwish" <darwi@linutronix.de>,
- Alexandre Chartre <alexandre.chartre@oracle.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251017011253.2937710-1-jon@nutanix.com>
- <20251020194446.w2s5f6nr7i7vw4ve@desk>
- <EA2E1D80-07A3-459D-B330-A667821E7C05@nutanix.com>
- <20251020204026.a7xuhnagsqo4otpx@desk>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251020204026.a7xuhnagsqo4otpx@desk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251018171756.1724191-1-pasha.tatashin@soleen.com>
+ <20251018171756.1724191-10-pasha.tatashin@soleen.com> <aPXszzdehAbkPOAh@kernel.org>
+In-Reply-To: <aPXszzdehAbkPOAh@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 20 Oct 2025 18:09:57 -0400
+X-Gm-Features: AS18NWCJ1e_UpQW7FijpabJLDoZps9ZGHn4yCdktBVEdTDDj_pM8M4yk7V0Wg8M
+Message-ID: <CA+CK2bCqZFY3HWNj6o2MS4+dz4Re+ekdY_GG1V4GL1Xq1NX_Ug@mail.gmail.com>
+Subject: Re: [PATCH v6 09/10] liveupdate: kho: Increase metadata bitmap size
+ to PAGE_SIZE
+To: Mike Rapoport <rppt@kernel.org>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
+	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
+	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
+	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/20/25 13:40, Pawan Gupta wrote:
->> I can’t speak to other VMMs (e.g. vmw, hyperv, hyperscalers) and how they do
->> it, but I suspect there are similar challenges around post-launch feature/bit
->> additions that require the VM to be completely cold-booted.
-> Ok, that makes BUS_LOCK_DETECT a better choice than BHI_CTRL. I think it
-> be better to replace BHI_CTRL with BUS_LOCK_DETECT.
+On Mon, Oct 20, 2025 at 4:03=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Sat, Oct 18, 2025 at 01:17:55PM -0400, Pasha Tatashin wrote:
+> > Metadata is preserved via 512-bytes, which requires using slabs. Slabs
+>
+> KHO memory preservation metadata is preserved in 512 byte chunks which
+> requires their allocation from slab allocator.
 
-Folks, I just think this kind of random feature spaghetti voodoo is a
-bad idea. Suppose X86_FEATURE_BUS_LOCK_DETECT is in silicon on an
-affected part but normally fused off. But a big customer shows up with a
-big checkbook and Intel releases microcode to enumerate
-X86_FEATURE_BUS_LOCK_DETECT on an affected part.
+done
 
-What then?
+>
+> > are not safe to be used with KHO because of kfence, and because partial
+>
+> Please add more details why kfence is not safe here.
 
-Your only choice is to convince Intel to make architectural the idea
-that X86_FEATURE_BUS_LOCK_DETECT is never enumerated on an affected part.
+Done.
 
-Because even if we go forward with that patch we've *DONE* that in
-Linux: we've made it de facto architecture and Intel can never change it.
+>
+> > slabs may lead leaks to the next kernel. Change the size to be
+> > PAGE_SIZE.
+> >
+> > While this change could potentially increase metadata overhead on
+> > systems with sparsely preserved memory, this is being mitigated by
+> > ongoing work to reduce sparseness during preservation via 1G guest
+> > pages. Furthermore, this change aligns with future work on a stateless
+> > KHO, which will also use page-sized bitmaps for its radix tree metadata=
+.
+>
+> With the stateless memory preservation there would be no problem with
+> kfence, right?
+> Maybe we should accelerate the stateless preservation work?
 
-Can someone try to boil down the problem statement for me again, please?
+They are orthogonal, theoretically radix tree could still use the
+512-bit bitmaps, but we chose to use page size. Also, Statless KHO
+still requires some work, and because it requires removing the
+notifiers, it is better if it is based it on top of the other LUO prep
+patches.
 
-	VMs are slow because of mitigations for issues to which they are
-	not vulnerable when running old kernels on old hypervisors.
-
-Is that it?
+>
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>
+> --
+> Sincerely yours,
+> Mike.
 
