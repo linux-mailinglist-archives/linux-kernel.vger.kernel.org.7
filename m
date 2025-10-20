@@ -1,219 +1,221 @@
-Return-Path: <linux-kernel+bounces-860483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400ACBF03BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF90BF037C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F633BE58D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6BC7189FA54
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225151F4CBF;
-	Mon, 20 Oct 2025 09:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4266C2F6561;
+	Mon, 20 Oct 2025 09:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="onWXANZn"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zxouHgNg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5lzRlQJq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zxouHgNg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5lzRlQJq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C142C2F60CA
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0621CAA79
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953109; cv=none; b=tzLxU4YRBCxFOVxbW/bHeTcm/+U2CvlCV/aYmEANJOl8ZItTPrum5NA5NCUCgp15GitIRxR4g9wFa7DGgeDcwBv8juIG99kCCARFPRCBtodhR0143i4ygS1aas9G0Uw1BrAGVExV9xt5xbIoCTMJ40yuRTFFv+ZHDSAuuflK6zY=
+	t=1760953104; cv=none; b=dkmmD8KskFRVBcEFGLE2Hcl6Ubt/EU4eLIuxwdRU855V9lHj1rmX8Gu6/+XRl41NoSxdT+JfxZbuQPVZf7Lyvj8ag27eR7gH87XX85QbT+3ijzXruUHrKGtOIR2I/E/WqToMKDj4gbk01yTU5tebQcMyRtmDyVUDlogT8gPBJtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953109; c=relaxed/simple;
-	bh=ZM99vAaDenOAHQs62WH/1ACKRvDOf/c1+nx6vwi0iiU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=l3SOKmb5RXqQsRL8GupdrNuEY7P24asUfTdWmJ+CBv7qRGI433OdsN/SRfaxxPf26Mw4+csyZyhW+/dJrBant8Iax3M9WhBl0V82RzJvWJZZ2vx49gVr3PuHW951aRwxeYjIje7TH0hr1HbuhqbWac2rnc0rkfdlJRw1uYns4nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=onWXANZn; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1760953104; c=relaxed/simple;
+	bh=h6eHIKNIKxvv7MntNZ2NPluU3sYBXbkxa/iV1J5GD+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rm3ga1vpBD7YVyqSLQthIEvXceBY4J0XAHzhxu/gahnIXsUOpxtp2AQvJiWA/qjn2elXMaTsyHYikaD3IzYwg2PDH7JP/XmXeAOWjoi68J0hWSCIUJ13GwUACK15NAGp5okUNPsgtnxJFGwUZ1DmOtpe24T3+Wo387nM8/gRPLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zxouHgNg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5lzRlQJq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zxouHgNg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5lzRlQJq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B602B21182;
+	Mon, 20 Oct 2025 09:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760953094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3Kd6mbbrPRG0zwXHtLEs9ID63+xl85WNbtfLvd00nw=;
+	b=zxouHgNgKUzdOarvvgPHxxhBWfS94a/uSkfjawCnhR8cbzz69iJLdEIMLj+zu50BZJJba5
+	bUTYv7oaSLn8CNysGSrIzr02b4aqBS2pxKu3DHfqFRoON9pn+7ej6fZrScypIZq2azmnM9
+	x+TSTCq6IzdNyUQ8GrWILzHPDDFkhg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760953094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3Kd6mbbrPRG0zwXHtLEs9ID63+xl85WNbtfLvd00nw=;
+	b=5lzRlQJqx8tIyzMXiqieG4GgqzCjJXMTESHJy83TMpTfVtscp3W2GniczNdnyGo/OW71MN
+	UX0rYu63KQ2G2IBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760953094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3Kd6mbbrPRG0zwXHtLEs9ID63+xl85WNbtfLvd00nw=;
+	b=zxouHgNgKUzdOarvvgPHxxhBWfS94a/uSkfjawCnhR8cbzz69iJLdEIMLj+zu50BZJJba5
+	bUTYv7oaSLn8CNysGSrIzr02b4aqBS2pxKu3DHfqFRoON9pn+7ej6fZrScypIZq2azmnM9
+	x+TSTCq6IzdNyUQ8GrWILzHPDDFkhg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760953094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3Kd6mbbrPRG0zwXHtLEs9ID63+xl85WNbtfLvd00nw=;
+	b=5lzRlQJqx8tIyzMXiqieG4GgqzCjJXMTESHJy83TMpTfVtscp3W2GniczNdnyGo/OW71MN
+	UX0rYu63KQ2G2IBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A767513AAC;
+	Mon, 20 Oct 2025 09:38:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id urrbKAYD9mgtDwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 Oct 2025 09:38:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 55C9AA0856; Mon, 20 Oct 2025 11:38:14 +0200 (CEST)
+Date: Mon, 20 Oct 2025 11:38:14 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, David Howells <dhowells@redhat.com>, 
+	Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 03/13] vfs: add try_break_deleg calls for parents to
+ vfs_{link,rename,unlink}
+Message-ID: <n5ihwvsits3u7fwvzuk42vmqdv45ap6u4gh77diegtxik42emp@whyfqmynxnl2>
+References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
+ <20251013-dir-deleg-ro-v1-3-406780a70e5e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1760953090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q5GKFSb8/CEfXGsPeMSq9twJk4tF7yOdz4CDd5l/dKU=;
-	b=onWXANZnK+qqfixEuAceXS1lWRx+JeiaxMXIWo0ENGg8AfYu6LSCzWRujpeE3aJgRl1MKD
-	5UYyN5Yu3LXWx0Pfe51SQNTWPgNGGwPlQub+f+qcMrlq1Ku3R9tK2sRXTOVmF5Y7wrAam9
-	paPdawkWZi6FjgBdOrwdkMzsQGQdYngyKTiWWVdnTCPE3hdsVUg/YvhuwmP+ZP3RQ+kq6r
-	a1dg7XBXJsQ+fAYnAyg3JrzuJLlaY24b5vin667/995YhHWgvY9Agftc09sFMPjGhnxV6M
-	lEJLdbXKhmGgw7RyRLeRm+zJ5nHdrkUyOLVr8zM7RnWrXoWozQe3ocHOXkRZDg==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Oct 2025 11:38:02 +0200
-Message-Id: <DDN1RQB4LG0X.30F0A3IMJ4YI4@cknow-tech.com>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <huangtao@rock-chips.com>
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Add support for rockchip
- pvtpll
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Elaine Zhang" <zhangqing@rock-chips.com>, <mturquette@baylibre.com>,
- <sboyd@kernel.org>, <sugar.zhang@rock-chips.com>, <heiko@sntech.de>,
- <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>
-References: <20251020023724.2723372-1-zhangqing@rock-chips.com>
- <20251020023724.2723372-5-zhangqing@rock-chips.com>
-In-Reply-To: <20251020023724.2723372-5-zhangqing@rock-chips.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-dir-deleg-ro-v1-3-406780a70e5e@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[44];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RL63fqwwx8ot6gmekemcs76f9d)];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[szeredi.hu,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,manguebit.org,microsoft.com,talpey.com,linuxfoundation.org,redhat.com,tyhicks.com,brown.name,chromium.org,google.com,davemloft.net,vger.kernel.org,lists.samba.org,lists.linux.dev];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-On Mon Oct 20, 2025 at 4:37 AM CEST, Elaine Zhang wrote:
-> Add pvtpll documentation for rockchip.
->
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+On Mon 13-10-25 10:48:01, Jeff Layton wrote:
+> In order to add directory delegation support, we need to break
+> delegations on the parent whenever there is going to be a change in the
+> directory.
+> 
+> vfs_link, vfs_unlink, and vfs_rename all have existing delegation break
+> handling for the children in the rename. Add the necessary calls for
+> breaking delegations in the parent(s) as well.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 100 ++++++++++++++++++
->  1 file changed, 100 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-=
-pvtpll.yaml
->
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.=
-yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
-> new file mode 100644
-
-Should this file have the 'clk-' part in its name?
-In a way this is different from the other DT binding files, but none of
-the others have the 'clk-' part in their file name:
-
-me@pc:~/linux/Documentation/devicetree/bindings/clock$ ls -lh rockchip,*
--rw-rw-r-- 1 me me 2,9K okt 20 11:32 rockchip,px30-cru.yaml
--rw-rw-r-- 1 me me 1,9K okt 20 11:32 rockchip,rk3036-cru.yaml
--rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3128-cru.yaml
--rw-rw-r-- 1 me me 2,3K okt 20 11:32 rockchip,rk3188-cru.yaml
--rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3228-cru.yaml
--rw-rw-r-- 1 me me 2,6K okt 20 11:32 rockchip,rk3288-cru.yaml
--rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rk3308-cru.yaml
--rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3328-cru.yaml
--rw-rw-r-- 1 me me 2,4K okt 20 11:32 rockchip,rk3368-cru.yaml
--rw-rw-r-- 1 me me 2,5K okt 20 11:32 rockchip,rk3399-cru.yaml
--rw-rw-r-- 1 me me 1,5K okt 20 11:32 rockchip,rk3528-cru.yaml
--rw-rw-r-- 1 me me 1,1K okt 20 11:32 rockchip,rk3562-cru.yaml
--rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3568-cru.yaml
--rw-rw-r-- 1 me me 1,2K okt 20 11:32 rockchip,rk3576-cru.yaml
--rw-rw-r-- 1 me me 1,6K okt 20 11:32 rockchip,rk3588-cru.yaml
--rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rv1108-cru.yaml
--rw-rw-r-- 1 me me 1,3K okt 20 11:32 rockchip,rv1126-cru.yaml
-
-> index 000000000000..8be34bcde7b0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
-> @@ -0,0 +1,100 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip Pvtpll
-> +
-> +maintainers:
-> +  - Elaine Zhang <zhangqing@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - rockchip,rv1103b-core-pvtpll
-> +          - rockchip,rv1103b-enc-pvtpll
-> +          - rockchip,rv1103b-isp-pvtpll
-> +          - rockchip,rv1103b-npu-pvtpll
-> +          - rockchip,rv1126b-core-pvtpll
-> +          - rockchip,rv1126b-isp-pvtpll
-> +          - rockchip,rv1126b-enc-pvtpll
-> +          - rockchip,rv1126b-aisp-pvtpll
-> +          - rockchip,rv1126b-npu-pvtpll
-> +          - rockchip,rk3506-core-pvtpll
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  rockchip,cru:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      Phandle to the main Clock and Reset Unit (CRU) controller.
-> +      Required for PVTPLLs that need to interact with the main CRU
-> +      for clock management operations.
-> +
-> +required:
-> +  - "#clock-cells"
-> +  - compatible
-> +  - reg
-> +  - clock-output-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pvtpll_core: pvtpll-core@20480000 {
-> +      compatible =3D "rockchip,rv1126b-core-pvtpll", "syscon";
-> +      reg =3D <0x20480000 0x100>;
-> +      #clock-cells =3D <0>;
-> +      clock-output-names =3D "clk_core_pvtpll";
-> +    };
-> +
-> +  - |
-> +    pvtpll_isp: pvtpll-isp@21c60000 {
-> +      compatible =3D "rockchip,rv1126b-isp-pvtpll", "syscon";
-> +      reg =3D <0x21c60000 0x100>;
-> +      rockchip,cru =3D <&cru>;
-> +      #clock-cells =3D <0>;
-> +      clock-output-names =3D "clk_isp_pvtpll";
-> +    };
-> +
-> +  - |
-> +    pvtpll_enc: pvtpll-enc@21f00000 {
-> +      compatible =3D "rockchip,rv1126b-enc-pvtpll", "syscon";
-> +      reg =3D <0x21f00000 0x100>;
-> +      #clock-cells =3D <0>;
-> +      clock-output-names =3D "clk_vepu_pvtpll";
-> +    };
-> +
-> +  - |
-> +    pvtpll_aisp: pvtpll-aisp@21fc0000 {
-> +      compatible =3D "rockchip,rv1126b-aisp-pvtpll", "syscon";
-> +      reg =3D <0x21fc0000 0x100>;
-> +      rockchip,cru =3D <&cru>;
-> +      #clock-cells =3D <0>;
-> +      clock-output-names =3D "clk_vcp_pvtpll";
-> +    };
-> +
-> +  - |
-> +    pvtpll_npu: pvtpll-npu@22080000 {
-> +      compatible =3D "rockchip,rv1126b-npu-pvtpll", "syscon";
-> +      reg =3D <0x22080000 0x100>;
-> +      rockchip,cru =3D <&cru>;
-> +      #clock-cells =3D <0>;
-> +      clock-output-names =3D "clk_npu_pvtpll";
-
-rockchip,cru line as the last line?
-
-Cheers,
-  Diederik
-
-> +    };
-> +
-> +...
-
+>  fs/namei.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 7377020a2cba02501483020e0fc93c279fb38d3e..6e61e0215b34134b1690f864e2719e3f82cf71a8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4667,6 +4667,9 @@ int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
+>  	else {
+>  		error = security_inode_unlink(dir, dentry);
+>  		if (!error) {
+> +			error = try_break_deleg(dir, delegated_inode);
+> +			if (error)
+> +				goto out;
+>  			error = try_break_deleg(target, delegated_inode);
+>  			if (error)
+>  				goto out;
+> @@ -4936,7 +4939,9 @@ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
+>  	else if (max_links && inode->i_nlink >= max_links)
+>  		error = -EMLINK;
+>  	else {
+> -		error = try_break_deleg(inode, delegated_inode);
+> +		error = try_break_deleg(dir, delegated_inode);
+> +		if (!error)
+> +			error = try_break_deleg(inode, delegated_inode);
+>  		if (!error)
+>  			error = dir->i_op->link(old_dentry, dir, new_dentry);
+>  	}
+> @@ -5203,6 +5208,14 @@ int vfs_rename(struct renamedata *rd)
+>  		    old_dir->i_nlink >= max_links)
+>  			goto out;
+>  	}
+> +	error = try_break_deleg(old_dir, delegated_inode);
+> +	if (error)
+> +		goto out;
+> +	if (new_dir != old_dir) {
+> +		error = try_break_deleg(new_dir, delegated_inode);
+> +		if (error)
+> +			goto out;
+> +	}
+>  	if (!is_dir) {
+>  		error = try_break_deleg(source, delegated_inode);
+>  		if (error)
+> 
+> -- 
+> 2.51.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
