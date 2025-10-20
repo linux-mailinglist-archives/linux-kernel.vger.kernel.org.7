@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-861113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6279BF1D02
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32EB5BF1D0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C04460644
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D608018A7EC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60122320A14;
-	Mon, 20 Oct 2025 14:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70866320A14;
+	Mon, 20 Oct 2025 14:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxr1R/7U"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QaQdlt4X"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11763325489
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF0730215B;
+	Mon, 20 Oct 2025 14:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970108; cv=none; b=OhXcfjW8b8NQo0/syb/gSKgfOH7KEDPOmrhOSizwrVMFEcMvT7KZuXx6YlCN3sf/JPUzawa4wYjwabck2iRtcP9AC6zgWWabFscDu1QJx1ZrLz9YEDd3LDiL0WjlENdK6uyRD2D5HT7hmSvtFMrYWmtQLb1EftUseDR604GeMfc=
+	t=1760970130; cv=none; b=Mj1ywGd67or5GesWxEjfgfnHd6BC8jEShpzV09TQxPkmMSSEXW5sdrzMoqHC7VLd5PmNJrtlCqu++cGXlxVwFL7XMSF+Tv9ICgaEgM1cIWHs3+Qb76L5ApjYC2Ta6mc4QKc9rh7zM3LQRbKvOa0SXdBvX+a8Rs3KgwJjiG8/dN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970108; c=relaxed/simple;
-	bh=6Gzdy6Pckbq9lvuq443WHswiyaiVpsZNH7pLh60bDa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mH7TzQmD1gu2uZ4+ndJR2MDTw1CZcG99d208lLxAliR8otuvARWe9IJOER7OpCbtZjrbG37UbXfdLsIZyEhTSSlTMQSbg07eo3sNehsc6IpBZqeWfR+Fn4234YBvnQ7ftvhJIpHWXm546W3KXZymzbqE75FeLTamh/tdVMd3oEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxr1R/7U; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-4270a0127e1so1863051f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760970101; x=1761574901; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YxqmXp4v2QLMvh6syiByu4Ynx/xvLm0NtCGB4RaQEqo=;
-        b=mxr1R/7UYnLsRW8hCT7o0U7cv6xw8eZ9lvgrsdl3P4lUjt9EEQH3O5WEoJQ2S+wBM/
-         Sch1eUQTNgO+1NvSRnKkPtuuZ5OHYYQV/VgTuRGhsGdUcdil3pj1VkeotCqYJTui+j5M
-         yeV2HxuoJf1lChgsOFdPP7FP8i9RcyOajBD4G8V3UKuR/xrFNO+vRiUucDYdvV3VVEZe
-         27UWYF9WMZhumR7fiUwuFHuY74Xx0f6DvhnArVtxlXMwg7VgMM5lIB27C2OOe9Vdui0H
-         8D6Wr2qms2fWHivO4ggUbHlWady8W5GOlm5Tv1i+0kjdiN9ZDoJN9xZbcg0p2uwftRPy
-         pUEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760970101; x=1761574901;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YxqmXp4v2QLMvh6syiByu4Ynx/xvLm0NtCGB4RaQEqo=;
-        b=K3nPufC+dJtfQBTT8OTBBDaqN6Khfq6+WgCjH/fLPrvyIPKcBv1pmSKN9cglw+66Uw
-         brgdnzzg6tRjWMbGOxm2ZZS6oW4kBTQZt9oKnrq+lHnRD/Z4mrFJYMIk7ld+LwYCU94K
-         jpcmzn/7Aaj55M8svvBgGm4cuwFkkd9nIZI4u0vGz1EOeSfW2pQSLpGcc6FHK8jxePr1
-         DVSWRaRAeQWD0gVo5AJyiVgm2ZnIj+8c262kFRw7z+uHC6LRp4rPNcxG4jy5VOoLytk1
-         dhvvtPy4Ra8hGRYmRWIufS9YTfn/d0sFYwjoQemv8fMYguKtIe20ibc/UAJn82wZ76CI
-         0bjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWj/ol4oufFR/xO6AewfyA5sGAA1cfLphj4jQbghGhPd3IzKMZTeOxmMAzkAjWDXXbYf3NB80n1eV7wuA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqEhXxeyQUMgSOEoBsnXq5PLYvtQK4TySxnOucMgpHUYXyZQfc
-	akNfVS6WjWwLOBiGPkexGMnBkeXvojGX8SkpOqDbUNd2TWfxlCtQgZlC
-X-Gm-Gg: ASbGncvFRBaH4wd9zmjaXHEE98quANbOZ9d+2YgehpBq648CRceGa87TZcZyN4c8jsQ
-	N1vcsC+gHArjGaQGf9T0zBB/zkwkcds33Rx6tLGF+oP9TlAAzro8lRunKnero0ipFbpEonIFpma
-	IEL5+o15Oqi+HKotktkEgWeJO+tmhAm4m22dDL+EzuXvbFDU6sEv8N02ABJBC0ImhdGH13mK540
-	GRqE+/ol1bxBJMg2+EvXDI/FnmTOaHfI+lGgl9MNitUi7osvxIwjy2X8Byy6Sz2Bc9MtxrjgkIN
-	UDUbn+Gmt/lUbvLiXoQiM3tEW5nbStlDwIHSwjEQK43iw35wHjDfYpDzKR8fTigYgIKkIZlWebr
-	xiyVuEp2zvs949XMK33pEwrQGYYa6x0CxgttvWUEOq2AyVCIL3E3hxQP/04zdujf+Lvtyn4W1fd
-	YIf6b3yTta0HvJ
-X-Google-Smtp-Source: AGHT+IHosVln57Io/lFR6bK5Ryk8CDp82/CoFu4jl9vj/N6JcHH4QxlFQapN4gi+QhSQj2fILa/7lg==
-X-Received: by 2002:a5d:5f82:0:b0:425:7c2f:8f98 with SMTP id ffacd0b85a97d-42704d442b3mr8815112f8f.1.1760970101030;
-        Mon, 20 Oct 2025 07:21:41 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:f99c:d6cf:27e6:2b03])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce678sm15827129f8f.51.2025.10.20.07.21.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 07:21:40 -0700 (PDT)
-Date: Mon, 20 Oct 2025 16:21:33 +0200
-From: =?iso-8859-1?Q?Rapha=EBl?= Gallais-Pou <rgallaispou@gmail.com>
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: alain.volmat@foss.st.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] drm/sti: hdmi: call drm_edid_connector_update
- when edid is NULL
-Message-ID: <aPZFbe3ccrYcFeAH@thinkstation>
-References: <20251020013039.1800-1-chuguangqing@inspur.com>
- <20251020013039.1800-2-chuguangqing@inspur.com>
+	s=arc-20240116; t=1760970130; c=relaxed/simple;
+	bh=eVXqdZWOtZ7txBWnH50nnMS7XqFYpHtuEUVHW4IWcvc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=c23ZWrxWu1E2HYKXqCV2w1vevhN7BV+ERu4CBx7lK1UE9bvCB35dk7bo8aJ22zjgfbcy/yNpCumBFVzpi8l9aNesb5PX5ENXHbz8CarHRaeQBJuSfKo/Yy409xfjE3gfwYPEKd4CIS50OKF03oVz/GS0seawVJZwkHsAStcI1BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QaQdlt4X; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1760970120;
+	bh=eVXqdZWOtZ7txBWnH50nnMS7XqFYpHtuEUVHW4IWcvc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=QaQdlt4XnQ8bxCpMVnwjRx90bajlP0wfryt4Gbw7RtcN+WcMPM1zMP1VeLsgpwjA3
+	 zgy7qZNFc2U7x3kknp6brY8sa0gtQQ7haUGK4WV+m9q/1BSq7JZ/ucq1O6i4LRuM5Y
+	 BB9um2wxslxBhnvVPm3c1K7gp9lSJMJH0RNh/Gpg=
+Date: Mon, 20 Oct 2025 17:21:56 +0300 (GMT+03:00)
+From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>,
+	linux-kselftest@vger.kernel.org, kernel test robot <lkp@intel.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Benjamin Berg <benjamin.berg@intel.com>
+Message-ID: <99359472-8b1e-4d51-adb8-5b16f1f90a9f@weissschuh.net>
+In-Reply-To: <aNaNtI+mbyc4zgFy@rli9-mobl>
+References: <aNaNtI+mbyc4zgFy@rli9-mobl>
+Subject: Re: [PATCH v3 09/12] um: use nolibc for the --showconfig
+ implementation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251020013039.1800-2-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <99359472-8b1e-4d51-adb8-5b16f1f90a9f@weissschuh.net>
 
-Le Mon, Oct 20, 2025 at 09:30:39AM +0800, Chu Guangqing a écrit :
-> call drm_edid_connector_update to reset the information when edid is NULL.
-> We can see the following comments in drm_edid.c
-> If EDID is NULL, reset the information.
-> 
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
-> ---
+Hi Benjamin,
 
-Hi,
+Sep 26, 2025 15:57:43 kernel test robot <lkp@intel.com>:
 
-Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on uml/next]
+> [also build test WARNING on uml/fixes shuah-kselftest/next shuah-kselftes=
+t/fixes linus/master v6.17-rc7 next-20250925]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:=C2=A0=C2=A0=C2=A0 https://github.com/intel-lab-lkp/linux/commits/Ben=
+jamin-Berg/tools-compiler-h-fix-__used-definition/20250924-222547
+> base:=C2=A0=C2=A0 https://git.kernel.org/pub/scm/linux/kernel/git/uml/lin=
+ux next
+> patch link:=C2=A0=C2=A0=C2=A0 https://lore.kernel.org/r/20250924142059.52=
+7768-10-benjamin%40sipsolutions.net
+> patch subject: [PATCH v3 09/12] um: use nolibc for the --showconfig imple=
+mentation
+> :::::: branch date: 2 days ago
+> :::::: commit date: 2 days ago
+> config: um-randconfig-r111-20250926 (https://download.01.org/0day-ci/arch=
+ive/20250926/202509261452.g5peaXCc-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20250926/202509261452.g5peaXCc-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/r/202509261452.g5peaXCc-lkp@intel.com/
+>
+> sparse warnings: (new ones prefixed by >>)
+> =C2=A0=C2=A0 command-line: note: in included file (through tools/include/=
+nolibc/nolibc.h, tools/include/nolibc/stddef.h, arch/um/include/shared/user=
+.h, builtin):
+>>> tools/include/nolibc/sys.h:109:29: sparse: sparse: Using plain integer =
+as NULL pointer
+> =C2=A0=C2=A0unistd.h:70:30: sparse: sparse: Using plain integer as NULL p=
+ointer
+> =C2=A0=C2=A0 tools/include/nolibc/unistd.h:70:33: sparse: sparse: Using p=
+lain integer as NULL pointer
 
-Best regards,
-Raphaël
+Do you intend to work on your UML with nolibc patches this cycle?
+If not I would fix these sparse warnings in the nolibc tree and also apply =
+your nolibc patches.
+
+
+Thomas
 
