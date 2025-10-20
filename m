@@ -1,319 +1,130 @@
-Return-Path: <linux-kernel+bounces-860750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42159BF0D6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:30:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63FABF0BC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59C8C4F4964
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAAD4189F23E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D2A2DF122;
-	Mon, 20 Oct 2025 11:29:27 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE112F7AC8;
+	Mon, 20 Oct 2025 11:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ddZS/Sn9"
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C4F246781;
-	Mon, 20 Oct 2025 11:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609EA230BCB;
+	Mon, 20 Oct 2025 11:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760959767; cv=none; b=V4nYLTHuV7YaMrQ0G8BiTtQFTSGWrXFqXt9rBq/f69BayQ1qIxdhpX66Dvk3qFXdFRsMop0cFixF3lvbxL1w/9n2Y85z4u19ejvy93xVMgJBhLcH2lN8OkUsPk6N9tjLJ8VrpOHnPSiNXFfNlxZxGUqInWoDXfFxHTBLO9loQr0=
+	t=1760958460; cv=none; b=QZYT2gekgoI0qeKjF0PlXNJ8QlZmqPJfmlghBWrz0PZnhaULz2umgSUp0YrGBIvmFkqPcAKY4g9xCaw4GiFpmrBa1gSdGpTp8rDqdQrQ40ZVChT2H5KgIqQFrjUl3gKu46F7NtVy6xOseoTn0c1EfmA6HAz71duuIHpRkVqzwyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760959767; c=relaxed/simple;
-	bh=OWxLcKqN1AX2fLZFpzOl+AtVxiTVen8Pq2II3d/sPMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=owN+WZjdyhu94A9q624ka9HiAzvqleYw81MpklFb5n9rauqkipszeG0I/sZa+78LCd/ccfMBspQYuZsaF8Z0aYtDFrZqqFxdglzjRIDPWnoWlh+eS6tZEEeH9EMANywbej2wEIzHsV/gDNckf3X2FX4ZzAEL4nTG6Etq/QiVQCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59KBSvxE051179;
-	Mon, 20 Oct 2025 20:28:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59KBSuro051175
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 20 Oct 2025 20:28:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <93744126-237b-4e36-8a62-a33e1fb52051@I-love.SAKURA.ne.jp>
-Date: Mon, 20 Oct 2025 20:28:54 +0900
+	s=arc-20240116; t=1760958460; c=relaxed/simple;
+	bh=37JXeaabSnQEBCgvzFMhmKS7+aCd6QldkTzU3wu9728=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JDz5539/l9MfZR+VER+Ot2KfvvqcCCPQJhpAw5dSb+Vxt3QD7CGXBNaz5jhFErFoLg+nO+cgj/X94P0TZPNBqc/A9hocXN3S4yROLYmoCW+XOKG3UNS6ToO34GANwhrEsAFTGM3E5Gq5ia7z9Z+zBn0V2b/BBklushiu6I3nxQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ddZS/Sn9; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=nQ0chgf8+QUyTzowyJfqVEnK894JZa7lGc3+hmjC1Yo=;
+	b=ddZS/Sn9zzzc8Kf5fxuDeSAb2exjusBlWN7RobWM674HE7ExtsIcj3uJw6wB3xYX/wTy7PhQg
+	DxAj9XoxB911hHx53WA7FFF8Qbjhxm6jMqsc7aYXBU4upkKMFUNyWMsZyHF2WIwI3kBGYtxFTs1
+	sfgFUoJN6tXSYbRFG/Hth3g=
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cqt0Y5NBcz1T4Jx;
+	Mon, 20 Oct 2025 19:06:37 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 467EE180491;
+	Mon, 20 Oct 2025 19:07:29 +0800 (CST)
+Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
+ 2025 19:07:28 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com>
+CC: <syzkaller-bugs@googlegroups.com>, <steffen.klassert@secunet.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>
+Subject: [PATCH net] Re: [syzbot] [net?] WARNING in xfrm6_tunnel_net_exit (4)
+Date: Mon, 20 Oct 2025 19:30:26 +0800
+Message-ID: <20251020113026.2461281-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] jbd2: assign different lock_class_key for different
- filesystem
-To: Jan Kara <jack@suse.cz>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <e42f1471-a88a-4938-8743-1d5b171c47ec@I-love.SAKURA.ne.jp>
- <fwsxrb7ugi5zeosugo6hyjdbhw36ppa5kekfi6n7we2vvi3r7m@ljrizqoagsg7>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <fwsxrb7ugi5zeosugo6hyjdbhw36ppa5kekfi6n7we2vvi3r7m@ljrizqoagsg7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav302.rs.sakura.ne.jp
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On 2025/10/20 18:31, Jan Kara wrote:
-> On Sun 19-10-25 19:52:43, Tetsuo Handa wrote:
->> syzbot is reporting possibility of deadlock due to sharing lock_class_key
->> for jbd2_handle across ext4 and ocfs2. But one disk partition can't have
->> two filesystems at the same time, and how locks in journal_t interacts
->> with other filesystem specific locks can vary depending on filesystems.
->> Therefore, lockdep should treat locks in journal_t different locks if
->> the filesystem which allocated the journal_t differs.
-> 
-> Thanks for debugging this. I agree with the idea of your solution but the
-> implementation is just ugly. Just let the filesystem pass the lockdep key
-> into jbd2_journal_init_dev() / jbd2_journal_init_inode() and make ext4 and
-> ocfs2 functions initializing the journal each have its own lock_class_key
-> declared and pass it to jbd2 functions. That way changes are much simpler
-> and also jbd2 doesn't have to be aware about which filesystems are using
-> it.
+#syz test
 
-Well, do you mean something like below diff? If we can assume that only ext4
-and ocfs2 are using jbd2, the diff becomes smaller...
-
- fs/ext4/super.c      |    6 +++-
- fs/jbd2/journal.c    |   68 ++++++++++++++++++++++++++++++++++++---------------
- fs/ocfs2/journal.c   |    6 +++-
- include/linux/jbd2.h |   15 ++++++++---
- 4 files changed, 67 insertions(+), 28 deletions(-)
-
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 43b9297fe8a7..184d025341da 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1287,6 +1287,13 @@ struct journal_s
- 	int (*j_bmap)(struct journal_s *journal, sector_t *block);
- };
+diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+index f3014e4f54fc..2e7ab56db152 100644
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -441,6 +441,7 @@ int xfrm_input_register_afinfo(const struct xfrm_input_afinfo *afinfo);
+ int xfrm_input_unregister_afinfo(const struct xfrm_input_afinfo *afinfo);
  
-+struct jbd2_lock_class_keys {
-+	const char *name;
-+	struct lock_class_key jbd2_trans_commit_key, j_abort_mutex, j_barrier,
-+		j_checkpoint_mutex, j_revoke_lock, j_list_lock, j_history_lock,
-+		j_state_lock;
-+};
-+
- #define jbd2_might_wait_for_commit(j) \
- 	do { \
- 		rwsem_acquire(&j->j_trans_commit_map, 0, 0, _THIS_IP_); \
-@@ -1523,10 +1530,10 @@ extern void	 jbd2_journal_unlock_updates (journal_t *);
+ void xfrm_flush_gc(void);
++void xfrm_state_delete_tunnel(struct xfrm_state *x);
  
- void jbd2_journal_wait_updates(journal_t *);
- 
--extern journal_t * jbd2_journal_init_dev(struct block_device *bdev,
--				struct block_device *fs_dev,
--				unsigned long long start, int len, int bsize);
--extern journal_t * jbd2_journal_init_inode (struct inode *);
-+extern journal_t *jbd2_journal_init_dev(struct block_device *bdev, struct block_device *fs_dev,
-+					unsigned long long start, int len, int bsize,
-+					struct jbd2_lock_class_keys *keys);
-+extern journal_t *jbd2_journal_init_inode(struct inode *inode, struct jbd2_lock_class_keys *keys);
- extern int	   jbd2_journal_update_format (journal_t *);
- extern int	   jbd2_journal_check_used_features
- 		   (journal_t *, unsigned long, unsigned long, unsigned long);
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index d480b94117cd..775c1cfa452a 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1506,6 +1506,34 @@ static int journal_load_superblock(journal_t *journal)
- 	return 0;
+ struct xfrm_type {
+ 	struct module		*owner;
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index d213ca3653a8..5d982e4e6526 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -806,7 +806,6 @@ void __xfrm_state_destroy(struct xfrm_state *x)
  }
+ EXPORT_SYMBOL(__xfrm_state_destroy);
  
-+#ifndef CONFIG_RT
-+/* This change goes to include/linux/spinlock.h */
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+#define spin_lock_init_with_key(lock, key)				\
-+	__raw_spin_lock_init(spinlock_check(lock), #lock, key, LD_WAIT_CONFIG)
-+#else
-+#define spin_lock_init_with_key(lock, key) do { spin_lock_init(lock); (void)(key); } while (0)
-+#endif
-+#else
-+/* This change goes to include/linux/spinlock_rt.h */
-+#define spin_lock_init_with_key(slock, key) __spin_lock_init(slock, #slock, key, false)
-+#endif
-+
-+#ifndef CONFIG_RT
-+/* This change goes to include/linux/rwlock.h */
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+#define rwlock_init_with_key(lock, key) __rwlock_init((lock), #lock, key)
-+#else
-+#define rwlock_init_with_key(lock, key) do { rwlock_init(lock); (void)(key); } while (0)
-+#endif
-+#else
-+/* This change goes to include/linux/rwlock_rt.h */
-+#define rwlock_init_with_key(rwl, key)			\
-+	do {						\
-+		init_rwbase_rt(&(rwl)->rwbase);		\
-+		__rt_rwlock_init(rwl, #rwl, key);	\
-+	} while (0)
-+#endif
- 
- /*
-  * Management for journal control blocks: functions to create and
-@@ -1517,11 +1545,10 @@ static int journal_load_superblock(journal_t *journal)
-  * superblock and initialize the journal_t object.
-  */
- 
--static journal_t *journal_init_common(struct block_device *bdev,
--			struct block_device *fs_dev,
--			unsigned long long start, int len, int blocksize)
-+static journal_t *journal_init_common(struct block_device *bdev, struct block_device *fs_dev,
-+				      unsigned long long start, int len, int blocksize,
-+				      struct jbd2_lock_class_keys *keys)
+-static void xfrm_state_delete_tunnel(struct xfrm_state *x);
+ int __xfrm_state_delete(struct xfrm_state *x)
  {
--	static struct lock_class_key jbd2_trans_commit_key;
- 	journal_t *journal;
- 	int err;
- 	int n;
-@@ -1547,20 +1574,20 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	init_waitqueue_head(&journal->j_wait_updates);
- 	init_waitqueue_head(&journal->j_wait_reserved);
- 	init_waitqueue_head(&journal->j_fc_wait);
--	mutex_init(&journal->j_abort_mutex);
--	mutex_init(&journal->j_barrier);
--	mutex_init(&journal->j_checkpoint_mutex);
--	spin_lock_init(&journal->j_revoke_lock);
--	spin_lock_init(&journal->j_list_lock);
--	spin_lock_init(&journal->j_history_lock);
--	rwlock_init(&journal->j_state_lock);
-+	mutex_init_with_key(&journal->j_abort_mutex, &keys->j_abort_mutex);
-+	mutex_init_with_key(&journal->j_barrier, &keys->j_barrier);
-+	mutex_init_with_key(&journal->j_checkpoint_mutex, &keys->j_checkpoint_mutex);
-+	spin_lock_init_with_key(&journal->j_revoke_lock, &keys->j_revoke_lock);
-+	spin_lock_init_with_key(&journal->j_list_lock, &keys->j_list_lock);
-+	spin_lock_init_with_key(&journal->j_history_lock, &keys->j_history_lock);
-+	rwlock_init_with_key(&journal->j_state_lock, &keys->j_state_lock);
+ 	struct net *net = xs_net(x);
+@@ -3085,7 +3084,7 @@ void xfrm_flush_gc(void)
+ }
+ EXPORT_SYMBOL(xfrm_flush_gc);
  
- 	journal->j_commit_interval = (HZ * JBD2_DEFAULT_MAX_COMMIT_AGE);
- 	journal->j_min_batch_time = 0;
- 	journal->j_max_batch_time = 15000; /* 15ms */
- 	atomic_set(&journal->j_reserved_credits, 0);
--	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
--			 &jbd2_trans_commit_key, 0);
-+	lockdep_init_map(&journal->j_trans_commit_map, keys->name,
-+			 &keys->jbd2_trans_commit_key, 0);
- 
- 	/* The journal is marked for error until we succeed with recovery! */
- 	journal->j_flags = JBD2_ABORT;
-@@ -1631,6 +1658,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
-  *  @start: Block nr Start of journal.
-  *  @len:  Length of the journal in blocks.
-  *  @blocksize: blocksize of journalling device
-+ *  @keys: Pointer to struct jbd2_lock_class_keys for lockdep annotation
-  *
-  *  Returns: a newly created journal_t *
-  *
-@@ -1638,13 +1666,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
-  *  range of blocks on an arbitrary block device.
-  *
-  */
--journal_t *jbd2_journal_init_dev(struct block_device *bdev,
--			struct block_device *fs_dev,
--			unsigned long long start, int len, int blocksize)
-+journal_t *jbd2_journal_init_dev(struct block_device *bdev, struct block_device *fs_dev,
-+				 unsigned long long start, int len, int blocksize,
-+				 struct jbd2_lock_class_keys *keys)
+-static void xfrm_state_delete_tunnel(struct xfrm_state *x)
++void xfrm_state_delete_tunnel(struct xfrm_state *x)
  {
- 	journal_t *journal;
- 
--	journal = journal_init_common(bdev, fs_dev, start, len, blocksize);
-+	journal = journal_init_common(bdev, fs_dev, start, len, blocksize, keys);
- 	if (IS_ERR(journal))
- 		return ERR_CAST(journal);
- 
-@@ -1664,7 +1692,7 @@ journal_t *jbd2_journal_init_dev(struct block_device *bdev,
-  * the journal.  The inode must exist already, must support bmap() and
-  * must have all data blocks preallocated.
-  */
--journal_t *jbd2_journal_init_inode(struct inode *inode)
-+journal_t *jbd2_journal_init_inode(struct inode *inode, struct jbd2_lock_class_keys *keys)
- {
- 	journal_t *journal;
- 	sector_t blocknr;
-@@ -1682,8 +1710,8 @@ journal_t *jbd2_journal_init_inode(struct inode *inode)
- 		  inode->i_sb->s_blocksize_bits, inode->i_sb->s_blocksize);
- 
- 	journal = journal_init_common(inode->i_sb->s_bdev, inode->i_sb->s_bdev,
--			blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
--			inode->i_sb->s_blocksize);
-+				      blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
-+				      inode->i_sb->s_blocksize, keys);
- 	if (IS_ERR(journal))
- 		return ERR_CAST(journal);
- 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 699c15db28a8..fc93a2ef5c2d 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -60,6 +60,8 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/ext4.h>
- 
-+static struct jbd2_lock_class_keys jbd2_ext4_lock_class_keys = { .name = "jbd2_ext4_handle" };
-+
- static struct ext4_lazy_init *ext4_li_info;
- static DEFINE_MUTEX(ext4_li_mtx);
- static struct ratelimit_state ext4_mount_msg_ratelimit;
-@@ -5851,7 +5853,7 @@ static journal_t *ext4_open_inode_journal(struct super_block *sb,
- 	if (IS_ERR(journal_inode))
- 		return ERR_CAST(journal_inode);
- 
--	journal = jbd2_journal_init_inode(journal_inode);
-+	journal = jbd2_journal_init_inode(journal_inode, &jbd2_ext4_lock_class_keys);
- 	if (IS_ERR(journal)) {
- 		ext4_msg(sb, KERN_ERR, "Could not load journal inode");
- 		iput(journal_inode);
-@@ -5956,7 +5958,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
- 		return ERR_CAST(bdev_file);
- 
- 	journal = jbd2_journal_init_dev(file_bdev(bdev_file), sb->s_bdev, j_start,
--					j_len, sb->s_blocksize);
-+					j_len, sb->s_blocksize, &jbd2_ext4_lock_class_keys);
- 	if (IS_ERR(journal)) {
- 		ext4_msg(sb, KERN_ERR, "failed to create device journal");
- 		errno = PTR_ERR(journal);
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index e5f58ff2175f..e92746e3cb0b 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -43,6 +43,8 @@
- 
- DEFINE_SPINLOCK(trans_inc_lock);
- 
-+static struct jbd2_lock_class_keys jbd2_ocfs2_lock_class_keys = { .name = "jbd2_ocfs2_handle" };
-+
- #define ORPHAN_SCAN_SCHEDULE_TIMEOUT 300000
- 
- static int ocfs2_force_read_journal(struct inode *inode);
-@@ -968,7 +970,7 @@ int ocfs2_journal_init(struct ocfs2_super *osb, int *dirty)
- 				 OCFS2_I(inode)->ip_clusters);
- 
- 	/* call the kernels journal init function now */
--	j_journal = jbd2_journal_init_inode(inode);
-+	j_journal = jbd2_journal_init_inode(inode, &jbd2_ocfs2_lock_class_keys);
- 	if (IS_ERR(j_journal)) {
- 		mlog(ML_ERROR, "Linux journal layer error\n");
- 		status = PTR_ERR(j_journal);
-@@ -1759,7 +1761,7 @@ static int ocfs2_replay_journal(struct ocfs2_super *osb,
- 		goto done;
+ 	if (x->tunnel) {
+ 		struct xfrm_state *t = x->tunnel;
+@@ -3096,6 +3095,7 @@ static void xfrm_state_delete_tunnel(struct xfrm_state *x)
+ 		x->tunnel = NULL;
  	}
+ }
++EXPORT_SYMBOL(xfrm_state_delete_tunnel);
  
--	journal = jbd2_journal_init_inode(inode);
-+	journal = jbd2_journal_init_inode(inode, &jbd2_ocfs2_lock_class_keys);
- 	if (IS_ERR(journal)) {
- 		mlog(ML_ERROR, "Linux journal layer error\n");
- 		status = PTR_ERR(journal);
+ u32 xfrm_state_mtu(struct xfrm_state *x, int mtu)
+ {
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 010c9e6638c0..7f769617882c 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1031,6 +1031,7 @@ static int xfrm_add_sa(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	if (err < 0) {
+ 		x->km.state = XFRM_STATE_DEAD;
+ 		xfrm_dev_state_delete(x);
++		xfrm_state_delete_tunnel(x);
+ 		__xfrm_state_put(x);
+ 		goto out;
+ 	}
+-- 
+2.34.1
 
 
