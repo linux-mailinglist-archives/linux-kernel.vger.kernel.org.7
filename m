@@ -1,121 +1,101 @@
-Return-Path: <linux-kernel+bounces-861458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C42BF2C5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3B7BF2C68
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B93B834CB64
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8FB18A7A70
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8634A3321CD;
-	Mon, 20 Oct 2025 17:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29413328EB;
+	Mon, 20 Oct 2025 17:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKRbJojv"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YZ8T1a4o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36B5278779;
-	Mon, 20 Oct 2025 17:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376B526B755;
+	Mon, 20 Oct 2025 17:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982249; cv=none; b=rzgnsrF914xlqeoF/whCzmIaKo6QYF6xBOphztmIII3qb9jW6W9kvp9tTFY6BR2kS8JMvY8w+EiHXib/HE3g0A/3LkjhjEFRbi7LfgCxz2aNozkc/uGwI4edmDuHZSEAKk49mPHazjOPcO4rOsO/fOOGkHEpjGIXcs07SRkBymY=
+	t=1760982260; cv=none; b=J0w+8SeeIpL/M3iESarTwuYvobn/G6bt5TyC42HeXqBkM4J2cohAH7zOX0q2qm/hjPQo3ouYhyR9DrTzLfC/gyHDqSNE+l4XFP3O17cyITskh0XdfslgXA0ANeQUfWbp0d37o1n8KTlF8yxot04ZDTMRwIneD8MA6M7+kx/OuZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982249; c=relaxed/simple;
-	bh=UGG12C0YM5gqVQtZMlTCg/cATtlJaDQQ0Fiijdez2oE=;
+	s=arc-20240116; t=1760982260; c=relaxed/simple;
+	bh=16sgzFk1cntQsUCQDvlwtn5r06wejinqXhOCoj9sMxQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQKFo0aWnwMyyePjauhvjY6KNu4EnlL/jVypO7aod3pmuXS4p+ngDNguSQNS6asMWh4vn16WAZ06pLbENJxIjHoq2Fmi1kLd5sDc8oa5Kfni5Lq5RH4cKu81S8qXbUq49jImFa/hLxvXM2eYxxwNyFLF8w+3c3u06PNZywdK36w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKRbJojv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A86C4CEF9;
-	Mon, 20 Oct 2025 17:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760982248;
-	bh=UGG12C0YM5gqVQtZMlTCg/cATtlJaDQQ0Fiijdez2oE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKRbJojvIKHCqkefW/DpMAV1M99m0j6YO0Tj1OD2zHTj+bDqqx7TobNR5L0KtHDCW
-	 dBNEVA6/rs08/Hyexa8t+YPNOO7QqVjqd6TsMc/F90aC9RQLEV+eT2ANXNJT16Q+A+
-	 yhxcI+1wCPK5fYXygRLV8YEpWRZ++mJ++LzlyKz3oKfWuFNhaJIYQqcsCimCd6J8vi
-	 cJNfdX4YsK4LIYPa9pO7bCBJ1cQwmLl+V/pDJCoKjDnJn7t9LtSmZuGZ+cQyn9+6gI
-	 0N9BhFNhWtEkRGpvQMNhUdU+6lHGZATGMnfJTGy+Up3DoIhidC1yWjIMtiHHbP4JBZ
-	 yN+H12d67oRNQ==
-Date: Mon, 20 Oct 2025 18:44:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	han.xu@nxp.com, broonie@kernel.org, dlan@gentoo.org,
-	guodong@riscstar.com, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: spi: fsl-qspi: add optional resets
-Message-ID: <20251020-henna-headache-fae4440ec7a8@spud>
-References: <20251020165152.666221-1-elder@riscstar.com>
- <20251020165152.666221-2-elder@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMQxs4+r2pOWQm5oBYA8uZQy1SrGQWtMHcZWWTs/lwylxObDKdfeYuP7kdUk2t+cKGFfa63Varmbh/Wepqnoih9UnO19vIOvo6tdNBbVbwBJwINCrm1WBIRITkrRaMkCVBkJB9aDbRwc3vp1CiiUVEkRWe9yQvVkWJubgEWSr0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=YZ8T1a4o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048D2C4CEFE;
+	Mon, 20 Oct 2025 17:44:18 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YZ8T1a4o"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1760982257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qxyQGLFJiDfo9EbmIoP7N27VSgBp0AMlllTAAYrklG4=;
+	b=YZ8T1a4oUMWrj+x0InaaoJC7QwohPIHM/oqgsXcNnhFikzBW5pdNCQ+OkZmI7PTDLwwB3j
+	2eerl5yZ7sP1Xvm1HlB3ah6lk0cewWUi0Fh8dNijlcf2aWfoWRwyh//gUG37MAY4kZ+FAj
+	QnEF1HeHczvHxDYGVKxHa0PA03T7mlw=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f88f6c01 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 20 Oct 2025 17:44:16 +0000 (UTC)
+Date: Mon, 20 Oct 2025 19:44:13 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH 01/10] lib/crypto: blake2s: Adjust parameter order of
+ blake2s()
+Message-ID: <aPZ0OU75EuC3tlxn@zx2c4.com>
+References: <20251018043106.375964-1-ebiggers@kernel.org>
+ <20251018043106.375964-2-ebiggers@kernel.org>
+ <aPT3dImhaI6Dpqs7@zx2c4.com>
+ <20251019160729.GA1604@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="17adE0b1pBWXLXwb"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251020165152.666221-2-elder@riscstar.com>
+In-Reply-To: <20251019160729.GA1604@sol>
 
+Hi Eric,
 
---17adE0b1pBWXLXwb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Oct 19, 2025 at 09:07:29AM -0700, Eric Biggers wrote:
+> On Sun, Oct 19, 2025 at 04:36:36PM +0200, Jason A. Donenfeld wrote:
+> > On Fri, Oct 17, 2025 at 09:30:57PM -0700, Eric Biggers wrote:
+> > > Reorder the parameters of blake2s() from (out, in, key, outlen, inlen,
+> > > keylen) to (key, keylen, in, inlen, out, outlen).
+> > 
+> > No objections to putting the size next to the argument. That makes
+> > sense. But the order really should be:
+> > 
+> >     out, outlen, in, inlen, key, keylen
+> > 
+> > in order to match normal APIs that output data. The output argument goes
+> > first. The input argument goes next. Auxiliary information goes after.
+> 
+> In general, both conventions are common.  But in the other hashing
+> functions in the kernel, we've been using output last.  I'd like to
+> prioritize making it consistent with:
 
-On Mon, Oct 20, 2025 at 11:51:44AM -0500, Alex Elder wrote:
-> Allow two resets to be optionally included for the Freescale QSPI driver.
+Hm. I don't like that. But I guess if that's what
+every-single-other-hash-function-does, then blake2s should follow the
+convention, to avoid churn of adding something new? 
 
-This is a binding, please don't mention the driver here.
+I went looking at C crypto libraries to see what generally the trend is,
+and I saw that crypto_hash from nacl and libsodium and supercop do `out,
+in`, as does cryptlib, but beyond that, most libraries don't provide an
+all-in-one-interface but only have init/update/final. So however you see
+fit, I guess; I don't want to hold up progress.
 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml =
-b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> index f2dd20370dbb3..0315a13fe319a 100644
-> --- a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> @@ -54,6 +54,11 @@ properties:
->        - const: qspi_en
->        - const: qspi
-> =20
-> +  resets:
-> +    items:
-> +      - description: SoC QSPI reset
-> +      - description: SoC QSPI bus reset
-
-If none of the fsl devices have resets, this should be added alongside
-the new spacemit compatible and not permitted for the other compatibles.
-
-
-> +
->  required:
->    - compatible
->    - reg
-> --=20
-> 2.48.1
->=20
-
---17adE0b1pBWXLXwb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPZ04wAKCRB4tDGHoIJi
-0lEKAP4tn2+XRwM5eBj2d46u1mM+jjxVgwNB08I2twSsMQSpRQEAupOGQFen6YpA
-+RHiekfk56oRh7/fLzUhP5reWtEMSQc=
-=KgvV
------END PGP SIGNATURE-----
-
---17adE0b1pBWXLXwb--
+Jason
 
