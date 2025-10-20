@@ -1,194 +1,208 @@
-Return-Path: <linux-kernel+bounces-861520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4BDBF2F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:29:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61BBBF2F10
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D9B18A613A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:30:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 319504E9929
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3643321D3;
-	Mon, 20 Oct 2025 18:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD84A2620FC;
+	Mon, 20 Oct 2025 18:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma+4cd8q"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LxvfJTRZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7353321B2
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CC27E792;
+	Mon, 20 Oct 2025 18:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760984977; cv=none; b=jp9nRZGee7nkgnI7jedcFD5VGuP79cmx8vf0shtRb9UHw9YxGkeqFYFnUAYXgRJ1ltr4xm4rwUpeUq6miPdt4A6q3PMWYiqbcG+h2qQ7QeQwPLchUykIZlLR1CCPctHKfqmnJCkyUEZ42MeGikZSkyl/wFJ2KH/CrXE9Qjt/dxQ=
+	t=1760985067; cv=none; b=mrVuQeZya8djiEfEdewMctZPfoavPB/4TIw+xnZ4va5KyUFmQc0/CTZ9QqiPukhstNsD736iQj/PqXzLu2AqFpiUQIgDviuQeDjJ/OwSceC8raUWAG/QkwA2jGOHgQ3y2cW3/6pAvKXADgTNIN20+81gpkMTKz14oZaTmLLO8gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760984977; c=relaxed/simple;
-	bh=YnkvNEzzrCZ2F2mwi3Xyfy1PKyGDWUGjXjVlFN3BUYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RfVha/gkX6tEsgPbvomZ+wL4CPPdV5Gw/XMDityB+OrEVsiIij4vrYKD/+lt0+iI0pNJUaGJ2C5ti82R31gBKwWp5oTX9JoaZIMmX7MEJY6Rf3FNrRk3gHPEWRmCqMaXlqpuYb8Q8Emt1HfK0WGKJPRgAhmwaqG1Xuh8UhV3fSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ma+4cd8q; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-33bb1701ca5so3914556a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:29:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760984975; x=1761589775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=G8S3WqjIfqedzQFzCR1LzIz7iLwesKjYQf37yiEbhNU=;
-        b=ma+4cd8qd/iXqkDBtfbtfYFATRR7UQG207GfSPnb53P0QBMe18ie4xRw8A1lhmFMSP
-         QbCIK1iEJyyHjOhXB4lOT78IZZKOpYYUovbMEZGe/NNAT9PWBazVK4oS2zfc7EgsW7nK
-         NL0VBVCGbbBnIaMA1Va+HbfH7TbxC5mCBLWIUEj56VDmClCTXo9H+P2rr4Xo09M1SxxB
-         tvsWRU6/pEofhuv2woCq3F8zQB9SSSwJSUEsZGovoTLlq6c5zZ2eF7HvcSuOzjKHaMxL
-         yv2JlQzwRaMshOKTSG5xXv92CZebGkwxvw6U94RZaogerxoF3oWZILj/AlzmUYyUdVLK
-         Df4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760984975; x=1761589775;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G8S3WqjIfqedzQFzCR1LzIz7iLwesKjYQf37yiEbhNU=;
-        b=lVL3nwW1BVeLBhAfbVqBTv+ijhVC2n3o10ZQeg8PudFKxYgPNO/slZbuSuRVBZevr7
-         oBD4tBN/quDif+OqDDk/H+L/NF9Ye6eknb9Nm4adQp7ej5slSPhiMzDhYMeDASrn3SCk
-         +7GZp6lysLcKkQW16LuVmTVnSeW7NNIGGKJO+bYDTXC3/+GpmuQonlOYQuw2ehzElyW9
-         7Yz1USG4Mv4zOrHSZxY0cNUfL0LNDt+p/Kk7DLkiV/D3EA084q+IOIVPL6tufdvbL5N4
-         mVVurWz1Xeu6LcVk1QP+/HMoc51b8u1K99TuP8TYG9Ve90I28ccigNnv1Li9QKtRgbd+
-         V6zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0oNRn683X87wILnSGhzMpp8snoOaW/bSO+T/7lpUQ/HRIz4aZXiTdqN3h4yAuASUQMgOTxg8BDmPA8dE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+5eZMBbCUbKZ7S9nP6+Vc1nAwuuryyy3dc/dUVwGOnoWJ+Brb
-	IVb0XX5KNso+iArctbSkRr50D/A+1K24Me59TWw0WeMEtBagkmv6HXJ3
-X-Gm-Gg: ASbGncudkz4JtgMO4ZiZ+liqtsqgn6mApDkGm/P4U63W6om9oJzK0olE+WPvbRFawDw
-	ZEn3nN0uZ2C6yrwAtGyajT2mkMHiw6/V3bqEUmRuLUUKGykisR7ncByRk5yop4pbpVYktyJVwne
-	8ZbsYppdu9IvUy5AY7CJsbHHgpt/XV5bjkxEZOJuz9QvilnDUZ4G6dIexX/2MXqKWffl9tMcBEX
-	jmwrtcdo6G+9lprZFUAf4SXkh4RmUYSpqp788/frk2xqub4qEabKGWJy2ob2fiG6L6VPovfbaDT
-	X1HHF9Fn1MtRN/IBFPBrc9F843qIuhITyrpSITo3rmJf0UOXL0M0i3AFsLoOueJv2HBXr2VUEZV
-	dtZjMyDsTQ1Ulg9V5NUYiDys7zcCbiHX1iVi5AaNNJ4tODTQLQNyIamv8eJyucDKqV5FWeDnWhK
-	vv0nM2gMVE56qwk931lD0/wrc7P7qlmitGzOJip0+Z02LNH9j/
-X-Google-Smtp-Source: AGHT+IFTq8qMNsiqU66jWDQF76YmSGgemaihg3w3pVoI3B5QClfDbRcDke3uMOzrWzlJXeCZI1IGQA==
-X-Received: by 2002:a17:90b:3f85:b0:33b:b078:d6d3 with SMTP id 98e67ed59e1d1-33bcf8e5ebfmr19897472a91.23.1760984975158;
-        Mon, 20 Oct 2025 11:29:35 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5d00c909sm8578734a91.0.2025.10.20.11.29.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 11:29:34 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <7cd3e303-6e20-4a84-8c91-cb20c1f209b0@roeck-us.net>
-Date: Mon, 20 Oct 2025 11:29:32 -0700
+	s=arc-20240116; t=1760985067; c=relaxed/simple;
+	bh=2o7Fw/nuNxjKMu5KaUQiLbIYThAN0vNPulMcmo+DTu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvFzw/dYuHhgDD60TO2504LDDa1fwrP5FB7CKVLE5OchkOYjGzyMTGJoYPcJ20arqINj40NwogUBirieQPLqXfs68ACoNJ8oKR4mS7pzaOGOYE5hjxrcGV7KCv6qJb0sxY1f+k1V8HfEkovRkSqf2N6DNRfmEnMpiq7DM9Szxug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LxvfJTRZ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760985064; x=1792521064;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2o7Fw/nuNxjKMu5KaUQiLbIYThAN0vNPulMcmo+DTu4=;
+  b=LxvfJTRZc+yLOkbFqnHo0M84m+6Rk5uleaMyrLe2Nxkppo9sMl5DuF+J
+   Mf8Q9pa81MSA+VXAl/q4OhMLdOlltKkrsjv9vpmGiUmu8N6TL1G7U1beu
+   cjbzOqcS8Kd46s/HVlel7mp40y9qgiY1MIu9YzKlpGZQJ3PKJapkZxXW0
+   jCC3rh3Ek66lKuQjukINqaU+kqaehCDXQYoIU1EKYRN3kwAT3zYErl7UA
+   evFfeCaXiEAJZS8/FxcWt4F3OjTBzC9LLZ/LWmlkO0Bsn50pMoFjTfe7x
+   8zLVQeHGj4wbxV4RR/RCEEtZbymAl5YS5XPncRUKViNKP+NeWDUxcBYDI
+   w==;
+X-CSE-ConnectionGUID: qGt/oaGaRGqHxTXoBMXnfQ==
+X-CSE-MsgGUID: tsZrIIF+THOiDTLrDEIIRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80732302"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="80732302"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:31:04 -0700
+X-CSE-ConnectionGUID: bZFwYJreTOSJmvgQfFbUNw==
+X-CSE-MsgGUID: HSYfEqkmStKEyzH8dwKxIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="183803554"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.62])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:31:02 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vAuep-00000001M7X-0k3W;
+	Mon, 20 Oct 2025 21:30:59 +0300
+Date: Mon, 20 Oct 2025 21:30:58 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in
+ place
+Message-ID: <aPZ_4qDfKdX3F_r3@smile.fi.intel.com>
+References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
+ <20251010144231.15773-3-ilpo.jarvinen@linux.intel.com>
+ <aO-vtdECWNpYpo6f@smile.fi.intel.com>
+ <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com>
+ <aPZ09UZMfKhYSUZE@smile.fi.intel.com>
+ <9d56e776-731a-7e25-60f0-44485cfbf12c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: mfd: rohm,bd96801-pmic: Correct
- timeout-sec length and reference watchdog schema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Timothy Pearson <tpearson@raptorengineering.com>
-References: <20251020-dt-bindings-watchdog-timeout-v1-0-d0f3235eb327@linaro.org>
- <20251020-dt-bindings-watchdog-timeout-v1-3-d0f3235eb327@linaro.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20251020-dt-bindings-watchdog-timeout-v1-3-d0f3235eb327@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9d56e776-731a-7e25-60f0-44485cfbf12c@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 10/20/25 09:52, Krzysztof Kozlowski wrote:
-> The parent node of ROHM BD96801 PMIC is also holding properties for the
-> watchdog, thus it should reference watchdog.yaml schema.  OTOH, the
-> timeout-sec property is used only as one number.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, Oct 20, 2025 at 09:15:08PM +0300, Ilpo Järvinen wrote:
+> On Mon, 20 Oct 2025, Andy Shevchenko wrote:
+> > On Mon, Oct 20, 2025 at 08:21:50PM +0300, Ilpo Järvinen wrote:
+> > > On Wed, 15 Oct 2025, Andy Shevchenko wrote:
+> > > > On Fri, Oct 10, 2025 at 05:42:30PM +0300, Ilpo Järvinen wrote:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+...
 
+> > > > > +/**
+> > > > > + * resource_mergeable - Test if resources are contiguous and can be merged
+> > > > > + * @r1: first resource
+> > > > > + * @r2: second resource
+> > > > > + *
+> > > > > + * Tests @r1 is followed by @r2 contiguously and share the metadata.
+> > > > 
+> > > > This needs an additional explanation about name equivalence that's not only by
+> > > > pointers, but by a content.
+> > > 
+> > > Okay. The point was to check names are the same, the pointer check was 
+> > > just an optimization as these resources are expected to carry the same 
+> > > name even on the pointer level.
+> > > 
+> > > > > + * Return: %true if resources are mergeable non-destructively.
+> > > > > + */
+> > > > > +static bool resource_mergeable(struct resource *r1, struct resource *r2)
+> > > > > +{
+> > > > > +	if ((r1->flags != r2->flags) ||
+> > > > > +	    (r1->desc != r2->desc) ||
+> > > > > +	    (r1->parent != r2->parent) ||
+> > > > > +	    (r1->end + 1 != r2->start))
+> > > > > +		return false;
+> > > > 
+> > > > > +	if (r1->name == r2->name)
+> > > > > +		return true;
+> > > > > +
+> > > > > +	if (r1->name && r2->name && !strcmp(r1->name, r2->name))
+> > > > > +		return true;
+> > > > > +
+> > > > > +	return false;
+> > > > 
+> > > > Hmm... Can we keep the logic more straight as in returning false cases as soon
+> > > > as possible?
+> > > > 
+> > > > I think of something like this:
+> > > > 
+> > > > 	if (r1->name && r2->name)
+> > > > 		return strcmp(r1->name, r2->name) == 0;
+> > > > 
+> > > > 	return r1->name == r2->name;
+> > > 
+> > > But the point the order above was to avoid strcmp() when the pointer 
+> > > itself is same which I think is quite common case. I don't think strcmp() 
+> > > itself checks whether the pointer is the same.
+> > 
+> > On the second thought I think comparing by the content is quite a behavioural
+> > change here.
 > 
-> ---
+> Compared to what?
 > 
-> This depends on previous watchdog patch.  I propose to take entire set
-> via watchdog tree, with Lee's acks.
-> ---
->   Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
+> This code was previously only used for merging contiguous "System RAM" 
+> resources (AFAICT, I don't have way to check what the names in all those
+> resources truly were but in any case, the check was even stricter earlier, 
+> comparing pointer equality only so definitely the names were not different 
+> before this).
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-> index 0e06570483ae..adb491bcc8dc 100644
-> --- a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-> @@ -57,8 +57,7 @@ properties:
->         - prstb
->         - intb-only
->   
-> -  timeout-sec:
-> -    maxItems: 2
-> +  timeout-sec: true
->   
->     regulators:
->       $ref: /schemas/regulator/rohm,bd96801-regulator.yaml
-> @@ -72,7 +71,10 @@ required:
->     - interrupt-names
->     - regulators
->   
-> -additionalProperties: false
-> +allOf:
-> +  - $ref: /schemas/watchdog/watchdog.yaml
-> +
-> +unevaluatedProperties: false
->   
->   examples:
->     - |
+> > Perhaps we may start without doing that first? Theoretically it
+> > might be the case when the content of names is different, but resources are
+> > the same.
 > 
+> Resources are NOT same, they're two contiguous memory regions and may 
+> originate from different source, and thus have different names.
+> 
+> Not caring about the names will lose one of them from /proc/iomem.
+> 
+> > The case when name is the same (by content, but pointers) with the
+> > idea of having different resources sounds to me quite an awkward case. TL;
+> > DR: What are the cases that we have in practice now?
+> 
+> In the original thread [1], PCI side resource coalescing did break the 
+> resources by merging without caring what the resource internals were. That 
+> problem was found after trying to fix another problem, thus it might not 
+> happen in practice except after fixing the other problem with root bus 
+> resources.
+> 
+> In the common case when merging PCI root bus resources, the resources 
+> typically have the same name - this happens all the time (e.g. io port 
+> ranges are split to many small ranges which form a contiguous region 
+> when coalesced). But that's not always the case, why do you think these 
+> two names should be merged losing some information:
+> 
+>      ee080000-ee08ffff : pci@ee090000
+>        ...
+>      ee090000-ee090bff : ee090000.pci pci@ee090000
+> 
+> ?
+
+I don't think it's a good idea (after reading the nice elaboration from you).
+It seems I misunderstood the use case(s). That's why I asked for some elaboration
+about the (new?) requirement to test the content of the names and not only pointer
+equivalency.
+
+> (Also, the careless change in the underlying resource by the code this 
+> series tries to fix would have likely broken also devres release of the 
+> mangled resource, which admittedly, is not related to name at all).
+> 
+> [1] https://lore.kernel.org/linux-pci/CAMuHMdVgCHU80mRm1Vwo6GFgNAtQcf50yHBz_oAk4TrtjcMpYg@mail.gmail.com/
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
