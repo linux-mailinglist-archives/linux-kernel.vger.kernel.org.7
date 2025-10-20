@@ -1,230 +1,130 @@
-Return-Path: <linux-kernel+bounces-859953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0610BEF08A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9998BBEF090
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 15FEB34875D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58FE189531E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56601B81D3;
-	Mon, 20 Oct 2025 01:52:12 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB041C8611;
+	Mon, 20 Oct 2025 01:52:27 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF5015A86D;
-	Mon, 20 Oct 2025 01:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D832D19B5B1
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760925132; cv=none; b=lVJRbXrwoWzU6ZJinuR6zN6+ZxT0UpgT2aiQGJ09o/ogOdAQyaZhkkL5dASXyXeYdE9lML1NXky/orcaFk6nZA+RWDKNI0ziPJg1iRiwwMPJ8GxB0adwh7NcKlegi3gxZEivuv87Gu2hhFd7Oe/yb20xH3bK8Te/1mTMQYUO5j0=
+	t=1760925147; cv=none; b=e0AHbuDU75sI+OnORIGgOOf+Bo1rv1dlXWN1t8X8qbciGIerFCQ06yasAQLdnKUW7+GnPtOTm7X7/6560eYrhxNgj9dXt19m4l8l2vGnIWB9fsdMRhnHgMv9evmwSBmOGKp6yeESXHwdM5mdHtVrrAW3ZuAlZ+/bCtrEGS5hWWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760925132; c=relaxed/simple;
-	bh=+BqNPlnJZucWLPsYuw/9JaOVHs4p5MfWP+ez/XuG3O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e83d9v8+M1gCUoNZFnM30lqImeNa0oxHoapINOvXH6WQNJsRGf7OttVMT/hj7IiQmUv/52Ys4xFi2u3brzOUny9IlCQsXnfOej7Y9Bn9DeF8k11HR9mK0ajl3kpDNt2BeeG6AVVusAra0Ym0ErwKWO70LhomGAz/RUMYvaLKyo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.147.23])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id F010A341F00;
-	Mon, 20 Oct 2025 01:52:08 +0000 (UTC)
-Date: Mon, 20 Oct 2025 09:52:04 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] riscv: dts: spacemit: add MusePi Pro board device
- tree
-Message-ID: <20251020015204-GYF1506524@gentoo.org>
-References: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
- <20251017-k1-musepi-pro-dts-v3-2-40b05491699f@linux.spacemit.com>
+	s=arc-20240116; t=1760925147; c=relaxed/simple;
+	bh=7adGGVF9tdW1YJFMPKEmSFylgttva22iP01hwiRYwow=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XfBTeZ8cfNcFbkTqvxPz2fILIsfqUu/0cU798B96x1GXUjhwajqzsOPG7QY3iq5ie9uDGX4IsLJ4/eI+RHt5+8/JDfx63666zNeQyeM90I7Wq/mDsdK3X8kcsHn38qLbPOq2bF6eFYDe9ZVPcQAk0Ez2LcesKycI9rPIt8SGtfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-93e4da7a183so348214939f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:52:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760925145; x=1761529945;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rFUqgO/1X4tGf013zyFKn87MJvA/QpMdKd1TaPnKCjc=;
+        b=QnnFVG9o33lkk0BBhsPO7dU1nPJ1d6r4JlxqxuyoGGjAHMtKal2nCPxOCGYy3eGPBT
+         Xvzciz73nVgFihJipHdSH5mRo0H9+f2bOd+nTUHIGNOi+ZXveoYtAc5nPbaie+jrcUa+
+         Hftba1TkAaF0C5x147DZ0d3h/3mCW2UBKQ25ew9E7qDvdrzlvk6gopkdiT3dqPh7Zsvp
+         RbezH/XfJERDfMZL8yeuzbqFgooCCWwgQRUFDr7pJ29Ba2uy/7NcNT6hoBPPbz0FcwL4
+         ZL3zFZBPx7O4Ct40HNUMRE9FmIVYDmhk/83EUMDTvldWZjH7SQLKKvyXdjLweJsNSHxV
+         CEgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtyelbJcMgAIPsE+MKum674MxwG92L4yb0YRX1ZSAukdvL1DukHC2Bu1VPrKnBKwQ/fqF5PyLKkmVSbVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU2kUrtBozuvgtM2KFXToATKXkWBvIYm+naWhg/rcUi5ty/cjR
+	kbf/EaDpqDh1ARSakpCBwIzpYkjCW0qPm9isQxqzz1yzq2vk9K9st//TyXxw37Vqdlcx2XpPMsr
+	B7GRJX6oxRp2o68EpGJiiZl5gGmpTdcsMlvGyBK0VV68m84ztc0WX7UIDFjU=
+X-Google-Smtp-Source: AGHT+IGEOGgAhJ/VqxDKE9fKEFF/jaq3tSnh+we7qLzZ2LAHPDAXshaEsuvm4ccKBJLGxkBNcROv4yDvfOrJP5YcURXXt2nQ2uHU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251017-k1-musepi-pro-dts-v3-2-40b05491699f@linux.spacemit.com>
+X-Received: by 2002:a05:6602:6409:b0:901:3363:e663 with SMTP id
+ ca18e2360f4ac-93e76451522mr1784937939f.13.1760925145012; Sun, 19 Oct 2025
+ 18:52:25 -0700 (PDT)
+Date: Sun, 19 Oct 2025 18:52:25 -0700
+In-Reply-To: <66f49736.050a0220.211276.0036.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f595d8.050a0220.91a22.043c.GAE@google.com>
+Subject: Re: [syzbot] [wireguard?] INFO: task hung in wg_netns_pre_exit (5)
+From: syzbot <syzbot+f2fbf7478a35a94c8b7c@syzkaller.appspotmail.com>
+To: Jason@zx2c4.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, jason@zx2c4.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Troy,
+syzbot has found a reproducer for the following issue on:
 
-On 13:52 Fri 17 Oct     , Troy Mitchell wrote:
-> Add initial device tree support for the MusePi Pro board [1].
-> The board is using the SpacemiT K1/M1 SoC.
-> 
-> The device tree is adapted from the SpacemiT vendor tree [2].
-> 
-> Here's a refined list of its core features for consideration:
->   - SoC: SpacemiT M1/K1, 8-core 64-bit RISC-V with 2.0 TOPS AI power.
->          This suggests potential for light AI/ML workloads on-device.
->   - Memory: LPDDR4X @ 2400MT/s, available in 8GB & 16GB options.
->             Sufficient for various workloads.
->   - Storage: Onboard eMMC 5.1 (64GB/128GB options). M.2 M-Key for NVMe
->              SSD (2230 size), and a microSD slot (UHS-II) for expansion.
->              Good variety for boot and data.
->   - Display: HDMI 1.4 (1080P@60Hz) and 2-lane MIPI DSI FPC (1080P@60Hz).
->              Standard display options.
->   - Connectivity: Onboard Wi-Fi 6 & Bluetooth 5.2. A single Gigabit
->                   Ethernet port (RJ45). Given the stated markets,
->                   this should cover basic networking.
->   - USB: 4x USB 3.0 Type-A (host) and 1x USB 2.0 Type-C (device/OTG).
->          Decent host capabilities.
->   - Expansion: Full-size miniPCIe slot for assorted modules
->                (4G/5G, wireless etc.). A second M.2 M-Key (2230) for more
->                general PCIe devices (SSD, PCIe-to-SATA, comm boards).
->   - GPIO: Standard 40-pin GPIO interface, as expected for an SBC.
->   - MIPI: Includes 1x 4-lane MIPI CSI FPC and 2x MIPI DSI FPC interfaces
->           for cameras and displays.
->   - Clock: Onboard RTC with battery support.
-I think you've already gave an overall description for MusePi board in
-patch [1/2] which is sufficient, in this patch you could better focus on
-what it actually done here? enabling mmc, ethernet, led, pdma, uart..
+HEAD commit:    88224095b4e5 Merge branch 'net-dsa-lantiq_gswip-clean-up-a..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b28de2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=913caf94397d1b8d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2fbf7478a35a94c8b7c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10796b04580000
 
-> 
-> This minimal device tree enables booting into a serial console with UART
-> output and a blinking LED.
-> 
-> Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
-> Link: https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
-> 
-ditto
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
-> Changelog in v3:
-> - sort dts node
-> - add ethernet alias
-> - add emmc, pdma, and eth0 node (a squash of patches 3–5 from v2)
-> - Link to v2: https://lore.kernel.org/all/20251010-k1-musepi-pro-dts-v2-2-6e1b491f6f3e@linux.spacemit.com/
-> 
-> Changelog in v2:
-> - modify commit message
-> - swap pinctrl-names and pinctrl-0 properties in uart0 node
-> - rename model: "MusePi Pro" -> "SpacemiT MusePi Pro"
-> - keep the dtb-$(CONFIG_ARCH_SPACEMIT) entries in alphabetical order
-> - Link to v1: https://lore.kernel.org/all/20250928-k1-musepi-pro-dts-v1-2-5efcca0ce3ae@linux.spacemit.com/
-> ---
->  arch/riscv/boot/dts/spacemit/Makefile          |  1 +
->  arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts | 78 ++++++++++++++++++++++++++
->  2 files changed, 79 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
-> index 152832644870624d8fd77684ef33addb42b0baf3..942ecb38bea034ef5fbf2cef74e682ee0b6ad8f4 100644
-> --- a/arch/riscv/boot/dts/spacemit/Makefile
-> +++ b/arch/riscv/boot/dts/spacemit/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
->  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
->  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
-> +dtb-$(CONFIG_ARCH_SPACEMIT) += k1-musepi-pro.dtb
->  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..590c9bdbdfda4d6ddd97a96e10fcaef0a75f3390
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-> @@ -0,0 +1,78 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-..
-> + * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com>
-this isn't a big problem, but I think it would be better to use SpacemiT
-Corp's Copyright, to reflect you're not doing as individual contributor..
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "k1.dtsi"
-> +#include "k1-pinctrl.dtsi"
-> +
-> +/ {
-> +	model = "SpacemiT MusePi Pro";
-> +	compatible = "spacemit,musepi-pro", "spacemit,k1";
-> +
-> +	aliases {
-> +		ethernet0 = &eth0;
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0";
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led1 {
-> +			label = "sys-led";
-> +			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +			default-state = "on";
-> +		};
-> +	};
-> +};
-> +
-> +&emmc {
-> +	bus-width = <8>;
-> +	mmc-hs400-1_8v;
-> +	mmc-hs400-enhanced-strobe;
-> +	non-removable;
-> +	no-sd;
-> +	no-sdio;
-> +	status = "okay";
-> +};
-> +
-> +&eth0 {
-> +	phy-handle = <&rgmii0>;
-> +	phy-mode = "rgmii-id";
-> +	pinctrl-0 = <&gmac0_cfg>;
-> +	pinctrl-names = "default";
-> +	rx-internal-delay-ps = <0>;
-> +	tx-internal-delay-ps = <0>;
-> +	status = "okay";
-> +
-> +	mdio-bus {
-> +		#address-cells = <0x1>;
-> +		#size-cells = <0x0>;
-> +
-> +		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
-> +		reset-delay-us = <10000>;
-> +		reset-post-delay-us = <100000>;
-> +
-> +		rgmii0: phy@1 {
-> +			reg = <0x1>;
-> +		};
-> +	};
-> +};
-> +
-> +&pdma {
-> +	status = "okay";
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-0 = <&uart0_2_cfg>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> 
-> -- 
-> 2.51.0
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f3cb46a2b9fc/disk-88224095.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0d43ffbc738d/vmlinux-88224095.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9817e4fdd10a/bzImage-88224095.xz
 
--- 
-Yixun Lan (dlan)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f2fbf7478a35a94c8b7c@syzkaller.appspotmail.com
+
+INFO: task kworker/u8:8:6081 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:8    state:D stack:23424 pid:6081  tgid:6081  ppid:2      task_flags:0x4208060 flags:0x00080000
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7026
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7083
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ wg_netns_pre_exit+0x1c/0x1d0 drivers/net/wireguard/device.c:419
+ ops_pre_exit_list net/core/net_namespace.c:161 [inline]
+ ops_undo_list+0x187/0x990 net/core/net_namespace.c:234
+ cleanup_net+0x4d8/0x820 net/core/net_namespace.c:696
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+INFO: task syz-executor:6161 blocked for more than 147 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:25608 pid:6161  tgid:6161  ppid:1      task_flags:0x400140 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7026
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
