@@ -1,123 +1,199 @@
-Return-Path: <linux-kernel+bounces-861309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805D9BF2563
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:14:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740B5BF259B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AFF74F6B25
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C73B7303
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1B2286425;
-	Mon, 20 Oct 2025 16:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF8285C8C;
+	Mon, 20 Oct 2025 16:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ixb2ZTXm"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="RKZF37ra"
+Received: from fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.65.3.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD9A283682
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F4A279917;
+	Mon, 20 Oct 2025 16:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.65.3.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976858; cv=none; b=iT7e3vq+YJja3lQyJ+UDvQH9sychghr25sLwfa1URhp6Mm/d70J4oV9Y3Lpn0UQumevKtRdeV5TI1A7omUrtAD19RHPx2u1ABiMu6dBBk1gKLEZjaBzf4TEN9hP+U4W/f6rxN6LSB9zLId7VLgwr+Zxa922xEllsxhZ4UedbPbw=
+	t=1760976875; cv=none; b=H7X+S9lLAzMLlX1kPQPnQNRIDuQJCf8cZNlhwcq5VJY+EDGlBFsbYPDA7U+Xz52TNxmyB/zwFyrTrI9Xlt63ePxMT8iSXa/7rzOF/n/lqqXPTBIBrGiSFLhcRGNzZFwQNvx8rVNxjW/pA/9riRyEF/2dx/IZwSln2AmBfsxwWzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976858; c=relaxed/simple;
-	bh=WS52j+nARIQivdKIiJ6ZjGEiAMPv19+XJeo+JRpwLF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMp+4Oe3KjeL8cP5wNLKQSU2hYeQQu9pwLWKbHaHvot2hhgN9ARRp4WKFDPA2jUkR9zXv0dS75h9SIUgNfSK+B6kfi51N2YVzoOcgtMnegrR5PPSymq+h6/HEG4by9KgO5BR44yd/7dSjBZ3Fw49e1DONuoMqKuZvbt1nvpUmYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ixb2ZTXm; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-87c21c5d3eeso64384826d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:14:16 -0700 (PDT)
+	s=arc-20240116; t=1760976875; c=relaxed/simple;
+	bh=luCWr/Ti5SiD6fz+TpJW/iL8yE1ZLZnMzX0YcwCrUyg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YO26dQXd6O6N9EllYellSMylI4DNqC/+WtWKA0CIr7Oc2VvRLZ2qrq2eVsDXqo9vLiKD7GC+YNKru2j0/hE4K4nboTA0LyiHdzAJSh0bem1R+yNaO3Vg8XgNYtj6fkEzuoOL8JkhjBmxgzOHjrWAkA3P35gOVuuyiBFEYkj0ru8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=RKZF37ra; arc=none smtp.client-ip=3.65.3.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1760976855; x=1761581655; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ovFN/fCbIduQYs6aLAjGNuo1sjBICaBJVjQ0giTZsZA=;
-        b=ixb2ZTXmjoc1S9dZN1Mo6YPO9Z4MhDb9GeAVX+B7q7PNDrtU9zu1hyiNDgc9hpVoU6
-         WbfWPZFfNDLD6sE7J+DWEuRloGRabZLg4G2x2WCzX1n6XDb6gUlJnfoaTWyOk+DkkqoF
-         2bv7pQ5Azcpvljr+aNvZhoyvOMftS9Ka2zO0ZEps2ZRbWMNYTVbJJvKWwM1u7ys5HcXF
-         4t79Wrv2Y16kyZo4i4r5aRlkeHPgNwG2bZ6mHfvhDx7BkBIumfL5LRgDMV4GbkP8Z1vC
-         u5gWbTKq/fIKbiRr/uR+hfpLsklhiOq5g/Fk/K9UhziE3OZSvr/9lkQW1qotFbMnYe1T
-         T5uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976855; x=1761581655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ovFN/fCbIduQYs6aLAjGNuo1sjBICaBJVjQ0giTZsZA=;
-        b=uDIHkfSi4jfo6hhjagCB4fd4wtgee1pKPXHzw5v62FxWd0y5fLNywavLvcJ38ZKsWs
-         Crkge46eydUuUU5Q9Y+iCBW1o3ojPAq6Nvq5HmgBJ13kWZDReT6WEiYLY2m8z80lbSp/
-         cBsAj51BptMHyJX3B0kTTxnUXk7QtyiBZ89dOdpY2F7xR12UwSr/0Z1mhW7qD0pw5u7/
-         8Kv1ILoKlpDzUca72Z+XSz7ql6YUTnrVPtAeriqUOd7OwwQH+dnVKpHFGBdqjmSvjksX
-         oU+K3rlW9BvQgf5MnIaPyoFoQZDvCSL5mHQIngdC7pSYJAROVHCVoCfNMqV3jeb1euYX
-         Vo3A==
-X-Forwarded-Encrypted: i=1; AJvYcCX5BopV76i0ZHOGmYAsCeNvVBAWYxjyqSDBbEksHdyhWAdDcCyYRxK/ZpCjVgm7qHPvFF3z6JLgNLMDo4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4trhhCgIA8cLBl+ge7NIq/siuiChrQnOJOehELOEwee7a6ztG
-	03ZB5DYN8bdUv+GaYvB11E3cWBLQWii8mvQNLBSYuZQP8k3vvMWrgcc4IR+vMvxnZFI=
-X-Gm-Gg: ASbGncsT5NOr4H/R03yOrIgT7qTac8LpD+ie7zRZ2XLaLNAlWUc719ZvZzyTMMciEWb
-	o3zwtE2UQA/+NTLr8+oCYI71LLjG6SZibtRM2b2GwKumHg/O3STuepUsCEDffLAfyo1nkxY17u9
-	EWzs4N9qLH+/+mjrZiWb7JJYyE2pyoo8fO7/KoLTSHP661n90IMOnQcii0cYi3Br9nIlYpHOsoI
-	j3Jo1h4pr7tohMBWXJeTOuU4xxtHV9U/a0XLBhR0ljXECdLIMnQP5Xh1uPdkMN0MDjcKarQZKFZ
-	ZLhVeZ8LD6OniVuHYgVbuL3ZEFvVBVp7fAK/cQDry5ZgrQOpfx6jJyUn+hxuF95AXEREP15iC+N
-	Lgc3XM9ePq0uqFoNwz+phCzSuvjmaldkW+mAi9x/XHWhn+/7/nIEyCR5CkXNhWATCaWqoLG1GDY
-	IIVPFVMPTWlqNVybmEtzkIIf+Bqr9XR1/xPIxMzO5cnXy3kHa2EfXvjqCxwEhiokB3fDTeuh0QC
-	roKDvPq
-X-Google-Smtp-Source: AGHT+IH3czW3FFC2OSmXtjeaxvNwaarf66L+VtGACK8pE6fNuWKDq/oMJT6l6rutOkaSLLGkRsNYgw==
-X-Received: by 2002:ad4:5c8d:0:b0:780:6e19:8ed with SMTP id 6a1803df08f44-87c20825260mr151746346d6.65.1760976855561;
-        Mon, 20 Oct 2025 09:14:15 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87d028924f6sm53420566d6.38.2025.10.20.09.14.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 09:14:15 -0700 (PDT)
-Date: Mon, 20 Oct 2025 12:14:13 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, muchun.song@linux.dev, osalvador@suse.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] hugetlb.h: flatten logic in
- arch_hugetlb_migration_supported
-Message-ID: <aPZf1aOyhVHVedok@gourry-fedora-PF4VCD3F>
-References: <20251008212614.86495-1-gourry@gourry.net>
- <def56e60-42ae-4848-b0a0-91bd1c95d8d7@redhat.com>
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazoncorp2; t=1760976873; x=1792512873;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Q24GU8FcFCs6WJb9C+XwHstoC5iy5s3AhZ8lLVXQMsU=;
+  b=RKZF37racKRjX2zf0QAbUJJu6AgxU2GUPfqO68CdMRW1eAtZpMbdeio2
+   Sndza5GbheYIIFdhhkyyXoIrlRuiv/SozVjp6fKy6mBFdyx1hH7gowfbp
+   BQjio+QVnS2JTn5dqGevmBL3LXClDPMKWh9WFOBcLHnsEqKA9KCQ6FXZK
+   1gzg5wiMU7a7RJPSimPho1TivgVrIoPWazwhbfNx10763/9tu5Err2IiI
+   yKbHSF05pxpW8WnxWvMyBQRueyh/mdAFbOOyHlFHmkNsnRgXBM8qVvv0M
+   JDQjI3XI+oOtQyxhTchiIGG/olHNYgkNJdvHEJkwptOnAZIYMqsYBlO8T
+   g==;
+X-CSE-ConnectionGUID: q1YPj9UCS+C9pLJ1GqSwKw==
+X-CSE-MsgGUID: 6KYuymc7Sv+p6+VzGT1Dvg==
+X-IronPort-AV: E=Sophos;i="6.19,242,1754956800"; 
+   d="scan'208";a="3895146"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 16:14:17 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:15098]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.47.14:2525] with esmtp (Farcaster)
+ id bf172871-1a0f-446d-960b-c321c4ef4f18; Mon, 20 Oct 2025 16:14:17 +0000 (UTC)
+X-Farcaster-Flow-ID: bf172871-1a0f-446d-960b-c321c4ef4f18
+Received: from EX19D022EUC001.ant.amazon.com (10.252.51.254) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 20 Oct 2025 16:14:17 +0000
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19D022EUC001.ant.amazon.com (10.252.51.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 20 Oct 2025 16:14:16 +0000
+Received: from EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80]) by
+ EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80%3]) with mapi id
+ 15.02.2562.020; Mon, 20 Oct 2025 16:14:16 +0000
+From: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org"
+	<shuah@kernel.org>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>, "david@redhat.com"
+	<david@redhat.com>, "jthoughton@google.com" <jthoughton@google.com>,
+	"patrick.roy@linux.dev" <patrick.roy@linux.dev>, "Thomson, Jack"
+	<jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, "Cali,
+ Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Subject: [PATCH v6 2/2] KVM: selftests: update guest_memfd write tests
+Thread-Topic: [PATCH v6 2/2] KVM: selftests: update guest_memfd write tests
+Thread-Index: AQHcQdyVtSwBRiB1XUqIh7uAE+bzAw==
+Date: Mon, 20 Oct 2025 16:14:16 +0000
+Message-ID: <20251020161352.69257-3-kalyazin@amazon.com>
+References: <20251020161352.69257-1-kalyazin@amazon.com>
+In-Reply-To: <20251020161352.69257-1-kalyazin@amazon.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <def56e60-42ae-4848-b0a0-91bd1c95d8d7@redhat.com>
 
-On Mon, Oct 13, 2025 at 10:10:05AM +0200, David Hildenbrand wrote:
-> On 08.10.25 23:26, Gregory Price wrote:
-> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> > index 526d27e88b3b..b030850975ef 100644
-> > --- a/include/linux/hugetlb.h
-> > +++ b/include/linux/hugetlb.h
-> > @@ -876,12 +876,9 @@ static inline void folio_clear_hugetlb_hwpoison(struct folio *folio)
-> >   #ifndef arch_hugetlb_migration_supported
-> >   static inline bool arch_hugetlb_migration_supported(struct hstate *h)
-> >   {
-> > -	if ((huge_page_shift(h) == PMD_SHIFT) ||
-> > +	return ((huge_page_shift(h) == PMD_SHIFT) ||
-> >   		(huge_page_shift(h) == PUD_SHIFT) ||
-> > -			(huge_page_shift(h) == PGDIR_SHIFT))
-> > -		return true;
-> > -	else
-> > -		return false;
-> > +		(huge_page_shift(h) == PGDIR_SHIFT));
-> 
-> switch (huge_page_shift(h)) {
-> case PMD_SHIFT:
-> case PUD_SHIFT:
-> case PGDIR_SHIFT:
-
-PGDIR_SHIFT is not a constant on x86.
-
-~Gregory
+From: Nikita Kalyazin <kalyazin@amazon.com>=0A=
+=0A=
+This is to reflect that the write syscall is now implemented for=0A=
+guest_memfd.=0A=
+=0A=
+Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>=0A=
+---=0A=
+ .../testing/selftests/kvm/guest_memfd_test.c  | 51 ++++++++++++++++---=0A=
+ 1 file changed, 45 insertions(+), 6 deletions(-)=0A=
+=0A=
+diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing=
+/selftests/kvm/guest_memfd_test.c=0A=
+index b3ca6737f304..be1f78542d64 100644=0A=
+--- a/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
++++ b/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
+@@ -24,18 +24,55 @@=0A=
+ #include "test_util.h"=0A=
+ #include "ucall_common.h"=0A=
+ =0A=
+-static void test_file_read_write(int fd)=0A=
++static void test_file_read(int fd)=0A=
+ {=0A=
+ 	char buf[64];=0A=
+ =0A=
+ 	TEST_ASSERT(read(fd, buf, sizeof(buf)) < 0,=0A=
+ 		    "read on a guest_mem fd should fail");=0A=
+-	TEST_ASSERT(write(fd, buf, sizeof(buf)) < 0,=0A=
+-		    "write on a guest_mem fd should fail");=0A=
+ 	TEST_ASSERT(pread(fd, buf, sizeof(buf), 0) < 0,=0A=
+ 		    "pread on a guest_mem fd should fail");=0A=
+-	TEST_ASSERT(pwrite(fd, buf, sizeof(buf), 0) < 0,=0A=
+-		    "pwrite on a guest_mem fd should fail");=0A=
++}=0A=
++=0A=
++static void test_write_supported(int fd, size_t total_size)=0A=
++{=0A=
++	size_t page_size =3D getpagesize();=0A=
++	void *buf =3D NULL;=0A=
++	int ret;=0A=
++=0A=
++	ret =3D posix_memalign(&buf, page_size, total_size);=0A=
++	TEST_ASSERT_EQ(ret, 0);=0A=
++=0A=
++	ret =3D pwrite(fd, buf, page_size, total_size);=0A=
++	TEST_ASSERT(ret =3D=3D -1, "writing past the file size on a guest_mem fd =
+should fail");=0A=
++	TEST_ASSERT_EQ(errno, EINVAL);=0A=
++=0A=
++	ret =3D pwrite(fd, buf, page_size, 0);=0A=
++	TEST_ASSERT(ret =3D=3D page_size, "write on a guest_mem fd should succeed=
+");=0A=
++=0A=
++	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
+_size);=0A=
++	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
++=0A=
++	free(buf);=0A=
++}=0A=
++=0A=
++static void test_write_not_supported(int fd, size_t total_size)=0A=
++{=0A=
++	size_t page_size =3D getpagesize();=0A=
++	void *buf =3D NULL;=0A=
++	int ret;=0A=
++=0A=
++	ret =3D posix_memalign(&buf, page_size, total_size);=0A=
++	TEST_ASSERT_EQ(ret, 0);=0A=
++=0A=
++	ret =3D pwrite(fd, buf, page_size, 0);=0A=
++	TEST_ASSERT(ret =3D=3D -1, "write on guest_mem fd should fail");=0A=
++	TEST_ASSERT_EQ(errno, ENODEV);=0A=
++=0A=
++	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
+_size);=0A=
++	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
++=0A=
++	free(buf);=0A=
+ }=0A=
+ =0A=
+ static void test_mmap_supported(int fd, size_t page_size, size_t total_siz=
+e)=0A=
+@@ -281,12 +318,14 @@ static void test_guest_memfd(unsigned long vm_type)=
+=0A=
+ =0A=
+ 	fd =3D vm_create_guest_memfd(vm, total_size, flags);=0A=
+ =0A=
+-	test_file_read_write(fd);=0A=
++	test_file_read(fd);=0A=
+ =0A=
+ 	if (flags & GUEST_MEMFD_FLAG_MMAP) {=0A=
++		test_write_supported(fd, total_size);=0A=
+ 		test_mmap_supported(fd, page_size, total_size);=0A=
+ 		test_fault_overflow(fd, page_size, total_size);=0A=
+ 	} else {=0A=
++		test_write_not_supported(fd, total_size);=0A=
+ 		test_mmap_not_supported(fd, page_size, total_size);=0A=
+ 	}=0A=
+ =0A=
+-- =0A=
+2.50.1=0A=
+=0A=
 
