@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-860270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A844BEFB6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:44:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E2ABEFB81
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CA890349B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:44:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6663BF42E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1568C2E9737;
-	Mon, 20 Oct 2025 07:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB5A2EA16C;
+	Mon, 20 Oct 2025 07:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Cd8C8esI"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eQ5Y/s4B"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7DD2E8DF7;
-	Mon, 20 Oct 2025 07:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DBC2E9735;
+	Mon, 20 Oct 2025 07:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760946163; cv=none; b=s3J+wcDB7+LMJ6zDD97doRvaPMPI2h+X31jqUmFUs4Okk7f+eoACbG90lOejf9UhYmi7hvUZIfmtLmf1W2RhNEyszLsF4qU8bNYYd2QQKR691VqniwPkABQrqXJh/P0o5kUJgExFQVQ9HUpiV5cp7shsBdslaFRcUnv/oSTAYKY=
+	t=1760946166; cv=none; b=PurWzkTO71p33kSc/xpI734B/hVrUIqD6sG6bwFxVfjipYeB2tLcVO47AqVo0mNQMD2968OM09jOReluCQ/TY4wOGBupuF2ZCl2NEoq76Jcg93PBqMsHT3AfLWapRwFxPfZP6T+nFMtsMnM6iyndPLYoTlovgMi+Ax5HmToFMyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760946163; c=relaxed/simple;
-	bh=VedNdTpKm5tRUC/+vBUImI7r+ZNXL5nzVWgqY+8DzGc=;
+	s=arc-20240116; t=1760946166; c=relaxed/simple;
+	bh=kXvgD49/oiZtkIDFu5jnSf40Y1LdECY61Trkg5w0BE0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SVUkNr2GOIlfEsV2Xo+GCPjoRltArSIUt7jrCq5XrWFwB2Ndx5hVIRHDwOlDtMfIIgDF/HYKrvzAxw4CRDfPnvwF8Ntmzq9gZztAAZpxIp6kaWTe0w/Q1wdnji/2x8/tFgs8U05Lhsi/qUxje0wXxfoerOi2TuJ6sGVAj34ynO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Cd8C8esI; arc=none smtp.client-ip=210.61.82.184
+	 MIME-Version:Content-Type; b=t6VM/BQWgjOttLlkuaSVvWypD08NJ8Ra/0gpqA+hyKNee4O8ASWmSinVKTm8facVI1PUl/soFyC7OWuqW1/9kkWdQHydoY5HLlRh3gRzmOe4PxWE1LSEioagVucpahQHpJlaOOGPDuM+VU8w0DY32IV2eSmJvSZPLFpRJw5fnrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eQ5Y/s4B; arc=none smtp.client-ip=60.244.123.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5784821aad8811f0b33aeb1e7f16c2b6-20251020
+X-UUID: 588f9082ad8811f0ae1e63ff8927bad3-20251020
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=8UN7sanGx2RMjFN9PAenKVDy3ihnS31FxWkQ7IZwMfg=;
-	b=Cd8C8esIwuDL69NXhHqVvFlvTUgQltJgxDQio3Wq8Z/+bkzjBksIh9uAdfdkogkSq/DtPyroP1FdTh+ZyaTsu0Nv83Zl92LcJ8MZ3gZ9lWMvChN/sBsEGBYx9H+g4IEX4VaA+/vhymjXlnOrqiBWSEQPZp1AUzrsesPrLfHTiWs=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=PQCWLUlWiyxvQaMBcUsF+Z0zW93ZbqkmIBVjZvUSn+Y=;
+	b=eQ5Y/s4Bv0t+zbgvbNN0mDT/De++uUMp891kdTsdYgOf9f3StQpW2v+XGTgreuet26hVkoISYkmSQRgcuW1m8nzTZZmPJIpwczl16M06z8MjH1YkKy8J/iBAoSbYc74xqyCCmF+JQK/7S7tOozuXEy5kgHqemNw1VPk3mZTJbzw=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:95b7c738-4721-4f88-b84f-530b94e9af32,IP:0,UR
+X-CID-O-INFO: VERSION:1.3.6,REQID:41168890-3e05-47df-acee-1598940ff108,IP:0,UR
 	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
 	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:c09c3e51-c509-4cf3-8dc0-fcdaad49a6d3,B
+X-CID-META: VersionHash:a9d874c,CLOUDID:aa309302-eaf8-4c8c-94de-0bc39887e077,B
 	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
 	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
 	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
@@ -46,18 +46,18 @@ X-CID-BVR: 2,SSN|SDN
 X-CID-BAS: 2,SSN|SDN,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
 X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 5784821aad8811f0b33aeb1e7f16c2b6-20251020
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+X-UUID: 588f9082ad8811f0ae1e63ff8927bad3-20251020
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
 	(envelope-from <xiandong.wang@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1952008899; Mon, 20 Oct 2025 15:42:34 +0800
+	with ESMTP id 592775459; Mon, 20 Oct 2025 15:42:36 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
  mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 20 Oct 2025 15:42:28 +0800
+ 15.2.1748.26; Mon, 20 Oct 2025 15:42:30 +0800
 Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
  mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Mon, 20 Oct 2025 15:42:27 +0800
+ 15.2.1748.26 via Frontend Transport; Mon, 20 Oct 2025 15:42:29 +0800
 From: Xiandong Wang <xiandong.wang@mediatek.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
@@ -69,9 +69,9 @@ CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<sirius.wang@mediatek.com>, <vince-wl.liu@mediatek.com>,
 	<jh.hsu@mediatek.com>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
 	Xiandong Wang <xiandong.wang@mediatek.com>
-Subject: [PATCH v1 10/13] dt-bindings: soc: mediatek: add dsi yaml for MT8189
-Date: Mon, 20 Oct 2025 15:40:23 +0800
-Message-ID: <20251020074211.8942-11-xiandong.wang@mediatek.com>
+Subject: [PATCH v1 11/13] soc: mediatek: add mmsys support for MT8189
+Date: Mon, 20 Oct 2025 15:40:24 +0800
+Message-ID: <20251020074211.8942-12-xiandong.wang@mediatek.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20251020074211.8942-1-xiandong.wang@mediatek.com>
 References: <20251020074211.8942-1-xiandong.wang@mediatek.com>
@@ -84,25 +84,382 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add compatible string to support dsi for MT8189.
+Add driver data for MT8189 and add the routing table for each mmsys.
 
 Signed-off-by: Xiandong Wang <xiandong.wang@mediatek.com>
 ---
- .../devicetree/bindings/display/mediatek/mediatek,dsi.yaml       | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/mediatek/mt8189-mmsys.h    | 300 +++++++++++++++++++++++++
+ drivers/soc/mediatek/mtk-mmsys.c       |  12 +
+ include/linux/soc/mediatek/mtk-mmsys.h |   5 +
+ 3 files changed, 317 insertions(+)
+ create mode 100644 drivers/soc/mediatek/mt8189-mmsys.h
 
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.yaml
-index 27ffbccc2a08..ae23f192e1e0 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.yaml
-@@ -36,6 +36,7 @@ properties:
-           - const: mediatek,mt8173-dsi
-       - items:
-           - enum:
-+              - mediatek,mt8189-dsi
-               - mediatek,mt8195-dsi
-               - mediatek,mt8365-dsi
-           - const: mediatek,mt8183-dsi
+diff --git a/drivers/soc/mediatek/mt8189-mmsys.h b/drivers/soc/mediatek/mt8189-mmsys.h
+new file mode 100644
+index 000000000000..31378b6ee100
+--- /dev/null
++++ b/drivers/soc/mediatek/mt8189-mmsys.h
+@@ -0,0 +1,300 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2024 MediaTek Inc.
++ */
++
++#ifndef __SOC_MEDIATEK_MT8189_MMSYS_H
++#define __SOC_MEDIATEK_MT8189_MMSYS_H
++
++#include <linux/soc/mediatek/mtk-mmsys.h>
++
++#define MT8189_MMSYS_SW0_RST_B				0x190
++
++#define MT8189_MMSYS_GCE_EVENT_SEL			0x308
++#define MT8189_EVENT_GCE_EN					(BIT(0) | BIT(1))
++
++#define MT8189_DISP_OVL0_OUT0_MOUT_EN 0xc10
++	#define MT8189_MOUT_DISP_OVL0_TO_DISP_RSZ0 BIT(0)
++	#define MT8189_MOUT_DISP_OVL0_TO_DISP_RDMA0 BIT(1)
++	#define MT8189_MOUT_DISP_OVL0_TO_DISP_WDMA0 BIT(2)
++
++#define MT8189_DISP_OVL1_OUT0_MOUT_EN 0xc14
++	#define MT8189_MOUT_DISP_OVL1_TO_DISP_RSZ1 BIT(0)
++	#define MT8189_MOUT_DISP_OVL1_TO_DISP_RDMA1 BIT(1)
++	#define MT8189_MOUT_DISP_OVL1_TO_DISP_WDMA1 BIT(2)
++#define MT8189_DISP_OVL_OUT0_MOUT_MASK 0x7
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR0_MOUT_EN 0xc74
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR0_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR0_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR0_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR0_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR0_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR0_TO_COMP_OUT_CROSSBAR5 BIT(5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR1_MOUT_EN 0xc78
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_COMP_OUT_CROSSBAR5 BIT(5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR2_MOUT_EN 0xc7c
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR2_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR2_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR2_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR2_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR2_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR2_TO_COMP_OUT_CROSSBAR5 BIT(5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR3_MOUT_EN 0xc80
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_COMP_OUT_CROSSBAR5 BIT(5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR4_MOUT_EN 0xc84
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_COMP_OUT_CROSSBAR5 BIT(5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR5_MOUT_EN 0xc88
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR5_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR5_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR5_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR5_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR5_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR5_TO_COMP_OUT_CROSSBAR5 BIT(5)
++#define MT8189_OVL_PQ_OUT_CROSSBAR_MOUT_MASK 0x3f
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR0_SEL_IN 0xc8c
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR0_FROM_DISP_DITER0 (0)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR0_FROM_DISP_RDMA0_RSZ0_SOUT (1)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR0_FROM_DISP_OVL0_OUT0_MOUT (2)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR0_FROM_DISP_DITER1 (3)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR0_FROM_DISP_RDMA1_RSZ1_SOUT (4)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR0_FROM_DISP_OVL1_OUT0_MOUT (5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR1_SEL_IN 0xc90
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR1_FROM_DISP_DITER0 (0)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR1_FROM_DISP_RDMA0_RSZ0_SOUT (1)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR1_FROM_DISP_OVL0_OUT0_MOUT (2)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR1_FROM_DISP_DITER1 (3)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR1_FROM_DISP_RDMA1_RSZ1_SOUT (4)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR1_FROM_DISP_OVL1_OUT0_MOUT (5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR2_SEL_IN 0xc94
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR2_FROM_DISP_DITER0 (0)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR2_FROM_DISP_RDMA0_RSZ0_SOUT (1)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR2_FROM_DISP_OVL0_OUT0_MOUT (2)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR2_FROM_DISP_DITER1 (3)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR2_FROM_DISP_RDMA1_RSZ1_SOUT (4)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR2_FROM_DISP_OVL1_OUT0_MOUT (5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR3_SEL_IN 0xc98
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR3_FROM_DISP_DITER0 (0)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR3_FROM_DISP_RDMA0_RSZ0_SOUT (1)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR3_FROM_FROM_DISP_OVL0_OUT0_MOUT (2)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR3_FROM_DISP_DITER1 (3)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR3_FROM_DISP_RDMA1_RSZ1_SOUT (4)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR3_FROM_DISP_OVL1_OUT0_MOUT (5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR4_SEL_IN 0xc9c
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR4_FROM_DISP_DITER0 (0)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR4_FROM_DISP_RDMA0_RSZ0_SOUT (1)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR4_FROM_DISP_OVL0_OUT0_MOUT (2)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR4_FROM_DISP_DITER1 (3)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR4_FROM_DISP_RDMA1_RSZ1_SOUT (4)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR4_FROM_DISP_OVL1_OUT0_MOUT (5)
++
++#define MT8189_OVL_PQ_OUT_CROSSBAR5_SEL_IN 0xca0
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR5_FROM_DISP_DITER0 (0)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR5_FROM_DISP_RDMA0_RSZ0_SOUT (1)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR5_FROM_DISP_OVL0_OUT0_MOUT (2)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR5_FROM_DISP_DITER1 (3)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR5_FROM_DISP_RDMA1_RSZ1_SOUT (4)
++	#define MT8189_SEL_IN_OVL_PQ_OUT_CROSSBAR5_FROM_DISP_OVL1_OUT0_MOUT (5)
++
++#define MT8189_COMP_OUT_CROSSBAR0_MOUT_EN 0xd70
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR0_TO_DISP_DSI0 BIT(0)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR0_TO_DISP_DVO0 BIT(1)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR0_TO_DISP_DVO1 BIT(2)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR0_TO_DPI0 BIT(3)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR0_TO_DISP_WDMA0 BIT(4)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR0_TO_DISP_WDMA1 BIT(5)
++
++#define MT8189_COMP_OUT_CROSSBAR1_MOUT_EN 0xd74
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR1_TO_DISP_DSI0 BIT(0)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR1_TO_DISP_DVO0 BIT(1)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR1_TO_DISP_DVO1 BIT(2)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR1_TO_DPI0 BIT(3)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR1_TO_DISP_WDMA0 BIT(4)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR1_TO_DISP_WDMA1 BIT(5)
++
++#define MT8189_COMP_OUT_CROSSBAR2_MOUT_EN 0xd78
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR2_TO_DISP_DSI0 BIT(0)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR2_TO_DISP_DVO0 BIT(1)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR2_TO_DISP_DVO1 BIT(2)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR2_TO_DPI0 BIT(3)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR2_TO_DISP_WDMA0 BIT(4)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR2_TO_DISP_WDMA1 BIT(5)
++
++#define MT8189_COMP_OUT_CROSSBAR3_MOUT_EN 0xd7c
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR3_TO_DISP_DSI0 BIT(0)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR3_TO_DISP_DVO0 BIT(1)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR3_TO_DISP_DVO1 BIT(2)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR3_TO_DPI0 BIT(3)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR3_TO_DISP_WDMA0 BIT(4)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR3_TO_DISP_WDMA1 BIT(5)
++
++#define MT8189_COMP_OUT_CROSSBAR4_MOUT_EN 0xd80
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DISP_DSI0 BIT(0)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DISP_DVO0 BIT(1)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DISP_DVO1 BIT(2)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DPI0 BIT(3)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DISP_WDMA0 BIT(4)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DISP_WDMA1 BIT(5)
++
++#define MT8189_COMP_OUT_CROSSBAR5_MOUT_EN 0xd84
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_DSI0 BIT(0)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_DVO0 BIT(1)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_DVO1 BIT(2)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DPI0 BIT(3)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_WDMA0 BIT(4)
++	#define MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_WDMA1 BIT(5)
++
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_DISP_DSC_WRAP0_0 BIT(0)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_DISP_DSC_WRAP0_1 BIT(1)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_VPP_MERGE0_0 BIT(2)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_VPP_MERGE0_1  BIT(3)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_COMP_OUT_CROSSBAR4 BIT(4)
++	#define MT8189_MOUT_OVL_PQ_OUT_CROSSBAR3_TO_COMP_OUT_CROSSBAR5 BIT(5)
++#define MT8189_COMP_OUT_CROSSBAR_MOUT_MASK 0x3f
++
++#define MT8189_COMP_OUT_CROSSBAR0_SEL_IN 0xd88
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR0_FROM_DISP_DSC_WRAP0_0 (0)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR0_FROM_DISP_DSC_WRAP0_1 (1)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR0_FROM_VPP_MERGE0_0 (2)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR0_FROM_VPP_MERGE0_1 (3)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR0_FROM_OVL_PQ_OUT_CROSSBAR4 (4)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR0_FROM_OVL_PQ_OUT_CROSSBAR5 (5)
++
++#define MT8189_COMP_OUT_CROSSBAR1_SEL_IN 0xd8c
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR1_FROM_DISP_DSC_WRAP0_0 (0)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR1_FROM_DISP_DSC_WRAP0_1 (1)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR1_FROM_VPP_MERGE0_0 (2)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR1_FROM_VPP_MERGE0_1 (3)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR1_FROM_OVL_PQ_OUT_CROSSBAR4 (4)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR1_FROM_OVL_PQ_OUT_CROSSBAR5 (5)
++
++#define MT8189_COMP_OUT_CROSSBAR2_SEL_IN 0xd90
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR2_FROM_DISP_DSC_WRAP0_0 (0)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR2_FROM_DISP_DSC_WRAP0_1 (1)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR2_FROM_VPP_MERGE0_0 (2)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR2_FROM_VPP_MERGE0_1 (3)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR2_FROM_OVL_PQ_OUT_CROSSBAR4 (4)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR2_FROM_OVL_PQ_OUT_CROSSBAR5 (5)
++
++#define MT8189_COMP_OUT_CROSSBAR3_SEL_IN 0xd94
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR3_FROM_DISP_DSC_WRAP0_0 (0)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR3_FROM_DISP_DSC_WRAP0_1 (1)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR3_FROM_VPP_MERGE0_0 (2)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR3_FROM_VPP_MERGE0_1 (3)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR3_FROM_OVL_PQ_OUT_CROSSBAR4 (4)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR3_FROM_OVL_PQ_OUT_CROSSBAR5 (5)
++
++#define MT8189_COMP_OUT_CROSSBAR4_SEL_IN 0xd98
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR4_FROM_DISP_DSC_WRAP0_0 (0)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR4_FROM_DISP_DSC_WRAP0_1 (1)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR4_FROM_VPP_MERGE0_0 (2)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR4_FROM_VPP_MERGE0_1 (3)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR4_FROM_OVL_PQ_OUT_CROSSBAR4 (4)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR4_FROM_OVL_PQ_OUT_CROSSBAR5 (5)
++
++#define MT8189_COMP_OUT_CROSSBAR5_SEL_IN 0xd9c
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR5_FROM_DISP_DSC_WRAP0_0 (0)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR5_FROM_DISP_DSC_WRAP0_1 (1)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR5_FROM_VPP_MERGE0_0 (2)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR5_FROM_VPP_MERGE0_1 (3)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR5_FROM_OVL_PQ_OUT_CROSSBAR4 (4)
++	#define MT8189_SEL_IN_COMP_OUT_CROSSBAR5_FROM_OVL_PQ_OUT_CROSSBAR5 (5)
++
++#define MT8189_DISP_RDMA0_RSZ0_SOUT_SEL 0xe00
++	#define MT8189_SOUT_DISP_RDMA0_RSZ0_TO_OVL_PQ_OUT_CROSSBAR1 (0)
++	#define MT8189_SOUT_DISP_RDMA0_RSZ0_TO_DISP_COLOR0 (1)
++
++#define MT8189_DISP_RDMA0_SEL_IN 0xe04
++	#define MT8189_SEL_IN_DISP_RDMA0_FROM_DISP_RSZ0_MOUT (0)
++	#define MT8189_SEL_IN_DISP_RDMA0_FROM_DISP_OVL0_OUT0_MOUT (1)
++#define MT8189_DISP_RDMA_SEL_IN_MASK 0x1
++
++#define MT8189_DISP_RDMA1_RSZ1_SOUT_SEL 0xe08
++	#define MT8189_SOUT_DISP_RDMA1_RSZ1_TO_OVL_PQ_OUT_CROSSBAR4 (0)
++	#define MT8189_SOUT_DISP_RDMA1_RSZ1_TO_DISP_COLOR1 (1)
++
++#define MT8189_DISP_RDMA1_SEL_IN 0xe0c
++	#define MT8189_SEL_IN_DISP_RDMA1_FROM_DISP_RSZ1_MOUT (0)
++	#define MT8189_SEL_IN_DISP_RDMA1_FROM_DISP_OVL1_OUT0_MOUT (1)
++
++#define MT8189_DISP_OVL0_BGCLR_MOUT_EN 0xe24
++	#define MT8189_MOUT_OVL_TO_BLENDOUT BIT(0)
++	#define MT8189_MOUT_OVL_TO_BG BIT(1)
++
++#define MT8189_DISP_OVL1_BGCLR_MOUT_EN 0xe28
++#define MT8189_DISP_OVL_BGCLR_MOUT_MASK 0x3
++
++static const struct mtk_mmsys_routes mmsys_mt8189_routing_table[] = {
++	/* main path */
++	MMSYS_ROUTE(DDP_COMPONENT_OVL0, DDP_COMPONENT_RDMA0,
++		    MT8189_DISP_OVL0_BGCLR_MOUT_EN, MT8189_DISP_OVL_BGCLR_MOUT_MASK,
++		    MT8189_MOUT_OVL_TO_BLENDOUT),
++	MMSYS_ROUTE(DDP_COMPONENT_OVL0, DDP_COMPONENT_RDMA0,
++		    MT8189_DISP_OVL0_OUT0_MOUT_EN, MT8189_DISP_OVL_OUT0_MOUT_MASK,
++		    MT8189_MOUT_DISP_OVL0_TO_DISP_RDMA0),
++	MMSYS_ROUTE(DDP_COMPONENT_OVL0, DDP_COMPONENT_RDMA0,
++		    MT8189_DISP_RDMA0_SEL_IN, MT8189_DISP_RDMA_SEL_IN_MASK,
++		    MT8189_SEL_IN_DISP_RDMA0_FROM_DISP_OVL0_OUT0_MOUT),
++	MMSYS_ROUTE(DDP_COMPONENT_RDMA0, DDP_COMPONENT_COMP0_OUT_CB4,
++		    MT8189_DISP_RDMA0_RSZ0_SOUT_SEL, MT8189_OVL_PQ_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_SOUT_DISP_RDMA0_RSZ0_TO_OVL_PQ_OUT_CROSSBAR1),
++	MMSYS_ROUTE(DDP_COMPONENT_RDMA0, DDP_COMPONENT_COMP0_OUT_CB4,
++		    MT8189_OVL_PQ_OUT_CROSSBAR1_MOUT_EN, MT8189_OVL_PQ_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_MOUT_OVL_PQ_OUT_CROSSBAR1_TO_COMP_OUT_CROSSBAR4),
++	MMSYS_ROUTE(DDP_COMPONENT_COMP0_OUT_CB4, DDP_COMPONENT_DVO0,
++		    MT8189_COMP_OUT_CROSSBAR4_MOUT_EN, MT8189_COMP_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_MOUT_COMP_OUT_CROSSBAR4_TO_DISP_DVO0),
++	/* ext path */
++	MMSYS_ROUTE(DDP_COMPONENT_OVL1, DDP_COMPONENT_RDMA1,
++		    MT8189_DISP_OVL1_BGCLR_MOUT_EN, MT8189_DISP_OVL_BGCLR_MOUT_MASK,
++		    MT8189_MOUT_OVL_TO_BLENDOUT),
++	MMSYS_ROUTE(DDP_COMPONENT_OVL1, DDP_COMPONENT_RDMA1,
++		    MT8189_DISP_OVL1_OUT0_MOUT_EN, MT8189_DISP_OVL_OUT0_MOUT_MASK,
++		    MT8189_MOUT_DISP_OVL1_TO_DISP_RDMA1),
++	MMSYS_ROUTE(DDP_COMPONENT_OVL1, DDP_COMPONENT_RDMA1,
++		    MT8189_DISP_RDMA1_SEL_IN, MT8189_DISP_RDMA_SEL_IN_MASK,
++		    MT8189_SEL_IN_DISP_RDMA1_FROM_DISP_OVL1_OUT0_MOUT),
++	MMSYS_ROUTE(DDP_COMPONENT_RDMA1, DDP_COMPONENT_COMP0_OUT_CB5,
++		    MT8189_DISP_RDMA1_RSZ1_SOUT_SEL, MT8189_OVL_PQ_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_SOUT_DISP_RDMA1_RSZ1_TO_OVL_PQ_OUT_CROSSBAR4),
++	MMSYS_ROUTE(DDP_COMPONENT_RDMA1, DDP_COMPONENT_COMP0_OUT_CB5,
++		    MT8189_OVL_PQ_OUT_CROSSBAR4_MOUT_EN, MT8189_OVL_PQ_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_MOUT_OVL_PQ_OUT_CROSSBAR4_TO_COMP_OUT_CROSSBAR5),
++	MMSYS_ROUTE(DDP_COMPONENT_COMP0_OUT_CB5, DDP_COMPONENT_DVO1,
++		    MT8189_COMP_OUT_CROSSBAR5_MOUT_EN, MT8189_COMP_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_DVO1),
++	MMSYS_ROUTE(DDP_COMPONENT_COMP0_OUT_CB5, DDP_COMPONENT_DSI0,
++		    MT8189_COMP_OUT_CROSSBAR5_MOUT_EN, MT8189_COMP_OUT_CROSSBAR_MOUT_MASK,
++		    MT8189_MOUT_COMP_OUT_CROSSBAR5_TO_DISP_DSI0),
++};
++
++static const struct mtk_mmsys_default mmsys_mt8189_disp0_default_table[] = {
++	{MT8189_MMSYS_GCE_EVENT_SEL, MT8189_EVENT_GCE_EN, GENMASK(1, 0)},
++};
++
++#endif /* __SOC_MEDIATEK_MT8189_MMSYS_H */
+diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
+index 3b490b993549..da5de4061007 100644
+--- a/drivers/soc/mediatek/mtk-mmsys.c
++++ b/drivers/soc/mediatek/mtk-mmsys.c
+@@ -22,6 +22,7 @@
+ #include "mt8183-mmsys.h"
+ #include "mt8186-mmsys.h"
+ #include "mt8188-mmsys.h"
++#include "mt8189-mmsys.h"
+ #include "mt8192-mmsys.h"
+ #include "mt8195-mmsys.h"
+ #include "mt8196-mmsys.h"
+@@ -116,6 +117,16 @@ static const struct mtk_mmsys_driver_data mt8188_vppsys1_driver_data = {
+ 	.is_vppsys = true,
+ };
+ 
++static const struct mtk_mmsys_driver_data mt8189_mmsys_driver_data = {
++	.clk_driver = "clk-mt8189-mmsys",
++	.routes = mmsys_mt8189_routing_table,
++	.num_routes = ARRAY_SIZE(mmsys_mt8189_routing_table),
++	.def_config = mmsys_mt8189_disp0_default_table,
++	.num_def_config = ARRAY_SIZE(mmsys_mt8189_disp0_default_table),
++	.sw0_rst_offset = MT8189_MMSYS_SW0_RST_B,
++	.num_resets = 32,
++};
++
+ static const struct mtk_mmsys_driver_data mt8192_mmsys_driver_data = {
+ 	.clk_driver = "clk-mt8192-mm",
+ 	.routes = mmsys_mt8192_routing_table,
+@@ -668,6 +679,7 @@ static const struct of_device_id of_match_mtk_mmsys[] = {
+ 	{ .compatible = "mediatek,mt8188-vdosys1", .data = &mt8188_vdosys1_driver_data },
+ 	{ .compatible = "mediatek,mt8188-vppsys0", .data = &mt8188_vppsys0_driver_data },
+ 	{ .compatible = "mediatek,mt8188-vppsys1", .data = &mt8188_vppsys1_driver_data },
++	{ .compatible = "mediatek,mt8189-mmsys", .data = &mt8189_mmsys_driver_data },
+ 	{ .compatible = "mediatek,mt8192-mmsys", .data = &mt8192_mmsys_driver_data },
+ 	/* "mediatek,mt8195-mmsys" compatible is deprecated */
+ 	{ .compatible = "mediatek,mt8195-mmsys", .data = &mt8195_vdosys0_driver_data },
+diff --git a/include/linux/soc/mediatek/mtk-mmsys.h b/include/linux/soc/mediatek/mtk-mmsys.h
+index 4a0b10567581..7d63b9f0899f 100644
+--- a/include/linux/soc/mediatek/mtk-mmsys.h
++++ b/include/linux/soc/mediatek/mtk-mmsys.h
+@@ -49,6 +49,7 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_DSI2,
+ 	DDP_COMPONENT_DSI3,
+ 	DDP_COMPONENT_DVO0,
++	DDP_COMPONENT_DVO1,
+ 	DDP_COMPONENT_ETHDR_MIXER,
+ 	DDP_COMPONENT_GAMMA,
+ 	DDP_COMPONENT_MDP_RDMA0,
+@@ -133,6 +134,10 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_UFOE,
+ 	DDP_COMPONENT_WDMA0,
+ 	DDP_COMPONENT_WDMA1,
++	DDP_COMPONENT_RSZ0,
++	DDP_COMPONENT_RSZ1,
++	DDP_COMPONENT_COMP0_OUT_CB4,
++	DDP_COMPONENT_COMP0_OUT_CB5,
+ 	DDP_COMPONENT_ID_MAX,
+ };
+ 
 -- 
 2.46.0
 
