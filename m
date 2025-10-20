@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-859899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548A1BEEEC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C00BEEECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E67E4E3D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 00:05:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 708184E24B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 00:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BE1B640;
-	Mon, 20 Oct 2025 00:05:44 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0138F5B;
+	Mon, 20 Oct 2025 00:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HNTVivU6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A27184E;
-	Mon, 20 Oct 2025 00:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543B48F40;
+	Mon, 20 Oct 2025 00:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760918744; cv=none; b=nC+FDJbSGha+89GMz9tPM9eyL83LWbZVE2fXAlPge2IEYgTAnld1H6/bci64syIkNv0AXYGcO3h/NjuJfz1Y1Rh31HxTSPgnUrMc341VI4FKDxx6X4PpSh5J98p/ajlP03e7q2X0Stv+XcyK7ou39Jg85qjrWnT5ZrXzgGCXvKs=
+	t=1760918866; cv=none; b=DqfHuU3uG/ek+Q2HRh8Vy6rDrstGZooo1JD82BBH7kV98r4Sy0p6xt48vfaCwOsHMxKQRg521mAXa1Kgd2aAnW0nn7jVBFmkUzQZgNDRSFfTYiIhzLQlHKanvbkR0Wb5HQ7REixXu1b2/Ckm0orlh1JxeLMIXesQAesgXueRET4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760918744; c=relaxed/simple;
-	bh=hJLTcllLmRKGjPAn9fdLk6a7sjgVkoZ3O9xsU1vvFno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVJIQTrBKzHY/SlbIuYUVjlD++Vz8peMg/pAIchJhPO+pb/QryrYLKevDpNy/AkMcVHEtYNCbwLSpOrH8M6b91Ah+A2hIMe3dzVsTEs4ztCrnZZpdxJK0/asIfCfyWX40LUzrOWr/xicghD6T+aX1XN2VwagHUvsA1TzTlOxtqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.147.23])
+	s=arc-20240116; t=1760918866; c=relaxed/simple;
+	bh=7757hFLmfs1eUjpHwbfvEqjbGCpElPRXNm+VdQ9zrlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HSLmoyxtzViVN7cygx6Ox2CRMdKP36H7O/ZR7Fz9kD9WIxAkiIV33S0m2dIAR/erQJ2IuswSpZbHE47rBcwlAJVoWqdJIXyACuT/6e2uJrckSd6a2ywNcPI2wLiU5X/hvUhJ/rIaVW40Y4nspGPoHSbVJ6km0/S8gy8LHfWHZTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HNTVivU6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1760918861;
+	bh=HDzk9vebfEsRyA2C/HsZNPBRsdMlwCiqqbK8Z0ywOAc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HNTVivU6epRb5eK4clqI/i8w7YGHEyHeRfM19gC6/gT6rSSQyy0X7akFsEKyKGewk
+	 GvpvMppVIubrEWdd61w1N/nXSB9wIRnZKqlt5oo5UlWfz7H723JxsmissKKnfK8NeA
+	 vDFKGoE+Ol0P1yG3vZ3idWQNsdtou8WXb5JPVG9Qkb45Axa+HlCMJjNij2Ns+Ke1hH
+	 F4RLNPHH/5ysKbaSowy6rDv6/toHv08n1f/PBSqSYm6RjCuDwGZY9pScbQcsfjbMo7
+	 UZ/eyk0JlwD5Q/de80IQ7dj3hppkZ9NX6JQ122Lbi6zFL+Eac5BLoyzySgwG6cKHyt
+	 od+yIn3C+cDcA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id B60C6340F21;
-	Mon, 20 Oct 2025 00:05:41 +0000 (UTC)
-Date: Mon, 20 Oct 2025 08:05:37 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Emil Renner Berthing <emil.renner.berthing@gmail.com>
-Cc: Aurelien Jarno <aurelien@aurel32.net>, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"open list:RISC-V ARCHITECTURE:Keyword:riscv" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit" <spacemit@lists.linux.dev>,
-	"open list:SYSTEM RESET/SHUTDOWN DRIVERS" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] driver: reset: spacemit-p1: add driver for
- poweroff/reboot
-Message-ID: <20251020000537-GYC1506524@gentoo.org>
-References: <20251019191519.3898095-1-aurelien@aurel32.net>
- <20251019191519.3898095-2-aurelien@aurel32.net>
- <CANBLGczi3GeaC4aWECV8NS-zqSHgRa-5onynz9fGsZeN8qgysg@mail.gmail.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqbNC2kr2z4w2J;
+	Mon, 20 Oct 2025 11:07:39 +1100 (AEDT)
+Date: Mon, 20 Oct 2025 11:07:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Elena Reshetova
+ <elena.reshetova@intel.com>, "Naveen N Rao (AMD)" <naveen@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the kvm-x86 tree with the tip tree
+Message-ID: <20251020110738.4e53c34a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANBLGczi3GeaC4aWECV8NS-zqSHgRa-5onynz9fGsZeN8qgysg@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/YMLJJi826km_DzMakT56p0a";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Aurelien, 
+--Sig_/YMLJJi826km_DzMakT56p0a
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 22:53 Sun 19 Oct     , Emil Renner Berthing wrote:
-> On Sun, 19 Oct 2025 at 22:34, Aurelien Jarno <aurelien@aurel32.net> wrote:
-> >
-> > This driver implements poweroff/reboot support for the SpacemiT P1 PMIC
-> > chip, which is commonly paired with the SpacemiT K1 SoC.
-> >
-> > The SpacemiT P1 support is implemented as a MFD driver, so the access is
-> > done directly through the regmap interface. Reboot or poweroff is
-> > triggered by setting a specific bit in a control register, which is
-> > automatically cleared by the hardware afterwards.
-> >
-> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > Acked-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > ---
-> > v2:
-> >  - Rebase onto v6.18-rc1
-> >  - Use dev_err_probe() to simplify the code
-> >  - Fix indentation of patch 1
-> >  - Collect Acked-by and Tested-by
-> >
-> >  drivers/power/reset/Kconfig              |  9 +++
-> >  drivers/power/reset/Makefile             |  1 +
-> >  drivers/power/reset/spacemit-p1-reboot.c | 88 ++++++++++++++++++++++++
-> >  3 files changed, 98 insertions(+)
-> >  create mode 100644 drivers/power/reset/spacemit-p1-reboot.c
-> >
-> > diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> > index 8248895ca9038..063202923d95d 100644
-> > --- a/drivers/power/reset/Kconfig
-> > +++ b/drivers/power/reset/Kconfig
-> > @@ -283,6 +283,15 @@ config POWER_RESET_KEYSTONE
-> >         help
-> >           Reboot support for the KEYSTONE SoCs.
-> >
-> > +config POWER_RESET_SPACEMIT_P1
-> > +       bool "SpacemiT P1 poweroff and reset driver"
-> 
-> The driver code looks to be written to work as a module, but here it
-> says "bool" not "tristate".
-> 
-> > +       depends on ARCH_SPACEMIT || COMPILE_TEST
-> > +       select MFD_SPACEMIT_P1
-> > +       default ARCH_SPACEMIT
-> 
-> If it does work as a module I'd prefer "default m" here.
-> 
-I second this, you can add my RoB if with it fixed
+Hi all,
 
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
--- 
-Yixun Lan (dlan)
+  arch/x86/include/asm/cpufeatures.h
+
+between commit:
+
+  6ffdb49101f0 ("x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature fl=
+ag")
+
+from the tip tree and commit:
+
+  5d0316e25def ("x86/cpufeatures: Add X86_FEATURE_X2AVIC_EXT")
+
+from the kvm-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/include/asm/cpufeatures.h
+index 592909dbe0a8,7129eb44adad..000000000000
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@@ -502,7 -500,7 +503,8 @@@
+  #define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-u=
+serspace, see VMSCAPE bug */
+  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring C=
+ounters */
+  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instruction=
+s */
+ -#define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for =
+4k vCPUs */
+ +#define X86_FEATURE_SGX_EUPDATESVN	(21*32+17) /* Support for ENCLS[EUPDAT=
+ESVN] instruction */
+++#define X86_FEATURE_X2AVIC_EXT		(21*32+18) /* AMD SVM x2AVIC support for =
+4k vCPUs */
+ =20
+  /*
+   * BUG word(s)
+
+--Sig_/YMLJJi826km_DzMakT56p0a
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1fUoACgkQAVBC80lX
+0GzIJQgAlle30wZrJz+o/iT7IKaBMsqI2xdRStaWYw+o4iFLRo+lkhv3UCiIWfk6
+L/Mbf68Of1Wctvgm2DUaK+/ugdUaCyI5eHyPUvLxNkljwH8XD4IzY9X9E2qgoWUZ
+Ve/Xx9ui5oSILTV6eTXv/7YUuvovhKR9qvp5+gv45fMnv9ihx8l4uUL9AIb295Dp
+bDchh3rVDM0nUvBPbPXHG/uY4KdKQH7+LmGcaWR9MHTHQE1GReoLm3B07X0Tic0d
+h5Au36GVtr1sge3076klMcHhPx6DodmIcSm4ZvfQd74ApNLwKO5ztBmhr58jdmw8
+7Vt5hpAAj6FFZwMHsoJpwo3hT2fW/w==
+=bVyY
+-----END PGP SIGNATURE-----
+
+--Sig_/YMLJJi826km_DzMakT56p0a--
 
