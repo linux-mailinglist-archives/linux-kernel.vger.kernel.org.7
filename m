@@ -1,175 +1,298 @@
-Return-Path: <linux-kernel+bounces-861636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5099BF33C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED02BF33D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C6B18C2FDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:36:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D87C64FBE69
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B0C2DE70B;
-	Mon, 20 Oct 2025 19:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903E1284B26;
+	Mon, 20 Oct 2025 19:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSK81WXg"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DwXq0GTw"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010008.outbound.protection.outlook.com [52.101.56.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD592D7DE8
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988970; cv=none; b=FsrIKbUNpkXY1N01Dnki6ZOm0oX9LrJ4Jz3eEjjW+RSOtmpawxYtUgmu2Ey/e8OEVsrsiSfWkYBCKJDQKX/esGPq6CeBY+A2dZ0cKK2lV+au3aZZSGX3Kn5lHaKLtJ2yKAJkie8Jr5vYtaE4w9/B/EEN8gJNy9qZWZMXv4c68do=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988970; c=relaxed/simple;
-	bh=1badgIiNTAPNpkcfawu2PFSrOUn1RLnP9k+lZMeoVE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TfBTi0GSrIdPkAMthZZLUearE2Qw5kjLd0ULx9+qk0Glw2FQ/+UrM+VeExJ6TuSa2Y98f4xykXGilb3sZkXlxFkIXECF8yIOiK7AZL8kPs9SOd1bnaMiZe4FN+rxYEwBP9UJSYSfiNLeyhJEQIg4AXpG0zqDR1rB1SGwqoiYjIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSK81WXg; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57f1b88354eso5355313e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760988966; x=1761593766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2EQCZF24uyYd+K66ud5iMJvTJa8EJgzNd81qWfpbtzM=;
-        b=WSK81WXgktshiOyYie0L2ydU9rH/CPH8uS6owYfRq+C11GxEnbl0E1xlnqDYCPf4wo
-         de3RB9HIwnay+QRTrVoGCZn8S4QgLLZ6bsOHVyUgq7exSAcBGGDomC27GgnRCrks51uj
-         VaAqZ1ikuYKYUro8o4b+/4RBUdR0Sjsveq8CjWrMrHg6kEr/30mkBZGDaEUHERB5gmlg
-         D3Z/KuW1YSjA98CVchCW5wYcE4ZlGPTpUy1lNOlVYfDsPj54ccHQV209/vXll/BtG4mQ
-         zwyWrkIDMgt6IMaal2oEj5avaA8ReU7z5eIyS27zW/8GNCctkepd1KSwFL5pBauRo3Ud
-         15hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760988966; x=1761593766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2EQCZF24uyYd+K66ud5iMJvTJa8EJgzNd81qWfpbtzM=;
-        b=ERnG9WYpStsbvI4dHbdyNeXAWCDHN8NSG00RkGbZSZ4XrvRWJ3f4MbKL4mWKxHxbbA
-         UWgNPK2GD7W29S/xuDkwRcc3bC4GNs/6weNJSyLlFF+QAAhszgeeOxS4nfiaWYWQmQmU
-         2O36d6lBCcoGbxPAeY7/m0EwneHMrwjXkjjXJtM8K479N7ol3WwzsDWVRCnTTmPRYMC0
-         UtDrmAJnaBWUTJ67vWYlFKLVmVb+z3OslQzqyzps0b9WPpFSZ5ctqxwuBUVwS3xFsH0F
-         DX8nosqQjrX529tD2luXU5B+d64/zvKZDnSSiCVl73lPXvymIH8AxC2D+h5WML4XSL/d
-         a5cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKntsU7k0IvwItSHYo2okzabjDGa/mScZ7oLAQWdvXuPcpaiMfdRbXQ502k32CTxGRom57ixENoknlGpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2HUoUuWztnwSJHhvkUTzn5ShiSYfuxdUrAnNhvEBe1e5xzrTd
-	2BrZSPYaUJndLN0zPiJYP9D7F2T7Vy0QLLfsyQCK3FmpGjyxjoNsTw+n6tfW2GaE6vFR4OV6iIk
-	69/3vuzA3BeGDSxaIESWtlJF/MNNnGYY=
-X-Gm-Gg: ASbGncvgOzkLxi8s2qfF15wJZZgu96zWZn4yv5g7bmYVvok8CfTqxq60zPn5otAToFU
-	cMl1DgJ7lQzhgmu/EiaKH68CvJmO0aXKy+j/3nwtUVemePAdb5kyXZn1yhvKsDZCVhIV9rB+EL/
-	UpHlE0kiZu4WhgGOJMbkHeT4ynzeVH9V3LXQAhN+r0Yh0q560grdlT1+qsFkKOLLAtpkr2r1m63
-	+o6b7xSiQV/S3Sxg59QEeZy9q9W6zfhNm4DG01XzacwO7jFuu+5ju9mU1D9TAusEBb0uLCd/gTM
-	X9r9Mjrh5bZkKnmCQA==
-X-Google-Smtp-Source: AGHT+IGJf1d7OGOI2bEsOsRKUAzUwqlW11kyu2gHkb5eSm8a2k5NOCXXslI+k5uFUiRwdMzagVbTM2EzHHMJP+MrdtU=
-X-Received: by 2002:a05:6512:3b0c:b0:57a:310:66a8 with SMTP id
- 2adb3069b0e04-591d85773ffmr4241105e87.55.1760988965463; Mon, 20 Oct 2025
- 12:36:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB573219A86;
+	Mon, 20 Oct 2025 19:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760989006; cv=fail; b=p7qTX/LcZKMjG1rMpPA8zeLqyfhDs7SYoWXh5WSkhcSKPt+QgvKKZYEOTptue3V6GItW97OXblPq1Bh3GOdA5GFoDzjW+vfze+Hi4M1W4vxxxSfRa47P21vM56dnO563aTiDV1QY/NtUK27q1aj133HIxJCq/eMc4hjVL4A/Ac4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760989006; c=relaxed/simple;
+	bh=fOvqaJB+AIHLRCHyWlLVklncnBXGaAjIWL9jrVwa1NA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FGdqSM21sLUmVDNNrcIPdlO5Ga4PvBG3um9y0D7FMLm4V1D9QItMulsBtV6EsYpPQdge61MptH4lvphaxv3p7xTiak6eyLFLSHnHTEARdisQIhNzHVz8UowHzbVeLfQi3dL3MKkA6GUwaAVMLbI9ctso4/3DfkUzBXhNBlFM1ro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DwXq0GTw; arc=fail smtp.client-ip=52.101.56.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ucMHwx2W+WEAZhwp36Uo99S1N7Z6lI+QR/rDvPK1ajk5WsqSp4dAmJGwdBcwhHZN0Ta7e5nEvnm985wvQBKfb/Gh3+kJSAIysJg2iBQ6NIkKgMWyQOvco/BiFKcR7bjJSfnje9uLoFFKos8MGOhJvi0VvxHkQV/EINJAfqFBx5V5ce31611xPPAIeNT6jcpKYWzxH0jgdTJGBG5MdFYuf713ha8+Db9xIIlck4+nISarVCgFV2pP/EwkuY6k0sHDddyAIULL2XUHme0TTKO9+TH8AnOqsYm8NxggjLiBy/CPSkxpWVW35vcJmNcUiicmaMXCeKV4QG6f+5NNg4adpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9C3MhekIpNCbfM4PsV+ye4UBq6SCZeNLGbT37g19wjc=;
+ b=HXIGh9EmQBXGN5JSx/ZRgOHIg0Mm8uoDUJ2WFGDyAO93F92fI2cRxx/7urSCws1Iu36scgH403tYA9GXRJ2DdLOjhJm948BZBDfEZ0cP+esjtIxJWFt3V24E7tySwikIufGiCFvUtCPXEMmEGZ0cfa7sTggyOn8OZmpcYCGDadlN9qWXyq1se6mzNO/v3ShI4PF3ZzEjS9HsrHhQLPvm97swdXdlTVZ/dlFUU8Wv5lO32LEdlarT56Dn/lQlSikWeEFQjmZ/nynb/aLPP9aDB1SHLDjdIYSvQzPxXEAs9xan5pWYSm6SLf6CyV++LDeHA/lxnEa21EDcOf+GJXx/DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9C3MhekIpNCbfM4PsV+ye4UBq6SCZeNLGbT37g19wjc=;
+ b=DwXq0GTwrCsPD76/YPB6X8HsWM5dSYs25tlDFJwg/fgfdAwYbrcV1AaBRddTIsVrcaHdSdTIOh5gzEFMoREbIxGlpikABijaqbJAmLOoj8SMgT/V0I4nAHRIDm2/n86lSEdvbVp9/sdVEpJG+5azWyGM7krwr9BJRSw8oc6FSU7K2p+Uj+TAogP823bwOEJzslWnk/MR2MsmWOmZfEKkAU32Z1La0MymFdGnU2wpnjDvE8Bc8A8qhis5021bjepasqPfq3KyIx6JkfU7HnDyWfKe8AhrVBlLYg7OT7nsCx0R8HwX1Ki0yZj1s8gOLGS/26SMKI7rbNb6zSMoAA56gA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by LV9PR12MB9806.namprd12.prod.outlook.com (2603:10b6:408:2ea::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 19:36:41 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 19:36:40 +0000
+Message-ID: <506e84b8-1a99-4548-b2c6-b502d790f4e1@nvidia.com>
+Date: Mon, 20 Oct 2025 12:36:33 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] docs: gpu: nova-core: Document the PRAMIN aperture
+ mechanism
+To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
+ Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <20251020185539.49986-5-joelagnelf@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20251020185539.49986-5-joelagnelf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0200.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::25) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
-In-Reply-To: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 20 Oct 2025 14:35:54 -0500
-X-Gm-Features: AS18NWDrjImObZLOKx397rQyb3hlXNjedT2Ykb-TqO4MVmOUlln0IpbJiO75nUI
-Message-ID: <CALHNRZ_KcJmoUp68a1NZau_KAMRczNbtiQ3cbXi7ET-vO=9uhw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable NVDEC and NVENC on Tegra210
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|LV9PR12MB9806:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01fc02cd-d702-4054-5dbd-08de100ffde7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TzdhS2l1SzF5K0U5aU1CUHBjV1JsU2ZQWlNtTFVDWjB1ZjM5ZTl1NTVPRUp6?=
+ =?utf-8?B?dG5pbG5HRGJ0QytvMkdmTFkveFFTYjYwOE5XSE5zTEhpOWpPWm9IT0FibVNz?=
+ =?utf-8?B?WjVNVXpFTm56aDVoamtTMmpYRUtmRTdwRnNFdlZMbG9LQURjclgxK3NsYVpR?=
+ =?utf-8?B?SlBScHJsMkl2MkczbTQzR2psWlZvZGJ3clJXVytmek9FQ09vY09TMU42c3Zx?=
+ =?utf-8?B?ZU9QNzlBZ3MvOEpkNmNNeXJVbGNTN3RCb0lyYmJkTmRjaDdSSXkzcGl1Y0tr?=
+ =?utf-8?B?Nys3aTdpc2VpYnB6aGkwUkpZbVRtdDJTbFcrM0RTU2NXR2psSUdKSWxTV1Rv?=
+ =?utf-8?B?amZZY25aWThoVy9NNEdWSFR4c1RvKzBvTnMvMTRVejdrOWVkYzBsakFtVlhZ?=
+ =?utf-8?B?MHNqZkI5cklLdjRMMGF5NCtVYmdnVEVjSTViREhHSUhvYXlnSUJYd0hJUU5j?=
+ =?utf-8?B?VzZ3ZFZKNjkvNG0xN3JoeWVlQkRJMWFCeHE4UlpTWjA4cm13SGNrcXBwY1ZV?=
+ =?utf-8?B?bzFQcXY1UkU3UWw2QWp2OGN6UGtKdCtQeDNOR3JGdXFCUHIxVENSNitZaC9L?=
+ =?utf-8?B?cDk0V0tPaXlOMzd4L001UW05Zm9hLzRMZjc3bkRuTWhWUVVJTm9aTlRBcjhh?=
+ =?utf-8?B?N0Q2ZzdheUdCVHBLMEhsRWt5c3h4bi95UlUzbUwxY3RhRUZSWUNpV3FaWHMv?=
+ =?utf-8?B?aFpKeXZnTVNZY0N4QmJ5N2xsYlJpS0ZVNngyUVBQb1p5UkZTMGw0c1BMRnZ2?=
+ =?utf-8?B?VE1FWlhBTG4yU2U4MUIxdEt3cklLOTB1MlI5OVJOMXk3WXpybllzMFJEQXdU?=
+ =?utf-8?B?TlY0QzRId0Vpd2IyeUNWZ3Zsa05jWHI3ZWplMVZhTTlhL1JMSGpEeUxVNXlw?=
+ =?utf-8?B?OC8rYXpBOTNBMVB2MU14cVo2VGNNZkhEWWdWVWxvdkpISS9IdytVNklrNEli?=
+ =?utf-8?B?aktZZ09OZ0dzUDZuSEZyNVJEMk5PTjdWdDJxdUZwTlNWR1owUVIyQTQzVmpD?=
+ =?utf-8?B?bndNQmdMa2ZyMlVrSW5adW9uVmhxUnBiTFVVMUkxRWpXZzYveW5kanlrVEF5?=
+ =?utf-8?B?WnBvdXVDdHl0VVFPbmhaMkRReTh2Tm1wRDJjNTc2RVY3MWxpci91cFExY1l1?=
+ =?utf-8?B?WHpQcjY4Si9OUkE5a3lrVzdZUGdpeTdUUWg3ejZGSWE5eFc1WUQ0R3dNWjJC?=
+ =?utf-8?B?K1c0R1dyV21JMVYrQlZtLy9FbUF5Qk5Jdk9ST0UzZDEya0dRMytYWGNjdHc1?=
+ =?utf-8?B?MnFRQzIzcnhpM2NtUDhVYmNFcGdrZ2c0M0c1dzZzZThVWlkwSFdFdzZmZEdK?=
+ =?utf-8?B?cjZ5bHJ4RWtyemFXMnNRRTMwRFQ2Y2FpS1RrZjdWL0FVQ3BpcG9ZRW1Oanc5?=
+ =?utf-8?B?ZVBVNy9xRGJmQkpEb2lDd0JFaFRrZ0lGbkkxWEN6Q291NkcrU2w2WkdEVW9Q?=
+ =?utf-8?B?Wmw5Y3ppY09HZGdIYjA0cklQNXlidStFNFQvUVRSYmsvUmNiWE12ZGdmY0FU?=
+ =?utf-8?B?ZGpsdlhUYVlpZktzOGZYenYvVzR1b3A4QWZITWxUZ28wSkdVbVo0WVRrMlRz?=
+ =?utf-8?B?bFZUcjNIUG1QMkJZZWF6QzRWTlc4OG1LRzNleFRxWnh2NXU4c0pwQ0F6TjJB?=
+ =?utf-8?B?Wnk0amN4Uk5PUmx1Y1c0cUhoZURGa3JpNXlVanFNSGVBR3BNMDhWVGplazhq?=
+ =?utf-8?B?SzlkN3Jzem0vWGpab2V6dmhDUmI0ZnB4VVZzZERVNlhpbWExVmxFTytxQXJJ?=
+ =?utf-8?B?a0I1K3VrZmhGKzc1RURRU3F3c1ZWdy9taWN3ZjJrUkREQnNDTXpPcFVQSDZP?=
+ =?utf-8?B?aFZhUGJSNTI5M044S0haWTcyeFhSVjVvRVFNZ1hQeGZidXlINEJWT25tVHB3?=
+ =?utf-8?B?d3VYNUhNM2F2VHY4R3F0bWdqT05VLzVFTUswbURzQktpdk5xMGg0Ny9TWUNa?=
+ =?utf-8?Q?Z77s02IYh9JHtt2emLrpZGcK1zgRHauV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bHVXQUcxeUxlS0Z3WWtRQVpDVWV2b283dXcyNWc0SHFrVEcvOXppMDNkbk5t?=
+ =?utf-8?B?RCt3aDgxMDRndHNrN0k4eW5uL0hGbUMzZm1BNVVKWVV0dmkrYmtWMTBocy9J?=
+ =?utf-8?B?anJDNEROeGsrVk9pZkRCRmFDajNNYkN0MDkyWm96eEVvQW42Z0UrSHFNdXhS?=
+ =?utf-8?B?R0w5dE5lKzFsOUZSbzZCM1Rka2ZSTFJ5UmtIN0tEWXF5SzhpVzJWZW9oK2ww?=
+ =?utf-8?B?MEJOcElEbVNqS25Mb1hmVThRKzFxUUZ2d1c2SFBkU3IrSWt3YjdGVWFWZkZU?=
+ =?utf-8?B?M2VTcWpDdUtFeGNWTU1Qclloc1U3aGpGTUJDdDBoc05nbEtBVEdDOUhNQXov?=
+ =?utf-8?B?RHNPZjRSQ3pUV0RnZkZkKzRYZlp6RmtQK2hJOGpXVk9jVS9KOStKZ0VGeWtQ?=
+ =?utf-8?B?ZWVER3dZUmgxNjdWamhRVTZsb1dQTm5ydC8zdE5JV09tK2pocGxhTEJkcGUx?=
+ =?utf-8?B?R1dGVVZzdiszTlpzRnJWazNZU2RRaC9WYU45dk9taU9pSnZSKzNVc3NQSnR6?=
+ =?utf-8?B?L0ZiSXRzMXd2ZEM2Yk5SejBYaGdHd2NZR2NDcHFHNVNmd05nci9rRHkwRXVK?=
+ =?utf-8?B?WFZyTGoyeXdqaU1NandyKzNuemhvK3pheEdIU2RwYWZCWEEzYkxEQmwya1Ev?=
+ =?utf-8?B?djN0RE1URFhIWlFsMGI2cjVHa2xudHk0M1hDMFB0SW1WVUNSbUd5Sks2VHNz?=
+ =?utf-8?B?V3J6cWlJZUYwNmlGaTJQakpYNG9OQ3pBcloyZEcyZzg4RVlCQ2Y2eUVWMUFy?=
+ =?utf-8?B?aHZNbUdtRkJreGJuOTdGbGt6ajZ1Z21OMFNUSlpHRjAvTDdSOGllUG9vNDFC?=
+ =?utf-8?B?cFE2ZUwra2I3UE13YUNuUGFDMEoxaTBzUnQxTVVGY21BTHhicVhCNG9jSlVy?=
+ =?utf-8?B?UTR2U2svVGF5WXI1VWgzUmZNamJ0TkVvSjY5ak5PR2ZBY0xPWDZzYlJoS212?=
+ =?utf-8?B?MEM0RGlmSFREZm0wenNGb3hLd3htc2lGdTdrSTVqUUt1MnFjWGlLVEFzOEpD?=
+ =?utf-8?B?bjYvdFFIWU0wRkI1SjhzTTlhVHFTZE9xTWRPRU1wMDVJTnJETFRDNUFCWjYr?=
+ =?utf-8?B?UWFsQ0NpUTQ4RVpJNHVYRDBxcTRzenZpdVF3RTZmcG40Y3F3Uld4WmVqaXFj?=
+ =?utf-8?B?Smd6ODJVSlJsV3Nnb3dSd2EzUUxrQSs5RFVIM1BVU3NINWRCTVcwNkFWTEJH?=
+ =?utf-8?B?Q3cvZUI5bGZFZzJrVHJIOTlzNy84SldYNVNoQVJkYmNNWk9tQldja1A3ekZa?=
+ =?utf-8?B?a0VrVzNIT3d5aHJhRlU1THZPUzE5MnNRRlBuMWpZUSs5alZkUERHVDVZdzlJ?=
+ =?utf-8?B?S0hiblpONWw3SXlKMmZSNDdWVFVndjJZak9CcmttVVpiamFxME5QcldrNVV1?=
+ =?utf-8?B?Vy95enpxSUxzTmdrZVUxNlRjUHpRYVl4K2JNU3MyRDZxQ0YxMG5lN3VvNW5Y?=
+ =?utf-8?B?K1ZPM2FRMkFjTmNPRjVjVXBQRlZBR1p3bUdHSlJJNDA2dFV1NUdvMEFRNzRv?=
+ =?utf-8?B?eFYwV25BWWZDYTZrY1pIVUtpbHBBSG5pL1RvWFdoR2hOb0RSMHZXak1VVHp2?=
+ =?utf-8?B?MzJPVURZNld5aGpjWld1UTJ0VmhTUEZaS04zV2lQU25pVmVzMkxneGR0aGFl?=
+ =?utf-8?B?ekJvLzc0K0o4WWFMVDBqeFZ3Q3A1MFdxT3VINlRkTGpONzVzSDRSTCtrUWxs?=
+ =?utf-8?B?OVhZUlRET3dmV0M4MGxzajExWldFZGgzcDFJMi9UNklJMlh1YnR6WC9zL0NI?=
+ =?utf-8?B?Q3MrQjRFQnVDVnlTeUZLUUVhVkZkU3hhYVhoSzZYMFY2eWpVY01HUHE5Zkpi?=
+ =?utf-8?B?dE5FaFphTXdaUlJnanFBTGRYTmxIRFdVM0tuUVJGa2xzSGFmeVJaU3V2Qm5M?=
+ =?utf-8?B?NTV4bHdiQWpwVHdRQ2N3RktrR0w5OU5yYmtGUzV0L0I5b05ySDhDRXdSY2Ir?=
+ =?utf-8?B?ZDZDMDByQ2J6RGsyQnU0YkdoQjdoUmdMTS8yblNlL0ZqWUFRMEJnUlJWSms2?=
+ =?utf-8?B?U0N6dFVSTGxIVHhHenIvWitrb0pZV2Z4UzVNTHhxd3RQV24vV0JCSEEvdlhR?=
+ =?utf-8?B?VFdmejRrcDExVGtIRjkwaXpad2ZiZUFoQjZKTmRVRFE2YkVjbXNmR3phZ3RY?=
+ =?utf-8?Q?w9TseU1oDbWJk/istBmgpGv1y?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01fc02cd-d702-4054-5dbd-08de100ffde7
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 19:36:40.4908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5pcphA/n5Eb7O9xLdpGtJLLm4VhtrdaOPhk7Ui0amQ0FpulemWpZn2IU6ZFhVtRe0u+RRcieE+ezGAxvJPefQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9806
 
-On Sat, Aug 16, 2025 at 1:03=E2=80=AFAM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> The other engines are already enabled, finish filling out the media
-> engine nodes and power domains.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 28 ++++++++++++++++++++++++++=
---
->  1 file changed, 26 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra210.dtsi
-> index 402b0ede1472af625d9d9e811f5af306d436cc98..80d7571d0350205b080bcf48b=
-8b8e2c1b93227f2 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -277,13 +277,25 @@ dsib: dsi@54400000 {
->                 nvdec@54480000 {
->                         compatible =3D "nvidia,tegra210-nvdec";
->                         reg =3D <0x0 0x54480000 0x0 0x00040000>;
-> -                       status =3D "disabled";
-> +                       clocks =3D <&tegra_car TEGRA210_CLK_NVDEC>;
-> +                       clock-names =3D "nvdec";
-> +                       resets =3D <&tegra_car 194>;
-> +                       reset-names =3D "nvdec";
+On 10/20/25 11:55 AM, Joel Fernandes wrote:
+...> +Logically, the PRAMIN aperture mechanism is implemented by the GPU's PBUS (PCIe Bus Controller Unit)
+> +and provides a CPU-accessible window into VRAM through the PCIe interface::
 > +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_NVDEC>;
-> +                       power-domains =3D <&pd_nvdec>;
->                 };
->
->                 nvenc@544c0000 {
->                         compatible =3D "nvidia,tegra210-nvenc";
->                         reg =3D <0x0 0x544c0000 0x0 0x00040000>;
-> -                       status =3D "disabled";
-> +                       clocks =3D <&tegra_car TEGRA210_CLK_NVENC>;
-> +                       clock-names =3D "nvenc";
-> +                       resets =3D <&tegra_car 219>;
-> +                       reset-names =3D "nvenc";
-> +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_NVENC>;
-> +                       power-domains =3D <&pd_nvenc>;
->                 };
->
->                 tsec@54500000 {
-> @@ -894,6 +906,18 @@ pd_audio: aud {
->                                 #power-domain-cells =3D <0>;
->                         };
->
-> +                       pd_nvenc: mpe {
-> +                               clocks =3D <&tegra_car TEGRA210_CLK_NVENC=
->;
-> +                               resets =3D <&tegra_car 219>;
-> +                               #power-domain-cells =3D <0>;
-> +                       };
-> +
-> +                       pd_nvdec: nvdec {
-> +                               clocks =3D <&tegra_car TEGRA210_CLK_NVDEC=
->;
-> +                               resets =3D <&tegra_car 194>;
-> +                               #power-domain-cells =3D <0>;
-> +                       };
-> +
->                         pd_sor: sor {
->                                 clocks =3D <&tegra_car TEGRA210_CLK_SOR0>=
-,
->                                          <&tegra_car TEGRA210_CLK_SOR1>,
->
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250814-tegra210-media-enable-576bb6a34b5c
->
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
+> +    +-----------------+    PCIe     +------------------------------+
+> +    |      CPU        |<----------->|           GPU                |
+> +    +-----------------+             |                              |
+> +                                    |  +----------------------+    |
+> +                                    |  |       PBUS           |    |
+> +                                    |  |  (Bus Controller)    |    |
+> +                                    |  |                      |    |
+> +                                    |  |  +--------------.<------------ (window always starts at
+> +                                    |  |  |   PRAMIN     |    |    |     BAR0 + 0x700000)
 
-Reminder to review or pick up this patch.
+Quick question: does "window always starts at" actually mean "windows
+is always initialized to" ? Or something else?
 
-Aaron
+
+thanks,
+-- 
+John Hubbard
+
+> +                                    |  |  |   Window     |    |    |
+> +                                    |  |  |   (1MB)      |    |    |
+> +                                    |  |  +--------------+    |    |
+> +                                    |  |         |            |    |
+> +                                    |  +---------|------------+    |
+> +                                    |            |                 |
+> +                                    |            v                 |
+> +                                    |  .----------------------.<------------ (Program PRAMIN to any
+> +                                    |  |       VRAM           |    |    64KB VRAM physical boundary)
+> +                                    |  |    (Several GBs)     |    |
+> +                                    |  |                      |    |
+> +                                    |  |  FB[0x000000000000]  |    |
+> +                                    |  |          ...         |    |
+> +                                    |  |  FB[0x7FFFFFFFFFF]   |    |
+> +                                    |  +----------------------+    |
+> +                                    +------------------------------+
+> +
+> +PBUS (PCIe Bus Controller) among other things is responsible in the GPU for handling MMIO
+> +accesses to the BAR registers.
+> +
+> +PRAMIN Window Operation
+> +=======================
+> +
+> +The PRAMIN window provides a 1MB sliding aperture that can be repositioned over
+> +the entire VRAM address space using the NV_PBUS_BAR0_WINDOW register.
+> +
+> +Window Control Mechanism
+> +-------------------------
+> +
+> +The window position is controlled via the PBUS BAR0_WINDOW register::
+> +
+> +    NV_PBUS_BAR0_WINDOW Register
+> +    +-----+-----+--------------------------------------+
+> +    |31-26|25-24|           23-0                       |
+> +    |     |TARG |         BASE_ADDR                    |
+> +    |     | ET  |        (bits 39:16 of VRAM address)  |
+> +    +-----+-----+--------------------------------------+
+> +
+> +    TARGET field values:
+> +    - 0x0: VID_MEM (Video Memory / VRAM)
+> +    - 0x1: SYS_MEM_COHERENT (Coherent system memory)
+> +    - 0x2: SYS_MEM_NONCOHERENT (Non-coherent system memory)
+> +
+> +64KB Alignment Requirement
+> +---------------------------
+> +
+> +The PRAMIN window must be aligned to 64KB boundaries in VRAM. This is enforced
+> +by the BASE_ADDR field representing bits [39:16] of the target address::
+> +
+> +    VRAM Address Calculation:
+> +    actual_vram_addr = (BASE_ADDR << 16) + pramin_offset
+> +    Where:
+> +    - BASE_ADDR: 24-bit value from NV_PBUS_BAR0_WINDOW[23:0]
+> +    - pramin_offset: 20-bit offset within PRAMIN window [0x00000-0xFFFFF]
+> +    Example Window Positioning:
+> +    +---------------------------------------------------------+
+> +    |                    VRAM Space                           |
+> +    |                                                         |
+> +    |  0x000000000  +-----------------+ <-- 64KB aligned      |
+> +    |               | PRAMIN Window   |                       |
+> +    |               |    (1MB)        |                       |
+> +    |  0x0000FFFFF  +-----------------+                       |
+> +    |                                                         |
+> +    |       |              ^                                  |
+> +    |       |              | Window can slide                 |
+> +    |       v              | to any 64KB boundary             |
+> +    |                                                         |
+> +    |  0x123400000  +-----------------+ <-- 64KB aligned      |
+> +    |               | PRAMIN Window   |                       |
+> +    |               |    (1MB)        |                       |
+> +    |  0x1234FFFFF  +-----------------+                       |
+> +    |                                                         |
+> +    |                       ...                               |
+> +    |                                                         |
+> +    |  0x7FFFF0000  +-----------------+ <-- 64KB aligned      |
+> +    |               | PRAMIN Window   |                       |
+> +    |               |    (1MB)        |                       |
+> +    |  0x7FFFFFFFF  +-----------------+                       |
+> +    +---------------------------------------------------------+
+> diff --git a/Documentation/gpu/nova/index.rst b/Documentation/gpu/nova/index.rst
+> index 46302daace34..e77d3ee336a4 100644
+> --- a/Documentation/gpu/nova/index.rst
+> +++ b/Documentation/gpu/nova/index.rst
+> @@ -33,3 +33,4 @@ vGPU manager VFIO driver and the nova-drm driver.
+>     core/fwsec
+>     core/falcon
+>     core/msgq
+> +   core/pramin
+
+
 
