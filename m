@@ -1,114 +1,124 @@
-Return-Path: <linux-kernel+bounces-859937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA42ABEEFF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:27:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EDCBEEFFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5453BFEE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:27:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE1A64E68A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7491D6193;
-	Mon, 20 Oct 2025 01:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B9A1DED49;
+	Mon, 20 Oct 2025 01:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zwtz0csG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="t7vi6l6k"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB0D33F6;
-	Mon, 20 Oct 2025 01:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DCD33F6;
+	Mon, 20 Oct 2025 01:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760923632; cv=none; b=OEcSmQ97MosBZRMTN5ItToq2Bko5XecpfLcvFpU3vUgNZ0WKv9I9ARPahKmjJLYeSOc15XsSWyaM5YzpBFN+SQsQSapbPAK9DCJLpDS4uZ99u+/hFVhx1pnp5+tczVgVxxGGKmQodITIPn79QM7ywh2I5odszzvd++zfZNeTK9c=
+	t=1760923803; cv=none; b=UKmmkYsXwc5hO5GvhygRvC6ttXVdKfyTkKbzIaG+KO6rCNMddpu/KUrvduJSAikKq/StWkUYtWAwbQc6wUpcRzq6McCGvUYx6iW5q8/5MO6yGILZHHhQh4rHmvtThMeti7Q04go+0WGR/dYvzN42RKznkOeOKHTkGdE7PPm7Q7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760923632; c=relaxed/simple;
-	bh=2RCcX1FkBJhaxxKaYdfl9YmBMQ9p8SESDEGnknRek+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HtaClc1VYRIjXTrPnv+JgOVhMBk4/RIWs+edelme8kY/7U1/2TaDCs87gEhKX+Ytc9XbSDRV8/Q7pMMXmpTO3Uq6GhZjeUGRh5X4NNFgg3MNFE7dVVmtiEgpUyei42vEEtbbWBxmoicPkOX5cKZECHVShsLb+v0jai44uuVa95E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Zwtz0csG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1760923626;
-	bh=aTCgF4R2/StQ0TsobNLt1z2cAJrZM+osfSAC9odaV/Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Zwtz0csGEjPrPvJMTa2jPENzu4QVMWxs9T7o+bPTtki1tPllz9hz6wyCG6q8sOjU/
-	 Q8wbNs+Tx41BPuAn2j3SEEm2DYSZ3KVyHOyY6yVE2IG8OkDxZng4K6tX7PjMnbM9z2
-	 ZNUfQkSsPkuyKbHzPn4G2t+vIV/mQ6JA/jupKdougyybHkxlaXEFEQ3OLyHd2K5KZA
-	 nUHy6TFy+TJlSEOn+tolkB6+3eTlOrkiKCF7WFQrdwYG6JX5ccDxs/RqKvx9bcI/v8
-	 hCxfIuMnRvTIIOyMzryYGdW+gyZnHSOC8+zNgqqsxqCgF8F8PL6wwo625lHAU/wtIf
-	 EYTTeS+6vYAVg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqd7s6gKyz4wB8;
-	Mon, 20 Oct 2025 12:27:05 +1100 (AEDT)
-Date: Mon, 20 Oct 2025 12:27:05 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Ioana Ciornei
- <ioana.ciornei@nxp.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the gpio-brgl tree
-Message-ID: <20251020122705.61031892@canb.auug.org.au>
-In-Reply-To: <20251020115611.6170f156@canb.auug.org.au>
-References: <20251020115611.6170f156@canb.auug.org.au>
+	s=arc-20240116; t=1760923803; c=relaxed/simple;
+	bh=cOOCymlcQ4yXe5flO7dYezoRaz5b3aNPXSz3NYiNa74=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mS582+Mz9PbrIjHb+B6/N0fD8hZ2SfJGS57jo6j5fJ2M0z1zIxZsj4m4otJD+alsm1BWKdkFMwbZJXZSXVvqXJtLfjLEmfeQ4KUlNWyPLpCxZr3pkqQcbt/V+xx/ocD9w241V6vYDiNMg+kYVGH4n1bmuBb6SaDtQZiUXD9bMRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=t7vi6l6k; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=bbvP9qtrOBpmi4VZWRhATVemHJdm1859xM2/i1HFr6o=;
+	b=t7vi6l6kdAlDwnnIV9+5Fq2cXQ3fu9Ah4U5V60VT135lbd084E8xF5xklLqY+NgtM/6R51/5k
+	/gamrgch+S8LLFH7MAeBMC8AAqNx5FhPn5QY4PFVj/eGIzy/D/h7dQoI5czth3zWRlrYy0pTE/D
+	j1szK7cJxNOH5Gnkhb+wIfE=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4cqdBc5WTjzmV7q;
+	Mon, 20 Oct 2025 09:29:28 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id D996C1A0188;
+	Mon, 20 Oct 2025 09:29:51 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 20 Oct 2025 09:29:50 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: <markus.elfring@web.de>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<gongfan1@huawei.com>, <guoxin09@huawei.com>, <gur.stavi@huawei.com>,
+	<horms@kernel.org>, <kuba@kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
+	<luoyang82@h-partners.com>, <meny.yossefi@huawei.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <pavan.chebbi@broadcom.com>,
+	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <wulike1@huawei.com>,
+	<zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
+Subject: Re: [PATCH net-next v02 4/6] hinic3: Add mac filter ops
+Date: Mon, 20 Oct 2025 09:29:44 +0800
+Message-ID: <20251020012947.2033-1-gongfan1@huawei.com>
+X-Mailer: git-send-email 2.51.0.windows.1
+In-Reply-To: <e8b52cf3-9f77-445c-8ba6-d8ac402841b7@web.de>
+References: <e8b52cf3-9f77-445c-8ba6-d8ac402841b7@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0yMOVyCe5+2=fyIfOeyX41A";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
---Sig_/0yMOVyCe5+2=fyIfOeyX41A
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Mon, 20 Oct 2025 11:56:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On 10/17/2025 7:51 PM, Markus Elfring wrote:
+> …> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_filter.c
+>> @@ -0,0 +1,413 @@
+> …> +static int hinic3_mac_filter_sync(struct net_device *netdev,
+>> +				  struct list_head *mac_filter_list, bool uc)
+>> +{
+> …
+>> +		hinic3_cleanup_filter_list(&tmp_add_list);> +		hinic3_mac_filter_sync_hw(netdev, &tmp_del_list, &tmp_add_list);
+>> +
+>> +		/* need to enter promiscuous/allmulti mode */
+>> +		err = -ENOMEM;
+>> +		goto err_out;
+>> +	}
+>> +
+>> +	return add_count;
+>> +
+>> +err_out:
+>> +	return err;
+>> +}
 >
-> After merging the gpio-brgl tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-qixis-fpga.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-qixis=
--fpga.o
->=20
-> Caused by commit
->=20
->   e88500247dc3 ("gpio: add QIXIS FPGA GPIO controller")
->=20
-> I have used the gpio-brgl tree from next-20251017 for today.
+> Is there a need to move any resource cleanup actions behind a more appropriate label?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.17#n532
+>
+>
+> Regards,
+> Markus
 
-Actually from next-20251016 as Mark did.
+Hi, Markus. Thanks for your comment.
 
---=20
-Cheers,
-Stephen Rothwell
+Your suggestion is great. In "hinic3_mac_filter_sync", there are two places in
+the code that return error values.
+Actually the error handling code you quoted should be refined as a new function
+because its error handling is special and cannot be normalized to function error
+path.
 
---Sig_/0yMOVyCe5+2=fyIfOeyX41A
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> +	if (err) {
+> +		hinic3_undo_del_filter_entries(mac_filter_list, &tmp_del_list);
+> +		hinic3_undo_add_filter_entries(mac_filter_list, &tmp_add_list);
+> +		netdev_err(netdev, "Failed to clone mac_filter_entry\n");
+> +
+> +		hinic3_cleanup_filter_list(&tmp_del_list);
+> +		hinic3_cleanup_filter_list(&tmp_add_list);
+> +		goto err_out;
+> +	}
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1j+kACgkQAVBC80lX
-0Gwg3Af/foBirw9idx3VmLbj6ofS9BAdHX7jfz7R4WDN1Xx6kIxWsdXlS2bcXvHr
-rLiTC/beDWcT0CDaNE1SrKpgxFScNErpoXH7jxd/NYytlgksIzTQbw8zMxIuAZlW
-3smnw7eMODOMr0clJ8ln2VqyCEoV0i8moFDa2CoX5Z088ucJtaq0fXSarj3kRmMW
-dmRkNbnnwxs7TALvKHug7DU3V27gEusurB3fifdQoLaCvqUOQl0rgpIAqPOb402/
-/dnoQyRHoNKcmr+H7C9yjY9ZV0JP6h2KD1CK46ntVd6o5iOR6f4+bLxs16fwpNg1
-jgHMsBy3nt3ajmFzVQiadOYbpgGAaA==
-=3Z6d
------END PGP SIGNATURE-----
-
---Sig_/0yMOVyCe5+2=fyIfOeyX41A--
+And anther place(only cleanup del_list & add_list) should be moved behind a
+error label in function error path according to linux doc.
 
