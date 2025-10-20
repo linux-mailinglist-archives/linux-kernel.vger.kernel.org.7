@@ -1,144 +1,180 @@
-Return-Path: <linux-kernel+bounces-860623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92734BF08A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:30:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1F4BF08A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40F233BE586
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:30:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05D294EA685
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E912F6585;
-	Mon, 20 Oct 2025 10:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UG2Tn5tc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36222F619A;
+	Mon, 20 Oct 2025 10:32:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B56B2F5313;
-	Mon, 20 Oct 2025 10:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BB22DC765
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956203; cv=none; b=cv8fRJKRd/meiKt1PVEbOmTiVktjs8+mGHvImumDVdVh6DmFmIEh7HQoJ7EQfIPC8dOE1/DruKjyuXrTygvYUyuFTyf5Z5Gse/Of3bCZNmicH7f4EWNHjaldPtEB6IAjNxBYzM1zvaobkJT9rh0K64dz407FrnOxjl5AIqSqRlM=
+	t=1760956326; cv=none; b=JkVIrA1zUN++WoyytRuWGEOUGkMTa0XmCWDe54o1cT3pdDhiYxWi9QdQeICoND107yf8RY1Oh8i49xDObpCCxLut5pl51FTj1r9tzYGv6h6s4Fu9rfnzg5SRucZgmXWZypNY+8hATKIfbItytcuWt/ut0KGwzBiNoIP/PEC9ymc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956203; c=relaxed/simple;
-	bh=O4zsHeZ8S8EDdAZy6SzWfWIxqoZoJ9xVjHhVZHJynGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oj1YNSgc0ravEjj3tfpquW2xOe+E2y8YT+9u1vsllA8fMzyzYLdwxdgPHBKOQ6KeNnGuJdvLYtnP3g/yNHHhbrJ+COJLCvQEiSrUuqPs41ZmjHoV3vCvVANqdi96yVJGzs04ziKvcZKduShPmUmW/A5S6vXPNC7OwDuq5Ay/XEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UG2Tn5tc; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760956201; x=1792492201;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O4zsHeZ8S8EDdAZy6SzWfWIxqoZoJ9xVjHhVZHJynGg=;
-  b=UG2Tn5tcb6S4jqGWaqzFe+inu8+FqyAXRkZz4FIfSFwrdm/iIXNv+PdU
-   wqbrHwSNUF+k9cj8rYE7E55p1XUq6L6EYGmGlyr4fyTe2/77sLS/OxOH0
-   DsdVwCXgpYGJV9Iy7f10F7pOJYHRHvtCMeoDJYHzL48G/pYXjgySboik9
-   cJ7NVOJ9b9vNLg0n5eeGw5whCPDlPzUeezmqm7Yxq3EftZBIZYorjaarz
-   06Yj83Lb87H8xCLqKvvdoSFivhSXAfwaJISWdaEdRzj03WkwQ1HOFuWCE
-   Y/gOur6hUfh+uj8Nf6lRsdjV7PN84SDlXGu2rXTIl8KwcvhLpqq4J30TJ
-   w==;
-X-CSE-ConnectionGUID: UqaeKbMIQxSly8xXodAGCg==
-X-CSE-MsgGUID: aGn5afrjTx2ahTWZmwgj+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="88537926"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="88537926"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 03:30:01 -0700
-X-CSE-ConnectionGUID: zWABuonbRbS1ip2ImfbO1g==
-X-CSE-MsgGUID: RU7DY4gOTKKSh/QSk7sUCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="183707922"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa008.fm.intel.com with ESMTP; 20 Oct 2025 03:29:59 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 67B9895; Mon, 20 Oct 2025 12:29:58 +0200 (CEST)
-Date: Mon, 20 Oct 2025 12:29:58 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Jinhui Guo <guojinhui.liam@bytedance.com>
-Cc: andriy.shevchenko@linux.intel.com, jsd@semihalf.com,
-	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] i2c: designware: Disable SMBus interrupts to prevent
- storms from mis-configured firmware
-Message-ID: <20251020102958.GL2912318@black.igk.intel.com>
-References: <20251011073057.2959-1-guojinhui.liam@bytedance.com>
- <20251011073057.2959-2-guojinhui.liam@bytedance.com>
+	s=arc-20240116; t=1760956326; c=relaxed/simple;
+	bh=jYY8uRNIqBnKZio8KgxhgXaN25hBqMJYxVaclQ0FIF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i0fiD4AcyX9rCqMTs/emPmrFIZ25SiVjZXoweR3Pxs0KufmZzAVMmr2TysCY1TBNosexzwGPdGB8wqd1T5HfRRcXOwNVQUsvCCwypkjn/zq4N0fGXo8BHWzMhv3zQvIn0yMDr+fNx0JDOYNPC4gu8ipl8iZ1Fyl0pReqJWwXDUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vAnB8-0002zv-AU; Mon, 20 Oct 2025 12:31:50 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vAnB6-004WvP-0K;
+	Mon, 20 Oct 2025 12:31:48 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vAnB6-0000000B1KI-00rQ;
+	Mon, 20 Oct 2025 12:31:48 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nishanth Menon <nm@ti.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	linux-doc@vger.kernel.org,
+	Michal Kubecek <mkubecek@suse.cz>,
+	Roan van Dijk <roan@protonic.nl>
+Subject: [PATCH net-next v7 0/5] ethtool: introduce PHY MSE diagnostics UAPI and drivers
+Date: Mon, 20 Oct 2025 12:31:42 +0200
+Message-ID: <20251020103147.2626645-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251011073057.2959-2-guojinhui.liam@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
+changes v7:
+- htmldoc fixes
+changes v6:
+- rework the code to use uint instead of u32/u64
+- use bitset for flags
+- use nest for each separate channel
+changes v5:
+- add struct phy_mse_snapshot and phy_mse_config to the documentation
+changes v4:
+- remove -ENETDOWN as expected error value for get_mse_config() and
+  get_mse_snapshot()
+- fix htmldocs builds
+- s/__ethtool-a-mse/--ethtool-a-mse
+changes v3:
+- add missing ETHTOOL_A_LINKSTATE_MSE_* yaml changes
+changes v2:
+- rebase on latest net-next
 
-On Sat, Oct 11, 2025 at 03:30:57PM +0800, Jinhui Guo wrote:
-> When probing the I2C master, disable SMBus interrupts to prevent
-> storms caused by broken firmware mis-configuring IC_SMBUS=1; the
-> handler never services them and a mis-configured SMBUS Master
-> extend-clock timeout can flood the CPU.
-> 
-> Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
-> ---
->  drivers/i2c/busses/i2c-designware-core.h   |  1 +
->  drivers/i2c/busses/i2c-designware-master.c | 11 +++++++++++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-> index 347843b4f5dd..d1122ff0a1b7 100644
-> --- a/drivers/i2c/busses/i2c-designware-core.h
-> +++ b/drivers/i2c/busses/i2c-designware-core.h
-> @@ -78,6 +78,7 @@
->  #define DW_IC_TX_ABRT_SOURCE			0x80
->  #define DW_IC_ENABLE_STATUS			0x9c
->  #define DW_IC_CLR_RESTART_DET			0xa8
-> +#define DW_IC_SMBUS_INTR_MASK		0xcc
->  #define DW_IC_COMP_PARAM_1			0xf4
->  #define DW_IC_COMP_VERSION			0xf8
->  #define DW_IC_SDA_HOLD_MIN_VERS			0x3131312A /* "111*" == v1.11* */
-> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-> index c7a72c28786c..eeb60536da32 100644
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -997,6 +997,11 @@ static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
->  	return 0;
->  }
->  
-> +static inline void i2c_dw_disable_smbus_intr(struct dw_i2c_dev *dev)
-> +{
-> +	regmap_write(dev->map, DW_IC_SMBUS_INTR_MASK, 0);
-> +}
+This series introduces a generic kernel-userspace API for retrieving PHY
+Mean Square Error (MSE) diagnostics, together with netlink integration,
+a fast-path reporting hook in LINKSTATE_GET, and initial driver
+implementations for the KSZ9477 and DP83TD510E PHYs.
 
-I wonder instead of this wrapper, can you just do this in
-i2c_dw_init_master() right after the adapter has been disabled?
+MSE is defined by the OPEN Alliance "Advanced diagnostic features for
+100BASE-T1 automotive Ethernet PHYs" specification [1] as a measure of
+slicer error rate, typically used internally to derive the Signal
+Quality Indicator (SQI). While SQI is useful as a normalized quality
+index, it hides raw measurement data, varies in scaling and thresholds
+between vendors, and may not indicate certain failure modes - for
+example, cases where autonegotiation would fail even though SQI reports
+a good link. In practice, such scenarios can only be investigated in
+fixed-link mode; here, MSE can provide an empirically estimated value
+indicating conditions under which autonegotiation would not succeed.
 
-> +
->  int i2c_dw_probe_master(struct dw_i2c_dev *dev)
->  {
->  	struct i2c_adapter *adap = &dev->adapter;
-> @@ -1063,6 +1068,12 @@ int i2c_dw_probe_master(struct dw_i2c_dev *dev)
->  		return ret;
->  
->  	__i2c_dw_write_intr_mask(dev, 0);
-> +	/*
-> +	 * Mask SMBus interrupts to block storms from broken
-> +	 * firmware that leaves IC_SMBUS=1; the handler never
-> +	 * services them.
-> +	 */
-> +	i2c_dw_disable_smbus_intr(dev);
->  	i2c_dw_release_lock(dev);
->  
->  	if (!(dev->flags & ACCESS_POLLING)) {
-> -- 
-> 2.20.1
+Example output with current implementation:
+root@DistroKit:~ ethtool lan1
+Settings for lan1:
+...
+        Speed: 1000Mb/s
+        Duplex: Full
+...
+        Link detected: yes
+        SQI: 5/7
+        MSE: 3/127 (channel: worst)
+
+root@DistroKit:~ ethtool --show-mse lan1
+MSE diagnostics for lan1:
+MSE Configuration:
+        Max Average MSE: 127
+        Refresh Rate: 2000000 ps
+        Symbols per Sample: 250
+        Supported capabilities: average channel-a channel-b channel-c
+                                channel-d worst
+
+MSE Snapshot (Channel: a):
+        Average MSE: 4
+
+MSE Snapshot (Channel: b):
+        Average MSE: 3
+
+MSE Snapshot (Channel: c):
+        Average MSE: 2
+
+MSE Snapshot (Channel: d):
+        Average MSE: 3
+
+[1] https://opensig.org/wp-content/uploads/2024/01/Advanced_PHY_features_for_automotive_Ethernet_V1.0.pdf
+
+Oleksij Rempel (5):
+  ethtool: introduce core UAPI and driver API for PHY MSE diagnostics
+  ethtool: netlink: add ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+  ethtool: netlink: add lightweight MSE reporting to LINKSTATE_GET
+  net: phy: micrel: add MSE interface support for KSZ9477 family
+  net: phy: dp83td510: add MSE interface support for 10BASE-T1L
+
+ Documentation/netlink/specs/ethtool.yaml      | 195 +++++++++
+ Documentation/networking/ethtool-netlink.rst  |  82 ++++
+ drivers/net/phy/dp83td510.c                   |  61 +++
+ drivers/net/phy/micrel.c                      | 101 +++++
+ include/linux/phy.h                           | 129 ++++++
+ include/uapi/linux/ethtool.h                  |   2 +
+ .../uapi/linux/ethtool_netlink_generated.h    | 109 +++++
+ net/ethtool/Makefile                          |   2 +-
+ net/ethtool/common.c                          |  13 +
+ net/ethtool/common.h                          |   2 +
+ net/ethtool/linkstate.c                       |  94 ++++
+ net/ethtool/mse.c                             | 411 ++++++++++++++++++
+ net/ethtool/netlink.c                         |  10 +
+ net/ethtool/netlink.h                         |   2 +
+ net/ethtool/strset.c                          |   5 +
+ 15 files changed, 1217 insertions(+), 1 deletion(-)
+ create mode 100644 net/ethtool/mse.c
+
+--
+2.47.3
+
 
