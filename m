@@ -1,53 +1,59 @@
-Return-Path: <linux-kernel+bounces-861476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8391BF2D1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:56:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE4EBF2D58
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85A1734E10A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:56:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD6474E8A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394C3331A7E;
-	Mon, 20 Oct 2025 17:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305773321D7;
+	Mon, 20 Oct 2025 17:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mo8NSVVj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIwu3N3R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DF221DB5;
-	Mon, 20 Oct 2025 17:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABAF13C3CD;
+	Mon, 20 Oct 2025 17:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982956; cv=none; b=HfCHVEue/NZi/3b2/3nluoCHoLH35FgABBfT3vOEZh9o10gZS9feNbbtNQJKWKlG4wWrmH8JQD1Ju/wlWqGWnpmNkPqrfoo5FgBMSbErlNPKC6/LNles+rkT1eh043TU02fqegzXr0cvA/Dhx4haNyYRamlc13pqBD+h0iBRlXY=
+	t=1760983149; cv=none; b=sYDevW2ULrC3tBFoJ0iinC4pEwO0nKeTFgh/kuEUZGEx0Uy6qVZN88K6dF2GVqa6L678I5y/A4rv7yk0rvTk7eVFq6yvCoxfnyO6yWTZDJwml/QUuF9vc8VhU1cxy44LAGcsfNY6SvA6X/TjjVzalHYjgovMFZzIQ7ZuvTdUC70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982956; c=relaxed/simple;
-	bh=2ogP/70t6tGzuzL3B9RTLcdw87Cips2j3HOmINioEgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=r3xOAqBt6J62BsTfVAIdX/Qz7DSnhZPwShq4VnWrf5SgSKcZpQfS5oNGmCoV2T3F72lJoLLIu/l1xi16l9DmO12/Oeg3wlf+5YFrpkPmbKj4omvBjwC2UP5mitsLhwRgWzQ1jv+BCvVMeUAKtb7AQ7oRTJDcP65xRQtWfEIHK24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mo8NSVVj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48771C4CEF9;
-	Mon, 20 Oct 2025 17:55:56 +0000 (UTC)
+	s=arc-20240116; t=1760983149; c=relaxed/simple;
+	bh=x7GUYv8Ms47fFopUIi3Wz6TTbTv7Y2GnvOK59yf3mcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWS2kr9d/YTHlCHgNKDkq2/LRkiBl19kVwhJlwGCcjm/WC0nIP7NZPCI+2vezC7QNJdo42CAe3iMqEW1z8mxOHo3RrAFKfEIrz/B+oOFs7JrAQ2EFRb1EhgzvSzDKmiHkHsMQLiHVGc713y7iAi7M6qUvDg8V4idb03Hn9NXHPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIwu3N3R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F22C4CEF9;
+	Mon, 20 Oct 2025 17:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760982956;
-	bh=2ogP/70t6tGzuzL3B9RTLcdw87Cips2j3HOmINioEgE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Mo8NSVVjeAIRpA6FHS/EbOrTJsEzTtz1AGOt31ZlFtZYxTFORtMRez9jFUN84yj1K
-	 OVU44JAJfBCyuLcJ3Dg4u7iegRdiHY/aInNiBRIXrTxpKJ3ArcpUyOEbjVx138OE5/
-	 YvxOnmJP9c1ramUvkKYf4Sv6kHt3hanzmvKyq+iZnWqZ+gLNQJ8sqNLYBo4rky8vlG
-	 sHUmUdJhvhayKsozF5HmLf2kYHjO9niIibAM3DTQsGyRVljEF7QO6P8hiTcvxi0/Hg
-	 PV+zVpeXvV8tmpUzTXpAkmkyjF9/SksIv9A0RtibmmhWc3A8aTv91Ep6HWJGUHiw/a
-	 jRZZYtvKy1hjg==
-Date: Mon, 20 Oct 2025 07:55:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Qu Wenruo <wqu@suse.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH PM/for-6.19] freezer: Clarify that only cgroup1 freezer uses
- PM freezer
-Message-ID: <aPZ3q6Hm865NicBC@slm.duckdns.org>
+	s=k20201202; t=1760983149;
+	bh=x7GUYv8Ms47fFopUIi3Wz6TTbTv7Y2GnvOK59yf3mcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pIwu3N3RIH04/zJHOEAoM7ocAG9NiaDVkyJ306sift4cHMx3Tb2f/ippaSK8Fg06m
+	 6IQXodbTyF3Qn2c8aDBNoAVRP6uZT4YfvSbV/KeUzZiYZHUyMEJW0Pbfi8/fKQNP3+
+	 pDGdjuzWzXILebjnLWC8McdJmoz/tKPyQwLAhX/T0UQmYRShJMBWRvW45Z1d1FMa6W
+	 s2Dn0RtbK5qByuihJwoqQzl2p1ofOCvEBa9Bfw1Q3yhHuxwDJn4cH0vmPgAfOXoB9i
+	 iMRB0KkL4qetti2maqpV8j/O4nn5UDYIT0eifLYn9cGmrEOg+7i5oDkN/hHaIRQa4v
+	 MoYDtbKU4Sn8A==
+Date: Mon, 20 Oct 2025 10:57:36 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Holger Dengler <dengler@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+	Harald Freudenberger <freude@linux.ibm.com>
+Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
+ library
+Message-ID: <20251020175736.GC1644@sol>
+References: <20251020005038.661542-1-ebiggers@kernel.org>
+ <20251020005038.661542-16-ebiggers@kernel.org>
+ <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,86 +62,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
 
-cgroup1 freezer piggybacks on the PM freezer, which inadvertently allowed
-userspace to produce uninterruptible tasks at will. To avoid the issue,
-cgroup2 freezer switched to a separate job control based mechanism. While
-this happened a long time ago, the code and comment haven't been updated
-making it confusing to people who aren't familiar with the history.
+On Mon, Oct 20, 2025 at 04:00:42PM +0200, Holger Dengler wrote:
+> On 20/10/2025 02:50, Eric Biggers wrote:
+> > Instead of exposing the s390-optimized SHA-3 code via s390-specific
+> > crypto_shash algorithms, instead just implement the sha3_absorb_blocks()
+> > and sha3_keccakf() library functions.  This is much simpler, it makes
+> > the SHA-3 library functions be s390-optimized, and it fixes the
+> > longstanding issue where the s390-optimized SHA-3 code was disabled by
+> > default.  SHA-3 still remains available through crypto_shash, but
+> > individual architectures no longer need to handle it.
+> > 
+> > Note that the existing code used both CPACF_KIMD_SHA3_224 and
+> > CPACF_KIMD_SHA3_256 after checking for just CPACF_KIMD_SHA3_256, and
+> > similarly for 384 and 512.  I've preserved that behavior.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> The current code also cover a performance feature, which allows (on
+> supported hardware, e.g. z17) to skip the ICV initialization.
 
-Rename cgroup_freezing() to cgroup1_freezing() and update comments on top of
-freezing() and frozen() to clarify that cgroup2 freezer isn't covered by the
-PM freezer mechanism.
+I'm not sure if by "ICV" you mean "Integrity Check Value" or "Initial
+Chaining Value", but SHA-3 doesn't have either of those.  It just starts
+with a state of all zeroes.  I assume that skipping the
+zero-initialization of the state is what you're referring to?
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Suggested-by: Qu Wenruo <wqu@suse.com>
----
- include/linux/freezer.h        |   12 ++++++++----
- kernel/cgroup/legacy_freezer.c |    2 +-
- kernel/freezer.c               |    2 +-
- 3 files changed, 10 insertions(+), 6 deletions(-)
+> support has been introduced with 88c02b3f79a6 ("s390/sha3: Support
+> sha3 performance enhancements"). Unfortunately, this patch removes
+> this support. Was this intended?
 
-diff --git a/include/linux/freezer.h b/include/linux/freezer.h
-index 32884c9721e5..0a8c6c4d1a82 100644
---- a/include/linux/freezer.h
-+++ b/include/linux/freezer.h
-@@ -22,14 +22,18 @@ extern bool pm_nosig_freezing;		/* PM nosig freezing in effect */
- extern unsigned int freeze_timeout_msecs;
- 
- /*
-- * Check if a process has been frozen
-+ * Check if a process has been frozen for PM or cgroup1 freezer. Note that
-+ * cgroup2 freezer uses the job control mechanism and does not interact with
-+ * the PM freezer.
-  */
- extern bool frozen(struct task_struct *p);
- 
- extern bool freezing_slow_path(struct task_struct *p);
- 
- /*
-- * Check if there is a request to freeze a process
-+ * Check if there is a request to freeze a task from PM or cgroup1 freezer.
-+ * Note that cgroup2 freezer uses the job control mechanism and does not
-+ * interact with the PM freezer.
-  */
- static inline bool freezing(struct task_struct *p)
- {
-@@ -63,9 +67,9 @@ extern bool freeze_task(struct task_struct *p);
- extern bool set_freezable(void);
- 
- #ifdef CONFIG_CGROUP_FREEZER
--extern bool cgroup_freezing(struct task_struct *task);
-+extern bool cgroup1_freezing(struct task_struct *task);
- #else /* !CONFIG_CGROUP_FREEZER */
--static inline bool cgroup_freezing(struct task_struct *task)
-+static inline bool cgroup1_freezing(struct task_struct *task)
- {
- 	return false;
- }
-diff --git a/kernel/cgroup/legacy_freezer.c b/kernel/cgroup/legacy_freezer.c
-index dd9417425d92..915b02f65980 100644
---- a/kernel/cgroup/legacy_freezer.c
-+++ b/kernel/cgroup/legacy_freezer.c
-@@ -63,7 +63,7 @@ static struct freezer *parent_freezer(struct freezer *freezer)
- 	return css_freezer(freezer->css.parent);
- }
- 
--bool cgroup_freezing(struct task_struct *task)
-+bool cgroup1_freezing(struct task_struct *task)
- {
- 	bool ret;
- 
-diff --git a/kernel/freezer.c b/kernel/freezer.c
-index ddc11a8bd2ea..a76bf957fb32 100644
---- a/kernel/freezer.c
-+++ b/kernel/freezer.c
-@@ -44,7 +44,7 @@ bool freezing_slow_path(struct task_struct *p)
- 	if (tsk_is_oom_victim(p))
- 		return false;
- 
--	if (pm_nosig_freezing || cgroup_freezing(p))
-+	if (pm_nosig_freezing || cgroup1_freezing(p))
- 		return true;
- 
- 	if (pm_freezing && !(p->flags & PF_KTHREAD))
+For now, yes.  I should have explained more in the patch, sorry.
+
+As currently proposed, lib/crypto/sha3.c supports arch-specific
+overrides of sha3_absorb_blocks() and sha3_keccakf().  Those cover the
+Keccak-f permutation which is by far the most performance critical part.
+This strategy is working well in the SHA-2, SHA-1, and MD5 libraries,
+which support the same level of arch overrides.
+
+We could update lib/crypto/sha3.c to allow architectures to override
+more of the code.  But we need to consider the tradeoffs:
+
+- Risk of bugs.  QEMU doesn't support the s390 SHA-3 instructions, so no
+  one except the s390 folks can test the code.  I can try to write code
+  for you, but I can't test it.  And the s390 SHA-3 code has had bugs;
+  see commits 992b7066800f, 68279380266a5, 73c2437109c3.
+
+  The first priority should be correctness.
+
+- The proposed change to the init functions would cause the format of
+  'struct __sha3_ctx' to be architecture-dependent.  While we can do
+  that if really needed, it's something that's best avoided for
+  simplicity.  It opens up more opportunity for error.
+
+- As I mentioned, Keccak-f is by far the most performance critical part
+  anyway.  The initial state is just all zeroes, and initializing it is
+  very lightweight.  Also consider that these contexts are often on the
+  stack, and people increasingly set the "init all stack variables to
+  zero" kernel hardening option anyway.
+
+  I'll also note that commit 88c02b3f79a6 has no performance data in it.
+  So it's not clear that it actually helped much.
+
+- The library has an optimization to greatly reduce the size of the
+  context: instead of buffering data separately, it just XOR's data into
+  the state.  So, if there's a sha3_*_init() followed by a sha3_update()
+  of less than 1 block, it will have to initialize the state anyway.  We
+  can delay it until that point on s390.  But again: complexity.
+
+- These potential additional s390 optimizations would presumably help
+  the most on short messages.  However, on short messages, merely
+  switching to the library often gives a large performance improvement
+  due to eliminating the very slow call to crypto_alloc_shash().  That's
+  actually a lot more important.
+
+I would suggest that we drop the sha3_*_init() optimization from
+consideration for now.  Providing overrides for the one-shot functions
+sha3_{224,256,384,512}() should be simpler as well as possibly a bit
+more useful, and I would suggest exploring that.
+
+I guess I can try to write the code for you again.  But again, without
+QEMU support I cannot test it.  The first priority in cryptography code
+is correctness, so that's not a great position to be in.
+
+Note that for new optimized code I'm requiring QEMU support for the
+instructions it uses.  This one would only be allowed because code that
+used these instructions already existed in arch/s390/crypto/.
+
+> Please also add me and Harald Freudenberger to the cc: list for this patch.
+
+Will do, thanks.
+
+- Eric
 
