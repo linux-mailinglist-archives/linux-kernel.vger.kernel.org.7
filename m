@@ -1,204 +1,212 @@
-Return-Path: <linux-kernel+bounces-860628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9FBBF08B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:32:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4029BF08A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64BB13E4FED
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D0E3E389C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8522F83D8;
-	Mon, 20 Oct 2025 10:32:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E312F6183;
+	Mon, 20 Oct 2025 10:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WaHmBe7Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aarrovnk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JYMcYo1p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QHzhkXy5"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98B22F25FA
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B88325B30E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956329; cv=none; b=QwANtu7ZyjW2ux77OyTpmL6/E19DSGHXNLctggjzhPplVxFSfe7W+P8uH9tMwXJ6VSZf33Cu4/INQQlB9ipQ0OrayPUxClZnBwqC7oXRbwljPuA2dyIkTLhYMIeAUZ9hspZLc5De0RsZ5C/R/PPG9oomy8FDOsVplYb83s7QXj4=
+	t=1760956326; cv=none; b=OaGlCT4NzWzM6taKHpps453GSpD0AJLeUU9+YyountNpI3gqZhOjisJxts5NwWNAs6zVaiMw6vRW3nIfBr4fxAq7y69GHDtYJ9EnPVyUEfCm9/gV8H6uHvVfD46xnYKUTU5uhnkj2Aftfqh6403NK5aCsPKyMPkk+EUIXK/L6WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956329; c=relaxed/simple;
-	bh=YPCEXZPRWvUPAiTSrF3q6IybVLjSsM4luAieK9QhEj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gXlesP6eAVsrN4U5ZgvdITbFG7R/PZW+wxMzuX3wxUrohmEJ4BJGi0+4vQRcMl3ki7Fg2uWy704G4wfFeXnc8ogvEJKE2rm5o0pW+GswfJpKriOmth1tLJ66jAfPz7t52qlaHkjc3LP62O3uEG4MU7XSbkM6ASjHuEGOd469atE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vAnB8-0002zz-AU; Mon, 20 Oct 2025 12:31:50 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vAnB6-004WvW-0p;
-	Mon, 20 Oct 2025 12:31:48 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vAnB6-0000000B1L5-0dHk;
-	Mon, 20 Oct 2025 12:31:48 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>,
-	Roan van Dijk <roan@protonic.nl>
-Subject: [PATCH net-next v7 5/5] net: phy: dp83td510: add MSE interface support for 10BASE-T1L
-Date: Mon, 20 Oct 2025 12:31:47 +0200
-Message-ID: <20251020103147.2626645-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251020103147.2626645-1-o.rempel@pengutronix.de>
-References: <20251020103147.2626645-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1760956326; c=relaxed/simple;
+	bh=1Tm1FKT+wU9gzbCx6LcGr6GchkpoM6QXziJclbBg6DU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iUc8f1B5/OgnqWisZrbuYT3c5c5FiV/sl9eWlIpVmLfAcJoIqpJZWZjNG+QCgbP2jmfnQ46xv6vupddvF0unfxJQDWwt2jP0Adt2pzhSX4S91ZY2ptBQ1yUwNFFXYMeUBQLitxIbBmqIvO8B3yrWM+5OJvqnl0R+ipyc8lVvbyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WaHmBe7Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aarrovnk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JYMcYo1p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QHzhkXy5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0DD582116D;
+	Mon, 20 Oct 2025 10:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760956318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OOdR9pfKqPD0a3Q4nBDVe6mStJO4QAAfwM2KqhG51tQ=;
+	b=WaHmBe7ZE1oJC86MBJcU6qbFI1t6s0YSn+Hvy5Dr6UwidJ621G/9W+vP6cfXoy6/iLzVhV
+	fMqWPjZqprU7o5rNuYvYRAn1yjZ4AN9mHKnTQPD3V0q6Z9Nng2Byn+HmmNyJjC/kX6G4Cq
+	PlKuYg38J9Ut4e4M2uJQSZzs65cnVBw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760956318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OOdR9pfKqPD0a3Q4nBDVe6mStJO4QAAfwM2KqhG51tQ=;
+	b=aarrovnkqkw5FLzzdsHl2oHIZF/qYCrKhaisXTJqGY9bTW72ZRb/7rsQHXKpO4MFfPeaJa
+	by0irXzlOjq3EjBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760956314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OOdR9pfKqPD0a3Q4nBDVe6mStJO4QAAfwM2KqhG51tQ=;
+	b=JYMcYo1pjH+WrBomtcKOa/dnrmp3Lum/8QPJVBri8WA6XC1QlQvslYWlIUYqDepToviVk8
+	paKTyBlTA1JLo44wXV8S7CyDMSj6g8+Fi9dTYsnO7KJbGCIP8yhtln+uvsP5u4MtSkVXbS
+	Xwp8cfV623eV8S8nhUNj+9ZpV9MUxAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760956314;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OOdR9pfKqPD0a3Q4nBDVe6mStJO4QAAfwM2KqhG51tQ=;
+	b=QHzhkXy5c1nUyHDTNV5oqoiXtTtzQf0C2dGRNcH38mhJjJ8NJedTpE4Zv62kFVJohLM9wU
+	CoHatHszYU4pzpAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE8D113A8E;
+	Mon, 20 Oct 2025 10:31:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Kqu3KJkP9mg1QgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 20 Oct 2025 10:31:53 +0000
+Message-ID: <48a24efa-a326-4cca-ab28-50c6251bf03a@suse.cz>
+Date: Mon, 20 Oct 2025 12:31:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
+ Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251018093002.3660549-1-rppt@kernel.org>
+ <aPQxN7-FeFB6vTuv@casper.infradead.org>
+ <3e798b9e-4915-404f-9197-ed3c32587141@kernel.org>
+ <85707316-3f2b-4e29-b821-a32f9097244e@kernel.org>
+ <635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com>
+ <3b97b754-890a-46c6-b892-a0324d529a3d@kernel.org>
+ <a95df2f2-5ecc-4d28-9bcc-1f9b457b04a5@redhat.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <a95df2f2-5ecc-4d28-9bcc-1f9b457b04a5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Implement get_mse_capability() and get_mse_snapshot() for the DP83TD510E
-to expose its Mean Square Error (MSE) register via the new PHY MSE
-UAPI.
+On 10/20/25 11:13, David Hildenbrand wrote:
+> On 20.10.25 11:08, Jiri Slaby wrote:
+>> On 20. 10. 25, 11:02, David Hildenbrand wrote:
+>>> Regarding the metadata overhead, in 2015 Linus wrote in that thread:
+>>>
+>>> "Long ago, allocating a page using kmalloc() was a bad idea, because
+>>> there was overhead for it in the allocation and the code.
+>>>
+>>> These days, kmalloc() not only doesn't have the allocation overhead,
+>>> but may actually scale better too, thanks to percpu caches etc."
+>>>
+>>> What's that status of that 10 years later?
+>> 
+>> AFAI skimmed through the code, for allocations > 2 pages
+>> (KMALLOC_MAX_CACHE_SIZE) -- if size is a constant -- slub resorts to
+>> alloc_pages().
+>> 
+>> For smaller ones (1 and 2 pages), there is a very little overhead in
+>> struct slab -- mm people, please correct me if I am wrong.
+> 
+> If it's really only "struct slab", then there is currently no overhead. 
+> Once it is decoupled from "struct page", there would be some.
 
-The DP83TD510E does not document any peak MSE values; it only exposes
-a single average MSE register used internally to derive SQI. This
-implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-refresh interval/number of symbols are estimated from 10BASE-T1L
-symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+Yes, but there's potentially better scalability and more debugging
+possibilities as benefits.
 
-For 10BASE-T1L deployments, SQI is a reliable indicator of link
-modulation quality once the link is established, but it does not
-indicate whether autonegotiation pulses will be correctly received
-in marginal conditions. MSE provides a direct measurement of slicer
-error rate that can be used to evaluate if autonegotiation is likely
-to succeed under a given cable length and condition. In practice,
-testing such scenarios often requires forcing a fixed-link setup to
-isolate MSE behaviour from the autonegotiation process.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-changes v7:
-- add Reviewed-by
----
- drivers/net/phy/dp83td510.c | 61 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 23af1ac194fa..6875f418fa78 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -61,6 +61,7 @@
- #define DP83TD510E_MASTER_SLAVE_RESOL_FAIL	BIT(15)
- 
- #define DP83TD510E_MSE_DETECT			0xa85
-+#define DP83TD510E_MSE_MAX			U16_MAX
- 
- #define DP83TD510_SQI_MAX	7
- 
-@@ -249,6 +250,63 @@ struct dp83td510_priv {
- #define DP83TD510E_ALCD_COMPLETE			BIT(15)
- #define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
- 
-+static int dp83td510_get_mse_capability(struct phy_device *phydev,
-+					struct phy_mse_capability *cap)
-+{
-+	/* DP83TD510E documents only a single (average) MSE register
-+	 * (used to derive SQI); no peak or worst-peak counters are
-+	 * described. Advertise only PHY_MSE_CAP_AVG.
-+	 */
-+	cap->supported_caps = PHY_MSE_CAP_AVG;
-+	/* 10BASE-T1L is a single-pair medium, so there are no B/C/D channels.
-+	 * We still advertise PHY_MSE_CAP_CHANNEL_A to indicate that the PHY
-+	 * can attribute the measurement to a specific pair (the only one),
-+	 * rather than exposing it only as a link-aggregate.
-+	 *
-+	 * Rationale:
-+	 *  - Keeps the ethtool MSE_GET selection logic consistent: per-channel
-+	 *    (A/B/C/D) is preferred over WORST/LINK, so userspace receives a
-+	 *    CHANNEL_A nest instead of LINK.
-+	 *  - Signals to tools that "per-pair" data is available (even if there's
-+	 *    just one pair), avoiding the impression that only aggregate values
-+	 *    are supported.
-+	 *  - Remains compatible with multi-pair PHYs and uniform UI handling.
-+	 *
-+	 * Note: WORST and other channels are not advertised on 10BASE-T1L.
-+	 */
-+	cap->supported_caps |= PHY_MSE_CHANNEL_A | PHY_MSE_CAP_LINK;
-+	cap->max_average_mse = DP83TD510E_MSE_MAX;
-+
-+	/* The datasheet does not specify the refresh rate or symbol count,
-+	 * but based on similar PHYs and standards, we can assume a common
-+	 * value. For 10BASE-T1L, the symbol rate is 7.5 MBd. A common
-+	 * diagnostic interval is around 1ms.
-+	 * 7.5e6 symbols/sec * 0.001 sec = 7500 symbols.
-+	 */
-+	cap->refresh_rate_ps = 1000000000; /* 1 ms */
-+	cap->num_symbols = 7500;
-+
-+	return 0;
-+}
-+
-+static int dp83td510_get_mse_snapshot(struct phy_device *phydev, u32 channel,
-+				      struct phy_mse_snapshot *snapshot)
-+{
-+	int ret;
-+
-+	if (channel != PHY_MSE_CHANNEL_LINK &&
-+	    channel != PHY_MSE_CHANNEL_A)
-+		return -EOPNOTSUPP;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_MSE_DETECT);
-+	if (ret < 0)
-+		return ret;
-+
-+	snapshot->average_mse = ret;
-+
-+	return 0;
-+}
-+
- static int dp83td510_led_brightness_set(struct phy_device *phydev, u8 index,
- 					enum led_brightness brightness)
- {
-@@ -893,6 +951,9 @@ static struct phy_driver dp83td510_driver[] = {
- 	.get_phy_stats	= dp83td510_get_phy_stats,
- 	.update_stats	= dp83td510_update_stats,
- 
-+	.get_mse_capability = dp83td510_get_mse_capability,
-+	.get_mse_snapshot = dp83td510_get_mse_snapshot,
-+
- 	.led_brightness_set = dp83td510_led_brightness_set,
- 	.led_hw_is_supported = dp83td510_led_hw_is_supported,
- 	.led_hw_control_set = dp83td510_led_hw_control_set,
--- 
-2.47.3
-
+> IIUC, I'm surprised that larger allocations wouldn't currently end up in 
+> PageSlab() pages.
+Can you elaborate why surprised?
 
