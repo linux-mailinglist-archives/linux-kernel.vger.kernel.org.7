@@ -1,301 +1,144 @@
-Return-Path: <linux-kernel+bounces-860832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD51BF11F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:21:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DB6BF0FC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6173C421312
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3CC188F7AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183553128DC;
-	Mon, 20 Oct 2025 12:13:38 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA22E3019D8;
+	Mon, 20 Oct 2025 12:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GcBW1Lig"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3182FB08C;
-	Mon, 20 Oct 2025 12:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116A329B778
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760962417; cv=none; b=ktM1f5nnilRs9LDxYKjBLiRXcdzx4/FdAIS/3mAzZl+aiCuGzcxXnouIScoH+pHgGQ3ZpFTHOJESD/4KznRv2ULtJYsacBd/H9O7CGB7ho6l7BV0JOTGwXIUBH4aeZv5xnzJBPUVszhSYVWQ0OFvQJcL7R29Sr5ffDDg/Cpy7cU=
+	t=1760961888; cv=none; b=bYOYT6wlwymvEkv0MP1WTY09xXGsvK0f/pBOo9GaBDt91k/A51SqcvlT/kmB7SUXRdwXu/ecaD7XDCUDJaBTFXESSRs3sIW6qlNAOBQmW8S6wzFROtXLyVdR9ENjbEQkCoAeIm7L3bZG+hWHHH22s826z9yieastEHFuXRQtZKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760962417; c=relaxed/simple;
-	bh=uRQt2BLn66gYf65UQCYarlFoLBJ3MSeRb88u26ArA/U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TaYdgtljeEPfJdh87kEC6jc8l/nAz+seqTIpabayso5i4w5276ZIbgEhSvykLjqaNDu1TSfhpfd90mtSViADewZ+UxwGYOVrAvOLRvLMIGylj8p3R3jL3FS56qwZ8s4EeIU2l6AG4/vw8kgLn85rbebCbVJ/6fR+//kOOLKR35Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqv295YFxz1HBMx;
-	Mon, 20 Oct 2025 19:53:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id D70CE1402EC;
-	Mon, 20 Oct 2025 19:53:40 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwD3th68IvZo8MqQAA--.3781S2;
-	Mon, 20 Oct 2025 12:53:40 +0100 (CET)
-Message-ID: <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 4/4] tpm: Allow for exclusive TPM access when using
- /dev/tpm<n>
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Jonathan McDowell <noodles@earth.li>, Peter Huewe <peterhuewe@gmx.de>, 
- Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, James Bottomley
-	 <James.Bottomley@hansenpartnership.com>, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zohar@linux.ibm.com
-Date: Mon, 20 Oct 2025 13:53:30 +0200
-In-Reply-To: <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
-References: <cover.1760958898.git.noodles@meta.com>
-	 <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1760961888; c=relaxed/simple;
+	bh=Obg9lKALKTbQbNao4PC2sY+XqF0ys1vM9SQdy1ltbZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hzeRdIMAklwPuYVTpb1WBP0hJFmqZmBXzz8HrIfISszyvk8fISip+f4o58c22FUK4kf144Bcdwe+Qlu1jcqT8qk2Px7vHIfAOzQUoiEadf0w5JKN+jqX7VPSey40l/oNxrfANOr9Q3iJfgnRhUFtuXIVH0ZjaEpK0mm3by9seh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GcBW1Lig; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBIufW001556
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:04:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s4X1DztV6QvL7Pg4RXS7POemnqWPt44nKM/SFas9VSs=; b=GcBW1Ligqmux3bw+
+	jr5ENDP9AKFkPxib+ibgVqzTFHqroWRv77IzUG2MrTkubR7dE6UlYwEoGKECWDSL
+	T/3eYRTfW1b/1Kz0X0nXJYiiCQRuym4ve5TLhVnZcGudzrFmzdiTfX5IjNGklaHq
+	PW/hW9K1OhrjWqoyo3vegHqGdzF+MZiOxKd98d4bGrRd/NExOh7vIQL3SHeWxqQB
+	2ijt9VmXbfnIlz8tFdusAmmjVKTIP/yblV09pMBDxhcZ437NZcCAAFZ0VJAyUrXD
+	5RKpj4g5dnosTsu3yRXC0AuBFjiTdX4pESufdeypg5IObEcTulaXxBq3uAyW1ZXD
+	r7dANw==
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v42k4jf3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:04:46 +0000 (GMT)
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5a34fceaaacso507520137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:04:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760961885; x=1761566685;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s4X1DztV6QvL7Pg4RXS7POemnqWPt44nKM/SFas9VSs=;
+        b=mdA8+sxrcxzSUppsA4lGi5knHto8v8ubo1eQ0v7OcRusVbUeEfmxzgtfITVko4FAcI
+         4Js/btIrH2FxdZd5M+HaQmPm58zq3MlXduMHrX3r8L3AchetUBXjRlV23LtyWtVp6Sea
+         cyWJyFBzWdIMfXmod9ImMHOGcl6nAOvnerEpjJMPk8g5UbqoGVucDxc1NVLqXQ8tN3hy
+         upbPJ8zXzu9i4WyCXaCTTey01RRnLxt+SJCFQBqOBtDWT8tdj9bM+p4jpxcMgbCK5MDr
+         TZ61fXgWggMIT6rvQQHohgj+2GeKSeKA0kzva1SAMlTPcWX4VfR4hEh9eDZFTkl0G1cd
+         83Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWix4uoS0ghOf5g4ziv2L967Ar2rPrSfWXBmRvhTcDW0z60U4o7IPVy5B5+92kSPlXRBzMeNKf1DWBKxvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRBRukyIQem9VkW0ctDpetbf8xT75II9fgBdK/xWDyc5zuTgqH
+	n0FZXc3gx7Kip9rDMmV/JduSwlyaZspp5V2lxFtPQgwZyeUHRQ0lPozV7lA08qspTkQHrJxFvvC
+	uQWbsRnNxN0r7X39ZeM/79x8ajPdzrGmt8ltD7YQ7ifhpzNJNn1QsT0kxVZpUgZ/+hWQ=
+X-Gm-Gg: ASbGncse1aMDP8h0+t0zGCuUt/DPRVjHPB1sEezYre8jxDnToppob5KzDq6a+Ffha20
+	JqseSf3FM4Vv4E7thGTRocPlHAoH0L1bb722ajgJsA5/dew95wPuct/qSzEeVPKf+wtWyqgDD45
+	rw22QK+M2Fh1f9C6eL9H41hLwHEuRgznx/5HvN+IdiEeGEudaEJf513y7r56zZjma0EScX1fcI8
+	0jyoYIBauBVmAlc2Xx4MAbcG5dTkxyp8XUwaLFT2QZdI0+/LblfKLC83p3he3RT6WzEcqBqxH8n
+	rXzCi5acdUUUg9EWyMlc9YlPZJuo9HDHUKG0tTynXdbWG9ppsCDWnw/at84w2AwZ9qKfI3UaKNa
+	FIbe01OaZX2xOEAXlOSgy/IVJtKPsEr7EFZpkTUUc7gtS4ya3gfjNyMGB
+X-Received: by 2002:a05:6122:2b4c:b0:554:e620:8bac with SMTP id 71dfb90a1353d-5564ed9918cmr1267938e0c.1.1760961884786;
+        Mon, 20 Oct 2025 05:04:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmRXOmvT7ihS8WpjzHcUqCEKdLb08ZusiFzD7vbt9CaBBWJjy3CB5Tc0tJkowRzMpAB8eBZA==
+X-Received: by 2002:a05:6122:2b4c:b0:554:e620:8bac with SMTP id 71dfb90a1353d-5564ed9918cmr1267929e0c.1.1760961884301;
+        Mon, 20 Oct 2025 05:04:44 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c494301aasm6708328a12.24.2025.10.20.05.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 05:04:43 -0700 (PDT)
+Message-ID: <0605aa45-f134-4298-b6d2-a64067d860de@oss.qualcomm.com>
+Date: Mon, 20 Oct 2025 14:04:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwD3th68IvZo8MqQAA--.3781S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Gry8CF1DGw15KF4UGw15Arb_yoWxtw18pF
-	45CF93urs8Jr4qqFn7ZanruF1a9w4IgayUG397K3s3Cwn0gF15Wrn8KFy3Zry7Wr1rCrsY
-	y3y0vFyUCFyjkaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBGj1k+sH2QAAs6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: hamoa-iot-evk: Fix 4-speaker
+ playback support
+To: Le Qi <le.qi@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com
+References: <20251010033728.1808133-1-le.qi@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251010033728.1808133-1-le.qi@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: dkHaB7pLpYXzbudTOgYDAM19sBnXuq_L
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMSBTYWx0ZWRfX28q+QWrvrNFQ
+ zGOvfLks0Nz5sWc7wqcIwkeSkoMaQL50VzHJwDNxYkrvDt38AtnUcKeEaHQeBSrXEOOVzSUMOgh
+ Lk/STUriXEazL7laQZNPytXM8+2y9cP4FHSBOrwiZIsidBWGiCFinn1yZsZeqesa4dqJs+1n2yf
+ E41bBIWmdiq/QKwgbkGavXQWE1d0YOj2qwxZXaJXWVzNU+lNq4X1oKAvSsyoN5+7LoLttDaEHjH
+ i+S2MFmOWkL+kbs+L+m69wVjpXx0yQ75SzC0CcfFX+DQMXW9hRCpJ0bS6iSR5oFl2nK1ENkwda+
+ NGp8YPo1zSOv+j78+Y5EYeQWJVyEMCj2mIuD/7ByFDPQvJqeujMty3KdEQmEAb+pLQeE835iHsB
+ m4LgiosXjb7S12/er8O2z1J/7cAKQw==
+X-Authority-Analysis: v=2.4 cv=QYNrf8bv c=1 sm=1 tr=0 ts=68f6255e cx=c_pps
+ a=P2rfLEam3zuxRRdjJWA2cw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=rzvUMi74TO_jfAOr2FEA:9 a=QEXdDO2ut3YA:10
+ a=ODZdjJIeia2B_SHc_B0f:22
+X-Proofpoint-ORIG-GUID: dkHaB7pLpYXzbudTOgYDAM19sBnXuq_L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180031
 
-On Mon, 2025-10-20 at 12:31 +0100, Jonathan McDowell wrote:
-> From: Jonathan McDowell <noodles@meta.com>
->=20
-> There are situations where userspace might reasonably desire exclusive
-> access to the TPM, or the kernel's internal context saving + flushing
-> may cause issues, for example when performing firmware upgrades. Extend
-> the locking already used for avoiding concurrent userspace access to
-> prevent internal users of the TPM when /dev/tpm<n> is in use.
->=20
-> The few internal users who already hold the open_lock are changed to use
-> tpm_internal_(try_get|put)_ops, with the old tpm_(try_get|put)_ops
-> functions changing to obtain read access to the open_lock.  We return
-> -EBUSY when another user has exclusive access, rather than adding waits.
->=20
-> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+On 10/10/25 5:37 AM, Le Qi wrote:
+> On the HAMOA-IOT-EVK board only 2 out of 4 speakers were functional.
+> Unlike the CRD, which shares a single GPIO reset line for WSA1/2,
+> this board provides a dedicated GPIO reset for each WSA, resulting
+> in 4 separate reset lines.
+> 
+> Update the device tree accordingly so that all 4 speakers can
+> playback audio as expected.
+> 
+> Signed-off-by: Le Qi <le.qi@oss.qualcomm.com>
 > ---
-> v2: Switch to _locked instead of _internal_ for function names.
-> v3: Move to end of patch series.
->=20
->  drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
->  drivers/char/tpm/tpm-dev-common.c |  8 ++---
->  drivers/char/tpm/tpm.h            |  2 ++
->  drivers/char/tpm/tpm2-space.c     |  5 ++-
->  4 files changed, 52 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index ba906966721a..687f6d8cd601 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
->  EXPORT_SYMBOL_GPL(tpm_chip_stop);
-> =20
->  /**
-> - * tpm_try_get_ops() - Get a ref to the tpm_chip
-> + * tpm_try_get_ops_locked() - Get a ref to the tpm_chip
->   * @chip: Chip to ref
->   *
->   * The caller must already have some kind of locking to ensure that chip=
- is
-> @@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
->   *
->   * Returns -ERRNO if the chip could not be got.
->   */
-> -int tpm_try_get_ops(struct tpm_chip *chip)
-> +int tpm_try_get_ops_locked(struct tpm_chip *chip)
->  {
->  	int rc =3D -EIO;
-> =20
-> @@ -185,22 +185,57 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->  	put_device(&chip->dev);
->  	return rc;
->  }
-> -EXPORT_SYMBOL_GPL(tpm_try_get_ops);
-> =20
->  /**
-> - * tpm_put_ops() - Release a ref to the tpm_chip
-> + * tpm_put_ops_locked() - Release a ref to the tpm_chip
->   * @chip: Chip to put
->   *
-> - * This is the opposite pair to tpm_try_get_ops(). After this returns ch=
-ip may
-> - * be kfree'd.
-> + * This is the opposite pair to tpm_try_get_ops_locked(). After this ret=
-urns
-> + * chip may be kfree'd.
->   */
-> -void tpm_put_ops(struct tpm_chip *chip)
-> +void tpm_put_ops_locked(struct tpm_chip *chip)
->  {
->  	tpm_chip_stop(chip);
->  	mutex_unlock(&chip->tpm_mutex);
->  	up_read(&chip->ops_sem);
->  	put_device(&chip->dev);
->  }
-> +
-> +/**
-> + * tpm_try_get_ops() - Get a ref to the tpm_chip
-> + * @chip: Chip to ref
-> + *
-> + * The caller must already have some kind of locking to ensure that chip=
- is
-> + * valid. This function will attempt to get the open_lock for the chip,
-> + * ensuring no other user is expecting exclusive access, before locking =
-the
-> + * chip so that the ops member can be accessed safely. The locking preve=
-nts
-> + * tpm_chip_unregister from completing, so it should not be held for lon=
-g
-> + * periods.
-> + *
-> + * Returns -ERRNO if the chip could not be got.
-> + */
-> +int tpm_try_get_ops(struct tpm_chip *chip)
-> +{
-> +	if (!down_read_trylock(&chip->open_lock))
-> +		return -EBUSY;
 
-Hi Jonathan
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-do I understand it correctly, that a process might open the TPM with
-O_EXCL, and this will prevent IMA from extending a PCR until that
-process closes the file descriptor?
-
-If yes, this might be a concern, and I think an additional API to
-prevent such behavior would be needed (for example when IMA is active,
-i.e. there is a measurement policy loaded).
-
-Thanks
-
-Roberto
-
-> +
-> +	return tpm_try_get_ops_locked(chip);
-> +}
-> +EXPORT_SYMBOL_GPL(tpm_try_get_ops);
-> +
-> +/**
-> + * tpm_put_ops() - Release a ref to the tpm_chip
-> + * @chip: Chip to put
-> + *
-> + * This is the opposite pair to tpm_try_get_ops(). After this returns
-> + * chip may be kfree'd.
-> + */
-> +void tpm_put_ops(struct tpm_chip *chip)
-> +{
-> +	tpm_put_ops_locked(chip);
-> +
-> +	up_read(&chip->open_lock);
-> +}
->  EXPORT_SYMBOL_GPL(tpm_put_ops);
-> =20
->  /**
-> @@ -644,10 +679,10 @@ void tpm_chip_unregister(struct tpm_chip *chip)
->  #ifdef CONFIG_TCG_TPM2_HMAC
->  	int rc;
-> =20
-> -	rc =3D tpm_try_get_ops(chip);
-> +	rc =3D tpm_try_get_ops_locked(chip);
->  	if (!rc) {
->  		tpm2_end_auth_session(chip);
-> -		tpm_put_ops(chip);
-> +		tpm_put_ops_locked(chip);
->  	}
->  #endif
-> =20
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev=
--common.c
-> index f2a5e09257dd..0f5bc63411aa 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -65,7 +65,7 @@ static void tpm_dev_async_work(struct work_struct *work=
-)
-> =20
->  	mutex_lock(&priv->buffer_mutex);
->  	priv->command_enqueued =3D false;
-> -	ret =3D tpm_try_get_ops(priv->chip);
-> +	ret =3D tpm_try_get_ops_locked(priv->chip);
->  	if (ret) {
->  		priv->response_length =3D ret;
->  		goto out;
-> @@ -73,7 +73,7 @@ static void tpm_dev_async_work(struct work_struct *work=
-)
-> =20
->  	ret =3D tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
->  			       sizeof(priv->data_buffer));
-> -	tpm_put_ops(priv->chip);
-> +	tpm_put_ops_locked(priv->chip);
-> =20
->  	/*
->  	 * If ret is > 0 then tpm_dev_transmit returned the size of the
-> @@ -220,14 +220,14 @@ ssize_t tpm_common_write(struct file *file, const c=
-har __user *buf,
->  	 * lock during this period so that the tpm can be unregistered even if
->  	 * the char dev is held open.
->  	 */
-> -	if (tpm_try_get_ops(priv->chip)) {
-> +	if (tpm_try_get_ops_locked(priv->chip)) {
->  		ret =3D -EPIPE;
->  		goto out;
->  	}
-> =20
->  	ret =3D tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
->  			       sizeof(priv->data_buffer));
-> -	tpm_put_ops(priv->chip);
-> +	tpm_put_ops_locked(priv->chip);
-> =20
->  	if (ret > 0) {
->  		priv->response_length =3D ret;
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 02c07fef41ba..57ef8589f5f5 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -272,6 +272,8 @@ struct tpm_chip *tpm_chip_alloc(struct device *dev,
->  				const struct tpm_class_ops *ops);
->  struct tpm_chip *tpmm_chip_alloc(struct device *pdev,
->  				 const struct tpm_class_ops *ops);
-> +int tpm_try_get_ops_locked(struct tpm_chip *chip);
-> +void tpm_put_ops_locked(struct tpm_chip *chip);
->  int tpm_chip_register(struct tpm_chip *chip);
->  void tpm_chip_unregister(struct tpm_chip *chip);
-> =20
-> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.=
-c
-> index 60354cd53b5c..0ad5e18355e0 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -58,10 +58,9 @@ int tpm2_init_space(struct tpm_space *space, unsigned =
-int buf_size)
-> =20
->  void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
->  {
-> -
-> -	if (tpm_try_get_ops(chip) =3D=3D 0) {
-> +	if (tpm_try_get_ops_locked(chip) =3D=3D 0) {
->  		tpm2_flush_sessions(chip, space);
-> -		tpm_put_ops(chip);
-> +		tpm_put_ops_locked(chip);
->  	}
-> =20
->  	kfree(space->context_buf);
-
+Konrad
 
