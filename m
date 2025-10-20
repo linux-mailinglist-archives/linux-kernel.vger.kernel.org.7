@@ -1,58 +1,92 @@
-Return-Path: <linux-kernel+bounces-860901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334B3BF1416
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0123EBF1612
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A329018A5A55
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF1E18A5ED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D8E31AF25;
-	Mon, 20 Oct 2025 12:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA29315D49;
+	Mon, 20 Oct 2025 12:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="JJWBAiQV"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdfbC0C2"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431E43054FB;
-	Mon, 20 Oct 2025 12:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D733148B4
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760963667; cv=none; b=EA274ty+AVK5c5hnIWeT9jOpAFoQCHJlWOTA5v08McDMJ0cXlcjHtYoJJcN4+zlGi7mQP+L6l8qwyvgHboAWy+Ao9OOPhZV/W0UB1VeBoELptyBDUzwWHDhg0WzcPutrvRB+S/LxDQoMzKMC7MWcbd+uPJHnL/WZACgshZw7J2Y=
+	t=1760965067; cv=none; b=K4aA2CVKzFaGC8QztgK98r4s9k2Yi/b6iQ1t4IjHBtbQeg5aGpNCsMH09WUZHGwnvkUzV8Cb0TunrPLlc1klYKtHHS8vwUzTAVrGidaPZyiyz6dDGLAyNEuqdq+ZWQ9NCQjuDbH5NOKvWYBVEL/gJMEZoUdoeZex8lfmwT3Lx78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760963667; c=relaxed/simple;
-	bh=h0WJFmupmKN0XJHhCP+qudmQBuXxIDkH9/Kp13xFuk4=;
+	s=arc-20240116; t=1760965067; c=relaxed/simple;
+	bh=G6FcO278eXFT1tgC313pIvONzjhfMvpa/sUOSVlAXKo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ALa4RXred1tDy4Mbgrp4tp3/xffHKYtxf3sndNjWnfBXDdJfCjgZOkfetaglERONwlh0hUg7+77SSwhV9eWzcrcTeWHl8BjgcFWz3/EVIykcsKRGN3xdFehLhRDXVQoS2CmgqvZHEqY4MCksVL83CKo9y/9NIuGtMXbQpfqfRXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=JJWBAiQV; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=reS54wtQHBJnB6K8azXiapyA5fEgeenFU64t0v4P6Mw=;
-	b=JJWBAiQVrg/NiYwkUfQZee3ahGKYJLfCd1hGqLyttCCXK4nvW1Ty+u40D4CG3V
-	/2SJr+7SpgCVCbTnt7kqOUEyTcT50UIGkhz2ZLniW1e1J/LHkP8qt+eVh+3QF1ct
-	UMKJBzJUg34+JEKCmZOtan3WcgAsg2Crst7aseJjkvxEw=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3H1ncK_Zo3plVAA--.16314S3;
-	Mon, 20 Oct 2025 20:32:30 +0800 (CST)
-Date: Mon, 20 Oct 2025 20:32:28 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-Subject: Re: [PATCH 1/2] arm64: dts: freescale: imx93-phyboard-nash: Add USB
- vbus regulators
-Message-ID: <aPYr3DRVerHvWN0i@dragon>
-References: <20250916080635.1520551-1-primoz.fiser@norik.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V40wNEAUPRHNTwiJOYb1Gl31yz7LJlH5r3vPln36G32RGGwteOr9J0INqABPqu/NRMrY8NqC4oMqSRGAbTMSG9IiShYIVl26Pb91ZlDpU1ip21HaAA7KRj6PVt7+qF8cQunlXOyVwCb9l5C5y8KH/jWcvnc6kUphbwjCFD2d00c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KdfbC0C2; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47114a40161so47707305e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760965064; x=1761569864; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ao5LTkpyunEEEJuwR6nh8mnIP8EeLv+acAjQyBGn0U=;
+        b=KdfbC0C2Sce4zHSEmbnnbyWcAGIkJoui8k91GIIXvf9QEwmDeqkzykh3ylXyuwxxlq
+         DP7IKSnC2RpA88JxKrbqc4uA8FF8cFtW9mWngA+dPoriONy1wDUASCsvbzDwxN9TrYZk
+         cbW+dm+U0zWVY7zu5W32u+oVuisiiwvIx304AfzRHVMKHmxP9G12yGdUHCAUMRFsyXHQ
+         5rhidWP7CTHW844P8sgRiljMMBMKLS7MaN/K//oocxYInqH0oWzndPdCQMpk+pdmJ0/N
+         vyx+Xpn8isd6yRxsTOiZVU5s+d8msOYEEWtAf8KAM2GGXi7eff6mhjJJd7UAfWpbjU3E
+         qDeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760965064; x=1761569864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ao5LTkpyunEEEJuwR6nh8mnIP8EeLv+acAjQyBGn0U=;
+        b=O+cIfX+z7JIaasjs6BNdeG6QOL5KsjiMLlndBlKWPEVkYEzke4bwYG+rLlt/AfGdRd
+         5WvVsUtnRsoExK9iecBh32VCBJM8j79reBkXzhZ7VFTLOh9q94dZiEEh7kekl0xQG7/Y
+         BZqioS1/K6K7NkJ7VIY1MeUvtByThbRY5amGOAzaYoAbvURnNhNnmyLz3TZd0ZIKVCWF
+         /1tg2Mw8Q0pQ1dKGphm8wHdRfbMoWs/dXfgscxhxKlEpG3h+isrOZk2dl4g//BLN+DB2
+         73LevHQXMw8Un1sggNbgGLa1XIMqLbtPAAZPTJAmGEq45+4oNLRIIPGikOZ8sMqzrkfT
+         aUUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk72yfTLehLTGk0mNkzuZotdmTGd8O0vxCZ7FMOSk7M1+UoE1349X1r87yGlHbGAaoCvnihjlTPZ060eQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeuVzlKLfYOJMm7SiVjTbIkfustZl5sBrGJsPgHdS+lUUp0jB1
+	30Rxnd3s8qFcNux7TfxXR4cdZU4QZW20N9T7D8OiVOKthD/FEyZULollGBMtMo9dsJQ=
+X-Gm-Gg: ASbGncuT87y7TbiSpTZjsfpXBUuS5H82A6dEqJLBj2XFf+XIpkPbgf/5SgsljipO87Z
+	JIMBeHhNzKpBUZJux8vqwlzLFutNPfFGX149XC6etmo+2FS0DuoVP+QL224/zwUfVwYHWjSsbXR
+	hmwA6Nl/ZUcUWdo7LdLqHR9tP/SjiCdWArEgMgaVKlYO0BsFWiIa1lakVO69ClXqqSCi0a4weNh
+	HxpAGonoHda47591m8vZXKjcTJSwwi9j5DWPrmVqUFIxJwX/oTscdTqIVmZC69zh90f0NvWr7aZ
+	cyHVJ+P0CVFtuCm2Askk9LvHC2ZOurGBrujJ2dPHec+u5DktEflus5nT/+lDkHr/sVroGvaWfwZ
+	ixURKbbpcSviySUW3yHBiclvW+63x78AnvsnQTgIkXLXQc6PyQxpxEHyrvEcPUNtUpLhGH9wsIa
+	C8BBma008JSdjztPQ=
+X-Google-Smtp-Source: AGHT+IHAzHSoaXW9FTqisoxwWWJ86QeGPH0Qn2VpgfeKv1K2ScSIldv6hbmEjlnUGO1KIv2vK/3+YA==
+X-Received: by 2002:a05:600c:3e07:b0:46e:450d:e037 with SMTP id 5b1f17b1804b1-4711786c560mr102540425e9.5.1760965063585;
+        Mon, 20 Oct 2025 05:57:43 -0700 (PDT)
+Received: from localhost ([41.210.143.179])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-471556e17afsm140881935e9.17.2025.10.20.05.57.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 05:57:43 -0700 (PDT)
+Date: Mon, 20 Oct 2025 15:33:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-hams@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzbot+2860e75836a08b172755@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] netrom: Prevent race conditions between multiple add
+ route
+Message-ID: <aPYsDVBMUQ0X_ulN@stanley.mountain>
+References: <aPYKgFTIroUhJAJA@stanley.mountain>
+ <20251020110244.3200311-1-lizhi.xu@windriver.com>
+ <aPYqRJXGhCNws4d3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +95,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916080635.1520551-1-primoz.fiser@norik.com>
-X-CM-TRANSID:Ms8vCgD3H1ncK_Zo3plVAA--.16314S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU7JKsUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNB7ZP2j2K94p1wAA3Z
+In-Reply-To: <aPYqRJXGhCNws4d3@stanley.mountain>
 
-On Tue, Sep 16, 2025 at 10:06:34AM +0200, Primoz Fiser wrote:
-> Add USB vbus regulators to silence the following kernel warnings:
+On Mon, Oct 20, 2025 at 03:25:40PM +0300, Dan Carpenter wrote:
+> On Mon, Oct 20, 2025 at 07:02:44PM +0800, Lizhi Xu wrote:
+> > The root cause of the problem is that multiple different tasks initiate
+> > NETROM_NODE commands to add new routes, there is no lock between them to
+> > protect the same nr_neigh.
+> > Task0 may add the nr_neigh.refcount value of 1 on Task1 to routes[2].
+> > 
+> > When Task2 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
+> > release the neighbour because its refcount value is 1.
+> > 
+> > In this case, the following situation causes a UAF:
+> > 
+> > Task0					Task1						Task2
+> > =====					=====						=====
+> > nr_add_node()
+> > nr_neigh_get_dev()			nr_add_node()
+> > 					nr_node_lock()
+> > 					nr_node->routes[2].neighbour->count--
+> > 					nr_neigh_put(nr_node->routes[2].neighbour);
+> > 					nr_remove_neigh(nr_node->routes[2].neighbour)
+> > 					nr_node_unlock()
+> > nr_node_lock()
+> > nr_node->routes[2].neighbour = nr_neigh
+> > nr_neigh_hold(nr_neigh);								nr_add_node()
+> > 											nr_neigh_put()
+> > 
+> > The solution to the problem is to use a lock to synchronize each add a route
+> > to node.
 > 
->   usb_phy_generic usbphynop1: dummy supplies not allowed for exclusive requests (id=vbus)
->   usb_phy_generic usbphynop2: dummy supplies not allowed for exclusive requests (id=vbus)
+> This chart is still not right.  Let me add line numbers to your chart:
 > 
-> Because generic USB PHY driver requires exclusive vbus regulators since
-> commit 75fd6485ccce ("usb: phy: generic: Get the vbus supply").
-> 
-> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> netrom/nr_route.c
+>    214          nr_node_lock(nr_node);
+>    215  
+>    216          if (quality != 0)
+>    217                  strscpy(nr_node->mnemonic, mnemonic);
+>    218  
+>    219          for (found = 0, i = 0; i < nr_node->count; i++) {
+>    220                  if (nr_node->routes[i].neighbour == nr_neigh) {
+>    221                          nr_node->routes[i].quality   = quality;
+>    222                          nr_node->routes[i].obs_count = obs_count;
 
-Applied both, thanks!
+Should we call nr_neigh->count++ if we found it?  I guess I don't
+really understand what nr_neigh->count is counting...  It would be
+really nice if someone added some comments explaining how the ref
+counting worked.
+
+>    223                          found = 1;
+>    224                          break;
+>    225                  }
+>    226          }
+
+regards,
+dan carpenter
 
 
