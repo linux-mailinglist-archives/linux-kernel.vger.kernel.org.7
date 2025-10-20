@@ -1,213 +1,311 @@
-Return-Path: <linux-kernel+bounces-861117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D15BF1D26
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D02BF1D35
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6803188292E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 457B41886A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D0E2FD7B2;
-	Mon, 20 Oct 2025 14:23:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF1A3148B5;
+	Mon, 20 Oct 2025 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DimUY5VD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+2nq8rFC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Aw68WIq7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0+J6D6TT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1561DDC28
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002DF1DDC28
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970236; cv=none; b=cNtwz0yRNKvVOi/CkDcjo/jPV6xaX8UhZp2uMoOw07r7qSGGIT3RyWL9AF1B1Hx79+SQXekgteyybfX6JeE+Qik5CUWEJsb7eDHyzrDZzjxs7eUUpas3tMUqRLhGi+RaDrTZgRx9/5wTctPfsYTZ4Tv6YUX9QkUAhORya151YmA=
+	t=1760970281; cv=none; b=OkquLDCqNka/USZwFrKphbemeRWvvWX0mKdJDlK9bs5GAiDekrGuO7Scoc9cHwbZUBZ/f12DeIwrV8TS9WwCDz0nfChN/ArQmI4Kl4EGNDScwtJei4/XpaDbQwzR6YVhszPoyN83zmflGgnbzzFFskUj0XCp4p3UH53jLVb1Bj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970236; c=relaxed/simple;
-	bh=kEQkpq1A/OasRTR52hp+2ykqHuCBSIGHAU9r9yXnMqc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zwza/R4k4K/k/j3Y0B68jwtCb4pYYRKpSGL/j6fupP+3Obygw56JUIyd7mkEaT2U+Czve/C8/9jqX5t/JJpKgwlrPmAks/Jpq6VXkIieEBpwHqlSaM/rzusEpqZPbooMbcux21dAhCJuuztswCmEZHNOLLpACOuhpV0K8cgEyAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cqyJW4hhLz6L5XF;
-	Mon, 20 Oct 2025 22:20:43 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id C3AD5140417;
-	Mon, 20 Oct 2025 22:23:50 +0800 (CST)
-Received: from localhost (10.48.157.75) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
- 2025 15:23:49 +0100
-Date: Mon, 20 Oct 2025 15:23:45 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>
-CC: Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>, Gregory
- Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>, Bharata B
- Rao <bharata@amd.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<dave.hansen@intel.com>, <hannes@cmpxchg.org>, <mgorman@techsingularity.net>,
-	<mingo@redhat.com>, <peterz@infradead.org>, <raghavendra.kt@amd.com>,
-	<riel@surriel.com>, <sj@kernel.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <nifan.cxl@gmail.com>,
-	<xuezhengchu@huawei.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
-	<byungchul@sk.com>, <kinseyho@google.com>, <joshua.hahnjy@gmail.com>,
-	<yuanchu@google.com>, <balbirs@nvidia.com>, <alok.rathore@samsung.com>,
-	<yiannis@zptcorp.com>, Adam Manzanares <a.manzanares@samsung.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-Message-ID: <20251020152345.00003d61@huawei.com>
-In-Reply-To: <CAOi6=wS6s2FAAbMbxX5zCZzPQE7Mm73pbhxpiM_5e44o6yyPMw@mail.gmail.com>
-References: <20250910144653.212066-1-bharata@amd.com>
-	<aMGbpDJhOx7wHqpo@casper.infradead.org>
-	<aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
-	<7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
-	<CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
-	<20250917174941.000061d3@huawei.com>
-	<5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
-	<20250925160058.00002645@huawei.com>
-	<CAOi6=wS6s2FAAbMbxX5zCZzPQE7Mm73pbhxpiM_5e44o6yyPMw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1760970281; c=relaxed/simple;
+	bh=baHp6t9cOLw4rwEIykl7MWlB8Mavg3VHjSesaj7tbsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oLGxhn/QdkdNavh0osujWw0ZqGJvOXovvZgEyflHYgY3/yg1IBj4/wl8GR+bjMdks6RNpbLJ5/cDbRTlQuUax0E9xA3GxkAZAvCZ3Y+1DxvdjjBm7iWIQkqDm6RpKzplZOnL8TIMxwUJvGh6C5ZTLJx9zwlZseGDFo1l59V+iTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DimUY5VD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+2nq8rFC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Aw68WIq7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0+J6D6TT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D916A211B1;
+	Mon, 20 Oct 2025 14:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760970274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DXu6Oiv5TScLPN1GMCbKMCa/lnAdU4Wi1ZJPc3fb6As=;
+	b=DimUY5VD6C0avRjvRdC2m670pw5mn8svhq9vSciojMG7BTpEkKSyU9FyWpjtou9ecQZ9ct
+	lDwQyMBa6o8FT5w2jO1yuDLW5FGBzsGNaGsm3Avm7FJYMwkmsks3A2azucw81a/W74g4h7
+	TdcmynYfb3bN6Xfl7fwCe3umjn9hGC0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760970274;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DXu6Oiv5TScLPN1GMCbKMCa/lnAdU4Wi1ZJPc3fb6As=;
+	b=+2nq8rFCOns8Qsp+J/q5F6oa3CHslL4d4uFK5W/tUypjTEExrxzDvv/JedrJzBuznAaoiT
+	2jDcmAdQ+fOmuwDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760970269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DXu6Oiv5TScLPN1GMCbKMCa/lnAdU4Wi1ZJPc3fb6As=;
+	b=Aw68WIq7F0uxTZnpKyqixo26r4fcK4SCtKtFyRQAF0IxnStW36r9iG92KV5O7ysGvnJnFu
+	q/xgV9iv1WY8qYYu/QJ6qezFuA87llnyuNZzLTbNm3vNjDGotTOQ+kEwLl+0QCtgBDvj3C
+	EEKpyBTliogpUv5jTcQfuQQHiXEc8m8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760970269;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DXu6Oiv5TScLPN1GMCbKMCa/lnAdU4Wi1ZJPc3fb6As=;
+	b=0+J6D6TT2ttLnqw+zMLnwW3a9RA0N4ed0ZigAoKTf+NX3rBh6pKWYrb7D6Bj2A751S6S3p
+	EOR1Z6D0e53DevBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9ED5A13A8E;
+	Mon, 20 Oct 2025 14:24:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dds6JR1G9mgfHwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 20 Oct 2025 14:24:29 +0000
+Message-ID: <d6cdfa19-688e-4169-ab30-d71335caee35@suse.de>
+Date: Mon, 20 Oct 2025 16:24:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/gud: rearrange gud_probe() to prepare for function
+ splitting
+To: Ruben Wauters <rubenru09@aol.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251020140147.5017-1-rubenru09.ref@aol.com>
+ <20251020140147.5017-1-rubenru09@aol.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251020140147.5017-1-rubenru09@aol.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Thu, 16 Oct 2025 18:16:31 +0200
-Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com> wrote:
+Hi,
 
-> On Thu, Sep 25, 2025 at 5:01=E2=80=AFPM Jonathan Cameron
-> <jonathan.cameron@huawei.com> wrote:
-> >
-> > On Thu, 25 Sep 2025 16:03:46 +0200
-> > Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com> wrote:
-> >
-> > Hi Yiannis, =20
-> Hi Jonathan! Thanks for your response!
->=20
-Hi Yiannis,
+looks good.
 
-This is way more fun than doing real work ;)
+Am 20.10.25 um 15:56 schrieb Ruben Wauters:
+> gud_probe() is currently very large and does many things, including
+> pipeline setup and feature detection, as well as having USB functions.
+>
+> This patch re-orders the code in gud_probe() to make it more organised
+> and easier to split apart in the future.
+>
+> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
 
-> [snip]
-> > > There are several things that may be done on the device side. For now=
-, I
-> > > think the kernel should be unaware of these. But with what I described
-> > > above, the goal is to have the capacity thresholds configured in a way
-> > > that we can absorb the occasional dirty cache lines that are written =
-back. =20
-> >
-> > In worst case they are far from occasional. It's not hard to imagine a =
-malicious =20
-> This is correct. Any simplification on my end is mainly based on the
-> empirical evidence of the use cases we are testing for (tiering). But
-> I fully respect that we need to be proactive and assume the worst case
-> scenario.
-> > program that ensures that all L3 in a system (say 256MiB+) is full of c=
-ache lines
-> > from the far compressed memory all of which are changed in a fashion th=
-at makes
-> > the allocation much less compressible.  If you are doing compression at=
- cache line
-> > granularity that's not so bad because it would only be 256MiB margin ne=
-eded.
-> > If the system in question is doing large block side compression, say 4K=
-iB.
-> > Then we have a 64x write amplification multiplier. If the virus is stre=
-aming over =20
-> This is insightful indeed :). However, even in the case of the 64x
-> amplification, you implicitly assume that each of the cachelines in
-> the L3 belongs to a different page. But then one cache-line would not
-> deteriorate the compressed size of the entire page that much (the
-> bandwidth amplification on the device is a different -performance-
-> story).
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-This is putting limits on what compression algorithm is used. We could do
-that but then we'd have to never support anything different. Maybe if the
-device itself provided the worse case amplification numbers that would do
-Any device that gets this wrong is buggy - but it might be hard to detect
-that if people don't publish their compression algs and the proofs of worst
-case blow up of compression blocks.
+If I'm not mistaken, you should by now have commit rights to the 
+drm-misc repo. Give it a few more days for others to review and if 
+nothing comes in, you're welcome to merge the patch into drm-misc-next.
 
-I guess we could do the maths on what the device manufacturer says and
-if we don't believe them or they haven't provided enough info to check,
-double it :)
-
-> So even in the 4K case the two ends of the spectrum are to
-> either have big amplification with low compression ratio impact, or
-> small amplification with higher compression ratio impact.
-> Another practical assumption here, is that the different HMU
-> mechanisms would help promote the contended pages before this becomes
-> a big issue. Which of course might still not be enough on the
-> malicious streaming writes workload.
-
-Using promotion to get you out of this is a non starter unless you have
-a backstop because we'll have annoying things like pinning going on or
-bandwidth bottlenecks at the promotion target.
-Promotion might massively reduce the performance impact of course under
-normal conditions.
-
-> Overall, I understand these are heuristics and I do see your point
-> that this needs to be robust even for the maliciously behaving
-> programs.
-> > memory the evictions we are seeing at the result of new lines being fet=
-ched
-> > to be made much less compressible.
-> >
-> > Add a accelerator (say DPDK or other zero copy into userspace buffers) =
-into the
-> > mix and you have a mess. You'll need to be extremely careful with what =
-goes =20
-> Good point about the zero copy stuff.
-> > in this compressed memory or hold enormous buffer capacity against fast
-> > changes in compressability. =20
-> To my experience the factor of buffer capacity would be closer to the
-> benefit that you get from the compression (e.g. 2x the cache size in
-> your example).
-> But I understand the burden of proof is on our end. As we move further
-> with this I will try to provide data as well.
-
-If we are aiming for generality the nasty problem is that either we have to
-write rules on what Linux will cope with, or design it to cope with the
-worse possible implementation :(
-
-I can think of lots of plausible sounding cases that have horrendous
-multiplication factors if done in a naive fashion.=20
-* De-duplication
-* Metadata flag for all 0s
-* Some general purpose compression algs are very vulnerable to the tails
-  of the probability distributions.  Some will flip between multiple modes
-  with very different characteristics, perhaps to meet latency guarantees.
-
-Would be fun to ask an information theorist / compression expert to lay
-out an algorithm with the worst possible tail performance but with good
-average.
+Best regards
+Thomas
 
 
+> ---
+> Changelog:
+>
+> v2
+> - rename gud_get_properties to gud_plane_add_properties and move
+>    function call to proper location
+> - move usb_set_intfdata and block with dma setup to just under gdrm init
+> - add proper spacing for init comments
+> ---
+>   drivers/gpu/drm/gud/gud_drv.c | 45 +++++++++++++++++++----------------
+>   1 file changed, 24 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
+> index b7345c8d823d..42135a48d92e 100644
+> --- a/drivers/gpu/drm/gud/gud_drv.c
+> +++ b/drivers/gpu/drm/gud/gud_drv.c
+> @@ -249,7 +249,7 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8 request, u8 val)
+>   	return gud_usb_set(gdrm, request, 0, &val, sizeof(val));
+>   }
+>   
+> -static int gud_get_properties(struct gud_device *gdrm)
+> +static int gud_plane_add_properties(struct gud_device *gdrm)
+>   {
+>   	struct gud_property_req *properties;
+>   	unsigned int i, num_properties;
+> @@ -463,10 +463,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   		return PTR_ERR(gdrm);
+>   
+>   	drm = &gdrm->drm;
+> -	drm->mode_config.funcs = &gud_mode_config_funcs;
+> -	ret = drmm_mode_config_init(drm);
+> -	if (ret)
+> -		return ret;
+>   
+>   	gdrm->flags = le32_to_cpu(desc.flags);
+>   	gdrm->compression = desc.compression & GUD_COMPRESSION_LZ4;
+> @@ -483,11 +479,28 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   	if (ret)
+>   		return ret;
+>   
+> +	usb_set_intfdata(intf, gdrm);
+> +
+> +	dma_dev = usb_intf_get_dma_device(intf);
+> +	if (dma_dev) {
+> +		drm_dev_set_dma_dev(drm, dma_dev);
+> +		put_device(dma_dev);
+> +	} else {
+> +		dev_warn(dev, "buffer sharing not supported"); /* not an error */
+> +	}
+> +
+> +	/* Mode config init */
+> +	ret = drmm_mode_config_init(drm);
+> +	if (ret)
+> +		return ret;
+> +
+>   	drm->mode_config.min_width = le32_to_cpu(desc.min_width);
+>   	drm->mode_config.max_width = le32_to_cpu(desc.max_width);
+>   	drm->mode_config.min_height = le32_to_cpu(desc.min_height);
+>   	drm->mode_config.max_height = le32_to_cpu(desc.max_height);
+> +	drm->mode_config.funcs = &gud_mode_config_funcs;
+>   
+> +	/* Format init */
+>   	formats_dev = devm_kmalloc(dev, GUD_FORMATS_MAX_NUM, GFP_KERNEL);
+>   	/* Add room for emulated XRGB8888 */
+>   	formats = devm_kmalloc_array(dev, GUD_FORMATS_MAX_NUM + 1, sizeof(*formats), GFP_KERNEL);
+> @@ -587,6 +600,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   			return -ENOMEM;
+>   	}
+>   
+> +	/* Pipeline init */
+>   	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
+>   				       &gud_plane_funcs,
+>   				       formats, num_formats,
+> @@ -598,12 +612,9 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+>   	drm_plane_enable_fb_damage_clips(&gdrm->plane);
+>   
+> -	devm_kfree(dev, formats);
+> -	devm_kfree(dev, formats_dev);
+> -
+> -	ret = gud_get_properties(gdrm);
+> +	ret = gud_plane_add_properties(gdrm);
+>   	if (ret) {
+> -		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
+> +		dev_err(dev, "Failed to add properties (error=%d)\n", ret);
+>   		return ret;
+>   	}
+>   
+> @@ -621,16 +632,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   	}
+>   
+>   	drm_mode_config_reset(drm);
+> -
+> -	usb_set_intfdata(intf, gdrm);
+> -
+> -	dma_dev = usb_intf_get_dma_device(intf);
+> -	if (dma_dev) {
+> -		drm_dev_set_dma_dev(drm, dma_dev);
+> -		put_device(dma_dev);
+> -	} else {
+> -		dev_warn(dev, "buffer sharing not supported"); /* not an error */
+> -	}
+> +	drm_kms_helper_poll_init(drm);
+>   
+>   	drm_debugfs_add_file(drm, "stats", gud_stats_debugfs, NULL);
+>   
+> @@ -638,7 +640,8 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   	if (ret)
+>   		return ret;
+>   
+> -	drm_kms_helper_poll_init(drm);
+> +	devm_kfree(dev, formats);
+> +	devm_kfree(dev, formats_dev);
+>   
+>   	drm_client_setup(drm, NULL);
+>   
 
-> >
-> > Key is that all software is potentially malicious (sometimes accidental=
-ly so ;)
-> >
-> > Now, if we can put this into a special pool where it is acceptable to d=
-rop the writes
-> > and return poison (so the application crashes) then that may be fine.
-> >
-> > Or block writes.   Running compressed memory as read only CoW is one wa=
-y to
-> > avoid this problem. =20
-> These could be good starting points, as I see in the rest of the thread.
->=20
-Fun problems.  Maybe we start with very conservative handling and then
-argue for relaxations later.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Jonathan
-
-> Thanks,
-> Yiannis
 
 
