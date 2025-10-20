@@ -1,227 +1,122 @@
-Return-Path: <linux-kernel+bounces-861944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58968BF418A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:03:10 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAEABF419A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95C818A6CCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:03:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9AEA134E32B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C28E155C97;
-	Tue, 21 Oct 2025 00:02:59 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E240478F54;
+	Tue, 21 Oct 2025 00:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zago.net header.i=@zago.net header.b="kCpm4ybj"
+Received: from cp4.obambu.com (cp4.obambu.com [88.99.29.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7052AD24
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00EB273F9;
+	Tue, 21 Oct 2025 00:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.29.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761004978; cv=none; b=Ig1W2DDs8jv2ORsIabqTMARg/FMSpQuOBL03z+n4NohSADdG8CE5rmcvKgPLpKO977HPAff9EoCDEM1dk2FmuOa24umkSoGZJw8rJvUcK5opXNLI84G0LDjbUBXEqOIkkzEBzKgYHDsnAK/g4goLcpf+XxC7nbjNyusgvP5YJPg=
+	t=1761005115; cv=none; b=TgKQ5hYkmUK+jdnA6OFrdjYHm9LsFVCYs9sCBI1OsdCOGzAmdmkzgigTjjh/4KNJ2XY1ahiv/0sWl2SMXVVcctpu+YBkE0LxOMUUjfhzEnV/ysciJguyyPs457IEIQyQ06lSipLxWZzJiZSsh7IwPstSuVeq3I4RdAgYDmvh3Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761004978; c=relaxed/simple;
-	bh=4jlamZdGevMQhmRlakFM+RZJoM+8Sn+L8wwQZntPgbE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ck84yizdN+ZP9J+R3zLtYMq5PA9uO4AJQoCM8v+p5aoHOW5FTTd1gRdegP48o+WUBfJQ2zV9PP71gAEIU5n/CLqHmDgYt/Edf+q0G1tnKU5GVURnKKYbd7JaNtdhbuH7P+E6f5F51d4JOzeMRBkaZjDCX1swuBjlvBVTM3W86gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-430c316fcb3so157962955ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:02:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761004976; x=1761609776;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SGtGnSMcxz8uRlspj8XhrY0JQrEt5g0a6j8yhS08xiY=;
-        b=ktPpdi3S7Hdui1NTWh9nmaxE9zFmZD4T+OMK1CSolttkbNhy7i5mqhPXWjA5oPXvOf
-         n8X4qZSMA5pQ7vhw15q6eTI5Fq3YQGIm52VNyHA0Na2Rr9PBPS+Pg2sT51IjkYq3rOn+
-         jBE5QZvQoBANtMiGTKzQJSpOE1a8D6z7oJLmmxMjWsUYl+9DXyLB9d9Twg4nUothU03r
-         whUnPA/HWLtgB7T//KXoxqYvyQD2foR0Tf9eOOuhSSPV9LICpBT8gyoEMV0dA9upPX86
-         13YvpuxI5kI4M9ke33ru4cnxKV9043rn1tMnM0RqqBH9EY9nsTLFtigkhMr7Ipy8Ueso
-         +cRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDTnAZMM+6zuq8XeO9yM7dLTJdPVqy4JJ1VxpnYWt9+JfSM2AWzYUUJ2eqwz3FCD1Vw195oUctWPoMqZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJI79WDGtqEtwFePV0hi5oIxBmOEV3J5KB8eEIh2ksTJy75NJT
-	EYYJjthzuT6rlJT11/KcqeFoYR8NFbt4eZM1WtD+UUPA3z8w0TEdfffJtJ22KsfhoDPuaCJguVC
-	5U9+vrUtIggtiK3txc2xfoK+yDfQsw72ojK3tshLrSLxIwI0RuF22L0nfi3U=
-X-Google-Smtp-Source: AGHT+IEmG+qDHLq+vF+wGve5vCFuV2izBRmasF6GBoQY1Gaf6l+lphX6gWoaecZ2wp1icepziYRG3QQDdn/btL3OCMLOtLGh7NLA
+	s=arc-20240116; t=1761005115; c=relaxed/simple;
+	bh=F1yV94Y1btTEz9XP1+4UrFoaP4Ef+rr/pPWNdyJQklI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n5UW1GfZIJQrXqadMgK2LNgUN6bt/HQYnkEc90tsCIPyTpAdUt+sTpSqD2ECBMPFu5daYuQM9hfXt4tpLPYzX4wGximYjHq9QwAifMluG32eQwWh0ipCinFs1Kth+N+XJFk1l1ZwdfFvgb0tsTiL5URo0zMaUattD4udb+2dIww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zago.net; spf=pass smtp.mailfrom=zago.net; dkim=pass (2048-bit key) header.d=zago.net header.i=@zago.net header.b=kCpm4ybj; arc=none smtp.client-ip=88.99.29.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zago.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zago.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=zago.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0DrXsX05Grva4tWU6XxJfz/A2NsaAczVNPLro4r7jRM=; b=kCpm4ybjA9C+5MwdBHDiI3WAzU
+	EghG2TGslavBB9P/wFgBzldimwl+3i4PVnxTrjlXgCyiz4gW/PdXzXLOtT7RAMgx3SB84Yz6CT/mF
+	hXzhDIUs6cIO/b9bnVqAZQUfLS+XV9TPoWkOpjemQ/ntplYjEOdgxsfGkT4vF+njOj3rBPKr/JJwn
+	zi+7Wq1FEW8SJSv80lpwJ9NmnWvT6g/249KNgC0LJrrIUMxp85opbqjQf53DyunsKvCFKYqXkHxFr
+	J5h4Q437dzDXra+TEm+NQvnDgnZZFnJgrX/pLVLAL96FH+gP3V9cXuRZuUhLh7DfO6vAFyiwJ9bKO
+	WgdWVBkA==;
+Received: from [68.203.21.78] (port=46264 helo=[192.168.1.205])
+	by cp4.obambu.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <frank@zago.net>)
+	id 1vAzZ2-00000004D5u-0fRx;
+	Tue, 21 Oct 2025 01:45:19 +0200
+Message-ID: <5f2f9957-52e1-43a6-b3f0-bd3f4e434ff6@zago.net>
+Date: Mon, 20 Oct 2025 18:45:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4415:20b0:430:c536:cfad with SMTP id
- e9e14a558f8ab-430c536d097mr177309805ab.16.1761004976084; Mon, 20 Oct 2025
- 17:02:56 -0700 (PDT)
-Date: Mon, 20 Oct 2025 17:02:56 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
-Subject: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
-From: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sgarzare@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: position: Add support for ams AS5600 angle
+ sensor
+To: Aditya Dutt <duttaditya18@gmail.com>, Jonathan Cameron
+ <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20251020201653.86181-1-duttaditya18@gmail.com>
+ <20251020201653.86181-3-duttaditya18@gmail.com>
+Content-Language: en-US
+From: Frank Zago <frank@zago.net>
+In-Reply-To: <20251020201653.86181-3-duttaditya18@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cp4.obambu.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - zago.net
+X-Get-Message-Sender-Via: cp4.obambu.com: authenticated_id: frank@zago.net
+X-Authenticated-Sender: cp4.obambu.com: frank@zago.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
 Hello,
 
-syzbot found the following issue on:
+Thanks for updating that driver and making the required changes. I tried to go back to it a few times but motivation was lost. 
 
-HEAD commit:    d9043c79ba68 Merge tag 'sched_urgent_for_v6.18_rc2' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=130983cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f0f52f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ea9734580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-d9043c79.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0546b6eaf1aa/vmlinux-d9043c79.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/81285b4ada51/bzImage-d9043c79.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.0.17/6098 is trying to acquire lock:
-ffff8880363b8258 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
-ffff8880363b8258 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1066
-
-but task is already holding lock:
-ffffffff906260a8 (vsock_register_mutex){+.+.}-{4:4}, at: vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
-
-which lock already depends on the new lock.
+The commit message should say "position sensor", not "angle sensor", for consistency.
 
 
-the existing dependency chain (in reverse order) is:
+> diff --git a/drivers/iio/position/as5600.c b/drivers/iio/position/as5600.c
+> new file mode 100644
+> index 000000000000..fe716d521548
+> --- /dev/null
+> +++ b/drivers/iio/position/as5600.c
+...
+> +	case AS5600_REG_RAW_ANGLE_L:
+> +	case AS5600_REG_ANGLE_L:
+> +	case AS5600_REG_AGC:
+> +	case AS5600_REG_MAGN_L:
+> +		mask = 0xFF;
+> +		break;
+> +	default:
+> +		/* Not a readable register */
+> +		return -EINVAL;
+> +	}
+> +
+> +
 
--> #1 (vsock_register_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
-       __mutex_lock+0x193/0x1060 kernel/locking/mutex.c:760
-       vsock_registered_transport_cid net/vmw_vsock/af_vsock.c:560 [inline]
-       vsock_find_cid net/vmw_vsock/af_vsock.c:570 [inline]
-       __vsock_bind+0x1b5/0xa10 net/vmw_vsock/af_vsock.c:752
-       vsock_bind+0xc6/0x120 net/vmw_vsock/af_vsock.c:1002
-       __sys_bind_socket net/socket.c:1874 [inline]
-       __sys_bind_socket net/socket.c:1866 [inline]
-       __sys_bind+0x1a7/0x260 net/socket.c:1905
-       __do_sys_bind net/socket.c:1910 [inline]
-       __se_sys_bind net/socket.c:1908 [inline]
-       __x64_sys_bind+0x72/0xb0 net/socket.c:1908
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sk_lock-AF_VSOCK){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain kernel/locking/lockdep.c:3908 [inline]
-       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
-       lock_acquire kernel/locking/lockdep.c:5868 [inline]
-       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
-       lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
-       lock_sock include/net/sock.h:1679 [inline]
-       vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1066
-       virtio_transport_close net/vmw_vsock/virtio_transport_common.c:1271 [inline]
-       virtio_transport_release+0x52a/0x640 net/vmw_vsock/virtio_transport_common.c:1291
-       vsock_assign_transport+0x320/0x900 net/vmw_vsock/af_vsock.c:502
-       vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1578
-       __sys_connect_file+0x141/0x1a0 net/socket.c:2102
-       __sys_connect+0x13b/0x160 net/socket.c:2121
-       __do_sys_connect net/socket.c:2127 [inline]
-       __se_sys_connect net/socket.c:2124 [inline]
-       __x64_sys_connect+0x72/0xb0 net/socket.c:2124
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(vsock_register_mutex);
-                               lock(sk_lock-AF_VSOCK);
-                               lock(vsock_register_mutex);
-  lock(sk_lock-AF_VSOCK);
-
- *** DEADLOCK ***
-
-1 lock held by syz.0.17/6098:
- #0: ffffffff906260a8 (vsock_register_mutex){+.+.}-{4:4}, at: vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
-
-stack backtrace:
-CPU: 3 UID: 0 PID: 6098 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2043
- check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain kernel/locking/lockdep.c:3908 [inline]
- __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
- lock_acquire kernel/locking/lockdep.c:5868 [inline]
- lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
- lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
- lock_sock include/net/sock.h:1679 [inline]
- vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1066
- virtio_transport_close net/vmw_vsock/virtio_transport_common.c:1271 [inline]
- virtio_transport_release+0x52a/0x640 net/vmw_vsock/virtio_transport_common.c:1291
- vsock_assign_transport+0x320/0x900 net/vmw_vsock/af_vsock.c:502
- vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1578
- __sys_connect_file+0x141/0x1a0 net/socket.c:2102
- __sys_connect+0x13b/0x160 net/socket.c:2121
- __do_sys_connect net/socket.c:2127 [inline]
- __se_sys_connect net/socket.c:2124 [inline]
- __x64_sys_connect+0x72/0xb0 net/socket.c:2124
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f767bf8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff0a2857b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007f767c1e5fa0 RCX: 00007f767bf8efc9
-RDX: 0000000000000010 RSI: 0000200000000000 RDI: 0000000000000004
-RBP: 00007f767c011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f767c1e5fa0 R14: 00007f767c1e5fa0 R15: 0000000000000003
- </TASK>
+extra empty line
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I believe you could add this to the second patch:
+Acked-by: Frank Zago <frank@zago.net>
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards,
+  Frank.
 
