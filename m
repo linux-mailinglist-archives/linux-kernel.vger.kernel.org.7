@@ -1,231 +1,123 @@
-Return-Path: <linux-kernel+bounces-860333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E97BEFE47
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404E6BEFE4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABF484F0436
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:20:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9FF3E6E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6E62EAB6B;
-	Mon, 20 Oct 2025 08:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027EB2EA15F;
+	Mon, 20 Oct 2025 08:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVZ9iUnl"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjOe2YZm"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963672EA49C
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D032EA736
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760948393; cv=none; b=n4bRcxwQmB4dV21h05uwuE6dXRK+Rf7LW8K3Q0FsRrFak1xtjPNnSJ/kkX+utRFwbh+TcmT6isGf/q563B/1BYeO0Ff/9/DHpFoexrEKpNwnP4bqoSpyI1jCtQj0btzjX9wEHRhMNLNTWkGXq6S2G4YjSUCYwemn0R1ggjD44YY=
+	t=1760948404; cv=none; b=j0qMtZb0AbAFNyy/h2UfMmtGJ78Ai95aO50PUGIFTr9GlsZiUhcHD1DTCZJ1xZzaVQam7nNMg0RJoDI7SeDmS1BpHAW8TwPNeJuJ3+F7KS1bz05ENKEEtd3BnprSZnUoWQ/zjkkHiuYyzOhMurR0+96wBPHNATArSFdbP7gQDl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760948393; c=relaxed/simple;
-	bh=S9UDMbWilPhdpfJwIjrQRamIzFyU9QD+ikxKlb0Oz8k=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ej/6rmNO4oU3kL/aJylqTxd8jWES0RvXtdTpY2Pyx74Hptup9MIrpqlU/Gkk/+stYU49rqX9fX/mkFF2O7V8S2QKjziVJZg/Z8a7z4YNB97waIt4f8rrHegbBsldAj1v3/M99tTKoBczKoQh+H7QanP84KYOkEPtAuSEmrUaOeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bVZ9iUnl; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1760948404; c=relaxed/simple;
+	bh=9CLN3XP4gT6Uua1C96RINMvaSgMZmj50DVjXUb+alrk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LL3JhWEbY7YLTySqXpVBVh3VkM2uP2x6sJIWvEsx6UH3ftFhTqLlyTXfhFILrdTX99+7EILQfRcfz495Si7RRX3vknTuPbCwngpS6QwrvrUPzPyy04Pcega2Q9zgJtfMuxM/2Eo8JwzdT9zmhtKLt9tHMmzjv+oOJZuyKp1kgrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XjOe2YZm; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so26184865e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:19:51 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-87a092251eeso95891126d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760948390; x=1761553190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVCb1IezkGjRWpLaVOS0OWSE2fmBa+Fn1PR1cAjcc/Q=;
-        b=bVZ9iUnldHZyholn32ZBdwQ5q63nZfV4CZBTcmun6SnylwJAoVevsOPEbON3m8A9ZN
-         4NK4QDvWabkDtnIHXZpg6XPSMW2HHq3+7BJ8T8JzCLawP1VEYT6F8vFIS35r5cI+7yp1
-         cM1u/ZbP8KjIDW2c8ciNMy3ZBpqGfnYYVhvsGO7nDvEeXPO3orPKZDBCocgXU+yGuwRf
-         2h+X2m8aTnZofw+Zww5k3azv5NCd/kEsvZMATVMg0TNRGHhBLrFBWbcMEcGuTHLUkhT4
-         BSK28K5VKPhov24DP4boUdw4HgMLj6SFEv5LokavJbbdHQAPwAaXwXFuGDGtZwgRSqX5
-         6f/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760948390; x=1761553190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760948400; x=1761553200; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oVCb1IezkGjRWpLaVOS0OWSE2fmBa+Fn1PR1cAjcc/Q=;
-        b=AxeFAwALnAsCga72l8TPKcZIqpMRFreEYq3ct7NvdaDkODZwqW+Lq8BItKtOG8CLC2
-         dawCx/m856zvJZ6dFq771wSiq2qC5NzG9OQaSf4NRde7TYIYY4oIF1x32SFrnvbDUcgq
-         DwWOuyUN+KnckmgQ9x7ufhh8KiuFCMCiKBBiGI2j24SZ7neWpGdTgmTBNXr+tDl8O+QU
-         8F9wM9uMRV9E9OPTjqMy6Pa4wCxuulDeebSOYOO4bM3sebJ0NqYRj8ztV6XWz2SHL8h7
-         THugT82UkulM/vWosjlbFwfTi5+LGc85jCqw83b6+dulEpw9mi3m6TqWWVx5KwqCQiYS
-         YlYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNEKaAuoHWzuqqid1g2gBsnfORxVsqWkG3uEV9OfUIXq4801jZNhK0+SjY2pzw6oG++vlErvBPQHW40HQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjUZWZ2VEgDr1hGHRUH0yPR5JETT8oxbqnliNfYjVhvf06h17p
-	bvXucSALwaO6s5q69e3p2rKuIR/CeXoTVyB3Ejngnoxz2g4ml8hgCHvQ
-X-Gm-Gg: ASbGnctZIb5F/S3jht8AUsg8h2HVe4xoaN/DBcWyNK6t0SUna3ioIwP0G5IXaCsD28w
-	lm7NVrF0qfWw/2UKmvXHM6l3zgojsqbS2sewS3QNh4b48JgJiUvzSDfwIiipUAVB/ESHkYfPN9b
-	dDTKdKCIwI1QXcljbhqm4nqROhW1+ludPf1iad26uM6hklzTHtTd46YSflS9n6KrfRnEvfQJA2b
-	0sMcQmhFFyUoKE2Gw1npJBDObaTCk3LQ+OXCQ/m8bqVP/bTP7SdnY6lXbd3g+db70ickNCA8keB
-	tyAXt5xSRdhQHjmZnfkzrUDF0D3OSvDEydmp09IP7OGgs+zksDVTgaRDVYjeW28Mh0Pe2HY1nGw
-	uTQa2aKOjIrW5PIs+rJv0KuEmHjbFQoeLNvVncjI5DwbFiLj2jQCpR0vzuiJe
-X-Google-Smtp-Source: AGHT+IEXZFrAVjWLOtNUPtFNYd/eiqI5y9E0oS07a02DP0cVokTgitLvFo7ntPqbG7MXVqYU7Eyhaw==
-X-Received: by 2002:a05:600c:870b:b0:471:9da:5252 with SMTP id 5b1f17b1804b1-47117919c1cmr93063265e9.29.1760948389780;
-        Mon, 20 Oct 2025 01:19:49 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c91sm216979455e9.11.2025.10.20.01.19.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 01:19:49 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 20 Oct 2025 10:19:47 +0200
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
-	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
-	sdf@fomichev.me, haoluo@google.com, mattbobrowski@google.com,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC bpf-next 5/5] selftests/bpf: add testcases for
- tracing session
-Message-ID: <aPXwo0puQI3t0CXC@krava>
-References: <20251018142124.783206-1-dongml2@chinatelecom.cn>
- <20251018142124.783206-6-dongml2@chinatelecom.cn>
+        bh=krtDUBIIbBhf5txhvHZ8ViDPiZJA8hj1zGguCfZUNVQ=;
+        b=XjOe2YZmUmzWNDgutBTWleHJZSCEW4s6qisehzrkDZjXcK3fDmxuv5jE5Wu83MMSDT
+         qLJ6zm902boqrXqh5jdwhnRpOZF4YdR+js0/tDqIhtDdbpxYWgsfOQbzNf9XrKlX7Dv3
+         n2ygL58W0bfwFtZjhNFv+qB/Ziu26ff43w14DXwwgExCyJpYTewKi2kl7yxqXKxc7lA7
+         Y1uOwOHEWCdcGB3KbrTBgRyU8ijdUwSs8BaclEOHf+bbP25gEMedFlGuXbmpkUXASv8N
+         dyQWf3lBTjbg6wjBDPlAOozdiCkGxEsH/llKpnMS+ZliVLpoT1yoTdx3mfml4LNQ8oCr
+         nxCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760948400; x=1761553200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=krtDUBIIbBhf5txhvHZ8ViDPiZJA8hj1zGguCfZUNVQ=;
+        b=rzvnewFBRY5m/tmtdVlXF8sD6muhG4Qd1lUagwqzljjADLzbH1TCeq1WandIJZHV0S
+         ksAoQW11RfnkGE4WQMyjo+HDvDK4tesEN2BJSrjeR/yrfPmA/cTeOuhUrHFdG1tWTTgE
+         MsQGLnUgjb1uveRInlgYJ9zH5HonU2IHMoaScEGZGD+x6gzfPoEO9LQSTxXZHHVhHPNs
+         ew4l8RnI54hS8/gCK7EWa8Ouj3i2YBDwZy0tOubbO4uSelDlbnjFMyFeB06XHUA0rl+J
+         pcG4stDIpD3bIVkdxujCg9oKDwdhKJczCJmQmKIemkucXLbjDra4ZTNpL0rbkXUTy6hg
+         D5pg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAlc0F7xo66kZZCGYMGcJmKo21HS9fXxBI/GQqBLst2QyXcdP00oj+nz5nID1cxuMy5DUAwJbtJkRIluM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr8Olt6yqWHMxG9w39kSKIL3PqFfPaAI3Of4QeoZYFUm5dgBq2
+	/pI+YWC1i/BjAsK7/Lh8NGyiBAI5+dyJX6pQBNUkvpoaLd2/2ETaUexptp4qvDtMLn1NzeHGje3
+	WXmnXdFpJvlmpqJm9+3GwUAPNe+aHegM=
+X-Gm-Gg: ASbGnctwhJfJNLYXrNvVNBFnFSUJRlzoUxE9RnH5BQ6cKG2RWuFoffyaNR+Q3DNZZs5
+	kN1HYYn0m6k8r6HEIae2hxWIlQ+2YVoW0uPX8B5p5o56gdxWvBNwRWl/uByY1NA5Y6qyYRQ0inX
+	U1m9cjWsUDrWs/R+6UOqA1xQYYMedOpX9CnQcMtp+DUQm8T+qkyG99n6YcmMcVYLTIwV4w7FHBM
+	O3EMfrmGrrGwfyAz/vTp7MXmzOoMfZBokB+YtrqRFznymrmAh4qhGqwKTL73GWDQX4ZyuNYl3tK
+	gKDgEnT2NYEEBofKUg==
+X-Google-Smtp-Source: AGHT+IH00fZSiLlpv5/iK2nqClbPVqEOFs6NjYUaaUpZZ81WenopkIUOdg2ZPbRIOvaCbrU3WZ4RbOVGHG7Hebvs9Kw=
+X-Received: by 2002:a05:622a:55:b0:4b3:4fa9:4cd2 with SMTP id
+ d75a77b69052e-4e89cfb2443mr191567221cf.33.1760948400448; Mon, 20 Oct 2025
+ 01:20:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018142124.783206-6-dongml2@chinatelecom.cn>
+References: <20250925-rk3576-evb1-dsi-v1-1-c76fc3740abc@gmail.com>
+In-Reply-To: <20250925-rk3576-evb1-dsi-v1-1-c76fc3740abc@gmail.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Mon, 20 Oct 2025 12:19:51 +0400
+X-Gm-Features: AS18NWCBDCEZzvVwJX4XETqmgmCCBqTdNAVD0aLBXbcVgyOY6pJqe52HL1dPqJA
+Message-ID: <CABjd4YwVfrzxYKM4cAG=-fMbw9OcQGZD20CVCG8FvC8phDsw+Q@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Add DSI LCD display on rk3576-evb1
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 18, 2025 at 10:21:24PM +0800, Menglong Dong wrote:
+On Thu, Sep 25, 2025 at 12:38=E2=80=AFAM Alexey Charkov <alchark@gmail.com>=
+ wrote:
+>
+> Add support for the Rockchip W552793DBA-V10 LCD+touchscreen assembly whic=
+h
+> comes physically attached to Rockchip RK3576 EVB1 boards.
+>
+> The display part is driven by the on-chip MIPI DSI controller, and the
+> touchscreen is connected over I2C.
+>
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+> Note that backlight support is left out for now, as it depends on PWM
+> support [0] which has not yet been merged.
+>
+> A workaround is simply `gpioset -c 0 13=3D1` to set the respective GPIO
+> pin high and thus to light up the display unconditionally.
+>
+> [0] https://lore.kernel.org/lkml/20250602-rk3576-pwm-v2-0-a6434b0ce60c@co=
+llabora.com/
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts | 89 ++++++++++++++++++=
+++++++
+>  1 file changed, 89 insertions(+)
 
-SNIP
+Hi Heiko,
 
-> +static void test_fsession_reattach(void)
-> +{
-> +	struct fsession_test *skel = NULL;
-> +	int err, prog_fd;
-> +	LIBBPF_OPTS(bpf_test_run_opts, topts);
-> +
-> +	skel = fsession_test__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "fsession_test__open_and_load"))
-> +		goto cleanup;
-> +
-> +	/* First attach */
-> +	err = fsession_test__attach(skel);
-> +	if (!ASSERT_OK(err, "fsession_first_attach"))
-> +		goto cleanup;
-> +
-> +	/* Trigger test function calls */
-> +	prog_fd = bpf_program__fd(skel->progs.test1);
-> +	err = bpf_prog_test_run_opts(prog_fd, &topts);
-> +	if (!ASSERT_OK(err, "test_run_opts err"))
-> +		return;
+Any thoughts about this one? Can we perhaps get it merged for -next?
 
-goto cleanup
-
-> +	if (!ASSERT_OK(topts.retval, "test_run_opts retval"))
-> +		return;
-
-goto cleanup
-
-> +
-> +	/* Verify first call */
-> +	ASSERT_EQ(skel->bss->test1_entry_called, 1, "test1_entry_first");
-> +	ASSERT_EQ(skel->bss->test1_exit_called, 1, "test1_exit_first");
-> +
-> +	/* Detach */
-> +	fsession_test__detach(skel);
-> +
-> +	/* Reset counters */
-> +	memset(skel->bss, 0, sizeof(*skel->bss));
-> +
-> +	/* Second attach */
-> +	err = fsession_test__attach(skel);
-> +	if (!ASSERT_OK(err, "fsession_second_attach"))
-> +		goto cleanup;
-> +
-> +	err = bpf_prog_test_run_opts(prog_fd, &topts);
-> +	if (!ASSERT_OK(err, "test_run_opts err"))
-> +		return;
-
-goto cleanup
-
-> +	if (!ASSERT_OK(topts.retval, "test_run_opts retval"))
-> +		return;
-
-goto cleanup
-
-> +
-> +	/* Verify second call */
-> +	ASSERT_EQ(skel->bss->test1_entry_called, 1, "test1_entry_second");
-> +	ASSERT_EQ(skel->bss->test1_exit_called, 1, "test1_exit_second");
-> +
-> +cleanup:
-> +	fsession_test__destroy(skel);
-> +}
-> +
-> +void test_fsession_test(void)
-> +{
-> +#if !defined(__x86_64__)
-> +	test__skip();
-> +	return;
-> +#endif
-> +	if (test__start_subtest("fsession_basic"))
-> +		test_fsession_basic();
-> +	if (test__start_subtest("fsession_reattach"))
-> +		test_fsession_reattach();
-> +}
-> diff --git a/tools/testing/selftests/bpf/progs/fsession_test.c b/tools/testing/selftests/bpf/progs/fsession_test.c
-> new file mode 100644
-> index 000000000000..cce2b32f7c2c
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/fsession_test.c
-> @@ -0,0 +1,178 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2025 ChinaTelecom */
-> +#include <vmlinux.h>
-> +#include <bpf/bpf_helpers.h>
-> +#include <bpf/bpf_tracing.h>
-> +
-> +char _license[] SEC("license") = "GPL";
-> +
-> +__u64 test1_entry_result = 0;
-> +__u64 test1_exit_result = 0;
-> +__u64 test1_entry_called = 0;
-> +__u64 test1_exit_called = 0;
-> +
-> +SEC("fsession/bpf_fentry_test1")
-> +int BPF_PROG(test1, int a)
-> +{
-
-I guess we can access return argument directly but it makes sense only
-for exit session program, or we could use bpf_get_func_ret
-
-jirka
-
-
-> +	bool is_exit = bpf_tracing_is_exit(ctx);
-> +
-> +	if (!is_exit) {
-> +		/* This is entry */
-> +		test1_entry_called = 1;
-> +		test1_entry_result = a == 1;
-> +		return 0; /* Return 0 to allow exit to be called */
-> +	}
-> +
-> +	/* This is exit */
-> +	test1_exit_called = 1;
-> +	test1_exit_result = a == 1;
-> +	return 0;
-> +}
-> +
-> +__u64 test2_entry_result = 0;
-> +__u64 test2_exit_result = 0;
-> +__u64 test2_entry_called = 0;
-> +__u64 test2_exit_called = 0;
-> +
-
-SNIP
+Thanks a lot,
+Alexey
 
