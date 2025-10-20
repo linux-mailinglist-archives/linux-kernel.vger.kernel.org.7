@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-861284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FE0BF2478
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BF3BF24A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 356964F5E69
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC4A3B4B6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE57283151;
-	Mon, 20 Oct 2025 16:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6D7283FEA;
+	Mon, 20 Oct 2025 16:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="diCbvMxy"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="QNkQ3EIZ"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E5C283FCF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15881283FF9;
+	Mon, 20 Oct 2025 16:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976099; cv=none; b=sgU5gNOS4drByzYkHeLEtb2mFiUc7FeLdDuKoqM3g6AtCvwB5nDKaP3Q39B/49dzCTMkAd4nR+Y5CBipSMBe7D/DAGLw6cZP5ha3LfMiVn3EtpZ6FVV2elGB+3nGa3bJiseahifq9VdHovA1uypMQvV1Ch19PLwlolzj3SI7L2Y=
+	t=1760976093; cv=none; b=Rc/VBgq0B4iiFyyDA15N/kutEjzKttHSCXDAPxyMFdqcIQW4boKJCl/9G+8XGNUKS5ld+CApno7mHvWVte1sv9lswFeDFWUjQmD5AuAtKiWOiyM9XYEaDJ0lIkphNQXfOAi6F3nw2Urfe4CYOp0i7OvtJmFa9Uq4vgzgTlsPoOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976099; c=relaxed/simple;
-	bh=lY512ww2GgxRIYZ3nYvRoncqZSBQoFPXtRikl+duERA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=hPfkIJq//AU4n3udEX/60VKsUqc2fAVgk6kAM0LvkR7HiwDScnfznzD+WHiB82mbN27U4sdc9TFpca+tgf5csy3YNjDVWlJjrAWlKRTJrvNkJIL34VJRo/Izjhe+AkocPiD6PzLTFSOFe02q3OdFUoIThw/UnfKvG/EnDlZasTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=diCbvMxy; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251020160135euoutp01a1ee36e7ad15d8e8a7aa21ff6f4f25b2~wPm29nWoA2236722367euoutp01T
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:01:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251020160135euoutp01a1ee36e7ad15d8e8a7aa21ff6f4f25b2~wPm29nWoA2236722367euoutp01T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760976095;
-	bh=Vz2ne046ZdvV+eht6cashAps0Hu4TwK9pfYylzXhh4I=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=diCbvMxyv6VHxaci38HRs6zoXY8d96RdjS2RPZsMICSvRkrneyUnNJQK/LZ/Uaw6L
-	 xKhKEh8hsY4h4LpLmmaQp2FgwMXXjvAaQ23ZKKXp/q88v7+QlSN/0+UZVzpoTvouWD
-	 rh/u5PEM7yXEQ2eTmgVRTObDe6WtX1W6+z/UzZLo=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251020160135eucas1p29eb8517e240f188f102e77713f85e29d~wPm2qtRxi1568615686eucas1p2V;
-	Mon, 20 Oct 2025 16:01:35 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251020160134eusmtip28bdd46101f68866229b0150d21bad517~wPm2Mo_TP1636616366eusmtip2o;
-	Mon, 20 Oct 2025 16:01:34 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa
-	<tfiga@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guennadi
-	Liakhovetski <g.liakhovetski@gmx.de>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Hans Verkuil <hverkuil@kernel.org>,
-	stable@vger.kernel.org, Shuangpeng Bai <SJB7183@psu.edu>
-Subject: [PATCH v2] media: videobuf2: forbid remove_bufs when legacy fileio
- is active
-Date: Mon, 20 Oct 2025 18:01:21 +0200
-Message-Id: <20251020160121.1985354-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760976093; c=relaxed/simple;
+	bh=6UAYYbRl6gVxoWFWJmquglKp4qMFnwIKcWIe1rtXLbg=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=T289z1O8g+K4LDJbEQFzr1vf5LWmJx6Z4/c7OT0KgNuiptlYRmRlFYeqW2zQzj3xKv/65fR9MUhVHbCTtiXvt0F9hHKG23bExf12qxp4H5ieI77kuM+uqgra3B/rYyMX/bk8Kuzvzv+idc0vqhJKt7bIkparx6kBtpJucS49xp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=QNkQ3EIZ; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 2641782854A5;
+	Mon, 20 Oct 2025 11:01:31 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 6o93uEcNXNI3; Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 9A8B7828851D;
+	Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 9A8B7828851D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1760976089; bh=9XOvRKZB3ZHxwazpGMcpCeHjuLjttzMXe5TLIp4gLwQ=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=QNkQ3EIZlV+10wfyNPSUJwaX1AJh4R3JpucrJc8ooITpdIhyvJ7G1fmq8HYjisO3U
+	 wiNUHduXl6At9Xg1WnGkXm2iTI39JSILVTduAzaeiA9T3KPJ3tmKNvpQ9HmA9QbHa0
+	 LR6xK9LY3dMenwsi+59F8E8iZcSGDJf7nuyuDeWQ=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Mn7UjrjG7kFk; Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 6F9BD82854A5;
+	Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
+Date: Mon, 20 Oct 2025 11:01:26 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: robh <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Lee Jones <lee@kernel.org>, 
+	Georgy Yakovlev <Georgy.Yakovlev@sony.com>
+Message-ID: <1626454153.1801886.1760976086710.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <f6f9cfc9-b26e-4358-8781-6ce75075d13f@linaro.org>
+References: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com> <20250929141113.GA3987541-robh@kernel.org> <924260297.1801829.1760974499327.JavaMail.zimbra@raptorengineeringinc.com> <f6f9cfc9-b26e-4358-8781-6ce75075d13f@linaro.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251020160135eucas1p29eb8517e240f188f102e77713f85e29d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251020160135eucas1p29eb8517e240f188f102e77713f85e29d
-X-EPHeader: CA
-X-CMS-RootMailID: 20251020160135eucas1p29eb8517e240f188f102e77713f85e29d
-References: <CGME20251020160135eucas1p29eb8517e240f188f102e77713f85e29d@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
+Thread-Topic: dt-bindings: mfd: Add sony,cronos-cpld
+Thread-Index: +XTYI2SaT+vzvvqrHcY8ELCXWJUT7g==
 
-vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
-potentially overwriting some pointers used by the legacy fileio access
-mode. Add a vb2_verify_memory_type() check symmetrical to
-vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
-protect internal queue state between subsequent read/write calls.
 
-CC: stable@vger.kernel.org
-Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
-Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
-Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- dropped a change to vb2_ioctl_create_bufs(), as it is already handled
-  by the vb2_verify_memory_type() call
-- replaced queue->type check in vb2_ioctl_remove_bufs() by a call to
-  vb2_verify_memory_type() which covers all cases
 
-v1: https://lore.kernel.org/all/20251016111154.993949-1-m.szyprowski@samsung.com/
----
- drivers/media/common/videobuf2/videobuf2-v4l2.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+----- Original Message -----
+> From: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+> To: "Timothy Pearson" <tpearson@raptorengineering.com>, "robh" <robh@kernel.org>
+> Cc: "devicetree" <devicetree@vger.kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Conor Dooley"
+> <conor+dt@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Georgy
+> Yakovlev" <Georgy.Yakovlev@sony.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
+> Sent: Monday, October 20, 2025 10:58:40 AM
+> Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-index d911021c1bb0..0de7490292fe 100644
---- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-+++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-@@ -1000,9 +1000,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
- 			  struct v4l2_remove_buffers *d)
- {
- 	struct video_device *vdev = video_devdata(file);
-+	int res;
- 
--	if (vdev->queue->type != d->type)
--		return -EINVAL;
-+	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
-+	if (res)
-+		return res;
- 
- 	if (d->count == 0)
- 		return 0;
--- 
-2.34.1
+> On 20/10/2025 17:34, Timothy Pearson wrote:
+>>>> +  watchdog:
+>>>> +    type: object
+>>>> +    description: Cronos Platform Watchdog Timer
+>>>> +
+>>>> +    allOf:
+>>>> +      - $ref: watchdog.yaml#
+>>>> +
+>>>> +    properties:
+>>>> +      compatible:
+>>>> +        const: sony,cronos-watchdog
+>>>
+>>> There's no need for a child node here. 'timeout-sec' can just go in the
+>>> parent node.
+>> 
+>> Could you elaborate on this please?  As far as I can tell we ref watchdog.yaml
+>> and need some kind of compatible string, so why would I break out timeout-sec
+>> directly here?
+> 
+> 
+> Please look where the comment was placed. Under $ref? No. Under this
+> compatible. $ref goes to the parent, obviously.
 
+This is not an area of the kernel I'm normally changing, so I appreciate the insight.  None of this yaml syntax is particularly obvious the first time it's encountered, at least not to me.
+
+> You do not need kind of compatible string. Parent already has one. You
+> do not need compatible strings at all to instantiate Linux drivers.
+> That's pretty common pattern for most of MFD-like devices, plenty of
+> examples in the kernel.
+
+Understood.
 
