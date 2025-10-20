@@ -1,143 +1,147 @@
-Return-Path: <linux-kernel+bounces-860336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61F5BEFE5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14140BEFE74
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266C71894151
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F681189D39C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045AF2EAB68;
-	Mon, 20 Oct 2025 08:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9A02EB85D;
+	Mon, 20 Oct 2025 08:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H4qBAEVC"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CO7riAtY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572152EACE1
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1CC1FF60A;
+	Mon, 20 Oct 2025 08:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760948495; cv=none; b=ONHwdD5ilHFlDbkVNtdy8lsKWXIYvsM+3z5S84JSreUIsg9us4m0v0QaBHyqRnHTifomZ3BvK82JE7fc84wlsYekyjZjjtUKztEdY+YO1AWB2/sM1PBCvr21DT+g1++pGwx1iiyna35FJoNB6NtmX2i12QtCPytZ4HxDEq498xE=
+	t=1760948572; cv=none; b=KQsXGXDgpUWV21bbT6Kyh0+gJab1ZJo+Oz8Fwkj2KwU07bgm/chOXQ0cKEMuIlYNyDb6pu4Ky745PpAA8jk7pJrEPRHcekVFa90dYY7pEG3p0eAhrA03MkZzEasACVQtuXU/Pr6drcCGa1n+kTUfzxc8/2/lHcw49Svyjqid1VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760948495; c=relaxed/simple;
-	bh=vYIeq28h+h6uqLtsFXdAP42iMivoDA7xV9+y/sQhMCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Eu84vdqFMml4QVEmNTqjFGu1JYEDpZulICo5NQFwdnWRKW/50YHEGu6LBJ+lLewYXsWGTR9JHXguNSmWgCmh2vH4yUq+f7ABHSuUgv9vnyzBPRsuDwT8L6vlrpR+MNePch26/vX6o1RIqEQUdfBpHbC/RcwePNiD0+JGx63Qyx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H4qBAEVC; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251020082131euoutp028d426dc097c30dada302e5998b4b7f7d~wJVLHD6it3130231302euoutp02K
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:21:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251020082131euoutp028d426dc097c30dada302e5998b4b7f7d~wJVLHD6it3130231302euoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760948491;
-	bh=ZFEomdtwKlWNv3vaRjUKVJ38TVbMvp19aEpEGTtW77A=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=H4qBAEVCxlWoQSWtZ7L1rf1eWVhBfrk/7TQogUjlqSKeJQF2pgixJ9afkIGX8Xpj/
-	 zE/UnPgB5KkA3RJBdCxGfy+PZf4bS90+d6OcZdw2/fF2Xvew7T+P1+ZGm0NK5Qi2m2
-	 IbLR9jPHZfU8lPEP+TFPF4Nn/vpUsXpyqDPPk9wk=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251020082131eucas1p1d723f7687dc5453dd4d19f0aaaa68bcd~wJVKw2cA11652416524eucas1p1P;
-	Mon, 20 Oct 2025 08:21:31 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251020082130eusmtip16db5dadda3e2e2ec69c92492a82572a2~wJVKGUsc92519025190eusmtip1h;
-	Mon, 20 Oct 2025 08:21:30 +0000 (GMT)
-Message-ID: <642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
-Date: Mon, 20 Oct 2025 10:21:30 +0200
+	s=arc-20240116; t=1760948572; c=relaxed/simple;
+	bh=8v23XW0hAwdFQYfOtD8IgyDFuPnLGjKXYO+djDjJjG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tCV7tzOODyZUAT+0QYwFJAX8cQ4ZURqMYVSHA+ZDCj26e0rto9DJho4dK8q28lCve+U2i3rdv8SEnxhi7z+isps1gF8mDoiXar3ifaitQQpBInb+/SlBOefMuN4b/m3OSwM1lCbfLquRBWQTa4f+XWUAaEe6NvypRqZ1G6fhLu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CO7riAtY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9242C4CEFE;
+	Mon, 20 Oct 2025 08:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760948572;
+	bh=8v23XW0hAwdFQYfOtD8IgyDFuPnLGjKXYO+djDjJjG0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CO7riAtYyjd3ndpj4ZESkP2rNvWii9tOnrQYxKO+6ne6Ca0nYzmbQ8izewzcWp7mG
+	 CkDHN0/Qs8Zjr2Oq9TY5bCFNaQdTfmR7ecBoerf+kxxVm7AEzJll2A8hCq6zm56M/X
+	 w91KslbEp8kgrefO+MdYKZp/+UKM4O/7rH80DUEqqvYdMqwyZin5FbxEIc9svWS7iP
+	 mocOHcnwyQHqpIMcvrq3pNwJ+Qt+whC+Qfyg5gG3hhdAJzslvWRVgFRhqubWGOa1JM
+	 oIbuDI8DvoSJTnxphq5uPkTCswYvfQDBYj1HW36sl0P/0QTxZZodheDNxVCBOveV+O
+	 OaJ9oIdVnk4oQ==
+Message-ID: <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
+Date: Mon, 20 Oct 2025 10:22:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
- legacy fileio is active
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Hans Verkuil
-	<hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans
-	Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251020082131eucas1p1d723f7687dc5453dd4d19f0aaaa68bcd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
-References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
-	<20251016111154.993949-1-m.szyprowski@samsung.com>
-	<36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
-	<84133573-986d-4cc8-8147-246f0da34640@samsung.com>
-	<1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
-	<21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On 20.10.2025 09:48, Benjamin Gaignard wrote:
->
-> Le 20/10/2025 à 09:39, Hans Verkuil a écrit :
->> On 20/10/2025 09:34, Marek Szyprowski wrote:
->>> On 20.10.2025 09:11, Benjamin Gaignard wrote:
->>>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
->>>>> create_bufs and remove_bufs ioctl calls manipulate queue internal 
->>>>> buffer
->>>>> list, potentially overwriting some pointers used by the legacy fileio
->>>>> access mode. Simply forbid those calls when fileio is active to 
->>>>> protect
->>>>> internal queue state between subsequent read/write calls.
->>>> Hi Marek,
->>>>
->>>> I may be wrong but using fileio API and create/remove API at the same
->>>> time
->>>> sound incorrect from application point of view, right ? If that not 
->>>> the
->>>> case maybe we should also add a test in v4l2-compliance.
->>> Definitely that's incorrect and v4l2-core must forbid such calls. The
->>> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending
->>> v4l2-compliance tools is probably a good idea.
->> Yes, please! A patch is welcome.
+On 20/10/2025 09:45, Tudor Ambarus wrote:
+> 
+> 
+> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>> --- a/drivers/clk/samsung/Kconfig
+>>> +++ b/drivers/clk/samsung/Kconfig
+>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>  	  status of the certains clocks from SoC, but it could also be tied to
+>>>  	  other devices as an input clock.
+>>>  
+>>> +config EXYNOS_ACPM_CLK
+>>> +	tristate "Clock driver controlled via ACPM interface"
+>>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
 >>
->>   I also wonder if its a
->>> good time to add a kernel option to completely disable legacy fileio
->>> access mode, as it is not really needed for most of the systems 
->>> nowadays.
->> No, that will break applications. Using read() is very common (and 
->> convenient!)
->> for MPEG encoders such as the cx18 driver.
->>
->> The fileio code is not blocking any new development, it's just there 
->> for those
->> drivers were it makes sense.
->>
->> Regards,
->>
->>     Hans
->
-> I wonder if this patch in useful because when calling 
-> vb2_ioctl_create_bufs()
-> it already check in vb2_verify_memory_type() if fileio is used or not.
+>> I merged the patches but I don't get why we are not enabling it by
+>> default, just like every other clock driver. What is so special here?
+> 
+> Thanks! Are you referring to the depends on line? I needed it otherwise
+> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
 
-Frankly speaking the original report I got was about mixing fileio with 
-vb2_ioctl_remove_bufs and that case is indeed not protected.
 
-While analyzing that I've inspected a symmetrical ioctl 
-(vb2_ioctl_create_bufs), but it looks I've I missed that a check is in 
-vb2_verify_memory_type(). I will remove it in v2 then.
+No. I am referring to missing default and defconfig patch.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
 
+
+Best regards,
+Krzysztof
 
