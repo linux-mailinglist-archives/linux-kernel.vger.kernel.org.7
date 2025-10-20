@@ -1,248 +1,322 @@
-Return-Path: <linux-kernel+bounces-861165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B27BF1F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:58:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC2ABF1F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF273BC5F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:58:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3B094F5D3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED4D2367D7;
-	Mon, 20 Oct 2025 14:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B72230274;
+	Mon, 20 Oct 2025 14:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="cnJgu+R8"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020121.outbound.protection.outlook.com [52.101.193.121])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nP6Iqe3S"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6041DE4C2;
-	Mon, 20 Oct 2025 14:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.121
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972311; cv=fail; b=nuKe6NOaoJlIFv6QNJjpncJWSNbAlcAV5A04fLGnRKYDACzjhMlYG7h2lIs01747/L2h1jbMvCWOHIyBqcfO7sX2p87ihxGeEeD5SA0SAtdSkOXcVac9YYWYymSQGWNg1nHVzysBalDPndftTQfqqQXRJGeKr+s2SUJPd25RX/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972311; c=relaxed/simple;
-	bh=plKSlmJ9Upk2TtQeCR9NxfjxCRz7Co9qh5TbKUov64k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IC7etTAyEbNvg2EolZnAzCMHnpB6PIV88BDR8cl6chVUAc0az1WtLXjyZ6Zu9l/3a3aHz0gN03svphzdmvMY4geGbQau9SFtinYrtkrmGEcb75puMMs1IFs7v1HeP657Zp3apIP15//REJJgR+Dp8xDRojaQO2gsIdQyWm2OJ1c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=cnJgu+R8; arc=fail smtp.client-ip=52.101.193.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MHMa0pKnBswXaIfu9VpRCGu4NH0GocnbgkhA8OvgU2dKSrsv92Kab58j1ODlOMzwAQOaazx2k+W4k8ome9tX4zgZPoYSPvb8UZZ+ZvhwLl0rSmt+2yC+XfFUTdrXnOtQOer7aenbH16WVyIY9NwtuvidapaJpnRPHILnTEaLBBXlls1mtxMtfikufDU2sgJMjqlwR02C/93f1FjYHBjDBqwYEUQM7gCF2ZeLalMHAvzNT49G83VanzME3w1+ClQ39k0Oelbs9iPU8F7Czvy1sQtd6c/crAKdYY4MuMl+09opgp3e7M0D+xMOJrSytRG70GEtywBkuh8mu6HOCgfgNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pCi4EZRMmAoK5qLqQpIJYHfJhTEnXeDCwutNvAaQ6iA=;
- b=L0vAFgkQHebv3Jxit26GAKsKBtuurQgzvEUajye484CVC0f+sYTBIo/5+zF8KFF1HWPbcOiktSbPcLkLRICJIUPmOygq0CHJTaVCRsGFab8YgSfbxXpuHDgc3kaeX55dDDGo7YkYecOVewg6jDqq4QFO//PUSva7nq3R7SDDSU0r1PaN9naHyP2H1u7WUxJYOceIXDXhVvUo7dhSSfulZxzpffAlYWwGd0Dl39MhJ5RkdpsWuzoi4HgdVdzKD+h1ITJeqEqMILGEuA+x6xjjYTjrtHm3O4Bj9VtIx23xyZ+dRUKr5ISkx7u00a4t23i8CYYdNNWm90Ggpy5FlKa1dw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pCi4EZRMmAoK5qLqQpIJYHfJhTEnXeDCwutNvAaQ6iA=;
- b=cnJgu+R8ytfWsEmz25f6p8R0pa7WtDfLbEixLpGsD4sG2pP4KdctNJKQ2TpbeTGzcfyQXZ2ysF02/TCc7nQVwmsKl/0l7f7PpXoyiAqgZVs0ucZWQjJFUqMRw80fTwvovvefZeLeWD53H13650AvDQyxA5HGbtg60xfmVvRaC7A=
-Received: from SA3PR21MB3867.namprd21.prod.outlook.com (2603:10b6:806:2fc::15)
- by DM4PR21MB3320.namprd21.prod.outlook.com (2603:10b6:8:69::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.4; Mon, 20 Oct
- 2025 14:58:26 +0000
-Received: from SA3PR21MB3867.namprd21.prod.outlook.com
- ([fe80::70ff:4d3:2cb6:92a3]) by SA3PR21MB3867.namprd21.prod.outlook.com
- ([fe80::70ff:4d3:2cb6:92a3%4]) with mapi id 15.20.9275.002; Mon, 20 Oct 2025
- 14:58:26 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>, Haiyang Zhang
-	<haiyangz@linux.microsoft.com>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Paul Rosswurm
-	<paulros@microsoft.com>, Dexuan Cui <DECUI@microsoft.com>, KY Srinivasan
-	<kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>, "davem@davemloft.net"
-	<davem@davemloft.net>, "pabeni@redhat.com" <pabeni@redhat.com>, Long Li
-	<longli@microsoft.com>, "ssengar@linux.microsoft.com"
-	<ssengar@linux.microsoft.com>, "ernis@linux.microsoft.com"
-	<ernis@linux.microsoft.com>, "dipayanroy@linux.microsoft.com"
-	<dipayanroy@linux.microsoft.com>, Konstantin Taranov
-	<kotaranov@microsoft.com>, "horms@kernel.org" <horms@kernel.org>,
-	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
-	"leon@kernel.org" <leon@kernel.org>, "mlevitsk@redhat.com"
-	<mlevitsk@redhat.com>, "yury.norov@gmail.com" <yury.norov@gmail.com>, Shiraz
- Saleem <shirazsaleem@microsoft.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [EXTERNAL] Re: [PATCH net-next,v2] net: mana: Support HW link
- state events
-Thread-Topic: [EXTERNAL] Re: [PATCH net-next,v2] net: mana: Support HW link
- state events
-Thread-Index: AQHcPVFWD9nsmGKsp0STD2ymhxH2HbTG+nuAgAQumFA=
-Date: Mon, 20 Oct 2025 14:58:26 +0000
-Message-ID:
- <SA3PR21MB38676E685565E2B144C1E1F3CAF5A@SA3PR21MB3867.namprd21.prod.outlook.com>
-References: <1760477209-9026-1-git-send-email-haiyangz@linux.microsoft.com>
- <20251017160541.4ce65ede@kernel.org>
-In-Reply-To: <20251017160541.4ce65ede@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=7ddb914f-1a61-4541-bab8-c1cf3be7cc9f;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-10-20T14:57:29Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA3PR21MB3867:EE_|DM4PR21MB3320:EE_
-x-ms-office365-filtering-correlation-id: 5385a5a4-4214-4b9d-1b8e-08de0fe91f7c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?+V2T9ummH+ki6asOnudrf8gUDfCGiWmwRgEW5EI+YK0pm9Ic8hXCHFGumXl2?=
- =?us-ascii?Q?MDOsU5pTJPXMbuo2QnAB8pNYnNL1whBwHvKIljL/Stuq7qHYDerJqr5gKxX/?=
- =?us-ascii?Q?6eR6yBWAXllzUFOK3CMYrW/uepiHKveH9rxPdgQUwGRF/RtZod7dKty7dVfa?=
- =?us-ascii?Q?6Vuxza3wvZJkziEUIstHM8YbvQIINo59pgiYeyC4Lz1SF2FseIjrtEeliaH3?=
- =?us-ascii?Q?7KyXLAQhl9vMShosECiLjUTZCbOksyZFy8FmmwLiFwMFnrb1PLRAzaWz2mB2?=
- =?us-ascii?Q?dRSypzhu2x+nDEMR/e5e19fjrrs/DG8NRsLYy8n/6giVSMNRBTHG3HFm04PF?=
- =?us-ascii?Q?u8kveKJB73kuz6AcP7985hr2nLwXlkEMHGgX0Ku3KmELDx8ql30GnZAhE4Cn?=
- =?us-ascii?Q?W0Vil3eQB6S9UQFuHFYBaPIQczEc6Sm/FYNlEiWAbmeyK2B+5ym+ELancvvM?=
- =?us-ascii?Q?bGHTjDEQdj1bX543/uqKCIVR+Kzmf5wtkagfPXTs22R+OGODyEwdI9QYTUut?=
- =?us-ascii?Q?AVYyjvwCGd8azGhFBKlD/GwMGgi3jDR4Yvi+NStahU4/N45rqNvQln2TWB6u?=
- =?us-ascii?Q?vm/x1yDXljx4H306Kse8Ghzijwg+ziD76HOAtnFbr1rOaD/PI3Z307OwSY8W?=
- =?us-ascii?Q?RNgnIE7QFeqI+olShwC3EkcqeW8ti+Oyfm145k7C9FyS6eZZagt6UV1e4kCS?=
- =?us-ascii?Q?/WFVg+Zo9FTFRb2PfXFA1sV8LPXMpQz/blBIqWLtN/UOZ9+hqw6fLH3tP+Ex?=
- =?us-ascii?Q?UCnTjEULtQNcqciT7g3Z9RVCf1nIS2jK+E6qctEN13yxLbf3jI6wlXp0qg7e?=
- =?us-ascii?Q?JWAjkSeEWpFlUalL28MbVflzZ56x6WGYu2gsAhp/ETWfDbJFMi8WebN9fq1S?=
- =?us-ascii?Q?n1Cj3y5viOmMaGZcsaZs4A0ARj74Vv+DDBKIp1UNdR+e6yhybGDU96HmoaSF?=
- =?us-ascii?Q?qIdoqI9nIMYY/hRUhVi8oSzbNbjh20LGa65sAg41HyjWV3YZbdBqijbaN1Jl?=
- =?us-ascii?Q?j4Q8Ytj5PpFTfEVxk91lu6A2KPsnKToD/OTdpHirB6ickUVKrS9b/gJex6x4?=
- =?us-ascii?Q?AQLLGW4e014xnRbdOR8iLDie+MwWhdPQBtK57NbAUfciMjOlG+KNtIhfQ2hk?=
- =?us-ascii?Q?8VD+MbgyomsN63kMzRGjBmeY2VVusuRVhrnvFa5oHmnSdOqfQ5xvo1bQ/qIt?=
- =?us-ascii?Q?tOLvefkToQxbVw2ZL0bsycC9h9GYN9X/nnOZ+HGXnXCNPYLRYJjDeTi05viC?=
- =?us-ascii?Q?M82sKNRIMAA8dnWWqSiMp+e3WWpOYEhoV0j189TVVZatREvKVHiz/SJEO3g3?=
- =?us-ascii?Q?75anDx8+uQvsaW4/toBgXhxFRWXnBo6lnvB/eKwWMFJfPUc8aX7DEe6ArG1H?=
- =?us-ascii?Q?UZjHDYhvv5nb6VvNbwqFS4h29/6L5cwuUfxNG9hZrLHpN9Atk+6jf8KuMkNG?=
- =?us-ascii?Q?L2PDFh0yswIdeXmFx0SAsmjgp4zzB+MxvK23CiQXNnf2cIfxETWW54zdk/l4?=
- =?us-ascii?Q?2ABZ8NFHB2RPH5CMbRHwfbFPwPLS6BXTBbuc?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR21MB3867.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?sKffxg4mHLipDg7yytJCb+MIGdnyhx+Hn4994n5Vyu+mCBg+tahele34a4WB?=
- =?us-ascii?Q?SQC/8+Lhpv8sJzH1x1lRPkP+stP6zOJ9sZJCpDuuDUcnQnpulMGzpCZS4NTV?=
- =?us-ascii?Q?L6jbTkbWiQX2mOAv3qlKTbamHJbuuDAbTeZ8MZ3OL5qe4RWv3ANWXREZMJun?=
- =?us-ascii?Q?KGE91wn2f2An/GBVwvnaOB/ShV7PW8RPToIq3zN3uT3jP0sMZA9oKZ0njHoM?=
- =?us-ascii?Q?XBnGmMECJP5iXwGzuqVB7RyZTXOngGjfb4rsfgsLL1B45W7XVj5BUBJx9LdA?=
- =?us-ascii?Q?QgyGvviKqpNoD89Aq79EJ5N3WHzZhukfMBUs3lwQeGeDlzWgqgPkxLDn03y5?=
- =?us-ascii?Q?egyYSxQjPQI+hxo7XM9XbMC+zYD5yMlHBK17AI7YqH0i0s02YIpj6ppLj/c9?=
- =?us-ascii?Q?fDHloFe30frvs+8xSlXeCwEiwjB0zu6PVrspmXneuFSVSSPURz/Ia134GoL3?=
- =?us-ascii?Q?e13eptD7AG2Wqm9c3Fxm0uF6TZZ73Qu7bh3U5zdldI1jsRt5oN8a65sYF0QT?=
- =?us-ascii?Q?79VNxrI9krRMUqQcKAWGzhSN/iHR/Cg4rCJkPJ7wUaa4yvm7J0CfxNPDTQCb?=
- =?us-ascii?Q?weagSAqkMP7abmoU+m6dGeLLbgM7CNvJVDUJzHPH4+97zUU2gYo6r14JB4Cg?=
- =?us-ascii?Q?XaOcurBgcPYHvg0AA87U1nOULkWy8feB9kaVTBgz5kgQ/6na4Meb7fYTE3JG?=
- =?us-ascii?Q?tYDgaIk5FEC+OWebBEoOCuX3IuEYPm1Qg4Z+RJ2m9H5k6zuzx3dFrlTfD7S3?=
- =?us-ascii?Q?snj4dLTuoOwsciG6OC8+O3x2oXrwOLYXHPRUuLg/40KMyNLj5Knz62X+RkXY?=
- =?us-ascii?Q?OD20rSmgrqEX3kwvO0yHCo3+0gkKkP0PCzys7Zxz/9QuNQwURyxmgUnqWPZA?=
- =?us-ascii?Q?BZd/j7efNUxTfJhcfFLJriZGDa02IMY/7uaVB/xFPxjz0X+pXRTNImvv72fG?=
- =?us-ascii?Q?qGQnIo1OQtKs9n6lkyx2fS8MkeHrlry7OmQHusXiJ1y2Sqi1rO4dJVI/rQ7R?=
- =?us-ascii?Q?foeAeX/Vq7+DNhnKEnlAgEXSoIMnPB1LsBOKEjvl14Q7Tog8gdkNK+9baGTl?=
- =?us-ascii?Q?6CtbdZfLRAzCW4AT5i8wulEeHauTsmpdZsvCWmJ68GJi1kkSISUOrsw3BRpI?=
- =?us-ascii?Q?N/nI4pOCC37vrIzPI4W4lroqj1iJjdAWuG+2NnaQ3sL55xq0iMrfcdOTi8b1?=
- =?us-ascii?Q?EEc1A7HnLjrandfJK2BZT6c9iU2FIl9VBKxj/bbokacQBW3dFkKi3EDxuC23?=
- =?us-ascii?Q?a/2bBOEc2NeV+DIYshCTlllbOPku+Uu+AnwMfYchxrpA8pYXo2bhseCaqevL?=
- =?us-ascii?Q?KIaBp57eGWoA0I/IKl/y3/4N3kOTtHJm2wi5SAn7UGSwYmpHgZI9aDYGDcwR?=
- =?us-ascii?Q?r+Ql+7KECZr8mar6ZCFoUPyb4BZAzjnwBXcgLAoeqIyODP9seInbzmgcieYa?=
- =?us-ascii?Q?nrWkSlS+NRN5mC/ZmWlU1WVUSeSWU8+nasMmWx+nRhN7JQkUe0ixTy3R3de0?=
- =?us-ascii?Q?76wOnnzIxLK2n+ifp2BY9IucukgLZFS3+RyN4nRKXZaw12/3/kWBNvnAkfzE?=
- =?us-ascii?Q?SY/po9AlDTQoGRE9JvIaia3WxGWsCHSF9afqhH6q?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85F71DE4C2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760972342; cv=none; b=bZTZnOiWMAb01sD/ePtrz7gH4CcaX1GsSteULOPi30G6i0JfvLlDDEKwO7SKrXCMtpWgXB6mhzBR0i0jBfcoBP4Pwhhd2esAvGEoxSK3kKChvqXLsLbTfCwoRAoUBKWZx8eqW3+EcTbsqyeSBvyUJiYiuHX3g+e3sDkJ/iOfKDc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760972342; c=relaxed/simple;
+	bh=kK0Hplkebq3Jrcf6qR3oANpGvK/cEA32zWG+bqxYj90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TxiVu7P5ZTZ2SinboUDFmEdKUr/MlLXgD3cZtu+rc9BTDjE9B6DGhtBbYPKHyAUxzo2yhoGZ51T1v9J7OqZiDZuofLoOXlcYM2ihClu3jYzzEkO655y3a9VvWi0BbKQb6p8K3UETCIz/Su5GEzmQa2nh2gJxEH3SeEYe60xumzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nP6Iqe3S; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c1f01a29-e283-4557-8c76-3d17c0233ce8@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760972338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m0ma2WKO11obahVHhDWDsmsHYDqO6Dhx6s7hPUoAius=;
+	b=nP6Iqe3S4byuBHsYB6xrj4GYA5+Um0vVMnkFv+Gt80VtlRWuYhTB4SYNhlbPLfq4urNka7
+	o0BfciXYyepX9fLYxx/iHk/ImRU67JfsAk11uGiAk7UaoQcb1Fu5AHNj3pIJJ0jP4D1hXf
+	ohtxfJ/XWAKa1+nRV+NlGAJlOKoJWk8=
+Date: Mon, 20 Oct 2025 22:58:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR21MB3867.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5385a5a4-4214-4b9d-1b8e-08de0fe91f7c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2025 14:58:26.2946
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: E3/DYmZGimNWY0ivg2Mjhep8ZKKVv5eTGc6atVxdHt864i36o7N7Nwhvtf+Mow3D+Is+gGdaubd66WaWOQU3dQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR21MB3320
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: guard is_zero_pfn() calls
+ with pte_present()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Wei Yang <richard.weiyang@gmail.com>
+References: <20251017093847.36436-1-lance.yang@linux.dev>
+ <699b143a-cca4-486c-a4ad-d0be561d4ab2@lucifer.local>
+ <b5627e83-489c-4e16-910c-fe7e56912793@linux.dev>
+ <2caf088c-e321-428e-afce-b1c11f52bc3f@lucifer.local>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <2caf088c-e321-428e-afce-b1c11f52bc3f@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
 
-> -----Original Message-----
-> From: Jakub Kicinski <kuba@kernel.org>
-> Sent: Friday, October 17, 2025 7:06 PM
-> To: Haiyang Zhang <haiyangz@linux.microsoft.com>
-> Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; Haiyang Zhang
-> <haiyangz@microsoft.com>; Paul Rosswurm <paulros@microsoft.com>; Dexuan
-> Cui <DECUI@microsoft.com>; KY Srinivasan <kys@microsoft.com>;
-> wei.liu@kernel.org; edumazet@google.com; davem@davemloft.net;
-> pabeni@redhat.com; Long Li <longli@microsoft.com>;
-> ssengar@linux.microsoft.com; ernis@linux.microsoft.com;
-> dipayanroy@linux.microsoft.com; Konstantin Taranov
-> <kotaranov@microsoft.com>; horms@kernel.org;
-> shradhagupta@linux.microsoft.com; leon@kernel.org; mlevitsk@redhat.com;
-> yury.norov@gmail.com; Shiraz Saleem <shirazsaleem@microsoft.com>;
-> andrew+netdev@lunn.ch; linux-rdma@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: [EXTERNAL] Re: [PATCH net-next,v2] net: mana: Support HW link
-> state events
->=20
-> On Tue, 14 Oct 2025 14:26:49 -0700 Haiyang Zhang wrote:
-> > From: Haiyang Zhang <haiyangz@microsoft.com>
-> >
-> > Handle the HW link state events received from HW channel, and
-> > set the proper link state, also stop/wake queues accordingly.
->=20
-> Why do you have to stop / start the queues? I think it's unusual.
-> Let the packets get dropped, sending out potentially old packets
-> when link comes back is not going to make anyone happier.
-Will do.
+On 2025/10/20 21:55, Lorenzo Stoakes wrote:
+> On Sat, Oct 18, 2025 at 12:33:33AM +0800, Lance Yang wrote:
+>>
+>>
+>> On 2025/10/17 23:44, Lorenzo Stoakes wrote:
+>>> On Fri, Oct 17, 2025 at 05:38:47PM +0800, Lance Yang wrote:
+>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>
+>>>> A non-present entry, like a swap PTE, contains completely different data
+>>>> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
+>>>> non-present entry, it will spit out a junk PFN.
+>>>
+>>> It feels like this somewhat contradicts points I've made on the original series
+>>> re the is_swap_pte() stuff. Sigh.
+>>
+>> My bad. I didn't get your point before ...
+> 
+> Don't worry, this is a problem that existed already and needs addressing, series
+> incoming :)
 
->=20
-> > +static void mana_link_state_handle(struct work_struct *w)
-> > +{
-> > +	struct mana_port_context *apc;
-> > +	struct mana_context *ac;
-> > +	struct net_device *ndev;
-> > +	bool link_up;
-> > +	int i;
-> > +
-> > +	ac =3D container_of(w, struct mana_context, link_change_work);
-> > +
-> > +	if (ac->mana_removing)
-> > +		return;
-> > +
-> > +	rtnl_lock();
-> > +
->=20
-> > @@ -3500,6 +3556,10 @@ void mana_remove(struct gdma_dev *gd, bool
-> suspending)
-> >  	int err;
-> >  	int i;
-> >
-> > +	ac->mana_removing =3D true;
-> > +
-> > +	cancel_work_sync(&ac->link_change_work);
->=20
-> Looks racy, the work needs @ac to check the ->mana_removing but
-> mana_remove() frees @ac. Just use disable_work_sync() please.
+Nice!
 
-Good idea. Will update the patch.
+> 
+>>
+>> And this patch is not intended to touch is_swap_pte() ...
+> 
+> Ack
+> 
+>>
+>>>
+>>> I guess that's _such a mess_ it's hard to avoid though.
+>>>
+>>> And I guess it's reasonable that !pte_present() means we can't expect a valid
+>>> PFN though.
+>>
+>> Yes, I think we expect a valid PFN must be under pte_present().
+> 
+> Yes
+> 
+>>
+>>>
+>>>>
+>>>> What if that junk PFN happens to match the zeropage's PFN by sheer
+>>>> chance? While really unlikely, this would be really bad if it did.
+>>>>
+>>>> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
+>>>> in khugepaged.c are properly guarded by a pte_present() check.
+>>>>
+>>>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>
+>>> Not sure I really suggested something that strictly contradicts points I
+>>> made... but I guess I did suggest guarding this stuff more carefully.
+>>
+>> Sorry, I didn't catch you again ... Will drop the Suggested-by tag.
+> 
+> Nah it's fine sorry, I think in general you are doing what I asked.
+
+Thanks for clarifying! I'll keep the Suggested-by tag then ;)
+
+> 
+> I'm going to address the is_swap_pte() stuff separately anyway :) have discussed
+> with David off-list a lot. Think I have a sensible plan...
+
+That's great to hear!
+
+> 
+>>
+>>>
+>>>> Reviewed-by: Dev Jain <dev.jain@arm.com>
+>>>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+>>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>>> ---
+>>>> Applies against commit 0f22abd9096e in mm-new.
+>>>>
+>>>> v1 -> v2:
+>>>>    - Collect Reviewed-by from Dev, Wei and Baolin - thanks!
+>>>>    - Reduce a level of indentation (per Dev)
+>>>>    - https://lore.kernel.org/linux-mm/20251016033643.10848-1-lance.yang@linux.dev/
+>>>>
+>>>>    mm/khugepaged.c | 29 ++++++++++++++++-------------
+>>>>    1 file changed, 16 insertions(+), 13 deletions(-)
+>>>>
+>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>>> index d635d821f611..648d9335de00 100644
+>>>> --- a/mm/khugepaged.c
+>>>> +++ b/mm/khugepaged.c
+>>>> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
+>>>>    		pte_t pteval = ptep_get(_pte);
+>>>>    		unsigned long pfn;
+>>>>
+>>>> -		if (pte_none(pteval))
+>>>> +		if (!pte_present(pteval))
+>>>>    			continue;
+>>>>    		pfn = pte_pfn(pteval);
+>>>>    		if (is_zero_pfn(pfn))
+>>>> @@ -690,17 +690,18 @@ static void __collapse_huge_page_copy_succeeded(pte_t *pte,
+>>>>    	     address += nr_ptes * PAGE_SIZE) {
+>>>>    		nr_ptes = 1;
+>>>>    		pteval = ptep_get(_pte);
+>>>> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>>>> +		if (pte_none(pteval) ||
+>>>> +		    (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
+>>>>    			add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
+>>>> -			if (is_zero_pfn(pte_pfn(pteval))) {
+>>>> -				/*
+>>>> -				 * ptl mostly unnecessary.
+>>>> -				 */
+>>>> -				spin_lock(ptl);
+>>>> -				ptep_clear(vma->vm_mm, address, _pte);
+>>>> -				spin_unlock(ptl);
+>>>> -				ksm_might_unmap_zero_page(vma->vm_mm, pteval);
+>>>> -			}
+>>>> +			if (pte_none(pteval))
+>>>> +				continue;
+>>>
+>>> Yeah I'm not sure I really love this refactoring.
+>>>
+>>> Can be:
+>>>
+>>> 		if (!is_swap_pte(pteval)) {
+>>> 			add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
+>>> 			if (!is_zero_pfn(pte_pfn(pteval)))
+>>> 				continue;
+>>>
+>>> 			...
+>>> 		}
+>>>
+>>> Doing pte_pfn() on a pte_none() PTE is fine.
+>>>
+>>> Obviously as theree's a lot of hate for is_swap_pte() you could also do:
+>>>
+>>> 		if (pte_none(pteval) || pte_present(pteval)) {
+>>> 			...
+>>> 		}
+>>>
+>>> Which literally open-codes !is_swap_pte().
+>>>
+>>> At the same time, this makes very clear that PTE none is OK.
+>>
+>> Emm, I'd prefer the new helper pte_none_or_zero() here:
+>>
+>> if (pte_none_or_zero(pteval)) {
+>> 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
+>> 	if (pte_none(pteval))
+>> 		continue;
+>> 	....
+>> }
+>> That looks really clean and simple for me ;)
+> 
+> Haha yeah sure that's better :)
+
+Glad you like the pte_none_or_zero() helper. I'll go with that.
+
+> 
+>>
+>>>
+>>>> +			/*
+>>>> +			 * ptl mostly unnecessary.
+>>>> +			 */
+>>>> +			spin_lock(ptl);
+>>>> +			ptep_clear(vma->vm_mm, address, _pte);
+>>>> +			spin_unlock(ptl);
+>>>> +			ksm_might_unmap_zero_page(vma->vm_mm, pteval);
+>>>>    		} else {
+>>>>    			struct page *src_page = pte_page(pteval);
+>>>>
+>>>> @@ -794,7 +795,8 @@ static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
+>>>>    		unsigned long src_addr = address + i * PAGE_SIZE;
+>>>>    		struct page *src_page;
+>>>>
+>>>> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>>>> +		if (pte_none(pteval) ||
+>>>> +		    (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
+>>>>    			clear_user_highpage(page, src_addr);
+>>>>    			continue;
+>>>>    		}
+>>>> @@ -1294,7 +1296,8 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>>>>    				goto out_unmap;
+>>>>    			}
+>>>>    		}
+>>>> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>>>> +		if (pte_none(pteval) ||
+>>>> +		    (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
+>>>>    			++none_or_zero;
+>>>>    			if (!userfaultfd_armed(vma) &&
+>>>>    			    (!cc->is_khugepaged ||
+>>>> --
+>>>> 2.49.0
+>>>>
+>>>
+>>> I mean all of this seems super gross anyway. We're constantly open-coding the
+>>> same check over and over again.
+>>>
+>>> static inline bool pte_is_none_or_zero(pte_t pteval)
+>>> {
+>>> 	if (is_swap_pte(pteval))
+>>> 		return false;
+>>>
+>>> 	return is_zero_pfn(pte_pfn(pteval));
+>>> }
+>>>
+>>> Put somewhere in a relevant header file.
+>>>
+>>> Or again, if there's distaste at is_swap_pte(), and here maybe it's more valid
+>>> not to use it (given name of function).
+>>>
+>>> static inline bool pte_is_none_or_zero(pte_t pteval)
+>>> {
+>>> 	/* Non-present entries do not have a PFN to check. */
+>>> 	if (!pte_present(pteval))
+>>> 		return false;
+>>>
+>>> 	if (pte_none(pteval))
+>>> 		return true;
+>>>
+>>> 	return is_zero_pfn(pte_pfn(pteval));
+>>> }
+>>
+>> Yeah, I'll put pte_none_or_zero() in this file first.
+>>
+>> static inline bool pte_none_or_zero(pte_t pte)
+>> {
+>> 	if (pte_none(pte))
+>> 		return true;
+>> 	return pte_present(pte) && is_zero_pfn(pte_pfn(pte));
+>> }
+> 
+> Well I intended this to be in some general header file, but it's not obvious
+> actually where would make sense so feel free to put here as a static (no need
+> for inline).
+
+Thanks! I will make it a static function in this file for now :)
+
+> 
+>>
+>>>
+>>> I think I'm going to do a series to addres the is_swap_pte() mess actually, as
+>>> this whole thing is very frustrating.
+>>
+>> Excellent! Looking forward to your series to clean that up ;)
+> 
+> Already started on it :)
+
+Cool! Really looking forward to the is_swap_pte() cleanup series!
 
 Thanks,
-- Haiyang
+Lance
+
 
