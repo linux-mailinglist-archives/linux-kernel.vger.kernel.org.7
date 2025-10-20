@@ -1,57 +1,78 @@
-Return-Path: <linux-kernel+bounces-860441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFDABF0219
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:18:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691D4BF021F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC983BE061
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:18:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14586346050
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADE92E9EB8;
-	Mon, 20 Oct 2025 09:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECE82F291B;
+	Mon, 20 Oct 2025 09:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bS2FDPKc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqUPsiWC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFD233987
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90F72E9EB8;
+	Mon, 20 Oct 2025 09:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760951894; cv=none; b=uqswFNhbpYXsCJ+pXKov4j2X4D2cfR9VJahYEyGJN5kXNoliJ58RGPsywji1I+dH20VVmEndvVIpL/t5+XhlC+59h7uH1jtynRSOgCpv6W21e2ZvXdSl99I/+B+un9hJvuOlrzXd9JBMqwdAiJ0ROxyOajAuwrosJlS1ZF66URc=
+	t=1760951919; cv=none; b=ryw/Yagf27bxEuH6V3Ce506bAI/NCrnpvCz0OfDQHemhyKN50mcZGGfyivZuSn3UgMEVJwyUkmzGuqvOjsDB14EZtC5PFmYEsG91adOwpcf20v1nQKDGOPB35JACdnODM0PstCH9o5qXLZEsWKtk7vXJngdOZMYQ4/mxv3ePs0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760951894; c=relaxed/simple;
-	bh=9hWV3tQD515DOMi/P0T7F8Fbww3uIzWpB+Gco+m9IqQ=;
+	s=arc-20240116; t=1760951919; c=relaxed/simple;
+	bh=/cQxPbdY+pcTNGh0XPcz5uMxQnnnHAx3qFxe/JAeVOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ql6RT9aeFzo95BZsqv10lUtum/LxwmP+ce0IT5NiW6dOTE6Q3vr9VszHHKQnqjTxYbdRGpB/4URhKfRQJlwy583J/TU1muHKXNdQVSCkvXTDlYYq0NpoLKKEqC1efJkYwK7gWwQW6X2Yumdd+gmN8YJpQS0POzgMBCqvem4XhRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bS2FDPKc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB313C4CEF9;
-	Mon, 20 Oct 2025 09:18:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760951891;
-	bh=9hWV3tQD515DOMi/P0T7F8Fbww3uIzWpB+Gco+m9IqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bS2FDPKcFY/SpT5JssQrifykT4c6G0XMcC0RQ/Rp552UHKHx1KzvrmuAakbloN+pB
-	 PTbUp8WVjGfqbrIjpQNU8fAAwker1lecJ6BKjAghABX68pTjiqZ9tW2wQI66UN8u95
-	 ApzIMVDA/i0BPk0OPtfSTCPVGIj1SBLoxtsZAEcOPr80CQB67S2VU8t4RghCVPRVmW
-	 EUZCso+gYiE+sZk+zblePAYO83kss23RLYeR4P/uYzBz4r1x/F0RfOLT373/LXlTT7
-	 ZRWvzrDk9NVI5QP+9bbyx1RoH46IS5JDNbRF4crpUYoethn91BZG5BUfApiJS+6YoI
-	 GVBzKM9g94S8w==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vAm1w-000000005uB-2lHy;
-	Mon, 20 Oct 2025 11:18:16 +0200
-Date: Mon, 20 Oct 2025 11:18:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip/qcom-irq-combiner: Rename driver structure
-Message-ID: <aPX-WBsUUXXmpqdg@hovoldconsulting.com>
-References: <20251017055226.7525-1-johan@kernel.org>
- <87sefhzn18.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2nL+LDdvy1t4hdOhQc00C2ZuPqIH4CTecxTES+OHZf1+1u5nPV39FVyMeAECFAmMOASXaBg1/slnwlRBtT8amRWFQfvjDkUs6cRTiHZEEF5L/Zhi+J2//W3u56tyzz1jUoAtO637SS1vBZY8tlGHBdcOIv6hQAVhVWOJFEJs/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqUPsiWC; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760951917; x=1792487917;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/cQxPbdY+pcTNGh0XPcz5uMxQnnnHAx3qFxe/JAeVOs=;
+  b=dqUPsiWC7KiW9SfJTrOH6L9BLLpZl61gczPWALy54GFzuZeyRBoVPKnM
+   aeRJFnZZPvFsoIJw1nEyslD+9vOuMA5gDSBpvy5nXf8dtXbHcwc7VVCg/
+   +qnJnVLIfFvc+tyT18FqmTv6zj2OHC+mth2jblayd35Nuexh22siz2xOp
+   VpRVkbCHxdv6tIPuQsZSAzlUOaMxSjHBduBDkYISK5xaCGUfLwR4f5Q7l
+   Mjmct/Eht1op87fqv7ybVn3rEq9RJ4JtkA8Txgj9iTz3s8KnxV5yW2Thp
+   sVuWfb4tnk+62DKxb0XhGPucyLZIbjuSYQ7MZHYbROcsGIl8brzzcrAjv
+   A==;
+X-CSE-ConnectionGUID: ef3wtcKDRDOTphLMA4dIfw==
+X-CSE-MsgGUID: 28ZMHNihT5aHrxPjPrjf3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62983663"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62983663"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 02:18:36 -0700
+X-CSE-ConnectionGUID: kfRTBUvGQdS4IIbFPJno6Q==
+X-CSE-MsgGUID: 0kH3ONZvS4aDG/b4fuyfzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="182472701"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.112])
+  by orviesa010.jf.intel.com with SMTP; 20 Oct 2025 02:18:32 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 20 Oct 2025 12:18:31 +0300
+Date: Mon, 20 Oct 2025 12:18:31 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
+	"Chen, Antony" <antony.chen@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Fedor Pchelkin <boddah8794@gmail.com>,
+	Andrei Kuchynski <akuchynski@chromium.org>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Detect and skip duplicate altmodes
+ from buggy firmware
+Message-ID: <aPX-ZxwaweJjtv3J@kuha.fi.intel.com>
+References: <20251016055332.914106-1-acelan.kao@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,32 +81,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87sefhzn18.ffs@tglx>
+In-Reply-To: <20251016055332.914106-1-acelan.kao@canonical.com>
 
-On Fri, Oct 17, 2025 at 03:16:19PM +0200, Thomas Gleixner wrote:
-> On Fri, Oct 17 2025 at 07:52, Johan Hovold wrote:
-> > The "_probe" suffix of the driver structure name prevents modpost from
-> > warning about section mismatches so replace it to catch any future
-> > issues like the recently fixed probe function being incorrectly marked
-> > as __init.
++Antony
+
+On Thu, Oct 16, 2025 at 01:53:32PM +0800, Chia-Lin Kao (AceLan) wrote:
+> Some firmware implementations incorrectly return the same altmode
+> multiple times at different offsets when queried via UCSI_GET_ALTERNATE_MODES.
+> This causes sysfs duplicate filename errors and kernel call traces when
+> the driver attempts to register the same altmode twice:
 > 
-> I take this grudgingly, but not without pointing out again that this is
-> just a horrible hack. Why can't this stuff be properly annotated and
-> recorded in a throwaway section so that modpost can act on reliable data
-> instead of using string matching on arbitrary function names?
+>   sysfs: cannot create duplicate filename '/devices/.../typec/port0/port0.0/partner'
+>   typec-thunderbolt port0-partner.1: failed to create symlinks
+>   typec-thunderbolt port0-partner.1: probe with driver typec-thunderbolt failed with error -17
+> 
+> Detect duplicate altmodes by comparing SVID and VDO before registration.
+> If a duplicate is detected, skip it and print a single clean warning
+> message instead of generating a kernel call trace:
+> 
+>   ucsi_acpi USBC000:00: con0: Firmware bug: duplicate partner altmode SVID 0x8087 at offset 1, ignoring. Please update your system firmware.
+> 
+> This makes the error handling more user-friendly while still alerting
+> users to the firmware bug.
+> 
+> The fix applies to all three recipient types: partner (SOP), port (CON),
+> and plug (SOP_P) altmodes.
+> 
+> Fixes: a79f16efcd00 ("usb: typec: ucsi: Add support for the partner USB Modes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
 
-This apparently dates back to 2006, but some of these magic patterns
-were at least dropped a few years ago with commit e1dc1bfe5b27
-("modpost: remove more symbol patterns from the section check
-whitelist").
+Thank you for the patch. Before going forward with this, I would like
+to make sure that Dell is not using the GET_ALTERNATE_MODES command in
+some customised way deliberately, and that this really is a bug in the
+EC firmware.
 
-With the irqchip driver fixed and soon hopefully the stm clocksource
-driver [1], we can retire also the special handling of the "_probe"
-suffix. I've just sent a patch. [2]
+After seeing the trace output when this happens, it looked to me as
+the first response to the GET_ALTERNATE_MODES fills the MID field in
+the response data structure with different SVIDs for some reason
+(maybe with all supported SVIDs)? If that's deliberate it means we
+should drop the first response, and start registering from the second
+one.
 
-Johan
+If I've understood correctly, we have people contacting Dell about
+this.
 
+thanks,
 
-[1] https://lore.kernel.org/lkml/20251017054943.7195-1-johan@kernel.org/
-[2] https://lore.kernel.org/lkml/20251020091613.22562-1-johan@kernel.org/
+-- 
+heikki
 
