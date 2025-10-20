@@ -1,162 +1,107 @@
-Return-Path: <linux-kernel+bounces-860707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FD6BF0BE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 579B8BF0BED
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940D91896DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CFF189F392
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CD82F83B2;
-	Mon, 20 Oct 2025 11:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1BF2F7AD7;
+	Mon, 20 Oct 2025 11:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojMFcVpo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLtgBPYj"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F65C24676B;
-	Mon, 20 Oct 2025 11:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0592F5A32
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958557; cv=none; b=e8CNM3JJ3AaGNQESMF05KSJrgcIzAjyyEd9Yj421lvr4YnIEY27P64sDMzqeYrlltXNKOqMH9pJGWtNAm/dotTq5H6YA9QYpf4OMBgvL8FvAAQWEeAI+nOAz3nH6rH6T+nwTdO8ZKg0OtvyqQYvJ/GRu25UWb6XmLC7TmCBrZNQ=
+	t=1760958632; cv=none; b=WQHzi87SE8z/wQIKjJ9b4If3f7jtOxRGHvplNrBJfMe2wFHAg7SO2kU6OVOwP5dGks9LP2G9lcncegS2caflu5WpBKzWZ2rTVvXZxxDfRdp3Pd3F73ttypcTzlBGqgk9Y9a/IQBMUDLQoXgEAH075INTM8znzXUWM0suk2S6daQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958557; c=relaxed/simple;
-	bh=gPhw4C5Mc1mlUVzNZ4fRDu3demukRrEs/UJmD6Ao5tI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dSk5IK5jT5t18FElAdL3IYFkQx9UOYXy5aji7sAZ3LbLhLNslEcsCBCjcEYeZt/qj8mPa0Xc27ebPi7xKcA548538Iwh8oa71Hseg1gyCc2S2HieZShyG+oUvrXxPR0xuFTxzRge2F7gkxxQMbBWQFzYysU6L7HCmqPCqd5R+q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojMFcVpo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37C63C4CEF9;
-	Mon, 20 Oct 2025 11:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760958556;
-	bh=gPhw4C5Mc1mlUVzNZ4fRDu3demukRrEs/UJmD6Ao5tI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ojMFcVpoy+tOys+d0AWRkpwO/JL9MoyUKe0mv2dr++BLdJfb/ae3YIrQY+mgJ8Js9
-	 LaTKrbRkGcDzfWD5WgrI8WTc0aQUKBiqFsiN3bvV3nD1XjCW6Wacs7zwwTQjmwCev5
-	 p/yAY0h7AK7bM9tLRpZk+WTHHM1popxBIua+wPVAniQGO3zGUAzL3J48SKYDJQV9NX
-	 SSDQTfC8oPDMqWbbfvTspNOpmHCocGI/+4kxcnuUizl92+YvJvujb8hg1c5Zfa8pMI
-	 Wvu0S8suxbYrfFvM6pZibYFDvYOrwR45VSKlEuFxLLhOyecvGDi04MKSKX7cSjVY/8
-	 Nd4pdPO3SKH+w==
-Message-ID: <66c1ebf0-1f91-4d9f-985f-71535f1e3d01@kernel.org>
-Date: Mon, 20 Oct 2025 13:09:11 +0200
+	s=arc-20240116; t=1760958632; c=relaxed/simple;
+	bh=lI8ywgeWjN+SfCPlGDPL8Glm1CbFy+WFTO07L/mQ20k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGHjLUHAK1lpABwu7q6ri0cWNaZ6v/7cbcvLFR+1ZKSwXHjwliS49euo2YhI6mYiIuWZ3lwirBDnrgbjWrmCwWFUrNO4mk3FkYPI4ndjc2OYL3H4P50WxzF4nBmKeOlJVpxghNKeNBtTK8h8ceXETnJvqikl8bJd2nhlrb7fE58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLtgBPYj; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-471066cfc2aso38366485e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:10:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760958629; x=1761563429; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1GwM38mh3nqijwky0hI3l2FSxHPE+1vxrvYPxKuFQQ=;
+        b=CLtgBPYjsssf2FMbyyeFhWRPKnzicPMUgyn3lx9LHlp6fN0SBUxAn65ZdYDLgkJ4DM
+         Ze7eA7pA3s+Fk2kuYVGQ6mz5mHgkGiAlwS84sOuDX4QFtxcSuc3rpFaDyBu6bhWUrC1n
+         nTRq9KBefDuVpbdP6LZdMHtZqLTWoGx/bQ58OZ85WfLqEbfs8UHGho6C6ZmQEluLx167
+         fop85s3plpPTOCB2r8wJus0hXD8Ed89Jlmp+GHR3sMEvbM5wIlwillNaUfRpK0glgmQy
+         +96EfQECpoXVEN33UH2wQGGcFJm9QRCpce+ZpRJAwA6o05Gn8G5ngFsSn7U+Cfq952VN
+         +roQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760958629; x=1761563429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q1GwM38mh3nqijwky0hI3l2FSxHPE+1vxrvYPxKuFQQ=;
+        b=ntBvF6vE8FrKJe3yNBFJfEJq303eOvf08kRz0R5/0LzV6s1+3ZAh+hGLa5ZcnJ9jzS
+         Rau3vm8Ly0R/EYm/xp/X7O6kwQzCy02GU7/dgG5fVIsDSUhCMa/lpepnODI9r/ANybRt
+         lg73yMgHGLdA+Pf+zOzHou35/SSQebW4YGX19T7DIw7ycQNfQZOF+qx1NmIjb7Ll75us
+         1lmMIHcQHTeTjhYXH7FTwgJw9djgM8FViEFCq2HUr0VulP2ruhjddAI0/0qL7Bp4V/yD
+         NnpMCL0Z9wKUkXCYHGuFDXEJ8CL2MP+4I6NXkaEcGqU533wlCYpsXIlOckvAGPbX6WB2
+         dcsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU6gP2O8Km61wNQm1fqYdCm12QzltrzB0yfcf+Cl88xwW+k2iewYyNZcm78AfOM4AP5K7hJk4RIlf5m7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuI30LGFnO6eYCNWGQ2taubTxEjKGJROzE/B2mlhRB1fGhYA3s
+	/tV4HFVA7ZKFNjd8h269zkVm4fd5gArfrypkx2Uqjs1f49/M9pZdx9OH
+X-Gm-Gg: ASbGncsHVYj/pOIdMSP2VNs7IE5ur06FEmvTTJoSonvrpRDLXlinGELiE83D99xxFEb
+	iiA/qSIKab694wtuLXfWPhoJQCbTXxSQa2rlnzSr32Ifct1qDt+mYKn6E8ZBwro/soH2/MPKiTI
+	PGaWnpd1jB1RB6sHiEnU3Z1xJETZcZ9yZDoQg5iEdT6lbzp2FBKWPVkKkT4u7Fa2DLurON3pV0k
+	aG+/J1S3V+ap5rkRMHdSk3AE4K3hpAmzI7p/GCwLRYWOQOEVXV4iiApP0ZJGBKSRd6MN8M4RpDX
+	KJxIMq4JAOmjlkJzprF/BUBvtIu1L8NzzMo+x/HuuC83wER5ykHWWYy3dalWPplJ1cXNetdQ1q/
+	pcQBjbYVyxzRTUKvqqRhHzUvmsByHrxLrUsOQ6F1feIcZzH5ck7//1+m/W7iRawjxQc09vD81zP
+	XkSXodZw==
+X-Google-Smtp-Source: AGHT+IEmMMoOjYfBUT5RqT6xtTVyMvQoeiu0xyX3gRg3r0UUnIXnqBqTe5A7yX+Qs8G91aoDug12qQ==
+X-Received: by 2002:a05:600c:8505:b0:45b:7a93:f108 with SMTP id 5b1f17b1804b1-4711786c71cmr94484055e9.3.1760958628958;
+        Mon, 20 Oct 2025 04:10:28 -0700 (PDT)
+Received: from fedora ([80.195.98.51])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c831asm218234765e9.13.2025.10.20.04.10.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 04:10:28 -0700 (PDT)
+Date: Mon, 20 Oct 2025 04:10:26 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: akpm@linux-foundation.org, urezki@gmail.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org
+Subject: Re: [PATCH] mm/vmalloc: Use kmalloc_array() instead of kmalloc()
+Message-ID: <aPYYovFBtHYKpgg4@fedora>
+References: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: dma: snps,dw-axi-dmac: Add iommu
- property
-To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
- Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Vinod Koul
- <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM"
- <dmaengine@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
- "open list:CADENCE NAND DRIVER" <linux-mtd@lists.infradead.org>,
- Dinh Nguyen <dinguyen@kernel.org>,
- Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-References: <cover.1760486497.git.khairul.anuar.romli@altera.com>
- <b9bcc7542afae659d01553c5559e28e4f01966b1.1760486497.git.khairul.anuar.romli@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b9bcc7542afae659d01553c5559e28e4f01966b1.1760486497.git.khairul.anuar.romli@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
 
-On 15/10/2025 02:13, Khairul Anuar Romli wrote:
-> Agilex5 integrates an ARM SMMU v3 (System Memory Management Unit) with
-> dedicated Translation Buffer Units (TBUs) assigned to various peripherals,
-> including the Synopsys DesignWare AXI DMA controller.
+On Sat, Oct 18, 2025 at 09:11:48PM +0100, Mehdi Ben Hadj Khelifa wrote:
+> The number of NUMA nodes (nr_node_ids) is bounded, so overflow is not a
+> practical concern here. However, using kmalloc_array() better reflects the
+> intent to allocate an array of unsigned ints, and improves consistency with
+> other NUMA-related allocations.
 > 
-> Each TBU handles address translation for its associated device by mapping
-> stream IDs to memory access permissions and virtual-to-physical address
-> mappings via the SMMU core.
+> No functional change intended.
 > 
-> The DesignWare AXI DMAC instances on Agilex5 are connected to their
-> respective TBUs. These TBUs forward DMA transactions from the controller
-> through the SMMU, enabling IOMMU-based features such as:
-> - Address translation for DMA operations
-> - Isolation and protection of memory regions accessed by the DMA controller
-> - Support for secure and virtualized environments through enforced access
->   control
-> 
-> To support this configuration, the `iommus` property must be added to the
-> binding schema for `snps,dw-axi-dmac`. This allows the device tree to
-> associate each DMA controller with the correct SMMU stream ID, enabling
-> the Linux IOMMU framework to configure translation contexts at runtime.
-> 
-> This change documents the IOMMU support for the DMA controller on Agilex5
-> and allows proper integration with the SMMUv3 hardware.
-> 
-> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 > ---
-> Changes in v3:
-> 	- Refined commit messages with detailed hardware descriptions.
-> 	- Remove redundant commit message and add hardware use for iommu.
-> Changes in v2:
->         - Updated the commit message to clarify the need for the changes
-> 	  and the hardware used of this changes.
-> ---
->  Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml | 3 +++
->  1 file changed, 3 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
