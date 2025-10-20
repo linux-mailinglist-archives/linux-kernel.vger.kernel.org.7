@@ -1,193 +1,152 @@
-Return-Path: <linux-kernel+bounces-859995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DCDBEF1C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:39:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43AFBEF1CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A1A3BEC46
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:39:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61251348360
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5238E29ACE5;
-	Mon, 20 Oct 2025 02:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C9829B775;
+	Mon, 20 Oct 2025 02:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b4aob83x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dzu7zjRg"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B06F17A2F0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01329AB1D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760927970; cv=none; b=P/+7anSnyc8X5Y3yXlAcpxDQ6Jbmeitbth/Ae5BaMcCjkew7J50drW6E9x5v34r5beVy1o0p9N8ZHVXNH5hg19eUcYgqxOyupspgkqwZ0tp+lIBEaf80ieSFLP9gHx35HYS7/gco7bx+ADWGsAv5P9VBZdKPFWYoLOUFxutJLaA=
+	t=1760928061; cv=none; b=LAGzBHRiDXPMhwlCgrywJfTbfZmhzjY+pTZWvBEQWCBA5LVLzxlnI7Ti8OLEaLqQ1iqi7aR/SdPuY68DvqCDqbMvFXT/9VnPxFrfHfGKwALTzOaXcPdTNp6aPOSe8qNEA9Oe74fl9zbr967QTW/p/7/vgnxFfpkkzC3yu+bJHh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760927970; c=relaxed/simple;
-	bh=AHIr1rCfOzKrgGllIJE+2osrB1Nxu1jpnyMI10s+AJ4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=knWIyngg+mlMDE6UwP9ANNhLFLZalaN78N3pCIsaWRGzchjHDXrwR+PgtEmtmCLXPX5djjm3GevWWAo74oc4hczECY8XfiGYbYpvWdtps/eMfxV2OLtVPGEMASFege7dlB3K57N928FF2HALvc+Wpp+wVjUQeh7OTdAUYS5ZTkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b4aob83x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760927967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9EkYhcXhHkTg4ElWdhzFPtQOrK8H5aoYZo0Q03k+XHA=;
-	b=b4aob83x4JuzRVRpWEWg6jqhPxzdOQ5G7Bw5CkYWLtwqh3yvMbXEse4YxKV8lFqCumovaN
-	gPT2yS2j/1/p8gm4xS8ikvhX9AU/DTJ1HcACD0nYoV5Ii1x8GM5jylDmmMYOL3uuAI4sM/
-	XYISLP/7gI8Q0HoxUrzr2mto4F9Iwx8=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-PZRFqqCPOLyd3CWKsz5tbA-1; Sun, 19 Oct 2025 22:39:25 -0400
-X-MC-Unique: PZRFqqCPOLyd3CWKsz5tbA-1
-X-Mimecast-MFC-AGG-ID: PZRFqqCPOLyd3CWKsz5tbA_1760927965
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-81d800259e3so63542436d6.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:39:25 -0700 (PDT)
+	s=arc-20240116; t=1760928061; c=relaxed/simple;
+	bh=UpRxe00P+c7+vyYZYzkM4qwGhgttHXs/vvOHzwK6E4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RKN/yvy+JMcUWWP0XXIshhZ+tH8s5LfdpRcZVAq4nhEyCJ0keolINH0EIdglHtNYuJjk74OPdP8XoHsowNwy0I6s73x8Fc1VOHyb21vB3m9clbl/BWvYEud7/NR/9GGoL/qFRpkefQEReAwDh9QMxvV/FA2g/8QdHifeGeSYjio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dzu7zjRg; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-3307de086d8so3150243a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760928060; x=1761532860; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CbkL5b+OBi8ON0V+7ODZODiLlH2T27rLkYqjonV3JTU=;
+        b=Dzu7zjRgYaeJiSV4kL2RQgeNMYs9lBfL34V/gtT+z8DEVd+Vey1tETnopzNUO164hj
+         ZWfqkq2NifdhFBmMqkt8b2MwJxRj/qRVc8DWiZ3mHpXG/s7VM4/oCxz0mokyptBW0VaJ
+         w3dQHr8q9kzmAtuoJIP/YmhpsxD1CtH6xigLmgIdtmoqogS+LN2isa9yR88SJWZWHoPY
+         77adrQ8S0cCuQOHex7JmxUbxHXTLabVuTuQqAX3t4tp+ib/Y/EB9xuIasU6h/Ix1C3wp
+         95niGEKjiJ4KXbeHfpnQ84qSAcoHr0yXP06DC7QMoeJID/Gzrw5x1kDyqy7xn9nsMIrZ
+         76FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760927965; x=1761532765;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9EkYhcXhHkTg4ElWdhzFPtQOrK8H5aoYZo0Q03k+XHA=;
-        b=PzrRZRTJCrfPrKMoLUr0NrK0K5hyTAJORqm6Haor96qkylOHjSsn2maDxArWBmswHM
-         eDqobouIPoDr06VAYXjwpR9aHCp0gy+qIURuscfZ8oXNsIjwhJJ20Ppq/Xi9llPFqkg3
-         pEoi7hkyVRuX8FYhC+K/Aenzg3zqilaIzPO13LWfRGM5kZ65cbaOqeRST3o4sFqNxvIh
-         Ya4WmV/AVLTomTwScWsZlahBOKSTTMpnAC0+EQKQ9NqPrWQOYKf5f+kIjpYlkwPb0kj7
-         kRrGsVHvmBifVoaXLSYKYPyqfPOu9w16YxDrB1NlKT+0ZUKU9VbpPXIdLej+StEPti3L
-         i2Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSsmyoLYMxVIY2PY9nPx0e1K8CyXV4C1ej2n3kr9vTIE32+pcE6XYaOkcZXEpor7G4XsEjjhJN/5gAuwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnQbrjBaszvU58PySf/06y0e5ZWZdy2SqqSsfgOGl4BHspBr42
-	eoatEhIOn6jOex8BdvVPDrAD1IxqIbbkvW+bn85Df9E4Rc5RfCXpg9YjrYXpP1g/uUd/UGsDXIX
-	NgzWVOZ4aJzzjHQ1A6WxXCtZ8297svv5CNFWGr6teh+k0LBjREHuqnRbrlfKEMZus1g==
-X-Gm-Gg: ASbGncvD7LDw9rtugWdCF8F3Z40EKmCWPAc3NT0BOyWHtL8CnAWq2Tit5nwd91HYTht
-	jkFppaWxDIPfVfNsuoT9PHwoMpGjtHY731O3l+ejn7Hm45W9gi0fMQAD/vmMPNL1XX2u7QDqx7r
-	6HXTH/JM0bq8AIUyyyzDFP84PfK36D+15rLWyC4pQ5SFLHP7VPOfTqlUuFLw8W8Vhs5XFuF8fG7
-	uPzBVThDOHvUiozUhijhB5rf/h4dfrIgGze6RtlZai01CpFl+esGMrKC6GCLmTAUdsCtZIPBiZr
-	bFgaLEMx7H5Rd4XDrYM5LIMmKQk+ivAdVEpPJ+bWvLyW1ktptVfHfDdcMrcELdkhqZ/xSq3lnKO
-	1Co5ssQTbqnJDTcz57ix1bOxA2I4Z24IX65l4vKNdekmUnA==
-X-Received: by 2002:ac8:424b:0:b0:4e8:a3ed:4c6c with SMTP id d75a77b69052e-4e8a3ed4d4bmr83408741cf.33.1760927965041;
-        Sun, 19 Oct 2025 19:39:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJghEypNh7+N9IeJFPOFeoy5BjrryYWLQAHJ4Kb5bkTlDx9CGosRlGv+om9gKXtkjcwAT9YQ==
-X-Received: by 2002:ac8:424b:0:b0:4e8:a3ed:4c6c with SMTP id d75a77b69052e-4e8a3ed4d4bmr83408551cf.33.1760927964539;
-        Sun, 19 Oct 2025 19:39:24 -0700 (PDT)
-Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cf86fb69sm465119785a.53.2025.10.19.19.39.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Oct 2025 19:39:24 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <9168ffab-b0a8-4024-a1f4-966b9f95c953@redhat.com>
-Date: Sun, 19 Oct 2025 22:39:22 -0400
+        d=1e100.net; s=20230601; t=1760928060; x=1761532860;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CbkL5b+OBi8ON0V+7ODZODiLlH2T27rLkYqjonV3JTU=;
+        b=qVhHKhJu7PW7aGR0Jz3/WddaojrKmKQwTYa0XVyGsX5QSA97ALxMaM3Uz0CBEo13XB
+         TmHHoVylqUV2cW0KQt6AO58aKXBmKgiSFZUgtrLH9hfu516K7HfOiiItdMFHlzHdK3Ba
+         uGXMxkmaVZiVQAZK6CfpZIVH8vlRzkbc/Vv6GXmBWPWHcasOQJlwrFHmh/zDZTDK3gMn
+         kR22YoKD7HT5aSjddY+RbSRvs4w6VKbJVABLS7pmj67cv7HHmy32UXQKewoI3PooiGeu
+         03ZurGBzA4sb5P4cUkCrh2v/Tn0QsrX5g9WmkS4FIL7FQaQNoKRUOtrJ/u2PazSAQ7ce
+         N5MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHe2fdh8Rqbb22KtgEsuepuyqxqKHROSNE3vpX5o4TxAFOi302w2F0RW47K31vmO/cLjMlTyw6rj1GC0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaiT/xt5XR5gu9PuxtDlluY5rTuzdO+qTnKv2E172yoxjLHLGj
+	nY66tCx91WuyPjuCsJWIFtF5QLumim1OgZn3dXOpYBF0XKSDIGgs+1W+
+X-Gm-Gg: ASbGncsrneYRXLRjPtp2Tkibbp87nu47EfS/woYSB7o7bzlCWF9+xh/IhqHgeIYk4/S
+	J3yE5X5IMSg8QJic4RQ80Kii4hD6XJG87QOcw1N6VOoIl5g/E0/r6QQYaBSzD2vXsFZOrW5ewP9
+	pz2DvwyteEZRFii34OI2WdLIK3hJ43WwexKnDY+OxMHO0E/mBKjcdTfofO8s4GWFUTlpOfTg6Sk
+	anv5NrNO+j0hWTwQb848CFJYAApivLbr9v/1ZX3puOZg1nLIMgmZpB9zcFViDueS5aGndpDeUQ+
+	4gWpVL7Zli3BcuXNfguUpO+bH2nrzTJ8Yy3aP1QCdIar55BYunOciqYZAvcoJiABgs3BrGS5z6P
+	fjb8YcVr2qzqKiHVHCjkqZHEkySD2xYpfj9IJA1gxfte1qUTkrbvzaMqCYQMPSkoMeMXQmNra6p
+	dzPKYr/baf
+X-Google-Smtp-Source: AGHT+IFt0GDoRx9gJXuSFEkLE1HjOlhETzFdQe+hDtnu+sHRGQW2KotFg7OOFFY+3KrIiMsrBK4qyA==
+X-Received: by 2002:a17:90b:388a:b0:32e:b36b:3711 with SMTP id 98e67ed59e1d1-33bcf90c00emr15314358a91.28.1760928059800;
+        Sun, 19 Oct 2025 19:40:59 -0700 (PDT)
+Received: from HUC.. ([210.57.99.100])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5de30555sm6603334a91.12.2025.10.19.19.40.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 19:40:59 -0700 (PDT)
+From: hupu <hupu.gm@gmail.com>
+To: hupu.gm@gmail.com
+Cc: acme@kernel.org,
+	adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	irogers@google.com,
+	jolsa@kernel.org,
+	justinstitt@google.com,
+	leo.yan@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	mark.rutland@arm.com,
+	mingo@redhat.com,
+	morbo@google.com,
+	namhyung@kernel.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	peterz@infradead.org
+Subject: [PATCH] perf build: Support passing extra Clang options via EXTRA_BPF_FLAGS
+Date: Mon, 20 Oct 2025 10:40:49 +0800
+Message-ID: <20251020024049.6877-1-hupu.gm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
+References: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 03/16] cpuset: factor out partition_enable()
- function
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
- <20250928071306.3797436-4-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20250928071306.3797436-4-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/28/25 3:12 AM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> Extract the core partition enablement logic into a dedicated
-> partition_enable() function. This refactoring centralizes updates to key
-> cpuset data structures including remote_sibling, effective_xcpus,
-> partition_root_state, and prs_err.
->
-> The function handles the complete partition enablement workflow:
-> - Adding exclusive CPUs via partition_xcpus_add()
-> - Managing remote sibling relationships
-> - Synchronizing effective exclusive CPUs mask
-> - Updating partition state and error status
-> - Triggering required scheduler domain rebuilds
->
-> This creates a coherent interface for partition operations and establishes
-> a foundation for future local partition support while maintaining existing
-> remote partition behavior.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 55 +++++++++++++++++++++++++++++++++---------
->   1 file changed, 44 insertions(+), 11 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 0787904321a9..43ce62f4959c 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1515,6 +1515,49 @@ static inline bool is_local_partition(struct cpuset *cs)
->   	return is_partition_valid(cs) && !is_remote_partition(cs);
->   }
->   
-> +static void partition_state_update(struct cpuset *cs, int new_prs,
-> +					  enum prs_errcode prs_err)
-> +{
-> +	lockdep_assert_held(&callback_lock);
-> +
-> +	cs->partition_root_state = new_prs;
-> +	WRITE_ONCE(cs->prs_err, prs_err);
-> +	if (!is_partition_valid(cs))
-> +		reset_partition_data(cs);
-> +}
-> +
-> +/**
-> + * partition_enable - Transitions a cpuset to a partition root
-> + * @cs: The cpuset to enable partition for
-> + * @parent: Parent cpuset of @cs, NULL for remote parent
-> + * @new_prs: New partition root state to set
-> + * @new_excpus: New exclusive CPUs mask for the partition
-> + *
-> + * Transitions a cpuset to a partition root, only for v2.
-> + */
-> +static void partition_enable(struct cpuset *cs, struct cpuset *parent,
-> +				 int new_prs, struct cpumask *new_excpus)
-> +{
-> +	bool isolcpus_updated;
-> +
-> +	lockdep_assert_held(&cpuset_mutex);
-> +	WARN_ON_ONCE(new_prs <= 0);
-> +	WARN_ON_ONCE(!cpuset_v2());
-> +
-> +	if (cs->partition_root_state == new_prs)
-> +		return;
-> +
-> +	spin_lock_irq(&callback_lock);
-> +	/* enable partition should only add exclusive cpus */
-> +	isolcpus_updated = partition_xcpus_add(new_prs, parent, new_excpus);
-> +	list_add(&cs->remote_sibling, &remote_children);
-> +	cpumask_copy(cs->effective_xcpus, new_excpus);
-> +	partition_state_update(cs, new_prs, PERR_NONE);
-> +	spin_unlock_irq(&callback_lock);
-> +	update_unbound_workqueue_cpumask(isolcpus_updated);
-> +	cpuset_force_rebuild();
-> +}
-> +
-partition_enable() is supposed to be a common helper used for the 
-creation of both local and remote partitions. The one in this patch does 
-work for remote partition but not for local partition. I would prefer to 
-make it good for both cases when you introduce it instead adding code in 
-patch 6 to make it work for local partition later in the series. It will 
-make it easier to review instead of jumping back and forth to make sure 
-that it will do the right thing.
+When cross-compiling perf with BPF enabled, Clang is invoked during the
+build. Some cross-compilation environments require additional compiler
+options, such as `--sysroot` or custom include paths.
 
-Cheers,
-Longman
+This patch introduces a new Make variable, `EXTRA_BPF_FLAGS`. During BPF
+skeleton builds, it appends user-provided options to `CLANG_OPTIONS`,
+allowing extra Clang flags to be set without modifying Makefile.perf
+directly.
 
+Example usage:
+    EXTRA_BPF_FLAGS="--sysroot=$SYSROOT"
+    make perf ARCH="$ARCH" EXTRA_BPF_FLAGS="$EXTRA_BPF_FLAGS"
+
+Change history:
+  v2:
+    - Rename EXTRA_CLANG_FLAGS to EXTRA_BPF_FLAGS
+    - Update commit message
+  v1:
+    - Introduce EXTRA_CLANG_FLAGS to allow passing extra Clang options
+
+Signed-off-by: hupu <hupu.gm@gmail.com>
+---
+ tools/perf/Makefile.perf | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 47c906b807ef..f1f2efdbab8c 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -1249,6 +1249,11 @@ else
+ 	$(Q)cp "$(VMLINUX_H)" $@
+ endif
+ 
++# Allow users to specify additional Clang options (e.g. --sysroot)
++# when cross-compiling BPF skeletons, enabling more flexible
++# build configurations.
++CLANG_OPTIONS += $(EXTRA_BPF_FLAGS)
++
+ $(SKEL_TMP_OUT)/%.bpf.o: $(OUTPUT)PERF-VERSION-FILE util/bpf_skel/perf_version.h | $(SKEL_TMP_OUT)
+ $(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vmlinux.h
+ 	$(QUIET_CLANG)$(CLANG) -g -O2 -fno-stack-protector --target=bpf \
+-- 
+2.43.0
 
 
