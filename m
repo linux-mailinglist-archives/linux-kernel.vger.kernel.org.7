@@ -1,182 +1,313 @@
-Return-Path: <linux-kernel+bounces-861032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC31BF19AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:46:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35EDEBF1A42
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85823B5F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:45:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 608E24FBBEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D4E320A3B;
-	Mon, 20 Oct 2025 13:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EA01CF5C6;
+	Mon, 20 Oct 2025 13:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JehUM3Pr"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012003.outbound.protection.outlook.com [40.107.200.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Irav/ePN"
+Received: from sonic305-20.consmr.mail.gq1.yahoo.com (sonic305-20.consmr.mail.gq1.yahoo.com [98.137.64.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92F73203AA;
-	Mon, 20 Oct 2025 13:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760967869; cv=fail; b=Ik8dcObKJ/uWBefxrIS1GEY0kuhuNiHq2EasbNPx6i6d73itnMBApW9jCzEkYtDhaEzYsV4zjl1Gvv1/kaQPWLTfVFAV4pTKgn1vveIHEHbc570d7cdjMZFiEqlgoWq/4HmJGnKJUb48I7DOkckVsZb12NDGIXLCyFxkw2QgKY0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760967869; c=relaxed/simple;
-	bh=nhccl63rYNlClAwu/CzH+FHSLpvOv3mpXewnFTneWzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SgMTo6IAj7AypFkvS7JESumz9CnOQ14ulgW50sUQfTiGoHFngzW5ufVa9oiPkzdGmGr97GFc8XGZcEaxU5sYPpx3rTnVc4fujK21cqtOIN6FgAbwqJKeBT3Fsds7At10I8Ri4/pYmCq9uW7L/K3K9SByCRvpWK24I5Fiof6ClLA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JehUM3Pr; arc=fail smtp.client-ip=40.107.200.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VtHKoS8mL8nouC5e7XmzyBn1oiXn62ciaOymaCVjPweOLv2UkBrOvvoKdjcS4BFny0cr5Xqvg/fV6Lvn7hwthUBD8op+KFHIMnbfrbmHbdpWCG5yfOWvqGJ+tbOyggcXVNdUeMWuDfS8grO2W1wd8MhbH8aUOjboOEVFE7ed38+WoGXF9+JIq5q2/gSbEe8WXpMYhF02Dt74Ve4NPJ8gQZKvmvXarh+nwVkIj7EBlS/pAWbtY88p+3btLy8TbwPcPFxt/bZXgM69Ei99k4gIX3lO/McjZQfF5krHCGCRmOwZ2TAJFy9cJqGupnsZsktzpRdin6YzAON3Ab8wgpF+7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S5gSsxRGuC5jQqWw+C304LQNCWMs0hF+F7s3Ytxz2gw=;
- b=F57jRWPxLJePrd0rB5gIfL6UA35SCuF+xFXYbeIuD54QMzgl0owx3lUVHkU3GuduIYmf0qM5v9UY1QYRZGwqVyiDfh6Sl3Mlntbqrqj9Khc7JEKTRPYKGuoEuIO04M7Kp2CIOWW/r6S+cu/rzhe6E0ai/XYwgI4uLmZJU5j7rLCzCWbjOKpAjqSPM8GrQsM/tFJKd0NREBr452mAxPrQOiLHE5K+mCPVKAc6chkD6O4K7CD+yWuleoDNvqi52uYHpX7sao1gF/rnVGvqYRzJjQIk6NNayyjc50y6khuWinBmbxjj5kMlH25uAlespPB/aMCa2w8I51Se4FiA9p4GoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S5gSsxRGuC5jQqWw+C304LQNCWMs0hF+F7s3Ytxz2gw=;
- b=JehUM3Prvf1A0WNKh53bhYn5+qONQ0L1xqWnepHrhVi2cZ3oRDdk9Wq4oMd+wOTpfPuwjuyVrS4HP3cq+DhOgCwfBeCh09+yNxmLDODY+Wz7j+dwDXQAOf+Rkkp50qO1kiIvop6WI1W+xRoswJ5DjodoKsP87IYAy1zNlCxsdQXWyXMOpxZ9C41ygG1z5JtQvMByPf4u43gS9aaaYnsOp5gPTOhX0FqfFz3IGa6MMALopbgOOD80eaL3xmzC28xYCy1hiI+i92kwVYus/3RPlwRbWnteQmOtpv02dRydW6uhKAqGYTVRTa71lDxiK3oiMCt9hdHEy1R4KVqINwyK7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DS5PPFE52C859EE.namprd12.prod.outlook.com (2603:10b6:f:fc00::666) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 13:44:22 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 13:44:22 +0000
-Date: Mon, 20 Oct 2025 15:44:14 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Emil Tsalapatis <linux-lists@etsalapatis.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/14] selftests/sched_ext: Add test for sched_ext
- dl_server
-Message-ID: <aPY8rjLoNfCDr9zp@gpd4>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-14-arighi@nvidia.com>
- <CABFh=a578RNXxjtze1TxAcPBkx9_M58qBc=6E4o-uFJx0DB4Jg@mail.gmail.com>
- <aPY3n5vIlzfTZMru@gpd4>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPY3n5vIlzfTZMru@gpd4>
-X-ClientProxiedBy: MI1P293CA0003.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:2::19) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56913F4FA
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.83
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760967953; cv=none; b=ZhP6gMo8NoOang5+cDITkBtprd9W68Fdt0gLFAhZlwry50U21NOTWncQc8ioj8tRjAqOgTtZMjBtDH/vUqzkP9FSgLILka3SF9QMfCeEnUPCWIkjZyXM6FBs3dhigddSlpVn0Afw1lWxLRr2370iwLt0AvadGHtJ1yzxPbcEc58=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760967953; c=relaxed/simple;
+	bh=c+0Y0W3YDG8Fanmcwop3DTgRqAxf1L5r+jSXhr8TIYY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hGzKk4hyrYG2sZZ6K3BeXohRs+Hl3KrbN7dsGeXa0+Q1WI+VJyUE+y1OC7DaVO4qJaN1m5f7ndjLtOkNAsrc8RdI890FkuAGdCAeRmbCM2pOgBSa9CBsL+rGWhiNfhzAyyROjPVZR91yMR3pMVOr2JUFajmuhVG47bi0dPgDN5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Irav/ePN; arc=none smtp.client-ip=98.137.64.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1760967945; bh=5uVJmr5JR3mO3AFjyOnXGLWxt7VA3RguUalmNLJh42Q=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=Irav/ePNIAV75PrRS5V/74lyoayR08e6/vZMlmAwpqAHo9b8Ff7jVPsRtijEzGIc6Ev+2KcT1SFkY3ZwBRIBGBcGkhqbrBhVqIYvWGZ+6/F/Fcu8gU5lJbR8fNDSEUxRRXpVCTcqsyzbblepxb+YVyQNRXFroNATXN9ipLpfqdXSnwRrkQDnJ2OGhQBNitX9gmtimVmMvwHjfnYLMRFfm9PphRmOYI8HE/WNcnLbNzZHvqesMmGyVc7zKPCQ5cEZpTM184KU46TwnBL9kjRp0qWo+YQFcGfbvEUR7H7e/cUO+2MyHNWNxuyMHEGXySPOlEfzeGZBIR78ltDldhLbzw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760967945; bh=A0RjmDB5eOVhwoVCMpnosBZWenO0jz2DUtLIdCHuwCN=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=qGtBSnl2Iv/r1RePovmmZjVbynlDdpP6QJeJlavoLzXycqQ1v1Up7S0PoUyz//1oEQqIzoZxwyiSd+yt0NQ/RPvvLU9B52WVxnGPkNc0R8+nYh3S2OCcIqzsta2aXFzhGLBZMNrjxHkwJKtLZV5ZlQJ1cVbJCf8Vza+M4QG2kcsX4s4nK3mQ5lF7QOzvZYhkFzpb1QacMLOrKgXmt4SLsAS1Uzck/jBKPTHgx9GlMzlaSviecqUdunnaeXCF7d0DwvTGd1Tc82loQJqbckOhe0saRMJweqj0eQiuBCigD0jlMYkifhf2173t4GRA0TySxAk5kv1WzxVmgInCo/a/6Q==
+X-YMail-OSG: foR3WyQVM1nHGlIAPQwIT9vpJYqckyJhVBRQsqwiqp9I43Ea0CgFjXtlLsj4xQ.
+ 39VMhoqLtRQW38oB1DgLAplOGBEOklBKGAfZjGOR13FXdranJiXaPtjEDv9eN_EtobMpNJBLuZuI
+ f73b.vK6UcE3oYMcerkUkkWo.dAQEwDvUR0KzSACVO.x_XGeWfliQWc42jEGHfU_zS8DJznF3gB3
+ Q_cRGRjDOC5RWkezt8oYcJIvk1.P_O4veTBjswAscL84zujlC2ZsScEQZ7xP2.Vl5A1AZWChXjD8
+ ULG.n0b09kAcqP9YKDrnQ1WdLea0_vpIZxBt8PC7D.Dn4TakLAsyCK2xrgTqCauzvFhTD25vPCmK
+ fuRlLaRAMfFVxlqZxd3XIOESQVOZIinsFGjsFZlJx0edga2miTJbsrTLXMywkTW6no9200Rew_SA
+ yQwL4L3MHNbggbWE1t2PQrCcTHqOeH4XPdxNUJG1DpA79dHZzhEe9Jrzg2BBRLUbFM04.Oe42g7j
+ abnZachVwzRKjFUfmTRhObNgXnVC7.juwuLAEtvZ0QqupB5FW2TFRpL164pg920xnlVFWaFJzPTc
+ gqrOEfmxMcaLczVILgdqDGn0LM8LoQ9JBNdyEX_yozjIKQ3Kc_qslA2mlWuXSj5bi5NgZ7bAGYql
+ Uy.776xoEFD_L.bLzIU45clsZS5ln3gkQodqnmvQm6CZxchqKKkhui1FJN4H1fzbqfawxOuwlmWR
+ gYk4UzrxbGr1Qh4oBZ7SoYmIlMxxZOLBLfG1Iq.eSNACIW_qvG6mDMOUzMAkKxHfmqj3Xg011bBB
+ DqdtRSnMWY.uGbQM3DeEPGRcUsiTQ3qa.3wJAKdvWYiHgkkBumnSRjOiWJLnXnXq.piopBvzRl.N
+ 2PVvLd_443Z6BwJ6Us5_mqQJj1Es8OotwZC2VPpcZr5UyYT3AkZHpyvcv7.SgLDejhTE4Rx1W3MA
+ BkyqfGsqZYP3Q2mD58qDTiB2VYCwoNjzsDZ7B4vA3Y8rNC1piVyWXfAYkMY2iImXMfwqMYl6DeAs
+ 8BF9V0Oj9Tvx5PB1ljlVlpfhtzgWAgARBd17Z5cCVxs.W90oxEUJ6ZWxrDZGinBCsDWvSlMwjmC2
+ trRZqoYnFToLgKjFZyzxCgs0TRlNjVmj2fjwA8UgvqUu2jyMTIJF8udGzNnkp7jkwakZf06Peuir
+ PenoNQo5JksBMQk25GwPh.xxCaDC8D0rBpGbzS.J6Y2BZdFUodATWG3a0f29kPOEQH6ILhm.ZCH6
+ VSa8nvqPxcJqOREpWQTcjgZzCgf8XnttEzpV0u67hGc07VG3.YnepLSItkbzgW6wuRFeER_qeCPr
+ 93FHn4AqocHvzt6Xn0olI1ITmTKlfgzdip_RTa4CyaCFbFLf.ZWHwlpXe2AchjcY98NtlfvEyvgf
+ z3TKmlsQeAnuPzx_JmEZZLPpyukgmQArAde9phZKE9fsFXhwBL69q6ln4ys7cREKoLZCkRhZ4O36
+ 4zazddbBEwafNgeLWpqeS2ut3sHf.1OjiKSSPQ.02AfHIBDh2c.MOVTc0v5TWzBCdT1CVBcM8XCl
+ gCPWwsCD9DVKy22k4yU.mNE1.LIbLMbPOc9kK3DuJlu9eVffX4Pw4SkHT59NJhSqJtt4mrKsLOu6
+ W78vcyKKRTuzBaF57B7CK44oHJvETrwwJKOmoS9zWRMLpIXYYJyfDAfRWFdBSXE_ihAo74UnyakQ
+ JIJXWvrONjSwyZ7bQ1FKCjjhtUI7pDpdk86qEzFhAM7KLYkcVbpniWJJVRb_ukjLiTcw5OYc4XZj
+ R653k9axMTvE9lF6FJm7pxwCX7y3WJYxjPB5xTW.pLviMTShoMmKCLlnRU.GkhCt9JcDIfwj7uPA
+ dtpcSjlVgsdDgbEEL5u7KaCVR.mQxooPh98hbMmd2WXJrye3mM_NruvXjHPjpGdWiPCEUz3dpzkN
+ z6DwOs8qlgDOX4Ckmd9y988XSe0Q1tbp8oe14bHbl2syNH7fQ_3G3tSXIY2O_5gIAkEYUN6pCXW8
+ leVeia9c8rTpCFJdtPCQJFvX0GEGp3zNxURIxUhNPk8yJ6S6PI2z5utKD8rQbE3E3I_iopNMtz26
+ 5Veivb.yLIvTKZ7.UR.OKgrHKRNoy0o0x2mj2yEp8G21z5Q3WKncxYv33nt0aft.Q7SCmWy7hJz.
+ TTJcP6cbY6BiKnn9imCsXMQKY4vG1d2j1...e6YO6yHhrzAOVqtoXW6r0oR4HHmmepLcBvSOOWIC
+ XDWMX0arJ4X46lexlk8hSGzQKVcRophdqsKRPouDUeJ0SbszG19sSCxzHxUI-
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: fb3a4017-ebb5-41f8-b578-7b5168ce3634
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Mon, 20 Oct 2025 13:45:45 +0000
+Received: by hermes--production-ir2-cdb597784-kgww5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6bb113d8e50eb3205fc44aed89e2ae09;
+          Mon, 20 Oct 2025 13:45:40 +0000 (UTC)
+Message-ID: <57f201bb938b14a13b4b7ecf8173612232486669.camel@aol.com>
+Subject: Re: [PATCH] drm/gud: rearrange gud_probe() to prepare for function
+ splitting
+From: Ruben Wauters <rubenru09@aol.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, Maarten Lankhorst
+	 <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Mon, 20 Oct 2025 14:45:38 +0100
+In-Reply-To: <cde9304a-5ab8-4f13-841c-c5679d55b502@suse.de>
+References: <20251019185642.14266-2-rubenru09.ref@aol.com>
+	 <20251019185642.14266-2-rubenru09@aol.com>
+	 <cde9304a-5ab8-4f13-841c-c5679d55b502@suse.de>
+Autocrypt: addr=rubenru09@aol.com; prefer-encrypt=mutual;
+ keydata=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
+ eIvzsqg==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-oaiLZrNq3M5m3JAyF0Vu"
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS5PPFE52C859EE:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9e43463-30b4-4d25-bc6b-08de0fdec69c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?imKGoo1zijO0sPm1juSu0VAMrdforah174tFLiM2SvBsWIYAB8oR7MDGV3Hc?=
- =?us-ascii?Q?RjBi94o3GLTduebpIxHxbhW9s5NJNIPyWcVzFeRLj9RxvfqlB6HUNu2bqVfN?=
- =?us-ascii?Q?UcW/HjKEpgx9mZ5Bp/nA1BVvvq2vqLh69zFbGhPg/lnxBlqjwJZRLy9g56Hc?=
- =?us-ascii?Q?fH6bvKc64A4aGdSijk9lKpZ7GDTmRVm/6dNwv2lMNl4WCOaazaBhosc1wcbr?=
- =?us-ascii?Q?FMEyiqZIKzAAfq/q865BtdCrr06xclHmuJB2VYcqZJu1zDpfTIfxvGccSHZM?=
- =?us-ascii?Q?8O949Y4H6nwv/LnS1Jg3QrZlP2e6xoNYORUz3v/QVa9hWhgLE50tZtDVyJbH?=
- =?us-ascii?Q?0m75oxJpvCjDCfHsbUPJa8/DjHRqTKzzh08+rUIRzhjRamPnQBSffH72uRaO?=
- =?us-ascii?Q?332WyzjLJ91dHZ7RhPPHcoyO2Bj9LE5rFlgTMVn5MiZUN1AMLESxrCwT/XBS?=
- =?us-ascii?Q?75dJuWBc1oyPj6JUw4pO4njNF6VBCz7S2vwAxl+baYoWQ6/cB5qeJvnZHBlA?=
- =?us-ascii?Q?ur+iZuy7C4zu6wZ2Z9+CVu+AGRMR+U9TviZDQ1DfvMw7vuVUf7H06IygxpTE?=
- =?us-ascii?Q?KKgknxmxKvjemyVsrI2QIzqbnMfOSIODdhD+NG12/zfaTcLIzu2WMEV9CO6z?=
- =?us-ascii?Q?Mmqhojr25P3aJL/kRd9c2ro3DJ/sOdckcMl77dzWeVZwYJJWDUPRpuGqsuR1?=
- =?us-ascii?Q?zbyyCzTykgW/e3yJX4ncO0dinnxlqUVfkBRpLEHVK+STU+s+/nR10D9WmPeG?=
- =?us-ascii?Q?6wb89j7FLdOLuqOqYaInDI52Eki+uYzKClKDHNC6FgmzCwj2Q8q9qyi1IQMn?=
- =?us-ascii?Q?TQYymY8Gy6EXzP5UrJgODqUny71Fd+5alP6joSpRCjrIkmL4N/wTys/p8UJV?=
- =?us-ascii?Q?I+0QBIetLQTFKKEP09Hb5rv/Y1uG1MuyvdxBuPylImmQvkUwvIEZs4T2UtSF?=
- =?us-ascii?Q?YE/fOZO85WCqbySxKmrzjas+rwnOGjBz98GxFKJemJkiI/fMriuqQJH/IoYQ?=
- =?us-ascii?Q?RA1uZk7pczIzZjzN0wUuGjlVcDw5niYXWNj5T4azVaBMrBxB2L+EyFHZuT8D?=
- =?us-ascii?Q?KWh6uvviJsB6CbV6UQ+H8GfufyOGl1XqhmKSpETDA9gUyTqwHWf2VMtEDDcn?=
- =?us-ascii?Q?jWH/hxqMpybSzBF65bPwc0clXEpJZWRKhVfzdsX1Rr/5+zmqoykvcY/lZZxp?=
- =?us-ascii?Q?45Hmb0JvEWAqC3kgViyCrlWUfQpslE0RSXf1P43VcjUiJNPfo/uNlZe0zaQm?=
- =?us-ascii?Q?Gi6y9FHLSygOUy+rqNnVx7xfOvSN3zO34o3uLfNhjecxR88JJEMFOkNsVOgy?=
- =?us-ascii?Q?N7RJ3CxKR30ZuuKriOp6e0WPb6A9I1C6ENYr5lXOsH+joN/BWpaS67vnaSD7?=
- =?us-ascii?Q?jDvhML+R/H4Xqifpxw7006rogDMgq7q2+n39YrFHhZqYUWBVv7RTR/cA9xgA?=
- =?us-ascii?Q?XPVyR0yzaJItU9rNQ0NsuoQ9iV2qLvKZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0p3qLN4bccouIWCL9gAYCh5FHGAWw+f1r6AI/4u23jkyX+j7/vMMcXna8mSQ?=
- =?us-ascii?Q?rkFPby0e7KDOFBSwQJd6ih32VH0tkxrdxh5afZSuhN2lrAP24vJikfWNiMcY?=
- =?us-ascii?Q?qiw5C8uXZCTFS3UUnH7xOIE+iC2SvDwJ8Ba///NwO8LI+LsijydNNB0K+uFQ?=
- =?us-ascii?Q?Co6tTsQ985iEvqXz7lX3+/rVFi+evZKdeaJ5/yHkMdXUf73r4XO4Dho4ZwOv?=
- =?us-ascii?Q?bgEfM5kxf1Ah9RQFE03JGPAcMzmjWraENHYxCf3vpShOPBmuKLt2Nt0xhiJA?=
- =?us-ascii?Q?8fw1rUIMA3szVVH7SI6u5RnF/9wsSCC+cIEg13kKODiJe9vZeDnZscvvFUVt?=
- =?us-ascii?Q?zsQFTyRqr1ooSNdd5gt5l+9JJTmvpbEzGoY4ZEzFacy4Ht2QCa/Z0BKPXl4m?=
- =?us-ascii?Q?44dnfryVsxIYPdBRTurD1fRoDsSKL/Laub7TgzdJ45O+tc8mOU83WfUCgUUF?=
- =?us-ascii?Q?/L02KPw6KKY9P5nlm6U1vNzfhvIRMiqNv3SazYtVdCG2hXztnH5QTmyU3cw5?=
- =?us-ascii?Q?KiRdiHc9IE7kvX3X8V1zkSDR4/aGPgOXN44nZt2CySB9yiBSdwJWc1PTIwfi?=
- =?us-ascii?Q?6WryQgo86WfwDu9mhtitg3LmuGvYBAs7OkCOjisim7TpAbOeKCDsCcxlke0U?=
- =?us-ascii?Q?FVfPETCqJXFc24sauU+f/H98GgfXxw9XGGs1bPj7JnpzBufmgNR2iT8/JPMQ?=
- =?us-ascii?Q?BQPpPluMalafZlkT7lhFLODiVs7w5f+Lo4rPVZKSgc7EajooFyyv3tXKVGmW?=
- =?us-ascii?Q?CMOkKPA2QSC3d+2DodPcEd0Vje+vhd4/VXaS19jxcJ8u2QWB1x1rpWb1bWva?=
- =?us-ascii?Q?eGwyBrt2W04os6sz6zTyGrdYBc+TJ5zq+f3F8dtKUFooJnaYiZZlst0s/uvl?=
- =?us-ascii?Q?YDRTKw5tekT613m7oC05Qt1FLlLjlIdpw3wK9bE4C6TXMdM8AKvlUPOJ11Lh?=
- =?us-ascii?Q?vjnhA9gcYpeTtFVID3KMud9mGDoVkiLrK163z29gKYUo/hdFnXll8Lox3Kwc?=
- =?us-ascii?Q?L9g4NUHEB7zoE5hDzW+kmrUupc50avlHIgKNEOhcpE4Hmg/n0y2yNDx2dS92?=
- =?us-ascii?Q?0ZjMzf22r4y7JYLRs9bB/iqpSiRMkwNGUAi+QiHjXyMjpo3pgU/Hhljfwqqx?=
- =?us-ascii?Q?C+bpML0nagji03CAyMm/85gVTj3TCTCdyWX/4Eh2aeaSV3VNgQKEf5Pby4+h?=
- =?us-ascii?Q?l8ytR28coU7bTBnRVVBLZxbCxh38VT2swHsyNLfuvICf5Cws+txCtE0KzFg9?=
- =?us-ascii?Q?eY0wtTD1JQFHYbiCx4H7ED0JdYAiAGTu7yZD4E+BU8mEbCY5g80w6WF4HDl4?=
- =?us-ascii?Q?0ldRbNyR9iVOIpDcCNI3fGep4I6N3YQ1vh6+x5zJNtkJGIxfbQJMaRqv1ozX?=
- =?us-ascii?Q?GO0MHyRBz1yGBHSvDrKT/Oi7WL3MZSH9sc4ZuVTgXivp+l6R9p0Bta0lMrSf?=
- =?us-ascii?Q?bSBCkL6LD9HS00T22/DPEYLGjT9+NeHnUQWMc2EPFXqGp6wDD+vgfYvXqrCO?=
- =?us-ascii?Q?gf/FSgaf46lL0EL3ypPM+fuc7oNSDuLx7F9vl52JRUdysz3A+w7MX/cz4Uzl?=
- =?us-ascii?Q?/3d8D23gK4PhJPL/aw0TavSXfVe6YIMUWAM4TWuO?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9e43463-30b4-4d25-bc6b-08de0fdec69c
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 13:44:22.4382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +XDs+HpFYr7UoGNd4QsAw4X8aPiMzt+hs16D3Y4dyIsR41I6y8p7m68dtYiQF+aF6RYhlPSJTXSjuxyiBP8JNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFE52C859EE
+X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Mon, Oct 20, 2025 at 03:22:53PM +0200, Andrea Righi wrote:
-> Hi Emil,
-...
-> > > +static bool sched_stress_test(void)
-> > > +{
-> > > +       float cfs_runtime, rt_runtime, actual_ratio;
-> > > +       int cfs_pid, rt_pid;
-> > 
-> > I think it should be cfs_pid -> ext_pid, cfs_runtime -> ext_runtime
 
-Oh and ack to this as well, using CFS in general is a bit confusing at this
-point.
+--=-oaiLZrNq3M5m3JAyF0Vu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--Andrea
+On Mon, 2025-10-20 at 09:00 +0200, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 19.10.25 um 20:53 schrieb Ruben Wauters:
+> > gud_prove() is currently very large and does many things, including
+>=20
+> 'gud_probe'
+
+Unfortunate typo that I only realised after sending
+>=20
+> > pipeline setup and feature detection, as well as having USB functions.
+> >=20
+> > This patch re-orders the code in gud_probe() to make it more organised
+> > and easier to split apart in the future.
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > ---
+> > I wanted to move mode config to just before pipeline init, however mode
+> > config is edited in feature detection so I was unsure how to go about i=
+t
+> > exactly.
+> > Further untangling of this may be required before splitting it out
+> > ---
+> >   drivers/gpu/drm/gud/gud_drv.c | 31 +++++++++++++++++--------------
+> >   1 file changed, 17 insertions(+), 14 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_dr=
+v.c
+> > index b7345c8d823d..583f7f8f4c00 100644
+> > --- a/drivers/gpu/drm/gud/gud_drv.c
+> > +++ b/drivers/gpu/drm/gud/gud_drv.c
+> > @@ -463,10 +463,6 @@ static int gud_probe(struct usb_interface *intf, c=
+onst struct usb_device_id *id)
+> >   		return PTR_ERR(gdrm);
+> >  =20
+> >   	drm =3D &gdrm->drm;
+> > -	drm->mode_config.funcs =3D &gud_mode_config_funcs;
+> > -	ret =3D drmm_mode_config_init(drm);
+> > -	if (ret)
+> > -		return ret;
+> >  =20
+> >   	gdrm->flags =3D le32_to_cpu(desc.flags);
+> >   	gdrm->compression =3D desc.compression & GUD_COMPRESSION_LZ4;
+> > @@ -483,11 +479,18 @@ static int gud_probe(struct usb_interface *intf, =
+const struct usb_device_id *id)
+> >   	if (ret)
+> >   		return ret;
+> >  =20
+> > +	/* Mode config init*/
+> > +	ret =3D drmm_mode_config_init(drm);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >   	drm->mode_config.min_width =3D le32_to_cpu(desc.min_width);
+> >   	drm->mode_config.max_width =3D le32_to_cpu(desc.max_width);
+> >   	drm->mode_config.min_height =3D le32_to_cpu(desc.min_height);
+> >   	drm->mode_config.max_height =3D le32_to_cpu(desc.max_height);
+> > +	drm->mode_config.funcs =3D &gud_mode_config_funcs;
+> >  =20
+> > +	/*Format init*/
+> >   	formats_dev =3D devm_kmalloc(dev, GUD_FORMATS_MAX_NUM, GFP_KERNEL);
+> >   	/* Add room for emulated XRGB8888 */
+> >   	formats =3D devm_kmalloc_array(dev, GUD_FORMATS_MAX_NUM + 1, sizeof(=
+*formats), GFP_KERNEL);
+> > @@ -587,6 +590,7 @@ static int gud_probe(struct usb_interface *intf, co=
+nst struct usb_device_id *id)
+> >   			return -ENOMEM;
+> >   	}
+> >  =20
+> > +	/*Pipeline init*/
+> >   	ret =3D drm_universal_plane_init(drm, &gdrm->plane, 0,
+> >   				       &gud_plane_funcs,
+> >   				       formats, num_formats,
+> > @@ -598,15 +602,6 @@ static int gud_probe(struct usb_interface *intf, c=
+onst struct usb_device_id *id)
+> >   	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+> >   	drm_plane_enable_fb_damage_clips(&gdrm->plane);
+> >  =20
+> > -	devm_kfree(dev, formats);
+> > -	devm_kfree(dev, formats_dev);
+> > -
+> > -	ret =3D gud_get_properties(gdrm);
+> > -	if (ret) {
+> > -		dev_err(dev, "Failed to get properties (error=3D%d)\n", ret);
+> > -		return ret;
+> > -	}
+> > -
+> >   	ret =3D drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NU=
+LL,
+> >   					&gud_crtc_funcs, NULL);
+> >   	if (ret)
+> > @@ -621,6 +616,13 @@ static int gud_probe(struct usb_interface *intf, c=
+onst struct usb_device_id *id)
+> >   	}
+> >  =20
+> >   	drm_mode_config_reset(drm);
+> > +	drm_kms_helper_poll_init(drm);
+> > +
+> > +	ret =3D gud_get_properties(gdrm);
+>=20
+> This function installs plane properties. So it need to be in its old=20
+> location after drm_universal_plane_init() and before=20
+> drm_mode_config_reset(). It should be renamed to=20
+> gud_plane_add_properties(). See [1] for the connector equivalent
+
+This does make sense, though I do wonder why it worked on testing,
+either way, will change it.
+>=20
+> [1]=20
+> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud=
+_connector.c#L474
+>=20
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to get properties (error=3D%d)\n", ret);
+> > +		return ret;
+> > +	}
+> >  =20
+>=20
+> >   	usb_set_intfdata(intf, gdrm);
+>=20
+> After you've called drm_kms_helper_poll_init(), DRM could query the=20
+> connector for attached displays at any time. This might require the usb=
+=20
+> interface to point to the gud device. And the DRM driver also needs to=
+=20
+> know about the DMA device.=C2=A0 I quick look through the driver code sug=
+gest=20
+> that it works without, but better not count on it.
+>=20
+> Best would be to move this line and the block with the DMA setup [2]=20
+> just after where the gud device got allocated with devmdrm_dev_alloc(). [=
+3]
+>=20
+> [2]=20
+> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud=
+_drv.c#L627
+> [3]=20
+> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud=
+_drv.c#L464
+
+Will do, I'll send a v2 patch with the requested changes.
+>=20
+> Best regards
+> Thomas
+>=20
+> >  =20
+> > @@ -638,7 +640,8 @@ static int gud_probe(struct usb_interface *intf, co=
+nst struct usb_device_id *id)
+> >   	if (ret)
+> >   		return ret;
+> >  =20
+> > -	drm_kms_helper_poll_init(drm);
+> > +	devm_kfree(dev, formats);
+> > +	devm_kfree(dev, formats_dev);
+> >  =20
+> >   	drm_client_setup(drm, NULL);
+> >  =20
+
+--=-oaiLZrNq3M5m3JAyF0Vu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE3obNNdPQ9V5CQi2Y0n5QwFCuDOEFAmj2PQIACgkQ0n5QwFCu
+DOGTeRAAv26J3+a3wBWoo1Oc1Ch7w4iKeQ3xEBuyJlsKkNZzxUSVgk6w3gFsNZNv
+2KgW3Lex92nseWc/t3J0wVNq7WNkg4SdH7kfqyAl+uKguAtOIwz0HUju4kVM5PIk
+CPbyVSKM7UnaIuPvYKvaW0ful4Ev/AXK1Etb3fSUj4XhFsedB1yJeHdzWfXckEvx
+zUbgA7Ob8YwzVl0dHnd5oe8hfg3iCM51q1jEr6aKD5cMt6FjNLpdsVTe3ZtghgdP
+D7GgBk8uNDmyQyMV+EMRhLFs8JZ7cUfOPk1vYobWGK4R0/S07FG0tFeqdTPuaIv8
+0UP8HZU26rb/nu8Tbj8xwvJCKj67MMht/JQvZntj07x6+TRWLex+QhlBOolLzLSo
+0C7y8SC40uIolBEwGj1Y45aG6KqBT0CKOnq8c9OrbHhQXd82m/4ci51OVZkZ67CK
+GVgGxbThAq4c+yYvw4MWsUHOCtnPCDRLx0OzwLSG0DHo9NbAvYw8bHwdRd4dfkSR
+BbhJXbhYEBIwzT2JtLfP6ScHS2+sYxOcibGf2kpnAXI6W2RaqvxiahAt/AMjahJG
+uxZHOqKXGLDJeOWIa4iWi0fcEU9Ocq0sLIKrcQ/e4O7cEpBChNK/1ciZwxEMX/93
+dzqwNFtG6Md8Ipe4luc1o7bkDiuz30KeomIMUplQlOPZFfkxiCI=
+=cYEe
+-----END PGP SIGNATURE-----
+
+--=-oaiLZrNq3M5m3JAyF0Vu--
 
