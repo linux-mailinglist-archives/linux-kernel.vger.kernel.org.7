@@ -1,95 +1,79 @@
-Return-Path: <linux-kernel+bounces-860473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2283EBF034C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55647BF0361
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 606C54F204D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:35:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ECAB4F3258
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05662F6162;
-	Mon, 20 Oct 2025 09:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kvWulCzv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7B2A1CF;
-	Mon, 20 Oct 2025 09:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C72C2F260E;
+	Mon, 20 Oct 2025 09:36:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5542F6189;
+	Mon, 20 Oct 2025 09:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952946; cv=none; b=hepvYelpjPu7By11zmBq74K9Ua9OdGqTEsnH4J86H06MD1JalrmYuuMTcILdIY6jA0kVSe7GK+AiiaTQqDHgtiUCZ56FWjNMGntVVm3dgKxYjizsrwvG4AO8eeLUAbXVwLrkDlA9bYYbSJzHN368FDMmxaac0d3kS5/i9yzQ6/Q=
+	t=1760953003; cv=none; b=pQgon+ZEKAEkeYmMGz3eNJpvg9x35tgekZnkLl2nxcXtVO8orJRlRLnD5uLBGfqmwFuFuHpAZYtpJMLxcxkse0VsIEXa4U7IlTPe/cWuOedte1JQn/LeutcfhkFyD+INYUn+bkT0MGbYcdqPLwTEiMhw4MBtplpv3jtPc39MJP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952946; c=relaxed/simple;
-	bh=2IAIt2SUCUhxcb807Lyj3JXjSDC9/iTXJyvqnAzZGRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJfK9DTViKgGnnyMvd1T2HYQttRldiWaI6JxLzN0NFGhltHER4ZjJ1OM1nHC5hPCMiwLaTqRdQ0YQX6MPpPVYa6riMg/rLNo3hLPIPTveWHw9OJIorth6WmomlyVV87iX/bwY2U0Is4TUj0fy57K9X3idb1PO3RFqICk4vdc04A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kvWulCzv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ln38FfARN4Gj/ksc4kfm6PLlv2NAm9fTW6k7Agq3IS0=; b=kvWulCzvyx0Ps/sMfHZZj+byCC
-	cu0YRjydzqAiw6m00rt624KHTY1G8Lf/3giE3ms7WHwf8cUKA3qpGjPX6LEKAtq5JqQXaA42Sxtae
-	QcyHUkg/2+hlM9a+bpai/Irs4UPGHnpP+hwIwKdD2Qds+IR4bgQXNdB4GV5DrDT0kMHnMCMtzT9VK
-	wSDpUUuYFB6ZGerWWRvGu9rioEi05/ZAeK7IhEKVu1Gvwai2qySksbq3Y5sGLmi58mFg1H29x3tvQ
-	Qu7Yp6laPe/AFlBhh8qJQCpRHiVziqXEnh3ykjKUSCMwrWb1ewV/v61Tcd9VL5KURr6K8XI2v0MFQ
-	SfuQRsoQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vAmIm-0000000Cbrq-2iTO;
-	Mon, 20 Oct 2025 09:35:40 +0000
-Date: Mon, 20 Oct 2025 02:35:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-block@vger.kernel.org
-Subject: Re: [GIT PULL] block-bio_iov_iter_export
-Message-ID: <aPYCbIrvAkOf5L3g@infradead.org>
-References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
- <aPHemg-xpVLkiEt9@infradead.org>
- <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
+	s=arc-20240116; t=1760953003; c=relaxed/simple;
+	bh=joXj06w73n0rY+/d9F0e5Np2WtABBHUJvjrkLlwZTLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lFGP1/7RcBO8qBjxDSUymR+54FY1/I66+99Z2wxkCOMuwF6A4hGwchsMrXZmjgGAHpm8tuB2LB9PaBFJP3KlMvJiGEpbcw+xkECqh/T8/InCLwSwHbK5QrceMpl9rtOYn3nbaoHbcUD4t5jpUzyQ/694WfUPNwzEupZupNS/5i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 503BD1063;
+	Mon, 20 Oct 2025 02:36:31 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FA903F66E;
+	Mon, 20 Oct 2025 02:36:38 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: stable@vger.kernel.org
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH 6.16-6.17 0/2] arm64: errata: Apply workarounds for Neoverse-V3AE
+Date: Mon, 20 Oct 2025 10:36:24 +0100
+Message-ID: <20251020093628.592682-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 09:31:59AM -0400, Kent Overstreet wrote:
-> On Thu, Oct 16, 2025 at 11:13:46PM -0700, Christoph Hellwig wrote:
-> > Umm,
-> > 
-> > besides adding exports without in-tree users, this is a patch that's
-> > never seen any relevant mailing list, in a pull request that the
-> > maintainer hasn't seen.  That's now exactly how Linux development works,
-> > does it?
-> 
-> Christoph, I wrote that code /for bcachefs/; the rest of you decided it
-> was nice and started using it too.
+Hi All,
 
-In fact this version was written by me, giving you the attribution
-because I stole a cool idea from you.  But none of this actually
-matters, there's not magic exception just because someone wrote the
-code.
+This series is a backport that applies to stable kernels 6.16 and 6.17, of the
+recent errata workarounds for Neoverse-V3AE, which were originally posted at:
 
-> Then you removed the export talking about the "abuse" of bcachefs using
-> it. WTF?
+  https://lore.kernel.org/all/20250919145832.4035534-1-ryan.roberts@arm.com/
 
-The random NULL bdev check that breaks the proper splitting.  We told
-told you that's not the way to go, but you just sent it directly to Linus
-instead of reworking it.  And this then got into the way of the rework
-Keith did to support arbitrarily small memory alignments.  Fortunately
-we could clean this up properly now.
+... and were originally merged upstream in v6.18-rc1.
+
+Thanks,
+Ryan
+
+Mark Rutland (2):
+  arm64: cputype: Add Neoverse-V3AE definitions
+  arm64: errata: Apply workarounds for Neoverse-V3AE
+
+ Documentation/arch/arm64/silicon-errata.rst | 2 ++
+ arch/arm64/Kconfig                          | 1 +
+ arch/arm64/include/asm/cputype.h            | 2 ++
+ arch/arm64/kernel/cpu_errata.c              | 1 +
+ 4 files changed, 6 insertions(+)
+
+--
+2.43.0
+
 
