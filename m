@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-861865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7037BF3DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:12:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A66BF3DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DD424FE49B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:11:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 832644FE5DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E292F25F3;
-	Mon, 20 Oct 2025 22:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2FE2F069E;
+	Mon, 20 Oct 2025 22:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="JWcFYVad"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLuBXQuV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234322E7F11
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0453EA8D;
+	Mon, 20 Oct 2025 22:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760998237; cv=none; b=QRAt0st8nQkMMKGM3m2+4Zm/G1ILuI6jx/e4nQlFpSz4QpnuTcyLlS5wL4tptAqO2P6912gAtMn6mrjYnGo0kqtCFaktqOFTXbDwzBfo4Pc5UjuNKbiUmnXXoSaUJZzwMpaA4H4F2Q75CeCHz1Pm1yLqBVaxU0IUPwfnDiv5Ico=
+	t=1760998347; cv=none; b=J1kFOwv3giABhd5+8QcWQ9GMjfqM+1S8kuImqhPVivvXweoOOMGQVst7cwJG7cFDblU4lBFrASxPsJ8+Nlk0hOFWXMpKipq0UQFJCWDsLz26Zt6k5b1PWu0AbmkP6Uk7ii041HxMvd95FYcVNPn0g3/A3lJmJOaeedORhgCfg1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760998237; c=relaxed/simple;
-	bh=ilx2DzwdWn0Eb7pbCFulmV8VsnS7KdZoAGThUj0Ef9U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cqJVreaaoN7hOfeQYJVcir27ercvmeDDacuUrc0tqRYyaowsB5rrAPEbG7PsqRTY1nUrfAN6fzVxX/smKNh9eDl3UGS2k3fahZ0RSY8RZvbPDPbj/Q385/NnZB2CzHVcjNAqekWUAEnwCSUw4ipOWhxhaVLq5es6Namu5KGRwA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=JWcFYVad; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so9262674a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760998233; x=1761603033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ilx2DzwdWn0Eb7pbCFulmV8VsnS7KdZoAGThUj0Ef9U=;
-        b=JWcFYVadt93YK7TOMy9LFnWbvObqk56tdaxiF6kzSqONWZfZ3rSPVf3TK3N4/AwBO+
-         pFxCx25zD/CXjIso7elAKENpgGBWpzVvwYZCJNDVQfjbK/FwZYyztBJw1zzbhPxIv2B3
-         ZfxEZVJ3xI6qUH8LODXMN02rJJJ7PluEjYQbsHrprn4kKprYA0VxgVw8bLeAv0W7QNsz
-         bh9MjNnqdmbxNUyIcaS74iTvQiGVBk/CW4qii6ibh8+ltp52tVefzDD9t2S8SUMhCw5X
-         jQat3tf43fY80Gj8Vf8wGhEi0jNqxzpsXvdVfuM5PpQ3kEOz3duFroJ/HNsw0+tRc6GT
-         O/CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760998233; x=1761603033;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ilx2DzwdWn0Eb7pbCFulmV8VsnS7KdZoAGThUj0Ef9U=;
-        b=P+eRLqA22EJYArY7v9WYXiPN0UvyBJWLz946kI20IsSifHDE3B/ysEbcSHCmawr0Ze
-         iX4XtvxV2ST2JoaUZbNGzqaplsoQJGHIYMUg6Yzjwg0jwAA60U6dRlJSe+Cbz/13Y2ip
-         QJVHgzO++kBcfkfxE1L61p3u0/H6nWQxSsCNney8HqLRZ2Zm3B1O+aHTo3L/D6+Z1WDH
-         N3Sc/n4gt1edMEXtgqW0RynC5Q3RTqsPC2rK7gbB1FokrMqWH6dJ9FYNCOn7cERDuE3b
-         DL8SjhDZxkDigmKn3IGApZ0Q08SU9o92ulNTNFQGQd6FS0wt+YZkSN5CqIm2zycZkEV3
-         RbQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQHhGutuuoMoCXk8Dx00037mA4gZXFDimu8V93Zd6NLZaHr/KjnvuDka4+B1wsRqvLr9BVp5qVVdO9pcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVXNs+0KqeGj8v5YJLmbl2pLiRPDRQtInRFIr28HPfVOaoN4iu
-	C/LtT8wZ1tPoeB02uvjiD/d0/TD9C1CdtluT/FVKdZEGHatO+2MwUyXuNIAN7dTdPCjBLugIZXb
-	KkgoGVfaBDOw+WDJ3+j4IzvFy0XvrTrE7Uy6wy6GY/Q==
-X-Gm-Gg: ASbGncvjPhmtKsAlSgfFpLZlvRF3r9EysUKmIDTn3f/Bd9gMn/QWDRjiRSyEPDxuZ/4
-	RubVYFGkQNoIJmEzVJwjPUqbOnZlSwLB8mKZFPovCPCtATAY0vN5ZG3L1AfdmhTcnFlNmb6NYGd
-	6gT204BTsomlmLkDan8f5wUvXWQGHplHl0JP+JnUydVmQmZIySNrc7tCYbQrSScNr2LfZhi1k6G
-	NlfngG0+/Ug/aaiGIQ2KYEpwXdWpObx2T8TtZMZnXGBME7Y+D5VwiB4ICpRQ8I29bnz
-X-Google-Smtp-Source: AGHT+IHXgN2A3la0YJxyyXqBd0MasNf9JRFf1RqDDAA3OQ+yqvWzJtnk8lJzn/WVj6Q3Gweop1jcYJMwQr5SF/i4N7Y=
-X-Received: by 2002:a05:6402:518c:b0:63c:5eef:c8eb with SMTP id
- 4fb4d7f45d1cf-63c5eefccb8mr7887864a12.31.1760998233475; Mon, 20 Oct 2025
- 15:10:33 -0700 (PDT)
+	s=arc-20240116; t=1760998347; c=relaxed/simple;
+	bh=IsXcIouzgz4wUiJybXRjXsiqCJLbVl38YFCNfwbmYSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ATvfFaHVyas2HPHMN7fmZj9T972t2m0cQgRLq85GMa1DNmEYW+uoJE5KioafknUO2HpAD84XG2fZjaLBdpfAV3UoC0aqcdd3Oy4GMH4BBewuSZQMYe39wnnm9z9O3kv+o5c6Qy2l7iLhWAzmRDFIFHlRHnj00POM6JhTMVAcLBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLuBXQuV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20B2C4CEFB;
+	Mon, 20 Oct 2025 22:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760998346;
+	bh=IsXcIouzgz4wUiJybXRjXsiqCJLbVl38YFCNfwbmYSM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OLuBXQuVqv4Q0CXR+aktQPwREcoe2KINO0W8J0kcZNxkVCZJcmxzyldbLpRxSu2lP
+	 d7OOp5Ip0LhslgUowkD75NEoCs2wNdw0D9BILt1gBcAf521rfa0c9THM1HQdGRMWwL
+	 sPnIxL7tEkG0Oe+c+YXxRpXukATfmUiuhgXwGTEH/JwCz1FSPmduHbAKAyLlQ7Iei4
+	 JMF8kvw+UqV59guyzNh1c5Wnk7Ye0Dvg2SlMhu8FDFlVhqrtJ5jywhp3KENAMd1b/P
+	 nLv7EuDpDsukTjCN5nZ4d/EDd5L2MSRq7PyyWN9kpKR+szTx5olR66ALO0PwvuHg/L
+	 LulWGiaKz6eqA==
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	linux-rockchip@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+Date: Mon, 20 Oct 2025 17:12:07 -0500
+Message-ID: <20251020221217.1164153-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018171756.1724191-1-pasha.tatashin@soleen.com>
- <20251018171756.1724191-10-pasha.tatashin@soleen.com> <aPXszzdehAbkPOAh@kernel.org>
-In-Reply-To: <aPXszzdehAbkPOAh@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 20 Oct 2025 18:09:57 -0400
-X-Gm-Features: AS18NWCJ1e_UpQW7FijpabJLDoZps9ZGHn4yCdktBVEdTDDj_pM8M4yk7V0Wg8M
-Message-ID: <CA+CK2bCqZFY3HWNj6o2MS4+dz4Re+ekdY_GG1V4GL1Xq1NX_Ug@mail.gmail.com>
-Subject: Re: [PATCH v6 09/10] liveupdate: kho: Increase metadata bitmap size
- to PAGE_SIZE
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 4:03=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Sat, Oct 18, 2025 at 01:17:55PM -0400, Pasha Tatashin wrote:
-> > Metadata is preserved via 512-bytes, which requires using slabs. Slabs
->
-> KHO memory preservation metadata is preserved in 512 byte chunks which
-> requires their allocation from slab allocator.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-done
+f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
+platforms") enabled Clock Power Management and L1 Substates, but that
+caused regressions because these features depend on CLKREQ#, and not all
+devices and form factors support it.
 
->
-> > are not safe to be used with KHO because of kfence, and because partial
->
-> Please add more details why kfence is not safe here.
+Enable only ASPM L0s and L1, and only when both ends of the link advertise
+support for them.
 
-Done.
+Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
+Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+---
 
->
-> > slabs may lead leaks to the next kernel. Change the size to be
-> > PAGE_SIZE.
-> >
-> > While this change could potentially increase metadata overhead on
-> > systems with sparsely preserved memory, this is being mitigated by
-> > ongoing work to reduce sparseness during preservation via 1G guest
-> > pages. Furthermore, this change aligns with future work on a stateless
-> > KHO, which will also use page-sized bitmaps for its radix tree metadata=
-.
->
-> With the stateless memory preservation there would be no problem with
-> kfence, right?
-> Maybe we should accelerate the stateless preservation work?
+Mani, not sure what you think we should do here.  Here's a stab at it as a
+strawman and in case anybody can test it.
 
-They are orthogonal, theoretically radix tree could still use the
-512-bit bitmaps, but we chose to use page size. Also, Statless KHO
-still requires some work, and because it requires removing the
-notifiers, it is better if it is based it on top of the other LUO prep
-patches.
+Not sure about the message log message.  Maybe OK for testing, but might be
+overly verbose ultimately.
 
->
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->
-> --
-> Sincerely yours,
-> Mike.
+---
+ drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 7cc8281e7011..dbc74cc85bcb 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -243,8 +243,7 @@ struct pcie_link_state {
+ 	/* Clock PM state */
+ 	u32 clkpm_capable:1;		/* Clock PM capable? */
+ 	u32 clkpm_enabled:1;		/* Current Clock PM state */
+-	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+-					   override */
++	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+ 	u32 clkpm_disable:1;		/* Clock PM disabled */
+ };
+ 
+@@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+ 	pcie_set_clkpm_nocheck(link, enable);
+ }
+ 
+-static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+-						   int enabled)
+-{
+-	struct pci_dev *pdev = link->downstream;
+-
+-	/* For devicetree platforms, enable ClockPM by default */
+-	if (of_have_populated_dt() && !enabled) {
+-		link->clkpm_default = 1;
+-		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
+-	}
+-}
+-
+ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+ {
+ 	int capable = 1, enabled = 1;
+@@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+ 	}
+ 	link->clkpm_enabled = enabled;
+ 	link->clkpm_default = enabled;
+-	pcie_clkpm_override_default_link_state(link, enabled);
+ 	link->clkpm_capable = capable;
+ 	link->clkpm_disable = blacklist ? 1 : 0;
+ }
+@@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+ 	struct pci_dev *pdev = link->downstream;
+ 	u32 override;
+ 
+-	/* For devicetree platforms, enable all ASPM states by default */
++	/* For devicetree platforms, enable L0s and L1 by default */
+ 	if (of_have_populated_dt()) {
+-		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
++		if (link->aspm_support & PCIE_LINK_STATE_L0S)
++			link->aspm_default |= PCIE_LINK_STATE_L0S;
++		if (link->aspm_support & PCIE_LINK_STATE_L1)
++			link->aspm_default |= PCIE_LINK_STATE_L1;
+ 		override = link->aspm_default & ~link->aspm_enabled;
+ 		if (override)
+-			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
+-				 FLAG(override, L0S_UP, " L0s-up"),
+-				 FLAG(override, L0S_DW, " L0s-dw"),
+-				 FLAG(override, L1, " L1"),
+-				 FLAG(override, L1_1, " ASPM-L1.1"),
+-				 FLAG(override, L1_2, " ASPM-L1.2"),
+-				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
+-				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
++			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
++				 FLAG(override, L0S, " L0s"),
++				 FLAG(override, L1, " L1"));
+ 	}
+ }
+ 
+-- 
+2.43.0
+
 
