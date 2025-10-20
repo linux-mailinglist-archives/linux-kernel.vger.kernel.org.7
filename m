@@ -1,40 +1,53 @@
-Return-Path: <linux-kernel+bounces-860706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D13BF0BD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD72BF0BE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90096189F7CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4537E189F35E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9C72F9D8C;
-	Mon, 20 Oct 2025 11:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39582F83AF;
+	Mon, 20 Oct 2025 11:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="dXqj5NkZ"
-Received: from mail-m21467.qiye.163.com (mail-m21467.qiye.163.com [117.135.214.67])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LCHscH3T"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4853424676B;
-	Mon, 20 Oct 2025 11:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1122F617F;
+	Mon, 20 Oct 2025 11:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958477; cv=none; b=oFa3zmzpxxj9lxNJwLHMOw8SEh/V330ZdyyEzamYZaaEmjI5KCkUTBsdwq33S1U77NbQ6jf20ZViaWEkEivoFbJnBRZAyOe9TTWQ04+tQFVsZZQrLCERQeJzim3I8YtlMdLmVjLTWUvfVbv+9owFZIxJEvgg9PXo+w7Y8qdl/yM=
+	t=1760958572; cv=none; b=GpIL7sZV2geu8O4KtDa9tw/oO61xkSnTSbcVt/SdQjjU/aUk0YnDXUX4lQZIYSX/Dx1YwOSrFjdbFdY1hv+X+53hPrOfTRpMXIpIGdrzGWzsDihayAfaX1W9MlIKQozaC5YXNR9tD7fz/UWy9e7os1q4+4200Td8ltOwlhlZeIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958477; c=relaxed/simple;
-	bh=XR2VwGVUBY0oNp+PAoWlyn373NkPJfO6YjBid3cI/xM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QaWlY5DJZ0hK93VgLKvxNj+9mznSfz9h1QJfiILy+xvvYslUDrNH0GWggGesZqa1h0ldxN7xzJaUKNy0wV7b8b8qENyYIobBidHZS9PrVGGMeRbFo0HV1HV2q2cZbFb6/AvO9dvgImQ3C4Wyhk62mSU0DKshLVMiN1vt84AvSu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=dXqj5NkZ; arc=none smtp.client-ip=117.135.214.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.149] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 268423cdc;
-	Mon, 20 Oct 2025 19:07:48 +0800 (GMT+08:00)
-Message-ID: <954a67d1-1759-4e18-8eef-3fa14fb3cef5@rock-chips.com>
-Date: Mon, 20 Oct 2025 19:07:46 +0800
+	s=arc-20240116; t=1760958572; c=relaxed/simple;
+	bh=fk1TO4ZsMehYzUyLbQcVt8MpvDW59sa20REU0KIb31M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FigekQXRCqoReDSGAUK0IFqUoowbXWtDULeC+Q/Od2sIrBcywChXDZ2ULlSDQIZfECtOWFbJPZSIROPNzo9zQE15mpDJzrkBlQNyfxU+aUA3NEj0Sw4g19TsdDmyDawyPHzg4EovTK1LlVnBPE6abdpf8TXcOsHS6qNNdcl/sz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LCHscH3T; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760958543; x=1761563343; i=markus.elfring@web.de;
+	bh=vu16eeWZId9dJlXn77Yis1FTYeIfH23X6y+nOXOhwcY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LCHscH3TE4dWjYPEYRTo5QY+n2XZf546FSIg5C8OZvCPBsJaS9H6r4r8kiRUE4SQ
+	 9zI/hSHxPt91uNliVlyZqZtZ3KYu0qHahlzb0A0O6G2EfCmkuzO3xLKMSvAE5/JHY
+	 R+VhvBKVMIwMpJE0kwKkRyBYl0C3MJHr2D/yVn5xlTh8W4PEFRq9lCIw5p0p4vDEm
+	 0P5y5zrthiXWzWifubxbKkXiD4OTnRB6f++BkNBNVMqdqxao03Th+8t5D4QmW/Uvw
+	 zB+eoMScaJ/2jzgDOkESXzl93BhQOm6ZRcnUYOFkLP9anS3lKAGTJz0N8Qzc6xcsX
+	 TB5dXovIo4IsfRjHVw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MD5jv-1v2JRu0vc9-002VDA; Mon, 20
+ Oct 2025 13:09:03 +0200
+Message-ID: <bec52694-c755-4d88-aa36-1d96f6d146e4@web.de>
+Date: Mon, 20 Oct 2025 13:08:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,183 +55,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/8] usb: typec: Add default HPD device when register
- DisplayPort altmode
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Chaoyi Chen <kernel@airkyi.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20251016022741.91-1-kernel@airkyi.com>
- <20251016022741.91-2-kernel@airkyi.com> <aPYImGmesrZWwyqh@kuha.fi.intel.com>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <aPYImGmesrZWwyqh@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9a014dd00203abkunm40e5dafaa0fcfb
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxlKGVZPGB1KQx1CSU5CSUJWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE
-	9VSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=dXqj5NkZfi6RdQnKgqMUg8BCh/n152sPRHim3KgJLTuoqkgUqNXBIJ1AlymydVKUpz8pF6HwyNm2AetRmBbh9s5l+IGGlsVFCOmPNAyFWUBGqpTYSkwmiZ3vxoKGCHQdHSj3aXmc2X4h5qhyffGPX+Ek0rtr7mj99qONbKoltJ8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=PW2Gb3KgS1lxfff0TLl++nMBLOL4Uug61XDZnqG+onc=;
-	h=date:mime-version:subject:message-id:from;
+To: linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>,
+ Jan Dabros <jsd@semihalf.com>, Jarkko Nikula
+ <jarkko.nikula@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] i2c: designware: Omit a variable reassignment in
+ dw_i2c_plat_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EnEHh+4nkuUmoqHH0gC8zBGCHAjfLGk0oJje0qKEu8Rmr9ZD3LM
+ Nfw1fFYBbquS/5lrbItimYj7bhfBDP7JJne/TiVf60K139HKCMUiq/5KfS8fc+rnBSlGFEh
+ GeQuWf1ZccG46OtNtdJkpvNttiF6yvl/Sc55AltV4Zsmwj4OaJIek5l/R5pFVS582hmhkcJ
+ 4WBeRjRn1wd7lrpkIohuA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vgPH6jG1T0s=;6loLz15M1dgwHr0CokK80Lb1u6L
+ NW19cfyPbHtbXxygoMGBafNIhbr5+xJkfgf/7/BFjzHceGaFLpSkKz1oh6c6lorTgqpEi4Nc6
+ vFTJzxyHkg9tP1gaupDYlOz0kU8lb3NArTyYen1Vfzkg2VQfFGxVQrrBWUUsmKZoNhTdyu4iL
+ OcJ2wPNnxHGSGPZAOs8VMYhsnMOLioaLTiVc49q2UZ1xkOFaZP/vKzgeeEDAduoyxAAupYXSs
+ 7I5QE1Hpno6PXN7JEwQZj52srZOy9X0shXvLzKD8WIjDUVLda3YDkGIBqE33V/XdL/jUyvad0
+ 7DkxE4QvG1zImNdMsI5ueNmlHFC1vrbaVTLyv0+qUBB17K/9WFf7z3kjSfrFZKYmGKUhnOms6
+ e5CYrHXb/AoO9laQ7juk3cXsBDBrcckeg5g8gRfcIed/Hq1lB6Mk+OcKaCx8aMvYLnmL6LapW
+ s+efpHNxNiMqLIHK9+xRTm4yfs4ztDGcqMV1/pFQ+UdbsIg+Q42dPrna/osDhzk/IkDAYdgqr
+ BN0jgmc8DGSh7TqHcF50D3Q7f+wRRxIoX0z0y9UahJn15rcDvL8ld8YVZjLPlYvByRgtSwaql
+ isBNgPmO7bEOKpDXhz/YAEJsRNyMAhWi9R1IOV8dmQ0BQWbE0rf8LvGlcAwueI9ijWxJO3Goi
+ JIvl3sqyMqxF/B6/U8LEmV77IaRSjp64i2juwL3H4um+BKvGwik8qPk9wgj9n/LYdu9zs7tP7
+ KxuvptsCuIa4U1FwraVrhectM4YNdNh9kIUeLD403NCMj5/jkkMv0aLg3fcSk31bhOseha1cR
+ 8dAgMYPGyQzzTQYNyH8Bnv1+2gjM+5MpZSJXVlxEp9p3hbQnHiFiEwKQcJmlfX7VocIfcQ+3W
+ uXOISgAYndHYsCOiNZRb2n9IzcET2pkK/ufsqSWd1wrpLSk+hApc3ymvmGMmOpLBiS1yULfwi
+ BbtqdADr911yQunmVCm23weZEbXDEXKxJvEIWBNAToOp+e6CArgjI7FgqvgGmzgVyHyd/gkdy
+ +z+/RAFIx4OOaAJ8P1GzWc0zCwdd5+9cjCmO0EANMtdA4u4KoRf78JBYDMZD1MYU5ITlqjr8h
+ ogDXJ+VMKAMJtuuvD3aTaeFwkKLorqJZ/LI241ZbaR5DBeNygyWUdQB4W5IBeOshpQ9bmOsJP
+ u08pNGfUUIsW/tBN3yN0fGojzGYWSj3OZfOhgzNT2gUxTDR8aPO98DaaAjZjqxhb4oU8d72FZ
+ Z3Gq1sxej0qt3G3J0UPLJzDBY5TaMRresv5kjt7tNSWyzNekpvDdDlrzxutGpOtIy9fy7At+z
+ gt6ZGEMDuBW0slYVILbKFeZBAJgvkVIl81MuFq66hfX7CLd4dFtFq6+/Kj9pqs/7MpeVtRyNm
+ F0E1TbsGKJiChnA3pgzeGniQ7S1zYH1505b8wWZOQ3Usa1EGE2vtC6zgr8iroPt5+ULoOl63i
+ ZVL1i4y50R2sDC175owXsxoiEuEbOmQ5Tn0Ah1eJAxawTB7qMzGRKtY3uxrnxDvn/QqnjazxI
+ emYrox6KxvnX9Gdn4i3x8CkoyTnQDEpwO0ZqUVyi5YuY67ZQf80UpEC8gAoODNb062sz8cNMJ
+ +vmGqWMrWH98bTCGI7S0J8icXPvcjAzXNq7/nLW7do7JkQj01xr+ixW+1mk9kTpN1Wej6fny0
+ LGxmovUweBuTEPbwgAlHbbiq7cg8yTVVfYGAZd/hv7jv9NNNxU/zikjlN890uFo4ET7nnpstG
+ Qx4lbHCOPLkCMMAyBL6fI8ykU5pgS811eWWFoCPf57S2oyGR+sx+IoTX7mYkmDhi8AhblHRkq
+ xe/aPD4udOA99v5v7T6t19P7iJd9VGc+2CihGYbIAXU/xClIAEV3ZrbrXmybVx7zkRImjkhlu
+ syTOQPn87/r4XLe755W/KHfxeUfPDTo+tIbbnnDy1lawcySfGPQbdTDl1LQ/ftL+FJcBsncOa
+ iDbkzgODIOKbP8b2p/e0IALbjVLJ0RITAZ/3lOtFvC3ahEZiOuoLUMCxL5x/vWeaUzT1dJdQQ
+ qancKAvEMg9ba/DZc/6cDzZXw0MbYS+VRmTKKw9lyAtu+wDw5ffort/zIOCHVDLZ2Vr+xhOCn
+ 4tAbUelWQpx+jBn7E/P35oNRhcb3Pfbsj8MkCaXJexMEBdrUNUh1E98cLauHhYcwJfvLMJnZl
+ dSr2qDfslycC+/rYnNyuVNsVVkVQERigY2gtJ9Rw21VhTDsJH9l2sTlhiAE/0tGhx3Pjl1vjS
+ 4OxyAGMP0aBoqbhKfV8nH19NnzVZ3x8vQYNJlCq2sAX/i3g9KdNm3VFiGFLqzG2sG8ajleqO8
+ SGBg0b+txySN1JfyANyi07IDAuQgBX3cKnZEwZ89UWanKhiRd4T0CBnYRc8f3FeYxr02EEqNa
+ W9qjEgQv81RYfIdrfta4UlT5NwJpxNKquojauwrpOyQNhfagJJbwt5H2zYgfszD9rlDJotAjt
+ c2Yl/+w2OX8h5y7yn4fjrQ2HeeW5nSeADXIdTGCC79L+sbkwgge50MIyG2FjbJmKzzb+IRAUN
+ HijWHXXWQCM66xVmHKUmb5tdxAijt/hOubvopuSKi/ZNEeYfiu8tv5gfZelTwxCdA2NmyyKtd
+ +qa9o0RSrUyPPF9jMGQGK4+fwjoBg/kUtThsXw0jE2w42YHx8xPunGYA9Vib8V+1RsY92eZYQ
+ krquhSiWcyaj/RnugFUi+p4iu11LwHSmiGZ1+YYf8fPMcxQL26VdxxeQx2UvkhDi94MgbrlrW
+ Vubn0ZEAgeQmch0QjNrPtqLY/qiSKL4RvewDEuraVF16XUqczySddxnZdt2sQqcxt2LcdmJYo
+ vjxcnswy/Atn9xhzhUy5hEkuWGxHBkpPYaWUB87ZoQ3TGQKm9yzX9VEYQnsgeQzLPsafEM8ED
+ WDkqf6QjxSrfF8EoQhYxTFDLvEkI2+voXDDq87DOmO2hIZq+TwcXSzMZEn2jjIkJM2E4rmgT7
+ Oba/zFs76xdTPuO5NCfR5mTy1Dv7+AnmpxABVfGkmmJgKz7+lhjGk7yb0er9cdXBFikgR93zf
+ j7RnuNdQx3TXrA9pQnfZIFrbvUs+p+1KpWVVGeO+A6vzWX2iupOqlhbs/E7awI20F6DP4YcOO
+ v2WhQwj1E15q0kvON7EFGY64QfMcIAXZx3p9M12LfDVoVHeTV5oEXywXSABiXM9DotfPzM3fN
+ 4AdIMPhfc9t7c4ATlM9XcQhnGfTYF9n/SmxyggVqV4MFQoWag7y+RZKsDTObvu1QW1UmPQ/dd
+ qidmRO+RF6oE4L19IftXdvm/zgiJnrGIZ0+kzJsv4aWZ0r2TKtCrkKBWTBarPetx4tr4L7iIl
+ qVs+deIVDJBXkpw5XW2TMswHOQh5DEeeNRBO0tUzSK0/YYStdhUhAi2GOv/grBfbULMFs3KtJ
+ c9DVfs8udFhNrWxOhyvnnlxFkES3xYyqAw2pI6TfeEgypArO2QhSmqK83CNfzLLLhGEaStQNy
+ BIlyEmGHZR8Bs/U+YL64PX8+zCIPIIUDA18QNtnuKyDxOQBD0GiOeZ9MIWnvADZRuyJE4mULF
+ DK6pzlcDYB3Cu8OT6L8jx3eSGtyznSjGC5eHno0CG60PivPRsAF6kEb5Rdl93xK0nMHCNGgJn
+ sl2OOrqIqpf33nBevb+CY1Thbqp/zar+vG7aFSub7LFMfi0agBfrhtcWOVn0v2paBBJctAQ15
+ x3rAnHOUJNHLyzzk7qUu/1tM21AbOtLUIlEMPx3T74rSMXVJBRSPDvIRb8Hyspi9YyWDtRpv5
+ qc8767TBhPocQhUilT5DUU/KkOYNl4KowvFtpHYGsmEq/Gbam6lJ3mgX6s9qo7knsuCF2xUnm
+ cTuz+/c70qOD25zVktPgUZAyGCjIcQnh+DMpMFBdrsWCP2l+4Y4DfkyiZwG/nBm2lkVDqbzzX
+ /JV2BGTQiDxdCcC01GUA80Vhfpj/dIytcZKz6oQxUqCfFIk2WTjpjuK01h0SeVQ0Caw2T8Zdf
+ 8cNFRZtAKJrTs9NXvfu/w18hYhdpMo9ETS9YuCXBBUVW/I7adiaatHCrgVQwC3qVyIxsQUdF8
+ aFMncYN4dpciUTCMCOKStNgd7gTl/Y5FHqmmm7c4spy2a3nlXJphPxy8blPY4n4A6ZiYu3RqZ
+ 6j2dVrD0aiwAt2s59MRUFw6Unx56zliv4FGUBUC+IBXcl+WTX0xPwQCjv8SMTGSAA8oOFPD7Q
+ Cy7YiO4bfMhQ+hOnLCILqYUJctuu+9szv7QrbRVAS5lJtDqTQyCc8Q87CPLEp7FTUaRONdO9p
+ /AcPZai9kpXMB7NqZdCojh+/qvPBgfBE6JEesprcXY7d2AlRNWckl2iJ+k9ApNSRcMihOHwEF
+ MQb60zv2UDVkEUbUZ7Ho2Ik+11CDCfaxvbdnRiw3fvgguaogzBndlucGKB7oOLlebcADpssG8
+ TdYdEtYDPyWncPMWw4lV49YBccWvLD7bT2xpB6fp+rgvK2a0mHxoYupSkKmH2LlLI0Rt7qTen
+ jPXREc8Hnvo+49eVH7XOl+BliRTYwTng9rHAZMhfmA45Isw3T3+xrNP62kSnyNjGA564uz+y3
+ YVwjQ/wjiqUBWdRy1oMbSHRfXeOAt2zLVGF79EYoEQfq9D5T1aOzOQ0yi8k7DXvepnFFDpMzt
+ BzzeiRs7g+3qkC3/FTLDiu2lbVhdTfuAk1VId5AQfwA2fsGxt5SPyE1Nl4Mogfz/er8PDIqbq
+ MMjJ3z/3zyW2ATv6MSb4pu+WN/bkkCr1xqu/l6KzxG8KrZEQqujp/0Xzt3ebOPDtInx2ltBcb
+ nYJoNgXfQjlaBljKRtGhQVlt1YilBuV/ljduaYsoDIl+6jtoQ2SQd+5bjG9Ey8SIy1+NsSrpa
+ HSqE3srvE3SzKVfsKPaAVR6iNaJJr/Av4BAwYdUB8QGl49iHZuAlOcIV64FJizsxAXxarUFXJ
+ ziplCVywTQ0t8P8AwuxZ+W8TuUN4RM+O2Dj6KVOEDxt0sKqiis5RPVdjOARfsvzU/l5nQ2+ek
+ 4rOiwfmbEKx0a89HnAvCjLrxw1WdZwnss4tTHXUA5hEaMZ6LKaX+5BQwtK+WsaJNJPygUhe1G
+ QY7Zg==
 
-Hi Heikki,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 20 Oct 2025 12:56:39 +0200
+Subject: [PATCH] i2c: designware: Omit a variable reassignment in dw_i2c_p=
+lat_probe()
 
-On 10/20/2025 6:02 PM, Heikki Krogerus wrote:
-> On Thu, Oct 16, 2025 at 10:27:34AM +0800, Chaoyi Chen wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> Add default DRM AUX HPD bridge device when register DisplayPort
->> altmode. That makes it redundant for each Type-C driver to implement
->> a similar registration process in embedded scenarios.
->>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->> ---
->>
->> Changes in v6:
->> - Fix depend in Kconfig.
->>
->> Changes in v5:
->> - Remove the calls related to `drm_aux_hpd_bridge_notify()`.
->> - Place the helper functions in the same compilation unit.
->> - Add more comments about parent device.
->>
->>   drivers/usb/typec/Kconfig         |  2 ++
->>   drivers/usb/typec/class.c         | 26 ++++++++++++++++++++++++++
->>   include/linux/usb/typec_altmode.h |  2 ++
->>   3 files changed, 30 insertions(+)
->>
->> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
->> index 2f80c2792dbd..a6730fbb576b 100644
->> --- a/drivers/usb/typec/Kconfig
->> +++ b/drivers/usb/typec/Kconfig
->> @@ -2,6 +2,8 @@
->>   
->>   menuconfig TYPEC
->>   	tristate "USB Type-C Support"
->> +	depends on DRM || DRM=n
->> +	select DRM_AUX_HPD_BRIDGE if DRM_BRIDGE && OF
-> This is wrong. DRM should not dictate how this entire subsystem core
-> is configured. The dependency needs to be on the DRM bridge side.
->
-> You can for example use the bus notification there to see when a new
-> alternate mode is being registered, or use some other notification
-> mechanism.
+An error code was assigned to a variable and checked accordingly.
+This value was passed to a dev_err_probe() call in an if branch.
+This function is documented in the way that the same value is returned.
+Thus delete a redundant variable reassignment.
 
-Is it a good idea to implement notification functions like drivers/usb/core/notify.c in TCPM, and then let other subsystems (such as DRM) listen to these notifications?
+The source code was transformed by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/i2c/busses/i2c-designware-platdrv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> thanks,
->
->>   	help
->>   	  USB Type-C Specification defines a cable and connector for USB where
->>   	  only one type of plug is supported on both ends, i.e. there will not
->> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
->> index 67a533e35150..e9d7772d1a8f 100644
->> --- a/drivers/usb/typec/class.c
->> +++ b/drivers/usb/typec/class.c
->> @@ -8,14 +8,18 @@
->>   
->>   #include <linux/module.h>
->>   #include <linux/mutex.h>
->> +#include <linux/of.h>
->>   #include <linux/property.h>
->>   #include <linux/slab.h>
->>   #include <linux/string_choices.h>
->>   #include <linux/usb/pd_vdo.h>
->> +#include <linux/usb/typec_dp.h>
->>   #include <linux/usb/typec_mux.h>
->>   #include <linux/usb/typec_retimer.h>
->>   #include <linux/usb.h>
->>   
->> +#include <drm/bridge/aux-bridge.h>
->> +
->>   #include "bus.h"
->>   #include "class.h"
->>   #include "pd.h"
->> @@ -538,6 +542,21 @@ const struct device_type typec_altmode_dev_type = {
->>   	.release = typec_altmode_release,
->>   };
->>   
->> +static void dp_altmode_hpd_device_register(struct typec_altmode *alt)
->> +{
->> +	if (alt->svid != USB_TYPEC_DP_SID)
->> +		return;
->> +
->> +	/*
->> +	 * alt->dev.parent->parent : USB-C controller device
->> +	 * alt->dev.parent         : USB-C connector device
->> +	 */
->> +	alt->hpd_dev = drm_dp_hpd_bridge_register(alt->dev.parent->parent,
->> +						  to_of_node(alt->dev.parent->fwnode));
->> +	if (IS_ERR(alt->hpd_dev))
->> +		alt->hpd_dev = NULL;
->> +}
->> +
->>   static struct typec_altmode *
->>   typec_register_altmode(struct device *parent,
->>   		       const struct typec_altmode_desc *desc)
->> @@ -600,6 +619,13 @@ typec_register_altmode(struct device *parent,
->>   		return ERR_PTR(ret);
->>   	}
->>   
->> +	/*
->> +	 * It is too late to register the HPD device when the DisplayPort
->> +	 * altmode device becomes ready. If the current altmode is DP,
->> +	 * register a static HPD device.
->> +	 */
->> +	dp_altmode_hpd_device_register(&alt->adev);
->> +
->>   	return &alt->adev;
->>   }
->>   
->> diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/typec_altmode.h
->> index b3c0866ea70f..acb0af1b9d5d 100644
->> --- a/include/linux/usb/typec_altmode.h
->> +++ b/include/linux/usb/typec_altmode.h
->> @@ -21,6 +21,7 @@ struct typec_altmode_ops;
->>    * @desc: Optional human readable description of the mode
->>    * @ops: Operations vector from the driver
->>    * @cable_ops: Cable operations vector from the driver.
->> + * @hpd_dev: HPD device for DisplayPort
->>    */
->>   struct typec_altmode {
->>   	struct device			dev;
->> @@ -32,6 +33,7 @@ struct typec_altmode {
->>   	char				*desc;
->>   	const struct typec_altmode_ops	*ops;
->>   	const struct typec_cable_ops	*cable_ops;
->> +	struct device			*hpd_dev;
->>   };
->>   
->>   #define to_typec_altmode(d) container_of(d, struct typec_altmode, dev)
->> -- 
->> 2.49.0
-
--- 
-Best,
-Chaoyi
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/bus=
+ses/i2c-designware-platdrv.c
+index 34d881572351..c69ef8da22ab 100644
+=2D-- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -248,7 +248,7 @@ static int dw_i2c_plat_probe(struct platform_device *p=
+dev)
+=20
+ 	ret =3D i2c_dw_probe_lock_support(dev);
+ 	if (ret) {
+-		ret =3D dev_err_probe(device, ret, "failed to probe lock support\n");
++		dev_err_probe(device, ret, "failed to probe lock support\n");
+ 		goto exit_reset;
+ 	}
+=20
+=2D-=20
+2.51.1
 
 
