@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-861131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EC8BF1DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4F9BF1D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67C284F5FF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:31:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6C584EE83E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA611F4180;
-	Mon, 20 Oct 2025 14:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0F21CEAB2;
+	Mon, 20 Oct 2025 14:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OaowyAO4"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7+ZDnsB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9D914B977
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53C94CB5B;
+	Mon, 20 Oct 2025 14:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970682; cv=none; b=jIxfTDfYUZGWOyq+FZtozyiY5bP8updP6vU04ZbLjxCAW4k/IW1hQZ5jib2L/MwcUqjmt9D2lQVGu/Mp97bG3QP8fcs0jVV94xDoUHlDfcIGq7fOct/hUJsTqfp9mYG96UNxGtn8uk0yl6vrH10My3mhFlRxSN3GGeWs6ttRI34=
+	t=1760970663; cv=none; b=dyGBsDKcdtgod5nhBAr04Ar0WpYmJkU9V0mBafr9LR+IZJnWXa3ZzKeyI8Fmk2N04BERjfEAVHDAsqATlLprztC8No0j7NoGhU5vE5AKhJnPKGxYwtrNaUn5M0GYg0+uGPBPSzZLOH5x0WWKt47gLQQdXJnyxT9c7KyaUcpUC/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970682; c=relaxed/simple;
-	bh=ocncgeK4F/A5hK4dMQ2DBao6HMMbPVNpExBqnwPrUxA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OojudXneU9cRVDImpg/eveaVBZeTRQMDsprMgrgsz5SusaWAwzPma+uhbOtgDzoyexL22JuKp1ZNvd8L/4QJMIuB1H13h1K37TLrJb8BAJTBUkREZJo2wLAoM8e71Ij0VCw9b0J7DsHbyKcuRqU73T7IYqnw099e+b4qHBTdZ24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OaowyAO4; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760970676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Cu1lxXRqsntQuulBb4j3CU9k50o6nIiJRnZhUDMzUTc=;
-	b=OaowyAO4SWsFDbxJ7QhB2O654+fZkKi/20KhisPHooP3XS6WsetNcFUjchcJpjEcHIYB/4
-	fGHf7LoNt+FVqkGPP9bGk5Eb/Szc7K5s90gtnQc3OaiPcgB8b1/6ipX/VCXzpCQ6Pp0Mej
-	hcQBUW5wnBQHGtXlpxSuXqZ4XQ2jRe4=
-From: Hao Ge <hao.ge@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1760970663; c=relaxed/simple;
+	bh=Zgh/z5OAav7Q4sWyHwtd8KQU+ZJ/UY2frwfkFs/0zg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TjpAkenHPTMGAhOVu3l2U3O++0ZW2Kz3Q5pq7OpLtoupdoiK1FD5VWQfKwf/WgpRGxMWeNqpNxq4t5ntKaZanQcsgq2M85NopYAGqpOOEZpg2JF1NouQOza/BazGgulynAdTERFzF56tkDygab0JRv3+JzZH9joPxzBuTHENuGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7+ZDnsB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA76C116B1;
+	Mon, 20 Oct 2025 14:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760970663;
+	bh=Zgh/z5OAav7Q4sWyHwtd8KQU+ZJ/UY2frwfkFs/0zg0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k7+ZDnsBo6sHFfM7V3XjA540jxwzbjD7wpXcvDjXgBZHceYe7SmphByUgNxyioXn6
+	 /B1Kqi83dvd9U37KNqP4f0HRQne1lyscHCkndUZFgy1BnAVUSjezJEsGhrdzko8TRv
+	 h+ObONN54XTBZsJrK7hx+95DhdoOV9eIKkGfbC1bW6wga4Ej96JLoSOi8I+XWbOpGV
+	 QCxeSUxmBXxZxZNduGonaSKD1vmACPpz+T2+/Nx+7okTyUcWO9A3AMvy33UsmYqTN1
+	 d8jAgOo9CjZrSA5ZzeH8d/Tf0j0E6kdVKlwBXMBkBsxC9EBgwnxOu4uafllhn/ILPI
+	 0D1gykG+4O5yg==
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Brendan Jackman <jackmanb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
 	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH v2] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
-Date: Mon, 20 Oct 2025 22:30:11 +0800
-Message-Id: <20251020143011.377004-1-hao.ge@linux.dev>
+	linux-serial@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH] mm, vc_screen: move __free() handler that frees a page to a common header
+Date: Mon, 20 Oct 2025 17:30:55 +0300
+Message-ID: <20251020143055.407696-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,124 +67,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Hao Ge <gehao@kylinos.cn>
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-In the alloc_slab_obj_exts function, there is a race condition
-between the successful allocation of slab->obj_exts and its
-setting to OBJEXTS_ALLOC_FAIL due to allocation failure.
+vc_screen defines __free() handler that frees a page using free_page().
+Move that definition to include/linux/gfp.h next to free_page() and
+rename it from free_page_ptr to free_page.
 
-When two threads are both allocating objects from the same slab,
-they both end up entering the alloc_slab_obj_exts function because
-the slab has no obj_exts (allocated yet).
-
-And One call succeeds in allocation, but the racing one overwrites
-our obj_ext with OBJEXTS_ALLOC_FAIL. The threads that successfully
-allocated will have prepare_slab_obj_exts_hook() return
-slab_obj_exts(slab) + obj_to_index(s, slab, p), where slab_obj_exts(slab)
-already sees OBJEXTS_ALLOC_FAIL and thus it returns an offset based
-on the zero address.
-
-And then it will call alloc_tag_add, where the member codetag_ref *ref
-of obj_exts will be referenced.Thus, a NULL pointer dereference occurs,
-leading to a panic.
-
-In order to avoid that, for the case of allocation failure where
-OBJEXTS_ALLOC_FAIL is assigned, we use cmpxchg to handle this assignment.
-
-Conversely, in a race condition, if mark_failed_objexts_alloc wins the
-race, the other process (that previously succeeded in allocation) will
-lose the race. A null pointer dereference may occur in the following
-scenario:
-
-Thread1                                                 Thead2
-
-alloc_slab_obj_exts                               alloc_slab_obj_exts
-
-old_exts = READ_ONCE(slab->obj_exts) = 0
-
-						  mark_failed_objexts_alloc(slab);
-
-cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts
-
-kfree and return 0;
-
-alloc_tag_add -> a panic occurs.
-
-To fix this, introduce a retry mechanism for the cmpxchg() operation:
-1. Add a 'retry' label at the point where READ_ONCE(slab->obj_exts) is
-   invoked, ensuring the latest value is fetched during subsequent retries.
-2. if cmpxchg() fails (indicating a concurrent update), jump back to
-   "retry" to re-read old_exts and recheck the validity of the obj_exts
-   allocated in this operation.
-
-Thanks for Vlastimil and Suren's help with debugging.
-
-Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures unconditionally")
-Suggested-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
+Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
-v2: Incorporate handling for the scenario where, if mark_failed_objexts_alloc wins the race,
-    the other process (that previously succeeded in allocation) will lose the race, based on Suren's suggestion.
-    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
----
- mm/slub.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ drivers/tty/vt/vc_screen.c | 6 ++----
+ include/linux/gfp.h        | 2 ++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 2e4340c75be2..fd1b5dda3863 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
+diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
+index c814644ef4ee..d2029f029de6 100644
+--- a/drivers/tty/vt/vc_screen.c
++++ b/drivers/tty/vt/vc_screen.c
+@@ -53,8 +53,6 @@
+ #define HEADER_SIZE	4u
+ #define CON_BUF_SIZE (IS_ENABLED(CONFIG_BASE_SMALL) ? 256 : PAGE_SIZE)
  
- static inline void mark_failed_objexts_alloc(struct slab *slab)
- {
--	slab->obj_exts = OBJEXTS_ALLOC_FAIL;
-+	cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
- }
+-DEFINE_FREE(free_page_ptr, void *, if (_T) free_page((unsigned long)_T));
+-
+ /*
+  * Our minor space:
+  *
+@@ -371,7 +369,7 @@ vcs_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ 	loff_t pos;
+ 	bool viewed, attr, uni_mode;
  
- static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
-@@ -2136,6 +2136,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
- #ifdef CONFIG_MEMCG
- 	new_exts |= MEMCG_DATA_OBJEXTS;
- #endif
-+retry:
- 	old_exts = READ_ONCE(slab->obj_exts);
- 	handle_failed_objexts_alloc(old_exts, vec, objects);
- 	if (new_slab) {
-@@ -2145,8 +2146,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
- 		 * be simply assigned.
- 		 */
- 		slab->obj_exts = new_exts;
--	} else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
--		   cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-+	} else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
- 		/*
- 		 * If the slab is already in use, somebody can allocate and
- 		 * assign slabobj_exts in parallel. In this case the existing
-@@ -2158,6 +2158,20 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
- 		else
- 			kfree(vec);
- 		return 0;
-+	} else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-+		/*
-+		 * There are some abnormal scenarios caused by race conditions:
-+		 *
-+		 *	Thread1				Thead2
-+		 *   alloc_slab_obj_exts		alloc_slab_obj_exts
-+		 *   old_exts = READ_ONCE(slab->obj_exts) = 0
-+		 *					mark_failed_objexts_alloc(slab);
-+		 *   cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts
-+		 *
-+		 * We should retry to ensure the validity of the slab_ext
-+		 * allocated in this operation.
-+		 */
-+		goto retry;
- 	}
+-	char *con_buf __free(free_page_ptr) = (char *)__get_free_page(GFP_KERNEL);
++	char *con_buf __free(free_page) = (char *)__get_free_page(GFP_KERNEL);
+ 	if (!con_buf)
+ 		return -ENOMEM;
  
- 	if (allow_spin)
+@@ -596,7 +594,7 @@ vcs_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+ 	if (use_unicode(inode))
+ 		return -EOPNOTSUPP;
+ 
+-	char *con_buf __free(free_page_ptr) = (char *)__get_free_page(GFP_KERNEL);
++	char *con_buf __free(free_page) = (char *)__get_free_page(GFP_KERNEL);
+ 	if (!con_buf)
+ 		return -ENOMEM;
+ 
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 0ceb4e09306c..93a6a532f10d 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -385,6 +385,8 @@ extern void free_pages(unsigned long addr, unsigned int order);
+ #define __free_page(page) __free_pages((page), 0)
+ #define free_page(addr) free_pages((addr), 0)
+ 
++DEFINE_FREE(free_page, unsigned long, if (_T) free_page(_T));
++
+ void page_alloc_init_cpuhp(void);
+ int decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp);
+ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp);
+
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
 -- 
-2.25.1
+2.50.1
 
 
