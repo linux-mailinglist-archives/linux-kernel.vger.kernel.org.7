@@ -1,105 +1,101 @@
-Return-Path: <linux-kernel+bounces-859948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D208ABEF066
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:39:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEF5BEF069
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928CC3BCF0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1468A1898983
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624B720ADD6;
-	Mon, 20 Oct 2025 01:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462DE1A76BC;
+	Mon, 20 Oct 2025 01:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WmjhfGdC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvK88p86"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35AE20409A;
-	Mon, 20 Oct 2025 01:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B89313EFE3;
+	Mon, 20 Oct 2025 01:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760924353; cv=none; b=BVcW67eLc8p34sy7KBHGaVDUlYjmsJM7uxS/snnpzSG341DO4D2WW3g5tMxF6cV3i/v0Zf6bSOy5GI/HyVv6pbRQ4JhPJ61buQh9FxmDhDAbBNhyYXpuyLk1rt0U/UjAD6cOl11AjhcQoindKOjy1Z0JcUx20QtdpV2qgcRmyf4=
+	t=1760924439; cv=none; b=rdwvs7bpUdHYzFGj9ZJhSfs4tsBc4+ID8pug5J6iSUZuZYSqYoRHXbmEfT++KQKO5zuYJBKOZbO3XuzeluhdD9gyNIQWBR7ftyEkvGfHtFAGZMi3BuWVAr90HiW3NaXAzK7fwGhuESUeRRYY3WNHNVleixhMjDd4ngQlLqt2geg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760924353; c=relaxed/simple;
-	bh=GyWoor8gS8UbJX5L+eoJALouqLGeSExH8nQZRvcnW+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=fOHBu0Swu+VGklNvyMEuZVYsMcJlcT4rpFbD0JKXNFmmFQBky3VZcbIehxV4WBD7y2xx4JT2W81Fd8syWWFNbls6FJyFiIueK+dIST1gJ0R99Hq5dFYlhRbTJPg98QGXhD9+2GrTrwYHHQt2IUECztCUBk9uyIiLWjcA3fSN5CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WmjhfGdC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1760924348;
-	bh=so7N3ZVTvwSaZj354Wqg3i7SOmjQ+EwXz94RSRXJtOY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WmjhfGdCYDefudirPYQ9/YQJk+MxOz8xrmqmWY5YkAE4KurCFrcXuiQ84l3ltBZdG
-	 N4Nk28YmOz9AQ/TGQuu29yBtgmpK0YAxYHGz2uY41XUNuUhqykmNzQeY3cc/+/yMkt
-	 bJDePVsce/2M//xvKu/tmzEb9ERw24Q7/Sqv+z8SdGRz3QYqqm/RJhbRYppZpLxtAv
-	 8nwgpQov/BXAPl/EwoLV0UHIn/9AN4ReWI7X1A798RbqnH2oxe832GCXRazIRYTFRJ
-	 wn8OKdLNzKFjto4yYR0hr53uVf0p2l7hyLfkbsbaf9+eJJtgdpCh3QlHdn+95j7d13
-	 A0M5i8nb7Tlng==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqdPm1nXlz4w1v;
-	Mon, 20 Oct 2025 12:39:08 +1100 (AEDT)
-Date: Mon, 20 Oct 2025 12:39:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the rust tree
-Message-ID: <20251020123907.13e15922@canb.auug.org.au>
+	s=arc-20240116; t=1760924439; c=relaxed/simple;
+	bh=ncV+BB5LnsdnGOmj1J0hFguoTEWuNEhshozSzbNUc7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiVVl7r0Ihf83o6+Efs/CCLBZaRkYUqhLYGgNYK+fDklHzLC3mhrduZTNC7FRuE9f6F/Fm9+WuGFPJl5dayvxnBNB1iiwEhOzzxlQqz5ztYFiTlpFCyPT+lUpl7/w2oaE9kiASevALo19RjyPnBwhKx8+j+ChvkFtCWyk+mxeDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvK88p86; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE6EC4CEE7;
+	Mon, 20 Oct 2025 01:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760924439;
+	bh=ncV+BB5LnsdnGOmj1J0hFguoTEWuNEhshozSzbNUc7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lvK88p86RRCdjnK89JGlagZW3E68RzoTsvKMndOUduD71PY/+4iOo6N1qaCARElK3
+	 6sMabHEPgcmpLm89tdCduelkJJPCU9apCgDzwE3glvEMSivuGrWf7iap3KnKg6VP0X
+	 g4gG20pAqgS+lKQoiISOhhGiRgJoMPT6NijgsZp/3S05R4UTgpeRqARB2FZRNDWBr9
+	 ui+0bK018Nz7ijfc2nz19qNCYC0hOI5A0/jWibFHTkziY4j2mn7Skd8lLCBsiR3ndY
+	 hPe9r7i9zzwICvO7VcNPQ8spsu7pq26Ei1WWmPoK2l9taY2Plp0j31aInnHoQKfezd
+	 nEzx+iFKJg2jw==
+Date: Mon, 20 Oct 2025 02:40:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: wangweidong.a@awinic.com
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de,
+	srinivas.kandagatla@oss.qualcomm.com, cy_huang@richtek.com,
+	nick.li@foursemi.com, hangyi@everest-semi.com,
+	alexey.klimov@linaro.org, niranjan.hy@ti.com, shenghao-ding@ti.com,
+	linux@treblig.org, rf@opensource.cirrus.com,
+	thorsten.blum@linux.dev, yesanishhere@gmail.com, ardb@kernel.org,
+	ebiggers@google.com, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, yijiangtao@awinic.com
+Subject: Re: [PATCH V2 1/7] ASoC: codecs:Rework the awinic driver lib
+Message-ID: <72907b06-c7f8-455e-8dd9-f5b4041d4bde@sirena.org.uk>
+References: <20251017101106.370742-1-wangweidong.a@awinic.com>
+ <20251017101106.370742-2-wangweidong.a@awinic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pS11apW4bJG=EJXoTrgti1y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OCQkiBZKWxSSnBpK"
+Content-Disposition: inline
+In-Reply-To: <20251017101106.370742-2-wangweidong.a@awinic.com>
+X-Cookie: You are lost in the Swamps of Despair.
 
---Sig_/pS11apW4bJG=EJXoTrgti1y
-Content-Type: text/plain; charset=US-ASCII
+
+--OCQkiBZKWxSSnBpK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Oct 17, 2025 at 06:10:59PM +0800, wangweidong.a@awinic.com wrote:
+> From: Weidong Wang <wangweidong.a@awinic.com>
+>=20
+> Extract the awxxxx driver common interfaces into
+> aw-common-firmware and aw-common-device
+> to facilitate subsequent driver usage.
 
-The following commit is also in the char-misc.curent tree as a different
-commit (but the same patch):
+This doesn't apply against current code, please check and resend.
 
-  abae8f3c8374 ("[TEMPORARY] rust_binder: clean `clippy::mem_replace_with_d=
-efault` warning")
-
-This is commit
-
-  7e69a24b6b35 ("rust_binder: clean `clippy::mem_replace_with_default` warn=
-ing")
-
-in the char-misc.current tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/pS11apW4bJG=EJXoTrgti1y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--OCQkiBZKWxSSnBpK
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1krsACgkQAVBC80lX
-0Gz3gAf/ez4NjSDhZiVFoudVSYvL7kkK8ZQUObhfMQs4MBwWUqktKfP+YKWNMrxe
-HU58BVCBumU5AVHU8FD/a3Dpxyixwa48G0pXRm4bGe7xKhfKwsVqXs0yLpzkFbuD
-09su2MRxoYDVl8hN9ZSKGG5uRqYl7gPjK7clQ0Pe4U3NLpJlXqHrLr4gkx/cvcKG
-UB3KToDhVviXCtUbjyrd7uiMFhUl8+EaSGLkrGbYBNaeEwSqGO83JPVHCdguJU52
-IDIcJf/UecC2RuIQjnVEFEnYPqKJriu4eLt9457GxPzPJb9nNPt/vBOYibeiKrsg
-c9UbnLV29K/We9jmairScEXvsXPNpg==
-=TjIF
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj1kw8ACgkQJNaLcl1U
+h9BSqwf+ItSJ3juwRzgglR51vzxFQ44jxWsGxyYIwFPapmP5ktV5gkMzDbsYsQ0G
+Qu7rzlBFixpgIcx9RyViQJ10SBxEl15M/+6SWYR8RRB4/YoFUmyfELtt4kwoSr0G
+S9kgTzHG8uWER6Cv8akG16rkfS6uXaiJqu/SLhQ8SsjipeDLV63rtHEhwudkV3Uv
+iubfQI1WMo9B5ULMmazAOlYtHw0xfkpbYnbsrprQgG52YXLhfIe3RbiPP7Ej0SD+
+lvp1Hj/c7FNjzQvu0FQkPaUsKMql/gz9E4OJYa/vilzd1LLtCmYI0uQ/fC+s/fN+
+rgz42qafn+aKak0+6Thd02TD3kmHqA==
+=wdef
 -----END PGP SIGNATURE-----
 
---Sig_/pS11apW4bJG=EJXoTrgti1y--
+--OCQkiBZKWxSSnBpK--
 
