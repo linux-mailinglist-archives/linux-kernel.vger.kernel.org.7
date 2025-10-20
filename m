@@ -1,124 +1,153 @@
-Return-Path: <linux-kernel+bounces-861832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBE6BF3C23
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:32:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8D6BF3C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472EA482261
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:30:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 04836351D43
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493A730506E;
-	Mon, 20 Oct 2025 21:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7751D2E173B;
+	Mon, 20 Oct 2025 21:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jdqaA1UZ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PrnTDDHQ"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437461C862E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12F6332EC8
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760995794; cv=none; b=GaJrFmhWJF4oJZElB2vyoF7mQi8ttcfo23M94ol9U+oqiovk+9o+3K8c/wYuNkYPA9tRzWoSxLZraDo3UnLaLMknDH28ZGysc6sDByLZyFpiHZcLmsOYkRxEegoiVUn7eh5Dq3cx0KlBLnpvmzydnKoeDi8JGZQdwUCKUadTMsk=
+	t=1760995811; cv=none; b=tcoVZcwTX4vf/okkeV2Vf6tadYPiWdgC7LKJwGqhM9MeKZHUdfx5q6Y1V7m3hxcHcsH9jJMDCRfTCggnd64w67ed43Y6ZXq4FKJ3yy1zHynt9N/U84OEdwDGvcm/s6uU+6bcYCvnxltllhM6j6nAxpeBGhm2ptjFm/dYzc485RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760995794; c=relaxed/simple;
-	bh=PqlFilZVmSbZKJLHpAkGDW0igOyGGkLNA6FRjPXGD80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFTv9cw4hT3FbDgIM2rBuR7NVlUKEjf4UBJQ/G8TvoD9cciUpeeA4xJ79qdKHqnrAPnJmsfVigLSpBlCtMdC/1t4CVbnUTunIlzONQwy2hvpbOqoTGj8vBpnZnXRUV13cwIuh9Kcn2gq+smoYewepBOgLt6UMrZuSPVntItRA+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jdqaA1UZ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2909448641eso47032745ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:29:53 -0700 (PDT)
+	s=arc-20240116; t=1760995811; c=relaxed/simple;
+	bh=z6lh+i5u+Wh6yLod//AsM+A5+3tCiCGhL03IBz7fnx8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=KBHtR8hsSbHh9VXHNWpJ7WQTuE6vrvN4X7SGmCwpyIuIToO5xRyGTMVCtLMnwUIzBS1vWZE0atUpFK7o2CDL7N5tEI4b6kRVzw5+CRuZWIT7bTdpdzSEjIPGXAQAzWJNqSZyoRouveESwna1cTdwra09B8Muui1z/srgZTsqBWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PrnTDDHQ; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57e36125e8aso4730883e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760995793; x=1761600593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=26ASe6SsfcfwXN+JG/2GTGw7BHHgM1XlqQIlC1K/NBc=;
-        b=jdqaA1UZWsigzRkXK2O8p9ZQRSa+FDJucZvY9vIZ2BoFf1KNt3MbiDs/62NGsrCOg2
-         +ji/hFkyfbsmnE0rwdNEtIylVUnKfefBtHhh/6EOYh+9tVd+THKYWhq+fI1ZEbdhro11
-         vn2+42low1nO93m0mJkAor0w5myk7GaQ4IXqojE5v1HQQtdFTHB+I8m36E1XFnL4sQyx
-         V7/KxdJlCH1CjhJAjvOoNcX7Znw8KNJMeP6CcSL/u8a8C02oO2QqgyH7tjwTNES8KFyU
-         irFosAixaTf4Y0zIUR6td7j210oJ3OayDY4HpFL+Ov9ev7xYEHSHa9xxvnRpcw+HhVE2
-         hZdg==
+        d=gmail.com; s=20230601; t=1760995807; x=1761600607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:user-agent:message-id
+         :in-reply-to:date:references:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z6lh+i5u+Wh6yLod//AsM+A5+3tCiCGhL03IBz7fnx8=;
+        b=PrnTDDHQ9nBvXHaIltDGt0K9kFe+TiE+Jp52IvnpPX9iJ81kWgFNqCdZgbZldTT6O7
+         /qzAGlE8t6AQRqIk/PlBfAJnUeRKlQTepO4QQm7ZyXT+uDmrukaSgKgOa3w223Eu1ldO
+         E/KUlspCEi2tjWwul6yLNOmnA815gBkAVHnCUr39hJTBBBhYNAWSPnJEVyOOglT3p4++
+         8IibYnmysRgFI5rkM/iUS1cjz3y29G30IIvE9P0RVfyqSKyzepC0kRfTkmK8kS1ofujw
+         nJhWFxqzNKTcSIrPdV8Ckebq5nwm6OywlHhY4X90AD6UQay6nHq6zYK/hLOCXtI/GMf/
+         RIHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760995793; x=1761600593;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=26ASe6SsfcfwXN+JG/2GTGw7BHHgM1XlqQIlC1K/NBc=;
-        b=pVPpS22yR71S4qLao54XGQRDH272WmcMZXDLtkd9a8YsdcFgv/zltCNi8kIlN3nOkg
-         zo1o+WB1pnwJYz65qDbeft3tLuhn6g3UOk50peYc684I1CvrtU7GOcI117Rs9xp1UdmL
-         peOTwTE1P/ByhtvFEDRlC0XFOTs4uRElkUOAFDzYU7al6VH6ZgWAnddkUtaas7k1egMF
-         VIIiR6eCY2M3lTiDmP2WlwYH5SMY9/mP/Ad0Aea8oG24l037h55Cwc1z6Tf8ggTR/YpW
-         NXJJ0AtKEBcTtli9XqHw6nXw1Vz00CP9/Vs2NkjXeuIfdEs5tqXFE1N7Rn3hKAvSqSw2
-         Z82g==
-X-Forwarded-Encrypted: i=1; AJvYcCXEbDbtD2f9zkX0jzp8ZKyEfrpwI9hUX18pYaTVmfWezMPQb/slv8h4xfdgpIHvn4vV58JmoyrCma4D+fE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl2IlQRlOroty9hvvzSrnMzDyQYl3VPHQddJ/FO1/UAGfJGU8z
-	cfNWwvsphJSuOgMCA9nIBnK8oqOGFEdKagXR1NDV31p5Z1UQmkunO2Fs0sczwotevg==
-X-Gm-Gg: ASbGncs3j8F+t1h4hMZxFqJRUdptZ0umZBxD5k23IyFstdDUDTGw0s64A9SILkjmMf/
-	xaeMY/AJxDHwoDwu+RVKs7X9q9SFgYwQfEndYi5e9Kzmk1mgjFrB6aaoOT+pQICXM8T1pExOuNI
-	knX3ob9ZimG+NEOex0Jgdh1PRimuf3KQmy9cu89fqQczAd15Ax1/jw20JhB9OUvOK5ezVphjogg
-	mC4WnJ9WE0yTNw4uHrkPialaBbZeMuVlSNMmTY5549sp7Hq3ffiWE/8mgVeFjSwbzOf13yfYwsK
-	2XA5zJuv6OzvWjAHT05pPk27b3UQQlFE7zJs61kcjqxa6+kDEDFTKPktOFxcxRRdLp4fR5NyC/2
-	k8hms8Pb3FqV8HoiGYz6H87f27uZE6/TrA4mb3Ushih4S6hQXd9bxFxOny1zxCdUOTiDSEnJoPX
-	H7l0S77Vt0POCbW4b+4DrBphYyzc13u6gffyItyB5I7xXKQw==
-X-Google-Smtp-Source: AGHT+IGk4YTNxvDRPlGdzR4t9GlLZJuciLlt+LaOjUUn8d6Qy58ILE26bgum5kvXRpVHjALaky9Cew==
-X-Received: by 2002:a17:902:ecc6:b0:249:71f5:4e5a with SMTP id d9443c01a7336-290c76f8182mr169199055ad.26.1760995792362;
-        Mon, 20 Oct 2025 14:29:52 -0700 (PDT)
-Received: from google.com (96.75.168.34.bc.googleusercontent.com. [34.168.75.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292472193dfsm88852855ad.105.2025.10.20.14.29.51
+        d=1e100.net; s=20230601; t=1760995807; x=1761600607;
+        h=content-transfer-encoding:mime-version:user-agent:message-id
+         :in-reply-to:date:references:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z6lh+i5u+Wh6yLod//AsM+A5+3tCiCGhL03IBz7fnx8=;
+        b=GXYDD2lcS/EKeE4ceVFeHXsczXyPBh5Eb7RkZCbT9JijGOST4Ky+ocLB0o8J7qqMJB
+         zxCx/pLfG57oYtWq8E/ec16u/QQwCiw9cNS5PXAIj9gbAk5t5TIK3U9woOtlW29/rGb/
+         a4LRn1RlySeH6e1oyKlzMwNHRkifR0AQE85Z9B81Rg0rA3qK84Mw4Gjr58lmf9qQleql
+         RIVVL09KJPF8G3P0VqwLqdM9rwPU7q3q2PYcpLHLDGFLasrIXn/CilDDErVfHAk1gGYs
+         zPBrNjkH7rd5JPm1v0RHcH8waY648gv5zhh+aIp4G7JTUL7/hHtBbejuzYT+GCLiyHTP
+         nRCg==
+X-Gm-Message-State: AOJu0Yz2Edib6ZO38gNiEKPRp60BysoKNEupZWfILAoEF31gspNLHWYv
+	NQsRRoBONQzX7FCDvvp9C0nN20hxKytJX+czI/Xia/0UFQZM2NgZezAiCHMrhQ==
+X-Gm-Gg: ASbGncvqPEtUdPI3+o/3ez6O6auSEBvpeGEKqiRtLle0IK5ef4W4bQ6T/Nf3F+NTAUa
+	W0gEs3D+ESJVIG4UAO6Gq8DpS3ZN5WLsx3CS7UM+HbX+/OA8pQWSZcugxthTvp+fWZEkFvl3VA4
+	3DBpASJNZl7NyKasXdKEEbTrHoMP0DGgl28I4a/HoKYcYFK9a4JU6U4VzDCithyrUdE+2/TvxPY
+	HRXxlqy0sD4YLLZeluUMgwjJyFvuTLazkNFapZguzVBDnO/P/yHFb43iQN750Wnx83Nvlmzq66r
+	L1iQxy2f82aJtur4InRswidwrY3gHLnh3nR1fiIzil9qxXos7msjjSVUCl8FelalisRuGtppW1v
+	BhjAZ7Dz2vdMkAnsZ/7n7AaGNiTLq0/sI7joZZ2iJ9MXipR0WpvhG48cCQLNdN3cbnqPl3bq5LR
+	y9O+E=
+X-Google-Smtp-Source: AGHT+IF5Bo08jM3TJ9uTNNWsiKlOlxEIRjh6gnDCwho4yiSF9vdgaePcv1Kqghvk3FNrZemW5YDYQA==
+X-Received: by 2002:a05:6512:3341:b0:58a:fa11:b7a1 with SMTP id 2adb3069b0e04-591d8566459mr4087945e87.24.1760995806577;
+        Mon, 20 Oct 2025 14:30:06 -0700 (PDT)
+Received: from osv.localdomain ([89.175.180.246])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def160dbsm2863843e87.62.2025.10.20.14.30.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 14:29:51 -0700 (PDT)
-Date: Mon, 20 Oct 2025 21:29:47 +0000
-From: David Matlack <dmatlack@google.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: bhelgaas@google.com, alex.williamson@redhat.com,
-	pasha.tatashin@soleen.com, jgg@ziepe.ca, graf@amazon.com,
-	pratyush@kernel.org, gregkh@linuxfoundation.org, chrisl@kernel.org,
-	rppt@kernel.org, skhawaja@google.com, parav@nvidia.com,
-	saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com,
-	david@redhat.com, jgowans@amazon.com, dwmw2@infradead.org,
-	epetron@amazon.de, junaids@google.com, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 12/21] vfio/pci: Skip clearing bus master on live
- update restored device
-Message-ID: <aPapy8nuqO3EETQB@google.com>
-References: <20251018000713.677779-1-vipinsh@google.com>
- <20251018000713.677779-13-vipinsh@google.com>
+        Mon, 20 Oct 2025 14:30:06 -0700 (PDT)
+From: Sergey Organov <sorganov@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel@vger.kernel.org,  Russell King <linux@armlinux.org.uk>,
+  Ulf Hansson <ulf.hansson@linaro.org>,  Shawn Guo <shawnguo@kernel.org>,
+  "Rob Herring (Arm)" <robh@kernel.org>,  Angelo Dureghello
+ <angelo@kernel-space.org>
+Subject: Re: ARM iMX6sx board fails to boot with kernel 6.17
+References: <87v7l03pqe.fsf@osv.gnss.ru>
+	<CAOMZO5DG=cQtqyzihrFarEq6=1AOAPAMkeXajjGxiW0yvFRa0Q@mail.gmail.com>
+	<87zfa016bd.fsf@osv.gnss.ru>
+	<CAOMZO5AFer_Yy20fqD9oVSNVPR2ZvvwYbrkSuj7eFgS_uMJC3A@mail.gmail.com>
+	<87v7ko11iw.fsf@osv.gnss.ru>
+	<CAOMZO5C0=vy6aABa6PGrD2iWBBRQ==LfpnRg3BTh_yTSn3vHcA@mail.gmail.com>
+	<87plav2186.fsf@osv.gnss.ru>
+	<CAOMZO5CsY-zRPE4hm=1kdTVquY24Y4T3evQrn9E792xZ434vBA@mail.gmail.com>
+	<87y0piiz04.fsf@osv.gnss.ru>
+	<CAOMZO5A2YMQQV8J6jg2o0C3qeFif0fSc5j6-98xhqNz=Lk4T+Q@mail.gmail.com>
+	<87ecr9upfd.fsf@osv.gnss.ru>
+	<CAOMZO5DmzokFbmucbcDg73CKzaz0vVdMgnfLdBapHFLWVzEqpA@mail.gmail.com>
+Date: Tue, 21 Oct 2025 00:30:05 +0300
+In-Reply-To: <CAOMZO5DmzokFbmucbcDg73CKzaz0vVdMgnfLdBapHFLWVzEqpA@mail.gmail.com>
+	(Fabio Estevam's message of "Mon, 13 Oct 2025 21:45:26 -0300")
+Message-ID: <87ms5lqn1e.fsf@osv.gnss.ru>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018000713.677779-13-vipinsh@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-17 05:07 PM, Vipin Sharma wrote:
+Hi Fabio,
 
-> @@ -167,6 +173,9 @@ static int vfio_pci_liveupdate_retrieve(struct liveupdate_file_handler *handler,
->  	 */
->  	filep->f_mapping = device->inode->i_mapping;
->  	*file = filep;
-> +	vdev = container_of(device, struct vfio_pci_core_device, vdev);
-> +	guard(mutex)(&device->dev_set->lock);
-> +	vdev->liveupdate_restore = ser;
+Fabio Estevam <festevam@gmail.com> writes:
 
-FYI, this causes a build failure for me:
+> Hi Sergey,
+>
+> On Sat, Oct 11, 2025 at 5:57 PM Sergey Organov <sorganov@gmail.com>
+> wrote:
+>
+>> I'm not familiar with the code and can't figure what exactly I'm
+>> expected to check. Could you please prepare a patch, and I'll be
+>> happy to apply and check it.
+>
+> Here is a patch you can try.
+>
+> It's not a formal patch yet, as it needs to be split.
 
-drivers/vfio/pci/vfio_pci_liveupdate.c:381:3: error: cannot jump from this goto statement to its label
-  381 |                 goto err_get_registration;
-      |                 ^
-drivers/vfio/pci/vfio_pci_liveupdate.c:394:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
-  394 |         guard(mutex)(&device->dev_set->lock);
-      |         ^
+As I've already reported, this patch unfortunately doesn't solve my
+issue, but then things got even more "interesting".
 
-It seems you cannot jump past a guard(). Replacing the guard with
-lock/unlock fixes it, and so does putting the guard into its own inner
-statement.
+Before I've said that latest kernel branch lf-6.12.y on
+https://github.com/nxp-imx/linux-imx does not have the 816978f83b
+commit, but yesterday I've found it does include similar change though
+with different commit message and without any reference to the original
+commit (that's why I missed it):
+
+https://github.com/nxp-imx/linux-imx/commit/3f127cc4f5f0f1c8563390c4db7727fcb5735aa9
+
+Now, this commit does *not* solve my problem either. I.e., lf-6.12.y
+still hangs on my board. I even tried to cherry-pick the original
+816978f83b on top of this, and all the conflicts I got look formal
+rather than functional, leaving code unchanged after resolution, so this
+commit is in fact almost perfect cherry-pick of the original 816978f83b
+that did solve my problem on the imx_4.9.11_1.0.0_ga branch of that
+repository.
+
+Yet another thing I figured that it's unlikely powering problem, as both
+3.3 and 1.8 are still there on eMMC when the board hangs. Clocks are
+most probable suspect then.
+
+I'm going to dig into imx_4.9.11_1.0.0_ga branch again more carefully to
+try to figure what's going on, and what actually either fixes or
+work-arounds the problem at hand.
+
+-- Sergey Organov
 
