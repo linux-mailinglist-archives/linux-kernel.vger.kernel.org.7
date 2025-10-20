@@ -1,104 +1,46 @@
-Return-Path: <linux-kernel+bounces-861287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC11BF249F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:03:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5178DBF24C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 356E24F6B27
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371E03A8532
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3483B285061;
-	Mon, 20 Oct 2025 16:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSZQ+0Nb"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE9C27B348;
+	Mon, 20 Oct 2025 16:02:26 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA612773D2
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33DC23E33D;
+	Mon, 20 Oct 2025 16:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976189; cv=none; b=Fn/aUdbA7IoRlnPhkieQ0qPwotp7wxm9RR6uAaXuxyfH3edtM31QNVtc2IqcqEsO9xe6gFUWjC+0c5lX3WX1YlrEF/hhBnLK6QD6xRx8VubK0CpeTpDiMnApTJx8BCSEL0biAsMZEvLcm9NSZ8r2FFM2aL9nglI/Wuq7LPsZlpE=
+	t=1760976145; cv=none; b=WAn41ebPsq1gvEwTT1ZF1h7bKchQJZi97Vpd8OAqyOMgIWaDIC9YYaUfR85S7QbPGert2fujtB6SlS1OEvDdwlIM7ILQkZkdneJSSaGgtPcf1gIwlG/1wi6fDQPFRG7Cnq0/XzCjZh+cVM/m2eknKwLPRXS0KXwvztrRLlqgoiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976189; c=relaxed/simple;
-	bh=5p8QM8GiyJ3VdJu3v6HqAWTAumRdDRF9TVX5rxrWIhc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u8b+13XA0ODeghBpm0xgKBEdZW9CphPAcW+rIX2lcVt3eVriuMBkfjN3F+WsDcRiWU8xvNjnQZT/ECa972tHqyPgzxoU6umTdIeSHZLIoa1NFV5qyz2EfT6fJVH/lXqC/2dJ0coKmX3azntfn/ZBKADzTsaaygA9UaZabrem7dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSZQ+0Nb; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63c0e774250so564558a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760976185; x=1761580985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sEqKuO9xbs7T7mcjnW0UyAFwwa+u/P82jsf/ebmJ8is=;
-        b=RSZQ+0NbRoXdDDj5kghqrTLTE0n738dfH+i25XWUoFMviFBQE8FYET+NCWrlrHgTZ9
-         z+C9NXTwtFkWzaEgZNktFuQIET0GrMTW1QODwazG0CVJIiJJ69OvZgb3dmTQIBFumsoq
-         ulV09kURZwM9jQdmSq/d59a+PRbLeN9/4G7AByj2NGXWQfdfqSEZsLmIcLtXod+KmQq6
-         /RhNJahfWxwTcs8nDlfmrMJIo2x2AU2dloBkxUzXNlm6DJ28LoDLFHyoX7NMxXuLCg2S
-         UQ+oPPhKmp+QETX1KP7ra7FRd/SzBLAgTegLDc+kTLrz0fUopet2+Jk5vURfL35UFVBn
-         xiXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976185; x=1761580985;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sEqKuO9xbs7T7mcjnW0UyAFwwa+u/P82jsf/ebmJ8is=;
-        b=vfD5heTUJ0Nha967EPKBcw5ezwYwXBKgO+4VYifu9F/WLS4rm51LCKZcvgfjX4FoG0
-         1fYP6UDBrJ/kZ4ewBfbbY9pNaAWbE01A5IgfaZI/q1ZTe8mPCKoWsIvfAW7M+9QrdTPT
-         05EEbk6pBVuKRFbxEpu8QY/FJRtYkpw6Q8ifYiac8HbMe0Vy7RrMmgcqMBdVeX98w9fp
-         I2iFuW0ExNxaUhFFAi7ir7DyUMK7pyuYoqmbOUQC+ylpL5lcrchgyVgO5yDLTc4+pjVo
-         Hk2hym3zg0ZoJQ2/CLsAC+ZILWKPUhW8skaKC2Drzct0cxcKnvFiY/nfem57HaV/HdwG
-         KanA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6EVJNua9t/UYi/XYNP2kkq5wigNcR+Dvzy/H8GeAVrHgVXAIG1mXSbqGM6Yo0MpImFwL+ZjSY0No1uqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLsjL3uQsNbg67vBCZsjLtvJIewGkInDrFLODiEQmBhb/nHB1Q
-	i2dU4s74kf1gR6AWGhSV5FbL7WQB/9YQxWyhG4ncaSw1gX7RwzEDyTjt
-X-Gm-Gg: ASbGnctBDWR7KR/tahaYmL52NkO6IJgSjA7txC3P3AC0pp7zmH++SNkv5F2AS9iLUiy
-	dCLOmCgiPbYgFirvOKKrH2WVaJyOM5QzA8aPdKYaXU/qmDs31w24aUWapLSUxteD8hEULpE4q4q
-	UOZSAmDeH5ETyNIUHBqVf0jZMjTzEjiDBUCJIDM76Q2eS3wyp5cLwoSCasH6uH2EaIPkbhMj1T/
-	Tq4zAscrG3VeNjXDXv2Kvrll0eaILg4KHT8abbiSy0d3Z7/JFdhpz/+pg0UkzcVwxdKG98PSiow
-	lThkJXJpNYElsqBDDlowQhFRcU9abcnkHq3Zt/6DK3A7/i0vOGbyaV9zmwu9TIJb+t0UDF7w/Rs
-	i0mRgmB/Il0V/gZTU3I/oLlfVV4zrELN6ZMcJx+vrfs/Z7OebIEuGkyP8GVB1eorP3JHqjoFR//
-	zS5cJy57bzb0XMBA==
-X-Google-Smtp-Source: AGHT+IEAZ4aDtO0vMHq0WUMhe05mN+O1T+el3SwZMkFfF983mLEGTQdhOfy2UfAjoiXHE/Y4G+rEjQ==
-X-Received: by 2002:a05:6402:274d:b0:63c:343:2493 with SMTP id 4fb4d7f45d1cf-63d1649c390mr29994a12.0.1760976185195;
-        Mon, 20 Oct 2025 09:03:05 -0700 (PDT)
-Received: from bhk ([165.50.86.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4945f1ffsm7186665a12.31.2025.10.20.09.03.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 09:03:04 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	sdf@fomichev.me,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
+	s=arc-20240116; t=1760976145; c=relaxed/simple;
+	bh=/ZvV3Y69oRvNWtCVQEv25ykydeIvnyXyip7Dd2u7jfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mVvsPijqQtv2SFB6fmrhCTPTyHQ4JKDISPHIDqD4dUtHS8QKE9nApXfHJhuSrePMSCLEOSRjmrwS1gdidqAY+nSNUAZHBxjbm3HkYuCFxngFEIlUxbSMYJlldsXIzTSlIHZOCmFIwmX4E3FxowaOsAHNeKFqVJJ30/7Ngvw/Ge8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [114.245.38.183])
+	by APP-03 (Coremail) with SMTP id rQCowACn830JXfZorNwzEg--.26415S2;
+	Tue, 21 Oct 2025 00:02:18 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH bpf-next v2] bpf/cpumap.c: Remove unnecessary TODO comment
-Date: Mon, 20 Oct 2025 18:02:37 +0100
-Message-ID: <20251020170254.14622-1-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
+	stable@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] soc: qcom: gsbi: fix double disable caused by devm
+Date: Tue, 21 Oct 2025 00:02:15 +0800
+Message-ID: <20251020160215.523-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,44 +48,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACn830JXfZorNwzEg--.26415S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar1Dur13Ary3WrW7WF4kJFb_yoW8Wryxpa
+	48JF93Cr48JF4Yka9rJw4UZF12y34fta4jgwn3C3s3Z3Z8Zr10qFy8tFy8ZF95XFZ5AFsx
+	Jr47tr4rAFn8uFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
+	4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYBA2j2T7wZzAAAsw
 
-After discussion with bpf maintainers[1], queue_index could
-be propagated to the remote XDP program by the xdp_md struct[2]
-which makes this todo a misguide for future effort.
+In the commit referenced by the Fixes tag, devm_clk_get_enabled() was
+introduced to replace devm_clk_get() and clk_prepare_enable(). While
+the clk_disable_unprepare() call in the error path was correctly
+removed, the one in the remove function was overlooked, leading to a
+double disable issue.
 
-[1]:https://lore.kernel.org/all/87y0q23j2w.fsf@cloudflare.com/
-[2]:https://docs.ebpf.io/linux/helper-function/bpf_xdp_adjust_meta/
+Remove the redundant clk_disable_unprepare() call from gsbi_remove()
+to fix this issue. Since all resources are now managed by devres
+and will be automatically released, the remove function serves no purpose
+and can be deleted entirely.
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Fixes: 489d7a8cc286 ("soc: qcom: use devm_clk_get_enabled() in gsbi_probe()")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 ---
-Changelog:
+ drivers/soc/qcom/qcom_gsbi.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Changes from v1:
-
--Added a comment to clarify that RX queue_index is lost after the frame
-redirection.
-
-Link:https://lore.kernel.org/bpf/d9819687-5b0d-4bfa-9aec-aef71b847383@gmail.com/T/#mcb6a0315f174d02db3c9bc4fa556cc939c87a706
- kernel/bpf/cpumap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index 703e5df1f4ef..6856a4a67840 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -195,7 +195,10 @@ static int cpu_map_bpf_prog_run_xdp(struct bpf_cpu_map_entry *rcpu,
+diff --git a/drivers/soc/qcom/qcom_gsbi.c b/drivers/soc/qcom/qcom_gsbi.c
+index 8f1158e0c631..a25d1de592f0 100644
+--- a/drivers/soc/qcom/qcom_gsbi.c
++++ b/drivers/soc/qcom/qcom_gsbi.c
+@@ -212,13 +212,6 @@ static int gsbi_probe(struct platform_device *pdev)
+ 	return of_platform_populate(node, NULL, NULL, &pdev->dev);
+ }
  
- 		rxq.dev = xdpf->dev_rx;
- 		rxq.mem.type = xdpf->mem_type;
--		/* TODO: report queue_index to xdp_rxq_info */
-+		/* The NIC RX queue_index is lost after the frame redirection
-+		 * but in case of need, it can be passed as a custom XDP
-+		 * metadata via xdp_md struct to the remote XDP program
-+		 */
+-static void gsbi_remove(struct platform_device *pdev)
+-{
+-	struct gsbi_info *gsbi = platform_get_drvdata(pdev);
+-
+-	clk_disable_unprepare(gsbi->hclk);
+-}
+-
+ static const struct of_device_id gsbi_dt_match[] = {
+ 	{ .compatible = "qcom,gsbi-v1.0.0", },
+ 	{ },
+@@ -232,7 +225,6 @@ static struct platform_driver gsbi_driver = {
+ 		.of_match_table	= gsbi_dt_match,
+ 	},
+ 	.probe = gsbi_probe,
+-	.remove = gsbi_remove,
+ };
  
- 		xdp_convert_frame_to_buff(xdpf, &xdp);
- 
+ module_platform_driver(gsbi_driver);
 -- 
-2.51.1.dirty
+2.25.1
 
 
