@@ -1,225 +1,130 @@
-Return-Path: <linux-kernel+bounces-861618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0352CBF3322
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:25:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDA3BF332E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C85F14F93C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8EE3A5B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74144331A44;
-	Mon, 20 Oct 2025 19:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE002F7477;
+	Mon, 20 Oct 2025 19:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="qwoFX9sV"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="crxxkVGZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD152D9ED5;
-	Mon, 20 Oct 2025 19:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988307; cv=pass; b=cXDEsK4nS11gxlzYRUUVxGT4NbNkvATBd4WMZuZUqeK6tY/blQQJ5fe3/aYwkAcskO5xYH8wyiwuRyual478cDfQ1U61CMgojU63rdOo+Fr5WDVyqQbbN3+mc0nchUlBCloh7vgn8U//aq4rcfhndTdHncFe9oTkL/QTMY8dTjg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988307; c=relaxed/simple;
-	bh=mbuCJmrn1zxddZb8HBPFRKrtcmwvNXXgDoKpwL10W+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iBbnIL/UKMjTQKePJXDfMlay1TmJwfxDctPG4d0YaUmIUzYUKELpHRfgjQ7ShYG10edsqbEwxrOwxqmwZFsDJPFYfcZ/+L9mL+ShWxqjl1APL3DHAf3RA6B2xEKKgbb/xxQVm7Jrk7qxomhSxtLwIYE65k3+/UEoHjaIuW9LYwA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=qwoFX9sV; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1760988297; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HFFzkEqD4v2/0MmD1YxfUfEHWiYX/lDLv/Qxi9+VOm+9JWJSF8/e5YvJmAmdVdQozCOBYJj8do1VPtHwOrEvd0C5iF30tvP+hYg69ngsMXINHDLgye8GcPGyb2WZzqIa77vvLAmRxwiBhX0Zi5z0ckH90lUqWxDsddErbjCWPtw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760988297; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Jfs9qm98itI/ML/yRbHJ6/qx7PP5MLRZCmJO7XYwdvI=; 
-	b=QHBfe0JfpwtBcOIqmYnssybik39mvqN6sXsgMJPcELG3B1sUM1//ERDXiO3lFfPumF4+WPsWUjG0iuZ6U3MuQ8AZfz9M1lYA7YIf2SkWnQdUSauhQA+ENpAfIQkf01yRq+xTBJSW4rWOZ34u6g4ylO687ZIABqwadsWSxNqFDw8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760988297;
-	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Jfs9qm98itI/ML/yRbHJ6/qx7PP5MLRZCmJO7XYwdvI=;
-	b=qwoFX9sVRg7Pgbw0+GoBESPFz7L1SzKz16Nxiji9YpM1/z2MXo8rxkYjDW3uZIqB
-	SoDGmTCPhZiBtXcwedZCwcBtj/EMjCbaM0X9QN4u6k8wlxy6O16bwzaEiCDYDf7Uu5B
-	Ypw2QCp+78tuHz0RrbPjwscBBCi8O5rR6akSOoRQ=
-Received: by mx.zohomail.com with SMTPS id 1760988296748941.0431977433706;
-	Mon, 20 Oct 2025 12:24:56 -0700 (PDT)
-From: Rong Zhang <i@rong.moe>
-To: Ike Panhc <ikepanhc@gmail.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"Derek J. Clark" <derekjohn.clark@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Rong Zhang <i@rong.moe>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] platform/x86: ideapad-laptop: Add charge_types:Fast (Rapid Charge)
-Date: Tue, 21 Oct 2025 03:24:34 +0800
-Message-ID: <20251020192443.33088-3-i@rong.moe>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251020192443.33088-1-i@rong.moe>
-References: <20251020192443.33088-1-i@rong.moe>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8001EDA0B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760988335; cv=none; b=V0wuIbVYEntFcbGdoh/D7xWcm6OKDFlA6l4ZDlKb6MzCIcE6bWcbVozzAe74bNmwJ7eQ1DhiF+XwIMIVIfg3684+K0BuPOP9yN+EpXmDiME3irHBEaULCZWcKvje922Otve/65dKy3XLeuJjVnpcxW3YO6wFX9sdpg6k/L++izY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760988335; c=relaxed/simple;
+	bh=Wbm1ygRsjezHORU08fF/499OQmmFQus/opuJpZ42+1M=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QaftptLVl8znvUtAggIsVE0BmssbYPPuEisFJEIlL/6/JE1c3k01Jl2d9BAwWKXDmiiRUrP+3OP+iLBmU84bKN5OZBfuTHurq4KBCv572h8R0pnZ1nCYOR9N2cEqrFYfSbxTkeWQ1iIOjVXmaTWu3f58PRedKbJIeoxtJ27Ho7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=crxxkVGZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760988332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U4JESqtwQUS70W7By+0xAr07eVoyj86fvuT0XAPYk34=;
+	b=crxxkVGZGhik+pVYmbMmGov1VfYYlu+LHY11uqLZB9p9Ve67RSMso+y5YfXWWkts9TcuC0
+	dzEu4qhg33WvyaV/LeM0BlZi42fhwzQWrsI5LREXTyS2yP5DChuo44GVrwcv5L8FhGlfsC
+	HhTVt8+pdbCTSrQP1olO3kS0SXXzYYQ=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-3VQeGlyqMXSDE0S-R7yKpQ-1; Mon, 20 Oct 2025 15:25:31 -0400
+X-MC-Unique: 3VQeGlyqMXSDE0S-R7yKpQ-1
+X-Mimecast-MFC-AGG-ID: 3VQeGlyqMXSDE0S-R7yKpQ_1760988330
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2909daa65f2so49399045ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:25:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760988330; x=1761593130;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4JESqtwQUS70W7By+0xAr07eVoyj86fvuT0XAPYk34=;
+        b=eRct5quQXjzkoKVvdti42VRvNReBiDXFApKh93/qafwFMjBsVD4W6SH4qJ5hlthuvu
+         4LdGy8B2PlJ+wmG2aLKlGif4dm7lRNI4taqkJAnG8K+QwikXo3qR52ELbTPahPoBrJXX
+         OeUWtKxjP2R9bZmGcHwHqaTIB/qPZqpkqQdVGHvVMfKVPLG1uxFVEkZCmASSwU3V5xrU
+         facCsci/f0t1jJpnngDAgK+EnNZGVnZQz4anw3F/FvjXxE7h2czInbrUuBGviE1s5M4Y
+         /3R7dz7IuqEssEfBgRy1DKcKZXpWxgEzgw02DSBdga/bv738Y85H3RQZXmST94DxrSiP
+         JVbw==
+X-Forwarded-Encrypted: i=1; AJvYcCV861G+d4S4YVsQulm1oS4JR70tlYaZ/mzaQc+rygPEPRpc6KUSl75GiZ+HpahVO8TkKy8wTT2cfUk2B3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9/9Fwgz4uHGvmtUZTzyFvos5UJLUSGg9WDQoZBCvB9gpShOFM
+	GIelUnmd3TCn6Omenqr8ABHYDIJaFG1Z3tuSG86RYZgY4COX4AjvXLluMRJBgnVAFc5ZCDuzSxT
+	oIkeDCXUqxXP8PxSG9rjHq8WMl5PXUGIVK0KrS6/GrlqFKAq5F/cZSWVPCZXOeXqmtA==
+X-Gm-Gg: ASbGncsOm4y7Litz0nZTsIsdD9lp2WLIn2iaQCQucHD9r0Z0ZGC6QCQ3R+11aMPGvaC
+	QC1JWck1t32bnP9mBv042JgISs42PMZXCHU7sNNnxfLTJzGsaPPk4gEcg9LnEz7Uh1BANbBUGiP
+	1lkAHZNfJl6BTnmSM8LB06abLGIPKcd5RY65jVB2qP6DN/JKryRNONHHAK+NoPOfua0Q+zaYQr9
+	ITjEcnS3xSoWxx1lxUXJdESJ6H19gCZM2Y1jPVBhZRNXH/zU0JPuIt3ZseoK6E9y5AsAfiv+/q/
+	sH/m/GhuTYbIZBjWmHK7XGB/ed+KkIPEBKGuPDg1whpQCZF3++GocV0XO3Fh2ZCaziO2U2aTJez
+	0FPbnykr7dsVRZcT5VUDHYa/KEV3D8jlLafC6Pm6Bk1rZIQ==
+X-Received: by 2002:a17:902:d48d:b0:28e:cbbd:975f with SMTP id d9443c01a7336-290918cbc07mr183114355ad.1.1760988329927;
+        Mon, 20 Oct 2025 12:25:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7MxRvQT1Q80b2Ca4WrbvNmJOsadkDAbT1SVRanvNr5ICan1Hwu3+VuUStpIJbA59QNwxJpw==
+X-Received: by 2002:a17:902:d48d:b0:28e:cbbd:975f with SMTP id d9443c01a7336-290918cbc07mr183114045ad.1.1760988329584;
+        Mon, 20 Oct 2025 12:25:29 -0700 (PDT)
+Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292a8c8e231sm33579975ad.36.2025.10.20.12.25.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 12:25:29 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <05900ad4-fdbd-4505-a080-1e71bedb5f4a@redhat.com>
+Date: Mon, 20 Oct 2025 15:25:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] cgroup/cpuset: Change callback_lock to raw_spinlock_t
+To: Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chen Ridong <chenridong@huawei.com>
+References: <20251020023207.177809-1-longman@redhat.com>
+ <20251020023207.177809-3-longman@redhat.com>
+ <aPZqk4h0ek_QM9o5@slm.duckdns.org>
+Content-Language: en-US
+In-Reply-To: <aPZqk4h0ek_QM9o5@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The GBMD/SBMC interface supports Rapid Charge mode (charge_types: Fast)
-in addition to Conservation Mode (charge_types: Long_Life).
+On 10/20/25 1:00 PM, Tejun Heo wrote:
+> On Sun, Oct 19, 2025 at 10:32:07PM -0400, Waiman Long wrote:
+>> The callback_lock is acquired either to read a stable set of cpu
+>> or node masks or to modify those masks when cpuset_mutex is also
+>> acquired. Sometime, it may need to go up the cgroup hierarchy while
+>> holding the lock to find the right set of masks to use. Assuming that
+>> the depth of the cgroup hierarch is finite and typically small, the
+>> lock hold time should be limited.
+>>
+>> As a result, it can be converted to raw_spinlock_t to reduce overhead
+>> in a PREEMPT_RT setting without introducing excessive latency.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+> Is this something that RT people would like? Why does the overhead of the
+> lock matter? I think this patch requires more justifications.
 
-Expose these two modes while carefully maintaining their mutually
-exclusive state, which aligns with the behavior of manufacturer
-utilities on Windows.
+Yes, I will push a new patch and cc the RT guys to see if they have any 
+objection. I had seen that callback_lock was changed to raw_spinlock_t 
+in one or more of the releases of the linux-rt-devel tree before the 
+mainline merge.
 
-Signed-off-by: Rong Zhang <i@rong.moe>
----
- drivers/platform/x86/lenovo/ideapad-laptop.c | 61 ++++++++++++++++++--
- 1 file changed, 56 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
-index 9f956f51ec8db..d2bfaa532020a 100644
---- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-+++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-@@ -62,13 +62,26 @@ enum {
- 	CFG_OSD_CAM_BIT      = 31,
- };
- 
-+/*
-+ * There are two charge modes supported by the GBMD/SBMC interface:
-+ * - "Rapid Charge": increase power to speed up charging
-+ * - "Conservation Mode": stop charging at 60-80% (depends on model)
-+ *
-+ * The interface doesn't prohibit enabling both modes at the same time.
-+ * However, doing so is essentially meaningless, and the manufacturer utilities
-+ * on Windows always make them mutually exclusive.
-+ */
-+
- enum {
-+	GBMD_RAPID_CHARGE_STATE_BIT = 2,
- 	GBMD_CONSERVATION_STATE_BIT = 5,
- };
- 
- enum {
- 	SBMC_CONSERVATION_ON  = 3,
- 	SBMC_CONSERVATION_OFF = 5,
-+	SBMC_RAPID_CHARGE_ON  = 7,
-+	SBMC_RAPID_CHARGE_OFF = 8,
- };
- 
- enum {
-@@ -632,6 +645,10 @@ static ssize_t conservation_mode_show(struct device *dev,
- 			return err;
- 	}
- 
-+	/*
-+	 * For backward compatibility, ignore Rapid Charge while reporting the
-+	 * state of Conservation Mode.
-+	 */
- 	return sysfs_emit(buf, "%d\n", !!test_bit(GBMD_CONSERVATION_STATE_BIT, &result));
- }
- 
-@@ -651,6 +668,16 @@ static ssize_t conservation_mode_store(struct device *dev,
- 
- 	guard(mutex)(&priv->gbmd_sbmc_mutex);
- 
-+	/*
-+	 * Prevent mutually exclusive modes from being set at the same time,
-+	 * but do not disable Rapid Charge while disabling Conservation Mode.
-+	 */
-+	if (state) {
-+		err = exec_sbmc(priv->adev->handle, SBMC_RAPID_CHARGE_OFF);
-+		if (err)
-+			return err;
-+	}
-+
- 	err = exec_sbmc(priv->adev->handle, state ? SBMC_CONSERVATION_ON : SBMC_CONSERVATION_OFF);
- 	if (err)
- 		return err;
-@@ -2015,14 +2042,21 @@ static int ideapad_psy_ext_set_prop(struct power_supply *psy,
- 				    const union power_supply_propval *val)
- {
- 	struct ideapad_private *priv = ext_data;
--	unsigned long op;
-+	unsigned long op1, op2;
-+	int err;
- 
- 	switch (val->intval) {
-+	case POWER_SUPPLY_CHARGE_TYPE_FAST:
-+		op1 = SBMC_CONSERVATION_OFF;
-+		op2 = SBMC_RAPID_CHARGE_ON;
-+		break;
- 	case POWER_SUPPLY_CHARGE_TYPE_LONGLIFE:
--		op = SBMC_CONSERVATION_ON;
-+		op1 = SBMC_RAPID_CHARGE_OFF;
-+		op2 = SBMC_CONSERVATION_ON;
- 		break;
- 	case POWER_SUPPLY_CHARGE_TYPE_STANDARD:
--		op = SBMC_CONSERVATION_OFF;
-+		op1 = SBMC_RAPID_CHARGE_OFF;
-+		op2 = SBMC_CONSERVATION_OFF;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -2030,7 +2064,11 @@ static int ideapad_psy_ext_set_prop(struct power_supply *psy,
- 
- 	guard(mutex)(&priv->gbmd_sbmc_mutex);
- 
--	return exec_sbmc(priv->adev->handle, op);
-+	err = exec_sbmc(priv->adev->handle, op1);
-+	if (err)
-+		return err;
-+
-+	return exec_sbmc(priv->adev->handle, op2);
- }
- 
- static int ideapad_psy_ext_get_prop(struct power_supply *psy,
-@@ -2042,6 +2080,7 @@ static int ideapad_psy_ext_get_prop(struct power_supply *psy,
- 	struct ideapad_private *priv = ext_data;
- 	unsigned long result;
- 	int err;
-+	bool is_rapid_charge, is_conservation;
- 
- 	scoped_guard(mutex, &priv->gbmd_sbmc_mutex) {
- 		err = eval_gbmd(priv->adev->handle, &result);
-@@ -2049,7 +2088,18 @@ static int ideapad_psy_ext_get_prop(struct power_supply *psy,
- 			return err;
- 	}
- 
--	if (test_bit(GBMD_CONSERVATION_STATE_BIT, &result))
-+	is_rapid_charge = test_bit(GBMD_RAPID_CHARGE_STATE_BIT, &result);
-+	is_conservation = test_bit(GBMD_CONSERVATION_STATE_BIT, &result);
-+
-+	if (unlikely(is_rapid_charge && is_conservation)) {
-+		dev_err(&priv->platform_device->dev,
-+			"unexpected charge_types: both [Fast] and [Long_Life] are enabled\n");
-+		return -EINVAL;
-+	}
-+
-+	if (is_rapid_charge)
-+		val->intval = POWER_SUPPLY_CHARGE_TYPE_FAST;
-+	else if (is_conservation)
- 		val->intval = POWER_SUPPLY_CHARGE_TYPE_LONGLIFE;
- 	else
- 		val->intval = POWER_SUPPLY_CHARGE_TYPE_STANDARD;
-@@ -2074,6 +2124,7 @@ static const struct power_supply_ext ideapad_battery_ext = {
- 	.properties		= ideapad_power_supply_props,
- 	.num_properties		= ARRAY_SIZE(ideapad_power_supply_props),
- 	.charge_types		= (BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
-+				   BIT(POWER_SUPPLY_CHARGE_TYPE_FAST) |
- 				   BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE)),
- 	.get_property		= ideapad_psy_ext_get_prop,
- 	.set_property		= ideapad_psy_ext_set_prop,
--- 
-2.51.0
+Thanks,
+Longman
 
 
