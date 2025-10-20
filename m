@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-860958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BD1BF1756
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:10:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D0EBF175C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CB124F501F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7399C18892F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503E731283C;
-	Mon, 20 Oct 2025 13:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B4E3128D3;
+	Mon, 20 Oct 2025 13:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="P6BX9Pcj"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuBIY3x8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4501619992C;
-	Mon, 20 Oct 2025 13:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE30286889;
+	Mon, 20 Oct 2025 13:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760965798; cv=none; b=nWjF1XrhlKyGUkqEupqvM5HGROqjBg01pH7fnA8y5WWyrtdKWS4kgWgufbtrFjAN8E4rO69A8/QnVC9rV+D1pkOU/OMX1zcT7+eW5Mp9e/lpTfXVqZR+D94ldMBS09HUOFobGd+wtQQJH4PKLFy9U2UpnnkPhkysr9DXEpPHHIc=
+	t=1760965825; cv=none; b=hYjqwl+RMOHxSH9+DqwxL+c0FZVl/BLodfx0qF1TPg5qq2fdXG9Quwnf0IWUthnXOQJuUXyVbVprOwH5iaoZocd+43QM1UQGRgUVQ7fK5fX+bM6+4MKlOdX1GqvBgskCZjkqx1r+kTbEp479fD40GGwjI5oqSmO/zOdOvCl1xNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760965798; c=relaxed/simple;
-	bh=5MJxyHQi0JAnt3hnhp6JjvFyKPWOiQz2LJxf6siCF/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjyvfI10YuFoN5oxVnDIltWG1VK/KgAf1drjaxFoo1V3Y+M288keYzRAxE5/WoEF6Cp/D4nDeMgBVznU2Hig99qmH/UF7fqp27HKUiFCk2uURP7wIXZKtgQsMmEMLtX/Z/1O7zqLaNMCAHjqItX8mN9kvAEPJechUyCKkUPUr4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=P6BX9Pcj; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760965787; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=A/YVSIfENMg7a+CnApsjKhHaaNSfgBvr9Vz+qTSmgCU=;
-	b=P6BX9Pcj1Y8Biyjhg/KHDuYm3uPOylZVVJTCgBT4U24088+cDNhATEgGcwktQzvJOJ3f/OHnC8J/RCSNPaaEVJFCGneGRJKwpQXaSk+Qf8nba0otDP6qWLyq/WIbszo65Xt/J8DepdzZCK2YJt7ouEZiAoAtfwQHlI1dUaVCJ2k=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqcnHlY_1760965785 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 20 Oct 2025 21:09:46 +0800
-Message-ID: <0fe95dbe-a7ba-4882-bfff-0197828ee6ba@linux.alibaba.com>
-Date: Mon, 20 Oct 2025 21:09:41 +0800
+	s=arc-20240116; t=1760965825; c=relaxed/simple;
+	bh=6Pc9UWszhKcAi8/KToVHt002Dk2g1lKSe+WvbjXwVI8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=FczyDMraP3/dtJUim75jipBB9T78quDfi0dREBb8zJGlh6zkEW+71bCCuyP5/O/T6sUb17FaVhmg0EJWOPSDq/dQ+/IXzngO43EinRK9XStuwV82AqVAosc495ZsMdFzMe1AsZQ7411UZuDzEnqBN8S/WDn6++dvBOwibsBTPTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuBIY3x8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103DAC4CEF9;
+	Mon, 20 Oct 2025 13:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760965825;
+	bh=6Pc9UWszhKcAi8/KToVHt002Dk2g1lKSe+WvbjXwVI8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=OuBIY3x8J5qZzQSjGUxQ4eCjq+K6khoqQ7MYbLGsyu7N/HZvEotU3uBcjoQZXBOCs
+	 561l/M4LCGkVn9ZE3M/FYGOLvGGAtArq3v2gfdSROclpygdXxcOe/wzY2WNYRwes8w
+	 qIh3JVVXN7ccpa2A83St5Um8s+coQ99sIBpPczPl7FuO4CpNrRZI18aiZWiHsNYSMu
+	 40N4qNDOH680/460peDWSbWHSwFvWTNEZRmRiuxysTLGl7jNtQGZ5/YRCIYOw1Fp0I
+	 PJ8KZ1GDgz6JVaLk6puxiGmzA6QZicoJtTb90Xm2GjZ6KXHeNUwhy5ipgY+txvhHOF
+	 IdxDQoxg/q9pA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
- native AER control
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org,
- sathyanarayanan.kuppuswamy@linux.intel.com, mahesh@linux.ibm.com,
- oohall@gmail.com, Jonathan.Cameron@huawei.com, terry.bowman@amd.com,
- tianruidong@linux.alibaba.com
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-5-xueshuai@linux.alibaba.com>
- <aPYMO2Eu5UyeEvNu@wunner.de>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <aPYMO2Eu5UyeEvNu@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 Oct 2025 15:10:18 +0200
+Message-Id: <DDN6A90KU2TR.31NIJCY3TEDYG@kernel.org>
+Cc: <linux-acpi@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: acpi: replace `core::mem::zeroed` with
+ `pin_init::zeroed`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Siyuan Huang" <huangsiyuan@kylinos.cn>, <rafael@kernel.org>,
+ <lenb@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <dakr@kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20251020031204.78917-1-huangsiyuan@kylinos.cn>
+In-Reply-To: <20251020031204.78917-1-huangsiyuan@kylinos.cn>
 
+On Mon Oct 20, 2025 at 5:12 AM CEST, Siyuan Huang wrote:
+> All types in `bindings` implement `Zeroable` if they can, so use
+> `pin_init::zeroed` instead of relying on `unsafe` code.
+>
+> If this ends up not compiling in the future, something in bindgen or on
+> the C side changed and is most likely incorrect.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1189
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Siyuan Huang <huangsiyuan@kylinos.cn>
 
+Thanks, great to see this.
 
-在 2025/10/20 18:17, Lukas Wunner 写道:
-> On Wed, Oct 15, 2025 at 10:41:58AM +0800, Shuai Xue wrote:
->> Replace the manual checks for native AER control with the
->> pcie_aer_is_native() helper, which provides a more robust way
->> to determine if we have native control of AER.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-Hi, Lukas,
+Cheers,
+Benno
 
-Thank you for your question.
-
-> 
-> Why is it more robust?
-
-IMHO, the pcie_aer_is_native() helper is more robust because it includes
-additional safety checks that the manual approach lacks:
-
-int pcie_aer_is_native(struct pci_dev *dev)
-{
-	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-
-	if (!dev->aer_cap)
-		return 0;
-
-	return pcie_ports_native || host->native_aer;
-}
-EXPORT_SYMBOL_NS_GPL(pcie_aer_is_native, "CXL");
-
-Specifically, it performs a sanity check for dev->aer_cap before
-evaluating native AER control.
-
-And I think this is more maintainable than manual checks scattered
-throughout the code, as the helper encapsulates the exact conditions
-required to determine native AER control.
-
-> 
-> Thanks,
-> 
-> Lukas
-
-Thanks.
-
-Shuai
+> ---
+>  rust/kernel/acpi.rs | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
