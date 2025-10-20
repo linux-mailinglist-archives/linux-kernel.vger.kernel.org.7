@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-860319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EBDBEFD86
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C28DBEFDD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2C9E4EE359
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451093BC7AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D542D2D249B;
-	Mon, 20 Oct 2025 08:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F5E2EA15C;
+	Mon, 20 Oct 2025 08:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IcSmMvb9"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="ipuNKsAt"
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC732AE70
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EE42E9735;
+	Mon, 20 Oct 2025 08:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760948009; cv=none; b=Jd1jj6cXmbO72E4lfdbYfd2SXBhBRoSBup385bSckj+IAs0heGSK+FlYzvH+gehBRMJcZJ77vQlgLXxOZpx+9Glds1KnfbkGvI3uS+hG6jWzYBwX5vNkAU8zr87xnMpvidJgkvRQZ/txEKRWWljgmyWWqhS87l8wF1p3NJ4kXYc=
+	t=1760948073; cv=none; b=PCu03w4oJYWWNKYiAU8/3Pfehy4Qj2FT1E3/kHuNwfA0VoqlZEJrkiciJUqmgB3t+0h9pa0d1lh6MLK5FfvnY6jnlOWlgwJS3VJi+HGOgUJrh0g0EdTn+POfAW8uPoLd4/78p73pJEYPC2vWXol55G6HdUkFuom8rWKlKBlAjUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760948009; c=relaxed/simple;
-	bh=afK/Qx+z9RGas0HRzNSA5jN0ZqduIDpcSTfT6I/gQ7M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Av2rDYuh3jk7mTy0t2r78SoAuvg/H4X0L7kPvde712G4dhZZFi0i4DcqyRYdAdSdgwvhsu0/whIdGUTdurjLNKwbp//x1wenlPHJ4tcfm01mrhkHFpdXYzfcAiwTWP2GIxTjlQwwnoSdCYQwKqQ7dZf/nkQLP06BDo3b6CPf2dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IcSmMvb9; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-634cdb5d528so5907926a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760948006; x=1761552806; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JomsFufr5VxruBAzGqqKWxKs5V3NjgNfh0Psh5CFJ6U=;
-        b=IcSmMvb92koeiNwE60G7rQY9Rk/HLBlbi+MC2+XVQX8NDX50dM4bh5D0aaffREy6iK
-         zy7hvBbRe/rG3fyMer7q/Jz4b5rMWFbq95zTDY4VLcLv6Oh10Mbz3V6ew2odtKA+eGtU
-         dj7XzoKrmSD87dQ9h8kXfwgF9FrCKwx6x/BO5npVuld7Sz0C1T90VUQI+BjOtuo9JQws
-         YajyNC2TLotKtheL4XGfP/GL5q4YTAiZ2xxaRXbXKXjLTllF56+Q+6fkHNh76jd7JFWn
-         ngGr7qyawbMxg8x+rDoX4aw3p4R0pVdzlBmIu7aaz7RA+DEo3/Tjg3CGZBX9wJkH0mUl
-         e4rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760948006; x=1761552806;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JomsFufr5VxruBAzGqqKWxKs5V3NjgNfh0Psh5CFJ6U=;
-        b=pexgdQpzOcUdnDiUbbSD0YOVWdN7JSPuMva276bFfGnghbDXoZ9kfVcTYV+WaKY91Q
-         OnfCRpSZe26osH0Ivnkh07rd5VFlZecPP3EXJJKb8F1jdwVm6TtiSvl9reSatBiP6wbE
-         AioyLeRZWjH+eA8cj/ZgQqg8sbG3lTcEyNknTm6PT47UsHxyRlpArN8ODs/Rpu4VDOuj
-         ALIj69Lp1krL95+gB4dqymqIGL5bO7l41JjgvN/d0dVIIjtG5C2c1IKsuqoBIennrwsp
-         w61n/N/AiVfpA22MqUogTEZLmqfFyvQqUEsBvy3josM3IdQ/M0mt1PmVx8XaEenlcUwQ
-         d7yA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKRsfqnuq/om2f2BGwoDaFihTEMHil301EQ1LGS+2KjHsmSxkRyFGHRhA6GC7l9KyQHWB0euaOWnGbrh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Ai4vA/ANoJkU46tzo1axjaS8T1pcMpi2DrbuN7aWwtOZNXY5
-	fK4RxIkT26WWpz0K2cMnisG/4cufUVNAmuKYTcIdVz7M0YHUMwIrIV/qZk+7AnFO2UGgh07rAo6
-	EIOkJkzYd1QnoDR8OiA==
-X-Google-Smtp-Source: AGHT+IGFoqM8MMHqDFI1tOFZ3cdMbIGCKb5OPolPUgoN9eefeCogzXHPUsYXOsFsFsY4hvT2U3wlDipVU4GnZTE=
-X-Received: from edbet13.prod.google.com ([2002:a05:6402:378d:b0:63c:493e:3803])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:aa7:d698:0:b0:631:6acd:fa3a with SMTP id 4fb4d7f45d1cf-63bfcdd5015mr12313526a12.4.1760948005837;
- Mon, 20 Oct 2025 01:13:25 -0700 (PDT)
-Date: Mon, 20 Oct 2025 08:13:24 +0000
-In-Reply-To: <DDM9EDPP7XQN.2SW537AZ7DAZ9@kernel.org>
+	s=arc-20240116; t=1760948073; c=relaxed/simple;
+	bh=b7RcGC+rlOoyYyHWy6EpOI4bZ4qo0j1xZf2JnvT1XSQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ij/zcR3kkLuFvQqG8gOWYoNbc9mbIPywLwFFMEUo0VgZK+oDKJL3nW5TiRSTwvsn0PusLBpRPdWhoEJncXXF83+BEUucWJrWr+NMImmLTL2cL/1of05B+SHsen5d9LJliSs9EnnTphQz0R3GSzzvw8XE+vydln+UKW/m13ydzfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=ipuNKsAt; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59K5U2Id1267559;
+	Mon, 20 Oct 2025 08:14:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=0SyO3Eu4R2RtY8+48nADsC4nchute0+HCCVr0S74e6k=; b=
+	ipuNKsAt60mRKZbY/FAF03XSlDEDsUL8jrIUmgoUFphDDj+N4vkdnUz3r5nw1lSg
+	2E26ExM5BIiKyPfcl2v9eMdKMM+OOmpBT7C5KtTcbHG3DzbCnk1U3h3FD0fBQ6mN
+	+6SHLPsKdI9rHm6V4UxAfY9/muh5xWIecFbSzU6COt1O/3ffKrY7lTj/FEaXYvzs
+	PtGtgxVZsK85381+uO5YcKdVu+3NehH35EU5c88T256sOx2mGltbVAgLewytDFuW
+	yfPKOPLLvwjlTS6fKw3v/TXNl4ktpYaScvr3pOjIFZVtisrCb/38ESsW7+Y8Nqtq
+	zRr/DY4DcMyWzrab9RLDSw==
+Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49v1v59kbf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 20 Oct 2025 08:14:04 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Mon, 20 Oct 2025 01:14:03 -0700
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Mon, 20 Oct 2025 01:14:00 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+        <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <pabeni@redhat.com>, <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] netrom: Prevent race conditions between multiple add route
+Date: Mon, 20 Oct 2025 16:13:59 +0800
+Message-ID: <20251020081359.2711482-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <68f3fa8a.050a0220.91a22.0433.GAE@google.com>
+References: <68f3fa8a.050a0220.91a22.0433.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-4-dakr@kernel.org>
- <aPI9tNoh0I3KGDjl@google.com> <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
- <aPS0aTUUwDsXmHFN@google.com> <DDM9EDPP7XQN.2SW537AZ7DAZ9@kernel.org>
-Message-ID: <aPXvJPcSgZdNlGtB@google.com>
-Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDA2NSBTYWx0ZWRfXzhP8++/29DF1
+ 8fFM8v0qi7ohb96j1oFsi5fMiV4l7ZbKgrnqtbsH0zAWC//Kq0f2Rn+EAE1Rfz6RWXYEHWtYRjI
+ ol6cb9FGkPKtRHlJ1jmR1SVrQ8h0cIYE/5EGm9x5Dmt5NAsQV+ZwctPLua9d24lIFqHcRGu5VN6
+ WNdvSsLMrXsuPOkx7ug926uI+pBBSQ3vxwVx0UfH6DeVUBkFML9PsuEr6zsnA5TYX8PerFqrgXs
+ 4Yy5NVwbE6omLPr5A5L0zpI62vM0izhogYxOaLDTXoSBdpghAS3p4a4MYVtFfdZYpXif7JMEnqU
+ sL9JMRprtTxiy8qMWwXO3UD+JdIRIsnXzh2C6p8XEM0lYQgMrRI2wOeE8e41y6a5nEwJ8XEux1w
+ xyO/13AtZ1fbHJaN9q3HG1+COeqFiA==
+X-Proofpoint-GUID: RDysNcMdUX6tPpqmO3otGQJ6KL4IUTyk
+X-Proofpoint-ORIG-GUID: RDysNcMdUX6tPpqmO3otGQJ6KL4IUTyk
+X-Authority-Analysis: v=2.4 cv=ANdmIO46 c=1 sm=1 tr=0 ts=68f5ef4c cx=c_pps
+ a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
+ a=t7CeM3EgAAAA:8 a=sx0YzN9DWx7IQLKmKLYA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510200065
 
-On Sun, Oct 19, 2025 at 01:24:05PM +0200, Danilo Krummrich wrote:
-> On Sun Oct 19, 2025 at 11:50 AM CEST, Alice Ryhl wrote:
-> > On Fri, Oct 17, 2025 at 04:37:48PM +0200, Danilo Krummrich wrote:
-> >> On Fri Oct 17, 2025 at 2:59 PM CEST, Alice Ryhl wrote:
-> >> > On Sat, Oct 04, 2025 at 12:26:40AM +0200, Danilo Krummrich wrote:
-> >> >> Introduce support for read-only, write-only, and read-write binary files
-> >> >> in Rust debugfs. This adds:
-> >> >> 
-> >> >> - BinaryWriter and BinaryReader traits for writing to and reading from
-> >> >>   user slices in binary form.
-> >> >> - New Dir methods: read_binary_file(), write_binary_file(),
-> >> >>   `read_write_binary_file`.
-> >> >> - Corresponding FileOps implementations: BinaryReadFile,
-> >> >>   BinaryWriteFile, BinaryReadWriteFile.
-> >> >> 
-> >> >> This allows kernel modules to expose arbitrary binary data through
-> >> >> debugfs, with proper support for offsets and partial reads/writes.
-> >> >> 
-> >> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> >> >
-> >> >> +extern "C" fn blob_write<T: BinaryReader>(
-> >> >> +    file: *mut bindings::file,
-> >> >> +    buf: *const c_char,
-> >> >> +    count: usize,
-> >> >> +    ppos: *mut bindings::loff_t,
-> >> >> +) -> isize {
-> >> >> +    // SAFETY:
-> >> >> +    // - `file` is a valid pointer to a `struct file`.
-> >> >> +    // - The type invariant of `FileOps` guarantees that `private_data` points to a valid `T`.
-> >> >> +    let this = unsafe { &*((*file).private_data.cast::<T>()) };
-> >> >> +
-> >> >> +    // SAFETY: `ppos` is a valid `loff_t` pointer.
-> >> >> +    let pos = unsafe { &mut *ppos };
-> >> >> +
-> >> >> +    let mut reader = UserSlice::new(UserPtr::from_ptr(buf.cast_mut().cast()), count).reader();
-> >> >> +
-> >> >> +    let ret = || -> Result<isize> {
-> >> >> +        let offset = (*pos).try_into()?;
-> >> >
-> >> > So offsets larger than the buffer result in Ok(0) unless the offset
-> >> > doesn't fit in an usize, in which case it's an error instead? I think we
-> >> > should treat offsets that are too large in the same manner no matter
-> >> > how large they are.
-> >> 
-> >> The offset being larger than thhe buffer is fine, userspace has to try to read
-> >> until the kernel indicates that there are no more bytes left to read by
-> >> returning zero.
-> >> 
-> >> But if the offset is larger than a usize there isn't a chance this can ever be
-> >> successful in the first place, hence I'd consider this an error.
-> >
-> > I don't really agree with this. Obviously we have to return Ok(0) if the
-> > position is equal to the buffer size. But for positions strictly larger
-> > than the buffer size I think it's reasonable to choose between Ok(0) or
-> > an error. But please, let's be consistent about whether we return Ok(0)
-> > or errors for positions larger than the buffer size.
-> 
-> There's not really a choice, it has to be Ok(0), otherwise we break userspace.
-> 
-> However, you do have a point with how the offset conversion to usize should be
-> handled. We shouldn't try to convert it to usize in the first place, but rather
-> pass it through as it is and make it a common offset-larger-buffer case.
+The root cause of the problem is that multiple different tasks initiate
+NETROM_NODE commands to add new routes, there is no lock between them to
+protect the same nr_neigh.
+Task0 may add the nr_neigh.refcount value of 1 on Task1 to routes[2].
+When Task3 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
+release the neighbour because its refcount value is 1.
 
-SGTM.
+In this case, the following situation causes a UAF:
 
-> We probably also want a type alias for bindings::loff_t.
+Task0					Task1
+=====					=====
+nr_add_node()
+nr_neigh_get_dev()			nr_add_node()
+					nr_node->routes[2].neighbour->count--
+					nr_neigh_put(nr_node->routes[2].neighbour);
+					nr_remove_neigh(nr_node->routes[2].neighbour)
+nr_node->routes[2].neighbour = nr_neigh
+nr_neigh_hold(nr_neigh);
 
-I ended up using i64 for simple_read_from_buffer in iov.rs instead of
-loff_t. But if they can differ, then yeah let's introduce a loff_t type
-alias.
+The solution to the problem is to use a lock to synchronize each add a route
+to node.
 
-Alice
+syzbot reported:
+BUG: KASAN: slab-use-after-free in nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
+Read of size 4 at addr ffff888051e6e9b0 by task syz.1.2539/8741
+
+Call Trace:
+ <TASK>
+ nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
+
+Reported-by: syzbot+2860e75836a08b172755@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2860e75836a08b172755
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ net/netrom/nr_route.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
+index b94cb2ffbaf8..ae1e5ee1f52f 100644
+--- a/net/netrom/nr_route.c
++++ b/net/netrom/nr_route.c
+@@ -102,7 +102,9 @@ static int __must_check nr_add_node(ax25_address *nr, const char *mnemonic,
+ 	struct nr_neigh *nr_neigh;
+ 	int i, found;
+ 	struct net_device *odev;
++	static DEFINE_MUTEX(add_node_lock);
+ 
++	guard(mutex)(&add_node_lock);
+ 	if ((odev=nr_dev_get(nr)) != NULL) {	/* Can't add routes to ourself */
+ 		dev_put(odev);
+ 		return -EINVAL;
+-- 
+2.43.0
+
 
