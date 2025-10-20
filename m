@@ -1,233 +1,175 @@
-Return-Path: <linux-kernel+bounces-861588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070F9BF321F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:14:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A48EBF3237
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED463B0B4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5C918C0BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EC52D94B6;
-	Mon, 20 Oct 2025 19:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7462D7802;
+	Mon, 20 Oct 2025 19:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="g6Bqbp/G"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013057.outbound.protection.outlook.com [52.101.72.57])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="opcfKr7J"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0FD2D73B6;
-	Mon, 20 Oct 2025 19:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987631; cv=fail; b=rOcvG+PK7OrasoQ99qeOW5PWQkHcQrPnKgf7JaNqWstTfSa4qTPUBw7ym077I8rAErDu+RFv4U+cQZdB4LcJ5Vb818SklGz4UTO2FkBQeHj0thYJVzjhpEKdyNMvQkMmfpAViZVU/mz0vd9bvwcRH3lXYF3KLrglK1ojsG/AmPY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987631; c=relaxed/simple;
-	bh=49Ja0C+JAR6tzCHaGgQ/a46NWwJfSl7Fb6e8DePzi8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hGiLcNFjkzpMMj7LQmMjKwKXeDJ+TtIntXcf9k3Ws10jBXIx4ztPp0iBI2EXIyfhQy619ASuvB5v6t3JEGCDkzLns4c+Zb2NHWuEM7J23njdqn7tBK93AGoahYyhodIEnTkndF9++1aCG9Idhgg7Kcir42fWPdp8MIt1uN13V8o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=g6Bqbp/G; arc=fail smtp.client-ip=52.101.72.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ut55HddjFcdvRQq1u8ONsE21cwQyISwHvx8zXO4KAa/00zcNliJEXDKtyOxVjbydLnSZrb6rp6zFReKmkIXEOlVnHadzZGtT3ACTqv2nChcyQGs3Ttj2CCDEl3WDtnlGYIngsTURbmOdUPx7ZfBrXNdC3O2a80PEGC3kFmyxtfNTioLJWUx3is+UPokDbpbrL/g9VEMaTsM8ZzgEbC5zbSbxUjckvV8udwbcCE1Fr+6pcJ2TfI0DkFNkwrQRczl2mscWP9blF5TP2e6zgNOQnVUjJTEQWPg11JChHeBOShRq16nS2E/QIX85Y65dpow171AHjzFpnkuJdXOUwd0Pww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YontUkHt1pgPf+ohSV96nKeBDQDH6MhfWqUTXrDOriA=;
- b=vCbICBoGAMzBiQUoN8LmMTik5z7ZIv5+GD3aXjEpLiNZYxNOhAouuqpxDBoylvb6A1d1OV3r8psdXYggsypYxspR8oE1LIVbnssvX0mnA+VbpTDfSC5WceBPC3fmCJWUOMfnXSZqLrK+lxGJJgRmMKrBTtC8TuukdZIJt0LPJ7dUNMCLNeXLCZj/QccGotq1WADdTQqyreVd00fpYFkKQq3WpLKl4M7+IxJmEUwgfN3UWyYtbpavDHQvnlKXcK5cz2kRspy4giY75feTxF/0SzxSIZem9SRFHdLr/DrHncaA89fOZCR41cTEIx3b1asjF+27eeHC1F2rMAKIGKR4uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YontUkHt1pgPf+ohSV96nKeBDQDH6MhfWqUTXrDOriA=;
- b=g6Bqbp/GNrUS6A+1z3tCvYBsCBpq0nN92AVGgjDiO7OoY8ni3IRN6/JaP+Jq7BTmDLniyavMEH9QtEEek2QToX1pwDHAmoMcd0x4eEWvOCmpwhientW4ycbWQyhuEfx/UgGjMU+clXzDU8hawANsxnkpvWMjfDAgbth0gjBofAy1XY0e2AhgOsJoN0Zq7PsbZYZEvWozzIYpIhvIMoVTZG09q9aQt0npcuYbnTuDAVVosg+C+8Nq1rUZL3FffBXgYLKsTZlpZOTCgDiAK9Ir3twoQ+QAKMohzA2JwNyvSksnJ8gabsqUYEeagEl6F3Ac/Y8XFJTFF6yJoJZw+h84og==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by DU4PR04MB11927.eurprd04.prod.outlook.com (2603:10a6:10:628::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 19:13:47 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9228.014; Mon, 20 Oct 2025
- 19:13:47 +0000
-Date: Mon, 20 Oct 2025 15:13:39 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Alex Elder <elder@riscstar.com>
-Cc: han.xu@nxp.com, broonie@kernel.org, dlan@gentoo.org,
-	guodong@riscstar.com, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] spi: fsl-qspi: add a clock disable quirk
-Message-ID: <aPaJ479zH/90fJ2d@lizhi-Precision-Tower-5810>
-References: <20251020165152.666221-1-elder@riscstar.com>
- <20251020165152.666221-5-elder@riscstar.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020165152.666221-5-elder@riscstar.com>
-X-ClientProxiedBy: BYAPR08CA0067.namprd08.prod.outlook.com
- (2603:10b6:a03:117::44) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC102D640F;
+	Mon, 20 Oct 2025 19:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760987655; cv=none; b=jy+ocVPgBbJL3MYJBeG6Mv55JoJ8i4uC+UVi3al10RchRSggVMdK1rg11hongKK8vY6marX327Vpb5CTsbIVAQ2GXe0VXHs6yReBbElUbvyqSdeoLqWrfCJJ0MS/QstOINOakQeIv7BudaxrD/jW6BqiJQbAR14vc4aRcST56tw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760987655; c=relaxed/simple;
+	bh=vreuyB1oJMX28dl3w587JJSbrdpOaZ848torossb2pI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WziHLUyYO+ymvH2JfDs9lnlNeePrI+KxuqHBGWmsMp86kryXdpvhhErCjr1AwKQyl2mLADcuJ8OjaAo7OiKWHCcqpKXZ8P59oNuENLnopuxegdTciszYGjCT4uzPEi9p9lfufJgHqEvBHHcS+VNsHVWiH8Hvq0xQBzphD2Y7L6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=opcfKr7J; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KFsRcd019061;
+	Mon, 20 Oct 2025 15:14:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=/m5lg
+	W9LZdYxB6YJs1TYPvAh9FlaVDaMUHUk0YNse/U=; b=opcfKr7J+GBJkXNumyjWj
+	BsmiwNMjp92VmSKMINJ9YzGkGUjzDaqhtW+0M71sgkuOC0+dP/e04u2hn96+w6Uz
+	8lz8xu6LqNekbZoNYmr3vJBhFxNu64l9mULn2lT5avmONhPOh+KqVwrnAdQ2cTGo
+	ZkycvfT5JxsvseADwnbpZI5iFZwCE4b1cDiC/O1OPQOsbpzgkrvxWAhMQvQnJqZE
+	tSQhTNQZv0qI95UO0ZONu08acdyQpTm7cgMXkcrZe1cPrrKrWhbnX504CYGpXM/2
+	BO2y5VWddmw16ZqUciKew7sSbpFeHxcU6kUqkzH2v3Ia/3yJLxXTsOe6IjR+qvSN
+	A==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49v4r4kn21-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 15:14:08 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 59KJE7Md026501
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 20 Oct 2025 15:14:07 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Mon, 20 Oct 2025 15:14:07 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Mon, 20 Oct 2025 15:14:07 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Mon, 20 Oct 2025 15:14:07 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 59KJDneO013270;
+	Mon, 20 Oct 2025 15:13:52 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <michael.hennerich@analog.com>, <nuno.sa@analog.com>,
+        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v6 2/8] Docs: iio: ad4030: Add double PWM SPI offload doc
+Date: Mon, 20 Oct 2025 16:13:49 -0300
+Message-ID: <9accfba376f997bc52293ad8fe151cbca98b0725.1760984107.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1760984107.git.marcelo.schmitt@analog.com>
+References: <cover.1760984107.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|DU4PR04MB11927:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e84785d-3d82-457c-bf73-08de100ccb3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|52116014|1800799024|366016|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BC4Tb+fJThnZeQrP8bRQYIj5c1qBO/Urmi4xVGgItB8kPH+VRVamB4zec7rU?=
- =?us-ascii?Q?9JXsv58NTTe+MXZWt2gPIdt8XY9JFC5v0R04xjYrpF89iX4f3/gXWnio+VtU?=
- =?us-ascii?Q?atX+z8Y0xxJsLnsbESnEqXpCzGWzkcyK+EryZ0xRMgNpSCK4BczHmwdRLmUr?=
- =?us-ascii?Q?Mloy4poDzW+bbIcXgpNVLUdsUAR+nntZMS/b6Ib9tXGkFcpW5BOVn0awpM6P?=
- =?us-ascii?Q?rvv7EukCLUO1DIBUO4hqpWjJn4mFc7Bj9M5yDRP5n+bYRjffxbvnm99XDE7D?=
- =?us-ascii?Q?3UyoUIyDNaFyC6QqfdtrvsSntlKtLtgPgR914Uoy928BMEV+G4x/8aTC9HDT?=
- =?us-ascii?Q?erQN+umwK+I6cnk8nmteK5CEEy/V0zWfubBJ/G8YOjG/vNCaNc2zEEsG0n6U?=
- =?us-ascii?Q?nPXYHUtH3mf3OCXQdrh1mzu7lg/snMTh+soQta9QMVQ7YX5Xd2vdhAZq4BhK?=
- =?us-ascii?Q?pcQ07vKpQf4zOpRcp4URPBv18dPssdehJf5Tr3WwC6Di/gSveh4vqi4sG8Pw?=
- =?us-ascii?Q?gpby52SNpeqQW5lf2K/yNoVLdspfd65z9ZlJSH3BRrz7XS1kFrYXWq6V014U?=
- =?us-ascii?Q?cZnNqebVB0Eis/zGQBk6mIuJULqyRuJVAKtCYCDslw+6Ff7T7UkP1s8zefT+?=
- =?us-ascii?Q?R+vIO2iyF53Yqcx1SO5Q8sLcE9K0L2w4Jpw2sR43EAQcDsNRCFyCqMZZ2FrF?=
- =?us-ascii?Q?rGFTgHuUcQ+0c+SI22MK5ndlKpU80C053YMGuwNifQ28hFiN8Sf4M8jcN06w?=
- =?us-ascii?Q?QBbzpCGnK/qY9VbZL9QyaVwZFz1Gin44C+UJUyT/BlLrhxkPIjGjlNRsFsYw?=
- =?us-ascii?Q?ta56Q0N+S0h4S0zh5mNHBwwZK6QEomuCOTc7EUhJjhHTorrkIuaK++daeCgL?=
- =?us-ascii?Q?Fs8Hb3frnjM8W0Lxkyi9ZY9/vfcKNhmhQGZdLTMXV0gBeXsfQj8mJp1HxKVa?=
- =?us-ascii?Q?LWKCv+XdBWnDWOp1QiD+DzxtpMMXGGQVaifNtlkE/HbFgW8lIN1Ds9JThzD9?=
- =?us-ascii?Q?TCg+GAATuKYhCOwPcZFPJ/wbstTi9m/9HrdOj4upyYALzk8wjKI2tCpsBDKW?=
- =?us-ascii?Q?E0J6wfx5AJonq3evnrNa9X7gq7JhXOblMyqV3Ad0KvMdp28+fqAx6qu1guvA?=
- =?us-ascii?Q?AnCKGl66eVDbVX7mGAtm1JVVa4sRPVoLyKMzQW26nptqYM5JcAeefIW7zVXR?=
- =?us-ascii?Q?apUZIt6qGFaA+Kwo8eN7HY8C4APF3Bw3Xt2c983DBh/WVjOz4G2h9+rHbgbx?=
- =?us-ascii?Q?dgX1aFWnj3f/T1o0Mz3iqo6ZPOlKii1c8VVdWmUssu7d/tXgMmXzCSEi93Qz?=
- =?us-ascii?Q?i4ImDjTbTyS3yHK5nGs0T+KCoCJrUYFa2rgXHSFRoZLyuhD0dVHhdrpDJi+Q?=
- =?us-ascii?Q?dYY/7zITPURpiC9kdvaBldTvPA2amXBdwji7fd6YTVbxfsfWUUMORfMvI1uR?=
- =?us-ascii?Q?B1YuCxNLae3gvyWMTvf60tLsigxjAkLG0+PFCv+vhteOWpkQSrvBqUiWFUzj?=
- =?us-ascii?Q?YdHNY/kpY89Ghsmd9jg2hThUWwJ44NgOkZvC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(1800799024)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dZcPnWTw7ut9uBYlR6ecHs24A1l8x8VHjVNLDSAzsQz5UBoe/dz603JanVi4?=
- =?us-ascii?Q?GH8p6IP4CGQvibkImOvu9GkkDzA9VvcGwaCI00cRxwgBxRQrKWWrAd+I1TSQ?=
- =?us-ascii?Q?3RiAhPfk9WewffbF6vZm6HrO6lt3Zz9KrBgp2Jm+YCYjEgX1obLSOsnhLf5R?=
- =?us-ascii?Q?cjIb2MoJSL721ZLyzcO8+M9k5xl0VGq4IR2e4seYLC4DzA5tcA7AnLy88zqe?=
- =?us-ascii?Q?5bqsS23XEtDUv2fMBOJEVHYG4EzOhE7TNZ1w3KvGJm1wuAYR0MqdHJgmiNf8?=
- =?us-ascii?Q?HDl9B5ZjHnUmeFBqRSap2SG+xSDtayvrH0sRVKrUeC5n61pqUUAt74T5hTTq?=
- =?us-ascii?Q?alM0jytMqaPN8TdqDsyvkFkmwp+Em0LzCqXHfimzNwgP90tOQJO8r5vLnQ2Y?=
- =?us-ascii?Q?2k3GZc+bQEb3dfLePpoF1cdfz+S6ZNRlv07YJm04SuMib3SmyAEB7FggfxRx?=
- =?us-ascii?Q?A9aADObMgU1mGpxLtmAu9XHedougRu1U0heJMffdKEzoXcB39m2B9AXhM6Sp?=
- =?us-ascii?Q?iIU2q1DvvynCj7IPVi9zHQo46pSnaONLuWAJoKIOB17w8/x/Jtjyf8srCJG3?=
- =?us-ascii?Q?yOxz90PDquzyYoBjTnJUtaH+deLvxmRWymNN8wFqbu3ZCfxn++iGQp47PcBl?=
- =?us-ascii?Q?jK8ctH/eb03L2r2OWcjM8BbtM22wqpJerx2zXHmMoPuR1NnRaL+x40koKDdl?=
- =?us-ascii?Q?t5kvRSV6QHmBt11qbNwUJjMa87gvqBWkglWUdt8++J6193FJo2g9Gi5mEUb4?=
- =?us-ascii?Q?Fi3nv83MhGEa1uq33Y59r6M/lJ0DZfn7E65zFWRP77scK/azqRVMse26eHr7?=
- =?us-ascii?Q?3bIPHt76vm0Pn1XuYJJUQRzSxkOn9sxWzh4aGUQ6s9pHq+zdunF2ALrdqCHU?=
- =?us-ascii?Q?f1/uMI6RfYmenhhtTotA0EEkE0kRYEEs7/6OOxJAia/MsYC+kfY7rw7ZIMjJ?=
- =?us-ascii?Q?GIQCA8gW9VwPYX++vbKH38JoEXtXMrnYaU1u1aEDJ4Vd1amG0JzPiwZvbST+?=
- =?us-ascii?Q?2y8qTZJ4/48Z9EIBapE9c4m448ESWwk6PVljLkv8sVrKFCjtmhkchCa7tVUK?=
- =?us-ascii?Q?39lw9ExQxKqYzo9SCtP7Y8wSYBo9QBwikPH39q4nae3nuu7ekzBoU7jPIxr7?=
- =?us-ascii?Q?E4PtL5TNzLi0T/lQb6pYAI3VOMrzIcbTCOkYUkQREtyroQ5EKivm/moVrJLZ?=
- =?us-ascii?Q?+0DujsB5BFva18glmlSLWdpo6/0kU8ZuhxMc7AmOzQLYUHKdLK5j8xSijXli?=
- =?us-ascii?Q?XjxspXuHjbRdptZy+0Sdzdt9XDVGUDF1oiuT3ctPlk8w26Xc+qycjL/f3q+g?=
- =?us-ascii?Q?upS06FsUG9UU8zMxots+6y0dW5Wovkciemch/OPSkCWkK2RXnt3Bm8ZFuh8u?=
- =?us-ascii?Q?5lwM0dbVlSuhZamWewaXDQtpA+5kQ3Yi2g8i4Y1qWZ3sz72ZH7qdohFKBXWJ?=
- =?us-ascii?Q?Cfe4Kq7gSWuje2sqVndJgug0JNDGWgVn8kmYXs2cOxx9dVqUx9kaGNs2+1+K?=
- =?us-ascii?Q?AqCO2dR50sHpKgipn87GMcXarKHlad52tlpLPDHPasq6S51kdHEK8l3itkIM?=
- =?us-ascii?Q?HYtlYQ5a/Tn8EhSd/pS5ML7yJs6ZNq+oaHwfX4c0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e84785d-3d82-457c-bf73-08de100ccb3a
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 19:13:47.0393
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fmPFp0FmwmuIPq9Ehty/NjK2HNrSyvdlEc3jjoGAO/dtxleLyrqD/Zkxu3w+ZAsuniLffgTWV6DP3iC8GoX0Lw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11927
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 7ZrOBwhmsRvqsdBuIVuHfb6WBJXZbfIp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzNSBTYWx0ZWRfX0ujCNs2mU7sA
+ keVfkiKo31VNyOYSRJHy1XfVGM7haOj/2p2epjWC2OxS57SpuYb29jMDPXAxPH1R14lFh5YpLcd
+ rHwck/GcfBlzG89S4Q3p6Gh4Dbf0CgWBsuowJs0AINsEWc/tyMbXNbsZq2SDu/z3fx/KtNVr4vP
+ /PfR2ahhJ0sN2y47iggyVqtygQLCsrY3IO64p496q9NFmB7oTzAHGlaSRkkdQ7PKx1KrE2TimfN
+ 81qEa3eSgOPFuIl0p+uavlQ2DSlcYoSQbfVS9veKl27a8KeEkpEioO4pXAVB5DZE6LcEYuKvUoi
+ cQDYmyIZvJJbaijplEEZj8UBhwSWwfLBEekm2iZRlplLCb6kdsHzsISdgwMlT5Xxn5jujW8fx6Z
+ fhK8ubcvhpRYLdKTqjxgqMbScsr50w==
+X-Authority-Analysis: v=2.4 cv=KKtXzVFo c=1 sm=1 tr=0 ts=68f68a00 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=wI1k2SEZAAAA:8 a=IpJZQVW2AAAA:8
+ a=gAnH3GRIAAAA:8 a=Z7BqY8bEq__jAXHbdh4A:9 a=6HWbV-4b7c7AdzY24d_u:22
+ a=IawgGOuG5U0WyFbmm1f5:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-GUID: 7ZrOBwhmsRvqsdBuIVuHfb6WBJXZbfIp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180035
 
-On Mon, Oct 20, 2025 at 11:51:47AM -0500, Alex Elder wrote:
-> The SpacemiT K1 SoC QSPI implementation needs to avoid shutting
-> off the clock when changing its rate.  Add a new quirk to indicate
-> the clock should not be disabled/enabled when changing its rate
-> for operations.
->
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/spi/spi-fsl-qspi.c | 21 +++++++++++++++++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-> index 1e27647dd2a09..703a7df394c00 100644
-> --- a/drivers/spi/spi-fsl-qspi.c
-> +++ b/drivers/spi/spi-fsl-qspi.c
-> @@ -197,6 +197,11 @@
->   */
->  #define QUADSPI_QUIRK_USE_TDH_SETTING	BIT(5)
->
-> +/*
-> + * Do not disable the "qspi" clock when changing its rate.
-> + */
-> +#define QUADSPI_QUIRK_NO_CLK_DISABLE	BIT(6)
+Document double PWM setup SPI offload wiring schema.
 
-NO_CLK_DISALBE look likes not clk disable capability. Maybe
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ Documentation/iio/ad4030.rst | 39 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-QUADSPI_QUIRK_SKIP_CLK_DISABLE
+diff --git a/Documentation/iio/ad4030.rst b/Documentation/iio/ad4030.rst
+index b57424b650a8..9caafa4148b0 100644
+--- a/Documentation/iio/ad4030.rst
++++ b/Documentation/iio/ad4030.rst
+@@ -92,6 +92,45 @@ Interleaved mode
+ In this mode, both channels conversion results are bit interleaved one SDO line.
+ As such the wiring is the same as `One lane mode`_.
+ 
++SPI offload wiring
++^^^^^^^^^^^^^^^^^^
++
++.. code-block::
++
++    +-------------+         +-------------+
++    |         CNV |<-----+--| GPIO        |
++    |             |      +--| PWM0        |
++    |             |         |             |
++    |             |      +--| PWM1        |
++    |             |      |  +-------------+
++    |             |      +->| TRIGGER     |
++    |          CS |<--------| CS          |
++    |             |         |             |
++    |     ADC     |         |     SPI     |
++    |             |         |             |
++    |         SDI |<--------| SDO         |
++    |         SDO |-------->| SDI         |
++    |        SCLK |<--------| SCLK        |
++    +-------------+         +-------------+
++
++In this mode, both the ``cnv-gpios`` and a ``pwms`` properties are required.
++The ``pwms`` property specifies the PWM that is connected to the ADC CNV pin.
++The SPI offload will have a ``trigger-sources`` property to indicate the SPI
++offload (PWM) trigger source. For AD4030 and similar ADCs, there are two
++possible data transfer zones for sample N. One of them (zone 1) starts after the
++data conversion for sample N is complete while the other one (zone 2) starts 9.8
++nanoseconds after the rising edge of CNV for sample N + 1.
++
++The configuration depicted in the above diagram is intended to perform data
++transfer in zone 2. To achieve high sample rates while meeting ADC timing
++requirements, an offset is added between the rising edges of PWM0 and PWM1 to
++delay the SPI transfer until 9.8 nanoseconds after CNV rising edge. This
++requires a specialized PWM controller that can provide such an offset.
++The `AD4630-FMC HDL project`_, for example, can be configured to sample AD4030
++data during zone 2 data read window.
++
++.. _AD4630-FMC HDL project: https://analogdevicesinc.github.io/hdl/projects/ad4630_fmc/index.html
++
+ SPI Clock mode
+ --------------
+ 
+-- 
+2.39.2
 
-> +
->  struct fsl_qspi_devtype_data {
->  	unsigned int rxfifo;
->  	unsigned int txfifo;
-> @@ -306,6 +311,11 @@ static inline int needs_tdh_setting(struct fsl_qspi *q)
->  	return q->devtype_data->quirks & QUADSPI_QUIRK_USE_TDH_SETTING;
->  }
->
-> +static inline int needs_clk_disable(struct fsl_qspi *q)
-
-bool type?
-
-Frank
-
-> +{
-> +	return !(q->devtype_data->quirks & QUADSPI_QUIRK_NO_CLK_DISABLE);
-> +}
-> +
->  /*
->   * An IC bug makes it necessary to rearrange the 32-bit data.
->   * Later chips, such as IMX6SLX, have fixed this bug.
-> @@ -536,15 +546,18 @@ static void fsl_qspi_select_mem(struct fsl_qspi *q, struct spi_device *spi,
->  	if (needs_4x_clock(q))
->  		rate *= 4;
->
-> -	fsl_qspi_clk_disable_unprep(q);
-> +	if (needs_clk_disable(q))
-> +		fsl_qspi_clk_disable_unprep(q);
->
->  	ret = clk_set_rate(q->clk, rate);
->  	if (ret)
->  		return;
->
-> -	ret = fsl_qspi_clk_prep_enable(q);
-> -	if (ret)
-> -		return;
-> +	if (needs_clk_disable(q)) {
-> +		ret = fsl_qspi_clk_prep_enable(q);
-> +		if (ret)
-> +			return;
-> +	}
->
->  	q->selected = spi_get_chipselect(spi, 0);
->
-> --
-> 2.48.1
->
 
