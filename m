@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-861291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64363BF24D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:05:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722EBBF24D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B2C18A50BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226A818A50CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD5D283C89;
-	Mon, 20 Oct 2025 16:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A12283C89;
+	Mon, 20 Oct 2025 16:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oJ9/rVdP"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="rkXE2R7r"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81EF25776
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227FF26B2B0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976322; cv=none; b=nZb07kD/8iBhs0BZEHbOQCr1RQiDlinmrTsbj0BVwY13vDQ/7s3MSDpp9QNYHq2jEUW96C+FutS+c1zN+iQMgWdPavCaL4/5NP1XwIj3algkmHgrallGIR45qoGx7zdnyKtwsEJjMKrg1/2rSKcE/AE0XumfCeqAP04L0cpZTyQ=
+	t=1760976346; cv=none; b=klWTSmWrqqdre7XalGLcWj8skRV3a/B9Ctz9p4CzSRyOEa2gSYrzQGDSgcOiCcRorI8NkCogtC3wQpbF7iELAUEafSGsxzP8pnkZ7YbUlpaThWRtS4SA338WZck695h3GsXs0qBs47s7zpnu/LVpAchwuOFRYs+Ln1UbQ9bV7bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976322; c=relaxed/simple;
-	bh=3oF43lksJ9ygM8ewfRf+0YO+ZnJQICThOq7TsgiSkAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=fM3DXaW0rFqtqiY1cc6LRt1z/dj/n9KAz+nN8GekCeooLzyvarhnjeWSixEAdczxWj9yiBL/WvKmPPwc8EzmOFNUfymSRiOf1mUdFk4bvrBIzZ1f319B4yZnTNSR6UPfUhDGFM7DFhswkH6xRF6SHwEvL10NS9ja61bltQa5URc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oJ9/rVdP; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251020160519euoutp0297776da84b6deb114f0015c1e433c1ac~wPqHkVxgj1355213552euoutp02I
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:05:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251020160519euoutp0297776da84b6deb114f0015c1e433c1ac~wPqHkVxgj1355213552euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760976319;
-	bh=epShz+CTOjY93xi7RVW37ayBnF7a/lRcVt7p/Q0G6UY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=oJ9/rVdPrTfHFcLWMVPkdpTgyvf+UUF5turT5qNnFT/su0+7pBMQGh/khYB2qw3g3
-	 pRJLXAgTT6pXFTvzQssoBtmQX075DjmTDpGOYC1NRq+2ewa8F8Pp4PlXZhUsXHbdTE
-	 YhepKCrYCrDr2oTatyLuN9VsD5kB1ggl6tMRTpxA=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251020160518eucas1p170b171f7b893a3ca0ddc4aed2a227836~wPqHFFq-02701827018eucas1p1t;
-	Mon, 20 Oct 2025 16:05:18 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251020160518eusmtip225816944b290f34ad376016b247e0857~wPqGZ8Q4P1470014700eusmtip2Y;
-	Mon, 20 Oct 2025 16:05:17 +0000 (GMT)
-Message-ID: <0f159e72-e5e4-44ea-8b3e-1ccb9341a9e8@samsung.com>
-Date: Mon, 20 Oct 2025 18:05:17 +0200
+	s=arc-20240116; t=1760976346; c=relaxed/simple;
+	bh=qMbp2Diy4U8QOB57q1OG406eTNxLv51sA/JgZoIVxkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUHP3H1LphKDjC/5Mm489gE0QS2Z6eh3YBKKVDPNQsTpO4f3RYcxDafSJ3D0CrQ4oLodSA8wA4kI/nbvzs40mbEl+G7c80BOxJvBgJUM4P8THM6gup4FdLE1PPnYT/FFiqnlyICBPWNJBRG5rbNQCldGbwQ+c84LvFoN5vS5BRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=rkXE2R7r; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-87c148fb575so72436926d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:05:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1760976344; x=1761581144; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p4JsBaddaRYoEAs4W8WEBwtA+SYjh8zLzD82hzn+tek=;
+        b=rkXE2R7rkqoNJUK+RD7jTuveO/WEnn0dBcwX09GQ2jAij4DUWkcOnWtDVXIp0W4y58
+         BqloU8n6CKIVXDV3QUIj0SfEseW55YYjMsh292rJXI90CuOmCy94MukGbAIlO1kCkZh0
+         bOf+Pv0Bz2whfhwSd5owJcyE6+vQUxQoRXCpnBsjKveiqu38AoVKyaWIvFtBYaMJRC81
+         vkU+VV79cX4hMEsEvb6IPHZDeFMeA64NPj37NWDp88bpjsA5h0/cJmpcFonC+6IGLPAN
+         wDiLQyvZJfSs1X2cDc0EAFQZ5pdIJavaLa7quYmWzoOOCGNEQFAFmhc7/badG5dKn6Ka
+         EPvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760976344; x=1761581144;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p4JsBaddaRYoEAs4W8WEBwtA+SYjh8zLzD82hzn+tek=;
+        b=n0phrourmf1AfHAeIflCHxzw7/ko/trHE+n6eJLlIjeHdDsamjoF3H1W9d/YivLZF5
+         f/ZeNGInWnAaR74qfPQAdMVd6XxAOYNwmzRiw5dGIkMvjpQG5NCeKHIbgCiBMPgKbuGd
+         L1r7tbo2nXTAaExWlMEqPQYzJi8Fc5Tz/J4AOtRSWXKC8N8mKy79xoixGNnVBjcTveQS
+         /dnoGto43TIRAReypAxOGDr+MPMlyEuFwp/g0d+pOGisulZ4DoCr2+KpL8I1gSAC450P
+         Si6lOU9bG5KNmUMpnrLmM9AMb00IBaGGiuvn0bY8iczs4KTIRLPVJHVtHJuIOy9r5ByT
+         FHtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXRBcXh0pD0tg0fe2EdKuzvJps+ch/ZMJI9tjDexVeVTTEMCWWjt+qpc8er6cXkr9oG76fWM4zD29aOVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtX2AkKI5ioUBzgdqOEVkTCU1DNub6PeTVkcZPS/X9NkGFGmQb
+	Cf3Qd/+89pcQSD+jw8i4/VPdVX0taTHw5WdX20BrHA+eYn8rvBQx8x3m76prZsOfEPE=
+X-Gm-Gg: ASbGncsrlzs2kd0sBt3rE5IOQYS7aazLmA8KQH2P2YdvNFdLereFtHAqE4HbJNTnhuH
+	54fJ0N+FsT4THtOoN7bTQNzl8aNYdD+zrM2wZepAU6TcndtXmEK4c8GCDd19PAx8KMF8ghjBBvo
+	u1ASaXOv/ma0ucH+fbkEbWxFDqxB0xNudLyW3sMoLaMnt2t4fRx4+IZhayf+Ea4FvDcZc6LP/J5
+	cC5Z7yPpYj85fZR8FFItWdGzT5zK3JqQDRj0Rgz/Yfam62y8x+bH5DKtQtjEtP1yKrpzmyoo7Bn
+	MLq+W/1l6dZkYww19dHackNC9owARsQ5U2pkRRvKMZ6Ri59C00L+KiAO75lOcPjLD3fFZdGjkPk
+	DyWiIKDrAfxMfenr823Bqk1o7tRxpOhl5+oShFkSVgq2BlPTOLDNTg9aFLJMvdnOYs8dFMR6IL7
+	9PqmqXk044ybYYZZ3jcsf2F1Pd5GcW5TxbmqjmWB0Wezz3RQGuzVYwfUzxpnE=
+X-Google-Smtp-Source: AGHT+IFO0Fmmp1MECEFi2jzErsOgbxowWqJ/ySBor/huje/sLrMYVoPz/DTL50HIV6LVQv5D46sXow==
+X-Received: by 2002:a05:6214:230c:b0:87d:e2b:cdf7 with SMTP id 6a1803df08f44-87d0e2bd165mr123924826d6.66.1760976343811;
+        Mon, 20 Oct 2025 09:05:43 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf521be67sm53378076d6.16.2025.10.20.09.05.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 09:05:43 -0700 (PDT)
+Date: Mon, 20 Oct 2025 12:05:41 -0400
+From: Gregory Price <gourry@gourry.net>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, osalvador@suse.de, corbet@lwn.net,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	hannes@cmpxchg.org, laoar.shao@gmail.com, mclapinski@google.com,
+	joel.granados@kernel.org, jack@suse.cz, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+	Michal Hocko <mhocko@suse.com>,
+	Alexandru Moise <00moses.alexander00@gmail.com>,
+	David Rientjes <rientjes@google.com>
+Subject: Re: [RFC PATCH] mm, hugetlb: implement movable_gigantic_pages sysctl
+Message-ID: <aPZd1dAIzAw7Ii8E@gourry-fedora-PF4VCD3F>
+References: <20251009161515.422292-1-gourry@gourry.net>
+ <6fe3562d-49b2-4975-aa86-e139c535ad00@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
- legacy fileio is active
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Hans Verkuil
-	<hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans
-	Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <258b9036-697d-48b2-91d6-5fb8ea2f1350@collabora.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251020160518eucas1p170b171f7b893a3ca0ddc4aed2a227836
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
-References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
-	<20251016111154.993949-1-m.szyprowski@samsung.com>
-	<36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
-	<84133573-986d-4cc8-8147-246f0da34640@samsung.com>
-	<1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
-	<21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
-	<642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
-	<258b9036-697d-48b2-91d6-5fb8ea2f1350@collabora.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fe3562d-49b2-4975-aa86-e139c535ad00@redhat.com>
 
-On 20.10.2025 10:30, Benjamin Gaignard wrote:
-> Le 20/10/2025 à 10:21, Marek Szyprowski a écrit :
->> On 20.10.2025 09:48, Benjamin Gaignard wrote:
->>> Le 20/10/2025 à 09:39, Hans Verkuil a écrit :
->>>> On 20/10/2025 09:34, Marek Szyprowski wrote:
->>>>> On 20.10.2025 09:11, Benjamin Gaignard wrote:
->>>>>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
->>>>>>> create_bufs and remove_bufs ioctl calls manipulate queue internal
->>>>>>> buffer
->>>>>>> list, potentially overwriting some pointers used by the legacy 
->>>>>>> fileio
->>>>>>> access mode. Simply forbid those calls when fileio is active to
->>>>>>> protect
->>>>>>> internal queue state between subsequent read/write calls.
->>>>>> Hi Marek,
->>>>>>
->>>>>> I may be wrong but using fileio API and create/remove API at the 
->>>>>> same
->>>>>> time
->>>>>> sound incorrect from application point of view, right ? If that not
->>>>>> the
->>>>>> case maybe we should also add a test in v4l2-compliance.
->>>>> Definitely that's incorrect and v4l2-core must forbid such calls. The
->>>>> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending
->>>>> v4l2-compliance tools is probably a good idea.
->>>> Yes, please! A patch is welcome.
->>>>
->>>>    I also wonder if its a
->>>>> good time to add a kernel option to completely disable legacy fileio
->>>>> access mode, as it is not really needed for most of the systems
->>>>> nowadays.
->>>> No, that will break applications. Using read() is very common (and
->>>> convenient!)
->>>> for MPEG encoders such as the cx18 driver.
->>>>
->>>> The fileio code is not blocking any new development, it's just there
->>>> for those
->>>> drivers were it makes sense.
->>>>
->>>> Regards,
->>>>
->>>>      Hans
->>> I wonder if this patch in useful because when calling
->>> vb2_ioctl_create_bufs()
->>> it already check in vb2_verify_memory_type() if fileio is used or not.
->> Frankly speaking the original report I got was about mixing fileio with
->> vb2_ioctl_remove_bufs and that case is indeed not protected.
->>
->> While analyzing that I've inspected a symmetrical ioctl
->> (vb2_ioctl_create_bufs), but it looks I've I missed that a check is in
->> vb2_verify_memory_type(). I will remove it in v2 then.
->
-> To keep vb2_ioctl_remove_bufs() symmetrical to vb2_ioctl_create_bufs()
-> we should do in vb2_ioctl_remove_bufs() something like :
-> res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
-> instead of vdev->queue->type != d->type.
->
-> This way we test fileio too.
+On Mon, Oct 20, 2025 at 04:17:06PM +0200, David Hildenbrand wrote:
+> On 09.10.25 18:15, Gregory Price wrote:
+> That could be supported by allowing for moving hugetlb folios when their
+> size is small enough to be served by the buddy, and the size we are
+> allocating is larger than the one of these folios.
+> 
 
+I think this is roughly what you'd be looking for?
+~Gregory
 
-Right, that will fit best. I've sent a v2 with such change. Btw, the 
-vb2_verify_memory_type() name is a bit misleading in this context. Maybe 
-it should be renamed to something like vb2_is_queue_compatible()?
+---
 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5549b32cdd31..5def2c53092e 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6922,8 +6922,12 @@ static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
+                if (PageReserved(page))
+                        return false;
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+-               if (PageHuge(page))
+-                       return false;
++               if (PageHuge(page)) {
++                       /* Don't consider moving same size/larger pages */
++                       if (!CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION ||
++                           ((1 << compound_order(page)) >= nr_pages))
++                               return false;
++               }
+        }
+        return true;
+ }
 
