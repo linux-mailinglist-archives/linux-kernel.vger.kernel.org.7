@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-860704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63FABF0BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:07:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C839BF0E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAAD4189F23E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2AE1892B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE112F7AC8;
-	Mon, 20 Oct 2025 11:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCCB303A22;
+	Mon, 20 Oct 2025 11:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ddZS/Sn9"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="ZeskzsYD"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609EA230BCB;
-	Mon, 20 Oct 2025 11:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACC72FFDFF;
+	Mon, 20 Oct 2025 11:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958460; cv=none; b=QZYT2gekgoI0qeKjF0PlXNJ8QlZmqPJfmlghBWrz0PZnhaULz2umgSUp0YrGBIvmFkqPcAKY4g9xCaw4GiFpmrBa1gSdGpTp8rDqdQrQ40ZVChT2H5KgIqQFrjUl3gKu46F7NtVy6xOseoTn0c1EfmA6HAz71duuIHpRkVqzwyU=
+	t=1760960588; cv=none; b=PokqaxgM77W8sTrlQ9Be+afzU0lxazDGndhXI2Bw9+SwUAXFUjJR8mIb4CIuE75it7njMTtd9BbnMLCmzxtH718+wxbegfmpX8vjThZGaK37ju6KOcU3fKw9iNipQ//fjAfi1dpUoBEvPlgUAz6FLdxgLg8h/dTFjAvc4V76mqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958460; c=relaxed/simple;
-	bh=37JXeaabSnQEBCgvzFMhmKS7+aCd6QldkTzU3wu9728=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JDz5539/l9MfZR+VER+Ot2KfvvqcCCPQJhpAw5dSb+Vxt3QD7CGXBNaz5jhFErFoLg+nO+cgj/X94P0TZPNBqc/A9hocXN3S4yROLYmoCW+XOKG3UNS6ToO34GANwhrEsAFTGM3E5Gq5ia7z9Z+zBn0V2b/BBklushiu6I3nxQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ddZS/Sn9; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=nQ0chgf8+QUyTzowyJfqVEnK894JZa7lGc3+hmjC1Yo=;
-	b=ddZS/Sn9zzzc8Kf5fxuDeSAb2exjusBlWN7RobWM674HE7ExtsIcj3uJw6wB3xYX/wTy7PhQg
-	DxAj9XoxB911hHx53WA7FFF8Qbjhxm6jMqsc7aYXBU4upkKMFUNyWMsZyHF2WIwI3kBGYtxFTs1
-	sfgFUoJN6tXSYbRFG/Hth3g=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cqt0Y5NBcz1T4Jx;
-	Mon, 20 Oct 2025 19:06:37 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 467EE180491;
-	Mon, 20 Oct 2025 19:07:29 +0800 (CST)
-Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
- 2025 19:07:28 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com>
-CC: <syzkaller-bugs@googlegroups.com>, <steffen.klassert@secunet.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>
-Subject: [PATCH net] Re: [syzbot] [net?] WARNING in xfrm6_tunnel_net_exit (4)
-Date: Mon, 20 Oct 2025 19:30:26 +0800
-Message-ID: <20251020113026.2461281-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760960588; c=relaxed/simple;
+	bh=BVHGhjsqK9b4xu71d6bYhuw8ohlUq0hfSWRFMjoS2us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3W1fRqSYCDwHHY3GUQoNy9QPqQien2Nc+zKo4MjULnhtMwYZgYrKqeohImUbOsG5084FbISbRGMwI6FdUmSV5pAE0Pket5ni/sVhLDrqWy9JYKmfVp0I6f7tg/7kOR/4ckbdl8AGKrb4b6va5pst0O8PUIz+/53AMU2t87tKcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=ZeskzsYD; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=sGh+lXCxJLP2PCtNQCSqJwH2PFvRYf3kwyoAPzwi6ko=; b=ZeskzsYDXqPOHB5dSBDe6pqdU/
+	cvZUjn4eTyzf22cno3nnnFvTDxUhg0jmRWnT2OFEKXS6DH9Tkzg3kgn6u0nGlJuR49ZQKT9TRoSLo
+	Kui0O0lWBkKZG1epYUheSakicRJGGuY9hIbHvCPlQGmBgO/B2j911ORhMwd47rBUAvX/bn34tpP4d
+	R3xIGVqYTyKj8aIxNu80t0upX8+BOzwrFGyqTGTMcbvB2Y9mCkI0EHcxIrakJZBV4EhUVAS71ZYwX
+	kIUu+SLq/aADyTeuyd6RODDLP67z6pLm3d1hZErS6FFqiJXV7GiSpHjur1Z/hDiHFqjyYpPHMBgBa
+	y0ngSvRQ==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1vAo5w-0017ul-1Y;
+	Mon, 20 Oct 2025 12:30:32 +0100
+Date: Mon, 20 Oct 2025 12:30:32 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] pm: Ensure exclusive userspace access when using
+ /dev/tpm<n>
+Message-ID: <cover.1760958898.git.noodles@meta.com>
+References: <cover.1758646791.git.noodles@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1758646791.git.noodles@meta.com>
 
-#syz test
+I hit a problem where ~ 1% of TPM firmware upgrades were failing.
+Investigating revealed the issue was that although the upgrade tool uses
+/dev/tpm0 this does not actually prevent access via /dev/tpmrm0, nor
+internal kernel users. It *does* prevent access to others via /dev/tpm0
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index f3014e4f54fc..2e7ab56db152 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -441,6 +441,7 @@ int xfrm_input_register_afinfo(const struct xfrm_input_afinfo *afinfo);
- int xfrm_input_unregister_afinfo(const struct xfrm_input_afinfo *afinfo);
- 
- void xfrm_flush_gc(void);
-+void xfrm_state_delete_tunnel(struct xfrm_state *x);
- 
- struct xfrm_type {
- 	struct module		*owner;
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index d213ca3653a8..5d982e4e6526 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -806,7 +806,6 @@ void __xfrm_state_destroy(struct xfrm_state *x)
- }
- EXPORT_SYMBOL(__xfrm_state_destroy);
- 
--static void xfrm_state_delete_tunnel(struct xfrm_state *x);
- int __xfrm_state_delete(struct xfrm_state *x)
- {
- 	struct net *net = xs_net(x);
-@@ -3085,7 +3084,7 @@ void xfrm_flush_gc(void)
- }
- EXPORT_SYMBOL(xfrm_flush_gc);
- 
--static void xfrm_state_delete_tunnel(struct xfrm_state *x)
-+void xfrm_state_delete_tunnel(struct xfrm_state *x)
- {
- 	if (x->tunnel) {
- 		struct xfrm_state *t = x->tunnel;
-@@ -3096,6 +3095,7 @@ static void xfrm_state_delete_tunnel(struct xfrm_state *x)
- 		x->tunnel = NULL;
- 	}
- }
-+EXPORT_SYMBOL(xfrm_state_delete_tunnel);
- 
- u32 xfrm_state_mtu(struct xfrm_state *x, int mtu)
- {
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 010c9e6638c0..7f769617882c 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1031,6 +1031,7 @@ static int xfrm_add_sa(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0) {
- 		x->km.state = XFRM_STATE_DEAD;
- 		xfrm_dev_state_delete(x);
-+		xfrm_state_delete_tunnel(x);
- 		__xfrm_state_put(x);
- 		goto out;
- 	}
+So the upgrade process started, the HW RNG came in to get some
+randomness in the middle, did the HMAC context dance, and confused
+everything to the point the TPM was no longer visible to the OS even
+after a reboot.
+
+Thankfully I've been able to recover those devices, but really what I'd
+like is the ability for a userspace tool to exclusively access the TPM
+without something coming in behind it. Given the lightweight attempt at
+locking that already exists I think this was the original intention.
+
+I've reworked this series based on feedback received.
+
+Firstly, it's been reordered TPM sharing functionality doesn't break
+during bisection.
+
+Secondly, the O_EXCL check has been tightend up to ensure the caller is
+also opening the device O_RDWR. Callers shouldn't really be opening the
+TPM except for reading + writing, but this should help guard against
+unexpected flags usage a bit more.
+
+Finally, this revision keeps the prohibition on more than one user of
+/dev/tpm#, to avoid unexpected breakages for clients that expect this to
+guard against multiple invocations. A client only then needs to use
+O_EXCL if it wants to prevent *all* other access, even with
+ContextSaves, such as the firmware upgrade case.
+
+(I've sent a separate standalone patch that allows the TPM HW RNG to be
+disabled at run time, and it's now in -next, but even with that I think
+something like this is a good idea as well.)
+
+Jonathan McDowell (4):
+  tpm: Remove tpm_find_get_ops
+  tpm: Add O_EXCL for exclusive /dev/tpm access
+  tpm: Include /dev/tpmrm<n> when checking exclusive userspace TPM
+    access
+  tpm: Allow for exclusive TPM access when using /dev/tpm<n>
+
+ drivers/char/tpm/tpm-chip.c       | 90 +++++++++++++++----------------
+ drivers/char/tpm/tpm-dev-common.c |  8 +--
+ drivers/char/tpm/tpm-dev.c        | 35 ++++++++++--
+ drivers/char/tpm/tpm-dev.h        |  1 +
+ drivers/char/tpm/tpm-interface.c  | 20 +++++--
+ drivers/char/tpm/tpm.h            |  3 +-
+ drivers/char/tpm/tpm2-space.c     |  5 +-
+ drivers/char/tpm/tpm_tis_core.c   |  3 +-
+ drivers/char/tpm/tpmrm-dev.c      | 20 ++++++-
+ include/linux/tpm.h               |  4 +-
+ 10 files changed, 124 insertions(+), 65 deletions(-)
+
 -- 
-2.34.1
+2.51.0
 
 
