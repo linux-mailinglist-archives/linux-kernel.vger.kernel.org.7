@@ -1,102 +1,131 @@
-Return-Path: <linux-kernel+bounces-860954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0D4BF16F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:07:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB95BF172F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4190C188EFE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:07:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F0804F64DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9CB30214F;
-	Mon, 20 Oct 2025 13:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8C93128D9;
+	Mon, 20 Oct 2025 13:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZ4QFW6p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+G04tYc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6473002D8;
-	Mon, 20 Oct 2025 13:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2472F6196;
+	Mon, 20 Oct 2025 13:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760965634; cv=none; b=QqyZZRJppGr1C8nfS9CGkeL89uSZOCQKKzNZJF/HqvTYpRCBq7Kc5oKa0KYpbQYBz0OFJc8b+iLODL8vQoZY3spgMCpsQEpQS0VLlmpBxNlSB7T3FZKqqsHa6zhAsClveQFcS0BaIUEpyaoXTsyKt9Iov5/3Vva1zwiS0kmB6I8=
+	t=1760965650; cv=none; b=MIk/s1xLmgzNr0YIAnK8x5urhesm91cX2EmNG/AP3FVXFw6McQiTlhPPfjqzGvdEGb0p6k+uPn2LHZSt8qgZ1vU/16MnryjBImEvkswx3PUoidjaEkKb3cXKkIfqY5qvBjhluW9eOlILALiNWTxMiUVuJP04Hu5scej30Mz3XA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760965634; c=relaxed/simple;
-	bh=sDt9bY6IJ8VZ0anxq/fNuLEICPIosHo7v/dxSN30r+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuiVb5S7atdxBvryi5k+Y9n8VlsNfkAw3UZCrDh3p3QZret7eX/fpo2+bDKuqqPRdymqyTByCTLglXvnMYCg8QrS64KUYEJCxdlm9tjAGThCc8fOxLiajTzTRMelyPD4+JiVOckadtpZVrO5S2T43JEnIKPIeKm9UuocyKIYc1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZ4QFW6p; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760965632; x=1792501632;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sDt9bY6IJ8VZ0anxq/fNuLEICPIosHo7v/dxSN30r+I=;
-  b=QZ4QFW6pmv2KAfcqQRuxt6hdb1wS5RfOb7rVyj1pi6j3uSDb+AAh3n26
-   4fbDI5+oNS/y2YC+vIcYZ89k3uyUrLyGKEPU3XcI9YF4XdJKmjzzMD6wa
-   oUWRKDAldZAFvEa3wNvODqzwzFUh7Tl+O1MoiEVBs7kATloQ4DxFDHmi9
-   vq3XZ6j5h3sdoDCTBCNLa43gz43FuYxVmZQoF8LlZ95YviTGe7fJS1zZ5
-   a6fmNZKY/aHQTVgn2DXO1W1lrTL+3LtwcOUav92r84vb78qG5De5lCNEd
-   a6mtGfDQuEFkzMCey1tp9tY2jkVXI/390oWA/YfIzUKmK1bVcMenPw24R
-   A==;
-X-CSE-ConnectionGUID: NyC1IEZRQGeM7aWQ4IlrAw==
-X-CSE-MsgGUID: YYIGcMwNT+yt9tfP3o3nEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62780692"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="62780692"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 06:07:02 -0700
-X-CSE-ConnectionGUID: gKz2po1ETZSS4NqhrWmrCg==
-X-CSE-MsgGUID: OPyi6ZnHTvyc7ZcVEH1Ftg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="188423419"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 20 Oct 2025 06:07:00 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 889D895; Mon, 20 Oct 2025 15:06:58 +0200 (CEST)
-Date: Mon, 20 Oct 2025 15:06:58 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Anand Moon <linux.amoon@gmail.com>,
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] i2c: designware: Omit a variable reassignment in
- dw_i2c_plat_probe()
-Message-ID: <20251020130658.GO2912318@black.igk.intel.com>
-References: <bec52694-c755-4d88-aa36-1d96f6d146e4@web.de>
+	s=arc-20240116; t=1760965650; c=relaxed/simple;
+	bh=84ijlBcIXDyj2XxLW1M/v22FZDomhnAZOpBhwWY+gj8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MeoRqyyaXJPkExVPcQQeA4jh5LJTpcqam8tdTCOrR41QXL+KfI+qVzRFVKHX9T3ij9FC60dyhEMpPMOBz3Cz52bg9EHSwbKt3i0Tx22goF3sV3VEPvSvE4zP64sm1fFlhuhFTiXoXnEv/+86cnqT85qfdY3ymb3dj+rzk5uaz/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+G04tYc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125E1C4CEF9;
+	Mon, 20 Oct 2025 13:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760965649;
+	bh=84ijlBcIXDyj2XxLW1M/v22FZDomhnAZOpBhwWY+gj8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=J+G04tYckYKTK5Fv7opz/ARIwtEcpd1Me7sAxQb80crCGS/FF/ITXqC3DPVs/XH9j
+	 VaAWQZV8BEjj3yusnRMMb1GQBDUJ7oADlIX09X4ihVNIc7loysdtraUaIeFg47JlED
+	 XqvTqs9/cHF8dq5Fc+COhUL3f6wUCHm6+m0GbMP0gXeaYVJGEDCiqLhoI4Aui6jsIh
+	 Xe3C1NzeO7/7Pk6sUq8VJqxVlgdy7LNh3R5aEhQs1W0S3HztVbN0dhlfMnGusb86E/
+	 i+UctN8VRIOyvrIcCHmcJ97jz0nFgqt+bP+8m07lsnYVvMTIz4vl0l0etr9l9APkyC
+	 DnHeQwf9qWSfg==
+From: Tamir Duberstein <tamird@kernel.org>
+Date: Mon, 20 Oct 2025 09:07:22 -0400
+Subject: [PATCH] rust: opp: simplify callers of `to_c_str_array`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bec52694-c755-4d88-aa36-1d96f6d146e4@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251020-opp-simpler-code-v1-1-04f7f447712f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAk09mgC/x3MQQqAIBBA0avIrBtQKYuuEi1KpxqoFIUIxLsnL
+ d/i/wyJIlOCUWSI9HBif1eoRoA9lnsnZFcNWupOSTWgDwETX+GkiNY7wm4wRluj+3VroWYh0sb
+ vv5zmUj5a6oWMYgAAAA==
+X-Change-ID: 20251018-opp-simpler-code-58662c627bf4
+To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-pm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760965647; l=1850;
+ i=tamird@kernel.org; h=from:subject:message-id;
+ bh=84ijlBcIXDyj2XxLW1M/v22FZDomhnAZOpBhwWY+gj8=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QHFqjXyc3WyeybzGTMB6Px+KBZWl1fyMKfCJf97ch3/b5poABmNTmH423TIyOELROATh2hm8hsT
+ tGJnVm37i5ww=
+X-Developer-Key: i=tamird@kernel.org; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On Mon, Oct 20, 2025 at 01:08:53PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 20 Oct 2025 12:56:39 +0200
-> Subject: [PATCH] i2c: designware: Omit a variable reassignment in dw_i2c_plat_probe()
-> 
-> An error code was assigned to a variable and checked accordingly.
-> This value was passed to a dev_err_probe() call in an if branch.
-> This function is documented in the way that the same value is returned.
-> Thus delete a redundant variable reassignment.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Use `Option` combinators to make this a bit less noisy.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Tamir Duberstein <tamird@kernel.org>
+---
+ rust/kernel/opp.rs | 25 ++++++++-----------------
+ 1 file changed, 8 insertions(+), 17 deletions(-)
+
+diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
+index 9d6c58178a6f..b84786f45522 100644
+--- a/rust/kernel/opp.rs
++++ b/rust/kernel/opp.rs
+@@ -443,23 +443,14 @@ pub fn set_supported_hw(mut self, hw: KVec<u32>) -> Result<Self> {
+     ///
+     /// The returned [`ConfigToken`] will remove the configuration when dropped.
+     pub fn set(self, dev: &Device) -> Result<ConfigToken> {
+-        let (_clk_list, clk_names) = match &self.clk_names {
+-            Some(x) => {
+-                let list = to_c_str_array(x)?;
+-                let ptr = list.as_ptr();
+-                (Some(list), ptr)
+-            }
+-            None => (None, ptr::null()),
+-        };
+-
+-        let (_regulator_list, regulator_names) = match &self.regulator_names {
+-            Some(x) => {
+-                let list = to_c_str_array(x)?;
+-                let ptr = list.as_ptr();
+-                (Some(list), ptr)
+-            }
+-            None => (None, ptr::null()),
+-        };
++        let clk_names = self.clk_names.as_deref().map(to_c_str_array).transpose()?;
++        let clk_names = clk_names.map_or(ptr::null(), |c| c.as_ptr());
++        let regulator_names = self
++            .regulator_names
++            .as_deref()
++            .map(to_c_str_array)
++            .transpose()?;
++        let regulator_names = regulator_names.map_or(ptr::null(), |c| c.as_ptr());
+ 
+         let prop_name = self
+             .prop_name
+
+---
+base-commit: a1ec674cd709fec213acbb567e699c5f6f58cb60
+change-id: 20251018-opp-simpler-code-58662c627bf4
+
+Best regards,
+--  
+Tamir Duberstein <tamird@kernel.org>
+
 
