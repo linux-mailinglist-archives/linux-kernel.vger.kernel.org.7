@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-861343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBC1BF27A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:39:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A29BF2794
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5505118A5F30
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A28F3A2925
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5173828C2BF;
-	Mon, 20 Oct 2025 16:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94248298CA6;
+	Mon, 20 Oct 2025 16:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="as/MNCVJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hg1aC1aW"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D338B22172E;
-	Mon, 20 Oct 2025 16:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C50A28A705
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760978250; cv=none; b=V9ArlMP+nGHZgAfGJT5AoCG0DOCplbZ4a/bbnahQ3AS0xmlQ6P6CInoNtwYRyQYM/bs9igQvLSwbAfWxteJ5e5Wm9PUXF4XqO/GwKBSnOu522/fpTodLssEhxzuAXEeUlKBW0BWLQMGJ9arJdIhL3xWddH8/eEDv4UY0JWGe3HE=
+	t=1760978278; cv=none; b=sh21cf2SB6nMKFeHt2MwKTgBIAqnCzJQNVKoqNNBcyDY7ACgf4zS+HHH0mfRArAmGCiBsgt9dnQcbnPPt3xR5OlSyoR56Wk4YuY37XgO3HnXhnrlmzX/s2OxfLIiJhIAXP8gdAGcbuTjuijATNWRso4TeNVc76gWnZBdUFIYOGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760978250; c=relaxed/simple;
-	bh=+qZlyl7YWbY2lLgbuJo2hAw91ag2rew7u58FOPhtmUc=;
+	s=arc-20240116; t=1760978278; c=relaxed/simple;
+	bh=YEG62/zWI7JUwRcU7/VbqYXkIBeekZs85fRYRhzN+08=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vur5FNfifWmpQRJldMSCd4mVByB8/aX8XiPr6Vzj8+wkRyzm+WR4iLAP56NuKUF05zsK+UZXsgO8Bmy/i9bPduIo4glSiBrxf9ygM95GuDlm7Yztk6hWNbjrQPPWdymwMhxVYaulyyj79mvaXTrspF373q/6HTySmm+K2qixi30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=as/MNCVJ; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760978249; x=1792514249;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+qZlyl7YWbY2lLgbuJo2hAw91ag2rew7u58FOPhtmUc=;
-  b=as/MNCVJcrzmNh+0bn6hh1WJNoRzwygBr6cr8DU3pvqEtXW6zHouvebC
-   WpODTllRf00Rg6p3B1Sx9TKjnP3cZdhfW1BJN7IjKyODEhUw1DO7coUzw
-   SX7AeEfBSNwxsDYHw4dEZ9XcQ0ZwWTgEOBEVERMxGnX8I7yFU7/4VZPWB
-   LZxH8WtBjGgEW8D1y7JcCPN+AO3vWXtbwpJ5cJwX2Xc6JCu+Dc8rkxEc/
-   hxxVIjqmbp4Utz/dLKh1EJD/iwQLLs40BFC7uA7gv/NQD0GIdpAxjfDWW
-   KRH4IfDBkJ7KIYvy9n21OEnHPNkUwsV2SnXmcBYtZ5WTMIZWy8qffMhRs
-   Q==;
-X-CSE-ConnectionGUID: McZZEvecSS2YqWEVpaigCQ==
-X-CSE-MsgGUID: CMrSmZBjRpOfNm+xecXq1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62128784"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="62128784"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:37:28 -0700
-X-CSE-ConnectionGUID: +UyQQ5tfSKWNT1m4Aaq+lw==
-X-CSE-MsgGUID: MUZlesziQx6BDxCrg5eraA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="183385703"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.103]) ([10.125.108.103])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:37:25 -0700
-Message-ID: <ca6e8c5f-4420-4efa-93fc-0c79774e8a96@intel.com>
-Date: Mon, 20 Oct 2025 09:37:24 -0700
+	 In-Reply-To:Content-Type; b=GPSfsVewX2SUvNj8NodKGEG0wMXnjqHSqSDRmNgor9r8BBqo4v0/6UcpEnxbLm32VYuMT3+noTgpaaeOuvFvu83TUEoV+4cA5FcbJwHmmSJ2O0e2pZ6jgH0mXJfxmbpt8+QUl80aVHJF0P+qJ8SKek+eDLDw8NyVgIPWRbq41lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hg1aC1aW; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee130237a8so2984475f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:37:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760978275; x=1761583075; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8de+GbhMdW9I2uk7I+p7HUkd98yL0Pf24fRr/KS7HxY=;
+        b=hg1aC1aWprRIR8snmgGxTdg5fXCGTABKkv63PYtDTqvGfsnhX+ei/4HsttKZD26ZyC
+         nTMUSoWjQlb2Js2wk3fhQlHgcbYy8WoL4zRslNvCVqcx+CFl6Gcewy2WwyaUXsyemuCD
+         Fqt2epiJ+BmmEShUwf9t/IAKhWhOpRF7oobDzSftBUvw3HBXKYvjLGAn6hNUlCNNJi03
+         Th0fjpi4DZ/7OplpgLdj31Y/nAB3R7tGjbsFZ3ehcSrXOHx5xz58wMAC4E1YJ0Hut3V2
+         3zFNHjJAYv7F84MWvHOUureNKQDhWi6bXbcY7Yl0ytGhdIR++JF5HBPHW4LKKMVb+qhl
+         tK6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760978275; x=1761583075;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8de+GbhMdW9I2uk7I+p7HUkd98yL0Pf24fRr/KS7HxY=;
+        b=KkFr0Fol69pcM6YTrd1EKm4bh2P1KeTviixqtjF2qsLUjSRUUcgzkMrvTJ35sI1zYH
+         PcDBmvJEwGJg9JurcPaI0h6AmCnwVl5xeaH8I0myA3W+d1PToipzuVN6ny8MvUVqT8QJ
+         wMHcZ4CguD5pv8RHG8rHP/DZYKeYohxoutzFLMoCpV3v62BraIFfnSdegzNuR+8sor8w
+         g1k8DmJykk9skBJRA3oxL9Qh2ZZzl3xFaXhIc6ujpD8w5KOpPBgbBGUOVwTO36n4jR5y
+         a5y8j1TK31zyxZ9F1P8DHM3YGTnwubfH+HLqn9xW4/fHu2+f3aefl7Zg1Myb5cjqaff1
+         k62g==
+X-Gm-Message-State: AOJu0Yx/KXLwDi/aAI77aoHtIp2E/zqLRcPY0m/B4Oo4FPymoPmRz0iJ
+	xv6Iw+XXHromZ2zCTDAm0i4SXURDOP7adyTb7G3SYQNibyX16Lez/N0S
+X-Gm-Gg: ASbGncsguPwYp6q5OnHc8oFqVoltT5uyxYQmZ3ikECY+vBGyDTHdA3jXLeE8pM+6gn3
+	sG1q8ObNOP/Yc/r2Azke9UeKVVTMOHJgyOr8G+nWHApF/NgWP5ufRKHKRuwvm9v86LPROrhIyHh
+	3gSPU+YGBIFcEqOFxS9BeK3/fxGQNFY4zkeIcIGAm/IjrwzT3ArdzK1dXQHrb8IMpbPLfCN6QBn
+	P1NO1LNyvqiT8BKIA2ebWVV3IadVEEa3uYYJeBsWYELzstLV9H7UB5miP5CTZG8gxtk1ZLN1ErE
+	VTrV1SQkG+lQxzQ+gpGfjPx06xJbP4NzRQ58B0hjZRL90JBSGgcFjvhbqE5Y3s+ETes34zwyo20
+	fh7prAW8zlYXCfCBN/kjgyqDPS7htNdi/2DrYd07bQO/9Dg09wFvXmFGsLlUvYcnRMd5HrfZXbu
+	QQbzE+tWCeevpYidKRbrBpZZkTQhLI5U9b58QMJ8eo
+X-Google-Smtp-Source: AGHT+IFz8nt5lSaN1IZMi/HsyQiO/U2toGtsPJ9LocnUEVg7UoKo9HQ8SO2vu6OgO8y7PKk852qrzQ==
+X-Received: by 2002:a05:6000:2405:b0:426:d5ac:8660 with SMTP id ffacd0b85a97d-42704e0eed1mr9832421f8f.58.1760978275077;
+        Mon, 20 Oct 2025 09:37:55 -0700 (PDT)
+Received: from [192.168.0.100] ([188.27.132.152])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a993sm16100829f8f.24.2025.10.20.09.37.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 09:37:54 -0700 (PDT)
+Message-ID: <0d8d7420-8a39-457f-a5a5-980a40809527@gmail.com>
+Date: Mon, 20 Oct 2025 19:37:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,165 +81,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6 v5] acpi/ghes: Add helper to copy CXL protocol error
- info to work struct
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- linux-cxl@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
- Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Guo Weikang <guoweikang.kernel@gmail.com>,
- Xin Li <xin@zytor.com>, Will Deacon <will@kernel.org>,
- Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan <gshan@redhat.com>,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Li Ming <ming.li@zohomail.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Jon Pan-Doh <pandoh@google.com>, Lukas Wunner <lukas@wunner.de>,
- Shiju Jose <shiju.jose@huawei.com>, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org
-References: <20251017133357.1150982-1-fabio.m.de.francesco@linux.intel.com>
- <20251017133357.1150982-6-fabio.m.de.francesco@linux.intel.com>
-From: Dave Jiang <dave.jiang@intel.com>
+Subject: Re: [PATCH v4 08/63] kbuild: Remove 'kmod_' prefix from
+ __KBUILD_MODNAME
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
+ laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
+ Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>,
+ Fazla Mehrab <a.mehrab@bytedance.com>,
+ Chen Zhongjin <chenzhongjin@huawei.com>, Puranjay Mohan
+ <puranjay@kernel.org>, Dylan Hatch <dylanbhatch@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Masahiro Yamada <masahiroy@kernel.org>
+References: <cover.1758067942.git.jpoimboe@kernel.org>
+ <f382dddad4b7c8079ce3dd91e5eaea921b03af72.1758067942.git.jpoimboe@kernel.org>
+From: Cosmin Tanislav <demonsingur@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20251017133357.1150982-6-fabio.m.de.francesco@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <f382dddad4b7c8079ce3dd91e5eaea921b03af72.1758067942.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 10/17/25 6:30 AM, Fabio M. De Francesco wrote:
-> Make a helper out of cxl_cper_post_prot_err() that checks the CXL agent
-> type and copy the CPER CXL protocol errors information to a work data
-> structure.
+On 9/17/25 7:03 PM, Josh Poimboeuf wrote:
+> In preparation for the objtool klp diff subcommand, remove the arbitrary
+> 'kmod_' prefix from __KBUILD_MODNAME and instead add it explicitly in
+> the __initcall_id() macro.
 > 
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> This change supports the standardization of "unique" symbol naming by
+> ensuring the non-unique portion of the name comes before the unique
+> part.  That will enable objtool to properly correlate symbols across
+> builds.
+> 
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 > ---
->  drivers/acpi/apei/ghes.c | 42 ++++++++++++++++++++++++++--------------
->  include/cxl/event.h      | 10 ++++++++++
->  2 files changed, 37 insertions(+), 15 deletions(-)
+>   include/linux/init.h | 3 ++-
+>   scripts/Makefile.lib | 2 +-
+>   2 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index e69ae864f43d3..e0f8b8ed2b7c4 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -734,20 +734,12 @@ int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
->  }
->  EXPORT_SYMBOL_GPL(cxl_cper_sec_prot_err_valid);
->  
-> -static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> -				   int severity)
-> +int cxl_cper_sec_prot_err_copy_to_wd(struct cxl_cper_prot_err_work_data *wd,
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index 17c1bc712e234..40331923b9f4a 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -200,12 +200,13 @@ extern struct module __this_module;
+>   
+>   /* Format: <modname>__<counter>_<line>_<fn> */
+>   #define __initcall_id(fn)					\
+> +	__PASTE(kmod_,						\
+>   	__PASTE(__KBUILD_MODNAME,				\
+>   	__PASTE(__,						\
+>   	__PASTE(__COUNTER__,					\
+>   	__PASTE(_,						\
+>   	__PASTE(__LINE__,					\
+> -	__PASTE(_, fn))))))
+> +	__PASTE(_, fn)))))))
+>   
+>   /* Format: __<prefix>__<iid><id> */
+>   #define __initcall_name(prefix, __iid, id)			\
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 1d581ba5df66f..b955602661240 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -20,7 +20,7 @@ name-fix-token = $(subst $(comma),_,$(subst -,_,$1))
+>   name-fix = $(call stringify,$(call name-fix-token,$1))
+>   basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
+>   modname_flags  = -DKBUILD_MODNAME=$(call name-fix,$(modname)) \
+> -		 -D__KBUILD_MODNAME=kmod_$(call name-fix-token,$(modname))
+> +		 -D__KBUILD_MODNAME=$(call name-fix-token,$(modname))
 
-Function name a bit awkward. Maybe cxl_cper_setup_error_work_data()?
+As others have mentioned, this breaks modules.alias generation.
 
-> +				     struct cxl_cper_sec_prot_err *prot_err,
-> +				     int severity)
->  {
-> -	struct cxl_cper_prot_err_work_data wd;
->  	u8 *dvsec_start, *cap_start;
->  
-> -	if (cxl_cper_sec_prot_err_valid(prot_err))
-> -		return;
-> -
-> -	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
-> -
-> -	if (!cxl_cper_prot_err_work)
-> -		return;
-> -
->  	switch (prot_err->agent_type) {
->  	case RCD:
->  	case DEVICE:
-> @@ -756,20 +748,40 @@ static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
->  	case RP:
->  	case DSP:
->  	case USP:
-> -		memcpy(&wd.prot_err, prot_err, sizeof(wd.prot_err));
-> +		memcpy(wd->prot_err, prot_err, sizeof(wd->prot_err));
->  
->  		dvsec_start = (u8 *)(prot_err + 1);
->  		cap_start = dvsec_start + prot_err->dvsec_len;
->  
-> -		memcpy(&wd.ras_cap, cap_start, sizeof(wd.ras_cap));
-> -		wd.severity = cper_severity_to_aer(severity);
-> +		memcpy(wd->ras_cap, cap_start, sizeof(wd->ras_cap));
-> +		wd->severity = cper_severity_to_aer(severity);
->  		break;
->  	default:
->  		pr_err_ratelimited("CXL CPER invalid agent type: %d\n",
->  				   prot_err->agent_type);
-> -		return;
-> +		return -EINVAL;
->  	}
->  
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(cxl_cper_sec_prot_err_copy_to_wd);
-> +
-> +static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> +				   int severity)
-> +{
-> +	struct cxl_cper_prot_err_work_data wd;
-> +
-> +	if (cxl_cper_sec_prot_err_valid(prot_err))
-> +		return;
-> +
-> +	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
-> +
-> +	if (!cxl_cper_prot_err_work)
-> +		return;
-> +
-> +	if (cxl_cper_sec_prot_err_copy_to_wd(&wd, prot_err, severity))
-> +		return;
-> +
->  	if (!kfifo_put(&cxl_cper_prot_err_fifo, wd)) {
->  		pr_err_ratelimited("CXL CPER kfifo overflow\n");
->  		return;
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index e1deb66c2197e..5f06cea5d6005 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -322,12 +322,22 @@ static inline int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data
->  
->  #ifdef CONFIG_ACPI_APEI_PCIEAER
->  int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err);
-> +int cxl_cper_sec_prot_err_copy_to_wd(struct cxl_cper_prot_err_work_data *wd,
-> +				     struct cxl_cper_sec_prot_err *prot_err,
-> +				     int severity);
->  #else
->  static inline int
->  cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
->  {
->  	return -EINVAL;
->  }
-> +static inline int
-> +cxl_cper_sec_prot_err_copy_to_wd(struct cxl_cper_prot_err_work_data *wd,
-> +				 struct cxl_cper_sec_prot_err *prot_err,
-> +				 int severity)
-> +{
-> +	return -EINVAL;
+The following diff seems to fix it, although in introduces a slight
+functional change if symbols do not actually follow the naming scheme.
 
--EOPNOTSUPP
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index b3333560b95e..c3c06b944c69 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -1489,14 +1489,11 @@ void handle_moddevtable(struct module *mod, 
+struct elf_info *info,
+  	if (ELF_ST_TYPE(sym->st_info) != STT_OBJECT)
+  		return;
 
-> +}
->  #endif
->  
->  #endif /* _LINUX_CXL_EVENT_H */
+-	/* All our symbols are of form 
+__mod_device_table__kmod_<modname>__<type>__<name>. */
++	/* All our symbols are of form 
+__mod_device_table__<modname>__<type>__<name>. */
+  	if (!strstarts(symname, prefix))
+  		return;
+
+-	modname = strstr(symname, "__kmod_");
+-	if (!modname)
+-		return;
+-	modname += strlen("__kmod_");
++	modname = symname + strlen(prefix);
+
+  	type = strstr(modname, "__");
+  	if (!type)
+
+It would seem like rust generated symbols don't follow it exactly?
+
+See module_device_table macro in rust/kernel/device_id.rs.
+
+>   modfile_flags  = -DKBUILD_MODFILE=$(call stringify,$(modfile))
+>   
+>   _c_flags       = $(filter-out $(CFLAGS_REMOVE_$(target-stem).o), \
 
 
