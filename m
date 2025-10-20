@@ -1,527 +1,491 @@
-Return-Path: <linux-kernel+bounces-860146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD352BEF6A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:09:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44C4BEF6AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 840B74E5B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:09:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D8754E7F00
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34442D238C;
-	Mon, 20 Oct 2025 06:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310BF2D1F69;
+	Mon, 20 Oct 2025 06:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YaCdthG+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AMuzVmAu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YaCdthG+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AMuzVmAu"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qJkO066B"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012001.outbound.protection.outlook.com [52.101.43.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435D72C0280
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760940568; cv=none; b=dT+KsOEacAqas5NpeSqBBvmMhFaQztSn2R/iN5QvKW5eKnsYjJLtnnlTeK9FhTYhOd5aZtcyicJC6dFhatum4sznfb715v88LXjbrDmDs79xSfhay30DUCFXAAZnhSLUBJqn3lJCXVjIclmHgeqdOtxuyN6vb5QblSDwiWOfjdg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760940568; c=relaxed/simple;
-	bh=UgDlIjc1FVqdUpBpnYDNh2xGTjNSXEiCJix2pOTRyuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H9tKRu7n84PgE9pecLnxxBTi+EWIt6QxnXqzaVVM/gOgzSWKDbemLa3UE69WREfITZcvvcPTCDCbd7Mw3lfs6lSb1HPQQFfCxvibn8dAZPTWBizH0RyoS9mhpKawJtzAF7lHWF+E8ukw4sgobWCePCjHFYm14MKYj/DFDsE2u9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YaCdthG+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AMuzVmAu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YaCdthG+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AMuzVmAu; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4170E1F385;
-	Mon, 20 Oct 2025 06:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760940560; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Ql5wHkB2WFVANuAhz1FG4f6RCGImO354vLJtgVa5xY=;
-	b=YaCdthG+ed4xOjNm4T1zqAgVRBG2uFiLtI2UXmOxg6oRLsmiBbYz6xiyK6yFIUuVc8c6UC
-	3nlEYU7dRg6OxK4AVVheSNnC74PZDZI1JUDDmLbLN0WDzjhVLh7vAJpd3DlFMNQpWgLz6+
-	A1Cw6D9T0SPEL1B8A+Tb11T6UQ8jLwE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760940560;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Ql5wHkB2WFVANuAhz1FG4f6RCGImO354vLJtgVa5xY=;
-	b=AMuzVmAuerkOQ+qBTBsJYoOMs3681Bp3mVjYR36U+ofwKqb4adJUtidRWQoL1CqPZtNsmA
-	LfMwNfcvkYk0q1BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760940560; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Ql5wHkB2WFVANuAhz1FG4f6RCGImO354vLJtgVa5xY=;
-	b=YaCdthG+ed4xOjNm4T1zqAgVRBG2uFiLtI2UXmOxg6oRLsmiBbYz6xiyK6yFIUuVc8c6UC
-	3nlEYU7dRg6OxK4AVVheSNnC74PZDZI1JUDDmLbLN0WDzjhVLh7vAJpd3DlFMNQpWgLz6+
-	A1Cw6D9T0SPEL1B8A+Tb11T6UQ8jLwE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760940560;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Ql5wHkB2WFVANuAhz1FG4f6RCGImO354vLJtgVa5xY=;
-	b=AMuzVmAuerkOQ+qBTBsJYoOMs3681Bp3mVjYR36U+ofwKqb4adJUtidRWQoL1CqPZtNsmA
-	LfMwNfcvkYk0q1BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A75EC13AAC;
-	Mon, 20 Oct 2025 06:09:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 25z0Jg/S9WjsSAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 20 Oct 2025 06:09:19 +0000
-Message-ID: <e7d46c17-5ffd-4816-acd2-2125ca259d20@suse.de>
-Date: Mon, 20 Oct 2025 08:09:19 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86C22D1F61;
+	Mon, 20 Oct 2025 06:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760940579; cv=fail; b=FRuip1ZfVNwqLEY0MtzQUn/twvJAdBVYbnaoFumEYZ1/aA4W0bUBfPAJZaTuK5yUIww6p0wWcJYTlkM3fLBmHxZ/PJratbuJ/mvY0TCkBMqG+yhT16YbIsC3xN/dnVCN64QRjIq+RmR52ms8ChyQwWmhVMVBK5tVBH+Zorj/7Bc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760940579; c=relaxed/simple;
+	bh=RBnWqyR71CKIvIInhtIUlIu3I+GW6e6DLKJiohjiJOw=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=eso5C2Vtdo/ShMfeGVDHrzqz64lvFGKtdhHBaRTId66dOUpFyLzbu6SInQNK5mdRjgBuN9DoAGJCAFmbAh3yvRG/7uZb8/oXHyCR6h193SzxaROKwclEH+dMECtzxejcfV2lb7P1rmQkpDY5dP19oWjwS5qc8bI/LTS2f1sOZd8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qJkO066B; arc=fail smtp.client-ip=52.101.43.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eK0lzIqmLrZ15CFh92sBEEIu0Zb8tn7QUi4Ydi4aVwKiEZOGpKGwulOX+0ZiKHGcuG5V3xVFPn5HwO4suOva5DB0OrGplr/w9G60TjaWWp+SYtGN0PlXWOMDt4/Zs7swkbBoDye8yYA1ipCzaBlQP0nGUMODUvw1BMiKDBIiya7MA+yp2CK5uD5i6elOx3+kRfL874ab1+ms87C8gruQr8F+36Sdyc/hm7/v07G2vsVwE+ul9tzZ3SfD9R63dXZiWRXxE7MxX4Hv8TGBYw0IDLham8bABH43OXHCtGSpE8He2Uo9c+rbn5442YKHzXxc/ySdShW6LtHIlPXBsFDOTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HU8zL3ZA9dbxldPP2sPQHRnSrt6XyB8e+TOrk0IyD5E=;
+ b=PqMd/18mqZjeUa8G/adUy7Vwjpt4XdZ1OG06cAXpuWibsUEHv3E53GcQecI01j5ozD+6RZW6uqKDZbTulUtoW8GL4M3Sde+dc5UzyB9Y0BWQzRZ6wjGBUzvWTBHtCnhAKwiDvBDS9zFJrhpdDmIqAUwg+mjUxSSOjuw1wsILTy9dtPfs2ZzwZ0m1UByVc8GBOHRgN03gb2MtKAXUkXOQ7rZc7E6dBUm7rU7VeT1SEEdtqXmCDjCMLmoPsqi1E45stco1BGDt6CKLggJsyl/ihbNTbciH4NO4vvMlPb0+1QTtIP153IgozUcQuNbcYYGFNzb01ghGItEN3WxNFQA2gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HU8zL3ZA9dbxldPP2sPQHRnSrt6XyB8e+TOrk0IyD5E=;
+ b=qJkO066BBMPP/PP/dbA4rYz95Hq2rhBTaGi5ShXVcsqXXhq4PowYcmTMhbxcQFh4XCppDOlNBjFlmo8KzlIvC3EBMUOp3fmoux7pULv5JkLC0ZePIgR3iAmnmxfLxREu+OyvrceTH4beOUv8ox6YTikvpa7n993DQK+YE+53+FaSKAYGOKb1xGCuVSluJouXsbVCMNHTVxC13FOPwNjMYxMXleVMNGTy+8+R7xF9HABiJsL7mAzlnbBeip+vPsDnrpxkrdV5JYMdgFWCG0+3+VgEPahX2nfnrt8++Qkli424txdAYfcOvQflBuAayX3RplTZ1qSFhne2z8DTZqUF0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH7PR12MB6666.namprd12.prod.outlook.com (2603:10b6:510:1a8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 06:09:30 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 06:09:30 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Mon, 20 Oct 2025 15:09:25 +0900
+Subject: [PATCH] gpu: nova-core: replace wait_on with kernel equivalents
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251020-nova_wait_on-v1-1-2eb87fb38d14@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIABTS9WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyMD3bz8ssT48sTMkvj8PN0k0yRLc1MLS5PEJBMloJaCotS0zAqwcdG
+ xtbUAZimIc14AAAA=
+X-Change-ID: 20251020-nova_wait_on-b5b975894ab4
+To: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Alice Ryhl <aliceryhl@google.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: John Hubbard <jhubbard@nvidia.com>, 
+ Alistair Popple <apopple@nvidia.com>, 
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+ Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: OSTP286CA0046.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:217::17) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/7] net/handshake: Support KeyUpdate message types
-To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
- kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
- kch@nvidia.com, Alistair Francis <alistair.francis@wdc.com>
-References: <20251017042312.1271322-1-alistair.francis@wdc.com>
- <20251017042312.1271322-5-alistair.francis@wdc.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20251017042312.1271322-5-alistair.francis@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,oracle.com,kernel.org,lists.linux.dev,vger.kernel.org,lists.infradead.org];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB6666:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7820d4a-f0bb-4a3d-42a5-08de0f9f3b75
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|10070799003|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZUtqT1FhbmI0LzJiaitvL0x1SzZ0eFc1UXZZL2xYWTNoN0MxVGsvenNjMVZ0?=
+ =?utf-8?B?SFJiZ0w4djVMTWIyY1dXUnR1c0wvcEUxU3doeFRaQmhGN0IrYW5HZDZmVFlV?=
+ =?utf-8?B?Ullpa1JURVpvcU8vb2lJWGtiQWxoM2p0VlJsUDdaSlM2YjFpVUt5WVgydWU5?=
+ =?utf-8?B?YWgvQzlCQWpvQW84ellCVlZNWnNnQ2k3RTh3U2tucGxZbUlhTzdiWUczM0Jv?=
+ =?utf-8?B?MWRxZ01pa3NTN285VE9LWXRxdmUrWlZ5dWovR25zUHlJcVZjWFhqWEZ4WUFV?=
+ =?utf-8?B?TDdHN2dxOU9OUmgyNnVzekNLWTBVMGVsVDgwaVZublg5bkJZZVlwOE9RVjVF?=
+ =?utf-8?B?d0UwL2FnL3lrMXNQUEdBV3JvWnZycjBMSTFVSmg5UHNuUnpRMkY5YThPOUpS?=
+ =?utf-8?B?aVJvUzNUS2JlWkdPLzBzb0xuTW9GS09FblBJMDBwekE3VzJnM1N0cmE5K05x?=
+ =?utf-8?B?dWdHRnpnVzlVZWVhZHNFN3VWTldYZUlUbTBmWFFaYTQxQW9Wa0tSSmk4THRx?=
+ =?utf-8?B?UmIrQUJxRnVlMUdPWkZseDVGVUI3UXh1dnRXNzZIWXZyWG5MRUxZQldiMG1t?=
+ =?utf-8?B?bUhrbmpuVEVtaGxVK215K2xvTFUwdC9PbC92V3pJeURrTk1zdFpRTU5ialhB?=
+ =?utf-8?B?NmRNcnltLytnZU5iaDRCUDg1TUxLWlhOUXhtOU4zaE13cWlFcm50SlEzalhu?=
+ =?utf-8?B?RUlWejhiWDEzcDkrN3c3YUFzekxVcGRxenVUZUJCOHBPZlM5a0VVQzRXVFpj?=
+ =?utf-8?B?T1k3N2NyaUpKa1dGa1BNcGIrdUEwWDBGN0Jla1VSN3hIK3JOVzVjWkxGR0kr?=
+ =?utf-8?B?azNzUnBiakdpWXlhR05iaXBBUDNzMEY5MWJ0WXlLcVZCVHVXeFRwM253aGZR?=
+ =?utf-8?B?NGFFcngwcys2bnZlaDZDTEpRYXBpUHVma1lNM3Q4TExCSnFWak5TRHlXTTBD?=
+ =?utf-8?B?Z25VcW1wald2QmQ3bmttbG9ISDVVY3Z2YzBGOEJyNSs2aFo1MlpkSUZFcW8x?=
+ =?utf-8?B?aFUxQXZYV1lid2Z3RGZYdXg3aDUwcllxVjNKYUg4Tm1NZFQyUEp0NFdHUjd0?=
+ =?utf-8?B?NmZsUnJ6QTRxSUFkdGxXWFd3ckFhQXFXbnNqYWlRV203enJMaTVQZUNLYTFz?=
+ =?utf-8?B?SE81a0hBOEJRcW1TZEErRTdlWFF2U0lzcTNIaWFiN0JHUHdaUjNZSG5RZU9U?=
+ =?utf-8?B?YThXTTNYb2JTR0FmZ1duRmdpWU03NmxtdzdTR3dyQVArTDQ0T2FQVGpkUm4z?=
+ =?utf-8?B?SUdrWFl6RjVNUlFPaksvNHk4QUs2WmRCSURFT0U1SGxQdTVuU09YRWQrdERs?=
+ =?utf-8?B?dDEwUGlZMXFUL2xsekV4VitYS1BRKzM3ZG5xcVFEbzRsMEtpN0VWWGJoVHo5?=
+ =?utf-8?B?MnNEYUZpVnBqR3Z3N2xzS1g4TEUwelhKdXpDRkY3QmNPWENhVXoyc29xY0R0?=
+ =?utf-8?B?bExCK2d1dkJMMHZKT0pwYVpJelFsYnhIVE9SY295TmdHL1NLcEhPTlI3RllB?=
+ =?utf-8?B?WEJ6WUxNY3VLWHlBN0JCYytkcUI0Nm9yWEtydi8rU2RXVDg4NVZ5V0RSL2Iz?=
+ =?utf-8?B?YVgxdFJHVnFEZmFyVXVXRlR5Y3JndklDNitabXhuUHhUREhNNExLUEQwVjFT?=
+ =?utf-8?B?K05OMHFVL0FoaWZRRnFyVmJXV3g4L3N1UWxGUlRtdFhnVVVMUGxhUzJNZm1s?=
+ =?utf-8?B?QWpZUkNvay9sUVJiV3NFanZQb1duM29BaEUvaXdsS01hNW9OTkw4M04rR3dw?=
+ =?utf-8?B?MGRxUlZLcldIeDZSamhIS3lDaVhYRWN2bmYrS2dldEVCUHhPeVZzL2N5NmZ3?=
+ =?utf-8?B?WnBHK1hsTHdoZWp5VTlDM0lnNXUwUVhRZTZMQWhPL0ZDTy9jd0c0VThDUlBz?=
+ =?utf-8?B?SE1WdW93N01UYlVsYmNLa2ZGNlNGc21qMkxYd1FjWnpub3J0MHEvaFgrYlcx?=
+ =?utf-8?B?eERYd3ZsN3VGTWsveEVRQzMybFhMU1M5L21JdElqSndDWnZtVXhkS3c4REph?=
+ =?utf-8?B?Vk1UemZXMzlLdVNEcTV1ZlA0dnRudnRUUzRtYUMveWszOU9KSTY4RU9uM0Vy?=
+ =?utf-8?Q?Z3+ZE+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(10070799003)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aFgvbHk3dGFteHJwSmM4SVFKbitva3luVkZ4d1ZNZTJLY1FRZnFFWGtNNFVt?=
+ =?utf-8?B?Rko0YWZYWUI4Zm40QURTaGFPQjdpaEpFUkFkR1hHMVRkR1RTeEcyb09VWG1n?=
+ =?utf-8?B?bEpKL2QyRDRXVkRCaEpBOW5GSUY3Wm9UM09NUjBwS0pSbXpqQWRrcEFTWmNQ?=
+ =?utf-8?B?ajlGMGFJNFJRK0xqUU52QWNEYUppUTY3RW5TdGFiZml6NEQ3MVV6UWlPelRq?=
+ =?utf-8?B?NkpINDFENHZrWXB3WEZ2Q0Z2S0NjZnhSVVI1S242UGNVaExLM3lpQlRoaC9Q?=
+ =?utf-8?B?ekhwckJTQ0xWTERCVkRwdkZzNmpiSzJaTEtUVjdzNHIzU1IvRWJjbThRZFBj?=
+ =?utf-8?B?VXNwYitEQ0d5c2c0Sk5SUGZ1RnZVNVFyOEpHVmJ4ekowNWc1bGU5UkI2ZUVw?=
+ =?utf-8?B?NEpzVFRzOXlKVE9OemRRZExRUmY3dkJlOTFPc1FqUTJNLzRFMlFhSFRHTHdK?=
+ =?utf-8?B?MGJFSTlleHArcGcveHFXUndUeFRmdElEeGpUeHNqRXBzdmRqSXhXa1A5aEQ4?=
+ =?utf-8?B?VnZVaHdKamNydEpZU1YvQitNZWYvQmM3MThVZDJJeDZ5UlRoK0g4T1B6RVZH?=
+ =?utf-8?B?bm9QbTJQd3B4UVM1MjJFMGhFb3ZMaFFGYkJyT1JrV2hpK0g3TjIySzQ5ZTVT?=
+ =?utf-8?B?TlNCV3V6c3VXTHF2RVNDZHkwS0poWDJ0dUZQdUhhQXJ3ZzZoWmlVQ25FYUc3?=
+ =?utf-8?B?eklQNDNseGZLM1dJeGFpQVZYaUJISGxDQ05zWUlISnRtRjhpVkVQTjRTUUhp?=
+ =?utf-8?B?TStyK0JoZlFMWnU3QmZjbzR3WVZLeUNHTXM2UkJuTk04OXQ2OExJb1p1VWxw?=
+ =?utf-8?B?bnlLQi90QUdKeWh2ellxMFFwckVlNzllelh3TmFXQ1NkZlZsTVlpY0xuSVBF?=
+ =?utf-8?B?MjJGZ0NBbjRKODg2a1F3WXAxdU15eklaQjNRTGdWU0cvZmk0ZEtINGt3c3B3?=
+ =?utf-8?B?aUppT3lTc3NYOWlWM3dIVVBIcU54VWtVakR4aThrVFA4N0pvaVZaQ0wxRDhM?=
+ =?utf-8?B?VTdGUytMQ0w0RUpOL3RNU2lOREkrbEswZko0QXluZ0FHZXA4SUNwWFZuYkwr?=
+ =?utf-8?B?bkhLdWsxdFExeTV0L3lVSDVXWjhEWTgrVWlyVldGcGQ2a3dlWmt3b3BYZThL?=
+ =?utf-8?B?U2toTkxDNG5obTNLZFVLZ3JORmRON21YVUUvSnFyZXNsVnA4UnVmLy9NSTlD?=
+ =?utf-8?B?UWR6N1UyeEcxK2x3NUlHU0FTTzh1V01MbXl6cUo2RncwcTErZWZDTVc3ZS8r?=
+ =?utf-8?B?K0lFWjdJNDhWb3BJNUJrYlAxUlh5V3VJeXM1dU9QRlpOR3E0cEgrcXRTNm1C?=
+ =?utf-8?B?YmRrREt3M1lWK0o1UHMvWEQ4UUZFUDJlWmE2Q0JKaVluejZDb3NlRDNBUDlB?=
+ =?utf-8?B?QittYmJhMkNDZkZYWUZTTk00SkM1cXFvc3lMdXJmcGlKRmMzdEtFbzVSWFVl?=
+ =?utf-8?B?S3U0OHovUzJ1K0VZU09MQmthbXF5Yzl3STVPcjd0MUVuaEJ6RVQxeGk1dDIy?=
+ =?utf-8?B?QUxoQnBSZ2hEODB3eFlxc25FQnJBamk5dkJWZUc1eFlCazJCWGJsdVRpV2tr?=
+ =?utf-8?B?ZElhUzJnaEl0VkVISTBwRmRtN29aS3ZpdjVhQm9pV0xFRzlKdEVhampJalo4?=
+ =?utf-8?B?djRic0liTWRrdGFIdjhRclBHRGNvREZrSHk4SHg0bjdzQS80SUdQdW1GVFYz?=
+ =?utf-8?B?OVZMWW1uR2lKZnY0L2hPajdFWWhVdFdlNjBJYWFvbDU2b25Pb21uYWhSUCtq?=
+ =?utf-8?B?anNkSWNocDJXcXRTVm9lMURtSkdaYy9WK2I3RkVCOUFsd05kTFBLTjFscFNP?=
+ =?utf-8?B?dlZEUVAybzQvdWdka1hTN2tzT2RMN2paL1hGWTVqVHEvUmk1aFlVdWtwZW5E?=
+ =?utf-8?B?My9xSFdvdURaeno0YW9zcVJHVHBDeCttRVFuc3RCbStlU3hwVWtDTjE1U1pZ?=
+ =?utf-8?B?VHRlVUU3ZVNhNHkxTmUwRGZTQnRaMVdQd1JHWDRmazFXQ2JJelZJcnpQbkxY?=
+ =?utf-8?B?S0o2SmtPQ0k5RC84WWxqWHE2TnJaT284SGFLOVFqc1BwSXdVRzhJSmNRaTVP?=
+ =?utf-8?B?Q1duZUZiWUJ1bkJUTCtwd3hnbWZpc2tNc2lCVS9ycDJ0d2FhYlZxZU4zNVZQ?=
+ =?utf-8?B?aitKVUNJNmxWV3h0MXBRMDd6Q1pkQWMwbS9xcmU0bFU1NVNLMVJGRHZDa3VN?=
+ =?utf-8?Q?0u/UWf+/WpJyuBi3lFL96gmEXZ5u6ONTMXGeLZO5F6K9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7820d4a-f0bb-4a3d-42a5-08de0f9f3b75
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 06:09:30.7111
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X5vqE7UEGWPr/v0ZKp9WjeqTKpYdSBH1OMJAmRKRMb8hKVD1uE18UO+O/Ujkt7QeVssrcxCgYOhT972HhVsJ/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6666
 
-On 10/17/25 06:23, alistair23@gmail.com wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
-> 
-> When reporting the msg-type to userspace let's also support reporting
-> KeyUpdate events. This supports reporting a client/server event and if
-> the other side requested a KeyUpdateRequest.
-> 
-> Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> ---
-> v4:
->   - Don't overload existing functions, instead create new ones
-> v3:
->   - Fixup yamllint and kernel-doc failures
-> 
->   Documentation/netlink/specs/handshake.yaml | 16 ++++-
->   drivers/nvme/host/tcp.c                    | 15 +++-
->   drivers/nvme/target/tcp.c                  | 10 ++-
->   include/net/handshake.h                    |  8 +++
->   include/uapi/linux/handshake.h             | 13 ++++
->   net/handshake/tlshd.c                      | 83 +++++++++++++++++++++-
->   6 files changed, 137 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/netlink/specs/handshake.yaml b/Documentation/netlink/specs/handshake.yaml
-> index a273bc74d26f..c72ec8fa7d7a 100644
-> --- a/Documentation/netlink/specs/handshake.yaml
-> +++ b/Documentation/netlink/specs/handshake.yaml
-> @@ -21,12 +21,18 @@ definitions:
->       type: enum
->       name: msg-type
->       value-start: 0
-> -    entries: [unspec, clienthello, serverhello]
-> +    entries: [unspec, clienthello, serverhello, clientkeyupdate,
-> +              clientkeyupdaterequest, serverkeyupdate, serverkeyupdaterequest]
->     -
+wait_on was a temporary helper function waiting for a kernel crate
+equivalent.
 
-Why do we need the 'keyupdate' and 'keyupdaterequest' types?
-Isn't the 'keyupdate' type enough, and can we specify anything
-else via the update type?
+Now that read_poll_timeout and fsleep are available, use them and remove
+wait_on.
 
->       type: enum
->       name: auth
->       value-start: 0
->       entries: [unspec, unauth, psk, x509]
-> +  -
-> +    type: enum
-> +    name: key-update-type
-> +    value-start: 0
-> +    entries: [unspec, send, received, received_request_update]
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ Documentation/gpu/nova/core/todo.rst      | 11 ------
+ drivers/gpu/nova-core/falcon.rs           | 62 ++++++++++++++-----------------
+ drivers/gpu/nova-core/falcon/hal/ga102.rs | 16 ++++----
+ drivers/gpu/nova-core/gfw.rs              | 36 ++++++++----------
+ drivers/gpu/nova-core/nova_core.rs        |  1 -
+ drivers/gpu/nova-core/util.rs             | 27 --------------
+ 6 files changed, 51 insertions(+), 102 deletions(-)
 
-See above.
+diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
+index 0972cb905f7a..c55c7bedbfdf 100644
+--- a/Documentation/gpu/nova/core/todo.rst
++++ b/Documentation/gpu/nova/core/todo.rst
+@@ -153,17 +153,6 @@ A `num` core kernel module is being designed to provide these operations.
+ | Complexity: Intermediate
+ | Contact: Alexandre Courbot
+ 
+-Delay / Sleep abstractions [DLAY]
+----------------------------------
+-
+-Rust abstractions for the kernel's delay() and sleep() functions.
+-
+-FUJITA Tomonori plans to work on abstractions for read_poll_timeout_atomic()
+-(and friends) [1].
+-
+-| Complexity: Beginner
+-| Link: https://lore.kernel.org/netdev/20250228.080550.354359820929821928.fujita.tomonori@gmail.com/ [1]
+-
+ IRQ abstractions
+ ----------------
+ 
+diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
+index 37e6298195e4..05856b43b51c 100644
+--- a/drivers/gpu/nova-core/falcon.rs
++++ b/drivers/gpu/nova-core/falcon.rs
+@@ -6,8 +6,10 @@
+ use hal::FalconHal;
+ use kernel::device;
+ use kernel::dma::DmaAddress;
++use kernel::io::poll::read_poll_timeout;
+ use kernel::prelude::*;
+ use kernel::sync::aref::ARef;
++use kernel::time::delay::fsleep;
+ use kernel::time::Delta;
+ 
+ use crate::dma::DmaObject;
+@@ -15,7 +17,6 @@
+ use crate::gpu::Chipset;
+ use crate::regs;
+ use crate::regs::macros::RegisterBase;
+-use crate::util;
+ 
+ pub(crate) mod gsp;
+ mod hal;
+@@ -380,13 +381,13 @@ pub(crate) fn new(
+     /// Wait for memory scrubbing to complete.
+     fn reset_wait_mem_scrubbing(&self, bar: &Bar0) -> Result {
+         // TIMEOUT: memory scrubbing should complete in less than 20ms.
+-        util::wait_on(Delta::from_millis(20), || {
+-            if regs::NV_PFALCON_FALCON_HWCFG2::read(bar, &E::ID).mem_scrubbing_done() {
+-                Some(())
+-            } else {
+-                None
+-            }
+-        })
++        read_poll_timeout(
++            || Ok(regs::NV_PFALCON_FALCON_HWCFG2::read(bar, &E::ID)),
++            |r| r.mem_scrubbing_done(),
++            Delta::ZERO,
++            Delta::from_millis(20),
++        )
++        .map(|_| ())
+     }
+ 
+     /// Reset the falcon engine.
+@@ -395,20 +396,17 @@ fn reset_eng(&self, bar: &Bar0) -> Result {
+ 
+         // According to OpenRM's `kflcnPreResetWait_GA102` documentation, HW sometimes does not set
+         // RESET_READY so a non-failing timeout is used.
+-        let _ = util::wait_on(Delta::from_micros(150), || {
+-            let r = regs::NV_PFALCON_FALCON_HWCFG2::read(bar, &E::ID);
+-            if r.reset_ready() {
+-                Some(())
+-            } else {
+-                None
+-            }
+-        });
++        let _ = read_poll_timeout(
++            || Ok(regs::NV_PFALCON_FALCON_HWCFG2::read(bar, &E::ID)),
++            |r| r.reset_ready(),
++            Delta::ZERO,
++            Delta::from_micros(150),
++        );
+ 
+         regs::NV_PFALCON_FALCON_ENGINE::alter(bar, &E::ID, |v| v.set_reset(true));
+ 
+-        // TODO[DLAY]: replace with udelay() or equivalent once available.
+         // TIMEOUT: falcon engine should not take more than 10us to reset.
+-        let _: Result = util::wait_on(Delta::from_micros(10), || None);
++        fsleep(Delta::from_micros(10));
+ 
+         regs::NV_PFALCON_FALCON_ENGINE::alter(bar, &E::ID, |v| v.set_reset(false));
+ 
+@@ -512,14 +510,12 @@ fn dma_wr<F: FalconFirmware<Target = E>>(
+             // Wait for the transfer to complete.
+             // TIMEOUT: arbitrarily large value, no DMA transfer to the falcon's small memories
+             // should ever take that long.
+-            util::wait_on(Delta::from_secs(2), || {
+-                let r = regs::NV_PFALCON_FALCON_DMATRFCMD::read(bar, &E::ID);
+-                if r.idle() {
+-                    Some(())
+-                } else {
+-                    None
+-                }
+-            })?;
++            read_poll_timeout(
++                || Ok(regs::NV_PFALCON_FALCON_DMATRFCMD::read(bar, &E::ID)),
++                |r| r.idle(),
++                Delta::ZERO,
++                Delta::from_secs(2),
++            )?;
+         }
+ 
+         Ok(())
+@@ -582,14 +578,12 @@ pub(crate) fn boot(
+         }
+ 
+         // TIMEOUT: arbitrarily large value, firmwares should complete in less than 2 seconds.
+-        util::wait_on(Delta::from_secs(2), || {
+-            let r = regs::NV_PFALCON_FALCON_CPUCTL::read(bar, &E::ID);
+-            if r.halted() {
+-                Some(())
+-            } else {
+-                None
+-            }
+-        })?;
++        read_poll_timeout(
++            || Ok(regs::NV_PFALCON_FALCON_CPUCTL::read(bar, &E::ID)),
++            |r| r.halted(),
++            Delta::ZERO,
++            Delta::from_secs(2),
++        )?;
+ 
+         let (mbox0, mbox1) = (
+             regs::NV_PFALCON_FALCON_MAILBOX0::read(bar, &E::ID).value(),
+diff --git a/drivers/gpu/nova-core/falcon/hal/ga102.rs b/drivers/gpu/nova-core/falcon/hal/ga102.rs
+index 0b1cbe7853b3..f2ae9537321d 100644
+--- a/drivers/gpu/nova-core/falcon/hal/ga102.rs
++++ b/drivers/gpu/nova-core/falcon/hal/ga102.rs
+@@ -3,6 +3,7 @@
+ use core::marker::PhantomData;
+ 
+ use kernel::device;
++use kernel::io::poll::read_poll_timeout;
+ use kernel::prelude::*;
+ use kernel::time::Delta;
+ 
+@@ -11,7 +12,6 @@
+     Falcon, FalconBromParams, FalconEngine, FalconModSelAlgo, PeregrineCoreSelect,
+ };
+ use crate::regs;
+-use crate::util;
+ 
+ use super::FalconHal;
+ 
+@@ -23,14 +23,12 @@ fn select_core_ga102<E: FalconEngine>(bar: &Bar0) -> Result {
+             .write(bar, &E::ID);
+ 
+         // TIMEOUT: falcon core should take less than 10ms to report being enabled.
+-        util::wait_on(Delta::from_millis(10), || {
+-            let r = regs::NV_PRISCV_RISCV_BCR_CTRL::read(bar, &E::ID);
+-            if r.valid() {
+-                Some(())
+-            } else {
+-                None
+-            }
+-        })?;
++        read_poll_timeout(
++            || Ok(regs::NV_PRISCV_RISCV_BCR_CTRL::read(bar, &E::ID)),
++            |r| r.valid(),
++            Delta::ZERO,
++            Delta::from_millis(10),
++        )?;
+     }
+ 
+     Ok(())
+diff --git a/drivers/gpu/nova-core/gfw.rs b/drivers/gpu/nova-core/gfw.rs
+index 8ac1ed187199..23c28c2a3793 100644
+--- a/drivers/gpu/nova-core/gfw.rs
++++ b/drivers/gpu/nova-core/gfw.rs
+@@ -18,13 +18,12 @@
+ //!
+ //! Note that the devinit sequence also needs to run during suspend/resume.
+ 
+-use kernel::bindings;
++use kernel::io::poll::read_poll_timeout;
+ use kernel::prelude::*;
+ use kernel::time::Delta;
+ 
+ use crate::driver::Bar0;
+ use crate::regs;
+-use crate::util;
+ 
+ /// Wait for the `GFW` (GPU firmware) boot completion signal (`GFW_BOOT`), or a 4 seconds timeout.
+ ///
+@@ -50,22 +49,19 @@ pub(crate) fn wait_gfw_boot_completion(bar: &Bar0) -> Result {
+     //
+     // TIMEOUT: arbitrarily large value. GFW starts running immediately after the GPU is put out of
+     // reset, and should complete in less time than that.
+-    util::wait_on(Delta::from_secs(4), || {
+-        // Check that FWSEC has lowered its protection level before reading the GFW_BOOT status.
+-        let gfw_booted = regs::NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_PRIV_LEVEL_MASK::read(bar)
+-            .read_protection_level0()
+-            && regs::NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_0_GFW_BOOT::read(bar).completed();
+-
+-        if gfw_booted {
+-            Some(())
+-        } else {
+-            // TODO[DLAY]: replace with [1] once it merges.
+-            // [1] https://lore.kernel.org/rust-for-linux/20250423192857.199712-6-fujita.tomonori@gmail.com/
+-            //
+-            // SAFETY: `msleep()` is safe to call with any parameter.
+-            unsafe { bindings::msleep(1) };
+-
+-            None
+-        }
+-    })
++    read_poll_timeout(
++        || {
++            Ok(
++                // Check that FWSEC has lowered its protection level before reading the GFW_BOOT
++                // status.
++                regs::NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_PRIV_LEVEL_MASK::read(bar)
++                    .read_protection_level0()
++                    && regs::NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_0_GFW_BOOT::read(bar).completed(),
++            )
++        },
++        |&gfw_booted| gfw_booted,
++        Delta::from_millis(1),
++        Delta::from_secs(4),
++    )
++    .map(|_| ())
+ }
+diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+index fffcaee2249f..db062e31a5e2 100644
+--- a/drivers/gpu/nova-core/nova_core.rs
++++ b/drivers/gpu/nova-core/nova_core.rs
+@@ -11,7 +11,6 @@
+ mod gpu;
+ mod gsp;
+ mod regs;
+-mod util;
+ mod vbios;
+ 
+ pub(crate) const MODULE_NAME: &kernel::str::CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
+diff --git a/drivers/gpu/nova-core/util.rs b/drivers/gpu/nova-core/util.rs
+deleted file mode 100644
+index bf35f00cb732..000000000000
+--- a/drivers/gpu/nova-core/util.rs
++++ /dev/null
+@@ -1,27 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-use kernel::prelude::*;
+-use kernel::time::{Delta, Instant, Monotonic};
+-
+-/// Wait until `cond` is true or `timeout` elapsed.
+-///
+-/// When `cond` evaluates to `Some`, its return value is returned.
+-///
+-/// `Err(ETIMEDOUT)` is returned if `timeout` has been reached without `cond` evaluating to
+-/// `Some`.
+-///
+-/// TODO[DLAY]: replace with `read_poll_timeout` once it is available.
+-/// (https://lore.kernel.org/lkml/20250220070611.214262-8-fujita.tomonori@gmail.com/)
+-pub(crate) fn wait_on<R, F: Fn() -> Option<R>>(timeout: Delta, cond: F) -> Result<R> {
+-    let start_time = Instant::<Monotonic>::now();
+-
+-    loop {
+-        if let Some(ret) = cond() {
+-            return Ok(ret);
+-        }
+-
+-        if start_time.elapsed().as_nanos() > timeout.as_nanos() {
+-            return Err(ETIMEDOUT);
+-        }
+-    }
+-}
 
->   
->   attribute-sets:
->     -
-> @@ -74,6 +80,13 @@ attribute-sets:
->         -
->           name: keyring
->           type: u32
-> +      -
-> +        name: key-update-request
-> +        type: u32
-> +        enum: key-update-type
-> +      -
-> +        name: key-serial
-> +        type: u32
+---
+base-commit: 1d5cffebd930d61588c32198f85fbe541ab97b8f
+change-id: 20251020-nova_wait_on-b5b975894ab4
 
-Not sure if I like key-serial. Yes, it is a key serial number,
-but it's not the serial number of the updated key (rather the serial
-number of the key holding the session information).
-Maybe 'key-update-serial' ?
-
->     -
->       name: done
->       attributes:
-> @@ -116,6 +129,7 @@ operations:
->               - certificate
->               - peername
->               - keyring
-> +            - key-serial
->       -
->         name: done
->         doc: Handler reports handshake completion
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 611be56f8013..2696bf97dfac 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -20,6 +20,7 @@
->   #include <linux/iov_iter.h>
->   #include <net/busy_poll.h>
->   #include <trace/events/sock.h>
-> +#include <uapi/linux/handshake.h>
->   
->   #include "nvme.h"
->   #include "fabrics.h"
-> @@ -206,6 +207,10 @@ static struct workqueue_struct *nvme_tcp_wq;
->   static const struct blk_mq_ops nvme_tcp_mq_ops;
->   static const struct blk_mq_ops nvme_tcp_admin_mq_ops;
->   static int nvme_tcp_try_send(struct nvme_tcp_queue *queue);
-> +static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
-> +			      struct nvme_tcp_queue *queue,
-> +			      key_serial_t pskid,
-> +			      handshake_key_update_type keyupdate);
->   
->   static inline struct nvme_tcp_ctrl *to_tcp_ctrl(struct nvme_ctrl *ctrl)
->   {
-> @@ -1726,7 +1731,8 @@ static void nvme_tcp_tls_done(void *data, int status, key_serial_t pskid,
->   
->   static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
->   			      struct nvme_tcp_queue *queue,
-> -			      key_serial_t pskid)
-> +			      key_serial_t pskid,
-> +			      handshake_key_update_type keyupdate)
->   {
->   	int qid = nvme_tcp_queue_id(queue);
->   	int ret;
-> @@ -1748,7 +1754,10 @@ static int nvme_tcp_start_tls(struct nvme_ctrl *nctrl,
->   	args.ta_timeout_ms = tls_handshake_timeout * 1000;
->   	queue->tls_err = -EOPNOTSUPP;
->   	init_completion(&queue->tls_complete);
-> -	ret = tls_client_hello_psk(&args, GFP_KERNEL);
-> +	if (keyupdate == HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC)
-> +		ret = tls_client_hello_psk(&args, GFP_KERNEL);
-> +	else
-> +		ret = tls_client_keyupdate_psk(&args, GFP_KERNEL, keyupdate);
->   	if (ret) {
->   		dev_err(nctrl->device, "queue %d: failed to start TLS: %d\n",
->   			qid, ret);
-> @@ -1898,7 +1907,7 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
->   
->   	/* If PSKs are configured try to start TLS */
->   	if (nvme_tcp_tls_configured(nctrl) && pskid) {
-> -		ret = nvme_tcp_start_tls(nctrl, queue, pskid);
-> +		ret = nvme_tcp_start_tls(nctrl, queue, pskid, HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC);
->   		if (ret)
->   			goto err_init_connect;
->   	}
-> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> index 4ef4dd140ada..8aeec4a7f136 100644
-> --- a/drivers/nvme/target/tcp.c
-> +++ b/drivers/nvme/target/tcp.c
-> @@ -1833,7 +1833,8 @@ static void nvmet_tcp_tls_handshake_timeout(struct work_struct *w)
->   	kref_put(&queue->kref, nvmet_tcp_release_queue);
->   }
->   
-> -static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue)
-> +static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
-> +	handshake_key_update_type keyupdate)
->   {
->   	int ret = -EOPNOTSUPP;
->   	struct tls_handshake_args args;
-> @@ -1852,7 +1853,10 @@ static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue)
->   	args.ta_keyring = key_serial(queue->port->nport->keyring);
->   	args.ta_timeout_ms = tls_handshake_timeout * 1000;
->   
-> -	ret = tls_server_hello_psk(&args, GFP_KERNEL);
-> +	if (keyupdate == HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC)
-> +		ret = tls_server_hello_psk(&args, GFP_KERNEL);
-> +	else
-> +		ret = tls_server_keyupdate_psk(&args, GFP_KERNEL, keyupdate);
->   	if (ret) {
->   		kref_put(&queue->kref, nvmet_tcp_release_queue);
->   		pr_err("failed to start TLS, err=%d\n", ret);
-> @@ -1934,7 +1938,7 @@ static void nvmet_tcp_alloc_queue(struct nvmet_tcp_port *port,
->   		sk->sk_data_ready = port->data_ready;
->   		write_unlock_bh(&sk->sk_callback_lock);
->   		if (!nvmet_tcp_try_peek_pdu(queue)) {
-> -			if (!nvmet_tcp_tls_handshake(queue))
-> +			if (!nvmet_tcp_tls_handshake(queue, HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC))
->   				return;
->   			/* TLS handshake failed, terminate the connection */
->   			goto out_destroy_sq;
-> diff --git a/include/net/handshake.h b/include/net/handshake.h
-> index dc2222fd6d99..084c92a20b68 100644
-> --- a/include/net/handshake.h
-> +++ b/include/net/handshake.h
-> @@ -10,6 +10,10 @@
->   #ifndef _NET_HANDSHAKE_H
->   #define _NET_HANDSHAKE_H
->   
-> +#include <uapi/linux/handshake.h>
-> +
-> +#define handshake_key_update_type u32
-> +
-Huh?
-You define it as 'u32' here
-
->   enum {
->   	TLS_NO_KEYRING = 0,
->   	TLS_NO_PEERID = 0,
-> @@ -38,8 +42,12 @@ struct tls_handshake_args {
->   int tls_client_hello_anon(const struct tls_handshake_args *args, gfp_t flags);
->   int tls_client_hello_x509(const struct tls_handshake_args *args, gfp_t flags);
->   int tls_client_hello_psk(const struct tls_handshake_args *args, gfp_t flags);
-> +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, gfp_t flags,
-> +			     handshake_key_update_type keyupdate);
->   int tls_server_hello_x509(const struct tls_handshake_args *args, gfp_t flags);
->   int tls_server_hello_psk(const struct tls_handshake_args *args, gfp_t flags);
-> +int tls_server_keyupdate_psk(const struct tls_handshake_args *args, gfp_t flags,
-> +			     handshake_key_update_type keyupdate);
->   
->   bool tls_handshake_cancel(struct sock *sk);
->   void tls_handshake_close(struct socket *sock);
-> diff --git a/include/uapi/linux/handshake.h b/include/uapi/linux/handshake.h
-> index b68ffbaa5f31..b691530073c6 100644
-> --- a/include/uapi/linux/handshake.h
-> +++ b/include/uapi/linux/handshake.h
-> @@ -19,6 +19,10 @@ enum handshake_msg_type {
->   	HANDSHAKE_MSG_TYPE_UNSPEC,
->   	HANDSHAKE_MSG_TYPE_CLIENTHELLO,
->   	HANDSHAKE_MSG_TYPE_SERVERHELLO,
-> +	HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE,
-> +	HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATEREQUEST,
-> +	HANDSHAKE_MSG_TYPE_SERVERKEYUPDATE,
-> +	HANDSHAKE_MSG_TYPE_SERVERKEYUPDATEREQUEST,
->   };
->   
->   enum handshake_auth {
-> @@ -28,6 +32,13 @@ enum handshake_auth {
->   	HANDSHAKE_AUTH_X509,
->   };
->   
-> +enum handshake_key_update_type {
-> +	HANDSHAKE_KEY_UPDATE_TYPE_UNSPEC,
-> +	HANDSHAKE_KEY_UPDATE_TYPE_SEND,
-> +	HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED,
-> +	HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED_REQUEST_UPDATE,
-> +};
-> +
-
-and here it's an enum. Please kill the first declaration.
-
->   enum {
->   	HANDSHAKE_A_X509_CERT = 1,
->   	HANDSHAKE_A_X509_PRIVKEY,
-> @@ -46,6 +57,8 @@ enum {
->   	HANDSHAKE_A_ACCEPT_CERTIFICATE,
->   	HANDSHAKE_A_ACCEPT_PEERNAME,
->   	HANDSHAKE_A_ACCEPT_KEYRING,
-> +	HANDSHAKE_A_ACCEPT_KEY_UPDATE_REQUEST,
-> +	HANDSHAKE_A_ACCEPT_KEY_SERIAL,
->   
->   	__HANDSHAKE_A_ACCEPT_MAX,
->   	HANDSHAKE_A_ACCEPT_MAX = (__HANDSHAKE_A_ACCEPT_MAX - 1)
-> diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
-> index 2549c5dbccd8..c40839977ab9 100644
-> --- a/net/handshake/tlshd.c
-> +++ b/net/handshake/tlshd.c
-> @@ -41,6 +41,7 @@ struct tls_handshake_req {
->   	unsigned int		th_num_peerids;
->   	key_serial_t		th_peerid[5];
->   
-> +	int			th_key_update_request;
->   	key_serial_t		user_session_id;
->   };
->   
-Why 'int' ? Can it be negative?
-If not please make it an 'unsigned int'
-
-> @@ -58,7 +59,8 @@ tls_handshake_req_init(struct handshake_req *req,
->   	treq->th_num_peerids = 0;
->   	treq->th_certificate = TLS_NO_CERT;
->   	treq->th_privkey = TLS_NO_PRIVKEY;
-> -	treq->user_session_id = TLS_NO_PRIVKEY;
-> +	treq->user_session_id = args->user_session_id;
-> +
->   	return treq;
->   }
->   
-> @@ -265,6 +267,16 @@ static int tls_handshake_accept(struct handshake_req *req,
->   		break;
->   	}
->   
-> +	ret = nla_put_u32(msg, HANDSHAKE_A_ACCEPT_KEY_SERIAL,
-> +			  treq->user_session_id);
-> +	if (ret < 0)
-> +		goto out_cancel;
-> +
-> +	ret = nla_put_u32(msg, HANDSHAKE_A_ACCEPT_KEY_UPDATE_REQUEST,
-> +			  treq->th_key_update_request);
-> +	if (ret < 0)
-> +		goto out_cancel;
-> +
->   	genlmsg_end(msg, hdr);
->   	return genlmsg_reply(msg, info);
->   
-> @@ -372,6 +384,44 @@ int tls_client_hello_psk(const struct tls_handshake_args *args, gfp_t flags)
->   }
->   EXPORT_SYMBOL(tls_client_hello_psk);
->   
-> +/**
-> + * tls_client_keyupdate_psk - request a PSK-based TLS handshake on a socket
-> + * @args: socket and handshake parameters for this request
-> + * @flags: memory allocation control flags
-> + * @keyupdate: specifies the type of KeyUpdate operation
-> + *
-> + * Return values:
-> + *   %0: Handshake request enqueue; ->done will be called when complete
-> + *   %-EINVAL: Wrong number of local peer IDs
-> + *   %-ESRCH: No user agent is available
-> + *   %-ENOMEM: Memory allocation failed
-> + */
-> +int tls_client_keyupdate_psk(const struct tls_handshake_args *args, gfp_t flags,
-> +			     handshake_key_update_type keyupdate)
-> +{
-> +	struct tls_handshake_req *treq;
-> +	struct handshake_req *req;
-> +	unsigned int i;
-> +
-> +	if (!args->ta_num_peerids ||
-> +	    args->ta_num_peerids > ARRAY_SIZE(treq->th_peerid))
-> +		return -EINVAL;
-> +
-> +	req = handshake_req_alloc(&tls_handshake_proto, flags);
-> +	if (!req)
-> +		return -ENOMEM;
-> +	treq = tls_handshake_req_init(req, args);
-> +	treq->th_type = HANDSHAKE_MSG_TYPE_CLIENTKEYUPDATE;
-> +	treq->th_key_update_request = keyupdate;
-> +	treq->th_auth_mode = HANDSHAKE_AUTH_PSK;
-> +	treq->th_num_peerids = args->ta_num_peerids;
-> +	for (i = 0; i < args->ta_num_peerids; i++)
-> +		treq->th_peerid[i] = args->ta_my_peerids[i];
-Hmm?
-Do we use the 'peerids'?
-I thought that the information was encoded in the session, ie
-the 'user_session_id' ?
-
-> +
-> +	return handshake_req_submit(args->ta_sock, req, flags);
-> +}
-> +EXPORT_SYMBOL(tls_client_keyupdate_psk);
-> +
->   /**
->    * tls_server_hello_x509 - request a server TLS handshake on a socket
->    * @args: socket and handshake parameters for this request
-> @@ -428,6 +478,37 @@ int tls_server_hello_psk(const struct tls_handshake_args *args, gfp_t flags)
->   }
->   EXPORT_SYMBOL(tls_server_hello_psk);
->   
-> +/**
-> + * tls_server_keyupdate_psk - request a server TLS KeyUpdate on a socket
-> + * @args: socket and handshake parameters for this request
-> + * @flags: memory allocation control flags
-> + * @keyupdate: specifies the type of KeyUpdate operation
-> + *
-> + * Return values:
-> + *   %0: Handshake request enqueue; ->done will be called when complete
-> + *   %-ESRCH: No user agent is available
-> + *   %-ENOMEM: Memory allocation failed
-> + */
-> +int tls_server_keyupdate_psk(const struct tls_handshake_args *args, gfp_t flags,
-> +			     handshake_key_update_type keyupdate)
-> +{
-> +	struct tls_handshake_req *treq;
-> +	struct handshake_req *req;
-> +
-> +	req = handshake_req_alloc(&tls_handshake_proto, flags);
-> +	if (!req)
-> +		return -ENOMEM;
-> +	treq = tls_handshake_req_init(req, args);
-> +	treq->th_type = HANDSHAKE_MSG_TYPE_SERVERKEYUPDATE;
-> +	treq->th_key_update_request = keyupdate;
-> +	treq->th_auth_mode = HANDSHAKE_AUTH_PSK;
-> +	treq->th_num_peerids = 1;
-> +	treq->th_peerid[0] = args->ta_my_peerids[0];
-
-Same here. Why do we need to set 'peerid'?
-
-> +
-> +	return handshake_req_submit(args->ta_sock, req, flags);
-> +}
-> +EXPORT_SYMBOL(tls_server_keyupdate_psk);
-> +
->   /**
->    * tls_handshake_cancel - cancel a pending handshake
->    * @sk: socket on which there is an ongoing handshake
-Nit: we _could_ overload 'peerid' with the user_session_id,then we 
-wouldn't need to specify a new field in the handshake
-request.
-But that's arguably quite hackish.
-
-Cheers,
-
-Hannes
+Best regards,
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Alexandre Courbot <acourbot@nvidia.com>
+
 
