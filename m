@@ -1,136 +1,219 @@
-Return-Path: <linux-kernel+bounces-860481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298AFBF0391
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:39:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400ACBF03BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B2D34F1707
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F633BE58D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C114F2F6190;
-	Mon, 20 Oct 2025 09:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225151F4CBF;
+	Mon, 20 Oct 2025 09:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WbNGj80P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="onWXANZn"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FBF2F617F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C142C2F60CA
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953094; cv=none; b=QfEGHzcVbDmUvutU49b2YZyNiWj0TS70BHUzGB6AvSG5+jBUOoFgeuPXT8ft9S0DZPYNbWnKr7uTKZLK9rUQdFBHMt/c3x+m4NGoxcHHI16Aebsh1FQlBCTuzgM9kN77wtEnmM6cdO+ivAKht7EunW364711EAMYHmkS5690Y6s=
+	t=1760953109; cv=none; b=tzLxU4YRBCxFOVxbW/bHeTcm/+U2CvlCV/aYmEANJOl8ZItTPrum5NA5NCUCgp15GitIRxR4g9wFa7DGgeDcwBv8juIG99kCCARFPRCBtodhR0143i4ygS1aas9G0Uw1BrAGVExV9xt5xbIoCTMJ40yuRTFFv+ZHDSAuuflK6zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953094; c=relaxed/simple;
-	bh=Y4akFPyqNZ4gnOcCriXi9WLSyaE0UFAHWq70mLAc43s=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=A+dngdPYjteRdkvCPIAnOVIDasCs9NeHVlmAHvnP36EGzd5NqS6YJXg2J6MsZwh6FQ8ShU8DiGcOjItsT7x68Yx5tl8zhttyKWyWyToLpA5SNCbkJedQfDSCznp64MEyK/vpy9r5gUlQPHyxJDIk+0+3qZR7Zgi2A6yrexwAEvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WbNGj80P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760953087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nFGptIdtZBHmiHibVZMuWEQ14EDEx3uCXIG9Z8fctL4=;
-	b=WbNGj80PLkweaOHLWLuBXt/uryhvnQPpB43kZrFtHkaQm1hFdTu6dpcb9tPmE+wDQi1BV8
-	KF7cx6jCNatqUtqey/jl7TMDHSKWlfiMcYbXfYmGNLV3BwLRPZfOIinK+eUuVc+EyAD/aC
-	FkS9SV30NQiKGMq2LMOk1J3A5leYAjg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-680-Oj_gfafkMAqmNfTMrMK-ZQ-1; Mon,
- 20 Oct 2025 05:38:04 -0400
-X-MC-Unique: Oj_gfafkMAqmNfTMrMK-ZQ-1
-X-Mimecast-MFC-AGG-ID: Oj_gfafkMAqmNfTMrMK-ZQ_1760953083
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 092A919560B2;
-	Mon, 20 Oct 2025 09:38:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.57])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB4EB19560A2;
-	Mon, 20 Oct 2025 09:38:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Add a couple of missing smb3_rw_credits tracepoints
+	s=arc-20240116; t=1760953109; c=relaxed/simple;
+	bh=ZM99vAaDenOAHQs62WH/1ACKRvDOf/c1+nx6vwi0iiU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=l3SOKmb5RXqQsRL8GupdrNuEY7P24asUfTdWmJ+CBv7qRGI433OdsN/SRfaxxPf26Mw4+csyZyhW+/dJrBant8Iax3M9WhBl0V82RzJvWJZZ2vx49gVr3PuHW951aRwxeYjIje7TH0hr1HbuhqbWac2rnc0rkfdlJRw1uYns4nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=onWXANZn; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1040866.1760953079.1@warthog.procyon.org.uk>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1760953090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q5GKFSb8/CEfXGsPeMSq9twJk4tF7yOdz4CDd5l/dKU=;
+	b=onWXANZnK+qqfixEuAceXS1lWRx+JeiaxMXIWo0ENGg8AfYu6LSCzWRujpeE3aJgRl1MKD
+	5UYyN5Yu3LXWx0Pfe51SQNTWPgNGGwPlQub+f+qcMrlq1Ku3R9tK2sRXTOVmF5Y7wrAam9
+	paPdawkWZi6FjgBdOrwdkMzsQGQdYngyKTiWWVdnTCPE3hdsVUg/YvhuwmP+ZP3RQ+kq6r
+	a1dg7XBXJsQ+fAYnAyg3JrzuJLlaY24b5vin667/995YhHWgvY9Agftc09sFMPjGhnxV6M
+	lEJLdbXKhmGgw7RyRLeRm+zJ5nHdrkUyOLVr8zM7RnWrXoWozQe3ocHOXkRZDg==
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 20 Oct 2025 10:37:59 +0100
-Message-ID: <1040867.1760953079@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 Oct 2025 11:38:02 +0200
+Message-Id: <DDN1RQB4LG0X.30F0A3IMJ4YI4@cknow-tech.com>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <huangtao@rock-chips.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Add support for rockchip
+ pvtpll
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+To: "Elaine Zhang" <zhangqing@rock-chips.com>, <mturquette@baylibre.com>,
+ <sboyd@kernel.org>, <sugar.zhang@rock-chips.com>, <heiko@sntech.de>,
+ <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+ <conor+dt@kernel.org>
+References: <20251020023724.2723372-1-zhangqing@rock-chips.com>
+ <20251020023724.2723372-5-zhangqing@rock-chips.com>
+In-Reply-To: <20251020023724.2723372-5-zhangqing@rock-chips.com>
+X-Migadu-Flow: FLOW_OUT
 
-Add missing smb3_rw_credits tracepoints to cifs_readv_callback() (for SMB1=
-)
-to match those of SMB2/3.
+On Mon Oct 20, 2025 at 4:37 AM CEST, Elaine Zhang wrote:
+> Add pvtpll documentation for rockchip.
+>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-=
+pvtpll.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.=
+yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> new file mode 100644
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Shyam Prasad N <sprasad@microsoft.com>
-cc: Tom Talpey <tom@talpey.com>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/cifssmb.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+Should this file have the 'clk-' part in its name?
+In a way this is different from the other DT binding files, but none of
+the others have the 'clk-' part in their file name:
 
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 7368479ac9c4..6acec5a229ac 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -1294,6 +1294,8 @@ cifs_readv_callback(struct TCP_Server_Info *server, =
-struct smb_message *smb)
- 		.rreq_debug_id =3D rdata->rreq->debug_id,
- 		.rreq_debug_index =3D rdata->subreq.debug_index,
- 	};
-+	unsigned int rreq_debug_id =3D rdata->rreq->debug_id;
-+	unsigned int subreq_debug_index =3D rdata->subreq.debug_index;
- =
+me@pc:~/linux/Documentation/devicetree/bindings/clock$ ls -lh rockchip,*
+-rw-rw-r-- 1 me me 2,9K okt 20 11:32 rockchip,px30-cru.yaml
+-rw-rw-r-- 1 me me 1,9K okt 20 11:32 rockchip,rk3036-cru.yaml
+-rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3128-cru.yaml
+-rw-rw-r-- 1 me me 2,3K okt 20 11:32 rockchip,rk3188-cru.yaml
+-rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3228-cru.yaml
+-rw-rw-r-- 1 me me 2,6K okt 20 11:32 rockchip,rk3288-cru.yaml
+-rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rk3308-cru.yaml
+-rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3328-cru.yaml
+-rw-rw-r-- 1 me me 2,4K okt 20 11:32 rockchip,rk3368-cru.yaml
+-rw-rw-r-- 1 me me 2,5K okt 20 11:32 rockchip,rk3399-cru.yaml
+-rw-rw-r-- 1 me me 1,5K okt 20 11:32 rockchip,rk3528-cru.yaml
+-rw-rw-r-- 1 me me 1,1K okt 20 11:32 rockchip,rk3562-cru.yaml
+-rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3568-cru.yaml
+-rw-rw-r-- 1 me me 1,2K okt 20 11:32 rockchip,rk3576-cru.yaml
+-rw-rw-r-- 1 me me 1,6K okt 20 11:32 rockchip,rk3588-cru.yaml
+-rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rv1108-cru.yaml
+-rw-rw-r-- 1 me me 1,3K okt 20 11:32 rockchip,rv1126-cru.yaml
 
- 	cifs_dbg(FYI, "%s: mid=3D%llu state=3D%d result=3D%d bytes=3D%zu\n",
- 		 __func__, smb->mid, smb->mid_state, rdata->result,
-@@ -1357,12 +1359,18 @@ cifs_readv_callback(struct TCP_Server_Info *server=
-, struct smb_message *smb)
- 			__set_bit(NETFS_SREQ_MADE_PROGRESS, &rdata->subreq.flags);
- 	}
- =
+> index 000000000000..8be34bcde7b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> @@ -0,0 +1,100 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip Pvtpll
+> +
+> +maintainers:
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - rockchip,rv1103b-core-pvtpll
+> +          - rockchip,rv1103b-enc-pvtpll
+> +          - rockchip,rv1103b-isp-pvtpll
+> +          - rockchip,rv1103b-npu-pvtpll
+> +          - rockchip,rv1126b-core-pvtpll
+> +          - rockchip,rv1126b-isp-pvtpll
+> +          - rockchip,rv1126b-enc-pvtpll
+> +          - rockchip,rv1126b-aisp-pvtpll
+> +          - rockchip,rv1126b-npu-pvtpll
+> +          - rockchip,rk3506-core-pvtpll
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  rockchip,cru:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      Phandle to the main Clock and Reset Unit (CRU) controller.
+> +      Required for PVTPLLs that need to interact with the main CRU
+> +      for clock management operations.
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - compatible
+> +  - reg
+> +  - clock-output-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pvtpll_core: pvtpll-core@20480000 {
+> +      compatible =3D "rockchip,rv1126b-core-pvtpll", "syscon";
+> +      reg =3D <0x20480000 0x100>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_core_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_isp: pvtpll-isp@21c60000 {
+> +      compatible =3D "rockchip,rv1126b-isp-pvtpll", "syscon";
+> +      reg =3D <0x21c60000 0x100>;
+> +      rockchip,cru =3D <&cru>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_isp_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_enc: pvtpll-enc@21f00000 {
+> +      compatible =3D "rockchip,rv1126b-enc-pvtpll", "syscon";
+> +      reg =3D <0x21f00000 0x100>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_vepu_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_aisp: pvtpll-aisp@21fc0000 {
+> +      compatible =3D "rockchip,rv1126b-aisp-pvtpll", "syscon";
+> +      reg =3D <0x21fc0000 0x100>;
+> +      rockchip,cru =3D <&cru>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_vcp_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_npu: pvtpll-npu@22080000 {
+> +      compatible =3D "rockchip,rv1126b-npu-pvtpll", "syscon";
+> +      reg =3D <0x22080000 0x100>;
+> +      rockchip,cru =3D <&cru>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_npu_pvtpll";
 
-+	trace_smb3_rw_credits(rreq_debug_id, subreq_debug_index, rdata->credits.=
-value,
-+			      server->credits, server->in_flight,
-+			      0, cifs_trace_rw_credits_read_response_clear);
- 	rdata->credits.value =3D 0;
- 	rdata->subreq.error =3D rdata->result;
- 	rdata->subreq.transferred +=3D smb->resp_data_len;
- 	trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
- 	netfs_read_subreq_terminated(&rdata->subreq);
- 	add_credits(server, &credits, 0);
-+	trace_smb3_rw_credits(rreq_debug_id, subreq_debug_index, 0,
-+			      server->credits, server->in_flight,
-+			      credits.value, cifs_trace_rw_credits_read_response_add);
- }
- =
+rockchip,cru line as the last line?
 
- /* cifs_async_readv - send an async write, and set up mid to handle resul=
-t */
+Cheers,
+  Diederik
+
+> +    };
+> +
+> +...
 
 
