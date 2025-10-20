@@ -1,107 +1,157 @@
-Return-Path: <linux-kernel+bounces-860366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1745DBEFF6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970FCBEFF8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF4C14E3D70
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B8D188BA9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B871E29ACC5;
-	Mon, 20 Oct 2025 08:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="mPDgNYmB"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41392EA49C;
+	Mon, 20 Oct 2025 08:32:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5FC2153FB;
-	Mon, 20 Oct 2025 08:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A932D6629
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949120; cv=none; b=IFNvWUY2nMUaZyRt/gmUHdLpXNFDyKaqM05oAEbhCm1vmSExC9EOWgP8RdmTiok9U5Kn1w42a13OD74oS/MNgpF/hZcQqwDg3gaF2q7k+IzRTApKym1byksyjdlkbP/SokrvvF05lw77wg02+uC5YvfOi6Bss6yKnUmOio4zLtM=
+	t=1760949158; cv=none; b=Zl4fbmNuv+IV32YfR8gUVGjnAgVYNts95KMlNRhGNe0OnlVcQyOv+XNl6+VlvOujjT8VVFMlkrRTqOxF55Pi0RlcCRax9bg9ptCLbqpsa07oZv3k9l7wXokzzKAx5n3ATmDDPQQtKKeMjR00imI4/39+fnTRax2d1Emcq0WzbVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949120; c=relaxed/simple;
-	bh=nW+5kA6uUzCaSA9DzZnF8B9Sku564AsvXK0wLxgURvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s55+Z0tFaIirsypYLeCapYIeBHhY3iwt1aZRrpkEbbdNkvvCz7z0wlkOYwEJTrt7U/ZY4P6wtwL0pftZWxYcv7x9QrYsd/YSet2hMkF40b8Lk9PQV7Vb+bCMHT1VRQl2ReXFHsyy45KzrGxymm70Kx5w5AIToCQIZS509BrMiFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=mPDgNYmB; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=xZ91Gwi5gifJjpKKisGxIOuvBzMpfG2m0X4OcVippnU=; b=mPDgNYmBcwiY902BXGH+5TCCcB
-	5zONyq1MWAa8X2urnLL60sGhBpmiWQriEPjndquGrDH9sR7EIIwJFpbyFfRnZ1m1Zdfkrb4SXN2SP
-	8ODciQWSVOYgmjZm4qcsUiw8ZFf1kzDuyZscjXj/8mLqh+YAHfgOXt7aBiohFFGHWT8xVr7a0WKxa
-	qykeuoyBnvJ4ntaiGa1CwD6yEwtkGym3u4SqTHUmyR9rgfWb1Oxb0Dt5Aqc8Vq9KlwOTQzVBi3HZd
-	ffYWNR7JzDZ5kR9uoh7VUfxOBwDH4cmDVEyjRJ16xPeewI/PxzDDQwAX67X+grdRGu353fN+3m9rn
-	A/WKdVwA==;
-Received: from [141.76.253.240] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vAlJ3-0007Cv-TS; Mon, 20 Oct 2025 10:31:53 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alexey Charkov <alchark@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add DSI LCD display on rk3576-evb1
-Date: Mon, 20 Oct 2025 10:31:53 +0200
-Message-ID: <5143458.iZASKD2KPV@phil>
-In-Reply-To:
- <CABjd4YwVfrzxYKM4cAG=-fMbw9OcQGZD20CVCG8FvC8phDsw+Q@mail.gmail.com>
-References:
- <20250925-rk3576-evb1-dsi-v1-1-c76fc3740abc@gmail.com>
- <CABjd4YwVfrzxYKM4cAG=-fMbw9OcQGZD20CVCG8FvC8phDsw+Q@mail.gmail.com>
+	s=arc-20240116; t=1760949158; c=relaxed/simple;
+	bh=2Zxi1uzwcNMLMP/BnWqBgmCsQY6hstGNmVrbM1QaAG8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YJQWIO1yQ07Pujm8EiLS48OTR/ikJYCBv2+a6tsKQFzWYBAKC/BApd/8Fru0xHh4nYlFQYzairZxA/CQtp3g7apNiUrz5q8rdFvqCitsuEq+Sf/Ah0n1cKhCUQmZOHGLSkDn1TZOlW6SD6TUKPjRY/MersSWncl5lvtOXjgd4yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vAlJG-0004CL-QY; Mon, 20 Oct 2025 10:32:06 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vAlJF-004VyN-1v;
+	Mon, 20 Oct 2025 10:32:05 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vAlJF-000000004Ju-23bC;
+	Mon, 20 Oct 2025 10:32:05 +0200
+Message-ID: <d6956eba2f99faedf7e6e28cb23d95a36101e6a9.camel@pengutronix.de>
+Subject: Re: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>, Biju Das	
+ <biju.das.jz@bp.renesas.com>, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,  "alexandre.belloni@bootlin.com"	
+ <alexandre.belloni@bootlin.com>, "robh@kernel.org" <robh@kernel.org>, 
+ "krzk+dt@kernel.org"	 <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+ <conor+dt@kernel.org>,  "geert+renesas@glider.be"	
+ <geert+renesas@glider.be>, "magnus.damm" <magnus.damm@gmail.com>, 
+ "mturquette@baylibre.com"	 <mturquette@baylibre.com>, "sboyd@kernel.org"
+ <sboyd@kernel.org>
+Cc: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>, 
+ "linux-renesas-soc@vger.kernel.org"
+	 <linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	 <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	 <linux-clk@vger.kernel.org>
+Date: Mon, 20 Oct 2025 10:32:05 +0200
+In-Reply-To: <TY7PR01MB14910BB6AD621CC7BA42D56D4D3F5A@TY7PR01MB14910.jpnprd01.prod.outlook.com>
+References: <20251019092106.5737-1-ovidiu.panait.rb@renesas.com>
+	 <20251019092106.5737-6-ovidiu.panait.rb@renesas.com>
+	 <TY3PR01MB11346CBE1C135CBEF82E3E7BE86F4A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	 <TY7PR01MB14910BB6AD621CC7BA42D56D4D3F5A@TY7PR01MB14910.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Am Montag, 20. Oktober 2025, 10:19:51 Mitteleurop=C3=A4ische Sommerzeit sch=
-rieb Alexey Charkov:
-> On Thu, Sep 25, 2025 at 12:38=E2=80=AFAM Alexey Charkov <alchark@gmail.co=
-m> wrote:
-> >
-> > Add support for the Rockchip W552793DBA-V10 LCD+touchscreen assembly wh=
-ich
-> > comes physically attached to Rockchip RK3576 EVB1 boards.
-> >
-> > The display part is driven by the on-chip MIPI DSI controller, and the
-> > touchscreen is connected over I2C.
-> >
-> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > ---
-> > Note that backlight support is left out for now, as it depends on PWM
-> > support [0] which has not yet been merged.
-> >
-> > A workaround is simply `gpioset -c 0 13=3D1` to set the respective GPIO
-> > pin high and thus to light up the display unconditionally.
-> >
-> > [0] https://lore.kernel.org/lkml/20250602-rk3576-pwm-v2-0-a6434b0ce60c@=
-collabora.com/
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts | 89 ++++++++++++++++=
-++++++++
-> >  1 file changed, 89 insertions(+)
+On Mo, 2025-10-20 at 08:13 +0000, Ovidiu Panait wrote:
+> Hi Biju,
 >=20
-> Hi Heiko,
+> > -----Original Message-----
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > Sent: Sunday, October 19, 2025 1:16 PM
+> > To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>; Claudiu Beznea
+> > <claudiu.beznea.uj@bp.renesas.com>; alexandre.belloni@bootlin.com;
+> > robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > geert+renesas@glider.be; magnus.damm <magnus.damm@gmail.com>;
+> > mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de
+> > Cc: linux-rtc@vger.kernel.org; linux-renesas-soc@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > clk@vger.kernel.org
+> > Subject: RE: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
+> >=20
+> >=20
+> >=20
+> > > -----Original Message-----
+> > > From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> > > Sent: 19 October 2025 10:21
+> > > Subject: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
+> > >=20
+> > > Add RTC node to Renesas RZ/V2H ("R9A09G057") SoC DTSI.
+> > >=20
+> > > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> > > ---
+> > >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 14 ++++++++++++++
+> > >  1 file changed, 14 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > > index 40b15f1db930..e426b9978e22 100644
+> > > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > > @@ -591,6 +591,20 @@ wdt3: watchdog@13000400 {
+> > >  			status =3D "disabled";
+> > >  		};
+> > >=20
+> > > +		rtc: rtc@11c00800 {
+> > > +			compatible =3D "renesas,r9a09g057-rtca3", "renesas,rz-
+> > rtca3";
+> > > +			reg =3D <0 0x11c00800 0 0x400>;
+> > > +			interrupts =3D <GIC_SPI 524 IRQ_TYPE_EDGE_RISING>,
+> > > +				     <GIC_SPI 525 IRQ_TYPE_EDGE_RISING>,
+> > > +				     <GIC_SPI 526 IRQ_TYPE_EDGE_RISING>;
+> > > +			interrupt-names =3D "alarm", "period", "carry";
+> > > +			clocks =3D <&cpg CPG_MOD 0x53>, <&rtxin_clk>;
+> > > +			clock-names =3D "bus", "counter";
+> > > +			power-domains =3D <&cpg>;
+> > > +			resets =3D <&cpg 0x79>, <&cpg 0x7a>;
+> >=20
+> > Missing reset-names??
+> >=20
 >=20
-> Any thoughts about this one? Can we perhaps get it merged for -next?
+> The resets are retrieved using devm_reset_control_array_get_shared(),
 
-Does the gpio-backlight work on that device?
-That would make the gpioset hack unnecessary.
+The device tree bindings should be designed independently from the
+driver implementation.
 
+> which does not rely on named reset entries. This keeps the
+> implementation minimal and keeps it in sync with RZ/G3S, which also
+> does not take the RTC reset by its name.
+>=20
+> For this reason, I kept the rtca3 bindings without a reset-names property=
+.
 
-Heiko
+There is no need to use the reset names in the driver if they are just
+toggled all at once, but unless you can guarantee that there will never
+be a need to tell them apart, it would be safer to give them a name.
 
-
+regards
+Philipp
 
