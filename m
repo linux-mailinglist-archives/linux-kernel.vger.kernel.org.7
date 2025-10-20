@@ -1,408 +1,432 @@
-Return-Path: <linux-kernel+bounces-860373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C0DBEFFD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0650BEFFD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE6189E40B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54828189AE46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828D62EC569;
-	Mon, 20 Oct 2025 08:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4802F2EC0A0;
+	Mon, 20 Oct 2025 08:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ImI/Z1vZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="WL/nMQME"
+Received: from mx-relay48-hz3.antispameurope.com (mx-relay48-hz3.antispameurope.com [94.100.134.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B4C2C1595;
-	Mon, 20 Oct 2025 08:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F282EC0B2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.237
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949407; cv=fail; b=VYb4a00AGcAdPjknTxS1dY8A/SElp3rhzc8oRg7WgOMansmV/Ad9CX8qLtf6IB3x868POPn/RmwiMVnFP37PN32dF0WgyNaVwGZHTSvndBMEAdxqsbhyy8PSS4KI+uuDz6tKMQmkKEzUmt4AMsmBn8PxYw3TMhBr5nFbVq468YQ=
+	t=1760949444; cv=pass; b=ouPpZ7sXBWgm7WeqQeAjS4S9sRIEQgS3x2akqPQ7kIqsI7wDw5x9xVv1MU9Q3KTPQ4eorfc0lEf2zk1lOdIOEFOSlAMfMXLp8xoHWkF4uhbeMn7Z1fHAIbDfh5opeKvh3RA6dgrmj1Eg7mP5Ub+C/DUBgrTe7hwrdIHcyCq64gk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949407; c=relaxed/simple;
-	bh=MV/LBnfTj0kC2fP55u0yIZCHZetX0+SrTViLUHWbdzM=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eGW3p8ndwqhcR85N1gXr+Ud2Mq/gM4jJxK68ZwHd6aTjkhPwrcyG2s+omhQazeThGxsxAGz7MBjKyPc5iDhB3kF5R2fxffPObg7VYjFTMf6C3CjZtHAbHNyTwDf5AADb4hDLh3IZq7ClekmN0MNKu++SxRWZDooUEVzj88E+iJU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ImI/Z1vZ; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760949405; x=1792485405;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   mime-version;
-  bh=MV/LBnfTj0kC2fP55u0yIZCHZetX0+SrTViLUHWbdzM=;
-  b=ImI/Z1vZrD9NE4TuWJXqqZXKCqzDn33AqEpcixeXQic8UxEur8w1IrN0
-   NEYHu1MnAnDroWDeF7XTq2Oco3NhXQ7+GK6J/W8Vr3jTj/uNSGGZyTp92
-   tLhlFzF9rL5nCJDXgjLBZ3YDSie9zCxbgE6ND3lB618qYWG+2WC20/OG5
-   zuI2lc+4Shxk6vhNCCxKCNNM+Nq8d/UkwMIzuC37+7hjaMUllr2EsneNf
-   kQwm/suKzehJnI2QE1vshETThzxqR43qAY0lAJeHc2TiIOQyvZhWr470P
-   rGpSLfUosazDqLeDneKSNdlqqbaDtj6Eg5ttiJe828MO8tsMCvfxakSUn
-   w==;
-X-CSE-ConnectionGUID: wIJfHBjWS8q94Df56l55kA==
-X-CSE-MsgGUID: dBrra38XSJKVN8FDzR6ylQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="50631625"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="50631625"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 01:36:45 -0700
-X-CSE-ConnectionGUID: U1qL9ifARIenN/XvZdbTIw==
-X-CSE-MsgGUID: b3xWaFFSSJSv79oXVk3bJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="182978759"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 01:36:45 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 20 Oct 2025 01:36:44 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 20 Oct 2025 01:36:44 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.0) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 20 Oct 2025 01:36:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iv4073F/0Bp2qW9Zc9O8QygSAJ7YcCcGyrQLUA9eaVvcTNs3Phqatb6+Q2lm+C+Wj4JvLY6jPanDkb9e1UcJJ8prukXLTJiMoEyf62rHKvkAu1ofa9rUbW3KUeoxj/fOCzJa89dj52ZJ2abjTmf7Z/s/a2TKIk5nCQtdMzHVMcGczSs3oI2WPDk4qgLFCLBGQe3UnD3ZrSAv+AIfxJmjw9MWVbpSEDKdosh9ufjrd/nDJZOoA2ZcdfwNhsLkF0wqnhYtgxKFmLiL1W3SCWidp6SxgSERn+32ay2MFTM5GbYN53nzu2tABnx8MCaFtfXMy8Gjn6GTpSS+s9Z12PDw+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IXh8ban+v4mkN67BTSB5OQKd/4jZrWcSb4ei5XA4oJ4=;
- b=Ovld633lgU6cchVlT1H9Id1UcYplGlrVmLE0Q5Mi31z09HNLlCBqwC8oPoZIkSncDT4kCQVkR53zursxjqUOy0fbeGozy6KXuEM0lY29YBQDB5YJlJvFrq+tseqGY9rFq9SNZDfSq7u3YUmOdFblMTmKPO/dcKKAhV4HLjBwRD5Ohr3zWpWwXyZoOjOOcK36dO8D8zx9FlKAiVBCTcom5ODJtHUIrn2lgiVyimXO2KRW0BNzRpDDXYA8+hXqqIzxvszgIA0iN13S7HNNIzLbI01jAHzNl+dkl9fiI3tHqtUtRzSFrgJU5GeDGJ4jPemtfF8z/FNWiYyVX1edOec/jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SA3PR11MB8119.namprd11.prod.outlook.com (2603:10b6:806:2f2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Mon, 20 Oct
- 2025 08:36:41 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 08:36:41 +0000
-Date: Mon, 20 Oct 2025 16:36:31 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: NeilBrown <neilb@ownmail.net>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-	<oliver.sang@intel.com>
-Subject: Re: [PATCH v2 06/14] VFS: introduce start_creating_noperm() and
- start_removing_noperm()
-Message-ID: <202510201610.40b1a654-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251015014756.2073439-7-neilb@ownmail.net>
-X-ClientProxiedBy: KUZPR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:d10:33::17) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	s=arc-20240116; t=1760949444; c=relaxed/simple;
+	bh=hiN3AVIwQ7ASrylksDJkYWnhjnlcFgbG0cResmPOMqA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DnVOQ9F4I7HlQz9jBoLTjf5qULhsfW9bKmKZmO/Yrq8QXtuuxK3pz6rDDt/ngTH4r6uvvsKvSzF+KW71I7FWeWqiA70Y+okkDu7r6J5QUo0VCnn1kfACJWkKNXCbQbFreSjnwjaYZPXhOHSfxUQY3JMgZ4wlsc0nJBudRjv8lFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=WL/nMQME; arc=pass smtp.client-ip=94.100.134.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate48-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=bTJve/afpJuaKd7XKA6kkj7fLwHslT2EeDKl1982FAY=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1760949432;
+ b=eiIZMB7lzsWHcwjocnSNRlBTzCfKHIlhS3DqbvnE8hGx35laI1taexunsq0FJQ9lFNG8IyN8
+ tmA5+N0eFmfx8jqMv/dTivhD7e9Ns1Lru3Z4LERFLdB4xCaf9/g0slORqsdHQEICax2EIV44qkS
+ I6QGb2uJLLQJow4k95RKibcS8qoahzhrrw/nioUQO90iKS6fjG6/1ESr1I2JUD/wg1HWnDDeHfP
+ AJhoV83XmYlRJOlh3CPBrIJ5nIvm6TU8oG205XHv2vZQGLBHPkrA0FrufF9zOA94AF+RhhuZLoU
+ 6LRYZ4BxGbw8jXzd9PCpdnTfwlzkRLu5kv2G5VFUGoHeA==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1760949432;
+ b=Bf6s/rLOIKUUY1XSqiA8benSoOCVHm/VrjC1zUY3gsR8AM87yaJNcgFK5Vdi4JSg3sfnCimq
+ J1J49dNJGvavYwI54sKmyvsCPTDL13xXeH8UX+InhTDo57gFH+Ie9WN6m80eapKLBUNx0liSL5Q
+ gTzW7mo6RtS3Z1YK7o+u7IVessK1dbiP3/7EE4stfjxYWUHqp2La2n4PFSvwmSgcKBBnQl2ovvg
+ mcA+YsQhSW6HWjl9bHb615a2ayUOg2w6lB8DHEBaelIg2lRId3TKie77ziAm94NG1dhJNVcRcOi
+ 07Cq0Zm49QSPQ9NTGLuD/P5sOWpIaKN9s4nG+rmhYZTew==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay48-hz3.antispameurope.com;
+ Mon, 20 Oct 2025 10:37:11 +0200
+Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
+	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 75D825A0C52;
+	Mon, 20 Oct 2025 10:37:01 +0200 (CEST)
+Message-ID: <9a438ecd4ac48d9546d76058e615419bb0942b42.camel@ew.tq-group.com>
+Subject: Re: [PATCH v2 1/4] i2c: machxo2: new driver
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Date: Mon, 20 Oct 2025 10:37:00 +0200
+In-Reply-To: <wsbevkqszimjkww3qihxbghtw3yaxaooagwrgv2prhldeutybh@vh5nmdx5hiha>
+References: 
+	<5855f15ad83617d3a71b40d89d61273722c6e15f.1760601899.git.matthias.schiffer@ew.tq-group.com>
+	 <wsbevkqszimjkww3qihxbghtw3yaxaooagwrgv2prhldeutybh@vh5nmdx5hiha>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SA3PR11MB8119:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9585fe0-c8a1-4a41-b589-08de0fb3cb38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+kM2jezQWFGiJcEHv8uVax6P9BTaLQzN/7j8Nqsd4VhPWuFM79ObUcT9nvBS?=
- =?us-ascii?Q?eT8fH4TL0qeTd2FJAZJumlR4/RGIpzDWc0EXdj0yJjU+gCswUhXGHoac9gXt?=
- =?us-ascii?Q?x386yzPVHv6EagZ0ngjYWrVYLm/IuCqe3WFxgQogiVJ4w832f6jhCBwGuKmX?=
- =?us-ascii?Q?/WyLxRau+uL7e67wdTTZvmSCVHMpKaioTa3RV+18jp/hENAApiBR+LvefxcA?=
- =?us-ascii?Q?2H+RoQytwr51oDypiCwrj5APEKwqN3KZiITG/SohRhKDryvk9Dp1POfPNQEQ?=
- =?us-ascii?Q?vQlXpMKKDA7bg/6T3bZI055fVamnX3gcG7I1kAMVvs2K5meFbXRs3aLXqMM6?=
- =?us-ascii?Q?a0q7o7nD1GjD55B62sT7r3aPi9SNMz3f05vbboIctuj2psH7aYKQ3Pjs8MOV?=
- =?us-ascii?Q?xc6m+modIklSmhoA+PiV7/TP8yulyF2vReIQQK0yB8si16j5oz9LNF22M/Mf?=
- =?us-ascii?Q?dN89L2dQAdVvs/01uQPNAI/xcYwHB/LlhMupNbsrdY94ZqF75HngvYM0LsfW?=
- =?us-ascii?Q?4jR/R8iKh3LPhQ4CWOfQ7634hOLKMuiygXj1izT/HkD70ASMmv0+CBVpKN2H?=
- =?us-ascii?Q?zmyf7egMY+w49uKEHcYXQga1Ix936YmXWMEm7ML7EemAAqGhUiPEgEpjrpp2?=
- =?us-ascii?Q?tHoZawNM1OlBY4ozcszX3ABVKiTagMXmRsxETIwAOSj6hAxhsBZU3iOI/DxH?=
- =?us-ascii?Q?d3UqyF0mv5W9LdeIyghehFhM8UB1spvSoILgvnnNaAX+NBK4OS5J/B+tdGLt?=
- =?us-ascii?Q?nzEi2z256ByKQD8ApWog+g9a/GOBzuAX4J8ULt2OHzJYcwatb/MO/D2PvKrq?=
- =?us-ascii?Q?fYJoYsUQW1A8bJ7RwWsOYvJWzVeyT0WVD4Old33vB44HIu8Nz95iFRYP203Y?=
- =?us-ascii?Q?f1Cc9MQwv6PhO4WIguY1Pv8a071zToL7mq8JkCLZZGe1Aq098MpXHcOb8jYY?=
- =?us-ascii?Q?tBoWVaU7/X3eYIZQGERxLHtXh5icx0Am+2NUIuN5udTiiiUJsLgzAcgFuFJX?=
- =?us-ascii?Q?ZU00MGhCZdVJS2CXCPd+2UOXULhwknxxi8fisqEuHDp5Jd6af3w+KHnF7F4i?=
- =?us-ascii?Q?RYE3RzE8ndyqgl+FSjWaJgOdnFkazV08bQnC0SomenJcAm7NE5WiRG14bW4e?=
- =?us-ascii?Q?vb7bLQ+cBp14BZKE56XgHNAWTYr7HzzlwUjXdnGJw1dfYTenDSXZNi5Qoyx3?=
- =?us-ascii?Q?LZnLH+bWdzwXglqHzlzfu0/hRM0SK2cm9f8kaxaOVYad59959wrPQFbgNJZT?=
- =?us-ascii?Q?kZ/9d8117ZW08UbdPY3m3gniaC7bWRmRUPe/Z9F/Vi5ruM9U6p0qWrsfB23a?=
- =?us-ascii?Q?MJGlWGASXekV+aKyEv5Eemh4NKmifkNMDaIwD3bV+/joPBDD7VOUOxQR1eMV?=
- =?us-ascii?Q?/bJG4NI8ay0ly52xXc8YU2JZytm/aGIAo2Q8Jp2VuCqIjleK9HUgCN06KYcA?=
- =?us-ascii?Q?CeNMjQBx7+myDRDuQWFd+Y41anl7G5pP+co9n2vlOpF3tA2IQvqzZA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9mqck7LUv1iT9Fbn2POk36sVvxyrgo1hS9vc+2m3x9nj/UFSSymUG2ZAg4B4?=
- =?us-ascii?Q?ZSNugW92BMDymVOnohahGXECYwg/MxxVac0IE5eFmyoeuvGnqwNAW/NZnj/q?=
- =?us-ascii?Q?ZXGlc8uMsZVQBvoRhvtPNJDIYinmqvwKqQObzxanhqhvRLNTtQi7wBEvqfV1?=
- =?us-ascii?Q?PYG/0+aiC57bZrZvCxg1DfOSTO0Zk63v2bltVbat9pYkzgz9sI8OS95M9e2o?=
- =?us-ascii?Q?6ctYGD2x0PAddA9cfAwwNIdtwuETV07vWYd0tyMeFfbfftE9Ezeo0m0u0eHd?=
- =?us-ascii?Q?G/sPrvibaKwlvd93BH8AAUm3vzNxB2B7qizNpOZfPLGHCpj/Wn6+LzRdsuuD?=
- =?us-ascii?Q?Y4/A3GMJiVkqaw4ddd97MK59qbVE8TMzOgdfDjIzu/elmU6DTwUTcKdd0M2B?=
- =?us-ascii?Q?BwRzK9Bnm3p+KLRaZyJO/3jiJMEBLB3vofaOSSasILRqqgxNR1bFxeUb+Cmm?=
- =?us-ascii?Q?QC+lktU2ZZEhjhVa2l20/s2R/6k82nzpgTq27k9tZ3WLIk4/r7gFOq+GpG4h?=
- =?us-ascii?Q?MlBrC4QkmPVSQ0WN2BgPXwfoSFC//oSmFcM7PACYdtqgAtNkX7R8D4wrFSo5?=
- =?us-ascii?Q?nXFMblrwjqY5fnwIKZKNYumscUvho9zGHWYty+VVlCAW0xj0jUV/C9GvPshz?=
- =?us-ascii?Q?jq2d4MQlqvb1IhwTXz9obpmS29fOiXoJvuOFYqiHNeaQ/wBOJoYl4RBlEB6Y?=
- =?us-ascii?Q?ux5eLP3Znw4pCcAUTQoA8ulHr8DB7r23U8qpeK3nV59eluCfQ5NOVVUhH82S?=
- =?us-ascii?Q?Knvm70rc9gXop6R7x9Y5NIKVNC7COoIJce1uvBOoA9moZNQ5Vljdt8sDRJmN?=
- =?us-ascii?Q?fpCqdKaEKkvP0I9blFE6jt3Qai4yQSRw3QY4owngF8UAS2HZ4NxWyJnNJYgS?=
- =?us-ascii?Q?pgrFCOcN9umW1mPJ1W2p9e4FMO9mU0zZVgXW76BW5qbploMwXCNm97/hxEau?=
- =?us-ascii?Q?TZ+3l66QEfa30in9xUTZf5jSsp8bES6PTdu+SY9pRL7LM8X0u/K78d7CFMV2?=
- =?us-ascii?Q?jJXXCvjB9XFf42HqHC9vq6pdqn26r5mhSBoyh8jHRz7/67tGZ8+bvkgNGPTB?=
- =?us-ascii?Q?6fBG3P/cKCKwS6jJNBF+jGjgzsPuSON+Mv8xtc3qenyBcwwTrxohDtN0QNd1?=
- =?us-ascii?Q?0Ibca0Ga4K6Wsh7M/7+eRgghuU79v8bLdE6ht3yd3JLYQBdAR+N179ZPUOwp?=
- =?us-ascii?Q?ck8HcffvO2Z3TOqlI1xA1HnXaBc5iR/mc0EKdb1U5+ee+mPR0hp0s1JWKD+u?=
- =?us-ascii?Q?lahLTH9sCZasjEzUPNgLTnCDO1uWy1nk0yn4YbF23XmdatZ7xh3yIsao5h92?=
- =?us-ascii?Q?zOyFLdV6NmPFQRNiLGudWVSTpb8jtFGWOjVzDhMV0QPAG4sbJGhSZw2zmsgU?=
- =?us-ascii?Q?N9mEw0xGZmiDVeGewuAFaS4p6swaYbLzdG7teLkqdZ6Xgzx+P0YGVJBQyEbs?=
- =?us-ascii?Q?p2GLTe7HOZQD7zLNCmJIH1jXrtzFlQXk558z5LatsMyifbI6n9m4Gg6H5UaR?=
- =?us-ascii?Q?//vKdF1eM73FY58h2Hx/x7kBLTitMBtPMjh1yaEiEFecn36e9eE3HpVVRc4R?=
- =?us-ascii?Q?IpsoTSfw0WNk7nAk+vjfJ1xp6I9nxwTYqR7aSvWgXSbVt9A+w4wNpkDAfksP?=
- =?us-ascii?Q?vQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9585fe0-c8a1-4a41-b589-08de0fb3cb38
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 08:36:41.7705
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3UjQ/2b/fWW676a0aw/3OIND+vfcISIe0r39+6m5zZtx59wJzDM6rZ9ef1QfIWQoM2pztqXaAgOyd9YaGV3Y6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB8119
-X-OriginatorOrg: intel.com
+X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay48-hz3.antispameurope.com with 4cqpgx6gXKz1kNh4D
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:5ba4ae6453ff635a7b9006afcfd7c665
+X-cloud-security:scantime:2.075
+DKIM-Signature: a=rsa-sha256;
+ bh=bTJve/afpJuaKd7XKA6kkj7fLwHslT2EeDKl1982FAY=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1760949431; v=1;
+ b=WL/nMQMEgLiKhhBrxbYDOq5vrxE8KuR22/mFK5r+OqdG5f/rsqyuxOu3m72fdiVEUBs1s6mF
+ DThdkJI/x94kIWJgoSFPKQoyYQM4AFK0lDZx8BT6H/CBTkczPfT3vSzd3M+Elxry4w0KULJVd4t
+ FmjbjiLFZWTCsW7AlRo6a2TklmmYOwUUB3/oCPUjsoCzq+z4rBKYcGmpUQSOvDzjaJ2CXAt0hBs
+ j9gWM+cs1PE2f78RivK8pV3ovG9jRY6wBnphnasjbamibxvAoGSgwyR+ey8ce49/dtd7Qk0iKBT
+ heU4QkVjSA02uwlBYKTizSxy8oUPP6MiZDg1MHTrDXClg==
+
+On Sat, 2025-10-18 at 01:24 +0200, Andi Shyti wrote:
+> Hi Matthias,
+>=20
+> ...
+>=20
+> > +enum machxo2_i2c_state {
+> > +	STATE_DONE,
+> > +	STATE_START,
+> > +	STATE_WRITE,
+> > +	STATE_READ_WAIT_SRW,
+> > +	STATE_READ,
+>=20
+> Can you please use a prefix for these enums?
+>=20
+> > +};
+>=20
+> ...
+>=20
+> > +/* Registers */
+> > +#define I2C_CR			0 /* Control, RW */
+> > +#define  I2C_CR_I2CEN		0x80 /* Enable I2C */
+> > +
+> > +#define I2C_CMDR		1 /* Command, RW */
+> > +#define  I2C_CMDR_STA		0x80 /* Start */
+> > +#define  I2C_CMDR_STO		0x40 /* Stop */
+> > +#define  I2C_CMDR_RD		0x20 /* Read */
+> > +#define  I2C_CMDR_WR		0x10 /* Write */
+> > +#define  I2C_CMDR_ACK		0x08 /* Send NACK if the bit is set */
+> > +#define  I2C_CMDR_CKSDIS	0x04 /* Clock stretch disable */
+> > +
+> > +#define I2C_BR0			2 /* Clock Pre-scale, RW */
+> > +#define I2C_BR1			3 /* Clock Pre-scale, RW */
+> > +#define I2C_TXDR		4 /* Transmit Data, WO */
+> > +#define I2C_SR			5 /* Status, RO */
+> > +#define  I2C_SR_TIP		0x80 /* Transmit In Progress */
+> > +#define  I2C_SR_BUSY		0x40 /* Bus Busy */
+> > +#define  I2C_SR_RARC		0x20 /* Received ACK (if unset) */
+> > +#define  I2C_SR_SRW		0x10 /* Slave Read/Write */
+> > +#define  I2C_SR_ARBL		0x08 /* Arbitration Lost */
+> > +#define  I2C_SR_TRRDY		0x04 /* Transmitter/Receiver Ready */
+> > +#define  I2C_SR_TROE		0x02 /* Transmitter/Receiver Overrun Error */
+> > +#define  I2C_SR_HGC		0x01 /* Hardware General Call Received */
+> > +#define I2C_RXDR		7 /* Receive Data, RO */
+> > +#define I2C_IRQ			8 /* IRQ, RW */
+> > +#define I2C_IRQEN		9 /* IRQ Enable, RW */
+> > +#define  I2C_IRQ_ARBL		0x08 /* Arbitration Lost */
+> > +#define  I2C_IRQ_TRRDY		0x04 /* Transmitter/Receiver Ready */
+> > +#define  I2C_IRQ_TROE		0x02 /* Transmitter/Receiver Overrun Error */
+> > +#define  I2C_IRQ_HGC		0x01 /* Hardware General Call Received */
+> > +#define  I2C_IRQ_MASK		(I2C_IRQ_ARBL | I2C_IRQ_TRRDY | I2C_IRQ_TROE)
+>=20
+> Can you please use a prefix for all these defines?
+>=20
+> ...
+>=20
+> > +/* Delay by a number of SCL cycles */
+> > +static inline void machxo2_delay(const struct machxo2_i2c *i2c,
+> > +				 unsigned int cycles)
+> > +{
+> > +	udelay(machxo2_cycles_to_usecs(i2c, cycles));
+>=20
+> can we use fsleep here?
+
+Outside of machxo2_recover, this is only run from the hrtimer handler, whic=
+h is
+softirq context, right? In any case, the MachXO2 I2C controller has some
+unfortunate timing-related fragility, so waiting longer than expected could=
+ be
+bad.
+
+Switching to fsleep just for machxo2_recover would be an option, which is a=
+lso
+the only place where a machxo2_delay() with cycles > 2 happens.
+
+>=20
+> > +}
+>=20
+> ...
+>=20
+> > +static enum machxo2_i2c_state
+> > +machxo2_write(struct machxo2_i2c *i2c, u8 stat)
+> > +{
+> > +	struct i2c_msg *msg =3D i2c->msg;
+> > +
+> > +	if (stat & I2C_SR_TRRDY) {
+>=20
+> if you do
+>=20
+> 	if (!(stat & I2C_SR_TRRDY))
+> 		return STATE_WRITE;
+>=20
+> you can save a level of indentation.
+>=20
+> > +		bool eom =3D (i2c->pos =3D=3D msg->len);
+> > +
+> > +		if (eom) {
+> > +			machxo2_delay(i2c, 1);
+> > +			stat =3D machxo2_get(i2c, I2C_SR);
+> > +		}
+> > +
+> > +		if ((i2c->pos > 0 || eom) && (stat & I2C_SR_RARC)) {
+> > +			dev_dbg(&i2c->adap.dev, "No ACK at %d\n", i2c->pos);
+> > +			return machxo2_error(i2c, -ENXIO);
+> > +		}
+> > +
+> > +		if (eom)
+> > +			return machxo2_end_of_message(i2c);
+> > +
+> > +		machxo2_set(i2c, I2C_TXDR, msg->buf[i2c->pos++]);
+> > +		machxo2_set(i2c, I2C_CMDR, I2C_CMDR_WR);
+> > +
+> > +		machxo2_reset_timer_wait(i2c);
+> > +	}
+> > +
+> > +	return STATE_WRITE;
+> > +}
+>=20
+> ...
+>=20
+> > +static irqreturn_t machxo2_isr(int irq, void *dev_id)
+> > +{
+> > +	struct machxo2_i2c *i2c =3D dev_id;
+> > +	u8 irq_stat =3D machxo2_get(i2c, I2C_IRQ);
+> > +
+> > +	if (!(irq_stat & I2C_IRQ_MASK))
+> > +		return IRQ_NONE;
+> > +
+> > +	/*
+> > +	 * Due to a race condition in the I2C controller, no edge on the IRQ
+> > +	 * line may be generated if an event comes in right at the moment whe=
+n
+> > +	 * the IRQs are cleared. Loop to ensure that IRQs are actually cleare=
+d.
+> > +	 */
+> > +	do {
+> > +		machxo2_set(i2c, I2C_IRQ, I2C_IRQ_MASK);
+> > +		irq_stat =3D machxo2_get(i2c, I2C_IRQ);
+> > +	} while (irq_stat & I2C_IRQ_MASK);
+> > +
+> > +	spin_lock(&i2c->lock);
+> > +	hrtimer_start(&i2c->timer, 0, HRTIMER_MODE_REL);
+> > +	spin_unlock(&i2c->lock);
+>=20
+> why do we need spin_locks here?
+
+This prevents a race against the following code in machxo2_restart_timer():
+
+	if (!hrtimer_is_queued(&i2c->timer))
+		hrtimer_forward_now(&i2c->timer, i2c->timer_wait);
+
+We do not want to hrtimer_forward_now() if the timer is already queued, so =
+we
+never lengthen the time until the next expiry.
+
+
+>=20
+> > +	return IRQ_HANDLED;
+> > +}
+>=20
+> ...
+>=20
+> > +static int machxo2_init(struct machxo2_i2c *i2c)
+> > +{
+> > +	unsigned int prescale;
+> > +
+> > +	/* Make sure the device is disabled */
+> > +	machxo2_set(i2c, I2C_CR, 0);
+> > +
+> > +	/* I2C bus frequencies officially supported by MachXO2 are 400, 100 a=
+nd 50 kHz */
+> > +	if (i2c->bus_khz >=3D 400)
+> > +		i2c->bus_khz =3D 400;
+> > +	else if (i2c->bus_khz >=3D 100)
+> > +		i2c->bus_khz =3D 100;
+> > +	else
+> > +		i2c->bus_khz =3D 50;
+> > +
+> > +	prescale =3D DIV_ROUND_UP(i2c->clock_khz, 4 * i2c->bus_khz);
+> > +	if (prescale > 0x3ff) {
+>=20
+> can you please explain this check?
+
+The register field is 10 bits wide, making 0x3ff its maximum value. Should =
+I add
+a comment?
+
+
+>=20
+> > +		dev_err(&i2c->adap.dev, "unsupported prescale: %d\n",
+> > +			prescale);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	machxo2_set(i2c, I2C_BR0, prescale & 0xff);
+> > +	machxo2_set(i2c, I2C_BR1, prescale >> 8);
+> > +
+> > +	machxo2_set(i2c, I2C_IRQEN, 0);
+> > +	machxo2_set(i2c, I2C_CR, I2C_CR_I2CEN);
+> > +
+> > +	return 0;
+> > +}
+>=20
+> ...
+>=20
+> > +static int machxo2_i2c_probe(struct platform_device *pdev)
+> > +{
+> > +	struct machxo2_i2c_platform_data *pdata;
+> > +	struct machxo2_i2c *i2c;
+> > +	struct resource *res;
+> > +	void __iomem *regs;
+> > +	int ret;
+> > +
+> > +	i2c =3D devm_kzalloc(&pdev->dev, sizeof(*i2c), GFP_KERNEL);
+> > +	if (!i2c)
+> > +		return -ENOMEM;
+> > +
+> > +	pdata =3D dev_get_platdata(&pdev->dev);
+> > +	if (!pdata || !pdata->clock_khz)
+> > +		return -EINVAL;
+> > +
+> > +	i2c->clock_khz =3D pdata->clock_khz;
+> > +	i2c->bus_khz =3D pdata->bus_khz;
+> > +
+> > +	res =3D platform_get_resource(pdev, IORESOURCE_IO, 0);
+> > +	if (IS_ERR(res))
+> > +		return PTR_ERR(res);
+> > +
+> > +	if (!devm_request_region(&pdev->dev, res->start, resource_size(res),
+> > +				 pdev->name)) {
+> > +		dev_err(&pdev->dev, "Can't get I/O resource.\n");
+> > +		return -EBUSY;
+>=20
+> please, use dev_err_probe() here.
+>=20
+> > +	}
+> > +
+> > +	regs =3D devm_ioport_map(&pdev->dev, res->start, resource_size(res));
+> > +	if (!regs) {
+> > +		dev_err(&pdev->dev, "Can't map I/O resource.\n");
+> > +		return -EBUSY;
+> > +	}
+> > +
+> > +	i2c->regmap =3D devm_regmap_init_mmio(&pdev->dev, regs, &machxo2_regm=
+ap_config);
+> > +	if (IS_ERR(i2c->regmap))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->regmap),
+> > +				     "Unable to initialize register map\n");
+> > +
+> > +	i2c->irq =3D platform_get_irq_optional(pdev, 0);
+> > +	if (i2c->irq < 0 && i2c->irq !=3D -ENXIO)
+> > +		return i2c->irq;
+> > +
+> > +	ret =3D machxo2_init(i2c);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	init_waitqueue_head(&i2c->wait);
+> > +	spin_lock_init(&i2c->lock);
+> > +	hrtimer_setup(&i2c->timer, machxo2_handle, CLOCK_MONOTONIC, HRTIMER_M=
+ODE_REL);
+> > +
+> > +	if (i2c->irq > 0) {
+> > +		ret =3D devm_request_irq(&pdev->dev, i2c->irq, machxo2_isr, 0,
+> > +				       pdev->name, i2c);
+> > +		if (ret) {
+> > +			dev_err(&pdev->dev, "Cannot claim IRQ\n");
+> > +			machxo2_set(i2c, I2C_CR, 0);
+> > +			return ret;
+>=20
+> Do we need to write '0' to I2C_CR here?
+
+
+machxo2_init() would have set I2C_CR_I2CEN here already; this resets it to =
+0. I
+will check if moving the machxo2_set(i2c, I2C_CR, I2C_CR_I2CEN) to a later =
+point
+in the probe is possible.
+
+Best,
+Matthias
 
 
 
-Hello,
 
-kernel test robot noticed "kernel_BUG_at_fs/open.c" on:
+>=20
+> Thanks,
+> Andi
+>=20
+> > +		}
+> > +
+> > +		machxo2_set(i2c, I2C_IRQEN, I2C_IRQ_MASK);
+> > +
+> > +		dev_info(&pdev->dev,
+> > +			 "Using IRQ %d, bus speed %dKHz, clock %dKHz.\n",
+> > +			 i2c->irq, i2c->bus_khz, i2c->clock_khz);
+> > +	} else {
+> > +		dev_info(&pdev->dev,
+> > +			 "Running in polling mode, bus speed %dKHz, clock %dKHz.\n",
+> > +			 i2c->bus_khz, i2c->clock_khz);
+> > +	}
+> > +
+> > +	platform_set_drvdata(pdev, i2c);
+> > +
+> > +	strscpy(i2c->adap.name, "i2c-machxo2", sizeof(i2c->adap.name));
+> > +	i2c->adap.algo =3D &machxo2_algorithm;
+> > +	i2c->adap.dev.parent =3D &pdev->dev;
+> > +	i2c->adap.nr =3D pdev->id;
+> > +	i2c->adap.owner =3D THIS_MODULE;
+> > +	i2c_set_adapdata(&i2c->adap, i2c);
+> > +
+> > +	ret =3D i2c_add_adapter(&i2c->adap);
+> > +	if (ret) {
+> > +		machxo2_set(i2c, I2C_CR, 0);
+> > +		machxo2_set(i2c, I2C_IRQEN, 0);
+> > +
+> > +		if (i2c->irq > 0)
+> > +			disable_irq(i2c->irq);
+> > +		hrtimer_cancel(&i2c->timer);
+> > +
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
 
-commit: dc62b71efff8093d50a9e1f7321cabcb76ff8447 ("[PATCH v2 06/14] VFS: introduce start_creating_noperm() and start_removing_noperm()")
-url: https://github.com/intel-lab-lkp/linux/commits/NeilBrown/debugfs-rename-end_creating-to-debugfs_end_creating/20251015-095112
-base: https://git.kernel.org/cgit/linux/kernel/git/driver-core/driver-core.git 3a8660878839faadb4f1a6dd72c3179c1df56787
-patch link: https://lore.kernel.org/all/20251015014756.2073439-7-neilb@ownmail.net/
-patch subject: [PATCH v2 06/14] VFS: introduce start_creating_noperm() and start_removing_noperm()
-
-in testcase: trinity
-version: 
-with following parameters:
-
-	runtime: 300s
-	group: group-03
-	nr_groups: 5
-
-
-
-config: x86_64-randconfig-074-20251018
-compiler: clang-20
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-+------------------------------------------+------------+------------+
-|                                          | 04e655aedc | dc62b71eff |
-+------------------------------------------+------------+------------+
-| boot_successes                           | 9          | 0          |
-| boot_failures                            | 0          | 9          |
-| kernel_BUG_at_fs/open.c                  | 0          | 9          |
-| Oops:invalid_opcode:#[##]                | 0          | 9          |
-| RIP:dentry_open                          | 0          | 9          |
-| Kernel_panic-not_syncing:Fatal_exception | 0          | 9          |
-+------------------------------------------+------------+------------+
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202510201610.40b1a654-lkp@intel.com
-
-
-[   58.472072][ T3648] ------------[ cut here ]------------
-[   58.472990][ T3648] kernel BUG at fs/open.c:1116!
-[   58.479432][ T3648] Oops: invalid opcode: 0000 [#1]
-[   58.480255][ T3648] CPU: 0 UID: 192664024 PID: 3648 Comm: trinity-c2 Tainted: G                T   6.18.0-rc1-00006-gdc62b71efff8 #1 PREEMPT
-[   58.482041][ T3648] Tainted: [T]=RANDSTRUCT
-[   58.482680][ T3648] RIP: 0010:dentry_open (fs/open.c:1116)
-[   58.483443][ T3648] Code: df 48 89 c3 48 89 c6 e8 90 fe ff ff 85 c0 74 0f 89 c5 48 89 df e8 82 92 00 00 48 63 c5 eb 03 48 89 d8 5b 5d c3 cc cc cc cc cc <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 66 66 66 66 66
-All code
-========
-   0:	df 48 89             	fisttps -0x77(%rax)
-   3:	c3                   	ret
-   4:	48 89 c6             	mov    %rax,%rsi
-   7:	e8 90 fe ff ff       	call   0xfffffffffffffe9c
-   c:	85 c0                	test   %eax,%eax
-   e:	74 0f                	je     0x1f
-  10:	89 c5                	mov    %eax,%ebp
-  12:	48 89 df             	mov    %rbx,%rdi
-  15:	e8 82 92 00 00       	call   0x929c
-  1a:	48 63 c5             	movslq %ebp,%rax
-  1d:	eb 03                	jmp    0x22
-  1f:	48 89 d8             	mov    %rbx,%rax
-  22:	5b                   	pop    %rbx
-  23:	5d                   	pop    %rbp
-  24:	c3                   	ret
-  25:	cc                   	int3
-  26:	cc                   	int3
-  27:	cc                   	int3
-  28:	cc                   	int3
-  29:	cc                   	int3
-  2a:*	0f 0b                	ud2		<-- trapping instruction
-  2c:	66 66 66 66 66 66 2e 	data16 data16 data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
-  33:	0f 1f 84 00 00 00 00 
-  3a:	00 
-  3b:	66                   	data16
-  3c:	66                   	data16
-  3d:	66                   	data16
-  3e:	66                   	data16
-  3f:	66                   	data16
-
-Code starting with the faulting instruction
-===========================================
-   0:	0f 0b                	ud2
-   2:	66 66 66 66 66 66 2e 	data16 data16 data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
-   9:	0f 1f 84 00 00 00 00 
-  10:	00 
-  11:	66                   	data16
-  12:	66                   	data16
-  13:	66                   	data16
-  14:	66                   	data16
-  15:	66                   	data16
-[   58.486214][ T3648] RSP: 0018:ffff88813b80fe20 EFLAGS: 00010246
-[   58.487088][ T3648] RAX: 0000000000000001 RBX: ffff888142398000 RCX: ffff888142354000
-[   58.488074][ T3648] RDX: ffff88813acdc000 RSI: 00000000fffffff9 RDI: ffff88813b80fe58
-[   58.489177][ T3648] RBP: 0000000000000213 R08: 0000000000000000 R09: 0000000000000000
-[   58.490214][ T3648] R10: ffff888141f59a90 R11: ffffffff81960fc9 R12: 0000000000000000
-[   58.491333][ T3648] R13: 00000000fffffff9 R14: ffff888102692798 R15: ffff888142354000
-[   58.492445][ T3648] FS:  00000000357bf880(0000) GS:0000000000000000(0000) knlGS:0000000000000000
-[   58.493720][ T3648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   58.494658][ T3648] CR2: 00007ffffffff000 CR3: 0000000142163000 CR4: 00000000000406b0
-[   58.495806][ T3648] Call Trace:
-[   58.496319][ T3648]  <TASK>
-[   58.496723][ T3648]  do_mq_open (ipc/mqueue.c:923)
-[   58.497381][ T3648]  __x64_sys_mq_open (ipc/mqueue.c:949 ipc/mqueue.c:942 ipc/mqueue.c:942)
-[   58.498090][ T3648]  ? entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-[   58.498979][ T3648]  do_syscall_64 (arch/x86/entry/syscall_64.c:?)
-[   58.499657][ T3648]  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-[   58.500484][ T3648] RIP: 0033:0x463519
-[   58.501061][ T3648] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 59 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-All code
-========
-   0:	00 f3                	add    %dh,%bl
-   2:	c3                   	ret
-   3:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
-   a:	00 00 00 
-   d:	0f 1f 40 00          	nopl   0x0(%rax)
-  11:	48 89 f8             	mov    %rdi,%rax
-  14:	48 89 f7             	mov    %rsi,%rdi
-  17:	48 89 d6             	mov    %rdx,%rsi
-  1a:	48 89 ca             	mov    %rcx,%rdx
-  1d:	4d 89 c2             	mov    %r8,%r10
-  20:	4d 89 c8             	mov    %r9,%r8
-  23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
-  28:	0f 05                	syscall
-  2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
-  30:	0f 83 db 59 00 00    	jae    0x5a11
-  36:	c3                   	ret
-  37:	66                   	data16
-  38:	2e                   	cs
-  39:	0f                   	.byte 0xf
-  3a:	1f                   	(bad)
-  3b:	84 00                	test   %al,(%rax)
-  3d:	00 00                	add    %al,(%rax)
-	...
-
-Code starting with the faulting instruction
-===========================================
-   0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
-   6:	0f 83 db 59 00 00    	jae    0x59e7
-   c:	c3                   	ret
-   d:	66                   	data16
-   e:	2e                   	cs
-   f:	0f                   	.byte 0xf
-  10:	1f                   	(bad)
-  11:	84 00                	test   %al,(%rax)
-  13:	00 00                	add    %al,(%rax)
-	...
-[   58.503916][ T3648] RSP: 002b:00007ffc376f2be8 EFLAGS: 00000246 ORIG_RAX: 00000000000000f0
-[   58.505150][ T3648] RAX: ffffffffffffffda RBX: 00000000000000f0 RCX: 0000000000463519
-[   58.506312][ T3648] RDX: 0000000000000030 RSI: fffffffffffffff9 RDI: 00007f9ad403e000
-[   58.507487][ T3648] RBP: 00007f9ad4949000 R08: 0000000030010000 R09: 0000000001000000
-[   58.508586][ T3648] R10: 00007f9ad403e008 R11: 0000000000000246 R12: 0000000000000002
-[   58.509732][ T3648] R13: 00007f9ad4949058 R14: 00000000357bf850 R15: 00007f9ad4949000
-[   58.510897][ T3648]  </TASK>
-[   58.511374][ T3648] Modules linked in:
-[   58.512025][ T3648] ---[ end trace 0000000000000000 ]---
-[   58.524399][ T3648] RIP: 0010:dentry_open (fs/open.c:1116)
-[   58.527033][ T3648] Code: df 48 89 c3 48 89 c6 e8 90 fe ff ff 85 c0 74 0f 89 c5 48 89 df e8 82 92 00 00 48 63 c5 eb 03 48 89 d8 5b 5d c3 cc cc cc cc cc <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 66 66 66 66 66
-All code
-========
-   0:	df 48 89             	fisttps -0x77(%rax)
-   3:	c3                   	ret
-   4:	48 89 c6             	mov    %rax,%rsi
-   7:	e8 90 fe ff ff       	call   0xfffffffffffffe9c
-   c:	85 c0                	test   %eax,%eax
-   e:	74 0f                	je     0x1f
-  10:	89 c5                	mov    %eax,%ebp
-  12:	48 89 df             	mov    %rbx,%rdi
-  15:	e8 82 92 00 00       	call   0x929c
-  1a:	48 63 c5             	movslq %ebp,%rax
-  1d:	eb 03                	jmp    0x22
-  1f:	48 89 d8             	mov    %rbx,%rax
-  22:	5b                   	pop    %rbx
-  23:	5d                   	pop    %rbp
-  24:	c3                   	ret
-  25:	cc                   	int3
-  26:	cc                   	int3
-  27:	cc                   	int3
-  28:	cc                   	int3
-  29:	cc                   	int3
-  2a:*	0f 0b                	ud2		<-- trapping instruction
-  2c:	66 66 66 66 66 66 2e 	data16 data16 data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
-  33:	0f 1f 84 00 00 00 00 
-  3a:	00 
-  3b:	66                   	data16
-  3c:	66                   	data16
-  3d:	66                   	data16
-  3e:	66                   	data16
-  3f:	66                   	data16
-
-Code starting with the faulting instruction
-===========================================
-   0:	0f 0b                	ud2
-   2:	66 66 66 66 66 66 2e 	data16 data16 data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
-   9:	0f 1f 84 00 00 00 00 
-  10:	00 
-  11:	66                   	data16
-  12:	66                   	data16
-  13:	66                   	data16
-  14:	66                   	data16
-  15:	66                   	data16
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20251020/202510201610.40b1a654-lkp@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
