@@ -1,134 +1,293 @@
-Return-Path: <linux-kernel+bounces-861643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B135CBF33F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:40:48 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D7BBF33F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04B73B43DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:40:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C22734FEE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A996127AC31;
-	Mon, 20 Oct 2025 19:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DF62DE71B;
+	Mon, 20 Oct 2025 19:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="C7j93pow"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ie5RzQlf"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F4A2D9EDD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CC11EDA0B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989242; cv=none; b=sNjFq0AD92Btg8ZSrpPSBnCnncp3v7aOxwGTpIKgSATTZXOtndnoIy0sa7OD1n3cR6ZgVh5ZOGrEIldGdD/7TXxi45zfSnY3sMB1PHHSq1xMjhs02Nj8lQAOFhb6e9IDPuwlWo1WNZ7/TMaFHLV3TXdZRr101s8hK4Cnlw6XATU=
+	t=1760989289; cv=none; b=UnjpSRYX5+W3Ybur5lG6xqTZXhlalXSeXYe7wNBZ3vfYC/dx4BVIl7oHQmf7jJJvnyegyeyj1ItuBr78vLE/jHCW3XaANqi4fjNhF/Ag5JK9TxI1WRxFCIxhM9KUiry9j7etEwIJvK4BgSE/ZPz+vit/A9JSFFuGgZ6pS7ozmXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989242; c=relaxed/simple;
-	bh=KHk7R4MpmD0tSWaJ3FGaAMpViTQt1Vx8oYaNaI+3JYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kg3Fgjo1k24AhLhKZikxjC+pomhWgqZKxpxBzfPXPYi68BDAPisFDiDRW/lBlVLIm5nLsUU236XOWV5gawVmuuy9IH77vV59dgS3PU6U7duvG6KVvTy2MteKTfyf0cSebukvYlbWGHUFc0EaR/RkXVnpqyk8bCTuePGH+JTDoeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=C7j93pow; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8901a7d171bso597567185a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:40:40 -0700 (PDT)
+	s=arc-20240116; t=1760989289; c=relaxed/simple;
+	bh=sb/xvSCvi4x1WhDKJCmukIHkLfL1xWtmz/H5UPqzbaA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c46ao1ubyp4GI/Dr7eNJ1GfbCBaGOSrXxzOaDKSfMHLsC1ntgQ6Zd3CJPtKm8+037dRMJIWoxaKVzX8Vp1SKXUMg8utp6vElqHy+Hot+xCgtcpPt2oMeTmeB8AvG66rWJ6CHb4v2Ctic/odMXHT7s9BrxmXzlqIl1owc0gY1S00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ie5RzQlf; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4f323cf89bso1034204566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1760989240; x=1761594040; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZnmEnPP8bfaJAvDeM1NTDj1+/Fjxn0k170ygaThNRUs=;
-        b=C7j93pow9sbrPWXkmg1bOQYmVLOANyaQwkUL7cy5biZ1xvIaCYtRcYjsDdBupoquLB
-         g0P7uNUg7zxR61ex2hJbFPp4H7/nfqQPVTJ6d7DGJX9yKGyp/kNQcO98fpZ3qIxLnIfr
-         IRTPr8BmekcTVNiWFuo7GNvctT/QoWEUqxZq/KUEAI6jTQ3el87jC6l/i2r59+IvQxPh
-         b6POKLaQpbzFXmF/Q22orP/Gg7zzNjAnJmjUAF/rT60yYHb4+6+fc2CnnOzw3Fm38qfZ
-         nRflXPDC0RABR8NVlfHH4dm852Ijd/D9suz/sDiyx9i20WX3RiXprwUqMxEiuxKEcbeo
-         jeaQ==
+        d=tuxon.dev; s=google; t=1760989285; x=1761594085; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=onBLaR3b5p0TKSaA4XAOR/ezLcGXv9VkB9uwhzqsH8k=;
+        b=ie5RzQlfPCBZQ+ZyoMpyzgyoxxh+roK9DrNiCTDVx3i7whEpp+iM3VblcGg1EvqKLw
+         aiJqGfl0dZ5Ng7fVBTaXgcGrs+j9ufTrE3JKPMV4O5Bblbf+zBIGPE0qXTnXlXHNVvT3
+         k8s4aG7ZayhiZX92y4Co+64NLgB6VR60DrlaLR5tNrWE7hFlu1zSkFZmHBc4UZ/+F5oU
+         JHY6hiPGpYqOQLt9DQi1raHc2NN1Wx+6vwpHKBKNajOQUPj1ISLHPaafP4g7+R/QFD5a
+         6qpz2+5yXuF0fTl/ZdUPU2xSrlBpGfjGrhO5EcFtvj8WsZE905yJpouF0nK2laWMnY1M
+         KsMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989240; x=1761594040;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZnmEnPP8bfaJAvDeM1NTDj1+/Fjxn0k170ygaThNRUs=;
-        b=VvZ0o2OFV9H6GHAoII64KArEhHcFj33xhgR3atbvkA1UQlk3R+TXtrAiTxb3jI55m4
-         Ont3tej0A0qvVZZqbt+J7C7lk5fWrJ6FmRTvg/eifDFNcRmvkbC/S7W6zoeZOXjKHHJ5
-         zKKmjJnNYEBgaM5gpsCOI/SJyzfw+vsi7m5Gf418cjVzpOvFaNXPix5EEEtjMF/JTWIC
-         UXExdYCLRjSjenFcCayHefWV5QkZZltjNSYSrPiwNOZRj5u3K8HDplyEcQGunqOGJ6Vc
-         jXyEtfkjlVmV5SS5GXrnuk7mEey4q5ADoM01Tpx1eSaTsH9jLCiMyTOWwe+Xe8qaqJBf
-         NVmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlfVFHFeKHg4WWWrUfpIJvw/PaX2rv28PoLIQr9y2w59L8bQkjBlIaIookw+T4aA6CJz1kr3+ITYhQqY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiesckKz8xn+Y2avuvaNRAx60+mEwtJdjLVHx7D3H2altvOeO3
-	Lz8Tr/C/0oZvt2nFRG3BRA1TT0Cs0evKgznPGMZNkihxRDIoV9wCRV+eNX/iwBOvoas=
-X-Gm-Gg: ASbGncsxyiqzM20tme5yTmcXdzbH736TGXx6RdxVQUlM6jdwrLOFxqw36X4bdZLJkIS
-	5Uhdcsnaunx9tkruP36Kd6vmdOVUPdPw3m/vtgsyYjqOf9R/FbmZb26DpuE28vJR68HQNgut27l
-	kAL/K8DB4qAOoyM6rCokV4WQS03XaZHRqw2jcNCNtM2kw0HDTNEhVmmIrGu3Y1oI+tkw8MXALpR
-	y5Wmnl+nu9IDQLRoYbfD25VbVVBudop34BsUVkFr08qIDjnr6WbcNvpQaO0WpZhEZ2tbWnqNMkU
-	gPCwh12QpSic3v78uKhdZbj0LwKXlTNgBdqEni9GqzhXxLGe7otjmUuI4VohkILiNjndx0SABU4
-	U1Yn4nX/InaTyLqX+inBwYcbhQstiqcb7yUP2Ng+mzzdrs71jj7Mf3L+Dmf6KhEfasVFyQe50X2
-	n625Zc6CQkEIml8N8SE1DnRVNSFC+bgZ3xWOdWDr2DZoGsB/PrUhn9EyMfF4FhD6TXqzQwpQ==
-X-Google-Smtp-Source: AGHT+IGuWZHEavHisVU9mk6gRIHhpdyd/lI8SERMr7lwjiSLbTWdMYvofhTVk+g9pKS5DS+eGwkHMQ==
-X-Received: by 2002:a05:620a:1710:b0:892:93df:3bdb with SMTP id af79cd13be357-89293df3e88mr974477885a.31.1760989239691;
-        Mon, 20 Oct 2025 12:40:39 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cefba77asm621032185a.33.2025.10.20.12.40.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 12:40:39 -0700 (PDT)
-Date: Mon, 20 Oct 2025 15:40:37 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
-	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org
-Subject: Re: [RFC PATCH] page_alloc: allow migration of smaller hugepages
- during contig_alloc.
-Message-ID: <aPaQNYsN_YPDOwQG@gourry-fedora-PF4VCD3F>
-References: <20251020170615.1000819-1-gourry@gourry.net>
- <487730c6-423a-4a03-a668-9b9ff92a5cfb@redhat.com>
- <aPZ0OKx_VnQ4H_w1@gourry-fedora-PF4VCD3F>
- <609E7E01-33A6-4931-AC89-1F4B2944FB64@nvidia.com>
- <272c425a-b191-4eef-af6e-2bca1db7a940@redhat.com>
+        d=1e100.net; s=20230601; t=1760989285; x=1761594085;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=onBLaR3b5p0TKSaA4XAOR/ezLcGXv9VkB9uwhzqsH8k=;
+        b=qRp/O7RfwJEHCzSzjorZq5NYmFY+a0WT90+NDU9YTWBMMfGKHiv27OkfH5JBRly2jN
+         cw7KkRPu8wXep1Jaq2LFEAXRCrKv4qx3xp57lDGBvRDI6Z3jDyZmUx1EsE7ChztfEbPu
+         7C/6SoLfALakqeHM9tEGZeMSGXc55MajA4rb//setwyiQ0HDJB203vUwxflzZJNJpOXj
+         qIOBJmmCO6zwPC1WQNHFeJZIvNyVNrKurgQQt5duePIreSOSiblmNb/t9ymJ+4X6vNCM
+         IejJOhmZ17rtQ3fgVUoH5MSk9iFIqsQ/jY1Z8krXhp1D2kGNV72e15q0iIJQRG5iCvtm
+         QKeg==
+X-Forwarded-Encrypted: i=1; AJvYcCW//v7h+Jev1VuKmS/0kASFSreUvRyWCpSXeZf+i2DCT7yjAp0OUWZM7HpK2TWZVxl9FaYIvyGtfdNCKHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4mXAb15rp7FpxcrgfaEJYlzy5Bs13EBQgG2JTWmvd/nUyy7Rs
+	BfsTeEnbZbYc0kyl8M3iWTDgIuT30kmFzd9d0Q4XlKyALc6GwfMNDccp7yZpgl19SjM=
+X-Gm-Gg: ASbGncuUfrmwk1euYX7f+nZVwu11ydGCwmhKNAA6y1KqG4YC47soJ61uIE66i5IpfU8
+	D5/dyVNFMfeSMFGQyXvXW0eAshFZUjIQ02kld0bzKno32Zlmk1TQj3VsU2+v62lwn0liSQqapkh
+	F5naubeYK8iSRu2K21bUf/Fr4e+MFzy5mzJG0XcJMgeGUXJp3SRQo0ug9+VP4LKk7nV0rTdruRw
+	0MsuWUkJa4WswDldsE4eLdeXjzun6EcmsJ5J/wcsMkqIf/SJN4xWgimfycHaXbUXAG0N/kBSvSh
+	73QpHV3aiyXTMRVHx6ilz756pR9pIUjBF+6+lCSBlpLKGEWaC1uG+h4/tr+ssd292YwRQrloRyX
+	0PF7t6kUfi8i76N0Iqh0p5/UD3NQhAAWe/gbQTfe+wvlwNaTn1UD0OqSt2nzNux+8ksX/VofM/c
+	0AYoAo1iQWQp5Gph4Mc4Y=
+X-Google-Smtp-Source: AGHT+IHhbdQhGKSUACguShRdbXAdYLQ8jkoHnOdr5MaV8eZ6H913I1UyhQF3tXQ/94Cx59O+/3xyDQ==
+X-Received: by 2002:a17:907:3f04:b0:b3f:a960:e057 with SMTP id a640c23a62f3a-b64749411b1mr1769618466b.31.1760989285272;
+        Mon, 20 Oct 2025 12:41:25 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb526175sm878800966b.56.2025.10.20.12.41.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 12:41:24 -0700 (PDT)
+Message-ID: <253d329d-12f9-478b-833e-096fafa4b109@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:41:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <272c425a-b191-4eef-af6e-2bca1db7a940@redhat.com>
+User-Agent: Mozilla Thunderbird
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v4 04/31] clk: at91: clk-sam9x60-pll: use clk_parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
+References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+ <259824455f5325b35d0fb85163866a81ff24304e.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <259824455f5325b35d0fb85163866a81ff24304e.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 09:18:36PM +0200, David Hildenbrand wrote:
-> > 
-> > Basically, what is the right way of checking a folio order without lock?
-> > Should we have a standardized helper function for that?
+Hi, Ryan,
+
+On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> As raised, snapshot_page() tries to stabilize the folio best it can.
+> Use struct clk_parent_data instead of struct parent_hw as this leads
+> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
+> conversion of existing SoC specific clock drivers from parent_names to
+> modern clk_parent_data structures. As clk-sam9x60-pll need to know
+> parent's rate at initialization we pass it now from SoC specific drivers.
+> This will lead in the end at removing __clk_get_hw() in SoC specific
+> drivers (that will be solved by subsequent commits).
+> 
+> Get the main_xtal name via of_clk_get_parent_name() to consistently get
+> the correct name for the main_xtal.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> [ryan.wanner@microchip.com: Add SAMA7D65 and SAM9X75 SoCs to the change set.]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  drivers/clk/at91/clk-sam9x60-pll.c | 14 +++++---------
+>  drivers/clk/at91/pmc.h             |  5 +++--
+>  drivers/clk/at91/sam9x60.c         |  8 +++++---
+>  drivers/clk/at91/sam9x7.c          | 16 +++++++++++-----
+>  drivers/clk/at91/sama7d65.c        | 25 ++++++++++++++-----------
+>  drivers/clk/at91/sama7g5.c         | 26 +++++++++++++++-----------
+>  6 files changed, 53 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+> index 3dc75a394ce1..9895881c67d7 100644
+> --- a/drivers/clk/at91/clk-sam9x60-pll.c
+> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
+> @@ -630,19 +630,19 @@ static const struct clk_ops sam9x60_fixed_div_pll_ops = {
+>  
+>  struct clk_hw * __init
+>  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+> -			      const char *name, const char *parent_name,
+> -			      struct clk_hw *parent_hw, u8 id,
+> +			      const char *name, const struct clk_parent_data *parent_data,
+> +			      unsigned long parent_rate, u8 id,
+>  			      const struct clk_pll_characteristics *characteristics,
+>  			      const struct clk_pll_layout *layout, u32 flags)
+>  {
+>  	struct sam9x60_frac *frac;
+>  	struct clk_hw *hw;
+>  	struct clk_init_data init = {};
+> -	unsigned long parent_rate, irqflags;
+> +	unsigned long irqflags;
+>  	unsigned int val;
+>  	int ret;
+>  
+> -	if (id > PLL_MAX_ID || !lock || !parent_hw)
+> +	if (id > PLL_MAX_ID || !lock || !parent_data)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	frac = kzalloc(sizeof(*frac), GFP_KERNEL);
+> @@ -650,10 +650,7 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	init.name = name;
+> -	if (parent_name)
+> -		init.parent_names = &parent_name;
+> -	else
+> -		init.parent_hws = (const struct clk_hw **)&parent_hw;
+> +	init.parent_data = (const struct clk_parent_data *)parent_data;
+>  	init.num_parents = 1;
+>  	if (flags & CLK_SET_RATE_GATE)
+>  		init.ops = &sam9x60_frac_pll_ops;
+> @@ -684,7 +681,6 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+>  		 * its rate leading to enabling this PLL with unsupported
+>  		 * rate. This will lead to PLL not being locked at all.
+>  		 */
+> -		parent_rate = clk_hw_get_rate(parent_hw);
+>  		if (!parent_rate) {
+>  			hw = ERR_PTR(-EINVAL);
+>  			goto free;
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index 16c2559889aa..d3fc38cf90eb 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -258,8 +258,9 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+>  
+>  struct clk_hw * __init
+>  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+> -			      const char *name, const char *parent_name,
+> -			      struct clk_hw *parent_hw, u8 id,
+> +			      const char *name,
+> +			      const struct clk_parent_data *parent_data,
+> +			      unsigned long parent_rate, u8 id,
+>  			      const struct clk_pll_characteristics *characteristics,
+>  			      const struct clk_pll_layout *layout, u32 flags);
+>  
+> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+> index 18baf4a256f4..bee35c65aceb 100644
+> --- a/drivers/clk/at91/sam9x60.c
+> +++ b/drivers/clk/at91/sam9x60.c
+> @@ -242,7 +242,8 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+>  	sam9x60_pmc->chws[PMC_MAIN] = hw;
+>  
+>  	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "pllack_fracck",
+> -					   "mainck", sam9x60_pmc->chws[PMC_MAIN],
+> +					   &AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MAIN]),
+> +					   clk_hw_get_rate(sam9x60_pmc->chws[PMC_MAIN]),
+>  					   0, &plla_characteristics,
+>  					   &pll_frac_layout,
+>  					   /*
+> @@ -268,8 +269,9 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+>  	sam9x60_pmc->chws[PMC_PLLACK] = hw;
+>  
+>  	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "upllck_fracck",
+> -					   "main_osc", main_osc_hw, 1,
+> -					   &upll_characteristics,
+> +					   &AT91_CLK_PD_HW(main_osc_hw),
+> +					   clk_hw_get_rate(main_osc_hw),
+> +					   1, &upll_characteristics,
+>  					   &pll_frac_layout, CLK_SET_RATE_GATE);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index cb5849da494f..c80306715d90 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -752,6 +752,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  	struct regmap *regmap;
+>  	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
+>  	struct clk_hw *td_slck_hw, *md_slck_hw, *usbck_hw;
+> +	static struct clk_parent_data parent_data;
+>  	struct clk_hw *parent_hws[9];
+>  	int i, j;
+>  
+> @@ -799,7 +800,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  
+>  	for (i = 0; i < PLL_ID_MAX; i++) {
+>  		for (j = 0; j < PLL_COMPID_MAX; j++) {
+> -			struct clk_hw *parent_hw;
+> +			unsigned long parent_rate;
+>  
+>  			if (!sam9x7_plls[i][j].n)
+>  				continue;
+> @@ -808,21 +809,26 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  			case PLL_TYPE_FRAC:
+>  				switch (sam9x7_plls[i][j].p) {
+>  				case SAM9X7_PLL_PARENT_MAINCK:
+> -					parent_hw = sam9x7_pmc->chws[PMC_MAIN];
+> +					parent_data = AT91_CLK_PD_NAME("mainck");
+> +					hw = sam9x7_pmc->chws[PMC_MAIN];
+>  					break;
+>  				case SAM9X7_PLL_PARENT_MAIN_XTAL:
+> -					parent_hw = main_xtal_hw;
+> +					parent_data = AT91_CLK_PD_NAME(main_xtal_name);
+> +					hw = main_xtal_hw;
+>  					break;
+>  				default:
+>  					/* Should not happen. */
+> -					parent_hw = NULL;
+>  					break;
+>  				}
+>  
+> +				parent_rate = clk_hw_get_rate(hw);
+> +				if (!parent_rate)
+> +					return;
+> +
+>  				hw = sam9x60_clk_register_frac_pll(regmap,
+>  								   &pmc_pll_lock,
+>  								   sam9x7_plls[i][j].n,
+> -								   NULL, parent_hw, i,
+> +								   &parent_data, parent_rate, i,
+>  								   sam9x7_plls[i][j].c,
+>  								   sam9x7_plls[i][j].l,
+>  								   sam9x7_plls[i][j].f);
+> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+> index ec2ef1a0249a..6229b7dfbea1 100644
+> --- a/drivers/clk/at91/sama7d65.c
+> +++ b/drivers/clk/at91/sama7d65.c
+> @@ -1093,7 +1093,7 @@ static const struct clk_pcr_layout sama7d65_pcr_layout = {
+>  
+>  static void __init sama7d65_pmc_setup(struct device_node *np)
+>  {
+> -	const char *main_xtal_name = "main_xtal";
+> +	const char *main_xtal_name;
+>  	struct pmc_data *sama7d65_pmc;
+>  	const char *parent_names[11];
+>  	void **alloc_mem = NULL;
+> @@ -1108,10 +1108,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>  
+>  	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
+>  	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
+> -	main_xtal_hw = __clk_get_hw(of_clk_get_by_name(np, main_xtal_name));
+> +	i = of_property_match_string(np, "clock-names", "main_xtal");
 
-is snapshot_page() even worth it if we're already racing on flag checks?
+Same as in the previous patch, please keep it close to
+of_clk_get_parent_name() for main_xtal above and check check also negative
+error numbers return by of_property_match_string(). Valid for the other
+similar occurrences in this or next patches.
 
-i.e. there's already a race condition between
-
-	pfn_range_valid_contig(range) -> compaction(range)
-
-on some bogus value the worst that happens is either compaction gets
-called when it can't compact, or compaction doesn't get called when it
-could compact - either way, compaction still handles it if called.
-
-We may just skip some blocks (which is still better than now).
-
---
-
-on compound_order - from mm.h:
-
-/*
- * compound_order() can be called without holding a reference, which means
- * that niceties like page_folio() don't work.  These callers should be
- * prepared to handle wild return values.  For example, PG_head may be
- * set before the order is initialised, or this may be a tail page.
- * See compaction.c for some good examples.
- */
-
-Seems like the correct interface given the scenario. I'll poke around.
-
-~Gregory
 
