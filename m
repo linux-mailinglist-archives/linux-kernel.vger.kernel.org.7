@@ -1,158 +1,144 @@
-Return-Path: <linux-kernel+bounces-860363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9B0BEFF40
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:31:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D18BEFF52
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3B3B4F026F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:30:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 648064EFD44
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0997F2DF122;
-	Mon, 20 Oct 2025 08:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDBE2EC086;
+	Mon, 20 Oct 2025 08:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mQb2+yga"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="Hz510bjN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A6F2E8DF0;
-	Mon, 20 Oct 2025 08:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949040; cv=none; b=CcgOp/0fiy/Uz/E1Qs7A36F5imtV9ZpYsUtYS4+HS2TzNkLxj3y0iUHmx1fbjRgTdZwX3FnQ/0FgQkW0I8JbGcf9S9PObTIzzSJjwHN9B7QRYCfnLt0WkhKkXusMZZRmNvQAmWSB5n87PGIiZF1zSsvPEUWBE74LorHKPN8HBiY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949040; c=relaxed/simple;
-	bh=g7YCL1sUbPStqVMJN6jT9eisK1CkwlQ2HT0ruBv8c+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ji0XpoyPJS8JeM/XO4u+JnEHsGovVl5i7OL4oMPISZ6XGlr28uuKc5AHSxSrJfe/TsBGAJiOOrVKbvf2YSTFTJDqwtfDwCeGd0pDvCU/R77Iw0s/qcdmZ+GMtjaf/rfHF8tdcaezZN0FYbCXeWhnqQCGOJdNZmC+0ZtZPMexwDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mQb2+yga; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760949035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jcnuuSTRqUyp29uKa5CEvOOKmfXQMRjJKflnfGm6FKw=;
-	b=mQb2+ygaH3snZXltYV1LxueQejv/s5F6IrIAuUWjTtDa9ftAfNeaQmEmZd72d20dP5aaEu
-	wIM8vtGMyVVJ3iLQyBlfdQ0M3AIEV0RvNRctkqbpUBMxbWItav21ySgMD63K/IW6DgsTH4
-	+aeEdo03S46TPqOSG6N4JHitTCN1XIU=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Menglong Dong <menglong8.dong@gmail.com>, Jiri Olsa <olsajiri@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC bpf-next 2/5] bpf: add kfunc bpf_tracing_is_exit for
- TRACE_SESSION
-Date: Mon, 20 Oct 2025 16:30:12 +0800
-Message-ID: <12766136.O9o76ZdvQC@7950hx>
-In-Reply-To: <aPXwfxRvSk63FOxU@krava>
-References:
- <20251018142124.783206-1-dongml2@chinatelecom.cn>
- <20251018142124.783206-3-dongml2@chinatelecom.cn> <aPXwfxRvSk63FOxU@krava>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D67754763;
+	Mon, 20 Oct 2025 08:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760949078; cv=pass; b=JPRsB6lX+Ty1/Fd5PAOQynw5dyRwOy2Al55ZQryZJ3sDPy70ap4PEoucE3bhnz+PN1PFTjH5eB96YuZuKXslkBBdJB+T2Bclby8LoahonlMHTotTu2e29Rp/80QpAQg7Nx37dMSqKTxKVDozOiSTuKkraA3eN3C9a2tfAo08H6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760949078; c=relaxed/simple;
+	bh=GxDW6HUYxD1XUJYrmVdYCf0aaVS7E0xLMcKwUuyGJy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oxAdGVnfb9AzqEgk49Vrnv6tkE8HP5CQI1Bbtwg/uJxyIixy5Pg5Xqk1/FxogNRND6UuUIbEkIz2vZeXb/miZKdGFS9INDsWYp8iE447DfotO4+sqXS3W3rpnc0iQeHa8Unho6zvj4Ip0pKtwZaFNoEatqcVk0N08VEpD8ZilWU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=Hz510bjN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760949065; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fuGrOvO5gEcKfcaA5DfZD5Td/6duZ3meJlYvUUXHuNfZKtTAwGDtB+TclWhyfkzwT4l+P2tbuB9Kq1VNxJKE9gR8lTpt4qHIPikrC/XrkgU1tcaA8TX6DSoR6fGwH8lavbzavY4jSArjD0WJnzavv4K4vOrnHYFTC3r6QfW65Ek=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760949065; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=i2q52bXAKqn7gOfHhudM0m7RKKiSLxsHofXnBnnwlZU=; 
+	b=KC2+fpAA6gHyMSH2GNoleqoGqhL4o+OBU/vqP83vsGm5ubPjm1q87zkXiDqWjMUMDPdPd00ZmYDa5TkDIhAkE0CBw2cSe4IQQc1AVTiRhc1mf2fVK44azU758p4uXkLxfzZhgNKjvUTOmcs8iwYTiwheZWg9OsDeJx/rt9ItZ7k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760949064;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=i2q52bXAKqn7gOfHhudM0m7RKKiSLxsHofXnBnnwlZU=;
+	b=Hz510bjNICHwjJ9c9WlvE/kJMH/Vcs2NB9XaFCoLdwYtqJv8TvSBJrvIKPIaHGFo
+	LLAU4P7dHA0HWaAuzhwCsF6HbOHPiTlr5xuqhs7uuvhZOZ411VAGmLxQ2ifF6ileenm
+	o0oPb/tY08JYjFPheFXr8xI4tDzLbzvm/LUOQALo=
+Received: by mx.zohomail.com with SMTPS id 1760949062626473.4112073699241;
+	Mon, 20 Oct 2025 01:31:02 -0700 (PDT)
+Message-ID: <258b9036-697d-48b2-91d6-5fb8ea2f1350@collabora.com>
+Date: Mon, 20 Oct 2025 10:30:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
-
-On 2025/10/20 16:19, Jiri Olsa wrote:
-> On Sat, Oct 18, 2025 at 10:21:21PM +0800, Menglong Dong wrote:
-> > If TRACE_SESSION exists, we will use extra 8-bytes in the stack of the
-> > trampoline to store the flags that we needed, and the 8-bytes lie before
-> > the function argument count, which means ctx[-2]. And we will store the
-> > flag "is_exit" to the first bit of it.
-> > 
-> > Introduce the kfunc bpf_tracing_is_exit(), which is used to tell if it
-> > is fexit currently.
-> > 
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > Co-developed-by: Leon Hwang <leon.hwang@linux.dev>
-> > Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> > ---
-> >  kernel/bpf/verifier.c    |  5 ++++-
-> >  kernel/trace/bpf_trace.c | 43 +++++++++++++++++++++++++++++++++++++---
-> >  2 files changed, 44 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index 40e3274e8bc2..a1db11818d01 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -12284,6 +12284,7 @@ enum special_kfunc_type {
-> >  	KF___bpf_trap,
-> >  	KF_bpf_task_work_schedule_signal,
-> >  	KF_bpf_task_work_schedule_resume,
-> > +	KF_bpf_tracing_is_exit,
-> >  };
-> >  
-> >  BTF_ID_LIST(special_kfunc_list)
-> > @@ -12356,6 +12357,7 @@ BTF_ID(func, bpf_res_spin_unlock_irqrestore)
-> >  BTF_ID(func, __bpf_trap)
-> >  BTF_ID(func, bpf_task_work_schedule_signal)
-> >  BTF_ID(func, bpf_task_work_schedule_resume)
-> > +BTF_ID(func, bpf_tracing_is_exit)
-> >  
-> >  static bool is_task_work_add_kfunc(u32 func_id)
-> >  {
-> > @@ -12410,7 +12412,8 @@ get_kfunc_ptr_arg_type(struct bpf_verifier_env *env,
-> >  	struct bpf_reg_state *reg = &regs[regno];
-> >  	bool arg_mem_size = false;
-> >  
-> > -	if (meta->func_id == special_kfunc_list[KF_bpf_cast_to_kern_ctx])
-> > +	if (meta->func_id == special_kfunc_list[KF_bpf_cast_to_kern_ctx] ||
-> > +	    meta->func_id == special_kfunc_list[KF_bpf_tracing_is_exit])
-> >  		return KF_ARG_PTR_TO_CTX;
-> >  
-> >  	/* In this function, we verify the kfunc's BTF as per the argument type,
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 4f87c16d915a..6dde48b9d27f 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -3356,12 +3356,49 @@ static const struct btf_kfunc_id_set bpf_kprobe_multi_kfunc_set = {
-> >  	.filter = bpf_kprobe_multi_filter,
-> >  };
-> >  
-> > -static int __init bpf_kprobe_multi_kfuncs_init(void)
-> > +__bpf_kfunc_start_defs();
-> > +
-> > +__bpf_kfunc bool bpf_tracing_is_exit(void *ctx)
-> > +{
-> > +	/* ctx[-2] is the session flags, and the last bit is is_exit */
-> > +	return ((u64 *)ctx)[-2] & 1;
-> > +}
-> 
-> I think this could be inlined by verifier
-
-Yeah, that make sense. I'll inline it in the next version.
-
-Thanks!
-Menglong Dong
-
-> 
-> jirka
-> 
-> 
-> > +
-> > +__bpf_kfunc_end_defs();
-> 
-> SNIP
-> 
-> 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
+ legacy fileio is active
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tfiga@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+ Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
+References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
+ <20251016111154.993949-1-m.szyprowski@samsung.com>
+ <36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
+ <84133573-986d-4cc8-8147-246f0da34640@samsung.com>
+ <1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
+ <21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
+ <642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+Le 20/10/2025 à 10:21, Marek Szyprowski a écrit :
+> On 20.10.2025 09:48, Benjamin Gaignard wrote:
+>> Le 20/10/2025 à 09:39, Hans Verkuil a écrit :
+>>> On 20/10/2025 09:34, Marek Szyprowski wrote:
+>>>> On 20.10.2025 09:11, Benjamin Gaignard wrote:
+>>>>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
+>>>>>> create_bufs and remove_bufs ioctl calls manipulate queue internal
+>>>>>> buffer
+>>>>>> list, potentially overwriting some pointers used by the legacy fileio
+>>>>>> access mode. Simply forbid those calls when fileio is active to
+>>>>>> protect
+>>>>>> internal queue state between subsequent read/write calls.
+>>>>> Hi Marek,
+>>>>>
+>>>>> I may be wrong but using fileio API and create/remove API at the same
+>>>>> time
+>>>>> sound incorrect from application point of view, right ? If that not
+>>>>> the
+>>>>> case maybe we should also add a test in v4l2-compliance.
+>>>> Definitely that's incorrect and v4l2-core must forbid such calls. The
+>>>> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending
+>>>> v4l2-compliance tools is probably a good idea.
+>>> Yes, please! A patch is welcome.
+>>>
+>>>    I also wonder if its a
+>>>> good time to add a kernel option to completely disable legacy fileio
+>>>> access mode, as it is not really needed for most of the systems
+>>>> nowadays.
+>>> No, that will break applications. Using read() is very common (and
+>>> convenient!)
+>>> for MPEG encoders such as the cx18 driver.
+>>>
+>>> The fileio code is not blocking any new development, it's just there
+>>> for those
+>>> drivers were it makes sense.
+>>>
+>>> Regards,
+>>>
+>>>      Hans
+>> I wonder if this patch in useful because when calling
+>> vb2_ioctl_create_bufs()
+>> it already check in vb2_verify_memory_type() if fileio is used or not.
+> Frankly speaking the original report I got was about mixing fileio with
+> vb2_ioctl_remove_bufs and that case is indeed not protected.
+>
+> While analyzing that I've inspected a symmetrical ioctl
+> (vb2_ioctl_create_bufs), but it looks I've I missed that a check is in
+> vb2_verify_memory_type(). I will remove it in v2 then.
+
+To keep vb2_ioctl_remove_bufs() symmetrical to vb2_ioctl_create_bufs()
+we should do in vb2_ioctl_remove_bufs() something like :
+res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
+instead of vdev->queue->type != d->type.
+
+This way we test fileio too.
 
 
+>
+> Best regards
 
