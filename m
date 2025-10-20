@@ -1,79 +1,133 @@
-Return-Path: <linux-kernel+bounces-860587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB62BF0764
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:14:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4A8BF0833
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD58C3B45FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677281881983
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCD72EC0BB;
-	Mon, 20 Oct 2025 10:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWPbP5qP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA9029ACC5;
+	Mon, 20 Oct 2025 10:22:00 +0000 (UTC)
+Received: from glittertind.blackshift.org (glittertind.blackshift.org [116.203.23.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553772F6577;
-	Mon, 20 Oct 2025 10:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0221E5714;
+	Mon, 20 Oct 2025 10:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.23.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955125; cv=none; b=L19hahBOicl5SwWyuy3jJOYeHNvhaPgQQeWqP0P9xK/qBNvgIYs7oH9c2DXmzX3wPv3dkP7D6pWJsyNMRxIVJNEH5JAufkWhCWCrPGoBlxuATN1/aBHgQciTwwMBYohrupjSVnJY/QbSopZXzEFIpHSpQh/XvvYXFrFrMyGqaCE=
+	t=1760955719; cv=none; b=nrw9Kk3kg0HqA1ATSG6hiXO/YxDfblZ8QkKlIRE1p3tsB+7xhcXyVo8LrZrx4hlh+NtwnGNiwkq9/5AhpqLXAL/jw7mKstcGPii4wPtc3K180vvXeMOYMjcbBP789k24h4K+Qp+0/WEKGy6eNg4IqIdP7Lmj12nohNdOtKMGJG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955125; c=relaxed/simple;
-	bh=SaTOvceqM8NvJ3wL1NKNHMEjldwn57jBpMR1nZADBMs=;
+	s=arc-20240116; t=1760955719; c=relaxed/simple;
+	bh=dsoMH9dpVO4k1M1W6qBL5U7xyB+KeAg4WZc1Ph2feA4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gkBYaKHUFPE2j65MLyop2szQkRG4cI0gOVIdjMTCMTWVK8aZxrtJZSkB/GBYKXTM2dnC9C4dDS1GSD/58QcEDuZKa5ucvyeK6wCgm+7Est0p6GCnUxkdzzlCzUad9UZegtSAeNF00nkDpAzeRYz3/1eHD6b0jfoJ0i8/vixOG4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWPbP5qP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325CDC116B1;
-	Mon, 20 Oct 2025 10:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760955124;
-	bh=SaTOvceqM8NvJ3wL1NKNHMEjldwn57jBpMR1nZADBMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XWPbP5qPhaGq0uQt7WwwZfJGgCmNuIhktt0MA3boZ1EC0AvrkxifU7J9xSOuiOp7A
-	 glevkmSFHtMzg6DHuf85LpHwwH2WZ2+ToJ0VVYE8Vh1kDQ2LF0jF0K0sG+jHYagcCi
-	 XscZcvZx4sPj+pEHS1RlCtK1d4WMrBgA/JwAtBsuhkneGU6zLiwUCDsmFEVfNEweRU
-	 GjBUa2E8O85yXT8MQMbAqJAcL+T9g94ieuqpV5vO4+XoMGJWHXSJ/1PxgJ8j+E/6Hv
-	 r1fUNdbjPDuJuI2yZJlP8oc/ut/YBZdgENZIYyqLp3rJtY7pr5IRnkVMp5Qh3PyxVM
-	 cAwBQZ4MH+KPA==
-Date: Mon, 20 Oct 2025 12:12:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Joan-Na-adi <joan.na.devcode@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Joan Na <joan.na@analog.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: regulator: Add MAX77675 binding
- header
-Message-ID: <20251020-cream-hippo-of-purring-0f4619@kuoka>
-References: <20251014053142.15835-1-joan.na@analog.com>
- <20251014053142.15835-2-joan.na@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBf+svzo953YhWobci1IznmDs+f8VpATsogVcVqd4gIM3KBGDtNWHWEwB4IMJPuyqEtOv0hxeDV4NtXTIHYMNwk0CRzc7+WiUdySM5VSGfaKvqc/dj+Dhz6jwevu3RyyZK3WogBtrxVMozxIk9ti+qCIIiarH0uDdFsNd8IJu18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackshift.org; spf=pass smtp.mailfrom=blackshift.org; arc=none smtp.client-ip=116.203.23.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackshift.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackshift.org
+Received: from bjornoya.blackshift.org (unknown [IPv6:2003:102:af0a:700:2ac1:489:378:697b])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "bjornoya.blackshift.org", Issuer "R10" (verified OK))
+	by glittertind.blackshift.org (Postfix) with ESMTPS id D714A76465F;
+	Mon, 20 Oct 2025 10:12:17 +0000 (UTC)
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5AEE848B06D;
+	Mon, 20 Oct 2025 10:12:17 +0000 (UTC)
+Date: Mon, 20 Oct 2025 12:12:15 +0200
+From: Marc Kleine-Budde <mkl@blackshift.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Andrei Lalaev <andrey.lalaev@gmail.com>, mailhol.vincent@wanadoo.fr, 
+	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
+Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
+Message-ID: <20251020-aspiring-agama-of-agreement-6d1727-mkl@blackshift.org>
+References: <20250714175520.307467-1-andrey.lalaev@gmail.com>
+ <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6flxl23ofa67og72"
 Content-Disposition: inline
-In-Reply-To: <20251014053142.15835-2-joan.na@analog.com>
+In-Reply-To: <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
 
-On Tue, Oct 14, 2025 at 02:31:40PM +0900, Joan-Na-adi wrote:
-> diff --git a/include/dt-bindings/regulator/maxim,max77675-regulator.h b/include/dt-bindings/regulator/maxim,max77675-regulator.h
-> new file mode 100644
-> index 000000000000..b3b52d1668c2
-> --- /dev/null
-> +++ b/include/dt-bindings/regulator/maxim,max77675-regulator.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD 2-Clause */
 
-Wrong text, it looks, please run checkpatch.
+--6flxl23ofa67og72
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+On 15.07.2025 11:37:15, Marc Kleine-Budde wrote:
+> What about this fix?
+>=20
+> diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
+> index 13826e8a707b..94603c9eb4aa 100644
+> --- a/drivers/net/can/dev/netlink.c
+> +++ b/drivers/net/can/dev/netlink.c
+> @@ -285,6 +285,12 @@ static int can_changelink(struct net_device *dev, st=
+ruct nlattr *tb[],
+>          }
+> =20
+>          if (data[IFLA_CAN_RESTART_MS]) {
+> +                if (!priv->do_set_mode) {
+> +                        NL_SET_ERR_MSG(extack,
+> +                                       "device doesn't support restart f=
+rom Bus Off");
+> +                        return -EOPNOTSUPP;
+> +                }
+> +
 
+Damn. This causes a regression on systemd-network:
+
+| systemd-networkd[1532939]: can0: Failed to set CAN interface configuratio=
+ns: Device doesn't support restart from Bus Off. Operation not supported
+| systemd-networkd[1532939]: can0: Failed
+| systemd-networkd[1532939]: can0: Trying to reconfigure the interface.
+| systemd-networkd[1532939]: can0: Reconfiguring with /etc/systemd/network/=
+90-can.network.
+
+Since v258-rc1 restart delays of 0 are configured, prior to this, they
+were ignored.
+
+I'll send a fix that allows configuring a restart delay of 0, even if
+the device doesn't have a restart handler.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--6flxl23ofa67og72
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmj2CvsACgkQDHRl3/mQ
+kZzOSAgAjpzrU8+fjVkgLEjaAc3ZqGwXIYjGq4YpaamsC1jY96P886QYBi985VK6
+Dpjda4aSe6zzLzCVf/bfGDRILpmiSA/Q+tk2SlJ6raH3YNdHOJ9YlWWVLiLOJYVH
+g/Rt65RMhywaS4AHfsa4YnTsv89v4rw6yVU/5sqtedPCtHPR9yA7cztAOgwzWHQA
+p6ix3xBz8Go7OvQ66wnSGYujtQwayKuWqaDLbHKjHL8wy0oXhMrF/63D753562sY
+DOnEoEnMxo6SSNz9nhAVF0RZ9QqEViyQFzcbQ/EXEFiGcOWXuQTpAbbwEMdwy45L
+rprAH0dSCtKuJ7+ypoqMBUPK2hVBbA==
+=z2cn
+-----END PGP SIGNATURE-----
+
+--6flxl23ofa67og72--
 
