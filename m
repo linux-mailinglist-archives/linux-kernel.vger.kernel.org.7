@@ -1,141 +1,140 @@
-Return-Path: <linux-kernel+bounces-861197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B284BF2086
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:14:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0772BF2074
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD12E4F8D0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6A9189336E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925401A316E;
-	Mon, 20 Oct 2025 15:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FC9253944;
+	Mon, 20 Oct 2025 15:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="x91YQ3nW"
-Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIIIdDA9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A47A23E320;
-	Mon, 20 Oct 2025 15:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9EF1DFF7;
+	Mon, 20 Oct 2025 15:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973190; cv=none; b=hlAkFxO6VKKtHlwjIy+T9lsbaqavMAVldzTLsxRXMGCEx9YILrpyj8ioTT4WalMHpfmpB3DMgII2XKXiaDZKOdo+GWIMljrOsK/AzpN+NFq+FH/BlJzLIuRIn0qOHCATgt7UCVgTVdGAQVXVC6XDQBCb3ue98Wclf60O1mBpYAk=
+	t=1760973199; cv=none; b=XrlwJQCf84K7czXtqc53iG08U9x7H8h6tQoqYxGYmkxtkqhoSk8lIFvp3J6kJN0DjWYWpXCFNiA/eEc2LE92bC8UE3NxJ692dSZ8sH88nxLWVCeYKKvqiNGgQY8ya1XAZPXG3JUV440Uc2c3DXi4z4fOfT65G2PVss+vQYCpS4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973190; c=relaxed/simple;
-	bh=3S4lO56CG9tohgwwGHC5szTZOdS41z1QUng2VGAXfBU=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WkzBXG2dpK7jvOTlq4pIy3NSJw7U+gI2vRIq0z11zjvVN5wk/lReq19hbUKjD6p/fO7C3tmeyTgjQxy1VILLMcxoIIH41p+1iI8AaYukxPL5enQL7uCOOzBarZDJzyTBlGNLM0YEvmV4i+W0FlAusfgD257PK3E+tfKG2uVR8Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=x91YQ3nW; arc=none smtp.client-ip=91.244.183.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
-Received: from mx0.infotecs-nt (localhost [127.0.0.1])
-	by mx0.infotecs.ru (Postfix) with ESMTP id 4676F1044BEA;
-	Mon, 20 Oct 2025 18:12:56 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 4676F1044BEA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
-	t=1760973176; bh=f6TnMnECCIqPoKuiS/BRSEBi2i3eEB1O/9qu6G5dZu4=;
-	h=From:To:CC:Subject:Date:From;
-	b=x91YQ3nWV7IHAWwSezpwHA3IdAsfvg2mFPSc6/DqfSXHjDjuA8oYfdNOvUHE1ZJc4
-	 F2QZGdklPbeKphT0MOn0hOug7Mxy34yMHV7+5yaoA+sXojYMWR9yjXpMgY0aGdDpbu
-	 358FtgGrCtfdR5GqWI7NvdhsJHStQJMCocRLq4Iw=
-Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
-	by mx0.infotecs-nt (Postfix) with ESMTP id 437E530CD6E3;
-	Mon, 20 Oct 2025 18:12:56 +0300 (MSK)
-From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
-To: Marcel Holtmann <marcel@holtmann.org>
-CC: Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH net] Bluetooth: MGMT: Fix OOB access in
- parse_adv_monitor_pattern()
-Thread-Topic: [PATCH net] Bluetooth: MGMT: Fix OOB access in
- parse_adv_monitor_pattern()
-Thread-Index: AQHcQdQDH+4einvhvkqzls1fGNBfVA==
-Date: Mon, 20 Oct 2025 15:12:55 +0000
-Message-ID: <20251020151255.1807712-1-Ilia.Gavrilov@infotecs.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760973199; c=relaxed/simple;
+	bh=YqHSvPd7oXvJfa97f+UihKrYm4qSWMBIKneomnSlbWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CixbwNyzppKqAz6AQF0928ONoYNX4s3KWBz56uG7f5CNz2qhJ4ptfMx2/r1ig5q9yBeI3l2xCFDL9SOtqDhD9pP9WqUAHKvIyqBDC35nG9YJ2pWdNx5EMll3aPtPl5o2JK5WNaR2CKRdCfimCJ8n5Et6iltlNlNnUgK6w3jBuNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIIIdDA9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC74EC4CEF9;
+	Mon, 20 Oct 2025 15:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760973198;
+	bh=YqHSvPd7oXvJfa97f+UihKrYm4qSWMBIKneomnSlbWg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VIIIdDA9KQzEaz89j2hXJTZ67sI6wWiDy25wwwN0tp292Bec6F1OmUqRdYJBICquf
+	 GG1TmYy+LJdEP622X97TR3SCiL7iwhZYL9Oj40dzQgc+ZJS+c2VWv/RcAyVYThvRx1
+	 mVhSRu2avHN+FrR5uDg+XP6VsyrQym7sk7YKl2U8Jo3WnUlFGNfHeDNyeM4Ld6ZDxN
+	 Yc86V8EjMKY8agrMd2hJoJ9lUBE+HbDaStx59927+wNEWcyouoK3DcCa9rQknxGcul
+	 2vh5gbckgtelfWEPj+bFaYQR8ku0LTZsCg+jOowA9Wvrz6DsNS863lq0NeK2KFbEqN
+	 oVQ+8q/9v/tow==
+From: SeongJae Park <sj@kernel.org>
+To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev (open list:DAMON),
+	linux-mm@kvack.org (open list:DAMON),
+	linux-kernel@vger.kernel.org (open list),
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: Re: [PATCH] mm/damon/sysfs-schemes: Validate nid usage in nid_show()
+Date: Mon, 20 Oct 2025 08:13:15 -0700
+Message-ID: <20251020151315.66260-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251020112824.144391-1-swarajgaikwad1925@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KLMS-Rule-ID: 5
-X-KLMS-Message-Action: clean
-X-KLMS-AntiSpam-Status: not scanned, disabled by settings
-X-KLMS-AntiSpam-Interceptor-Info: not scanned
-X-KLMS-AntiPhishing: Clean, bases: 2025/10/20 14:26:00
-X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/10/20 14:44:00 #27798716
-X-KLMS-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
-In the parse_adv_monitor_pattern() function, the value of
-the 'length' variable is currently limited to HCI_MAX_EXT_AD_LENGTH(251).
-The size of the 'value' array in the mgmt_adv_pattern structure is 31.
-If the value of 'pattern[i].length' is set in the user space
-and exceeds 31, the 'patterns[i].value' array can be accessed
-out of bound when copied.
+Hello Swaraj,
 
-Increasing the size of the 'value' array in
-the 'mgmt_adv_pattern' structure will break the userspace.
-Considering this, and to avoid OOB access revert the limits for 'offset'
-and 'length' back to the value of HCI_MAX_AD_LENGTH.
+On Mon, 20 Oct 2025 11:28:24 +0000 Swaraj Gaikwad <swarajgaikwad1925@gmail.com> wrote:
 
-Found by InfoTeCS on behalf of Linux Verification Center
-(linuxtesting.org) with SVACE.
+> The nid_show() function previously returned the node ID (nid) without
+> verifying if the goal object of damos_sysfs_quota_goal was using a
+> node-based metric. This could lead to incorrect reporting when the
+> goal metric was unrelated to node memory.
+> 
+> This patch introduces a validation step to ensure that nid_show() only
+> returns the node ID for valid node-based metrics:
+> - DAMOS_QUOTA_NODE_MEM_USED_BP
+> - DAMOS_QUOTA_NODE_MEM_FREE_BP
+> 
+> For other metrics, it returns -EINVAL to prevent misleading information.
+> 
+> Tested with KUnit:
+> - Built kernel with KUnit and DAMON sysfs tests enabled.
+> - Executed KUnit tests:
+>   ./kunit.py run --kunitconfig ./mm/mm/damon/tests/.kunitconfig
+> - All 25 tests passed, including damon_sysfs_test_add_targets.
 
-Fixes: db08722fc7d4 ("Bluetooth: hci_core: Fix missing instances using HCI_=
-MAX_AD_LENGTH")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
----
- include/net/bluetooth/mgmt.h | 2 +-
- net/bluetooth/mgmt.c         | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+So nice patch, thank you!  I have a comment below, though.
 
-diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
-index 74edea06985b..4b07ce6dfd69 100644
---- a/include/net/bluetooth/mgmt.h
-+++ b/include/net/bluetooth/mgmt.h
-@@ -780,7 +780,7 @@ struct mgmt_adv_pattern {
- 	__u8 ad_type;
- 	__u8 offset;
- 	__u8 length;
--	__u8 value[31];
-+	__u8 value[HCI_MAX_AD_LENGTH];
- } __packed;
-=20
- #define MGMT_OP_ADD_ADV_PATTERNS_MONITOR	0x0052
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index a3d16eece0d2..500033b70a96 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -5391,9 +5391,9 @@ static u8 parse_adv_monitor_pattern(struct adv_monito=
-r *m, u8 pattern_count,
- 	for (i =3D 0; i < pattern_count; i++) {
- 		offset =3D patterns[i].offset;
- 		length =3D patterns[i].length;
--		if (offset >=3D HCI_MAX_EXT_AD_LENGTH ||
--		    length > HCI_MAX_EXT_AD_LENGTH ||
--		    (offset + length) > HCI_MAX_EXT_AD_LENGTH)
-+		if (offset >=3D HCI_MAX_AD_LENGTH ||
-+		    length > HCI_MAX_AD_LENGTH ||
-+		    (offset + length) > HCI_MAX_AD_LENGTH)
- 			return MGMT_STATUS_INVALID_PARAMS;
-=20
- 		p =3D kmalloc(sizeof(*p), GFP_KERNEL);
---=20
-2.39.5
+> 
+> Based on commit 3a8660878839 ("Linux 6.18-rc1").
+
+Maybe this is better to be put under the below comment section [1].
+
+> 
+> Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+> ---
+>  mm/damon/sysfs-schemes.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+> index 6536f16006c9..23a73b94fe53 100644
+> --- a/mm/damon/sysfs-schemes.c
+> +++ b/mm/damon/sysfs-schemes.c
+> @@ -1112,7 +1112,16 @@ static ssize_t nid_show(struct kobject *kobj,
+>  	struct damos_sysfs_quota_goal *goal = container_of(kobj, struct
+>  			damos_sysfs_quota_goal, kobj);
+>  
+> -	/* todo: return error if the goal is not using nid */
+> +	switch (goal->metric) {
+> +		case DAMOS_QUOTA_USER_INPUT:
+> +		case DAMOS_QUOTA_SOME_MEM_PSI_US:
+> +			return -EINVAL;
+> +		case DAMOS_QUOTA_NODE_MEM_USED_BP:
+> +		case DAMOS_QUOTA_NODE_MEM_FREE_BP:
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +	}
+>  
+>  	return sysfs_emit(buf, "%d\n", goal->nid);
+>  }
+
+According to 'git bisect', I in the past actually added the todo comment.  But,
+I of now cannot remember why I in the past did think that's something to do.  I
+now think this function is better to be simply show the value the user has set
+last time, since users could set the metrics after setting nid.  Other similar
+parameters also work in the way, to be wiring-order independent, so that simple
+behavior would be better for consistency, too.
+
+I'm sorry if the wrong todo comment was confusing you, Swaraj.  Would you mind
+sending a patch removing only the todo comment, without introducing any
+behavior change?
+
+[1] https://docs.kernel.org/process/submitting-patches.html#commentary
+
+
+Thanks,
+SJ
 
