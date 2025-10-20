@@ -1,100 +1,220 @@
-Return-Path: <linux-kernel+bounces-860765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90355BF0E13
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:38:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2606BF0E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B5B18837E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 091593A5C45
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4FE301009;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89143301014;
 	Mon, 20 Oct 2025 11:38:31 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F072FBE02
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329781F3B9E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760960311; cv=none; b=Ir/4v083n8Z89KQknzF0QxjfADG6e531qUhzLukrIIjK+B1kBJ91vreGOgZJq8If8QYf6r2VxOh8erB8BiL66wXHrhxcXI1+3H2qCHpyREc8MY5GXVPUeFyATDlTVHZYppH6+U3nU/ynp3FhF6WjP5eCmTTei07av6wWq+txCKs=
+	t=1760960310; cv=none; b=rQKTzy4QR4r4KjTnrOeHpw1qLvYpHaR7cyk+VmDMultBy4la91ut2UC6oKzJQwjt8ZZfz20P9XAlUVYSiu+yeqZ4Iq0bl2r+Wp5pAx0nnSI+LubiCZLb6iXMFFu//j/I8983HRG59BxorWB2qdqCsfPjn4XeRI2h7uZukJisOCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760960311; c=relaxed/simple;
-	bh=X/Lf6eJ2MeIX6uQyHWlFiCMgPrqb1bVvrXirRM9qSNg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ltk/wcpyr/PxL2MDjPhB6pkazsssxZxopdXYM2QKMeUMte6rBvjjwwWGGivpzF0E18bEFi9KBRqOl4N8rjUF6aZJKILH2RkQGl8KGWaz8s0022C2R2WzoQJhHztA2I2se48gQAGlwQbMUDVZtH2B59jfV5L8RIqVNeoH9nijtt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+	s=arc-20240116; t=1760960310; c=relaxed/simple;
+	bh=nVNdc+bElqfdDMNVlJB5mmE6L+bL92tTvVCC0tuI8ZU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SsxHQqz61FK8RDai/UgeulcwWO/iAjyhx89LDWEJhxYi89y/drwJLOmiWyXr+ZPK9K/LGnv3HcBXoh/bGzGlkZcLdjMZMZV99IVNlg07A70DR7Hu4OBHlEedBLBG3rnWxfVwoVrmisoNfQxlq8hoMfjdMHCGj1o34/DYRgvU31k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e86696bd9so223424939f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:38:29 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e8db8badeso154420339f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:38:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760960309; x=1761565109;
+        d=1e100.net; s=20230601; t=1760960308; x=1761565108;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T485cP2PDfKw5L0LRph7Bn15y7b3Q3pOZ3t1w+cyIf4=;
-        b=LETlgEUNCtXA4Arhc/Qk+5A3kVDBz0HAokpiqdbgFGNNc8xgQ/eb7aAeWQduQm9oPS
-         v+mINigzwDo4/jATZhz9TTzyHqqCMP8BbAbASCZwGJsWXC4qwCu4XjtgUgP7SWX3DGT1
-         QhpRw8O0Rjv4hyslNed4lDvPNVp30OcOkGXwds+T7yU8IrtsrQLEUNgzQGPsprVZXKhD
-         79IKMDVUvXJCrIOYELhqKUw6PBoBcLwDo0e6BFQN/b3XrnpIZWJCHTlTwQTvkcwIjk7a
-         fB0UUFTJOIRRgtUrUmMCC+SZqa8VSgm524FmherI6kwHrxXj9sQKHQr1zSt/Oit9T5pJ
-         1Q8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbNsBM1xdkIyoQoo0D96Z5AvwkTP6tG3wLkH+NbxKADdoS9Y1kx3mDr/CxARmvbBpLGWn99nKKMBB3ktY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLLMPeOXJzLsNjYC5MerhK4eQy056eJ8KJEtHzz5GppPk6Tps9
-	P8mt+L3uy4Z0IwXoVI/tOUqSlIhfQ9Eb35HuhMOj9BshWSwrDMw3ruXveRi5wuvNuu72J++MCVO
-	MBepUK83ZYLk77Wop+3OyHi/MclUtlyJpr++w74iZkWdiXWUKcGIhfwfQyyg=
-X-Google-Smtp-Source: AGHT+IHIyMhT2Z7ldaGWSNIsMhOp6eIxGv/OXeRO4NSe4aOlKDrIeCpWJ8zH7xQnYmCBAGYSuEoYeUAhfH35xDnurjNGR3f1fo6u
+        bh=N8CK+chTKx9rsEaPQt4laFwFXYyo/LUomWo19HYjkvw=;
+        b=hsztJMHK2GcCBJoy1eqvpatl3xahyqwguZ/Wd+uqT1HPKDn8Kzv5KtBaDM4QCPcVEX
+         dEsSz/Za6bPAlFUa7zdDYSBbLN/t3Z20lGdx4WguqaZkV4d5/o+v8UlGIqYyCilqF8Se
+         P/X63y/0enF6ZmSbyDuG+I/mX0uzOowIjSoUYXGA5ntekgBzmpWMITb+KDG1sOjdo5jX
+         1heI8RkdmZluNsrCcADhGS8dpcbQsJQj6gDIfL2EpKN/nVVBonOlGMIeitLDe72LR4/r
+         iGivgBjUfRCn0RStA+jXgkklIMMILXIYcHJmGvWLWmJBO0a/ocSfgtcelGyo1gZ8PDw0
+         hgpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOl7JiA/tb4u07TG8semmqZCfqhzIQ9bHNilWGALdz2O/FSLyVcU7FtiptVZYVP0myVQMBbG4pMgQN0rI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3UlB4/BKVLOyAwUV2BtcA2KBsfqgm3YISESqMGnCZ0lA2a8nJ
+	qoCb9CAgy8EOVFyDd3TDu2QXLJcIUXqG7TBpQtWik1XHA+hwcwpd3MJm0NWwC77htEss/6NTQDV
+	/1DrVql/gZFcdO7NzjxspF3YjH7Bca8IY5OVj+HE8nq9fkmseLxiKXE+4aoQ=
+X-Google-Smtp-Source: AGHT+IESARV6Rzp6WQud5MHhBqEpjYbkgI4q5NleuAzRvx/nSQ/JNphlDIdWqybCpLo4msCr7FPS9vlQwTQ0cPvjTWLWYyz/nUms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15d3:b0:940:d1a7:dfa2 with SMTP id
- ca18e2360f4ac-940d1a7e14bmr873323939f.1.1760960308844; Mon, 20 Oct 2025
+X-Received: by 2002:a05:6602:14cb:b0:93e:856a:2fe8 with SMTP id
+ ca18e2360f4ac-93e856a325emr1481601439f.19.1760960308285; Mon, 20 Oct 2025
  04:38:28 -0700 (PDT)
 Date: Mon, 20 Oct 2025 04:38:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f61f34.a70a0220.205af.0030.GAE@google.com>
-Subject: [syzbot] Monthly v9fs report (Oct 2025)
-From: syzbot <syzbot+list0d3fd201f302d26981a7@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Message-ID: <68f61f34.a70a0220.205af.002f.GAE@google.com>
+Subject: [syzbot] [net?] BUG: soft lockup in xfrm_policy_timer
+From: syzbot <syzbot+4eba0fa4e072709f8c2d@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello v9fs maintainers/developers,
+Hello,
 
-This is a 31-day syzbot report for the v9fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/v9fs
+syzbot found the following issue on:
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 8 issues are still open and 37 have already been fixed.
+HEAD commit:    bf45a62baffc Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c95542580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd2356106f507975
+dashboard link: https://syzkaller.appspot.com/bug?extid=4eba0fa4e072709f8c2d
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
 
-Some of the still happening issues:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Ref Crashes Repro Title
-<1> 2597    Yes   INFO: task hung in v9fs_evict_inode
-                  https://syzkaller.appspot.com/bug?extid=56bd5818697f0f93fdd9
-<2> 96      Yes   WARNING: refcount bug in p9_req_put (3)
-                  https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
-<3> 5       No    possible deadlock in flush_all_rcu_sheaves
-                  https://syzkaller.appspot.com/bug?extid=aecb85f534f8915b6f5b
-<4> 2       Yes   WARNING in v9fs_begin_writeback
-                  https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f0d4874557e9/disk-bf45a62b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0bf44a13b5b2/vmlinux-bf45a62b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/18db8bc9907c/Image-bf45a62b.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4eba0fa4e072709f8c2d@syzkaller.appspotmail.com
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:0]
+Modules linked in:
+irq event stamp: 314797
+hardirqs last  enabled at (314796): [<ffff80008b062b20>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:68 [inline]
+hardirqs last  enabled at (314796): [<ffff80008b062b20>] exit_to_kernel_mode+0x10/0x1c arch/arm64/kernel/entry-common.c:75
+hardirqs last disabled at (314797): [<ffff80008b062af0>] __enter_from_kernel_mode arch/arm64/kernel/entry-common.c:43 [inline]
+hardirqs last disabled at (314797): [<ffff80008b062af0>] enter_from_kernel_mode+0x14/0x34 arch/arm64/kernel/entry-common.c:50
+softirqs last  enabled at (310210): [<ffff8000803db160>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (310210): [<ffff8000803db160>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (310295): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 03400005 (nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : queued_spin_lock_slowpath+0x138/0xaec kernel/locking/qspinlock.c:197
+lr : queued_spin_lock_slowpath+0x144/0xaec kernel/locking/qspinlock.c:197
+sp : ffff800097c17940
+x29: ffff800097c179e0 x28: 1fffe0001b7fe7a1 x27: 1ffff00011f10c32
+x26: ffff80008f886180 x25: dfff800000000000 x24: ffff700012f82f2c
+x23: 0000000000000001 x22: ffff80008f886190 x21: ffff0000dbff3d08
+x20: ffff0000dbff3d10 x19: ffff0000dbff3d00 x18: 1fffe00033771c88
+x17: ffff80010c3e8000 x16: ffff800080537d14 x15: 0000000000000001
+x14: 1fffe0001b7fe7a0 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001b7fe7a1 x10: dfff800000000000 x9 : 0000000000000000
+x8 : 0000000000000001 x7 : ffff800089d8c26c x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008b0885f8
+x2 : 0000000000000000 x1 : 0000000000000001 x0 : 0000000000000001
+Call trace:
+ __cmpwait_case_8 arch/arm64/include/asm/cmpxchg.h:229 [inline] (P)
+ __cmpwait arch/arm64/include/asm/cmpxchg.h:257 [inline] (P)
+ queued_spin_lock_slowpath+0x138/0xaec kernel/locking/qspinlock.c:197 (P)
+ queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+ do_raw_spin_lock+0x2a8/0x2cc kernel/locking/spinlock_debug.c:116
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:127 [inline]
+ _raw_spin_lock_bh+0x50/0x60 kernel/locking/spinlock.c:178
+ spin_lock_bh include/linux/spinlock.h:356 [inline]
+ xfrm_policy_kill+0x238/0x4a4 net/xfrm/xfrm_policy.c:498
+ xfrm_policy_delete net/xfrm/xfrm_policy.c:2372 [inline]
+ xfrm_policy_timer+0x2fc/0x640 net/xfrm/xfrm_policy.c:419
+ call_timer_fn+0x1b4/0x818 kernel/time/timer.c:1747
+ expire_timers kernel/time/timer.c:1798 [inline]
+ __run_timers kernel/time/timer.c:2372 [inline]
+ __run_timer_base+0x51c/0x76c kernel/time/timer.c:2384
+ run_timer_base kernel/time/timer.c:2393 [inline]
+ run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2403
+ handle_softirqs+0x328/0xc88 kernel/softirq.c:579
+ __do_softirq+0x14/0x20 kernel/softirq.c:613
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:68
+ call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:73
+ invoke_softirq kernel/softirq.c:460 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:680
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:696
+ __el1_irq arch/arm64/kernel/entry-common.c:520 [inline]
+ el1_interrupt+0x40/0x60 arch/arm64/kernel/entry-common.c:532
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:537
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48 (P)
+ cpuidle_idle_call kernel/sched/idle.c:190 [inline]
+ do_idle+0x1d8/0x454 kernel/sched/idle.c:330
+ cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:428
+ rest_init+0x2d8/0x2f4 init/main.c:744
+ start_kernel+0x390/0x3e0 init/main.c:1097
+ __primary_switched+0x8c/0x94 arch/arm64/kernel/head.S:246
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 7396 Comm: syz.1.139 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : __sanitizer_cov_trace_pc+0x8/0x84 kernel/kcov.c:213
+lr : xfrm_state_lookup_spi_proto net/xfrm/xfrm_state.c:1708 [inline]
+lr : xfrm_alloc_spi+0x48c/0xd04 net/xfrm/xfrm_state.c:2589
+sp : ffff8000a2e76f30
+x29: ffff8000a2e77040 x28: 0000000000000033 x27: 0000000000000003
+x26: ffff0000dbff2440 x25: ffff0000dbff38e0 x24: dfff800000000000
+x23: ffff0000f4c69540 x22: ffff0000dbff38e0 x21: 00000000000018c0
+x20: 00000000634d0100 x19: 0000000000060000 x18: 0000000000000000
+x17: 00000000ffff0000 x16: ffff80008b065bd0 x15: ffff7000145cedd0
+x14: 1ffff000145cedd0 x13: 0000000000000004 x12: ffffffffffffffff
+x11: 0000000000080000 x10: 0000000000ff0100 x9 : 0000000000000002
+x8 : ffff0000dbf2db80 x7 : ffff800089dc6ba0 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000002
+x2 : 0000000000000008 x1 : 00000000634d0100 x0 : 0000000000060000
+Call trace:
+ __sanitizer_cov_trace_pc+0x8/0x84 kernel/kcov.c:210 (P)
+ xfrm_alloc_userspi+0x55c/0x9c8 net/xfrm/xfrm_user.c:1873
+ xfrm_user_rcv_msg+0x588/0x7c4 net/xfrm/xfrm_user.c:3501
+ netlink_rcv_skb+0x220/0x3fc net/netlink/af_netlink.c:2552
+ xfrm_netlink_rcv+0x80/0x9c net/xfrm/xfrm_user.c:3523
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x694/0x8c4 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x648/0x930 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg net/socket.c:729 [inline]
+ ____sys_sendmsg+0x490/0x7b8 net/socket.c:2614
+ ___sys_sendmsg+0x204/0x278 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __arm64_sys_sendmsg+0x184/0x238 net/socket.c:2703
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-You may send multiple commands in a single email message.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
