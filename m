@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-861523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0446BF2F28
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DFEBF2F2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 195D64F845C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37169427BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8227823D7CA;
-	Mon, 20 Oct 2025 18:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ3C/7RE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91839202961;
+	Mon, 20 Oct 2025 18:33:25 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882A51A262A;
-	Mon, 20 Oct 2025 18:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69DE1F151C;
+	Mon, 20 Oct 2025 18:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760985189; cv=none; b=KSYXJ7CrEqiU4MYHSNvkDBvdiswShFFWZlCyAqEoKCu76CVOhS+l8eRIAnxe8fqyAMsBJOvFP9+IBg6T9ruNiP1/9rXBSrXCdb1lGqNgWl4qUA2mKoa3gyuBp80mXRnseeDYzMmHnJUvgTMlU/+crm45kIrOC2WEyp9OYSvajsQ=
+	t=1760985205; cv=none; b=GfRoRcts92naTC+rhi1P+Nkf+q2JuLy1BAwe9TXzukWQpBDvBQuw5nQUbwSUZZcr4FOwa9XOoksz5xNG7j6/y4YLR4QqNUwVbUzECaZmhioNQcvuBMuKvDpMnUxfi9H7XBxzGPcyz4yuiLrHmbT/UYs7p24NUWSqpx/PyImvXx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760985189; c=relaxed/simple;
-	bh=hngoAyREJmI3NxsC47gSFZTRqeZYnGhsBqNJamSsNXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9ILvQ1qVnfE8ThB9FzgY49sbEu9kZFwaB1bDDsxkHGsMdPCtge6QiVoBf6hyVanXczI/mzPSyZIdUkQfE7S9JZnH3Np2NYn8A1p3kTLBYBPFjrsrOg2OtujmO7YNoGdfng1A1enxxuz6+IXIFPsyfoCZ5ntuOcOE5Nognv+Yoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZ3C/7RE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A1EC113D0;
-	Mon, 20 Oct 2025 18:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760985189;
-	bh=hngoAyREJmI3NxsC47gSFZTRqeZYnGhsBqNJamSsNXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KZ3C/7RECo6JatE7dPRcwR7OxRUgFqSLoMTtBDqx2H/pQtPRUDbVev1A6ISeKbJ9e
-	 rjvDZBisHRDNjkoqQFNumPk+Ojw/yWIqgKlF7a18ZyM+Pfb7DeM1xSj39v9W3SCsKy
-	 GB/5iDF1aMkkfxBv4ox6JDTzrb86Cy1acymPJqN8eEQ6muiomsMDFRjJcDH4SQzNNo
-	 Bud67/d05MI2/lPv1gmbTW3R2x95u7veFq7svQHE5MXeR/2o0DVCAlV3fqrkY+8GAY
-	 1U7jG9ykr58IJZumFnFDorIah4OcTlHiX8QVUzRCNn0W9thjzJ64fG3cGCujNrH7dV
-	 ZYm9D9ctmzgIg==
-Received: by pali.im (Postfix)
-	id A6833678; Mon, 20 Oct 2025 20:33:04 +0200 (CEST)
-Date: Mon, 20 Oct 2025 20:33:04 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
-	hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
-	djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
-	rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
-	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
-	gunho.lee@lge.com
-Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
-Message-ID: <20251020183304.umtx46whqu4awijj@pali>
-References: <20251020020749.5522-1-linkinjeon@kernel.org>
+	s=arc-20240116; t=1760985205; c=relaxed/simple;
+	bh=5gXaYWbN7G3/7h+AXsbtIdN5dVqKRh6WWrUSpcXas9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jgG3EjGE2H5GWdJVPbM7pPCitG1aoAg8R3YII9cYaw3w7ENH4sTnv6oiauzVlykEb8On8rKXB5uZ0mdaVtAH7dtjTXg0VstyHRjxteOH9Q/XbuU7RXP4h2DTfxoLfQxHziB/ZlJDewty7X8A5oDFyUrD5FpWDR0Kiwcv5mkJTuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 10FB51A027B;
+	Mon, 20 Oct 2025 18:33:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id DC5B26000C;
+	Mon, 20 Oct 2025 18:33:12 +0000 (UTC)
+Date: Mon, 20 Oct 2025 14:33:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ring-buffer: fix kernel-doc format to avoid a
+ warning
+Message-ID: <20251020143332.732ae92d@gandalf.local.home>
+In-Reply-To: <20251020010037.2681824-1-rdunlap@infradead.org>
+References: <20251020010037.2681824-1-rdunlap@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020020749.5522-1-linkinjeon@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: cp3ksiu1b1oasx3s4q185i3nqjodaeto
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: DC5B26000C
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19SHafg6TbufMcgmGIXbuTc9+HLk0fPKR4=
+X-HE-Tag: 1760985192-677937
+X-HE-Meta: U2FsdGVkX1/HyFtSoM0inYVG0URL6sOhceVECnY7ftRHvrgOXFpt4Y1JUlaZEWhHjT5scToxS/uqK/517pjzCeAfeInIGPa96/Yuy4y9to5HPayt2hnhS6q+ANYapn8Ou2BC6tkY40fYYHYJQdPyLeMzrPpNbBupvAVNBSh6mOev67OWZZADkFf/PXfJso+adH+bsL0g1POrSx9SIin0tHLCKGwix/uJaxvHJv/FajbRwhI9FnFAf01IOX4I3QYodIlOQaiyBKlSJ5tCjItoIFYlvexG6K8H+c8H9uxEXPFV8liKhZpJvIj3IsjJJ3ZKWJlbtyepLNOMGNGISWfzDPuimVQyRTVMO5lwdtTsWmm5LYcEylTS0FJeMYxrj+lky17m911TmwySQC9kxRdkCzetPyWCxH/85rKDkl/KgCFTXtXcBF2dEhldla3xdg/9uYf/ns8G/geRy/Mhz8MCkbxgfWvRNn7ltDcZg6lw7pgmeBuhUT7uGBYuRGyBpRxj9KiSDG4kPlTxdqg8Kncon+xPvuSy3DoRcoJggQ+ETNM=
 
-Hello,
+On Sun, 19 Oct 2025 18:00:37 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Do you have a plan, what should be the future of the NTFS support in
-Linux? Because basically this is a third NTFS driver in recent years
-and I think it is not a good idea to replace NTFS driver every decade by
-a new different implementation.
+> Format the kernel-doc for RINGBUF_TYPE_DATA_TYPE_LEN_MAX correctly
+> to prevent a kernel-doc warning:
+> 
+> Warning: include/linux/ring_buffer.h:61 Enum value
+>  'RINGBUF_TYPE_DATA_TYPE_LEN_MAX' not described in enum 'ring_buffer_type'
+> 
+> Fixes: 334d4169a659 ("ring_buffer: compressed event header")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> v2: reformat based on comments from Steven;
+>     add more enum types to aid with comments;
+> 
+> Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: linux-trace-kernel@vger.kernel.org
+> ---
+>  include/linux/ring_buffer.h |   13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> --- linux-next-20251016.orig/include/linux/ring_buffer.h
+> +++ linux-next-20251016/include/linux/ring_buffer.h
+> @@ -43,18 +43,23 @@ struct ring_buffer_event {
+>   *				 array[0] = top (28 .. 59) bits
+>   *				 size = 8 bytes
+>   *
+> - * <= @RINGBUF_TYPE_DATA_TYPE_LEN_MAX:
+> - *				Data record
+> - *				 If type_len is zero:
+> + * @RINGBUF_TYPE_DATA:		Data record
+>   *				  array[0] holds the actual length
+>   *				  array[1..(length+3)/4] holds data
+>   *				  size = 4 + length (bytes)
+> - *				 else
+> + *
+> + * @RINGBUF_TYPE_DATA_TYPE_LEN_MIN:
+> + * 				Data record with length and data as below
+> + * . . .
+> + * @RINGBUF_TYPE_DATA_TYPE_LEN_MAX:
+> + *				Data record
+>   *				  length = type_len << 2
+>   *				  array[0..(length+3)/4-1] holds data
+>   *				  size = 4 + length (bytes)
+>   */
+>  enum ring_buffer_type {
+> +	RINGBUF_TYPE_DATA = 0,
+> +	RINGBUF_TYPE_DATA_TYPE_LEN_MIN = 1,
 
-Is this new driver going to replace existing ntfs3 driver? Or should it
-live side-by-side together with ntfs3?
+Adding this just to satisfy kerneldoc seems a bit much.
 
-If this new driver is going to replace ntfs3 then it should provide same
-API/ABI to userspace. For this case at least same/compatible mount
-options, ioctl interface and/or attribute features (not sure what is
-already supported).
+If this is going to be added, then it should be used in the code.
 
-You wrote that ntfsplus is based on the old ntfs driver. How big is the
-diff between old ntfs and new ntfsplus driver? If the code is still
-same, maybe it would be better to call it ntfs as before and construct
-commits in a way which will first "revert the old ntfs driver" and then
-apply your changes on top of it (like write feature, etc..)?
+The RINGBUF_TYPE_DATA should probably be called RINGBUF_TYPE_DATA_LARGE, as
+it is zero when it is a large event (bigger than 112 bytes).
 
-For mount options, for example I see that new driver does not use
-de-facto standard iocharset= mount option like all other fs driver but
-instead has nls= mount option. This should be fixed.
+>  	RINGBUF_TYPE_DATA_TYPE_LEN_MAX = 28,
+>  	RINGBUF_TYPE_PADDING,
+>  	RINGBUF_TYPE_TIME_EXTEND,
 
-Pali
+-- Steve
 
