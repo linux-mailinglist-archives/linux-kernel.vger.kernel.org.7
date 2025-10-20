@@ -1,172 +1,182 @@
-Return-Path: <linux-kernel+bounces-861130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20995BF1DA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:31:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EE0BF1DF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52B03AD79D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:31:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4789A4F40ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0841E32B9;
-	Mon, 20 Oct 2025 14:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CE719C553;
+	Mon, 20 Oct 2025 14:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SlqvTeos"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3Sp5tegT"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB81D88D7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E096136351
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970681; cv=none; b=Nv+Gc78HNAe5Mj6VlTLR4ofiIh+x8tCL8ZribgoQ37NOhwk32jw922shesFozcZiuTXHOMKAPnjcVAuMeENwHYtmXWFzVHWx2tXDa0Fg6q8Hvj/K7IdL6qzoObpAVwYMKvRrnzvFW/ihfydJa5ze2lXwMa7hzC32NC5dGwWqB8o=
+	t=1760970780; cv=none; b=ABDOrKC3JkdIXdrYNBvMGb1edcpcYfDH+qIRt+h1Ija3WfMjj9MuhPrx/Fxwnb4tYQIvMkBJDtCECgIuDLDoOBzu6DItiTwYE3zMCNVqh9zBkkzj0VmtwoD1PfEE1oSr3FduEVSf1cj+nuTpyD71VCSDkXSkuUM7G+e+l6YsG2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970681; c=relaxed/simple;
-	bh=AWZ5JEQErQEgkIxsRTfnsV0dbvBu3BBNbNNvaGHfU1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ak4z/MApPyRytxhFg32w7UPD0UEHCiFWbjj+8HmCM54maz2k2Kq+XaXgnrQrmP10eYRuWO6dDnr9CgZLIjk71Prub0ARkIi0BiSQXB9/pDRY8wWgzG9rB2SxzoqECNkJNv1xO/qEJqATAXFZLWm0YfW6DTGwNA2vent+KUoVmPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SlqvTeos; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KCDkpR024863
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:31:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WDwzWmcq4AKDGdpNvyveTUSafU4v7snQckB7LNYwDV0=; b=SlqvTeosTjNrJ8Eb
-	sO4+qHexPJuy7bWwTF+Ezj/j9GZBx+dQ1f6a0pBbXo/5d7D5JbgcePTZ3iMUJnc7
-	44cOs4QlAuJx2EFC8s0D3pwXt/cgbZffLJ3h+yL40mn2OCUOoBcy7gcuqr1P+8Ck
-	S8g9juUcJoUjaoanE6I+bUt8x4sbEtUoPjJe1NW/sQehaVJTATCjxWmpY2Tm7eXs
-	PYCj7ZWIMRJGW1KmLCR64VSm+NYR8L7K91Po4vrao/Zu2BNyZLDKc6alu5yjnCup
-	C2UqdSFVLLoAVp94yhTIS0TSw3D4aWeRrV5dsjWIV0sQjWlMQFIWl1WKu/JWvKlC
-	D2D/PQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w7w3cp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:31:18 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-87c14264340so78054736d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:31:18 -0700 (PDT)
+	s=arc-20240116; t=1760970780; c=relaxed/simple;
+	bh=Efs56rk0rh6KgCp6OjzpKIx03q5a6HbqOI6l92/mJFk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DDxyOEWvKP1VDh6U3YP6WzNZayvcdtEodTsoIlTM05q9xryIZqWGRrtWERB7GrnqLVcCsCRztVyA1hh9Ye0V3326GAQWn8tpsyBzWJzJdzjGUbu9e16nS1z088gh7/U+i7EL0MgyYHNYPc81wWaNTHyqiym8Pvrh84zDvgchglY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3Sp5tegT; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b609c0f6522so8320645a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760970778; x=1761575578; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rxtYEYVGg1xee+FU6QJob1EIzCq4b+DS/H4drZtXgbA=;
+        b=3Sp5tegT4S/I93DPczEipbN11Ouh29RTRAb7h8oJBjPAwzt/h78/LHVl/ruRcaL+R7
+         SGlC4dz26aG9AvTMKQd+KB2AYW0Q73kVt9vpSi/94QocmaH1SYteEBl8H5ZaJs33ttRy
+         Qcs3LhQ/bs0kKVALhxTb3dxEvPHUwLWzbqwAGP/wJm+A1O1wbNvmcrsF1qEfmeSgpH7R
+         6mrfCkB9+dEa16rkxF73g7WDmoIO1uukdX9g1I1HJt9F2/F/X9VA4IlbX/EJLcfk5k61
+         9F5Gw4xIkLUxQ2eIO1s5KCgj+nhMNaKGJ2MJP6obsPqn9UpLUlSzAoUmWh1wB4EsN8tR
+         np+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760970677; x=1761575477;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WDwzWmcq4AKDGdpNvyveTUSafU4v7snQckB7LNYwDV0=;
-        b=uqoaNqxuEgl//3rJCAe9TLj3fvpgKYKCdNjfCD9pVj+VXmnJEGPzEO0XKoQr68EKup
-         FiArMpoUpZ/utyZavYzfDaqZ5ZMR6yW6gtHmLJtIkLJ8ZUoHurKCnRwc0pcGeODSe4uF
-         2sWAjN3SsAkrX8EmVl0d07SDSocIUEa7vJhECaTXR46CXNYaZ2Y0AwNBE2jqi+m9kqxk
-         03hi3RSPS59WL3h7HSRna+xCnuF5UI0d0m/DSGSYQovrlleQypK77GUf3TRspuTGYTRq
-         vetaJH1CBUwvA1xmu+lU7n4YRf+rDo8D+TcHB2AJ7+N4Mtlxhp0h1qRXm7bu495J9Do3
-         7N0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVkWTJraURWBEIr6NlstMAW+Rabzue26X3qst9vJ8jjfjHmZEvUvIpl7CH8Pt7H1CHdhFxC7MBNtZvs/EM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDg8LDthvkBs81YCG0BHn+KH2SPHz03WKdUjoaJ0mnBTvKDFYW
-	Mnk+hqYhTJ+2sd7QJp7IAJNSYoq7B1X+LWV4JBQL7bAi/KsXBoDyx8JBTtsGD+tSqrmHftTtcDh
-	VRFbzl5jF/VcJpcH7jTjBaEcwKCT/0ya3h+L5tCYtCxgy5LXlvKCIcungZiB3rNs2ei0=
-X-Gm-Gg: ASbGnctGNkxFAUKkJMtFiHYbKXo+ODLyIhOIbSw8j6MD9IEx5no19iVnQ3G/wPSJlnP
-	KCkSW8xZA9z4Cz2/Ho3ZM+p9iV/qU1fbBg5FGQIsZcHHa5YyRwAfguwFsPBhGpBR6eGy5mtFPVe
-	izcthm7+m0lM0/s6Vajvkno3D1OSS6kjpPSbDJK3d40IiXfxGiO7g7peOFr1XD8iBf+EB6oECD3
-	YBD6n258CrT/Y2odQR2+rzuvSqnjf6LqAJWjybxhvLQ72eugCDDnTTH56hILiBvsjrZs0S7t4q1
-	RcQ094SfsDl2iBvtiV6vYo0u1uL76MMaG1DLF9JYnKLaOF21pyosRrm5UmfsYpx2jJwXZGUiIGd
-	q852k1/tZBQQGJEr1Y/YgLOF8cA==
-X-Received: by 2002:a05:622a:110e:b0:4e8:a9a2:4d50 with SMTP id d75a77b69052e-4e8a9a25039mr160564851cf.41.1760970677202;
-        Mon, 20 Oct 2025 07:31:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEos+8Az1kXkegLkZkoK78dfEsCGhaPacnWf31fm6ldL4T9xO4u7snVWYRJLwJrJQGi8f6MRg==
-X-Received: by 2002:a05:622a:110e:b0:4e8:a9a2:4d50 with SMTP id d75a77b69052e-4e8a9a25039mr160564271cf.41.1760970676602;
-        Mon, 20 Oct 2025 07:31:16 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-471553f8a3asm171487535e9.16.2025.10.20.07.31.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 07:31:16 -0700 (PDT)
-Message-ID: <4f394672-c7dc-4fdc-b70a-27fa8e20dd74@oss.qualcomm.com>
-Date: Mon, 20 Oct 2025 15:31:15 +0100
+        d=1e100.net; s=20230601; t=1760970778; x=1761575578;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rxtYEYVGg1xee+FU6QJob1EIzCq4b+DS/H4drZtXgbA=;
+        b=deav0wX+QsbkSeUJExGQNT2jsKwAhPOt9T6EpRkyqVO6Ey1NjFJZ1+UNiyHH554yT7
+         RgpoEjHD7UwvO/WO5Xnej6pl1cR/NK8ov3+5oOIq9zEoFERU3EvCBGM4Bh8DRJwlJREj
+         2i9kmgZvazwB75fHeEAapr8qlyNsuzr0jYyY8eWjAa3YJd4yOXeSrhz1RVzp16OiHnvM
+         SPOm4r1JFXMeIf6S06T3fGc4k3d6bgM6NWnAT9TEoZKTOzboDUatPYQ2pOMxPUcuR2Mg
+         G0ucyuajY1ZazVWUuhsUIHdlR3GC22rbMILFoHU1nrZUfbppzTZfSbMDi6nIIscGXJm6
+         6puA==
+X-Forwarded-Encrypted: i=1; AJvYcCWk3iJvRQKQAS5gKlPgVxwFyBKTLlkcXxIGU6lpYAVltPLCQHq/bt2Q5gTwbR9ZoxfroKadORgDGuT2JM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzihVEHPp8PSw357+I7xqiJ94gWRyPJ6YSlZ0X25gbNuLmMMLW6
+	H3ezDGlpAQe1JoyUG/FaPNzUWsODMHwioWId4A6zfYQ0BM8BpaLBdLPbV1QzUjB7IaVu4OMee56
+	g9+JNzQ==
+X-Google-Smtp-Source: AGHT+IHYN3gPwuTbUwp+qLhiw1dSLKSY08s8KoatdQfaWUcMz0x8Il84U6uQREjYTVBx6/2IDE5exBcT4Xo=
+X-Received: from plcr12.prod.google.com ([2002:a17:903:14c:b0:290:4eeb:bc7a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1746:b0:28d:190a:1913
+ with SMTP id d9443c01a7336-290caf8509bmr147845565ad.38.1760970777614; Mon, 20
+ Oct 2025 07:32:57 -0700 (PDT)
+Date: Mon, 20 Oct 2025 07:32:56 -0700
+In-Reply-To: <20250910174210.1969750-1-sshegde@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: qcom: sdw: fix memory leak for
- sdw_stream_runtime
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
-        broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Stable@vger.kernel.org
-References: <20251020131208.22734-1-srinivas.kandagatla@oss.qualcomm.com>
- <20251020131208.22734-2-srinivas.kandagatla@oss.qualcomm.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20251020131208.22734-2-srinivas.kandagatla@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfXyzLA6D9l3fn/
- qhhkMCBp1KU0jXRLQ5UZUtGTYmfEKcGIujqV5RZwTjc2Y6tW9IYWhNQxdIN/ENAdVHgVxGNvWOA
- z59KCnW0enU8a0l6TDXmU/HX7dReVGwQkFtwIvWAiUd3gH7DVSCt8b1sWykmnBxa2YbkumHg3A8
- /QBnT+GquOYObsvq4JEWa6403b7/RmAi6Je1rRMFUEjaPHNkOtuPHnDHzPNnhT4N6cy6kI1DLF0
- iKRCBCXMDue1pY3ks0sf4SkajliXYFvS4k6KKL0jJ6UlS2w4/i/Ds8A7Zzw9/09yxs+872oJQQC
- umaf+0qIWGFRaqaUQB2I1jIlAwciDO61nLOfCBqeiYwUEUlc/tJ3QnnhvIV2k40ZTLKyHdqDPTl
- wo8p76HXPs5psYcLr1ifS2lIyWboQA==
-X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68f647b6 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=-57JWHKmnLzaxYqXpKAA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: H8hh6T__J8gQgaYGOaLVhd6BccV4D2Wq
-X-Proofpoint-ORIG-GUID: H8hh6T__J8gQgaYGOaLVhd6BccV4D2Wq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
+Mime-Version: 1.0
+References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
+Message-ID: <aPZIGCFk-Rnlc1yT@google.com>
+Subject: Re: [RFC PATCH v3 00/10] paravirt CPUs and push task for less vCPU preemption
+From: Sean Christopherson <seanjc@google.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com, 
+	maddy@linux.ibm.com, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org, 
+	vschneid@redhat.com, iii@linux.ibm.com, huschle@linux.ibm.com, 
+	rostedt@goodmis.org, dietmar.eggemann@arm.com, vineeth@bitbyteword.org, 
+	jgross@suse.com, pbonzini@redhat.com
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Sep 10, 2025, Shrikanth Hegde wrote:
+> tl;dr
+> 
+> This is follow up of [1] with few fixes and addressing review comments.
+> Upgraded it to RFC PATCH from RFC. 
+> Please review. 
+> 
+> [1]: v2 - https://lore.kernel.org/all/20250625191108.1646208-1-sshegde@linux.ibm.com/
+> 
+> v2 -> v3:
+> - Renamed to paravirt CPUs
 
+There are myriad uses of "paravirt" throughout Linux and related environments,
+and none of them mean "oversubscribed" or "contended".  I assume Hillf's comments
+triggered the rename from "avoid CPUs", but IMO "avoid" is at least somewhat
+accurate; "paravirt" is wildly misleading.
 
-On 10/20/25 2:12 PM, Srinivas Kandagatla wrote:
-> {
-> + switch (id) {
-> + case WSA_CODEC_DMA_RX_0:
-> + case WSA_CODEC_DMA_TX_0:
-> + case WSA_CODEC_DMA_RX_1:
-> + case WSA_CODEC_DMA_TX_1:
-> + case WSA_CODEC_DMA_TX_2:
-> + case RX_CODEC_DMA_RX_0:
-> + case TX_CODEC_DMA_TX_0:
-> + case RX_CODEC_DMA_RX_1:
-> + case TX_CODEC_DMA_TX_1:
-> + case RX_CODEC_DMA_RX_2:
-> + case TX_CODEC_DMA_TX_2:
-> + case RX_CODEC_DMA_RX_3:
-> + case TX_CODEC_DMA_TX_3:
-> + case RX_CODEC_DMA_RX_4:
-> + case TX_CODEC_DMA_TX_4:
-> + case RX_CODEC_DMA_RX_5:
-> + case TX_CODEC_DMA_TX_5:
-> + case RX_CODEC_DMA_RX_6:
-> + case RX_CODEC_DMA_RX_7:
+> - Folded the changes under CONFIG_PARAVIRT.
+> - Fixed the crash due work_buf corruption while using
+>   stop_one_cpu_nowait. 
+> - Added sysfs documentation.
+> - Copy most of __balance_push_cpu_stop to new one, this helps it move 
+>   the code out of CONFIG_HOTPLUG_CPU. 
+> - Some of the code movement suggested. 
+> 
+> -----------------
+> ::Detailed info:: 
+> -----------------
+> Problem statement 
+> 
+> vCPU - Virtual CPUs - CPU in VM world.
+> pCPU - Physical CPUs - CPU in baremetal world.
+> 
+> A hypervisor does scheduling of vCPUs on a pCPUs. It has to give each
+> vCPU some cycles and be fair. When there are more vCPU requests than
+> the pCPUs, hypervsior has to preempt some vCPUs in order to run others.
+> This is called as vCPU preemption.
+> 
+> If we take two VM's, When hypervisor preempts vCPU from VM1 to run vCPU from 
+> VM2, it has to do save/restore VM context.Instead if VM's can co-ordinate among
+> each other and request for limited  vCPUs, it avoids the above overhead and 
+> there is context switching within vCPU(less expensive). Even if hypervisor
+> is preempting one vCPU to run another within the same VM, it is still more 
+> expensive than the task preemption within the vCPU. So basic aim to avoid 
+> vCPU preemption.
+> 
+> So to achieve this, introduce "Paravirt CPU" concept, where it is better if
+> workload avoids these vCPUs at this moment. (vCPUs stays online, don't want
+> the overhead of sched domain rebuild and hotplug takes a lot of time too).
+> 
+> When there is contention, don't use paravirt CPUs.
+> When there is no contention, use all vCPUs. 
 
-Looks like we need one more entry here for RB3.
-      case SLIMBUS_0_RX...SLIMBUS_6_TX:
+...
 
-Hmm RB3 also has memory leaks for very long time, good that this list is
-able to clean up some of that inconsistent handling of dai ids for
-soundwire stream.
+> ------------
+> Open issues: 
+> 
+> - Derivation of hint from steal time is still a challenge. Some work is
+>   underway to address it. 
+> 
+> - Consider kvm and other hypervsiors and how they could derive the hint.
+>   Need inputs from community. 
 
---srini
+Bluntly, this series is never going to land, at least not in a form that's remotely
+close to what is proposed here.  This is an incredibly simplistic way of handling
+overcommit, and AFAICT there's no line of sight to supporting more complex scenarios.
 
-> + return true;
-> + default:
-> + break;
-> + }
-> +
-> + return false;
-> +}
+I.e. I don't see a path to resolving all these "todos" in the changelog from the
+last patch:
 
+ : Ideal would be get the hint from hypervisor. It would be more accurate
+ : since it has knowledge of all SPLPARs deployed in the system.
+ : 
+ : Till the hint from underlying hypervisor arrives, another idea is to
+ : approximate the hint from steal time. There are some works ongoing, but
+ : not there yet due to challenges revolving around limits and
+ : convergence.
+ : 
+ : Till that happens, there is a need for debugfs file which could be used to
+ : set/unset the hint. The interface currently is number starting from which
+ : CPUs will marked as paravirt. It could be changed to one the takes a
+ : cpumask(list of CPUs) in future.
+
+I see Vineeth and Steven are on the Cc.  Argh, and you even commented on their
+first RFC[1], where it was made quite clear that sprinkling one-off "hints"
+throughoug the kernel wasn't a viable approach.
+
+I don't know the current status of the ChromeOS work, but there was agreement in
+principle that the bulk of paravirt scheduling should not need to touch the kernel
+(host or guest)[2].
+
+[1] https://lore.kernel.org/all/20231214024727.3503870-1-vineeth@bitbyteword.org
+[2] https://lore.kernel.org/all/ZjJf27yn-vkdB32X@google.com
 
