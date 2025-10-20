@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-860191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AB9BEF8D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:58:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8128DBEF8DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D2A3E0E35
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:58:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B0224EA8C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789F42DAFC0;
-	Mon, 20 Oct 2025 06:57:54 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C832DA763;
+	Mon, 20 Oct 2025 06:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZ7fFHzZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CE02D780C;
-	Mon, 20 Oct 2025 06:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361932D9782
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760943473; cv=none; b=EFqwD79njTwV+4/jVPH60WjYSUTBx0DBqzIwC1EKw0x1ZA0reNQRZ+WpcLOQwYcvgzHP2Jm501m1heaEiXrUSfeaz9MyZvA6d19+FSMRm6as0VFlDgSSrRXePL9NWNGsBOxouNJFaVRxyyVABqWhCmF7wbz/7VQSILTRTgaczPM=
+	t=1760943536; cv=none; b=MJkbcQNqonJiNYXNn6ogymZDjI73wkeqNKZUjsB1f8dUIKii562tXnO0+D2gad5x52kKSfdq+m+baOSKfwLmvAaOzIBEwWChmlX3GXsQfGxXe8Xnf6DZKWSg+x5Ns7/bTaR0JUEIHXykfFKuSEfAyNlkxYLJCIpSPnLsqQ0s6Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760943473; c=relaxed/simple;
-	bh=q8naxR3K/bCtoiM4Cr6D3ZqvL+9SJItYOw5w0h1xC/0=;
+	s=arc-20240116; t=1760943536; c=relaxed/simple;
+	bh=1DpMfoI7ltctuVO7Qw5nyBzKMPuyNQVCtIj9HXzFXw0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQQ/7OKts8I3IA8J/J8IrZhmO3SBJkTnefM4IkvURR8xhZ7btLM2AfcLLVRgOoeZq2JHy8VzAaHRRs5eOYdyoUBcxZaozYtGk94iIbxqD+QJqpno7M3e4V2arzEOIBj777I7hpf6GM/Fvp97eAWEesCrUECWnu+suW2Quk+iLes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqmSL1f37zYQtgW;
-	Mon, 20 Oct 2025 14:56:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CE11F1A11F8;
-	Mon, 20 Oct 2025 14:57:40 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP4 (Coremail) with SMTP id gCh0CgBXXEFj3fVorszpAw--.59424S2;
-	Mon, 20 Oct 2025 14:57:40 +0800 (CST)
-Message-ID: <57cf1fbe-8356-4c5d-864a-20b07d63de72@huaweicloud.com>
-Date: Mon, 20 Oct 2025 14:57:38 +0800
+	 In-Reply-To:Content-Type; b=CczK2NmcZU+29AvWKaUvpkwO8h7z8c8/H0kMqIQ8xQS/W0Iz1yF37DoBYdRDbuKVgDwKLl6zjF4upQD4JCkLSlmcbsY7HnA6Rdic9UOOX6qhuJd9qV5zcyR+t82SWLSTGvBX/tGMOKalShNbwJ46fLn7FOFeeQkTUKXkGE02RB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZ7fFHzZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B518C4CEFB;
+	Mon, 20 Oct 2025 06:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760943536;
+	bh=1DpMfoI7ltctuVO7Qw5nyBzKMPuyNQVCtIj9HXzFXw0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pZ7fFHzZMZVCRFDoGCD/kcE3PMExmUz8DtqIWwlhnMQhhmpUh1eKmkB/GyHDUrZqd
+	 tW0gik/hlsD36rUmv3oblLDw0ajuVxFkvtfGI8AcsJ/QzRa7uLRaqy1zrn8ml+E2dz
+	 D6fG4XRj/PQ2Mnc+INeXrWHRsh9a9cByby69A+ruGhZvpmhz4ZiuBHVB5rA8JFWZKz
+	 5vtI8HfwKchza2qul30y5NNI4BPpfFgyxQsIkzvtdDXj7lITwEYv0Od4Xeu3TJpEKD
+	 evnpdFXr6UhwrZbxlNsVEQjPlR2ywh8EZz4vh85FS42oc7kdp0CMwV/b7pneE6zJlD
+	 yTz9/Nh3xCsvA==
+Message-ID: <3e798b9e-4915-404f-9197-ed3c32587141@kernel.org>
+Date: Mon, 20 Oct 2025 08:58:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,209 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] cgroup/cpuset: Don't track # of local child
- partitions
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>
-References: <20251020023207.177809-1-longman@redhat.com>
- <20251020023207.177809-2-longman@redhat.com>
+Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
+To: Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, David Hildenbrand <david@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251018093002.3660549-1-rppt@kernel.org>
+ <aPQxN7-FeFB6vTuv@casper.infradead.org>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251020023207.177809-2-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <aPQxN7-FeFB6vTuv@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXXEFj3fVorszpAw--.59424S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3JF43WF18uw4kJr4fuw17Wrg_yoW7KrWxpF
-	yUGr47JFWUta4UCa4Dta929w1rKwsFqayqkwn5Wa4fAFy7t3W0yFyjva9aqF1UWrykuryU
-	ZFs0qr4fW3ZFkrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-
-
-On 2025/10/20 10:32, Waiman Long wrote:
-> The cpuset structure has a nr_subparts field which tracks the number
-> of child local partitions underneath a particular cpuset. Right now,
-> nr_subparts is only used in partition_is_populated() to avoid iteration
-> of child cpusets if the condition is right. So by always performing the
-> child iteration, we can avoid tracking the number of child partitions
-> and simplify the code a bit.
+On 19. 10. 25, 2:30, Matthew Wilcox wrote:
+> On Sat, Oct 18, 2025 at 12:29:59PM +0300, Mike Rapoport wrote:
+>> Vast majority of allocations that use get_free_pages() and its derivatives
+>> cast the returned unsigned long to a pointer and then cast it back to
+>> unsigned long when freeing the memory.
+>>
+>> These castings are useless and only obfuscate the code.
+>>
+>> Make get_free_pages() and friends return 'void *' and free_pages() accept
+>> 'void *' as its address parameter.
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/cgroup/cpuset-internal.h |  3 ---
->  kernel/cgroup/cpuset.c          | 41 +++++++++++----------------------
->  2 files changed, 13 insertions(+), 31 deletions(-)
-> 
-> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
-> index 337608f408ce..5cac42c5fd97 100644
-> --- a/kernel/cgroup/cpuset-internal.h
-> +++ b/kernel/cgroup/cpuset-internal.h
-> @@ -155,9 +155,6 @@ struct cpuset {
->  	/* for custom sched domain */
->  	int relax_domain_level;
->  
-> -	/* number of valid local child partitions */
-> -	int nr_subparts;
-> -
->  	/* partition root state */
->  	int partition_root_state;
->  
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 52468d2c178a..7aef59ea9627 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -358,8 +358,13 @@ static inline bool is_in_v2_mode(void)
->   * @excluded_child: a child cpuset to be excluded in task checking
->   * Return: true if there are tasks, false otherwise
->   *
-> - * It is assumed that @cs is a valid partition root. @excluded_child should
-> - * be non-NULL when this cpuset is going to become a partition itself.
-> + * @cs should be a valid partition root or going to become a partition root.
-> + * @excluded_child should be non-NULL when this cpuset is going to become a
-> + * partition itself.
-> + *
-> + * Note that a remote partition is not allowed underneath a valid local
-> + * or remote partition. So if a non-partition root child is populated,
-> + * the whole partition is considered populated.
->   */
->  static inline bool partition_is_populated(struct cpuset *cs,
->  					  struct cpuset *excluded_child)
-> @@ -369,8 +374,6 @@ static inline bool partition_is_populated(struct cpuset *cs,
->  
->  	if (cs->css.cgroup->nr_populated_csets)
->  		return true;
-> -	if (!excluded_child && !cs->nr_subparts)
-> -		return cgroup_is_populated(cs->css.cgroup);
->  
->  	rcu_read_lock();
->  	cpuset_for_each_child(child, css, cs) {
-> @@ -1302,7 +1305,6 @@ static void reset_partition_data(struct cpuset *cs)
->  
->  	lockdep_assert_held(&callback_lock);
->  
-> -	cs->nr_subparts = 0;
->  	if (cpumask_empty(cs->exclusive_cpus)) {
->  		cpumask_clear(cs->effective_xcpus);
->  		if (is_cpu_exclusive(cs))
-> @@ -1746,7 +1748,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  	int deleting;	/* Deleting cpus from parent's effective_cpus	*/
->  	int old_prs, new_prs;
->  	int part_error = PERR_NONE;	/* Partition error? */
-> -	int subparts_delta = 0;
->  	int isolcpus_updated = 0;
->  	struct cpumask *xcpus = user_xcpus(cs);
->  	bool nocpu;
-> @@ -1771,10 +1772,9 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  		if (is_partition_valid(parent))
->  			adding = cpumask_and(tmp->addmask,
->  					     xcpus, parent->effective_xcpus);
-> -		if (old_prs > 0) {
-> +		if (old_prs > 0)
->  			new_prs = -old_prs;
-> -			subparts_delta--;
-> -		}
-> +
->  		goto write_error;
->  	}
->  
-> @@ -1829,7 +1829,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  		WARN_ON_ONCE(!cpumask_subset(tmp->new_cpus, parent->effective_cpus));
->  
->  		deleting = true;
-> -		subparts_delta++;
->  	} else if (cmd == partcmd_disable) {
->  		/*
->  		 * May need to add cpus back to parent's effective_cpus
-> @@ -1840,7 +1839,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  		if (is_partition_valid(cs)) {
->  			cpumask_copy(tmp->addmask, cs->effective_xcpus);
->  			adding = true;
-> -			subparts_delta--;
->  		}
->  		new_prs = PRS_MEMBER;
->  	} else if (newmask) {
-> @@ -1963,17 +1961,13 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  		switch (cs->partition_root_state) {
->  		case PRS_ROOT:
->  		case PRS_ISOLATED:
-> -			if (part_error) {
-> +			if (part_error)
->  				new_prs = -old_prs;
-> -				subparts_delta--;
-> -			}
->  			break;
->  		case PRS_INVALID_ROOT:
->  		case PRS_INVALID_ISOLATED:
-> -			if (!part_error) {
-> +			if (!part_error)
->  				new_prs = -old_prs;
-> -				subparts_delta++;
-> -			}
->  			break;
->  		}
->  	}
-> @@ -2002,11 +1996,9 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  	 * newly deleted ones will be added back to effective_cpus.
->  	 */
->  	spin_lock_irq(&callback_lock);
-> -	if (old_prs != new_prs) {
-> +	if (old_prs != new_prs)
->  		cs->partition_root_state = new_prs;
-> -		if (new_prs <= 0)
-> -			cs->nr_subparts = 0;
-> -	}
-> +
->  	/*
->  	 * Adding to parent's effective_cpus means deletion CPUs from cs
->  	 * and vice versa.
-> @@ -2018,10 +2010,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  		isolcpus_updated += partition_xcpus_add(new_prs, parent,
->  							tmp->delmask);
->  
-> -	if (is_partition_valid(parent)) {
-> -		parent->nr_subparts += subparts_delta;
-> -		WARN_ON_ONCE(parent->nr_subparts < 0);
-> -	}
->  	spin_unlock_irq(&callback_lock);
->  	update_unbound_workqueue_cpumask(isolcpus_updated);
->  
-> @@ -2105,8 +2093,6 @@ static void compute_partition_effective_cpumask(struct cpuset *cs,
->  			 */
->  			spin_lock_irq(&callback_lock);
->  			make_partition_invalid(child);
-> -			cs->nr_subparts--;
-> -			child->nr_subparts = 0;
->  			spin_unlock_irq(&callback_lock);
->  			notify_partition_change(child, old_prs);
->  			continue;
-> @@ -4021,7 +4007,6 @@ static void cpuset_handle_hotplug(void)
->  		 */
->  		if (!cpumask_empty(subpartitions_cpus)) {
->  			if (cpumask_subset(&new_cpus, subpartitions_cpus)) {
-> -				top_cpuset.nr_subparts = 0;
->  				cpumask_clear(subpartitions_cpus);
->  			} else {
->  				cpumask_andnot(&new_cpus, &new_cpus,
+> No.  Linus has rejected this change before.  I can't find it now, it was
+> a long time ago.  Most of them shouldn't be using get_free_pages() at
+> all, they should be using kmalloc().
 
-LGTM
+I'd be interested in the refusal thread (what was the rejection exactly 
+about). In a need of whole pages, why would I want to alloc more for 
+metadata (using k*alloc)? Or what am I missing?
 
+thanks,
 -- 
-Best regards,
-Ridong
-
+js
+suse labs
 
