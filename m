@@ -1,145 +1,209 @@
-Return-Path: <linux-kernel+bounces-861056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D9FBF1A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2FCBF1ABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B88424622
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10C13A756D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D1131DD82;
-	Mon, 20 Oct 2025 13:54:06 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EF331E115;
+	Mon, 20 Oct 2025 13:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B+awK0hd"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010066.outbound.protection.outlook.com [52.101.193.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548A62F8BCB;
-	Mon, 20 Oct 2025 13:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760968445; cv=none; b=gj86AtH/D7GJ+2RkXbyXoKteHf7wugasJFEO+wPM5xC+HQX4AljZ7wtiVpjk0R3rT0v7bIVtJ9jZjzN9s5IuKN8fG+QZOM0TUHgZuI/3prQCzKqKjQZzjAU+UejzL0oNGbwBZsUOa0+4EcREbv0WcC6frXtlEzgsEWkw6hKdukE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760968445; c=relaxed/simple;
-	bh=J01PKdVb+PAYTLqN3ZPbTIlYwpZAt9dDt6JqgQrDOIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7X7E8/92m+HciSrxtFbQ2OLbfPyT/r2Zuu4RDmapkF6mnkwUSXbWjo5CRnkOPDWDxFqRQq+2bgVhm2BQg+4mSrotbhp0wyeaiolSJhrQTcob7OgR9UVGSUNtK8xNSE0pYJnxa/14/TAeRpZtrTUegkvREwVZVqXhWTc2+syEd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 210FD20083D3;
-	Mon, 20 Oct 2025 15:54:00 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 0A1E44A12; Mon, 20 Oct 2025 15:54:00 +0200 (CEST)
-Date: Mon, 20 Oct 2025 15:54:00 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
-	kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
-	terry.bowman@amd.com, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-Message-ID: <aPY--DJnNam9ejpT@wunner.de>
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-4-xueshuai@linux.alibaba.com>
- <aPYKe1UKKkR7qrt1@wunner.de>
- <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE71246768;
+	Mon, 20 Oct 2025 13:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760968558; cv=fail; b=uLdE/yfj84n/mJ2CrDO7ppMB4ImnFcTeBPUzHDw/iDEdx12IV/vMuBOe2x4TXC0MvgfMgbAnnklydhGnfw2IgSM4fFjbpljg5sG9Vgkk8KqFvdeMmDAAnnoZfZ1IvqgIRp0hzpAzwGWlNlG1fyd+haoMrn/DH53ZiP+Axn6ZMao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760968558; c=relaxed/simple;
+	bh=AqLUjR6GjWBuIw7ak5mmRejwVBGHpzAeY3xEK6Ra99c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DLrKBfzj3juzH0HK1ESM9hgezhJQ/sB13bcexsaskyLAyQ/7pvDzEfvJDad9ezKpVymF0WuwKSIGEQXz/utlyD2KOlV+lLON7eW6WcebljQ5t3IjBQcaWoTCU1Do50A6A6i3jNUDRoo2CsuGKwtTJexgAd76JhCPfhoTpZSqjtw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B+awK0hd; arc=fail smtp.client-ip=52.101.193.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nio3Gv/d4x/dWENWlMGlRJXUS43RqMpRfEVaHCWzFHF8Esqm1kmSGZr2ep3Oki71Q0aymGnl2mwjdROaiB5Sth+N86TpTrHV4nX9ITFQzd8AbB5tTA17g7xXQzVofMd1C0zjLEKoUopusaWysVtCSNgg3u93j+2ksRvbPAKNHG+6F9/xe7jFCSQDDjY1J00unIsT7DhYoJZk735q1RLFv5ZF98JHSMcehQMRFO1d6y9+4ThMHV3CZbW3oXdVGSjPSr1K/BJZzemEbeFVO8prXPJK/PHzkfwgMACgwwpW+igpICoWmu1w9NoMjy0FudMxT3Pz0sQdXwAJ3phDlddWrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rv34eZMvlqF3K2GHmnpEc3EM1UWR/R+FMF9Gv6J3kco=;
+ b=xJgSnqPkuuPUwE1TGIfWCcUDw1oOGE+1gp3BVjSLL1NKOd64yvoQJg4Q8yirKzlxUFLwtDmN6j1+9SN2rHieVaV/FuKEgiVNFtQtX9trMz44ROLEE7YYeedpGxk8wTQlNCB0FjdfojUo5dbDp23Bj3lhrOO1M3MdzP2nRVUr2KM3b9KPW34JXyogVBKRQg48i+o5EZdwGXUHELZBwMX386jivHTtZkqYty9vCfWfEKXt+pBHPh6ex+iKb63q5exDYf8gfRfA2HFnMhz+JatS7KQL+ueFDBIFJ8GIgt7keHpDxjjQsfi4LNAHaMBbes7ImjomPLOo448DkUNPM8zdhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rv34eZMvlqF3K2GHmnpEc3EM1UWR/R+FMF9Gv6J3kco=;
+ b=B+awK0hdTsgaupwoy+rtfZSLrgdzkbIOYrwuK4Vnd503DpSam6Hlcc4j4vTz1DGwavDNpL2EK8afPC87i8rsbP1jLIWgl+d4ueCeCmpOhUdUpC6F2mw6+Nwced8sfIRE0Z1wTETFE7nYzvclC47BAh3Y2mURfneHckYuMavkrsko8nVTf3OB+5ZG+Zwp1cDCi3HI0CWTKB3AYD9ZSDydl5ukjf7SE4S5s3czPIv1NeLfRyYeBz+w9wfQxPIyuVBJlByNJDBFNz84gxJz8c3Tt75v+JOPbBYwee1HOiz3WF2ImQAnwSX9TeLTnQcjAOPv5kMooknoZJcyfvZMvnGclQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by CH3PR12MB7665.namprd12.prod.outlook.com (2603:10b6:610:14a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Mon, 20 Oct
+ 2025 13:55:52 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 13:55:52 +0000
+Date: Mon, 20 Oct 2025 15:55:44 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/14] selftests/sched_ext: Add test for sched_ext
+ dl_server
+Message-ID: <aPY_YHK-oWZp0KK1@gpd4>
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-14-arighi@nvidia.com>
+ <67335454-6657-42d2-bf98-d1df1b58baa6@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67335454-6657-42d2-bf98-d1df1b58baa6@arm.com>
+X-ClientProxiedBy: ZR0P278CA0089.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:22::22) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH3PR12MB7665:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d09bbd0-bcc2-4215-18da-08de0fe061ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ozleiUqkzrbAU7aw1vi7uQ4ovyzQMSH7XM9RCJRvUTQ5h378BW7W3LYpSzin?=
+ =?us-ascii?Q?KEfqgr67hXIetlEISt1/oEIU69ZnzmXkDIuhwWgTfozeso47uHi8lbIC2Cmj?=
+ =?us-ascii?Q?5bx29kI/SwVWU4+ZBpPZnOtp+Wi1rdgOqYApJd+yNt61wK4NetS7uyNdXx0Z?=
+ =?us-ascii?Q?b5GYGWoBSCQeoR+1AVJ2I8Pc1/PWwFF5056ROdIq4GDcKATmqEppl8PQeAdU?=
+ =?us-ascii?Q?LpELd+bip3XB6lDBLoi8EsPjpXWNa4Q1HYKlf+dpPs12uTkHAi1yNXNFE58/?=
+ =?us-ascii?Q?PT10OanU9RMVCMaDtYud3EOW7XtRPMQiet0BjE1RZdKbOhHMhRHkvagKwKT6?=
+ =?us-ascii?Q?deayB45aMBisL2FqMncn0L4czEa7kgdf9kiAz9TyfWkKtFaDRu7FFxSzdi6d?=
+ =?us-ascii?Q?IAeN3k1ggmFrgk9NmKDL4PIfvLN3tLPtA9s5T0PpYrBshm25rpERD/mFCb7q?=
+ =?us-ascii?Q?1II/ZnbsD1xCalr7qGtyqJoDGPwhp+33fAGGOP4lKWmgcUZfDTkh0OsG+tAK?=
+ =?us-ascii?Q?8FC1bq0sJyMWwZlCVonymgcStCrKpt7e0wRjo0ayn5VzK93ZT/H8PTcVKN3q?=
+ =?us-ascii?Q?JQ6lXiNXGvHxlgkphSynnTKa8adIH4YR51OLML2KzvFpNuDEO20i1bW5PT7K?=
+ =?us-ascii?Q?ne+nR8eelSIno6AkRgiEw+7FBVxOYGaTh0lFJhDZ4PhP+NWr6HVqqk+hiS4d?=
+ =?us-ascii?Q?SnI6sHkwBOb85Q0w9heWqyq7p0dPVNIBUfIBNiy9ycMZ/xlBtNZm/IqesU/4?=
+ =?us-ascii?Q?DN2WzdaE5CWbleitrg6zRY0s0TVvwlxy7hQ+VvDq7GpmhtwT+Pon/edfqBfB?=
+ =?us-ascii?Q?caq4Q8PUdcwQOCrbpqESUyARessr33MLEBf50NRhYveuzksDR1oRAt37o69q?=
+ =?us-ascii?Q?/rQ9X+qOefcsOArWU0yTs/9kbBFXexuV7pF+3ysoKEpY5QNG1xMulgEVH+Xj?=
+ =?us-ascii?Q?GQCTg7NLhR5Yj8Q+Rq8C8LOuIsz0iL2/vL+UYcip3B28ZhNaO/98L8UrwzY/?=
+ =?us-ascii?Q?a7HCai3J2LvBg+9oYeQDaeUeTKwz8deG9k09rYkIzFkkAoOxMulCoI90fPyE?=
+ =?us-ascii?Q?YGAfTlx+/+0GUzAbOV/nDH4A95VSahAZAbJhCeeir0hrqvBbnsXwG2pZrNNI?=
+ =?us-ascii?Q?Bt4vM6C0+uYfP7BvxJe/PdHp2vWwfRVYt6XEZNri/EnIsdlY/3GtsBOXLerZ?=
+ =?us-ascii?Q?TOEtSPOvjPWsMV9LOkjgfxoBUf0rZBXunrxJb2T7xwcobeBoY4Zd38I8M2tg?=
+ =?us-ascii?Q?5QgEDzUTOsBeQiwXERE/IS7j4xt3EaF+iMt/S/bcCTPDawA5mdDMLw0Cu552?=
+ =?us-ascii?Q?e+KtMJaRWvoDUdniwnQWZsYVqd881Bjy0Ihk4aUL0qi5rDiPsqZJ3EeU619T?=
+ =?us-ascii?Q?T1haFFWyvmeYMQQdRlcR6nH2ZW4HZEcQKqNAv9HtvPVfSMBOpl7Qyx5pJzc/?=
+ =?us-ascii?Q?nnaL9t3y9xArvBKnkv0S3WHGCKdj/6bd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?s559qzRfnTioSjviF2Zo7v6iGKKVz6lsOYMd5ZMI7WdJu+XIz2qQc28lnUNt?=
+ =?us-ascii?Q?48dfTqkj9yqORnXUU3KJdXncAhubM66EknTinWKmYao9qj2Y7XSVD5RskPlC?=
+ =?us-ascii?Q?BeAf+zoTupLmwGXy/ukkiXzLhFCHE1dY2rcEp6nGquNnvV8ykA5m3TOeKI8R?=
+ =?us-ascii?Q?4gXvVqDNOJu6cJ39vRtgyQNodruvFl58e+7PXt2eAtSpwQsNuavx/zEdTA6R?=
+ =?us-ascii?Q?J2742tp2zJ5yAllyR+qKUxii5++AuTEFRFRm8MIj8iYflE8d7EIykr6jMuD5?=
+ =?us-ascii?Q?U2SfQp5nOIYmLGge/syOnwY3tDLuGcGjDsvHprbnN98QW4LZDVpiIaOgaQk4?=
+ =?us-ascii?Q?ZjnfTFvZGf4XS/B0l4mmtZiU25WlGNmQiWXWiA0t7JS58BwoEk3Xsp4Bv954?=
+ =?us-ascii?Q?AkNLVnRtARwW3QGTS5Bz7vSfWH/z6VbsebWUejyOAVp5PEj/zQXLVJPrASg7?=
+ =?us-ascii?Q?VCT94uDeCBBCvEHmWf2MLaxECREAFiKxgP/P7quixaqrEWfF33S+Ch/r4OEi?=
+ =?us-ascii?Q?EeQ4++CqhshOmoOmaDWA4IYid7XAvQsxQwg00oW83S7hyxadpGH+18nSMuqd?=
+ =?us-ascii?Q?NH6m0uC1EkwGS6HUJeKNuRZwpAfS1Sq78kTR0aLipaTvYXdQdg/+Nxuz1at2?=
+ =?us-ascii?Q?mk30bzWWsK80U9aEFVFvCxW4ORyioI9VQPzrwKJWeBDe5VUuTiWuvX4VWY0H?=
+ =?us-ascii?Q?O5mdTCmE+Dp+DQbmMGmeFGNdoUPTGcJxYLmkjU1ENBHCPzMfqu/Y1MjXUyGl?=
+ =?us-ascii?Q?AycZQtQFQuieBly4Jvq7+/lVGwIhb2wIW0DsdnGPzvE39hFRUpEN7b0lEmvG?=
+ =?us-ascii?Q?GtbPx7wXp86ofvqVPUftg5mnZbxCvuhEJuDtoHN2yuLtaepjiAk27jc+4TGs?=
+ =?us-ascii?Q?HLHLtowKgJAURUyho1D6a9Up0+/5vkGBcJntrTIEcWG17CwtGTkoxpnV1at5?=
+ =?us-ascii?Q?f0xlODWf5dufUUj+mg2kCRju8yvaBjprjZ4DRLgbbEgQlO1NKDK1CZQnnlB9?=
+ =?us-ascii?Q?KPjsxEteOxGnkZ4wT2WWLjvwNb5E6ejqUvtbGkNW1LVTrHpAsawZDL/mNxEQ?=
+ =?us-ascii?Q?31rnaSOzzomvmMhxjCIv20lZ8wRQG1R2CQcLKy2miJQE2GROuLC29WnHv/cM?=
+ =?us-ascii?Q?dkzsq1zAtA/YeD4W9wf1X6AYWHKbs4LcteRCnDDMrSKgb8v69+CW118Rw8Rl?=
+ =?us-ascii?Q?rYmaXhs13Jk6OJGUX4ljTgs/Vl3sqD281DLJHqKycwrvmJAbAc8CoZ1uxN2e?=
+ =?us-ascii?Q?frARZnf9M5IQnnSgxueNwhVgmBysNJ77twnYokEg0jaTScy37fU2DPVGIcNN?=
+ =?us-ascii?Q?dMJvo89UqBtma+7Qx3d7RndLzdbTEnnD0PmKURwKC4/3hNa1pS3VzaoMtbhC?=
+ =?us-ascii?Q?Q/Dgd1MRspISE2uqC44RqUzZS8v7x9LEqmiZQsGb0kDxmsqQ66ab21NSNY70?=
+ =?us-ascii?Q?9QITF4XaI8XhicQ2iFc7JSMb0iMUBqDvByYc4afMQ/HMe7rgGux92XOYNNzt?=
+ =?us-ascii?Q?abReqorgVIUkO2y818VsFFueHfgSDr/nCeoGPApQ3zUizCVGKNsT9Y3LYLpP?=
+ =?us-ascii?Q?OFo+wpanU7t4pyVg8BN8S/QZv6MoDGafzZNSYzTo?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d09bbd0-bcc2-4215-18da-08de0fe061ba
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 13:55:52.1470
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xuAyEnVHceOuC58GiLeS+k2fFKwQqfiA5emBC6JhQ6O7RWmkjUlTva3SJiyCzp61p56/Vjrrlf7VTTXE+mR/Vw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7665
 
-On Mon, Oct 20, 2025 at 08:58:55PM +0800, Shuai Xue wrote:
-> ??? 2025/10/20 18:10, Lukas Wunner ??????:
-> > On Wed, Oct 15, 2025 at 10:41:57AM +0800, Shuai Xue wrote:
-> > > +++ b/drivers/pci/pcie/err.c
-> > > @@ -253,6 +254,16 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
-> > >   			pci_warn(bridge, "subordinate device reset failed\n");
-> > >   			goto failed;
-> > >   		}
-> > > +
-> > > +		/* Link recovered, report fatal errors of RCiEP or EP */
-> > > +		if (state == pci_channel_io_frozen &&
-> > > +		    (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END)) {
-> > > +			aer_add_error_device(&info, dev);
-> > > +			info.severity = AER_FATAL;
-> > > +			if (aer_get_device_error_info(&info, 0, true))
-> > > +				aer_print_error(&info, 0);
-> > > +			pci_dev_put(dev);
-> > > +		}
+Hi Christian,
+
+On Mon, Oct 20, 2025 at 02:26:17PM +0100, Christian Loehle wrote:
+> On 10/17/25 10:26, Andrea Righi wrote:
+> > Add a selftest to validate the correct behavior of the deadline server
+> > for the ext_sched_class.
 > > 
-> > Where is the the pci_dev_get() to balance the pci_dev_put() here?
-> 
-> The corresponding pci_dev_get() is called in add_error_device(). Please
-> refer to commit 60271ab044a5 ("PCI/AER: Take reference on error
-> devices") which introduced this reference counting mechanism.
-
-That is non-obvious and needs a code comment.
-
-> > It feels awkward to leak AER-specific details into pcie_do_recovery().
-> > That function is supposed to implement the flow described in
-> > Documentation/PCI/pci-error-recovery.rst in a platform-agnostic way
-> > so that powerpc (EEH) and s390 could conceivably take advantage of it.
+> > [ Joel: Replaced occurences of CFS in the test with EXT. ]
 > > 
-> > Can you find a way to avoid this, e.g. report errors after
-> > pcie_do_recovery() has concluded?
+> > Co-developed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> > ---
+> >  tools/testing/selftests/sched_ext/Makefile    |   1 +
+> >  .../selftests/sched_ext/rt_stall.bpf.c        |  23 ++
+> >  tools/testing/selftests/sched_ext/rt_stall.c  | 214 ++++++++++++++++++
+> >  3 files changed, 238 insertions(+)
+> >  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
+> >  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
 > 
-> I understand your concern about keeping pcie_do_recovery()
-> platform-agnostic.
-
-The code you're adding above, with the exception of the check for
-pci_channel_io_frozen, should live in a helper in aer.c.
-Then you also don't need to rename add_error_device().
-
-> I explored the possibility of reporting errors after
-> recovery concludes, but unfortunately, this approach isn't feasible due
-> to the recovery sequence. The issue is that most drivers'
-> pci_error_handlers implement .slot_reset() which internally calls
-> pci_restore_state() to restore the device's configuration space and
-> state. This function also clears the device's AER status registers:
 > 
->   .slot_reset()
->     => pci_restore_state()
->       => pci_aer_clear_status()
-
-This was added in 2015 by b07461a8e45b.  The commit claims that
-the errors are stale and can be ignored.  It turns out they cannot.
-
-So maybe pci_restore_state() should print information about the
-errors before clearing them?
-
-Actually pci_restore_state() is only supposed to restore state,
-as the name implies, and not clear errors.  It seems questionable
-that the commit amended it to do that.
-
-> > I'm also worried that errors are reported *during* recovery.
-> > I imagine this looks confusing to a user.  The logged messages
-> > should make it clear that these are errors that occurred *earlier*
-> > and are reported belatedly.
+> Does this pass consistently for you?
+> For a loop of 1000 runs I'm getting total runtime numbers for the EXT task of:
 > 
-> You raise an excellent point about potential user confusion. The current
-> aer_print_error() interface doesn't indicate that these are historical
-> errors being reported belatedly. Would it be acceptable to add a
-> clarifying message before calling aer_print_error()? For example:
+>    0.000 -    0.261 |  (7)
+>    0.261 -    0.522 | ###### (86)
+>    0.522 -    4.437 |  (0)
+>    4.437 -    4.698 |  (1)
+>    4.698 -    4.959 | ################### (257)
+>    4.959 -    5.220 | ################################################## (649)
 > 
->   pci_err(dev, "Reporting error that occurred before recovery:\n");
+> I'll try to see what's going wrong here...
 
-Yes, something like that.  "Errors reported prior to reset"?  Dunno.
+Is that 1000 runs of total_bw? Yeah, the small ones don't look right at
+all, unless they're caused by some errors in the measurement (or something
+wrong in the test itself). Still better than without the dl_server, but
+it'd be nice to understand what's going on. :)
+
+I'll try to reproduce that on my side as well.
 
 Thanks,
-
-Lukas
+-Andrea
 
