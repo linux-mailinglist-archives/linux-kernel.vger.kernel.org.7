@@ -1,174 +1,134 @@
-Return-Path: <linux-kernel+bounces-861398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFD2BF29FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BA7BF29D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A62D4EC2A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26EBD402C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73583321D7;
-	Mon, 20 Oct 2025 17:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D763A32F75B;
+	Mon, 20 Oct 2025 17:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWdrNuSx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UwkgW0U2"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1635330320;
-	Mon, 20 Oct 2025 17:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA6D2D1F44
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760980281; cv=none; b=HFfiIqaK388dSC0WuUDPtSDN6V5Lhx2RCUjmg/lXd4/uNflsYzb5yxXAjRj9JGtmkumuvNzDyf7pyIE9NZ1oM+5RGPWl+xTLu8eGNBn83sNpc8U1bBnSB5Fdp1rmMEjv4keCYy0s3zS8Hxndz1YBeff7dWbt8colXNEQy4n6dCI=
+	t=1760980270; cv=none; b=UfRiIbmtl/F3ZL5OzyYQSz2HTGDBA5W/vzpaBjfOEZFIpUuUVGcDa4ZDwLQuZE9v0A9Il80PzprM74QEs7jjKfzhrXg4DPzdcmfdv7L3vZlY7BCu1gBeTYk2LcXTJgrgdOQ/dINjFXx2GPvcCQqc2sN7nxkKB/SqobihQbT1UDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760980281; c=relaxed/simple;
-	bh=y56EJjskppbR+/rkKdNbFUjyY8BC1025ZtXtMgp99fA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WVhYnOUy88xn2INzFk3vwTmY9/4M+Wlz3VQJlUrxOTOSzwhwS4BjbRU1I163B9HTCx/0kpU4/bYGlDzD/Xjayu8HYaKq3Gj2JqtGOXw9p2pzWmLpYkUzQYsfGYzOn+zfOdsa08vUXirLDIplNkio5W8voyKDdp6cxaZZ2u4R56g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWdrNuSx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B601C4AF0B;
-	Mon, 20 Oct 2025 17:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760980280;
-	bh=y56EJjskppbR+/rkKdNbFUjyY8BC1025ZtXtMgp99fA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AWdrNuSx2oo2kKoNLDRwFOI+ta0fWeipsRkJtycyKAs8R6VgZTE+U+gAuq4mRQGVb
-	 4MuZPrA8qZQOL+YkkaM/nMEbjhnAJh+kTEOProDZY5Eb8rTuy2NM80bBzhzKPYOwwi
-	 bnsXxRTbX7UFNdOgN80sf0ZPoGvkILMO2TYcXRhcFFWR28+KOd8iyOabAd/10iiGrt
-	 6r/DLmIlcFvSSzf0j/3sBUcQobSAzwhDlIkY/kuoTR6WLEh1rXl7PSAeADFChD/CgR
-	 +NWmHgob6V3MPJfv8cuJl8uhKYwxS02j+CbjAR83SlmUYnTTi+mKfxPymhnIq0laGP
-	 OWS1xwwnN2wXQ==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 431FD5FE78; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Mark Brown <broonie@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: linux-sunxi@lists.linux.dev,
-	linux-sound@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] ASoC: sun4i-spdif: Support SPDIF output on A523 family
-Date: Tue, 21 Oct 2025 01:10:50 +0800
-Message-ID: <20251020171059.2786070-5-wens@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251020171059.2786070-1-wens@kernel.org>
-References: <20251020171059.2786070-1-wens@kernel.org>
+	s=arc-20240116; t=1760980270; c=relaxed/simple;
+	bh=AxIWE6iyO7Ox6m/9nhJ9NldPxg6UR5QmtIrf8wdrwwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9OLao7PoaZLmdXRKAd1/GUmUXt2123t91/eMbYs2N70a8Jq2IYLVT6eLSvPEry4k+ti9R2uI6C8HShx9xhaBoGCvgQYkKNRhp+uLv3KTGdsj+2Gx9ACr7geusx/ArhIL9MKkTRuDFxKRHoa+0cFwRLKrP/6uYiUOcYCRKX2VEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UwkgW0U2; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 20 Oct 2025 17:10:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760980256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aSf8ZuG7Eh6WV3v9wcYX32BSw6mgJdJhb5+lBU8QmAY=;
+	b=UwkgW0U2aqd2eVZG5BGxiBBExVol2fh5Kz30LAnbxEyJcJ5KEnj7Ff7Cn0SGvLeMYibadi
+	kaVV4pHYJ+VdkAWg/bsEXO8bD9AZm824XXzokeWNRDfBhGJ7OZ3NGxgN/s89b6dYadc5uK
+	N78AmE1Ya0s9fiphyhUtDkFX2dp3E2s=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/4] KVM: selftests: Use a loop to create guest page
+ tables
+Message-ID: <bbppzosz2alycri5o75fibahsqeb2y4bq5n6b3b23amrgtlrro@ppp5vwu2uoat>
+References: <20250917215031.2567566-1-jmattson@google.com>
+ <20250917215031.2567566-2-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917215031.2567566-2-jmattson@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-The TX side of the SPDIF block on the A523 is almost the same the
-previous generations, the only difference being that it has separate
-module clock inputs for the TX and RX side.
+On Wed, Sep 17, 2025 at 02:48:37PM -0700, Jim Mattson wrote:
+> Walk the guest page tables via a loop when creating new mappings,
+> instead of using unique variables for each level of the page tables.
+> 
+> This simplifies the code and makes it easier to support 5-level paging
+> in the future.
+> 
+> Signed-off-by: Jim Mattson <jmattson@google.com>
+> ---
+>  .../testing/selftests/kvm/lib/x86/processor.c | 22 +++++++------------
+>  1 file changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
+> index d4c19ac885a9..0238e674709d 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> @@ -184,8 +184,8 @@ static uint64_t *virt_create_upper_pte(struct kvm_vm *vm,
+>  void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
+>  {
+>  	const uint64_t pg_size = PG_LEVEL_SIZE(level);
+> -	uint64_t *pml4e, *pdpe, *pde;
+> -	uint64_t *pte;
+> +	uint64_t *pte = &vm->pgd;
+> +	int current_level;
+>  
+>  	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K,
+>  		    "Unknown or unsupported guest mode, mode: 0x%x", vm->mode);
+> @@ -209,20 +209,14 @@ void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
+>  	 * Allocate upper level page tables, if not already present.  Return
+>  	 * early if a hugepage was created.
+>  	 */
+> -	pml4e = virt_create_upper_pte(vm, &vm->pgd, vaddr, paddr, PG_LEVEL_512G, level);
+> -	if (*pml4e & PTE_LARGE_MASK)
+> -		return;
+> -
+> -	pdpe = virt_create_upper_pte(vm, pml4e, vaddr, paddr, PG_LEVEL_1G, level);
+> -	if (*pdpe & PTE_LARGE_MASK)
+> -		return;
+> -
+> -	pde = virt_create_upper_pte(vm, pdpe, vaddr, paddr, PG_LEVEL_2M, level);
+> -	if (*pde & PTE_LARGE_MASK)
+> -		return;
+> +	for (current_level = vm->pgtable_levels; current_level > 0; current_level--) {
 
-Since this driver currently only supports TX, add support for a
-different clock name so that TX and RX clocks can be separated
-if RX support is ever added. Then add support for the A523.
+I think the condition here should be: "current_level > PG_LEVEL_4K" or
+"current_level >= PG_LEVEL_2M". PG_LEVEL_4K is 1, so right now we will
+call virt_create_upper_pte() for PG_LEVEL_4K and skip the logic after
+the logic after the loop.
 
-Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
----
- sound/soc/sunxi/sun4i-spdif.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+I think it still accidentally works for most cases, but we shouldn't
+rely on that.
 
-diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdif.c
-index 34e5bd94e9af..6a58dc4311de 100644
---- a/sound/soc/sunxi/sun4i-spdif.c
-+++ b/sound/soc/sunxi/sun4i-spdif.c
-@@ -177,6 +177,7 @@ struct sun4i_spdif_quirks {
- 	bool has_reset;
- 	unsigned int val_fctl_ftx;
- 	unsigned int mclk_multiplier;
-+	const char *tx_clk_name;
- };
- 
- struct sun4i_spdif_dev {
-@@ -323,6 +324,7 @@ static int sun4i_spdif_hw_params(struct snd_pcm_substream *substream,
- 	}
- 	mclk *= host->quirks->mclk_multiplier;
- 
-+	dev_info(&pdev->dev, "Setting SPDIF clock rate to %u\n", mclk);
- 	ret = clk_set_rate(host->spdif_clk, mclk);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev,
-@@ -542,7 +544,6 @@ static struct snd_soc_dai_driver sun4i_spdif_dai = {
- 		.formats = SUN4I_FORMATS,
- 	},
- 	.ops = &sun4i_spdif_dai_ops,
--	.name = "spdif",
- };
- 
- static const struct sun4i_spdif_quirks sun4i_a10_spdif_quirks = {
-@@ -572,6 +573,14 @@ static const struct sun4i_spdif_quirks sun50i_h6_spdif_quirks = {
- 	.mclk_multiplier = 1,
- };
- 
-+static const struct sun4i_spdif_quirks sun55i_a523_spdif_quirks = {
-+	.reg_dac_txdata = SUN8I_SPDIF_TXFIFO,
-+	.val_fctl_ftx   = SUN50I_H6_SPDIF_FCTL_FTX,
-+	.has_reset      = true,
-+	.mclk_multiplier = 1,
-+	.tx_clk_name	= "tx",
-+};
-+
- static const struct of_device_id sun4i_spdif_of_match[] = {
- 	{
- 		.compatible = "allwinner,sun4i-a10-spdif",
-@@ -594,6 +603,15 @@ static const struct of_device_id sun4i_spdif_of_match[] = {
- 		/* Essentially the same as the H6, but without RX */
- 		.data = &sun50i_h6_spdif_quirks,
- 	},
-+	{
-+		.compatible = "allwinner,sun55i-a523-spdif",
-+		/*
-+		 * Almost the same as H6, but has split the TX and RX clocks,
-+		 * has a separate reset bit for the RX side, and has some
-+		 * expanded features for the RX side.
-+		 */
-+		.data = &sun55i_a523_spdif_quirks,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_spdif_of_match);
-@@ -635,6 +653,7 @@ static int sun4i_spdif_probe(struct platform_device *pdev)
- 	const struct sun4i_spdif_quirks *quirks;
- 	int ret;
- 	void __iomem *base;
-+	const char *tx_clk_name = "spdif";
- 
- 	dev_dbg(&pdev->dev, "Entered %s\n", __func__);
- 
-@@ -671,9 +690,12 @@ static int sun4i_spdif_probe(struct platform_device *pdev)
- 		return PTR_ERR(host->apb_clk);
- 	}
- 
--	host->spdif_clk = devm_clk_get(&pdev->dev, "spdif");
-+	if (quirks->tx_clk_name)
-+		tx_clk_name = quirks->tx_clk_name;
-+	host->spdif_clk = devm_clk_get(&pdev->dev, tx_clk_name);
- 	if (IS_ERR(host->spdif_clk)) {
--		dev_err(&pdev->dev, "failed to get a spdif clock.\n");
-+		dev_err(&pdev->dev, "failed to get the \"%s\" clock.\n",
-+			tx_clk_name);
- 		return PTR_ERR(host->spdif_clk);
- 	}
- 
--- 
-2.47.3
-
+> +		pte = virt_create_upper_pte(vm, pte, vaddr, paddr, current_level, level);
+> +		if (*pte & PTE_LARGE_MASK)
+> +			return;
+> +	}
+>  
+>  	/* Fill in page table entry. */
+> -	pte = virt_get_pte(vm, pde, vaddr, PG_LEVEL_4K);
+> +	pte = virt_get_pte(vm, pte, vaddr, PG_LEVEL_4K);
+>  	TEST_ASSERT(!(*pte & PTE_PRESENT_MASK),
+>  		    "PTE already present for 4k page at vaddr: 0x%lx", vaddr);
+>  	*pte = PTE_PRESENT_MASK | PTE_WRITABLE_MASK | (paddr & PHYSICAL_PAGE_MASK);
+> -- 
+> 2.51.0.470.ga7dc726c21-goog
+> 
 
