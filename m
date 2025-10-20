@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-860582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CD6BF0722
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:11:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C28BF0758
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5FEB4E22B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F65B188D2FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0612F5A2F;
-	Mon, 20 Oct 2025 10:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6205191F91;
+	Mon, 20 Oct 2025 10:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j9EzymXH"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YJqDUezh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE29A23507E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA912F5338
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955093; cv=none; b=Zmyf+VJQ71WCgwVQLeJdis5XTchrqN8wsqFUDUCp5xiXGNHNTp0hHAVDWklm5/rTQokeorzysNV/EDoQQsuZI9Z0tLKEOPm3Y8hEpujWgtEuiQRbEB4ckc2Bzubp72sfkwxFJ+iO8P2wT3lUBNuXCmi7rNAOLAaYepBUCtJiOIk=
+	t=1760955099; cv=none; b=kohejQdR5WJ8vrWirJmidBDLNhq57afddlbuCQXSL35buz4x0R+QTsFHTtak7PffmYV4NkwfXBo6OAnjOVDubfkU7hjuPgcYaZXd3y604WzBsLfFNqG7Wl8d82qCO39WyfxW7nub4augJVeJ3eE53AlOm26SSBtp8FAipW6SbHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955093; c=relaxed/simple;
-	bh=IKyaMslWq1y2YKzDPM770ge87lSKrtCwH8m2MdWwFcE=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=iOxtdzD3rnWChNhGt1Xvd1sGpahIWkNuZ+EvAl6HhUxY8IAcUN+O3YLgODIuULOsJShfEg3B6NvrA3epzQlY7aNY53msZlWC4K+I1/O51UakYffuSPCDoO6toeIyuZjyaazRjE3l//YLCeYWiaWx369h6jzE0WZ601Xoi+rsMbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j9EzymXH; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1760955099; c=relaxed/simple;
+	bh=ZHTslemG6vD7mveUfKMEef1heksyeaxeei4lGFbU3eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QdOvWNNK8R1Nu5td09P2WUag3ZzxP9JTldYZaud4/LDWxrj1p1PAJyafH/rc8Zs1jkZlz5XCg/gjmcbquXNEo8r1mtyDkRk7ClSG/QWFXtJxlevWKPJS2kyG2Du1uI0PFiJv+aIkRxPb3boXOMVgpZRKGr6a5LiQmwz95Df/7Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YJqDUezh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760955095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=By7D5EDOrUkPayF85rpQrUjI0fj8mVU6g5pLLb1g4yk=;
+	b=YJqDUezhOd/uN5Ep5cY19bXOkRaCzT8P8Y2BM5Kl3dJmsMB6Khq0dCp9bPDPWcKwmJJxd/
+	4JYrYhpTrWqyGPJR3ZfGO8bwoXscxzvi5KFARyuW6x8JPMGlbXGKaTLaYyug3ztRMdFTnA
+	wswJZEbjL8DwxTzuoOkjhxRHEiauumI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52-vwNN3HjLPnedKcJyxL5TMg-1; Mon, 20 Oct 2025 06:11:34 -0400
+X-MC-Unique: vwNN3HjLPnedKcJyxL5TMg-1
+X-Mimecast-MFC-AGG-ID: vwNN3HjLPnedKcJyxL5TMg_1760955093
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-426feed0016so1711285f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:11:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760955093; x=1761559893;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=By7D5EDOrUkPayF85rpQrUjI0fj8mVU6g5pLLb1g4yk=;
+        b=fzyf7KSA+JbEQfOjuXWyI8fHQGkKTHqZiKTvBNxIIMp4S1nABP4HWH8MaL6jD+EFxf
+         ElrFadyVtNEE8DSTfemHIEd5bwHdM8/TOO1YVHFAPyOOUv3trcyRrZvTI97m7fdXqr4c
+         Rbj7HDsmsAT5VhC7pfF5X2bhcF6J2/53QmFQlO4pB+gjkZCrm2NS6Cdz97Q3HbbT+TZf
+         ou6Sljjo2WgLmOjGIk8OpIV1MLvC2tpiK7Cx3raRNmb/2T3Udv7nVHf4yQpqRtXYb+ub
+         CsrVb7mHKT1Ni0645ctb1rQD8E+xYlOsTTRtyePYA12uFfbV+a4ZqZcULZD+2CXlcsyT
+         CoXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXC3Qbj22NIxaNmC0uxoir2x50qWugtJKUXkMfhEMqfzDhiCsLTax76weVQK78RDt9wB6gG/dsl5+TYWL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO7gILqmT5YlzaaAmVZTZmykpe7D4cGmZOsuyMUd4ZX9DS8WEi
+	THoTktelbX6YbhPtUFrtHefr6RPooA2YjClbp6CFoxWT40NIIIdSyoO/wcnWG0YPauBjCkdgSd6
+	R6FJ3QEz39S5WFEEY6PO+C+Jhy52jFLVcmyS2utE1j0o/ydSkG8kf/LbcCa57aasJhA==
+X-Gm-Gg: ASbGnctgzlGu6tm24MmMXeIE54874hyqB0sJmJM1a+Rhs45dXew4CA3nRaWswi0sC0c
+	HJ21YiRXLKITWKOCgOnEJ4P6q+s4YjYyT3X089g9p6EEiV3MHhhbIOL+J185LLvyssSi/UxbrQp
+	oGW+Et/I+8CE1UC0evhgAScbyu5m1DVCqsqAoBKwhz4Jeh+kyGwCt7PZeAJ+Ku3qCZKSUlt+fSN
+	UijtHiDJaAAh+Ol5vKJ0cGuI0Cpt5VcaY7gfhqpVffBnhFD1797vEYM348pWk/WtkAaIGU1mbfW
+	ONmB6hs8+kKML9xDr//xxIWNgtoGRhuEUkwER4g33aXjdbFNm2SJbJR87VCnsKXfdzWc
+X-Received: by 2002:a05:6000:2512:b0:426:d589:2633 with SMTP id ffacd0b85a97d-42704d993d3mr9607607f8f.44.1760955092891;
+        Mon, 20 Oct 2025 03:11:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcCqLGIZso6bGMyB5AaLWkPWA+ClbR/rzs2RDoBD+0IFStoS89flwVj7QRG0ejepqFb1hRXw==
+X-Received: by 2002:a05:6000:2512:b0:426:d589:2633 with SMTP id ffacd0b85a97d-42704d993d3mr9607593f8f.44.1760955092488;
+        Mon, 20 Oct 2025 03:11:32 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9fdfsm14430388f8f.40.2025.10.20.03.11.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 03:11:32 -0700 (PDT)
+Date: Mon, 20 Oct 2025 06:11:29 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8 19/19] virtio_ring: add in order support
+Message-ID: <20251020061049-mutt-send-email-mst@kernel.org>
+References: <20251020071003.28834-1-jasowang@redhat.com>
+ <20251020071003.28834-20-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760955086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=thqmaBr5SnMdqTFodzowvqsyJlTkVDv3C36xUDXcoMQ=;
-	b=j9EzymXH6xplPMFkNiSM/r3T/xoM6jYPrxOz55fSbSNwrbRZdZP/+Apng27+iIx9pMY93j
-	JpB9fW2aWc4guQvlXazw7tm8KW8NSfyFAy+GMXCAVPS4/dBX3EPPjhM8xX+aajXoykb6lA
-	YVocxzm+BkNw0sckolpU7eICCWv0PX8=
-Date: Mon, 20 Oct 2025 10:11:23 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <db4d9e73e6a70033da561ed88aef32c1ebe411dd@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v1] mm/vmscan: Add retry logic for cgroups with
- memory.low in kswapd
-To: "Michal Hocko" <mhocko@suse.com>
-Cc: linux-mm@kvack.org, "Andrew Morton" <akpm@linux-foundation.org>, "Axel
- Rasmussen" <axelrasmussen@google.com>, "Yuanchu Xie"
- <yuanchu@google.com>, "Wei Xu" <weixugc@google.com>, "Johannes Weiner"
- <hannes@cmpxchg.org>, "David Hildenbrand" <david@redhat.com>, "Qi Zheng"
- <zhengqi.arch@bytedance.com>, "Shakeel Butt" <shakeel.butt@linux.dev>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- linux-kernel@vger.kernel.org
-In-Reply-To: <aPE84XfToVH4eAbs@tiehlicka>
-References: <20251014081850.65379-1-jiayuan.chen@linux.dev>
- <aO4Y35l12Cav-xr4@tiehlicka>
- <a6cd4eb712f3b9f8898e9a2e511b397e8dc397fc@linux.dev>
- <aPEGDwiA_LhuLZmX@tiehlicka>
- <46df65477e0580d350e6e14fea5e68aee6a2832b@linux.dev>
- <aPE84XfToVH4eAbs@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020071003.28834-20-jasowang@redhat.com>
 
-October 17, 2025 at 02:43, "Michal Hocko" <mhocko@suse.com mailto:mhocko@=
-suse.com?to=3D%22Michal%20Hocko%22%20%3Cmhocko%40suse.com%3E > wrote:
+On Mon, Oct 20, 2025 at 03:10:03PM +0800, Jason Wang wrote:
+> @@ -168,7 +172,7 @@ struct vring_virtqueue_packed {
+>  struct vring_virtqueue;
+>  
+>  struct virtqueue_ops {
+> -	int (*add)(struct vring_virtqueue *_vq, struct scatterlist *sgs[],
+> +	int (*add)(struct vring_virtqueue *vq, struct scatterlist *sgs[],
+>  		   unsigned int total_sg, unsigned int out_sgs,
+>  		   unsigned int in_sgs,	void *data,
+>  		   void *ctx, bool premapped, gfp_t gfp);
 
+BTW this should really be part of 13/19, not here.
 
->=20
->=20On Thu 16-10-25 15:10:31, Jiayuan Chen wrote:
-> [...]
->=20
->=20>=20
->=20> The issue we encountered is that since the watermark_boost paramete=
-r is enabled by
-> >  default, it causes kswapd to be woken up even when memory watermarks=
- are still relatively
-> >  high. Due to rapid consecutive wake-ups, kswapd_failures eventually =
-reaches MAX_RECLAIM_RETRIES,
-> >  causing kswapd to stop running, which ultimately triggers direct mem=
-ory reclaim.
-> >=20
->=20>  I believe we should choose another approach that avoids breaking t=
-he memory.low semantics.
-> >  Specifically, in cases where kswapd is woken up due to watermark_boo=
-st, we should bypass the
-> >  logic that increments kswapd_failures.
-> >=20
->=20yes, this seems like unintended side effect of the implementation. Se=
-ems
-> like a rare problem as low limits would have to be configured very clos=
-e
-> to kswapd watermarks. My assumption has always been that low limits are
-> not getting very close to watermarks because that makes any reclaim ver=
-y
-> hard and configuration rather unstable but you might have a very good
-> reason to configure the memory protection that way. It would definitely
-> help to describe your specific setup with rationale so that we can look
-> into that closer.
-> --=20
->=20Michal Hocko
-> SUSE Labs
->
+-- 
+MST
 
-Thank you for your response, Michal.
-
-To provide more context about our specific setup:
-
-1. The memory.low values set on host pods are actually quite large,
-   some pods are set to 10GB, others to 20GB, etc.
-2. Since most pods have memory limits configured, each time kswapd
-   is woken up, if a pod's memory usage hasn't exceeded its own
-   memory.low, its memory won't be reclaimed.
-3. When applications start up, rapidly consume memory, or experience
-   network traffic bursts, the kernel reaches steal_suitable_fallback(),
-   which sets watermark_boost and subsequently wakes kswapd.
-4. In the core logic of kswapd thread (balance_pgdat()), when reclaim is
-   triggered by watermark_boost, the maximum priority is 10. Higher prior=
-ity
-   values mean less aggressive LRU scanning, which can result in no pages
-   being reclaimed during a single scan cycle:
-
-if (nr_boost_reclaim && sc.priority =3D=3D DEF_PRIORITY - 2)
-    raise_priority =3D false;
-
-5. This eventually causes pgdat->kswapd_failures to continuously accumula=
-te,
-   exceeding MAX_RECLAIM_RETRIES, and consequently kswapd stops working.
-   At this point, the system's available memory is still significantly ab=
-ove
-   the high watermark=E2=80=94it's inappropriate for kswapd to stop under=
- these
-   conditions.
-
-The final observable issue is that a brief period of rapid memory allocat=
-ion
-causes kswapd to stop running, ultimately triggering direct reclaim and
-making the applications unresponsive.
 
