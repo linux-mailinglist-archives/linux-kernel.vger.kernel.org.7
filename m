@@ -1,458 +1,289 @@
-Return-Path: <linux-kernel+bounces-859986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC46BEF167
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F26DBEF182
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B131895E4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19541189648F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B9229B239;
-	Mon, 20 Oct 2025 02:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4F629ACD7;
+	Mon, 20 Oct 2025 02:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gq0+wLUJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Gkk0oiRt"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010066.outbound.protection.outlook.com [52.101.201.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE029A9C3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760927558; cv=none; b=aAX/4pjNLFMAv0XcWs831jcUQ0cwGpKXrfj0gwqKGTauJSSvw2EE2aXAWEGNZIunVGMQKIv3YYFNsHDjTKAq/CgthdiO7TLsO5Z2z5jNSQ1Y49dWvA8vsCSnQam2hlr5dEIG3MW15hXC+C4fMnOCvjzcw2ykxARD17OcKaMYx8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760927558; c=relaxed/simple;
-	bh=Qyu5x+rIDV9rj8o4/gyGLVDwjVhwowYPbcL/S9+e/tA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB0378F5D;
+	Mon, 20 Oct 2025 02:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760927660; cv=fail; b=F3nbXLTip09KwnQZKK1c1uRmLZ26njCj/1kRhQt3sbqPbqj5ojw8nVT/pWPbFV1aoyM+ywecrIDmaFr2tOD8beI/8LZTb6qTQXkHbGSdN8xym9EGWToSLtXW86bdtXf+K9DWam8p8wj4DCW+cZuv9wDV5Hm2uhWgqgjnQL06TPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760927660; c=relaxed/simple;
+	bh=p+8psK/RRzGQx3qkuUnFqu3uT5rAblld5u7hbdTs47k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bK+zl3g8jYEGf4q++WFm8JTPk+17AYBkMilQWX3Eay+qCd03n3Ckjj8Wr9fap1ZsXnXvGV+yxQXsCj/SGfeBUI7UYNgdBoMShwwG1zcE/ZwKwgm0E+EvUMrLK+AdjmQ2BL48Ue8ZjQuLCYGAQQcz8NR7C7gPAYnXvp8SsfUqMeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gq0+wLUJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760927555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX5MTENNNovMHiufRZKIYxUV8K61rf34joxQCU3I40c=;
-	b=gq0+wLUJxU52R8dvq/fbruewQCD3cGuEdYAs55j44Uqp5WAXbAiRF4u5EcP/pJjbj13Lsq
-	qtkezEiHG1oiiFcQFbLXwDNHDznpN1ROjms4qTxssU216b+8bBfzsyl7+c/aGtaf4dVG/m
-	aZBvQ4OnaZ/sk4yD77nwAqoQ4JjhNvo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-NsIHmlbxOjunld_qRoDm1w-1; Sun,
- 19 Oct 2025 22:32:33 -0400
-X-MC-Unique: NsIHmlbxOjunld_qRoDm1w-1
-X-Mimecast-MFC-AGG-ID: NsIHmlbxOjunld_qRoDm1w_1760927552
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2958E1956063;
-	Mon, 20 Oct 2025 02:32:32 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.2.16.62])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA8BC180057E;
-	Mon, 20 Oct 2025 02:32:29 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ridong <chenridong@huawei.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/2] cgroup/cpuset: Change callback_lock to raw_spinlock_t
-Date: Sun, 19 Oct 2025 22:32:07 -0400
-Message-ID: <20251020023207.177809-3-longman@redhat.com>
-In-Reply-To: <20251020023207.177809-1-longman@redhat.com>
-References: <20251020023207.177809-1-longman@redhat.com>
+	 Content-Type:MIME-Version; b=jLvxnB3ubnXIka6If3GNpscyR9Fir25jq3JvQ6pXYjT84KWEt01ELy85LOUEg0n+CcO6qfC2N6mY95kZBi+Rqn2DZLDGDQ958oykAqZZu5kE9h9Xy7a9dDSLysv5SzSbVz+6hcdtmOiQIAC/UBAjVEyywaNBiJwRIXfhSUJhJ30=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Gkk0oiRt; arc=fail smtp.client-ip=52.101.201.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z+G8SQGy06nDmjEURaWneL18D+Jq5JbP6oZtXOUMjT6RTHydX+XIw717hjXaFFyBGQNZIL2ij9quxZzXyv0nJZh7Gac5SBTKCKvSucC8Hw7G/YKV0iTvSKRqRL0aeM9w/OG7RQF0SRC0CdSeIYfH02/O/IHOX4z6BQdI2GLfxMfwi8t0BHmtWaChqkiI7avkLQFUuRxyLmu3A+rc7FLL55WEXFred7B6HPakvLnXQDM06Q3ohOKjOqp7DuQoLRY3vK8CmNYDSqDeB9cA2sAzXzqh2bZEjwcFOBmnNHQKlmvFnX0irkiWBo9oPqWxsbTC/vMuFvbwBfy9fF0JGpVVYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UGZ1UcGc64i/UbZLRWrOU3lWPFpSAiHbrYTe4fBsuwo=;
+ b=gfOL1iWfssqb0hShSo9OEu1D74rYLU0THbzOX6g8B4BBIWDrvhTFl7e+hwKgAG8ugAY95Xi5j94OG++/yHZrWdMQZk9kg1adzrq2cjza7Tfb2ugPdphgvOQ1Vbw3LqC6MrvVlHgiywVjjpbVgoLBwnWQ49nVU5o+UxpoMezZ6gPoaKSSg6wdOQu1evMrUIRrHDTbMUs42eHXx8OYrZQooV3J5gFAOSzunP9DRypVHkXeiilDAi03fnvOpq2rcFDJgZdUSXRuBxT75i5UXMKr5DhM1iT1/wZOXX4hAF+SR6UDeI4gA/tLOhASvbBUoX02R0gl3IlAqgbbG+UHdXuYwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UGZ1UcGc64i/UbZLRWrOU3lWPFpSAiHbrYTe4fBsuwo=;
+ b=Gkk0oiRtIZeAfryRcmSnsPQEMyz4c1og5MRVGUGcvC4l39Y5mbDhLOTxo7Xq9NIC7HaIdjCUs/61RJczdZxc91EFpeOgfWD4pxtRGI0G8GeVjZHXuwnYCT586CMMnO3qSffoIQIA/ofouJ7gOgsp17Ff0pw/WVNdt3jE9CC75gyquVwksV7xTDY5moigyiP7BN4b9HiesnyCd/MlbkAJEkVytLCilDlEMyNhz/l1sBp4ZcrWA5Uf6DAc/HXSe02R7gwHKDOudik2h7vMTB5sojotMIeXWYu+EGrT4ZXz0jRPtVPDVetK2dN7FjhFLqipk0Zm620GlYHospWy66wDhQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ CY5PR12MB6345.namprd12.prod.outlook.com (2603:10b6:930:22::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.15; Mon, 20 Oct 2025 02:34:15 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9228.012; Mon, 20 Oct 2025
+ 02:34:15 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>,
+ Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+ Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v4 17/24] staging: media: tegra-video: tegra20: adjust format
+ align calculations
+Date: Mon, 20 Oct 2025 11:34:08 +0900
+Message-ID: <2442650.GKX7oQKdZx@senjougahara>
+In-Reply-To: <20251008073046.23231-18-clamor95@gmail.com>
+References:
+ <20251008073046.23231-1-clamor95@gmail.com>
+ <20251008073046.23231-18-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0262.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:455::9) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|CY5PR12MB6345:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ccf9fad-1c19-4fc5-88e5-08de0f812911
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UlNKQ05PRVA2a1JLdHp1U1RlZjJ0L3M3QTZvVk5QQmdrY1JpVnFMb21lVEla?=
+ =?utf-8?B?VGVVdXJtQ1NPRHROQkJneUxwV2M2Qi9jVm1hRk84UHpJR2l0M294eEtHSm5p?=
+ =?utf-8?B?LzA1U29sKys3OFZmaFdTaXY1eWJBSW50ZjVFYWp1OExMT1JQREFFVWZGU0FK?=
+ =?utf-8?B?RTRiOWtSQmFRN3lYNzNZalZrREE1VEljcUpqTWFrVXdIL0RzMW92RXhhbmtF?=
+ =?utf-8?B?RTcvVHJCZ2VCb3ZnVTM0OGZJM1BjMkdqeU10Q293VmpDTVl0YmJ6czBLek5M?=
+ =?utf-8?B?M2l5V0RRREJuMlo4ellpV05CZ3ZnVnJCdWJtMU5oUGIzYlJlWXVHSUlMMlNX?=
+ =?utf-8?B?TlZsM251ejE4aWtkOEpGbktDcmNRVVNBNitwcDlxdFYzWWZIWE90djZ2dFFi?=
+ =?utf-8?B?eW5MSTVRbE5jdENXemxxVmY1czEyNkhhSDRpVjM3T2hkV3pHNEFwSzBpZTZt?=
+ =?utf-8?B?L0VZdktyaXNISnRHTVg3R1p6azVrTlFjS3hDMDZIM2xMZDAzbExlZWQzaDhR?=
+ =?utf-8?B?WlNueXB6cW52ZjZqL2hSejlYVndFcE1FWkRqVElZY1BYeTZjZzZxTW5VeWhJ?=
+ =?utf-8?B?d2I0VW5lVGh6ak02SGhDSzlrUlhJd2VxN2tRZWpkam56b1V1VmtHZjRXZ3h0?=
+ =?utf-8?B?UDlUL3N1S2xUVXpNQnlxQzZ4RVo1TEwwSldxcXVxZ1lCcGthSGlGNDNZZXY0?=
+ =?utf-8?B?Q3NmN25KQXhFdTN3MGh6MGZrN3ZvNVQ4MEJlMVZzNnJGZHh2RFpBWUtwU3pH?=
+ =?utf-8?B?MEZubXI0ZVp2YXNEdVhNQUFNSUFXUUtwT1RYZHpoRjN1eE5NTU5EcklRWnN5?=
+ =?utf-8?B?aGlOb1paQWVBdFVOWVF5cEh4NW5xTGdIb05NR2lSd2dydDNKaVRobTF3QVZy?=
+ =?utf-8?B?a1h0eWFsODltc1I4SDViMUFoK2E3L1VkNDJvaC9NTWZlZ2RrK014Y3NrdUZj?=
+ =?utf-8?B?TXVVbERrWFVCZFdra1pwd2kyYmNtN2hTaDlmYXVuUG1EUlN4NjJMdmU5YkYy?=
+ =?utf-8?B?U2kySnRXYWRYemltMWx5Q3ZYVnV6aHBOMExZL2dRWlI3SjhFZWhSdlJnQ0dM?=
+ =?utf-8?B?TEw1bE9xaE5uRGZvbEF5VzFkS3hQSno5UnZOQmM4eFdHSVB6T3htckJGcjB5?=
+ =?utf-8?B?Z3NRMzFieG45Y2lwRERhM0Z5czVZQzhFb2RPdVBhczVFWWFZSSs4WjFYVkFy?=
+ =?utf-8?B?T2laM01Ta3B2YUsxTWc2OE12ZDRZV0FhcWVWZXgyeVlMcWwxdWUwN0dSR2Zs?=
+ =?utf-8?B?bmwzblh3dXNHdVEwN2xXOFY4cnRVdmZwY1pmejBaOExRS01lS0FxMWl1RGpQ?=
+ =?utf-8?B?WklPSXlydHRoZDV0cEpyWVpuZzVXczEzMmdqNnRqYWVIakRnSXZESkZnVnlo?=
+ =?utf-8?B?Wk1HcHVmZUd5WDk4MlMrY2xoV3JadlBKQ1FVMFFFTUtJRHB0ajErbXk0Smhs?=
+ =?utf-8?B?VEpaSHptU0sraUZ3cEwvMFl6enF2NDl5aHM5VXNYSzZ2SDhHSVZwN01GVElW?=
+ =?utf-8?B?NG1nSVovbWNtb3hFYkhkUjhQYU1oN1RUQjdhQkEvTTBjaGlFaUxUM2lzK290?=
+ =?utf-8?B?ckpURnZTVGxlUGxBMXpWSjE3V2NYTlRVL21QN1dLK2N5VVJ4ZTgxSHhxT2FT?=
+ =?utf-8?B?ckVQd1NVa0xrSmV1eGJDWW1KY2NmNGQzOHlwR0FSOWovbndqaFdueWlxUStQ?=
+ =?utf-8?B?ZWQwZjJUZlk1NUhYc0hiVWMyNC91eXJaeWl5UDR5NkVhTlpYQnhuK0dacDY1?=
+ =?utf-8?B?NmVQL2NLd2x4aHlQckRRZUptcFVzSHBWMEFQZDBBSlIrRWJsSDk2RFN1Znl5?=
+ =?utf-8?B?MDBwdHhjanhFWHRPcm5uajRabWdYY1Q5L0ROQkMyOXQ1WjFPTUJURjZId1h1?=
+ =?utf-8?B?V2NYSVhKWEV6UUVaVEc2WmFjV2JlS3VjejgxUHpsQUtSS25GUGlMV3ZHeDFH?=
+ =?utf-8?B?NTkwK1NnU3BaYVZpaTJ3SDBNR1BIYXd1TExsd3RBL1JSUkR6WExEWGpSbDBX?=
+ =?utf-8?Q?jAkWtRRtLVxTD2CKSVkKZHqDOiKB/c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cGlsWDVFTjZjb053Y3FINko3L1ZlOEQxWXpxaSt6bmtKM2dnTXR0bU01ZUwr?=
+ =?utf-8?B?R2R0NkViVDRmTUpNZWJPSnNycjVUekFnd2cyQkxMS3NCQmxEVkttc2xIcmwv?=
+ =?utf-8?B?NmNnMCtrN2dGNkFQWkxZb3p1YkJOUmdSMWcwbHVFQTlSZkVENEhaTkxtRDZZ?=
+ =?utf-8?B?cTZoZE1nWldxa1RIZ2p5dkxnMnA3dlJLVWxURER2OEJHVFhta29JdUd3RUtx?=
+ =?utf-8?B?czNCMnNDcmlGVi8rT0xYcWRCSkwrN08zR0wzbHRoWUVhOXpVbjlyK0c0RUNu?=
+ =?utf-8?B?cVhMVzVpdldsM1JrWDVaTG1FaVhHVHJkUG8wZlBrMzNBU0RzMThyVkNiVEpv?=
+ =?utf-8?B?Y1VCSWZNYXdpT3NTNG93L05YZVA1TjRhR2REbnUrb1lHdXJoamVmR2hucmw0?=
+ =?utf-8?B?UXFwbU5hb1JRY2xzSEtlaHhMQ2lzdmxuUUZrNmZwckpIblJhWWpLaEpTNVNY?=
+ =?utf-8?B?Q3ZOeDVJQmN6VzN5aExSZUlaREZrVkFvWUxkSG1mRVg3YTNheWNoZWxHS2tU?=
+ =?utf-8?B?cXpjWlZFSHJzNjFqQWdzWC9lVmdyUDk4ajgvWVRuMXhvMXl0QjNDa1M4YXFY?=
+ =?utf-8?B?a3k3VjlLU2tGalliVFNKejdkNUMzandhOVQwcTRHNlh6bG9STDZuOFpJc2Qy?=
+ =?utf-8?B?a3pSZk1NZm1yWHFqQWttbVVLeWNZU3oxbGxSOTNEelVqRFRyTzNFYUlkYUpH?=
+ =?utf-8?B?Mm96di9WVkdVWGkyc1B1YjN0Tm9zR3lHQVR1b3FTaTJsSWVKQWpNSlkrcER0?=
+ =?utf-8?B?aTRqT01aOXNUMmlQcVlyNDJOaEM0QTJmL09BM3htWlVGRkVuSWFQM2YzQk1N?=
+ =?utf-8?B?M1c1NVg3NTRoVzRBSWhrQTE5TXp2a1c0ZzF3TmU3cnRlbGJuL0dlS3JtUXR2?=
+ =?utf-8?B?bkNGekRVcTRGZFN5SkVSanZrWnpybTdsK1NRd29GMUVZTXJUWWpIajMzNGNO?=
+ =?utf-8?B?a3d0cFNSanM2bENPNk1Wc2pTY2hWK2lsaHAxQkFiamFxaC9mSmdqdjgxNWFC?=
+ =?utf-8?B?ZkpMNTN0Wm1GUlIxNzZtRmNZVTAwbUd3OTEycFFCa1prOFJpbk5GT2VleGlm?=
+ =?utf-8?B?Y3VWSjEvRjhjT09IMm0rOE54dVE2bUNtSmlpQjNleEZERVFHMHRpMGdjOUZm?=
+ =?utf-8?B?TFpKYXRmTzJzQnpDb2VBRHlzR1ZUR2pJY05yMW9ncDBlUmN2ZGJsS3ZKSlBQ?=
+ =?utf-8?B?cHA4dE1iUFFqYm1uekUyb1l3bHpHcWxUeDlUZ0NOWVpDWXcrdldkZ1g4MGlX?=
+ =?utf-8?B?RU9SVGdad2J4QnR1L0ZWcVAyM2VpdWwvUy9GNG1qdmt5MHBYVC9KMjh1QVVn?=
+ =?utf-8?B?elMrVW1pRmg4RmFlRzdwSTZ2TzBMQkVxU3cyY0tJdWpKU0lTV2V6aGNVUEdi?=
+ =?utf-8?B?OFdjRGxGbm1zUzUrQjZML1d3VnRrZDFDTzNLa3AwSUdvcnJQSFBrVGdPaGtq?=
+ =?utf-8?B?MTBScDBGb084Qi9ocHVtdUpENEg2R1dZVGhLeW9jTVB1aFo2bGRYOWtlS2NU?=
+ =?utf-8?B?REQ4ckN2RmZPWldLZTB1dVRibXZEejJaZHRWd04xNmFNMlByVWliUUVGdSt3?=
+ =?utf-8?B?V1FlTitQeVlLYjVFWkZLRGg2V3pySzNzQWUzbmdaUVlhdm1Odzg4TVhBSWly?=
+ =?utf-8?B?dTAwY3hraWV3dVByS24vS2p2QjEvTmEzaUhDTjE3K25sWDlKUTdSWGhWMzBJ?=
+ =?utf-8?B?cGp2UFpKZngyY0YxajdRZ0t2VC92SWRHVUJQaFY2L25YTUNBQVJmcU11ZU5K?=
+ =?utf-8?B?VEJNdkFQQldMNk92eUJQbFl4OHAvYVYxSWNiSlJMNGJEajAvcHBRZENyUEp6?=
+ =?utf-8?B?ZGlldFh6NkZEYmZnenZ4aVRDWmtpeHJLUGpNRkVRSmhmU0luVm1TMmFXcTMx?=
+ =?utf-8?B?ZDJla21CU3IzeVBpd0cza1hoY3ZZaE5lNUV6UUxRMzhjU2lNc1RvSFEvanRC?=
+ =?utf-8?B?czlaeG5FNlhpcXRlNGZWbE56TEFwTDUwbC9pL2lCc0lXR3RlMnZYV2h6bVl3?=
+ =?utf-8?B?bFB3NmFhcHU4dGRnQjRJNit2MnNna1kybDVqSzVUTVpyOWZFczBDTGh1dDlQ?=
+ =?utf-8?B?WFBMd0ZBTnlIdjBaN1hZbXYxS0M1cEM5NUU3NzVTU2w5N25tdlFyTndKT2xn?=
+ =?utf-8?B?OHZMY0VnL2RWUG90R1hMUzlrcElrclBQdnBpZjVrVzVwQnlhZTM1bWxIS1Jm?=
+ =?utf-8?B?K3lLc0JUblEvWXhkNGYrWm5nLzJIRnZCUldEZ2dGekhWWVNxcHFsUnZLdDRa?=
+ =?utf-8?B?R1N0dXIxcFB0VEd5dVhReVVnSkZnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ccf9fad-1c19-4fc5-88e5-08de0f812911
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 02:34:14.9929
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WS4utXThfm3ALf5KE8OyJV8ISy2FRRlPrqQ0oB/YawxatCK3pu/WC+g+mDu7y8DIf0KYMwGCfZw0MV2HDwzr7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6345
 
-The callback_lock is acquired either to read a stable set of cpu
-or node masks or to modify those masks when cpuset_mutex is also
-acquired. Sometime, it may need to go up the cgroup hierarchy while
-holding the lock to find the right set of masks to use. Assuming that
-the depth of the cgroup hierarch is finite and typically small, the
-lock hold time should be limited.
-
-As a result, it can be converted to raw_spinlock_t to reduce overhead
-in a PREEMPT_RT setting without introducing excessive latency.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 94 +++++++++++++++++++++---------------------
- 1 file changed, 47 insertions(+), 47 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 7aef59ea9627..026eb1a17ad2 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -285,16 +285,16 @@ void cpuset_full_unlock(void)
- 	cpus_read_unlock();
- }
- 
--static DEFINE_SPINLOCK(callback_lock);
-+static DEFINE_RAW_SPINLOCK(callback_lock);
- 
- void cpuset_callback_lock_irq(void)
+On Wednesday, October 8, 2025 4:30=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Expand supported formats structure with data_type and bit_width fields
+> required for CSI support. Adjust tegra20_fmt_align by factoring out commo=
+n
+> bytesperline and sizeimage calculation logic shared by supported planar
+> and non-planar formats and leaving planar-related correction under a
+> switch.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/staging/media/tegra-video/tegra20.c | 39 ++++++++++-----------
+>  1 file changed, 19 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/stagin=
+g/media/tegra-video/tegra20.c
+> index 7c3ff843235d..ffaaa2bb8269 100644
+> --- a/drivers/staging/media/tegra-video/tegra20.c
+> +++ b/drivers/staging/media/tegra-video/tegra20.c
+> @@ -280,18 +280,13 @@ static void tegra20_fmt_align(struct v4l2_pix_forma=
+t *pix, unsigned int bpp)
+>  	pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  TEGRA20_MAX_WIDT=
+H);
+>  	pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, TEGRA20_MAX_HEIG=
+HT);
+> =20
+> +	pix->bytesperline =3D roundup(pix->width, 8) * bpp;
+> +	pix->sizeimage =3D pix->bytesperline * pix->height;
+> +
+>  	switch (pix->pixelformat) {
+> -	case V4L2_PIX_FMT_UYVY:
+> -	case V4L2_PIX_FMT_VYUY:
+> -	case V4L2_PIX_FMT_YUYV:
+> -	case V4L2_PIX_FMT_YVYU:
+> -		pix->bytesperline =3D roundup(pix->width, 2) * 2;
+> -		pix->sizeimage =3D roundup(pix->width, 2) * 2 * pix->height;
+> -		break;
+>  	case V4L2_PIX_FMT_YUV420:
+>  	case V4L2_PIX_FMT_YVU420:
+> -		pix->bytesperline =3D roundup(pix->width, 8);
+> -		pix->sizeimage =3D roundup(pix->width, 8) * pix->height * 3 / 2;
+> +		pix->sizeimage =3D pix->sizeimage * 3 / 2;
+>  		break;
+>  	}
+>  }
+> @@ -576,20 +571,24 @@ static const struct tegra_vi_ops tegra20_vi_ops =3D=
  {
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- }
- 
- void cpuset_callback_unlock_irq(void)
- {
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- }
- 
- static struct workqueue_struct *cpuset_migrate_mm_wq;
-@@ -1552,11 +1552,11 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
- 	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
- 		return PERR_INVCPUS;
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
- 	list_add(&cs->remote_sibling, &remote_children);
- 	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	update_unbound_workqueue_cpumask(isolcpus_updated);
- 	cpuset_force_rebuild();
- 	cs->prs_err = 0;
-@@ -1585,7 +1585,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
- 	WARN_ON_ONCE(!is_remote_partition(cs));
- 	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	list_del_init(&cs->remote_sibling);
- 	isolcpus_updated = partition_xcpus_del(cs->partition_root_state,
- 					       NULL, cs->effective_xcpus);
-@@ -1597,7 +1597,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
- 	/* effective_xcpus may need to be changed */
- 	compute_excpus(cs, cs->effective_xcpus);
- 	reset_partition_data(cs);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	update_unbound_workqueue_cpumask(isolcpus_updated);
- 	cpuset_force_rebuild();
- 
-@@ -1654,7 +1654,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
- 			goto invalidate;
- 	}
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	if (adding)
- 		isolcpus_updated += partition_xcpus_add(prs, NULL, tmp->addmask);
- 	if (deleting)
-@@ -1666,7 +1666,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
- 	cpumask_copy(cs->effective_xcpus, excpus);
- 	if (xcpus)
- 		cpumask_copy(cs->exclusive_cpus, xcpus);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	update_unbound_workqueue_cpumask(isolcpus_updated);
- 	if (adding || deleting)
- 		cpuset_force_rebuild();
-@@ -1995,7 +1995,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 	 * Newly added CPUs will be removed from effective_cpus and
- 	 * newly deleted ones will be added back to effective_cpus.
- 	 */
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	if (old_prs != new_prs)
- 		cs->partition_root_state = new_prs;
- 
-@@ -2010,7 +2010,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 		isolcpus_updated += partition_xcpus_add(new_prs, parent,
- 							tmp->delmask);
- 
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	update_unbound_workqueue_cpumask(isolcpus_updated);
- 
- 	if ((old_prs != new_prs) && (cmd == partcmd_update))
-@@ -2091,9 +2091,9 @@ static void compute_partition_effective_cpumask(struct cpuset *cs,
- 			/*
- 			 * Invalidate child partition
- 			 */
--			spin_lock_irq(&callback_lock);
-+			raw_spin_lock_irq(&callback_lock);
- 			make_partition_invalid(child);
--			spin_unlock_irq(&callback_lock);
-+			raw_spin_unlock_irq(&callback_lock);
- 			notify_partition_change(child, old_prs);
- 			continue;
- 		}
-@@ -2239,7 +2239,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- 			new_prs = cp->partition_root_state;
- 		}
- 
--		spin_lock_irq(&callback_lock);
-+		raw_spin_lock_irq(&callback_lock);
- 		cpumask_copy(cp->effective_cpus, tmp->new_cpus);
- 		cp->partition_root_state = new_prs;
- 		if (!cpumask_empty(cp->exclusive_cpus) && (cp != cs))
-@@ -2254,7 +2254,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- 				    cp->cpus_allowed, parent->effective_xcpus);
- 		else if (new_prs < 0)
- 			reset_partition_data(cp);
--		spin_unlock_irq(&callback_lock);
-+		raw_spin_unlock_irq(&callback_lock);
- 
- 		notify_partition_change(cp, old_prs);
- 
-@@ -2507,12 +2507,12 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- 
- 	partition_cpus_change(cs, trialcs, &tmp);
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cpumask_copy(cs->cpus_allowed, trialcs->cpus_allowed);
- 	cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
- 	if ((old_prs > 0) && !is_partition_valid(cs))
- 		reset_partition_data(cs);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 
- 	/* effective_cpus/effective_xcpus will be updated here */
- 	update_cpumasks_hier(cs, &tmp, force);
-@@ -2572,12 +2572,12 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- 	trialcs->prs_err = PERR_NONE;
- 	partition_cpus_change(cs, trialcs, &tmp);
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cpumask_copy(cs->exclusive_cpus, trialcs->exclusive_cpus);
- 	cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
- 	if ((old_prs > 0) && !is_partition_valid(cs))
- 		reset_partition_data(cs);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 
- 	/*
- 	 * Call update_cpumasks_hier() to update effective_cpus/effective_xcpus
-@@ -2792,9 +2792,9 @@ static void update_nodemasks_hier(struct cpuset *cs, nodemask_t *new_mems)
- 			continue;
- 		rcu_read_unlock();
- 
--		spin_lock_irq(&callback_lock);
-+		raw_spin_lock_irq(&callback_lock);
- 		cp->effective_mems = *new_mems;
--		spin_unlock_irq(&callback_lock);
-+		raw_spin_unlock_irq(&callback_lock);
- 
- 		WARN_ON(!is_in_v2_mode() &&
- 			!nodes_equal(cp->mems_allowed, cp->effective_mems));
-@@ -2849,9 +2849,9 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
- 
- 	check_insane_mems_config(&trialcs->mems_allowed);
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cs->mems_allowed = trialcs->mems_allowed;
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 
- 	/* use trialcs->mems_allowed as a temp variable */
- 	update_nodemasks_hier(cs, &trialcs->mems_allowed);
-@@ -2906,9 +2906,9 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
- 	spread_flag_changed = ((is_spread_slab(cs) != is_spread_slab(trialcs))
- 			|| (is_spread_page(cs) != is_spread_page(trialcs)));
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cs->flags = trialcs->flags;
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 
- 	if (!cpumask_empty(trialcs->cpus_allowed) && balance_flag_changed) {
- 		if (cpuset_v2())
-@@ -3021,14 +3021,14 @@ static int update_prstate(struct cpuset *cs, int new_prs)
- 		update_partition_exclusive_flag(cs, new_prs);
- 	}
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cs->partition_root_state = new_prs;
- 	WRITE_ONCE(cs->prs_err, err);
- 	if (!is_partition_valid(cs))
- 		reset_partition_data(cs);
- 	else if (isolcpus_updated)
- 		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	update_unbound_workqueue_cpumask(isolcpus_updated);
- 
- 	/* Force update if switching back to member & update effective_xcpus */
-@@ -3342,7 +3342,7 @@ int cpuset_common_seq_show(struct seq_file *sf, void *v)
- 	cpuset_filetype_t type = seq_cft(sf)->private;
- 	int ret = 0;
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 
- 	switch (type) {
- 	case FILE_CPULIST:
-@@ -3373,7 +3373,7 @@ int cpuset_common_seq_show(struct seq_file *sf, void *v)
- 		ret = -EINVAL;
- 	}
- 
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	return ret;
- }
- 
-@@ -3567,12 +3567,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 
- 	cpuset_inc();
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	if (is_in_v2_mode()) {
- 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
- 		cs->effective_mems = parent->effective_mems;
- 	}
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 
- 	if (!test_bit(CGRP_CPUSET_CLONE_CHILDREN, &css->cgroup->flags))
- 		goto out_unlock;
-@@ -3599,12 +3599,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	}
- 	rcu_read_unlock();
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cs->mems_allowed = parent->mems_allowed;
- 	cs->effective_mems = parent->mems_allowed;
- 	cpumask_copy(cs->cpus_allowed, parent->cpus_allowed);
- 	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- out_unlock:
- 	cpuset_full_unlock();
- 	return 0;
-@@ -3655,7 +3655,7 @@ static void cpuset_css_free(struct cgroup_subsys_state *css)
- static void cpuset_bind(struct cgroup_subsys_state *root_css)
- {
- 	mutex_lock(&cpuset_mutex);
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 
- 	if (is_in_v2_mode()) {
- 		cpumask_copy(top_cpuset.cpus_allowed, cpu_possible_mask);
-@@ -3667,7 +3667,7 @@ static void cpuset_bind(struct cgroup_subsys_state *root_css)
- 		top_cpuset.mems_allowed = top_cpuset.effective_mems;
- 	}
- 
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 	mutex_unlock(&cpuset_mutex);
- }
- 
-@@ -3831,10 +3831,10 @@ hotplug_update_tasks(struct cpuset *cs,
- 	if (nodes_empty(*new_mems))
- 		*new_mems = parent_cs(cs)->effective_mems;
- 
--	spin_lock_irq(&callback_lock);
-+	raw_spin_lock_irq(&callback_lock);
- 	cpumask_copy(cs->effective_cpus, new_cpus);
- 	cs->effective_mems = *new_mems;
--	spin_unlock_irq(&callback_lock);
-+	raw_spin_unlock_irq(&callback_lock);
- 
- 	if (cpus_updated)
- 		cpuset_update_tasks_cpumask(cs, new_cpus);
-@@ -3996,7 +3996,7 @@ static void cpuset_handle_hotplug(void)
- 	/* For v1, synchronize cpus_allowed to cpu_active_mask */
- 	if (cpus_updated) {
- 		cpuset_force_rebuild();
--		spin_lock_irq(&callback_lock);
-+		raw_spin_lock_irq(&callback_lock);
- 		if (!on_dfl)
- 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
- 		/*
-@@ -4014,17 +4014,17 @@ static void cpuset_handle_hotplug(void)
- 			}
- 		}
- 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
--		spin_unlock_irq(&callback_lock);
-+		raw_spin_unlock_irq(&callback_lock);
- 		/* we don't mess with cpumasks of tasks in top_cpuset */
- 	}
- 
- 	/* synchronize mems_allowed to N_MEMORY */
- 	if (mems_updated) {
--		spin_lock_irq(&callback_lock);
-+		raw_spin_lock_irq(&callback_lock);
- 		if (!on_dfl)
- 			top_cpuset.mems_allowed = new_mems;
- 		top_cpuset.effective_mems = new_mems;
--		spin_unlock_irq(&callback_lock);
-+		raw_spin_unlock_irq(&callback_lock);
- 		cpuset_update_tasks_nodemask(&top_cpuset);
- 	}
- 
-@@ -4117,7 +4117,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
- 	unsigned long flags;
- 	struct cpuset *cs;
- 
--	spin_lock_irqsave(&callback_lock, flags);
-+	raw_spin_lock_irqsave(&callback_lock, flags);
- 
- 	cs = task_cs(tsk);
- 	if (cs != &top_cpuset)
-@@ -4139,7 +4139,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
- 			cpumask_copy(pmask, possible_mask);
- 	}
- 
--	spin_unlock_irqrestore(&callback_lock, flags);
-+	raw_spin_unlock_irqrestore(&callback_lock, flags);
- }
- 
- /**
-@@ -4210,9 +4210,9 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
- 	nodemask_t mask;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&callback_lock, flags);
-+	raw_spin_lock_irqsave(&callback_lock, flags);
- 	guarantee_online_mems(task_cs(tsk), &mask);
--	spin_unlock_irqrestore(&callback_lock, flags);
-+	raw_spin_unlock_irqrestore(&callback_lock, flags);
- 
- 	return mask;
- }
-@@ -4304,12 +4304,12 @@ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
- 		return true;
- 
- 	/* Not hardwall and node outside mems_allowed: scan up cpusets */
--	spin_lock_irqsave(&callback_lock, flags);
-+	raw_spin_lock_irqsave(&callback_lock, flags);
- 
- 	cs = nearest_hardwall_ancestor(task_cs(current));
- 	allowed = node_isset(node, cs->mems_allowed);
- 
--	spin_unlock_irqrestore(&callback_lock, flags);
-+	raw_spin_unlock_irqrestore(&callback_lock, flags);
- 	return allowed;
- }
- 
--- 
-2.51.0
+>  	.vi_stop_streaming =3D tegra20_vi_stop_streaming,
+>  };
+> =20
+> -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)	\
+> -{							\
+> -	.code    =3D MEDIA_BUS_FMT_##MBUS_CODE,		\
+> -	.bpp     =3D BPP,					\
+> -	.fourcc  =3D V4L2_PIX_FMT_##FOURCC,		\
+> +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, BPP, FOURCC)	=
+\
+> +{									\
+> +	.img_dt		=3D TEGRA_IMAGE_DT_##DATA_TYPE,			\
+> +	.bit_width	=3D BIT_WIDTH,					\
+> +	.code		=3D MEDIA_BUS_FMT_##MBUS_CODE,			\
+> +	.bpp		=3D BPP,						\
+> +	.fourcc		=3D V4L2_PIX_FMT_##FOURCC,			\
+>  }
+> =20
+>  static const struct tegra_video_format tegra20_video_formats[] =3D {
+> -	TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
+> -	TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
+> -	TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
+> -	TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
+> -	TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
+> -	TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
+> +	/* YUV422 */
+> +	TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, UYVY),
+> +	TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, VYUY),
+> +	TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, YUYV),
+> +	TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, YVYU),
+> +	/* YUV420P */
+> +	TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 1, YUV420),
+> +	TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 1, YVU420),
+>  };
+> =20
+>  const struct tegra_vi_soc tegra20_vi_soc =3D {
+>=20
+
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+
+
+
 
 
