@@ -1,241 +1,208 @@
-Return-Path: <linux-kernel+bounces-860794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0422BF0F79
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:59:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400D2BF0F7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44503E69D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA563BBD52
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7909430506F;
-	Mon, 20 Oct 2025 11:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20EF302CC9;
+	Mon, 20 Oct 2025 11:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lvy4f+fW"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012040.outbound.protection.outlook.com [52.101.53.40])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="KkCHc70t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pUKEzKgh"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABA724A047;
-	Mon, 20 Oct 2025 11:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961462; cv=fail; b=ivJUlCyqsQHvCpd2woqOuwhVQnRdIkgFe7NLAL7oZEzdKojGzDnoPjql7tOEz5Nu0Uv6XYNY/Zw5dW2viBQ4tWWfWEYIgS8J0SWd10AyVOEiJUnNt3jqduKiAxqESpWRu4IoBki9v3jCxN5D5oc+B62a3g3wGRBLcUSAwTvfUhE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961462; c=relaxed/simple;
-	bh=HQHpscoA/m6/P2SrAR4ulc5dlfwM8aKAosMiYtdQpE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aZfmEHPCBlVWyRQK7Rt+mcRXGeb+0H7vrUJ1ciFMbZTe+c48RameaJrXixSZNVo5jEQHBbD/YDRLW9sLEPI+uwOlseavA5dnyjNAEIrEZXrKOlx2A9VXXKHrCOG/nv7rM5RJl1avbiIo1JZ+ZM5OfITDIeEEZ9Nag61nNt8u6Qo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lvy4f+fW; arc=fail smtp.client-ip=52.101.53.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RpnYFHVKxrywbFDduP7rR13mOjSyBMMFHdEWkEE/ru+9kknoDC38Vdx28MCMW2EtsaG88IoiCjZxBPx06DokoYlSH+AvyXYld1eq86Dz6dar028PouZaBcgb/ohqAxnXt8nfaQ4gRmeuzWISAjQ1shWWWCGtVBdgzvzaB8nIwJi+v9rcWTIVpgZgBT30GrSqNkUZSxa8qYzhrEqopqLE9D17v96ykSZFShricpctKFwjmKCXRqxTi3IFvAQ157bk7+HRPVBkJ9iWngJUV/MREBk9z+BJTpzKgGCYOHmRCiayzDV0FPIPOCgamWUUq2y2DNRVsb8/9VdsadhPknpl1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=foTPVV0lKp7sjSLImcSdySw0rmx0Pj3j75CDP0jdN98=;
- b=L2JdAfn5blotlAai4eG4UABieAWgfXm9Axl5vj7z0Vj38kkURIEiWAZ0UJzJm88OMn/SSSv9IQGxmlJ/KVwHyKTMRVRnPqPp4R07xR/B1Gr0IFwCWpqlv9l8m1QXkjXMTsughtLzieTZka9+0J9q08BSTWAvqHj6xbSx5uoND8kYSSIXxK7Z0MmEV6yD3wR74zjlL3REiFh9sr0l2/XBfo6Rb1bJyxqwgeUGm4w5yHl+t4n5ezQPXrjJojiJrXsS3J2A4pPwuoaQvYdSSSlDksGX5bVr3NDCKxRqnVNNZYn6dpALS5Ye3HONwCsql2cMWDlE7UEXfzXTSnWgTysBDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=foTPVV0lKp7sjSLImcSdySw0rmx0Pj3j75CDP0jdN98=;
- b=lvy4f+fWiz8COX85w5q6JEkIfQq0kbJXI6T9LsTHN7gxrSxfZNT2bfqkLQxjLIBfY7y5+3UmmkkaK5VmX+UDqKx5ublFAhLljvmM3lwqmHHTx86zIQJmQP445wyA8sFe+xeM48yWou57a+ci4d/cG6vOncOeMOZJG4IYDIk1Z5Rhb3tHKQm4EO9Zat+XtG4H9g+LfpI28sfcUHOqMh7+Mq+N1ZUgD+i29nG9zvS+MpJNQRv4kZEvpX1OpVNWlCJO39CDzTEII5vtuI9OZ7XREs4suNwz/zzT/4mSPl75La/M8okBOdvxZQK9cUR8JRjJppbrY6RzzzuISYtano6l8Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by SN7PR12MB7910.namprd12.prod.outlook.com (2603:10b6:806:34b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 11:57:37 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 11:57:37 +0000
-Date: Mon, 20 Oct 2025 08:57:34 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Message-ID: <20251020115734.GH316284@nvidia.com>
-References: <20251016054204.1523139-1-tzungbi@kernel.org>
- <20251016054204.1523139-6-tzungbi@kernel.org>
- <20251016123149.GA88213@nvidia.com>
- <aPGryj-V5PQZRtoI@google.com>
- <20251017134916.GK3901471@nvidia.com>
- <aPJp3hP44n96Rug9@tzungbi-laptop>
- <20251017162116.GA316284@nvidia.com>
- <aPT-7TTgW_Xop99j@tzungbi-laptop>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPT-7TTgW_Xop99j@tzungbi-laptop>
-X-ClientProxiedBy: BY1P220CA0004.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:59d::15) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F9F30DD2F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760961500; cv=none; b=EHBn21jbGPQVnUCmxZsicTLPdlSNtwIP95g/OYfeOIZBUtPS/T/agoMyxJGCIfsr8Vsbf4shhVf65B24xLGkq6jIpyuxDvgz86WCrxisAypJdANj/C4dExP2dyAvMYY+n+IAqCXBBzgpDekzxkCq23SX0ZQ4QIfri1K92GfiP/c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760961500; c=relaxed/simple;
+	bh=LrSjw7A1t1j3KWoJg+t7ZzRpPUSAFXuG6r84MPT5zqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OAF27BQRPoBjxgNS/X587sFI/7UhqvyfmChnnZ7Zwgv8U3LhGGY1U23KMoEq72GeAL/ELSQ4CBXx+mlKSftZGf0sG85g3h/vVrEptRORLzJPglyiius9EmbRXfJlD/MCZ8rKHnSa4Ai94ToPRYHhE0y8j+EXiRMEcRjEjyoInGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=KkCHc70t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pUKEzKgh; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 97C24EC02E2;
+	Mon, 20 Oct 2025 07:58:14 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 20 Oct 2025 07:58:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm2; t=1760961494; x=1761047894; bh=Ww9DvCfxJ9
+	3mFFiHtNCtI5RjcFbBSgRKT6N64U8sLJY=; b=KkCHc70t1mgu3nMMGEfvIM0gIe
+	HmVPe+7wdWD0rlxBalyrB7ui1NT+yEKishMnun/sHHGFGYuSNArr71nk+h7P+Fa5
+	gFMxqNq2QkEW/4dtgFYRoL8YDlmJwG/nfrL6heRMqbwC1QDjLcdqEcXDBHEOk+UD
+	MfAOndw5/AgqmCDAhKcdBhi3hjccQM6Xi8HDkpaLyH1qVu4nVT+4dP+6offJkWek
+	/5GbbQmtNha3bDSJvoH+G5O3Ysx90zw57Vy4Ss+MmcWCVBr6fX8aMuEstfMZ8EJK
+	9VOepqPdcjaBLhNjF3BdgljnT+2CKzJ8DUTaY7yiI1xQAvf33p5OWKyqXYvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760961494; x=1761047894; bh=Ww9DvCfxJ93mFFiHtNCtI5RjcFbBSgRKT6N
+	64U8sLJY=; b=pUKEzKghSifSQJs8BJXSEnSskU/UK9uojnvGTZrryBagWXR4NP8
+	PHQmBfD1QTa1LCKmaLuSIx+mX3FZ7i+BrswGdL05vv0sd178OT4r/JSN5MuWvT4e
+	mGhDR1jY4ptlss00Y8SGkn1BWzjzEcfjQLbv1CxODKCfJOZfX+7Ms3Ktcotn6Gnl
+	RrD8OSdICckzWEZndu/KX5mY6y7Y4d1XslaVkEDTfTf+twAGHKfygMavxeoyIf/+
+	KF5tSHFSkbvXf2oU0k/qCctcPs0nTH1rtmboEvtRo8l2561GEh651ayDIFy4yOBd
+	hYZx3YJvX7dQASGKRwYTonqTz4Icl1WkIag==
+X-ME-Sender: <xms:1iP2aHqqyTsbJWXhtkH69dJe-78IllZLRTxMXEnecsHAgJYCGXrVAg>
+    <xme:1iP2aPl6WcCsitzEVwlCrYqdWbAGg5wYUeOfIKFFQOsf27q3vq-pICS6QGLSNvNsV
+    1Jbb4G4XCDj-wAMYQKoYESSyXkd0Xmeopp-Alk-bKScmjEZyV-u3u0>
+X-ME-Received: <xmr:1iP2aLyP538O7lnNRV-9NHMjS36khcpAVQW3vZjJG60jFJ--RwYiOiMFb83Ix3hlPhb-idcEbDgdWUWbggLrnd3R-r5eHnZzMPG7FkYY00Dx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeejjeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffveekud
+    fhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrg
+    hmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvg
+    hfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:1iP2aHkGo6cgYWqDnkiRWm6kepPwmFP2sRoMDJID3vhGrsQfKGLp-A>
+    <xmx:1iP2aEcqW5mqSURk2TKLMMogdzaGqk9rKWOnH7apNapd_dkVHYpbjA>
+    <xmx:1iP2aNrBEnF7JgFzZO0blPcTx2QyP0DpBARMm5tE4tqKA-b6xCOnWA>
+    <xmx:1iP2aC5unPTOy87JzbZn_muOwHwM_XKpACvsj2lzjlyXZDBaSNMu8Q>
+    <xmx:1iP2aGdG4J73XGDqZyQTm35zaDr2wpGZBWnJZvo1QPziuAlgdM31yUI1>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 Oct 2025 07:58:13 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: core: use cleanup function to release cached configuration ROM
+Date: Mon, 20 Oct 2025 20:58:10 +0900
+Message-ID: <20251020115810.92839-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SN7PR12MB7910:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52f4c373-2125-41dd-59a1-08de0fcfdc73
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ShT9cUNsqAtIujHfkcyOd/8hHZqZNgmAsbOIUSCU2oKSunrTe7T0QHKYqoJL?=
- =?us-ascii?Q?aQDrHQOkoB9B3Yz6KsRaIv72fYQg/Nk56GXUzvTNwSR8xRF0IaI+dA2StNQb?=
- =?us-ascii?Q?qPzfyzmg8idS+S/jXIvG63Nqba+pO6I6fcuGt9xRbGnYtBoe7XuGm1IpUujc?=
- =?us-ascii?Q?lHKtn7jVrc3SqNQEYEfQk5+oY+yTCdoi+asW5uEXk01VMcZ9YBrcsgSCnZVo?=
- =?us-ascii?Q?ItzqgtpxL+YJr/J0NihK7j68jR6WTF2r9zOugSamXnjZp1jETTSvIQ8SorXA?=
- =?us-ascii?Q?jNVQHObYJgFiXNBvaIoyU8jVryefcbKVKQN+KoGr9nN3eI5QN5CGn4bU06cg?=
- =?us-ascii?Q?N9F7x9uf6PRUx4PAgv4eCP3/j0d2uCtps9GXuXOZF/G7xpb/MdUIRdtMZ19t?=
- =?us-ascii?Q?jxSbUz6M/Xc/vGs0oqkwRT0dp+wMB/runZFXAnVYv60dvtiTllXCtAv88HPj?=
- =?us-ascii?Q?L5x3dw45dUv7Ejt7jQlpNg/mKkRAhM1D1+gX9bFot7o29oxtghZEAMmBkpLl?=
- =?us-ascii?Q?g8SDtm11k93EWT1tIIXJvsSnDC1Wd6LlZcxD2NRz6p98Z0ICzSwPEJwTZ6rw?=
- =?us-ascii?Q?cm54hRciFpdF8YVWxG7Er2Cv9AYJVnyk+mpOaVdUhpKaZ2VRqPbIeFWeg0rP?=
- =?us-ascii?Q?kkUm8OAtqP4utFrztjMcZIsfxlEvwdAhgnV48tXFBpK++rfOp34NwCpmQFH1?=
- =?us-ascii?Q?0QC9uB75Kil1co8mS+qrnwWyzgwfi5q/zeowTUpzl3FY2+bhQoWPNbM8iVWW?=
- =?us-ascii?Q?dtibtnf5JisJFR9sEJOgVHSZ6PEr/tSyfPRPDfOHzbrZjppggNUjvGxTYSXG?=
- =?us-ascii?Q?JDeXVjvwzj95w6SLIUTzMoIpWb/EyQER2tp9Qav5VqorgAWNQjatldIQ9Cfw?=
- =?us-ascii?Q?K6B468xnPX0yU3I+8IFzIXa9SWQ5GTJY/KGV8JIULUj20F0meUZKuXwdyTkq?=
- =?us-ascii?Q?s4bx5J1LL15CbY/IB7GvtYuRV5ZJaZqNKcqODSzoywqnO7ofrM/jxD4geVDB?=
- =?us-ascii?Q?XU9/ZLQf9U5ZZt5FbggOplym/6C+vkK9F9zbssVGxHQZbmXxfiP8zWmN5h/w?=
- =?us-ascii?Q?dB2hoxnZK2+sXi9AseF7qmz2Bz9sk0qcO/QeudbDlshuAS4GR8MSMD+d3WAQ?=
- =?us-ascii?Q?6iSfcwqxw3ULoKYV6cS93Tpocbn8vyq98o/gcAKyHlOjDtUJ+3taZ4yOlPmC?=
- =?us-ascii?Q?xZRmQRJMntKqqtRKz0zq4BMkArriwjo4FFvg0BCDSrtseKctj9NIwRonaGsv?=
- =?us-ascii?Q?zIRX3VztdXEEsDvQ2AxEogfI5XGUY0SWAN9ntAx4Mc4re/YlzAwyoUt1sl9d?=
- =?us-ascii?Q?TEIgVnH2oslg3jQ3gJHns3xuAYHNEjtb0ST+DWm61FSrduJH19LCO+/vx3YI?=
- =?us-ascii?Q?FgmvaLfbxxm8aeiZ7qkwQ4Ub+wGZw+TWdFaZM3FGEEO0KIvJFUs0YUfMIdE5?=
- =?us-ascii?Q?6UU0XMnCnM6c73/wmpSkG8gNCXsaipOO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VJF15OyFC9rMipncFWN9nHYCvAO7admBamIV+LD9i7rxuEbmcGFPgTmhBwml?=
- =?us-ascii?Q?8pQv5AsMT1KQaXnO+SE4JRRt4aadaE0Z5ij0yWEU58ST40LswyCpi92Tq0Ls?=
- =?us-ascii?Q?YwiyZmZhz3f6ryOz51iH4NVF9Dn/U9zyVP74bRifhfaz0FaNqUWOwXakK5z8?=
- =?us-ascii?Q?+D7o1mW5aT0IXqy7Wxig4OQd5wG8HoHECHT7VKpmAITYIXaLao94ZJ7eZOtM?=
- =?us-ascii?Q?1mK4lZY3BzDl80HNq4wBxq7b6CQbuKvvip2hqVCkbrbgEvHFzJxfXfrUvkGy?=
- =?us-ascii?Q?bDsZs65y3/xTaU1BPS8RgyvdgpgFYKZDi684o7B/aOLSP1fZGBETOTxfhH1s?=
- =?us-ascii?Q?55Ry1w3JA35Je5jez9R+SxD5I4fXIJQ0pRB8YvdcNtp2diKLZGJ3Uk6cKJD5?=
- =?us-ascii?Q?MHTHGchbJRf1JAMlsLY4443DOxTDX7mVek5TkaYAYvCVhEeZ36JkQ2m3kkN7?=
- =?us-ascii?Q?zvFd1Wk/Dt5pA+CHpWdSgKwAW3JhXJoS+L7BZ1qkBlSBPreH9mjLgC5JdOio?=
- =?us-ascii?Q?Z4qddNGbyDxncGhPm5Dq4upHRTmprpEYx6/lgY0HBS0Ab+0Qkce/q0hxqJAR?=
- =?us-ascii?Q?8Rt3GKrD1EcxxhXlD59k0WaelbpqpvBZqKi4DJOj++XsOf5Do0B0f9mAu583?=
- =?us-ascii?Q?KNUCDlRD6do2wQWpGPmemV6ZJHwPXG9n/IVJMXwTMyB8K55Ebg7GrFe+89UM?=
- =?us-ascii?Q?1Y2Kuns4L+irKEPWzxcaukLGoaXWrxfm4xExq2TkrDqPIIr2j2E7wzbsOgq/?=
- =?us-ascii?Q?f3ORn/eqaoRKrCFiHs44Pp32g2jUV0hoGe6ryCG0wNFxTJI39Sd/fy2q+qjX?=
- =?us-ascii?Q?dGUv5eG6q+0+bphLMa8LNkH1mpcp0woQgh9GZkB9YehusHpnFwePCsA6Eiiv?=
- =?us-ascii?Q?1sjGoZ4vssrJvCKPg5TAchfhbYMVGLpkH5fj1yO1OM9GoSxt7tl4q43b8mVg?=
- =?us-ascii?Q?W2LI8j+L9jGkdhLKvSgd5lemgIfyAAkKgsgH7QsSyY+D6furlo/zLQMWOGbV?=
- =?us-ascii?Q?36smT6K/FsOtTFEVGUii9VKpMY9CrRKJvnUlqwxgp21a8/JeJ95VO7N1BSOu?=
- =?us-ascii?Q?nliqoKBtdBMbIqXDSBw5nzo9lmc6Lr6DKo3eIGQqeFe3LqNqxIu6/977WWKA?=
- =?us-ascii?Q?zovuD4Dt/H9hJNGaPGcioBXKwvWp4jLrnC8VeHkQ4mxlPGwArHLwczMyHenF?=
- =?us-ascii?Q?sOzbi8Qx+n1GY0jRlX5QGnb0r2eSmRWar1eYR2RmAvAT4JVUy79hVMybDTcM?=
- =?us-ascii?Q?3ixqyKmOTvzky1to2e4NAWXAxK44NfJIYUCCH4Zo07BaZu/j84HG8VsKbWyx?=
- =?us-ascii?Q?R4mjqbnXH0zwnAdud47rLVuBxW4MSDD+cMUf8BDRM9RVk3ekaNvbpu27qi5w?=
- =?us-ascii?Q?dGxDyiisuVxKN85c4O3Pxm1/LVL9+5ccZfhldD2XRk9g+f0SvmbJdrLLBDUh?=
- =?us-ascii?Q?0M+1f1qcJpk6KUQc0j2DPwpePC6rx9uOWaEEQaplT3CwZEla/fP3NYCwP9s/?=
- =?us-ascii?Q?0Hx2Mh3yI3s0Z/8hHrUFhpb6HPp1CyUODJMHKjxhJBT+5mSeSkTYW8yuzMBx?=
- =?us-ascii?Q?f9/PkXqWcW0ETbSJV3cbuwstM0jV3VNOBd2ktFB0?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52f4c373-2125-41dd-59a1-08de0fcfdc73
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 11:57:37.5813
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ND+5fy7VZooPnq9fzbWonbChdOv40x0C5hXT0MqIHpXiQTsnCF7z9TGWmBpWPb4j
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7910
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 19, 2025 at 11:08:29PM +0800, Tzung-Bi Shih wrote:
-> On Fri, Oct 17, 2025 at 01:21:16PM -0300, Jason Gunthorpe wrote:
-> > On Sat, Oct 18, 2025 at 12:07:58AM +0800, Tzung-Bi Shih wrote:
-> > > > This is already properly lifetime controlled!
-> > > > 
-> > > > It *HAS* to be, and even your patches are assuming it by blindly
-> > > > reaching into the parent's memory!
-> > > > 
-> > > > +	misc->rps[0] = ec->ec_dev->revocable_provider;
-> > > > 
-> > > > If the parent driver has been racily unbound at this point the
-> > > > ec->ec_dev is already a UAF!
-> > > 
-> > > Not really, it uses the fact that the caller is from probe().  I think the
-> > > driver can't be unbound when it is still in probe().
-> > 
-> > Right, but that's my point you are already relying on driver binding
-> > lifetime rules to make your access valid. You should continue to rely
-> > on that and fix the lack of synchronous remove to fix the bug.
-> 
-> I think what you're looking for is something similar to the following
-> patches.
-> 
-> - Instead of having a real resource to protect with revocable, use the
->   subsystem device itself as a virtual resource.  Revoke the virtual
->   resource when unregistering the device from the subsystem.
-> 
-> - Exit earlier if the virtual resource is NULL (i.e. the subsystem device
->   has been unregistered) in the file operation wrappers.
+When returning from read_config_rom() function, the allocated buffer and
+the previous buffer for configuration ROM should be released. The cleanup
+function is useful in the case.
 
-Sure
+This commit uses the cleanup function to remove goto statements.
+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-device.c | 34 ++++++++++++----------------------
+ 1 file changed, 12 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
+index 1674de477852..9b0080397154 100644
+--- a/drivers/firewire/core-device.c
++++ b/drivers/firewire/core-device.c
+@@ -653,8 +653,8 @@ static int read_rom(struct fw_device *device, int generation, int speed, int ind
+ static int read_config_rom(struct fw_device *device, int generation)
+ {
+ 	struct fw_card *card = device->card;
+-	const u32 *old_rom, *new_rom;
+-	u32 *rom, *stack;
++	const u32 *new_rom, *old_rom __free(kfree) = NULL;
++	u32 *stack, *rom __free(kfree) = NULL;
+ 	u32 sp, key;
+ 	int i, end, length, ret, speed;
+ 	int quirks;
+@@ -673,7 +673,7 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 	for (i = 0; i < 5; i++) {
+ 		ret = read_rom(device, generation, speed, i, &rom[i]);
+ 		if (ret != RCODE_COMPLETE)
+-			goto out;
++			return ret;
+ 		/*
+ 		 * As per IEEE1212 7.2, during initialization, devices can
+ 		 * reply with a 0 for the first quadlet of the config
+@@ -682,10 +682,8 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 		 * harddisk).  In that case we just fail, and the
+ 		 * retry mechanism will try again later.
+ 		 */
+-		if (i == 0 && rom[i] == 0) {
+-			ret = RCODE_BUSY;
+-			goto out;
+-		}
++		if (i == 0 && rom[i] == 0)
++			return RCODE_BUSY;
+ 	}
  
-> By doing so, we don't need to provide a misc_deregister_sync() which could
-> probably maintain a list of opening files in miscdevice and handle with all
-> opening files when unregistering.  
+ 	quirks = detect_quirks_by_bus_information_block(rom);
+@@ -712,15 +710,13 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 		 */
+ 		key = stack[--sp];
+ 		i = key & 0xffffff;
+-		if (WARN_ON(i >= MAX_CONFIG_ROM_SIZE)) {
+-			ret = -ENXIO;
+-			goto out;
+-		}
++		if (WARN_ON(i >= MAX_CONFIG_ROM_SIZE))
++			return -ENXIO;
+ 
+ 		/* Read header quadlet for the block to get the length. */
+ 		ret = read_rom(device, generation, speed, i, &rom[i]);
+ 		if (ret != RCODE_COMPLETE)
+-			goto out;
++			return ret;
+ 		end = i + (rom[i] >> 16) + 1;
+ 		if (end > MAX_CONFIG_ROM_SIZE) {
+ 			/*
+@@ -744,7 +740,7 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 		for (; i < end; i++) {
+ 			ret = read_rom(device, generation, speed, i, &rom[i]);
+ 			if (ret != RCODE_COMPLETE)
+-				goto out;
++				return ret;
+ 
+ 			if ((key >> 30) != 3 || (rom[i] >> 30) < 2)
+ 				continue;
+@@ -804,25 +800,19 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 
+ 	old_rom = device->config_rom;
+ 	new_rom = kmemdup(rom, length * 4, GFP_KERNEL);
+-	if (new_rom == NULL) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (new_rom == NULL)
++		return -ENOMEM;
+ 
+ 	scoped_guard(rwsem_write, &fw_device_rwsem) {
+ 		device->config_rom = new_rom;
+ 		device->config_rom_length = length;
+ 	}
+ 
+-	kfree(old_rom);
+-	ret = RCODE_COMPLETE;
+ 	device->max_rec	= rom[2] >> 12 & 0xf;
+ 	device->cmc	= rom[2] >> 30 & 1;
+ 	device->irmc	= rom[2] >> 31 & 1;
+- out:
+-	kfree(rom);
+ 
+-	return ret;
++	return RCODE_COMPLETE;
+ }
+ 
+ static void fw_unit_release(struct device *dev)
 
-I don't think we want to change the default behavior of
-misc_deregister.. Maybe if it was a mutex not srcu it would be OK, but
-srcu you are looking at delaying driver removal by seconds
-potentially.
+base-commit: dbd0cf204fe6ba7ba226153d1d90369019b90164
+-- 
+2.51.0
 
-> @@ -234,6 +240,10 @@ int misc_register(struct miscdevice *misc)
->                 return -EINVAL;
->         }
->  
-> +       misc->rp = revocable_provider_alloc(misc);
-> +       if (!misc->rp)
-> +               return -ENOMEM;
-
-Just get rid of all this revocable stuff, all this needs is a scru or
-a mutex, none of this obfuscation around a simple lock is helpful in
-core kernel code.
-
-> @@ -1066,6 +1066,7 @@ struct file {
->                 freeptr_t               f_freeptr;
->         };
->         /* --- cacheline 3 boundary (192 bytes) --- */
-> +       struct fs_revocable_replacement *f_rr;
->  } __randomize_layout
-
-The thing that will likely attract objections is this. It is probably
-a good idea to try to remove it.
-
-For simple misc users the inode->i_cdev will always be valid and you
-can reach the struct misc_dev/cdev from there in all the calls.
-
-More complex cdev users replace the inode so that wouldn't work
-universally but it is good enough to get started at least.
-
-Jason
 
