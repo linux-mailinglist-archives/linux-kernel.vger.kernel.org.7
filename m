@@ -1,116 +1,483 @@
-Return-Path: <linux-kernel+bounces-860501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE6ABF04A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:46:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E17BF0490
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3019D3B005D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:43:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DBDE4F2884
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A62FB094;
-	Mon, 20 Oct 2025 09:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M66NK0n7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE52F9DA7;
-	Mon, 20 Oct 2025 09:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4303B301013;
+	Mon, 20 Oct 2025 09:40:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF052FFF89
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953233; cv=none; b=ZvIwr5rlAslceFp6nNW3n+3P9CCLJVmDikQD+kMvCkC1/Fz2KC/5w/zpqwCSH9YzbtBRzvPoEJSnQvztOespsHM+nAhw59FKeTh++jOZEn9LTWhXDSg9sOJV4IPDVyyJPJXYR/CgBCRGWMlaj1upgcmwvN1kgr3JzNQj6ruO9CA=
+	t=1760953236; cv=none; b=u25lbyQL1JeXNmXbnYIUddkDiJD7xCLvCWeJFNX6LOs7oDGKyJiqkHC8CI134Ddp4I4VkmTFd+5KewacngGclXgxssTPS48wJ6LKBw1zBUavJjsJVtMtoLzNYxFvG4MU/WnwGW69+g+ZB0csTnpsWGVV5KSC99nyfZq3DIe+GiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953233; c=relaxed/simple;
-	bh=Z1kaVO3Ed9EJ8fGuWa7kSlIV+SC1mWkBs/JeBs2k83Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=TjoLlrAaQbRytQNtdHZiQAdDPDG2m7Y/BROCaSJdktrQb3r7C5ON9fc7Z9SEc6LWCoUGL8Aws81ArfqRsi0L+owk5Lhyxj42pvhK/dfxxS84Vp48wIxrh6uhL63qWpRNug8o0R2eJjSLqZOExZ+/gxAi90gJ9lM9Y6+ouUSd/gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M66NK0n7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD55AC4CEF9;
-	Mon, 20 Oct 2025 09:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760953232;
-	bh=Z1kaVO3Ed9EJ8fGuWa7kSlIV+SC1mWkBs/JeBs2k83Y=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=M66NK0n7kCPkczZVv5CJ0SN99cvs22UTtSJapV/hliT4wneK87ZS3VYhv3aEg6MuM
-	 sxBXAPVuPrUOvubD5Ban6A4Qzat2/L3OlQUGBqHYmE9sjKL07cGirQ2PaJoSDKBKRY
-	 uyIrxC8T2bjV5Zme0/scFP+4tMpMGkIaASpQoBhnlpQXvQ9NRkc0lTKh0fSZIfTHoI
-	 0K8egAAshl6DkfrGsz7UL5OTjFICMkUMTo6AT1g6t/qjbLgg8cFQ3XxxPKfYlLKGPc
-	 u4jArVK5MENoThiQhKmR81T2DFTZNuX3FqegOH/hT0l/lpkHsRvkprFg2C1g544Di+
-	 X8YOz4Po/BwEw==
+	s=arc-20240116; t=1760953236; c=relaxed/simple;
+	bh=G1XxqQ6lzRVAKRqp78xs4Q9nvQa2yTvp8cEMIW3pdrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ahGagFIAcqKB7NbrQQeLH92GL0ou8eqPRDGfDYVQCojnLlG6rCu/O5Bzi6wIWX2B6QnstR7hUzbsMJn6UE/EJGOwq8hj4x73Wk8YM9m2iYXrFJGmiiyKtW7UvhfnfVcEho1g4ue9Znr5+RcrrCxkhPFWVXpy9MetHhbPegFrriU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E72C81063;
+	Mon, 20 Oct 2025 02:40:25 -0700 (PDT)
+Received: from [10.57.36.117] (unknown [10.57.36.117])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6342C3F66E;
+	Mon, 20 Oct 2025 02:40:31 -0700 (PDT)
+Message-ID: <fbb5af8e-bce6-43d0-b88f-006c968d3600@arm.com>
+Date: Mon, 20 Oct 2025 10:40:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 05/10] drm/panthor: Introduce panthor_pwr API and power
+ control framework
+To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
+Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <20251014094337.1009601-1-karunika.choo@arm.com>
+ <20251014094337.1009601-6-karunika.choo@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251014094337.1009601-6-karunika.choo@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Oct 2025 11:40:28 +0200
-Message-Id: <DDN1TL0WE895.1R5Z8AR975ZJH@kernel.org>
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <mmaurer@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
-References: <20251003222729.322059-1-dakr@kernel.org>
- <20251003222729.322059-4-dakr@kernel.org> <aPI9tNoh0I3KGDjl@google.com>
- <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
- <DDKOLD1897SY.84W93E6L8ITR@kernel.org> <aPSzE7DpA7DxTHmm@google.com>
- <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org> <aPXu0FWUrbxyemPq@google.com>
-In-Reply-To: <aPXu0FWUrbxyemPq@google.com>
+Content-Transfer-Encoding: 7bit
 
-On Mon Oct 20, 2025 at 10:12 AM CEST, Alice Ryhl wrote:
-> On Sun, Oct 19, 2025 at 02:01:03PM +0200, Danilo Krummrich wrote:
->> On Sun Oct 19, 2025 at 11:44 AM CEST, Alice Ryhl wrote:
->> > On Fri, Oct 17, 2025 at 04:53:09PM +0200, Danilo Krummrich wrote:
->> >> On Fri Oct 17, 2025 at 4:37 PM CEST, Danilo Krummrich wrote:
->> >> > The reason I went with a trait is because that's consistent within =
-the file.
->> >> >
->> >> > Otherwise, I don't mind one or the other. If we always want to use =
-a struct, I'm
->> >> > fine with that. :)
->> >>=20
->> >> Actually, there's another reason I forgot about since I sent the seri=
-es. :)
->> >>=20
->> >> We need it because we derive it from blanket implementations:
->> >>=20
->> >> 	impl<T: BinaryWriter + Sync> BinaryReadFile<T> for T
->> >> 	impl<T: BinaryReader + Sync> BinaryWriteFile<T> for T
->> >> 	impl<T: BinaryWriter + BinaryReader + Sync> BinaryReadWriteFile<T> f=
-or T
->> >
->> > You can still use a struct:
->> >
->> > struct BinaryWriterVtable<T: BinaryWriter + Sync>;
->> >
->> > impl<T: BinaryWriter + Sync> BinaryWriterVtable<T> {
->> >     const VTABLE: bindings::foo =3D ...;
->> > }
->>=20
->> Yeah, but do we get something for adding yet another type in this case?
->>=20
->> Another point to consider is if we want a more generic fops abstraction =
-type.
->>=20
->> In any case, I'd like to add this as good first issue for the whole file=
- to be
->> changed accordingly.
->
-> Yes, keep it as-is for consistency with the rest of the file, even if
-> the file is inconsistent with the rest of `kernel`. Please go ahead and
-> file a good-first-issue for this.
+On 14/10/2025 10:43, Karunika Choo wrote:
+> Add the new panthor_pwr module, which provides basic power control
+> management for Mali-G1 GPUs. The initial implementation includes
+> infrastructure for initializing the PWR_CONTROL block, requesting and
+> handling its IRQ, and defining the PANTHOR_HW_FEATURE_PWR_CONTROL
+> feature flag.
+> 
+> The patch also integrates panthor_pwr with the device lifecycle (init,
+> suspend, resume, and unplug) through the new API functions. It also
+> registers the IRQ handler under the 'gpu' IRQ as the PWR_CONTROL block
+> is located within the GPU_CONTROL block.
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 
-Before doing so, can you please answer the question above? While I'm all fo=
-r
-consistency, in this specific case it seems we'd need another indirection f=
-or
-that. And I'm not convinced that's an improvement.
+Mostlt looks good - two minor comments below.
+
+> ---
+>  drivers/gpu/drm/panthor/Makefile         |   1 +
+>  drivers/gpu/drm/panthor/panthor_device.c |  14 ++-
+>  drivers/gpu/drm/panthor/panthor_device.h |   4 +
+>  drivers/gpu/drm/panthor/panthor_hw.h     |   3 +
+>  drivers/gpu/drm/panthor/panthor_pwr.c    | 135 +++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_pwr.h    |  23 ++++
+>  drivers/gpu/drm/panthor/panthor_regs.h   |  79 +++++++++++++
+>  7 files changed, 258 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_pwr.c
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_pwr.h
+> 
+> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
+> index 02db21748c12..753a32c446df 100644
+> --- a/drivers/gpu/drm/panthor/Makefile
+> +++ b/drivers/gpu/drm/panthor/Makefile
+> @@ -10,6 +10,7 @@ panthor-y := \
+>  	panthor_heap.o \
+>  	panthor_hw.o \
+>  	panthor_mmu.o \
+> +	panthor_pwr.o \
+>  	panthor_sched.o
+>  
+>  obj-$(CONFIG_DRM_PANTHOR) += panthor.o
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index 847dea458682..d3e16da0b24e 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -20,6 +20,7 @@
+>  #include "panthor_gpu.h"
+>  #include "panthor_hw.h"
+>  #include "panthor_mmu.h"
+> +#include "panthor_pwr.h"
+>  #include "panthor_regs.h"
+>  #include "panthor_sched.h"
+>  
+> @@ -102,6 +103,7 @@ void panthor_device_unplug(struct panthor_device *ptdev)
+>  	panthor_fw_unplug(ptdev);
+>  	panthor_mmu_unplug(ptdev);
+>  	panthor_gpu_unplug(ptdev);
+> +	panthor_pwr_unplug(ptdev);
+>  
+>  	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+>  	pm_runtime_put_sync_suspend(ptdev->base.dev);
+> @@ -249,10 +251,14 @@ int panthor_device_init(struct panthor_device *ptdev)
+>  	if (ret)
+>  		goto err_rpm_put;
+>  
+> -	ret = panthor_gpu_init(ptdev);
+> +	ret = panthor_pwr_init(ptdev);
+>  	if (ret)
+>  		goto err_rpm_put;
+>  
+> +	ret = panthor_gpu_init(ptdev);
+> +	if (ret)
+> +		goto err_unplug_pwr;
+> +
+>  	ret = panthor_gpu_coherency_init(ptdev);
+>  	if (ret)
+>  		goto err_unplug_gpu;
+> @@ -293,6 +299,9 @@ int panthor_device_init(struct panthor_device *ptdev)
+>  err_unplug_gpu:
+>  	panthor_gpu_unplug(ptdev);
+>  
+> +err_unplug_pwr:
+> +	panthor_pwr_unplug(ptdev);
+> +
+>  err_rpm_put:
+>  	pm_runtime_put_sync_suspend(ptdev->base.dev);
+>  	return ret;
+> @@ -446,6 +455,7 @@ static int panthor_device_resume_hw_components(struct panthor_device *ptdev)
+>  {
+>  	int ret;
+>  
+> +	panthor_pwr_resume(ptdev);
+>  	panthor_gpu_resume(ptdev);
+>  	panthor_mmu_resume(ptdev);
+>  
+> @@ -455,6 +465,7 @@ static int panthor_device_resume_hw_components(struct panthor_device *ptdev)
+>  
+>  	panthor_mmu_suspend(ptdev);
+>  	panthor_gpu_suspend(ptdev);
+> +	panthor_pwr_suspend(ptdev);
+>  	return ret;
+>  }
+>  
+> @@ -568,6 +579,7 @@ int panthor_device_suspend(struct device *dev)
+>  		panthor_fw_suspend(ptdev);
+>  		panthor_mmu_suspend(ptdev);
+>  		panthor_gpu_suspend(ptdev);
+> +		panthor_pwr_suspend(ptdev);
+>  		drm_dev_exit(cookie);
+>  	}
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 1457c1255f1f..05818318e0ba 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -31,6 +31,7 @@ struct panthor_job;
+>  struct panthor_mmu;
+>  struct panthor_fw;
+>  struct panthor_perfcnt;
+> +struct panthor_pwr;
+>  struct panthor_vm;
+>  struct panthor_vm_pool;
+>  
+> @@ -126,6 +127,9 @@ struct panthor_device {
+>  	/** @hw: GPU-specific data. */
+>  	struct panthor_hw *hw;
+>  
+> +	/** @pwr: Power control management data. */
+> +	struct panthor_pwr *pwr;
+> +
+>  	/** @gpu: GPU management data. */
+>  	struct panthor_gpu *gpu;
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
+> index 5a4e4aad9099..caba522cd680 100644
+> --- a/drivers/gpu/drm/panthor/panthor_hw.h
+> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
+> @@ -15,6 +15,9 @@ struct panthor_device;
+>   * New feature flags will be added with support for newer GPU architectures.
+>   */
+>  enum panthor_hw_feature {
+> +	/** @PANTHOR_HW_FEATURE_PWR_CONTROL: HW supports the PWR_CONTROL interface. */
+> +	PANTHOR_HW_FEATURE_PWR_CONTROL,
+> +
+>  	/** @PANTHOR_HW_FEATURES_END: Must be last. */
+>  	PANTHOR_HW_FEATURES_END
+>  };
+> diff --git a/drivers/gpu/drm/panthor/panthor_pwr.c b/drivers/gpu/drm/panthor/panthor_pwr.c
+> new file mode 100644
+> index 000000000000..d07ad5b7953a
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_pwr.c
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/* Copyright 2025 ARM Limited. All rights reserved. */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/wait.h>
+> +
+> +#include <drm/drm_managed.h>
+> +
+> +#include "panthor_device.h"
+> +#include "panthor_hw.h"
+> +#include "panthor_pwr.h"
+> +#include "panthor_regs.h"
+> +
+> +#define PWR_INTERRUPTS_MASK \
+> +	(PWR_IRQ_POWER_CHANGED_SINGLE | \
+> +	 PWR_IRQ_POWER_CHANGED_ALL | \
+> +	 PWR_IRQ_DELEGATION_CHANGED | \
+> +	 PWR_IRQ_RESET_COMPLETED | \
+> +	 PWR_IRQ_RETRACT_COMPLETED | \
+> +	 PWR_IRQ_INSPECT_COMPLETED | \
+> +	 PWR_IRQ_COMMAND_NOT_ALLOWED | \
+> +	 PWR_IRQ_COMMAND_INVALID)
+> +
+> +/**
+> + * struct panthor_pwr - PWR_CONTROL block management data.
+> + */
+> +struct panthor_pwr {
+> +	/** @irq: PWR irq. */
+> +	struct panthor_irq irq;
+> +
+> +	/** @reqs_lock: Lock protecting access to pending_reqs. */
+> +	spinlock_t reqs_lock;
+> +
+> +	/** @pending_reqs: Pending PWR requests. */
+> +	u32 pending_reqs;
+> +
+> +	/** @reqs_acked: PWR request wait queue. */
+> +	wait_queue_head_t reqs_acked;
+> +};
+> +
+> +static void panthor_pwr_irq_handler(struct panthor_device *ptdev, u32 status)
+> +{
+> +	spin_lock(&ptdev->pwr->reqs_lock);
+> +	gpu_write(ptdev, PWR_INT_CLEAR, status);
+> +
+> +	if (unlikely(status & PWR_IRQ_COMMAND_NOT_ALLOWED))
+> +		drm_err(&ptdev->base, "PWR_IRQ: COMMAND_NOT_ALLOWED");
+> +
+> +	if (unlikely(status & PWR_IRQ_COMMAND_INVALID))
+> +		drm_err(&ptdev->base, "PWR_IRQ: COMMAND_INVALID");
+> +
+> +	if (status & ptdev->pwr->pending_reqs) {
+> +		ptdev->pwr->pending_reqs &= ~status;
+> +		wake_up_all(&ptdev->pwr->reqs_acked);
+> +	}
+> +	spin_unlock(&ptdev->pwr->reqs_lock);
+> +}
+> +PANTHOR_IRQ_HANDLER(pwr, PWR, panthor_pwr_irq_handler);
+> +
+> +void panthor_pwr_unplug(struct panthor_device *ptdev)
+> +{
+> +	unsigned long flags;
+> +
+> +	if (!ptdev->pwr)
+> +		return;
+> +
+> +	/* Make sure the IRQ handler is not running after that point. */
+> +	panthor_pwr_irq_suspend(&ptdev->pwr->irq);
+> +
+> +	/* Wake-up all waiters. */
+> +	spin_lock_irqsave(&ptdev->pwr->reqs_lock, flags);
+> +	ptdev->pwr->pending_reqs = 0;
+> +	wake_up_all(&ptdev->pwr->reqs_acked);
+> +	spin_unlock_irqrestore(&ptdev->pwr->reqs_lock, flags);
+> +}
+> +
+> +int panthor_pwr_init(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_pwr *pwr;
+> +	int err, irq;
+> +
+> +	if (!panthor_hw_has_feature(ptdev, PANTHOR_HW_FEATURE_PWR_CONTROL))
+> +		return 0;
+> +
+> +	pwr = drmm_kzalloc(&ptdev->base, sizeof(*pwr), GFP_KERNEL);
+> +	if (!pwr)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&pwr->reqs_lock);
+> +	init_waitqueue_head(&pwr->reqs_acked);
+> +	ptdev->pwr = pwr;
+> +
+> +	irq = platform_get_irq_byname(to_platform_device(ptdev->base.dev), "gpu");
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	err = panthor_request_pwr_irq(ptdev, &pwr->irq, irq, PWR_INTERRUPTS_MASK);
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +int panthor_pwr_reset_soft(struct panthor_device *ptdev)
+> +{
+> +	return 0;
+> +}
+> +
+> +int panthor_pwr_l2_power_off(struct panthor_device *ptdev)
+> +{
+> +	return 0;
+> +}
+> +
+> +int panthor_pwr_l2_power_on(struct panthor_device *ptdev)
+> +{
+> +	return 0;
+> +}
+
+I don't see any need to add these dummy functions - just add the full
+implementation in the next patch.
+
+> +
+> +void panthor_pwr_suspend(struct panthor_device *ptdev)
+> +{
+> +	if (!ptdev->pwr)
+> +		return;
+> +
+> +	panthor_pwr_irq_suspend(&ptdev->pwr->irq);
+> +}
+> +
+> +void panthor_pwr_resume(struct panthor_device *ptdev)
+> +{
+> +	if (!ptdev->pwr)
+> +		return;
+> +
+> +	panthor_pwr_irq_resume(&ptdev->pwr->irq, PWR_INTERRUPTS_MASK);
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_pwr.h b/drivers/gpu/drm/panthor/panthor_pwr.h
+> new file mode 100644
+> index 000000000000..a4042c125448
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_pwr.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
+> +/* Copyright 2025 ARM Limited. All rights reserved. */
+> +
+> +#ifndef __PANTHOR_PWR_H__
+> +#define __PANTHOR_PWR_H__
+> +
+> +struct panthor_device;
+> +
+> +void panthor_pwr_unplug(struct panthor_device *ptdev);
+> +
+> +int panthor_pwr_init(struct panthor_device *ptdev);
+> +
+> +int panthor_pwr_reset_soft(struct panthor_device *ptdev);
+> +
+> +int panthor_pwr_l2_power_on(struct panthor_device *ptdev);
+> +
+> +int panthor_pwr_l2_power_off(struct panthor_device *ptdev);
+> +
+> +void panthor_pwr_suspend(struct panthor_device *ptdev);
+> +
+> +void panthor_pwr_resume(struct panthor_device *ptdev);
+> +
+> +#endif /* __PANTHOR_PWR_H__ */
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index 8bee76d01bf8..84db97c11e68 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -72,6 +72,7 @@
+>  
+>  #define GPU_FEATURES					0x60
+>  #define   GPU_FEATURES_RAY_INTERSECTION			BIT(2)
+> +#define   GPU_FEATURES_RAY_TRAVERSAL			BIT(5)
+
+This line shouldn't be in this patch.
+
+Thanks,
+Steve
+
+>  
+>  #define GPU_TIMESTAMP_OFFSET				0x88
+>  #define GPU_CYCLE_COUNT					0x90
+> @@ -205,4 +206,82 @@
+>  #define CSF_DOORBELL(i)					(0x80000 + ((i) * 0x10000))
+>  #define CSF_GLB_DOORBELL_ID				0
+>  
+> +/* PWR Control registers */
+> +
+> +#define PWR_CONTROL_BASE				0x800
+> +#define PWR_CTRL_REG(x)					(PWR_CONTROL_BASE + (x))
+> +
+> +#define PWR_INT_RAWSTAT					PWR_CTRL_REG(0x0)
+> +#define PWR_INT_CLEAR					PWR_CTRL_REG(0x4)
+> +#define PWR_INT_MASK					PWR_CTRL_REG(0x8)
+> +#define PWR_INT_STAT					PWR_CTRL_REG(0xc)
+> +#define   PWR_IRQ_POWER_CHANGED_SINGLE			BIT(0)
+> +#define   PWR_IRQ_POWER_CHANGED_ALL			BIT(1)
+> +#define   PWR_IRQ_DELEGATION_CHANGED			BIT(2)
+> +#define   PWR_IRQ_RESET_COMPLETED			BIT(3)
+> +#define   PWR_IRQ_RETRACT_COMPLETED			BIT(4)
+> +#define   PWR_IRQ_INSPECT_COMPLETED			BIT(5)
+> +#define   PWR_IRQ_COMMAND_NOT_ALLOWED			BIT(30)
+> +#define   PWR_IRQ_COMMAND_INVALID			BIT(31)
+> +
+> +#define PWR_STATUS					PWR_CTRL_REG(0x20)
+> +#define   PWR_STATUS_ALLOW_L2				BIT(0)
+> +#define   PWR_STATUS_ALLOW_TILER			BIT(1)
+> +#define   PWR_STATUS_ALLOW_SHADER			BIT(8)
+> +#define   PWR_STATUS_ALLOW_BASE				BIT(14)
+> +#define   PWR_STATUS_ALLOW_STACK			BIT(15)
+> +#define   PWR_STATUS_DOMAIN_ALLOWED(x)			(1 << (x))
+> +#define   PWR_STATUS_DELEGATED_L2			BIT(16)
+> +#define   PWR_STATUS_DELEGATED_TILER			BIT(17)
+> +#define   PWR_STATUS_DELEGATED_SHADER			BIT(24)
+> +#define   PWR_STATUS_DELEGATED_BASE			BIT(30)
+> +#define   PWR_STATUS_DELEGATED_STACK			BIT(31)
+> +#define   PWR_STATUS_DELEGATED_SHIFT			16
+> +#define   PWR_STATUS_DOMAIN_DELEGATED(x)		(1 << ((x) + PWR_STATUS_DELEGATED_SHIFT))
+> +#define   PWR_STATUS_ALLOW_SOFT_RESET			BIT(33)
+> +#define   PWR_STATUS_ALLOW_FAST_RESET			BIT(34)
+> +#define   PWR_STATUS_POWER_PENDING			BIT(41)
+> +#define   PWR_STATUS_RESET_PENDING			BIT(42)
+> +#define   PWR_STATUS_RETRACT_PENDING			BIT(43)
+> +#define   PWR_STATUS_INSPECT_PENDING			BIT(44)
+> +
+> +#define PWR_COMMAND					PWR_CTRL_REG(0x28)
+> +#define   PWR_COMMAND_POWER_UP				0x10
+> +#define   PWR_COMMAND_POWER_DOWN			0x11
+> +#define   PWR_COMMAND_DELEGATE				0x20
+> +#define   PWR_COMMAND_RETRACT				0x21
+> +#define   PWR_COMMAND_RESET_SOFT			0x31
+> +#define   PWR_COMMAND_RESET_FAST			0x32
+> +#define   PWR_COMMAND_INSPECT				0xF0
+> +#define   PWR_COMMAND_DOMAIN_L2				0
+> +#define   PWR_COMMAND_DOMAIN_TILER			1
+> +#define   PWR_COMMAND_DOMAIN_SHADER			8
+> +#define   PWR_COMMAND_DOMAIN_BASE			14
+> +#define   PWR_COMMAND_DOMAIN_STACK			15
+> +#define   PWR_COMMAND_SUBDOMAIN_RTU			BIT(0)
+> +#define   PWR_COMMAND_DEF(cmd, domain, subdomain)	\
+> +	(((subdomain) << 16) | ((domain) << 8) | (cmd))
+> +
+> +#define PWR_CMDARG					PWR_CTRL_REG(0x30)
+> +
+> +#define PWR_L2_PRESENT					PWR_CTRL_REG(0x100)
+> +#define PWR_L2_READY					PWR_CTRL_REG(0x108)
+> +#define PWR_L2_PWRTRANS					PWR_CTRL_REG(0x110)
+> +#define PWR_L2_PWRACTIVE				PWR_CTRL_REG(0x118)
+> +#define PWR_TILER_PRESENT				PWR_CTRL_REG(0x140)
+> +#define PWR_TILER_READY					PWR_CTRL_REG(0x148)
+> +#define PWR_TILER_PWRTRANS				PWR_CTRL_REG(0x150)
+> +#define PWR_TILER_PWRACTIVE				PWR_CTRL_REG(0x158)
+> +#define PWR_SHADER_PRESENT				PWR_CTRL_REG(0x200)
+> +#define PWR_SHADER_READY				PWR_CTRL_REG(0x208)
+> +#define PWR_SHADER_PWRTRANS				PWR_CTRL_REG(0x210)
+> +#define PWR_SHADER_PWRACTIVE				PWR_CTRL_REG(0x218)
+> +#define PWR_BASE_PRESENT				PWR_CTRL_REG(0x380)
+> +#define PWR_BASE_READY					PWR_CTRL_REG(0x388)
+> +#define PWR_BASE_PWRTRANS				PWR_CTRL_REG(0x390)
+> +#define PWR_BASE_PWRACTIVE				PWR_CTRL_REG(0x398)
+> +#define PWR_STACK_PRESENT				PWR_CTRL_REG(0x3c0)
+> +#define PWR_STACK_READY					PWR_CTRL_REG(0x3c8)
+> +#define PWR_STACK_PWRTRANS				PWR_CTRL_REG(0x3d0)
+> +
+>  #endif
+
 
