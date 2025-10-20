@@ -1,253 +1,223 @@
-Return-Path: <linux-kernel+bounces-860318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C955ABEFD7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:13:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327B9BEFD95
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FAE3AB709
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:13:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDA604EF35E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E1D2E339B;
-	Mon, 20 Oct 2025 08:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA082EA16B;
+	Mon, 20 Oct 2025 08:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="p5JlOO5d"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010047.outbound.protection.outlook.com [52.101.229.47])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dk8h1DEA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F1E2AE70;
-	Mon, 20 Oct 2025 08:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947998; cv=fail; b=oHInLU5D0s9sE26L0vG0Xup6dd3GTs7b1DSf0gWeBhGPXPOYw/dbraDQ4N8iWpxNlJP76LXTHO4M2kaAWrVADgFEgdCdyX5Yp0eG/ToU43RL98SKGIg+DHDMXkQ6JW3MPNfZSAN+2XmbGD+LyHdGkVFOJ8fAirfAB1rN5l1k0EE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947998; c=relaxed/simple;
-	bh=xamI5uUms4hsYDUclEfoE5Kml2Iv2FBznxhGt5ISNxM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Iwl3ToNxiRAByC+kX1SdqEl+2EBHP9sweE/NldLC3mjrV8DpiJvYb9GAXjn3TAIB77TZJUuWLLNde8sAIPAZVTPoB9XvveV3MCrgTF7z1Hq69JDgGySJm/rursf1ZnqN9XONx8rzIihoKGTmbOnHNMydzmaqUBywz3leDydGOEc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=p5JlOO5d; arc=fail smtp.client-ip=52.101.229.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mLO1rvqzd//LD7rYUWlQpGGdbWkxfpGBzYVFOiilcJdZOpSiMn+kF9X+yNWI0JasrJl4fx/u52smSAl1qBx0jOVA3iddb1aHMInUighELPm7DUzjy3IIWvbzQOr8V0OlrF7qpgYg0nmgAwZTw0KjKAWVprtkpz5+9iISzVfICcziJ91Ax5qOznXhStFH0FMOID7ckJ0dourdW89JSbMA0HVOmMWPB3HXtNaOIwwQ8aQDk9CgdQWvF8cdrtiiLXuaZURHGwupTrqVTuJC2G6/S1cWZdKJV3GJRzMh440iVU62qUF8vl0lyfduDmCaNFPpdUOR9F87oqxzyWCaIuK61Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i0/qFwzROcUf8lpSQdscNQArf+KVp25wbb4r3a/Ky1w=;
- b=MuC+OFLEhm/ampR+Rsz1VU4vu2vGlV5S544HhGQnQc3wHG695Bm/EkRTe9k7EmUNOLm/FvxP0TarHA+KI05tuy3gG1rXXcf0pgz1H7eVkuvZ6Lmjewbk4WE2B07Yh9ubKnH9aykkSNtLqTbnQb6VhBjnPFsYiZiknuYBcf5T+ZOrVCyy6CbD2SR6SW6/bRkFmq3ERtrh4+EAa99Fk0Pm1uGUNDJOZDI9oA3rNWO9YJhTerphbzF8E7k2nuUt7Sli+M8nuE+KwHIgknff9/gKKXRo9sBSXhjKzQDvr096wwzBQcDh5oepJLXTsEWUELhE8I/YH9ahK2BXAXJ3qNC8lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i0/qFwzROcUf8lpSQdscNQArf+KVp25wbb4r3a/Ky1w=;
- b=p5JlOO5dVaQRGuXf66CFU2hrCmhmlkxQXfArfLGKyzFm/gmalAubMHwy+Tx3B15DpkcNhaszKCFWqh14S4btLaIA5T1o/QCTLw0OOWttYnMwqaZP6YgzMvmlFur3+UphORA0KDqWpQY97Jb4F7ZmeRJYzWNylN7M37IEsbrGIW0=
-Received: from TY7PR01MB14910.jpnprd01.prod.outlook.com
- (2603:1096:405:253::12) by TY7PR01MB14308.jpnprd01.prod.outlook.com
- (2603:1096:405:245::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
- 2025 08:13:05 +0000
-Received: from TY7PR01MB14910.jpnprd01.prod.outlook.com
- ([fe80::c78:8e4f:a976:9941]) by TY7PR01MB14910.jpnprd01.prod.outlook.com
- ([fe80::c78:8e4f:a976:9941%2]) with mapi id 15.20.9253.008; Mon, 20 Oct 2025
- 08:13:05 +0000
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, "alexandre.belloni@bootlin.com"
-	<alexandre.belloni@bootlin.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>,
-	magnus.damm <magnus.damm@gmail.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-CC: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
-Thread-Topic: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
-Thread-Index: AQHcQNnpD+MZABpK50GyV5pRHAKx9bTJQMBwgAFjJ6A=
-Date: Mon, 20 Oct 2025 08:13:05 +0000
-Message-ID:
- <TY7PR01MB14910BB6AD621CC7BA42D56D4D3F5A@TY7PR01MB14910.jpnprd01.prod.outlook.com>
-References: <20251019092106.5737-1-ovidiu.panait.rb@renesas.com>
- <20251019092106.5737-6-ovidiu.panait.rb@renesas.com>
- <TY3PR01MB11346CBE1C135CBEF82E3E7BE86F4A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To:
- <TY3PR01MB11346CBE1C135CBEF82E3E7BE86F4A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14910:EE_|TY7PR01MB14308:EE_
-x-ms-office365-filtering-correlation-id: fb416044-d561-47f1-5474-08de0fb07ee7
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|7053199007|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?ok+tyGhseJGw+kOek2ODyQ8KHo28Ihu5SpBKexwTJJVKqOyLgUEFK03iPGUB?=
- =?us-ascii?Q?sqesuId1FyhnZr+kNY/4SfYhDt28h6H4jS/OF46woX49UgzR+oexp8DDd1ZU?=
- =?us-ascii?Q?zU2f/2mcNvdbpVVN+9GSrpDzGi9P5he8jOFK9Ir2Plvg7KXQw6SJdq/Hd/Vi?=
- =?us-ascii?Q?vxwB4Hm176hqDqKFnd+Y3ajO812iGS+P4dZW4zpJRXU0/EdL2B9nDrAec9Pq?=
- =?us-ascii?Q?h2T3rgjuu47zYnS64aTOXO41Bu25EiOMN3TFfv5jVoYGSzwR0ZvO4uZUGaWn?=
- =?us-ascii?Q?PQ9JcnUSlcPvpDbkdq5zemFK/EYZ/mtHLmxW66ibafI5V/UlodpyWu7rnivw?=
- =?us-ascii?Q?/cbjy7qW9iSAlKHNsom9qmri8s9BTtkJBdDlnX+vVfyZMglK5pHj0a5VlhNa?=
- =?us-ascii?Q?ZyHEILvWn4sy5xJIq6wJnj7Ru24sJR+fRLB7MvIPsg36nnJZDltCV3lV7oBR?=
- =?us-ascii?Q?hlhhym/oQ9ePZPQZo83pDym3cnY5y8rAXBY3v39TfHn3GlbDZiG6UWuQc3SL?=
- =?us-ascii?Q?KMHLdRQYdg+du3665G0ghNxvV36MgSFJ3isF3b5dGDDghV3qQE2Jhm+LlvAw?=
- =?us-ascii?Q?EEVriEwh/EoHXXjO21nv8N2RGKn6oUCrOHPQjL7/OTGhNe1H4WBtkMZqH0fG?=
- =?us-ascii?Q?0v5IHd/Xrgt5Khv1cYrfudsxZGKox1b25CaC5eouQQ7gpfP6ObIO+2OtcqUg?=
- =?us-ascii?Q?h67XQS/1mOFY7xgqitO5KF2l5KQADZhjbVXIaHTEgO2JBNU4M2QLasnxvaPK?=
- =?us-ascii?Q?yc9LFOHZ/ktWe2xO4f4DLKbzuFeTMYMa8qoEio199iPL79ZBKp/gWucwq/Jd?=
- =?us-ascii?Q?h3gNbGCDmw3p5tPQGFuMYN3P+J2/pUS+bVNlyV5eTAAqjICHxqNYTlyGmT+A?=
- =?us-ascii?Q?P09NUextlp5a0/cFSfy47UHCI/PlQ8hyLPd8bkor90wmDn3ymt+TTJwNVCfu?=
- =?us-ascii?Q?P3WBno2jUS6kLjJZtQKvbaRoOP4WTmpjk0UcBwn0k4MffLWsRb9AVzLm5Wto?=
- =?us-ascii?Q?AVJFQsl68uKSNWUTdk+9oEC0/+8ax4+OlUfuSbaXqV1re5/9ygODNH+sQrF7?=
- =?us-ascii?Q?wcZrDQ0I2xqrd5uj6yMgIGOMyOMzbV+uIjXlC3ceV3/ltunWZBoIqEluZ6QE?=
- =?us-ascii?Q?5QDFKFbtWW8xl3RO+i1HMWdHMG/fn4CaXt4iIDqhv/SFqjVHr5MsvID7Wfwj?=
- =?us-ascii?Q?5pcR5IJ/vw2o2D6HflmUr1EvfIOz9pESY6KjtGqJvJo2k/0rYaAoo/Ou2Vp/?=
- =?us-ascii?Q?JhASVrq3ElMpzHWAFcY2W0IRMD471zYwZnfqFnn+dQMZKtVxCeWTNUeZ2HDt?=
- =?us-ascii?Q?Y+Si3CXvjpZOiqJuNXazC5BsqWfCA4Pw9fz3YihbNoeVEzawthS1yGxa8AfX?=
- =?us-ascii?Q?r2OBvImty0dsBN1tzt5sUUGjQDHV5gusAQkE+nFE8zF4YSyEQ6rX2o+DAy+E?=
- =?us-ascii?Q?JLa1EMiRYMoppQy1D45U7jvvvccKr+MtVIBptWnapM69//KB9CwGric4zmgr?=
- =?us-ascii?Q?5lJJjRKGgTnJpWW1Y1eKx93GCwi6y8PUjYHAXoHp4IJLjkuhUt8xF4psrA?=
- =?us-ascii?Q?=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14910.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(7053199007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?5k/SoK3jcpR0LO290OY0J924reiv32LJjWXIEV6klcSD34jdiE4zeWSTRueN?=
- =?us-ascii?Q?jm9oasKUge8wuE8KZ4QAd5Sk4X19UiJUHCqyaTWHFsEZD6UT/XOMMlWkuAVY?=
- =?us-ascii?Q?uL4rcqKEFskauxyHBNbpcPMBt3icshjs0AaT2qWojHWvnc0ZGae+SMhMFFoF?=
- =?us-ascii?Q?o09zijMnCMn38gEqcymtx+MhNwaX+i0DmfNtkEDwjGSDm9jHYx0fPSfbLIDQ?=
- =?us-ascii?Q?Rt2tkDObmBIFWvLXqlis4NOFFpqZR62iFNvwTCKsSjll3SspgDCGJEXKyX6k?=
- =?us-ascii?Q?gT3PkcotM8a9rFH/XN5Ucf5ewEMoCWYIn3cqKOI0qfPJUjoThRFrd04FPtf3?=
- =?us-ascii?Q?jR8MN8BCq17A6fYARn65k6cNl2Q/GclymplPMtAhtpA8t4vh/b9won+DiCm6?=
- =?us-ascii?Q?AMHeAG1Sq/77dJ0TBBeF7lHpvLEt/Vt12H5i0bV1spzVxLtLcpbuxHSXncFM?=
- =?us-ascii?Q?0ncdPWCu05jLkDELLta/KifRWCHdQc0Z4HplBARO2L0GLsAh2gDZqzjE4CbK?=
- =?us-ascii?Q?djX7ikNK5Rf5x5TIss4hEKefGIJUbkoDvAy+0Tu8tZrVbmDT1SrXPVaEUre0?=
- =?us-ascii?Q?lqr60VlgOK6jxkyrrsWO22cuapP1pjEvpekoMUm8Cz4XcDoO1oy/tfA9nPHO?=
- =?us-ascii?Q?wq7cQaeyFpvVs1CjGAL6hGdHiz4NgJMPiktkrM1p1xhuBp7um5tK4Xc3N85T?=
- =?us-ascii?Q?d32QrtmqyNpQxVOWqG8u5EDFM71yyyKYwoX60gYHlxe3GoOs86pC1HXO4Jy3?=
- =?us-ascii?Q?y5qVE3lLE0FbHo8dGT9yFnCly0wXaVrsDIyBrfYLoDDl3ypGGP5ned0fXSqI?=
- =?us-ascii?Q?Hfeb0pals2QspXbhVP/RCNt4MR9IgJwWSix+52MH19AXHde6MY25LU2Nb5En?=
- =?us-ascii?Q?VQ3F4NLNFbELovkQ+Krf93OYLDr8FC0bcCZIFH2CH0MulZRp4lpXB9vs3dpr?=
- =?us-ascii?Q?7zrBQj9is5kIPn/cM4Eim3ew6qEGryNEDomgBI6dxL1XAwAAW2N2uI8oY9TK?=
- =?us-ascii?Q?o5s02ggw8nypTRaeAb1bR0cbgxL/nnler/ZbRq7RwP+1qcoRCozjAVPsrEJP?=
- =?us-ascii?Q?m5+WphbIgqbffrqBeN9OYaoZDuaiyiq34+wvMXMUUTc54FqEP98QQ43JJq3I?=
- =?us-ascii?Q?BrCM5PGF/91nXEl9F1WWZ50QAeHrYMnkkcFAaS71VsUo3kKaVDPYDKih/b22?=
- =?us-ascii?Q?zN2fTuUtrjohAM5AbAiJoGyNTpR/wqrZjauJOV45cuqgokGgzLnPf4y4pgPc?=
- =?us-ascii?Q?FQgQg34XZ8pLNUh0WB6wAd3YynNWG+J1U6AXeKlZqTbQl3nwDGfOFKNoYcqa?=
- =?us-ascii?Q?b1aiJl+I4DrDctqKLT+bi9vpLcwuT6tcNIGU+eXHgZHBEzVwXThfOXsh5FM0?=
- =?us-ascii?Q?3z0UOVCLiqHvWVTJoA5fo4u7sBdfgSmhnhQiGqSpZ3921hopUbdOd/X02PH4?=
- =?us-ascii?Q?zv3udKDDxko9UOk2oWLMXPhZupJ49dnwQOf7PKkyO6dPGafXdoouX3EmSEPn?=
- =?us-ascii?Q?yWvwjx8tGtD1zhzUNCQssXencqqh/MvpISZ0ot9dS86zKUY1uwtq3XdXS9hw?=
- =?us-ascii?Q?DNRiyHFBuDBU87llvUoiGdHnPj6OEmGNXXoPWtnxhlyc+KqOwKhPzXiDvXDI?=
- =?us-ascii?Q?Zg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A9A2D6629
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760948009; cv=none; b=m1dzBQT6xE940MWwOPh5FGaRLPK1JvRJNmRuY3rBRnem1yfBwJr6U31JoDuINpgbeIMxt6KQbbopM9z5ZTqd3GwdTcXP0yTzVYqNGHLDFLz26lTsRGzCIr50VXDOGlbMce834eITwzcDZIZuYWfVskW5M0XKWDl+/vAbovL7tgI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760948009; c=relaxed/simple;
+	bh=eWUdVUQn4e5pJS+pC4d8RvrZAEG0k5mgZUxDdEUFFTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mKo2tCbxoAbnLAM+L6Gw7+R+XyArWRoZKD/noZmrADSdYceZQTRkKruqJOZvpw1moxPUMIJLDaRFV9cnui1pV1KvOiepl9PE07zUZah3VAQmxKK42jq/H9i381arENoGU7zBoEL7mzVJBGJg99OM9nHrU5PvXIVuE9aN2d2eNoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dk8h1DEA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JNuuMn004849
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:13:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eWUdVUQn4e5pJS+pC4d8RvrZAEG0k5mgZUxDdEUFFTE=; b=Dk8h1DEAHhqV3f9c
+	U2MZ4yA4xxBTsMT9lNsIYVR8z+z4Xtzs+3yWAUzzvvgcbE2PunRNa+jDx0l+EbkA
+	gGPC3SJska3WSGb2rorWJYPxpeU0ZV3aeE+E+etGX9Ru0V4PkpDSaHYREbYFwfLa
+	2IL9RZ/YwQsvZnpehN/IjrkVxxepJQdS2AeiCRCILlq65UK5QzIaa6TPy5uTeQ7Q
+	E7a2GHpy3Xy57I9OT2Wb8LffcZMgvbktwo11SvUERh6H/xhT146Ew6o5CfVYg9VG
+	Q6whiaQp8cx+1oZh2CI6y2KGqbYGwzpLQ3ntXKt1b7Tw1kaQ6FhJvueT+TUz16JW
+	HT6LHQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27hv5cr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:13:26 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-88ea6169a96so357034585a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:13:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760948006; x=1761552806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eWUdVUQn4e5pJS+pC4d8RvrZAEG0k5mgZUxDdEUFFTE=;
+        b=HI7HqPq6m3Sr4TQdgPa3QnQBfnZarA3ijV9aCdsnaoTbL3BGfmSB9GkbapAEp/yWqj
+         ru5kFx3OkU3ckh8v9yOH6EJCer1EqYXdUWaMLRrthjueCt8R9WP8Tfr/ayk0arxUyyog
+         TyqHbFZIwYb18qRcpxODFwNFfTAUm9/JxN6D5VloMUGgfJfBqMTkjKV0TaOJ4/9GCJVJ
+         9IDipTJCziLoWFt1eFmI0X4tyDuhqis5HJfOE6p51YvtP95Egb3I6s9jLl5Zgo7HLRNl
+         AxvGt6UiMpchHrMhP7P2mSaGjT8O00ocwNBxJb57XItmxTNw9ZHnS61/XFvQXwCKDopR
+         P56Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQntBA+vBSrLCjEA5TzQoaNfOUvNLTjvY0euzzUIHO0hGakvH5VpPrkTu+cbmg/SEahQOuCC8dzHxOog0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy69yLKfmiWrPEJm54CZczMJ6hy1XNCjraOQXbaoW+l31ODZcf/
+	sCt0ltXgzQn2tCZCxubrsS+5HVEfXLJlZc1XiLopjzsCLew+KZClrWGWnG+5A84qAAHOHrmXtBR
+	Rcd/wboPYY6kRoMjnVoQ1G/YSNgC1UQQ3WrQhNn1XUtqT7XRlIvXJ4yGTJ526EkdzYnTdvD0lvr
+	CNrGj/rva07uvVPhn6CLHzIldJs/YqYc7FMOUyJZFRLQ==
+X-Gm-Gg: ASbGncsL1+qQxbK/fLvAj9pzKzex4O9GHD/U2fltx4d0+lQecIa0obM2m92iZndxNZ8
+	wikZzpNHhOJUSGYDbMG6HctXNZuujtFTJrC15RqjmYrTQJFonQOPI9hMAdIZAetV1q2dtsL8niJ
+	99N6B0p79cemQTemYMJFxqwXA88nwPF8MnBymYuqg7ASRTXAYI1Q1vHMfVjLrbT12mT2zvU0VEh
+	nRcxgGOPGBwX7RfKL8vaLVIGteRnYm26HjgFmYdd8Bf
+X-Received: by 2002:a05:620a:190e:b0:883:5640:b0da with SMTP id af79cd13be357-8906e2cf39dmr1436903485a.3.1760948005978;
+        Mon, 20 Oct 2025 01:13:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEb6zG3EmsKjpqb2r+Qft6H1geCepq6JDWxSiyy4RN7KSOTJqDZAnRX1cclURNEe+Zx+0M8EH233ksa03DnVzI=
+X-Received: by 2002:a05:620a:190e:b0:883:5640:b0da with SMTP id
+ af79cd13be357-8906e2cf39dmr1436901085a.3.1760948005468; Mon, 20 Oct 2025
+ 01:13:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14910.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb416044-d561-47f1-5474-08de0fb07ee7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2025 08:13:05.0318
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5CVLwhcX4XFpwXPxTgR+GbjXJwTvmem2351QnuxHbtvmHALJQecB1nkKOKhXIWRv4NjahzmfuRC02ffK4CLY8jv1/KI1/eLTRFEHX+MLo3A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14308
+References: <20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com>
+ <9984bc23-05ef-4d46-aeb8-feb0a18e5762@kernel.org> <bc0caeb8-c99b-4bef-a69e-5ce433e6b890@oss.qualcomm.com>
+ <c4fd6bfc-cc9a-4f37-99b3-f36466691a1e@linaro.org> <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
+ <33513b43-f6d1-4c76-887b-39611a75e1f4@kernel.org> <WnfCknsSyJK68PQZkE2q7COZHRpsLOFlr3dcbwiVR6SBWtF9iRQ4MGzp_9q31O0kyhZwoncQWfHjJQvpz7nyfw==@protonmail.internalid>
+ <ab43c5c9-edc5-459e-8ef7-2aa8bec559c0@oss.qualcomm.com> <0e6e1b8a-d9ae-42d1-b1ad-4314e0d76ab7@kernel.org>
+ <2c0011d3-a692-457c-9ac0-a445fc82df37@oss.qualcomm.com>
+In-Reply-To: <2c0011d3-a692-457c-9ac0-a445fc82df37@oss.qualcomm.com>
+From: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Date: Mon, 20 Oct 2025 10:13:14 +0200
+X-Gm-Features: AS18NWAwySZMB2zZMh-0PxLreQh1uFGY20Blv1uikWAJkb59A8nYis59v_-2Kqo
+Message-ID: <CAFEp6-0c9C8N86HQh2Y1xfOEM5Lc8XV4BE3xX6WROF5F+_-Bvg@mail.gmail.com>
+Subject: Re: [PATCH] media: qcom: camss: Enable setting the rate to
+ camnoc_rt_axi clock
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: "Bryan O'Donoghue" <bod@kernel.org>,
+        Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX8CwTZXI+5YDG
+ YoKSRDvt2lKl8ebPoesykfsvSQhoWC1tO3URbzeq2FbfClw4zxqNdvmjpvp8cyiLlOiFOT0Vyey
+ 8whQ0i3gG+aOCmLA7NDgrTWTDwRiPZ1HN8DEafcH57Ko9V5PmSymhbbvqcCsEApyrX9xRd0GgZ4
+ GNR5r7ICyDniKQKVjqVfQ5N4mnxkRr8FMMOSToiEIcDwViS7mzUX15oFfiDt/l9//2Rk6j/bnb+
+ C+LO92yvNusDJcnK3UA4z3WkJkOcEpGom00VLF0J4YNiJWd/hGwygBeVb4pQQx+Ey7LEInOsYPc
+ nZk7PLlu/cMxTsQBhMOKwKJLAEUckcWwbHvz1cUYkuyGiDFMTR46GlXzpHbuHqZ4Ho32s81NWfH
+ VTfliL6pq6e2OPozsTXp11wKFZWPzA==
+X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f5ef26 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Y5ZU1JmK0_tTG0nlGdEA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: 1UaTdC7EUjBkHhRXqYIC1gxrQ4hksOj9
+X-Proofpoint-ORIG-GUID: 1UaTdC7EUjBkHhRXqYIC1gxrQ4hksOj9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180018
 
-Hi Biju,
-
-> -----Original Message-----
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: Sunday, October 19, 2025 1:16 PM
-> To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>; Claudiu Beznea
-> <claudiu.beznea.uj@bp.renesas.com>; alexandre.belloni@bootlin.com;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> geert+renesas@glider.be; magnus.damm <magnus.damm@gmail.com>;
-> mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de
-> Cc: linux-rtc@vger.kernel.org; linux-renesas-soc@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> clk@vger.kernel.org
-> Subject: RE: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
->=20
->=20
->=20
-> > -----Original Message-----
-> > From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> > Sent: 19 October 2025 10:21
-> > Subject: [PATCH 5/6] arm64: dts: renesas: r9a09g057: Add RTC node
+On Mon, Oct 20, 2025 at 5:23=E2=80=AFAM Hangxiang Ma
+<hangxiang.ma@oss.qualcomm.com> wrote:
+>
+> On 10/17/2025 7:41 PM, Bryan O'Donoghue wrote:
+> > On 16/10/2025 21:53, Vijay Kumar Tumati wrote:
+> >>
+> >> On 10/16/2025 8:31 AM, Bryan O'Donoghue wrote:
+> >>> On 16/10/2025 13:22, Loic Poulain wrote:
+> >>>>> I'm - perhaps naively - assuming this clock really is required ... =
+and
+> >>>>> that both will be needed concurrently.
+> >>>> AFAIU, the NRT clock is not in use for the capture part, and only
+> >>>> required for the offline processing engine (IPE, OPE), which will
+> >>>> likely be described as a separated node.
+> >>>
+> >>> Maybe yeah though we already have bindings.
+> >>>
+> >>> @Hangxiang I thought we had discussed this clock was required for you=
+r
+> >>> setup.
+> >>>
+> >>> Can you confirm with a test and then
+> >>>
+> >>> 1. Repost with my RB - I assume you included this on purpose
+> >>> 2. Respond that you can live without it.
+> >>>
+> >>> ---
+> >>> bod
+> >>>
+> >> @Bryan and others, sorry, I am just trying to understand the exact ask
+> >> here. Just to add a bit more detail here, On certain architectures,
+> >> there is one CAMNOC module that connects all of the camera modules (RT
+> >> and NRT) to MMNOC. In these, there is one 'camnoc_axi' clock that need=
+s
+> >> to be enabled for it's operation. However, on the newer architectures,
+> >> this single CAMNOC is split into two, one for RT modules (TFEs and IFE
+> >> Lites) and the other for NRT (IPE and OFE). So, on a given architectur=
+e,
+> >> we either require 'camnoc_axi' or 'camnoc_rt_axi' for RT operation, no=
+t
+> >> both. And yes, one of them is a must. As you know, adding the support
+> >> for the newer clock in "vfe_match_clock_names" will only enable the
+> >> newer chip sets to define this in it's resource information and set th=
+e
+> >> rate to it based on the pixel clock. In kaanapali vfe resources, we do
+> >> not give the 'camnoc_axi_clk'. Hopefully we are all on the same page
+> >> now, is it the suggestion to use 'camnoc_axi_clk' name for
+> >> CAM_CC_CAMNOC_RT_AXI_CLK ? We thought it would be clearer to use the
+> >> name the matches the exact clock. Please advise and thank you.
 > >
-> > Add RTC node to Renesas RZ/V2H ("R9A09G057") SoC DTSI.
+> > The ask is to make sure this clock is needed @ the same time as the
+> > other camnoc clock.
 > >
-> > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> > If so then update the commit log on v2 to address the concerns given
+> > that it may not be necessary.
+> >
+> > If not then just pining back to this patch "we checked and its not
+> > needed" will do.
+> >
 > > ---
-> >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > index 40b15f1db930..e426b9978e22 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > @@ -591,6 +591,20 @@ wdt3: watchdog@13000400 {
-> >  			status =3D "disabled";
-> >  		};
-> >
-> > +		rtc: rtc@11c00800 {
-> > +			compatible =3D "renesas,r9a09g057-rtca3", "renesas,rz-
-> rtca3";
-> > +			reg =3D <0 0x11c00800 0 0x400>;
-> > +			interrupts =3D <GIC_SPI 524 IRQ_TYPE_EDGE_RISING>,
-> > +				     <GIC_SPI 525 IRQ_TYPE_EDGE_RISING>,
-> > +				     <GIC_SPI 526 IRQ_TYPE_EDGE_RISING>;
-> > +			interrupt-names =3D "alarm", "period", "carry";
-> > +			clocks =3D <&cpg CPG_MOD 0x53>, <&rtxin_clk>;
-> > +			clock-names =3D "bus", "counter";
-> > +			power-domains =3D <&cpg>;
-> > +			resets =3D <&cpg 0x79>, <&cpg 0x7a>;
->=20
-> Missing reset-names??
->=20
+> > bod
+>
+> @Bryan, I test two scenarios individually that also consider @Vladimir's
+> concern. I confirm this clock rate setting is necessary.
+> 1. Remove 'camnoc_rt_axi' from the vfe clock matching function.
+> 2. Remove 'camnoc_nrt_axi' from the vfe clock resources in camss.c.
+> Both of them block the image buffer write operation. More clearly, we
+> will stuck at the stage when all buffers acquired but CAMSS takes no acti=
+on.
+>
+> I agree with @Vijay to keep 'camnoc_rt_axi' to distinguish between the
+> new one and 'camnoc_axi'. The disagreement concerns how to standardize
+> the camnoc clock name or how to differentiate between RT and NRT clock
+> names if a new RT clock name is introduced. Other chips like sm8550,
+> sm8775p depend on 'camnoc_axi'. Meanwhile, 'camnoc_rt_axi' and
+> 'camnoc_nrt_axi' are both necessary for QCM2290 and X1E80100. But chips
+> like QCM2290 and X1E80100 may not need to set the clock rate but
+> Kaanapali needs. @Vladimir
 
-The resets are retrieved using devm_reset_control_array_get_shared(),
-which does not rely on named reset entries. This keeps the
-implementation minimal and keeps it in sync with RZ/G3S, which also
-does not take the RTC reset by its name.
+Actually NRT clock does not seem necessary for QCM2290 as capture only
+involves RealTime elements.
+I tried without that clock and the capture is working, so I think of
+making it optional in the QCM2290 bindings.
+Also, I thought these clocks could be indirectly scaled via their
+respective interconnects?
 
-For this reason, I kept the rtca3 bindings without a reset-names property.
-
-Best regards,
-Ovidiu
-
-> Cheers,
-> Biju
->=20
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> >  		scif: serial@11c01400 {
-> >  			compatible =3D "renesas,scif-r9a09g057";
-> >  			reg =3D <0 0x11c01400 0 0x400>;
-> > --
-> > 2.51.0
-> >
-
+Regards,
+Loic
 
