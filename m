@@ -1,193 +1,298 @@
-Return-Path: <linux-kernel+bounces-860948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6D9BF1663
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:01:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7280BBF169F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C599234CE3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50325188A936
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C38239E60;
-	Mon, 20 Oct 2025 13:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MYoodAvC"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0530B3191AE;
+	Mon, 20 Oct 2025 13:00:44 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E79339A8;
-	Mon, 20 Oct 2025 13:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2916E3126A6
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760965221; cv=none; b=q3Cd9+wH1Scc1mHcfTFyELKbJ8LLkTSg0tiOQSUzwClXRsUV/+CEEvtav8NimPF9oTHD0DkHijcgqiknV+C9xoGuaTGVoTvYDlUAgrV2Tsxrh7FLhuOOtE+eOlWPto+Ten84FkPRCtf4k2nrKTKRgQr8eIvMH/n7LUCcBSivP4Y=
+	t=1760965243; cv=none; b=FF4eOM3mHCkowGm6/cotmIT0dbkT2Yr6Bhov9q4qx8tWF38QN1a32F7CdO30XfInKT8bP3rOq/ggZKghuqdNphChTukgHiTl/yWlwJOjJMEx10XJ+3pfoYVLYeU7UIblNM87rLi4td5loCAoy4iQlrUUxczihLHdIZPn09NC34o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760965221; c=relaxed/simple;
-	bh=L5AONxnW45RKiVE2kaWUGbR1Yv5Cm8NyMUmn3AReMMA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=N6vkKs2OuynbvcbdUIPcd9INKo0r18wwPCFyMKSE/WWJXsyd7TDW+Y/UdWt0f8Ay4hvAuzKB7TWCjfiMyNjCrNwWQtAIjogmOVS7KJ0fZyhbNwAOtbD4B92yChj1tuAOEcFAva5tz/RoIAag8CVzwb74QKzkdReGfPEq5cYCyMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MYoodAvC; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760965215; x=1761570015; i=markus.elfring@web.de;
-	bh=k2BV2Zs6KyNvvkXjdx3X0JvRTK39aZwsnopynBsWICQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MYoodAvC3qOjoqXTFkNR9eHH05CLFe4NP8DIPYUyIffEj3LN3t5TMAB2LknQDhbM
-	 X9kfmYh36jzMq5lB3Zc+Y+XwLfJzi1hn4R55VR23H0xp2ceUxtRx17hG11dTBCCOj
-	 +K8BbfTQhYPDhokn98myeAS13u2IOu+Me42TXcVRlK/JBh59fVnGbT6iTYLGTOQHb
-	 XLb87FF0t7eWZyemHAMIO/hVoJnz2WDEPNWH5WT8C4A5T+NhJRwbWfmbNhFA76wHQ
-	 n1MCHXeloX2rFyaopq4DEGVehxQ4HEHvCUFvKT23LYq6g3dDjHUMI9DvPs15fg81G
-	 vbRnHc5Q0IOsplQbMA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLRYf-1ut1Ui1FCd-00SPQl; Mon, 20
- Oct 2025 15:00:15 +0200
-Message-ID: <28b3e6b0-0090-4256-8dd6-5a01fc4bd576@web.de>
-Date: Mon, 20 Oct 2025 15:00:13 +0200
+	s=arc-20240116; t=1760965243; c=relaxed/simple;
+	bh=+BhpvIfdxxZ/aCetXMa1dsKCSF78eaw36kKX1XCRo0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EwYejPM39nOPspEFGkgseeKfAhOpSNW4GUATEk7KnueFX0boasxH2OI0MBR5Rn9WD65Fmw8uO089mBCRVVMlPSCZOvcxzJ0QvoBLug11UHEAXCIctXwThSrzSTKAC/HcyD5OVgea/7X1WzljJeEsP/JD5AQwtCnMbYbW0T8auO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-54aa5f70513so1124289e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:00:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760965240; x=1761570040;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WTAfAvg+E5E0/JeW2qvrB22XDr/x/zemAkA2zC9bvaY=;
+        b=uM8YthXQpsBLOx0DaUtTSu8OCBbYIYfOMLYZChsZVaJeKd1Sh7j3g5jAIJhmT22woL
+         ZdrM9xMi/AfXEv9IU1y9qAV6DPDcPvT7fn26jmyRu2hekAB24lAqUFv+icdAhwhFCUeM
+         IKPbGPscSGde/lOa2bcd1AXGoJ6rsnvZJbqSHAl0Y4c+yULZzDJl3WY+N8/thStmTKB8
+         MqcoWAqDBufV5Ar+t/NI8VWJNt8C6wdxeJXR8Wf9mvnnB/qImjZbwkSM2t41N8ls/PHK
+         ZYrQ7UdTs7/YzbYG6NuFxLmyzqXU5R2GwU7kjXBuYDxjig6vPvXE3gM8h+77qT1GWHIu
+         cExA==
+X-Forwarded-Encrypted: i=1; AJvYcCVY5wKHC2J0Pu6YvBoMh5wfDCCXk6OX3Yb5+GiLCfEv11j1rdsH/A4wivejKja5zTTp0JU7zEMlK3mse08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTkwRsWaBNijZFktYnLdg7JqsM8+0g0ln0iLR+tXXOvAemmwVb
+	9iWwDb0e4VQXgaCDfNTabazZwJmcqcYKw2dvIbTMtNeiROGfLyM4rrlFtMYD17nF
+X-Gm-Gg: ASbGncu0Cn+OCLTuBjI12BJxq7xgs/gODEo4+GfyTKJGrzAvHdgR1v7uw202Kv4hwRs
+	oVrArRnYBW+5k3ArvbKpjQ6mn+nOlHNNY4Ub2qZRDEqXbOZwe36XJFHnGKkwFxD/JVHNjw2Hnpy
+	7P+HmlWsm47uLeJO0hWONx9A6gcMr+MCJoOKXbp7u1OoDl01Z5khFlH8IXmEemF5AcsPJvYfdN6
+	VggHPJyGZvnq6wSEjglhfKJ7FwFpyALqKqq29jrDp2mH0MlAPrnt4252aherCVrcag2WPTwa2tK
+	lQkt/WmS4tJpMmixphT474/vCHphk8E/POwQuhniPHCNyzeIYBLqrFx1/phhWPzx9vqgGpPEy9R
+	B4Q36+zAYSviptFT1/h5tHM3LxidX7Uv7gW+g3YIoBM3agBr73RqgXg+O9NHC+XepI7YxZHy4L3
+	hzW8f+E1YAF75Hy8aSf5Rc5KCrwkReacNw3GfrCw==
+X-Google-Smtp-Source: AGHT+IHAmuhE1N3yq8W0psoAliuIWRTNrlHdcj94Mi5CaDTaYZPrS1VArCWi74VWtxtwUAmQgQDnlw==
+X-Received: by 2002:a05:6122:2521:b0:54b:b95f:5ffa with SMTP id 71dfb90a1353d-5564edaafc5mr3324330e0c.5.1760965239500;
+        Mon, 20 Oct 2025 06:00:39 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-556620a63a5sm2255670e0c.14.2025.10.20.06.00.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 06:00:36 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5b658b006e2so2140413137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:00:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWcHkFxlDkzYAzZK0b9wzCWFyW6OnwDRzfH6jpvcLHX3ZIIk38XI1qkM5NhZeq0J1YWhwINnKy95mC64Y8=@vger.kernel.org
+X-Received: by 2002:a05:6102:f09:b0:5d5:f6ae:38d1 with SMTP id
+ ada2fe7eead31-5db093f61bfmr207405137.38.1760965235930; Mon, 20 Oct 2025
+ 06:00:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann
- <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Anand Moon <linux.amoon@gmail.com>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] misc: rp1: Omit two variable reassignments in rp1_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UridH3VEjBpeNGDZtqQz5HV8TpGFUEGVFuI45Y3fkzhxltdOW8C
- YNssXcSf/UGt7DM/1MJJ+lszzkLRy9qGpnDm0jXyeCAihEaSLOKNpVpIK5q83qZJ4ridQFo
- 4h40c+Kw4Q3m3DnUgV11kSTe+CK5azJsMmlX+Tqfku9D6J9Wjcw6sVBwfbzEJ/Zb9/iqFrn
- /MVKa3hPNmVvLKc8AtvUA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pHMFG0xsXuM=;TSobXuOpXI9KokQChdqm1qRMnsG
- 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
- TanJGEZXqZ1WVACYyNFYBxH4rw=
+References: <cover.1760696560.git.geert+renesas@glider.be> <67c1998f144b3a21399672c8e4d58d3884ae2b3c.1760696560.git.geert+renesas@glider.be>
+ <aPKQMdyMO-vrb30X@yury>
+In-Reply-To: <aPKQMdyMO-vrb30X@yury>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 20 Oct 2025 15:00:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXq7xubX4a6SZWcC1HX+_TsKeQigDVQrWvA=js5bhaUiQ@mail.gmail.com>
+X-Gm-Features: AS18NWBop_uORR3NT3_HDoVoJ_Tyxhm-9TufWw0aoroSF1IMR97eq1M8wyRugog
+Message-ID: <CAMuHMdXq7xubX4a6SZWcC1HX+_TsKeQigDVQrWvA=js5bhaUiQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] bitfield: Add non-constant field_{prep,get}() helpers
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 20 Oct 2025 14:51:43 +0200
-Subject: [PATCH] misc: rp1: Omit two variable reassignments in rp1_probe()
+Hi Yury,
 
-An error code was assigned to a variable and checked accordingly.
-This value was passed to a dev_err_probe() call in an if branch.
-This function is documented in the way that the same value is returned.
-Thus delete two redundant variable reassignments.
+On Fri, 17 Oct 2025 at 20:51, Yury Norov <yury.norov@gmail.com> wrote:
+> On Fri, Oct 17, 2025 at 12:54:10PM +0200, Geert Uytterhoeven wrote:
+> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > constants.  However, it is very common to prepare or extract bitfield
+> > elements where the bitfield mask is not a compile-time constant.
+> >
+> > To avoid this limitation, the AT91 clock driver and several other
+> > drivers already have their own non-const field_{prep,get}() macros.
+> > Make them available for general use by consolidating them in
+> > <linux/bitfield.h>, and improve them slightly:
+> >   1. Avoid evaluating macro parameters more than once,
+> >   2. Replace "ffs() - 1" by "__ffs()",
+> >   3. Support 64-bit use on 32-bit architectures.
+> >
+> > This is deliberately not merged into the existing FIELD_{GET,PREP}()
+> > macros, as people expressed the desire to keep stricter variants for
+> > increased safety, or for performance critical paths.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Acked-by: Crt Mori <cmo@melexis.com>
+> > ---
+> > v4:
+> >   - Add Acked-by,
+> >   - Rebase on top of commit 7c68005a46108ffa ("crypto: qat - relocate
+> >     power management debugfs helper APIs") in v6.17-rc1,
+> >   - Convert more recently introduced upstream copies:
+> >       - drivers/edac/ie31200_edac.c
+> >       - drivers/iio/dac/ad3530r.c
+>
+> Can you split out the part that actually introduces the new API?
 
-The source code was transformed by using the Coccinelle software.
+Unfortunately not, as that would cause build warnings/failures due
+to conflicting redefinitions.
+That is a reason why I want to apply this patch ASAP: new copies show
+up all the time.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/misc/rp1/rp1_pci.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> > --- a/include/linux/bitfield.h
+> > +++ b/include/linux/bitfield.h
+> > @@ -220,4 +220,40 @@ __MAKE_OP(64)
+> >  #undef __MAKE_OP
+> >  #undef ____MAKE_OP
+> >
+> > +/**
+> > + * field_prep() - prepare a bitfield element
+> > + * @mask: shifted mask defining the field's length and position
+> > + * @val:  value to put in the field
+> > + *
+> > + * field_prep() masks and shifts up the value.  The result should be
+> > + * combined with other fields of the bitfield using logical OR.
+> > + * Unlike FIELD_PREP(), @mask is not limited to a compile-time constant.
+> > + */
+> > +#define field_prep(mask, val)                                                \
+> > +     ({                                                              \
+> > +             __auto_type __mask = (mask);                            \
+> > +             typeof(mask) __val = (val);                             \
+> > +             unsigned int __shift = sizeof(mask) <= 4 ?              \
+> > +                                    __ffs(__mask) : __ffs64(__mask); \
+> > +             (__val << __shift) & __mask;    \
+>
+> __ffs(0) is undef. The corresponding comment in
+> include/asm-generic/bitops/__ffs.h explicitly says: "code should check
+> against 0 first".
 
-diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-index 803832006ec8..3baea1a24549 100644
-=2D-- a/drivers/misc/rp1/rp1_pci.c
-+++ b/drivers/misc/rp1/rp1_pci.c
-@@ -226,8 +226,7 @@ static int rp1_probe(struct pci_dev *pdev, const struc=
-t pci_device_id *id)
-=20
- 	err =3D pcim_enable_device(pdev);
- 	if (err < 0) {
--		err =3D dev_err_probe(&pdev->dev, err,
--				    "Enabling PCI device has failed");
-+		dev_err_probe(&pdev->dev, err, "Enabling PCI device has failed");
- 		goto err_put_node;
- 	}
-=20
-@@ -243,8 +242,7 @@ static int rp1_probe(struct pci_dev *pdev, const struc=
-t pci_device_id *id)
- 	err =3D pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
- 				    PCI_IRQ_MSIX);
- 	if (err < 0) {
--		err =3D dev_err_probe(&pdev->dev, err,
--				    "Failed to allocate MSI-X vectors\n");
-+		dev_err_probe(&pdev->dev, err, "Failed to allocate MSI-X vectors\n");
- 		goto err_put_node;
- 	} else if (err !=3D RP1_INT_END) {
- 		dev_err(&pdev->dev, "Cannot allocate enough interrupts\n");
-=2D-=20
-2.51.1
+An all zeroes mask is a bug in the code that calls field_{get,prep}().
 
+> I think mask = 0 is a sign of error here. Can you add a code catching
+> it at compile time, and maybe at runtime too? Something like:
+>
+>  #define __field_prep(mask, val)
+>  ({
+>         unsigned __shift = sizeof(mask) <= 4 ? __ffs(mask) : __ffs64(mask);
+>         (val << __shift) & mask;
+>  })
+>
+>  #define field_prep(mask, val)
+>  ({
+>         unsigned int __shift;
+>         __auto_type __mask = (mask), __ret = 0;
+>         typeof(mask) __val = (val);
+>
+>         BUILD_BUG_ON_ZERO(const_true(mask == 0));
+
+Futile, as code with a constant mask should use FIELD_PREP() instead.
+
+>
+>         if (WARN_ON_ONCE(mask == 0))
+>                 goto out;
+>
+>         __ret = __field_prep(__mask, __val);
+>  out:
+>         ret;
+>  })
+
+Should we penalize all users (this is a macro, thus inlined everywhere)
+to protect against something that is clearly a bug in the caller?
+E.g. do_div() does not check for a zero divisor either.
+
+> > +
+> > +/**
+> > + * field_get() - extract a bitfield element
+> > + * @mask: shifted mask defining the field's length and position
+> > + * @reg:  value of entire bitfield
+> > + *
+> > + * field_get() extracts the field specified by @mask from the
+> > + * bitfield passed in as @reg by masking and shifting it down.
+> > + * Unlike FIELD_GET(), @mask is not limited to a compile-time constant.
+> > + */
+> > +#define field_get(mask, reg)                                         \
+> > +     ({                                                              \
+> > +             __auto_type __mask = (mask);                            \
+> > +             typeof(mask) __reg =  (reg);                            \
+>
+> This would trigger Wconversion warning. Consider
+>         unsigned reg = 0xfff;
+>         field_get(0xf, reg);
+>
+> <source>:6:26: warning: conversion to 'int' from 'unsigned int' may change the sign of the result [-Wsign-conversion]
+>     6 |     typeof(mask) __reg = reg;
+>       |                          ^~~
+>
+> Notice, the __auto_type makes the __mask to be int, while the reg is
+
+Apparently using typeof(mask) has the same "issue"...
+
+> unsigned int. You need to do:
+>
+>         typeof(mask) __reg = (typeof(mask))(reg);
+
+... so the cast is just hiding the issue? Worse, the cast may prevent the
+compiler from flagging other issues, e.g. when accidentally passing
+a pointer for reg.
+
+>
+> Please enable higher warning levels for the next round.
+
+Enabling -Wsign-conversion gives lots of other (false positive?)
+warnings.
+
+> Also, because for numerals __auto_type is int, when char is enough - are
+> you sure that the macro generates the optimal code? User can workaround it
+> with:
+>
+>         field_get((u8)0xf, reg)
+>
+> but it may not be trivial. Can you add an example and explanation please?
+
+These new macros are intended for the case where mask is not a constant.
+So typically it is a variable of type u32 or u64.
+
+> > +             unsigned int __shift = sizeof(mask) <= 4 ?              \
+> > +                                    __ffs(__mask) : __ffs64(__mask); \
+>
+> Can you use BITS_PER_TYPE() here?
+
+Yes, I could use BITS_PER_TYPE(unsigned long) here, to match the
+parameter type of __ffs() (on 64-bit platforms, __ffs() can be used
+unconditionally anyway), at the expense of making the line much longer
+so it has to be split.  Is that worthwhile?
+
+>
+> > +             (__reg & __mask) >> __shift;    \
+> > +     })
+> > +
+>
+> When mask == 0, we shouldn't touch 'val' at all. Consider
+>
+>         field_get(0, get_user(ptr))
+>
+> In this case, evaluating 'reg' is an error, similarly to memcpy().
+
+Again, a zero mask is a bug.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
