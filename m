@@ -1,109 +1,97 @@
-Return-Path: <linux-kernel+bounces-861120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131A5BF1D3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A5EBF1D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA717406D8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8021888F26
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0B8320A39;
-	Mon, 20 Oct 2025 14:24:57 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E026A320CC3;
+	Mon, 20 Oct 2025 14:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="r9dvdsmG"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746811DDC28;
-	Mon, 20 Oct 2025 14:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FD12FC879;
+	Mon, 20 Oct 2025 14:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970297; cv=none; b=aEfbx8GDukx9jD/3cEgN9jUt4hfV0Ii7l5qagnBrcikWyHkzNSybdzyUeRcK42buFwWQf9hZFU+3uAIwZN2yuKy8KbDvjV3GR587w4cKj7Lnd0lCyaJEe1H5+q0ed8Xnimy2pi+GVoy7uvRUebCEB9P/XTfKHtjTCKoFVvFxiNc=
+	t=1760970316; cv=none; b=DZCuaGn4wSRMXez+7x0kXQ28/Pbj4cch4rg13E7JLyXLbe0XxwYYlktZLi+3OIEN2cJmJxDTVg2fxSfx+d8FCC7xCIqSX/vtfKLHnnGln/OjRqrLdezFCzdzxCSA0sSqCOyx5LDN1e9W6L4MM9FsLA6iRik8eDqQHILL8YTYEn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970297; c=relaxed/simple;
-	bh=Y5pWNFXphYmf+c/smwTg27tadPgyii7jSwEHNg0ZXO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AsGWRvGID424Ux9hVtUZxhJb4lBv4TlSYygvZOcXQZK+X3HUHyUNR2T/Ydj3+9D58EBd3ggemLLtW2VIl0Rvk04daVs56g1C4w2xkJwGRxw7zqbEdB9f2uYNJVFY3lj/S4kES4OUoVig5IaMHROvxSj6SRLHwZ5mHFfl1ukBMEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 783182C0664D;
-	Mon, 20 Oct 2025 16:24:52 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 6146D4A12; Mon, 20 Oct 2025 16:24:52 +0200 (CEST)
-Date: Mon, 20 Oct 2025 16:24:52 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
-	kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
-	terry.bowman@amd.com, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-Message-ID: <aPZGNP79kJO74W4J@wunner.de>
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-4-xueshuai@linux.alibaba.com>
- <aPYKe1UKKkR7qrt1@wunner.de>
- <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
- <aPY--DJnNam9ejpT@wunner.de>
- <43390d36-147f-482c-b31a-d02c2624061f@linux.alibaba.com>
+	s=arc-20240116; t=1760970316; c=relaxed/simple;
+	bh=xzx/KILlu/k+PYO6Mo5bYNQxIWS3X82u9ZCo4BcvVFw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SxQYdRXON8Zycg4pktsrjlzQElbTQoC3K/I4UR6CgtLqV660/K9jtLXw4GClUadbsLj386TROukoABcDe32iKJn6N0d35ABtXfw4W//DlFfQi5tSbyqj04zjb6b3nsbzHuCmghgGogkRJJxgy+toucBl7ysmLPcVmfYaWf1LDP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=r9dvdsmG; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ql6VIoTcMfomJunkktUdjzrMiXsFWDL7h2Eor4f6FTA=;
+	t=1760970315; x=1762179915; b=r9dvdsmGRQ+fJsADnIqIRQDOMZSmljkY/j2ghQNuoJDa+NE
+	+RJQ8ES49FqPXBMYFHTG0SEdVvoE9ZT2qDSN8Bd8o/Zcr3Ufow3eRi5azLt2UalsoJ3Dr41z4HV+w
+	GrgPCXfNAcCqONr+Thc9FCVNmrtsWJdk4jrz+qPYExzczZ4dPQVohiu6OokGfEYsAh7j7CkgyZ7hH
+	7yWwikv1ZM0y8FlmEjgvHxek00r2hbYXYjz22IRR3US3ahmiRX98ceUbYM0x6hrS2rIN9Gyj/5Krh
+	WtmXC8bTbmf+xsXJO2UGgnyB3Q9/qOuztoKeg3me4LnXFvabXva8IJFoJrfhS7dg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vAqow-000000094e6-02Bo;
+	Mon, 20 Oct 2025 16:25:10 +0200
+Message-ID: <e0ce9b89f0e0a6379070e9e135c53722a2d0a19f.camel@sipsolutions.net>
+Subject: Re: [PATCH wireless-next] wifi: mac80211_hwsim: advertise
+ puncturing feature support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 20 Oct 2025 16:25:09 +0200
+In-Reply-To: <20251017-hwsim_set_punct_feature_bit-v1-1-3be1bb3450c0@oss.qualcomm.com>
+References: 
+	<20251017-hwsim_set_punct_feature_bit-v1-1-3be1bb3450c0@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43390d36-147f-482c-b31a-d02c2624061f@linux.alibaba.com>
+X-malware-bazaar: not-scanned
 
-On Mon, Oct 20, 2025 at 10:17:10PM +0800, Shuai Xue wrote:
-> void aer_report_frozen_error(struct pci_dev *dev)
-> {
->     struct aer_err_info info;
-> 
->     if (dev->pci_type != PCI_EXP_TYPE_ENDPOINT &&
->         dev->pci_type != PCI_EXP_TYPE_RC_END)
->         return;
-> 
->     aer_info_init(&info);
->     aer_add_error_device(&info, dev);
->     info.severity = AER_FATAL;
->     if (aer_get_device_error_info(&info, 0, true))
->         aer_print_error(&info, 0);
-> 
->     /* pci_dev_put() pairs with pci_dev_get() in aer_add_error_device() */
->     pci_dev_put(dev);
-> }
+On Fri, 2025-10-17 at 09:32 +0530, Aditya Kumar Singh wrote:
+> If userspace provides a puncturing bitmap via the NL80211_ATTR_PUNCT_BITM=
+AP
+> attribute, the kernel with mac80211_hwsim driver currently rejects the
+> command with the error: "driver doesn't support puncturing", because the
+> driver does not advertise support for this feature.
+>=20
+> At present, the following hwsim test cases utilize puncturing, but the
+> bitmap is not sent to the kernel. Instead, the puncturing information is
+> conveyed only through the beacon data:
+>  * eht_5ghz_80mhz_puncturing_override_1
+>  * eht_5ghz_80mhz_puncturing_override_2
+>  * eht_5ghz_80mhz_puncturing_override_3
+>=20
+> A future change in hostapd will begin configuring the puncturing bitmap
+> explicitly, which will cause these test cases to fail unless the driver
+> advertises support.
+>=20
+> To address this, update mac80211_hwsim driver to advertise puncturing
+> feature support.
 
-Much better.  Again, I think you don't need to rename add_error_device()
-and then the code comment even fits on the same line:
+This might be a good time to introduce better checks vs. what we have
+now in hwsim_chans_compat(), which just uses the control channel rather
+than any actual bandwidth/puncturing/etc.
 
-	pci_dev_put(dev);  /* pairs with pci_dev_get() in add_error_device() */
+It'd also make the tests actually test more. What do you think?
 
-> > >    .slot_reset()
-> > >      => pci_restore_state()
-> > >        => pci_aer_clear_status()
-> > 
-> > This was added in 2015 by b07461a8e45b.  The commit claims that
-> > the errors are stale and can be ignored.  It turns out they cannot.
-> > 
-> > So maybe pci_restore_state() should print information about the
-> > errors before clearing them?
-> 
-> While that could work, we would lose the error severity information at
-
-Wait, we've got that saved in pci_cap_saved_state, so we could restore
-the severity register, report leftover errors, then clear those errors?
-
-Thanks,
-
-Lukas
+johannes
 
