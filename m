@@ -1,208 +1,249 @@
-Return-Path: <linux-kernel+bounces-861521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61BBBF2F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:31:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF5BBF2F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 319504E9929
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:31:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93F3F4E5354
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD84A2620FC;
-	Mon, 20 Oct 2025 18:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3053B1DE4E0;
+	Mon, 20 Oct 2025 18:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LxvfJTRZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ae/21XYz"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CC27E792;
-	Mon, 20 Oct 2025 18:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15801A262A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760985067; cv=none; b=mrVuQeZya8djiEfEdewMctZPfoavPB/4TIw+xnZ4va5KyUFmQc0/CTZ9QqiPukhstNsD736iQj/PqXzLu2AqFpiUQIgDviuQeDjJ/OwSceC8raUWAG/QkwA2jGOHgQ3y2cW3/6pAvKXADgTNIN20+81gpkMTKz14oZaTmLLO8gw=
+	t=1760985141; cv=none; b=RorvvSF/cjbUD+di0JxMEqpFI6aweKjPePPPL+pR2fTnU6Y3kFomGjcH7y+CeBLwFAXcXPME8Pfa2IuDAZggZvgjXm1f1QHND2j0rAE63zjzFqfnnXs2GQ5C15KBxWrxBTd5q85o8pA5tQpMPPWlERD+CbvfVQn+ASmSYzeoi7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760985067; c=relaxed/simple;
-	bh=2o7Fw/nuNxjKMu5KaUQiLbIYThAN0vNPulMcmo+DTu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvFzw/dYuHhgDD60TO2504LDDa1fwrP5FB7CKVLE5OchkOYjGzyMTGJoYPcJ20arqINj40NwogUBirieQPLqXfs68ACoNJ8oKR4mS7pzaOGOYE5hjxrcGV7KCv6qJb0sxY1f+k1V8HfEkovRkSqf2N6DNRfmEnMpiq7DM9Szxug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LxvfJTRZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760985064; x=1792521064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=2o7Fw/nuNxjKMu5KaUQiLbIYThAN0vNPulMcmo+DTu4=;
-  b=LxvfJTRZc+yLOkbFqnHo0M84m+6Rk5uleaMyrLe2Nxkppo9sMl5DuF+J
-   Mf8Q9pa81MSA+VXAl/q4OhMLdOlltKkrsjv9vpmGiUmu8N6TL1G7U1beu
-   cjbzOqcS8Kd46s/HVlel7mp40y9qgiY1MIu9YzKlpGZQJ3PKJapkZxXW0
-   jCC3rh3Ek66lKuQjukINqaU+kqaehCDXQYoIU1EKYRN3kwAT3zYErl7UA
-   evFfeCaXiEAJZS8/FxcWt4F3OjTBzC9LLZ/LWmlkO0Bsn50pMoFjTfe7x
-   8zLVQeHGj4wbxV4RR/RCEEtZbymAl5YS5XPncRUKViNKP+NeWDUxcBYDI
-   w==;
-X-CSE-ConnectionGUID: qGt/oaGaRGqHxTXoBMXnfQ==
-X-CSE-MsgGUID: tsZrIIF+THOiDTLrDEIIRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80732302"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="80732302"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:31:04 -0700
-X-CSE-ConnectionGUID: bZFwYJreTOSJmvgQfFbUNw==
-X-CSE-MsgGUID: HSYfEqkmStKEyzH8dwKxIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="183803554"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.62])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:31:02 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vAuep-00000001M7X-0k3W;
-	Mon, 20 Oct 2025 21:30:59 +0300
-Date: Mon, 20 Oct 2025 21:30:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in
- place
-Message-ID: <aPZ_4qDfKdX3F_r3@smile.fi.intel.com>
-References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
- <20251010144231.15773-3-ilpo.jarvinen@linux.intel.com>
- <aO-vtdECWNpYpo6f@smile.fi.intel.com>
- <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com>
- <aPZ09UZMfKhYSUZE@smile.fi.intel.com>
- <9d56e776-731a-7e25-60f0-44485cfbf12c@linux.intel.com>
+	s=arc-20240116; t=1760985141; c=relaxed/simple;
+	bh=VkqneVDbsyT0IzlYqd3SDo8bA2HKS26W3MsXwZnzK6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ljHB6cbedOfomYZyVuKr6ljWWoAdzUYYj+7kda7pMyGlodwb47fjQ16aXFvtXr/T4l/gASRo3S9XHQcf0w25SD37hJL3OhxAH/9w7n7MKmMSNfVR9FdF0y1X6EE4yyFEFHeVp3cQcF/Aii6qolOOUzvD5Llq7Fs9Q97dm9ENdpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ae/21XYz; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781001e3846so4335461b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760985139; x=1761589939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kThRqoFCTjPJKmH3oIqpB9iPzfqXX/RIxNab4q9zYLg=;
+        b=Ae/21XYzGGnVTsrb5xrVuMfidWBTP30immWqmqDFJ0BZFBOYiM9zU7xBZnjhwR5gVF
+         MelWxu546oTMWpDgkq5pz8GhN1omVTqOXvkey1W3B77Qdy0nRUf9rhpe3z53G3Dz0c4Z
+         vBPMtafY2wp3w4aUX5vYE0CIk+MJcxig6s6Ds5vWTFTJJ/6/IwSlFxV6TuzVOsJra/Rj
+         SyV516jM566OC1H33y/jYesfP2bxG2cekaL0bpNqcJmWFMiCC3Xxg4Rfz/5os2EyxVhM
+         e+ja8dF02xFE6JP87g3lGlaX5riL+FJDGMw7tyY2xbKXfhRCtBkkFoeLud3oYwHxqUb4
+         gYJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760985139; x=1761589939;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kThRqoFCTjPJKmH3oIqpB9iPzfqXX/RIxNab4q9zYLg=;
+        b=Zmj/303X1ukaBDlxpkTNft/JBYKR3xTLIcH69qisY5TQhy+KQyccVhbgh+sQeFC1Tr
+         g1at/ozlBoUS2m0/BNr3YMzZypLjOqq5aTd52aOjvNrzOsyo9kP+CCw0rFfKAD6eoKYJ
+         R6A+x/ZY0jivlzWmk6jPI52buefwe4vhoqj3Lae1jcIR71xkxwpqbZSjfYcePlDD0HaT
+         NKwdk2Ca3H/THqX1dalPHMR4K1dTSAF0TVtSk8EYZwzMEI0gSot5Mu46gEOfBjcsOj4V
+         Zo4xMcsPRRgnJgMxtAQvNEQp8CynK9edULcvLdYND3NoIy7MNqoKRfV2dxAjpiMNcKrH
+         +Y6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXhjSRws2tFIP6hcNJkjYin/aTS0Wp9mHIiOxPnHlvHPi2/FuipRVOsLE0TOqtpRj15RwPeL9FvPWwETGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg/anr8lwtYo6U/2Npcn8/4TR4ePPrMvN5SkrfoXGS1qNT+FFG
+	32IxZoDvmNCJP/SppHkE1cPIvKoD+iGrtONwZp0kFkIe/F2b5evovfUZ
+X-Gm-Gg: ASbGncuwZQBzfxBxKxwu0oZerDzhTjG1DR2ZyOy0CIBHTJPfcnpaUe9qQzznLtngfjW
+	j+VrLKS9ub1tVYMVB0Z7W21c5/hN/y/ZfjvN28iO1y3/DIf9Rgneek81yBByFL5tbUrBszXDuuM
+	Tq+7z0/hQMKkBw4eIoC/mITRy2oLx4Pcn5ZBkZkjENgB5UxHAOMVjLv1hGRpwKQitQq2vepypV9
+	Mve2j11vO9Z+GaLa846yWZ8wRUdW7APEkBgQKxYDMwCAjHeaC/7LbUYCYliHxeLl/xMsgDhrLUR
+	SogR749IPS6iQfpkxojBRyOxhote1FuRbSDxBURpqkFyRixIHNva2Ry4n8kyzIRG5K38Wk4wrNP
+	cgsVwrjqYU+9mK3kWXUs5lcagqCoxs07l9QjtK1X2Zc5ONxKdXGTVnvsIZ8rh56Oi2DhHo8tl+3
+	Mk3fSvsQ==
+X-Google-Smtp-Source: AGHT+IFHpDDSC/ec/z6gP3yDF0Lq0IAw+hvtA6O/sngS65F0b6ioDK/6RnHMjz5+qa4OG9b5X3ZwEQ==
+X-Received: by 2002:a17:903:b10:b0:280:fe18:847b with SMTP id d9443c01a7336-290caf85191mr169484515ad.33.1760985138937;
+        Mon, 20 Oct 2025 11:32:18 -0700 (PDT)
+Received: from rakuram-MSI.. ([2409:40f4:3002:6efb:47d0:40b1:d5b:bf65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fd9e8sm86645795ad.85.2025.10.20.11.32.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 11:32:18 -0700 (PDT)
+From: Rakuram Eswaran <rakuram.e96@gmail.com>
+To: u.kleine-koenig@baylibre.com
+Cc: chenhuacai@kernel.org,
+	dan.carpenter@linaro.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	lkp@intel.com,
+	rakuram.e96@gmail.com,
+	skhan@linuxfoundation.org,
+	ulf.hansson@linaro.org,
+	zhoubinbin@loongson.cn
+Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling using devm APIs
+Date: Tue, 21 Oct 2025 00:02:07 +0530
+Message-ID: <20251020183209.11040-1-rakuram.e96@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: o55ujlbvxwezsf3ogqx33pcbg5b2lviy6bv5ufnz6t7yi4v23t@i6uiafh6no6c 
+References: <o55ujlbvxwezsf3ogqx33pcbg5b2lviy6bv5ufnz6t7yi4v23t@i6uiafh6no6c>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9d56e776-731a-7e25-60f0-44485cfbf12c@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Oct 20, 2025 at 09:15:08PM +0300, Ilpo J�rvinen wrote:
-> On Mon, 20 Oct 2025, Andy Shevchenko wrote:
-> > On Mon, Oct 20, 2025 at 08:21:50PM +0300, Ilpo J�rvinen wrote:
-> > > On Wed, 15 Oct 2025, Andy Shevchenko wrote:
-> > > > On Fri, Oct 10, 2025 at 05:42:30PM +0300, Ilpo J�rvinen wrote:
-
-...
-
-> > > > > +/**
-> > > > > + * resource_mergeable - Test if resources are contiguous and can be merged
-> > > > > + * @r1: first resource
-> > > > > + * @r2: second resource
-> > > > > + *
-> > > > > + * Tests @r1 is followed by @r2 contiguously and share the metadata.
-> > > > 
-> > > > This needs an additional explanation about name equivalence that's not only by
-> > > > pointers, but by a content.
-> > > 
-> > > Okay. The point was to check names are the same, the pointer check was 
-> > > just an optimization as these resources are expected to carry the same 
-> > > name even on the pointer level.
-> > > 
-> > > > > + * Return: %true if resources are mergeable non-destructively.
-> > > > > + */
-> > > > > +static bool resource_mergeable(struct resource *r1, struct resource *r2)
-> > > > > +{
-> > > > > +	if ((r1->flags != r2->flags) ||
-> > > > > +	    (r1->desc != r2->desc) ||
-> > > > > +	    (r1->parent != r2->parent) ||
-> > > > > +	    (r1->end + 1 != r2->start))
-> > > > > +		return false;
-> > > > 
-> > > > > +	if (r1->name == r2->name)
-> > > > > +		return true;
-> > > > > +
-> > > > > +	if (r1->name && r2->name && !strcmp(r1->name, r2->name))
-> > > > > +		return true;
-> > > > > +
-> > > > > +	return false;
-> > > > 
-> > > > Hmm... Can we keep the logic more straight as in returning false cases as soon
-> > > > as possible?
-> > > > 
-> > > > I think of something like this:
-> > > > 
-> > > > 	if (r1->name && r2->name)
-> > > > 		return strcmp(r1->name, r2->name) == 0;
-> > > > 
-> > > > 	return r1->name == r2->name;
-> > > 
-> > > But the point the order above was to avoid strcmp() when the pointer 
-> > > itself is same which I think is quite common case. I don't think strcmp() 
-> > > itself checks whether the pointer is the same.
+On Thu, 16 Oct 2025 at 14:20, Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
+>
+> On Wed, Oct 15, 2025 at 12:16:57AM +0530, Rakuram Eswaran wrote:
+> > This patch refactors pxamci_probe() to use devm-managed resource
+> > allocation (e.g. devm_dma_request_chan()) and dev_err_probe() for
+> > improved readability and automatic cleanup on probe failure.
+> >
+> > This eliminates redundant NULL assignments and manual release logic.
+> >
+> > This issue was originally reported by Smatch:
+> > drivers/mmc/host/pxamci.c:709 pxamci_probe() warn: passing zero to 'PTR_ERR'
+> >
+> > The warning occurred because a pointer was set to NULL before using
+> > PTR_ERR(), leading to PTR_ERR(0) and an incorrect 0 return value.
+> > This refactor eliminates that condition while improving overall
+> > error handling robustness.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/r/202510041841.pRlunIfl-lkp@intel.com/
+> > Fixes: 58c40f3faf742c ("mmc: pxamci: Use devm_mmc_alloc_host() helper")
+> > Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> > Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+> > ---
+> >
+> > Changes since v1:
+> > Following Uwe Kleine-König’s suggestion:
+> > - Replaced dma_request_chan() with devm_dma_request_chan() to make DMA
+> >   channel allocation devm-managed and avoid manual release paths.
+> > - Used dev_err_probe() for improved error reporting and consistent
+> >   probe failure handling.
+> > - Removed redundant NULL assignments and obsolete goto-based cleanup logic.
+> > - Updated commit message to better describe the intent of the change.
+> >
+> > Testing note:
+> > I do not have access to appropriate hardware for runtime testing.
+> > Any help verifying on actual hardware would be appreciated.
+> >
+> > Build and Analysis:
+> > This patch was compiled against the configuration file reported by
+> > 0day CI in the above link (config: s390-randconfig-r071-20251004) using
+> > `s390x-linux-gnu-gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0`.
+> >
+> > Static analysis was performed with Smatch to ensure the reported warning
+> > no longer reproduces after applying this fix.
+> >
+> > Command used for verification:
+> >   ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- \
+> >   ~/project/smatch/smatch_scripts/kchecker ./drivers/mmc/host/pxamci.c
+> >
+> >  drivers/mmc/host/pxamci.c | 57 +++++++++++++++------------------------
+> >  1 file changed, 21 insertions(+), 36 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
+> > index 26d03352af63..d03388f64934 100644
+> > --- a/drivers/mmc/host/pxamci.c
+> > +++ b/drivers/mmc/host/pxamci.c
+> > @@ -652,11 +652,14 @@ static int pxamci_probe(struct platform_device *pdev)
+> >       host->clkrt = CLKRT_OFF;
 > > 
-> > On the second thought I think comparing by the content is quite a behavioural
-> > change here.
-> 
-> Compared to what?
-> 
-> This code was previously only used for merging contiguous "System RAM" 
-> resources (AFAICT, I don't have way to check what the names in all those
-> resources truly were but in any case, the check was even stricter earlier, 
-> comparing pointer equality only so definitely the names were not different 
-> before this).
-> 
-> > Perhaps we may start without doing that first? Theoretically it
-> > might be the case when the content of names is different, but resources are
-> > the same.
-> 
-> Resources are NOT same, they're two contiguous memory regions and may 
-> originate from different source, and thus have different names.
-> 
-> Not caring about the names will lose one of them from /proc/iomem.
-> 
-> > The case when name is the same (by content, but pointers) with the
-> > idea of having different resources sounds to me quite an awkward case. TL;
-> > DR: What are the cases that we have in practice now?
-> 
-> In the original thread [1], PCI side resource coalescing did break the 
-> resources by merging without caring what the resource internals were. That 
-> problem was found after trying to fix another problem, thus it might not 
-> happen in practice except after fixing the other problem with root bus 
-> resources.
-> 
-> In the common case when merging PCI root bus resources, the resources 
-> typically have the same name - this happens all the time (e.g. io port 
-> ranges are split to many small ranges which form a contiguous region 
-> when coalesced). But that's not always the case, why do you think these 
-> two names should be merged losing some information:
-> 
->      ee080000-ee08ffff : pci@ee090000
->        ...
->      ee090000-ee090bff : ee090000.pci pci@ee090000
-> 
-> ?
+> >       host->clk = devm_clk_get(dev, NULL);
+> > -     if (IS_ERR(host->clk)) {
+> > -             host->clk = NULL;
+> > -             return PTR_ERR(host->clk);
+> > -     }
+> > +     if (IS_ERR(host->clk))
+> > +             return dev_err_probe(dev, PTR_ERR(host->clk),
+> > +                                  "Failed to acquire clock\n");
+> >
+> > +     /*
+> > +      * Note that the return value of clk_get_rate() is only valid
+> > +      * if the clock is enabled.
+> > +      */
+>
+> The intention of this comment in my WIP suggestion was to point out
+> another thing to fix as the precondition for calling clk_get_rate()
+> isn't asserted. If you don't want to address this (which is fine),
+> drop the comment (or improve my wording to make it more obvious that
+> there is something to fix).
+>
 
-I don't think it's a good idea (after reading the nice elaboration from you).
-It seems I misunderstood the use case(s). That's why I asked for some elaboration
-about the (new?) requirement to test the content of the names and not only pointer
-equivalency.
+Hi Uwe,
 
-> (Also, the careless change in the underlying resource by the code this 
-> series tries to fix would have likely broken also devres release of the 
-> mangled resource, which admittedly, is not related to name at all).
-> 
-> [1] https://lore.kernel.org/linux-pci/CAMuHMdVgCHU80mRm1Vwo6GFgNAtQcf50yHBz_oAk4TrtjcMpYg@mail.gmail.com/
+Sorry for the delayed reply as I was in vacation. 
 
+Ah, got it — I’ll drop the clk_get_rate() comment since it was only a reminder
+from your WIP suggestion.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Just to confirm, are you referring to adding a call to clk_prepare_enable()
+before clk_get_rate()? I can move the clk_get_rate() call after
+clk_prepare_enable(), or drop the comment entirely.
 
+If my understanding is correct, I’ll keep v3 focused on the current set of
+fixes and handle the clk_get_rate() precondition (by moving it after
+clk_prepare_enable()) in a follow-up patch. That should keep the scope of each
+change clean and review-friendly.
 
+> > -out:
+> > -     if (host->dma_chan_rx)
+> > -             dma_release_channel(host->dma_chan_rx);
+> > -     if (host->dma_chan_tx)
+> > -             dma_release_channel(host->dma_chan_tx);
+>
+> I was lazy in my prototype patch and didn't drop the calls to
+> dma_release_channel() in pxamci_remove(). For a proper patch this is
+> required though.
+>
+> To continue the quest: Now that I looked at pxamci_remove(): `mmc` is
+> always non-NULL, so the respective check can be dropped.
+>
+
+Understood. Since pxamci_remove() is only called after successful allocation
+and initialization in probe(), mmc will always be a valid pointer. I’ll drop
+the if (mmc) check in v3 as it can never be NULL in normal operation, and
+remove the dma_release_channel() calls as well.
+
+I’ve prepared a preview of the v3 patch incorporating your previous comments.
+Before sending it out formally, I wanted to share it with you to confirm that
+the updates look good — especially the cleanup changes in pxamci_remove() and
+the dropped clk_get_rate() comment.
+
+static void pxamci_remove(struct platform_device *pdev)
+{
+	struct mmc_host *mmc = platform_get_drvdata(pdev);
+	struct pxamci_host *host = mmc_priv(mmc);
+
+	mmc_remove_host(mmc);
+
+	if (host->pdata && host->pdata->exit)
+		host->pdata->exit(&pdev->dev, mmc);
+
+	pxamci_stop_clock(host);
+	writel(TXFIFO_WR_REQ|RXFIFO_RD_REQ|CLK_IS_OFF|STOP_CMD|
+			END_CMD_RES|PRG_DONE|DATA_TRAN_DONE,
+			host->base + MMC_I_MASK);
+
+	dmaengine_terminate_all(host->dma_chan_rx);
+	dmaengine_terminate_all(host->dma_chan_tx);
+}
+
+Please let me know if anything still needs adjustment before v3.
+
+Best Regards,
+Rakuram
 
