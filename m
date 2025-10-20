@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-861285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5178DBF24C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D49DBF24D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371E03A8532
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:02:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED80B422415
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE9C27B348;
-	Mon, 20 Oct 2025 16:02:26 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33DC23E33D;
-	Mon, 20 Oct 2025 16:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B9E283129;
+	Mon, 20 Oct 2025 16:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Le4Rme1q"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9560926F296;
+	Mon, 20 Oct 2025 16:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976145; cv=none; b=WAn41ebPsq1gvEwTT1ZF1h7bKchQJZi97Vpd8OAqyOMgIWaDIC9YYaUfR85S7QbPGert2fujtB6SlS1OEvDdwlIM7ILQkZkdneJSSaGgtPcf1gIwlG/1wi6fDQPFRG7Cnq0/XzCjZh+cVM/m2eknKwLPRXS0KXwvztrRLlqgoiU=
+	t=1760976187; cv=none; b=VHhK4/25ciq1HFTD8M/gJJ4eMsYrCzI1AuE/5aVd5VmuURE1BlqeU9rW/bvGMCTBo4cTn3UGw/fXTZ0ncf8pgnvGfu/l7svWxkiDqM4z37ewm1qdx5wbbGtOl0b/CGPUqJVWx22YcvE+Xv0YZA31yO4CbGc9lWlj9z2lXQ0PmP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976145; c=relaxed/simple;
-	bh=/ZvV3Y69oRvNWtCVQEv25ykydeIvnyXyip7Dd2u7jfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mVvsPijqQtv2SFB6fmrhCTPTyHQ4JKDISPHIDqD4dUtHS8QKE9nApXfHJhuSrePMSCLEOSRjmrwS1gdidqAY+nSNUAZHBxjbm3HkYuCFxngFEIlUxbSMYJlldsXIzTSlIHZOCmFIwmX4E3FxowaOsAHNeKFqVJJ30/7Ngvw/Ge8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [114.245.38.183])
-	by APP-03 (Coremail) with SMTP id rQCowACn830JXfZorNwzEg--.26415S2;
-	Tue, 21 Oct 2025 00:02:18 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] soc: qcom: gsbi: fix double disable caused by devm
-Date: Tue, 21 Oct 2025 00:02:15 +0800
-Message-ID: <20251020160215.523-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1760976187; c=relaxed/simple;
+	bh=JvOCR57DWSFecee/oWHPQq1FBVtq9nwuQUxNx7n/1Hc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QV7eMiyw1ZLaMlfu7lX4ARcFcmkSro4qVH92+CLhO7wFmr7JKN5SJlXEi3dB6PChCHeYKPxl7rkv98XaPgXKoSPait+ZI/aueyf5pwTHoeQdKWvaMwJSmR/SgZiVHnGHoqitQ8zVeAmaq03UZCCjApz5mEh2fb6B9MX8p8/cC+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Le4Rme1q; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id ADD68201DAC4;
+	Mon, 20 Oct 2025 09:03:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ADD68201DAC4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760976185;
+	bh=scyb7wZ7MdJMCaaNB+EvmDsakq25Zch1vo2shBY/s6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Le4Rme1qvxnweUnpgb85Vv2YhukqWFRffwZc6f0b8/nUIThLnILtPvi/4Z+f8Z19s
+	 IZN+TkJ9H4AWwcNNYLs+zyB4bzLU9DjUtQfXcjHpRsvA8v10vnf6/yvgWuKu/Xq1YD
+	 PbVvr4e/1z8G4g2NMx6RXEgQocq7bTSJvHLr8KOE=
+Message-ID: <c673e8da-d770-414a-bd8d-715688238dd1@linux.microsoft.com>
+Date: Mon, 20 Oct 2025 09:02:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACn830JXfZorNwzEg--.26415S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar1Dur13Ary3WrW7WF4kJFb_yoW8Wryxpa
-	48JF93Cr48JF4Yka9rJw4UZF12y34fta4jgwn3C3s3Z3Z8Zr10qFy8tFy8ZF95XFZ5AFsx
-	Jr47tr4rAFn8uFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
-	4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
-	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYBA2j2T7wZzAAAsw
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mshv: Fix deposit memory in MSHV_ROOT_HVCALL
+To: Wei Liu <wei.liu@kernel.org>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+ decui@microsoft.com, arnd@arndb.de, mrathor@linux.microsoft.com,
+ skinsburskii@linux.microsoft.com
+References: <1760727497-21158-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <20251017220655.GA614927@liuwe-devbox-debian-v2.local>
+ <20251017222633.GA632885@liuwe-devbox-debian-v2.local>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20251017222633.GA632885@liuwe-devbox-debian-v2.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In the commit referenced by the Fixes tag, devm_clk_get_enabled() was
-introduced to replace devm_clk_get() and clk_prepare_enable(). While
-the clk_disable_unprepare() call in the error path was correctly
-removed, the one in the remove function was overlooked, leading to a
-double disable issue.
+On 10/17/2025 3:26 PM, Wei Liu wrote:
+> On Fri, Oct 17, 2025 at 10:06:55PM +0000, Wei Liu wrote:
+>> On Fri, Oct 17, 2025 at 11:58:17AM -0700, Nuno Das Neves wrote:
+>>> When the MSHV_ROOT_HVCALL ioctl is executing a hypercall, and gets
+>>> HV_STATUS_INSUFFICIENT_MEMORY, it deposits memory and then returns
+>>> -EAGAIN to userspace. The expectation is that the VMM will retry.
+>>>
+>>> However, some VMM code in the wild doesn't do this and simply fails.
+>>> Rather than force the VMM to retry, change the ioctl to deposit
+>>> memory on demand and immediately retry the hypercall as is done with
+>>> all the other hypercall helper functions.
+>>>
+>>> In addition to making the ioctl easier to use, removing the need for
+>>> multiple syscalls improves performance.
+>>>
+>>> There is a complication: unlike the other hypercall helper functions,
+>>> in MSHV_ROOT_HVCALL the input is opaque to the kernel. This is
+>>> problematic for rep hypercalls, because the next part of the input
+>>> list can't be copied on each loop after depositing pages (this was
+>>> the original reason for returning -EAGAIN in this case).
+>>>
+>>> Introduce hv_do_rep_hypercall_ex(), which adds a 'rep_start'
+>>> parameter. This solves the issue, allowing the deposit loop in
+>>> MSHV_ROOT_HVCALL to restart a rep hypercall after depositing pages
+>>> partway through.
+>>>
+>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>
+>> In v1 you said you will add a "Fixes" tag. Where is it?
+> 
+> I added this:
+> 
+> Fixes: 621191d709b1 ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
+> 
+> Let me know if that's not correct.
+> 
+Oops! That's correct, thanks.
 
-Remove the redundant clk_disable_unprepare() call from gsbi_remove()
-to fix this issue. Since all resources are now managed by devres
-and will be automatically released, the remove function serves no purpose
-and can be deleted entirely.
-
-Fixes: 489d7a8cc286 ("soc: qcom: use devm_clk_get_enabled() in gsbi_probe()")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/soc/qcom/qcom_gsbi.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/drivers/soc/qcom/qcom_gsbi.c b/drivers/soc/qcom/qcom_gsbi.c
-index 8f1158e0c631..a25d1de592f0 100644
---- a/drivers/soc/qcom/qcom_gsbi.c
-+++ b/drivers/soc/qcom/qcom_gsbi.c
-@@ -212,13 +212,6 @@ static int gsbi_probe(struct platform_device *pdev)
- 	return of_platform_populate(node, NULL, NULL, &pdev->dev);
- }
- 
--static void gsbi_remove(struct platform_device *pdev)
--{
--	struct gsbi_info *gsbi = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(gsbi->hclk);
--}
--
- static const struct of_device_id gsbi_dt_match[] = {
- 	{ .compatible = "qcom,gsbi-v1.0.0", },
- 	{ },
-@@ -232,7 +225,6 @@ static struct platform_driver gsbi_driver = {
- 		.of_match_table	= gsbi_dt_match,
- 	},
- 	.probe = gsbi_probe,
--	.remove = gsbi_remove,
- };
- 
- module_platform_driver(gsbi_driver);
--- 
-2.25.1
+> Wei
 
 
