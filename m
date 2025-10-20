@@ -1,180 +1,99 @@
-Return-Path: <linux-kernel+bounces-860983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F11CBF181C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889B6BF1840
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0133E4F5252
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD923AFFDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CCC1A5B92;
-	Mon, 20 Oct 2025 13:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0913128D6;
+	Mon, 20 Oct 2025 13:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EwALX88j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L16aJg2W"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799231C84C0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DF0246768;
+	Mon, 20 Oct 2025 13:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760966322; cv=none; b=gqbvnlMa7XiaiabQxYbwCZ3OYaNT3uZvptZ0Qg1DbOWj6MeiA0sOZnFjNL9sg5bQbW1P0OZDVeSrobA+l/yEant253XC/lorD4p7ZtgtLNWJy0id6p+hpqbFVnNJNDCpd9F5nkFEgchhia8dC48PWmW69ZEfVo9RFTDbO6tAzRI=
+	t=1760966502; cv=none; b=BtMEVLyF7cnWnfOieRbNOfxJb1ZrGF5OqtCSOhlzLw6zIgXXFy9jsgG4CaY9qy0C3D/Jt13ytiZVAOHAP1Jn6LcWJqj/Z81AecwZflY31IPeJsJ6TdPZSeorLqmgy87/bBAZU5pRkfNx3nzYFLZzt0qK03u9a96JGy4Uw++8/RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760966322; c=relaxed/simple;
-	bh=T3ZbtjSKT8Lj7egPFjM6MiatDeaM7MGWw8l3RDf0DmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pGGBx2prZ3x4jvPMoCHQIBvYW2cmxlSH3Kko9Zicj11Bw6leFzyHNpsE/rsNl+pTrqYaCSaWRiQdZ7mlkNPqx5DcDIc4SDKUmTzre0BDY2Sxw/TWobY55t+sxw86oqfl1KoJFJp7GemTe12HeKTxmvsA32B05euft1kX1x0T2ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EwALX88j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3D1C4CEF9
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760966322;
-	bh=T3ZbtjSKT8Lj7egPFjM6MiatDeaM7MGWw8l3RDf0DmU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EwALX88jE+a5/SJm114LxzVAweK1Zqq8niclfsDsy3HZMBCxFYb4xDf43S6fM4xDy
-	 996IjgH/1tA+OFM2usFAKN/taqUu3iklUOGYHfmBD0A8P3jd4Le9kEAdpVmIc/xt4M
-	 w3IhGhetqU/KpOvXG7j2FvvGhbExSC2Yt1oLUA628wtDju8dPinLqOrKiTAE9eTRzl
-	 QwGTKo6Z0OSKKB1X55Zrc3FkMw4J5ziEqaPaAh8uvXg5TPSH6YD5JFWq4K2RCj8YgO
-	 aqBfx9D7UXhrQeNy6EiDft4Iysd08VDEHcBd6Ze/5pqEkLG4hNV5Npz/QJpUKKjw+G
-	 z40F3nwPsMQQg==
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-441de7ba142so2493516b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:18:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUC4YX69xdm6yfhjNJytVs8OAkuaA7wzxp8hMSk7wpKnb8YhduqUYe222WXVZTURPfIj3FFC1lILWA4sUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG3yTlSLDC0TNAc9plPymN8fdnXLcJZorNZYEWtEjdvbJngdTR
-	RUiy77iMlH8I/m72R7Cs1amtjL531ysr2A89WKO1goAooJm5hwA3kK2mne932A8UjCHdb3O6NaO
-	XSBSd+hu7Zp2K/K5wIFMgTLFB2AZe17w=
-X-Google-Smtp-Source: AGHT+IF/IMbPwn3GU9n0xfrwMBAuzNb6Pn6kpxiIwhCKY05pivQFzdXOwTuxpU/TktIIh6PsdQ9Id4DfpO4//2n4z0w=
-X-Received: by 2002:a05:6808:448d:b0:43f:57cb:7fa0 with SMTP id
- 5614622812f47-443a313d2e4mr5097747b6e.46.1760966321405; Mon, 20 Oct 2025
- 06:18:41 -0700 (PDT)
+	s=arc-20240116; t=1760966502; c=relaxed/simple;
+	bh=IbxW4iy/ORdzRWjGHRfMUARzsy1VBtY+cCnLFG8KxE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i96nQzFVmkwPDS202HnUdw/QxGUkx8A4AdBFqhfv7qDvV2qDJ/3ZFA/EO6IDOxxZ/hLjc3VCXoK6fPuVxeyfJ7iig2163hEGgkyLIk1ufUIWdMG4+oMsPpEeNWrhdpD4UbRtgNmrtifjoTbJLcNBrNryfo/FcKhKDFvzMgLzVTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L16aJg2W; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=39sFsgq/tZnDvvZj4BvMobyTdX/qSf9wpLI9lFYHekA=; b=L16aJg2WmNI2rAcPbopnWoaUep
+	VhSLOWGUy8ZJEYMCXNnoO8iOkAjxG3mBNLO0bTO8H+mEM5nsRj1IiBRFmlq9uU22ZromG8gsrehmD
+	3l9thEreW0aslhW2F0t+NmsW/4yNEyVs3DQikUQxxg+69RoDp8nGfbTf8KUJMztsVf2aCbHFAECjw
+	VX9QtGNj1KyEYpCdoEgUk+n2QgnXuppiLau2pQVn1P9V+dZ8aA19lrTd4HGbf4s//aACZpWI+sMhq
+	LsQxXmL4R8cW8vfgubXeGzQpLevbca0WEYH4fHE6LzdUWbe930b1RFuoyvW4F4RD8Xs3rlbMHSj8X
+	3R8o0VAA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vAppQ-0000000Dldh-2QIh;
+	Mon, 20 Oct 2025 13:21:36 +0000
+Date: Mon, 20 Oct 2025 06:21:36 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-block@vger.kernel.org
+Subject: Re: [GIT PULL] block-bio_iov_iter_export
+Message-ID: <aPY3YKzGbIKxFbl-@infradead.org>
+References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
+ <aPHemg-xpVLkiEt9@infradead.org>
+ <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
+ <aPYCbIrvAkOf5L3g@infradead.org>
+ <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4687373.LvFx2qVVIh@rafael.j.wysocki> <5f0aa630-b30a-44c4-a52c-e08179cd3bf9@arm.com>
- <CAJZ5v0gBtv0bpK2swkc6D0AmanpKAvqO53dgRp2e7p9cWAM3TA@mail.gmail.com>
- <28ecb23b-ecee-409a-9771-24f801081d07@arm.com> <CAJZ5v0jMoEVUaYYPx6EtHFxsg6TF-QtDWJGrasGK7C2C+JxOFw@mail.gmail.com>
- <001801dc4041$607c19f0$21744dd0$@telus.net> <8ccf53bd-81cc-4c7b-88b5-5d7aeebf2c3f@arm.com>
-In-Reply-To: <8ccf53bd-81cc-4c7b-88b5-5d7aeebf2c3f@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 20 Oct 2025 15:18:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ijNkUQdTGRUHRUQKKeEzCR354CGkf-L2oUsG51bnU5oA@mail.gmail.com>
-X-Gm-Features: AS18NWATCzTLrtkVknl3eJY6FaRyejQGQJdzCQsbaYC0yK49S0qSAqlbZ709Yq0
-Message-ID: <CAJZ5v0ijNkUQdTGRUHRUQKKeEzCR354CGkf-L2oUsG51bnU5oA@mail.gmail.com>
-Subject: Re: RE: [PATCH v1] cpuidle: governors: menu: Predict longer idle time
- when in doubt
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Doug Smythies <dsmythies@telus.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Tomasz Figa <tfiga@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sun, Oct 19, 2025 at 4:45=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 10/18/25 16:10, Doug Smythies wrote:
-> > Hi all,
-> >
-> > I have been following and testing these menu.c changes over the last mo=
-nths,
-> > but never reported back on this email list because:
-> > 1.) I never found anything significant to report.
-> > 2.) I always seemed to be a week or more behind the conversations.
->
-> Your input is always appreciated!
+On Mon, Oct 20, 2025 at 08:56:59AM -0400, Kent Overstreet wrote:
+> The implementation has morphed given multipage bvecs and iov_iters, but
+> otherwise it looks structurally much the same as the version I
+> originally introduced.
 
-Indeed.
+Not a pissing context, but I introduced it.  I attributed the git
+authorship you because it fundamentally it based on your idea but with a
+lot of tweaks.  I and many others do this to give proper credit.
 
-> >
-> > On 2025.10.18 04:47 Rafael wrote:
-> >> On Fri, Oct 17, 2025 at 8:37=E2=80=AFPM Christian Loehle wrote:
-> >>> On 10/17/25 10:39, Rafael J. Wysocki wrote:
-> >>>> On Fri, Oct 17, 2025 at 10:22=E2=80=AFAM Christian Loehle wrote:
-> >>>>> On 10/16/25 17:25, Rafael J. Wysocki wrote:
-> >>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>>>
-> >>>>>> It is reported that commit 85975daeaa4d ("cpuidle: menu: Avoid dis=
-carding
-> >>>>>> useful information") led to a performance regression on Intel Jasp=
-er Lake
-> >>>>>> systems because it reduced the time spent by CPUs in idle state C7=
- which
-> >>>>>> is correlated to the maximum frequency the CPUs can get to because=
- of an
-> >>>>>> average running power limit [1].
-> >
-> > I would like to understand Sergey's benchmark test better, and even try
-> > to repeat the results on my test system. I would also like to try to
-> > separate the variables in an attempt to isolate potential contributors.
-> >
-> > To eliminate the PL1 effect, limit the CPU frequency to 2300 MHz and re=
-peat
-> > the test. To eliminate potential CPU frequency scaling contributions, u=
-se the
-> > performance CPU frequency scaling governor. Both changes at once would
-> > be an acceptable first step.
-> >
-> > Sergey: Would you be willing to do that test?
-> > Sergey: Could you provide more details about your test?
->
-> +1
-> Depending on what the actual test does maybe offlining CPUs and comparing=
- would
-> be interesting too (if this means that we never reach throttling on this =
-system).
+> Please attribute correctly, and that would've included CCing me on the
+> patch that dropped the EXPORT_SYMBOL().
 
-While it would be kind of interesting to know the test details, I
-don't think that this is just one test.
+No, we don't Cc the author of each line of code or even function.  The
+relevant maintainer here is Jens.
 
-Sergey mentioned several different symptoms in his initial message:
+> The way you're doing it with bdev_logical_block_size() is just wrong -
+> even for single device filesystems! - because it's the filesystem
+> blocksize that's relevant here and that isn't necessarily going to match
+> (even if it matched when the filesystem was formatted, filesystems can
+> be moved to different block devices).
 
-https://lore.kernel.org/linux-pm/36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww=
-4il3g3cv@cohflgdbpnq7/
+I'm not sure what you are talking about, but the changes you seem to
+be complaining about are making the alignment boundary a caller provided
+argument.  Which seems to be what you're arguing for here?  Either way
+this is the wrong venue.  If you want to change something sent patches
+following the usual guidelines to the maintainer.
 
-which kind of indicates several different tests regressing, so this
-appears to be a whole-platform issue.
-
-> >>From the turbostat data of the other day, it seems that the system was
-> > only power throttled for about 25 seconds for each test. What we don't =
-know
-> > is how long the test took overall or the magnitude of any contributions=
- from
-> > the power limit throttling.
->
-> If I didn't mess up it should be >800s, at least from the sum of idle tim=
-e
-> Sergey provided. (excludes active time)
-> That makes the powerthrottling story less plausible IMO.
-
-Quite evidently, there is a correlation between the max CPU ("busy")
-frequency and the time spent in core C7 on that system.
-
-The only explanation that I can offer is a firmware mechanism turning
-spare power into a CPU boost.
-
-RAPL is such a mechanism and it doesn't throttle strictly speaking,
-but it prevents the CPU package (in the case of PL1) from using more
-energy than it is allowed to use over a given time frame.  One way to
-achieve that is to allow CPUs to run fast at the beginning of the
-measurement window and then throttle them below a certain power level,
-but it is not the only way and it is not likely to be used.  Moreover,
-it is unlikely that the time spent in C7 will affect that because that
-time is not known when the measurement window starts.
-
-Another approach is to keep the package power on a "trajectory" to
-meet the goal and adjust periodically given what all of the CPUs are
-doing.  In that case, it will throttle sometimes when the direction of
-changes is mispredicted, but overall it will set OPPs with certain
-expectation regarding the trend.
-
-Also, on some platforms high-turgo OPPs are "locked" when deep core
-idle states (typically C6 and above) are not utilized, but I'm not
-aware of that being done on Jasper Lake.
 
