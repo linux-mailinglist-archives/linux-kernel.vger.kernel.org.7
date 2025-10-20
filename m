@@ -1,212 +1,216 @@
-Return-Path: <linux-kernel+bounces-861097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE3DBF1CA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:17:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E66BF1CAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DA4A188FE7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:17:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF4294E823B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C22184;
-	Mon, 20 Oct 2025 14:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B0C2FC879;
+	Mon, 20 Oct 2025 14:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fj4ACLXO"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F2Gkd969"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF25323417
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5325A655
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969842; cv=none; b=r4/FzoTnC/o1574Wx0rnKhQoiQz1MxGWPZYG4FBldIbZLKWgQDmfIA7ot3YAtBcHTI6pEzHtFEQVCG7r26h2ZmNfz/QRlfDeYAiCMFEd2XJt2OHzdCf2SrXEErUH/N2Bdiil3plW3sWJqOqKPHIkb7dqoeai93IlwmlFidpO6C8=
+	t=1760969836; cv=none; b=ABz7/S4ZESKJS+KFarXfdXZMc/gXbz3PXyJ1Zb27wd1vQsNMoehhLh6vNNgjYRSHR/Bjkp0Vebz0N5sUw+yqwI96gRe8BR2GbkxLRJoQbDO0hxZjsxKezz+yAIiBkKUmmaldq/Dd4Kv3ulp8zryO4RUwAEL8TEBbh4XQy53KHhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969842; c=relaxed/simple;
-	bh=GgaR0JF2DiNFcr+JLR+skAJBZe8ZfkbJM0uSeMUmHNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lquH2Czwfv5QQqo91tPFyaUaG7La953zlCoKq2H703vlkQgPZaUNl7qsxtzpNTq1T52aeV09neUFUuHoYYksoCZ/V6CweQyWxpwiIcLnIljG73eSPY2ZR/gjGnXsICvBujLDrePBj3soGVg2MYNDu3AvWr7TKtb2JmmH0Dr+DuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fj4ACLXO; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so3968863b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760969839; x=1761574639; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MFGSwFSrgqDr9/3WMg/kXR+n60QLpJskpnlVbbXnq7E=;
-        b=Fj4ACLXOuyHGurIdjfUL8FcVmFbnm+HjYPtIBnXUycyVRNj1V8AkaYh3YOHngc76us
-         ESaYAVC7RaXb5oMDPzIsdnoNV/WaDqzYzaKMzH98oIApPkbrJ9ypblNfbMJ3PDBWgSGZ
-         Kozgz5RZGZZw2Kpa5dS/2LvWPEs1MeezAT3AbgOc5Bvu0AxzxhH9lwAwhgT5N/UAsJ4F
-         D4Gy4+AuY6C+0gwqBrXZPox++CIok5sqegXlG4zal1H4OS08gXXMLDmvqRxg25eyoZGe
-         PoN8sN0Zw+hKJt0Wp4hvCP7UPQTDNhOvatU+YatE6woAguT5Cm5eF1Fw7bPWmitjzzNG
-         1iOQ==
+	s=arc-20240116; t=1760969836; c=relaxed/simple;
+	bh=hLn4KX6C+zx+kRhAJwsP0GiYeYzEKw8qqlJ6TVXxhqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oM+1D8KF98mOkFJuKUwrpdp6N/oVpvpZ45YtsaduMsDl2F9ogyYYjOTkFkxu0R/0KIi6S5RLZ9bxN22Pn2U/ExzWmw9jg5ER/lUKvjhXYylRmC7gDKDQ9oFZIfQzQTinSa4Tv2ljpV1LWpkxxWzC1EvfsQG/QdhlHeQWg7C+14A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F2Gkd969; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760969833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jfYAKZOWZrksi5qoX4OmGVPw0kd6k84iLxlHCLK7oEE=;
+	b=F2Gkd969EpV1H/Iy6E8+zvkxj7O66rqYq2hyc87bQ0DcIyWwuTlqWTP9em/00QdHaBarY3
+	QQKswp3MBd2jzRnznGROdqwO/OdlE40ufCX3ph++rD9wETNpqfPGDSnQzurd/6VCRbjFZr
+	3VV3YlhF5PSrkIGDHccWUGWhCnjRXQc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-t-55sHaaMRuArUu2tsXDxw-1; Mon, 20 Oct 2025 10:17:10 -0400
+X-MC-Unique: t-55sHaaMRuArUu2tsXDxw-1
+X-Mimecast-MFC-AGG-ID: t-55sHaaMRuArUu2tsXDxw_1760969829
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4284525aecbso1634124f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:17:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760969839; x=1761574639;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MFGSwFSrgqDr9/3WMg/kXR+n60QLpJskpnlVbbXnq7E=;
-        b=Xwtbk6zxTeFYgRrLdKYGUJ3n7pdLvRsOL7XIz7j/4pTWlmEPz+J/PpUJsxm4Y6jbAZ
-         cIRBemTTjiSpqQ1kLaYxKmHSAt+IbVaps8+ml7EwM7RC/N65W7z5/VuXIW1mxRHFzkNc
-         bdEl8hFf7QM6IhQDy7Nrj9nj/33KeonkqD4NP6QJQJQ57hojoLEBERtGfirFyftOiTnv
-         SxPNq8IiAehbg7nTm0YimKTx6E12n7c587v5UOIKh8qdGgZcMqy+byrWRMQyBhRn3aIP
-         iaxHsFQsjMmLnbesrMGLXtRzg97euPoK7kY3F8nq50GtaPupDhTgBLP+3VxAY0aeGggK
-         jF9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVK1qKV3xehRoBwwitVh2YRiYUVCiw6Teph/2KiEs/psPJyuvl7WFPL4IMHvX0NAiHP+UY4RXgXLv3e/j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjtlFr5VgNXqM33+O+QJLpXQXpIPBaz8tkAID3EIbJzkFHXeSS
-	FwIGxhxxmKXy/aAOrf6tXsb1soL36xg2WTR9lLIPO8OKHwb5oAGwsoW5
-X-Gm-Gg: ASbGncuIVJZHbe7B3UtxxlGZdDuNzjUHhxk1JK9U6tgTBsZsrPQDzSQ5X9oseebMxeM
-	LaqCzfCVB9Aczq5gTiXrQIwRPQIpr6CfSxpj0fWDvX9ChYdkTzTDmxwQc63Zl1lVBrap/b/uFy9
-	BfwUFYwWf2SheohY6/9S92T313C6IJSrZb40m2AiR1jIVnctUHseGz8yp89pIoClehE7p72pfsw
-	ZCdIZwLdmBg7+L/o7AKwXvssLyhZFDN9TTp0M7iDpkPx7F+KPl+21jQ/Z+h+8s9D5gZ4icFKMTq
-	2ngZrRN8fNVyhFyMjSFjblwWKLS8aksREJR2hqm5N1+L212zAorqgYs49JaEc98IGLik0kWHzW8
-	G6M5UHg5kHs1xDXolS8G6xnmBUnceUIjc3Y0Zdiv6v6iBhmolDNIqG3v6GmoH+vBa7MwAaiQYgJ
-	WjgKq91s4F0dyH+CZn4Zd2vC2krvnc9go=
-X-Google-Smtp-Source: AGHT+IEGpqCj48hSlGvE39SucbX6Ouca5PqF+VzauRnJXVW7BvicaDLem8wj36fR99ehw835dYNneQ==
-X-Received: by 2002:a17:90b:3c02:b0:33b:6bff:35fe with SMTP id 98e67ed59e1d1-33bc9d1c743mr18185739a91.16.1760969839288;
-        Mon, 20 Oct 2025 07:17:19 -0700 (PDT)
-Received: from hiagonb ([2804:1b3:a7c0:fdb0:efbb:1413:f1d2:48d9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5de11601sm8126966a91.9.2025.10.20.07.17.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 07:17:18 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:17:04 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, afd@ti.com, u-kumar1@ti.com, 
-	hnagalla@ti.com, jm@ti.com, d-gole@ti.com, b-padhi@ti.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Robert Nelson <robertcnelson@gmail.com>, 
-	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, Emanuele Ghidoli <emanuele.ghidoli@toradex.com>, 
-	Francesco Dolcini <francesco.dolcini@toradex.com>, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
-	Logan Bristol <logan.bristol@utexas.edu>, Josua Mayer <josua@solid-run.com>, John Ma <jma@phytec.com>, 
-	Nathan Morrisson <nmorrisson@phytec.com>, Garrett Giordano <ggiordano@phytec.com>, 
-	Matt McKee <mmckee@phytec.com>, Wadim Egorov <w.egorov@phytec.de>, 
-	Max Krummenacher <max.krummenacher@toradex.com>, Stefan Eichenberger <stefan.eichenberger@toradex.com>, 
-	Hiago De Franco <hiago.franco@toradex.com>, Diogo Ivo <diogo.ivo@siemens.com>, 
-	Li Hua Qian <huaqian.li@siemens.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Baocheng Su <baocheng.su@siemens.com>, Benedikt Niedermayr <benedikt.niedermayr@siemens.com>, 
-	regressions@lists.linux.dev
-Subject: [REGRESSION] Suspend to RAM does not work anymore with
- k3-am62-ti-ipc-firmware.dtsi
-Message-ID: <sid7gtg5vay5qgicsl6smnzwg5mnneoa35cempt5ddwjvedaio@hzsgcx6oo74l>
+        d=1e100.net; s=20230601; t=1760969829; x=1761574629;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jfYAKZOWZrksi5qoX4OmGVPw0kd6k84iLxlHCLK7oEE=;
+        b=sDuKBjXN2x88ngusnJCVARRVgC3CJz2wGCBxviVs9UeeP/SjT/YjnicBVlNmBsVpmR
+         Ah9puJa/cYkr6nK0SwIZB31BccHRNBogOv3MBsouf+VH4GM5CuP79hE0JorhjPgLhtRU
+         270291vDdziNb2iscMFy+QXYVkKTe4MUri15v/fzWMUHXY/wqEq+O4v5HrDXxypCIV8x
+         KIpP+yx+SYWTl5Cd2w0/Y31MaIIsX9Tbl0lBlmHRvuz0L/3PFxIh9bjcB3HQWyXCoGo9
+         74EfUe722rObro8XHoUX2esLXhNbcncmpczu54myAidMQd2LLC2wYgH/rSsLEt592plM
+         l8Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCURvkxwH1JntTuO0kk1Q2hofQ6elu9e6yuF1A6ul5attshhiYBwbvyO1KGwvn6Pkc/NiLN6zhoZ/x7ILIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvwZfDUZEJCfkfALfP+rRHiuxKyGyZ4vxgjTu4WYTXs9kSfG1f
+	B6zGQUaW6h16oaOHB0w8on1ENLOnIqgVcfXtHfZTZFbUE0bTRv+LbuSGV1BNDi7/keJq4TEKHKg
+	7MYjLhFyYp/CHqpCbtemQz5lbS60or1MhcpPUjeoFH3/z/TaMUDIRPyJXjnNEcUIJlg==
+X-Gm-Gg: ASbGncsYD9ghHar/l71QQtZ6d1n4VhUdfoVdneP1q/s+9Bf9YCh2F9sQEh7yDbCD1hz
+	LKWuFrYc7blXVGXwZ277QEUtcb75EcD+upkEDNUx/WRdt73FKMfAvHekLuQi2N9keEIhcq34PJt
+	Xq0Ng/UxZSU/67BEv4jjnyVDaJgfhhCQQnP8hnMuhNUqxMC0aB1rPv2frcjjWo8+vJqL6sFz4H1
+	mnE0u8mlkjpiSbmkIjFn+47gGR7FHw6BcdXr/IBoKSdu5JY6IUs3pUBDOxrjGL1D4I5oWMyy2S6
+	2yPvPZrBiCUMliw/5NKRYEUFSnsGQGxExZWDkqnlqEYJ743dhkkvy7zKU6nogIkpacJtbOYhXmS
+	O4l2ukY6lFxth//inFgYPx2+Lx9gLfoYqOBxcFVBVQ27L8R8eqCZtHRrBvO082u79KojgJlrJbW
+	oD3RvPsU7raUKRumJUeb8Oi6+RwxU=
+X-Received: by 2002:a5d:5c89:0:b0:425:6866:6a9e with SMTP id ffacd0b85a97d-42704ca6ba1mr8775138f8f.0.1760969828664;
+        Mon, 20 Oct 2025 07:17:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6OUvLi2k38V0HguToAtdytTARx3HNV77YTxzJsGCen7movSvk2GULYom+MGJGITAx0cpoXg==
+X-Received: by 2002:a5d:5c89:0:b0:425:6866:6a9e with SMTP id ffacd0b85a97d-42704ca6ba1mr8775103f8f.0.1760969828192;
+        Mon, 20 Oct 2025 07:17:08 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a993sm15520367f8f.24.2025.10.20.07.17.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 07:17:07 -0700 (PDT)
+Message-ID: <6fe3562d-49b2-4975-aa86-e139c535ad00@redhat.com>
+Date: Mon, 20 Oct 2025 16:17:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm, hugetlb: implement movable_gigantic_pages sysctl
+To: Gregory Price <gourry@gourry.net>, linux-mm@kvack.org, osalvador@suse.de
+Cc: corbet@lwn.net, muchun.song@linux.dev, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, laoar.shao@gmail.com, mclapinski@google.com,
+ joel.granados@kernel.org, jack@suse.cz, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+ Michal Hocko <mhocko@suse.com>,
+ Alexandru Moise <00moses.alexander00@gmail.com>,
+ David Rientjes <rientjes@google.com>
+References: <20251009161515.422292-1-gourry@gourry.net>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251009161515.422292-1-gourry@gourry.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello all,
+On 09.10.25 18:15, Gregory Price wrote:
+> This reintroduces a concept removed by
+> commit d6cb41cc44c6 ("mm, hugetlb: remove hugepages_treat_as_movable sysctl")
+> 
+> This sysctl provides some flexibility between multiple requirements which
+> are difficult to square without adding significantly more complexity.
+> 
+> 1) onlining memory in ZONE_MOVABLE to maintain hotplug compatibility
+> 2) onlining memory in ZONE_MOVABLE to increase reliability of hugepage
+>     allocation.
+> 
+> When the user's intent for ZONE_MOVABLE is to allow more reliable huge
+> page allocation (as opposed to enabling hotplugability), disallowing 1GB
+> hugepages in this region this region is pointless.  So if hotplug is not
+> a requirement, we can loosen the restrictions to allow 1GB gigantic pages
+> in ZONE_MOVABLE.
+> 
+> Since 1GB can be difficult to migrate / has impacts on compaction /
+> defragmentation, we don't enable this by default.  However, since there
+> are scenarios where gigantic pages are migratable (hugetlb available in
+> multiple places), we should allow use of these on zone movable regions.
+> 
+> Note: Boot-time CMA is not possible for driver-managed hotplug memory,
+> as CMA requires the memory to be registered as SystemRAM at boot time.
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Alexandru Moise <00moses.alexander00@gmail.com>
+> Suggested-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Link: https://lore.kernel.org/all/20180201193132.Hk7vI_xaU%25akpm@linux-foundation.org/
+> ---
 
-After commit 1d6161617c10 (“arm64: dts: ti: k3-am62-ti-ipc-firmware:
-Refactor IPC cfg into new dtsi”), suspend-to-RAM stopped working on
-AM62x.
+I just remembered one thing, maybe Oscar knows what I mean:
 
-When I originally tested that change, I did not test suspend-to-RAM
-functionality, but our testing infrastructure caught this regression.
+At some point we discussed a possible issue when 
+alloc_contig_range()/alloc_contig_pages() would try to allocate a 
+gigantic folio and would stumble over movable gigantic folios (possibly 
+triggering some recursion when trying to move that one? Not sure).
 
-See the log below:
+We wanted to avoid having one gigantic folio allocation try to move 
+another gigantic folio allocation.
 
-root@verdin-am62-15479173:~# cat /sys/class/remoteproc/remoteproc*/state
-offline
-offline
-offline
-root@verdin-am62-15479173:~# echo mem > /sys/power/state
-[   37.798686] PM: suspend entry (deep)
-[   37.805942] Filesystems sync: 0.003 seconds
-[   37.811965] Freezing user space processes
-[   37.819214] Freezing user space processes completed (elapsed 0.002 seconds)
-[   37.826469] OOM killer disabled.
-[   37.829721] Freezing remaining freezable tasks
-[   37.835557] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[   37.843057] printk: Suspending console(s) (use no_console_suspend to debug)
-[   37.953874] omap-mailbox 29000000.mailbox: fifo 5 has unexpected unread messages
-[   37.953909] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
-[   37.953941] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
-[   37.953967] PM: Some devices failed to suspend, or early wake event detected
-[   37.973876] am65-cpsw-nuss 8000000.ethernet: set new flow-id-base 19
-[   37.984655] am65-cpsw-nuss 8000000.ethernet end0: PHY [8000f00.mdio:00] driver [TI DP83867] (irq=353)
-[   37.985655] am65-cpsw-nuss 8000000.ethernet end0: configuring for phy/rgmii-rxid link mode
-[   38.009002] usb-conn-gpio connector: repeated role: device
-[   38.013377] lt8912 1-0048: PM: dpm_run_callback(): lt8912_bridge_resume [lontium_lt8912b] returns -121
-[   38.013420] lt8912 1-0048: PM: failed to resume async: error -121
-[   38.153252] OOM killer enabled.
-[   38.156422] Restarting tasks: Starting
-[   38.163532] Restarting tasks: Done
-[   38.167252] random: crng reseeded on system resumption
-[   38.173031] PM: suspend exit
+I think your patch would not change anything in that regard: when we 
+scan for a suitable range in alloc_contig_pages_noprof() we call 
+pfn_range_valid_contig() .
 
-The omap-mailbox driver returns -EBUSY because it detects an unexpected
-unread message on FIFO 5.  As I understand it, this FIFO corresponds to
-the communication channel between the DM R5 and the Cortex-M4 cores.
+There, we simply give up whenever we spot any PageHuge(), preventing 
+this issue.
 
-DM R5 sends a message that is never consumed, since no firmware is
-running on the M4 (the core is offline). This unhandled message prevents
-the system from entering suspend.
+However, it also means that we won't try moving 2MB folios to free up a 
+1GB folio.
 
-This issue also appears on the downstream TI kernel, which I reported
-earlier [1] (for reference).
+That could be supported by allowing for moving hugetlb folios when their 
+size is small enough to be served by the buddy, and the size we are 
+allocating is larger than the one of these folios.
 
-The following patch resolves the problem:
+-- 
+Cheers
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-index ea69fab9b52b..e07cf3290cc3 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-@@ -26,11 +26,6 @@ mbox_m4_0: mbox-m4-0 {
-                ti,mbox-rx = <0 0 0>;
-                ti,mbox-tx = <1 0 0>;
-        };
--
--       mbox_r5_0: mbox-r5-0 {
--               ti,mbox-rx = <2 0 0>;
--               ti,mbox-tx = <3 0 0>;
--       };
- };
+David / dhildenb
 
- &mcu_m4fss {
-@@ -45,7 +40,6 @@ &wkup_r5fss0 {
- };
-
- &wkup_r5fss0_core0 {
--       mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-        memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-                        <&wkup_r5fss0_core0_memory_region>;
-        status = "okay";
-
-Ultimately  this issue is related to the omap driver itself:
-
-1. We should have a functionatlly to save and restore the messages into
-the mailbox, instead of preveting it to go into suspend.
-
-2. Or we could not check all 16 FIFOs if the kernel does not own them:
-
-	for (fifo = 0; fifo < mdev->num_fifos; fifo++) {
-		if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
-			dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
-				fifo);
-			return -EBUSY;
-		}
-	}
-
-Setting the number of FIFOs to 4 in the device tree also resolves this
-issue.
-
-Do you have suggestions on how best to fix this in the driver, or should
-we consider reverting the DTS change until suspend-to-RAM works again?
-
-#regzbot introduced: 1d6161617c
-
-[1] https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1557295/am62p-mailbox-channel-is-not-freed-during-r5-remoteproc-stop-call/6069413
-
-Best regards,
-Hiago.
 
