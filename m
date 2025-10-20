@@ -1,119 +1,163 @@
-Return-Path: <linux-kernel+bounces-860384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBFFBF0033
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:45:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A162ABF001B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47BFC4F0939
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD303B82D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67788227EAA;
-	Mon, 20 Oct 2025 08:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DGjWvPCk"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C524D2EC0A0;
+	Mon, 20 Oct 2025 08:44:44 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C1B22157E;
-	Mon, 20 Oct 2025 08:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA752DCF7C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949915; cv=none; b=TS5AyQRjw/d+ISGMOEEnaMn4YDnZ4mTAic6eFzfcu+k4yzJbk/A08tNWwctu2w/pAOGp9sTOSXJToLUREVfh7T8evuM9WJTsqXCJX8uWi14de1+4OgXgxpHLJD7yZeUTRhXFUpfDrmK3WZrnNDXhVPt+2tqPs94E0GO831UdSrE=
+	t=1760949884; cv=none; b=BX2puptH7HNlCQw87I6Cu5W1CB542epZNZszvkSG54NO/0SxAB6yXD/r5DbhLnJpg7fapJztSali5QkdhzORq/426+2vssUcRUq8s4adWkQT55XAabfSxB/icWwTcto0H2AwRJrYFIormpUp3AfQFismVazd72WrdR9fSsV+GjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949915; c=relaxed/simple;
-	bh=4emvamnxeVcZ7PnbszrmZ5Ey1SXW/RPYZYBohuaxU9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oYcn1cSshpJMBj16bMsJOB4NmRfDd+gN3izkNQbvi5bmQCRaLcqTSbs35fIm06BCBWud1x4J5tfyg/338mmlTwbIWNUg3VPZXtZw06nbK6pXxe/2LcL5RXzWjr/07r30/LapSvddPYe3nwAdP9YgBHx6arSB75a513RMKuMCksI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DGjWvPCk; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=cQ+W9Pz7bUHF75GeykvdTCCj3llsnLUvXgSmSak+v08=; b=DGjWvPCkVHonsBt5WCMgdkSDv5
-	egS2lHn/WDWNRoTcTlVO8mYonrNGv8TSTw7nNK1pZW0vxyK+EM0ugghYKsyM0B8Qz+ynlWoAdQXff
-	wVQum5jPSkmN+BG9OryOCWot1JZaj4OTMRwlXuh4JhfEjBUYHZ4q2nemHSxVlNTl4Q6bFLKAmEClz
-	gfqKp6ruaRqzJqT+vLhBGO1JxKr/bhaxT90ySLo1TpUuyFxkB/+kjYJ70Oe91lbgWnxEkG2D/vcmK
-	IvD/NzxIpKOE1d11N5LIXqkr2UepvsqjWaSxvzt1dv2OlpA6rKAOW5xjbf1JIMB9CC2eG3Zxi+MBq
-	j6JZfT6A==;
-Received: from [58.29.143.236] (helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vAlVm-00C1op-NO; Mon, 20 Oct 2025 10:45:03 +0200
-From: Changwoo Min <changwoo@igalia.com>
-To: lukasz.luba@arm.com,
-	rafael@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org
-Cc: christian.loehle@arm.com,
-	tj@kernel.org,
-	kernel-dev@igalia.com,
-	linux-pm@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Changwoo Min <changwoo@igalia.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 2/2] PM: EM: Include the iterator/accessor code for the performance domain conditionally
-Date: Mon, 20 Oct 2025 17:44:29 +0900
-Message-ID: <20251020084429.230322-2-changwoo@igalia.com>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <20251020084429.230322-1-changwoo@igalia.com>
-References: <20251020084429.230322-1-changwoo@igalia.com>
+	s=arc-20240116; t=1760949884; c=relaxed/simple;
+	bh=aYr05q1o0cdDOrP+MKajyhMt96ooJZe8riiKiTtZo7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IlqRPJJywf5mMvxon14S6RCIPB/KTBL+hVNvu4VQ3hlJFDceChqXkcNvkFFiGk6u5Zd0lBbjWeW+mpg3TgnJIEGJiHtKhkrLmyGriSiwZ8ZUQTq2A0VXjapeKFbMqJbxT/MhFCRnizgIzijjmXZcZqB/auOhpdH4PgnWydFta0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqpqm3LTKzYQtqN;
+	Mon, 20 Oct 2025 16:43:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 311801A12E6;
+	Mon, 20 Oct 2025 16:44:39 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP1 (Coremail) with SMTP id cCh0CgB36Ux19vVoEFXsAw--.5397S2;
+	Mon, 20 Oct 2025 16:44:39 +0800 (CST)
+Message-ID: <08d14514-3419-4aa8-9b20-cd95a45706e2@huaweicloud.com>
+Date: Mon, 20 Oct 2025 16:44:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 11/16] cpuset: simplify partition update logic
+ for hotplug tasks
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+ <20250928071306.3797436-12-chenridong@huaweicloud.com>
+ <b436725e-215f-467f-9123-1853f65c3946@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <b436725e-215f-467f-9123-1853f65c3946@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgB36Ux19vVoEFXsAw--.5397S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45Kr17Jw43Ar1rAw48tFb_yoW5ZryDpr
+	95GFW7tayjgr10k3sFqF97A34UGan7J3WUtwnIq3WrJr12vw1v9F1jq3sY9FW5XrWkGF17
+	ZFn0qr4xZF18Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-When CONFIG_ENERGY_MODEL is set but CONFIG_NET is not set, the following
-errors are raised:
 
->> kernel/power/energy_model.c:1003:5: error: redefinition of
-   'for_each_em_perf_domain'
 
->> kernel/power/energy_model.c:1022:24: error: redefinition of
-   'em_perf_domain_get_by_id'
+On 2025/10/20 11:00, Waiman Long wrote:
+> 
+> On 9/28/25 3:13 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> Simplify the partition update logic in cpuset_hotplug_update_tasks() by
+>> calling the unified local_partition_update() interface.
+>>
+>> For local partitions, the previous patch introduced local_partition_update
+>> which handles both validation state transitions:
+>> - Invalidates local partitions that fail validation checks
+>> - Transitions invalid partitions to valid state when no errors are detected
+>>
+>> This eliminates the need for separate transition logic
+>> in cpuset_hotplug_update_tasks(), which can now simply call
+>> local_partition_update() to handle all local partition changes.
+>>
+>> This patch simplifies the logic by always proceeding to update_tasks for
+>> remote partitions, regardless of whether they were disabled or not. Since
+>> the original code didn't perform any meaningful operations for non-disabled
+>> remote partitions, this change should not affect functionality.
+>>
+>> The partition_cmd mechanism can now be safely removed as it is no longer
+> 
+> It is partition_cmd enum type.
+> 
 
-That is because these two functions are defined in em_netlink.h (empty
-function body) and energy_model.c (actual implementation).
+Thank you,
 
-To avoid the compilation errors, conditionally include the actual function
-implementations in energy_model.c when both CONFIG_ENERGY_MODEL and
-CONFIG_NET are set.
+Will update.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510151232.UNZ2J7TZ-lkp@intel.com/
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
----
- kernel/power/energy_model.c | 2 ++
- 1 file changed, 2 insertions(+)
+>> referenced by any code paths after the partition update logic
+>> simplification.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 67 ++++++++++++++++--------------------------
+>>   1 file changed, 26 insertions(+), 41 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 9e98df542715..a1896a199c8b 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1211,17 +1211,6 @@ static void compute_effective_cpumask(struct cpumask *new_cpus,
+>>       cpumask_and(new_cpus, cs->cpus_allowed, parent->effective_cpus);
+>>   }
+>>   -/*
+>> - * Commands for update_parent_effective_cpumask
+>> - */
+>> -enum partition_cmd {
+>> -    partcmd_enable,        /* Enable partition root      */
+>> -    partcmd_enablei,    /* Enable isolated partition root */
+>> -    partcmd_disable,    /* Disable partition root      */
+>> -    partcmd_update,        /* Update parent's effective_cpus */
+>> -    partcmd_invalidate,    /* Make partition invalid      */
+>> -};
+>> -
+>>   static void update_sibling_cpumasks(struct cpuset *parent, struct cpuset *cs,
+>>                       struct tmpmasks *tmp);
+>>   @@ -2062,6 +2051,9 @@ static int __local_partition_update(struct cpuset *cs, struct cpumask *xcpus,
+>>           update_partition_sd_lb(cs, old_prs);
+>>           return part_error;
+>>       }
+>> +    /* Nothing changes, return PERR_NONE */
+>> +    if (new_prs == old_prs && cpumask_equal(excpus, cs->effective_xcpus))
+>> +        return PERR_NONE;
+> I believe you already have this check added when you introduce __local_partition_update() in patch
+> 9. It is a duplicate.
+> 
+> Cheers,
+> Longman
 
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index 92c12b5983ed..e669d5057fca 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -1006,6 +1006,7 @@ void em_rebuild_sched_domains(void)
- 	schedule_work(&rebuild_sd_work);
- }
- 
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_NET)
- int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
- 			    void *data)
- {
-@@ -1039,3 +1040,4 @@ struct em_perf_domain *em_perf_domain_get_by_id(int id)
- 
- 	return NULL;
- }
-+#endif
+Thank you,
+
+Will update.
+
 -- 
-2.51.1.dirty
+Best regards,
+Ridong
 
 
