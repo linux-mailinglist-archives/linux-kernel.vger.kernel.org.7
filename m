@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-859900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C00BEEECE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:07:52 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A90BEEED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 708184E24B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 00:07:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7B7134874C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 00:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0138F5B;
-	Mon, 20 Oct 2025 00:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E1641C62;
+	Mon, 20 Oct 2025 00:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HNTVivU6"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="GgTRdcy+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rxxbNTdc"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543B48F40;
-	Mon, 20 Oct 2025 00:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9F4523A;
+	Mon, 20 Oct 2025 00:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760918866; cv=none; b=DqfHuU3uG/ek+Q2HRh8Vy6rDrstGZooo1JD82BBH7kV98r4Sy0p6xt48vfaCwOsHMxKQRg521mAXa1Kgd2aAnW0nn7jVBFmkUzQZgNDRSFfTYiIhzLQlHKanvbkR0Wb5HQ7REixXu1b2/Ckm0orlh1JxeLMIXesQAesgXueRET4=
+	t=1760919576; cv=none; b=p8oQlmo/0ZNPUDiPzqVRd9yv/8kg1UlRQkub6fOiXpeZXMnOU+76yisuMDERLLxtRMKGGBQclm6NeE+C7CbIEn76eDfxsvwXulglbYwwmXR1IpxqABPUR9+taFPG9FlAjV6NU8NW2imSPMgNW9ymPelhX/y5OSCbOjgvhXKgyBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760918866; c=relaxed/simple;
-	bh=7757hFLmfs1eUjpHwbfvEqjbGCpElPRXNm+VdQ9zrlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HSLmoyxtzViVN7cygx6Ox2CRMdKP36H7O/ZR7Fz9kD9WIxAkiIV33S0m2dIAR/erQJ2IuswSpZbHE47rBcwlAJVoWqdJIXyACuT/6e2uJrckSd6a2ywNcPI2wLiU5X/hvUhJ/rIaVW40Y4nspGPoHSbVJ6km0/S8gy8LHfWHZTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HNTVivU6; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1760918861;
-	bh=HDzk9vebfEsRyA2C/HsZNPBRsdMlwCiqqbK8Z0ywOAc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HNTVivU6epRb5eK4clqI/i8w7YGHEyHeRfM19gC6/gT6rSSQyy0X7akFsEKyKGewk
-	 GvpvMppVIubrEWdd61w1N/nXSB9wIRnZKqlt5oo5UlWfz7H723JxsmissKKnfK8NeA
-	 vDFKGoE+Ol0P1yG3vZ3idWQNsdtou8WXb5JPVG9Qkb45Axa+HlCMJjNij2Ns+Ke1hH
-	 F4RLNPHH/5ysKbaSowy6rDv6/toHv08n1f/PBSqSYm6RjCuDwGZY9pScbQcsfjbMo7
-	 UZ/eyk0JlwD5Q/de80IQ7dj3hppkZ9NX6JQ122Lbi6zFL+Eac5BLoyzySgwG6cKHyt
-	 od+yIn3C+cDcA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqbNC2kr2z4w2J;
-	Mon, 20 Oct 2025 11:07:39 +1100 (AEDT)
-Date: Mon, 20 Oct 2025 11:07:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Sean Christopherson <seanjc@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Elena Reshetova
- <elena.reshetova@intel.com>, "Naveen N Rao (AMD)" <naveen@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the kvm-x86 tree with the tip tree
-Message-ID: <20251020110738.4e53c34a@canb.auug.org.au>
+	s=arc-20240116; t=1760919576; c=relaxed/simple;
+	bh=mJyjMq0b9lJKN+cXw+75qsOg3FtzMcUHmqJ4JvVGMuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpSKH6mkeOKxaYxG81And9moa0sMSlzMD3BHsMD3Rw/LD6tTsayXKjeDNCtBjRnEkm6yFcjKwqcwUmqN3+I0EdTd0j452B2ylvw1Jb3UIHApDwOB73h98DzEXI/DSbxQ1DGGCR8WFdWuh3kRbXCkOoaQhpxzbdl1Pm+GENSrGds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=GgTRdcy+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rxxbNTdc; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id EE9C1EC0199;
+	Sun, 19 Oct 2025 20:19:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Sun, 19 Oct 2025 20:19:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1760919570; x=
+	1761005970; bh=JVAv1dpkfiW3RgU/UKAykTqypLZJp0v7q2MsRYL73mA=; b=G
+	gTRdcy+t1u/G1o0n3+AOV6fVekbSlr5th19jJAxIrYa5m5HGmoLD0RVp44ii17Il
+	/lsrwOyIyKmXh7CFaNdoVD/pIzGatd5kMbW2tkr6sAECGC/oefzgC37cO0DOJztk
+	yWNyY3/PCmfc/LvT6jcOYB9sqJ86s2Ewi8f9653eF1HIwDRPUIja7mP8bn19brgh
+	3cEAQybcfYb2qO/TA3NId6V2AyNLdbUxwI0BPnuuEJczBW6bekNjw5K5OPQkTo/b
+	lb4BOe+3HpPGSObejCd93SSSuGQhaM8T3B/FgCy8EauRsmwDRjg1jDgNNxGm3gsG
+	ZwsNpovvyk4NosedqHwdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760919570; x=1761005970; bh=JVAv1dpkfiW3RgU/UKAykTqypLZJp0v7q2M
+	sRYL73mA=; b=rxxbNTdcDCXtXDVxyXOV3JzB2vOlKGpEmvyqcQAmi062wgECsiD
+	mUNQ6sb8hx+7z9HTju3FeJ01mNqihm3cVUzQEETUGNnerXQ7zYS/PsJB+4dcfJbU
+	jb8ZqZnEJoX4hrBVyKRrFRXYZODf5TB9+3zAT4ZBRZJ85Nfe8xGZ9VO/B3OR4Mlh
+	LhZeQMSEK7fHvwQvOpETT4vE0hEC3+P7RGDaeOFiw5X15Hw/ltXEetGNd5XQeNQ3
+	8moHvDS6FCfy29AAYrnRwNSZueWlknoDSBSSuj0dA6l13iNAvc7ABatoNVXP9kSE
+	Vnsvq7jX4FGwfxR7T2Pob18IO7kG2G5x7ww==
+X-ME-Sender: <xms:EoD1aHGK9i0bPvHVfGaByNnQdlmwmo1J5sUoWkADFkQYh_GFNQU1bg>
+    <xme:EoD1aEf5F7vnaWxaShGvGoMePkcRXpRNWD8QORoWP4PT8ZhpSjAFFBzn-l9_RgZlI
+    AOH7xFZ1LP6XJlFgNeL-yvMxQ3Fkf2aCddicDvaJh7gjrEqQ8jLMZs>
+X-ME-Received: <xmr:EoD1aBH3cQDzo8qH6N_fhDwvc15Mr9bxyhKOLR56acng5lpX62VM89E-xlhW-dPu-v-kiSnJCCmcxyC79Oz6hSVFQYYz1m1T>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeeifeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
+    dttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
+    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhteetgf
+    ekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
+    hkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurh
+    gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhouhhnugesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:EoD1aNU4WnkDL-pLWs45EqRmThdu-nm-WsaFJDTPqQ3FnFJ6I74twQ>
+    <xmx:EoD1aIKev0LI_GAU9pkknmuTE3gKAcEbcAlLs9B4okV5QU-2zBLPcg>
+    <xmx:EoD1aF9X90g-DZEIH4KknQgFv_309u6c6IaycH60re-fpE_Oy-XLCg>
+    <xmx:EoD1aDLDpOQGw2CSklRXuhLp93QtnHdlhl73eOIV3CKsEND8A8rwWw>
+    <xmx:EoD1aF4ye777I_dKJZTuZnPyjoOshBxFFErjberl1hcSxhkNOSLNwtjs>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 19 Oct 2025 20:19:29 -0400 (EDT)
+Date: Mon, 20 Oct 2025 09:19:26 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 0/4] firewire: core: handle TASCAM
+ FW-1884/FW-1804/FW-1082 quirk
+Message-ID: <20251020001926.GA52936@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YMLJJi826km_DzMakT56p0a";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018035532.287124-1-o-takashi@sakamocchi.jp>
 
---Sig_/YMLJJi826km_DzMakT56p0a
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Oct 18, 2025 at 12:55:28PM +0900, Takashi Sakamoto wrote:
+> Hi,
+> 
+> In 2003, TEAC Corporation had released FW-1884/FW-1804/FW-1082 in its
+> TASCAM brand. These devices are already supported by a driver in ALSA
+> firewire stack, but they have an interoperability issue related to
+> the speed of asynchronous transactions and isochronous transmissions.
+> When operating at the speed described in configuration ROM, they are
+> too lazy to respond, and eventually frozen.
+> 
+> The most likely cause of this issue is a mismatch in the gap count
+> between the initiators and receivers. Theoretically, this can be
+> resolved by transmitting phy configuration packets to optimize gap count.
+> Nevertheless, this approach has proven ineffective, suggesting that the
+> device firmware may contain a bug causing the issue.
+> 
+> From my experience, these devices operate more reliably at lower
+> transaction and transmission speeds, which provides a practical
+> mitigation.
+> 
+> This patch series addresses the interoperability issue. The core function
+> of Linux FireWire subsystem is changed to read the entire configuration
+> ROM at the lowest speed (S100), and to identify these devices based on its
+> contents. Once identified, their maximum speed is limited to S200. The
+> ALSA driver then performs asynchronous requests and isochronous
+> transmission at that speed to prevent device freezes.
+> 
+> Takashi Sakamoto (4):
+>   firewire: core: code refactoring to compute transaction speed
+>   firewire: core: determine transaction speed after detecting quirks
+>   firewire: core: handle device quirk of TASCAM FW-1884/FW-1804/FW-1082
+>   ALSA: firewire-tascam: reserve resources for transferred isochronous
+>     packets at S400
+> 
+>  drivers/firewire/core-device.c        | 86 +++++++++++++++------------
+>  include/linux/firewire.h              |  3 +
+>  sound/firewire/tascam/tascam-stream.c | 21 +++----
+>  3 files changed, 63 insertions(+), 47 deletions(-)
+> 
+> 
+> base-commit: 15f9610fc96ac6fd2844e63f7bf5a0b08e1c31c8
 
-Hi all,
+Applied to for-next branch.
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+To sound subsystem maintainer, I'll send the 4th patch to mainline as a
+part of firewire subsystem updates in next merge window.
 
-  arch/x86/include/asm/cpufeatures.h
 
-between commit:
+Regards
 
-  6ffdb49101f0 ("x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature fl=
-ag")
-
-from the tip tree and commit:
-
-  5d0316e25def ("x86/cpufeatures: Add X86_FEATURE_X2AVIC_EXT")
-
-from the kvm-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/include/asm/cpufeatures.h
-index 592909dbe0a8,7129eb44adad..000000000000
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@@ -502,7 -500,7 +503,8 @@@
-  #define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-u=
-serspace, see VMSCAPE bug */
-  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring C=
-ounters */
-  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instruction=
-s */
- -#define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for =
-4k vCPUs */
- +#define X86_FEATURE_SGX_EUPDATESVN	(21*32+17) /* Support for ENCLS[EUPDAT=
-ESVN] instruction */
-++#define X86_FEATURE_X2AVIC_EXT		(21*32+18) /* AMD SVM x2AVIC support for =
-4k vCPUs */
- =20
-  /*
-   * BUG word(s)
-
---Sig_/YMLJJi826km_DzMakT56p0a
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1fUoACgkQAVBC80lX
-0GzIJQgAlle30wZrJz+o/iT7IKaBMsqI2xdRStaWYw+o4iFLRo+lkhv3UCiIWfk6
-L/Mbf68Of1Wctvgm2DUaK+/ugdUaCyI5eHyPUvLxNkljwH8XD4IzY9X9E2qgoWUZ
-Ve/Xx9ui5oSILTV6eTXv/7YUuvovhKR9qvp5+gv45fMnv9ihx8l4uUL9AIb295Dp
-bDchh3rVDM0nUvBPbPXHG/uY4KdKQH7+LmGcaWR9MHTHQE1GReoLm3B07X0Tic0d
-h5Au36GVtr1sge3076klMcHhPx6DodmIcSm4ZvfQd74ApNLwKO5ztBmhr58jdmw8
-7Vt5hpAAj6FFZwMHsoJpwo3hT2fW/w==
-=bVyY
------END PGP SIGNATURE-----
-
---Sig_/YMLJJi826km_DzMakT56p0a--
+Takashi Sakamoto
+`
 
