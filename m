@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-860554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E46CBF0653
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:05:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36514BF065C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF9218A08D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:05:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D66EB34B1C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C222F744F;
-	Mon, 20 Oct 2025 10:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FA22F7AC0;
+	Mon, 20 Oct 2025 10:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DRhdYVbr"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HoJ9JA6o"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6B22F6566;
-	Mon, 20 Oct 2025 10:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A57C2F6582;
+	Mon, 20 Oct 2025 10:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954672; cv=none; b=H69AjFgNNnLIMekEvd/XeJHpwfm3Bc51C912nEmbU50uhVN+w35N9SxqT/AmVGbf3CxhpqocqE2fWreRg3KkKA+1RAevzyynXe0mY2p+f4BMzoZMXVZJIhCRLlfwDr4rfwd1PFmziuOPl5PdiDJdkOZMOdCnO77bWNMb/4Jz6Ns=
+	t=1760954672; cv=none; b=rzSPhS/N3CTVLIvT5p0oPcHJmcH5NolEkU6FKALxcZ4cfcBNHCistd3j01j5PGOKpxagaWtXYK50oZ+h46uln0HwiRRRBaOYbmaP4Ila1QywOMgS09ndy/fU8F7/xnrBfLfIp0t98B+uKCLJRz+D09M/Gy9dfmaWGpug7hr7YUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760954672; c=relaxed/simple;
-	bh=L1rux84uqgx/z11sRLkzA6t6Db5oXXI6MffF6eUjKHs=;
+	bh=IV+xFbIFU0tK2tXhub1pHDb9c/lzEMIQDMPHcmWu09Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FdDcbxcgD2Lb92drDS3+WKudtmoBJZAkYdWYx0s1yhDo1tIWRN36Z33CJI7EAYhqKM+FZ+f2fM1OvveFfUSOqRpJbStIwGYgHB2fg0i20gTioQi6RdftNE++q2amF5H1VxXYNcUih1YxR43VW2XITumwiBDGeRZs1tjL58kTQiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DRhdYVbr; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=HslmDCh+KKRqaeYX0ZJ5dSVlUE1H2yZDAhX9HwOHrVww6uHhGKH8YAtyRoRLS8dfsCZdHS7gK9VK3wI54H9iLpvPj4U9pKZhZzynoCOKzS0weXg2KE4Q1K7py/QPmcKUNQym42V6Qzg01iMbCwzvD7DlM+CxhG27bAGzx1IunBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HoJ9JA6o; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760954668;
-	bh=L1rux84uqgx/z11sRLkzA6t6Db5oXXI6MffF6eUjKHs=;
+	s=mail; t=1760954669;
+	bh=IV+xFbIFU0tK2tXhub1pHDb9c/lzEMIQDMPHcmWu09Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DRhdYVbrEghPgLy5Qcqa1koh1Qni8U62cjyXqlP4zHLE1ILf7rnxPpwQjAUw4juEo
-	 nh++ADgODNcbf3NB0UiAU3avqnYn5OTwRZCzNIhSiJLXgehnwMzvZ/Xof2OxLm5w0b
-	 0UDf8QiP7Xe+KGG9CLfHwXS/TIdZxl1VQdpRPytPuixPJ9NFaPzMNhYxRy1lvMZzmB
-	 4X/3xgZ9WEs9pkPJpE3IPSQrBJz9aVZWwNTWKi5QHMZ2qXNopcdNtzm8V1ul55Xw0l
-	 KghISDNQZZHriuQaTI+p+WbSr+HiQz4k6ZBuBb1Wo/NrMlXs1bpR79iLB+TXId978T
-	 MvXlpTXrmVBSQ==
+	b=HoJ9JA6omdS7lMAhbjAEXaISHRoSK3MfmK2nKyNOjLq65oRSL2dA7fyDZeYqiUDw2
+	 mJTa+ai1jhseUueMTKXpEUQlm7pauO12zVU7c+SIHC7QStIfpJZunQaBnwZs7v+Vay
+	 I1nmVMhNfs1hp/SdRmIJJhWBlGyUHUK6jPA3LRE5JXJgH20IeiaNQkmDnp4N5woFdQ
+	 WUZDKTLt07s/KJYIQ0A2gn9id/yY5BOOmzCGqrm1iyNzdfs7wE6phxnFNIeaP/urDW
+	 Pex+bYGsi1NA1EvtPHoZvIbz8IOu1YgocDV3oBVLZHDUvrvnd+03+AFq8+BleeuUWB
+	 ZG467KK8/EIjA==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 67B0017E127F;
-	Mon, 20 Oct 2025 12:04:27 +0200 (CEST)
-Message-ID: <a30a7076-9c27-4e78-b57e-cdf2a14dc5c8@collabora.com>
-Date: Mon, 20 Oct 2025 12:04:27 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BACAA17E13A5;
+	Mon, 20 Oct 2025 12:04:28 +0200 (CEST)
+Message-ID: <def12c6b-94ef-465b-94ec-2144464e4ff3@collabora.com>
+Date: Mon, 20 Oct 2025 12:04:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 16/20] soc: mediatek: mtk-cmdq: Remove shift_pa
- parameter from cmdq_pkt_jump()
+Subject: Re: [PATCH v8 17/20] media: platform: mtk-mdp3: Use
+ cmdq_pkt_jump_rel() without shift_pa
 To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
@@ -75,22 +75,22 @@ Cc: Matthias Brugger <matthias.bgg@gmail.com>,
  dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 References: <20251017065028.1676930-1-jason-jh.lin@mediatek.com>
- <20251017065028.1676930-17-jason-jh.lin@mediatek.com>
+ <20251017065028.1676930-18-jason-jh.lin@mediatek.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20251017065028.1676930-17-jason-jh.lin@mediatek.com>
+In-Reply-To: <20251017065028.1676930-18-jason-jh.lin@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 17/10/25 08:44, Jason-JH Lin ha scritto:
-> Since shift_pa will be stored in the cmdq_mbox_priv structure within
-> cmdq_pkt, all shift_pa parameters in CMDQ helper APIs can be removed.
+> With the removal of the shift_pa parameter, cmdq_pkt_jump_rel_temp()
+> can be replaced by the new cmdq_pkt_jump_rel() without shift_pa.
 > 
-> Remove the shift_pa parameters from cmdq_pkt_jump(), cmdq_pkt_jump_abs(),
-> and cmdq_pkt_jump_rel().
+> Then, remove the cmdq_shift_pa variable in the mdp_dev structure for
+> each mbox client.
 > 
+> Fixes: ade176534112 ("soc: mediatek: cmdq: Add parameter shift_pa to cmdq_pkt_jump()")
 > Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
