@@ -1,146 +1,173 @@
-Return-Path: <linux-kernel+bounces-860092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19394BEF4CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:32:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2445CBEF4E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF98D4ED67E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6011894BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDFF2C027F;
-	Mon, 20 Oct 2025 04:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DF62BEFFF;
+	Mon, 20 Oct 2025 04:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzeAIT2C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NfAyEKYW"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCEF2BFC85;
-	Mon, 20 Oct 2025 04:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6B4287258
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760934583; cv=none; b=MAriK/iTfvvM6sUbQVz98l7KjY8MEIFKavV6XceHdX17b7m7ydCzW8KeB/8ZitwKTVMTD3iE2IxkBICFcS51dKsZ/sV1KgtvnPORcj3YTvY1zWdK5AF/VY2Ow2B+dbR2/nqeO+F0lXAcRQwl0QzuwM5kcCLpHjTNsft0RU9b6VE=
+	t=1760934883; cv=none; b=XIWSP3ctNO4rWPiBNvJiHrc7tmTx+MPLwsPlGTZHDuZv2RlnPOuRps6LaJsOy8sypNnPeSUag+VbcI7nVbi2oLEdz49JMHPfE1CffLKWdmF7hrlcZEyeUpXTseT3207EsdAs+U+Du8f3yepn76D4inroYRpYYbZh9dwKqVGPWzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760934583; c=relaxed/simple;
-	bh=G8wPvJIawe3c7/4nWsLf0Ggnz1ZZW6fQPBZyxA+8XOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BeiPmj+G8sOnWgQOngHeOt8Zab5xVFB74nx/PonS9Rw4F3oeYP2RNX7/C3ELjnVileVav5bOu2tj/KNmSGmFiAVmad27rf0NYzXWdhHElTad/1YtKsKBJEisWQPvlCNjUxbi6EeQv6dtTgHXhSYZ+PvdcGJOSEVJ57Ju1++qRoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MzeAIT2C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37453C4CEF9;
-	Mon, 20 Oct 2025 04:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760934583;
-	bh=G8wPvJIawe3c7/4nWsLf0Ggnz1ZZW6fQPBZyxA+8XOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MzeAIT2Csw4SggUC9nBSLWYA98odWXVEVZ3oYU/3FuAiRiSZtXfUHdNIl7HrqOPt6
-	 R8zOjbD07fpSLWl40znNIzZ6195LipribDAuqkYGRuWPxLYTMBmUqI73fvlN9EpNoQ
-	 sFrzn5GJ1R0j5Y1ZL9/nTOy0xNN4Fe7Il1M5MdYyVDya7FLeZGL6KzyXlcULwD13Yb
-	 LlyzxXzbe6q7RwxrtihMzYkaZfezVPmdafd/CZVh9dT1Cd8F6VLgF+8Ii+mNOytS3d
-	 k6Ebc1QPVJzStdGsFfZmBe9aV6oN0W/HoZn0Zb2n/i+65Gi1qzR+taupDiY0mViV8K
-	 0VsKBQooDyrkg==
-Date: Mon, 20 Oct 2025 13:29:37 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Zecheng Li <zecheng@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/9] perf annotate: Skip annotating data types to lea
- instructions
-Message-ID: <aPW6sUywwZzDeOkW@google.com>
-References: <20251013181607.2745653-1-zecheng@google.com>
- <20251013181607.2745653-2-zecheng@google.com>
- <aO6ZIQ2WwTPGWATX@x1>
+	s=arc-20240116; t=1760934883; c=relaxed/simple;
+	bh=7ewcKsl4gSix4JTKxm4T8FGk4nC5GRnthKInzNEJlTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sPgXgdpuCynfzmjW7vSElqJ2I9UzV83+dbdJEv+0D517oYakkj6TDU2Al1oyPkvTki4E1yVafh9O1O/FQv/El5SLc+owdHx+9ebYXUXo6RxchYEKu3ewUFrx+TBZr3Hkr8ieVO3YYv880bTjRjPqy+VLluGs+NkxRsNLIJh0RHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NfAyEKYW; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33bb090aa78so3262694a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1760934881; x=1761539681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+onDgxMPyKLOY40mbxy0dXul6lSc7HSME7/BE/rGWAw=;
+        b=NfAyEKYWo82OpAZIbTWLx75EMDh5FhuZBaTsW0RAyNMPjXQ+sr+CBlaTAFBZLagSh6
+         vggU/q6Zei07093xZj/SDfED2I8Tso9wzBBJC1Z9JgcVtGalglXcY5k0XXgwdnD2ZhM3
+         ya6owBHGnr27ZLYfm7peX6Kf78k7CteKOUXKXu+LWz3FNyJw7BTgHi8JiWIJWyDGWKn4
+         tnYQL0mAAu7SzBTmUsCIh/C/8SkNM2SQAtpAC7DqJTduRGsNeaC9oIZr3uXpEleK7j4b
+         /PAr0/cmDG+Hjl+0Voi0YXcnBdef/n3RKjzje5V1XhCO8E7XaOJOt95ClaTGmFr3f8MC
+         s5oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760934881; x=1761539681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+onDgxMPyKLOY40mbxy0dXul6lSc7HSME7/BE/rGWAw=;
+        b=HjB76BB5IFHmW0tjjt3ikJMbgEcB9pIb7Z1SbqBA4GDG8LzAptavfEbzJMQH+lRfn1
+         Glk2QM5IqWVc03BC8+ajX0ivtOQdokmuO4XkfWa8bD6RdKDJDoLo838cIel/vlJ1CU+O
+         LTAUbYqgnWYpc6fGrGX33hv157h8RGECJ3wiM9gH4PUEObBGY5SdVHARNnT/8sgohZPa
+         lABHm+y0JPQQF1l07T7vYhhBPbq7pW8ZGgtvBwYtneGkHehgvyY4aBO9+8rP/BZLUebK
+         fT5NBoeV/NbwaxTlUGP/ejB4okg3HI/beRkmnYnhMEUWDAIWQGlJgt6rt7SleHZufQ83
+         QFFg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+XX9LVhY2gZaJlN/rcC0mVAZxugQDG0QFw2lScmBVcwO4xgUq4Xhj+/RIwcWqfPPcxeT66yfMsMG+1Ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnk7ODgRaCNm8btZ0HOxik/32y2fd3jJXU9ZlhFmaQgsMTf1Z/
+	WGbmjAM71sH2YzALXwtmWZ1dYS4Euz+DSkPEXrP3NpgGWBsJouGO7NparPwGZbgDRQdJSpeZLtZ
+	HPVks5kXsJspazz9Pkj0+TY0is14ZvXyL/ZFeG+Qofw==
+X-Gm-Gg: ASbGncvbTtIPRn3WmB49faZSUnwjGzTb+vAdIDTJ5GW/DrPrMMy+sZ2i4jkgDPEB9IR
+	xPHCB0DqVMY12l1HAZNSsYyjJxx5cLJF/AgjgdOOBg5kUX5zxOft7Gs33xGDxSMT1z2qASPRYLQ
+	hXUjxlQgFq5jG6nUcVaIPEAe2YVclPg0OKFqG+s98+K5+K/1SvnZA4FwaSbk+6uOLwUBk1jgJgT
+	SfYRVg6RaVW44ZIpptNh62A8/87y36wg4dL2+fZbdoGHCNfCWaakjiQDyyqDJeDjToHJRWn0MvR
+	vTFkHdSWekOYVWu308o=
+X-Google-Smtp-Source: AGHT+IH9a1FKrBN3wWlaNuwKbnc7SmqwwgKUv1BbHl2nQXJtIw5nLWAzBwdqnbFCmBJfMi6jc127yHWzB+hEpQgkJLs=
+X-Received: by 2002:a17:90b:3510:b0:32c:2cd:4d67 with SMTP id
+ 98e67ed59e1d1-33bcf892b26mr17239614a91.13.1760934880715; Sun, 19 Oct 2025
+ 21:34:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aO6ZIQ2WwTPGWATX@x1>
+References: <20251020042056.30283-1-luxu.kernel@bytedance.com>
+In-Reply-To: <20251020042056.30283-1-luxu.kernel@bytedance.com>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Mon, 20 Oct 2025 12:34:29 +0800
+X-Gm-Features: AS18NWCAyFau_n9LGvHEY6sx4LEsfPQSzxZhTugNhp11gJ7ivOgOscG6Z4MCNx8
+Message-ID: <CAPYmKFs5ATB26ZWtP3vyT=zhJHrafgvBAm6GUw27AM7h5vE9Kw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] riscv: Add Zalasr ISA extension support
+To: corbet@lwn.net, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, will@kernel.org, peterz@infradead.org, 
+	boqun.feng@gmail.com, mark.rutland@arm.com, anup@brainfault.org, 
+	atish.patra@linux.dev, pbonzini@redhat.com, shuah@kernel.org, 
+	parri.andrea@gmail.com, ajones@ventanamicro.com, brs@rivosinc.com, 
+	guoren@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	apw@canonical.com, joe@perches.com, lukas.bulwahn@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 03:40:33PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Oct 13, 2025 at 06:15:58PM +0000, Zecheng Li wrote:
-> > Introduce a helper function is_address_gen_insn() to check
-> > arch-dependent address generation instructions like lea in x86. Remove
-> > type annotation on these instructions since they are not accessing
-> > memory. It should be counted as `no_mem_ops`.
-> > 
-> > Signed-off-by: Zecheng Li <zecheng@google.com>
-> > ---
-> >  tools/perf/util/annotate.c | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> > index a2e34f149a07..fb60467fa877 100644
-> > --- a/tools/perf/util/annotate.c
-> > +++ b/tools/perf/util/annotate.c
-> > @@ -2698,6 +2698,20 @@ static bool is_stack_canary(struct arch *arch, struct annotated_op_loc *loc)
-> >  	return false;
-> >  }
-> >  
-> > +/**
-> > + * Returns true if the instruction has a memory operand without
-> > + * performing a load/store
-> > + */
-> > +static bool is_address_gen_insn(struct arch *arch, struct disasm_line *dl)
-> > +{
-> > +	if (arch__is(arch, "x86")) {
-> > +		if (!strncmp(dl->ins.name, "lea", 3))
-> > +			return true;
-> > +	}
-> 
-> Can't we turn this into:
-> 
-> tatic bool disasm_line__is_address_gen_insn(const struct disasm_line *dl)
-> {
-> 		return dl->ins.address_gen;
-> }
+This series was automatically blocked by Gmail due to too many
+recipients, so I resent it twice, causing the emails to appear
+discontinuous. I apologize for any inconvenience this may have caused
+to the reviewer.
 
-Probably better to add ins->ops->addr_gen() instead of adding a new
-field to the struct ins.  Then it could be:
+Best regards,
+Xu Lu
 
-static bool ins__is_addr_gen(const struct ins *ins)
-{
-	return ins->ops == &addr_gen_ops;
-}
-
-But this requires more changes and it can be done later.
-
-Thanks,
-Namhyung
-
-> 
-> I.e. at some initial step when setting dl->ins, cache this series of
-> string operations and then use it s result?
-> 
-> - Arnaldo
-> 
-> > +
-> >  static struct disasm_line *
-> >  annotation__prev_asm_line(struct annotation *notes, struct disasm_line *curr)
-> >  {
-> > @@ -2806,6 +2820,12 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
-> >  		return &stackop_type;
-> >  	}
-> >  
-> > +	if (is_address_gen_insn(arch, dl)) {
-> > +		istat->bad++;
-> > +		ann_data_stat.no_mem_ops++;
-> > +		return NO_TYPE;
-> > +	}
-> > +
-> >  	for_each_insn_op_loc(&loc, i, op_loc) {
-> >  		struct data_loc_info dloc = {
-> >  			.arch = arch,
-> > -- 
-> > 2.51.0.788.g6d19910ace-goog
+On Mon, Oct 20, 2025 at 12:21=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> =
+wrote:
+>
+> This patch adds support for the Zalasr ISA extension, which supplies the
+> real load acquire/store release instructions.
+>
+> The specification can be found here:
+> https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
+>
+> This patch seires has been tested with ltp on Qemu with Brensan's zalasr
+> support patch[1].
+>
+> Some false positive spacing error happens during patch checking. Thus I
+> CCed maintainers of checkpatch.pl as well.
+>
+> [1] https://lore.kernel.org/all/CAGPSXwJEdtqW=3Dnx71oufZp64nK6tK=3D0rytVE=
+cz4F-gfvCOXk2w@mail.gmail.com/
+>
+> v4:
+>  - Apply acquire/release semantics to arch_atomic operations. Thanks
+>  to Andrea.
+>
+> v3:
+>  - Apply acquire/release semantics to arch_xchg/arch_cmpxchg operations
+>  so as to ensure FENCE.TSO ordering between operations which precede the
+>  UNLOCK+LOCK sequence and operations which follow the sequence. Thanks
+>  to Andrea.
+>  - Support hwprobe of Zalasr.
+>  - Allow Zalasr extensions for Guest/VM.
+>
+> v2:
+>  - Adjust the order of Zalasr and Zalrsc in dt-bindings. Thanks to
+>  Conor.
+>
+> Xu Lu (10):
+>   riscv: Add ISA extension parsing for Zalasr
+>   dt-bindings: riscv: Add Zalasr ISA extension description
+>   riscv: hwprobe: Export Zalasr extension
+>   riscv: Introduce Zalasr instructions
+>   riscv: Apply Zalasr to smp_load_acquire/smp_store_release
+>   riscv: Apply acquire/release semantics to arch_xchg/arch_cmpxchg
+>     operations
+>   riscv: Apply acquire/release semantics to arch_atomic operations
+>   riscv: Remove arch specific __atomic_acquire/release_fence
+>   RISC-V: KVM: Allow Zalasr extensions for Guest/VM
+>   RISC-V: KVM: selftests: Add Zalasr extensions to get-reg-list test
+>
+>  Documentation/arch/riscv/hwprobe.rst          |   5 +-
+>  .../devicetree/bindings/riscv/extensions.yaml |   5 +
+>  arch/riscv/include/asm/atomic.h               |  70 ++++++++-
+>  arch/riscv/include/asm/barrier.h              |  91 +++++++++--
+>  arch/riscv/include/asm/cmpxchg.h              | 144 +++++++++---------
+>  arch/riscv/include/asm/fence.h                |   4 -
+>  arch/riscv/include/asm/hwcap.h                |   1 +
+>  arch/riscv/include/asm/insn-def.h             |  79 ++++++++++
+>  arch/riscv/include/uapi/asm/hwprobe.h         |   1 +
+>  arch/riscv/include/uapi/asm/kvm.h             |   1 +
+>  arch/riscv/kernel/cpufeature.c                |   1 +
+>  arch/riscv/kernel/sys_hwprobe.c               |   1 +
+>  arch/riscv/kvm/vcpu_onereg.c                  |   2 +
+>  .../selftests/kvm/riscv/get-reg-list.c        |   4 +
+>  14 files changed, 314 insertions(+), 95 deletions(-)
+>
+> --
+> 2.20.1
+>
 
