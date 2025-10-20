@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-860723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3DCBF0C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F5BBF0C8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C75189FBE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC5218A011D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9D12571C2;
-	Mon, 20 Oct 2025 11:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432C7254876;
+	Mon, 20 Oct 2025 11:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PlwDYxDL"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T+/gzaFU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A681F5825;
-	Mon, 20 Oct 2025 11:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9D1208D0;
+	Mon, 20 Oct 2025 11:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958968; cv=none; b=RdiOjGynddaAaB8Mf5PSl1pKTWVz82FkQ4lXgJn6+Li7+p/BNOb66dBowbImXwThNVUO7NMLtId0mt8TzpmTT3TSzlOGUJv+68Bq7NEQZhnaU+9/Pgf43dQcxPIOqPIHxVBv/nodRF1z2QKu9ybpuurLq4TlIs5VqxtVnNc12VU=
+	t=1760959036; cv=none; b=N+a+gv+1hcOkh6E1lInT8AUpTr9iBChvd/jdonOdSHwATbR4uZh6/X8uTcCuQnMOGHfidmBuyOIx9WavjUw7rjL0Rat5yvRdU0eIQ7OZL3F0+pA/UqcrEZdhDsXE9MHX1XMuSCnKFVmXwK5ij31spYXTkyMHTsxAOqPNRfBOCKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958968; c=relaxed/simple;
-	bh=X0eKZdFlSWj/hHX4OYGh6yBB3JhcwwktgIYdMBCdF7M=;
+	s=arc-20240116; t=1760959036; c=relaxed/simple;
+	bh=TSbmKbsnr+avsjQaaO7wq/0jRqFL/RY167AdevoNFQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CCWPb18Vq5DUq7C5+Zzy9K7yeCEUObSZKz/p7nC92UPBxpmanrPo5pX7878JTluOxOmPL88w+O4g3UiHihuGMrE42kMvFsdCiYRiiLQYa0qBOrR2lLQQyC86swdVUOTDi00LsxwWevB+CDWFtgcZetee7Qaezp7WU7ALF84lvC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PlwDYxDL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EDDEC4CEF9;
-	Mon, 20 Oct 2025 11:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760958967;
-	bh=X0eKZdFlSWj/hHX4OYGh6yBB3JhcwwktgIYdMBCdF7M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=acW1/VD6g68kad3DoW8R0iBWNgwXs0FEyrZj3lXQ/QdXFqMuOnmjrS4PCNmkMpfFHDOnzPwuFmEyIl3JKul0Fd555w6qJbo7hiGtmX8iL5EKG0UOCd5NvIFllsBo+Y/XX3rjs3ZGw9GOAIIEQn9jVKPg0TxhW+FW6YMMhLtHOwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T+/gzaFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B32C113D0;
+	Mon, 20 Oct 2025 11:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760959036;
+	bh=TSbmKbsnr+avsjQaaO7wq/0jRqFL/RY167AdevoNFQk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PlwDYxDLexHxuJDjsT8XRWxCtS0pSUGKNFz94TlQjAMaDGnqwlhisoJn3hON91lQO
-	 A1Vli/NxJi66rFDpFrj38VobB1qI8W6KaEJAFuh8Mxg7Sif4UqfIPGvbh4Stb3viEA
-	 gYVQr5zvgexIP0l9QqyInkJDC1sU3V8OHDwZhD6y5a2cpX59zJCi10pby8bJK5W5Zq
-	 lvAdkiE83Ajrg/CgkpS5X6M0aIqJ/Rsegbz1rBnev/nJXTbPU1gfsfISaJhY4a1a1o
-	 6PJO39w3sVjgOdqXMh+BDq2Z5jLgr47YchSGybYwQbk7HV7s0KH/gaKauob9fxJtRB
-	 q3EL/1llhA2MQ==
-Date: Mon, 20 Oct 2025 13:16:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] media: dt-bindings: video-interfaces: add
- video-interfaces.h information
-Message-ID: <20251020-majestic-warm-barracuda-06acb3@kuoka>
-References: <20251014170043.2341146-1-Frank.Li@nxp.com>
+	b=T+/gzaFUI/5qXMrR+Ex4Rn67ne7yv//C6OyMcA3Jc5ad69gm4sDsuUdk+ycejc5qd
+	 Cj9bKQcErNjiZNbVeITNp/g4gJA9BuGPjulpoYV/1b1yVMf3F3Pyo1kVOG+QnjMkrA
+	 CgncLTbyrKXfk7eBIee1OQM2DGJ8dC3J3XJzI5jI=
+Date: Mon, 20 Oct 2025 13:17:13 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: stable@vger.kernel.org, tglx@linutronix.de, Julia.Lawall@inria.fr,
+	akpm@linux-foundation.org, anna-maria@linutronix.de, arnd@arndb.de,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@roeck-us.net, luiz.dentz@gmail.com, marcel@holtmann.org,
+	maz@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+	sboyd@kernel.org, viresh.kumar@linaro.org
+Subject: Re: [PATCH 6.1.y 00/12] timers: Provide timer_shutdown[_sync]()
+Message-ID: <2025102001-unlaced-playroom-f60b@gregkh>
+References: <20251010150252.1115788-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014170043.2341146-1-Frank.Li@nxp.com>
+In-Reply-To: <20251010150252.1115788-1-aha310510@gmail.com>
 
-On Tue, Oct 14, 2025 at 01:00:43PM -0400, Frank Li wrote:
-> Add dt-bindings/media/video-interfaces.h informations to help avoid use
-
-"Mention dt-bindings/media/video-interfaces.h in descriptions to help..."
-
-> hardcode in dts.
+On Sat, Oct 11, 2025 at 12:02:40AM +0900, Jeongjun Park wrote:
+> The "timers: Provide timer_shutdown[_sync]()" patch series implemented a
+> useful feature that addresses various bugs caused by attempts to rearm
+> shutdown timers.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/media/video-interfaces.yaml | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> https://lore.kernel.org/all/20221123201306.823305113@linutronix.de/
 > 
-> diff --git a/Documentation/devicetree/bindings/media/video-interfaces.yaml b/Documentation/devicetree/bindings/media/video-interfaces.yaml
-> index 038e85b45befa..f96cc0e403ddd 100644
-> --- a/Documentation/devicetree/bindings/media/video-interfaces.yaml
-> +++ b/Documentation/devicetree/bindings/media/video-interfaces.yaml
-> @@ -95,7 +95,7 @@ properties:
->        - 6 # BT.656
->        - 7 # DPI
->      description:
-> -      Data bus type.
-> +      Data bus type. See dt-bindings/media/video-interfaces.h.
+> However, this patch series was not fully backported to versions prior to
+> 6.2, requiring separate patches for older kernels if these bugs were
+> encountered.
+> 
+> The biggest problem with this is that even if these bugs were discovered
+> and patched in the upstream kernel, if the maintainer or author didn't
+> create a separate backport patch for versions prior to 6.2, the bugs would
+> remain untouched in older kernels.
+> 
+> Therefore, to reduce the hassle of having to write a separate patch, we
+> should backport the remaining unbackported commits from the
+> "timers: Provide timer_shutdown[_sync]()" patch series to versions prior
+> to 6.2.
 
-Please use full path, so it can be validated by tools.
+Thanks for doing this, all now queued up.
 
-Best regards,
-Krzysztof
-
+greg k-h
 
