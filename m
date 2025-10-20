@@ -1,186 +1,77 @@
-Return-Path: <linux-kernel+bounces-860618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA063BF0843
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:23:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C72BF083D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93B464EFD3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADE13A4014
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BCE2F7AD8;
-	Mon, 20 Oct 2025 10:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XH//neKq"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458052F6566;
+	Mon, 20 Oct 2025 10:23:18 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D9E2F5A02;
-	Mon, 20 Oct 2025 10:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5B1E9919
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955800; cv=none; b=D61aOzpNp8cPAyH5nuBL7L0vl/ky4ldqK/EMFdvSC6YrX7zRq2owhwejWCoEITTpzf9QqLhZ75NEkwv2GELQC/RIwXc3WaclMgD63UiyndLwDVmGdZV3ycggva5aPJCRi90FFYeYPtdMoCFxbaqOAnyrmcbb7r9t63OI3V7CwLc=
+	t=1760955797; cv=none; b=mIi26CpaERtJrAzw4i1Y3I+zz9v0JMcHryP1hbnT5wQXdjZLA/oL3Gj9XjjR1/Zgk2/qu+10eIpzTZ7LF+WpRDuoc7IjhCsJbSKEOJt9EsmD5YP4cOaxlx8T8AnyUNTyuIinXfKz2Nc3UwwGKSIShI0FyOFK4KYv0cTJd3ukd3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955800; c=relaxed/simple;
-	bh=OxzG71sDwuES4H6I4qFPGwWEW0NNXV3gRKLkV68zpaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PSyqSGuUkR5aIeic0UTQHy4kUt2Kc81bOTx/HUme4zOZRC4qEhOu1ntvwXUOHSCbQ/AOFwf1VIumBS85hcKvXHySTivmslgkcuGJ5i50cJ032NfcWpKcAJ+z5FQ7b27f+eMjSfe9nhfSa916ITYusmz8I2yZEkYkYWY6Ej3JGOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XH//neKq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760955796;
-	bh=OxzG71sDwuES4H6I4qFPGwWEW0NNXV3gRKLkV68zpaE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XH//neKq+w5ZgmjiqKKIco53S1kTKoUN8zlzWGaHQ8eqMxEhNaqwvK724JMy91qct
-	 SqKfpex0IJtdEjSv88RB15h0kV/JycwfSC8bTA9LFfHIQZ10PQ0ES8GNIIQxrZ5snr
-	 JC939XvsPv0CDkgO+8enjSZ0MeRrXJ8axcyu5SVnYUQCPZJo4aiiXMCUE2ZvWpDXp/
-	 /crTyWIfJAIkew8Hpq8q2uyIhqben3OMy18dM0yJ/3dpAn3KiSJym0YV91fopaPvOR
-	 AEYNXvHbCVg4i4NP3th6xaoTA5npM+/tS1btPBBSuu+/OVxIOjV1hSX+EOX8JAWqT0
-	 E8WFxFyEYHcoQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 462D917E04DA;
-	Mon, 20 Oct 2025 12:23:15 +0200 (CEST)
-Message-ID: <82594ce7-f093-4753-b808-cd234845aed8@collabora.com>
-Date: Mon, 20 Oct 2025 12:23:14 +0200
+	s=arc-20240116; t=1760955797; c=relaxed/simple;
+	bh=q8iTwWxV6aAGQRZoQ5GTvOeC/Ir3MLyotU2BKkvhx64=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kmOrSW6j4tTeA5RLupdyn/aEkYlP6TTcnkhrKD/z+5oj3kxvgV9ZIglASgeCAUq3W/yxA3nVHwUMKt3DanWpkHxEEni/P8s+fsrQaVQ1/LrMflR6SxRL0b6s766oKtSPhqdQ0dUZXfxhKoWNzEFgS5wIrXSidPy7IU0lqavpoCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93bc56ebb0aso1300546039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:23:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760955795; x=1761560595;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8iTwWxV6aAGQRZoQ5GTvOeC/Ir3MLyotU2BKkvhx64=;
+        b=ViypCJu0eKNPsFbGF+T1RxxLRgq99T7R0Abc9/k/zh8phzDA6uL0Vt/N/sE6uFSo3v
+         tpISG8FGafPTAn9GdUoxSLL6nlSBhx7837T3kiAB4TQx7lrXcmMMAR06sl7caIgvyE/2
+         438J13lxvai18tajnxarG1udZ3dU+/z7qJ/9yFqQe5OzWFNWi40xcHimQWWy7tVAk0er
+         RstqxpmMhem7yOffIK4Vozpt5Unfep904hYzjcsf6bJe3AigCtZq51tqe23C9/flkJIa
+         8vSdVexBRqimO1AxpsBlUTbvBnzXEtPXqLBcI7JsBS5iL2jj5dhDp7gZs2uqGdXyMfpH
+         T2aA==
+X-Gm-Message-State: AOJu0YyQaa2t6PF1gArTjuvK5pCb4GRUOu+33FmGm9JCUMEfBHvNvy1s
+	MwAq9GAFAiI/9JQ2LU75hzVfenaKYRD7nLeKuVcypRNlHVt0myIHtL4vRHQehuN62v0at14zfFb
+	GMf8uTqnKMMmOEDTSsaRhsXdw2nDjYP9R5yq5SNyn2P3w0q5Jwp05xPAl0P0=
+X-Google-Smtp-Source: AGHT+IEbToY3tHLK1cjbQz1cOmF39i71niNJ0D+LKV1KWZm2l/GzU4hJ0HRBe3PGXm1ICKS3NtREDHm7NhzGUJSilZXDj9TZJs80
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/15] arm64: dts: mediatek: mt7981b-openwrt-one:
- Configure UART0 pinmux
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Sjoerd Simons <sjoerd@collabora.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
- <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, netdev@vger.kernel.org,
- Bryan Hinton <bryan@bryanhinton.com>
-References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
- <20251016-openwrt-one-network-v1-2-de259719b6f2@collabora.com>
- <aPDnT4tuSzNDzyAE@makrotopia.org>
- <5f430ff9-d701-426a-bf93-5290e6912eb4@collabora.com>
- <aPEfUBl6fMe6QYdY@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <aPEfUBl6fMe6QYdY@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:1588:b0:940:d4e8:4717 with SMTP id
+ ca18e2360f4ac-940d4e84e51mr628169939f.13.1760955795596; Mon, 20 Oct 2025
+ 03:23:15 -0700 (PDT)
+Date: Mon, 20 Oct 2025 03:23:15 -0700
+In-Reply-To: <66f86aaa.050a0220.4a974.000e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f60d93.050a0220.91a22.0443.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ 211ddde0823f1442e4ad052a2f30f050145ccada
+From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Il 16/10/25 18:37, Daniel Golle ha scritto:
-> On Thu, Oct 16, 2025 at 04:29:14PM +0200, AngeloGioacchino Del Regno wrote:
->> Il 16/10/25 14:38, Daniel Golle ha scritto:
->>> On Thu, Oct 16, 2025 at 12:08:38PM +0200, Sjoerd Simons wrote:
->>>> Add explicit pinctrl configuration for UART0 on the OpenWrt One board,
->>>>
->>>> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
->>>> ---
->>>>    arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts | 11 +++++++++++
->>>>    1 file changed, 11 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
->>>> index 968b91f55bb27..f836059d7f475 100644
->>>> --- a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
->>>> +++ b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
->>>> @@ -22,6 +22,17 @@ memory@40000000 {
->>>>    	};
->>>>    };
->>>> +&pio {
->>>> +	uart0_pins: uart0-pins {
->>>> +		mux {
->>>> +			function = "uart";
->>>> +			groups = "uart0";
->>>> +		};
->>>> +	};
->>>> +};
->>>> +
->>>>    &uart0 {
->>>> +	pinctrl-names = "default";
->>>> +	pinctrl-0 = <&uart0_pins>;
->>>>    	status = "okay";
->>>>    };
->>>
->>> As there is only a single possible pinctrl configuration for uart0,
->>> both the pinmux definition as well as the pinctrl properties should go
->>> into mt7981b.dtsi rather than in the board's dts.
->>
->> If there's really one single possible pin configuration for the UART0 pins,
->> as in, those pins *do not* have a GPIO mode, then yes I agree.
->>
->> If those pins can be as well configured as GPIOs, this goes to board DTS.
-> 
-> I respectfully disagree and will explain below.
-> 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Thanks a lot for taking the time to write all this - explains everything,
-and even too much :) :)
+***
 
-Though, there's something funny here! The following snippet of "main" text
-does explain stuff that is interesting, but that I (not other people, so
-thanks again for saying all this) know already, but.....
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 211ddde0823f1442e4ad052a2f30f050145ccada
+Author: dmantipov@yandex.ru
 
-> All pinmux pins on the MediaTek platform also allow being configured as
-> GPIOs. However, if you configure those as GPIOs the consequence is that
-> you cannot use UART0 any more at all. So using UART0 at all always
-> implies using exactly those pins, there is no alternative to that.
-> 
-> Hence every board with every possible uses of pins 32 and 33 (there is
-> only RX and TX for UART0, RTS/CTS flow-control is not possible) can be
-> represented without needing to configure the pinctrl for uart0 on the
-> board level. There isn't going to be any variation on the board-level
-> when it comes to uart0. Either it is enabled (status = "okay";), and
-> that will always imply using the 'uart0' group in mode 'uart', or, in
-> case any of the two pins of uart0 is used for something else that means
-> uart0 cannot be enabled. Simple as that.
-> 
-> Hence there is no need to duplicate that pinctrl settings on each and
-> every board, as controlling the 'status' property on the board-level
-> already gives 100% freedom.
-> 
-
-...all of this is not justifying your point.
-
-> (Sidenote: As even the BootROM already uses those two pins as UART for
-> debug output,
-
-Funny thing is, your side note is what *fully* justifies your disagreement
-and it's also what triggers me to say that you're right, lol :)
-
-Okay then, I am fine with this commit now and I can renew my
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Cheers!
-Angelo
-
-> it is very unlikely that anyone would actually use them
-> for anything else in production. Apart from being used as GPIOs you can
-> also use pins 32 and 33 as an I2C target for external debug access to the
-> registers of either the sgmii0_phy, sgmii1_phy or u3_phy. However, that
-> doesn't matter in terms of the debate above, as the crucial point there
-> is that using uart0 always implies using group 'uart0' in 'uart' mode.)
-
-
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 211ddde0823f1442e4ad052a2f30f050145ccada
 
