@@ -1,123 +1,321 @@
-Return-Path: <linux-kernel+bounces-861623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42418BF3340
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325A3BF334C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3121886A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0EE3A85C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5792D9ED5;
-	Mon, 20 Oct 2025 19:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8289832038D;
+	Mon, 20 Oct 2025 19:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJGO/Lg/"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Map30f33"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C522D24B4
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9F32C0268;
+	Mon, 20 Oct 2025 19:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988519; cv=none; b=IS/VDV1AJgdPdL6VURGsVQGAIfc8Gp95+ZgE0eIakpaZOSZZeY9OJVb8oLOvFXrO/E87R16LLvLSXwb4I+Sqegw6NyGor4NDRGJ3hInrgEQ6NF2JCmXQlCEqTNBH1CylTZ0kMqoaYcI7C2+nVIM8AWWHGTvcmkQZyxthqpQu4n4=
+	t=1760988586; cv=none; b=TrzvKlzmwLc+9Ljj1JnN3PHR3bF7EQfU0nZmqIV6r9i3Y4ILu/kChdXZ9A8r8Rn1IIKq3/ZVoPOTDGoD5HlBr1IXKWrJCmNRe9+KjTALmmnPHMUtwuSnEtbZKJajOPwRBQhamZXm+eo3iCEjhZ+VPOdd+6PpQcLPFbK5mlq4SYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988519; c=relaxed/simple;
-	bh=p7xYeF0WlMh71JeISQYSQHf2LpPiKT+ylBcdVGC2AqU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AGSSU4l0Sgm5ag/Si8hADQbgwwlI+MLdkqZPOOfYuJRUmCgiJqeoffn5QhiEOZ1ru6IxzgyA6cftI3la7c7zJXJDMpz0tp6kYUmaSzMORUJgB+WPkrOxeBfCRuqhtNFWE4SNw9CfEKM0T2fokaYK2Rm6pZVfskyG1uHTTHD1z5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJGO/Lg/; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-579363a4602so4757826e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760988515; x=1761593315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mMg83nd2YrTgwcvW3RZ6bW/OIA8b6kbsYQV4BXY32dU=;
-        b=TJGO/Lg/3ZI93Doa2cyBSYdG6jGqWq5DvF/eqVzDpPPyMRBa6AD0YhzNX6Jd4wcAfA
-         vsCuM3uiNUVCwqVJDiG8onEnDMq3gnhXC3i7sJuGv/JQ61TVrUcnRPyBvEy2hAmJyRwV
-         ygZD2Ep/HAgDkZWgN8pIeclFa8whL6MXt9cCH9gAmXxoOOzETXTG2dfr3NkQfN17hrA8
-         P2oIWCCVoPU4Fgq06zo5DNzQhUcg5Zyl7DzUMNqyzsaCSLXmjcE2kxIkczEjobnlHxaW
-         WPImJXTGIUmsPXISTMrgoO7xZKATCaEDgVSn/GrsQWhBBoDaeB0PhYtbwynLVgt4nGvJ
-         V39A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760988515; x=1761593315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mMg83nd2YrTgwcvW3RZ6bW/OIA8b6kbsYQV4BXY32dU=;
-        b=NeGoA04M0P2luGmt9a6I7eVAw2AtTksQBoVOg9yxSVNyu5Itx52C+qrRKMJjiPlWi+
-         t9Ei7lR2nsgItoFhOnQ90iKdoHOpHFkkUIkahGIvfjXamqk8GVo6Wvxbz6CuCx8Ungm1
-         eDQMKfS+5zDBNZIBtVZMcmKjjO8UpCCqwv3YU6GJk6w69V8J6UgwQ4j10E5FSdAG6xOa
-         s8kkM+ZnGuo6Irt2aebL+kot/eKyJ/mqoD5L1CHrelAXhlFzirnZ7vdNrMzHA7dNInmG
-         zPQSrkokfYJ9P0L+VWx/fJ+BzrK7C5KCUrD6rY7tb2CCbuBB2kgWWQhIaJEnhEsjuSmW
-         Q+zA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZDX5tFUfBmUDWjYwjzDRhrmSLY6+R/3V1ndGVgKJXVLngxzcbI/jiUQMzPuJzk9/goGLcos+bKpmCMzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVpMp30qx4O0dN4YnVCSLEO853g9JQAgsiNy8Ysn3Ifqc8Lccm
-	Gfud6u/m2g3t6B1j3FQ4vamhLkztqmQbyCcK6jAWxv3Ou94PPy/T0FA1XLl5Wd0E4hqFeuQWwmL
-	MucrNio4Q0/IUGdaDBrPsi/j+KT4ibNfdWtgm
-X-Gm-Gg: ASbGnct726GUXf9KqCeQiZohGYNqgtVg4sFF69MlNFltn/1cTD7aHf/UBQk2V6LcdeA
-	1z51bTAnfNiP0DtAEcklM/1G95TVq4yIxYWXKLVpTiALVht69bNxqgf08wxrqSACSMN6bQdM5AZ
-	32nksR4da+53pUiaE/qFSbxazHCeya3CI0jfDvjDQmtcunxg52pu2C7GRA2HMcaSDXFS9hwlmpU
-	9smYaqrwG/HXanDlCrNbDGGvHi9eD+D+2yxlb3Tuv9lEBJvaeGfiAI/zffthBXT4CyZZPVjDSz0
-	TY1q+IZr0Oo1DEV0Ig==
-X-Google-Smtp-Source: AGHT+IGBoVkVev7OLhVh5KiRwW/MZskLumEnnwL6WLxBkk2eAfCxIeEvBR17BmPX3b8GgUCopYGwgBk2P/JNXv/x5+E=
-X-Received: by 2002:a05:6512:1307:b0:57e:b9a:9c82 with SMTP id
- 2adb3069b0e04-591d85836e7mr4364166e87.39.1760988515325; Mon, 20 Oct 2025
- 12:28:35 -0700 (PDT)
+	s=arc-20240116; t=1760988586; c=relaxed/simple;
+	bh=24pjMusfqXK/ZFMzf4J8378emXyJcIaZpRhLK2I3LBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r7nfRu4AqcsQPoZqbY6+1E3AKUXeIyK8/U5j0Uj8gkx7vQ9rSkc1Do9i5CFxaaIS5wM01VjtSA+T5fPYnazZAtGt3xGZ0h5Z05APp23lOGgZwt8VDGiCYBbuQned8zL/ZHpg0KrMBaouTbEDmGG4tlChoG1Ctd//IA7zYtfjJJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Map30f33; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59KJTV4p3067010;
+	Mon, 20 Oct 2025 14:29:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760988571;
+	bh=qyKwmzguvn8OepZ+GiGPYMTWq6LubaMtWkC4xy/16sM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Map30f33dLThJqzVXeWjXysLeX/Hx0HaGFLJft2cTd8MRDYBDvXpsxI4yWdQpzdiR
+	 CyBV3HPIOZN5xxhWN8etz3g8qbew8lofJZdEj+BLmA2KY3j/xfTxAD97PJbTXWS9lO
+	 tO5UZuCp2FixFWKm1DKSnKJ/pZQ93QSomOgKvDLE=
+Received: from DFLE205.ent.ti.com (dfle205.ent.ti.com [10.64.6.63])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59KJTVuC660754
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 20 Oct 2025 14:29:31 -0500
+Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 20 Oct
+ 2025 14:29:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 20 Oct 2025 14:29:31 -0500
+Received: from [10.247.21.203] (lt5cg2132ltw.dhcp.ti.com [10.247.21.203])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59KJTVHx2494367;
+	Mon, 20 Oct 2025 14:29:31 -0500
+Message-ID: <e8ca48e2-264d-462b-89a6-0c788a58ce77@ti.com>
+Date: Mon, 20 Oct 2025 14:29:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
-In-Reply-To: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 20 Oct 2025 14:28:22 -0500
-X-Gm-Features: AS18NWBlNKt3MmTfiejt6ZGCRffbefMOPo_ko_DLqTSSs5UW2n7AtLASjfzoSFc
-Message-ID: <CALHNRZ8ycMNA-OLx=hWNmetqxioDSbt2mRH=_NXr2zLu_pbJoA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] arm64: tegra: Add reserved-memory node to L4T
- Tegra210 devices
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: chips-media: wave5: Fix Hang in Encoder
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Nas Chung
+	<nas.chung@chipsnmedia.com>,
+        Jackson Lee <jackson.lee@chipsnmedia.com>,
+        Mauro
+ Carvalho Chehab <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Darren Etheridge <detheridge@ti.com>
+References: <20251020173332.2271145-1-b-brnich@ti.com>
+ <351e25ea533c440e3fa5131fe44796f66bc4ff82.camel@collabora.com>
+Content-Language: en-US
+From: Brandon Brnich <b-brnich@ti.com>
+In-Reply-To: <351e25ea533c440e3fa5131fe44796f66bc4ff82.camel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Aug 3, 2025 at 10:14=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
-> Changes in v2:
-> - Add patch for P2180
-> - Link to v1: https://lore.kernel.org/r/20250526-p3450-mts-bug-v1-1-78500=
-613f02c@gmail.com
->
-> ---
-> Aaron Kling (2):
->       arm64: tegra: Add reserved-memory node for P3450
->       arm64: tegra: Add reserved-memory node for P2180
->
->  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 6 ++++++
->  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 6 ++++++
->  2 files changed, 12 insertions(+)
-> ---
-> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-> change-id: 20250526-p3450-mts-bug-02394af31f0a
->
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
+Hi Nicolas,
 
-Reminder to review or pick up this series.
+On 10/20/2025 1:41 PM, Nicolas Dufresne wrote:
+> Hi Brandon,
+> 
+> 
+> Le lundi 20 octobre 2025 à 12:33 -0500, Brandon Brnich a écrit :
+>> Wave5 encoder driver only changed states to PIC_RUN in start streaming by
+>> making the assumption that VIDIOC STREAMON call has already been called.
+>> In frameworks like FFMPEG, this condition has not been met when in the
+>> start streaming function resulting in the application hanging. Therefore,
+>> job_ready and device_run need to be extended to have support for this case.
+> 
+> I'm afraid you will have to rework that commit message in V2, I could not make
+> much sense out of it. See comments below, but by spliting your patch, it might
+> get easier to explain what you are trying to fix.
 
-Aaron
+Understood, I provide a better explanation in next patch. I can see how 
+some of the below can be confusing.
+
+> 
+>>
+>> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+>> ---
+>>   .../chips-media/wave5/wave5-vpu-enc.c         | 74 +++++++++++++------
+>>   1 file changed, 51 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> index a02853d42d61..3a3b585ceb8e 100644
+>> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> @@ -705,6 +705,11 @@ static int wave5_vpu_enc_encoder_cmd(struct file *file, void *fh, struct v4l2_en
+>>   
+>>   		m2m_ctx->last_src_buf = v4l2_m2m_last_src_buf(m2m_ctx);
+>>   		m2m_ctx->is_draining = true;
+>> +
+>> +		if (v4l2_m2m_num_dst_bufs_ready(m2m_ctx) > 0) {
+> 
+> Its job_ready callback and framework task to check this, I think you can go
+> directly to try to schedule.
+> 
+>> +			dev_dbg(inst->dev->dev, "Forcing job run for draining\n");
+>> +			v4l2_m2m_try_schedule(m2m_ctx);
+> 
+> This is fair, and the decoder does the same. Though, it has nothing to do with
+> the transition from OPEN -> SEQ_INIT -> PIC_RUN. Do this in its own commit with
+> its own explanation.
+
+Understood
+
+> 
+>> +		}
+>>   		break;
+>>   	case V4L2_ENC_CMD_START:
+>>   		break;
+>> @@ -1411,6 +1416,34 @@ static int prepare_fb(struct vpu_instance *inst)
+>>   	return ret;
+>>   }
+>>   
+>> +static int wave5_vpu_enc_prepare_cap_seq(struct vpu_instance *inst)
+>> +{
+> 
+> Factor-out in its own commit, with a message this is preparation work and with
+> no function changes. Its really hard to review code that moves around and may
+> have changes in it.
+
+Might not be important to do anymore if your suggestions on the 
+conditional at the bottom of this patch work. I only moved this code to 
+it's own function since I updated device_run to have capability to 
+support the same state change if it was not achieved in start_streaming.
+
+> 
+>> +	int ret = 0;
+>> +
+>> +	ret = initialize_sequence(inst);
+>> +	if (ret) {
+>> +		dev_warn(inst->dev->dev, "Sequence not found: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +	ret = switch_state(inst, VPU_INST_STATE_INIT_SEQ);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * The sequence must be analyzed first to calculate the proper
+>> +	 * size of the auxiliary buffers.
+>> +	 */
+>> +	ret = prepare_fb(inst);
+>> +	if (ret) {
+>> +		dev_warn(inst->dev->dev, "Framebuffer preparation, fail: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = switch_state(inst, VPU_INST_STATE_PIC_RUN);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>   static int wave5_vpu_enc_start_streaming(struct vb2_queue *q, unsigned int count)
+>>   {
+>>   	struct vpu_instance *inst = vb2_get_drv_priv(q);
+>> @@ -1453,27 +1486,8 @@ static int wave5_vpu_enc_start_streaming(struct vb2_queue *q, unsigned int count
+>>   		if (ret)
+>>   			goto return_buffers;
+>>   	}
+>> -	if (inst->state == VPU_INST_STATE_OPEN && m2m_ctx->cap_q_ctx.q.streaming) {
+>> -		ret = initialize_sequence(inst);
+>> -		if (ret) {
+>> -			dev_warn(inst->dev->dev, "Sequence not found: %d\n", ret);
+>> -			goto return_buffers;
+>> -		}
+>> -		ret = switch_state(inst, VPU_INST_STATE_INIT_SEQ);
+>> -		if (ret)
+>> -			goto return_buffers;
+>> -		/*
+>> -		 * The sequence must be analyzed first to calculate the proper
+>> -		 * size of the auxiliary buffers.
+>> -		 */
+>> -		ret = prepare_fb(inst);
+>> -		if (ret) {
+>> -			dev_warn(inst->dev->dev, "Framebuffer preparation, fail: %d\n", ret);
+>> -			goto return_buffers;
+>> -		}
+>> -
+>> -		ret = switch_state(inst, VPU_INST_STATE_PIC_RUN);
+>> -	}
+>> +	if (inst->state == VPU_INST_STATE_OPEN && m2m_ctx->cap_q_ctx.q.streaming)
+>> +		ret = wave5_vpu_enc_prepare_cap_seq(inst);
+>>   	if (ret)
+>>   		goto return_buffers;
+>>   
+>> @@ -1598,6 +1612,14 @@ static void wave5_vpu_enc_device_run(void *priv)
+>>   
+>>   	pm_runtime_resume_and_get(inst->dev->dev);
+>>   	switch (inst->state) {
+>> +	case VPU_INST_STATE_OPEN:
+>> +		ret = wave5_vpu_enc_prepare_cap_seq(inst);
+>> +		if (ret) {
+>> +			dev_warn(inst->dev->dev, "Framebuffer preparation, fail: %d\n", ret);
+>> +			switch_state(inst, VPU_INST_STATE_STOP);
+>> +			break;
+>> +		}
+>> +		fallthrough;
+>>   	case VPU_INST_STATE_PIC_RUN:
+>>   		ret = start_encode(inst, &fail_res);
+>>   		if (ret) {
+>> @@ -1633,6 +1655,12 @@ static int wave5_vpu_enc_job_ready(void *priv)
+>>   	case VPU_INST_STATE_NONE:
+>>   		dev_dbg(inst->dev->dev, "Encoder must be open to start queueing M2M jobs!\n");
+>>   		return false;
+>> +	case VPU_INST_STATE_OPEN:
+>> +		if (wave5_vpu_both_queues_are_streaming(inst)) {
+>> +			dev_dbg(inst->dev->dev, "Both queues have been turned on now, M2M job can occur\n");
+>> +			return true;
+>> +		}
+>> +		return false;
+>>   	case VPU_INST_STATE_PIC_RUN:
+>>   		if (m2m_ctx->is_draining || v4l2_m2m_num_src_bufs_ready(m2m_ctx)) {
+>>   			dev_dbg(inst->dev->dev, "Encoder ready for a job, state: %s\n",
+>> @@ -1642,9 +1670,9 @@ static int wave5_vpu_enc_job_ready(void *priv)
+>>   		fallthrough;
+>>   	default:
+>>   		dev_dbg(inst->dev->dev,
+>> -			"Encoder not ready for a job, state: %s, %s draining, %d src bufs ready\n",
+>> +			"Encoder not ready for a job, state: %s, %s draining, %d src bufs ready, %d dst bufs ready\n",
+>>   			state_to_str(inst->state), m2m_ctx->is_draining ? "is" : "is not",
+>> -			v4l2_m2m_num_src_bufs_ready(m2m_ctx));
+>> +			v4l2_m2m_num_src_bufs_ready(m2m_ctx), v4l2_m2m_num_dst_bufs_ready(m2m_ctx));
+>>   		break;
+>>   	}
+>>   	return false;
+> 
+> Perhaps its going to be clear with proper commit message, but I'm still not
+> clear how you can endup with both queues streaming without two calls to
+> wave5_vpu_enc_start_streaming(). I don't deny the condition might be broken
+> then, but the intent is for this code to bring the driver to PIC_RUN on the
+> second call.>
+>  From VPU_INST_STATE_NONE:
+> 
+> Case 1:
+>     STREAMON(CAP)
+>     	- bring it to OPEN state
+
+Wouldn't this be the no-op and cause no state change? VPU only goes to 
+OPEN when start_streaming is called on the OUTPUT plane.
+
+>     STREAMON(OUT)
+>     	- Initialize the sequence and prepare the FB
+>     	- Leaving with PIC_RUN state
+
+So this state would be opening and leaving in state OPEN, but since CAP 
+was called first, it should be streaming so check would happen.
+
+> 
+> 
+> Case 2:
+>     STREAMON(OUT)
+>     	- no-op
+This would put into state open.
+
+>     STREAMON(CAP)
+>     	- To OPEN
+
+It would already be in state open since STREAMON(OUT) put it there.
+
+>     	- To INIT_SEQ
+>     	- To PIC_RUN
+Then the above two don't happen due to below condition failing.
+
+>     
+> 
+> So in case 2, the code fails this condition:
+> 
+> 	if (inst->state == VPU_INST_STATE_OPEN && m2m_ctx->cap_q_ctx.q.streaming) {>
+> 
+> Basically type == CAP, and vb2 won't be setting the .streaming state before this
+> function returns. A possible solution would be:
+> 
+> 	if (inst->state == VPU_INST_STATE_OPEN &&
+> 	    (m2m_ctx->cap_q_ctx.q.streaming || type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)) {
+
+I can test this and I'm sure it will work because this would force it to 
+enter that code block to regardless on the 2nd start_streaming case. 
+This appears to be the cleaner solution without messing around with the 
+state's in job_ready and device_run. So this patch becomes much simpler. 
+I will split into two: 1. updating this conditional (assuming it works) 
+and 2. updating cmd_stop to go directly to try_schedule. Both patches 
+with better commit messages.
+
+Best,
+Brandon
+
+> 
+> cheers,
+> Nicolas
+
 
