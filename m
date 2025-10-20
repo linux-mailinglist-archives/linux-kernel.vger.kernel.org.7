@@ -1,212 +1,421 @@
-Return-Path: <linux-kernel+bounces-861505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988A0BF2E4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C58BF2E43
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CCFC3A5969
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0280146115B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB93332EC8;
-	Mon, 20 Oct 2025 18:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BA03328EC;
+	Mon, 20 Oct 2025 18:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARnEci84"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="uJl4bvbl"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C537E29A326;
-	Mon, 20 Oct 2025 18:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2553321BF;
+	Mon, 20 Oct 2025 18:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760984119; cv=none; b=o9dcPPQ37A3QhuCAqswq7uur1yKleiWXi708gcQ223xkC0ru2ZLgDrSGDW8WjmBGvDr1saW1zQh2Zpf7pLyLYe7uc4Cov1+pS+kwAjqircD21NzlRBSB6UBYyqzPdJUpQrddZsZYMG9SccnLRqxvqeosW5oD3d4vzLYuu0H9q+c=
+	t=1760984117; cv=none; b=YkbH45cmjtGxvs6WPjUawghik0l9jQ9qQIEck58wmlr/14w2ug3tmSvYpWiT9uzpNLfd6SVloSpg50vCwDTkkIQhy/0zCosxb015eI1Z6jXq/GgTU6H5TgWjB9FMZDDIedu5o1g2xRUofOR56d6/iBBTVExWOI4saCXxBr3eRRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760984119; c=relaxed/simple;
-	bh=E/fgf1dqbLBph0Xv5986+OlBJAI2J+9JbYK1ixdN8cQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rS+Rb4IHp0Nl4HwRoVD4JYSDgaoPYuMZz7B/127iZkdb9qfOYoZ55MAa1/OZkBidwDiNBGaBEDYhAtwytpe6PKoY1q3LKAP8gIvJYcS1WGn5jYPH3UZlJU1+RQIMnpvgLM4azOgulE96wKJ05KDy3fvwvwTJsEtKa22Jzg0w6Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARnEci84; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760984117; x=1792520117;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=E/fgf1dqbLBph0Xv5986+OlBJAI2J+9JbYK1ixdN8cQ=;
-  b=ARnEci8495dKQBBHNiEv7ypZkwN+FTkQc3CAdqHPRA2aRjHUsAfH/gbA
-   DMo7uiiFHIeookS2Rhdcd/FfkxG3grEO0+JVscYsnUIwJHDS6q5sdP5eZ
-   B0FXo0pSYUDM5QGEbq0UdzvRH9YbfeKLliG8KkN1f3Lvudyx24teTqPJ3
-   SJ4FMUBUwwVlwVW/CFg02WDBt/uvf69KyZ3+aoM/67NmUGneCiHZmQGmf
-   ZsY3AmPT8DiuBV4ZQs7d8/UtnDJ2XZAWiGD9HNPxaAfMCX2Rmy5A9f6KR
-   oC/FJUX/1NZ/MgoGbyFg42W4Czge5mVu0ivzGBi9cee1BdPLJ+rR0vWXr
-   A==;
-X-CSE-ConnectionGUID: BuFE9txxT/ytIg6iZtkRTg==
-X-CSE-MsgGUID: PScta0pRRIOJ8uBOXvEpOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63145221"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="63145221"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:15:16 -0700
-X-CSE-ConnectionGUID: /D3SR9BxSNeCqSUBQuyNQw==
-X-CSE-MsgGUID: noz/WAhiQGerA9msjaudTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="214007076"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.76])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:15:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 20 Oct 2025 21:15:08 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI: Do not coalesce host bridge resource structs
- in place
-In-Reply-To: <aPZ09UZMfKhYSUZE@smile.fi.intel.com>
-Message-ID: <9d56e776-731a-7e25-60f0-44485cfbf12c@linux.intel.com>
-References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com> <20251010144231.15773-3-ilpo.jarvinen@linux.intel.com> <aO-vtdECWNpYpo6f@smile.fi.intel.com> <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com> <aPZ09UZMfKhYSUZE@smile.fi.intel.com>
+	s=arc-20240116; t=1760984117; c=relaxed/simple;
+	bh=iXt6vpEl2GY8CP1Su70xln432WueQBOJIcmDL+8m6KI=;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=jE1aJlq4hW98VVAiLKzwFq2iQ/qAwZV1NF+wJoiFYizYdNENHHovvVPSFWUl8JBkahqUlXIiR/f2RhReG9p5sbZy0gXMMU5F+2cXu98UeuqQphQcs3eZ2wEdjMWH1y1+925CPQlI8gFNiMBA6CCidy7lnqxWmVinHYUDmt/9AnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=uJl4bvbl; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 9FD9B8288084;
+	Mon, 20 Oct 2025 13:15:14 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id jqNUTe8Wk7Co; Mon, 20 Oct 2025 13:15:13 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 69ABA8288916;
+	Mon, 20 Oct 2025 13:15:13 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 69ABA8288916
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1760984113; bh=4vKxjpiVAaNQ9JHmxNGsHFr/xYTBTH95LrQ0W9ZsgR8=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=uJl4bvblqWnZ+3y/ttcSE4fikI8NUYUX8Ac+zpWeJp/VZ4RVbSUhG9OnR+M48sqtq
+	 /PpZgOLpTEp/j5tPSILbLlaiEgCAApThs6J3ZkuCHeBNIyJk8OpzGJ47tQoV3vJhsz
+	 ruVnsziWDyuyp1Q1YT436HIE0u8wIh99cyVysmWQ=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zAgbONBYsYxB; Mon, 20 Oct 2025 13:15:13 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 3D5518288084;
+	Mon, 20 Oct 2025 13:15:13 -0500 (CDT)
+Date: Mon, 20 Oct 2025 13:15:13 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Lee Jones <lee@kernel.org>, 
+	Georgy Yakovlev <Georgy.Yakovlev@sony.com>
+Message-ID: <1149130558.1802047.1760984113046.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <69142127.1802045.1760984091439.JavaMail.zimbra@raptorengineeringinc.com>
+References: <1787448596.1802034.1760983830792.JavaMail.zimbra@raptorengineeringinc.com> <1587929609.1802041.1760983921227.JavaMail.zimbra@raptorengineeringinc.com> <13657666.1802042.1760984066594.JavaMail.zimbra@raptorengineeringinc.com> <69142127.1802045.1760984091439.JavaMail.zimbra@raptorengineeringinc.com>
+Subject: [PATCH v4 4/4] watchdog: sony-cronos-smc: Add watchdog driver for
+ Sony  Cronos SMC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-33266822-1760982831=:976"
-Content-ID: <cbde40da-41dd-3028-53a3-42d1c9a3c10d@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
+Thread-Topic: watchdog: sony-cronos-smc: Add watchdog driver for Sony Cronos SMC
+Thread-Index: 2sKQBCK/cFq8bcVeB0FycJRZCrk72uhu0OzSZMBtKSw5MQvtthqvlHEl
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The Sony Cronos Platform Controller is a multi-purpose platform controller with
+an integrated watchdog.  Add the watchdog driver for the Cronos SMC.
 
---8323328-33266822-1760982831=:976
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <eb1e09dc-4afa-d9d0-bacc-45f736382b02@linux.intel.com>
+Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
+---
+ drivers/watchdog/Kconfig           |  17 ++
+ drivers/watchdog/Makefile          |   1 +
+ drivers/watchdog/sony-cronos-wdt.c | 283 +++++++++++++++++++++++++++++
+ 3 files changed, 301 insertions(+)
+ create mode 100644 drivers/watchdog/sony-cronos-wdt.c
 
-On Mon, 20 Oct 2025, Andy Shevchenko wrote:
-
-> On Mon, Oct 20, 2025 at 08:21:50PM +0300, Ilpo J=E4rvinen wrote:
-> > On Wed, 15 Oct 2025, Andy Shevchenko wrote:
-> > > On Fri, Oct 10, 2025 at 05:42:30PM +0300, Ilpo J=E4rvinen wrote:
->=20
-> ...
->=20
-> > > > +/**
-> > > > + * resource_mergeable - Test if resources are contiguous and can b=
-e merged
-> > > > + * @r1: first resource
-> > > > + * @r2: second resource
-> > > > + *
-> > > > + * Tests @r1 is followed by @r2 contiguously and share the metadat=
-a.
-> > >=20
-> > > This needs an additional explanation about name equivalence that's no=
-t only by
-> > > pointers, but by a content.
-> >=20
-> > Okay. The point was to check names are the same, the pointer check was=
-=20
-> > just an optimization as these resources are expected to carry the same=
-=20
-> > name even on the pointer level.
-> >=20
-> > > > + * Return: %true if resources are mergeable non-destructively.
-> > > > + */
-> > > > +static bool resource_mergeable(struct resource *r1, struct resourc=
-e *r2)
-> > > > +{
-> > > > +=09if ((r1->flags !=3D r2->flags) ||
-> > > > +=09    (r1->desc !=3D r2->desc) ||
-> > > > +=09    (r1->parent !=3D r2->parent) ||
-> > > > +=09    (r1->end + 1 !=3D r2->start))
-> > > > +=09=09return false;
-> > >=20
-> > > > +=09if (r1->name =3D=3D r2->name)
-> > > > +=09=09return true;
-> > > > +
-> > > > +=09if (r1->name && r2->name && !strcmp(r1->name, r2->name))
-> > > > +=09=09return true;
-> > > > +
-> > > > +=09return false;
-> > >=20
-> > > Hmm... Can we keep the logic more straight as in returning false case=
-s as soon
-> > > as possible?
-> > >=20
-> > > I think of something like this:
-> > >=20
-> > > =09if (r1->name && r2->name)
-> > > =09=09return strcmp(r1->name, r2->name) =3D=3D 0;
-> > >=20
-> > > =09return r1->name =3D=3D r2->name;
-> >=20
-> > But the point the order above was to avoid strcmp() when the pointer=20
-> > itself is same which I think is quite common case. I don't think strcmp=
-()=20
-> > itself checks whether the pointer is the same.
->=20
-> On the second thought I think comparing by the content is quite a behavio=
-ural
-> change here.
-
-Compared to what?
-
-This code was previously only used for merging contiguous "System RAM"=20
-resources (AFAICT, I don't have way to check what the names in all those
-resources truly were but in any case, the check was even stricter earlier,=
-=20
-comparing pointer equality only so definitely the names were not different=
-=20
-before this).
-
-> Perhaps we may start without doing that first? Theoretically it
-> might be the case when the content of names is different, but resources a=
-re
-> the same.
-
-Resources are NOT same, they're two contiguous memory regions and may=20
-originate from different source, and thus have different names.
-
-Not caring about the names will lose one of them from /proc/iomem.
-
-> The case when name is the same (by content, but pointers) with the
-> idea of having different resources sounds to me quite an awkward case. TL=
-;
-> DR: What are the cases that we have in practice now?
-
-In the original thread [1], PCI side resource coalescing did break the=20
-resources by merging without caring what the resource internals were. That=
-=20
-problem was found after trying to fix another problem, thus it might not=20
-happen in practice except after fixing the other problem with root bus=20
-resources.
-
-In the common case when merging PCI root bus resources, the resources=20
-typically have the same name - this happens all the time (e.g. io port=20
-ranges are split to many small ranges which form a contiguous region=20
-when coalesced). But that's not always the case, why do you think these=20
-two names should be merged losing some information:
-
-     ee080000-ee08ffff : pci@ee090000
-       ...
-     ee090000-ee090bff : ee090000.pci pci@ee090000
-
-?
-
-(Also, the careless change in the underlying resource by the code this=20
-series tries to fix would have likely broken also devres release of the=20
-mangled resource, which admittedly, is not related to name at all).
-
-[1] https://lore.kernel.org/linux-pci/CAMuHMdVgCHU80mRm1Vwo6GFgNAtQcf50yHBz=
-_oAk4TrtjcMpYg@mail.gmail.com/
-
-
---=20
- i.
---8323328-33266822-1760982831=:976--
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 05008d937e40..843ee5f8d750 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -416,6 +416,23 @@ config SL28CPLD_WATCHDOG
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called sl28cpld_wdt.
+ 
++config SONY_CRONOS_WATCHDOG
++	tristate "Sony Cronos CPLD Watchdog"
++	depends on ARCH_ASPEED || COMPILE_TEST
++	depends on I2C
++	select WATCHDOG_CORE
++	help
++	  Say Y here to include support for the watchdog timer
++	  for the Sony Cronos control CPLD.
++
++	  All known Cronos systems use the ASpeed AST2600 SoC,
++	  therefore the configuration option is gated on
++	  ARCH_ASPEED selection.  If this changes, add the new
++	  SoCs to the selection list.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called sony-cronos-wdt.
++
+ # ALPHA Architecture
+ 
+ # ARM Architecture
+diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+index b680e4d3c1bc..724d5982c240 100644
+--- a/drivers/watchdog/Makefile
++++ b/drivers/watchdog/Makefile
+@@ -243,3 +243,4 @@ obj-$(CONFIG_MENZ069_WATCHDOG) += menz69_wdt.o
+ obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
+ obj-$(CONFIG_STPMIC1_WATCHDOG) += stpmic1_wdt.o
+ obj-$(CONFIG_SL28CPLD_WATCHDOG) += sl28cpld_wdt.o
++obj-$(CONFIG_SONY_CRONOS_WATCHDOG) += sony-cronos-wdt.o
+diff --git a/drivers/watchdog/sony-cronos-wdt.c b/drivers/watchdog/sony-cronos-wdt.c
+new file mode 100644
+index 000000000000..650fcee28885
+--- /dev/null
++++ b/drivers/watchdog/sony-cronos-wdt.c
+@@ -0,0 +1,283 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Watchdog device driver for Sony Cronos SMCs
++ * Copyright (C) 2015 Dialog Semiconductor Ltd.
++ * Copyright (C) 2022-2025 Raptor Engineering, LLC
++ *
++ */
++
++#include <linux/delay.h>
++#include <linux/i2c.h>
++#include <linux/jiffies.h>
++#include <linux/kernel.h>
++#include <linux/mfd/sony-cronos.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/watchdog.h>
++
++static const unsigned int wdt_timeout[] = { 10, 80 };
++static const unsigned int wdt_timeout_ctl_bits[] = { 0x1, 0x0 };
++#define CRONOS_TWDSCALE_DISABLE 0
++#define CRONOS_TWDSCALE_MIN 1
++#define CRONOS_TWDSCALE_MAX (ARRAY_SIZE(wdt_timeout) - 1)
++#define CRONOS_WDT_MIN_TIMEOUT wdt_timeout[CRONOS_TWDSCALE_MIN]
++#define CRONOS_WDT_MAX_TIMEOUT wdt_timeout[CRONOS_TWDSCALE_MAX]
++#define CRONOS_WDG_DEFAULT_TIMEOUT wdt_timeout[CRONOS_TWDSCALE_MAX]
++
++struct sony_cronos_watchdog {
++	struct sony_cronos_smc *hw;
++	struct watchdog_device wdtdev;
++};
++
++static unsigned int sony_cronos_wdt_read_timeout(struct sony_cronos_watchdog *wdt)
++{
++	unsigned int i;
++	unsigned int val;
++
++	regmap_read(wdt->hw->regmap, CRONOS_WDT_CTL_REG, &val);
++
++	for (i = CRONOS_TWDSCALE_MIN; i <= CRONOS_TWDSCALE_MAX; i++) {
++		if (wdt_timeout_ctl_bits[i] == (val & CRONOS_WDT_TIMEOUT_MASK))
++			return wdt_timeout[i];
++	}
++
++	dev_err(wdt->hw->dev, "Invalid configuration data present in watchdog control register!\n");
++	return wdt_timeout[CRONOS_WDT_MIN_TIMEOUT];
++}
++
++static unsigned int sony_cronos_wdt_timeout_to_sel(unsigned int secs)
++{
++	unsigned int i;
++
++	for (i = CRONOS_TWDSCALE_MIN; i <= CRONOS_TWDSCALE_MAX; i++) {
++		if (wdt_timeout[i] >= secs)
++			return wdt_timeout_ctl_bits[i];
++	}
++
++	return wdt_timeout_ctl_bits[CRONOS_TWDSCALE_MAX];
++}
++
++static int sony_cronos_reset_watchdog_timer(struct sony_cronos_watchdog *wdt)
++{
++	return regmap_write(wdt->hw->regmap, CRONOS_WDT_CLR_REG, CRONOS_WDT_CLR_VAL);
++}
++
++static int sony_cronos_wdt_update_timeout_register(struct sony_cronos_watchdog *wdt,
++						   unsigned int regval)
++{
++	int ret;
++
++	struct sony_cronos_smc *chip = wdt->hw;
++
++	ret = sony_cronos_reset_watchdog_timer(wdt);
++	if (ret) {
++		dev_err(wdt->hw->dev, "Watchdog failed to reset (err = %d)\n", ret);
++		goto done;
++	}
++
++	return regmap_update_bits(chip->regmap, CRONOS_WDT_CTL_REG, CRONOS_WDT_TIMEOUT_MASK,
++				  regval);
++
++done:
++	return ret;
++}
++
++static int sony_cronos_wdt_start(struct watchdog_device *wdd)
++{
++	struct sony_cronos_watchdog *wdt = watchdog_get_drvdata(wdd);
++	struct sony_cronos_smc *chip = wdt->hw;
++	unsigned int selector;
++	int ret;
++
++	selector = sony_cronos_wdt_timeout_to_sel(wdt->wdtdev.timeout);
++	ret = sony_cronos_wdt_update_timeout_register(wdt, selector);
++	if (ret) {
++		dev_err(wdt->hw->dev, "Watchdog prestart configuration failed (err = %d)\n", ret);
++		goto done;
++	}
++
++	ret = regmap_update_bits(chip->regmap, CRONOS_WDT_CTL_REG, CRONOS_WDT_ENABLE_MASK, 1);
++
++	if (ret)
++		dev_err(wdt->hw->dev, "Watchdog failed to start (err = %d)\n", ret);
++
++done:
++	return ret;
++}
++
++static int sony_cronos_wdt_stop(struct watchdog_device *wdd)
++{
++	struct sony_cronos_watchdog *wdt = watchdog_get_drvdata(wdd);
++	struct sony_cronos_smc *chip = wdt->hw;
++	int ret;
++
++	ret = regmap_update_bits(chip->regmap, CRONOS_WDT_CTL_REG, CRONOS_WDT_ENABLE_MASK, 1);
++	if (ret)
++		dev_err(wdt->hw->dev, "Watchdog failed to stop (err = %d)\n", ret);
++
++	return ret;
++}
++
++static int sony_cronos_wdt_ping(struct watchdog_device *wdd)
++{
++	struct sony_cronos_watchdog *wdt = watchdog_get_drvdata(wdd);
++	int ret;
++
++	/*
++	 * Prevent pings from occurring late in system poweroff/reboot sequence
++	 * and possibly locking out restart handler from accessing i2c bus.
++	 */
++	if (system_state > SYSTEM_RUNNING)
++		return 0;
++
++	ret = sony_cronos_reset_watchdog_timer(wdt);
++	if (ret)
++		dev_err(wdt->hw->dev, "Failed to ping the watchdog (err = %d)\n", ret);
++
++	return ret;
++}
++
++static int sony_cronos_wdt_set_timeout(struct watchdog_device *wdd, unsigned int timeout)
++{
++	struct sony_cronos_watchdog *wdt = watchdog_get_drvdata(wdd);
++	unsigned int selector;
++	int ret;
++
++	selector = sony_cronos_wdt_timeout_to_sel(timeout);
++	ret = sony_cronos_wdt_update_timeout_register(wdt, selector);
++	if (ret)
++		dev_err(wdt->hw->dev, "Failed to set watchdog timeout (err = %d)\n", ret);
++	else
++		wdd->timeout = wdt_timeout[selector];
++
++	return ret;
++}
++
++static int sony_cronos_wdt_restart(struct watchdog_device *wdd, unsigned long action, void *data)
++{
++	struct sony_cronos_watchdog *wdt = watchdog_get_drvdata(wdd);
++	struct i2c_client *client = to_i2c_client(wdt->hw->dev);
++	int ret;
++
++	/* Don't use regmap because it is not atomic safe */
++	ret = i2c_smbus_write_byte_data(client, CRONOS_WDT_CTL_REG, CRONOS_WDT_CTL_RESET_VAL);
++	ret = i2c_smbus_write_byte_data(client, CRONOS_BMC_RESET_REG, CRONOS_BMC_RESET_VAL);
++	if (ret < 0)
++		dev_alert(wdt->hw->dev, "Failed to shutdown (err = %d)\n", ret);
++
++	/* wait for reset to assert... */
++	mdelay(500);
++
++	return ret;
++}
++
++static const struct watchdog_info sony_cronos_watchdog_info = {
++	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING,
++	.identity = "Sony Cronos WDT",
++};
++
++static const struct watchdog_ops sony_cronos_watchdog_ops = {
++	.owner = THIS_MODULE,
++	.start = sony_cronos_wdt_start,
++	.stop = sony_cronos_wdt_stop,
++	.ping = sony_cronos_wdt_ping,
++	.set_timeout = sony_cronos_wdt_set_timeout,
++	.restart = sony_cronos_wdt_restart,
++};
++
++static const struct of_device_id sony_cronos_compatible_id_table[] = {
++	{
++		.compatible = "sony,cronos-watchdog",
++	},
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, sony_cronos_compatible_id_table);
++
++static int sony_cronos_wdt_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	unsigned int timeout;
++	struct sony_cronos_smc *chip;
++	struct sony_cronos_watchdog *wdt;
++
++	chip = dev_get_drvdata(dev->parent);
++	if (!chip)
++		return -EINVAL;
++
++	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
++	if (!wdt)
++		return -ENOMEM;
++
++	wdt->hw = chip;
++
++	wdt->wdtdev.info = &sony_cronos_watchdog_info;
++	wdt->wdtdev.ops = &sony_cronos_watchdog_ops;
++	wdt->wdtdev.min_timeout = CRONOS_WDT_MIN_TIMEOUT;
++	wdt->wdtdev.max_timeout = CRONOS_WDT_MAX_TIMEOUT;
++	wdt->wdtdev.min_hw_heartbeat_ms = 0;
++	wdt->wdtdev.timeout = CRONOS_WDG_DEFAULT_TIMEOUT;
++	wdt->wdtdev.status = WATCHDOG_NOWAYOUT_INIT_STATUS;
++	wdt->wdtdev.parent = dev;
++
++	watchdog_set_restart_priority(&wdt->wdtdev, 128);
++
++	watchdog_set_drvdata(&wdt->wdtdev, wdt);
++	dev_set_drvdata(dev, &wdt->wdtdev);
++
++	timeout = sony_cronos_wdt_read_timeout(wdt);
++	if (timeout)
++		wdt->wdtdev.timeout = timeout;
++
++	/* Set timeout from DT value if available */
++	watchdog_init_timeout(&wdt->wdtdev, 0, dev->parent);
++
++	if (timeout) {
++		sony_cronos_wdt_set_timeout(&wdt->wdtdev, wdt->wdtdev.timeout);
++		set_bit(WDOG_HW_RUNNING, &wdt->wdtdev.status);
++	}
++
++	return devm_watchdog_register_device(dev, &wdt->wdtdev);
++}
++
++static int __maybe_unused sony_cronos_wdt_suspend(struct device *dev)
++{
++	struct watchdog_device *wdd = dev_get_drvdata(dev);
++
++	if (watchdog_active(wdd))
++		return sony_cronos_wdt_stop(wdd);
++
++	return 0;
++}
++
++static int __maybe_unused sony_cronos_wdt_resume(struct device *dev)
++{
++	struct watchdog_device *wdd = dev_get_drvdata(dev);
++
++	if (watchdog_active(wdd))
++		return sony_cronos_wdt_start(wdd);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(sony_cronos_wdt_pm_ops, sony_cronos_wdt_suspend, sony_cronos_wdt_resume);
++
++static struct platform_driver sony_cronos_wdt_driver = {
++	.probe = sony_cronos_wdt_probe,
++	.driver = {
++		.name = "sony-cronos-watchdog",
++		.pm = &sony_cronos_wdt_pm_ops,
++		.of_match_table = sony_cronos_compatible_id_table,
++	},
++};
++module_platform_driver(sony_cronos_wdt_driver);
++
++MODULE_AUTHOR("Raptor Engineering, LLC <tpearson@raptorengineering.com>");
++MODULE_DESCRIPTION("WDT device driver for Sony Cronos SMCs");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:sony-cronos-watchdog");
+-- 
+2.39.5
 
