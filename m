@@ -1,157 +1,165 @@
-Return-Path: <linux-kernel+bounces-861460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11A0BF2CAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:46:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29939BF2C89
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EA3E4F9E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:44:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C101E34D342
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F523328EC;
-	Mon, 20 Oct 2025 17:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF533321D7;
+	Mon, 20 Oct 2025 17:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kO35s21X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoWOuH7p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAE13328F2;
-	Mon, 20 Oct 2025 17:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B833328EB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982269; cv=none; b=cWOoRBmMxIu1zDZAYLUh0FR4w7rYIITNSz3IsViM8NV7TV3sdySEWjLTlRwmKAnweGWcQwDGmWq7YCTp5FLRW2DGW5QvPqaUDXaqQu8hLIqSdIW0J5Q0q0snLsKZIifAlAqUmyE71bg2i0kXxEeA2CYQdb7QBTONTOi0wrgzD+k=
+	t=1760982276; cv=none; b=FiCe1X4S5wWgrZUk+ip/yx09Jr+5mJ3ZSwbHsacP7Dz5KhCQmKHUcR/uEJk4f/yIA1HrxIgxmc3ytcLPTDeYbS2DNWSo3baPa8xN6ksHShp7bi/rbjK7rwiS2Ci0VM+jeIQsHxbuu9foPYUgrmLNpBCRYSEz5XLt6bTPJJsdZgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982269; c=relaxed/simple;
-	bh=32dtGpNdyTdYO53P8P14PmChbZsJYUzhABFWKdzmSx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+dgwQy67AeCg00YUN3ldEP+Bcl7/TnfLO6ouS9u7vtttEbA+CddG98xDEXKu7f2IjpML8nOYYE0TJYUgK8pJB0RUxxOVe8f+HEIUX8YldXjKz7sO0ttTuP58p6qvsGeMtT42RYCmMYWXCZDFOyT+lupKMzIdANFpY0+W4Zkp2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kO35s21X; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760982268; x=1792518268;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=32dtGpNdyTdYO53P8P14PmChbZsJYUzhABFWKdzmSx8=;
-  b=kO35s21XLoYP/hK1xhuZgzLT+KINBWOevuRqd13LIb4QYLEfbqOUWNXM
-   fa7ciWsIWYVl2PGgQih2D/TMsRHjG5eFpfj5LbycRlWwu9XJdYj6qjqet
-   39AOyU0i7F3gNFrOYUREQhQZditJJSzOPBIHHfGJPD0ENVHKQ78pW11kq
-   3B0wKIPoXJsL3XSpbys4PAwmdTeRv41I8F1nfvYtW9rdwALbXCa20OaKz
-   HN9rd8FBz8Q8C9AQSTaw2pwSEsjzkgsh73GSlbFaUW3L2xUFOzHxfEdJk
-   BBquH/WJB1xwu9TdzHekdbB+GO7M5azK7vJlwf/DV2C5EIABNn5vAJExk
-   A==;
-X-CSE-ConnectionGUID: tsa/rKgzSfyhXWm54aLZcA==
-X-CSE-MsgGUID: E+zX9kvmTiuKohPM/Z3w7A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73393954"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="73393954"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 10:44:27 -0700
-X-CSE-ConnectionGUID: 7A32v3lvRQKiBSJuiVID3w==
-X-CSE-MsgGUID: kT+dY9Y6QqaYWgRNUUk8/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="184156966"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.62])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 10:44:24 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vAtvh-00000001Leh-3wxZ;
-	Mon, 20 Oct 2025 20:44:21 +0300
-Date: Mon, 20 Oct 2025 20:44:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in
- place
-Message-ID: <aPZ09UZMfKhYSUZE@smile.fi.intel.com>
-References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
- <20251010144231.15773-3-ilpo.jarvinen@linux.intel.com>
- <aO-vtdECWNpYpo6f@smile.fi.intel.com>
- <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com>
+	s=arc-20240116; t=1760982276; c=relaxed/simple;
+	bh=9SQduol4sq0EtS2GcOIwdhucDz3vZOy2iqkydjidjb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z97i4QBHFhu3AvWZLIJ/Te4RWFP4ozFGBfV6ocMlvjrpLyA0ddl+55nTPeuOOROTMrT5HRqNL6jTdpBJeaZLV+TzaF+GeX8RtXbQtk5TsCxeWDrIpVQPtnvaOrRxClBOCIu52BSAb37cXVusRXQVOUZIgAe5/7xrcc5PJdbdpxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoWOuH7p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512C4C2BC86
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760982276;
+	bh=9SQduol4sq0EtS2GcOIwdhucDz3vZOy2iqkydjidjb0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XoWOuH7pqGKUuHsGV4vnJ9f2sK9s0qP/cnmrb8G+I/J68fBw1F7pqORh3JN/Fh3Tp
+	 eOqfw6DVP/uLocyxy/H5lVzQDfvYG1m+yR7sJ0gbjEI5HJaRa2C+FbuGAVMNoFjNEM
+	 tQRnaQOY1B+RmhajjkSLD8ZHgmDiQWC83ItxpM+FsoI/CojrO6RKudqeL7T5/jiIdM
+	 jlwJxeWKEmgo8xgKwz9CHGclQ/3AGF/iOxsyP+tjDwcjzMKqOhI/ah22OuxBKSudzd
+	 A1VmOL90BuYrfJafDdw8s57VpX+gsu3SwiLmgDCeTmXqXXPFU3sw8dajyGmHmjmX8Z
+	 2RM0WNCFERl/w==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7c0e8367d4eso1584547a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:44:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3foJnBfdtoqXUSNdZMWv+lTlJ9CvJcm5hdA7/63yupgxvyXVivsmTfc5dRdh85WCPe068xyEGMv69IxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9q06SmRpBHErJ1/gh7juaK1kE8ZFcF/AEzY2wv969Hh0OzehA
+	S/F40nh/5BkNRc4B7M95xtIXskWlKnCH3ajKu5TWH70FwkQvKRJrYRQtZz2j5lCQM0ByNkGShw0
+	iOFejvRzSNSE/WqaREmw+QrNecvre0c0=
+X-Google-Smtp-Source: AGHT+IEwbvz72kNzUitB/HZRHnWBHktzWo+WHJ4wfWV7a7y7zEi7Xt1kb6kk+2+LndRg6PQI9iAqjmMQy+zxteny/jM=
+X-Received: by 2002:a05:6808:190d:b0:438:8c9:5f4 with SMTP id
+ 5614622812f47-443a2edee81mr5446868b6e.19.1760982275490; Mon, 20 Oct 2025
+ 10:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20251014001055.772422-6-changwoo@igalia.com> <202510151232.UNZ2J7TZ-lkp@intel.com>
+In-Reply-To: <202510151232.UNZ2J7TZ-lkp@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 20 Oct 2025 19:44:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hAnKEUP7n_d3bzVEi0HGmgZXC-+U=_RmS1n0wGniv8qQ@mail.gmail.com>
+X-Gm-Features: AS18NWDqU8gI4O1WJOZVUI3zH0SqwXzI9Pu_KT0r6C5A7fFtSAxMeq04Q4UHq8s
+Message-ID: <CAJZ5v0hAnKEUP7n_d3bzVEi0HGmgZXC-+U=_RmS1n0wGniv8qQ@mail.gmail.com>
+Subject: Re: [PATCH v5 05/10] PM: EM: Add an iterator and accessor for the
+ performance domain
+To: kernel test robot <lkp@intel.com>, Changwoo Min <changwoo@igalia.com>
+Cc: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com, 
+	pavel@kernel.org, oe-kbuild-all@lists.linux.dev, christian.loehle@arm.com, 
+	tj@kernel.org, kernel-dev@igalia.com, linux-pm@vger.kernel.org, 
+	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 08:21:50PM +0300, Ilpo Järvinen wrote:
-> On Wed, 15 Oct 2025, Andy Shevchenko wrote:
-> > On Fri, Oct 10, 2025 at 05:42:30PM +0300, Ilpo Järvinen wrote:
+On Wed, Oct 15, 2025 at 6:50=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Changwoo,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on amd-pstate/linux-next]
+> [also build test ERROR on amd-pstate/bleeding-edge linus/master v6.18-rc1=
+ next-20251014]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Changwoo-Min/PM-EM=
+-Assign-a-unique-ID-when-creating-a-performance-domain/20251014-082420
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git=
+ linux-next
+> patch link:    https://lore.kernel.org/r/20251014001055.772422-6-changwoo=
+%40igalia.com
+> patch subject: [PATCH v5 05/10] PM: EM: Add an iterator and accessor for =
+the performance domain
+> config: i386-buildonly-randconfig-001-20251015 (https://download.01.org/0=
+day-ci/archive/20251015/202510151232.UNZ2J7TZ-lkp@intel.com/config)
+> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251015/202510151232.UNZ2J7TZ-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510151232.UNZ2J7TZ-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+> >> kernel/power/energy_model.c:1003:5: error: redefinition of 'for_each_e=
+m_perf_domain'
+>     1003 | int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, =
+void *),
+>          |     ^~~~~~~~~~~~~~~~~~~~~~~
+>    In file included from kernel/power/energy_model.c:20:
+>    kernel/power/em_netlink.h:18:5: note: previous definition of 'for_each=
+_em_perf_domain' with type 'int(int (*)(struct em_perf_domain *, void *), v=
+oid *)'
+>       18 | int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, =
+void *),
+>          |     ^~~~~~~~~~~~~~~~~~~~~~~
+> >> kernel/power/energy_model.c:1022:24: error: redefinition of 'em_perf_d=
+omain_get_by_id'
+>     1022 | struct em_perf_domain *em_perf_domain_get_by_id(int id)
+>          |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+>    kernel/power/em_netlink.h:24:24: note: previous definition of 'em_perf=
+_domain_get_by_id' with type 'struct em_perf_domain *(int)'
+>       24 | struct em_perf_domain *em_perf_domain_get_by_id(int id)
+>          |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+>
 
-...
+Please update the patch to address this report and resend it, thanks!
 
-> > > +/**
-> > > + * resource_mergeable - Test if resources are contiguous and can be merged
-> > > + * @r1: first resource
-> > > + * @r2: second resource
-> > > + *
-> > > + * Tests @r1 is followed by @r2 contiguously and share the metadata.
-> > 
-> > This needs an additional explanation about name equivalence that's not only by
-> > pointers, but by a content.
-> 
-> Okay. The point was to check names are the same, the pointer check was 
-> just an optimization as these resources are expected to carry the same 
-> name even on the pointer level.
-> 
-> > > + * Return: %true if resources are mergeable non-destructively.
-> > > + */
-> > > +static bool resource_mergeable(struct resource *r1, struct resource *r2)
-> > > +{
-> > > +	if ((r1->flags != r2->flags) ||
-> > > +	    (r1->desc != r2->desc) ||
-> > > +	    (r1->parent != r2->parent) ||
-> > > +	    (r1->end + 1 != r2->start))
-> > > +		return false;
-> > 
-> > > +	if (r1->name == r2->name)
-> > > +		return true;
-> > > +
-> > > +	if (r1->name && r2->name && !strcmp(r1->name, r2->name))
-> > > +		return true;
-> > > +
-> > > +	return false;
-> > 
-> > Hmm... Can we keep the logic more straight as in returning false cases as soon
-> > as possible?
-> > 
-> > I think of something like this:
-> > 
-> > 	if (r1->name && r2->name)
-> > 		return strcmp(r1->name, r2->name) == 0;
-> > 
-> > 	return r1->name == r2->name;
-> 
-> But the point the order above was to avoid strcmp() when the pointer 
-> itself is same which I think is quite common case. I don't think strcmp() 
-> itself checks whether the pointer is the same.
-
-On the second thought I think comparing by the content is quite a behavioural
-change here. Perhaps we may start without doing that first? Theoretically it
-might be the case when the content of names is different, but resources are
-the same. The case when name is the same (by content, but pointers) with the
-idea of having different resources sounds to me quite an awkward case. TL;
-DR: What are the cases that we have in practice now?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> vim +/for_each_em_perf_domain +1003 kernel/power/energy_model.c
+>
+>   1002
+> > 1003  int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, voi=
+d *),
+>   1004                              void *data)
+>   1005  {
+>   1006          struct em_perf_domain *pd;
+>   1007
+>   1008          lockdep_assert_not_held(&em_pd_mutex);
+>   1009          guard(mutex)(&em_pd_list_mutex);
+>   1010
+>   1011          list_for_each_entry(pd, &em_pd_list, node) {
+>   1012                  int ret;
+>   1013
+>   1014                  ret =3D cb(pd, data);
+>   1015                  if (ret)
+>   1016                          return ret;
+>   1017          }
+>   1018
+>   1019          return 0;
+>   1020  }
+>   1021
+> > 1022  struct em_perf_domain *em_perf_domain_get_by_id(int id)
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
