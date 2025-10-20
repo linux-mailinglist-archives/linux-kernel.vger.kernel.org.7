@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-860726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA185BF0CAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:18:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D617BF0CB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7885F18A0765
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA91B3E3703
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB10F257839;
-	Mon, 20 Oct 2025 11:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1JwrdS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E23E2512E6;
+	Mon, 20 Oct 2025 11:19:47 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342D208D0;
-	Mon, 20 Oct 2025 11:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62001208D0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760959131; cv=none; b=HNLwLD7LA/TAWlJin8mQZQ2yZ/vff3SGFf9BTJa4DckYY+G/JKfvv4OtkX2gd9AY4TjxqA7hSGnmEJup+iNN5DlZ6id4hNsuh+40AfiUeTxCfwqtnX8o4jAzqLcF4oViy2Q2KQAFQrzcXZUlC8ynl9AoLNX/snWb/96D8WVJTvo=
+	t=1760959186; cv=none; b=Fru0xX8oO2BvWB4qvT5paeb5TYeF359NziAxeHI1kHU7ItTovXILHtIMTI8QEFiRoNLKUMLlsn2OoAUi8H/v9i9TkT8MC1D4QgeQ5owK1eyYoCD1/w4wipI4CbW5g5VKho4jRamnNgz55CLeFPwwqDPX3V+4ZjSRmI8SPaqsqR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760959131; c=relaxed/simple;
-	bh=Iy3FMNU5JJj4+eobaequ5U9DsJS3Eu2JCPZfUoHRLM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PREPvQI88sEZIwe1KB2TS4ulaozeWhx/CZuW87cSz7tZp7Mkj0YEsxN+MPYY4YnRSN8UDDAe3IwQ62EBE8EzGue/XA8A7+VNP3BRpDdPxCF0t49OqTXugI0vugWIRxOJBI6y1nyDxdXlL2HQ5vFqdZFKa9CqtbTNhAutWTqlyXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1JwrdS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD51C4CEF9;
-	Mon, 20 Oct 2025 11:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760959131;
-	bh=Iy3FMNU5JJj4+eobaequ5U9DsJS3Eu2JCPZfUoHRLM0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C1JwrdS/G9cyZBVz70TdUPL5CDw4bxQC7K/UKxcbX3pIQw4jA9CPEPCJz3qzNiDJr
-	 xfrZ8qt0NuHseRzPdlugNgT1mtMdBhrm5YWRM5rMHgMyr4fJIwtYXVmLu8TwEMn3D2
-	 nWme45d69LMWaKx/HcloNPDqIXuRnNLNI2uzVLMqYv65uIPYy0lVVjOOHcpnCO1QJ5
-	 C+y57GeZXMvAZ8dyWf2gmXPuBecIsHzhtpMS+rJ4x9PO1oaYatt4Z2V1J9V/NPFfI1
-	 ULuLMnns6lTPJCXShpffMxBJExnx+W40wwyVa4jw1UFMu3XmfhxInInHRD8F7gmfZH
-	 utBZp4qVtSV3g==
-Message-ID: <a3994a92-0a36-411e-97a3-b01fd406ddd1@kernel.org>
-Date: Mon, 20 Oct 2025 13:18:43 +0200
+	s=arc-20240116; t=1760959186; c=relaxed/simple;
+	bh=4NHl9YWPCcB7bspdk1aKDQnvXbSyyNnmpsla0HGH8AA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qSIvnHK5FP4nDvhFqdIuQTMQZG3pA/8JwM11BJzbdVHE7zfMBsLOyqMz1U6XXgB8RkXxtSEZKBtVhpU+TSypn8YTgR2mHucfMLfaJ9BfuZp4985DRzJyH76NFRdmw1AV31aaJjXg+ukdnaNioFn4/v05Os2xmkgTbvgREfx8SpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so415394139f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:19:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760959184; x=1761563984;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R7nHb2B3GUq/O0CwjxET7WjV0XZjmLvCfXvikWJUVss=;
+        b=szR3wRyCxcwPvCvP0w4YLH2PpoIxuQY9xVNb7dDCwZURb+KDneb71rAD7bwKrq62Eq
+         wV/yj/HJLXrWf8sDWqVwJZWMe2dZduH/BD8BANKkWpZAGLhiiGZmJiu4KvOlWbULOxNj
+         tKa6k4GpVfXoBBGZILMYVeLqztQhBa9rVpKOOuabWJlYXg89uP+nDBvl2IVPHot72FiG
+         1pFMcI8m+SSUpYCX2xNTydfTO09vnXK3/FL5ilZOs2YSEgiz0ikAX/YP/0gz82+VK/3n
+         uy3L13D2suT1scL0ky4+jrLN9WEdfN8jPg+9ZDwNfEdjjFmxYxqVj5vSCh6YUAbMM8cN
+         Knsg==
+X-Gm-Message-State: AOJu0Yw7806sWab9b96UsuEHZEt+PFB3iUZGUc3j1jftmClkj4qDmOgA
+	gO//madKQV0S0BIDh+PyH3B2Tpqx9Fp1Ul4FGPiFrZ3woSb0B6qI4NURP2obes81KNnAsKjnIL1
+	Di3pajnCEHBeGApVrltY/YpFarR0jP/E/Pj4SGqi7sstLg4UX96P9l3PcBaE=
+X-Google-Smtp-Source: AGHT+IEvlFX7yue1Ci/4T0X/rPe6ugXXwgmqTvXW2hVsKkdlCAlXi/g56WOMy1jE/PX6gBSUkQl1PMgv5WcpB3feB1Puz1MNcuwy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: display/msm: Add SM6150 DisplayPort
- controller
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: xiangxu.yin@oss.qualcomm.com, Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
- li.liu@oss.qualcomm.com
-References: <20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com>
- <20251015-add-displayport-support-to-qcs615-devicetree-v4-1-aa2cb8470e9d@oss.qualcomm.com>
- <58446b2d-560f-4a7e-890a-78ae0bb92908@kernel.org>
- <f4dihh4z2nnkjcpsrmopycm6opellvv4mkpee72xjbn26nw544@sfc4oy6c2xci>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <f4dihh4z2nnkjcpsrmopycm6opellvv4mkpee72xjbn26nw544@sfc4oy6c2xci>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:1414:b0:940:d395:fb53 with SMTP id
+ ca18e2360f4ac-940d395fcbemr606714339f.12.1760959184425; Mon, 20 Oct 2025
+ 04:19:44 -0700 (PDT)
+Date: Mon, 20 Oct 2025 04:19:44 -0700
+In-Reply-To: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f61ad0.050a0220.91a22.0445.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 20/10/2025 13:07, Dmitry Baryshkov wrote:
-> On Sun, Oct 19, 2025 at 07:13:32PM +0200, Krzysztof Kozlowski wrote:
->> On 15/10/2025 03:53, Xiangxu Yin via B4 Relay wrote:
->>> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->>>
->>> Describe the DisplayPort controller for Qualcomm SM6150 SoC.
->>>
->>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->>> ---
->>>  .../devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml     | 11 +++++++++++
->>>  1 file changed, 11 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
->>> index 9ac24f99d3ada1c197c9654dc9babebccae972ed..935eca23ce6b30b81b3ad778e5fcacc817a230c3 100644
->>> --- a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
->>> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
->>> @@ -51,6 +51,16 @@ patternProperties:
->>>        compatible:
->>>          const: qcom,sm6150-dpu
->>>  
->>> +  "^displayport-controller@[0-9a-f]+$":
->>> +    type: object
->>> +    additionalProperties: true
->>> +    properties:
->>> +      compatible:
->>> +        items:
->>> +          - const: qcom,sm6150-dp
->>> +          - const: qcom,sm8150-dp
->>
->> 6150 is compatible with 8150 or 8350? I have doubts.
-> 
-> SM6150 has the same DP controller as SM8150. SM8150 is compatible with
-> SM8350.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
+***
 
-So if SM6150 is EXACTLY the same as SM8150, then describe it in commit
-msg. If NOT EXACTLY the same, then probably this should be just
-compatible with 8350. Anyway, proper justification is missing.
+Subject: 
+Author: clf700383@gmail.com
 
-Existing commit msg is pretty useless, repeat the diff. I can read the
-diff. Commit msg should explain all the background which is not obvious.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
 
+From 6dc2deb09faf7d53707cc9e75e175b09644fd181 Mon Sep 17 00:00:00 2001
+From: clingfei <clf700383@gmail.com>
+Date: Mon, 20 Oct 2025 13:48:54 +0800
+Subject: [PATCH] fix integer overflow in set_ipsecrequest
 
-Best regards,
-Krzysztof
+syzbot reported a kernel BUG in set_ipsecrequest() due to an skb_over_panic.
+
+The mp->new_family and mp->old_family is u16, while set_ipsecrequest receives
+family as uint8_t,  causing a integer overflow and the later size_req calculation
+error, which exceeds the size used in alloc_skb, and ultimately triggered the
+kernel bug in skb_put.
+
+Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
+Signed-off-by: Cheng Lingfei <clf700383@gmail.com>
+---
+ net/key/af_key.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 2ebde0352245..08f4cde01994 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3518,7 +3518,7 @@ static int set_sadb_kmaddress(struct sk_buff *skb, const struct xfrm_kmaddress *
+ 
+ static int set_ipsecrequest(struct sk_buff *skb,
+ 			    uint8_t proto, uint8_t mode, int level,
+-			    uint32_t reqid, uint8_t family,
++			    uint32_t reqid, uint16_t family,
+ 			    const xfrm_address_t *src, const xfrm_address_t *dst)
+ {
+ 	struct sadb_x_ipsecrequest *rq;
+-- 
+2.34.1
+
 
