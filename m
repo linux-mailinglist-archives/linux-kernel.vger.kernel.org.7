@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-861218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ECCBF21B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2F4BF21C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9AB864F8C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E54D4F8FEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AE52638BF;
-	Mon, 20 Oct 2025 15:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XSngMUTo"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC50A21B9C5;
+	Mon, 20 Oct 2025 15:26:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE5420468E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31951C3C11
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973972; cv=none; b=VDezHN5hcRKTQhNCaf6A8NgnI60or4TMNQABWt1ogb4zA8YQuCBPANokkfl01e7dK/wRTeOUygvIbEmHl/SUZuuuY14N67/HUWh2kRtMUpOqslClOfGFtquZJ3bzwxOHjUWig2dV18Ki1z64U3L7B0Iet3eHcRr2hyLfj6vN+hk=
+	t=1760974018; cv=none; b=JBx2mwYv6u/T4wcv9QDX7HsazAf4iJrsDoh516F9HoxUi0y64pGi+jq4FaHThh+uApCd7D84Z9eOqIZ9oGI3ZFwxaOURv4UDPAaPKVzTlqHhTf3xTrHVgDc3j8qZPIhtI4EwmoIuzWI9QhfhsGkEv6cmXvnEv+oP3mXNf1Y92+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973972; c=relaxed/simple;
-	bh=a9ZMjyfDA31yDaba7Y56UnAcVJ4HbdeHmZr/qEpxu9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAPjniHQkek0VYtZgQm9tJ833vm+zdvYhK2gt8DEvJooTW2yyzkCYATEOpwWvHb32NbnLI84rxEtbt4f7RyVLT8Jaovn5EP5nT3cw7QjshJsLKYCwAFYeSNp7ijASPt58iZyZx0l6nLGT4Le0hHFCSVTG2XYMqTd1VVa6otAt1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XSngMUTo; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-59093864727so5316108e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760973969; x=1761578769; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vq0Ngsa6W3+xLONQxcuO1N5EPGipkieRFHNCPkJXdK4=;
-        b=XSngMUTofG2mnCVOQxRJBpGFtJ1tlrC3GImdXbm6lvRj79vsP2dpgJDjaGzPc1Ce0z
-         NBgevDgJZRciHPviT5qkrpgYizL6RYBUNe98n00P5U9wd5LCZUqiA1gCh8VTF0O+gkjM
-         FciREUDLHn2arlh6ILcCC+CfBLeENadCE8grkAf9I8leaD1R3ZAVpIrJGPTLncUqMSiY
-         2ItqRkYN+/4VkrXaQA2kWDpUQHwklevRsj/YnM8zlhVJtpO4D/dJLSMHYsdTh/AweUnL
-         j91i+N0/ec4XF0Ea9Z9u3iIwt66Tv28Ys6WS+XrTpimfnLeBF62ZlMU0MnkYleFWwDmU
-         rmVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760973969; x=1761578769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vq0Ngsa6W3+xLONQxcuO1N5EPGipkieRFHNCPkJXdK4=;
-        b=Ld/KjQcwd9I6MA+K6wognnTHEGaYMKxN01GsufkTJB/YJrq6PsTTWOSqem/yRMIoSD
-         ASGyY4h63F0s4TVWe2cPMRzPUcgTlzC+1R3R/ZZQvSB/WKWKhiGzvB1KkJuABsyGYKD2
-         LgCL1UU8o2AGozy+HqfyV9U9RfMJbl9ZsOv3spMmib2ON1CiVu0w1vHoy1dQfDlKKm+n
-         FYNn7JZTiyzAQSYb5YJ9X894e9V0Py2NAA3Lo2JytOfec1tx0d7vTALTLKykjP3DKb8T
-         o5aqV51UDciYWyixjOcqazCdtgi+yJoN7nc2Z5ZN79uuqUaSfklqGjZSEGY0BqI+Z/FX
-         cbUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcypiwWor62FM6lD6ddy8dHseUQ1aRKnGwFpHbz8L9Nm5gxEvjVP2Kto9kyta7BL2bm57l6o4EzYEHKSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpKC6rQ196iB1LLYaoX9lVPVRseMsqJRLYL4OZeseuECYcPms5
-	uRQeL1ZZEehztFx0pYFqJQqGROObE/W6ktu3OP1vFr2CjvHoD9U/NdWPIuIjN76ud6YC+zGAolT
-	gwIiIbdcyuQ9MTmbVYSIH2HUDhTDOZqsWvZQZe6WxAw==
-X-Gm-Gg: ASbGncs5k0ZDICo3NAJu4JoZS1aGnXokooD9SFhL9THZZSG9+STyfBoTquO3Ec5iQoz
-	jWaLKKwPjdOUiM9Q5reOPo6txcfZBJ6azzTopfWevp6SwgpFUDQIgZxtNtUNY7JPkj1BbIv68Du
-	7rsYnBaP52Bu7XYKMa2yI46cB6Mov3vF3LRm+XihxrNA1JWWyB4NOOlbZID3ql/HoEosDfH0HKE
-	dyt5KaG1lODPG9qFaW/d+KrdHulUms+0dPlP3l1oFep+IHM4H4Gobwjo5hOMSN3qJ4/88ETLnaQ
-	iaffA5FpuSeloit4Np0VCA9wVHs=
-X-Google-Smtp-Source: AGHT+IGll3AO5pddldZvdf8aT3o18197wF1OauftFBj0SwG5yVH2Ck3XNplXu499kdviIVNDW5wL3ULwaxU1vYqiW0E=
-X-Received: by 2002:a05:6512:6c9:b0:591:d7e1:7859 with SMTP id
- 2adb3069b0e04-591d8577432mr4474281e87.56.1760973968664; Mon, 20 Oct 2025
- 08:26:08 -0700 (PDT)
+	s=arc-20240116; t=1760974018; c=relaxed/simple;
+	bh=vPL+q/vk+gg2Stp2ZUVK2Nu5mtP+IFMSjWR997aw3oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7NUpQVFNo2BGhFzg5bz+5rGtaqjRvjFKJ+qLF4SKDa9qWtF0Kzb5m+cEhrBwbYPwVxyWeGBczSV2g09EL4zq3aCyfcq2F+O916pL3dDfkTmTXovLzfbJlwa02zGJM53FjRbRZPRDfbbnadXfCHazcvMvQnL4aRZrLE6w23dGkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vArme-0005as-Fn; Mon, 20 Oct 2025 17:26:52 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vArme-004ZUd-0k;
+	Mon, 20 Oct 2025 17:26:52 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id F2B4348B5B7;
+	Mon, 20 Oct 2025 15:26:51 +0000 (UTC)
+Date: Mon, 20 Oct 2025 17:26:50 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, Andrei Lalaev <andrey.lalaev@gmail.com>
+Subject: Re: [PATCH can] can: netlink: can_changelink(): allow disabling of
+ automatic restart
+Message-ID: <20251020-gigantic-jovial-mastiff-cb8d0d-mkl@pengutronix.de>
+References: <20251020-netlink-fix-restart-v1-1-3f53c7f8520b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
- <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org> <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
-In-Reply-To: <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 20 Oct 2025 17:25:55 +0200
-X-Gm-Features: AS18NWAjCt18PuLE0qD-eSmCj5bEgp_luJDnH9x9exFUGhDFJ5w2jrnK3EKU3zo
-Message-ID: <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com>
-Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent of
- the reset device
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sjgy3rx7vga7lvbm"
+Content-Disposition: inline
+In-Reply-To: <20251020-netlink-fix-restart-v1-1-3f53c7f8520b@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--sjgy3rx7vga7lvbm
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH can] can: netlink: can_changelink(): allow disabling of
+ automatic restart
+MIME-Version: 1.0
 
-On Mon, Oct 6, 2025 at 5:19=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.d=
-e> wrote:
->
-> >       if (!label_tmp)
-> >               return -EINVAL;
-> > @@ -919,6 +915,11 @@ static int __reset_add_reset_gpio_device(const str=
-uct of_phandle_args *args)
-> >       if (args->args_count !=3D 2)
-> >               return -ENOENT;
-> >
-> > +     struct gpio_device *gdev __free(gpio_device_put) =3D
-> > +             gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
->
-> We are mixing cleanup helpers with gotos in this function, which the
-> documentation in cleanup.h explicitly advises against.
->
-> I know the current code is already guilty, but could you take this
-> opportunity to prepend a patch that splits the part under guard() into
-> a separate function?
->
+On 20.10.2025 13:34:42, Marc Kleine-Budde wrote:
+> Since the commit c1f3f9797c1f ("can: netlink: can_changelink(): fix NULL
+> pointer deref of struct can_priv::do_set_mode"), the automatic restart
+> delay can only be set for devices that implement the restart handler stru=
+ct
+> can_priv::do_set_mode. As it makes no sense to configure a automatic
+> restart for devices that doesn't support it.
+>=20
+> However, since systemd commit 13ce5d4632e3 ("network/can: properly handle
+> CAN.RestartSec=3D0") [1], systemd-networkd correctly handles a restart de=
+lay
+> of "0" (i.e. the restart is disabled). Which means that a disabled restart
+> is always configured in the kernel.
+>=20
+> On systems with both changes active this causes that CAN interfaces that
+> don't implement a restart handler cannot be brought up by systemd-network=
+d.
+>=20
+> Solve this problem by allowing a delay of "0" to be configured, even if t=
+he
+> device does not implement a restart handler.
+>=20
+> [1] https://github.com/systemd/systemd/commit/13ce5d4632e395521e6205c9544=
+93c7fc1c4c6e0
+>=20
+> Cc: stable@vger.kernel.org
+> Cc: Andrei Lalaev <andrey.lalaev@gmail.com>
+> Reported-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> Closes: https://lore.kernel.org/all/20251020-certain-arrogant-vole-of-sun=
+shine-141841-mkl@pengutronix.de
+> Fixes: c1f3f9797c1f ("can: netlink: can_changelink(): fix NULL pointer de=
+ref of struct can_priv::do_set_mode")
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-If I'm being honest, I'd just make everything else use __free() as
-well. Except for IDA, it's possible.
+Applied to linux-can.
 
-That being said: I have another thing in the works, namely converting
-the OF code to fwnode in reset core. I may address this there as I'll
-be moving stuff around. Does this make sense?
+Marc
 
-> I'd also move this block after the lockdep_assert_not_held() below.
->
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Yeah lockdep asserts should be at the top of the function.
+--sjgy3rx7vga7lvbm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Bart
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmj2VLcACgkQDHRl3/mQ
+kZw5RAgAjdw8+lPMF2fLPP05DKR/FCNIvJrujgSopNVkuBLpNBl6ojzCHhauTRQ8
+TplZgZZiXjQwB3VyR3LKmLqKtwJOcw2wtidyLOS6YEr3XI9rw5e5KenWURoclH15
+U2NiKGcepNb9TPsWCNjY2sj8O9zj6UPy/XeWYdBrSxc6ut17X0897UTAE5uINwq+
+Y3E0wxwMQfgCiAafddik7B7IvDKSjZys87/vHeY7EFuaLoameRxNoRfY8ZtYqILM
+MeE0JpmASzMOEfY09dHH5NbffxIYgontrEcW8njbPgLv2iK1MIJ4dH8ghsmSXPYL
+SoN3br2eUaaVxyIesdAcKmQw0ZVDFA==
+=szio
+-----END PGP SIGNATURE-----
+
+--sjgy3rx7vga7lvbm--
 
