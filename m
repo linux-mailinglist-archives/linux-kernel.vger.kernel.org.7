@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-860534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B2EBF056E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:57:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B83BF0589
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A35514E90BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:57:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6E09534AD56
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1E02F617E;
-	Mon, 20 Oct 2025 09:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915522F5A14;
+	Mon, 20 Oct 2025 09:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTfdfeu7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMcMo6z6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E3B2F60D1;
-	Mon, 20 Oct 2025 09:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F0323EA9C;
+	Mon, 20 Oct 2025 09:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954204; cv=none; b=ppG2XVXhn6Os1QkgQES5EVDAhrRR6jHBuVb300KIT71kijn5HIsGkbIdqknElm3wW/Rhby8TLnYSBIHx4ntFJMUnYGmN4TVFTU+cAbDMu2NxBs9Vk+FXf0Vun3Gm7W16MYUeTnanZ9K+Cf1VyHswJj0n40k6I3/FsbwwmDsRn5w=
+	t=1760954292; cv=none; b=Lj2vByd+MBWBJRTICM3X7ToarTuzGfpfjIwKTb/NadFkHbDXU1CksOiRjpVo6b3GHLbi8xMoqciOz0dOELbCL7rc34SJ5fHX59DP604eppGPEmL4GesBGzQ1ZXc8YEvdIPK8stOxXYk6m1uertYHRgIYWSXOMUjbbAVxuU+TCyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954204; c=relaxed/simple;
-	bh=eRscmhaBeaXNyyMb6QNngH3o5h5QCnU9xCb75nFP7+M=;
+	s=arc-20240116; t=1760954292; c=relaxed/simple;
+	bh=NiBGc+8QbFyTGPny5KTd2eO9Xrvo0n3prlh5bGsN3BU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EhvHYhKRm8KqgOL9p8h1pWbkizxfqjXBQ9NwXI+lBLgA18iaQgapOPbSzQUCsDrxphAYqANxBlgFsSwH+8812EzBhJFhrHHrCIdDcbd0D9PsCJKslC/UBsJhIwDhhQmYFpwqrn0m5xBzMvw8BDwcQrV8TMPFLGx5htX4ZgmkvQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTfdfeu7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844F3C4CEF9;
-	Mon, 20 Oct 2025 09:56:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=C4j6toJoNa1LhC/vBadngLJFLvA+fCLw1feMR/KcVnMSHX/9U2FcrlQuBB57NgN03yTSsMebB9fqS9E8FAkReiY3HuZ/fJ+mdAJV9R9bCyCKrnfTMY44MLsPk/jwZPNcW4iftxvYg+Sg96L3Y1+ObogTHenEq+GvQ2VIyFStzIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMcMo6z6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13483C4CEF9;
+	Mon, 20 Oct 2025 09:58:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760954203;
-	bh=eRscmhaBeaXNyyMb6QNngH3o5h5QCnU9xCb75nFP7+M=;
+	s=k20201202; t=1760954292;
+	bh=NiBGc+8QbFyTGPny5KTd2eO9Xrvo0n3prlh5bGsN3BU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TTfdfeu7+i1jUYuaXPwGYgFpZ061KDKhmAeYU6LXSHmZVl4lLGEFxYVEEjcUeeEIQ
-	 cvrGT7UgAI4lKgsp3/EPHY2EbxgElGBkCyw7GEhhjeH/DGWR7X6mpgaNoxKAkUXZZO
-	 Mi6f9OrDOYt0rus2Kaq8TnBWsTs5N/gJ389bdcbWjqtJ/iuhuNbY/IIUextL4vNluy
-	 +viQe9GpTDGX/6l5h/zlR2L6hMnQLjazC/sTjT5Nz84GLCCW6deVz6kg0GYBOIktNo
-	 5q+icUzkiCEYEf/J1+8Nkdkq28e8cgiyQYXWb6iXDOw7MHJ9UwIDe6oAePv90frKCU
-	 MAOkNIVOB4kPg==
-Message-ID: <4dc420a3-cf89-4f45-84e7-4d0079240681@kernel.org>
-Date: Mon, 20 Oct 2025 11:56:36 +0200
+	b=CMcMo6z6a+ZViNqLjo7nIltpr+C41hKf3CrxAevtTNvNCTtul0axJLFTb374trMoQ
+	 H0C7ka6++1hkVNVAYHwshxyXcdF7BRgx/oLnpX1RJd3fNIDyyFqP59uPD6mj/Hl+0i
+	 qOqXUStEg8xXCsibVWFiJOy/K8oSzLKRpDGgYnsVV+o2uQAVOn2XpuUFZUjJx94S/1
+	 LBt2OlkeE2OFR/uIXyBQlRc2RjzmtNWhhTYU8EfNLym+2We3uzHsqb9e5GsjLPdERc
+	 9nH+5t5DrQHfxiRnjuXWuhz1uf7ctzDVkS2r/jkM9J1AsEc/2ztMy+RA6hcPJgV9tD
+	 UuyasGxIw3C/A==
+Message-ID: <f6812244-8e8e-45b9-87b9-fe96d740a843@kernel.org>
+Date: Mon, 20 Oct 2025 11:58:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,41 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: ufs: mediatek,ufs: add MT8195
- compatible and update clock nodes
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
- "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>, "robh@kernel.org"
- <robh@kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- =?UTF-8?B?TWFjcGF1bCBMaW4gKOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "macpaul@gmail.com" <macpaul@gmail.com>,
- =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- =?UTF-8?B?QmVhciBXYW5nICjokKnljp/mg5/lvrcp?= <bear.wang@mediatek.com>,
- =?UTF-8?B?UmFtYXggTG8gKOe+heaYjumBoCk=?= <Ramax.Lo@mediatek.com>
-References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
- <20250722085721.2062657-3-macpaul.lin@mediatek.com>
- <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
- <438077d191833bb4f628b2c6da3b86b3ecfb40e6.camel@mediatek.com>
- <cb173df9-4c70-4619-b36d-8e99272551b6@kernel.org>
- <a9bf15e48afd8496ca9b015e7f5b03821863a0b2.camel@mediatek.com>
- <7f285723-ecd7-4df6-8c9b-f2e786ce3602@kernel.org>
- <4b3d2678d2b724fb53ec7272ef8daf52197d4a0e.camel@mediatek.com>
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+ <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
+ <a03cd07f-8e9f-4b02-b301-f1bbb69eb7db@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -129,104 +113,59 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <4b3d2678d2b724fb53ec7272ef8daf52197d4a0e.camel@mediatek.com>
+In-Reply-To: <a03cd07f-8e9f-4b02-b301-f1bbb69eb7db@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 20/10/2025 11:44, Peter Wang (王信友) wrote:
-> On Mon, 2025-10-20 at 10:28 +0200, Krzysztof Kozlowski wrote:
+On 20/10/2025 11:19, Tudor Ambarus wrote:
+> 
+> 
+> On 10/20/25 9:22 AM, Krzysztof Kozlowski wrote:
+>> On 20/10/2025 09:45, Tudor Ambarus wrote:
 >>>
 >>>
->>> Hi Krzysztof Kozlowski,
+>>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>>>> --- a/drivers/clk/samsung/Kconfig
+>>>>> +++ b/drivers/clk/samsung/Kconfig
+>>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>>>  	  status of the certains clocks from SoC, but it could also be tied to
+>>>>>  	  other devices as an input clock.
+>>>>>  
+>>>>> +config EXYNOS_ACPM_CLK
+>>>>> +	tristate "Clock driver controlled via ACPM interface"
+>>>>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+>>>>
+>>>> I merged the patches but I don't get why we are not enabling it by
+>>>> default, just like every other clock driver. What is so special here?
 >>>
->>> The main reason for my objection was also clearly stated:
->>> "removing these DTS settings will make what was originally
->>> a simple task more complicated."
->>> I’m not sure if you are quoting only the "In addition"
->>> part to take it out of context?
->>
->> It is not out of context. It was the statement on its own.
-> 
-> Hi Krzysztof Kozlowski,
-> 
-> However, you haven’t addressed the main reason for my objection.
-> "removing these DTS settings will make what was originally
-> a simple task more complicated."
-
-
-You did not object in technical matter at all here:
-https://lore.kernel.org/all/ce0f9785f8f488010cd81adbbdb5ac07742fc988.camel@mediatek.com/
-
-Look at this patch.
-
-You said nothing about actual change, except blocking the community
-maintainer. You did not raise any other concerns so what are you
-speaking about "other main concerns"?
-
-Even if such existed, they did not matter, because YOU WROTE ONLY:
-
-"The role of MediaTek UFS maintainer is not suitable to be handed over
-to someone outside of MediaTek."
-
-This is what we discuss here.
-
-> 
+>>> Thanks! Are you referring to the depends on line? I needed it otherwise
+>>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
 >>
 >>
->>
->> You denied community to participate and now you twist the argument
->> like
->> you want Mediatek people to be involved. No one denied Mediatek to be
->> maintainer.
->>
->> It is you who denied community to join the maintainers.
->>
->> This is not acceptable and you still do not understand why.
-> 
-> I think I understand your point now, you believe that opposing
-> this patch means opposing community participation and support, right?
-
-Do you even read your own comments and where did you place them? Do you
-understand that we discuss emails, not some unsaid or other threads?
-
-Look at this:
-
-https://lore.kernel.org/all/ce0f9785f8f488010cd81adbbdb5ac07742fc988.camel@mediatek.com/
-
-	
-> But it’s clear that you haven’t carefully considered the main 
-> reason for my objection?
-
-Main reason for objection? What?
-
-> 
-> 
-> 
->>
->>
->> You could apologize and explain your mistakes, but instead you push
->> same
->> narrative.
->>
->> Still a red flag. I will not accept such vendor-like behaviors,
->> because
->> they significantly harm the community.
->>
->> I am very surprised that UFS maintainers did not object to it. This
->> should be clearly ostracized.
->>
+>> No. I am referring to missing default and defconfig patch.
 >>
 > 
-> Sorry, I still don’t quite understand why having people who
-> know the SoC better maintain the SoC driver would be considered
-> harmful to the community?
+> default m or y would force compilation of EXYNOS_ACPM_CLK and
+> EXYNOS_ACPM_PROTOCOL for all ARCH_EXYNOS, even on Exynos platforms that
+> don't use ACPM. Since ACPM is not universally required by the Exynos
+> architecture, I thought to make it opt-in (default n).
 
-You are twisting the problem, like anyone denied you being the maintainer.
 
-YOU DENIED OTHER PEOPLE!
+Just like every clock driver. So again - how is it different?
 
-I finish the discussion here, I am considering your explanations
-intentionally twisting the point thus I find it still harmful behavior.
+> 
+> Setting it as a module in arm64 defconfig makes it available on
+> compatible platforms.
+> 
+> Similar clock drivers do the same: CLK_RASPBERRYPI.
+> COMMON_CLK_SCPI, COMMON_CLK_SCMI - no defaults and set them as builtin
+> in the arm64 defconfig.
+
+
+I am speaking about Samsung drivers.
+
 
 Best regards,
 Krzysztof
