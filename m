@@ -1,196 +1,124 @@
-Return-Path: <linux-kernel+bounces-860127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB38BEF5C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:35:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FADBEF5CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6BF3A8EF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E400D3AAAC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3BD2C21D5;
-	Mon, 20 Oct 2025 05:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DAE2C21DA;
+	Mon, 20 Oct 2025 05:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2l3gjU8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="dQsa4Vv1"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1ED2C1595
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760938534; cv=none; b=M00OvRI1yiejaC68TNACohCpTaUdo0mNBerhKEESd9Jwbe53Xq4p0zZ3CJhPSEidFeBlzELf3SAD1UX4PJHhsfe8FK82WlMheJMJTDgkvL3ScwK7jmrLnobJ3/x1KOMb15Uv0lgbP1KpBcRR64HyDI8KDS+Fi+CXWQeUjA9nH/M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760938534; c=relaxed/simple;
-	bh=OmseD2GSHOEHpHB6QqwwQHqjeBZ8sXlRm2+cbjVYE94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bRCdZ83pp/HZjcRIBKhSJpefrqtBqBkKfJbMJRKz6MrL5/ukSV5jYZb9SCQi2nshqGD23WGqj0UMr3leum2qCd8LS6F0RNVTy9RofUoNaiIrQTNqzqbARLmrwaX6r4OH28NyKlXQjknl4cmqI5ig62cgoC5HpM62MV6wYkj+GtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2l3gjU8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7141BC19424
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760938532;
-	bh=OmseD2GSHOEHpHB6QqwwQHqjeBZ8sXlRm2+cbjVYE94=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=o2l3gjU8dPY9QYzdZfMB4+OCbqP99DTEqJqbSoOLRzPJ52UtIpgZhl8Jf9C+F0etf
-	 CSYPJL+SCuDwKDlM9i5Gkvbe25laDPNpLS4BStA8/84qBheHSsVPWBklLGehO4EXr7
-	 InzZprTre3fzfOfqvTV8PjoRhRUDXXfu4Bp40uXTQUEKyzRATPg8BmxR6MnzDVKQDv
-	 Fobc6K9WcklXOtHD+GmWnrrcEe7WF0ODxJLoFueTeYMa9pKrr2svIM2gA+AGH4ax2i
-	 SFyxwhczsOhxUJHgXjdTIJ0Eyk9C1iQrMNRIvfeTIX+U914zmGguH85j4NTQ47BbAO
-	 W10MBjdCjFeAw==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b48d8deafaeso885636566b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 22:35:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmGkFDAD5nouk8WuTCICFn585+stVQVSy5LubIFulIo8e+r97Eo5dC9SXV2P7y+Mz+JLHCIOrdToc20Ak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYWmmKOC1DxRekYhTmG6jt/y4IaQ/nAZ08VVtFah7PEATznIIj
-	P+CjopX47xu5OOGtRg1t5Klucf1+G7OACLnZVg5Kny5JKrlKoJwmW4KFpfJp2rHEDIMq6c7jLUS
-	7QhyelDwjyp0Zg90A6+fAGqz10/z4rB4=
-X-Google-Smtp-Source: AGHT+IGJ8vJJhlpaws17DbH8YvNznNg35vZBBhvw4ze2LW69dvFdUZTxnYKudaXWdopgIaUC8wm0j3I4yu4CuSadzsU=
-X-Received: by 2002:a17:907:5c9:b0:b3e:fe8f:764 with SMTP id
- a640c23a62f3a-b6473b51c3amr1491346966b.32.1760938530955; Sun, 19 Oct 2025
- 22:35:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F036A1B808
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760938595; cv=pass; b=LTa74MgVq0h0L403fRBj93t60SJeGLWGIarNrIpgN7nwK+Q48aKCBSuufcE6SB32iapzCR3i0UMIZbfRoxPtO35SFP+50DByrObNkoB0Xwl2xEpHenjR3OG729evShByaXFtlKV7rliKdBeCx+bMoFHl4mPNYP6UCoRKhqJTgGQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760938595; c=relaxed/simple;
+	bh=LsKPC72L1qa9G6Jo7PNy2G0RM2UZjFfL/IW3cia2YAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rudoqV7qaJSgtolLq8/7/22sYanJn83T9GWMhupal3unK6EhRDr4H65bZ9OFSkLbdyANVKxxKqpSkxmjQu985Il9VqBwH9iQZoscrO136AKsGanbRejew2Ztlj9A8tjq51cIlmY2reTvyqKjHQ5DZ6PBKA6C3p8PtPinE7waMoM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=dQsa4Vv1; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1760938551; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=g4FzZx1aEUrBK7K003fUF8PgjPlQJxGYbbJI24vXc7jYiNIjNhoQ/Oa86cJ0lYdO27mPOE3AMIUm3pUjmgnjjDDwGV3QvcciIC0K+nlBTorvFamCDKxQ4CUSJetsR63+SM8q2OMP3ohhdPuooi3bfqbQrzOHm+C6Gyj2Rba7bhA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760938551; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0YW2HMr2DUsmn8ceqO8yT15Oj+U8v3tq38CvBsexo1g=; 
+	b=OtSAdLQxoXCrhsHnf06YpGKNAN4mnbuFW2R+Sy3ShPncxRnUWJJhRje5umqbKba2fi7Ba2hrNvtFaVFgE/ejP5dtz2dRVnV0ot3FJ2WECIfjr25rg5P2cMRgVDEZsUCdIIR+LG97kEdsBJBFnn+86p0q3IsV7TgwiaOw6Rrx+io=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760938551;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=0YW2HMr2DUsmn8ceqO8yT15Oj+U8v3tq38CvBsexo1g=;
+	b=dQsa4Vv1mXp1rYp/bkxqvxGadouSynDbPaWhNBMiE6UbhRfDLKpSNUPKniz55VTP
+	Xv4qb8Vfn/tHf+k8i9cB9EQl+nEkL/icsRv+EoT33NvvQJ1Hqe26rfKzSuCSjdvVloI
+	McaDMpDF1dk90+9gd+qIy9WK5BUFEukfBVXBrNYpIKoBgwgTbwlNPG+qSxXp93V9kGI
+	hFtR+nFe5GwT/9w8TbLpa5aigEeKhQrsy5SBEqNZ/G8/4S9xVLTGZM3U6zrCbHLg/Kh
+	E0oRbfUSYCqEHev8p8ijP1Rl+dduFKyenT1w/55J0z5MY9TeMwkSdsDg6yeTWJY9Jpx
+	mJfS9F6/eg==
+Received: by mx.zohomail.com with SMTPS id 1760938548786142.3683573948715;
+	Sun, 19 Oct 2025 22:35:48 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Han Gao <rabenda.cn@gmail.com>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Yao Zi <ziyao@disroot.org>,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH v2] drm/ttm: add pgprot handling for RISC-V
+Date: Mon, 20 Oct 2025 13:35:23 +0800
+Message-ID: <20251020053523.731353-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251014072856.3004683-1-chenxiaosong.chenxiaosong@linux.dev> <20251014072856.3004683-5-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251014072856.3004683-5-chenxiaosong.chenxiaosong@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 20 Oct 2025 14:35:18 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_xwKGST7PXu9ha5wdBF_M-qoe2g52Dp9Y3-0r+aYXa-w@mail.gmail.com>
-X-Gm-Features: AS18NWDE9ndh_wUKHI08XJDuUrySPQisDTHRSfrG6H2JnZao0cRGyNPG-iHYZTw
-Message-ID: <CAKYAXd_xwKGST7PXu9ha5wdBF_M-qoe2g52Dp9Y3-0r+aYXa-w@mail.gmail.com>
-Subject: Re: [PATCH v3 15/22] smb: move FILE_SYSTEM_ATTRIBUTE_INFO to common/cifspdu.h
-To: chenxiaosong.chenxiaosong@linux.dev
-Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
-	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
-	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Tue, Oct 14, 2025 at 4:30=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
-v> wrote:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> Rename "struct filesystem_attribute_info" to "FILE_SYSTEM_ATTRIBUTE_INFO"=
-,
-> then move duplicate definitions to common header file.
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Please check the warnings from checkpatch.pl.
+The RISC-V Svpbmt privileged extension provides support for overriding
+page memory coherency attributes, and, along with vendor extensions like
+Xtheadmae, supports pgprot_{writecombine,noncached} on RISC-V.
 
-WARNING: do not add new typedefs
-#109: FILE: fs/smb/common/cifspdu.h:352:
-+typedef struct {
+Adapt the codepath that maps ttm_write_combined to pgprot_writecombine
+and ttm_noncached to pgprot_noncached to RISC-V, to allow proper page
+access attributes.
 
-WARNING: Prefer __packed over __attribute__((packed))
-#114: FILE: fs/smb/common/cifspdu.h:357:
-+} __attribute__((packed)) FILE_SYSTEM_ATTRIBUTE_INFO;
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+Tested-by: Han Gao <rabenda.cn@gmail.com>
+---
+Changes in v2:
+- Added Han Gao's test tag.
 
-> ---
->  fs/smb/client/cifspdu.h    | 7 -------
->  fs/smb/common/cifspdu.h    | 8 ++++++++
->  fs/smb/server/smb2pdu.c    | 6 +++---
->  fs/smb/server/smb_common.h | 7 -------
->  4 files changed, 11 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-> index 07eb821654e1..a6f7e168961e 100644
-> --- a/fs/smb/client/cifspdu.h
-> +++ b/fs/smb/client/cifspdu.h
-> @@ -1937,13 +1937,6 @@ typedef struct {
->  /* minimum includes first three fields, and empty FS Name */
->  #define MIN_FS_ATTR_INFO_SIZE 12
->
-> -typedef struct {
-> -       __le32 Attributes;
-> -       __le32 MaxPathNameComponentLength;
-> -       __le32 FileSystemNameLen;
-> -       char FileSystemName[52]; /* do not have to save this - get subset=
-? */
-> -} __attribute__((packed)) FILE_SYSTEM_ATTRIBUTE_INFO;
-> -
->  /***********************************************************************=
-*******/
->  /* QueryFileInfo/QueryPathinfo (also for SetPath/SetFile) data buffer fo=
-rmats */
->  /***********************************************************************=
-*******/
-> diff --git a/fs/smb/common/cifspdu.h b/fs/smb/common/cifspdu.h
-> index 1109c20f7bf8..560900617be7 100644
-> --- a/fs/smb/common/cifspdu.h
-> +++ b/fs/smb/common/cifspdu.h
-> @@ -348,4 +348,12 @@ typedef struct server_negotiate_rsp {
->  #define FILE_CASE_PRESERVED_NAMES      0x00000002
->  #define FILE_CASE_SENSITIVE_SEARCH     0x00000001
->
-> +/* See FS-FSCC 2.5.1 */
-> +typedef struct {
-> +       __le32 Attributes;
-> +       __le32 MaxPathNameComponentLength;
-> +       __le32 FileSystemNameLen;
-> +       __le16 FileSystemName[]; /* do not have to save this - get subset=
-? */
-> +} __attribute__((packed)) FILE_SYSTEM_ATTRIBUTE_INFO;
-> +
->  #endif /* _COMMON_CIFSPDU_H */
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index a46d4ddade9e..a05b04799c0d 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -5485,10 +5485,10 @@ static int smb2_get_info_filesystem(struct ksmbd_=
-work *work,
->         }
->         case FS_ATTRIBUTE_INFORMATION:
->         {
-> -               struct filesystem_attribute_info *info;
-> +               FILE_SYSTEM_ATTRIBUTE_INFO *info;
->                 size_t sz;
->
-> -               info =3D (struct filesystem_attribute_info *)rsp->Buffer;
-> +               info =3D (FILE_SYSTEM_ATTRIBUTE_INFO *)rsp->Buffer;
->                 info->Attributes =3D cpu_to_le32(FILE_SUPPORTS_OBJECT_IDS=
- |
->                                                FILE_PERSISTENT_ACLS |
->                                                FILE_UNICODE_ON_DISK |
-> @@ -5507,7 +5507,7 @@ static int smb2_get_info_filesystem(struct ksmbd_wo=
-rk *work,
->                                         "NTFS", PATH_MAX, conn->local_nls=
-, 0);
->                 len =3D len * 2;
->                 info->FileSystemNameLen =3D cpu_to_le32(len);
-> -               sz =3D sizeof(struct filesystem_attribute_info) + len;
-> +               sz =3D sizeof(FILE_SYSTEM_ATTRIBUTE_INFO) + len;
->                 rsp->OutputBufferLength =3D cpu_to_le32(sz);
->                 break;
->         }
-> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-> index a5dd656c36f1..016ec93e6df4 100644
-> --- a/fs/smb/server/smb_common.h
-> +++ b/fs/smb/server/smb_common.h
-> @@ -56,13 +56,6 @@
->                 FILE_EXECUTE | FILE_DELETE_CHILD | \
->                 FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES)
->
-> -struct filesystem_attribute_info {
-> -       __le32 Attributes;
-> -       __le32 MaxPathNameComponentLength;
-> -       __le32 FileSystemNameLen;
-> -       __le16 FileSystemName[]; /* do not have to save this - get subset=
-? */
-> -} __packed;
-> -
->  struct filesystem_device_info {
->         __le32 DeviceType;
->         __le32 DeviceCharacteristics;
-> --
-> 2.43.0
->
+ drivers/gpu/drm/ttm/ttm_module.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/ttm/ttm_module.c b/drivers/gpu/drm/ttm/ttm_module.c
+index b3fffe7b5062a..aa137ead5cc59 100644
+--- a/drivers/gpu/drm/ttm/ttm_module.c
++++ b/drivers/gpu/drm/ttm/ttm_module.c
+@@ -74,7 +74,8 @@ pgprot_t ttm_prot_from_caching(enum ttm_caching caching, pgprot_t tmp)
+ #endif /* CONFIG_UML */
+ #endif /* __i386__ || __x86_64__ */
+ #if defined(__ia64__) || defined(__arm__) || defined(__aarch64__) || \
+-	defined(__powerpc__) || defined(__mips__) || defined(__loongarch__)
++	defined(__powerpc__) || defined(__mips__) || defined(__loongarch__) || \
++	defined(__riscv)
+ 	if (caching == ttm_write_combined)
+ 		tmp = pgprot_writecombine(tmp);
+ 	else
+-- 
+2.51.0
+
 
