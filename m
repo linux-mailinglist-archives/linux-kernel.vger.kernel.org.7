@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-861526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2614BF2F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:37:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E60BF2F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4AE3A7AFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:37:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F67334B82D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB7F2C08CC;
-	Mon, 20 Oct 2025 18:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E063F2C0268;
+	Mon, 20 Oct 2025 18:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="nhhMIwRC"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AnlaKJ93"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0341323C4E9
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474592C0262;
+	Mon, 20 Oct 2025 18:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760985438; cv=none; b=YdvEQajM1M8nOHl239dmREFtjRT6bswB2MtYapXL+O2gN9JuAHSLRGOTRjMhjM+N9tXlQFBLlLduPZvW+qQb2BnFaIWGT6LsK6Gi7XA8JQ12rGc7SLJ1LQLVhloWi8ynekATKEgZHTmz22J0YMFHuQ8YhGEwIgh5X/MRPXTaTHM=
+	t=1760985491; cv=none; b=ew7aZ6Cl4UZZZ2RZACmGLx/NHfVvHS4Jng3XXhrbT4YmhzzRlQT3KajVX29Y6sjMITOxY4/EJtcWueA5cJWL8iZiFmzMoxqEaMrxr5GyPWIJnSmbwNWMwct4cI8kdyXCdH8/uvgBmBn32JICEoI10qBYmzJpGD0yYLBwt25ALx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760985438; c=relaxed/simple;
-	bh=1vFXt6XRVipPdMLkxRp5oxg38DR886N+xgXmYyeXzbs=;
+	s=arc-20240116; t=1760985491; c=relaxed/simple;
+	bh=u2kLy5AQDMP6Qh4T+AMn2cRnD+nhl4BTD0LozXc+FW8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GyNEW7PYwQDU9OS9YGQhgcIm+uLTyNhjG6nCqMllJrCLYEGFgosmEsP8uWQH9wdAL4l0yO75b3XxieKd4Q6Vt4MQ8DSxIkc6nriEsaFvPwKI9EqNmQm3HgC1V7hujUCu6MfrfX9P2KpRAsPkAeaAGCfHw1j41/pGSS9ntOI/Jrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=nhhMIwRC; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-430d7638d27so18144215ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760985436; x=1761590236; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jr/vYXNnHg5mvV0vPYpieCO6Isu4juKQ+h7apsb/fSI=;
-        b=nhhMIwRCE0g1nky9C1Te47U7tSWrjASdLQaabFTv5ct3taXghMHTI6X6eyBfmV+Kcd
-         aMAicmtW2JNX/1A3vJ8tIw68AdiW/v5mzyVSOuUq9DnkCZcNaLKCZZLxqKCOqjrL+Q56
-         BgRw4jlHQXKIkL6nDwSbQQvC0VKfJ30/WIphj2UdSXg30PXgVEgSAJMQpOSlfzIxWgxa
-         inH6o+MLpnKIzuiZGJqbg6I+Foit96pCWurCA3PV6R1SmB22N1C7GNTVCOTmrJsVUkQY
-         5epO9ZJA7M8x9EDdNUlr9Iv1qry+0lueILCwiNy9VRrTOwOLgG1Q0mid9NLAukFx5LSo
-         bYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760985436; x=1761590236;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jr/vYXNnHg5mvV0vPYpieCO6Isu4juKQ+h7apsb/fSI=;
-        b=NIqAhfNcoQT8yrVtR1zJ46XGmhRmHST9de3Cq6LgvKyMGKJkN3BYOIbJmfZmaoF7AM
-         mOGtEzQKqUf8G1R13BqiARmWh0rMF02Gjp1d9C+5UDgUqemSLm1RgVtN0D0leXr3bgEB
-         09MgBBag+7VH1FFw2a5HhLi0Ssr9ymFSYtNfFoMf6DFNkTIyY3t9aLaaVGXd0SIZS6o0
-         GJuO14/zGk0K3TGcCi+l4/41Y+70GJjph3aUvFIdlAMC4Si5YMOfkSlGgrFruAvZ15MW
-         kq6RvCTQq5t8CwFMu1DQsoHskjptg/PgnvXhgrElZ4VSwYDoOIgi4ZYdYKvOfjxQ/xad
-         3AJw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5lTejCOipJ5BcadU2mnoTlWdDsK+WOotybDuUW070+oF7RcPiNvbQiq/7a432a6Bt4R5MpHpq+SSRlFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzfXqae+aDMNho0UrZxXmx2geJ+vpmOz3dqXenKyqZNThpDgcI
-	KdGJgBSbtBJniXkjvq1+cgche5V+SNwdReVsQKtbjHbYUaG7gSbcJFMvEp792K6WuE8=
-X-Gm-Gg: ASbGncvMoExrOAch9BIu+GzOy/nsNjet54Pb05jlbtRRKG5KBlzqaEQfN/4n2EN388t
-	EcD/pt6Jo5sO5sc7orLnOgh20I2Hq2ZlQKaMYhbJf/ol0u+mR8MIjmWDeErfhwXTSijbEdGwFz0
-	y84HxJNro/iAT+L25A5u6H8eORLp7ICM2a50VeS0yhH1BxQXmen2/qKBoDE9lDc8xrwx1lr49Hi
-	/EoEumaJeauflfLOHgRmogOd2O7v0eIsIbO11cea9QsPQbUaT90nXzHbzCaEJSHj2tGOxi1gbhO
-	tRyGLcRN/5kwzJcGKsG2fN99DnvS7IfaLeAMRPx0DwgjqgwxGQjrLKw9RZ25vYScj367ng99FdS
-	VRVJKq/2KRqxA43w29wTNzqH0NLI+rOKMcw3b5ysWaHOE0lgLlEY97O60U86fK3FecMENK5zTou
-	DrsVxyVjblyfcf665NbSb07AkyAacYyQHo4YEKi8sQ63d9trKR
-X-Google-Smtp-Source: AGHT+IElNLjj7kkxLdaR/W624I/459FfOH+dYJAUUw0iEYH3D4Q87WRcXxpP//DJVpw9S08uE/P7Hw==
-X-Received: by 2002:a05:6e02:1523:b0:430:a973:7e53 with SMTP id e9e14a558f8ab-430c5294ff1mr183507015ab.21.1760985436041;
-        Mon, 20 Oct 2025 11:37:16 -0700 (PDT)
-Received: from [10.211.55.5] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d070ba35sm33475995ab.10.2025.10.20.11.37.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 11:37:15 -0700 (PDT)
-Message-ID: <e40f28a2-960e-4002-8384-d99343b4fdd1@riscstar.com>
-Date: Mon, 20 Oct 2025 13:37:13 -0500
+	 In-Reply-To:Content-Type; b=hrG84aVGAONnyd8VyObBpsfEvsDE5tOLZoVcXUMnhNoblI5eoKdqZUfMe9oj/ZVAUGd/l1wyNyDd4ixoHE6U1hjN+CuPTlB0cpvYGy9nu8F8M1T2EQn/1o1QgLfcxXx4+NwMu88ZF4HkW3r8chicmuxekTx8K2BVblFxeDKxjyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AnlaKJ93; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760985488; x=1792521488;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=u2kLy5AQDMP6Qh4T+AMn2cRnD+nhl4BTD0LozXc+FW8=;
+  b=AnlaKJ936q5Na/iCBa7PGK6eklIXgUyI9KPN4e3UeHcLi7tnTnoFwxJl
+   fheKb5Klvw3sZnMliUqcmNyJTtROHCnz2NqjRSPqCbGvjI8/qUVd+x410
+   3H3wN49WzqP2lIyJKFWTEt/9F2FS/lYx6HzaV3h6R/K8YX1DaDSH8h0wG
+   mg6pG7f8N0wqtY5B261WMbbXHX6q6YJzuluZCOiRyedOLutH67O61XdYg
+   ov9CXQ3pZ99O2GQztC4crovrr01pWOV1VN10Kf/6QswWDN9ONdYYUZjfF
+   ifKPBqf5wvwJ98XAqqtazsdGLWUOmjRexORe+ijSojerinOte5g72W0gx
+   w==;
+X-CSE-ConnectionGUID: UhlnJ+zgQnOij5DKtFTemQ==
+X-CSE-MsgGUID: qPaOtHnJStK+u3FGizo18Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66969195"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="66969195"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:38:07 -0700
+X-CSE-ConnectionGUID: wUJaxdbqSJqeJgCixLySGQ==
+X-CSE-MsgGUID: 1STlR9ztQKawfoBgVeLGaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="187415426"
+Received: from skuppusw-desk2.jf.intel.com (HELO [10.165.154.101]) ([10.165.154.101])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:38:07 -0700
+Message-ID: <fe1daf3b-162e-4132-8cdc-c89305391090@linux.intel.com>
+Date: Mon, 20 Oct 2025 11:38:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,52 +66,215 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] dt-bindings: spi: fsl-qspi: support SpacemiT K1
-To: Mark Brown <broonie@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, han.xu@nxp.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, dlan@gentoo.org,
- guodong@riscstar.com, devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
- imx@lists.linux.dev, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251020165152.666221-1-elder@riscstar.com>
- <20251020165152.666221-3-elder@riscstar.com>
- <20251020-blinked-primary-2b69cf37e9fe@spud>
- <b28d71c4-d632-4ee5-8c4b-270649fca882@riscstar.com>
- <710c36f2-3551-4738-a965-f1564416348c@sirena.org.uk>
+Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: Shuai Xue <xueshuai@linux.alibaba.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ bhelgaas@google.com, kbusch@kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com, tianruidong@linux.alibaba.com, lukas@wunner.de
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-4-xueshuai@linux.alibaba.com>
 Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <710c36f2-3551-4738-a965-f1564416348c@sirena.org.uk>
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20251015024159.56414-4-xueshuai@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/20/25 1:26 PM, Mark Brown wrote:
-> On Mon, Oct 20, 2025 at 01:06:46PM -0500, Alex Elder wrote:
->> On 10/20/25 12:39 PM, Conor Dooley wrote:
-> 
->>>> +          - spacemit,k1-qspi
-> 
->>> Are the newly added resets mandatory for the spacemit platform?
-> 
->> This is interesting.  I never even tried it without specifying them.
-> 
->> I just tried it, and at least on my system QSPI functioned without
->> defining these resets.  I will ask SpacemiT about this.  If they are
->> not needed I will omit the first patch (which added optional resets),
->> and won't use them.
-> 
-> It might be safer to describe them, otherwise things are vulnerable to
-> issues like the bootloader not leaving things in a predictable state.
 
-I mentioned exactly this in my message to SpacemiT just now.
+On 10/14/25 19:41, Shuai Xue wrote:
+> The AER driver has historically avoided reading the configuration space of
+> an endpoint or RCiEP that reported a fatal error, considering the link to
+> that device unreliable. Consequently, when a fatal error occurs, the AER
+> and DPC drivers do not report specific error types, resulting in logs like:
+>
+>    pcieport 0015:00:00.0: EDR: EDR event received
+>    pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
+>    pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
+>    pcieport 0015:00:00.0: AER: broadcast error_detected message
+>    pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
+>    pcieport 0015:00:00.0: AER: broadcast resume message
+>    pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
+>    pcieport 0015:00:00.0: AER: device recovery successful
+>    pcieport 0015:00:00.0: EDR: DPC port successfully recovered
+>    pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
+>
+> AER status registers are sticky and Write-1-to-clear. If the link recovered
+> after hot reset, we can still safely access AER status and TLP header of the
+> error device. In such case, report fatal errors which helps to figure out the
+> error root case.
+>
+> After this patch, the logs like:
+>
+>    pcieport 0015:00:00.0: EDR: EDR event received
+>    pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
+>    pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
+>    pcieport 0015:00:00.0: AER: broadcast error_detected message
+>    vfio-pci 0015:01:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>    pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
 
-And yes, regardless of their answer, you're probably right.
-It is *possible* that these resets must be de-asserted, so
-it's safest to describe them.
+It would be more clear if you follow the same order of the log as before section
+and highlight the new logs that are getting added.
 
-Conor please if you disagree with this, please say so.
-Otherwise I think I'll keep them in the next version
+>    vfio-pci 0015:01:00.0:   device [144d:a80a] error status/mask=00001000/00400000
+>    vfio-pci 0015:01:00.0:    [12] TLP                    (First)
+>    vfio-pci 0015:01:00.0: AER:   TLP Header: 0x4a004010 0x00000040 0x01000000 0xffffffff
+>    pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
+>    pcieport 0015:00:00.0: AER: broadcast resume message
+>    pcieport 0015:00:00.0: AER: device recovery successful
+>    pcieport 0015:00:00.0: EDR: DPC port successfully recovered
+>    pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
+>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
+>   drivers/pci/pci.h      |  4 +++-
+>   drivers/pci/pcie/aer.c | 18 +++++++++++-------
+>   drivers/pci/pcie/dpc.c |  2 +-
+>   drivers/pci/pcie/err.c | 11 +++++++++++
+>   4 files changed, 26 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 6b0c55bed15b..3eccef2d25a3 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -739,8 +739,10 @@ struct aer_err_info {
+>   	struct pcie_tlp_log tlp;	/* TLP Header */
+>   };
+>   
+> -int aer_get_device_error_info(struct aer_err_info *info, int i);
+> +int aer_get_device_error_info(struct aer_err_info *info, int i,
+> +			      bool link_healthy);
+>   void aer_print_error(struct aer_err_info *info, int i);
+> +int aer_add_error_device(struct aer_err_info *e_info, struct pci_dev *dev);
+>   
+>   int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
+>   		      unsigned int tlp_len, bool flit,
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 0b5ed4722ac3..aaea9902cbb7 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -978,7 +978,7 @@ EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
+>    * @e_info: pointer to error info
+>    * @dev: pointer to pci_dev to be added
+>    */
+> -static int add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
+> +int aer_add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
 
-Thanks.
+I don't think you need this rename.
 
-					-Alex
+>   {
+>   	int i = e_info->error_dev_num;
+>   
+> @@ -1068,7 +1068,7 @@ static int find_device_iter(struct pci_dev *dev, void *data)
+>   
+>   	if (is_error_source(dev, e_info)) {
+>   		/* List this device */
+> -		if (add_error_device(e_info, dev)) {
+> +		if (aer_add_error_device(e_info, dev)) {
+>   			/* We cannot handle more... Stop iteration */
+>   			pci_err(dev, "Exceeded max supported (%d) devices with errors logged\n",
+>   				AER_MAX_MULTI_ERR_DEVICES);
+> @@ -1382,12 +1382,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
+>    * aer_get_device_error_info - read error status from dev and store it to info
+>    * @info: pointer to structure to store the error record
+>    * @i: index into info->dev[]
+> + * @link_healthy: link is healthy or not
+>    *
+>    * Return: 1 on success, 0 on error.
+>    *
+>    * Note that @info is reused among all error devices. Clear fields properly.
+>    */
+> -int aer_get_device_error_info(struct aer_err_info *info, int i)
+> +int aer_get_device_error_info(struct aer_err_info *info, int i,
+> +			      bool link_healthy)
+>   {
+>   	struct pci_dev *dev;
+>   	int type, aer;
+> @@ -1415,10 +1417,12 @@ int aer_get_device_error_info(struct aer_err_info *info, int i)
+>   			&info->mask);
+>   		if (!(info->status & ~info->mask))
+>   			return 0;
+> +		info->level = KERN_WARNING;
+
+I recommend setting this when initializing the info->level at the caller end (to match
+other callers)
+
+>   	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
+>   		   type == PCI_EXP_TYPE_RC_EC ||
+>   		   type == PCI_EXP_TYPE_DOWNSTREAM ||
+> -		   info->severity == AER_NONFATAL) {
+> +		   info->severity == AER_NONFATAL ||
+> +		   (info->severity == AER_FATAL && link_healthy)) {
+>   
+>   		/* Link is still healthy for IO reads */
+>   		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
+> @@ -1427,7 +1431,7 @@ int aer_get_device_error_info(struct aer_err_info *info, int i)
+>   			&info->mask);
+>   		if (!(info->status & ~info->mask))
+>   			return 0;
+> -
+> +		info->level = KERN_ERR;
+>   		/* Get First Error Pointer */
+>   		pci_read_config_dword(dev, aer + PCI_ERR_CAP, &aercc);
+>   		info->first_error = PCI_ERR_CAP_FEP(aercc);
+> @@ -1451,11 +1455,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
+>   
+>   	/* Report all before handling them, to not lose records by reset etc. */
+>   	for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
+> -		if (aer_get_device_error_info(e_info, i))
+> +		if (aer_get_device_error_info(e_info, i, false))
+>   			aer_print_error(e_info, i);
+>   	}
+>   	for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
+> -		if (aer_get_device_error_info(e_info, i))
+> +		if (aer_get_device_error_info(e_info, i, false))
+>   			handle_error_source(e_info->dev[i], e_info);
+>   	}
+>   }
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index f6069f621683..21c4e8371279 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -284,7 +284,7 @@ struct pci_dev *dpc_process_error(struct pci_dev *pdev)
+>   		pci_warn(pdev, "containment event, status:%#06x: unmasked uncorrectable error detected\n",
+>   			 status);
+>   		if (dpc_get_aer_uncorrect_severity(pdev, &info) &&
+> -		    aer_get_device_error_info(&info, 0)) {
+> +		    aer_get_device_error_info(&info, 0, false)) {
+>   			aer_print_error(&info, 0);
+>   			pci_aer_clear_nonfatal_status(pdev);
+>   			pci_aer_clear_fatal_status(pdev);
+> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> index bebe4bc111d7..4e65eac809d1 100644
+> --- a/drivers/pci/pcie/err.c
+> +++ b/drivers/pci/pcie/err.c
+> @@ -215,6 +215,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>   	struct pci_dev *bridge;
+>   	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>   	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+> +	struct aer_err_info info;
+>   
+>   	/*
+>   	 * If the error was detected by a Root Port, Downstream Port, RCEC,
+> @@ -253,6 +254,16 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>   			pci_warn(bridge, "subordinate device reset failed\n");
+>   			goto failed;
+>   		}
+> +
+> +		/* Link recovered, report fatal errors of RCiEP or EP */
+> +		if (state == pci_channel_io_frozen &&
+> +		    (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END)) {
+> +			aer_add_error_device(&info, dev);
+> +			info.severity = AER_FATAL;
+info.level = KERN_ERR ?
+> +			if (aer_get_device_error_info(&info, 0, true))
+> +				aer_print_error(&info, 0);
+> +			pci_dev_put(dev);
+
+Like Lukas mentioned, it needs a comment about why you need this.
+
+> +		}
+>   	}
+>   
+>   	if (status == PCI_ERS_RESULT_NEED_RESET) {
 
