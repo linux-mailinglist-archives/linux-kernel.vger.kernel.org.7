@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-861283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BF3BF24A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F08BF24AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC4A3B4B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4025818A6F9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6D7283FEA;
-	Mon, 20 Oct 2025 16:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3662283C89;
+	Mon, 20 Oct 2025 16:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="QNkQ3EIZ"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="PgN5d+Wz"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15881283FF9;
-	Mon, 20 Oct 2025 16:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976093; cv=none; b=Rc/VBgq0B4iiFyyDA15N/kutEjzKttHSCXDAPxyMFdqcIQW4boKJCl/9G+8XGNUKS5ld+CApno7mHvWVte1sv9lswFeDFWUjQmD5AuAtKiWOiyM9XYEaDJ0lIkphNQXfOAi6F3nw2Urfe4CYOp0i7OvtJmFa9Uq4vgzgTlsPoOU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976093; c=relaxed/simple;
-	bh=6UAYYbRl6gVxoWFWJmquglKp4qMFnwIKcWIe1rtXLbg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=T289z1O8g+K4LDJbEQFzr1vf5LWmJx6Z4/c7OT0KgNuiptlYRmRlFYeqW2zQzj3xKv/65fR9MUhVHbCTtiXvt0F9hHKG23bExf12qxp4H5ieI77kuM+uqgra3B/rYyMX/bk8Kuzvzv+idc0vqhJKt7bIkparx6kBtpJucS49xp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=QNkQ3EIZ; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 2641782854A5;
-	Mon, 20 Oct 2025 11:01:31 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 6o93uEcNXNI3; Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 9A8B7828851D;
-	Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 9A8B7828851D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1760976089; bh=9XOvRKZB3ZHxwazpGMcpCeHjuLjttzMXe5TLIp4gLwQ=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=QNkQ3EIZlV+10wfyNPSUJwaX1AJh4R3JpucrJc8ooITpdIhyvJ7G1fmq8HYjisO3U
-	 wiNUHduXl6At9Xg1WnGkXm2iTI39JSILVTduAzaeiA9T3KPJ3tmKNvpQ9HmA9QbHa0
-	 LR6xK9LY3dMenwsi+59F8E8iZcSGDJf7nuyuDeWQ=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Mn7UjrjG7kFk; Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
-Received: from vali.starlink.edu (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 6F9BD82854A5;
-	Mon, 20 Oct 2025 11:01:29 -0500 (CDT)
-Date: Mon, 20 Oct 2025 11:01:26 -0500 (CDT)
-From: Timothy Pearson <tpearson@raptorengineering.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: robh <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Lee Jones <lee@kernel.org>, 
-	Georgy Yakovlev <Georgy.Yakovlev@sony.com>
-Message-ID: <1626454153.1801886.1760976086710.JavaMail.zimbra@raptorengineeringinc.com>
-In-Reply-To: <f6f9cfc9-b26e-4358-8781-6ce75075d13f@linaro.org>
-References: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com> <20250929141113.GA3987541-robh@kernel.org> <924260297.1801829.1760974499327.JavaMail.zimbra@raptorengineeringinc.com> <f6f9cfc9-b26e-4358-8781-6ce75075d13f@linaro.org>
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941D626B2B0;
+	Mon, 20 Oct 2025 16:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760976227; cv=pass; b=UdvCA7TBT2Dnzv/eh7fvKabHSbnmy8R1LqP6hMd/LfbDYaq80YwdEfehV5ky/cWGC5ltjh+/CKq6eiSsP4nqw5dVcCDFRStfiXSD5I61qEVjKsdxE9CG756hCk1at2xmat47Z4oGbrKiZ5NZfnW0eow6l7JFJMm5HEYFVGPQLMw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760976227; c=relaxed/simple;
+	bh=ro82tuJO2Pfqb531Qikn6skLjZyls+TNek52L3zOQfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=umqrBsDXI00Lcnat6e8rKyBn99mDXfEyDBdtMMrt4GHU+R9EtCOKIaq9egNmf+Mm5MHPK8IIGipMYW4q6cLA/ExgjEBG0n0tl6Xr7dwIpbLAnmYCLJSAorva3RTGm6fWVUOy6BREjpGzXxU6UeRPq/oA5LxkW/GvVy5j+f4unac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=PgN5d+Wz; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760976215; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RFrW5ZNk272kd1WcOV58uBEKs8lUI+Z+Xh/DiYF0TK4hquqDBxd+oBpNRcJTFSPULjYVgzo8YCCSEne++R34ba2SIT6GiY4wQe2ppOWxYBFscOVB/9wm3xuUc7z7dOzYo1w6dLPryRQ+GBihw8BeGF9JeMi773nkw7gmSh0cXyU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760976215; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zNUjUWoucb2PzoYo+4bAqMEYEMS3kWl+sgHUY98jqEE=; 
+	b=HepY1Bt83ItRKR0DkMZ2UzMWNafGtXQmwRV6yfHfE1WugzIoMPB3XYW9Teq5wOFrzbPiM4gfFG3eukgFU2nkt9xQYRjHGagZAdda0eTlscVh1ZgVpnAjr72ilG3+ZUvgT1p9WKK8grPIJTSTc1IqEqD0XpxGCq+HsLnDkgABNYY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760976215;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=zNUjUWoucb2PzoYo+4bAqMEYEMS3kWl+sgHUY98jqEE=;
+	b=PgN5d+WzjwI6HJ1gckTIeZ0AefZRbGjqO1JqiQLJD0ovbmXtxVl9fyPA8ykSDNdX
+	IiQ+e72nf9L/cqzaH7kpEg8rI1Lb4cq+8E6mK2BeYeFVTlFF/Qbu72kAkCK0LbkwjuK
+	KaIXpjVVAqjZIqg03OETFYanJWYEFXiCsIAg7+zY=
+Received: by mx.zohomail.com with SMTPS id 1760976213261263.4457427334356;
+	Mon, 20 Oct 2025 09:03:33 -0700 (PDT)
+Message-ID: <d71a32f1-dbce-42e3-88f5-7c0628e05528@collabora.com>
+Date: Mon, 20 Oct 2025 18:03:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
-Thread-Topic: dt-bindings: mfd: Add sony,cronos-cpld
-Thread-Index: +XTYI2SaT+vzvvqrHcY8ELCXWJUT7g==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: videobuf2: forbid remove_bufs when legacy
+ fileio is active
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tfiga@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+ Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org,
+ Shuangpeng Bai <SJB7183@psu.edu>
+References: <CGME20251020160135eucas1p29eb8517e240f188f102e77713f85e29d@eucas1p2.samsung.com>
+ <20251020160121.1985354-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <20251020160121.1985354-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+Le 20/10/2025 à 18:01, Marek Szyprowski a écrit :
+> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
+> potentially overwriting some pointers used by the legacy fileio access
+> mode. Add a vb2_verify_memory_type() check symmetrical to
+> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
+> protect internal queue state between subsequent read/write calls.
+>
+> CC: stable@vger.kernel.org
+> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
+> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
+> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
------ Original Message -----
-> From: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-> To: "Timothy Pearson" <tpearson@raptorengineering.com>, "robh" <robh@kernel.org>
-> Cc: "devicetree" <devicetree@vger.kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Conor Dooley"
-> <conor+dt@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Georgy
-> Yakovlev" <Georgy.Yakovlev@sony.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
-> Sent: Monday, October 20, 2025 10:58:40 AM
-> Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
+Thanks for the patch.
 
-> On 20/10/2025 17:34, Timothy Pearson wrote:
->>>> +  watchdog:
->>>> +    type: object
->>>> +    description: Cronos Platform Watchdog Timer
->>>> +
->>>> +    allOf:
->>>> +      - $ref: watchdog.yaml#
->>>> +
->>>> +    properties:
->>>> +      compatible:
->>>> +        const: sony,cronos-watchdog
->>>
->>> There's no need for a child node here. 'timeout-sec' can just go in the
->>> parent node.
->> 
->> Could you elaborate on this please?  As far as I can tell we ref watchdog.yaml
->> and need some kind of compatible string, so why would I break out timeout-sec
->> directly here?
-> 
-> 
-> Please look where the comment was placed. Under $ref? No. Under this
-> compatible. $ref goes to the parent, obviously.
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
 
-This is not an area of the kernel I'm normally changing, so I appreciate the insight.  None of this yaml syntax is particularly obvious the first time it's encountered, at least not to me.
-
-> You do not need kind of compatible string. Parent already has one. You
-> do not need compatible strings at all to instantiate Linux drivers.
-> That's pretty common pattern for most of MFD-like devices, plenty of
-> examples in the kernel.
-
-Understood.
+> ---
+> v2:
+> - dropped a change to vb2_ioctl_create_bufs(), as it is already handled
+>    by the vb2_verify_memory_type() call
+> - replaced queue->type check in vb2_ioctl_remove_bufs() by a call to
+>    vb2_verify_memory_type() which covers all cases
+>
+> v1: https://lore.kernel.org/all/20251016111154.993949-1-m.szyprowski@samsung.com/
+> ---
+>   drivers/media/common/videobuf2/videobuf2-v4l2.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index d911021c1bb0..0de7490292fe 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -1000,9 +1000,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
+>   			  struct v4l2_remove_buffers *d)
+>   {
+>   	struct video_device *vdev = video_devdata(file);
+> +	int res;
+>   
+> -	if (vdev->queue->type != d->type)
+> -		return -EINVAL;
+> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
+> +	if (res)
+> +		return res;
+>   
+>   	if (d->count == 0)
+>   		return 0;
 
