@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-860643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6EEBF095A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:38:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79038BF093F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC7C3A3A36
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:36:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 427974E90B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4872FB094;
-	Mon, 20 Oct 2025 10:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FW4/sZPF"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F582FB0B1;
-	Mon, 20 Oct 2025 10:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CE72ECEA7;
+	Mon, 20 Oct 2025 10:37:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E0722A4D8;
+	Mon, 20 Oct 2025 10:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956562; cv=none; b=U264PP9rRwftgq3N1izOGdcKiRWstUKp+D8rM6oyd9uI/K4YQs7ECvHczmw8ukUBhvs5FJprd09EOXccdrZJAkiJrRw0UeVWPvHamKq2nINrXKau5FDVrOvFRaA+p+b66iTbRzaVbh7RdYrJANw9+av4yhue/zi5J5f0QLZRQsc=
+	t=1760956672; cv=none; b=r16S94ihATuu/6E147GTZ+b4sge3pbLefGfJyvTdncM1uksTUU/nnd52acaHFsA7izBg1blS8vBPNRt/uF/+R25zXbhVSMBhl6xQ2PRtquFZkxgcu1b2KcVYWqaE/n97mP192V5Gdh9iGg90zSHYPQFPvdXPawkseC8twUB6pIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956562; c=relaxed/simple;
-	bh=GlPRnhvTkY2sAG96sRPyf5FBZxMsGVmonJWGyXdZSIY=;
+	s=arc-20240116; t=1760956672; c=relaxed/simple;
+	bh=paWt8mUs1WHd7QLJQI0i4s8rgFnun7wqgJxl3u+yWSY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aIRPCsPFA//0GbovMlOQzD8VRUYeQZodlgPIvfIi3U55eYvILSnoXKylrnkWyXHC9S+w3mtwlIGnCSDrnfAKnHsa7qhW6I5BOUrK7NK0qP5bgwsaRt1noaUb6l9rZjuqqrT1XmP3Wa7BmPto27mh2WE/rwahGDRgXTzXsOd2yuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FW4/sZPF; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760956559;
-	bh=GlPRnhvTkY2sAG96sRPyf5FBZxMsGVmonJWGyXdZSIY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FW4/sZPFX43xuFdEiJI19pfIOQZMgoWWmmzWhTmD565solxcwhJRc5+t0YNEZXrIK
-	 PKPlqh1cuUwlAdmnvQsrT8GoHMh+ihMOm454CBwSX/1mFuQiY+KlxH2w5OeuHu3nqA
-	 p8FFZiODXjTPnnIzgVQm/q0v+fy3Ao6XfxIhTvI/mcorrcWx/dul0eZX66aQvg8Rmw
-	 3Kh1Lei+jjAn8I0gGya9lv2rRSNHyKGwRCQou1p/6ZMsXcWSiSumtWlSNBN0qygDL4
-	 apiK4hSZbnp4qnmpKhLTt6s7mBZ+tUXLi1EiVU9Vj9Fn2MDKB8MeP1po6vBR0cwM57
-	 SuQDwrNwGapwQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9764B17E108C;
-	Mon, 20 Oct 2025 12:35:58 +0200 (CEST)
-Message-ID: <20a763e9-3574-4284-ab3a-f25f18d50c6b@collabora.com>
-Date: Mon, 20 Oct 2025 12:35:58 +0200
+	 In-Reply-To:Content-Type; b=I5qsc/V5DH1eujd0N+Ekfg41GegxdRkoTYYhimltlYNbjd3BvoqIa5C07gmCfhwz9Eny6Qwuy5o6hgg5rYj3TdKCCa0qP365vQ98b9y6E9w74Djz4JqjIgeXfIZjgz9EgHhSPmzi8W5XaSVAoV1DFTSrAy7fpvyVYYqNFJAMV+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6116D1063;
+	Mon, 20 Oct 2025 03:37:42 -0700 (PDT)
+Received: from [10.57.65.147] (unknown [10.57.65.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB2C53F63F;
+	Mon, 20 Oct 2025 03:37:41 -0700 (PDT)
+Message-ID: <3836a43f-809e-419d-a85d-74606d9daa0f@arm.com>
+Date: Mon, 20 Oct 2025 12:37:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,35 +41,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/14] iommu/mediatek: fix device leak on of_xlate()
-To: Johan Hovold <johan@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
- Janne Grunau <j@jannau.net>, Rob Clark <robin.clark@oss.qualcomm.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy
- <vdumpa@nvidia.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251020045318.30690-1-johan@kernel.org>
- <20251020045318.30690-6-johan@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251020045318.30690-6-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 05/13] mm: introduce CONFIG_ARCH_LAZY_MMU
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-6-kevin.brodsky@arm.com>
+ <aPNjd2dg3YN-TZKH@kernel.org>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <aPNjd2dg3YN-TZKH@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 20/10/25 06:53, Johan Hovold ha scritto:
-> Make sure to drop the reference taken to the iommu platform device when
-> looking up its driver data during of_xlate().
-> 
-> Fixes: 0df4fabe208d ("iommu/mediatek: Add mt8173 IOMMU driver")
-> Cc: stable@vger.kernel.org	# 4.6
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> Reviewed-by: Yong Wu <yong.wu@mediatek.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+On 18/10/2025 11:52, Mike Rapoport wrote:
+>> @@ -231,7 +231,7 @@ static inline int pmd_dirty(pmd_t pmd)
+>>   * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
+>>   * and the mode cannot be used in interrupt context.
+>>   */
+>> -#ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+>> +#ifndef CONFIG_ARCH_LAZY_MMU
+>>  static inline void arch_enter_lazy_mmu_mode(void) {}
+>>  static inline void arch_leave_lazy_mmu_mode(void) {}
+>>  static inline void arch_flush_lazy_mmu_mode(void) {}
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index 0e26f4fc8717..2fdcb42ca1a1 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -1372,6 +1372,9 @@ config PT_RECLAIM
+>>  config FIND_NORMAL_PAGE
+>>  	def_bool n
+>>  
+>> +config ARCH_LAZY_MMU
+>> +	bool
+>> +
+> I think a better name would be ARCH_HAS_LAZY_MMU and the config option fits
+> better to arch/Kconfig.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Sounds fine by me - I'm inclined to make it slightly longer still,
+ARCH_HAS_LAZY_MMU_MODE, to avoid making "LAZY_MMU" sound like some HW
+feature.
 
-
+- Kevin
 
