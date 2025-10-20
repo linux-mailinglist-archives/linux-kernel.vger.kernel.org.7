@@ -1,267 +1,112 @@
-Return-Path: <linux-kernel+bounces-860059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47CDBEF380
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05918BEF384
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72FE54E97BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:04:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FC9B4EA448
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C472BE04C;
-	Mon, 20 Oct 2025 04:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D372BE041;
+	Mon, 20 Oct 2025 04:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXZ1xttV"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="Uq+m6Ruj"
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C911372604
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC6E8F5B;
+	Mon, 20 Oct 2025 04:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760933089; cv=none; b=NtwyYSVhjxF6aZ5VaShq6p49IL6I5pZKuvke3hn08RgFkKGZj/UAOe5bZLuNo3rPdz68mlbJzHS4jiyXJYNev3sijKlyWWUxoD3Gc73gkcy7xEb4faeiYN2I+1L7ttEcfsf9Oj88ADGLykOE0NcO72QmZhamzFVNVNwK4d5BWpU=
+	t=1760933316; cv=none; b=sO0poSOziYKW/J/uHocViC45/PhirvJc6RDzdpz0kz6o6SlYf74ReHYZ86Sv7qd72Q8l8vIH5Ao48zxcEYM8N0BfQv+x835LS6rTrpfDh5aazGroVkqsp8aco/GW0AGNPzzIZqQARFAOm20n8dZGk1gi/TGvZNlxXZHiNvmX6UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760933089; c=relaxed/simple;
-	bh=BrBSwvP4U1oadRL+lkNQZU8qTv/t08T3CSd325/A6yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WUmIDRYR4yyDbWyeDbQiwXSJyEJi4qGQUFvSNlI2sZIn5ffyRL1EQQJI9NhLdnaDGngR4CgeICUm2kuv/XHdJkHksjYZvgJYxCUnsdN6MLIjs/5JUrFaTfiZkVTqyTLlHUvh5IPaKhTTLG0J3aSlMjw1HDYU0ebtFpbk7HuwBJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXZ1xttV; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-430b621ec08so35217915ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760933087; x=1761537887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bTk8LQSKM8ZGCaHMHDpO18C5oLMVQQjrf2wrzeY1hAA=;
-        b=CXZ1xttVCr6kpp1e0y7Erx+TC7lr3ZIT28HFBh8GNXdPIB5EVnQcX6a8Yi531KEMSx
-         nTH7uGWfo61LhbiEGlRJ1bnyMXc9A8RN72jL3qYkmcEb3hvtDg6mOmc5KcNx4ksuXni5
-         si2clbj5Ie1UKMenWZmLFm+MVf/D+mAeAOKKPB+AtRatRrEiSGm6r4/rUN9Cnu4J2QQW
-         ZBFVP7sYKeIzROSkEA+bCG37EvO/WVEKoLzMTC+fXWNy2Hm97iR1FVTqt2XdrvMVOLV+
-         EBLhzNFKgstylwBuxVe81t5ZjY+D5lNcFvT1M28PBV4mUSiGfP1pabMAdTI0g3MmCxvu
-         KfiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760933087; x=1761537887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bTk8LQSKM8ZGCaHMHDpO18C5oLMVQQjrf2wrzeY1hAA=;
-        b=HRvRDQVozkdX0vDLiZwkVILH8kAgK+O5apfhwNEmNYNJPrPrtjLX58vv4faxJsG7KD
-         gIOL6IuSsDTKD34j2W3EIM85TTWdafCe+b3AliiGGChb3RTTwVqnZYpzGYnkiGt9uROL
-         0ugI50NHQjeCct6aQsV/DQQC5rPmxTiaW0DO3qRE9fhR89QUnroD+HwzOgJBOYTeziz2
-         dURtMRPMs8o542GZW0A4yYHPp4QS76TdxZiebh7hXXvrv1IgTZhLSr1otOcJ4ke8bNLz
-         jJgbcjbY40U6VQxIxiAgRNJ9Ufed95pnyrC9KrD/fdqnJlKw/PwVNns6R3jmIzzPXX/s
-         3f9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVUDvJuGH3cfTjiL9erw4lZPPYGoLWBEtO/8FPBaNwDoFloIcRPz4n10ebUhHe/5u9SM6M/E8Oq/avqkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPCXTOt6IN4jzAKNYJnEJij8M9nz/n+ZP5gF0kHbU3/flhgUht
-	PRa4aP6UhSAzNyBRD+Xe2otVxGXiwnvalssnrFanrbdEDLH5hTwvlPBSWPMFl1+8z3ElaUBGUYZ
-	we/Dzx4+6IGbrwNhIxYhcxs5W5lPLiYY=
-X-Gm-Gg: ASbGncsMW+m2FuU6TNtgoqWzOQr6c5ljFW02FplrQqbV3boM5vpRPzADiwPC9hcuqE3
-	h/HpsL+m5HrFE1fJDcqhlYyoiSm56AJxSJmz4C9HjjUMMJqc0uC4zKGzWif8dSZwtda/QDHTyPe
-	DcyocDSS8ZDcWpqUOFOqNbB1p8YiUd1vX/97UnvBfoFDK7a1v2emu5qW66jCh/Y5tL7Wla4DElz
-	GMK21AKhkqlh/d8twORfyLpBCJ43vY7hmmgHF8Y8abgSWiV9Z3S+60QbCPp
-X-Google-Smtp-Source: AGHT+IFE+jMAi7h84qz7XsmrOA79Sd5fnA4EM2eXCUcvh21k25H/Gc4+Y4wEo+5nw8VEoR1gFzucPWsrRT+RdmGjjkk=
-X-Received: by 2002:a05:6e02:440b:20b0:430:c78c:75d6 with SMTP id
- e9e14a558f8ab-430c78c7663mr136337455ab.2.1760933086863; Sun, 19 Oct 2025
- 21:04:46 -0700 (PDT)
+	s=arc-20240116; t=1760933316; c=relaxed/simple;
+	bh=Xs789rIC2x1LyfFCF/lWHeg73oO1t+9X0l+uqBHBem0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oFbwFSGGhlltKnVEH352EmZmmfG1CTgrMG0NXRa7djr57TpIHTWjiFtcgj7sLld+d6nXLYT3K3Q5mNswWTHZwz5cU8gvOG95ltcQvCF5lklA1TSGIagCCoM2kqktkh6jOLdJxn+ZJWJnKoliC1Gz2lLlDWt+399pC6hVHfErPtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=Uq+m6Ruj; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=vogSXQAY5L+d+4yqK1YD4lFEDswlXWh6n2/fPYiXaHc=;
+	b=Uq+m6RujRZINecpmG/RFEnm71tx29HPn3oqyaA5YECxIQ2f/ub//4auE1WZWcYV7xxQrh41lW
+	0TKOQ8wqYq3dEMTpaHC5SjR9vw/gI862S59IBvnhNWNPSWbfoTk1SBOoerHUDbrfrdMXixWNLop
+	5kP9LyPyXGzUKKaCm+ye640=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4cqhhg4LHPzcZyT;
+	Mon, 20 Oct 2025 12:07:15 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id A9CD6180B4A;
+	Mon, 20 Oct 2025 12:08:22 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 20 Oct 2025 12:08:22 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
+ 2025 12:08:21 +0800
+Message-ID: <7c351acf-aa0e-4e2e-89de-f296b3abd956@huawei.com>
+Date: Mon, 20 Oct 2025 12:08:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251019170016.138561-1-peng.yu@alibaba-inc.com>
- <CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com>
- <befd947e-8725-4637-8fac-6a364b0b4df0.peng.yu@alibaba-inc.com> <CANn89iJN4V8SeythtQVrSjhztWmCySdAxR8h35i4Ea2ceq9k8w@mail.gmail.com>
-In-Reply-To: <CANn89iJN4V8SeythtQVrSjhztWmCySdAxR8h35i4Ea2ceq9k8w@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Mon, 20 Oct 2025 12:04:10 +0800
-X-Gm-Features: AS18NWALYw2lHzYBSWjmSmUBTSCtc_mSfoRsooIveVePQXl350PkrjeJ8WzCf2o
-Message-ID: <CAL+tcoD8akZPp87CFnc2d98eZGvXheNeUEJBZcJEaqHZst4DFQ@mail.gmail.com>
-Subject: Re: [PATCH] net: set is_cwnd_limited when the small queue check fails
-To: Eric Dumazet <edumazet@google.com>
-Cc: "YU, Peng" <peng.yu@alibaba-inc.com>, Peng Yu <yupeng0921@gmail.com>, 
-	ncardwell <ncardwell@google.com>, kuniyu <kuniyu@google.com>, 
-	netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] mailbox: pcc: Mark Tx as complete in PCC IRQ handler
+To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Adam Young <admiyo@os.amperecomputing.com>, Robbie King
+	<robbiek@xsightlabs.com>, Jassi Brar <jassisinghbrar@gmail.com>, "Cristian
+ Marussi" <cristian.marussi@arm.com>
+References: <20251016-pcc_mb_updates-v1-0-0fba69616f69@arm.com>
+ <20251016-pcc_mb_updates-v1-4-0fba69616f69@arm.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20251016-pcc_mb_updates-v1-4-0fba69616f69@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Mon, Oct 20, 2025 at 12:00=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
- wrote:
->
-> On Sun, Oct 19, 2025 at 4:00=E2=80=AFPM YU, Peng <peng.yu@alibaba-inc.com=
-> wrote:
-> >
-> > I think we know the root cause in the driver. We are using the
-> > virtio_net driver. We found that the issue happens after this driver
-> > commit:
-> >
-> > b92f1e6751a6 virtio-net: transmit napi
-> >
-> > According to our test, the issue will happen if we apply below change:
-> >
-> >
-> >  static int xmit_skb(struct send_queue *sq, struct sk_buff *skb)
-> >  {
-> >         struct virtio_net_hdr_mrg_rxbuf *hdr;
-> > @@ -1130,6 +1174,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb=
-, struct net_device *dev)
-> >         int err;
-> >         struct netdev_queue *txq =3D netdev_get_tx_queue(dev, qnum);
-> >         bool kick =3D !skb->xmit_more;
-> > +       bool use_napi =3D sq->napi.weight;
-> >
-> >         /* Free up any pending old buffers before queueing new ones. */
-> >         free_old_xmit_skbs(sq);
-> > @@ -1152,8 +1197,10 @@ static netdev_tx_t start_xmit(struct sk_buff *sk=
-b, struct net_device *dev)
-> >         }
-> >
-> >         /* Don't wait up for transmitted skbs to be freed. */
-> > -       skb_orphan(skb);
-> > -       nf_reset(skb);
-> > +       if (!use_napi) {
-> > +               skb_orphan(skb);
-> > +               nf_reset(skb);
-> > +       }
-> >
-> >
-> > Before this change, the driver will invoke skb_orphan immediately when
-> > it receives a skb, then the tcp layer will decrease the wmem_alloc.
-> > Thus the small queue check won't fail. After applying this change, the
-> > virtio_net driver will tell tcp layer to decrease the wmem_alloc when
-> > the skp is really sent out.
-> > If we set use_napi to false, the virtio_net driver will invoke
-> > skb_orphan immediately as before, then the issue won't happen.
-> > But invoking skb_orphan in start_xmit looks like a workaround to me,
-> > I'm not sure if we should rollback this change.  The small queue check
-> > and cwnd window would come into a kind of "dead lock" situation to me,
-> > so I suppose we should fix that "dead lock".  If you believe we
-> > shouldn't change TCP layer for this issue, may I know the correct
-> > direction to resolve this issue? Should we modify the virtio_net
-> > driver, let it always invoke skb_orphan as before?
-> > As a workaround, we set the virtio_net module parameter napi_tx to
-> > false, then the use_napi would be false too. Thus the issue won't
-> > happen. But we indeed want to enable napi_tx, so may I know what's
-> > your suggestion about this issue?
-> >
->
-> I think you should start a conversation with virtio_net experts,
-> instead of making TCP
-> bufferbloated again.
->
-> TX completions dynamics are important, and we are not going to
-> penalize all drivers
-> just because of one.
->
-> You are claiming deadlocks, but the mechanisms in place are proven to
-> work damn well.
 
-Oh, we're almost at the same time to reply to the thread :)
-
-Right, I'm totally with you.
-
-Thanks,
-Jason
-
+在 2025/10/17 3:08, Sudeep Holla 写道:
+> The PCC IRQ handler clears channel-in-use and notifies clients with
+> mbox_chan_received_data(), but it does not explicitly mark the
+> transmit as complete. In IRQ completion mode this could leave Tx complete
+> waiters hanging or lead to generic timeouts in the mailbox core.
 >
-> >
-> > ------------------------------------------------------------------
-> > From:Eric Dumazet <edumazet@google.com>
-> > Send Time:2025 Oct. 20 (Mon.) 01:43
-> > To:Peng Yu<yupeng0921@gmail.com>
-> > CC:ncardwell<ncardwell@google.com>; kuniyu<kuniyu@google.com>; netdev<n=
-etdev@vger.kernel.org>; "linux-kernel"<linux-kernel@vger.kernel.org>; Peng =
-YU<peng.yu@alibaba-inc.com>
-> > Subject:Re: [PATCH] net: set is_cwnd_limited when the small queue check=
- fails
-> >
-> >
-> > On Sun, Oct 19, 2025 at 10:00 AM Peng Yu <yupeng0921@gmail.com> wrote:
-> > >
-> > > The limit of the small queue check is calculated from the pacing rate=
-,
-> > > the pacing rate is calculated from the cwnd. If the cwnd is small,
-> > > the small queue check may fail.
-> > > When the samll queue check fails, the tcp layer will send less
-> > > packages, then the tcp_is_cwnd_limited would alreays return false,
-> > > then the cwnd would have no chance to get updated.
-> > > The cwnd has no chance to get updated, it keeps small, then the pacin=
-g
-> > > rate keeps small, and the limit of the small queue check keeps small,
-> > > then the small queue check would always fail.
-> > > It is a kind of dead lock, when a tcp flow comes into this situation,
-> > > it's throughput would be very small, obviously less then the correct
-> > > throughput it should have.
-> > > We set is_cwnd_limited to true when the small queue check fails, then
-> > > the cwnd would have a chance to get updated, then we can break this
-> > > deadlock.
-> > >
-> > > Below ss output shows this issue:
-> > >
-> > > skmem:(r0,rb131072,
-> > > t7712, <------------------------------ wmem_alloc =3D 7712
-> > > tb243712,f2128,w219056,o0,bl0,d0)
-> > > ts sack cubic wscale:7,10 rto:224 rtt:23.364/0.019 ato:40 mss:1448
-> > > pmtu:8500 rcvmss:536 advmss:8448
-> > > cwnd:28 <------------------------------ cwnd=3D28
-> > > bytes_sent:2166208 bytes_acked:2148832 bytes_received:37
-> > > segs_out:1497 segs_in:751 data_segs_out:1496 data_segs_in:1
-> > > send 13882554bps lastsnd:7 lastrcv:2992 lastack:7
-> > > pacing_rate 27764216bps <--------------------- pacing_rate=3D27764216=
-bps
-> > > delivery_rate 5786688bps delivered:1485 busy:2991ms unacked:12
-> > > rcv_space:57088 rcv_ssthresh:57088 notsent:188240
-> > > minrtt:23.319 snd_wnd:57088
-> > >
-> > > limit=3D(27764216 / 8) / 1024 =3D 3389 < 7712
-> > > So the samll queue check fails. When it happens, the throughput is
-> > > obviously less than the normal situation.
-> > >
-> > > By setting the tcp_is_cwnd_limited to true when the small queue check
-> > > failed, we can avoid this issue, the cwnd could increase to a reasona=
-lbe
-> > > size, in my test environment, it is about 4000. Then the small queue
-> > > check won't fail.
-> >
-> >
-> > >
-> > > Signed-off-by: Peng Yu <peng.yu@alibaba-inc.com>
-> > > ---
-> > >  net/ipv4/tcp_output.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> > > index b94efb3050d2..8c70acf3a060 100644
-> > > --- a/net/ipv4/tcp_output.c
-> > > +++ b/net/ipv4/tcp_output.c
-> > > @@ -2985,8 +2985,10 @@ static bool tcp_write_xmit(struct sock *sk, un=
-signed int mss_now, int nonagle,
-> > >                     unlikely(tso_fragment(sk, skb, limit, mss_now, gf=
-p)))
-> > >                         break;
-> > >
-> > > -               if (tcp_small_queue_check(sk, skb, 0))
-> > > +               if (tcp_small_queue_check(sk, skb, 0)) {
-> > > +                       is_cwnd_limited =3D true;
-> > >                         break;
-> > > +               }
-> > >
-> > >                 /* Argh, we hit an empty skb(), presumably a thread
-> > >                  * is sleeping in sendmsg()/sk_stream_wait_memory().
-> > > --
-> > > 2.47.3
-> >
-> > Sorry this makes no sense to me.  CWND_LIMITED should not be hijacked.
-> >
-> > Something else is preventing your flows to get to nominal speed,
-> > because we have not seen anything like that.
-> >
-> > It is probably a driver issue or a receive side issue : Instead of
-> > trying to work around the issue, please root cause it.
+> Invoke mbox_chan_txdone() in the IRQ path once the platform has
+> acknowledged the transfer so the core can wake any waiters and update
+> state accordingly.
+>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>   drivers/mailbox/pcc.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index 327e022973db..33bd2d05704b 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -341,6 +341,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>   	 */
+>   	pchan->chan_in_use = false;
+>   	mbox_chan_received_data(chan, NULL);
+> +	mbox_chan_txdone(chan, 0);
+Normally, this interface is called by mbox client.
+So, IMO, this added code is not ok for mbox client.
+AFAIS, this code should be for type4, right?
+If so, the mbox client of type 4 channel has  responsibility to call 
+this interface.
+>   
+>   	pcc_chan_acknowledge(pchan);
+>   
 >
 
