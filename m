@@ -1,151 +1,194 @@
-Return-Path: <linux-kernel+bounces-860032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BD5BEF2AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:16:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C384BEF2B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D15314E7BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:16:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19DDC4E9C7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ADD26CE05;
-	Mon, 20 Oct 2025 03:16:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D729BD90;
+	Mon, 20 Oct 2025 03:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOc1vDfJ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C3822083
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9DC26CE05
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760930166; cv=none; b=lZ6YSrdnwzt8w2khqCI5FvYt2jBJ59xZPKASSeZMshU9mntP6xUw+BaT4gvdlWIRSHNDoBuGr7bAdVjzroCLaQgX63sEUEz6lL7AFjigR6sSwGzVMU5M2oHFeuWWmq0PJUofDybDuAapmd2SzubQa8N172COUfNLRbMdBJtAVbk=
+	t=1760930232; cv=none; b=fo/ESN04UB+q1Sdznj/j/IP7DKNZepZmNaEbji18ebsBLM5Q8tpXEQ0TioRVc72J0Qf2G9xUyt4ZWtFUEKl9YED1s/Z43ytG76fGFRH1x92GFFvKp+uZxO8beyIpOIRpNvqsf0lSPeikN1En3DGQV8sM2iY3tK01G8uqxLtaMq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760930166; c=relaxed/simple;
-	bh=g9TKGeQhUxIlOPlEuXHzpzDTdxiEO6XArSUQODFppgo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=szm1GGcnFwMFfcR98Zd0Rf8FBs/IpMhT/SOA14WHkjqFlP5rD7Y2tP9TRJ463XIjKvYBrZwA9d7Ke0Gi6XBMlaPE6VIwKFM+oCtOPdZ99mLg0w1EYMijT8Yy82Jx0OsywoI3tkv8hubhn6qr2xw1lVlgsDucQpQWMXGSxKavHl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e85344382so619473639f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:16:04 -0700 (PDT)
+	s=arc-20240116; t=1760930232; c=relaxed/simple;
+	bh=Qv1HG9au83J7guckWop8/cgavdJDTQcWIQGKLivyPZg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DRh8d02uNLouuIZbj6peZ76JY3QmDmBN2Tprcn9C7VSL7X7LiUrVXYfACShiq4ROYy+Lr9S1+X/9zbvfHycs5l89waym2OYqruU03dnUSkg11noYl1mlZfLOYKTlFmNlqPS90FnJlP3xpNHNnKUdmQZGB7pQerb7bYbAJ02N9mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOc1vDfJ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-269639879c3so37820785ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:17:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760930230; x=1761535030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGks2sOnnpNLPiQkQk5TdavZHCtfoEFSojg02a8VBgI=;
+        b=BOc1vDfJwcdTWnQSl8wErjdt58QEu9d4A4uuWo+Yj9/iecarzaTVNQxe/TSfIk4JX+
+         Mk90NQ9WHNRtHT+JYsKxeF6YaKhH0YVOW+o/DIRRAMqwYocl8fBdbaUtSMm0tKmUVS7K
+         PV9/XDO+Ac0F8UrdEzAaw5l9ZAnfgs8hkwBlsj/ifiXEAMUe/F8gS/RZdj99qbQD60S2
+         bLXFFn6vKRMA59T/b5BQb9s/hTzMzxTZKNY0c1irKjiyXQ4JeN6/9bouexEh4M2+no0j
+         Lp96QaVg6dgGHwHRMyF7gB0g96WVcsKyk+gZaptHfOL4TceHZ4Hg40CuqgmxcenhI7Tc
+         sSTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760930164; x=1761534964;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jCBLHYs6iMUqUpPrztMtBA/nY1gLV8nFEOGj2Q0kA18=;
-        b=fJQrWpeGY/33RS3hzRgPksqNGJb9xw+VTbt7Owoqe74sIRABWpUFsGDRtzLr9oTUev
-         k0vrTmlX0On8OGH2rxZjiOq+4OHCJYqILIWWStrt4eVapmRJtWuD9RRxRRGlOJkpZZXT
-         RvGoYIvtQsCTLfZ7nXkBrSgREqFjG/MNQ5RdgfyErW4AUVIqWSy5HMVmxwH1ACkwkwo2
-         EB3i4MEnQAL65C4LScy0MjvGBDWTOVxgruvVNCBe93jIIFKaPXophEpH7CpaTcshE4Yq
-         LWYWJfTqAnyOAgd4CL3BLPsjkYoLKXWG8d7vMpWVIjXNKXppPeDRM/N+AnnCt3C/95SR
-         8dsw==
-X-Gm-Message-State: AOJu0YzlTStD0QAxjbec00KmA41pzD3YFOC4//nkcPytERyYOCnW8AMY
-	fbat0NR73qzwDO8DSlpYz7IMRkePNCqdrAR2ZVHnPjK0EhukbH1RPhbOQcCgzZ36zoGfazhs2Tz
-	si7KvPpqjuujt54xIok1Bm+AkjUZaVc9e5KeOTiKyvdtefqCsNfjeLbCqE/0=
-X-Google-Smtp-Source: AGHT+IGJ6EDtvQnPuD2/u93EXJa8E6sX2N/QSRc6c2lbdGXC0XhqIgbbu3FV9cGwYTqO/WrMT6JxhxoHEXX1zv0a6jxAW5ep85Cl
+        d=1e100.net; s=20230601; t=1760930230; x=1761535030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kGks2sOnnpNLPiQkQk5TdavZHCtfoEFSojg02a8VBgI=;
+        b=H53Z/zb+ptV0DGn8217Ca2fF5vKMqsFHg332pW+WDJaPCN4mSbZM0RnKCjMqQNRUAE
+         1dDkVhBTWMWbJ/I+nNUwg6cnfyBfQ8Ed6E0EPvibJLBkOCmgyAYAROjkTIejvLZ6nnl5
+         +7BgrdgW9M9HVuUhiWLTDqJlbtcFJvL9MjHyQirayaV0rRiVQlhNiR4Jzp+tRx+EyXM4
+         CteMvFivubHcErB9X+9A+3kQ8rB+bqfAG0tb4XwJ9YtuP8/6fMmKO92m9BlJDA1s9ZQc
+         hZ1FsoWedDW8sleQ+JMLFcbfnPvc5VfsxDdGjMXI0BozUe7qcxQCf/8XrJITcxG5jfR5
+         Pfvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxQr3WFRz+cLTZmg/hwrwuE11A4YBb1fHWv8VHMqTjaDsqWHV5m6D6JFQwUcdFH5oSZTLls11/NVpATCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb9HjlXjuBXRrIluZn8F+UlgIxXmCn73+KoU7lqgYPf+ZB7X3P
+	NUCAFirF5DCzw/fqkP6W4ulAGNP7NTYgYfdETNFjqnu8AVRkKo83AWP/
+X-Gm-Gg: ASbGncs+XIVJCYpteY0rArg3bhiqT2sxaAEtusKlaBi56dTXOZ6KrimcLaMlL6cJ3dn
+	g5uNSzkg39AbujX1kyQTrKjadof399Kcj6uLmSPyrUEjh1+qAMF1U2GMOv8gUgmHURXcDyE+IH3
+	6TROvN7Kjcc4dvZ9ipYlsXqilcC1OtsyiLB1/aaPyjeoBuG1OfEu8cXvYmuuPSsz3iKifr+jXnn
+	j9TpQfs4IHSQCGE0kDObqpvoB3X0xVOEUTQZEgb2g1ltv6ixMfeK/m3+TfrkNwHA0Y37Hmn4Ql8
+	Bo8LBx1hwrOdhrPdu3v6jbB5f0STAC7s8H6woPvMNwmQU0azNwtxX4i2cGSNv0/TyWdOEV7J0j8
+	4xGu6ktrnnhSinUxMEx61gPLDduhWVE3J66aYAiAEZY0jXFp3ypyTm269tu1F2WS7athnrMP7zk
+	in9TkM7XA9AfKbIRP/6Cvxr+M9HXZ6mGNG137hVlt9RIpTnQ==
+X-Google-Smtp-Source: AGHT+IHgkWxUzoUUp0gWSk3OAPdv3h9UX6IroOzlUnb1eY2K5j3hSN09VNabSt60qr2F5Tmrcms9KQ==
+X-Received: by 2002:a17:903:41c6:b0:25d:37fc:32df with SMTP id d9443c01a7336-290cb65c914mr164540365ad.47.1760930230150;
+        Sun, 19 Oct 2025 20:17:10 -0700 (PDT)
+Received: from localhost.localdomain ([2409:891f:1da1:a41d:3815:5989:6e28:9b6d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fddfesm66373435ad.88.2025.10.19.20.17.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 19 Oct 2025 20:17:09 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	david@redhat.com,
+	ziy@nvidia.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	hannes@cmpxchg.org,
+	usamaarif642@gmail.com,
+	gutierrez.asier@huawei-partners.com,
+	willy@infradead.org,
+	ameryhung@gmail.com,
+	rientjes@google.com,
+	corbet@lwn.net,
+	21cnbao@gmail.com,
+	shakeel.butt@linux.dev,
+	tj@kernel.org,
+	lance.yang@linux.dev,
+	rdunlap@infradead.org
+Cc: bpf@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v11 mm-new 05/10] mm: thp: enable THP allocation exclusively through khugepaged
+Date: Mon, 20 Oct 2025 11:16:50 +0800
+Message-Id: <20251020031655.1093-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d1b:b0:93f:fca2:e548 with SMTP id
- ca18e2360f4ac-93ffca2eba6mr895663639f.8.1760930163925; Sun, 19 Oct 2025
- 20:16:03 -0700 (PDT)
-Date: Sun, 19 Oct 2025 20:16:03 -0700
-In-Reply-To: <20251020025728.15250-1-ssranevjti@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f5a973.a70a0220.205af.0024.GAE@google.com>
-Subject: Re: [syzbot] [net?] kernel BUG in set_ipsecrequest
-From: syzbot <syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, ssrane_b23@ee.vjti.ac.in, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+khugepaged_enter_vma() ultimately invokes any attached BPF function with
+the TVA_KHUGEPAGED flag set when determining whether or not to enable
+khugepaged THP for a freshly faulted in VMA.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in set_ipsecrequest
+Currently, on fault, we invoke this in do_huge_pmd_anonymous_page(), as
+invoked by create_huge_pmd() and only when we have already checked to
+see if an allowable TVA_PAGEFAULT order is specified.
 
-skbuff: skb_over_panic: text:ffffffff8a205d63 len:392 put:16 head:ffff88805b276a40 data:ffff88805b276a40 tail:0x188 end:0x180 dev:<NULL>
-------------[ cut here ]------------
-kernel BUG at net/core/skbuff.c:212!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6444 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:skb_panic+0x157/0x160 net/core/skbuff.c:212
-Code: c7 60 0e 6e 8c 48 8b 74 24 08 48 8b 54 24 10 8b 0c 24 44 8b 44 24 04 4d 89 e9 50 55 41 57 41 56 e8 4e 50 f5 ff 48 83 c4 20 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003c06b68 EFLAGS: 00010282
-RAX: 0000000000000088 RBX: dffffc0000000000 RCX: 05b0c7e83ffe1100
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000180 R08: ffffc90003c06867 R09: 1ffff92000780d0c
-R10: dffffc0000000000 R11: fffff52000780d0d R12: ffff888078c92150
-R13: ffff88805b276a40 R14: ffff88805b276a40 R15: 0000000000000188
-FS:  00007f2bce8166c0(0000) GS:ffff888125d0b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f90ed0682d0 CR3: 0000000069384000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- skb_over_panic net/core/skbuff.c:217 [inline]
- skb_put+0x159/0x210 net/core/skbuff.c:2583
- skb_put_zero include/linux/skbuff.h:2788 [inline]
- set_ipsecrequest+0x73/0x680 net/key/af_key.c:3532
- pfkey_send_migrate+0x11f2/0x1de0 net/key/af_key.c:3636
- km_migrate+0x155/0x260 net/xfrm/xfrm_state.c:2838
- xfrm_migrate+0x2020/0x2330 net/xfrm/xfrm_policy.c:4698
- xfrm_do_migrate+0x796/0x900 net/xfrm/xfrm_user.c:3144
- xfrm_user_rcv_msg+0x7a3/0xab0 net/xfrm/xfrm_user.c:3501
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:742
- ____sys_sendmsg+0x505/0x830 net/socket.c:2630
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2bcd98eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2bce816038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2bcdbe5fa0 RCX: 00007f2bcd98eec9
-RDX: 0000000000000000 RSI: 0000200000000380 RDI: 0000000000000004
-RBP: 00007f2bcda11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f2bcdbe6038 R14: 00007f2bcdbe5fa0 R15: 00007ffd8b27cbc8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:skb_panic+0x157/0x160 net/core/skbuff.c:212
-Code: c7 60 0e 6e 8c 48 8b 74 24 08 48 8b 54 24 10 8b 0c 24 44 8b 44 24 04 4d 89 e9 50 55 41 57 41 56 e8 4e 50 f5 ff 48 83 c4 20 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003c06b68 EFLAGS: 00010282
-RAX: 0000000000000088 RBX: dffffc0000000000 RCX: 05b0c7e83ffe1100
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000180 R08: ffffc90003c06867 R09: 1ffff92000780d0c
-R10: dffffc0000000000 R11: fffff52000780d0d R12: ffff888078c92150
-R13: ffff88805b276a40 R14: ffff88805b276a40 R15: 0000000000000188
-FS:  00007f2bce8166c0(0000) GS:ffff888125e0b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000001f40 CR3: 0000000069384000 CR4: 00000000003526f0
+Since we might want to disallow THP on fault-in but allow it via
+khugepaged, we move things around so we always attempt to enter
+khugepaged upon fault.
 
+This change is safe because:
+- khugepaged operates at the MM level rather than per-VMA. The THP
+  allocation might fail during page faults due to transient conditions
+  (e.g., memory pressure), it is safe to add this MM to khugepaged for
+  subsequent defragmentation.
+- If __thp_vma_allowable_orders(TVA_PAGEFAULT) returns 0, then
+  __thp_vma_allowable_orders(TVA_KHUGEPAGED) will also return 0.
 
-Tested on:
+While we could also extend prctl() to utilize this new policy, such a
+change would require a uAPI modification to PR_SET_THP_DISABLE.
 
-commit:         7361c864 selftests/bpf: Fix list_del() in arena list
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e10e7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Acked-by: Lance Yang <lance.yang@linux.dev>
+Cc: Usama Arif <usamaarif642@gmail.com>
+---
+ mm/huge_memory.c |  1 -
+ mm/memory.c      | 13 ++++++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-Note: no patches were applied.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index e105604868a5..45d13c798525 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1390,7 +1390,6 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+ 	ret = vmf_anon_prepare(vmf);
+ 	if (ret)
+ 		return ret;
+-	khugepaged_enter_vma(vma);
+ 
+ 	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
+ 			!mm_forbids_zeropage(vma->vm_mm) &&
+diff --git a/mm/memory.c b/mm/memory.c
+index 7a242cb07d56..5007f7526694 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -6327,11 +6327,14 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 	if (pud_trans_unstable(vmf.pud))
+ 		goto retry_pud;
+ 
+-	if (pmd_none(*vmf.pmd) &&
+-	    thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
+-		ret = create_huge_pmd(&vmf);
+-		if (!(ret & VM_FAULT_FALLBACK))
+-			return ret;
++	if (pmd_none(*vmf.pmd)) {
++		if (vma_is_anonymous(vma))
++			khugepaged_enter_vma(vma);
++		if (thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
++			ret = create_huge_pmd(&vmf);
++			if (!(ret & VM_FAULT_FALLBACK))
++				return ret;
++		}
+ 	} else {
+ 		vmf.orig_pmd = pmdp_get_lockless(vmf.pmd);
+ 
+-- 
+2.47.3
+
 
