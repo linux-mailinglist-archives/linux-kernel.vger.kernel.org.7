@@ -1,150 +1,156 @@
-Return-Path: <linux-kernel+bounces-861720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DF1BF378A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 295E7BF3C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADDAB4EDBE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:39:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD01F4E7F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC322DCF5D;
-	Mon, 20 Oct 2025 20:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B952EDD69;
+	Mon, 20 Oct 2025 21:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnCiNIgm"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bCqF63Fc"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058BC1A76BC
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D342ED84C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760992749; cv=none; b=r1ekedQG1QqkOVy0wa3UHz1pt92voeyGqueCtk37T4AZZMdPYTjPpEH7qLLCvc/0ZbeaFFEJSDFpDvWoQTxBiYbs6Kak2uhi5HwO1lPnn8Vq4i+YAGfntuBqw1n4EaDDOsqc7MaPtboR6eKvGyC1qW28qT/d30wT4c/S32NDTW0=
+	t=1760996593; cv=none; b=SNe3MyGyhXfK3mfFUXBLekqN5T6DIsHxJjkClq5WkmgRuCy/c6p+qdYuDUXj5gCYTFbxnF2E61+6KpwAJ7QeZ49MHIYeqLw5rE/1A9dOTUM/JXYdZJSkUphJIv+I1Q6MBJmgBjFb/Z78AjnXucgZV+Gn/SqPdBMcd8EAb/7b8jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760992749; c=relaxed/simple;
-	bh=qBfD4dD8XFhkLWwXK5SqJnOINmi5CJvE/sMdh19cgbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qs+CBbXfBv4+jvYXes7xdVf51vSQCYGcisj66pmDjhGR9BCo+bfJiqbZHulBmvVZKoE/bO/6cyQ2R4+X4N1lq4w1FEG8Oyh3e6PoBQOizBdoWf8PKIearKbP2pMA19Ul1QBNQ2PJQ3rGTqxP5CPM7o/7xM+/6qf92QiJ51DmPjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jnCiNIgm; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3c76f3703cso83391966b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:39:05 -0700 (PDT)
+	s=arc-20240116; t=1760996593; c=relaxed/simple;
+	bh=y2m25W7zkJm4lmZAqrSB8Op5PkRsIhwCbtsRZflqNDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEYyQMc9I/IoXz8zUutCJxWoUzrPPb0xt6OLduf/ebJ/HvqxuBt1FoBvLm95NRPOCtx9cJQykjA2IlQ4xXmkgrJxppEW8qqNMx9cOmBk2pkbypxgUChFclQX4PZIxBxbLhL55754+5hmDArCR6MEgO8LAHldG+9MAbwoFaDL6mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bCqF63Fc; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-79ef9d1805fso4490076b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:43:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760992744; x=1761597544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I13zc6oy6n5wEThdTlFRQKlOHJB6pi47H7uQVP12yGs=;
-        b=jnCiNIgm/k43HFxUkgACMlum37EIWxmhM6bHTM1uAiC230ryfVkz1f1ehtnETzGhIf
-         5T1qiolRPcKIkF3Cg0H0pn7LfQABOi0Yn7pCg/JgFQbjC71IihLa0JYWA68aGsCvmLwh
-         TSA20hG64DA5OiZunj5gI39sk77j0Z7+KvMkTxAz53Xet7xD3GRt+YL9EEkBrE4FNZ3e
-         HPLqfQ0OUf21wXYLw3jbAiOo7n41vkR+aKKDZX+v7drFPNRIthWZLWHq82Q2jCFmLtnJ
-         oR1kNilFqHgdiQockePpEyj1ozSANGqJchA2dRhrQ0OvFx2QWOH6zWUPF52+S6x3yeDU
-         tw7w==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760996591; x=1761601391; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LQOa5MIIi+7CgnSuXmOmCMZIcE9hFQ3mA2YcxpQezgc=;
+        b=bCqF63FcLxJQ/OV38f81uNkBz/+g2HrlN3yo0wwWS9kJuir8mmOD4kIagjZ9kC3449
+         lEgtmftxq15FfqD7HBdxO2dJzWigu4f5x7QSw+xuPgWiTLJVpyx20FwK4AUQt2x0ulXU
+         R79bA3G8B6ISlCjzBgu1bneuaC92KgNjHNU1bKFuvXuTTvQqmfOoM1JVW/2Qp6UdyBjH
+         r6avvWdgNIzFtBf6lADLi2oMXwNuPGkDzdK/ySlVTekXFyiPBqcvUj3AMsiZfhs7AWaR
+         QMQbVlSHOqRaaR1XuZ99ZkIuSPvoK//NTXi2C0t2MhPLBszHgkHSls2L1VH1PCZrvY7p
+         XlPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760992744; x=1761597544;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1760996591; x=1761601391;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I13zc6oy6n5wEThdTlFRQKlOHJB6pi47H7uQVP12yGs=;
-        b=V6T80hl1r53InKiCr4SRxEMT7+pDvZgRNZV/VJD51gcN2/pFPiMpBOWpvxBtnFcDvn
-         RRJUnavgiQ5vmS4s8wx3WHO+mmsU80NCbIBcOaIdEEhZmFnBDAi83jgJRp8LHaMThagx
-         oJP+IvgOU4Y7wIhmTc9y0+yjdX6vc+s5lK/lrFk+5MmH/SVZCz4FzeEksU6EM1rBguU3
-         hgrirCrH3SVN6K7SxzQglAEIXUVwEnvSNyLKNvljJfroXtRowyltV+kf9IAuIcwoRiGU
-         2qrm3eQRhLGoSTCxTM54Ya2QvrU7KGg4TAVlblYIxNIynFVHM3WnuVACtLYtWn0WoEa9
-         EOSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiK+1rQ4FLXIxfJDDE68uWS7AUjX42GLv9xkboQ1yow3AGGZw4oWRy4QM+M5zJzgolAOb+HYG8zKMBZQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRlB7ydo1L7NUZPq4xq07MHKnFO+ge7NHJEGVXLPZJQDN5yXOt
-	Kz/VdVR8Z9uCESgg9jksQCubbLHdLoXCwDtbNQx8mJDQZJ72iZOM50t6
-X-Gm-Gg: ASbGnctE8jZjo0N0c0EZJQrTatUFyV/zK+2YMbgnrLQzAhtIEDtb10B2FiKcnXkM3a3
-	93vXnCpJd1pD7L7JzB7/JESlR0MBSNZC86MpXEom33Z8C0gNyIi1ar/jI5TmsRxv3wBtQowMOHM
-	vheiHJDBSqzcumMK0I28lTNRJ7/Lelj529/h5JbEF6iJBnn8B8vzA6EkeUcV2pbGmFdNuq8HqVg
-	MMz1DqNo0LQ7xSEAPkfvzgzVAn7fH27DMhJUhj35FYy0wieUPEgqfO0liVNySrXvCDPfwPpelEP
-	1620C+3oYRKjWyuSXX/Ed0M5jmXXGrNj2enPBaDkM3DO7SHV0HlM9QkL93cB9VLUA0XbcW6WUZG
-	9kCe9a6UI52ZqBaNVKmsNSeZv71E5UvyOsPPNhFi4/pFSRy+5R7eis/wCj4G9HGGxxI8HJT86LO
-	RADQqiQ5ffCSY9mi5RbYSNOIRwnDNh
-X-Google-Smtp-Source: AGHT+IHzlmKFJ8QvxM6XXCi3yDGc0o5ave5OzIak2mYRhAtf9x4ZklR2v8SH+Ts3J9IOPDUqUfvRMA==
-X-Received: by 2002:a17:907:9805:b0:b29:8743:81ef with SMTP id a640c23a62f3a-b6c744b500bmr72625166b.0.1760992744003;
-        Mon, 20 Oct 2025 13:39:04 -0700 (PDT)
-Received: from [192.168.1.105] ([165.50.73.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb035d5fsm891116266b.44.2025.10.20.13.39.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 13:39:03 -0700 (PDT)
-Message-ID: <e4f0290b-5d15-472f-acee-e1e1b0629ec0@gmail.com>
-Date: Mon, 20 Oct 2025 22:38:55 +0100
+        bh=LQOa5MIIi+7CgnSuXmOmCMZIcE9hFQ3mA2YcxpQezgc=;
+        b=WFer0c3biR+c/ZBDWMBO/w7NO9lSIt3LfmNORf3iSiZ1O+N8fd6BGhIz4Rp00AOExo
+         PBLoc0YMeF+lHf580DxdToaXQ5Y2qY/KfTbR34b+FeNL02VR6DvtG6QfK4Q1SwfH0JAD
+         QTL73Fc/7rIf2SWodbOq/hIHG+PvQXdRiTtTX1PpvDYJNFEshKgj4OG0sBfE3wdszd5s
+         E2b+pu/XOxrWHrlWcWMMsy6h5wzYz5fcpWCiUTiy+CVHV0dIJz9gAksQbK4CZ9fGaeIF
+         j6C97CkGalInHjBTWAE5ibwACS0NEiFBoDiGiHFsnvhRuym8R7VZchrDiZVBZqnc/LYz
+         edjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEAX1aX6qOlTJAkltDUYItSW1tQH3OVw+dBwUbGLGuh+LtKDF+ZwOHoKHwavkDHIR6Cegq/m930Oao/Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydaskyMJQAIwAuC+Wd37AmzCZdLg9bh94MvZOFGeOKFk4NJ1ej
+	9vfuqQt1fdjsv+nXW9e/nwCPimd98zhDjivALifm47InAUiwRhTFUcMDniFDw+sh50k=
+X-Gm-Gg: ASbGncuGhugdBn9rpNpnZ5wxlLqCFshVY/JGvaDgr5RT1UJLuNSy+CSijgMsxsEmrlx
+	DRu/4buQ4hfBh6IGvOKEvbzkfKm4rXY9GldIq0eAI+uOxFphu5jg6PCCcZAukI0AkgioqooSbvp
+	GI6G3hLeWbPvKbnT2gfgxUTwN+i+pEQYbMDwysB9ppm+XGlNk4hZ5pl/CKNN6yWHHHlqhA7LsaJ
+	rSfKfYcJfNShXsoPdLLZ4z/ga7eo7R2chUeYRmtTzvB9Laj1CLwq1Wx2d3ruvQ77vcVBunlBbEq
+	zOSMMy2kzvJTKUK6LdhBQ2qwviMWtxsOXYOvGbU4zQHv1Od5+T6aAZ7TzLs0U7Yru+6oqPiVwwf
+	9XM80fYO7oDkfsLR6mrkntDb/oJ8u3ZuY5eh55NjUgows7EgBEMprn5vCB2h/LppGibpSGOab4C
+	6ZLkQdwiVoD5mvbDupziENNtwYBaHVVu0LAF5EMGo84Jiq7FwUjZs=
+X-Google-Smtp-Source: AGHT+IE1HUX+wcNiDJeJ7OTlztv/NSJpMhRfSbA7KZpViYePBOTXDJQlldupatbqjRCb7qVsG4PmXw==
+X-Received: by 2002:a05:6a00:230a:b0:781:16de:cc1a with SMTP id d2e1a72fcca58-7a220d37785mr19816985b3a.32.1760996591191;
+        Mon, 20 Oct 2025 14:43:11 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff184basm9336482b3a.15.2025.10.20.14.43.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 14:43:10 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1vAxel-0000000HUpj-3jCY;
+	Tue, 21 Oct 2025 08:43:07 +1100
+Date: Tue, 21 Oct 2025 08:43:07 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Anand Jain <anajain.sg@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>
+Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
+ origin
+Message-ID: <aPas60j7AoyLLQK0@dread.disaster.area>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+ <20251014015707.129013-2-andrealmeid@igalia.com>
+ <aO3T8BGM6djYFyrz@infradead.org>
+ <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/solomon: Use kmalloc_array() instead of kmalloc()
-To: Shuah Khan <skhan@linuxfoundation.org>, javierm@redhat.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251019145927.167544-1-mehdi.benhadjkhelifa@gmail.com>
- <2541f99c-1081-4253-ae58-97654694cd78@linuxfoundation.org>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <2541f99c-1081-4253-ae58-97654694cd78@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
 
-On 10/20/25 9:08 PM, Shuah Khan wrote:
-> On 10/19/25 08:58, Mehdi Ben Hadj Khelifa wrote:
->> Replace kmalloc() with kmalloc_array() in several places to correctly
->> handle array allocations and benefit from built-in overflow checking.
->> This prevents potential integer overflows[1] when computing allocation
->> sizes from width, height, pitch, or page values.
->>
->> [1]:https://docs.kernel.org/process/deprecated.html
+On Wed, Oct 15, 2025 at 07:46:34AM +0800, Anand Jain wrote:
+> On 14-Oct-25 12:39 PM, Christoph Hellwig wrote:
+> > On Mon, Oct 13, 2025 at 10:57:07PM -0300, Andr� Almeida wrote:
+> > > Some filesystem have non-persistent UUIDs, that can change
+> > > between mounting, even if the filesystem is not modified. To
+> > > prevent false-positives when mounting overlayfs with index
+> > > enabled, use the fsid reported from statfs that is persistent
+> > > across mounts.
+> > 
+> > Please fix btrfs to not change uuids, as that completely defeats
+> > the point of uuids.
 > 
-> Mu understanding is that this document lists deprecates APIs so people
-> don't keep adding new ones.
+> We needed cloned device mount support for an A/B testing use case,
+> but changing the on-disk UUID defeats the purpose.
 > 
-> I didn't get the impression that we are supposed to go delete them from
-> the kernel and cause a churn.
-> 
-the document[1] specifically quotes the following:"
-Dynamic size calculations (especially multiplication) should not be 
-performed in memory allocator (or similar) function arguments due to the 
-risk of them overflowing. This could lead to values wrapping around and 
-a smaller allocation being made than the caller was expecting. Using 
-those allocations could lead to linear overflows of heap memory and 
-other misbehaviors. (One exception to this is literal values where the 
-compiler can warn if they might overflow. However, the preferred way in 
-these cases is to refactor the code as suggested below to avoid the 
-open-coded arithmetic.)"
-Specifically mentionned the refactor of the code base in such cases 
-which is why i'm doing the patches in the first place.Also i'm trying 
-the best to send patches related to the issue where such issues of 
-overflow are present or to be consistent with the same API used within 
-the same subsystem.
-[1]:https://docs.kernel.org/process/deprecated.html> How are you testing 
-these changes - do you have this hardware?
-> 
->>
-I have a raspberrypi zero 2 wh that i'm using in combination with the 
-ssd1306 OLED panel via I2C to test it's rendering and it's working 
-properly by using modetest and seeing no regressions or warnings in dmesg.
+> Right now, ext4 and Btrfs can mount identical devices, but XFS
+> can't.
 
-Best Regards,
-Mehdi Ben Hadj Khelifa
+Absolutely not true.
 
->> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
->> ---
->>   drivers/gpu/drm/solomon/ssd130x.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
-> 
-> thanks,
-> -- Shuah
+XFS has been able to mount filesystems with duplicate UUIDs on Linux
+for almost 25 years. The "-o nouuid" mount option (introduced in
+2001) to bypass the duplicate uuid checks done at mount time.
 
+XFS tracks all mounted filesystem UUIDs largely to prevent multiple
+mounts of the same filesystem due to multipath storage presenting it
+via multiple different block devices.
+
+The nouuid mount option was added back when enterprise storage
+arrays started supporting hardware level thinp and LUN
+clone/snapshot functionality. Adding "-o nouuid" allowed cloned LUNs
+to be mounted for for backup/recovery purposes whilst the main
+filesystem was still mounted and in active use.
+
+> How about extending this to the common
+> VFS layer and adding a parameter to tell apart a cloned
+> device from the same device accessed through multiple
+> paths?
+
+Perhaps we should lift the XFS UUID tracking code to the VFS
+and intercept "-o nouuid" at the VFS to allow duplicates only when
+that mount option is set?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
