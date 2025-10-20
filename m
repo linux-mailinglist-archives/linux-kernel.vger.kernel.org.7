@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-860550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB36BF0608
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:04:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703D5BF0620
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 340C14ED9BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7290018A0920
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917922F1FE5;
-	Mon, 20 Oct 2025 10:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3782F5A0E;
+	Mon, 20 Oct 2025 10:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s59ugeqc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CH+UctTt"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85AF227EB9;
-	Mon, 20 Oct 2025 10:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7F823C8A0;
+	Mon, 20 Oct 2025 10:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954653; cv=none; b=Y21I3U2klsnkwJ72qrAy+r9zcxl+0uAL88IFxoP4oDYr7aAEV7nSsJDHLlF7X7gG2YQP0Um0edkiJof0OFv11vjOUDManTXuT44+5gvcL+W9gIvX4AO6DP06dJA1wEKS1+88A9qOy5hYshhC2/XAEh0GGsEJT1ssgKmNqLtoRFU=
+	t=1760954668; cv=none; b=mnPX0aOE9wXaqHINpl/LuPLAa3ujaHolb9H1455dkbsjwP9+yV9tD/4SWgXH0g4W4JM/9DZ564Uhu+ToppSHDN/ygzRKNy1W582U0GP0WDSb/34hLziwPYVVkhzvp6nabLIsgwW2gUxtpggWHFP5lgSwQzU+Kc7wr63n2ZtuUMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954653; c=relaxed/simple;
-	bh=O7CSLXdkG96nqjZPq+FkyyDWvL5sJW9UxsJ3bE5vHCg=;
+	s=arc-20240116; t=1760954668; c=relaxed/simple;
+	bh=TSQ1O9TZH171lduwyZFqhbsEFJNX+R5Wl3LdaC6jVCE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eVxErccLR1i3YNJ7zBIUj0btzaxGyP1vx/uutNjn3uVUZJ7CziRYUD7ATwaExxPIe3Hgs5hLy6vVl/KIjBWeXQBD8GY3Sy4O0Lghnq41r43JfnDu9rXE83yFnBUZESS4muFrTbe1u6iWqm37A4lO+apXpGQaqd/t9nyV3O38CuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s59ugeqc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5681C4CEF9;
-	Mon, 20 Oct 2025 10:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760954652;
-	bh=O7CSLXdkG96nqjZPq+FkyyDWvL5sJW9UxsJ3bE5vHCg=;
+	 In-Reply-To:Content-Type; b=tUhg6GyNPnhIANZIZzx/V0ircrUGmsvTTD+1+sD8gFAgtJmB+R/rNwW7hH+tFkFpRKHx5PjLGEvXo9cXjqhESVKaxWfUxEiIdB1/bfuWNZnxafw6Hwy5Ztz/6WCTP5TdXT3sN/rtqLI1pk9X0WLD+IUDS9C/zZctUOZmED7IwRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CH+UctTt; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760954664;
+	bh=TSQ1O9TZH171lduwyZFqhbsEFJNX+R5Wl3LdaC6jVCE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s59ugeqc7TgNCHMzuBRi161/pOXpZrL9EhC2iGEoH5/DtfaD0SGPWHWbcY4jibWgC
-	 rWw4FE//CWAnAJPLyn9D4v6vVJoY8577pLovc8ru1avvyz8TUEvxiNt1arcu7xhMqL
-	 luReNlC0C+ZblwiGnqsjnf8SFNRGaUzu04JRjt/GDI/HOApVAo8ZvkZ+16AOoSbHDe
-	 3W7J+f99yWz3sPLR4LMJX2TO7fQq+Fodqbq9UrJhv2HWQRJRl8Ecgiwd0A/+jLvAwp
-	 4HEPwqnGOAlLqLRI47g2PNViZdx5/9bo+uzuPGtZKtwIk0no9JLOK+NH0kxNdKO8Fn
-	 iXiOKLvEDr/4w==
-Message-ID: <62bb4f8d-ffbb-4529-ab0a-70fd8c77078d@kernel.org>
-Date: Mon, 20 Oct 2025 12:04:06 +0200
+	b=CH+UctTt8HvyE/iPs6B/wGaSmV4/fgQZ4QkTgks/VTHtuBBPk+tVHooYo76AcmAdb
+	 V9wSrjW9FgMJyDWox87nRVHyubDveOY9L8kCbIjJUBDVLeCh3cfDTICNLI7UJp5wsq
+	 unGhjv0feF4HdEbbqc42yXzCpqV+ji3+35iHmt1CFXGaiKLGWcWvZ/6TX+6OZFfyq+
+	 AZ5rRnYnyPy4m7rO1zH4swC8lpknvbEkcppJbRAKA7Hyv115r9rbu2juj4c6NLEBWb
+	 DdgyuFkGqCnM3RZWRjtWHenDZf5va9VcQVQfr4kJDKrubxZayasHCsAXj/MnLyc5yJ
+	 1tFBhyUqhoiUA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4CCEF17E0FAD;
+	Mon, 20 Oct 2025 12:04:23 +0200 (CEST)
+Message-ID: <8adbea9e-998a-4da8-9388-7adc4102c572@collabora.com>
+Date: Mon, 20 Oct 2025 12:04:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,92 +56,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] riscv: sophgo: add top syscon device for cv18xx
-To: Longbin Li <looong.bin@gmail.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v8 20/20] mailbox: mtk-cmdq: Remove unsued
+ cmdq_get_shift_pa()
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@gmail.com>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Ze Huang <huangze@whut.edu.cn>
-Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20251020083838.67522-1-looong.bin@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
+ Singo Chang <singo.chang@mediatek.com>,
+ Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Chen-yu Tsai <wenst@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20251017065028.1676930-1-jason-jh.lin@mediatek.com>
+ <20251017065028.1676930-21-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251020083838.67522-1-looong.bin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251017065028.1676930-21-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/10/2025 10:38, Longbin Li wrote:
-> Add top syscon device bindings related DTS change for CV1800.
+Il 17/10/25 08:44, Jason-JH Lin ha scritto:
+> Since the mailbox driver data can be obtained using cmdq_get_mbox_priv()
+> and all CMDQ users have transitioned to cmdq_get_mbox_priv(),
+> cmdq_get_shift_pa() can be removed.
 > 
-> ---
-> 
-> Changes in v2:
-> 
->   - Add ranges property.
->   - Use proper regex in patternProperties.
->   - Add complete example including child nodes.
-> 
-> Changes in v1:
-> 
->   - https://lore.kernel.org/all/20251012022555.6240-1-looong.bin@gmail.com/
-> 
-> Changed by RFC:
-> 
->   - https://lore.kernel.org/all/20250611082452.1218817-1-inochiama@gmail.com/
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
-So this is v3, not v2. We do not count from 0, -1 or -2 (of you have
-three RFCs). Please start using b4, so you will get it right. Otherwise
-how can we compare versions between v1 and RFC? Try yourself with `b4 diff`.
-
-Best regards,
-Krzysztof
 
