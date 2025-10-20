@@ -1,44 +1,88 @@
-Return-Path: <linux-kernel+bounces-860431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE4FBF01DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6331ABF01DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B0304F1135
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF21A3B82B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC352ED165;
-	Mon, 20 Oct 2025 09:13:17 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840132EDD48;
+	Mon, 20 Oct 2025 09:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2mBd8BG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1F32E266A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4C72ED144
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760951597; cv=none; b=E+SGWKnwNAhokcCoTyshhZKLVShq9q+rWhJ7uBg1l9vRqFDjuYdZ/ULryCd9ZAs+WG0QqSbO3cNmoPIvI/CauBYvqVfLloloiHRJupNZA60qAoAgKR+JRQh7vSMqQX9MTnYbe6jqpYZ6fCLYKH3UsrkUAvouCoqFJzI3MLHLeNA=
+	t=1760951622; cv=none; b=G5MRMvF+R8/8ILAXSS+2VyO8/Aet/NPz/jOozTRCGMGCF9HqhQDfK+e24IHFiyjRttWYGjgd31oePBx+wGEHtRs+t/Ajs2O0XFxxtCRgmHRP8NDOKhcJG62qx+E5FHi5yLzf4MyMhLSJim+sx0ns3WZ5d9oU5im9jOenXgr/G0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760951597; c=relaxed/simple;
-	bh=56oWEVBzatiA1wt4cCaOJBZkP0gZKhWyAOnOBJWTfI8=;
+	s=arc-20240116; t=1760951622; c=relaxed/simple;
+	bh=aUcQn5I0PiueTLpOZyiXPCO+z8+eH9JgH5aQUMhgFn8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ks0Q8IzEmRSSrDsezKdGH15W/VesR9KITXq5ehn8ZDeL0Xsr5q0pXMcQMuGQa9ZF/6Xqtk6cAEvjRCKMoifMXpcgdIU1Myn/tnB62Utl2hnMbuLQVA9v/zI1lYhJx0PHOurSH13stNNJlhlfaVDVcTPEbEZjMqiJetFR2DBFaVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cqqSm74pwzKHMQ0;
-	Mon, 20 Oct 2025 17:12:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B944E1A1A4E;
-	Mon, 20 Oct 2025 17:13:09 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgAny0Mk_fVoDjb7Aw--.16020S2;
-	Mon, 20 Oct 2025 17:13:09 +0800 (CST)
-Message-ID: <3d9dceab-82c8-4811-9be2-7571d09a9e76@huaweicloud.com>
-Date: Mon, 20 Oct 2025 17:13:07 +0800
+	 In-Reply-To:Content-Type; b=Jpt4mrli7tUChYluvLBmWf86djtElNl80BMRsZBulQWEdO/rsnDvWkgDf8jfXNw2aI+pbVSkfFHZCq+GOYOAg3essdvdaVGj2uHBnaAl0wu3QEhBrP6zYlrIKi2b3MePZsPGcLIPd0v8TX2NgYdpn/4t186YoTQ8yEQcUHSdgVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2mBd8BG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760951620;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Eh0wHwo2LU2FIRX9AhMX9fHbYdP7OvIPgfEQ71tVBzI=;
+	b=H2mBd8BGI+0Bh+38SCmJ1+oXxzxITNcbL+jg8R3MX0B31keBQU0aVoleJhusWmhb4tCVlI
+	Ij55qm7ZKncDLcMh9uMcPXglLsbYT2X9sXDyB2wq00nr1GQxUiGnxUkIP1ifK/fHMj1gI9
+	KTlRBm0k8GniLgLKuTijlmHNoP4YZLE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-178-dBb3GYbqPMe5EVg3d3Sw9w-1; Mon, 20 Oct 2025 05:13:38 -0400
+X-MC-Unique: dBb3GYbqPMe5EVg3d3Sw9w-1
+X-Mimecast-MFC-AGG-ID: dBb3GYbqPMe5EVg3d3Sw9w_1760951617
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e4cb3e4deso14512595e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:13:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760951617; x=1761556417;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eh0wHwo2LU2FIRX9AhMX9fHbYdP7OvIPgfEQ71tVBzI=;
+        b=PbtdCahkqfSDWmT3Ukxlu4HaBpPMyOYb8ROAmfGOawmJ5BK0iYKk6mGTOiHBPAdDgf
+         K9Pwj4rzmdSpczZ4Mmb6ycWn7S4CS2ssQ6JGyineE52WCU7l2EDJas8nTkhp0vq0YjSW
+         ImVe3jTbcT+1PYZz78Uony3oAPRwEZAkXHIO2P2dliN/xbmovfQf/50WqmlW9EskCnNR
+         4t7gcOzYVWNONkIpBSGjWOnvNfAS1XvVuxN7Bd3fcF8iNSbkZTAPtoom8R1lV2cQ/I01
+         K0wSEb7YeKke0Hp+EM5NzPGB63FzjLNmEc0PHGBfLDnevbbc8R59T5FtnQG9zCRBO8z2
+         btBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnk3rS9lN9D1MtVfTqqzd87/5R/VnW9Ks9YdYcF3EZgswA8vME19BZm98eNISMq3PbDjIMhWMg7OpJZTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc1nAG8efUjMgjZp0H+ysUUg1+2qaJPArapAjYWJs89vC7l6BN
+	Z2RlKvHcIikbqdK9gkIptWD4Xw6S4PMm09PL5UA/CtKXTXScBHUtZPcQDT7JubEDZ3L58C/zy/y
+	AjTq5xlKPZVLDf7pBlYj2AVr0whTg6Qr3KdkFBOKlxzUJXUJUL+cGHBMOkU/O+W/zQg==
+X-Gm-Gg: ASbGncvJ25xwIq2G419n3R+uyIdX/OxnOwYQ2lsqFgISqzBkBbcZXaqjY1jG5y4BHH3
+	+m6GZSgsVbt26I8sNbS+7IkKs3Mwca8Rx9RMweUL49H33bGW/UXhct91UAJGpSyNonGazxmq6vx
+	ZJF0cbywlQCp5paEfK0+YICFjuhXOlSY883ADMRcOQpbYAzaeLw8/1dOMWGxpBxbWUDDaqkXeiA
+	d1f67SSQETlIn9K5n4s2cVQrz2MuE5plRJlK+Rt8AlHgHgl7yetHAp9Q742OzrpeJiuHZRPvBWG
+	P4Q0tBLnQUdDgfzPp/oljocfSsOzG+3OcEhSqiiqfjE/flYl9zZTxry/5j3GWdWIfu95vanckrZ
+	oS45G9PncSv/O+0xZoh7xaShfGN1i8+DI9SRGAvkPbtfzDrNaVqGfSKvc9rwHNJqtq3mf7C5EML
+	WUfV3501OkKv3kli2rY/4FdhalErw=
+X-Received: by 2002:a05:600c:3b98:b0:46e:6339:79c5 with SMTP id 5b1f17b1804b1-4711724b354mr119191845e9.5.1760951617111;
+        Mon, 20 Oct 2025 02:13:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFME1ceOxJyPsxu5kjPbUdJ41bH4P8jCHFCQX4VPWwz7nZ35nqwnC6x0CCerHmtu/XFIG6fA==
+X-Received: by 2002:a05:600c:3b98:b0:46e:6339:79c5 with SMTP id 5b1f17b1804b1-4711724b354mr119191525e9.5.1760951616638;
+        Mon, 20 Oct 2025 02:13:36 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c56sm14482749f8f.18.2025.10.20.02.13.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 02:13:36 -0700 (PDT)
+Message-ID: <a95df2f2-5ecc-4d28-9bcc-1f9b457b04a5@redhat.com>
+Date: Mon, 20 Oct 2025 11:13:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,205 +90,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 14/16] cpuset: fix isolcpus stay in root when
- isolated partition changes to root
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
- <20250928071306.3797436-15-chenridong@huaweicloud.com>
- <a07b794c-d133-4d23-b0b0-cb9e0dc42d2b@redhat.com>
+Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
+To: Jiri Slaby <jirislaby@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251018093002.3660549-1-rppt@kernel.org>
+ <aPQxN7-FeFB6vTuv@casper.infradead.org>
+ <3e798b9e-4915-404f-9197-ed3c32587141@kernel.org>
+ <85707316-3f2b-4e29-b821-a32f9097244e@kernel.org>
+ <635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com>
+ <3b97b754-890a-46c6-b892-a0324d529a3d@kernel.org>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <a07b794c-d133-4d23-b0b0-cb9e0dc42d2b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAny0Mk_fVoDjb7Aw--.16020S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xr48GrW7Aw48WryxCFWDXFb_yoW3Cr13pF
-	95KFWUJrWYkw1rC34UJF4kZryrJw4DJ3WDtrn8XFyrXF47AF10vFyjg390gr1UXrWkGr1U
-	ZF1jqrsrZF17AwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8YYLPUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <3b97b754-890a-46c6-b892-a0324d529a3d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/10/20 11:06, Waiman Long wrote:
-> On 9/28/25 3:13 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
+On 20.10.25 11:08, Jiri Slaby wrote:
+> On 20. 10. 25, 11:02, David Hildenbrand wrote:
+>> Regarding the metadata overhead, in 2015 Linus wrote in that thread:
 >>
->> A bug was detected with the following steps:
+>> "Long ago, allocating a page using kmalloc() was a bad idea, because
+>> there was overhead for it in the allocation and the code.
 >>
->>    # cd /sys/fs/cgroup/
->>    # mkdir test
->>    # echo 9 > test/cpuset.cpus
->>    # echo isolated > test/cpuset.cpus.partition
->>    # cat test/cpuset.cpus.partition
->>    isolated
->>    # cat test/cpuset.cpus
->>    9
->>    # echo root > test/cpuset.cpus.partition
->>    # cat test/cpuset.cpus
->>    9
->>    # cat test/cpuset.cpus.partition
->>    root
+>> These days, kmalloc() not only doesn't have the allocation overhead,
+>> but may actually scale better too, thanks to percpu caches etc."
 >>
->> CPU 9 was initially placed in an isolated partition. When the partition
->> type is changed from isolated to root, CPU 9 remains in what becomes a
->> valid root partition. This violates the rule that isolcpus can only be
->> assigned to isolated partitions.
+>> What's that status of that 10 years later?
 > 
-> I am a bit confused at the beginning about this as it does not clearly state that CPU 9 was listed
-> in the "isolcpus" boot command line parameter, but I believe this is what you mean here. Yes, there
-> is a restriction that a boot time isolcpus CPU cannot be put into a non-isolated partition, though
-> that will likely to be relaxed in the near future.
+> AFAI skimmed through the code, for allocations > 2 pages
+> (KMALLOC_MAX_CACHE_SIZE) -- if size is a constant -- slub resorts to
+> alloc_pages().
 > 
+> For smaller ones (1 and 2 pages), there is a very little overhead in
+> struct slab -- mm people, please correct me if I am wrong.
 
-Yep, the CPU 9 was listed in the "isolcpus" boot command line parameter.
+If it's really only "struct slab", then there is currently no overhead. 
+Once it is decoupled from "struct page", there would be some.
 
-> Anyway, it is a real corner case. I also don't believe commit f28e22441f35 is the one that
-> introduced this issue as the restriction was added later on via commit 4a74e418881f ("cgroup/cpuset:
-> Check partition conflict with housekeeping setup").
-> 
-> As you have added a Fixes tag, it should be moved to the front of the series as it is likely to be
-> backported to stable. Putting it near the end of a series with a lot of changes in between will make
-> it harder to backport to the stable kernels.
-> 
-
-Maybe I should find some way to fix this issue first.
-
->> Fix the issue by re-enabling partition validation, which performs
->> comprehensive partition error checking. In the scenario described above,
->> this change causes the operation to fail with housekeeping conflicts,
->> preventing the invalid configuration.
-> From the code diff below, I don't know how you re-enable partition validation.
-> 
-
-When a valid local partition has its type changed (e.g., from "isolated" to "root"), the
-remote_partition_enable function is not invoked again. Consequently, the critical check for whether
-the partition can be enabled is skipped during this process.
-
-  echo isolated > test/cpuset.cpus.partition
-  echo root > test/cpuset.cpus.partition
-
->>
->> Additionally, when enable a local partition, the warning for tmp->addmask
->> not being a subset of parent's effective CPUs was removed. This warning was
->> triggered during local partition re-enablement because the CPUs were
->> already added to exclusive_cpus during the previous enable operation. The
->> subset check is not applicable in this re-enablement scenario.
-> 
-> That should be in the new code that you introduce in this series. So it either be integrated into
-> one of your earlier patches or be separated out as a separate patch without the Fixes tag as it is
-> not applicable for the stable releases.
-> 
-> Cheers,
-> Longman
-> 
-
-Okay, I will try to integrate it into earlier patches.
-
->>
->> Fixes: f28e22441f35 ("cgroup/cpuset: Add a new isolated cpus.partition type")
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 35 +++++++++--------------------------
->>   1 file changed, 9 insertions(+), 26 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 20288dbd6ccf..2aaa688c596f 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1873,6 +1873,7 @@ static int local_partition_enable(struct cpuset *cs,
->>   {
->>       struct cpuset *parent = parent_cs(cs);
->>       enum prs_errcode part_error;
->> +    bool cpumask_updated = false;
->>         lockdep_assert_held(&cpuset_mutex);
->>       WARN_ON_ONCE(is_remote_partition(cs));    /* For local partition only */
->> @@ -1899,22 +1900,14 @@ static int local_partition_enable(struct cpuset *cs,
->>       if (part_error)
->>           return part_error;
->>   -    /*
->> -     * This function will only be called when all the preliminary
->> -     * checks have passed. At this point, the following condition
->> -     * should hold.
->> -     *
->> -     * (cs->effective_xcpus & cpu_active_mask) ⊆ parent->effective_cpus
->> -     *
->> -     * Warn if it is not the case.
->> -     * addmask is used as temporary variable.
->> -     */
->> -    cpumask_and(tmp->addmask, tmp->new_cpus, cpu_active_mask);
->> -    WARN_ON_ONCE(!cpumask_subset(tmp->addmask, parent->effective_cpus));
->> +    cpumask_updated = cpumask_andnot(tmp->addmask, tmp->new_cpus,
->> +                     parent->effective_cpus);
->>       partition_enable(cs, parent, new_prs, tmp->new_cpus);
->>   -    cpuset_update_tasks_cpumask(parent, tmp->addmask);
->> -    update_sibling_cpumasks(parent, cs, tmp);
->> +    if (cpumask_updated) {
->> +        cpuset_update_tasks_cpumask(parent, tmp->addmask);
->> +        update_sibling_cpumasks(parent, cs, tmp);
->> +    }
->>       return 0;
->>   }
->>   @@ -2902,7 +2895,6 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->>       int err = PERR_NONE, old_prs = cs->partition_root_state;
->>       struct cpuset *parent = parent_cs(cs);
->>       struct tmpmasks tmpmask;
->> -    bool isolcpus_updated = false;
->>         if (old_prs == new_prs)
->>           return 0;
->> @@ -2920,7 +2912,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->>       if (err)
->>           goto out;
->>   -    if (!old_prs) {
->> +    if (new_prs > 0) {
->>           /*
->>            * cpus_allowed and exclusive_cpus cannot be both empty.
->>            */
->> @@ -2950,12 +2942,6 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->>               err = local_partition_enable(cs, new_prs, &tmpmask);
->>           else
->>               err = remote_partition_enable(cs, new_prs, &tmpmask);
->> -    } else if (old_prs && new_prs) {
->> -        /*
->> -         * A change in load balance state only, no change in cpumasks.
->> -         * Need to update isolated_cpus.
->> -         */
->> -        isolcpus_updated = true;
->>       } else {
->>           /*
->>            * Switching back to member is always allowed even if it
->> @@ -2985,16 +2971,13 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->>       WRITE_ONCE(cs->prs_err, err);
->>       if (!is_partition_valid(cs))
->>           reset_partition_data(cs);
->> -    else if (isolcpus_updated)
->> -        isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
->>       spin_unlock_irq(&callback_lock);
->> -    update_unbound_workqueue_cpumask(isolcpus_updated);
->>         /* Force update if switching back to member & update effective_xcpus */
->>       update_cpumasks_hier(cs, &tmpmask, !new_prs);
->>         /* A newly created partition must have effective_xcpus set */
->> -    WARN_ON_ONCE(!old_prs && (new_prs > 0)
->> +    WARN_ON_ONCE(!old_prs && (cs->partition_root_state > 0)
->>                     && cpumask_empty(cs->effective_xcpus));
->>         /* Update sched domains and load balance flag */
+IIUC, I'm surprised that larger allocations wouldn't currently end up in 
+PageSlab() pages.
 
 -- 
-Best regards,
-Ridong
+Cheers
+
+David / dhildenb
 
 
