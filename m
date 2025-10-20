@@ -1,208 +1,299 @@
-Return-Path: <linux-kernel+bounces-861007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD44BF190D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F20BF191F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB92B4F49B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C273AEB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFBD3195FC;
-	Mon, 20 Oct 2025 13:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEDB2F8BCB;
+	Mon, 20 Oct 2025 13:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ukXo/foZ"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011048.outbound.protection.outlook.com [52.101.57.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S3mOaGB0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rsFaY7CX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dWa3K2mp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B++jNjrE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376561C3306;
-	Mon, 20 Oct 2025 13:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760967497; cv=fail; b=G9qzO+hr6LvZ6/5s8p4nqMtJfnbDH8EXO8KxKTmbvTVuPMnEgH9fk0M2phu7E1dACMN9gttGZZbaGQ6JNWq8eSTNRw5imUBPQqifJujYucwgvPDYsl9smeTbSqNvqVMibua3zv6jeAQZYkDzMMEwJwnXsTt1tuDat9eufTRAH8A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760967497; c=relaxed/simple;
-	bh=T4f3Qd8N3bhjQB/QeNwU3M9JsdTQywYY0AvxWxyvTmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sPLJ1PUK3zCoxlRitzlMm4pCkLNSQzT/duaRCmuKPBn+FK5aFTg087TIymdVZ0b0wP1Txvdao7gae+0P7n7Ex3joHy8xx+3Pa2qccrbwJ41N1VNIuuvBjSBeVMtBRnn8Pmv2yKa5C52/DryirVXLZtcXE4RzckYVraLVzrsday0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ukXo/foZ; arc=fail smtp.client-ip=52.101.57.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YiOsUMViwMjvi3e+r1JBb1JkiJD2uxiaEGaYdV+TSxjO0wrM+uQAbkhRntm3NgoblJbQ4q99Xnwng86o1VrgBtSwuzf+5vSg+pWO6ZvUUcbda3yJkug+AMbpVVAMg/zNcX+Vx+ZXodsl5ADHOyhpCHeH/MVnachchw/5wJYv69ZhzLwTehlEKjZW8XjtPaQQ5EpitqyIRKNDwfydlzi13QbWXM0POlOWrFn8R15Lh48A//Ay+MrVhVBIDWnAmpCntDzYT8bxdTP8BORGqPwFIo7XELcVBmimZHIIWM9AjGq+IR2VoPLU6pgzGFLv3O2GFJf7fY1PT4bkmep0DCwX/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jODA44V5I4ClCSnjKeZuI2H11A5nZOCM9Ef0M6bOSKE=;
- b=v0QZVfd9BXJOUR4gs1Bu6syrnePJbsZZBeYZmN8mn4EU+qxm6RKXEwSet9sRIUI4mB1rk52SbNRS0Xmfe2lvVGNzpoWpWcPV8L5jFmRFw4YfWejPw4/cYngY8HBdyvXmth9PM/udXeggcUIIwf4vbKTXUFJanegnMhTj1jKwP73IRo+DtLwOXZV5wcEp6ewmc0SNaLJxSXGN7jRn0GYVzloNw8GyXL0T+zE5cQWQrEquj9cs6FXCFlZkIGMeeLFJ9QANbNBHtikkF/ZcaO4P/5vPwyBRrgjRK/0xrtarFArtew3kADD0So0e1ABqxsITVQb9tEzysbtzob5uE3yvqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jODA44V5I4ClCSnjKeZuI2H11A5nZOCM9Ef0M6bOSKE=;
- b=ukXo/foZVH+ZcSzvDhcMdaR9M9S7v3uiyFCWmwRI/yv18cG3ENe1sieSv9Kd9/ivZFcjYiur6FiPK2aeLfxUm6Th/FAfQXALO4w+94swoiVL92Xc9Dgqw8Yg+4znvpfLhuHBifPWwIK203UfoswHtisOR4r9mbZCS0beNmqV12yHSRqqdxEa/INBtIfIExcb3l38tbIydIlfz9rlei3OL9Lg3r+JkEwe1HRmrkmPS3/uWXKe5UEtguYwmuIBwEoRIK+KE1veQxw0KLWGtq9W3D5R3FtdcpCJ0RmKBhsOO17QymkUrrt/3MwZrRudv4cnjBKgmGXeGbfiVzHzJ5iGwg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by LV3PR12MB9187.namprd12.prod.outlook.com (2603:10b6:408:194::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 13:38:12 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 13:38:11 +0000
-Date: Mon, 20 Oct 2025 15:38:03 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/14] sched/deadline: Return EBUSY if dl_bw_cpus is zero
-Message-ID: <aPY7O7NNs2KyKpb-@gpd4>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-5-arighi@nvidia.com>
- <aPYFv6YcxqWez8aK@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPYFv6YcxqWez8aK@jlelli-thinkpadt14gen4.remote.csb>
-X-ClientProxiedBy: ZR2P278CA0038.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:47::7) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417F82C21E4
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760967537; cv=none; b=Xxd0+s493iVztp37DrNl01Jpv8rGua8uS1ysfhSfujXP9SDyExw3i/MY3xBPAf3SuGdwdpcwKGADOLeXVFJ/gfFRp0XLTXzYoU5AsKhTIYRh0M/AiE40OaINJX4zG7DpscP0cIjgMkJthK2QFHIcsyG6exJfB7w4KUowaxyFeCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760967537; c=relaxed/simple;
+	bh=9wQ2bND1mPIM6ed87fe7TH8lrL7VZNaGcj1Do/D1NgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6mDMwmqmpTEUHFB7BIIbaa4vANpooa/JC7QHgP3QfsNCTyiv+hLLJ9bpgFt/6BrXyR4z7d4EK9wx6KvzzktiaYURZev8dVuI8/5LCPhw91QOlKPtB9LQaOmEvh65mkd8wEWWve08oNYvRM/ChnEb4n/1qhgpsRz9LoIAMgg58A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S3mOaGB0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rsFaY7CX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dWa3K2mp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B++jNjrE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 51AC62117C;
+	Mon, 20 Oct 2025 13:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760967529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
+	b=S3mOaGB0jNO4C0J0XRF5qVzVHjCFjIiI/nmm1BCQ8d1G6cIi6MbrKAQ/VIyFC/4OzD3Wb9
+	poIpHkReq6Um2MFhHM1H8B6cZgv42u3l2GMME3XeZFbOw8/XyAOTxwCKdbW7pU/zcWZAnj
+	CehRbGGlnbg8Jwi5It3ZWvH6WAIi2HQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760967529;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
+	b=rsFaY7CXoyArNv+KymKvCp4BHUDuzfre1A0Rp8tQFoJj7bCcgyzZgEGITwzTsXYmfCIXdK
+	BT2r8zkZb5LuLBAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dWa3K2mp;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=B++jNjrE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760967525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
+	b=dWa3K2mpxO3qeBG/SxmVBHg79iHpPabFnHMOR7wY+R7pACNeu/3qtTcFzRDlcK9WH3XvBN
+	UCKBGvxV4JKmThVwu09IWaAtONgMgov5izDR3LuiEjjGqQCa4Kh/Z8BKfQoWG5mKDqMvmM
+	JQs+ougGIcbc3v/mm34YTRQ7s4JMg0k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760967525;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
+	b=B++jNjrEq2csaT1voFzTlIL4Ch5NzKgfvgbXR1w+x1DKsVwBnsAr6KD2T42r+hcUPSGhzf
+	COQ+LOhmrQNYm6CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D377D13AAC;
+	Mon, 20 Oct 2025 13:38:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9j5RJmQ79mhFcgAAD6G6ig
+	(envelope-from <ematsumiya@suse.de>); Mon, 20 Oct 2025 13:38:44 +0000
+Date: Mon, 20 Oct 2025 10:38:42 -0300
+From: Enzo Matsumiya <ematsumiya@suse.de>
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Call the calc_signature functions directly
+Message-ID: <jf5k4w47cw3jhc3nfmhwtaqtqxrqd5ufg4agpagacbxejyuhb7@udi3ed54kf3m>
+References: <1090391.1760961375@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|LV3PR12MB9187:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2afb530-2f7e-4438-bb07-08de0fdde9a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1+BsaDNcBso++LVQcLI1W6jZlPUAWJ1g8jdIrD6tDxrnvJatjWRxRrNOZ8+m?=
- =?us-ascii?Q?7lilgrFwLb+2o3HSeFnjJg6+6toqUU/CU2/YEdO544LHtOacR5e2G3/pQSlk?=
- =?us-ascii?Q?AECIFkGSVqjLqJqYRqvvgfaLMBJTk3v8H5+ky4HsZaZVyPFcAsyRItKpDXYZ?=
- =?us-ascii?Q?H2NZyMPOOLwG7gKa2llS7qh0JpvAXaMIbf3oIYDmX4wzF2wxQHExmn0/yYWG?=
- =?us-ascii?Q?taZdmXOI7S1iaN9VDDvIls/3+JEc3/WsH2fSBxyiPaez3OSoeNyvHUYTAFIH?=
- =?us-ascii?Q?wkEIruCMv6k3btp1/oc8VBd+3k6PZn5M9Og45pQURrCClJvrCfbtXTtJM9kR?=
- =?us-ascii?Q?81zdg4rnqqENUORXVI6nM1AzF/yCSiyizXw69D05FRYm8rYHkDGZIZdKtSV9?=
- =?us-ascii?Q?tpvPPNR6uGSjVB9cVjl5DmdR6zR20KlblAOGdI5dps7MSOzf7O+snBRIvB9z?=
- =?us-ascii?Q?qnrPu5N/n2oSFRhyWtA8dQjmOjijG1r0gCcKrVKDEXl6em1knX2EmVGYWNbH?=
- =?us-ascii?Q?cZrs/AHU0tSshTeE8o/acqRBMKjpmkcB1F4PVBYdFXD8T/g1bMhfiWokfZUs?=
- =?us-ascii?Q?CPdZn3HxtGWtnmPL94F2eHSLll3gU/yGKe9W4cTrY60aKRC+1t0bpw1BnG09?=
- =?us-ascii?Q?tB2PLYHcjBqT9FXJW4Zfmx2zXzRo9ZLRXVZw7HHl8W3NcvZgmEKrDKENqX6d?=
- =?us-ascii?Q?t6AUz+k9oKKSDCJIkpPbnPz0kNufrYzc2HLTCYweqQxWLBQ58EGBkb8ibHcu?=
- =?us-ascii?Q?LDFE2M52rriXpu5zSVrgK/x/QpRzQPxGucol00yYXoHhzVkxXlu8hwIaXNRU?=
- =?us-ascii?Q?awHvurHd2p3CKFdlbtn8Fld5yOg/hm1g9y//x60EwVUMCqLcnNOvR6s8bv7i?=
- =?us-ascii?Q?sfsArCuhDGglmEriMDDsE+9IJkrxcWh0gLMVhaev6C67nWR1jdYX8e+nR7fI?=
- =?us-ascii?Q?M/TS7vvT+XhgalHXwd5k4m+OMfj48eoCbVAbDgXMRU8vrrN+KZ+4N1Q0gB1L?=
- =?us-ascii?Q?OecaCSAH+o8yIGS8uNpyCGWQqoQSpQuS+wRuxqq+k0YxJ0cTfV13BNpZGlju?=
- =?us-ascii?Q?+NFL6dZVWfNNM97eSDLfhc692n4wpcSpITKEZdguc+KR6m0a5p7IVX4sfR8j?=
- =?us-ascii?Q?GXG3eOYqkf3mNzNv8sbCNgdHITOenW21jFBDM1IXlYpTfnNn7FrJYF5ItXqC?=
- =?us-ascii?Q?BYCPxmnhFE1HDQv62M85Fob2c3bc0p1DSWwTeTazjEWE3YuqGMPFxGK2bUSY?=
- =?us-ascii?Q?bxiB12uxvGICGMY5v1cCpTtnMcUqHdmubJmC1xT6ryZA5vjmim8UAgBtZKKu?=
- =?us-ascii?Q?FQMRZPGhImGw8pUJU44UzFsr+nwGZh3is+nnYe7wtJNzWB0HuRi+CCmahR6W?=
- =?us-ascii?Q?w75GyLOh38B0SHa9g+N8XJXPSLCwA/Z5Im9SwA2FFYKx8ZMhdhnXenJhHJBf?=
- =?us-ascii?Q?lFwX9djNzfWy4b0SxctgeuIeGm7LH2zt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XLS9ifvJagg87wOumo4ACljULQOCKCLK83ELh2TgNKwuRH0QglESK9Z1iU8z?=
- =?us-ascii?Q?jTKdxD7kwD2/JSLx/xjEILgcjw82dwzs8J5hbBqOhXhr9LE0axJBA/B8f6F1?=
- =?us-ascii?Q?TcPwuUhwuFqBBO37k2DuJ8jyoiA2URWVtIrT0ZECH57HC2o1tzcmODgf4bib?=
- =?us-ascii?Q?ykY+c5AqRDbKqsRMzYTqAHprdwjE0H79rxKY3LL97cBuF/mGw5RL67/2KXIb?=
- =?us-ascii?Q?I14nNvcuvR3+4sL/Iht8bVs3rp9Xov2rLdp7Uyfir0Tb9dknSZHyLOLygkve?=
- =?us-ascii?Q?V8qlGa/cifsf8KdMvPX01YSmoeGd++v16H2iyjPaIYNFaCvLQMhENrJjNn2s?=
- =?us-ascii?Q?zLWV4/TOLa2dxptX+AWA7Dub/e4fRMpmN5F/2nZFgf+DxfNxywJ/eGtOaKwV?=
- =?us-ascii?Q?7F4sArC4U5VH/sO7oPumAB8sTGT+xAQMRH/rwyBxdlwGs74h+GfgCh/TEL8+?=
- =?us-ascii?Q?uJVWDlOf3EBYbkneULSr5wcjW2vtg7FImpTY7Lbbeif6XffB+9+LsbUY8idS?=
- =?us-ascii?Q?SWfXkihpk+94A/9xEaY9m/dmCMlpA8prc83ncm/aTjkXrHvGcuriKXKVzBiw?=
- =?us-ascii?Q?bDcsrzRcH4lB8uB6P8hPWOjaZCdnO5U6/BirOcM0V8JLeqK16/Kk+4v9Y1Oa?=
- =?us-ascii?Q?JSZ/R/eCB9W/reehLEumiYP1lU6vKelaJyhmFpEp3jyvcvWGx25Kn3rgY7hY?=
- =?us-ascii?Q?WG3IBiLXu1Q15oUnNJWPl/Vv4jQC7Atr0/BgjYvnYxsb3/2A4H+BZ8iykX/J?=
- =?us-ascii?Q?Am6x0Y0ONZHjDMF6pHMT14JUcccmTtYKs7HfJAmV2pzWYODo2KqZVs+8EnBb?=
- =?us-ascii?Q?H7H3b7SjmKHSMq4Nh3VYJZA3GT7CiYHk51wCP354pSLArKxuHrA5YUKncSq4?=
- =?us-ascii?Q?rkkI5UDf9myWxjl0Ubn47EJjYTZOlEO10Iv1XXtciv/yZf9Ww5+I9vhmNc45?=
- =?us-ascii?Q?+lAtPPXJBac92masfm5wb7z2WHTFPRqk+t1gM4QVNFwlIpymdlmqTdtlUDcF?=
- =?us-ascii?Q?M3bzBfXmF9/FdZpAlJ2+mQOkfDyJxHFnQtL4i1jn38dOhRg3wwHwySa/8N2c?=
- =?us-ascii?Q?HwWulIe+kwYUll0kgTk1Q77ukqUBo5urSqZBzfGRneZMFnZQVInyb/wAbYUH?=
- =?us-ascii?Q?fvSC4SnDMiZVaMudyYb0xwdAMx3hcZ9R4apz2BKcQ4XK3okgrZbrAkQIhW0j?=
- =?us-ascii?Q?NdSllo8FvC6SucHA8ttM+iMek8+ksx3FKlX2vcgZLwXOFYdqWETK4ghHheaN?=
- =?us-ascii?Q?ycnfisLvBlaLFapVt0kxMSR9ns06AyrhpbJ720A60zKeciANmmSArOj/rrlJ?=
- =?us-ascii?Q?5SvW8ZJkRFFjuQz0iMI2ATAQHoDQPicXm6UksXIDHoKmlzap1ytdRKNwMWT5?=
- =?us-ascii?Q?XXY8Znu+mTb7txgwlJWlisoGARccBrqZL8SOm51RP+ASq841WpIOuXpCKv/F?=
- =?us-ascii?Q?o4m939vB3/tlQ/2xE0HvzJ2CzZW+GjUvwh58biygVz2jyTppH7jaJI9L5KsY?=
- =?us-ascii?Q?7VtzvM6xm8sn8llE4f84MEfY0YFKLZpUxw2ZLFmeMOr6q5es3xBmIiCby69V?=
- =?us-ascii?Q?jEU8vkBgx49X2eFkxUt36yQH7EXFyISf9+h73tUQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2afb530-2f7e-4438-bb07-08de0fdde9a9
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 13:38:11.8616
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kdKRc9DEt2aDM77CGU6iJ2NOpcz40VpMTpIhHBQuLDj8aT/+4yYS9kLf20VDqcP1QhB+uXsCSf1VXR/GYijHgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9187
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1090391.1760961375@warthog.procyon.org.uk>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 51AC62117C
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[samba.org:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.01
 
-On Mon, Oct 20, 2025 at 11:49:51AM +0200, Juri Lelli wrote:
-> Hi!
-> 
-> On 17/10/25 11:25, Andrea Righi wrote:
-> > From: Joel Fernandes <joelagnelf@nvidia.com>
-> > 
-> > Hotplugged CPUs coming online do an enqueue but are not a part of any
-> > root domain containing cpu_active() CPUs. So in this case, don't mess
-> > with accounting and we can retry later. Without this patch, we see
-> > crashes with sched_ext selftest's hotplug test due to divide by zero.
-> > 
-> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > ---
-> >  kernel/sched/deadline.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > index 4aefb34a1d38b..f2f5b1aea8e2b 100644
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -1665,7 +1665,12 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
-> >  	cpus = dl_bw_cpus(cpu);
-> >  	cap = dl_bw_capacity(cpu);
-> >  
-> > -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-> > +	/*
-> > +	 * Hotplugged CPUs coming online do an enqueue but are not a part of any
-> > +	 * root domain containing cpu_active() CPUs. So in this case, don't mess
-> > +	 * with accounting and we can retry later.
-> 
-> Later when? It seems a little vague. :)
+Hi David,
 
-Yeah, this comment is actually incorrect, we're not "retrying later"
-anymore (we used to do that in a previous version), now the params are
-applied via:
+On 10/20, David Howells wrote:
+>As the SMB1 and SMB2/3 calc_signature functions are called from separate
+>sign and verify paths, just call them directly rather than using a function
+>pointer.  The SMB3 calc_signature then jumps to the SMB2 variant if
+>necessary.
+>
+>Signed-off-by: David Howells <dhowells@redhat.com>
+>cc: Steve French <sfrench@samba.org>
+>cc: Paulo Alcantara <pc@manguebit.org>
+>cc: linux-cifs@vger.kernel.org
+>cc: linux-fsdevel@vger.kernel.org
+>---
+> fs/smb/client/cifsglob.h      |    2 --
+> fs/smb/client/smb2ops.c       |    4 ----
+> fs/smb/client/smb2proto.h     |    6 ------
+> fs/smb/client/smb2transport.c |   18 +++++++++---------
+> 4 files changed, 9 insertions(+), 21 deletions(-)
+>
+>diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+>index b91397dbb6aa..7297f0f01cb3 100644
+>--- a/fs/smb/client/cifsglob.h
+>+++ b/fs/smb/client/cifsglob.h
+>@@ -536,8 +536,6 @@ struct smb_version_operations {
+> 	void (*new_lease_key)(struct cifs_fid *);
+> 	int (*generate_signingkey)(struct cifs_ses *ses,
+> 				   struct TCP_Server_Info *server);
+>-	int (*calc_signature)(struct smb_rqst *, struct TCP_Server_Info *,
+>-				bool allocate_crypto);
+> 	int (*set_integrity)(const unsigned int, struct cifs_tcon *tcon,
+> 			     struct cifsFileInfo *src_file);
+> 	int (*enum_snapshots)(const unsigned int xid, struct cifs_tcon *tcon,
+>diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+>index 7c392cf5940b..66eee3440df6 100644
+>--- a/fs/smb/client/smb2ops.c
+>+++ b/fs/smb/client/smb2ops.c
+>@@ -5446,7 +5446,6 @@ struct smb_version_operations smb20_operations = {
+> 	.get_lease_key = smb2_get_lease_key,
+> 	.set_lease_key = smb2_set_lease_key,
+> 	.new_lease_key = smb2_new_lease_key,
+>-	.calc_signature = smb2_calc_signature,
+> 	.is_read_op = smb2_is_read_op,
+> 	.set_oplock_level = smb2_set_oplock_level,
+> 	.create_lease_buf = smb2_create_lease_buf,
+>@@ -5550,7 +5549,6 @@ struct smb_version_operations smb21_operations = {
+> 	.get_lease_key = smb2_get_lease_key,
+> 	.set_lease_key = smb2_set_lease_key,
+> 	.new_lease_key = smb2_new_lease_key,
+>-	.calc_signature = smb2_calc_signature,
+> 	.is_read_op = smb21_is_read_op,
+> 	.set_oplock_level = smb21_set_oplock_level,
+> 	.create_lease_buf = smb2_create_lease_buf,
+>@@ -5660,7 +5658,6 @@ struct smb_version_operations smb30_operations = {
+> 	.set_lease_key = smb2_set_lease_key,
+> 	.new_lease_key = smb2_new_lease_key,
+> 	.generate_signingkey = generate_smb30signingkey,
+>-	.calc_signature = smb3_calc_signature,
+> 	.set_integrity  = smb3_set_integrity,
+> 	.is_read_op = smb21_is_read_op,
+> 	.set_oplock_level = smb3_set_oplock_level,
+>@@ -5777,7 +5774,6 @@ struct smb_version_operations smb311_operations = {
+> 	.set_lease_key = smb2_set_lease_key,
+> 	.new_lease_key = smb2_new_lease_key,
+> 	.generate_signingkey = generate_smb311signingkey,
+>-	.calc_signature = smb3_calc_signature,
+> 	.set_integrity  = smb3_set_integrity,
+> 	.is_read_op = smb21_is_read_op,
+> 	.set_oplock_level = smb3_set_oplock_level,
+>diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
+>index b3f1398c9f79..7e98fbe7bf33 100644
+>--- a/fs/smb/client/smb2proto.h
+>+++ b/fs/smb/client/smb2proto.h
+>@@ -39,12 +39,6 @@ extern struct mid_q_entry *smb2_setup_async_request(
+> 			struct TCP_Server_Info *server, struct smb_rqst *rqst);
+> extern struct cifs_tcon *smb2_find_smb_tcon(struct TCP_Server_Info *server,
+> 						__u64 ses_id, __u32  tid);
+>-extern int smb2_calc_signature(struct smb_rqst *rqst,
+>-				struct TCP_Server_Info *server,
+>-				bool allocate_crypto);
+>-extern int smb3_calc_signature(struct smb_rqst *rqst,
+>-				struct TCP_Server_Info *server,
+>-				bool allocate_crypto);
+> extern void smb2_echo_request(struct work_struct *work);
+> extern __le32 smb2_get_lease_state(struct cifsInodeInfo *cinode);
+> extern bool smb2_is_valid_oplock_break(char *buffer,
+>diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
+>index 33f33013b392..916c131d763d 100644
+>--- a/fs/smb/client/smb2transport.c
+>+++ b/fs/smb/client/smb2transport.c
+>@@ -247,9 +247,9 @@ smb2_find_smb_tcon(struct TCP_Server_Info *server, __u64 ses_id, __u32  tid)
+> 	return tcon;
+> }
+>
+>-int
+>+static int
+> smb2_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
+>-			bool allocate_crypto)
+>+		    bool allocate_crypto)
+> {
+> 	int rc;
+> 	unsigned char smb2_signature[SMB2_HMACSHA256_SIZE];
+>@@ -576,9 +576,9 @@ generate_smb311signingkey(struct cifs_ses *ses,
+> 	return generate_smb3signingkey(ses, server, &triplet);
+> }
+>
+>-int
+>+static int
+> smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
+>-			bool allocate_crypto)
+>+		    bool allocate_crypto)
+> {
+> 	int rc;
+> 	unsigned char smb3_signature[SMB2_CMACAES_SIZE];
+>@@ -589,6 +589,9 @@ smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
+> 	struct smb_rqst drqst;
+> 	u8 key[SMB3_SIGN_KEY_SIZE];
+>
+>+	if ((server->vals->protocol_id & 0xf00) == 0x200)
 
-  ext.c:handle_hotplug() -> dl_server_on() -> dl_server_apply_params()
+Please use:
 
-Or via scx_enable() when an scx scheduler is loaded. So, I'm wondering if
-this condition is still needed. Will do some tests.
+   if (server->vals->protocol_id <= SMB21_PROT_ID)
 
-Thanks!
--Andrea
+Other than that
+
+Acked-by: Enzo Matsumiya <ematsumiya@suse.de>
+
+>+		return smb2_calc_signature(rqst, server, allocate_crypto);
+>+
+> 	rc = smb3_get_sign_key(le64_to_cpu(shdr->SessionId), server, key);
+> 	if (unlikely(rc)) {
+> 		cifs_server_dbg(FYI, "%s: Could not get signing key\n", __func__);
+>@@ -657,7 +660,6 @@ smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
+> static int
+> smb2_sign_rqst(struct smb_rqst *rqst, struct TCP_Server_Info *server)
+> {
+>-	int rc = 0;
+> 	struct smb2_hdr *shdr;
+> 	struct smb2_sess_setup_req *ssr;
+> 	bool is_binding;
+>@@ -684,9 +686,7 @@ smb2_sign_rqst(struct smb_rqst *rqst, struct TCP_Server_Info *server)
+> 		return 0;
+> 	}
+>
+>-	rc = server->ops->calc_signature(rqst, server, false);
+>-
+>-	return rc;
+>+	return smb3_calc_signature(rqst, server, false);
+> }
+>
+> int
+>@@ -722,7 +722,7 @@ smb2_verify_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server)
+>
+> 	memset(shdr->Signature, 0, SMB2_SIGNATURE_SIZE);
+>
+>-	rc = server->ops->calc_signature(rqst, server, true);
+>+	rc = smb3_calc_signature(rqst, server, true);
+>
+> 	if (rc)
+> 		return rc;
+>
+>
 
