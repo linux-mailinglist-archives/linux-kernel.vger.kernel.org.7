@@ -1,135 +1,207 @@
-Return-Path: <linux-kernel+bounces-861313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1F5BF2598
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:15:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC564BF25AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8622C34DF45
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:15:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C8CB4F7C35
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F5C285C8C;
-	Mon, 20 Oct 2025 16:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85AD285CA4;
+	Mon, 20 Oct 2025 16:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TJn04CwI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cIZuMcJ5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Frw6gIzy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE52149E17
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1630D1F875A;
+	Mon, 20 Oct 2025 16:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976939; cv=none; b=Rao5k62VKESi9a9AcgAHpa9mvLcIQ6pD5MUbR2cEGNCYZsEpd0zQlSyEZCI4bTJphaQ7yudsvlq3lv8RSFWJkELohJWMj9BBEiNvkcbv8rgYMeV508jyDjgfiXBSdEWvFzebJ+jaSEu4UjC9bwMFr/FtAuX2db+XfiGRzaQWrV8=
+	t=1760977004; cv=none; b=I8x6NaU7fCL6tg4VHHHl3xTonLuzWEPGd4YBGBn3i21YR81ynxR9uHRSmbDE5iiJfGRnD/uBZSWcJyaM7a0v+/OKopDp/pIhKOA5VhFqgrRUMUlNwvgSjtL6ORYLeoT6Ifbn1nLsFCLVwEQnpIVF7PgYYJAtclXGfaMGY0a1hws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976939; c=relaxed/simple;
-	bh=cPmhMPpHMf9OZXvBCKCLmUgibMzQ5xtsqijFgeLuud0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbDU4mmVmtaBXq8+d3xLX4uEv9fKqlPuRv/4HuTELwydw3hL1J5BG7HdseEN+JRT/Gfyebj70I7RsFvKEWx9mA7YGSNilHAzaRSThIQ+4BTZhDs2L7yYyB0PNAETMGN0ym9aJVX5ICgTjXbNEio6cxMDiuXOCr0boaNtDARhdLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TJn04CwI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760976937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1760977004; c=relaxed/simple;
+	bh=KiMV88naAvNGqD6/P2CoP/o4jIDZv0w8Ks277SHNBcY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qLftKF/0//eITtN/MHqC+2cD28Zwx64OTfIlGia+1+hyAbdKyDoYO6cv5Qgav1Rn3wy1AEZW+0Rh0rFYYrGd82EEhvlaDcUpNBRyR5RvCd4ZTTbig0CggYiMyTgy05IW9H8VCZ7C8VKBHXBpeLZeg5S5QdgT/z2YZCHsIm5epQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cIZuMcJ5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Frw6gIzy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 20 Oct 2025 16:16:35 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760977000;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BJxplQWUUgvPACnS8sqBaCwMVjdrCjqo1EJhgx6jkt8=;
-	b=TJn04CwIEkQMGVbjoYG2e4UqcA7sGipkn1/aEZ1RX4CcFjx+VejJ/wCHaI/dGY6ommV6Vg
-	niVPJfZV8uW9thtmshIeoHx5gtW0l7kjRPhArFmkvyikT7W6h/qPxlTZYrQBsfIq+G4TSu
-	5LHqYDfDpjMyNu4Q6PVBXAQtjojESg0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-T3D5TdA6NSWAh3FWh3CnkA-1; Mon, 20 Oct 2025 12:15:35 -0400
-X-MC-Unique: T3D5TdA6NSWAh3FWh3CnkA-1
-X-Mimecast-MFC-AGG-ID: T3D5TdA6NSWAh3FWh3CnkA_1760976934
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-470fd59d325so25007845e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:15:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976934; x=1761581734;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BJxplQWUUgvPACnS8sqBaCwMVjdrCjqo1EJhgx6jkt8=;
-        b=UiQGwWquhPd9vJqc7MPSQE4cu6gpKocpH8pEKpXwX2Ha3m6xswyA/oKSFhIvLQvR3h
-         zgb8iZ0dpJ7krpmT7byjtH5+gE7F7k/GVwyV9xbv1YfYiV4yL2KF/0S6UC5U68vrSRVe
-         O5xf66NqwNSNZsDuVPo5G4UeudiXOZe6ljPOpYtgmMSH+ExrlXNpLQ28cjDQXB93ibp5
-         MG4EmAq55ow/Xkcg/R5cVZKe9I7qFp4n25UMeMXENoP+vLu+/sCiepn7fbnpNBsH2SR/
-         YLnJYM4MXPjKfLsQ7jSrb7pHtKGxw1bo5BPSilIPi41ft/sYcCsScIICFFkymGParnQv
-         l2zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/N1U5NjFLwXik/AyrDGI0sslWmm38MqDJqOPfaQjGdetTVomniWQ4HieOjiMTNqsWx3hQQbui9osHNCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+pasYoIXRXua/OW1ifgoH49/SGQo7flI71gh28pvUIhf+KtEh
-	Tw7BWvePmC09FIrlKtgjDECoI9LGwpTA38QrCrGACIaPflrDQEnN+rlDk+IRbA5lBZPXBLKsfwG
-	1NITcynshhHo4LOBYx+RveaZ+fIgz1hhfMJ2uli/NpFdNOV94Jq1VNUz5ntxkX3CwAw==
-X-Gm-Gg: ASbGncsOLxYUealeBRXcFnggzWCJTe7wWWLoEsW701543AWerhuQX+haxORUN3A936i
-	POykXNojeYdhMubx07JLIpb/1THuTpf9P3ML66NgkXEKmk7JWfus3DTslAcgm13o4FVHneZUImJ
-	SuBfCE9Wkp4vjjDfM7RJRnBzp5v/x4Wt6i1icE+/UzKwsWN4zhGs3JnLK11emTgiZ6R01eUycKO
-	AI7kSTjKgKFpllD5xy7H3mSXsda7FqrogNaTLdAzfW6inMnu1rrw3PuW7gDWQ9yGefbKSWNbepI
-	876G+kLsPzb5a/fkD9as2JZHfzkHZVqk1m0OKuO8yKkP4EAgv3gLI/9ieNt0/T1KhMGr
-X-Received: by 2002:a05:600c:540c:b0:46e:46c8:edac with SMTP id 5b1f17b1804b1-471178a6f9emr90894785e9.11.1760976934205;
-        Mon, 20 Oct 2025 09:15:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfD1sVXteUr24GtFdMBM0eLxjgwGriWkSrDglWOuWS3Nl4AUBUsgwyoowFrJaYLNlrtXxv8g==
-X-Received: by 2002:a05:600c:540c:b0:46e:46c8:edac with SMTP id 5b1f17b1804b1-471178a6f9emr90893495e9.11.1760976931307;
-        Mon, 20 Oct 2025 09:15:31 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0e9csm16201513f8f.5.2025.10.20.09.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 09:15:30 -0700 (PDT)
-Date: Mon, 20 Oct 2025 12:15:28 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8 12/19] virtio_ring: switch to use unsigned int for
- virtqueue_poll_packed()
-Message-ID: <20251020121235-mutt-send-email-mst@kernel.org>
-References: <20251020071003.28834-1-jasowang@redhat.com>
- <20251020071003.28834-13-jasowang@redhat.com>
+	bh=SwMa4qwpeiYK6uMvBc/dyrJpfPZJ8N70kiMTfYlE7ao=;
+	b=cIZuMcJ5Fse0lXCBu99UQkZdPHGqqtWElUD1F1AhlrBdg6we8zMajdfu7+GradWKBWC5B7
+	NA4Geq4JQ0P04ZPGHoQz0SPz2aCO8IYRP37CmBW2drIwt5wvCYNIxBfQlBAvG9FlXOsUY8
+	FyWPzeVtQa6VUv1W7Pl2tyeJ/ju6DaF4amN02mlAheddUBJR2F3R1v7bKOv7FeXqWHu+9x
+	yJMmFyD+mApgaU4MdR0UhRbbaj/B9Vt3LoOjFeu1N0uDaP/eqIZS6ZPqJQ94VzTgFxGJke
+	ORnddZD5X6j+Ky5d4xPBLALegum3zkCYSjCdupzyT9YsISBDPN9pkar3MUUlMg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760977000;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SwMa4qwpeiYK6uMvBc/dyrJpfPZJ8N70kiMTfYlE7ao=;
+	b=Frw6gIzy1lK9flHWzdqzT6HIfGf0arTkqHfFnv/eRlKpoccZC80tGl1vPorkmIvqCEBH2L
+	YU5glqRCky3BgXBQ==
+From: "tip-bot2 for Babu Moger" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86,fs/resctrl: Fix NULL pointer dereference with
+ events force-disabled in mbm_event mode
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <a62e6ac063d0693475615edd213d5be5e55443e6.1760560934.git.babu.moger@amd.com>
+References:
+ <a62e6ac063d0693475615edd213d5be5e55443e6.1760560934.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020071003.28834-13-jasowang@redhat.com>
+Message-ID: <176097699593.2601451.1411282576310072979.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 03:09:56PM +0800, Jason Wang wrote:
-> Switch to use unsigned int for virtqueue_poll_packed() to match
-> virtqueue_poll() and virtqueue_poll_split() and ease
+The following commit has been merged into the x86/urgent branch of tip:
 
-and to ease
+Commit-ID:     19de7113bfac33ba92c004a9b510612bb745cfa0
+Gitweb:        https://git.kernel.org/tip/19de7113bfac33ba92c004a9b510612bb74=
+5cfa0
+Author:        Babu Moger <babu.moger@amd.com>
+AuthorDate:    Thu, 16 Oct 2025 08:34:19 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 20 Oct 2025 18:06:31 +02:00
 
-> the abstraction
-> the virtqueue ops.
+x86,fs/resctrl: Fix NULL pointer dereference with events force-disabled in mb=
+m_event mode
 
-of the virtqueue ops
+The following NULL pointer dereference is encountered on mount of resctrl fs
+after booting a system that supports assignable counters with the
+"rdt=3D!mbmtotal,!mbmlocal" kernel parameters:
 
+  BUG: kernel NULL pointer dereference, address: 0000000000000008
+  RIP: 0010:mbm_cntr_get
+  Call Trace:
+  rdtgroup_assign_cntr_event
+  rdtgroup_assign_cntrs
+  rdt_get_tree
 
-> 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 58c03a8aab85..73dcc6984e33 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -1699,7 +1699,8 @@ static inline bool is_used_desc_packed(const struct vring_virtqueue *vq,
->  	return avail == used && used == used_wrap_counter;
->  }
->  
-> -static bool virtqueue_poll_packed(const struct vring_virtqueue *vq, u16 off_wrap)
-> +static bool virtqueue_poll_packed(const struct vring_virtqueue *vq,
-> +				  unsigned int off_wrap)
->  {
->  	bool wrap_counter;
->  	u16 used_idx;
-> -- 
-> 2.31.1
+Specifying the kernel parameter "rdt=3D!mbmtotal,!mbmlocal" effectively disab=
+les
+the legacy X86_FEATURE_CQM_MBM_TOTAL and X86_FEATURE_CQM_MBM_LOCAL features
+and the MBM events they represent. This results in the per-domain MBM event
+related data structures to not be allocated during early initialization.
 
+resctrl fs initialization follows by implicitly enabling both MBM total and
+local events on a system that supports assignable counters (mbm_event mode),
+but this enabling occurs after the per-domain data structures have been
+created.
+
+After booting, resctrl fs assumes that an enabled event can access all its
+state. This results in NULL pointer dereference when resctrl attempts to
+access the un-allocated structures of an enabled event.
+
+Remove the late MBM event enabling from resctrl fs.
+
+This leaves a problem where the X86_FEATURE_CQM_MBM_TOTAL and
+X86_FEATURE_CQM_MBM_LOCAL features may be disabled while assignable counter
+(mbm_event) mode is enabled without any events to support. Switching between
+the "default" and "mbm_event" mode without any events is not practical.
+
+Create a dependency between the X86_FEATURE_{CQM_MBM_TOTAL,CQM_MBM_LOCAL} and
+X86_FEATURE_ABMC (assignable counter) hardware features. An x86 system that
+supports assignable counters now requires support of X86_FEATURE_CQM_MBM_TOTAL
+or X86_FEATURE_CQM_MBM_LOCAL.
+
+This ensures all needed MBM related data structures are created before use and
+that it is only possible to switch between "default" and "mbm_event" mode when
+the same events are available in both modes. This dependency does not exist in
+the hardware but this usage of these feature settings work for known systems.
+
+  [ bp: Massage commit message. ]
+
+Fixes: 13390861b426e ("x86,fs/resctrl: Detect Assignable Bandwidth Monitoring=
+ feature details")
+Co-developed-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Link: https://patch.msgid.link/a62e6ac063d0693475615edd213d5be5e55443e6.17605=
+60934.git.babu.moger@amd.com
+---
+ arch/x86/kernel/cpu/resctrl/monitor.c | 11 ++++++++++-
+ fs/resctrl/monitor.c                  | 16 +++++++---------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resc=
+trl/monitor.c
+index 2cd25a0..fe1a2aa 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -458,7 +458,16 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ 		r->mon.mbm_cfg_mask =3D ecx & MAX_EVT_CONFIG_BITS;
+ 	}
+=20
+-	if (rdt_cpu_has(X86_FEATURE_ABMC)) {
++	/*
++	 * resctrl assumes a system that supports assignable counters can
++	 * switch to "default" mode. Ensure that there is a "default" mode
++	 * to switch to. This enforces a dependency between the independent
++	 * X86_FEATURE_ABMC and X86_FEATURE_CQM_MBM_TOTAL/X86_FEATURE_CQM_MBM_LOCAL
++	 * hardware features.
++	 */
++	if (rdt_cpu_has(X86_FEATURE_ABMC) &&
++	    (rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL) ||
++	     rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL))) {
+ 		r->mon.mbm_cntr_assignable =3D true;
+ 		cpuid_count(0x80000020, 5, &eax, &ebx, &ecx, &edx);
+ 		r->mon.num_mbm_cntrs =3D (ebx & GENMASK(15, 0)) + 1;
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index 4076336..572a992 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -1782,15 +1782,13 @@ int resctrl_mon_resource_init(void)
+ 		mba_mbps_default_event =3D QOS_L3_MBM_TOTAL_EVENT_ID;
+=20
+ 	if (r->mon.mbm_cntr_assignable) {
+-		if (!resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
+-			resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID);
+-		if (!resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
+-			resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID);
+-		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg =3D r->mon.mbm_cfg_mask;
+-		mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg =3D r->mon.mbm_cfg_mask &
+-								   (READS_TO_LOCAL_MEM |
+-								    READS_TO_LOCAL_S_MEM |
+-								    NON_TEMP_WRITE_TO_LOCAL_MEM);
++		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
++			mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg =3D r->mon.mbm_cfg_mask;
++		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
++			mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg =3D r->mon.mbm_cfg_mask &
++									   (READS_TO_LOCAL_MEM |
++									    READS_TO_LOCAL_S_MEM |
++									    NON_TEMP_WRITE_TO_LOCAL_MEM);
+ 		r->mon.mbm_assign_on_mkdir =3D true;
+ 		resctrl_file_fflags_init("num_mbm_cntrs",
+ 					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
 
