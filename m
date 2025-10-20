@@ -1,170 +1,200 @@
-Return-Path: <linux-kernel+bounces-861028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8130FBF19EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD86BF199D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AEAF74F80A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E3542357E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FFB32AAC4;
-	Mon, 20 Oct 2025 13:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="jlN+RZE9"
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA34432ABC4;
+	Mon, 20 Oct 2025 13:42:47 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482AB320CC9;
-	Mon, 20 Oct 2025 13:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2019932AACD
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760967762; cv=none; b=dT7CEgFYty41L1ZbxqtDWGwW1WM+NO2TlxkIOwJ2zbjzD+6zagUQrxb66W6CyorATNY2kNuzix9f/1s3JPV9AAcFEd7HQ7pMKeD+XsEoXmkbOSGEDhjICZRIB/8q5IMat5S6IuIroXCn600lIV+QjcF7i8SBsMfXD/N3qFM5CFU=
+	t=1760967767; cv=none; b=ko9pnKmtKZClZGaYhTELTlFW+xT39Vo1VEPwvJ+HFiLI3w153NJVHSj4bmjem1BX6L3V4zb2tAha7K7uIygUV55PA+0pJYuBV9mUDtP/nxG7cks5M+Gf9XLJ3LELyunqiasLFsk9I7sXtQ3zIzRaR3JGAERtm0dlo9rwh6QL99I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760967762; c=relaxed/simple;
-	bh=NYIcWPB3HB87TMKzTL0Sak6CDFuBEJcCgrUOwcRT2ss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BsIByOcOw5HCNVAyBZBFZ6rZje64d6SNPSnHbWyydhep9TMiKLKY42oTjUFStKCrL63oepys5KHNhUwuc6O9M7W7AkFlNbnhiq2OZgg2fK03Eu6dqDCV95osJ3TMd0L4G1FopfZAEKcvW5huMwy9sOU6RsoTo0JlsDBrsUhCqEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=jlN+RZE9; arc=none smtp.client-ip=216.71.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1760967762; x=1792503762;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NYIcWPB3HB87TMKzTL0Sak6CDFuBEJcCgrUOwcRT2ss=;
-  b=jlN+RZE9BDBd3mWVEhKUFyW//oYwVy/TmUczXOWBKHzoD5nrPf3uIKoQ
-   oC1quyn9Wk2w+u93BoL9vK/yRBsEhDpF35jOnayZSLnljRReHWGzj3/fv
-   07kfaUnAjWUKffRHRdruFzswFQIPlWCYQPCALLyBuP0NRC2WmH09ugZHF
-   q2dwwnjtbjLl7DtUkfEXv5DhWKQnF1HyOdW3gcdtyDK3/7j6gI1wOQ5+g
-   noKCligjOb+kk1GvnX8UchRNHcKXhgIkQACwoDXrJhBfyTh5QLhDAmon5
-   YTy3n2JvR++3UL4cHPpIPID7s+8BW7JNBjR7Ewxwasmaf/EJUKJ4bs2yR
-   A==;
-X-CSE-ConnectionGUID: 3MUKF46ORVi4889FyiVJlg==
-X-CSE-MsgGUID: jL2x8eHaSpOBPi37QVUnAg==
-X-IronPort-AV: E=Sophos;i="6.19,242,1754928000"; 
-   d="scan'208";a="134518687"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep03.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Oct 2025 21:42:41 +0800
-IronPort-SDR: 68f63c50_2OxoRKbsNO9+K43s5AxCyO2gry8KeD4uyHUV/lDBjW+sFS3
- aBDYdHzrpzU9sj1JMjF0IHc3DLtL9JEOR8ymuNA==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep03.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Oct 2025 06:42:41 -0700
-WDCIronportException: Internal
-Received: from 1pgdl13.ad.shared (HELO neo.fritz.box) ([10.224.28.46])
-  by uls-op-cesaip02.wdc.com with ESMTP; 20 Oct 2025 06:42:37 -0700
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To: axboe@kernel.dk
-Cc: chaitanyak@nvidia.com,
-	dlemoal@kernel.org,
-	hare@suse.de,
-	hch@lst.de,
-	john.g.garry@oracle.com,
-	linux-block@vger.kernel.org,
-	linux-btrace@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	martin.petersen@oracle.com,
-	mathieu.desnoyers@efficios.com,
-	mhiramat@kernel.org,
-	naohiro.aota@wdc.com,
-	rostedt@goodmis.org,
-	shinichiro.kawasaki@wdc.com,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v4 16/16] blktrace: handle BLKTRACESETUP2 ioctl
-Date: Mon, 20 Oct 2025 15:41:23 +0200
-Message-ID: <20251020134123.119058-17-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251020134123.119058-1-johannes.thumshirn@wdc.com>
-References: <20251020134123.119058-1-johannes.thumshirn@wdc.com>
+	s=arc-20240116; t=1760967767; c=relaxed/simple;
+	bh=OBcex5OTPX795T0RzQ28tSO2c+mInHsmWctTSaRbFL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pt3HA3PtOWOAjkOP4z/YRuP/GmBORWb2JWzCnU+pYKtmoJ75BCkB/syTsxZIvWbSehz/vk92LmTWUOfUR3e//vl58ugBEaAC/zzRb2OqpQ8CTKxdHg4B+6egNJMi6aHZPjCKxVuoy4D+UbV2Q5D+Z+JqOkHg3I9iVDNFsiYi5fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-8fb58f2b820so2470547241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:42:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760967764; x=1761572564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VaoJvkckgwvI7BiUEGUU/6/pih+zeGwr4mjBxmqvp+k=;
+        b=ku7IlSIBfA5F3PEY+TWO/3UVRemFoVpZ7p0wn+NKh/XOgzb9o8AxzdnC5KMQfe3P+4
+         Vj0OYGNq8K4yhfLzq7d/W7PPcqmDzQHnn9XiUbIpAkqPnX3SRxYyILurYzru4hJsMGe2
+         puLaisLyePhb0rl6JVoCgsu/2PaViubtjcqAYj8/DRMo9YmdPcaMVvEfrAtuWR5vZCHM
+         6H9jl+S5ywlodtagGFUfMoH1iUig1K6tIVBiG9x4k5fab9aeZ9ciran6K4KTocvk2rDS
+         nhe1i6gQYq/ouMliT7gofWkOBBIfXJHBhikPnFB29j5A9aTlt31StgNPAvsGxGxh8M2z
+         COxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUDq2gJEwS7jkLVORo6R/Act02V2l/g+iiyz88I2IXugBeDwp4po55sGnjn4HgrJew1i8DRzMGfYJDamA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuNu8DBjlpQ/268VW4zf9bJfVNQT1ymAhqQC0jb1Qu5JoJ1VPc
+	Ap4zGvL9yFHu+FZ71jo7YQ+XRBZQ6LbebPKT6IjHx0iLNIxpsu4JyKjlhsL+gJVy
+X-Gm-Gg: ASbGncuCh30WcSk1CWZTsMq5R7HvdMrKGDOYj+u5meattSSP8P9MTd9fk5C8jJyF3rE
+	Geiyel/g7vqpGJHZCHPpnd6f1+EVugwjUwjVg+KKyyf4H5YhBfSAG/Qrb1U1tARhe9l0TOnrayS
+	KZumIaTS9tqwsgmntLXaz53A93KLFH2250Oo2b8/xtxj1vflA/dlR46EjDAh5zUW5pI5Swe+FIP
+	hDUS6OdO/NtYL7ke5L57zbqDFGUcGiFBaSSMg+XNxpce8JKrhke+NPofouSSbqoioHugU0CbXm6
+	eywyNgcxfZLcztjEv1vGHSxwZCxnlS6ltLbHm8fF+X75ytLnvIdJ1RYSYx9Fpbnl//2voJpV6T5
+	zm7Z5Wm6NnGX5W90ItVu/XWhp8QO3hfvkSjLoi7PadROOfptWfQfgCz4JhvsoZDy/6P4qMBndHy
+	S8r5C3CTP4FiTJToyA4HH+2kXBgYtx40gIP/nRzA==
+X-Google-Smtp-Source: AGHT+IGzzmlyvEQwBP2TCQ20lmB+GukdVU3ycYzDzr3e+CvhXPhpq/tqbOSscOij1andzfmKL12RMw==
+X-Received: by 2002:a05:6102:38d3:b0:56c:eed1:276d with SMTP id ada2fe7eead31-5d7dd5b951cmr4392967137.18.1760967763681;
+        Mon, 20 Oct 2025 06:42:43 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d96c25dd20sm2513576137.11.2025.10.20.06.42.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 06:42:43 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-932bb8636f8so1828171241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:42:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGtxU8IS7k5fdbTfZALzCj/JIgT7vpvLQT8Gv0fnr0lp/CEjVWevZQk5QBmb40S37qmbqFAf4PKtefk9E=@vger.kernel.org
+X-Received: by 2002:a05:6102:30dc:10b0:5d7:e095:9398 with SMTP id
+ ada2fe7eead31-5d7e095983dmr2892907137.30.1760967763055; Mon, 20 Oct 2025
+ 06:42:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 20 Oct 2025 15:42:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com>
+X-Gm-Features: AS18NWAs9KN2FaEXaNCdOiFdwPBQPDTNxUr11vq1wTHrkD5pV6effUucshx_MRw
+Message-ID: <CAMuHMdVwAkC0XOU_SZ0HeH0+oT-j5SvKyRcFcJbbes624Yu9uQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] PCI & resource: Make coalescing host bridge windows safer
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.or>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Handle the BLKTRACESETUP2 ioctl, requesting an extended version of the
-blktrace protocol from user-space.
+Hi Ilpo,
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- block/ioctl.c           |  1 +
- kernel/trace/blktrace.c | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+On Fri, 10 Oct 2025 at 16:42, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+> Here's a series for Geert to test if this fixes the improper coalescing
+> of resources as was experienced with the pci_add_resource() change (I
+> know the breaking change was pulled before 6.18 main PR but I'd want to
+> retry it later once the known issues have been addressed). The expected
+> result is there'll be two adjacent host bridge resources in the
+> resource tree as the different name should disallow coalescing them
+> together, and therefore BAR0 has a window into which it belongs to.
+>
+> Generic info for the series:
+>
+> PCI host bridge windows were coalesced in place into one of the structs
+> on the resources list. The host bridge window coalescing code does not
+> know who holds references and still needs the struct resource it's
+> coalescing from/to so it is safer to perform coalescing into entirely
+> a new struct resource instead and leave the old resource addresses as
+> they were.
+>
+> The checks when coalescing is allowed are also made stricter so that
+> only resources that have identical the metadata can be coalesced.
+>
+> As a bonus, there's also a bit of framework to easily create kunit
+> tests for resource tree functions (beyond just resource_coalesce()).
+>
+> Ilpo J=C3=A4rvinen (3):
+>   PCI: Refactor host bridge window coalescing loop to use prev
+>   PCI: Do not coalesce host bridge resource structs in place
+>   resource, kunit: add test case for resource_coalesce()
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index d7489a56b33c..3927ca4707d0 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -691,6 +691,7 @@ long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
- 
- 	/* Incompatible alignment on i386 */
- 	case BLKTRACESETUP:
-+	case BLKTRACESETUP2:
- 		return blk_trace_ioctl(bdev, cmd, argp);
- 	default:
- 		break;
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 75994671d7ee..c4f0b84482ca 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -748,6 +748,38 @@ int blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- }
- EXPORT_SYMBOL_GPL(blk_trace_setup);
- 
-+static int blk_trace_setup2(struct request_queue *q, char *name, dev_t dev,
-+			    struct block_device *bdev, char __user *arg)
-+{
-+	struct blk_user_trace_setup2 buts2;
-+	struct blk_trace *bt;
-+
-+	if (copy_from_user(&buts2, arg, sizeof(buts2)))
-+		return -EFAULT;
-+
-+	if (!buts2.buf_size || !buts2.buf_nr)
-+		return -EINVAL;
-+
-+	if (buts2.flags != 0)
-+		return -EINVAL;
-+
-+	mutex_lock(&q->debugfs_mutex);
-+	bt = blk_trace_setup_prepare(q, name, dev, buts2.buf_size, buts2.buf_nr,
-+				     bdev);
-+	if (IS_ERR(bt)) {
-+		mutex_unlock(&q->debugfs_mutex);
-+		return PTR_ERR(bt);
-+	}
-+	blk_trace_setup_finalize(q, name, 2, bt, &buts2);
-+	mutex_unlock(&q->debugfs_mutex);
-+
-+	if (copy_to_user(arg, &buts2, sizeof(buts2))) {
-+		blk_trace_remove(q);
-+		return -EFAULT;
-+	}
-+	return 0;
-+}
-+
- #if defined(CONFIG_COMPAT) && defined(CONFIG_X86_64)
- static int compat_blk_trace_setup(struct request_queue *q, char *name,
- 				  dev_t dev, struct block_device *bdev,
-@@ -838,6 +870,10 @@ int blk_trace_ioctl(struct block_device *bdev, unsigned cmd, char __user *arg)
- 	char b[BDEVNAME_SIZE];
- 
- 	switch (cmd) {
-+	case BLKTRACESETUP2:
-+		snprintf(b, sizeof(b), "%pg", bdev);
-+		ret = blk_trace_setup2(q, b, bdev->bd_dev, bdev, arg);
-+		break;
- 	case BLKTRACESETUP:
- 		snprintf(b, sizeof(b), "%pg", bdev);
- 		ret = blk_trace_setup(q, b, bdev->bd_dev, bdev, arg);
--- 
-2.51.0
+Thanks for your series!
 
+I have applied this on top of commit 06b77d5647a4d6a7 ("PCI:
+Mark resources IORESOURCE_UNSET when outside bridge windows"), and
+gave it a a try on Koelsch (R-Car M2-W).
+
+Impact on dmesg (for the first PCI/USB) instance:
+
+     pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
+     pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
+-> 0x00ee080000
+     pci-rcar-gen2 ee090000.pci: PCI: revision 11
+     pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+     pci_bus 0000:00: root bus resource [bus 00]
+     pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
+     pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
+PCI endpoint
+    -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]: no initial
+claim (no window)
+     pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
+    -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
+initial claim (no window)
+     pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
+     pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
+PCI endpoint
+    -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
+claim (no window)
+     pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
+     pci 0000:00:01.0: supports D1 D2
+     pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
+     pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
+PCI endpoint
+    -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
+claim (no window)
+     pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
+     pci 0000:00:02.0: supports D1 D2
+     pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
+     PCI: bus0: Fast back to back transfers disabled
+     pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
+     pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
+     pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
+     pci 0000:00:01.0: enabling device (0140 -> 0142)
+     pci 0000:00:02.0: enabling device (0140 -> 0142)
+
+I.e. the "no initial claim (no window)" messages introduced by commit
+06b77d5647a4d6a7 are no longer seen.
+The BARs still show "mem size <n>" instead of the "mem <start>-<end>"
+before commit 06b77d5647a4d6a7, though.
+
+This series has not impact on /proc/iomem, or on the output of
+"lspci -v" (commit 06b77d5647a4d6a7 also had no impact here).
+I.e. the part of /proc/iomem related to the first PCI/USB instance
+still looks like:
+
+    ee080000-ee08ffff : pci@ee090000
+      ee080000-ee080fff : 0000:00:01.0
+        ee080000-ee080fff : ohci_hcd
+      ee081000-ee0810ff : 0000:00:02.0
+        ee081000-ee0810ff : ehci_hcd
+    ee090000-ee090bff : ee090000.pci pci@ee090000
+
+I hope this matches your expectation.s
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
