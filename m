@@ -1,161 +1,141 @@
-Return-Path: <linux-kernel+bounces-861347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A41ABF27C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC39BF2B27
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF82F18C2628
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C032A460FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0703254A1;
-	Mon, 20 Oct 2025 16:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3A23314DE;
+	Mon, 20 Oct 2025 17:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQsMR9Ok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HEIgDkpP"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D649321457;
-	Mon, 20 Oct 2025 16:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD612FB618;
+	Mon, 20 Oct 2025 17:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760978357; cv=none; b=uAHXjef45eCdtqZaddYawNkO1F0hokDy2XiHBp/Lb9RN3l6V0Kk778Jg4D3MwpClL2e/njfevi2Wio1UZBnoklnBcAr1oo6bKZKE58tOr8YldyuV11S4AS1IfiChXEQ/le+ZK2XdxKnqjSW4hY8AEAnXu/DPhpUflHRA2oZvEIA=
+	t=1760981073; cv=none; b=qg5X9keuQ2P9Xlhnzu2GyM2N3OMvMBpEZK73gzdy62Y/CVOWnO8+1sfUBVYaq3VCyMFkL93wDL1ufD5Cj+r7SRMuxPzMkboVuqifDy8Usam3rslO8/0pA/DwWwZRiFEydsrB4uNkININN69dJUt5RGGKfhVWSgT6iAUOc6uezM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760978357; c=relaxed/simple;
-	bh=eeCxTQhmLEWvE9BlEKDnreJyLFhJt0Baibzlj367w+c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m9w3PMxMxLKrf1BuOL5ZGC4yejmbV2Iym99tDlaxPk6gijnFRYt6JdYP/7A1iWcujnrGkMKQa0SjpWHcqTNXyEANgM/bGyXmuyeLqA4xvkiI7w64JJvGxdCwSU42leZlPeWK54zUAVGVu6CiPZpfOLLMzDBYe3Mxr70yhp08c/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQsMR9Ok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 280ECC4CEF9;
-	Mon, 20 Oct 2025 16:39:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760978356;
-	bh=eeCxTQhmLEWvE9BlEKDnreJyLFhJt0Baibzlj367w+c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CQsMR9OkVjqYfwZfIiYj58LavMSP9Z1SzFU3bx51MNN7IRRorGu/mCR3C/f2SswJn
-	 /+Lwdv/mjLt7HcjyOEAX5oGu2dGldpjxlxBvgYHcjZt9ntQ9eKhcaQz5C8m3/H6Bph
-	 IUz7T3xdbO+hOm+MHq9d9179WyxV7/mNCVwSD43MqST4V/t98UxvCGTvcUF6mw72UJ
-	 dutwt6+PeKQw7gT++pYzgAFI1s939Zai7aRohv7LRtJjJ66SqW41LjeE46L/rz0CYv
-	 O3SyAXrRAhCPHRXkF1NLvXcPEe4C4JJfWVxirlGy1c5WGvNu/azJZe1KT4H4FGCecK
-	 5fkvRq77mNV8A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vAsuf-0000000FZt9-3Yhi;
-	Mon, 20 Oct 2025 16:39:13 +0000
-Date: Mon, 20 Oct 2025 17:39:13 +0100
-Message-ID: <86ldl5wmry.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	kasan-dev@googlegroups.com,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 03/16] arm64/insn: always inline aarch64_insn_decode_register()
-In-Reply-To: <20250923174903.76283-4-ada.coupriediaz@arm.com>
-References: <20250923174903.76283-1-ada.coupriediaz@arm.com>
-	<20250923174903.76283-4-ada.coupriediaz@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760981073; c=relaxed/simple;
+	bh=GMRINbJVU7BdoYvauFkAAngbH+xAKnMVrhGHnsTc5Tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Og0TvV5vFoazw/gqo9c5G682XZ87/PXgRG1dKAqE/nPS4rQYKczhPHL7Dm383r3Mbm6VmcgPax9JyCYuuRqTC/2Bh1OgWQi2hXqqwf0qmmhe+BuSggV73UkdXb7EjNI9zZ+vtTB1z9utUoBI6XvvHIY9QqDrHk1pp3CUEzSYf/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HEIgDkpP; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=1EQjJzSZx3vQRH4NLG4P9mwqn4qdkH6P67OwZLAR1wI=; b=HEIgDkpPwGTGM1uN
+	Dj5Jru8kQatMzdwu+NUF6qOhm5Dq6u82X/j2jcef1gFphJgHQxXZpCuURpceNL6FB8kvWBmDZJIdV
+	mjLnoaBruevIhVMe5QryaKGDjPM5ENLEXRKWbQPZUlr0fZ5LzSC+OFFR70ATA2bbKU1zyNifyI9Ng
+	Rncr4roD2FYVSdY2A6QU7qFGgK24o59mIj87sopAGh3Ga/lg8PctTZID+r+qYXO+Xep8RS3XDhizg
+	6ZZnikaitG0goK/2mIA5VdP0ZfOkD2VBqdoXVvALktbFtAYuG+IX5b5gWcZbUhwX1SShGpw7Do9z0
+	8VKmdLF5oTOJNe3OhA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1vAsvA-00HXXJ-2m;
+	Mon, 20 Oct 2025 16:39:44 +0000
+Date: Mon, 20 Oct 2025 16:39:44 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wifi: mac80211: Remove unused wdev_to_ieee80211_vif
+Message-ID: <aPZl0LFtls2LA6uf@gallifrey>
+References: <20250619005229.291961-1-linux@treblig.org>
+ <aOvZ8FHp7-tliei2@gallifrey>
+ <30b9e7eebfc99330857f7a81c72b9eb23ea6406d.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ada.coupriediaz@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, ardb@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, kasan-dev@googlegroups.com, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <30b9e7eebfc99330857f7a81c72b9eb23ea6406d.camel@sipsolutions.net>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 16:32:48 up 176 days, 46 min,  1 user,  load average: 0.04, 0.03,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Tue, 23 Sep 2025 18:48:50 +0100,
-Ada Couprie Diaz <ada.coupriediaz@arm.com> wrote:
+* Johannes Berg (johannes@sipsolutions.net) wrote:
+> On Sun, 2025-10-12 at 16:40 +0000, Dr. David Alan Gilbert wrote:
+> > * linux@treblig.org (linux@treblig.org) wrote:
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > 
+> > > wdev_to_ieee80211_vif() was added in 2013 by
+> > > commit ad7e718c9b4f ("nl80211: vendor command support")
+> > > but has remained unused.
+> > > 
+> > > Remove it.
+> > > 
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > 
+> > Hi,
+> >   Gentle ping on this one please.
+
+Hi Johannes,
+  Thanks for the reply,
+
+> This was/is used elsewhere out-of-tree, so I had dropped this change, at
+> least for now.
+
+OK, I've made a note.
+
+> I guess that's really not a good excuse though.
+
+So what is it about these out of tree things that needs these calls;
+why don't the in tree ones need it?
+
+Dave
+
 > 
-> As it is always called with an explicit register type, we can
-> check for its validity at compile time and remove the runtime error print.
+> I guess drivers could instead ieee80211_iterate_active_interfaces_mtx()
+> and find the right wdev from that list, like
 > 
-> This makes `aarch64_insn_decode_register()` self-contained and safe
-> for inlining and usage from patching callbacks.
 > 
-> Signed-off-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-> ---
->  arch/arm64/include/asm/insn.h | 32 ++++++++++++++++++++++++++++++--
->  arch/arm64/lib/insn.c         | 29 -----------------------------
->  2 files changed, 30 insertions(+), 31 deletions(-)
+> struct wdev_find_vif_iter {
+> 	struct wireless_dev *wdev;
+> 	struct ieee80211_vif *vif;
+> };
 > 
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> index 18c7811774d3..f6bce1a62dda 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -7,6 +7,7 @@
->   */
->  #ifndef	__ASM_INSN_H
->  #define	__ASM_INSN_H
-> +#include <linux/bits.h>
->  #include <linux/build_bug.h>
->  #include <linux/types.h>
->  
-> @@ -558,8 +559,35 @@ enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
->  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
->  u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
->  				  u32 insn, u64 imm);
-> -u32 aarch64_insn_decode_register(enum aarch64_insn_register_type type,
-> -					 u32 insn);
-> +static __always_inline u32 aarch64_insn_decode_register(
-> +				 enum aarch64_insn_register_type type, u32 insn)
-> +{
-> +	compiletime_assert(type >= AARCH64_INSN_REGTYPE_RT &&
-> +		type <= AARCH64_INSN_REGTYPE_RS, "unknown register type encoding");
-> +	int shift;
-> +
-> +	switch (type) {
-> +	case AARCH64_INSN_REGTYPE_RT:
-> +	case AARCH64_INSN_REGTYPE_RD:
-> +		shift = 0;
-> +		break;
-> +	case AARCH64_INSN_REGTYPE_RN:
-> +		shift = 5;
-> +		break;
-> +	case AARCH64_INSN_REGTYPE_RT2:
-> +	case AARCH64_INSN_REGTYPE_RA:
-> +		shift = 10;
-> +		break;
-> +	case AARCH64_INSN_REGTYPE_RM:
-> +	case AARCH64_INSN_REGTYPE_RS:
-> +		shift = 16;
-> +		break;
-> +	default:
-> +		return 0;
-
-Could you replace the above compiletime_assert() with something in the
-default: case instead (BUILD_BUG_ON() or otherwise)?
-
-I'm a bit concerned that if we add an enum entry in the middle of the
-current lot, this code becomes broken without us noticing. It would
-also rid us of this "return 0" case, which is pretty brittle.
-
-Thanks,
-
-	M.
-
+> static void wdev_find_vif_iter_fn(void *data, u8 *mac, struct ieee80211_vif *vif)
+> {
+> 	struct wdev_find_vif_iter *iter = data;
+> 
+> 	if (ieee80211_vif_to_wdev(vif) == iter->wdev)
+> 		iter->vif = vif;
+> }
+> 
+> struct ieee80211_vif *wdev_to_ieee80211_vif(struct wireless_dev *wdev)
+> {
+> 	struct wdev_find_vif_iter iter = {
+> 		.wdev = wdev,
+> 	};
+> 
+> 	ieee80211_iterate_active_interfaces_mtx(wiphy_to_ieee80211_hw(wdev->wiphy),
+> 						IEEE80211_IFACE_SKIP_SDATA_NOT_IN_DRIVER,
+> 						wdev_find_vif_iter_fn, &iter);
+> 
+> 	return iter.vif;
+> }
+> 
+> 
+> but I guess I'm not sure it's really better for drivers to have that vs.
+> upstream carrying the unused function.
+> 
+> johannes
 -- 
-Without deviation from the norm, progress is not possible.
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
