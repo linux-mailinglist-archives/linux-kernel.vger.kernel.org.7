@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-860189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048F7BEF8D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB28EBEF8CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 789294ED3C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7343E0D3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EF62E0B6D;
-	Mon, 20 Oct 2025 06:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D562DAFCA;
+	Mon, 20 Oct 2025 06:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qwco39ka"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/c2r9fK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373B92E03E6
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDD62D949A;
+	Mon, 20 Oct 2025 06:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760943365; cv=none; b=PPcvM2eDZvpa1j8tjmGGj9v+D6hsh2A4l/b8UmDXtRy//GSsUo8WglyKtFLapO6SuveLUvBrsYtFOQcKnXb9HxtTLZqlkBlFzxavIcPi9t6mp0zhi6+GtNM9qR9c0ioVF2J3SNqyyfikpR904C5LP3nUOtySuPg6X9FaqXMkjLo=
+	t=1760943464; cv=none; b=V1gnrvbYp37jvypVyI0iylT5Ft0CGdQHU4wqxy6/RUa6aAPh4aDDu3qg5+3JtF86hPeno/K+1+sunBi3BUE1asLD+YLvTMu/u3eqHwLx8eUXVoo8yephl0FTaAr1cESlCjjhPogOyxn5uCXuuolIq8noV3DUbwIezBkiDNZtEFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760943365; c=relaxed/simple;
-	bh=z/nKAyPM8Gl3KMi0qkV4zPK4PT1ivqYkvCn2i3d2YbQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DhNobcbnSvJYrM8bKlBFXNM67FGRUDZcjW8xG0WHhSxRVdLUlYy97YTpuBgh1q2Ppu8YkoSpEi6HvR4bZ+hEO6bEKHxqNh4Srn5kjApnNb6YbrsuC9hjXiP2k90Lv/wgtkNjSjCIt2gwjMHO2p7N20xx55cJFKY9H62BZ8XpRCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qwco39ka; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3e8f400f79so67271866b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 23:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760943361; x=1761548161; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0DnThhMkOfv9YGDKUQ7VwqLvt/fY4Aetr2LPisH1YU=;
-        b=Qwco39kavjz9il7ru8MtW5CXU9oQtMYm3H1N/9YBxgXD/W4XxEhLGKfOUf43SgT1i/
-         RhfavRnP0oMO2Y20DDLK3bAdyoIJfjf5TUhitKoRcTSDsdb7VXHZerZNdfZw/tahdEFQ
-         QnVltwZOLNuNigZKJUIaODhua8QhjydxVTnra6CIUiZDQpHARxZbzB7UiIYWeLkPixdo
-         HCsuzc9+2ZUtfB+XaQsMgfB05FUZ+j+3NYzL2/HniY3xK6FXNwubNxQH0ToORTIWHr2v
-         JpAgrTrbY0CcDqhZtd+Bhcpkm81szB96F80Jctt4G2TV/+1VIGFXsCBWDlOeWDIH0WfA
-         PSWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760943361; x=1761548161;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0DnThhMkOfv9YGDKUQ7VwqLvt/fY4Aetr2LPisH1YU=;
-        b=DacpeY2xI2mNcnocQl5KBdRa+lzq1T1Kkx4gm4wiggnlOSGMjYTZxylGCGuaEGmsvr
-         whU6EpEB+h5uSm1Tpxc4R7QqNDzOm4OO5m7JhsIkx7HIoRbrKXWzZqo7RHSTtMrgccq7
-         hw08pxXusn7t1Fr4seIuYIb4n9DOkUKid1Ku5I7sHdavXDf1t2bP55hEkGMUluyQQvFh
-         k0Il3Rfq9C7Bmd8uEFYjFw8ur3zgM4M1G1RGD687c5yDIVKWEHnHcciQ1pwQNXQdmGZz
-         MvxpWjiPfE7pnkYhz8OnJz4TK0bMnvHQWiT0i7xrH3+HNC6RQF8MHrLyrTvm7gsS2iNl
-         btNw==
-X-Gm-Message-State: AOJu0Yy+iK22Cc3rkjBM1kYqQqRrXz7lKr0DNbvmD+OGL65GHhfqPTNW
-	VYCYqOwQAx2YhXV7s1j9M9RZHQCyDucrPcYKB7naT8Mkq2RsBSu46D5RaG+skhesjjg=
-X-Gm-Gg: ASbGncuLJCWjHRfhOcHtip8Q4vQzT1RIwe7Pc2lN+Hg50HLE10iL5DbghetZjFfdgcB
-	DtQjI1ofQrkhH7fsz8ZRrwrdqBlGdeQoK5HWC9lmCgHNooedvXZzE/2ToRzXi//kuYYO3kR7e9F
-	t4SZ2J8TaGubwar4wYM+YQNTzQ31TFD0jvnD5J6Pyclo75ke1dmtAAsQ1hqTm35jGMq/TUN0hvT
-	IkIZoPWChRyPTOOhkFtdI4548Hg5oyZq7/p/udg9DmpEkrUtN6A92uj61LDBASE7MiCylVnSSOf
-	EqeUvdyYaWvVYIHHvbsIz9gV17wlwX9xcDX7GcwVgz8h4IbhUSiH/twkFBd10NI49ZFEXoS//VG
-	PctES+EADm1IJzar9/3eZJce7XSriJkNtrTdtoqLLqOLRC+UEhD2mWwTSVaB1X6BKpWSp9Oo6E0
-	mloOYpfLcdGTFXPCsJ
-X-Google-Smtp-Source: AGHT+IFB6Ey5I5GEPVDKYwQBF2ZBDxVATO0+MlEz4wW7uv+BJczKh6T6QMgfi5LUYg/EAYYZmtjQvg==
-X-Received: by 2002:a17:906:9f86:b0:b3d:5088:2140 with SMTP id a640c23a62f3a-b6472353d0emr732095566b.3.1760943361476;
-        Sun, 19 Oct 2025 23:56:01 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb036a3esm711731466b.46.2025.10.19.23.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 23:56:00 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-In-Reply-To: <20251010-acpm-clk-v6-6-321ee8826fd4@linaro.org>
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-6-321ee8826fd4@linaro.org>
-Subject: Re: (subset) [PATCH v6 6/6] MAINTAINERS: add ACPM clock bindings
- and driver
-Message-Id: <176094335955.18498.10975479866423717961.b4-ty@linaro.org>
-Date: Mon, 20 Oct 2025 08:55:59 +0200
+	s=arc-20240116; t=1760943464; c=relaxed/simple;
+	bh=3zKcbSMPDP4MWcdlhzd5uYSC4CKRpKj4OpV+hFKX4mQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmOxyYCJ78GnfZYhicEWPrWnTSAOy+sz8vMcgg0W1+wTRyKijiWDpgmK00lE678wLzm/GYYMVwgT/z9dKVl+fXfIapF4ZsXJi1LVgxBen1Gz8ZlUthtweW0oGWMgh587UOaMDVq1YCnLdQbhpfBnCg+u8xqw1b4ccUwKoDh2Dm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/c2r9fK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B54AC4CEF9;
+	Mon, 20 Oct 2025 06:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760943463;
+	bh=3zKcbSMPDP4MWcdlhzd5uYSC4CKRpKj4OpV+hFKX4mQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h/c2r9fKO5C/9wOuhV2YrXDqKfIorKXbdecYWIkwER6qlgC4ozMkjC3qAQYwLs9AP
+	 tJujPtHztTZtW1geiCoa7E+GpLfLeaCFgheEaST3T7PqeIu/fO3HDpXXjTv/wANzNu
+	 jPgS3SOgbJSJGRTBIaQPG0mbRofhtVsRnxL48eSNkIdOXoPsjU4jFUr5o1HQFmGnti
+	 6lWhqEANjU7EhoKEzFa/mrIJrm18WQmKZUiKblQvz8YeTdFw12rgY7j2X+rg/EK1bt
+	 a3WFWZSQgBoWddUnY5ISPlI3c3Ne2EzbffjZilRWpShSXu0LheYnqbeuccIH6pZ3Jw
+	 McoKR2jNhgSNg==
+Message-ID: <737b57e6-6d91-49fc-b52d-32e40861d25f@kernel.org>
+Date: Mon, 20 Oct 2025 08:57:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] dt-bindings: mediatek: mt8189: Add bindings for MM
+ & APU & INFRA IOMMU
+To: Zhengnan Chen <zhengnan.chen@mediatek.com>, Yong Wu
+ <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: iommu@lists.linux.dev, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20251015125532.9041-1-zhengnan.chen@mediatek.com>
+ <20251015125532.9041-2-zhengnan.chen@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251015125532.9041-2-zhengnan.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 
-
-On Fri, 10 Oct 2025 12:46:36 +0000, Tudor Ambarus wrote:
-> Extend the Google Tensor SoC support list of files to include the
-> GS101 ACPM clock bindings. Add the ACPM clock driver under the
-> Samsung Exynos ACPM Protocol entry.
+On 15/10/2025 14:55, Zhengnan Chen wrote:
+> There are three iommu in total, namely MM_IOMMU, APU_IOMMU, INFRA_IOMMU,
+> Add bindings for them.
 > 
+> Signed-off-by: Zhengnan Chen <zhengnan.chen@mediatek.com>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../bindings/iommu/mediatek,iommu.yaml        |   8 +
+>  .../memory/mediatek,mt8189-memory-port.h      | 283 ++++++++++++++++++
+>  2 files changed, 291 insertions(+)
+>  create mode 100644 include/dt-bindings/memory/mediatek,mt8189-memory-port.h
 > 
-
-Applied, thanks!
-
-[6/6] MAINTAINERS: add ACPM clock bindings and driver
-      https://git.kernel.org/krzk/linux/c/ad97aba3e64f8e474ecbce0c4e08486023ce8ab2
+For memory-controller:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Krzysztof
 
