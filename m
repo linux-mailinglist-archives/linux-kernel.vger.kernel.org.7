@@ -1,77 +1,138 @@
-Return-Path: <linux-kernel+bounces-860617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C72BF083D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:23:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30627BF0870
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADE13A4014
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:23:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 619FF4F1A36
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458052F6566;
-	Mon, 20 Oct 2025 10:23:18 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6A02F6588;
+	Mon, 20 Oct 2025 10:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGOt4Seg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5B1E9919
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2812EC0BB;
+	Mon, 20 Oct 2025 10:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955797; cv=none; b=mIi26CpaERtJrAzw4i1Y3I+zz9v0JMcHryP1hbnT5wQXdjZLA/oL3Gj9XjjR1/Zgk2/qu+10eIpzTZ7LF+WpRDuoc7IjhCsJbSKEOJt9EsmD5YP4cOaxlx8T8AnyUNTyuIinXfKz2Nc3UwwGKSIShI0FyOFK4KYv0cTJd3ukd3U=
+	t=1760955964; cv=none; b=DYdsIwyLHC3OflxcbQzmgEfJplksE/ztjOS51C8v+I+WpFHDShHIxG6WfF0j1+hikEd4oBkviJZNTY+a5FX4BVdAHkQoW6MStyPi9v2wuWsUZL7g0UhZ/QC0fio8RetfVyXXoI/ckNOR2z22Xu88lZJreU+y3rzWt2HwA3/U7ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955797; c=relaxed/simple;
-	bh=q8iTwWxV6aAGQRZoQ5GTvOeC/Ir3MLyotU2BKkvhx64=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kmOrSW6j4tTeA5RLupdyn/aEkYlP6TTcnkhrKD/z+5oj3kxvgV9ZIglASgeCAUq3W/yxA3nVHwUMKt3DanWpkHxEEni/P8s+fsrQaVQ1/LrMflR6SxRL0b6s766oKtSPhqdQ0dUZXfxhKoWNzEFgS5wIrXSidPy7IU0lqavpoCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93bc56ebb0aso1300546039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:23:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760955795; x=1761560595;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8iTwWxV6aAGQRZoQ5GTvOeC/Ir3MLyotU2BKkvhx64=;
-        b=ViypCJu0eKNPsFbGF+T1RxxLRgq99T7R0Abc9/k/zh8phzDA6uL0Vt/N/sE6uFSo3v
-         tpISG8FGafPTAn9GdUoxSLL6nlSBhx7837T3kiAB4TQx7lrXcmMMAR06sl7caIgvyE/2
-         438J13lxvai18tajnxarG1udZ3dU+/z7qJ/9yFqQe5OzWFNWi40xcHimQWWy7tVAk0er
-         RstqxpmMhem7yOffIK4Vozpt5Unfep904hYzjcsf6bJe3AigCtZq51tqe23C9/flkJIa
-         8vSdVexBRqimO1AxpsBlUTbvBnzXEtPXqLBcI7JsBS5iL2jj5dhDp7gZs2uqGdXyMfpH
-         T2aA==
-X-Gm-Message-State: AOJu0YyQaa2t6PF1gArTjuvK5pCb4GRUOu+33FmGm9JCUMEfBHvNvy1s
-	MwAq9GAFAiI/9JQ2LU75hzVfenaKYRD7nLeKuVcypRNlHVt0myIHtL4vRHQehuN62v0at14zfFb
-	GMf8uTqnKMMmOEDTSsaRhsXdw2nDjYP9R5yq5SNyn2P3w0q5Jwp05xPAl0P0=
-X-Google-Smtp-Source: AGHT+IEbToY3tHLK1cjbQz1cOmF39i71niNJ0D+LKV1KWZm2l/GzU4hJ0HRBe3PGXm1ICKS3NtREDHm7NhzGUJSilZXDj9TZJs80
+	s=arc-20240116; t=1760955964; c=relaxed/simple;
+	bh=iobSRMNBr6A6PLca5QdeARE0++ongB1tSynHaXdwxKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hed2gJ2cpt/3utE0t4vxwphS1B6+npkzTl1npCZFGui2ApORycupGVgG+8pWEOyXYUjzctUFRJHN+Re9hcg9b5sVSZ6PgE4zmWMORupQc1Jj08NsQpF0c6q0tXZp4RoUBWU4iJA3alAClWcjTevjeDRyp4LSV96/UotVH39pSAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGOt4Seg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01AABC113D0;
+	Mon, 20 Oct 2025 10:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760955963;
+	bh=iobSRMNBr6A6PLca5QdeARE0++ongB1tSynHaXdwxKo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AGOt4SegqfDGL8Jyvh2lgBaXNwPk7O0xo7D/6t1QCL31GOcl18nO/w57QVqrE8qnd
+	 FlEaM97xSVlBVTOmN95vqx9aaMs0Vndwp20LhfzFcADo0wdlF7UH1+hv57WiFtYMiF
+	 YA0AERx6WjrJX7nkHsm96B4MEi84GaFUBhkE95gCnwdq1hJA6GMGmaLbM88DneR5P7
+	 ZFc6lgxVL5GE6PGk1XPtx4OTbtqSCyNlMvCihjC8aICWvmkQ5YNU7hxOr3QYW64+ZK
+	 1VPHX10S6I4tXEyPAs6GS9DV3LX7XVCrAIipQzO1uGkmZ6qyEE7SB8zDUjMKSfETkO
+	 qfhEERA2mehFQ==
+Message-ID: <51264795-758b-4b54-b95d-00e39f764c4f@kernel.org>
+Date: Mon, 20 Oct 2025 12:25:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1588:b0:940:d4e8:4717 with SMTP id
- ca18e2360f4ac-940d4e84e51mr628169939f.13.1760955795596; Mon, 20 Oct 2025
- 03:23:15 -0700 (PDT)
-Date: Mon, 20 Oct 2025 03:23:15 -0700
-In-Reply-To: <66f86aaa.050a0220.4a974.000e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f60d93.050a0220.91a22.0443.GAE@google.com>
-Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- 211ddde0823f1442e4ad052a2f30f050145ccada
-From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/9] clk: qcom: rpmh: Add support for Kaanapali rpmh
+ clocks
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com
+References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
+ <20250924-knp-clk-v1-4-29b02b818782@oss.qualcomm.com>
+ <1d2b6c69-4ea8-472b-a18d-0bd39042184c@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1d2b6c69-4ea8-472b-a18d-0bd39042184c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 20/10/2025 12:11, Aiqun(Maria) Yu wrote:
+>>  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+>>  					 void *data)
+>>  {
+>> @@ -990,6 +1028,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+>>  
+>>  static const struct of_device_id clk_rpmh_match_table[] = {
+>>  	{ .compatible = "qcom,glymur-rpmh-clk", .data = &clk_rpmh_glymur},
+>> +	{ .compatible = "qcom,kaanapali-rpmh-clk", .data = &clk_rpmh_kaanapali},
+>>  	{ .compatible = "qcom,milos-rpmh-clk", .data = &clk_rpmh_milos},
+>>  	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
+>>  	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+>>
+> Remind to review this patch.
 
-***
+True, we still wait for review from you or other people from Qualcomm,
+not upstream maintainers.
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 211ddde0823f1442e4ad052a2f30f050145ccada
-Author: dmantipov@yandex.ru
-
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 211ddde0823f1442e4ad052a2f30f050145ccada
+Best regards,
+Krzysztof
 
