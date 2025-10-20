@@ -1,250 +1,124 @@
-Return-Path: <linux-kernel+bounces-861509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F43BF2E89
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39847BF2E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1523AF47F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:19:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51B13AE9C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF842C3271;
-	Mon, 20 Oct 2025 18:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FBC2D0C7D;
+	Mon, 20 Oct 2025 18:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="NzTuUlAy"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dc510Gf+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4jY1/YqI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CB3332905
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF641EDA0B;
+	Mon, 20 Oct 2025 18:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760984336; cv=none; b=fwd5jMf1pwHTuaOuBx6j5XuDRrXfxfC5zu0FtgKW5FALNqMi7K8fej22mOLE5DaFqbJ0nu6P6PCUB0epuN2PSby8nRljYHLClMt8evFgdsy2yRPlU/FnwdxJVKUzk2TmJ7TNlM3Z+Uco1MfzCEFcAlxs3IRgQWDRgleT7W3f94Q=
+	t=1760984420; cv=none; b=ADguHv7xd0T/PGAroc7KZ2Cb6X1YmAGfm0fM88uuBwHVlR2/Rm5G2iUMjwgBkx8e7wo5ltYKWUJJilTTFPYRDFN1O5WtIx6l1KroDmlerRZhojxk/kCkONmR/XfFyMaVI4ZyOJ/OJ1XPd7x87H898JdJbmfPDPdkpVh9Tidos5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760984336; c=relaxed/simple;
-	bh=HTQ7AqipbpEFjOSw2SAnook8GHMgNeBvluv+1LerSeA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XMWaUwse1Tu8AGfYF26qS0EEjHLJDUAW0xSpTHvPk0RMwVbvIFWjfUFl5AGb4vaPjfd0aPqrXTa3kaoAljxruRWSZ60lgg7GzPVIbMrZgSHaHyjgJkticZa4p9mJ9b2gi5YCExliu3bLNw/Yr+4ijSANI1N9FUFjpkMcTEIGBB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=NzTuUlAy; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3381f041d7fso6076503a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1760984334; x=1761589134; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J3wXXjw9bzD6MPVLbQ5doCpWIDPvan0gGJzfGLwRl50=;
-        b=NzTuUlAyvQELTeughwB+xv5+VUDQbAjpK2XidsMfOOfNrE8A7FwwQPa9Gp6P7837R2
-         RovQSDAPLt6kMMlNIgByLampHUz3NOLKLaHWNHGkQUIZFyEsfKfI7WX4RIHJFnqaEibW
-         oKTxQ3fFUvBGplQlTVu9NNZfliCZJXUC6C4Q3q+chCiMJFtt6rjeAWBascslQGCQYzTF
-         ihRRSBR1aRTcqBBL9HLZO0en0dwGE8+x+Q6/9ceaM4AADGjgMBhCmzKeqrgLGBDQYGMJ
-         PdXudgJRysE4wxn/DuCkKo3Liw8hB+0nfRIF8PWLep9J6MW80sat52aLFRnujqOhaE1N
-         EDig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760984334; x=1761589134;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J3wXXjw9bzD6MPVLbQ5doCpWIDPvan0gGJzfGLwRl50=;
-        b=Rq1JnrS5Fe8zageFJl1JelGPZkjQUqhKBMlos8DQes3dOwaKIWJ9GbJHamX7+F48Pf
-         T9Fbf3JROHqc9AUy5GDArPtUkeh+G0Po1nDJtEi3ZJuu4bQ7tR63Iq2wb+RsxwbVkAcd
-         3bylrbq1oKnNfS1pLhVcn8okT4jmqei6VfG8YLDagJPRIxEKchOdVoRWQKUOKB6h9E76
-         oEWRQamyqDN34eP0CGpldEieAZ8pkimkuI8Y+ePUcAv8yp3uWFf2+d2lyM89BbEp1ONK
-         /r61/KQbjTF02fSzyhIt8cQRtJAAqP8glo3AHCImRuyoRFmc7+R1XT7ilcB89VlDowXL
-         tfLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8UeTsOuFSoHKbdC7d6Jb99aAopruJTlq4gtxxeTjII3ppCpXAo1x0yCJ4g6xSQebsL07N6G9tHfsnRWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpOvvSet9DaUlb9q2I1eW/uiWsMdu4f4R83jzlnOcG7KpLBj2S
-	1ma+PC2989LAY3DqyGYm0ZYeX6W1ZzNp8YdtgcdniOFz1oV6ubgPnRiBR2wHBxw8LQI=
-X-Gm-Gg: ASbGncutlU1S5TKoN/NqppIKTFCZAzRlR4A/CHBOSWWyt1ZQ3+GwGtr65V2KqS3AjY6
-	Z2GH+juB7nHTyWQPGd8mVnjllHRRm4Rp5zvnGZr6T87Ao0TyHbSjJN8cSahVivNnciapu5JwUVY
-	szhkDsr50AUkM5xKEBWyM47Q771TUjvDdC1ee5KP2fI+zen1TZwm3MQMY2uy3T8vhgbJUFFoSXB
-	0n0hgi1qJQr+tLygAkbsI0rK6Q07Z1zHf3uJSmi4Mji9/DIWAJPo6i9+i+OuGyZUwFtLQM74hJI
-	zo8FzyldXwj393Nv5ybDvIbfxeGUfX3ouFFsN1n5+KnlOYIRRx/ra6lH4bKIwqUj8qWSiJOvLuq
-	dCAbJvKXq0RmOCbdIAFJTIY2ZAyaFvMiCjHO/0XmuFTk90mHUY1m9MGRvPliJdGRqm3ugXI9/cp
-	tQOON2CcGsbTTot0SWm4EP
-X-Google-Smtp-Source: AGHT+IGTvGMOz93bZ6gvLfbDW2Z5HUTn/LhD3gZSIqP3hEuhNTUpAhz52wVhznRHxX8oqUHCbXBsgg==
-X-Received: by 2002:a17:90a:d406:b0:32d:e027:9b26 with SMTP id 98e67ed59e1d1-33bc9d1a8e6mr20155181a91.13.1760984333589;
-        Mon, 20 Oct 2025 11:18:53 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5df93591sm8775752a91.17.2025.10.20.11.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 11:18:53 -0700 (PDT)
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 20 Oct 2025 11:18:52 -0700
-Subject: [PATCH RFC] arch/riscv: add proc status (proc/<pid>/status)
+	s=arc-20240116; t=1760984420; c=relaxed/simple;
+	bh=+7F+pToV+3z0kjtQBmZ9mVVzN9AivMSujlzvN7xMPZY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=WwEtuE82LmXhKr/NhHYgiUVtViMPKpUehGFHhvK5V7ZT+qpDVM82QSME0uK3mBD0iZyu655vcuAK7anvEei5A/CDUDgmJWP3G6+iGfStbBbkwMnjutL3uVJtjOqd/8hASo3D+vBZpsy0BGevtnoC1MncsINhM2wPARR72TQjSHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dc510Gf+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4jY1/YqI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 20 Oct 2025 18:20:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760984416;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gMSL5YhuHM0+KOZy6EQ+ysTWuNUYxAwDs6k45pUzMpo=;
+	b=Dc510Gf+1rb5Hl7l8xF02JeALprUz1GMBLXrZtd/INYBi80JZSs5VFaZ3wLqK6IJTHCfaj
+	Y/MU5vlv1wz3GHbXahdnYvmlWPPYsKy1rJAVK1RSdYbVsaZl0lWjnNlS8vnQTMvXy/DNJn
+	/gf/k2vnpkbzv3BGJx0bou1Zri6LGpBebFMuj8vsbOD2IjPLnCc5zYl2prtchqy1nZbAyl
+	t1cda8KXNMFmpqklNpG7rOs7rmfZUdOjsoFIEbrvCWIXPZ6gRMFSIxihVE1a3MMvVqYC99
+	I3slSXzNgsJPHq3HgFcKjx++PQvnv/A+1p5NVD1r+UwyY7736I5WveBxwCX5eg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760984416;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gMSL5YhuHM0+KOZy6EQ+ysTWuNUYxAwDs6k45pUzMpo=;
+	b=4jY1/YqIe9iZL4hcC27TR5E/X4e1P3gQ1wtVIF/YVS6+kvv+Xnmfo2xbDjDj+qFvfoaPnA
+	wm5DsR696aYw80CQ==
+From: "tip-bot2 for Christophe JAILLET" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/msi] genirq/msi: Slightly simplify msi_domain_alloc()
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C1ce680114cdb8d40b072c54d7f015696a540e5a6=2E1760863?=
+ =?utf-8?q?194=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+References: =?utf-8?q?=3C1ce680114cdb8d40b072c54d7f015696a540e5a6=2E17608631?=
+ =?utf-8?q?94=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <176098441506.2601451.3693832213814934444.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251020-proc_status-v1-1-59d2c8ccd4f0@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAAt99mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA0Nz3YKi/OT44pLEktJi3ZQ0w8TUlGQL02TzZCWgjoKi1LTMCrBp0Up
- Bbs5KsbW1ABchsmtiAAAA
-To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
- alexghiti@rivosinc.com, cleger@rivosinc.com, zong.li@sifive.com, 
- heinrich.schuchardt@canonical.com, valentin.haudiquet@canonical.com, 
- jesse.huang@sifive.com, Deepak Gupta <debug@rivosinc.com>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: quoted-printable
 
-x86 has proc/<pid>/status to see various runtime characteristics
-of running task. Implement same for riscv. This patch implements
-status for shadow stack and landing pad state.
+The following commit has been merged into the irq/msi branch of tip:
 
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Commit-ID:     ac646f44956edc9aaa406b4a8fef17888a2166af
+Gitweb:        https://git.kernel.org/tip/ac646f44956edc9aaa406b4a8fef17888a2=
+166af
+Author:        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+AuthorDate:    Sun, 19 Oct 2025 10:40:08 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 20 Oct 2025 20:18:48 +02:00
+
+genirq/msi: Slightly simplify msi_domain_alloc()
+
+The return value of irq_find_mapping() is only tested, not used for
+anything else.
+
+Replaced it by irq_resolve_mapping() which is internally used by
+irq_find_mapping() and allows a simple boolean decision.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://patch.msgid.link/1ce680114cdb8d40b072c54d7f015696a540e5a6.17608=
+63194.git.christophe.jaillet@wanadoo.fr
 ---
-This is just a one patch but sending it as RFC with cover letter to seek
-feedback. x86 has `arch_proc_pid_thread_features` to enumerate status of
-arch thread specific features on runtime. This can be done using prctl
-as well but from quick/script perspective `cat /proc/<pid>/status` is more
-desirable. In this patch, simply `arch_proc_pid_thread_features` is implemented
-for riscv which queries shadow stack and landing pad state and reports back.
-Thus it is dependent on riscv user cfi enabling series.
+ kernel/irq/msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If this patch itself is self-standing and good enough, I can roll this patch
-as part of riscv user cfi enabling series.
-
-OR
-
-If there is ask for other riscv thread specific features that could be
-enumerated in similar fashion, we will need it to be done as separate series
-(with `thread_features` added to `thread_info`)
-
-Example output below.
-
-Name:   cat
-Umask:  0022
-State:  R (running)
-Tgid:   133
-Ngid:   0
-Pid:    133
-PPid:   129
-TracerPid:      0
-Uid:    0       0       0       0
-Gid:    0       0       0       0
-FDSize: 256
-Groups: 0 10
-NStgid: 133
-NSpid:  133
-NSpgid: 133
-NSsid:  129
-Kthread:        0
-VmPeak:    10788 kB
-VmSize:    10788 kB
-VmLck:         0 kB
-VmPin:         0 kB
-VmHWM:      1400 kB
-VmRSS:      1400 kB
-RssAnon:             116 kB
-RssFile:            1284 kB
-RssShmem:              0 kB
-VmData:       92 kB
-VmStk:      8324 kB
-VmExe:         4 kB
-VmLib:      2312 kB
-VmPTE:        40 kB
-VmSwap:        0 kB
-HugetlbPages:          0 kB
-CoreDumping:    0
-THP_enabled:    0
-untag_mask:     0xffffffffffffffff
-Threads:        1
-SigQ:   0/31771
-SigPnd: 0000000000000000
-ShdPnd: 0000000000000000
-SigBlk: 0000000000000000
-SigIgn: 0000000000000000
-SigCgt: 0000000000000000
-CapInh: 0000000000000000
-CapPrm: 000001ffffffffff
-CapEff: 000001ffffffffff
-CapBnd: 000001ffffffffff
-CapAmb: 0000000000000000
-NoNewPrivs:     0
-Seccomp:        0
-Seccomp_filters:        0
-Speculation_Store_Bypass:       unknown
-SpeculationIndirectBranch:      unsupported
-Cpus_allowed:   3
-Cpus_allowed_list:      0-1
-Mems_allowed:   1
-Mems_allowed_list:      0
-voluntary_ctxt_switches:        0
-nonvoluntary_ctxt_switches:     3
-riscv_thread_features:  shstk_enabled lpad_enabled
-riscv_thread_features_locked:   shstk_unlocked lpad_unlocked
----
- arch/riscv/kernel/Makefile     |  1 +
- arch/riscv/kernel/cpu/Makefile |  1 +
- arch/riscv/kernel/cpu/proc.c   | 28 ++++++++++++++++++++++++++++
- 3 files changed, 30 insertions(+)
-
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index f60fce69b725..b32c11667d81 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -71,6 +71,7 @@ obj-y	+= vendor_extensions.o
- obj-y	+= vendor_extensions/
- obj-y	+= probes/
- obj-y	+= tests/
-+obj-y	+= cpu/
- obj-$(CONFIG_MMU) += vdso.o vdso/
- 
- obj-$(CONFIG_RISCV_MISALIGNED)	+= traps_misaligned.o
-diff --git a/arch/riscv/kernel/cpu/Makefile b/arch/riscv/kernel/cpu/Makefile
-new file mode 100644
-index 000000000000..2b474fb49afe
---- /dev/null
-+++ b/arch/riscv/kernel/cpu/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_PROC_FS)			+= proc.o
-diff --git a/arch/riscv/kernel/cpu/proc.c b/arch/riscv/kernel/cpu/proc.c
-new file mode 100644
-index 000000000000..4661190c43d1
---- /dev/null
-+++ b/arch/riscv/kernel/cpu/proc.c
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/smp.h>
-+#include <linux/timex.h>
-+#include <linux/string.h>
-+#include <linux/seq_file.h>
-+#include <linux/cpufreq.h>
-+#include <linux/proc_fs.h>
-+#include <asm/usercfi.h>
-+
-+#ifdef CONFIG_RISCV_USER_CFI
-+
-+void arch_proc_pid_thread_features(struct seq_file *m, struct task_struct *task)
-+{
-+	seq_puts(m, "riscv_thread_features:\t");
-+	if (is_shstk_enabled(task))
-+		seq_puts(m, "shstk_enabled ");
-+
-+	if (is_indir_lp_enabled(task))
-+		seq_puts(m, "lpad_enabled ");
-+
-+	seq_putc(m, '\n');
-+
-+	seq_puts(m, "riscv_thread_features_locked:\t");
-+	is_shstk_locked(task) ? seq_puts(m, "shstk_locked ") : seq_puts(m, "shstk_unlocked ");
-+	is_indir_lp_locked(task) ? seq_puts(m, "lpad_locked ") : seq_puts(m, "lpad_unlocked ");
-+	seq_putc(m, '\n');
-+}
-+#endif /* CONFIG_RISCV_USER_CFI */
-
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251017-proc_status-df1aedc85c7c
---
-- debug
-
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index e7ad992..6888688 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -706,7 +706,7 @@ static int msi_domain_alloc(struct irq_domain *domain, un=
+signed int virq,
+ 	irq_hw_number_t hwirq =3D ops->get_hwirq(info, arg);
+ 	int i, ret;
+=20
+-	if (irq_find_mapping(domain, hwirq) > 0)
++	if (irq_resolve_mapping(domain, hwirq))
+ 		return -EEXIST;
+=20
+ 	if (domain->parent) {
 
