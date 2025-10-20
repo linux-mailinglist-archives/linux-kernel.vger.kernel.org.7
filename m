@@ -1,200 +1,263 @@
-Return-Path: <linux-kernel+bounces-860926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B56FBF1573
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140B6BF1594
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2341889B53
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A801D18A5BCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298A630BBA6;
-	Mon, 20 Oct 2025 12:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAA03126D6;
+	Mon, 20 Oct 2025 12:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8rkt97q"
-Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oNz4QML5"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AE73FFD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B83FFD;
+	Mon, 20 Oct 2025 12:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760964730; cv=none; b=MOkXzKm2AmsakliYmuIDNxu2p+oc1VdzbQy4HrsAyBqEQOLRFeOsyxjKloUEkOCtd+rdGyl2+3wYpwYvZuqjMcSeDeJLq2chp9JaaAEzMxfSY2k83jYetmr7ZKPf/C/KhIBvH4j/EeLILtRBOO1tuGCxXnc9RVWAPjG1arSTJTs=
+	t=1760964773; cv=none; b=AdCpOu4aJ1qFSp8jg1u0rpwryhg1UHbquFAJlwihspMsiC9KigwAWwHJ9zmbD/rMHJ7/9i4eLHRqLtUnqMVGYnH7DtuJGVR5KcSptCDZOZzAsmJd/shuSC+xNx86KWB+i+DxlrGa9SeRDWlaITfpnJrgsBXqft3NajPTwHuIq+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760964730; c=relaxed/simple;
-	bh=NoKN/VklOZ0PsX6E7d/ZEOoFp7KZ+BZQhEK8O2S1oJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dx1zuy75+qf4Ym9Wc05uh+s6DBYnDRgkyC00CfDqV+D703lWas4MYBKccRxUml8hHmNQM4GdO6/5gsFmmDTAHeCrh0JSs+Swkme+b+Ymcx5DPhd9evkSSDY5nyJRmA75T1Ee0onH/V0kD+xoxDy+f9IVkerBN4vABVXuJ9YBLMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8rkt97q; arc=none smtp.client-ip=209.85.208.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-36d77ae9de5so40728751fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760964725; x=1761569525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wJLLkJALqNt2BGM9vipmlGBox7Ra/Q013j8h0mIEzZI=;
-        b=g8rkt97qs3QC4rL3qsh3PR+Pqzj2V8iWAAr5az8X1vOd+jbjaRLAzQJHnxU+OZttfz
-         db9tNHw/8Nu6fs7LubjPtWC1yGuSOM1AlDMLnEA5ozugUD9dmQxziwhD/8FdnaNzVVZI
-         ig8YFQJxIowlcHyAZxjrTwgsuRbAf6a36KjFchc64oEv/Tsexvl6mNGf1Ttf/NGTKUT4
-         puL0856gWwIAN5MxfGcXu0DsblcCj34Sva61thcFons+e2Y0N7VixAGfhHb1vLijH83y
-         tzE7p03RmpYUKFFf47eCOYfPaPLWfELrNYS7beqH0ARziajpP+PLitetJi2+e7UcwV8L
-         xKXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760964725; x=1761569525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wJLLkJALqNt2BGM9vipmlGBox7Ra/Q013j8h0mIEzZI=;
-        b=rqu8/oaWaa5f95/oqRSWJd+x2758tGPeDTeosz1kvIApGl1Nlgm2HK7htwitwWcFTk
-         qfQNcnNO0edbAVTSQlzn0Z/q5u0sLvGliE1BNU3mA915WPCYLq5ke+s1aYe0xotgQJ34
-         gb5JthEx4SwkNCRNp5RrrJNo6T47ZKVs/abNQkUIoaqk83M48GX3svQOkkKLREClCIuM
-         0ARZx1gAZ/59GbA9McsBsyWn5iMSPSUmfhFzdj3nfeeiwaGZmZxxYQC8ojXZZsXXHZw0
-         koyXkgmmAtkT7PEE5rY79tRgva8/wMfHIEFp6A8UuLL9aJuo4x5eg5wcAyNZ7JpgYCyh
-         hFRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxKBeWgRc8dUh8G41aSWTDYbNhUPSOktySILSjPth38PsQQeTyGFH2skDwVpJHG3CjXxH9Jd+0gSHAb1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvcLWbK+CI3y+QIFMIrnwkC4JbK1FMaKSZsDU6PDpgo5d5zx6F
-	4ge0FC/TyCVDrd7KwArlDD6FeDniidYhRqXcRvdH+mwziK9guq21uSLEaJiEDpqx5gwUJSVIn+y
-	oNoHH8l6KiCJS58k0gIQqRG40rRedscNR5E8nu5k=
-X-Gm-Gg: ASbGncs/SDYGHolaR6qdtuybNWAGLp6hGrSiiztIuiwdnLTrzxNIj7KqrkwvFMdDiDN
-	5ECxE5B6WuGj/pD1DnUR0431AF5/4rN7Qi/3XnUsB9cocmlvDThzLseP8UvDAjROM4GLXstwNMn
-	hIApRCXFkO/GR0vIn+2z/heeLfmGndh7xQdHWaJwJdBNzrZA/ZAKH9uyaM983i44Oy5JbBUYa0n
-	FtbjuFBhDee2l55T7zTFsQvbAMPCmuIQQkEg1A2iclX8wxl6i0kAKXiD3o5
-X-Google-Smtp-Source: AGHT+IGamRLPldBcGCNTyINQ6T9zJDiT6xEn1aaKY8nTPcFl2bpamrI0VbQ+h0d3P2S96PS2ryWOeFNU1dzTbr4RLrw=
-X-Received: by 2002:a05:651c:1595:b0:372:17eb:1191 with SMTP id
- 38308e7fff4ca-3779793eaedmr38894401fa.18.1760964724945; Mon, 20 Oct 2025
- 05:52:04 -0700 (PDT)
+	s=arc-20240116; t=1760964773; c=relaxed/simple;
+	bh=J9APxNL5PwC3SXUAS1ytIgcn6UBgz/29jtLEKf2eyWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MaKxBq1sktZk6KiPeVl+sTxaATjbdB6T6Etvw31pCGk4wcO++38v3uZ4a5QIPBOc8h3FCwT4AJT731jBG5Ncs8T+oxlNe67ALRKuoyCVQ/5Ifdf5cJ2KMg98wX+wSv/T18prtfWDkdHPYi8MJw4GEYh9FtU2/pZCZqak+H9vg2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oNz4QML5; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 192601A150D;
+	Mon, 20 Oct 2025 12:52:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D688C606D5;
+	Mon, 20 Oct 2025 12:52:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3CDA102F23B2;
+	Mon, 20 Oct 2025 14:52:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760964764; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=xm/J5aoiPYsZnMiN7LTPgkGX52KGGjizlIB4W3vhsvI=;
+	b=oNz4QML52tT7x/9G0sWyWTxbCrAVkNvTv79vy7Dp5UIupPUNqYDHcEkldl79sy3TOslfCe
+	/k81yvPVrU+6MkZTNFShUBBIspeDJirvh9+NrHDH5AFPfUZLg7gHYSeGFnkL8Aq82o2hfZ
+	LJ7CT8ajJWywOKH7nYFIYQvtLol54IcTYgNeUgl62+YJb0H0dsSalA4yrSAqO7+BOwNCVM
+	fK189keR7wQECoOZneEEzTCMsjbZO70i4AI96+MIQmA9M20NIW0rH47ptuYGHm9uoXifVl
+	CfPl18lfYSdKcKBJyeI+hrd+XtRyjYso2ZTmPosoxLNot3FBGdbRbILiN78CKQ==
+Date: Mon, 20 Oct 2025 14:52:14 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
+ <alexis.lothore@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH net-next 2/3] net: stmmac: Allow supporting coarse
+ adjustment mode
+Message-ID: <20251020145214.64186fc9@kmaincent-XPS-13-7390>
+In-Reply-To: <b2c58580-d891-4d10-b3dd-572f7f98c6fe@bootlin.com>
+References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
+	<20251015102725.1297985-3-maxime.chevallier@bootlin.com>
+	<20251017182358.42f76387@kernel.org>
+	<d40cbc17-22fa-4829-8eb0-e9fd26fc54b1@bootlin.com>
+	<20251020110040.18cf60c9@kmaincent-XPS-13-7390>
+	<b2c58580-d891-4d10-b3dd-572f7f98c6fe@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
- <20251020024049.6877-1-hupu.gm@gmail.com> <aPW3rilb8DtFDIMC@google.com> <20251020101523.GE281971@e132581.arm.com>
-In-Reply-To: <20251020101523.GE281971@e132581.arm.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Mon, 20 Oct 2025 20:51:52 +0800
-X-Gm-Features: AS18NWBR03yV6R3tb_Tq7HsUgE_JE6nP9lFhGsbqder5VlR8vuplgzTZM726trU
-Message-ID: <CADHxFxQjMy9n7G1dUX=HLi3b5VFjMd8YpBP7DOQyOdaQp443mA@mail.gmail.com>
-Subject: Re: [PATCH] perf build: Support passing extra Clang options via EXTRA_BPF_FLAGS
-To: Leo Yan <leo.yan@arm.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, adrian.hunter@intel.com, 
-	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
-	justinstitt@google.com, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
-	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
-	peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Leo,
-Thank you for your reply and for taking the time to discuss this in detail.
+On Mon, 20 Oct 2025 11:32:37 +0200
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-On Mon, Oct 20, 2025 at 6:15=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Mon, Oct 20, 2025 at 01:16:46PM +0900, Namhyung Kim wrote:
->
-> [...]
->
-> > On Mon, Oct 20, 2025 at 10:40:49AM +0800, hupu wrote:
-> > > When cross-compiling perf with BPF enabled, Clang is invoked during t=
-he
-> > > build. Some cross-compilation environments require additional compile=
-r
-> > > options, such as `--sysroot` or custom include paths.
->
-> [...]
->
-> > Leo, are you ok with this?
->
-> To be clear, now we are not talking cross build for perf program or any
-> targeting a CPU arch, it is a build failure for eBPF program.
->
+> Hi K=C3=B6ry,
+>=20
+> On 20/10/2025 11:00, Kory Maincent wrote:
+> > On Sat, 18 Oct 2025 09:42:57 +0200
+> > Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+> >  =20
+> >> Hi Jakub,
+> >>
+> >> On 18/10/2025 03:23, Jakub Kicinski wrote: =20
+> >>> On Wed, 15 Oct 2025 12:27:22 +0200 Maxime Chevallier wrote:   =20
+> >>>> The DWMAC1000 supports 2 timestamping configurations to configure how
+> >>>> frequency adjustments are made to the ptp_clock, as well as the repo=
+rted
+> >>>> timestamp values.
+> >>>>
+> >>>> There was a previous attempt at upstreaming support for configuring =
+this
+> >>>> mode by Olivier Dautricourt and Julien Beraud a few years back [1]
+> >>>>
+> >>>> In a nutshell, the timestamping can be either set in fine mode or in
+> >>>> coarse mode.
+> >>>>
+> >>>> In fine mode, which is the default, we use the overflow of an accumu=
+lator
+> >>>> to trigger frequency adjustments, but by doing so we lose precision =
+on
+> >>>> the timetamps that are produced by the timestamping unit. The main
+> >>>> drawback is that the sub-second increment value, used to generate
+> >>>> timestamps, can't be set to lower than (2 / ptp_clock_freq).
+> >>>>
+> >>>> The "fine" qualification comes from the frequent frequency adjustmen=
+ts we
+> >>>> are able to do, which is perfect for a PTP follower usecase.
+> >>>>
+> >>>> In Coarse mode, we don't do frequency adjustments based on an
+> >>>> accumulator overflow. We can therefore have very fine subsecond
+> >>>> increment values, allowing for better timestamping precision. However
+> >>>> this mode works best when the ptp clock frequency is adjusted based =
+on
+> >>>> an external signal, such as a PPS input produced by a GPS clock. This
+> >>>> mode is therefore perfect for a Grand-master usecase.
+> >>>>
+> >>>> We therefore attempt to map these 2 modes with the newly introduced
+> >>>> hwtimestamp qualifiers (precise and approx).
+> >>>>
+> >>>> Precise mode is mapped to stmmac fine mode, and is the expected defa=
+ult,
+> >>>> suitable for all cases and perfect for follower mode
+> >>>>
+> >>>> Approx mode is mapped to coarse mode, suitable for Grand-master.   =
+=20
+> >>>
+> >>> I failed to understand what this device does and what the problem is =
+:(
+> >>>
+> >>> What is your ptp_clock_freq? Isn't it around 50MHz typically?=20
+> >>> So 2 / ptp_freq is 40nsec (?), not too bad?   =20
+> >>
+> >> That's not too bad indeed, but it makes a difference when acting as
+> >> Grand Master, especially in this case because you don't need to
+> >> perform clock adjustments (it's sync'd through PPS in), so we might
+> >> as well take this opportunity to improve the TS.
+> >> =20
+> >>>
+> >>> My recollection of the idea behind that timestamping providers
+> >>> was that you can configure different filters for different providers.
+> >>> IOW that you'd be able to say:
+> >>>  - [precise] Rx stamp PTP packets=20
+> >>>  -  [approx] Rx stamp all packets
+> >>> not that you'd configure precision of one piece of HW..   =20
+> >>
+> >> So far it looks like only one provider is enabled at a given time, my
+> >> understanding was that the qualifier would be used in case there
+> >> are multiple timestampers on the data path, to select the better one
+> >> (e.g. a PHY that supports TS, a MAC that supports TS, we use the=20
+> >> best out of the two). =20
+> >=20
+> > No, we do not support multiple timestampers at the same time.
+> > For that IIUC we would have to add a an ID of the source in the packet.=
+ I
+> > remember people were talking about modifying cmsg.=20
+> > This qualifier is indeed a first step to walk this path but I don't thi=
+nk
+> > people are currently working on adding this support for now.=20
+> >  =20
+> >> However I agree with your comments, that's exactly the kind of feedback
+> >> I was looking for. This work has been tried several times now each
+> >> time with a different uAPI path, I'm OK to consider that this is out
+> >> of the scope of the hwprov feature.
+> >> =20
+> >>> If the HW really needs it, just lob a devlink param at it?   =20
+> >>
+> >> I'm totally OK with that. I'm not well versed into devlink, working mo=
+stly
+> >> with embedded devices with simple-ish NICs, most of them don't use dev=
+link.
+> >> Let me give it a try then :) =20
+> >=20
+> > meh, I kind of dislike using devlink here. As I said using timestamping
+> > qualifier is a fist step for the multiple timestamping support. If one =
+day
+> > we will add this support, if there is other implementation it will add
+> > burden on the development to track and change all the other implementat=
+ion.
+> > Why don't we always use this qualifier parameter even if it is not real=
+ly
+> > for simultaneous timestamping to avoid any future wrong development cho=
+ice.
+> > =20
+>=20
+> On my side I've implemented the devlink-based approach, and I have to say=
+ i'm
+> not so unhappy with it :) At least I don't have the feeling this is bendi=
+ng
+> the API to fit one specific case.
 
-I=E2=80=99d like to clarify the background and scenario once more:
-I=E2=80=99m building an SDK that includes a cross-compilation toolchain for
-the target architecture along with a copy of the kernel source tree.
-The goal is to make this SDK usable on any host system to build
-software, including perf with eBPF enabled, without requiring the host
-to install any additional packages. This is a common requirement in
-embedded environments, where we often cannot control or modify the
-host system setup.
+Indeed I don't think so, but my idea was to generalize the selection of
+the timestamp provider source to one API even if it is only one clock for t=
+wo
+different qualifiers.
+=20
+> The thing is that the qualifier model doesn't fully map to the situation =
+we
+> have in stmmac.
+>=20
+> The stmmac coarse/fine adjustment doesn't only changes the timestamping
+> behaviour, but also the ptp_clock adjustment mode.=20
+>=20
+> So changing the qualifier here will have a side effect on the PTP clock,
+> do we accept that as part of the hwprov timestamping API ?
 
+Yes, I see the timestamp source as a couple of a qualifier plus a PTP
+clock index therefore if we change the timestamp source it is intended to h=
+ave
+side effect.
 
-On Wed, Oct 15, 2025 at 5:30=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> Have you installed the GCC cross packages ?
->
->  $ sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
->  $ sudo apt-get install libc6-dev-aarch64-cross linux-libc-dev-aarch64-cr=
-oss
->  $ sudo apt-get install libc6-dev-arm64-cross linux-libc-dev-arm64-cross
->
-> My understanding is arm64 cross compilation tries to find headers in the
-> path /usr/aarch64-linux-gnu/include/ (I confirmed this on Ubuntu/Debian
-> distros).  After install GCC cross packages, the headers should appear
-> in the folder.
->
+> Should we use this API for coarse/fine stmmac config, I agree with your
+> previous comment of adding a dedicated qualifier that explicitely says
+> that using this qualifier comes with side effects, with the risk of
+> paving the way for lots of modes being added for driver-specific scenario=
+s.
 
-As you mentioned earlier, installing the GCC cross packages on the
-host does allow perf to be cross-built successfully. This works in my
-current setup (Ubuntu host kernel 6.14, SDK kernel source 6.18).
+I am not really a PTP in the field user but maybe there is a limited number=
+ of
+generic qualifier possible. Here we could have a qualifier for better frequ=
+ency
+precision and one for better timestamping precision. I don't think we will =
+end
+with tons of different qualifiers.
+Maybe PTP maintainers and users like Richard or Willem have pointers on the
+number of possible qualifier?
 
-However, this approach has two key drawbacks:
-a) Limited portability
-If the SDK is moved to a different host, these packages must be
-installed again for it to work, breaking the =E2=80=9Cplug-and-play=E2=80=
-=9D goal and
-increasing deployment complexity.
-b) Kernel version mismatch risk
-The headers from these packages are determined by the kernel version
-in the host=E2=80=99s distribution repository, not the kernel version in th=
-e
-SDK. For example, the host apt repository might ship headers from
-kernel 5.0 while the SDK contains kernel 6.18; differences in UAPI
-files (e.g., linux/bpf.h) could cause eBPF programs to fail to build
-due to missing APIs or structure changes. This risk is greater with
-fast-evolving subsystems like eBPF, even if it does not happen in my
-current environment.
+> Another thing with the stmmac implem is that we don't truly have 2
+> timestampers (1 approx and 1 precise), but rather only one whose precision
+> can be adjusted. Does it really make sense here to have the qualifier
+> writeable for the same timestamper ?
 
-This is why I don=E2=80=99t consider relying on host-installed packages as =
-an
-optimal solution for my case.
+I do think so.
 
+> Of course the netlink tsinfo/tsconfig is more appealing due to its generic
+> nature, but OTHO I don't want to introduce ill-defined behaviours in that
+> API with this series. The multiple timestamper work still makes a ton of
+> sense for MAC+PHY timestamping setups :)
 
-> This patch does not make clear why we cannot build eBPF program in
-> self-contained way. E.g., after installed kernel headers, why Makefile
-> misses to include installed headers when build eBPF program.
->
+I think that is where it would be nice to have a review from Richard or
+Willem on this to give us pointers on what is existing in the PTP world and=
+ if
+using a qualifier makes sense.
 
-I may not have explained myself clearly. As noted above, installing
-the headers you mentioned does allow perf to build successfully, but
-this is not the approach I ideally want, and it is not the most
-suitable option for my current context.
-
-The aim of my patch is to explicitly direct the build system to use
-the SDK=E2=80=99s own header files (via --sysroot or an additional -I path)=
-,
-ensuring that:
-a) The build works without installing any host packages;
-b) The headers used always match the SDK=E2=80=99s kernel version, eliminat=
-ing
-potential version mismatch problems.
-
-I believe this approach meets the principle of self-contained builds
-and aligns well with real-world embedded development needs.
-
-In addition, allowing additional parameters to be passed to clang via
-EXTRA_BPF_FLAGS would provide greater flexibility in the build
-process.
-
-Looking forward to further discussion.
-
-Thanks,
-hupu
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
