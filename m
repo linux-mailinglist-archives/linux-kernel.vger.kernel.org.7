@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-860196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17156BEF922
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:03:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DC0BEF928
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0FEC4ED874
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD5418897E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10AE1E4BE;
-	Mon, 20 Oct 2025 07:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4108E2D8767;
+	Mon, 20 Oct 2025 07:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P7+fKu6a"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWQta6xq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F97150997;
-	Mon, 20 Oct 2025 07:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D6B22173F;
+	Mon, 20 Oct 2025 07:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760943726; cv=none; b=WFUWx/dR8nDuvzBFYqYboxE/wZUCcVEJ5H31n4gk1B+PMwAW9GHaRRabaGrT1TdpcQT/GO/caEnLanrYbAMMqFVMLywA9rz/j2YpUCzV3XcG0X91agfqL0CKSlxGqTL5mUlvpAoiAXxHd9HF/0bAG5mYc3vY+pfV20VLCzu8Sf4=
+	t=1760943801; cv=none; b=MRnTFcsDstA0VJaVgh45ruFFhAKC0NLGxOqr96MVe77S8IuvMTMAMEB2EKsbjsPjAagcqqdFVs5jGJQ3ck/yXpkwlCioLbi+kUAFF24o3mFV/56x1QGOLWUyCD3246VAVobym8jWC41IVbvHu8fs91g9GtG6jM2QN3KexE/JyM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760943726; c=relaxed/simple;
-	bh=HkxfFtL/3XaTb44aFl9pdJtcAEASN9Gh6pDMPwEX1HQ=;
+	s=arc-20240116; t=1760943801; c=relaxed/simple;
+	bh=XP/iXY31pwnAwtKE9Vnx2Txoc0iaUX/VhtGFvpcioEE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=quK7jC6rqy9ZG18Qhv/7coHn+DuU4y360OsR3vXVouURPAMtOxkNwzEm8pWxpOumFnsqt4dtR3OJRD/ziPxglF5ezYQevAxIKXMM76vDwY7u6v7xeNTikBXTGjEYuU27c/KWlnjla54jvPyTLTMZ8e3qj3IqKI3xPuJOfJOj028=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P7+fKu6a; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59K5WDwe001436;
-	Mon, 20 Oct 2025 07:01:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=U04AMG
-	uiqfCKuuu4HGpR+ogoEBa5LdNdpgi6t0TQSJA=; b=P7+fKu6aVrSf5NLk7vZMfA
-	IA6DJtrB2ngzdctCND+mg/kC/S6My9g6DqwsDVLZjd/5Wz8DSUI1cEW0gQrJO7Yz
-	ui8EIAwbpNEvWd75cvROYSBTKI+ZRfIDJSxKgvKRp2nVvrNpirHL8KftLz3ID1gE
-	yy6tOozi3LGa1ZdH9SyaY9UQ41cMLy/YECSFuz5j7qozbniOAMzSArZgrIrrWAkg
-	S72HrmK4FrhV/P0AQsO120r6usynLV3T6IU1AWWXz+wL0OXmzeAgq9lFsWOZa3AD
-	VCsDRXxB1WYfvYnrkdpQZw7NJ6R35VKHB/U9Aj80/tBdbrqCHC1aRfGN0Gi3DsCQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rr4cp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 07:01:40 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59K71dtC030213;
-	Mon, 20 Oct 2025 07:01:39 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rr4cm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 07:01:39 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59K3J71u011033;
-	Mon, 20 Oct 2025 07:01:38 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx0v8by-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 07:01:38 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59K71aIH21954904
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 07:01:36 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C19E20040;
-	Mon, 20 Oct 2025 07:01:36 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC7D22004D;
-	Mon, 20 Oct 2025 07:01:35 +0000 (GMT)
-Received: from [9.155.199.94] (unknown [9.155.199.94])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 20 Oct 2025 07:01:35 +0000 (GMT)
-Message-ID: <c163a247-4f02-4010-a860-5060e34a34db@linux.ibm.com>
-Date: Mon, 20 Oct 2025 09:01:35 +0200
+	 In-Reply-To:Content-Type; b=IP6W3GZJF5qMCkceXuQsMOHZHrPZLrdiZxebBSMdvMHMxa75n86wGtjhF0Se2o+wGLUu3fJw9s4SPLANfQ1sKPiQNmKLY77c4lbgVvJ93jPoztov/Pr+YpwpbZcjRGc09D0L70ZxwJMd1uUiMwuCdDeiTCm84jsymZ+uBIR8UtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWQta6xq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D7FCC4CEF9;
+	Mon, 20 Oct 2025 07:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760943801;
+	bh=XP/iXY31pwnAwtKE9Vnx2Txoc0iaUX/VhtGFvpcioEE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dWQta6xq2NGa/nT3MYwNJm0UBqECC0Zg+I8d0X80DpgPG521S4MwVawe1+5Flufkv
+	 qSpLSyHt+kkeliVUiDR7xPqmQ9ch8YxTEiOsBVU4dg96eKXDWtqyppyu5eoXJV6Da/
+	 atPKfCjEhlgfTLDSXrc2rMNhhv8wQ2RnCndFjGK6IB81etj+SgPn32mAQBFh+Bi1pz
+	 QNZPAWS9AfZMlUbJgl899wDMSnJBvHAbL/qb5m/wRbsbaTu4bzVXQmb6ubfbYxOcLk
+	 +2IMNUUYnFgmMeRlb8/RLPi7JVqwhisJxyMzcdIhwGl3hGrzL/bnGXpLb3waDH/8ug
+	 yBkc9oU30SeSg==
+Message-ID: <4a436c40-0fb4-47b7-bfd4-0bc499e85b5a@kernel.org>
+Date: Mon, 20 Oct 2025 09:03:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,183 +49,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: KVM/s390x regression
-To: David Hildenbrand <david@redhat.com>, Balbir Singh <balbirs@nvidia.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: Liam.Howlett@oracle.com, airlied@gmail.com, akpm@linux-foundation.org,
-        apopple@nvidia.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
-        byungchul@sk.com, dakr@kernel.org, dev.jain@arm.com,
-        dri-devel@lists.freedesktop.org, francois.dugast@intel.com,
-        gourry@gourry.net, joshua.hahnjy@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        lorenzo.stoakes@oracle.com, lyude@redhat.com, matthew.brost@intel.com,
-        mpenttil@redhat.com, npache@redhat.com, osalvador@suse.de,
-        rakie.kim@sk.com, rcampbell@nvidia.com, ryan.roberts@arm.com,
-        simona@ffwll.ch, ying.huang@linux.alibaba.com, ziy@nvidia.com,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-next@vger.kernel.org
-References: <20251001065707.920170-4-balbirs@nvidia.com>
- <20251017144924.10034-1-borntraeger@linux.ibm.com>
- <9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
- <c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
- <8c778cd0-5608-4852-9840-4d98828d7b33@redhat.com>
- <74272098-cfb7-424b-a55e-55e94f04524e@linux.ibm.com>
- <84349344-b127-41f6-99f1-10f907c2bd07@redhat.com>
- <c9f28d0c-6b06-47a2-884d-7533f7b49c45@nvidia.com>
- <3a2db8fc-d289-415b-ae67-5a35c9c32a76@redhat.com>
- <cb85aaa3-e456-4fd8-b323-46c75d453a02@redhat.com>
+Subject: Re: [PATCH v6 0/6] exynos-acpm: add DVFS protocol and clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <cb85aaa3-e456-4fd8-b323-46c75d453a02@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: v4AhxjdYPQ4pAwdTVyyGMZBkLltfsYnV
-X-Proofpoint-GUID: HGaWrDevPhF1ISP8dLXNWldbJ_jQHpwb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXzXLWYXdS7hpy
- qNGKGWSJWyIeny2Q6sQf3+EEPv7O8gq0l5X1IuADybSQAj7A43xpS3Tps95MHeYYh9t33hr3A35
- l+PG8dlG5bqCGLX/xUG4IP7aE1ULj006EF+/6bi8RH485thE3VpLhaoskEqPRC8mbjUa5glVK5x
- zJzH4H2DSuJGnfnkd9h/ntuEjvvPAZS1xuZHQnrKIs00r+EuimU4rteVA9P10C4iNJnbz6/afoq
- 2z2Wny7QHKj4t9il4LfDOEvvEoWOpiqXKv5WchRi1NZIjq1Yn++B7Mj82V00Q9QUF4lDex7ZGsD
- dJW2zxk9pCCdadpiPi846uCpHbMBYdX6gB+l95RbAL1/BEsao6NPACr4YtGtW0HE4stXLrpctEW
- YjeywxCKkh6foVSvhrI1VUR6adUAGA==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f5de54 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=vFDTLKEYg0PC3Nlu-GsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 18.10.25 um 00:41 schrieb David Hildenbrand:
-> On 18.10.25 00:15, David Hildenbrand wrote:
->> On 17.10.25 23:56, Balbir Singh wrote:
->>> On 10/18/25 04:07, David Hildenbrand wrote:
->>>> On 17.10.25 17:20, Christian Borntraeger wrote:
->>>>>
->>>>>
->>>>> Am 17.10.25 um 17:07 schrieb David Hildenbrand:
->>>>>> On 17.10.25 17:01, Christian Borntraeger wrote:
->>>>>>> Am 17.10.25 um 16:54 schrieb David Hildenbrand:
->>>>>>>> On 17.10.25 16:49, Christian Borntraeger wrote:
->>>>>>>>> This patch triggers a regression for s390x kvm as qemu guests can no longer start
->>>>>>>>>
->>>>>>>>> error: kvm run failed Cannot allocate memory
->>>>>>>>> PSW=mask 0000000180000000 addr 000000007fd00600
->>>>>>>>> R00=0000000000000000 R01=0000000000000000 R02=0000000000000000 R03=0000000000000000
->>>>>>>>> R04=0000000000000000 R05=0000000000000000 R06=0000000000000000 R07=0000000000000000
->>>>>>>>> R08=0000000000000000 R09=0000000000000000 R10=0000000000000000 R11=0000000000000000
->>>>>>>>> R12=0000000000000000 R13=0000000000000000 R14=0000000000000000 R15=0000000000000000
->>>>>>>>> C00=00000000000000e0 C01=0000000000000000 C02=0000000000000000 C03=0000000000000000
->>>>>>>>> C04=0000000000000000 C05=0000000000000000 C06=0000000000000000 C07=0000000000000000
->>>>>>>>> C08=0000000000000000 C09=0000000000000000 C10=0000000000000000 C11=0000000000000000
->>>>>>>>> C12=0000000000000000 C13=0000000000000000 C14=00000000c2000000 C15=0000000000000000
->>>>>>>>>
->>>>>>>>> KVM on s390x does not use THP so far, will investigate. Does anyone have a quick idea?
->>>>>>>>
->>>>>>>> Only when running KVM guests and apart from that everything else seems to be fine?
->>>>>>>
->>>>>>> We have other weirdness in linux-next but in different areas. Could that somehow be
->>>>>>> related to use disabling THP for the kvm address space?
->>>>>>
->>>>>> Not sure ... it's a bit weird. I mean, when KVM disables THPs we essentially just remap everything to be mapped by PTEs. So there shouldn't be any PMDs in that whole process.
->>>>>>
->>>>>> Remapping a file THP (shmem) implies zapping the THP completely.
->>>>>>
->>>>>>
->>>>>> I assume in your kernel config has CONFIG_ZONE_DEVICE and CONFIG_ARCH_ENABLE_THP_MIGRATION set, right?
->>>>>
->>>>> yes.
->>>>>
->>>>>>
->>>>>> I'd rule out copy_huge_pmd(), zap_huge_pmd() a well.
->>>>>>
->>>>>>
->>>>>> What happens if you revert the change in mm/pgtable-generic.c?
->>>>>
->>>>> That partial revert seems to fix the issue
->>>>> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->>>>> index 0c847cdf4fd3..567e2d084071 100644
->>>>> --- a/mm/pgtable-generic.c
->>>>> +++ b/mm/pgtable-generic.c
->>>>> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
->>>>>                if (pmdvalp)
->>>>>                     *pmdvalp = pmdval;
->>>>> -       if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
->>>>> +       if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
->>>>
->>>> Okay, but that means that effectively we stumble over a PMD entry that is not a migration entry but still non-present.
->>>>
->>>> And I would expect that it's a page table, because otherwise the change
->>>> wouldn't make a difference.
->>>>
->>>> And the weird thing is that this only triggers sometimes, because if
->>>> it would always trigger nothing would ever work.
->>>>
->>>> Is there some weird scenario where s390x might set a left page table mapped in a PMD to non-present?
->>>>
->>>
->>> Good point
->>>
->>>> Staring at the definition of pmd_present() on s390x it's really just
->>>>
->>>>       return (pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT) != 0;
->>>>
->>>>
->>>> Maybe this is happening in the gmap code only and not actually in the core-mm code?
->>>>
->>>
->>>
->>> I am not an s390 expert, but just looking at the code
->>>
->>> So the check on s390 effectively
->>>
->>> segment_entry/present = false or segment_entry_empty/invalid = true
->>
->> pmd_present() == true iff _SEGMENT_ENTRY_PRESENT is set
->>
->> because
->>
->>     return (pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT) != 0;
->>
->> is the same as
->>
->>     return pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT;
->>
->> But that means we have something where _SEGMENT_ENTRY_PRESENT is not set.
->>
->> I suspect that can only be the gmap tables.
->>
->> Likely __gmap_link() does not set _SEGMENT_ENTRY_PRESENT, which is fine
->> because it's a software managed bit for "ordinary" page tables, not gmap
->> tables.
->>
->> Which raises the question why someone would wrongly use
->> pte_offset_map()/__pte_offset_map() on the gmap tables.
->>
->> I cannot immediately spot any such usage in kvm/gmap code, though.
->>
+On 10/10/2025 14:46, Tudor Ambarus wrote:
+> Dependencies description:
+> All patches should go through the Samsung SoC tree.
+> The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
+> If the clock subsystem needs to merge the new clock driver, it will
+> need an immutable tag with the 2 patches.
 > 
-> Ah, it's all that pte_alloc_map_lock() stuff in gmap.c.
-> 
-> Oh my.
-> 
-> So we're mapping a user PTE table that is linked into the gmap tables through a PMD table that does not have the right sw bits set we would expect in a user PMD table.
-> 
-> What's also scary is that pte_alloc_map_lock() would try to pte_alloc() a user page table in the gmap, which sounds completely wrong?
-> 
-> Yeah, when walking the gmap and wanting to lock the linked user PTE table, we should probably never use the pte_*map variants but obtain
-> the lock through pte_lockptr().
-> 
-> All magic we end up doing with RCU etc in __pte_offset_map_lock()
-> does not apply to the gmap PMD table.
-> 
+> The following DT patches depend on the bindings from #1:
+> https://lore.kernel.org/linux-samsung-soc/20250924-acpm-dvfs-dt-v4-0-3106d49e03f5@linaro.org/
 
-CC Claudio.
+You forgot to mention that this patchset adds new dtbs_check warnings,
+which are fixed ONLY after applying DT patches.
+
+Best regards,
+Krzysztof
 
