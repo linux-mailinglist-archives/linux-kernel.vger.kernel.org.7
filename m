@@ -1,167 +1,126 @@
-Return-Path: <linux-kernel+bounces-860098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238C9BEF501
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B55BEF537
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A0F3E1272
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDCB18992CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1F62C026A;
-	Mon, 20 Oct 2025 04:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194882C2368;
+	Mon, 20 Oct 2025 04:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOsBGZT+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMwtCmvR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6DA29A326
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F602BF3F4;
+	Mon, 20 Oct 2025 04:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760935946; cv=none; b=jTgZFymShm4u6R8QDttSETtA/5DN+AjNTfcPHN/O4lCZaUJJUjmD7tDLE0oNCrWgo3iq4icfDQ8W5HO9UgC7avFkBeUDtPqJG6gtRXOWJ5xxKmxPQFRWEVsbiudfqUIdeTQNISo9Fo8n6hBD7yG1/xkpcbiPT31Rg6NKbL7HKcQ=
+	t=1760936197; cv=none; b=DbAAO7MRxMGxL4EbzF8Zuy6hEOk5JGAoIN97UhFLyqscrQFzA9iWObVRpuUUbhy6dWN3FNRU3dvNzhaKzNSXK/S4UkOpRYg+itv51GadoEYME3MGoc772CpAw9IjygCkqdHzh6lg/I+Y7CNYZHX8MRaEZI4N+RPuee7PklqPels=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760935946; c=relaxed/simple;
-	bh=RWX85HMxsmO4/qLMChtm+VThVZ1Cx193U1PHAy0oFJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DtZX7Y4FZiTjBOnlZu54YAKzGmhsb/J4ijySpVcCynBo8iq2Xvs3aZbYLswZSAJmTh6V2DtDO9toxo3KC6VBJpbnq8XxRCYr83wFUBR+Pfyj4wo/sTadol/VodRis5GqwR2yWXkJ/JfpH1CfRYmIo3KjzHLwF9RcHHI3F08Nw3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOsBGZT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC5AC4AF09
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:52:25 +0000 (UTC)
+	s=arc-20240116; t=1760936197; c=relaxed/simple;
+	bh=knUidLk/WfGmOIs1Y9PoZq64HcYmaba7BCKKYXsS7kA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtlOIhY2GXbXwyTUs7Wf02Q3fThskNX7SVN6WUX6P7TPzn241BKNxv55UiuEuSG8U0GQhLEKQI1aOLpm5gAAmxMs8HAFuO/5xkEl1pvo5hvFuaug3mdXapZww4dEMg4HkcLv5cTG9lMN2v7FskJeeeKikcgTw7StJB6NC240Swk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMwtCmvR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FC6C4CEF9;
+	Mon, 20 Oct 2025 04:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760935945;
-	bh=RWX85HMxsmO4/qLMChtm+VThVZ1Cx193U1PHAy0oFJw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TOsBGZT+I1W0wrrvYHr3mdXPuh+Z/54Gaw2QtQLLD8iZvxmFLJ4dWHSYcUkGPdenY
-	 M6C27NzO6slsjXF8OvG5paAaxy2kNpTfYbW5iW3uS7svBw3hqL/BffmnnSt5FpQ1CC
-	 2ICywg6QYXpNYR1up7ikDogWFRsQuGtGKLdzQo1TLjmZ7pT8EIOfmOo3rIDfy8ZHlr
-	 k1zUQ/hZLOOz65c9wRdymvztuegZ8TLz+Z6PFmm07++cuPyhOb89/I8qXsf8AbqVIc
-	 0yh6SJ+SgGWMDbr7U+GOc8CLDPvJ8qhWLHoeGPpyz57N9UhPZ+7eSwD5neZSuYcxYN
-	 q9kFMw14u/XwQ==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c4f1e7243so2406612a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:52:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWauE3yfaDuAnfIPh1bwsEbDpc0q+BhIPZd50D28s9N2HAc4/eGTP5Egh1liPLyvVJtCWX5jUw7J9XaBXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFs6DcFAy1qgLOhhmat9OrAYY9dLxZ9Vl3AkgtkzxK8tA1Mo6c
-	p/9hBT2JEq48MguhCOGCrL5hL8kCcQE1W9gfofU2Ygv6p7+Vck/tVRHrHCPThEe1l/NLQ3H1vLB
-	ZQiuHxe3wF1eKX3EyhisgKdmZ0tSmY0o=
-X-Google-Smtp-Source: AGHT+IGHItkbPi2ADrDcBHUrAbdp4PQwF/p+LMbhlO3lJlhBqp6g5qUXzx5qbuxQUk2bPrnJGC45VJF26C0WQ1a/jHY=
-X-Received: by 2002:a05:6402:40c5:b0:63c:1e95:dd4c with SMTP id
- 4fb4d7f45d1cf-63c1f6cea34mr11794026a12.27.1760935944345; Sun, 19 Oct 2025
- 21:52:24 -0700 (PDT)
+	s=k20201202; t=1760936197;
+	bh=knUidLk/WfGmOIs1Y9PoZq64HcYmaba7BCKKYXsS7kA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aMwtCmvR9qHD3LD18YwF4lEKiTMvYC4JmMT7IKS7REcHOzxAyRddwVWpaXZfDpkO9
+	 s4+zTGq1F7oEbIfTYXZuGDjVvg1PuaG4XBD/X4YNG0Z8b9dr72N0VUuoRqIyfPfxya
+	 dcbNEI09hYxGnv/bRsBagoXwFl6aQPzCaXMqbJgm8SxTAs8F6h7wXRajzdnNWoo5k1
+	 Hmcal3rgaMdmmJ8JNXPFaAYH4lSzV7LRb1617oFgDk1eTfc7VBppG2bZU6ODOgB7Lq
+	 ZzenNSKsJAHxs4IQpL8fmWE5S3RItR1kU6QYKDps7F0Y60J8Ey9+pfpbccYHQA6o1t
+	 KK9rvTa3noxEg==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vAhwm-0000000082z-2h25;
+	Mon, 20 Oct 2025 06:56:40 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH v3 00/14] iommu: fix device leaks
+Date: Mon, 20 Oct 2025 06:53:04 +0200
+Message-ID: <20251020045318.30690-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev> <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251014071917.3004573-8-chenxiaosong.chenxiaosong@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 20 Oct 2025 13:52:12 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
-X-Gm-Features: AS18NWC9rJ3BCkasTR-zLLGiCjygRe0e8WsJ37JjLpFH4ojEp1UX1W0MBYorK_A
-Message-ID: <CAKYAXd9SJ_92si7_wt=hLm9RZmrVm2oZZqNOPFDGvPZzMzkAYA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/22] smb: move some duplicate definitions to common/smb2pdu.h
-To: chenxiaosong.chenxiaosong@linux.dev
-Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
-	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
-	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
-	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 4:21=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
-v> wrote:
->
-> From: ZhangGuoDong <zhangguodong@kylinos.cn>
->
-> In order to maintain the code more easily, move duplicate definitions to
-> new common header file.
->
-> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
-> ---
->  fs/smb/client/smb2pdu.h | 24 +++---------------------
->  fs/smb/common/smb2pdu.h | 24 ++++++++++++++++++++++++
->  fs/smb/server/smb2pdu.c |  8 ++++----
->  fs/smb/server/smb2pdu.h | 17 -----------------
->  4 files changed, 31 insertions(+), 42 deletions(-)
->
-> diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-> index 101024f8f725..c013560bcfa1 100644
-> --- a/fs/smb/client/smb2pdu.h
-> +++ b/fs/smb/client/smb2pdu.h
-> @@ -135,11 +135,9 @@ struct share_redirect_error_context_rsp {
->
->
->  /* See MS-SMB2 2.2.13.2.11 */
-> -/* Flags */
-> -#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
->  struct durable_context_v2 {
->         __le32 Timeout;
-> -       __le32 Flags;
-> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
->         __u64 Reserved;
->         __u8 CreateGuid[16];
->  } __packed;
-> @@ -157,13 +155,13 @@ struct durable_reconnect_context_v2 {
->                 __u64 VolatileFileId;
->         } Fid;
->         __u8 CreateGuid[16];
-> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
-> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
->  } __packed;
->
->  /* See MS-SMB2 2.2.14.2.12 */
->  struct durable_reconnect_context_v2_rsp {
->         __le32 Timeout;
-> -       __le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
-> +       __le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
->  } __packed;
->
->  struct create_durable_handle_reconnect_v2 {
-> @@ -263,22 +261,6 @@ struct network_resiliency_req {
->  } __packed;
->  /* There is no buffer for the response ie no struct network_resiliency_r=
-sp */
->
-> -#define RSS_CAPABLE    cpu_to_le32(0x00000001)
-> -#define RDMA_CAPABLE   cpu_to_le32(0x00000002)
-> -
-> -#define INTERNETWORK   cpu_to_le16(0x0002)
-> -#define INTERNETWORKV6 cpu_to_le16(0x0017)
-> -
-> -struct network_interface_info_ioctl_rsp {
-> -       __le32 Next; /* next interface. zero if this is last one */
-> -       __le32 IfIndex;
-> -       __le32 Capability; /* RSS or RDMA Capable */
-> -       __le32 Reserved;
-> -       __le64 LinkSpeed;
-> -       __le16 Family;
-> -       __u8 Buffer[126];
-> -} __packed;
-> -
->  struct iface_info_ipv4 {
->         __be16 Port;
->         __be32 IPv4Address;
-> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-> index f79a5165a7cc..25e8ece283c4 100644
-> --- a/fs/smb/common/smb2pdu.h
-> +++ b/fs/smb/common/smb2pdu.h
-> @@ -1290,6 +1290,10 @@ struct create_mxac_req {
->         __le64 Timestamp;
->  } __packed;
->
-> +/* See MS-SMB2 2.2.13.2.11 and MS-SMB2 2.2.13.2.12 and MS-SMB2 2.2.14.2.=
-12 */
-> +/* Flags */
-> +#define SMB2_DHANDLE_FLAG_PERSISTENT   0x00000002
-I prefer moving it when the durable handle structures are moved to
-/common later.
-Thanks.
+This series fixes device leaks in the iommu drivers, which pretty
+consistently failed to drop the reference taken by
+of_find_device_by_node() when looking up iommu platform devices.
+
+Included are also a couple of related cleanups.
+
+Johan
+
+
+Changes in v3
+ - fix mediatek use-after-free on probe deferral
+ - add acks and reviewed-bys from Marek, Yong and Thierry
+
+Changes in v2
+ - drop omap reference sooner; remove unused pointer
+  - amend exynos commit message with reference to partial fix
+   - amend tegra commit message with reference to partial fix
+    - add Robin's ack
+
+
+Johan Hovold (14):
+  iommu/apple-dart: fix device leak on of_xlate()
+  iommu/qcom: fix device leak on of_xlate()
+  iommu/exynos: fix device leak on of_xlate()
+  iommu/ipmmu-vmsa: fix device leak on of_xlate()
+  iommu/mediatek: fix device leak on of_xlate()
+  iommu/mediatek: fix use-after-free on probe deferral
+  iommu/mediatek: simplify dt parsing error handling
+  iommu/mediatek-v1: fix device leak on probe_device()
+  iommu/mediatek-v1: fix device leaks on probe()
+  iommu/mediatek-v1: add missing larb count sanity check
+  iommu/omap: fix device leaks on probe_device()
+  iommu/omap: simplify probe_device() error handling
+  iommu/sun50i: fix device leak on of_xlate()
+  iommu/tegra: fix device leak on probe_device()
+
+ drivers/iommu/apple-dart.c              |  2 ++
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c | 10 +++-----
+ drivers/iommu/exynos-iommu.c            |  9 +++----
+ drivers/iommu/ipmmu-vmsa.c              |  2 ++
+ drivers/iommu/mtk_iommu.c               | 34 +++++++++++++++++--------
+ drivers/iommu/mtk_iommu_v1.c            | 28 ++++++++++++++++----
+ drivers/iommu/omap-iommu.c              |  7 ++---
+ drivers/iommu/omap-iommu.h              |  2 --
+ drivers/iommu/sun50i-iommu.c            |  2 ++
+ drivers/iommu/tegra-smmu.c              |  5 ++--
+ 10 files changed, 63 insertions(+), 38 deletions(-)
+
+-- 
+2.49.1
+
 
