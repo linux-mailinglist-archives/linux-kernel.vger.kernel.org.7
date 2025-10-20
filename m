@@ -1,301 +1,184 @@
-Return-Path: <linux-kernel+bounces-861601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2451BF32AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38361BF32B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F5174FBBA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:16:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE1894FC95A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6032302CBA;
-	Mon, 20 Oct 2025 19:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8362D640F;
+	Mon, 20 Oct 2025 19:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="S/GV6Wmj"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iREq6nXD"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013062.outbound.protection.outlook.com [40.107.201.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B5F2D7DE9;
-	Mon, 20 Oct 2025 19:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987760; cv=none; b=cnBYGguK/+Kvzji2QVUVnM6l+kCasgQo1epe5nafwbrS+zAJunIe7RTNKOttES1yDWSa0NnL2cmRSwjo+RF9hGlefHYLVDiJOv9KbswIdwXIB+92+KzetcqZgw/FYNomYivYuvdpI3L68XYn1whRaX7FAFeGNUEpuuYPfA0tsLw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987760; c=relaxed/simple;
-	bh=DfSbOncfbSbWKBMEesbtZv1T8pP6N6YIiLr6TWtajIE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ULYQ8l4URzRNJiKhz/zPav8gQc0qg0m1/ODNfW++5xg7S6AHBhcQ/dvvE25qWOLtcZ3R/RgSx3Pk0f4dEKfjtjyT+v/MNjL5EpOO+ugmGUwWl7UCO0nTQkVm0Q/UEF3znMCq9elCJMVUOdwMx17f3VgxEAs+6yaY+d938aCWZsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=S/GV6Wmj; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KFMlrS026606;
-	Mon, 20 Oct 2025 15:15:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=SiknH
-	4v0/YW+i+jJQcVAZ379QT74Iw+cOocSzMCEvu8=; b=S/GV6Wmjvz6Xw3+byPE0T
-	xXJ28Xi+a7DSz3cIc16osxGWpMmwhxn12VOr0jAzbnJYatJMkfGWWTDx81WlBI8e
-	Vl4dPuzZ1BuSJ5vmd+ss1fpn7VebZGdpmmtra1s9KNVhLmKHFQeFcHbKSrX4fZfv
-	ptgSyvWKXYNrEfCp7VbONvL8n19XU1SsKkZ7V7bKmowMV9Y4XeLZFOWMsLZ3xL+T
-	ISf4AgYyBkxNhjkdYRsSPoIoEh4H2tf7Sao3Xh0cxaJKOJW+JWSC0/UdAr0tnMlD
-	UwhaXgO8GV/ws4YFZqd7rxktMiVj9gptOv1RpDaybaIPzo/k4y8zhcpO2fudSofp
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49v7t3b4x0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 15:15:54 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 59KJFrCC002701
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 20 Oct 2025 15:15:53 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Mon, 20 Oct
- 2025 15:15:53 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Mon, 20 Oct 2025 15:15:53 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 59KJFeSk013489;
-	Mon, 20 Oct 2025 15:15:42 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <michael.hennerich@analog.com>, <nuno.sa@analog.com>,
-        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v6 8/8] iio: adc: ad4030: Support common-mode channels with SPI offloading
-Date: Mon, 20 Oct 2025 16:15:39 -0300
-Message-ID: <3fadbf22973098c4be9e5f0edd8c22b8b9b18ca6.1760984107.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1760984107.git.marcelo.schmitt@analog.com>
-References: <cover.1760984107.git.marcelo.schmitt@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E5F283FDD
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760987799; cv=fail; b=agr31EpO6KCQ4sG+lysrOK6IPlYmxjZYQF0nKcpLJuvng1iTSc34PB5Qveb5z6yUdO0LqsrlCyh6EQgGgjc1Xdxc9k8shKsotbOPz6urSbbEaJC824BMDSCS2b20Im4WdgooPoHmJZBfH/Eeq5NT6L2ILrdYHTdZnBJWzckLgtg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760987799; c=relaxed/simple;
+	bh=SF4VeQr/gPbDc7NehhhS7f1emU4cjhsU6YXy+k/sDqE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1ytN7Z35bIqRDpJIZiMAl7Co8J2eMmIkCgCX7nAWpKPSSf7wuLhSACpVEpxQPjozTw2qG53McDFgIHuZTq29hOy/aGyfckyxbAd+tHmiIHMEMxqNAOMS26YXI1COQcz+sj3L8bb9yBCYgo8aaB+lkWeROgloXnEEwg902R9/NA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iREq6nXD; arc=fail smtp.client-ip=40.107.201.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QSW+hyX4rvnUTuWS96gCYTOPF2OJcMUfmUlCNBgJIsjhZzAnm9EKnkszi9BhA33kTyMEAwmjN/6nHIGqLwW/CQx4hT6/+8hhSQUfdB0C9KFhKQE7yp+6ZnG22cXouB3FjXyViJXYpeq28+w60IL73EpWxCB4C8NPU5CBUE1SUjsL1DQs3BMoSOX7rpgPBoQs7Rp7dgfyahRCf7/g/FKGeDvGOgUvdoXm2ML0ZfXdMupt75FfNcCJqcLt0gYnF7uWmFxDUKXJTVSU2m7vWakkhCq/yqH88bYZHPZS5isxuxbMeoucX0uxSCzreIUNaHbSC5EveU5p1vpkRmj7OK9o9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gTifzaDtIeIGMUJPDNpHSblEN3/LU3gQrRGCekOirMU=;
+ b=Jg9ohT1ZNWCN4DuFH0a431B07/A+DCrm0+IB+un3iYagYI3RcL+mo467Bu7s+HnMUWasqsiyDNpLwDKf6/Ao6FTJCZ3Hb6p0wuUYG7OQCRlT9gRsaDeU5uMTDNEzwyXUdzb2FPSVPmSC1sk2iDTl93lcyOmwugvAE1AD5h5dmw2a6hQZb47cpaTUBgrx29yMyhxR5dZRKY6losNzD1YnrEyI1Ts5f1KdX9YYyRBWJ54LRrT3i1bNp0xcRwDPYDP6Sm75gXOjyO6Nv7twh9uUecWw76zw5GaR1ruzaIpO44NlK5HiL/Cl+ig7Fllxqs7dJRtA3rJ1sZi+4qw14gMh6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gTifzaDtIeIGMUJPDNpHSblEN3/LU3gQrRGCekOirMU=;
+ b=iREq6nXDggLOk0W9yexV8wYTMzk4m6BIMwwy3vzGhX6FoUmWV12leTyacAxeCENYy4is163lO6o9boOPhSWmq2iIgsiAW7F8iywigaFlo7gMD7a7Z/YrG1joJgpdCFNQAhHDeRqcvTrXcHxxXuu8A2rXqlCjvN8wccITbfJTtGIVVnuVHtFxmztn3R2phE8QRYAMTBQE92T35y1FF4/rgXEClZC5TKqg0RgPS5/9akrEGW9SYHhJPP4MVhQguWfo+pav1pOcwO+EkUpwbxXZappLQSrQZ5SFybYNL6C9Hrry2bHWhIGERLURJoiMk0G5ITmSlCyQFljpDk0krPQsJw==
+Received: from CH2PR20CA0016.namprd20.prod.outlook.com (2603:10b6:610:58::26)
+ by IA1PR12MB7543.namprd12.prod.outlook.com (2603:10b6:208:42d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Mon, 20 Oct
+ 2025 19:16:34 +0000
+Received: from CH2PEPF00000144.namprd02.prod.outlook.com
+ (2603:10b6:610:58:cafe::c1) by CH2PR20CA0016.outlook.office365.com
+ (2603:10b6:610:58::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Mon,
+ 20 Oct 2025 19:16:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH2PEPF00000144.mail.protection.outlook.com (10.167.244.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 19:16:34 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 20 Oct
+ 2025 12:16:29 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 20 Oct 2025 12:16:28 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 20 Oct 2025 12:16:28 -0700
+Date: Mon, 20 Oct 2025 12:16:26 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: kernel test robot <lkp@intel.com>, <will@kernel.org>,
+	<oe-kbuild-all@lists.linux.dev>, <jean-philippe@linaro.org>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <balbirs@nvidia.com>,
+	<miko.lenczewski@arm.com>, <peterz@infradead.org>, <kevin.tian@intel.com>,
+	<praan@google.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain
+ arm_smmu_invs array
+Message-ID: <aPaKirLXdOtvuNgA@Asurada-Nvidia>
+References: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
+ <202510172156.WHU485ad-lkp@intel.com>
+ <aPKjEvxCJoRhzU7K@Asurada-Nvidia>
+ <20251020121056.GJ316284@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDA2MiBTYWx0ZWRfX7KxKEwT+UMGl
- 0JD7+9UKIN+SdTjrzdXf7I78OlAnFI0wd6l94BXwSfH1hpGxupYeV3XNV96/S4EdLOWkZA1fRJq
- oCb//Uz0MdcWgBuFXrDhBl0ZEZjLWvw5ymX355O8Zu7Onzyksoio7GyXyNyd10lWCZYr2YPGLAf
- 5okBmm0Mck5W0lPMxLCMzrHrzv1VpQTd4zH7Mb57YVhsM3deWPoiJUATxWxm9Iy8ZRbTxaPtkeR
- PPX3q3HpJfBOJng0Q31NRztpA8dBIfqDCvCoWbNgLcmz8lrNG4ApB/GhDrZTo7H9W1TG8fspgZy
- cOJ9pHlIyrD8+uh6lL7xKIFwDoBs6YSY5Ikh3qX+w91C/ZCw9GG552rQHoLGggzTgdg5IJoEajy
- oV6xaqjQeOSnsCUkGLyAdVnKNLu3mg==
-X-Authority-Analysis: v=2.4 cv=UPPQ3Sfy c=1 sm=1 tr=0 ts=68f68a6a cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=gAnH3GRIAAAA:8
- a=HoujexutVUGUbmyXq-QA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 9xg1Rnwvn8KvWhlgSlnR_yYb6oXSPoRB
-X-Proofpoint-GUID: 9xg1Rnwvn8KvWhlgSlnR_yYb6oXSPoRB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 clxscore=1015 phishscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180062
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251020121056.GJ316284@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000144:EE_|IA1PR12MB7543:EE_
+X-MS-Office365-Filtering-Correlation-Id: 060faac0-bbe8-41be-8c69-08de100d2efc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2QcmtfdHqDFkaxuUyvQpUL2RexRxcUieBCjXZe6Tz04hYe8Z81WEKnPRCNT/?=
+ =?us-ascii?Q?KlSWR8vTy1mbnr1PGyOE2pKe3V3aaL01nuhJi1iPzdwYCgf/8RzzNF0cwhsv?=
+ =?us-ascii?Q?XLFJcMvEveWoDUHnJVoKzfS0pAQ0CBklmF0ZTCB2JA7sfhgQuaDDKJ5tvFTx?=
+ =?us-ascii?Q?2d8Oes9qhOg9YkJP1KpdYDAqhxpX2UmyVjclD+pVPKcKYzwbv6bhoIclv3wL?=
+ =?us-ascii?Q?OHqQ8aYDxy4Q+98rIV3hJokTRZdpy6XjyydGnggO0pbeLUncwY5Ue8aecXkJ?=
+ =?us-ascii?Q?8tIqmnXKGYxDneFk7n984s2iqpmP8wlbFd/Az2Q16rFSM6TUVOjNfgpG6FEC?=
+ =?us-ascii?Q?tiMbC09z5i0lc5+Gn0Dv0KxzjOl7MaCAN57A1KDftRWrf9M+rOHD3/iRXD9n?=
+ =?us-ascii?Q?M9sQT5rm7eWpqv7oQPBmZsoi7bO6H8P2uY/7Q7NhDsOYHSS2RhZsnUn/1B1+?=
+ =?us-ascii?Q?YhYCHXXRlNTkBIjxLR2mJSghgOKboHQlkPMxSgK4ZQ6pyxsgd1qlmz4VKAM+?=
+ =?us-ascii?Q?9p4uE6NivS+yPD3LrrVANPw+9BJoAJyouCypA7Our/SSLdePhserhnn545+i?=
+ =?us-ascii?Q?oWo804hxsPnJENnZoJvmM+hfsxzBCDJwPIFHs9//INJdF8sYzQD3cnAr8IQS?=
+ =?us-ascii?Q?o5sDizQsOVOAUW4T/24NKczem832cNb297ZDDdo2tdWKc6yF4rbhpRcmKFf/?=
+ =?us-ascii?Q?1aeRSre3AeT2p8w4z9cf3ywKAJy9nHeUe9zJfZpHiPPj5tcnPnt+sD8PAMLS?=
+ =?us-ascii?Q?hTzFcDqX6HgPwFM9tebVGhOLBKI4XWWdqDlp0FbXBI0OwwquO+itsP25o+OB?=
+ =?us-ascii?Q?o7eB38MFzdCXCx6kE4dZeENISazDO1Jn3IftkZDU/wXNKd9Lj5GlCU56i6t2?=
+ =?us-ascii?Q?bj8TMYvKR7LnOZqUNuuDtiqow9llAbpsCuVMqmyqtVTG55XArOgqvgCApo7a?=
+ =?us-ascii?Q?oCH1oXkl0WIQ8DEgG+MburmV1+H28BKrZwz4P4y6tY17rufTbUe9GV0IfKlh?=
+ =?us-ascii?Q?wYgcIMuom2U7iQSSg1A2WUyRGZcX3+2+Xh3Stt/qCCO8ebmc5XPKw/XoGldu?=
+ =?us-ascii?Q?ug3S0iQnLob6jzNJlWtFYuqTnVYrFhm+lLVx/G4ef1teqS9SfOJAxGh7LLUD?=
+ =?us-ascii?Q?GP8MB4Ps+hm+JU9J50OoYy1x11UJHCHo2U85TiavzBcp2Ae70uVSV0eu2FFx?=
+ =?us-ascii?Q?+N42ztWMinQcF1LoAy3oMJbhZGOC7BpyE2HYtabI1bz+INtI+mLllWo2zNeZ?=
+ =?us-ascii?Q?DwOoHVVyAF7nLfAj/6IMvlhJ89sTfBnw/a0bKq58zyPfj4zK2j6soywuJr3y?=
+ =?us-ascii?Q?HSUL3p7OdCnvirDMQGihdaRtjaUxV2rfk3SNthlOej/mCEwUk5nEtPcWomvQ?=
+ =?us-ascii?Q?ulzPod1lHNOD/I7Q+LBxx9cZ1kID6/WoK57m1bkV+HbHrmw2yF/bU3m5CqSM?=
+ =?us-ascii?Q?nFc0XeojyN+Gl8/Qc0GXFmNM32k8fZD0w8e9lCeefq6kPoR8e0OMFguVqmBi?=
+ =?us-ascii?Q?cC1VqY7BH1Rz0LWgTb7Xxy9PBG1UpaNIQUbdT5OsGK73CdyLj3gvbtjglWpH?=
+ =?us-ascii?Q?c0i4mE3dLpXxD4u5kgo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 19:16:34.0570
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 060faac0-bbe8-41be-8c69-08de100d2efc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000144.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7543
 
-AD4030 and similar devices can read common-mode voltage together with
-ADC sample data. When enabled, common-mode voltage data is provided in a
-separate IIO channel since it measures something other than the primary
-ADC input signal and requires separate scaling to convert to voltage
-units. The initial SPI offload support patch for AD4030 only provided
-differential channels. Now, extend the AD4030 driver to also provide
-common-mode IIO channels when setup with SPI offloading capability.
+On Mon, Oct 20, 2025 at 09:10:56AM -0300, Jason Gunthorpe wrote:
+> On Fri, Oct 17, 2025 at 01:12:02PM -0700, Nicolin Chen wrote:
+> > On Fri, Oct 17, 2025 at 09:47:07PM +0800, kernel test robot wrote:
+> > >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c: note: in included file:
+> > > >> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct callback_head *head @@     got struct callback_head [noderef] __rcu * @@
+> > >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse:     expected struct callback_head *head
+> > >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse:     got struct callback_head [noderef] __rcu *
+> > > >> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse: sparse: cast removes address space '__rcu' of expression
+> > ...
+> > >   1045	
+> > >   1046	static inline void arm_smmu_domain_free(struct arm_smmu_domain *smmu_domain)
+> > >   1047	{
+> > > > 1048		kfree_rcu(smmu_domain->invs, rcu);
+> > 
+> > Looks like it should be:
+> >  static inline void arm_smmu_domain_free(struct arm_smmu_domain *smmu_domain)
+> >  {
+> > -       kfree_rcu(smmu_domain->invs, rcu);
+> > +       struct arm_smmu_invs *invs = rcu_dereference(smmu_domain->invs);
+> 
+> rcu_derference_protected(,true) since we know there is no concurrency
+> here..
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
-New patch.
-I hope this works for ADCs with two channels. It's not clear if works as
-expected with current HDL and single-channel ADCs (like ADAQ4216).
+Oh right, it's outside rcu_read_lock().
 
-The ad4630_fmc HDL project was designed for ADCs with two channels and
-always streams two data channels to DMA (even when the ADC has only one
-physical channel). Though, if the ADC has only one physical channel, the
-data that would come from the second ADC channel comes in as noise and
-would have to be discarded. Because of that, when using single-channel
-ADCs, the ADC driver would need to use a special DMA buffer to filter out
-half of the data that reaches DMA memory. With that, the ADC sample data
-could be delivered to user space without any noise being added to the IIO
-buffer. I have implemented a prototype of such specialized buffer
-(industrialio-buffer-dmaengine-filtered), but it is awful and only worked
-with CONFIG_IIO_DMA_BUF_MMAP_LEGACY (only present in ADI Linux tree). Usual
-differential channel data is also affected by the extra 0xFFFFFFFF data
-pushed to DMA. Though, for the differential channel, it's easier to see it
-shall work for two-channel ADCs (the sine wave appears "filled" in
-iio-oscilloscope).
-
-So, I sign this, but don't guarantee it to work.
-
- drivers/iio/adc/ad4030.c | 49 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 40 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-index 5f968f2a2b3c..74ff35742cda 100644
---- a/drivers/iio/adc/ad4030.c
-+++ b/drivers/iio/adc/ad4030.c
-@@ -192,7 +192,7 @@ struct ad4030_state {
- 	unsigned int avg_log2;
- 	enum ad4030_out_mode mode;
- 	/* Offload sampling */
--	struct spi_transfer offload_xfer;
-+	struct spi_transfer offload_xfer[2];
- 	struct spi_message offload_msg;
- 	struct spi_offload *offload;
- 	struct spi_offload_trigger *offload_trigger;
-@@ -237,7 +237,7 @@ struct ad4030_state {
-  * - _idx - _ch * 2 + _ch gives the channel number for this specific common-mode
-  *   channel
-  */
--#define AD4030_CHAN_CMO(_idx, _ch)  {					\
-+#define __AD4030_CHAN_CMO(_idx, _ch, _offload)  {			\
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |			\
- 		BIT(IIO_CHAN_INFO_SCALE),				\
- 	.type = IIO_VOLTAGE,						\
-@@ -247,12 +247,18 @@ struct ad4030_state {
- 	.scan_index = (_idx),						\
- 	.scan_type = {							\
- 		.sign = 'u',						\
--		.storagebits = 8,					\
-+		.storagebits = (_offload ? 32 : 8),			\
- 		.realbits = 8,						\
--		.endianness = IIO_BE,					\
-+		.endianness = (_offload ? IIO_CPU : IIO_BE),		\
- 	},								\
- }
- 
-+#define AD4030_CHAN_CMO(_idx, _ch)					\
-+	__AD4030_CHAN_CMO(_idx, _ch, 0)
-+
-+#define AD4030_OFFLOAD_CHAN_CMO(_idx, _ch)				\
-+	__AD4030_CHAN_CMO(_idx, _ch, 1)
-+
- /*
-  * For a chip with 2 hardware channel this will be used to create 2 differential
-  * channels:
-@@ -1180,6 +1186,7 @@ static const struct iio_buffer_setup_ops ad4030_buffer_setup_ops = {
- static void ad4030_prepare_offload_msg(struct iio_dev *indio_dev)
- {
- 	struct ad4030_state *st = iio_priv(indio_dev);
-+	bool common_mode;
- 	u8 offload_bpw;
- 
- 	if (st->mode == AD4030_OUT_DATA_MD_30_AVERAGED_DIFF)
-@@ -1187,10 +1194,22 @@ static void ad4030_prepare_offload_msg(struct iio_dev *indio_dev)
- 	else
- 		offload_bpw = st->chip->precision_bits;
- 
--	st->offload_xfer.bits_per_word = offload_bpw;
--	st->offload_xfer.len = spi_bpw_to_bytes(offload_bpw);
--	st->offload_xfer.offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
--	spi_message_init_with_transfers(&st->offload_msg, &st->offload_xfer, 1);
-+	st->offload_xfer[0].bits_per_word = offload_bpw;
-+	st->offload_xfer[0].len = spi_bpw_to_bytes(offload_bpw);
-+	st->offload_xfer[0].offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
-+
-+	common_mode = st->mode == AD4030_OUT_DATA_MD_24_DIFF_8_COM ||
-+		      st->mode == AD4030_OUT_DATA_MD_16_DIFF_8_COM;
-+
-+	if (common_mode) {
-+		offload_bpw = 8;
-+		st->offload_xfer[1].bits_per_word = offload_bpw;
-+		st->offload_xfer[1].len = spi_bpw_to_bytes(offload_bpw);
-+		st->offload_xfer[1].offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
-+	}
-+
-+	spi_message_init_with_transfers(&st->offload_msg, st->offload_xfer,
-+					common_mode ? 2 : 1);
- }
- 
- static int ad4030_offload_buffer_postenable(struct iio_dev *indio_dev)
-@@ -1273,6 +1292,7 @@ static int ad4030_offload_buffer_predisable(struct iio_dev *indio_dev)
- static const struct iio_buffer_setup_ops ad4030_offload_buffer_setup_ops = {
- 	.postenable = &ad4030_offload_buffer_postenable,
- 	.predisable = &ad4030_offload_buffer_predisable,
-+	.validate_scan_mask = ad4030_validate_scan_mask,
- };
- 
- static int ad4030_regulators_get(struct ad4030_state *st)
-@@ -1524,7 +1544,7 @@ static int ad4030_probe(struct spi_device *spi)
- 		 * Offloaded SPI transfers can't support software timestamp so
- 		 * no additional timestamp channel is added.
- 		 */
--		indio_dev->num_channels = st->chip->num_voltage_inputs;
-+		indio_dev->num_channels = 2 * st->chip->num_voltage_inputs;
- 		indio_dev->channels = st->chip->offload_channels;
- 		ret = ad4030_spi_offload_setup(indio_dev, st);
- 		if (ret)
-@@ -1645,6 +1665,7 @@ static const struct ad4030_chip_info ad4030_24_chip_info = {
- 	},
- 	.offload_channels = {
- 		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_24_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(1, 0),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_AD4030_24_GRADE,
- 	.precision_bits = 24,
-@@ -1666,6 +1687,8 @@ static const struct ad4030_chip_info ad4630_16_chip_info = {
- 	.offload_channels = {
- 		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_16_offload_scan_types),
- 		AD4030_OFFLOAD_CHAN_DIFF(1, ad4030_16_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(2, 0),
-+		AD4030_OFFLOAD_CHAN_CMO(3, 1),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_AD4630_16_GRADE,
- 	.precision_bits = 16,
-@@ -1687,6 +1710,8 @@ static const struct ad4030_chip_info ad4630_24_chip_info = {
- 	.offload_channels = {
- 		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_24_offload_scan_types),
- 		AD4030_OFFLOAD_CHAN_DIFF(1, ad4030_24_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(2, 0),
-+		AD4030_OFFLOAD_CHAN_CMO(3, 1),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_AD4630_24_GRADE,
- 	.precision_bits = 24,
-@@ -1708,6 +1733,8 @@ static const struct ad4030_chip_info ad4632_16_chip_info = {
- 	.offload_channels = {
- 		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_16_offload_scan_types),
- 		AD4030_OFFLOAD_CHAN_DIFF(1, ad4030_16_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(2, 0),
-+		AD4030_OFFLOAD_CHAN_CMO(3, 1),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_AD4632_16_GRADE,
- 	.precision_bits = 16,
-@@ -1729,6 +1756,8 @@ static const struct ad4030_chip_info ad4632_24_chip_info = {
- 	.offload_channels = {
- 		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_24_offload_scan_types),
- 		AD4030_OFFLOAD_CHAN_DIFF(1, ad4030_24_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(2, 0),
-+		AD4030_OFFLOAD_CHAN_CMO(3, 1),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_AD4632_24_GRADE,
- 	.precision_bits = 24,
-@@ -1747,6 +1776,7 @@ static const struct ad4030_chip_info adaq4216_chip_info = {
- 	},
- 	.offload_channels = {
- 		ADAQ4216_OFFLOAD_CHAN_DIFF(0, ad4030_16_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(1, 0),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_ADAQ4216_GRADE,
- 	.precision_bits = 16,
-@@ -1766,6 +1796,7 @@ static const struct ad4030_chip_info adaq4224_chip_info = {
- 	},
- 	.offload_channels = {
- 		ADAQ4216_OFFLOAD_CHAN_DIFF(0, ad4030_24_offload_scan_types),
-+		AD4030_OFFLOAD_CHAN_CMO(1, 0),
- 	},
- 	.grade = AD4030_REG_CHIP_GRADE_ADAQ4224_GRADE,
- 	.precision_bits = 24,
--- 
-2.39.2
-
+Thanks
+Nicolin
 
