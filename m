@@ -1,89 +1,139 @@
-Return-Path: <linux-kernel+bounces-861544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBAABF305A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:51:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2CABF3084
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB7664E5FDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:51:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCD464EF2E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B612C327D;
-	Mon, 20 Oct 2025 18:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED102D4817;
+	Mon, 20 Oct 2025 18:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WkNfyVdJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rn166uEX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB7325A65B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4FF2C327D;
+	Mon, 20 Oct 2025 18:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760986294; cv=none; b=F4n9mcsUQOTheRumcwpaOLvoxEVVfmBknZqpzDTVi6wE8liHpgtI9g/Zi3ZCn38FTD84n+8UX3nzC+V0sFuKPs/WqXwRPK0COeH1BU7hXPbshN+v5mX6UbsI4aOQxnazNM6euSzt7bN9vjpLK8uQLdBr1r3qNAl3oQTVhr2WP+E=
+	t=1760986340; cv=none; b=mj6JDuAFouhukhMd1/2mDftCTZGKmo5HyAGFahWoDTlwRO4/7OP5GRPo9e5+a0hCZOtPKfbECSymODTh7RMoY/eF3CmL6hk/ieDYeCk6SF1yv4TGxOtVHbJNceglOLeZCrb7h5HWMy0ALs1axSiNHUvqpOgwUQEcpnwbHhUob50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760986294; c=relaxed/simple;
-	bh=40LTusOts5S9t0vBDeulq6YZCZDkQDSQp5HJ5bDVNnU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FjXQy91edt/j6zMXNDuUHfQBY+NtPbXP9eZ57l2HkGhtme4ZYTK7aB4ZjwYi2OiB/XgMTc0glAIVJ23lwzUKckCh2vUFyn/7loftMt+iNZiJq8313VkaDJPSferZS5fP290DUE5Avj7cVZyYnm+FDhkIrR2FRDLmYaFq6wxGLE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WkNfyVdJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F2DC113D0;
-	Mon, 20 Oct 2025 18:51:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760986293;
-	bh=40LTusOts5S9t0vBDeulq6YZCZDkQDSQp5HJ5bDVNnU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WkNfyVdJHb997RiacCKoiESXQWvl5qv62lTfBduxMC6Yy8VC1R4vLFSo+A44gAAEi
-	 nRJsAt91Z5jVmPp61XHAGax5UVBZ8IomtiBGjcPEYnVDrzCS0SIXz96YSSLPlTWD+s
-	 Jh4ZrM2NaSu1av+YvsczRKbWIGuAGn5hCFTs0le4=
-Date: Mon, 20 Oct 2025 11:51:32 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Chant <achant@google.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Brian Gerst
- <brgerst@gmail.com>, Christian Brauner <brauner@kernel.org>, Francesco
- Valla <francesco@valla.it>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Guo Weikang <guoweikang.kernel@gmail.com>, Huacai Chen
- <chenhuacai@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu
- <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, Masahiro Yamada
- <masahiroy@kernel.org>, Michal =?ISO-8859-1?Q?Koutn=FD?=
- <mkoutny@suse.com>, Miguel Ojeda <ojeda@kernel.org>,
- "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Randy Dunlap
- <rdunlap@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo
- <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Thomas
- =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: Re: [PATCH] init/main.c: Wrap long kernel cmdline when printing to
- logs
-Message-Id: <20251020115132.10897a599c8fbda4829b3f89@linux-foundation.org>
-In-Reply-To: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
-References: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760986340; c=relaxed/simple;
+	bh=EQ8t7tB+D4tqgjE5FX3+AxWSSwDJe9Zy/EctcpllNj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sub9IwwUn5ECZEIHYhAo1YM1aerpzSpeY2RG23jh1pCNLtulQe9JWUOCm8Cp0lkvsonOGVrhlVAegXgqk0FMg/Z2N+fshbrhkaz38jYsird556697cxt6pCKXcsZAkXuKxl9Hi70K68gxQ3k3YUzNKaT07v3DtI68xe+QtSo12M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rn166uEX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=tvR/JOCDykbUtNBkJ2YheNXEBp8e8ja99yZKcJe41jk=; b=Rn166uEXHRAoxorCRcipzvbU/Y
+	9LYEOK9yuC6IL2lh2+2j0hi6aIl1fJxE2sNKydc1xihXpchLrcP9i5vDopTNPtE1+PhuYWignc4PL
+	/6YlFTFIs3+FkMKTw723y1lHHMx/rp+8d1Cig0WScb12/aNttg/tNHV2+hjX5GnOcfbo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vAuyu-00BY4z-B8; Mon, 20 Oct 2025 20:51:44 +0200
+Date: Mon, 20 Oct 2025 20:51:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 2/3] net: phy: Add helper for fixing RGMII PHY mode
+ based on internal mac delay
+Message-ID: <8da7450f-ef1a-4d8f-9081-a31585e2da19@lunn.ch>
+References: <20251020095500.1330057-1-inochiama@gmail.com>
+ <20251020095500.1330057-3-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020095500.1330057-3-inochiama@gmail.com>
 
-On Sun, 19 Oct 2025 10:06:14 -0700 Douglas Anderson <dianders@chromium.org> wrote:
-
-> The kernel cmdline length is allowed to be longer than what printk can
-> handle. When this happens the cmdline that's printed to the kernel
-> ring buffer at bootup is cutoff and some kernel cmdline options are
-> "hidden" from the logs. This undercuts the usefulness of the log
-> message.
+On Mon, Oct 20, 2025 at 05:54:58PM +0800, Inochi Amaoto wrote:
+> The "phy-mode" property of devicetree indicates whether the PCB has
+> delay now, which means the mac needs to modify the PHY mode based
+> on whether there is an internal delay in the mac.
 > 
-> Add wrapping to the printout. 
+> This modification is similar for many ethernet drivers. To simplify
+> code, define the helper phy_fix_phy_mode_for_mac_delays(speed, mac_txid,
+> mac_rxid) to fix PHY mode based on whether mac adds internal delay.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  drivers/net/phy/phy-core.c | 43 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/phy.h        |  3 +++
+>  2 files changed, 46 insertions(+)
+> 
+> diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+> index 605ca20ae192..4f258fb409da 100644
+> --- a/drivers/net/phy/phy-core.c
+> +++ b/drivers/net/phy/phy-core.c
+> @@ -101,6 +101,49 @@ const char *phy_rate_matching_to_str(int rate_matching)
+>  }
+>  EXPORT_SYMBOL_GPL(phy_rate_matching_to_str);
+> 
+> +/**
+> + * phy_fix_phy_mode_for_mac_delays - Convenience function for fixing PHY
+> + * mode based on whether mac adds internal delay
+> + *
+> + * @interface: The current interface mode of the port
+> + * @mac_txid: True if the mac adds internal tx delay
+> + * @mac_rxid: True if the mac adds internal rx delay
+> + *
+> + * Return fixed PHY mode, or PHY_INTERFACE_MODE_NA if the interface can
+> + * not apply the internal delay
+> + */
 
-Do we really need the wrapping?  That will confuse anything which
-parses the output expecting a single line.
+I think a helper like this is a good idea. But there are a couple of
+things i don't like about this implementation.
 
-And the code would presumably be much simpler if we simply chunked up
-the printing and spat out one really long line.
+I don't like returning PHY_INTERFACE_MODE_NA on error. I would prefer
+-EINVAL.  of_get_phy_mode() passed a phy_interface_t *, and returns an
+errno. The same would be good here.
 
+I find:
+
+phy_fix_phy_mode_for_mac_delays(interface, true, false)
+
+hard to read. You cannot see what these true/false mean. Which is Rx
+and which is Tx?
+
+Rather than true false, how about passing an
+PHY_INTERFACE_MODE_RGMII_* values?
+
+PHY_INTERFACE_MODE_RGMII_ID would indicate the MAC is doing both
+delays.  PHY_INTERFACE_MODE_RGMII_RXID the MAC is implementing the RX
+delay? I'm open to other ideas here.
+
+	Andrew
 
