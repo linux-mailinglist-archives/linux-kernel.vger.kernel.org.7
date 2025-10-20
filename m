@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-861157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B10FBF1EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:53:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D135BF1EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A19D4214D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711BE461AFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8150C228C99;
-	Mon, 20 Oct 2025 14:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED5E229B18;
+	Mon, 20 Oct 2025 14:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asELskkp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyopwRDT"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB44A1514F7;
-	Mon, 20 Oct 2025 14:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6470218AB0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972015; cv=none; b=npIQvDGI7XGACgqFRX0Qzan+GVRHVpJHnqMUlwYsBLclvAI8IsaJ/et3G9z99Mw3nM59l/sG5hRCN7sgJ22sC894l8ujqhVXu3cuOg0By3GG4aatD9cpqNtJDbkbhVFJmUXFM7uWvHrklTeEl4vZindp8JK1SDfv5oaLRpFrecE=
+	t=1760972024; cv=none; b=m+C/a8Vz5pB6Suzp85kAUznFR4S/0WfRF1dUKxvwlfNcedltP3CXABq3HaNPPtY7UA4YoKPVqYFfAskKKGfRwcslRJPmcqq9DMQCYoyaBhosnb6fJucvKk/N0TjCcdZ3DXlLEK3hRz06HJeSHZGtziO48A/uumNGqEj67jXhb4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972015; c=relaxed/simple;
-	bh=iAt8uGGscg6uWZh66jwdRnihglXUOWBkZsoHIrSxxpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvAYegYNAmoW4eRn3EBIkvuNAVSckBN1iDH6D2T5F3LxnDB8N/4mxNn9ogGNNbD0BWb8+oxezdEnx+GSCjydGCrMN41R9ygV1n/kP9IVPYx0t9ffY6uuM6b9ysZBvbMDfX1Vh48GvKo8tesqNr89eoc9yHYJVZACUKoTki7ZCec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asELskkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A889C4CEF9;
-	Mon, 20 Oct 2025 14:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760972015;
-	bh=iAt8uGGscg6uWZh66jwdRnihglXUOWBkZsoHIrSxxpA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=asELskkprdgJtjllqYs0rdCuEmNCkXqf4RBj2CyENr/KnnJJILB41kjDrHdVs7+W6
-	 ffnVeXfx/I2d232YlMsDIASdOVv8OY7PhBo2MBieCPhN06dAao+0W8Lc37WK0sPkh6
-	 WbegKrPveUSXR1m3Mfy/3xeRSNY+EXtOEXdLGyPSp1EBI+FqxSS8aWowSCzHE+IRi8
-	 UxLmeEKWma8nAxmSVZzbzYpzqNZT7KTC9CbIQyVcUDep/EZ+SXxD8CfyZVW4VYmVJo
-	 dPusg9uxnjdW4uNJ/UGXYQG4B4uF7vaVJBMpIi5bTB7rYm0KhFMkYE1fIXmYf47SkM
-	 mVwmzzY/NxoYA==
-Date: Mon, 20 Oct 2025 17:53:30 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 3/3] block-dma: properly take MMIO path
-Message-ID: <20251020145330.GO6199@unreal>
-References: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com>
- <20251017-block-with-mmio-v1-3-3f486904db5e@nvidia.com>
- <20251017062519.GC402@lst.de>
- <20251020085231.GM6199@unreal>
- <20251020123027.GA19560@lst.de>
+	s=arc-20240116; t=1760972024; c=relaxed/simple;
+	bh=Qgmm5n3QgGYHJXMdGtmtk4unsoI55ELPPsP//oF6jlQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fj+KNd5wd04UrBYVozhjYKn2/0mpp94npi7sju5jYsgp9Ye21xISMTA+RiYiupsHHUIAv+EQCyrftx9btS0wbz/QbBkkrLaHUSOCir0OiZ8pQKY5AeOgJnoHGKARRU79W/9AUoLQWzccPKn00RKnHOCzy/SBcXBaBslbjYpn+u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyopwRDT; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-781206cce18so4533658b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760972022; x=1761576822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qZ/VR7vR62blRBnvkVTsR0wWUxwVHVWxsZkAw6EQ2kA=;
+        b=eyopwRDTzsYqa7D6TT4ydJRu6wVtm+4RTQ/6mh8/r3ny496mCrriAkyk8119gLYOJA
+         70h2h44snrnT3BA/yajKrCT3Xytaezl/ZPs5fpif4jJAhJCJ73bvOHwgVlsmB+ByxVyV
+         +6lVSlh/xyQPmGM3RDWtIfrIt12txH5hKBSk/+LS0G2EkPuXIlHd7ZM7fx5rQhoOmilV
+         JwNq8vPPcQXBiGWhI5kUsO5B9oJNsdyN9xntCqHFoYlIkp3BoN1zVrFvYnQiaEtyN2aB
+         XHGUy+/3Mjb4ro9j68+SdJK5ebxBROiJs4FDW2mPuXPRrAH9E9prMjSB3ymCKkJomEOy
+         0gZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760972022; x=1761576822;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qZ/VR7vR62blRBnvkVTsR0wWUxwVHVWxsZkAw6EQ2kA=;
+        b=TdmU46Rd8ElAP+0dr0PrfwZE65Je5ZirQjLyyaaNWFke6dUY0lOc30cV3rn+2PoYXb
+         Q2mzg2m/ngfanZ+HSxCjBzs9H6pJj/Fx5f9oIU3w5FeUf6rsYrfcsC0RWxNRUSgcCVWS
+         tR4RTyXvbTyR/6j4IdTmhTF11hFQ32nQqbFIa6rCtcnhDirtqIpR8nQ8ulJ/QXRq9ven
+         pPDkiQzhtayvDGLVWQ/PEmcu1mWr+iSluWLkqfFxlK8mlHONUrTyOboCb9sdZnLg3AtO
+         f9evGeIqXn+WOX5MFq2cmz638pDQEiXMnfWjsBr4i/b0CHFQWdqvR3zQ5P0zKnncQVrA
+         otTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpJ+uGA22PdUKMPW62YZmVmxjeCU8nxzrd9koiJQrIEcDylkOuawe+dB10WohesfrxUY3H73VA2D6B5DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxgL9HKKzdQg2xqzIT9lHF7wdCJUU0nTq3Mrj8S6pz3mIO5cHO
+	xGRuMkyZLLrKKsjVlJYUxv37uG/K8+u+XJ125gqzbrzeWVC2qB1NfhlerhCWBOrU
+X-Gm-Gg: ASbGnctUPABpcH3Hdzek1As/awmo5YRe6kQHK/buw/IYbCAIXyMR9R3SEg1vXJI2pR3
+	tKCvMO5GaSu2w2xsYFUICDC+MzV3P0srIhBsM2i5qsr9R03inf1TtUZQ5e9Lypjp4vVKnzB8ald
+	wn2nKnp8nWRiC2527q+Q3C/1oxH84ZY/KFVpxsqmn6rx8x9fYOS+degzgkfXnziEr0g3S01uGL0
+	GzfqPpCs8YZNFPRIPkwe7sggUNdi01SdJzlC1CtkWA+TmNwhvqYrnu3hjEkcMA6R2iFWYYnJLOf
+	94QqHmknbjGN/3KLjjvCw1yaC7jiH1KOCe8Hp6eENwewANBOdBff0UrU0pWpwv6k3uV7YOWCN/9
+	lmkjttDQvIVpn1lpevBB71SkX0wbBVpM4NqUqqe+ujbK6NpLgdzGGYU71A9tblGVbSItRPLMKqQ
+	8U2trK0F0ycl1iTJ5Kvw9RRac/kiAN
+X-Google-Smtp-Source: AGHT+IGTdtRXRVBqo/etSZIrqHnDE2k5yUz+r6mePyKfylMditsns+sMecwWotZWB5+Cv8bZSvNjyQ==
+X-Received: by 2002:a05:6a20:549d:b0:32d:a6c0:15bb with SMTP id adf61e73a8af0-334a7a5fed0mr16479924637.31.1760972022096;
+        Mon, 20 Oct 2025 07:53:42 -0700 (PDT)
+Received: from clint-Latitude-7390.. ([110.226.183.194])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2300f159csm8497919b3a.46.2025.10.20.07.53.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 07:53:41 -0700 (PDT)
+From: Clint George <clintbgeorge@gmail.com>
+To: rdunlap@infradead.org
+Cc: clintbgeorge@gmail.com,
+	corbet@lwn.net,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	workflows@vger.kernel.org
+Subject: [PATCH] docs: ktap: Revert incorrect change
+Date: Mon, 20 Oct 2025 20:23:34 +0530
+Message-Id: <20251020145334.65356-1-clintbgeorge@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ba148c36-8778-425e-8c94-35ebd708fc80@infradead.org>
+References: <ba148c36-8778-425e-8c94-35ebd708fc80@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020123027.GA19560@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 02:30:27PM +0200, Christoph Hellwig wrote:
-> On Mon, Oct 20, 2025 at 11:52:31AM +0300, Leon Romanovsky wrote:
-> > What about this commit message?
-> 
-> Much bettwer.  Btw, what is the plan for getting rid of the
-> "automatic" p2p handling, which would be the logical conflusion from
-> this?
+Thank you  Randy for pointing out. I am really sorry that i missed the
+incorrect change while creating the Patch. I have reverted the
+incorrect change in this version.
 
-I continued with "automatic" p2p code and think that it is structured
-pretty well. Why do you want to remove it?
+Fix couple of grammar and spelling issues such as:
+diagnosic -> diagnostic
+Cuurently accepted directives -> The currently accepted directives
 
-The code in v2 looks like this:
+This patch aims to correct these issues and enhance the existing
+documentation.
 
-@@ -184,6 +184,8 @@ static bool blk_dma_map_iter_start(struct request *req, struct device *dma_dev,
-                 * P2P transfers through the host bridge are treated the
-                 * same as non-P2P transfers below and during unmap.
-                 */
-+               iter->attrs |= DMA_ATTR_MMIO;
-+               fallthrough;
-        case PCI_P2PDMA_MAP_NONE:
-                break;
-        default:
+Signed-off-by: Clint George <clintbgeorge@gmail.com>
+---
+ Documentation/dev-tools/ktap.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-...
-
-@@ -1038,6 +1051,9 @@ static blk_status_t nvme_map_data(struct request *req)
-        if (!blk_rq_dma_map_iter_start(req, dev->dev, &iod->dma_state, &iter))
-                return iter.status;
+diff --git a/Documentation/dev-tools/ktap.rst b/Documentation/dev-tools/ktap.rst
+index a9810bed5..faaad92e6 100644
+--- a/Documentation/dev-tools/ktap.rst
++++ b/Documentation/dev-tools/ktap.rst
+@@ -13,7 +13,7 @@ which don't align with the original TAP specification. Thus, a "Kernel TAP"
+ This specification describes the generally accepted format of KTAP as it is
+ currently used in the kernel.
  
-+       if (iter.attrs & DMA_ATTR_MMIO)
-+               iod->flags |= IOD_DATA_MMIO;
-+
-        if (use_sgl == SGL_FORCED ||
-            (use_sgl == SGL_SUPPORTED &&
-             (sgl_threshold && nvme_pci_avg_seg_size(req) >= sgl_threshold)))
-@@ -1060,6 +1076,9 @@ static blk_status_t nvme_pci_setup_meta_sgls(struct request *req)
-                                                &iod->meta_dma_state, &iter))
-                return iter.status;
+-KTAP test results describe a series of tests (which may be nested: i.e., test
++KTAP test results describe a series of tests (which may be nested: i.e., tests
+ can have subtests), each of which can contain both diagnostic data -- e.g., log
+ lines -- and a final result. The test structure and results are
+ machine-readable, whereas the diagnostic data is unstructured and is there to
+@@ -94,7 +94,7 @@ keyword preceding the diagnostic data. In the event that a parser encounters
+ a directive it doesn't support, it should fall back to the "ok" / "not ok"
+ result.
  
-+       if (iter.attrs & DMA_ATTR_MMIO)
-+               iod->flags |= IOD_META_MMIO;
-+
-        if (blk_rq_dma_map_coalesce(&iod->meta_dma_state))
-                entries = 1;
+-Currently accepted directives are:
++The currently accepted directives are:
+ 
+ - "SKIP", which indicates a test was skipped (note the result of the test case
+   result line can be either "ok" or "not ok" if the SKIP directive is used)
+@@ -237,7 +237,7 @@ Major differences between TAP and KTAP
+ ==================================================   =========  ===============
+ Feature                                              TAP        KTAP
+ ==================================================   =========  ===============
+-yaml and json in diagnosic message                   ok         not recommended
++yaml and json in diagnostic message                  ok         not recommended
+ TODO directive                                       ok         not recognized
+ allows an arbitrary number of tests to be nested     no         yes
+ "Unknown lines" are in category of "Anything else"   yes        no
+-- 
+2.34.1
 
-...
-
-@@ -733,8 +739,11 @@ static void nvme_unmap_metadata(struct request *req)
-                return;
-        }
-
-+       if (iod->flags & IOD_META_MMIO)
-+               attrs |= DMA_ATTR_MMIO;
-+
-        if (!blk_rq_integrity_dma_unmap(req, dma_dev, &iod->meta_dma_state,
--                                       iod->meta_total_len)) {
-+                                       iod->meta_total_len, attrs)) {
-                if (nvme_pci_cmd_use_meta_sgl(&iod->cmd))
-                        nvme_free_sgls(req, sge, &sge[1], attrs);
-                else
-
-The code is here (waiting for kbuild results)  https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/log/?h=block-with-mmio-v2
-
-Thanks
 
