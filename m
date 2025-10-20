@@ -1,246 +1,319 @@
-Return-Path: <linux-kernel+bounces-861067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF5BBF1B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97ED9BF1B96
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43E654F7EB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:03:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 157FF4F7A38
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AF2320A03;
-	Mon, 20 Oct 2025 14:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D8F31DDAE;
+	Mon, 20 Oct 2025 14:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VDIf1diV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X7MiAOht"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1755E1607A4;
-	Mon, 20 Oct 2025 14:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA81320A04
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760968985; cv=none; b=er6/HhnW2FtAVOdaSTg8QfA5VhAzBPauoBgnaTg8ADX6ehiSR1rMefNa03wYRkFFVZzRTEbdHOOHFqUdQCLuaYJKO9WBvSOKrvq3OYhCm82Vpk+RhQZfp6SVtavCZTKs0ddMpsyK1oIqEK2acvKW5hFqsR7fBR9I4o8OZOolaiE=
+	t=1760969089; cv=none; b=uLTYmUbbaHksccOKLTcN8MfEAVIz/UAqBSSKNfCAQz63O/lRxRqsNBZi3DLzNpi6Z2xtRY5pXnA/1r+z1WImJvryVEAK7BjXEvuAHpyoogpUi6wyzDg6g+unhQB27o6A3oZJrw0+DK/50pmDM0MCuGJsbVyB8bXBlcYWIcw+Ye4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760968985; c=relaxed/simple;
-	bh=wa/LFx+3nxvEsI8+aKge1iAS1QhaGGNlrbnB3buk7SI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HftYHxLPBzUlqB084iKcrqOIuVmj5d7lNMD2bMxYCZjoDRhMnflXYr2YdZ6XAXPeGU2c4+tUPVuqh4CTM9wl7tci9vBkLUz+Lcq4zfP4WxNirXrVuMAs1V5MuyGdixgQx29K/vXedFxxVJIBJ3sqYVqgj4wpbdpfRuqlmzAgafA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VDIf1diV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760968980;
-	bh=wa/LFx+3nxvEsI8+aKge1iAS1QhaGGNlrbnB3buk7SI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VDIf1diVrnftwL38ZREdQLDRwHdtKgievZhFbibJhQFutwAztvjM5o0Ofy8B+MuJ1
-	 gbB2fB5zCNc+lFbJoxBbEDZzf1uheBzC+Nlx9sun+NUI/d/KYBq3Ff28STT0H965tq
-	 nnrbsAdRosSrONRkoiNeZgNC8PuvSRPgPpkICA0Q54jAzdpR5hhw1tu2Y1cS27zwJX
-	 FRg9vM1KZf5TCg1umqLDbOg3lDUSE36e1IEZJfrh77+iTevPfFGOU0jL5YfxqKJ1H/
-	 gzueE+BKPyTjIQVERY1kpaRD5P4l5aKwVvJQygCbM/bzM0GDjLk7n4Ja3+QPhI/Axl
-	 9w4l4cXjKqsWA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1760969089; c=relaxed/simple;
+	bh=i+9LKxDDSXM4KTrBOFxxo03StFcObVdEUmDtTSBGof4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGKRg4LyPPfr4+3lFEKLO+X4dgkYbJZYQNBQv1DY+fxxtP4QwHp5xmIjgk6oBaDnahcxmFT6aXnsREwuaPyAFNpfNZ2RMPDBehhPC7wsynaliEc9aRyiBiKwkLOTb2Y/hOzYC7mOG3Fr1Iu1HB96GnFLMRlQbdvNA1gW/zVzI3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X7MiAOht; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760969086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BlDea+K7RrqF+0c4ajkZO4tGO8g9VagPIIYOXwl//jg=;
+	b=X7MiAOhto+Il3pOeYtfDTnnD2DYHb5pnN9N3E20FS/cdEultdFKcT0CX6V2SZXlyJDuUMZ
+	sCDDAchE8wu3FG9Pf01xf1NtfFY3C9oi6sr7eE/zgkRTsPSbmaVEzCRkEUY5nwWqKf1oAR
+	k4uiaCJz6REAPXZgO00ivwrIX0vjiek=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-443-dINp-Q95OcGh1kZDAcLnNA-1; Mon,
+ 20 Oct 2025 10:04:42 -0400
+X-MC-Unique: dINp-Q95OcGh1kZDAcLnNA-1
+X-Mimecast-MFC-AGG-ID: dINp-Q95OcGh1kZDAcLnNA_1760969081
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0AF5A17E0456;
-	Mon, 20 Oct 2025 16:02:59 +0200 (CEST)
-Message-ID: <8453efd3-630e-4f2c-950d-88a73927cc54@collabora.com>
-Date: Mon, 20 Oct 2025 16:02:58 +0200
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68E291954200;
+	Mon, 20 Oct 2025 14:04:41 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.64.140])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A036C1955F1B;
+	Mon, 20 Oct 2025 14:04:37 +0000 (UTC)
+Date: Mon, 20 Oct 2025 11:04:35 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
+	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH 2/4] rtla/timerlat: Add --bpf-action option
+Message-ID: <7xttv65omwux7q4rpjsfety234qqfdmgwezskg4m6rgal4aaq2@r7vpdvfepiro>
+References: <20251017144650.663238-1-tglozar@redhat.com>
+ <20251017144650.663238-3-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/15] arm64: dts: mediatek: mt7981b-openwrt-one:
- Configure UART0 pinmux
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Sjoerd Simons <sjoerd@collabora.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
- <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, netdev@vger.kernel.org,
- Bryan Hinton <bryan@bryanhinton.com>
-References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
- <20251016-openwrt-one-network-v1-2-de259719b6f2@collabora.com>
- <aPDnT4tuSzNDzyAE@makrotopia.org>
- <5f430ff9-d701-426a-bf93-5290e6912eb4@collabora.com>
- <aPEfUBl6fMe6QYdY@makrotopia.org>
- <82594ce7-f093-4753-b808-cd234845aed8@collabora.com>
- <aPYq4cnaAHu5ags5@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <aPYq4cnaAHu5ags5@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017144650.663238-3-tglozar@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Il 20/10/25 14:28, Daniel Golle ha scritto:
-> On Mon, Oct 20, 2025 at 12:23:14PM +0200, AngeloGioacchino Del Regno wrote:
->> Il 16/10/25 18:37, Daniel Golle ha scritto:
->>> On Thu, Oct 16, 2025 at 04:29:14PM +0200, AngeloGioacchino Del Regno wrote:
->>>> Il 16/10/25 14:38, Daniel Golle ha scritto:
->>>>> On Thu, Oct 16, 2025 at 12:08:38PM +0200, Sjoerd Simons wrote:
->>>>>> Add explicit pinctrl configuration for UART0 on the OpenWrt One board,
->>>>>>
->>>>>> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
->>>>>> ---
->>>>>>     arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts | 11 +++++++++++
->>>>>>     1 file changed, 11 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
->>>>>> index 968b91f55bb27..f836059d7f475 100644
->>>>>> --- a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
->>>>>> +++ b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
->>>>>> @@ -22,6 +22,17 @@ memory@40000000 {
->>>>>>     	};
->>>>>>     };
->>>>>> +&pio {
->>>>>> +	uart0_pins: uart0-pins {
->>>>>> +		mux {
->>>>>> +			function = "uart";
->>>>>> +			groups = "uart0";
->>>>>> +		};
->>>>>> +	};
->>>>>> +};
->>>>>> +
->>>>>>     &uart0 {
->>>>>> +	pinctrl-names = "default";
->>>>>> +	pinctrl-0 = <&uart0_pins>;
->>>>>>     	status = "okay";
->>>>>>     };
->>>>>
->>>>> As there is only a single possible pinctrl configuration for uart0,
->>>>> both the pinmux definition as well as the pinctrl properties should go
->>>>> into mt7981b.dtsi rather than in the board's dts.
->>>>
->>>> If there's really one single possible pin configuration for the UART0 pins,
->>>> as in, those pins *do not* have a GPIO mode, then yes I agree.
->>>>
->>>> If those pins can be as well configured as GPIOs, this goes to board DTS.
->>>
->>> I respectfully disagree and will explain below.
->>>
->>
->> Thanks a lot for taking the time to write all this - explains everything,
->> and even too much :) :)
->>
->> Though, there's something funny here! The following snippet of "main" text
->> does explain stuff that is interesting, but that I (not other people, so
->> thanks again for saying all this) know already, but.....
->>
->>> All pinmux pins on the MediaTek platform also allow being configured as
->>> GPIOs. However, if you configure those as GPIOs the consequence is that
->>> you cannot use UART0 any more at all. So using UART0 at all always
->>> implies using exactly those pins, there is no alternative to that.
->>>
->>> Hence every board with every possible uses of pins 32 and 33 (there is
->>> only RX and TX for UART0, RTS/CTS flow-control is not possible) can be
->>> represented without needing to configure the pinctrl for uart0 on the
->>> board level. There isn't going to be any variation on the board-level
->>> when it comes to uart0. Either it is enabled (status = "okay";), and
->>> that will always imply using the 'uart0' group in mode 'uart', or, in
->>> case any of the two pins of uart0 is used for something else that means
->>> uart0 cannot be enabled. Simple as that.
->>>
->>> Hence there is no need to duplicate that pinctrl settings on each and
->>> every board, as controlling the 'status' property on the board-level
->>> already gives 100% freedom.
->>>
->>
->> ...all of this is not justifying your point.
+On Fri, Oct 17, 2025 at 04:46:48PM +0200, Tomas Glozar wrote:
+> Add option --bpf-action that allows the user to attach an external BPF
+> program that will be executed via BPF tail call on latency threshold
+> overflow.
 > 
-> So what is the rule then? I understand the logic of describing the
-> pins eg. for uart1 only on board-level as there are actual alternatives
-> regarding the pins to be used, and if also including RTS/CTS pins.
-> Hence, for uart1, there are several possible pingroups which can be
-> used. What would be the argument to keep a pinctrl description for
-> which the SoC doesn't offer any alternatives to be on the board-level?
-> There is nothing to be decided by the board, literally 0 freedom.
+> Executing additional BPF code on latency threshold overflow allows doing
+> doing low-latency and in-kernel troubleshooting of the cause of the
+> overflow.
+> 
+> The option takes an argument, which is a path to a BPF ELF file
+> expected to contain a function named "action_handler" in a section named
+> "tp/timerlat_action" (the section is necessary for libbpf to asssign the
+> correct BPF program type to it).
+> 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/src/timerlat.c      | 11 ++++++
+>  tools/tracing/rtla/src/timerlat.h      |  2 +-
+>  tools/tracing/rtla/src/timerlat_bpf.c  | 54 ++++++++++++++++++++++++++
+>  tools/tracing/rtla/src/timerlat_bpf.h  |  6 ++-
+>  tools/tracing/rtla/src/timerlat_hist.c |  5 +++
+>  tools/tracing/rtla/src/timerlat_top.c  |  5 +++
+>  6 files changed, 81 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/tracing/rtla/src/timerlat.c b/tools/tracing/rtla/src/timerlat.c
+> index b69212874127..6907a323f9ec 100644
+> --- a/tools/tracing/rtla/src/timerlat.c
+> +++ b/tools/tracing/rtla/src/timerlat.c
+> @@ -48,6 +48,17 @@ timerlat_apply_config(struct osnoise_tool *tool, struct timerlat_params *params)
+>  		}
+>  	}
+>  
+> +	/* Check if BPF action program is requested but BPF is not available */
+> +	if (params->bpf_action_program) {
+> +		if (params->mode == TRACING_MODE_TRACEFS) {
+> +			err_msg("BPF actions are not supported in tracefs-only mode\n");
+> +			goto out_err;
+> +		}
+> +
+> +		if (timerlat_load_bpf_action_program(params->bpf_action_program))
+> +			goto out_err;
+> +	}
+> +
+>  	if (params->mode != TRACING_MODE_BPF) {
+>  		/*
+>  		 * In tracefs and mixed mode, timerlat tracer handles stopping
+> diff --git a/tools/tracing/rtla/src/timerlat.h b/tools/tracing/rtla/src/timerlat.h
+> index fd6065f48bb7..8dd5d134ce08 100644
+> --- a/tools/tracing/rtla/src/timerlat.h
+> +++ b/tools/tracing/rtla/src/timerlat.h
+> @@ -27,6 +27,7 @@ struct timerlat_params {
+>  	int			dump_tasks;
+>  	int			deepest_idle_state;
+>  	enum timerlat_tracing_mode mode;
+> +	const char		*bpf_action_program;
+>  };
+>  
+>  #define to_timerlat_params(ptr) container_of(ptr, struct timerlat_params, common)
+> @@ -36,4 +37,3 @@ int timerlat_main(int argc, char *argv[]);
+>  int timerlat_enable(struct osnoise_tool *tool);
+>  void timerlat_analyze(struct osnoise_tool *tool, bool stopped);
+>  void timerlat_free(struct osnoise_tool *tool);
+> -
+> diff --git a/tools/tracing/rtla/src/timerlat_bpf.c b/tools/tracing/rtla/src/timerlat_bpf.c
+> index 1d619e502c65..3c63bf7aa607 100644
+> --- a/tools/tracing/rtla/src/timerlat_bpf.c
+> +++ b/tools/tracing/rtla/src/timerlat_bpf.c
+> @@ -7,6 +7,10 @@
+>  
+>  static struct timerlat_bpf *bpf;
+>  
+> +/* BPF object and program for action program */
+> +static struct bpf_object *obj;
+> +static struct bpf_program *prog;
+> +
+>  /*
+>   * timerlat_bpf_init - load and initialize BPF program to collect timerlat data
+>   */
+> @@ -56,6 +60,10 @@ int timerlat_bpf_init(struct timerlat_params *params)
+>  		return err;
+>  	}
+>  
+> +	/* Set BPF action program to NULL */
+> +	prog = NULL;
+> +	obj = NULL;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -96,6 +104,11 @@ void timerlat_bpf_detach(void)
+>  void timerlat_bpf_destroy(void)
+>  {
+>  	timerlat_bpf__destroy(bpf);
+> +	bpf = NULL;
+> +	if (obj)
+> +		bpf_object__close(obj);
+> +	obj = NULL;
+> +	prog = NULL;
+>  }
+>  
+>  static int handle_rb_event(void *ctx, void *data, size_t data_sz)
+> @@ -190,4 +203,45 @@ int timerlat_bpf_get_summary_value(enum summary_field key,
+>  			 bpf->maps.summary_user,
+>  			 key, value_irq, value_thread, value_user, cpus);
+>  }
+> +
+> +/*
+> + * timerlat_load_bpf_action_program - load and register a BPF action program
+> + */
+> +int timerlat_load_bpf_action_program(const char *program_path)
+> +{
+> +	int err;
+> +
+> +	obj = bpf_object__open_file(program_path, NULL);
+> +	if (!obj) {
+> +		err_msg("Failed to open BPF action program: %s\n", program_path);
+> +		return -1;
+> +	}
+> +
+> +	err = bpf_object__load(obj);
+> +	if (err) {
+> +		err_msg("Failed to load BPF action program: %s\n", program_path);
+
+This error path misses the call to to bpf_object__close()
+
+> +		return -1;
+> +	}
+> +
+> +	prog = bpf_object__find_program_by_name(obj, "action_handler");
+> +	if (!prog) {
+> +		err_msg("BPF action program must have 'action_handler' function: %s\n",
+> +			program_path);
+> +		bpf_object__close(obj);
+> +		obj = NULL;
+> +		return -1;
+> +	}
+> +
+> +	err = timerlat_bpf_set_action(prog);
+> +	if (err) {
+> +		err_msg("Failed to register BPF action program: %s\n", program_path);
+> +		bpf_object__close(obj);
+> +		obj = NULL;
+> +		prog = NULL;
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  #endif /* HAVE_BPF_SKEL */
+> diff --git a/tools/tracing/rtla/src/timerlat_bpf.h b/tools/tracing/rtla/src/timerlat_bpf.h
+> index b5009092c7a3..169abeaf4363 100644
+> --- a/tools/tracing/rtla/src/timerlat_bpf.h
+> +++ b/tools/tracing/rtla/src/timerlat_bpf.h
+> @@ -30,7 +30,7 @@ int timerlat_bpf_get_summary_value(enum summary_field key,
+>  				   long long *value_thread,
+>  				   long long *value_user,
+>  				   int cpus);
+> -
+> +int timerlat_load_bpf_action_program(const char *program_path);
+>  static inline int have_libbpf_support(void) { return 1; }
+>  #else
+>  static inline int timerlat_bpf_init(struct timerlat_params *params)
+> @@ -58,6 +58,10 @@ static inline int timerlat_bpf_get_summary_value(enum summary_field key,
+>  {
+>  	return -1;
+>  }
+> +static inline int timerlat_load_bpf_action_program(const char *program_path)
+> +{
+> +	return -1;
+> +}
+>  static inline int have_libbpf_support(void) { return 0; }
+>  #endif /* HAVE_BPF_SKEL */
+>  #endif /* __bpf__ */
+> diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+> index 606c1688057b..5e639cc34f64 100644
+> --- a/tools/tracing/rtla/src/timerlat_hist.c
+> +++ b/tools/tracing/rtla/src/timerlat_hist.c
+> @@ -763,6 +763,7 @@ static void timerlat_hist_usage(char *usage)
+>  		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
+>  		"	     --on-threshold <action>: define action to be executed at latency threshold, multiple are allowed",
+>  		"	     --on-end <action>: define action to be executed at measurement end, multiple are allowed",
+> +		"	     --bpf-action <program>: load and execute BPF program when latency threshold is exceeded",
+>  		NULL,
+>  	};
+>  
+> @@ -853,6 +854,7 @@ static struct common_params
+>  			{"deepest-idle-state",	required_argument,	0, '\4'},
+>  			{"on-threshold",	required_argument,	0, '\5'},
+>  			{"on-end",		required_argument,	0, '\6'},
+> +			{"bpf-action",		required_argument,	0, '\7'},
+>  			{0, 0, 0, 0}
+>  		};
+>  
+> @@ -1062,6 +1064,9 @@ static struct common_params
+>  				exit(EXIT_FAILURE);
+>  			}
+>  			break;
+> +		case '\7':
+> +			params->bpf_action_program = optarg;
+> +			break;
+>  		default:
+>  			timerlat_hist_usage("Invalid option");
+>  		}
+> diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+> index fc479a0dcb59..da5d5db1bc17 100644
+> --- a/tools/tracing/rtla/src/timerlat_top.c
+> +++ b/tools/tracing/rtla/src/timerlat_top.c
+> @@ -521,6 +521,7 @@ static void timerlat_top_usage(char *usage)
+>  		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
+>  		"	     --on-threshold <action>: define action to be executed at latency threshold, multiple are allowed",
+>  		"	     --on-end: define action to be executed at measurement end, multiple are allowed",
+> +		"	     --bpf-action <program>: load and execute BPF program when latency threshold is exceeded",
+>  		NULL,
+>  	};
+>  
+> @@ -603,6 +604,7 @@ static struct common_params
+>  			{"deepest-idle-state",	required_argument,	0, '8'},
+>  			{"on-threshold",	required_argument,	0, '9'},
+>  			{"on-end",		required_argument,	0, '\1'},
+> +			{"bpf-action",		required_argument,	0, '\2'},
+>  			{0, 0, 0, 0}
+>  		};
+>  
+> @@ -798,6 +800,9 @@ static struct common_params
+>  				exit(EXIT_FAILURE);
+>  			}
+>  			break;
+> +		case '\2':
+> +			params->bpf_action_program = optarg;
+> +			break;
+>  		default:
+>  			timerlat_top_usage("Invalid option");
+>  		}
+> -- 
+> 2.51.0
 > 
 
-As you described - the BootROM is using those two pins as UART0.
-
-Should you want those pins to be used as GPIOs, you'd at least get HW glitches in
-early boot phases, or you'd render emergency download mode unusable - which is not
-a good idea, not practical, and also, well, almost a stupid thing to do from the
-hardware perspective.
-
-This means that it is very, very, very unlikely (to the point that it's practically
-impossible) that those pins can ever be used for anything else that is not *the*
-one of the two functions that are supported for them (which is UART0 in this case).
-
-In this case, adding the pins at the board level would only create unnecessary
-duplication and nothing else, because, well, noone could possibly ever use those
-for anything else, again.
-
-That's the criteria.
-
-If the BootROM didn't use those pins, and those could support both GPIO mode and
-HW function mode (any: uart0, 1, 2...n, spi, i2c, whatever else), even though it
-is likely for boards to use them for one specific function, there is nothing that
-stops a HW engineer to decide to route those elsewhere and use them as a GPIO
-instead, so that's not a SoC configuration, but rather a HW implementation decision
-at the PCB level.
-
-See it like this (although this is an oversimplified view):
-  - SoC DT describes the SoC (the chip) - in this case the MT7981B chip
-  - Board DT describes decisions that were taken by the HW engineer that developed
-    the PCB on which the MT7981B was placed.
-
-Clearly, if there's a board design (usually, a "base project") that has derivatives
-(for example, a device with eMMC, one with UFS, one with both, one with two SFP,
-one with one SFP and one soldered ethernet chip on a non-exposed SFP interface,
-etc) it is ok to have a "board-common" dtsi and specific board variants on top,
-like it is done with some bananapi and some genio boards.
-
-Lots of text here - yet oversimplified. There is much more to say, but I think
-(and hope) that this is enough to make you understand the main point (of course
-feel free to throw more questions if what I wrote doesn't fully satisfy you).
-
->>
->>> (Sidenote: As even the BootROM already uses those two pins as UART for
->>> debug output,
->>
->> Funny thing is, your side note is what *fully* justifies your disagreement
->> and it's also what triggers me to say that you're right, lol :)
->>
->> Okay then, I am fine with this commit now and I can renew my
->>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> Note that the patch you have just added your Reviewed-by:-tag to does
-> *not* add the uart0 pinctrl on SoC-level but board-level, so different
-> from what I argued for above.
-
-Ewwww I'm doing too may things at once. Pretty crazy days around here :)))
-
- >> Did you mean to add Reviewed-by: for that
-> (which contraticts what you just wrote) or rather to the to-be-submitted
-> v2 of this series which includes the change to move the uart0 pinctrl
-> to mt7981b.dtsi?
-
-Yeah. Sorry.
-
-I repeat then, so that this is clear: you are right, the pinctrl for UART0 on the
-MT7981B SoC must go to mt7981b.dtsi and *not* to mt7981b-openwrt-one.
-
-Cheers,
-Angelo
 
