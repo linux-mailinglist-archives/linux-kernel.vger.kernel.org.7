@@ -1,184 +1,115 @@
-Return-Path: <linux-kernel+bounces-860280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E17BEFBC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CB4BEFBCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B7E33B6A7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219E23BF2EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044CA2E2EEE;
-	Mon, 20 Oct 2025 07:48:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9F62E1EF4;
+	Mon, 20 Oct 2025 07:49:47 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D612DF133
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E61620E334;
+	Mon, 20 Oct 2025 07:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760946526; cv=none; b=dcnn0rRjisMVqP/8JR5xQc68NhakgmDqHFEr/ZQc8GEZA0JYZ31zMWxeqRSgEPd+C8Dob9JknKpx2fx5Oi4lyYAh8SgwXlWoIDs3vqmPyTyyazyOhJpFbTJ/pO7po9zZUx1YYeWF2IS2brQLRZgnK+Xn5BY9GOivB2avNfBMgeM=
+	t=1760946587; cv=none; b=Tu5U/x9RmSTKl9Mx0YcJqQXhb0dane76L/JHjSLrL78QUhhB5TRMnlEVos2pom+GBWITK5Ex3FAK2j2oJ+rbpU1Ogh4K1gqw0XYkTQWUyi87AywWUzNIh4mAntLQlkdEMxUYSeazdn8Yo8WSH5AEtsHOAanfyUO1h1zdJgc4q3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760946526; c=relaxed/simple;
-	bh=yUk3lhUt1sY7o4U0LgDMsfxKrxc/YMRb9KlIccU7EbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+RYCMRwQGGqCdPP1/uWEj49gO4ACqV1hf6D1uxO7iyjG2ALvZ39yItG611Pt1voc7TaZpaNThtVEDyewsrzAbyN8T0txcB7ebz7Iz/GP685gQHeXLWtRamijHcw+ejR3r2RKV9DsBA7iHvJ9DtyHg5oS2BFQiaIyW9U/ELNAmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqnb959qhzYQtpW;
-	Mon, 20 Oct 2025 15:47:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 62CE21A17ED;
-	Mon, 20 Oct 2025 15:48:40 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgDniEFX6fVoDI30Aw--.58966S2;
-	Mon, 20 Oct 2025 15:48:40 +0800 (CST)
-Message-ID: <fa7fa2e5-c602-4318-90e1-89c742c6cc1a@huaweicloud.com>
-Date: Mon, 20 Oct 2025 15:48:38 +0800
+	s=arc-20240116; t=1760946587; c=relaxed/simple;
+	bh=rqF2+4aZsZgXwI99r/vp0x9hXEbZsi9gPenHK717Rp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=p9oaAsbmdY0XZi+LjIiD5BkQ7V24I50eiYJ8A0HUtTqRp09Xd4Kb8ZheWeN2vFZ20pT3258AbVyLwEaGy0zaz6PNx2CnLcH9QILHbvf1DGA1K6xLGfQ+YTGV2dlRsCPtutTtXHE9G//WNfgFV61k5HFRZy+3NeeQBbqEA9MiuqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 4f4e1ddaad8911f0a38c85956e01ac42-20251020
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:077d9843-85d1-45bd-9f42-d164766ef793,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:cb42775910660d13e7362869089db852,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:5,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 4f4e1ddaad8911f0a38c85956e01ac42-20251020
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 571335398; Mon, 20 Oct 2025 15:49:30 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: eugen.hristev@linaro.org
+Cc: alexandre.belloni@bootlin.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	nicolas.ferre@microchip.com,
+	xiaopei01@kylinos.cn
+Subject: [PATCH v2] iio: adc: at91-sama5d2_adc: Fix potential use-after-free in sama5d2_adc driver
+Date: Mon, 20 Oct 2025 15:49:25 +0800
+Message-Id: <268cbf0a5d9b931fcf6c025c53cc698ce78e4689.1760946527.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <e9d6831a-d0ef-440c-b235-fec18048deed@linaro.org>
+References: <e9d6831a-d0ef-440c-b235-fec18048deed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 03/16] cpuset: factor out partition_enable()
- function
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
- <20250928071306.3797436-4-chenridong@huaweicloud.com>
- <9168ffab-b0a8-4024-a1f4-966b9f95c953@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <9168ffab-b0a8-4024-a1f4-966b9f95c953@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDniEFX6fVoDI30Aw--.58966S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr4rAr1UtFW5ur43Xr1rCrg_yoWrCw1UpF
-	95JFW5tayUKryfC3srXF4xC34fKrs7J3WUtwn7X3W8Xr17Aw1vgFyj9390g3WUXrWkGry5
-	ZF1DWrs7uF17AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+at91_adc_interrupt can call at91_adc_touch_data_handler function
+to start the work by schedule_work(&st->touch_st.workq).
 
+If we remove the module which will call at91_adc_remove to
+make cleanup, it will free indio_dev through iio_device_unregister
+while the work mentioned above will be used. The sequence of operations
+that may lead to a UAF bug is as follows:
 
-On 2025/10/20 10:39, Waiman Long wrote:
-> On 9/28/25 3:12 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> Extract the core partition enablement logic into a dedicated
->> partition_enable() function. This refactoring centralizes updates to key
->> cpuset data structures including remote_sibling, effective_xcpus,
->> partition_root_state, and prs_err.
->>
->> The function handles the complete partition enablement workflow:
->> - Adding exclusive CPUs via partition_xcpus_add()
->> - Managing remote sibling relationships
->> - Synchronizing effective exclusive CPUs mask
->> - Updating partition state and error status
->> - Triggering required scheduler domain rebuilds
->>
->> This creates a coherent interface for partition operations and establishes
->> a foundation for future local partition support while maintaining existing
->> remote partition behavior.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 55 +++++++++++++++++++++++++++++++++---------
->>   1 file changed, 44 insertions(+), 11 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 0787904321a9..43ce62f4959c 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1515,6 +1515,49 @@ static inline bool is_local_partition(struct cpuset *cs)
->>       return is_partition_valid(cs) && !is_remote_partition(cs);
->>   }
->>   +static void partition_state_update(struct cpuset *cs, int new_prs,
->> +                      enum prs_errcode prs_err)
->> +{
->> +    lockdep_assert_held(&callback_lock);
->> +
->> +    cs->partition_root_state = new_prs;
->> +    WRITE_ONCE(cs->prs_err, prs_err);
->> +    if (!is_partition_valid(cs))
->> +        reset_partition_data(cs);
->> +}
->> +
->> +/**
->> + * partition_enable - Transitions a cpuset to a partition root
->> + * @cs: The cpuset to enable partition for
->> + * @parent: Parent cpuset of @cs, NULL for remote parent
->> + * @new_prs: New partition root state to set
->> + * @new_excpus: New exclusive CPUs mask for the partition
->> + *
->> + * Transitions a cpuset to a partition root, only for v2.
->> + */
->> +static void partition_enable(struct cpuset *cs, struct cpuset *parent,
->> +                 int new_prs, struct cpumask *new_excpus)
->> +{
->> +    bool isolcpus_updated;
->> +
->> +    lockdep_assert_held(&cpuset_mutex);
->> +    WARN_ON_ONCE(new_prs <= 0);
->> +    WARN_ON_ONCE(!cpuset_v2());
->> +
->> +    if (cs->partition_root_state == new_prs)
->> +        return;
->> +
->> +    spin_lock_irq(&callback_lock);
->> +    /* enable partition should only add exclusive cpus */
->> +    isolcpus_updated = partition_xcpus_add(new_prs, parent, new_excpus);
->> +    list_add(&cs->remote_sibling, &remote_children);
->> +    cpumask_copy(cs->effective_xcpus, new_excpus);
->> +    partition_state_update(cs, new_prs, PERR_NONE);
->> +    spin_unlock_irq(&callback_lock);
->> +    update_unbound_workqueue_cpumask(isolcpus_updated);
->> +    cpuset_force_rebuild();
->> +}
->> +
-> partition_enable() is supposed to be a common helper used for the creation of both local and remote
-> partitions. The one in this patch does work for remote partition but not for local partition. I
-> would prefer to make it good for both cases when you introduce it instead adding code in patch 6 to
-> make it work for local partition later in the series. It will make it easier to review instead of
-> jumping back and forth to make sure that it will do the right thing.
-> 
-> Cheers,
-> Longman
-> 
+CPU0                                      CPU1
 
-Thank you, Longman.
+                                     | at91_adc_workq_handler
+at91_adc_remove                      |
+iio_device_unregister(indio_dev)     |
+//free indio_dev                     |
+                                     | iio_push_to_buffers(indio_dev)
+                                     | //use indio_dev
 
-My original intention was to keep the changes easier to review. Patches 3–5 are meant to be pure
-refactoring moves of code from the remote partition logic, without altering any behavior.
+Fix it by ensuring that the work is canceled before proceeding with
+the cleanup in at91_adc_remove.
 
-Would it be clearer to proceed in the following stages:
+Fixes: 3ec2774f1cc ("iio: adc: at91-sama5d2_adc: add support for position and pressure channels")
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ drivers/iio/adc/at91-sama5d2_adc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-1. Introduce partition_enable(), partition_disable(), and partition_update() with their complete
-logic first.
-2. Replace the corresponding logic in remote partitions with these new helpers.
-3. Then, replace the logic in local partitions with the same helpers.
-
+diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+index b4c36e6a7490..1cd6ce61cf17 100644
+--- a/drivers/iio/adc/at91-sama5d2_adc.c
++++ b/drivers/iio/adc/at91-sama5d2_adc.c
+@@ -2480,6 +2480,7 @@ static void at91_adc_remove(struct platform_device *pdev)
+ 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+ 	struct at91_adc_state *st = iio_priv(indio_dev);
+ 
++	cancel_work_sync(&st->touch_st.workq);
+ 	iio_device_unregister(indio_dev);
+ 
+ 	at91_adc_dma_disable(st);
 -- 
-Best regards,
-Ridong
+2.25.1
 
 
