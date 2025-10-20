@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-860033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C384BEF2B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:17:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF94BEF2B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19DDC4E9C7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:17:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73F32348BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D729BD90;
-	Mon, 20 Oct 2025 03:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A4C29B233;
+	Mon, 20 Oct 2025 03:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOc1vDfJ"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awt91vO4"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9DC26CE05
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A70529B777
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760930232; cv=none; b=fo/ESN04UB+q1Sdznj/j/IP7DKNZepZmNaEbji18ebsBLM5Q8tpXEQ0TioRVc72J0Qf2G9xUyt4ZWtFUEKl9YED1s/Z43ytG76fGFRH1x92GFFvKp+uZxO8beyIpOIRpNvqsf0lSPeikN1En3DGQV8sM2iY3tK01G8uqxLtaMq4=
+	t=1760930241; cv=none; b=of7Httg75dz+qbMHjbagPGE3hXBxWla38udKm0DcajMQ9ruTxaN7yoIQCii3JerSbUUxoiumlWfNPIGIYtIjwEAqumXiE7qp4FLDdmKFym2oU9P5OvnchxFGtZRJj8VUke5FkxsLRTa/30QE6fg06cQTrlh72CVKwqnp5IVwAGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760930232; c=relaxed/simple;
-	bh=Qv1HG9au83J7guckWop8/cgavdJDTQcWIQGKLivyPZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DRh8d02uNLouuIZbj6peZ76JY3QmDmBN2Tprcn9C7VSL7X7LiUrVXYfACShiq4ROYy+Lr9S1+X/9zbvfHycs5l89waym2OYqruU03dnUSkg11noYl1mlZfLOYKTlFmNlqPS90FnJlP3xpNHNnKUdmQZGB7pQerb7bYbAJ02N9mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOc1vDfJ; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1760930241; c=relaxed/simple;
+	bh=sTyjq4lpHpE1Tag4v7BrWtTUyfVl+9Yq5BWJCJuucZ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eoN0BQku0yhrFtK7CS3VRv+jGu7WagTxZPSl+s2zBaqUO+/Ccq45TupZpvM10YSkTTgYy/THTXIeiauuOS1mr5kYFtEjadc5y1mr3gG2lVY/P8d856mT6lRtS7t21vq/ns1IPRb9WpCosyo5xQ/BSORbei7pywPLb26MfL3vBLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=awt91vO4; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-269639879c3so37820785ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:17:10 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-29292eca5dbso7383445ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760930230; x=1761535030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGks2sOnnpNLPiQkQk5TdavZHCtfoEFSojg02a8VBgI=;
-        b=BOc1vDfJwcdTWnQSl8wErjdt58QEu9d4A4uuWo+Yj9/iecarzaTVNQxe/TSfIk4JX+
-         Mk90NQ9WHNRtHT+JYsKxeF6YaKhH0YVOW+o/DIRRAMqwYocl8fBdbaUtSMm0tKmUVS7K
-         PV9/XDO+Ac0F8UrdEzAaw5l9ZAnfgs8hkwBlsj/ifiXEAMUe/F8gS/RZdj99qbQD60S2
-         bLXFFn6vKRMA59T/b5BQb9s/hTzMzxTZKNY0c1irKjiyXQ4JeN6/9bouexEh4M2+no0j
-         Lp96QaVg6dgGHwHRMyF7gB0g96WVcsKyk+gZaptHfOL4TceHZ4Hg40CuqgmxcenhI7Tc
-         sSTQ==
+        d=gmail.com; s=20230601; t=1760930239; x=1761535039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kYdtRER+63D5fwP+dPFGkrD4tSBc+ZR0Nj1GwO3r8rs=;
+        b=awt91vO4bDyg6BC107x/vOpmB4wLxzVF5dNdNwcXwB124WZfBJizAS5Aaj/gJT9JiS
+         YVQ1nsRzSgPSdnMK88ewCrWVir/xYtIsBAuyjylfWLakwJGz+p1LiEAj0jgx3ABX5xbW
+         bfatyQq/Xcldh5nDu3Nb6n6PPiShCwNJ8oxfLQ7gViOcUtAMAHQd2xBHJfzvG2wTTDme
+         0NxGKsf3S4h2vQQRRekqtt+ceS4jpUVbBW7p0odDSzTZQgaHS0+pS5ikSvCF6v7xN1lA
+         Mdo2I3LMlgv2riILDHWoAdSi7pg51rPn6JGdtFu4dzRRkANHgq3VmqbpMIpTFw9FB/8I
+         eNCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760930230; x=1761535030;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kGks2sOnnpNLPiQkQk5TdavZHCtfoEFSojg02a8VBgI=;
-        b=H53Z/zb+ptV0DGn8217Ca2fF5vKMqsFHg332pW+WDJaPCN4mSbZM0RnKCjMqQNRUAE
-         1dDkVhBTWMWbJ/I+nNUwg6cnfyBfQ8Ed6E0EPvibJLBkOCmgyAYAROjkTIejvLZ6nnl5
-         +7BgrdgW9M9HVuUhiWLTDqJlbtcFJvL9MjHyQirayaV0rRiVQlhNiR4Jzp+tRx+EyXM4
-         CteMvFivubHcErB9X+9A+3kQ8rB+bqfAG0tb4XwJ9YtuP8/6fMmKO92m9BlJDA1s9ZQc
-         hZ1FsoWedDW8sleQ+JMLFcbfnPvc5VfsxDdGjMXI0BozUe7qcxQCf/8XrJITcxG5jfR5
-         Pfvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxQr3WFRz+cLTZmg/hwrwuE11A4YBb1fHWv8VHMqTjaDsqWHV5m6D6JFQwUcdFH5oSZTLls11/NVpATCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb9HjlXjuBXRrIluZn8F+UlgIxXmCn73+KoU7lqgYPf+ZB7X3P
-	NUCAFirF5DCzw/fqkP6W4ulAGNP7NTYgYfdETNFjqnu8AVRkKo83AWP/
-X-Gm-Gg: ASbGncs+XIVJCYpteY0rArg3bhiqT2sxaAEtusKlaBi56dTXOZ6KrimcLaMlL6cJ3dn
-	g5uNSzkg39AbujX1kyQTrKjadof399Kcj6uLmSPyrUEjh1+qAMF1U2GMOv8gUgmHURXcDyE+IH3
-	6TROvN7Kjcc4dvZ9ipYlsXqilcC1OtsyiLB1/aaPyjeoBuG1OfEu8cXvYmuuPSsz3iKifr+jXnn
-	j9TpQfs4IHSQCGE0kDObqpvoB3X0xVOEUTQZEgb2g1ltv6ixMfeK/m3+TfrkNwHA0Y37Hmn4Ql8
-	Bo8LBx1hwrOdhrPdu3v6jbB5f0STAC7s8H6woPvMNwmQU0azNwtxX4i2cGSNv0/TyWdOEV7J0j8
-	4xGu6ktrnnhSinUxMEx61gPLDduhWVE3J66aYAiAEZY0jXFp3ypyTm269tu1F2WS7athnrMP7zk
-	in9TkM7XA9AfKbIRP/6Cvxr+M9HXZ6mGNG137hVlt9RIpTnQ==
-X-Google-Smtp-Source: AGHT+IHgkWxUzoUUp0gWSk3OAPdv3h9UX6IroOzlUnb1eY2K5j3hSN09VNabSt60qr2F5Tmrcms9KQ==
-X-Received: by 2002:a17:903:41c6:b0:25d:37fc:32df with SMTP id d9443c01a7336-290cb65c914mr164540365ad.47.1760930230150;
-        Sun, 19 Oct 2025 20:17:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760930239; x=1761535039;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kYdtRER+63D5fwP+dPFGkrD4tSBc+ZR0Nj1GwO3r8rs=;
+        b=EZFwpP4vqJIDiGcdJKdjpcOLcE/+jm4zu03q7T/57VQE32W31TqFHSZS6I3Fx5oMEM
+         zKmfHt0/weRiGhnTjN9zufEn+rl3lQZSKI9dkOv6dWFcdc2tYgRC95BYIgQCILkFDDjk
+         1UVw4YCN+iW3VQyCa1BVkjx7WHAPW+jmgC1HgW/IclMIFfIoLKJ5XqAyiJoizaKu2F4v
+         k4n+pLD96kAtBI4POIsQ22gshluixvDSRXVhkgTqC70xQcin6a4igRPi5KMwflNn/q8A
+         AOBrWJDSRmgO4bTrXBBtVxREinloWyS4+4B01utJ+JaHOnb/L8EGwiR8Pu4voTK0PdkC
+         ZTLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPewaFSlk4Kt1UjqCG4diqffrB/NAeJ3Ww9QBVDWPEOuXrrHDIbgn1sVb7KG3Zp3+D9zW0Otuw0oASmLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybArkxtP3IlgEDYUksZuSS+yazAH4Guq8bdbxRwHyqYT3qQttg
+	leSc0lR3SyR3DIC4L2yQ7fIO5Pyy6qOMyK9ZTXXcCUv82QacOTq7B263
+X-Gm-Gg: ASbGnctZYknlUNsTEeX6xj8FswIIQQ6D2nYf3SNeoO15btD390L1i++r1g1Su9UTOwx
+	9LQ4Bfjoluv7ZJK/tAC178JspwUR3JdLgAN2tsZFCJeusYuWLEbMXdLhrm0e6zAZYCBu4rJt8rK
+	cyRogGH+7gj2YbKrs5ySEgwnwMufbxMVXSlIWfk6IrDIbJr36e3F70zoiLjZ4E5mqvdiK1qbwDx
+	Kg8aRIXAfEVVe67Ybf+rt0EAyTJnCLhIj/WYDI8+Bj7NZnrIvObw58i3wx0QH/iDVPel5mVS2YV
+	WarBglcCoqZlROTQ0N0O9rpPCPpC+uIG7do/Z23eLechBoH7tJmui9D+wV71+jfH083r7g73B4/
+	55ix8ZTcwkbi5SxKxyNupBzVGBEI04PcGCh2P63fLtBttOD6bXrzNK2Km7/qmOFEjJrxn0PZtFg
+	e/mVerVxZrAWgIu3E1W7goiPLdPADMybrqapwHcmDroBvvbQ==
+X-Google-Smtp-Source: AGHT+IGo/kUBmmZVSBiCCtDWJPQhX6W2PzXxnBQ3p+r5Rs/M8lNok3r/Ez1M0M2GbDWgxzLf0C8R3g==
+X-Received: by 2002:a17:902:dac5:b0:267:6754:8fd9 with SMTP id d9443c01a7336-290ca216ad6mr166008035ad.39.1760930238858;
+        Sun, 19 Oct 2025 20:17:18 -0700 (PDT)
 Received: from localhost.localdomain ([2409:891f:1da1:a41d:3815:5989:6e28:9b6d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fddfesm66373435ad.88.2025.10.19.20.17.01
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fddfesm66373435ad.88.2025.10.19.20.17.10
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 19 Oct 2025 20:17:09 -0700 (PDT)
+        Sun, 19 Oct 2025 20:17:18 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org,
 	ast@kernel.org,
@@ -109,10 +111,12 @@ Cc: bpf@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v11 mm-new 05/10] mm: thp: enable THP allocation exclusively through khugepaged
-Date: Mon, 20 Oct 2025 11:16:50 +0800
-Message-Id: <20251020031655.1093-1-laoar.shao@gmail.com>
+Subject: [PATCH v11 mm-new 06/10] mm: bpf-thp: add support for global mode
+Date: Mon, 20 Oct 2025 11:16:51 +0800
+Message-Id: <20251020031655.1093-2-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+In-Reply-To: <20251020031655.1093-1-laoar.shao@gmail.com>
+References: <20251020031655.1093-1-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -121,73 +125,201 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-khugepaged_enter_vma() ultimately invokes any attached BPF function with
-the TVA_KHUGEPAGED flag set when determining whether or not to enable
-khugepaged THP for a freshly faulted in VMA.
+The per-process BPF-THP mode is unsuitable for managing shared resources
+such as shmem THP and file-backed THP. This aligns with known cgroup
+limitations for similar scenarios [0].
 
-Currently, on fault, we invoke this in do_huge_pmd_anonymous_page(), as
-invoked by create_huge_pmd() and only when we have already checked to
-see if an allowable TVA_PAGEFAULT order is specified.
+Introduce a global BPF-THP mode to address this gap. When registered:
+- All existing per-process instances are disabled
+- New per-process registrations are blocked
+- Existing per-process instances remain registered (no forced unregistration)
 
-Since we might want to disallow THP on fault-in but allow it via
-khugepaged, we move things around so we always attempt to enter
-khugepaged upon fault.
+The global mode takes precedence over per-process instances. Updates are
+type-isolated: global instances can only be updated by new global
+instances, and per-process instances by new per-process instances.
 
-This change is safe because:
-- khugepaged operates at the MM level rather than per-VMA. The THP
-  allocation might fail during page faults due to transient conditions
-  (e.g., memory pressure), it is safe to add this MM to khugepaged for
-  subsequent defragmentation.
-- If __thp_vma_allowable_orders(TVA_PAGEFAULT) returns 0, then
-  __thp_vma_allowable_orders(TVA_KHUGEPAGED) will also return 0.
-
-While we could also extend prctl() to utilize this new policy, such a
-change would require a uAPI modification to PR_SET_THP_DISABLE.
+Link: https://lore.kernel.org/linux-mm/YwNold0GMOappUxc@slm.duckdns.org/ [0]
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Acked-by: Lance Yang <lance.yang@linux.dev>
-Cc: Usama Arif <usamaarif642@gmail.com>
 ---
- mm/huge_memory.c |  1 -
- mm/memory.c      | 13 ++++++++-----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ mm/huge_memory_bpf.c | 109 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 2 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e105604868a5..45d13c798525 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1390,7 +1390,6 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
- 	ret = vmf_anon_prepare(vmf);
- 	if (ret)
- 		return ret;
--	khugepaged_enter_vma(vma);
+diff --git a/mm/huge_memory_bpf.c b/mm/huge_memory_bpf.c
+index e8894c10d1d9..cad1ca6f59a4 100644
+--- a/mm/huge_memory_bpf.c
++++ b/mm/huge_memory_bpf.c
+@@ -33,6 +33,28 @@ struct bpf_thp_ops {
+ };
  
- 	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
- 			!mm_forbids_zeropage(vma->vm_mm) &&
-diff --git a/mm/memory.c b/mm/memory.c
-index 7a242cb07d56..5007f7526694 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6327,11 +6327,14 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	if (pud_trans_unstable(vmf.pud))
- 		goto retry_pud;
+ static DEFINE_SPINLOCK(thp_ops_lock);
++static struct bpf_thp_ops __rcu *bpf_thp_global; /* global mode */
++
++static unsigned long
++bpf_hook_thp_get_orders_global(struct vm_area_struct *vma,
++			       enum tva_type type,
++			       unsigned long orders)
++{
++	thp_order_fn_t *bpf_hook_thp_get_order;
++	int bpf_order;
++
++	rcu_read_lock();
++	bpf_hook_thp_get_order = rcu_dereference(bpf_thp_global->thp_get_order);
++	if (!bpf_hook_thp_get_order)
++		goto out;
++
++	bpf_order = bpf_hook_thp_get_order(vma, type, orders);
++	orders &= BIT(bpf_order);
++
++out:
++	rcu_read_unlock();
++	return orders;
++}
  
--	if (pmd_none(*vmf.pmd) &&
--	    thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
--		ret = create_huge_pmd(&vmf);
--		if (!(ret & VM_FAULT_FALLBACK))
--			return ret;
-+	if (pmd_none(*vmf.pmd)) {
-+		if (vma_is_anonymous(vma))
-+			khugepaged_enter_vma(vma);
-+		if (thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
-+			ret = create_huge_pmd(&vmf);
-+			if (!(ret & VM_FAULT_FALLBACK))
-+				return ret;
-+		}
- 	} else {
- 		vmf.orig_pmd = pmdp_get_lockless(vmf.pmd);
+ unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
+ 				      enum tva_type type,
+@@ -45,6 +67,10 @@ unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
+ 	if (!mm)
+ 		return orders;
  
++	/* Global BPF-THP takes precedence over per-process BPF-THP. */
++	if (rcu_access_pointer(bpf_thp_global))
++		return bpf_hook_thp_get_orders_global(vma, type, orders);
++
+ 	rcu_read_lock();
+ 	bpf_thp = rcu_dereference(mm->bpf_mm.bpf_thp);
+ 	if (!bpf_thp || !bpf_thp->thp_get_order)
+@@ -177,6 +203,23 @@ static int bpf_thp_init_member(const struct btf_type *t,
+ 	return 0;
+ }
+ 
++static int bpf_thp_reg_gloabl(void *kdata, struct bpf_link *link)
++{
++	struct bpf_thp_ops *ops = kdata;
++
++	/* Protect the global pointer bpf_thp_global from concurrent writes. */
++	spin_lock(&thp_ops_lock);
++	/* Only one instance is allowed. */
++	if (rcu_access_pointer(bpf_thp_global)) {
++		spin_unlock(&thp_ops_lock);
++		return -EBUSY;
++	}
++
++	rcu_assign_pointer(bpf_thp_global, ops);
++	spin_unlock(&thp_ops_lock);
++	return 0;
++}
++
+ static int bpf_thp_reg(void *kdata, struct bpf_link *link)
+ {
+ 	struct bpf_thp_ops *bpf_thp = kdata;
+@@ -187,6 +230,11 @@ static int bpf_thp_reg(void *kdata, struct bpf_link *link)
+ 	pid_t pid;
+ 
+ 	pid = bpf_thp->pid;
++
++	/* Fallback to global mode if pid is not set. */
++	if (!pid)
++		return bpf_thp_reg_gloabl(kdata, link);
++
+ 	p = find_get_task_by_vpid(pid);
+ 	if (!p)
+ 		return -ESRCH;
+@@ -207,8 +255,10 @@ static int bpf_thp_reg(void *kdata, struct bpf_link *link)
+ 	 * might register this task simultaneously.
+ 	 */
+ 	spin_lock(&thp_ops_lock);
+-	/* Each process is exclusively managed by a single BPF-THP. */
+-	if (rcu_access_pointer(mm->bpf_mm.bpf_thp))
++	/* Each process is exclusively managed by a single BPF-THP.
++	 * Global mode disables per-process instances.
++	 */
++	if (rcu_access_pointer(mm->bpf_mm.bpf_thp) || rcu_access_pointer(bpf_thp_global))
+ 		goto out_lock;
+ 	err = 0;
+ 	rcu_assign_pointer(mm->bpf_mm.bpf_thp, bpf_thp);
+@@ -224,12 +274,33 @@ static int bpf_thp_reg(void *kdata, struct bpf_link *link)
+ 	return err;
+ }
+ 
++static void bpf_thp_unreg_global(void *kdata, struct bpf_link *link)
++{
++	struct bpf_thp_ops *bpf_thp;
++
++	spin_lock(&thp_ops_lock);
++	if (!rcu_access_pointer(bpf_thp_global)) {
++		spin_unlock(&thp_ops_lock);
++		return;
++	}
++
++	bpf_thp = rcu_replace_pointer(bpf_thp_global, NULL,
++				      lockdep_is_held(&thp_ops_lock));
++	WARN_ON_ONCE(!bpf_thp);
++	spin_unlock(&thp_ops_lock);
++
++	synchronize_rcu();
++}
++
+ static void bpf_thp_unreg(void *kdata, struct bpf_link *link)
+ {
+ 	struct bpf_thp_ops *bpf_thp = kdata;
+ 	struct bpf_mm_ops *bpf_mm;
+ 	struct list_head *pos, *n;
+ 
++	if (!bpf_thp->pid)
++		return bpf_thp_unreg_global(kdata, link);
++
+ 	spin_lock(&thp_ops_lock);
+ 	list_for_each_safe(pos, n, &bpf_thp->mm_list) {
+ 		bpf_mm = list_entry(pos, struct bpf_mm_ops, bpf_thp_list);
+@@ -242,6 +313,31 @@ static void bpf_thp_unreg(void *kdata, struct bpf_link *link)
+ 	synchronize_rcu();
+ }
+ 
++static int bpf_thp_update_global(void *kdata, void *old_kdata, struct bpf_link *link)
++{
++	struct bpf_thp_ops *old_bpf_thp = old_kdata;
++	struct bpf_thp_ops *bpf_thp = kdata;
++	struct bpf_thp_ops *old_global;
++
++	if (!old_bpf_thp || !bpf_thp)
++		return -EINVAL;
++
++	spin_lock(&thp_ops_lock);
++	/* BPF-THP global instance has already been removed. */
++	if (!rcu_access_pointer(bpf_thp_global)) {
++		spin_unlock(&thp_ops_lock);
++		return -ENOENT;
++	}
++
++	old_global = rcu_replace_pointer(bpf_thp_global, bpf_thp,
++					 lockdep_is_held(&thp_ops_lock));
++	WARN_ON_ONCE(!old_global);
++	spin_unlock(&thp_ops_lock);
++
++	synchronize_rcu();
++	return 0;
++}
++
+ static int bpf_thp_update(void *kdata, void *old_kdata, struct bpf_link *link)
+ {
+ 	struct bpf_thp_ops *old_bpf_thp = old_kdata;
+@@ -249,6 +345,15 @@ static int bpf_thp_update(void *kdata, void *old_kdata, struct bpf_link *link)
+ 	struct bpf_mm_ops *bpf_mm;
+ 	struct list_head *pos, *n;
+ 
++	/* Updates are confined to instances of the same scope:
++	 * global to global, process-local to process-local.
++	 */
++	if (!!old_bpf_thp->pid != !!bpf_thp->pid)
++		return -EINVAL;
++
++	if (!old_bpf_thp->pid)
++		return bpf_thp_update_global(kdata, old_kdata, link);
++
+ 	INIT_LIST_HEAD(&bpf_thp->mm_list);
+ 
+ 	/* Could be optimized to a per-instance lock if this lock becomes a bottleneck. */
 -- 
 2.47.3
 
