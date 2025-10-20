@@ -1,182 +1,106 @@
-Return-Path: <linux-kernel+bounces-861730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76926BF37F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4553BF37FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2045A4F6DB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:49:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74A3E4F3973
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3DE2E284B;
-	Mon, 20 Oct 2025 20:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6672E3387;
+	Mon, 20 Oct 2025 20:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K829CxD5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FUGiufY8"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811AD2E0408
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC472D63FF
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760993338; cv=none; b=BFze697eDJdjPMh1EYxNrM578gL0VP/VSS45r2t6ecQLPMjCKCQNaihwKb+wy9fDATHfhwrBfTy6XKEXddTDcLHPDGpWeqDsXrz+w0miUBM7XdlbocOE8K0Brq24PUsSorzDcWLS3hc8LTQ+ZwZKTjgY3/xiQt+RlKDD36jcicw=
+	t=1760993476; cv=none; b=lfdwNhk+32dqaYGNOhzDtrkGQuFCcRlmro6yb1usqRSCfPx/Xv9pkrRw2f98sejOpePQMKQ77d0h+mcJqUvIDm1ISwBY4NmtxlTwfQlbh0O6diW6YjP6vC2/tT8YSOwy/OuWggckjyslNz/0jr2yQA1E1aWA9Lt0kp7FvQ353l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760993338; c=relaxed/simple;
-	bh=M4AhKATDdg4iYlPRuYd6QFWM30DidNdfhwLv4ITgdIw=;
+	s=arc-20240116; t=1760993476; c=relaxed/simple;
+	bh=d/DNocr10We9+tRibfaGdS7+LWNCjniYedbAm0aObrM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LQk+bXdyA7WVJ2L3N8bY1XKd5rpn3jE/obcOwNAjLK9AuVN8yEZkVRVCfQu4bqUzi5KQHkiiWEtdJmwfPkpgzLZ8k41ZBL+YjQsVPEqNMDUEMwgeZQOG+daO0uF93c/iEsque6/HGBzuFSYH63mlFo/wzaekX1BoejSjlWxxRLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K829CxD5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B62DC116C6
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760993338;
-	bh=M4AhKATDdg4iYlPRuYd6QFWM30DidNdfhwLv4ITgdIw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K829CxD5OX1nOQtT+azyZy6+Bf6FXv2m7iGJ2yoNGG+9DkQglIm5Q4A1izFGIF5Vn
-	 1FsqSqZY/mwktcwB4imdUkkv87bfdDSmsbkHziNFVQ0y1sagzj1XagLjmpJ5lO84Av
-	 qGRnfTsjp28NIlNiSbE2RhDmbEi0IMecWzh7mrfXy8o/kE9PCuuqGB+lUQG4ka5g14
-	 kP2LtsRDNjIx7T/YwK/ke5cLWr4zK6EP6QkgKEpSjv86RhqNnuOvFkqbXd2QoFMCga
-	 cuhOq4MQyep0G+qUcE9zNdmkw2cUGeuHtOkFbMipnquujs4ocII+K6j0n8EC762uN5
-	 7OKEFpN8IX/Sg==
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4283be7df63so1305515f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:48:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVpCxJN7pa3irnuv0bzaUUm0CbD5IJ7L36RYn0NJM92VV8sTdywqE1EUqtaEtIiR23TzHiuWsxv5YBpZJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzksej2KDkzE6KEI10CTr1HiFHLxeHa5XZ8T1GtAw4cGNwVq95N
-	AJPiXWam4XLFWfJ/8xdiDNQZx1CTP+TClB0av7HQLl8UkQ9h8sOwxoWVAqHt8eSoF2Hjs2itHl2
-	sJhKl+kTOcxjilfSo0K5LNGiJ7P7nWV8=
-X-Google-Smtp-Source: AGHT+IG85s9AQnEsN7IduXkEM9P74jpZPvDj12tUe87rhadJgIBF0s8dfM3ZjxeutaFi0HHg6DtIskHC6u5jFK5v1HM=
-X-Received: by 2002:a05:6000:26c4:b0:427:202:d4d2 with SMTP id
- ffacd0b85a97d-42704db5b02mr9514161f8f.58.1760993336717; Mon, 20 Oct 2025
- 13:48:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=U2ZmgxENl/WrdZwc1aRBgpGpduynwO8j/fpb7RD3Ew0hbqNcu4CByIVSyWnIoUoULH47LhfC65OiVH/IqZ9dcX60/QEIcvPOC+vOUNNcQxEc4QDBIp6lCJr1HPw2iFQyxY8vxt3xNFb4BIP5VL5qgP8NBjK8nr48CDZqF9qXJ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FUGiufY8; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-579d7104c37so6047210e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760993473; x=1761598273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d/DNocr10We9+tRibfaGdS7+LWNCjniYedbAm0aObrM=;
+        b=FUGiufY83yAlygBhP4TFTjFNKd4/t2agmvIzik+ZTYI9pDcxMgppvelmm6v6+YdXk7
+         hUkmPBIu99umbqZrqqNdT+rCkDffaSnuAcGjKwG2B/TryDqmvTPWAkdm6IKExPqInpzW
+         Z7o5BKrwzSKavjm6Qb0GY29CwMids43H+cEGDWZlhHx0negGtFLCUTjuP5DHtA3KyTzg
+         f4GD2XF7CpyLvrI1rXhqFcWkFAwafWYXd7b9WebJ6/vHG0YmsW1ynh7H160kVZkB1i5U
+         l/zLciJkGsQ1EJqPZeczG2YQypSE9HTmRK2REJmlut/FJEn38uwGTEJrF9MivwqsGRCU
+         NWHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760993473; x=1761598273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d/DNocr10We9+tRibfaGdS7+LWNCjniYedbAm0aObrM=;
+        b=l8BBE/mKbzCPbSBP9XWNUx+e7DxQskUQLjZbKIpQgLXQPErMU/3ZSJSdnePZCY7N7Q
+         zwdxH7hkh/duARJzsSj7qNf5VUQD3mT4bgj8ko97+tJSrflhTmJ+gJV/bAPzqUMpjHNW
+         gDGr5PuyUMc3kYQxvc+tgruVOWTeFYIOGGRZpYy5pdrzEjHD6xQyBsil/OyAnPiQ0Wfi
+         4bzetJsF39GsRCogBJeapJJjctRJ6TbPMPRxErgMBf8GvV5OcntOczGEGRrwopoW6+aP
+         /AylxaHGZuLhW+ZCEfLYPksYFJffxQNb5wDxHQA4MfEXEm4PPjqq8wfsqaebCkMlZeBK
+         9H/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTHh+GxpDM5NWrXlfrBLzS3YZeKP9fsjqxfDIP7bj/QzII55WsKtD3PXbZlQ0i4OFpt/t/XO7OeLsklLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaLmhlgV5lS7XSOQrvYbZAOT9tD8Ij5L2MAxujCWI89Nl4/hrZ
+	q+W7qlbGLQMX+hYaA5P/KbyZG62Jd73fJEQXhar6PuCQTQ0IyXpzWjzR19zsqOSI9vtw9EIaOUt
+	TEXerkA37Fydd3c7kPJs9fV6qTsO/cnzDWZWufu9r
+X-Gm-Gg: ASbGncvVxVuYM+3kaGSR8uXYBGX7aO6PxIU3J0cMGlqrWWzkEQ+anQH8x/XaWv09hYQ
+	+eJ9gd7NTAHy4ZKDvDaCcW/nXLlwbLhlH1bBPXF9fU4SNIXZ19HG2grXExfN2xtD34RowbYzWmq
+	ywnU+keMtI34X5NuKujietbHLHL0/Im2O1g2expZhJ5mwbe1SpGAOLzrFPhmmCKLA6kReBjwzGX
+	FhR3ONIAWC/Ka/7tK2cBZRcuPY2mZvlIPkbQa6K2XlatiXZlxlfj9uuY5xwFQPi3yNJ1DFhKqBJ
+	6fVglWo=
+X-Google-Smtp-Source: AGHT+IFptH7lgeIQIF8Wb79g6w5+VZiUQoWjQkKuVLjC5A13jG0UM4rCDEn9XOnf7H7IQFGgZlhwFcy9kFCumyNbmPY=
+X-Received: by 2002:a05:6512:3082:b0:58b:63:81cf with SMTP id
+ 2adb3069b0e04-591d8579843mr4495565e87.55.1760993473069; Mon, 20 Oct 2025
+ 13:51:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006224208.1060990-1-mrathor@linux.microsoft.com>
- <20251017223300.GB632885@liuwe-devbox-debian-v2.local> <20251017225732.GC632885@liuwe-devbox-debian-v2.local>
- <74e019ac-afc7-3178-0f0a-dc903af5c4ca@linux.microsoft.com>
- <SN6PR02MB4157C70EBD25315F098DB3A1D4F7A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <4a4fa302-18fa-ba01-ec06-d4bf0cc84032@linux.microsoft.com>
-In-Reply-To: <4a4fa302-18fa-ba01-ec06-d4bf0cc84032@linux.microsoft.com>
-From: Wei Liu <wei.liu@kernel.org>
-Date: Mon, 20 Oct 2025 13:48:44 -0700
-X-Gmail-Original-Message-ID: <CAHd7WqzLaUXX_O6vw9YRUnPWNyTZgCANK+ZDVMYkTM4ozcZxGg@mail.gmail.com>
-X-Gm-Features: AS18NWA_4_fWQVMLOfg9SHFybsBj35x7jD_NSU21S2po6A7IjEienZKubJKF8UI
-Message-ID: <CAHd7WqzLaUXX_O6vw9YRUnPWNyTZgCANK+ZDVMYkTM4ozcZxGg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Hyper-V: Implement hypervisor core collection
-To: Mukesh R <mrathor@linux.microsoft.com>
-Cc: Michael Kelley <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "kys@microsoft.com" <kys@microsoft.com>, 
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "decui@microsoft.com" <decui@microsoft.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de" <arnd@arndb.de>
+References: <20251018000713.677779-1-vipinsh@google.com> <20251018000713.677779-19-vipinsh@google.com>
+In-Reply-To: <20251018000713.677779-19-vipinsh@google.com>
+From: David Matlack <dmatlack@google.com>
+Date: Mon, 20 Oct 2025 13:50:45 -0700
+X-Gm-Features: AS18NWDGxqhjIaoTQRNUFc91_bCzfrzvv4w3uLlEfEEIlUZmI_rVPec29OqIzHg
+Message-ID: <CALzav=cD4WLKX0roP8mvWEO1dhLGLtopeLTmH=f-DeV2Z3mAJA@mail.gmail.com>
+Subject: Re: [RFC PATCH 18/21] vfio: selftests: Build liveupdate library in
+ VFIO selftests
+To: Vipin Sharma <vipinsh@google.com>
+Cc: bhelgaas@google.com, alex.williamson@redhat.com, pasha.tatashin@soleen.com, 
+	jgg@ziepe.ca, graf@amazon.com, pratyush@kernel.org, 
+	gregkh@linuxfoundation.org, chrisl@kernel.org, rppt@kernel.org, 
+	skhawaja@google.com, parav@nvidia.com, saeedm@nvidia.com, 
+	kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
+	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
+	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 20 Oct 2025 at 12:05, Mukesh R <mrathor@linux.microsoft.com> wrote:
->
-> On 10/17/25 19:54, Michael Kelley wrote:
-> > From: Mukesh R <mrathor@linux.microsoft.com> Sent: Friday, October 17, 2025 4:58 PM
-> >>
-> >> On 10/17/25 15:57, Wei Liu wrote:
-> >>> On Fri, Oct 17, 2025 at 10:33:00PM +0000, Wei Liu wrote:
-> >>>> On Mon, Oct 06, 2025 at 03:42:02PM -0700, Mukesh Rathor wrote:
-> >>>> [...]
-> >>>>> Mukesh Rathor (6):
-> >>>>>   x86/hyperv: Rename guest crash shutdown function
-> >>>>>   hyperv: Add two new hypercall numbers to guest ABI public header
-> >>>>>   hyperv: Add definitions for hypervisor crash dump support
-> >>>>>   x86/hyperv: Add trampoline asm code to transition from hypervisor
-> >>>>>   x86/hyperv: Implement hypervisor RAM collection into vmcore
-> >>>>>   x86/hyperv: Enable build of hypervisor crashdump collection files
-> >>>>>
-> >>>>
-> >>>> Applied to hyperv-next. Thanks.
-> >>>
-> >>> This breaks i386 build.
-> >>>
-> >>> /work/linux-on-hyperv/linux.git/arch/x86/hyperv/hv_init.c: In function ?hyperv_init?:
-> >>> /work/linux-on-hyperv/linux.git/arch/x86/hyperv/hv_init.c:557:17: error: implicit declaration of function ?hv_root_crash_init? [-Werror=implicit-function-declaration]
-> >>>   557 |                 hv_root_crash_init();
-> >>>       |                 ^~~~~~~~~~~~~~~~~~
-> >>>
-> >>> That's because CONFIG_MSHV_ROOT is only available on x86_64. And the
-> >>> crash feature is guarded by CONFIG_MSHV_ROOT.
-> >>>
-> >>> Applying the following diff fixes the build.
-> >>
-> >>
-> >> Thanks. A bit surprising tho that CONFIG_MSHV_ROOT doesn't have
-> >> hard dependency on x86_64. It should, no?
-> >
-> > CONFIG_MSHV_ROOT *does* have a hard dependency on X86_64.
-> >
-> > But the problem is actually more pervasive than just 32-bit builds. Because
-> > of the hard dependency, 32-bit builds imply CONFIG_MSHV_ROOT=n, which is
-> > the real problem. In arch/x86/include/asm/mshyperv.h the declaration for
-> > hv_root_crash_init() is available only when CONFIG_MSHV_ROOT is defined
-> > (m or y). There's a stub hv_root_crash_init() if CONFIG_MSHV_ROOT is defined
-> > and CONFIG_CRASH_DUMP=n, but not if CONFIG_MSHV_ROOT=n. The solution
-> > is to add a stub when CONFIG_MSHV_ROOT=n, as below:
-> >
-> > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> > index 76582affefa8..a5b258d268ed 100644
-> > --- a/arch/x86/include/asm/mshyperv.h
-> > +++ b/arch/x86/include/asm/mshyperv.h
-> > @@ -248,6 +248,8 @@ void hv_crash_asm_end(void);
-> >  static inline void hv_root_crash_init(void) {}
-> >  #endif  /* CONFIG_CRASH_DUMP */
-> >
-> > +#else   /* CONFIG_MSHV_ROOT */
-> > +static inline void hv_root_crash_init(void) {}
-> >  #endif  /* CONFIG_MSHV_ROOT */
-> >
-> >  #else /* CONFIG_HYPERV */
-> >
-> > Annoyingly, this solution duplicates the hv_root_crash_init() stub.  So
-> > an alternate approach that changes a few more lines of code is this:
-> >
-> > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> > index 76582affefa8..1342d55c2545 100644
-> > --- a/arch/x86/include/asm/mshyperv.h
-> > +++ b/arch/x86/include/asm/mshyperv.h
-> > @@ -237,18 +237,14 @@ static __always_inline u64 hv_raw_get_msr(unsigned int reg)
-> >  }
-> >  int hv_apicid_to_vp_index(u32 apic_id);
-> >
-> > -#if IS_ENABLED(CONFIG_MSHV_ROOT)
-> > -
-> > -#ifdef CONFIG_CRASH_DUMP
-> > +#if IS_ENABLED(CONFIG_MSHV_ROOT) && IS_ENABLED(CONFIG_CRASH_DUMP)
-> >  void hv_root_crash_init(void);
-> >  void hv_crash_asm32(void);
-> >  void hv_crash_asm64(void);
-> >  void hv_crash_asm_end(void);
-> > -#else   /* CONFIG_CRASH_DUMP */
-> > +#else   /* CONFIG_MSHV_ROOT && CONFIG_CRASH_DUMP */
-> >  static inline void hv_root_crash_init(void) {}
-> > -#endif  /* CONFIG_CRASH_DUMP */
-> > -
-> > -#endif  /* CONFIG_MSHV_ROOT */
-> > +#endif  /* CONFIG_MSHV_ROOT && CONFIG_CRASH_DUMP */
-> >
-> >  #else /* CONFIG_HYPERV */
-> >  static inline void hyperv_init(void) {}
-> >
-> > Michael
->
-> Thanks. Yeah, either of the above two is ok. The latter does not
-> duplicate, so may be tiny bit better. Wei will pick one and apply
-> directly.
->
+On Fri, Oct 17, 2025 at 5:07=E2=80=AFPM Vipin Sharma <vipinsh@google.com> w=
+rote:
 
-I fixed hyperv-next using the second option.
+> +TEST_GEN_ALL_PROGS :=3D $(TEST_GEN_PROGS)
+> +TEST_GEN_ALL_PROGS +=3D $(TEST_GEN_PROGS_EXTENDED)
 
-Wei
+The TEST_GEN_PROGS_EXTENDED support should go in the commit that first
+needs them, or in their own commit.
 
