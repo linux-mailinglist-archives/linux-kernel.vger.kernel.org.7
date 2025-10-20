@@ -1,298 +1,214 @@
-Return-Path: <linux-kernel+bounces-861637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED02BF33D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C031BF33D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D87C64FBE69
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:36:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E2418A0C14
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903E1284B26;
-	Mon, 20 Oct 2025 19:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE28330304;
+	Mon, 20 Oct 2025 19:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DwXq0GTw"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010008.outbound.protection.outlook.com [52.101.56.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d1TNzonU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB573219A86;
-	Mon, 20 Oct 2025 19:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989006; cv=fail; b=p7qTX/LcZKMjG1rMpPA8zeLqyfhDs7SYoWXh5WSkhcSKPt+QgvKKZYEOTptue3V6GItW97OXblPq1Bh3GOdA5GFoDzjW+vfze+Hi4M1W4vxxxSfRa47P21vM56dnO563aTiDV1QY/NtUK27q1aj133HIxJCq/eMc4hjVL4A/Ac4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989006; c=relaxed/simple;
-	bh=fOvqaJB+AIHLRCHyWlLVklncnBXGaAjIWL9jrVwa1NA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FGdqSM21sLUmVDNNrcIPdlO5Ga4PvBG3um9y0D7FMLm4V1D9QItMulsBtV6EsYpPQdge61MptH4lvphaxv3p7xTiak6eyLFLSHnHTEARdisQIhNzHVz8UowHzbVeLfQi3dL3MKkA6GUwaAVMLbI9ctso4/3DfkUzBXhNBlFM1ro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DwXq0GTw; arc=fail smtp.client-ip=52.101.56.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ucMHwx2W+WEAZhwp36Uo99S1N7Z6lI+QR/rDvPK1ajk5WsqSp4dAmJGwdBcwhHZN0Ta7e5nEvnm985wvQBKfb/Gh3+kJSAIysJg2iBQ6NIkKgMWyQOvco/BiFKcR7bjJSfnje9uLoFFKos8MGOhJvi0VvxHkQV/EINJAfqFBx5V5ce31611xPPAIeNT6jcpKYWzxH0jgdTJGBG5MdFYuf713ha8+Db9xIIlck4+nISarVCgFV2pP/EwkuY6k0sHDddyAIULL2XUHme0TTKO9+TH8AnOqsYm8NxggjLiBy/CPSkxpWVW35vcJmNcUiicmaMXCeKV4QG6f+5NNg4adpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9C3MhekIpNCbfM4PsV+ye4UBq6SCZeNLGbT37g19wjc=;
- b=HXIGh9EmQBXGN5JSx/ZRgOHIg0Mm8uoDUJ2WFGDyAO93F92fI2cRxx/7urSCws1Iu36scgH403tYA9GXRJ2DdLOjhJm948BZBDfEZ0cP+esjtIxJWFt3V24E7tySwikIufGiCFvUtCPXEMmEGZ0cfa7sTggyOn8OZmpcYCGDadlN9qWXyq1se6mzNO/v3ShI4PF3ZzEjS9HsrHhQLPvm97swdXdlTVZ/dlFUU8Wv5lO32LEdlarT56Dn/lQlSikWeEFQjmZ/nynb/aLPP9aDB1SHLDjdIYSvQzPxXEAs9xan5pWYSm6SLf6CyV++LDeHA/lxnEa21EDcOf+GJXx/DQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9C3MhekIpNCbfM4PsV+ye4UBq6SCZeNLGbT37g19wjc=;
- b=DwXq0GTwrCsPD76/YPB6X8HsWM5dSYs25tlDFJwg/fgfdAwYbrcV1AaBRddTIsVrcaHdSdTIOh5gzEFMoREbIxGlpikABijaqbJAmLOoj8SMgT/V0I4nAHRIDm2/n86lSEdvbVp9/sdVEpJG+5azWyGM7krwr9BJRSw8oc6FSU7K2p+Uj+TAogP823bwOEJzslWnk/MR2MsmWOmZfEKkAU32Z1La0MymFdGnU2wpnjDvE8Bc8A8qhis5021bjepasqPfq3KyIx6JkfU7HnDyWfKe8AhrVBlLYg7OT7nsCx0R8HwX1Ki0yZj1s8gOLGS/26SMKI7rbNb6zSMoAA56gA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by LV9PR12MB9806.namprd12.prod.outlook.com (2603:10b6:408:2ea::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 19:36:41 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 19:36:40 +0000
-Message-ID: <506e84b8-1a99-4548-b2c6-b502d790f4e1@nvidia.com>
-Date: Mon, 20 Oct 2025 12:36:33 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] docs: gpu: nova-core: Document the PRAMIN aperture
- mechanism
-To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org, acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
- Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
-References: <20251020185539.49986-1-joelagnelf@nvidia.com>
- <20251020185539.49986-5-joelagnelf@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20251020185539.49986-5-joelagnelf@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0200.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::25) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E392D9EDD
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760989009; cv=none; b=tdWvd77M5uamErqdIRA1hC4DmLG2MGWaHwPPHh+uCUNLvU9YbCOmKrv9w08dh8v4Mc9w0DYlxYyNWPOru051079wz+8W8XYgIMHzRzvNzc6rlGrPGVyEpudkQtsYP1yV4N2D/S3i5fdMT2bmjWXe7FzAH5/4mGANfU+80JRkFCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760989009; c=relaxed/simple;
+	bh=HXS7xGymDI6/8nnlFWj0A2HLQl6SA7kHsV+2dlr/xeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d4sQtxINhMGJ5/knkAJMlibj4Bfb1FrsCnsNjtf67kwvyzS2RIRLRiqXh6wzDRSzP4bWeIso5Je7pQXScxidUU+tMJgGR0C7f9fWZg1JuDNrcI/fbthLOnM2VTqo5mi4lbu97PV9B+asoFJl8BhBWj7UUl9Q5gKA0ZDWgSK9ACU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d1TNzonU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760989006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZiaSM2PnoC+EdbhzADV84+t+uutkx1Amp/dmBBeJxQ=;
+	b=d1TNzonUBAde62H0OVgA4jWkMEQ81nb85H3I7Xxpf6sX2scMbRlfgpCJPWz7iD9iC5Qc+9
+	mG8IdKEdpEbfq6t+Lt4a9v3s9cgyVsuOigkMFGIYfaPgD/gP72rudioKUw1uPUiJsTu+pT
+	S/a/GJqElD6TOByQyd2R0x1snQ1OzM4=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-qSHyl0aoOWWJSldRZ_vF9Q-1; Mon, 20 Oct 2025 15:36:45 -0400
+X-MC-Unique: qSHyl0aoOWWJSldRZ_vF9Q-1
+X-Mimecast-MFC-AGG-ID: qSHyl0aoOWWJSldRZ_vF9Q_1760989005
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-86df46fa013so2112025485a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:36:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760989005; x=1761593805;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5ZiaSM2PnoC+EdbhzADV84+t+uutkx1Amp/dmBBeJxQ=;
+        b=fToSMbW/XmyFs3PO+m4bo6j9J7DweneIKZcD6qUh5t/BYRlQNSBOXqX+stfWNGbjMr
+         MyWgn02rArInn7cVtySrQAmgRnKRbpIGTSgiphsQI5tvyRD2OW1zdP2g/4fAszYs8e9H
+         /taGgmw97S4HBTKroFKMY2k+jWR0GLxL0RoCsO8AlbtflHuPCLDlCi3ZDeJKnHMCfkcE
+         t/2TVLIDnCmYsyDV2/RW7yoImAwpISKHfJZJBUheGUcvv8bvMnz2KmDP/46SariqSX/A
+         wqwcEtmCtoJhMY/Pifo0yhMYfrF0yO5EAPzWMSVxAMO5Lj2J3B5MTRRA50QF5s38HKkU
+         QqNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+z/lp91Hx0rt9Qk9/MnecCQWTIebwr/XLrODe/m7xU8IJYjIK+U83HG3TBBPnkDUwyWwlw1qLRsT7CHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLLxGWKUjm0FS3n6Qhrm7W4d7zq9KMkfY110ldP4c1eYeckeAv
+	vNESM/g8mnx0MAQcnW4fgQjGlOFMgwKaGku1Rm5L5sUc/NGs1iwhXUeNEL5GchU/hzQ3uv7GVlI
+	1dr6/MxMR41R6Wh9ZWBTk/OMUVhT39CQKMicyF1dd3UN4mK5zfqUs2y/dlA891oqy2w==
+X-Gm-Gg: ASbGnctia1NwQKhRfSA0ANVbP8tIriK/jDPx6aF4PZeF0+EA8fONmcFbmKGyt5BVCB7
+	30gROSp0SeAPAywn67sCcANAKJSFTjOYFmm/MnhAcyJO7SbnqIpWqimdjD4YXujt0MH4200Bovw
+	/WN9kFKn413IMfDC/sIdNuff8SfijFm/rhQvXahUagrvawtJq8v+pYR5oV2LzMyR97h5iz9pqZq
+	8BO5kPf1nWGijSoRgehrt0Twd31S4Vbg5dKqXMWuCPZz3T6zKD/Y+xgPxzHB18f1wd/xWegqTyq
+	5ZoQSlzIsbOwPWuSvb3C3DnSJhvnnNsGi3MfyL3L7bJUauofF0T0PpknZaapSnqNg5LNsJqein2
+	wP4OU8ML6uG2i4ecAbJlsHM3GNyVW/g==
+X-Received: by 2002:a05:620a:372a:b0:859:be3b:b5ac with SMTP id af79cd13be357-8906e7b97famr1467033885a.4.1760989004792;
+        Mon, 20 Oct 2025 12:36:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsNNiKmKY9peurhzlqev2tF6KISu0JNaKtgEbeRgj3Y5mOQwBz7wnSHOaZ0F5uLAZ7ugJitg==
+X-Received: by 2002:a05:620a:372a:b0:859:be3b:b5ac with SMTP id af79cd13be357-8906e7b97famr1467030685a.4.1760989004383;
+        Mon, 20 Oct 2025 12:36:44 -0700 (PDT)
+Received: from redhat.com ([2600:382:7726:4296:a56e:fe07:ce3f:d5f0])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8924e082780sm537713185a.51.2025.10.20.12.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 12:36:43 -0700 (PDT)
+Date: Mon, 20 Oct 2025 15:36:41 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Laura Nao <laura.nao@collabora.com>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	kernel@collabora.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Message-ID: <aPaPSeClhiq2WYJN@redhat.com>
+References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
+ <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
+ <aPFbDl_JKyDay1S5@redhat.com>
+ <3342669.irdbgypaU6@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|LV9PR12MB9806:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01fc02cd-d702-4054-5dbd-08de100ffde7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzdhS2l1SzF5K0U5aU1CUHBjV1JsU2ZQWlNtTFVDWjB1ZjM5ZTl1NTVPRUp6?=
- =?utf-8?B?dG5pbG5HRGJ0QytvMkdmTFkveFFTYjYwOE5XSE5zTEhpOWpPWm9IT0FibVNz?=
- =?utf-8?B?WjVNVXpFTm56aDVoamtTMmpYRUtmRTdwRnNFdlZMbG9LQURjclgxK3NsYVpR?=
- =?utf-8?B?SlBScHJsMkl2MkczbTQzR2psWlZvZGJ3clJXVytmek9FQ09vY09TMU42c3Zx?=
- =?utf-8?B?ZU9QNzlBZ3MvOEpkNmNNeXJVbGNTN3RCb0lyYmJkTmRjaDdSSXkzcGl1Y0tr?=
- =?utf-8?B?Nys3aTdpc2VpYnB6aGkwUkpZbVRtdDJTbFcrM0RTU2NXR2psSUdKSWxTV1Rv?=
- =?utf-8?B?amZZY25aWThoVy9NNEdWSFR4c1RvKzBvTnMvMTRVejdrOWVkYzBsakFtVlhZ?=
- =?utf-8?B?MHNqZkI5cklLdjRMMGF5NCtVYmdnVEVjSTViREhHSUhvYXlnSUJYd0hJUU5j?=
- =?utf-8?B?VzZ3ZFZKNjkvNG0xN3JoeWVlQkRJMWFCeHE4UlpTWjA4cm13SGNrcXBwY1ZV?=
- =?utf-8?B?bzFQcXY1UkU3UWw2QWp2OGN6UGtKdCtQeDNOR3JGdXFCUHIxVENSNitZaC9L?=
- =?utf-8?B?cDk0V0tPaXlOMzd4L001UW05Zm9hLzRMZjc3bkRuTWhWUVVJTm9aTlRBcjhh?=
- =?utf-8?B?N0Q2ZzdheUdCVHBLMEhsRWt5c3h4bi95UlUzbUwxY3RhRUZSWUNpV3FaWHMv?=
- =?utf-8?B?aFpKeXZnTVNZY0N4QmJ5N2xsYlJpS0ZVNngyUVBQb1p5UkZTMGw0c1BMRnZ2?=
- =?utf-8?B?VE1FWlhBTG4yU2U4MUIxdEt3cklLOTB1MlI5OVJOMXk3WXpybllzMFJEQXdU?=
- =?utf-8?B?TlY0QzRId0Vpd2IyeUNWZ3Zsa05jWHI3ZWplMVZhTTlhL1JMSGpEeUxVNXlw?=
- =?utf-8?B?OC8rYXpBOTNBMVB2MU14cVo2VGNNZkhEWWdWVWxvdkpISS9IdytVNklrNEli?=
- =?utf-8?B?aktZZ09OZ0dzUDZuSEZyNVJEMk5PTjdWdDJxdUZwTlNWR1owUVIyQTQzVmpD?=
- =?utf-8?B?bndNQmdMa2ZyMlVrSW5adW9uVmhxUnBiTFVVMUkxRWpXZzYveW5kanlrVEF5?=
- =?utf-8?B?WnBvdXVDdHl0VVFPbmhaMkRReTh2Tm1wRDJjNTc2RVY3MWxpci91cFExY1l1?=
- =?utf-8?B?WHpQcjY4Si9OUkE5a3lrVzdZUGdpeTdUUWg3ejZGSWE5eFc1WUQ0R3dNWjJC?=
- =?utf-8?B?K1c0R1dyV21JMVYrQlZtLy9FbUF5Qk5Jdk9ST0UzZDEya0dRMytYWGNjdHc1?=
- =?utf-8?B?MnFRQzIzcnhpM2NtUDhVYmNFcGdrZ2c0M0c1dzZzZThVWlkwSFdFdzZmZEdK?=
- =?utf-8?B?cjZ5bHJ4RWtyemFXMnNRRTMwRFQ2Y2FpS1RrZjdWL0FVQ3BpcG9ZRW1Oanc5?=
- =?utf-8?B?ZVBVNy9xRGJmQkpEb2lDd0JFaFRrZ0lGbkkxWEN6Q291NkcrU2w2WkdEVW9Q?=
- =?utf-8?B?Wmw5Y3ppY09HZGdIYjA0cklQNXlidStFNFQvUVRSYmsvUmNiWE12ZGdmY0FU?=
- =?utf-8?B?ZGpsdlhUYVlpZktzOGZYenYvVzR1b3A4QWZITWxUZ28wSkdVbVo0WVRrMlRz?=
- =?utf-8?B?bFZUcjNIUG1QMkJZZWF6QzRWTlc4OG1LRzNleFRxWnh2NXU4c0pwQ0F6TjJB?=
- =?utf-8?B?Wnk0amN4Uk5PUmx1Y1c0cUhoZURGa3JpNXlVanFNSGVBR3BNMDhWVGplazhq?=
- =?utf-8?B?SzlkN3Jzem0vWGpab2V6dmhDUmI0ZnB4VVZzZERVNlhpbWExVmxFTytxQXJJ?=
- =?utf-8?B?a0I1K3VrZmhGKzc1RURRU3F3c1ZWdy9taWN3ZjJrUkREQnNDTXpPcFVQSDZP?=
- =?utf-8?B?aFZhUGJSNTI5M044S0haWTcyeFhSVjVvRVFNZ1hQeGZidXlINEJWT25tVHB3?=
- =?utf-8?B?d3VYNUhNM2F2VHY4R3F0bWdqT05VLzVFTUswbURzQktpdk5xMGg0Ny9TWUNa?=
- =?utf-8?Q?Z77s02IYh9JHtt2emLrpZGcK1zgRHauV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bHVXQUcxeUxlS0Z3WWtRQVpDVWV2b283dXcyNWc0SHFrVEcvOXppMDNkbk5t?=
- =?utf-8?B?RCt3aDgxMDRndHNrN0k4eW5uL0hGbUMzZm1BNVVKWVV0dmkrYmtWMTBocy9J?=
- =?utf-8?B?anJDNEROeGsrVk9pZkRCRmFDajNNYkN0MDkyWm96eEVvQW42Z0UrSHFNdXhS?=
- =?utf-8?B?R0w5dE5lKzFsOUZSbzZCM1Rka2ZSTFJ5UmtIN0tEWXF5SzhpVzJWZW9oK2ww?=
- =?utf-8?B?MEJOcElEbVNqS25Mb1hmVThRKzFxUUZ2d1c2SFBkU3IrSWt3YjdGVWFWZkZU?=
- =?utf-8?B?M2VTcWpDdUtFeGNWTU1Qclloc1U3aGpGTUJDdDBoc05nbEtBVEdDOUhNQXov?=
- =?utf-8?B?RHNPZjRSQ3pUV0RnZkZkKzRYZlp6RmtQK2hJOGpXVk9jVS9KOStKZ0VGeWtQ?=
- =?utf-8?B?ZWVER3dZUmgxNjdWamhRVTZsb1dQTm5ydC8zdE5JV09tK2pocGxhTEJkcGUx?=
- =?utf-8?B?R1dGVVZzdiszTlpzRnJWazNZU2RRaC9WYU45dk9taU9pSnZSKzNVc3NQSnR6?=
- =?utf-8?B?L0ZiSXRzMXd2ZEM2Yk5SejBYaGdHd2NZR2NDcHFHNVNmd05nci9rRHkwRXVK?=
- =?utf-8?B?WFZyTGoyeXdqaU1NandyKzNuemhvK3pheEdIU2RwYWZCWEEzYkxEQmwya1Ev?=
- =?utf-8?B?djN0RE1URFhIWlFsMGI2cjVHa2xudHk0M1hDMFB0SW1WVUNSbUd5Sks2VHNz?=
- =?utf-8?B?V3J6cWlJZUYwNmlGaTJQakpYNG9OQ3pBcloyZEcyZzg4RVlCQ2Y2eUVWMUFy?=
- =?utf-8?B?aHZNbUdtRkJreGJuOTdGbGt6ajZ1Z21OMFNUSlpHRjAvTDdSOGllUG9vNDFC?=
- =?utf-8?B?cFE2ZUwra2I3UE13YUNuUGFDMEoxaTBzUnQxTVVGY21BTHhicVhCNG9jSlVy?=
- =?utf-8?B?UTR2U2svVGF5WXI1VWgzUmZNamJ0TkVvSjY5ak5PR2ZBY0xPWDZzYlJoS212?=
- =?utf-8?B?MEM0RGlmSFREZm0wenNGb3hLd3htc2lGdTdrSTVqUUt1MnFjWGlLVEFzOEpD?=
- =?utf-8?B?bjYvdFFIWU0wRkI1SjhzTTlhVHFTZE9xTWRPRU1wMDVJTnJETFRDNUFCWjYr?=
- =?utf-8?B?UWFsQ0NpUTQ4RVpJNHVYRDBxcTRzenZpdVF3RTZmcG40Y3F3Uld4WmVqaXFj?=
- =?utf-8?B?Smd6ODJVSlJsV3Nnb3dSd2EzUUxrQSs5RFVIM1BVU3NINWRCTVcwNkFWTEJH?=
- =?utf-8?B?Q3cvZUI5bGZFZzJrVHJIOTlzNy84SldYNVNoQVJkYmNNWk9tQldja1A3ekZa?=
- =?utf-8?B?a0VrVzNIT3d5aHJhRlU1THZPUzE5MnNRRlBuMWpZUSs5alZkUERHVDVZdzlJ?=
- =?utf-8?B?S0hiblpONWw3SXlKMmZSNDdWVFVndjJZak9CcmttVVpiamFxME5QcldrNVV1?=
- =?utf-8?B?Vy95enpxSUxzTmdrZVUxNlRjUHpRYVl4K2JNU3MyRDZxQ0YxMG5lN3VvNW5Y?=
- =?utf-8?B?K1ZPM2FRMkFjTmNPRjVjVXBQRlZBR1p3bUdHSlJJNDA2dFV1NUdvMEFRNzRv?=
- =?utf-8?B?eFYwV25BWWZDYTZrY1pIVUtpbHBBSG5pL1RvWFdoR2hOb0RSMHZXak1VVHp2?=
- =?utf-8?B?MzJPVURZNld5aGpjWld1UTJ0VmhTUEZaS04zV2lQU25pVmVzMkxneGR0aGFl?=
- =?utf-8?B?ekJvLzc0K0o4WWFMVDBqeFZ3Q3A1MFdxT3VINlRkTGpONzVzSDRSTCtrUWxs?=
- =?utf-8?B?OVhZUlRET3dmV0M4MGxzajExWldFZGgzcDFJMi9UNklJMlh1YnR6WC9zL0NI?=
- =?utf-8?B?Q3MrQjRFQnVDVnlTeUZLUUVhVkZkU3hhYVhoSzZYMFY2eWpVY01HUHE5Zkpi?=
- =?utf-8?B?dE5FaFphTXdaUlJnanFBTGRYTmxIRFdVM0tuUVJGa2xzSGFmeVJaU3V2Qm5M?=
- =?utf-8?B?NTV4bHdiQWpwVHdRQ2N3RktrR0w5OU5yYmtGUzV0L0I5b05ySDhDRXdSY2Ir?=
- =?utf-8?B?ZDZDMDByQ2J6RGsyQnU0YkdoQjdoUmdMTS8yblNlL0ZqWUFRMEJnUlJWSms2?=
- =?utf-8?B?U0N6dFVSTGxIVHhHenIvWitrb0pZV2Z4UzVNTHhxd3RQV24vV0JCSEEvdlhR?=
- =?utf-8?B?VFdmejRrcDExVGtIRjkwaXpad2ZiZUFoQjZKTmRVRFE2YkVjbXNmR3phZ3RY?=
- =?utf-8?Q?w9TseU1oDbWJk/istBmgpGv1y?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01fc02cd-d702-4054-5dbd-08de100ffde7
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 19:36:40.4908
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5pcphA/n5Eb7O9xLdpGtJLLm4VhtrdaOPhk7Ui0amQ0FpulemWpZn2IU6ZFhVtRe0u+RRcieE+ezGAxvJPefQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9806
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3342669.irdbgypaU6@workhorse>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 10/20/25 11:55 AM, Joel Fernandes wrote:
-...> +Logically, the PRAMIN aperture mechanism is implemented by the GPU's PBUS (PCIe Bus Controller Unit)
-> +and provides a CPU-accessible window into VRAM through the PCIe interface::
-> +
-> +    +-----------------+    PCIe     +------------------------------+
-> +    |      CPU        |<----------->|           GPU                |
-> +    +-----------------+             |                              |
-> +                                    |  +----------------------+    |
-> +                                    |  |       PBUS           |    |
-> +                                    |  |  (Bus Controller)    |    |
-> +                                    |  |                      |    |
-> +                                    |  |  +--------------.<------------ (window always starts at
-> +                                    |  |  |   PRAMIN     |    |    |     BAR0 + 0x700000)
+Hi Nicolas,
 
-Quick question: does "window always starts at" actually mean "windows
-is always initialized to" ? Or something else?
+On Fri, Oct 17, 2025 at 02:21:55PM +0200, Nicolas Frattaroli wrote:
+> On Thursday, 16 October 2025 22:52:30 Central European Summer Time Brian Masney wrote:
+> > On Fri, Oct 10, 2025 at 10:47:09PM +0200, Nicolas Frattaroli wrote:
+> > > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> > > operations, such as setting the rate or switching parents. However,
+> > > another operation that can and often does touch actual hardware state is
+> > > recalc_rate, which may also be affected by such a dependency.
+> > > 
+> > > Add parent enables/disables where the recalc_rate op is called directly.
+> > > 
+> > > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+> > > Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > > ---
+> > >  drivers/clk/clk.c | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98df0c0d2ad244eb90 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *core,
+> > >  	unsigned long rate = parent_rate;
+> > >  
+> > >  	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
+> > > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > +			clk_core_prepare_enable(core->parent);
+> > > +
+> > >  		rate = core->ops->recalc_rate(core->hw, parent_rate);
+> > > +
+> > > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > +			clk_core_disable_unprepare(core->parent);
+> > > +
+> > >  		clk_pm_runtime_put(core);
+> > >  	}
+> > >  	return rate;
+> > 
+> > clk_change_rate() has the following code:
+> > 
+> > 
+> >         if (core->flags & CLK_OPS_PARENT_ENABLE)
+> >                 clk_core_prepare_enable(parent);
+> > 
+> > 	...
+> > 
+> >         core->rate = clk_recalc(core, best_parent_rate);
+> > 
+> > 	...
+> > 
+> >         if (core->flags & CLK_OPS_PARENT_ENABLE)
+> >                 clk_core_disable_unprepare(parent);
+> > 
+> > clk_change_rate() ultimately is called by various clk_set_rate
+> > functions. Will that be a problem for the double calls to
+> > clk_core_prepare_enable()?
+> 
+> I don't see how multiple prepares are a problem as long as they're
+> balanced.
+> 
+> > 
+> > Fanning this out to the edge further is going to make the code even
+> > more complicated. What do you think about moving this to
+> > clk_core_enable_lock()? I know the set_parent operation has a special
+> > case that would need to be worked around.
+> 
+> __clk_core_init also needs special code in that case, as it calls the
+> bare recalc_rate op with no clk_core_enable_lock beforehand. It's also
+> wrong, in that recalc_rate does not necessitate the clock being on as
+> far as I'm aware. (if it did, this wouldn't be a problem in the first
+> place, as enabling it would enable the parent as well). Changing the
+> semantics of clk_recalc, and therefore clk_get_rate, to also enable
+> the clock, would be a major change in how the common clock framework
+> functions.
+> 
+> In my case, the __clk_core_init callback was the one that crashed,
+> so it really needs to happen there, and I really don't want to
+> refactor every location where `CLK_OPS_PARENT_ENABLE` is used for
+> a bugfix just to avoid potentially checking the same flag twice.
+> 
+> Having `CLK_OPS_PARENT_ENABLE` cleaned up such that every clk op
+> that has potential register access is never directly called by the
+> clk core except for one place, an accessor function that does both
+> pmdomain and `CLK_OPS_PARENT_ENABLE` checks, would be nice, e.g.
+> by keeping the clk_recalc change and then having __clk_core_init
+> call clk_recalc instead of the recalc op directly. But then the
+> __clk_core_init logic needs further refactoring as well.
+> 
+> I'm not sure I want to do that in this series, because it's quite
+> a bit different from just adding the missing check and parent
+> toggling, and has the chance of me introducing subtle logic bugs
+> in what is supposed to be a bugfix.
 
+I agree and that makes sense. Thanks for the explanation. What you have
+is a good compromise.
 
-thanks,
--- 
-John Hubbard
-
-> +                                    |  |  |   Window     |    |    |
-> +                                    |  |  |   (1MB)      |    |    |
-> +                                    |  |  +--------------+    |    |
-> +                                    |  |         |            |    |
-> +                                    |  +---------|------------+    |
-> +                                    |            |                 |
-> +                                    |            v                 |
-> +                                    |  .----------------------.<------------ (Program PRAMIN to any
-> +                                    |  |       VRAM           |    |    64KB VRAM physical boundary)
-> +                                    |  |    (Several GBs)     |    |
-> +                                    |  |                      |    |
-> +                                    |  |  FB[0x000000000000]  |    |
-> +                                    |  |          ...         |    |
-> +                                    |  |  FB[0x7FFFFFFFFFF]   |    |
-> +                                    |  +----------------------+    |
-> +                                    +------------------------------+
-> +
-> +PBUS (PCIe Bus Controller) among other things is responsible in the GPU for handling MMIO
-> +accesses to the BAR registers.
-> +
-> +PRAMIN Window Operation
-> +=======================
-> +
-> +The PRAMIN window provides a 1MB sliding aperture that can be repositioned over
-> +the entire VRAM address space using the NV_PBUS_BAR0_WINDOW register.
-> +
-> +Window Control Mechanism
-> +-------------------------
-> +
-> +The window position is controlled via the PBUS BAR0_WINDOW register::
-> +
-> +    NV_PBUS_BAR0_WINDOW Register
-> +    +-----+-----+--------------------------------------+
-> +    |31-26|25-24|           23-0                       |
-> +    |     |TARG |         BASE_ADDR                    |
-> +    |     | ET  |        (bits 39:16 of VRAM address)  |
-> +    +-----+-----+--------------------------------------+
-> +
-> +    TARGET field values:
-> +    - 0x0: VID_MEM (Video Memory / VRAM)
-> +    - 0x1: SYS_MEM_COHERENT (Coherent system memory)
-> +    - 0x2: SYS_MEM_NONCOHERENT (Non-coherent system memory)
-> +
-> +64KB Alignment Requirement
-> +---------------------------
-> +
-> +The PRAMIN window must be aligned to 64KB boundaries in VRAM. This is enforced
-> +by the BASE_ADDR field representing bits [39:16] of the target address::
-> +
-> +    VRAM Address Calculation:
-> +    actual_vram_addr = (BASE_ADDR << 16) + pramin_offset
-> +    Where:
-> +    - BASE_ADDR: 24-bit value from NV_PBUS_BAR0_WINDOW[23:0]
-> +    - pramin_offset: 20-bit offset within PRAMIN window [0x00000-0xFFFFF]
-> +    Example Window Positioning:
-> +    +---------------------------------------------------------+
-> +    |                    VRAM Space                           |
-> +    |                                                         |
-> +    |  0x000000000  +-----------------+ <-- 64KB aligned      |
-> +    |               | PRAMIN Window   |                       |
-> +    |               |    (1MB)        |                       |
-> +    |  0x0000FFFFF  +-----------------+                       |
-> +    |                                                         |
-> +    |       |              ^                                  |
-> +    |       |              | Window can slide                 |
-> +    |       v              | to any 64KB boundary             |
-> +    |                                                         |
-> +    |  0x123400000  +-----------------+ <-- 64KB aligned      |
-> +    |               | PRAMIN Window   |                       |
-> +    |               |    (1MB)        |                       |
-> +    |  0x1234FFFFF  +-----------------+                       |
-> +    |                                                         |
-> +    |                       ...                               |
-> +    |                                                         |
-> +    |  0x7FFFF0000  +-----------------+ <-- 64KB aligned      |
-> +    |               | PRAMIN Window   |                       |
-> +    |               |    (1MB)        |                       |
-> +    |  0x7FFFFFFFF  +-----------------+                       |
-> +    +---------------------------------------------------------+
-> diff --git a/Documentation/gpu/nova/index.rst b/Documentation/gpu/nova/index.rst
-> index 46302daace34..e77d3ee336a4 100644
-> --- a/Documentation/gpu/nova/index.rst
-> +++ b/Documentation/gpu/nova/index.rst
-> @@ -33,3 +33,4 @@ vGPU manager VFIO driver and the nova-drm driver.
->     core/fwsec
->     core/falcon
->     core/msgq
-> +   core/pramin
-
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
 
