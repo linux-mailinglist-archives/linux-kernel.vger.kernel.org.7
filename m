@@ -1,126 +1,189 @@
-Return-Path: <linux-kernel+bounces-861099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9A1BF1CC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 207E7BF1CB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6757A4F73FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:17:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E05B84F6F3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645A33233F4;
-	Mon, 20 Oct 2025 14:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA24325482;
+	Mon, 20 Oct 2025 14:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IJN6+Wug"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LaE1wh8T"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4643233FA
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D908324B2D;
+	Mon, 20 Oct 2025 14:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969854; cv=none; b=mC6TLORrpOe7P2rF+7sXNB/rlqLEUxnrJ8JxJQvBl8SNsGvvLw6muFXDfOGRcPBp4MM1dLtsOZ03bYROMimFexIc5lJg4m9E2DRVmSMkzvxgJ8kj5rx1ahCiO/v4A/9NXoHkrwSVYVVzmwO3GrPlEv85Po0wvT8XF5m+SRIjgdA=
+	t=1760969847; cv=none; b=J0E56v4MhBJyY/VDA0l5ap85VSWW4Iv4i+z4tgYQ/RhoS9aTk9/7E5k7gvItNCXRaJs6RXIAZGGs3dfEZTBm4DFmpas7vAcoZiXXvXN2V/7ptpLlSe+TdLZUkXx81Et8K2JwUTz9JEWjzf/9sB8knEnesdF5U7irMzx/uUMLx8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969854; c=relaxed/simple;
-	bh=fFwvfRX1utthycDd8a7gB1S6E3bKuVWapgtPfi/xRjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HKT8WbtnM6j/LibvWe52MSTBxL318mxNiEOP8S9fCVkE29Bhb5oQvXDJJtG9Xwq2C3h99VRQI/l9f8P+JM7NAGDijk/K4pwSCMemT3saYIG5s776O1K8NvsSj7hHGEhHXz3bCl3X89L2UDHskMcpdA/5JR27WHEb/Czc2tBwRvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IJN6+Wug; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-375eff817a3so48697051fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760969851; x=1761574651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d4CIb+mZ4TdXD2+XOrnH5Psl6jGU1lXy8Aan9HS+a3c=;
-        b=IJN6+WugNKC6STxXAblbefFSzR4+3saljJPLL0jEaRaQMqDOiwCLGRTINS8TSmZ+1t
-         BSe5qOQNhQnwZ83olBBOsLe4+flOEP1wFlA3GtskdiLQeT2qOouSGQJavTzD0+MAorn2
-         Zpvf/TziVRv9yD78KvH58VGw5HTqBxw0f48QXFDpDV3sxoGH7+YOK7Lu8riIhfMqJhuH
-         J2z4NSgUTKiAIrgqbMXpBNLX46TCivSv2UCWe87QFa6jjnU2FEQ4qHjcAl259UHW1jeb
-         RMFZO2Dt54fTkot1Z206nN5t6qgjmTCTtYI4hyz/qER6/yfLHlkXryXBZ+q1eBGWHfAe
-         tTdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760969851; x=1761574651;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d4CIb+mZ4TdXD2+XOrnH5Psl6jGU1lXy8Aan9HS+a3c=;
-        b=j5rey0eiIYQFkS1TefDZIJFKADMN4KtFStUY7osDvxa1MGRERhdKqoBSW19jC/IjJQ
-         1BPxmQ5RTY1CrPS4LdeKA0Ju9RMZfNgrCmbMw5+68lcRYlNBnDQ3oZWhYW3PGtdPKYoL
-         30ZouFzS8Uy3LpcxkWS47wlMYH0pfevpyAqlSJxTrm8tBGc1C5uHuyJIZl7jGybq/WrS
-         tvqiooGxDOWKGaEt79iJgG9Rpg8zHPSFgrNGheAzJB6ievOKCRCyaoFnPYWm8uOGiS4I
-         BHoxn9+iM8ZWbzK2E2r+w2aNnwLcJAJt6wVyATitYjYA5z0/uroH47QElvvMKmkJJPdw
-         eNdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVW/hvAWNJ9005K9K/lg8hqgvYEolXArGch+TpPyb2icSZQjkP/ZYKAEkln6Bw+AWOlVtHTX357WOsRIUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYuIIjG1TBzkyJZURa15AtQ2UvLJZMWZ4bUIZxXmTwp+fX0QBM
-	M9mekZPsx9yuzR3g3Vl7+ob3ljFYQ5YoOz0qaANUGhcaRT8X/OJEEeFZ1duEEQE48O8=
-X-Gm-Gg: ASbGncufyfjIwaFevcxrzgZ3YeMYwkuSo9S+Iq8mZQop53BD0Avq+KguFTDHrqWhQ8f
-	tZDXpGDOhV1D+ybyv2mQR+rsxrOWf3YC/1eyl2xqoCtGlppiVNFt06dG6zSVd9sj988BGowT+2E
-	vq8xO9h8wuRHBw4UacSi85KAxtwkGMYJK4AHa+eimhTVJC/pAT5gXqIfEYNCBaUlV69HIo+bt0h
-	MDHZVHXPS37stbwMTmIJ3rhHhvvG2kXEQz30nOFBt17QtU8HZMKVuujosKNxZUMXHz0uG0EKAcs
-	3VuwyzXxpJwXzctMS4HPf1YMozb+1nzxlQ9cffz4SIRSPzv4/vYb/4aleI+d5NNE15SLsdsDVwZ
-	2GjEAfqF1sNn3DB+QGvYOH/ZhLwItGGhLN8Y3a9hQZadtVBE8enQbksRW+S8rTFa2Jo+/PQnxXB
-	4hmz97+FdKeduRLuyVLMbo2xT1miP7NuYhE5F3sF3G9VCKU/membmGqbwtkIwB
-X-Google-Smtp-Source: AGHT+IGaUa1A4Uzcr6IBjfTLgEHTVeFFWXgoQ0Z12nmLZQh/21hDjDxTbaAdxTiU3/Df8JDb3tz84w==
-X-Received: by 2002:a05:651c:501:b0:376:46ba:864c with SMTP id 38308e7fff4ca-37797aca3femr42697361fa.46.1760969850852;
-        Mon, 20 Oct 2025 07:17:30 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a950a284sm20797191fa.36.2025.10.20.07.17.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 07:17:30 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 0/2] pmdomain: Improve idlestate selection for CPUs
-Date: Mon, 20 Oct 2025 16:17:10 +0200
-Message-ID: <20251020141718.150919-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760969847; c=relaxed/simple;
+	bh=QB9CdOa26Kz2J9F8apkOMprzYuZ5f+UZb4ivDOAmhds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DRHsdyfI0PrQ31gn7trPMdEYkhKf03SV9Sh0bNt2fJDBDLh79StIazb9ZtErh0Z+vVkWoEBUWhJKuryyrLhLRlsoVSvD5aCsyRi8LQRteHXd0b8B7Zdn90m2mJmklGqXZ5M15dhwhEulPsVzKAyQGFttgh6dI+gCOWh7C4RD/b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LaE1wh8T; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760969836; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=L9u+mE9dC3rDy2AZuVZ/h7CRM8UL4x5A0aYpGW6XD4U=;
+	b=LaE1wh8TjB0RTHvxm6t7SxN38y+genp/TeFv+LyGO9THTtGq4mMEEYKt1Bze6n0ZuSLpAmOJLyvr9KmqZEyQq7eU/UuZ+gbu35lXox+DhJTM9VLiSmmnU77FOPlknopmpWd5w2oxNB+118I0FKUhyXGROammWaJnpMyOCIyfTLc=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqchTRM_1760969834 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 20 Oct 2025 22:17:15 +0800
+Message-ID: <43390d36-147f-482c-b31a-d02c2624061f@linux.alibaba.com>
+Date: Mon, 20 Oct 2025 22:17:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, mahesh@linux.ibm.com,
+ oohall@gmail.com, Jonathan.Cameron@huawei.com, terry.bowman@amd.com,
+ tianruidong@linux.alibaba.com
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-4-xueshuai@linux.alibaba.com>
+ <aPYKe1UKKkR7qrt1@wunner.de>
+ <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
+ <aPY--DJnNam9ejpT@wunner.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aPY--DJnNam9ejpT@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Platforms using the genpd governor for CPUs are relying on it to find the most
-optimal idlestate for a group of CPUs. Although, observations tells us that
-there are some significant improvement that can be made around this.
+Hi, Lukas,
 
-These improvement are based upon allowing us to take pending IPIs into account
-for the group of CPUs that the genpd governor is in control of. If there is
-pending IPI for any of these CPUs, we should not request an idlestate that
-affects the group, but rather pick a shallower state that affects only the CPU.
+在 2025/10/20 21:54, Lukas Wunner 写道:
+> On Mon, Oct 20, 2025 at 08:58:55PM +0800, Shuai Xue wrote:
+>> ??? 2025/10/20 18:10, Lukas Wunner ??????:
+>>> On Wed, Oct 15, 2025 at 10:41:57AM +0800, Shuai Xue wrote:
+>>>> +++ b/drivers/pci/pcie/err.c
+>>>> @@ -253,6 +254,16 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>>>    			pci_warn(bridge, "subordinate device reset failed\n");
+>>>>    			goto failed;
+>>>>    		}
+>>>> +
+>>>> +		/* Link recovered, report fatal errors of RCiEP or EP */
+>>>> +		if (state == pci_channel_io_frozen &&
+>>>> +		    (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END)) {
+>>>> +			aer_add_error_device(&info, dev);
+>>>> +			info.severity = AER_FATAL;
+>>>> +			if (aer_get_device_error_info(&info, 0, true))
+>>>> +				aer_print_error(&info, 0);
+>>>> +			pci_dev_put(dev);
+>>>> +		}
+>>>
+>>> Where is the the pci_dev_get() to balance the pci_dev_put() here?
+>>
+>> The corresponding pci_dev_get() is called in add_error_device(). Please
+>> refer to commit 60271ab044a5 ("PCI/AER: Take reference on error
+>> devices") which introduced this reference counting mechanism.
+> 
+> That is non-obvious and needs a code comment.
 
-More details are available in the commit messages for each patch.
+Agreed. I'll add a comment to clarify the reference counting relationship.
 
-Kind regards
-Ulf Hansson
+> 
+>>> It feels awkward to leak AER-specific details into pcie_do_recovery().
+>>> That function is supposed to implement the flow described in
+>>> Documentation/PCI/pci-error-recovery.rst in a platform-agnostic way
+>>> so that powerpc (EEH) and s390 could conceivably take advantage of it.
+>>>
+>>> Can you find a way to avoid this, e.g. report errors after
+>>> pcie_do_recovery() has concluded?
+>>
+>> I understand your concern about keeping pcie_do_recovery()
+>> platform-agnostic.
+> 
+> The code you're adding above, with the exception of the check for
+> pci_channel_io_frozen, should live in a helper in aer.c.
+> Then you also don't need to rename add_error_device().
 
+Good point.
 
-Ulf Hansson (2):
-  smp: Introduce a helper function to check for pending IPIs
-  pmdomain: Extend the genpd governor for CPUs to account for IPIs
+That's a much cleaner approach. I'll create a helper function in aer.c,
+something like:
 
- drivers/pmdomain/governor.c | 20 +++++++++++++-------
- include/linux/smp.h         |  5 +++++
- kernel/smp.c                | 24 ++++++++++++++++++++++++
- 3 files changed, 42 insertions(+), 7 deletions(-)
+void aer_report_frozen_error(struct pci_dev *dev)
+{
+     struct aer_err_info info;
 
--- 
-2.43.0
+     if (dev->pci_type != PCI_EXP_TYPE_ENDPOINT &&
+         dev->pci_type != PCI_EXP_TYPE_RC_END)
+         return;
 
+     aer_info_init(&info);
+     aer_add_error_device(&info, dev);
+     info.severity = AER_FATAL;
+     if (aer_get_device_error_info(&info, 0, true))
+         aer_print_error(&info, 0);
+
+     /* pci_dev_put() pairs with pci_dev_get() in aer_add_error_device() */
+     pci_dev_put(dev);
+}
+
+>> I explored the possibility of reporting errors after
+>> recovery concludes, but unfortunately, this approach isn't feasible due
+>> to the recovery sequence. The issue is that most drivers'
+>> pci_error_handlers implement .slot_reset() which internally calls
+>> pci_restore_state() to restore the device's configuration space and
+>> state. This function also clears the device's AER status registers:
+>>
+>>    .slot_reset()
+>>      => pci_restore_state()
+>>        => pci_aer_clear_status()
+> 
+> This was added in 2015 by b07461a8e45b.  The commit claims that
+> the errors are stale and can be ignored.  It turns out they cannot.
+> 
+> So maybe pci_restore_state() should print information about the
+> errors before clearing them?
+
+While that could work, we would lose the error severity information at
+that point, which could lead to duplicate or less informative error
+messages compared to what the AER driver provides. The helper function
+approach preserves all error details for proper reporting.
+
+> 
+> Actually pci_restore_state() is only supposed to restore state,
+> as the name implies, and not clear errors.  It seems questionable
+> that the commit amended it to do that.
+> 
+>>> I'm also worried that errors are reported *during* recovery.
+>>> I imagine this looks confusing to a user.  The logged messages
+>>> should make it clear that these are errors that occurred *earlier*
+>>> and are reported belatedly.
+>>
+>> You raise an excellent point about potential user confusion. The current
+>> aer_print_error() interface doesn't indicate that these are historical
+>> errors being reported belatedly. Would it be acceptable to add a
+>> clarifying message before calling aer_print_error()? For example:
+>>
+>>    pci_err(dev, "Reporting error that occurred before recovery:\n");
+> 
+> Yes, something like that.  "Errors reported prior to reset"?  Dunno.
+
+I'll use "Errors reported prior to reset" - it's clear and concise.
+
+> 
+> Thanks,
+> 
+> Lukas
+
+Thanks.
+Shuai
 
