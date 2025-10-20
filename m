@@ -1,39 +1,40 @@
-Return-Path: <linux-kernel+bounces-860849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348F7BF12B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E01BF12BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE9C3AAD77
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756E13B05C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D9B30F94E;
-	Mon, 20 Oct 2025 12:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B133311C3B;
+	Mon, 20 Oct 2025 12:24:53 +0000 (UTC)
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409031FECBA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF462FD7B2
 	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760963092; cv=none; b=ncdYGiS6wspuPKDXtOqNSRSo/gHKjDiyWXKiOd+ByemcOojqC3QPqEAwH1GLnK2E4ODbYxGcrl/6LYF3m4ZpHBbKRlLeZYaarsTuETENGjN66dC3/l0wl5+TOuFVtBIhdw7rJCP1fGrhY8Iil8ECSMBNqgevfuf+bNhM36npq38=
+	t=1760963092; cv=none; b=mj/CjMIVbMV3C5rSYfVG9iIy5OkJCfQFhVGQ+h8IRQgY+sqpp/9XX/jNfQImxJ11ho/LCRaxPwfMww85PXlQlxbYNN9MTYxoLRzenMqFi9ZGQa58voKTQ0xD4x0HO8rxKfxp1ewpHnnAEaj3Ng6Gip+A82J3KJp/455MrmDKKMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760963092; c=relaxed/simple;
-	bh=T+x3Q/n+hNYLfm1OG7Nr213sc00RppuxHWpkom8orS4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ijp2dSAgDnl9OnFi3VV8L0+Vx9Y6DGAu9pM55VwVFsMq9HDeFazHe9kOda4/E8rsGyHTN96sf9jb0iaH9P5MMBroysp/KW2V3ljE1IEi9rTiz/GLziFPRoaGcoFTjQux9voAjtPm0Ri6wyZQ7Sv9F5bdwxTfd4pnaitFWKle8/8=
+	bh=Qr7xE6U/A+NttNX0ZQWwv+Sri5jBhsjXcs0k9MrD0U0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dQr5kvdLMj+PkW2NiL41c0fRKTC+k4vj5ZfSvIBSd9lh69RzDm5zc8lYH2hKV8HVgnuzS0oy8rwapUwuBUylJF8EJIsZZk1RoPL2U9o58CulYpdGsQwZ1zFcZonhUspVQc6WkQulWH4xyN7HZyzGENZ4CtkK/Orkv/m4msmBrcA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from [127.0.0.2] (unknown [114.241.85.109])
-	by APP-05 (Coremail) with SMTP id zQCowABX+RLoKfZo2ywDEg--.13259S2;
+	by APP-05 (Coremail) with SMTP id zQCowABX+RLoKfZo2ywDEg--.13259S3;
 	Mon, 20 Oct 2025 20:24:08 +0800 (CST)
 From: Vivian Wang <wangruikang@iscas.ac.cn>
-Subject: [PATCH 0/2] riscv: tests: Make RISCV_KPROBES_KUNIT tristate
-Date: Mon, 20 Oct 2025 20:23:54 +0800
-Message-Id: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
+Date: Mon, 20 Oct 2025 20:23:55 +0800
+Subject: [PATCH 1/2] riscv: tests: Rename kprobes_test_riscv to
+ kprobes_riscv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,10 +43,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANop9mgC/yWNQQrDIBBFryKz7hS1VEquUrIwdpIOIdqORgIhd
- 680y/c+vL9DJmHK0KkdhCpnTrGBuSgIbx8nQn41Bqvt3WirUTiHivMaueAcUhx5wpE3dGgeqM0
- YHA3eOXODlvgIte2ff/YnC33X9lJOCYPPhCEtC5dOVXdtEQkG+uP4AXA1YsybAAAA
-X-Change-ID: 20251020-riscv-kunit-kconfig-fix-6-18-01fc6eba6613
+Message-Id: <20251020-riscv-kunit-kconfig-fix-6-18-v1-1-d773b5d5ce48@iscas.ac.cn>
+References: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
+In-Reply-To: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
 To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
  Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
  Nam Cao <namcao@linutronix.de>
@@ -54,50 +54,50 @@ Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
  Inochi Amaoto <inochiama@gmail.com>, Yao Zi <ziyao@disroot.org>, 
  Vivian Wang <wangruikang@iscas.ac.cn>
 X-Mailer: b4 0.14.3
-X-CM-TRANSID:zQCowABX+RLoKfZo2ywDEg--.13259S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr1kWF4xGw48XFy7Kr1rZwb_yoWfAwc_Cw
-	4IvrykGa1UAFyqkFyYg393XFs5t348KFy3Xr1rtrWxGr1xKr9rKa1kur18C3s5u398XF13
-	t3yku34qvF12qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-TRANSID:zQCowABX+RLoKfZo2ywDEg--.13259S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruw1rGr15urykGr1xuryUWrg_yoWfGrb_C3
+	WUtr93ur40yFyjqry5JanayFs3tw1xKFWrJrnxtry8Jw4UGF9Ika1vgr1Ut3yrWrZ0gFW7
+	Kr47W34qva15ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbk8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
+	0Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+	wVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
+	x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E
+	0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67
+	AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48I
+	cxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxw
+	CY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
+	JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1V
+	AFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4
+	A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73
+	UjIFyTuYvjfU8T5lUUUUU
 X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-Fix an allmodconfig warning on v6.18-rc1:
+According to Documentation/dev-tools/kunit/style.rst a KUnit test suite
+normally should not have "test" in the name. Rename it to follow the
+style guide.
 
-    WARNING: 3 bad relocations
-    ffffffff81e24118 R_RISCV_64        kunit_unary_assert_format
-    ffffffff81e24a60 R_RISCV_64        kunit_binary_assert_format
-    ffffffff81e269d0 R_RISCV_JUMP_SLOT  __kunit_do_failed_assertion
-
-While we're at it, rename the test to remove the word "test", in order
-to conform to the style guide.
-
+Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
 ---
-Vivian Wang (2):
-      riscv: tests: Rename kprobes_test_riscv to kprobes_riscv
-      riscv: tests: Make RISCV_KPROBES_KUNIT tristate
+ arch/riscv/kernel/tests/kprobes/test-kprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/riscv/kernel/tests/Kconfig.debug          | 2 +-
- arch/riscv/kernel/tests/kprobes/Makefile       | 4 +++-
- arch/riscv/kernel/tests/kprobes/test-kprobes.c | 5 ++++-
- 3 files changed, 8 insertions(+), 3 deletions(-)
----
-base-commit: cb6649f6217c0331b885cf787f1d175963e2a1d2
-change-id: 20251020-riscv-kunit-kconfig-fix-6-18-01fc6eba6613
+diff --git a/arch/riscv/kernel/tests/kprobes/test-kprobes.c b/arch/riscv/kernel/tests/kprobes/test-kprobes.c
+index 6f6cdfbf5a95..0716c88bcec7 100644
+--- a/arch/riscv/kernel/tests/kprobes/test-kprobes.c
++++ b/arch/riscv/kernel/tests/kprobes/test-kprobes.c
+@@ -49,7 +49,7 @@ static struct kunit_case kprobes_testcases[] = {
+ };
+ 
+ static struct kunit_suite kprobes_test_suite = {
+-	.name = "kprobes_test_riscv",
++	.name = "kprobes_riscv",
+ 	.test_cases = kprobes_testcases,
+ };
+ 
 
-Best regards,
 -- 
-Vivian "dramforever" Wang
+2.51.0
 
 
