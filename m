@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel+bounces-860720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B6BBF0C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:14:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D46BF0C5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 565164F2CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70E494F2CA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F992FCC10;
-	Mon, 20 Oct 2025 11:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D902FB601;
+	Mon, 20 Oct 2025 11:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvNEszqL"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlZryOFe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202F42FB085
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FE825229C;
+	Mon, 20 Oct 2025 11:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958844; cv=none; b=kHG3ggkAVryQCGd6kTcyAfHvFiU2BCfHhfGzlXXY6BUuL7VBh70aiRHdYUOo9Z1iiXn8JWjsVhiC0I46/fNPW4/K1tO+GokPJbyEjprg4df+Ro7w/N34zySwrbSSxdQxBgUuKVNVz2p284kZ95yrXF+8Ss3k1Y8wTRyK17ef6Ik=
+	t=1760958880; cv=none; b=QLfHxL29bvcDOlJUlzTXyoZb+5HL8D5oSjjoZzGxcCKHJZBiTpE1e0IweTD+IXvs4ppxnhS/n/dm8ZCrLOQ3qyHg2eyPGKrGiwc9UcE2MqsPG7cBYvNctGJcVknPs7RfaCqdKDInTWettjllxNhcviBke0y/bqjvTYoGmPThcGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958844; c=relaxed/simple;
-	bh=gcBpP1ZhLnY9zOIftFnmJ1Hum0VuILkD2+x7sHEaLsM=;
+	s=arc-20240116; t=1760958880; c=relaxed/simple;
+	bh=V62uDvINV9pfoVeOC2Ljq6Nrt7DgmFMZhMqR7vMAx0Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZ5Ak5yK0kfsf1fkYhw4y7RPX686oO9QK4Ah1t7r8xyf3g1q0iGEuAzpZ/Lj8Y8eFzppHKQWbjiTJTrfKrcrxRxRXcTTX2KzCv2B1klrVf6yeNvgVtZTR/+Xpfe9SvjoCte540mO3zOwQ1EcnAEBPbwVCG3BN8CgMreCGg3Akro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvNEszqL; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46fcf9f63b6so22272525e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760958841; x=1761563641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1heHxgcOS8YwObtzwumeQPol9GYSJNTAFquV9NKRtlU=;
-        b=IvNEszqL73TqREl8U9naZKuPZO7ZoHjMMQiWWyt0lPCO3suS7Nn4SG8kPiyxsGYNZf
-         VNxtRcZnKb9Z9qKOUjMdTshjA2IgCnmRIAQMvkZ0Y1G1QPjEKANe/Joqi0LON5+tR5qE
-         GvJIPZk3J6emD8S5hL+oqRJThoOLNmJEMR0CfCYfCmOPv8HsXbA+qgqzOwNrOvZOhPyt
-         6qwIn75/+sYNuGrAxYOtNWYFxvx5b+zX+l9Nr9g61w/CQQVwSwGxyR58+KzAvUwtGU5M
-         ssTqHtbR4Idtw8jGpBPQNv1SvXLRPvmAF+cnt65813xFF6VYzrQ6/RQ5bDuVtGyb3OOG
-         BeJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760958841; x=1761563641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1heHxgcOS8YwObtzwumeQPol9GYSJNTAFquV9NKRtlU=;
-        b=HQ4QNxVjmLrEkjNza8j4etHipLG2DV666T+SdKeYArwgq/SOmrZ8LjS3dU2CFBr0uD
-         BxQml3e4uAMuhBETAcKPPNTg582DdfqmBUBFBxVRvvh2Q+rXRbpsTFR+/TFwCev2omks
-         Hn5RhU5ZHoudVxC6XSxHrMm5QRLYywDU2xe8/hY+07XmNxUGXRYXGXkWICgqS24fAFI7
-         VQI/qo3EdsC3y3uaVfYHoXbLewTX26ffe+stu1izsjZNcfqVHYgdzXMkc4GamCL7lTv7
-         qUpqYxJmyxU1czpFn09zP1xozu56CJdb4BVAqYz8t54LPqp6BTEaK17BuztdYI31wL5m
-         bN/g==
-X-Gm-Message-State: AOJu0YyGD3c8YTbw3/cwGPGplrewHaDmQzpYIGEhHR/G0njH5BPfvouC
-	uQuZ6K9VtUaVBdjpQQj8IUm+uOtB2AJaB9bh8f9MAlyZN7nbFCoVLXpr
-X-Gm-Gg: ASbGncsmtjDJsEccm25v/b2qTg2p8su+Zze0lmGSmdikNyhDTqk+XbBFBMs4tqju2hT
-	gdfNku2/O4oASHoE/LZkycgVIA2o9ZZkxRtBL9pIsA2rPMe/cx0SsBjty1USXNmTK1YvTDC/kWf
-	NVZb6ZSh3Y5R3K3JKbIINGpRkVPMY6OEYGjwhnLai1WF3KcXXu/m1nR/6LkOmTf2NOgOb5wnNQp
-	rkTOIDPUrISwa2BuirGfa2vEO6RW8TqmDx/KWSKQ6kbmFYiAaMmh7R52g7ZPyQOqlOpLQ5WIy2U
-	cJk0Wo0fP1uvQvhAWR9agUy1Zx6/iH0VD8ytDLVAtD+r+o0R4qnicIl/RsrySHdxw+ws1PE7zCi
-	chPfv7y5WTLeMEtiQ/Ruc1MpdadsUprfUDmwX70LWF1Z4GuIyVUszgBM4mz7EaxoaMNf5e+K1yV
-	KwBHc=
-X-Google-Smtp-Source: AGHT+IHWoiPpeqTARzLXxV4BCLyaxgCCge6xGUQlWKCJbqKAdJmBiSsHsX5Cf5MLZPjNVhog6dZEIw==
-X-Received: by 2002:a05:6000:310e:b0:3e7:5f26:f1e5 with SMTP id ffacd0b85a97d-42704d623acmr8416696f8f.23.1760958841442;
-        Mon, 20 Oct 2025 04:14:01 -0700 (PDT)
-Received: from gmail.com ([51.154.251.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c34sm14733020f8f.17.2025.10.20.04.14.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 04:14:01 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:14:00 +0000
-From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
-	Jens Taprogge <jens.taprogge@taprogge.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	industrypack-devel@lists.sourceforge.net,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] MAINTAINERS: ipack: add ipack.h header file
-Message-ID: <aPYZeLtsXqNQYsce@gmail.com>
-References: <20251014030038.759222-1-rdunlap@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LgNVq1VNIPHnXpedA3ESQWs1+rRU/Qu9fr9NZQfzd1mtQ8J20bYQqa0jD2pnsF0WTygI6GlqpAjmsqJq2Ft1iNxiaDnZA0ejVvNLMHcfE5xwSf4FAZWgMdmj2FxQJfkmWLD1s+Sy+q17wUnCJ4v+DckoRlvyekmDy1valZyX8NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hlZryOFe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AD3C4CEF9;
+	Mon, 20 Oct 2025 11:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760958879;
+	bh=V62uDvINV9pfoVeOC2Ljq6Nrt7DgmFMZhMqR7vMAx0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hlZryOFeHJf9xG35np+I8SQEsCotqwkDYwGHMmcPhmkWb/+OUt7FEPDQEtoM9Cicq
+	 PtOoFgtyHTf4CkrHhwYQFmRYyDNm/0LyyKw5uMAyA8Hc+fRyzuJqefn7VgeOjk8aWs
+	 l32RAGqkrBvI2scqZqfWAC9h0lW6NFP64HicXaUJKbFG2SYArjryLEhDW+vT9dpwxK
+	 Cm3n5XLDwQYeg54lUlm1e5e1FP5DCHkhNsiQiXD9PJj9p8QLQg+sShRcpTtSSCZ7Dv
+	 y9tJGge0cSSG/Xb+iR31uvMLKrDZ3yLS1KwgYCE3w1d2o5o4Wu/tQdqp5VYeC9W8Xg
+	 fi3j/06XLJAwg==
+Date: Mon, 20 Oct 2025 13:14:37 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vitor Soares <ivitro@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Vitor Soares <vitor.soares@toradex.com>, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: PCI: ti,j721e-pci-host: Add optional
+ regulator supplies
+Message-ID: <20251020-kickass-fervent-capybara-9c48a0@kuoka>
+References: <20251014112553.398845-1-ivitro@gmail.com>
+ <20251014112553.398845-2-ivitro@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,43 +62,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251014030038.759222-1-rdunlap@infradead.org>
+In-Reply-To: <20251014112553.398845-2-ivitro@gmail.com>
 
-On Mon, Oct 13, 2025 at 08:00:38PM -0700, Randy Dunlap wrote:
-> Add the header file so that get_maintainer.pl will report useful
-> info instead of just linux-kernel@vger.
+On Tue, Oct 14, 2025 at 12:25:48PM +0100, Vitor Soares wrote:
+> From: Vitor Soares <vitor.soares@toradex.com>
 > 
-> Fixes: 14dc124f1b2f ("MAINTAINERS: Add maintainers for Industry Pack subsystem")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> Cc: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
-> Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-> Cc: Jens Taprogge <jens.taprogge@taprogge.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: industrypack-devel@lists.sourceforge.net
-> ---
->  MAINTAINERS |    1 +
->  1 file changed, 1 insertion(+)
+> Add optional regulator supply properties for PCIe endpoints on TI SoCs.
+> Some boards provide dedicated regulators for PCIe devices, such as
+> 1.5V (miniPCIe), 3.3V (common for M.2 or miniPCIe), or 12V
+> (for high-power devices). These supplies are now described as optional
+> properties to allow the driver to control endpoint power where supported.
+
+Last sentence is completely redundant. Please do not describe DT, we
+all can read the patch. Driver is irrelevant here.
+
+How you described here and in descriptions, suggests these are rather
+port properties, not the controller.
+
 > 
-> --- linux-next-20251013.orig/MAINTAINERS
-> +++ linux-next-20251013/MAINTAINERS
-> @@ -12216,6 +12216,7 @@ L:	industrypack-devel@lists.sourceforge.
->  S:	Maintained
->  W:	http://industrypack.sourceforge.net
->  F:	drivers/ipack/
-> +F:	include/linux/ipack.h
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> ---
+>  .../devicetree/bindings/pci/ti,j721e-pci-host.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+> index c704099f134b..a20b03406448 100644
+> --- a/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+> +++ b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+> @@ -110,6 +110,18 @@ properties:
+>        interrupts:
+>          maxItems: 1
 >  
->  INFINEON DPS310 Driver
->  M:	Eddie James <eajames@linux.ibm.com>
+> +  vpcie1v5-supply:
 
-Hello Randy,
+How is it called in this device datasheet (not the board schematics)?
 
-Thank you for your patch.
+> +    description: 1.5V regulator used to power PCIe interfaces,
+> +                 typically present on miniPCIe slots.
 
-Acknowledged-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Best regards,
+Krzysztof
 
-Hey Greg, could you please add this patch to your misc tree?
-
-Thanks,
-Vaibhav
 
