@@ -1,199 +1,136 @@
-Return-Path: <linux-kernel+bounces-861310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740B5BF259B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:16:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBCABF257A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C73B7303
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:14:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A25E134DE4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF8285C8C;
-	Mon, 20 Oct 2025 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BB5286425;
+	Mon, 20 Oct 2025 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="RKZF37ra"
-Received: from fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.65.3.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IdUH978P"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F4A279917;
-	Mon, 20 Oct 2025 16:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.65.3.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A602857FC
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976875; cv=none; b=H7X+S9lLAzMLlX1kPQPnQNRIDuQJCf8cZNlhwcq5VJY+EDGlBFsbYPDA7U+Xz52TNxmyB/zwFyrTrI9Xlt63ePxMT8iSXa/7rzOF/n/lqqXPTBIBrGiSFLhcRGNzZFwQNvx8rVNxjW/pA/9riRyEF/2dx/IZwSln2AmBfsxwWzU=
+	t=1760976908; cv=none; b=ninz4Zw4/eQJNrMUIoFyBLlSkIVsxkNVXk7KSt4bPQ/+EgUQZgsim3UHA/l53tzi5ogMtN6kHnGIiXVh5YFE+Ai7aXOdpAJwO6AD8thZq8ITZrUiOZL6nwU7jie2aWeazc+QPTtSfT4AwIOeb4YoYLyBdX5pLgUu26mlviepsDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976875; c=relaxed/simple;
-	bh=luCWr/Ti5SiD6fz+TpJW/iL8yE1ZLZnMzX0YcwCrUyg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YO26dQXd6O6N9EllYellSMylI4DNqC/+WtWKA0CIr7Oc2VvRLZ2qrq2eVsDXqo9vLiKD7GC+YNKru2j0/hE4K4nboTA0LyiHdzAJSh0bem1R+yNaO3Vg8XgNYtj6fkEzuoOL8JkhjBmxgzOHjrWAkA3P35gOVuuyiBFEYkj0ru8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=RKZF37ra; arc=none smtp.client-ip=3.65.3.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1760976908; c=relaxed/simple;
+	bh=Jua4BIwx1wftC9YUkccQgpopg9gTW50dQgVx8gQLv7k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GvN32uthD6nnzpSSTvEkAICGxWtmiZuHgCK90RI+EyzNhz/s8XkvfSyF5C/nGMfslySaWvCV0lZB8sot4316VXPYV7yvvU0x+f9Nco8kqjDO0Nem867eBUg8eIdirRPUTCXt/fJcaXZyero0q6ckX1RotYPsUevPFoloGoTnqR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IdUH978P; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-471bde1e8f8so7948725e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:15:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1760976873; x=1792512873;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Q24GU8FcFCs6WJb9C+XwHstoC5iy5s3AhZ8lLVXQMsU=;
-  b=RKZF37racKRjX2zf0QAbUJJu6AgxU2GUPfqO68CdMRW1eAtZpMbdeio2
-   Sndza5GbheYIIFdhhkyyXoIrlRuiv/SozVjp6fKy6mBFdyx1hH7gowfbp
-   BQjio+QVnS2JTn5dqGevmBL3LXClDPMKWh9WFOBcLHnsEqKA9KCQ6FXZK
-   1gzg5wiMU7a7RJPSimPho1TivgVrIoPWazwhbfNx10763/9tu5Err2IiI
-   yKbHSF05pxpW8WnxWvMyBQRueyh/mdAFbOOyHlFHmkNsnRgXBM8qVvv0M
-   JDQjI3XI+oOtQyxhTchiIGG/olHNYgkNJdvHEJkwptOnAZIYMqsYBlO8T
-   g==;
-X-CSE-ConnectionGUID: q1YPj9UCS+C9pLJ1GqSwKw==
-X-CSE-MsgGUID: 6KYuymc7Sv+p6+VzGT1Dvg==
-X-IronPort-AV: E=Sophos;i="6.19,242,1754956800"; 
-   d="scan'208";a="3895146"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 16:14:17 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:15098]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.47.14:2525] with esmtp (Farcaster)
- id bf172871-1a0f-446d-960b-c321c4ef4f18; Mon, 20 Oct 2025 16:14:17 +0000 (UTC)
-X-Farcaster-Flow-ID: bf172871-1a0f-446d-960b-c321c4ef4f18
-Received: from EX19D022EUC001.ant.amazon.com (10.252.51.254) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 20 Oct 2025 16:14:17 +0000
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19D022EUC001.ant.amazon.com (10.252.51.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 20 Oct 2025 16:14:16 +0000
-Received: from EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80]) by
- EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80%3]) with mapi id
- 15.02.2562.020; Mon, 20 Oct 2025 16:14:16 +0000
-From: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org"
-	<shuah@kernel.org>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>, "david@redhat.com"
-	<david@redhat.com>, "jthoughton@google.com" <jthoughton@google.com>,
-	"patrick.roy@linux.dev" <patrick.roy@linux.dev>, "Thomson, Jack"
-	<jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, "Cali,
- Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Subject: [PATCH v6 2/2] KVM: selftests: update guest_memfd write tests
-Thread-Topic: [PATCH v6 2/2] KVM: selftests: update guest_memfd write tests
-Thread-Index: AQHcQdyVtSwBRiB1XUqIh7uAE+bzAw==
-Date: Mon, 20 Oct 2025 16:14:16 +0000
-Message-ID: <20251020161352.69257-3-kalyazin@amazon.com>
-References: <20251020161352.69257-1-kalyazin@amazon.com>
-In-Reply-To: <20251020161352.69257-1-kalyazin@amazon.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google; t=1760976904; x=1761581704; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sni5/6MbmNzQeyCmE1PCgBk84A0B0wyk3qAYIl/S1Js=;
+        b=IdUH978PtIEnPcNnfYf0AbosmOVgeSuiNE/sUZIoNV6/30qFzPSYmIC/rRKylImZuA
+         ZUdw+e918WMlo9nGKTYgh20oqbI7wqsqRcnSQXEqmk4cUY7OSTLy7s1TjFao78dFdwjS
+         uRQw7xMznsVtXcLGdHwWWXwTdr0v1YL7Wu99dLqsqyPHfdB4vbPLks6FNQoZpk/nNdGp
+         DoNy56o5dTxZI/YG5MpQCfbnFursh2lPhN+VU6Gp/UpBft9A7S7iQGUmOz7XRz0f4UoL
+         hJZpYHziIRol4jidLH96XiFQfcIhciyBtfqkRIE0s/IJlsIQIoVBC65YiXhnR6pu2xeq
+         l/eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760976904; x=1761581704;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Sni5/6MbmNzQeyCmE1PCgBk84A0B0wyk3qAYIl/S1Js=;
+        b=e6LxR+ElWfoFhOzolw7Jh2h1L5SMXiRZPQoZNMKXHGqTdeyZbH+roAi07FQxgMFc1N
+         TTYC5lTuy/coVoGaXdHm9qRjQMlsgnQVFwcWG8IP35ZNzN0tvESEpuJuaBiCdEm7qj/M
+         MsndVnIr5CWfrigIrCOFdCUadAhIlS2v7awJl/ir70nR/XVTV38JaM9OmSiiHQay8JEy
+         0JfnMAzreILJ+MrLtLPNvsf91nd252NkGhGOb/mmtZS/eFEB9uE+BC8cYtcquMMFRU2W
+         H+ZsbCWLo5sTORlrsYb/0iVJHiKesRnMXIEAg5NHBhMgerTryUO40etRixOZbNU8X+Z1
+         /sfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTd4C5PnBWmGzMZss6pRbD9gixNKH7eqzcq2YAIhD4dIshBRMPViDumKr8/L3sioelIMBMhn/kbKt8JAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuRdxXuoVPUkmVWpytC6pkYHdvNSnThWlZ4We3z0OmReiXRQk6
+	IyT1lOpMxvbwuPAgTJA0xkobxbsywRotEV4Nn0rc4hsqOBUP25bBSQ4IVRS2l0vECcE=
+X-Gm-Gg: ASbGncu7vR1ZAzxrs5PWMiZ3ywugTerPkauWuMTvzZnyMDK0fwTqhcEFyvwL/OwFh6X
+	eLh4jmtGPUYGRYq2nu0kcsErTaqNHRRFpdbFATIoJRi2Z1eS9kfinY3AdLXBU2CSa2UXpBGZ6kr
+	J4u16Vztt5OqImM+sytJHSKdmP3fQrbqBd5usxMQG8BCFPNcuoZ+hZhz6SL9UFzZv+yBXxUE2dd
+	epuoHn3PH8Fh6QGl9vLtvIv1uJRctd5L9/aqpmiwaqoeusuCVP1Ko/E42HBbjmopvyT+khfrE5F
+	dTbno1qaL5EolmwlZJAUweabC3sFK+6SZSw2zgGdxz1YzCHr0iu/QLupYaEmZfEJqJQVZsi78pB
+	Q+Lwl2Xg3OcfaZ7OV83Bsg01gy7GhKGymkrxH1YGz2bIylZFUuE/njJi7M1spuAKrPjr3sLRUsD
+	s6P6eZZX57rFz7UI0qQDSW0IZ5
+X-Google-Smtp-Source: AGHT+IH+gc9K2IC1kig15CAHz3blcIpeF1+MZI8wwLj0FCfsFcBo1OSzfR+iD09YwCtZptUMS2gWQA==
+X-Received: by 2002:a05:600c:670a:b0:45d:d97c:236c with SMTP id 5b1f17b1804b1-471179017f3mr85002415e9.21.1760976904492;
+        Mon, 20 Oct 2025 09:15:04 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:9f99:cf6:2e6a:c11f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ba070sm16146014f8f.42.2025.10.20.09.15.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 09:15:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 Oct 2025 17:15:02 +0100
+Message-Id: <DDNA7OTLQ0GF.2YAUOG3GYV50A@linaro.org>
+Cc: <perex@perex.cz>, <tiwai@suse.com>, <srini@kernel.org>,
+ <linux-sound@vger.kernel.org>, <m.facchin@arduino.cc>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 0/9] ASoC: qcom: q6dsp: fixes and updates
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>,
+ <broonie@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
 
-From: Nikita Kalyazin <kalyazin@amazon.com>=0A=
-=0A=
-This is to reflect that the write syscall is now implemented for=0A=
-guest_memfd.=0A=
-=0A=
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>=0A=
----=0A=
- .../testing/selftests/kvm/guest_memfd_test.c  | 51 ++++++++++++++++---=0A=
- 1 file changed, 45 insertions(+), 6 deletions(-)=0A=
-=0A=
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing=
-/selftests/kvm/guest_memfd_test.c=0A=
-index b3ca6737f304..be1f78542d64 100644=0A=
---- a/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
-@@ -24,18 +24,55 @@=0A=
- #include "test_util.h"=0A=
- #include "ucall_common.h"=0A=
- =0A=
--static void test_file_read_write(int fd)=0A=
-+static void test_file_read(int fd)=0A=
- {=0A=
- 	char buf[64];=0A=
- =0A=
- 	TEST_ASSERT(read(fd, buf, sizeof(buf)) < 0,=0A=
- 		    "read on a guest_mem fd should fail");=0A=
--	TEST_ASSERT(write(fd, buf, sizeof(buf)) < 0,=0A=
--		    "write on a guest_mem fd should fail");=0A=
- 	TEST_ASSERT(pread(fd, buf, sizeof(buf), 0) < 0,=0A=
- 		    "pread on a guest_mem fd should fail");=0A=
--	TEST_ASSERT(pwrite(fd, buf, sizeof(buf), 0) < 0,=0A=
--		    "pwrite on a guest_mem fd should fail");=0A=
-+}=0A=
-+=0A=
-+static void test_write_supported(int fd, size_t total_size)=0A=
-+{=0A=
-+	size_t page_size =3D getpagesize();=0A=
-+	void *buf =3D NULL;=0A=
-+	int ret;=0A=
-+=0A=
-+	ret =3D posix_memalign(&buf, page_size, total_size);=0A=
-+	TEST_ASSERT_EQ(ret, 0);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, total_size);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "writing past the file size on a guest_mem fd =
-should fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "write on a guest_mem fd should succeed=
-");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	free(buf);=0A=
-+}=0A=
-+=0A=
-+static void test_write_not_supported(int fd, size_t total_size)=0A=
-+{=0A=
-+	size_t page_size =3D getpagesize();=0A=
-+	void *buf =3D NULL;=0A=
-+	int ret;=0A=
-+=0A=
-+	ret =3D posix_memalign(&buf, page_size, total_size);=0A=
-+	TEST_ASSERT_EQ(ret, 0);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write on guest_mem fd should fail");=0A=
-+	TEST_ASSERT_EQ(errno, ENODEV);=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	free(buf);=0A=
- }=0A=
- =0A=
- static void test_mmap_supported(int fd, size_t page_size, size_t total_siz=
-e)=0A=
-@@ -281,12 +318,14 @@ static void test_guest_memfd(unsigned long vm_type)=
-=0A=
- =0A=
- 	fd =3D vm_create_guest_memfd(vm, total_size, flags);=0A=
- =0A=
--	test_file_read_write(fd);=0A=
-+	test_file_read(fd);=0A=
- =0A=
- 	if (flags & GUEST_MEMFD_FLAG_MMAP) {=0A=
-+		test_write_supported(fd, total_size);=0A=
- 		test_mmap_supported(fd, page_size, total_size);=0A=
- 		test_fault_overflow(fd, page_size, total_size);=0A=
- 	} else {=0A=
-+		test_write_not_supported(fd, total_size);=0A=
- 		test_mmap_not_supported(fd, page_size, total_size);=0A=
- 	}=0A=
- =0A=
--- =0A=
-2.50.1=0A=
-=0A=
+On Wed Oct 15, 2025 at 2:17 PM BST, Srinivas Kandagatla wrote:
+> This patchset has 4 fixes and some enhancements to the Elite DSP driver
+> support.
+> Fixes includes=20
+> 	- setting correct flags for expected behaviour of appl_ptr
+> 	- fix closing of copp instances
+> 	- fix buffer alignment.
+> 	- fix state checks before closing asm stream
+> Enhancements include:
+> 	- adding q6asm_get_hw_pointer and ack callback support
+>
+> There is another set of updates comming soon, which will add support
+> for early memory mapping and few more modules support in audioreach.
+>
+> Srinivas Kandagatla (9):
+>   ASoC: qcom: q6apm-dai: set flags to reflect correct operation of
+>     appl_ptr
+>   ASoC: qcom: q6adm: the the copp device only during last instance
+>   ASoC: qcom: qdsp6: q6asm-dai: set 10 ms period and buffer alignment.
+>   ASoC: qcom: q6asm-dai: perform correct state check before closing
+>   ASoC: qcom: q6asm: handle the responses after closing
+>   ASoC: qcom: q6asm-dai: schedule all available frames to avoid dsp
+>     under-runs
+>   ASoC: qcom: q6asm: add q6asm_get_hw_pointer
+>   ASoC: qcom: q6asm-dai: use q6asm_get_hw_pointer
+>   ASoC: qcom: q6asm: set runtime correctly for each stream
+
+I tested this series on RB5 and RB3 boards and it seems to work.
+
+It becomes a real pain to verify things on RB3. There is a regression
+related to slimbus regmap and linux-next is broken on RB3 starting
+with next-20251017.
+The tag next-20251016 works just fine (after applying slimbus regmap
+fix).
+
+For the whole series:
+
+Tested-by: Alexey Klimov <alexey.klimov@linaro.org> # RB5, RB3
+
 
