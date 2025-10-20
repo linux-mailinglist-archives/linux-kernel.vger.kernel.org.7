@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-861645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9618BF3400
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:41:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C92BF3406
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C06418A8276
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:42:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 064654FC952
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B68330304;
-	Mon, 20 Oct 2025 19:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3422F12D6;
+	Mon, 20 Oct 2025 19:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="f38f3xHA"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XOgBwqhZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B677C2BEC23
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A41827AC31
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989310; cv=none; b=AtbMPaQvklGLVjHlr8Z/335mAEiM5o3Zc7btI0LQU+mVb8UZ33IxNENYe5Q17TMoP7R6DqEGlaepJmfyjWAHtTRLmirFC35BNlQxWNPpZSj5ljSoamAlezWd6ER8U6q+t2+o1i5aZjmWUxMRnLwOFU7uT3EL+VHlKXWNA9gmecs=
+	t=1760989350; cv=none; b=jzX6Ggn7RLz+LHoEczgE1pE0LrsuPMl2S5u7Ecb3NJWToxNWFuKiO4mACZ7c9CqeXtBfPSqdl5LauS+BjpOPE8hRLJNVtPoIlJOQCur3cTugiuMyAXllluBUmfDyHZSYPi4HsUrQh6J33/K20DiJoI/Ndo5u1ueCZGGg2QrBjsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989310; c=relaxed/simple;
-	bh=uQSzjldxRTZ35ORML6b3Cd4RgGLVmAPkW+5ZxaJHB28=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Fp4SmONSkB14q6mWheQ3lvxAgGZi/KcLTWO+mbrKkfmZyrZxIWEWQa0ZZSNGNT8qP8SD30wD5dezEBJCxzBx06Dg7hSYcC4uOLrytBPAseuXmoMpycmm2tGNy1PTcBWWTMH9Nh448LybGjk+hNuPJNlRcRC1DiU49GFOYD4Q7Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=f38f3xHA; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c4f1e7243so3565758a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:41:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760989306; x=1761594106; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S+3slhELo00fMq3w//kko/evMNTGZF1TLZtlTKBnvEc=;
-        b=f38f3xHAdE+ycTYIPZX40GnfoIm4Kvx3pCaNBHweC0BH1cqw7K5HswGsRf9vqYrqnZ
-         wRdyVjB8ptllWQqgH3ZNwGVHM9GiUKYuF7icRp5JW/T6Nej9tp8uuRSfM/MKf8cn9H75
-         qhKS6XAlSQuf28XqSp4cWNI/XzEbj5fL9D/rrgtZ/IDhYlaj79XO6qUUUhl/2boLScMS
-         d0QZfGqR2ZaX5mMr5Ol4gRVN0Tmp1X7XBiJwmyeW41sHT6OSwqGZKAbe7k7EBP4PVswg
-         eLypgtM+ECJ91S+6j8u75cmVNz4gnE8YrendcQOis7ABOqXQxKEYWZ4AKFDDfqK3P+Cu
-         AS9w==
+	s=arc-20240116; t=1760989350; c=relaxed/simple;
+	bh=Ztw6Vg3yxEBGSCGxY69MHUAEyG+LUvQQcv47RkuBdYU=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ScLw8R7SgWCvTJ7cTrHy08q2PjFCMvVYgNYcu3PLxGBCWxqnGJPAYRys/y6uJOsPTeVFnPOo0NvehILL7X5dle5cJ8ktiAhblpAK5tnlk51PB1Sa6shnRsp219Zz3uZ1p9MvxQEU27WAVAIS3vq73ucNMcBMJII1l+erSLiea9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XOgBwqhZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760989347;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a6g3XqFbLunJWKjBLqSAOthKCe1NOTnQPQLUs+XNm8A=;
+	b=XOgBwqhZrbyGw4WpYizy3xuosTUtSFZn0m/tKPiG8S3aPewFJnNLTNYCEQasUeCbwuXXTM
+	wgOF1QonH9CAj1B5VVkQC77dm4TtfL7nHIs7hlKT0+w65PkesY0seyJxMyKowmiHTjIobM
+	ETcmcjSnqw+fE4dN9MiJm6VXVauqJ+k=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-j3RMlJYCMDO0IF3Vqecatg-1; Mon, 20 Oct 2025 15:42:26 -0400
+X-MC-Unique: j3RMlJYCMDO0IF3Vqecatg-1
+X-Mimecast-MFC-AGG-ID: j3RMlJYCMDO0IF3Vqecatg_1760989345
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b6a793619b2so1407738a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:42:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989306; x=1761594106;
+        d=1e100.net; s=20230601; t=1760989344; x=1761594144;
         h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+3slhELo00fMq3w//kko/evMNTGZF1TLZtlTKBnvEc=;
-        b=N9j+eIXxaKy/7j9JYAOMmq5yPcXHV0T0rZliQB2godjg1eizx/pFub9VHzbNACHOoL
-         Omr5Y4wbqAl729xTXyhF41GtGGEP4dKKiibjKBsr92LNohcB7lBzyo5ScQ1alBqE5qTj
-         CK2M0FqGOoqUyJ7ehUB6zuwlGSG15LlifSzx3fRvzkyCq+3dcZXO0ZHU+reLymHCQb50
-         1CwH1OSF4sBWgDqnevFdZDZ0XWPECP6rK2xULNcaJSx9VdZlRjJP4NbtyzO9V7b8yuu1
-         7vprhWX81IP+rUXjghRDTHXYaSeJuRdcYhtiUP93h8ojnkqhdg6dIPfacCYeXDtWbmx6
-         aiKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURlfL2+vKEjy9roLprXfL1vArUz0NQzaBKIvEbSZinQSZeyWEpxfJWWWDjfmlVv/y/mb/7f/fDoHtLfwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsyfZKnh9rP+edCiErJn1h15orj2kR0fiqVEQ2aOynQpLmblD3
-	gDacatiK2eQ3XNGwkxTIF09rRfGah883+8l710ORcoyGFd10WB+o+2Z+vihCQELR2YA=
-X-Gm-Gg: ASbGncvwhn2I6h7PdkD2KYPZLGwQ1+V7uwHr6ugVtBK4hQ9umiteX4lyG4kdq9cq7qp
-	NUBwuXqdd+ONHmmZMDWGxBVVFr9ti8tpc4oO4EQwWkJ4vqjjpL8LpzK0C7SHyzCLKNAN6cpY7RX
-	Oy6vW3GO8ZD2ZmhXf4A/KQm6hLvUHUgQk8eTmaQyqzOZ+LM97nr5F2bjMDidKzSaw9BfLiZoeEO
-	6eBPSEOIZH+GSwyWh+aYLMxTLFujCXK6uESkJ6tXfuTCwpw9NbhUxK7CwaBFUyDDL33/rP4gZjM
-	eXHk2vFYaQTBQeNJJni4PAF0qQn6H4K1OmKjPZbt3I0LU9ZXI7Z6XgVu9AY7cQ33+4W7Uji8uLG
-	vhwo7ZIP1+V1WEAyGDIwDOYP/SlHBvYF3baE9Liu6gMNM/XFteC8cN0HBU8qePPAyUSwE49tgcT
-	O5U4t1rsR/
-X-Google-Smtp-Source: AGHT+IHDIxoLORK8TXA5ZD6/WsOqHWJqq7Eq+n+YHr0BJm7nwggP3jvxI5a/xsatvpj+kR59rawzjQ==
-X-Received: by 2002:a05:6402:4306:b0:628:b619:49bd with SMTP id 4fb4d7f45d1cf-63c1f6cea4amr12864517a12.25.1760989305960;
-        Mon, 20 Oct 2025 12:41:45 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c49430145sm7409668a12.19.2025.10.20.12.41.44
+        bh=a6g3XqFbLunJWKjBLqSAOthKCe1NOTnQPQLUs+XNm8A=;
+        b=rXHDaSapgR3I3ObGwhYdyH0oiyPUJANLf3vxsUMhzLyPC00kLZkhQMwKTCue2AZCm+
+         KK7DcJl45yG3cnLfVe01uTNLEhHJWJC1rU0vl+VhA2Lin0HQuFQtrfwd338rc4WBifEo
+         O5CdUy4MjrtG6o8U+Fyngvkp3WPhZpyBegZBx6VWBuG749BbHPepOU/MqyHLALPOxNL1
+         VrB27vPncZXDEUGb9WiNM6bLR2d/zbE74OzY18I+USxTFfCTgySBBLSsOdwuBv8BisNU
+         oY6+qkCo6y36JbBRZbUKcGGPbwvatuZKb76ap9CATuQZBgSQRTz0hVUIlaxq0XM8eaA5
+         G2RA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzlEM1bXtz+ACCcPcRg3pMMRniOtAv7BNNbpzrKdOYmPx50eanEHzb0veZ8MafJaEc9w1GLq4MBrt/c/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6r+hJldfCOyNxP6TH63NphlHRAivKsKRkS3Yz25CcIl7Nh29f
+	1Ru/wWtsZbsMRn0kVR1YxxR9cP3WUroS6p9fj2P6fda7U++ORXbWC8rwwjRmolaPGIw3zCcfoTF
+	skQ1bjTpV8iyji3E2/WXRzNTd6k8juPJDsQutPIpHSIrvzoq6cgz/bR/R0bawjbs29g/3w/MgFw
+	==
+X-Gm-Gg: ASbGnct7oWKl5bmOZCWc775gvLmWZwqaRh1F/OU0ZUdRz4f1H3uhog2yOTAitxeAIy2
+	4G1feT3C3W350OLHas/4aJKbXLk056bxLiOJDM7ZXF16O6vbiZdXUrjbGXuiG4p2W6ie4nVA+0P
+	eKRzqGTOcWijQxD8m8MjBa6vttf8VyCwuSjch3+6aoknUJoOoiiSwTRy5tAxbwLt+bNN7CYtbnt
+	GSK7gh4Ax7hPbFdxXQBgnMg30rtc1/j1PqK6Y4X7SgvSjnhuOWyo6g11uYibG1gSet/VE4qRe6v
+	kB398o0g5KrUSPJYoplIJdVcCJ7aW4/D9FIci8L0E4h8lYBMivaSYql530sJSZgNyuecAukmzrl
+	ygpr6hRdNpu9rv2ZoLwK/+uGlw8v7dkUSnOeqooDn5aJN5Q==
+X-Received: by 2002:a17:902:f70e:b0:267:912b:2b36 with SMTP id d9443c01a7336-290c740004bmr156554755ad.23.1760989344513;
+        Mon, 20 Oct 2025 12:42:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRWFk1AZqstaY8GO1xjmBy3mYMSjCJ/Vl8njIHQS7mPY1BPP47SjE6229biJif3Mo6uDRSmA==
+X-Received: by 2002:a17:902:f70e:b0:267:912b:2b36 with SMTP id d9443c01a7336-290c740004bmr156554425ad.23.1760989343966;
+        Mon, 20 Oct 2025 12:42:23 -0700 (PDT)
+Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5971sm87457045ad.56.2025.10.20.12.42.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:41:44 -0700 (PDT)
-Message-ID: <5650e47d-97ab-49a3-8342-7aad9daa5a1c@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:41:43 +0300
+        Mon, 20 Oct 2025 12:42:23 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <e8018984-96ed-49fa-8571-79a0d39cb218@redhat.com>
+Date: Mon, 20 Oct 2025 15:42:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,31 +91,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v4 05/31] clk: at91: clk-peripheral: switch to
- clk_parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <b0635913503630a8e1880b0b9ba8656465020181.1758226719.git.Ryan.Wanner@microchip.com>
+Subject: Re: [PATCH -next RFC 03/16] cpuset: factor out partition_enable()
+ function
+To: Chen Ridong <chenridong@huaweicloud.com>, Waiman Long <llong@redhat.com>,
+ tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+ <20250928071306.3797436-4-chenridong@huaweicloud.com>
+ <9168ffab-b0a8-4024-a1f4-966b9f95c953@redhat.com>
+ <fa7fa2e5-c602-4318-90e1-89c742c6cc1a@huaweicloud.com>
 Content-Language: en-US
-In-Reply-To: <b0635913503630a8e1880b0b9ba8656465020181.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <fa7fa2e5-c602-4318-90e1-89c742c6cc1a@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, Ryan,
+On 10/20/25 3:48 AM, Chen Ridong wrote:
+>
+> On 2025/10/20 10:39, Waiman Long wrote:
+>> On 9/28/25 3:12 AM, Chen Ridong wrote:
+>>> From: Chen Ridong <chenridong@huawei.com>
+>>>
+>>> Extract the core partition enablement logic into a dedicated
+>>> partition_enable() function. This refactoring centralizes updates to key
+>>> cpuset data structures including remote_sibling, effective_xcpus,
+>>> partition_root_state, and prs_err.
+>>>
+>>> The function handles the complete partition enablement workflow:
+>>> - Adding exclusive CPUs via partition_xcpus_add()
+>>> - Managing remote sibling relationships
+>>> - Synchronizing effective exclusive CPUs mask
+>>> - Updating partition state and error status
+>>> - Triggering required scheduler domain rebuilds
+>>>
+>>> This creates a coherent interface for partition operations and establishes
+>>> a foundation for future local partition support while maintaining existing
+>>> remote partition behavior.
+>>>
+>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>> ---
+>>>    kernel/cgroup/cpuset.c | 55 +++++++++++++++++++++++++++++++++---------
+>>>    1 file changed, 44 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>> index 0787904321a9..43ce62f4959c 100644
+>>> --- a/kernel/cgroup/cpuset.c
+>>> +++ b/kernel/cgroup/cpuset.c
+>>> @@ -1515,6 +1515,49 @@ static inline bool is_local_partition(struct cpuset *cs)
+>>>        return is_partition_valid(cs) && !is_remote_partition(cs);
+>>>    }
+>>>    +static void partition_state_update(struct cpuset *cs, int new_prs,
+>>> +                      enum prs_errcode prs_err)
+>>> +{
+>>> +    lockdep_assert_held(&callback_lock);
+>>> +
+>>> +    cs->partition_root_state = new_prs;
+>>> +    WRITE_ONCE(cs->prs_err, prs_err);
+>>> +    if (!is_partition_valid(cs))
+>>> +        reset_partition_data(cs);
+>>> +}
+>>> +
+>>> +/**
+>>> + * partition_enable - Transitions a cpuset to a partition root
+>>> + * @cs: The cpuset to enable partition for
+>>> + * @parent: Parent cpuset of @cs, NULL for remote parent
+>>> + * @new_prs: New partition root state to set
+>>> + * @new_excpus: New exclusive CPUs mask for the partition
+>>> + *
+>>> + * Transitions a cpuset to a partition root, only for v2.
+>>> + */
+>>> +static void partition_enable(struct cpuset *cs, struct cpuset *parent,
+>>> +                 int new_prs, struct cpumask *new_excpus)
+>>> +{
+>>> +    bool isolcpus_updated;
+>>> +
+>>> +    lockdep_assert_held(&cpuset_mutex);
+>>> +    WARN_ON_ONCE(new_prs <= 0);
+>>> +    WARN_ON_ONCE(!cpuset_v2());
+>>> +
+>>> +    if (cs->partition_root_state == new_prs)
+>>> +        return;
+>>> +
+>>> +    spin_lock_irq(&callback_lock);
+>>> +    /* enable partition should only add exclusive cpus */
+>>> +    isolcpus_updated = partition_xcpus_add(new_prs, parent, new_excpus);
+>>> +    list_add(&cs->remote_sibling, &remote_children);
+>>> +    cpumask_copy(cs->effective_xcpus, new_excpus);
+>>> +    partition_state_update(cs, new_prs, PERR_NONE);
+>>> +    spin_unlock_irq(&callback_lock);
+>>> +    update_unbound_workqueue_cpumask(isolcpus_updated);
+>>> +    cpuset_force_rebuild();
+>>> +}
+>>> +
+>> partition_enable() is supposed to be a common helper used for the creation of both local and remote
+>> partitions. The one in this patch does work for remote partition but not for local partition. I
+>> would prefer to make it good for both cases when you introduce it instead adding code in patch 6 to
+>> make it work for local partition later in the series. It will make it easier to review instead of
+>> jumping back and forth to make sure that it will do the right thing.
+>>
+>> Cheers,
+>> Longman
+>>
+> Thank you, Longman.
+>
+> My original intention was to keep the changes easier to review. Patches 3–5 are meant to be pure
+> refactoring moves of code from the remote partition logic, without altering any behavior.
+>
+> Would it be clearer to proceed in the following stages:
+>
+> 1. Introduce partition_enable(), partition_disable(), and partition_update() with their complete
+> logic first.
+> 2. Replace the corresponding logic in remote partitions with these new helpers.
+> 3. Then, replace the logic in local partitions with the same helpers.
+>
+Yes, that should make it easier to review.
 
-On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Use struct clk_parent_data instead of parent_hw for peripheral clocks.
+Thanks,
+Longman
 
-Could you please explain also why as done in other patches?
-
-The rest looks good to me.
-
-Thank you,
-Claudiu
 
