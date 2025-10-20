@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-860157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29571BEF730
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:19:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A997BEF73F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC7E13A4A49
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:19:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1F5E4EB4AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733532D6629;
-	Mon, 20 Oct 2025 06:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966B92D6E77;
+	Mon, 20 Oct 2025 06:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iT7alFgV"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="GibsK9mv"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84112D73B4
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4416D2BE7AB;
+	Mon, 20 Oct 2025 06:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760941160; cv=none; b=YHPlPKG/Hwa4YG+0gfLQjKUtOORNoU98AqXPhe2xxf9Esy9kSZVISTvigeatWKDz/gtU0p2ZDt21TsxXPTTWgh4KGm6fLKUD5gGZlYvI2CAiMzCDRdhdsFHQQzBAhn5Y7CK9iHi5hd9IPjx6K9UAAm66bJoTDHX2DwynKBggmbM=
+	t=1760941237; cv=none; b=eWr1gR6YoLrNkIEv0HLyq2j6yUfk70Xa6cH3/CaIj9wkmznIdDXbAna7PD/8gLq4zH7ACN3MJA/HTH8vvKSCKEWwS8VJblY+hMD6/eH1JgWdie+shbhgmTJNe76/lBK9aOArr0FRL5kx2WlaE/p+Vhh8ZivkRS2RrmPqGC4RrS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760941160; c=relaxed/simple;
-	bh=l+meFdtgtAN8bjmpeYL0yYYPs5cpnCir2LWq3DL2PBc=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=kf5pOZlTPvZulsGLCfMO9TZ5PDOXfA8O+JzsU8g9y6aOg1/JkHvN3zUS2DyrsYqFUotJWmt3YfwqPDoIzx5hkPLXiFr1zNcdx8DQ37NA0lUm111dgB65ZF+Rnc/uMC0oEbO7mqjqSh5TuEKshLWZZHE72ZsA1wmqkfBOggJwINY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iT7alFgV; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251020061916epoutp027920d7aedf4eb1d0ca8d6164a5f04296~wHqbyoSg01864518645epoutp02g
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:19:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251020061916epoutp027920d7aedf4eb1d0ca8d6164a5f04296~wHqbyoSg01864518645epoutp02g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760941156;
-	bh=IoC6cxPk+EVU4X5dumaa3IopImaiwdS8+Ozryi8aOKc=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=iT7alFgVHbUZmRVePu+8YZpvF1CxQctg7ZXpCPJDQ0jhEOoO+7viMc7iEMybcBA9g
-	 hw15QdnLJrYDMFxm5/7//sGkZaWkWl4eRwrS+TWB5iHvJiDlYiR+b7neo5QPl3vvOd
-	 rot8fFcOdT7ZW8lrsv0kdACFzt3Pq+nGxhdWX1YI=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251020061916epcas1p1b4d39bd4a86208fb8d10ee9bee788188~wHqbdqw-m2614526145epcas1p19;
-	Mon, 20 Oct 2025 06:19:16 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.38.195]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cqld00wCMz3hhT8; Mon, 20 Oct
-	2025 06:19:16 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251020061915epcas1p357374cbea0f699416b8678e426274485~wHqa2kxoM0694606946epcas1p3C;
-	Mon, 20 Oct 2025 06:19:15 +0000 (GMT)
-Received: from wkonkim01 (unknown [10.253.100.198]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251020061915epsmtip11478c2889fa5c0704b204bc460f07467~wHqaz6Bnr0817108171epsmtip1g;
-	Mon, 20 Oct 2025 06:19:15 +0000 (GMT)
-From: "Wonkon Kim" <wkon.kim@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<peter.wang@mediatek.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <5befc42a-9e00-4d03-a392-f2d823ffd872@acm.org>
-Subject: RE: [PATCH v2] ufs: core: Initialize a value of an attribute as
- returned by uic cmd
-Date: Mon, 20 Oct 2025 15:19:15 +0900
-Message-ID: <323701dc4189$75c2fbf0$6148f3d0$@samsung.com>
+	s=arc-20240116; t=1760941237; c=relaxed/simple;
+	bh=FMzwDLFPIaSEcR2/SgZ5u7C2uusNYOh1YFNZTnIg/B4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gYnPAurK/vzqV5XH4eyHbhEM6AJlsDddt7kVcFup4WYhd0fuN737O1E0HsrXVgQD9uqK/md5WDDmZodmlAV/IsqZdUXPpthkrqWRGspnqm2cr0cNSFXShzNH9f/dfLHdNay5vhdjBfKVI8V2WABcPjlYMHuL2K0+ZD2RvwDPG8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=GibsK9mv; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=Y69aW3OVi711Rd8WiNYabEGSp7/jv8rsx82kizG6cK0=;
+	b=GibsK9mvT93giLJYzeg0ifJSTIDvibrDvzw42oPR/BAcCGC41PxrUIlnyI7G/xuYI00DCg0kM
+	dxR78LjKGdBzgGsTWUuEUNtkjhnZMyYvXMa6gKV3/NtKcyAkKk96kRYN9+1S3FyobL6UQQeCfEj
+	HbYCLHZaqHRzMnF87sBs2Co=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cqlf12wFSzLlVc;
+	Mon, 20 Oct 2025 14:20:09 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id B0AAA1A0188;
+	Mon, 20 Oct 2025 14:20:32 +0800 (CST)
+Received: from kwepemq200017.china.huawei.com (7.202.195.228) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 20 Oct 2025 14:20:32 +0800
+Received: from [10.67.110.40] (10.67.110.40) by kwepemq200017.china.huawei.com
+ (7.202.195.228) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
+ 2025 14:20:31 +0800
+Message-ID: <0d67adac-7ca2-4467-9d2e-049b62fcd7a2@huawei.com>
+Date: Mon, 20 Oct 2025 14:20:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQDv4UgPMqiJUZ3lL8b8FwZq3QhsIwLCHDWKAlqvTe+2emmD8A==
-Content-Language: ko
-X-CMS-MailID: 20251020061915epcas1p357374cbea0f699416b8678e426274485
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca
-References: <CGME20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca@epcas1p3.samsung.com>
-	<20251014044046.84046-1-wkon.kim@samsung.com>
-	<5befc42a-9e00-4d03-a392-f2d823ffd872@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 0/2] cpuset: Add cpuset.mems.spread_page to
+ cgroup v2
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+CC: <llong@redhat.com>, <tj@kernel.org>, <hannes@cmpxchg.org>,
+	<cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lujialin4@huawei.com>
+References: <20250930093552.2842885-1-caixinchen1@huawei.com>
+ <wpdddawlyxc27fkkkyfwfulq7zjqkxbqqe2upu4irqkcbzptft@jowwnu3yvgvg>
+Content-Language: en-US
+From: Cai Xinchen <caixinchen1@huawei.com>
+In-Reply-To: <wpdddawlyxc27fkkkyfwfulq7zjqkxbqqe2upu4irqkcbzptft@jowwnu3yvgvg>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq200017.china.huawei.com (7.202.195.228)
 
-> On 10/13/25 9:40 PM, Wonkon Kim wrote:
-> > diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> > index 9a43102b2b21..6858f005cc8b 100644
-> > --- a/drivers/ufs/core/ufshcd.c
-> > +++ b/drivers/ufs/core/ufshcd.c
-> > @@ -4273,8 +4273,8 @@ int ufshcd_dme_get_attr(struct ufs_hba *hba, u32
-> attr_sel,
-> >   			get, UIC_GET_ATTR_ID(attr_sel),
-> >   			UFS_UIC_COMMAND_RETRIES - retries);
-> >
-> > -	if (mib_val && !ret)
-> > -		*mib_val = uic_cmd.argument3;
-> > +	if (mib_val)
-> > +		*mib_val = ret == 0 ? uic_cmd.argument3 : 0;
-> >
-> >   	if (peer && (hba->quirks & UFSHCD_QUIRK_DME_PEER_ACCESS_AUTO_MODE)
-> >   	    && pwr_mode_change)
-> > @@ -4990,7 +4990,7 @@ EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
-> >
-> >   static int ufshcd_disable_tx_lcc(struct ufs_hba *hba, bool peer)
-> >   {
-> > -	int tx_lanes = 0, i, err = 0;
-> > +	int tx_lanes, i, err = 0;
-> >
-> >   	if (!peer)
-> >   		ufshcd_dme_get(hba, UIC_ARG_MIB(PA_CONNECTEDTXDATALANES),
-> 
-> Please split this patch into two patches: a first patch with the
-> ufshcd_dme_get_attr() change and a second patch with the
-> ufshcd_disable_tx_lcc() change. Please also add a Fixes: tag to the first
-> patch. That will cause the first patch to be included automatically in
-> stable kernels and also in Android kernels.
-> 
+I tried using memory.max, but clearing the page cache caused performance 
+degradation. The MPOL_INTERLEAVE setting requires restarting the 
+DataNode service. In this scenario, the issue can be resolved by 
+restarting the service, but I would prefer not to restart the DataNode 
+service if possible, as it would cause a period of service interruption.
+
+On 9/30/2025 8:05 PM, Michal Koutný wrote:
+> Hello Xinchen.
+>
+> On Tue, Sep 30, 2025 at 09:35:50AM +0000, Cai Xinchen <caixinchen1@huawei.com> wrote:
+>> I discovered that the DataNode process had requested a large amount
+>> of page cache. most of the page cache was concentrated in one NUMA node,
+>> ultimately leading to the exhaustion of memory in that NUMA node.
+> [...]
+>> This issue can be resolved by migrating the DataNode into
+>> a cpuset, dropping the cache, and setting cpuset.memory_spread_page to
+>> allow it to evenly request memory.
+> Would it work in your case instead to apply memory.max or apply
+> MPOL_INTERLEAVE to DataNode process?
+>
+> In anyway, please see commit 012c419f8d248 ("cgroup/cpuset-v1: Add
+> deprecation messages to memory_spread_page and memory_spread_slab")
+> since your patchset would need to touch that place(s) too.
+>
 > Thanks,
-> 
-> Bart.
-
-
-Sure. I'll split and update it.
-
-Thanks,
-Wonkon Kim.
-
+> Michal
 
