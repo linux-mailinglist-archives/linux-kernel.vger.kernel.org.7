@@ -1,95 +1,67 @@
-Return-Path: <linux-kernel+bounces-859979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CE9BEF130
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119B1BEF13C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59F1B3E3D14
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9F53E48F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C566723D7C6;
-	Mon, 20 Oct 2025 02:13:30 +0000 (UTC)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0B5262FFF;
+	Mon, 20 Oct 2025 02:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="UeELagL1"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A3123B609
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A601425334B;
+	Mon, 20 Oct 2025 02:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760926409; cv=none; b=SIwJNenatilZdAD0HNB5z+qB58Vh4dTWlSNqiM2jZe+Z5LvZ6zNuNGgIlJy6DWI1+eliYqDVKJMEyfbBFygYjJqccT9hMlb4GbKrsC6A8muNrfYRZfJQBaoULqVUP2vECAnjcrhSaxmL8cgSPnBcyFjpzh8GA/kDPc366Mt3YRk=
+	t=1760926438; cv=none; b=VY5fwWekYmUyjnQW6RtcyGCrVnx4VeYv9wYEYMoAtYG+rMGr7LIGEmv2x0Mtg7lrmEziX/zBPfzeGatyfqCW8iJU0ckbukl5hFjzwOrNoPbjHgumCR+Q2byysKuQH46vzEfFRhupmfzRJa3FZhpOkVkcfniFGvDBwlSXtkfoCSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760926409; c=relaxed/simple;
-	bh=pKjAvPilpvYO7Jqc8Cja9FjPI9P4hoIdJDieFWm0WiU=;
+	s=arc-20240116; t=1760926438; c=relaxed/simple;
+	bh=Ha9MQzysPOX3yOhVlEYOWL+C8FnPK4ezGU3JCiwFods=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AV8rmJexXoG0qnvs7WfRDcku+7M9TOc25xMEO8soA0L8BUqQtr0wcXfPCZ2/ikAAImK5pbDaaQuGNYcoGh0Ficj5fpJdpU8ZNb0Coqcg8tlzsR7lOnscX13t2xeWYqx2gWmiQZNrdfaEluiEEcoPbCEZP/8HTs3TcpSUhPLHPnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so3454672b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:13:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760926406; x=1761531206;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HmceufBWbFt/6jbFM7UlsShW+ci0E83Fk+RSbao9kcM=;
-        b=hq6Z45DKrbF9Tkq2ozjnAwNQvmavZfHgZfGooetXSu/JUujUcwRX+7faEQjWqz2ngN
-         1ryWVI+keYf6EaaaZ9lx7hItTvDDQ5g+GU3kHONFcc0lqIlnpPo/IigcMRFSD9ZBm903
-         C4dQyzq+dNF3haVYxzAtZkIl0ZfUe1oCbL3CtFY/d1uvkn4zmuid6H67Lwwu4cgKilOF
-         YjnyN50T9t8QkpjUg9Wgs0KOGpeqoN9y9dngHPP7f+wMpCGAgVyNclbf9Eyi9SU5+UMO
-         UjFAPna+5LWk6kWMVEjD8yBmgBcwleet7l0zMFTx2kKi/JvBd1orwdTmuILxsXs+/CCq
-         RR8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUj1rgLvQz1EAuLrqLqYRsnTCPzvattkzXlCV3QwNnC1HxJcilBC36wsK3RyQ2NbhXMk/OSZJwszWdsaJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5SEBmxCyswN59uUe7stOAk9TaLVdIjPTgdHAQfolmMhuDq2aM
-	WFj/qzGCZGCYkXKG7ydbtjDp7ACjGLbO5+8/YNCLzlSub1fyFuIF7qp4
-X-Gm-Gg: ASbGncuAqxsvvPcI4t6ux5pCKtutea2AdmGp8ya9Tkdi1dN0f+H25wgNqthyIwlLqCs
-	qtprs00JdfwiTt+9+cBUwE7btYfL/0XkKtywEzLb/4gqKldMXyPC6+Z1wkl6QihayFek7Aqdcoq
-	kXxbHXcIBs0rjAZNleHk08g/k3NZS0LqzdvCthnLVbN7F8aHPaPzXh3Pyq9xhWh6Qtb4RmcS4oS
-	WYt2hlg6dIxdVox23k8h25s3989pB7L2uhenBzjBvSHUm9t9e7XkQXO8FJP/a5t/9130mhw/LT7
-	+9pASme43pnLo7H5DXOnPs4akXX+8AY+oPkMjD47Toujq89vrfUkDVBlZjOP8Y6awyrC1CESiTX
-	bQjwRugYJ8wKoVhG+pCLbv36ZEJauxo74xHtvnLdl00L8jrME4+r9tjJLhd69sdL21m7J44rH6G
-	8mspaNINiZ571IxXI=
-X-Google-Smtp-Source: AGHT+IH/VWP7TZWHKAiIfbLLsoIQAFhHFivlRyqDMDn9BcgY57BaQ6LySkAtHNmr6Ox+Cz0wR0h+3g==
-X-Received: by 2002:a05:6a21:6da6:b0:263:b547:d0c3 with SMTP id adf61e73a8af0-334a85d9ef8mr14056890637.36.1760926406576;
-        Sun, 19 Oct 2025 19:13:26 -0700 (PDT)
-Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a764508b0sm6406849a12.0.2025.10.19.19.13.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 19:13:25 -0700 (PDT)
-From: Namjae Jeon <linkinjeon@kernel.org>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	hch@infradead.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	willy@infradead.org,
-	jack@suse.cz,
-	djwong@kernel.org,
-	josef@toxicpanda.com,
-	sandeen@sandeen.net,
-	rgoldwyn@suse.com,
-	xiang@kernel.org,
-	dsterba@suse.com,
-	pali@kernel.org,
-	ebiggers@kernel.org,
-	neil@brown.name,
-	amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
+	 MIME-Version; b=deAc0GD8TCzpxHKp3f52qsvF4RZSyYH3OGbJHJslMJMv+gj0CpP6mHH3Hm53YGk2PQQyKIIG2AkCSDdpyq1G9Fx7n8ZEN7goxF+C9oKNyGLX4fQXTev5rRFqQkeGNg+JX49LPiGmHhuuFJKi/hy3MWmof8ndt9n+GPA7Cdt1A14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=UeELagL1; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1760926361;
+	bh=pzVyONwXb/8XHbx8LYvOWLQDfxHTrG02yDRUj8ZtCNM=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=UeELagL1ILWThB9FPowkQSbPLJiFBzkMvR+1JsZULQvmcMhRWWc7TxHxbaA9jaCi8
+	 PYJKSFAszzFcuBQA/qFJN7tATY7netK/6K3FekVdBHh7jTUi+sKetLaGQiMN4LFKE1
+	 F+zNNdsu7lDPs1vFMujsdJnBUZrY0SCpc1aHMOyU=
+X-QQ-mid: zesmtpip4t1760926354t9455e896
+X-QQ-Originating-IP: 0E8AicbofZVPioFvNQJImVcnsnCyOThZafGWr0XuzRI=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 20 Oct 2025 10:12:32 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16094178770994634205
+From: tuhaowen <tuhaowen@uniontech.com>
+To: rafael@kernel.org
+Cc: dakr@kernel.org,
+	gregkh@linuxfoundation.org,
+	kernel-team@android.com,
+	lenb@kernel.org,
 	linux-kernel@vger.kernel.org,
-	iamjoonsoo.kim@lge.com,
-	cheol.lee@lge.com,
-	jay.sim@lge.com,
-	gunho.lee@lge.com,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH 11/11] ntfsplus: add Kconfig and Makefile
-Date: Mon, 20 Oct 2025 11:12:27 +0900
-Message-Id: <20251020021227.5965-6-linkinjeon@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251020021227.5965-1-linkinjeon@kernel.org>
-References: <20251020021227.5965-1-linkinjeon@kernel.org>
+	linux-pm@vger.kernel.org,
+	pavel@kernel.org,
+	saravanak@google.com,
+	wusamuel@google.com
+Subject: Re: [PATCH v4] PM: Support aborting sleep during filesystem sync
+Date: Mon, 20 Oct 2025 10:12:28 +0800
+Message-Id: <20251020021228.2336745-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <CAJZ5v0h3wTGqTn-DqAKA6_bxF-=sQGauGJm_BUOxeQd87EQSYw@mail.gmail.com>
+References: <CAJZ5v0h3wTGqTn-DqAKA6_bxF-=sQGauGJm_BUOxeQd87EQSYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,119 +69,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: Mutteg8H72qDJ/2nTiJF1bGCAKl502sWOHI6Itwz4lX4Qhf4aXU6lueu
+	2eO7HbB3SYRMkpmEjkqJb4iERy96p0hReLyW6rejBv/ok0Y8EBZ/A5nW1Cb1+LwG9fbi0Rz
+	uygkCk2l1If9f/Zbwqu8//uHeN4lXb2mFbhcu8SYWG5ojYnhWMI/K+J4ADzvqdi4XuEBc/J
+	iI6gutZOu1uva4fKppqMQaqHgEdCQnJ++2YQXM/Hkfn4dTXhvT7jpA0X1XhpiecH/uoid5Q
+	IH1ShWpuB/VxF7V1XsKKTkoNNL0DBhXvCoQVyp3D/jF3mXPrbEU3iXXeV1KYUjM6SFh/YH4
+	yf7naDEU2RbuDj+qvP/qx9G9tbNzO129J+s0uNfsVSyRXAJKIWzGEl8OQj8yw+GwZ/madA9
+	22JQdBNqJRh7uZt+LHSNINSCsx5cGD58C5YopBL+4AK4tfxCueHJ7EcAZp08pjMcjVDneeD
+	RvRwqBuARJhNlAEoiNCqjIm+I/NfSgIJR26CkRnILmWM8Tq4aTEuyjdpeULHZoP8vVTXuo9
+	QUklmmqth3aLwZCzz7OjzUBFnmGuLFQov+OtsNEWBrat/lgEwOmrXhM66W1FV32XFMTVEg6
+	gneWJcwcRb+dn0HquSI9nAcKwuwrsdjyHgBHH1+GB2yp/L+gkqicAncsqcJaaeug0EOHHZu
+	qnfUc2qUX0QyE5P6EPebd3moEzXaXdLaNBW2k4ni3/Bq01W52wOA8TwTR0BamRHuOh8acNg
+	gywCamJxXjmwuiemPwsdpp1Ehcc9fqJ0v/OyGArrH9TyZ/hWet1bU7DNnS+So/yqtvn0Nox
+	VKEcGFpU3r4A27qnJV4Bxb8hHhUfAy1ve7wTwPqDPuCDte9mdp4eFo3Cr27xJgwexSUz9H4
+	jaIoHZ6+Aj5TsgjlEjub6hvmMa7Xl1WBZqwQ/5WRVBVTd+VGuG4PbHMrLSV5pCoCUeME6s/
+	fb87H1x3ODo83vbRN1yGPP65zZ6mFXM3zNOa9mioMUqgBOQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-This adds the Kconfig and Makefile for ntfsplus.
+Hi Rafael,
 
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
----
- fs/Kconfig           |  1 +
- fs/Makefile          |  1 +
- fs/ntfsplus/Kconfig  | 45 ++++++++++++++++++++++++++++++++++++++++++++
- fs/ntfsplus/Makefile | 18 ++++++++++++++++++
- 4 files changed, 65 insertions(+)
- create mode 100644 fs/ntfsplus/Kconfig
- create mode 100644 fs/ntfsplus/Makefile
+Thank you for your attention to this matter. I'd like to clarify the 
+difference between our approach and the Google team's solution, as they 
+address fundamentally different use cases and environments.
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 0bfdaecaa877..70d596b99c8b 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -153,6 +153,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
- source "fs/fat/Kconfig"
- source "fs/exfat/Kconfig"
- source "fs/ntfs3/Kconfig"
-+source "fs/ntfsplus/Kconfig"
- 
- endmenu
- endif # BLOCK
-diff --git a/fs/Makefile b/fs/Makefile
-index e3523ab2e587..2e2473451508 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -91,6 +91,7 @@ obj-y				+= unicode/
- obj-$(CONFIG_SMBFS)		+= smb/
- obj-$(CONFIG_HPFS_FS)		+= hpfs/
- obj-$(CONFIG_NTFS3_FS)		+= ntfs3/
-+obj-$(CONFIG_NTFSPLUS_FS)	+= ntfsplus/
- obj-$(CONFIG_UFS_FS)		+= ufs/
- obj-$(CONFIG_EFS_FS)		+= efs/
- obj-$(CONFIG_JFFS2_FS)		+= jffs2/
-diff --git a/fs/ntfsplus/Kconfig b/fs/ntfsplus/Kconfig
-new file mode 100644
-index 000000000000..c13cd06720e7
---- /dev/null
-+++ b/fs/ntfsplus/Kconfig
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config NTFSPLUS_FS
-+	tristate "NTFS+ file system support"
-+	select NLS
-+	help
-+	  NTFS is the file system of Microsoft Windows NT, 2000, XP and 2003.
-+	  This allows you to mount devices formatted with the ntfs file system.
-+
-+	  To compile this as a module, choose M here: the module will be called
-+	  ntfsplus.
-+
-+config NTFSPLUS_DEBUG
-+	bool "NTFS+ debugging support"
-+	depends on NTFSPLUS_FS
-+	help
-+	  If you are experiencing any problems with the NTFS file system, say
-+	  Y here.  This will result in additional consistency checks to be
-+	  performed by the driver as well as additional debugging messages to
-+	  be written to the system log.  Note that debugging messages are
-+	  disabled by default.  To enable them, supply the option debug_msgs=1
-+	  at the kernel command line when booting the kernel or as an option
-+	  to insmod when loading the ntfs module.  Once the driver is active,
-+	  you can enable debugging messages by doing (as root):
-+	  echo 1 > /proc/sys/fs/ntfs-debug
-+	  Replacing the "1" with "0" would disable debug messages.
-+
-+	  If you leave debugging messages disabled, this results in little
-+	  overhead, but enabling debug messages results in very significant
-+	  slowdown of the system.
-+
-+	  When reporting bugs, please try to have available a full dump of
-+	  debugging messages while the misbehaviour was occurring.
-+
-+config NTFSPLUS_FS_POSIX_ACL
-+	bool "NTFS+ POSIX Access Control Lists"
-+	depends on NTFSPLUS_FS
-+	select FS_POSIX_ACL
-+	help
-+	  POSIX Access Control Lists (ACLs) support additional access rights
-+	  for users and groups beyond the standard owner/group/world scheme,
-+	  and this option selects support for ACLs specifically for ntfs
-+	  filesystems.
-+	  NOTE: this is linux only feature. Windows will ignore these ACLs.
-+
-+	  If you don't know what Access Control Lists are, say N.
-diff --git a/fs/ntfsplus/Makefile b/fs/ntfsplus/Makefile
-new file mode 100644
-index 000000000000..1e7e830dbeec
---- /dev/null
-+++ b/fs/ntfsplus/Makefile
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for the ntfsplus filesystem support.
-+#
-+
-+# to check robot warnings
-+ccflags-y += -Wint-to-pointer-cast \
-+        $(call cc-option,-Wunused-but-set-variable,-Wunused-const-variable) \
-+        $(call cc-option,-Wold-style-declaration,-Wout-of-line-declaration)
-+
-+obj-$(CONFIG_NTFSPLUS_FS) += ntfsplus.o
-+
-+ntfsplus-y := aops.o attrib.o collate.o misc.o dir.o file.o index.o inode.o \
-+	  mft.o mst.o namei.o runlist.o super.o unistr.o attrlist.o ea.o \
-+	  upcase.o bitmap.o lcnalloc.o logfile.o reparse.o compress.o \
-+	  ntfs_iomap.o
-+
-+ccflags-$(CONFIG_NTFSPLUS_DEBUG) += -DDEBUG
--- 
-2.34.1
+On Mon, Oct 13, 2025 at 8:02 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > No, it's different. We don't mind a long filesystem sync if we don't
+> > have a need to abort a suspend. If it takes 25 seconds to sync the
+> > filesystem but there's no need to abort it, that's totally fine. So,
+> > this patch is just about allowing abort to happen without waiting for
+> > file system sync to finish.
 
+Saravana is correct that our problems are different. Let me explain the 
+key distinction:
+
+**Google's approach (Mobile/Android focus)**:
+- Problem: Unnecessary wake-ups during sync operations waste battery
+- Solution: Abort sync only when wakeup events occur (user interaction)
+- Philosophy: Wait indefinitely for sync if no user action required
+- Use case: Mobile devices where users expect to press power button to wake
+
+**Our approach (Desktop/PC focus)**:
+- Problem: Indefinite sync hangs leave users with unresponsive black screen
+- Solution: Proactive timeout to prevent system appearing frozen
+- Philosophy: Provide user feedback and system recovery within reasonable time
+- Use case: Desktop/laptop where users expect immediate system response
+
+> > The other patch's requirement is to always abort if suspend takes 25
+> > seconds (or whatever the timeout is). IIRC, in his case, it's because
+> > of a bad disk or say a USB disk getting unplugged. I'm not convinced a
+> > suspend timeout is the right thing to do, but I'm not going to nack
+> > it. But to implement his requirement, he can put a patch on top of
+> > ours where he sets a timer and then aborts suspends if it fires.
+
+The key difference is **when** we need to abort:
+- Google: Abort when user wants to wake up (reactive)
+- UnionTech: Abort when sync becomes pathologically slow (proactive)
+
+For desktop users, a 25-second black screen with no feedback creates the 
+impression of a system freeze, especially when caused by removed USB 
+devices or failing storage. Users cannot distinguish between "system is 
+syncing" and "system has crashed" without feedback.
+
+**Question about integration**:
+
+Since both approaches serve legitimate but different needs, could we 
+implement a unified solution that supports both mechanisms? For example:
+
+1. **Combined approach**: Implement both wakeup-based abort (Google's patch) 
+   and timeout-based abort (our patch) in the same framework
+
+2. **Configuration via sysfs**: Add a node to control the behavior:
+   - `/sys/power/sync_abort_mode`:
+     - "wakeup-only": Use Google's approach (abort only on wakeup events)
+     - "timeout": Use our approach (abort on timeout)
+     - "both": Use both mechanisms (abort on either condition)
+
+3. **Default behavior**: Could default to "wakeup-only" for mobile/embedded 
+   systems and "timeout" for desktop systems, or let distributions choose
+
+This would allow different systems to choose appropriate behavior based 
+on their needs.
+
+Would this unified approach be acceptable? We're happy to work on 
+implementation details with the Google team to ensure both use cases 
+are properly addressed.
+
+**Additional concern about integration timing**:
+
+I noticed that Samuel Wu previously mentioned in his response to you 
+(Sep 30, 2025) that our approaches could be "decoupled" and that I could 
+"build changes on top of theirs." However, after reviewing their v4 patch 
+implementation, I'm concerned that if their approach lands first, it may 
+make our timeout-based solution significantly more difficult to integrate.
+
+Their current implementation:
+- Uses workqueue + completion for sync operations
+- Introduces pm_sleep_fs_sync() as the main interface
+- Adds complex state management for back-to-back sleep attempts
+
+This architecture makes it challenging to integrate our timeout approach 
+and add mode switching functionality. If their patch lands first, adding 
+our timeout mechanism would require:
+- Modifying their workqueue-based sync mechanism to support timeout
+- Adding logic to coordinate between workqueue completion and timeout
+- Implementing mode switching between wakeup-abort and timeout-abort
+- Ensuring proper interaction between the two abort mechanisms
+
+The main challenge is: how do we add timeout functionality to their 
+workqueue + completion design? And how do we implement clean switching 
+between "abort on wakeup events" mode versus "abort on timeout" mode? 
+Their current design focuses solely on wakeup-based abort, so retrofitting 
+timeout support and mode selection would require significant changes to 
+their implementation.
+
+Would it be possible to consider both approaches simultaneously to ensure 
+a clean integration path? This might result in a better unified solution 
+than trying to retrofit timeout functionality into their workqueue-based 
+implementation.
+
+Best regards,
+Haowen Tu
 
