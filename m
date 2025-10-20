@@ -1,145 +1,196 @@
-Return-Path: <linux-kernel+bounces-860798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A537FBF0F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A334EBF0F89
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED44407EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD094070FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4F530DEAF;
-	Mon, 20 Oct 2025 11:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60843043D1;
+	Mon, 20 Oct 2025 11:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Cf7dvSYh"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MmkU7qmw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2BF304BA6;
-	Mon, 20 Oct 2025 11:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEEC229B36
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961541; cv=none; b=EHrYlMRw5HZJFYrMWw9Sch3z8U3kftnKgFVARYXE5PJOIRDN0QyYsybq/d98kWsbhmthSnrNfKyMk1DfuI0Kj2qeoVsXetnFbkpSErNtSf6NvN96CGy9AgU1Is6p1Zlw/2XX/e1qbvko5LFgqdhKHLC2Tu06SHcqCwlGzSq8eIE=
+	t=1760961538; cv=none; b=r2RQTWUKNl2TwnW7mFnj52PA4Q7OyqbQ4OWmosRRINtN4XrboiB/4UDHbq7AL4N8fmWGzL3CwuqjoFKbqFyGOLnXuqECN+EUR1ix36ig/urNCAMWZKUpsrstfetu9+zbiaXFbLwlXlEFuP3Yga8moViH7HTD1A8UOWb+jARBY20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961541; c=relaxed/simple;
-	bh=twDF9OguaUJ2De+Kad9iwRfsXW9uLjYealqHeC1163c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=tcb9vHcpEpVC4+6K+49RRFHMD3B8dMpKNJRSSGGw+K8k7rJTfwnIsuAjVhMbu/UH82wlE7qDky2N8oibvak0qjiI7C2fz3wZg+H0IIQ3uqLlnwsBLLfUjbbbYvg/GH14WaLmc8sKb0RptWrHfQjHVt6lWFS5hs8O4PYt8jItQEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Cf7dvSYh; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D5E81C0AFD7;
-	Mon, 20 Oct 2025 11:58:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 576C7606D5;
-	Mon, 20 Oct 2025 11:58:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4070102F2303;
-	Mon, 20 Oct 2025 13:58:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760961535; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+oTJtOzmO5MoG1vTfvH4VMt8dt9j6XcomPhTobdBBrw=;
-	b=Cf7dvSYhSPPGCQtaDH/kArAbpv6iVQrLAZpoS/I53TZdgik8dxFC4VE12dOqsqAp9WA8Ed
-	ITdeZ1QBV1wIISggBWfePNz0F+lK3bdQe7qBLWyBKO092dWw1mazGwNt74ia1QbBzaMfQp
-	Ue5ST2TYfrWWYFDFBEnxxyG94XtIUzD0VPiuCZlbkvWnrl6iigMiF0FQvUiH4l5A9/09yg
-	IWyFpxZzCzK4WYuP9Gx/lK7vk5lRs/P3ikfJf0bnXBMagwhgIXNXL7lPxS60Fymuw/YjQM
-	MxvLco4azF+aL3bbdbkHhMquMaCVQjUWubMB55FhA3vafQS3pV+XsTc1/NGIdA==
+	s=arc-20240116; t=1760961538; c=relaxed/simple;
+	bh=prBsS/3TdnqRdZW7jgJaElFuOWg9kNn6hLTHuRKrO4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QA9Xwfoh3410U5S1rDFEMvLs42kY6LNtSshckqLVFmrW1JzKJE3wfRGSAjTT3n82ROZ4eAU2j8gg087XXOGFAi0g4a1kbdnXpTi38cnJ/PT3K7jIh9Gq6dm5sXoWgpKkf7h0td4kg0VMJQPK7jCcdc2BcAsD6VjBYkzPGOCJVIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MmkU7qmw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760961536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3DGWABDIIB0dwmhK6Y7TeY6zhcql3nAwcUWHRom4zEg=;
+	b=MmkU7qmwmztaS+EXaTxdSUt4G+mHq/mXvspn6c4EM1XpvyKqtJqiIbKPcfTMiuc4f2LFA2
+	7uL7HK/17p394llxTba0UOAzrUZ/CeRjqbtE2+BqSyWPnLpY+NtPlrScn7o7zttbIhdy1E
+	22ZnwW3gw54M9+3WnizVhzVlcEUxwHI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-1-p_KbAeS7MVSZBJY6JiOS9Q-1; Mon, 20 Oct 2025 07:58:54 -0400
+X-MC-Unique: p_KbAeS7MVSZBJY6JiOS9Q-1
+X-Mimecast-MFC-AGG-ID: p_KbAeS7MVSZBJY6JiOS9Q_1760961534
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471005f28d2so16412085e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:58:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760961533; x=1761566333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3DGWABDIIB0dwmhK6Y7TeY6zhcql3nAwcUWHRom4zEg=;
+        b=ZHtXcDAtyaYJ5BLnGqk1h8+q+eep7eoo0COw64GTFZeivuq7zNLmUth62AuypOUR7e
+         xeE7T4KL4PYO8Loto/ruZt5GiO5mZWRk72+05AYl1nrmpHJ+Umsae8CKmBqb5t2bv1ZJ
+         pWXgW0Z8K4JjRWJlVhlc/6SbY1vKxXW0gabT4AiK76A+lJJZkABUrsXbarqnjUvnhcaV
+         LKl3mPZZrAr9Iq5ss9nStV64L2xUBg0vC4RNeuLAXzwgonDRrNPOxcaGtBsxiwp+vEfp
+         Dtl+y9M6CeSObFE5LeDoB2o4EZS7KiG9g9ll1SECWJrZoc1I+IDdvCgg6sHgSLFyNrOm
+         v8wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4/mPdL0lW3O8bjFrZR99JG3VwcOHfBCOSgGagL+PSVZFX4Ua3gTdNj4xKUrtV2rb6mSKKfiktNlVB8nA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy9XezVY4IDZ5JOeKFuFDiSwhvgKps9RV8X4VdjXZwb2YCOq7v
+	Hjtp27kgbrYyu/kwlSmlx4EW5lqr5SJnDC8cwfZlb1mUjMbPJMjd9ViY520F2dlsjQB6LjLiCSE
+	lgbfkeFAoBXh6agY3+2XQgLgRsQKS0empufJE2Cr6/L88tN5yQB+fs+doKfz1hcl9tQ==
+X-Gm-Gg: ASbGncscSePMz/w8UxNC/z9TVwt/P1Y2yDMzvU6gIv1+g73GfwWidEq3ZMhTPHy+Nez
+	uyMJvMrzEwiQ3oMMZkE2ySJFi6ZAe2nqllr0v9oxTcpV+oFG/tM4qT5FvCiEbQtx7aITZ05loSn
+	BsIrH6x0XXmWsRZ19/yBph7cVKEprf6EjWKk+SAlsNe7zlVdB+kNGsCvB/u0H7Ad/39DHPgSzSg
+	yZlCGk1cDPww+VIkopvixXmpo17AvREXI8gQxa/8PPS//IBiTceilcKYITtiwJxYKDRRBLCfQLe
+	YMZ99E48CjkJB2hFaE66P2OR2ZnmdJYvZbdsfFeXMxpDeNT1dnEZegParAMq0tIS+0fs6PB6cGP
+	pTnWtAeIHyX+gvTdHXDBHeFu/OQUHFpI=
+X-Received: by 2002:a05:600c:828a:b0:46e:39e1:fc3c with SMTP id 5b1f17b1804b1-4711787617amr91944585e9.5.1760961533608;
+        Mon, 20 Oct 2025 04:58:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3bJRkDnTNsDoLX27C6wNA7H7qPmCVso88dp9ehs0+zp2XESQa1XmzDa+Csu2dj2eVZorh8A==
+X-Received: by 2002:a05:600c:828a:b0:46e:39e1:fc3c with SMTP id 5b1f17b1804b1-4711787617amr91944415e9.5.1760961533236;
+        Mon, 20 Oct 2025 04:58:53 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c900asm229469775e9.16.2025.10.20.04.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 04:58:52 -0700 (PDT)
+Date: Mon, 20 Oct 2025 13:58:50 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luigi De Matteis <ldematteis123@gmail.com>
+Subject: Re: [PATCH 06/14] sched_ext: Add a DL server for sched_ext tasks
+Message-ID: <aPYj-iOdvgUYQFpn@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-7-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Oct 2025 13:58:49 +0200
-Message-Id: <DDN4RIQJDP38.DTL27ATUDSYA@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH net-next 07/15] net: macb: simplify
- macb_adj_dma_desc_idx()
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
- <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
- <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, =?utf-8?q?Beno=C3=AEt_Monin?=
- <benoit.monin@bootlin.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>
-To: "Andrew Lunn" <andrew@lunn.ch>, =?utf-8?q?Th=C3=A9o_Lebrun?=
- <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251014-macb-cleanup-v1-0-31cd266e22cd@bootlin.com>
- <20251014-macb-cleanup-v1-7-31cd266e22cd@bootlin.com>
- <3a36ff13-893d-429f-b46e-ade24836d27a@lunn.ch>
-In-Reply-To: <3a36ff13-893d-429f-b46e-ade24836d27a@lunn.ch>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017093214.70029-7-arighi@nvidia.com>
 
-Hello Andrew,
+Hi!
 
-On Fri Oct 17, 2025 at 8:00 PM CEST, Andrew Lunn wrote:
-> On Tue, Oct 14, 2025 at 05:25:08PM +0200, Th=C3=A9o Lebrun wrote:
->> The function body uses a switch statement on bp->hw_dma_cap and handles
->> its four possible values: 0, is_64b, is_ptp, is_64b && is_ptp.
->>=20
->> Instead, refactor by noticing that the return value is:
->>    desc_size * MULT
->> with MULT =3D 3 if is_64b && is_ptp,
->>             2 if is_64b || is_ptp,
->>             1 otherwise.
->>=20
->> MULT can be expressed as:
->>    1 + is_64b + is_ptp
->>=20
->> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
->> ---
->>  drivers/net/ethernet/cadence/macb_main.c | 18 ++++++------------
->>  1 file changed, 6 insertions(+), 12 deletions(-)
->>=20
->> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethe=
-rnet/cadence/macb_main.c
->> index 7f74e280a3351ee7f961ff5ecd9550470b2e68eb..44a411662786ca4f309d6f93=
-89b0d36819fc40ad 100644
->> --- a/drivers/net/ethernet/cadence/macb_main.c
->> +++ b/drivers/net/ethernet/cadence/macb_main.c
->> @@ -136,19 +136,13 @@ static unsigned int macb_dma_desc_get_size(struct =
-macb *bp)
->>  static unsigned int macb_adj_dma_desc_idx(struct macb *bp, unsigned int=
- desc_idx)
->>  {
->>  #ifdef MACB_EXT_DESC
->> -	switch (bp->hw_dma_cap) {
->> -	case HW_DMA_CAP_64B:
->> -	case HW_DMA_CAP_PTP:
->> -		desc_idx <<=3D 1;
->> -		break;
->> -	case HW_DMA_CAP_64B_PTP:
->
-> I _think_ this makes HW_DMA_CAP_64B_PTP unused and it can be removed?
+On 17/10/25 11:25, Andrea Righi wrote:
+> From: Joel Fernandes <joelagnelf@nvidia.com>
+> 
+> sched_ext currently suffers starvation due to RT. The same workload when
+> converted to EXT can get zero runtime if RT is 100% running, causing EXT
+> processes to stall. Fix it by adding a DL server for EXT.
+> 
+> A kselftest is also provided later to verify:
+> 
+> ./runner -t rt_stall
+> ===== START =====
+> TEST: rt_stall
+> DESCRIPTION: Verify that RT tasks cannot stall SCHED_EXT tasks
+> OUTPUT:
+> TAP version 13
+> 1..1
+> ok 1 PASS: CFS task got more than 4.00% of runtime
+> 
+> [ arighi: drop ->balance() now that pick_task() has an rf argument ]
+> 
+> Cc: Luigi De Matteis <ldematteis123@gmail.com>
+> Co-developed-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> ---
+>  kernel/sched/core.c     |  3 +++
+>  kernel/sched/deadline.c |  2 +-
+>  kernel/sched/ext.c      | 51 +++++++++++++++++++++++++++++++++++++++--
+>  kernel/sched/sched.h    |  2 ++
+>  4 files changed, 55 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 096e8d03d85e7..31a9c9381c63f 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8679,6 +8679,9 @@ void __init sched_init(void)
+>  		hrtick_rq_init(rq);
+>  		atomic_set(&rq->nr_iowait, 0);
+>  		fair_server_init(rq);
+> +#ifdef CONFIG_SCHED_CLASS_EXT
+> +		ext_server_init(rq);
+> +#endif
+>  
+>  #ifdef CONFIG_SCHED_CORE
+>  		rq->core = rq;
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 0680e0186577a..3c1fd2190949e 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1504,7 +1504,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
+>  	 * The fair server (sole dl_server) does not account for real-time
 
-It does indeed. That constant gets removed in the following patch
-([08/15], "net: macb: move bp->hw_dma_cap flags to bp->caps").
-It  appeared to make more sense to remove all HW_DMA_CAP_* at once.
-You probably noticed as you continued your review.
+Fair server is not alone anymore. :))
 
-Thanks for the review! I guess you have spotted that the series got
-applied to netdev/net-next by Jakub [0].
+Please update the comment as well.
 
-[0]: https://lore.kernel.org/lkml/176066582948.1978978.752807229943547484.g=
-it-patchwork-notify@kernel.org/
+>  	 * workload because it is running fair work.
+>  	 */
+> -	if (dl_se == &rq->fair_server)
+> +	if (dl_se->dl_server)
+>  		return;
+>  
+>  #ifdef CONFIG_RT_GROUP_SCHED
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+...
+
+> @@ -1487,6 +1499,11 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
+>  	sub_nr_running(rq, 1);
+>  
+>  	dispatch_dequeue(rq, p);
+> +
+> +	/* Stop the server if this was the last task */
+> +	if (rq->scx.nr_running == 0)
+> +		dl_server_stop(&rq->ext_server);
+> +
+
+Do we want to use the delayed stop behavior for scx-server as we have
+for fair-server? Wonder if it's a matter of removing this explicit stop
+and wait for a full period to elapse as we do for fair. It should reduce
+timer reprogramming overhead for scx as well.
+
+Thanks,
+Juri
 
 
