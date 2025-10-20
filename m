@@ -1,176 +1,161 @@
-Return-Path: <linux-kernel+bounces-861517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB5EBF2EDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:28:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F5BBF2EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9A6422C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:28:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D5174F4D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FE133291F;
-	Mon, 20 Oct 2025 18:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B20433291F;
+	Mon, 20 Oct 2025 18:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NK7EioqS"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="FCfovOsZ"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E5E3321B3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760984894; cv=none; b=nZ826zqQ7bn41k1EikgYC6D4KiZbqgcf7426H3MbIC1BFGT7sxTOtxY1XPz3jTGx0Vh4Q5UbdLfW/YVOqjjI2re5fVhdJejukVYla/exANfFscnm21eRIKHVkh1zhFvEjxcx9PcWklLtSi3gtWupt6rAnTJLPCHu5pazZQcBX74=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760984894; c=relaxed/simple;
-	bh=SsEF18SdcbxARL97VlTND2ETEKSS7WjiPQkcE6caLPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LXH8SqCbsFeEWRespbPW3PenYZdL1JoK/JdmVFXD4YQRrk5VZ1E5p4KDTl2HjUALOLTFhxWHHK5ItaSijE6xZSkRZDSkUShfItefcedvNl/QudVNsuDFzyiQT5rt6IY62wgNeJCXw3ZVghYslaXi93g8HArYut0EKNd2lSMhlR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NK7EioqS; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7a1603a098eso2868307b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760984892; x=1761589692; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=O11l6c/6WNY6EuzWxhhuUfeETXk68wKUAKWksFL62x4=;
-        b=NK7EioqSHL5MVHe/GnBv+lruc4ZfcyBty0Njrn0FSvK7dZXT4ai79NeIyY/73JjiD7
-         cIo8HrO5DAyolUtsQSqDxWm3BmaZ6LkZt3cZ6szFXgFRihs0+DHu2vVF55U6Rpvx9AVP
-         2b0MKYao1T5FF0hkX0Nek7QLdibF3XrVUVxKFuiHXzU/Kh7oULulBaGceNMZn7bdmT6z
-         Q7RBXcJo2yriBWjQxlylG63ltM6okNq4NHgztG0R5HhDZ14JbqMD2u1lQcI9ZkDBEXXF
-         UMh9N4F+XcN0HdPqB4DRRC78sorQRYqsa0DpPWjuhLsAOqgL5TdTGUxidOTHl9yihvKi
-         bZGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760984892; x=1761589692;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O11l6c/6WNY6EuzWxhhuUfeETXk68wKUAKWksFL62x4=;
-        b=FAGU81WfgPIm5C8kwb+/s3wcDNw85yYUUKa/ESuPsM14f8X2HJRPy+rF1L5F6hb+UW
-         g2tfD1H0bM8sMdgaoar3N7pDyum1Kw1Ay5qasCTD6yCBCxpf//DPz3r/i74vCAwoF0cz
-         ynD8egZXHMCQv1KrrY+EoAmY9yCA24XRSl3mubFDU9IgpX9mP48r7uNYT0pbmbtZogx9
-         puwIOp5eoDo0iM+lKPcUHe2bSVjbiaHI7vBamd5Aih5ai5jfwG+EBD475BGp+Y8E+6J6
-         TlGRlZLUna6cwDdV+9q8fac20xXLSiqHNvEfNBE0SbDM+NjQTwXbfTbGdVXZna/C6RDA
-         iS4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUgvxlz2sGe0V/0gEHzxJNaHKXHYABiUOXkEOEDgCsmDfC/pDtp7IrDgwf6dKPcXAvo6pQr4bCD+i/bgQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNnDgVcbaefJOvBfs+wZ94y7r1uJBarLOHsnxao2CyVssLniSm
-	UTbr4A5j3e4GdK172svLdgxk2vSGFponlq60z8ykSaCMRnvcH89luJdZ
-X-Gm-Gg: ASbGnctWIVbKxEMu/y+xMjM6rIx5VnqoAYqkf2LI8z9pWKAgAoYb8fD9/I0+Na3LzRr
-	B+u5bj0hTkvr9cA34HSv7UF13dRfwtu30wEVGigPsmp2wDrUD1jk5iRVnVFF5QQQy9VrszIebyg
-	WjPsEtHKJ2HfyzqlZeWLPvAdMxIlTbJ1rj6kMyTaLwYMC7V8Y5HxoZBhyCgho6eUNNmIWiyR/BS
-	s0W+hhAlKtC1m2diQkouIOh/ZH+8DC/fgG4Jy88S7vWpKm9T6A03gqYbDwktcWlWCQa1plZtmzj
-	OYKMq5U0BpoSInPZVdkUJ40mkFez9KOtT+4PqqgnOCqgOoJh9yP9L/k+MTzsiTrVJhlkyzzLmU9
-	q1UOl8MwCb84XodYgRvUS8tGIru260fa6wQAOwnZFZEpVC+9XIM62Ub8DyBwxJKKV7GR7634cmW
-	rBcjIZ7NVyETHwbI4ZlbfiB+GtkJX/p2X/VUroCVVDFLS0VQ2A
-X-Google-Smtp-Source: AGHT+IGxOtMDTcCkSSe1r7ijbi+tu9WmGE3vb/BccPHTGQ1lE+8Q4yHdexM+nwMk8emt8GMaB+ehRA==
-X-Received: by 2002:a05:6a20:7351:b0:334:a022:d7ab with SMTP id adf61e73a8af0-334a8629434mr18752755637.43.1760984892032;
-        Mon, 20 Oct 2025 11:28:12 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76676a2esm8200311a12.15.2025.10.20.11.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 11:28:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <49228a45-7e53-40e3-a5bb-49a4dd1823e8@roeck-us.net>
-Date: Mon, 20 Oct 2025 11:28:10 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562C627B345;
+	Mon, 20 Oct 2025 18:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760984946; cv=pass; b=lmdD1tjB7Fbvw1t2QFgQDpoef2rTzYGbNn0toyHPlRjAriCIj5agsFSIvDijunpydaK54Perzqwpi157xk4GzSPJDb/7CG7mhjSlourgrCz35l45XqbKMTdekU7FevM2GdXsI5TKCvTDAYU8USs0bUSAyeWq6+OP44zKE2oi/Rk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760984946; c=relaxed/simple;
+	bh=C4Q5V6tBRB3IMyf1AeACx4S8uv7NjMA3quCujeqqqZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n44dg2oIiyvWcVAMgB+7qrv+OlkMVzh2AtpuGF741OkXPMNpv7l3IuMkbrbQ5DESUw9hVAcJJuiIenPDDpl2aZKBRQ66bszRjDbdKMKcgtAXAhz/ADSn6fa/tTMe6XQPtfAG2AAkH1dEDaWiuany5KfAxR7dhB5AWieGwCbaHeE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=FCfovOsZ; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4cr3pp30Nnz49Pv9;
+	Mon, 20 Oct 2025 21:28:50 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1760984930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p0qqzZHHz/0r7H8SMWr8rylCvjrXud3IqxroUD42/J0=;
+	b=FCfovOsZq4B1TX5f6aM5jtfBh9Iyxy12lDbaY9dFc0gkTl5dtXw8ji5+RgyHRZrxzSsLwG
+	aJ1Fo0OqVpgcmTwyrZCB1ixGNhxrCvUv7PLV4N5ASOEGNaI0jKrQCUkd+JratuEOWgV1ef
+	CsO+nFkUIHKi4emyolGEJ2+wdHngufzBEIczqwqBwcD0+/fPvNdwcZO0/akocQwvqRyEL6
+	ZZmwqfMCu7SIj0hYa91wpBSglbNd/4SbNbtYKOggvmnBytXyKajnY/++dgzlZ0n7rIyrQd
+	F37DJGaeXDPb/Hj+I/37hKI+wf4HC9/2KwJ6AacBbx3l526eNo6XpuHfqkCM2Q==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1760984930; a=rsa-sha256;
+	cv=none;
+	b=l498ZiT4N5HGKaNBBURODcs07DNMh2BIfQK4Mb6lcmBITJRZE620+yAi+ZGl+dxV6ZkaoA
+	bibweS6mtaXMqMz3BBEuvo19VBDjefg+2KUKgblWKGq4FixGhz9u2HiDFkruZlOvMkFniP
+	GbED5y8jf8pFeLGAeLnM4fnRQhg9KxLWv9QPYa4QSCKa750+aJwojy0zsZKl4zRUZpnVu0
+	js7ovhhXxW+CRJCaXkUBmhy6QgNWhhp2h4a1iVGZbgKo+rKHrfj4yyeu3+P7W7IfBUGDTl
+	LJBj1vj0JMtFcn+Qxyr2bjOwYlaLnUZ0U0N4KGYZcxCD/RDMhE0SIKPfBZZWmw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1760984930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p0qqzZHHz/0r7H8SMWr8rylCvjrXud3IqxroUD42/J0=;
+	b=EE9Syeoxhls1mtOm6JGqTLhcjAdgymKXsXCY623S/rb80ExBijc2l/I4mchGpqlS+0C5Q9
+	cbFZJQubQWDC2DervNV7XFwm2dzoGNfrwA2w40RZQ5qt18SFOyCqWNsp6HZ2UqdmfjWKEJ
+	JLlsUaZDyXneodvi3Whf/70JZG0deGPg/GsDMSDY4+zw6h3M48Bfi5bi5p4C27LRBtPQ39
+	P6X565p+2dBVCf8d2x+QMQmu0UtdLuezKNhtZS8+y/dkfRBDN3mpyK37t0FpLKuQOqLrVE
+	0dmKBLGeckMqdyaPLpjv6UaWHhPqCLmCm0iaWwAhht/roFJcjKdew/4mQCMqUQ==
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id CBFAD634C50;
+	Mon, 20 Oct 2025 21:28:49 +0300 (EEST)
+Date: Mon, 20 Oct 2025 21:28:49 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Ricardo Ribalda <ribalda@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: i2c: imx214: Exit early on control init errors
+Message-ID: <aPZ_YRwpDNPFjePX@valkosipuli.retiisi.eu>
+References: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: watchdog: Allow node names named 'pmic'
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Timothy Pearson <tpearson@raptorengineering.com>
-References: <20251020-dt-bindings-watchdog-timeout-v1-0-d0f3235eb327@linaro.org>
- <20251020-dt-bindings-watchdog-timeout-v1-2-d0f3235eb327@linaro.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20251020-dt-bindings-watchdog-timeout-v1-2-d0f3235eb327@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
 
-On 10/20/25 09:52, Krzysztof Kozlowski wrote:
-> Watchdog is often part of more complex devices like Power Management ICs
-> (PMIC), e.g. on rohm,bd96801, and the schema can be referenced by a
-> binding describing parent (main) node.  Allow another typical name for
-> such PMIC devices: pmic.
+Hi Ricardo,
+
+On Tue, Oct 14, 2025 at 11:00:17AM +0000, Ricardo Ribalda wrote:
+> Now we try to initialize all the controls and at the very end check
+> ctrl_hdlr->error to check if one of them has failed.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> This confuses smatch, who do not know how to track the state of
+> imx214->link_freq.
+> 
+> drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
+> 
+> Fix this by exiting early on control initialization errors.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
->   Documentation/devicetree/bindings/watchdog/watchdog.yaml | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Right now we are handling this with a quirk in media-ci, if Dan cannot
+> fix smatch in a kernel cycle we should merge this patch.
+> ---
+> Changes in v2:
+> - Fix typo in commit message commit
+> - Move error tag where it belongs (Thanks Hans!)
+> - Link to v1: https://lore.kernel.org/r/20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org
+> ---
+>  drivers/media/i2c/imx214.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/watchdog.yaml b/Documentation/devicetree/bindings/watchdog/watchdog.yaml
-> index be0327f587eb..77ac23516d6d 100644
-> --- a/Documentation/devicetree/bindings/watchdog/watchdog.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/watchdog.yaml
-> @@ -21,7 +21,7 @@ select:
->   
->   properties:
->     $nodename:
-> -    pattern: "^(timer|watchdog)(@.*|-([0-9]|[1-9][0-9]+))?$"
-> +    pattern: "^(pmic|timer|watchdog)(@.*|-([0-9]|[1-9][0-9]+))?$"
->   
->     timeout-sec:
->       maxItems: 1
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..c66f0e18726c3fc15df91c37888a797bcea82134 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>  						   V4L2_CID_LINK_FREQ,
+>  						   imx214->bus_cfg.nr_of_link_frequencies - 1,
+>  						   0, imx214->bus_cfg.link_frequencies);
+> -	if (imx214->link_freq)
+> -		imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +	if (!imx214->link_freq)
+> +		goto err_init_ctrl;
+> +
+> +	imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+
+You could do this cleaner by simply moving the assignment after the handler
+error check. Some drivers do that already.
+
+I wonder why this seems to be a problem for smatch in the imx214 driver as
+the pattern is widely used across the sensor drivers.
+
+>  
+>  	/*
+>  	 * WARNING!
+> @@ -1099,6 +1101,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>  
+>  	v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx214_ctrl_ops, &props);
+>  
+> +err_init_ctrl:
+>  	ret = ctrl_hdlr->error;
+>  	if (ret) {
+>  		v4l2_ctrl_handler_free(ctrl_hdlr);
 > 
 
+-- 
+Kind regards,
+
+Sakari Ailus
 
