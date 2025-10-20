@@ -1,195 +1,121 @@
-Return-Path: <linux-kernel+bounces-859980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119B1BEF13C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22078BEF12A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9F53E48F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0871189AFBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0B5262FFF;
-	Mon, 20 Oct 2025 02:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431C72580F3;
+	Mon, 20 Oct 2025 02:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="UeELagL1"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7ush6/4"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A601425334B;
-	Mon, 20 Oct 2025 02:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED25D23D7C6
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760926438; cv=none; b=VY5fwWekYmUyjnQW6RtcyGCrVnx4VeYv9wYEYMoAtYG+rMGr7LIGEmv2x0Mtg7lrmEziX/zBPfzeGatyfqCW8iJU0ckbukl5hFjzwOrNoPbjHgumCR+Q2byysKuQH46vzEfFRhupmfzRJa3FZhpOkVkcfniFGvDBwlSXtkfoCSs=
+	t=1760926485; cv=none; b=fozVvo5fuz7v4kyk/gTsU+HC65UYVx5DrT8S5U2y4HNyHQgZvwludqICjSymHMPNhR1X0SkrzqsRvhKnm6cstXUTnTxhdnzx/1RGyYxRYq5+BkB+iqXvPMkOoihXFEBSnJWk75xjzQd6vX5zWtiBso0m+u1F3VXJvHKfaeIEg2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760926438; c=relaxed/simple;
-	bh=Ha9MQzysPOX3yOhVlEYOWL+C8FnPK4ezGU3JCiwFods=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=deAc0GD8TCzpxHKp3f52qsvF4RZSyYH3OGbJHJslMJMv+gj0CpP6mHH3Hm53YGk2PQQyKIIG2AkCSDdpyq1G9Fx7n8ZEN7goxF+C9oKNyGLX4fQXTev5rRFqQkeGNg+JX49LPiGmHhuuFJKi/hy3MWmof8ndt9n+GPA7Cdt1A14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=UeELagL1; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1760926361;
-	bh=pzVyONwXb/8XHbx8LYvOWLQDfxHTrG02yDRUj8ZtCNM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=UeELagL1ILWThB9FPowkQSbPLJiFBzkMvR+1JsZULQvmcMhRWWc7TxHxbaA9jaCi8
-	 PYJKSFAszzFcuBQA/qFJN7tATY7netK/6K3FekVdBHh7jTUi+sKetLaGQiMN4LFKE1
-	 F+zNNdsu7lDPs1vFMujsdJnBUZrY0SCpc1aHMOyU=
-X-QQ-mid: zesmtpip4t1760926354t9455e896
-X-QQ-Originating-IP: 0E8AicbofZVPioFvNQJImVcnsnCyOThZafGWr0XuzRI=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 20 Oct 2025 10:12:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16094178770994634205
-From: tuhaowen <tuhaowen@uniontech.com>
-To: rafael@kernel.org
-Cc: dakr@kernel.org,
-	gregkh@linuxfoundation.org,
-	kernel-team@android.com,
-	lenb@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	pavel@kernel.org,
-	saravanak@google.com,
-	wusamuel@google.com
-Subject: Re: [PATCH v4] PM: Support aborting sleep during filesystem sync
-Date: Mon, 20 Oct 2025 10:12:28 +0800
-Message-Id: <20251020021228.2336745-1-tuhaowen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <CAJZ5v0h3wTGqTn-DqAKA6_bxF-=sQGauGJm_BUOxeQd87EQSYw@mail.gmail.com>
-References: <CAJZ5v0h3wTGqTn-DqAKA6_bxF-=sQGauGJm_BUOxeQd87EQSYw@mail.gmail.com>
+	s=arc-20240116; t=1760926485; c=relaxed/simple;
+	bh=8JfHOylAVVip2muOOt7ETieAPZo3QGzhMvbAFmkzR1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=foA8AE4qrhlH5pUQu8Zag6wp19mQ2KMid3vIy0oV2Rnza29xAcbrrcNOK9VdfiYPvJ6KDv/QNc6Pn2OvLQfpDyZCoEe7qbWZClfMnGkKzga5AMOkEz46j4wulD88SrcXqn0KEjhsguNdp0MI6V3kVY9XypJGCL+qljjaC4zT2yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7ush6/4; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-269640c2d4bso7009795ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760926483; x=1761531283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bVsG9Um499m4I5IEf6ueuZxgpEkoYUIuj1YcdEGnVKM=;
+        b=B7ush6/4VZrKLHd5nScH8fKvA1ckixpBGBGUC+7rzSyQcFsANpgsCzSfXiixA8KPXj
+         jXcv7DqIIJl04nWiwpUM5mw5E16DYTbaULepwzTvTLcSugerU7sJhNU9rZn9lxAATGqo
+         pINUKXEywI3/A5v93uhswwAxVCUJ3ykQL1EkGh//ur8rCYNwxuqcInvHd8x2v464dWKd
+         MM/zEBmgKiUx5DzJG3+2ESN2pJ4yx29yDj9xX1Wwzg5p1SSAhOGAdgYwIpl8uE79soiN
+         51wo3yYZQf4GYtrNga5Bq+jiNXUJbjONKPRwVJ0wclhz6gDgHR9O6vxa9dxdS+Q5kbOW
+         +E8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760926483; x=1761531283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bVsG9Um499m4I5IEf6ueuZxgpEkoYUIuj1YcdEGnVKM=;
+        b=LxYbwpESEKcq04n/g/FpEfQ1Epgg3s2Drz9QmSmiVnvB6Rmdw6q3gP222LUGvtq9Pv
+         e3G8iEAwK1PtlmYywppU3yGAtzd6AMed6WhtyrtWbhh/JSlR8VrPkF1eXjr3646/jvVE
+         j6JSHG2i0GB3HurbRlaEBwmK3IlJop4d4hKF0Odt2QUOq+JoolojQ9uMX3dE//EIVRsi
+         l6ZbIpHGCpAhvg7izsyMVso3zzfqSNvu+j7K2LfmHun5gnSTFzZ/gEiv6efFhzGasCBN
+         jXxq/7K5Ah2RfG48ZNtOA6uwvpqH+3yA8hXrJH1S3VrHV290TWa6iJpsynZpELpGch3i
+         3zhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxOXBruwjiih4bg1AemUhaFfQ+bSc5KN2V1n0utdLbnd2W1911cT4CPw88AvnG8bS14ybGRYWLA29ZNW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFuc6xyIqURgyVhDhh7qdk1g7JzDn1RDIKrTvykGjntywpbdvd
+	eirbBsSpZoBxjWWiWnhCQz4rLQlOMgsQNksYhsyuwNsbR49A2fjY1wxFnKh0Ejw8K04l2ZwCD65
+	NHpR7TEdDrS4QFOXiSGCY5ztQ5dNpChZXp6WI
+X-Gm-Gg: ASbGncs7h3Xw2ft6wfa8Es7y8XdxNekHoEvc0Ph4hYWDbFk0OlmztKrDcT6n7HzVELN
+	pqg/lIpAoz53O7GGKFN0kDEq9NUM1bmHuhaBSPcpanNC/4cdb+58SmeqpcYjklcaThVODfwFQsb
+	iLg34xqrB7OQbTPCZYlG19av4lwrJQIqCyJ5/GuIpWlLPrPfS8LtnxE1+6sRZhLyX+0MbB08X3u
+	9ow+Hs0E0ZgAswrTpk+yfPrlnzheZRoO1H1xlVMHyFefuzq4SS8uJSJhyoxoeWIzevkDXnNZyKG
+	7ugwkaZ8f06H1WYZDBkQE9xzFNNGFtxzqWhHSqF0XDTx1PNe4cS+SwunQTw5HonwOED3RRQwlkk
+	Z1/yDD6K0A5/gjQ==
+X-Google-Smtp-Source: AGHT+IFoTDHFumvg+2Yk2emYmQtucNR9NpaL+I7bbTkx8Mw5vZ+9U/yijmuyuLh6n8oOi9ctCSyePVKDkAY+eLSipNY=
+X-Received: by 2002:a17:903:1965:b0:292:64ec:8f4d with SMTP id
+ d9443c01a7336-29264ec9324mr31315655ad.8.1760926483145; Sun, 19 Oct 2025
+ 19:14:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: Mutteg8H72qDJ/2nTiJF1bGCAKl502sWOHI6Itwz4lX4Qhf4aXU6lueu
-	2eO7HbB3SYRMkpmEjkqJb4iERy96p0hReLyW6rejBv/ok0Y8EBZ/A5nW1Cb1+LwG9fbi0Rz
-	uygkCk2l1If9f/Zbwqu8//uHeN4lXb2mFbhcu8SYWG5ojYnhWMI/K+J4ADzvqdi4XuEBc/J
-	iI6gutZOu1uva4fKppqMQaqHgEdCQnJ++2YQXM/Hkfn4dTXhvT7jpA0X1XhpiecH/uoid5Q
-	IH1ShWpuB/VxF7V1XsKKTkoNNL0DBhXvCoQVyp3D/jF3mXPrbEU3iXXeV1KYUjM6SFh/YH4
-	yf7naDEU2RbuDj+qvP/qx9G9tbNzO129J+s0uNfsVSyRXAJKIWzGEl8OQj8yw+GwZ/madA9
-	22JQdBNqJRh7uZt+LHSNINSCsx5cGD58C5YopBL+4AK4tfxCueHJ7EcAZp08pjMcjVDneeD
-	RvRwqBuARJhNlAEoiNCqjIm+I/NfSgIJR26CkRnILmWM8Tq4aTEuyjdpeULHZoP8vVTXuo9
-	QUklmmqth3aLwZCzz7OjzUBFnmGuLFQov+OtsNEWBrat/lgEwOmrXhM66W1FV32XFMTVEg6
-	gneWJcwcRb+dn0HquSI9nAcKwuwrsdjyHgBHH1+GB2yp/L+gkqicAncsqcJaaeug0EOHHZu
-	qnfUc2qUX0QyE5P6EPebd3moEzXaXdLaNBW2k4ni3/Bq01W52wOA8TwTR0BamRHuOh8acNg
-	gywCamJxXjmwuiemPwsdpp1Ehcc9fqJ0v/OyGArrH9TyZ/hWet1bU7DNnS+So/yqtvn0Nox
-	VKEcGFpU3r4A27qnJV4Bxb8hHhUfAy1ve7wTwPqDPuCDte9mdp4eFo3Cr27xJgwexSUz9H4
-	jaIoHZ6+Aj5TsgjlEjub6hvmMa7Xl1WBZqwQ/5WRVBVTd+VGuG4PbHMrLSV5pCoCUeME6s/
-	fb87H1x3ODo83vbRN1yGPP65zZ6mFXM3zNOa9mioMUqgBOQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+References: <20251020123907.13e15922@canb.auug.org.au>
+In-Reply-To: <20251020123907.13e15922@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 20 Oct 2025 04:14:31 +0200
+X-Gm-Features: AS18NWA3ZmGHFmBFe3-4nb8TG3BuQ8EUt4EFZAl0oM-rY9K-dBB0ncgrANro-v0
+Message-ID: <CANiq72kHWgsvmxPYSAHpM5HaxCSf73t4NkPsBRXiPMTTe_u51w@mail.gmail.com>
+Subject: Re: linux-next: duplicate patch in the rust tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+On Mon, Oct 20, 2025 at 3:39=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> The following commit is also in the char-misc.curent tree as a different
+> commit (but the same patch):
+>
+>   abae8f3c8374 ("[TEMPORARY] rust_binder: clean `clippy::mem_replace_with=
+_default` warning")
+>
+> This is commit
+>
+>   7e69a24b6b35 ("rust_binder: clean `clippy::mem_replace_with_default` wa=
+rning")
+>
+> in the char-misc.current tree.
 
-Thank you for your attention to this matter. I'd like to clarify the 
-difference between our approach and the Google team's solution, as they 
-address fundamentally different use cases and environments.
+Yeah, I added it at the top to be able to have the `rust-next`
+Clippy-clean, but I don't plan to submit it.
 
-On Mon, Oct 13, 2025 at 8:02 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > No, it's different. We don't mind a long filesystem sync if we don't
-> > have a need to abort a suspend. If it takes 25 seconds to sync the
-> > filesystem but there's no need to abort it, that's totally fine. So,
-> > this patch is just about allowing abort to happen without waiting for
-> > file system sync to finish.
+Since you detect them, I will remove it to avoid confusion.
 
-Saravana is correct that our problems are different. Let me explain the 
-key distinction:
+Greg: it would be nice to get that one submitted to Linus during the
+-rcs, rather than the next merge window.
 
-**Google's approach (Mobile/Android focus)**:
-- Problem: Unnecessary wake-ups during sync operations waste battery
-- Solution: Abort sync only when wakeup events occur (user interaction)
-- Philosophy: Wait indefinitely for sync if no user action required
-- Use case: Mobile devices where users expect to press power button to wake
+Thanks!
 
-**Our approach (Desktop/PC focus)**:
-- Problem: Indefinite sync hangs leave users with unresponsive black screen
-- Solution: Proactive timeout to prevent system appearing frozen
-- Philosophy: Provide user feedback and system recovery within reasonable time
-- Use case: Desktop/laptop where users expect immediate system response
-
-> > The other patch's requirement is to always abort if suspend takes 25
-> > seconds (or whatever the timeout is). IIRC, in his case, it's because
-> > of a bad disk or say a USB disk getting unplugged. I'm not convinced a
-> > suspend timeout is the right thing to do, but I'm not going to nack
-> > it. But to implement his requirement, he can put a patch on top of
-> > ours where he sets a timer and then aborts suspends if it fires.
-
-The key difference is **when** we need to abort:
-- Google: Abort when user wants to wake up (reactive)
-- UnionTech: Abort when sync becomes pathologically slow (proactive)
-
-For desktop users, a 25-second black screen with no feedback creates the 
-impression of a system freeze, especially when caused by removed USB 
-devices or failing storage. Users cannot distinguish between "system is 
-syncing" and "system has crashed" without feedback.
-
-**Question about integration**:
-
-Since both approaches serve legitimate but different needs, could we 
-implement a unified solution that supports both mechanisms? For example:
-
-1. **Combined approach**: Implement both wakeup-based abort (Google's patch) 
-   and timeout-based abort (our patch) in the same framework
-
-2. **Configuration via sysfs**: Add a node to control the behavior:
-   - `/sys/power/sync_abort_mode`:
-     - "wakeup-only": Use Google's approach (abort only on wakeup events)
-     - "timeout": Use our approach (abort on timeout)
-     - "both": Use both mechanisms (abort on either condition)
-
-3. **Default behavior**: Could default to "wakeup-only" for mobile/embedded 
-   systems and "timeout" for desktop systems, or let distributions choose
-
-This would allow different systems to choose appropriate behavior based 
-on their needs.
-
-Would this unified approach be acceptable? We're happy to work on 
-implementation details with the Google team to ensure both use cases 
-are properly addressed.
-
-**Additional concern about integration timing**:
-
-I noticed that Samuel Wu previously mentioned in his response to you 
-(Sep 30, 2025) that our approaches could be "decoupled" and that I could 
-"build changes on top of theirs." However, after reviewing their v4 patch 
-implementation, I'm concerned that if their approach lands first, it may 
-make our timeout-based solution significantly more difficult to integrate.
-
-Their current implementation:
-- Uses workqueue + completion for sync operations
-- Introduces pm_sleep_fs_sync() as the main interface
-- Adds complex state management for back-to-back sleep attempts
-
-This architecture makes it challenging to integrate our timeout approach 
-and add mode switching functionality. If their patch lands first, adding 
-our timeout mechanism would require:
-- Modifying their workqueue-based sync mechanism to support timeout
-- Adding logic to coordinate between workqueue completion and timeout
-- Implementing mode switching between wakeup-abort and timeout-abort
-- Ensuring proper interaction between the two abort mechanisms
-
-The main challenge is: how do we add timeout functionality to their 
-workqueue + completion design? And how do we implement clean switching 
-between "abort on wakeup events" mode versus "abort on timeout" mode? 
-Their current design focuses solely on wakeup-based abort, so retrofitting 
-timeout support and mode selection would require significant changes to 
-their implementation.
-
-Would it be possible to consider both approaches simultaneously to ensure 
-a clean integration path? This might result in a better unified solution 
-than trying to retrofit timeout functionality into their workqueue-based 
-implementation.
-
-Best regards,
-Haowen Tu
+Cheers,
+Miguel
 
