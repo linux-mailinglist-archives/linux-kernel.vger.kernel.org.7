@@ -1,101 +1,157 @@
-Return-Path: <linux-kernel+bounces-861459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3B7BF2C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:44:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11A0BF2CAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8FB18A7A70
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:44:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EA3E4F9E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29413328EB;
-	Mon, 20 Oct 2025 17:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F523328EC;
+	Mon, 20 Oct 2025 17:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YZ8T1a4o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kO35s21X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376B526B755;
-	Mon, 20 Oct 2025 17:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAE13328F2;
+	Mon, 20 Oct 2025 17:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982260; cv=none; b=J0w+8SeeIpL/M3iESarTwuYvobn/G6bt5TyC42HeXqBkM4J2cohAH7zOX0q2qm/hjPQo3ouYhyR9DrTzLfC/gyHDqSNE+l4XFP3O17cyITskh0XdfslgXA0ANeQUfWbp0d37o1n8KTlF8yxot04ZDTMRwIneD8MA6M7+kx/OuZE=
+	t=1760982269; cv=none; b=cWOoRBmMxIu1zDZAYLUh0FR4w7rYIITNSz3IsViM8NV7TV3sdySEWjLTlRwmKAnweGWcQwDGmWq7YCTp5FLRW2DGW5QvPqaUDXaqQu8hLIqSdIW0J5Q0q0snLsKZIifAlAqUmyE71bg2i0kXxEeA2CYQdb7QBTONTOi0wrgzD+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982260; c=relaxed/simple;
-	bh=16sgzFk1cntQsUCQDvlwtn5r06wejinqXhOCoj9sMxQ=;
+	s=arc-20240116; t=1760982269; c=relaxed/simple;
+	bh=32dtGpNdyTdYO53P8P14PmChbZsJYUzhABFWKdzmSx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMQxs4+r2pOWQm5oBYA8uZQy1SrGQWtMHcZWWTs/lwylxObDKdfeYuP7kdUk2t+cKGFfa63Varmbh/Wepqnoih9UnO19vIOvo6tdNBbVbwBJwINCrm1WBIRITkrRaMkCVBkJB9aDbRwc3vp1CiiUVEkRWe9yQvVkWJubgEWSr0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=YZ8T1a4o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048D2C4CEFE;
-	Mon, 20 Oct 2025 17:44:18 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YZ8T1a4o"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1760982257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qxyQGLFJiDfo9EbmIoP7N27VSgBp0AMlllTAAYrklG4=;
-	b=YZ8T1a4oUMWrj+x0InaaoJC7QwohPIHM/oqgsXcNnhFikzBW5pdNCQ+OkZmI7PTDLwwB3j
-	2eerl5yZ7sP1Xvm1HlB3ah6lk0cewWUi0Fh8dNijlcf2aWfoWRwyh//gUG37MAY4kZ+FAj
-	QnEF1HeHczvHxDYGVKxHa0PA03T7mlw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f88f6c01 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 20 Oct 2025 17:44:16 +0000 (UTC)
-Date: Mon, 20 Oct 2025 19:44:13 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH 01/10] lib/crypto: blake2s: Adjust parameter order of
- blake2s()
-Message-ID: <aPZ0OU75EuC3tlxn@zx2c4.com>
-References: <20251018043106.375964-1-ebiggers@kernel.org>
- <20251018043106.375964-2-ebiggers@kernel.org>
- <aPT3dImhaI6Dpqs7@zx2c4.com>
- <20251019160729.GA1604@sol>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+dgwQy67AeCg00YUN3ldEP+Bcl7/TnfLO6ouS9u7vtttEbA+CddG98xDEXKu7f2IjpML8nOYYE0TJYUgK8pJB0RUxxOVe8f+HEIUX8YldXjKz7sO0ttTuP58p6qvsGeMtT42RYCmMYWXCZDFOyT+lupKMzIdANFpY0+W4Zkp2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kO35s21X; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760982268; x=1792518268;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=32dtGpNdyTdYO53P8P14PmChbZsJYUzhABFWKdzmSx8=;
+  b=kO35s21XLoYP/hK1xhuZgzLT+KINBWOevuRqd13LIb4QYLEfbqOUWNXM
+   fa7ciWsIWYVl2PGgQih2D/TMsRHjG5eFpfj5LbycRlWwu9XJdYj6qjqet
+   39AOyU0i7F3gNFrOYUREQhQZditJJSzOPBIHHfGJPD0ENVHKQ78pW11kq
+   3B0wKIPoXJsL3XSpbys4PAwmdTeRv41I8F1nfvYtW9rdwALbXCa20OaKz
+   HN9rd8FBz8Q8C9AQSTaw2pwSEsjzkgsh73GSlbFaUW3L2xUFOzHxfEdJk
+   BBquH/WJB1xwu9TdzHekdbB+GO7M5azK7vJlwf/DV2C5EIABNn5vAJExk
+   A==;
+X-CSE-ConnectionGUID: tsa/rKgzSfyhXWm54aLZcA==
+X-CSE-MsgGUID: E+zX9kvmTiuKohPM/Z3w7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73393954"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="73393954"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 10:44:27 -0700
+X-CSE-ConnectionGUID: 7A32v3lvRQKiBSJuiVID3w==
+X-CSE-MsgGUID: kT+dY9Y6QqaYWgRNUUk8/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="184156966"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.62])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 10:44:24 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vAtvh-00000001Leh-3wxZ;
+	Mon, 20 Oct 2025 20:44:21 +0300
+Date: Mon, 20 Oct 2025 20:44:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kai-Heng Feng <kaihengf@nvidia.com>, Rob Herring <robh@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/3] PCI: Do not coalesce host bridge resource structs in
+ place
+Message-ID: <aPZ09UZMfKhYSUZE@smile.fi.intel.com>
+References: <20251010144231.15773-1-ilpo.jarvinen@linux.intel.com>
+ <20251010144231.15773-3-ilpo.jarvinen@linux.intel.com>
+ <aO-vtdECWNpYpo6f@smile.fi.intel.com>
+ <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251019160729.GA1604@sol>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8401388b-2957-0853-d80b-4479e02c47f0@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Eric,
+On Mon, Oct 20, 2025 at 08:21:50PM +0300, Ilpo Järvinen wrote:
+> On Wed, 15 Oct 2025, Andy Shevchenko wrote:
+> > On Fri, Oct 10, 2025 at 05:42:30PM +0300, Ilpo Järvinen wrote:
 
-On Sun, Oct 19, 2025 at 09:07:29AM -0700, Eric Biggers wrote:
-> On Sun, Oct 19, 2025 at 04:36:36PM +0200, Jason A. Donenfeld wrote:
-> > On Fri, Oct 17, 2025 at 09:30:57PM -0700, Eric Biggers wrote:
-> > > Reorder the parameters of blake2s() from (out, in, key, outlen, inlen,
-> > > keylen) to (key, keylen, in, inlen, out, outlen).
+...
+
+> > > +/**
+> > > + * resource_mergeable - Test if resources are contiguous and can be merged
+> > > + * @r1: first resource
+> > > + * @r2: second resource
+> > > + *
+> > > + * Tests @r1 is followed by @r2 contiguously and share the metadata.
 > > 
-> > No objections to putting the size next to the argument. That makes
-> > sense. But the order really should be:
-> > 
-> >     out, outlen, in, inlen, key, keylen
-> > 
-> > in order to match normal APIs that output data. The output argument goes
-> > first. The input argument goes next. Auxiliary information goes after.
+> > This needs an additional explanation about name equivalence that's not only by
+> > pointers, but by a content.
 > 
-> In general, both conventions are common.  But in the other hashing
-> functions in the kernel, we've been using output last.  I'd like to
-> prioritize making it consistent with:
+> Okay. The point was to check names are the same, the pointer check was 
+> just an optimization as these resources are expected to carry the same 
+> name even on the pointer level.
+> 
+> > > + * Return: %true if resources are mergeable non-destructively.
+> > > + */
+> > > +static bool resource_mergeable(struct resource *r1, struct resource *r2)
+> > > +{
+> > > +	if ((r1->flags != r2->flags) ||
+> > > +	    (r1->desc != r2->desc) ||
+> > > +	    (r1->parent != r2->parent) ||
+> > > +	    (r1->end + 1 != r2->start))
+> > > +		return false;
+> > 
+> > > +	if (r1->name == r2->name)
+> > > +		return true;
+> > > +
+> > > +	if (r1->name && r2->name && !strcmp(r1->name, r2->name))
+> > > +		return true;
+> > > +
+> > > +	return false;
+> > 
+> > Hmm... Can we keep the logic more straight as in returning false cases as soon
+> > as possible?
+> > 
+> > I think of something like this:
+> > 
+> > 	if (r1->name && r2->name)
+> > 		return strcmp(r1->name, r2->name) == 0;
+> > 
+> > 	return r1->name == r2->name;
+> 
+> But the point the order above was to avoid strcmp() when the pointer 
+> itself is same which I think is quite common case. I don't think strcmp() 
+> itself checks whether the pointer is the same.
 
-Hm. I don't like that. But I guess if that's what
-every-single-other-hash-function-does, then blake2s should follow the
-convention, to avoid churn of adding something new? 
+On the second thought I think comparing by the content is quite a behavioural
+change here. Perhaps we may start without doing that first? Theoretically it
+might be the case when the content of names is different, but resources are
+the same. The case when name is the same (by content, but pointers) with the
+idea of having different resources sounds to me quite an awkward case. TL;
+DR: What are the cases that we have in practice now?
 
-I went looking at C crypto libraries to see what generally the trend is,
-and I saw that crypto_hash from nacl and libsodium and supercop do `out,
-in`, as does cryptlib, but beyond that, most libraries don't provide an
-all-in-one-interface but only have init/update/final. So however you see
-fit, I guess; I don't want to hold up progress.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Jason
+
 
