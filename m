@@ -1,264 +1,218 @@
-Return-Path: <linux-kernel+bounces-861610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1DCBF32E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:19:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC607BF32F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 189764FA6BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:19:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CF144FB7B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89FF2D8DD9;
-	Mon, 20 Oct 2025 19:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEDF2D640F;
+	Mon, 20 Oct 2025 19:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="krM1SMM8"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dFn2F8Bz"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012017.outbound.protection.outlook.com [52.101.66.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288622D1901
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987993; cv=none; b=A/1qGg4Ee6PVrvSTO4bbX4KuCDbS/6clyn/rPZZ/1VWB56qbS8r//uo2E72R5aMVh2d1zVUNtpW7pj5mlTDhmlQNIDUiHP1sOuI7oBVaXtR4DFAp9XRqe+GeuC2pJZ6Wvwanb0CKuD/vcRqawnig9uY+bX1dgqdycvANWVhsZyE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987993; c=relaxed/simple;
-	bh=vdPCScQSgAAL2WyPO0aJjHrLCVNYBrruwyni11S9av0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LPrcxhfHG6W3SIMsqOCreeJIKwgY2gUcv7m/kvOoXwZk2ifocbCfNzSPv3lD9T5I/LJU+rB9Y/x9nW2Z2+URSseXCIV2TiPJDM9AhK064ITsdON3cdH92HSBAc7qe2px6U6tssADRjbKci+HGJCGbjuGHyEu1zA9zPMEdzcW1Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=krM1SMM8; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46fcf9f63b6so25554405e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760987989; x=1761592789; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l+uFkVa2u5HB8Xqrap3smBvxLAVYpo23297fy2cjAVs=;
-        b=krM1SMM8pe1ZEayns2LLs6AnctA7zFXT0P3eNGe5CcXe+B5BmSO4vWwqx9slHy1bsZ
-         dmiFFiGyb+eDP84YJcNsx1bGKzx2pRUPFLsSEn0J51A93DZU1qWt+fGptmH2eBs0G9GF
-         mtv7DqAsmMvhRUN96mRTruLfempMvNHNnE39NE2rkoGBfk59L1ItzbkecMtCrQEFcLtQ
-         tqy7PRe/LvbrrVjEGbH00Sm99caIzWrKHejMsX2LWJLcx3tpfMmJg021lHGtVY8DyZbp
-         wekMGp/gEmbkIg39Oco3VzT5qzKyQpJmFiq/93qPREZ5Ib5Wbf3Y/44osIAS1PQhTO0X
-         pZdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760987989; x=1761592789;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l+uFkVa2u5HB8Xqrap3smBvxLAVYpo23297fy2cjAVs=;
-        b=gmNlOjUIjDvxn/oHqNeidVsnMJZGqSda6MG7uNVxmgONjgay3/HUf7APA28O3/BvB4
-         50UjGhEnyiMfmXo7S9x+0aZzUCSuul+REBf8hQWxmjDOGPn1Hd7faygpKDJ+/KktZoUU
-         +DDZdnA/ZCteJBSg3B55jmGDP3mdpqfQjrV8zMKQxKwLzwUXeXOYb0AQY60qDCLE5g6J
-         RZuLbv/vm6OTxO8cV4kuNPkaH37sv9hfVuGASILH8IR6o3MqMOqjtPY3gJ1z9aMfina9
-         AI57al4FI7Nk8hq4oDm/TnyPhwqZP953SKlTpWci8dZh10gecLMLVHsP9qBVQOq2tbce
-         nZdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAbNIV6HC3gNu3ExEt8mUIwT0qluxLeplUSCu5J/GRRz8ckrW9F3M+9Zb0h4FVKL9MGYhcbitM0UKYq4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTKDQ1f7vBkFGBeRWnE+BUC9h4XqHhQMNwdgfz06N3wT2TPQg6
-	sWZpVBQX7vysmPdaHSCLBmojFU4F8ZTSPET49NUbLYzvJyzDz9qfNyOpmVCI35sNZ4I=
-X-Gm-Gg: ASbGncvSUduOeLAyuT18TeTDN8KgjOSp1P0CJrsddjMpWNImXeg847zLpv4KbBE+L4Y
-	a7J4VWHitEHlCfUqkbboUXLwY0SP7dWyqKFeSgsJu6xMN3gaQ7hSy4xdWaRMjAlu6QOE/Ls6h6C
-	HgMPWxMYVrcTbs11iEZ5A36gLDl9LXYw/59+58JtXaKuWVaBQjq7RC5u0/CQV9dZ8IeDIF709g4
-	rZB5/PahZ7xEYBzpeQ/6JO6QgVYVQqnrueGxe+RAY3mgQCEbMTLqTJ4AV57mjZr++f7h/s42AIU
-	BIOw6JT7QxHOvRzLhC/v2wMqrXw+avQb/cVuSDUueTIiCRzb6yBmWARbSYwC1bqlJrKdw4hvsJL
-	Qz6PpPnCDrzJW5rlbI6SmVcy5gpG6m4IqoI7OBZjvqvoDonjsTGOBkzPSFuutpA1/+YgEghmxDB
-	39182Zcf+Z
-X-Google-Smtp-Source: AGHT+IGyDLbOrAVFyVlclFlduDeAPiKLL+XPFcf6nUCR2OVZ1JSE5xowDpETyC6TnlDfw1Og0gsFRg==
-X-Received: by 2002:a05:600c:4f89:b0:46e:3edc:2811 with SMTP id 5b1f17b1804b1-4711787750dmr94185105e9.14.1760987989393;
-        Mon, 20 Oct 2025 12:19:49 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c34sm258496125e9.10.2025.10.20.12.19.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:19:48 -0700 (PDT)
-Message-ID: <a007a272-03e3-40fd-871a-aa315f99697c@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:19:47 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A172D6E6E;
+	Mon, 20 Oct 2025 19:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760988053; cv=fail; b=M80ly6Z5uoSi/1n9Owh+A/UIrw/oXWOaxKpyxDHZ2Gdk12Vm0ERvBCLasLwus8PVw9usMbKKliDh2F6RPb9anXPZBhisH27nfj7aZRWCTioKN19JB9YxA3WKcYQzF/dD5/IFvsBrhcPnZklV/Iku4Vg+CLZSsRartP4POvYcqtA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760988053; c=relaxed/simple;
+	bh=iDFAICLWrlDwANZUbCLOsijgsNeqQ81O5JUr0NrRhto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=F96DjIXO6TKxhU16ESyLbvONaX0YU3pI8YFHNVbG4CxtqFOapkNofYSR2ew4wriHGyMPXwFDBhJHnVdYjJPXuK/XdTLt1Ele6MEFHb4AnT01g4+30aJCFkQRPtpUfP8JCfQbPn6R/NeI1XoASNt6fSiKQGYP9Ai4Od/CBPW+Klg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dFn2F8Bz; arc=fail smtp.client-ip=52.101.66.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xMXSezghyKVhfxGoa8InX5blEbNNg8c6hqywHOkuhD36d2o+qSFOdCSjBiEHCw1VPwVDuklRyOtZEt1/RiXquchHsrJi8AVCL3Xuq3//ZGyhPPHCdrVf9SLZEXAevFK7WVxItZfkc0GSoYSX3cXBIrlXvYBWoHhRO5MuBOYlzT6uy7iIb+BjvdjzUx6hEf8LlXBfcDq35g8D382lul4tHaJtV+zhAmF5/ptgbIvSDH0gg2eBoNisCn1JDfRlPOx3JsjoExfjHrkARFE0mnlCQZA8ehzy6l/h1zXq/HuO90yD57MS+EOcZY3jjmu08aiid/kvI/z8b7KMwLAmto02FQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fYItoSi2/YXr9422suegPDfhaulKBOnbKeNZ9rwHQlg=;
+ b=fTtIo10L4GJ2HvxupWF8GGoOlMTlE3KAwCOosdJhfykPyanTwvcAtEgAu13gJnWQDwqq8VIDtNPBpjdBTOGTB3+MU9dDgDI5dpCynuAVdGveOMQmstRqAzLQwaSr08Yw/cP1BfB3R1iaQaKlPBSv+uYbWAb+s5wAJeXR4BTQiDJfqNLLnvx4qf4X5lYA0/7bKJ3UUP5xdhKEdxQhrKJbbmSPlOmS16KuM94o6ECHFEzRnT+m6FUC4YccUF/rBJYIj7QZfa8SZeK8TnyPPcO8bFpX0ZkK23hz9ZPsNKtTQIN99c0mfbeQLbsbfORles2Enx8kFsKN9yf26nrG+9C+ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fYItoSi2/YXr9422suegPDfhaulKBOnbKeNZ9rwHQlg=;
+ b=dFn2F8BzOiWCvrlmHv54jnv52piBqunLELq2UelZa2c0NYN4BAJ+WF6bOfkreXVcclHUZVaKYwsd9OHmrRTbvIUUMjZUoXQvenbi+x5zgiOhHVoe5RG9TFk1qb+97tYeIbz0NCMUElo5LZYxNDEY/qugxmCO9HM8pHgRKUrOq88EtWG0fKCrshnAiaEC3gY1iWSIHrkq1umqqn2docg3HyfyXDheARxeOiLAJ61wqcxfkyGmnaTTVi7LvvUbVZi05PPsJYTnxMxFcAQjgakzkUIgSUeosg14Tz5aeBTmPV718aPk9S3zDZh6Dd+9wORwtsXytdknbAG3pWnLsvYPmA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by DU4PR04MB11927.eurprd04.prod.outlook.com (2603:10a6:10:628::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 19:20:49 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9228.014; Mon, 20 Oct 2025
+ 19:20:49 +0000
+Date: Mon, 20 Oct 2025 15:20:41 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Alex Elder <elder@riscstar.com>
+Cc: han.xu@nxp.com, broonie@kernel.org, dlan@gentoo.org,
+	guodong@riscstar.com, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] spi: fsl-qspi: allot 1KB per chip
+Message-ID: <aPaLibm+oVKSDbL9@lizhi-Precision-Tower-5810>
+References: <20251020165152.666221-1-elder@riscstar.com>
+ <20251020165152.666221-6-elder@riscstar.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020165152.666221-6-elder@riscstar.com>
+X-ClientProxiedBy: SJ0PR03CA0175.namprd03.prod.outlook.com
+ (2603:10b6:a03:338::30) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 26/31] clk: at91: at91sam9x5: switch to parent_hw and
- parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <015b98fa475f97ae8e952343ee9703c9c0d37d19.1758226719.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <015b98fa475f97ae8e952343ee9703c9c0d37d19.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|DU4PR04MB11927:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e9850d4-331d-4338-33fa-08de100dc6ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|52116014|1800799024|366016|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1rOESFcYzzUipDpRTEvwGq0Y9dZG4Pp2pYrhqbmGa9cCBRQv08otJ7jxiyU3?=
+ =?us-ascii?Q?7zTy2Cz1y6BLcaOtWqGPDzLx0Q/z9KZR4g6IZ+bZ3YiYgDWUitJWgKjQq8R6?=
+ =?us-ascii?Q?ztePdf3gisn8QUS2HyVhhHtNJfYTkY6b7qjr20Ls9bcSVZQ2DR80Gm80WxJk?=
+ =?us-ascii?Q?5S7p7PKB0ATftBqD3JdV7XRTG1KLz8xh8NYU83Ig8gb9IxHPTU4lfLkakUFk?=
+ =?us-ascii?Q?ui/0FP9tIvOFxJRR4BcESYrXDdEP775wmVrUcYxurdOzT7yckiaodQM48AyD?=
+ =?us-ascii?Q?t8/dW3qQCPnuSHkWfB+RV0aMlM1qSiCk7YAa3mex5EuXUuY8BZhcqvdbvg23?=
+ =?us-ascii?Q?tFtsziwyePOFWZUOzI0L7WHOKH8gEeQlj6SxhmnnFwvjR/enf/Cw+etORQ+D?=
+ =?us-ascii?Q?rTwiTvG88XPr8BO54MyOe6islaJOyWqbW83Y0Zu+peAvR2mho/w8ppFflLs1?=
+ =?us-ascii?Q?QS0RYpCTWKu6tV52WCLs07MD/uEsw/9jCgAIx4LwAaKinVSITcgm6a4cGrjY?=
+ =?us-ascii?Q?3dk2hsv37FtCazRxNbQCXBBTQDDychJIcRRSLo4cNoOyb5Z/qwJOOdcYuZfN?=
+ =?us-ascii?Q?eNpEcMSmRBVqz6qh+bZdlBc7jVxtTpPNPSLL66UAEBrZjxGsDy7JZRzG1TbA?=
+ =?us-ascii?Q?FRStXYejF7iVolhcuFSqbFms4RmF/iiGin8WwL7NaKX38xc7Y4HsfHKP9uk+?=
+ =?us-ascii?Q?Vjw1TEit2x5Svl3TDJugVazePrhMg6exTJwGK6vJs/UrSkUbX2R7lKQ/lnEa?=
+ =?us-ascii?Q?6AmHxMoqR1bstaWi8lsk/RbCB4Cn2t7b08NaovnOLdAOfQhGlqQj85fgKkwp?=
+ =?us-ascii?Q?OTpntSF47h61t5ekhXpG0ZuQrkVLmZt34WQhUoI0G0pWr/eUCTLRQrvcPoEy?=
+ =?us-ascii?Q?fApR8/n756uwzkb+OuGcq71oo4WIyH0QL5TN/lSNKz5Tzseygjxk67XVnKOX?=
+ =?us-ascii?Q?ybZKQ6Mk5DlkelS3Vb5nr4wZuw+/q+7bveZIMHwLe1UwHREeuTZJJnK27jRM?=
+ =?us-ascii?Q?aOwS5g74zltB2udIUr2QyYdi5vaaFU7P75EWHb0AKv8cfygAezYDez9oheDR?=
+ =?us-ascii?Q?17mrl50tOIHM7pKgyb4Bc2h59eI1Z+N6gHvTiYPhlRbFs2WEqCiT7+xb9riC?=
+ =?us-ascii?Q?RCZKHxNSv41pp/neajYgM1Qp6ft1GAhJBQHHeDLj7DlK5X7tDsDok08L3Rti?=
+ =?us-ascii?Q?gZFlfYsF51fb1abz26eenjWKa4WnvXuzULFyX2H+0Neos0XRonF7kp1qEhX3?=
+ =?us-ascii?Q?ioAY+EmSbkLsOiQFKc3yvBysVnxCmYkiUcX6REkOgHINhsBZFBcAoD+uYZ+q?=
+ =?us-ascii?Q?k1aZSZZgVxx1PZR2mSXmPYGwgDbV7CTNy3mI1ItMCksVJufJTkc27h8lV1fE?=
+ =?us-ascii?Q?z2SDwpFCsYdSKeyy/3KdXrl/IQMY0JS5U2/MsMdyh63MdOCzXzFy/AoLfZzv?=
+ =?us-ascii?Q?Lrs2uQTZGUMQCIVvcv+4vdIt2lY/+1cWjMB5us5grD/Tb91NImgpAbXpR7pP?=
+ =?us-ascii?Q?d149TP7MpaWVQRE9zLqD7tDr7A6fEfVUz/jL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(1800799024)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AjFXXBt3yPyZCSYBzQmjk2xu3kGMaD/FPzSObyBarwrP8hhIWk4Wh8CPu42P?=
+ =?us-ascii?Q?SkEMY6VvSv1sBabVHNkpJgIjGiPnzYQzumJ/+lKHEELGpjwsv/WVFE/2ygeG?=
+ =?us-ascii?Q?snjlG0NHXQxk0RmLtnt/VpqbZVsTHgVl6cFlJ2xyKkvYnU5k0MtLbgVcrmu5?=
+ =?us-ascii?Q?f6qKNYNEjWD534PBl2hMlrhH4nTT6f2Px1De6jhAfpvNbcIDoTSpQa4A+4rW?=
+ =?us-ascii?Q?er935ziV+8vAtwEgNZ4AFWutzxfDpZdPuU0RYmIcZOkHKU/Gt+2K6aLNkDWb?=
+ =?us-ascii?Q?s8yRX0i1akDMeVBIBmibGW/u5qzH3cJFVNcjRX2Q5obckp/DHCuPlrwtF4e5?=
+ =?us-ascii?Q?0KuGZTLPLUuLrg9uLvSJiZBk3U0GD6pbx82JigVL7KF9l+yH07vSDvnbPo96?=
+ =?us-ascii?Q?X7ufcW574/0+G5eGptMctZbrZyAubB4+M+XwGC7S3v+htx0d8NISOgaAAYTb?=
+ =?us-ascii?Q?GSSszYvLNEvIzucp84YrWhP11X2aZNnUBUUEhz1rHq2ZnQragE0LLSgtdAk3?=
+ =?us-ascii?Q?Fq6yWe0PWoyiLbQr+dhzgZStG8YWjvyKoC1E0aAKuoh8oss6U6o4awlY+pDj?=
+ =?us-ascii?Q?jAGYPSlsKslW/HVxGWTHsgWPeiNQTR4NMoZjGfYaSeadEPlgStLG+TrZrsyQ?=
+ =?us-ascii?Q?A/hELBPdilndIqSW/TFvQNdrtrwSCm9BVGAT7C8nhCBqE6jBeqtzTPdjBYQ9?=
+ =?us-ascii?Q?3TzailcvFwnG8YtfEY3Pio0z8TCHBCU8a5lehGfeKIZ9vlBMgtPv+2jA3p0o?=
+ =?us-ascii?Q?w+8AjCwyFNGebEWzcXTHZxO4jCq+isGypUoWUOO5cmNAUSMHTziqQYUEiRrP?=
+ =?us-ascii?Q?47wXFjxGZyhkQFKaEVYpz+51mZs24ks5Y3E+36BYzBqHyiGe01+TtxhvCp1d?=
+ =?us-ascii?Q?6r+2sJUrN36oNyq2GIio/SbdveEsRLj8FeBPGkE0zq3+TAImNOqQLWRWg/AB?=
+ =?us-ascii?Q?cT/e5gQPHu4ywAXQBE5dB3XOTajsyJ+SygU88d0r0MSUi/hjfVjp1I/QMiKd?=
+ =?us-ascii?Q?3MOREAZCGWdQb9dk1vVSwkFKrvcDC5ftiRLEGcf9Gv5VHUoKgCTu+Ncbh7RM?=
+ =?us-ascii?Q?EOTPt+ScPGgUXJM3TrUC9OoGnUOcn0QCDJrGQvvzx5O9AHFgh8Kb4MhknoiE?=
+ =?us-ascii?Q?lvwGgil7OCWeDeNEQnEh0m4XiDpNKlykt8l9lhtKuZZBFWQR6+pU2anJzm3c?=
+ =?us-ascii?Q?2NFiiccUz41+fX00pBMapd9soU/lGZ/pZcStHBMX8bIMuDBDQQ8KHBR2zV53?=
+ =?us-ascii?Q?UJxyuzaAOyLsU23gr0b8ezbVnobaHizXn42lwF7agNb572oE+M6KEDuRCI++?=
+ =?us-ascii?Q?SlcFtG6ZAapuiYMgJNKD5Bmj5rVlvy3ILx8m6nwTEjI+wQew8Ek1bQmS+BpG?=
+ =?us-ascii?Q?aRjTFal6KRcSQzMgpZ6VE9DAA5m7HizXaGazxXdDu3bEPZMNJyQyvk3XSlkN?=
+ =?us-ascii?Q?C3KaZIQeuok5slX1Kuh7+eFL1iV5nxIlG5a4lqkzmiGJWSNHo4op7WjyAxSO?=
+ =?us-ascii?Q?hKLM4fFS3zlpteXcAJWZ3Ltij5jx4ccALTzwq8lgGKr2FH+3SKibFh+DgtxO?=
+ =?us-ascii?Q?wGeUqOSVpUJ/emsYv7Q=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e9850d4-331d-4338-33fa-08de100dc6ac
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 19:20:49.1317
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TfHyosBnDXkYSTfLdHDzSKesdDxsqQUbbWOUAAOlAnVapSDXbt6AVyUr9+Tsj9Med1WeWmjanBz9BsGzVrh2BA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11927
 
-Hi, Ryan,
+On Mon, Oct 20, 2025 at 11:51:48AM -0500, Alex Elder wrote:
+> In fsl_qspi_default_setup(), four registers define the size
+> of blocks of data to written to each of four chips that
+> comprise SPI NOR flash storage.  They are currently defined
+> to be the same as the AHB buffer size (which is always 1KB).
+>
+> The SpacemiT QSPI has an AHB buffer size of 512 bytes, but
+> requires these four sizes to be multiples of 1024 bytes.
 
-On 9/19/25 00:16, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Switch AT91SAM9X5 clocks to use parent_hw and parent_data. Having
-> parent_hw instead of parent names improves to clock registration
-> speed and re-parenting.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+I think it'd better to add field at fsl_qspi_devtype_data, like
+sfa_size.
+
+sz = q->devtype_data->sfa_size ? q->devtype_data->sfa_size : q->devtype_data->ahb_buf_size.
+
+qspi_writel(q, addr_offset + 1 * sz, base + QUADSPI_SFA1AD);
+...
+
+Frank
+>
+> Rather than add a new quirk to support this scenario, just
+> define the four sizes to be 1KB rather than being dependent
+> on the AHB buffer size.
+>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
 > ---
->  drivers/clk/at91/at91sam9x5.c | 108 +++++++++++++++++++---------------
->  1 file changed, 61 insertions(+), 47 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-> index 13331e015dd7..46d5ea2e6417 100644
-> --- a/drivers/clk/at91/at91sam9x5.c
-> +++ b/drivers/clk/at91/at91sam9x5.c
-> @@ -38,9 +38,9 @@ static const struct clk_pll_characteristics plla_characteristics = {
->  	.out = plla_out,
->  };
->  
-> -static const struct {
-> +static struct {
->  	char *n;
-> -	char *p;
-> +	struct clk_hw *parent_hw;
->  	unsigned long flags;
->  	u8 id;
->  } at91sam9x5_systemck[] = {
-> @@ -48,12 +48,12 @@ static const struct {
->  	 * ddrck feeds DDR controller and is enabled by bootloader thus we need
->  	 * to keep it enabled in case there is no Linux consumer for it.
+>  drivers/spi/spi-fsl-qspi.c | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
+> index 703a7df394c00..9ecb756b33dba 100644
+> --- a/drivers/spi/spi-fsl-qspi.c
+> +++ b/drivers/spi/spi-fsl-qspi.c
+> @@ -795,17 +795,14 @@ static int fsl_qspi_default_setup(struct fsl_qspi *q)
+>  	 * In HW there can be a maximum of four chips on two buses with
+>  	 * two chip selects on each bus. We use four chip selects in SW
+>  	 * to differentiate between the four chips.
+> -	 * We use ahb_buf_size for each chip and set SFA1AD, SFA2AD, SFB1AD,
+> -	 * SFB2AD accordingly.
+> +	 *
+> +	 * We use 1K for each chip and set SFA1AD, SFA2AD, SFB1AD, SFB2AD
+> +	 * accordingly.
 >  	 */
-> -	{ .n = "ddrck", .p = "masterck_div", .id = 2, .flags = CLK_IS_CRITICAL },
-> -	{ .n = "smdck", .p = "smdclk",   .id = 4 },
-> -	{ .n = "uhpck", .p = "usbck",    .id = 6 },
-> -	{ .n = "udpck", .p = "usbck",    .id = 7 },
-> -	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-> -	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-> +	{ .n = "ddrck", .id = 2, .flags = CLK_IS_CRITICAL },
-> +	{ .n = "smdck", .id = 4 },
-> +	{ .n = "uhpck", .id = 6 },
-> +	{ .n = "udpck", .id = 7 },
-> +	{ .n = "pck0",  .id = 8 },
-> +	{ .n = "pck1",  .id = 9 },
->  };
->  
->  static const struct clk_pcr_layout at91sam9x5_pcr_layout = {
-> @@ -133,12 +133,13 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
->  					const struct pck *extra_pcks,
->  					bool has_lcdck)
->  {
-> +	struct clk_hw *main_rc_hw, *main_osc_hw, *hw;
->  	struct clk_range range = CLK_RANGE(0, 0);
->  	const char *slck_name, *mainxtal_name;
->  	struct pmc_data *at91sam9x5_pmc;
-> -	const char *parent_names[6];
-> +	struct clk_parent_data parent_data[6];
->  	struct regmap *regmap;
-> -	struct clk_hw *hw;
-> +	struct clk_hw *smdck_hw, *usbck_hw;
->  	int i;
->  	bool bypass;
->  
-> @@ -162,56 +163,58 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
->  	if (!at91sam9x5_pmc)
->  		return;
->  
-> -	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-> -					   50000000);
-> -	if (IS_ERR(hw))
-> +	main_rc_hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-> +						   50000000);
-> +	if (IS_ERR(main_rc_hw))
->  		goto err_free;
->  
->  	bypass = of_property_read_bool(np, "atmel,osc-bypass");
->  
-> -	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL,
-> -					bypass);
-> -	if (IS_ERR(hw))
-> +	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
-> +						 &AT91_CLK_PD_NAME(mainxtal_name), bypass);
-> +	if (IS_ERR(main_osc_hw))
->  		goto err_free;
->  
-> -	parent_names[0] = "main_rc_osc";
-> -	parent_names[1] = "main_osc";
-> -	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, NULL, 2);
-> +	parent_data[0] = AT91_CLK_PD_HW(main_rc_hw);
-> +	parent_data[1] = AT91_CLK_PD_HW(main_osc_hw);
-> +	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_data, 2);
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
->  	at91sam9x5_pmc->chws[PMC_MAIN] = hw;
->  
-> -	hw = at91_clk_register_pll(regmap, "pllack", "mainck", NULL, 0,
-> +	hw = at91_clk_register_pll(regmap, "pllack", NULL,
-> +				   &AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_MAIN]), 0,
->  				   &at91rm9200_pll_layout, &plla_characteristics);
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> -	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack", NULL);
-> +	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, &AT91_CLK_PD_HW(hw));
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
->  	at91sam9x5_pmc->chws[PMC_PLLACK] = hw;
->  
-> -	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
-> +	hw = at91_clk_register_utmi(regmap, NULL, "utmick", NULL,
-> +				    &AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_MAIN]));
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
->  	at91sam9x5_pmc->chws[PMC_UTMI] = hw;
->  
-> -	parent_names[0] = slck_name;
-> -	parent_names[1] = "mainck";
-> -	parent_names[2] = "plladivck";
-> -	parent_names[3] = "utmick";
-> +	parent_data[0] = AT91_CLK_PD_NAME(slck_name);
-> +	parent_data[1] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_MAIN]);
-> +	parent_data[2] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_PLLACK]);
-> +	parent_data[3] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_UTMI]);
->  	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
-> -					   parent_names, NULL,
-> +					   NULL, parent_data,
->  					   &at91sam9x5_master_layout,
->  					   &mck_characteristics, &mck_lock);
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> -	hw = at91_clk_register_master_div(regmap, "masterck_div",
-> -					  "masterck_pres", NULL,
-> +	hw = at91_clk_register_master_div(regmap, "masterck_div", NULL,
-> +					  &AT91_CLK_PD_HW(hw),
->  					  &at91sam9x5_master_layout,
->  					  &mck_characteristics, &mck_lock,
->  					  CLK_SET_RATE_GATE, 0);
-> @@ -220,28 +223,30 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
->  
->  	at91sam9x5_pmc->chws[PMC_MCK] = hw;
->  
-> -	parent_names[0] = "plladivck";
-> -	parent_names[1] = "utmick";
-> -	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, NULL, 2);
-> -	if (IS_ERR(hw))
-> +	parent_data[0] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_PLLACK]);
-> +	parent_data[1] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_UTMI]);
-> +	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_data, 2);
-> +	if (IS_ERR(usbck_hw))
->  		goto err_free;
->  
-> -	hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_names, NULL, 2);
-> -	if (IS_ERR(hw))
-> +	parent_data[0] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_PLLACK]);
-> +	parent_data[1] = AT91_CLK_PD_HW(at91sam9x5_pmc->chws[PMC_UTMI]);
-
-No need for these. parent_data[] is already filled from the USB clk
-registration.
+> -	qspi_writel(q, q->devtype_data->ahb_buf_size + addr_offset,
+> -		    base + QUADSPI_SFA1AD);
+> -	qspi_writel(q, q->devtype_data->ahb_buf_size * 2 + addr_offset,
+> -		    base + QUADSPI_SFA2AD);
+> -	qspi_writel(q, q->devtype_data->ahb_buf_size * 3 + addr_offset,
+> -		    base + QUADSPI_SFB1AD);
+> -	qspi_writel(q, q->devtype_data->ahb_buf_size * 4 + addr_offset,
+> -		    base + QUADSPI_SFB2AD);
+> +	qspi_writel(q, addr_offset + 1 * SZ_1K, base + QUADSPI_SFA1AD);
+> +	qspi_writel(q, addr_offset + 2 * SZ_1K, base + QUADSPI_SFA2AD);
+> +	qspi_writel(q, addr_offset + 3 * SZ_1K, base + QUADSPI_SFB1AD);
+> +	qspi_writel(q, addr_offset + 4 * SZ_1K, base + QUADSPI_SFB2AD);
+>
+>  	q->selected = -1;
+>
+> --
+> 2.48.1
+>
 
