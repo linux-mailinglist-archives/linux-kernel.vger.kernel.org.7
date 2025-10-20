@@ -1,216 +1,251 @@
-Return-Path: <linux-kernel+bounces-861069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F1EBF1B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98009BF1B5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47CD034CF3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:04:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1EE0634CF1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CB43203AA;
-	Mon, 20 Oct 2025 14:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB61320CCC;
+	Mon, 20 Oct 2025 14:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FkmpLDC2"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011014.outbound.protection.outlook.com [52.101.57.14])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="JogvuJnh"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848CF30214F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483A61684B0;
 	Mon, 20 Oct 2025 14:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969037; cv=fail; b=IJ40f9HTrInPjCQTXpjV7YUp0a3UYG7aNoFKZowlsoR4Hp7Udv9bUnXdxorRJjmoJYn3ORBHNgUp+iAi4Zr1JLDS4nGp/i3s+mH+PHz7KnBl7Olo5LLQpzJueELkL0LyCGpUqnr9IykKTPLMGznKmPV6zMcWRnjmSBT26xVgnIU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969037; c=relaxed/simple;
-	bh=8mSWDP+o2XnHDmm2L/pXKQckgAZOQvNj2BL33zoMW8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=klAPIxqeMR6b9eI/3kzgBr3eCJ7B30V1E+89MHf5XjtA59OtP+/SJYXdpFvYQf7TWSUx1G3MjTmiXmoChz865Fv6l3h3gGlgeuh+RjIYvdPKTGQssGkc5W0yyoSsasX58NWB4QPtwoe/YaZI+bdbqSr9rxOsBNkwyBpM+KLH9Jw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FkmpLDC2; arc=fail smtp.client-ip=52.101.57.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xthqNCzS7IA/3YNjj0DGhNU7kGDdOpD9hASYyNlNRK0Qd5c6PiZt1UI9muCgcXyog35JPq8t1twhhmvA+A3l6sSJzE++4VBRA62TaodhUC7G0A37rTCGFZgtKSc2YMY/muopCxVqPqAOaH5kQo7aL75l70vB/XxSIN3p24LCzdpgFZeggQlxDfIyB6t44FClHjVTSwNCtRwx2cGUKfh59T3uUnu1odbFPi7ToF73pAr802Gcg1Mid5oWDjL82LL4ipp3OWqAbGeBc76QcLOGHpaq1lqhXpWeiYc1knETfRudr2Z5fUe2BMf4jEKUCP4MiesCf2GaQNDhUxn0/mbcSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fzuc0BOtKKqrJGaAF0QWqQWtNt9pULMz8A9ag/4mCl0=;
- b=re0t6zIANr04xvnW7/Z0ByFOt4P6dtQEPyXuQEVxmukD7wrVV+9dFstgikDzDzjlYtxC2jWCCRHYz6xgQ0Muld59AczZ5pFcVP8wGpOm+NnFmpstmRMjhG0aq/WJdnk1Lqtk84A64wZHy1ojWK8aCDiQphgElkywgO2H49elHYX10TcD5CfMMATK2gL3pyKAxMcU+ZkkHyNOeTuOeAUD665PkyPWusDBejuMAQR0NOqTEc8qv16JI+IApMnptG9BwGNroXkD5BbPszXEyrUe63Y+a2E0CWPqOC12t5M8nA2UY8yB9+il583RpyKIpVmFTEBssL6t/mZaLDLzdlepWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fzuc0BOtKKqrJGaAF0QWqQWtNt9pULMz8A9ag/4mCl0=;
- b=FkmpLDC24T2JC0sY1pr6NMjvIO293s1mp3L4bEjlsjsV+30XfvMfHZd0jcyZYz/C08+x3IGk0dwiPTxBDvNpUbZ7GG9zwkcxYwz04nUWr+o8qUuTfWLj5lR0qzZaE0c0/M+e/akeJGmOwI0g6eUgmtVai0CQDr9ntBN689MmOjGGjaudZ4Cvgli+hmsqWjqetdV6lekAdQ8MrYAeoH9hUiIqbp49VSWrm56skpm/KIzcO9lVGxjauTRGc4UYyE7mMb328rOjcUWaPNalwItR/iBgtTymk1LpVUwurcautN9W8Nn4gCgkVi8pgYqwl422D8/uV45ReRQfYOisuGZHBg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by IA1PR12MB6187.namprd12.prod.outlook.com (2603:10b6:208:3e5::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Mon, 20 Oct
- 2025 14:03:49 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 14:03:49 +0000
-Date: Mon, 20 Oct 2025 16:03:41 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/14] sched/deadline: Return EBUSY if dl_bw_cpus is zero
-Message-ID: <aPZBPQpRHm977Fno@gpd4>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-5-arighi@nvidia.com>
- <aPYFv6YcxqWez8aK@jlelli-thinkpadt14gen4.remote.csb>
- <aPY7O7NNs2KyKpb-@gpd4>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPY7O7NNs2KyKpb-@gpd4>
-X-ClientProxiedBy: ZR0P278CA0073.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:22::6) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760969040; cv=none; b=F/4kL/yvil0oclp6UhjVlMM6Xo4vhainyqW89OSyBaLVzzNWk21J37Bvip2X1Yja3cPbq3AFrP6aMIGf5v+A5KMRbNoL7p01j1jIw1wmKDo1R/vr+WV6P/bW0R5Sb4wYDpywbdKpuBNg3bMPfw6xxkHhEiaz5vMZmAQ8Qb6yYa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760969040; c=relaxed/simple;
+	bh=btjEQO5WGFEITSL2Qu0TwJo19bxva8VXFu4dsNQmnr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kOg6Qctw5drBsEO8ueYBLe5xpAs5PNFhLqbmqHb0O+61eQpLQ+8hoKDUdI/f/AxDETXULIINbwofd4S5OapeIjb85iAgq5BSufbDWUHP/FhJpxlECVlbsGk7Jq0Hm0sbZFzAiNNwVPkDteSt/XAcRgaK3DDoPFPKv6RgNZ9v7IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=JogvuJnh; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 63DA1534109C;
+	Mon, 20 Oct 2025 16:03:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1760969027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wDhqgp76WpC+4iEmVhkxCNYgjRz0pZYukTW/oudD/PA=;
+	b=JogvuJnhkU7w8xxRuUmAQBjfEORbVkv37sZTFxQkyvzh2Hc6RTPWa/st4Des27rWcGGjpn
+	AU9w+fqEXCb9+tsr64v/s2jEC0OxoBYlDTWL/aiv1ZhtTct2pfrf6xs6FwPR3VUd9sE1hX
+	6A/nyE02wP4t7wlOlBaJbWl6JGPdWHg=
+Message-ID: <d3603461-c6ef-4385-9574-b708ae8ddcb4@ixit.cz>
+Date: Mon, 20 Oct 2025 16:03:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|IA1PR12MB6187:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4c5395a-ec88-4d89-4ab6-08de0fe17e27
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?W/ER0RdcXSQHAhCpybsQFv35drw8ZukNC2XGLwkUAwBGxeuvcPcUmvbZeVM6?=
- =?us-ascii?Q?Sq+yAnqK+MD7fDTOQuLqa2vqG9QzmhcrwhfochUV9klA5B2sad8GoYEQabe8?=
- =?us-ascii?Q?CTjczS4Me7Hi9HxmHNf6iMjvwhvgQn3eJOuUMGjwqB7rxO4/3yaioMTWkpbJ?=
- =?us-ascii?Q?hOBEmU2HbYsfqOkzhYKoTLU70yQqamU5y/giP7D9IVA2ltjSwOVeGdYHhl6q?=
- =?us-ascii?Q?FeQuUo8JdhkRSx1oKnCknp2gVmkoerbJRP72q9OkuYo904spL5o0hQikAwsZ?=
- =?us-ascii?Q?8PN4j40kKhyAyR2hSvsojgELuEgB6uzOGdxmNF0q+ESgoSsr6lTqu1OYSmzs?=
- =?us-ascii?Q?IAvt5ZJMcmM3cbEUa7c1+tUvxOe6ch4wkSZ7073ILKu7nEpSxidn0liQbwwz?=
- =?us-ascii?Q?jV86l6bnDPHXgn6YtTz2j3CrNQ5I3RzyfljPxnVvaohrJb5HrUXdWVqMWjie?=
- =?us-ascii?Q?1m1wkL6vzWk0F+ZB75uERAH81JPNWw7wJumR6blybiveywaFpADHGyxeA1/p?=
- =?us-ascii?Q?In49NRDaOgxFm4NnK6IU9uMx/4NJrE/EgvxNjbkgZu1Q2ndhVTJq3KuoGyIW?=
- =?us-ascii?Q?fwtG9cSj0ndhr6484SddZvXk8dwzmu/ie434fpfQj/o+3LyfFWOn4qNi+OZ2?=
- =?us-ascii?Q?BCFbEbNnXsLEtUqIklHotFQnzibL7K9y6RuXHZkeSSBfIbXUupE3cPBhseUg?=
- =?us-ascii?Q?Yuf4ZGRQ31Cs/2Vj6vBrXI/0oRp1PFeQyKl6QTNblR+SftaRhZoNsIBiYzje?=
- =?us-ascii?Q?LScfmaoDJLpiedwywxRH2VsE7bRljKiQT/nbutG1S5kJs8BSCLiUcK/9FrMw?=
- =?us-ascii?Q?lnMjDHDxpgwKBjZgesu9F3pB86S7HFlkhK3zXm7/dPkyUKU1ZPUVtb24vDQ1?=
- =?us-ascii?Q?6AZQQjTIrWy9UT5KNDQH4sU4UaxVDuHpLXdSFCG/Pw5rPIZ3jQwitVpb9nf0?=
- =?us-ascii?Q?AfIoO1aKHWe+EjmuDKqxuYOmLIRDoHamsUEsTyzRSL/c9YXsUdIHHH1Q5n5u?=
- =?us-ascii?Q?Nll8Rnrk9hScHEdK1bPflSVLaE3JkUuX4jPGO1qbYButk3u5wWsrUrVgWuQl?=
- =?us-ascii?Q?ZksqTfo2b4uYe/jums700ZaznJybZYKJgHsQWRb12mOOcxlkqeGYxF/y7+8j?=
- =?us-ascii?Q?liO5W5TZalitgCVe1UTEsL/UTDUa4c3t0SZhf6WiDnX+LSsSCwZy6+zAbdhp?=
- =?us-ascii?Q?+cHZSuAlPo4RAlKnAVo8sb+QUvwZmSujBgfMpW0JGqObzerR/f5pHiIXeGcY?=
- =?us-ascii?Q?UanMadZTfJ5yipRb2DOIuSpz3NFegBj8y7JL1anmzFbFldMfWKVs5CBQCXcX?=
- =?us-ascii?Q?1FV1A+hVnQnDgoeVs/TeXHtVufoHWOWMyDPDnJ+V/Ld0I+z8zf3iGtMBih/B?=
- =?us-ascii?Q?BEIabEYY5TcuyJchqSUyjphict1GaO8eV/VaBKW5ngsiLH2w9Q2iFGVbdHKx?=
- =?us-ascii?Q?COy4C/OP4vUxM7+E23Ppg82hgQuoUXWk?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bWa2RvsuqpS+Ie6g7uffGgmFXRdKGKC0zvcNO7IdRxBI1JohS+UrXOr+V52o?=
- =?us-ascii?Q?OTUHCDkujwzn/S4K2Z3MoRIekOb3+oq57y2Fmg62cnDuS+bWRsSbxqoBo/jN?=
- =?us-ascii?Q?75XdDkeo/XfMm9T9EEjPttbfuk7CM1JGmyHtb59Qnd0XNkgF+hQ5YfEdNQBa?=
- =?us-ascii?Q?EnmgQz1YsYX1Sn6jRo9UHF+0iFDT5BsqnpZwzHLnoDhwUo4sHo9jU5mOte47?=
- =?us-ascii?Q?EDayZGWUMhZz3X2yYpjdo5S9jtQQOlbn4nOMrYBROWaELtlVt7VQHI5YCP6d?=
- =?us-ascii?Q?dnqT4yC3nPzW/b6s3fWaDv1bFI0D8/qY3o03nRSOp9byEeRuyu31yjPtLjG9?=
- =?us-ascii?Q?okOMaxQow5qW0T5kLEcflnUTlJw0Fsl4YBgggMedH5ZoEHTSKVRLy3jezKwM?=
- =?us-ascii?Q?HHG/9bUx+Ai3MES/IIHghtHEDL3+TnFYZ3ctcbw/el31sm61WmE3qDluw0aD?=
- =?us-ascii?Q?rnP44adp2KXY9Xl1McG6w6sI+7aDN4nyS7v8MFv61H1mIuq8bAGsVspvXLBW?=
- =?us-ascii?Q?PDBHUIJnMjEz0IXo/WQMP8P7tSlvJKIgS/PK/nbG4X44A9oFoK1kFjLuOYr9?=
- =?us-ascii?Q?B6iF8eSFe+hed4fVSUo9COIZrw/53lv8dpof/3FNrHpJKVQT9DVqMOfRzxhx?=
- =?us-ascii?Q?KtSqPVvBJXTiVgaZkZdlyktWGZ4qNz4dk/fPUWYPCcz3/Moh0bSZ9uF7WOVQ?=
- =?us-ascii?Q?zG2nKZpGOdmju/S7y6Cq319JSYS5LqjVzGlWGZdyr/E0Bxmp1S2hi9FKsTmQ?=
- =?us-ascii?Q?5q9X6HBQ+LHAzTJ9Ba7Tf24Z8vtF8hxtYUmRniI+jCOb8KvQ4BvABxDtQo53?=
- =?us-ascii?Q?j4LE7WHq1o9K5ygoq0La9PNMfAzmGepBzjZ5Q7HiMA4u1d4h56hPVx6onLBw?=
- =?us-ascii?Q?PbwBDmf0eVnW/i45+rU57DkrTXpb35PQvBa5Bxk8yRqrC2X7jPshnSEtk2Ja?=
- =?us-ascii?Q?aSYt8bjmPDlOp6aRanzqB7L+qbKgCC2O4zAbyl0pe1cc5ndNq7R+HN1Ey8NZ?=
- =?us-ascii?Q?YIZkdlHjaRckMhF9HzPDQ2WkvgHaY8djVUUIpe7ykVcY1J7Hpcds5PrRd7/G?=
- =?us-ascii?Q?rOCuLBvQ7XxBTTBilk66rKEEY/HV59ZoobNypkdDk92GpobONkzmFDeQmtvs?=
- =?us-ascii?Q?/VqjaGsoD99ICrDnGRk2PwuUI/sVw5NFhW5HMcjmojwvZ/+MZYVosDezxzXH?=
- =?us-ascii?Q?tRdmo0EzgzFoMF3a/DNgmmpzoWb03uB+S40y9o1TfbWQWl3D1CBDbERDu9ZL?=
- =?us-ascii?Q?flp5esZwbUyzV40XJSMahuEUzxWa6dBAOoaLIWmiZgm95Ins0L8+ha7YOPzq?=
- =?us-ascii?Q?FA9Zl9/UbjfZHRzRZMLc/x/8f2ZijzsZoPeem7ihNhj/oGLqeusJVgEquea+?=
- =?us-ascii?Q?xcIpjhMCw/s/sIsLC30PALkrfTE2Ho2XXJqlSpD+rFJ3xrA3nSmiPqPOZtej?=
- =?us-ascii?Q?ZFb3GZWKTzBoyoNDQcan15At6Veb0h/E9EZiOO6BkBxpnSLJNBBQJjIGc0DJ?=
- =?us-ascii?Q?XGbsoB5nSoBqNYls4dLy6n+bK4ckos8FzRMak/6HR0/3u8PBsHVdQyj2UIfh?=
- =?us-ascii?Q?reT2DpfjNzCgr0LYkdrY671eavqa2bgtXYtUVHIr?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4c5395a-ec88-4d89-4ab6-08de0fe17e27
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 14:03:49.3742
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sTZ5S0aJnaws4C/89dJenPglpoZOpYH7WbM4/I5R7hQyuL2ceSAZjq6WKPY+xWMRYSWvOdbpcHmzQC2QNg1UDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6187
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] arm64: dts: qcom: sdm845-oneplus: Describe panel
+ vci and poc supplies
+To: Casey Connolly <casey.connolly@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ phone-devel@vger.kernel.org
+References: <20251016-s6e3fc2x01-v3-0-ce0f3566b903@ixit.cz>
+ <20251016-s6e3fc2x01-v3-2-ce0f3566b903@ixit.cz>
+ <aeb9a34a-d9ea-4027-9f61-beae73498266@linaro.org>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <aeb9a34a-d9ea-4027-9f61-beae73498266@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 03:38:12PM +0200, Andrea Righi wrote:
-> On Mon, Oct 20, 2025 at 11:49:51AM +0200, Juri Lelli wrote:
-> > Hi!
-> > 
-> > On 17/10/25 11:25, Andrea Righi wrote:
-> > > From: Joel Fernandes <joelagnelf@nvidia.com>
-> > > 
-> > > Hotplugged CPUs coming online do an enqueue but are not a part of any
-> > > root domain containing cpu_active() CPUs. So in this case, don't mess
-> > > with accounting and we can retry later. Without this patch, we see
-> > > crashes with sched_ext selftest's hotplug test due to divide by zero.
-> > > 
-> > > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > > ---
-> > >  kernel/sched/deadline.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > > index 4aefb34a1d38b..f2f5b1aea8e2b 100644
-> > > --- a/kernel/sched/deadline.c
-> > > +++ b/kernel/sched/deadline.c
-> > > @@ -1665,7 +1665,12 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
-> > >  	cpus = dl_bw_cpus(cpu);
-> > >  	cap = dl_bw_capacity(cpu);
-> > >  
-> > > -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-> > > +	/*
-> > > +	 * Hotplugged CPUs coming online do an enqueue but are not a part of any
-> > > +	 * root domain containing cpu_active() CPUs. So in this case, don't mess
-> > > +	 * with accounting and we can retry later.
-> > 
-> > Later when? It seems a little vague. :)
+On 20/10/2025 15:45, Casey Connolly wrote:
 > 
-> Yeah, this comment is actually incorrect, we're not "retrying later"
-> anymore (we used to do that in a previous version), now the params are
-> applied via:
 > 
->   ext.c:handle_hotplug() -> dl_server_on() -> dl_server_apply_params()
+> On 16/10/2025 18:16, David Heidelberg via B4 Relay wrote:
+>> From: Casey Connolly <casey.connolly@linaro.org>
+>>
+>> There are two additional supplies used by the panel, both are GPIO
+>> controlled and are left enabled by the bootloader for continuous splash.
+>>
+>> Previously these were (incorrectly) modelled as pinctrl. Describe them
+>> properly so that the panel can control them.
+>>
+>> Fixes: 288ef8a42612 ("arm64: dts: sdm845: add oneplus6/6t devices")
 > 
-> Or via scx_enable() when an scx scheduler is loaded. So, I'm wondering if
-> this condition is still needed. Will do some tests.
+> This Fixes: is not correct, it should be the commit that first added the
+> panel to the DT since it was added after the initial DT.
 
-Looks like I can't reproduce the error with the hotplug kselftest anymore
-(and it was happening pretty quickly).
+I double checked, it's the right commit, the panel node was added in the 
+initial commit (it's also mentioned in the commit itself)
+...
+  * Display
+...
 
-Then I guess we can drop this patch or maybe add a WARN_ON_ONCE(!cpus) just
-to safe?
+> 
+> The driver changes also need to be backported and may not apply properly
+> to stable kernels, so we should be careful with this.
+But the OnePlus 6T driver never worked before, that's why I assume the 
+backport here play very small role.
 
-Thanks,
--Andrea
+If no other objection, I'll keep the Fixes tag in next version, but if 
+maintainers decides to remove it, I'm fine with it too.
+
+David
+
+>> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+>> Co-developed-by: David Heidelberg <david@ixit.cz>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
+>>   .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 46 +++++++++++++++++++++-
+>>   1 file changed, 45 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+>> index dcfffb271fcf3..1cf03047dd7ae 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+>> @@ -162,6 +162,34 @@ ts_1p8_supply: ts-1p8-regulator {
+>>   		enable-active-high;
+>>   		regulator-boot-on;
+>>   	};
+>> +
+>> +	panel_vci_3v3: panel-vci-3v3-regulator {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "LCD_VCI_3V";
+>> +
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 26 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +		pinctrl-0 = <&panel_vci_default>;
+>> +		pinctrl-names = "default";
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	panel_vddi_poc_1p8: panel-vddi-poc-regulator {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "VDDI_POC";
+>> +
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +
+>> +		gpio = <&tlmm 25 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +		pinctrl-0 = <&panel_poc_default>;
+>> +		pinctrl-names = "default";
+>> +		regulator-boot-on;
+>> +	};
+>>   };
+>>   
+>>   &adsp_pas {
+>> @@ -429,6 +457,8 @@ display_panel: panel@0 {
+>>   		reg = <0>;
+>>   
+>>   		vddio-supply = <&vreg_l14a_1p88>;
+>> +		vci-supply = <&panel_vci_3v3>;
+>> +		poc-supply = <&panel_vddi_poc_1p8>;
+>>   
+>>   		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
+>>   
+>> @@ -803,6 +833,20 @@ hall_sensor_default: hall-sensor-default-state {
+>>   		bias-disable;
+>>   	};
+>>   
+>> +	panel_vci_default: vci-state {
+>> +		pins = "gpio26";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	panel_poc_default: poc-state {
+>> +		pins = "gpio25";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-disable;
+>> +	};
+>> +
+>>   	tri_state_key_default: tri-state-key-default-state {
+>>   		pins = "gpio40", "gpio42", "gpio26";
+>>   		function = "gpio";
+>> @@ -818,7 +862,7 @@ ts_default_pins: ts-int-state {
+>>   	};
+>>   
+>>   	panel_reset_pins: panel-reset-state {
+>> -		pins = "gpio6", "gpio25", "gpio26";
+>> +		pins = "gpio6";
+>>   		function = "gpio";
+>>   		drive-strength = <8>;
+>>   		bias-disable;
+>>
+> 
+
+-- 
+David Heidelberg
+
 
