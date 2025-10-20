@@ -1,78 +1,101 @@
-Return-Path: <linux-kernel+bounces-860517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02D8BF04E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:49:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0B0BF04EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594FF189B8BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:50:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3ABF234ACF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AD42ECE95;
-	Mon, 20 Oct 2025 09:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB623EA82;
+	Mon, 20 Oct 2025 09:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KORLSnZG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="diHCGmFr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF0C239E79;
-	Mon, 20 Oct 2025 09:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428DB238171
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953774; cv=none; b=oxG6kg/JXktLee5tiAghqA55e8cUDMY6akR3Wc5cnQjks38N52VyQtzLEP0savNS4yfmyAWZTdIE6f0WmX8BILKiJm6PVEpzSrWuyTt6DPDHqN+4oHVRgBY7w2tZDOrjKihb9D7iSj0qVH0QwxuMWKLlqF/nZRpN0C7RHOrk4f0=
+	t=1760953800; cv=none; b=cl0E08mam8LCwWeaHp7IDfPlI3QCK3y3UHMj+dFRCHsq55Lvk24JKhuDkqTz8Ie/N+YtpRDeWHyuehRqPDCv4mxKaf6I/4Dweh0n026qOCvM4OVIXebMAi1/X8xtG8lZTLFQygKkpEvLc189c96fx5OvlPZY1smZBfE0u13zfuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953774; c=relaxed/simple;
-	bh=IFMa8J4BmSP1xDkcLMdkDieSTWmOeb/WK7h22yGsHts=;
+	s=arc-20240116; t=1760953800; c=relaxed/simple;
+	bh=L88CURN76sT3+kKjYcMn64mems4KIaIBpiqCE7sLYgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oOOiva6SpTVTLFed5tTajOkZFTbZP/u+4FYAVPUXpwvnV9VZhk3yrJN22c34DNQ2PVUD9WVw+s6r1KUSha2VFJnPmFr1LekDRey/RxAF+Rs0X+vJTsdnehaXJl9QLnApooFNQXPkXEH4oS0gPXGR8X/QgnvFNbaqQBNC/ZeZoW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KORLSnZG; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760953772; x=1792489772;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IFMa8J4BmSP1xDkcLMdkDieSTWmOeb/WK7h22yGsHts=;
-  b=KORLSnZGIHs/aUjBMUVjZI6mMYdQ6MqnT2i/JYRF8gfRqITtpYCYztp4
-   h4MoN8BU/TMMRMU7GfoMa3Y9JNwF62tAPN9BlxxGAW0ynDvzhyjn/HdQv
-   +8ErzMTxXfhL9zWi6y7FXjupaT8E03NOFYC+yMQ0kv6E0oib/UKyTF+/H
-   BfSR0FcEy9hb3O8mGkVJCPVphU6PalH9LNydkvLiKMj5qhAAX4ZTe9mfQ
-   fshDiqlUCmN9wOgxqpEu24g/tUxH2fpRgXZV9uE2hlKlwfGBnnnCoBGDS
-   CTPwChY0cYjjqOXVqp2aqI15za5n/0CvCp3uPmYmzmy4Pu+YQO5iASPgt
-   g==;
-X-CSE-ConnectionGUID: Vr6vVxNnTF2CMIZGdrvjHg==
-X-CSE-MsgGUID: oCb6J91jQKuiWrAJHYWGQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="80506113"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="80506113"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 02:49:32 -0700
-X-CSE-ConnectionGUID: EWWHbbtLR2+5nMBBpCh4PQ==
-X-CSE-MsgGUID: UML7sHo4Qk2dcuXbG7eECQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="188581319"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.112])
-  by fmviesa004.fm.intel.com with SMTP; 20 Oct 2025 02:49:28 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 20 Oct 2025 12:49:27 +0300
-Date: Mon, 20 Oct 2025 12:49:27 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
-	Jack Pham <jack.pham@oss.qualcomm.com>,
-	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 2/3] usb: typec: ps883x: Rework ps883x_set()
-Message-ID: <aPYFpzD6sklAvywa@kuha.fi.intel.com>
-References: <20251014-topic-ps883x_usb4-v1-0-e6adb1a4296e@oss.qualcomm.com>
- <20251014-topic-ps883x_usb4-v1-2-e6adb1a4296e@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OkcYNaYuBzycF94ZHERPBIellk3nxPKu2QeWMDwAf94M0FOAckTXfFRqNuQanzUGRrTccfzaHbS+EvcNr9wMktCrMXTFUhZ8aWoWpAWckKQU/DssyiHMTrXjeuxYAQ+drGavq1yn/NeCfBtrOILGtyWo+3M6Z/2lPmApaFucxg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=diHCGmFr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760953797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rFTTrhJcTtAwy2zqRcI97c2G9J1jPFu8DQY9tZIK604=;
+	b=diHCGmFrFi90oKz2i9vdPD5ZZ6Mf9SPMhiRmgZrOmszySw/IfXmXyJa2lYzJ7UTzpS4sMh
+	FXMUtNS43s25qmSLa3jogjnVKPGaF22NBFP9pqGqrnGI1BahD61XCO6dhjdoeJWRPBvqyc
+	XEnLAQXK5+0FmdaGhcMFCxr7GUDUodo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-oHvSwupbMCe6QTYCaRR3MA-1; Mon, 20 Oct 2025 05:49:55 -0400
+X-MC-Unique: oHvSwupbMCe6QTYCaRR3MA-1
+X-Mimecast-MFC-AGG-ID: oHvSwupbMCe6QTYCaRR3MA_1760953794
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4284525aecbso1377502f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:49:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760953794; x=1761558594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rFTTrhJcTtAwy2zqRcI97c2G9J1jPFu8DQY9tZIK604=;
+        b=XfEAzYkW62P510e261uPY5WbBWopvZ4abwtcF09ysJSZ5F6Ts40H9SrcXraHcAYC4n
+         qwgdTS6OK2kq92xRbXheS7f5dBqCF8z5QCyHPjxwGQREdZWgrYiTyHEilddurC7RnsdN
+         tJiNpqvALzZ6vpZ6qvyyDNiBhAYiqTYd3P+RjkOGLqZ866cs+71B3It20ri9bxPU/EMq
+         gikELV7Gol3cdHmncyO/mSJIfvF+/2NCMY/j2zkfcy3bx/bhW4JFKohjoyqnmpwFqGG7
+         czXH1GozmI4FX+erPICU9Rf2ykB3WS3rIRw3I1bIz3edEKrKx7DCemM3ESmwcpFzIyQe
+         //+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+N8kzm197fcF43o2IJ4IWIiVB2lspdoQ8bqVuNSpJXJBbxiqW3M6VscDeEHG7wZWYd65CdAZuqdj1ZKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Z+On+5jzZR3oYs+73FNcNuuzrG9HVR/X5ToSGLMuAZGFFmEt
+	2iZDyd7RQt3jDGN015jRBBFCvc05s2WtaKTG19tT5L0Cn91SRj28rA9bSHMX9hv+qiGnawyqijE
+	ZS+s9UVCAviKIpgeMHmMmNIiCoDmjwhnUjtIJUyJ6Q9MjP3M1ieTt3KdwyUWYJ+iX1Q==
+X-Gm-Gg: ASbGncsLKHKXu7Me2edgxG0cQNSkYKxeaeR/tU2ObWRU1qIJZKCHuFlfmsOOfg1v1R/
+	Xq2i8mkoAFTEjK327q5l8Qqu/+4i9HxL/ldydm6B162LQ/V0V5YcgZeOWWLCxQBdPZKtsZd0NAN
+	hke4uc9anoi6OIsEMfezzoPf0f10D7QZvzPgmMsp4r2fNByxLIOyUe3OaRSFvBFEx+CpkfW+S9I
+	VdYF2x27JHUB4Qu1OWYLSw+jth+ij08K8V9yDS+XUwt0VmKewssBPgMVtyU4Jgsn3hNm+MVzc8Q
+	SXZE3hO7iVffrWZ6ditLIxyNpYbvPHaCaqEWdA1gjbbw054eTf0GbchppakeC8UXYUuw2LPz+lO
+	wA0ofoa6PsHrrB2d08tSbsi/GSpk4lEk=
+X-Received: by 2002:a05:6000:240c:b0:426:ee84:25a1 with SMTP id ffacd0b85a97d-42704daed04mr9407323f8f.38.1760953794293;
+        Mon, 20 Oct 2025 02:49:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEircX9r4vwBahUAWz08Ch5Vp4KLieMSMxL6ClC8S+P82LJBqd/Fmi99o4l9qj8yYvXucqwnw==
+X-Received: by 2002:a05:6000:240c:b0:426:ee84:25a1 with SMTP id ffacd0b85a97d-42704daed04mr9407306f8f.38.1760953793898;
+        Mon, 20 Oct 2025 02:49:53 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a9a9sm14899561f8f.29.2025.10.20.02.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 02:49:53 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:49:51 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/14] sched/deadline: Return EBUSY if dl_bw_cpus is zero
+Message-ID: <aPYFv6YcxqWez8aK@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-5-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,113 +104,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014-topic-ps883x_usb4-v1-2-e6adb1a4296e@oss.qualcomm.com>
+In-Reply-To: <20251017093214.70029-5-arighi@nvidia.com>
 
-On Tue, Oct 14, 2025 at 06:06:46PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hi!
+
+On 17/10/25 11:25, Andrea Righi wrote:
+> From: Joel Fernandes <joelagnelf@nvidia.com>
 > 
-> In preparation to extend it with new alt/USB modes, rework the code a
-> bit by changing the flow into a pair of switch statements.
+> Hotplugged CPUs coming online do an enqueue but are not a part of any
+> root domain containing cpu_active() CPUs. So in this case, don't mess
+> with accounting and we can retry later. Without this patch, we see
+> crashes with sched_ext selftest's hotplug test due to divide by zero.
 > 
-> Reviewed-by: Jack Pham <jack.pham@oss.qualcomm.com>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 > ---
->  drivers/usb/typec/mux/ps883x.c | 71 ++++++++++++++++++++++--------------------
->  1 file changed, 37 insertions(+), 34 deletions(-)
+>  kernel/sched/deadline.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
-> index 68f172df7be3..72f1e737ca4b 100644
-> --- a/drivers/usb/typec/mux/ps883x.c
-> +++ b/drivers/usb/typec/mux/ps883x.c
-> @@ -99,44 +99,47 @@ static int ps883x_set(struct ps883x_retimer *retimer, struct typec_retimer_state
->  	int cfg1 = 0x00;
->  	int cfg2 = 0x00;
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 4aefb34a1d38b..f2f5b1aea8e2b 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1665,7 +1665,12 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
+>  	cpus = dl_bw_cpus(cpu);
+>  	cap = dl_bw_capacity(cpu);
 >  
-> -	if (retimer->orientation == TYPEC_ORIENTATION_NONE ||
-> -	    state->mode == TYPEC_STATE_SAFE) {
-> -		return ps883x_configure(retimer, cfg0, cfg1, cfg2);
-> -	}
-> -
-> -	if (state->alt && state->alt->svid != USB_TYPEC_DP_SID)
-> -		return -EINVAL;
-> -
->  	if (retimer->orientation == TYPEC_ORIENTATION_REVERSE)
->  		cfg0 |= CONN_STATUS_0_ORIENTATION_REVERSED;
->  
-> -	switch (state->mode) {
-> -	case TYPEC_STATE_USB:
-> -		cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
-> -		break;
-> +	if (state->alt) {
-> +		switch (state->alt->svid) {
-> +		case USB_TYPEC_DP_SID:
-> +			cfg1 |= CONN_STATUS_1_DP_CONNECTED |
-> +				CONN_STATUS_1_DP_HPD_LEVEL;
->  
-> -	case TYPEC_DP_STATE_C:
-> -		cfg1 = CONN_STATUS_1_DP_CONNECTED |
-> -		       CONN_STATUS_1_DP_SINK_REQUESTED |
-> -		       CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D |
-> -		       CONN_STATUS_1_DP_HPD_LEVEL;
-> -		break;
-> -
-> -	case TYPEC_DP_STATE_D:
-> -		cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
-> -		cfg1 = CONN_STATUS_1_DP_CONNECTED |
-> -		       CONN_STATUS_1_DP_SINK_REQUESTED |
-> -		       CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D |
-> -		       CONN_STATUS_1_DP_HPD_LEVEL;
-> -		break;
-> -
-> -	case TYPEC_DP_STATE_E:
-> -		cfg1 = CONN_STATUS_1_DP_CONNECTED |
-> -		       CONN_STATUS_1_DP_HPD_LEVEL;
-> -		break;
-> -
-> -	default:
-> -		return -EOPNOTSUPP;
-> +			switch (state->mode)  {
-> +			case TYPEC_DP_STATE_C:
-> +				cfg1 |= CONN_STATUS_1_DP_SINK_REQUESTED |
-> +					CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D;
-> +				fallthrough;
-> +			case TYPEC_DP_STATE_D:
-> +				cfg1 |= CONN_STATUS_0_USB_3_1_CONNECTED;
-> +				break;
-> +			default: /* MODE_E */
-> +				break;
-> +			}
-> +			break;
-> +		default:
-> +			dev_err(&retimer->client->dev, "Got unsupported SID: 0x%x\n",
-> +				state->alt->svid);
-> +			return -EOPNOTSUPP;
-> +		}
-> +	} else {
-> +		switch (state->mode) {
-> +		case TYPEC_STATE_SAFE:
-> +		/* USB2 pins don't even go through this chip */
-> +		case TYPEC_MODE_USB2:
-> +			break;
-> +		case TYPEC_STATE_USB:
-> +		case TYPEC_MODE_USB3:
-> +			cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
-> +			break;
-> +		default:
-> +			dev_err(&retimer->client->dev, "Got unsupported mode: %lu\n",
-> +				state->mode);
-> +			return -EOPNOTSUPP;
-> +		}
->  	}
->  
->  	return ps883x_configure(retimer, cfg0, cfg1, cfg2);
-> 
-> -- 
-> 2.51.0
+> -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
+> +	/*
+> +	 * Hotplugged CPUs coming online do an enqueue but are not a part of any
+> +	 * root domain containing cpu_active() CPUs. So in this case, don't mess
+> +	 * with accounting and we can retry later.
 
--- 
-heikki
+Later when? It seems a little vague. :)
+
+Thanks,
+Juri
+
 
