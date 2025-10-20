@@ -1,278 +1,150 @@
-Return-Path: <linux-kernel+bounces-861676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70986BF351F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:05:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7E9BF3528
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9C16350C72
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:05:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1856E4EF5DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A52DA77E;
-	Mon, 20 Oct 2025 20:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6050C2DAFC1;
+	Mon, 20 Oct 2025 20:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="HjA0zd/B"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TdkWiIl7"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D073FBA7;
-	Mon, 20 Oct 2025 20:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760990700; cv=pass; b=MZqVbRaOJ0D/GoRMPhCJSmeJ5JiSxXatsd0O3AsdAkJsHP4pv4+Aqoi+RgBFBha0A9jkW+T5CXspFToVjMkC9DuF//NhKjKLjBd0SeLf71oAKeeVnWQzzvOUgKIO2eNpJanHdNJtjsTp6Cyye+x+nPyqYMvGJ5eSUE9t21c/hH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760990700; c=relaxed/simple;
-	bh=VYzNr5rEz4tPzBtcMf4/Zb+FVLKe21z1Zjt6/iovnTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hoeiAH1byYPoIUbCXSxOXxfUHFaJkeFJfpLdhw825ERK/07b9Okc6IpA+0ukqTrXp7pgrw6/TpLj3LtbVJn5JP68Afo8lZQrTFqgfMmj4SbqkKsB3nY1MJtXBe/kRXbWYVErVyzolR7YHcs4b1HgFFLrv6wsHgLxrR4afS7NcmE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=HjA0zd/B; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4cr5xh0XDPzyNC;
-	Mon, 20 Oct 2025 23:04:56 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1760990696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6RjQVb5H+msS5TZEkqAuNT1Z3nBCudhYqn6e89HVHVM=;
-	b=HjA0zd/BSxuildZX1nBzRH5v+r4JtStv3F9vjGFr8o9M/Ucv+Amnk34kmEEMFGh3ZRs9mi
-	m+u8d5sfpgbbM1FtJ71K8Uk/R1zAShO+WaIZlBjkozAhbuqEKSpnYRUOigswkao9EvAt7P
-	60kZy6/zh9bzsbNXO7QUSdDjnrC74Hg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1760990696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6RjQVb5H+msS5TZEkqAuNT1Z3nBCudhYqn6e89HVHVM=;
-	b=al6TpQv36DYmJ9PTBvH6DH7dNxl2UpRF9Mk34ITmvQX++R6TxOujWgnJ1z9/h9jz1U8XDA
-	y913dtpU9tpbEU1QnOuzZhm4vL5a4xgpZXtuzQ4j/G+KaCSkBpH/LiontGNd97kMYjd8BM
-	bJIgDEh32b9VqENwKv0ZcBuC2KX5jKw=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1760990696; a=rsa-sha256; cv=none;
-	b=zLwv/dQ0SXVUTaL0grcOKSCUFCRAkchiVBWSjlh9g3NhmiasEQwsOh9OFBy+G+cDZupWgn
-	P5rChwdHfZ5RF2/VvrK0Gvej+EQ5SGRGmF13nOOrfIVM36xXxH6MQfvQZhU/9q5SF6+33m
-	PGCPm6CfIYENPePdpRacSIVXCQY0Dlc=
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id B5CAA634C50;
-	Mon, 20 Oct 2025 23:04:55 +0300 (EEST)
-Date: Mon, 20 Oct 2025 23:04:55 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Ricardo Ribalda <ribalda@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: i2c: imx214: Exit early on control init errors
-Message-ID: <aPaV56-NxiFFx1XU@valkosipuli.retiisi.eu>
-References: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
- <aPZ_YRwpDNPFjePX@valkosipuli.retiisi.eu>
- <CANiDSCt+E+Ogr9+Y4_4KA_vBOYyTNZgwZVBD2wLMJirQE+PS3Q@mail.gmail.com>
- <aPaOxb9DyQfnU7_Q@valkosipuli.retiisi.eu>
- <CANiDSCvS3gnrQ0sPrdhiQxY47rHHrvVMq_wDDBYa_L=Y-VZwAg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73212DC780
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760990778; cv=none; b=hubBXfNysIeF/4xJRYG6+0M0yGJHnDlOumP8u4lbw9rJLNyar6dyuP12xmxf61Vma/gJPHahvyHiI2HEuILaU/cnLZRqGEsBmtkGQehbVxQggxs6zD30HoUX3TOr67ugy1Mg2ZOsObVNKfP9k0YrneSvcxGPB07AaD5T0Bju/Ek=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760990778; c=relaxed/simple;
+	bh=M14WERNoISUKDIASjp/njJi/I2QySI4GEZLp1C64AYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JpGfdk7EyD0U1gbGUBVkSTt6ZVxWkQXXocuVg+2WOrSbrynYhsReLVaN48/n2iacqwc19dqXtBaamcVIROc8K+5b5rEITMSBbyXpqkH0a9ZhVVK2HeWV69THPtsaRsMsnVsVI9y+E4uMmYYqCaBsvtBrTPgr2xdTNq077414zL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TdkWiIl7; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-430bf3b7608so42727285ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1760990774; x=1761595574; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nQkO3IuJguHVhXAT8cFCDHDyIOMJuLnuozCyzaC9Aqs=;
+        b=TdkWiIl7sLSe18DWGmAwfDu4OfQnWZ3UKP0wc3vlpEBQ4uX7dVgbJOscEEm9elGVy4
+         C79OmjobogY/N+7GV3vMjtXuFlODUFhXaUlw7kq1ufc2zDWVWIeTfbAPSyIUg0yrx323
+         Hn5VclJs05al2CBP3+gPJXmaz9Ky0l0w0Ifpk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760990774; x=1761595574;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nQkO3IuJguHVhXAT8cFCDHDyIOMJuLnuozCyzaC9Aqs=;
+        b=ceJU1usZQ/PNMTiHU7XK8KfSIwphB+9qgoJ+NlwMGc1VVREgS+VVYuDWfyhmfPYQQJ
+         pQkJru0YJyTus7AhRbqkE3DLtB+/3XQ15+IXrLBvoP5fqSatfzjNBQrTwIyMSkLEM37L
+         XCHBxzMnZTaEf+awEkQj//lXILA3I6y/B9a9ncQqRdbHypsfWfPRvt0AT68XK6TI4EIF
+         KBFh9Qy1kcktRq6qRvwaEJ8z83lwtVTUDPQ0nj18CurtrBVjcivEi7mjRJA6P37wPl5m
+         7xnksjTAuBvZoa+44xp2k+w64xfrQ4nypRI2ddFKt3dOP6XIJH2HIiZ9GTtusgCdeVm5
+         U2qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkffSXl+lJeNCu/S9peAB2R8n9B2z0M1dJmLqfwZ0U4tRy2hyVpuDqm9nYxJSEZRmUYjpzyi9tVFkthN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEXz2hkyPbdd3yxPRzlhWeuGaPp4F0jVdAwq9iZQgXaZqmDV0v
+	Edly2VAaTyT8ArmdbzIIsf2G5cqozy6qNE77u/300+E2KfpWXWQgrbHvwi69zfUJM0M=
+X-Gm-Gg: ASbGncviD6eQiql5fceRwgYK87uWhsfO0or3BFtW1b7zs2JM5Z7zEnSzXSMrXFsBTz/
+	Y5iLE9oTQJfPUc3wUMAlcl4FGLqErrNBauXKANl5yID1WuG5aIFp9P+YoX9jsQpQQJ/ceft3QWc
+	+YRK2u1Ff/Bc0rY33xPOWNqVMH78Jq8GJacLgz1BwKZLO0I37aBFHo147lUEVFIRttdzVwXFF87
+	nkfwUk0bYg3kUN4eM8AZy9TtOoU957dl1fhUJtPFJqHuz7kiMBb9e8vdsi6WlBpfEdL0Osq2F8u
+	IR/ndUpK2d0T6nY3IiWry9VPVWg9m4eOo32GcPS+/5entGyS4obSBfePbPx7nt+Wev6E/LORchg
+	2nbfbr0kS3mx3Xz7Vb49Oa+iTOTvWEZPtQ1vxcvC3BQAxTL0eRForQX2Kl5NcSLoXdG+13ppn1s
+	kPqmjPmB9PuFh7hzTqH74a4Y8=
+X-Google-Smtp-Source: AGHT+IEtvgICWGX8/WbpnP2nVW91/2+QpAoQcberNM3IS3yjxMJRNE6F6lyTYjc+DI/ShO5QUQj4jA==
+X-Received: by 2002:a05:6e02:4506:20b0:430:c8ad:81d3 with SMTP id e9e14a558f8ab-430c8ad8410mr170043265ab.30.1760990773634;
+        Mon, 20 Oct 2025 13:06:13 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d06f9ff0sm33307335ab.3.2025.10.20.13.06.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 13:06:12 -0700 (PDT)
+Message-ID: <ea12faad-1735-4a49-a70d-d4cac5629042@linuxfoundation.org>
+Date: Mon, 20 Oct 2025 14:06:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Greg KH <gregkh@linuxfoundation.org>
+Cc: lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
+ <2025101910-dipper-suburb-1755@gregkh>
+ <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
+ <d072dfe7-e0e9-49f6-89ed-25d194035e3b@gmail.com>
+ <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiDSCvS3gnrQ0sPrdhiQxY47rHHrvVMq_wDDBYa_L=Y-VZwAg@mail.gmail.com>
 
-Hi Ricardo,
+On 10/20/25 03:50, Jani Nikula wrote:
+> On Sun, 19 Oct 2025, Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> wrote:
+>> On 10/19/25 3:47 PM, Thomas Zimmermann wrote:
+>>> Hi
+>>>
+>>> Am 19.10.25 um 16:34 schrieb Greg KH:
+>>>> On Sun, Oct 19, 2025 at 04:12:28PM +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>>> Replace kmalloc() with kmalloc_array() to correctly
+>>>>> handle array allocations and benefit from built-in overflow checking[1].
+>>>>>
+>>>>> [1]:https://docs.kernel.org/process/deprecated.html
+>>>>>
+>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>>>> ---
+>>>>>    drivers/gpu/drm/tiny/repaper.c | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/
+>>>>> repaper.c
+>>>>> index 4824f863fdba..290132c24ff9 100644
+>>>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>>>> @@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct
+>>>>> drm_framebuffer *fb, const struct iosys_map *
+>>>>>        DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>>>              epd->factored_stage_time);
+>>>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>>>> +    buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
+> 
+> Also worth emphasizing that this is wildly wrong for any height that is
+> not a multiple of 8.
+> 
+> And I thought I shot down a similar patch not long ago.
+> 
+> Is there some tool that suggests doing this? Fix the tool instead
+> please.
+> 
 
-On Mon, Oct 20, 2025 at 09:58:47PM +0200, Ricardo Ribalda wrote:
-> Hi Sakai
-> 
-> On Mon, 20 Oct 2025 at 21:34, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> >
-> > Hi Ricardo,
-> >
-> > On Mon, Oct 20, 2025 at 08:51:44PM +0200, Ricardo Ribalda wrote:
-> > > Hi Sakari
-> > >
-> > > On Mon, 20 Oct 2025 at 20:28, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > > >
-> > > > Hi Ricardo,
-> > > >
-> > > > On Tue, Oct 14, 2025 at 11:00:17AM +0000, Ricardo Ribalda wrote:
-> > > > > Now we try to initialize all the controls and at the very end check
-> > > > > ctrl_hdlr->error to check if one of them has failed.
-> > > > >
-> > > > > This confuses smatch, who do not know how to track the state of
-> > > > > imx214->link_freq.
-> > > > >
-> > > > > drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
-> > > > >
-> > > > > Fix this by exiting early on control initialization errors.
-> > > > >
-> > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > > ---
-> > > > > Right now we are handling this with a quirk in media-ci, if Dan cannot
-> > > > > fix smatch in a kernel cycle we should merge this patch.
-> > > > > ---
-> > > > > Changes in v2:
-> > > > > - Fix typo in commit message commit
-> > > > > - Move error tag where it belongs (Thanks Hans!)
-> > > > > - Link to v1: https://lore.kernel.org/r/20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org
-> > > > > ---
-> > > > >  drivers/media/i2c/imx214.c | 7 +++++--
-> > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> > > > > index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..c66f0e18726c3fc15df91c37888a797bcea82134 100644
-> > > > > --- a/drivers/media/i2c/imx214.c
-> > > > > +++ b/drivers/media/i2c/imx214.c
-> > > > > @@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *imx214)
-> > > > >                                                  V4L2_CID_LINK_FREQ,
-> > > > >                                                  imx214->bus_cfg.nr_of_link_frequencies - 1,
-> > > > >                                                  0, imx214->bus_cfg.link_frequencies);
-> > > > > -     if (imx214->link_freq)
-> > > > > -             imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > > > > +     if (!imx214->link_freq)
-> > > > > +             goto err_init_ctrl;
-> > > > > +
-> > > > > +     imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > > >
-> > > > You could do this cleaner by simply moving the assignment after the handler
-> > > > error check. Some drivers do that already.
-> > > >
-> > > > I wonder why this seems to be a problem for smatch in the imx214 driver as
-> > > > the pattern is widely used across the sensor drivers.
-> > >
-> > > Smatch thinks that there could be case where
-> > >
-> > > imx->link_freq = NULL, and imx214_pll_update returns 0.
-> > >
-> > > That is not solved by moving the assignment `imx214->link_freq->flags
-> > > |=` after if (ret)
-> >
-> > Did you test this? The smatch message suggests otherwise (but of course
-> > this could just turn into a different smatch error).
-> 
-> Actually smatch do not hate it :)
-> 
-> ribalda@ribalda:~/work/linux$ make -i W=1 C=1
-> CHECK="../media-ci/third_party/smatch/smatch -p=kernel"
-> KCFLAGS="-Wmaybe-uninitialized" drivers/media/i2c/imx214.o
->   CC      kernel/sched/rq-offsets.s
-> In file included from kernel/sched/rq-offsets.c:5:
-> kernel/sched/sched.h: In function ‘mm_cid_get’:
-> kernel/sched/sched.h:3743:25: error: variable ‘cpumask’ set but not
-> used [-Werror=unused-but-set-variable]
->  3743 |         struct cpumask *cpumask;
->       |                         ^~~~~~~
-> cc1: all warnings being treated as errors
-> make[2]: [scripts/Makefile.build:182: kernel/sched/rq-offsets.s] Error
-> 1 (ignored)
-> /bin/sh: line 1: kernel/sched/rq-offsets.s: No such file or directory
-> make[2]: [Kbuild:46: include/generated/rq-offsets.h] Error 1 (ignored)
->   CALL    scripts/checksyscalls.sh
->   DESCEND objtool
->   INSTALL libsubcmd_headers
->   CC      drivers/media/i2c/imx214.o
->   CHECK   drivers/media/i2c/imx214.c
-> 
-> 
-> ribalda@ribalda:~/work/linux$ git diff
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 94ebe625c9e6..a21461b55923 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -1014,8 +1014,6 @@ static int imx214_ctrls_init(struct imx214 *imx214)
->                                                    V4L2_CID_LINK_FREQ,
-> 
-> imx214->bus_cfg.nr_of_link_frequencies - 1,
->                                                    0,
-> imx214->bus_cfg.link_frequencies);
-> -       if (imx214->link_freq)
-> -               imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> 
->         /*
->          * WARNING!
-> @@ -1038,9 +1036,6 @@ static int imx214_ctrls_init(struct imx214 *imx214)
->         imx214->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
->                                            V4L2_CID_HBLANK, hblank, hblank,
->                                            1, hblank);
-> -       if (imx214->hblank)
-> -               imx214->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> -
->         exposure_max = mode->vts_def - IMX214_EXPOSURE_OFFSET;
->         exposure_def = min(exposure_max, IMX214_EXPOSURE_DEFAULT);
->         imx214->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
-> @@ -1060,13 +1055,9 @@ static int imx214_ctrls_init(struct imx214 *imx214)
-> 
->         imx214->hflip = v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
->                                           V4L2_CID_HFLIP, 0, 1, 1, 0);
-> -       if (imx214->hflip)
-> -               imx214->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> 
->         imx214->vflip = v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
->                                           V4L2_CID_VFLIP, 0, 1, 1, 0);
-> -       if (imx214->vflip)
-> -               imx214->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> 
->         v4l2_ctrl_cluster(2, &imx214->hflip);
-> 
-> @@ -1106,6 +1097,11 @@ static int imx214_ctrls_init(struct imx214 *imx214)
->                 return ret;
->         }
-> 
-> +       imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> +       imx214->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> +       imx214->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> +       imx214->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> +
->         ret = imx214_pll_update(imx214);
->         if (ret < 0) {
->                 v4l2_ctrl_handler_free(ctrl_hdlr);
-> 
-> 
-> >
-> > >
-> > > I believe Dan is already flagged about this, but I do not think that
-> > > it will be super simple to fix in his code.
-> > >
-> > > If smatch can handle this case before rc5 I will delete this patch.
-> >
-> > There are other options, too, such as storing the link frequency index (the
-> > driver won't even support setting it) or the frequency itself.
-> 
-> There are plenty of options :) But I am still failing to see what is
-> wrong with this patch.
+They are documented in https://docs.kernel.org/process/deprecated.html
+Mu understanding is that this document lists deprecates APIs so people
+don't keep adding new ones.
 
-Error handling is often complicated and poorly tested. If you don't need to
-introduce new labels to do it, just don't. The control framework does it
-nicely to simplify drivers so let's rely on it.
+I didn't get the impression that we are supposed to go delete them from
+the kernel and cause a churn.
 
-> 
-> We exit early when there is an error instead of continuing doing work
-> that will be useless.
-> 
-> If you really prefer your way I can send a v3... but we have probably
-> more fun work to do :P
-
-Yes, but I don't want this pattern to spread. That tends to happen if you
-introduce it in one driver.
-
--- 
-Regards,
-
-Sakari Ailus
+thanks,
+-- Shuah
 
