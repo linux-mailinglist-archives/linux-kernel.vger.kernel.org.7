@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-861649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89600BF341B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:43:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0115BBF341E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDEB485589
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6E494FCC17
 	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB6331A4F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32412BEC23;
 	Mon, 20 Oct 2025 19:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="a5mfG97c"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Y34Uxxv/"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DC62D0636
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198C32DE71B
 	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989402; cv=none; b=dN4GJKqJsH7GpFs4AhQYiyPTXRKksu0w49HpfDDJXDG5ZSIfQjb4q6faF2oUMuXuVXrN1tXyYnZWODIeOS60oHmV3jp7eFvf7uYzIpOTss2p5KE6PSaccLLcsJw7Uv+CZjg/MsNqO/uoM/9281YfcEIvygyA1yP1zdOgdua6Cnc=
+	t=1760989402; cv=none; b=Z6gEbnkIxLMqz/47cOiKeI+2gjUjGC3O2VGdOxPxa9h0IzK2OwhHo+blBmX7GjdmNUnt+IpWd2K936+PGTxLy+aqZ9DBceCMJ3JPconxyj0KZ+aJeVcZaUaNTZnpPmuxd5aKtEae4AFrj+ktiQJBaOjZrqjO/I+5yWxLB5CMX9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760989402; c=relaxed/simple;
-	bh=46YL1iGrEGxGTcZR7UAy864AfYF4ZbJbASJ+m8Vy1Uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vc+gc7PnpfwGPwwuuJuvcUGEOD+4anCbGbg4AzAjhkEqZh205LsDrvQeG+BkE+DGPXJzeBEQ9LN8GCmOb3ZLhr/BIxX3hFF7dSgqTXkGYT6WdhCUTg8zSVIVzrH5DC+bbTFZ/wk3J028ar5ZYQYCroae1hxDLH2sqFsfwAcflDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=a5mfG97c; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781206cce18so4848723b3a.0
+	bh=VJM4/DdbT7H1VG7QERkhEiMoX1aBxdIXTavIKIb63bM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GFT5ioYIelwwJ66pnC0IjCxImGJkScjFrDjVRzJbTfAyqiKg7WsHPkdrXqabRcRPPqz1dyp2DA5HEn58GkjcOu7mPHaDUcNjWF1J16Ve24TP0hvjN2KwxsmCSUGLkyNUxkF/rXADK5i3FniCxgj69N3WMkY+QAXBel559RryRU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Y34Uxxv/; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3d5088259eso735805066b.1
         for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760989400; x=1761594200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hM5MMLXsYM69EBdIPQteBCdcHt+2UMoOmn9dDxRhd44=;
-        b=a5mfG97cKK6L6qg7GB8i3pN9CegqinKOLdXtgwNOj+8P17cnu35zvGkTFlGLxGqx3z
-         bwg8A3U8a2el5beYTWcK+ejybL/uQDE/E9tEGC2KtmCOLTrGVKdLQ1mYZOkygQXrfNN+
-         904b1+RRGf+upol4SkpetN6iq7WXtNclZEdvVVOxHmrmaEchc0SSFbwplwp9Wc0Iv/5b
-         4DFtBhU/aN6PsBLN5p9MbQBLQWkYYc+FFENACx/t7deFYz8gn57iSsPpB0liyRKNivuQ
-         toKsm9H5hwzy6fcpgIzwAcY51EacTHkHyyXZL9jgA7tckOf/8Urt51h4+W3eFJ/5tv4O
-         +iLQ==
+        d=tuxon.dev; s=google; t=1760989399; x=1761594199; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8WnrihOd4AsebH9UmcXUF+DGII/SVijUJ5cnGJII058=;
+        b=Y34Uxxv/TjADgw+9r1qDnQvywtn7r2R5Na24VWic2zSO2/u4vI6k7P5Sxx1diq13mP
+         YYUs2bybXstBzIZkRiY7fJlEMH5GoWktqEk3W7sUGcaoER8/b3Bt++XS1QTU/+Ij7uOh
+         LgNePv9BMzjgSGawjx0Lk+vV46mRxd6TDoe/9nxNmk2RHyGmqkTFimkH5vgh8wCoX5Vp
+         CrIeVH8icxgEet4DlzLoto36bdTGX/O551ivbnzmff/djH6zhSVA4pTFE7jn/RkJGEww
+         fSbGTn3Ec7/IkuAD4vDqZK/7Z2faFI+v0KG1QKJxtJIXbifniTH9OE/5JiAS24nM0uDT
+         lkEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989400; x=1761594200;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1760989399; x=1761594199;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hM5MMLXsYM69EBdIPQteBCdcHt+2UMoOmn9dDxRhd44=;
-        b=MDQmpaiQoPR5RyJo5a+9lyMmkjgUH+rK7aTKjCWK0ngZ58JNBuwCQLdAjDGXOiUNHd
-         z5WhrGmnyV2iEUXMqcMzhD0/LwTrGWbj/YVggtGdMwTtaJT5I6Y3CjaNveB/LAJqdd5Q
-         QkEae+1jnlt0PgW9yjDBPAdTd8AIWzp3eUn+4Sf3y0+vDnM3yg79tw0c8KbIJCXKADZv
-         uRyJyowPcC1vxsI+VyMXSwLvs2K+lEoRaIgXtWvXDxSUsyLj+kWq4mo7ph98vrluIZKn
-         ikl+l43lVw5RIxRWGJPYTlbjfJYueB/WesOLWz2Lc2L4Yc+QorHCvrVK4MjjMSlOiwA6
-         qJEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo7Jk+vGiSUZCVYmYURHufKZOXDYwyRgINhpi3HH0I4a3ZkM/2kOZIBnS5xTPu3NACAVzioEYtpDvTHzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9qiGLB7PuT3AorfSigBAPG7+ikoskt3XcHea5P2oD+GZsZCen
-	qgOpDHRCcUHEMEjy3xpbh/vxu7nPk2M022/az9aPQCz7qL5WIqjFce/gZN7BbRPlnC0=
-X-Gm-Gg: ASbGncvFcHa6LW4E8alzE7itBbnmNeMw/EMuHOHMuL3EcF6Y2RWGraXDJp5Stq8QltO
-	BQMP16w571ch5Ho6oYJ1Bdmb9mCbzkowyQF2PasuBgG6mCuT9Bceg/pB79mdPnrI1XRPsKD0Qoa
-	o8Wd1Zy8dOGzUrdT26MJTQrjhmVolohhepFTRddTXw7Q3ZE+N1N46AJYgwev3oplar79QQswvM4
-	kHQeXBlRFVeVgd/tHzLTj+RLbEuuaEwKt/upEqLb36di6IUeISYZ4cLdiVhhISJQ95LnC03QRv5
-	6EKCvbaZJK3BxUBO/LsGzGw5sbWCCkp+ZYKMSsc/L8R+wt0aDAeIRJwSSwDTXv3qg7e2PJiKrbK
-	ryxu/xm5nv2Zcnoot8yYRagDCLY20fd5NtlZReCm5TQDi19cbgVCYtWu32IoLPOh8x6ZlGlO9gC
-	2z8AeOSmJqMVT1ZjI3oU4/v+x/gZY/rTGdoFf9OPwSGfiGpVdPSfBtEA==
-X-Google-Smtp-Source: AGHT+IEz0c9auRC0TwjskGJJcvcC5ayj8gqgof4QV51C8KuJdIiqhiUNN8QL7OYGY673kk8y9oGq8A==
-X-Received: by 2002:a05:6a00:784:b0:77d:c625:f5d3 with SMTP id d2e1a72fcca58-7a210d8ffd0mr15317951b3a.1.1760989399677;
+        bh=8WnrihOd4AsebH9UmcXUF+DGII/SVijUJ5cnGJII058=;
+        b=ufzKC9+sw1TCGMp5zpQTprbt6W0AwSMjTWTs3EWEu4SUd1wwmqH9VgxfcRr885r1h6
+         opKC31Qvs/SAlzI6gJ4+iWpkHsZ1+2kTiIoaQuz5xVnKv0Fi2s69d9VVJLrH6nbyAZzQ
+         8/3yZ5GoLugFhbDOjq76LDom8KDIOVQyH/U7CTO5uwRosijBPWB+PzCW+ZPnL0MTg2Z4
+         6bfILKd84sjSkU+gipRXnH5PNqW+Krq61YgBvoam/T4cSLDCYUhKrfQViccP6KSLCMW9
+         AfoL7Upvx9Y/6WY2ov86OjPWa3inWTEEL471YmZby/7GQ9iXdXXiH0WuZLlxIBA0lcxH
+         2LTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtOyZ+KSBMd4z2e4isDD+Y6Q7+6Y7sc+YgfPFBzMf36bdJK15JeuU83JjfL1UNh1C6OBBr/5tKt93wFko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbWAbRfWWEPIXo4D9pFms8kMce0GzS/q1KwnNNo5yh+IDWG4d7
+	Wi6l2URLjpnkystDLY6qJDHdGp3lpazurzDDE5qg52AYS+lM71YiO/J8iqKZokm3yVc=
+X-Gm-Gg: ASbGncvj6NNFq8aXpQ8D3G/0xodCXF/1Yb/bmL+nQPY+kt/sV2RmtIaPSW4LboZnGJC
+	nvI4+NxX71X8uYjePPLmipL2SaihcNIK5VOJBGx5zOl/cFM7MpdzMaevFrFNRtYyD/sjf38NAVU
+	oRfD8f9mUbnkiK6E4f30Vkjp3TJXBYzEOLIq5I8O80QDPcG9TSGDeVhB4y+0ru+tLU1MmnrRvpo
+	jLI1V0eECYy2YKXtH6mmt9J17rFP5sviCPqPp4YWyPNtbWxgLglnq5UjYKdSoZ6Jg1aP1BsEigI
+	nvWjHbj+gOGS5CQdGE1HOjafKy4wE7RaAEE5kE7+Xr3WdTHHalN8ndrcysZ0Tx465x2ihLUQlp8
+	TX1Q/64WEV1qt7eQ0r7k5oiOeIw5AJsFVxRje81J3fncZlqyeT/ftTiboFGnJtHdKWJ7zmHViXD
+	Q4+gq3Nb68KMY85uhylS4=
+X-Google-Smtp-Source: AGHT+IEA4WJiFVCo5i3lXWM9cTARgkcQvZpClBs7kLwlr1bv/oiPFR5QlLTNGP2c3IF9GX6YbAtlWg==
+X-Received: by 2002:a17:907:3f89:b0:b0c:1701:bf77 with SMTP id a640c23a62f3a-b64732424e1mr1670530466b.18.1760989399157;
         Mon, 20 Oct 2025 12:43:19 -0700 (PDT)
-Received: from ?IPV6:2804:7f0:bcc1:8cb8:dfc4:4af0:d7c6:a030? ([2804:7f0:bcc1:8cb8:dfc4:4af0:d7c6:a030])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff158f8sm9251975b3a.8.2025.10.20.12.43.15
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb03649dsm868542666b.50.2025.10.20.12.43.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:43:19 -0700 (PDT)
-Message-ID: <ca6a8e5a-f14d-4017-90dc-be566d594eee@ventanamicro.com>
-Date: Mon, 20 Oct 2025 16:43:14 -0300
+        Mon, 20 Oct 2025 12:43:18 -0700 (PDT)
+Message-ID: <26ea14dd-d331-41ee-b5b0-865918aa7690@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:43:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,143 +82,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RISC-V: KVM: Remove automatic I/O mapping for VM_PFNMAP
-To: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev,
- pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- pbonzini@redhat.com, jiangyifei@huawei.com
-Cc: guoren@kernel.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251020130801.68356-1-fangyu.yu@linux.alibaba.com>
-From: Daniel Henrique Barboza <dbarboza@ventanamicro.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v4 07/31] clk: at91: clk-utmi: use clk_parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
+References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+ <87a3e3615345c975acc669207cd8bd9f849b0fb0.1758226719.git.Ryan.Wanner@microchip.com>
 Content-Language: en-US
-In-Reply-To: <20251020130801.68356-1-fangyu.yu@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <87a3e3615345c975acc669207cd8bd9f849b0fb0.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi, Ryan,
 
-
-On 10/20/25 10:08 AM, fangyu.yu@linux.alibaba.com wrote:
-> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> As of commit aac6db75a9fc ("vfio/pci: Use unmap_mapping_range()"),
-> vm_pgoff may no longer guaranteed to hold the PFN for VM_PFNMAP
-> regions. Using vma->vm_pgoff to derive the HPA here may therefore
-> produce incorrect mappings.
+> Use struct clk_parent_data instead of struct parent_hw as this leads
+> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
+> conversion of existing SoC specific clock drivers from parent_names to
+> modern clk_parent_data structures.
 > 
-> Instead, I/O mappings for such regions can be established on-demand
-> during g-stage page faults, making the upfront ioremap in this path
-> is unnecessary.
-> 
-> Fixes: 9d05c1fee837 ("RISC-V: KVM: Implement stage2 page table programming")
-> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
-
-Hi,
-
-This patch fixes the issue observed by Drew in [1]. I was helping Drew
-debug it using a QEMU guest inside an emulated risc-v host with the
-'virt' machine + IOMMU enabled.
-
-Using the patches from [2], without the workaround patch (18), booting a
-guest with a passed-through PCI device fails with a store amo fault and a
-kernel oops:
-
-[    3.304776] Oops - store (or AMO) access fault [#1]
-[    3.305159] Modules linked in:
-[    3.305603] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc4 #39
-[    3.305988] Hardware name: riscv-virtio,qemu (DT)
-[    3.306140] epc : __ew32+0x34/0xba
-[    3.307910]  ra : e1000_irq_disable+0x1e/0x9a
-[    3.307984] epc : ffffffff806ebfbe ra : ffffffff806ee3f8 sp : ff2000000000baf0
-[    3.308022]  gp : ffffffff81719938 tp : ff600000018b8000 t0 : ff60000002c3b480
-[    3.308055]  t1 : 0000000000000065 t2 : 3030206530303031 s0 : ff2000000000bb30
-[    3.308086]  s1 : ff60000002a50a00 a0 : ff60000002a50fb8 a1 : 00000000000000d8
-[    3.308118]  a2 : ffffffffffffffff a3 : 0000000000000002 a4 : 0000000000003000
-[    3.308161]  a5 : ff200000001e00d8 a6 : 0000000000000008 a7 : 0000000000000038
-[    3.308195]  s2 : ff60000002a50fb8 s3 : ff60000001865000 s4 : 00000000000000d8
-[    3.308226]  s5 : ffffffffffffffff s6 : ff60000002a50a00 s7 : ffffffff812d2760
-[    3.308258]  s8 : 0000000000000a00 s9 : 0000000000001000 s10: ff60000002a51000
-[    3.308288]  s11: ff60000002a54000 t3 : ffffffff8172ec4f t4 : ffffffff8172ec4f
-[    3.308475]  t5 : ffffffff8172ec50 t6 : ff2000000000b848
-[    3.308763] status: 0000000200000120 badaddr: ff200000001e00d8 cause: 0000000000000007
-[    3.308975] [<ffffffff806ebfbe>] __ew32+0x34/0xba
-[    3.309196] [<ffffffff806ee3f8>] e1000_irq_disable+0x1e/0x9a
-[    3.309241] [<ffffffff806f1e12>] e1000_probe+0x3b6/0xb50
-[    3.309279] [<ffffffff80510554>] pci_device_probe+0x7e/0xf8
-[    3.310001] [<ffffffff80610344>] really_probe+0x82/0x202
-[    3.310409] [<ffffffff80610520>] __driver_probe_device+0x5c/0xd0
-[    3.310622] [<ffffffff806105c0>] driver_probe_device+0x2c/0xb0
-(...)
-
-
-Further debugging showed that, as far as QEMU goes, the store fault happens in an
-"unassigned io region", i.e. a region where there's no IO memory region mapped by
-any device. There is no IOMMU faults being logged and, at least as far as I've
-observed, no IOMMU translation bugs in the QEMU side as well.
-
-
-Thanks for the fix!
-
-
-Tested-by: Daniel Henrique Barboza <dbarboza@ventanamicro.com>
-
-
-
-[1] https://lore.kernel.org/all/20250920203851.2205115-38-ajones@ventanamicro.com/
-[2] https://lore.kernel.org/all/20250920203851.2205115-20-ajones@ventanamicro.com/
-
-
-
-
->   arch/riscv/kvm/mmu.c | 20 +-------------------
->   1 file changed, 1 insertion(+), 19 deletions(-)
+>  drivers/clk/at91/clk-utmi.c | 16 ++++++++--------
+>  drivers/clk/at91/pmc.h      |  4 ++--
+>  drivers/clk/at91/sama7g5.c  | 21 +++++++++++++--------
+>  3 files changed, 23 insertions(+), 18 deletions(-)
 > 
-> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> index 525fb5a330c0..84c04c8f0892 100644
-> --- a/arch/riscv/kvm/mmu.c
-> +++ b/arch/riscv/kvm/mmu.c
-> @@ -197,8 +197,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->   
->   	/*
->   	 * A memory region could potentially cover multiple VMAs, and
-> -	 * any holes between them, so iterate over all of them to find
-> -	 * out if we can map any of them right now.
-> +	 * any holes between them, so iterate over all of them.
->   	 *
->   	 *     +--------------------------------------------+
->   	 * +---------------+----------------+   +----------------+
-> @@ -229,32 +228,15 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->   		vm_end = min(reg_end, vma->vm_end);
->   
->   		if (vma->vm_flags & VM_PFNMAP) {
-> -			gpa_t gpa = base_gpa + (vm_start - hva);
-> -			phys_addr_t pa;
-> -
-> -			pa = (phys_addr_t)vma->vm_pgoff << PAGE_SHIFT;
-> -			pa += vm_start - vma->vm_start;
-> -
->   			/* IO region dirty page logging not allowed */
->   			if (new->flags & KVM_MEM_LOG_DIRTY_PAGES) {
->   				ret = -EINVAL;
->   				goto out;
->   			}
-> -
-> -			ret = kvm_riscv_mmu_ioremap(kvm, gpa, pa, vm_end - vm_start,
-> -						    writable, false);
-> -			if (ret)
-> -				break;
->   		}
->   		hva = vm_end;
->   	} while (hva < reg_end);
->   
-> -	if (change == KVM_MR_FLAGS_ONLY)
-> -		goto out;
-> -
-> -	if (ret)
-> -		kvm_riscv_mmu_iounmap(kvm, base_gpa, size);
-> -
->   out:
->   	mmap_read_unlock(current->mm);
->   	return ret;
+> diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+> index b991180beea1..38ffe4d712a5 100644
+> --- a/drivers/clk/at91/clk-utmi.c
+> +++ b/drivers/clk/at91/clk-utmi.c
+> @@ -144,7 +144,7 @@ static struct clk_hw * __init
+>  at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
+>  				struct regmap *regmap_sfr,
+>  				const char *name, const char *parent_name,
+> -				struct clk_hw *parent_hw,
+> +				struct clk_parent_data *parent_data,
+>  				const struct clk_ops *ops, unsigned long flags)
+>  {
+>  	struct clk_utmi *utmi;
+> @@ -152,7 +152,7 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
+>  	struct clk_init_data init = {};
+>  	int ret;
+>  
+> -	if (!(parent_name || parent_hw))
+> +	if (!(parent_name || parent_data))
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	utmi = kzalloc(sizeof(*utmi), GFP_KERNEL);
+> @@ -161,8 +161,8 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
+>  
+>  	init.name = name;
+>  	init.ops = ops;
+> -	if (parent_hw)
+> -		init.parent_hws = (const struct clk_hw **)&parent_hw;
+> +	if (parent_data)
+> +		init.parent_data = (const struct clk_parent_data *)parent_data;
+>  	else
+>  		init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+> @@ -185,10 +185,10 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
+>  struct clk_hw * __init
+>  at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
+>  		       const char *name, const char *parent_name,
+> -		       struct clk_hw *parent_hw)
+> +		       struct clk_parent_data *parent_data)
+>  {
+>  	return at91_clk_register_utmi_internal(regmap_pmc, regmap_sfr, name,
+> -			parent_name, parent_hw, &utmi_ops, CLK_SET_RATE_GATE);
+> +			parent_name, parent_data, &utmi_ops, CLK_SET_RATE_GATE);
+>  }
+>  
+>  static int clk_utmi_sama7g5_prepare(struct clk_hw *hw)
+> @@ -287,8 +287,8 @@ static const struct clk_ops sama7g5_utmi_ops = {
+>  
+>  struct clk_hw * __init
+>  at91_clk_sama7g5_register_utmi(struct regmap *regmap_pmc, const char *name,
+> -			       const char *parent_name, struct clk_hw *parent_hw)
+> +			       const char *parent_name, struct clk_parent_data *parent_data)
+>  {
+>  	return at91_clk_register_utmi_internal(regmap_pmc, NULL, name,
+> -			parent_name, parent_hw, &sama7g5_utmi_ops, 0);
+> +			parent_name, parent_data, &sama7g5_utmi_ops, 0);
+>  }
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index 13d125793216..ee77c14e8b25 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -302,10 +302,10 @@ at91rm9200_clk_register_usb(struct regmap *regmap, const char *name,
+>  struct clk_hw * __init
+>  at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
+>  		       const char *name, const char *parent_name,
+> -		       struct clk_hw *parent_hw);
+> +		       struct clk_parent_data *parent_data);
+>  
+>  struct clk_hw * __init
+>  at91_clk_sama7g5_register_utmi(struct regmap *regmap, const char *name,
+> -			       const char *parent_name, struct clk_hw *parent_hw);
+> +			       const char *parent_name, struct clk_parent_data *parent_data);
+>  
+>  #endif /* __PMC_H_ */
+> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+> index b1b0e9e67228..dde662a6133f 100644
+> --- a/drivers/clk/at91/sama7g5.c
+> +++ b/drivers/clk/at91/sama7g5.c
+> @@ -976,10 +976,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>  	void **alloc_mem = NULL;
+>  	int alloc_mem_size = 0;
+>  	struct regmap *regmap;
+> -	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
+> +	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
+>  	struct clk_hw *td_slck_hw, *md_slck_hw;
+> -	static struct clk_parent_data parent_data;
+> +	struct clk_parent_data parent_data[2];
 
+This should be part of patch 6/31.
+
+>  	struct clk_hw *parent_hws[10];
+> +	struct clk *main_xtal;
+
+This could be moved in the for block where of_clk_get_by_name(np,
+main_xtal_name); is called.
 
