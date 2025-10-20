@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-861904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCDABF3F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:44:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C3CBF3F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36DAB18C47C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:44:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8ECDA4F9B00
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6252F49F2;
-	Mon, 20 Oct 2025 22:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F992F5305;
+	Mon, 20 Oct 2025 22:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ckb24Xyd"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZECwyy//"
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776A423BD1B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B082F3C22
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761000238; cv=none; b=qUfD1ixZGWWsW/Rv3yow4aEWtiqUZEYnhs9uKYc4mStPPa9zRLBNI1WVpyqNBBZggvjepy1pXOlNfYsnyOkc7JHS5jAA9TpkILwcX78Uyakx1yn9fxAMHPXRLYKim14noP4Hk3cHmpwzXoL3ei9a5IKycdbXyd1Iw65b3sUeSac=
+	t=1761000239; cv=none; b=S8Fr9h1K7JAP+XHR8eUUk5wlpRxmrgsNwN4woO2Y9defySdZSG4pHKEyJiWXk3e371m/OF2wjko4+StMG44Huh3Na7LIMQhzY+9dTGMH4G83gEtMLqPW1nUMkm9a8xB8scSOwjhWeK9VetJrIr3vysRgc9NcNAxMgPTXmVue4p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761000238; c=relaxed/simple;
-	bh=32XZ91vU9aHs6FzuV4F05AddOrn3ok96jr3nZdLHa+8=;
+	s=arc-20240116; t=1761000239; c=relaxed/simple;
+	bh=+cbkIGf51wu+dKYaAbvM2BvLqB684l7hmHUlZdt7yPM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WsgXj/5AqRsfrkWtpq0PiuUa+3/RuNJylVlnVRUqy/PJ3n4l9DE61qW533CAaA+d+zaAi3xQSfMx2PLGntyZA7Fb2b/8m4QCAmsBNiye90Sv0aSRcPAbl/gQhQWA4yBQh0jZnHmdSYFzDDgp2PKF6Z5p4gH8jCdSKizrAOrYPcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ckb24Xyd; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=oUROmUmnpB5WVqgPzU1MbMWoAQWwkMIDQsRvt96b+MUXN3rLDqTzddDn6ux7ZwrOqg3vAHESP5POZr9ZSeVOc3eZWDaz7gqfcnABtEEN9TbRDPcbEuUkajeiX5lEtAE+79fzf5wCIv8/28PkyHhRCI8T5oW+P6Xo+d/aH9dDCbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZECwyy//; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Received: from DESKTOP-0403QTC.corp.microsoft.com (unknown [20.236.10.163])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6A704201DAC4;
-	Mon, 20 Oct 2025 15:43:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6A704201DAC4
+	by linux.microsoft.com (Postfix) with ESMTPSA id 4B5BD201DAC2;
+	Mon, 20 Oct 2025 15:43:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4B5BD201DAC2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761000236;
-	bh=Ph3WtohmXgImXfa9CmzZxYK2qUGteeBrfoVhYg+75HE=;
+	s=default; t=1761000237;
+	bh=gqIaDRBc7A1MoNCB58t4c+4ECYr6ZJnpkTgiwo2Dv/k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ckb24XydlMf4jnD23uFGyHxjxRH1RCFALQfCrH2OwfvseJhjcw91QUNBToptMf2e+
-	 dd+Zs0GcructXackizLXES44fEzmilZ0oo9SCd529EmqrCy5H0kLBZzGenZjZ4G6Ct
-	 xQwbvOwQ5jgVH1WxnRHvKqhphcGdKM2PkKgukSM8=
+	b=ZECwyy//cK1BvEWFcJd7VU11EbY5v2cEiXuBmPZ6RNA/mbM/0iLK4BJ3k+h4iuEFK
+	 Bfze1YLQbzTqwDTpIWSSAoHCaodSfdIDlV9LcR2dDNwlzOONrs8xo6A8XzIYf3+Lrb
+	 BhU0VMW8cRfCfAvUEWZ4BX9D67q8gB8Lbmgrnk1I=
 From: Jacob Pan <jacob.pan@linux.microsoft.com>
 To: linux-kernel@vger.kernel.org,
 	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
@@ -52,9 +52,9 @@ Cc: Jacob Pan <jacob.pan@linux.microsoft.com>,
 	Zhang Yu <zhangyu1@linux.microsoft.com>,
 	Jean Philippe-Brucker <jean-philippe@linaro.org>,
 	Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
-Date: Mon, 20 Oct 2025 15:43:52 -0700
-Message-Id: <20251020224353.1408-2-jacob.pan@linux.microsoft.com>
+Subject: [PATCH v2 2/2] iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
+Date: Mon, 20 Oct 2025 15:43:53 -0700
+Message-Id: <20251020224353.1408-3-jacob.pan@linux.microsoft.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
 References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
@@ -66,125 +66,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While polling for n spaces in the cmdq, the current code instead checks
-if the queue is full. If the queue is almost full but not enough space
-(<n), then the CMDQ timeout warning is never triggered even if the
-polling has exceeded timeout limit.
+From: Alexander Grest <Alexander.Grest@microsoft.com>
 
-This patch polls for the availability of exact space instead of full and
-emit timeout warning accordingly.
+The SMMU CMDQ lock is highly contentious when there are multiple CPUs
+issuing commands on an architecture with small queue sizes e.g 256
+entries.
 
-Fixes: 587e6c10a7ce ("iommu/arm-smmu-v3: Reduce contention during command-queue insertion")
-Co-developed-by: Yu Zhang <zhangyu1@linux.microsoft.com>
-Signed-off-by: Yu Zhang <zhangyu1@linux.microsoft.com>
+The lock has the following states:
+ - 0:		Unlocked
+ - >0:		Shared lock held with count
+ - INT_MIN+N:	Exclusive lock held, where N is the # of shared waiters
+ - INT_MIN:	Exclusive lock held, no shared waiters
+
+When multiple CPUs are polling for space in the queue, they attempt to
+grab the exclusive lock to update the cons pointer from the hardware. If
+they fail to get the lock, they will spin until either the cons pointer
+is updated by another CPU.
+
+The current code allows the possibility of shared lock starvation
+if there is a constant stream of CPUs trying to grab the exclusive lock.
+This leads to severe latency issues and soft lockups.
+
+To mitigate this, we release the exclusive lock by only clearing the sign
+bit while retaining the shared lock waiter count as a way to avoid
+starving the shared lock waiters.
+
+Also deleted cmpxchg loop while trying to acquire the shared lock as it
+is not needed. The waiters can see the positive lock count and proceed
+immediately after the exclusive lock is released.
+
+Exclusive lock is not starved in that submitters will try exclusive lock
+first when new spaces become available.
+
+In a staged test where 32 CPUs issue SVA invalidations simultaneously on
+a system with a 256 entry queue, the madvise (MADV_DONTNEED) latency
+dropped by 50% with this patch and without soft lockups.
+
+Reviewed-by: Mostafa Saleh <smostafa@google.com>
+Signed-off-by: Alexander Grest <Alexander.Grest@microsoft.com>
 Signed-off-by: Jacob Pan <jacob.pan@linux.microsoft.com>
 ---
-v2: - Reduced debug print info (Nicolin)
-    - Use a separate irq flags for exclusive lock
-    - Handle queue_poll err code other than ETIMEOUT
+v2:
+	- Changed shared lock acquire condition from VAL>=0 to VAL>0
+	  (Mostafa)
+	- Added more comments to explain shared lock change (Nicolin)
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 66 ++++++++-------------
- 1 file changed, 26 insertions(+), 40 deletions(-)
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 31 ++++++++++++++-------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index bf67d9abc901..6959d99c74a3 100644
+index 6959d99c74a3..9e632bb022fe 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -117,12 +117,6 @@ static bool queue_has_space(struct arm_smmu_ll_queue *q, u32 n)
- 	return space >= n;
- }
- 
--static bool queue_full(struct arm_smmu_ll_queue *q)
--{
--	return Q_IDX(q, q->prod) == Q_IDX(q, q->cons) &&
--	       Q_WRP(q, q->prod) != Q_WRP(q, q->cons);
--}
--
- static bool queue_empty(struct arm_smmu_ll_queue *q)
+@@ -460,20 +460,26 @@ static void arm_smmu_cmdq_skip_err(struct arm_smmu_device *smmu)
+  */
+ static void arm_smmu_cmdq_shared_lock(struct arm_smmu_cmdq *cmdq)
  {
- 	return Q_IDX(q, q->prod) == Q_IDX(q, q->cons) &&
-@@ -612,38 +606,6 @@ static void arm_smmu_cmdq_poll_valid_map(struct arm_smmu_cmdq *cmdq,
- 	__arm_smmu_cmdq_poll_set_valid_map(cmdq, sprod, eprod, false);
+-	int val;
+-
+ 	/*
+-	 * We can try to avoid the cmpxchg() loop by simply incrementing the
+-	 * lock counter. When held in exclusive state, the lock counter is set
+-	 * to INT_MIN so these increments won't hurt as the value will remain
+-	 * negative.
++	 * When held in exclusive state, the lock counter is set to INT_MIN
++	 * so these increments won't hurt as the value will remain negative.
++	 * The increment will also signal the exclusive locker that there are
++	 * shared waiters.
+ 	 */
+ 	if (atomic_fetch_inc_relaxed(&cmdq->lock) >= 0)
+ 		return;
+ 
+-	do {
+-		val = atomic_cond_read_relaxed(&cmdq->lock, VAL >= 0);
+-	} while (atomic_cmpxchg_relaxed(&cmdq->lock, val, val + 1) != val);
++	/*
++	 * Someone else is holding the lock in exclusive state, so wait
++	 * for them to finish. Since we already incremented the lock counter,
++	 * no exclusive lock can be acquired until we finish. We don't need
++	 * the return value since we only care that the exclusive lock is
++	 * released (i.e. the lock counter is non-negative).
++	 * Once the exclusive locker releases the lock, the sign bit will
++	 * be cleared and our increment will make the lock counter positive,
++	 * allowing us to proceed.
++	 */
++	atomic_cond_read_relaxed(&cmdq->lock, VAL > 0);
  }
  
--/* Wait for the command queue to become non-full */
--static int arm_smmu_cmdq_poll_until_not_full(struct arm_smmu_device *smmu,
--					     struct arm_smmu_cmdq *cmdq,
--					     struct arm_smmu_ll_queue *llq)
--{
--	unsigned long flags;
--	struct arm_smmu_queue_poll qp;
--	int ret = 0;
--
--	/*
--	 * Try to update our copy of cons by grabbing exclusive cmdq access. If
--	 * that fails, spin until somebody else updates it for us.
--	 */
--	if (arm_smmu_cmdq_exclusive_trylock_irqsave(cmdq, flags)) {
--		WRITE_ONCE(cmdq->q.llq.cons, readl_relaxed(cmdq->q.cons_reg));
--		arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, flags);
--		llq->val = READ_ONCE(cmdq->q.llq.val);
--		return 0;
--	}
--
--	queue_poll_init(smmu, &qp);
--	do {
--		llq->val = READ_ONCE(cmdq->q.llq.val);
--		if (!queue_full(llq))
--			break;
--
--		ret = queue_poll(&qp);
--	} while (!ret);
--
--	return ret;
--}
--
- /*
-  * Wait until the SMMU signals a CMD_SYNC completion MSI.
-  * Must be called with the cmdq lock held in some capacity.
-@@ -775,6 +737,7 @@ static int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
- 	unsigned long flags;
- 	bool owner;
- 	struct arm_smmu_ll_queue llq, head;
-+	struct arm_smmu_queue_poll qp;
- 	int ret = 0;
+ static void arm_smmu_cmdq_shared_unlock(struct arm_smmu_cmdq *cmdq)
+@@ -500,9 +506,14 @@ static bool arm_smmu_cmdq_shared_tryunlock(struct arm_smmu_cmdq *cmdq)
+ 	__ret;								\
+ })
  
- 	llq.max_n_shift = cmdq->q.llq.max_n_shift;
-@@ -785,10 +748,33 @@ static int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
- 	do {
- 		u64 old;
- 
-+		queue_poll_init(smmu, &qp);
- 		while (!queue_has_space(&llq, n + sync)) {
-+			unsigned long iflags;
-+
- 			local_irq_restore(flags);
--			if (arm_smmu_cmdq_poll_until_not_full(smmu, cmdq, &llq))
--				dev_err_ratelimited(smmu->dev, "CMDQ timeout\n");
-+			/*
-+			 * Try to update our copy of cons by grabbing exclusive cmdq access. If
-+			 * that fails, spin until somebody else updates it for us.
-+			 */
-+			if (arm_smmu_cmdq_exclusive_trylock_irqsave(cmdq, iflags)) {
-+				WRITE_ONCE(cmdq->q.llq.cons, readl_relaxed(cmdq->q.cons_reg));
-+				arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, iflags);
-+				llq.val = READ_ONCE(cmdq->q.llq.val);
-+				local_irq_save(flags);
-+				continue;
-+			}
-+
-+			ret = queue_poll(&qp);
-+			if (ret == -ETIMEDOUT) {
-+				dev_err_ratelimited(smmu->dev, "CPU %d CMDQ Timeout, Cons: %08x, Prod: 0x%08x Lock 0x%x\n",
-+						    smp_processor_id(), llq.cons, llq.prod, atomic_read(&cmdq->lock));
-+				queue_poll_init(smmu, &qp);
-+			} else if (ret) {
-+				dev_err_ratelimited(smmu->dev, "CPU %d CMDQ Poll error %d\n",
-+						    smp_processor_id(), ret);
-+			}
-+			llq.val = READ_ONCE(cmdq->q.llq.val);
- 			local_irq_save(flags);
- 		}
++/*
++ * Only clear the sign bit when releasing the exclusive lock this will
++ * allow any shared_lock() waiters to proceed without the possibility
++ * of entering the exclusive lock in a tight loop.
++ */
+ #define arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, flags)		\
+ ({									\
+-	atomic_set_release(&cmdq->lock, 0);				\
++	atomic_fetch_and_release(~INT_MIN, &cmdq->lock);				\
+ 	local_irq_restore(flags);					\
+ })
  
 -- 
 2.43.0
