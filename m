@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-861106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA738BF1CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:20:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5650BF1CE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D45FF4F6ADA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:19:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DCA54ED0C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80325322745;
-	Mon, 20 Oct 2025 14:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA8B31197C;
+	Mon, 20 Oct 2025 14:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F2UlWDd3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YaksNdhd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Yfzcjgq/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iPtVhfJC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XkyJX9FS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3365F322C99
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5892F25E0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969958; cv=none; b=GC1s6jQHVg7KdLnzycMRU+CMFo1LB+E5JWK7++y0ucf5N+KiU9YVESKZNLj5AKKk+22oITg55ifYtYy6+HFc+PokjuH9n0YDr5W/Q8vdrorGvLfEncFpeK4/6L489vDtZn6ZxtIftlkUZSH5VvCOK0O0kHJMvC73znoxdNeZzic=
+	t=1760970002; cv=none; b=KfcfOBSBuTCINA6LPSXkaizLfO5+KSXKZtiOe/v/inqMneedxmjzjxJnCmSBcO+cLExoofaydvNH+/dPRDyvo7HhbxyqoOBu6GNEMok/bKPua6UyeknEaom94ZBIxyvQhbAKcqZNjfmkczoAlR6lY+1AR5qm8n1VAlmpC9Jer+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969958; c=relaxed/simple;
-	bh=S+9U8PTCBE9u96MJ7rHIGGP+OkXXpmWO+rYNaz2InCc=;
+	s=arc-20240116; t=1760970002; c=relaxed/simple;
+	bh=QHXNtaionzyuYsDzzDFc9xDZtztaw7kPOVJGaBmY9ME=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qy+7X6ew7oPkA5PAxbN4ZekPg8Ybe1u1f+Xq+S6LJ5xg579EJEsnqIWjuZQ/mAQ2jNcq81KP7pbyNmHGw4tVDR2KsJSFmItLiFZmkDqY7jAI75mlZa20zymhesQWMcRNw+jt8utyX8tE0eNvV1vURGZTg8DxIaK69LgRyfF+Ztw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F2UlWDd3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760969956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=NJJ9z3B7b5i2cwUCFFpp+xPPQ+7hBMfnJJ6MomQrsX4x3HQ8yDI8BVswvA4enrBuMkRles76HIj26Pwvo3df2xNGdwKKrVjXjxG3qr4WaDWIjCaCgWYn8n/kRj+swszGo0iLF56Tb9ualdIjl9CgmVlGdVKemUjKd1f+c9eFz/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YaksNdhd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Yfzcjgq/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iPtVhfJC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XkyJX9FS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D82F51F445;
+	Mon, 20 Oct 2025 14:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760969995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=65btNgY1S+uFcA06CrNMMM0YWdZBYxuJXH6kRyOL5H4=;
-	b=F2UlWDd33yHk3Dq9f92LIjJbSVW3FLaKBgV4Yr0IvAyuRk/rhUCU0ERgBnGyBaJs/0JhnO
-	ZEQjHl6PuPtuRyGuJLydhi4rhmrRSET9TLu6ev90fbbqbXIeXnx2SUKC24TUiDvFYgjCDz
-	oL/5rHZIivYiTyb5tKZ5HQPyna/4a00=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-ddQgKda5OeKDQ0FNIABOoA-1; Mon, 20 Oct 2025 10:19:14 -0400
-X-MC-Unique: ddQgKda5OeKDQ0FNIABOoA-1
-X-Mimecast-MFC-AGG-ID: ddQgKda5OeKDQ0FNIABOoA_1760969953
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-470fd49f185so36913985e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:19:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760969953; x=1761574753;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=65btNgY1S+uFcA06CrNMMM0YWdZBYxuJXH6kRyOL5H4=;
-        b=Owg7/MG6Pcd1b85E3nLlTmiZAH7fxbQmLuqVWPVg8VmLE0/1/yYMv982/e9IcuxsPO
-         nSAPFCipYAuyyN3r4HsThh6V9r3mwLdaFarmr5v5S44aBDTOSgJb8cjy6NTbxTcqkXeZ
-         1+phFmZinq92QNbdo4pk0Y6KHBFdUDOakmE4/d3nxIQWZ474utgBzIKewgWF7E5CfQ2Z
-         Gunrg8bZsotie3IxjDF8s/n9Feq3UHRVaydR5rW3f3qTNDk2pEb8vpvsCZcBEjIk0NoG
-         O/bbxyCZkif37XfkAmSQ8ZUUDPANwmp0bY08Q4x5YhTKRpdjahS/6DfsjNNyAxcCbULq
-         CsLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlZ0vAs1t0ZYFQ1G2eSp5wAvXfT7/U0AwhXAap4TFMY3t19Jl9yJL5ASei31UAqrmjhL43Sn+4cA72mtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjmGxz3yvLl7GZuD2Ias4arf+Ucy82n1c2lT5UCv1DbTtGq2u8
-	SliMtWrCeMemfwtg7/uVIrurrG4upevwGSlczqqCUXygDoUCJGf0gR7oVBe95pEtLAu3XHu8TY0
-	NkXTbF1bx7KCUNDgHtmb2G/Eki2MNKD7x1pFB+BxSiYxrtjYVgfN4T/J+0y+KGfJIEQ==
-X-Gm-Gg: ASbGncsG6QIrvuLTSz1mSXvwMelgXb38nS/JMT/XomeP6EAnbVmAzfF+TDR2no28RpA
-	3bqzYglvuWS7xyCraIrjHfb3HMW+DIFL3XZm5me4qvdlwUivelgX0dMOORDO8eS8VWOOW2AS3Px
-	dAoBv92cjJh/El5QXHKAW+hw26PNmu+DfRQvpaW81moi5tv65LTCtzYpn1uCOHArdKzR15M1rnk
-	Zz6EegwFwBzSp94D1yiVjyiwJFRR7+fVRu0hjpePss6Ol8TwB3LPu7r5x+qxac2Wsu5/8qault9
-	m8C+y2sJTxbLsGQKnihdKOL84l8yW44ya3eQamSekN1N5n0yjxFlDeCQ1hXVG/jOwjQs8jB29+p
-	8wQR0c5x/z7FOH/dDOyUHxXIxJ0m5gpJ+e+cGW1gz7HRuywGId6/ftR6yyH1G1j3PXBh3U8FJkh
-	7mIAeEIbZRmVl4SPMsWRm6QSdPCM8=
-X-Received: by 2002:a5d:5d02:0:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-42704d9b22amr8367713f8f.43.1760969953320;
-        Mon, 20 Oct 2025 07:19:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIQ86tVQBiVUCtXtty92ZgvqJuklg1r9FrAW/HfWuTtSRsNtewiudoCqYJbGF96Hka/1j4mQ==
-X-Received: by 2002:a5d:5d02:0:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-42704d9b22amr8367680f8f.43.1760969952867;
-        Mon, 20 Oct 2025 07:19:12 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0e9csm15752758f8f.5.2025.10.20.07.19.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 07:19:12 -0700 (PDT)
-Message-ID: <dc0587af-5054-4da0-adf2-20aa5a10d40f@redhat.com>
-Date: Mon, 20 Oct 2025 16:19:10 +0200
+	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
+	b=YaksNdhdJFPHRAhWPwb7MzXrGDy9eoWT89GAo9yZddbD88WLvYgCdjltoFPuXDi+wJRVlo
+	OwABPfyiGy4vd1x7ouhzQwKcrd1zHOxIWipnkvpGDJPKX6Kdz4bdM2OZgqczjai/hjCGaV
+	a60f5lnlkncYo67eAoYGo9uPS2V6P1s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760969995;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
+	b=Yfzcjgq/U36ZuxL+Oxb9aUjKhN7BqU9oyNIzmhv/ovMqU4GN4X35EYDBSRY9pkjrmUwbgQ
+	4rpXBEiPAtejLYAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760969990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
+	b=iPtVhfJCTO/x0hsnbswQMjUiHGtaCbqR7HsDJ5aDQgRS48JPzU9U/bbT1j6+q86w84Wp4B
+	g+5kEYpuj11mJo5XhjKjk8W5B5fq3N7cfEPPSIY2oqj2RiXnfdC8CUuIvhglrXwlqqf1bv
+	f8BnJfLzSvRWqu/1wGO9YolYRrglMIQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760969990;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
+	b=XkyJX9FSurNfBMhgpZg7mewttv8Ll4Ptds3px6hJ3bieDFlBIvkTZ7SgdKNVwB/TaST8/6
+	9Aysa1yA3OjMxoBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A431713A8E;
+	Mon, 20 Oct 2025 14:19:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gaClJgZF9mhkGwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 20 Oct 2025 14:19:50 +0000
+Message-ID: <dd443c76-b68d-4a1c-9b36-d88dd6c95998@suse.de>
+Date: Mon, 20 Oct 2025 16:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,91 +96,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] mm/hugetlb: Support vm_uffd_ops API
-To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- Nikita Kalyazin <kalyazin@amazon.com>, Vlastimil Babka <vbabka@suse.cz>,
- Axel Rasmussen <axelrasmussen@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- James Houghton <jthoughton@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Hugh Dickins
- <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
- Ujwal Kundur <ujwal.kundur@gmail.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Oscar Salvador <osalvador@suse.de>, Suren Baghdasaryan <surenb@google.com>,
- Andrea Arcangeli <aarcange@redhat.com>
-References: <20251014231501.2301398-1-peterx@redhat.com>
- <20251014231501.2301398-4-peterx@redhat.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] drm/gud: rearrange gud_probe() to prepare for function
+ splitting
+To: Ruben Wauters <rubenru09@aol.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251019185642.14266-2-rubenru09.ref@aol.com>
+ <20251019185642.14266-2-rubenru09@aol.com>
+ <cde9304a-5ab8-4f13-841c-c5679d55b502@suse.de>
+ <57f201bb938b14a13b4b7ecf8173612232486669.camel@aol.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251014231501.2301398-4-peterx@redhat.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <57f201bb938b14a13b4b7ecf8173612232486669.camel@aol.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On 15.10.25 01:15, Peter Xu wrote:
-> Add support for the new vm_uffd_ops API for hugetlb.  Note that this only
-> introduces the support, the API is not yet used by core mm.
-> 
-> Due to legacy reasons, it's still not trivial to move hugetlb completely to
-> the API.  But it will still use supported_ioctls properly on the API with
-> all the implementations still hard coded in mm/.
-> 
-> Cc: Muchun Song <muchun.song@linux.dev>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Acked-by: Mike Rapoport <rppt@kernel.org>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
+Hi
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Am 20.10.25 um 15:45 schrieb Ruben Wauters:
+> On Mon, 2025-10-20 at 09:00 +0200, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 19.10.25 um 20:53 schrieb Ruben Wauters:
+>>> gud_prove() is currently very large and does many things, including
+>> 'gud_probe'
+> Unfortunate typo that I only realised after sending
+>>> pipeline setup and feature detection, as well as having USB functions.
+>>>
+>>> This patch re-orders the code in gud_probe() to make it more organised
+>>> and easier to split apart in the future.
+>>>
+>>> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+>>> ---
+>>> I wanted to move mode config to just before pipeline init, however mode
+>>> config is edited in feature detection so I was unsure how to go about it
+>>> exactly.
+>>> Further untangling of this may be required before splitting it out
+>>> ---
+>>>    drivers/gpu/drm/gud/gud_drv.c | 31 +++++++++++++++++--------------
+>>>    1 file changed, 17 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
+>>> index b7345c8d823d..583f7f8f4c00 100644
+>>> --- a/drivers/gpu/drm/gud/gud_drv.c
+>>> +++ b/drivers/gpu/drm/gud/gud_drv.c
+>>> @@ -463,10 +463,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>>>    		return PTR_ERR(gdrm);
+>>>    
+>>>    	drm = &gdrm->drm;
+>>> -	drm->mode_config.funcs = &gud_mode_config_funcs;
+>>> -	ret = drmm_mode_config_init(drm);
+>>> -	if (ret)
+>>> -		return ret;
+>>>    
+>>>    	gdrm->flags = le32_to_cpu(desc.flags);
+>>>    	gdrm->compression = desc.compression & GUD_COMPRESSION_LZ4;
+>>> @@ -483,11 +479,18 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>>>    	if (ret)
+>>>    		return ret;
+>>>    
+>>> +	/* Mode config init*/
+>>> +	ret = drmm_mode_config_init(drm);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>    	drm->mode_config.min_width = le32_to_cpu(desc.min_width);
+>>>    	drm->mode_config.max_width = le32_to_cpu(desc.max_width);
+>>>    	drm->mode_config.min_height = le32_to_cpu(desc.min_height);
+>>>    	drm->mode_config.max_height = le32_to_cpu(desc.max_height);
+>>> +	drm->mode_config.funcs = &gud_mode_config_funcs;
+>>>    
+>>> +	/*Format init*/
+>>>    	formats_dev = devm_kmalloc(dev, GUD_FORMATS_MAX_NUM, GFP_KERNEL);
+>>>    	/* Add room for emulated XRGB8888 */
+>>>    	formats = devm_kmalloc_array(dev, GUD_FORMATS_MAX_NUM + 1, sizeof(*formats), GFP_KERNEL);
+>>> @@ -587,6 +590,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>>>    			return -ENOMEM;
+>>>    	}
+>>>    
+>>> +	/*Pipeline init*/
+>>>    	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
+>>>    				       &gud_plane_funcs,
+>>>    				       formats, num_formats,
+>>> @@ -598,15 +602,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>>>    	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+>>>    	drm_plane_enable_fb_damage_clips(&gdrm->plane);
+>>>    
+>>> -	devm_kfree(dev, formats);
+>>> -	devm_kfree(dev, formats_dev);
+>>> -
+>>> -	ret = gud_get_properties(gdrm);
+>>> -	if (ret) {
+>>> -		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
+>>> -		return ret;
+>>> -	}
+>>> -
+>>>    	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
+>>>    					&gud_crtc_funcs, NULL);
+>>>    	if (ret)
+>>> @@ -621,6 +616,13 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>>>    	}
+>>>    
+>>>    	drm_mode_config_reset(drm);
+>>> +	drm_kms_helper_poll_init(drm);
+>>> +
+>>> +	ret = gud_get_properties(gdrm);
+>> This function installs plane properties. So it need to be in its old
+>> location after drm_universal_plane_init() and before
+>> drm_mode_config_reset(). It should be renamed to
+>> gud_plane_add_properties(). See [1] for the connector equivalent
+> This does make sense, though I do wonder why it worked on testing,
+> either way, will change it.
+
+It could be that you can add it afterwards, but that certainly creates 
+timing issues with user space. There's a related note at [1].
+
+[1] 
+https://elixir.bootlin.com/linux/v6.17.3/source/drivers/gpu/drm/drm_mode_object.c#L231
+
+Best regards
+Thomas
+
+>> [1]
+>> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud_connector.c#L474
+>>
+>>> +	if (ret) {
+>>> +		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
+>>> +		return ret;
+>>> +	}
+>>>    
+>>>    	usb_set_intfdata(intf, gdrm);
+>> After you've called drm_kms_helper_poll_init(), DRM could query the
+>> connector for attached displays at any time. This might require the usb
+>> interface to point to the gud device. And the DRM driver also needs to
+>> know about the DMA device.  I quick look through the driver code suggest
+>> that it works without, but better not count on it.
+>>
+>> Best would be to move this line and the block with the DMA setup [2]
+>> just after where the gud device got allocated with devmdrm_dev_alloc(). [3]
+>>
+>> [2]
+>> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud_drv.c#L627
+>> [3]
+>> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud_drv.c#L464
+> Will do, I'll send a v2 patch with the requested changes.
+>> Best regards
+>> Thomas
+>>
+>>>    
+>>> @@ -638,7 +640,8 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>>>    	if (ret)
+>>>    		return ret;
+>>>    
+>>> -	drm_kms_helper_poll_init(drm);
+>>> +	devm_kfree(dev, formats);
+>>> +	devm_kfree(dev, formats_dev);
+>>>    
+>>>    	drm_client_setup(drm, NULL);
+>>>    
 
 -- 
-Cheers
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-David / dhildenb
 
 
