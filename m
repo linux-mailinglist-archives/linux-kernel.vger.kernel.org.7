@@ -1,164 +1,164 @@
-Return-Path: <linux-kernel+bounces-860695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EEDBF0B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A96F3BF0B66
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACEA84F3B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:03:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DB8F4F2580
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EE72F6921;
-	Mon, 20 Oct 2025 11:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C56829D270;
+	Mon, 20 Oct 2025 11:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="r0I40SDR"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKLcgTV9"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8112F25A2B5;
-	Mon, 20 Oct 2025 11:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A62259CA7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958190; cv=none; b=RTgefx9EnVx1mmcZrS20ZC+D5BNVc7p08xSs4xbx4EXBLcV2h6NYTt9qWh1IlrNQr7ITdD6DFmpm06WycPttl2GCQRXIn03BfRr6c1Mwo+28gWZdFRcw3kxmFjB/p5a7VyPKugQ/Ofi5QuiEb3KN0ljHvyd7jVufdD9qjQWPy7Y=
+	t=1760958174; cv=none; b=qo2lRUU6BPPnqvjZsfd11mtyUARTA+6oRvXGXV73n143GihbrwM8ibX5cAlnXQT7lISB6VFLhv917ayMxOVCBhI5abSpN25YhlDLhXwSXxe6if7qx++o4yst2+GXl05FPIvvohHLuWdwRN6doj5l9mtbnS039kHGHfyaK5meXvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958190; c=relaxed/simple;
-	bh=uTy13h8Bh8GmGg4viRWana9rJcoqUxHqfN60ZTJptq4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RdU3Ez3SxR9F0KDvdYohuhJnxOv7z8xaYC2I0fq0ArpkJsin1FHnMAm7+bb2JKWULxOYXvBw1wT7VluUF+rWLH6pO3SZaeUIyMul0SzqXRgFLp+I2XKfXxaEu3Uk5sLUl9MhKmIu+d58CigcSHbQQ/HCC4WDpIax3kkdo3kO/QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=r0I40SDR; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59KAx3AJ2647827;
-	Mon, 20 Oct 2025 11:02:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=AJ/Kr5Rp4wWGUhcXuXNylkJ/RJG30RRJRygVeBM29Ic=; b=
-	r0I40SDR304uPkz2j/IvZ16wTozEmsmbsJ4NxJtprZ/yRHRxAIzAdI9a5G+35pSw
-	A44heb+Eonc27hK8QnA9S9yR/JFpAQUnruTasWhyOWakbBzhVQb21JHZe6Sz7b/d
-	7DvdB5TNNP0af76yd2rUbjEdUPzLAmru5lHUEbrEKH7+AQwCLOjfyjaTXgZZwIJG
-	SeYmh4pW15qad0IreGPOB9o/3FJK7pJRAsF7SmBKK4Za4NCuUwf5ePo6CHT0PAEF
-	kric26RCgm/kpl/EIPgTIXZia5+7pEUaFSX7vMtGBx+2zeCVl//1g35F4Ef6R06C
-	Th13X3+d5UlTJBd0nZbKjA==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49v03y1t4n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 20 Oct 2025 11:02:48 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.59; Mon, 20 Oct 2025 04:02:47 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.59 via Frontend Transport; Mon, 20 Oct 2025 04:02:44 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <dan.carpenter@linaro.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-        <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-        <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V2] netrom: Prevent race conditions between multiple add route
-Date: Mon, 20 Oct 2025 19:02:44 +0800
-Message-ID: <20251020110244.3200311-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aPYKgFTIroUhJAJA@stanley.mountain>
-References: <aPYKgFTIroUhJAJA@stanley.mountain>
+	s=arc-20240116; t=1760958174; c=relaxed/simple;
+	bh=W1JaE8rS+GbY/d7gvazS4gQFxDwV4eMwNOn47dqusZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vi+NwSvM8g4F/otXGc23IOqFYL+GUmb8UN3tTfKV5j1A7Dsp2ysMMwa0tPzS9AINZ9oZtyTHdmOYSOXgtYAMNGumdUbgE28Tk5dXFXQYkjbODKaf+JUN0kjFLSJC0hfPtyEk58ThrksdITEEYcByXFkmuruBp+NIRzal5u+12UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKLcgTV9; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-471bde1e8f8so6068785e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760958171; x=1761562971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xaDzCk8g9Yg/TwlJeMcBMF5t+X3WKHYwMzLzHQCj6g=;
+        b=SKLcgTV96RTAEsTyKqdP//fl68SsWZs0++NzmzOy7PerGASaHwpFNYtLBOenc6ZAyK
+         0aB0ohdih/1OK6OQhvxx6+8S6rsfmOdXIpPrRncKOATOm2c7SqLsf/iQW82OE/IWNS7m
+         RsC84qBitEiy3uCsBfEItwgIJWHvra4zmElwiYHoyrbLptmGA07smCKzYhEVK9O20NgM
+         c/mhqOrbZRyuQvI3EjKcRd2cUjJ61xDaKanZX+HuZIdtSXy91d1gfovvNBXaXWfLikWm
+         H4eEVa1Gd3jUEvPSjAgzS2VHNoiF25McgSyd1/0qHiqBlkZsouuLUl2EKcYqjh/1zRXO
+         9aTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760958171; x=1761562971;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xaDzCk8g9Yg/TwlJeMcBMF5t+X3WKHYwMzLzHQCj6g=;
+        b=fTlZgFH+viN0HP+JYemmkTfu7kTmli3XqWmfsyje3as5eGAeytz9awDeJ6K8hir+cC
+         I4GVIHaAn3tZ3a48E9rAaRBCvhc2GLni+1rJRJhD+9n7p5+WUPUIAei82mUgRY3KRmGf
+         9QSFCOp5xrfVsLCD90uizUDFKRNN3rDjNN1b0IIcfSE+1Hh10xy0/YS7Y6oqzbTcBbsf
+         +nXMCgVO74SszIF/vUHqFQpP8eUzZpp3Q71tSrwxZfGwd92M9rXYU2VJbWdLunfXxsKy
+         c8djBpKjM6frsmhRHojnz8gpBoAagZQfztUFPpv8TBCRZhi/eAHpH3UzchQrrLdu164U
+         6qRw==
+X-Gm-Message-State: AOJu0YyP2tPdozmV+7fkwuc39a48bAlFlywka9A1YyXUA8z2PkwCJbo2
+	e4Zf45t6no3HWmnUfnCn0iyScTiOR1sINjsmGks/UWXVIHET2cobJcx5DE4kHrNLd2I=
+X-Gm-Gg: ASbGncs9LZmtwomyVu1/xtUVL/gHbpKOTEW76SLxUfyCEO7J/bdqTkNdD7w8equiszn
+	S5tz6d4PALzwL3dO+EWNaKJoemSm9wyxgL0yMxahMAdxWuWkG+e3Jo8S8Li9upHRQuLEWFl6/qt
+	FP/xGdTU3Fo7O/ZHgUja5z56bneD4D5prvo/1Yu2Db/26SzA3IEYtiSuC/XD+851mSg7zl0kBet
+	fMY/QzVocHrLvfLS4ElO/Zi5Ss8+a7ClwN0JRVZzK5sI4bbDyABATpE5ILecB6tRugzbUthYg73
+	X5IO4Bb2fXVK/uZ93IlpeiIQBBvjivw9Ym7xL37S2FOSaGjVO3arzH1uAABcxxHOEbBUEQOpH5J
+	gFifGLlWXjnUds0vLYBkdD6ynDbqN+la/uq+E6ORrU+z+UxT20HrLUUCwgm96tH0OhON8qj9y9C
+	v8FWPAOZrr
+X-Google-Smtp-Source: AGHT+IHVRGuyj2IpvPopVEw/V/0JRaYFv5Zr9eggn9/gr+9TUMeVNtov2/qg5jgRutFZM+D2sOlUeg==
+X-Received: by 2002:a05:600c:820f:b0:46f:b42e:e365 with SMTP id 5b1f17b1804b1-4711791dce8mr93413745e9.39.1760958170945;
+        Mon, 20 Oct 2025 04:02:50 -0700 (PDT)
+Received: from [10.11.12.107] ([79.115.63.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715520dd65sm137785635e9.15.2025.10.20.04.02.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 04:02:50 -0700 (PDT)
+Message-ID: <de77e673-c2f2-4293-88bf-be9c6779a5dc@linaro.org>
+Date: Mon, 20 Oct 2025 12:02:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: UoIN2cRs8T7sjCiz6rGGAAHF70uY9LRc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDA5MCBTYWx0ZWRfXw3pTxr/o5MnW
- 47s4O/RMpo7PcxLbGYhNpI9fnUfangmHN7cigXGugoAedmTSSdNv/VOfeZOKUKDO4CSCQoqZvkE
- 7RbJ09PmlID3OkQAjwE7w5Y6O0LdO+bT0khWfb7ngawbDsAgTFwluSlG2uxQ7RiM71HKjFG05dZ
- hfRck2v+Wzg70eWDVq8ToD9lPdu6o6To/FKltp1t+LGqjpm0xe4U+UcIsJy+O1z0Ul/ygQWZsrq
- SUTlvtxrOS/BoeU/NC9bG8ZGgUjerBtRg89ruVQVHZkcaqNQFTmmc321uDqlLDHFeMh9dcnUdc/
- pCaBaU/3uY5iXcq3J3lhFgnsswTytv/YF0IV+9Lq6uSTwdG1CpTmASDFy2wJ9Q4BRn9DMk8RvCy
- JPKMUkk1nGeCx3WS07Kc6Wuss1gk8g==
-X-Proofpoint-ORIG-GUID: UoIN2cRs8T7sjCiz6rGGAAHF70uY9LRc
-X-Authority-Analysis: v=2.4 cv=Uolu9uwB c=1 sm=1 tr=0 ts=68f616d8 cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
- a=t7CeM3EgAAAA:8 a=sx0YzN9DWx7IQLKmKLYA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1011 malwarescore=0 adultscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510200090
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+ <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
+ <a03cd07f-8e9f-4b02-b301-f1bbb69eb7db@linaro.org>
+ <f6812244-8e8e-45b9-87b9-fe96d740a843@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <f6812244-8e8e-45b9-87b9-fe96d740a843@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The root cause of the problem is that multiple different tasks initiate
-NETROM_NODE commands to add new routes, there is no lock between them to
-protect the same nr_neigh.
-Task0 may add the nr_neigh.refcount value of 1 on Task1 to routes[2].
 
-When Task2 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
-release the neighbour because its refcount value is 1.
 
-In this case, the following situation causes a UAF:
+On 10/20/25 10:58 AM, Krzysztof Kozlowski wrote:
+> On 20/10/2025 11:19, Tudor Ambarus wrote:
+>>
+>>
+>> On 10/20/25 9:22 AM, Krzysztof Kozlowski wrote:
+>>> On 20/10/2025 09:45, Tudor Ambarus wrote:
+>>>>
+>>>>
+>>>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>>>>> --- a/drivers/clk/samsung/Kconfig
+>>>>>> +++ b/drivers/clk/samsung/Kconfig
+>>>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>>>>  	  status of the certains clocks from SoC, but it could also be tied to
+>>>>>>  	  other devices as an input clock.
+>>>>>>  
+>>>>>> +config EXYNOS_ACPM_CLK
+>>>>>> +	tristate "Clock driver controlled via ACPM interface"
+>>>>>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+>>>>>
+>>>>> I merged the patches but I don't get why we are not enabling it by
+>>>>> default, just like every other clock driver. What is so special here?
+>>>>
+>>>> Thanks! Are you referring to the depends on line? I needed it otherwise
+>>>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+>>>
+>>>
+>>> No. I am referring to missing default and defconfig patch.
+>>>
+>>
+>> default m or y would force compilation of EXYNOS_ACPM_CLK and
+>> EXYNOS_ACPM_PROTOCOL for all ARCH_EXYNOS, even on Exynos platforms that
+>> don't use ACPM. Since ACPM is not universally required by the Exynos
+>> architecture, I thought to make it opt-in (default n).
+> 
+> 
+> Just like every clock driver. So again - how is it different?
 
-Task0					Task1						Task2
-=====					=====						=====
-nr_add_node()
-nr_neigh_get_dev()			nr_add_node()
-					nr_node_lock()
-					nr_node->routes[2].neighbour->count--
-					nr_neigh_put(nr_node->routes[2].neighbour);
-					nr_remove_neigh(nr_node->routes[2].neighbour)
-					nr_node_unlock()
-nr_node_lock()
-nr_node->routes[2].neighbour = nr_neigh
-nr_neigh_hold(nr_neigh);								nr_add_node()
-											nr_neigh_put()
+The key difference lies in the universality of the hardware interface
+across the ARCH_EXYNOS family. If EXYNOS_AUDSS_CLK_CON, EXYNOS_CLKOUT
+are considered core, integral, or nearly universal features across
+Exynos SoCs, then it's alright to have them by default. I can't tell how
+common is ACPM across the Samsung Exynos SoCs. I know it's present on
+gs{1,2)01 and e850. Heard it mentioned around some other phone but I
+can't remember which. Maybe we shall set to a default m when more users
+reveal themselves? I'm of course open to drop the defconfig patch and
+follow up with a patch setting EXYNOS_ACPM_CLK to
+"default m if ARCH_EXYNOS" if you think it's common enough.
 
-The solution to the problem is to use a lock to synchronize each add a route
-to node.
-
-syzbot reported:
-BUG: KASAN: slab-use-after-free in nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
-Read of size 4 at addr ffff888051e6e9b0 by task syz.1.2539/8741
-
-Call Trace:
- <TASK>
- nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
-
-Reported-by: syzbot+2860e75836a08b172755@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2860e75836a08b172755
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
-V1 -> V2: update comments for cause uaf
-
- net/netrom/nr_route.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
-index b94cb2ffbaf8..ae1e5ee1f52f 100644
---- a/net/netrom/nr_route.c
-+++ b/net/netrom/nr_route.c
-@@ -102,7 +102,9 @@ static int __must_check nr_add_node(ax25_address *nr, const char *mnemonic,
- 	struct nr_neigh *nr_neigh;
- 	int i, found;
- 	struct net_device *odev;
-+	static DEFINE_MUTEX(add_node_lock);
- 
-+	guard(mutex)(&add_node_lock);
- 	if ((odev=nr_dev_get(nr)) != NULL) {	/* Can't add routes to ourself */
- 		dev_put(odev);
- 		return -EINVAL;
--- 
-2.43.0
-
+Cheers,
+ta
 
