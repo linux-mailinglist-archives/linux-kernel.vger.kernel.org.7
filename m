@@ -1,115 +1,196 @@
-Return-Path: <linux-kernel+bounces-861455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7634BF2C6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:44:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96923BF2C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A4F54FC585
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E85318A7728
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE43321D0;
-	Mon, 20 Oct 2025 17:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="De1mxxBd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22CC3321BC;
+	Mon, 20 Oct 2025 17:42:34 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3B53321C3;
-	Mon, 20 Oct 2025 17:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BED21ABD7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982086; cv=none; b=aZQpX0XQY1clkibBYpuFk4PGQUmQUVvYI8oq5oFUzn910YRoAU1O/1TLARxA0o9t3Nc/9JyvoBB+OJF9Aqoy1anDmLkhYpJVur/cqMbKmj2ui2F9YclGdziGFaf9/fH99P7p47w0URC5Xw4UQZmSkoW6MJmcZPmCS0s/X0HTFUo=
+	t=1760982154; cv=none; b=OHsNqJ14la/F5bro65Nrk5kjTZp8WVG/gXWJOGwYtKaWK6JNNsd2j+Wz6WFM7LXWNYJbq7+JsPgCVo8tWF7nPh9UXuX5Q51WjYEpP4pvj6Qq0XUvoH9ILyzGZ53bW+QUgfmboC7LdSPq0/dRKofeK5IPkwyuWm2HdhboaqW7ygI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982086; c=relaxed/simple;
-	bh=0shQKZ6LMkY7eu+foeqCzGr2kMlEmfoaK6oMFy9Q3fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOC0SyFCka2UzrA+YrkNE2uGb3JOzYDVMgoESXA6XyUp+q4sZE9FkAgF37hVyr/9dLlYMbsVuMo+oUNzRTQ3vMl+MZ5B0E7yubtWPMDgIYrceBIj+n2iWqgDiY81wmmHR0eEzw3VnlDvv7e95V98cl6AMGkvl87wxN9C3aQPnII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=De1mxxBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99DAC4CEF9;
-	Mon, 20 Oct 2025 17:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760982086;
-	bh=0shQKZ6LMkY7eu+foeqCzGr2kMlEmfoaK6oMFy9Q3fk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=De1mxxBddZqMNleN87F+pQxQO9G//qIlPV7tFewpeYUIjnWrJvbkgzf5+ZE6H2uPl
-	 HsKeowTy6HQIWgilMsO/ACqB+7Q7qcUi03DvuN3BKf5rHM0AE2kx0mTzqQgukoG5Df
-	 G0aCfX3EtwRjEy0ckL46C4eVjqpJ8hBU035OmuvibVjrgcTyJQWpdyNoe7RMiVGY3s
-	 QddLVA9H1YWfE9N4zNdxP/D3ai5zdXIPbHqP8dTQ3caEsDCHyeQ0uWZG8E2Hqk2hWb
-	 F68SASIw7WIPsQM/y+XvSnSZ77lu3wuwNSBx2+zAHM9WYfYkcSy/8k1lzb8UpCN2L1
-	 DwDWjoLvxVURQ==
-Date: Mon, 20 Oct 2025 18:41:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: han.xu@nxp.com, broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, dlan@gentoo.org, guodong@riscstar.com,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: spi: fsl-qspi: support SpacemiT K1
-Message-ID: <20251020-utility-remedial-4b4dfc716409@spud>
-References: <20251020165152.666221-1-elder@riscstar.com>
- <20251020165152.666221-3-elder@riscstar.com>
+	s=arc-20240116; t=1760982154; c=relaxed/simple;
+	bh=qNsEYytiGRTReSMmoy2JakqeGw/R7wEdWRZO5PGzT9s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UOXrmpUXaQTjVH8xYk0iT/ACvCTRXZ81JiXM+QHUMHe1KV4StLW+rawJotVdJJWFocQqqy/cfW7gsvgeuJvUl/unrLv0U4USkLGEzHvXhShbADpBbiI0NtnlhG+1vqWIUMRWK47H++UEXeKv+RmIJQ1Frv4T8szfSAY/1p91s74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 20 Oct
+ 2025 20:42:26 +0300
+Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 20 Oct
+ 2025 20:42:26 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten
+	<hsweeten@visionengravers.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+	<syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] comedi: check device's attached status in compat ioctls
+Date: Mon, 20 Oct 2025 20:41:22 +0300
+Message-ID: <20251020174125.150608-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EtcE87axyRT4niT6"
-Content-Disposition: inline
-In-Reply-To: <20251020165152.666221-3-elder@riscstar.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
+Syzbot identified an issue [1] that crashes kernel, seemingly due to
+unexistent callback dev->get_valid_routes(). By all means, this should
+not occur as said callback must always be set to
+get_zero_valid_routes() in __comedi_device_postconfig().
 
---EtcE87axyRT4niT6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As the crash seems to appear exclusively in i386 kernels, at least,
+judging from [1] reports, the blame lies with compat versions
+of standard IOCTL handlers. Several of them are modified and
+do not use comedi_unlocked_ioctl(). While functionality of these
+ioctls essentially copy their original versions, they do not
+have required sanity check for device's attached status. This,
+in turn, leads to a possibility of calling select IOCTLs on a
+device that has not been properly setup, even via COMEDI_DEVCONFIG.
 
-On Mon, Oct 20, 2025 at 11:51:45AM -0500, Alex Elder wrote:
-> Add the SpacemiT K1 SoC QSPI IP to the list of supported hardware.
+Doing so on unconfigured devices means that several crucial steps
+are missed, for instance, specifying dev->get_valid_routes()
+callback.
 
-Also, you should really explain why this spacemit device is the first
-one to be in what's been an fsl-specific binding for now in the commit
-message.
-pw-bot: changes-requested
+Fix this somewhat crudely by ensuring device's attached status before
+performing any ioctls, improving logic consistency between modern
+and compat functions.
 
->=20
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml =
-b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> index 0315a13fe319a..5bbda4bc33350 100644
-> --- a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> @@ -22,6 +22,7 @@ properties:
->            - fsl,imx6ul-qspi
->            - fsl,ls1021a-qspi
->            - fsl,ls2080a-qspi
-> +          - spacemit,k1-qspi
->        - items:
->            - enum:
->                - fsl,ls1043a-qspi
-> --=20
-> 2.48.1
->=20
+[1] Syzbot report:
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+...
+CR2: ffffffffffffffd6 CR3: 000000006c717000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ get_valid_routes drivers/comedi/comedi_fops.c:1322 [inline]
+ parse_insn+0x78c/0x1970 drivers/comedi/comedi_fops.c:1401
+ do_insnlist_ioctl+0x272/0x700 drivers/comedi/comedi_fops.c:1594
+ compat_insnlist drivers/comedi/comedi_fops.c:3208 [inline]
+ comedi_compat_ioctl+0x810/0x990 drivers/comedi/comedi_fops.c:3273
+ __do_compat_sys_ioctl fs/ioctl.c:695 [inline]
+ __se_compat_sys_ioctl fs/ioctl.c:638 [inline]
+ __ia32_compat_sys_ioctl+0x242/0x370 fs/ioctl.c:638
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+...
 
---EtcE87axyRT4niT6
-Content-Type: application/pgp-signature; name="signature.asc"
+Reported-by: syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ab8008c24e84adee93ff
+Fixes: 3fbfd2223a27 ("comedi: get rid of compat_alloc_user_space() mess in COMEDI_CHANINFO compat")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+Compile-tested only due to my QEMU setup currently being broken.
+Also, there is no decent syzkaller repro for this problem so
+testing this is a little tricky.
 
------BEGIN PGP SIGNATURE-----
+P.S. 'Fixes' tag is technically not correct, as each compat ioctl
+that requires special handling arguments-wise has been modified
+in separate commit. I've opted not to mention each and every one
+of them.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPZ0QQAKCRB4tDGHoIJi
-0jw3AP9fIzYzUtEKSJLqkolLXPEWaL3paAWpO+XlKFabuMCkVQEAj6t4t3UyUduk
-YQnlq9gBr5tZn+FNWIUYFR5JDC/WXww=
-=0LUZ
------END PGP SIGNATURE-----
+P.P.S. While these multiple identical checks look abhorrent, I've
+decided against changing current approach to compat functions.
 
---EtcE87axyRT4niT6--
+ drivers/comedi/comedi_fops.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+index 7e2f2b1a1c36..123e9af2ed44 100644
+--- a/drivers/comedi/comedi_fops.c
++++ b/drivers/comedi/comedi_fops.c
+@@ -3023,6 +3023,11 @@ static int compat_chaninfo(struct file *file, unsigned long arg)
+ 	chaninfo.rangelist = compat_ptr(chaninfo32.rangelist);
+ 
+ 	mutex_lock(&dev->mutex);
++	if (!dev->attached) {
++		dev_dbg(dev->class_dev, "no driver attached\n");
++		mutex_unlock(&dev->mutex);
++		return -ENODEV;
++	}
+ 	err = do_chaninfo_ioctl(dev, &chaninfo);
+ 	mutex_unlock(&dev->mutex);
+ 	return err;
+@@ -3044,6 +3049,11 @@ static int compat_rangeinfo(struct file *file, unsigned long arg)
+ 	rangeinfo.range_ptr = compat_ptr(rangeinfo32.range_ptr);
+ 
+ 	mutex_lock(&dev->mutex);
++	if (!dev->attached) {
++		dev_dbg(dev->class_dev, "no driver attached\n");
++		mutex_unlock(&dev->mutex);
++		return -ENODEV;
++	}
+ 	err = do_rangeinfo_ioctl(dev, &rangeinfo);
+ 	mutex_unlock(&dev->mutex);
+ 	return err;
+@@ -3120,6 +3130,11 @@ static int compat_cmd(struct file *file, unsigned long arg)
+ 		return rc;
+ 
+ 	mutex_lock(&dev->mutex);
++	if (!dev->attached) {
++		dev_dbg(dev->class_dev, "no driver attached\n");
++		mutex_unlock(&dev->mutex);
++		return -ENODEV;
++	}
+ 	rc = do_cmd_ioctl(dev, &cmd, &copy, file);
+ 	mutex_unlock(&dev->mutex);
+ 	if (copy) {
+@@ -3145,6 +3160,11 @@ static int compat_cmdtest(struct file *file, unsigned long arg)
+ 		return rc;
+ 
+ 	mutex_lock(&dev->mutex);
++	if (!dev->attached) {
++		dev_dbg(dev->class_dev, "no driver attached\n");
++		mutex_unlock(&dev->mutex);
++		return -ENODEV;
++	}
+ 	rc = do_cmdtest_ioctl(dev, &cmd, &copy, file);
+ 	mutex_unlock(&dev->mutex);
+ 	if (copy) {
+@@ -3205,6 +3225,12 @@ static int compat_insnlist(struct file *file, unsigned long arg)
+ 	}
+ 
+ 	mutex_lock(&dev->mutex);
++	if (!dev->attached) {
++		dev_dbg(dev->class_dev, "no driver attached\n");
++		mutex_unlock(&dev->mutex);
++		kfree(insns);
++		return -ENODEV;
++	}
+ 	rc = do_insnlist_ioctl(dev, insns, insnlist32.n_insns, file);
+ 	mutex_unlock(&dev->mutex);
+ 	kfree(insns);
+@@ -3224,6 +3250,11 @@ static int compat_insn(struct file *file, unsigned long arg)
+ 		return rc;
+ 
+ 	mutex_lock(&dev->mutex);
++	if (!dev->attached) {
++		dev_dbg(dev->class_dev, "no driver attached\n");
++		mutex_unlock(&dev->mutex);
++		return -ENODEV;
++	}
+ 	rc = do_insn_ioctl(dev, &insn, file);
+ 	mutex_unlock(&dev->mutex);
+ 	return rc;
 
