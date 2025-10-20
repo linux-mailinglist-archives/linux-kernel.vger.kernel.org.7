@@ -1,122 +1,94 @@
-Return-Path: <linux-kernel+bounces-860542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F20BF05C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:01:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80CABF05C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 323524EBAB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:01:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9352934B070
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB727233727;
-	Mon, 20 Oct 2025 10:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D402E8B62;
+	Mon, 20 Oct 2025 10:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cJ04DR5b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DI7m1xyh"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043721D7E42
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9270823E35B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954497; cv=none; b=sNV+jbAGDl+OjGKyJcadZwVPVKRNnTPU6fT5RY4uBO7MTbkNwPCnN02ncpixWHY4HAcejcK0zNt0GnK8+gLozyzN1fodNoC6Rpkxs4TZCovtlHyA0HxRcfRyRbA1rjt9cLyuWwF9Je/EjIn0qDVsLfIRIldLVHNoqLrsmGHpUrs=
+	t=1760954488; cv=none; b=Vota2hNJqcuZSt9zgDD+snmXyiaL+Tm2mF94xleXT0oIetFdxGfmubOciLSQxlD/0Y5z/9FKAPzJrDQaIM+k4xiRAnB/Thk8JwdkgQ2U8ff1amgGnArp5rICIZpf7oKnBMbfwuHOQeWHgFgEzRtmL8cQxe2byJ2DP3HDM8WzKYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954497; c=relaxed/simple;
-	bh=4H0XHowcWHq+DU5xJnk0XZQicGIQDAh8pWA4/2dAZaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOIOw8MrEK+6TwV8s6UrMs7ztCJkHHP7AvwYW7DpLS465zkwVsgsc7HUqw1kkF+TyARXoYkdAH0pD5/1jWi5bvo9YZT8ktYXbiPqjcNvrud/7tHa6IgvSaE2rVx/1fHiKvvHQnjSRlyZ19YVkego8cHmNpS81Y5QhRP41v5+tAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cJ04DR5b; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760954495; x=1792490495;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4H0XHowcWHq+DU5xJnk0XZQicGIQDAh8pWA4/2dAZaA=;
-  b=cJ04DR5bQGQN3CJQLrA6ZJb1xWioGDq4UZJmQwW5a0PwrzjAWowPqwV4
-   ArmTDcYo1n2S6gxFFoNMk0W6yLIvHVNsIUG90luy2iwREir8hvDMXRKeQ
-   fHo25sG4C66SyXsBC7EkgIxXFM3STtbyLZggYvPN1NNjGZCQ1+/+63tar
-   q/weTwwymi4A33uiMhNyz1eGLuw91UqEhqNwGinhBoQwtMv/ntwLo52+Q
-   eOpWWdp0p/7HUIskjfvm1kSO0dKj09D+TunCLdzZ13Gdesr/oxrK5ZNUn
-   CGYmVE2CNfcV8AcxyJQoUZJN4v/I9iNaa95nCJ+sxaczsfwmL2ZqZKrYi
-   A==;
-X-CSE-ConnectionGUID: y41zEr8bS+aPIRqEGfHz0w==
-X-CSE-MsgGUID: HaJ6cSf5Q6WR8lAVribWCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="62275958"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="62275958"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 03:01:34 -0700
-X-CSE-ConnectionGUID: tgiP9a8ITt2p8q9FlSGlYQ==
-X-CSE-MsgGUID: iSe+NxidSZOHYbuboL82qQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="183775390"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.6])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 03:01:27 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vAmhd-00000001Gle-41E3;
-	Mon, 20 Oct 2025 13:01:21 +0300
-Date: Mon, 20 Oct 2025 13:01:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Szuying Chen <chensiying21@gmail.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Szuying Chen <Chloe_Chen@asmedia.com.tw>,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	dan.j.williams@intel.com, gourry@gourry.net, jhubbard@nvidia.com,
-	akinobu.mita@gmail.com, sumanthk@linux.ibm.com,
-	peterz@infradead.org, huang.ying.caritas@gmail.com,
-	Andrew_Su@asmedia.com.tw, Yd_Tseng@asmedia.com.tw,
-	Ed_Huang@asmedia.com.tw, Cindy1_Hsu@asmedia.com.tw,
-	Jesse1_Chang@asmedia.com.tw, Richard_Hsu@asmedia.com.tw
-Subject: Re: [PATCH] kernel: resourse: Add conditional handling for ACPI
- device
-Message-ID: <aPYIcfMOml2Gujh1@ashevche-desk.local>
-References: <20251017023531.5616-1-Chloe_Chen@asmedia.com.tw>
- <202510201616.6e6b62a1-lkp@intel.com>
+	s=arc-20240116; t=1760954488; c=relaxed/simple;
+	bh=mhITn3HDo0uQ823iD054gcNgABztLTs2sqLqGtvUuxE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qK9MsYXfqs4+vVeJQQJyjfpYqTK4oBvozsz97s05+i49vfnGKqTVJEhpMaxNSlQujhj+BzMmGjYkVtUM2AYC92eRf116p8Ye8BS1p9ZRVmpX2MtXh+w3mbcT6jxYEHxysx447MO13R+jtNPVSTyvEFy6Rt2YWE0bwA7+c8/GQ+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DI7m1xyh; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47106720618so24366845e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760954485; x=1761559285; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0l1K7JIIcbBvkAiIx/D88CHUVKA5vo6fkTzO0AUaHY=;
+        b=DI7m1xyhb1cJqgJQYHoz4KCfk9x21tB/H9AjSRDJWLldf/LEiZ6EJcCS9Fr/YqKchS
+         tXy3Cv8KinM/Echpsq4GlvupQ1sf7jvkG4evdZVYs84SMy4QeKnm6ZhM5ncJeTiO/Vmj
+         Usm2Y2UeQn8F0p0JdSJ2YoxR2BWUEmlvIb8yA0CaZOt59e9Vpj22rtqfsb0ZYyyY9HOd
+         uGZ5W5e9cD4suAcGvAACa9Bp2I/KIrx2MPfKUSpVuVhVQ2pz2waC7sHXtNnfrMb3ivw6
+         LS4z0tmmNC0tyk3KpUj0D0XeJCdquRTyQd9jBIGGwkageH9uOTFvQy03XGy5SnmzHELI
+         F9ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760954485; x=1761559285;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0l1K7JIIcbBvkAiIx/D88CHUVKA5vo6fkTzO0AUaHY=;
+        b=TRmlD9WwRylQSX8CqCB9XitzuYL4Y1RVVVpYBMLU8AFDWmZib8LcmqEY1qWQF4rddZ
+         vh/ryXBzs+z5Clu8pQ1p3sKuLBHFXHSe5NEU7CTLZ+5EKWyf44jPFJVRL57zJ4Z8evNB
+         HMOmxP1uVFp3Ywm8JBupnDbzbGoIqXXgpecJRJFl8BLdleV8yakx1kUCk6iwj2bv+DFL
+         SngUz0Km6s6C5Bxy/CIh61Bb8+frbomU0aBTky3Iq8L73Pn5/Ovh9M5ejSw4q+fxh8Yl
+         FGm5vcuhgbbtjNiH0jZo8YdNmXznXbppCzuZzbTu5kxuQY9BW3TgrhZjFb+pCe9eNsvW
+         FSVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO68joYYqusdx228ZvPynq8qSjRwOOuH2VjpgdlbCh2NxEscxKNCT5qSUfjWWLkWo6Y7vJHphHF0gHs20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD55HLv/V4ORDTGPRSwW0UsH46FMcqUkGXl20r0+8QEtqyLGJ7
+	0QVQZPTWHGufrCTN2x+f889pw93kXzIkPDwr4M2VflS2uTDUx7OxY4qc5iXHvaAoyHmA+XAi6J8
+	fIFAODML83HJ7nSADQA==
+X-Google-Smtp-Source: AGHT+IFATPYHlVFBmlLsBVvlR3qG2Rbu19LkskrwZ1g9wMvquqf+maELC/ipWw6CiyqUDRaelkkGsv2zR0WAluY=
+X-Received: from wmbd1.prod.google.com ([2002:a05:600c:58c1:b0:45d:eb3b:5482])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:548c:b0:46d:5189:3583 with SMTP id 5b1f17b1804b1-471177bad0dmr87865495e9.0.1760954485032;
+ Mon, 20 Oct 2025 03:01:25 -0700 (PDT)
+Date: Mon, 20 Oct 2025 10:01:24 +0000
+In-Reply-To: <20251003222729.322059-6-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202510201616.6e6b62a1-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-6-dakr@kernel.org>
+Message-ID: <aPYIdIk7jXruPeV0@google.com>
+Subject: Re: [PATCH 5/7] samples: rust: debugfs: add example for blobs
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Oct 20, 2025 at 04:46:04PM +0800, kernel test robot wrote:
+On Sat, Oct 04, 2025 at 12:26:42AM +0200, Danilo Krummrich wrote:
+> Extend the Rust debugfs sample to demonstrate usage of binary file
+> support. The example now shows how to expose both fixed-size arrays
+> and dynamically sized vectors as binary blobs in debugfs.
 > 
-> kernel test robot noticed "BUG:sleeping_function_called_from_invalid_context_at_include/linux/sched/mm.h" on:
-> 
-> commit: 871e73eea694be4705a5e3ebc9119e6c76c7b246 ("[PATCH] kernel: resourse: Add conditional handling for ACPI device")
-> url: https://github.com/intel-lab-lkp/linux/commits/Szuying-Chen/kernel-resourse-Add-conditional-handling-for-ACPI-device/20251017-103749
-> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everything
-> patch link: https://lore.kernel.org/all/20251017023531.5616-1-Chloe_Chen@asmedia.com.tw/
-> patch subject: [PATCH] kernel: resourse: Add conditional handling for ACPI device
-> 
-> in testcase: boot
-> 
-> config: i386-randconfig-141-20251019
-> compiler: gcc-14
-> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-> +-------------------------------------------------------------------------------+------------+------------+
-> |                                                                               | 4d30e94233 | 871e73eea6 |
-> +-------------------------------------------------------------------------------+------------+------------+
-> | BUG:sleeping_function_called_from_invalid_context_at_include/linux/sched/mm.h | 0          | 12         |
-> +-------------------------------------------------------------------------------+------------+------------+
-
-Thanks, absolutely NAK to the patch based on this report and my previous comment.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
