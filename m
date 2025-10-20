@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-861532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F88BF2FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4ABBF2FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC75B3B68C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46603B1AE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCBC21B918;
-	Mon, 20 Oct 2025 18:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA42D0283;
+	Mon, 20 Oct 2025 18:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivXVHfp5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpEQulUQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2932C21F0;
-	Mon, 20 Oct 2025 18:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF731DE4E0;
+	Mon, 20 Oct 2025 18:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760985712; cv=none; b=eAja8T+c3oykJigcwZb3F1skiCx8ShRwNwsZ128QluOfRcfdX/tUhckbeuO97gIgaN1qvBiE6QPEWl4n8yAVvDUdTSFuCCUuAuM2ykxQLVNQXUj0YAh7epJagmZZcq5mUl7XroC4Ispr7wKqjzPS5Scs+EGobn7heG9gXYqNbls=
+	t=1760985793; cv=none; b=VWTYTXoXY/AxegHUbBlWGL1UqE3p7YjdMn4Jhcvu6DuAfa6I75Uce4HkAO6W41j48/Z7/Hm7xQhH5G1FgpLJqKmYikcaDTYgPfKkksIz4PieKVuZoyx2Phmh+xK1D52IzykBJE7fO10EwnqRFFoJRMnyACeHfyhZfJP+3zwerBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760985712; c=relaxed/simple;
-	bh=KC5ynBTKwAPPm0Ypk6n9KoPtmJH7cvFRh2ciSY8Lgx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flgYdoyr745ahthlM8BIh46gJrufxv48i+pnwQpK8o2GnBpYMy8yYfcjwR/i3hBP1AUTr2jsBHgAh1fKwtinuIUuwXrnAAMTkUPoN0JCKrlWr8rdweGEMASKdaVVXNWqlqiE6dEK7JIbAOscm4I3i3t2p5hGQPBPLKtjM31Jyjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivXVHfp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2113C113D0;
-	Mon, 20 Oct 2025 18:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760985711;
-	bh=KC5ynBTKwAPPm0Ypk6n9KoPtmJH7cvFRh2ciSY8Lgx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ivXVHfp5mcc7Qs6T2dGRR3qWo5mpwJ/C2T3UqyXTZjjUdnK8XTbgGKD1yNGbzRcIW
-	 gw1B/EaRizweTxKV2AvTHc85QcneaAaaiw3DQOOXBBFDwFzjXPWL1Ff4yPd7DF+TC1
-	 rpHpJRTUxBmbLk9I7TLdorms7cO23bo5322qnKSt6S8+W8wrC8XVq2dTSqozQrc6QS
-	 1E5NA0nu018nP4UMwxaTEQ8wHg4ySQaY0UcPIs93sM0qYQrGLNxGG1wcoVV+NDwugD
-	 QXr9UdmZGeiY+MZb0KRiDguDywmupXimWUuO/OkULdKE/R7ntbykjAVwvXnLMF83K0
-	 hZ3RiJWg1+h3w==
-Date: Mon, 20 Oct 2025 19:41:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: han.xu@nxp.com, broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, dlan@gentoo.org, guodong@riscstar.com,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: spi: fsl-qspi: support SpacemiT K1
-Message-ID: <20251020-unwound-cake-21799c9522a1@spud>
-References: <20251020165152.666221-1-elder@riscstar.com>
- <20251020165152.666221-3-elder@riscstar.com>
- <20251020-utility-remedial-4b4dfc716409@spud>
- <08d99fcd-4d0c-4d81-a314-7e1a8bfaa64c@riscstar.com>
+	s=arc-20240116; t=1760985793; c=relaxed/simple;
+	bh=8rrgzNNkAXQJ2s3G7iaOcQ9ClFqvPz61hpFmah8TFKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=khofE1IR1Z/kJX4/8PlPn1wb+7sjqdJV0o7OxIdjgAZqQQgHEYeuQTZOlZDzVO3JsLU6kfvcRDdxtp9SpTQDQR2OXPIfN3+kJGTZWh/FA8I249KnA/8eZusequc0ITJ4+HHAsBhqOaJN2O+KOcjUmRJ4iYR+lYEPIAjuT0Ln0YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpEQulUQ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760985792; x=1792521792;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8rrgzNNkAXQJ2s3G7iaOcQ9ClFqvPz61hpFmah8TFKQ=;
+  b=mpEQulUQRhvbdf/MQIYAW8ltlm8nY9JWBPv6ow2hkDwUril0HkKdcQB9
+   gzoe2NLWfl3peGAY5wNurdUfrM29r9SvfvYYvDmToEcfRhgQFWYlKF4Uo
+   +QgqL4mSS4uUhbx7do3F4u+DEcGd3VJ9bywE+nQNg3RbOh4qDbwMCP48d
+   +kn9PkkkKRa715gcjr3f5PWRsmR/WLT7IL7jkXjUEJXipV52xD2mJrCv2
+   crehLUI/iWuLPcu+TN2u0A6fxF6Zy4QibvqXjEda2mXbH5E2tgdBiU/+Q
+   /znANL8RU/yIaoUQJDbboA434tN+ir4wiMH7FpHd6Q9hP8dpfcEQRlo1w
+   A==;
+X-CSE-ConnectionGUID: 7nYquKorQUOjwBqj0xKJ5g==
+X-CSE-MsgGUID: yGbHhnyvRYWmNAnpDeNj9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73778069"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="73778069"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:43:11 -0700
+X-CSE-ConnectionGUID: 62lNo2+SRdyU50TAsi/wNg==
+X-CSE-MsgGUID: 38MMGEGuRXuYXjQADXH3Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="187416438"
+Received: from skuppusw-desk2.jf.intel.com (HELO [10.165.154.101]) ([10.165.154.101])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 11:43:12 -0700
+Message-ID: <a92c343a-919d-4940-b142-4919d90eb9f3@linux.intel.com>
+Date: Mon, 20 Oct 2025 11:43:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="S9zWXF20ApbbyoB6"
-Content-Disposition: inline
-In-Reply-To: <08d99fcd-4d0c-4d81-a314-7e1a8bfaa64c@riscstar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
+ native AER control
+To: Shuai Xue <xueshuai@linux.alibaba.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ bhelgaas@google.com, kbusch@kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com, tianruidong@linux.alibaba.com, lukas@wunner.de
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-5-xueshuai@linux.alibaba.com>
+Content-Language: en-US
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20251015024159.56414-5-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---S9zWXF20ApbbyoB6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/14/25 19:41, Shuai Xue wrote:
+> Replace the manual checks for native AER control with the
+> pcie_aer_is_native() helper, which provides a more robust way
+> to determine if we have native control of AER.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
 
-On Mon, Oct 20, 2025 at 01:06:50PM -0500, Alex Elder wrote:
-> On 10/20/25 12:41 PM, Conor Dooley wrote:
-> > On Mon, Oct 20, 2025 at 11:51:45AM -0500, Alex Elder wrote:
-> > > Add the SpacemiT K1 SoC QSPI IP to the list of supported hardware.
-> >=20
-> > Also, you should really explain why this spacemit device is the first
-> > one to be in what's been an fsl-specific binding for now in the commit
-> > message.
->=20
-> I'm not sure how much of an explanation you're looking for, but
-> yes, I agree with you, it stands out that it's the first one, so
-> I at least should have acknowledged that.  I'll add something
-> here in the next version.
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Even just mentioning that the register interface etc is nigh identical.
-Otherwise this just looks like picking a random file to put the
-compatible in. Remember, this is independent from the driver change and
-must be justified in its own commit message.
-
->=20
-> 					-Alex
->=20
-> > pw-bot: changes-requested
-> >=20
-> > >=20
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > >   Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.y=
-aml b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> > > index 0315a13fe319a..5bbda4bc33350 100644
-> > > --- a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> > > +++ b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
-> > > @@ -22,6 +22,7 @@ properties:
-> > >             - fsl,imx6ul-qspi
-> > >             - fsl,ls1021a-qspi
-> > >             - fsl,ls2080a-qspi
-> > > +          - spacemit,k1-qspi
-> > >         - items:
-> > >             - enum:
-> > >                 - fsl,ls1043a-qspi
-> > > --=20
-> > > 2.48.1
-> > >=20
->=20
-
---S9zWXF20ApbbyoB6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPaCagAKCRB4tDGHoIJi
-0ohiAQDQx8/ngIErenJDLWY4lU6RY+0qmrL51bMTNVAHh7sOwAEAghs7YSCh8Sjd
-Sp5Y5uHh2P8M3xL2JiAL026goVBQXAg=
-=a65U
------END PGP SIGNATURE-----
-
---S9zWXF20ApbbyoB6--
+>   drivers/pci/pcie/err.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> index 4e65eac809d1..097990094b71 100644
+> --- a/drivers/pci/pcie/err.c
+> +++ b/drivers/pci/pcie/err.c
+> @@ -214,7 +214,6 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>   	int type = pci_pcie_type(dev);
+>   	struct pci_dev *bridge;
+>   	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+> -	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+>   	struct aer_err_info info;
+>   
+>   	/*
+> @@ -289,7 +288,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>   	 * it is responsible for clearing this status.  In that case, the
+>   	 * signaling device may not even be visible to the OS.
+>   	 */
+> -	if (host->native_aer || pcie_ports_native) {
+> +	if (pcie_aer_is_native(dev)) {
+>   		pcie_clear_device_status(dev);
+>   		pci_aer_clear_nonfatal_status(dev);
+>   	}
 
