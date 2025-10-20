@@ -1,161 +1,115 @@
-Return-Path: <linux-kernel+bounces-860438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B52BF0204
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:17:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 185D8BF01F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C088B3E00CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF5B1897013
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C7B29DB6A;
-	Mon, 20 Oct 2025 09:16:38 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE952E8B76;
+	Mon, 20 Oct 2025 09:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS7BR6NX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2C52F49FC
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333C52F5477;
+	Mon, 20 Oct 2025 09:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760951798; cv=none; b=F0udgzgM8VjTQxX1QnELJVfTAt3qYQDL+ET2LmiT2S4B4eVZImqu55TQPAG3xZk13zPd3KjgySvVOA7zSx8dYAcWVD3EUdoSiWGaqVXsXglnc+LoZu2dMPrMTuvEkuJZU1ZG1oHQw95J/eAnhX/expUaXgK+HzE1fm6BepEoFC0=
+	t=1760951785; cv=none; b=WfL3yuK8fmmPzVlc4SF4Ye8R3Y86+gu+xS5a4hNoU5hyARhnQeJkKpgD4KLpjw9y/CE46kZ+0+4vOzZ2gd1LQdXnUQNhWFQjVoek0uHwCm4vuE1vIWZAZr0ZFOHD1K0B/e4qXjs5ThRgWRPTOrXJtiIOOhGY66COw/hLBssEkJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760951798; c=relaxed/simple;
-	bh=P5qdqIbQJXlpU2AVWwO5CppXIEQ7tRUuCuhzdjaCMI0=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SQ2i2xFNPOKC9Zrm4GJ9iBzxFH40axfaZEWzrznkckOfnvWLgTW9mEjuEhBtn7YZeE+i6mDdxXV5nDJSVIeT6a2O/0DA4E97Tezj41H+bGIYkwtCK+bwcRcEcCQ2Qmu7pt1uBwsR3SKBA4Ss1Cam3g4rPAxEuiTkNwwEYafCBnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vAlzx-0000qK-0b; Mon, 20 Oct 2025 11:16:13 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vAlzv-004WQH-0r;
-	Mon, 20 Oct 2025 11:16:11 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vAlzv-0000000059F-0jvO;
-	Mon, 20 Oct 2025 11:16:11 +0200
-Message-ID: <af5211fbb818c873f22b6622526fa8e0c9eb2fde.camel@pengutronix.de>
-Subject: Re: [PATCH net-next v3 4/4] net: mdio: reset PHY before attempting
- to access registers in fwnode_mdiobus_register_phy
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Buday Csaba <buday.csaba@prolan.hu>, Andrew Lunn <andrew@lunn.ch>, 
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller"	 <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski	 <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli	 <f.fainelli@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 20 Oct 2025 11:16:11 +0200
-In-Reply-To: <cb6640fa11e4b148f51d4c8553fe177d5bdb4d37.1760620093.git.buday.csaba@prolan.hu>
-References: <cover.1760620093.git.buday.csaba@prolan.hu>
-	 <cb6640fa11e4b148f51d4c8553fe177d5bdb4d37.1760620093.git.buday.csaba@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760951785; c=relaxed/simple;
+	bh=eea7TGjWmILytppQwQWuyFscpaeat9mDLK8ckK53Yr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WfU6+ijEKBWJpAO5++d9YBNU5ENAWsjSjjjlJMQdzCmq659gm86MB4pZJtaWgOglGUaivYyx4xVzhMMMUQ2WwOHoCIwl91T28WY4IVtC0eak7KjcUraLHU31gt+dXDqYNOBqYUWMjc8mEqNga6uqRIIE8wU9+KqiaaBTPEg3sIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS7BR6NX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1790C4CEFE;
+	Mon, 20 Oct 2025 09:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760951784;
+	bh=eea7TGjWmILytppQwQWuyFscpaeat9mDLK8ckK53Yr4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PS7BR6NXfYILjDkzGxqe8vVzPppJil0WlSwLnQTdCDaGQzOqju7Zzf4yn9CIz+4R8
+	 7p8+iUmYEh15KM1GXgPB3bRwuXgPwAUuseWTti3f7HJp5bEUAP7ppIIX9l0AOXJaO5
+	 GhjINUXc7zRZQJHfuc/xB3W1UqeOfC1ZzCFetOwWnV+Doj4P1A2S0ShXyqtkux73tS
+	 qGZXGefc5gDTJBmUOMYOFrqxBSs+O6InbZSdszlQ8KZJb3l6YC3PBUelyqTogBGYTA
+	 R3JNMG9XJd/tbolFeV2ZSUpAQ+2uN1uuaJcfYABcE/ab3hVDSu3aPc1xTXKUkujwvw
+	 ttzLP14Bd6y1Q==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vAm0C-000000005sE-1Bjx;
+	Mon, 20 Oct 2025 11:16:29 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH] modpost: drop '*_probe' from section check whitelist
+Date: Mon, 20 Oct 2025 11:16:13 +0200
+Message-ID: <20251020091613.22562-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Fr, 2025-10-17 at 18:10 +0200, Buday Csaba wrote:
-> Implement support for the `phy-id-read-needs-reset` device tree
-> property.
->=20
-> When the ID of an ethernet PHY is not provided by the 'compatible'
-> string in the device tree, its actual ID is read via the MDIO bus.
-> For some PHYs this could be unsafe, since a hard reset may be
-> necessary to safely access the MDIO registers.
->=20
-> This patch performs the hard-reset before attempting to read the ID,
-> when the mentioned device tree property is present.
->=20
-> Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
-> ---
-> V2 -> V3: kernel-doc replaced with a comment (fixed warning)
-> V1 -> V2:
->  - renamed DT property `reset-phy-before-probe` to
->   `phy-id-read-needs-reset`
+Several symbol patterns used to be whitelisted to allow drivers to refer
+to functions annotated with __devinit and __devexit, which have since
+been removed.
 
-Not completely, see below.
+Commit e1dc1bfe5b27 ("modpost: remove more symbol patterns from the
+section check whitelist") removed most of these patterns but left
+'*_probe' after a reported warning in an irqchip driver.
 
->  - renamed fwnode_reset_phy_before_probe() to
->    fwnode_reset_phy()
->  - added kernel-doc for fwnode_reset_phy()
->  - improved error handling in fwnode_reset_phy()
-> ---
->  drivers/net/mdio/fwnode_mdio.c | 35 +++++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdi=
-o.c
-> index ba7091518..8e8f9182a 100644
-> --- a/drivers/net/mdio/fwnode_mdio.c
-> +++ b/drivers/net/mdio/fwnode_mdio.c
-> @@ -114,6 +114,36 @@ int fwnode_mdiobus_phy_device_register(struct mii_bu=
-s *mdio,
->  }
->  EXPORT_SYMBOL(fwnode_mdiobus_phy_device_register);
-> =20
-> +/* Hard-reset a PHY before registration */
-> +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-> +			    struct fwnode_handle *phy_node)
-> +{
-> +	struct mdio_device *tmpdev;
-> +	int err;
-> +
-> +	tmpdev =3D mdio_device_create(bus, addr);
-> +	if (IS_ERR(tmpdev))
-> +		return PTR_ERR(tmpdev);
-> +
-> +	fwnode_handle_get(phy_node);
-> +	device_set_node(&tmpdev->dev, phy_node);
-> +	err =3D mdio_device_register_reset(tmpdev);
-> +	if (err) {
-> +		mdio_device_free(tmpdev);
-> +		return err;
-> +	}
-> +
-> +	mdio_device_reset(tmpdev, 1);
-> +	mdio_device_reset(tmpdev, 0);
-> +
-> +	mdio_device_unregister_reset(tmpdev);
-> +
-> +	mdio_device_free(tmpdev);
-> +	fwnode_handle_put(phy_node);
-> +
-> +	return 0;
-> +}
-> +
->  int fwnode_mdiobus_register_phy(struct mii_bus *bus,
->  				struct fwnode_handle *child, u32 addr)
->  {
-> @@ -129,8 +159,11 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
->  		return PTR_ERR(mii_ts);
-> =20
->  	is_c45 =3D fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c=
-45");
-> -	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
-> +	if (is_c45 || fwnode_get_phy_id(child, &phy_id)) {
-> +		if (fwnode_property_present(child, "reset-phy-before-probe"))
+Turns out that was indeed an incorrect reference which has now been
+fixed by commit 9b685058ca93 ("irqchip/qcom-irq-combiner: Fix section
+mismatch").
 
-Commit message says this should be "phy-id-read-needs-reset" now.
+A recently added clocksource driver also relies on this suffix to
+suppress another valid warning, and that is being fixed separately. [1]
 
-regards
-Philipp
+Note that drivers with valid reasons for suppressing the warnings can
+use the __ref macros.
+
+Link: https://lore.kernel.org/lkml/20251017054943.7195-1-johan@kernel.org/ [1]
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+
+As mentioned above there are still two drivers relying on the "_probe"
+pattern to suppress valid warnings so perhaps it's best to hold off on
+merging this until the corresponding fixes are in mainline (e.g. next
+cycle or so unless Thomas can fast-track them).
+
+Johan
+
+
+ scripts/mod/modpost.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 47c8aa2a6939..5c499dace0bb 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -953,7 +953,7 @@ static int secref_whitelist(const char *fromsec, const char *fromsym,
+ 	/* symbols in data sections that may refer to any init/exit sections */
+ 	if (match(fromsec, PATTERNS(DATA_SECTIONS)) &&
+ 	    match(tosec, PATTERNS(ALL_INIT_SECTIONS, ALL_EXIT_SECTIONS)) &&
+-	    match(fromsym, PATTERNS("*_ops", "*_probe", "*_console")))
++	    match(fromsym, PATTERNS("*_ops", "*_console")))
+ 		return 0;
+ 
+ 	/* Check for pattern 3 */
+-- 
+2.49.1
+
 
