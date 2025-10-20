@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-861262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668DABF2348
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 378C7BF22D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551DA18A39C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83711898BDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DE0275105;
-	Mon, 20 Oct 2025 15:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FC926B96A;
+	Mon, 20 Oct 2025 15:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="bttH3Hxg"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKXboRap"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5D7274B44
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8E1242D9E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975349; cv=none; b=aUKOYNo4Qybm3NLhfE6whIqAMkkXrGlt/LyXJ6GtH9ZSjGg633nM5XFbaWaWbkimpgLDIaxPdgGwyWxQj8632FkUnih+YsvhXmY8QX2IQrlEpFaP1s8zpCd7RsWZC6P1uj8QPwVfs/4gWKpT3uqKVAV3hgquANsl1rOxjm+7JBo=
+	t=1760975070; cv=none; b=ZdQtYx+oFCVaLIzp5V659g88Gssn4Hzv/ossrHyHO3vmPlcL8bdCFilYdmjXkJ8Tib8j5IJhccvRMnFC3XvI2CLexoElgPRRylTHhhAXXkxeqVdCRFm7QiO8vzeD1EfnKvD2FygwIb6yoyvVQF0vc+D4b7n9POnAhj0Umggw+94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975349; c=relaxed/simple;
-	bh=VOe7YeHPmgqFVb45V0QBaf5dPkfM9WSW0Ud6q0TRFCE=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=YkQX2p8NSqUJfa0JymNAn4fPytF94w06WfhxCJkcWfW0x49O2mMQgDb+CPR6WUkPypIEyop1nl9VCZ8V7iC51ZJF1qQOXHcC2saOMlfDoQ1hADRkIpxXEeceO9ACyBXuXx/GZf6xZNhpT9Pc2W/Hg0wrMPAhkTgKDuw8QI/tAUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=bttH3Hxg; arc=none smtp.client-ip=43.163.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1760975034;
-	bh=h13hvJEmeQORaCCWjAwRU639z0CD1vvMgt80xJncD7M=;
-	h=From:To:Cc:Subject:Date;
-	b=bttH3HxgB0fua+BRCEPcyoyggtHH1DHrWsQNS+WKUZNWZzXkN2UdB3V1ix0zgCSEU
-	 HaYDSMdywFzCZt32NFEKeB5WpUHTwN6UuqzFFPqhx9ab8afMJx/dwUOGZExyMqMZG2
-	 4/vSS6ohB/05jpFW0Ob2jFEIoBpIpPaPLBdsc7LQ=
-Received: from zm.. ([2408:8340:a20:6b00:20c:29ff:fe69:94c7])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id AF512C33; Mon, 20 Oct 2025 23:43:53 +0800
-X-QQ-mid: xmsmtpt1760975033tdhzogchg
-Message-ID: <tencent_C04F39CA166C38A5502D7CF206688E191307@qq.com>
-X-QQ-XMAILINFO: MuOYcNghSeIL+gqpZ0UIhkab9xX8mbPqNkiEFQL68ll/hyA4or+x3ZlpPjHjV4
-	 4cs1iACFmsdhs2DgDi9G5PZawYliEBKwo4/Bx6hpMrkPIRDtjyWoasqvFoDcNXl22fss8UggP7Ej
-	 28a/WVDFIb/Styu2wVb7Cd0f4c7hEUEnvqMF9Bc/hsSK+1PrPBSqpA9gzH6pHYQGx9yx3/rLZzZl
-	 A5Z0upHHyh8XeZxWqPqlhKD5Hzj41FzCAyoOK+XKvVAsmcxy6+VHK81VnTaafVkEF4PBJ+ywDVxh
-	 HSruJqAFSFcJbLvv689QNTQaLWO176IQJMTbdhoGYIU6lyknuPhdIq+RE/B0AbR/7wT4gtK/aHNT
-	 Csx3xl5Mm2tjgKW4Rmr9ty/3S3c/LfJKLemlJyq7CA4He3lqg1a52mkMiTKq8NjvA8G/A/8dCn+c
-	 SXJaS4gG+J6OqlQrm9Kc7p5iTTj9Iy/VZJcIgW9QRiuhYLStZytqPZCHwvOjBl6MtMEfU8S23Zdi
-	 DRJgNm8l4fntFNyaMtHoFh4tCPQ/6cGKO7bw4RvCGxZs+3XXvLUXeOTtGP6hYO1hpAiBxm//6rU3
-	 IWWq+ykSKy6puhor6hs/rE0CgZKb5a6OlwuBJhPT2FbN8obT1lfENOGz7MyOXSXNGEZFQyquhDt6
-	 jVVx6fQUTBnmllOsQuqlZxsnY9ZTQVkms2lCHu2AN8IvedLrTH2nlQJw2DEDI7S8IEOrEmEUEYCO
-	 hMJoeZ0DQZ5+n9/sDysM4txz28QrvxJw3F9LMgLns2CQsbGFQM9oEoTp1P8AUJMMrqT+Nhb///qz
-	 YUfXhnmfpVQFCI8u6IveZgK9fv7z1Ay+HrJGh5PKOCg0cXfYDb2ctcWFQqgQX6NwvmJ1D+fr86Os
-	 zCd4EgDZdnpm5n7qXFhgvLegkAcNIbkhZ3xC3s7cmXQQZTBYDnMH3szhZU5KBzkDL/ri7oCT/rhP
-	 CAoPXIwAYWOviTT3gsbqIas6b8JGbcksqMQ4ihe5lNkCltYvkmuNHHq+19EcY4HA8L8MFzPxhj2/
-	 89LVBLITHbL/g0kNIdZH1MfHHaojIgtnahX+QQlrknkzPfo97YUKv8TFBeQHkkTvXXufuPPzIw2H
-	 x5cEnqlp1NTIJueBocOp7keMwmRQ==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: zhoumin <teczm@foxmail.com>
-To: mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	zhoumin <teczm@foxmail.com>
-Subject: [PATCH] cputime:make function static
-Date: Mon, 20 Oct 2025 23:43:50 +0800
-X-OQ-MSGID: <20251020154350.74033-1-teczm@foxmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760975070; c=relaxed/simple;
+	bh=vVCAMQZ9VZYVBMCVBw/5S+OiKMRfl7we43CExJvn3Ng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifF+CaiZqaOM0C7GJ0XKoIgnoWvRncLx52u4YrIg80Jo+vk+fdTJGzOVrsUTvg09XKHxY3JNy9rQ/fG/gRg10KwK97X/eJ/Xw0PThoaDqeIY/KOZjKdYMMYtmeOeH2zxK/dVq2HMeXe1W8Z4tH8WhwZ22uzQHutnKNv4zQzfNag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKXboRap; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b57d93ae3b0so2941155a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760975068; x=1761579868; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Y1CSxzIR0fv7maZ+ANOh4LIYK2ZvUFcV3YgMDZQcxA=;
+        b=gKXboRapbe59G+3tNO4Fjvu0tkJ1ijWWxnooZngZENQIwIMREly+jWh0SNmrahLzY+
+         uZdqEwPMzKPUCwMvkG6o1EZC4OVPCNlPBypSsbOu1sQm0Pn/Uycb+PwxRE2Z9MrPFPa7
+         AgAfABDRWyYuXAhQMOdfq9LCWJErp/qocXJZesiniNaKLzwu9NDiJsbJ4s2yp21kJL2U
+         w75sBffdJ/Cf3HO9Y6TN1tQssRqKsEsB1FrhYtFJZvslAdxx1MXwMqcC7zKsRbi0Z+SM
+         DSUdxsSiH8O6AgCR2VC51POnJzW7bw02NyXtPTfbBq0XXHfpvVp/vQEFICoP4YNc1qP6
+         9VwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760975068; x=1761579868;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Y1CSxzIR0fv7maZ+ANOh4LIYK2ZvUFcV3YgMDZQcxA=;
+        b=kB9hRUgPFAmRDWJNDVlvgyz1TdpHpWYTVOvpBlqei+AA97XWUDRq3zHzimMqnrb6Uh
+         D9a51oA4dSsc2BOBOZ71UnzOBCGWw+cG6Lqk9FMZOC7FjE4ADe4nbWVkF+ZdoR5Ic7vL
+         td2drLjTBAAfnfDFEp1FrZuBLwUEKumIakHGT9jiSlvQ3HrBzA43xBC+6n1mIpOjn4P9
+         aHuPS1Ocb4nkdj2j4nC2mxTIlP0Nil2f7hx/aRIKoBm+H2lH2XIgzfBNJSPW2D+dLvVD
+         flvmEly9CTKfzpD1auEu2UdLdqUDEhLlvXIj5cHYiWRqgPFwniXubpE7FiQCYMdzpakB
+         Wsiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuEIxxKCGVnd4OSQgvtJgf4GPErDDeJbLO1uuPUP5OPMr3V3b2/ljZekfZsxcR2fO/A5xZ0YzPIQBqbdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuNHmg3i1Om9lLW5BVnq4VDt2I7C/0BXilVMwh4AgQRoRNsQi9
+	y2ePkRzdZjHmU+TSeTO34d/EisZW9FvHbScpdAwSOqfWUvi7xjy0UhA1
+X-Gm-Gg: ASbGnctC0kd2LvlAZzQQsutrrQscsBx8qIAxd89gFO/LVDKFH0Og2AY0SYQ1h7qoNFC
+	2zIX0n4d2xhaB5ZwBQzYhDC+j/wKAQU4hZ9OeWC6yo/ldaSmkt/nXE9fId9EmICQem2xYKvK4Zy
+	ljFK8y1kJu7GJ0GAhpDE2WHgTRLP6JnZbXCyx1TZpfSpKCjUH58TsvTpVPYzDct8zoV7S7QNQEX
+	UROmaXGhryRaqR0qDJwzXZVOS6V8zkSPKRnfaKBWCxCiiv83yRqyIiqNQl4zZQsv+e9Y3cfwfK2
+	Aq2SoK24GFU/q5v46WXYCHVAx6gaHIR6SwiWChTioXcyGuMR9pqTE3RUK/yNfhlWEN24VxZZcjA
+	awaG+xOToSBAYmXtheIqRwlgRamQkizdss+b9O9VJJzQJ5IUFfg9rM1aYGPoAJa9uTssLKR3GEr
+	o0giRTk1h0BckimtgFoylBMdxfd7vpuywxnxzO
+X-Google-Smtp-Source: AGHT+IEMOFE9N0vOyy2Knz1EYUYNFp/diS2UfD4ZLPam7/RwKCkbB21p+DSbZLLCJqeti9P1f9KOzQ==
+X-Received: by 2002:a17:902:db0b:b0:290:b53b:7459 with SMTP id d9443c01a7336-290cb65dc2amr160144995ad.56.1760975068096;
+        Mon, 20 Oct 2025 08:44:28 -0700 (PDT)
+Received: from [192.168.1.4] ([223.181.116.113])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292472197desm83363565ad.115.2025.10.20.08.44.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 08:44:27 -0700 (PDT)
+Message-ID: <46aa84cd-63cc-4263-9061-021fa3205b87@gmail.com>
+Date: Mon, 20 Oct 2025 21:14:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] dt-bindings: mmc: ti,omap2430-sdhci: Add json
+ schema for the text binding
+To: Rob Herring <robh@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>,
+ Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20251019-ti-sdhci-omap-v4-0-fdc63aaeb083@gmail.com>
+ <20251020142710.GA576827-robh@kernel.org>
+Content-Language: en-US
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+In-Reply-To: <20251020142710.GA576827-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Make account_system_time static.
 
-Signed-off-by: zhoumin <teczm@foxmail.com>
----
- include/linux/kernel_stat.h | 1 -
- kernel/sched/cputime.c      | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
-index b97ce2df376f..815400c81015 100644
---- a/include/linux/kernel_stat.h
-+++ b/include/linux/kernel_stat.h
-@@ -119,7 +119,6 @@ static inline void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
- 
- extern void account_user_time(struct task_struct *, u64);
- extern void account_guest_time(struct task_struct *, u64);
--extern void account_system_time(struct task_struct *, int, u64);
- extern void account_system_index_time(struct task_struct *, u64,
- 				      enum cpu_usage_stat);
- extern void account_steal_time(u64);
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 6dab4854c6c0..8c74b86f74f5 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -183,7 +183,7 @@ void account_system_index_time(struct task_struct *p,
-  * @hardirq_offset: the offset to subtract from hardirq_count()
-  * @cputime: the CPU time spent in kernel space since the last update
-  */
--void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
-+static void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
- {
- 	int index;
- 
+On 20-10-2025 19:57, Rob Herring wrote:
+> On Sun, Oct 19, 2025 at 01:04:36PM +0000, Charan Pedumuru wrote:
+>> Create a YAML binding for ti,omap2430-sdhci and fix vmmc-supply
+>> property typo for a DTS file.
+>>
+>> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+>> ---
+>> Note: The property "ti,needs-special-reset" was not removed from DTS cause it will
+>>       disrupt the compilation for other compatibles as the node &mmc is used for all
+>>       compatibles for some DTS files.
+> 
+> I don't understand. AFIACT, "ti,needs-special-reset" is only used for 
+> the hsmmc driver/binding. But this series for for the sdhci 
+> driver/binding. So shouldn't the property be removed from sdhci nodes 
+> (and the binding), but kept for hsmmc nodes?
+
+
+Yes we can remove that property from sdhci , but &mmc node in DTS is common for all mmc drivers and this "ti,needs-special-reset" property is defined there for one board, so even when I remove it from DTSI for sdhci nodes, the DTS file still contains this property in &mmc node which is also common for other mmc drivers, so even if we remove that property for sdhci node, we still need to define it in YAML to resolve dtb_check. The issue here is not removing the property from sdhci node in DTSI file, but to remove it from &mmc node from a DTS file which is common to all mmc drivers.
+
+Here is the DTS node (ti/omap/am5729-beagleboneai.dts) which contain that property and is common for all mmc drivers.
+&mmc2 {
+	status = "okay";
+	vmmc-supply = <&vdd_1v8>;
+	vqmmc-supply = <&vdd_1v8>;
+	bus-width = <8>;
+	ti,non-removable;
+	non-removable;
+	mmc-pwrseq = <&emmc_pwrseq>;
+
+	ti,needs-special-reset;
+	dmas = <&sdma_xbar 47>, <&sdma_xbar 48>;
+	dma-names = "tx", "rx";
+
+};
+
+> 
+> Rob
+
 -- 
-2.43.0
+Best Regards,
+Charan.
 
 
