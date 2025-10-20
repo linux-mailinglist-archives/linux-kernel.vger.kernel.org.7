@@ -1,195 +1,153 @@
-Return-Path: <linux-kernel+bounces-860662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AAA0BF0A77
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:47:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AF2BF0A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFBF23BBC9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D941F189842C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3A225179A;
-	Mon, 20 Oct 2025 10:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5B91922FD;
+	Mon, 20 Oct 2025 10:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSOkEo4T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5wXs9Ur"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CB1248F64;
-	Mon, 20 Oct 2025 10:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E052A24BBEE;
+	Mon, 20 Oct 2025 10:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760957213; cv=none; b=puzowVCg3V596Tb3O9Oq2GLfh6LjL9vQqhf4D7GTSUvl9jf8v08K7KX8LabwEIZzUp5uQPnkfprAMp59fnZYZ7zZw6xOEgRwMqFswrjbOUYbTBQ/4OAhnQbIrBxD6M2RJfJjANdC539SD3NNdhm9OcwtW1t+fprKSUN+Mog0EY4=
+	t=1760957230; cv=none; b=l42WA6D5po8kRxid5T8f+kLhDJhEu2K3+xWw9qcy9X66jujs27JdQH76+W/bCkGqtQDeTw0MmRDF89GDWQTpZOWFIPjLjOi4m1DkWGuGo4qoGykiHRZUx71KVPASVTaOECiz6Y3K13jq44T6Ygaedxh/O2xo/numNy9ZPBcgqew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760957213; c=relaxed/simple;
-	bh=D1ZkUGIvlqw3I085AUCc/kwgl9Idn6a5N0Vdlll34oU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HR3CaX4Wz8F3fvah+w8yVFToIBzRZTqXWvpD663/4PWkDf4SeMR8tue8vP+imAvWQaOegnm7KqtaYmFp3Jsx10PPTS9GgmRpR/DAofdknyHlp+PGh/aRh1xDfeM8lrcGF1x+piIkltr1vOIjTYawtKeYpP7hoCkXqyIf2nWN8kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSOkEo4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED912C4CEF9;
-	Mon, 20 Oct 2025 10:46:51 +0000 (UTC)
+	s=arc-20240116; t=1760957230; c=relaxed/simple;
+	bh=aRCKuRMfy54t4bXfC91JSBbnFrkYdLdzDBFthyWBges=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SPhAThBDoG+6CeCP/gECG3c4LpV+S5KWDX4J53RUyoE/FD8IuaijauPKIN8EwTeLgPQk4AdGU8ffFXrGZl/pZ9aokxzjNRJBvmrfBApkCiQ318f/eu0+sYFppEljvDtXJ+SzAf7uDvHWLDVG4xJHs4x2e0jgWpaYqYgcNQNMDH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5wXs9Ur; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45EF9C4CEF9;
+	Mon, 20 Oct 2025 10:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760957213;
-	bh=D1ZkUGIvlqw3I085AUCc/kwgl9Idn6a5N0Vdlll34oU=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=kSOkEo4TAPBJ+HG5+qKtiuAlWykbHxA/98Ke/2hhkNzNXTQGslxalWAYqvxvTNN2E
-	 gYzbGCOJoxBGi9TvV1vTBOhrHJcKtjEqMLBww4mUlG+R/OVItocZMzjyz/RibwfX1c
-	 3CKzJcrYIZiYK+iXeed1j6IJGppoDPQMTR9+M+i76spfKRF52XNmMl3qOY2xt8k+y9
-	 FmjQ4sdlnUH7fmJNAJol8G6Vl3wEHepKJkxXUdFTm6r5cb1+NbMOfl1S4H6KUinXNU
-	 Z8wPeoUKjFt5IG/RH0klRkM6LYKkSWevLNQTBMnmFS2oaeO3/cnyhzOW2gDV9LxcDP
-	 E0CE9KzEvsRUQ==
-Message-ID: <1507fe55-d756-46bb-abf1-0d1fb7f9bee0@kernel.org>
-Date: Mon, 20 Oct 2025 12:46:50 +0200
+	s=k20201202; t=1760957227;
+	bh=aRCKuRMfy54t4bXfC91JSBbnFrkYdLdzDBFthyWBges=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=C5wXs9UrwAszdToIyQFZOKA+qjfH1I2yEPkUwkzif5j4NUpLKHFN+GMhrhIqgexug
+	 RION/AebVZepdsmtOasBwAWiACN37Gehlt1tI8qJg7HtryTMMo10HtKPrCYnzR4mqe
+	 4+PULhz1P29UQ7xi9xpd6H5FBB+GABK10UO1niUyk/RDp0/kyX2pLnbML9flNDcQzL
+	 aYW2fXSJMZ3lR3hb360j2riGA3jr36dSUWNgOK7M5tcBXGGa9PTP6H75+SqYahWyFO
+	 kMCmQhwDcBIhvdGNxp8m1U8ycZ8ibkyN4OjbXeseDCjOCx9Rphnry3738s2aUJRn3N
+	 wCconD0AwTHAg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vAnPt-0000000FSul-0I6N;
+	Mon, 20 Oct 2025 10:47:05 +0000
+Date: Mon, 20 Oct 2025 11:47:04 +0100
+Message-ID: <86plahx32v.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Mark\
+ Rutland" <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J.\
+ Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"Saravana\
+ Kannan" <saravanak@google.com>,
+	Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau
+	<j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark
+	<james.clark@linaro.org>
+Subject: Re: [PATCH v3 03/26] of/irq: Add IRQ affinity reporting interface
+In-Reply-To: <20251009174959.00001b05@huawei.com>
+References: <20250922082833.2038905-1-maz@kernel.org>
+	<20250922082833.2038905-4-maz@kernel.org>
+	<20251009174959.00001b05@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 02/23] tools: docs: parse_data_structs.py: output a line
- number
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <cover.1759329363.git.mchehab+huawei@kernel.org>
- <dcffa6844dede00052f5fb851a857991468f22b5.1759329363.git.mchehab+huawei@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <dcffa6844dede00052f5fb851a857991468f22b5.1759329363.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 01/10/2025 16:49, Mauro Carvalho Chehab wrote:
-
-Missing commit message!
-
-I'm less concerned about the missing message (it's clear what is happening here),
-than I am about the fact that checkpatch wasn't run.
-
-Regards,
-
-	Hans
-
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  tools/docs/lib/parse_data_structs.py | 29 ++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
+On Thu, 09 Oct 2025 17:49:59 +0100,
+Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
 > 
-> diff --git a/tools/docs/lib/parse_data_structs.py b/tools/docs/lib/parse_data_structs.py
-> index 6c868f84f029..d28471a045f1 100755
-> --- a/tools/docs/lib/parse_data_structs.py
-> +++ b/tools/docs/lib/parse_data_structs.py
-> @@ -143,7 +143,7 @@ class ParseDataStructs:
->          for symbol_type in self.DEF_SYMBOL_TYPES:
->              self.symbols[symbol_type] = {}
->  
-> -    def store_type(self, symbol_type: str, symbol: str,
-> +    def store_type(self, ln, symbol_type: str, symbol: str,
->                     ref_name: str = None, replace_underscores: bool = True):
->          """
->          Stores a new symbol at self.symbols under symbol_type.
-> @@ -172,7 +172,7 @@ class ParseDataStructs:
->          else:
->              ref_link = symbol
->  
-> -        self.symbols[symbol_type][symbol] = f"{prefix}{ref_link}{suffix}"
-> +        self.symbols[symbol_type][symbol] = (f"{prefix}{ref_link}{suffix}", ln)
->  
->      def store_line(self, line):
->          """Stores a line at self.data, properly indented"""
-> @@ -240,20 +240,20 @@ class ParseDataStructs:
->                  if is_enum:
->                      match = re.match(r"^\s*([_\w][\w\d_]+)\s*[\,=]?", line)
->                      if match:
-> -                        self.store_type("symbol", match.group(1))
-> +                        self.store_type(line_no, "symbol", match.group(1))
->                      if "}" in line:
->                          is_enum = False
->                      continue
->  
->                  match = re.match(r"^\s*#\s*define\s+([\w_]+)\s+_IO", line)
->                  if match:
-> -                    self.store_type("ioctl", match.group(1),
-> +                    self.store_type(line_no, "ioctl", match.group(1),
->                                      replace_underscores=False)
->                      continue
->  
->                  match = re.match(r"^\s*#\s*define\s+([\w_]+)(\s+|$)", line)
->                  if match:
-> -                    self.store_type("define", match.group(1))
-> +                    self.store_type(line_no, "define", match.group(1))
->                      continue
->  
->                  match = re.match(r"^\s*typedef\s+([_\w][\w\d_]+)\s+(.*)\s+([_\w][\w\d_]+);",
-> @@ -261,20 +261,20 @@ class ParseDataStructs:
->                  if match:
->                      name = match.group(2).strip()
->                      symbol = match.group(3)
-> -                    self.store_type("typedef", symbol, ref_name=name)
-> +                    self.store_type(line_no, "typedef", symbol, ref_name=name)
->                      continue
->  
->                  for re_enum in self.RE_ENUMS:
->                      match = re_enum.match(line)
->                      if match:
-> -                        self.store_type("enum", match.group(1))
-> +                        self.store_type(line_no, "enum", match.group(1))
->                          is_enum = True
->                          break
->  
->                  for re_struct in self.RE_STRUCTS:
->                      match = re_struct.match(line)
->                      if match:
-> -                        self.store_type("struct", match.group(1))
-> +                        self.store_type(line_no, "struct", match.group(1))
->                          break
->  
->      def process_exceptions(self, fname: str):
-> @@ -342,7 +342,8 @@ class ParseDataStructs:
->  
->                  # Change self.symbols to use the replacement rule
->                  if old in self.symbols[c_type]:
-> -                    self.symbols[c_type][old] = new_ref
-> +                    (_, ln) = self.symbols[c_type][old]
-> +                    self.symbols[c_type][old] = (new_ref, ln)
->                  else:
->                      print(f"{name}:{ln}: Warning: can't find {old} {c_type}")
->  
-> @@ -360,8 +361,8 @@ class ParseDataStructs:
->  
->              print(f"{c_type}:")
->  
-> -            for symbol, ref in sorted(refs.items()):
-> -                print(f"  {symbol} -> {ref}")
-> +            for symbol, (ref, ln) in sorted(refs.items()):
-> +                print(f"  #{ln:<5d} {symbol} -> {ref}")
->  
->              print()
->  
-> @@ -384,7 +385,7 @@ class ParseDataStructs:
->  
->          # Process all reference types
->          for ref_dict in self.symbols.values():
-> -            for symbol, replacement in ref_dict.items():
-> +            for symbol, (replacement, _) in ref_dict.items():
->                  symbol = re.escape(re.sub(r"([\_\`\*\<\>\&\\\\:\/])", r"\\\1", symbol))
->                  text = re.sub(fr'{start_delim}{symbol}{end_delim}',
->                                fr'\1{replacement}\2', text)
-> @@ -420,8 +421,8 @@ class ParseDataStructs:
->              text.append("")
->  
->              # Sort symbols alphabetically
-> -            for symbol, ref in sorted(refs.items()):
-> -                text.append(f"* :{ref}:")
-> +            for symbol, (ref, ln) in sorted(refs.items()):
-> +                text.append(f"* {ref}: line #{ln}")
->  
->              text.append("")  # Add empty line between categories
->  
+> On Mon, 22 Sep 2025 09:28:10 +0100
+> Marc Zyngier <maz@kernel.org> wrote:
+> 
+> > Plug the irq_populate_fwspec_info() helper into the OF layer
+> > to offer an IRQ affinity reporting function.
+> > 
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Trivial comment inline but I don't care that much.
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> 
+> > ---
+> >  drivers/of/irq.c       | 20 ++++++++++++++++++++
+> >  include/linux/of_irq.h |  7 +++++++
+> >  2 files changed, 27 insertions(+)
+> > 
+> > diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> > index 74aaea61de13c..9a205cb033bda 100644
+> > --- a/drivers/of/irq.c
+> > +++ b/drivers/of/irq.c
+> > @@ -479,6 +479,26 @@ int of_irq_get(struct device_node *dev, int index)
+> >  }
+> >  EXPORT_SYMBOL_GPL(of_irq_get);
+> >  
+> > +const struct cpumask *of_irq_get_affinity(struct device_node *dev, int index)
+> > +{
+> > +	struct of_phandle_args oirq;
+> > +	struct irq_fwspec_info info;
+> > +	struct irq_fwspec fwspec;
+> > +	int rc;
+> > +
+> > +	rc = of_irq_parse_one(dev, index, &oirq);
+> > +	if (rc)
+> > +		return NULL;
+> > +
+> > +	of_phandle_args_to_fwspec(oirq.np, oirq.args, oirq.args_count,
+> > +				  &fwspec);
+> > +
+> > +	if (!irq_populate_fwspec_info(&fwspec, &info))
+> > +		return info.affinity;
+> My slightly picky mental consistency filter suggests that this would look
+> more like the ACPI version as
+> 
+> 	if (irq_populate_fwspec_info(&fwspec, &info))
+> 		return NULL;
+> 
+> 	return info.affinity;
+> 
+> But I don't really care.
 
+Consistency doesn't hurt. I've applied this.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
