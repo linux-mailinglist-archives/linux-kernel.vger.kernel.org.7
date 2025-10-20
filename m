@@ -1,165 +1,111 @@
-Return-Path: <linux-kernel+bounces-861461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29939BF2C89
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:45:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19A3BF2CB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C101E34D342
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:45:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87EF64FA747
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF533321D7;
-	Mon, 20 Oct 2025 17:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42633321CD;
+	Mon, 20 Oct 2025 17:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoWOuH7p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y+d2pJ0Z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GFYwm7eY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B833328EB
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A49026B755
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982276; cv=none; b=FiCe1X4S5wWgrZUk+ip/yx09Jr+5mJ3ZSwbHsacP7Dz5KhCQmKHUcR/uEJk4f/yIA1HrxIgxmc3ytcLPTDeYbS2DNWSo3baPa8xN6ksHShp7bi/rbjK7rwiS2Ci0VM+jeIQsHxbuu9foPYUgrmLNpBCRYSEz5XLt6bTPJJsdZgQ=
+	t=1760982300; cv=none; b=DXDehWeVpMBHzFar/HLyDbRSzHDI2oIlGxMs3jrn5bXAlfLD5oM/BZ9X6leTv6SEsXQLtiT9tl6jAm2yu9ZqSbd0nxCUUWRAYTmxOU8ZDDRAIRo7YSepyXPzWwtIt7s/DsRaebGWTcW/PeYwYdq4noS08vmkjSqR1elWUiWY4A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982276; c=relaxed/simple;
-	bh=9SQduol4sq0EtS2GcOIwdhucDz3vZOy2iqkydjidjb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z97i4QBHFhu3AvWZLIJ/Te4RWFP4ozFGBfV6ocMlvjrpLyA0ddl+55nTPeuOOROTMrT5HRqNL6jTdpBJeaZLV+TzaF+GeX8RtXbQtk5TsCxeWDrIpVQPtnvaOrRxClBOCIu52BSAb37cXVusRXQVOUZIgAe5/7xrcc5PJdbdpxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoWOuH7p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512C4C2BC86
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760982276;
-	bh=9SQduol4sq0EtS2GcOIwdhucDz3vZOy2iqkydjidjb0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XoWOuH7pqGKUuHsGV4vnJ9f2sK9s0qP/cnmrb8G+I/J68fBw1F7pqORh3JN/Fh3Tp
-	 eOqfw6DVP/uLocyxy/H5lVzQDfvYG1m+yR7sJ0gbjEI5HJaRa2C+FbuGAVMNoFjNEM
-	 tQRnaQOY1B+RmhajjkSLD8ZHgmDiQWC83ItxpM+FsoI/CojrO6RKudqeL7T5/jiIdM
-	 jlwJxeWKEmgo8xgKwz9CHGclQ/3AGF/iOxsyP+tjDwcjzMKqOhI/ah22OuxBKSudzd
-	 A1VmOL90BuYrfJafDdw8s57VpX+gsu3SwiLmgDCeTmXqXXPFU3sw8dajyGmHmjmX8Z
-	 2RM0WNCFERl/w==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7c0e8367d4eso1584547a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:44:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3foJnBfdtoqXUSNdZMWv+lTlJ9CvJcm5hdA7/63yupgxvyXVivsmTfc5dRdh85WCPe068xyEGMv69IxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9q06SmRpBHErJ1/gh7juaK1kE8ZFcF/AEzY2wv969Hh0OzehA
-	S/F40nh/5BkNRc4B7M95xtIXskWlKnCH3ajKu5TWH70FwkQvKRJrYRQtZz2j5lCQM0ByNkGShw0
-	iOFejvRzSNSE/WqaREmw+QrNecvre0c0=
-X-Google-Smtp-Source: AGHT+IEwbvz72kNzUitB/HZRHnWBHktzWo+WHJ4wfWV7a7y7zEi7Xt1kb6kk+2+LndRg6PQI9iAqjmMQy+zxteny/jM=
-X-Received: by 2002:a05:6808:190d:b0:438:8c9:5f4 with SMTP id
- 5614622812f47-443a2edee81mr5446868b6e.19.1760982275490; Mon, 20 Oct 2025
- 10:44:35 -0700 (PDT)
+	s=arc-20240116; t=1760982300; c=relaxed/simple;
+	bh=w5/OlzW9N66DcpypHR1C7SYDx1S2cEIE5LQRdH+OqXE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Efe4dlJNst44WjjdWRl87kiGnnCzQClHb24WbbbN5HgvBZGxhMjHplJtNBk4Ly0t2GkE7ShDrN7JWTS/sZiXbxliWszj/jGhIyVQmZ2Cmsp0fDxZ/1g2uRsk/vSHvKL58ojdpu0h4Z0+C+779Fy2BkOnPtA5cLJ7WJCF11eF/K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y+d2pJ0Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GFYwm7eY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760982296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o5nLyOLxW/yZHAWixRniPvYdKNsJsg26FMrw+1O2HHQ=;
+	b=y+d2pJ0ZdEqudmxQCJZi43gDWG7GBPQuOF2BgYQSmyQI/iSouL601cj4GbfGHGp4wlYyAz
+	tSbzx+0di4OZKfmRzvI40dyQmYJaklm9QhhPpnbiHO5hfxHvkCExHWe8EkO+S6ag3jPzYC
+	B06MBMsud1Zem1+lNIpd99KlcH3ktOXsoBW+o0uArrTBw42YmJK2GOPKBd5Lhh26MkFUhj
+	N7KSU7IOLpj59ZEKCvTWGyTYOOjVhVvXWfM8+4McYFvA8gIZOSenZv/HVrUtFUj/Gmg95Z
+	e3uGlHtb3CGV1amdoX+7OUAM1usBpP+ZR7/DTm/bDoQd352nAYP8IB8YFZVdLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760982296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o5nLyOLxW/yZHAWixRniPvYdKNsJsg26FMrw+1O2HHQ=;
+	b=GFYwm7eY7qOlZEbF48OLPgnfFsyAlxEg/Nkxo/hWMQgnXWjR+Ra52dR2A/eSzQmJ38jIrj
+	HUHuepe36hYeWvBA==
+To: Troy Mitchell <troy.mitchell@linux.dev>, Paul Walmsley <pjw@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
+ <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Troy
+ Mitchell <troy.mitchell@linux.dev>
+Subject: Re: [PATCH] irqchip/sifive-plic: use hartid as context_id in OF to
+ fix AMP conflicts
+In-Reply-To: <20251020-fix-plic-amp-v1-1-defe2a99ab80@linux.dev>
+References: <20251020-fix-plic-amp-v1-1-defe2a99ab80@linux.dev>
+Date: Mon, 20 Oct 2025 19:44:55 +0200
+Message-ID: <87bjm1zcvc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014001055.772422-6-changwoo@igalia.com> <202510151232.UNZ2J7TZ-lkp@intel.com>
-In-Reply-To: <202510151232.UNZ2J7TZ-lkp@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 20 Oct 2025 19:44:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hAnKEUP7n_d3bzVEi0HGmgZXC-+U=_RmS1n0wGniv8qQ@mail.gmail.com>
-X-Gm-Features: AS18NWDqU8gI4O1WJOZVUI3zH0SqwXzI9Pu_KT0r6C5A7fFtSAxMeq04Q4UHq8s
-Message-ID: <CAJZ5v0hAnKEUP7n_d3bzVEi0HGmgZXC-+U=_RmS1n0wGniv8qQ@mail.gmail.com>
-Subject: Re: [PATCH v5 05/10] PM: EM: Add an iterator and accessor for the
- performance domain
-To: kernel test robot <lkp@intel.com>, Changwoo Min <changwoo@igalia.com>
-Cc: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com, 
-	pavel@kernel.org, oe-kbuild-all@lists.linux.dev, christian.loehle@arm.com, 
-	tj@kernel.org, kernel-dev@igalia.com, linux-pm@vger.kernel.org, 
-	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Oct 15, 2025 at 6:50=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Changwoo,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on amd-pstate/linux-next]
-> [also build test ERROR on amd-pstate/bleeding-edge linus/master v6.18-rc1=
- next-20251014]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Changwoo-Min/PM-EM=
--Assign-a-unique-ID-when-creating-a-performance-domain/20251014-082420
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git=
- linux-next
-> patch link:    https://lore.kernel.org/r/20251014001055.772422-6-changwoo=
-%40igalia.com
-> patch subject: [PATCH v5 05/10] PM: EM: Add an iterator and accessor for =
-the performance domain
-> config: i386-buildonly-randconfig-001-20251015 (https://download.01.org/0=
-day-ci/archive/20251015/202510151232.UNZ2J7TZ-lkp@intel.com/config)
-> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251015/202510151232.UNZ2J7TZ-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510151232.UNZ2J7TZ-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> kernel/power/energy_model.c:1003:5: error: redefinition of 'for_each_e=
-m_perf_domain'
->     1003 | int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, =
-void *),
->          |     ^~~~~~~~~~~~~~~~~~~~~~~
->    In file included from kernel/power/energy_model.c:20:
->    kernel/power/em_netlink.h:18:5: note: previous definition of 'for_each=
-_em_perf_domain' with type 'int(int (*)(struct em_perf_domain *, void *), v=
-oid *)'
->       18 | int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, =
-void *),
->          |     ^~~~~~~~~~~~~~~~~~~~~~~
-> >> kernel/power/energy_model.c:1022:24: error: redefinition of 'em_perf_d=
-omain_get_by_id'
->     1022 | struct em_perf_domain *em_perf_domain_get_by_id(int id)
->          |                        ^~~~~~~~~~~~~~~~~~~~~~~~
->    kernel/power/em_netlink.h:24:24: note: previous definition of 'em_perf=
-_domain_get_by_id' with type 'struct em_perf_domain *(int)'
->       24 | struct em_perf_domain *em_perf_domain_get_by_id(int id)
->          |                        ^~~~~~~~~~~~~~~~~~~~~~~~
->
+On Mon, Oct 20 2025 at 11:49, Troy Mitchell wrote:
+> In asymmetric multi-processing (AMP) scenarios, the original PLIC
+> driver used the context loop index 'i' as context_id for OF (device
 
-Please update the patch to address this report and resend it, thanks!
+Which original driver and when did it stop to use the context loop index?
 
-> vim +/for_each_em_perf_domain +1003 kernel/power/energy_model.c
->
->   1002
-> > 1003  int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, voi=
-d *),
->   1004                              void *data)
->   1005  {
->   1006          struct em_perf_domain *pd;
->   1007
->   1008          lockdep_assert_not_held(&em_pd_mutex);
->   1009          guard(mutex)(&em_pd_list_mutex);
->   1010
->   1011          list_for_each_entry(pd, &em_pd_list, node) {
->   1012                  int ret;
->   1013
->   1014                  ret =3D cb(pd, data);
->   1015                  if (ret)
->   1016                          return ret;
->   1017          }
->   1018
->   1019          return 0;
->   1020  }
->   1021
-> > 1022  struct em_perf_domain *em_perf_domain_get_by_id(int id)
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> tree) platforms. This caused multiple contexts from different harts
+> (e.g., core0 and core4) to share the same enable_base, leading to
+> conflicts when initializing the PLIC.
+
+When did it stop to cause the issues? And if the issues have been
+already resolved, what is this patch about?
+
+> This patch resolves enable_base conflicts on AMP platforms while
+
+# git grep 'This patch' Documentation/process/
+
+> maintaining SMP/UP behavior.
+
+There is zero explanation what this patch does to resolve the issue.
+
+See also:
+
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+
+>  
+>  		if (is_of_node(fwnode)) {
+> -			context_id = i;
+> +			context_id = hartid * 2 + i % 2;
+
+This is incomprehensible and will cause head scratching 6 weeks down the
+road. This needs a proper comment with an explanation what this is
+about and why it is correct under all circumstances.
+
+Thanks,
+
+        tglx
 
