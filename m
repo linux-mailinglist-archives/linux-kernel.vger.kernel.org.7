@@ -1,156 +1,148 @@
-Return-Path: <linux-kernel+bounces-861895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E922BF3EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B0DBF3EE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E1724ECF4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B54903AEBCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85042F39A6;
-	Mon, 20 Oct 2025 22:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A761A2F5A3B;
+	Mon, 20 Oct 2025 22:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bjxMXWw6"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D8lrsUcd"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7E42F39A4;
-	Mon, 20 Oct 2025 22:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97762F5301;
+	Mon, 20 Oct 2025 22:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760999780; cv=none; b=uHSUVSEgARs9SzYSn+KktUFrFhb+6puT4w0ttlqCyods4xcC/u6bGJBbqwBdyGyjq6wiDq+5ATj1seSvfq40dWzjSxlstrp1p5F68QaP7D0fL65nwUjEJszrPZXM1qqUfZlZlH1gsWW56TkfU23ao8hs4+SSw6DZaPVL66xOzyc=
+	t=1760999758; cv=none; b=U8HnKLloM8hX3cJUvOHHMKi8eLA2FWxufqsLRdyVp3MAn12RUNm4o9ZsljGvu5imVJbFB5hLWWJUZtrgGxws5NZNSPeCpvZIWvKGWyIb/smaArTQ9BT2Ue2OUYBEMkeK86qk5hnxRmR30mO065W8BRc9TgiZNLorgv16pZf0Dj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760999780; c=relaxed/simple;
-	bh=Ds40lvVQ8ct4/JMQM6+DhsSpkMtda2d+9Lt4Ht9DnyM=;
-	h=To:Cc:Message-ID:In-Reply-To:References:From:Subject:Date; b=YwvtfJJGL5eiNUECS2fmW8MX5DO1/IfPk1W3InpZT08B2LIG0u9R5qD/1rGQVRU5adH4Ivdwy35kF3YJ0Bs0eg16+5OlJSqryjRP1LuXF5nB2VjovgcqEyoaIkPlAuXKGPlgYav9G2fduym7tzeTtONCaIiDhNDWtRx0UzQlUzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bjxMXWw6; arc=none smtp.client-ip=202.12.124.156
+	s=arc-20240116; t=1760999758; c=relaxed/simple;
+	bh=z7VO9YALcMuks9K3N5YvpPrFdoIjEl3cTk4Y51zyFiY=;
+	h=Message-ID:From:Subject:Date:To:Cc; b=CrrO+PadM8jhLwYlkSP+ueHg3bh4ur6sOKyxhMknxqYpGQABiQ/GDuKnW9wyEtE3wh3gpJLO8OfGUAeT7qp/EfoAx9aoxwEeHp19wk43Yrcb4KN9AXYTDQmjDRArIN+iVM6Qu3ofWUFjyeolGhIoP+8O9j5dHz3LEUeXa3/6hRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D8lrsUcd; arc=none smtp.client-ip=202.12.124.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B6DC57A0133;
-	Mon, 20 Oct 2025 18:36:16 -0400 (EDT)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4A5321D0016B;
+	Mon, 20 Oct 2025 18:35:54 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 20 Oct 2025 18:36:17 -0400
+  by phl-compute-01.internal (MEProxy); Mon, 20 Oct 2025 18:35:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:in-reply-to:message-id
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760999776; x=
-	1761086176; bh=sCEkbZKrl8bKnVzNmi1Kw704fMBYVAIdlc+QSCIPujs=; b=b
-	jxMXWw6NFgPgWlWIleVc5chc/9HyOBYg4QfUexgH7mW9G7DwDFLUs6WoHP7R8Dtr
-	vZ1mpPHNEO32cKKWTGz5KkSxj44VP8A6DpSnDmkPiKfj1Grh3g09d7BRvr6Osl1J
-	lMNhboHYycxPoMbgkR62/+qKldWsgONUhK23vIp40NmiInBmAQ3os+OKu0S/ZIjX
-	OZ0y+ebfoFVEJ3GZNVg4s6YEVxGyX+UYwOu8WAiJVRQT+SBayG3j8VlW918OCzQ9
-	O2KB2EHehfsoBCiQBzNmqFTn6prHdQrPOVziONsj1xuvjC0fFbLRspfC576OYlOD
-	RiZHjWcrhJpSw2GuHEedw==
-X-ME-Sender: <xms:YLn2aDM5ztU0qc5Qrv8G8OfHLyfrINQ1mU09qaM5riZ30J6aZjZHMg>
-    <xme:YLn2aBog_OILZHfR7G52mcosCIVTThdbArql8CjHGP5bMdt9xNuyAO6yG4sMhSpbL
-    PQUJfZ1dLRDz0Xxj8Vk0nkWp2k-S_Kw8tlAy6BHOMFVridgc49OPwA>
-X-ME-Received: <xmr:YLn2aK5UoBUjWR8kTOscOql0nJ3Hs0QhwcesUDHLnsoAtxRIz-74iy9ry-weE1oh7h5RuizBTBJEYYHg_ncxB2UMpG5r7xySCog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeeltdegucetufdoteggodetrf
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1760999754; x=1761086154; bh=WbKJEdG21clYm0wc8Wne2Sbd+OXB
+	PgwJrowUTp5Q/E8=; b=D8lrsUcdgdbChRnbqU8+J4ul97nvFi37TYAhVROEGFGF
+	zZ/iyiYLXPekaF2cIeNXWefZ8ao/ga9awnqpPYSsfmiQH4gDo6fMomtfi1CnPyHZ
+	o4pBooZ1/PaScmU2vqjn3ghpvzNb4JQGUdoBL3xLmZ5WKgrmipnrGjq4OZg2qYCt
+	RgunsNxw2eYDsN1iU6ozWCn+ZbM0JaVK7VViNNUfOSumlksjLatSntCPjpDDgnWD
+	l4Vf6Nmn99I1UYfyYMVFs2JSe3iSBVsJ8eMnO+p3Z+tREmv5Q8azMzyVapO91cLb
+	R9lPjCoq0bviv8eS7H/i08DES+1/raU/jxCIoa5J1g==
+X-ME-Sender: <xms:Sbn2aPFwXyDWB6rBB6_MmTCNsuua4ZSGUBL6YQFAe8bDHVQCWw18Kg>
+    <xme:Sbn2aIRbjO1rEYuSkAXZ9X6108oosFsXj09nZMIdm7vCumsLnMs3XDEZLdgZiuQ8c
+    j7wJj4uRdwkEW8IdI0Se99wnVoC2_IecFEzNj000NzKAK6fM3nDycM>
+X-ME-Received: <xmr:Sbn2aHQrjdceZiUFsqKygDBsNtdBGDxtqV3R9Tu7hA1xaanHJPrXa_igYDgJlI7pNEju3lo4xhDImkgreBhnepmK0xu_xITPLMQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeeltdefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepvfevkfgjfhfhufffsedttdertddttddtnecuhfhrohhmpefhihhnnhcuvfhhrghi
-    nhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeevgffgtdfhhfefveeuudfgtdeugfeftedtveekieeggfduleetgeegueehgeffffen
-    ucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrg
-    hinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedufedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghm
-    vghsrdgsohhtthhomhhlvgihsehhrghnshgvnhhprghrthhnvghrshhhihhprdgtohhmpd
-    hrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopegrkhhpmheslhhi
-    nhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprghrnhgusegrrhhnug
-    gsrdguvgdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:YLn2aJGpQGZyi2GtNbRJleRIQRoBTk0wG6N6WEWGz0nlM5OsXBC5og>
-    <xmx:YLn2aM0A99CJ7CAKjcBJNFLsA2wYpQoVrOf7Ry6Y5wIif-NcSVoqPg>
-    <xmx:YLn2aGrE_QT4LWs_mDQqnHgb74JmCxRw-saALwloywQZf7gIS5tcGQ>
-    <xmx:YLn2aJNwt_7R44CVe6YKm5RqiyusTz7Ywbj8JqorLwKIFnSTM4Reaw>
-    <xmx:YLn2aEXfsXXPFvjs8a7lFi4MnbqpAA6EDe4ZAp50rnLHhJVpsktM2iw3>
+    gurhepkffhufffvfevsedttdertddttddtnecuhfhrohhmpefhihhnnhcuvfhhrghinhcu
+    oehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtthgvrhhnpe
+    duvedtieevfedvffetudehteeihedtkefhkeeivdelvddtheekteeiueduudefueenucff
+    ohhmrghinhepudejrddqnhgvfienucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggp
+    rhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgrmhgvsh
+    drsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomhdprhgt
+    phhtthhopeguvghllhgvrhesghhmgidruggvpdhrtghpthhtohepphgvthgvrhiisehinh
+    hfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtg
+    hpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnuges
+    rghrnhgusgdruggvpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:Sbn2aDeRu2WihSf1EEsDccScZ7aFH2Xos4Uk6YS0MenxQ_4A0z8ogQ>
+    <xmx:Sbn2aDfxx3IXMPtbxY-3lJ6xYA5x_i2XNs-Bh6bB_w90LV0VOV690w>
+    <xmx:Sbn2aB-6tS8KPC6okonTAsWKEmtMbNrDIIZ_vJwG3L4_9nB8UC-2fA>
+    <xmx:Sbn2aLM4y1Y4jCZ2w-yqSgD3WYuyzvi6zPRahZDxwpV-xZzoV3gMKQ>
+    <xmx:Srn2aIDyCR_ZROGkcgoSk6sDlJMCCRQSH6uKa3KcBkTKenGfFi_TY_HY>
 Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 Oct 2025 18:36:13 -0400 (EDT)
-To: Peter Zijlstra <peterz@infradead.org>,
-    Will Deacon <will@kernel.org>,
-    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-    Helge Deller <deller@gmx.de>
+ 20 Oct 2025 18:35:51 -0400 (EDT)
+Message-ID: <cover.1760999284.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [RFC v4 0/5] Align atomic storage
+Date: Tue, 21 Oct 2025 09:28:04 +1100
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+    Helge Deller <deller@gmx.de>,
+    Peter Zijlstra <peterz@infradead.org>,
+    Will Deacon <will@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
+    Andrii Nakryiko <andrii@kernel.org>,
     Arnd Bergmann <arnd@arndb.de>,
+    Alexei Starovoitov <ast@kernel.org>,
     Boqun Feng <boqun.feng@gmail.com>,
+    bpf@vger.kernel.org,
+    Daniel Borkmann <daniel@iogearbox.net>,
     Geert Uytterhoeven <geert@linux-m68k.org>,
     linux-arch@vger.kernel.org,
     linux-kernel@vger.kernel.org,
     linux-m68k@vger.kernel.org,
-    Mark Rutland <mark.rutland@arm.com>,
-    linux-parisc@vger.kernel.org
-Message-ID: <c36756368f0ee942d5a995a603ce290eba06a5b6.1760999284.git.fthain@linux-m68k.org>
-In-Reply-To: <cover.1760999284.git.fthain@linux-m68k.org>
-References: <cover.1760999284.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [RFC v4 2/5] parisc: Drop linux/kernel.h include from asm/bug.h
- header
-Date: Tue, 21 Oct 2025 09:28:04 +1100
+    linux-parisc@vger.kernel.org,
+    Mark Rutland <mark.rutland@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-This patch series will add WARN_ON_ONCE() calls to the header file
-linux/instrumented.h. That requires including linux/bug.h,
-but doing so causes the following compiler error on parisc:
+This series adds the __aligned attribute to atomic_t and atomic64_t
+definitions in include/asm-generic.
 
-In file included from ./include/linux/atomic/atomic-instrumented.h:17,
-                 from ./include/linux/atomic.h:82,
-                 from ./arch/parisc/include/asm/bitops.h:13,
-                 from ./include/linux/bitops.h:67,
-                 from ./include/linux/kernel.h:23,
-                 from ./arch/parisc/include/asm/bug.h:5,
-                 from ./include/linux/bug.h:5,
-                 from ./include/linux/page-flags.h:10,
-                 from kernel/bounds.c:10:
-./include/linux/instrumented.h: In function 'instrument_atomic_alignment_check':
-./include/linux/instrumented.h:69:9: error: implicit declaration of function 'WARN_ON_ONCE' [-Werror=implicit-function-declaration]
-   69 |         WARN_ON_ONCE((unsigned long)v & (size - 1));
-      |         ^~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[3]: *** [scripts/Makefile.build:182: kernel/bounds.s] Error 1
+It also adds Kconfig options to enable a new runtime warning to help
+reveal misaligned atomic accesses on platforms which don't trap that.
 
-The problem is, asm/bug.h indirectly includes atomic-instrumented.h,
-which means a new cycle appeared in the graph of #includes. And because
-some headers in the cycle can't see all definitions, WARN_ON_ONCE()
-appears to be an undeclared function.
+This patch series is a Request For Comments because the alignment
+change is a time/space tradeoff. Its costs and benefits are expected
+to vary across platforms and workloads. More measurements are needed.
 
-This only happens on parisc and it's easy to fix. In the error
-message above, linux/kernel.h is included by asm/bug.h. But it's no
-longer needed there, so remove it.
-
-The comment about needing BUGFLAG_TAINT seems to be incorrect as of
-commit 19d436268dde ("debug: Add _ONCE() logic to report_bug()"). Also,
-a comment in linux/kernel.h strongly discourages its use here.
-
-Compile-tested only.
 ---
- arch/parisc/include/asm/bug.h | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/arch/parisc/include/asm/bug.h b/arch/parisc/include/asm/bug.h
-index 833555f74ffa..dbf65623c513 100644
---- a/arch/parisc/include/asm/bug.h
-+++ b/arch/parisc/include/asm/bug.h
-@@ -2,8 +2,6 @@
- #ifndef _PARISC_BUG_H
- #define _PARISC_BUG_H
- 
--#include <linux/kernel.h>	/* for BUGFLAG_TAINT */
--
- /*
-  * Tell the user there is some problem.
-  * The offending file and line are encoded in the __bug_table section.
+Changed since v3:
+ - Rebased on v6.17.
+ - New patch to resolve header dependency issue on parisc.
+ - Dropped documentation patch.
+
+Changed since v2:
+ - Specify natural alignment for atomic64_t.
+ - CONFIG_DEBUG_ATOMIC checks for natural alignment again.
+ - New patch to add weakened alignment check.
+ - New patch for explicit alignment in BPF header.
+
+---
+
+Finn Thain (4):
+  bpf: Explicitly align bpf_res_spin_lock
+  parisc: Drop linux/kernel.h include from asm/bug.h header
+  atomic: Specify alignment for atomic_t and atomic64_t
+  atomic: Add option for weaker alignment check
+
+Peter Zijlstra (1):
+  atomic: Add alignment check to instrumented atomic operations
+
+ arch/parisc/include/asm/bug.h    |  2 --
+ include/asm-generic/atomic64.h   |  2 +-
+ include/asm-generic/rqspinlock.h |  2 +-
+ include/linux/instrumented.h     | 15 +++++++++++++++
+ include/linux/types.h            |  2 +-
+ kernel/bpf/rqspinlock.c          |  1 -
+ lib/Kconfig.debug                | 18 ++++++++++++++++++
+ 7 files changed, 36 insertions(+), 6 deletions(-)
+
 -- 
 2.49.1
 
