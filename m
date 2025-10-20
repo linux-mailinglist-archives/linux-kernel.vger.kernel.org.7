@@ -1,274 +1,164 @@
-Return-Path: <linux-kernel+bounces-860927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF04DBF1585
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:52:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6DDBF15AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 082F034CE25
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:52:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5217C4E2693
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D712F6933;
-	Mon, 20 Oct 2025 12:52:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07307EAF9;
-	Mon, 20 Oct 2025 12:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C06313278;
+	Mon, 20 Oct 2025 12:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dgo10asf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17D02ED872
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760964750; cv=none; b=IegvyONC7CnR0NHuLRPtELHXTy8rTc3rpX9LcfSrRcmyjJckvC2bECFAgHlBvLSBZrouxRazooBZQV9NJGvJpa/z+OEZMRW71JUE/urYcrT2MYYVtb9a0iUwuiID8e9a8vhOhqUjkFzCTg1PtZlBXO4LNA8a17t9OZ0vSqddFyY=
+	t=1760964800; cv=none; b=JE6CMSQR8jnKeph8P46c7CDG5JOrtXhiUW1PpuVJbjM80XnZI1BcW3IQVdPB9PJzas4CffQpHWfbPzfxGHAug0we3zflHSSCOcugZyy2G+xlzR485rlzZuWekYHcyV3tsxnvqTL5GCXTIG6k91iZ1JTJOuh/JV0QA0a0tQOtoAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760964750; c=relaxed/simple;
-	bh=lAqAFT4GVUeCpwBeJIgV5QqxXzg23w/OzLcrc2FHEKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwoVvcAJuZvAl8FQHDmIF6sxAueIM8v08Wx6jYTwOk8JhrkA4/qyWDQ6oWogU/wXdvoDdokSCpbIDedU6eCoNgogNeD1ZycP2Pzv3Fk8L8+YJ16ryZl9yacDhLDdpQGmbH7Z/RtZyUHKDxjQ1Dk1/JmjKHeyvDCxe4pEvtrR6w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C8C41007;
-	Mon, 20 Oct 2025 05:52:17 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9E4B3F66E;
-	Mon, 20 Oct 2025 05:52:22 -0700 (PDT)
-Date: Mon, 20 Oct 2025 13:52:20 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Adam Young <admiyo@os.amperecomputing.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH  v30 2/3] mailbox: pcc: functions for reading and writing
- PCC extended data
-Message-ID: <20251020-honored-cat-of-elevation-59b6c4@sudeepholla>
-References: <20251016210225.612639-1-admiyo@os.amperecomputing.com>
- <20251016210225.612639-3-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1760964800; c=relaxed/simple;
+	bh=b1Ho41wPbtTkT4EBGbCu60ljlAVIsBmQU8YjFD4CUz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ClVkkM7L/2LYiZcNII34r7TMQck127MYiTdoKAiw4coeeZpuoHppmk3UMvRtDRuAcbPpDXwNLSg8ZeIjACGAivhkaRZGcCaXyC4JjCBz3RCdUfEpD71qaJfJokE1jdUZGi3U9Q1TrgmdG0WRvfuFaQs0p34VoNXNXvG+15DY67k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dgo10asf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59K7vld0004476
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:53:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EF+mB/bpa3oyIOPYc2W7+74/IY9ayvbAnqsJ0d+UfCQ=; b=dgo10asfv6ehTpQ6
+	GPUZA00FWZy3SY8YQRLCV0DCmGaJMBlgNSkjdK4gs5z9fXW6YwDWUhiiZQeW/joQ
+	//TSDT3sFm7j69wh/ga7DGp8WXjRg/wVxWQYEaOc2/F2CACObQL6Pc9PRFC6eLpB
+	ZrlQB0EN7wIzAs6sEpsJkf2Fvki87uZfquFfpkamW6qVW2s6dEmSHkOGA2r5SSdp
+	b7++T0eKWDVGaAU5OtwYBFzOxVSuJjyohD64EeaLS1MaxZIO3oSn4hXyYpZE/5WU
+	r+VAtIzVn+G5L1SAlN85yIUtQooplbnd20CKBywLkdcV6oe+ELsW8a4lu5tyCY+l
+	Smv43A==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v469cq14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:53:17 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-88e452b04d5so144055385a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:53:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760964796; x=1761569596;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EF+mB/bpa3oyIOPYc2W7+74/IY9ayvbAnqsJ0d+UfCQ=;
+        b=isyZktVxB2WrhQ71OZaz/q9CdAYjy3lpaDhIu2S89vPOXl00gz/+KqlwcCjp4IZfLL
+         spLmRtEETXQFFbKGsmqnPOObOsz95DiOk3Wrt2vCeqPAIYp4fyZtUdECCWJ1M5VjlziC
+         fNtGrYENCjWzJOyqqoJHX0VgSTmLcT1XJBWKRO8G9DWXTm+jLQ9lr2GPwFNfUbEvHL1h
+         AY0sP53JCQcydxH/g18P+gOvcX0bxWndhK3HXjYXpwR0DRge1192+ZU59C1AzPQE4Vh4
+         vlqN+293ciabHApEtpsiRb1ZdFI0c3WN7hSKfJOqr6SIMWa8/3hAyqm0lL2YpINxt7Ye
+         MBng==
+X-Gm-Message-State: AOJu0YzWGAC7j2Qo763sfNOGqmmdpSLYNz3aN7f2IgqkYNYGNoBhDbYt
+	W3yOOamLtrbtdFM0vYHeXDFct4pEdzF2WfvNKNSf38n/FI+ECD6cQSh/1HfF7dPc9VgOeDdyVjQ
+	evBQbwkxTbv1+++Y5a1K2XU18Uc8+bkiMDG+sAgsgxih9bp7c4WyPP4medq1IvAI57pI=
+X-Gm-Gg: ASbGncvl3rEIxzOn2GqLA3mCQ4xt/HXaCeUzDp2lRTXiE5T5bREgRquQAy/u0MBpw/R
+	ivc7ERN/SKjkx3lbWzDyqPWJUEJhZCDHbwm60NvZodKBUcQvvZyKkxC4mtkCpawGg8B/R1MwtGC
+	mNVcT34RzFLGorGTBdHaHii0LMePFgIvIWTPE4SlGB9zI80JUms0zZae3OeraZomQxZQ50gAKWS
+	0tPJGyTphcAUAip++JwS4NzYNtlzcmtys2uFlsSaqNNAoKZ4JX9Ln/mQpMLKXKQHLUtzHweXQga
+	Zhtr/d9GxMYv1aJGc4/Pgookcpi8Sbv1yB8bB7jtrzSVO6k02WN4wyJlmQ2/y5o8G7DZrwu19g5
+	O+xSYIOSwnTVogLymaMmaNWmZ5LyHWXLgDEi6AoqLtjauqrNXPBJSURp+
+X-Received: by 2002:ac8:7f88:0:b0:4b5:a0fb:59a4 with SMTP id d75a77b69052e-4e89d204a5amr104645541cf.1.1760964796363;
+        Mon, 20 Oct 2025 05:53:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMUijr7zh7WDC9Ju5q9CPUNhL99y4KT2cXZBubsxI6OQ3z4vNYFwHW90nzecqKoXWsctT9TQ==
+X-Received: by 2002:ac8:7f88:0:b0:4b5:a0fb:59a4 with SMTP id d75a77b69052e-4e89d204a5amr104645301cf.1.1760964795892;
+        Mon, 20 Oct 2025 05:53:15 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb9523a7sm802235066b.71.2025.10.20.05.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 05:53:15 -0700 (PDT)
+Message-ID: <9631ca0a-9944-4322-ab05-25b46ed27c07@oss.qualcomm.com>
+Date: Mon, 20 Oct 2025 14:53:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016210225.612639-3-admiyo@os.amperecomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] media: qcom: camss: Add common TPG support
+To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20251017-camss_tpg-v5-0-cafe3ad42163@oss.qualcomm.com>
+ <20251017-camss_tpg-v5-1-cafe3ad42163@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251017-camss_tpg-v5-1-cafe3ad42163@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: gLx9Xg1GibKGGmzYrBZIiKsPy8cWB1qj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMiBTYWx0ZWRfX0ZCR6N04GPau
+ 2l/6FmN1VN0kSD0WLMiv6/CQr54+Fi2OG8vIXlvvxzMQrUKZXlcPE0yAD8c1ITsZo05xQ66t8N0
+ W9KY0hMJcy3gVjA0yNq2fsZCYshgBpE8GAz5hOnrTOknoYLoD0eOPewq77XbTFyTDpP8ZdxTZ/i
+ 8gi0r5XxnMgx3gqIknSQafnSoJQjTHSI7kvoqO6ZwTleyWuGY0Z4Ihb5kRM6LOibImbb/u/Ujz6
+ pLMoKtFkz9UCheb4pmJRwgf/gDjQLPxNgvn/PpVWVGqu0vYJ01yvmXuRfVu+Ads5N5Pr4bHe5eI
+ urMRvGVO3P/vTkedcQTVc2kFKS1ov312tSaWi2DjyfzK2wD3LeM1TVxiVOja7Q5qu5xsxtJTHcu
+ dcs0DndBuGAMQDmI08ovxyYn4BJ49g==
+X-Authority-Analysis: v=2.4 cv=U8qfzOru c=1 sm=1 tr=0 ts=68f630bd cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=Hdz6Az-7eOjHTHoZ_0EA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: gLx9Xg1GibKGGmzYrBZIiKsPy8cWB1qj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180032
 
-On Thu, Oct 16, 2025 at 05:02:20PM -0400, Adam Young wrote:
-> Adds functions that aid in compliance with the PCC protocol by
-> checking the command complete flag status.
+On 10/17/25 7:06 AM, Wenmeng Liu wrote:
+> Introduce a new common Test Pattern Generator (TPG) implementation for
+> Qualcomm CAMSS. This module provides a generic interface for pattern
+> generation that can be reused by multiple platforms.
 > 
-> Adds a function that exposes the size of the shared buffer without
-> activating the channel.
+> Unlike CSID-integrated TPG, this TPG acts as a standalone block
+> that emulates both CSIPHY and sensor behavior, enabling flexible test
+> patterns without external hardware.
 > 
-> Adds a function that allows a client to query the number of bytes
-> avaialbel to read in order to preallocate buffers for reading.
-> 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+> Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
 > ---
->  drivers/mailbox/pcc.c | 129 ++++++++++++++++++++++++++++++++++++++++++
->  include/acpi/pcc.h    |  38 +++++++++++++
->  2 files changed, 167 insertions(+)
-> 
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 978a7b674946..653897d61db5 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -367,6 +367,46 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->  	return IRQ_HANDLED;
->  }
->  
-> +static
-> +struct pcc_chan_info *lookup_channel_info(int subspace_id)
+
+[...]
+
+> +const struct tpg_format_info *tpg_get_fmt_entry(struct tpg_device *tpg,
+> +						const struct tpg_format_info *formats,
+> +						unsigned int nformats,
+> +						u32 code)
 > +{
-> +	struct pcc_chan_info *pchan;
-> +	struct mbox_chan *chan;
+> +	struct device *dev = tpg->camss->dev;
+> +	size_t i;
 > +
-> +	if (subspace_id < 0 || subspace_id >= pcc_chan_count)
-> +		return ERR_PTR(-ENOENT);
+> +	for (i = 0; i < nformats; i++)
+> +		if (code == formats[i].code)
+> +			return &formats[i];
 > +
-> +	pchan = chan_info + subspace_id;
-> +	chan = pchan->chan.mchan;
-> +	if (IS_ERR(chan) || chan->cl) {
-> +		pr_err("Channel not found for idx: %d\n", subspace_id);
-> +		return ERR_PTR(-EBUSY);
-> +	}
-> +	return pchan;
-> +}
-> +
-> +/**
-> + * pcc_mbox_buffer_size - PCC clients call this function to
-> + *		request the size of the shared buffer in cases
-> + *              where requesting the channel would prematurely
-> + *              trigger channel activation and message delivery.
-> + * @subspace_id: The PCC Subspace index as parsed in the PCC client
-> + *		ACPI package. This is used to lookup the array of PCC
-> + *		subspaces as parsed by the PCC Mailbox controller.
-> + *
-> + * Return: The size of the shared buffer.
-> + */
-> +int pcc_mbox_buffer_size(int index)
-> +{
-> +	struct pcc_chan_info *pchan = lookup_channel_info(index);
-> +
-> +	if (IS_ERR(pchan))
-> +		return -1;
-> +	return pchan->chan.shmem_size;
-> +}
-> +EXPORT_SYMBOL_GPL(pcc_mbox_buffer_size);
-> +
+> +	dev_warn_once(dev, "Unknown format\n");
 
-Why do you need to export this when you can grab this from
-struct pcc_mbox_chan which is returned from pcc_mbox_request_channel().
+It would probably be useful to denote which format is invalid (i.e.
+print its code or so), and _once doesn't seem like a right choice,
+because the user may choose 2 different invalid formats and only
+the first one would cause a descriptive warning
 
-Please drop the above 2 functions completely.
-
-> +
->  /**
->   * pcc_mbox_request_channel - PCC clients call this function to
->   *		request a pointer to their PCC subspace, from which they
-> @@ -437,6 +477,95 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
->  }
->  EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
->  
-> +/**
-> + * pcc_mbox_query_bytes_available
-> + *
-> + * @pchan pointer to channel associated with buffer
-> + * Return: the number of bytes available to read from the shared buffer
-> + */
-> +int pcc_mbox_query_bytes_available(struct pcc_mbox_chan *pchan)
-> +{
-> +	struct pcc_extended_header pcc_header;
-> +	struct pcc_chan_info *pinfo = pchan->mchan->con_priv;
-> +	int data_len;
-> +	u64 val;
-> +
-> +	pcc_chan_reg_read(&pinfo->cmd_complete, &val);
-> +	if (val) {
-> +		pr_info("%s Buffer not enabled for reading", __func__);
-> +		return -1;
-> +	}
-
-Why would you call pcc_mbox_query_bytes_available() if the transfer is
-not complete ?
-
-> +	memcpy_fromio(&pcc_header, pchan->shmem,
-> +		      sizeof(pcc_header));
-> +	data_len = pcc_header.length - sizeof(u32) + sizeof(pcc_header);
-
-Why are you adding the header size to the length above ?
-
-> +	return data_len;
-> +}
-> +EXPORT_SYMBOL_GPL(pcc_mbox_query_bytes_available);
-> +
-> +/**
-> + * pcc_mbox_read_from_buffer - Copy bytes from shared buffer into data
-> + *
-> + * @pchan - channel associated with the shared buffer
-> + * @len - number of bytes to read
-> + * @data - pointer to memory in which to write the data from the
-> + *         shared buffer
-> + *
-> + * Return: number of bytes read and written into daa
-> + */
-> +int pcc_mbox_read_from_buffer(struct pcc_mbox_chan *pchan, int len, void *data)
-> +{
-> +	struct pcc_chan_info *pinfo = pchan->mchan->con_priv;
-> +	int data_len;
-> +	u64 val;
-> +
-> +	pcc_chan_reg_read(&pinfo->cmd_complete, &val);
-> +	if (val) {
-> +		pr_info("%s buffer not enabled for reading", __func__);
-> +		return -1;
-> +	}
-
-Ditto as above, why is this check necessary ?
-
-> +	data_len  = pcc_mbox_query_bytes_available(pchan);
-> +	if (len < data_len)
-> +		data_len = len;
-> +	memcpy_fromio(data, pchan->shmem, len);
-> +	return len;
-> +}
-> +EXPORT_SYMBOL_GPL(pcc_mbox_read_from_buffer);
-> +
-> +/**
-> + * pcc_mbox_write_to_buffer, copy the contents of the data
-> + * pointer to the shared buffer.  Confirms that the command
-> + * flag has been set prior to writing.  Data should be a
-> + * properly formatted extended data buffer.
-> + * pcc_mbox_write_to_buffer
-> + * @pchan: channel
-> + * @len: Length of the overall buffer passed in, including the
-> + *       Entire header. The length value in the shared buffer header
-> + *       Will be calculated from len.
-> + * @data: Client specific data to be written to the shared buffer.
-> + * Return: number of bytes written to the buffer.
-> + */
-> +int pcc_mbox_write_to_buffer(struct pcc_mbox_chan *pchan, int len, void *data)
-> +{
-> +	struct pcc_extended_header *pcc_header = data;
-> +	struct mbox_chan *mbox_chan = pchan->mchan;
-> +
-> +	/*
-> +	 * The PCC header length includes the command field
-> +	 * but not the other values from the header.
-> +	 */
-> +	pcc_header->length = len - sizeof(struct pcc_extended_header) + sizeof(u32);
-> +
-> +	if (!pcc_last_tx_done(mbox_chan)) {
-> +		pr_info("%s pchan->cmd_complete not set.", __func__);
-> +		return 0;
-> +	}
-
-The mailbox moves to next message only if the last tx is done. Why is
-this check necessary ?
-
-> +	memcpy_toio(pchan->shmem,  data, len);
-> +
-> +	return len;
-> +}
-> +EXPORT_SYMBOL_GPL(pcc_mbox_write_to_buffer);
-> +
-> 
-
-I am thinking if reading and writing to shmem can be made inline helper.
-Let me try to hack up something add see how that would look like.
-
->  /**
->   * pcc_send_data - Called from Mailbox Controller code. Used
->   *		here only to ring the channel doorbell. The PCC client
-> diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
-> index 840bfc95bae3..96a6f85fc1ba 100644
-> --- a/include/acpi/pcc.h
-> +++ b/include/acpi/pcc.h
-> @@ -19,6 +19,13 @@ struct pcc_mbox_chan {
->  	u16 min_turnaround_time;
->  };
->  
-> +struct pcc_extended_header {
-> +	u32 signature;
-> +	u32 flags;
-> +	u32 length;
-> +	u32 command;
-> +};
-> +
-
-This again is a duplicate of struct acpi_pcct_ext_pcc_shared_memory.
-It can be dropped.
-
--- 
-Regards,
-Sudeep
+Konrad
 
