@@ -1,117 +1,160 @@
-Return-Path: <linux-kernel+bounces-860791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CF2BF0F58
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:57:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F423EBF0F3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385F83E7593
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:57:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F5FE4F2E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0988A30F53E;
-	Mon, 20 Oct 2025 11:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5592730CD9F;
+	Mon, 20 Oct 2025 11:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="0gEXgnIY"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnoo7ygt"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7A930FC35
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BFB3043B2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961415; cv=none; b=SlZs09jT41COmnah/x/1+2ipnb7RdnOLA21XMW4e1nZV9umEqiB4kWKkYTWPKnVvY9IwS2S10k/iOXeGTamL6pvWgbUmOS12ASGLJGatC+ohhwZNg18VcPJLmfEK/GDsBBD2s32b9Aa9IELKyHB2ze3i3bzMmZDIBT2I2bmKuro=
+	t=1760961408; cv=none; b=XHXmj91EBlzSmvTwrut/Ew+0jYTPnXqdF9UkQ7f+fw3wbcrGqn+oDlImdd0+ijqo6hctmWPM+fVXtGa8biyLXWyB7c5+m62b2HoEPzLylKwBSQDDIXdxv2jSjNoWmZm0TRWBi2Aj4oAtQwW78lAPO4vYmf2F068T2y5lxlfQ4bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961415; c=relaxed/simple;
-	bh=ZTbA1qfwtTWnDUQYYQBEGnlG6EasH/qpBuqL+ZHu52s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NyosbqJbtEvmQjvFREXGojy7KMLXMyseYVzJ1dGUzSUGvsyMKaSiQJJgYJM74Y+1xWS4FNwY3zhWpqqQCJAN37ZYvFJEyduAZRez9/Z3yDASaK0hyWRuFiFPpH8WqM1LDRew3uk8QMcQ2EVMygXPJyZTGxXzqfOlGycKW+6BBCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=0gEXgnIY; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id C85BF6892EB;
-	Mon, 20 Oct 2025 13:56:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1760961406;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DK3/svln/NWfvJpk3kK/gSDPYhLgNuFCyCVVwQR5cTc=;
-	b=0gEXgnIYO0LcIXcoTDOotM4/yx/qYtb+x670dvp+wGnsUaTaSa+mnv6XJWCPC94vrTnhaE
-	tL4qbWhZkvDERsOaGwuyu7/07rUFTbvSVLhTD5RoVsNM3UslAF1QuUcB5DB9NoW9rbxC1N
-	YjEDClZFzb6NW/0rc2Nu3UK9GvTp0qTbhKVwJ/G1ayLBpARKEZ6/rbzgzxrVSiB5CHq6Vm
-	VxozR9cTJ1BVb6BqXiLmsR7azTpdVacUfAlWmtlGYBc0RBBcjVHUvwN+zc+Cr/ccKHK557
-	4sJfrSCHKkZdlj/mV7zxNApIHY6mz0BH86dabLxmmaJgEVYDWt/e4cJa+PtBYQ==
-From: Sander Vanheule <sander@svanheule.net>
-To: Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Sander Vanheule <sander@svanheule.net>
-Subject: [RFC PATCH 2/2] gpio: regmap: Bypass cache for aliased outputs
-Date: Mon, 20 Oct 2025 13:56:36 +0200
-Message-ID: <20251020115636.55417-3-sander@svanheule.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251020115636.55417-1-sander@svanheule.net>
-References: <20251020115636.55417-1-sander@svanheule.net>
+	s=arc-20240116; t=1760961408; c=relaxed/simple;
+	bh=hTskfQo0NjdF1aO4CduW40V+ZawJynYNJviEmtJkwXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nf/AaDd/tEPWJutNhWTWis9fTGdsCk4DSA52188csVys6LN3BstWsKduAN4XH0ebkjvACt5pC41XzMh0gGFK5GFJU3OQGfLmh/Mg0jqtktF7svFYLXbQmb2zm6VRPl7kuRdwKBohLvyMxfd7VR97cNviD0Qld0Jsha1654k7gUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dnoo7ygt; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so22951135e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760961404; x=1761566204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVRRLNVutxbrlT7gr0KnLXf9XWES3Zc9MH2pzODtziI=;
+        b=dnoo7ygtmJfCQ3oABjv7RH/BrUoVZ2AvtX+pTcsA/W4A6XPbcWD1suRCAI7wjdnhQe
+         nitMQcPM02RuNUXEGVm4T5e9I1uPvsGCrSTabMjLlwSGWmSx5oy2pH2do2Xh5di+8HPn
+         +A5phMQNpzvuLNU9jCWJ700Z9Cda/U14pjaqjDfsnDjGNjNCQek5bT73St32UyGAN0em
+         CkOzotNuIe8XUt0lNTs+CSUZz6PmSeO/Dh+zG54LKKZ3mIazngh1JyuPgRvkpLVobfnl
+         nUXCvF+GOCgxjmRzWH5syBhlrfu3yl7CZxKURuioyY5VVNQ9ze7mqL+XV5+oQR7TGvCU
+         EaYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760961404; x=1761566204;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QVRRLNVutxbrlT7gr0KnLXf9XWES3Zc9MH2pzODtziI=;
+        b=pafyEoMvJYSV1yZdxRIzjvdzFs/nYmfHg/Btmint5QKVJ0eCh84NYutOe7kmirtCu8
+         yznrcJoILN3sf3CsFcTTIanFOFZUgD55m+VxsgWghptUHj0uL+nNXDawbKK5fngTPXCV
+         n5fRR1jzRCc97NdV2f/lwFbCOKySZSQOHjv1BPBKe2Z3jBeJVvNqwch/dsgOPIXe/Tv9
+         w42j3iqUSnFETfEXfar6sxx6UKaJZq4zJwT7S7tAV+4SBWYqpRaRKlaNuZM4j4Fsksmf
+         bnkkQiUYDwfXJMcOeCdBbt4nPrBpelUZm+9hfGuAHkZKTPHQmmGIdNECQL4+mEjUT2AW
+         6mBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMrpMQjMqYd02apA0pYucVku5MQk8Zqu9Nh7AglImTR/4luNRDvYfwzFGzSlc9Dd0AFXa7J88uGaWMprs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe+9cN1IIpgOMqJE6Cqy9Yjgy79ZygzeXovSrnDGwoXDbCNAEw
+	RtS+a7xt3Az2Zj964hHAgsLD7pIXxBgE9IHyAMh8xahMSd7rNJ5f+aMZ
+X-Gm-Gg: ASbGnctQU1iXCee0q6NFbOUjLbm5D4bxj7DYk2hUY30Ur4l9MKwOHFz7eSSeZAmpTWf
+	YEYFkd/PFi1V+0sdBF4ONMeE8UPcGtyhAUXUfNz45PLGeQgVRS/0CBpLey3iasc3mOO8+Qq8Hs7
+	B5yBKikKFEZDblEIAnTbrVk2/pNyYO3A9Nb3aiemMf3Ncr6wGiltMlhAUGHwZ6oBCgR4IfcmpUr
+	r0IyG20eIHMoP3YfcmJiz9m3CwF5nvsd4eKmJjkVOydzLe9w+2TQmVmt8Uf0+jauf/jXD6PWkXA
+	PL7aW3I476kl73J3VGJL+yTzxf4PoTdz+5LMQGPKymjbwNxc6yN3r0dORFYxLqy0O9AaEDpuE1B
+	2T0hB07zccmlfl6PaL2RQisjtljo2wkRqSsBpvJcgSI+A5GwF1GK6f99LeH7r29PL6IGEaawPp+
+	qxtEbxRdfaffdT+imYPw4YJz1ZtX79KOi0xchbhLXrUU/ME23VmjZj
+X-Google-Smtp-Source: AGHT+IFkDJRMPYkAfm9Q4Et+bgkNbe8x1ULe2dIiNCf2fKKXr9KvgcUITnst4gVjGHdTTBSDvIhbSQ==
+X-Received: by 2002:a05:600c:1d9b:b0:46e:6c40:7377 with SMTP id 5b1f17b1804b1-4711792007bmr90837795e9.35.1760961404075;
+        Mon, 20 Oct 2025 04:56:44 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d90bsm142450875e9.2.2025.10.20.04.56.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 04:56:43 -0700 (PDT)
+Date: Mon, 20 Oct 2025 12:56:42 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
+ <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, =?UTF-8?B?R3LDqWdvcnk=?= Clement
+ <gregory.clement@bootlin.com>, =?UTF-8?B?QmVub8OudA==?= Monin
+ <benoit.monin@bootlin.com>, "Maxime Chevallier"
+ <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next 11/15] net: macb: replace min() with umin()
+ calls
+Message-ID: <20251020125642.35c59292@pumpkin>
+In-Reply-To: <DDN4GPV4RONM.1Z2JDM26J7D8E@bootlin.com>
+References: <20251014-macb-cleanup-v1-0-31cd266e22cd@bootlin.com>
+	<20251014-macb-cleanup-v1-11-31cd266e22cd@bootlin.com>
+	<20251019151059.10bb5e18@pumpkin>
+	<DDN4GPV4RONM.1Z2JDM26J7D8E@bootlin.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-GPIO chips often have data input and output registers aliased to the
-same offset. The output register is non-valitile and could in theory be
-cached. The input register however is volatile by nature and hence
-should not be cached, resulting in different requirements for reads and
-writes.
+On Mon, 20 Oct 2025 13:44:43 +0200
+Th=C3=A9o Lebrun <theo.lebrun@bootlin.com> wrote:
 
-The generic gpiochip implementation stores a shadow value of the pin
-output data, which is updated and written to hardware on output data
-changes. Pin input values are always obtained by reading the aliased
-data register from hardware.
+> On Sun Oct 19, 2025 at 4:10 PM CEST, David Laight wrote:
+> > On Tue, 14 Oct 2025 17:25:12 +0200
+> > Th=C3=A9o Lebrun <theo.lebrun@bootlin.com> wrote:
+> > =20
+> >> Whenever min(a, b) is used with a and b unsigned variables or literals,
+> >> `make W=3D2` complains. Change four min() calls into umin(). =20
+> >
+> > It will, and you'll get the same 'error' all over the place.
+> > Basically -Wtype-limits is broken.
+> >
+> > Don't remove valid checks because it bleats. =20
+>=20
+> In theory I agree. In practice, this patch leads to a more readable
+> `make W=3D2 drivers/net/ethernet/cadence/` stderr output, by removing a
+> few false positives, and that's my only desire (not quite).
+>=20
+> I am not sure what you mean by "Don't remove valid checks"; could you
+> clarify? My understanding is that the warning checks are about the
+> signedness of unsigned integers. Are you implying that we lose
+> something (safety?) when switching from min(a, b) to umin(a, b) with
+> a/b both unsigned ints?
 
-For gpio-regmap the output data could be in multiple registers, but we
-can use the regmap cache support to shadow the output values by marking
-the data registers as non-volatile. By using regmap_read_bypassed() we
-can still treat the input values as volatile, irrespective of the regmap
-config. This ensures proper functioning of writing the output register
-with regmap_write_bits(), which will then use and update the cache only
-on data writes, gaining some performance from the cached output values.
+The issue is that -Wtype-limits warns for every case where min() is
+used with two unsigned values.
+It is pretty much impossible to code around it as well.
+It also warns for other #defines that are trying to check for invalid
+constant values.
+The checks are there to pick up invalid calls, using umin() (and worse
+min_t()) to avoid the warnings is making the checks pointless.
+So you may know the code is ok, but the compile-time checks are there
+to ensure it is ok.
 
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
----
- drivers/gpio/gpio-regmap.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+	David
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index ba3c19206ccf..afecacf7607f 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -81,7 +81,11 @@ static int gpio_regmap_get(struct gpio_chip *chip, unsigned int offset)
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_read(gpio->regmap, reg, &val);
-+	/* ensure we don't spoil any register cache with pin input values */
-+	if (gpio->reg_dat_base == gpio->reg_set_base)
-+		ret = regmap_read_bypassed(gpio->regmap, reg, &val);
-+	else
-+		ret = regmap_read(gpio->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
--- 
-2.51.0
+> [0]: https://lore.kernel.org/lkml/176066582948.1978978.752807229943547484=
+.git-patchwork-notify@kernel.org/
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/=
+commit/?id=3Df26c6438a285
+>=20
+> --
+> Th=C3=A9o Lebrun, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+>=20
 
 
