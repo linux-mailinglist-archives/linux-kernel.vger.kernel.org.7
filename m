@@ -1,220 +1,110 @@
-Return-Path: <linux-kernel+bounces-860291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D47BEFC14
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:56:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36A7BEFC2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 519EB4EE35B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:56:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4A704EDF08
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE782E2DFB;
-	Mon, 20 Oct 2025 07:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1BB2E54DB;
+	Mon, 20 Oct 2025 07:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPvzBrud"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vsGP9GB6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4CE2E22B4;
-	Mon, 20 Oct 2025 07:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2326619C542;
+	Mon, 20 Oct 2025 07:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947001; cv=none; b=PTAHvRnnEc0vvK4LB2fFPiHPGK+aDnUS5Ouni2+yq+wNXlppIYlvH6LsMKE9K+M+YmMtg+17aLEKKOgzXBTQ3//xVI/9ye4hACBhAd4hE+Jv1Hn+/uDTFSX9Lo8lWggHyHf/m5qoSMluUvxUBeVd0gWVmkV/454oU5qiAJmswDo=
+	t=1760947041; cv=none; b=JcPrns8fVCkYSsexWemo30jrt+9NJ7J1kJ/V2uoVLbEbMmlWTQ5JDqsqOv2x4OPxn0F5qNDhRDweIc8Aa+vkvGuGsaPIxB13yIhrXZSQRNsz21i6tiXAJDvG+dsdBEYx9hT1wC9vTGIMwVCxhY21PjY4p6vNxZYoY3oa1u/8HqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947001; c=relaxed/simple;
-	bh=vHuyvyDutqP074TwQ/Do5qMwy1i/7b3uTyvUv4SmVP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nb9eE3doriMCYJ7T0KGee2tBJGSvuKumFwIaWVKcQPp8Q5WwIaVaNo8nVgAOOssEOmzY0FBpuncCSN2JZHDG8rlClUsuSWOXjzWp6ohH36FoZi3k/0BOU8aBJ/jQatInUkJ9tLkXYyDuRTMGsMSox9qJLvbg5d1I2G5Oe5txHNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPvzBrud; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13EB5C4CEF9;
-	Mon, 20 Oct 2025 07:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760947000;
-	bh=vHuyvyDutqP074TwQ/Do5qMwy1i/7b3uTyvUv4SmVP8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cPvzBruduJpLGbmc+gGMxSqlCZGgUaMYOmotAJNyAGv8lconA3N54WyhQvJYaKpAN
-	 wVlVdDJgtLaOv4mAqQnf7+FeDC/ig0Kdg3+yGfj2Hbh1L23LBMblmmdlQkmWruz8IS
-	 1fTIRQs58pOwelCT2s9zGARgTZVnNE3Pm8+UErk0klGpDVBfNrxbC8RPxsbecx1zIu
-	 QHBG4rNFlOITsbRfgMu6XzWoOajmopGnocmA4baJH2oKjpPKPhZlfT7BtlBdsODQuv
-	 X8XbfS5V/8aV0l/vbtv5A7Ofh8MhISvZA/jlKUcnMypOMZrd135ADs/PA/q1/kCzCk
-	 ceO6mE5UiSMNA==
-Date: Mon, 20 Oct 2025 10:56:31 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org, jasonmiu@google.com,
-	dmatlack@google.com, skhawaja@google.com
-Subject: Re: [PATCH v6 08/10] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-Message-ID: <aPXrLy8BmblbLpCG@kernel.org>
-References: <20251018171756.1724191-1-pasha.tatashin@soleen.com>
- <20251018171756.1724191-9-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1760947041; c=relaxed/simple;
+	bh=qDdnNRHiTz2QbCYprUKY0QL/UbZGKH3LlwnDczLrVGk=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=rxHYtsOOaXyQ7s2v7D9ff3crw809YXT5NgE5OL7F7LsaDnPGSYEtRQQKpodLIWoehFmLw9CwwN6wgV8notEXI87eWDi8/WDfRwl77tAUgFbPAJHfeuLm9VH2VHxi2pNn7pJjbUDITw4Zh7vkNnsAfMbVUUTjBGOF3ho6GgOaOEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vsGP9GB6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F30AD2D5;
+	Mon, 20 Oct 2025 09:55:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1760946928;
+	bh=qDdnNRHiTz2QbCYprUKY0QL/UbZGKH3LlwnDczLrVGk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=vsGP9GB6HruHq9PlrGCXncb/F7ndJ/CN2Lqz71NVYPzViZsn3C8CiAtwmKVMQ4r89
+	 1EVNA/O5LwIEzpW5sPAifbtF2CT+akTXgV8xMVXwgzp7Fk3DFGSnHJadhbZ/w5V8FW
+	 16TOK7Ib5iQxBzG4Ge7ImWIQdVDX4fBXYlxQSimg=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018171756.1724191-9-pasha.tatashin@soleen.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251020-ptr_err-leftover-v1-1-150b0f8b46b9@chromium.org>
+References: <20251020-ptr_err-leftover-v1-1-150b0f8b46b9@chromium.org>
+Subject: Re: [PATCH] media: renesas: fdp1: Use %pe format specifier
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 20 Oct 2025 08:57:07 +0100
+Message-ID: <176094702701.935713.13430509417971695210@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Sat, Oct 18, 2025 at 01:17:54PM -0400, Pasha Tatashin wrote:
-> It is invalid for KHO metadata or preserved memory regions to be located
-> within the KHO scratch area, as this area is overwritten when the next
-> kernel is loaded, and used early in boot by the next kernel. This can
-> lead to memory corruption.
-> 
-> Adds checks to kho_preserve_* and KHO's internal metadata allocators
-> (xa_load_or_alloc, new_chunk) to verify that the physical address of the
-> memory does not overlap with any defined scratch region. If an overlap
-> is detected, the operation will fail and a WARN_ON is triggered. To
-> avoid performance overhead in production kernels, these checks are
-> enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Quoting Ricardo Ribalda (2025-10-20 08:53:41)
+> The %pe format specifier is designed to print error pointers. It prints
+> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+> omitting PTR_ERR()
+>=20
+> This patch fixes this cocci report:
+> ./platform/renesas/rcar_fdp1.c:2303:4-11: WARNING: Consider using %pe to =
+print PTR_ERR()
+>=20
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Thanks, same as the others:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 > ---
->  kernel/liveupdate/Kconfig                   |  8 ++++
->  kernel/liveupdate/Makefile                  |  1 +
->  kernel/liveupdate/kexec_handover.c          | 52 ++++++++++++++-------
->  kernel/liveupdate/kexec_handover_debug.c    | 25 ++++++++++
->  kernel/liveupdate/kexec_handover_internal.h |  9 ++++
->  5 files changed, 78 insertions(+), 17 deletions(-)
->  create mode 100644 kernel/liveupdate/kexec_handover_debug.c
-> 
-> diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> index cea287842475..851d1a22b4c5 100644
-> --- a/kernel/liveupdate/Kconfig
-> +++ b/kernel/liveupdate/Kconfig
-> @@ -27,4 +27,12 @@ config KEXEC_HANDOVER_DEBUGFS
->  	  Also, enables inspecting the KHO fdt trees with the debugfs binary
->  	  blobs.
->  
-> +config KEXEC_HANDOVER_DEBUG
-> +	bool "Enable Kexec Handover debug checks"
-> +	depends on KEXEC_HANDOVER_DEBUGFS
-> +	help
-> +	  This option enables extra sanity checks for the Kexec Handover
-> +	  subsystem. Since, KHO performance is crucial in live update
-> +	  scenarios and the extra code might be adding overhead it is
-> +	  only optionally enabled.
-
-And empty line here would be nice.
-
->  endmenu
-> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> index c87d00c40c82..ebfc31814d16 100644
-> --- a/kernel/liveupdate/kexec_handover.c
-> +++ b/kernel/liveupdate/kexec_handover.c
-> @@ -8,6 +8,7 @@
->  
->  #define pr_fmt(fmt) "KHO: " fmt
->  
-> +#include <linux/cleanup.h>
->  #include <linux/cma.h>
->  #include <linux/count_zeros.h>
->  #include <linux/kexec.h>
-> @@ -131,26 +132,26 @@ static struct kho_out kho_out = {
->  
->  static void *xa_load_or_alloc(struct xarray *xa, unsigned long index, size_t sz)
->  {
-> -	void *elm, *res;
-> +	void *res = xa_load(xa, index);
->  
-> -	elm = xa_load(xa, index);
-> -	if (elm)
-> -		return elm;
-> +	if (res)
-> +		return res;
-> +
-> +	void *elm __free(kfree) = kzalloc(sz, GFP_KERNEL);
->  
-> -	elm = kzalloc(sz, GFP_KERNEL);
->  	if (!elm)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	if (WARN_ON(kho_scratch_overlap(virt_to_phys(elm), sz)))
-
-I'd move the WARN_ON into kho_scratch_overlap().
-
-> +		return ERR_PTR(-EINVAL);
-> +
->  	res = xa_cmpxchg(xa, index, NULL, elm, GFP_KERNEL);
->  	if (xa_is_err(res))
-> -		res = ERR_PTR(xa_err(res));
-> -
-> -	if (res) {
-> -		kfree(elm);
-> +		return ERR_PTR(xa_err(res));
-> +	else if (res)
->  		return res;
-> -	}
->  
-> -	return elm;
-> +	return no_free_ptr(elm);
->  }
-  
-...
-
-> @@ -379,14 +384,17 @@ static int kho_mem_serialize(struct kho_out *kho_out)
->  	struct khoser_mem_chunk *chunk = NULL;
->  	struct kho_mem_phys *physxa;
->  	unsigned long order;
-> +	int ret = -ENOMEM;
-
-Nit: s/ret/err/
-
->  
->  	xa_for_each(&kho_out->track.orders, order, physxa) {
->  		struct kho_mem_phys_bits *bits;
->  		unsigned long phys;
->  
-> diff --git a/kernel/liveupdate/kexec_handover_debug.c b/kernel/liveupdate/kexec_handover_debug.c
-> new file mode 100644
-> index 000000000000..7986dcc63047
-> --- /dev/null
-> +++ b/kernel/liveupdate/kexec_handover_debug.c
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * kexec_handover_debug.c - kexec handover optional debug functionality
-> + * Copyright (C) 2025 Google LLC, Pasha Tatashin <pasha.tatashin@soleen.com>
-> + */
-> +
-> +#define pr_fmt(fmt) "KHO: " fmt
-> +
-> +#include "kexec_handover_internal.h"
-> +
-> +bool kho_scratch_overlap(phys_addr_t phys, size_t size)
-> +{
-> +	phys_addr_t scratch_start, scratch_end;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < kho_scratch_cnt; i++) {
-> +		scratch_start = kho_scratch[i].addr;
-> +		scratch_end = kho_scratch[i].addr + kho_scratch[i].size - 1;
-
-I agree with Pratyush that 
-
-		scratch_end = kho_scratch[i].addr + kho_scratch[i].size;
-
-		if (phys < scratch_end ...
-
-is clearer.
-
-> +		if (phys <= scratch_end && (phys + size) > scratch_start)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-
--- 
-Sincerely yours,
-Mike.
+> It seems that we missed this file from the original patchset.
+> https://lore.kernel.org/linux-media/20251013-ptr_err-v1-0-2c5efbd82952@ch=
+romium.org/
+> ---
+>  drivers/media/platform/renesas/rcar_fdp1.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/renesas/rcar_fdp1.c b/drivers/media/p=
+latform/renesas/rcar_fdp1.c
+> index 3515601030eccefe3d979303893c93c85ab0a9b2..672869815f636de25ce08261b=
+f327f156b617a37 100644
+> --- a/drivers/media/platform/renesas/rcar_fdp1.c
+> +++ b/drivers/media/platform/renesas/rcar_fdp1.c
+> @@ -2299,8 +2299,7 @@ static int fdp1_probe(struct platform_device *pdev)
+>                 fdp1->fcp =3D rcar_fcp_get(fcp_node);
+>                 of_node_put(fcp_node);
+>                 if (IS_ERR(fdp1->fcp)) {
+> -                       dev_dbg(&pdev->dev, "FCP not found (%ld)\n",
+> -                               PTR_ERR(fdp1->fcp));
+> +                       dev_dbg(&pdev->dev, "FCP not found (%pe)\n", fdp1=
+->fcp);
+>                         return PTR_ERR(fdp1->fcp);
+>                 }
+>         }
+>=20
+> ---
+> base-commit: 8652359fc004cbadbf0e95692c1472caac6260c2
+> change-id: 20251020-ptr_err-leftover-1997b3a6e06e
+>=20
+> Best regards,
+> --=20
+> Ricardo Ribalda <ribalda@chromium.org>
+>
 
