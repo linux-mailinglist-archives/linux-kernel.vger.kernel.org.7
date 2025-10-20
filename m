@@ -1,45 +1,38 @@
-Return-Path: <linux-kernel+bounces-860945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08177BF1648
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:01:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C251BF16A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFFD3E2CD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:01:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3B754F85AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC944320CC9;
-	Mon, 20 Oct 2025 12:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gAhw3Fhf"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C053164A1;
+	Mon, 20 Oct 2025 12:59:56 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9A9313E1A;
-	Mon, 20 Oct 2025 12:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BA73148AD
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760965155; cv=none; b=mDPhqcrh3BO5eW1PNkZYh6KjC4UzQOIOtz8OP9B/8mhWJNshIjvoqsBdtWF6ZUzflseGE/I/XHifXIHyjmk7myj7HdVRFumgGtt52G1alkQAMrrad2KEIfmWIR++b6Uc2c97dkGb474/x7yaG+F107IWUOgK7pztOpJjt7csTd4=
+	t=1760965195; cv=none; b=eydFtiAd5E0tRZFroxitlJXWZKeMura4MNCP6vOK4ctMx8ReT4NTkhwu9fwHvRdTtMbs7FPBAndFcuteb5Z+BiM2F0pGYEkL8W0Xmcp9upHprS2PiuEocqmp6ymu6uuwPKPB0zhMr194O3i6RwZ5J6HXMSNS+FY/odkfZhSKrU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760965155; c=relaxed/simple;
-	bh=hJGwDdy/cVGoByAo6t8ZfN/VwGD2JYemnH0/dl2RWSw=;
+	s=arc-20240116; t=1760965195; c=relaxed/simple;
+	bh=hzUyPPbuX5n3KugTEY1eIbx8XCLAlqtP+aUQsryn418=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aXRYm0lRth3sDBP6PmUoeb93OIKwKkKjsGHyL7ZSZl9Fn+b4Vz+d86ru7ZIgM1z0yjZTyKtinW2j7FGBxoscPKod7RoZjskk0sesQrWxo719TR6s7dHftIfUSolDyB6BegYT0vUI5qFqHa56MXId9YygE8S/7mMBlrUGDq2l3ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gAhw3Fhf; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760965142; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=NUZ4OFbIPKN0hupA12avsNJ58g3zFU3PpdC+1cMmplk=;
-	b=gAhw3Fhfv0sFNXUyobN6etJJVNKVp4EYW/PTJmBdIqySWSE010g5wXrwRGFoXMVRVLgMfoarxY0VMyyB0GvOY+aH1qvlQzpvTEg1/Dtz2K5Hb7bxIFYMETFgNrRPKSKDNHcKgB6UHD5xVatTCQIbdcq3JjWjXX3qV545xKRcd+M=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqcKlem_1760965140 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 20 Oct 2025 20:59:01 +0800
-Message-ID: <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
-Date: Mon, 20 Oct 2025 20:58:55 +0800
+	 In-Reply-To:Content-Type; b=f0E04WOsmJN/RhTMQr42aJkEL/DiTMa3M/nzu5d43O2mH0TkF9JskKPw8OCsXd6XBfYPtfVIZxBTvm/6fl4N15tbWDRMOlqztwkWfELp6rlxUfXr/U4lfJmpj6TP/8dcG7sJRuCFcLRy1z2faJIOkW2MrQACZypm1+CwkhM1LmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.107] (unknown [114.241.85.109])
+	by APP-01 (Coremail) with SMTP id qwCowAAHYKI6MvZo4TP9EQ--.2971S2;
+	Mon, 20 Oct 2025 20:59:38 +0800 (CST)
+Message-ID: <4a2312d1-5294-4621-8276-b7a9447b3e1a@iscas.ac.cn>
+Date: Mon, 20 Oct 2025 20:59:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,101 +40,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org,
- sathyanarayanan.kuppuswamy@linux.intel.com, mahesh@linux.ibm.com,
- oohall@gmail.com, Jonathan.Cameron@huawei.com, terry.bowman@amd.com,
- tianruidong@linux.alibaba.com
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-4-xueshuai@linux.alibaba.com>
- <aPYKe1UKKkR7qrt1@wunner.de>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <aPYKe1UKKkR7qrt1@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 0/2] riscv: tests: Make RISCV_KPROBES_KUNIT tristate
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Nam Cao <namcao@linutronix.de>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
+ Inochi Amaoto <inochiama@gmail.com>, Yao Zi <ziyao@disroot.org>
+References: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20251020-riscv-kunit-kconfig-fix-6-18-v1-0-d773b5d5ce48@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAHYKI6MvZo4TP9EQ--.2971S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrWr4DZFyftrWkKFyxKF4kZwb_yoWxXwb_uF
+	4kWwn7Gws8CF40krWq9r95Gr93t3yj9ryUWryvgrWUCr9293ZrGw4DJFn2v3Z8Gr4vvFnx
+	Wwsxur10kasrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z2
+	80aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF
+	7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+	8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+	xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
+	8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
+	aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x07j0fOwUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+On 10/20/25 20:23, Vivian Wang wrote:
 
+> Fix an allmodconfig warning on v6.18-rc1:
+>
+>     WARNING: 3 bad relocations
+>     ffffffff81e24118 R_RISCV_64        kunit_unary_assert_format
+>     ffffffff81e24a60 R_RISCV_64        kunit_binary_assert_format
+>     ffffffff81e269d0 R_RISCV_JUMP_SLOT  __kunit_do_failed_assertion
 
-在 2025/10/20 18:10, Lukas Wunner 写道:
-> On Wed, Oct 15, 2025 at 10:41:57AM +0800, Shuai Xue wrote:
->> +++ b/drivers/pci/pcie/err.c
->> @@ -253,6 +254,16 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->>   			pci_warn(bridge, "subordinate device reset failed\n");
->>   			goto failed;
->>   		}
->> +
->> +		/* Link recovered, report fatal errors of RCiEP or EP */
->> +		if (state == pci_channel_io_frozen &&
->> +		    (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END)) {
->> +			aer_add_error_device(&info, dev);
->> +			info.severity = AER_FATAL;
->> +			if (aer_get_device_error_info(&info, 0, true))
->> +				aer_print_error(&info, 0);
->> +			pci_dev_put(dev);
->> +		}
->>   	}
+For more context, I said this was to fix a warning, but I tried it out
+anyway just to see what happens. Apparently, nothing. The kprobe tests
+just don't run if RISCV_KPROBES_KUNIT=y but KUNIT=m.
 
-Hi, Lukas,
+So this config combination being just wrong is the problem, and the
+warning is just a loud symptom.
 
-> 
-> Where is the the pci_dev_get() to balance the pci_dev_put() here?
+Vivian "dramforever" Wang
 
-The corresponding pci_dev_get() is called in add_error_device(). Please
-refer to commit 60271ab044a5 ("PCI/AER: Take reference on error
-devices") which introduced this reference counting mechanism.
-
-> 
-> It feels awkward to leak AER-specific details into pcie_do_recovery().
-> That function is supposed to implement the flow described in
-> Documentation/PCI/pci-error-recovery.rst in a platform-agnostic way
-> so that powerpc (EEH) and s390 could conceivably take advantage of it.
-> 
-> Can you find a way to avoid this, e.g. report errors after
-> pcie_do_recovery() has concluded?
-
-I understand your concern about keeping pcie_do_recovery()
-platform-agnostic. I explored the possibility of reporting errors after
-recovery concludes, but unfortunately, this approach isn't feasible due
-to the recovery sequence. The issue is that most drivers'
-pci_error_handlers implement .slot_reset() which internally calls
-pci_restore_state() to restore the device's configuration space and
-state. This function also clears the device's AER status registers:
-
-   .slot_reset()
-     => pci_restore_state()
-       => pci_aer_clear_status()
-
-Therefore, the only window to capture and report the original error
-information is between link recovery (after reset_subordinates()) and
-before .slot_reset() is called. Once .slot_reset() executes, the error
-status is cleared and lost forever.
-
-> 
-> I'm also worried that errors are reported *during* recovery.
-> I imagine this looks confusing to a user.  The logged messages
-> should make it clear that these are errors that occurred *earlier*
-> and are reported belatedly.
-
-You raise an excellent point about potential user confusion. The current
-aer_print_error() interface doesn't indicate that these are historical
-errors being reported belatedly. Would it be acceptable to add a
-clarifying message before calling aer_print_error()? For example:
-
-   pci_err(dev, "Reporting error that occurred before recovery:\n");
-
-Alternatively, if you have suggestions for a better approach to make
-this timing clear to users, I'd be happy to implement them.
-
-> 
-> Thanks,
-> 
-> Lukas
-
-Thanks for valuable comments.
-
-Best Regards,
-Shuai
 
