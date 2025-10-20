@@ -1,207 +1,187 @@
-Return-Path: <linux-kernel+bounces-861235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48FBBF221C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:35:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBC4BF221F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427AF402685
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F73E42722F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E4526B77B;
-	Mon, 20 Oct 2025 15:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449E6264A97;
+	Mon, 20 Oct 2025 15:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="uB7XyDpl"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EMuWOJaE"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011066.outbound.protection.outlook.com [52.101.65.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB09C224B09;
-	Mon, 20 Oct 2025 15:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974507; cv=none; b=TKaazup4Qc9jFuE7MmL5rUEk7pQgUgI4i/ITNyyDK472q60ctOY3QDKsKt5ceh/TUCcxAnsnSNF6TYnBvVC1LBbJ/4zYnJUeLSatNddmSZ11megJuzwvG8wrWNnQUsAQldUp55ooi8osqVPOwD2Wcyf5oT4HHXhwbMD87PyPfPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974507; c=relaxed/simple;
-	bh=gDlhSaVSkDj8yzoau+14ole4av+6Pn/w1EHSSWO+UUM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=C2Ptx8Gm1UI4KxD97LTfae1d+4MKaJyEJZVFHLECJd5J9iQZMCDzOuvl6IqG2RGzwLRd7g0U2mtzmhnZJ5GbUuBuskxH/KaBkyrrSPLRr0XMtZtkYUj/oNguqZ5r8nxjJB8fZ+wDvjWoosweamtXaLBS/EeGed77dxOVt0FFszQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=uB7XyDpl; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id DA2288289231;
-	Mon, 20 Oct 2025 10:35:03 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 4-otD47ZzKNL; Mon, 20 Oct 2025 10:35:03 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 1CCD0828923B;
-	Mon, 20 Oct 2025 10:35:03 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 1CCD0828923B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1760974503; bh=C5GrYTcKNHQBG0i3HG36jm3JgGWfmfbhQQHHPm7yVjw=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=uB7XyDplSv1lm5LS78PA1XOJhKaM7dyPZFMg1+cVe/Bs90wMWm4I+3Gie8WNf1bvE
-	 gkTIC84UDersRy+QruFuvbvXxi5MdCbRli8dDv8olftzJ3pMktULnloevgU1QE9nVs
-	 t3Zr+13nWiuINEr/cwPaw0exyscRzcuy5tRK2BI4=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6f5EdfwTuUK3; Mon, 20 Oct 2025 10:35:02 -0500 (CDT)
-Received: from vali.starlink.edu (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id E09248289231;
-	Mon, 20 Oct 2025 10:35:02 -0500 (CDT)
-Date: Mon, 20 Oct 2025 10:34:59 -0500 (CDT)
-From: Timothy Pearson <tpearson@raptorengineering.com>
-To: robh <robh@kernel.org>
-Cc: devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Lee Jones <lee@kernel.org>, 
-	Georgy Yakovlev <Georgy.Yakovlev@sony.com>, 
-	Shawn Anastasio <sanastasio@raptorengineering.com>
-Message-ID: <924260297.1801829.1760974499327.JavaMail.zimbra@raptorengineeringinc.com>
-In-Reply-To: <20250929141113.GA3987541-robh@kernel.org>
-References: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com> <20250929141113.GA3987541-robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82031E47B7;
+	Mon, 20 Oct 2025 15:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760974552; cv=fail; b=Mw1Ia+Ire63u+ag+r/b42ikxA2C9f345fTb2nAUGXzDutgjxO0ymdLrcJk49Dq/TtV5P33h06XIX6cJ3Ae/c+vpIPMvRC2IyQQRf0Rh3k6BZwfgmJYy3VX1OQmAI8rSbP3hNHTrUu3MVX4GG4AKVdH173bO39LJEGBcXmACDJuk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760974552; c=relaxed/simple;
+	bh=voGFfGTr3KDdvgeDYV4i6n5Ap4UFfZCblpQ/XsJSyTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XEY8zUNo44oQYMRFotfRTLasMPmAahb48k9j8g3FUeAMLWh+hKDVkolGLbA+OY8YE4TXKhib/znj0fxIVpyb2CRjbaiRgowvryKpGZBxkP654nwiTep4gfE4WBpSTd1/EBXuqyIViCWG/rIfsDbyVWkQl0vhKc9Ucq4yf1yxhj0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EMuWOJaE; arc=fail smtp.client-ip=52.101.65.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YwyGt/cLaOBrh0K/ihwYHreZjawZpMEoF/MexJCw5y2YOWkaZMQJTuA2G48+Ahc/RBxI0wgEeKbPJyXq0ZOOJQwun5ssCFPAvPt4SRJy23uKggs4sDoRgIA1UM0Su8m/S6NxMLHywipX21gVmntC2FLweuyccGnL024BQScI/TcAnplAqaEZfC5I9TiPHoRO6lRFMBjbuUsD8GYxXGp4WLmGp/1hC8ArSGWPQo+odrjwuNRSOplKtrj2yBB6JrwG6ndjvDB1iuotj07SFeDiBACCWRZKGKMvQ7QMgm6R+7SYbP0OJeNMGPHF8dgl4QRWQT8LxG5cC3j76zjsRSSwnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R25DAJh5+U4+NS74d2lT6sqCWc6wuk8fXPYSvrQJhTw=;
+ b=a/IQ1eTsT+k8/bUUEwOl8NJKQOUMjHsbEQEaU78aBatv62PUg84mk2C4GydD66qlI7VeEblXmRTPIbKZLECnpcm43KGompC5c1iHF/ZrJuf/Bc0gj/6RSQoTgGm8rLa7MSPgx7cNl90BmdD73YmI0V19x+uC3DWhU0lNXPJ348LjxifKGFCWEgUagu354o/wEi4ECbXb2oSCalOpsqfeu+F1y6CKr4yvstW/B0q7ayYZk5ppH+a5w63gjzM0lR2fKooguNyV9Rg3AE1UMOQ9xIiFeetq1z+ugLplA1Tgt/HykZHF9fXu4XcK2njMwv3S7Hp96DvVDPoe3UZGpigatw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R25DAJh5+U4+NS74d2lT6sqCWc6wuk8fXPYSvrQJhTw=;
+ b=EMuWOJaExbDabuLezzxY3D4m/LLPGWL6Xd+61rf0glG3upklH+lOfPExT23q704gWwv3WJNM4b3mMygozGoySwZHBPnL2FJvKsFsx0lzNR0NnEI5RSM0Jhlmw7xTNquLf2a6GIBQX53ioOYshCL9JqMatT0j+iCFIuh7oApArBKQKMoMD8Xyq87EpWCYYxcT2Zg34bTpa5t34A7lvPuNIECLVt6pbSGCvYdQSdQS3Dlh4fJ6mRJhSEQavTRnR8W9KhoyudycNJHB5mIMskSEYamVWW6T1IZxRKw8krIDA3UrHwT6sQNT+FgYCLISpoGTS/YLVq4qL0dSBOeb5qMZRQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by VI0PR04MB10541.eurprd04.prod.outlook.com (2603:10a6:800:26a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 15:35:47 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9228.014; Mon, 20 Oct 2025
+ 15:35:47 +0000
+Date: Mon, 20 Oct 2025 11:35:41 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Yannic Moog <y.moog@phytec.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, upstream@lists.phytec.de,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] arm64: dts: imx8mp-phyboard-pollux: add fan-supply
+Message-ID: <aPZWzbRKquauLco4@lizhi-Precision-Tower-5810>
+References: <20251020-imx8mp-dts-additions-v1-0-ea9ac5652b8b@phytec.de>
+ <20251020-imx8mp-dts-additions-v1-1-ea9ac5652b8b@phytec.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020-imx8mp-dts-additions-v1-1-ea9ac5652b8b@phytec.de>
+X-ClientProxiedBy: CH2PR18CA0054.namprd18.prod.outlook.com
+ (2603:10b6:610:55::34) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
-Thread-Topic: dt-bindings: mfd: Add sony,cronos-cpld
-Thread-Index: 7dsbt6pMz36EGRoJ8W27OGXqUYJwWw==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|VI0PR04MB10541:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2d3e81f-6da0-4cf6-b777-08de0fee5720
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|52116014|7416014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?w0EmIMmRT9qfEpbpPWVpm4THApMUjwv87rEkTWwQx5rIMuMiYGNcR0Cd+eK8?=
+ =?us-ascii?Q?GVGbpFkmwh2H9+QundYfmuDpZ0dWjyAlXOmirIf52yu1YMeZWqDv3m4zq/Sr?=
+ =?us-ascii?Q?cHjfm1ghnjCgSUYYMzs/kwj5mS3ZWa8Vq5h6P4a/+JpSP/SGLv10GQdGlysm?=
+ =?us-ascii?Q?7ME3rxLvyMtMUzhvnGP5Nvp9VaA18xQmUrSgQAXejpqA5Mrb91qy6OCxgQZr?=
+ =?us-ascii?Q?hjoINwYO585KXfdSKMJlrrl3XWsDsssIjD1HUcO4GgQ5Fp7w8sgFEIv3eRC1?=
+ =?us-ascii?Q?AH9b/0EC15yvzB/PF6I7VK0KhKVaAzosyynuT2MNzbqZzmyjt7RR665W2LpX?=
+ =?us-ascii?Q?S1ZX9LEj0uZonRFslne4c32m3AzcejnugPs7Mn3ycsBKhwjUleJZGgzWkjac?=
+ =?us-ascii?Q?Wp1USa1R/qbGw4zjeEt9TjF4ZrW4YwgBruLBgrb5TN+qDrXkoBfvSlCIyWbN?=
+ =?us-ascii?Q?biylLrM/iwhWOqFL3biYmVz5Usw+PU3dCzaYHel+3u1viIUMraSaBg5t74NH?=
+ =?us-ascii?Q?q7RaBX51vxOhPIdx0XNSdPJWHeZdbigxwJFCSBHM6AY2HmuM/NqHRv/ua2cZ?=
+ =?us-ascii?Q?+JmmLUP7QbK3mTxS/tmYOhTMTKy/oNXRno6HLaCsXVbhq0YmGSn3J0ane8dr?=
+ =?us-ascii?Q?OiLsdVTKy+u3A5VgrjdntqYaKe+4ph//EAncsbhEfvxy88Qc2cLC9Qr9duQS?=
+ =?us-ascii?Q?UVrIOrrged7O2UFnDzEdYpk/+JGAUlaGvO6YJMyMUoOs/Epwr/ZlpHGa/foi?=
+ =?us-ascii?Q?ThFkqzUb+E9RDeOH2JET7LISG5OvswI3zz43zV9qvZ6ryVISwI7e9ytao0C6?=
+ =?us-ascii?Q?MymHsLW2rV2njIcat5Vt56b1YRVyDFDEnTQVUUGyMKxeL7FPN2D5z0mpqyib?=
+ =?us-ascii?Q?nFPIA8lAtAdI4tAxvFToZ+MvmpWVnhHXdZpQo26RhNPhdKf2J1/8f4P33UPu?=
+ =?us-ascii?Q?CKr8tDlGUy/XNDQWBnWKaQmjACybgWw0pNSdrVejjFjqR4WlqaEUYF1ARCJw?=
+ =?us-ascii?Q?RmPNmFXQEQTDSSEfgmnsSIUGPEGEhjzoLs+aDUiVz1TvP/BKJ46snezKYSYA?=
+ =?us-ascii?Q?LtJDl5ZDaqyEQFeNyJ4nhRCO8ZbSWOYxmYCKTEFLHeDb5HkRgjgMzl+jxeDI?=
+ =?us-ascii?Q?bhNLxNbucBS2ykS3FBPVwPRu2QXYXSxBTfvp35A8jbbhfrhUyOZhqLYioTdQ?=
+ =?us-ascii?Q?cdDiQWhCQ2o446hgVYCCE4JaLdkC3JgBxn2I07eWyjEJEoCbC7EKyo6U5Af3?=
+ =?us-ascii?Q?lOMnrXRhan+Q6M1UUfB25fpTkv/Tdg7eKPR4ujGYI+Qe8LZr2UcYVU1IDZvX?=
+ =?us-ascii?Q?cnYn2t5xnXWWrXWOkzH50k6lSsWu6YZT3h6ahVo0FLtb+4MMSgEAWTenchkD?=
+ =?us-ascii?Q?RD0kK+x00DE2HWcexLn31P3w0wkyUtpQjuRd5JYjkq97ezohkjf3aLrlWui2?=
+ =?us-ascii?Q?JiCYuzX27g5CmM+kwq/PkU8mZ1DuZMOrwkvdptkTr+jSIH3f2LERZPdiQp0C?=
+ =?us-ascii?Q?PfC3KX6/dZUNM6wqlPpmiLRL6QCGalBulDse?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(52116014)(7416014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vofvGIicCb1ySmFXW9sPwbj9M9InYBi6ZPvZ0WKnhfh4RDZgUdqnQCv6LL40?=
+ =?us-ascii?Q?bkq+AGd9srm/JDKR89q7dOUjLMTjWFKpPstsBJBeEQlUcDJAxoSIaCNZ1yQg?=
+ =?us-ascii?Q?rWNCJetaKrcO7otv253K8QbywYUCUP9l1j1Q2TOVJ9+FefEYDN3NnX/A3z3Q?=
+ =?us-ascii?Q?P7GoctTguNx5EmGCFl6PuLjTMP16kuSPG8ytyzrjEGYcPDEorUp8vGa5/mb4?=
+ =?us-ascii?Q?qOlPo01FsBSxCwjO06bvD7UMHf2nqJLD2FxQJJJhrbqMYsnjBqAH7xwmqAnR?=
+ =?us-ascii?Q?Qg6/RMhxLO3BzyXRsUQ/2P6xI1rGO2/R/O0Qtf6gmwKBsOVeCJQuKnZfOmd9?=
+ =?us-ascii?Q?uO6mtngPKN0hutK+ZJzAXmkus2te35ctX1n8Lr0Z3T2u/JmeUSUf2cdjuKVR?=
+ =?us-ascii?Q?GU5li8L6Eb1vHY88T9MsfL7bw9wJ1YJFwmQBJCRr0QpYX1EuZUuI6ajVX0PT?=
+ =?us-ascii?Q?fUKh0C0BzRK5umk90mViZCkxtBVV0bNwhaXJwVzDOr4ePRc9/EVrspKtdc74?=
+ =?us-ascii?Q?mrG7dB8j7Tz+UZUidjmY1WRR9vCr99e2CrojAq7qWfUvFZq595bQYcmIW9Kk?=
+ =?us-ascii?Q?w2UlqX++hI+pTVBQFx067fjS182fc34/EJdOb13AOS4rdJaAwGvI4hya6PIi?=
+ =?us-ascii?Q?jVLkxlzEHUfD+IlYluRIsLUTZdk6Zad8LHkHhACuqGqBmjaroHpYeQIh36wo?=
+ =?us-ascii?Q?w/Gnt+cdjIBPiyNNPMzIyopLoMuQXBAcCmYCwWKTbgSV1ndTDZbCDtiDJN/j?=
+ =?us-ascii?Q?MEZuPI9C0MuZRf1dke5B/zH1BTzBOI0pME+yHB9Dq4MRtD8eht82a0mbjaSW?=
+ =?us-ascii?Q?yaEb9h40S4aq2DjSX9l//vA8B48zrDijbsLGE4RC/PqCzJES6Z/05mnhhq/u?=
+ =?us-ascii?Q?e6Sd/1W75nvOiLvWNU8yuqbX67YL0K4IG/eVSy/F32od9a+E2nAJqkj9kYKA?=
+ =?us-ascii?Q?VeB9uzIYU7X/IeoZDLzv41OhaJALFr877mt7LysTVcowY+CQeWsAkX0UNtf5?=
+ =?us-ascii?Q?7YOztf4gYJ6TBVC2BWg5D9nuZoFdDUXg7IjYbmdXwxIkNSeaN0KLoZksVjUh?=
+ =?us-ascii?Q?XK0rACIpv0tvFf/t57h8ICiepfoj9R8jYNU0aXK9rNOEoKwznn+Wn7lhdWLT?=
+ =?us-ascii?Q?3SRyCi/euH59BI+bnHE9Br7axG3bzYkCj8MGi6kfuXDl4GPN48KfgtqpSd1R?=
+ =?us-ascii?Q?CGix+SzBNDKjkb4BA0DlL1+2mwwfXc9Bs0SRzgzlsiYgP7mou789AvDAf4OE?=
+ =?us-ascii?Q?99Q/2QNKdEiJTlnv/c9QRg+lUzGskzeOr/PV4H19nVceyt3vxdHHXNIvbwCi?=
+ =?us-ascii?Q?rEisse3ZEonMM1Bs7oblykzXWP0pWRlDSvo6Ee4aKH0uDGZq7XT+0wBPPvdT?=
+ =?us-ascii?Q?nBWlgbTvlN9waDBSiFoBTWhHDBTWrirWVfyY5RA00LQY2gMuOD0ChF+HCDmK?=
+ =?us-ascii?Q?0iRVKQ50cAlFekiU2b5VUszZTgAeqVhQB52FhslJiQaKG0Qw/ac0kJK1GBDw?=
+ =?us-ascii?Q?yr8Icq6p8k4i1SxkRN3qjOzgqFicDoP3tC+wWU+gBvu+eEcGGJ+Dwar+zNGL?=
+ =?us-ascii?Q?YUJB/i8y4tnWue6XKDIJKXqS0iv69qxspMr7yid/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2d3e81f-6da0-4cf6-b777-08de0fee5720
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 15:35:47.5390
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x81+v0qUPdaqSFGIh4ubDOFgaNF8swvvZZxPNarIc/jMBgq0mnk4oR+Ei9uQN7xNUkQWbRPB/dpbthVh15vAXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10541
 
+On Mon, Oct 20, 2025 at 03:11:22PM +0200, Yannic Moog wrote:
+> Add 5v regulator to gpio fan node.
+>
+> Signed-off-by: Yannic Moog <y.moog@phytec.de>
+> ---
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-
------ Original Message -----
-> From: "robh" <robh@kernel.org>
-> To: "Timothy Pearson" <tpearson@raptorengineering.com>
-> Cc: "devicetree" <devicetree@vger.kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Conor Dooley"
-> <conor+dt@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Georgy
-> Yakovlev" <Georgy.Yakovlev@sony.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
-> Sent: Monday, September 29, 2025 9:11:13 AM
-> Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
-
-> On Thu, Sep 25, 2025 at 01:17:33PM -0500, Timothy Pearson wrote:
->> The Sony Cronos Platform Controller CPLD is a multi-purpose platform
->> controller that provides both a watchdog timer and an LED controller for
->> the Sony Interactive Entertainment Cronos x86 server platform. As both
->> functions are provided by the same CPLD, a multi-function device is
->> exposed as the parent of both functions.
->> 
->> Add a DT binding for this device.
->> 
->> Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
->> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
->> ---
->>  .../bindings/mfd/sony,cronos-cpld.yaml        | 121 ++++++++++++++++++
->>  1 file changed, 121 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
->> 
->> diff --git a/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
->> b/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
->> new file mode 100644
->> index 000000000000..3cebf6c0153d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
->> @@ -0,0 +1,121 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +# Copyright 2025 Raptor Engineering, LLC
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mfd/sony,cronos-cpld.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Sony Cronos Platform Controller CPLD multi-function device
->> +
->> +maintainers:
->> +  - Georgy Yakovlev <Georgy.Yakovlev@sony.com>
->> +
->> +description: |
-> 
-> Don't need '|' if no formatting or paragraphs to preserve.
-> 
->> +  The Sony Cronos Platform Controller CPLD is a multi-purpose platform
->> +  controller that provides both a watchdog timer and an LED controller for the
->> +  Sony Interactive Entertainment Cronos x86 server platform. As both functions
->> +  are provided by the same CPLD, a multi-function device is exposed as the
->> +  parent of both functions.
->> +
->> +properties:
->> +  compatible:
->> +    const: sony,cronos-cpld
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  leds:
->> +    type: object
->> +    additionalProperties: false
->> +    description: |
->> +      The Cronos LED controller is a subfunction of the Cronos platform
->> +      controller, which is a multi-function device.
->> +
->> +      Each led is represented as a child node of sony,cronos-led. Fifteen RGB
->> +      LEDs are supported by the platform.
->> +
->> +    properties:
->> +      compatible:
->> +        const: sony,cronos-led
->> +
->> +      reg:
->> +        maxItems: 1
->> +
->> +      "#address-cells":
->> +        const: 1
->> +
->> +      "#size-cells":
->> +        const: 0
->> +
->> +    patternProperties:
->> +      "^multi-led@[0-15]$":
->> +        type: object
->> +        $ref: leds-class-multicolor.yaml#
->> +        unevaluatedProperties: false
->> +
->> +        properties:
->> +          reg:
->> +            description:
->> +              LED channel number (0..15)
->> +            minimum: 0
->> +            maximum: 15
->> +
->> +        required:
->> +          - reg
->> +
->> +    required:
->> +      - compatible
->> +      - "#address-cells"
->> +      - "#size-cells"
->> +
->> +  watchdog:
->> +    type: object
->> +    description: Cronos Platform Watchdog Timer
->> +
->> +    allOf:
->> +      - $ref: watchdog.yaml#
->> +
->> +    properties:
->> +      compatible:
->> +        const: sony,cronos-watchdog
-> 
-> There's no need for a child node here. 'timeout-sec' can just go in the
-> parent node.
-
-Could you elaborate on this please?  As far as I can tell we ref watchdog.yaml and need some kind of compatible string, so why would I break out timeout-sec directly here?
-
-Thanks!
+>  arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+> index 9687b4ded8f4c98fe68bcbeedcb5ea03434e27a3..6203e39bc01be476f16f5ac80b6365bce150ae37 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+> @@ -31,6 +31,7 @@ fan0: fan {
+>  		compatible = "gpio-fan";
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&pinctrl_fan>;
+> +		fan-supply = <&reg_vcc_5v_sw>;
+>  		gpio-fan,speed-map = <0     0
+>  				      13000 1>;
+>  		gpios = <&gpio5 4 GPIO_ACTIVE_HIGH>;
+>
+> --
+> 2.51.0
+>
 
