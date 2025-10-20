@@ -1,140 +1,97 @@
-Return-Path: <linux-kernel+bounces-861611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27288BF32E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:20:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA92FBF31F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C316D3A9F7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD579406B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937AD2D9481;
-	Mon, 20 Oct 2025 19:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2D52D5940;
+	Mon, 20 Oct 2025 19:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UsDV1yOl"
-Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AhOHkMnn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D43325394B;
-	Mon, 20 Oct 2025 19:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249CEA926;
+	Mon, 20 Oct 2025 19:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988038; cv=none; b=kDbg3O2kBg9cLTnyJtj3U0YW8W0aCk39zNJ2lcqIPaiFQfOFKh54slYcp6an5eRSKcj65fHOcWXhYMnAciGb8uq+/i8gk5tOxpqo8hxqy4b1FA9YBRqkU++V/ZQbwicHtoxzj2iMAKSgME+avh/6cD1RYwqXj5liYHZ8QEGvIrU=
+	t=1760987530; cv=none; b=fMNTz/31a+xfIpjWZbZQdVEQMnvMkVx21ZCR/TVfMIcV+wwbmxH7WsT/bS6QH28Wy5+ORSyX/m9bBcJSaL825Ss08MfSywnWJt9p58OS5W/c6xaqqXu1ygxk5Rzg7O2GB3i4oAhl9BmFAeQtUA5xVwbjXqXGQ22c5eCZSzM57mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988038; c=relaxed/simple;
-	bh=L4UsWSzuusmlizFglphTpMbVFFClnAflcd2d6Tv4uYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ppZ9X43WNlSJrubRCLwnNMQVJMITteW7/UrauwC54+GawBBVuwJAGRRBMm1U73SYdDjBWB7XJ49JK4WuhC2NerQzK+F7w3jiHQOcxVg6/gbPnKJIWQ3LAl0uGdNnUFzSLNjHDWoiVttsh2E2gXiBJKtDJHlZB55yz1mLJxOvpjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UsDV1yOl; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id AvHuvxg21KmV9AvHuvJma1; Mon, 20 Oct 2025 21:11:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1760987484;
-	bh=xnC6hSP77KC5LZzIcnY+I3sTuSG/mCUZB+qcZYzF0fs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UsDV1yOlmsSNe1We7aX1s6h3ih42qyfDQYb9I4YEApoHPKvcly61lJmuw9zpCdxsW
-	 87jpQqqPSEiY3gYh/cThVbIyFmjJl0Cg7q0jAE3QipIzF4ZxV4DrqM03NWKTQfrPO2
-	 v8yN2KQ6FBKSCiKArNpiNdyBEwMcohzM6t+MeO5/6Nr0gq2HyDulLXbV8BnHJyS/pR
-	 0TkHUIsGQheFRjv4m0/ZBjKCXtKIIPrLNWKSRV21m4Dp1l++Fu9eznY443i4LthCoQ
-	 iTpGhTHjnthLID+owISCtHYUnZYAF/K0kSzmkSjnkcUDfBu1e1oi6gVykH8tEV0l2Z
-	 B4gQAEun4E0vg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 Oct 2025 21:11:24 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	devicetree@vger.kernel.org
-Subject: [PATCH] misc: rp1: Fix some error handling paths
-Date: Mon, 20 Oct 2025 21:11:16 +0200
-Message-ID: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760987530; c=relaxed/simple;
+	bh=nGxwJURU/oilInwTQUZZ6gbdSgb0KGfYK9QccT8jcwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T3wlGzevZJcR3tHuw/cPDNkUwdhIv9H9X1/gZAo5Z4jpUWsRAnV3ZUn+m3hLLG/8uR3IRiqp7/XtMjzVFTj3uj1f7J2SHXW16z5FigvrozsV53Ic4A0hVMjO9uy6HbPFQFRcsoAxGSGeb+LMtn1YpFI3Dw6Zj2NbOCDA3aYczcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AhOHkMnn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=q+A06mrhqjgyB7WoXYxFIbVy9xqSyLZ7F6r9ARP4k/M=; b=AhOHkMnnfNzl8Lw+FQh1X92eIy
+	EzjfYAk2NjifHZJlB/LMYlWVKgfA926vtS7TbiOk0fw09mZGiwJRw2I3+UQ28Li/eP5OKHw6TXT01
+	ujcTWyKeMJBxU9uCx0q+M/hHxuTh7PR/qFi3/E9w5E/W/uOKXL9fGJ3RByO0amiVvJDOMIN5uaUBH
+	jc+fQ/RZHdhekYGHE8EG5SRnyWqwvV3UvaBJ0Fsbw1BfPDM/s8lFdjm0UdcGXoge3R9FmAH+q1nPK
+	uaWn3nj86pSdRtQMW31RN0Dlyh6aE0HDLHNspaz4fWUofJeasdFL+ZO23zQNDkEObH0vXCCxJQdKL
+	2O58DwxQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vAvId-0000000EjgW-1UUc;
+	Mon, 20 Oct 2025 19:12:07 +0000
+Message-ID: <6b8e7935-6b80-4f00-9a44-7003071d1a21@infradead.org>
+Date: Mon, 20 Oct 2025 12:12:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Documentation: sysrq: Rewrite /proc/sysrq-trigger
+ usage
+To: =?UTF-8?B?VG9tw6HFoSBNdWRydcWIa2E=?= <tomas.mudrunka@gmail.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Serial <linux-serial@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Cengiz Can <cengiz@kernel.wtf>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
+References: <20251016103609.33897-2-bagasdotme@gmail.com>
+ <aa388d29-b83b-454e-a686-638c80c6a7bf@infradead.org>
+ <CAH2-hc+XQR7v9Z28yH_CTWZ4ieaF5eQFKBVut1idULP=4w03fQ@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAH2-hc+XQR7v9Z28yH_CTWZ4ieaF5eQFKBVut1idULP=4w03fQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Error handling in the probe and the clean-up path in the remove function
-should be adjusted depending on if data is taken from DT or from overlay at
-runtime.
 
-of_overlay_remove() should not be called when of_overlay_remove() was not
-called.
 
-of_node_put() should be called in the remove function to avoid a potential
-reference leak.
+On 10/20/25 4:50 AM, Tomáš Mudruňka wrote:
+>> I am still OK with removing the 2 "However" lines. We don't typically
+>> document or provide warnings for how the code might be changed in the
+>> future. If someone modifies this code and the documentation needs to be
+>> updated, it should be updated at that time.
+>>
+>> --
+>> ~Randy
+> 
+> Problem here is, that you cannot really modify the code without warning
+> users in advance. This is the warning.
 
-Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is compile tested only.
+All code in the kernel is subject to change in the future (anything
+that breaks userspace less so than other code).
+I don't see thousands of warnings about such future changes.
 
-I think (hope...) that a cleaner solution is possible. So feel free to
-improve it or completely change it if needed.
----
- drivers/misc/rp1/rp1_pci.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-index 803832006ec8..9105269488a9 100644
---- a/drivers/misc/rp1/rp1_pci.c
-+++ b/drivers/misc/rp1/rp1_pci.c
-@@ -44,6 +44,8 @@ struct rp1_dev {
- 	struct irq_data *pcie_irqds[64];
- 	void __iomem *bar1;
- 	int ovcs_id;	/* overlay changeset id */
-+	struct device_node *rp1_node;	/* useful only if skip_ovl == true */
-+	bool skip_ovl;
- 	bool level_triggered_irq[RP1_INT_END];
- };
- 
-@@ -289,10 +291,14 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto err_unload_overlay;
- 	}
- 
-+	rp1->skip_ovl = skip_ovl;
-+	rp1->rp1_node = rp1_node;
-+
- 	return 0;
- 
- err_unload_overlay:
--	of_overlay_remove(&rp1->ovcs_id);
-+	if (!skip_ovl)
-+		of_overlay_remove(&rp1->ovcs_id);
- err_unregister_interrupts:
- 	rp1_unregister_interrupts(pdev);
- err_put_node:
-@@ -308,8 +314,12 @@ static void rp1_remove(struct pci_dev *pdev)
- 	struct device *dev = &pdev->dev;
- 
- 	of_platform_depopulate(dev);
--	of_overlay_remove(&rp1->ovcs_id);
-+	if (!rp1->skip_ovl)
-+		of_overlay_remove(&rp1->ovcs_id);
- 	rp1_unregister_interrupts(pdev);
-+
-+	if (rp1->skip_ovl)
-+		of_node_put(rp1->rp1_node);
- }
- 
- static const struct pci_device_id dev_id_table[] = {
 -- 
-2.51.0
+~Randy
 
 
