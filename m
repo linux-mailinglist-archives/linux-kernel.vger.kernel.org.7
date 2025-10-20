@@ -1,93 +1,144 @@
-Return-Path: <linux-kernel+bounces-860120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E785BEF579
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:03:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2503BEF582
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478D63B94B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AE23BD3D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375192820A4;
-	Mon, 20 Oct 2025 05:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bT3IsDld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B469B2BE638;
+	Mon, 20 Oct 2025 05:07:16 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9320518C26
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87322AD3C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760936594; cv=none; b=EZW8ks7UfLKJUKH/Xuc1D5cJVem2kJ9Vd75wQZ8Vf1f6wz7GHa+FXvc31u6DE/Fsw5WHf3r+zav3UHjpEnuJWMuIrQcIEKjFm6OLlhFnyFpqiCfscpxhtGPe+m0Ytp+6xRhGbaeBQrnComZi/+kKKspWgL/7PY5EjzfkFSl51FQ=
+	t=1760936836; cv=none; b=UsrxIAAsEUyJCwzcw1Qt+pCIuWQAKfBaKQcp5oGOw3V6LkyNFe9s7F6zHR5cc1Y0yNDPbU5godHRtUmiErFd2qK+C0O6CQIrXZulxGZ6d/d/B0CxstdP0dcJpTm5Swn8kbfaDFfaximdtZg5I7w5JawfDZld0QGqzvsqS+ZdbIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760936594; c=relaxed/simple;
-	bh=etxCApgdgnBijPI1T0DibfTrBg+nQeKaoI9q1FeiBrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FjMEsz4nXxLPVW/62z7y9C7P47uImCpGoka7XVTSpLRuKL5MqZlMbkX54mt1wU9xUQsezAI+LiGvtMbRkGtWczpCF7yvw2vKiINp7Izf+gQk8klEHdG7ARQgrdG19sJY9lug00CFOj22/dPBhtAr6RSpTG/RqM9eVrbuWuwxnFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bT3IsDld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7377CC4CEFE
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:03:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760936594;
-	bh=etxCApgdgnBijPI1T0DibfTrBg+nQeKaoI9q1FeiBrQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bT3IsDldZ+dzs0SKlb68Axv/OITgz37S+13So+mN0V24dm8/b2ZxF96GrnBxP7fG5
-	 V5zwgcRZfw6wO2L8NoTLGxJ44L97YhZyxSr7Y8IhC0XdCtyQTsY5UoVJ54G4JTD6yj
-	 lmiuChqH/BGmQyVlo+BALZqnrs4UQFNW0X87gEQDAa0DUWwwMIUfgCbVF3AMKHSvaN
-	 6XGP/6gxS8Hjslm41y5Uu6T7YPFQNbQy4N47NGXsPEghJl9QLJRT6KFN00p72vyMRn
-	 2Vw9+C1cfI377S/+Lgt/H+MyEWLQ1Sve5G1sJY27aCDnGPlkGFviKms+jh2o3K7/Lk
-	 2YNlZx/LJjPTA==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c49539cf7so2963380a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 22:03:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXkygaf7sOPnB6fToYlxXl62q6k+ilTlrIBuTkNrKjbqxppIp3T0wfiEWfTHUZ1ZbUwth5MhfDOa1Ct/oM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6GFK10vGODy0p9Ol/kmZGcdIbk1IBgimmFKkF2JGJ5ofnR0lO
-	6SYd1/Mq9ZVb55wMJ4cMoftF23loktcNXW3mC9Vq706/WEN9nQ7qpFacytooFs90s2QJvZHVqq3
-	u2pdtZ1vNvnmhLiDGaw8Z+zPTuPaxY4w=
-X-Google-Smtp-Source: AGHT+IFx+F2BT09NtY957zTEzJFrrLdKDfb/4t9mK+mq3XyOhaPDmlUqvbNnye4qaRJB5iC9dHHISj0/zR9BxV+CINg=
-X-Received: by 2002:a05:6402:848:b0:639:c94f:93b9 with SMTP id
- 4fb4d7f45d1cf-63c1f6d4691mr10433481a12.33.1760936593075; Sun, 19 Oct 2025
- 22:03:13 -0700 (PDT)
+	s=arc-20240116; t=1760936836; c=relaxed/simple;
+	bh=zUB2g3AECxnAOw7faHNNWjkv2Y53JovcHFQ/3tBfPGY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GgptNjx42hsyX3Ku8f9RKoQMxJLk8Y+y8uu+2AzomME4qZVzo3o3GXP74d6lyGMaJV6IdlyMsBMOQ3gTcqP0RwvDjl1lni9+IvBp8nEW0SNFO+NFxyK3HVUCCNpQFMviMyY9DNNvGR+5Hn+f/Iw9yKze/gM8VoP8NCZ5FFOWNpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e809242d0so635469739f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 22:07:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760936834; x=1761541634;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=svOFUgSkKPzmpuo6vMNkhQsklUncgAj20xgi8iPCxMM=;
+        b=kHBbWJrE9INAxYAzpWEgfmKSpDD+3y4pRVu0oU27BSvq9chEOgKvHDq3lHb8UUYlsc
+         R9oPFwokA8IWv1dFeMrik9A1OIKbiSbsqQhwJkFZMTiio+H8Ij/QuSYR2rDfhstyMVF1
+         qRBTU3STMcMoBW7xhhVrUl7c+PoeWb0wh3+zaQ1Nf4+S61jsTuTUw/DTjxV8x30p56c2
+         az9/eqMzG5MlNXI/sw6dJi2ewuLz0vuOSpuvD2DRKFqKoruM2g3j5Xt64a0sJpaxf1nD
+         IEOmjaMoxGoMJy0VAhOKcx9uN1aip6MpnzTBzcuQs1HAiw8Q2JeY6CPh3ER7EganIshW
+         JFgA==
+X-Gm-Message-State: AOJu0YxX6vaaY0qqoN2Ez7GsPybwz78xf8mQdmPhjmh47KUNpyvwkFPo
+	fGiDQZUFXE1Fuf8/7k3vfnVARtjSBOWQ2iwuQcnvOX6Z7t8N3PRb6ffp2piMZkHcifKMgYwWGqU
+	1sxHLjJs0m08JLWHkJdsUyQFi+EIT4McCp2lh9BT5PAKIDVGgr3+4WiioWLk=
+X-Google-Smtp-Source: AGHT+IGw4dL0S9HgZTeKPlWuXRLhamlodke0q1EpHDRg+GMmcNWRUanrmB9pRoLxA+a8mfEKDN5OWc20m5RFlbGMU5lsqcedARDx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev> <20251014071917.3004573-10-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251014071917.3004573-10-chenxiaosong.chenxiaosong@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 20 Oct 2025 14:03:01 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-zUyxsrevM9huWDeyOb3Y7XbT3ngqq1Xax0um-dXTwqg@mail.gmail.com>
-X-Gm-Features: AS18NWAH1NWKTf5iWkVIYaCb0sEEOhlcF6TaOw0NJJrXIjjP-x3O0tyby-A7Yig
-Message-ID: <CAKYAXd-zUyxsrevM9huWDeyOb3Y7XbT3ngqq1Xax0um-dXTwqg@mail.gmail.com>
-Subject: Re: [PATCH v3 09/22] smb: move copychunk definitions to common/smb2pdu.h
-To: chenxiaosong.chenxiaosong@linux.dev
-Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
-	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
-	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
-	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
+X-Received: by 2002:a05:6602:2dd1:b0:940:da3b:6acb with SMTP id
+ ca18e2360f4ac-940da3b7640mr309253939f.18.1760936833963; Sun, 19 Oct 2025
+ 22:07:13 -0700 (PDT)
+Date: Sun, 19 Oct 2025 22:07:13 -0700
+In-Reply-To: <68c58bfa.050a0220.3c6139.04d2.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f5c381.a70a0220.205af.0026.GAE@google.com>
+Subject: Forwarded: [PATCH v2] ext4: refresh inline data size before write operations
+From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-> diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-> index 0be63c00f848..9b5880e60a4e 100644
-> --- a/fs/smb/client/smb2pdu.h
-> +++ b/fs/smb/client/smb2pdu.h
-> @@ -191,36 +191,12 @@ struct crt_sd_ctxt {
->         struct smb3_sd sd;
->  } __packed;
->
-> -
-> -#define COPY_CHUNK_RES_KEY_SIZE        24
->  struct resume_key_req {
->         char ResumeKey[COPY_CHUNK_RES_KEY_SIZE];
->         __le32  ContextLength;  /* MBZ */
->         char    Context[];      /* ignored, Windows sets to 4 bytes of zero */
->  } __packed;
-This can also be moved along with copychunk structures.
-Thanks.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: [PATCH v2] ext4: refresh inline data size before write operations
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+The cached ei->i_inline_size can become stale between the initial size
+check and when ext4_update_inline_data()/ext4_create_inline_data() use
+it. Although ext4_get_max_inline_size() reads the correct value at the
+time of the check, concurrent xattr operations can modify i_inline_size
+before ext4_write_lock_xattr() is acquired.
+
+This causes ext4_update_inline_data() and ext4_create_inline_data() to
+work with stale capacity values, leading to a BUG_ON() crash in
+ext4_write_inline_data():
+
+  kernel BUG at fs/ext4/inline.c:1331!
+  BUG_ON(pos + len > EXT4_I(inode)->i_inline_size);
+
+The race window:
+1. ext4_get_max_inline_size() reads i_inline_size = 60 (correct)
+2. Size check passes for 50-byte write
+3. [Another thread adds xattr, i_inline_size changes to 40]
+4. ext4_write_lock_xattr() acquires lock
+5. ext4_update_inline_data() uses stale i_inline_size = 60
+6. Attempts to write 50 bytes but only 40 bytes actually available
+7. BUG_ON() triggers
+
+Fix this by recalculating i_inline_size via ext4_find_inline_data_nolock()
+immediately after acquiring xattr_sem. This ensures ext4_update_inline_data()
+and ext4_create_inline_data() work with current values that are protected
+from concurrent modifications.
+
+This is similar to commit a54c4613dac1 ("ext4: fix race writing to an
+inline_data file while its xattrs are changing") which fixed i_inline_off
+staleness. This patch addresses the related i_inline_size staleness issue.
+
+Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
+Cc: stable@kernel.org
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+Changes in v2:
+- Simplified to single-line fix (refresh i_inline_size after taking lock)
+- The refresh protects ext4_update_inline_data()/ext4_create_inline_data()
+  from using stale i_inline_size that may have changed between the initial
+  size check and lock acquisition
+- Follows same pattern as commit a54c4613dac1 for consistency
+---
+ fs/ext4/inline.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 1b094a4f3866..b48c7dbe76a2 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -418,7 +418,12 @@ static int ext4_prepare_inline_data(handle_t *handle, struct inode *inode,
+ 		return -ENOSPC;
+ 
+ 	ext4_write_lock_xattr(inode, &no_expand);
+-
++	/*
++	 * ei->i_inline_size may have changed since the initial check
++	 * if other xattrs were added. Recalculate to ensure
++	 * ext4_update_inline_data() validates against current capacity.
++	 */
++	(void) ext4_find_inline_data_nolock(inode);
+ 	if (ei->i_inline_off)
+ 		ret = ext4_update_inline_data(handle, inode, len);
+ 	else
+-- 
+2.43.0
+
 
