@@ -1,54 +1,79 @@
-Return-Path: <linux-kernel+bounces-860469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DA5BF0316
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B9CBF031F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DE5A4F1C58
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2130E3BA046
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1273D6F;
-	Mon, 20 Oct 2025 09:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8622F12CA;
+	Mon, 20 Oct 2025 09:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ULhkehzu"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="g5+Fz/4W"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BEA167272
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62491DDC5
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952776; cv=none; b=LorkncwDAa6fV0kP/QZ3HWY9R3mIn5UFAB7I8B11Vo1TTr/Nr7tKjGCuuG1hpiHcI3sOF9gwwDeZkFXyYnnTARn5jQ0R3aWVyKPvJOqSd3/0vLJBVWLD5jM/B98EU+0DBVJfOmbDo5VFX+uSlid0weLiNjFlPLeuyC4Y7SZADhA=
+	t=1760952812; cv=none; b=IpDGZdq2GksUfBKwpdyek4q3FgRy8uRtMp6i5Bj04YS/2AYPiksTVMvKQlhCldn2nwmPAj7qIJQ9XX3c4y4TEov/jywPPuAebuT2MLGXS2apRKmX+IowsjhlCj1Cd8Jf6pZydcYPLOdYcXxtBYgadhpHfywrj9lz090qKxSRcII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952776; c=relaxed/simple;
-	bh=EQQSvK9Zes0aGSRKn3lcU0vKC4Njc8y3MfnUjJQjcuQ=;
+	s=arc-20240116; t=1760952812; c=relaxed/simple;
+	bh=q7KMqZysh+a3liEOjxIZ5pRAbK2zhPglz1suWJYgrtE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mYl+7R7Mdt3dliyVW1U04NGD/I51siHU0OfjQPCkwCy6+z6K7hD66v4kcSCEzhp3nd5fmQVWry2cA68n0ec+7TCG2nH1nX5G3u0cWPS9x10Pb1kO1uDLDQtw/xQe2GxoBp8QuLdOtxnd/bgy1XSm+r+ZDKsCyH9uIgvNApj5CQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ULhkehzu; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id EB38C4E4120B;
-	Mon, 20 Oct 2025 09:32:50 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BF17A606D5;
-	Mon, 20 Oct 2025 09:32:50 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 647E9102F23A5;
-	Mon, 20 Oct 2025 11:32:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760952769; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=gtraHV6tD9LMKBudKXJHrkWgzDDis34qevkyGhCtEA4=;
-	b=ULhkehzui4+Ze3NHhCw8OMTAHXwv4oGVtZa0hDSLkxX/UG8SvbSN0PjmVqYIdg0iX0jix5
-	W4Zeq952RjF+8bdaxgfHOThl4QttcfUWbaPvfHrbHz29UEAhGpS3z0lb/iWan1+yfcx4wO
-	awLEDw2RDqcNsPYcqlg0IqtPsTBNgsEP+t0zGAaV4zU3V+a4PGjnBgIZWwt0b+cA2yKR40
-	5W50Pov7mZOjSJbmpm/UosEQdHDokkvAnlXm0QimgTH2qhPv7EzlMoDZo3htdoieFGV297
-	yIwq1ovbcf7gGKx0bx88ZmpdC1lLiE70c6uNN8+A6dxF0wv4+9UMGzLAY5jZeQ==
-Message-ID: <b2c58580-d891-4d10-b3dd-572f7f98c6fe@bootlin.com>
-Date: Mon, 20 Oct 2025 11:32:37 +0200
+	 In-Reply-To:Content-Type; b=QNomvYX8hdja4Q9PYaBncTPW1PekmXfLt1tPQJn11GiWUcR3jnUWpxznbi8CnGxv2EivYL629Sns8GJysnUi2c5SgxUinjOgXo4Lcc4mCKc0+dkVLxfGn2BghMPbGDW7WDdaXFNOk1Q/kF1JmGRXXbG1Z7lpvaPUPCFnhOsNkgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=g5+Fz/4W; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47112a73785so30839285e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1760952809; x=1761557609; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=35P1VBGXpvybu0O/QguU3+ECEHWeEOmbTTq+p+G5dt8=;
+        b=g5+Fz/4WhZLjOD6z2nzvpci2WZ3fFSZSzKZsBfNcwBrhBV0Hz5hZ8x3xaWHZDocA1A
+         1bSV7l8ZSYKhTWwihvNV3ly8iaHspaBtgWWK62DdIfdWvecejuXg0V04mfhnLZgL5HhN
+         MVDwKj3ydQb/1oVH7o4xRRDE54LwhSNsN0KinbAb/nliGvFAebDzX3bq8ljOJXvtbdgd
+         875xrRMCEBRPaydmY8btpFEUGtz2TmDu4ADwpHOAa1MufhJaeHwc9yKPO9oO2+oESZZd
+         SJ+NNH3BFkp0sNGqc3keTbXNgNjaLfI7PIo1nDG0TN3TXsBjs2bSNc7lwI5lIddt5qWk
+         c85w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760952809; x=1761557609;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=35P1VBGXpvybu0O/QguU3+ECEHWeEOmbTTq+p+G5dt8=;
+        b=g8S2J+IYREKtEPG6tPCha4qVkuT20YCJ7/NB/0mBAvyVjtbchYFBcuUeEdthTzQs2I
+         yIyWAhoZ5Glp3CJx7v7XVUiqewX6LTLRFzMKBrzi85wLKJ25rsq80G6/nOUBxzP0AFOR
+         eFaNA8H09MCyvHBsIoTn3ytsubBYXgSqDCh7A0laJ6IwqoH+ngoILBbD0gHxEphSFyq+
+         dy/7YUIdaMbKBFnDtJER8cNbkhrvL/Uq4TbSySHakbZhoRatKDI7bO+OMUJwguU4BLfm
+         6GDFEJHsjkxffG8gtjeFKQ2J2xkKNZedaDp4gds9KV4MJppsqLnD6SpIfRADwjifM5zS
+         GAgA==
+X-Gm-Message-State: AOJu0YyTV8Jkxf9itOVT5i7uhFKi90A4jSqnPZe5AY/DlwNN5KErDVUs
+	L8cF07vEiPCYEq1KFyyRFkZfAi2jOst/GYTIPfBXQEtgCmuXxVFL3A9+SZtcvF1cnQs=
+X-Gm-Gg: ASbGnctNUZngpQGDqJfqBhCtDDUlQoPJSBKbfgTV2xCh0NU8P6UubRnBryBG5ZDMRvh
+	hs1gGlIoXtokn5HnweQ56PYZeS1+eCYHuzuhGXrSTl5LJ8u6Bg1NO/WueKErP8beLcyyuJNNzCH
+	NMy5UaM6qyPYw15CvSV/JiMz7aa8FVjU0EEAhJ4y+0Cx/Qj6meRwCP2g1ysxgsYHvgz+F73RytS
+	4Q+l4AQBlHLwxMKWVd42ndhFKqdRl4m5FvBkkdIfyVF3/tLEVJu7a3x+acl4qrZIQT5p84BJa9M
+	vN+uSc9Evqe7nDCVpuzi8xnhyhSNQW9iAYztYBC5MNR5OAII3RDtK9Uz2vX5s81zslR7TD2IqwR
+	2Jjd8wC5D8bOXXsUxnoDHFnDlbNUdlWd/fee1y8Af+3kXQUkrSeVVpvTcRKSTuWzn4HY6Bug2jI
+	gZAmvl23iCgjReYs/ipPsjn1CzQQ==
+X-Google-Smtp-Source: AGHT+IGUDMR8mkIoFpUlAAdUP/6zPdVHLyL+h1bB5WDQD3WBZIgLWI1xtBdpKBPhcrO0v8yIyFyufw==
+X-Received: by 2002:a05:600d:41cc:b0:471:13dd:baef with SMTP id 5b1f17b1804b1-4711791beadmr80450325e9.26.1760952808602;
+        Mon, 20 Oct 2025 02:33:28 -0700 (PDT)
+Received: from [192.168.0.101] ([90.242.12.242])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715520dd65sm134062965e9.15.2025.10.20.02.33.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 02:33:28 -0700 (PDT)
+Message-ID: <0130b962-6cd7-4f2c-8fd0-809a21495e03@ursulin.net>
+Date: Mon, 20 Oct 2025 10:33:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,153 +81,300 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/3] net: stmmac: Allow supporting coarse
- adjustment mode
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
- <20251015102725.1297985-3-maxime.chevallier@bootlin.com>
- <20251017182358.42f76387@kernel.org>
- <d40cbc17-22fa-4829-8eb0-e9fd26fc54b1@bootlin.com>
- <20251020110040.18cf60c9@kmaincent-XPS-13-7390>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251020110040.18cf60c9@kmaincent-XPS-13-7390>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v4 07/13] drm/v3d: Use huge tmpfs mount point helper
+To: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Miko=C5=82aj_Wasiak?=
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>,
+ Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Christopher Healy <healych@amazon.com>, Matthew Wilcox
+ <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kernel@collabora.com
+References: <20251015153018.43735-1-loic.molinari@collabora.com>
+ <20251015153018.43735-8-loic.molinari@collabora.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20251015153018.43735-8-loic.molinari@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Köry,
 
-On 20/10/2025 11:00, Kory Maincent wrote:
-> On Sat, 18 Oct 2025 09:42:57 +0200
-> Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On 15/10/2025 16:30, Loïc Molinari wrote:
+> Make use of the new drm_gem_huge_mnt_create() helper to avoid code
+> duplication. Now that it's just a few lines long, the single function
+> in v3d_gemfs.c is moved into v3d_gem.c.
 > 
->> Hi Jakub,
->>
->> On 18/10/2025 03:23, Jakub Kicinski wrote:
->>> On Wed, 15 Oct 2025 12:27:22 +0200 Maxime Chevallier wrote:  
->>>> The DWMAC1000 supports 2 timestamping configurations to configure how
->>>> frequency adjustments are made to the ptp_clock, as well as the reported
->>>> timestamp values.
->>>>
->>>> There was a previous attempt at upstreaming support for configuring this
->>>> mode by Olivier Dautricourt and Julien Beraud a few years back [1]
->>>>
->>>> In a nutshell, the timestamping can be either set in fine mode or in
->>>> coarse mode.
->>>>
->>>> In fine mode, which is the default, we use the overflow of an accumulator
->>>> to trigger frequency adjustments, but by doing so we lose precision on the
->>>> timetamps that are produced by the timestamping unit. The main drawback
->>>> is that the sub-second increment value, used to generate timestamps, can't
->>>> be set to lower than (2 / ptp_clock_freq).
->>>>
->>>> The "fine" qualification comes from the frequent frequency adjustments we
->>>> are able to do, which is perfect for a PTP follower usecase.
->>>>
->>>> In Coarse mode, we don't do frequency adjustments based on an
->>>> accumulator overflow. We can therefore have very fine subsecond
->>>> increment values, allowing for better timestamping precision. However
->>>> this mode works best when the ptp clock frequency is adjusted based on
->>>> an external signal, such as a PPS input produced by a GPS clock. This
->>>> mode is therefore perfect for a Grand-master usecase.
->>>>
->>>> We therefore attempt to map these 2 modes with the newly introduced
->>>> hwtimestamp qualifiers (precise and approx).
->>>>
->>>> Precise mode is mapped to stmmac fine mode, and is the expected default,
->>>> suitable for all cases and perfect for follower mode
->>>>
->>>> Approx mode is mapped to coarse mode, suitable for Grand-master.  
->>>
->>> I failed to understand what this device does and what the problem is :(
->>>
->>> What is your ptp_clock_freq? Isn't it around 50MHz typically? 
->>> So 2 / ptp_freq is 40nsec (?), not too bad?  
->>
->> That's not too bad indeed, but it makes a difference when acting as
->> Grand Master, especially in this case because you don't need to
->> perform clock adjustments (it's sync'd through PPS in), so we might
->> as well take this opportunity to improve the TS.
->>
->>>
->>> My recollection of the idea behind that timestamping providers
->>> was that you can configure different filters for different providers.
->>> IOW that you'd be able to say:
->>>  - [precise] Rx stamp PTP packets 
->>>  -  [approx] Rx stamp all packets
->>> not that you'd configure precision of one piece of HW..  
->>
->> So far it looks like only one provider is enabled at a given time, my
->> understanding was that the qualifier would be used in case there
->> are multiple timestampers on the data path, to select the better one
->> (e.g. a PHY that supports TS, a MAC that supports TS, we use the 
->> best out of the two).
+> v3:
+> - use huge tmpfs mountpoint in drm_device
+> - move v3d_gemfs.c into v3d_gem.c
 > 
-> No, we do not support multiple timestampers at the same time.
-> For that IIUC we would have to add a an ID of the source in the packet. I
-> remember people were talking about modifying cmsg. 
-> This qualifier is indeed a first step to walk this path but I don't think
-> people are currently working on adding this support for now. 
+> v4:
+> - clean up mountpoint creation error handling
 > 
->> However I agree with your comments, that's exactly the kind of feedback
->> I was looking for. This work has been tried several times now each
->> time with a different uAPI path, I'm OK to consider that this is out
->> of the scope of the hwprov feature.
->>
->>> If the HW really needs it, just lob a devlink param at it?  
->>
->> I'm totally OK with that. I'm not well versed into devlink, working mostly
->> with embedded devices with simple-ish NICs, most of them don't use devlink.
->> Let me give it a try then :)
+> Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
+> ---
+>   drivers/gpu/drm/v3d/Makefile    |  3 +-
+>   drivers/gpu/drm/v3d/v3d_bo.c    |  5 ++-
+>   drivers/gpu/drm/v3d/v3d_drv.c   |  2 +-
+>   drivers/gpu/drm/v3d/v3d_drv.h   | 11 +-----
+>   drivers/gpu/drm/v3d/v3d_gem.c   | 27 +++++++++++++--
+>   drivers/gpu/drm/v3d/v3d_gemfs.c | 60 ---------------------------------
+>   6 files changed, 30 insertions(+), 78 deletions(-)
+>   delete mode 100644 drivers/gpu/drm/v3d/v3d_gemfs.c
 > 
-> meh, I kind of dislike using devlink here. As I said using timestamping
-> qualifier is a fist step for the multiple timestamping support. If one day we
-> will add this support, if there is other implementation it will add burden on
-> the development to track and change all the other implementation. Why don't we
-> always use this qualifier parameter even if it is not really for simultaneous
-> timestamping to avoid any future wrong development choice.
+> diff --git a/drivers/gpu/drm/v3d/Makefile b/drivers/gpu/drm/v3d/Makefile
+> index fcf710926057..b7d673f1153b 100644
+> --- a/drivers/gpu/drm/v3d/Makefile
+> +++ b/drivers/gpu/drm/v3d/Makefile
+> @@ -13,8 +13,7 @@ v3d-y := \
+>   	v3d_trace_points.o \
+>   	v3d_sched.o \
+>   	v3d_sysfs.o \
+> -	v3d_submit.o \
+> -	v3d_gemfs.o
+> +	v3d_submit.o
+>   
+>   v3d-$(CONFIG_DEBUG_FS) += v3d_debugfs.o
+>   
+> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+> index c41476ddde68..6b9909bfce82 100644
+> --- a/drivers/gpu/drm/v3d/v3d_bo.c
+> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
+> @@ -112,7 +112,7 @@ v3d_bo_create_finish(struct drm_gem_object *obj)
+>   	if (IS_ERR(sgt))
+>   		return PTR_ERR(sgt);
+>   
+> -	if (!v3d->gemfs)
+> +	if (!obj->dev->huge_mnt)
 
-On my side I've implemented the devlink-based approach, and I have to say i'm not
-so unhappy with it :) At least I don't have the feeling this is bending
-the API to fit one specific case.
+Maybe it would be a good idea to add a helper for this check. Keeping 
+aligned with drm_gem_huge_mnt_create() something like 
+drm_gem_has_huge_mnt()? That would then hide the optional drm_device 
+struct member if you decide to go for that.
 
-The thing is that the qualifier model doesn't fully map to the situation we
-have in stmmac.
+>   		align = SZ_4K;
+>   	else if (obj->size >= SZ_1M)
+>   		align = SZ_1M;
+> @@ -148,12 +148,11 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev, struct drm_file *file_priv,
+>   			     size_t unaligned_size)
+>   {
+>   	struct drm_gem_shmem_object *shmem_obj;
+> -	struct v3d_dev *v3d = to_v3d_dev(dev);
+>   	struct v3d_bo *bo;
+>   	int ret;
+>   
+>   	shmem_obj = drm_gem_shmem_create_with_mnt(dev, unaligned_size,
+> -						  v3d->gemfs);
+> +						  dev->huge_mnt);
 
-The stmmac coarse/fine adjustment doesn't only changes the timestamping
-behaviour, but also the ptp_clock adjustment mode. 
+Okay this one goes away by the end of the series.
 
-So changing the qualifier here will have a side effect on the PTP clock,
-do we accept that as part of the hwprov timestamping API ?
+>   	if (IS_ERR(shmem_obj))
+>   		return ERR_CAST(shmem_obj);
+>   	bo = to_v3d_bo(&shmem_obj->base);
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+> index c5a3bbbc74c5..19ec0ea7f38e 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.c
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
+> @@ -106,7 +106,7 @@ static int v3d_get_param_ioctl(struct drm_device *dev, void *data,
+>   		args->value = v3d->perfmon_info.max_counters;
+>   		return 0;
+>   	case DRM_V3D_PARAM_SUPPORTS_SUPER_PAGES:
+> -		args->value = !!v3d->gemfs;
+> +		args->value = !!dev->huge_mnt;
+>   		return 0;
+>   	case DRM_V3D_PARAM_GLOBAL_RESET_COUNTER:
+>   		mutex_lock(&v3d->reset_lock);
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index 1884686985b8..99a39329bb85 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -158,11 +158,6 @@ struct v3d_dev {
+>   	struct drm_mm mm;
+>   	spinlock_t mm_lock;
+>   
+> -	/*
+> -	 * tmpfs instance used for shmem backed objects
+> -	 */
+> -	struct vfsmount *gemfs;
+> -
+>   	struct work_struct overflow_mem_work;
+>   
+>   	struct v3d_queue_state queue[V3D_MAX_QUEUES];
+> @@ -569,6 +564,7 @@ extern const struct dma_fence_ops v3d_fence_ops;
+>   struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_queue q);
+>   
+>   /* v3d_gem.c */
+> +extern bool super_pages;
+>   int v3d_gem_init(struct drm_device *dev);
+>   void v3d_gem_destroy(struct drm_device *dev);
+>   void v3d_reset_sms(struct v3d_dev *v3d);
+> @@ -576,11 +572,6 @@ void v3d_reset(struct v3d_dev *v3d);
+>   void v3d_invalidate_caches(struct v3d_dev *v3d);
+>   void v3d_clean_caches(struct v3d_dev *v3d);
+>   
+> -/* v3d_gemfs.c */
+> -extern bool super_pages;
+> -void v3d_gemfs_init(struct v3d_dev *v3d);
+> -void v3d_gemfs_fini(struct v3d_dev *v3d);
+> -
+>   /* v3d_submit.c */
+>   void v3d_job_cleanup(struct v3d_job *job);
+>   void v3d_job_put(struct v3d_job *job);
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index bb110d35f749..635ff0fabe7e 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -258,6 +258,30 @@ v3d_invalidate_caches(struct v3d_dev *v3d)
+>   	v3d_invalidate_slices(v3d, 0);
+>   }
+>   
+> +static void
+> +v3d_huge_mnt_init(struct v3d_dev *v3d)
+> +{
+> +	int err = 0;
+> +
+> +	/*
+> +	 * By using a huge shmemfs mountpoint when the user wants to
+> +	 * enable Super Pages, we can pass in mount flags that better
+> +	 * match our usecase.
+> +	 */
+> +
+> +	if (super_pages)
+> +		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
 
-Should we use this API for coarse/fine stmmac config, I agree with your
-previous comment of adding a dedicated qualifier that explicitely says
-that using this qualifier comes with side effects, with the risk of
-paving the way for lots of modes being added for driver-specific scenarios.
+If it is this patch that is creating the build failure then the two 
+should be squashed.
 
-Another thing with the stmmac implem is that we don't truly have 2
-timestampers (1 approx and 1 precise), but rather only one whose precision
-can be adjusted. Does it really make sense here to have the qualifier
-writeable for the same timestamper ?
+Then in "drm/v3d: Fix builds with CONFIG_TRANSPARENT_HUGEPAGE=n" this 
+ends up a bit ugly:
 
-Of course the netlink tsinfo/tsconfig is more appealing due to its generic
-nature, but OTHO I don't want to introduce ill-defined behaviours in that
-API with this series. The multiple timestamper work still makes a ton of
-sense for MAC+PHY timestamping setups :)
+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+  	if (super_pages)
+#endif
+  		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
 
-I'm opened for both approached TBH :)
+Does this not work:
 
-Maxime
+  	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
+  		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+
+?
+
+Regards,
+
+Tvrtko
+
+> +
+> +	if (v3d->drm.huge_mnt)
+> +		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
+> +	else if (err)
+> +		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n",
+> +			 err);
+> +	else
+> +		drm_notice(&v3d->drm,
+> +			   "Transparent Hugepage support is recommended for optimal performance on this platform!\n");
+> +}
+> +
+>   int
+>   v3d_gem_init(struct drm_device *dev)
+>   {
+> @@ -309,7 +333,7 @@ v3d_gem_init(struct drm_device *dev)
+>   	v3d_init_hw_state(v3d);
+>   	v3d_mmu_set_page_table(v3d);
+>   
+> -	v3d_gemfs_init(v3d);
+> +	v3d_huge_mnt_init(v3d);
+>   
+>   	ret = v3d_sched_init(v3d);
+>   	if (ret) {
+> @@ -329,7 +353,6 @@ v3d_gem_destroy(struct drm_device *dev)
+>   	enum v3d_queue q;
+>   
+>   	v3d_sched_fini(v3d);
+> -	v3d_gemfs_fini(v3d);
+>   
+>   	/* Waiting for jobs to finish would need to be done before
+>   	 * unregistering V3D.
+> diff --git a/drivers/gpu/drm/v3d/v3d_gemfs.c b/drivers/gpu/drm/v3d/v3d_gemfs.c
+> deleted file mode 100644
+> index c1a30166c099..000000000000
+> --- a/drivers/gpu/drm/v3d/v3d_gemfs.c
+> +++ /dev/null
+> @@ -1,60 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/* Copyright (C) 2024 Raspberry Pi */
+> -
+> -#include <linux/fs.h>
+> -#include <linux/mount.h>
+> -#include <linux/fs_context.h>
+> -
+> -#include "v3d_drv.h"
+> -
+> -void v3d_gemfs_init(struct v3d_dev *v3d)
+> -{
+> -	struct file_system_type *type;
+> -	struct fs_context *fc;
+> -	struct vfsmount *gemfs;
+> -	int ret;
+> -
+> -	/*
+> -	 * By creating our own shmemfs mountpoint, we can pass in
+> -	 * mount flags that better match our usecase. However, we
+> -	 * only do so on platforms which benefit from it.
+> -	 */
+> -	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> -		goto err;
+> -
+> -	/* The user doesn't want to enable Super Pages */
+> -	if (!super_pages)
+> -		goto err;
+> -
+> -	type = get_fs_type("tmpfs");
+> -	if (!type)
+> -		goto err;
+> -
+> -	fc = fs_context_for_mount(type, SB_KERNMOUNT);
+> -	if (IS_ERR(fc))
+> -		goto err;
+> -	ret = vfs_parse_fs_string(fc, "source", "tmpfs");
+> -	if (!ret)
+> -		ret = vfs_parse_fs_string(fc, "huge", "within_size");
+> -	if (!ret)
+> -		gemfs = fc_mount_longterm(fc);
+> -	put_fs_context(fc);
+> -	if (ret)
+> -		goto err;
+> -
+> -	v3d->gemfs = gemfs;
+> -	drm_info(&v3d->drm, "Using Transparent Hugepages\n");
+> -
+> -	return;
+> -
+> -err:
+> -	v3d->gemfs = NULL;
+> -	drm_notice(&v3d->drm,
+> -		   "Transparent Hugepage support is recommended for optimal performance on this platform!\n");
+> -}
+> -
+> -void v3d_gemfs_fini(struct v3d_dev *v3d)
+> -{
+> -	if (v3d->gemfs)
+> -		kern_unmount(v3d->gemfs);
+> -}
+
 
