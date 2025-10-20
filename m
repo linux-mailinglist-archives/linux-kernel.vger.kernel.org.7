@@ -1,99 +1,157 @@
-Return-Path: <linux-kernel+bounces-859903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812AFBEEEED
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:41:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D85BEEEFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9E6E4E1503
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 00:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A51E3BA884
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 00:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD0086323;
-	Mon, 20 Oct 2025 00:41:12 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.123])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CEDB652;
-	Mon, 20 Oct 2025 00:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D5B1A4E70;
+	Mon, 20 Oct 2025 00:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/wAwz++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429FC29A1;
+	Mon, 20 Oct 2025 00:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760920872; cv=none; b=NpL6NcQUlcfUVyt/eoSujl+ZY8BW7oGLUqhAYBK6kOVXZ27B24aTY2ASZ9jKDDDNo6ar1P+sO0/4ephjbBhKmyDO1NgxHaiPx5QJ3tvMh7fgxjfKlAavPI5y7UF/1vUC9htm5kN4BOe9r+1UV7wO7Ra2DtFXPRaeYeToP0LgfOc=
+	t=1760921612; cv=none; b=sne1+QBtlWgaM0LgU5nkkt/dlx/+T0m1/DDK35dhQjC8FzJ+5QUefK9ckhHXw9Rbz1P6FZCashvghDexB/FGPfe5SQzfyp2/Nc/peMysFRHtdu49xzcrYq6aDbbdatNd/aFjGogo8EdX5ayNxf2eUajVVEPYjZ7HxufKQIGIYJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760920872; c=relaxed/simple;
-	bh=np4+VdCIYjoDgWkrRURQxL7azM8oS7+Nph68KFVuIhU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PkwOG/3O9WDVU6Vz+l3fEbW5sVOJuHXoYebioROckjUUlua9CcFnuaMSTvUpvO/+L6lwUgHvipCXgu1ZBBePeLhOZhoki+zAvdk+Atkhb7g0kfZhuZkmY6HN2sxmc7tXuQC8fPfxZgbksHw/toZY7mVJq0GebZazUjMIMnsxCak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: YC6X55iFRL6o4pHcGmm1VA==
-X-CSE-MsgGUID: P+78NqPvTcyp1OLC12hHdA==
-X-IronPort-AV: E=Sophos;i="6.19,241,1754928000"; 
-   d="scan'208";a="155764876"
-From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
-To: Jiri Kosina <jikos@kernel.org>
-CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Benjamin Tissoires
-	<bentiss@kernel.org>, "kenalba@google.com" <kenalba@google.com>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?gb2312?B?wO7F9A==?= <lipeng43@xiaomi.com>, =?gb2312?B?wqy5+rrq?=
-	<luguohong@xiaomi.com>
-Subject: =?gb2312?B?tPC4tDogtPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFtQQVRDSCB2Ml0gSElE?=
- =?gb2312?B?OiBoaWQtaW5wdXQ6IG9ubHkgaWdub3JlIDAgYmF0dGVyeSBldmVudHMgZm9y?=
- =?gb2312?Q?_digitizers?=
-Thread-Topic: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFtQQVRDSCB2Ml0gSElEOiBoaWQt?=
- =?gb2312?B?aW5wdXQ6IG9ubHkgaWdub3JlIDAgYmF0dGVyeSBldmVudHMgZm9yIGRpZ2l0?=
- =?gb2312?Q?izers?=
-Thread-Index: AQHcPeaJlgoeOuC85U+13WxtbainmbTFgLmngAB5O4CABD5tZQ==
-Date: Mon, 20 Oct 2025 00:40:59 +0000
-Message-ID: <4b7b5b7a13fc4191a0d7c99233984e45@xiaomi.com>
-References: <c5b52grvciabpcgavhjqximqqq6fczowgvmckke6aflq72mzyv@gzzkyt25xygc>,<p7675qor-q8qp-spr8-3o6r-pp3qp42qp4q4@xreary.bet>
- <c717d9d1483f4436a9ba6e4266ea4e55@xiaomi.com>,<pp809797-55r9-0os0-0n21-6990q620q788@xreary.bet>
-In-Reply-To: <pp809797-55r9-0os0-0n21-6990q620q788@xreary.bet>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760921612; c=relaxed/simple;
+	bh=JmOANjyD/5j6cWmAe84VhHCBmVIXWn3nb+w9e/Dv9Ds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ONm/V2d2gKbz6yFiclyHyWLokCTfbnKy9OVSDrVECtqlOYxvWE5cI7rU8cOVT5tn0qz+zSJe/F78oFU6QUcocThVNyTJgddiRvVkwBva4d4Zw9oqEF6jaKG/SlRGmbdjw+r7X8Ndp4Fric+hcR9avHDHnZvwQ2jA3PrtEPgBH88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/wAwz++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED4AC4CEE7;
+	Mon, 20 Oct 2025 00:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760921611;
+	bh=JmOANjyD/5j6cWmAe84VhHCBmVIXWn3nb+w9e/Dv9Ds=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a/wAwz++HOKRcfz9DcEAOY2sylzStIUZNP4xJm9y3uzHsLR9qu7KYWo630H4TD9mZ
+	 Du7k2rDKKuzY2rHR3s8u+h0vtGyRO3wFaqFxVbcwrP7QWizJ/Eh/k90udvxWpb25kI
+	 ZgLL3xBBHmweo2Cc+KPWLhWMkosDhXvMS3Y+hujXL10R8TshutyCNFF/YTnJyFWBBl
+	 cFBo6rGTlWNnbsChsVhY7mMbHxhHPAOn5STP+0YYrII/m0b1sQm73yvdFGridtHKwf
+	 uJKKC/Mk4CqvjW2P0t0Xv3OApbhC105t2kxI6yqgyjuoY9OlAIuuAksuKj3Jfq8pTf
+	 x0hwFWzW091Rw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 00/17] SHA-3 library
+Date: Sun, 19 Oct 2025 17:50:21 -0700
+Message-ID: <20251020005038.661542-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-DQpUaGFuayB5b3Ugc28gbXVjaKOhDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fDQq3orz+yMs6IEppcmkgS29zaW5hIDxqaWtvc0BrZXJuZWwub3JnPg0Kt6LLzcqxvOQ6
-IDIwMjXE6jEw1MIxN8jVIDIzOjUxOjQzDQrK1bz+yMs6IMKsufq66g0Ks63LzTogRG1pdHJ5IFRv
-cm9raG92OyBCZW5qYW1pbiBUaXNzb2lyZXM7IGtlbmFsYmFAZ29vZ2xlLmNvbTsgbGludXgtaW5w
-dXRAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyDA7sX0DQrW
-98ziOiBSZTogtPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFtQQVRDSCB2Ml0gSElEOiBoaWQtaW5w
-dXQ6IG9ubHkgaWdub3JlIDAgYmF0dGVyeSBldmVudHMgZm9yIGRpZ2l0aXplcnMNCg0KW83isr/T
-yrz+XSC0y9PKvP7AtNS009rQocPXuavLvs3isr+jrMfrvffJ97SmwO2ho8j0ttTTyrz+sLLIq9DU
-tObSyaOsx+u9q9PKvP7XqreiuPhtaXNlY0B4aWFvbWkuY29tvfjQ0Le0wKENCg0KT24gRnJpLCAx
-NyBPY3QgMjAyNSwgwqy5+rrqIHdyb3RlOg0KDQo+IFdoZXJlIGNhbiBJIGZpbmQgaW5mb3JtYXRp
-b24gYWJvdXQgeW91ciBjb21taXRzPyBJcyBpdA0KPiAiaHR0cHM6Ly93ZWIuZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2hpZC9oaWQuZ2l0L2xvZy8/aD1mb3ItNi4xNy91
-cHN0cmVhbS1maXhlcyI/DQo+IFNvIGZhciwgSSBoYXZlbid0IHNlZW4gYW55IGluZm9ybWF0aW9u
-IGFib3V0IHRoaXMgY29tbWl0LiBJJ2xsIG5lZWQgdGhpcw0KPiBpbmZvcm1hdGlvbiB3aGVuIEkg
-c3VibWl0IHRoaXMgY29kZSB0byBHb29nbGUncyBHS0kuIFRoYW5rIHlvdSENCg0KVGhlIHF1ZXVl
-IG9mIGZpeGVzIGZvciA2LjE4IGlzIGF0DQoNCiAgICAgICAgaHR0cHM6Ly9naXQua2VybmVsLm9y
-Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvaGlkL2hpZC5naXQvbG9nLz9oPWZvci02LjE4L3Vw
-c3RyZWFtLWZpeGVzDQoNCmFuZCBpdCdzIGp1c3Qgbm93IG9uIGl0cyB3YXkgdG8gTGludXMnIHRy
-ZWU6DQoNCiAgICAgICAgaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvaGlkL2hpZC5naXQvbG9nLz9oPWZvci1saW51cw0KDQotLQ0KSmlyaSBLb3NpbmENClNV
-U0UgTGFicw0KDQojLyoqKioqKrG+08q8/rywxuS4vbz+uqzT0NChw9e5q8u+tcSxo8Pc0MXPoqOs
-vfbP3tPat6LLzbj4yc/D5rXY1rfW0MHQs/a1xLj2yMu78si61+mho7371rnIzrrOxuTL+8jL0tTI
-zrrO0M7Kvcq508OjqLD8wKi1q7K7z97T2sirsr+78rK/t9a12NC5wrahori01sahorvyyaK3oqOp
-sb7Tyrz+1tC1xNDFz6Kho8jnufvE+rTtytXBy7G+08q8/qOsx+vE+sGivLS157uwu/LTyrz+zajW
-qreivP7Iy7Kiyb6z/bG+08q8/qOhIFRoaXMgZS1tYWlsIGFuZCBpdHMgYXR0YWNobWVudHMgY29u
-dGFpbiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gZnJvbSBYSUFPTUksIHdoaWNoIGlzIGludGVu
-ZGVkIG9ubHkgZm9yIHRoZSBwZXJzb24gb3IgZW50aXR5IHdob3NlIGFkZHJlc3MgaXMgbGlzdGVk
-IGFib3ZlLiBBbnkgdXNlIG9mIHRoZSBpbmZvcm1hdGlvbiBjb250YWluZWQgaGVyZWluIGluIGFu
-eSB3YXkgKGluY2x1ZGluZywgYnV0IG5vdCBsaW1pdGVkIHRvLCB0b3RhbCBvciBwYXJ0aWFsIGRp
-c2Nsb3N1cmUsIHJlcHJvZHVjdGlvbiwgb3IgZGlzc2VtaW5hdGlvbikgYnkgcGVyc29ucyBvdGhl
-ciB0aGFuIHRoZSBpbnRlbmRlZCByZWNpcGllbnQocykgaXMgcHJvaGliaXRlZC4gSWYgeW91IHJl
-Y2VpdmUgdGhpcyBlLW1haWwgaW4gZXJyb3IsIHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBieSBw
-aG9uZSBvciBlbWFpbCBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIGl0ISoqKioqKi8jDQo=
+This series is targeting libcrypto-next.  It can also be retrieved from:
+
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha3-lib-v1
+
+This series builds on the first 5 patches of David's v6 series
+(https://lore.kernel.org/r/20251017144311.817771-1-dhowells@redhat.com),
+which I've included unmodified as the initial patches.  The remaining
+patches improve the SHA-3 library, for example by simplifying the API
+and migrating the existing arm64 and s390-optimized SHA-3 code into the
+library.  The last patch reimplements the sha3-* crypto_shash algorithms
+on top of the library.
+
+If the s390 folks could re-test the s390 optimized SHA-3 code, that
+would be helpful.  QEMU doesn't support the instructions it uses.
+
+David Howells (5):
+  s390/sha3: Rename conflicting functions
+  arm64/sha3: Rename conflicting functions
+  lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128,
+    SHAKE256
+  lib/crypto: Move the SHA3 Iota transform into the single round
+    function
+  lib/crypto: Add SHA3 kunit tests
+
+Eric Biggers (12):
+  lib/crypto: sha3: Fix libsha3 build condition
+  lib/crypto: sha3: Use appropriate conversions in
+    sha3_keccakf_generic()
+  lib/crypto: sha3: Drop unfinished SHAKE support from
+    gen-hash-testvecs.py
+  lib/crypto: sha3: Consistently use EXPORT_SYMBOL_GPL
+  lib/crypto: sha3: Replace redundant ad-hoc test with FIPS test
+  lib/crypto: sha3: Simplify the API
+  lib/crypto: sha3: Document one-shot functions in header and improve
+    docs
+  crypto: arm64/sha3 - Update sha3_ce_transform() to prepare for library
+  lib/crypto: arm64/sha3: Migrate optimized code into library
+  lib/crypto: s390/sha3: Migrate optimized code into library
+  crypto: jitterentropy - use default sha3 implementation
+  crypto: sha3 - Reimplement using library API
+
+ Documentation/crypto/index.rst                |   1 +
+ Documentation/crypto/sha3.rst                 | 147 +++++++
+ arch/arm64/configs/defconfig                  |   2 +-
+ arch/arm64/crypto/Kconfig                     |  11 -
+ arch/arm64/crypto/Makefile                    |   3 -
+ arch/arm64/crypto/sha3-ce-glue.c              | 151 -------
+ arch/s390/configs/debug_defconfig             |   3 +-
+ arch/s390/configs/defconfig                   |   3 +-
+ arch/s390/crypto/Kconfig                      |  20 -
+ arch/s390/crypto/Makefile                     |   2 -
+ arch/s390/crypto/sha.h                        |  51 ---
+ arch/s390/crypto/sha3_256_s390.c              | 157 --------
+ arch/s390/crypto/sha3_512_s390.c              | 157 --------
+ arch/s390/crypto/sha_common.c                 | 117 ------
+ crypto/Makefile                               |   2 +-
+ crypto/jitterentropy-kcapi.c                  |  12 +-
+ crypto/sha3.c                                 | 172 ++++++++
+ crypto/sha3_generic.c                         | 290 -------------
+ crypto/testmgr.c                              |   8 +
+ include/crypto/sha3.h                         | 314 ++++++++++++++-
+ lib/crypto/Kconfig                            |  13 +
+ lib/crypto/Makefile                           |  10 +
+ .../crypto/arm64}/sha3-ce-core.S              |  66 +--
+ lib/crypto/arm64/sha3.h                       |  64 +++
+ lib/crypto/fips.h                             |   7 +
+ lib/crypto/s390/sha3.h                        |  76 ++++
+ lib/crypto/sha3.c                             | 380 ++++++++++++++++++
+ lib/crypto/tests/Kconfig                      |  11 +
+ lib/crypto/tests/Makefile                     |   1 +
+ lib/crypto/tests/sha3_kunit.c                 | 344 ++++++++++++++++
+ lib/crypto/tests/sha3_testvecs.h              | 231 +++++++++++
+ scripts/crypto/gen-fips-testvecs.py           |   4 +
+ scripts/crypto/gen-hash-testvecs.py           |   6 +-
+ 33 files changed, 1822 insertions(+), 1014 deletions(-)
+ create mode 100644 Documentation/crypto/sha3.rst
+ delete mode 100644 arch/arm64/crypto/sha3-ce-glue.c
+ delete mode 100644 arch/s390/crypto/sha.h
+ delete mode 100644 arch/s390/crypto/sha3_256_s390.c
+ delete mode 100644 arch/s390/crypto/sha3_512_s390.c
+ delete mode 100644 arch/s390/crypto/sha_common.c
+ create mode 100644 crypto/sha3.c
+ delete mode 100644 crypto/sha3_generic.c
+ rename {arch/arm64/crypto => lib/crypto/arm64}/sha3-ce-core.S (84%)
+ create mode 100644 lib/crypto/arm64/sha3.h
+ create mode 100644 lib/crypto/s390/sha3.h
+ create mode 100644 lib/crypto/sha3.c
+ create mode 100644 lib/crypto/tests/sha3_kunit.c
+ create mode 100644 lib/crypto/tests/sha3_testvecs.h
+
+base-commit: 123fa1574bccee87da735d13e89c931e88288b40
+-- 
+2.51.1.dirty
+
 
