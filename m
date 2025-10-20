@@ -1,98 +1,86 @@
-Return-Path: <linux-kernel+bounces-861227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD68BF21E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AB2BF21F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC3E18A3854
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990151884F06
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A6126C3BD;
-	Mon, 20 Oct 2025 15:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXiJrIJ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ADB26657D;
+	Mon, 20 Oct 2025 15:30:56 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B86F26B955
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78936217704;
+	Mon, 20 Oct 2025 15:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974190; cv=none; b=F/WCRb7eJ6Xb7WgckrdCU24gjPRiY8oRdRz6VvHC68Ple0NlU5oD5lDeSalexHtqBQCSr/o9Iy+RaS4EFcJu5NhaLN1pCFoA0y1rmTDHtvPupD1zpXCKy5H2rrik+itPPF8c2OJdfEtCqJt86z03Mxj3KHXm4eT0crqPjqwj6GY=
+	t=1760974256; cv=none; b=nyBdymq6AvjfjjrE36rGIQSCw9fBIB9f0zVD2xfeBQC5+YtRPpOyU2kSZs4ZZxgNDu7BdIMlqbxKyTI/F0i2jxXCjix5u+koWtFd0dTTbb2C/zKAKVcWVw+oTSK8jnz7TAwz9ApOdz7MW2yz/40MvcnVacBEj9VfC+yuKDrb6Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974190; c=relaxed/simple;
-	bh=O1orugBr2pvTT4K3ZaPXwEVdYUClnxbj+YqzNevsSfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aOHiE8E3lZlXI0ryz2l7p++twNjbGqBGjbqFTL24pzrXoam2i2atCj2dH0ebNyuQ4zN9JyN6rYWTPhymdBYjpw2tLPjbPtziat4J8gY6T/YXtNXr1gygnw9uLNrcs2BkzRW6STrwxmN7yPbiSCDVBZ1QUx6AKoqcSTZYB1dd8R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXiJrIJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D2BC4CEF9;
-	Mon, 20 Oct 2025 15:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760974189;
-	bh=O1orugBr2pvTT4K3ZaPXwEVdYUClnxbj+YqzNevsSfs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uXiJrIJ687SJ+ZX5Q9oD4LYK5sQUkdBCyvr+bs6NtwlmsufLYur10NjjA0u5WTGnm
-	 JRmI2YhfP4weHJj8V5eSziLaUAUrt7B5YAVrqZyN+PdEDso6q/fNmLpcA3aux5cj8Y
-	 Yk9PpxF/uV91kzuWgAU2Tir+58s4qs+jJtHrYpYULtU5lGBaWp2fNWq4wkUH0fkZ1J
-	 c8i/yjnj8QJ5tGDRgXbs4gd1hcUg3sL2NJLjzdbgbW1UJ3Dj616krygQMks7XZFvaD
-	 +pSHufqszj8KlVb4M+mdQ5Q0yYyA4R8RSGEhsuAZt3bAtITJC8UhwAtrw4LJtxwzRD
-	 v+BiJRk4g+3Ig==
-Message-ID: <33f2a0f7-3e15-4256-a631-70e68fdec15d@kernel.org>
-Date: Mon, 20 Oct 2025 09:29:49 -0600
+	s=arc-20240116; t=1760974256; c=relaxed/simple;
+	bh=yXu/aPFPd22saUrdFwVxRLUKqp+7tQb6E2xRDecSqYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jxCbPgtHVSS8R5iZNuR/e8FIPbGhSNxIPPDThhRYCLOniBfLm5TD65q4vc+zPp8jrTOOSC/pDb//D0C2zXuhC0mf3nHSrUIcRm+BpwR5iLn5HYUv+bBtQNtG2bSBxyyatFEqtQj1+lWbebvmGTmxTvlcN52nJPba4sN49qm/Yks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 79A73C01EE;
+	Mon, 20 Oct 2025 15:30:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id C7E372000D;
+	Mon, 20 Oct 2025 15:30:39 +0000 (UTC)
+Date: Mon, 20 Oct 2025 11:30:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: lukas@wunner.de, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
+ ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
+ Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
+ bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
+ anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
+ tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v12 1/3] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+Message-ID: <20251020113058.0d245002@gandalf.local.home>
+In-Reply-To: <82098b0d-d460-4657-9db6-3721dcc9a162@linux.alibaba.com>
+References: <20251014123159.57764-1-xueshuai@linux.alibaba.com>
+	<20251014123159.57764-2-xueshuai@linux.alibaba.com>
+	<20251014114029.4c59bb1a@gandalf.local.home>
+	<b6353617-048a-4e12-a1d4-6d1484619927@linux.alibaba.com>
+	<20251015103757.3d6f6cf7@gandalf.local.home>
+	<82098b0d-d460-4657-9db6-3721dcc9a162@linux.alibaba.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/vmalloc: Use kmalloc_array() instead of kmalloc()
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
- akpm@linux-foundation.org, urezki@gmail.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
-Content-Language: en-US
-From: Khalid Aziz <khalid@kernel.org>
-In-Reply-To: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: sbz6fc6mr3sdntjm11j69wqbha6b3m5d
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: C7E372000D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/aj93rMfMtQSQXPJ8Zy1ywqsFOi0yQcK8=
+X-HE-Tag: 1760974239-962848
+X-HE-Meta: U2FsdGVkX1/4v5hsBwz1QuFoJ2VSKd8GMWu6NDBGUoTHclOYdzzzBlYj/rkKevvf+yX9rmX7cllLc97CfukDvBlhCgzQYFwJm7lbJrXHd4/eW0mKiQofC7oOmZBt5P1cUtlGTVuGiCqm5GkdH34jH2aV3WxWzEnhFRbuZul2EdzHdX/CcnnhC0o9QX7yAn1Gclpb+9j1/2rvhCPRrIGalG37LQDT4q6YL1KeU9WlrpeWB8xRqxaAr8oYZFwFUcefnmKbWOjFyUg3z6U0PNbogO4S+k+ZlGSrxXLYFUKDvMWQJ55D1MXG+6ZoVLQxSQR5tzCRi3TeYIwVQGDA9xN3+OZ8KsNMGmGFc0oAfkO+6ZzUkOMqIxM+UO58l3BruDnuK4LWLAdopl2i4THE48eVpQ==
 
-On 10/18/25 2:11 PM, Mehdi Ben Hadj Khelifa wrote:
-> The number of NUMA nodes (nr_node_ids) is bounded, so overflow is not a
-> practical concern here. However, using kmalloc_array() better reflects the
-> intent to allocate an array of unsigned ints, and improves consistency with
-> other NUMA-related allocations.
+On Mon, 20 Oct 2025 09:32:59 +0800
+Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+
+> Got it, will add a comment.
 > 
-> No functional change intended.
-> 
-> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> ---
->   mm/vmalloc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 798b2ed21e46..697bc171b013 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -5055,7 +5055,7 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
->   	unsigned int *counters;
->   
->   	if (IS_ENABLED(CONFIG_NUMA))
-> -		counters = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
-> +		counters = kmalloc_array(nr_node_ids, sizeof(unsigned int), GFP_KERNEL);
->   
->   	for_each_vmap_node(vn) {
->   		spin_lock(&vn->busy.lock);
+> If you don't have any other concerns with this patch, would you mind
+> adding your Reviewed-by tag?
 
-This looks like reasonable change for clarity.
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org> # for trace event
 
-Reviewed-by: Khalid Aziz <khalid@kernel.org>
-
---
-Khalid
+-- Steve
 
