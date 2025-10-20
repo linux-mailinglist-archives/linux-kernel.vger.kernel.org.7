@@ -1,107 +1,87 @@
-Return-Path: <linux-kernel+bounces-860709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579B8BF0BED
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85A9BF0BF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CFF189F392
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C595189F6CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1BF2F7AD7;
-	Mon, 20 Oct 2025 11:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLtgBPYj"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1892F83C2;
+	Mon, 20 Oct 2025 11:11:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0592F5A32
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEE925393C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958632; cv=none; b=WQHzi87SE8z/wQIKjJ9b4If3f7jtOxRGHvplNrBJfMe2wFHAg7SO2kU6OVOwP5dGks9LP2G9lcncegS2caflu5WpBKzWZ2rTVvXZxxDfRdp3Pd3F73ttypcTzlBGqgk9Y9a/IQBMUDLQoXgEAH075INTM8znzXUWM0suk2S6daQ=
+	t=1760958664; cv=none; b=ccd5f1fZlMprQ9L7ZpH0f3WWuDZl20zjBm6AyI3bGchrClPnoUGNR8vqIcaQiPCh9JYyCAuWxlmEaJb+jr2qsuvQq8VsCSOHjOWMQh7P6yUaWVZOxwqG1+jqNSeJeKPcfXiJKCKk9nRpCWHco54lzSzMOc/1snm5G2NXIL0YdU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958632; c=relaxed/simple;
-	bh=lI8ywgeWjN+SfCPlGDPL8Glm1CbFy+WFTO07L/mQ20k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGHjLUHAK1lpABwu7q6ri0cWNaZ6v/7cbcvLFR+1ZKSwXHjwliS49euo2YhI6mYiIuWZ3lwirBDnrgbjWrmCwWFUrNO4mk3FkYPI4ndjc2OYL3H4P50WxzF4nBmKeOlJVpxghNKeNBtTK8h8ceXETnJvqikl8bJd2nhlrb7fE58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLtgBPYj; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-471066cfc2aso38366485e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760958629; x=1761563429; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q1GwM38mh3nqijwky0hI3l2FSxHPE+1vxrvYPxKuFQQ=;
-        b=CLtgBPYjsssf2FMbyyeFhWRPKnzicPMUgyn3lx9LHlp6fN0SBUxAn65ZdYDLgkJ4DM
-         Ze7eA7pA3s+Fk2kuYVGQ6mz5mHgkGiAlwS84sOuDX4QFtxcSuc3rpFaDyBu6bhWUrC1n
-         nTRq9KBefDuVpbdP6LZdMHtZqLTWoGx/bQ58OZ85WfLqEbfs8UHGho6C6ZmQEluLx167
-         fop85s3plpPTOCB2r8wJus0hXD8Ed89Jlmp+GHR3sMEvbM5wIlwillNaUfRpK0glgmQy
-         +96EfQECpoXVEN33UH2wQGGcFJm9QRCpce+ZpRJAwA6o05Gn8G5ngFsSn7U+Cfq952VN
-         +roQ==
+	s=arc-20240116; t=1760958664; c=relaxed/simple;
+	bh=CH2xljU6c9gBVw3DBYilV6b30fXLwpU/kbNwbZ6SgBU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dbcioubqQA+S0uzas+PKOmfWEJeB/NEmSkR92kLk/2dlFrWEDD3rmL0rUOUH/KgQAmp0WDSJko8xkOyt9ieyvIOhz+jFSnBMmgEO6kMuPwuMeMIndSWoK8GghS8u3YWo/RvuDsT4qnmMCKXrloR90/ujnYzm6j05Zxg6Bqz5N/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430afaea1beso49804945ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:11:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760958629; x=1761563429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q1GwM38mh3nqijwky0hI3l2FSxHPE+1vxrvYPxKuFQQ=;
-        b=ntBvF6vE8FrKJe3yNBFJfEJq303eOvf08kRz0R5/0LzV6s1+3ZAh+hGLa5ZcnJ9jzS
-         Rau3vm8Ly0R/EYm/xp/X7O6kwQzCy02GU7/dgG5fVIsDSUhCMa/lpepnODI9r/ANybRt
-         lg73yMgHGLdA+Pf+zOzHou35/SSQebW4YGX19T7DIw7ycQNfQZOF+qx1NmIjb7Ll75us
-         1lmMIHcQHTeTjhYXH7FTwgJw9djgM8FViEFCq2HUr0VulP2ruhjddAI0/0qL7Bp4V/yD
-         NnpMCL0Z9wKUkXCYHGuFDXEJ8CL2MP+4I6NXkaEcGqU533wlCYpsXIlOckvAGPbX6WB2
-         dcsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXU6gP2O8Km61wNQm1fqYdCm12QzltrzB0yfcf+Cl88xwW+k2iewYyNZcm78AfOM4AP5K7hJk4RIlf5m7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuI30LGFnO6eYCNWGQ2taubTxEjKGJROzE/B2mlhRB1fGhYA3s
-	/tV4HFVA7ZKFNjd8h269zkVm4fd5gArfrypkx2Uqjs1f49/M9pZdx9OH
-X-Gm-Gg: ASbGncsHVYj/pOIdMSP2VNs7IE5ur06FEmvTTJoSonvrpRDLXlinGELiE83D99xxFEb
-	iiA/qSIKab694wtuLXfWPhoJQCbTXxSQa2rlnzSr32Ifct1qDt+mYKn6E8ZBwro/soH2/MPKiTI
-	PGaWnpd1jB1RB6sHiEnU3Z1xJETZcZ9yZDoQg5iEdT6lbzp2FBKWPVkKkT4u7Fa2DLurON3pV0k
-	aG+/J1S3V+ap5rkRMHdSk3AE4K3hpAmzI7p/GCwLRYWOQOEVXV4iiApP0ZJGBKSRd6MN8M4RpDX
-	KJxIMq4JAOmjlkJzprF/BUBvtIu1L8NzzMo+x/HuuC83wER5ykHWWYy3dalWPplJ1cXNetdQ1q/
-	pcQBjbYVyxzRTUKvqqRhHzUvmsByHrxLrUsOQ6F1feIcZzH5ck7//1+m/W7iRawjxQc09vD81zP
-	XkSXodZw==
-X-Google-Smtp-Source: AGHT+IEmMMoOjYfBUT5RqT6xtTVyMvQoeiu0xyX3gRg3r0UUnIXnqBqTe5A7yX+Qs8G91aoDug12qQ==
-X-Received: by 2002:a05:600c:8505:b0:45b:7a93:f108 with SMTP id 5b1f17b1804b1-4711786c71cmr94484055e9.3.1760958628958;
-        Mon, 20 Oct 2025 04:10:28 -0700 (PDT)
-Received: from fedora ([80.195.98.51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c831asm218234765e9.13.2025.10.20.04.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 04:10:28 -0700 (PDT)
-Date: Mon, 20 Oct 2025 04:10:26 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Cc: akpm@linux-foundation.org, urezki@gmail.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org
-Subject: Re: [PATCH] mm/vmalloc: Use kmalloc_array() instead of kmalloc()
-Message-ID: <aPYYovFBtHYKpgg4@fedora>
-References: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
+        d=1e100.net; s=20230601; t=1760958662; x=1761563462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uliS5KAsmEXDUool2RAPHcmNHkNEm5clWmYl07NQfQU=;
+        b=cYVSTjaakP9S8z7m/f0YUJAlixuVUkO3LODRgY49fTdyCLsQS4pZGmO8dZtGYTN7eH
+         TY+rSTJhT9e+eY20SL0/TMncMpjZN/kb2nyXT/Ss7CTuKAZayH4nZ4NxrAAWSK0CZjYh
+         iSZb3Z9Wjrmei5UY6iLt70QqUCuR22TCzsCLMBlfxuUNGlXLAkxRKqC4LiMXu1NQZmZe
+         pePbcTedZovkJktRzuWZApn9mE9Rlpx11Gn18kl+Fio+okGlcEbPrcVsLCG6Rcn4/0x2
+         5Tg8I0OxTE1GDfb+gmARP73tkk0F/jbKIA+o0TlmJK6P6LnFUUW1knzab71XbXj3Ofh6
+         COBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEaqtRx1C9YHfpSy5u6Z6+MbkUsFKZe3tanI6CIbAu1u8YZuCxBzw2FFteCp+gz3/aEHj2+bnHjowOqEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxati7osDYA1u/FGnxvgJNNINsimjscVLWNqN3fFdEjIEsFzCqA
+	829OGMeGZHxpBVHgjIo5kcu4eeygskgChqbbIkCmD+Hvesv5VgBhIlOKJrsDqvZRFmvnRMaS7CY
+	vB61MkWhRXsRwPfv9v5Ti48ONRJxfqCFNbUX8nDfNreOyA74FH6X//HT0dTU=
+X-Google-Smtp-Source: AGHT+IE/ROpo6LHEeOcBWN0ivTLEMcXq4KFme42u6PZTPiM2Pberirt38qlSz+Z+A++Pk+xFObHIl7Dr24KBozJR4mzaq3Y+ny6Z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018201207.27441-1-mehdi.benhadjkhelifa@gmail.com>
+X-Received: by 2002:a05:6e02:144d:b0:42f:8eeb:49a1 with SMTP id
+ e9e14a558f8ab-430c523d6fdmr205757645ab.13.1760958662386; Mon, 20 Oct 2025
+ 04:11:02 -0700 (PDT)
+Date: Mon, 20 Oct 2025 04:11:02 -0700
+In-Reply-To: <a9cfa569-b234-4ad0-b2e5-1a227e7ea9ac@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f618c6.a70a0220.205af.002e.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_flush_truncate_log
+From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Oct 18, 2025 at 09:11:48PM +0100, Mehdi Ben Hadj Khelifa wrote:
-> The number of NUMA nodes (nr_node_ids) is bounded, so overflow is not a
-> practical concern here. However, using kmalloc_array() better reflects the
-> intent to allocate an array of unsigned ints, and improves consistency with
-> other NUMA-related allocations.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> ---
+Hello,
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
+Tested-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         211ddde0 Linux 6.18-rc2
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=153c9492580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7c601ba0b0d071c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d55dad3a9e8e9f7d2b5
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15059734580000
+
+Note: testing is done by a robot and is best-effort only.
 
