@@ -1,118 +1,253 @@
-Return-Path: <linux-kernel+bounces-860053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E02FBEF358
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:52:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0BDBEF35F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 483583BE41C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:52:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C6C613487BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9DE2BE056;
-	Mon, 20 Oct 2025 03:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6822BE7D5;
+	Mon, 20 Oct 2025 04:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I9XrFF2A"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YS38CXLM"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0D61CAB3;
-	Mon, 20 Oct 2025 03:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D77366
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760932368; cv=none; b=Pu0cBKHWdI31yfPIWCZGTCg3hepmvVnVmHeXa3BIsrHBwHLqtxsc4tQNkTzqJ6n+FHffrRM9IiEABvwpYiNt6swwrFJ5yjZ2tvMxKU6Ge/fgLbToLNDTERgNm9kAMnjeX6i/NJoVkRiPudrsswoPzQ5zSCcjY5HAM9KH+70g2D8=
+	t=1760932811; cv=none; b=FVqf2ZxMHRuyi+3+aEPJMRv8TiVpoEA97CE+vdHvCv5gMMlLYMsDX9i+DAm4f3wgThA6pe75PmjOHViyJ/P+Fqy/zD0m6HBkPHCZ4m2Of+ydQFHiZWZ4o4v8kn+yhesBkdocxmqq4WeKd70ZymF+M1ZJxYy47SpC1gNROwPlXYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760932368; c=relaxed/simple;
-	bh=U3g7wYH0qePdK7Ad2YYnoKzcs4RtC8AJ8f+wY5NsG5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Kz9t8R5LcHQRqRcp2TZUCX2z8p4BR4bBEpI8ydUnDTRCuabUTqwWf80jj7lB5550WJwq/lmBC+VPUDj8Lgbqlab7pnNQQFkOYpPPc7GLE7bewjhaa/tiOkh2y2DwHohWZT0BeMYZO85ACu+E4NQUrlnuYk9Lx77IqEbflBtlKf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=I9XrFF2A; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1760932360;
-	bh=Zp0xD0I7qFshjrJbahsPhJ5yCyx5tg1/oVy+rB8vmVg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=I9XrFF2A+jJGnmyg5KOhbUBw9NAklpAUYVKvg1ncU8vsQGhW6RFywE6zo1lZW5hpO
-	 YHLi9yz0fm77Eyd/8Mi2s90L2QXFeCtZ1LAE7kPmAa3f6+SPg8KaV5WDqmvhwHj1Nq
-	 BrW11vatEwjWaxTccf4qPKxIdjLQ9U/a311wWU9gJy+/TzKHlUliR1GJalpUG5uDt+
-	 DYzIR/MhXAOGamMn4fkS6yZeMQUCEYmSZF2/n9pdDApYPb7SKuUkXyw24ZA3JZC3+z
-	 f56MKK3h6Br0KFlJ4zzjyYjp18AUYzQmmjGj0rynvHMzE0tsfXpEIXQwxQ0vcdOm9D
-	 9GtYaxncxwobA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cqhMr1zGwz4w9v;
-	Mon, 20 Oct 2025 14:52:39 +1100 (AEDT)
-Date: Mon, 20 Oct 2025 14:52:39 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>, Johannes
- Berg <johannes@sipsolutions.net>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the iwlwifi-next tree
-Message-ID: <20251020145239.72fc628e@canb.auug.org.au>
+	s=arc-20240116; t=1760932811; c=relaxed/simple;
+	bh=dPgG0ZE3Yj/qIHsnysGw2HwgvlzEI7DoOEPYWJ0sbcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqd831rj03WJCsdZnEoteN6Y27qiXNKMpg63h4R9q5nHvWSGG5oq0qtLH3XIF/BHIRUZ5pdSMKIgs9ioMFJd6hdvQZZYW9Gj9jxZGvqTnW/XRdVvZ4qzXasM6HaMAN7SHuuf0Xa/kfqmZMUNiLvzzEh6uzZv1SRumIdQ0ziSAw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YS38CXLM; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7f04816589bso630659185a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760932808; x=1761537608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EGlyUJ6dWl6nFWnMZlQKvO9MHD3+EqVzrC0LlyJOg7g=;
+        b=YS38CXLMndfio0XQ3DMDE3wt4tDXZacYUV1+8q1M+lM5UyRR/vTY3270PYDhkkAe1h
+         7gDOf4JleJXIyr7MmOxYQRweV21LOGVueHQUfguEILlCwASQ7rbEl+P7PjHouOe7qoEE
+         FtUXvZlrqbEMxD51fAXLAwXf5jzOFi9KSUnIAzAJ8ihs8eceM6ecI40LengjMhDnyzku
+         GrtVSuxUgy79AelCOBo/acWGLm90tSMbjjElGfs1oLmRhHeFgQuIMkMqrOOA4vcdlUoU
+         ony1Z5DrKZNM4/xHuxTzZMpbNRZBsR30yZx4AukSpgU8MhgGm42QyRAOiFxtwl3chcRJ
+         HW1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760932808; x=1761537608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EGlyUJ6dWl6nFWnMZlQKvO9MHD3+EqVzrC0LlyJOg7g=;
+        b=ZLXIl/5siZgRHZdfdtxYoID/KLep9/0b5IKY8owYCocYsN6+cdlnRKOBwpS+WMjQ5z
+         U5z3zNMItRsARrfdm01TPgCAsyrsUttySrT91pA+0BpMN4h8UtjhFWuaVBxayPQwqVOM
+         IF9LsmukoXGFFrVEMxyw+Ep4oOB0pecxPYrOTXKw4V7dUEukSCgz6KBBLLhgH04n+dIx
+         BQvDkECSka0qpBoDvpbkraxjPRIi3ZKL6HdQ+7TvccYeZeZKU+H/o4jh5vB6qbLbSk4v
+         Y0l/BPH9m458hU2B/QepB8T23HW2LUgoVVjG0ptqI2KQ4S3fofjdp36Jhbh8e3e/rfpU
+         /b0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVtix/UE4+OhdzHjw4/ryIoGrs9TfZQpNFaS6iW/u3KwaQoEzr1LVetQx1sIBAig5ybcpl+pRjztEs97Cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxImPZssY+CsGAfh0UxMSeQbCqCQmZ56VphYd7wRx4H/ZYsO6yq
+	fe8p2XDIjWIUPpe72iYx/+iOtfNEXYUVdXlUhCEXTJo5vrwYiLZb5QQ+DeWqlBksVua9YpCsnH7
+	FDqV6t+9NXHqwXijksod7gVRVwmDAqp0xpBnaa1og
+X-Gm-Gg: ASbGnctt1noPMoYnAatt7qxQTsgmiQLyKzITTWR0Ld4EtNyii3PLbixS51xeW7r97t/
+	RDsX/KS5dcF0xACRxcoynlIrs64i7qzFXmXjrSuyF5z9pGbWInxcy+QquuUiSSJ72sMXYnKDrsD
+	gMtc7WZs5NDrluE1BMwzfJACf+52HOVpd3hjBK6Z8jEoEydsL5zbglNmI0oxBjfPhoyItdvP1H1
+	XNl14f1p7I449NwakbY93MGeXJ/c5hRV0yHr7ZVfChGMIdym/epEtY5IakZ0ADrdAkt4V5iHXR/
+	+uOlmg==
+X-Google-Smtp-Source: AGHT+IEYSIicyADdCPkVkJb9qW9fbgvEYpNmDm5QqCs36TVq0BifkMw6E49Bz9qod7hDZDlRGPtcnNSaTXB1nyV9ejQ=
+X-Received: by 2002:ac8:5883:0:b0:4d0:e037:6bd2 with SMTP id
+ d75a77b69052e-4e89d4150a0mr167900401cf.83.1760932806725; Sun, 19 Oct 2025
+ 21:00:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/G6Niw5e/4tP6pI3d2.3a=G=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/G6Niw5e/4tP6pI3d2.3a=G=
-Content-Type: text/plain; charset=US-ASCII
+References: <20251019170016.138561-1-peng.yu@alibaba-inc.com>
+ <CANn89iLsDDQuuQF2i73_-HaHMUwd80Q_ePcoQRy_8GxY2N4eMQ@mail.gmail.com> <befd947e-8725-4637-8fac-6a364b0b4df0.peng.yu@alibaba-inc.com>
+In-Reply-To: <befd947e-8725-4637-8fac-6a364b0b4df0.peng.yu@alibaba-inc.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Sun, 19 Oct 2025 20:59:54 -0700
+X-Gm-Features: AS18NWC6F1R_I0KBruG0TdOotc8Di3KFGXIV9tbul7OG-wYVpC98nHHzEY6rIio
+Message-ID: <CANn89iJN4V8SeythtQVrSjhztWmCySdAxR8h35i4Ea2ceq9k8w@mail.gmail.com>
+Subject: Re: [PATCH] net: set is_cwnd_limited when the small queue check fails
+To: "YU, Peng" <peng.yu@alibaba-inc.com>
+Cc: Peng Yu <yupeng0921@gmail.com>, ncardwell <ncardwell@google.com>, 
+	kuniyu <kuniyu@google.com>, netdev <netdev@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Sun, Oct 19, 2025 at 4:00=E2=80=AFPM YU, Peng <peng.yu@alibaba-inc.com> =
+wrote:
+>
+> I think we know the root cause in the driver. We are using the
+> virtio_net driver. We found that the issue happens after this driver
+> commit:
+>
+> b92f1e6751a6 virtio-net: transmit napi
+>
+> According to our test, the issue will happen if we apply below change:
+>
+>
+>  static int xmit_skb(struct send_queue *sq, struct sk_buff *skb)
+>  {
+>         struct virtio_net_hdr_mrg_rxbuf *hdr;
+> @@ -1130,6 +1174,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, =
+struct net_device *dev)
+>         int err;
+>         struct netdev_queue *txq =3D netdev_get_tx_queue(dev, qnum);
+>         bool kick =3D !skb->xmit_more;
+> +       bool use_napi =3D sq->napi.weight;
+>
+>         /* Free up any pending old buffers before queueing new ones. */
+>         free_old_xmit_skbs(sq);
+> @@ -1152,8 +1197,10 @@ static netdev_tx_t start_xmit(struct sk_buff *skb,=
+ struct net_device *dev)
+>         }
+>
+>         /* Don't wait up for transmitted skbs to be freed. */
+> -       skb_orphan(skb);
+> -       nf_reset(skb);
+> +       if (!use_napi) {
+> +               skb_orphan(skb);
+> +               nf_reset(skb);
+> +       }
+>
+>
+> Before this change, the driver will invoke skb_orphan immediately when
+> it receives a skb, then the tcp layer will decrease the wmem_alloc.
+> Thus the small queue check won't fail. After applying this change, the
+> virtio_net driver will tell tcp layer to decrease the wmem_alloc when
+> the skp is really sent out.
+> If we set use_napi to false, the virtio_net driver will invoke
+> skb_orphan immediately as before, then the issue won't happen.
+> But invoking skb_orphan in start_xmit looks like a workaround to me,
+> I'm not sure if we should rollback this change.  The small queue check
+> and cwnd window would come into a kind of "dead lock" situation to me,
+> so I suppose we should fix that "dead lock".  If you believe we
+> shouldn't change TCP layer for this issue, may I know the correct
+> direction to resolve this issue? Should we modify the virtio_net
+> driver, let it always invoke skb_orphan as before?
+> As a workaround, we set the virtio_net module parameter napi_tx to
+> false, then the use_napi would be false too. Thus the issue won't
+> happen. But we indeed want to enable napi_tx, so may I know what's
+> your suggestion about this issue?
+>
 
-After merging the iwlwifi-next tree, today's linux-next build (arm64
-defconfig) failed like this:
+I think you should start a conversation with virtio_net experts,
+instead of making TCP
+bufferbloated again.
 
-drivers/net/wireless/intel/iwlwifi/iwl-drv.c:180:13: warning: 'iwl_drv_is_w=
-ifi7_supported' defined but not used [-Wunused-function]
-  180 | static bool iwl_drv_is_wifi7_supported(struct iwl_trans *trans)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c: In function 'iwl_pc=
-i_gen1_2_probe':
-drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c:4222:13: error: impl=
-icit declaration of function 'iwl_drv_is_wifi7_supported' [-Wimplicit-funct=
-ion-declaration]
- 4222 |         if (iwl_drv_is_wifi7_supported(iwl_trans)) {
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+TX completions dynamics are important, and we are not going to
+penalize all drivers
+just because of one.
 
-Caused by commit
+You are claiming deadlocks, but the mechanisms in place are proven to
+work damn well.
 
-  1f9285c0c2eb ("wifi: iwlwifi: be more chatty when we fail to find a wifi7=
- device")
-
-$ grep CONFIG_IWLMLD .config
-# CONFIG_IWLMLD is not set
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/G6Niw5e/4tP6pI3d2.3a=G=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj1sgcACgkQAVBC80lX
-0GzTPwf/WjZhfjB0Umvk9HbnbVQzwibGA+agMP9j6mDTOEFncs1Ji/l7rp9vFkBd
-90GO5r2qz+69+JlDjytTqbCfBpMDJhHwhw7UtgqrDqNsWlW+qt7qXS20ysy2gq6F
-9+W9EbFv6XhUQRMq+3j0/PhPM5ZMYCf/QsVm/354RwjCESkjif+xg27nmw63N8uv
-FftKGWwl8kreRD2RMQTrj9nts1YB/Kf+MuXapEd93Ssqq9fmpn48sKD0wwOq+GVv
-lUKj3vqIvxTckRVqBVmzTCAYM8P6ZFAO1laPkquiIHLKp4Ip38q6Yuwiy32l3b7e
-79B8CoMW3u4RANeHoADbgfn13TGYLA==
-=KZOJ
------END PGP SIGNATURE-----
-
---Sig_/G6Niw5e/4tP6pI3d2.3a=G=--
+>
+> ------------------------------------------------------------------
+> From:Eric Dumazet <edumazet@google.com>
+> Send Time:2025 Oct. 20 (Mon.) 01:43
+> To:Peng Yu<yupeng0921@gmail.com>
+> CC:ncardwell<ncardwell@google.com>; kuniyu<kuniyu@google.com>; netdev<net=
+dev@vger.kernel.org>; "linux-kernel"<linux-kernel@vger.kernel.org>; Peng YU=
+<peng.yu@alibaba-inc.com>
+> Subject:Re: [PATCH] net: set is_cwnd_limited when the small queue check f=
+ails
+>
+>
+> On Sun, Oct 19, 2025 at 10:00 AM Peng Yu <yupeng0921@gmail.com> wrote:
+> >
+> > The limit of the small queue check is calculated from the pacing rate,
+> > the pacing rate is calculated from the cwnd. If the cwnd is small,
+> > the small queue check may fail.
+> > When the samll queue check fails, the tcp layer will send less
+> > packages, then the tcp_is_cwnd_limited would alreays return false,
+> > then the cwnd would have no chance to get updated.
+> > The cwnd has no chance to get updated, it keeps small, then the pacing
+> > rate keeps small, and the limit of the small queue check keeps small,
+> > then the small queue check would always fail.
+> > It is a kind of dead lock, when a tcp flow comes into this situation,
+> > it's throughput would be very small, obviously less then the correct
+> > throughput it should have.
+> > We set is_cwnd_limited to true when the small queue check fails, then
+> > the cwnd would have a chance to get updated, then we can break this
+> > deadlock.
+> >
+> > Below ss output shows this issue:
+> >
+> > skmem:(r0,rb131072,
+> > t7712, <------------------------------ wmem_alloc =3D 7712
+> > tb243712,f2128,w219056,o0,bl0,d0)
+> > ts sack cubic wscale:7,10 rto:224 rtt:23.364/0.019 ato:40 mss:1448
+> > pmtu:8500 rcvmss:536 advmss:8448
+> > cwnd:28 <------------------------------ cwnd=3D28
+> > bytes_sent:2166208 bytes_acked:2148832 bytes_received:37
+> > segs_out:1497 segs_in:751 data_segs_out:1496 data_segs_in:1
+> > send 13882554bps lastsnd:7 lastrcv:2992 lastack:7
+> > pacing_rate 27764216bps <--------------------- pacing_rate=3D27764216bp=
+s
+> > delivery_rate 5786688bps delivered:1485 busy:2991ms unacked:12
+> > rcv_space:57088 rcv_ssthresh:57088 notsent:188240
+> > minrtt:23.319 snd_wnd:57088
+> >
+> > limit=3D(27764216 / 8) / 1024 =3D 3389 < 7712
+> > So the samll queue check fails. When it happens, the throughput is
+> > obviously less than the normal situation.
+> >
+> > By setting the tcp_is_cwnd_limited to true when the small queue check
+> > failed, we can avoid this issue, the cwnd could increase to a reasonalb=
+e
+> > size, in my test environment, it is about 4000. Then the small queue
+> > check won't fail.
+>
+>
+> >
+> > Signed-off-by: Peng Yu <peng.yu@alibaba-inc.com>
+> > ---
+> >  net/ipv4/tcp_output.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+> > index b94efb3050d2..8c70acf3a060 100644
+> > --- a/net/ipv4/tcp_output.c
+> > +++ b/net/ipv4/tcp_output.c
+> > @@ -2985,8 +2985,10 @@ static bool tcp_write_xmit(struct sock *sk, unsi=
+gned int mss_now, int nonagle,
+> >                     unlikely(tso_fragment(sk, skb, limit, mss_now, gfp)=
+))
+> >                         break;
+> >
+> > -               if (tcp_small_queue_check(sk, skb, 0))
+> > +               if (tcp_small_queue_check(sk, skb, 0)) {
+> > +                       is_cwnd_limited =3D true;
+> >                         break;
+> > +               }
+> >
+> >                 /* Argh, we hit an empty skb(), presumably a thread
+> >                  * is sleeping in sendmsg()/sk_stream_wait_memory().
+> > --
+> > 2.47.3
+>
+> Sorry this makes no sense to me.  CWND_LIMITED should not be hijacked.
+>
+> Something else is preventing your flows to get to nominal speed,
+> because we have not seen anything like that.
+>
+> It is probably a driver issue or a receive side issue : Instead of
+> trying to work around the issue, please root cause it.
 
