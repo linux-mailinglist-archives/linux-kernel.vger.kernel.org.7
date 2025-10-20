@@ -1,138 +1,208 @@
-Return-Path: <linux-kernel+bounces-861300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5114DBF251A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:10:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE99BBF2523
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E48544F7F3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:10:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4F53B8505
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30D5287502;
-	Mon, 20 Oct 2025 16:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NSRivX1f"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB14283682;
+	Mon, 20 Oct 2025 16:09:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43579284672
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73203283FEA
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976573; cv=none; b=cy8sQCRyqTDTd23dhsXdqiVi7X2ELg5m80KX2NnMGIS2L2/UBK/EMSx546NuigWffUd+y9dkBiK7vpcjM7uSwIz1kCNhpNzC6A+zvHlAwV2srCY3kXV6B1LZJrv/XNcUegCFt7kT6sGJFnnx9SQyo7s0vMFxyfYZvK84u+a16bM=
+	t=1760976572; cv=none; b=pWVXfoydoNQi0rZSMdO+0B10WVQmcjSv3HTN8A/xhpyGsUrWK3HuI0z84FD8m9F7NaIcU+iHM/EwPLA/MiNTPmKxA+p+DOCwGyS8bBUtnr5uyZyHfIX18056ahiYM4XTQM2dm8WNYERvAOqW+KBb75MhsuUSrifqwomvPPSP7Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976573; c=relaxed/simple;
-	bh=ha6ie/2/u6zJrKwYTajAyrhyL5xMgX+Aax8ZNcQwaqM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UuNQGKAkG1rU4n1UXehyNc7cPZ5+67seAVB6syau0dCaDwv1t9wdEP8GX7iRRF/EvuzwEkFuz6oCjOIRl0ijMT8uR2NQ96QhPYwgF6d2GCWICpS8Zf/lIVOVvXgH1c/spkf9iKC2fq1E9hMplKdL1/KSCCga8su3wXr2ejim4qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NSRivX1f; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso34079825e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760976570; x=1761581370; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EdGV3pXRvDZEMUVAr3wBUVdjxRZ+XlT8jBZ7bZa9MFk=;
-        b=NSRivX1fB3h8ImFLmeyB9+P04/MCuwil2D2FB78RFUg+vq80a0DukPWYw4stJnIbmq
-         S2E8JWfs5skricbml9tg0XdAxIfYTaBbRVU4ED7FBpJgvMfhHah7251Hswy2yMZNeBgr
-         lsk2xgRN70spAUv8CpUrefh5/ueaPIw50kvZCCZ7TboANyE0nK2iO/ml8puoc+W/ljPd
-         K+0CI+IdJRdWV/VPJ7arObsDwfRiUaZJE4hDoKSZrBvP4hQCPE5y3p/4uDj78sY41KGG
-         fvPFtbBvKgvYP00Ac57DI/4KD1Jy1YiaGUcuEOG31M24PG10MY1vEecK/670RHn6VDEL
-         0URA==
+	s=arc-20240116; t=1760976572; c=relaxed/simple;
+	bh=cKX7axGAua4wBOQ7vViFnnyY08CuouvVP8szBHpbHH4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lLDcWdNs5Hb8vG506kSSsfQQGT/xA+XBARrCd9/3ypNGRHdCmfmRKk0jMSc7A/9bCIxP+jySv+ENv6h7IuaWOD4Q93JjxMRTNqAYXIfrwO5MVh3yaOWzWRcYXAx24kPwW1Q87sjCydEKvEoCZeP3nZrCNo2aaNr70fOpXccn+wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430d1adb32aso19413135ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:09:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976570; x=1761581370;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EdGV3pXRvDZEMUVAr3wBUVdjxRZ+XlT8jBZ7bZa9MFk=;
-        b=kFdAi1E+FzoAcIt1p58r0VTdxN+JLOdz9mVkKBNeef5sM6rZXRjktxEReiApsypFbr
-         tLEzHaLCxmyJc+h6YZdrTSrf4muA4zaSbSz4wKYeCKCkQQ9rycorSV3A+xDzbOdb5n5k
-         tEBzwsJNSngD1YYCrOGWDUO4V4kpSLisK1Doi2BYd1csHQlGLDWp1fqJaNJ53UQDX9Zg
-         9jM5hEU242r8qQMt0QalOoGmM/88/B03pF77eoFhp+8ZzqZHTJV3YfPhhMEw22iT+BJc
-         OBgnV03BhARdHk+BScPv+5E/gJ8kpIolBqBNY7xXDP39EXRW0RMyA41FXYERp7AxJkUq
-         T29w==
-X-Forwarded-Encrypted: i=1; AJvYcCVe0URSAnOninHai/EqnBiFIT4bV8RNgFupMF65iR2g5ffR3kekgnDcRBN8TVuV12kaRd6nL4VM/Vacdl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqxbI6fEsMmPagtX17o5BSK3l610If76k2iI8nkODD+21J4zx/
-	42B7URwxU1WSYyV6/twN/qCyO978REtVLaYVcLNEeJg9WqdasHkWiC5EWfjuj5VybE8=
-X-Gm-Gg: ASbGncvLtEHysi5r5Sh4c0ZEFifBQlKAt0u8+FxP3aQHKR/5CnDjSBMI34r+Bwn0x1d
-	V9Z+vJ1J4sUsOxG1xrxCea/zDqJ8QM7d6o7GM3HX3vuqMXHB+tGY56GCFh4e8pPZgLgNoVe8xO8
-	w8kTL1BTOacHAuJWwPcTqAmG2HFlVO5WsDpulsXwTU99k3MPmwKU9qh1tTY5ojmJC92uQEsK5ci
-	fzEO9ELysk5fyc/lw7YfOJbqSezur51kNfLo72oczlMONg41GLpJIK8IkGDh9B3yKVk2lycnXPd
-	1YHXJhSDntB7hmhdmjWQBuaVJvZgz5sR4Eq8DhAsVhYePZE5cS1CuBHBuMDFsvcA/sc6fPBE6vP
-	yI9mqELwsS87LS4lDi1DFjuK7tYJssNvRYWrXANkZ9qjy2t6ZCAmJpSZfANy4sUznPMtDYY6BFp
-	/uoxnNzwF9IQ==
-X-Google-Smtp-Source: AGHT+IEpD/dgfFxYo7Xn6Vgdco+3DDr06fnsR0Y91h0oS5NHj2q4LVKHPL4JNe8M5lo+EseIF/VeOw==
-X-Received: by 2002:a05:600c:34d0:b0:46e:3550:9390 with SMTP id 5b1f17b1804b1-47117907a3bmr93162205e9.20.1760976569664;
-        Mon, 20 Oct 2025 09:09:29 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a6c5sm16408067f8f.28.2025.10.20.09.09.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 09:09:29 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Mon, 20 Oct 2025 17:08:28 +0100
-Subject: [PATCH 3/3] perf jevents: Suppress circular dependency warnings
+        d=1e100.net; s=20230601; t=1760976569; x=1761581369;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pbfF70cDDtAHBRC9nSIxTU9q86P/OB6WZ1gA9jNUyrg=;
+        b=GYeHPQjmcUWRKHKRZ4wAYojGlLrW9t+mKvMXt8iJbkAAxQcY/BPdt9OEbzehRzH8qg
+         sDyM6m3RcZK7pWFuj1rhwGvYRLFsytIqW2mpO4TKpb7Z7ZS4+k+buicXw6GGRuhHCE8c
+         IF45IO4xMT2L/CqDVYHG7y6FaDa2DmauYsqchJvVjN2WBpzmjtIHh3TrDs045LG8osOB
+         n0hTZIUELK7n0Th+ExxaNM1HRmTRZl3I5+vY8OwifpwGONLIolvk3DHX9GWbWHOGro8P
+         mB+kf5RwxUowK15s/qvBFiBHipDd7yYgZvDb0mAjsGNAqoUeiCFVhZHVli4DUYR2yCDx
+         maww==
+X-Forwarded-Encrypted: i=1; AJvYcCUIZv+IFYclffSY2cZTQx9hNHW//TbtK0NOQ+NBSclPEh+J52NmW0Ij934HgkkDomHWd4qAMR0SE3EWwcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz257s1LKv90I+oMxJaQGpoYmWTKifyBe5CfNN2JKC6otdvMPKO
+	57UK33Jz5CCY7tORyJ/BX+K44pL0K6BAzQERSQj7BDdF1NxSnTIv2a5gUWeunYBE3mcD+2qrGeR
+	fPwQKGfqA6K17ziHb1W6QTvUxyJqnhDHGyce0b8Rr/Bvyl7Bq7qBcsv9Ul6M=
+X-Google-Smtp-Source: AGHT+IHYQTSzzfTWBjWfSVU0sprZlwQ9IxoWFFjnmAvndOeKFlOeFDGJlIqFloDQ99h7zzClGfhPq4Srx74v+eVNKlbeVAHa/O5P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251020-james-perf-fix-json-find-v1-3-627b938ccf0d@linaro.org>
-References: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
-In-Reply-To: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+X-Received: by 2002:a05:6e02:1a46:b0:42b:2f98:3fc2 with SMTP id
+ e9e14a558f8ab-430c52b4580mr193897435ab.17.1760976569555; Mon, 20 Oct 2025
+ 09:09:29 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:09:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f65eb9.a70a0220.205af.0034.GAE@google.com>
+Subject: [syzbot] [net?] possible deadlock in gro_cells_receive
+From: syzbot <syzbot+f9651b9a8212e1c8906f@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When doing an in source build, $(OUTPUT) is empty so the rule has the
-same input and output file. Suppress the warning by only adding the rule
-when doing an out of source build. The same condition already exists for
-the clean rule for json files.
+Hello,
 
-This fixes the following warnings:
+syzbot found the following issue on:
 
-  make[3]: Circular pmu-events/arch/nds32/mapfile.csv <- pmu-events/arch/nds32/mapfile.csv dependency dropped.
-  make[3]: Circular pmu-events/arch/powerpc/mapfile.csv <- pmu-events/arch/powerpc/mapfile.csv dependency dropped.
-  ...
+HEAD commit:    cf1ea8854e4f Merge tag 'mmc-v6.18-rc1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12456492580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=f9651b9a8212e1c8906f
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-Signed-off-by: James Clark <james.clark@linaro.org>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a6a5b37662b9/disk-cf1ea885.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4b4d732ae480/vmlinux-cf1ea885.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/acd7feec5537/bzImage-cf1ea885.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f9651b9a8212e1c8906f@syzkaller.appspotmail.com
+
+============================================
+WARNING: possible recursive locking detected
+syzkaller #0 Not tainted
+--------------------------------------------
+syz.2.329/7421 is trying to acquire lock:
+ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
+
+but task is already holding lock:
+ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock((&cell->bh_lock));
+  lock((&cell->bh_lock));
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+8 locks held by syz.2.329/7421:
+ #0: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #0: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: bpf_test_timer_enter+0x1e/0x2b0 net/bpf/test_run.c:40
+ #1: ffffffff8d64ab00 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0xa1/0x540 kernel/softirq.c:163
+ #2: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: __local_bh_disable_ip+0xa1/0x540 kernel/softirq.c:163
+ #3: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #3: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #3: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: netif_receive_skb_list_internal+0x4fd/0xcb0 net/core/dev.c:6297
+ #4: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #4: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #4: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: ip6_input+0x23/0x270 net/ipv6/ip6_input.c:499
+ #5: ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+ #5: ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
+ #6: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #6: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #6: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: ip6_input+0x23/0x270 net/ipv6/ip6_input.c:499
+ #7: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #7: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #7: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: gro_cells_receive+0x50/0x790 net/core/gro_cells.c:21
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 7421 Comm: syz.2.329 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3041
+ check_deadlock kernel/locking/lockdep.c:3093 [inline]
+ validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3895
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ rt_spin_lock+0x88/0x3e0 kernel/locking/spinlock_rt.c:56
+ spin_lock include/linux/spinlock_rt.h:44 [inline]
+ gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
+ ip6_tnl_rcv+0x7c/0xa0 net/ipv6/ip6_tunnel.c:903
+ ip6gre_rcv net/ipv6/ip6_gre.c:-1 [inline]
+ gre_rcv+0xbfa/0x11e0 net/ipv6/ip6_gre.c:588
+ ip6_protocol_deliver_rcu+0xe0b/0x15c0 net/ipv6/ip6_input.c:438
+ ip6_input_finish+0x191/0x370 net/ipv6/ip6_input.c:489
+ NF_HOOK+0x30c/0x3a0 include/linux/netfilter.h:318
+ ip6_input+0x16a/0x270 net/ipv6/ip6_input.c:500
+ dst_input include/net/dst.h:474 [inline]
+ ip6_sublist_rcv_finish+0x1c8/0x2a0 net/ipv6/ip6_input.c:88
+ ip6_list_rcv_finish net/ipv6/ip6_input.c:145 [inline]
+ ip6_sublist_rcv+0xb11/0xdd0 net/ipv6/ip6_input.c:321
+ ipv6_list_rcv+0x3e5/0x430 net/ipv6/ip6_input.c:355
+ __netif_receive_skb_list_ptype net/core/dev.c:6122 [inline]
+ __netif_receive_skb_list_core+0x5f4/0x800 net/core/dev.c:6169
+ __netif_receive_skb_list net/core/dev.c:6221 [inline]
+ netif_receive_skb_list_internal+0x96f/0xcb0 net/core/dev.c:6312
+ netif_receive_skb_list+0x54/0x450 net/core/dev.c:6364
+ xdp_recv_frames net/bpf/test_run.c:280 [inline]
+ xdp_test_run_batch net/bpf/test_run.c:361 [inline]
+ bpf_test_run_xdp_live+0x1790/0x1b20 net/bpf/test_run.c:390
+ bpf_prog_test_run_xdp+0x75b/0x10e0 net/bpf/test_run.c:1331
+ bpf_prog_test_run+0x2cd/0x340 kernel/bpf/syscall.c:4673
+ __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6152
+ __do_sys_bpf kernel/bpf/syscall.c:6244 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6242 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6242
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3bce98efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3bccbee038 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007f3bcebe5fa0 RCX: 00007f3bce98efc9
+RDX: 0000000000000048 RSI: 0000200000000600 RDI: 000000000000000a
+RBP: 00007f3bcea11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3bcebe6038 R14: 00007f3bcebe5fa0 R15: 00007fffd6bba178
+ </TASK>
+
+
 ---
- tools/perf/pmu-events/Build | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-index c5e2d5f13766..a46ab7b612df 100644
---- a/tools/perf/pmu-events/Build
-+++ b/tools/perf/pmu-events/Build
-@@ -29,10 +29,12 @@ $(PMU_EVENTS_C): $(EMPTY_PMU_EVENTS_C)
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,gen)cp $< $@
- else
--# Copy checked-in json for generation.
-+# Copy checked-in json to OUTPUT for generation if it's an out of source build
-+ifneq ($(OUTPUT),)
- $(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,gen)cp $< $@
-+endif
- 
- $(LEGACY_CACHE_JSON): $(LEGACY_CACHE_PY)
- 	$(call rule_mkdir)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.34.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
