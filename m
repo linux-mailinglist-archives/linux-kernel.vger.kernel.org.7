@@ -1,208 +1,277 @@
-Return-Path: <linux-kernel+bounces-860675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B7ABF0AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:51:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380D6BF0AD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA23F4F25EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A93189D2CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7102505AA;
-	Mon, 20 Oct 2025 10:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F22253B42;
+	Mon, 20 Oct 2025 10:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RFgxqqv7"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013068.outbound.protection.outlook.com [40.107.201.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHEPhIMK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EF2248F66;
-	Mon, 20 Oct 2025 10:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760957460; cv=fail; b=b1d9Qhk4z4LqyFwMXKPEwL+emiM/mh5UMFpNkkTppt9geNpyLvaDaNFQHooIenTAO0u7vG3ZpmOQmud0Z6sHYgWZRgMN8Mtbdp7Mpn5QIMA9uKpg/YZH3eScWS/xEJVi5GVHlk10/xir3OlfzCssJ+9AFWNEQcKNxyESSZF3VSA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760957460; c=relaxed/simple;
-	bh=rM7KlNFc19BP2sDerUTzCG/K5qxZzMpBCmqzV5xD4Ic=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=WzRx3WpfyKiideICuTlzfb5T8r0O7OYdV9M4rFVAsEwEcCEf+nYkimIAfn9a9UgWXsFYOUpKJTj59YS9UXeQ83D8mjD2CAuVfrw/H2DR28hrP74qu5xeIaiBDcCVzaHWUp64BiS1W1c7Cu+jhQb/N1z7plZER8K3Xf/gENmdwMs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RFgxqqv7; arc=fail smtp.client-ip=40.107.201.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u3tLrdH3Kh/XgHVwQHQurgxHKsfzfaLE8H6M+KdyKtwNmPoC/oZ5o4hVjpS8lLXiDTCqahzKtE/iwABO2HpeyhPI2cg8NDXDMIXPju4mPiIeBOxp2Eo2EbC/+i6cEwDO3XMqd/S5j7bXCcM7kR6YFM6jzU1csePvodu2HNZLugNNwtp3f/i+unNwmR0QPXfYhZavpBd0er7d9SO+gbyhj2STo9BbW/1Re73XuFz2OUXmjO5KNkxCg8Ea6Y3eqzSZxbifp0Hpv78CiMSlJXkph/Fy0R+e0/fvJAxr1yoFoxvh/o0soGsTrMk2XkSvSqVqsU8YYbDjOOtAjrRJJiltyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rM7KlNFc19BP2sDerUTzCG/K5qxZzMpBCmqzV5xD4Ic=;
- b=yy/Msreyoctvour3G/8TY7IF+ZEN2IymTpQG8iI4zRCd0XfszHehgivAvv6P4wSkvqTq2KJm00YytPYJEASiyYfO52cFeZvMBt01N/xIKNC8CIsA6HL5f6iISVFwMGg+/c5xUQOooWkoJKVJg1FwVl8Krnmch+S05Ke/HLLkbEdVtw3dMi318hEASJoXE4eToIkv7bnfiSJZij5meFeSef5MP5656vmNUTXTejtgHbhWfrUoSoyC1iQLVUDD15vHudql5eE6Ekf9dhe4yywueDSn2ojJEwICRHuc3FBu3NDmUR1MwfjkTCH3XP+b4ytmwV04OGylBc+bqWNT/AtvdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rM7KlNFc19BP2sDerUTzCG/K5qxZzMpBCmqzV5xD4Ic=;
- b=RFgxqqv7v7SGgF8nDwJRVpsqMoycOZLBmQH3TpMVzZoFZZKzPYdyKEj5JUEOkJGl/IXQ0DRVQcteswbYN6X5rytl+LYWtnADDWKmY4gqvNewCcHK6rwZ+4wHUtiUgaGQwbfKMEx1fg7eie+zknqqpXXVcEyoBxDVPMUvZrB2tsuOuX9xNluh7kurxGjckbefY8nk5B2CX4zweXifp/Huoi97fc2qy6w08/hicDyUUhZXwlmn5BgLbqHcyRssc6LttYTBhS0eq8KS5wzimmVfIf8YnWZ02EmYhFe+dQMlTlzTK3+K0k4Sj0soaAe3k5f1qtgPXAQm42I8d2nbDe5vSQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by BN5PR12MB9485.namprd12.prod.outlook.com (2603:10b6:408:2a8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 10:50:53 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 10:50:53 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Oct 2025 19:50:50 +0900
-Message-Id: <DDN3BGP9270Q.28ZV9MAWO3CUC@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v5 03/14] gpu: nova-core: gsp: Create wpr metadata
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251013062041.1639529-1-apopple@nvidia.com>
- <20251013062041.1639529-4-apopple@nvidia.com>
- <DDJJ4ECCSE2I.1EUAJRU9JBGNI@nvidia.com>
- <zwaefk62to77b5nyakeiboyj53fge3lysc3z7arp54tyyherdo@nsqhuig7bmbc>
- <DDK4KADWJHMG.1FUPL3SDR26XF@kernel.org>
- <DDMWPMS0U5PK.3IW61GCOI3GZB@nvidia.com>
- <DDN2ITDOVCEV.50CEULQSFLVO@kernel.org>
-In-Reply-To: <DDN2ITDOVCEV.50CEULQSFLVO@kernel.org>
-X-ClientProxiedBy: TY4PR01CA0027.jpnprd01.prod.outlook.com
- (2603:1096:405:2bf::11) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2C324A051;
+	Mon, 20 Oct 2025 10:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760957506; cv=none; b=lj3Ms2uYZXfccQ/FLmkbo7JJPtbDbNmBkFRU7GA1WRLMzvdvcp6BqhVKW91R1frremzN9h/3wHurnDT4zFvH0lb0RnHp20nqxliWN8SUkrfsPjanyRu1/jrx/AsDAiigHIrCR11xm+uOrI6t+D4B3ZXFiXdZCCkM3UHZjrOaUiI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760957506; c=relaxed/simple;
+	bh=AI+v3B44r7aI13Nyi97cGokuSp4SZUSbHz6ilhTTrPM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Tra7qcIgRlzjs6BYmFuJDKIR8uKqL2U45l8U22dzslr+oVpVsTxi7bCAEDhhzpNMUn2K6QMbThEKLbb6Ets5FxeYdfQwkXDxV9pD+2Ah9z8YsaNYGND0ODljTQzVaS6w+9aAn3mPGlAJwQ+aFUVcK+CmuPmfGeuhUsj+YMoa/mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHEPhIMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813A3C4CEF9;
+	Mon, 20 Oct 2025 10:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760957505;
+	bh=AI+v3B44r7aI13Nyi97cGokuSp4SZUSbHz6ilhTTrPM=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=rHEPhIMKfAcuEoJ1yzoyxjZCT7gddKGVNgjks2o7VYrhJxCdBDEz/EuHvz4t33pIl
+	 sYgCpxBvOdbdKsWS778ABh2lWq0j54jO1ALXCn7851mK9vMId58jl3m4bU3qlkrfiQ
+	 WaYfgXCxan9jHaGHqkEaYsLLMZeiu6QGjnIoBSPuhNpZMIxCv+XpStj+0SlEeTYUOW
+	 juAOqAQ48+A6nSfx+us1gpNGjqrpyjjlun+kHdg3cbmruAVYOPy7aAPBw6u85menJt
+	 LTNCcMBFKUEUja/zgwmHggVmp6B9OoINvaMZsocKfZd9vSS35S0bMU1k0BaaT6bpFJ
+	 5DdctfxVYPpOA==
+Message-ID: <e9ac7f92-3041-487c-9b48-e38fb98214a8@kernel.org>
+Date: Mon, 20 Oct 2025 12:51:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BN5PR12MB9485:EE_
-X-MS-Office365-Filtering-Correlation-Id: 230cf3e6-77c3-4e66-72e8-08de0fc68a7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aFI0UHdaTXdQWjBSYTVTUXZxMU94d1lOY1pRK3hkcEpyWityelpjWStUaDZ0?=
- =?utf-8?B?QzJ4dFVCS3hVQjE5bXhiRlU4c3FwWFRMVDF1bUNYOXhhTU04V2xSMDN6eUpF?=
- =?utf-8?B?akNobkcxRFZJbXFYZlg4VHczZktSTndyZFNGaCtHWm80bE1iUkZUc2hlRHFr?=
- =?utf-8?B?Q1k0R29PZE5wSnM5NlpVemVyVHRNQTBtbnZTZ0lnTlBaeGs3amRuc2xHVGJi?=
- =?utf-8?B?TzF4NjFjQXlaeVc5bzhINDFvU01Xb3g3SWh6VXJxMUs0eFExS2NCUTNCdW02?=
- =?utf-8?B?RkszVjRhbDYxNkJGR3VSZXMzNlhtbzJoSmRPV3Q1OHZXbjFOZjlLMjJwL051?=
- =?utf-8?B?Q0Y4OU9WaGoya3drNElhRWdrM2t6Si9GdWxpV0ZjNVlidTUxSndKY3Z0ZXlw?=
- =?utf-8?B?UTMzMmwxV0t6SGUyUkV2MUNkaEsyWTU2S2p2RXdqTUNpK0loOVdCN3djdDda?=
- =?utf-8?B?R29Jbm9UZEcxeE1Vak1OYkgvQzYwTU1nVlc5QUt5SXBnZlpmZm9oSGlxT0lK?=
- =?utf-8?B?ZXIrVWV2d0tJNXFpN1FaR3dYWWM2U3NBNnZ6c3lsTVF1cUlOWkJpNmoxdm1x?=
- =?utf-8?B?dHdUamIrNW41bEd5SmtaNXNjazJieWhFZk1aOE52TDU3S0xVdWdHOW9PQWVL?=
- =?utf-8?B?cWhiV1BrY0Zkd05uY2NiL3c4TFYyKzdsMDJteUNJOFgrOG93a3d3TENON1Vp?=
- =?utf-8?B?aXZ0ZXJhUXNibzY0eGk5Smp5L2dLUi9UazlQRzhOVWdZY3lvR0RTSnorNExa?=
- =?utf-8?B?Q0VsMnRjM0tqUDJVYlB2bjJlY1pHUVUySm1hM1dWOC94RFM5VGQ3cnFVM3Yr?=
- =?utf-8?B?cHp5YU5DdnBSSENhQTdKMG9lU2JVamQ4TUxsVFhiRTVCM01IY1RZKzQ0RWl1?=
- =?utf-8?B?Ui9hM3pHamV1NzAybmVCT1grME1MWThZbXJQNUVrTEJQeWh0Qk5YdXJ2LzZu?=
- =?utf-8?B?czA3N2lOSnlKNzExQkZtSjBTWG9hd3J0ZFA2TW1aeHpUc2hnRzBvMWFGaGhZ?=
- =?utf-8?B?T01QS1l3RndTM1JwRC9DRlV0ckpOdlUzcHI3d0hTQXh5b3pRQlFudC9iZCsx?=
- =?utf-8?B?OC9TMEh0K1VhSElVRm1NNFpxdVgwdFA1TFQyMlpvalNoZHVWSHR5eXBOZ3Q3?=
- =?utf-8?B?c3J5Sm1qNlY3eEZGNDkvRWRNWDM2eDBqU3dqcTVvdXpNZlhFVnE2UHZzY1Y0?=
- =?utf-8?B?QjVuVFBIR1ZzWWZJN2tlUFk3aldNZytjMTZvaUFDSldhVnBKbWM1a3dkR0dO?=
- =?utf-8?B?cDQya1FubWxiNENndHN2TWtnOXBsK3hla3FRMEYreGRnbjdHSUhKQUVnNW1M?=
- =?utf-8?B?Rks5d1QxVEVuQmNDZmJPUHV6VVhIdmNJZjNvdWJva0ZJdzFvQTI0Vno3c2dx?=
- =?utf-8?B?Q0FkM1Q0bk9Qc2NQbFZyZU9oK3M4cDJjWEcvTEc0ZFJoU1JxZjAvZGg2cmxt?=
- =?utf-8?B?V2RzZVdvSXBwVnUzS015R0VzbXdlS3h5T0RkZjlpVkNJZ1NsT2RXdkpoVGY0?=
- =?utf-8?B?WEZSNkxDMjVrRVJXM3dPN2Zqa1lGWkdzVGw1VmVxVS9teEtZRHoxb1lJSHZE?=
- =?utf-8?B?QThzczBLdFZnUmlVd0lmOENlY3REaUVNM3RRVE96eDNVbjhSTGI4YXI0WWtX?=
- =?utf-8?B?RE1aT1dzSGJncTZsdkVUa015WW1iU3BOVThrZHVPalI0eEF1bThHOW5HQnpj?=
- =?utf-8?B?cy9JSzRpcENkeHlldU9lRmo1eUdRWEJmV1RyM2JMOG1VSUxJLzFQc2RUZnRw?=
- =?utf-8?B?bGVNYTFLNUE2MHFvQzRlRzF0Sy9UcTNpMG5JVHhzQjA0ZHk0QzBlemxFMjA3?=
- =?utf-8?B?aXlNUXlnVG4wNWJFNktSbkVEMjlDd2pya2tmb0ErSjd4akdVRURqcVp3UUV6?=
- =?utf-8?B?cDlFd3o1SUt0M09Zbng2VldzekFJTnkzQitOUHR3eDlKcDlYdFJ0bk9paVJB?=
- =?utf-8?Q?yF/7RG0dlRHyPsQVfpi9MWYloHahnK5I?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QmFwU3ROVUUwSFlXTDVWWU96U3lsNkNxYmREbHpmdlhLVCtwajlVWkdJaTQ4?=
- =?utf-8?B?ZDJMR0oreXdQajhLcktQcGIxZXNrckJleFY3aWtBMm5hMU5qd2sxNjJMTVZi?=
- =?utf-8?B?OGs0MnNjNDFVQi9HSjNTdFEvTWdMaGVUU21VNkE4d2s2SGFHdUgvUlM3L3Rm?=
- =?utf-8?B?N1k5MndWaXNQeGpPY1lzWDg2UWZrYXk1L0svd3R4L1c1T0pHRnhOd2RRWHRL?=
- =?utf-8?B?NDRsYVBRcjJsNVNjaFo3a2xlV0hiL3BQZ2ZCQm53ZzFmODBoUTladndYNk9D?=
- =?utf-8?B?UWNwRzFnMUlzbzhHYzI2TktrVzRKZ3FBRDBRc1ZacmNSTU5DTzBoNHZ6bVVt?=
- =?utf-8?B?Nk14Nm1jMEZBSmVkK0o4eHVBMDAxa0hCaDFsNGc4bjZxZzRWT21TZytqajhJ?=
- =?utf-8?B?bmJaOHJsWUpwWTkraC9PazZFbGpuUjVmV1VqUVJEQlpXc3VwZzE3NllqdU5n?=
- =?utf-8?B?QjZuaDhGT2U5TjFneUVSSWQ3OHpKaWNaWVNOcFVRQm5DR2w1eTV3STZnem4x?=
- =?utf-8?B?cUM5Mmc0YVBLL2FSUk9KQkpmL3NScVNGYUVjMEdrMHF5eklSRElpVzlDc0Vp?=
- =?utf-8?B?aU82a2p6V0l6WTEzVXVZSTNyVzY3cFlnVXUrTkIzaHpKTmlvZ3lpTEUvcUNC?=
- =?utf-8?B?ejVxWndaZkZzRTJINTRVaFlsOG1DaEJzZFFweE5BRFMvd0xxNkhlQS9kNGpl?=
- =?utf-8?B?S25NYnc0VDFRU085THJsK1daaVRlM205OFNlT01oSmF6ZnJBdjBWWXhwa0NO?=
- =?utf-8?B?WENjc0RIU29GQk9KeWRqdXliMnFVOGFKbm5ocyt1OUFDc3dhV3ZUK2VxZURt?=
- =?utf-8?B?VWVQOUVNL3diRHBrak1zSCtHNGplZ2VvUUtOV0tpL0NvbUxjME5BQS8yblVa?=
- =?utf-8?B?MGNmNU9SaDJtckd5QVlmYTVydXJNU1JNNE5kdENKRkdva2FXay8xSHllSUdn?=
- =?utf-8?B?TE5tQXFKVFZTbVV6c0RJa0Y5UG5GZGNaMGRuc1dvQTFqNkxPS3NFVitTbXJO?=
- =?utf-8?B?bFVsNkh4UXcxSkNoSkM3c1lFSlNVTi9UNkR4eGJhRjU1UGJSNGxVcHFUY1k4?=
- =?utf-8?B?eDY4dDNmWGczaHNBT1p2Zm5reFlFenVERHlvRlRsOXE0Vk9qMGdCYzJIWVh5?=
- =?utf-8?B?MmJpeTVNeW5KTG5vbU83UTVqQUtRU1lYSm5WSEk2WG9lK2xSdWdPNDJCYncw?=
- =?utf-8?B?bTNocWtGTUM5czA2ckpIbjI0T3dkekRFRkNOandocmRmS0R2K3ZQdWxFOWtX?=
- =?utf-8?B?R0s4NThjazRmaHJlN1dBUENEbnF5NE8zT2NETDlPVWRsclYwWVdhdnN5NTBS?=
- =?utf-8?B?TTVBVFJkWC81L0grTXg4RzNjeWowZ2liT0dmN2xIck5SUWJjcTRtOTFSSStM?=
- =?utf-8?B?Z2Z5eWRuQVovZFkyQitPUHVLaldvZkx5Um1WbnE2a2t0SXF3VDVhK1p2ZlFM?=
- =?utf-8?B?UTRyWm1maVVndnpkd0QvUG1WdDRSYUFUM2JUVEsxZCt5cHk3OWhwV05Tak9J?=
- =?utf-8?B?aW5PeUJWVFc3WTdYdFI2cTJybW9PYTVZL25aOVJPL1ZMNjBhaUg0b3RPSlBV?=
- =?utf-8?B?VSs0ZlZuZWN0Z1oraVFXK3d6Wm1qY3RxWnVVRUZNNS9iTFhibjdiSFVMVnY1?=
- =?utf-8?B?YXZnMjFKeWpIL2FTcnMrWVhsT2MwdGtaRXNkaWpWQS9DMlU0YXlXUzVqTW5X?=
- =?utf-8?B?UDNoak1vY1VnV3ZlOCtVdWViSzZNOGYreE1RdFh2T09tZ0FBZzFMSXcyOFhN?=
- =?utf-8?B?OGhlczZoTDZoVGhxSG1FblVVRHJ4bVdLaXRuR1EwaXpQSlZBY1hTdVdaMS9B?=
- =?utf-8?B?ZmQvbnFLVnV1NDVDRzVJL3Nlb3JLLzRpSWdxZFdKQ3lsQmdOVVpvazVDVU4z?=
- =?utf-8?B?T2dBN3hLNXl3bEk2WXloOGxiWlRzZFgyYjE1enowZEJYMXZFNmt2cFpQbWNS?=
- =?utf-8?B?UW1PdXBHN2p6SEcwcXlMcll0QSt4KzkrTDVwMFBtTGFWYjlxTXIvMkt5SlEv?=
- =?utf-8?B?ZmF2UThtb3ZtTzhBQVdVdjZwUkgzRUNqQ3BZU1ora3c4a0dhbEcvRy9NWVRU?=
- =?utf-8?B?T3F3N1BuWmJLTFNhVUlIQW9vSy96QmxhQ3o1UGo3RmpOVy9jR2VaUEFPRUlP?=
- =?utf-8?B?SU9ORzJFbC9GUkNhL2NOcDV4RCtOZEtWVjUwdmNoVjBNM0Y0bGs2S21uYXJZ?=
- =?utf-8?Q?tKgybOCnF7Yv0CvY2VxqKuJWQlNi2IH1A31l+0W4th4s?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 230cf3e6-77c3-4e66-72e8-08de0fc68a7d
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 10:50:53.6412
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T3vLwYIWfeAmHyTD+C0vhn6vQxpLmS/g/PowIudXRd7RTz45RdlCIiveZ8LL1yM+lWCILVBmuXZ6zDsqiZh6lA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9485
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 00/23] Fix media uAPI cross references
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <cover.1759329363.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <cover.1759329363.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon Oct 20, 2025 at 7:13 PM JST, Danilo Krummrich wrote:
-> On Mon Oct 20, 2025 at 7:40 AM CEST, Alexandre Courbot wrote:
->> The alternative would be to have const functions like `usize_to_u64`. It
->> doesn't look as smooth as the extention trait, but can be used in const
->> contexts.
->
-> That's what I thought of, exactly for the reason of being usable in const
-> contexts (at least for a quick fix in nova-core).
->
-> Whether we want an extention trait and a separate temporary const_usize_t=
-o_u64()
-> etc. can be discussed in the context of making it common infrastructure.
+On 01/10/2025 16:49, Mauro Carvalho Chehab wrote:
+> In the past, media used Docbook to generate documentation, together
+> with some logic to ensure that cross-references would match the
+> actual defined uAPI.
+> 
+> The rationale is that we wanted to automatically check for uAPI
+> documentation gaps.
+> 
+> The same logic was migrated to Sphinx. Back then, broken links
+> were reported. However, recent versions of it and/or changes at
+> conf.py disabled such checks.
+> 
+> The result is that several symbols are now not cross-referenced,
+> and we don't get warnings anymore when something breaks.
+> 
+> This series consist on 2 parts:
+> 
+> Part 1: extra patches to parse_data_structs.py and kernel_include.py;
+> Part 2: media documentation fixes.
+> 
+> I'm not sure what's the best strategy to merge it, as some patches
+> belong to doc while others are media. So, they can be merged on
+> either one of the tree, or split on two series and merged in
+> separate or even being merged via a PR applied on both trees.
+> 
+> IMO, the latter is the better strategy.
+> 
+> Anyway, let's submit the series for review and discuss later about
+> its merge strategy.
 
-Thanks - so IIUC the idea would be to keep this local to nova-core in a
-first time? If so I guess I can produce this fast (and convert our many
-uses of `as` in the driver so far).
+For all the media/cec oatches:
+
+Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+
+Nice that cross references are now properly checked.
+
+Regards,
+
+	Hans
+
+> 
+> Mauro Carvalho Chehab (23):
+>   tools: docs: parse_data_structs.py: drop contents header
+>   tools: docs: parse_data_structs.py: output a line number
+>   docs: kernel_include.py: fix line numbers for TOC
+>   docs: kernel_include.py: propose alternatives
+>   tools: docs: parse_data_structs: make process_exceptions two stages
+>   tools: docs: parse_data_structs.py: get rid of process_exceptions()
+>   tools: docs: parse_data_structs.py: add namespace support
+>   tools: docs: parse_data_structs.py: accept more reftypes
+>   docs: media: dvb: use TOC instead of file contents at headers
+>   docs: media: dvb: enable warnings for most headers
+>   docs: media: rc: use TOC instead of file contents for LIRC header
+>   docs: media: mediactl: use TOC instead of file contents
+>   docs: kernel_include.py: use get_close_matches() to propose
+>     alternatives
+>   docs: media: add missing c namespace to V4L headers
+>   docs: media: videodev2.h.rst.exceptions: fix namespace on refs
+>   media: docs: add a missing reference for VIDIOC_QUERY_CTRL
+>   media: docs: videodev2.h.rst.exceptions: ignore struct
+>     __kernel_v4l2_timeval
+>   media: docs: add some C domain missing references
+>   docs: cec: cec.h.rst.exceptions: fix broken references from cec.h
+>   docs: cec: show broken xrefs and show TOC instead of cec.h content
+>   docs: media: dmx_types: place kerneldoc at the right namespace
+>   docs: media: dvb: headers: warn about broken cross references
+>   docs: media: dvb: fix dmx.h.rst.exceptions
+> 
+>  Documentation/sphinx/kernel_include.py        | 110 ++++++-
+>  .../userspace-api/media/cec/cec-header.rst    |   8 +-
+>  .../media/cec/cec.h.rst.exceptions            |   3 +
+>  .../media/dvb/dmx.h.rst.exceptions            |  82 +++--
+>  .../userspace-api/media/dvb/dmx_types.rst     |   1 +
+>  .../media/dvb/frontend.h.rst.exceptions       |   5 +-
+>  .../userspace-api/media/dvb/headers.rst       |  31 +-
+>  .../media/mediactl/media-header.rst           |   8 +-
+>  .../media/mediactl/media.h.rst.exceptions     |   3 +
+>  .../userspace-api/media/rc/lirc-header.rst    |  14 +-
+>  .../userspace-api/media/v4l/app-pri.rst       |   1 +
+>  .../userspace-api/media/v4l/audio.rst         |   1 +
+>  .../userspace-api/media/v4l/biblio.rst        |   1 +
+>  .../userspace-api/media/v4l/buffer.rst        |   2 +
+>  .../media/v4l/capture-example.rst             |   1 +
+>  .../userspace-api/media/v4l/capture.c.rst     |   1 +
+>  .../media/v4l/colorspaces-defs.rst            |   1 +
+>  .../media/v4l/colorspaces-details.rst         |   1 +
+>  .../userspace-api/media/v4l/colorspaces.rst   |   1 +
+>  .../userspace-api/media/v4l/common-defs.rst   |   1 +
+>  .../userspace-api/media/v4l/common.rst        |   1 +
+>  .../userspace-api/media/v4l/compat.rst        |   1 +
+>  .../userspace-api/media/v4l/control.rst       |   1 +
+>  .../userspace-api/media/v4l/crop.rst          |   1 +
+>  .../userspace-api/media/v4l/depth-formats.rst |   1 +
+>  .../userspace-api/media/v4l/dev-decoder.rst   |   1 +
+>  .../userspace-api/media/v4l/dev-encoder.rst   |   1 +
+>  .../userspace-api/media/v4l/dev-event.rst     |   1 +
+>  .../userspace-api/media/v4l/dev-mem2mem.rst   |   1 +
+>  .../userspace-api/media/v4l/dev-meta.rst      |   1 +
+>  .../userspace-api/media/v4l/dev-osd.rst       |   1 +
+>  .../userspace-api/media/v4l/dev-overlay.rst   |   1 +
+>  .../userspace-api/media/v4l/dev-radio.rst     |   1 +
+>  .../userspace-api/media/v4l/dev-sdr.rst       |   1 +
+>  .../media/v4l/dev-stateless-decoder.rst       |   1 +
+>  .../userspace-api/media/v4l/dev-subdev.rst    |   1 +
+>  .../userspace-api/media/v4l/dev-touch.rst     |   1 +
+>  .../userspace-api/media/v4l/devices.rst       |   1 +
+>  .../userspace-api/media/v4l/dv-timings.rst    |   1 +
+>  .../media/v4l/ext-ctrls-camera.rst            |   1 +
+>  .../media/v4l/ext-ctrls-codec-stateless.rst   |   1 +
+>  .../media/v4l/ext-ctrls-codec.rst             |   1 +
+>  .../media/v4l/ext-ctrls-colorimetry.rst       |   1 +
+>  .../media/v4l/ext-ctrls-detect.rst            |   1 +
+>  .../userspace-api/media/v4l/ext-ctrls-dv.rst  |   1 +
+>  .../media/v4l/ext-ctrls-flash.rst             |   1 +
+>  .../media/v4l/ext-ctrls-fm-rx.rst             |   1 +
+>  .../media/v4l/ext-ctrls-fm-tx.rst             |   1 +
+>  .../media/v4l/ext-ctrls-image-process.rst     |   1 +
+>  .../media/v4l/ext-ctrls-image-source.rst      |   1 +
+>  .../media/v4l/ext-ctrls-jpeg.rst              |   1 +
+>  .../media/v4l/ext-ctrls-rf-tuner.rst          |   1 +
+>  .../media/v4l/extended-controls.rst           |   1 +
+>  .../userspace-api/media/v4l/field-order.rst   |   1 +
+>  .../userspace-api/media/v4l/fourcc.rst        |   1 +
+>  .../userspace-api/media/v4l/hsv-formats.rst   |   1 +
+>  .../userspace-api/media/v4l/libv4l.rst        |   1 +
+>  .../userspace-api/media/v4l/meta-formats.rst  |   1 +
+>  .../media/v4l/metafmt-c3-isp.rst              |   1 +
+>  .../userspace-api/media/v4l/metafmt-d4xx.rst  |   1 +
+>  .../media/v4l/metafmt-generic.rst             |   1 +
+>  .../media/v4l/metafmt-intel-ipu3.rst          |   1 +
+>  .../media/v4l/metafmt-pisp-be.rst             |   1 +
+>  .../media/v4l/metafmt-pisp-fe.rst             |   1 +
+>  .../media/v4l/metafmt-rkisp1.rst              |   1 +
+>  .../userspace-api/media/v4l/metafmt-uvc.rst   |   1 +
+>  .../userspace-api/media/v4l/metafmt-vivid.rst |   1 +
+>  .../media/v4l/metafmt-vsp1-hgo.rst            |   1 +
+>  .../media/v4l/metafmt-vsp1-hgt.rst            |   1 +
+>  .../userspace-api/media/v4l/pixfmt-bayer.rst  |   1 +
+>  .../userspace-api/media/v4l/pixfmt-cnf4.rst   |   1 +
+>  .../media/v4l/pixfmt-compressed.rst           |   1 +
+>  .../media/v4l/pixfmt-indexed.rst              |   1 +
+>  .../userspace-api/media/v4l/pixfmt-intro.rst  |   1 +
+>  .../userspace-api/media/v4l/pixfmt-inzi.rst   |   1 +
+>  .../userspace-api/media/v4l/pixfmt-m420.rst   |   1 +
+>  .../media/v4l/pixfmt-packed-hsv.rst           |   1 +
+>  .../media/v4l/pixfmt-packed-yuv.rst           |   1 +
+>  .../media/v4l/pixfmt-reserved.rst             |   1 +
+>  .../userspace-api/media/v4l/pixfmt-rgb.rst    |   1 +
+>  .../media/v4l/pixfmt-sdr-cs08.rst             |   1 +
+>  .../media/v4l/pixfmt-sdr-cs14le.rst           |   1 +
+>  .../media/v4l/pixfmt-sdr-cu08.rst             |   1 +
+>  .../media/v4l/pixfmt-sdr-cu16le.rst           |   1 +
+>  .../media/v4l/pixfmt-sdr-pcu16be.rst          |   1 +
+>  .../media/v4l/pixfmt-sdr-pcu18be.rst          |   1 +
+>  .../media/v4l/pixfmt-sdr-pcu20be.rst          |   1 +
+>  .../media/v4l/pixfmt-sdr-ru12le.rst           |   1 +
+>  .../media/v4l/pixfmt-srggb10-ipu3.rst         |   1 +
+>  .../media/v4l/pixfmt-srggb10.rst              |   1 +
+>  .../media/v4l/pixfmt-srggb10alaw8.rst         |   1 +
+>  .../media/v4l/pixfmt-srggb10dpcm8.rst         |   1 +
+>  .../media/v4l/pixfmt-srggb10p.rst             |   1 +
+>  .../media/v4l/pixfmt-srggb12.rst              |   1 +
+>  .../media/v4l/pixfmt-srggb12p.rst             |   1 +
+>  .../media/v4l/pixfmt-srggb14.rst              |   1 +
+>  .../media/v4l/pixfmt-srggb14p.rst             |   1 +
+>  .../media/v4l/pixfmt-srggb16.rst              |   1 +
+>  .../media/v4l/pixfmt-srggb8-pisp-comp.rst     |   1 +
+>  .../userspace-api/media/v4l/pixfmt-srggb8.rst |   1 +
+>  .../media/v4l/pixfmt-tch-td08.rst             |   1 +
+>  .../media/v4l/pixfmt-tch-td16.rst             |   1 +
+>  .../media/v4l/pixfmt-tch-tu08.rst             |   1 +
+>  .../media/v4l/pixfmt-tch-tu16.rst             |   1 +
+>  .../userspace-api/media/v4l/pixfmt-uv8.rst    |   1 +
+>  .../media/v4l/pixfmt-v4l2-mplane.rst          |   1 +
+>  .../userspace-api/media/v4l/pixfmt-v4l2.rst   |   1 +
+>  .../userspace-api/media/v4l/pixfmt-y12i.rst   |   1 +
+>  .../userspace-api/media/v4l/pixfmt-y16i.rst   |   1 +
+>  .../userspace-api/media/v4l/pixfmt-y8i.rst    |   1 +
+>  .../media/v4l/pixfmt-yuv-luma.rst             |   1 +
+>  .../media/v4l/pixfmt-yuv-planar.rst           |   1 +
+>  .../userspace-api/media/v4l/pixfmt-z16.rst    |   1 +
+>  .../userspace-api/media/v4l/pixfmt.rst        |   1 +
+>  .../userspace-api/media/v4l/planar-apis.rst   |   1 +
+>  .../userspace-api/media/v4l/querycap.rst      |   1 +
+>  .../userspace-api/media/v4l/sdr-formats.rst   |   1 +
+>  .../media/v4l/selection-api-configuration.rst |   1 +
+>  .../media/v4l/selection-api-examples.rst      |   1 +
+>  .../media/v4l/selection-api-intro.rst         |   1 +
+>  .../media/v4l/selection-api-targets.rst       |   1 +
+>  .../media/v4l/selection-api-vs-crop-api.rst   |   1 +
+>  .../userspace-api/media/v4l/selection-api.rst |   1 +
+>  .../media/v4l/selections-common.rst           |   1 +
+>  .../userspace-api/media/v4l/standard.rst      |   1 +
+>  .../media/v4l/subdev-formats.rst              |   1 +
+>  .../userspace-api/media/v4l/tch-formats.rst   |   1 +
+>  .../userspace-api/media/v4l/tuner.rst         |   1 +
+>  .../userspace-api/media/v4l/user-func.rst     |   1 +
+>  .../media/v4l/v4l2-selection-flags.rst        |   1 +
+>  .../media/v4l/v4l2-selection-targets.rst      |   1 +
+>  .../userspace-api/media/v4l/v4l2.rst          |   1 +
+>  .../media/v4l/v4l2grab-example.rst            |   1 +
+>  .../userspace-api/media/v4l/v4l2grab.c.rst    |   1 +
+>  .../userspace-api/media/v4l/video.rst         |   1 +
+>  .../userspace-api/media/v4l/videodev.rst      |   9 +-
+>  .../media/v4l/videodev2.h.rst.exceptions      | 288 +++++++++---------
+>  .../media/v4l/vidioc-queryctrl.rst            |   8 +
+>  .../userspace-api/media/v4l/yuv-formats.rst   |   1 +
+>  tools/docs/lib/parse_data_structs.py          | 230 ++++++++------
+>  tools/docs/parse-headers.py                   |   5 +-
+>  141 files changed, 608 insertions(+), 324 deletions(-)
+> 
+
 
