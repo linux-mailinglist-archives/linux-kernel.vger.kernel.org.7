@@ -1,183 +1,234 @@
-Return-Path: <linux-kernel+bounces-860447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FBDBF0267
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:25:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E46ABF0158
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 753F14EEDDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:25:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A4884F0E17
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F4C2F5A02;
-	Mon, 20 Oct 2025 09:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B087A2E8B76;
+	Mon, 20 Oct 2025 09:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hjsK+JyU"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1f2XP8D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5291117A31C;
-	Mon, 20 Oct 2025 09:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F142BE03D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952322; cv=none; b=l99ibTAHNsYRWhaG3CnBXA26N7snX13qADMDtOi1uSPWl03AZFwfDH7NXUc+L+tfxu4YEmfbgV0YIU8Azq4BeyxbgaGhO8SzhFHGMVGo2pe0QE9Ybz1DFEIJTsO27dZ7ZZ/Z0JXRcMvSDBUadL/r+UOXbT0nCUtpcDC+Cwh180w=
+	t=1760951104; cv=none; b=jBxj//U6qqMVyFqZ2abhDijM33HUrZ3C9/WP1AVyH+7AAyA99V1iOP8dgAQrSr6Tf26wpc/3cHFebwpxkdIn7SfcEGnXXeoeyY/580hvlszuxajnZRqyVYQALJMJaaHVbJsX0N6FgI35ewZRPTL+vk0qWl5pMqCocis+wXuTOwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952322; c=relaxed/simple;
-	bh=GSLAu6ycSSWWpZrqpwKr7JMl4EBZsZ5dl0glJx8qTj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aYfqVghjmIpsjAErJmwpUz3B6SMEzD4WL3ykHCWn30oA1NlOSF5AXuAseva4tefHs3xYAcTIfA2EHMgYvY3MtrnNnirYV3APvM2oMZ+S8ZBoYsWBTatNK26R4k8gRlP5sJSvLwnmrzUj5Lo+wojVteMM7brZGMXlfZZTbo9quZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hjsK+JyU; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JMkum2016545;
-	Mon, 20 Oct 2025 09:04:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Pe7xLD
-	fJi0AzIHv3rSgjsegyZR/rKdoJT/nj5U92Ldg=; b=hjsK+JyUy1jI2s0tYnGGdS
-	sB7zH8bk1jLbaqVv8Tyyy59hum6lqx6j84ewkAt2iRFJeJLFfyqq2f/IAv5+3FqO
-	AAPffhaAz70St6g1Fn12h0jL1eCu12XV7G3y+Zds4PuB4whuzpn3Z5thi+v9FqAy
-	fXFmqZdNqbf1YXk1H8stbvCsbQpPuwnEqGcHRAg8rWzpZELHxeeOlBwncqIc3kAu
-	8c2ER3gwOuSqr/3KpmZXtzTQfOGhoE0uHZ1ZPrg+VX3GBeBpD+rPsp9JhDJYH38e
-	YVhzsXcaZXbE8yXVeId3rj8z9X/Xvn2jupst+8QK0I3EqyFEm4CzN0R6G0XxzQBw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33f0k57-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 09:04:52 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59K931u2006230;
-	Mon, 20 Oct 2025 09:04:51 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33f0k51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 09:04:51 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59K6wZc2024686;
-	Mon, 20 Oct 2025 09:04:50 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqjmudb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 09:04:50 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59K94m1962718372
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 09:04:48 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0F48C20049;
-	Mon, 20 Oct 2025 09:04:48 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 143B220040;
-	Mon, 20 Oct 2025 09:04:47 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.155.209.42])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 20 Oct 2025 09:04:47 +0000 (GMT)
-Date: Mon, 20 Oct 2025 11:04:44 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Balbir Singh
- <balbirs@nvidia.com>, Liam.Howlett@oracle.com,
-        airlied@gmail.com, akpm@linux-foundation.org, apopple@nvidia.com,
-        baohua@kernel.org, baolin.wang@linux.alibaba.com, byungchul@sk.com,
-        dakr@kernel.org, dev.jain@arm.com, dri-devel@lists.freedesktop.org,
-        francois.dugast@intel.com, gourry@gourry.net, joshua.hahnjy@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        lorenzo.stoakes@oracle.com, lyude@redhat.com, matthew.brost@intel.com,
-        mpenttil@redhat.com, npache@redhat.com, osalvador@suse.de,
-        rakie.kim@sk.com, rcampbell@nvidia.com, ryan.roberts@arm.com,
-        simona@ffwll.ch, ying.huang@linux.alibaba.com, ziy@nvidia.com,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-next@vger.kernel.org
-Subject: Re: linux-next: KVM/s390x regression
-Message-ID: <20251020110444.18981271@p-imbrenda>
-In-Reply-To: <748cdc18-e32d-41bd-90d1-a102b1c51e06@redhat.com>
-References: <20251001065707.920170-4-balbirs@nvidia.com>
-	<20251017144924.10034-1-borntraeger@linux.ibm.com>
-	<9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
-	<c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
-	<8c778cd0-5608-4852-9840-4d98828d7b33@redhat.com>
-	<74272098-cfb7-424b-a55e-55e94f04524e@linux.ibm.com>
-	<84349344-b127-41f6-99f1-10f907c2bd07@redhat.com>
-	<c9f28d0c-6b06-47a2-884d-7533f7b49c45@nvidia.com>
-	<f5debf87-0477-4d6a-8280-0cd95cd09412@linux.ibm.com>
-	<748cdc18-e32d-41bd-90d1-a102b1c51e06@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760951104; c=relaxed/simple;
+	bh=KZuK0NW8g/jyi+GON1sj2/KfHSvjXYfSxqe8K2xhPPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atyNXyhh7CnXiVK9IrfAHeMnbDhLiCe5WLkKik4yFAFU3aQO0Ogz9Gg2H3wu2OpqKwqIO+zYnI7VRgHB3ZNvOjwiMMzVanA2yvKEew1d66vL9eAm4IRvHcgsboAmeV9+w91h8dVUirYA9Yab1/P1Mik8V8A5r6BZrK1sPX3OzWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1f2XP8D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760951101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=22yfNbJ+mpY0goN/o5ffj6htndw8FKixezqcENam2+w=;
+	b=e1f2XP8DWJKcyXuzJWcka0LIuiIYGiDw861XczIG4W+8Ad/O1gspov4mIymN/rpHqF0fjp
+	0MGHAVUW4VIiZv3hfCRyA4jJQEUFcBlKnP+oUu8ahsSrUimSq9siytbehwsYEWWh+ngc0w
+	sK82IXk3RSiXdbaANhKgkeCidLh9cVw=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-wjA7secINj2q7A_oVtBfLA-1; Mon, 20 Oct 2025 05:04:58 -0400
+X-MC-Unique: wjA7secINj2q7A_oVtBfLA-1
+X-Mimecast-MFC-AGG-ID: wjA7secINj2q7A_oVtBfLA_1760951098
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b479e43ad46so344427666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:04:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760951098; x=1761555898;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=22yfNbJ+mpY0goN/o5ffj6htndw8FKixezqcENam2+w=;
+        b=XoWh26/Rj6P1HR0FH9SHgDTaOs0t+Oyu9JeYUTYcChnPnuhGV2zyWQYhT5EzbPT9LI
+         7tGy9877j4T+p53fdu5+R0LwjCH1TR1mvNd0uQxXnzl5iSxJIU270IGK2JqpSRBWyjqd
+         g0q28pMPma3r7Z6/cOxQndt8gPKflHUFTnHLi1UreNolM1QfRVItSxh0oWs5q1pxFJUl
+         mZxEZ2fvNyU5KzthlytCqh/XHoO56td+MlPyjcDPWG+2xc0wRC1ElQ7R2TpKC2Fn5zGL
+         i+zctZqfPyCJMT6GDkA/se/sYPiaFyfjmh5Fj90d2aq1YWlJJOzxzLOJnwMEWY8cX/Sl
+         5a3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUX/BBRptbsXvlGWbsv+5iOUxeTt/xwc/HSGSXd5Sq9I81TBB3sy43pq8Y9t+MkMRJuBTr9RjoiGTrB0H4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkqzA8MIu4jS9iMW/1g8gRFUsZrwdqIqdPC5jHMh0jS+HFNWZM
+	ZlOctscqtH8sNMTLZ7p95I+RXh06VLxOadCVrHeVHpJ0eABaICRc9uNiEwxqbL/y20+kDZN1mto
+	kPpeAgMaVnl54aagw+SHHQIj+mIw9g2DrcE0g1gOhSVObEAnKSFO5yq95C8GT0Fhk7A==
+X-Gm-Gg: ASbGncutnK8mDADlV1t3FZmCcU2SkeyO99eBOovwZA0Nq4kujvDyXeICd38F5U9+UsT
+	uU/oZTndY1WylGNBUL6qIpThqDBQj4H+wPXgqCQJTA0QoJc/SqqIOHlAWVw8In2dFAy6uZICdR0
+	UkKiNSbrm9BDv3pSZeJ8boUOhHGB0/XjrWs4/wWXfDahXbkcwdGP4prcvvwsE9El2mxtYxF399d
+	QapZ3aW1/oE1hq193movGxn60Z+nzLsacDLQtSNlc7cAsvqAkyz2VAskZHFkPvYIY6dYi5e43Yv
+	TwJrV69aE62ItiIU0EpdkUFhCAPQFWNuP8U0boGUh+IwoiwO/B9s+sKLivORu93nYDgdHygzBNU
+	mj8pJS3WEdiG1RNDTApKX1DSipF+Z+Qs/z2LCPExphlW2Y6EjK8U=
+X-Received: by 2002:a17:906:fe41:b0:b45:a6e6:97b4 with SMTP id a640c23a62f3a-b64764e2fd5mr1384717366b.50.1760951097653;
+        Mon, 20 Oct 2025 02:04:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFe2BUld3tY9H9mPNFll8sWB6BjRuOwgWEhUFvxf6FyCKHjQQuGnV1QEE2cqA4E1arzNlugSg==
+X-Received: by 2002:a17:906:fe41:b0:b45:a6e6:97b4 with SMTP id a640c23a62f3a-b64764e2fd5mr1384713366b.50.1760951097175;
+        Mon, 20 Oct 2025 02:04:57 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da1b96sm739516666b.1.2025.10.20.02.04.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 02:04:56 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:04:51 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, keyring@vger.kernel.org, 
+	dpsmith@apertussolutions.com, ross.philipson@oracle.com, Jonathan McDowell <noodles@earth.li>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, 
+	Stefan Berger <stefanb@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v6 10/10] tpm-buf: Enable managed and stack allocations.
+Message-ID: <yynqxoqux5whcbsnticikhwmupqh57xfbll5egzkn42kj7gkaf@s4kwxfmto5ia>
+References: <20251018111725.3116386-1-jarkko@kernel.org>
+ <20251018111725.3116386-11-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FMYWBuos c=1 sm=1 tr=0 ts=68f5fb34 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=20KFwNOVAAAA:8 a=Y9YCzrUEY6i5LxjyWmAA:9 a=CjuIK1q_8ugA:10
- a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: 8NerjxZPc--zjiIaTkWhkbJb_dv91boA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXwUQT8uqXzLgT
- JXanwJTsJZhXSf9IQ85O6DcGpxj2pZbntCNT2apS3VcD/U6tP0QhPJfmrYMTAFY5moHo9ocxaBp
- +YrDIFN/qxKi7hF9PcJJL1NaQU9stv1rfOV+z2A95t4AbdVbAJBsm8Md4kJIHjjdKc8DClAH7O7
- BjnaJmtsN6hMiSl/+syaXX5Ba90L75FhUWn7ANyQw3EQ3v1HNxUnQh6BqaRIV+bYdyt37Bpqb5n
- BMqhwknYHskhwr19Sg1KoUc9vENeex3nQpwCG0dSoCQc8JiJnE0TbPS6EsohBPRPmFaql31m/Yg
- AqSen81fILOQUHR5w2lt7AYaVgKFKtbDVCFWDdsM/LMjll6ySvJFhQPLR0yqyDznjUZPW3ofJto
- TTo4j1PQpHWqLLm3u1x0jnTvPhWevw==
-X-Proofpoint-ORIG-GUID: ut1HsLhtsE_04j4yjYOi9RKsWrHzMoY0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20251018111725.3116386-11-jarkko@kernel.org>
 
-On Mon, 20 Oct 2025 10:41:28 +0200
-David Hildenbrand <david@redhat.com> wrote:
+On Sat, Oct 18, 2025 at 02:17:25PM +0300, Jarkko Sakkinen wrote:
+>From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>
+>Decouple kzalloc from buffer creation, so that a managed allocation can be
+>done trivially:
+>
+>	struct tpm_buf *buf __free(kfree) buf = kzalloc(TPM_BUFSIZE,
+>							GFP_KERNEL);
+>	if (!buf)
+>		return -ENOMEM;
+>	tpm_buf_init(buf, TPM_BUFSIZE);
+>
+>Alternatively, stack allocations are also possible:
+>
+>	u8 buf_data[512];
+>	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
+>	tpm_buf_init(buf, sizeof(buf_data));
+>
+>Given that every single tpm_transmit_cmd() call site needs to be changed,
+>place command names from TCG 1.2 and 2.0 specifications to the @dest
+>parameter, which will e.g., help tracing bugs.
 
-> On 20.10.25 09:00, Christian Borntraeger wrote:
-> > Am 17.10.25 um 23:56 schrieb Balbir Singh:
-> >   
-> >> In the meanwhile, does this fix/workaround work?
-> >>
-> >> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-> >> index 0c847cdf4fd3..31c1754d5bd4 100644
-> >> --- a/mm/pgtable-generic.c
-> >> +++ b/mm/pgtable-generic.c
-> >> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
-> >>    
-> >>    	if (pmdvalp)
-> >>    		*pmdvalp = pmdval;
-> >> -	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
-> >> +	if (unlikely(pmd_none(pmdval) || is_pmd_non_present_folio_entry(pmdval)))
-> >>    		goto nomap;
-> >>    	if (unlikely(pmd_trans_huge(pmdval)))
-> >>    		goto nomap;
-> >>  
-> > 
-> > Yes, this seems to work.  
-> 
-> Right, but that's not what we will want here. We'll have to adjust s390x 
+Perhaps my previous message fell through the cracks, but I still have a 
+couple of comments (perhaps trivial, sorry in that case) that have not 
+been answered about this patch:
 
-I'm looking into that
+>
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>---
+>v6
+>- Update commit message.
+>v5:
+>- There was a spurious change in tpm2_seal_trusted() error
+>  code handling introduce by this patch.
+>v4:
+>- Since every single tpm_transmit_cmd() call site needs to be
+>  changed anyhow, use 'dest' parameter more structured and
+>  actually useful way, and pick the string TCG 1.2 and 2.0
+>  specifications.
+>- tpm1-cmd: Remove useless rc declarations and repliace them
+>  with trivial "return tpm_transmit_cmd" statement.
+>- Reverted spurious changes in include/linux/tpm.h.
+>- Use concisely TPM_BUFSIZE instead of PAGE_SIZE.
+>v3:
+>- A new patch from the earlier series with more scoped changes and
+>  less abstract commit message.
+>---
+> drivers/char/tpm/tpm-buf.c                | 122 +++++----
+> drivers/char/tpm/tpm-sysfs.c              |  21 +-
+> drivers/char/tpm/tpm.h                    |   1 -
+> drivers/char/tpm/tpm1-cmd.c               | 162 +++++-------
+> drivers/char/tpm/tpm2-cmd.c               | 299 ++++++++++------------
+> drivers/char/tpm/tpm2-sessions.c          | 122 +++++----
+> drivers/char/tpm/tpm2-space.c             |  44 ++--
+> drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
+> include/linux/tpm.h                       |  18 +-
+> security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+> security/keys/trusted-keys/trusted_tpm2.c | 175 ++++++-------
+> 11 files changed, 484 insertions(+), 544 deletions(-)
+>
+>diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+>index 1b9dee0d0681..a3bf3c3d0c48 100644
+>--- a/drivers/char/tpm/tpm-buf.c
+>+++ b/drivers/char/tpm/tpm-buf.c
 
-> gmap code (which is getting redesigned either way) to only take the page 
+[...]
 
-unfortunately the rework won't make it in 6.18, so I'll have to quickly
-cobble together a fix
+>@@ -92,6 +119,9 @@ EXPORT_SYMBOL_GPL(tpm_buf_destroy);
+>  */
+> u32 tpm_buf_length(struct tpm_buf *buf)
 
-> lock.
-> 
-> In the end, we'll want here later a single
-> 
-> if (!pmd_present(pmdval))
-> 	goto nomap;
-> 
+Should we update the return value to u16?
+
+
+> {
+>+	if (buf->flags & TPM_BUF_INVALID)
+>+		return 0;
+>+
+> 	return buf->length;
+> }
+> EXPORT_SYMBOL_GPL(tpm_buf_length);
+
+[...]
+
+>diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+>index 636acb66a4f6..3ac204a902de 100644
+>--- a/security/keys/trusted-keys/trusted_tpm1.c
+>+++ b/security/keys/trusted-keys/trusted_tpm1.c
+>@@ -310,9 +310,8 @@ static int TSS_checkhmac2(unsigned char *buffer,
+>  * For key specific tpm requests, we will generate and send our
+>  * own TPM command packets using the drivers send function.
+>  */
+>-static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+>+static int trusted_tpm_send(void *cmd, size_t buflen)
+> {
+>-	struct tpm_buf buf;
+> 	int rc;
+>
+> 	if (!chip)
+>@@ -322,15 +321,12 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> 	if (rc)
+> 		return rc;
+>
+>-	buf.flags = 0;
+>-	buf.length = buflen;
+>-	buf.data = cmd;
+> 	dump_tpm_buf(cmd);
+>-	rc = tpm_transmit_cmd(chip, &buf, 4, "sending data");
+>+	rc = tpm_transmit_cmd(chip, cmd, 4, "sending data");
+
+Is it fine here to remove the intermediate tpm_buf ?
+
+IIUC tpm_transmit_cmd() needs a tpm_buf, while here we are passing just
+the "data", or in some way it's a nested tpm_buf?
+
+> 	dump_tpm_buf(cmd);
+>
+>+	/* Convert TPM error to -EPERM. */
+> 	if (rc > 0)
+>-		/* TPM error */
+> 		rc = -EPERM;
+>
+> 	tpm_put_ops(chip);
+
+Thanks,
+Stefano
 
 
