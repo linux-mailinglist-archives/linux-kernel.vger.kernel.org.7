@@ -1,140 +1,151 @@
-Return-Path: <linux-kernel+bounces-860302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7B6BEFCAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:06:03 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB3FBEFCAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0EF3B8B22
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:05:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85C7E347FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083512E7F03;
-	Mon, 20 Oct 2025 08:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RorPQ5ol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB612D876A;
+	Mon, 20 Oct 2025 08:06:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E52D3A8F7;
-	Mon, 20 Oct 2025 08:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63CB2DEA94
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947554; cv=none; b=LYPapp9jUQgh7YknL+ckFBzLUa/W8BrMkXya1g6RGiPJF1XXeiRLWzXTLCZof6z2X7xVB2LS+dK6ShHaDzR5kM52AIaJdemElGfiQ5I4w5dveZGxY6I2pNptEB1ZnysjxmeohvPFSrKxMjwOi0J6InvKiTs2LUf5ULQEfmtkzBc=
+	t=1760947583; cv=none; b=kpggE4x40P8oPw+4ONTKAg27m9zPlO3zPDPtZS3LlM6qlPB3b1lfI5+NeE93yqlBhZsoxEhMwxXPeQ0k7bmAFZ9OfQvzCinArkZ8Fr+UVpFqt5yqi0hqKOI6/yGBgYDG2/t/3YMM9T7wa9AZrI2/EhfWozYiZEQVezrLh8wy6S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947554; c=relaxed/simple;
-	bh=rXda7spHoPBZ+btkYMydEsdxIcZXVOZHXuPQfGL5NOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifbkDghsBYByXmd9gklSTh/lQrbgQEk+z1thEnPOdv1sLdvpaUQ2pi1r+U79XsccMxI9rl2kQpv5h086cc23TalFX045yZgp/DvuRg41aEMGobDA1KDct00Z8GQA0J0sW36yeb8QwzRe6HAzNQ6KoYZpdjLp0osZU+fsu3rBnVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RorPQ5ol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9AC4C4CEF9;
-	Mon, 20 Oct 2025 08:05:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760947554;
-	bh=rXda7spHoPBZ+btkYMydEsdxIcZXVOZHXuPQfGL5NOo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RorPQ5olAs/Pyghkzn3Qc8h10zq3G79fwC1hL8SfRWZb9JgJbZWZsx3QyuBAuZhwQ
-	 C1pNEdrWswDJ/U1+Ggy6ILEYWd99LIk6R1hdOqrP4sXWYKO9i7qz2dJyUEr1B3lrhf
-	 UYJRcNABMc67F7U0tQR/iMO1gUOg4Tci/IGLfMczunIcDga+dIX/gDtgb8+UHrsmsD
-	 pkSGFCN7LagnLRbPFB3utcBqN8bA0jptZQSAm9+VdUZx75mWv4I4/dUaPyhrVkPv3w
-	 etGxXmQyQ35MZu+MQQAby00aklXEEhMx9yUpIY7rVOE/JEFD3jw9azZUII1W2dJCY+
-	 1aZYlWJKxnePg==
-Date: Mon, 20 Oct 2025 11:05:44 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org, jasonmiu@google.com,
-	dmatlack@google.com, skhawaja@google.com
-Subject: Re: [PATCH v6 10/10] liveupdate: kho: allocate metadata directly
- from the buddy allocator
-Message-ID: <aPXtWDPGHA2kCg32@kernel.org>
-References: <20251018171756.1724191-1-pasha.tatashin@soleen.com>
- <20251018171756.1724191-11-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1760947583; c=relaxed/simple;
+	bh=mTyBepi9R4tFdZgFaonYYBYV/glIteocSDz5RGAmKZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JsCOPulEqMbmR+Z7nZ9PnJVyiYF8XEAV8iATrVu4pI7pijtICRni6lYVUuInxt9O4ZxLaD12Y2h7tvYzhj2ht+znHEo49Omh9gRAGeDIYInqynHbC1v9wKxh7zHmvXqobIQml6SIXVPvvqZAyebjjlOUItvpBkHzsEGHDZ6GlV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqnzW1cJDzYQtLc;
+	Mon, 20 Oct 2025 16:05:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id DB7BA1A06DF;
+	Mon, 20 Oct 2025 16:06:17 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgAnyUF57fVoYvD1Aw--.34222S2;
+	Mon, 20 Oct 2025 16:06:17 +0800 (CST)
+Message-ID: <63411cc0-5879-4e9c-a7ba-3e8fac362629@huaweicloud.com>
+Date: Mon, 20 Oct 2025 16:06:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018171756.1724191-11-pasha.tatashin@soleen.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 06/16] cpuset: introduce
+ local_partition_enable()
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+ <20250928071306.3797436-7-chenridong@huaweicloud.com>
+ <85e776e6-110e-4c04-88b7-93059db8f74c@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <85e776e6-110e-4c04-88b7-93059db8f74c@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAnyUF57fVoYvD1Aw--.34222S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45tFWfAr1ftFWrWr1UAwb_yoW5AFW8pF
+	1kGFWrtFWYgryrC3srXF4kArWrKrs7J3WDtwn3Xa4rXr17Aw1vgF1j93s0gF1UXrWkGFyU
+	ZF1jqrsrZF17ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbiF4tUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Sat, Oct 18, 2025 at 01:17:56PM -0400, Pasha Tatashin wrote:
-> KHO allocates metadata for its preserved memory map using the slab
-> allocator via kzalloc(). This metadata is temporary and is used by the
-> next kernel during early boot to find preserved memory.
-> 
-> A problem arises when KFENCE is enabled. kzalloc() calls can be
-> randomly intercepted by kfence_alloc(), which services the allocation
-> from a dedicated KFENCE memory pool. This pool is allocated early in
-> boot via memblock.
-> 
-> When booting via KHO, the memblock allocator is restricted to a "scratch
-> area", forcing the KFENCE pool to be allocated within it. This creates a
-> conflict, as the scratch area is expected to be ephemeral and
-> overwriteable by a subsequent kexec. If KHO metadata is placed in this
-> KFENCE pool, it leads to memory corruption when the next kernel is
-> loaded.
-> 
-> To fix this, modify KHO to allocate its metadata directly from the buddy
-> allocator instead of slab.
-> 
-> Fixes: fc33e4b44b27 ("kexec: enable KHO support for memory preservation")
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-> ---
->  kernel/liveupdate/kexec_handover.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> index 7c8e89a6b953..92662739a3a2 100644
-> --- a/kernel/liveupdate/kexec_handover.c
-> +++ b/kernel/liveupdate/kexec_handover.c
-> @@ -132,6 +132,8 @@ static struct kho_out kho_out = {
->  	.finalized = false,
->  };
->  
-> +DEFINE_FREE(kho_free_page, void *, free_page((unsigned long)_T))
-> +
 
-Just drop kho_ prefix and stick it into include/linux/gfp.h:
 
-DEFINE_FREE(free_page, void *, if (_T) free_page((unsigned long)_T))
-
->  static void *xa_load_or_alloc(struct xarray *xa, unsigned long index)
->  {
->  	void *res = xa_load(xa, index);
-> @@ -139,7 +141,7 @@ static void *xa_load_or_alloc(struct xarray *xa, unsigned long index)
->  	if (res)
->  		return res;
->  
-> -	void *elm __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> +	void *elm __free(kho_free_page) = (void *)get_zeroed_page(GFP_KERNEL);
->  
->  	if (!elm)
->  		return ERR_PTR(-ENOMEM);
-> @@ -352,9 +354,9 @@ static_assert(sizeof(struct khoser_mem_chunk) == PAGE_SIZE);
->  static struct khoser_mem_chunk *new_chunk(struct khoser_mem_chunk *cur_chunk,
->  					  unsigned long order)
->  {
-> -	struct khoser_mem_chunk *chunk __free(kfree) = NULL;
-> +	struct khoser_mem_chunk *chunk __free(kho_free_page) = NULL;
->  
-> -	chunk = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> +	chunk = (void *)get_zeroed_page(GFP_KERNEL);
->  	if (!chunk)
->  		return ERR_PTR(-ENOMEM);
->  
-> -- 
-> 2.51.0.915.g61a8936c21-goog
+On 2025/10/20 10:44, Waiman Long wrote:
+> On 9/28/25 3:12 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> The partition_enable() function introduced in the previous patch can be
+>> reused to enable local partitions.
+>>
+>> First, partition_enable() was enhanced to support local partition enabling
+>> by properly handling parent's nr_subparts counter and adding notification
+>> operations.
+>>
+>> Then, the local_partition_enable() function is introduced, which factors
+>> out the local partition enablement logic from
+>> update_parent_effective_cpumask(). After passing local partition validation
+>> checks, it delegates to partition_enable() to complete the partition setup.
+>>
+>> This refactoring creates a clear separation between local and remote
+>> partition operations while maintaining code reuse through the shared
+>> partition_enable() infrastructure.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 111 +++++++++++++++++++++++++++--------------
+>>   1 file changed, 74 insertions(+), 37 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 0e2f95daf459..154992cdfe9a 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1539,6 +1539,7 @@ static void partition_enable(struct cpuset *cs, struct cpuset *parent,
+>>                    int new_prs, struct cpumask *new_excpus)
+>>   {
+>>       bool isolcpus_updated;
+>> +    int old_prs;
+>>         lockdep_assert_held(&cpuset_mutex);
+>>       WARN_ON_ONCE(new_prs <= 0);
+>> @@ -1547,15 +1548,21 @@ static void partition_enable(struct cpuset *cs, struct cpuset *parent,
+>>       if (cs->partition_root_state == new_prs)
+>>           return;
+>>   +    old_prs = cs->partition_root_state;
+>>       spin_lock_irq(&callback_lock);
+>>       /* enable partition should only add exclusive cpus */
+>>       isolcpus_updated = partition_xcpus_add(new_prs, parent, new_excpus);
+>> -    list_add(&cs->remote_sibling, &remote_children);
+>> +    /* enable remote partition */
+>> +    if (!parent)
+>> +        list_add(&cs->remote_sibling, &remote_children);
+>> +    else if (!is_partition_valid(cs))
+>> +        parent->nr_subparts += 1;
+>>       cpumask_copy(cs->effective_xcpus, new_excpus);
+>>       partition_state_update(cs, new_prs, PERR_NONE);
+>>       spin_unlock_irq(&callback_lock);
+>>       update_unbound_workqueue_cpumask(isolcpus_updated);
+>>       cpuset_force_rebuild();
+>> +    notify_partition_change(cs, old_prs);
+>>   }
 > 
+> As commented in an earlier patch, the partition_enable() chnage should be moved there.
+> 
+> Cheers,
+> Longman
+
+Thank you, will update.
 
 -- 
-Sincerely yours,
-Mike.
+Best regards,
+Ridong
+
 
