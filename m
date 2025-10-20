@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-860606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECE5BF080F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:19:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F2FBF0809
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28231891354
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:17:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14B23A97F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73792F7AC5;
-	Mon, 20 Oct 2025 10:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351992F6592;
+	Mon, 20 Oct 2025 10:16:15 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D79C2F618F;
-	Mon, 20 Oct 2025 10:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CCB2F6585
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955328; cv=none; b=Z4gOkS8GEqHYekTApJmmJCruyZUNE1FG3k6TKx31S9GiRhpWBWJVge1fKKMfo+MHLV+B5Dkt/MJaI0Hh+40r4RGNNU22SFWW/u+4+syTNZ0zv1dI+PtPBjaBcmoRkm9ceCYoyuPpQ+UTIUurs9V+rKKqFvo3zEqQbRiD4LEsuII=
+	t=1760955374; cv=none; b=c6xxxcn46romx5vLG5tAG2J9UsmaDELav6o1nse6KUQKWgVZyVzzbM5h70gDLOFmxqKov10rhJIwrN7QLlqyTF1xceGqmFuIgqGMxNKklKbXmjv2meNZ0HTnrBZaWQjQ2KfYXYqrInUnSJoGic+eogNbeaw5yJVZKvCwiKSuvJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955328; c=relaxed/simple;
-	bh=6i+WB0Tq8+B4dcsaJzgkmAvi1jwR+YbvQcxpaUoU47U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3m2NUsarIDWxBLSm6SkjPEgc7vSlQVoEVDGurSQuZH6MgMmhKdEgbEEl3YnBqQdEKR5ehHq2hJpTkasL4A+xcqgk0aQ+TNIsjovInBJyLtAaLI9l4+u+RTt0/jFHEM/Dgzv5KxehLJFn2+0U+4QP1alg61UPb6g9SINYvFGWO4=
+	s=arc-20240116; t=1760955374; c=relaxed/simple;
+	bh=CLUkAi1bAjNY/50j+64miftzFu18/7PwdxO7o5j+lUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DaFLlucieP9xJczdeBotakgo8wv1LpPMvsiLZ8aNHhAne6/v/gusmXEAF+ranhHTC1MJzlrb78tABnVA8omr5+rKZEkSYZqHj5Jjmn7r3KiTcyN+73Zx21MpB4qB6rPEWMVKja5XuS+nA6wJYTxkXi58zc+GN3uznkogtdqmav0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D13A1063;
-	Mon, 20 Oct 2025 03:15:17 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E01453F63F;
-	Mon, 20 Oct 2025 03:15:24 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:15:23 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: hupu <hupu.gm@gmail.com>, acme@kernel.org, adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com, irogers@google.com,
-	jolsa@kernel.org, justinstitt@google.com,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	mark.rutland@arm.com, mingo@redhat.com, morbo@google.com,
-	nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
-	peterz@infradead.org
-Subject: Re: [PATCH] perf build: Support passing extra Clang options via
- EXTRA_BPF_FLAGS
-Message-ID: <20251020101523.GE281971@e132581.arm.com>
-References: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
- <20251020024049.6877-1-hupu.gm@gmail.com>
- <aPW3rilb8DtFDIMC@google.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 113321063;
+	Mon, 20 Oct 2025 03:16:04 -0700 (PDT)
+Received: from [10.1.31.45] (e127648.arm.com [10.1.31.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E292C3F63F;
+	Mon, 20 Oct 2025 03:16:10 -0700 (PDT)
+Message-ID: <d76040f3-40d2-4cc3-bf59-cdd9f6673ad2@arm.com>
+Date: Mon, 20 Oct 2025 11:16:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPW3rilb8DtFDIMC@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Remove unused variable in mm_cid_get()
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-kernel@vger.kernel.org,
+ andriy.shevchenko@linux.intel.com
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>
+References: <20251017073050.2411988-1-kevin.brodsky@arm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20251017073050.2411988-1-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 01:16:46PM +0900, Namhyung Kim wrote:
+On 10/17/25 08:30, Kevin Brodsky wrote:
+> The cpumask variable in mm_cid_get() has never been used, remove it.
+> 
+> This fixes a -Wunused-but-set-variable warning when building with
+> W=1.
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> ---
+>  kernel/sched/sched.h | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 1f5d07067f60..361f9101cef9 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -3740,11 +3740,9 @@ static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
+>  			     struct mm_struct *mm)
+>  {
+>  	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
+> -	struct cpumask *cpumask;
+>  	int cid;
+>  
+>  	lockdep_assert_rq_held(rq);
+> -	cpumask = mm_cidmask(mm);
+>  	cid = __this_cpu_read(pcpu_cid->cid);
+>  	if (mm_cid_is_valid(cid)) {
+>  		mm_cid_snapshot_time(rq, mm);
+> 
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 
-[...]
-
-> On Mon, Oct 20, 2025 at 10:40:49AM +0800, hupu wrote:
-> > When cross-compiling perf with BPF enabled, Clang is invoked during the
-> > build. Some cross-compilation environments require additional compiler
-> > options, such as `--sysroot` or custom include paths.
-
-[...]
-
-> Leo, are you ok with this?
-
-To be clear, now we are not talking cross build for perf program or any
-targeting a CPU arch, it is a build failure for eBPF program.
-
-This patch does not make clear why we cannot build eBPF program in
-self-contained way. E.g., after installed kernel headers, why Makefile
-misses to include installed headers when build eBPF program.
-
-I am not saying we cannot specify an external sysroot path, but before
-proceed that, we should make sure the build can work with self-contained
-headers.
-
-Thanks,
-Leo
+Andy also posted this:
+https://lore.kernel.org/lkml/20251015091935.2977229-1-andriy.shevchenko@linux.intel.com/
 
