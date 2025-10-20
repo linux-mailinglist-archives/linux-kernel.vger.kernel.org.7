@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-860639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA8FBF091B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:36:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD56BF0927
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE201894748
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:36:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3B394E4EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A482F25FE;
-	Mon, 20 Oct 2025 10:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B18E2F83AA;
+	Mon, 20 Oct 2025 10:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WGIjd0V+"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SLIN3qii"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA1C2ECEA7;
-	Mon, 20 Oct 2025 10:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102752F7AA8
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956558; cv=none; b=UZ02uYEh7XStbzA8SH+Pi8SbtWZpfbZX3XgmN0Ss7g2ApZYqoAupRLvMYUZlPFKj6HVtLjfVGqO9SexSncfjkM+nrCkRWQLlP5Uq2z0ZI1CdNu5kEVzqamYLF9FLLJet8mLIVB+8MmGQ2/LCFtGVXA/36134LNmEGKiTiNIK2gw=
+	t=1760956560; cv=none; b=hb//PGCBITsWsB/+9iN3Md0TGkxtBcPTMbONPjj8j7M8s1Z/x+lByytzu9hke/xDzXqBvDH3BEjSMpafavMV+/i9w0CRCnQYhBQNQabENhHdMp9u90/HnqpfYJ3HOq4et4b0HiQ+F8iKJ/0qE6oBw/OV09AjtF8u7PWVBP8HTQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956558; c=relaxed/simple;
-	bh=EBhRgaiQ6/W9CPnpGDJ5KuATCP7EtkH0S/7FRN0UfMI=;
+	s=arc-20240116; t=1760956560; c=relaxed/simple;
+	bh=T2bTjeEiXishWJMDed7e8b6WcF3hdcjPE0PZ6daxeDw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnzBqnylHmI2DNb0c75NAW26dcqeaoaydgj4P9YceC6n4gBgmBaukHlrCr5NBK00H9z+rfHj17MZJ/PVJJUSVla+JfVSnxUTsRaiJojob2vl+F3rTNYyay1VQlnSE7DdPDWsFhPR51DeH2ZCPlsrYLVfg6ZZoUyNYok04/IkYxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WGIjd0V+; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=f6rnTbgbq2JmTZ1VXxxWdZakF1mvzK1iFC7KR8sW+7I2gIFOVHr+qIGCFQHPAnu+U/ykZE4eT0oxs58PCKKozNwazDnhkimqTSfN6+51QJM1tD/0Cfdvjec608KBrvYql/bBkBqVgd0D6LaA4/pwyGdq8Xd3eZhs4RxgEwy0QLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SLIN3qii; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760956555;
-	bh=EBhRgaiQ6/W9CPnpGDJ5KuATCP7EtkH0S/7FRN0UfMI=;
+	s=mail; t=1760956557;
+	bh=T2bTjeEiXishWJMDed7e8b6WcF3hdcjPE0PZ6daxeDw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WGIjd0V+RgumDJYFFKGx+s83IOl1hwloTZTw4+2oIDIjqU7ylMQbLImzZZDWALo1J
-	 jbbmvoOTSzhl8H5wg5PPj+UCWrAOImTljSZ4E6YvJyJMjvn1xZlPS1wmvDhb4wrXba
-	 tLC+euW9wc7b4DjOjKBmyHzU0hnpZdKi4OPXQjyfV3Vi6L60U4niT9gXMn9TZnuRAW
-	 eVW8uszDadUGjAv2XGuwlcsfUOj3MDjpEBF3tEz4uvpvTlas02uRlGVxw/XXysqe2B
-	 VMyHnDDFhbSnSCcmWJHojVW2hbEcdS3asTD9xTRQJQ6NU5O9TkafMCq4ev234Mx6L8
-	 Tud9g8HIAxzPw==
+	b=SLIN3qiigHADvtevtw9JAxryBVw1YW2Jsp1rISqSf9IqCj38HEDINt6ak1gJZTGnL
+	 Kn3Y28G/jlgU5NamokPY10phpd62eXiZ52/6VLxFOLu/ruzZ3Uz02WycehDfewMTs8
+	 dmxM3RihZrVGia0h/8BfFZNL+s20zjePKSymUz802Rb00aUnd8AlD1k8nUZ31h/ClN
+	 0vssb9Ng/9zU3gjI2MIK867gO/78fIzJiXJo467YmtQtF00/ddae39wiNYCIyn+F4X
+	 qkV34DFUsiE25+pJUsjf4shhIePF+u4P1XjYTKZgC2+nrluWL76L+QpecNUSOHvZAi
+	 pTZLo3HbaR9Fw==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9487C17E130E;
-	Mon, 20 Oct 2025 12:35:54 +0200 (CEST)
-Message-ID: <6af6bf9b-1188-49eb-bcb6-f0355afa4c7a@collabora.com>
-Date: Mon, 20 Oct 2025 12:35:53 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C05C417E1404;
+	Mon, 20 Oct 2025 12:35:56 +0200 (CEST)
+Message-ID: <3fdeaa04-15e2-4455-a78c-627abb767830@collabora.com>
+Date: Mon, 20 Oct 2025 12:35:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/14] iommu/mediatek-v1: fix device leaks on probe()
+Subject: Re: [PATCH v3 07/14] iommu/mediatek: simplify dt parsing error
+ handling
 To: Johan Hovold <johan@kernel.org>, Joerg Roedel <joro@8bytes.org>,
  Will Deacon <will@kernel.org>
 Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
@@ -64,23 +65,29 @@ Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
  Marek Szyprowski <m.szyprowski@samsung.com>, Yong Wu <yong.wu@mediatek.com>,
  Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
  Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy
- <vdumpa@nvidia.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>
+ <vdumpa@nvidia.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
 References: <20251020045318.30690-1-johan@kernel.org>
- <20251020045318.30690-10-johan@kernel.org>
+ <20251020045318.30690-8-johan@kernel.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20251020045318.30690-10-johan@kernel.org>
+In-Reply-To: <20251020045318.30690-8-johan@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 20/10/25 06:53, Johan Hovold ha scritto:
-> Make sure to drop the references taken to the larb devices during
-> probe on probe failure (e.g. probe deferral) and on driver unbind.
+> As previously documented by commit 26593928564c ("iommu/mediatek: Add
+> error path for loop of mm_dts_parse"), the id mapping may not be linear
+> so the whole larb array needs to be iterated on devicetree parsing
+> errors.
 > 
-> Fixes: b17336c55d89 ("iommu/mediatek: add support for mtk iommu generation one HW")
-> Cc: stable@vger.kernel.org	# 4.8
-> Cc: Honghui Zhang <honghui.zhang@mediatek.com>
+> Simplify the loop by iterating from index zero while dropping the
+> redundant NULL check for consistency with later cleanups.
+> 
+> Also add back the comment which was removed by commit 462e768b55a2
+> ("iommu/mediatek: Fix forever loop in error handling") to prevent anyone
+> from trying to optimise the loop by iterating backwards from 'i'.
+> 
+> Cc: Yong Wu <yong.wu@mediatek.com>
 > Acked-by: Robin Murphy <robin.murphy@arm.com>
 > Signed-off-by: Johan Hovold <johan@kernel.org>
 
