@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-861524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DFEBF2F2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:33:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0886ABF2F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37169427BC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:33:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94C734F818C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91839202961;
-	Mon, 20 Oct 2025 18:33:25 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE1C23D7CA;
+	Mon, 20 Oct 2025 18:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oO/nBleE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69DE1F151C;
-	Mon, 20 Oct 2025 18:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF8418871F;
+	Mon, 20 Oct 2025 18:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760985205; cv=none; b=GfRoRcts92naTC+rhi1P+Nkf+q2JuLy1BAwe9TXzukWQpBDvBQuw5nQUbwSUZZcr4FOwa9XOoksz5xNG7j6/y4YLR4QqNUwVbUzECaZmhioNQcvuBMuKvDpMnUxfi9H7XBxzGPcyz4yuiLrHmbT/UYs7p24NUWSqpx/PyImvXx0=
+	t=1760985281; cv=none; b=Vj6LQ7tHOGhon3v5waYe5d1GNaHZFBqSVAq8RiCjCrvufXNu0RlQJpF/m9AMh09hGEsFIblBLyJNiwa95ZxddIZAVwgDvNTMFWtmG8zA3LjJNDVZgaDHOJr6T9CrbiAW1kxfFt0SszgJoJoRsFnCJxnUqAZ2dsKw9v6PLL0tXfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760985205; c=relaxed/simple;
-	bh=5gXaYWbN7G3/7h+AXsbtIdN5dVqKRh6WWrUSpcXas9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jgG3EjGE2H5GWdJVPbM7pPCitG1aoAg8R3YII9cYaw3w7ENH4sTnv6oiauzVlykEb8On8rKXB5uZ0mdaVtAH7dtjTXg0VstyHRjxteOH9Q/XbuU7RXP4h2DTfxoLfQxHziB/ZlJDewty7X8A5oDFyUrD5FpWDR0Kiwcv5mkJTuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 10FB51A027B;
-	Mon, 20 Oct 2025 18:33:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id DC5B26000C;
-	Mon, 20 Oct 2025 18:33:12 +0000 (UTC)
-Date: Mon, 20 Oct 2025 14:33:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ring-buffer: fix kernel-doc format to avoid a
- warning
-Message-ID: <20251020143332.732ae92d@gandalf.local.home>
-In-Reply-To: <20251020010037.2681824-1-rdunlap@infradead.org>
-References: <20251020010037.2681824-1-rdunlap@infradead.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760985281; c=relaxed/simple;
+	bh=gjS3HaZTB70SN0CMIVUcsMKXvKTA6y0cr7ybQ3Mlt9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CM3afk4ypwtXOy+jaAXeZkopa/Pfl6moiQdgceJ8VrANk2zsR+VvfjPcfqAAK/w98uCP1kFvROle+UcPSm9rg6V9IhQCWzBcd4bUWYMz8HNgyaC29Jb+jdwsBZpf1wZ8a9QoYGLhYlkz8EVp6duNiWdLEi/A8pIcCpuYQ1oSNZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oO/nBleE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=mvskDAhgWUe7l3foP8MvPa+nL/C2ovcPgG7OHEUBg4A=; b=oO/nBleEU72BSGluGqPQJeZ+wr
+	D4SLjlJ6hrZ2ZyhkPwVIQjHhqmHpnCF6G40Yyt8xewCREWNbzvrea4YgbKnyFqWXpf/5m34v47FEu
+	1PH3dY5n5BR2wb2L5HW/EaJv+C2zuuvRHDSAMjLaxlZaB46Tbhd0qYJE7sIImVhE8ly8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vAui0-00BY2M-30; Mon, 20 Oct 2025 20:34:16 +0200
+Date: Mon, 20 Oct 2025 20:34:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v2 2/2] arm64: dts: ls1028a: Add mbls1028a and
+ mbls1028a-ind devicetrees
+Message-ID: <14f52170-cc5b-4808-8fc1-28685ba349dd@lunn.ch>
+References: <20251020133536.303471-1-alexander.stein@ew.tq-group.com>
+ <20251020133536.303471-2-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: cp3ksiu1b1oasx3s4q185i3nqjodaeto
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: DC5B26000C
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19SHafg6TbufMcgmGIXbuTc9+HLk0fPKR4=
-X-HE-Tag: 1760985192-677937
-X-HE-Meta: U2FsdGVkX1/HyFtSoM0inYVG0URL6sOhceVECnY7ftRHvrgOXFpt4Y1JUlaZEWhHjT5scToxS/uqK/517pjzCeAfeInIGPa96/Yuy4y9to5HPayt2hnhS6q+ANYapn8Ou2BC6tkY40fYYHYJQdPyLeMzrPpNbBupvAVNBSh6mOev67OWZZADkFf/PXfJso+adH+bsL0g1POrSx9SIin0tHLCKGwix/uJaxvHJv/FajbRwhI9FnFAf01IOX4I3QYodIlOQaiyBKlSJ5tCjItoIFYlvexG6K8H+c8H9uxEXPFV8liKhZpJvIj3IsjJJ3ZKWJlbtyepLNOMGNGISWfzDPuimVQyRTVMO5lwdtTsWmm5LYcEylTS0FJeMYxrj+lky17m911TmwySQC9kxRdkCzetPyWCxH/85rKDkl/KgCFTXtXcBF2dEhldla3xdg/9uYf/ns8G/geRy/Mhz8MCkbxgfWvRNn7ltDcZg6lw7pgmeBuhUT7uGBYuRGyBpRxj9KiSDG4kPlTxdqg8Kncon+xPvuSy3DoRcoJggQ+ETNM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020133536.303471-2-alexander.stein@ew.tq-group.com>
 
-On Sun, 19 Oct 2025 18:00:37 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
+> +&enetc_mdio_pf3 {
+> +	mdio0_rgmii_phy00: ethernet-phy@0 {
+> +		compatible = "ethernet-phy-ieee802.3-c22";
+> +		reg = <0x00>;
+> +		reset-gpios = <&gpio_exp_1v8 1 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <1>;
+> +		reset-deassert-us = <200>;
+> +		interrupt-parent = <&gpio_exp_1v8>;
+> +		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
 
-> Format the kernel-doc for RINGBUF_TYPE_DATA_TYPE_LEN_MAX correctly
-> to prevent a kernel-doc warning:
-> 
-> Warning: include/linux/ring_buffer.h:61 Enum value
->  'RINGBUF_TYPE_DATA_TYPE_LEN_MAX' not described in enum 'ring_buffer_type'
-> 
-> Fixes: 334d4169a659 ("ring_buffer: compressed event header")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> v2: reformat based on comments from Steven;
->     add more enum types to aid with comments;
-> 
-> Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: linux-trace-kernel@vger.kernel.org
-> ---
->  include/linux/ring_buffer.h |   13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> --- linux-next-20251016.orig/include/linux/ring_buffer.h
-> +++ linux-next-20251016/include/linux/ring_buffer.h
-> @@ -43,18 +43,23 @@ struct ring_buffer_event {
->   *				 array[0] = top (28 .. 59) bits
->   *				 size = 8 bytes
->   *
-> - * <= @RINGBUF_TYPE_DATA_TYPE_LEN_MAX:
-> - *				Data record
-> - *				 If type_len is zero:
-> + * @RINGBUF_TYPE_DATA:		Data record
->   *				  array[0] holds the actual length
->   *				  array[1..(length+3)/4] holds data
->   *				  size = 4 + length (bytes)
-> - *				 else
-> + *
-> + * @RINGBUF_TYPE_DATA_TYPE_LEN_MIN:
-> + * 				Data record with length and data as below
-> + * . . .
-> + * @RINGBUF_TYPE_DATA_TYPE_LEN_MAX:
-> + *				Data record
->   *				  length = type_len << 2
->   *				  array[0..(length+3)/4-1] holds data
->   *				  size = 4 + length (bytes)
->   */
->  enum ring_buffer_type {
-> +	RINGBUF_TYPE_DATA = 0,
-> +	RINGBUF_TYPE_DATA_TYPE_LEN_MIN = 1,
+PHY interrupts are generally level not edge. So this is probably
+wrong.
 
-Adding this just to satisfy kerneldoc seems a bit much.
+> +		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
+> +		ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+> +		ti,led-function = <0x05b0>;
+> +		ti,led-ctrl = <0x1001>;
 
-If this is going to be added, then it should be used in the code.
+I really would prefer /sys/class/leds was used. In fact, these are not
+documented, and don't even seem to be implemented in mainline. So you
+need to drop them.
 
-The RINGBUF_TYPE_DATA should probably be called RINGBUF_TYPE_DATA_LARGE, as
-it is zero when it is a large event (bigger than 112 bytes).
-
->  	RINGBUF_TYPE_DATA_TYPE_LEN_MAX = 28,
->  	RINGBUF_TYPE_PADDING,
->  	RINGBUF_TYPE_TIME_EXTEND,
-
--- Steve
+     Andrew
 
