@@ -1,128 +1,207 @@
-Return-Path: <linux-kernel+bounces-861851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9137BBF3D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:06:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2B6BF3D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44D054EE68A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8C0189881C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D615F2EDD74;
-	Mon, 20 Oct 2025 22:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932742EFD86;
+	Mon, 20 Oct 2025 22:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOTRont/"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BfUtVR8y"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E2D3EA8D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3DF1C695;
+	Mon, 20 Oct 2025 22:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760997986; cv=none; b=irZWrS31P3KOqopSH8vQdIUo9exeCaDbXX5fZepvOoTfyRmZfohavmw1MevUGQM9u+cGBJN8BchtgWunpgKeCfCwm39oRGhKL3hPAO4ADDXv4aG3tdYjibg7cx9H82KnIReDVVAKchWuOtInuacRROTtEWtJIxgze17M/C2P0BQ=
+	t=1760998056; cv=none; b=D7qhEVUO53332Mye0g1lGNr7s8OgjxPInVPqT/OJ2ydF7etikvTAXapNBUW0T6uQWCM5ObyLNrCZhTw4IZ4MoyqlVpBwXqKzJufSwatsaig6A988MEHChBMXpiFpyxhZ9DO0IFhz9XA5wGl6VrtsXitJkNDf4WP6i7A3xJwsFM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760997986; c=relaxed/simple;
-	bh=XwfxJpkuKRhpMHP25aeZ14Z6h+rFhKdoC0myaWRs9Ng=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IH3zZG8nuxGm0+R50fkOPaPoY2B767CmMQVxcyzGCvM/jfqcBQikSgrCY6FVN/R1ckRWL6UVGekkkIPtDG7y37bOq6arOCtzkD7A8YbsNvy3uODX48RlPZ6XjufzLEIrKiz4I9vIn3hQrIC9Teb8kNmEnwn9IT+HygPhLn0529g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOTRont/; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b67684e2904so3412513a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760997984; x=1761602784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gXeclBXp+p/82bfQPtilxTPOoghHByuuBPmA7Z/irA=;
-        b=SOTRont/OzeulKH+Ixnx731L36pZodPZWoNkIaC77q/Zwq0wgcvosJH4RDjtF2uWDb
-         HRqKg3B7btPggvumZmmzLijHRQf7P+XgOGEICT64RldTvt4jhzJ+MTDq5mdLXgsXYzkJ
-         lPr69DL3Me+Yo5Mp8MxRLx5UD/f4KvP5RTOX8t+fD0RdNwSSzUv9lJHViptsVViKJxLA
-         Eg0SM0Zf67r99OW889Nzi7+HWSrews1NCBh8n03otKJ7sZkRM9+54X8yFDbX7o1q1XZX
-         CTpCVXsyT2EE/n42hjFikoSGzEaKSVwZ/sWUhFjmy17dxmdrS70a9mrYDXRxENWQ+CIX
-         zzNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760997984; x=1761602784;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0gXeclBXp+p/82bfQPtilxTPOoghHByuuBPmA7Z/irA=;
-        b=MtVPvJfLJuCARy7haNLdzsZTATH5LpB69qjZwVANEY/WqM4uuKCOgIcy4a24MhGssU
-         O6FO6FbBIAMN+sd6YA4FIexVCdVEMFmPxxEmea1whsTs892tg9ceT3CBX7lZA1tau/D3
-         iDdQfV6bjspF8fBXJRc44m1gVzY2zfsaaVMyR1xBCXErClB+2x2XoUCF2KCLm30DYIpa
-         TJiHuHqd1ck4djdj7jwJd3sA/PmVHtK5ca8zlbZGxOJd4SuI2cnDu9PE+Qof880ZufU2
-         SLLZ5mCkXw9CPS4Ph6wqpqwmLufotQvXLhLEVKUtSUrEs+20yb3diO2m4B5w49YQzANM
-         hVwg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6yOEijJS6CBQ3F3c1Hp9LCLpf7/Y7kkQsS/hmQCNaFz8Yfu8wplf0co9lGqTvrOHm46t1eNWaNpih5Dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx99pbF8Vj5SnT27RrkYbODidx+solfKdVBiYV9GbuG1i6D6cPT
-	rD8hi7biC+ElHZk7QEF+eHtH4Bx8LVp2u20OxdipTuEoFqrOTvCS+hKJ
-X-Gm-Gg: ASbGncticASlUK6OFZZ9D8keICEpDNozDR2TSSpkWvB+qIlsiadjUrPBm79bZmm+iCC
-	Del1y6EEoS4PfKnCG6Y3wKPwnhVZKcshArupsrpDTk5/KRhVJINzzhUiYCinnQzuFLLtwU6SDCo
-	h23bO0jDLXThXMHwAD4khsKmc46RxTLu0D1hC9LojCbP4DI3KPuWOHQ5AxKij6ap5nM9nHrS2Ie
-	P6yEUMbjSaMg8QD5Ei3Al8dRn2NzinX/mBc76MsA7naiewWxu+BOPclvS+MgI24/ig1UTV8elnP
-	GYzg/nMoU4SVlgqrS8iyvzF0LnYOXiL+ITufsr/OULd13uwqVoZFFK4dV5KvpU8Wg/snWljJ7pc
-	4NW2qaVm9toI1rrElu7zocG4S9RGk7ymPbEYYs7zaK1FvEE1tGH3CSSs4fzDoRLCZLwFOucCx8d
-	jW8ZRO53+Iiri8k/DM5ssvKwiDAJTLnR+Ob6vDUvQrq29n7cTq1UKu7YMAEvzkr23WpaynIoPU
-X-Google-Smtp-Source: AGHT+IFdzHcDeIueYeHoyFWOW/jaiU11HxIcfnBthDUJXild7yFBmKI/g7gmzJXllA5w0fq5gf9swA==
-X-Received: by 2002:a17:902:f642:b0:28a:5b8b:1f6b with SMTP id d9443c01a7336-290c9cbbd49mr189078095ad.21.1760997983958;
-        Mon, 20 Oct 2025 15:06:23 -0700 (PDT)
-Received: from linux-dev.dhcp4.washington.edu ([205.175.106.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdee2sm90216975ad.92.2025.10.20.15.06.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 15:06:22 -0700 (PDT)
-From: Aditya Gollamudi <adigollamudi@gmail.com>
-To: mingo@redhat.com
-Cc: adigollamudi@gmail.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kernel/sched: removed unused *cpumask ptr in kernel/sched/sched.h
-Date: Mon, 20 Oct 2025 15:06:01 -0700
-Message-Id: <20251020220601.176639-1-adigollamudi@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760998056; c=relaxed/simple;
+	bh=H5Sx8VCAi4uDZTrCoyLCZeTCEAQROEY7HE/dz3M3F4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t4iwIbpGPW8hYgqIEnjdnCKIuc25MZvQLvFNGcBjkmMkexqg/DgFZTfhujg8AVitxAzkDRpZi9f6c0wPO/a57qoPxSyejKujn8V28O3x5HFEhMLG1r/J2Iv3ZPossg2MB97ai8rZEr0lIb0kepfIvIC5TiOVWCLet8BgSZduxf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BfUtVR8y; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KFURnH026789;
+	Mon, 20 Oct 2025 22:07:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=r6sUFF
+	eWnIrjGTAl4MBZvysEDk1VUIyRSBaJopdfdgs=; b=BfUtVR8ycv5UpzMVxmIFKY
+	BQbYhmzulPF+80NwDj8AaBn3+GwL5zg9qclU8cux+dgEt0Fvf0BibbTSIyho9fAW
+	Fl1EKzJkdQrIrRg4CWn3XKchEK8PgfDsklxWb1BQ9+mt/fWVL3IWM+Yz6NuYg5Gm
+	7BGJWMPrkA5Mn5P9AU2YUqNZlCFmhbTAtDjL3fIrWaQBwaxjtsJYEbu5xehxEWP7
+	0oTzalfN5aLHlVGBmWnVpbYxmw5TosYgSVaywDfwD+xxaf9gS726itZgVlaraXRf
+	rB/O1XcPwdZBMG/MgfnKtfcWUPU8etFgKYG98vRkU9dmWyDG8iMV6PlNppGfpyNg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vjnca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 22:07:07 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KLEsLT014779;
+	Mon, 20 Oct 2025 22:07:07 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vn7s01mx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 22:07:06 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KM76CI31720118
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 Oct 2025 22:07:06 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2391C58058;
+	Mon, 20 Oct 2025 22:07:06 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C617358059;
+	Mon, 20 Oct 2025 22:07:04 +0000 (GMT)
+Received: from [9.61.241.180] (unknown [9.61.241.180])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 20 Oct 2025 22:07:04 +0000 (GMT)
+Message-ID: <25435d82-575d-495f-ae61-bd38570ff9ad@linux.ibm.com>
+Date: Mon, 20 Oct 2025 15:07:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] PCI/sysfs: Use runtime PM guard macro for
+ auto-cleanup
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Zhang Qilong <zhangqilong3@huawei.com>,
+        Ulf Hansson
+ <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
+        Dhruva Gole <d-gole@ti.com>, Niklas Schnelle <schnelle@linux.ibm.com>
+References: <6196611.lOV4Wx5bFT@rafael.j.wysocki>
+ <2323750.iZASKD2KPV@rafael.j.wysocki>
+Content-Language: en-US
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <2323750.iZASKD2KPV@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bhUE52pihM2-hnvxydHCN2Rc_tCGvwvn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX57jXW+8zLtMi
+ 7PrDbm0hKnsV78siKRz9+/b07CC+/Xv6Fukkspad3M0w+zS9jBVqzyhEEKfw1JlL9VLwo5xxfRV
+ PhNrDiJ83nlCgpx48MY68E+FEDFySquZ11A2HVF3wPvYSsYMP7x2T4p8nrfs01PDL9Oz5TcUQIf
+ AIskfnB2Fc/rxHxgQnDWO5YjL8FJPY7vZgjn0GLzHUF6B3zrEZ907ED+d+seKyRbfl/i6I3R4fX
+ cBzV2VW+0nsHowxYXd4j6yydd/hiXpx7tGw9r7rOF0z5vrUE7GRcCO0fWYRAKhImIcYhDD0dT/z
+ 1yJ1WinElwCKtE68oabMU53yMAdQuiZi145sbiI9KOGx7TRxSiFG4dyobr3N2h+CFXLTn9vnZAh
+ IVs5gu32bEn7PvAOz9uRSK1bA+mthA==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f6b28b cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=bC-a23v3AAAA:8 a=QyXUC8HyAAAA:8 a=1XWaLZrsAAAA:8 a=hqneplKKMpFo2bd696AA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=FO4_E8m0qiDe52t0p3_H:22
+ a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
+ a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-ORIG-GUID: bhUE52pihM2-hnvxydHCN2Rc_tCGvwvn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_06,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-From: Adi Gollamudi <adigollamudi@gmail.com>
 
-remove use of cpumask ptr initialized at the top of the mm_cid_get() function to nothing.
-remove initialization of cpumask ptr in the same function, "cpumask = mm_cidmask(mm);" because
-it is not used later.
+On 9/26/2025 9:24 AM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Use the newly introduced pm_runtime_active_try guard to simplify
+> the code and add the proper error handling for PM runtime resume
+> errors.
+>
+> Based on an earlier patch from Takashi Iwai <tiwai@suse.de> [1].
+>
+> Link: https://patch.msgid.link/20250919163147.4743-3-tiwai@suse.de [1]
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> v3 -> v4:
+>     * Use ACQUIRE()/ACQUIRE_ERR() (Jonathan)
+>     * Adjust subject and changelog
+>     * Take patch ownership (it's all different now)
+>     * Pick up Bjorn's ACK from v3 (Bjorn, please let me know if that's not OK)
+>
+> v2 -> v3: No changes
+>
+> v1 -> v2:
+>     * Adjust the name of the class to handle the disabled runtime PM case
+>       transparently (like the original code).
+>
+> ---
+>   drivers/pci/pci-sysfs.c |    5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
+>   		return count;
+>   	}
+>   
+> -	pm_runtime_get_sync(dev);
+> -	struct device *pmdev __free(pm_runtime_put) = dev;
+> +	ACQUIRE(pm_runtime_active_try, pm)(dev);
+> +	if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
+> +		return -ENXIO;
+>   
+>   	if (sysfs_streq(buf, "default")) {
+>   		pci_init_reset_methods(pdev);
+>
+>
+Hi Rafael,
 
-Signed-off-by: Adi Gollamudi <adigollamudi@gmail.com>
----
- kernel/sched/sched.h | 2 --
- 1 file changed, 2 deletions(-)
+This patch breaks updating the 'reset_method' sysfs file on s390. If we 
+try to update the reset_method, we are hitting the ENXIO error. eg:
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index be9745d104f7..d5d943681bf8 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3710,11 +3710,9 @@ static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
- 			     struct mm_struct *mm)
- {
- 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
--	struct cpumask *cpumask;
- 	int cid;
- 
- 	lockdep_assert_rq_held(rq);
--	cpumask = mm_cidmask(mm);
- 	cid = __this_cpu_read(pcpu_cid->cid);
- 	if (mm_cid_is_valid(cid)) {
- 		mm_cid_snapshot_time(rq, mm);
--- 
-2.34.1
+echo 'bus' > /sys/bus/pci/devices/0007\:00\:10.1/reset_method
+-bash: echo: write error: No such device or address
+
+I don't think s390 does anything different in this path, so this could 
+also impact other platforms? Changing this to something like this fixes it
+
+
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 9d6f74bd95f8..d7fc0dc81c30 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -1517,8 +1517,8 @@ static ssize_t reset_method_store(struct device *dev,
+                 return count;
+         }
+
+-       ACQUIRE(pm_runtime_active_try, pm)(dev);
+-       if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
++       ACQUIRE(pm_runtime_active, pm)(dev);
++       if (ACQUIRE_ERR(pm_runtime_active, &pm))
+                 return -ENXIO;
+
+This changes the logic to what it was previously which used 
+pm_runtime_get_sync and pm_runtime_put. But I am not familiar with the 
+PM runtime code, so not sure what would be the right fix here.
+
+Thanks
+
+Farhan
+
 
 
