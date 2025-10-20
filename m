@@ -1,257 +1,256 @@
-Return-Path: <linux-kernel+bounces-860716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA80BF0C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:13:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA308BF0C47
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 683333431A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:13:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B19334F2A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682FF3009E2;
-	Mon, 20 Oct 2025 11:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E8B2FB615;
+	Mon, 20 Oct 2025 11:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcoaVsmf"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBeNtnzs"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0C02ECE91
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96792F99BE
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958710; cv=none; b=VKGiiXx0fh7lijWimobY9PUhX0DyGtlyzmN4l3PbogYJQmxZDH7TBOmgjGgnfDxkLoMdHDXSb09/NuCFaRHZv8IflQf+jAKu8lu8Axzli20NDBIsuFboR2BPdb2FVxrFkGErU7IFudny9RhfO6OE5Mp3r5j/CqDsTvJeez0ZqAE=
+	t=1760958754; cv=none; b=Iyhovrg2hUpXbS/FMrltRr1KEhnjCZfokmGVxopmoPowtG0ik6M7k21QYHnvokt1WZeH8pnhWX1SdpxKRPPkN21XKKAmM3GKxrv6zPdPmd33IM4gFR4ML+fQbEw9KPysBXgg1NUoDPNxiGoVIeVMdLwLlk66J3vATstU1OLmORM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958710; c=relaxed/simple;
-	bh=TXVMSVKr7qOF8hxFoE16OYMWYnXG64+kVUadI/8l4wY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P2oMsfG5ASHRi9Vt+4zlCXopjVpE0pNdZ7xvM4sj5BqgSE24v7UGXhLGNM1TjZmI/40Nw1ZZTLargg1MSCaeaovfCuWkR6flFOfdem/Pv+8whYZlHH3GhKHEczuw1Ta3AvKfv2YOEVGjYw61a9tCGdHG89/vZD+jxuKGGo1npuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcoaVsmf; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1760958754; c=relaxed/simple;
+	bh=n+gvQT6Cp9atDtjg/KyYC4YYp+xamGrTEI0pAHgmHrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kc7RpHeTn43X4mz0ttTGcQCt9AtkJSLDvdMUlGRhI7Jz30JSwIa1zuiTHipV49UH7EWzjlsr37N4Aiqrb89tb5QumdKLjedRFiPW1+ad5hN28YQJXWRmC2CAsdmhqIQhAA3IPvjSCasLk94rqeYFs/lw7NvGTO6p0kE+o2btnUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HBeNtnzs; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-427015003eeso3085005f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:11:47 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e542196c7so33741015e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:12:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760958706; x=1761563506; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pPXQlJHmF4oh6NBrps4WHzY7MPHl2PKqTkZLsKWcZ4A=;
-        b=JcoaVsmf9nKfAK+EYipoaOEhhb1ZnErlyGhFID2wyAXexwvLfsiFfmvmZBzGur6I6e
-         WXER5UuCNc1k6muBhkiwCdegkW86xmLxtBIudB7DjNvjp3Fu4mPmVfUlOxJCyijPEz33
-         xlL3uMSJZsodBk0CUUGRbreuUDbzqSlhZ6EtddLQEc0AXluR1+pTpe+NJaz9bTN0sdkG
-         AVUkSXAihqSZRLZs5hNfrXvLIBS7EnW3YSvdQyitc0NwamTfvALrDuDgJKucgysLlk32
-         NMCkvPZW5f6iroW1UqiYSF+/dkYefvALMKQeb65QlV9X5bhy9XTcsMkxMic6+x8yFVM/
-         OO1A==
+        d=gmail.com; s=20230601; t=1760958751; x=1761563551; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2qwR6qWGPZt8aBWLxI/e6FP+u71DAbbOdbYMkZiZQiI=;
+        b=HBeNtnzsbQbmHmaCR/CILC9wT+G6SXaODVblhZpYYVp+se9PjcVS4U4BYftf3RbGo/
+         uDJB6PLxQnEZgdTHyErZ9xJmga4xhZPm7qdiR3rUTutnN0cMjmGEI015v6eueBIO3Y6N
+         Mnyf25d2CgyFow3hRhLz4Oo3ysq0r0HP9AwHiNnzNrWDUn0792Q7i+0lC7psQ4+RLGwm
+         05xpVSOLxhK4Wqdd8hBAL/dUolZeN7lwGo1DIbMazySRu52/NsoWvDQ4FV5alBgbyaed
+         FV4xs8pIkzIOTO1H7FwMgsGowLaSVlKlsn0FpeTFaOvY4Yh3DUVqesO1QxejKhLMXzfS
+         peDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760958706; x=1761563506;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pPXQlJHmF4oh6NBrps4WHzY7MPHl2PKqTkZLsKWcZ4A=;
-        b=gGeA8WrJ7oxrfqPJnUfxXS+NIE6EF8xHB+FeAK1MfIzSwLlSkz6bZhSeCYe+q9ccl2
-         hOjn0Vli36qj5YnVC/xaokPQ8gWeaM3AVIvj0BfYH13oqGeukrma0nVLfxP6wIJSzQi8
-         FdjJwWyZG4bkYDYGT31d+BR3rj7i4UFy+SwrcJJ8WgOU5Dwn5OBByzEdI538x5dNM00G
-         OJbDWV53Z0xpy0tcW5n5qxIEgPxqGdoOZoP0iVxMq3wGF5FH0w4Ui/7GHYF2kKPypt8O
-         FTXwnsxql2vJvYvjySgjvZcjkFN8nYYUPVXRzJ5a4Zkas7CII1wayFCFn9qgQbBn+T5t
-         tTQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4bzbrCUejM6MbqwQZmHlX2oyyPlOhbYm8DGMwIehpUbNU+wIHRffrUqh0RTKSz1EhX1zgZVnyjrYQK84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw65GwrgXvl0MlmHAiPBq7iTdGlOMy+Z8oZL5gA8HfJhU2Phoqm
-	fe203KHbKzzfvAXgT7hQh4+O9jfPWWy+CLvkT68MhY6OeIFqwE8e4NgI
-X-Gm-Gg: ASbGncu5XetIg4muTePpZOMDKnT+kMnaySjP4DHUpLds72KaiBndER4g5FCVO6lLydj
-	kkZ53lmM+b9CSaoWr2ZS9g3MO6Foghj0lqfibi3z+sNnKtF8O3VmkP4U8rKrMVI0G3QHWo2StcK
-	DXguu78NgaYVgzr1v1dc+GDtcHTIfneRmAW9nLlN4jJB+zUg/SVKqnqzdfkxzDHu1QoiWR0K0Mz
-	2Ma1EfnGhB0knm5/JwAKZP/8k+7B6sRPNj+7yCIkctDZHtPwSZMARk+5PqEIzIAXvHbZvHK3Ex+
-	/Iw6S2Fob9sijc6+kLXH2yByFdhNDv0eKdAJZ1Bwn59nPgJE2iWumDqtOyOTGyUZasW6mcp5lJT
-	fNRNowPLGUgC49n3+KNdYOBjvYIchh1WO+us4IhT2ItDp1Q8IqL+F4yvetUd7sPVkk/C3zzh2RY
-	vDfayZACiZNPqV8XenqUkovM0HF0hrB906
-X-Google-Smtp-Source: AGHT+IFBsfG4mDpuxI4J6L+KtUyhOVfV2XO1Jy56tSGTqhQz+pjBeuHuXsCZpnVJzTfM6p4J9vjM2Q==
-X-Received: by 2002:a05:6000:2911:b0:426:da92:d390 with SMTP id ffacd0b85a97d-42704d83ce7mr8733199f8f.10.1760958705757;
-        Mon, 20 Oct 2025 04:11:45 -0700 (PDT)
-Received: from Ansuel-XPS24 (93-34-92-177.ip49.fastwebnet.it. [93.34.92.177])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4283e7804f4sm12692219f8f.10.2025.10.20.04.11.44
+        d=1e100.net; s=20230601; t=1760958751; x=1761563551;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2qwR6qWGPZt8aBWLxI/e6FP+u71DAbbOdbYMkZiZQiI=;
+        b=e0P2SECk5hnbxGVCwjMrmRMomT3E1xw97g1crlmHAISsREQJ4er4a3SvDkDOkbXamI
+         IVaC9ncd+Ksiy4fXHJ3BoCLJdAWc/iRocv7P+QgNYWUsXQAYH+mBmWqnz0zlu9+XcN06
+         bLN5oEtJNRXeYWm45qAUBP1KNahqVFrOJ6PZvpwzvLBxYgvi46mwsvY216o0RsYQqvGz
+         FnCyXOS4LLwqK0w9slfuq22bGfC+D80JOTqMCEkvrf2DTGXXTV25Mo0NKPzpTB4P6Kcv
+         l/Q1DNvs52imWtGl/Xr9Whj4LAU9e86NwEVLxQjx2IM68fURHDXqH6mTvDk0ZHtTxrAS
+         2Vig==
+X-Gm-Message-State: AOJu0YwGtN8Rd4p6sJH5rDpoIHJ9oAxPIrTQo/ZeaONyxSMws7DU+r0G
+	QBrk6P+yfsHA90sC6KbrlE4j7UFN8uXCoVuCijQITKtCXbFr1mGRf30Z
+X-Gm-Gg: ASbGncuwmUpVALkOMtliKjHp6RIeE0rY8uiC+gkprXpdFwXcHU2SSKCBDTTnW2LPU9G
+	wg0Yk6Mf6cyBcam9bl0VFmiXUch2J90i4n690JeFv3XdZHLMBKXoB9T0kUoYPP56ne9ncL+/z7M
+	WPzHDnjJcK9bm4uYqm0vsfg2Xc8l2plXHP+8C6u3NetZRoLjf6dJ7JlZs9RPgwZ2bxgGvHGu1NL
+	dtESO2aWHSKE7sA0CtZdfxekNiFa8NxNSynsz2Lm87iWl9kSIHwEaOQe05XpQsqOEgJ0eb0+X+9
+	A9nHMODa3n2Byu7RvWN06Hhr3SD2XpLkARsfDglM97fyhyP8SlJqMzDVjy3FAcCXx8plIv/NKcx
+	eBvYZ4Lz4okQbirvrNzJiuWxTqfPfRigk3O9ylaoB34MWmACGnP+951N4HP1gZXLpoGlRmx/bYG
+	o9s/c=
+X-Google-Smtp-Source: AGHT+IF/EyA0TIzNac7W/+V2NGoOmFFFbqSmHi7kM1sTW+R8m65rZUTt98m3cX0WAgEihq9NbKzorQ==
+X-Received: by 2002:a05:6000:2f83:b0:427:151:3da6 with SMTP id ffacd0b85a97d-42701514163mr10336952f8f.29.1760958751085;
+        Mon, 20 Oct 2025 04:12:31 -0700 (PDT)
+Received: from gmail.com ([51.154.251.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0ec2sm14645274f8f.3.2025.10.20.04.12.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 04:11:45 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org,
-	upstream@airoha.com
-Subject: [PATCH v6 5/5] PCI: mediatek: Add support for Airoha AN7583 SoC
-Date: Mon, 20 Oct 2025 13:11:09 +0200
-Message-ID: <20251020111121.31779-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251020111121.31779-1-ansuelsmth@gmail.com>
-References: <20251020111121.31779-1-ansuelsmth@gmail.com>
+        Mon, 20 Oct 2025 04:12:30 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:12:29 +0000
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Jens Taprogge <jens.taprogge@taprogge.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	industrypack-devel@lists.sourceforge.net,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2] ipack: fix ipack.h kernel-doc warnings
+Message-ID: <aPYZHYx90jqtkYp0@gmail.com>
+References: <20251016033543.1142049-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251016033543.1142049-1-rdunlap@infradead.org>
 
-Add support for the second PCIe Root Complex present on Airoha AN7583
-SoC.
+On Wed, Oct 15, 2025 at 08:35:43PM -0700, Randy Dunlap wrote:
+> Fix various kernel-doc warnings in ipack.h:
+> 
+>  - Remove an empty kernel-doc comment.
+>  - Add 2 missing struct short descriptions.
+>  - Fix a typo in a description.
+>  - Add a missing struct field description.
+>  - Add some missing Return descriptions.
+>  - Clarify one function short description.
+> 
+> Warning: ../include/linux/ipack.h:73 Cannot find identifier on line:
+>  */
+> Warning: ../include/linux/ipack.h:74 Cannot find identifier on line:
+> struct ipack_region {
+> Warning: ../include/linux/ipack.h:75 Cannot find identifier on line:
+>         phys_addr_t start;
+> Warning: ../include/linux/ipack.h:76 Cannot find identifier on line:
+>         size_t      size;
+> Warning: ../include/linux/ipack.h:77 Cannot find identifier on line:
+> };
+> Warning: ../include/linux/ipack.h:78 Cannot find identifier on line:
+> 
+> Warning: ../include/linux/ipack.h:79 Cannot find identifier on line:
+> /**
+> Warning: ipack.h:80 missing initial short description on line:
+>  *      struct ipack_device
+> Warning: ipack.h:163 missing initial short description on line:
+>  *      struct ipack_bus_device
+> Warning: ipack.h:130 struct member 'id_table' not described in 'ipack_driver'
+> Warning: ipack.h:189 No description found for return value of 'ipack_bus_register'
+> Warning: ipack.h:194 No description found for return value of 'ipack_bus_unregister' ***
+> Warning: ipack.h:202 No description found for return value of 'ipack_driver_register'
+> Warning: ipack.h:221 No description found for return value of 'ipack_device_init'
+> Warning: ipack.h:236 No description found for return value of 'ipack_device_add'
+> Warning: ipack.h:271 No description found for return value of 'ipack_get_carrier'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> v2: reformat patch description with indents (Vaibhav)
+> 
+> Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+> Cc: Jens Taprogge <jens.taprogge@taprogge.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: industrypack-devel@lists.sourceforge.net
+> ---
+>  include/linux/ipack.h |   23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> --- linux-next-20251013.orig/include/linux/ipack.h
+> +++ linux-next-20251013/include/linux/ipack.h
+> @@ -70,15 +70,13 @@ enum ipack_space {
+>  	IPACK_SPACE_COUNT,
+>  };
+>  
+> -/**
+> - */
+>  struct ipack_region {
+>  	phys_addr_t start;
+>  	size_t      size;
+>  };
+>  
+>  /**
+> - *	struct ipack_device
+> + *	struct ipack_device - subsystem representation of an IPack device
+>   *
+>   *	@slot: Slot where the device is plugged in the carrier board
+>   *	@bus: ipack_bus_device where the device is plugged to.
+> @@ -89,7 +87,7 @@ struct ipack_region {
+>   *
+>   * Warning: Direct access to mapped memory is possible but the endianness
+>   * is not the same with PCI carrier or VME carrier. The endianness is managed
+> - * by the carrier board throught bus->ops.
+> + * by the carrier board through bus->ops.
+>   */
+>  struct ipack_device {
+>  	unsigned int slot;
+> @@ -124,6 +122,7 @@ struct ipack_driver_ops {
+>   * struct ipack_driver -- Specific data to each ipack device driver
+>   *
+>   * @driver: Device driver kernel representation
+> + * @id_table: Device ID table for this driver
+>   * @ops:    Callbacks provided by the IPack device driver
+>   */
+>  struct ipack_driver {
+> @@ -161,7 +160,7 @@ struct ipack_bus_ops {
+>  };
+>  
+>  /**
+> - *	struct ipack_bus_device
+> + *	struct ipack_bus_device - IPack bus representation
+>   *
+>   *	@dev: pointer to carrier device
+>   *	@slots: number of slots available
+> @@ -185,6 +184,8 @@ struct ipack_bus_device {
+>   *
+>   * The carrier board device should call this function to register itself as
+>   * available bus device in ipack.
+> + *
+> + * Return: %NULL on error or &struct ipack_bus_device on success
+>   */
+>  struct ipack_bus_device *ipack_bus_register(struct device *parent, int slots,
+>  					    const struct ipack_bus_ops *ops,
+> @@ -192,6 +193,8 @@ struct ipack_bus_device *ipack_bus_regis
+>  
+>  /**
+>   *	ipack_bus_unregister -- unregister an ipack bus
+> + *
+> + *	Return: %0
+>   */
+>  int ipack_bus_unregister(struct ipack_bus_device *bus);
+>  
+> @@ -200,6 +203,8 @@ int ipack_bus_unregister(struct ipack_bu
+>   *
+>   * Called by a ipack driver to register itself as a driver
+>   * that can manage ipack devices.
+> + *
+> + * Return: zero on success or error code on failure.
+>   */
+>  int ipack_driver_register(struct ipack_driver *edrv, struct module *owner,
+>  			  const char *name);
+> @@ -215,7 +220,7 @@ void ipack_driver_unregister(struct ipac
+>   * function.  The rest of the fields will be allocated and populated
+>   * during initalization.
+>   *
+> - * Return zero on success or error code on failure.
+> + * Return: zero on success or error code on failure.
+>   *
+>   * NOTE: _Never_ directly free @dev after calling this function, even
+>   * if it returned an error! Always use ipack_put_device() to give up the
+> @@ -230,7 +235,7 @@ int ipack_device_init(struct ipack_devic
+>   * Add a new IPack device. The call is done by the carrier driver
+>   * after calling ipack_device_init().
+>   *
+> - * Return zero on success or error code on failure.
+> + * Return: zero on success or error code on failure.
+>   *
+>   * NOTE: _Never_ directly free @dev after calling this function, even
+>   * if it returned an error! Always use ipack_put_device() to give up the
+> @@ -266,9 +271,11 @@ void ipack_put_device(struct ipack_devic
+>  	 .device = (dev)
+>  
+>  /**
+> - * ipack_get_carrier - it increase the carrier ref. counter of
+> + * ipack_get_carrier - try to increase the carrier ref. counter of
+>   *                     the carrier module
+>   * @dev: mezzanine device which wants to get the carrier
+> + *
+> + * Return: true on success.
+>   */
+>  static inline int ipack_get_carrier(struct ipack_device *dev)
+>  {
+Hello Randy,
 
-This is based on the Mediatek Gen1/2 PCIe driver and similar to Gen3
-also require workaround for the reset signals.
+Thank you for your changes.
 
-Introduce a new quirk to skip having to reset signals and also introduce
-some additional logic to configure the PBUS registers required for
-Airoha SoC.
+Acknowledged-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/pci/controller/pcie-mediatek.c | 75 +++++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 14 deletions(-)
+Hey Greg, could you please add this patch to your misc tree?
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 313da61a0b8a..4b78b6528f9f 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -147,11 +147,13 @@ struct mtk_pcie_port;
-  * @MTK_PCIE_FIX_CLASS_ID: host's class ID needed to be fixed
-  * @MTK_PCIE_FIX_DEVICE_ID: host's device ID needed to be fixed
-  * @MTK_PCIE_NO_MSI: Bridge has no MSI support, and relies on an external block
-+ * @MTK_PCIE_SKIP_RSTB: Skip calling RSTB bits on PCIe probe
-  */
- enum mtk_pcie_quirks {
- 	MTK_PCIE_FIX_CLASS_ID = BIT(0),
- 	MTK_PCIE_FIX_DEVICE_ID = BIT(1),
- 	MTK_PCIE_NO_MSI = BIT(2),
-+	MTK_PCIE_SKIP_RSTB = BIT(3),
- };
- 
- /**
-@@ -687,23 +689,25 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 		regmap_update_bits(pcie->cfg, PCIE_SYS_CFG_V2, val, val);
- 	}
- 
--	/* Assert all reset signals */
--	writel(0, port->base + PCIE_RST_CTRL);
-+	if (!(soc->quirks & MTK_PCIE_SKIP_RSTB)) {
-+		/* Assert all reset signals */
-+		writel(0, port->base + PCIE_RST_CTRL);
- 
--	/*
--	 * Enable PCIe link down reset, if link status changed from link up to
--	 * link down, this will reset MAC control registers and configuration
--	 * space.
--	 */
--	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
-+		/*
-+		 * Enable PCIe link down reset, if link status changed from
-+		 * link up to link down, this will reset MAC control registers
-+		 * and configuration space.
-+		 */
-+		writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
- 
--	msleep(PCIE_T_PVPERL_MS);
-+		msleep(PCIE_T_PVPERL_MS);
- 
--	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
--	val = readl(port->base + PCIE_RST_CTRL);
--	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
--	       PCIE_MAC_SRSTB | PCIE_CRSTB;
--	writel(val, port->base + PCIE_RST_CTRL);
-+		/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
-+		val = readl(port->base + PCIE_RST_CTRL);
-+		val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
-+		       PCIE_MAC_SRSTB | PCIE_CRSTB;
-+		writel(val, port->base + PCIE_RST_CTRL);
-+	}
- 
- 	/* Set up vendor ID and class code */
- 	if (soc->quirks & MTK_PCIE_FIX_CLASS_ID) {
-@@ -824,6 +828,41 @@ static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
- 	return 0;
- }
- 
-+static int mtk_pcie_startup_port_an7583(struct mtk_pcie_port *port)
-+{
-+	struct mtk_pcie *pcie = port->pcie;
-+	struct device *dev = pcie->dev;
-+	struct pci_host_bridge *host;
-+	struct resource_entry *entry;
-+	struct regmap *pbus_regmap;
-+	resource_size_t addr;
-+	u32 args[2], size;
-+
-+	/*
-+	 * Configure PBus base address and base address mask to allow
-+	 * the hw to detect if a given address is accessible on PCIe
-+	 * controller.
-+	 */
-+	pbus_regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+							   "mediatek,pbus-csr",
-+							   ARRAY_SIZE(args),
-+							   args);
-+	if (IS_ERR(pbus_regmap))
-+		return PTR_ERR(pbus_regmap);
-+
-+	host = pci_host_bridge_from_priv(pcie);
-+	entry = resource_list_first_type(&host->windows, IORESOURCE_MEM);
-+	if (!entry)
-+		return -ENODEV;
-+
-+	addr = entry->res->start - entry->offset;
-+	regmap_write(pbus_regmap, args[0], lower_32_bits(addr));
-+	size = lower_32_bits(resource_size(entry->res));
-+	regmap_write(pbus_regmap, args[1], GENMASK(31, __fls(size)));
-+
-+	return mtk_pcie_startup_port_v2(port);
-+}
-+
- static void mtk_pcie_enable_port(struct mtk_pcie_port *port)
- {
- 	struct mtk_pcie *pcie = port->pcie;
-@@ -1208,6 +1247,13 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
- 	.quirks = MTK_PCIE_FIX_CLASS_ID,
- };
- 
-+static const struct mtk_pcie_soc mtk_pcie_soc_an7583 = {
-+	.ops = &mtk_pcie_ops_v2,
-+	.startup = mtk_pcie_startup_port_an7583,
-+	.setup_irq = mtk_pcie_setup_irq,
-+	.quirks = MTK_PCIE_FIX_CLASS_ID | MTK_PCIE_SKIP_RSTB,
-+};
-+
- static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
- 	.device_id = PCI_DEVICE_ID_MEDIATEK_7629,
- 	.ops = &mtk_pcie_ops_v2,
-@@ -1217,6 +1263,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
- };
- 
- static const struct of_device_id mtk_pcie_ids[] = {
-+	{ .compatible = "airoha,an7583-pcie", .data = &mtk_pcie_soc_an7583 },
- 	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
--- 
-2.51.0
-
+Thanks,
+Vaibhav
 
