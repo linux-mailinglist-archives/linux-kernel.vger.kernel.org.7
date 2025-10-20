@@ -1,183 +1,183 @@
-Return-Path: <linux-kernel+bounces-860305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173E3BEFCBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B029BEFD41
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AAD53E5E80
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:07:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CBE93E7F86
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9DB2E7F2A;
-	Mon, 20 Oct 2025 08:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268762E92A6;
+	Mon, 20 Oct 2025 08:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ChvmfHxP"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TyxiXm/t"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226321FAC42
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A172EA729
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947618; cv=none; b=pZzgMNA1a8GmBcxHdIGkAJEC/0PPOmlc8a1P8hqs6y7qJmLzn92pkCxb+Zysri0Uz/Ujo2ZRuuNkeQypvZ3wsBkFNkkaOXM9ncjbiX22joy+A8BhkEzOfOAvdm8UopipjvxNAAjrLcLXKh6V85SulQPcVTtef+ACJYx3V6o7yIU=
+	t=1760947693; cv=none; b=ehX74wgHyVQd2qTz7ZmIYVz3BV78WJ3+f/xtmrI49o+VNEMvm0WiTXvZIku65ttldl2+A5QF/K30NFfowEqCtPK2WGQLJi1veG6cf807pW+RKo6UAViRaI1ngpj9HOV1yftjJQ5qk3HPJJo3bKKo1HGH0f8YwFAWmOv5FLDKNOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947618; c=relaxed/simple;
-	bh=2N4OGTa3rtpVqsCUmLw1+yGLYM1aVUWodNNb5rGn3LU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jlwo8PuB/sf35OUnppP+RNDLR8MkD9Iy9qqB1OfEjQr5Y74EattR4HlVJ9Xa92nc+dqyCN2ghdtmyaE5doMV4jV+hha4UBtbpKIKKEHq751XeBHVDLOLAAPlJS8cfbECbj4Pc3IfaPXB5drVinOTbWnBnIYYvUzziaHbo2F56i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ChvmfHxP; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57e03279bfeso4633472e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:06:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760947615; x=1761552415; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mkm6279T3HUfgpQGhHQv/L3gfBoclYPQErPb1Lc1rZ0=;
-        b=ChvmfHxPcsr5oqTyaxzEOErFjKsRbpf09iwv6M+YbNAHO4edqM0U6qkbAkUwnZZjKU
-         8cQvj2pILIh2k9xopW6vPOWlItutE2bletpShfdMLoFofqlREKbTn/p5Apd5gyAwQgPd
-         yDl0EKvnZ92QivHTJATl0ay1X+UQclLSgTEQv8FWL7IKjQsUAukDS63ZjXQQ3Q+xxbOQ
-         c3lYSMi4BPMQO8+omYkoJ0VV1hdAyPwnBIZpD3p4zP2upW1QT+mxomFglSFH1oCLdAB2
-         xIlW8AauyZvUQ9+HZ/9RlRIE/UXoPUyj7h3t5UEOzK2V383s1k9U1KQD5/LrdEpisnd9
-         bQMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760947615; x=1761552415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mkm6279T3HUfgpQGhHQv/L3gfBoclYPQErPb1Lc1rZ0=;
-        b=makdaFEt61fQwGMVHSzj+bGDGoWCfANN6mIQdsl6lFqwHJ+WeJ590miK2IZGviSDRN
-         0dE/G2q8eZYsXQ5E4wOw0OE3fcYt2TUG57BlMOJKXYw3kcstTXRqbWCTttzxPjhuVQGB
-         WV65jMKeZRG00hmSRnay2Ahn62SSdkpZerANnAcQidSKRg11oOl3WGEAawoiO6GPg45g
-         kZyc82Mq1SYcLaOGD1kQH4qFUIAdYR7oAk/OqBFhX1Xe/JeuOPNFNfn3sxZnsuffkUCA
-         svSXOcHzXcT7GnGaOBQ2xDyljMR8oZWnsqhIhl899Ebs09aUhzY332w0uPR6g8CWq8Eh
-         bLSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGiu8vLDY1XUjh75/QWuqXUI4y13GgBATdjQzNHYYi/L91Ox1JV4eB0/i/xXfHgQrq23NLjDQ5dBJE6hQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5ZgZpZlS6uLjyGj0g20KiQ9K+mpJUZZzIuaMyukl6pAouE1FF
-	7dbJirn4Q5PdSKDoG9VPO1YYc8eSNhN/UfK+8d78V/vkogMK1XoIGbpT2hoxcr8oGtKvtBuOfqx
-	Ib35kyorpIc8oa71A9gVjFu5LIjh7KmeIETJceLIKZA==
-X-Gm-Gg: ASbGncsDimB+gHtZiCa3ODEQdSeJYrdhG7k4tSfcVAVo3uHH9pO9N9t77xSvhHkw9LM
-	rCpu9HpDk7/PLAOzff3s4dg7jzSLOpKepyJls8ctZrVSFmH5hDN8Ltg6MsGkbqWdH2tEpttqZGH
-	jMtO9FHRNwRJNB8tfmB6oaP+tL3HGld7gLu9CrjqGoQ+dugK/PVl9nQWfQIjz37wINamXzbLPhG
-	sDYLsS1L9/ASHuSiaBIvnuKKwhTZbYASjen4XjTBGiA85fxd4t7N4aVOwd02aNEkCqaZ5bDpS8Y
-	usvhdoRmO7YthYCGY0nZgG8Xp1A=
-X-Google-Smtp-Source: AGHT+IEnXnRGs3SMCxArSB4fSMudVmkeEhYn3XsDaW2U3rT4w958z2/aG9YTzEXKt0OOPBNno6cCif5OzOylxpizFcw=
-X-Received: by 2002:a05:6512:10cf:b0:57d:cdb4:5b94 with SMTP id
- 2adb3069b0e04-591d0b42497mr5006809e87.11.1760947614999; Mon, 20 Oct 2025
- 01:06:54 -0700 (PDT)
+	s=arc-20240116; t=1760947693; c=relaxed/simple;
+	bh=2L21Qopfly/U4b9yKtsDB4jlN3j5TDLRZmMl98kJ+LM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MZIqClohs9xwi3rKNZV2VkrsPcDx8+qzMPyqCa9EweAXBqYuu66Cnk9chRy6cJCdd2RBaA+w879uQK07gboeExC9NlwEYJSsNzWnISrTPsrKdNEopCELgvx+EXsWD6X46nuWUPYSZXTK2n97aZJ//f7mC68LXL6C1mPjfIjUqFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TyxiXm/t; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 4326F4E411EE;
+	Mon, 20 Oct 2025 08:08:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 17A74606D5;
+	Mon, 20 Oct 2025 08:08:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1F488102F239E;
+	Mon, 20 Oct 2025 10:08:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760947685; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=+v8XTZeq0pOdpvOANy27ZmijoxF+wc+fMdKurB1Y/rc=;
+	b=TyxiXm/tltgqYMOJvaHd+RodIIPn8VuM3f4rLSKo98iXzyARLyfVefDl2PW0jGzSNhnd3d
+	zc250nIn4vaayJZYFR3YnL1Vq3M6YUXKRbt3ptC2BM0QRizdA+YFtcn8ttyVRD0mTjKNuz
+	1kjWHvmBSk0YVpKBzTOZs9sl7d7IOmmitLndSosxwx6Ywfw5jcJaqfo83GZ/4FvqyO7M7L
+	oxqx3cgd91CrTmctmk5hzW3CCezO1AUfqW++8y+FIVwO3kryF7Hf5Wejetb6osQQvmWXkk
+	GFnX/4aCeil4dnEi8sKej8r/K/8EPFvUkJYkOh8m2G1aN1RRJeyVKZR5PxqU7g==
+From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v5 8/8] ARM: dts: r9a06g032: Add support for GPIO interrupts
+Date: Mon, 20 Oct 2025 10:06:44 +0200
+Message-ID: <20251020080648.13452-9-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251020080648.13452-1-herve.codina@bootlin.com>
+References: <20251020080648.13452-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
- <20251006-reset-gpios-swnodes-v1-3-6d3325b9af42@linaro.org> <aO1dBgPZfDJTsPfE@smile.fi.intel.com>
-In-Reply-To: <aO1dBgPZfDJTsPfE@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 20 Oct 2025 10:06:43 +0200
-X-Gm-Features: AS18NWAY7ksNch0utlYlmtfhIIguLjMNDdOQUCfuHVJCcKTUxj14rMyFhjwQYVM
-Message-ID: <CAMRc=MfOoHn+mLRpQBEsC3g5sM=VZBgVffsm68CAXJBHffPxdA@mail.gmail.com>
-Subject: Re: [PATCH 3/9] software node: allow referencing firmware nodes
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sat, Oct 18, 2025 at 7:34=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Oct 06, 2025 at 03:00:18PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > At the moment software nodes can only reference other software nodes.
-> > This is a limitation for devices created, for instance, on the auxiliar=
-y
-> > bus with a dynamic software node attached which cannot reference device=
-s
-> > the firmware node of which is "real" (as an OF node or otherwise).
-> >
-> > Make it possible for a software node to reference all firmware nodes in
-> > addition to static software nodes. To that end: use a union of differen=
-t
-> > pointers in struct software_node_ref_args and add an enum indicating
-> > what kind of reference given instance of it is. Rework the helper macro=
-s
-> > and deprecate the existing ones whose names don't indicate the referenc=
-e
-> > type.
-> >
-> > Software node graphs remain the same, as in: the remote endpoints still
-> > have to be software nodes.
->
-> ...
->
-> > +enum software_node_ref_type {
-> > +     /* References a software node. */
-> > +     SOFTWARE_NODE_REF_SWNODE =3D 0,
->
->
-> I don't see why we need an explicit value here.
->
+In the RZ/N1 SoC, the GPIO interrupts are multiplexed using the GPIO
+Interrupt Multiplexer.
 
-It was to make it clear, this is the default value and it's the one
-used in older code with the legacy macros. I can drop it, it's no big
-deal.
+Add the multiplexer node and connect GPIO interrupt lines to the
+multiplexer.
 
-> > +     /* References a firmware node. */
-> > +     SOFTWARE_NODE_REF_FWNODE,
-> > +};
->
-> ...
->
-> >  /**
-> >   * struct software_node_ref_args - Reference property with additional =
-arguments
-> > - * @node: Reference to a software node
-> > + * @swnode: Reference to a software node
-> > + * @fwnode: Alternative reference to a firmware node handle
-> >   * @nargs: Number of elements in @args array
-> >   * @args: Integer arguments
-> >   */
-> >  struct software_node_ref_args {
-> > -     const struct software_node *node;
-> > +     enum software_node_ref_type type;
-> > +     union {
-> > +             const struct software_node *swnode;
-> > +             struct fwnode_handle *fwnode;
-> > +     };
->
-> Can't we always have an fwnode reference?
->
+The interrupt-map available in the multiplexer node has to be updated in
+dts files depending on the GPIO usage. Indeed, the usage of an interrupt
+for a GPIO is board dependent.
 
-Unfortunately no. A const struct software_node is not yet a full
-fwnode, it's just a template that becomes an actual firmware node when
-it's registered with the swnode framework. However in order to allow
-creating a graph of software nodes before we register them, we need a
-way to reference those templates and then look them up internally in
-swnode code.
+Up to 8 GPIOs can be used as an interrupt line (one per multiplexer
+output interrupt).
 
-Bart
+Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi | 41 ++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-> >       unsigned int nargs;
-> >       u64 args[NR_FWNODE_REFERENCE_ARGS];
-> >  };
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
->
+diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+index da977cdd8487..c7196e720c6c 100644
+--- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
+@@ -534,6 +534,14 @@ gpio0a: gpio-port@0 {
+ 				#gpio-cells = <2>;
+ 				snps,nr-gpios = <32>;
+ 				reg = <0>;
++
++				interrupt-controller;
++				interrupt-parent = <&gpioirqmux>;
++				interrupts = < 0  1  2  3  4  5  6  7
++					       8  9 10 11 12 13 14 15
++					      16 17 18 19 20 21 22 23
++					      24 25 26 27 28 29 30 31 >;
++				#interrupt-cells = <2>;
+ 			};
+ 
+ 			/* GPIO0b[0..1]   connected to pins GPIO1..2   */
+@@ -576,6 +584,14 @@ gpio1a: gpio-port@0 {
+ 				#gpio-cells = <2>;
+ 				snps,nr-gpios = <32>;
+ 				reg = <0>;
++
++				interrupt-controller;
++				interrupt-parent = <&gpioirqmux>;
++				interrupts = < 32 33 34 35 36 37 38 39
++					       40 41 42 43 44 45 46 47
++					       48 49 50 51 52 53 54 55
++					       56 57 58 59 60 61 62 63 >;
++				#interrupt-cells = <2>;
+ 			};
+ 
+ 			/* GPIO1b[0..1]   connected to pins GPIO55..56 */
+@@ -608,6 +624,14 @@ gpio2a: gpio-port@0 {
+ 				#gpio-cells = <2>;
+ 				snps,nr-gpios = <32>;
+ 				reg = <0>;
++
++				interrupt-controller;
++				interrupt-parent = <&gpioirqmux>;
++				interrupts = < 64 65 66 67 68 69 70 71
++					       72 73 74 75 76 77 78 79
++					       80 81 82 83 84 85 86 87
++					       88 89 90 91 92 93 94 95 >;
++				#interrupt-cells = <2>;
+ 			};
+ 
+ 			/* GPIO2b[0..9] connected to pins GPIO160..169 */
+@@ -620,6 +644,23 @@ gpio2b: gpio-port@1 {
+ 			};
+ 		};
+ 
++		gpioirqmux: interrupt-controller@51000480 {
++			compatible = "renesas,r9a06g032-gpioirqmux", "renesas,rzn1-gpioirqmux";
++			reg = <0x51000480 0x20>;
++			#interrupt-cells = <1>;
++			#address-cells = <0>;
++			interrupt-map-mask = <0x7f>;
++
++			/*
++			 * Example mapping entry. Board DTs need to overwrite
++			 * 'interrupt-map' with their specific mapping. Check
++			 * the irqmux binding documentation for details.
++			 */
++			interrupt-map = <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++
++			status = "disabled";
++		};
++
+ 		can0: can@52104000 {
+ 			compatible = "renesas,r9a06g032-sja1000", "renesas,rzn1-sja1000";
+ 			reg = <0x52104000 0x800>;
+-- 
+2.51.0
+
 
