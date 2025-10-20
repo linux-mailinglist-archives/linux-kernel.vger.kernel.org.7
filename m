@@ -1,317 +1,91 @@
-Return-Path: <linux-kernel+bounces-861107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5650BF1CE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:20:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A596BF1CE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DCA54ED0C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F11218A75EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA8B31197C;
-	Mon, 20 Oct 2025 14:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YaksNdhd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Yfzcjgq/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iPtVhfJC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XkyJX9FS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70980321F2A;
+	Mon, 20 Oct 2025 14:20:47 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5892F25E0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057182FD7B2;
+	Mon, 20 Oct 2025 14:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970002; cv=none; b=KfcfOBSBuTCINA6LPSXkaizLfO5+KSXKZtiOe/v/inqMneedxmjzjxJnCmSBcO+cLExoofaydvNH+/dPRDyvo7HhbxyqoOBu6GNEMok/bKPua6UyeknEaom94ZBIxyvQhbAKcqZNjfmkczoAlR6lY+1AR5qm8n1VAlmpC9Jer+U=
+	t=1760970047; cv=none; b=RUowt71V8KwrvrWkkKBQPji/h+OXsGz7ZQht8CUZ7se+GErFHZA5Pa/jk0drg32HWVXVvxCnsBMVY05uK1fvvb2wZkLq0A3sBL7KUnqx8jppz6VVHA05O5MzMs2NwmPb+P+MMHdfntX3GaBwQsyh/23UI7hidYIHi3SZVo7CsUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970002; c=relaxed/simple;
-	bh=QHXNtaionzyuYsDzzDFc9xDZtztaw7kPOVJGaBmY9ME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJJ9z3B7b5i2cwUCFFpp+xPPQ+7hBMfnJJ6MomQrsX4x3HQ8yDI8BVswvA4enrBuMkRles76HIj26Pwvo3df2xNGdwKKrVjXjxG3qr4WaDWIjCaCgWYn8n/kRj+swszGo0iLF56Tb9ualdIjl9CgmVlGdVKemUjKd1f+c9eFz/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YaksNdhd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Yfzcjgq/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iPtVhfJC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XkyJX9FS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D82F51F445;
-	Mon, 20 Oct 2025 14:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760969995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
-	b=YaksNdhdJFPHRAhWPwb7MzXrGDy9eoWT89GAo9yZddbD88WLvYgCdjltoFPuXDi+wJRVlo
-	OwABPfyiGy4vd1x7ouhzQwKcrd1zHOxIWipnkvpGDJPKX6Kdz4bdM2OZgqczjai/hjCGaV
-	a60f5lnlkncYo67eAoYGo9uPS2V6P1s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760969995;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
-	b=Yfzcjgq/U36ZuxL+Oxb9aUjKhN7BqU9oyNIzmhv/ovMqU4GN4X35EYDBSRY9pkjrmUwbgQ
-	4rpXBEiPAtejLYAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760969990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
-	b=iPtVhfJCTO/x0hsnbswQMjUiHGtaCbqR7HsDJ5aDQgRS48JPzU9U/bbT1j6+q86w84Wp4B
-	g+5kEYpuj11mJo5XhjKjk8W5B5fq3N7cfEPPSIY2oqj2RiXnfdC8CUuIvhglrXwlqqf1bv
-	f8BnJfLzSvRWqu/1wGO9YolYRrglMIQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760969990;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6VujmBoZ/wpS0cluGqxYFA8ibDzlnOmPpqfAdyS2DHY=;
-	b=XkyJX9FSurNfBMhgpZg7mewttv8Ll4Ptds3px6hJ3bieDFlBIvkTZ7SgdKNVwB/TaST8/6
-	9Aysa1yA3OjMxoBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A431713A8E;
-	Mon, 20 Oct 2025 14:19:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gaClJgZF9mhkGwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 20 Oct 2025 14:19:50 +0000
-Message-ID: <dd443c76-b68d-4a1c-9b36-d88dd6c95998@suse.de>
-Date: Mon, 20 Oct 2025 16:19:50 +0200
+	s=arc-20240116; t=1760970047; c=relaxed/simple;
+	bh=Svv7NMXFNpj2k34olEOUeJp95lr/GE8kZLjPFyLzbtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7KLuMUu5nZhOvO+ZgqHY1H1/rKMhbTzHzAemJxHJSQUHDMUTmzVg2dbgw16Swdh/w04V2ohFZRKvOvcjLDfr840wTLPOnER724ZGr/wmov+WSXd8IE554LwJ7X4WJQsUUo2GGduSsWsaceTnti9bDxBv8/3Dz2xIttU+OVo7V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
+	id 95C3A618FC; Mon, 20 Oct 2025 16:20:36 +0200 (CEST)
+Date: Mon, 20 Oct 2025 16:20:36 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Andrii Melnychenko <a.melnychenko@vyos.io>
+Cc: pablo@netfilter.org, kadlec@netfilter.org, phil@nwl.cc,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] nf_conntrack_ftp: Added nfct_seqadj_ext_add() for
+ ftp's conntrack.
+Message-ID: <aPZFNBNXlyq0Q5dM@strlen.de>
+References: <20251016104802.567812-1-a.melnychenko@vyos.io>
+ <20251016104802.567812-2-a.melnychenko@vyos.io>
+ <aPDU6i1HKhy5v-nh@strlen.de>
+ <CANhDHd-k2Ros8nFo4fNi=-Mu1DxkK4A2MgLYjuDqPwpfJYYfdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/gud: rearrange gud_probe() to prepare for function
- splitting
-To: Ruben Wauters <rubenru09@aol.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251019185642.14266-2-rubenru09.ref@aol.com>
- <20251019185642.14266-2-rubenru09@aol.com>
- <cde9304a-5ab8-4f13-841c-c5679d55b502@suse.de>
- <57f201bb938b14a13b4b7ecf8173612232486669.camel@aol.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <57f201bb938b14a13b4b7ecf8173612232486669.camel@aol.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANhDHd-k2Ros8nFo4fNi=-Mu1DxkK4A2MgLYjuDqPwpfJYYfdw@mail.gmail.com>
 
-Hi
+Andrii Melnychenko <a.melnychenko@vyos.io> wrote:
+> I've researched the issue a bit. Despite the fact that in `nf_nat_ftp()`
+> the helper for the expected connection is installed, it isn't executed in
+> the following functions - `nf_nat_mangle_tcp_packet()`. Also, shouldn't the
+> logic of `nf_nat_follow_master` affect the "upcoming" passive FTP
+> connection?
 
-Am 20.10.25 um 15:45 schrieb Ruben Wauters:
-> On Mon, 2025-10-20 at 09:00 +0200, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 19.10.25 um 20:53 schrieb Ruben Wauters:
->>> gud_prove() is currently very large and does many things, including
->> 'gud_probe'
-> Unfortunate typo that I only realised after sending
->>> pipeline setup and feature detection, as well as having USB functions.
->>>
->>> This patch re-orders the code in gud_probe() to make it more organised
->>> and easier to split apart in the future.
->>>
->>> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
->>> ---
->>> I wanted to move mode config to just before pipeline init, however mode
->>> config is edited in feature detection so I was unsure how to go about it
->>> exactly.
->>> Further untangling of this may be required before splitting it out
->>> ---
->>>    drivers/gpu/drm/gud/gud_drv.c | 31 +++++++++++++++++--------------
->>>    1 file changed, 17 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
->>> index b7345c8d823d..583f7f8f4c00 100644
->>> --- a/drivers/gpu/drm/gud/gud_drv.c
->>> +++ b/drivers/gpu/drm/gud/gud_drv.c
->>> @@ -463,10 +463,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->>>    		return PTR_ERR(gdrm);
->>>    
->>>    	drm = &gdrm->drm;
->>> -	drm->mode_config.funcs = &gud_mode_config_funcs;
->>> -	ret = drmm_mode_config_init(drm);
->>> -	if (ret)
->>> -		return ret;
->>>    
->>>    	gdrm->flags = le32_to_cpu(desc.flags);
->>>    	gdrm->compression = desc.compression & GUD_COMPRESSION_LZ4;
->>> @@ -483,11 +479,18 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->>>    	if (ret)
->>>    		return ret;
->>>    
->>> +	/* Mode config init*/
->>> +	ret = drmm_mode_config_init(drm);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>>    	drm->mode_config.min_width = le32_to_cpu(desc.min_width);
->>>    	drm->mode_config.max_width = le32_to_cpu(desc.max_width);
->>>    	drm->mode_config.min_height = le32_to_cpu(desc.min_height);
->>>    	drm->mode_config.max_height = le32_to_cpu(desc.max_height);
->>> +	drm->mode_config.funcs = &gud_mode_config_funcs;
->>>    
->>> +	/*Format init*/
->>>    	formats_dev = devm_kmalloc(dev, GUD_FORMATS_MAX_NUM, GFP_KERNEL);
->>>    	/* Add room for emulated XRGB8888 */
->>>    	formats = devm_kmalloc_array(dev, GUD_FORMATS_MAX_NUM + 1, sizeof(*formats), GFP_KERNEL);
->>> @@ -587,6 +590,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->>>    			return -ENOMEM;
->>>    	}
->>>    
->>> +	/*Pipeline init*/
->>>    	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
->>>    				       &gud_plane_funcs,
->>>    				       formats, num_formats,
->>> @@ -598,15 +602,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->>>    	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
->>>    	drm_plane_enable_fb_damage_clips(&gdrm->plane);
->>>    
->>> -	devm_kfree(dev, formats);
->>> -	devm_kfree(dev, formats_dev);
->>> -
->>> -	ret = gud_get_properties(gdrm);
->>> -	if (ret) {
->>> -		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
->>> -		return ret;
->>> -	}
->>> -
->>>    	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
->>>    					&gud_crtc_funcs, NULL);
->>>    	if (ret)
->>> @@ -621,6 +616,13 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->>>    	}
->>>    
->>>    	drm_mode_config_reset(drm);
->>> +	drm_kms_helper_poll_init(drm);
->>> +
->>> +	ret = gud_get_properties(gdrm);
->> This function installs plane properties. So it need to be in its old
->> location after drm_universal_plane_init() and before
->> drm_mode_config_reset(). It should be renamed to
->> gud_plane_add_properties(). See [1] for the connector equivalent
-> This does make sense, though I do wonder why it worked on testing,
-> either way, will change it.
+Yes, but we need the seqadj extension on the control connection to
+rewrite the announced address to connect to/from.
 
-It could be that you can add it afterwards, but that certainly creates 
-timing issues with user space. There's a related note at [1].
+nf_nat_setup_info() takes care of this but only for template-based
+helper assignment, not for the explicit assign done via
+nft_ct_helper_obj_eval().
 
-[1] 
-https://elixir.bootlin.com/linux/v6.17.3/source/drivers/gpu/drm/drm_mode_object.c#L231
+> I've also checked the setup of `nfct_seqadj_ext_add()` in the
+> `ft_ct_helper_obj_eval()` routine - it works. However, now the seqadj would
+> be added to all "NATed" conntrack helpers.
 
-Best regards
-Thomas
+Yes.
 
->> [1]
->> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud_connector.c#L474
->>
->>> +	if (ret) {
->>> +		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
->>> +		return ret;
->>> +	}
->>>    
->>>    	usb_set_intfdata(intf, gdrm);
->> After you've called drm_kms_helper_poll_init(), DRM could query the
->> connector for attached displays at any time. This might require the usb
->> interface to point to the gud device. And the DRM driver also needs to
->> know about the DMA device.  I quick look through the driver code suggest
->> that it works without, but better not count on it.
->>
->> Best would be to move this line and the block with the DMA setup [2]
->> just after where the gud device got allocated with devmdrm_dev_alloc(). [3]
->>
->> [2]
->> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud_drv.c#L627
->> [3]
->> https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/gpu/drm/gud/gud_drv.c#L464
-> Will do, I'll send a v2 patch with the requested changes.
->> Best regards
->> Thomas
->>
->>>    
->>> @@ -638,7 +640,8 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->>>    	if (ret)
->>>    		return ret;
->>>    
->>> -	drm_kms_helper_poll_init(drm);
->>> +	devm_kfree(dev, formats);
->>> +	devm_kfree(dev, formats_dev);
->>>    
->>>    	drm_client_setup(drm, NULL);
->>>    
+> Maybe it's better to leave the
+> seqadj setup in `nf_conntrack_ftp`, so it would apply explicitly to FTP
+> traffic, but with an additional `(ct->status & IPS_NAT_MASK)` check?
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+As-is, almost all the helpers are broken when used with nat and assignment
+via nft objref infra.  We could add some annotation to those that don't
+need seqadj, but afaics thats just the netbios helper.
 
+> I can prepare a new patch with changes in either `nft_ct` or
+> `nf_conntrack_ftp`.
+> Any suggestions?
 
+Thanks, please fix nft_ct infra.  Does the above make sense to you?
 
