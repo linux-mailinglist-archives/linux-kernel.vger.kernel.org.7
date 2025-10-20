@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-861817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140AABF3B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:24:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033C3BF3B66
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE7918C0C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:24:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A407C3516E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50463334C1C;
-	Mon, 20 Oct 2025 21:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E72E62C5;
+	Mon, 20 Oct 2025 21:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liUGcVyg"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Caamiasd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190A334692
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BC4334372;
+	Mon, 20 Oct 2025 21:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760995430; cv=none; b=olz3OV6fan5U3efO9D2Z9OYMuXJm8JlyQK4BrjVNQd41FyPN03aZx7VDHYl81Ljge02Ev4bGWPqW7sGen/bBeU24ZIzvFVqKfXxrgxgYOFy9Gmexz7mS36S3z9Fpqa82Icsc50sg2gW0YrT3bDAr0+/LCA0YkzZcqQleQTIfiu8=
+	t=1760995360; cv=none; b=sHSY+Aji7cYTTGWJ60H6yHSwplgMySyUHC6G5skmHx/nvebW/bB+JF3jkNuxPGsE8HcslDQkPABLEze44klOpLBoMktfYMQjLqokMzWYSRKnhOIBCf0Y3sDqj3SrVKvH/JQylGzlttd1N6DbUlp+HrcW5AsCBvtoP9Uajfzi4MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760995430; c=relaxed/simple;
-	bh=ibhPvtx39doJjXzqMVBHPIxV8whgIxw3fdx9JJ7FKfI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vAMKMm2qlVY0ug+aHbfgPXqNqu/Fa9464wC2SNgPbSY/Ee+g3S2BoQkti9hMSRZ0QkBiwdCuLBtvUOWxfn5AfnNnRmCLWg/7Vc6tF4wAPTx9d4/ZUJ1Cqrg6cEuLV63iyMxwA5MadYrTJqKwxlne8mdwe5rlKy7wUfXEy1W1UTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liUGcVyg; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-472cbd003feso739535e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760995426; x=1761600226; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3wc9icIF6ANq7bIYtjR0bXRUcBUAsbuuGXfXqpMDQNE=;
-        b=liUGcVygdye/ajx7eBmNlJqxsDUvPOQBCesrNkiw15KnpbZwfScNtWqYR15mOeSQ8w
-         9Zk5aWnFIsNI7fuilYhfAFfTGGEv70dSvcJyRTBfh3xca9NE32AAEkrppDUvJ4kzLof0
-         F+Ts8Py8a+Gcnx3rxQGLIDomUX2dGlcWs/f+QPfjH1cmOmVyAus2ORI8Y7id2U4lpdee
-         GVvhx4pUbK84jc8WAQPJW9y8dVY1kX1zxYkhY79J6HcojeASl78GcYjSX3Igv5M0F8he
-         xNHSOr7gZW05ATnr9a21SR0BWGgSSkhs7V2zmYBVaIcOHl1oSQEOrkhfUNSLg/HjYgg5
-         SX3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760995426; x=1761600226;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3wc9icIF6ANq7bIYtjR0bXRUcBUAsbuuGXfXqpMDQNE=;
-        b=JMuGbh8LjxzPSMgOcrR1Da2SjUaZ3axDhYOCBfgipt0tBrDnPujUSkg/IsKoIBD+cV
-         QGNuFIA9QrYOINchJYGMeQCrzpmHyMHMdLTjRGfI32vhO/QbUHWq1J7DOi0ag5Dwvuui
-         AomEXNAma0XcAOtYKfhLyZYadqm3oTW7RDB4wsVt7mLNCw6scIivcpe8rgOcreoztUZu
-         eAdv9pyfIikL6ZFQ8By6fG6j/dbQk4PT30eOSe+ADiAZewhA1Th/aAFzRRd++ABg185F
-         K8gAfZER9NYTHLpIyM3mL5A841Hb3UyZtevgllUlcSuRP6d8QMHBtjPZTNHSb7HJ3JtL
-         22cQ==
-X-Gm-Message-State: AOJu0Yx4byj928Gmp/Ow4AWKXGWdjy58LcsWla7R2aLYj2kxZlvDNTci
-	O9PlARKM8gU5y9QAx7jynqlkpDSWZQDuwW9bEk4Ygl2MPUwWzSzmHN6I
-X-Gm-Gg: ASbGnctuQmqwdxO720sfiro0VpaBOf3ddFO6kK5EQ+P6awEvRx8gHek+gNz9IJFd2eW
-	UUM2ICpJ54Stg4BLE5z2VrFBtthoSGVjKiYDMahHamsa7cNTLeht+eWnB6fFAQRvtGZgYdcvKQ7
-	7Ae0m9VHukjrPAxjsdPZlIXzw4CG5af5CcXSh0ely1kMI21n3FPUOSB0uerGO2maRv85LfBNKh+
-	Il1SpPo4+feNXJMnm37qjuphL5rXraaqqBMUPVKp+Q7FnViaCnCxhuSsQaQ+orySpMweeWAQc/I
-	9c06PtuUWovEzxaqHoMLJl4cW9u3GaR6y6iLUBdfxgWTH0ra53mrLj2FXUBFlCc6E6x0Ha240Dn
-	yBQqo57LDgnppbKuC1Y0+HDmNp5nRpTjf45nX6ahWc8ERXu51ki69TEwo0XMVXNAyomRvSbt3mP
-	ncl+Dq
-X-Google-Smtp-Source: AGHT+IFKeEzNOuZE8Rb5SdMiZ8cxxtJjmrvr71zG4Tr9HOdYTow9+lCka3okRv5TO5BvJQ/+TEWOJw==
-X-Received: by 2002:a05:600c:1d25:b0:471:152a:e574 with SMTP id 5b1f17b1804b1-474942c4fa0mr5690495e9.2.1760995426167;
-        Mon, 20 Oct 2025 14:23:46 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:4a::])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d916sm157517505e9.4.2025.10.20.14.23.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 14:23:45 -0700 (PDT)
-From: Gustavo Luiz Duarte <gustavold@gmail.com>
-Date: Mon, 20 Oct 2025 14:22:35 -0700
-Subject: [PATCH net 2/2] netconsole: Fix race condition in between reader
- and writer of userdata
+	s=arc-20240116; t=1760995360; c=relaxed/simple;
+	bh=qYY1qLufeY1f3EgZKySLUuTNayjNH8pPG4M0+/NEz38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqoTUoCJRfrdu4gQq/C5OU0Zl+388MjONNEWzKXoVBvMrquYC0OBh4av4rYO5DwB96IKeM/LzVO250QM1csj6kPZG9g7itcq4LFsAC+/my7eB/FKOye3471lrlTW8FZkskW+rdFEdlus48AoJ4yryAQSn8IZgPEsD25meSi/Jw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Caamiasd; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760995359; x=1792531359;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qYY1qLufeY1f3EgZKySLUuTNayjNH8pPG4M0+/NEz38=;
+  b=CaamiasdZnal1/P7o8xlteCrTUl22/3CBjNd27mHxXZTgiyhP8S3qHrV
+   0/2CF/QSsJkT8tyWBsIFOsnI5OcBtscb+mnDnT6Nh0XWjDZneK1js5R/z
+   dKyFa6DXmCLlzbmPC72EdFAKlDR75SLyaPU5IseWDpq+hd36doZAKscUa
+   //1V0YzBYbmWHl0BBoMKo98Yddnuo4MrrjZAYesVjKNLdNYfHcBlwmfhh
+   hhcZ24HFgiESimKGpron5rQjobQbcLQf8LySrnkX6xkeaTq76ehY4LENW
+   Y8J4smgScwsndvKKdH7V/G+O+TOHK69qw5Wq8G/7YK9krihZOikkJc4MB
+   A==;
+X-CSE-ConnectionGUID: wFpi56kSTxCJmpf0yy2pUA==
+X-CSE-MsgGUID: PYhwAYBiQVWG8rXn5tscXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63027346"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="63027346"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 14:22:38 -0700
+X-CSE-ConnectionGUID: EeYIFcZZSAWV9W04YExiTg==
+X-CSE-MsgGUID: GUpku4krSyW7QNn1N2/BCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="188528968"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.123]) ([10.125.108.123])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 14:22:37 -0700
+Message-ID: <2393460e-aed6-44ac-9f11-f5b9a1f29e6b@intel.com>
+Date: Mon, 20 Oct 2025 14:22:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] cxl_test: enable zero sized decoders under hb0
+To: Alison Schofield <alison.schofield@intel.com>,
+ Gregory Price <gourry@gourry.net>
+Cc: Vishal Aslot <vaslot@nvidia.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ "open list:COMPUTE EXPRESS LINK (CXL)" <linux-cxl@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251015024019.1189713-1-vaslot@nvidia.com>
+ <20251015024019.1189713-2-vaslot@nvidia.com>
+ <aPXgLp1Em6wKlx0t@aschofie-mobl2.lan>
+ <aPZE3Spas-IvHmfd@gourry-fedora-PF4VCD3F>
+ <aPaNzeGqUHf6gGIu@aschofie-mobl2.lan>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <aPaNzeGqUHf6gGIu@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251020-netconsole-fix-race-v1-2-b775be30ee8a@gmail.com>
-References: <20251020-netconsole-fix-race-v1-0-b775be30ee8a@gmail.com>
-In-Reply-To: <20251020-netconsole-fix-race-v1-0-b775be30ee8a@gmail.com>
-To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Matthew Wood <thepacketgeek@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Gustavo Luiz Duarte <gustavold@gmail.com>
-X-Mailer: b4 0.13.0
 
-The update_userdata() function constructs the complete userdata string
-in nt->extradata_complete and updates nt->userdata_length. This data
-is then read by write_msg() and write_ext_msg() when sending netconsole
-messages. However, update_userdata() was not holding target_list_lock
-during this process, allowing concurrent message transmission to read
-partially updated userdata.
 
-This race condition could result in netconsole messages containing
-incomplete or inconsistent userdata - for example, reading the old
-userdata_length with new extradata_complete content, or vice versa,
-leading to truncated or corrupted output.
 
-Fix this by acquiring target_list_lock with spin_lock_irqsave() before
-updating extradata_complete and userdata_length, and releasing it after
-both fields are fully updated. This ensures that readers see a
-consistent view of the userdata, preventing corruption during concurrent
-access.
+On 10/20/25 12:30 PM, Alison Schofield wrote:
+> On Mon, Oct 20, 2025 at 10:19:09AM -0400, Gregory Price wrote:
+>> On Mon, Oct 20, 2025 at 12:09:34AM -0700, Alison Schofield wrote:
+>>>> This patch updates cxl_test to enable decoders 1 and 2
+>>>> in the host-bridge 0 port, in a switch uport under hb0,
+>>>> and the endpoints ports with size zero simulating
+>>>> committed zero sized decoders.
+>>>
+>>> Decoders 1 & 2 - those are after decoder 0, the autoregion.
+>>> That's a problem ATM, when we try to teardown the autoregion we
+>>> get out of order resets. Like I asked in the other patch, if there
+>>> are rules about where these zero size decoders may appear, that
+>>> may make the solution here simpler.
+>>>
+>>
+>> I think this is going to require a quirk-doc like other deviations.
+> 
+> Really need to hear more about spec here. You mention quirk, but is it
+> really a quirk or spec defined behavior?
+> 
+>>
+>> A committed decoder must have a base address, and with 0-size subsequent
+>> or previous decoders would also have an address that covers that address
+>> as well.  This is on top of the ordering issue if the 0-side decoders
+>> come after a programmable decoder.
+>>
+>> I'm not convinced this even makes sense as a security thing if you can
+>> reset the bus and re-activate everything (after a graceful teardown).
+>>
+>> Seems easier to just report the decoders as unavailable and then not
+>> probe them.
+> 
+> Users see a memdev in the topology and want to use it but find no
+> available endpoint decoder. We'll probably want a mechanism to show why
+> that is so, hence the suggestion to add to topology and show as locked.
 
-The fix aligns with the existing locking pattern used throughout the
-netconsole code, where target_list_lock protects access to target
-fields including buf[] and msgcounter that are accessed during message
-transmission.
-
-Fixes: df03f830d099 ("net: netconsole: cache userdata formatted string in netconsole_target")
-
-Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
----
- drivers/net/netconsole.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 194570443493b..1f9cf6b12dfc5 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -888,6 +888,9 @@ static void update_userdata(struct netconsole_target *nt)
- {
- 	int complete_idx = 0, child_count = 0;
- 	struct list_head *entry;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&target_list_lock, flags);
- 
- 	/* Clear the current string in case the last userdatum was deleted */
- 	nt->userdata_length = 0;
-@@ -918,6 +921,8 @@ static void update_userdata(struct netconsole_target *nt)
- 	}
- 	nt->userdata_length = strnlen(nt->extradata_complete,
- 				      sizeof(nt->extradata_complete));
-+
-+	spin_unlock_irqrestore(&target_list_lock, flags);
- }
- 
- static ssize_t userdatum_value_store(struct config_item *item, const char *buf,
-
--- 
-2.47.3
+I think the kernel driver should be fully aware of what is and isn't fully present and handle them appropriately. And on the user side, 'cxl list' should show a decoder in a zero size state so the admin knows why things are the way they are.  > 
+>>
+>> ~Gregory
 
 
