@@ -1,145 +1,206 @@
-Return-Path: <linux-kernel+bounces-859956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D22BEF09C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:54:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81983BEF09F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A081898D8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:55:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E0474E7C88
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47661DF97F;
-	Mon, 20 Oct 2025 01:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58B1DFE12;
+	Mon, 20 Oct 2025 01:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="SZYbAUZR"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZtLLZYXC"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F9A1ACED7;
-	Mon, 20 Oct 2025 01:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C5F1DDC33
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760925292; cv=none; b=picrn7C9j25XaYkHRORmpgERbzzFQ7a8EYnc7r5J5Tr09M1qc4ILpQLNa6if/YdFMhT12FXszjReIXJDoF+cDqNHQ+lCbk16V7TtXRvt67I6GaEK5VhxMaLwbbal/u6DexXljU7kMyF9scdSrNdUV5DhKxlrOYE+0Mb4S6egoG4=
+	t=1760925362; cv=none; b=rwg42/IJxNYV61fhlOdetJngGEJBOi19/ZV+HNWiwgFmC02xwxjR8Qy4KqcOv9omtX8gswpCKajVQGZ7TDy1HJ84H4h63tpHbo8kl5daxAdcdpllxrTbCwE1blu0DKUxfKjSTETxqag1GV7C7cM8dvDQWCxSHp7X+M6nZNd+IVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760925292; c=relaxed/simple;
-	bh=E5CFjS+FLJA9VAM8OWnJP7UELXzDJdDIiwbZOT3J7Wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DNi33aSBUWtKovw7JPBrjt0ApYJlL/+tQQMzEFnONqXqsw3KXNhArYscT211aYcuoOv514Kz9gu6Kyk/6dwyTXhYhle3OPnzYbbDplui0C7CXItwygi57FhVTIdTmSk1kS+YBK+1BZzwHlGXkXNtZPH0EHOYqQcNs6mQ7S0Bd8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=SZYbAUZR; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1760925264;
-	bh=PHQXMd97MnTG8yBwsciGWWANd35WJk6gSCdTScCji0w=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=SZYbAUZRtq9uVOviAY+7VAksF9YNpI0dI83cJ2Z7iElrK9Qk6VPmfzcVO11IKKFAi
-	 hJqbtoLRdvb0XDnQ8AdWDYJWHT6E2M9zmVQyEf6ttIjvo7WDRkjBOrBQzcKjfOD0or
-	 7HPAUW1wrJUGzp38uNzb2Pd5BMhl90b5Ru1f9NPM=
-X-QQ-mid: esmtpgz15t1760925263t112ed490
-X-QQ-Originating-IP: ZuqEQVrvPyjcqO5ccy9yBkk58y5T6FF/58EnwbXksTs=
-Received: from = ( [14.123.254.135])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 20 Oct 2025 09:54:21 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8184163125021412626
-EX-QQ-RecipientCnt: 15
-Date: Mon, 20 Oct 2025 09:54:21 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Yixun Lan <dlan@gentoo.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	s=arc-20240116; t=1760925362; c=relaxed/simple;
+	bh=FhzgS1/MGPIfdcjIr19V6Zpkv9/EfeIlF628IPVhrec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H0vfn5kUWy562UJZHGZS6J+52bvGceF9LXxOFZnWs8mVxXFFC5BXE9EfeHq9tUlRKglDyVOiVkdBfk9QEJYqQ5V1L1jwIr6fFdYdT/1FQdGvZmf6/pMN64qhlu2SvV4LE2iCTkZElC776RIG0R/k97Qw0vsXASud/2MIEW21aiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZtLLZYXC; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4270a3464caso1419396f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760925359; x=1761530159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s+Q06UI6PhTkJgy9be05aY/Rj5+zLhZlUFJf9K2EKUA=;
+        b=ZtLLZYXCEwmFAGJ4IrUwSi2FVlzITPw5zpr2GbTDQBKg76usSjPsPQmJrB95vg843S
+         hti0GW+u+0hYVdwSUxQvq9DJvHsBch/6jlnydiDkZqQNi/6qS51dWA9FkqlTAful1qLH
+         xJYTousGr54EeYX+wr1G/TIKRc1cIib51qgY4u536WTqZH/UyuamjhWN+TumaZ9NPvTc
+         myrdEx0LNY6EI7XMIicTE5dEElfhErz+brIrIH6bnjw6oJhpEhfxEvwxBJil7MGT1v8q
+         s5+NWWuoYnSHtBtd0kxB7NqKlqTmSQxvHVO4nLFaUWMCh6E3E9TjY7qQ8bLKIpWz4iyk
+         4a6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760925359; x=1761530159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s+Q06UI6PhTkJgy9be05aY/Rj5+zLhZlUFJf9K2EKUA=;
+        b=BH4llX2KgErz/7foq++sVHguCZT8rnDxMFbTOef6WJSpSkuKbQneKmGC4LAAexLGXm
+         3//exrHIbnPC0yIZRpo17/lQmk80at71/idoiE2MSomcYT53VckwiJPtnpPm1pZglML1
+         bJM9947BpUAJywQ7EVcd8iDD7HWLAG96rpzfsxPlvyjEoal4IHYOuQU/7ETSwQxLWMTa
+         z6NnzW6rYn8hq60eR77DG3POKwXd4L0oajZwPI5SsG1ODLMXGkAtK6CkCW7hl7181Mb/
+         9E8hnX2LIfNsmp7S/QrSu7aA04RZ9DTRg2JguWrt1KTuMfkEtWBEbWX8xFkkOsOPLYlK
+         TfYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrj1hevZOR5nTVcnuku1bKUT+XB6WpBOeViT9uNRF5jCu9t4yl7wPhiWn9RhocwUAAnrLdfr7vW9o3B64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy29LZqbi82hQrYpyEMw01y8i2Hjb8ZCy1SL+/jJTkm7O9UY190
+	OVTgaVTuk7etjR5wfQ28uW8bsQMz/ynbvAXW1kJ4SibSLvEi950ldG+abpmLVEn8t1U=
+X-Gm-Gg: ASbGncsCUMp11SR1tOwOtNNY2ZnPr+nx+CPgcWSUHKP1CBVEwlfu1t9zGnLmeRxqs0q
+	lCYznelPGG09epjcy/IwxEP3CQUnBVxtSod9Drun7KtyoiyGfWstyXJbw5jOB9u9CQSEK6mWzIs
+	V9vCtFQkNBXmmoIguD4Q8jsjrAEmd2NS4qWIdZ2qbqx9TuJtgxztzN7MlHgdmVqr5hIFAGd0MvU
+	SJm+QnRSAgRvzx31kYf4uQSv7QGqZi9EAudphx6RTbA7nRiQXrxrnKaPCQuQ3T0JVLU6qxzYCO1
+	MUGBezg//GUqQKKA+Z8STX0Wp1jOsyqf3LoY0AWx4UJWZYBwO30LdKOS44H5IDU72tbIbi1viN+
+	uiSbaAkp1jQa020YbxCgKo+qzznkwFx5E3efgL0A2KISajzXIwsbAeqDRHDTC8R7AbBuitExAqh
+	3yGphuYGiOCPP0Njo=
+X-Google-Smtp-Source: AGHT+IG6BI0NR7Fcw8+O+sc+d7pzt0R1JZXANX7cqKWtOTX4YgRgFe1wtH43dzv/ihmHpMDqYHwKTw==
+X-Received: by 2002:a05:6000:26ca:b0:428:3c66:a027 with SMTP id ffacd0b85a97d-4283c66a441mr4335994f8f.54.1760925359019;
+        Sun, 19 Oct 2025 18:55:59 -0700 (PDT)
+Received: from orion.home ([2a02:c7c:7259:a00:9f99:cf6:2e6a:c11f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47152959b6dsm115381535e9.7.2025.10.19.18.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 18:55:58 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: broonie@kernel.org,
+	gregkh@linuxfoundation.org,
+	srini@kernel.org
+Cc: rafael@kernel.org,
+	dakr@kernel.org,
+	make24@iscas.ac.cn,
+	steev@kali.org,
+	dmitry.baryshkov@oss.qualcomm.com,
 	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: riscv: spacemit: add MusePi Pro board
-Message-ID: <D20EEBFFFF06649D+aPWWTSN4LByos8Qb@kernel.org>
-References: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
- <20251017-k1-musepi-pro-dts-v3-1-40b05491699f@linux.spacemit.com>
- <20251020014132-GYE1506524@gentoo.org>
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] regmap: slimbus: fix bus_context pointer in __devm_regmap_init_slimbus
+Date: Mon, 20 Oct 2025 02:55:57 +0100
+Message-ID: <20251020015557.1127542-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020014132-GYE1506524@gentoo.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NO1BRaLNHOi7r4KHy/fSB6wYSb7WbPkPrr2VFuY2cTbDoQiJW5I9DcUJ
-	sKyBsGJb/1KRtzPRKpCK9QZ6HBhXaIJfJJi4tZD+F7W6sT6aQFTDR5sXr56PepB0gp+HlIZ
-	bgNFUMKj+p25g4iUntANuKUr3cQQC7jGFne7AyoDEWvY/MkG73a9k/5y4vqjx81dKodHCws
-	TT3+of4620rMnyFrYm9aNgnWKUp+HjI22/S4qmdZxs01QBBGUPgCZFQPkcv88g2UGp2bf7X
-	RscymWxWfzNzcK6XfzicN1/GBqzId7YGsIPYjxgaqzlVC8JEDUkRczV6IWWacN1Bp65PyND
-	spp8iNq68Z4rTDSHdkvXLXGDd9/va/qjR06Z9CFfjcBf1EkOFs3ah0n58fJxNr5z5jYC3PB
-	fq3zBJiEnLKHa93zh61rp9R9aiNRosewtimvSSt3zRn6jVrXSMJe6V5XWAc0s/WhSYHHqHp
-	84bOo9tDp3upQ68MkLSyQ936XBjDkI0KvPV8guGBzlq9mnAjr0aYfHCngoWpfqtcydsT1f6
-	knwLx12Gn8ZAmXdSskMJO7ZTxlXaT0BWgAOotIEyXj18fDrg4FYzGa/8KNkJrICkw+rywiR
-	K6fWMesYePedOP+ltJz6nMBLeAupBYSPmrRX/E2/JvE1hLrUD59P6tlsuSM63Z6I3EYXFPZ
-	xfHUjUE6ITWLFRa/93o/D7rwD4hFuXmxMtDGr5cuCUPcqeomHtVE7R55ZUGxO7iVBEmFFwV
-	A64h9pceHKYdp+kXpQ78fWcf8feGi4EP1nzGviuXL2XgAZ+f0WYy4Ijl2vSEXjH8yxuEne7
-	Fcq4p1tn5cepVUQRx7cLUHAMtOowLzdV1U02L9yldZAWZqHjOPw6dLxyxGzEQvgvtHfGLek
-	yhfYbEWxxiJR/Qc7Ufjb/qzwO4Eg0/jjRYs2hmsPPOygnW79nHl2IUoOqGihldSTaoyaNZS
-	oWrIg93PeJIYLvVE9vLsQXA8YruagO28Y0VERoL5t2HBqxa3EpYZnkcP7o5vEU6Kh2RKhpp
-	dJUf2dXVZbvSX1r4oPA3z60gYyru4mJFHHcOPIX3AV4d7my5BX
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 09:41:32AM +0800, Yixun Lan wrote:
-> Hi Troy,
-> 
-> On 13:52 Fri 17 Oct     , Troy Mitchell wrote:
-> > Document the compatible string for the MusePi Pro [1]. It is a 1.8-inch
-> > single board computer based on the SpacemiT K1/M1 RISC-V SoC [2].
-> > 
-> > Here's a refined list of its core features for consideration:
-> >   - SoC: SpacemiT M1/K1, 8-core 64-bit RISC-V with 2.0 TOPS AI power.
-> ..
-> >          This suggests potential for light AI/ML workloads on-device.
-> drop these additional marketing info, just give neutral technical description
-> >   - Memory: LPDDR4X @ 2400MT/s, available in 8GB & 16GB options.
-> 
-> ..
-> >             Sufficient for various workloads.
-> ditto
-> >   - Storage: Onboard eMMC 5.1 (64GB/128GB options). M.2 M-Key for NVMe
-> >              SSD (2230 size), and a microSD slot (UHS-II) for expansion.
-> ..
-> >              Good variety for boot and data.
-> ditto
-> >   - Display: HDMI 1.4 (1080P@60Hz) and 2-lane MIPI DSI FPC (1080P@60Hz).
-> ..
-> >              Standard display options.
-> ditto, please check more bellow yourself..
-> 
-> >   - Connectivity: Onboard Wi-Fi 6 & Bluetooth 5.2. A single Gigabit
-> >                   Ethernet port (RJ45). Given the stated markets,
-> >                   this should cover basic networking.
-> >   - USB: 4x USB 3.0 Type-A (host) and 1x USB 2.0 Type-C (device/OTG).
-> >          Decent host capabilities.
-> >   - Expansion: Full-size miniPCIe slot for assorted modules
-> >                (4G/5G, wireless etc.). A second M.2 M-Key (2230) for more
-> >                general PCIe devices (SSD, PCIe-to-SATA, comm boards).
-> >   - GPIO: Standard 40-pin GPIO interface, as expected for an SBC.
-> >   - MIPI: Includes 1x 4-lane MIPI CSI FPC and 2x MIPI DSI FPC interfaces
-> >           for cameras and displays.
-> >   - Clock: Onboard RTC with battery support.
-> > 
-> > Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
-> > Link: https://www.spacemit.com/en/key-stone-k1 [2]
-> > 
-> no blank line here
+Commit 4e65bda8273c ("ASoC: wcd934x: fix error handling in
+wcd934x_codec_parse_data()") revealed the problem in slimbus regmap.
+That commit breaks audio playback, for instance, on sdm845 Thundercomm
+Dragonboard 845c board:
 
-Thanks, I'll fix them in the next version.
+ Unable to handle kernel paging request at virtual address ffff8000847cbad4
+ Mem abort info:
+   ESR = 0x0000000096000007
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x07: level 3 translation fault
+ Data abort info:
+   ISV = 0, ISS = 0x00000007, ISS2 = 0x00000000
+   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+ swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000a1360000
+ [ffff8000847cbad4] pgd=0000000000000000, p4d=100000010003e403, pud=100000010003f403, pmd=10000001025cf403, pte=0000000000000000
+ Internal error: Oops: 0000000096000007 [#1]  SMP
+ Modules linked in: (long list of modules...)
+ CPU: 5 UID: 0 PID: 776 Comm: aplay Not tainted 6.18.0-rc1-00028-g7ea30958b305 #11 PREEMPT
+ Hardware name: Thundercomm Dragonboard 845c (DT)
+ pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : slim_xfer_msg+0x24/0x1ac [slimbus]
+ lr : slim_read+0x48/0x74 [slimbus]
+ sp : ffff800089113330
+ x29: ffff800089113350 x28: 00000000000000c0 x27: 0000000000000268
+ x26: 0000000000000198 x25: 0000000000000001 x24: 0000000000000000
+ x23: 0000000000000000 x22: ffff800089113454 x21: ffff00008488e800
+ x20: ffff000084b4760a x19: 0000000000000001 x18: 0000000000000be2
+ x17: 0000000000000c19 x16: ffffbcef364cd260 x15: ffffbcef36dafb10
+ x14: 0000000000000d38 x13: 0000000000000cb4 x12: 0000000000000c91
+ x11: 1fffe0001161b6e1 x10: ffff800089113470 x9 : ffff00008b0db70c
+ x8 : ffff000081479ee0 x7 : 0000000000000000 x6 : 0000000000000800
+ x5 : 0000000000000001 x4 : 0000000000000000 x3 : ffff00008263c200
+ x2 : 0000000000000060 x1 : ffff800089113368 x0 : ffff8000847cb7c8
+ Call trace:
+  slim_xfer_msg+0x24/0x1ac [slimbus] (P)
+  slim_read+0x48/0x74 [slimbus]
+  regmap_slimbus_read+0x18/0x24 [regmap_slimbus]
+  _regmap_raw_read+0xe8/0x174
+  _regmap_bus_read+0x44/0x80
+  _regmap_read+0x60/0xd8
+  _regmap_update_bits+0xf4/0x140
+  _regmap_select_page+0xa8/0x124
+  _regmap_raw_write_impl+0x3b8/0x65c
+  _regmap_bus_raw_write+0x60/0x80
+  _regmap_write+0x58/0xc0
+  regmap_write+0x4c/0x80
+  wcd934x_hw_params+0x494/0x8b8 [snd_soc_wcd934x]
+  snd_soc_dai_hw_params+0x3c/0x7c [snd_soc_core]
+  __soc_pcm_hw_params+0x22c/0x634 [snd_soc_core]
+  dpcm_be_dai_hw_params+0x1d4/0x38c [snd_soc_core]
+  dpcm_fe_dai_hw_params+0x9c/0x17c [snd_soc_core]
+  snd_pcm_hw_params+0x124/0x464 [snd_pcm]
+  snd_pcm_common_ioctl+0x110c/0x1820 [snd_pcm]
+  snd_pcm_ioctl+0x34/0x4c [snd_pcm]
+  __arm64_sys_ioctl+0xac/0x104
+  invoke_syscall+0x48/0x104
+  el0_svc_common.constprop.0+0x40/0xe0
+  do_el0_svc+0x1c/0x28
+  el0_svc+0x34/0xec
+  el0t_64_sync_handler+0xa0/0xf0
+  el0t_64_sync+0x198/0x19c
+ Code: 910083fd f9423464 f9000fe4 d2800004 (394c3003)
+ ---[ end trace 0000000000000000 ]---
 
-                        - Troy
+The __devm_regmap_init_slimbus() started to be used instead of
+__regmap_init_slimbus() after the commit mentioned above and turns out
+the incorrect bus_context pointer (3rd argument) was used in
+__devm_regmap_init_slimbus(). It should be &slimbus->dev. Correct it.
+The wcd934x codec seems to be the only (or the first) user of
+devm_regmap_init_slimbus() but we should fix till the point where
+__devm_regmap_init_slimbus() was introduced therefore two "Fixes" tags.
+
+Fixes: 4e65bda8273c ("ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()")
+Fixes: 7d6f7fb053ad ("regmap: add SLIMbus support")
+Cc: stable@vger.kernel.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Ma Ke <make24@iscas.ac.cn>
+Cc: Steev Klimaszewski <steev@kali.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+
+The patch/fix is for the current 6.18 development cycle
+since it is fixes the regression introduced in 6.18.0-rc1.
+
+ drivers/base/regmap/regmap-slimbus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/regmap/regmap-slimbus.c b/drivers/base/regmap/regmap-slimbus.c
+index 54eb7d227cf4..edfee18fbea1 100644
+--- a/drivers/base/regmap/regmap-slimbus.c
++++ b/drivers/base/regmap/regmap-slimbus.c
+@@ -63,7 +63,7 @@ struct regmap *__devm_regmap_init_slimbus(struct slim_device *slimbus,
+ 	if (IS_ERR(bus))
+ 		return ERR_CAST(bus);
+ 
+-	return __devm_regmap_init(&slimbus->dev, bus, &slimbus, config,
++	return __devm_regmap_init(&slimbus->dev, bus, &slimbus->dev, config,
+ 				  lock_key, lock_name);
+ }
+ EXPORT_SYMBOL_GPL(__devm_regmap_init_slimbus);
+-- 
+2.47.3
+
 
