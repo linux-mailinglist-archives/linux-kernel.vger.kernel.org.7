@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-863432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33E2BF7D9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E90BF7DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5FE2035705F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5360518C8CD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A790F34D4DD;
-	Tue, 21 Oct 2025 17:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DF534E744;
+	Tue, 21 Oct 2025 17:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZsZMd12C"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S3BkYC3Y"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6662534C805
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C4934B673
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067144; cv=none; b=GdcDU5P1FuaSuPaCwu9q233QTHnjtpLWtQlX0gcNS3gh2SDf7jTtHa1oVxluC06qOmtc1x5Dbla9Cx+DTe37na7oB2nXc37v7Q9gG8qvdyni4Fq3i5j3sDUsudhBWH9nLuCfK9jKKsfREp1+jHrbkpUQGJtS9QqnY81AkNE9nmA=
+	t=1761067146; cv=none; b=i43/uDLWZQwRQpJOwLriu0OcXB01Tc+iO3sT7NA06uXv2N8TvQSnkYU1B2aZG+3GJy34Z9MEP5pGCgqAcxd9S0e6NMe7gM32ToKumeMJWmVy3hySBerLef/c/1iTsJWO1jHUwNUOSuE1VHRxBxvM13P9JcMjE19K3epE5yW0EaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067144; c=relaxed/simple;
-	bh=00/2+DREpEQlqJ4UA8SPxKC2zjZGhMyKiML2L9cLFUY=;
+	s=arc-20240116; t=1761067146; c=relaxed/simple;
+	bh=bVm3wj0rdBh+AJbk0Usgg6WfDlhUd11mnBwuH0QUZdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jUUTFJjltUQ3iR6zuXWNAq/+fUYUnmob3CRc6WzLzb1kpWj9cJF2DGaQiJ+uhTpgv2+KzeWOL5TpQB03OTyBA+JOUK+cQoiyFF0GpLo0mj70ApO3wHU1D/3PiyXbFbwIKp/+IhGiWePJ0PLjJKe/4FlM/A946DTZt5YD+hjEH0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZsZMd12C; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjR9EVbX3tgrFfatBvf6etNxl0N6yBB4k9c0I2GFDvcDSAHP5JcFwWYwdfaAWablujEwlJUUbsybC9KQ2DMifMKvOUmMondg4mMPzd0ymuXX/lcoI8M5ys2/cZ2zoSyWuqVy4Yd5mzwA/vHwkOGk+RSuuvrzzE4TkweNa2AX2Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S3BkYC3Y; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ctkaacDUhFa+HpzMqK3sEhe9CACWQ7XmbpQ/iyJHGjA=; b=ZsZMd12C0x0LQutyy3Wfmd4ejd
-	4nwJvmzg5FZ8TMu4UDs9h6EkJPeOqCIuWINQ6HGCgqLuTKZc1OMKAYsYhvMEckq7rQxLrvHKvBgDh
-	ppCUhlvmkIt4hQns5vOOeooQXu5WQPPWYm0TJmp1vpvYpl9BIM370lm4Tzo0i59RMk3bqo/8Flr1z
-	d1DOqxCaFXCO0Oddc0XOrXtmtq/E2SvTQ3D6MLFpq6LR0hN3W/hBJnR5WytZLx0DmK3+BNQ86dR5V
-	S0xhy37jsPlmpLuAQLXIy+PbixkSK4ndyquX9ZkAVClSUVNB+zuPPIlo9b5eNb7TQzq08QkhJk7dH
-	CjMTM/qg==;
+	bh=FaZru9bBOAeoaWKt5uRkTSnegYw7yISFtb4fmI4q2lM=; b=S3BkYC3YwFrdw3o2szORw4T9Te
+	Uw7K3paaCB5l+oq+VHnF4U1nLL4K2Ir9eYSUKqXi6IpRgjx9EsF1SlyMOX8UX5Av+sKDmJ2L13/RC
+	JEnPKNlHaBimpv7D7Dqe1Jnyz4h1IXdz+pOLcasnARZAMXGOCBRgUHd82Vw+nQ2aoycPVHMRq6+K+
+	UUlIbMlkIMOOJbIuprV87l11XpJGCmYGU0F02QY7sZJG3nw5IrVD1npvTTA/wHq4vfzcvV1M6lhFu
+	gx49XMZTj74a1udeG9FBCbQFe9OJpmpwy7cI6ZsZg1OTP9d0HU52z5uqQaIXqIqtDjDTn140lxo6h
+	Co2AOKhg==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBG0d-0000000DsXZ-1C1p;
-	Tue, 21 Oct 2025 17:18:57 +0000
+	id 1vBG0c-0000000DsWg-1k1h;
+	Tue, 21 Oct 2025 17:18:56 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6BC9930306F; Mon, 20 Oct 2025 11:16:01 +0200 (CEST)
-Date: Mon, 20 Oct 2025 11:16:01 +0200
+	id 0DB89303077; Mon, 20 Oct 2025 11:27:27 +0200 (CEST)
+Date: Mon, 20 Oct 2025 11:27:27 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -61,7 +61,7 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
 	TCMalloc Team <tcmalloc-eng@google.com>
 Subject: Re: [patch 16/19] sched/mmcid: Provide CID ownership mode fixup
  functions
-Message-ID: <20251020091601.GH3245006@noisy.programming.kicks-ass.net>
+Message-ID: <20251020092727.GI3245006@noisy.programming.kicks-ass.net>
 References: <20251015164952.694882104@linutronix.de>
  <20251015172835.313805515@linutronix.de>
 Precedence: bulk
@@ -76,29 +76,69 @@ In-Reply-To: <20251015172835.313805515@linutronix.de>
 
 On Wed, Oct 15, 2025 at 07:29:54PM +0200, Thomas Gleixner wrote:
 
-> +static void __maybe_unused mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
+> +static bool mm_cid_fixup_task_to_cpu(struct task_struct *t, struct mm_struct *mm)
 > +{
-> +	unsigned int cpu;
+> +	/* Remote access to mm::mm_cid::pcpu requires rq_lock */
+> +	guard(task_rq_lock)(t);
+> +	if (t->mm != mm)
+> +		return false;
 
+I'm slightly confused about this one; I'm assuming it is a double check
+of mm for the VM_CLONE case below, once before lock once after. Except,
+none of the scheduler locks actually serialize t->mm ...
 
-Alternatively you could take cpus_read_lock() and iterate online_cpus().
-No offline CPU should be running a userspace task and all that.
+IIRC the only way to actually change ->mm is exec(), and that is under
+task_lock().
 
-Doesn't really matter much, this also works fine.
-
-> +	/* Walk the CPUs and fixup all stale CIDs */
-> +	for_each_possible_cpu(cpu) {
-> +		struct mm_cid_pcpu *pcp = per_cpu_ptr(mm->mm_cid.pcpu, cpu);
-> +		struct rq *rq = cpu_rq(cpu);
+> +	if (cid_on_task(t->mm_cid.cid)) {
+> +		/* If running on the CPU, transfer the CID, otherwise drop it */
+> +		if (task_rq(t)->curr == t)
+> +			mm_cid_transfer_to_cpu(t, per_cpu_ptr(mm->mm_cid.pcpu, task_cpu(t)));
+> +		else
+> +			mm_unset_cid_on_task(t);
+> +	}
+> +	return true;
+> +}
 > +
-> +		/* Remote access to mm::mm_cid::pcpu requires rq_lock */
-> +		guard(rq_lock_irq)(rq);
-> +		if (cid_on_cpu(pcp->cid)) {
-> +			/* If rq->curr has @mm, fix it up right here */
-> +			if (rq->curr->mm == mm && rq->curr->mm_cid.active)
-> +				mm_cid_transfer_to_task(rq->curr, pcp);
-> +			else
-> +				mm_drop_cid_on_cpu(mm, pcp);
+> +static void __maybe_unused mm_cid_fixup_tasks_to_cpus(void)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	struct task_struct *p, *t;
+> +	unsigned int users;
+> +
+> +	/*
+> +	 * This can obviously race with a concurrent affinity change, which
+> +	 * increases the number of allowed CPUs for this mm, but that does
+> +	 * not affect the mode and only changes the CID constraints. A
+> +	 * possible switch back to per task mode happens either in the
+> +	 * deferred handler function or in the next fork()/exit().
+> +	 *
+> +	 * The caller has already transferred. The newly incoming task is
+> +	 * already accounted for, but not yet visible.
+> +	 */
+> +	users = mm->mm_cid.users - 2;
+> +	if (!users)
+> +		return;
+> +
+> +	guard(rcu)();
+> +	for_other_threads(current, t) {
+> +		mm_cid_fixup_task_to_cpu(t, mm);
+> +		users--;
+> +	}
+> +
+> +	if (!users)
+> +		return;
+> +
+> +	/* Happens only for VM_CLONE processes. */
+
+Right, sorry for reminding you about this :-)
+
+> +	for_each_process_thread(p, t) {
+> +		if (t == current || t->mm != mm)
+> +			continue;
+> +		if (mm_cid_fixup_task_to_cpu(t, mm)) {
+> +			if (--users == 0)
+> +				return;
 > +		}
 > +	}
 > +}
