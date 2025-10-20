@@ -1,212 +1,168 @@
-Return-Path: <linux-kernel+bounces-861583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8055BF31F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:12:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC01BF3201
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4391A18C0288
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:12:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 080C94F078F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9592D63E5;
-	Mon, 20 Oct 2025 19:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97212D6409;
+	Mon, 20 Oct 2025 19:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="O27kC9Yn"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XvAly5Lg"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9CD2D63E2
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660532BE7D1
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987545; cv=none; b=c2zA8/w1bxGGM/vBKyDWOb36LjaNq2jGfBidkAiLoSolNvWx+N7WzVnj26AWyDiEiFYFCevX5s98rz8gvgWi6W464v8r69t+ZRGajxtQY5yRTFYLoOiQLUNsi7161ULmkLzuAkF/CqWA36ZDYxPaNk+vLnSVVWL9c2bRxq2XofI=
+	t=1760987562; cv=none; b=ZVNe9bh8yrJKeNLHs+KBP0Ht27eQYOP8JUxdj4HTh/3RhP2v3k5X8BUef2qlf8H6lnZcZ9c7Fz3FPgk4B1VpiWYhZLm4rNf/BSsaHW0bDHV5Lj1uKwbfYbjcfCvY/SAldcM1ayyl4wQpKNKhtK8d3DGv3ldlr1kVbT0MZY6uKH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987545; c=relaxed/simple;
-	bh=VQ4SzNY0lBUV9PtfB7g6DB3KhRUhItrtjourvDfil6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7irl8LQT95vNiDfd9oqx5jL4TH/CxiCObK8grp0qrdgaTl/skXMv4tPdcrgdReUP9ukUsHUUei3ITPiQkqeCstNrg7hzubcc+EJWHAp5a9RUHOnPkARK7rD/9L9SBiSwueoscdcJEySSC22L+AVhZJkAuCiZRWbQi7HqRGcNxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=O27kC9Yn; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso8535133a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:12:22 -0700 (PDT)
+	s=arc-20240116; t=1760987562; c=relaxed/simple;
+	bh=Wto3PZwvEe+pg4mNkQ3S7CuwCsIYj9pOUY9FLfwcENY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukChEstvqOAZaq2NNrmEPDve+CA4j6faBBw7cKbRgjJk+6MSGkKvn8TpN3C70h27UouPvOwuWY0rJlyfQDHYQhFE8xmBu2ZiSJeB/vx3GDhIV6Cm/ejDW/X3fPVtq4SjS+mUWiF8RRMxDnrpOw0zB/pkftjqMDj2cbaRc0RMXrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XvAly5Lg; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so5824618a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:12:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760987541; x=1761592341; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KkLNLWcUc4VcQy1RdKOzXNlhz8HxfGsE6Q1JJE3irRY=;
-        b=O27kC9Yn4AQXyrVOo0+b10JWgWsfFhuAazcbKErKmuE/F7ayYJc4k32f1o+8i9t2WD
-         vA/vp8AHbx+Je2eSb+gExGTHtgr1/Xg78jU6URMj0L+q/+cujnsyCX9yk8G9QfiHtlWm
-         3rfctpjSMa7v+sk0/sQRuSv0REMJ2fta7fftTbqKFxJq1v/e3jIkH1MyuYp5I1NfIgVP
-         QtNphl2jHOfI6qo995spU3qERz8sOv72Qs6gQ3cRstOu2sNefPYisl8Av4CBmhPpKCyC
-         7LpQej9CB2U0ze+O2vSoPVhiRryO1ThIjNcE0CFSkeQ63NZiopVSy55WZ5zY0vC3wpwE
-         f59g==
+        d=paul-moore.com; s=google; t=1760987560; x=1761592360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sc7VJXdo3UtIww5U8CPY9TfvbkDo2/ocS4PDbChl9Jk=;
+        b=XvAly5LgIVNg1r6SM0b498KKuGwwSxkTFJJWqf9TasecQehvR7tMLbz1GcsaBqlBQv
+         B/e3X58A+ECkNartOxhvHa+/6hewqgVgKedsMO+1fPQAMmyegfPIbELFOU38M7j4AXuV
+         vxBuwRzhc/8DzTjA0R9ktONyybRCMa5k+gc7u12nJv+CcYoUhv/fWyhB8bbrVKB+2g6V
+         XkaxSxY6c9/ED+nVlXpMwPMgg+PuTDVQJFhN+uE3s+VfN3AGyGlayGO0scujDZ3MSAsR
+         BJ3k1YhOsQZW06ZEO4I42EWizekiRDjjhwLUHwzctu8qHUBRFox+V1x8cHEcExsWU2qe
+         EYqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760987541; x=1761592341;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KkLNLWcUc4VcQy1RdKOzXNlhz8HxfGsE6Q1JJE3irRY=;
-        b=gvtQ/Xu95lrICoux1b1+d5n59Gewhi2AZEAhpE68v38OfQjpsLhWiO1Lu7RFzFut1q
-         01Fri/rWcxjHVDKIsXxFvLUjYOfxhVdGROCvKXtbNWT0kv/kbbm4YH7kKSeCvyVnGVrC
-         1umrI5QVMW82UqiJ+CJfQviWyNioMsRt9m7iWqT6P173bUyKRyiQfEZ5zrYRt37RfwzS
-         P0Um32Cx5IwnwVPKeXtpjMtTskqWmIlPrZk50TOP3PNCDA+ji/JNEU8c/acPuz5h71Jm
-         xRU3zr/uiQ6+8oaAogMlxVCbbeNwHP4sQH8bFGdtPvD7x8Hfu2vuQDIXS2EinSScjo7L
-         l8oA==
-X-Forwarded-Encrypted: i=1; AJvYcCV74bhDKIjCnLdHfT8AiuY+Kw9g4VAHa2MeP07sILgno8PonHDuKy5FF/AtJzUfXiNzrwBOnHVopYwQN8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEm1KRzM4UnhpKT1LZvUFRCqjpUSXwK6K2dH06sFR/7a4cbZ0A
-	WmWfK59mIoCBg9ISiD3EgvsQS/tewJSevyuH0kqLEupthRz5e0XMqWA1hkKL/nDM6HWLCTmjAdS
-	I+nRl
-X-Gm-Gg: ASbGncsLEf2xu4rwchxsO95x9GFnrcYtf5z1EWiLUDCMI7RzGgrbSyvE98UjY5YqLs7
-	7ZSHHAxntT29Llc+ZxNhyFJyrOHyFH/cMxMsjIzUqqxhuK7X47Oi+Kods66963wXoBVNH6O1nff
-	1+DdPQgMMIWLnCkNh0DRCSrjWky163juxFABjPe4xLVxPr+5/egAYJlqrLdaEaVyWr3tX0gInNM
-	NdM/gZRCXdOM6i4Htb4dMX9r62Vsm0CZdnjRNq/Af0FNsshaxGRQNNYjGKEADowf/JD+T2Nh7g2
-	zVuq0MQ4wUgcEbg6Y1n2BmhOxXX11nPFFklG7bb39w6il70lMgquGF1uGIrc4XFyG+cGPj6QEno
-	nZaaohwGf6wvTUAfa+TtT8fwSZwCzeZIs++lxJBBZ/EIPrktTtGFdx56hbdqyp9e9DZtpgm0aen
-	guiHC9HLE08OuBz1kWIxI=
-X-Google-Smtp-Source: AGHT+IG81276e7uaBZBiP1Z3ZjOuhvsbjXNfOAQY81Ajp6ESbGOgBPYu59ysj+jcPMn9WrMI2xyoow==
-X-Received: by 2002:a05:6402:40c5:b0:637:e4d1:af00 with SMTP id 4fb4d7f45d1cf-63c1f677665mr13504584a12.10.1760987540877;
-        Mon, 20 Oct 2025 12:12:20 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48acf60dsm7304270a12.18.2025.10.20.12.12.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:12:20 -0700 (PDT)
-Message-ID: <81e23b35-5a31-4f4c-a65a-ccf069c000a5@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:12:19 +0300
+        d=1e100.net; s=20230601; t=1760987560; x=1761592360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sc7VJXdo3UtIww5U8CPY9TfvbkDo2/ocS4PDbChl9Jk=;
+        b=B/8xGO6k4xRACXWU41dVuECZVxfw5xxK7LykdLIZw33WwMpdtYjfgwKAiedsAFxznx
+         yqMEZFgxhAJuZpSJUPaTfbXcfvcqqAdcOd/+VhuqEHqU8Cm+6fAr7dhGrmtDlAAYAQSm
+         SSsK6k0m06WNC07D0qtVdDJAC6i/MH0PlenrIYe1qpuSvxIZPdoJ2N4GxUpYhoIISQJt
+         1cTTjINIDtW/WqCv8NHNSF4/R7zCfTQrFzJI0uX2xk/iV/KvwFPPxBYWp/WfvbhFzHVU
+         b6gvdLuUJuO1hixNOZ9fUWej6H32rh7/e9vDB1In99pAKA9EnoTYMBdrj4ao4x+YgvD9
+         mqLg==
+X-Gm-Message-State: AOJu0Yw3Con+Hj5ygst7m9iiAf3VE4pt0yEH2vYgGEa0qlswLpMJnTOW
+	jNr6N6q880K4FCR6wMhR9hPfXTjdVIbxXwx6c6dYzWMaXHSqbkQbWml/dedRlezxwhUYlS4Ja0T
+	d8z+NW90u1wt0jlpdm8I86SjiujbFNDEYFpv564W2
+X-Gm-Gg: ASbGncviux1CWExefDKCvH9HvQ7/7cjC0bJReHJdmKB3hGzE05zuufTCKnxhd4n6QBL
+	sGqxBVyIiAByLIGVIZt/Mo8FzFXxD/Zd+F6n8Iw3zkjqf/r0AvM1VC4NjZgMch57cJuXDRJS6y4
+	IOp6iSQIf02wQE529TDMY6LE0V6QRm1dy/3JzRe0etD2B6RA8GqcksDsIsnHYpFtBaXhaK339qJ
+	xnnNzHB6p6UIFd0Yr0dEw/1XzdBCspuNgRHUbAWClgN6gzrFlww4kaxj6CJs3/AWa+rx+FSDzAL
+	YPmyeg==
+X-Google-Smtp-Source: AGHT+IFHrTtTH6I3lTgO8qQ7DSrZQAKZFTUY6VZ8yzd1t4lfye4csFe9B9t1LuoroTCUBrs/OA+MDscdSNIVCjPeyfE=
+X-Received: by 2002:a17:90b:2ec7:b0:33b:6650:57c3 with SMTP id
+ 98e67ed59e1d1-33bcf8ec60dmr18193076a91.21.1760987559706; Mon, 20 Oct 2025
+ 12:12:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 17/31] clk: at91: clk-h32mx: add support for parent_hw
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <9d37104c581548a995e20a86f3501bee10b6acce.1758226719.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <9d37104c581548a995e20a86f3501bee10b6acce.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <b30e8d56703dfd84778fa73845eaa1ec@paul-moore.com> <20251017081050.1171969-1-zhanghongru@xiaomi.com>
+In-Reply-To: <20251017081050.1171969-1-zhanghongru@xiaomi.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 20 Oct 2025 15:12:28 -0400
+X-Gm-Features: AS18NWB9BWqh8x0h5dc2vyZvqxDGjfJS5_tcMkj-8g4gJY7kkSA9hd7IeNuvtrg
+Message-ID: <CAHC9VhQ_hv1ri1csrgGP+9RssCuJBDuOLSDowZRD5xZcDD2mPA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
+ during boot
+To: Hongru Zhang <zhanghongru06@gmail.com>
+Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, selinux@vger.kernel.org, 
+	stephen.smalley.work@gmail.com, zhanghongru@xiaomi.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Ryan,
+On Fri, Oct 17, 2025 at 4:10=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
+om> wrote:
+> > On Sep 26, 2025 Hongru Zhang <zhanghongru06@gmail.com> wrote:
 
-On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Add support for parent_hw in h32mx clock driver.
+...
 
-s/parent_hw/parent_data. Same for the patch title. And the above paragraph
-should be updated accordingly.
+> > I would expect the number of active AVC nodes, and AVC churn in general=
+,
+> > to be very policy dependent; some policies and use cases simply result =
+in
+> > more AVC nodes than others.  With that in mind, I'm wondering if instea=
+d
+> > of using a kernel command line parameter to specify the number of AVC
+> > buckets, we should instead include an AVC size "hint" in the policy tha=
+t
+> > we can use to size the AVC when loading a new policy.
+> >
+> > Thoughts?
+>
+> I previously considered supporting dynamic adjustment of slot size during
+> runtime, but this seems to introduce code complexity and overhead. Every
+> time avc_lookup() or avc_insert() happens, we would need to check if the
+> table exists. Adjusting slot size and accessing a specific slot might
+> occur simultaneously, potentially requiring additional lock protection.
 
-The rest LGTM.
+I would imagine that a very simple implementation would simply convert
+the selinux_avc variable from an instance of selinux_avc to a RCU
+protected selinux_avc pointer.  As the AVC already uses RCU, I think
+the number of changes should be relatively minimal:
 
-> With this parent-child relation is described with pointers rather
-> than strings making registration a bit faster.
-> 
-> All the SoC based drivers that rely on clk-h32mx were adapted
-> to the new API change. The switch itself for SoCs will be done
-> in subsequent patches.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
->  drivers/clk/at91/clk-h32mx.c | 11 +++++++----
->  drivers/clk/at91/dt-compat.c |  2 +-
->  drivers/clk/at91/pmc.h       |  2 +-
->  drivers/clk/at91/sama5d2.c   |  2 +-
->  drivers/clk/at91/sama5d4.c   |  2 +-
->  5 files changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
-> index 1e6c12eeda10..4b709f9bd831 100644
-> --- a/drivers/clk/at91/clk-h32mx.c
-> +++ b/drivers/clk/at91/clk-h32mx.c
-> @@ -83,10 +83,10 @@ static const struct clk_ops h32mx_ops = {
->  
->  struct clk_hw * __init
->  at91_clk_register_h32mx(struct regmap *regmap, const char *name,
-> -			const char *parent_name)
-> +			const char *parent_name, struct clk_parent_data *parent_data)
->  {
->  	struct clk_sama5d4_h32mx *h32mxclk;
-> -	struct clk_init_data init;
-> +	struct clk_init_data init = {};
->  	int ret;
->  
->  	h32mxclk = kzalloc(sizeof(*h32mxclk), GFP_KERNEL);
-> @@ -95,8 +95,11 @@ at91_clk_register_h32mx(struct regmap *regmap, const char *name,
->  
->  	init.name = name;
->  	init.ops = &h32mx_ops;
-> -	init.parent_names = parent_name ? &parent_name : NULL;
-> -	init.num_parents = parent_name ? 1 : 0;
-> +	if (parent_data)
-> +		init.parent_data = (const struct clk_parent_data *)parent_data;
-> +	else
-> +		init.parent_names = &parent_name;
-> +	init.num_parents = 1;
->  	init.flags = CLK_SET_RATE_GATE;
->  
->  	h32mxclk->hw.init = &init;
-> diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-> index 3285e3110b58..ccdeba3a1130 100644
-> --- a/drivers/clk/at91/dt-compat.c
-> +++ b/drivers/clk/at91/dt-compat.c
-> @@ -201,7 +201,7 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
->  
->  	parent_name = of_clk_get_parent_name(np, 0);
->  
-> -	hw = at91_clk_register_h32mx(regmap, name, parent_name);
-> +	hw = at91_clk_register_h32mx(regmap, name, parent_name, NULL);
->  	if (IS_ERR(hw))
->  		return;
->  
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index db067177e6ef..64faaa8123c9 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -180,7 +180,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
->  
->  struct clk_hw * __init
->  at91_clk_register_h32mx(struct regmap *regmap, const char *name,
-> -			const char *parent_name);
-> +			const char *parent_name, struct clk_parent_data *parent_data);
->  
->  struct clk_hw * __init
->  at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
-> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> index 7904f2122ed7..8c7ff0108b41 100644
-> --- a/drivers/clk/at91/sama5d2.c
-> +++ b/drivers/clk/at91/sama5d2.c
-> @@ -276,7 +276,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->  
->  	sama5d2_pmc->chws[PMC_MCK] = hw;
->  
-> -	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck_div");
-> +	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck_div", NULL);
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-> index 7cda8032653e..04c848cd7001 100644
-> --- a/drivers/clk/at91/sama5d4.c
-> +++ b/drivers/clk/at91/sama5d4.c
-> @@ -214,7 +214,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
->  
->  	sama5d4_pmc->chws[PMC_MCK] = hw;
->  
-> -	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck_div");
-> +	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck_div", NULL);
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
+* Ensure we wrap selinux_avc derefs with rcu_dereference().  This
+should be the only real change needed for lookups and insertions as
+every search through the AVC will start with deref'ing the selinux_avc
+pointer.
 
+* Update avc_init() to allocate the cache slots with a default value,
+fail if unable to allocate the cache memory.  If we ensure that the
+selinux_avc pointer will always be valid, we can avoid having to check
+it.
+
+* Policy (re)loads which would change the number of AVC cache slots
+would allocate and initialize a new selinux_avc then swap the global
+selinux_avc pointer under spinlock.  The old AVC cache could then be
+free'd according to RCU rules.  I haven't thought about it too much,
+but I suspect we could do away with flushing the old AVC in these
+cases, even if we can't, flushing the old AVC is easy enough.
+
+> When increasing slot size, we could directly copy the contents from the
+> old table. When decreasing slot size, nodes exceeding the new slot size
+> would need to be re-hashed and attached to appropriate positions.
+
+Changing the number of cache slots should happen infrequently enough
+that I see no need to migrate the old entries to the new cache
+instance.  It's a cache, it will fill back up naturally.
+
+> On my Android device, policies are fixed before system image release and
+> don't change or load dynamically during system running. Using kernel
+> parameters for adjustment ensures no additional locks or checks are neede=
+d
+> during runtime table access, maintaining simplicity and efficiency of the
+> lookup code.
+
+If your system does not update its policy over the course of a single
+boot, and presumably doesn't drastically change its behavior during
+that time, there is another, simpler option that we should consider:
+setting AVC_CACHE_SLOTS at compile time based on a Kconfig tunable.
+The code change would essentially be one line:
+
+ #define AVC_CACHE_SLOTS   (2 << CONFIG_SECURITY_SELINUX_AVC_HASH_BITS)
+
+... with a corresponding entry in security/selinux/Kconfig.  That
+should be a very easy change, and if you set the default value such
+that AVC_CACHE_SLOTS remains at 512, there should be no impact on
+existing systems.
+
+--=20
+paul-moore.com
 
