@@ -1,206 +1,142 @@
-Return-Path: <linux-kernel+bounces-861174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B8BBF1FBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8612FBF1FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C81B461FF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FBF5462201
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B512E241664;
-	Mon, 20 Oct 2025 15:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14D823C519;
+	Mon, 20 Oct 2025 15:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRT5USF1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UCIyZ/am"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE373223DD0;
-	Mon, 20 Oct 2025 15:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B118C234964
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972658; cv=none; b=Gx7PzqaJlwjAo6x2Ee3Y5cGH3KwKdkqAs8qZSaX57pwOzeSPoP09S9esXZgUDd0P813C/U8fA4q36oyv2EAVglR1wwHBKym9Iqje/fGExzvGh2t5n+rW7FsAymnvMVPlxNfkanI5r5zamq2ucfQErtRPhCRWQIuq/McBH00zUiY=
+	t=1760972670; cv=none; b=OjbEpb3R6pK7zncjhEVSGMevh27ShkcOCykm2DrCPnJXAZ+0eiH+O0HyaM2uTvaA/VGpxL8Omg2V/u9q5I9q0+xyHsdMKXW09SdhXbyHGRMtR+kMaDMQdPCc1ysh1kaQ2nMy/A65Aa/9n7ALTk/NhD0epQUm5KQNv/WektCHUMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972658; c=relaxed/simple;
-	bh=opgDUacvsAEAblCjRwc/cnZnXjDHKNzApka9lSwmFm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gUCJGq7oLBs8iufG/N1KxDq0gGHNH9SR+TTAeUkJGfE5YSwtMbUWq6KJPrfRIjW1NSw/tdHctm8QhTpoDVBOup/2HNbKnruv6F0GZ3drD2CLhhuJfrvZEIUt/+Hi6jClqCpzurrAuZHne95O+Ir7sKxAT58K7LOvr2JTMHv/XWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRT5USF1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6DD1C4CEF9;
-	Mon, 20 Oct 2025 15:04:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760972657;
-	bh=opgDUacvsAEAblCjRwc/cnZnXjDHKNzApka9lSwmFm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iRT5USF1c9hlxYuIAOhCLi5vAK5WR7rom9xRkIU3R7gF7myd/1e5DMMfNCS0kUZkY
-	 3iRkzX0tjSk5Oi94wjBXhi3wnlTtnIwsAvgfAKJFuquBcdXjW7d9WDWrPNIf5J0bU5
-	 zVOo4RRrxdwbFsBukm+Rj6kIqO8vqJWtwlc9Wep5HFp36crF5d7piD0ABkB0lYukcY
-	 occ87bgOGiq4SFUOt5aNiFNgE39VrrMYCKAhg7FXj21tnyeBL4evlgZwZyr9LIYUQF
-	 TbY2GnPoLUsXHvGaif5VObAw2oxejIFZ08On78dvTXugRYsJ65uWf5lD//iEs7lnk9
-	 fxqi91aJMPONw==
-Date: Mon, 20 Oct 2025 18:04:12 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v5 1/9] PCI/P2PDMA: Separate the mmap() support from the
- core logic
-Message-ID: <20251020150412.GP6199@unreal>
-References: <cover.1760368250.git.leon@kernel.org>
- <1044f7aa09836d63de964d4eb6e646b3071c1fdb.1760368250.git.leon@kernel.org>
- <aPHibioUFZV8Wnd1@infradead.org>
- <20251017115320.GF3901471@nvidia.com>
- <aPYqliGwJTcZznSX@infradead.org>
- <20251020125854.GL316284@nvidia.com>
+	s=arc-20240116; t=1760972670; c=relaxed/simple;
+	bh=NQTt3yR3wb555kAg+WKMiqLQ3QOmGXvQw1+WcPNE6mk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=db5s91j3tFWkk1aVCvs92BrC+ye4Y/HUpzYgEvP+Uqx2um+hDrT1lh7CJMsufPOL2BYWctpSX9O2hSEGQ8LJhQWIzECnmNy4w1oK0iOsNHTkXGocUc/lUhGV6GpSE0O5W9JRjVayz6ztJcW8WOGqskU0je5s0Px5y6ATEAFOND4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UCIyZ/am; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so29366535e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760972666; x=1761577466; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7j5YzMBOCDrFLrL1gjEGQ9zi19aLgZpxoO0BZALkK7I=;
+        b=UCIyZ/amgYCUKpmSi2zCw1JGpsCsGWkMe4lwWX6WkmtRk6juK6CIbkwBYZ57y8ZdmM
+         jmqWvtxnzwfo4+Q8tHe4MdEBPRG/baug1JI5umGrC3+QKypZ2W1TmHWn15N965W/BkjY
+         ZFIYYiX7Iz3gO534fWQ8k+/LzP9mR/Q1I5QmcDZEIPFp9nZ5cP/jdLxJtAdtggWFI4rk
+         pLZMtSs0k2U9KEcu7ZGg/TJpvHn5K7aiULdMXqRu7HtUnt+K+WIFhFhcTLda75cPrPP+
+         9OnOhxRkyCXkAyGo5R1comx9x1eNq0s7m7byvwMmjIayGMdOwpVtbGHVUsa0alq7MKAI
+         nnPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760972666; x=1761577466;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7j5YzMBOCDrFLrL1gjEGQ9zi19aLgZpxoO0BZALkK7I=;
+        b=DYjlvIq9Zf/60NyTJH2tMvCPoqu/Tgh/TBRuM3loYUEEKsN73WKVf3AId6iPyE7wBG
+         4z442YBrKxLownWl64MDPU9zBAeqkKxWBzeXaYCOKiCWt6HB2xKe4fPOheLdU0M+G9Jf
+         s22gzUs+4B46fmGzufnCVW325wELr14UWF46xn188KYs5w415OW2DfQYpR7T4ZxL9d6K
+         UIgp7aHWcYesOUvj1zw6i8NZT4JQWFjoTfFLfb7ugMLqGCiOCNBXMtmc60MwqWmmroCD
+         Trh9LsN00ylW+ut1490Yya3NP1e6wFnYuTW5nGg0zOFM3z/5zxily7nBgtL7gumDEkVp
+         vExw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFxZnr9qB7c97Vs6YPPEqSkVUPtLY3tNc3HZK6nnipdsjIsQRyjWa45Me+b8zY0uNRF2a7vwkGIHd4+0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMDZJcOp9GCM3ib9Z4Rw0hjsG+NL52bsKfGjnT4d7jBVUhC+qv
+	AxxsKkOiszj7UkHwKg5R0rNyYftOZDO5VmCaVp0+O5TLFQSV3haru+2RsJsW273Tmmw=
+X-Gm-Gg: ASbGncsgPrOAHY6z/gjpfFxfE+YlWUy8lMtRjKZZ79eNnnJj/0ghixuoGSYhs9z3fiO
+	LYXWqOboKTtY7k1XySuB9ZWzgjDt/cG5VSHALj7aR5A9E94cvi/09yj/2WQqfHf9+0hSk07hyZM
+	HXsgnu53qn5DC/92H4uQU2rBYMDsXAgAAdK0vLSM1PtySgGYUDUS7uL3IyEhuSZezf3nv3b+mQj
+	6ntYr7Bry5BMYTrHMb9HFb74uWxhjFTpGnzfXHZeMMEszqpv3i44gAUI9rqAWk38Y28uCEH8+0d
+	KqviXHFfRf8aU8isQzxM20QWCi2OnZLYegDWElokk12+dK0LenDGeEMTAVuGWLCIl9fnzgYqUMR
+	faPXv3WGpl6GnNmPagHvnVIIVheF9XmL+SA40FiPvB5Tl1TcEqZMSVG3isG6wXVBAbguObF6F2N
+	fydbXzuzoTGYyD6Q==
+X-Google-Smtp-Source: AGHT+IH+kjVEaLAgrhbcv9wCPGNvII0B3F+6rlxLJXUsp++tlTBLtRr0Ji9BepfUMnPNIQ4qAWtnfA==
+X-Received: by 2002:a05:600c:5299:b0:471:95a:60b1 with SMTP id 5b1f17b1804b1-471179192d4mr122728725e9.32.1760972666014;
+        Mon, 20 Oct 2025 08:04:26 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:9f99:cf6:2e6a:c11f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b9853sm15747079f8f.33.2025.10.20.08.04.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 08:04:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020125854.GL316284@nvidia.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 Oct 2025 16:04:24 +0100
+Message-Id: <DDN8PM13DWWZ.BCXRTJIFB7PD@linaro.org>
+Cc: <perex@perex.cz>, <tiwai@suse.com>, <srini@kernel.org>,
+ <linux-sound@vger.kernel.org>, <m.facchin@arduino.cc>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 7/9] ASoC: qcom: q6asm: add q6asm_get_hw_pointer
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>,
+ <broonie@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20251015131740.340258-8-srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20251015131740.340258-8-srinivas.kandagatla@oss.qualcomm.com>
 
-On Mon, Oct 20, 2025 at 09:58:54AM -0300, Jason Gunthorpe wrote:
-> On Mon, Oct 20, 2025 at 05:27:02AM -0700, Christoph Hellwig wrote:
-> > On Fri, Oct 17, 2025 at 08:53:20AM -0300, Jason Gunthorpe wrote:
-> > > On Thu, Oct 16, 2025 at 11:30:06PM -0700, Christoph Hellwig wrote:
-> > > > On Mon, Oct 13, 2025 at 06:26:03PM +0300, Leon Romanovsky wrote:
-> > > > > The DMA API now has a new flow, and has gained phys_addr_t support, so
-> > > > > it no longer needs struct pages to perform P2P mapping.
-> > > > 
-> > > > That's news to me.  All the pci_p2pdma_map_state machinery is still
-> > > > based on pgmaps and thus pages.
-> > > 
-> > > We had this discussion already three months ago:
-> > > 
-> > > https://lore.kernel.org/all/20250729131502.GJ36037@nvidia.com/
-> > > 
-> > > These couple patches make the core pci_p2pdma_map_state machinery work
-> > > on struct p2pdma_provider, and pgmap is just one way to get a
-> > > p2pdma_provider *
-> > > 
-> > > The struct page paths through pgmap go page->pgmap->mem to get
-> > > p2pdma_provider.
-> > > 
-> > > The non-struct page paths just have a p2pdma_provider * without a
-> > > pgmap. In this series VFIO uses
-> > > 
-> > > +	*provider = pcim_p2pdma_provider(pdev, bar);
-> > > 
-> > > To get the provider for a specific BAR.
-> > 
-> > And what protects that life time?  I've not seen anyone actually
-> > building the proper lifetime management.  And if someone did the patches
-> > need to clearly point to that.
-> 
-> It is this series!
-> 
-> The above API gives a lifetime that is driver bound. The calling
-> driver must ensure it stops using provider and stops doing DMA with it
-> before remove() completes.
-> 
-> This VFIO series does that through the move_notify callchain I showed
-> in the previous email. This callchain is always triggered before
-> remove() of the VFIO PCI driver is completed.
-> 
-> > > I think I've answered this three times now - for DMABUF the DMABUF
-> > > invalidation scheme is used to control the lifetime and no DMA mapping
-> > > outlives the provider, and the provider doesn't outlive the driver.
-> > 
-> > How?
-> 
-> I explained it in detail in the message you are repling to. If
-> something is not clear can you please be more specific??
-> 
-> Is it the mmap in VFIO perhaps that is causing these questions?
-> 
-> VFIO uses a PFNMAP VMA, so you can't pin_user_page() it. It uses
-> unmap_mapping_range() during its remove() path to get rid of the VMA
-> PTEs.
-> 
-> The DMA activity doesn't use the mmap *at all*. It isn't like NVMe
-> which relies on the ZONE_DEVICE pages and VMAs to link drivers
-> togther.
-> 
-> Instead the DMABUF FD is used to pass the MMIO pages between VFIO and
-> another driver. DMABUF has a built in invalidation mechanism that VFIO
-> triggers before remove(). The invalidation removes access from the
-> other driver.
-> 
-> This is different than NVMe which has no invalidation. NVMe does
-> unmap_mapping_range() on the VMA and waits for all the short lived
-> pgmap references to clear. We don't need anything like that because
-> DMABUF invalidation is synchronous.
-> 
-> The full picture for VFIO is something like:
-> 
-> [startup]
->   MMIO is acquired from the pci_resource
->   p2p_providers are setup
-> 
-> [runtime]
->   MMIO is mapped into PFNMAP VMAs
->   MMIO is linked to a DMABUF FD
->   DMABUF FD gets DMA mapped using the p2p_provider
-> 
-> [unplug]
->   unmap_mapping_range() is called so all VMAs are emptied out and the
->   fault handler prevents new PTEs 
->     ** No access to the MMIO through VMAs is possible**
-> 
->   vfio_pci_dma_buf_cleanup() is called which prevents new DMABUF
->   mappings from starting, and does dma_buf_move_notify() on all the
->   open DMABUF FDs to invalidate other drivers. Other drivers stop
->   doing DMA and we need to free the IOVA from the IOMMU/etc.
->     ** No DMA access from other drivers is possible now**
-> 
->   Any still open DMABUF FD will fail inside VFIO immediately due to
->   the priv->revoked checks.
->     **No code touches the p2p_provider anymore**
-> 
->   The p2p_provider is destroyed by devm.
-> 
-> > > Obviously you cannot use the new p2provider mechanism without some
-> > > kind of protection against use after hot unplug, but it doesn't have
-> > > to be struct page based.
-> > 
-> > And how does this interact with everyone else expecting pgmap based
-> > lifetime management.
-> 
-> They continue to use pgmap and nothing changes for them.
-> 
-> The pgmap path always waited until nothing was using the pgmap and
-> thus provider before allowing device driver remove() to complete.
-> 
-> The refactoring doesn't change the lifecycle model, it just provides
-> entry points to access the driver bound lifetime model directly
-> instead of being forced to use pgmap.
-> 
-> Leon, can you add some remarks to the comments about what the rules
-> are to call pcim_p2pdma_provider() ?
+On Wed Oct 15, 2025 at 2:17 PM BST, Srinivas Kandagatla wrote:
+> Currently we are performing an extra layer of calculation on the hw_ptr,
+> which is always prone to errors.
+> Move this to common dsp layer for better accuracy.
 
-Yes, sure.
+The subject says that the change adds q6asm_get_hw_ptr but here it says
+that calculation of hw_ptr is moved. Where is it moved out of or from?
 
-Thanks
+Currently the commit message is confusing.
 
-> 
-> Jason
+It seems to be potential confusing split with commit.
+("ASoC: qcom: q6asm-dai: use q6asm_get_hw_pointer") where calculation
+of hw_ptr was implemented in q6asm-dai.c.
+
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> ---
+>  sound/soc/qcom/qdsp6/q6asm.c | 12 ++++++++++++
+>  sound/soc/qcom/qdsp6/q6asm.h |  1 +
+>  2 files changed, 13 insertions(+)
+>
+> diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
+> index 371389c8fa7a..643ca944b1b5 100644
+> --- a/sound/soc/qcom/qdsp6/q6asm.c
+> +++ b/sound/soc/qcom/qdsp6/q6asm.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/wait.h>
+>  #include <linux/module.h>
+> +#include <linux/atomic.h>
+
+Ideally this should be sorted but it seems it was not initially.
+
+>  #include <linux/soc/qcom/apr.h>
+>  #include <linux/device.h>
+>  #include <linux/of_platform.h>
+> @@ -248,6 +249,7 @@ struct audio_port_data {
+>  	uint32_t num_periods;
+>  	uint32_t dsp_buf;
+>  	uint32_t mem_map_handle;
+> +	atomic_t hw_ptr;
+>  };
+
+Thanks,
+Alexey
 
