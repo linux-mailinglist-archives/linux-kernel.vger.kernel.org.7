@@ -1,331 +1,218 @@
-Return-Path: <linux-kernel+bounces-860039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAC3BEF2EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:21:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C726BEF2FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 115434E423B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244A73E25EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2545280CE0;
-	Mon, 20 Oct 2025 03:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE7D2BD5B4;
+	Mon, 20 Oct 2025 03:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dQzaY5yq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bxEBhXs/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5408C2BD58A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A5C29ACC3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760930506; cv=none; b=Eo6PCo2D0vP4GMCpkntzCH8blKCc145u495sEuFK8FrezokqV09S3ncJaF/jp/yIm4fTgj8y41nmsdV0eJGw2VODAKwn2jWXAr2/1u9z17QrDS8WIj2WaZfx/J8c3YSMaiCEvESk6xHyiy1wE8zfM+vXPVirUAr/xgEsRi1VOhQ=
+	t=1760930598; cv=none; b=ABukza8zuZpQNRM8xoctc87H+Lxf8rO9HUANqUWsD2KUhoWVFJrhddSkv9+TgAkGtIb6JkphRMo7OXO6Od1k8sTBsC4rk0gH5dKgOqkeV2fD++P/HDY2GAEV9/hi9qhPJwAQldnJ0wMDj/Y2hngdm5WISyvovM9qSppCeVAqYdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760930506; c=relaxed/simple;
-	bh=iAHbKOlodD1oxWd5bp7bH8X2p0ded5kYJMwBBjJ9nmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOy7uvOsTCGf8xbLlRMBTIFyFoCWXJQIulJTsiDALsUDXCHB29TGpr96NYTq2ywTyxebDFi8Iv04nxXSszI86ZqW5DWWJ2eCFcTva+UdOiDVhT9pjGLCFoa3b1nMjqTyrNY7YejPdX9/xAWl/sVQSbPGu7ZLl6s3Bc37JVMsTs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dQzaY5yq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760930501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0JKqsT+pVGb3yUUgF+L5kb6vD8xkT98BOWqh/DjwhU=;
-	b=dQzaY5yqLiWMgyWZs20g/qIe2XXFQl2WgzSg8JkbSkbXxIbOLzDvfAI/2J51fLFNzpd29z
-	OeqZq4gm59iagkZEWzObOmSYfExBusMYUA1/Tq9eSbrbb0yoT7JSX2FkMidovLbBeS/den
-	hYVdq67xt6zyVwkh9B67UWwB7Z6zpDY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-ld6iHKT8PCer6Wz2wzS7-w-1; Sun,
- 19 Oct 2025 23:21:31 -0400
-X-MC-Unique: ld6iHKT8PCer6Wz2wzS7-w-1
-X-Mimecast-MFC-AGG-ID: ld6iHKT8PCer6Wz2wzS7-w_1760930489
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B159F18002C9;
-	Mon, 20 Oct 2025 03:21:27 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.104])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 047E3300019F;
-	Mon, 20 Oct 2025 03:21:24 +0000 (UTC)
-Date: Mon, 20 Oct 2025 11:21:22 +0800
-From: Pingfan Liu <piliu@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCHv3] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-Message-ID: <aPWqsui-7HCUB5g-@fedora>
-References: <20251017122636.17671-1-piliu@redhat.com>
- <1b510c7e-6d48-4f3c-b3cb-8a7a0834784c@redhat.com>
+	s=arc-20240116; t=1760930598; c=relaxed/simple;
+	bh=al8+YONBhG2K0jRHRVifybv1Z6NPQiebH5U+vVbxWbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ueBDxBqOjfRxXu/m6gvvInofpU0k3sD/rjTiItdNZkMLwplktw6mwL4AzpetJHraVs/1y8rsfeXAxAH7mCFXRRunm9DXQkRg542WLE4CfJL+qJhKuV9XVCytir54vae0U2OUhdIvRAODsPq+S/BIUHlYe710Aqu4IezqRvbUuuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bxEBhXs/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JNBqB7024329
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:23:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5vxEAGKk22m0X7ILOt+O5zdpKy7zzuPx9aZvAOYq5kA=; b=bxEBhXs/KAZ/nfcC
+	Bu/59yVu7eWeUmwbn7lSAq39SGPWOnPb15b2C5Z7ogBJUh9ZJyD0aH39CchxPCTL
+	6XJY9HbimNwrnCqHDQ0/tIq52pifKRF6chyqwVSwYgJvw1+nS2FiBomWCxvWcc+R
+	FfeD3vAPgF2h0987cBn3md7YBhs37y1mADD0Asx9JGfBaF+qItvCqmZhUStyt1W8
+	qpnA697jOYr4l+5QCSjYGGqfUl4bDm+zGYkb+c89haOeRAOpXcSkuCs15W6Ro0UE
+	PQIm6qMEhpbBWKFVffU2XUSpuNqLuorsd8uXstuO5sqTghD/Ewz3IzP0dw1oOEik
+	vFiZTg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v42k3d1x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:23:16 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-33bcb779733so3135761a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:23:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760930595; x=1761535395;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5vxEAGKk22m0X7ILOt+O5zdpKy7zzuPx9aZvAOYq5kA=;
+        b=FMVRE4jRJDLnfNQyWCdjT+53Dh4nd4UnEU7ZJVFIVoyE8az8ckn3sl/RFZ67hxaLAW
+         Vnq9AHz1dCxfHfJLRMvgZwzi+kQzhrYO4na97k1G470V1+DYq/jyuvMgJf8/P2vgEgDJ
+         aNQZaPGGC7N56XNNztdIVXVM6HN1VHYTUE5sHjO08BOKHlPt3Qrnx51JsGf0X/9z8sdG
+         jtwvsJYcIG8ww0pupnC2ykQpLMURGLRlJaXIHKb2Eo+aSjFvrZ2BA/iwGs5zFIAvhRV/
+         mgnFU5ls0mPNWE+0abpFDU01lcCruCHQ9TwmqScU9EOBqJyzR/t+6BT1lfhhV5Oyd/Ko
+         kZYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlS/FuDSUPgim5yhLB7BprRMonKMmBprx1u1hWdUChKrHNdpZytOhgbMEYNS+8dW51lc7PpRp/Wis1MoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhH7y6NURkCy8LAPBW4Yr72sen6PwG4RKjrLM0IXzZ0mPxjOuO
+	tHShqveJxY8D2bJ6fu9S03FJMdPbBWh7w5Xw8Wnwg1p//A5I/oeV1FSbIBxwnh7qn12rgqRr5VQ
+	NnWekrFuPeBAUEVYMVLG/2Xzk6xtO5Uj84ZTcKm0Pcw2lw/cUJYiNO7ld3gxYSjGPXnQ=
+X-Gm-Gg: ASbGncsIRvz+vo9fAPLNbgDfu5qlk5AjEoSYfqJBaA59HyBAqnfGBTqiyufrtQXrIaQ
+	WHZi7MBgoYrhKR5tNa+l4izbq+HAFgJO9fY4qD7w+If1I/OfrwTbT9FbiG3uX07wF8PrV7fKjTV
+	Fq9S/LYKOi0yruXLnHWWcBWw+aMbSKRO3TxARlryyCRljWMQ8en5tJ2hlRb18LR/eqBSlvDcl7M
+	DTNT3L04rY5qtX/aRpBjFxRcvKsZ4SutF9HladhxnSuILROG9tnjgSVeiPEfBF/trQiDWORpIAY
+	zlWR/u0w8R7CZt8SEQK53UWdjj0BBczR0tM4AKS79Hi4lUkIFKie7fPcONJluBsOLwoFDzBz+zw
+	0NjGHolIEGE9VKtxZFC5X/d5wTd5aeVa3aA1s9MG1kVZyakU7emevK465tUzx0p12ERMx/A==
+X-Received: by 2002:a17:90b:39cd:b0:332:3515:3049 with SMTP id 98e67ed59e1d1-33bcf85acb9mr17403128a91.4.1760930595345;
+        Sun, 19 Oct 2025 20:23:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IES39tE/Di3MmwGwTYwN/xeXnDCJXXVgvh9xe8MLyTfqwPZoTQnofwIPkkLhV47dTPyhpVL/g==
+X-Received: by 2002:a17:90b:39cd:b0:332:3515:3049 with SMTP id 98e67ed59e1d1-33bcf85acb9mr17403084a91.4.1760930594773;
+        Sun, 19 Oct 2025 20:23:14 -0700 (PDT)
+Received: from [10.133.33.77] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5df5c288sm6593924a91.15.2025.10.19.20.23.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 20:23:14 -0700 (PDT)
+Message-ID: <2c0011d3-a692-457c-9ac0-a445fc82df37@oss.qualcomm.com>
+Date: Mon, 20 Oct 2025 11:23:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b510c7e-6d48-4f3c-b3cb-8a7a0834784c@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Enable setting the rate to
+ camnoc_rt_axi clock
+To: Bryan O'Donoghue <bod@kernel.org>,
+        Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com>
+ <9984bc23-05ef-4d46-aeb8-feb0a18e5762@kernel.org>
+ <bc0caeb8-c99b-4bef-a69e-5ce433e6b890@oss.qualcomm.com>
+ <c4fd6bfc-cc9a-4f37-99b3-f36466691a1e@linaro.org>
+ <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
+ <33513b43-f6d1-4c76-887b-39611a75e1f4@kernel.org>
+ <WnfCknsSyJK68PQZkE2q7COZHRpsLOFlr3dcbwiVR6SBWtF9iRQ4MGzp_9q31O0kyhZwoncQWfHjJQvpz7nyfw==@protonmail.internalid>
+ <ab43c5c9-edc5-459e-8ef7-2aa8bec559c0@oss.qualcomm.com>
+ <0e6e1b8a-d9ae-42d1-b1ad-4314e0d76ab7@kernel.org>
+Content-Language: en-US
+From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+In-Reply-To: <0e6e1b8a-d9ae-42d1-b1ad-4314e0d76ab7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: C_imKmHb9XoCXhjac9lc8SAeNEF9Fc02
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMSBTYWx0ZWRfX41MAwrynFpnK
+ ROqoVPxCMmH2H2MPnXy3pa+UqspRv4yabaR04DOM6KtN3VMF09uxpeyzTW6LZf/kZnYw6FBaP91
+ s9fHIPpqSv1djcTt0O0V5+ztuaGDJv45mWSIPSKp/nSG2/G4zF8CnT8ddYV/PWF8rLo1bFy95lg
+ z7BJMt1WZZkReYwyPwsHzG0YByanaWK3oDETY0iFv0TTvLuDw2iW/XsRuu2IOt2JGDAZHXPtLgi
+ zyoS2oyBgVh48prAI6Zcjhoh/F03wNC6VIHBPtrkZJ2mOPZt3qecnzE23GxeQar/SjdZqiC1G2J
+ 6ZxJaRg0/Ja204OMZC2a4VWvDzdeePCS5ICukgAUmuElXHDpxsajXaEP6R5BhP/n3TjzZfye8n8
+ mG91d4MEhyk9FXH2xmsvnt6daskgEg==
+X-Authority-Analysis: v=2.4 cv=QYNrf8bv c=1 sm=1 tr=0 ts=68f5ab24 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=KDWtGc0jIIkTB6t2Zz4A:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: C_imKmHb9XoCXhjac9lc8SAeNEF9Fc02
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180031
 
-Hi Waiman,
-
-I appreciate your time in reviewing my patch. Please see the comment
-belows.
-
-On Fri, Oct 17, 2025 at 01:52:45PM -0400, Waiman Long wrote:
-> On 10/17/25 8:26 AM, Pingfan Liu wrote:
-> > When testing kexec-reboot on a 144 cpus machine with
-> > isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
-> > encounter the following bug:
-> > 
-> > [   97.114759] psci: CPU142 killed (polled 0 ms)
-> > [   97.333236] Failed to offline CPU143 - error=-16
-> > [   97.333246] ------------[ cut here ]------------
-> > [   97.342682] kernel BUG at kernel/cpu.c:1569!
-> > [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> > [   97.353281] Modules linked in: rfkill sunrpc dax_hmem cxl_acpi cxl_port cxl_core einj vfat fat arm_smmuv3_pmu nvidia_cspmu arm_spe_pmu coresight_trbe arm_cspmu_module rndis_host ipmi_ssif cdc_ether i2c_smbus spi_nor usbnet ast coresight_tmc mii ixgbe i2c_algo_bit mdio mtd coresight_funnel coresight_stm stm_core coresight_etm4x coresight cppc_cpufreq loop fuse nfnetlink xfs crct10dif_ce ghash_ce sha2_ce sha256_arm64 sha1_ce sbsa_gwdt nvme nvme_core nvme_auth i2c_tegra acpi_power_meter acpi_ipmi ipmi_devintf ipmi_msghandler dm_mirror dm_region_hash dm_log dm_mod
-> > [   97.404119] CPU: 0 UID: 0 PID: 2583 Comm: kexec Kdump: loaded Not tainted 6.12.0-41.el10.aarch64 #1
-> > [   97.413371] Hardware name: Supermicro MBD-G1SMH/G1SMH, BIOS 2.0 07/12/2024
-> > [   97.420400] pstate: 23400009 (nzCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> > [   97.427518] pc : smp_shutdown_nonboot_cpus+0x104/0x128
-> > [   97.432778] lr : smp_shutdown_nonboot_cpus+0x11c/0x128
-> > [   97.438028] sp : ffff800097c6b9a0
-> > [   97.441411] x29: ffff800097c6b9a0 x28: ffff0000a099d800 x27: 0000000000000000
-> > [   97.448708] x26: 0000000000000000 x25: 0000000000000000 x24: ffffb94aaaa8f218
-> > [   97.456004] x23: ffffb94aaaabaae0 x22: ffffb94aaaa8f018 x21: 0000000000000000
-> > [   97.463301] x20: ffffb94aaaa8fc10 x19: 000000000000008f x18: 00000000fffffffe
-> > [   97.470598] x17: 0000000000000000 x16: ffffb94aa958fcd0 x15: ffff103acfca0b64
-> > [   97.477894] x14: ffff800097c6b520 x13: 36312d3d726f7272 x12: ffff103acfc6ffa8
-> > [   97.485191] x11: ffff103acf6f0000 x10: ffff103bc085c400 x9 : ffffb94aa88a0eb0
-> > [   97.492488] x8 : 0000000000000001 x7 : 000000000017ffe8 x6 : c0000000fffeffff
-> > [   97.499784] x5 : ffff003bdf62b408 x4 : 0000000000000000 x3 : 0000000000000000
-> > [   97.507081] x2 : 0000000000000000 x1 : ffff0000a099d800 x0 : 0000000000000002
-> > [   97.514379] Call trace:
-> > [   97.516874]  smp_shutdown_nonboot_cpus+0x104/0x128
-> > [   97.521769]  machine_shutdown+0x20/0x38
-> > [   97.525693]  kernel_kexec+0xc4/0xf0
-> > [   97.529260]  __do_sys_reboot+0x24c/0x278
-> > [   97.533272]  __arm64_sys_reboot+0x2c/0x40
-> > [   97.537370]  invoke_syscall.constprop.0+0x74/0xd0
-> > [   97.542179]  do_el0_svc+0xb0/0xe8
-> > [   97.545562]  el0_svc+0x44/0x1d0
-> > [   97.548772]  el0t_64_sync_handler+0x120/0x130
-> > [   97.553222]  el0t_64_sync+0x1a4/0x1a8
-> > [   97.556963] Code: a94363f7 a8c47bfd d50323bf d65f03c0 (d4210000)
-> > [   97.563191] ---[ end trace 0000000000000000 ]---
-> > [   97.595854] Kernel panic - not syncing: Oops - BUG: Fatal exception
-> > [   97.602275] Kernel Offset: 0x394a28600000 from 0xffff800080000000
-> > [   97.608502] PHYS_OFFSET: 0x80000000
-> > [   97.612062] CPU features: 0x10,0000000d,002a6928,5667fea7
-> > [   97.617580] Memory Limit: none
-> > [   97.648626] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]
-> > 
-> > Tracking down this issue, I found that dl_bw_deactivate() returned
-> > -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> > When a CPU is inactive, its rd is set to def_root_domain. For an
-> > blocked-state deadline task (in this case, "cppc_fie"), it was not
-> > migrated to CPU0, and its task_rq() information is stale. As a result,
-> > its bandwidth is wrongly accounted into def_root_domain during domain
-> > rebuild.
+On 10/17/2025 7:41 PM, Bryan O'Donoghue wrote:
+> On 16/10/2025 21:53, Vijay Kumar Tumati wrote:
+>>
+>> On 10/16/2025 8:31 AM, Bryan O'Donoghue wrote:
+>>> On 16/10/2025 13:22, Loic Poulain wrote:
+>>>>> I'm - perhaps naively - assuming this clock really is required ... and
+>>>>> that both will be needed concurrently.
+>>>> AFAIU, the NRT clock is not in use for the capture part, and only
+>>>> required for the offline processing engine (IPE, OPE), which will
+>>>> likely be described as a separated node.
+>>>
+>>> Maybe yeah though we already have bindings.
+>>>
+>>> @Hangxiang I thought we had discussed this clock was required for your
+>>> setup.
+>>>
+>>> Can you confirm with a test and then
+>>>
+>>> 1. Repost with my RB - I assume you included this on purpose
+>>> 2. Respond that you can live without it.
+>>>
+>>> ---
+>>> bod
+>>>
+>> @Bryan and others, sorry, I am just trying to understand the exact ask
+>> here. Just to add a bit more detail here, On certain architectures,
+>> there is one CAMNOC module that connects all of the camera modules (RT
+>> and NRT) to MMNOC. In these, there is one 'camnoc_axi' clock that needs
+>> to be enabled for it's operation. However, on the newer architectures,
+>> this single CAMNOC is split into two, one for RT modules (TFEs and IFE
+>> Lites) and the other for NRT (IPE and OFE). So, on a given architecture,
+>> we either require 'camnoc_axi' or 'camnoc_rt_axi' for RT operation, not
+>> both. And yes, one of them is a must. As you know, adding the support
+>> for the newer clock in "vfe_match_clock_names" will only enable the
+>> newer chip sets to define this in it's resource information and set the
+>> rate to it based on the pixel clock. In kaanapali vfe resources, we do
+>> not give the 'camnoc_axi_clk'. Hopefully we are all on the same page
+>> now, is it the suggestion to use 'camnoc_axi_clk' name for
+>> CAM_CC_CAMNOC_RT_AXI_CLK ? We thought it would be clearer to use the
+>> name the matches the exact clock. Please advise and thank you.
 > 
-> First of all, in an emergency situation when we need to shutdown the kernel,
-> does it really matter if dl_bw_activate() returns -EBUSY? Should we just go
-> ahead and ignore this dl_bw generated error?
+> The ask is to make sure this clock is needed @ the same time as the 
+> other camnoc clock.
 > 
-
-Ah, sorry - the previous test example was misleading. Let me restate it
-as an equivalent operation on a system with 144 CPUs:
-  sudo bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
-
-That extracts the hot-removal part, which is affected by the bug, from
-the kexec reboot process. It expects that only cpu0 is online, but in
-practice, the cpu143 refused to be offline due to this bug.
-
-As for the ignorance of dl_bw in the kexec process, I have a dedicated
-draft for it. Later I will send it out and cc you.
-
+> If so then update the commit log on v2 to address the concerns given 
+> that it may not be necessary.
 > 
-> > The key point is that root_domain is only tracked through active rq->rd.
-> > To avoid using a global data structure to track all root_domains in the
-> > system, we need a way to locate an active CPU within the corresponding
-> > root_domain.
-> > 
-> > The following rules stand for deadline sub-system and help locating the
-> > active cpu
-> >    -1.any cpu belongs to a unique root domain at a given time
-> >    -2.DL bandwidth checker ensures that the root domain has active cpus.
-> > 
-> > Now, let's examine the blocked-state task P.
-> > If P is attached to a cpuset that is a partition root, it is
-> > straightforward to find an active CPU.
-> > If P is attached to a cpuset that has changed from 'root' to 'member',
-> > the active CPUs are grouped into the parent root domain. Naturally, the
-> > CPUs' capacity and reserved DL bandwidth are taken into account in the
-> > ancestor root domain. (In practice, it may be unsafe to attach P to an
-> > arbitrary root domain, since that domain may lack sufficient DL
-> > bandwidth for P.) Again, it is straightforward to find an active CPU in
-> > the ancestor root domain.
-> > 
-> > This patch groups CPUs into isolated and housekeeping sets. For the
-> > housekeeping group, it walks up the cpuset hierarchy to find active CPUs
-> > in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
-> > 
-> > Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> > Cc: Waiman Long <longman@redhat.com>
-> > Cc: Tejun Heo <tj@kernel.org>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: "Michal Koutný" <mkoutny@suse.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Juri Lelli <juri.lelli@redhat.com>
-> > Cc: Pierre Gondois <pierre.gondois@arm.com>
-> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> > Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Ben Segall <bsegall@google.com>
-> > Cc: Mel Gorman <mgorman@suse.de>
-> > Cc: Valentin Schneider <vschneid@redhat.com>
-> > To: cgroups@vger.kernel.org
-> > To: linux-kernel@vger.kernel.org
-> > ---
-> >   include/linux/cpuset.h  | 18 ++++++++++++++++++
-> >   kernel/cgroup/cpuset.c  | 27 +++++++++++++++++++++++++++
-> >   kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
-> >   3 files changed, 69 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> > index 2ddb256187b51..7c00ebcdf85d9 100644
-> > --- a/include/linux/cpuset.h
-> > +++ b/include/linux/cpuset.h
-> > @@ -130,6 +130,7 @@ extern void rebuild_sched_domains(void);
-> >   extern void cpuset_print_current_mems_allowed(void);
-> >   extern void cpuset_reset_sched_domains(void);
-> > +extern void task_get_rd_effective_cpus(struct task_struct *p, struct cpumask *cpus);
-> >   /*
-> >    * read_mems_allowed_begin is required when making decisions involving
-> > @@ -276,6 +277,23 @@ static inline void cpuset_reset_sched_domains(void)
-> >   	partition_sched_domains(1, NULL, NULL);
-> >   }
-> > +static inline void task_get_rd_effective_cpus(struct task_struct *p,
-> > +		struct cpumask *cpus)
-> > +{
-> > +	const struct cpumask *hk_msk;
-> > +	struct cpumask msk;
-> > +
-> > +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > +		if (!cpumask_and(&msk, p->cpus_ptr, hk_msk)) {
-> > +			/* isolated cpus belong to a root domain */
-> > +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > +			return;
-> > +		}
-> > +	}
-> > +	cpumask_and(cpus, cpu_active_mask, hk_msk);
-> > +}
+> If not then just pining back to this patch "we checked and its not 
+> needed" will do.
 > 
-> The size of struct cpumask can be large depending on the extra value of
-> NR_CPUS. For a x86-64 RHEL kernel, it is over 1 kbytes. We can actually
-> eliminate the use of a struct cpumask variable by replacing cpumask_and()
-> with cpumask_intersects().
-> 
+> ---
+> bod
 
-OK.
+@Bryan, I test two scenarios individually that also consider @Vladimir's 
+concern. I confirm this clock rate setting is necessary.
+1. Remove 'camnoc_rt_axi' from the vfe clock matching function.
+2. Remove 'camnoc_nrt_axi' from the vfe clock resources in camss.c.
+Both of them block the image buffer write operation. More clearly, we 
+will stuck at the stage when all buffers acquired but CAMSS takes no action.
 
-> You said that isolated CPUs belong to a root domain. In the case of CPUs
-> within an isolated partition, the CPUs are in a null root domain which I
-> don't know if it is problematic or not.
-> 
+I agree with @Vijay to keep 'camnoc_rt_axi' to distinguish between the 
+new one and 'camnoc_axi'. The disagreement concerns how to standardize 
+the camnoc clock name or how to differentiate between RT and NRT clock 
+names if a new RT clock name is introduced. Other chips like sm8550, 
+sm8775p depend on 'camnoc_axi'. Meanwhile, 'camnoc_rt_axi' and 
+'camnoc_nrt_axi' are both necessary for QCM2290 and X1E80100. But chips 
+like QCM2290 and X1E80100 may not need to set the clock rate but 
+Kaanapali needs. @Vladimir
 
-If I understand correctly, during CPU hot-removal, the following rules apply:
+We now prefer to add 'camnoc_rt_axi' (Right?). Maybe its better to add 
+comment lines to remove the ambiguity whether 'camnoc_axi' denotes to RT 
+or NRT. Please advise and correct me. Willing to receive feedback and 
+suggestions. Thanks you for all.
 
--1.Check whether the total dl_bw of all DL tasks in the affected root
-domain can be satisfied by the remaining CPUs in the same root domain.
-If it can, the hot-removal proceeds; otherwise, the hot-removal is rejected.
-
--2.During the CPU hot-removal process, migratable tasks on the dying CPU
-are forcibly migrated to other CPUs in the same root domain, regardless
-of their CPU affinity.
-
-My patch does not violate these rules.
-
-> We usually prefix an externally visible function from cpuset with the cpuset
-> prefix to avoid namespace collision. You should consider doing that for this
-> function.
-> 
-
-OK.
-
-> Also I am still not very clear about the exact purpose of this function. You
-> should probably add comment about this.
-> 
-
-> > +
-> >   static inline void cpuset_print_current_mems_allowed(void)
-> >   {
-> >   }
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index 27adb04df675d..f7b18892ed093 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -1102,6 +1102,33 @@ void cpuset_reset_sched_domains(void)
-> >   	mutex_unlock(&cpuset_mutex);
-> >   }
-> > +/* caller hold RCU read lock */
-> > +void task_get_rd_effective_cpus(struct task_struct *p, struct cpumask *cpus)
-> > +{
-> > +	const struct cpumask *hk_msk;
-> > +	struct cpumask msk;
-> > +	struct cpuset *cs;
-> > +
-> > +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > +		if (!cpumask_and(&msk, p->cpus_ptr, hk_msk)) {
-> > +			/* isolated cpus belong to a root domain */
-> > +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > +			return;
-> > +		}
-> > +	}
-> > +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
-> > +	cs = task_cs(p);
-> > +	while (cs != &top_cpuset) {
-> > +		if (is_sched_load_balance(cs))
-> > +			break;
-> > +		cs = parent_cs(cs);
-> > +	}
-> > +
-> > +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
-> > +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
-> > +}
-> > +
-> 
-> Similar problems with the non-CONFIG_CPUSETS version in cpuset.h.
-> 
-
-OK, I will fix it.
-
-Thanks,
-
-Pingfan
-
+---
+Hangxiang
 
