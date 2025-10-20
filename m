@@ -1,135 +1,76 @@
-Return-Path: <linux-kernel+bounces-861492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439E3BF2DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:09:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817B6BF2DE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FF218C13BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:09:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2EA3134E2AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A3D28DB46;
-	Mon, 20 Oct 2025 18:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEevJ9h2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3998F2C0F7F;
+	Mon, 20 Oct 2025 18:09:18 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D79627C178
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6AB11CBA
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760983731; cv=none; b=mk7Ulbuo9e/rnLqE+1Em+lSbiCJY163DxNQWKIrhqlMXyAi5y26rn7Um4BW1N/txSysHw3GqtuYA3G4hBRJM0w+DSZCJJ0Fxyl4QPKlXwUmB2Jqe4i4tUaP0SuqOQRUO54yD3nThDuZi1KbzyYvLfWG7X31IVxvt7gs9fiVw3Xk=
+	t=1760983757; cv=none; b=sBJQppfz7cIuAURGp2U0M1J6zo3XE+VyLQyPkQ+QetsUtsoGoegF3LQRntRKzPwEzf5kPleBr+Ph4IlWzDz4NU/Z+7UsO3J9OJs4pcRTqQeFUJn3yVZszV8txHY7qDrT9yZx2plpYBOtB7BP5zmry2jK+uxf9L9zK/AxRm5Vihg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760983731; c=relaxed/simple;
-	bh=N1WA1B/++B9dBsW4DUV4V1OFij7Palh+7DF4vorc9NQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJ5CNY+HXPid+xTa9Oe8AeLx6W+Yg7+tz0UnQel8wZo6yxYAmG2RnQu3KDss8z0bZZUVwAlNMWtwL5Uh/jz0KUBCtm5CzvbnYK6e6vZbKLIgnWYiF+eVk9CeotVIWeiinKCmZnKIJlQ5nxnLkAGbe3m2FJS9YNeFanhpgDyYT2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEevJ9h2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AEFC116C6
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760983731;
-	bh=N1WA1B/++B9dBsW4DUV4V1OFij7Palh+7DF4vorc9NQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZEevJ9h2GA3K0cNIaP1Cmq8VmK+Bwf4O1KRjP/cOcx9UCT97GJfpcqCXddzTsvmmS
-	 nDgxcYRD6wLr/8DSqB3tCX9N+dbLR66CMbEQyHCLRgV3REU4FVWavbpsD8KeZGO/OT
-	 OVjN2aHY8JUNi+wXU1f2AhX3+6JaG5HIXe5Rf8RXXetzFcJOafn8+uPQgY+vofqq44
-	 +uZ97Rrekoz3tYMTOxq/aMSvmZz68cBiBxkwJEXlHq/kpVq5B7edRwidH6Mh7b8Pm1
-	 CgkpyoZIQPzwQwMdMcpBpT3+qwa7L8tR8JNw2VpwtYTwi8UucKddIcDZ/gGwH6GhrT
-	 w1a0zrVv6o8ag==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-43f86ddb3f4so1296234b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:08:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJAgm/PPcdjCOvEFkNbodMk5ZUX8KmQqNcneLwRebJ+EgtByEUJYaI/RbfUMkmDFqdCf2xyAzCWdyw2Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr4R/dpoZGHiInXkRX+32+xa2sQS4N9BChF0bK6qEMkoUuDTMS
-	WQYVhCCuGz5JC0W8vjI1D7PhgDYU33RZnrY0MjDt1uuBu2dmSYBIeVrKK1qGFNE+PCKJRny4/ZE
-	nUov3Wdl367DO0R68MJ9qtaP9morCj4U=
-X-Google-Smtp-Source: AGHT+IFz9WByM47omjWy2vhrJ1sSbtY7aDQ9Hq8M//aUANLjGQ7Ci6EvcJPBHzmBXzgGirC2hX/uXvCqQiPjAobXrNs=
-X-Received: by 2002:a05:6808:1b0d:b0:441:8f74:fd3 with SMTP id
- 5614622812f47-443a30c38b7mr6161560b6e.64.1760983730567; Mon, 20 Oct 2025
- 11:08:50 -0700 (PDT)
+	s=arc-20240116; t=1760983757; c=relaxed/simple;
+	bh=55NMtRW1UtmtPtbEs1qlcCx0jla+cZ5ycM6VKr0KbIw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FRwEvC7LpQJve7Xi9ThCPpo0BRY5tq2LH6+HwXMXM9ZrOl0I4dO9WsHxfDyNnr/6hagQCNZ6+fxaQ1TgjXk5QAChxLUz7q25I3iAhLzs7DMmsduuxEeMVH1Jo4/Tn5xgtN/zM+ZXm4lGbyMK+Z/gw8CgoW+WDJlFbhA58UNmRQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9228ed70eb7so1331894839f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:09:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760983755; x=1761588555;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZC5D2/stYzjkWKubRrS6EEwX3TMruWVvn+3w2hzO/bA=;
+        b=Ht3ls0/NrA94qHj8EvfQFHtMOqJ9EZph1tCI7tk51Yf5x3dey3vnRGGjP8/zMvrKho
+         SNhAnNXNruzT+oie4Jci5Md+MFjTnJW9dqNjDB5gRKaBlcAbp1Y41sDcy8yjcQEwAZg5
+         rkUZqO4sXYErdNSGKAaOWxC+8hGB2fhjCz4cYYNzP+dwRNoT1cvqq2KCsgN3mIwGHs45
+         oAArjDV40pS17+gMOMrFtK1zk8FkfgkmyoDNTUkXPJfVKMGqTpuCSXqZhIFgfVbZuuOQ
+         I/Z+V2fr0QVZZZbZPEWaVC6DJHFjSIdhT0L4cH1mdh6GHtl+VfVZCSR0IUN/SG8StH2Z
+         wURQ==
+X-Gm-Message-State: AOJu0YxcOqCtM5BEJ7NcXORfrHjkVbdrL9nCslNGvdkIafnvbKniytHr
+	JX6qI9BXeZH++HOT0IJK5wE7iJ0wTFcpeAmtz8dIm9wtOQX9InyhCsNxsGD29yJqtAN1q08Xs2I
+	oXiyQCACPYdRloAIRCBS6mBDDRxW7bWHXjU7ZoOubgEa/HgFhCNh7nDEBWw0=
+X-Google-Smtp-Source: AGHT+IH4txqYkWKnQNTOCis63nM1K3FWUHJUZzWwbyLK9oCdXgdOt3JZ1SKKWp4fTTZrr4gbmsx/2GJCPfdimUWiJ4cisdqRA9HY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007063551.3147937-1-senozhatsky@chromium.org> <CAAFQd5DxxPTH08MJGKzaDkgzcChArvN6pEQtmX63zytKn0C58w@mail.gmail.com>
-In-Reply-To: <CAAFQd5DxxPTH08MJGKzaDkgzcChArvN6pEQtmX63zytKn0C58w@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 20 Oct 2025 20:08:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hzSowdZBC2_SV79BUgPMZSRM9ObD8wyssgMFw9A9LHTA@mail.gmail.com>
-X-Gm-Features: AS18NWBisJ4phsvo4q-93bPN4oR0a5usnjXljqq8higN2fMtPm4--e23LDfwIa0
-Message-ID: <CAJZ5v0hzSowdZBC2_SV79BUgPMZSRM9ObD8wyssgMFw9A9LHTA@mail.gmail.com>
-Subject: Re: [PATCHv2] PM: dpm: add module param to backtrace all CPUs
-To: Tomasz Figa <tfiga@chromium.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1d93:b0:430:bf60:6b01 with SMTP id
+ e9e14a558f8ab-430c5268fccmr196115365ab.19.1760983755553; Mon, 20 Oct 2025
+ 11:09:15 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:09:15 -0700
+In-Reply-To: <68cb3c25.050a0220.50883.002a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f67acb.050a0220.91a22.044f.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+e7be6bf3e45b7b463bfa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 7, 2025 at 9:51=E2=80=AFAM Tomasz Figa <tfiga@chromium.org> wro=
-te:
->
-> On Tue, Oct 7, 2025 at 3:36=E2=80=AFPM Sergey Senozhatsky
-> <senozhatsky@chromium.org> wrote:
-> >
-> > Add dpm_watchdog_all_cpu_backtrace module parameter which
-> > controls all CPU backtrace dump before DPM panics the system.
-> > This is expected to help understanding what might have caused
-> > device timeout.
-> >
-> > Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> > ---
-> >  drivers/base/power/main.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > index e83503bdc1fd..7a8807ec9a5d 100644
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -34,6 +34,7 @@
-> >  #include <linux/cpufreq.h>
-> >  #include <linux/devfreq.h>
-> >  #include <linux/timer.h>
-> > +#include <linux/nmi.h>
-> >
-> >  #include "../base.h"
-> >  #include "power.h"
-> > @@ -515,6 +516,11 @@ struct dpm_watchdog {
-> >  #define DECLARE_DPM_WATCHDOG_ON_STACK(wd) \
-> >         struct dpm_watchdog wd
-> >
-> > +static bool __read_mostly dpm_watchdog_all_cpu_backtrace;
-> > +module_param(dpm_watchdog_all_cpu_backtrace, bool, 0644);
-> > +MODULE_PARM_DESC(dpm_watchdog_all_cpu_backtrace,
-> > +                "Backtrace all CPUs on DPM watchdog timeout");
-> > +
-> >  /**
-> >   * dpm_watchdog_handler - Driver suspend / resume watchdog handler.
-> >   * @t: The timer that PM watchdog depends on.
-> > @@ -530,8 +536,12 @@ static void dpm_watchdog_handler(struct timer_list=
- *t)
-> >         unsigned int time_left;
-> >
-> >         if (wd->fatal) {
-> > +               unsigned int this_cpu =3D smp_processor_id();
-> > +
-> >                 dev_emerg(wd->dev, "**** DPM device timeout ****\n");
-> >                 show_stack(wd->tsk, NULL, KERN_EMERG);
-> > +               if (dpm_watchdog_all_cpu_backtrace)
-> > +                       trigger_allbutcpu_cpu_backtrace(this_cpu);
-> >                 panic("%s %s: unrecoverable failure\n",
-> >                         dev_driver_string(wd->dev), dev_name(wd->dev));
-> >         }
-> > --
-> > 2.51.0.618.g983fd99d29-goog
-> >
->
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Applied as 6.19 material with some edits in the subject and changelog, than=
-ks!
+***
+
+Subject: 
+Author: zlatistiv@gmail.com
+
+#syz test
 
