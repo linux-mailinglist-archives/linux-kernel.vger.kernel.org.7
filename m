@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-861334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983EABF271F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EB3BF273A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EEBB4F7C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:33:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42C084E2D18
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B3A2877D0;
-	Mon, 20 Oct 2025 16:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9613288C2D;
+	Mon, 20 Oct 2025 16:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O08gzrWL"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZZzZ1aWf"
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F4228C871
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F44724168D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760977972; cv=none; b=BPrluBo8J9VahSPCS/YSkQgLMW1UG0PdXW1ZMEeYJFaxfXnf5L6Q0yax2KWDz454fvIY5kWr4VMHjW4pPP8sesDBWyBmtGZSQEEkUtFsL+fLNkO1Gx2a3kl26/Rlrp1mBVlMYzdTX9STgUq78DrlST+u0g/fzAVgll9LaWhTfgU=
+	t=1760978042; cv=none; b=Ed/lPbliolAdgBYpvZD8gcEf7xqAJbOAowT/YD9DoGWjQGS+yviNL1eR0JtPQB2IN6MzeucC0DpAYxqFaI5trtGX3XIf2TvngrPbgnHn8ScrsblAiz3wkPqGZF3lvE5HmB72JVsKcAxJ8fKgGrHFvcN6ubsq/ncfq0WO8PWZVeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760977972; c=relaxed/simple;
-	bh=kHu/zwUbCrQZ2tme86OxuUxLlfikNWjv8AaS4WsjHQo=;
+	s=arc-20240116; t=1760978042; c=relaxed/simple;
+	bh=Y5CEGs0t9LeXRLRCfmnRV+V4yK09SUomkNMkTtKhZbE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Db+zXn+8X53hBAH6o518+Z4uGjCX1NeQ2f/+ag00ue6FN+BEIl/oFrgDYux0Sy1cFyffY9+QBDeA23P9qBDEqRHBzaz/FfGYr4IFRpt97sxORcXflrC/DV7DgT6Hz4IXHmkAiM5NQVc6QJlVjDxfQjLdgOJROWR6JzwZicuQjkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O08gzrWL; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=YYi6eUxwY8b+ON0hVDGeLJUCOeFbY3uUXgNEWeZRuSuMwJ3tSE+0eCetJQLk8piACldxmm8BZpFF68SRmdANnUxtkaS59MbUWFm4ZztEusM0Pf81MqTc2woKlBM688Sv4abF+j/7/z2Cj4nJRV8HSSPq0YvYjnlIC04MiNBXkbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZZzZ1aWf; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-27356178876so31765075ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:32:49 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28973df6a90so44955555ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:33:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760977969; x=1761582769; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760978039; x=1761582839; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Diz1lCzHvuhLNBvdbjp3hmbn87n7UqeGb+eLzgGMNx0=;
-        b=O08gzrWLfmGPK/lAeZ3guB94XFV3FO5ZHTPXFTZmfk4BijFb5i2+tsWEmscjVnXzPM
-         36nR1W0u3qA1Ld4xPzSjSYHrk5rlJcefT3W9NnkNqiTlVALJX1GKpD/1zABOCb5q+Z+l
-         h1JpJeqYr3LHICWNBKwTRJYBPL/kKGocKpAdPeIFJeSCpSk1z/qcLO7MZu7n7oUp6Xd3
-         J95ng2iRGpggiyj/Xlomwd0UrO7IOVSQUXUQQcv11+5ZNqKwriGPxgNBY53sZDUCVp4+
-         MP7QqxbieJw1lnf6KfJ4nLWpfFYyyG+xDGpruPAoKbwKv4RnX/gGYO/LD4Nn9SicvYW2
-         tNug==
+        bh=xahSst9CglR2qFJe71Is8QVBM1v0GjyVtyRULSD/218=;
+        b=ZZzZ1aWf/BGewykJ8Q9qUGbrPQukcfrZt0B02Oi8ff+QqNUVMJQjYsyy2eLUcNCzQ8
+         5HUHH6CiSmyRtZ4EDVYXBa8dFjApSUowuVUgYXjV5bacbe9dO9RyDPv+JF9nclfLqqpt
+         IdfMppAP9uIeK6GMJU96xuSsTC2AeCDaNma4X96UKPETy6Eo64osK422sR8SRSNNpf4o
+         Wyc6s1n8stoxlJWqlLQqkgniG8OkK33jVGq5LqE58beJO83LfvVx9gUmnwB/GKNMBo2t
+         yOXseyiy1R7ee9Ng53rEj6jUciJoh6UWzoj6MbOaz7+/qxUoVKU52BrbMv6wW0qmSAzn
+         LY+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760977969; x=1761582769;
+        d=1e100.net; s=20230601; t=1760978039; x=1761582839;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Diz1lCzHvuhLNBvdbjp3hmbn87n7UqeGb+eLzgGMNx0=;
-        b=YDsOtNFUUpnFDtCHy2ugSYC7T+03DyqHIzm/WZrx7uveg1EYKtAgnqi0o/5UgM3IBa
-         IxGH5elkH5aJ/SbRxLv5Dqfi9ojr7op/qVnQdwPEKhFUiD+swmAaLBvBYAW6VKYBC0V6
-         ETv5BwCavK+ZlJT3mYIvAPX8nkCb+PG3mD0twJd2yeWHJCVoaGFIzzlAxz5ueAZmHZjm
-         A1+2OiKBdLnAfdgTdhUHYTJt5w+gZO0aISbESe6xi9B7EVjNeV2MMo1fcyfszIhPk+X1
-         BK3zu7U2+YbsWck02aqnuyCNMpo+8vquHbb4AT6+SK4eAFfs9z9r6AO6AOuPqlV+t032
-         qilA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcc/JcdVilLg+ZB87cId8GQsCQI2o4yO2SI0hQESyQYaIE7oXmqJYjw2wh7+4NGDCJzjplhRLJ6+0RLGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3B6lSdzJBAjBh8eLGMUZcknnGVIQNkPF34yBAhC8sCVt7M/M8
-	HeWlc+FKi4xlXhYfvKQL4ArbvaSzfNgbUJ2G4B6YyKlob6Fv16dhpCDszH3gJ+apZqSTE9Tjfkb
-	93YT7wg==
-X-Google-Smtp-Source: AGHT+IEBssmEK7IRnbhmUgh1LvtwLWzxveFfoJwgyr9fXBCvprfyt2fJMMmtuyxeI3YpRV0rM/SKweh7WoY=
-X-Received: from pjww4.prod.google.com ([2002:a17:90b:58a4:b0:33b:c327:1273])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f543:b0:24c:965a:f97e
- with SMTP id d9443c01a7336-290c9cf2e68mr182575675ad.2.1760977969344; Mon, 20
- Oct 2025 09:32:49 -0700 (PDT)
-Date: Mon, 20 Oct 2025 09:32:47 -0700
-In-Reply-To: <176055119471.1528900.16047808072294975428.b4-ty@google.com>
+        bh=xahSst9CglR2qFJe71Is8QVBM1v0GjyVtyRULSD/218=;
+        b=gnY/mOTpCZXvCDfuNV1XSY+aWZPtaWYCfrhEuv7mdy/pQcTxnTGntIyul8hHsHo5Nu
+         BLnSvCnINQOQy8hOFmm3Bo2vPkj+f+Ybk7385tw2NsuLfoFe+qWtmXRgR0hfpBHoa4Cb
+         8n5shbl3gpdGeebpxw2nS9dKO8LTyvwM3wiUKuFkhBJHOr43xJyNfGl9nmWY/z8ACuE3
+         4qvYJuTXDHB3bRsDgIVzw31fLDv7pFcNuXYUD2IZGqZT1yZT3BFDmzXPMDqa3F2jAtTt
+         GWqnPb7n7yq+YjYzoMiS8avxVlazGExYJLfHBDgL2RCJF/yc6+75AwGB1x4LTsyFVkvS
+         i3MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViiAiVemzMYe3C9fAE+3EfMeKDhDcjjThAdaUuY/PL69wpH8NzejZIy+MtNB9MdmD3LNrCYXVzaoiKDAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzch7e4FrPpo3yJvipT3G0tGhmQJ1EAvUUmEHH5TF5MG9qkKHyK
+	n83LzUAn86W66Jh2mymuWrCY1TAlmBWHG9dqD0lE8nKt0vb2HbJA7u9YKxxV+BpxbqTQFfyLDTY
+	cFz/Q8g==
+X-Google-Smtp-Source: AGHT+IGz3l2nSx5AlR6WsV3KMbX/iOTStifDphqigGBgItnK5hyzgl82eH4fn8NCfPXntYDzW0XJZScJ2gU=
+X-Received: from pjbgk9.prod.google.com ([2002:a17:90b:1189:b0:339:ee99:5e9b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db09:b0:290:a3ba:1a8a
+ with SMTP id d9443c01a7336-290ccac6d3cmr177014055ad.53.1760978038920; Mon, 20
+ Oct 2025 09:33:58 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:33:01 -0700
+In-Reply-To: <20251014152802.13563-1-leo.bras@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251007-b4-kvm-mmu-stresstest-1proc-v1-1-8c95aa0e30b6@google.com>
- <176055119471.1528900.16047808072294975428.b4-ty@google.com>
-Message-ID: <aPZkLykr3L_cBeqN@google.com>
-Subject: Re: [PATCH] KVM: selftests: Don't fall over when only one CPU
+References: <20251014152802.13563-1-leo.bras@arm.com>
+X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
+Message-ID: <176097609826.440019.16093756252971850484.b4-ty@google.com>
+Subject: Re: [PATCH 1/1] doc/kvm/api: Fix VM exit code for full dirty ring
 From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Brendan Jackman <jackmanb@google.com>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Leonardo Bras <leo.bras@arm.com>
+Cc: kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 15, 2025, Sean Christopherson wrote:
-> On Tue, 07 Oct 2025 19:12:31 +0000, Brendan Jackman wrote:
-> > Running this test on a system with only one CPU is not a recipe for
-> > success. However, there's no clear-cut reason why it absolutely
-> > shouldn't work, so the test shouldn't completely reject such a platform.
-> > 
-> > At present, the *3/4 calculation will return zero on these platforms and
-> > the test fails. So, instead just skip that calculation.
-> > 
-> > [...]
+On Tue, 14 Oct 2025 16:28:02 +0100, Leonardo Bras wrote:
+> While reading the documentation, I saw a exit code I could not grep for, to
+> figure out it has a slightly different name.
 > 
-> Applied to kvm-x86 selftests, thanks!
-> 
-> [1/1] KVM: selftests: Don't fall over when only one CPU
->       https://github.com/kvm-x86/linux/commit/98dea1b75186
+> Fix that name in documentation so it points to the right exit code.
 
-FYI, I rebased this onto 6.18-rc2 so that I could apply selftests changes that
-conflicted with fixes that went into -rc2 (yet another lesson learned about the
-dangers of using -rc1 as a base).  New hash:
+Applied to kvm-x86 generic, with a massaged shortlog.  Thanks!
 
-[1/1] KVM: selftests: Don't fall over in mmu_stress_test when only one CPU is present
-      https://github.com/kvm-x86/linux/commit/b146b289f759
+[1/1] KVM: Fix VM exit code for full dirty ring in API documentation
+      https://github.com/kvm-x86/linux/commit/04fd067b770d
+
+--
+https://github.com/kvm-x86/linux/tree/next
 
