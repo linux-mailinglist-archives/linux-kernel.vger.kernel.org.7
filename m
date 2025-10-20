@@ -1,143 +1,149 @@
-Return-Path: <linux-kernel+bounces-861901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B1ABF3F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:42:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40445BF3F4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A3A04F04F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:42:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1566A4EB06C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088AB2F3C1E;
-	Mon, 20 Oct 2025 22:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA2D6BFCE;
+	Mon, 20 Oct 2025 22:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EDBzXZ3v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sPX78qam"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2DB6BFCE;
-	Mon, 20 Oct 2025 22:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE2923BD1B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761000130; cv=none; b=I85dTUlGD/KDrjiiSMPtOuFfUFG6GIolRZlGnfN83LVZXdEfG8kxQr/C6BHEH+J83aYXrKMjbnJbhsRKHNaXhA6Xn9y0TZlCdJlVrb1Dl+0Q7muh50PXpZ71zz/k1T45AQKRlQj7kBqIjn0ghBGIelBrDN4HJ0gMD9fSzGv/ndQ=
+	t=1761000201; cv=none; b=BgL5mMY7uN6x4lEg1MrNdFhPr/0jteHa25Tn2z/NkTblDwgyV26w2ulD/iozQnlyW9oMxOrgaZ6EkQLRUNcYwf4iS5qwlQ98Ir9rr9elc0JoYlSHcGyMTAqgyIqbw28bdmuqsQLPeSQle4p6oIHbUf56nQD+7+46gtiFGP+jxiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761000130; c=relaxed/simple;
-	bh=iu6pGzNNNImU64aQiHqIp2NRkU5k6hrYuzTFzZvTvHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sh9S3ucxLTVUwS4Dpm4jdF0fFZUdaLDO+FcXPIxBRUogPhh/WKwgJhgHPHSl4x2TqCrArcZhc3pbuRJKEkbFzuDo2gq8kq+hj4mZrLHo7b6aPZSVI24HXVCgUEjCQ2kiIurzf7s9tPMjc/Rs6wVxOnVVbhx54YbfrrQ+TbMjkp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EDBzXZ3v; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761000129; x=1792536129;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=iu6pGzNNNImU64aQiHqIp2NRkU5k6hrYuzTFzZvTvHc=;
-  b=EDBzXZ3v6Hm2BBUmzMg7nqubSH2QDeFWWhZ5FtFSBB6o1RT5pzPszEjA
-   qOTIUAKiuEFQjbDInMmALDru20SZZDXM7IaCSv8KGWx0p/YDnzJ6er+nF
-   lM0gpHycxLVA+SvkxqNf9uaecYCrlJCvCkxHRoMtCumtoqKpBw4euBKzE
-   XsZxhFL9FNfEhKnVH4YG5VcUMOuU7hTX2xZ/UlkMEdM5zWTePeX2uLmWJ
-   KnqV2OjABv/laDIGl9nZGzx85yoaRq7Pt8ehNih/bN3L9LWT499nEkIQ8
-   PnmHnDgld+A3isKS71jrGbxltrV2ltqT+n+shWihRuI70iGH+PEQDxu4N
-   A==;
-X-CSE-ConnectionGUID: JiTtiNm/R4SnyXIaGxm9Pg==
-X-CSE-MsgGUID: 9YB7spdAQrqdaJLyEJiASw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="50695875"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="50695875"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 15:42:07 -0700
-X-CSE-ConnectionGUID: 8yVOQ2eMStyEt5w1siwO3w==
-X-CSE-MsgGUID: F26zH07TTyOo32AlUsmt7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="182630847"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO desk) ([10.124.220.167])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 15:42:06 -0700
-Date: Mon, 20 Oct 2025 15:41:59 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Jon Kohler <jon@nutanix.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/its: use Sapphire Rapids+ feature to opt out
-Message-ID: <20251020224159.xkhfs3phai5o6rzb@desk>
-References: <20251017011253.2937710-1-jon@nutanix.com>
- <20251020194446.w2s5f6nr7i7vw4ve@desk>
- <EA2E1D80-07A3-459D-B330-A667821E7C05@nutanix.com>
- <20251020204026.a7xuhnagsqo4otpx@desk>
- <225134fd-033f-4d63-b88c-772179054694@intel.com>
+	s=arc-20240116; t=1761000201; c=relaxed/simple;
+	bh=AqgTpYLx8CwO8hQnt4Mwj4oe0AK580FEU7XGKrhn/Po=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NsZacGb28m29hCUwMENrCCxH+5IYV7GgnB/09YlpPDRpWWFN+cam4zBz833oUt+nOkcZmfhn2/FMGBU93SGdG0neXLCHC8WUcBJkeN+N9BPYXyrSKSjAT5CNECRsHojozXOWmc/WpueL8OyuPEdOF3MSzu/su5VxNbWM3CuAj7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sPX78qam; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso37971745e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761000198; x=1761604998; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AqgTpYLx8CwO8hQnt4Mwj4oe0AK580FEU7XGKrhn/Po=;
+        b=sPX78qamHS1cJ1CyVZIO3TCRtqEyXnSW1XO8mLxAZL15ihSkHeJ6lIIEjQh6KWm3ER
+         mO8aG5QL4wWS3wo1i2CKNpy01bCN05ne52ge14mM8oRDQ9zbhbutElwFMZiKZEs7vktL
+         f29zxZewa8Q5e2UD19bqovcXZWFmRPWaldn3ew/BfB+MHKT0P94TsHw+tSTj+h3LvsqF
+         rmJ4c1dSNPW8KMmb9pYZUFLH0SR4BSVr7t+95MO3XeKKoXP+O4CHnynrj9UthwqhkfxE
+         QSSNLFEX1+eqczcvWim4FzNBo0zSMgZQibRDepWdkKgmFr9dq3UCUvI0SGjYNSoQhOV9
+         HhZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761000198; x=1761604998;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AqgTpYLx8CwO8hQnt4Mwj4oe0AK580FEU7XGKrhn/Po=;
+        b=Xcjes2BX3yIohwA5Kr6f5e+DESFkOUN0C+z5d3vtTRvFM3kLAd5jqLDGIxsDdiA//a
+         jNkJTJBZ1CqrZGhfqQJ1htn8e2cBpfl21cJp/9Gjmk+drip4LuzEpbo+G/VDRici3wVJ
+         WiL2ormVaOWP6I9Byavx9oSphvPlisrq6nqRQJTKsJA2oc6CGPTn7CeiTvZtPxioR/Md
+         9kdYw5N6LiAmFXQ+jRFcidQ64XOc4oj24EbMKl/7UZoQWyB4T7BCsjoHsbcXzrS4x51b
+         pUtKiHD5NeecVl/EEGPKKeIwVEegnU3yAx0cDfezA29NuvtQ2ZSaekIvHPG3NYOfuoLi
+         JT1A==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Ni1PnkhALeXQ2TKGb61pL/ucM9VtSuVdQgcU8/5QYzb8Cfu8JrSha6cE1nhPBNBnO7N2A+FhLUZeaNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIfxibrCzCyrmHceu/4V5r8KujCZ+hpgvgv/2dtb/vNm1ZYkOa
+	zZF66F7f74g//rXFjMkG+xx+5JCkOx+OeVIR0hFBOHFNB/9amPrA0242SabQakDrNEypVsgUjqN
+	SM1ngjAJBiW036j2JdA==
+X-Google-Smtp-Source: AGHT+IGge7y5ElnicFlN3+NEM1B7QPLLGE3Z15cYGDjK/uvYJ2qkxfQ4JRz7kneBOslFx2scA53r9xy1yTZQK1I=
+X-Received: from wmwc7.prod.google.com ([2002:a05:600d:62c7:b0:470:fd92:351d])
+ (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:670a:b0:45d:d97c:236c with SMTP id 5b1f17b1804b1-471179017f3mr91705375e9.21.1761000198080;
+ Mon, 20 Oct 2025 15:43:18 -0700 (PDT)
+Date: Mon, 20 Oct 2025 22:43:17 +0000
+In-Reply-To: <87ikgieiar.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <225134fd-033f-4d63-b88c-772179054694@intel.com>
+Mime-Version: 1.0
+References: <87ikgieiar.fsf@trenco.lwn.net>
+X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
+Message-ID: <20251020224317.723069-1-sidnayyar@google.com>
+Subject: [PATCH v2 00/10] scalable symbol flags with __kflagstab
+From: Siddharth Nayyar <sidnayyar@google.com>
+To: corbet@lwn.net
+Cc: arnd@arndb.de, gprocida@google.com, linux-arch@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, maennich@google.com, mcgrof@kernel.org, 
+	nathan@kernel.org, nicolas.schier@linux.dev, petr.pavlu@suse.com, 
+	samitolvanen@google.com, sidnayyar@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 20, 2025 at 03:09:41PM -0700, Dave Hansen wrote:
-> On 10/20/25 13:40, Pawan Gupta wrote:
-> >> I can’t speak to other VMMs (e.g. vmw, hyperv, hyperscalers) and how they do
-> >> it, but I suspect there are similar challenges around post-launch feature/bit
-> >> additions that require the VM to be completely cold-booted.
-> > Ok, that makes BUS_LOCK_DETECT a better choice than BHI_CTRL. I think it
-> > be better to replace BHI_CTRL with BUS_LOCK_DETECT.
-> 
-> Folks, I just think this kind of random feature spaghetti voodoo is a
-> bad idea. Suppose X86_FEATURE_BUS_LOCK_DETECT is in silicon on an
-> affected part but normally fused off. But a big customer shows up with a
-> big checkbook and Intel releases microcode to enumerate
-> X86_FEATURE_BUS_LOCK_DETECT on an affected part.
+On Mon, Oct 13, 2025 at 8:02PM Jonathan Corbet <corbet@lwn.net> wrote:
+> Siddharth Nayyar <sidnayyar@google.com> writes:
+> > This patch series implements a mechanism for scalable exported symbol
+> > flags using a separate section called __kflagstab. The series introduces
+> > __kflagstab support, removes *_gpl sections in favor of a GPL flag,
+> > simplifies symbol resolution during module loading, and adds symbol
+> > import protection.
+>
+> This caught my eye in passing ... some questions ...
+>
+> The import protection would appear to be the real point of this work?
 
-Hmm, right.
+Yes, import protection prompted the introduction of __kflagstab. But I
+would agrue that __kflagstab in its own right is an improvement to the
+overall health of the module loader code, therefore can be taken even
+without import protection.
 
-> What then?
-> 
-> Your only choice is to convince Intel to make architectural the idea
-> that X86_FEATURE_BUS_LOCK_DETECT is never enumerated on an affected part.
-> 
-> Because even if we go forward with that patch we've *DONE* that in
-> Linux: we've made it de facto architecture and Intel can never change it.
+> But it seems that you have kind of buried it; why not describe what you
+> are trying to do here and how it will be used?
 
-Using BHI_CTRL here was in agreement with CPU architects. Even though its a
-heuristic, it is very unlikely to be broken by a microcode update.
+Point taken. For sake of clarity, import protection is a mechanism which
+intends to restrict the use of symbols exported by vmlinux to signed
+modules only, i.e. unsigned modules will be unable to use these symbols.
+I will ensure this goes into the cover letter for following versions of
+the patch series.
 
-I can't say for sure about BUS_LOCK_DETECT.
+> I ask "how it will be used" since you don't provide any way to actually
+> mark exports with this new flag. What is the intended usage here?
 
-> Can someone try to boil down the problem statement for me again, please?
-> 
-> 	VMs are slow because of mitigations for issues to which they are
-> 	not vulnerable when running old kernels on old hypervisors.
+Patch 09/10 (last hunk) provides a mechanism to enable import protection
+for all symbols exported by vmlinux. To summarise, modpost enables
+import protection when CONFIG_UNUSED_KSYMS_WHITELIST is set. This
+results in all symbols except for the ones mentioned in the whitelist to
+be protected from being imported by out-of-tree modules. In other words,
+out-of-tree modules can only use symbols mentioned in
+CONFIG_UNUSED_KSYMS_WHITELIST, when the config option is set.
 
-From what I understand:
+I realise I should have documented this behaviour, both in the cover
+letter as well as in kernel documentation. I will do so in the following
+version of the patch series.
 
-  Unless a VM is cold-booted, it cannot see the new features/immunity bits
-  exposed by the hypervisor. In this particular case, a guest gets the
-  updated kernel with ITS mitigation, but can't see the immunity bit unless
-  it is cold-booted.
+Please share any feedback on the mechnism to enable the mechanism. In my
+opinion, CONFIG_UNUSED_KSYMS_WHITELIST has a complementary goal to
+import protection and therefore I felt like using the option to enable
+import protection. In case this seems to convoluted, I am okay with
+introducing an explicit option to enable import protection.
 
-  The other part of the problem is when host kernel/hypervisor is not
-  updated. In this case immunity bit is not exposed to the guest at all.
+> If I understand things correctly, applying this series will immediately
+> result in the inability to load any previously built modules, right?
+> That will create a sort of flag day for anybody with out-of-tree modules
+> that some may well see as a regression. Is that really the intent?
 
-My 2 cents: All of this makes me feel the instead of exposing the immunity
-bit, a guest should be told about the bug presence. That way security
-minded users who update regularly get the bug enumerations, and hence the
-mitigations. OTOH, performance focused users who don't update/cold-boot
-often don't get unnecessarily slowed down.
+Unfortunately this series will break all modules which export symbols
+since older versions of such modules will not have the kflagstab
+section.
+
+Out-of-tree modules which do not export symbols of their own will only
+fail to load in case the CONFIG_UNUSED_KSYMS_WHITELIST is set and the
+symbols which these modules consume are not present in the whitelist.
+
+Regards,
+Siddharth Nayyar
 
