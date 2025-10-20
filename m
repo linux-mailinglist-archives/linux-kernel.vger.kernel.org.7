@@ -1,86 +1,132 @@
-Return-Path: <linux-kernel+bounces-860515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D6ABF04D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCCDBF04DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320D1188F7C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5C8F189B855
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC2E23D7EA;
-	Mon, 20 Oct 2025 09:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CD723C8A0;
+	Mon, 20 Oct 2025 09:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mWcRVKqq"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DU44KOEC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D7E1E9919;
-	Mon, 20 Oct 2025 09:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F4A18FC86;
+	Mon, 20 Oct 2025 09:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953741; cv=none; b=Xvl4NXb1EN/puaiFEAnGg41So/C6y9DcPG65LCpZzgigbcQIvmNgmK9jy13+8aEmpiXfCji9U5PYAVLjHPFZSdj3KqqJSxCAnAx0UcA1vCI3z3Io5R7MRzeyPMx3PyLaP07B3p13zzqaNVWCVkMczeWQKAYtBCEscpMKTE1rKas=
+	t=1760953761; cv=none; b=Zg+PDJG3QWC1sXVuhri7Sp6SA3pKGIHvlNF6NPJfLsZUnu/WRv4yl7hPQTCsWrWyJNpJk4M8j6Tu+M+Vg1VpOCdUdbYqrcQoSZtJM136RhYYkYCIY9qrWdp9tFq/pOWUsZ6syQ1xcxMnBtbE/Tez8HUDwX7C7WLXSovptVN9yjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953741; c=relaxed/simple;
-	bh=ek7hXcjHfSQNfshdtQ9VuzGH6TYTSrmvRDEFyQJSzMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TpGWUR/Dn8eEjpH2obsKhFRDxaLtHv6koYyG5W57T2EsOJN+8Upb8XxXsjo4HA6e6Gsw89/HrFCoT5MzR0ZAEKGQFxAx/PdNbSJR+5gy48CtM3D9tjo9lTqMhi9/yTmmxPU/V+EV8zb/9jemejI767sN/tDzNh2kQTz3k4FCQlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mWcRVKqq; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ek7hXcjHfSQNfshdtQ9VuzGH6TYTSrmvRDEFyQJSzMY=;
-	b=mWcRVKqqug1bMs4Cgl7P9GItTyL3VXvC38rpN+vmjwC9emt/RfOm5zkq58oU2V
-	8e5iF29jzuwua1M9BAW0/vuWmGimqQYPl00w804ktNcu5Ndiri/pqFJAZZUqH8gy
-	AdYRCTt+6ourUYnq4VtJK1M4rM8BmN1X8uD9cmckPzSbY=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDX54tJBfZoTepRAA--.25208S3;
-	Mon, 20 Oct 2025 17:47:54 +0800 (CST)
-Date: Mon, 20 Oct 2025 17:47:52 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <bence98@sch.bme.hu>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Andrej Rosano <andrej.rosano@reversec.com>,
-	Andrej Rosano <andrej@inversepath.com>
-Subject: Re: [PATCH v2 2/8] ARM: dts: imx53-usbarmory: Replace license text
- comment with SPDX identifier
-Message-ID: <aPYFSKQ3T3I4VTff@dragon>
-References: <20250814-imx-misc-dts-lic-v2-0-faff7db49a5f@prolan.hu>
- <20250814-imx-misc-dts-lic-v2-2-faff7db49a5f@prolan.hu>
- <aMKEF4wAeET3Ntus@stjenka.localdomain>
- <78cae034-77a3-43bc-87c1-18344d5ba8c8@sch.bme.hu>
+	s=arc-20240116; t=1760953761; c=relaxed/simple;
+	bh=rY/ExjFftFDDfWSv0SQkHYyd2IdhRXA45VozZtzHka8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=XWfUNJYTjuDNKnm1MTxTg/LtNx8MXIPeNov8hfK6o96+MDwHDbsJNmG/OfHwJY94u7FVJqHo8PJfWIxb2XuPEy68l5wNNR21QkyuJVCLYeSOwggVTNBykIMJ1jd9tKoAj2j3aLEqAK5DziST6XbKQhDOqrz01QDSPi2IVB3R1qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DU44KOEC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5965C4CEF9;
+	Mon, 20 Oct 2025 09:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760953761;
+	bh=rY/ExjFftFDDfWSv0SQkHYyd2IdhRXA45VozZtzHka8=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=DU44KOECbzAOPXTVRKloPNpamKj2IcG+d8xgIRA7p9CmGuvwxZn0Fh7TL/GZzzXJu
+	 Th3fY5jK6X4FieCg08u2Wt+lxXGziU6zv8I7jTjMULBMah/tva/x9CbRIdK/JEJ5Yj
+	 RXNnaJkJqNcusgROd75MGXwnww8dnGHyyVU2VnnDTAGUVOAtAExO6Pr9aWRmpNcfuq
+	 SBY1DXoxEAim0yVOeGpVyKMIOFXvisIKQLji4w+ekw0PnsLpslLYmohiXv4Z2VdaaO
+	 CCovoBEYx6+HKx190GsgWkjmW7jBKSvL0/qWWUdpLCDeU0ZJivIG49Twu2wfhDOpmQ
+	 7JUOs0J3HqOng==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <78cae034-77a3-43bc-87c1-18344d5ba8c8@sch.bme.hu>
-X-CM-TRANSID:M88vCgDX54tJBfZoTepRAA--.25208S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUx2YLDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIgsrkGj2BUvImwAA3R
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 Oct 2025 11:49:17 +0200
+Message-Id: <DDN20C4Z22X3.2ML01WB1HRDRI@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+References: <20251003222729.322059-1-dakr@kernel.org>
+ <20251003222729.322059-4-dakr@kernel.org> <aPI9tNoh0I3KGDjl@google.com>
+ <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
+ <DDKOLD1897SY.84W93E6L8ITR@kernel.org> <aPSzE7DpA7DxTHmm@google.com>
+ <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org> <aPXu0FWUrbxyemPq@google.com>
+ <DDN1TL0WE895.1R5Z8AR975ZJH@kernel.org>
+ <CAH5fLgjw4cZ3Y3Z60v8Wtp1EsR3AjyopJBE-UzZH5H3qkFrWmQ@mail.gmail.com>
+In-Reply-To: <CAH5fLgjw4cZ3Y3Z60v8Wtp1EsR3AjyopJBE-UzZH5H3qkFrWmQ@mail.gmail.com>
 
-On Thu, Sep 25, 2025 at 06:44:37PM +0200, Bence Csókás wrote:
-> Would it be possible to partial-apply just this patch? Or should I maybe
-> resubmit it alone? The patches in this "series" are not really related after
-> all.
+On Mon Oct 20, 2025 at 11:42 AM CEST, Alice Ryhl wrote:
+> On Mon, Oct 20, 2025 at 11:40=E2=80=AFAM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+>>
+>> On Mon Oct 20, 2025 at 10:12 AM CEST, Alice Ryhl wrote:
+>> > On Sun, Oct 19, 2025 at 02:01:03PM +0200, Danilo Krummrich wrote:
+>> >> On Sun Oct 19, 2025 at 11:44 AM CEST, Alice Ryhl wrote:
+>> >> > On Fri, Oct 17, 2025 at 04:53:09PM +0200, Danilo Krummrich wrote:
+>> >> >> On Fri Oct 17, 2025 at 4:37 PM CEST, Danilo Krummrich wrote:
+>> >> >> > The reason I went with a trait is because that's consistent with=
+in the file.
+>> >> >> >
+>> >> >> > Otherwise, I don't mind one or the other. If we always want to u=
+se a struct, I'm
+>> >> >> > fine with that. :)
+>> >> >>
+>> >> >> Actually, there's another reason I forgot about since I sent the s=
+eries. :)
+>> >> >>
+>> >> >> We need it because we derive it from blanket implementations:
+>> >> >>
+>> >> >>   impl<T: BinaryWriter + Sync> BinaryReadFile<T> for T
+>> >> >>   impl<T: BinaryReader + Sync> BinaryWriteFile<T> for T
+>> >> >>   impl<T: BinaryWriter + BinaryReader + Sync> BinaryReadWriteFile<=
+T> for T
+>> >> >
+>> >> > You can still use a struct:
+>> >> >
+>> >> > struct BinaryWriterVtable<T: BinaryWriter + Sync>;
+>> >> >
+>> >> > impl<T: BinaryWriter + Sync> BinaryWriterVtable<T> {
+>> >> >     const VTABLE: bindings::foo =3D ...;
+>> >> > }
+>> >>
+>> >> Yeah, but do we get something for adding yet another type in this cas=
+e?
+>> >>
+>> >> Another point to consider is if we want a more generic fops abstracti=
+on type.
+>> >>
+>> >> In any case, I'd like to add this as good first issue for the whole f=
+ile to be
+>> >> changed accordingly.
+>> >
+>> > Yes, keep it as-is for consistency with the rest of the file, even if
+>> > the file is inconsistent with the rest of `kernel`. Please go ahead an=
+d
+>> > file a good-first-issue for this.
+>>
+>> Before doing so, can you please answer the question above? While I'm all=
+ for
+>> consistency, in this specific case it seems we'd need another indirectio=
+n for
+>> that. And I'm not convinced that's an improvement.
+>
+> The choice is between adding a new type or a new trait. There's no
+> intrinsic advantage to choosing either one, but the rest of `kernel`
+> chose "new type" over "new trait", so it makes sense to be consistent.
 
-Applied, thanks!
-
+My hesitation came from the assumption that we'd need another type (additio=
+nal
+to the existing trait). But we can indeed replace it, so that's fine.
 
