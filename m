@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-861374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D754ABF2913
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:59:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8BDBF2943
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 350A934D30B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:59:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B5D44E79CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB54330308;
-	Mon, 20 Oct 2025 16:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC3B33033F;
+	Mon, 20 Oct 2025 17:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MeKcGWor"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIW234R9"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90202638BF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C85330B2C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760979537; cv=none; b=cS6pfqoeLQQin3ehXDF5XXDvSjz2VDqP5BsyRgVK70lU2DwHYGOBA1xRaXk/CfGZhp2UaBGxkOb5FDaI8Yb0WXQsyAGmZJqeaL5Zqc9uy/dggQeg+Fa490fXkgjMHGTldeWyjig90gBFRE75EjQE3PFwkkJ+hvOLv7AZsMXf+HY=
+	t=1760979611; cv=none; b=EdNah7hSYq74kp+E8lwQMxuctNJjtRnnHUl5ITpmggkceAOXgCR89hrtRS0IDPY0siO32Qu2XRk99heO7l7T4hYL2U76jwJya2D35+Zne5c4XX9+Lj435wuXyLqtY6dVJwMA2OmuVGwIJTmlDInXh2wggfR1AXIxFibzqS+wt4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760979537; c=relaxed/simple;
-	bh=4bQ5dGdI37+mKtm3nyfRFem5GeQNndtwmqJv6QZC4X0=;
+	s=arc-20240116; t=1760979611; c=relaxed/simple;
+	bh=EXc0jOYLRmr/3jRYSk2fLCR4EdRJhtPN83IRY/bFlt8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V9PWi9uz+qmx+qbNhecAfStfFHh08FT0GcxjSV+vH3ciZhU+h7ugzkVNwQw0wkngnp7i/6v+i404LWfH+Efd6zA7wcW1lP3NJcAH2N5VubYnQYPc5C1fr+Z1Jgz6K7OzbO2NQUWFE3UwtLnqW4M3E9fM56eT7e/UwspgCKhoe18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MeKcGWor; arc=none smtp.client-ip=209.85.219.54
+	 To:Cc:Content-Type; b=Wo59KmH6SGisLljwhfWM9F4Gis+1CoRqKXDAnk0Sk/UAjWj8XC+pHuNsRsqEYMoyzbEvtnGHSFwHkwsMgtQ1ojPAWto3a3AvnXKZaPpd9sQEy6LxvcUKIGGyms+p5Qy3UYnZHZKW3B8OhVBdfPatS10PKM+qCtFq8K3ATMgyYQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIW234R9; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-87c167c0389so74437756d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:58:55 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-81efcad9c90so84393516d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760979535; x=1761584335; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760979607; x=1761584407; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WgsdylpKUJQfQkBSHP7xg/RD79zsocybv4Uh09OP8R0=;
-        b=MeKcGWoro02/4Eg8K9LVgB9EI6XZMMdkvBezzHR9H/bq9oKo86d4lpqZvjhBJ4YivJ
-         NxtjUsp/enHfGZ84xtDNbbxfwcKknwJn5Io2fXOOnH0rQEegINY/LgyoufTcPT/0xokX
-         0GG2Xwx4aHoFNuKl4RjCSkjLMjxLPsafu7+uuLzGA2Mnqq5V1gODvnaZm7eAg4CSn92h
-         d1V6kLk1YSbTQ3dGYsWAyGgkfgscH+9/izwj+XbtiwbeCp93/VZj0FOQVlqfghWzBp8/
-         Brv5Mq9fdgx7dRk67pWdFRh4Z64J1UTKhYhxNP1DBy7iRKGWRItJQnbawzA5fE6IZw/e
-         A3LA==
+        bh=4RSN4YFTB3br2+B3ySD6exiSoPsxEwCTC80by1DxrCk=;
+        b=QIW234R9WrrlKJk2HVXisGbrYjBI/eH9cDZ6nuGqUJb351Dw9HZMBHEWsS0MhTrkRk
+         yl87JgGgm6rlD/1yygbS30JSKHQ/6z07pgw/4HxYa4TfOwXcgSS4qqVZO7F33j3IFG9b
+         b0p22vkt/1RGvQt4WwxJI80tKU9I0tQhTUVyAsvc5IazWbvRl4LqkJZCyeakz5DwLzg0
+         j8RncyqIdyh5eUWp04kAy1pV71aDeGRTVHw5gZxfXeWNAuk+GsL0OhCu4gylJtZfXNlI
+         ty4l/DrsXepycl2SgRP8hC2kIqc86eYHioc79PuPoy5csO+El7od88krnQtlRk+lc3Ba
+         bqNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760979535; x=1761584335;
+        d=1e100.net; s=20230601; t=1760979607; x=1761584407;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WgsdylpKUJQfQkBSHP7xg/RD79zsocybv4Uh09OP8R0=;
-        b=xJHBboapLhie2wrgNJ4e0z1rWb33Yp1vvBFfm32thIRiTQvjyMHHXeEZE80/oK7GtF
-         pVUdG88fqkjoWpMfK7ZhuWllXEQ9qo5Zubmg8lG3zq744vYMB6Hxmr7Z7zu6/hLsY6eG
-         0n0aCmFpvOuQjj6DV9Waq5yzvcTiJYm5b0FMNcojyKDF0p0bo2+OCt4Vf1IzwE66sNRP
-         fPJ6pSsbE5KPopKg2F4cvWPfzd2sC/UZ+yC33NClal+NPu0yPB48EZKn6vv/PU2lMpOA
-         aFpYFMU9U9ZP+eOd0U+CXjrFrKPhfxV97X4xfK6msiWcKE+ViwskJI4oZTe+dEzqU+Kf
-         003g==
-X-Forwarded-Encrypted: i=1; AJvYcCWgQien7XB6tFy2lmwcn5Vv9jNIy0jFcgN0SN3mRsQiUTr9elZPqg6FCylL7L1IYs1cIDPXi92S0j6F8OI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNoYCDNGuH5CF+nip3LBSKGiNsOiijQ6g0RPFJBm63LLmo6EUW
-	6VHEUNVyX/gHxTvEBN+Bs903ZoP0WnEdPYOaJ+YtIRDG2lNzLr1l8T8g7TPDqBkeOI/Y81xxphf
-	P+HcHQbfVYfzp4wi5d3DerK5vrD5Jw6Y=
-X-Gm-Gg: ASbGncvJ30KQOqcjpN98/UlWt4x7sbzKacaxZAP2BkOjiHTxS6v5TvEWKsVYe1jxAza
-	Tmr7OnQgN4OjplpJa3EC/xFmYU+i/8Uv5HOFGY1ZmKDyhjtFWDG9HSDJIQrjDKiAIg1BHWjSCYf
-	x94/b34FbOFQlphrrfWSl+EebQYU+EeSHuPu3ww4vsEmDm01uWssHS3QxxO35EPJ0zwZ7MObZ2y
-	EFac0j22azvqgR4bTRmKblpdgzK8XQt+SicGU8ndNIMaI4u+Z4ddilxl5Po+e8YSToO1toPW2TB
-	aszYDIVbpCcN/kclA8ESjdG4Nuv4ENQPcY1n8tDQyJDJNOyS9pz0sevEQNWiDHHX129E+V57k6C
-	wgfRV/hkDxxo24vNTe6/Fpamm49OxtsWan26HrjwP4CHAHMnO40j2YodIWdMrMg4NXHRBZpcfmy
-	LSE6VtCxBV/lHoBPAFa8Zz
-X-Google-Smtp-Source: AGHT+IHbXFlV0wP4FY/uwKW9bu6aO+4kvfoixtYtWRosnhokGbPU8PEqiSlE80WY+IOyu6/479D4KFoQCxyPQIW+q5g=
-X-Received: by 2002:a05:6214:1c09:b0:87c:dffa:3291 with SMTP id
- 6a1803df08f44-87cdffa3562mr107155826d6.43.1760979534432; Mon, 20 Oct 2025
- 09:58:54 -0700 (PDT)
+        bh=4RSN4YFTB3br2+B3ySD6exiSoPsxEwCTC80by1DxrCk=;
+        b=PUc7SuPS69zEQPhWDM2gwmvErEq29jcNvHjvg+9zzZ7o3fipCm3Gebb5iARF8iFTXj
+         x9VyW9/hAn7/g6hs11RdIqaKUNfpPjb55a9pqWCNEK1gzYCxPPFFpU9xDsYweQmxm7C6
+         EXlMlSbXj8zIpICiEHPUtz+UvOQIYGRKNgl8PtR492//MyJvGo4NHvGhrRTfAl4+R+E/
+         yxKv+7xu8NAl3QXdYnxJPaBUTSyp3QDNmzY97yPCMtRt/8tZt1/Vc/J56Tm72/gUsgK+
+         Cy9aW8XdDY+UNYUfb+PrAC5gnGPUDtbfuNPZEjeyRBAXZ1DTD81/ZlFO4dmz9YpNCAoQ
+         9oJw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7cBOFJQzPvXJq8SUloAKyp0XA2vBTPVLS0c1i9HakvTmlKrD3Kw2y1es8mtJJOav0zrEHKm7b1AXpQM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgaWpNnJXcJcXG7FLTboQhL88kB+6ow7CtGfZVpMiMvpOYSgqL
+	tcPkVO0qTbf/Y97KN8w5PxjwX6yHZattXxyZn19COwfqlhxi/y/KQx25uCI1fkqnWRFTCR5Km2c
+	kLKHmHSYKjBoJ1LwRy+bzuTalzeoQqUkHeRDE
+X-Gm-Gg: ASbGncvobmDY8P+wPR/Wa/gh2XkFZ0FPq00bLB23sN8SG61VLflnP8Z8E8LJ0O/rJ9j
+	g26NY/h2+5MZc2HAVhwfsiR+Cgxwi785DANLxxOV8fMO1T1nZL+QjZ6YFDXCJ9gH8Akc7OtJZKI
+	pnDfXcW3IXgh0rwVDp41EjeTx1ArHCj4VsP2gZTutM66tu1aFk+jSa9aM1TjDLxHV8sQ9VzS9g/
+	ICINsho7W0WPxBxDYGAC+OLNwo7y7E5RCWhCVpYipJWTUwP5v6J+XhyvvRvuDpNxmIZWAYHn50t
+	T3Gr/dy4uFpzbaFqGbS9s/bi+xcK734LJbB5aFi4UfCvnPEmFMeFHHhulOqdRlZlfDL/MYjn6ZK
+	HtKoVUvEmsWY/in4B3Mcfx0OrCQwsx2BX64eSar+1zABwiXYqbx0DovhZ5ptjIrdf3CC55Soo31
+	g=
+X-Google-Smtp-Source: AGHT+IFHQ5iz8/Saro2LRp+bwSIlhkAJVCK9/l8+MswododraUp4Qz/LXmzQtrn4f2pjW8VxdwrV1XzKCjcqyAUk8lg=
+X-Received: by 2002:ad4:5cea:0:b0:86b:4ffa:a8b2 with SMTP id
+ 6a1803df08f44-87c20576935mr170951986d6.22.1760979607465; Mon, 20 Oct 2025
+ 10:00:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1006942.1760950016@warthog.procyon.org.uk> <vmbhu5djhw2fovzwpa6dptuthwocmjc5oh6vsi4aolodstmqix@4jv64tzfe3qp>
- <1158747.1760969306@warthog.procyon.org.uk>
-In-Reply-To: <1158747.1760969306@warthog.procyon.org.uk>
+References: <1039410.1760951767@warthog.procyon.org.uk>
+In-Reply-To: <1039410.1760951767@warthog.procyon.org.uk>
 From: Steve French <smfrench@gmail.com>
-Date: Mon, 20 Oct 2025 11:58:42 -0500
-X-Gm-Features: AS18NWCQzB81UKEefQM5CmQBxxIlIJnyDPWcumyA1Qwmkt85JWSyfbkHNlFn7yQ
-Message-ID: <CAH2r5mvOwmdcP_5kjC+ENgtooi06AuPvwBXrMnZrfy7_poAoFQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix TCP_Server_Info::credits to be signed
+Date: Mon, 20 Oct 2025 11:59:56 -0500
+X-Gm-Features: AS18NWB_wm78_JKAnPCw2RD98jnwlVQ7_i0H__VeQ2TBjimWfb0DUiLikj1O_Qg
+Message-ID: <CAH2r5mtLDTExHRhbr3yyK1Jm1Azq8PyN_TkWsf3gyEWVhybrnw@mail.gmail.com>
+Subject: Re: [PATCH] cifs: #include cifsglob.h before trace.h to allow structs
+ in tracepoints
 To: David Howells <dhowells@redhat.com>
-Cc: Enzo Matsumiya <ematsumiya@suse.de>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.org>, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pavel Shilovsky <piastryyy@gmail.com>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	Bharath S M <bharathsm@microsoft.com>, Shyam Prasad <nspmangalore@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, linux-cifs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 9:08=E2=80=AFAM David Howells <dhowells@redhat.com>=
+Do you have patches in process that will depend on this?
+
+On Mon, Oct 20, 2025 at 4:16=E2=80=AFAM David Howells <dhowells@redhat.com>=
  wrote:
 >
-> Enzo Matsumiya <ematsumiya@suse.de> wrote:
 >
-> > Both semantically and technically, credits shouldn't go negative.
-> > Shouldn't those other fields/functions become unsigned instead?
+> Make cifs #include cifsglob.h in advance of #including trace.h so that th=
+e
+> structures defined in cifsglob.h can be accessed directly by the cifs
+> tracepoints rather than the callers having to manually pass in the bits a=
+nd
+> pieces.
 >
-> That's really a question for Steve, but it makes it easier to handle
-> underflow, and I'm guessing that the maximum credits isn't likely to exce=
-ed
-> 2G.
+> This should allow the tracepoints to be made more efficient to use as wel=
+l
+> as easier to read in the code.
 >
-> David
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Paulo Alcantara <pc@manguebit.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/smb/client/cifsproto.h |    1 +
+>  fs/smb/client/trace.c     |    1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> index 07dc4d766192..4ef6459de564 100644
+> --- a/fs/smb/client/cifsproto.h
+> +++ b/fs/smb/client/cifsproto.h
+> @@ -9,6 +9,7 @@
+>  #define _CIFSPROTO_H
+>  #include <linux/nls.h>
+>  #include <linux/ctype.h>
+> +#include "cifsglob.h"
+>  #include "trace.h"
+>  #ifdef CONFIG_CIFS_DFS_UPCALL
+>  #include "dfs_cache.h"
+> diff --git a/fs/smb/client/trace.c b/fs/smb/client/trace.c
+> index 465483787193..16b0e719731f 100644
+> --- a/fs/smb/client/trace.c
+> +++ b/fs/smb/client/trace.c
+> @@ -4,5 +4,6 @@
+>   *
+>   *   Author(s): Steve French <stfrench@microsoft.com>
+>   */
+> +#include "cifsglob.h"
+>  #define CREATE_TRACE_POINTS
+>  #include "trace.h"
+>
+>
 
-Interesting question - I do like the idea of keeping signed if it
-makes it easier to check
-for underflows but IIRC that hasn't been a problem in a long time (adding P=
-avel
-and Ronnie in case they remember) but more important than the signed
-vs. unsigned
-in my opinion is at least keeping the field consistent.
-
-I have seen a few stress related xfstests that often generate
-reconnects, so we may want
-to run with the tracepoint enabled
-(smb3_reconnect_with_invalid_credits) to see if that
-is actually happening (the underflow of credits)
-
-I also was thinking that we should doublecheck that lease break acks
-will never run out credits
-(since that can deadlock servers for more than 30 seconds as they wait
-for timeouts), even if
-"lease break storms" are rare.   Maybe we should allow e.g. lease
-break acks to borrow echo
-credits e.g. as minor improvement?
 
 --=20
 Thanks,
