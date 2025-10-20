@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-860727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D617BF0CB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0634BBF0CB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA91B3E3703
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FCD18A0DBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E23E2512E6;
-	Mon, 20 Oct 2025 11:19:47 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E52D254876;
+	Mon, 20 Oct 2025 11:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MaMM1T8k"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62001208D0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B390324886F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760959186; cv=none; b=Fru0xX8oO2BvWB4qvT5paeb5TYeF359NziAxeHI1kHU7ItTovXILHtIMTI8QEFiRoNLKUMLlsn2OoAUi8H/v9i9TkT8MC1D4QgeQ5owK1eyYoCD1/w4wipI4CbW5g5VKho4jRamnNgz55CLeFPwwqDPX3V+4ZjSRmI8SPaqsqR0=
+	t=1760959210; cv=none; b=V/KYcmhxWT9xfJFS7YZtwYxntPO82CvXS77fdmij0prYG55eY1FQbKx3G9d16c2cRKFGYNr6FZyjYjxzpucNr6M0B/KOmxkg4My9Y59EeFUGPZrSXu3RMNi1Tl7H5PM6jzzghdp+q5yizuqIK5dotTZcntsZkfHze7IpxzNNGDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760959186; c=relaxed/simple;
-	bh=4NHl9YWPCcB7bspdk1aKDQnvXbSyyNnmpsla0HGH8AA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qSIvnHK5FP4nDvhFqdIuQTMQZG3pA/8JwM11BJzbdVHE7zfMBsLOyqMz1U6XXgB8RkXxtSEZKBtVhpU+TSypn8YTgR2mHucfMLfaJ9BfuZp4985DRzJyH76NFRdmw1AV31aaJjXg+ukdnaNioFn4/v05Os2xmkgTbvgREfx8SpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so415394139f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:19:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760959184; x=1761563984;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7nHb2B3GUq/O0CwjxET7WjV0XZjmLvCfXvikWJUVss=;
-        b=szR3wRyCxcwPvCvP0w4YLH2PpoIxuQY9xVNb7dDCwZURb+KDneb71rAD7bwKrq62Eq
-         wV/yj/HJLXrWf8sDWqVwJZWMe2dZduH/BD8BANKkWpZAGLhiiGZmJiu4KvOlWbULOxNj
-         tKa6k4GpVfXoBBGZILMYVeLqztQhBa9rVpKOOuabWJlYXg89uP+nDBvl2IVPHot72FiG
-         1pFMcI8m+SSUpYCX2xNTydfTO09vnXK3/FL5ilZOs2YSEgiz0ikAX/YP/0gz82+VK/3n
-         uy3L13D2suT1scL0ky4+jrLN9WEdfN8jPg+9ZDwNfEdjjFmxYxqVj5vSCh6YUAbMM8cN
-         Knsg==
-X-Gm-Message-State: AOJu0Yw7806sWab9b96UsuEHZEt+PFB3iUZGUc3j1jftmClkj4qDmOgA
-	gO//madKQV0S0BIDh+PyH3B2Tpqx9Fp1Ul4FGPiFrZ3woSb0B6qI4NURP2obes81KNnAsKjnIL1
-	Di3pajnCEHBeGApVrltY/YpFarR0jP/E/Pj4SGqi7sstLg4UX96P9l3PcBaE=
-X-Google-Smtp-Source: AGHT+IEvlFX7yue1Ci/4T0X/rPe6ugXXwgmqTvXW2hVsKkdlCAlXi/g56WOMy1jE/PX6gBSUkQl1PMgv5WcpB3feB1Puz1MNcuwy
+	s=arc-20240116; t=1760959210; c=relaxed/simple;
+	bh=GbM499rYztmTo2pv+FqowS2W/5GxpHh/TTTctifhzfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=paw5pLB9vX7ZhMN+GBVvLVCFPHiLGrvihcqY33zGnK+/e5EjMOTDM6uNxPXFfA7AES0Knw57RODnuy/oW/QIqHYp7UJrWBxGPNJuJJ4XmDHCNH7HjSH24o05vb5LWYHbMQygLCdmb1/HpqNlyrPgAOK/YnB/PYsvlSRYbTpyL7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MaMM1T8k; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760959206;
+	bh=GbM499rYztmTo2pv+FqowS2W/5GxpHh/TTTctifhzfo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MaMM1T8k1/m2rJf1LXKMv2d2M8wMTD7/cJiEuzXtHLTudXpOZj6/9Tt1da9Ga1OUJ
+	 Dq776rdaXYJZDKpK4RuEJgkdjg+Pyn4wyzItHcv4GA5ZWM+WfTLjWuLeKdWmFL9bgw
+	 xgAEM9r9Ku9D23mQ3ZYGhgzmnnRXdXzdH6MYfG2v1Ls+Dejsf6A/iYMZmHAl4YyilR
+	 5nqu38/DlwHGBke2SXUc4sLBSajJ86AZBKVF5KjrTvTjIq6jjo+2K9t1ogg0hxAw1l
+	 RBYw24x6oj06R520r8Eo78QAAJDO5XAcwkJLQH5VIyzNTQdc83P16h0T9yYFVL04Ux
+	 GwQHs/ZbBkvZw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5E74A17E129E;
+	Mon, 20 Oct 2025 13:20:06 +0200 (CEST)
+Date: Mon, 20 Oct 2025 13:20:01 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: liviu.dudau@arm.com, steven.price@arm.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
+Subject: Re: [PATCH] drm/panthor: Fix potential memleak of vma structure
+Message-ID: <20251020132001.75ac7598@fedora>
+In-Reply-To: <6549faee-1633-427a-b7e8-3722808976f2@arm.com>
+References: <20251020085914.1276090-1-akash.goel@arm.com>
+	<20251020113029.1ec51806@fedora>
+	<6549faee-1633-427a-b7e8-3722808976f2@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1414:b0:940:d395:fb53 with SMTP id
- ca18e2360f4ac-940d395fcbemr606714339f.12.1760959184425; Mon, 20 Oct 2025
- 04:19:44 -0700 (PDT)
-Date: Mon, 20 Oct 2025 04:19:44 -0700
-In-Reply-To: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f61ad0.050a0220.91a22.0445.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, 20 Oct 2025 10:50:19 +0100
+Akash Goel <akash.goel@arm.com> wrote:
 
-***
+> On 10/20/25 10:30, Boris Brezillon wrote:
+> > On Mon, 20 Oct 2025 09:59:14 +0100
+> > Akash Goel <akash.goel@arm.com> wrote:
+> >   
+> >> This commit addresses a memleak issue of panthor_vma (or drm_gpuva)
+> >> structure in Panthor driver, that can happen if the GPU page table
+> >> update operation to map the pages fail.
+> >> The issue is very unlikely to occur in practice.
+> >>
+> >> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+> >> Signed-off-by: Akash Goel <akash.goel@arm.com>
+> >> ---
+> >>   drivers/gpu/drm/panthor/panthor_mmu.c | 4 +++-
+> >>   1 file changed, 3 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> >> index 6dec4354e378..34a86f7b58d9 100644
+> >> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> >> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> >> @@ -2081,8 +2081,10 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+> >>   	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
+> >>   				   op_ctx->map.sgt, op->map.gem.offset,
+> >>   				   op->map.va.range);
+> >> -	if (ret)
+> >> +	if (ret) {
+> >> +		kfree(vma);  
+> > 
+> > Calling kfree() in this context is probably fine, but I think I'd
+> > prefer if we were introducing a panthor_vm_op_ctx_return_vma() helper
+> > returning the vma to the preallocated array, and letting the deferred
+> > cleanup function free this up.  
+> 
+> 
+> Thanks for the quick review.
+> 
+> So need to do like this, where we search for a NULL entry to store the 
+> VMA pointer to be returned ?
+> 
+> static void
+> panthor_vm_op_ctx_return_vma(struct panthor_vm_op_ctx *op_ctx,
+> 			     struct panthor_vma *vma)
+> {
+> 	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++) {
+> 		if (!op_ctx->preallocated_vmas[i]) {
+> 			op_ctx->preallocated_vmas[i] = vma;
+> 			return;
+> 		}
+> 	}
+> }
+> 
+> 
+> Please let me know.
 
-Subject: 
-Author: clf700383@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-
-From 6dc2deb09faf7d53707cc9e75e175b09644fd181 Mon Sep 17 00:00:00 2001
-From: clingfei <clf700383@gmail.com>
-Date: Mon, 20 Oct 2025 13:48:54 +0800
-Subject: [PATCH] fix integer overflow in set_ipsecrequest
-
-syzbot reported a kernel BUG in set_ipsecrequest() due to an skb_over_panic.
-
-The mp->new_family and mp->old_family is u16, while set_ipsecrequest receives
-family as uint8_t,  causing a integer overflow and the later size_req calculation
-error, which exceeds the size used in alloc_skb, and ultimately triggered the
-kernel bug in skb_put.
-
-Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-Signed-off-by: Cheng Lingfei <clf700383@gmail.com>
----
- net/key/af_key.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 2ebde0352245..08f4cde01994 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3518,7 +3518,7 @@ static int set_sadb_kmaddress(struct sk_buff *skb, const struct xfrm_kmaddress *
- 
- static int set_ipsecrequest(struct sk_buff *skb,
- 			    uint8_t proto, uint8_t mode, int level,
--			    uint32_t reqid, uint8_t family,
-+			    uint32_t reqid, uint16_t family,
- 			    const xfrm_address_t *src, const xfrm_address_t *dst)
- {
- 	struct sadb_x_ipsecrequest *rq;
--- 
-2.34.1
-
+Yep, that looks good to me.
 
