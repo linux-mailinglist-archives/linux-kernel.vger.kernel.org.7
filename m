@@ -1,241 +1,271 @@
-Return-Path: <linux-kernel+bounces-860408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3398BBF0113
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:00:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F80BF0122
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8733A8C8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:00:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC583AC2D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1662EC55D;
-	Mon, 20 Oct 2025 09:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D142EDD75;
+	Mon, 20 Oct 2025 09:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ey7T6ny8";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ey7T6ny8"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010021.outbound.protection.outlook.com [52.101.84.21])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JQG6KNFP"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26985299AB3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.21
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760950799; cv=fail; b=jBLmRYlSSjy0IJCv61oQ4DaoRRQYMSsoZg3anOx/uihsbO2hIboyqz5IawtjHbIKGrQaxOaGdOhWTUvI7a5nDcpbEIGyrp6Yvb8hWl62M7YkzsIm55owjrAzFRNiAJ/xN4FjACCN+54yoS6cAHXvRqWQ9NlPS1hBLFv5pYudfrY=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760950799; c=relaxed/simple;
-	bh=WVU9jnObvGun1Oyi7Nt+XArwnFX22xHghK7dBtjKLvQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AycnC8t/wK9T1+Fd+vkgKhJjBZsXL5748WA605cOvl2nV6VuvUKBAUuAYcAdEAGnpzljWUQqlIhgIa4OJ9ZMxEUT50YfjWulloMVgbcH4CeJxEhS1kXfYVXrzaegFkjMmpmIFNhz8qtkV1m5a9MEiZAun1VMbX/qjWQaFgLMdOI=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ey7T6ny8; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ey7T6ny8; arc=fail smtp.client-ip=52.101.84.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=OKumbHuEGK3n9PhZxf7vCUyF5PCukSiBg2lIC4QL6bXDJfg6K1sJC0t8QveTlSZ4HtBom1jVjUDv3/aiDx8wmTJdef2ZPtLNIF+q/CYbH5OrFC0XcUaqw+KOoiAoNvXbst+idf7taV9upbRC/xr9QCg+CJwYF83dkRvA6kYr1yRXM94N8MVLvYiBm/X/41UX+5vMXgQrFBBMSJz9cbVsHJGhpXaokBOzd9ITbYGStCjoqXsz0SwHqJDjr8b2fTh0uCqLywpMhapvb+xyFpUoTRihtkZLWUyWwMH4S+ux0mWHpz0DAYmZhN3T/w/wlmolDcMzlUWgoEK+VBQSbb7/7Q==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5BJZ5DjRNXMrFWHg7VHmQXBMegt9/b8HwQlWVEpk2sY=;
- b=VM5uAXqyiAmPhLdA3yE8aYjSCzNJ5NSwHTyIN/VbPOzdxcGrTBcdlnU2VVA4vaJIzRK+Mrzs2+xocX6dN6OR1zJzzlntRDtw6eecw7d+PX2jWY9M/kiQUUm0493kjNl9DBQfPqGJUIR8gMrknLljiqorCwWZeNQ2xQTW6uBgFbPzsrtaFFc5EDRsyKx/uR6m8JOhXjXOdkvfLV760ar302ckc6O4odqNrJjB8ViGHlIbnkpESi5dmDoiM5HmG+HnSX2NFomrbpwia5Izj35k7nEZY0GUznuaQ27HWJ4Xt4uD/FpF9MuXAGLu5NK1jUfFMS9A1aHSpTdaBSCUcc7VbA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5BJZ5DjRNXMrFWHg7VHmQXBMegt9/b8HwQlWVEpk2sY=;
- b=Ey7T6ny8mVbfu5QraYxPvsxYC10uUXzvT7aY7G2JkPAlWSSgjfZ52P9lyLudV6eV1RyDPBN1qWT2p0UPoO+ul0wdTBa8TUKk9wZG23jacOTvxc5VkJd2mQl22/VBUGpX89rmSYRatX4EqJUw6w+kA7xYtrtaGb9XvYi2cdgjuv8=
-Received: from DU2PR04CA0312.eurprd04.prod.outlook.com (2603:10a6:10:2b5::17)
- by AM9PR08MB6036.eurprd08.prod.outlook.com (2603:10a6:20b:2dc::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 08:59:53 +0000
-Received: from DB3PEPF00008860.eurprd02.prod.outlook.com
- (2603:10a6:10:2b5:cafe::1a) by DU2PR04CA0312.outlook.office365.com
- (2603:10a6:10:2b5::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.16 via Frontend Transport; Mon,
- 20 Oct 2025 08:59:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB3PEPF00008860.mail.protection.outlook.com (10.167.242.11) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
- via Frontend Transport; Mon, 20 Oct 2025 08:59:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hsaZRADWuAvJYbuXHRdoySOcjHwESuqGuVPuPKhJzrA88Bhenc+dqvjnMwdDGEL1cY1Ed0ZkPWNlant3buWy8Gb5J+x5gQiidqkEAa63ahcIFjqwfhQcNWw9arx1v2rqoGdeLtoOddxfr4FiaCCl2+8KSPs7vqR2qwDppN04Gy+oZVlwNU7UhTk17II1SVh7ez8pymlWhEnA1CqNU+U/T278pxy9RAbE91k1s6Qhx9YUqPpMatpdg0fAxW5ub/bufByUxDkfjlXL4uG5nR2PR9rA/fe6Ec6p0xNEVfOWn0MCrV3XxpYjBYWXSkJkrVl/2sGlfJal4Pqsf3KVmij9WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5BJZ5DjRNXMrFWHg7VHmQXBMegt9/b8HwQlWVEpk2sY=;
- b=oZtdnls7y5+sUySMk1IDhbxZD4GHBqmpi4mcLGkVisE3NY0ZrCMKAxI2TrsXWtMZ002e9DDqCI1R2f4apKyM2QgkiX+Pa0Q86ixdW0V4wdcOYxIcb4HlEd5Sx+5WdyWpaC+uVkC9zI3UTRYHxDswAfWevCY9ME/dBlVJxQOWbjJTs6jTyf6E9rgl87lOjnuq4bfa7EhityNQdFh/EDWcMrtxFCUkLpczYVr34hQ1w0+h6+aG+1IP/fCpdG9K2nCQXZzLJbhf1JQ2k0MRgtT55YD8FnW1JAuO88eapsrBz9//cH87jZsqpiZkSbiHSq4GXgWwxfiGeCzNn/P7vNwT6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5BJZ5DjRNXMrFWHg7VHmQXBMegt9/b8HwQlWVEpk2sY=;
- b=Ey7T6ny8mVbfu5QraYxPvsxYC10uUXzvT7aY7G2JkPAlWSSgjfZ52P9lyLudV6eV1RyDPBN1qWT2p0UPoO+ul0wdTBa8TUKk9wZG23jacOTvxc5VkJd2mQl22/VBUGpX89rmSYRatX4EqJUw6w+kA7xYtrtaGb9XvYi2cdgjuv8=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB6982.eurprd08.prod.outlook.com (2603:10a6:20b:415::16)
- by AS2PR08MB8695.eurprd08.prod.outlook.com (2603:10a6:20b:55e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 08:59:20 +0000
-Received: from AM9PR08MB6982.eurprd08.prod.outlook.com
- ([fe80::5d5d:a4a7:198c:fbdd]) by AM9PR08MB6982.eurprd08.prod.outlook.com
- ([fe80::5d5d:a4a7:198c:fbdd%4]) with mapi id 15.20.9228.016; Mon, 20 Oct 2025
- 08:59:20 +0000
-From: Akash Goel <akash.goel@arm.com>
-To: boris.brezillon@collabora.com,
-	liviu.dudau@arm.com,
-	steven.price@arm.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	nd@arm.com,
-	Akash Goel <akash.goel@arm.com>
-Subject: [PATCH] drm/panthor: Fix potential memleak of vma structure
-Date: Mon, 20 Oct 2025 09:59:14 +0100
-Message-Id: <20251020085914.1276090-1-akash.goel@arm.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0137.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c4::15) To AM9PR08MB6982.eurprd08.prod.outlook.com
- (2603:10a6:20b:415::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03042EC54B;
+	Mon, 20 Oct 2025 09:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760950818; cv=none; b=Xc9ht3eILrHHM6NInZwBBi3gCxsXCtITr4hHWULSG4eWBMHj8wyliobgxNZ6jAuhVrNxw1RQ+C+cF+IEeArqIUoJEb6yBGts88mgZyHpavH5Ies9L2Rno0x5wVYf+RqKHUuniFI5Ww6AZ+XEjUQ5k9Iz+xHk7YO66cN8oYmO0b0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760950818; c=relaxed/simple;
+	bh=+jFZYr2kC50kCmKUrtMimyHdoYSmePtTF/KTisughUM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UxVZT+XqR/sUrcdJIiMupttSPsN3d3FYpbAjPf2s4zv2xdIZpgasUf7hfn/EkvH4WNMEoMppDU+om9ix0yMIXOzq97GU5gyy5BWrl1xVdnsr6jnyUDzQMIPXx8H/6iJT5jUChEFz4HTAGILPS2mxSETKaeJlvIDYQN/rPJRVtfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JQG6KNFP; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59K8Rxad030419;
+	Mon, 20 Oct 2025 08:59:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jVtDuk
+	Gw2n+ZaQ9mM67Eub+Cmf6GKijXyww7IL5m5bE=; b=JQG6KNFPOZWEVQxw/s7mYw
+	s0VtmOG4p67YOKBRlc3EiRKlYjwr03hMZBj8zlZYmkOSLPd8d0wQUTpkknDpHg6+
+	PC1XgYSPRTfSx/HaNzGc/xGZdqqyIlm1xZpIwOsMFgzi0cPpny4ItpMOsdQFjWnd
+	8RUTNCOY6wfRGEhugbqgw1pQ0FnqCKtF2q9NbC0gXzS7zz7pZOxWnpyNpARQqDfe
+	GmoA7jrs9tG3lLWUfSruC3oyowbQV4DBmnDBKB4gHzMVyV51+hxrAFqyh7aFELno
+	JDTGj0Q50eVBen1SyRlW0AZS9vfg956qBuejczuxh+mIK2Su/XjnCc06UqLbMm6g
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31byjhm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 08:59:52 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59K5cWtZ017061;
+	Mon, 20 Oct 2025 08:59:51 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vnkxn0ce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 08:59:51 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59K8xoBQ54067622
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 Oct 2025 08:59:50 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9595B58056;
+	Mon, 20 Oct 2025 08:59:50 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E984658052;
+	Mon, 20 Oct 2025 08:59:48 +0000 (GMT)
+Received: from [9.152.212.179] (unknown [9.152.212.179])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 20 Oct 2025 08:59:48 +0000 (GMT)
+Message-ID: <0f4776c0eac3c004d36677377525662d75752ebd.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 01/10] PCI: Avoid saving error values for config space
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Farhan Ali <alifm@linux.ibm.com>, Benjamin Block <bblock@linux.ibm.com>,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
+        mjrosato@linux.ibm.com
+Date: Mon, 20 Oct 2025 10:59:48 +0200
+In-Reply-To: <aPT26UZ41DsN5C01@wunner.de>
+References: <aOE1JMryY_Oa663e@wunner.de>
+	 <c0818c13-8075-4db0-b76f-3c9b10516e7a@linux.ibm.com>
+	 <aOQX6ZTMvekd6gWy@wunner.de>
+	 <8c14d648-453c-4426-af69-4e911a1128c1@linux.ibm.com>
+	 <aOZoWDQV0TNh-NiM@wunner.de>
+	 <21ef5524-738a-43d5-bc9a-87f907a8aa70@linux.ibm.com>
+	 <aOaqEhLOzWzswx8O@wunner.de>
+	 <d69f239040b830718b124c5bcef01b5075768226.camel@linux.ibm.com>
+	 <aOtL_Y6HH5-qh2jD@wunner.de>
+	 <bb59edee909ceb09527cedec10896d45126f0027.camel@linux.ibm.com>
+	 <aPT26UZ41DsN5C01@wunner.de>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB6982:EE_|AS2PR08MB8695:EE_|DB3PEPF00008860:EE_|AM9PR08MB6036:EE_
-X-MS-Office365-Filtering-Correlation-Id: f66a7336-e83e-4237-ebc7-08de0fb70896
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?GZmIylzBIHBKk2TaBaucBqUD/GW08Rz8Ti3niwxsawYfhvYia+tLP0WYj2N1?=
- =?us-ascii?Q?/fw+HLMnybZqL8CumLgj5oz8+pzO5vE8SonI3WugxovwmoPrLtqJF3QX8QkT?=
- =?us-ascii?Q?s8U1x8pPdENyeW++yjMikPaT3oDp5ZZHb/sLdflpClFs2mEqh8yFl0MO2/yi?=
- =?us-ascii?Q?Hzi2u4JB6j67B/2p0slfBSd33948Z82kX4+czvpaFObULDzJlc2sU5QyA8y0?=
- =?us-ascii?Q?TDxl1KSdVV/iEJpN4YDmpKRevLY4DzgLG/auFiCo8lZIbBVy9vHFfbGIMnXy?=
- =?us-ascii?Q?7axBYD3Xn6JvTOMSTE0LTmM0tUZOP4smGJrtYl4FAKTQ4/Rs2dYGrEuaZ965?=
- =?us-ascii?Q?l35lvJ617pZ2ALizN0IhY3Ayp6xo/JTOIjTn03cu/phsAm1bWqFOOUmbhoyy?=
- =?us-ascii?Q?eQLG98RgW1jrg8SJoro7FKauo1+pcP36JDwNcg1vPAel09pBuFInJOys4+kM?=
- =?us-ascii?Q?z2suRGNZekg1H4QZpodtVhpy96zLv45ZF7jjxLX4FYPqFc726p0Fap8zW0io?=
- =?us-ascii?Q?MFujtGoj70rnUlDMc/Am8qzzALhtGLWUgQXDN62Sq6CJAx1vAaaKPmP1W2R6?=
- =?us-ascii?Q?0SMb15uQyJzznU+SGNT0bYd0DsJX4CNqjBVQUJ5oG204agwbj77wz7seCJqV?=
- =?us-ascii?Q?hPXUUU6fz3jk/K5RIkDDnZhKJ0xbaBcPdQ+F5Kq0VGaBEU18g3JN37JUT0bx?=
- =?us-ascii?Q?+j6cPfZp79lPGgkuh0GZHBzs+sKVadkPlQQT8hYvS/Cqt8BauwlvCT+q1+Da?=
- =?us-ascii?Q?Z90cPzt2U/ZyE7XdjGO/8mEkaD1mX9jksHzX704VR3lxNkQmZV/3gsCcs4au?=
- =?us-ascii?Q?umypyNEMYby7FhUrCb/PQLXXiI2NjeMCX8mC8TuB/+B57Fkmpo0+TnLXfN0r?=
- =?us-ascii?Q?X7AzLVtWMdY8BEOI5NVR7ZJna0TMuBPYPEmelu3Cv31E08FonsXF1AhwuHT/?=
- =?us-ascii?Q?NBRsLXvgjC3ftJ6+BfPsWwAgERPqCp8KVoq/kfFgLRrs1ct9UhPfb4QM5i9D?=
- =?us-ascii?Q?BVnLMFSmrngDUZ4ugKkpawOcM7nbTb522bEAq1/hOa0Lb1x6c4wwRlmpTt9q?=
- =?us-ascii?Q?jWyF2g0ezma9FeqmXkxwLjSbFBkufVozHnuxe9bVVxLwZk7kpi6N2xg/nwfm?=
- =?us-ascii?Q?7ukzykTOKtpnW4Wc7L3VmAEvw0vgQq5mfQfIrUejoaQ7JYw8XaGz5Fvcch7e?=
- =?us-ascii?Q?icu9CGz1XBG0E79s7PpyGi/Z+QVHSOjQ3+qLGNlECD7VNy9vx0f0/YkBrNsE?=
- =?us-ascii?Q?M3AU6f7kiqv7pMl2+0SXyZNKPFfOVqD+1J3ZF8/S533qizG2/+GpO4JqGXKc?=
- =?us-ascii?Q?UMlWxgVQSNEU/CS9WgRfJhx1Vn9eZBJ44TfjBrCnwiurQggweb/92l4sAnhI?=
- =?us-ascii?Q?zV1PXSGIyUg3bX8hKNGTEZnhHsD2E+l7M9d1GlXBIdoOmgNn5TfwekFd7A73?=
- =?us-ascii?Q?lpal+bPSZc8IwyzVtHK1ebX7/5kyYYiQ?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6982.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB8695
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB3PEPF00008860.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	e60ed285-5bf8-48be-5c1f-08de0fb6f4e7
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|14060799003|35042699022|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iHnzLzRJWquWDX5V9DgbZAGPtUi/7q9ZU/3yB1t633SPXUSIyuHud4Ovk8Gv?=
- =?us-ascii?Q?BhDGbl11GSuR3mHorxsyku1iUjV1vMECdcfLZ0XjzY5KtGcGCNd2QGzT6wdV?=
- =?us-ascii?Q?uvFKprXsnGSBQHSdP+9OvegGWTR+Mkw+6TDbGJjAT+Y15arb3IJzw++Sw0GY?=
- =?us-ascii?Q?KFNApGjgUEGAl2iQVrmel1L5r02P/HBVOWRpSHO9f8iMmzNL6feTSCxhdrQn?=
- =?us-ascii?Q?g27tovlgUdrDIA2/I8V5LkAqtEYdN0Yt0C+lkSj+ji1kbDzizf2aT3X3YfXi?=
- =?us-ascii?Q?kn6wa4bxafr5Bglv8/Dzpph+Kwaayusvim8RALz5bC0RaqHeHgijAK27vhf9?=
- =?us-ascii?Q?tHmp3+8+neYxU1QifVCZIV3WQ3N0sEXRgAxk1pfjpI+95YZcrRW5LeMJxt6d?=
- =?us-ascii?Q?FIVEROKT/pfFtdjA3FgZf7vapc/L6thQ+ybs5wKkUkFTqPWQL++7aY8/Tq5G?=
- =?us-ascii?Q?MM5AL1cwTgctMabCiTrHHSLA8e2E4UQJzyoiSFdGUZC3Zo/3yYbU6V4BleDq?=
- =?us-ascii?Q?+vNB75emihey6t4jeYjx2Ebyj3kiit/83OzpQmWEYaaIHk2kW5xgsYmjwQ+m?=
- =?us-ascii?Q?5Pn2hTdRuym6Gu/bJT+IBcYJ5Xt19SQ12YdsrC8C1MFeIvzjruaRzGWVewD+?=
- =?us-ascii?Q?VLz7bTkejirPxjhu3QjuYHJCIQ/riQyu9tYx7mdT9TjUe36BaCMJHLZJhdkZ?=
- =?us-ascii?Q?mWjVirny9Wu1gOCbLdIZOzHpDWD1pLKlVF8xk9FZy32rD+Ien5c9ZI+C81or?=
- =?us-ascii?Q?QFwCDHQ8B84UF5ltob8Qiwak4wLReBFdi0ThT5/fC8eDOGUAYfk4iwMDNyLc?=
- =?us-ascii?Q?gXOmDGr7Liuz09H/19G+AxFcdnOO25J+X4qQS2ASlI7JFlrDQ20e6fxfkm3H?=
- =?us-ascii?Q?JdI0+41sEQPI6h6iGQv8seUUWvi3VgnSLCrQm1qaY9K1o7+6ssk+2SjxybvG?=
- =?us-ascii?Q?hUJUnpfJFcWRNXI5S+GTWZ3ZG1T/uVHlXRNE77lrsuol09tIwLnq2rTf+lU+?=
- =?us-ascii?Q?u11X+bqw8xcb3qEPk2Zkbohhg/2xv/a2En0cIzIrC0A0J01F85wgDrwlJrcL?=
- =?us-ascii?Q?reNcUw3K5xPMzoVl+ZRHreE5Wox9mlOz9RM4tDrWnow587X36XwI/CG4O+WF?=
- =?us-ascii?Q?5gx7cgEmA/VkYf8LYGck5KqV74+9T8QOdmCDY3M79jTJX+XMt0kP/Eap9G/p?=
- =?us-ascii?Q?K0rFTGRsu65UhyzXjx5YdnzOiO804JuP+5Bt6ob4ngcZ6/+ekcJYjTuaIRw3?=
- =?us-ascii?Q?Q3QB98jYF+pls8QpfwPmgUG1GJfc5mVbxvLWAYH9mPgUYSQfABE6mJRHHkZN?=
- =?us-ascii?Q?QEx5csWcU6rK7iovppqST+F9BF2qUoMH33HYXoV/F0m/7d64URKBjks+Z42p?=
- =?us-ascii?Q?BWydCRRt0rLTovC7xcawue+24B2XWHBnkyoUtxZNDZIbSt1qngf+q7LW2zBC?=
- =?us-ascii?Q?/0i+lAUSjFM2pytYMBz7ikTNgY1Sc/8uRNYTCboR5Mshyu0SvSEZD8pgCVO4?=
- =?us-ascii?Q?K6bBzd0gXsyQEdREtxwJKatVJHJyeAzhx3MIWQV36IY/gCf1DT44+nk5YI/2?=
- =?us-ascii?Q?ucPU8Q9+QOSe6sQnUYg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(14060799003)(35042699022)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 08:59:52.9750
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f66a7336-e83e-4237-ebc7-08de0fb70896
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB3PEPF00008860.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR08MB6036
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _-3epTCZB-2k-1SE1GlAsA-TZnRTMC0M
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXwDKNHQ2Uu4xz
+ BaCLEkEpxgHcVQ+taR54Qu0Wwde3D7V4ySmQ4vRRMmum8P/1yhYXQkHL5Wt8GEL0EVVwwuwgjbi
+ 8NiVz6oozJF5I/aZhIQrtim0BSrE4Z06gldNwF8TXedVWbuv5LnU0eTelfuctQQ4OrxDxlnJRgW
+ dEhh6n5gVGz1z78nNktCNF6wTu5jiz57kBghQwgP3ECm0NABZ14QLm8SdCo2sCi0HYA7LPRBcX1
+ TxzVKmRH4bnH14RFmfmIWF+75oQtbSwYV7pZe6EE1gdVDkNMXG5nhMvKGliiA6825fsOM4GSNjE
+ IVkPtQjTdLdAs/9YXC6o7Fr6ckEK5deZ97KSWoyEn+S/Yb/EI/yJJTmlezDpihWqAW95y5WFKQN
+ gzpC69uxboMsZJql4cBIt0ouOCrZOQ==
+X-Proofpoint-GUID: _-3epTCZB-2k-1SE1GlAsA-TZnRTMC0M
+X-Authority-Analysis: v=2.4 cv=SKNPlevH c=1 sm=1 tr=0 ts=68f5fa08 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=oXgQLIJDr0Oto5wQi3AA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-This commit addresses a memleak issue of panthor_vma (or drm_gpuva)
-structure in Panthor driver, that can happen if the GPU page table
-update operation to map the pages fail.
-The issue is very unlikely to occur in practice.
+On Sun, 2025-10-19 at 16:34 +0200, Lukas Wunner wrote:
+> On Tue, Oct 14, 2025 at 02:07:57PM +0200, Niklas Schnelle wrote:
+> > On Sun, 2025-10-12 at 08:34 +0200, Lukas Wunner wrote:
+> > > If you do want to stick with your alternative approach,
+> > > maybe doing the error handling in the ->mmio_enabled() phase
+> > > instead of ->error_detected() would make more sense.
+> > > In that phase you're allowed to access the device,
+> > > you can also attempt a local reset and return
+> > > PCI_ERS_RESULT_RECOVERED on success.
+> > >=20
+> > > You'd have to return PCI_ERS_RESULT_CAN_RECOVER though
+> > > from the ->error_detected() callback in order to progress
+> > > to the ->mmio_enabled() step.
+> >=20
+> > The problem with using ->mmio_enabled() is two fold. For one we
+> > sometimes have to do a reset instead of clearing the error state, for
+> > example if the device was not only put in the error state but also
+> > disabled, or if the guest driver wants it,
+>=20
+> Well in that case you could reset the device in the ->mmio_enabled() step
+> from the guest using the vfio reset ioctl.
+>=20
+> > Second and more
+> > importantly this would break the guests assumption that the device will
+> > be in the error state with MMIO and DMA blocked when it gets an error
+> > event. On the other hand, that's exactly the state it is in if we
+> > report the error in the ->error_detected() callback
+>=20
+> At the risk of continuously talking past each other:
+>=20
+> How about this, the host notifies the guest of the error in the
+> ->error_detected() callback.  The guest notifies the driver and
+> collects the result (whether a reset is requested or not), then
+> returns PCI_ERS_RESULT_CAN_RECOVER to the host.
+>=20
+> The host re-enables I/O to the device, invokes the ->mmio_detected()
+> callback.  The guest then resets the device based on the result it
+> collected earlier or invokes the driver's ->mmio_enabled() callback.
+>=20
+> If the driver returns PCI_ERS_RESULT_NEED_RESET from the
+> ->mmio_enabled() callback, you can likewise reset the device from
+> the guest using the ioctl method.
+>=20
+> My concern is that by insisting that you handle device recovery
+> completely in the ->error_detected() phase, you're not complying
+> with the protocol specified in Documentation/PCI/pci-error-recovery.rst
+> and as a result, you have to amend the reset code in the PCI core
+> because it assumes that all arches adheres to the protocol.
+> In my view, that suggests that the approach needs to be reworked
+> to comply with the protocol.  Then the workarounds for performing
+> a reset while I/O is blocked become unnecessary.
+>=20
+> Thanks,
+>=20
+> Lukas
 
-Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
-Signed-off-by: Akash Goel <akash.goel@arm.com>
----
- drivers/gpu/drm/panthor/panthor_mmu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yeah I think we're talking past each other a bit. In my mind we're
+really not doing the recovery in ->error_detected() at all. Within that
+callback we only do the notify, and then do nothing in the rest of
+recovery. Only after will the guest do recovery though I do see your
+point that leaving the device in the error state kind of means that
+recovery is still ongoing even if we're not in the recovery handler
+anymore. But then any driver could also just return
+PCI_ERS_RESULT_RECOVERED in error_detected() and land us in the same
+situation.=C2=A0And at least on s390 there is also the case that the device
+actually enters the error state before we get the error event so we
+could already race into a situation where the guest does a reset and
+the device is already in the error state but we haven't seen the event
+yet. And this seems inherent to hardware blocking I/O on error which by
+it's nature can happen at any time.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 6dec4354e378..34a86f7b58d9 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -2081,8 +2081,10 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
- 	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
- 				   op_ctx->map.sgt, op->map.gem.offset,
- 				   op->map.va.range);
--	if (ret)
-+	if (ret) {
-+		kfree(vma);
- 		return ret;
-+	}
- 
- 	/* Ref owned by the mapping now, clear the obj field so we don't release the
- 	 * pinning/obj ref behind GPUVA's back.
--- 
-2.25.1
+But let's put that aside, say we want to implement your model where we
+do check with the guest and its device driver. How would that work,
+somehow error_detected() would have to wait for the guest to proceed
+into recovery and since the guest could just not do that we'd have to
+have some kind of timeout. Also we can't allow the guest to choose
+PCI_ERS_RESULT_RECOVERED because otherwise we'd again be in the
+situation where recovery is completed without unblocking I/O. And if we
+want to stick to the architecture QEMU/KVM will have to kind of have a
+mode where after being informed of ongoing recovery for a device they
+intercept attempts to reset / firmware calls for reset and turn that
+into the correct return. And somehow also deal with the timeout because
+e.g. old Linux guests won't do recovery but there is also no
+architected way for a guest to say that it does recovery.
 
+To me this seems worse than accepting that even with PCI error
+recovery,  resets can encounter PCI devices with blocked I/O which is
+already true now if e.g. user-space happens to drive a reset racing
+with hardware I/O blocking.
+
+Thanks,
+Niklas
 
