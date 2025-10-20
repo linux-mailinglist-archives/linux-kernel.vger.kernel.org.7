@@ -1,255 +1,112 @@
-Return-Path: <linux-kernel+bounces-861380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60208BF294F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C1DBF295E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D864834DBC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:00:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F1C834DD83
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00BB330D42;
-	Mon, 20 Oct 2025 17:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C11274FC1;
+	Mon, 20 Oct 2025 17:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rH/0U3I5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2Luoy03"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBE4330329;
-	Mon, 20 Oct 2025 17:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107A0221F0C;
+	Mon, 20 Oct 2025 17:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760979637; cv=none; b=bPL0jBhDVYeDEuAdAWMd2MboyZrN5lXVfHPg8RFGJO/UTBRo5SO/EVt5ejmMX8gHcdgDlfEu4LvFqBQeCevZBKF96Ng+IR2Mc1yI3wpIHvr8Tp7+aMsthAM7PD2aOM9F/GikrzelqyrChzZzH3B1zUm8rLwLfb5Ep2d/z0W5BMc=
+	t=1760979712; cv=none; b=RRPJ6/kdftncGtiJ5s0F5QlAb1yfH5X2VQLi7mwHnE7ju15Prrq7o5g9tnpJKAtt+7qZuizCmJ4RUtMBiLaE3DDGPVNFu/o43HiSY4kEpndElWJjoDQNjvXujSyzFwhWEPCnlhEnUm/nwjS98NISp6k5Z9lutxzmKzPGa/gaKto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760979637; c=relaxed/simple;
-	bh=BU3E31v1tzbfSNTfzttdVX/zcrCKLPuxR+y2TXX47C0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fKAEvp4YumU7E671b9dfOivytTNsoHC+rtE05lP5mIJIhpwTvP9hmKoz3PNvPYSB6Mu/pdbRN+9pF5ZFYKIXJVtHaYwQLVtpN3Zu9MjBQsLRhIKIGMb47alcPl8UWnfcu+qfg4coCw9+KJDoL11mxe3+yB//WUmGkYyRBxxWsJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rH/0U3I5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE23C116B1;
-	Mon, 20 Oct 2025 17:00:35 +0000 (UTC)
+	s=arc-20240116; t=1760979712; c=relaxed/simple;
+	bh=VgEmpr+DPqtaWMUYgEbrJ98w8woA/zo2OlQgPflSiFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V6eiu/Mn2N5yS3xLbDBoxjL+/5Jv/9iJ2dCeRrBVpRZ5J1pvmMo6FE+jH+7k7/l/RvnAjRjhqw6Gds5h2rFihD5gBubznZbLVTcz2Byq5fcgnuTQ6XYvp+bn1TQYwToGK6T+BnYOXfUd0rIt0E4q41PDsQq890Slet8Hh79z6YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2Luoy03; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA178C4CEF9;
+	Mon, 20 Oct 2025 17:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760979636;
-	bh=BU3E31v1tzbfSNTfzttdVX/zcrCKLPuxR+y2TXX47C0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rH/0U3I59eKLObUfB/6bgVypw316c+hwH4CMBh1hcv8VJ8H6yogYx5PcmfmSGgOgi
-	 Ltmkcm4AGogUL8Kn7lN+qoMnAVV0khCe16lfAyj5VtLIhg4AF7kgjkMYdf0In+xJtN
-	 FjzaaPT6UP8pKUF3gzFYRQwRdsbnoIKIOVucWRWlZ8FiuJWAEsNsYkjGNFzLb98fwo
-	 5gDKG7hf2vv3TlrJMZ7RAGgZ/35Z6E95MtxHBKoNfepTCMVRJnZGeMbWXRTDKLHg81
-	 5VeMx3ZQdd9GoBV3X9ALrMqC8AR6X7Vpkk6XjJ1Ud19vG3uQbkDG2gcD841PpayDNz
-	 iaTdr6vseKAww==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: [PATCH v2 2/2] block-dma: properly take MMIO path
-Date: Mon, 20 Oct 2025 20:00:21 +0300
-Message-ID: <20251020-block-with-mmio-v2-2-147e9f93d8d4@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com>
-References: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com>
+	s=k20201202; t=1760979710;
+	bh=VgEmpr+DPqtaWMUYgEbrJ98w8woA/zo2OlQgPflSiFk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G2Luoy03EDvu0clu6JA7SA0dQOS29Zxvy2FtjX3BmEjnuWElr2tnDj+TnGhNjqJBl
+	 V0OWze8jjjiQrK7DmVWlxF+f+mf6BxyMI7ZBj9885uQYh2/g0ydLBJOvFsiAYcV2mo
+	 0K/QtBBU2nMZRWEzFpW7N+lJuPbXUT0xqZfc/tvXykWhoFoqT/LG0V9alenXD53fdA
+	 eTzBaFMJQg/Tz+pN62LBj835+TJ5h8Zlj8haoCbOOBTLs2ubHCfFJ2QbqG/ZeiQcls
+	 hKVx7VX7V26R2UtDjRpwkz5Aj3Q7bQ436rqxyvZVEIp9u5iT2m4y7G63Fw5L7ZKu1U
+	 csB0/weYKKYhA==
+Date: Mon, 20 Oct 2025 18:01:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: mmc: ti,da830-mmc: convert to DT schema
+Message-ID: <20251020-blimp-gravel-ca7f43294ac7@spud>
+References: <20251011-davinci-mmc-v2-1-355da3e25123@gmail.com>
+ <20251012-nickname-morale-e1e21796f1f1@spud>
+ <bffddadc-4235-4ccf-a0ed-7a0de68e2fbe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZoahM1thDyeEzw2g"
+Content-Disposition: inline
+In-Reply-To: <bffddadc-4235-4ccf-a0ed-7a0de68e2fbe@gmail.com>
 
-From: Leon Romanovsky <leonro@nvidia.com>
 
-In commit eadaa8b255f3 ("dma-mapping: introduce new DMA attribute to
-indicate MMIO memory"), DMA_ATTR_MMIO attribute was added to describe
-MMIO addresses, which require to avoid any memory cache flushing, as
-an outcome of the discussion pointed in Link tag below.
+--ZoahM1thDyeEzw2g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In case of PCI_P2PDMA_MAP_THRU_HOST_BRIDGE transfer, blk-mq-dm logic
-treated this as regular page and relied on "struct page" DMA flow.
-That flow performs CPU cache flushing, which shouldn't be done here,
-and doesn't set IOMMU_MMIO flag in DMA-IOMMU case.
+On Sun, Oct 19, 2025 at 07:28:49PM +0530, Charan Pedumuru wrote:
+>=20
+>=20
+> On 12-10-2025 19:05, Conor Dooley wrote:
+> > On Sat, Oct 11, 2025 at 08:52:07AM +0000, Charan Pedumuru wrote:
+> >> Convert TI Highspeed MMC host controller binding to YAML format. Define
+> >> 'clocks' and 'interrupts' properties to resolve errors identified by
+> >> 'dt_check' and 'dtb_check'.
+> >>
+> >> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+> >> ---
+> >> Changes in v2:
+> >> - Modified the commit message.
+> >> - Removed 'interrupts' from required properties following the old bind=
+ing.
+> >> - Changed the maintainer for the binding to "Conor Dooley".
+> >=20
+> > Bro, what? Where did that come from? I know nothing about this device at
+> > all. Find someone from TI to put there.
+>=20
+>=20
+> I checked for the compatible driver and found the author but no email add=
+ress, so can I add Ulf Hansson <ulf.hansson@linaro.org> to the maintainers =
+then?
 
-Link: https://lore.kernel.org/all/f912c446-1ae9-4390-9c11-00dce7bf0fd3@arm.com/
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- block/blk-mq-dma.c            |  6 ++++--
- drivers/nvme/host/pci.c       | 23 +++++++++++++++++++++--
- include/linux/blk-integrity.h |  7 ++++---
- include/linux/blk-mq-dma.h    | 11 +++++++----
- 4 files changed, 36 insertions(+), 11 deletions(-)
+What about the author of the original binding? In either case, the
+original author's email should be attainable from the commit history.
 
-diff --git a/block/blk-mq-dma.c b/block/blk-mq-dma.c
-index 4ba7b0323da4..3ede8022b41c 100644
---- a/block/blk-mq-dma.c
-+++ b/block/blk-mq-dma.c
-@@ -94,7 +94,7 @@ static bool blk_dma_map_direct(struct request *req, struct device *dma_dev,
- 		struct blk_dma_iter *iter, struct phys_vec *vec)
- {
- 	iter->addr = dma_map_phys(dma_dev, vec->paddr, vec->len,
--			rq_dma_dir(req), 0);
-+			rq_dma_dir(req), iter->attrs);
- 	if (dma_mapping_error(dma_dev, iter->addr)) {
- 		iter->status = BLK_STS_RESOURCE;
- 		return false;
-@@ -116,7 +116,7 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
- 
- 	do {
- 		error = dma_iova_link(dma_dev, state, vec->paddr, mapped,
--				vec->len, dir, 0);
-+				vec->len, dir, iter->attrs);
- 		if (error)
- 			break;
- 		mapped += vec->len;
-@@ -184,6 +184,8 @@ static bool blk_dma_map_iter_start(struct request *req, struct device *dma_dev,
- 		 * P2P transfers through the host bridge are treated the
- 		 * same as non-P2P transfers below and during unmap.
- 		 */
-+		iter->attrs |= DMA_ATTR_MMIO;
-+		fallthrough;
- 	case PCI_P2PDMA_MAP_NONE:
- 		break;
- 	default:
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 91a8965754f0..f45d1968611d 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -260,6 +260,12 @@ enum nvme_iod_flags {
- 	/* single segment dma mapping */
- 	IOD_SINGLE_SEGMENT	= 1U << 2,
- 
-+	/* Data payload contains MMIO memory */
-+	IOD_DATA_MMIO		= 1U << 3,
-+
-+	/* Metadata contains MMIO memory */
-+	IOD_META_MMIO		= 1U << 4,
-+
- 	/* Metadata using non-coalesced MPTR */
- 	IOD_SINGLE_META_SEGMENT	= 1U << 5,
- };
-@@ -733,8 +739,11 @@ static void nvme_unmap_metadata(struct request *req)
- 		return;
- 	}
- 
-+	if (iod->flags & IOD_META_MMIO)
-+		attrs |= DMA_ATTR_MMIO;
-+
- 	if (!blk_rq_integrity_dma_unmap(req, dma_dev, &iod->meta_dma_state,
--					iod->meta_total_len)) {
-+					iod->meta_total_len, attrs)) {
- 		if (nvme_pci_cmd_use_meta_sgl(&iod->cmd))
- 			nvme_free_sgls(req, sge, &sge[1], attrs);
- 		else
-@@ -762,7 +771,11 @@ static void nvme_unmap_data(struct request *req)
- 		return;
- 	}
- 
--	if (!blk_rq_dma_unmap(req, dma_dev, &iod->dma_state, iod->total_len)) {
-+	if (iod->flags & IOD_DATA_MMIO)
-+		attrs |= DMA_ATTR_MMIO;
-+
-+	if (!blk_rq_dma_unmap(req, dma_dev, &iod->dma_state, iod->total_len,
-+			      attrs)) {
- 		if (nvme_pci_cmd_use_sgl(&iod->cmd))
- 			nvme_free_sgls(req, iod->descriptors[0],
- 				       &iod->cmd.common.dptr.sgl, attrs);
-@@ -1038,6 +1051,9 @@ static blk_status_t nvme_map_data(struct request *req)
- 	if (!blk_rq_dma_map_iter_start(req, dev->dev, &iod->dma_state, &iter))
- 		return iter.status;
- 
-+	if (iter.attrs & DMA_ATTR_MMIO)
-+		iod->flags |= IOD_DATA_MMIO;
-+
- 	if (use_sgl == SGL_FORCED ||
- 	    (use_sgl == SGL_SUPPORTED &&
- 	     (sgl_threshold && nvme_pci_avg_seg_size(req) >= sgl_threshold)))
-@@ -1060,6 +1076,9 @@ static blk_status_t nvme_pci_setup_meta_sgls(struct request *req)
- 						&iod->meta_dma_state, &iter))
- 		return iter.status;
- 
-+	if (iter.attrs & DMA_ATTR_MMIO)
-+		iod->flags |= IOD_META_MMIO;
-+
- 	if (blk_rq_dma_map_coalesce(&iod->meta_dma_state))
- 		entries = 1;
- 
-diff --git a/include/linux/blk-integrity.h b/include/linux/blk-integrity.h
-index b659373788f6..aa42172f5cc9 100644
---- a/include/linux/blk-integrity.h
-+++ b/include/linux/blk-integrity.h
-@@ -30,10 +30,11 @@ int blk_rq_map_integrity_sg(struct request *, struct scatterlist *);
- 
- static inline bool blk_rq_integrity_dma_unmap(struct request *req,
- 		struct device *dma_dev, struct dma_iova_state *state,
--		size_t mapped_len)
-+		size_t mapped_len, unsigned int attrs)
- {
- 	return blk_dma_unmap(req, dma_dev, state, mapped_len,
--			bio_integrity(req->bio)->bip_flags & BIP_P2P_DMA);
-+			bio_integrity(req->bio)->bip_flags & BIP_P2P_DMA,
-+			attrs);
- }
- 
- int blk_rq_count_integrity_sg(struct request_queue *, struct bio *);
-@@ -126,7 +127,7 @@ static inline int blk_rq_map_integrity_sg(struct request *q,
- }
- static inline bool blk_rq_integrity_dma_unmap(struct request *req,
- 		struct device *dma_dev, struct dma_iova_state *state,
--		size_t mapped_len)
-+		size_t mapped_len, unsigned int attrs)
- {
- 	return false;
- }
-diff --git a/include/linux/blk-mq-dma.h b/include/linux/blk-mq-dma.h
-index faf4dd574c62..aab4d04e6c69 100644
---- a/include/linux/blk-mq-dma.h
-+++ b/include/linux/blk-mq-dma.h
-@@ -50,19 +50,21 @@ static inline bool blk_rq_dma_map_coalesce(struct dma_iova_state *state)
-  * @state:	DMA IOVA state
-  * @mapped_len: number of bytes to unmap
-  * @is_p2p:	true if mapped with PCI_P2PDMA_MAP_BUS_ADDR
-+ * @attrs:	DMA attributes
-  *
-  * Returns %false if the callers need to manually unmap every DMA segment
-  * mapped using @iter or %true if no work is left to be done.
-  */
- static inline bool blk_dma_unmap(struct request *req, struct device *dma_dev,
--		struct dma_iova_state *state, size_t mapped_len, bool is_p2p)
-+		struct dma_iova_state *state, size_t mapped_len, bool is_p2p,
-+		unsigned int attrs)
- {
- 	if (is_p2p)
- 		return true;
- 
- 	if (dma_use_iova(state)) {
- 		dma_iova_destroy(dma_dev, state, mapped_len, rq_dma_dir(req),
--				 0);
-+				 attrs);
- 		return true;
- 	}
- 
-@@ -70,10 +72,11 @@ static inline bool blk_dma_unmap(struct request *req, struct device *dma_dev,
- }
- 
- static inline bool blk_rq_dma_unmap(struct request *req, struct device *dma_dev,
--		struct dma_iova_state *state, size_t mapped_len)
-+		struct dma_iova_state *state, size_t mapped_len,
-+		unsigned int attrs)
- {
- 	return blk_dma_unmap(req, dma_dev, state, mapped_len,
--				req->cmd_flags & REQ_P2PDMA);
-+			     req->cmd_flags & REQ_P2PDMA, attrs);
- }
- 
- #endif /* BLK_MQ_DMA_H */
+--ZoahM1thDyeEzw2g
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.51.0
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPZq9gAKCRB4tDGHoIJi
+0gHNAP9omX2gwSwH6uEZFZVp/REqDzLbsEAfRlr96cKUgLRLWAEA5qs+d0xO7EdM
+kRwYqTGUqtoHaZc1jcHjkA40F9A5uQY=
+=7XgR
+-----END PGP SIGNATURE-----
+
+--ZoahM1thDyeEzw2g--
 
