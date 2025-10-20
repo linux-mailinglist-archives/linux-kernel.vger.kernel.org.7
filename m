@@ -1,62 +1,69 @@
-Return-Path: <linux-kernel+bounces-861135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16976BF1DDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:32:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9ACBF1E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5510407768
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:32:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC5EC4E8FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC68235360;
-	Mon, 20 Oct 2025 14:31:34 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAA71A239A;
-	Mon, 20 Oct 2025 14:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004D121CC60;
+	Mon, 20 Oct 2025 14:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mboxify.com header.i=@mboxify.com header.b="OwXPKfMY"
+Received: from mail-108-mta156.mxroute.com (mail-108-mta156.mxroute.com [136.175.108.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C7F1A0B15
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970694; cv=none; b=r/TMjHL1c0lknFzsQnfADVF9/qmwKaZQbYN0TieMLkz3U1RaM5l0Z6KkIz/ayXHjU+I84Uo64b0o6V3uMOUnoGg9LhhBniOvemmeFPaSsYkRQ/Vi4NE/pQpdeeYmDi41ZXMNoVD8mZKLR989nblGN8PUbI55pu/K/nLdJluoqL8=
+	t=1760970998; cv=none; b=DDXvcTmRLJzDYDje3Qq/FJDoK1V3pUB99gbzHALrtfFctLIJ/fU7lwMTmghxfBV97D8XpH3TfdLdKjGa3RB6gsZ+AT1HR0QshWWhk5p6xuIOj5vwTIoo8mgFEqO2XBloYCzF5pLBue1rIOcos8b2c4cAr/fQIzazpZY+GEG9Occ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970694; c=relaxed/simple;
-	bh=Bty+vvqO0kZ7CUd0Q2nqj5ngueUp9769n2FevdwMEyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fGxYKNxFVmm4UAcHjlSQsn8kV64xFRIfVAclN/Mu47HYDiHfuNUdLt1ybF0hC49Ycd76FyjUw8aGQAjXMVwEaBvUE5YXCNuQZ1Tyvvxh5xmNyQY4oibtotuOuNJ5zC/+DQCCXQGo8pI/CNnTy/4wbujRWv9SYIbImqq0r+vHsOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: qPnqo77zQLGKHJRIXyqJhg==
-X-CSE-MsgGUID: pMNaHPNaRwSsplcJ/xXfBw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2025 23:31:31 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.23])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 46A8F41CCD99;
-	Mon, 20 Oct 2025 23:31:25 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: john.madieu.xa@bp.renesas.com,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1760970998; c=relaxed/simple;
+	bh=ddWJdG1P2ZlGpyrf4gCRX+zQV6lQSvd0ATTLs3MzEs8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RmsXR3xNKyJhO/5LI546I0t8vVDgz6DtBKg+luuksyI9EkuZTe0X+hMOHt6qQ9mnvETXT76uIFKEwL/H64I3hzbhZm087Ue35Bn0Us5rNyjBJbVaOHHlPDUowaaxNJBEQiSYCjZTKvESQcJOwDCla+9QtBiEeDoPbRDTS+/DRHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mboxify.com; spf=pass smtp.mailfrom=mboxify.com; dkim=pass (2048-bit key) header.d=mboxify.com header.i=@mboxify.com header.b=OwXPKfMY; arc=none smtp.client-ip=136.175.108.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mboxify.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mboxify.com
+Received: from filter006.mxroute.com ([140.82.40.27] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta156.mxroute.com (ZoneMTA) with ESMTPSA id 19a02084155000c217.00c
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Mon, 20 Oct 2025 14:31:26 +0000
+X-Zone-Loop: 739e8e0ff8f200ddd65c2dce872699c3a7a8352c4183
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mboxify.com
+	; s=x; h=Content-Transfer-Encoding:MIME-Version:Date:Subject:Cc:To:From:
+	Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References; bh=KTc+h5WtHJT49QcAJjVdZ5eUjU+Wru+QolCtOi2Ys4c=; b=OwXPKfMYe4oOlU
+	1LY8IVK4TQsUMai6QKcWjMnZCjuhk4Y3AihJLdGJw1MgKAG7WZbX+FPgRX2bxjXeaLjJsDbOwbrqp
+	ZAH8J/wEPOTl+De0TYI2UrgYisH3WWrc7CdKW8QKWZo+3uSFxoy3OLnPyd/lt7Wd+x8O93iJGVidv
+	1lsnEEGPynDgignV+YkW7+QWikHthNnWqVKDp9K78UfGuAV78DlEiacgiAjn6gzFKWm3d8FAv0GUr
+	OoQ2SXO58Ex37jfZs639Wpvwa5Z0+wTKTmv85OmFRVQSdOX1iW7WK3Yb/ktjxNfGboigwpI0hPanp
+	qcvLHIfdxSJcAy8N1oYg==;
+From: Bo Sun <bo@mboxify.com>
+To: kuba@kernel.org,
+	pabeni@redhat.com
+Cc: sgoutham@marvell.com,
+	lcherian@marvell.com,
+	gakula@marvell.com,
+	jerinj@marvell.com,
+	hkelam@marvell.com,
+	sbhatta@marvell.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: renesas: r9a09g057: Add TSU nodes
-Date: Mon, 20 Oct 2025 14:31:07 +0000
-Message-ID: <20251020143107.13974-4-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com>
-References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com>
+	Bo Sun <bo@mboxify.com>
+Subject: [PATCH net 0/1] octeontx2-af: CGX: fix bitmap leaks
+Date: Mon, 20 Oct 2025 22:31:11 +0800
+Message-Id: <20251020143112.357819-1-bo@mboxify.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,150 +71,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Id: bo@mboxify.com
 
-The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
-to measure the junction temperature. The device provides real-time
-temperature measurements for thermal management, utilizing two dedicated
-channels for temperature sensing:
-- TSU0, which is located near the DRP-AI block
-- TSU1, which is located near the CPU and DRP-AI block
+This patch frees the RX/TX flow-control bitmaps in cgx_lmac_exit().
+The leak was introduced in commit e740003874ed ("octeontx2-af:Flow
+control resource management") and should be back-ported to stable.
 
-Since TSU1 is physically closer the CPU and the highest temperature
-spot, it is used for CPU throttling through a passive trip and cooling
-map. TSU0 is configured only with a critical trip.
 
-Add TSU nodes along with thermal zones and keep them enabled in the SoC
-DTSI.
+Bo Sun (1):
+  octeontx2-af: CGX: fix bitmap leaks
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
-v2 changes: none
-
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 75 ++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index e426b9978e22..e88cfc965415 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -65,6 +65,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -75,6 +76,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -85,6 +87,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -95,6 +98,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -285,6 +289,32 @@ sys: system-controller@10430000 {
- 			resets = <&cpg 0x30>;
- 		};
- 
-+		tsu0: thermal@11000000 {
-+			compatible = "renesas,r9a09g057-tsu", "renesas,r9a09g047-tsu";
-+			reg = <0 0x11000000 0 0x1000>;
-+			interrupts = <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 0x109>;
-+			resets = <&cpg 0xf7>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			renesas,tsu-trim = <&sys 0x320>;
-+		};
-+
-+		tsu1: thermal@14002000 {
-+			compatible = "renesas,r9a09g057-tsu", "renesas,r9a09g047-tsu";
-+			reg = <0 0x14002000 0 0x1000>;
-+			interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 0x10a>;
-+			resets = <&cpg 0xf8>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			renesas,tsu-trim = <&sys 0x330>;
-+		};
-+
- 		xspi: spi@11030000 {
- 			compatible = "renesas,r9a09g057-xspi", "renesas,r9a09g047-xspi";
- 			reg = <0 0x11030000 0 0x10000>,
-@@ -1326,6 +1356,51 @@ stmmac_axi_setup: stmmac-axi-config {
- 		snps,blen = <16 8 4 0 0 0 0>;
- 	};
- 
-+	thermal-zones {
-+		sensor1_thermal: sensor1-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		sensor2_thermal: sensor2-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu1>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&sensor2_target>;
-+					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
-+							 <&cpu2 0 3>, <&cpu3 0 3>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				sensor2_target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
--- 
-2.51.0
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 
