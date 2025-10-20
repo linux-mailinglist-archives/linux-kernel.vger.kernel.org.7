@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-861604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D4DBF32BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:18:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81836BF32BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B83684FA6BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:17:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC7734FA908
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062412D6E6E;
-	Mon, 20 Oct 2025 19:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D8E2D4B40;
+	Mon, 20 Oct 2025 19:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cXBMjwhh"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="iB564wGI"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF82F26A0D0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D5225394B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987865; cv=none; b=gWRB/XwmI6O0YXuSNNJpmanmtqBgWpkfv5GENsuLVXCAZ/OZJQTozgImJ7hkPfds0RuzJB15hSVWxLGA5e8YHcRKRXph9L6Vton+dAPErlffTEEbKcC+F3TXWfa/EZQ8GhAzQQUP3RoHHs1rFCbMkthxE1klKwPhDK8v1Nu3TaE=
+	t=1760987890; cv=none; b=nr/4mnuvfv9F7CV+nvo7aw+6FkxzXU8xaguPgWSTRzEe+EPC+gbWmLkDH54un+Xjlne9Q/4Z3mllwJFxmYqZL1ZPBunb2KwfkR+WfssrYgHR2zJCFH+Pgo5M32sZE2pGJdujUQ2UFwZlWdoTk3epbFM4rs3lP0xNDsefDJqig9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987865; c=relaxed/simple;
-	bh=rwe67KlzgVEU0q6posof/Uf1LS61e3v2dpbkz+mjDGU=;
+	s=arc-20240116; t=1760987890; c=relaxed/simple;
+	bh=B2GwWQHb2WNCqgXU+VsEpJ51dyfQjF+xpMUj0xTobyE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jl51Hqtk0LGUEHlZaVmEwp3TvwJAWM0iNSwRtJ7v2r96WtV6tuMukumjr0KI57s1709VZNwWBHW9XzSInHXspx8+8diYgLtUBWYn533A3towCSchCqJoPMqow1XBAOJAFUD/jp080rwvXujSp86LZekOQ96KJTS+0HgFJSkD6dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cXBMjwhh; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:Content-Type; b=SCCB7PhczSVqze3yiH3gcTJnK/mVN3Dpah97fMjZWL9T6zt5Oqx42VwqS1f67kHbT1nFVlywpOgcRD4miqpR9s9zgE8ZEwheuHg/GpmAAcGElyT6jmwNvoBcksWIAHrT6MU/kIxJhgkTtp9KDOWEt+Rg4uAty2Tpnbf94/y9c1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=iB564wGI; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4283be7df63so1272131f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:17:43 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee130237a8so3082749f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760987862; x=1761592662; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1760987887; x=1761592687; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=R3hw419kHIanWXI8S7q/r2sYT6jc1swylj0x7Y5Ea4A=;
-        b=cXBMjwhhJiK6yHo9TUOFPB5y+KOfGdmBos68jAXLctZrNS0xOTP+waqLRT+/56sIaZ
-         4tIg4AR8zswgHSOxaIGYCctSqGb7/McigfRwAmLjyrqp84P7+GfL8YIZjM80UAH8jY5C
-         bFlehrNsu00ry18LRzzU3cTbbY8/wNyRkayMGd15ffVTVFpuk5RnFr1TcGdPTLAd7YmI
-         C4pS5EcbeQIGA3UgJ9tSGUvBpDVL5pK5w+0VRZTwMJPL+DAN7Y2h8sX2qxZKgpMMKa+8
-         4UtLVI8Re7CClNQp8gy6dP1Ab5Lv5NpVbh+mVUIJesuZ6UcM2l5heo9b4krWuJunjX3Z
-         PhQg==
+        bh=I0tsx4KSP77ESIlhthvIKVZRSnX72ewIM/q8+bWb71E=;
+        b=iB564wGIPE/WtHO8W6lGQdxqfEpDskJ2S9chg50uyVzySvufkfOldJvvFuwmuWQEnm
+         gAGJPMIvM82mwdAPTaH4471CpNK9PaffUsjaceyxnGOVygfKCufQlY5wnLM9kJwwdc2t
+         IIBjln+kDrqE0MniMQAyrqTNLEif7vSVN0sjMYpCOZfWjYV3djviGkC+k7zCDN8Ie8SR
+         ZIUsmQqRdzuSxy8zWLkAmAwUSuyYzYKCF0hSVY8BbvIJ/Bb67TgIDqR/uBWZwm5Uosxo
+         m/gp+DCd+2SWvsrLn7yCs1CdBQHUJ4r9ykSYi+qoY10VnvHW/9iaIw6o3uE9IueTXLyD
+         lfow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760987862; x=1761592662;
+        d=1e100.net; s=20230601; t=1760987887; x=1761592687;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R3hw419kHIanWXI8S7q/r2sYT6jc1swylj0x7Y5Ea4A=;
-        b=ms/2UuZboZvIyRQFtJT0Cx6IqNjdAX7oK4oHDoP81dMp5PHkHyx26lc07vjA0C4ifo
-         z/3fkhakI2aIbwRb0OAXhrSrB7tya+e6XW6rmZC2viJlpYh8v0FG8DprQJl6yNkW1xaz
-         T027EX4PzeoC8TxI5jHJ2zGLCQI/c7XKiDWoalXza4PMo7Tbl33wUgu/se+sP9F/zgQ5
-         eHisAanN/x4r7P+IdiJLqkmazXse7rZ7fUjYr1zB/cFZtepMkZhxRgLh9PBm2dQcD4Yd
-         iNy+XrYjIcE8y9e34LbWrHDcftp11GhWHUHpwTF07mMoocOcmXB6+qRbWjr17wfE+AY0
-         VENw==
-X-Forwarded-Encrypted: i=1; AJvYcCUScSDAGZDNywak+34MwdsObwKtVTS32ZTlkw4H0rKFQwcNNx2ccbffUzzCpTYy52Y66JnjCOCFH/3gCSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8oVmBUXJo5NQBaYQkk6Ld1Vgq4w0GaQmpGJw41MaXq01ddBx4
-	FMP1FIoqVI4KXdiUx59s9edDr51xqgQVdPYK1Igc8p1hO6Q37H3wwnQIC+D/cb5XO6e1dw/7ld5
-	p28gx
-X-Gm-Gg: ASbGnctICsmbbey1hUfY7WUwG1EMTG0hFp6L59KqkaEBTCZfZnwEyeNcnkVcV5zg6mT
-	EsEXD1XNsGQ2f2JnGIwi27Efu/EadZPg3HGDBtrnuf+hTP+ye2G1NBcVMQRHpuMI5Uxl5VxiGk8
-	Km6Ru07BcaIoyc6e1cFAsKljhYvqLP1CHfbIJI0dHdaEpoa8dSyqRLqA3hIax0pppOLM63p7R6o
-	fGViue3KyJKEz+7UCJoNi8QeY6kNQLGWnbi6gSVPt9q+aq5vKQY6tty1d6yrg69su4+6I6OVmOn
-	M3rJL6VrbPWt/otDmN3ExIv+o+nZAhvCkhSRABR5ixL9mWZCSUNr+gBwybspIZ88eI70bC0FbR5
-	CnfX35SMnBHibUMnUqlWPLLRm7mhR8+AI6sOXlrWE83TtAxbGNYeqrc0HrxsoyJCP2M5SYNQ9d2
-	CMbaNf/qkmoGT8r0xdq/w=
-X-Google-Smtp-Source: AGHT+IGK6tHTgvB0+6Qz+f3/Hvkcp/D3IAI05W/uCv4j1nGOxIb4P88xZ43wqUbIHoY/frZXUcKPpg==
-X-Received: by 2002:a05:6000:25e1:b0:427:580:99a7 with SMTP id ffacd0b85a97d-42705809a1emr8127287f8f.59.1760987861989;
-        Mon, 20 Oct 2025 12:17:41 -0700 (PDT)
+        bh=I0tsx4KSP77ESIlhthvIKVZRSnX72ewIM/q8+bWb71E=;
+        b=w5a8JV74Kc1xJTUdz2CLWdJahl8NyvI0mRPg/Fh9Rvyf43Ynbc+t2rcXAJ7CpqUx5C
+         tpUWqp8BKL48WI6bSEdqEykZfEg4sSKF3PswswerQvlk0JSGzNzuMxIz6SsGoJUdSkhl
+         Tt+GFbROM2MZKRoadx7arX5tvw2v/vfKdWQYEc1dPz9pG0S+BxbJwtbHer+wNsVl3byH
+         HNexLFJlisQElZnX/q/2BH9vO2cvjGZKGvhNZYGrm5I2in7Dr/QqbnTMdbLsR8lnta0N
+         4+rBtSnz/bYYkVcnpycJ8Od4EhgbHpRW1d7JZtTuGpv5gICA8xbGy8pKbbY/JtCvXo0f
+         kpUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPNUAMBBzsURQv9mSh/L5Era26TOQW5G7hxaHyAwNlwA+0zZGx6pLMiwkI5YBO4vq6LOoH8pe7Aw+0nkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfAFjWRNiUiHWLhLvzBenKl6grFS+Lz7wFvyZz1qYtSSWhWh17
+	IwC+LOiteraIJ/VOJvlLo2xXp3FMTyhadDpwtLYSpeBm1zI8aJr7JJx4fgMVu4ToyjQ=
+X-Gm-Gg: ASbGnctRA7xTAsb6oPVlBFFRGIooKXinGoY+kphLkqARQ18OSamLWO/GCUCQPAj/OnS
+	Auu1/fQFomxDGZfMe+sWomhPDXG90QtQa54DQ2MzO+bAWXXlJga/oWS/5/wIl5ED+cSbzHhhb2p
+	vQgTbj268FhEZPJScISG2u7ZT7NcOPfuV6oy4gXJRSTukJ9REw69HHzjN+SOLwOjNWk/mMXDNvh
+	gStlqDi2e1KCORk0wnnpDmJADnvjUDXXAmTzwA5sL7PSr5GwO+yguvaOGq+nudWiUVYfJtiWU/T
+	uvcNAU1+XZ5iXasNOqS0f1GX/+cHp9jEUSyDs/IA0jYaFonokN2+TR36PIW1fZ7ZSSCEka1hgXf
+	Vtu4Oxa7iIyTm8xoF159iU6nHJ5J4tc1Bvv376Zucm/LBrcOxhXhitsElfm0lvj9K7aeGeLVEFy
+	btEenYpBBg2DwLunIMhQQ=
+X-Google-Smtp-Source: AGHT+IFcgqnPdm4nc9BDRoT2IcMx9OPGQN7Qu5Edx1CiNPuj1x/M7ZsidNWYx587c0BBZFL+lcxA7A==
+X-Received: by 2002:a05:6000:702:b0:427:51d:1177 with SMTP id ffacd0b85a97d-427051d1222mr8232140f8f.8.1760987887446;
+        Mon, 20 Oct 2025 12:18:07 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ba070sm16797899f8f.42.2025.10.20.12.17.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a976sm16913232f8f.32.2025.10.20.12.18.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:17:40 -0700 (PDT)
-Message-ID: <ebe90c15-bb39-45a9-9016-e5ec864e549d@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:17:39 +0300
+        Mon, 20 Oct 2025 12:18:06 -0700 (PDT)
+Message-ID: <e9358bd4-c972-4fb0-a11b-fd562e885ac8@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:18:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,32 +82,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 20/31] clk: at91: clk-slow: add support for parent_hw
+Subject: Re: [PATCH v3 15/32] clk: at91: clk-audio-pll: add support for
+ parent_hw
 To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <ba17012ff9130fa50954163a07c9dd6245b66e21.1758226719.git.Ryan.Wanner@microchip.com>
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <bb2fe895daeeb0815452213a437bf2c9e3f6ebcf.1752176711.git.Ryan.Wanner@microchip.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <ba17012ff9130fa50954163a07c9dd6245b66e21.1758226719.git.Ryan.Wanner@microchip.com>
+In-Reply-To: <bb2fe895daeeb0815452213a437bf2c9e3f6ebcf.1752176711.git.Ryan.Wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi, Ryan,
 
-
-On 9/19/25 00:16, Ryan.Wanner@microchip.com wrote:
+On 7/10/25 23:07, Ryan.Wanner@microchip.com wrote:
 > From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> Add support for parent_hw in slow clock drivers. With this parent-child
+> Add support for parent_hw in audio pll clock drivers.
 
-s/parent_hw/parent_data
+s/parent_hw/parent_data. Same for the patch title
 
-> relation is described with pointers rather than strings making
-> registration a bit faster.
+> With this parent-child relation is described with pointers rather
+> than strings making registration a bit faster.
 > 
-> All the SoC based drivers that rely on clk-slow were adapted
+> All the SoC based drivers that rely on clk-audio-pll were adapted
 > to the new API change. The switch itself for SoCs will be done
 > in subsequent patches.
 > 
