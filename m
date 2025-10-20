@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-860525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61526BF052F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93238BF0532
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1515934AB73
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FAD3A3938
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C99523C8A1;
-	Mon, 20 Oct 2025 09:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7172B2F5334;
+	Mon, 20 Oct 2025 09:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K13o+kNn"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZD5z2o6U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F198429ACC3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445222EC576
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954043; cv=none; b=eAMg6XiIkgpa9C+sJpLkvPs9WV1mTySWP3X0bkzRefipKbuh/jdwVyTd3mCn39PHwvGRzttcDqvp2hXCZ1U4srdtGOYVxqBboyQ4Ulw818l476Q2YUGa0D6mK6PzhtLsTiTXaIGof+9m6JOHGhiDAMVOIsRQdGmh0/tXyusFdU0=
+	t=1760954075; cv=none; b=jgqsnhmCiEjfFC27FYu/nF0+4EPX179G7XwPqeR4+Wh+mTurENmKnxhfZI47g4ytozDVYzZHzpRNcLQQJSgAcWZsR7S+UejcN2vPeMYG6hHq+3VQyDfwePq1YZfbkLnUPzeFssgQGhhkm3yyRDT1IWweNbhtiw59Z9H+A9DaZKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954043; c=relaxed/simple;
-	bh=Zk7GfMvZ/z+gK/VrZS+DewwGdOPqsTuMoJtQbhmGP3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BT3e7tVHYa0zBsz46agaOMgVwoYk8RYA0u1NMJ69DEmLa2ApjTNJgL1dLak+1CydD8vkmE3+/G55IgvVQCSWyvZuu7QmNhjhE7FRRpK6Z2nGhIjJQ7xKkCSvM10Owqx69n2dMHNq8BYEh6qvX/JADYWgjgvs+BK6yaGNRJ+Tdn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K13o+kNn; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47157119d8bso3693895e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760954040; x=1761558840; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qEZOmmPRU+6Jp7MDbpYX1wr9n73+5CZ3iAvnUvQZOdM=;
-        b=K13o+kNndIzCbAauT0TsRA8iVO5BR+J5ROZlxwZQysceL9IyClL0PI+EX6ImiJz2UR
-         B8ICLqaVcpUzEe1X6Xmd+KwA1fIOJey2GYkCA+v69UYVbocLLf4skKw81C7FUStESWyY
-         VyIjKeuDPOnyVbUd+x4hqtqJ2wUqIUO4LvqA7T/C4KQ/dxuD/G1ULJN+ad6zPvOrNZeM
-         GMLt0tphpxdE0VwGSVjVg34bl4Ua73UB/+CRLNFpgVpx+vU0bMHGZTXoXXYCvUAD8noY
-         ZQ4pDi34yNlQt5N9AXVKxrGiQ9zGP0PhWApAjessJ0DCe6Nl1c30D0h9Vqw3WM2ai2kX
-         Sp+w==
+	s=arc-20240116; t=1760954075; c=relaxed/simple;
+	bh=EDh2hY7KcsoLCVNbqCrydEKfepj9ENE7y3LCCo74QDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahyYnnoDEDv1/2mnMng5KmQQES6Ck9sreACGEHYDBWOdMbiqNfBqmLi6v0cu2baIASEC1HOGdvewBu1ncuwFoCjm+1/ldE2i/YCVMRhadmgVH/CcbxK39mHwY8mfxzD4OlSTLljHALOKNGDapCG49fwqrfJWCkSWvs0dI9cQiG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZD5z2o6U; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760954073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FOvPujFryMZ7+AgeMw1kh2ZO5Xa2du80EwXqsZUS+1A=;
+	b=ZD5z2o6UtjtJmVOkMKRPwAnZFTAWSglCX8QHsHYo8MIgvIEUIcWzYX47STLcOJG9ornSYp
+	bcX2QfP68C0thUPUf6A0OQyDN40Osnr59ZLj3vawijvGvZiQ/fO+JaTDP652FmGJb/uVgm
+	S0ih44x1CaSNJ+WU2KKUE+KzlxZcB0w=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-135-qQUPM4KQPUuKotvkm1RmmA-1; Mon, 20 Oct 2025 05:54:31 -0400
+X-MC-Unique: qQUPM4KQPUuKotvkm1RmmA-1
+X-Mimecast-MFC-AGG-ID: qQUPM4KQPUuKotvkm1RmmA_1760954070
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-47114018621so20231355e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:54:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760954040; x=1761558840;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qEZOmmPRU+6Jp7MDbpYX1wr9n73+5CZ3iAvnUvQZOdM=;
-        b=JItTdhnm/HDQOUFTsfhppevc4rn3oprdrT+WpUhofpKc09y7VDNKcrTkGaPz4PeS83
-         V/be7pdVQRwhVZs36Q6qSX30ztnQNaG94VaTChTLLCfWvIcDxFZm0sDj+u6unkA2x/2Y
-         TJV84zcTSzzTYWGSlKKfI03VFfr4ZkvT+DbY7ze3JmAwSlT98sClEog23Zr2tLnFU/yn
-         56UdH+/PLrUa1w3Y2DdvvGSwMft5pYZT3sqYsBorITDIiOQBC1+kbtPUv2HeeS46aSpq
-         V1xtoWmw/bMQqAUxzN8WXix9yF6WbczUFiz8IcN/qcVkX/uQM7r7SiSiNFM5QTfx0IJR
-         tCsA==
-X-Gm-Message-State: AOJu0YwZE7FFErkGkGTTtNQq0LWOk8qlDBshaLx2iyhWq7tLbfk/yJCU
-	2u6+OsqVrR579hmuEd++m+CxtDiiiRidHNE7SPacY5Fd9hejlIYfdpGI95XGYwywkvU=
-X-Gm-Gg: ASbGnctZPD3vWrEc8jBkL8d7JjdTD1LyHxCx+pLaUan26/PtuVcuCTdKMub9kbg8VP+
-	fccdjLLAMPGKdRQXFdlHWRm7IhNJtJtdM72cMBRwdPnY7Jnxj/+Lv0OoAzdntRdAtk1BISly59e
-	KZOkVKS5F9qLRM5THZHKbHex3gy9fwuFRPO3P46ttSXWBvYJqk56exLY0vsAfUfi1OjtcbkKIM+
-	RV+kSRSGjsm4FfsD64XlyJNmJZnPlgBvEAI+mG8aILR8BBv1U8qfyNskQBAX0Q/yRLsdjoPlhpj
-	+ktsBECVW2u5ZStvvC8O0giW/3/nzus3R++DvZElYj0PMKnQqg4Yh7h6B+jRF2jX1v4XCVll6bf
-	Su7YnlfeqX3N459V7gEaSnRY08U6iCZntP3VG4ZAklRrXXe/AU8Kyt6wgBElD0E7UJ0M9l7/906
-	2jtKEFELuKmGgbyhXMbPMmAY43KCOxNA==
-X-Google-Smtp-Source: AGHT+IFX1wgTFn1MLKPhwOgGbyn9M3V01/rxbBTWs1eN7xRNGNtr9tOjyrzfftVxp4Ewsx3pfTiwYg==
-X-Received: by 2002:a05:600c:3b8d:b0:471:9da:5248 with SMTP id 5b1f17b1804b1-47117917155mr87074895e9.26.1760954040323;
-        Mon, 20 Oct 2025 02:54:00 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4714fb1b668sm156200285e9.0.2025.10.20.02.53.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 02:53:59 -0700 (PDT)
-Message-ID: <cad8f866-1655-4f4d-acf0-a974ad40ef39@linaro.org>
-Date: Mon, 20 Oct 2025 10:53:56 +0100
+        d=1e100.net; s=20230601; t=1760954070; x=1761558870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FOvPujFryMZ7+AgeMw1kh2ZO5Xa2du80EwXqsZUS+1A=;
+        b=FNhYhIbVCZbWctIEA6425eQUzBdSONcjIdAl+GIqC5+aL1tl5fXQHgfX9KFnvEAZ3h
+         3LRP6XGPgzh5nSZlP8Iulp4nWStQSG0tjH7Ul97mWrsFFYpHCfQClEZyHE9QxEoibaTP
+         I241nZsBJnmYV8q8C2TzHsiKwUjQcg47P9mtmfioHjviu3PrErBVgmnQH3hkCXBQVrnw
+         7a9YkT26myRuyYZyTDZFY8YE2lQUp9jKIxSE5qo8sfdBuN0DuEwCfqFL7xG2v/K2PfsG
+         d7n1dX9JNkPNGUma4k1q2M9AF7w6dwevyI8B6RHjQ8aLs4VoSgTrfcbaNH+YRxH4C2ot
+         n5Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2gePIUTb0aSjlPWB+y/sY3evte9YyzwizI/DGkOjjLOJWl+8BdMERb6jnROMKVmtB1TWni+pDU+9P/kQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5ZZ7EY44oQ3S3FleyAvkSkYqcV29BfJGAwVrb0TAVaTrcccb3
+	5Ff1Si/NUsGdxwZY/Yqy9SS9dEolGvOn3a5iw+chyA0x6ViuGV1JFOpzIFLH4TMqXYrDWD3sQ1z
+	DXKRTiIIEzjKKz0x7rFMHjld89esUwJLvgGgxaRqr9m4icADthIPRT0GunozROQl1lA==
+X-Gm-Gg: ASbGncuPXjrz/VXZlnomw65yIG66lwmDMmN1GNH1FLg4J1uoWHQlFyaZiNzIsJBeQO0
+	2KxAWtHDSIOWDE+JGmrb0PsvbkKChtcDYFYg2pH2bULCY4qQoA502WagBV+KRDgUXHKzK/9+9Ho
+	pCnigqHHIgORI671rR1T/ZO5q8LPesuM2IceXQ/x3SB/hhTXq7zU5DkwIZyeJQsANNUCSIRrhx5
+	PXlYElnCzbnP/R9qFfmVXqcUgW7Ru7Yv0K7nmV34oEbGwZdT1sFC3zl6uGEo0R45Yv4+nAOalD9
+	C16UtEzVgqJYwYzqnAW+PY5iYsvK7IpZJc4vjl12RdkdsD+alZs/93yJzP9lp+p+GxQZAEX3mZW
+	1sRuYqKacTHQ8dlDppGqIeM53inYD/U4=
+X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr98205645e9.33.1760954070233;
+        Mon, 20 Oct 2025 02:54:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwQc8jHbyCjws7r+xEl2xJJIVq9zC6q6jCBAIB087YXtxrslD/Tbf+7AnvpKx9nVNS0eYmew==
+X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr98205355e9.33.1760954069891;
+        Mon, 20 Oct 2025 02:54:29 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711442d9e8sm224260885e9.7.2025.10.20.02.54.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 02:54:29 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:54:27 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/14] sched: Add a server arg to
+ dl_server_update_idle_time()
+Message-ID: <aPYG0w4dYZIws9sr@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-6-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/6] exynos-acpm: add DVFS protocol and clock driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <4a436c40-0fb4-47b7-bfd4-0bc499e85b5a@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <4a436c40-0fb4-47b7-bfd4-0bc499e85b5a@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017093214.70029-6-arighi@nvidia.com>
 
+Hi!
 
-
-On 10/20/25 8:03 AM, Krzysztof Kozlowski wrote:
-> On 10/10/2025 14:46, Tudor Ambarus wrote:
->> Dependencies description:
->> All patches should go through the Samsung SoC tree.
->> The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
->> If the clock subsystem needs to merge the new clock driver, it will
->> need an immutable tag with the 2 patches.
->>
->> The following DT patches depend on the bindings from #1:
->> https://lore.kernel.org/linux-samsung-soc/20250924-acpm-dvfs-dt-v4-0-3106d49e03f5@linaro.org/
+On 17/10/25 11:25, Andrea Righi wrote:
+> From: Joel Fernandes <joelagnelf@nvidia.com>
 > 
-> You forgot to mention that this patchset adds new dtbs_check warnings,
-> which are fixed ONLY after applying DT patches.
-> 
+> Since we are adding more servers, make dl_server_update_idle_time()
+> accept a server argument than a specific server.
 
-Indeed, sorry. I saw how you handled the dependencies in your tree with
-the 2 dedicated branches, I'll keep in mind.
+Nit,                      ^ rather?
 
-Cheers,
-ta
+> Reviewed-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+
+Thanks,
+Juri
+
 
