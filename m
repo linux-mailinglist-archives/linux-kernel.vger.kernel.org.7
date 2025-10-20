@@ -1,164 +1,210 @@
-Return-Path: <linux-kernel+bounces-861189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60879BF203E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:11:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04421BF2056
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564644F732F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:10:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C726418A8075
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E9F23A58B;
-	Mon, 20 Oct 2025 15:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fIcEAqRU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B8AEEBA;
+	Mon, 20 Oct 2025 15:11:39 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB13415CD74;
-	Mon, 20 Oct 2025 15:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027DE237163
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973049; cv=none; b=SymiEJKMSBa+EbpGpeILM89xQgt6M76I1ZzD4XJvh/rBL5NOdGLCIghQ91IK6wJ7y2K2Q9Ckme8NfOp1hcK0l8e0JdfUANzuARKfgRUcfzRxYCww/Njg4bJ+SbgFwE03ByylyIQoRqDfpjHvwu7uRtcYu4B9qDSVqiEQQ5EP2S8=
+	t=1760973097; cv=none; b=oUwz77in1zTLGQpzWsOCcJ/Gc3Uq2Ap81le1buCicKKrcOpI1YyEPSe1wm3xwXupz7gz8rJpwVnm90+1R3cv9XoePCCeIQK660scX+K2qpOIKq5p2RRUN1bQ0mh75cAoGkNnaYA6rT8GiBx/YaNzn0sWCjPAtLVWfKH5RaqrXPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973049; c=relaxed/simple;
-	bh=fqNjrot1k4YOkjMvUMIgaO7PDDgmIlgF/NrFLCl9TFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ae8kdBf0VWMWTJb0RoEUDqBYw7dprwq6ZrxBBGu44IgPxd+NxKqcmoB6qpccDiY0lli28LJ67X80vpQRiTLIkQlH9aRHPRQswQ5TikYqtOZ1WLxzBVz26v77uHzBJArX47S2swwQ7Ox6NFCc5LGYAhTlNDLDCqFvh8eP+wZS2tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fIcEAqRU; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760973047; x=1792509047;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fqNjrot1k4YOkjMvUMIgaO7PDDgmIlgF/NrFLCl9TFg=;
-  b=fIcEAqRUtNK6zH5wScUYjY0q3+CLoZ+3FvvhfCfinavs9KtdemrvON51
-   vAEpfht7DdZdOsy9Ml+qYKnmShC4IOAjpXlGkOY6LkaMDpL5hs/EMU+hq
-   rQ9HIlDtR33OBZqd3I5HzzI/SHbE5jgiM1FVldu9GfqjXAJ45QxvGgZKY
-   FhvUgqPlWA74dRG8MHiKyUambyrVa5fmaH7BEwajqwPB0zFm9mjxMzwlh
-   2Gv1CSA3iKAnKfmz8g3jnB3ya4rp7gGQj7TGNSwFfdg+BcHyrjzwSLUf1
-   oeofMTKePknUtjMAN1S2z6VpOAhTnWF8Kzem42S2E5DJhLkS7c2Y4mEYX
-   Q==;
-X-CSE-ConnectionGUID: 2bMy6OxsRZWHGCAdgtt/0Q==
-X-CSE-MsgGUID: lyjJe3SZRHe6+WyI1QENBQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62789966"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="62789966"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 08:10:21 -0700
-X-CSE-ConnectionGUID: BJmxr3lpQuq18L62t0Llkw==
-X-CSE-MsgGUID: GbjmQTpuQsay5QqgQ0kAmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="182539954"
-Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.108.101]) ([10.125.108.101])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 08:10:21 -0700
-Message-ID: <033f56f9-fb66-4bf5-b25a-f2f8b964cd4e@intel.com>
-Date: Mon, 20 Oct 2025 08:10:21 -0700
+	s=arc-20240116; t=1760973097; c=relaxed/simple;
+	bh=4YiViUBFTwA2a1lWkwIs3a7IfjWtNdpW+qXuZ+8j+eg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=twGBFDLvMBnhr2c2ZgLgpS1EQT893fp6d8gWj42yPQ9leh+9hN8FL3x4n1T97K7Nn1B0uPuhyykvPpxQGuso9SyyLPDgDeA8Bef3zoYjVp3wFgJ9jY401DkWL4cOR86FjH7xkzow/FKumXj0iAqM0xBBq+AHcESEBH9wQSXbSWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so19698985e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:11:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760973093; x=1761577893;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xapFPBcIStZkytv/ETnNi3GDKQo+WlFQKnTNuCtXFIM=;
+        b=l3/IlUSVlvPoPHbFeLmI+olxPyJuE2iEG7caOBgQEueQtKl67dWKy/pa6/QgPb0RM3
+         LR9OCIUklyGJ5cheROOOsWtKVmqBcURa4SHUDiVTQlkvSU4RdH28ZGcztM4r+tbPHqf1
+         pjM9Jz2SxFjiBGt1NYexXQZIXwc+6Mwq1i7T9D8u7E2wiQbEndzaiw+X6lZDA+u5ysoK
+         H48AO4aRUMipQI2as7V80sc9xY+tybzO3gg1X5NTIY3y/DtmsxSx6DKyyLzJkUAzq826
+         0vcYUBF9IH3s4nIKCt6+6kOb16H2wxnyhnTTvLAzLGjpiBqv+EVnfWhLTnz+xtYM+7b1
+         YOvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5chAUkXt4birfVRlD0kQUXq4/1qKi0EGmpTowV8TufhMKToX0eyqGL2cP3ZLpvn9UsIPzPTIBpNCJWjg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx69m4CXZ8/GD09mAMSsJjQ2znnl8Z8qWZ0zoUYFHQmM4eDigh/
+	5GUFFukKuG+tUNCs1rKhHaRmDjAXM9pUDBAt1/vnd5w/7Phl8LPyYGdm
+X-Gm-Gg: ASbGnctjzrlJmjxG1p4dtQDfXCrDhFOkNeSb2TgPFkPA27EC/vzhUPM+OLXVg4pxPmA
+	jaoGq/RyYlXd/Kdrk1LXlrfZ4v4kk9qoGTkOjDfgMDTOplzBXdzNOHkTeXaLJmJLuuq63eGcyNk
+	b3W4wW+PQp4MPSdNuSGHkLT5mTfxXt2WFXkASnbYyOp57YA3/PuD5fI2VqibakYsixga9sU0iuk
+	ZfFhWM1XTn+5JI74ljgDcrglu+jzssDaqO1MxFT8oTHcLhznPnW4Cd9Kr0RIwWdebzFv2G2rbJB
+	d4KADwXzRt/YI0zflMGVnx6D+74IT0yvrnIdEQO3PUDFurU/Pdm0J1ANl7Lfo/3shv6t3fYWGzE
+	KLyumvUqWWB9MV25lHX9SDfrNxCPEZ173XSlhFRiSk8RTT2PHk1V8pUQ6TtDVQihmvPZscFCH8O
+	bw52g=
+X-Google-Smtp-Source: AGHT+IFZ1aeQR12oUSXeiDRJrR3mCpaEJtTUm8uvDUK2YrM/Ongf5OfImsnLjKHn868bXD/fCM0uQQ==
+X-Received: by 2002:a05:600c:548c:b0:468:9e79:bee0 with SMTP id 5b1f17b1804b1-471177bc126mr93837155e9.0.1760973093038;
+        Mon, 20 Oct 2025 08:11:33 -0700 (PDT)
+Received: from localhost.localdomain ([2a09:0:1:2::30b2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711442dbaesm236142095e9.8.2025.10.20.08.11.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 20 Oct 2025 08:11:32 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH mm-new v3 1/1] mm/khugepaged: guard is_zero_pfn() calls with pte_present()
+Date: Mon, 20 Oct 2025 23:11:11 +0800
+Message-ID: <20251020151111.53561-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/virt/tdx: Use precalculated TDVPR page physical
- address
-To: Sean Christopherson <seanjc@google.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Kai Huang <kai.huang@intel.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Vishal Annapurve <vannapurve@google.com>, Thomas Huth <thuth@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-coco@lists.linux.dev,
- kvm@vger.kernel.org, Farrah Chen <farrah.chen@intel.com>
-References: <20250910144453.1389652-1-dave.hansen@linux.intel.com>
- <aPY_yC45suT8sn8F@google.com>
- <872c17f3-9ded-46b2-a036-65fc2abaf2e6@intel.com>
- <aPZKVaUT9GZbPHBI@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aPZKVaUT9GZbPHBI@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/20/25 07:42, Sean Christopherson wrote:
->> In a perfect world, we'd have sparse annotations for the vaddr, paddr,
->> pfn, dma_addr_t and all the other address spaces. Until then, I like
->> passing struct page around.
-> But that clearly doesn't work since now the raw paddr is being passed in many
-> places, and we end up with goofy code like this where one param takes a raw paddr,
-> and another uses page_to_phys().
-> 
-> @@ -1583,7 +1578,7 @@ u64 tdh_vp_addcx(struct tdx_vp *vp, struct page *tdcx_page)
->  {
->         struct tdx_module_args args = {
->                 .rcx = page_to_phys(tdcx_page),
-> -               .rdx = tdx_tdvpr_pa(vp),
-> +               .rdx = vp->tdvpr_pa,
->         };
+From: Lance Yang <lance.yang@linux.dev>
 
-I'm kinda dense normally and my coffee hasn't kicked in yet. What
-clearly does not work there?
+A non-present entry, like a swap PTE, contains completely different data
+(swap type and offset). pte_pfn() doesn't know this, so if we feed it a
+non-present entry, it will spit out a junk PFN.
 
-Yeah, vp->tdvpr_pa is storing a physical address as a raw u64 and not a
-'struct page'. That's not ideal. But it's also for a pretty good reason.
+What if that junk PFN happens to match the zeropage's PFN by sheer
+chance? While really unlikely, this would be really bad if it did.
 
-The "use 'struct page *' instead of u64 for physical addresses" thingy
-is a good pattern, not an absolute rule. Use it when you can, but
-abandon it for the greater good when necessary.
+So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
+in khugepaged.c are properly guarded by a pte_present() check.
 
-I don't hate the idea of a tdx_page_t. I'm just not sure it's worth the
-trouble. I'd certainly take a good look at the patches if someone hacked
-it together.
+Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reviewed-by: Nico Pache <npache@redhat.com>
+Reviewed-by: Dev Jain <dev.jain@arm.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+Applies against commit a61ca1246ad3 in mm-new.
+
+v2 -> v3:
+ - Collect Reviewed-by from Nico - thanks!
+ - Add a VM_WARN_ON_ONCE() for unexpected PTEs (per David)
+ - Introduce a pte_is_none_or_zero() helper to reduce duplication
+   (per David and Lorenzo)
+ - https://lore.kernel.org/linux-mm/20251017093847.36436-1-lance.yang@linux.dev/
+
+v1 -> v2:
+ - Collect Reviewed-by from Dev, Wei and Baolin - thanks!
+ - Reduce a level of indentation (per Dev)
+ - https://lore.kernel.org/linux-mm/20251016033643.10848-1-lance.yang@linux.dev/
+
+ mm/khugepaged.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
+
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index d635d821f611..6f2ae2238b5b 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -337,6 +337,13 @@ struct attribute_group khugepaged_attr_group = {
+ };
+ #endif /* CONFIG_SYSFS */
+ 
++static bool pte_none_or_zero(pte_t pte)
++{
++	if (pte_none(pte))
++		return true;
++	return pte_present(pte) && is_zero_pfn(pte_pfn(pte));
++}
++
+ int hugepage_madvise(struct vm_area_struct *vma,
+ 		     vm_flags_t *vm_flags, int advice)
+ {
+@@ -518,6 +525,7 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
+ 
+ 		if (pte_none(pteval))
+ 			continue;
++		VM_WARN_ON_ONCE(!pte_present(pteval));
+ 		pfn = pte_pfn(pteval);
+ 		if (is_zero_pfn(pfn))
+ 			continue;
+@@ -548,8 +556,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
+ 	     _pte++, addr += PAGE_SIZE) {
+ 		pte_t pteval = ptep_get(_pte);
+-		if (pte_none(pteval) || (pte_present(pteval) &&
+-				is_zero_pfn(pte_pfn(pteval)))) {
++		if (pte_none_or_zero(pteval)) {
+ 			++none_or_zero;
+ 			if (!userfaultfd_armed(vma) &&
+ 			    (!cc->is_khugepaged ||
+@@ -690,17 +697,17 @@ static void __collapse_huge_page_copy_succeeded(pte_t *pte,
+ 	     address += nr_ptes * PAGE_SIZE) {
+ 		nr_ptes = 1;
+ 		pteval = ptep_get(_pte);
+-		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
++		if (pte_none_or_zero(pteval)) {
+ 			add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
+-			if (is_zero_pfn(pte_pfn(pteval))) {
+-				/*
+-				 * ptl mostly unnecessary.
+-				 */
+-				spin_lock(ptl);
+-				ptep_clear(vma->vm_mm, address, _pte);
+-				spin_unlock(ptl);
+-				ksm_might_unmap_zero_page(vma->vm_mm, pteval);
+-			}
++			if (pte_none(pteval))
++				continue;
++			/*
++			 * ptl mostly unnecessary.
++			 */
++			spin_lock(ptl);
++			ptep_clear(vma->vm_mm, address, _pte);
++			spin_unlock(ptl);
++			ksm_might_unmap_zero_page(vma->vm_mm, pteval);
+ 		} else {
+ 			struct page *src_page = pte_page(pteval);
+ 
+@@ -794,7 +801,7 @@ static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
+ 		unsigned long src_addr = address + i * PAGE_SIZE;
+ 		struct page *src_page;
+ 
+-		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
++		if (pte_none_or_zero(pteval)) {
+ 			clear_user_highpage(page, src_addr);
+ 			continue;
+ 		}
+@@ -1294,7 +1301,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 				goto out_unmap;
+ 			}
+ 		}
+-		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
++		if (pte_none_or_zero(pteval)) {
+ 			++none_or_zero;
+ 			if (!userfaultfd_armed(vma) &&
+ 			    (!cc->is_khugepaged ||
+-- 
+2.49.0
+
 
