@@ -1,153 +1,269 @@
-Return-Path: <linux-kernel+bounces-860664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AF2BF0A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:47:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E025DBF0A83
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D941F189842C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B513A622E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5B91922FD;
-	Mon, 20 Oct 2025 10:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4765724A051;
+	Mon, 20 Oct 2025 10:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5wXs9Ur"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZL8vjzwo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qG6kgw/C";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yVkVGVcE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sxtp60tv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E052A24BBEE;
-	Mon, 20 Oct 2025 10:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A167F1FBEA2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760957230; cv=none; b=l42WA6D5po8kRxid5T8f+kLhDJhEu2K3+xWw9qcy9X66jujs27JdQH76+W/bCkGqtQDeTw0MmRDF89GDWQTpZOWFIPjLjOi4m1DkWGuGo4qoGykiHRZUx71KVPASVTaOECiz6Y3K13jq44T6Ygaedxh/O2xo/numNy9ZPBcgqew=
+	t=1760957354; cv=none; b=CraDwODJ2BPmVd7fCwtmLA1dMI7kAnwD7Rn3+8SbFwy1S8JmLkqbgA2JhuCaQ7veRw0EQmS+trOjYMmbLNeGGa6p6cK7HhkVhBfBGaytvaA7RyJ9sS8vYBlwrlqEL3A4qDBHO/pZeGYGUlM8sGnorFfs8Vhh2BXv/dkw2XM2EqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760957230; c=relaxed/simple;
-	bh=aRCKuRMfy54t4bXfC91JSBbnFrkYdLdzDBFthyWBges=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SPhAThBDoG+6CeCP/gECG3c4LpV+S5KWDX4J53RUyoE/FD8IuaijauPKIN8EwTeLgPQk4AdGU8ffFXrGZl/pZ9aokxzjNRJBvmrfBApkCiQ318f/eu0+sYFppEljvDtXJ+SzAf7uDvHWLDVG4xJHs4x2e0jgWpaYqYgcNQNMDH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5wXs9Ur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45EF9C4CEF9;
-	Mon, 20 Oct 2025 10:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760957227;
-	bh=aRCKuRMfy54t4bXfC91JSBbnFrkYdLdzDBFthyWBges=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C5wXs9UrwAszdToIyQFZOKA+qjfH1I2yEPkUwkzif5j4NUpLKHFN+GMhrhIqgexug
-	 RION/AebVZepdsmtOasBwAWiACN37Gehlt1tI8qJg7HtryTMMo10HtKPrCYnzR4mqe
-	 4+PULhz1P29UQ7xi9xpd6H5FBB+GABK10UO1niUyk/RDp0/kyX2pLnbML9flNDcQzL
-	 aYW2fXSJMZ3lR3hb360j2riGA3jr36dSUWNgOK7M5tcBXGGa9PTP6H75+SqYahWyFO
-	 kMCmQhwDcBIhvdGNxp8m1U8ycZ8ibkyN4OjbXeseDCjOCx9Rphnry3738s2aUJRn3N
-	 wCconD0AwTHAg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vAnPt-0000000FSul-0I6N;
-	Mon, 20 Oct 2025 10:47:05 +0000
-Date: Mon, 20 Oct 2025 11:47:04 +0100
-Message-ID: <86plahx32v.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Mark\
- Rutland" <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J.\
- Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	"Saravana\
- Kannan" <saravanak@google.com>,
-	Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau
-	<j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark
-	<james.clark@linaro.org>
-Subject: Re: [PATCH v3 03/26] of/irq: Add IRQ affinity reporting interface
-In-Reply-To: <20251009174959.00001b05@huawei.com>
-References: <20250922082833.2038905-1-maz@kernel.org>
-	<20250922082833.2038905-4-maz@kernel.org>
-	<20251009174959.00001b05@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760957354; c=relaxed/simple;
+	bh=I3/DGCoEYQewn0HWxxQ90UR7rwdxR0vMCz5fJOY3F3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iYfoZ8Os5V8t2MfRuxSDk6I0vHZJIiYCgiDo7jGrX8eQNMGCxPRGe0oiDOdnvBDiZ7Fb9NCeX+mtRFWG2IbLhG2uXsX+IpdiruYE16VXvdvKtIo/oitmq/9eDM0IU1d2RoJV3k8nkX7nT7Zpm7/NRAcbR6pMlqT1SkmMqztUoMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZL8vjzwo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qG6kgw/C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yVkVGVcE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sxtp60tv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 78A8B21168;
+	Mon, 20 Oct 2025 10:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760957346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L/1PNH6wOs+QKkt+SZGzRCm3ajzjR5Lfr6SqCxfTmXM=;
+	b=ZL8vjzwoLnYnH34PE23uOZ3F3KME+KZqah3J6iLrOAuIGG55a1y8khNsokLPisKQFkB+Zt
+	IfFjIAA51YwretPO3zXQ9pzqjpBpQBzUGYhJV7HdtTqtgVFwL9FvAaassisqgZgltkQdXh
+	FaRqTnUnLqQgIlh3Y4q12lSnp/zOa5s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760957346;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L/1PNH6wOs+QKkt+SZGzRCm3ajzjR5Lfr6SqCxfTmXM=;
+	b=qG6kgw/CY6HgazkCA5OvgraUaaiZ8GzmN1dAVcaS9c5yhq0IRWciCYu1uXelFRUyde7frd
+	ZojSTnZ7cd6wfTAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760957342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L/1PNH6wOs+QKkt+SZGzRCm3ajzjR5Lfr6SqCxfTmXM=;
+	b=yVkVGVcEVd7iFkUB1cHgrafjLLLjojOwjg/Skee+K1+9rLOaXYuolwlrpV9HaLRDziYRcq
+	X16Wox/4ZiEeh5KUB5dCsJE2+nk8vIyh6dv6IsDBAGjI8WBqAl+MQwa5rOpU9YiuM8e1nu
+	hqWiMvaBFP97+XG10aq55w/+z94zSaI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760957342;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L/1PNH6wOs+QKkt+SZGzRCm3ajzjR5Lfr6SqCxfTmXM=;
+	b=sxtp60tvPcS0gxsQlJPO2QZD3N2ZFt3J9tNCVfpnbxgiffn3XaIkEn81I7Fu6JhneWxPqi
+	OUMweWftSXID6aBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10DDD13A8E;
+	Mon, 20 Oct 2025 10:49:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mjY2Ap4T9mhCUgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 20 Oct 2025 10:49:02 +0000
+Message-ID: <3aa0ef90-22e1-4531-b059-57d924c44011@suse.de>
+Date: Mon, 20 Oct 2025 12:49:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
+ Greg KH <gregkh@linuxfoundation.org>
+Cc: lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
+ <2025101910-dipper-suburb-1755@gregkh>
+ <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
+ <d072dfe7-e0e9-49f6-89ed-25d194035e3b@gmail.com>
+ <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[linux.intel.com,gmail.com,linuxfoundation.org];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch,lists.freedesktop.org,vger.kernel.org,linuxfoundation.org,lists.linuxfoundation.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Thu, 09 Oct 2025 17:49:59 +0100,
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
-> 
-> On Mon, 22 Sep 2025 09:28:10 +0100
-> Marc Zyngier <maz@kernel.org> wrote:
-> 
-> > Plug the irq_populate_fwspec_info() helper into the OF layer
-> > to offer an IRQ affinity reporting function.
-> > 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Trivial comment inline but I don't care that much.
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> 
-> > ---
-> >  drivers/of/irq.c       | 20 ++++++++++++++++++++
-> >  include/linux/of_irq.h |  7 +++++++
-> >  2 files changed, 27 insertions(+)
-> > 
-> > diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> > index 74aaea61de13c..9a205cb033bda 100644
-> > --- a/drivers/of/irq.c
-> > +++ b/drivers/of/irq.c
-> > @@ -479,6 +479,26 @@ int of_irq_get(struct device_node *dev, int index)
-> >  }
-> >  EXPORT_SYMBOL_GPL(of_irq_get);
-> >  
-> > +const struct cpumask *of_irq_get_affinity(struct device_node *dev, int index)
-> > +{
-> > +	struct of_phandle_args oirq;
-> > +	struct irq_fwspec_info info;
-> > +	struct irq_fwspec fwspec;
-> > +	int rc;
-> > +
-> > +	rc = of_irq_parse_one(dev, index, &oirq);
-> > +	if (rc)
-> > +		return NULL;
-> > +
-> > +	of_phandle_args_to_fwspec(oirq.np, oirq.args, oirq.args_count,
-> > +				  &fwspec);
-> > +
-> > +	if (!irq_populate_fwspec_info(&fwspec, &info))
-> > +		return info.affinity;
-> My slightly picky mental consistency filter suggests that this would look
-> more like the ACPI version as
-> 
-> 	if (irq_populate_fwspec_info(&fwspec, &info))
-> 		return NULL;
-> 
-> 	return info.affinity;
-> 
-> But I don't really care.
+Hi
 
-Consistency doesn't hurt. I've applied this.
+Am 20.10.25 um 11:50 schrieb Jani Nikula:
+> On Sun, 19 Oct 2025, Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> wrote:
+>> On 10/19/25 3:47 PM, Thomas Zimmermann wrote:
+>>> Hi
+>>>
+>>> Am 19.10.25 um 16:34 schrieb Greg KH:
+>>>> On Sun, Oct 19, 2025 at 04:12:28PM +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>>> Replace kmalloc() with kmalloc_array() to correctly
+>>>>> handle array allocations and benefit from built-in overflow checking[1].
+>>>>>
+>>>>> [1]:https://docs.kernel.org/process/deprecated.html
+>>>>>
+>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>>>> ---
+>>>>>    drivers/gpu/drm/tiny/repaper.c | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/
+>>>>> repaper.c
+>>>>> index 4824f863fdba..290132c24ff9 100644
+>>>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>>>> @@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct
+>>>>> drm_framebuffer *fb, const struct iosys_map *
+>>>>>        DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>>>              epd->factored_stage_time);
+>>>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>>>> +    buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
+> Also worth emphasizing that this is wildly wrong for any height that is
+> not a multiple of 8.
 
-Thanks,
+Yes. I skipped over details as the format helpers would solve this 
+problem if done correctly.
 
-	M.
+>
+> And I thought I shot down a similar patch not long ago.
+
+You did AFAIR.
+
+>
+> Is there some tool that suggests doing this? Fix the tool instead
+> please.
+
+There's this todo item that the patch refers to. Volunteers discover 
+these and start working. But without mentoring, it's often not to 
+anyone's benefit. I've noticed a similar pattern wrt the DRM todo list.
+
+Best regards
+Thomas
+
+>
+> BR,
+> Jani.
+>
+>
+>
+>
+>>>> This isn't an array, so this function change doesn't seem to make much
+>>>> sense, right?  The size should have already been checked earlier in the
+>>>> call change to be correct.
+>> Yes,I was intending to say framebuffer but I was working on another
+>> similar patch simultaneously so I reused same words by mistake. Thanks
+>> for clarifying that.>
+>>> Yes, we've recently received plenty of these pointless changes. The
+>>> correct code would compute the number of bytes per pixel using
+>>> drm_format_info_min_pitch() and multiply with fb->height. The latter
+>>> could (maybe) use kmalloc_array(). It would still not be an array in the
+>>> common sense.
+>>>
+>> Thanks for the review and suggestion.I will be sending a v2 patch with
+>> the recommended code change.
+>>
+>> Best Regards,
+>> Mehdi Ben Hadj Khelifa> Best regards
+>>> Thomas
+>>>
+>>>> thanks,
+>>>>
+>>>> greg k-h
+>>> -- 
+>>> -- 
+>>> Thomas Zimmermann
+>>> Graphics Driver Developer
+>>> SUSE Software Solutions Germany GmbH
+>>> Frankenstrasse 146, 90461 Nuernberg, Germany
+>>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+>>> HRB 36809 (AG Nuernberg)
 
 -- 
-Without deviation from the norm, progress is not possible.
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
