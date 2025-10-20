@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-861617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719CBBF331F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:25:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0352CBF3322
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C9F9C34EFF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:25:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C85F14F93C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D833112BD;
-	Mon, 20 Oct 2025 19:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74144331A44;
+	Mon, 20 Oct 2025 19:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="EssbVOlL"
+	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="qwoFX9sV"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B6421ABD7;
-	Mon, 20 Oct 2025 19:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD152D9ED5;
+	Mon, 20 Oct 2025 19:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988306; cv=pass; b=VVS619WD3LRz2LddqDbEeEg4mmUzkbTKD+CH8rwKp/wSy2gxScE/t2Dkg0xuc81t7nGBzOqbKQe1Wgy74+3qNr4M05GeOV74cw2VKXaeeexUiG+VjD//38NCpV6u0mSACZ44mI4D5e3jw+uDXeO3/g3mrjvYPDmJ2fjWMV62M44=
+	t=1760988307; cv=pass; b=cXDEsK4nS11gxlzYRUUVxGT4NbNkvATBd4WMZuZUqeK6tY/blQQJ5fe3/aYwkAcskO5xYH8wyiwuRyual478cDfQ1U61CMgojU63rdOo+Fr5WDVyqQbbN3+mc0nchUlBCloh7vgn8U//aq4rcfhndTdHncFe9oTkL/QTMY8dTjg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988306; c=relaxed/simple;
-	bh=zQ/vNVFI31WoIhAZSn7izuOFvqff4NwI1zEJlvVF/4w=;
+	s=arc-20240116; t=1760988307; c=relaxed/simple;
+	bh=mbuCJmrn1zxddZb8HBPFRKrtcmwvNXXgDoKpwL10W+c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EnNi6ynmA+hxQ+zyygjy6Hc1O+0UjHgSyaFnz38af0io8havnnr4L9UN4gj0DdQyFHgtgywB3MIqjAZZnhpmf/phRQMCOuWhVYTnbkk75/gLJttXl3OZN6nQPvQz8Znc321Tpesr6Y7F95+EZwWL9EnrUNXOpvMnwfbarXVUz3I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=EssbVOlL; arc=pass smtp.client-ip=136.143.188.15
+	 MIME-Version; b=iBbnIL/UKMjTQKePJXDfMlay1TmJwfxDctPG4d0YaUmIUzYUKELpHRfgjQ7ShYG10edsqbEwxrOwxqmwZFsDJPFYfcZ/+L9mL+ShWxqjl1APL3DHAf3RA6B2xEKKgbb/xxQVm7Jrk7qxomhSxtLwIYE65k3+/UEoHjaIuW9LYwA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=qwoFX9sV; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1760988296; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1760988297; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=e3dM/c86ZnXlpVVvrYa9R8vD0UPkbE7vS+k1JtlKidmD7rwxmuIC9FCl6pYzDBf55WVEuASxWA9wRvHJOnfaU6fo9zs2P9C1cCne7e32f8duRVD7bADV1blV7kJWehByDNZU9a9lmmYtWCOmR5xjmAH7kh5l7EdqvM06ZF9+g8Q=
+	b=HFFzkEqD4v2/0MmD1YxfUfEHWiYX/lDLv/Qxi9+VOm+9JWJSF8/e5YvJmAmdVdQozCOBYJj8do1VPtHwOrEvd0C5iF30tvP+hYg69ngsMXINHDLgye8GcPGyb2WZzqIa77vvLAmRxwiBhX0Zi5z0ckH90lUqWxDsddErbjCWPtw=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760988296; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8edqjT6dBZ2S1RQE3PoymEqkIw4maJ1LUrinmkP1Dcs=; 
-	b=VaVgorAo0wM17crk0Fmn5pTJgBb4m/XY2yb+JWfM59ivZUhCrgkdlUyZpIjSZ6XbdTcdt9tYtCWTtfB+/Bm7o5QedQNt6eUlBh9H4XcSU3x2g4KD7uQWV7e10xUBUKLB+LgyN/64M6pzRjjjmENwwyYD3fTYxlKBTUF2b/TYBCg=
+	t=1760988297; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Jfs9qm98itI/ML/yRbHJ6/qx7PP5MLRZCmJO7XYwdvI=; 
+	b=QHBfe0JfpwtBcOIqmYnssybik39mvqN6sXsgMJPcELG3B1sUM1//ERDXiO3lFfPumF4+WPsWUjG0iuZ6U3MuQ8AZfz9M1lYA7YIf2SkWnQdUSauhQA+ENpAfIQkf01yRq+xTBJSW4rWOZ34u6g4ylO687ZIABqwadsWSxNqFDw8=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760988296;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760988297;
 	s=zmail; d=rong.moe; i=i@rong.moe;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=8edqjT6dBZ2S1RQE3PoymEqkIw4maJ1LUrinmkP1Dcs=;
-	b=EssbVOlLYXC9Eb8evZY9RbACqLGmiEHPLFiqZWons0Bcq7X81TVhNGU2ZTz7TMDs
-	T3GJZAmSdPCzsbnCIRKv+rSSlZk/jaG6Axej/d26i21bc3JPNHcX1oBqiSeEa7iPGW/
-	HDQ7R2odtY420duqitUVVyIoilUK7hDQ/KSAwWMc=
-Received: by mx.zohomail.com with SMTPS id 176098829406155.51830365458795;
-	Mon, 20 Oct 2025 12:24:54 -0700 (PDT)
+	bh=Jfs9qm98itI/ML/yRbHJ6/qx7PP5MLRZCmJO7XYwdvI=;
+	b=qwoFX9sVRg7Pgbw0+GoBESPFz7L1SzKz16Nxiji9YpM1/z2MXo8rxkYjDW3uZIqB
+	SoDGmTCPhZiBtXcwedZCwcBtj/EMjCbaM0X9QN4u6k8wlxy6O16bwzaEiCDYDf7Uu5B
+	Ypw2QCp+78tuHz0RrbPjwscBBCi8O5rR6akSOoRQ=
+Received: by mx.zohomail.com with SMTPS id 1760988296748941.0431977433706;
+	Mon, 20 Oct 2025 12:24:56 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
 To: Ike Panhc <ikepanhc@gmail.com>,
 	Mark Pearson <mpearson-lenovo@squebb.ca>,
@@ -59,9 +59,9 @@ To: Ike Panhc <ikepanhc@gmail.com>,
 Cc: Rong Zhang <i@rong.moe>,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] platform/x86: ideapad-laptop: Protect GBMD/SBMC calls with mutex
-Date: Tue, 21 Oct 2025 03:24:33 +0800
-Message-ID: <20251020192443.33088-2-i@rong.moe>
+Subject: [PATCH 2/2] platform/x86: ideapad-laptop: Add charge_types:Fast (Rapid Charge)
+Date: Tue, 21 Oct 2025 03:24:34 +0800
+Message-ID: <20251020192443.33088-3-i@rong.moe>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251020192443.33088-1-i@rong.moe>
 References: <20251020192443.33088-1-i@rong.moe>
@@ -74,173 +74,151 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-The upcoming changes for Rapid Charge support require two consecutive
-SBMC calls to switch charge_types. Hence, a mutex is required.
+The GBMD/SBMC interface supports Rapid Charge mode (charge_types: Fast)
+in addition to Conservation Mode (charge_types: Long_Life).
 
-The reason for not using rw_semaphore for this purpose is that allowing
-simultaneous GBMD calls is not really useful and doesn't deserve the
-overhead.
+Expose these two modes while carefully maintaining their mutually
+exclusive state, which aligns with the behavior of manufacturer
+utilities on Windows.
 
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
- drivers/platform/x86/lenovo/ideapad-laptop.c | 91 ++++++++++++--------
- 1 file changed, 56 insertions(+), 35 deletions(-)
+ drivers/platform/x86/lenovo/ideapad-laptop.c | 61 ++++++++++++++++++--
+ 1 file changed, 56 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
-index fcebfbaf04605..9f956f51ec8db 100644
+index 9f956f51ec8db..d2bfaa532020a 100644
 --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
 +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-@@ -158,6 +158,7 @@ struct ideapad_rfk_priv {
- struct ideapad_private {
- 	struct acpi_device *adev;
- 	struct mutex vpc_mutex; /* protects the VPC calls */
-+	struct mutex gbmd_sbmc_mutex; /* protects GBMD/SBMC calls */
- 	struct rfkill *rfk[IDEAPAD_RFKILL_DEV_NUM];
- 	struct ideapad_rfk_priv rfk_priv[IDEAPAD_RFKILL_DEV_NUM];
- 	struct platform_device *platform_device;
-@@ -455,37 +456,40 @@ static int debugfs_status_show(struct seq_file *s, void *data)
- 	struct ideapad_private *priv = s->private;
- 	unsigned long value;
+@@ -62,13 +62,26 @@ enum {
+ 	CFG_OSD_CAM_BIT      = 31,
+ };
  
--	guard(mutex)(&priv->vpc_mutex);
--
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_MAX, &value))
--		seq_printf(s, "Backlight max:  %lu\n", value);
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL, &value))
--		seq_printf(s, "Backlight now:  %lu\n", value);
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_POWER, &value))
--		seq_printf(s, "BL power value: %s (%lu)\n", value ? "on" : "off", value);
--
--	seq_puts(s, "=====================\n");
--
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_RF, &value))
--		seq_printf(s, "Radio status: %s (%lu)\n", value ? "on" : "off", value);
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_WIFI, &value))
--		seq_printf(s, "Wifi status:  %s (%lu)\n", value ? "on" : "off", value);
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_BT, &value))
--		seq_printf(s, "BT status:    %s (%lu)\n", value ? "on" : "off", value);
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_3G, &value))
--		seq_printf(s, "3G status:    %s (%lu)\n", value ? "on" : "off", value);
-+	scoped_guard(mutex, &priv->vpc_mutex) {
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_MAX, &value))
-+			seq_printf(s, "Backlight max:  %lu\n", value);
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL, &value))
-+			seq_printf(s, "Backlight now:  %lu\n", value);
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_BL_POWER, &value))
-+			seq_printf(s, "BL power value: %s (%lu)\n", value ? "on" : "off", value);
++/*
++ * There are two charge modes supported by the GBMD/SBMC interface:
++ * - "Rapid Charge": increase power to speed up charging
++ * - "Conservation Mode": stop charging at 60-80% (depends on model)
++ *
++ * The interface doesn't prohibit enabling both modes at the same time.
++ * However, doing so is essentially meaningless, and the manufacturer utilities
++ * on Windows always make them mutually exclusive.
++ */
 +
-+		seq_puts(s, "=====================\n");
-+
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_RF, &value))
-+			seq_printf(s, "Radio status: %s (%lu)\n", value ? "on" : "off", value);
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_WIFI, &value))
-+			seq_printf(s, "Wifi status:  %s (%lu)\n", value ? "on" : "off", value);
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_BT, &value))
-+			seq_printf(s, "BT status:    %s (%lu)\n", value ? "on" : "off", value);
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_3G, &value))
-+			seq_printf(s, "3G status:    %s (%lu)\n", value ? "on" : "off", value);
-+
-+		seq_puts(s, "=====================\n");
-+
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value))
-+			seq_printf(s, "Touchpad status: %s (%lu)\n", value ? "on" : "off", value);
-+		if (!read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &value))
-+			seq_printf(s, "Camera status:   %s (%lu)\n", value ? "on" : "off", value);
-+	}
+ enum {
++	GBMD_RAPID_CHARGE_STATE_BIT = 2,
+ 	GBMD_CONSERVATION_STATE_BIT = 5,
+ };
  
- 	seq_puts(s, "=====================\n");
+ enum {
+ 	SBMC_CONSERVATION_ON  = 3,
+ 	SBMC_CONSERVATION_OFF = 5,
++	SBMC_RAPID_CHARGE_ON  = 7,
++	SBMC_RAPID_CHARGE_OFF = 8,
+ };
  
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &value))
--		seq_printf(s, "Touchpad status: %s (%lu)\n", value ? "on" : "off", value);
--	if (!read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &value))
--		seq_printf(s, "Camera status:   %s (%lu)\n", value ? "on" : "off", value);
--
--	seq_puts(s, "=====================\n");
-+	scoped_guard(mutex, &priv->gbmd_sbmc_mutex) {
-+		if (!eval_gbmd(priv->adev->handle, &value))
-+			seq_printf(s, "GBMD: %#010lx\n", value);
-+	}
+ enum {
+@@ -632,6 +645,10 @@ static ssize_t conservation_mode_show(struct device *dev,
+ 			return err;
+ 	}
  
--	if (!eval_gbmd(priv->adev->handle, &value))
--		seq_printf(s, "GBMD: %#010lx\n", value);
- 	if (!eval_hals(priv->adev->handle, &value))
- 		seq_printf(s, "HALS: %#010lx\n", value);
++	/*
++	 * For backward compatibility, ignore Rapid Charge while reporting the
++	 * state of Conservation Mode.
++	 */
+ 	return sysfs_emit(buf, "%d\n", !!test_bit(GBMD_CONSERVATION_STATE_BIT, &result));
+ }
  
-@@ -622,9 +626,11 @@ static ssize_t conservation_mode_show(struct device *dev,
+@@ -651,6 +668,16 @@ static ssize_t conservation_mode_store(struct device *dev,
  
- 	show_conservation_mode_deprecation_warning(dev);
+ 	guard(mutex)(&priv->gbmd_sbmc_mutex);
  
--	err = eval_gbmd(priv->adev->handle, &result);
--	if (err)
--		return err;
-+	scoped_guard(mutex, &priv->gbmd_sbmc_mutex) {
-+		err = eval_gbmd(priv->adev->handle, &result);
++	/*
++	 * Prevent mutually exclusive modes from being set at the same time,
++	 * but do not disable Rapid Charge while disabling Conservation Mode.
++	 */
++	if (state) {
++		err = exec_sbmc(priv->adev->handle, SBMC_RAPID_CHARGE_OFF);
 +		if (err)
 +			return err;
 +	}
- 
- 	return sysfs_emit(buf, "%d\n", !!test_bit(GBMD_CONSERVATION_STATE_BIT, &result));
- }
-@@ -643,6 +649,8 @@ static ssize_t conservation_mode_store(struct device *dev,
- 	if (err)
- 		return err;
- 
-+	guard(mutex)(&priv->gbmd_sbmc_mutex);
 +
  	err = exec_sbmc(priv->adev->handle, state ? SBMC_CONSERVATION_ON : SBMC_CONSERVATION_OFF);
  	if (err)
  		return err;
-@@ -2007,15 +2015,22 @@ static int ideapad_psy_ext_set_prop(struct power_supply *psy,
+@@ -2015,14 +2042,21 @@ static int ideapad_psy_ext_set_prop(struct power_supply *psy,
  				    const union power_supply_propval *val)
  {
  	struct ideapad_private *priv = ext_data;
-+	unsigned long op;
+-	unsigned long op;
++	unsigned long op1, op2;
++	int err;
  
  	switch (val->intval) {
++	case POWER_SUPPLY_CHARGE_TYPE_FAST:
++		op1 = SBMC_CONSERVATION_OFF;
++		op2 = SBMC_RAPID_CHARGE_ON;
++		break;
  	case POWER_SUPPLY_CHARGE_TYPE_LONGLIFE:
--		return exec_sbmc(priv->adev->handle, SBMC_CONSERVATION_ON);
-+		op = SBMC_CONSERVATION_ON;
-+		break;
+-		op = SBMC_CONSERVATION_ON;
++		op1 = SBMC_RAPID_CHARGE_OFF;
++		op2 = SBMC_CONSERVATION_ON;
+ 		break;
  	case POWER_SUPPLY_CHARGE_TYPE_STANDARD:
--		return exec_sbmc(priv->adev->handle, SBMC_CONSERVATION_OFF);
-+		op = SBMC_CONSERVATION_OFF;
-+		break;
+-		op = SBMC_CONSERVATION_OFF;
++		op1 = SBMC_RAPID_CHARGE_OFF;
++		op2 = SBMC_CONSERVATION_OFF;
+ 		break;
  	default:
  		return -EINVAL;
- 	}
-+
-+	guard(mutex)(&priv->gbmd_sbmc_mutex);
-+
-+	return exec_sbmc(priv->adev->handle, op);
- }
+@@ -2030,7 +2064,11 @@ static int ideapad_psy_ext_set_prop(struct power_supply *psy,
  
- static int ideapad_psy_ext_get_prop(struct power_supply *psy,
-@@ -2028,9 +2043,11 @@ static int ideapad_psy_ext_get_prop(struct power_supply *psy,
- 	unsigned long result;
- 	int err;
+ 	guard(mutex)(&priv->gbmd_sbmc_mutex);
  
--	err = eval_gbmd(priv->adev->handle, &result);
--	if (err)
--		return err;
-+	scoped_guard(mutex, &priv->gbmd_sbmc_mutex) {
-+		err = eval_gbmd(priv->adev->handle, &result);
-+		if (err)
-+			return err;
-+	}
- 
- 	if (test_bit(GBMD_CONSERVATION_STATE_BIT, &result))
- 		val->intval = POWER_SUPPLY_CHARGE_TYPE_LONGLIFE;
-@@ -2292,6 +2309,10 @@ static int ideapad_acpi_add(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	err = devm_mutex_init(&pdev->dev, &priv->gbmd_sbmc_mutex);
+-	return exec_sbmc(priv->adev->handle, op);
++	err = exec_sbmc(priv->adev->handle, op1);
 +	if (err)
 +		return err;
 +
- 	err = ideapad_check_features(priv);
- 	if (err)
- 		return err;
++	return exec_sbmc(priv->adev->handle, op2);
+ }
+ 
+ static int ideapad_psy_ext_get_prop(struct power_supply *psy,
+@@ -2042,6 +2080,7 @@ static int ideapad_psy_ext_get_prop(struct power_supply *psy,
+ 	struct ideapad_private *priv = ext_data;
+ 	unsigned long result;
+ 	int err;
++	bool is_rapid_charge, is_conservation;
+ 
+ 	scoped_guard(mutex, &priv->gbmd_sbmc_mutex) {
+ 		err = eval_gbmd(priv->adev->handle, &result);
+@@ -2049,7 +2088,18 @@ static int ideapad_psy_ext_get_prop(struct power_supply *psy,
+ 			return err;
+ 	}
+ 
+-	if (test_bit(GBMD_CONSERVATION_STATE_BIT, &result))
++	is_rapid_charge = test_bit(GBMD_RAPID_CHARGE_STATE_BIT, &result);
++	is_conservation = test_bit(GBMD_CONSERVATION_STATE_BIT, &result);
++
++	if (unlikely(is_rapid_charge && is_conservation)) {
++		dev_err(&priv->platform_device->dev,
++			"unexpected charge_types: both [Fast] and [Long_Life] are enabled\n");
++		return -EINVAL;
++	}
++
++	if (is_rapid_charge)
++		val->intval = POWER_SUPPLY_CHARGE_TYPE_FAST;
++	else if (is_conservation)
+ 		val->intval = POWER_SUPPLY_CHARGE_TYPE_LONGLIFE;
+ 	else
+ 		val->intval = POWER_SUPPLY_CHARGE_TYPE_STANDARD;
+@@ -2074,6 +2124,7 @@ static const struct power_supply_ext ideapad_battery_ext = {
+ 	.properties		= ideapad_power_supply_props,
+ 	.num_properties		= ARRAY_SIZE(ideapad_power_supply_props),
+ 	.charge_types		= (BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
++				   BIT(POWER_SUPPLY_CHARGE_TYPE_FAST) |
+ 				   BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE)),
+ 	.get_property		= ideapad_psy_ext_get_prop,
+ 	.set_property		= ideapad_psy_ext_set_prop,
 -- 
 2.51.0
 
