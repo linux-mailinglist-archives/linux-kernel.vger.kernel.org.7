@@ -1,136 +1,181 @@
-Return-Path: <linux-kernel+bounces-860069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13055BEF3BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43CCABEF3C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8A11899E36
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851CC1885C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B242A2BEC2E;
-	Mon, 20 Oct 2025 04:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034FC2BEC42;
+	Mon, 20 Oct 2025 04:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcQj5RPH"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NzraLz31"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1B92BE035
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6E02BE7CB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760933985; cv=none; b=Kh4fshJ40kl2Z176ZNMvJw6ZOwsFvaxWiXSEC6+xlbu00IaJfSeTUeWbwMPW+0NyHXvzupBgwR1mZLK2/WNhsg4PNvQsObjhNIwHptO1mwlzZjm0YP6DxnGX7321H+15GF40PD2gHZAOtR2Fznal5hWM49igDRzXN12Vh0IVefQ=
+	t=1760934073; cv=none; b=raD/cbVzTdCcc355INA/+4rKV3gP7DZfhhXYY61+GnmewxIP4qZRwey/SC0njTg9JIrX/8ISFC8MPLL6PSdEDKvpG2JOaorMxlp5U/nKydqJeP7xNX7Sfo4aLtdUZviPIaA7QFrHfO3ABTYgWDrGIuBJBHZF2QJA6fYGdPiG/2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760933985; c=relaxed/simple;
-	bh=s3zAr2Lw3rD/hCeK/LxHqHkhg0wpepJJnQXf3fhGEoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aqy0pEGQRan4jKZ2iiIuQB6HCBLbOrQiHDl3nveqd3KDbiERdOq6S6ozy6L7Wy1X48R6lZaL21lO+n2ahiLsJnB2xMuxOsg34ABbfeq3AKNobTWE9+gS8Ejhw6/0kuIdf/3FL6X5eZFFSAPsKZp991HfqqvDICB7VXq2c7YlwwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcQj5RPH; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7a23208a0c2so1068242b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:19:43 -0700 (PDT)
+	s=arc-20240116; t=1760934073; c=relaxed/simple;
+	bh=KSjoxuwSlFaFq4TJcoW0tRdCftkDMdzYUiOjhUqgUR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0r9TTdleOkJ/YObPazaCRCYaQsbxmS1B3fAdM9ojko6z2KX8fLWZk1H3CNHjf1Q0AzZZa1JLaMhz77Wmzp11fl5vZlQ+Lx035du0fff81n3OvKIWlZRbdNkKBHKoUrlArx3mePgFMEmqBzfI06xsWTPh6eV6/kUt6W3nSFNq4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NzraLz31; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290b48e09a7so45316405ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:21:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760933983; x=1761538783; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SWRlJEZdwGAnIwAauINa4R3cyyZ8Vt+QqKXF4C/l9tg=;
-        b=JcQj5RPHWujfCC3Vp3fxckb+Z4suvrkwe0eRJnBjybmx/djHhdLKufoBCTJ734JnV6
-         09GsMfB9w4ctiYupw/N0rqoc23WL4Apmt6LxrAep/nJVxPSdSL5Ogkx8w0i0ReUf0Zm/
-         Nmz4/H+M5/3NG4e7nrBZA0BVlRAI9u6UNhRawC5F8YZSEgPbEAhzJhd/oWKfSH1QhI2h
-         f4gBf5fTEvXUrK6z30qcf8fSmJcRaQ6e76V+dA/khkxx4A/oMQbjUIywZMYsbylIZsc9
-         29BQLt+soP2q2WBQclaUX07ufads66uxz0J30BpkJVzmjAyeR9dThWlv2dD5VcEiSGuF
-         pMzA==
+        d=bytedance.com; s=google; t=1760934070; x=1761538870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=conQFyh0ywHaD293wZYZONSgw/GLLJWk5gnj1mP84r4=;
+        b=NzraLz3102v6ehlBEAVRV9f1Ok1HDyPK+1tRUW79Wa0oG7FGeo7ruUdMP1CeyBjm8y
+         n+0+oPEaUTPef9c6NFgmz4m4MqXFUxhpzQ+Rd+HjvzzA0m1PimfQR2oSTLDkTPyJurkD
+         zS0TSjk/KWlXvSnRfN5W1cUH9C0upyQjZ6Sn1DacODGoLgQrM1w5tqvujyFMOPboYv/P
+         CIT3qBZJkB+ri82n0Q3szP/QCDewqZ3A0FqMIC2aG4Lp9cumz7a+W3fqKy6SQdCqIi5s
+         EHP3M9HW5Gb5shh5r/m6+YtFvn2/unBxzGZhMETpCv24FPAiLTLw7hmJ/i5HSVzcftrT
+         oRww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760933983; x=1761538783;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SWRlJEZdwGAnIwAauINa4R3cyyZ8Vt+QqKXF4C/l9tg=;
-        b=gpoFdE0E9b7XapbK61JHO24cmIelYRkixWCwu71QvUsmXFyzlBBEc4WrIe7x1Mmd3W
-         TG2C7BuHEKWF4zzE1c2Pp4+jJZYIeEuURAKZe4toYN4xVeX4DVC7KTkr20/2YqrwF/rY
-         NM3Y11QFVf7moFolHztO7kamEkYYsaRlb2E1Lz6HuZXZMxHoVjk6U02hfgYHGXXoOWqM
-         yucdtBQ2uHt8aWav294Ag5uiGMPl4bJvwseUkWs0fsAbLlXf9d5xkXQvFKPsysLpOjXQ
-         VDPVT6UPqCu1j60zcDXFaaqi/o5VJxX2AWSmYubGJVHX6Gho/TAeVm+zYhl+upQTOeKN
-         jQ2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQd4dxOA9yqOZqXPOW/aEgcAYmFPJ7Hs6Y2UWsELLFtVDa4o0960QIM8zwCYuuakB6SiuQmguquKivGJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs/eQqwn34MJ5aoLJf9rjO7eym/l5khiKLB38AwS6tnxxuM7lU
-	CxOgL/EueTtafWm5OlzEsMYF57U15sWSG+7B4B7m7ynJC168IYvZb/89
-X-Gm-Gg: ASbGncsQ7ASHJ2+hqoeY27i5pVBYwZKjgkVo0IX9aAYu9Zw3RzAklO2pNtYtlAx2EIb
-	7ub8pXXSwLBpKKFp0rP5CL84YjeMTqeHm2JctqzXYV3pXpSgIV7fnmFU6+kylADx6iZsRGIGaNu
-	uhaNfEsi1ygu4rSBGizaX+YATJ3yKEpTqBh5RepA2uazU4Kg+cRBY+9fy/gIWiEdPxTfVxtmWLU
-	MhX6Zprtw39c4OFZHoag3d/az183cOH/FojwGx1YGcAShY+KWzIIfsvlxUc4gDmwu57gOy2Opgk
-	VXPmT8iiZ214vHtZq8EklRuQQTdlBZIU+ZpVdJO+prdgldFXE7uu3uSlB+JdNtRSFY1oX/BdEoW
-	wPRncAGkls4dkZ1aDqGa91zHhMaulLjlZ3FtA2zKlfxMk+CzBWrOPzRrEVviPiQ0YcaXC4Ox1ay
-	Dx/hOa0IOH47ZJmw==
-X-Google-Smtp-Source: AGHT+IFgXTzodinLLkmL+sZBQeQk+ymkQXYFzmC5F7odb2hPBu8wYY31SZhor2FAQq/w5Rr23U2jYA==
-X-Received: by 2002:a05:6a21:6da8:b0:252:9bf:ad9c with SMTP id adf61e73a8af0-334a8629f82mr15461749637.51.1760933982959;
-        Sun, 19 Oct 2025 21:19:42 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2300f253csm6975121b3a.47.2025.10.19.21.19.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 21:19:41 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id D938941E481B; Mon, 20 Oct 2025 11:19:39 +0700 (WIB)
-Date: Mon, 20 Oct 2025 11:19:39 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Baoquan He <bhe@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mm-unstable tree
-Message-ID: <aPW4W8cmRS9w3lpw@archie.me>
-References: <20251020134517.795a133d@canb.auug.org.au>
- <aPWvfu5MQROcWKOf@MiWiFi-R3L-srv>
+        d=1e100.net; s=20230601; t=1760934070; x=1761538870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=conQFyh0ywHaD293wZYZONSgw/GLLJWk5gnj1mP84r4=;
+        b=pudaaI34cQ7Hju28LoliQvRBQUfj57go0xsO+sjiMevpNpjSBl3pzJRsC26YJGI14f
+         /dBL+Ya60C0rFrOXTCMK8zPR6nMwgvhMl37F8FfrN6YpaPBpa0cJiJ8TIhBaGj9WK49E
+         +jHkna/7ZE13G9Vu+xSgeLkv89bSLTKC4cyebGoWQDNKABwkssvfsOb7cSUKi+yN7XKj
+         hC2JrBXNxh0jyjX7uWFDgNh/LsTissI+tTQT0aXGNPHgowRwrDPkoOV3ePuh8BxeB3EB
+         yVTd/KdW5fepk6TKMS2kX3tAOQvTmKKMGmPwUKRSQei8mJqbWoLcvQyUpirqdlmnGcfD
+         FaiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0sZewVr9AWjbJebBTSqsBtBUi8CLPIIUwHPiKvtwm9GsAB5y5729W0mzaZJwqiB2qE5d25s2mEWCn7Fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA6F3b6ZB6fqyOYII2xRFwCGkaoFRBBBNRJzUEyuA5bCULV5qK
+	QA5FzQcfZuSEsFmNXSU3UFahAvF4lWWJJaCj/ucsnJ7mXGDzt+qhysUbAmTLwMbD/r4=
+X-Gm-Gg: ASbGncv+X0aLTHu8/QzLNhy3vAxEjJN/oT0vBG2KNmwqRjaEvCScq/FZor3LPaw6eVW
+	Rkg6chiPf8ZeAQHR2UP44p/aTweK5yqIa7S2mhKoJ6hAwcbN+5CPdCj5/E2uqI1FGKSg0yaXLji
+	xDppxJmNae95XupaJIJTS2J1IhnAE/xFbwDtdXCbloH2X9TO8XCGNaCl+q8TXq+8k16Byz6t+nr
+	uagUVHTkZcLcgdp4NmMI+xENUjS/LYh1LZr14KXeTDyAb0gYS3hnvy63AnMo/W/ByLDBBK2D1ao
+	aJueE2zDt7tWgEDWeF2P4Da5K//5pKP+f+SV8bUjNA59rGUnCRzMt+D6C6DlHbPINYkBVzKDI9Q
+	nk1+vkU1A0gm/mfHfFYIET9lOYYCoux6fL73lphDY0yqFyJ5ClQeyYCHcGNRO4zlOyrR7RIac9I
+	BKLCogW9fW5vQH3hWvE3CjKTWY73+D5zK+dRVrYEKB9i/FVePJETwjv7xI66Z7U9c9jspsKEMNI
+	A==
+X-Google-Smtp-Source: AGHT+IEdkgCehFcbIRaUApmCfafCEhZVkAa78hZZpBjec5gPS2C5TVHNU0zWNgu3Z2IjgaK3I7rtpw==
+X-Received: by 2002:a17:902:f687:b0:26e:49e3:55f1 with SMTP id d9443c01a7336-290c9cbc867mr157233355ad.18.1760934069971;
+        Sun, 19 Oct 2025 21:21:09 -0700 (PDT)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec14e9sm68762035ad.9.2025.10.19.21.21.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 19 Oct 2025 21:21:09 -0700 (PDT)
+From: Xu Lu <luxu.kernel@bytedance.com>
+To: corbet@lwn.net,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	mark.rutland@arm.com,
+	anup@brainfault.org,
+	atish.patra@linux.dev,
+	pbonzini@redhat.com,
+	shuah@kernel.org,
+	parri.andrea@gmail.com,
+	ajones@ventanamicro.com,
+	brs@rivosinc.com,
+	guoren@kernel.org
+Cc: linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	apw@canonical.com,
+	joe@perches.com,
+	lukas.bulwahn@gmail.com,
+	Xu Lu <luxu.kernel@bytedance.com>
+Subject: [PATCH v4 00/10] riscv: Add Zalasr ISA extension support
+Date: Mon, 20 Oct 2025 12:20:46 +0800
+Message-ID: <20251020042056.30283-1-luxu.kernel@bytedance.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ACjYVYqtsauwiUs9"
-Content-Disposition: inline
-In-Reply-To: <aPWvfu5MQROcWKOf@MiWiFi-R3L-srv>
+Content-Transfer-Encoding: 8bit
 
+This patch adds support for the Zalasr ISA extension, which supplies the
+real load acquire/store release instructions.
 
---ACjYVYqtsauwiUs9
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The specification can be found here:
+https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
 
-On Mon, Oct 20, 2025 at 11:41:50AM +0800, Baoquan He wrote:
-> diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin=
--guide/mm/index.rst
-> index ebc83ca20fdc..bbb563cba5d2 100644
-> --- a/Documentation/admin-guide/mm/index.rst
-> +++ b/Documentation/admin-guide/mm/index.rst
-> @@ -39,7 +39,6 @@ the Linux memory management.
->     shrinker_debugfs
->     slab
->     soft-dirty
-> -   swap_numa
->     transhuge
->     userfaultfd
->     zswap
+This patch seires has been tested with ltp on Qemu with Brensan's zalasr
+support patch[1].
 
-LGTM, thanks!
+Some false positive spacing error happens during patch checking. Thus I
+CCed maintainers of checkpatch.pl as well.
 
---=20
-An old man doll... just what I always wanted! - Clara
+[1] https://lore.kernel.org/all/CAGPSXwJEdtqW=nx71oufZp64nK6tK=0rytVEcz4F-gfvCOXk2w@mail.gmail.com/
 
---ACjYVYqtsauwiUs9
-Content-Type: application/pgp-signature; name=signature.asc
+v4:
+ - Apply acquire/release semantics to arch_atomic operations. Thanks
+ to Andrea.
 
------BEGIN PGP SIGNATURE-----
+v3:
+ - Apply acquire/release semantics to arch_xchg/arch_cmpxchg operations
+ so as to ensure FENCE.TSO ordering between operations which precede the
+ UNLOCK+LOCK sequence and operations which follow the sequence. Thanks
+ to Andrea.
+ - Support hwprobe of Zalasr.
+ - Allow Zalasr extensions for Guest/VM.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPW4VwAKCRD2uYlJVVFO
-oxZAAQC5wdKajBQyJLJrs49+X5zKeEvwkgxMr8ESkCVYMsSVSgEAxXXgFHFvTKqT
-iDSaU2Ad2+9Xs1jakCfqypLctL5sKQg=
-=jxQm
------END PGP SIGNATURE-----
+v2:
+ - Adjust the order of Zalasr and Zalrsc in dt-bindings. Thanks to
+ Conor.
 
---ACjYVYqtsauwiUs9--
+Xu Lu (10):
+  riscv: Add ISA extension parsing for Zalasr
+  dt-bindings: riscv: Add Zalasr ISA extension description
+  riscv: hwprobe: Export Zalasr extension
+  riscv: Introduce Zalasr instructions
+  riscv: Apply Zalasr to smp_load_acquire/smp_store_release
+  riscv: Apply acquire/release semantics to arch_xchg/arch_cmpxchg
+    operations
+  riscv: Apply acquire/release semantics to arch_atomic operations
+  riscv: Remove arch specific __atomic_acquire/release_fence
+  RISC-V: KVM: Allow Zalasr extensions for Guest/VM
+  RISC-V: KVM: selftests: Add Zalasr extensions to get-reg-list test
+
+ Documentation/arch/riscv/hwprobe.rst          |   5 +-
+ .../devicetree/bindings/riscv/extensions.yaml |   5 +
+ arch/riscv/include/asm/atomic.h               |  70 ++++++++-
+ arch/riscv/include/asm/barrier.h              |  91 +++++++++--
+ arch/riscv/include/asm/cmpxchg.h              | 144 +++++++++---------
+ arch/riscv/include/asm/fence.h                |   4 -
+ arch/riscv/include/asm/hwcap.h                |   1 +
+ arch/riscv/include/asm/insn-def.h             |  79 ++++++++++
+ arch/riscv/include/uapi/asm/hwprobe.h         |   1 +
+ arch/riscv/include/uapi/asm/kvm.h             |   1 +
+ arch/riscv/kernel/cpufeature.c                |   1 +
+ arch/riscv/kernel/sys_hwprobe.c               |   1 +
+ arch/riscv/kvm/vcpu_onereg.c                  |   2 +
+ .../selftests/kvm/riscv/get-reg-list.c        |   4 +
+ 14 files changed, 314 insertions(+), 95 deletions(-)
+
+-- 
+2.20.1
+
 
