@@ -1,163 +1,90 @@
-Return-Path: <linux-kernel+bounces-860952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDFDBF16C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:05:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C584BF14DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF833A1EA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4766518844D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1EC2F999F;
-	Mon, 20 Oct 2025 13:05:26 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD4C131E49;
+	Mon, 20 Oct 2025 12:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NdX3w7kU"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF53305051;
-	Mon, 20 Oct 2025 13:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21A33C465;
+	Mon, 20 Oct 2025 12:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760965526; cv=none; b=szbUvfU6IhYFO/S0h/yv7mlG8rRiOkTcib9LFSrQuioAmuNJLnuAXtkwCuOo03SWY8Q7yyjal/9rDwyddDVGWVAItodrWsRZAuVEXrEfBjXfRBXLfjNeFI1XhQ5WqdaD++Rmoea+tCyyxuTk2GoIJcA5E9ZTmwMVLInEeEo11VY=
+	t=1760964375; cv=none; b=THn3406ExpxD6BWGv93271oIX3MEWdgzSiL8F/9vSqLnhH7+vWYa5BQNuXJFsdF3oGV1M5MdqB9IyApRn0v7BnCJw8vY5qnt33kZXUkt5gsjRo+jU64asiTZc/30VthaLEUMWGDAbFNim5vFHDWW0fOrvy0rOHXqC+C780STLfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760965526; c=relaxed/simple;
-	bh=6JaNTYuzFX194ohi8CEXAnS9b3DUfGnIy3Avrmyk8WU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J6GT0SkMxIuKpOse+19PspvvUQbEwBMwsUo5hIVS8Mb2yyhiqpmQKDiezvTVHXLrUGDHCKZPb4DenjG7WozxOLZaIgHBjUyQ1/iB9nIhWrA+svHdoBuRIXcn1JrZ5jf6lYsNphZaKJxfY8rGHHe5W0/mzc0V4SwJhhr+p7a/yMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4cqw9t2bhSzpTn3;
-	Mon, 20 Oct 2025 20:44:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 7C3C71402EC;
-	Mon, 20 Oct 2025 20:45:27 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXjnvdLvZoujOSAA--.4456S2;
-	Mon, 20 Oct 2025 13:45:26 +0100 (CET)
-Message-ID: <1987088bb29971883d2b5c06a31c8114c729422c.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,  Karel Srot <ksrot@redhat.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Date: Mon, 20 Oct 2025 14:45:15 +0200
-In-Reply-To: <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-	 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-	 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-	 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-	 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-	 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-	 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-	 <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1760964375; c=relaxed/simple;
+	bh=iCETLYsFibjq+CsukzViDDTORlacs1ZM9GueRkvBoiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ebLrk4pEiSxOEdEp4a2AHYg8Qt6f5p4FBPZh8Tghun8+SFeeyZeuURk8F8rq/u7RtsGR1kHSOwZs3CynIkC2RitvntdVFyZYtUTJbFVmu9Vh+f5VDDIP7cBC1KbQbqxZJ4NgEdIVmlK/ipnLPi8Wa3YIcW2N+9PyuRmQAYxCdLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NdX3w7kU; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=iCETLYsFibjq+CsukzViDDTORlacs1ZM9GueRkvBoiQ=; b=NdX3w7kUUi40I3knc1H3016F0j
+	Yag6eG4tQ09/7ItC9tkDkRTOL9esr2bm8Q/ox54JUnDMGCdGrWFNvznVSQJm2nHjvlme+o9RwtJaG
+	449+bJJqQ7F+DqQRoPrcuK9a7mhGZMDOm3FtAOSgl7Nen101eMV4Bk7ruKrwXTKNXisau5my3ijnl
+	KvKnS8P4XLWuinHMB5DWh+JI4fj+uFXM0njHMhpRgZIeyZPsVA8kwlchpyydJZecgGM2VLjs/scFX
+	qTxBRI6xSpwtmu9dE06F2qRSa3B7VxOi8IBv+vMe3Li1Bz6j6G7C4TeXNjpG4NU+v18UuE8JzImiV
+	W3jLpg3A==;
+Received: from [141.76.253.240] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vApGZ-0001AI-NB; Mon, 20 Oct 2025 14:45:35 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: dmitry.baryshkov@oss.qualcomm.com, Andy Yan <andyshrk@163.com>,
+ neil.armstrong@linaro.org, andrzej.hajda@intel.com
+Cc: mripard@kernel.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+ Laurent.pinchart@ideasonboard.com, maarten.lankhorst@linux.intel.com,
+ rfoss@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, knaerzche@gmail.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v8 1/2] drm/rockchip: inno-hdmi: Convert to drm bridge
+Date: Mon, 20 Oct 2025 14:45:34 +0200
+Message-ID: <8913609.MhkbZ0Pkbq@phil>
+In-Reply-To: <20251016083843.76675-2-andyshrk@163.com>
+References:
+ <20251016083843.76675-1-andyshrk@163.com>
+ <20251016083843.76675-2-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAXjnvdLvZoujOSAA--.4456S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuryDGFy7Zr4fAF1UKF15Jwb_yoW5AF15pF
-	WkWa4YyrZ5JFn3Jan2vwn8WrWrKrWxG3yUXFn8Kr1kA3W5X3W0vr10yF4Y9F4kXw1Sgw45
-	ZrW2kr17Za98ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBGj1k+sIuQAAsV
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 2025-10-20 at 08:21 -0400, Mimi Zohar wrote:
-> On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
-> > > > > 2. Instead of defining an additional process_measurement() argume=
-nt to identify
-> > > > > compressed kernel modules, to simplify the code it might be possi=
-ble to define a
-> > > > > new "func" named COMPRESSED_MODULE_CHECK.
-> > > > >=20
-> > > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPRES=
-SED_MODULE_CHECK
-> > > >=20
-> > > > I also thought about this approach. But IMA rule maps kernel module
-> > > > loading to MODULE_CHECK. If we define a new rule and ask users to u=
-se
-> > > > this new rule, ima_policy=3Dsecure_boot still won't work.
-> > >=20
-> > > I don't have a problem with extending the "secure-boot" policy to sup=
-port
-> > > uncompressed kernel modules appended signatures, based on whether
-> > > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to t=
-he existing
-> > > MODULE_CHECK rule.
-> >=20
-> > I assume once the new rule get added, we can't remove it for userspace
-> > backward compatibility, right? And with CPIO xattr supported, it seems
-> > there is no need to keep this rule. So if this concern is valid, do you
-> > think we shall switch to another approach i.e. to make IMA support
-> > verifying decompressed module and then make "secure-boot" to allow
-> > appended module signature?
+Am Donnerstag, 16. Oktober 2025, 10:38:31 Mitteleurop=C3=A4ische Sommerzeit=
+ schrieb Andy Yan:
+> From: Andy Yan <andy.yan@rock-chips.com>
 >=20
-> Yes, once the rule is added, it wouldn't be removed.  As for "to make IMA
-> support verifying decompressed module", yes that might be a better soluti=
-on,
-> than relying on "sig_enforce" being enabled. IMA already supports verifyi=
-ng the
-> appended signatures.  A new IMA specific or LSM hook would need to be def=
-ined
-> after module_decompress().
+> Convert it to drm bridge driver, it will be convenient for us to
+> migrate the connector part to the display driver later.
 >=20
-> Remember based on policy, IMA supports:
-> 1. verifying the signature stored in security.ima xattr
-> 2. verifying the appended signature (not for compressed kernel modules)
-> 3. verifying both the xattr and appended signatures
-> 4. none
->=20
-> To prevent 3 - verifying both types of signatures, the IMA arch specific =
-policy
-> rule only adds the "appraise func=3DMODULE_CHECK ..." rule if CONFIG_MODU=
-LE_SIG is
-> NOT enabled.  Calling set_module_sig_enforced() from ima_appraise_measure=
-ment()
-> to set sig_enforce could inadvertently result in requiring both the xattr=
- and
-> the appended signature kernel module verification.  To prevent this from
-> happening, "sig_enforce" should not be set, only verified in
-> ima_appraise_measurement().
->=20
-> >=20
-> > Another thought is to make CPIO support xattr. Today I realize that
-> > ima_policy=3Dsecure_boot can also cause failure of loading kdump kernel=
-.
-> > So the issue this patch tries to resolves has much less impact than I
-> > thought. Maybe we can wait until CPIO xattr support is ready? I'll help
-> > review and test Roberto's patches if this is the best way forward.
->=20
-> I'm not sure of the status of the CPIO patch set.  Roberto?
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-I haven't had time to look at it recently. I can take the openEuler
-version, address the remaining comments and repost.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Roberto
+But of course I would be really happy if someone with more experience
+on general bridges could also take a look.
+
+
+Heiko
+
 
 
