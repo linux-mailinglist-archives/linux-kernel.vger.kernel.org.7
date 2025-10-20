@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-861475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF07BF2D08
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:54:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8391BF2D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0381C18C12C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:54:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85A1734E10A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F3F3321C1;
-	Mon, 20 Oct 2025 17:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394C3331A7E;
+	Mon, 20 Oct 2025 17:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9GSvqsr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mo8NSVVj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D012D94B4;
-	Mon, 20 Oct 2025 17:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DF221DB5;
+	Mon, 20 Oct 2025 17:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982850; cv=none; b=mXUDMoBSMsf0xBTsu6AQAZVCoQwCZGBrm2/gIGUCwYm/FreDX7gt6MCkR8obOdhcbtTIcdJSRzOFzo6SlnoPu4PNKAlYXNHt+hGGFj9BYWvsMgtzH1ZMaknTPzBk6xlm/zu+tIYYJVywG8TRHe/AXBCkzkuxrsmYcBHnasZhOeI=
+	t=1760982956; cv=none; b=HfCHVEue/NZi/3b2/3nluoCHoLH35FgABBfT3vOEZh9o10gZS9feNbbtNQJKWKlG4wWrmH8JQD1Ju/wlWqGWnpmNkPqrfoo5FgBMSbErlNPKC6/LNles+rkT1eh043TU02fqegzXr0cvA/Dhx4haNyYRamlc13pqBD+h0iBRlXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982850; c=relaxed/simple;
-	bh=W9Q/9dwn0h86HXDHG358xCGj+ZGwS3vc5Ixmi2iD/rk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gRigte3XqfEZh/gGoYAbzW3piL6uymkutOCrDoqMx7iGXKiTwxAn9mMiYbJv3EORnIvZYhCKShWHCtMm99nEpY9sKRYdorWOYh9KVbUsYt+rgqcFX+MKXgl3GG3B6iWLX3uMrb7dWBWlQwAdqxhQnXaQ7ss3Ncbivog9WGMNIes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9GSvqsr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E212C4CEFE;
-	Mon, 20 Oct 2025 17:54:09 +0000 (UTC)
+	s=arc-20240116; t=1760982956; c=relaxed/simple;
+	bh=2ogP/70t6tGzuzL3B9RTLcdw87Cips2j3HOmINioEgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=r3xOAqBt6J62BsTfVAIdX/Qz7DSnhZPwShq4VnWrf5SgSKcZpQfS5oNGmCoV2T3F72lJoLLIu/l1xi16l9DmO12/Oeg3wlf+5YFrpkPmbKj4omvBjwC2UP5mitsLhwRgWzQ1jv+BCvVMeUAKtb7AQ7oRTJDcP65xRQtWfEIHK24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mo8NSVVj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48771C4CEF9;
+	Mon, 20 Oct 2025 17:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760982850;
-	bh=W9Q/9dwn0h86HXDHG358xCGj+ZGwS3vc5Ixmi2iD/rk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=o9GSvqsrrkBYtGFIQS7hjCb4B3q8prvkuUHnqv0Ei1X8WgjTgcxI5PrUIby/HhzyH
-	 7VyXj1z8YJbjJe5LW0bejXCibBAZoZQgR7kBWOmBXjkCpLi4k0INLU3rbyg+8C9lNJ
-	 Ig8WPyQH9k0OHcyGuOzAOAbyTRUuHidqJpddzTr90ET02+6Gwpefa6WkOykTo76Ta7
-	 tFuCAjqOy0cM5Tvsy9wXMqGTWYtqQybIf3rFqGiihFhV1JgLXsY9z1AVrmkL6l2y38
-	 OZTB4oOm/JQsySlpugWgDZDJ/I+h+lYrcyn5tN9L2dfiEPml5nIapok7mLsaN6qfsR
-	 ofa568azqcp3A==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cosmin Tanislav <demonsingur@gmail.com>
-Subject: [PATCH] module: Fix device table module aliases
-Date: Mon, 20 Oct 2025 10:53:40 -0700
-Message-ID: <e52ee3edf32874da645a9e037a7d77c69893a22a.1760982784.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1760982956;
+	bh=2ogP/70t6tGzuzL3B9RTLcdw87Cips2j3HOmINioEgE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Mo8NSVVjeAIRpA6FHS/EbOrTJsEzTtz1AGOt31ZlFtZYxTFORtMRez9jFUN84yj1K
+	 OVU44JAJfBCyuLcJ3Dg4u7iegRdiHY/aInNiBRIXrTxpKJ3ArcpUyOEbjVx138OE5/
+	 YvxOnmJP9c1ramUvkKYf4Sv6kHt3hanzmvKyq+iZnWqZ+gLNQJ8sqNLYBo4rky8vlG
+	 sHUmUdJhvhayKsozF5HmLf2kYHjO9niIibAM3DTQsGyRVljEF7QO6P8hiTcvxi0/Hg
+	 PV+zVpeXvV8tmpUzTXpAkmkyjF9/SksIv9A0RtibmmhWc3A8aTv91Ep6HWJGUHiw/a
+	 jRZZYtvKy1hjg==
+Date: Mon, 20 Oct 2025 07:55:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Qu Wenruo <wqu@suse.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH PM/for-6.19] freezer: Clarify that only cgroup1 freezer uses
+ PM freezer
+Message-ID: <aPZ3q6Hm865NicBC@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit 6717e8f91db7 ("kbuild: Remove 'kmod_' prefix from
-__KBUILD_MODNAME") inadvertently broke module alias generation for
-modules which rely on MODULE_DEVICE_TABLE().
+cgroup1 freezer piggybacks on the PM freezer, which inadvertently allowed
+userspace to produce uninterruptible tasks at will. To avoid the issue,
+cgroup2 freezer switched to a separate job control based mechanism. While
+this happened a long time ago, the code and comment haven't been updated
+making it confusing to people who aren't familiar with the history.
 
-It removed the "kmod_" prefix from __KBUILD_MODNAME, which caused
-MODULE_DEVICE_TABLE() to generate a symbol name which no longer matched
-the format expected by handle_moddevtable() in scripts/mod/file2alias.c.
+Rename cgroup_freezing() to cgroup1_freezing() and update comments on top of
+freezing() and frozen() to clarify that cgroup2 freezer isn't covered by the
+PM freezer mechanism.
 
-As a result, modpost failed to find the device tables, leading to
-missing module aliases.
-
-Fix this by explicitly adding the "kmod_" string within the
-MODULE_DEVICE_TABLE() macro itself, restoring the symbol name to the
-format expected by file2alias.c.
-
-Fixes: 6717e8f91db7 ("kbuild: Remove 'kmod_' prefix from __KBUILD_MODNAME")
-Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reported-by: Mark Brown <broonie@kernel.org>
-Reported-by: Cosmin Tanislav <demonsingur@gmail.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Suggested-by: Qu Wenruo <wqu@suse.com>
 ---
- include/linux/module.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/freezer.h        |   12 ++++++++----
+ kernel/cgroup/legacy_freezer.c |    2 +-
+ kernel/freezer.c               |    2 +-
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index e135cc79aceea..d80c3ea574726 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -251,10 +251,11 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
-  */
- #define __mod_device_table(type, name)	\
- 	__PASTE(__mod_device_table__,	\
-+	__PASTE(kmod_,			\
- 	__PASTE(__KBUILD_MODNAME,	\
- 	__PASTE(__,			\
- 	__PASTE(type,			\
--	__PASTE(__, name)))))
-+	__PASTE(__, name))))))
+diff --git a/include/linux/freezer.h b/include/linux/freezer.h
+index 32884c9721e5..0a8c6c4d1a82 100644
+--- a/include/linux/freezer.h
++++ b/include/linux/freezer.h
+@@ -22,14 +22,18 @@ extern bool pm_nosig_freezing;		/* PM nosig freezing in effect */
+ extern unsigned int freeze_timeout_msecs;
  
- /* Creates an alias so file2alias.c can find device table. */
- #define MODULE_DEVICE_TABLE(type, name)					\
--- 
-2.51.0
-
+ /*
+- * Check if a process has been frozen
++ * Check if a process has been frozen for PM or cgroup1 freezer. Note that
++ * cgroup2 freezer uses the job control mechanism and does not interact with
++ * the PM freezer.
+  */
+ extern bool frozen(struct task_struct *p);
+ 
+ extern bool freezing_slow_path(struct task_struct *p);
+ 
+ /*
+- * Check if there is a request to freeze a process
++ * Check if there is a request to freeze a task from PM or cgroup1 freezer.
++ * Note that cgroup2 freezer uses the job control mechanism and does not
++ * interact with the PM freezer.
+  */
+ static inline bool freezing(struct task_struct *p)
+ {
+@@ -63,9 +67,9 @@ extern bool freeze_task(struct task_struct *p);
+ extern bool set_freezable(void);
+ 
+ #ifdef CONFIG_CGROUP_FREEZER
+-extern bool cgroup_freezing(struct task_struct *task);
++extern bool cgroup1_freezing(struct task_struct *task);
+ #else /* !CONFIG_CGROUP_FREEZER */
+-static inline bool cgroup_freezing(struct task_struct *task)
++static inline bool cgroup1_freezing(struct task_struct *task)
+ {
+ 	return false;
+ }
+diff --git a/kernel/cgroup/legacy_freezer.c b/kernel/cgroup/legacy_freezer.c
+index dd9417425d92..915b02f65980 100644
+--- a/kernel/cgroup/legacy_freezer.c
++++ b/kernel/cgroup/legacy_freezer.c
+@@ -63,7 +63,7 @@ static struct freezer *parent_freezer(struct freezer *freezer)
+ 	return css_freezer(freezer->css.parent);
+ }
+ 
+-bool cgroup_freezing(struct task_struct *task)
++bool cgroup1_freezing(struct task_struct *task)
+ {
+ 	bool ret;
+ 
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index ddc11a8bd2ea..a76bf957fb32 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -44,7 +44,7 @@ bool freezing_slow_path(struct task_struct *p)
+ 	if (tsk_is_oom_victim(p))
+ 		return false;
+ 
+-	if (pm_nosig_freezing || cgroup_freezing(p))
++	if (pm_nosig_freezing || cgroup1_freezing(p))
+ 		return true;
+ 
+ 	if (pm_freezing && !(p->flags & PF_KTHREAD))
 
