@@ -1,189 +1,129 @@
-Return-Path: <linux-kernel+bounces-860410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9FABF012E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:01:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D8CBF0133
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879FA189ED83
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA6A1889C37
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AC02ECD3E;
-	Mon, 20 Oct 2025 09:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D34C2ECEA7;
+	Mon, 20 Oct 2025 09:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FWCLp+Ly"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYAnnr9D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD2D1339A4;
-	Mon, 20 Oct 2025 09:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D291DF26E;
+	Mon, 20 Oct 2025 09:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760950866; cv=none; b=nxfSpQmSYbYEa62Zls5rZzVRa47HCE9jNjJHq8vlTS9H6fCIEI3ur4wEW0Re/frQ+zfyU3wIR9t0p+NlFOPwgL+EMrNd56kWIBo/uv1QGbtsrUGkJ4CIXeM9jLztRZC34GVR8AFgp0DYjErZomHdsTonBgu7vkbAtyc+3R8ogAs=
+	t=1760950938; cv=none; b=GrRpN1562oodRlQCLOQ2xd/ZCQvh6BYRBFtHKwBSoq4vDP4PbdMDHjE089krtdmb2D99eUGZ0CTUEFS/I5K6gA4HppGr8Z/KzqD49fXWsl47SLhCLLiwVqxUKCcfBgpQdtpnSFQBVtsYk5OPrfvM8x6AI1EF4gzHDlek2C1CKsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760950866; c=relaxed/simple;
-	bh=s3TW/r7T2badC/ZEIZc34MmPgtv5S92LlxEm/4siFKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ArgWeRNo5W9+YPY2DVr2iuhg8wJ77gJtdnko3Njrhf574hdHdMx7QcQgJF11Sg2lYEhcmLDgoY2CNTGTG+XSGVHYOC18MYuyaQWcroImLddCqQWVYfX6xoSogia7pgThZriwKZwVqITBn7D4EiPnwOJVETwB3sSDdP0dk6sNLVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FWCLp+Ly; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8DB32C0AFE3;
-	Mon, 20 Oct 2025 09:00:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 14310606D5;
-	Mon, 20 Oct 2025 09:00:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7EABE102F0848;
-	Mon, 20 Oct 2025 11:00:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760950851; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=tPSoQs2CvGi5u9WAZU9trHNjsn5O33QJQeQZz6ZOGo8=;
-	b=FWCLp+LymzTBtoxTpwCzYeqpC03RM5EI7AN7m04pAvK1k+3K7S9RkJKa6pxKOrt+rYFmhC
-	TzdH1nu7WX2+ytv8jxRU37msTsvka2trXNIPTurDBqWBzyXvGqX4DPlZ3HD/aDIcvyOeMW
-	EBmZzwmJStLSpTECQHbKP4h17C0oNr8BJCSaFRR2VINwm/jdSU+0RnPA9fqHOQuebw5zFg
-	kamhtAmJBEGnhwkcK5Da+rZXiArfdes8X5DCXTBN/RPTjSaetFawm4FK4Yq5JF6clVjy8O
-	I85axUH+b6Xe0ojYvTG7FwBzfKttPZzsrtiS/emYYBx+WPKDIXEJAPw0HvX/zQ==
-Date: Mon, 20 Oct 2025 11:00:40 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
- <alexis.lothore@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] net: stmmac: Allow supporting coarse
- adjustment mode
-Message-ID: <20251020110040.18cf60c9@kmaincent-XPS-13-7390>
-In-Reply-To: <d40cbc17-22fa-4829-8eb0-e9fd26fc54b1@bootlin.com>
-References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
-	<20251015102725.1297985-3-maxime.chevallier@bootlin.com>
-	<20251017182358.42f76387@kernel.org>
-	<d40cbc17-22fa-4829-8eb0-e9fd26fc54b1@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760950938; c=relaxed/simple;
+	bh=ezcFUr+LQe4OMTnbeAg5YTOtTsWfMeeIN46IscDdMVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rj63VVUMZ4n5wQUH26McKLiPJoME7nqPiZXng8sq6dJ+clVfW1rrqePyITMHJ5r+QqULEtYprZnlM4ZiGC3ItEFBB+K0TaiRqQAx/7+Ls1mpASlON6hmYLLSfgtKfhaEVto51E+wrw2/Bcuxvorh0HqqWlkraJLDFH7ANanRxhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYAnnr9D; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760950936; x=1792486936;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ezcFUr+LQe4OMTnbeAg5YTOtTsWfMeeIN46IscDdMVU=;
+  b=DYAnnr9DCHZ1OLq7tC0cT+nRly7h7gYd2KnxZof719rO68x3G41VjdbM
+   Svc6q73QGaRrBAxk6FRPaKkpP36ZCd00P0fjVr1cPxRMo9NwYI1IoV+tH
+   4w7YVXdDs6jkIW6I/QW4kcAcJFoF0BcBZ62j5U2PbAlFXXb2Ng1dSJAvG
+   BEC0e10fqCfPW/NcaaZOVVON9U6kFokAZ0A71CaP/1Ph+1eRr5wFKcptA
+   6BnQeT52/sHINw1Vg8t46dPhks5kOqCBanuyHwYOaEfcz1H+ta7YNJYKK
+   +sCQGYd41C5ws9OXAWB2RAugRlLvDwhyZmc6f93XKtjkEfRuKrIm+rmNy
+   g==;
+X-CSE-ConnectionGUID: SxwuxAXGRXmJkBS64sbbBQ==
+X-CSE-MsgGUID: vjmrzHlfStGdwMoJswUWNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="63105866"
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="63105866"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 02:02:15 -0700
+X-CSE-ConnectionGUID: Zp35cNExTaC4y3fHINJaGQ==
+X-CSE-MsgGUID: 9WfhUskZQvSfWEjJPOkPFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="220429504"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.112])
+  by orviesa001.jf.intel.com with SMTP; 20 Oct 2025 02:02:12 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 20 Oct 2025 12:02:10 +0300
+Date: Mon, 20 Oct 2025 12:02:10 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Badhri Jagan Sridharan <badhri@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	kernel@pengutronix.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] tcpm: switch check for role_sw device with fw_node
+Message-ID: <aPX6kuSgsPS8L2k6@kuha.fi.intel.com>
+References: <20251013-b4-ml-topic-tcpm-v2-1-63c9b2ab8a0b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-b4-ml-topic-tcpm-v2-1-63c9b2ab8a0b@pengutronix.de>
 
-On Sat, 18 Oct 2025 09:42:57 +0200
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On Mon, Oct 13, 2025 at 11:43:40AM +0200, Michael Grzeschik wrote:
+> When there is no port entry in the tcpci entry itself, the driver will
+> trigger an error message "OF: graph: no port node found in /...../typec" .
+> 
+> It is documented that the dts node should contain an connector entry
+> with ports and several port pointing to devices with usb-role-switch
+> property set. Only when those connector entry is missing, it should
+> check for port entries in the main node.
+> 
+> We switch the search order for looking after ports, which will avoid the
+> failure message while there are explicit connector entries.
+> 
+> Fixes: d56de8c9a17d ("usb: typec: tcpm: try to get role switch from tcpc fwnode")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-> Hi Jakub,
->=20
-> On 18/10/2025 03:23, Jakub Kicinski wrote:
-> > On Wed, 15 Oct 2025 12:27:22 +0200 Maxime Chevallier wrote: =20
-> >> The DWMAC1000 supports 2 timestamping configurations to configure how
-> >> frequency adjustments are made to the ptp_clock, as well as the report=
-ed
-> >> timestamp values.
-> >>
-> >> There was a previous attempt at upstreaming support for configuring th=
-is
-> >> mode by Olivier Dautricourt and Julien Beraud a few years back [1]
-> >>
-> >> In a nutshell, the timestamping can be either set in fine mode or in
-> >> coarse mode.
-> >>
-> >> In fine mode, which is the default, we use the overflow of an accumula=
-tor
-> >> to trigger frequency adjustments, but by doing so we lose precision on=
- the
-> >> timetamps that are produced by the timestamping unit. The main drawback
-> >> is that the sub-second increment value, used to generate timestamps, c=
-an't
-> >> be set to lower than (2 / ptp_clock_freq).
-> >>
-> >> The "fine" qualification comes from the frequent frequency adjustments=
- we
-> >> are able to do, which is perfect for a PTP follower usecase.
-> >>
-> >> In Coarse mode, we don't do frequency adjustments based on an
-> >> accumulator overflow. We can therefore have very fine subsecond
-> >> increment values, allowing for better timestamping precision. However
-> >> this mode works best when the ptp clock frequency is adjusted based on
-> >> an external signal, such as a PPS input produced by a GPS clock. This
-> >> mode is therefore perfect for a Grand-master usecase.
-> >>
-> >> We therefore attempt to map these 2 modes with the newly introduced
-> >> hwtimestamp qualifiers (precise and approx).
-> >>
-> >> Precise mode is mapped to stmmac fine mode, and is the expected defaul=
-t,
-> >> suitable for all cases and perfect for follower mode
-> >>
-> >> Approx mode is mapped to coarse mode, suitable for Grand-master. =20
-> >=20
-> > I failed to understand what this device does and what the problem is :(
-> >=20
-> > What is your ptp_clock_freq? Isn't it around 50MHz typically?=20
-> > So 2 / ptp_freq is 40nsec (?), not too bad? =20
->=20
-> That's not too bad indeed, but it makes a difference when acting as
-> Grand Master, especially in this case because you don't need to
-> perform clock adjustments (it's sync'd through PPS in), so we might
-> as well take this opportunity to improve the TS.
->=20
-> >=20
-> > My recollection of the idea behind that timestamping providers
-> > was that you can configure different filters for different providers.
-> > IOW that you'd be able to say:
-> >  - [precise] Rx stamp PTP packets=20
-> >  -  [approx] Rx stamp all packets
-> > not that you'd configure precision of one piece of HW.. =20
->=20
-> So far it looks like only one provider is enabled at a given time, my
-> understanding was that the qualifier would be used in case there
-> are multiple timestampers on the data path, to select the better one
-> (e.g. a PHY that supports TS, a MAC that supports TS, we use the=20
-> best out of the two).
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-No, we do not support multiple timestampers at the same time.
-For that IIUC we would have to add a an ID of the source in the packet. I
-remember people were talking about modifying cmsg.=20
-This qualifier is indeed a first step to walk this path but I don't think
-people are currently working on adding this support for now.=20
+> ---
+> Changes in v2:
+> - fixed typos in the description
+> - added fixes tag
+> - added Cc: stable@vger.kernel.org
+> - Link to v1: https://lore.kernel.org/r/20251003-b4-ml-topic-tcpm-v1-1-3cdd05588acb@pengutronix.de
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index b2a568a5bc9b0ba5c50b7031d8e21ee09cefa349..cc78770509dbc6460d75816f544173d6ab4ef873 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -7876,9 +7876,9 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+>  
+>  	port->partner_desc.identity = &port->partner_ident;
+>  
+> -	port->role_sw = usb_role_switch_get(port->dev);
+> +	port->role_sw = fwnode_usb_role_switch_get(tcpc->fwnode);
+>  	if (!port->role_sw)
+> -		port->role_sw = fwnode_usb_role_switch_get(tcpc->fwnode);
+> +		port->role_sw = usb_role_switch_get(port->dev);
+>  	if (IS_ERR(port->role_sw)) {
+>  		err = PTR_ERR(port->role_sw);
+>  		goto out_destroy_wq;
+> 
 
-> However I agree with your comments, that's exactly the kind of feedback
-> I was looking for. This work has been tried several times now each
-> time with a different uAPI path, I'm OK to consider that this is out
-> of the scope of the hwprov feature.
->=20
-> > If the HW really needs it, just lob a devlink param at it? =20
->=20
-> I'm totally OK with that. I'm not well versed into devlink, working mostly
-> with embedded devices with simple-ish NICs, most of them don't use devlin=
-k.
-> Let me give it a try then :)
-
-meh, I kind of dislike using devlink here. As I said using timestamping
-qualifier is a fist step for the multiple timestamping support. If one day =
-we
-will add this support, if there is other implementation it will add burden =
-on
-the development to track and change all the other implementation. Why don't=
- we
-always use this qualifier parameter even if it is not really for simultaneo=
-us
-timestamping to avoid any future wrong development choice.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+-- 
+heikki
 
