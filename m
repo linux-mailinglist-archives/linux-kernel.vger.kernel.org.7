@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-860126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4A4BEF5BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:32:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF387BEF5DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF37D3BFFBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:32:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A4784E62EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA14C23EAA3;
-	Mon, 20 Oct 2025 05:32:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D82C21E7;
+	Mon, 20 Oct 2025 05:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpY6c1/I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23538635D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3874145355;
+	Mon, 20 Oct 2025 05:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760938324; cv=none; b=I6QU8ESYIw8Kfgk+u8Cxpk0xj+jK6z4vGg+4ZhqdPIukjSP8ggY8I4j2HjGn+UfETmyC1Mhx6GDAMOLjG1XSeUlMGdttyPVbB5HJ1Iqm4ACNmGel8fN0UgeN1bmL/w8F9C1fTaWWIbwCv8Z/hMH/Lk0dOFr/y/8T1sjUnqMAFWg=
+	t=1760938699; cv=none; b=tbYN36MGbLQgdlkOqQfGJBecNdVCV6kb1GfLDZYhljdU8iTtjefmZwzJ52iJIEHmt9A+64JT8Vm2tsPG2ArFyqx2qdc9mqvZtFEcbAHpCd7YNSAbEb4sgCBOILKDmM1ebb14mvuyRKOfrtkzc95BzAh0ec2n5rjo6zMBAUkgLZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760938324; c=relaxed/simple;
-	bh=yFd5jssshs8ZvpSkWYi55/nW/GY6HWAT1qK0o5t2fok=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ny5jV0yqpFpqgftW715/bvKiXv7uKhzBzxZogIQGsDgxWeI6advpVlEwk6lKgRshC2sXRgaQnx3qE/n6CO3g/97pMXmzlitcSsk6uzaKKSkQCrXNzCRG9v/vonWaWHD6wUKpShXIPpUyi0pi3NRHpzHUI8CCIUTPPMWsSUb5N/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-93e7b0584c9so228592539f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 22:32:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760938322; x=1761543122;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHew1nT1YTG70UVWDKPR9uReuPl+j3B2kVokdiOT2mc=;
-        b=moj/NjhMArZM9ZUdhVkDrXcn69uNVAJoyl9Z1uuIpc2u8JhTTwlKLgvYNrugrOEfMQ
-         ERsMGdYw0ypiMpJTXdTLg3gQv37aL4QFZjkg6O+sa1cb41p+v5WL4eOkaIT8MOUD3JIX
-         RgTgDhFmFSdhnWA1jBYer5b7VNWwglX2rb3CqeTMch9mjlb4a9MPQYGrS9obG3Fs0yiL
-         Oug6c5xlcAwXUDc5Z9wszVY22DEMYA6jpuGXu4TRDESsg77MW+Wu/fWYzjcdaHL0WJ8Z
-         JjJroga2QCdZiyVsorody3efr6I8uA+jX9LBYjTAjBmGbuEruev0G/PIvaIkfGwwjbkR
-         Aftw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLna/F7qmS2Ra8VRenElj6LYKx6ceFZlukmQkNJWGgYy6np7iFGCNsAYS11nYK0o9mMQlGc5clfkbC/xI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP0/6ClqqTRTCz7Nc58qAuUKSZWBtD3R0i6Z0SRKsangFwIe2l
-	bsGU81HAqm4RN+yZyKAaXuGBLhHShq+cfMHCMgSVsShe0x0cmTXSpBGAWeZrAfNcWFZShYNe9JA
-	NPr3eLmGG3GHW9ACLQfDdvTXPc/LOmtunGPmloaVzcVexVE0Ja4WNnW2//BU=
-X-Google-Smtp-Source: AGHT+IHbExlzADWVFwhGTLSVrnsL/Uo9+DdiVCg2bSy/QTJN46OVbyA1ln26dFCBzDtb/4pZUB1Mj8aAltTn/8dcyO4jT5Sj0sZe
+	s=arc-20240116; t=1760938699; c=relaxed/simple;
+	bh=34fldmSOk8nJAh4latVatdAliKdxeQL60mo7ncKT1OA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l1cGt4NHCNVkyG7oAT7GNsdXdRtN9ZQHxJNzwhQ833+oV34SI/09DWsJXBcNblYMfFdfbzIjyJ17THJhuS+cB3ChmrqjBBPdvCF2VOb+5ntYWvM3jVM0LSfCijidT17kwVdNVPlIREjU55BYKyzce1+w1WAhuO9Pjly5X3egcDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpY6c1/I; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760938698; x=1792474698;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=34fldmSOk8nJAh4latVatdAliKdxeQL60mo7ncKT1OA=;
+  b=VpY6c1/IlTY5DVddxOwIUc3Msx45rpZIYjHT4HjaQQicmBSSVjCSMXNs
+   473TGjX6/GG7LGVjjMvJpLz1MUx75zvTNz8HuXvBcheSQOdnj5Sefv7rB
+   id4BvPlelJKulmM97Q3ta5ygsHxha8Z8sgW5SUGjc7VHN1UaXwxESFw8C
+   9GuU37csQKzN3ewtS0YWyhqqhAs7dj1yvm4fYG5EYhPB+qOoZOOlMEGOx
+   7IjKYsUSjBwC/TsFYrsebcQZyVnzX2Onk6eL76qGzefxf/qKHD6rnXSqR
+   q3CIcwxC7zDpaf4cHI+UoZ37r8nEaDXf1ZQLMpbv55PlFsRR1fy1uOudp
+   w==;
+X-CSE-ConnectionGUID: JZlWQPb5SgmBVl/b6tMerw==
+X-CSE-MsgGUID: S8Sb6qD4R1mGNtWgV7dzpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="62753912"
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="62753912"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 22:38:17 -0700
+X-CSE-ConnectionGUID: 3+CThLmvSO6V5/F4GDCApA==
+X-CSE-MsgGUID: RsoVDXakTFCTuMkAqrRqsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="214214521"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 22:38:11 -0700
+Message-ID: <13d660ea-9bff-47dc-9cd7-ae74869edc5a@linux.intel.com>
+Date: Mon, 20 Oct 2025 13:34:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f715:0:b0:93b:bd28:b1af with SMTP id
- ca18e2360f4ac-93e762a87b4mr1605002539f.3.1760938321945; Sun, 19 Oct 2025
- 22:32:01 -0700 (PDT)
-Date: Sun, 19 Oct 2025 22:32:01 -0700
-In-Reply-To: <20251020050706.473196-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f5c951.a70a0220.205af.0027.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (3)
-From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, stable@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot ci] Re: Fix stale IOTLB entries for kernel address space
+To: David Hildenbrand <david@redhat.com>, Dave Hansen
+ <dave.hansen@intel.com>,
+ syzbot ci <syzbot+cid009622971eb4566@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, apopple@nvidia.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, iommu@lists.linux.dev, jannh@google.com,
+ jean-philippe@linaro.org, jgg@nvidia.com, joro@8bytes.org,
+ kevin.tian@intel.com, liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, luto@kernel.org,
+ mhocko@kernel.org, mingo@redhat.com, peterz@infradead.org,
+ robin.murphy@arm.com, rppt@kernel.org, security@kernel.org,
+ stable@vger.kernel.org, tglx@linutronix.de, urezki@gmail.com,
+ vasant.hegde@amd.com, vbabka@suse.cz, will@kernel.org, willy@infradead.org,
+ x86@kernel.org, yi1.lai@intel.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <68eeb99e.050a0220.91a22.0220.GAE@google.com>
+ <89146527-3f41-4f1e-8511-0d06e169c09e@intel.com>
+ <8cdb459f-f7d1-4ca0-a6a0-5c83d5092cd8@linux.intel.com>
+ <d1a6c65c-6518-4227-8ec3-f2af4f7724ad@redhat.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <d1a6c65c-6518-4227-8ec3-f2af4f7724ad@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 10/18/25 01:10, David Hildenbrand wrote:
+> On 16.10.25 10:00, Baolu Lu wrote:
+>> On 10/16/25 00:25, Dave Hansen wrote:
+>>> Here's the part that confuses me:
+>>>
+>>> On 10/14/25 13:59, syzbot ci wrote:
+>>>> page last free pid 5965 tgid 5964 stack trace:
+>>>>    reset_page_owner include/linux/page_owner.h:25 [inline]
+>>>>    free_pages_prepare mm/page_alloc.c:1394 [inline]
+>>>>    __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2906
+>>>>    pmd_free_pte_page+0xa1/0xc0 arch/x86/mm/pgtable.c:783
+>>>>    vmap_try_huge_pmd mm/vmalloc.c:158 [inline]
+>>> ...
+>>>
+>>> So, vmap_try_huge_pmd() did a pmd_free_pte_page(). Yet, somehow, the PMD
+>>> stuck around so that it *could* be used after being freed. It _looks_
+>>> like pmd_free_pte_page() freed the page, returned 0, and made
+>>> vmap_try_huge_pmd() return early, skipping the pmd pmd_set_huge().
+>>>
+>>> But I don't know how that could possibly happen.
+>>
+>> The reported issue is only related to this patch:
+>>
+>> - [PATCH v6 3/7] x86/mm: Use 'ptdesc' when freeing PMD pages
+>>
+>> It appears that the pmd_ptdesc() helper can't be used directly here in
+>> this patch. pmd_ptdesc() retrieves the page table page that the PMD
+>> entry resides in:
+>>
+>> static inline struct page *pmd_pgtable_page(pmd_t *pmd)
+>> {
+>>           unsigned long mask = ~(PTRS_PER_PMD * sizeof(pmd_t) - 1);
+>>           return virt_to_page((void *)((unsigned long) pmd & mask));
+>> }
+>>
+>> static inline struct ptdesc *pmd_ptdesc(pmd_t *pmd)
+>> {
+>>           return page_ptdesc(pmd_pgtable_page(pmd));
+>> }
+>>
+>> while, in this patch, we need the page descriptor that a pmd entry
+>> points to.
+> 
+> Ah. But that's just pointing at a leaf page table, right?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in __ext4_journal_stop
+Yes, that points to a leaf page table.
 
-------------[ cut here ]------------
-kernel BUG at fs/ext4/ext4_jbd2.c:54!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 1 UID: 0 PID: 7077 Comm: syz.2.139 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:ext4_put_nojournal fs/ext4/ext4_jbd2.c:54 [inline]
-RIP: 0010:__ext4_journal_stop+0x191/0x1a0 fs/ext4/ext4_jbd2.c:126
-Code: e8 f4 39 50 ff e9 f8 fe ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 10 ff ff ff e8 ba ee b5 ff e9 06 ff ff ff e8 d0 39 50 ff 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc90005097840 EFLAGS: 00010293
-RAX: ffffffff826f68f0 RBX: 0000000000000000 RCX: ffff88802c95bc80
-RDX: 0000000000000000 RSI: 000000000000034f RDI: ffffffff8d5e1065
-RBP: ffffc90005097968 R08: ffffea0001c01337 R09: 1ffffd4000380266
-R10: dffffc0000000000 R11: fffff94000380267 R12: 0000000000000078
-R13: 000000000000034f R14: ffffffff8d5e1065 R15: ffff888072ba0298
-FS:  00007fbd8db566c0(0000) GS:ffff88812646d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000674 CR3: 000000005d163000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ext4_write_inline_data_end+0x7a9/0xab0 fs/ext4/inline.c:847
- generic_perform_write+0x62a/0x900 mm/filemap.c:4263
- ext4_buffered_write_iter+0xce/0x3a0 fs/ext4/file.c:299
- ext4_file_write_iter+0x298/0x1bc0 fs/ext4/file.c:-1
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x5c9/0xb30 fs/read_write.c:686
- ksys_write+0x145/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbd8cd8eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbd8db56038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fbd8cfe5fa0 RCX: 00007fbd8cd8eec9
-RDX: 0000000000000078 RSI: 0000200000000600 RDI: 0000000000000005
-RBP: 00007fbd8ce11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fbd8cfe6038 R14: 00007fbd8cfe5fa0 R15: 00007ffdf5505328
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ext4_put_nojournal fs/ext4/ext4_jbd2.c:54 [inline]
-RIP: 0010:__ext4_journal_stop+0x191/0x1a0 fs/ext4/ext4_jbd2.c:126
-Code: e8 f4 39 50 ff e9 f8 fe ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 10 ff ff ff e8 ba ee b5 ff e9 06 ff ff ff e8 d0 39 50 ff 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc90005097840 EFLAGS: 00010293
-RAX: ffffffff826f68f0 RBX: 0000000000000000 RCX: ffff88802c95bc80
-RDX: 0000000000000000 RSI: 000000000000034f RDI: ffffffff8d5e1065
-RBP: ffffc90005097968 R08: ffffea0001c01337 R09: 1ffffd4000380266
-R10: dffffc0000000000 R11: fffff94000380267 R12: 0000000000000078
-R13: 000000000000034f R14: ffffffff8d5e1065 R15: ffff888072ba0298
-FS:  00007fbd8db566c0(0000) GS:ffff88812636d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fab1c171880 CR3: 000000005d163000 CR4: 0000000000350ef0
+These two helpers are called in vmap_try_huge_pmd/pud() to clean up the
+low-level page tables and make room for pmd/pud_set_huge(). The huge
+page entry case shouldn't go through these paths; otherwise, the code is
+already broken.
 
-
-Tested on:
-
-commit:         211ddde0 Linux 6.18-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=113e8de2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=308983f9c02338e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15536b04580000
-
+Thanks,
+baolu
 
