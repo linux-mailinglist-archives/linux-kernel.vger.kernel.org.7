@@ -1,168 +1,141 @@
-Return-Path: <linux-kernel+bounces-861912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CC3BF3FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:07:01 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B61BF3FCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B3A426011
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:07:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E980834E06E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963B52F619A;
-	Mon, 20 Oct 2025 23:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACDE2F6919;
+	Mon, 20 Oct 2025 23:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rp161r8S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQjKWkZo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015802D979F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DDB18FC86;
+	Mon, 20 Oct 2025 23:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761001616; cv=none; b=lY7d4De8nbKAW2uzz319Mai6Br7SrZFV3g+5/6QFaT6wd/AnzfZ8sEewzMcduvNBTwf8Ut/MMCuuFpVPVgQHa6rypMcwHxcFKtv2qyemrthaQzGBO2aALsZleD1Ukc1/cu+k8XCZ+dQVZAR3/8s4CDdlnDW5t1eut8S4LhhV87M=
+	t=1761001668; cv=none; b=Lou2i/esBC6J+9k58QRfyyNaNrXQzbKX0ql9WneSlWHnkGlLXUf1o/FWO9dOilSS02fQCzTCXUMtTnoR7eDOJtwITp3n+kBzJpR3UrUiAxFylmvsuzIEDWAX65DfDcJT3JfTf/0v8lL0myIJn3NHUEJRQsOfi0DThNQkW3QRDns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761001616; c=relaxed/simple;
-	bh=WOamq/8NTrRJ6lJQJ2kGQKI3k7GTITbOcQoS4hwx+3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwZ4oL1chwqbom/ijKAAhN91Bh64z981PYg3WHtLhTvUe7FRDVtNH3huqTOc8/66lXgkUE8Aa4IPhWIFDlQiIqPT5Z7A8FeHaE1S83j+pcxQ6rIcmAdoTwimHO7NikVK1EXci+lphJge4nFcY6GGRHm+j/Ni3YTAE9TcXSMhx+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rp161r8S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761001613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yadhvA4ZuoYMPNwq6F4mNtP+XLX9TmfXDYE8mlqAeoM=;
-	b=Rp161r8SphdNHbB1w/9Zn0eX0KE2VvPeadoXBLDoH4B3TW4Ggc33kFx5xPX93KfgMIXfIo
-	aRSD2Mv0Rz4gJUQf5cDoTwDqBMJs4o6IrHDHVWF3wNwkQaEENISL+rLCEUHR7iCvQEMZsR
-	NHJIoC+/23iZg54xZ05osg03a30ZQDU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-211-SyJK4Pn9Ov6uoKgyLeu2pg-1; Mon, 20 Oct 2025 19:06:51 -0400
-X-MC-Unique: SyJK4Pn9Ov6uoKgyLeu2pg-1
-X-Mimecast-MFC-AGG-ID: SyJK4Pn9Ov6uoKgyLeu2pg_1761001610
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso10728195e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:06:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761001610; x=1761606410;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yadhvA4ZuoYMPNwq6F4mNtP+XLX9TmfXDYE8mlqAeoM=;
-        b=DhpqVyB9leDb9hZVfgkbPSmKQEpmnAnKPUuBc2MOBddb2n5swvnwHVAAS+1DntAXqZ
-         vPLwo1tGLdEY8+j6rvJZYGyMouZA2eFENz9/LzRbg8diobla0j3KERu/KJeTFBkzeYn2
-         cuWpX3BRFiuuinh2b1cKQkFbhsgFZ1Y/txwXybirLQN67UVspg8AfhsSNe1acvH/tmsP
-         xY9JoeDawDJruQAEjY1aIOTOEKZoIc/FS3K51XR/TqzziFQTDh+u3WfB16OGJjeZHSl6
-         j5n/MeMjx7GaBcZ37YXMQCmqvA4CeBFVtJVdADX8g/0SlnkhhYO836al+2/SmSzmZyYN
-         FE0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdY1X6PibPyJ9kf/eEF/YcmbawR9Y5vLHxAEuVTJmCwN8Vu3EACtYbDdTAJ/27ruc8VZcSYtZLfljzt8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6sd6et28cnjCIGrVYhz15GOYwrTmbPloCsCH7ohGO0IOT0ucM
-	Krv5yj+KnmvRZxrEJZ1FrJXabwdiys9acJhNokHYba2agAipoV5kBO2UX8QCTG7pIxn/8oo2Jt1
-	LuTs4clFhtZZgZ0s2GuvagW2nmD8ML/KHjZNDDc8XJ1cSy/SQHiWn4F687f/I7t9DdA==
-X-Gm-Gg: ASbGncu5VLv+2bIIcxeYRcyB0UFkHHEYca5CygiyqL1zsLYfsq8TRHBaFeJNmL8Qu51
-	/OyHPrFxfPS4csieRZKU5FGIgub6ZaCmSUBnanSvkazZ/PqHYN4RMNORrY5WHFSfjOiQ29BS1PK
-	h3TuV13iLn48AAqp6Ogz9K94f0JwavgmTyaNkD8WQfp5G82ncGpIkFPUW91sHXyHiSQZZv2gXs2
-	4gFwaS+mpmDNIZlEHfcPS7dQ6/xFlk5+nPJUlZbI5SSn/aMzGybh0GGU1rHJbURYOzg5ymD5DiC
-	xsKaiMmPFl+hImNmEZxQIhRJAv5dUoEQMVBeV4sa2zKJh5nmyUJHgnG+TRaCxZXv7cyL
-X-Received: by 2002:a05:600c:8b03:b0:46e:41b0:f0cb with SMTP id 5b1f17b1804b1-4711790c57amr116010325e9.25.1761001610028;
-        Mon, 20 Oct 2025 16:06:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGF22YnS0c4s1OTo1hseU2hGEMN8vRo6HAvsbGEUP5hVKEl3u1SlCcU+fRoWFkUMK+1iwOOIw==
-X-Received: by 2002:a05:600c:8b03:b0:46e:41b0:f0cb with SMTP id 5b1f17b1804b1-4711790c57amr116010165e9.25.1761001609538;
-        Mon, 20 Oct 2025 16:06:49 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711442d3ddsm246071025e9.5.2025.10.20.16.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 16:06:48 -0700 (PDT)
-Date: Mon, 20 Oct 2025 19:06:46 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7 15/19] virtio_ring: factor out core logic of buffer
- detaching
-Message-ID: <20251020190537-mutt-send-email-mst@kernel.org>
-References: <20250925103708.44589-1-jasowang@redhat.com>
- <20250925103708.44589-16-jasowang@redhat.com>
+	s=arc-20240116; t=1761001668; c=relaxed/simple;
+	bh=2Wa1BgnVlLMR9sWUOy65xMkiyC8G6kFyDOFsk3N3BBQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=aYiGiRMsvrpD4V/grjHo+opk/Y5g7kv3lvqEr6KY3pbdc86qIoBEC3OPKrR/FQly+GDmFvgLAWJ2CrjMvyYa7gNGPJazZqd+21sgYhODksApoI6S6ACc4l0KxWMcU8ogOGdOlRGxF9GHjNvV1FvQUS9rRSnUrJteMDUTlZaZ4/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQjKWkZo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E485C4CEFB;
+	Mon, 20 Oct 2025 23:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761001667;
+	bh=2Wa1BgnVlLMR9sWUOy65xMkiyC8G6kFyDOFsk3N3BBQ=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=jQjKWkZovtgan8oP7x3Yg9nVAcUQxzBrpl+k+LoV1DWOEGDhznrBSuIC4YAs5XNsT
+	 kWJR568cr7apF1VPYjDqs+3yM0/ClSQ4wvOcC3cEuBZEUlZgFsQGhajhQULk9XLQq3
+	 tj8kN04500N1jT2BlE5VKEtYcJnDI9+zpX2sQmC6eG6RNhdRYr8c7AW1E+as8+CPJW
+	 jaO1ZZOeyh2TIqs1r/qj6w20IBbYGpKbU6ZsDjCV9wrDDL9JRlqBVOA5jwRC3u6hEy
+	 WB98/dZafN5t6EKhvZ0FBi62uIx9+YD2IRJrTbEOHsN0RvJBV/j+1qnEM+DuSRt/DJ
+	 aGuCg2/ju2YUQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250925103708.44589-16-jasowang@redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 Oct 2025 01:07:40 +0200
+Message-Id: <DDNIZMOBCE1Z.1ZOQ83TKTHQ28@kernel.org>
+Subject: Re: [PATCH v7.1 2/4] gpu: nova-core: bitfield: Move
+ bitfield-specific code from register! into new macro
+Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "Yury Norov"
+ <yury.norov@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Timur
+ Tabi" <ttabi@nvidia.com>, "joel@joelfernandes.org"
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "Edwin
+ Peer" <epeer@nvidia.com>
+To: "John Hubbard" <jhubbard@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251016151323.1201196-1-joelagnelf@nvidia.com>
+ <20251016151323.1201196-3-joelagnelf@nvidia.com> <aPEv_UO4vViOcOvN@yury>
+ <2CF462DB-D2C8-473F-9D70-522E6AFEDCE4@nvidia.com>
+ <DDJZY40SO5EF.2066SEKKQ4U8I@kernel.org>
+ <e4f5ca12-bf67-4b48-97a1-7ab2c771056e@nvidia.com>
+ <aa3b4ebf-12c9-4ffd-bfd9-bcd920970309@nvidia.com>
+In-Reply-To: <aa3b4ebf-12c9-4ffd-bfd9-bcd920970309@nvidia.com>
 
-On Thu, Sep 25, 2025 at 06:37:04PM +0800, Jason Wang wrote:
-> Factor out core logic of buffer detaching and leave the id population
+On Tue Oct 21, 2025 at 12:50 AM CEST, John Hubbard wrote:
+> On 10/16/25 12:39 PM, John Hubbard wrote:
+>> On 10/16/25 12:34 PM, Danilo Krummrich wrote:
+>>> On Thu Oct 16, 2025 at 9:28 PM CEST, Joel Fernandes wrote:
+>>>>> On Oct 16, 2025, at 1:48=E2=80=AFPM, Yury Norov <yury.norov@gmail.com=
+> wrote:
+>>>>> =EF=BB=BFOn Thu, Oct 16, 2025 at 11:13:21AM -0400, Joel Fernandes wro=
+te:
+>> ...
+>>> While I'm not super opinionated for general bitfields, for the register=
+!()
+>>> infrastructure I very much prefer the hi:lo notation, as this is the co=
+mmon
+>>> notation in datasheets and TRMs.
+>>>
+>>> However, if we use hi:lo, we should use it decending, i.e.:
+> (restored from the email thread):
+>
+> 	bitfield! {
+> 	    struct ControlReg {
+> 	        7:5 state as u8 =3D> State;
+> 	        3:0 mode as u8 ?=3D> Mode;
+> 	    }
+> 	}>>
+>>=20
+>> Sure, descending works.
+>
+> Oops! I need to correct myself. After reviewing most of Joel Fernandes'
+> latest patchset ([PATCH 0/7] Pre-requisite patches for mm and irq in
+> nova-core) [1], I remember that the HW documentation is written in
+> ascending order.
+>
+> For one example (out of countless hundreds or thousands), please see [2].
+> Considering that I actually pushed this file up to github just a few
+> years ago, it's rather silly of me to forget this basic truth. :)
+>
+> We really want to stay close to the HW documentation, and so, all other
+> things being (nearly) equal, this means that we should prefer ascending
+> field order, if that's OK with everyone.
 
+But that's OpenRM specific, I'm pretty sure when you look at internal datas=
+heets
+and TRMs you will find hi:lo with decending order, for instance [3] page 16=
+72
+(clicked a random location in the scroll bar. :).
 
-"id population" here really means "free list management".
+Besides, I think that hi:lo with ascending order is confusing. It should ei=
+ther
+be hi:lo decending or lo:hi ascending.
 
+For registers the common one is the former.
 
-> to the caller so in order can just call the core logic.
-
-
-in order -> in_order
-
-
-> 
-> Acked-by: Eugenio Pérez <eperezma@redhat.com>
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index fc04cdb99706..4b01c26f83b9 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -1661,8 +1661,8 @@ static bool virtqueue_kick_prepare_packed(struct vring_virtqueue *vq)
->  	return needs_kick;
->  }
->  
-> -static void detach_buf_packed(struct vring_virtqueue *vq,
-> -			      unsigned int id, void **ctx)
-> +static void detach_buf_packed_in_order(struct vring_virtqueue *vq,
-> +				       unsigned int id, void **ctx)
->  {
->  	struct vring_desc_state_packed *state = NULL;
->  	struct vring_packed_desc *desc;
-> @@ -1673,8 +1673,6 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
->  	/* Clear data ptr. */
->  	state->data = NULL;
->  
-> -	vq->packed.desc_extra[state->last].next = vq->free_head;
-> -	vq->free_head = id;
->  	vq->vq.num_free += state->num;
->  
->  	if (unlikely(vq->use_map_api)) {
-> @@ -1711,6 +1709,17 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
->  	}
->  }
->  
-> +static void detach_buf_packed(struct vring_virtqueue *vq,
-> +			      unsigned int id, void **ctx)
-> +{
-> +	struct vring_desc_state_packed *state = &vq->packed.desc_state[id];
-> +
-> +	vq->packed.desc_extra[state->last].next = vq->free_head;
-> +	vq->free_head = id;
-> +
-> +	detach_buf_packed_in_order(vq, id, ctx);
-> +}
-> +
->  static inline bool is_used_desc_packed(const struct vring_virtqueue *vq,
->  				       u16 idx, bool used_wrap_counter)
->  {
-> -- 
-> 2.31.1
-
+> [1] https://lore.kernel.org/20251020185539.49986-1-joelagnelf@nvidia.com
+> [2] https://github.com/NVIDIA/open-gpu-doc/blob/master/manuals/ampere/ga1=
+02/dev_ce.ref.txt
+[3] https://developer.nvidia.com/downloads/orin-series-soc-technical-refere=
+nce-manual/
 
