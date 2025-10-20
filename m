@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-861393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99053BF29C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB4EBF2A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64F404EA715
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2FF018A6D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BE0330D24;
-	Mon, 20 Oct 2025 17:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7163321CC;
+	Mon, 20 Oct 2025 17:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QCTzRP/P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTQz/DbS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724ED330D22
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F2532F754;
+	Mon, 20 Oct 2025 17:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760980092; cv=none; b=ZmXhQKZw7Ay4NKbbcJAcDWKRtixe8hYtzt8awr2HOvY54AdOG8UlSHsO25MuI24Nc5ejX8H05iJACME3RTPQNW/MGST2+YOrD1CYYHTLetn9UhjVzP/5VxTahZUvH49F0wC7WYMlVRO880+tlY1m+Z7FnsNvrw7leiAIMJ8S3Xc=
+	t=1760980280; cv=none; b=KL4JMiuQ1GKOFFkAUnSVz03AM0ogk/zwwzGBNPxHc3GZlIbshzcv4hm1C3u982P5Ay7bHMJLsf+VT9VR+/DgnpWneG85Za9lWLSeRAcZ74F4agyvN3Gdmsx99PwfnCtErJRKDNhEDpKcwIfuTAyGso/O+WIn3C+SJIqV46qR1ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760980092; c=relaxed/simple;
-	bh=++JBAp2xm1Bl/YkWLfXigpQePNZ412++Qg25OLfZJHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwF5uVgTBeS60QU9DOzbZnMixOXansCrNXLFP4PYc4ghW4u4wgH6R2W5/uRzJWyMr8Nwm1yeLj98SyW8qAS2/C9c7rmK6qdpy7imFWB0JAdikdr8NrNi1qZB6BAmitQoXFBdqyxYCnbrVT8PgsGRbn+RBrFOabUq1tOn2OVJXo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QCTzRP/P; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760980090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pux7rQuDYhVQLMQRoejdWlthCyHXYYQvPav2QQo4Hto=;
-	b=QCTzRP/PZO5cExc6xTYcFMUCFfhi34DkfmItFm6FvkOg1L0lyx3cFqc6PHw3HdVIwIUoWL
-	68Pbc7voD38wAP/MBJEGWVdeqSxoxpMOc5fDI9aejLXA9gtf7luT78f+l13gEUNMOS+zKT
-	hcfEormdqVZQQjtLjDZ1ckSeyeZIgsM=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-299-Ko7QcETxPvW8OQAGxZ4rTQ-1; Mon, 20 Oct 2025 13:08:09 -0400
-X-MC-Unique: Ko7QcETxPvW8OQAGxZ4rTQ-1
-X-Mimecast-MFC-AGG-ID: Ko7QcETxPvW8OQAGxZ4rTQ_1760980088
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87a0e9be970so170542916d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:08:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760980088; x=1761584888;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pux7rQuDYhVQLMQRoejdWlthCyHXYYQvPav2QQo4Hto=;
-        b=ZH4IeZOirm4CtqVsF+OWQRo1xnSxSpa/DbTAJ1SEPD/bJhcE2Py61f/Jc0+q4bByRS
-         j4uUIrvtcpAdqTBCLUTNzox/aaBPiD0opBEpeK6fg1XaenFkYplbqzUMYOR2t5uDGAPG
-         XqTgbG3mrOOt9RDWwoJ6a/6uItAggzLJknm4Sy841WyRVX9j0xdfyOtLoAISGRHzd6x1
-         c2XiIGREWBWzk/JjXgTpwW5vfQh7YPz+UBK27Qcpme1LxWLGQOxOn+WerO6yIcS8uT2b
-         gPhynR63FnG5Ev30Y135w39YSVJFd2+HOutoZWrsOjLb6/0y7XWoHh9p3q6qWCHEdf9d
-         PQ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUovrDb+YfFk3m+nS9n3JhLZ/8wh4KVz8otrFyjCpyPpvheq8C3ESJQ6y/gkqsuvBpEKu45kCHwe5PV+BQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmCpJ9jSnbxKXGS0ZjtM0wtGhKz0CKnFWmrJrHVaTqTYkJ2CCM
-	M6EUFrn/Blj+xXJbrmmJubH06tDSrV2wkUcpRDRkQHmjLDsPA03J8Xb00bzmCpQHPd+mrYldH9x
-	rU9uVE2kvH6fKMDDTpZwiT7mFTTIgUwbkccWaif0ZgzWmBJb1A7DqJc9BBMuejiNLCQ==
-X-Gm-Gg: ASbGncv41BGE9XfRlKKnvueyVzzhgLJwWPAYYKewkQ60EpbdGiEsFe3/dlezpfBC4Eb
-	ZSNnJ2IYp3hQy19bp4ify6v3myA3aaGjiSn1GXO9+rBbZsX2kvSJ2znZwCRWq/8Qwez9uZ2y63c
-	Y5H2YIvZ6+KENpZ/Py+2WQfHO0F2Kd0EMKCrCfH2hz5ZJ8Vp6TEQLXR7+8lvMi02dLTX6vcwd5v
-	UXzK1h50mGaL6Q8V68q9UOQdOe0Jr3zdmasRwFcl9NVh84ZC88TLNXOZEjHgsK8fmAOAdPyUW02
-	PKFShZS+/CHwVBp8Co5F+wJng28K6Kpf4cpcy8iSUeGzRmMWkeEV4J1zwMpOz51WawCqa4KkAY0
-	=
-X-Received: by 2002:a05:6214:629:b0:7ee:aaf0:b759 with SMTP id 6a1803df08f44-87c20545ce6mr186916706d6.7.1760980088300;
-        Mon, 20 Oct 2025 10:08:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2dJ1otsnjO4gPqjD5cms9cnStOkEvPQXBCTaBj9kaoCae+He0cJx4lWam6Mw/3/Lz8ib0iw==
-X-Received: by 2002:a05:6214:629:b0:7ee:aaf0:b759 with SMTP id 6a1803df08f44-87c20545ce6mr186916106d6.7.1760980087735;
-        Mon, 20 Oct 2025 10:08:07 -0700 (PDT)
-Received: from localhost ([2607:f2c0:b0fc:be00:98f9:e204:8ae3:6483])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-87d02d90b05sm54655476d6.63.2025.10.20.10.08.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 10:08:07 -0700 (PDT)
-Date: Mon, 20 Oct 2025 13:08:06 -0400
-From: Peter Colberg <pcolberg@redhat.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	s=arc-20240116; t=1760980280; c=relaxed/simple;
+	bh=TJPYa24Z5KTj/XUQBDA+4muq/sKdsaWSFY+S+sPkdkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nIfTC1fQRqpNr66bAWuk4T6M9eiIOTdheb/qPSCuISI2/s3pua+2mntMwNlnMTrrKPlNq9n91m3GM/iGciLfC4tqz9pTTOdUQHTmTRisQnS2BPTznNdzbBcdNl9741XH6rqsayyyKW/3PEAVCcBZEDKNuW3exIwRucp/ab84wiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTQz/DbS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B395C4CEF9;
+	Mon, 20 Oct 2025 17:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760980280;
+	bh=TJPYa24Z5KTj/XUQBDA+4muq/sKdsaWSFY+S+sPkdkw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RTQz/DbS3nDJtiW0gDdrU4/D+mk33QWYGezbsuDwSgW+xyVGsCuE7m2lbKyKoZDYg
+	 Qxd2TUg5S8DD4fruNkVcz6j9K2v0gJFpE6uo4SZaiwN6gkdyVwLfkaneT53r5mDLH7
+	 WoUBvzrF4qdszKMcVpagSm4DAFS+/vF12j6AL74W6f3HsqSeqZ3cfBsFgCvUocr291
+	 Q84eyOe8eHgi1cUIQiImKIl+am2qIMJjFA3bkyY05VTwx/oHMC06eQm5Aq1xnKVWUt
+	 odkOIZ8CHk2n+GNqzHgdEF7a5pMxYN0hWChZwXnFGS4LMAX5WhEe+eSD+gJ7lXcQdw
+	 MLoZ4bYpOegMA==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 1D6D45FDC3; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Mark Brown <broonie@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Cc: linux-sunxi@lists.linux.dev,
+	linux-sound@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] rust: pci: consistently use INTx and PCI BAR in
- comments
-Message-ID: <aPZsdplimqnRheb1@earendel>
-Mail-Followup-To: Danilo Krummrich <dakr@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20251019045620.2080-1-pcolberg@redhat.com>
- <DDN4FLSD09W9.30I0BJXFAU5YB@kernel.org>
+Subject: [PATCH 00/11] allwinner: a523: Enable I2S and SPDIF TX
+Date: Tue, 21 Oct 2025 01:10:46 +0800
+Message-ID: <20251020171059.2786070-1-wens@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DDN4FLSD09W9.30I0BJXFAU5YB@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 01:43:16PM +0200, Danilo Krummrich wrote:
-> On Sun Oct 19, 2025 at 6:56 AM CEST, Peter Colberg wrote:
-> > This patch series normalises the comments of the Rust PCI abstractions
-> > to consistently refer to legacy as INTx interrupts and use the spelling
-> > PCI BAR, as a way to familiarise myself with the Rust for Linux project.
-> 
-> That's great to hear! :)
-> 
-> Can you please rebase the two patches on driver-core-testing [1]?
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git/log/?h=driver-core-testing
+Hi folks,
 
-Thanks Danilo, I have sent a v2 [2] rebased onto your "Rust PCI
-housekeeping" patch series in driver-core-testing.
+This series enables the SPDIF and I2S hardware found on the Allwinner
+A523/A527/T527 family SoCs. These SoCs have one SPDIF interface and
+four I2S interfaces. All of them are capable of both playback and
+capture, however the SPDIF driver only supports playback.
 
-[2] https://lore.kernel.org/rust-for-linux/20251020170223.573769-1-pcolberg@redhat.com/
+The series is organized by subsystem, so each maintainer can find the
+patches they need to take.
 
-Peter
+Patch 1 adds SoC/hardware specific compatibles for the two DMA
+controllers in the A523 SoC.
+
+Patch 2 adds an SoC specific compatible for the I2S interface
+controllers in the A523 SoC.
+
+Patch 3 adds an SoC specific compatible for the SPDIF interface
+controller in the A523 SoC.
+
+Patch 4 adds driver support for the SPDIF interface.
+
+Patch 5 marks a clock related to the DMA controller as critical. The
+docs are quite vague on how this particular clock gate ties in with
+the other memory bus gate that the DMA controller needs.
+
+Patch 6 tweaks the software lower limit of the audio PLL.
+
+Patch 7 adds devices nodes for the DMA controllers.
+
+Patch 8 adds a devices node for the SPDIF interface controller.
+
+Patch 9 adds device nodes for the I2S interface controllers.
+
+Patch 10 adds one set of pinmux settings for I2S2.
+
+Patch 11 is what I used to test the changes, and serves as an example
+for how to use these new interfaces.
+
+
+Patch 1 can go through the dmaengine tree, or I can take it through the
+sunxi tree.
+
+Patches 2 through 4 should go through the ASoC tree.
+
+The rest, except the example, will go through the sunxi tree.
+
+
+Please take a look.
+
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (11):
+  dt-bindings: dma: allwinner,sun50i-a64-dma: Add compatibles for A523
+  ASoC: dt-bindings: allwinner,sun4i-a10-i2s: Add compatible for A523
+  ASoC: dt-bindings: allwinner,sun4i-a10-spdif: Add compatible for A523
+  ASoC: sun4i-spdif: Support SPDIF output on A523 family
+  clk: sunxi-ng: sun55i-a523-r-ccu: Mark bus-r-dma as critical
+  clk: sunxi-ng: sun55i-a523-ccu: Lower audio0 pll minimum rate
+  arm64: dts: allwinner: a523: Add DMA controller device nodes
+  arm64: dts: allwinner: a523: Add device node for SPDIF block
+  arm64: dts: allwinner: a523: Add device nodes for I2S controllers
+  arm64: dts: allwinner: a523: Add I2S2 pins on PI pin group
+  [EXAMPLE] arm64: dts: allwinner: a527-cubie-a5e: Enable I2S and SPDIF
+    output
+
+ .../dma/allwinner,sun50i-a64-dma.yaml         |   5 +-
+ .../sound/allwinner,sun4i-a10-i2s.yaml        |   4 +-
+ .../sound/allwinner,sun4i-a10-spdif.yaml      |  44 +++++-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 135 ++++++++++++++++++
+ .../dts/allwinner/sun55i-a527-cubie-a5e.dts   |  52 +++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c      |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |   2 +-
+ sound/soc/sunxi/sun4i-spdif.c                 |  28 +++-
+ 8 files changed, 259 insertions(+), 13 deletions(-)
+
+-- 
+2.47.3
 
 
