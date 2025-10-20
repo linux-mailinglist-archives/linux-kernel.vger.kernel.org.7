@@ -1,92 +1,109 @@
-Return-Path: <linux-kernel+bounces-860462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A68BF02A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8A4BF02E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F81E189F3D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3A13A5690
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964DB2F5A0E;
-	Mon, 20 Oct 2025 09:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ED42F60D1;
+	Mon, 20 Oct 2025 09:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRhRdzVc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Rf48OgoV"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D618D2F5499;
-	Mon, 20 Oct 2025 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C852E2F5A3F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952529; cv=none; b=nWsZhW0WjD/xDurRscb3CyQPx4J8e7prDcGuTaFMnZ+dzubJXagCVcmXXQiGtw6Q9bfTx5Pom4sMgSGm75u5SIF6MiPl++dlyB7sx2eGZaxX74ffoCYKbLad7UxlPLqSCETyKiFRkZo1qyOb6eQWjW0ZGKB/DnvOUGzj6r6pMIk=
+	t=1760952638; cv=none; b=YvE0XfhO0nRCQr9wZM+1U3LzOSrEcSLXXHQZUazbTUdRqevKUjCLArXyMwENezPqErMqqZyrPHxeBrX8g2Rr/E2/Jvqscl8nD2jMtg6u2uphL8DyNrNcQKtX83pz7M8drqbVcFBwilfSs67lpPjlbBTWMDld66LqulAWy967CcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952529; c=relaxed/simple;
-	bh=zUL6wY6nUkFC7RGRQqooEtBqgzEkwxUZ3UEDi7LPXlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IBjWV2bMapVRxwXKqy9IoTW1GLkiFd9/INGFBY14Qruno5FE8y4cBlbaGm+XmTPsChsQMzQOlpotmsgDVvNVhsLSV2rMgtPxRlVfNxRUMUJL0ukR/GnXarc7Y3A6pKUudf9e7e4SbUQsl+OJRdtyrJ+/RDntN6CdtTsEX3YD2t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRhRdzVc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F17C4CEF9;
-	Mon, 20 Oct 2025 09:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760952528;
-	bh=zUL6wY6nUkFC7RGRQqooEtBqgzEkwxUZ3UEDi7LPXlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HRhRdzVcMB61IB7i+p7RSXbRZlUCKKayYcJwSONs+XbN4XoXG/ee4IREKqIoxdShg
-	 eLEgFxXzkCoOcTA6DT+0ugxnjH45NcB+U8AP+ouCyjqJqZZD4jrTGEhnt5jyqi2OIy
-	 lKmOwMNQwNSx5o9FmVIGJZ02lJfEMBln6Mk32N+Pu6LP3LgcmI2V1Ltcb6g4Pke+8Y
-	 dd9v0HkBiblXFkoSJox3HGDrdP8I/r915gxMOmFg63dIIHmfNV0mRW0RPeQqgwEhtq
-	 iJ2Cr3nwYFY/zxgFhPYfsFFxuR9o3kgDJyf26j0jPBPSJ/28pWyN33VqkctenYdaTB
-	 +1NazHpe3VGKg==
-Date: Mon, 20 Oct 2025 11:28:45 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH v4] i2c: spacemit: configure ILCR for accurate SCL
- frequency
-Message-ID: <t26pyjnmzj62oczwuje2bbscowj22pdge2ef3tcktwmhzpsq47@7odo2ccvc52a>
-References: <20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com>
+	s=arc-20240116; t=1760952638; c=relaxed/simple;
+	bh=/X7hroxlMZHltT+duFeeJsVmt3DSGvxeD6QGIKP/XRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JmbsMJ9hqd1N8T77oKMKW7oPf9MHSJv25GcKogtj1IsPBmYIqxxxCniJygwKoj0rAqNGo2+ySmSzG2Qb0uMo0hx8L1715qH0aW3jEIGKoQfZJKpVsLvrdkTb6PHgh135Wu2JymKh/xU0CSeMvAAE9+QqDAlsOpCyPsDdEmOv3O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Rf48OgoV; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760952634;
+	bh=/X7hroxlMZHltT+duFeeJsVmt3DSGvxeD6QGIKP/XRk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Rf48OgoVx2w6kZ6mYxYIrIUIxXskEIzQd/1SxHQsiLhWdlgO/cfhb5sceP3pHI7NY
+	 +IpuL4HTB/Tq4dR4TeAfIRlZG3afxkHMYhjUSj1J83k7R0hv44pv1vGYBrw3Ykrhfc
+	 Zl/HIgFs2WSTJzeMDozHgfJ47jUCr3WSdzkmLqrdqV53+M8oCtY3kGp3qyQ3MEdvwT
+	 b+goATHgdcOKq2G77r1BBfTX4MEphITTephocJqtS5sFtCvqoPnzDAsw0GK16S2HMq
+	 XqjK9YmGL8jh/UElguL4l/Ft4hfh0P+/OakVdjBq52KQniBm+rOz4COvjdkXlFxFwZ
+	 6UrTAVEoKgksg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 73D5A17E0DB7;
+	Mon, 20 Oct 2025 11:30:34 +0200 (CEST)
+Date: Mon, 20 Oct 2025 11:30:29 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: liviu.dudau@arm.com, steven.price@arm.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
+Subject: Re: [PATCH] drm/panthor: Fix potential memleak of vma structure
+Message-ID: <20251020113029.1ec51806@fedora>
+In-Reply-To: <20251020085914.1276090-1-akash.goel@arm.com>
+References: <20251020085914.1276090-1-akash.goel@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Troy,
+On Mon, 20 Oct 2025 09:59:14 +0100
+Akash Goel <akash.goel@arm.com> wrote:
 
-On Fri, Oct 17, 2025 at 03:27:39PM +0800, Troy Mitchell wrote:
-> The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
-> master mode operations is determined by the ILCR (I2C Load Count Register).
-> Previously, the driver relied on the hardware's reset default
-> values for this register.
+> This commit addresses a memleak issue of panthor_vma (or drm_gpuva)
+> structure in Panthor driver, that can happen if the GPU page table
+> update operation to map the pages fail.
+> The issue is very unlikely to occur in practice.
 > 
-> The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
-> frequencies lower than intended. For example, with the default
-> 31.5 MHz input clock, these default settings result in an SCL
-> frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
-> and approximately 338 kHz (fast mode) when targeting 400 kHz.
-> These frequencies are below the 100 kHz/400 kHz nominal speeds.
+> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+> Signed-off-by: Akash Goel <akash.goel@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> This patch integrates the SCL frequency management into
-> the Common Clock Framework (CCF). Specifically, the ILCR register,
-> which acts as a frequency divider for the SCL clock, is now registered
-> as a managed clock (scl_clk) within the CCF.
-> 
-> This patch also cleans up unnecessary whitespace
-> in the included header files.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 6dec4354e378..34a86f7b58d9 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -2081,8 +2081,10 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+>  	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
+>  				   op_ctx->map.sgt, op->map.gem.offset,
+>  				   op->map.va.range);
+> -	if (ret)
+> +	if (ret) {
+> +		kfree(vma);
 
-merged to i2c/i2c-host.
+Calling kfree() in this context is probably fine, but I think I'd
+prefer if we were introducing a panthor_vm_op_ctx_return_vma() helper
+returning the vma to the preallocated array, and letting the deferred
+cleanup function free this up.
 
-Thanks Yixun for your reviews here.
+>  		return ret;
+> +	}
+>  
+>  	/* Ref owned by the mapping now, clear the obj field so we don't release the
+>  	 * pinning/obj ref behind GPUVA's back.
 
-Andi
 
