@@ -1,167 +1,179 @@
-Return-Path: <linux-kernel+bounces-860234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F35BEFA00
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D47BEFA3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB313189CC9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1C8189C4F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D783D2DF71E;
-	Mon, 20 Oct 2025 07:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6402DA77E;
+	Mon, 20 Oct 2025 07:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dr4M8hUh"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kp3MTYtF"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084A52DECB0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B583A8F7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760944410; cv=none; b=jxmAPbPE8bqK4OyF2ao7G65dQmRBmROTNi0KqbuChQOgC3IPceOPHknBwRgTSjFf2qey0xe5abitbQJi5tptOUSWpdHY5hP7cC6O0tLhYdpc382k9pa3+cJqn81KT1BoWZopCOE0b1hxjdrXAvFKtyJ6QCPOAykK04uOCPhFsUc=
+	t=1760944680; cv=none; b=GWOudBK0N4zAWLyixy/zv+bqUHUKx7ibrlS0KPvTX9I9Rv7DO/Nf9mWCuF60egJJdEzkmmGLhE16u9y/kDn7SZd/XaQaeP6Zluybk+qFwG8ALgY75Ukt+MwLcvX3FSQPBJs5z6JO9UAWplvm/vDD2Iv6XKKzX0B+oid/vauoS94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760944410; c=relaxed/simple;
-	bh=PeGTn3iFxDHG7Zzquzk+8Eb8iZsO1eg0YMwOWsI8x/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RijNPfjJ/y1Z1irtP9Zls1StBL8+uaYVc0WdZvPPy1pve33J4/guX5jNLsPUQ1jo+0NMlvZ8hleWLhecmtuPeLB5w7tTy4SBAmXG17Bomxg649kF59jL+W3lURfrYs+VjH4jujdXexQ+O1UFNOHOCtzmhgJeZBx+K2G6Zxbfpfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dr4M8hUh; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso3807647f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:13:27 -0700 (PDT)
+	s=arc-20240116; t=1760944680; c=relaxed/simple;
+	bh=4QBKB6Il0FtSYd/ap/LeXMOphioqXNw9dMPyFWJ8QJI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OdRexVnkBO4mN8cyskSy/6+VuBIVjmmzHTDA6+H+i33UR98kThZz7wVRyUskJ2FxwtEGulAPlEsV4JMlf0Ijtfx85gCjxewgjgEhFAqUVO+WvHPopMioGHOr56MYG/DgiLnCOiLD6BxM0Sr0k7tH04wkexmVdgJeoXSAm3o4tjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kp3MTYtF; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-58d29830058so4770838e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:17:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760944406; x=1761549206; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v29GrQR+ncc3DZUAcuhlbn2tQqEiegD397LZB82cRuo=;
-        b=Dr4M8hUhE+/cBGZLTsBkQyyIzNFDW+rmb/Dxy7sgROQE8OhRNw5grubqMfjp+Ex6v/
-         Ll6ADkHS2z/2ZvABzPxP7kb4Hm9NRwrPZayLIfFAYRsXkejSVtZl5vmuK1jOi88O/yuI
-         4/4sZrjNVOo5KxgCD2Rf3Psqy2KjHYvivDDIFStEF8gzVFXnif/eSTQQMe/lOMq10f2j
-         odhRfjzS6LqWs2fD2h/x55gLv80Wp7cjIKzQA0qAXz2bTP/PBaxZCAz5sE7BfITdKCV8
-         WxnBhMY0vTgtQmPGav8ySENXn0MGBjvvpIaEBJi83FtymZUEx16IJnBSQ4D2auG9DSlM
-         Nm1w==
+        d=gmail.com; s=20230601; t=1760944677; x=1761549477; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dc0V6uSK5r5A6NQwmKa55NukJxjqQrLEAaKU2mAU2+s=;
+        b=Kp3MTYtFbQWv9evS7ICdGO5yTpVshRKROtwczbTJS4kABgjbCeRi18QOYLd8n2fjK6
+         vqg0KF8uTquy2FH0xg+ssPGkTH6SJA7nsuGKXf2chIu9cPhUNS7EcIVXCX71ruY8Kx33
+         2d7ZIakaeHxOB9Syt2dU7yZ+w9WIBD/2BQUVtS/x4fNhK0YU73RO6kN0CtdeHUAF7fgi
+         8AuJ4SRzOt6bhUHE6KZcDMYIw93ML3l3/s9L+w+KRQyvicyzT3S2f3UY/3ogsAtOPDIz
+         10HthIYF/vupwVqlLWZ1qqJKuxcMYlIrs2s2Hnx3chd119MaiIbaMc/mUGgRXmu4X566
+         9zmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760944406; x=1761549206;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760944677; x=1761549477;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v29GrQR+ncc3DZUAcuhlbn2tQqEiegD397LZB82cRuo=;
-        b=MaJfKxfRKjzyHLqIdX9sdx76dO2t5mqf6+aVvuDhIrpXU1lBA4hu9GQdkvJ1DkpstZ
-         5wx+9KU6y/zt8FHK5XfE0BGE389NKPxzfA9S+eTEnSRTuxCh+oC/dPYgL/ObhBRAOgp1
-         fi9uXIHrtZ7jQGs/Ge5KiRkLMmFPl42i8QWdlBOJTMylpK3ymvMSWww8R4GWGZ/ssnbk
-         AkfW18TB7qmtAdWH6UHS6V/Ka2WcZCbCXAf4juZZxsJMZqh42r0FhIkORHy1MyXPwXER
-         Zs7KMpz1DjaLPTJA77dfke4J3bNkhCiim9nyimxduiqak8DZ8ujsbA28+R03Zmwgp+mM
-         TxXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgnFzVojauCEb2pR9mF7YXruHwjM47K/Rdkzn8/s4ESKtZJDIkDgjtmWVhixmWH8nRoq8s6j85NW+VjwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJjSIa/5MpK24H5xYRqRMi/ZRQt7g70Q5IGuLx/2ivLVQwFhT2
-	jAXQRm6htK+NC0JtcRINmXXVcg0r+0J3YnKJmsWMzLmue7Lx4XjfVSRLX4fXe5MjEi8=
-X-Gm-Gg: ASbGncuvC+vPFui1T607QKDQfC3qMKS16Ut0bcEpICAITt6kmTx7HTN3oEKfjJ3UcdJ
-	6rFqCT+1n+8PfWI6FMnrSfiX87uZnvmqVNhXFpR25TGBguDhxnJouuC1Baby8SJRyntwmemVJNJ
-	FbC3kH8OiociMK3AE5SGWSOHGOv1vt1opPn5qO60Pq6MqbnpLZFdWa78BZC6Glr+F9VjkgXqOF7
-	nrbbrjFoWbKSdB70K+awd/ZdUk7SOWA2qlr+TOVo9JItgtkDxUFWqHrBed5x2ueaaZYOGnvw+mI
-	9ldv+9o5CFGwlqio97ihetJWKgTF5T5/HUDBmk5ddN2rzslHvZ3K/5sOVMv35Ni1vuTJLPsgF1w
-	vwwi/eBGLzIiaIZzGZiCoeKbwZuPKiC2NQR3+cEvgvioO5YFeQepfanI1aMnPJTSQRjUCUOxJa0
-	fNdqys8eZ87RMJwxkq
-X-Google-Smtp-Source: AGHT+IGCWcj+ZeSsBGtAZjJoabbi0svPUJxfv7bQF2wz0Kk+abDltn5J9+7dAFKFJ6moPAKqLR/Rtg==
-X-Received: by 2002:a05:6000:25fd:b0:427:587:d9ae with SMTP id ffacd0b85a97d-4270587d9c1mr6413104f8f.9.1760944406004;
-        Mon, 20 Oct 2025 00:13:26 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00b9f71sm13715262f8f.37.2025.10.20.00.13.25
+        bh=dc0V6uSK5r5A6NQwmKa55NukJxjqQrLEAaKU2mAU2+s=;
+        b=ck8GE9Vb+3szpiCdr8inV7XAscq5l85IrfQVk41FbApOSiovno6o4AiazbZlbpIL+T
+         /miWUmhaXh8DceUDM0iCBIGZXomhhOMozIFyMvI7EqCosxihDX7fWPcoTKmrM3W8eNXC
+         YVKU26JI1q0FlmMKXcBUzvMT37DrCTQ11zK35oPJiTHRBCaEwqRGxN6G7udLXoKuri4C
+         37TFlBbjOcVTZYkQDT5pVqxBclH/fxha8AMJxzZon2xwORsUoO7ykFQmDOXU3mWJ4doG
+         yk1ZELLZyr/gDBYWPcBRlIBhrUkk9LvJaVWUaIiMjWEIoreS+8oqU7QY3quNPW+qcO7d
+         bBnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOnrR8JYwpkot8AWq4fFvO35Oczf/Wp1q2Awbm9BmzMEWSnY5fwZg2EfqW6VO399Evim9HWloyYpcrJtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymqi+WjU6veGdDEQkeOcxGF4KYVX2lpSLxXL02aJDJ47co8rAh
+	UBlr57+lmgmB+vIncEko8I4v5eHDvSUGHoycWLVwPr04aZ+4H9An8Lxb
+X-Gm-Gg: ASbGncvSwmOHwMDa0CAEjn1VveFfPEv4ayeD0jWsrJS9ST/VxW0UxyQ3Q7ewkWwXBfp
+	iVMhktjj86ZDXWm7R04uT7ycKka1DC05GqxtQFFGvEJNIJSQ7j7aJ93xgIHGAdhidycIMB7ZStd
+	Ss1XKwu7HnnVPCmRYnaFAIKYo/62rtwjNdV+C/6/jif5so6URmHNgsT/0beTo2o+nzA0Q6utLQS
+	ZpC/WS7c2SUZD1gS2DwqUwBCylsUjIYIH3/W6R1Tjpp4gPKUktKEDMhUxt5G6KblnolWbNQRRAl
+	eOIbMTnMR8NglEod5KgS/yrkb+3cn4nIfBTsTI1WiP8MtLonZK15HHMXbvrtZg3kztsUrZCslEv
+	wm3QZ+kbt2qJqIADWSiXG+2oN88MNo1L0eFl2+v/tEhHBUYM73/4yShPQM6tTYnvkFgYRPeQAC+
+	zt1Xd3dL0D5aTmbedc/dmh0fJTtj8Xle93n4OlYaLHT23RG/LBQPzYK+Y=
+X-Google-Smtp-Source: AGHT+IFIUr81RYs1HnZHUDaeh17UXtMO+MIIH4Sl+yVvk+zd3TV85RaBPn3bfogTKTF+CcTwgZ/zgg==
+X-Received: by 2002:a2e:be88:0:b0:36d:a459:f0a4 with SMTP id 38308e7fff4ca-3779782374emr39869861fa.5.1760944676478;
+        Mon, 20 Oct 2025 00:17:56 -0700 (PDT)
+Received: from [192.168.1.168] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a921ae62sm18863341fa.21.2025.10.20.00.17.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 00:13:25 -0700 (PDT)
-Date: Mon, 20 Oct 2025 10:13:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Jonathan Brophy <professorjonny98@gmail.com>,
-	lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Jonathan Brophy <professor_jonny@hotmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] leds: Add virtualcolor LED group driver
-Message-ID: <202510201457.uOrhkKly-lkp@intel.com>
+        Mon, 20 Oct 2025 00:17:55 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v3 0/5] I2C Mux per channel bus speed
+Date: Mon, 20 Oct 2025 09:17:23 +0200
+Message-Id: <20251020-i2c-mux-v3-0-908ac5cf9223@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251019092331.49531-5-professorjonny98@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAPi9WgC/02MwQ6CMBAFf4X0bM12Cw315H8YD6WtsImAabXBE
+ P7dQgzhOC9vZmbRB/KRXYqZBZ8o0jhkkKeC2c4MrefkMjMErEALyQkt7z8TbwCUdB6NLx3L71f
+ wD5q20u2euaP4HsN3Cyexrv8G4t5IggPH2urSKAFawrXtDT3PduzZ2ki4ewLg4GH2GqXrSpXW6
+ UodvWVZfl4u8ojWAAAA
+X-Change-ID: 20250913-i2c-mux-b0063de2ae4d
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Peter Rosin <peda@axentia.se>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2666;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=4QBKB6Il0FtSYd/ap/LeXMOphioqXNw9dMPyFWJ8QJI=;
+ b=owEBbQKS/ZANAwAKAYiATm9ZXVIyAcsmYgBo9eIEheq7Rqmcp7HaHOoJV1mtgdBS1lD+tswqa
+ CBMXmGlcneJAjMEAAEKAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaPXiBAAKCRCIgE5vWV1S
+ MtfnD/9lcCqltRfYcuFLqJaGS85PuVBltcB/MmI4glYwIypiT86qEbIRd/znRNdYvwN5eUJw9m/
+ 1smtKC9UIIZ0brBXY+kGiNagQ3TZMxVu5tkMPuYWwRsr9Ew8bIQgZ7KDrzKHGjkvLGSg04lV21g
+ sahrz1WrWqNkiPYqx+cs14PLmDCejJ+I4cA5CdWItiGHuFWnP5a+A1Y9ybeNYqviGmTZU22v2kO
+ rsud7o993aMfWsb2qKz08cPr51wR/qIhoqdLK5vwlNOWXovKcPAYj+xA+w4++hV45tXM/UDnkOi
+ DJ0MCxAfBGt1+tX4HgugIDJbCoWZ9m9wwyB9rABvR+Lc+AmvQ9z4uuAHOZl+xehPq1hrG/G34HC
+ L3GhqXsuq7DVMdmS/OTF1gXskhLY5vYb+mWWUTiC1/CAlm4Ww7948aiJfZi3byW2cFSq2JSdcpv
+ se73CpFn3fAI4jnTqNeOq+UN+JiaRdAaHFSAy+PWTap5YGwEFKaczF04MgpWheKBIcVt19l90IE
+ hSYoqKrnOfjvcvWuLY5IrYuCwlEU7/qG4SNjpMNNjOoZcjfErHNzlKiNmuBehPq5bymf1f8eYD7
+ uWm6x9IJJSEjc4bGO2cy6mc7bpVr2e7T70dT0uPI/XoOJDpcnnCzYzYr86CLLs5x+2fBTinYFR3
+ iUOLAlBmvPYXRHA==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-Hi Jonathan,
+This was a RFC on how to implement a feature to have different bus
+speeds on different channels with an I2C multiplexer/switch.
+As no major complaints on the design came up during the review, I
+decided to submit the series without the RFC tag.
 
-kernel test robot noticed the following build warnings:
+The benefit with this feature is that you may group devices after
+the fastest bus speed they can handle.
+A real-world example is that you could have e.g. a display running @400kHz
+and a smart battery running @100kHz using the same I2C controller.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+There are many corner cases where this may cause a problem for some
+hardware topologies. I've tried to describe those I could think of
+in the documentation, see Patch #5.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Brophy/dt-bindings-Add-virtualcolor-class-dt-bindings-documentation/20251019-172647
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20251019092331.49531-5-professorjonny98%40gmail.com
-patch subject: [PATCH v3 4/4] leds: Add virtualcolor LED group driver
-config: parisc-randconfig-r072-20251020 (https://download.01.org/0day-ci/archive/20251020/202510201457.uOrhkKly-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 8.5.0
+E.g. one risk is that if the mux driver does not disconnect channels
+when Idle, this may cause a higher frequency to "leak" through to
+devices that are supposed to run at lower bus speed.
+This is not only a "problem" for changing bus speed but could also be
+an issue for potential address conflicts.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202510201457.uOrhkKly-lkp@intel.com/
+The implementation is split up into several patches:
 
-smatch warnings:
-drivers/leds/rgb/leds-group-virtualcolor.c:303 parse_monochromatic_leds() warn: 'mono_count' unsigned <= 0
-drivers/leds/rgb/leds-group-virtualcolor.c:303 parse_monochromatic_leds() warn: error code type promoted to positive: 'mono_count'
+Patch #1 Introduce a callback for the i2c controller to set bus speed
+Patch #2 Introduce functionality to adjust bus speed depending on mux
+         channel.
+Patch #3 Cleanup i2c-davinci driver a bit to prepare it for set_clk_freq
+Parch #4 Implement set_clk_freq for the i2c-davinci driver
+Parch #5 Update documentation with this feature
 
-vim +/mono_count +303 drivers/leds/rgb/leds-group-virtualcolor.c
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Changes in v3:
+- Return -EINVAL if channel is faster than parent (kernel test robot)
+- Link to v2: https://lore.kernel.org/r/20251002-i2c-mux-v2-0-b698564cd956@gmail.com
 
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  296  static int parse_monochromatic_leds(struct device *dev, struct device_node *child,
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  297  				    struct virtual_led *vled)
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  298  {
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  299  	u32 mono_count;
+Changes in v2:
+- Changed bus_freq field to bus_freq_hz in davinci_i2c_dev (Bartosz Golaszewski)
+- Removed idle_state from mux core (Peter Rosin)
+- Link to v1: https://lore.kernel.org/r/20250922-i2c-mux-v1-0-28c94a610930@gmail.com
 
-This needs to be an int.
+---
+Marcus Folkesson (5):
+      i2c: core: add callback to change bus frequency
+      i2c: mux: add support for per channel bus frequency
+      i2c: davinci: calculate bus freq from Hz instead of kHz
+      i2c: davinci: add support for setting bus frequency
+      docs: i2c: i2c-topology: add section about bus speed
 
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  300  	int ret, i;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  301  
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  302  	mono_count = of_property_count_elems_of_size(child, "leds", sizeof(u32));
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19 @303  	if (mono_count <= 0) {
-                                                            ^^^^^^^^^^^^^^^
+ Documentation/i2c/i2c-topology.rst | 176 +++++++++++++++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-davinci.c   |  41 ++++++---
+ drivers/i2c/i2c-mux.c              | 116 +++++++++++++++++++++---
+ include/linux/i2c.h                |  13 +++
+ 4 files changed, 324 insertions(+), 22 deletions(-)
+---
+base-commit: 22f20375f5b71f30c0d6896583b93b6e4bba7279
+change-id: 20250913-i2c-mux-b0063de2ae4d
 
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  304  		vled->num_monochromatics = 0;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  305  		return 0;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  306  	}
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  307  
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  308  	vled->num_monochromatics = mono_count;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  309  	vled->monochromatics = devm_kcalloc(dev, vled->num_monochromatics,
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  310  					    sizeof(*vled->monochromatics), GFP_KERNEL);
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  311  	if (!vled->monochromatics)
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  312  		return -ENOMEM;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  313  
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  314  	for (i = 0; i < vled->num_monochromatics; i++) {
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  315  		struct led_classdev *led_cdev;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  316  
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  317  		led_cdev = devm_of_led_get(dev, i);
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  318  		if (IS_ERR(led_cdev)) {
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  319  			ret = PTR_ERR(led_cdev);
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  320  			return dev_err_probe(dev, ret,
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  321  					     "Failed to get monochromatic LED %d\n", i);
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  322  		}
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  323  
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  324  		vled->monochromatics[i] = led_cdev;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  325  	}
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  326  
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  327  	return 0;
-bc8d39d8adf81b2 Jonathan Brophy 2025-10-19  328  }
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Marcus Folkesson <marcus.folkesson@gmail.com>
 
 
