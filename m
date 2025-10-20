@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-861769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173E1BF3A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:04:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80390BF3A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 652F24FEA1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:03:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B81734FEAE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07977286D40;
-	Mon, 20 Oct 2025 21:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E4B2E6CBF;
+	Mon, 20 Oct 2025 21:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouIobFV1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PD8Blozi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4707B2DAFD8;
-	Mon, 20 Oct 2025 21:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CE9224AF9;
+	Mon, 20 Oct 2025 21:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760994182; cv=none; b=cWEegAObMjsbD7+zp7FzXzpKpAzXM6RtCIhozTzoaMh5iSoyeDGGMOLK7pWyvzj/NJOVANaqPn7sZorZQy0Xii9NEyh5rsTbkplAqk9Fn684v1bmClJTqozjRGoDzXV/ADLsvJ3vKWCNqlGhNty7sYP3S19KttOAXH2q3fyOb3E=
+	t=1760994196; cv=none; b=bAJrL4+3EvTZ0AFEAEyiCYp4QT1WfjhrJqsbsoxV5yOKVzvxiZjche36RciVLCN5npZF6swaDwNleDltQTRq30Cq/i1GzjEKA/vLKWZCIAPryJMmdw0v/fZtQElfjpDrUDYT0msdjaCH8ISfk6g7OHHe3R2Q3wX8CK9oa/iqGhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760994182; c=relaxed/simple;
-	bh=rl73LAPbGGpQy7mrVVA+/INyZcf/ngN3OHEiLJHKOyw=;
+	s=arc-20240116; t=1760994196; c=relaxed/simple;
+	bh=Ou0q9+vDky6WmZGd0SxbtKlr44TKXu7QETyYG4jlv/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdKsUNXU/eYlexcbSCZntkl2JfZw28nwmVKF69E5H/VHuWXj4zUaoU+anvWHjJJKgFrjQ3iT3Vz+rsNAPgpi8y99xvicID9nM+ItzvGZiN9GjKacqemjoSEnXAduFC0jqkXrQMEHNK7Tx5RC7QDMHrZrVrAdXPPAEFTP4lMzRAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouIobFV1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C28AC116C6;
-	Mon, 20 Oct 2025 21:03:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jg10KUf+rHxA9Dpo1jEJK0FTmqWhQS/xz3vpmUkWUmPAkbxmwru1h0grJO2CktdVfXrBFCBxJijcvwSFAN7N0Rk8ogW2/+tPjALdHCLt8SMqnrjNuHEhP9TbmTw5I7hDANuZ9Tw+X8RXokAXP/HGi3pCQo9WB/NGtTXNxZp0u04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PD8Blozi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE54EC113D0;
+	Mon, 20 Oct 2025 21:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760994181;
-	bh=rl73LAPbGGpQy7mrVVA+/INyZcf/ngN3OHEiLJHKOyw=;
+	s=k20201202; t=1760994196;
+	bh=Ou0q9+vDky6WmZGd0SxbtKlr44TKXu7QETyYG4jlv/Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ouIobFV1as3wMda6uinjBFim60/TLrtZBzdBaPYle29anpuOkOsF9JdzA1trGarLd
-	 tl2iE9I17y6Lx1UxAuU7G9qfiL3fH2e9+fRZwbZMlu1zhZLq2WrvAfihurVHZhuDFo
-	 Np6wr4T316XQCHoZiz/pUIn29o1IuLeAl3SaHuxv6ggXklExTb4k9IglCcrPW4DpaC
-	 lqwrLkWAlwoa3XXlbsAciYXP6OIDqAmeJ4ce221bxkytn2v4Ieei/0J5luCL0xBb55
-	 AlLApvXI0UTV+fqb6Ca7LsKbF3ONvg9sfhsa7kk3+soyEF2iE33Z5hSYRd5snlXFHn
-	 NupzmCoh5JWYA==
-Date: Mon, 20 Oct 2025 16:02:59 -0500
+	b=PD8Blozi+5D10vbjjn8gNtF52ctf2Tmff9XLBQX/XHhEroeYkQB8e/PpUXiKa8ZTn
+	 0GDfxisJFJAhnRXyXDEkO7Ksr2UrD0024yJo8jo01gI2eMLvk98KchnvZMM0g2hoPJ
+	 yUYljrN52TzXvN/TQO2efysVbkqpZFSSaNW7HTQD6pBZzD6dBNx9oL310gmyRkIpCB
+	 1ONJJVDMMaR9omJGiQgJxBX7teiX4A8gBDoEbS6zhGiAWPGSWV0JMBHUPifGK/QXiJ
+	 oOsAbceut+xOTImco6FABJLphQKPX2QtuQMfsJGaIIN8gi/FTnuhcXAZBGuiSUgKSt
+	 GYJ2MZIjI6AGw==
+Date: Mon, 20 Oct 2025 16:03:13 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
-	Tim Harvey <tharvey@gateworks.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] dt-bindings: media: convert nxp,tda1997x.txt to
- yaml format
-Message-ID: <176099417892.1821164.3923406811640179986.robh@kernel.org>
-References: <20251015154817.2500601-1-Frank.Li@nxp.com>
+To: niravkumarlaxmidas.rabara@altera.com
+Cc: krzk+dt@kernel.org, Matthew Gerlach <matthew.gerlach@altera.com>,
+	linux-kernel@vger.kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: Change Altera socfpga-ecc-manager.yaml
+ maintainer
+Message-ID: <176099419186.1821570.3377055200887970860.robh@kernel.org>
+References: <20251017083849.3213192-1-niravkumarlaxmidas.rabara@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,30 +58,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015154817.2500601-1-Frank.Li@nxp.com>
+In-Reply-To: <20251017083849.3213192-1-niravkumarlaxmidas.rabara@altera.com>
 
 
-On Wed, 15 Oct 2025 11:48:11 -0400, Frank Li wrote:
-> Convert nxp,tda1997x.txt to yaml format
+On Fri, 17 Oct 2025 16:38:49 +0800, niravkumarlaxmidas.rabara@altera.com wrote:
+> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
 > 
-> Additional changes:
-> - update audio width to 8, 16, 24, 32.
-> - keep one example only.
+> Update Altera socfpga-ecc-manager dt bindings maintainer from
+> <matthew.gerlach@altera.com> to <niravkumarlaxmidas.rabara@altera.com>
+> as Matthew Gerlack is moving out of Altera.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> Acked-by: Matthew Gerlach <matthew.gerlach@altera.com>
 > ---
-> change in v2
-> - add empty line
-> - add description for matrix's col. add limit for first index. But not
-> sure how to limit it to unique id.
-> ---
->  .../bindings/media/i2c/nxp,tda19971.yaml      | 162 ++++++++++++++++
->  .../bindings/media/i2c/nxp,tda1997x.txt       | 178 ------------------
->  2 files changed, 162 insertions(+), 178 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
->  delete mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
+> 
+> changes in v2:
+> - Update maintainer name in yaml bindings as well.
+> - Use correct maintainer list for patch submission.
+> 
+> Link to previous patch Acked-by Matthew Gerlach
+> https://lore.kernel.org/lkml/91cd7ccb-e821-48de-8d52-f8889af80a08@altera.com/
+> 
+>  .../devicetree/bindings/edac/altr,socfpga-ecc-manager.yaml      | 2 +-
+>  MAINTAINERS                                                     | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied, thanks!
 
 
