@@ -1,84 +1,116 @@
-Return-Path: <linux-kernel+bounces-861376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46D2BF293A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:00:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECEABF294C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8796734D43D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:00:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6268C4F7CA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B059330331;
-	Mon, 20 Oct 2025 17:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EB52BF002;
+	Mon, 20 Oct 2025 17:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFxrdVgV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naKhHO64"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCD532F75E;
-	Mon, 20 Oct 2025 17:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD5B1EF39E;
+	Mon, 20 Oct 2025 17:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760979604; cv=none; b=pGx7JwBNw00Q2OczdLe+xceI/2z4OxzUmjn/fW5oG4d9uyVlNLtC01rMlnQTTqQeBP8wIENZGYenOa9QbrGKdEMHXGA2a0ev1U5CtEdB2TMIEgauM/BcXmgAezu/0bg1pjIfHRudLcAajTjx9RLWfN6SdlpesuZ2vMoMmY27hAo=
+	t=1760979629; cv=none; b=JNa+UQNCkwP4Dv9HQVyMCdfQ5MORdstFwLDDCjMMp/M8h8XknORDT1/aF4Cp+Pw2AM997bGEXw78PsSsCV5fbR0Ke1th+cgl57Us7h5W+CpfFGjrue3HtVQ8JDdJWGrmjNP9LRwTTuFK080guiaDm2TUsxi1caZ9Ss6aKSrlkmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760979604; c=relaxed/simple;
-	bh=g9I0U02/cUqENuDToUCyNj2Rm3pn6hIWjCEcA13CqVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Es/TgemCm8fqzXSoCzf/535DIMnfACrcHG++9bvda9zl2VJBe7BJ1EcUTYBYElnLRt5uGuhZeMuChPZ4mmrfnPYDMox1CtTNPVeJZ7mDTpXHClq+ERrAYQTWfzu5kN3KJRHnt0rw/afMfISmAvw7i7ArL7YfW6ZIi0k4QnFCG40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFxrdVgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502C2C4CEF9;
-	Mon, 20 Oct 2025 17:00:04 +0000 (UTC)
+	s=arc-20240116; t=1760979629; c=relaxed/simple;
+	bh=aDeOnEEz1nETobkR0liGykS0l8wmYPsfShAs2ltzD7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NBKD0bkIJ+Pg7QslehhLjO1u0IsDd6vdaH3cttl8sH11ucSV2YrcfvXwlHjzMsabRQd4+Ce0mUMOatBUiyVu6Pi2Pc7u1RNo9UbKwmVk1bpcwrDq0jXNSJpM9YRKdeNuzkPamjtTNTDEvustOikT+4+Rj17MvxoNW/XFJS4GNDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naKhHO64; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0393BC4CEF9;
+	Mon, 20 Oct 2025 17:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760979604;
-	bh=g9I0U02/cUqENuDToUCyNj2Rm3pn6hIWjCEcA13CqVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nFxrdVgV1OsUGGgz+RBNH/ULZ4O4F8o8C2BPnuYcTmMHfntNko2ojmLiWnsYkLfKS
-	 tE+rtIRVtq5iRmDUft0siOw4bCBqn0FCzKOJV73chnDKRlmObMAaalMmZJxBldrwth
-	 SZSSFL0AnsiSldjcy0rqA/lYUr6KlrGRTAJohYKX7Ed/X3TfU2391jgSMC4IvVBNmt
-	 LEmV/cXQNW1L8Un5uNmAvSSs+Az79ry3LQEQqTR7ET7XnqV8gDXyvgiOAS3dt5aHya
-	 6j2QPn+loM5LRBVrB+cwsErkebDaZcH8HcJhpe6Zzizk0bQjxl135KKn/Z7oMqpTDL
-	 b6Cxm8cDKdy7w==
-Date: Mon, 20 Oct 2025 07:00:03 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chen Ridong <chenridong@huawei.com>
-Subject: Re: [PATCH 2/2] cgroup/cpuset: Change callback_lock to raw_spinlock_t
-Message-ID: <aPZqk4h0ek_QM9o5@slm.duckdns.org>
-References: <20251020023207.177809-1-longman@redhat.com>
- <20251020023207.177809-3-longman@redhat.com>
+	s=k20201202; t=1760979628;
+	bh=aDeOnEEz1nETobkR0liGykS0l8wmYPsfShAs2ltzD7w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=naKhHO642wpE6pJC8jUqPZgMFbjxkebP1+tixYGLmX5nENZioJ/daM/nUGEc7DskT
+	 eQjfLka959SMZlj/bj2szpSo9I2JUoNKEOaEOylFI8c/AIYjF9se1BKzjx7tJmds3v
+	 ZGAKSrifgiAX2Zeb97ZcBfnPOhj0cBhis9PUgyvmusF8HkxmzuCtqaXeA9lHfRTF2O
+	 Qgh1tbyDSsX0DGggMWV5E5YI/UY+ZxffSoZNmiUZ1xTEvOFBFHEZzLNoo2vBdVMFjY
+	 qM1WvYJWDE6innT8ar4vyx5cFqPQ79Oz7EON2h4oT6Abf88RhXVUcwqktWKcFjhy0m
+	 t8wzAXfYQNadw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org
+Subject: [PATCH v2 0/2] block: Enable proper MMIO memory handling for P2P DMA
+Date: Mon, 20 Oct 2025 20:00:19 +0300
+Message-ID: <20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020023207.177809-3-longman@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251016-block-with-mmio-02acf4285427
+X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 19, 2025 at 10:32:07PM -0400, Waiman Long wrote:
-> The callback_lock is acquired either to read a stable set of cpu
-> or node masks or to modify those masks when cpuset_mutex is also
-> acquired. Sometime, it may need to go up the cgroup hierarchy while
-> holding the lock to find the right set of masks to use. Assuming that
-> the depth of the cgroup hierarch is finite and typically small, the
-> lock hold time should be limited.
-> 
-> As a result, it can be converted to raw_spinlock_t to reduce overhead
-> in a PREEMPT_RT setting without introducing excessive latency.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+Changelog:
+v2:
+ * Added Chirstoph's Reviewed-by tag for first patch.
+ * Squashed patches
+ * Stored DMA MMIO attribute in NVMe IOD flags variable instead of block layer.
+v1: https://patch.msgid.link/20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com
+ * Reordered patches.
+ * Dropped patch which tried to unify unmap flow.
+ * Set MMIO flag separately for data and integrity payloads.
+v0: https://lore.kernel.org/all/cover.1760369219.git.leon@kernel.org/
 
-Is this something that RT people would like? Why does the overhead of the
-lock matter? I think this patch requires more justifications.
+----------------------------------------------------------------------
 
-Thanks.
+This patch series improves block layer and NVMe driver support for MMIO
+memory regions, particularly for peer-to-peer (P2P) DMA transfers that
+go through the host bridge.
 
--- 
-tejun
+The series addresses a critical gap where P2P transfers through the host
+bridge (PCI_P2PDMA_MAP_THRU_HOST_BRIDGE) were not properly marked as
+MMIO memory, leading to potential issues with:
+
+- Inappropriate CPU cache synchronization operations on MMIO regions
+- Incorrect DMA mapping/unmapping that doesn't respect MMIO semantics  
+- Missing IOMMU configuration for MMIO memory handling
+
+This work is extracted from the larger DMA physical API improvement
+series [1] and focuses specifically on block layer and NVMe requirements
+for MMIO memory support.
+
+Thanks
+
+[1] https://lore.kernel.org/all/cover.1757423202.git.leonro@nvidia.com/
+
+---
+Leon Romanovsky (2):
+      nvme-pci: migrate to dma_map_phys instead of map_page
+      block-dma: properly take MMIO path
+
+ block/blk-mq-dma.c            |  8 ++++---
+ drivers/nvme/host/pci.c       | 50 +++++++++++++++++++++++++++++++------------
+ include/linux/blk-integrity.h |  7 +++---
+ include/linux/blk-mq-dma.h    | 12 +++++++----
+ 4 files changed, 53 insertions(+), 24 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251016-block-with-mmio-02acf4285427
+
+Best regards,
+--  
+Leon Romanovsky <leonro@nvidia.com>
+
 
