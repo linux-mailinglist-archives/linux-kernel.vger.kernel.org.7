@@ -1,106 +1,68 @@
-Return-Path: <linux-kernel+bounces-861670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA80BF34E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:59:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CA6BF34F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B85E4E42AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:59:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDFFF4E6711
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F0233342C;
-	Mon, 20 Oct 2025 19:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WkeJBh/G"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA6A2D4B40;
+	Mon, 20 Oct 2025 19:59:17 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6081C332EA3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF6C333434;
+	Mon, 20 Oct 2025 19:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760990352; cv=none; b=fossS5r9xXcyyuHCLrPpFcZLMeB4JK1WtAabO6NxOKP6IH2Tl3xdNG9GvYwNzr72bodJT55EV8hIjxjHMOTDfdcVhzC+OylvMDWnnndxZOQ1sozsBZFpXMhrkBY+MkJt1fFblf3yoROzXit4vHaiyH7ZR5A0d7vZ//SAUUpzqB4=
+	t=1760990356; cv=none; b=NvnrBqEU8R9NqaHMipWL/owB8ZVbc0+fSt4SPoDUjEQdmfQ1cbFIupyIVLUCpKAdMtAkR67fiF8r114T6Tdoak8OmnoSx46Ol5t9U5hYj3QpiH2AMdbBBayoBIFuWtG56Q6QdEJz3Jfn7OXmOqKwtajBRoXuTJb+UfZnmVA2has=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760990352; c=relaxed/simple;
-	bh=RGfpAN5rzMHTTLTFD3Loxuaxwb3861xuxa5WQkx+zXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fj6pVXIHMOXifpWayngl02kmNRWPL+ZcbvLKhNPQ5S3f1QeZg9IgT9NU7dTluEEJVLXkwW1V69PoalWGJygzgPbqlOLgBoLjDymaKbMLt8hHY6jU7iji2l+AnISCWs0Uu64KFpUtcI6xg1PJoHNil7/FUks9kub87zQGB9mU52g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WkeJBh/G; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-471b80b994bso28354125e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760990349; x=1761595149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RGfpAN5rzMHTTLTFD3Loxuaxwb3861xuxa5WQkx+zXw=;
-        b=WkeJBh/GhWNSApkJsZAVMbPiFNLpdO876HgkWJdzb9VP2jbuW1zwgZglrrkN6KYALG
-         BCtVRlA5lRrBgZg+Rtw0CxE8iy0/x/spNUHaOkXaueLrK4wBDNG0l0LRP6BiSHOl+W9Q
-         1Zq5SzvKF6E9GI+zsojA72FKsiOjlLF77Me90JIkujGAZVkuxGB2MgVKdXtppKQJa34M
-         LqprURPuLU3hhqGO3LXlQHYyLX1DvUZMOp8/A5FLRgunTmc816GkVlHXjm/jnTAUVsox
-         2mAHrqOXwcyiaFc036goSvI/yg4benKqGINRMrrv2IxbM6xM5kkRudprrL/G5fKQycDq
-         7jPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760990349; x=1761595149;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RGfpAN5rzMHTTLTFD3Loxuaxwb3861xuxa5WQkx+zXw=;
-        b=ZVlVXJUFMLN/7GzrqzEpXujUQli/6FTG62Xvx4A3GOdfST7lrukj9Y3YL5iwVj8V1T
-         WtP08JtduY9YU2slDJf8h28VpdspCVBftavJwwEZL7kDRqptKSfuz4Rlo2xezWEKbpZz
-         PUg6z/TLbQJnIbf0oNZHZNsQPZG+PZeeTQs64iXWDCt+zfveAWw+C39chB2YxG3w4gnB
-         Ui1LqoXKUIanPbBp3dgU7ro+IBfmHSBWyi/ROUb4KGNm8uPg9We1BkEEdWWZUgS+LdNE
-         +1MNlXM5PDMN5fL5Z3RLSn3H8yjJRlyoI4yRxrmZLhSeGMRsMHgiHr7KkFwHzsly5fWk
-         9HGA==
-X-Gm-Message-State: AOJu0Yw2rsOxL2uRVEHQrxex04Co536g7sKBUyivMkYbRNmr/PT1Clws
-	zwl6DroiOLpn+/KEO4nqqPLh865LOkrSX09/locA76o4Fp8olEtk+rvK4MVMfO9mxrU=
-X-Gm-Gg: ASbGncthfs6Q9P1qaKOtu+NnSJjk013KC4jWspJo6TvL1rGzVKn3G4xjW7fZ00lgdGh
-	ppiLGniHVPrZrlJrePqxHNbRK4rEfMYwg/0eJgM933wDnZsijfVPE+f68nQO9tEM2aeRUpPP637
-	hmB5bQGjpyWc09YJGHAtyjRJmn3/A++4WGPLGZOewT4obamOD6IO1JOFffO31GWwDWAkQQhf8Vh
-	c3FD8ojUh5pC3uR5hK8bmyUnL7ge6vg3DnTfPKCU3Y902lajPFdykrVABRlNvy//047sSuFIWJ9
-	Crc9Vsg0wpO6Q0wt7DKGzWxPmNbTyGnNX4YtFu1QrtgAQpEqGBqFmOsrMXeZuZA2eFPIHr1kxLM
-	zUoI7f5eeWjNa8k23v9RZq3oR0jKJJ5RB/lUpp71iqLneXgns0cO19aongKaJupx28flMGqnCcB
-	M17vO64YCqV4Iay/Py9mT7Q1SeVmXBIEKz+NErxkBtU/Zl/byG66HPrQ==
-X-Google-Smtp-Source: AGHT+IGvccbSI11XJaSMgNlpFHKrVHSLfRMXa/L8Zy3VVZh4FfZmD5f/hOBseLwrd7XiHIRl8wNufg==
-X-Received: by 2002:a05:600c:5298:b0:46e:432f:32ab with SMTP id 5b1f17b1804b1-4711791d1e3mr108234665e9.33.1760990348602;
-        Mon, 20 Oct 2025 12:59:08 -0700 (PDT)
-Received: from [192.168.0.163] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c900asm247164875e9.16.2025.10.20.12.59.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:59:08 -0700 (PDT)
-Message-ID: <c1fae486-ee56-41bf-b3e9-e2e2a9338d1f@linaro.org>
-Date: Mon, 20 Oct 2025 20:59:07 +0100
+	s=arc-20240116; t=1760990356; c=relaxed/simple;
+	bh=HWDQQBySaWwcyqBNxtQ6itbpSI+j3m+A//1gLr/GpxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDFSlHFJnunf/I1HhGzudMyjCLSrDFk1/qrkVEqE4NmicWe3PIFBsXH0RbIyzJmVaKjh1Z1qgSKqEc9i8FFalJF5r3XKoUmk+0uFzddM2sr26rzcd9FrKI1IjtzgchWBMaW/RckvAiN1zvC4mri7I+3rZ0zoYou+/eJw5X7ZqNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id C57CC84F; Mon, 20 Oct 2025 14:59:11 -0500 (CDT)
+Date: Mon, 20 Oct 2025 14:59:11 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Serge Hallyn <sergeh@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: failed to fetch the capabilities-next tree
+Message-ID: <aPaUj1rENWJr+fvX@mail.hallyn.com>
+References: <20251020075738.2de7288c@canb.auug.org.au>
+ <aPWPWEfPpyE94qcs@mail.hallyn.com>
+ <20251020140947.0dfa07c9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] media: qcom: camss: Add common TPG support
-To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20251017-camss_tpg-v5-0-cafe3ad42163@oss.qualcomm.com>
- <20251017-camss_tpg-v5-1-cafe3ad42163@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20251017-camss_tpg-v5-1-cafe3ad42163@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020140947.0dfa07c9@canb.auug.org.au>
 
-On 17/10/2025 06:06, Wenmeng Liu wrote:
-> + * Rreturn 0 on success
+On Mon, Oct 20, 2025 at 02:09:47PM +1100, Stephen Rothwell wrote:
+> Hi Serge,
+> 
+> On Sun, 19 Oct 2025 20:24:40 -0500 "Serge E. Hallyn" <serge@hallyn.com> wrote:
+> >
+> > Sorry, there's nothing in there right now, so I think I deleted the
+> > tag during the last cycle.  Is the right thing to just leave it
+> > pointing at something like 6.18 with no changes and let your
+> > automation calculate an empty set?
+> 
+> Yeah, that makes it easier for me (probably just reset it to v6.18-rc2).
 
-You might as well zap this too since you're v6ing.
-
----
-bod
+Done, and I'm adding a note to my process notes so I don't forget.  Sorry
+for the inconvenience.
 
