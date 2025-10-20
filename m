@@ -1,203 +1,112 @@
-Return-Path: <linux-kernel+bounces-860845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D29BF1210
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD19ABF123C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E881A4EDE77
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:22:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C03134B14C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2CA1D5170;
-	Mon, 20 Oct 2025 12:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E00311950;
+	Mon, 20 Oct 2025 12:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UYiPj0CK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxt8BRhI"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E1430F555;
-	Mon, 20 Oct 2025 12:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A092FD7B2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760962936; cv=none; b=sHVVd7yTg4xvPKqCcj+Sj9y0Ix1hZMaDru/yBQzF4AdjgAHdAiUdQA9MCHmwpl8EMcDIN/XMP4JjhyYklkdYzkliyZErlLr9iR+k9pi7TOcyYGwj7oelnyQ7HOSk64WF/N7LqVg5+Sts3uQqvCpD1sPWnC5AOARsjPGWXGAkPWU=
+	t=1760963033; cv=none; b=QTykQ+32cQkD43qV9NHSy/eIoV952vnmGc2No8wMQL2U8PwEvy4igt+5ZrQncNmXfCEBy5Vnp6Ou8AziVP3m6aBnN9ydC8ETLf9odPVNRwAQOf77tDK/+tDVci3QoFbe0pDC0T0D0o17LEx/70xRQAIwE3eH513T9ZafNzoyAv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760962936; c=relaxed/simple;
-	bh=of3wZAUHKMfCVZYVBcIRSyBLTUb2ezn0Z1hO3nSqfII=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=IxlUqrFTmvmIT3Pikbm+hImgtjIrkG6oI9v/2oTZKMe9x6Qt2xGymuRHWM+fNnlxQA0G37ykrG3O0RoVDzTuY1zs7aPrfDa3BnAfKbV815+vnTLYFleI0MYY3jdVnWOBCzbvsgIXyUMIXgYrzinr0DIdP/QB5mHO7xIrnfpDISw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UYiPj0CK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JMhEtm001343;
-	Mon, 20 Oct 2025 12:21:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cNpXfp
-	oUFXhapoL9sTv4eIMTnzU91hptS30+pXpGrF8=; b=UYiPj0CKqgZy73ViJ56a0u
-	3jJrk/2vG9i7ESpwny3f8CRJo2DcQEbRfhsK/CNH5AEECg2swVN8EHyj6ZgRSw0z
-	zYyrgsaI+0oPRsIjYn3oLbNbV1X9I+arvl55c9OMmDCp7TQlRYQqEGKITnTtvDA0
-	0Z5sbU3Dh8nXS9bH9A4WNH4BpYHsaE5Qz5CmvCM8D4aG6s+AH5RdDQVPxZCo1c6Z
-	N45NCvyNJ9TmKWUoVSsUxmks/KM6Hj3SVXv+1XNLWxDHQQRoYbQDLVo1XzuodCBN
-	ZJFjNuhPfPwbG/5GhsuyBM5zi3/UXpdqiJ86pElu1KI75ONnfRwVjoF7GXN0H/3g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32h88pt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 12:21:53 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59KCIaFx030654;
-	Mon, 20 Oct 2025 12:21:52 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32h88pq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 12:21:52 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBxp43002306;
-	Mon, 20 Oct 2025 12:21:52 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqej5dbr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 12:21:51 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KCLp2029557300
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 12:21:51 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2E39558059;
-	Mon, 20 Oct 2025 12:21:51 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EFAC558063;
-	Mon, 20 Oct 2025 12:21:49 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.31.144])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 20 Oct 2025 12:21:49 +0000 (GMT)
-Message-ID: <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,
-        Karel Srot <ksrot@redhat.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
-        open list	 <linux-kernel@vger.kernel.org>
-In-Reply-To: <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-	 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-	 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-	 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-	 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-	 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-	 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 20 Oct 2025 08:21:49 -0400
+	s=arc-20240116; t=1760963033; c=relaxed/simple;
+	bh=xsVrddNgKdsa59i88tOUom/s0Tf6ykU6bezL99BIn20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVKK3UHCT9McZ0m7EKXe2XuAowDy/uFKRKu2ImXkKejL4pSIXVa+PSF4WDLPI2t0vVHGUfpgBfVLVAEFLx43h0YCIoRduFn5WP8ksyhe013Ux2U81aICMZiS69DRkev5JHQFWBR0KjXnREERoXQdNM2Va5RaR8O7L4hjBULJBcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sxt8BRhI; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47106fc51faso50918705e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760963030; x=1761567830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xsVrddNgKdsa59i88tOUom/s0Tf6ykU6bezL99BIn20=;
+        b=sxt8BRhIXDtx4vu9KqP17PgMkS+Cc8Wf5VnW9SPMpkawYQFCW2nJ4UqDokOnQ/BbOP
+         1UKoNPjca7BshWAGhdLF4sM1dXQDy4YkBGp3VhyH6zetcxIGWlCYeKeNKsX8frNfx42P
+         XP4hW5S5UsXOIllauXGcuR8cMGiJNQJK0ut0424GQnez6x7Oj6JvGHtNHR0TxhSgwX1x
+         xN27l81GfgUbDp71FxBU21EOtTZbCM2VwzRAheDehQCkQNIJFmv3MNr4G+46pMbpp+kJ
+         P4bcNgolPKgt5uNNvwTN4qFjEpPUa7aT21sjQi4WyWlbR+WOlx6nvcL7RgqgyUowmerr
+         UDbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760963030; x=1761567830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xsVrddNgKdsa59i88tOUom/s0Tf6ykU6bezL99BIn20=;
+        b=vaRlTaMiiM9Bxg0EnptcGrSdVnaSZRr27SAuNkymdjXfh2bmGbbbG5KqbTH7+B/8HL
+         ZCAlV/hAkKsU1nScxZiSbKyooa0iMokNO9AH4XeoDMDayFDBJGXpwXv5gbEmmC/jdbtK
+         jqhphdNVCRMikJaPBsMVm5MxQdyuJZkJ423qwcu8a3REk/ClZ3SdCzM2g6Z78LFBU+0c
+         ZyYCNwn5QBaIWSBckk7MPVQueGd8qBY32bEI45liVHWIdU8Ou7fKUj/m5JBh17XLX5o/
+         IQGPEW2Hkcu8JLh4V5mwHM+gowhgQTdUp+cD4twq6FtKLKCqeNZNS5zF/oJAOcUZ2Fm+
+         xXaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsLvIIRrk+Ps4q0I/SUZM25JuYpdOuoT3FFfYDXTphV2ChG8ESbA4LMDQ4MUyy78OzBQIec+Pqfl4TJr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN7zIm7iS9YI28+GOuilwpKe7UqPkQQ34/5Y1xBmk+KYCQJ785
+	lfSVpOUnBglvrdqoSdf+WDi6cEFKm3vnK64Fa/Tn9AFckjTzw9wcEAU0TdecUAR7JpW2n09LFp/
+	O43JpeyD1ZwYnuGZyrhr9/ZGZ+sLJYnPtt4+e7NjR
+X-Gm-Gg: ASbGncuobZ8YUrAoWNG4do1sJJu55EEKj/pAJ0WRMxGFNlh0qrd1IAmlLJET7cmmlIz
+	ZNhBzKz65cvRtI98TnVer8g/UW8gMVIJvC6TICkbGsMb9wwOLS1iC+dMD6vCPB+wwVqXBi+bQLM
+	tA0rDJZbxdi0ezft1KCnIbwrp+TstmJqVAKyZ+EPAtgtFWpSMoAB8nc4rEXRe6HBVHHGtdVvRts
+	HP9GOSQKounBOuffAnHbo46chumseOlY6f+V41155YBJIqWTpOp9ApRyX/WtXrUKPLN5yPJ6mIC
+	HJa0+RGXn7sI5To=
+X-Google-Smtp-Source: AGHT+IEzDxQ99eTVFb1p72eG4BzDy4n/ljYK7KwPaNsss7sxyo0CST4hlFo6R49mTS4MCJM90qjBH4sAGn3rQV8UuQ0=
+X-Received: by 2002:a05:600c:1d9c:b0:45d:d1a3:ba6a with SMTP id
+ 5b1f17b1804b1-471179174dcmr105272825e9.33.1760963029708; Mon, 20 Oct 2025
+ 05:23:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXx2sXdzBFqE/3
- Chand0NEWi5yJUE1JpE90Efp/BTQYh2L0GvsDXlVKVvAPAWQb+tBY5SlZgKUZMY03h+XYauSXu4
- ECGSrrtVP9zWs943kOlEDzrEmYfPPz3vXQVONhvGKfehCJPxeSNfmbqe6wp+GzcSkUuSdITksRS
- 0EA9isfnRfH0+6efN/MWQL+8C4gWMWpwPfwA0UDU84cTksGlsZtj5wWREEuazm23c1unrrusamj
- FiCKb1fjOIf46UIVzB5sUWusHKQNPRly7vaEjzHrw2y0AJWLde8RpTjms2P1NkAOufzCdJJGF7O
- 9oo4UKLaNHEmEs3eBrdnCs2X/BZkZ2EHCZoYguXWWA3F0ea65tIbLqVkUg9OJOy5aAAuq57ZQFn
- 3zf/Kh0Nmv/cKZsCmlbNzW5tuCJi+g==
-X-Authority-Analysis: v=2.4 cv=OrVCCi/t c=1 sm=1 tr=0 ts=68f62961 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=gQ7tohhNsIfWToB5Hf4A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: -wQ3BsphU_0TP5q_Rdhw-GwkOHurO_Lm
-X-Proofpoint-ORIG-GUID: FbuxV6urzwBcOUH24ky1XvU7_oMffsb7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- clxscore=1015 bulkscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+References: <20251014064120.263455-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20251014064120.263455-1-lukas.bulwahn@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 20 Oct 2025 14:23:37 +0200
+X-Gm-Features: AS18NWA5B7IaPN02pGfQccVfxUVjCyEnsxCY8l0rw-xGHW4tso6TZRmVCMfMeXA
+Message-ID: <CAH5fLghsp6UXy9ghYe0bS7ASty-VrDLVwRkmOt44Pr1sU6vvag@mail.gmail.com>
+Subject: Re: [PATCH] rust: drm: remove unneeded handling for config DRM_LEGACY
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
-> > > > 2. Instead of defining an additional process_measurement() argument=
- to identify
-> > > > compressed kernel modules, to simplify the code it might be possibl=
-e to define a
-> > > > new "func" named COMPRESSED_MODULE_CHECK.
-> > > >=20
-> > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPRESSE=
-D_MODULE_CHECK
-> > >=20
-> > > I also thought about this approach. But IMA rule maps kernel module
-> > > loading to MODULE_CHECK. If we define a new rule and ask users to use
-> > > this new rule, ima_policy=3Dsecure_boot still won't work.
-> >=20
-> > I don't have a problem with extending the "secure-boot" policy to suppo=
-rt
-> > uncompressed kernel modules appended signatures, based on whether
-> > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to the=
- existing
-> > MODULE_CHECK rule.
->=20
-> I assume once the new rule get added, we can't remove it for userspace
-> backward compatibility, right? And with CPIO xattr supported, it seems
-> there is no need to keep this rule. So if this concern is valid, do you
-> think we shall switch to another approach i.e. to make IMA support
-> verifying decompressed module and then make "secure-boot" to allow
-> appended module signature?
+On Tue, Oct 14, 2025 at 8:41=E2=80=AFAM Lukas Bulwahn <lbulwahn@redhat.com>=
+ wrote:
+>
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Since commit 94f8f319cbcb ("drm: Remove Kconfig option for legacy support
+> (CONFIG_DRM_LEGACY)"), the special handling in the rust drm code for the
+> config DRM_LEGACY is not needed.
+>
+> Remove the drm_legacy_fields macro and simply use bindings::drm_driver
+> unconditionally.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Yes, once the rule is added, it wouldn't be removed.  As for "to make IMA
-support verifying decompressed module", yes that might be a better solution=
-,
-than relying on "sig_enforce" being enabled. IMA already supports verifying=
- the
-appended signatures.  A new IMA specific or LSM hook would need to be defin=
-ed
-after module_decompress().
-
-Remember based on policy, IMA supports:
-1. verifying the signature stored in security.ima xattr
-2. verifying the appended signature (not for compressed kernel modules)
-3. verifying both the xattr and appended signatures
-4. none
-
-To prevent 3 - verifying both types of signatures, the IMA arch specific po=
-licy
-rule only adds the "appraise func=3DMODULE_CHECK ..." rule if CONFIG_MODULE=
-_SIG is
-NOT enabled.  Calling set_module_sig_enforced() from ima_appraise_measureme=
-nt()
-to set sig_enforce could inadvertently result in requiring both the xattr a=
-nd
-the appended signature kernel module verification.  To prevent this from
-happening, "sig_enforce" should not be set, only verified in
-ima_appraise_measurement().
-
->=20
-> Another thought is to make CPIO support xattr. Today I realize that
-> ima_policy=3Dsecure_boot can also cause failure of loading kdump kernel.
-> So the issue this patch tries to resolves has much less impact than I
-> thought. Maybe we can wait until CPIO xattr support is ready? I'll help
-> review and test Roberto's patches if this is the best way forward.
-
-I'm not sure of the status of the CPIO patch set.  Roberto?
-
-Mimi
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
