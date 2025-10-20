@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-861899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D67BF3F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB1FBF3F36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC54D542A31
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:39:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF74F18C69BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296822F49E7;
-	Mon, 20 Oct 2025 22:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0F42EFD98;
+	Mon, 20 Oct 2025 22:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojXXAGjM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kHoCQRDC"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4B72F291E;
-	Mon, 20 Oct 2025 22:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876AA2F1FEC
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760999837; cv=none; b=Zm26QpkLPt7yqWPVTV/ByBHsOl3EN2hwbjV2bvmpsgpaZIVYFgHKEzC+BaWSHmhOGhaAbO58muIEcGTH22r2n5/7aouEdtNMtExGEpBQxsP3r9ZAnWeON5zBo6Dp5SN5jHGO86VOqMRLygJMmkWK5TO4GXe123KOslWITrMGRNo=
+	t=1761000005; cv=none; b=mgtsCXf7XMjjjeqTasJVqaceoO73lB8gGmFBk7JQ4kqJwmBTs2wNVCi09dOB+yELG2Mu01oWbFmNKwZRPFqyj8lJKIRlVltkYMTfbRJqup/Vynppy+qxeAFXW5qytILwR+YrQxVB/Jl/VzCDeG2/eMvD2ZlB7mNNY+c/V40eGWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760999837; c=relaxed/simple;
-	bh=X03MLlNZmvU94ilYyWwoQIQq86cMDYcS266UvkvFaP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=IN5XYOXoSrPRCFiuY6lfFlfN8p0VuRtoXhKBDcwz3eS1N3wJ5wxM4GbWkFbz/creziD3QeVUAxk3t2P+15IJ9RZcj1kJa1UKHuYMaoBjbBFo7/X3HZ5M0Vj6cRNzM0lxtiRBOBsPeUa8tbNA9cF4R391S96WDZ+ZnEscruSxaWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojXXAGjM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD21C4CEFB;
-	Mon, 20 Oct 2025 22:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760999836;
-	bh=X03MLlNZmvU94ilYyWwoQIQq86cMDYcS266UvkvFaP4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ojXXAGjMcvVVLavA9AOYZJch/4+wbt1IikP//ZZFRZ2zHLZC86qZs3boDC5+AypyM
-	 bqrvxZvEvSuIbUspGzFMinCdpryn2F41f4d/+RMzq7j77LK5h/hswUm/d0lF7ZbWgr
-	 /0iETRL2RRpOBsQQJ1ABZRe/G0KwSXambwtpILOMrHz72hGFmqnWGSi5+KN53+aMr3
-	 eQL4levHvEUjBxhtJ7D760Xt/S3o6mxZAw+0AvFoy1DJ6A2egeplwSA4+shbf1UOt3
-	 cU9f5Zs/aJBiqkSuIEzCzgpR1Yxhme5KXDNjOcZNPt9LdJurT7vLjpuvzZfxaOaFHW
-	 szDTN337qF7jg==
-Date: Mon, 20 Oct 2025 17:37:14 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-pci@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] MIPS: Malta: Use pcibios_align_resource() to
- block io range
-Message-ID: <20251020223714.GA1165320@bhelgaas>
+	s=arc-20240116; t=1761000005; c=relaxed/simple;
+	bh=Tgo1ln9Y6VE+gmfHVXivughYL6jpYIM3N6Z1Efok2No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUs1M/C3szWsU5qPamSsX8cDxLX21bejSiSTFPVo8L9ckDoFEOm3SdAZ9s9iRoZPpt2O7z0LtOLvmYevDlfrFwMGgzevWktbE01dQ1zwJC4M9gLI0SDL32S3a493SXXchmfYmKYWmHrxwk5pnoKwBsx4nEGif+D8bvncmFx8MFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kHoCQRDC; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-290da96b37fso46555ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761000003; x=1761604803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GqANdouNpfXe1TpRYeq8OtUbMCXC+xuGaNpt4ay/34I=;
+        b=kHoCQRDCLAqY+/x0NIU6c3OeceXwFh8uwuWbvIggH0Zz4XqRyglBIM0JiG0JAG8S49
+         /fX4XT6jB/t9V46/BMVXE0O4vjuefOUJAGgoYk/fh/dgATD0etjtAq/PkL9BqqP9Iz9+
+         tENviSWhG15OZzlWEyLobHukGWpovdXWTIfIPIIUW9NEW46RWKX+8MF4c8vJkvtHieO2
+         cO/ESgKvyRynBmu3Yh79rWorIVUxRZhEnYcgy5C/jdrfn3ajv9gc4d+hUBUTvBJqPeRb
+         bwD8saoLyE7Xwb6UpmR5yt39lxS66WE0N7gKLMJ0ireDzuh0lWoTRfHZ4YYTF/ZeVVlA
+         +82w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761000003; x=1761604803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GqANdouNpfXe1TpRYeq8OtUbMCXC+xuGaNpt4ay/34I=;
+        b=o0GJdV055Mtc+kzqfhxcG+Dc48Qu6gQ2JNYT1N5Ty50MPWomAKouE50dJyacgwO1Ay
+         a8f8U6MK29ZWd2rAL02fahGmf8t6kARPLkkonUEkRiAadlgpHBueZA7ti5V5rZ8nRigo
+         Ue0jP32lg2sQWFEvrSfvBUH5jMox1lmpEmhNvY+qZSW5tJbXAj9RRt+a3fvHPwv6bo/1
+         WLKeaGs16XzP1O1MkyDJHkXfTj7EN1QQe0LgUJ2QMAuK1+xrC7yn0OGDHEn5wlNT+cOJ
+         gTsdUWyg7GbAR4wKusJBgolWSnFOkpUBWZxox+QrPgpXAfteR368eccdC2eRBY0yxK6j
+         yAPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuX/ucpC9F6RPcyyLGHNzHSXF8ONBycr/PNg7g7+ix8/aFrL2xioy+1M6Hna4Awl7Lo90U5opSW4mCzZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNuojvqdkYPVST/xelm5dBzk5LQpnvlOecV1g2mi+yS+1FnmKt
+	hjkTk3hq4jgatLb5+9GiSh+VIa71dXQNkq0Ztl0kNcHNv145LDMzGBzszoA8/FL7Eg==
+X-Gm-Gg: ASbGnctjzZxppqkEvs3PN94TnnM3GjYT3IugE/PcCrQdiHwLEZFPfq/09di36f8gt9o
+	JSvxVatsu+QrbtfxUICr2uORpAxStCxpkmfzxah/0sDnvHVdor72lC4ZojQ0RKiLPsxJidaKf40
+	wDQCoDm4uPk3gqKmlToazO4v3w9OcyRZrlDnNCHwXnz3NjfhuYJDjNyTyeo/7ctO37Jh9ok7dDU
+	ZdB1eZHNv+lly+j5JnIuUEJa7APLPVSzMVWn088GWSkCiQzadfBm+4qfz9VABnsvJnRbi0q/y1j
+	iYxYBelmX5Ogg6lNwngPUKO5TKl/pBSQVqUDmktjdJTDdyU6VU01Jqk3UiF+BWdbj4Up8/klNKt
+	kkzEtmjX6H6qGKk72oh1otg9h7+g5SufbSZqgBOrKiuzEhVTZ1pIVRBGi2fswzd9QYMrhz/PIwO
+	TPIa0JwtORQ02qq0Yf1dA3Z3r4GzaqnwzJrcuS
+X-Google-Smtp-Source: AGHT+IEcqTlHp/Qpfza19a+3ciBdyb/icBOnAmIupjsmC3a9l9OFGVEdaUxANAVMTmKc4io99zwLcw==
+X-Received: by 2002:a17:903:8c7:b0:291:6488:5af5 with SMTP id d9443c01a7336-292de2e477emr479535ad.1.1761000002470;
+        Mon, 20 Oct 2025 15:40:02 -0700 (PDT)
+Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdee2sm90693775ad.92.2025.10.20.15.40.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 15:40:01 -0700 (PDT)
+Date: Mon, 20 Oct 2025 15:39:57 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: David Matlack <dmatlack@google.com>
+Cc: bhelgaas@google.com, alex.williamson@redhat.com,
+	pasha.tatashin@soleen.com, jgg@ziepe.ca, graf@amazon.com,
+	pratyush@kernel.org, gregkh@linuxfoundation.org, chrisl@kernel.org,
+	rppt@kernel.org, skhawaja@google.com, parav@nvidia.com,
+	saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com,
+	david@redhat.com, jgowans@amazon.com, dwmw2@infradead.org,
+	epetron@amazon.de, junaids@google.com, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 12/21] vfio/pci: Skip clearing bus master on live
+ update restored device
+Message-ID: <20251020223957.GA610352.vipinsh@google.com>
+References: <20251018000713.677779-1-vipinsh@google.com>
+ <20251018000713.677779-13-vipinsh@google.com>
+ <aPapy8nuqO3EETQB@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251017221204.GA1050107@bhelgaas>
+In-Reply-To: <aPapy8nuqO3EETQB@google.com>
 
-On Fri, Oct 17, 2025 at 05:12:04PM -0500, Bjorn Helgaas wrote:
-> On Fri, Oct 17, 2025 at 02:09:03PM +0300, Ilpo Järvinen wrote:
-> > According to Maciej W. Rozycki <macro@orcam.me.uk>, the
-> > mips_pcibios_init() for malta adjusts root bus IO resource start
-> > address to prevent interfering with PIIX4 I/O cycle decoding. Adjusting
-> > lower bound leaves PIIX4 IO resources outside of the root bus resource
-> > and assign_fixed_resource_on_bus() does not link the resources into the
-> > resource tree.
-> > 
-> > Prior to commit ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-> > the arch specific pcibios_enable_resources() did not check if the
-> > resources were assigned which diverges from what PCI core checks,
-> > effectively hiding the PIIX4 IO resources were not properly within the
-> > resource tree. After starting to use pcibios_enable_resources() from
-> > PCI core, enabling PIIX4 fails:
-> > 
-> > ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
-> > ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
-> > 
-> > MIPS PCI code already has support for enforcing lower bounds using
-> > PCIBIOS_MIN_IO in pcibios_align_resource() without altering the IO
-> > window start address itself. Make malta PCI code too to use
-> > PCIBIOS_MIN_IO.
-> > 
-> > Fixes: ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-> > Fixes: aa0980b80908 ("Fixes for system controllers for Atlas/Malta core cards.")
-> > Link: https://lore.kernel.org/linux-pci/9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net/
-> > Link: https://lore.kernel.org/linux-pci/alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk/
-> > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+On 2025-10-20 21:29:47, David Matlack wrote:
+> On 2025-10-17 05:07 PM, Vipin Sharma wrote:
 > 
-> Since ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()") came
-> through the PCI tree, I'd be happy to merge this as well, given your
-> ack, Thomas.  It would be ideal to have a tested-by from Guenter.
+> > @@ -167,6 +173,9 @@ static int vfio_pci_liveupdate_retrieve(struct liveupdate_file_handler *handler,
+> >  	 */
+> >  	filep->f_mapping = device->inode->i_mapping;
+> >  	*file = filep;
+> > +	vdev = container_of(device, struct vfio_pci_core_device, vdev);
+> > +	guard(mutex)(&device->dev_set->lock);
+> > +	vdev->liveupdate_restore = ser;
 > 
-> I provisionally put it on pci/for-linus to facilitate testing.  If it
-> doesn't solve the problem or you'd rather take it, Thomas, I'll be
-> glad to drop it.
+> FYI, this causes a build failure for me:
+> 
+> drivers/vfio/pci/vfio_pci_liveupdate.c:381:3: error: cannot jump from this goto statement to its label
+>   381 |                 goto err_get_registration;
+>       |                 ^
+> drivers/vfio/pci/vfio_pci_liveupdate.c:394:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+>   394 |         guard(mutex)(&device->dev_set->lock);
+>       |         ^
+> 
+> It seems you cannot jump past a guard(). Replacing the guard with
+> lock/unlock fixes it, and so does putting the guard into its own inner
+> statement.
 
-Added:
+I didn't get this error in my builds. I used:
 
-  Tested-by: Guenter Roeck <linux@roeck-us.net>
-  Tested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-  Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+  make -j$(nproc) bzImage
 
-and dropped the Fixes: aa0980b80908 ("Fixes for system controllers for
-Atlas/Malta core cards.")
+After your email, I tried with clang, using:
 
-If the missing resource reservations (dma1, tiger, dma page reg)
-mentioned by Maciej are an issue or can be fixed up, let me know and
-we can amend this.
+  LLVM=1 make -j$(nproc) bzImage
 
-> > ---
-> > 
-> > v2:
-> > 
-> > - Remove if and always set PCIBIOS_MIN_IO (suggested by Maciej).
-> > - Minor improvement to the changelog
-> > 
-> >  arch/mips/pci/pci-malta.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/mips/pci/pci-malta.c b/arch/mips/pci/pci-malta.c
-> > index 6aefdf20ca05..2e35aeba45bc 100644
-> > --- a/arch/mips/pci/pci-malta.c
-> > +++ b/arch/mips/pci/pci-malta.c
-> > @@ -230,8 +230,7 @@ void __init mips_pcibios_init(void)
-> >  	}
-> >  
-> >  	/* PIIX4 ACPI starts at 0x1000 */
-> > -	if (controller->io_resource->start < 0x00001000UL)
-> > -		controller->io_resource->start = 0x00001000UL;
-> > +	PCIBIOS_MIN_IO = 0x1000;
-> >  
-> >  	iomem_resource.end &= 0xfffffffffULL;			/* 64 GB */
-> >  	ioport_resource.end = controller->io_resource->end;
-> > 
-> > base-commit: 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
-> > -- 
-> > 2.39.5
-> > 
+This one indeed fails with the error you mentioned. Thanks for catching
+it. I wonder why gcc not complaining about it? May be I need to pass
+some options to enable this build error on gcc.
 
