@@ -1,70 +1,67 @@
-Return-Path: <linux-kernel+bounces-863436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B260EBF7DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:21:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAA2BF7DE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC0F404A71
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D24541D3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711D634E756;
-	Tue, 21 Oct 2025 17:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4728635172C;
+	Tue, 21 Oct 2025 17:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iJpACR8f"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z+uBgZ0q"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB0E34D4C2;
-	Tue, 21 Oct 2025 17:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA9234C82A;
+	Tue, 21 Oct 2025 17:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067146; cv=none; b=VnNQasHls1bzqS6Qmb6MisAkJLdn4zKBCOwm2FaM+32mdefV94+IovivmDkIpYs1pJo98fQIRT6coZUsBlOwrSAVSRYXgRNNRGsvRL2dxEbqTxAMrjc6hYuSJr5CdHeD3SSphXBtggTKUQGNu2GRHO/2+dxHVn9hajrHvd01By4=
+	t=1761067149; cv=none; b=HDMNTPKyXMa9u2lcnIxxPDdBezxUXplh2Z5IPJ6f4bRCot0AqHAeke0i1/U69iNJ9pNf3ksUCMCe+nAHY4ph1QSh9YUQ25rTsyxeiIUFC4CFYDpr9qvapL2Ws8cW4fi6myj1tpUlaqCateLb+zBcRm/5EMR1hEpJEc1E058Y0NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067146; c=relaxed/simple;
-	bh=EYCensHCTYsKm3RvolDZoGIf0eSBvV+gt0fZiUhWa2o=;
+	s=arc-20240116; t=1761067149; c=relaxed/simple;
+	bh=APDtLhXblBwS9DQRReD0gd2A85Zk53l59rWi0MPQ0rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H78y9qqJAJYlJ2H6/xfl/XjhZHeU5c1XgJ8/WrGRcxCCpTBt7vNh+IJHakFFDLIAwHEkxSGgS5j6Gpkazgsu8lQyeAQ0cInXFX9WciitPSclI9jyBOastUTrjzP9Fpt2APFqchBx354xE1VL5bdo9GjCFNl5n1zOM7sd62CYghQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iJpACR8f; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type:Content-Disposition:In-Reply-To; b=BG2Xfmiv1pdZvuAn93UWenrPRFAv/QAkAofCu9nIn+sS7F/DNbV4Z+kffc4APtri7lth5cpjOzYT+Nu2kqriooXrWK4+Wor40J5/SG/xzis/zhonAzQqafG+z6n/7uME53SP+hJKl0IzccQvZalvisGpbnmLWNqGoNAT8NdNzBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z+uBgZ0q; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=l9mMHyRpjZNuARz2M/ntN05dqQHUqrEry8WgR/OKxkE=; b=iJpACR8fALcW3zx4sxeUuZq+iv
-	1jyrsXKGsC4gkwKU+RW8kNbkG7rgWSGQMovM9yPLj+yCPYp0glp86xXj3p3+Q0lKaPGqog3ytx/HE
-	frEZT48/Vvj9Imreu6aII0MoLe+K6iMzxIHBrzp7eKvNUPAHnjrll/4WYGUOkJP2MTsT7S+MC9PXa
-	/+VIUm15Huj/QuBoSWUl+7A5KA2JfVM25XR0iUe3qOBUQpD50gQaGUDbi3G9QD7kXTv2obfMid84g
-	mzolNCNemc0Wb6zvid/q7xYTL7tYkYbCBN8lc9zJAlfq1sSg4XNcfDKddiQ3z/JWbavvmvJ+F4NbW
-	EJ22ZbjQ==;
+	bh=QzchzrjP8FlIuKSYCzJ8pjq9HCBr1gD14zJzjcDAwDs=; b=Z+uBgZ0qsiHGtjo8dv8YdnexnA
+	JasO0byS3J/dlOB9ulPFmIBg7VmhciiE+D6ghI94XCSEzZ3d9pR4fAwPsxMhMbO38FCNC0YB3M8VH
+	pdqZJ8APAjVTCOLjSOfvXg9L/CHHyNybafQBnexilywkjRf5S0UNBJKi0W52C7MpdGH6ccpxlLBPg
+	67fg0xZO0Noc2Og65nJTMPG6uLkpJuQwlCyazSzCeoC3VUi5GdmTLKQqVWUuHU4YWjmqW9dBaO2hd
+	pMzttx1cf0+S6EleJkT8bqHmJzy/bwg1Mz4FKwSbhWIUZXNrOYP+HxXGZ0kbmDACqC6vnGnG94H0F
+	UDbfek8A==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBF8s-00000000tBz-1NPr;
-	Tue, 21 Oct 2025 16:23:25 +0000
+	id 1vBF8z-00000000tCI-2tgG;
+	Tue, 21 Oct 2025 16:23:30 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 90D30303063; Mon, 20 Oct 2025 12:49:34 +0200 (CEST)
-Date: Mon, 20 Oct 2025 12:49:34 +0200
+	id A45FC3030BE; Mon, 20 Oct 2025 12:51:54 +0200 (CEST)
+Date: Mon, 20 Oct 2025 12:51:54 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] sched: Remove never used code in mm_cid_get()
-Message-ID: <20251020104934.GQ3419281@noisy.programming.kicks-ass.net>
-References: <20251015091935.2977229-1-andriy.shevchenko@linux.intel.com>
- <aPYKpJ4MdjlGeILa@ashevche-desk.local>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] objtool/rust: add one more `noreturn` Rust function
+Message-ID: <20251020105154.GR3419281@noisy.programming.kicks-ass.net>
+References: <20251020020714.2511718-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,19 +70,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPYKpJ4MdjlGeILa@ashevche-desk.local>
+In-Reply-To: <20251020020714.2511718-1-ojeda@kernel.org>
 
-On Mon, Oct 20, 2025 at 01:10:44PM +0300, Andy Shevchenko wrote:
-> On Wed, Oct 15, 2025 at 11:19:34AM +0200, Andy Shevchenko wrote:
-> > Clang is not happy with set but unused variable (this is visible
-> > with `make W=1` build:
-> > 
-> > kernel/sched/sched.h:3744:18: error: variable 'cpumask' set but not used [-Werror,-Wunused-but-set-variable]
-> > 
-> > It seems like the variable was never be used along with the assignment that
-> > does not have side effects as far as I can see. Remove those altogether.
+On Mon, Oct 20, 2025 at 04:07:14AM +0200, Miguel Ojeda wrote:
+> Between Rust 1.79 and 1.86, under `CONFIG_RUST_KERNEL_DOCTESTS=y`,
+> `objtool` may report:
 > 
-> Anybody to apply this for fixes?
+>     rust/doctests_kernel_generated.o: warning: objtool:
+>     rust_doctest_kernel_alloc_kbox_rs_13() falls through to next
+>     function rust_doctest_kernel_alloc_kvec_rs_0()
+> 
+> (as well as in rust_doctest_kernel_alloc_kvec_rs_0) due to calls to the
+> `noreturn` symbol:
+> 
+>     core::option::expect_failed
+> 
+> from code added in commits 779db37373a3 ("rust: alloc: kvec: implement
+> AsPageIter for VVec") and 671618432f46 ("rust: alloc: kbox: implement
+> AsPageIter for VBox").
+> 
+> Thus add the mangled one to the list so that `objtool` knows it is
+> actually `noreturn`.
+> 
+> This can be reproduced as well in other versions by tweaking the code,
+> such as the latest stable Rust (1.90.0).
+> 
+> Stable does not have code that triggers this, but it could have it in
+> the future. Downstream forks could too. Thus tag it for backport.
+> 
+> See commit 56d680dd23c3 ("objtool/rust: list `noreturn` Rust functions")
+> for more details.
+> 
+> Cc: stable@vger.kernel.org # Needed in 6.12.y and later.
+> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  tools/objtool/check.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index a5770570b106..3c7ab910b189 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -217,6 +217,7 @@ static bool is_rust_noreturn(const struct symbol *func)
+>  	 * these come from the Rust standard library).
+>  	 */
+>  	return str_ends_with(func->name, "_4core5sliceSp15copy_from_slice17len_mismatch_fail")		||
+> +	       str_ends_with(func->name, "_4core6option13expect_failed")				||
+>  	       str_ends_with(func->name, "_4core6option13unwrap_failed")				||
+>  	       str_ends_with(func->name, "_4core6result13unwrap_failed")				||
+>  	       str_ends_with(func->name, "_4core9panicking5panic")					||
+> 
 
-Why? W=1 and WERROR is very much you get to keep the pieces land, no?
+I'll go stick it in tip/objtool/core; but I gotta ask, where are we with
+the toolchain support for noreturn?
 
