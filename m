@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-860715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B43BF0C30
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:13:08 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA80BF0C32
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC2C3A9371
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:13:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 683333431A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98562FF147;
-	Mon, 20 Oct 2025 11:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682FF3009E2;
+	Mon, 20 Oct 2025 11:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMZmj06c"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcoaVsmf"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05AA2FBE05
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0C02ECE91
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958709; cv=none; b=VMDLOqkByPFO8sbjWqC6fjavpyQzFxsiqCX+CJN4osm87UAazfpj4QLCHDeTO6hPtMCWX451FAJyQguRLt3hJpYxhuNCXiMQ/DC1YoHXmkQLog7Xz28Jck/ARCubMjzdRZgIeU28QnZqZdTnwGnU+ZPsDdJhxkqETFQJ+IAYC7I=
+	t=1760958710; cv=none; b=VKGiiXx0fh7lijWimobY9PUhX0DyGtlyzmN4l3PbogYJQmxZDH7TBOmgjGgnfDxkLoMdHDXSb09/NuCFaRHZv8IflQf+jAKu8lu8Axzli20NDBIsuFboR2BPdb2FVxrFkGErU7IFudny9RhfO6OE5Mp3r5j/CqDsTvJeez0ZqAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958709; c=relaxed/simple;
-	bh=u3O5/Vnm1zd6rOBSlXUrvnWCu5VwPjHgeRbcIJf/UzQ=;
+	s=arc-20240116; t=1760958710; c=relaxed/simple;
+	bh=TXVMSVKr7qOF8hxFoE16OYMWYnXG64+kVUadI/8l4wY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UuYaT7/WIPA0xg5/jAdynBJmTPQwbLnHu50oTdtOaG2YXxkfqAfgvPofrgbCcTL9+T5tFg2qGv9Wdu9vum865xaiOzQbvb7M/ZsLo2uQOmG+ZbetHE0sLm5pLCL9NzTOZ/8BruE+zNZ6xcM/3ow6cyafYQyxvqlAypGn49oks0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMZmj06c; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=P2oMsfG5ASHRi9Vt+4zlCXopjVpE0pNdZ7xvM4sj5BqgSE24v7UGXhLGNM1TjZmI/40Nw1ZZTLargg1MSCaeaovfCuWkR6flFOfdem/Pv+8whYZlHH3GhKHEczuw1Ta3AvKfv2YOEVGjYw61a9tCGdHG89/vZD+jxuKGGo1npuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcoaVsmf; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-471191ac79dso34130855e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:11:46 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-427015003eeso3085005f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:11:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760958704; x=1761563504; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760958706; x=1761563506; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Mh4C9N1Ju5JAAtnjcdgue8CazsWnd2rnlhBAUlc6beo=;
-        b=cMZmj06cksMOVk/z5IiLs7k6X6gUa1PwL82OjpUT4xRT9f7hXVUhyQb+KUdjiUCBLM
-         PfyaSbR3sDBf8tyZSE2/4q6ETeG3acjfG7Luc+ETjZ+fNVSRrWTIxiv33zNzRzZJl0v3
-         pX2o+YBEfb5QHUFImR98O56uNIzYWnCZxZc9DEgpW+C/ecrzOVn2W87Xx41+fk3Di5Fy
-         2wJSp7SX8VePaTQBkTU4IARiMgBIG5VO4aUpw1QbVCt7tg3DXolG6cYMyJXIdx8rVD4M
-         FBJXBjBE8od+hFEOA+c48qN/MklgtUxqP8lA2hR+98PYG2b/ESewvObGTh/WKKGtoNWe
-         +3tQ==
+        bh=pPXQlJHmF4oh6NBrps4WHzY7MPHl2PKqTkZLsKWcZ4A=;
+        b=JcoaVsmf9nKfAK+EYipoaOEhhb1ZnErlyGhFID2wyAXexwvLfsiFfmvmZBzGur6I6e
+         WXER5UuCNc1k6muBhkiwCdegkW86xmLxtBIudB7DjNvjp3Fu4mPmVfUlOxJCyijPEz33
+         xlL3uMSJZsodBk0CUUGRbreuUDbzqSlhZ6EtddLQEc0AXluR1+pTpe+NJaz9bTN0sdkG
+         AVUkSXAihqSZRLZs5hNfrXvLIBS7EnW3YSvdQyitc0NwamTfvALrDuDgJKucgysLlk32
+         NMCkvPZW5f6iroW1UqiYSF+/dkYefvALMKQeb65QlV9X5bhy9XTcsMkxMic6+x8yFVM/
+         OO1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760958704; x=1761563504;
+        d=1e100.net; s=20230601; t=1760958706; x=1761563506;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Mh4C9N1Ju5JAAtnjcdgue8CazsWnd2rnlhBAUlc6beo=;
-        b=UhK18/enyAyfhdpxp50pbmWetue5Ga1QrWoRmloMh4d+TgcG1dFC2XW/h+KOAetQ8J
-         rPJfjxXbZtDMyEY7sdVEiyQznvGmXxOGKW1FS/AiHb+YYSIklKt743vOzUGSqnuw/5ba
-         BrwF6gANKf9rIaQTpFSpeOU1cOPyvg9rYsPDmrbK/F83l+2BZH4nvYa8cZEODvHstsWz
-         PCQhQWbqyn6dCaascbeAZ35SO2shbaZTR48or8YXwn4hIxIghViOeVCwMPugZGOaGp+R
-         yjOckveRm75bKZEsxajNngr5YuyuDdTKFpAE0kXp+lbmXDAbpntl59J1bAv423te20Dv
-         160Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUQDnZWSNv8ZuyYIISBPh9UHoAlh3LPdcrrbrXVHRoMpGWV2XosKxgezMm03Oj6q8KAvtE9knxcf/GO4WM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZDUerwcnbnpqPRGxeBqMH1l9nHzPeZu4vRDco1WcvXxvUnXm5
-	LkUj6SxOcJ2vbUR7I7dUyyBBU26UD9Yrzxfoy8TLQgUuh0a8flbcYBYG
-X-Gm-Gg: ASbGnctceXYhIrxi+g9FuQKK1ogcJUUtMW4UDV1VkiMoO9b+DiTZjsbVbGtcZyv2Awi
-	ODS3slaV08ncwpYInloFA9QneV6SpipX2ZoFj0HsAPTILtnejEP30orDaB7VWHCdenw5ONP2PV9
-	Lk+gCBmCwhhXViobqX5KIEkDluDMf77oe2d6cB3odJ4z2hfqxK5hGqfB/QQvCO+jKo82Aw5wMDs
-	QZngNTHN+gB7JM9ZOUdNZPIYWFnWgfhU5adlNZkLMHnKrJtDrR0MPiR3CMS1Frk6wdn0KvGzcIw
-	WL+lk9ZzWIG+4rA9zMxv/wHvM31XSDkclC+bnNReAxcWTVIePhnC6+8iyxCmCa3+g7N6I7nv04X
-	AVOjEo0N6/lggXF2S20Ggk8BbSvsOuBSubjkY9jtlFaRKJeGScbVcB+50BTgw038V1+MFaSun26
-	yBfRxGnDypY2ZNu3UPrySmnEjog7c97TkBpqNdk45pXcg=
-X-Google-Smtp-Source: AGHT+IEC/EgoEzWLSutjjbvP1mXzMKOilW3J4zLO71+sEvQNi3rD9SLIUZ1bssHJ/V0ea3felgXDhA==
-X-Received: by 2002:a05:600c:1e06:b0:46f:b43a:aeee with SMTP id 5b1f17b1804b1-4711792089emr93643585e9.39.1760958704255;
-        Mon, 20 Oct 2025 04:11:44 -0700 (PDT)
+        bh=pPXQlJHmF4oh6NBrps4WHzY7MPHl2PKqTkZLsKWcZ4A=;
+        b=gGeA8WrJ7oxrfqPJnUfxXS+NIE6EF8xHB+FeAK1MfIzSwLlSkz6bZhSeCYe+q9ccl2
+         hOjn0Vli36qj5YnVC/xaokPQ8gWeaM3AVIvj0BfYH13oqGeukrma0nVLfxP6wIJSzQi8
+         FdjJwWyZG4bkYDYGT31d+BR3rj7i4UFy+SwrcJJ8WgOU5Dwn5OBByzEdI538x5dNM00G
+         OJbDWV53Z0xpy0tcW5n5qxIEgPxqGdoOZoP0iVxMq3wGF5FH0w4Ui/7GHYF2kKPypt8O
+         FTXwnsxql2vJvYvjySgjvZcjkFN8nYYUPVXRzJ5a4Zkas7CII1wayFCFn9qgQbBn+T5t
+         tTQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4bzbrCUejM6MbqwQZmHlX2oyyPlOhbYm8DGMwIehpUbNU+wIHRffrUqh0RTKSz1EhX1zgZVnyjrYQK84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw65GwrgXvl0MlmHAiPBq7iTdGlOMy+Z8oZL5gA8HfJhU2Phoqm
+	fe203KHbKzzfvAXgT7hQh4+O9jfPWWy+CLvkT68MhY6OeIFqwE8e4NgI
+X-Gm-Gg: ASbGncu5XetIg4muTePpZOMDKnT+kMnaySjP4DHUpLds72KaiBndER4g5FCVO6lLydj
+	kkZ53lmM+b9CSaoWr2ZS9g3MO6Foghj0lqfibi3z+sNnKtF8O3VmkP4U8rKrMVI0G3QHWo2StcK
+	DXguu78NgaYVgzr1v1dc+GDtcHTIfneRmAW9nLlN4jJB+zUg/SVKqnqzdfkxzDHu1QoiWR0K0Mz
+	2Ma1EfnGhB0knm5/JwAKZP/8k+7B6sRPNj+7yCIkctDZHtPwSZMARk+5PqEIzIAXvHbZvHK3Ex+
+	/Iw6S2Fob9sijc6+kLXH2yByFdhNDv0eKdAJZ1Bwn59nPgJE2iWumDqtOyOTGyUZasW6mcp5lJT
+	fNRNowPLGUgC49n3+KNdYOBjvYIchh1WO+us4IhT2ItDp1Q8IqL+F4yvetUd7sPVkk/C3zzh2RY
+	vDfayZACiZNPqV8XenqUkovM0HF0hrB906
+X-Google-Smtp-Source: AGHT+IFBsfG4mDpuxI4J6L+KtUyhOVfV2XO1Jy56tSGTqhQz+pjBeuHuXsCZpnVJzTfM6p4J9vjM2Q==
+X-Received: by 2002:a05:6000:2911:b0:426:da92:d390 with SMTP id ffacd0b85a97d-42704d83ce7mr8733199f8f.10.1760958705757;
+        Mon, 20 Oct 2025 04:11:45 -0700 (PDT)
 Received: from Ansuel-XPS24 (93-34-92-177.ip49.fastwebnet.it. [93.34.92.177])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4283e7804f4sm12692219f8f.10.2025.10.20.04.11.42
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4283e7804f4sm12692219f8f.10.2025.10.20.04.11.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 04:11:43 -0700 (PDT)
+        Mon, 20 Oct 2025 04:11:45 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Ryder Lee <ryder.lee@mediatek.com>,
 	Jianjun Wang <jianjun.wang@mediatek.com>,
@@ -100,9 +100,9 @@ To: Ryder Lee <ryder.lee@mediatek.com>,
 	linux-arm-kernel@lists.infradead.org,
 	netdev@vger.kernel.org,
 	upstream@airoha.com
-Subject: [PATCH v6 4/5] PCI: mediatek: Use generic MACRO for TPVPERL delay
-Date: Mon, 20 Oct 2025 13:11:08 +0200
-Message-ID: <20251020111121.31779-5-ansuelsmth@gmail.com>
+Subject: [PATCH v6 5/5] PCI: mediatek: Add support for Airoha AN7583 SoC
+Date: Mon, 20 Oct 2025 13:11:09 +0200
+Message-ID: <20251020111121.31779-6-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251020111121.31779-1-ansuelsmth@gmail.com>
 References: <20251020111121.31779-1-ansuelsmth@gmail.com>
@@ -114,32 +114,143 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the generic PCIe MACRO for TPVPERL delay to wait for clock and power
-stabilization after PERST# Signal instead of the raw value of 100 ms.
+Add support for the second PCIe Root Complex present on Airoha AN7583
+SoC.
+
+This is based on the Mediatek Gen1/2 PCIe driver and similar to Gen3
+also require workaround for the reset signals.
+
+Introduce a new quirk to skip having to reset signals and also introduce
+some additional logic to configure the PBUS registers required for
+Airoha SoC.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 75 +++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index cbffa3156da1..313da61a0b8a 100644
+index 313da61a0b8a..4b78b6528f9f 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -697,12 +697,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 	 */
- 	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
+@@ -147,11 +147,13 @@ struct mtk_pcie_port;
+  * @MTK_PCIE_FIX_CLASS_ID: host's class ID needed to be fixed
+  * @MTK_PCIE_FIX_DEVICE_ID: host's device ID needed to be fixed
+  * @MTK_PCIE_NO_MSI: Bridge has no MSI support, and relies on an external block
++ * @MTK_PCIE_SKIP_RSTB: Skip calling RSTB bits on PCIe probe
+  */
+ enum mtk_pcie_quirks {
+ 	MTK_PCIE_FIX_CLASS_ID = BIT(0),
+ 	MTK_PCIE_FIX_DEVICE_ID = BIT(1),
+ 	MTK_PCIE_NO_MSI = BIT(2),
++	MTK_PCIE_SKIP_RSTB = BIT(3),
+ };
+ 
+ /**
+@@ -687,23 +689,25 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+ 		regmap_update_bits(pcie->cfg, PCIE_SYS_CFG_V2, val, val);
+ 	}
+ 
+-	/* Assert all reset signals */
+-	writel(0, port->base + PCIE_RST_CTRL);
++	if (!(soc->quirks & MTK_PCIE_SKIP_RSTB)) {
++		/* Assert all reset signals */
++		writel(0, port->base + PCIE_RST_CTRL);
  
 -	/*
--	 * Described in PCIe CEM specification sections 2.2 (PERST# Signal) and
--	 * 2.2.1 (Initial Power-Up (G3 to S0)). The deassertion of PERST# should
--	 * be delayed 100ms (TPVPERL) for the power and clock to become stable.
+-	 * Enable PCIe link down reset, if link status changed from link up to
+-	 * link down, this will reset MAC control registers and configuration
+-	 * space.
 -	 */
--	msleep(100);
-+	msleep(PCIE_T_PVPERL_MS);
+-	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
++		/*
++		 * Enable PCIe link down reset, if link status changed from
++		 * link up to link down, this will reset MAC control registers
++		 * and configuration space.
++		 */
++		writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
  
- 	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
- 	val = readl(port->base + PCIE_RST_CTRL);
+-	msleep(PCIE_T_PVPERL_MS);
++		msleep(PCIE_T_PVPERL_MS);
+ 
+-	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
+-	val = readl(port->base + PCIE_RST_CTRL);
+-	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
+-	       PCIE_MAC_SRSTB | PCIE_CRSTB;
+-	writel(val, port->base + PCIE_RST_CTRL);
++		/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
++		val = readl(port->base + PCIE_RST_CTRL);
++		val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
++		       PCIE_MAC_SRSTB | PCIE_CRSTB;
++		writel(val, port->base + PCIE_RST_CTRL);
++	}
+ 
+ 	/* Set up vendor ID and class code */
+ 	if (soc->quirks & MTK_PCIE_FIX_CLASS_ID) {
+@@ -824,6 +828,41 @@ static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
+ 	return 0;
+ }
+ 
++static int mtk_pcie_startup_port_an7583(struct mtk_pcie_port *port)
++{
++	struct mtk_pcie *pcie = port->pcie;
++	struct device *dev = pcie->dev;
++	struct pci_host_bridge *host;
++	struct resource_entry *entry;
++	struct regmap *pbus_regmap;
++	resource_size_t addr;
++	u32 args[2], size;
++
++	/*
++	 * Configure PBus base address and base address mask to allow
++	 * the hw to detect if a given address is accessible on PCIe
++	 * controller.
++	 */
++	pbus_regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
++							   "mediatek,pbus-csr",
++							   ARRAY_SIZE(args),
++							   args);
++	if (IS_ERR(pbus_regmap))
++		return PTR_ERR(pbus_regmap);
++
++	host = pci_host_bridge_from_priv(pcie);
++	entry = resource_list_first_type(&host->windows, IORESOURCE_MEM);
++	if (!entry)
++		return -ENODEV;
++
++	addr = entry->res->start - entry->offset;
++	regmap_write(pbus_regmap, args[0], lower_32_bits(addr));
++	size = lower_32_bits(resource_size(entry->res));
++	regmap_write(pbus_regmap, args[1], GENMASK(31, __fls(size)));
++
++	return mtk_pcie_startup_port_v2(port);
++}
++
+ static void mtk_pcie_enable_port(struct mtk_pcie_port *port)
+ {
+ 	struct mtk_pcie *pcie = port->pcie;
+@@ -1208,6 +1247,13 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
+ 	.quirks = MTK_PCIE_FIX_CLASS_ID,
+ };
+ 
++static const struct mtk_pcie_soc mtk_pcie_soc_an7583 = {
++	.ops = &mtk_pcie_ops_v2,
++	.startup = mtk_pcie_startup_port_an7583,
++	.setup_irq = mtk_pcie_setup_irq,
++	.quirks = MTK_PCIE_FIX_CLASS_ID | MTK_PCIE_SKIP_RSTB,
++};
++
+ static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
+ 	.device_id = PCI_DEVICE_ID_MEDIATEK_7629,
+ 	.ops = &mtk_pcie_ops_v2,
+@@ -1217,6 +1263,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
+ };
+ 
+ static const struct of_device_id mtk_pcie_ids[] = {
++	{ .compatible = "airoha,an7583-pcie", .data = &mtk_pcie_soc_an7583 },
+ 	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
+ 	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
+ 	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
 -- 
 2.51.0
 
