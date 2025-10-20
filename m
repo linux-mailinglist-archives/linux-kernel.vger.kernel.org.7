@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-861289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0ADBF24ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:06:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32475BF24C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802D83B9AF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DE218A79FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC84283C87;
-	Mon, 20 Oct 2025 16:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2372773D2;
+	Mon, 20 Oct 2025 16:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQeUNVAX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JG4NnQgp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25E727AC48;
-	Mon, 20 Oct 2025 16:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B0726B2B0;
+	Mon, 20 Oct 2025 16:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976235; cv=none; b=Qrbpr+p+EnFHfq3YU1Zb5a9qx0y08dQIJTygU438YiahWMv/PWdwc2M/evaUPCq/5fyyiD3l4L+Nm6fJXlNEpdO95JDJ9kOw1TR9trwD14Q5jwKeVRpuCFQxFq95MZLuT4okVHOJBqiTXmIIiqhQBGxfjUSOyOKpezgnj9HB4zQ=
+	t=1760976248; cv=none; b=Ig+CX6rF3WEJOLmFj7/OYYcWqf6jiAEqDk2u4BvLbwMoPMlRhFV50yJN4yNEqKQ6S1eqZ7qwgofOVXYrpjGN94gYqPXywEGKeQtHsHSBQtRK9ZPweRc4ZiAoKc/xQ51BldCcbVCzAnAA6NX6TwIIqi6F5DxU7moGAXd6d0p5ZIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976235; c=relaxed/simple;
-	bh=PTSBkKOFzjQfn3WycpT5x6OZ24XSKTqM3cXc2NT58hw=;
+	s=arc-20240116; t=1760976248; c=relaxed/simple;
+	bh=y87Qov3Jt4LC0JXlONBamFdqUvce5uT3fMcKNGfdSck=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMZRQoAbHMblyohhlZJpd+Zb1RVNBCVnvU41f/w++KZLAvst961oVwWtBiUfjdRBtWz77lPjW6x+P3aRBHods72rt8M7T3IqpmFqaycnEHGAkETe7AHaHNrdc3iMx0Dmu7LvNYDAlfVwrl5gY2Oc8vF8k/k8i+MTIP1Y43fq+qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQeUNVAX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F145CC4CEF9;
-	Mon, 20 Oct 2025 16:03:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760976235;
-	bh=PTSBkKOFzjQfn3WycpT5x6OZ24XSKTqM3cXc2NT58hw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rQeUNVAXwVMxDa7klmBpKqPkBd0QDMjH3nB7u4DpeXk6dTkTROx3cVWm/iw5r08GS
-	 7o9+WV9sHCf5uUvJsf+kEo5IvaYG8kpJoIX4xo5wGh9l4KyGTgtyp1oU+YbAhoex/l
-	 REkrSyP1dqTOAP2UeyTMa4BgDCcFbusz8ZYvxqX/Lr1FU4+0bDkv6+BhgWpUxAXnK1
-	 vyx25e5V3ibrhZkFJ+/RLVdqX4/ai/mkgMC2o8DMjIFC9zNFjHxbGyUQVdaeEJ0xiy
-	 w90i/6s2mBSiwjs+BKcANjMW6UMt96hah6qyg2SrOkxH5VRBGDF+Sk4/OWb4mpmWi6
-	 64ul2XvTpqEHg==
-Message-ID: <aab92ea9-60a4-43e5-bbee-96484d15f3a7@kernel.org>
-Date: Mon, 20 Oct 2025 11:03:53 -0500
+	 In-Reply-To:Content-Type; b=f6x+0mo0f/YiHquohKY3Sk9JKOHztr9OuCC0jqO3tvgQE3RuFZhjOivYTKwgN1F/+fzZb4rLT53FtUPeuZgMFmg0+PHISW+R4mWe2qlp3wCzpQQPu0TvS/w3mWySUFF83ZjeeBy86+o+hFRvFvEp/vyeaqEUY4xhQzhAXcTEi6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JG4NnQgp; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760976246; x=1792512246;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=y87Qov3Jt4LC0JXlONBamFdqUvce5uT3fMcKNGfdSck=;
+  b=JG4NnQgpEDpAkeQUJXH0uPPb/WDSFXn8qlR9IPiLGKamX9lCzFtqmqK0
+   QX6wGrS7kwq5UuBSQrqhXD8l8MhZRaCeRnrws4ZFta+hjt7eUfGzwX51U
+   uvz4cvnWOTeMMJhP61uVH8OUImH6DSm6Ex+XRdJe6ATuqKF5QGhJ7Zkhq
+   HGQnDoEQ8P7BC6gXh8UC71GPLgk0v7Cc9chZRBkwJXfktT7ib6K4zWEuI
+   ukvdPfbQa5AuAIbuTzi+1FfONqyy5wTNdTRjhKkDYnR3fdhYzypnc1k3V
+   RqTmzFb+5RS5cWc1u+e7+YNgWfZhFNZp5+t30K3mqtDSyvEq9hmNeHWLo
+   w==;
+X-CSE-ConnectionGUID: kclfaq4xRUaerQvPFumMWQ==
+X-CSE-MsgGUID: ktlgrbi1Qj++j1i5OUg0UQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65709012"
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="65709012"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:04:04 -0700
+X-CSE-ConnectionGUID: +BNDHO+tROOuyxe325cjEA==
+X-CSE-MsgGUID: tGqTHgdfTEq/PAYuNSvGDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="183379002"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.103]) ([10.125.108.103])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:04:02 -0700
+Message-ID: <7d4a53ea-1d2b-42b5-ad22-3a023f415cd2@intel.com>
+Date: Mon, 20 Oct 2025 09:04:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,77 +66,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v6 0/4] stratix10: Add framework for asynchronous
- communication with SDM
-To: mahesh.rao@altera.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Gong <richard.gong@intel.com>,
- Alan Tull <atull@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250924-sip_svc_upstream-v6-0-c88ef68bf24e@altera.com>
+Subject: Re: [PATCH 4/6 v5] acpi/ghes: Add helper for CPER CXL protocol errors
+ checks
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ linux-cxl@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+ Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Guo Weikang <guoweikang.kernel@gmail.com>,
+ Xin Li <xin@zytor.com>, Will Deacon <will@kernel.org>,
+ Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan <gshan@redhat.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Li Ming <ming.li@zohomail.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Karolina Stolarek <karolina.stolarek@oracle.com>,
+ Jon Pan-Doh <pandoh@google.com>, Lukas Wunner <lukas@wunner.de>,
+ Shiju Jose <shiju.jose@huawei.com>, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-pci@vger.kernel.org
+References: <20251017133357.1150982-1-fabio.m.de.francesco@linux.intel.com>
+ <20251017133357.1150982-5-fabio.m.de.francesco@linux.intel.com>
+From: Dave Jiang <dave.jiang@intel.com>
 Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250924-sip_svc_upstream-v6-0-c88ef68bf24e@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20251017133357.1150982-5-fabio.m.de.francesco@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 9/24/25 02:39, Mahesh Rao via B4 Relay wrote:
-> The patch set includes the following changes:
+On 10/17/25 6:30 AM, Fabio M. De Francesco wrote:
+> Move the CPER CXL protocol errors validity checks out of
+> cxl_cper_post_prot_err() to cxl_cper_sec_prot_err_valid() and check the
+> serial number only for CXL agents that are CXL devices (UEFI v2.10,
+> Appendix N.2.13).
 > 
-> - Add protection for querying memory objects in multi-threaded flow.
-> - Add support to generate and maintain message id and client id for
->    asynchronous communication with SDM.
-> - Add framework to communicate with Secure Device Manager (SDM)
->    asynchronously by sending a request and polling for response.
-> - Add commands for performing Remote System Update (RSU) operations
->    asynchronously.
-> - Migrate RSU driver to use the asynchronous communication framework.
-> 
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
 > ---
-> - Link to v6: https://lore.kernel.org/r/20250901-sip_svc_upstream-v6-0-b4db7f07cbb2@altera.com
+>  drivers/acpi/apei/ghes.c | 32 ++++++++++++++++++++++----------
+>  include/cxl/event.h      | 10 ++++++++++
+>  2 files changed, 32 insertions(+), 10 deletions(-)
 > 
-> Changes in v6:
-> - Use guard() helper function for svc_mem_lock.
-> - Fixed comment message style according to kernel coding style.
-> - Added fixes tag to commit message.
-> - Removed id generation patch and use in house ida allocator.
-> - Changed lock of hashmap db lock from rcu to spinlock for better latency.
-> 
-> - Link to v5: https://lore.kernel.org/r/20250708-sip_svc_upstream-v5-0-9c4289256d54@altera.com
-> 
-> - Link to v5: https://lore.kernel.org/r/20250620-sip_svc_upstream-v5-0-732d4ac08a32@altera.com
-> 
-> Changes in v5:
-> - Use FIELD_PREP, FIELD_GET() and GENMASK() for bit
->    manipulation for ids.
-> - Bring down probing when stratix10_svc_async_init()
->    fails.
-> - Other minor fixes.
-> 
-> - Link to v4: https://lore.kernel.org/r/20250610-sip_svc_upstream-v4-0-bcd9d6089071@altera.com
-> 
-> Changes in v4:
-> - Added description for svc_mem_lock mutex.
-> - Wrapped commit message and comments in source
->    code to kernel coding style as per coding style.
-> - Added minor code fixes.
-> - Moved variables to the top of the function
-> - Removed HWMON support from in the patch-set, this
->    will be sent in a separate patch-set.
-> - Added support for RSU commands to asynchronously
->    communicate with SDM.
-> - Migrated RSU driver to use the supported
->    asynchronous commands
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index d6fe5f020e96e..e69ae864f43d3 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -706,30 +706,42 @@ static DEFINE_KFIFO(cxl_cper_prot_err_fifo, struct cxl_cper_prot_err_work_data,
+>  static DEFINE_SPINLOCK(cxl_cper_prot_err_work_lock);
+>  struct work_struct *cxl_cper_prot_err_work;
+>  
+> -static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
+> -				   int severity)
+> +int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
+>  {
+> -	struct cxl_cper_prot_err_work_data wd;
+> -	u8 *dvsec_start, *cap_start;
+> -
+>  	if (!(prot_err->valid_bits & PROT_ERR_VALID_AGENT_ADDRESS)) {
+>  		pr_err_ratelimited("CXL CPER invalid agent type\n");
+> -		return;
+> +		return -EINVAL;
+>  	}
+>  
+>  	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
+>  		pr_err_ratelimited("CXL CPER invalid protocol error log\n");
+> -		return;
+> +		return -EINVAL;
+>  	}
+>  
+>  	if (prot_err->err_len != sizeof(struct cxl_ras_capability_regs)) {
+>  		pr_err_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
+>  				   prot_err->err_len);
+> -		return;
+> +		return -EINVAL;
+>  	}
+>  
+> -	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
+> -		pr_warn(FW_WARN "CXL CPER no device serial number\n");
+> +	if ((prot_err->agent_type == RCD || prot_err->agent_type == DEVICE ||
+> +	     prot_err->agent_type == LD || prot_err->agent_type == FMLD) &&
+> +	    !(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
+> +		pr_warn_ratelimited(FW_WARN
+> +				    "CXL CPER no device serial number\n");
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(cxl_cper_sec_prot_err_valid);
+> +
+> +static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
+> +				   int severity)
+> +{
+> +	struct cxl_cper_prot_err_work_data wd;
+> +	u8 *dvsec_start, *cap_start;
+> +
+> +	if (cxl_cper_sec_prot_err_valid(prot_err))
+> +		return;
+>  
+>  	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
+>  
+> diff --git a/include/cxl/event.h b/include/cxl/event.h
+> index 6fd90f9cc2034..e1deb66c2197e 100644
+> --- a/include/cxl/event.h
+> +++ b/include/cxl/event.h
+> @@ -320,4 +320,14 @@ static inline int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_ACPI_APEI_PCIEAER
+> +int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err);
+> +#else
+> +static inline int
+> +cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
+> +{
+> +	return -EINVAL;
 
-Can you please rebase this series on my latest tree:
+-EOPNOTSUPP?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git/log/?h=svc_driver_for_v6.19
+> +}
+> +#endif
+> +
+>  #endif /* _LINUX_CXL_EVENT_H */
 
-Patch 2 is not applying correctly.
 
-Thanks,
-Dinh
 
