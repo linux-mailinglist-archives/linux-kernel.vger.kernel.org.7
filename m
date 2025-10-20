@@ -1,181 +1,207 @@
-Return-Path: <linux-kernel+bounces-861234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A351DBF2210
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48FBBF221C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FCC188940E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:34:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427AF402685
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0443B26A1CF;
-	Mon, 20 Oct 2025 15:33:39 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E4526B77B;
+	Mon, 20 Oct 2025 15:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="uB7XyDpl"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F419A26657D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB09C224B09;
+	Mon, 20 Oct 2025 15:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974418; cv=none; b=t0W7gB0+QllcbNLS/N5W1KPeOMydxaBzlgKH3Ns7gcLshZVr2HNszNslv2ZEfRFmCXmFI8YE6bqBZ9F4v1+5OXzzJT5yXafa8uONAVxXasrRvi6H1KJETif8LI8lQoSJ/0kp7zMefw1TVMNeNdxww+FaJGD2JpjFfm78t8Yow3M=
+	t=1760974507; cv=none; b=TKaazup4Qc9jFuE7MmL5rUEk7pQgUgI4i/ITNyyDK472q60ctOY3QDKsKt5ceh/TUCcxAnsnSNF6TYnBvVC1LBbJ/4zYnJUeLSatNddmSZ11megJuzwvG8wrWNnQUsAQldUp55ooi8osqVPOwD2Wcyf5oT4HHXhwbMD87PyPfPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974418; c=relaxed/simple;
-	bh=XPck7Pu3R5UOQEJwx7GCF1vs4o8WhjABnI7JG+e6iMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y6z4Eg4QoJ1H6y8fcYFM+Qh2TagDAkOl2ZmIA6YMhGmZLZnG+DCA49BbFqvd0QDmA5JSzhmmqkVQOHHGByWUsn0zEd3jeZvq8DK9SEoOzLwj1dE9BZisW1vVkwGyYsEOSDxYq3ns3h4X89hKxOofsRt7893Sj4tUGu+Tdwg6FZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from Mobilestation.localdomain (unknown [183.6.59.216])
-	by APP-01 (Coremail) with SMTP id qwCowABHoaM4VvZoynsZEg--.39132S2;
-	Mon, 20 Oct 2025 23:33:21 +0800 (CST)
-From: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
-To: zihong.plct@isrc.iscas.ac.cn
-Cc: ajones@ventanamicro.com,
-	alex@ghiti.fr,
-	alexghiti@rivosinc.com,
-	aou@eecs.berkeley.edu,
-	cleger@rivosinc.com,
-	evan@rivosinc.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	pjw@kernel.org,
-	samuel.holland@sifive.com,
-	shuah@kernel.org,
-	zhangyin2018@iscas.ac.cn,
-	zihongyao@outlook.com
-Subject: [PATCH v3 1/2] riscv: hwprobe: Expose Zicbop extension and its block size
-Date: Mon, 20 Oct 2025 23:33:08 +0800
-Message-ID: <20251020153309.68267-1-zihong.plct@isrc.iscas.ac.cn>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251020152924.64551-1-zihong.plct@isrc.iscas.ac.cn>
-References: <20251020152924.64551-1-zihong.plct@isrc.iscas.ac.cn>
+	s=arc-20240116; t=1760974507; c=relaxed/simple;
+	bh=gDlhSaVSkDj8yzoau+14ole4av+6Pn/w1EHSSWO+UUM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=C2Ptx8Gm1UI4KxD97LTfae1d+4MKaJyEJZVFHLECJd5J9iQZMCDzOuvl6IqG2RGzwLRd7g0U2mtzmhnZJ5GbUuBuskxH/KaBkyrrSPLRr0XMtZtkYUj/oNguqZ5r8nxjJB8fZ+wDvjWoosweamtXaLBS/EeGed77dxOVt0FFszQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=uB7XyDpl; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id DA2288289231;
+	Mon, 20 Oct 2025 10:35:03 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 4-otD47ZzKNL; Mon, 20 Oct 2025 10:35:03 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 1CCD0828923B;
+	Mon, 20 Oct 2025 10:35:03 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 1CCD0828923B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1760974503; bh=C5GrYTcKNHQBG0i3HG36jm3JgGWfmfbhQQHHPm7yVjw=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=uB7XyDplSv1lm5LS78PA1XOJhKaM7dyPZFMg1+cVe/Bs90wMWm4I+3Gie8WNf1bvE
+	 gkTIC84UDersRy+QruFuvbvXxi5MdCbRli8dDv8olftzJ3pMktULnloevgU1QE9nVs
+	 t3Zr+13nWiuINEr/cwPaw0exyscRzcuy5tRK2BI4=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6f5EdfwTuUK3; Mon, 20 Oct 2025 10:35:02 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id E09248289231;
+	Mon, 20 Oct 2025 10:35:02 -0500 (CDT)
+Date: Mon, 20 Oct 2025 10:34:59 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: robh <robh@kernel.org>
+Cc: devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Lee Jones <lee@kernel.org>, 
+	Georgy Yakovlev <Georgy.Yakovlev@sony.com>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Message-ID: <924260297.1801829.1760974499327.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <20250929141113.GA3987541-robh@kernel.org>
+References: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com> <20250929141113.GA3987541-robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHoaM4VvZoynsZEg--.39132S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFWkXrWkWF45GryDKw4DArb_yoWrAF18pF
-	4DZrsxWFs8Cw4xCFWxt3WkZrn5J3Z7Kw43KF1Uu3yUJFW7trWrXr9xtFsIyr1DtFyFya92
-	gF4SgrZYya9rAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: p2lk00vjoszunw6l223fol2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
+Thread-Topic: dt-bindings: mfd: Add sony,cronos-cpld
+Thread-Index: 7dsbt6pMz36EGRoJ8W27OGXqUYJwWw==
 
-- Add `RISCV_HWPROBE_EXT_ZICBOP` to report the presence of the
-  Zicbop extension.
-- Add `RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE` to expose the block
-  size (in bytes) when Zicbop is supported.
-- Update hwprobe.rst to document the new extension bit and block
-  size key, following the existing Zicbom/Zicboz style.
 
-Signed-off-by: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
----
- Documentation/arch/riscv/hwprobe.rst  | 8 +++++++-
- arch/riscv/include/asm/hwprobe.h      | 2 +-
- arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
- arch/riscv/kernel/sys_hwprobe.c       | 6 ++++++
- 4 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-index 2f449c9b15bd..52f12af43b9d 100644
---- a/Documentation/arch/riscv/hwprobe.rst
-+++ b/Documentation/arch/riscv/hwprobe.rst
-@@ -275,6 +275,9 @@ The following keys are defined:
-        ratified in commit 49f49c842ff9 ("Update to Rafified state") of
-        riscv-zabha.
- 
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZICBOP`: The Zicbop extension is supported, as
-+       ratified in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
-+
- * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated.  Returns similar values to
-      :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF`, but the key was
-      mistakenly classified as a bitmask rather than a value.
-@@ -369,4 +372,7 @@ The following keys are defined:
- 
-     * :c:macro:`RISCV_HWPROBE_VENDOR_EXT_XSFVFWMACCQQQ`: The Xsfvfwmaccqqq
-         vendor extension is supported in version 1.0 of Matrix Multiply Accumulate
--	Instruction Extensions Specification.
-\ No newline at end of file
-+	Instruction Extensions Specification.
-+
-+* :c:macro:`RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE`: An unsigned int which
-+  represents the size of the Zicbop block in bytes.
-diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
-index 948d2b34e94e..2f278c395af9 100644
---- a/arch/riscv/include/asm/hwprobe.h
-+++ b/arch/riscv/include/asm/hwprobe.h
-@@ -8,7 +8,7 @@
- 
- #include <uapi/asm/hwprobe.h>
- 
--#define RISCV_HWPROBE_MAX_KEY 14
-+#define RISCV_HWPROBE_MAX_KEY 15
- 
- static inline bool riscv_hwprobe_key_is_valid(__s64 key)
- {
-diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-index 5d30a4fae37a..9cc508be54c5 100644
---- a/arch/riscv/include/uapi/asm/hwprobe.h
-+++ b/arch/riscv/include/uapi/asm/hwprobe.h
-@@ -82,6 +82,7 @@ struct riscv_hwprobe {
- #define		RISCV_HWPROBE_EXT_ZAAMO		(1ULL << 56)
- #define		RISCV_HWPROBE_EXT_ZALRSC	(1ULL << 57)
- #define		RISCV_HWPROBE_EXT_ZABHA		(1ULL << 58)
-+#define		RISCV_HWPROBE_EXT_ZICBOP	(1ULL << 59)
- #define RISCV_HWPROBE_KEY_CPUPERF_0	5
- #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
- #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-@@ -107,6 +108,7 @@ struct riscv_hwprobe {
- #define RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE	12
- #define RISCV_HWPROBE_KEY_VENDOR_EXT_SIFIVE_0	13
- #define RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0	14
-+#define RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE	15
- /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
- 
- /* Flags */
-diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-index 000f4451a9d8..7a6ae1327504 100644
---- a/arch/riscv/kernel/sys_hwprobe.c
-+++ b/arch/riscv/kernel/sys_hwprobe.c
-@@ -113,6 +113,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
- 		EXT_KEY(ZCB);
- 		EXT_KEY(ZCMOP);
- 		EXT_KEY(ZICBOM);
-+		EXT_KEY(ZICBOP);
- 		EXT_KEY(ZICBOZ);
- 		EXT_KEY(ZICNTR);
- 		EXT_KEY(ZICOND);
-@@ -293,6 +294,11 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
- 		if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOM))
- 			pair->value = riscv_cbom_block_size;
- 		break;
-+	case RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE:
-+		pair->value = 0;
-+		if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOP))
-+			pair->value = riscv_cbop_block_size;
-+		break;
- 	case RISCV_HWPROBE_KEY_HIGHEST_VIRT_ADDRESS:
- 		pair->value = user_max_virt_addr();
- 		break;
--- 
-2.47.2
+----- Original Message -----
+> From: "robh" <robh@kernel.org>
+> To: "Timothy Pearson" <tpearson@raptorengineering.com>
+> Cc: "devicetree" <devicetree@vger.kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Conor Dooley"
+> <conor+dt@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Georgy
+> Yakovlev" <Georgy.Yakovlev@sony.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
+> Sent: Monday, September 29, 2025 9:11:13 AM
+> Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
 
+> On Thu, Sep 25, 2025 at 01:17:33PM -0500, Timothy Pearson wrote:
+>> The Sony Cronos Platform Controller CPLD is a multi-purpose platform
+>> controller that provides both a watchdog timer and an LED controller for
+>> the Sony Interactive Entertainment Cronos x86 server platform. As both
+>> functions are provided by the same CPLD, a multi-function device is
+>> exposed as the parent of both functions.
+>> 
+>> Add a DT binding for this device.
+>> 
+>> Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+>> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
+>> ---
+>>  .../bindings/mfd/sony,cronos-cpld.yaml        | 121 ++++++++++++++++++
+>>  1 file changed, 121 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
+>> 
+>> diff --git a/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
+>> b/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
+>> new file mode 100644
+>> index 000000000000..3cebf6c0153d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
+>> @@ -0,0 +1,121 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +# Copyright 2025 Raptor Engineering, LLC
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mfd/sony,cronos-cpld.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sony Cronos Platform Controller CPLD multi-function device
+>> +
+>> +maintainers:
+>> +  - Georgy Yakovlev <Georgy.Yakovlev@sony.com>
+>> +
+>> +description: |
+> 
+> Don't need '|' if no formatting or paragraphs to preserve.
+> 
+>> +  The Sony Cronos Platform Controller CPLD is a multi-purpose platform
+>> +  controller that provides both a watchdog timer and an LED controller for the
+>> +  Sony Interactive Entertainment Cronos x86 server platform. As both functions
+>> +  are provided by the same CPLD, a multi-function device is exposed as the
+>> +  parent of both functions.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sony,cronos-cpld
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  leds:
+>> +    type: object
+>> +    additionalProperties: false
+>> +    description: |
+>> +      The Cronos LED controller is a subfunction of the Cronos platform
+>> +      controller, which is a multi-function device.
+>> +
+>> +      Each led is represented as a child node of sony,cronos-led. Fifteen RGB
+>> +      LEDs are supported by the platform.
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        const: sony,cronos-led
+>> +
+>> +      reg:
+>> +        maxItems: 1
+>> +
+>> +      "#address-cells":
+>> +        const: 1
+>> +
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      "^multi-led@[0-15]$":
+>> +        type: object
+>> +        $ref: leds-class-multicolor.yaml#
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          reg:
+>> +            description:
+>> +              LED channel number (0..15)
+>> +            minimum: 0
+>> +            maximum: 15
+>> +
+>> +        required:
+>> +          - reg
+>> +
+>> +    required:
+>> +      - compatible
+>> +      - "#address-cells"
+>> +      - "#size-cells"
+>> +
+>> +  watchdog:
+>> +    type: object
+>> +    description: Cronos Platform Watchdog Timer
+>> +
+>> +    allOf:
+>> +      - $ref: watchdog.yaml#
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        const: sony,cronos-watchdog
+> 
+> There's no need for a child node here. 'timeout-sec' can just go in the
+> parent node.
+
+Could you elaborate on this please?  As far as I can tell we ref watchdog.yaml and need some kind of compatible string, so why would I break out timeout-sec directly here?
+
+Thanks!
 
