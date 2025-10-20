@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-860758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF24BBF0DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC866BF0DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DA6A4EA83C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:35:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30B3B4F35F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526C520C023;
-	Mon, 20 Oct 2025 11:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF132FB963;
+	Mon, 20 Oct 2025 11:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnN0FXLQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6cikYH1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411721D63D8;
-	Mon, 20 Oct 2025 11:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97B12FBDEA;
+	Mon, 20 Oct 2025 11:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760960117; cv=none; b=EjCzrfVbOXcTwMh3lOBH0CjgjjtwAXLRo5npC1vn4CYWWZW3ZTxEaLBWkqciHgQ+hsIxi2kv54AXf6ILJn2fuHlGWalXm0aaKKwpOvVn4RSpduamXzcopZoS7FBO280GxwrUpAWXnbxTPouXBp5vvRzPrpa6adkTWqgPkvvup68=
+	t=1760960118; cv=none; b=HIYGJyiN4s0ximsQ6NhPRfpaXUdbJEFUQCuR7CzmaH0rVTeqppOvB2eTJhCbGh3asFeV7/9MjIQOA0D2Q1c+JbNRdSwG/LckaPux5lK8Urrylcjblfn8p0cXTQ6hLOtIiobJgMlZE6XkNz/FkEmATBEWL8+KkKOTYDyOVK30P9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760960117; c=relaxed/simple;
-	bh=BZQ/yiKuYI1cpgDUQi79oMoVDAwuNWBEABObpOg5voU=;
+	s=arc-20240116; t=1760960118; c=relaxed/simple;
+	bh=OmRJtAyMH/0v9J8nQVCQldqM14idOu50BxcbfyNn8Ao=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=E/0677rD/M7gVbgCXzd1H7vP2vgsSCIPXOPghcdNkGEzD9+lsO89mI5I1Hk8AAueuTCdKkLp+JKLFQd5ELAOVJ+v9pgodGee9ra8XbQ7+nvMhtsxxlfTZuVy6N6LSXi0upz++83PTNlJ4yQ7h1mtFCZ6VNH/VZost8E75BBYolo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnN0FXLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEF1C116B1;
-	Mon, 20 Oct 2025 11:35:16 +0000 (UTC)
+	 Message-Id:Subject; b=thWJcSP6WZhPkkQ5wW1CVg1CgMe97gHZuoTmsavbSxo/Q48LDGhgYkd2rx6927FgC/iWnI/YWCZZL9ynIeGGEd9JC2n/4RvkZh4j8iM1luxZJnDq+xdisUR0+J6gyhsaR4xOcFSGkk3EvDJfxnnuYUGim2xLqMRASuA4vRNWprA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6cikYH1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C2AC113D0;
+	Mon, 20 Oct 2025 11:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760960116;
-	bh=BZQ/yiKuYI1cpgDUQi79oMoVDAwuNWBEABObpOg5voU=;
+	s=k20201202; t=1760960118;
+	bh=OmRJtAyMH/0v9J8nQVCQldqM14idOu50BxcbfyNn8Ao=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=RnN0FXLQUwQ7GMTJzIfhbQ83Q7TiRYxpfSrTHdvqGRVmZz2A8AWJTwM8hZn+5H+t2
-	 3dSgfeK7zC+0yQFV5RZqWTGHQP473yVFEBR7mscI5wBJDQFjKzBC75KtRdJ6LcoSlc
-	 FoR1RKPjWXpEDri5AJv4OktC1qvkH31H5ifbk+UKNGx7zOAKpn3gcPdx1KRHqv4/yr
-	 ENmbmgUnhu4ZUXwcYs5hmlmAlV9jwy/nrMbNtznfqx1rCHWpcUKN57qECA7x/bNVmR
-	 CAvA3y0b0jIM37/GZ6iD/ueUaMuY2bfaiFDjDL2SylwhaM0yHP0PEDWjsmxs4H2xOY
-	 Tcseosc2q4Yxg==
-Date: Mon, 20 Oct 2025 06:35:14 -0500
+	b=c6cikYH1j4WBJmp6eixwxUNQtSo6XoJQrg1LezBGOlR2gVnQvhEdenSHnmI0GUBW7
+	 Dr+Zx7wprfUbE4a1BTixv7sjxluTHJylHv7UPkHMkpsfdI5UBFJGYmlh6Wc805XukK
+	 sSxThg2W4YJZSwADSykkaHGjqc4q1RP9dYLPhIbTfxIUryNXe5GImhqlNCuh/v4S+W
+	 HaptJA3RJCktxzSNdgwS5Pu41Jx8xbVkBa9eKGa7XF9+Z9G6GDGj5bC56vRots3kHn
+	 yYRy5TfU0sDVfAUZQ0h8dI5xchC2ZznwGJi8vPlZcF6w/VYfjf1O7dOPkZ04kM3dEi
+	 YE1Ew2eVCXsIA==
+Date: Mon, 20 Oct 2025 06:35:16 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,48 +50,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jonathan Brophy <professor_jonny@hotmail.com>, 
- Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Radoslav Tsvetkov <rtsvetkov@gradotech.eu>, lee Jones <lee@kernel.org>
-To: Jonathan Brophy <professorjonny98@gmail.com>
-In-Reply-To: <20251019092331.49531-3-professorjonny98@gmail.com>
-References: <20251019092331.49531-1-professorjonny98@gmail.com>
- <20251019092331.49531-3-professorjonny98@gmail.com>
-Message-Id: <176096011281.22748.15975544575193365055.robh@kernel.org>
-Subject: Re: [PATCH v3 2/4] dt-bindings: leds: Add virtualcolor group dt
- bindings documentation.
+Cc: linmin@eswincomputing.com, ulf.hansson@linaro.org, 
+ lizhi2@eswincomputing.com, devicetree@vger.kernel.org, 
+ pinkesh.vaghela@einfochips.com, weishangjuan@eswincomputing.com, 
+ jszhang@kernel.org, linux-mmc@vger.kernel.org, 
+ zhangsenchuan@eswincomputing.com, conor+dt@kernel.org, 
+ p.zabel@pengutronix.de, caohang@eswincomputing.com, 
+ dongxuyang@eswincomputing.com, luyulin@eswincomputing.com, 
+ ningyu@eswincomputing.com, Conor Dooley <conor.dooley@microchip.com>, 
+ adrian.hunter@intel.com, linux-kernel@vger.kernel.org, 
+ xuxiang@eswincomputing.com, krzk+dt@kernel.org
+To: hehuan1@eswincomputing.com
+In-Reply-To: <20251019115238.320-1-hehuan1@eswincomputing.com>
+References: <20251019115133.300-1-hehuan1@eswincomputing.com>
+ <20251019115238.320-1-hehuan1@eswincomputing.com>
+Message-Id: <176096011380.22917.1988679321096076522.robh@kernel.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
+ EIC7700
 
 
-On Sun, 19 Oct 2025 22:23:25 +1300, Jonathan Brophy wrote:
-> From: Jonathan Brophy <professor_jonny@hotmail.com>
+On Sun, 19 Oct 2025 19:52:38 +0800, hehuan1@eswincomputing.com wrote:
+> From: Huan He <hehuan1@eswincomputing.com>
 > 
-> Add device tree binding documentation for the virtual LED group driver
-> that implements virtual LED groups by aggregating multiple monochromatic
-> LEDs
+> EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
+> Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
 > 
-> Bindings for the virtual driver are not describing hardware LEDs they
-> describe virtual devices made from groups of hardware LEDs created from an array
-> of LED phandles.
-> 
-> Normally the device tree is used to describe hardware not virtual hardware
-> but it is particularly useful in situations where you require an LED to be a
-> specific color by mixing primary colors, such as multi element multi color LEDs
-> to be operated from a device tree binding.
-> 
-> It also becomes useful with multiple LEDs operating the same indicator such as
-> ring of light indicators where the LEDs are driven From different GPIO outputs
-> unifying the control that can give basic indication during system startup,
-> shutdown upgrade etc...
-> 
-> co-developed-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-> Signed-off-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-> Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>
+> Signed-off-by: Huan He <hehuan1@eswincomputing.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  .../leds/leds-group-virtualcolor.yaml         | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml
+>  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 57 +++++++++++++++++--
+>  1 file changed, 51 insertions(+), 6 deletions(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -99,18 +87,14 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: pwm-led-controller (pwm-leds): led-1: 'max-brightness' is a required property
-	from schema $id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: pwm-led-controller (pwm-leds): led-2: 'max-brightness' is a required property
-	from schema $id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: pwm-led-controller (pwm-leds): led-3: 'max-brightness' is a required property
-	from schema $id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: pwm-led-controller (pwm-leds): led-4: 'max-brightness' is a required property
-	from schema $id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/eswin,eic7700-eth.example.dtb: ethernet@50400000 (eswin,eic7700-qos-eth): eswin,hsp-sp-csr: [[4294967295, 256], [264, 280]] is too short
+	from schema $id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/eswin,eic7700-eth.example.dtb: ethernet@50400000 (eswin,eic7700-qos-eth): Unevaluated properties are not allowed ('eswin,hsp-sp-csr' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251019092331.49531-3-professorjonny98@gmail.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251019115238.320-1-hehuan1@eswincomputing.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
