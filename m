@@ -1,248 +1,150 @@
-Return-Path: <linux-kernel+bounces-861471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1E5BF2CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:52:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953D9BF2CEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B30C04E2F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:52:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F9354ECA13
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C0432F764;
-	Mon, 20 Oct 2025 17:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1463321C6;
+	Mon, 20 Oct 2025 17:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPO/bmMk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j87a7Qnr"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228F62E9EDD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6FF2673B7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982737; cv=none; b=OHuOFgZ2H/V9ZWqwW4/QaAe1O3Via06amcICceJAN+O/T5y6hIcQ39SZ3/dMoEgr2Br2aYMpUnPj8z1kIr6XQVK5EgFjHi+HJNh0zcl8RiQYSRlcOnioew43ICtvDA0Cv1pTcP8HtAWv3ONH2mLqqc/y34yn339owtB0Z/Qz3PE=
+	t=1760982745; cv=none; b=qLNxQ6f77JNMjFAJHQq76HTVgkCnkIZ/NZvtyk4g3S4/3G57ILsITmCl7719e8qjX/LLd6HU6B1kQ6olZyxew37Px7ZkYr2Bd/xeJFlSB4WA8RQHpyEpqEWTgnJaOb+jWVKqtSZhGZWG6g2+JI4k1kaQL04XDWxDlKw2o8zjOpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982737; c=relaxed/simple;
-	bh=7sAIIgLxZTkRmg9+IStAmoK1ltS9LtxTlQvl1Ut6g5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbXahbBoQ6aDz/lJrDkhciuLXHbXUC9xd5DbkQF4yZt8QBAkfs0vp/g/6jpWRFfHP8j0i1Jc5d9w+qhV7CkT09QZjJsFSqjl6ZwmT23cuoEx0MVEsbk21Cyt1Hz/mEOZPyDVPtNjC90n/fm6MRdrfKLEVu+2H+8S5vxstFeUBvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPO/bmMk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77B53C4CEF9;
-	Mon, 20 Oct 2025 17:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760982736;
-	bh=7sAIIgLxZTkRmg9+IStAmoK1ltS9LtxTlQvl1Ut6g5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UPO/bmMkvowEEjMVkjqssDByXDYAFYwrSHASHiROoswJCme1T7kXpmeJLmKi7NlKh
-	 ltUaUJzXwbAvGVc6OZtYiE6m83Gx7MSzBnmrv33GvuqOEFPm9LIHiAciLyc3P3fqNw
-	 ojuatUpJG6OhAERH3v8nt4Ar2Q154I1KyLa6Il2RHm1sIpmrL5aKOC7sDuKyOPgIRp
-	 Kpp7ze/lQwiK9B5rHYPWPCrI4xOheBOBzQ/m298DUeIq7RBVirU3lEegmpFlWHArhv
-	 8MOD3XurI8OSg0E74+J4pERamsVY18saN9tkuHlFuqI4928PQ2te1s1Hxfl1mZ35Mf
-	 rggDikZeZnFeQ==
-Date: Mon, 20 Oct 2025 18:52:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: muchun.song@linux.dev, osalvador@suse.de, david@redhat.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com,
-	Aishwarya.TCV@arm.com, torvalds@linux-foundation.org
-Subject: Re: [PATCH v2] hugetlbfs: skip VMAs without shareable locks in
- hugetlb_vmdelete_list
-Message-ID: <9d20e689-c06e-43f8-811f-3e66f3e86d2b@sirena.org.uk>
-References: <20250926033255.10930-1-kartikey406@gmail.com>
- <7a1d0eb0-ab08-4fa8-bdab-b193b69a8c9d@sirena.org.uk>
+	s=arc-20240116; t=1760982745; c=relaxed/simple;
+	bh=pdYHJcuACjLxyUbGtQJb6l+Qo8ulOoDOXrsmHol9Lt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KQhjsWtDIN0qapR3xeLSbrPZ543Hm8d3aJbMR+u4KHKmTPN06vudVay7Fgrxkv+aBIZZRA9Y47Xz7aQvzq9+GG4DxXcGaIYxNoaBPULfBee7hiclETF5hG26jHZtSyixrzO1Yev5bbMZGFZiXKsjJWCt8KDzfobpf02XoDHOkt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j87a7Qnr; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so227010f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760982743; x=1761587543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0hPztYo4gHaE9LtG99gGwWjUyFltd44jOHvoR42cvBk=;
+        b=j87a7QnrHSHjFhEFTU4teGZPeNQZlfIdzR1xQC8IjN9UPQSSXbpPCoTiiORv/5M26V
+         XNeT9wtRjLDR26FEUpBkuYN8XedK6vEidP1psmaUBKW/DyQeDl/b1RiGH5zam0iNotsB
+         OfHnoVm3xQx1F0ZKp84uPJyBTt/8rtkJDDiAZeVowPp+iQes2QMZBZizY5s2KYWqKKGy
+         prGE+BCJv10yntaNtHknE5Z2ZudkCnDGH8Pu6aVvi3Zz+iacwJG8Opi1/3BVO4DF4cpi
+         vvQAzIDEcUZm1DFY8pIuw4yLsSr4Eo7Pcpszdpe7ABCnq1T5zMIFqjpRtLgDsWaItaNt
+         VX4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760982743; x=1761587543;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0hPztYo4gHaE9LtG99gGwWjUyFltd44jOHvoR42cvBk=;
+        b=b8D8rkU423ZYvkc/eCgCSmGxqJvWhhk6D8YjWROjpjJsQLySWoOf1/A1SyAyqhHNp4
+         +4QjqAHg1ltIqSJSKWZ3JfU3z8edc6jIKkZx+VWLgXI5nJiI/DgbICCa/QTeT7K640DS
+         jY5CkuwQ0j7I5jJXgLnbQPxP+r1bQSbQDxa202z1kxI/EJneZDHUvgyPvv7EA5UISUOF
+         FShLlajFrk8qlQkah7themFcmJyVWekRWlqa3l4nkfn29zukNNlQl+KrFbOlzDUrO2WY
+         uI3uC28xMiKaM4on521VQVXiWYKb1OG5lcX4NqNLB7a+wtZPt+sty5eKD63RZWad6DlZ
+         MrTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoUe+yc9Kn+f49hR1pf+9dBE7q/LuR2AKoNsGGDzX8W/gzd4DkVHOWomcQme1gnHt0K/A2qZ8i/Ic0TNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQl6U/utVGUaGBVGb800W3RegcRb7khctyTCBQuEhFNOkmshBx
+	AVUphXfsKvsguheMe40H9v/1bkcJOBKmynO2pzrzKaEtBqrKxxM/YRcx
+X-Gm-Gg: ASbGncsLYYDifqSZ1N/r1nsPy5i2lkh0LvUijsdE4rckmxd7fpe7iXJ7L3g1RwosYEt
+	LnI4tTjwWG9cZhRgJPyoqn38uxWHM4LGwPaKNx4m9xrKwQ9UpCYp3CSDm/lEEZn34mKa7E29rub
+	AX9bAJREzOMvSJ6J2ZpPfOOIdfqK4L5iuSKElYijucF6I9IV4bAAmvmIBVVLYD+yLdj1T/HzS1e
+	uNMjrOD+IaetWAslJo8tLaBvihNLfDzOTXYyL6mb4j/RD9rahPqSgXJM/xFkoCpsqm1ySHqfSS+
+	IMbeQiGkZFIWcC7FYLeJEdmpfX8p85D6ukv+6pLHMpXTMWKLqnMdSPU3rTsi4Z8eEA/j7yzMJCB
+	Cd+vs0nYVfpn7ZMAUlPqJwrtGgD9UP6LQMEvhcEhP3XqKeZhvHMSFuD1rxS/23yOoC/estrYpLj
+	yIVRnQoMkYDRlIkOPWYhRDIQcV4ievurDZKwef0doIQpnteRCZ0tnBU2QNC91kRsh+jnD7n0jbJ
+	CIQWQ==
+X-Google-Smtp-Source: AGHT+IGEpXcGziVc/IPeVNYdyzKmZC+YRn2Z3nf2tImqr8LtU1jXE0yH1+EHM8IBNjLdRoUankugUA==
+X-Received: by 2002:a05:6000:26d2:b0:3e6:f91e:fa72 with SMTP id ffacd0b85a97d-42704d83dfdmr8290390f8f.7.1760982742464;
+        Mon, 20 Oct 2025 10:52:22 -0700 (PDT)
+Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c34sm16222568f8f.17.2025.10.20.10.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 10:52:22 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+ Samuel Holland <samuel@sholland.org>, Mark Brown <broonie@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
+Cc: linux-sunxi@lists.linux.dev, linux-sound@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 06/11] clk: sunxi-ng: sun55i-a523-ccu: Lower audio0 pll minimum
+ rate
+Date: Mon, 20 Oct 2025 19:52:20 +0200
+Message-ID: <8591609.T7Z3S40VBb@jernej-laptop>
+In-Reply-To: <20251020171059.2786070-7-wens@kernel.org>
+References:
+ <20251020171059.2786070-1-wens@kernel.org>
+ <20251020171059.2786070-7-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yyTuGu9lnDO8eP9m"
-Content-Disposition: inline
-In-Reply-To: <7a1d0eb0-ab08-4fa8-bdab-b193b69a8c9d@sirena.org.uk>
-X-Cookie: Sic Transit Gloria Thursdi.
-
-
---yyTuGu9lnDO8eP9m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Oct 03, 2025 at 11:57:35AM +0100, Mark Brown wrote:
-> On Fri, Sep 26, 2025 at 09:02:54AM +0530, Deepanshu Kartikey wrote:
-> > hugetlb_vmdelete_list() uses trylock to acquire VMA locks during trunca=
-te
-> > operations. As per the original design in commit 40549ba8f8e0 ("hugetlb:
-> > use new vma_lock for pmd sharing synchronization"), if the trylock fails
-> > or the VMA has no lock, it should skip that VMA. Any remaining mapped
-> > pages are handled by remove_inode_hugepages() which is called after
-> > hugetlb_vmdelete_list() and uses proper lock ordering to guarantee
-> > unmapping success.
+Dne ponedeljek, 20. oktober 2025 ob 19:10:52 Srednjeevropski poletni =C4=8D=
+as je Chen-Yu Tsai napisal(a):
+> While the user manual states that the PLL's rate should be between 180
+> MHz and 3 GHz in the register defninition section, it also says the
+> actual operating frequency is 22.5792*4 MHz in the PLL features table.
 >=20
-> For the past few days I've been seeing failures on Raspberry Pi 4 in
-> the hugetlbfs-madvise kselftest in -next which bisect to this patch.
-> The test reports:
+> 22.5792*4 MHz is one of the actual clock rates that we want and is
+> is available in the SDM table. Lower the minimum clock rate to 90 MHz
+> so that both rates in the SDM table can be used.
+
+So factor of 2 could be missed somewhere?
+
 >=20
-> # # -------------------------
-> # # running ./hugetlb-madvise
-> # # -------------------------
-> # # Unexpected number of free huge pages line 252
-> # # [FAIL]
-> # not ok 6 hugetlb-madvise # exit=3D1
+> Fixes: 7cae1e2b5544 ("clk: sunxi-ng: Add support for the A523/T527 CCU PL=
+Ls")
+> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 
-This issue is now present in mainline:
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Raspberry Pi 4: https://lava.sirena.org.uk/scheduler/job/1976561#L1798
-Orion O6:       https://lava.sirena.org.uk/scheduler/job/1977081#L1779
+Best regards,
+Jernej
 
-and still bisects to this patch.
-
-> Full log:
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
->   https://lava.sirena.org.uk/scheduler/job/1913276#L1803
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
+g/ccu-sun55i-a523.c
+> index acb532f8361b..20dad06b37ca 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> @@ -300,7 +300,7 @@ static struct ccu_nm pll_audio0_4x_clk =3D {
+>  	.m		=3D _SUNXI_CCU_DIV(16, 6),
+>  	.sdm		=3D _SUNXI_CCU_SDM(pll_audio0_sdm_table, BIT(24),
+>  					 0x178, BIT(31)),
+> -	.min_rate	=3D 180000000U,
+> +	.min_rate	=3D 90000000U,
+>  	.max_rate	=3D 3000000000U,
+>  	.common		=3D {
+>  		.reg		=3D 0x078,
 >=20
-> Bisect log:
->=20
-> # bad: [7396732143a22b42bb97710173d598aaf50daa89] Add linux-next specific=
- files for 20251002
-> # good: [9d3bc72cc0a9791bf4910ef854b2c3dd61af3bbf] Merge branch 'for-rc' =
-of https://git.kernel.org/pub/scm/linux/kernel/git/fwctl/fwctl.git
-> # good: [d4ecae56a8c7d3287a5bcdb2d65f7102ee580ab6] clk: mediatek: Add MT8=
-196 mcu clock support
-> # good: [4c134c2a5f3db29afe35b2d30e39bb6d867b08da] um: Indent time-travel=
- help messages
-> # good: [bf1af4f6e62878e053d20cd71267aed8dfb3e715] perf arm-spe: Downsamp=
-le all sample types equally
-> # good: [e414334883f4835058ca06f934bc4988eb9cd9e6] Merge branch 'next/dt'=
- into for-next
-> # good: [54653bb3ec83d1f717adab6108db82a3966d19ee] clk: renesas: rzv2h: r=
-emove round_rate() in favor of determine_rate()
-> # good: [87a877de367d835b527d1086f75727123ef85fc4] KVM: x86: Rename handl=
-e_fastpath_set_msr_irqoff() to handle_fastpath_wrmsr()
-> # good: [c26675447faff8c4ddc1dc5d2cd28326b8181aaf] KVM: x86: Zero XSTATE =
-components on INIT by iterating over supported features
-> # good: [6684aba0780da9f505c202f27e68ee6d18c0aa66] XArray: Add extra debu=
-gging check to xas_lock and friends
-> git bisect start '7396732143a22b42bb97710173d598aaf50daa89' '9d3bc72cc0a9=
-791bf4910ef854b2c3dd61af3bbf' 'd4ecae56a8c7d3287a5bcdb2d65f7102ee580ab6' '4=
-c134c2a5f3db29afe35b2d30e39bb6d867b08da' 'bf1af4f6e62878e053d20cd71267aed8d=
-fb3e715' 'e414334883f4835058ca06f934bc4988eb9cd9e6' '54653bb3ec83d1f717adab=
-6108db82a3966d19ee' '87a877de367d835b527d1086f75727123ef85fc4' 'c26675447fa=
-ff8c4ddc1dc5d2cd28326b8181aaf' '6684aba0780da9f505c202f27e68ee6d18c0aa66'
-> # test job: [d4ecae56a8c7d3287a5bcdb2d65f7102ee580ab6] https://lava.siren=
-a.org.uk/scheduler/job/1907306
-> # test job: [4c134c2a5f3db29afe35b2d30e39bb6d867b08da] https://lava.siren=
-a.org.uk/scheduler/job/1903298
-> # test job: [bf1af4f6e62878e053d20cd71267aed8dfb3e715] https://lava.siren=
-a.org.uk/scheduler/job/1900552
-> # test job: [e414334883f4835058ca06f934bc4988eb9cd9e6] https://lava.siren=
-a.org.uk/scheduler/job/1904803
-> # test job: [54653bb3ec83d1f717adab6108db82a3966d19ee] https://lava.siren=
-a.org.uk/scheduler/job/1900685
-> # test job: [87a877de367d835b527d1086f75727123ef85fc4] https://lava.siren=
-a.org.uk/scheduler/job/1697972
-> # test job: [c26675447faff8c4ddc1dc5d2cd28326b8181aaf] https://lava.siren=
-a.org.uk/scheduler/job/1698132
-> # test job: [6684aba0780da9f505c202f27e68ee6d18c0aa66] https://lava.siren=
-a.org.uk/scheduler/job/1738722
-> # test job: [7396732143a22b42bb97710173d598aaf50daa89] https://lava.siren=
-a.org.uk/scheduler/job/1913276
-> # bad: [7396732143a22b42bb97710173d598aaf50daa89] Add linux-next specific=
- files for 20251002
-> git bisect bad 7396732143a22b42bb97710173d598aaf50daa89
-> # test job: [74fc450198cf792e3db35ea4d49197a467233373] https://lava.siren=
-a.org.uk/scheduler/job/1913848
-> # bad: [74fc450198cf792e3db35ea4d49197a467233373] Merge branch 'main' of =
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-> git bisect bad 74fc450198cf792e3db35ea4d49197a467233373
-> # test job: [db484ff3fff1fafa0017cdd017795bec09ace5e4] https://lava.siren=
-a.org.uk/scheduler/job/1913993
-> # bad: [db484ff3fff1fafa0017cdd017795bec09ace5e4] Merge branch 'docs-next=
-' of git://git.lwn.net/linux.git
-> git bisect bad db484ff3fff1fafa0017cdd017795bec09ace5e4
-> # test job: [7d942c9d9660e6808dcd835c4c73ad5405cc5518] https://lava.siren=
-a.org.uk/scheduler/job/1914055
-> # bad: [7d942c9d9660e6808dcd835c4c73ad5405cc5518] Merge branch 'for-next'=
- of https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git
-> git bisect bad 7d942c9d9660e6808dcd835c4c73ad5405cc5518
-> # test job: [db03d3c83bdb21667392d1596fafdfb38325c2a0] https://lava.siren=
-a.org.uk/scheduler/job/1914176
-> # bad: [db03d3c83bdb21667392d1596fafdfb38325c2a0] Merge branch 'dma-mappi=
-ng-for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski=
-/linux.git
-> git bisect bad db03d3c83bdb21667392d1596fafdfb38325c2a0
-> # test job: [84a7a9823e73fe3c0adcc4780fa7a091981048ef] https://lava.siren=
-a.org.uk/scheduler/job/1914247
-> # good: [84a7a9823e73fe3c0adcc4780fa7a091981048ef] mm/shmem, swap: remove=
- redundant error handling for replacing folio
-> git bisect good 84a7a9823e73fe3c0adcc4780fa7a091981048ef
-> # test job: [c7416f37e4d31fb28ac4ed584b13037e69a22dbe] https://lava.siren=
-a.org.uk/scheduler/job/1914387
-> # bad: [c7416f37e4d31fb28ac4ed584b13037e69a22dbe] Merge branch 'mm-nonmm-=
-stable' of https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> git bisect bad c7416f37e4d31fb28ac4ed584b13037e69a22dbe
-> # test job: [3dfd02c900379d209ac9dcac24b4a61d8478842a] https://lava.siren=
-a.org.uk/scheduler/job/1914497
-> # good: [3dfd02c900379d209ac9dcac24b4a61d8478842a] hugetlb: increase numb=
-er of reserving hugepages via cmdline
-> git bisect good 3dfd02c900379d209ac9dcac24b4a61d8478842a
-> # test job: [fe7a283b39160153b6d1bd7f61b0a9d5d44987a8] https://lava.siren=
-a.org.uk/scheduler/job/1915206
-> # good: [fe7a283b39160153b6d1bd7f61b0a9d5d44987a8] ocfs2: add suballoc sl=
-ot check in ocfs2_validate_inode_block()
-> git bisect good fe7a283b39160153b6d1bd7f61b0a9d5d44987a8
-> # test job: [74058c0a9fc8b2b4d5f4a0ef7ee2cfa66a9e49cf] https://lava.siren=
-a.org.uk/scheduler/job/1916011
-> # good: [74058c0a9fc8b2b4d5f4a0ef7ee2cfa66a9e49cf] Squashfs: fix uninit-v=
-alue in squashfs_get_parent
-> git bisect good 74058c0a9fc8b2b4d5f4a0ef7ee2cfa66a9e49cf
-> # test job: [9f1c14c1de1bdde395f6cc893efa4f80a2ae3b2b] https://lava.siren=
-a.org.uk/scheduler/job/1916064
-> # good: [9f1c14c1de1bdde395f6cc893efa4f80a2ae3b2b] Squashfs: reject negat=
-ive file sizes in squashfs_read_inode()
-> git bisect good 9f1c14c1de1bdde395f6cc893efa4f80a2ae3b2b
-> # test job: [fb552b2425cf8f16c9c72229a972d1744b24d855] https://lava.siren=
-a.org.uk/scheduler/job/1916102
-> # good: [fb552b2425cf8f16c9c72229a972d1744b24d855] alloc_tag: fix boot fa=
-ilure due to NULL pointer dereference
-> git bisect good fb552b2425cf8f16c9c72229a972d1744b24d855
-> # test job: [81e78b7ec61e89e8bab9736551839f79b063614c] https://lava.siren=
-a.org.uk/scheduler/job/1916193
-> # bad: [81e78b7ec61e89e8bab9736551839f79b063614c] mm: convert folio_page(=
-) back to a macro
-> git bisect bad 81e78b7ec61e89e8bab9736551839f79b063614c
-> # test job: [1acc369373008b9eeb930fbb47847c0693055553] https://lava.siren=
-a.org.uk/scheduler/job/1916218
-> # bad: [1acc369373008b9eeb930fbb47847c0693055553] mm/khugepaged: use star=
-t_addr/addr for improved readability
-> git bisect bad 1acc369373008b9eeb930fbb47847c0693055553
-> # test job: [dd83609b88986f4add37c0871c3434310652ebd5] https://lava.siren=
-a.org.uk/scheduler/job/1916225
-> # bad: [dd83609b88986f4add37c0871c3434310652ebd5] hugetlbfs: skip VMAs wi=
-thout shareable locks in hugetlb_vmdelete_list
-> git bisect bad dd83609b88986f4add37c0871c3434310652ebd5
-> # first bad commit: [dd83609b88986f4add37c0871c3434310652ebd5] hugetlbfs:=
- skip VMAs without shareable locks in hugetlb_vmdelete_list
 
 
 
---yyTuGu9lnDO8eP9m
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj2dsoACgkQJNaLcl1U
-h9Da2gf/T6/QZw+cK8/E1zTR2oE9jdXkFHM6mwGxdCEEE4m6IacU3MOB4a3f3hGA
-GMSlCEApk/POPMnwFikM0kRCRgOA0nkbz/iYEaz6kk+bxvZW7OWJ2ka2JPSG1UuG
-ifZ+xnyiqkJY/4/E0mgrlL32YBBbtEDPKxUKH9TAv004AbvUQWGrVprlEO76hlzy
-rH+nqp1WOrM7qUgTWPmUNE1d0iobuUOj8Wc6tF1zJawETwyjXNw263P/av9La9xS
-xAZx71YX0E0kuu8QS8KJBPMafEjsiqGauRZB7X+tS37mCRnzbrKAhIzykzQ2ceCI
-7JG0Fyetx+uWH5LH5rrnDblgrxze9A==
-=RoL8
------END PGP SIGNATURE-----
-
---yyTuGu9lnDO8eP9m--
 
