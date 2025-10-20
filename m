@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-860294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFBCBEFC53
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:59:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9033CBEFC6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5C03BE422
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:59:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 535014EDFA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206992E336E;
-	Mon, 20 Oct 2025 07:59:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703C619C542
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BECC2E4274;
+	Mon, 20 Oct 2025 08:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcyUDAUP"
+Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893392E3AF1
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947188; cv=none; b=KDI+ZyufviiBbTCWVmuCpUoTH1/gT5xIjFJ+Cc5+g4CjwJE5ZFuDy5teA0Wln7EmCjgpM566EwTx1osZGcfAyT3j+QUKBUM5VIYRS+ttN0NrtUPjylvz4J4+3ZlABLf0WB7pfRtiCRwbPevNWP7t5JSI3/cHZSahS168x6L2T1Q=
+	t=1760947226; cv=none; b=mHwX7uMzkvRZ1CuCygLaPG9cmlsWbATDOg8pXiXss2o1jh9Vk6QHofFNwJAIxWu4dFUV0i9IGI6uVAubiPrwLWbSGmPGqPBmu+/KyQw8vuQh+waXbjDXb3K/Z705+KZUMrTxpSB55VzVHq/mpBBbQjfTKyG+1mEFQlIOLI7ElZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947188; c=relaxed/simple;
-	bh=cNIzRBLR2VNDxsPHGbdqUKpAui/g9FRb3KrqxF1ngIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4Bf04SKQ1zrU/NWfdni2sGh6XeBxq5fwzsDfUs5qjA+kKDeaMnX0yrVzNR49gvC/Y0Tjog1bt4LhRhUoEUp8kZ3e+Bic+hqxX8LoJw5fXwBv4lQOUeWBwYQFIKlMkjNCebK/xj4Tz5m8WGZDjaUWbV0NTVFYF1CmIlG8GOnRFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B94581063;
-	Mon, 20 Oct 2025 00:59:37 -0700 (PDT)
-Received: from [10.57.36.117] (unknown [10.57.36.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33C493F63F;
-	Mon, 20 Oct 2025 00:59:43 -0700 (PDT)
-Message-ID: <77faf362-05bc-45b8-bddd-eed66ae70a63@arm.com>
-Date: Mon, 20 Oct 2025 08:59:41 +0100
+	s=arc-20240116; t=1760947226; c=relaxed/simple;
+	bh=Zmqo4L+meBOETvdur9HriUdnxH1JJd48yOGhQ75ip1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HK063p1tWYqlzkUBER7cSfFoD4TcEBwSa507SEZTlUFqPpCXxhMcTlmmTz8nC0fQgtEiULWlhnK79XaEs9tNxMtmlDXVrZqTDc2SziC8OTXyijXe+disyfkjcEAzEFi5HY80GctP1mT803R98rRtJ55M2nuSFl1O/XHR2bmza/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcyUDAUP; arc=none smtp.client-ip=209.85.208.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-3717780ea70so44077731fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760947223; x=1761552023; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FqFqpQMzveXZ0RGEyviEw8DDVWwyBqtk13RJd8bj4CU=;
+        b=XcyUDAUPPTFohquNJG9Wt+PeHhyqoozQHTXCFY0p6WwxojSFpve1rgiCYW7EuK7cDq
+         5vsNTUhgj+8O6yimk5SKHn7J7y84SKPmpFC4S2zDLDD4bFljVGTifpwvg9pmm49oImon
+         q6Z//8Q5r4fOVLC0g7WDMOf0TD83nzq4Ji3v6z4Mj1N1mrR6xdEW5PwCvlr8S1aqwjen
+         6fBbEtZMdm20qow3g/08ROuxMzJEycBJ8ABo45nrb36PLHEFW8Eifl/A5Bo9PUhETj9N
+         UWhwP6GEBRyJCEmI8P7qcA3MvTIyiVyEkgm5wYAVlcMLdp9hQtYttYDDm1GjVxPBhhIG
+         M7yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760947223; x=1761552023;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FqFqpQMzveXZ0RGEyviEw8DDVWwyBqtk13RJd8bj4CU=;
+        b=mH1C81O3vnilAgcFmuD4YJk2UKBxaRomDhswJUmThhIcm847YtSb1xTOmVstkWMZUE
+         EegSTOKzq+u5Dl5yVXlEFs6DS5tdgYxboXCm+5imv88cF1ABiOjCjAxrUNmqiKMybPnY
+         uGVm7DI326zayskk1zAqHwEkYnCW2X9bZ0RSvor9AbOwqaXAD0W+LsweUgaGds5U1sWA
+         S21Z4mHIlWb/OT9UpyT9Wp1dSKAM3yJkRzov6M+aJjiNhC1SI9y8qmfsR4IgJV17XNvC
+         yN7bQ9leJvPLTASltJi0Dbi7FJdxI1Jyhi6+g6DkFQo1VkklefF32mpaCV6goULKnb3I
+         loJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWG7sr20peyueYE3TNdswSKTf3jr+9dNOKKZHH1MOUj2akazPOIDV4+k2Xgr4WO/fKAe96rFcQYjGvF7NE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSOzqM7KfJ04eintFZgG/Jmz5UwpAeAZsjly2E07VanONS2d/b
+	+os+XdoUNhZoja5Kh84eKg2hehBIgQ9Jll8LbyspfG1unxjKgpO77L3L23iv8Uw46wu123YfY0s
+	ioJz5Sf76PITqB1IWbrEAUcjg+4gnHw4=
+X-Gm-Gg: ASbGnctztNw9ZWP2QLcNpFCyROPv0da8cjNsmReldmY7neAJ8UHZkhmWUsUSv63UJqz
+	rRbOQ6nZMNT125tlZfKGSpfLMb10WfZUF2kxJM0n/sMvQYzzPGrX1bjNllYMbxAQ5gsvSNP5v+9
+	klZu4Q++VMLSi0bSBmJhQ1KCVnPW13QuMbUzKbF5LpEc/uL/rKalooi9qqXvtFTrwYuBcIfgHy0
+	2FmFq2KfNFrimA/JDCe84ZdxNfOaJAcyOxdX74d70WjYL9+Ys6Dyi42KLOAtU7vxiyimpQ=
+X-Google-Smtp-Source: AGHT+IEb6aTrOmEOubjtMhNC4fScG5O+4jxoJC7WfiJ+3w31K1dW+u/j2kGMtu9zgMz0h6FWV//Soz3m52hhkz09Slo=
+X-Received: by 2002:a05:651c:1b96:b0:372:9f0c:2154 with SMTP id
+ 38308e7fff4ca-37797a63033mr32880721fa.42.1760947222240; Mon, 20 Oct 2025
+ 01:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: attach the driver's multiple power
- domains
-To: Rain Yang <jiyu.yang@oss.nxp.com>, imx@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: boris.brezillon@collabora.com, liviu.dudau@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, xianzhong.li@nxp.com,
- Rain Yang <jiyu.yang@nxp.com>, Prabhu Sundararaj <prabhu.sundararaj@nxp.com>
-References: <20251013093438.125243-1-jiyu.yang@oss.nxp.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251013093438.125243-1-jiyu.yang@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
+ <20251020024049.6877-1-hupu.gm@gmail.com> <aPW3rilb8DtFDIMC@google.com>
+In-Reply-To: <aPW3rilb8DtFDIMC@google.com>
+From: hupu <hupu.gm@gmail.com>
+Date: Mon, 20 Oct 2025 16:00:10 +0800
+X-Gm-Features: AS18NWCPgKC5zJlAEPd5vuFyJxDJdYi3AQG_LXrD3kVoNlN710m-tOjCqzYruQQ
+Message-ID: <CADHxFxQF033b97sBx8rtRHAo5Ou5Uc3WLUH1Y5+qA3f1i2MMjw@mail.gmail.com>
+Subject: Re: [PATCH] perf build: Support passing extra Clang options via EXTRA_BPF_FLAGS
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
+	justinstitt@google.com, leo.yan@arm.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
+	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
+	peterz@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/10/2025 10:34, Rain Yang wrote:
-> From: Rain Yang <jiyu.yang@nxp.com>
-> 
-> Some platforms, such as i.MX95, utilize multiple power domains that need
-> to be attached explicitly. This patch ensures that the driver properly
-> attaches all available power domains using devm_pm_domain_attach_list().
-> 
-> Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Prabhu Sundararaj <prabhu.sundararaj@nxp.com>
-> Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index f0b2da5b2b96..fbbc84e9efbe 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -167,6 +167,7 @@ static void panthor_device_free_page(struct drm_device *ddev, void *data)
->  int panthor_device_init(struct panthor_device *ptdev)
->  {
->  	u32 *dummy_page_virt;
-> +	struct dev_pm_domain_list  *pd_list = NULL;
->  	struct resource *res;
->  	struct page *p;
->  	int ret;
-> @@ -218,6 +219,12 @@ int panthor_device_init(struct panthor_device *ptdev)
->  	if (ret)
->  		return ret;
->  
-> +	ret = devm_pm_domain_attach_list(ptdev->base.dev, NULL, &pd_list);
-> +	if (ret < 0) {
-> +		drm_err(&ptdev->base, "attach power domains failed, ret=%d", ret);
-> +		return ret;
+Hi Namhyung,
+Thanks for your review.
 
-This fails on the rock-5b. I believe because the PM code automatically 
-attaches a single power domain (as on the rock-5b) so this then returns 
--EEXIST:
+On Mon, Oct 20, 2025 at 12:16=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Mon, Oct 20, 2025 at 10:40:49AM +0800, hupu wrote:
+> > When cross-compiling perf with BPF enabled, Clang is invoked during the
+> > build. Some cross-compilation environments require additional compiler
+> > options, such as `--sysroot` or custom include paths.
+> >
+> > This patch introduces a new Make variable, `EXTRA_BPF_FLAGS`. During BP=
+F
+> > skeleton builds, it appends user-provided options to `CLANG_OPTIONS`,
+> > allowing extra Clang flags to be set without modifying Makefile.perf
+> > directly.
+> >
+> > Example usage:
+> >     EXTRA_BPF_FLAGS=3D"--sysroot=3D$SYSROOT"
+> >     make perf ARCH=3D"$ARCH" EXTRA_BPF_FLAGS=3D"$EXTRA_BPF_FLAGS"
+>
+> Why not just:
+>
+>   make perf ARCH=3D"arm64" EXTRA_BPF_FLAGS=3D"--sysroot=3D..."
+>
+> >
+> > Change history:
+> >   v2:
+> >     - Rename EXTRA_CLANG_FLAGS to EXTRA_BPF_FLAGS
+> >     - Update commit message
+> >   v1:
+> >     - Introduce EXTRA_CLANG_FLAGS to allow passing extra Clang options
+> >
+> > Signed-off-by: hupu <hupu.gm@gmail.com>
+>
+> Leo, are you ok with this?
+>
+> > ---
+> >  tools/perf/Makefile.perf | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> > index 47c906b807ef..f1f2efdbab8c 100644
+> > --- a/tools/perf/Makefile.perf
+> > +++ b/tools/perf/Makefile.perf
+> > @@ -1249,6 +1249,11 @@ else
+> >       $(Q)cp "$(VMLINUX_H)" $@
+> >  endif
+> >
+> > +# Allow users to specify additional Clang options (e.g. --sysroot)
+> > +# when cross-compiling BPF skeletons, enabling more flexible
+> > +# build configurations.
+>
+> Can you please move this comment or add new one at the top of the file
+> along with EXTRA_CFLAGS?
+>
 
-[   11.433501] panthor fb000000.gpu: [drm] *ERROR* attach power domains failed, ret=-17
-
-I notice that the tegra driver checks dev->pm_domain and only calls 
-devm_pm_domain_attach_list if that is NULL.
+Alright, I will prepare a v3 patch based on your review comments.
 
 Thanks,
-Steve
-
-> +	}
-> +
->  	ret = panthor_devfreq_init(ptdev);
->  	if (ret)
->  		return ret;
-
+hupu
 
