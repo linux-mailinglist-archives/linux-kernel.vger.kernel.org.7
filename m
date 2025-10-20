@@ -1,223 +1,176 @@
-Return-Path: <linux-kernel+bounces-860174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B15DBEF805
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:41:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F3EBEF7FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D86418854CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:41:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEAB24E72F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57412D8DAA;
-	Mon, 20 Oct 2025 06:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272082D8DA4;
+	Mon, 20 Oct 2025 06:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="oqywBw51"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpT25Pxe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9992D7DFB;
-	Mon, 20 Oct 2025 06:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C36720B22;
+	Mon, 20 Oct 2025 06:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760942472; cv=none; b=exE+913164L5+C7ew/g2O8rVxWHDh1mu4qEKeVteO7CwijQLVnYVZBgyQgbzfyKV4e7Dr+2pgSHq1h309Mc8FOB/OlPveOwuKZA4+mw3h3iNDOthvt0EPYWXRk7nX/6ssMQ2uaDg5Vwo+iRZiGubgDyXPfCx+9rtZV1HaQcHXIg=
+	t=1760942432; cv=none; b=iuXRoLSTtpvVFlYCvfHlHQocsMKK3PEVso1KonjTMcRBCaHxxvjKJReiTpPnyLi3c10K3Mlp3dxlWxi5goicyTOZEzeM9T3ybBxf7eLKatoJ090/sxcnYGOMtgPCHTw/3I7SL4GL7Hr5dEdh80FtLHSrOmzbNafrHLPTrCmbD/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760942472; c=relaxed/simple;
-	bh=HvkZQIT3YWSHEloVSkLh35b3GVu96O2L6Q9lSbh+XQc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8eBu9di+JM+QrtrU0TmCu98axHSL1txz0sW+osHuYdQoL7a48/8+qMCQPmb3qnsQHw0b8FnLeYnIvncrSuJTaJNmrFD6VvQ3bLYs2Qt2xnlH7GQ47Q1VdFkpDF0D7zM3ZdrqAbyOOvo1KlzXBCj4VHO2oJgPa61kUGCWHTNXak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=oqywBw51; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1760942469; x=1792478469;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HvkZQIT3YWSHEloVSkLh35b3GVu96O2L6Q9lSbh+XQc=;
-  b=oqywBw51x9eUYgQqWXJajaW9qtb3sv2deRIrktLWWhAulT8ZFcr7iQW4
-   uNP8U3DF5NS2bjl+RS+zzhm+oONrpSVo+mketSWtm8BIhkq32DGvXXUo5
-   3ockl8W4I5/DCJlxlY9BK9UJV2lxq6XvMGB6bku2iL3AYg7lmaL5pGseT
-   3DTkNBgx5L1evvWDFJ03HTJ5OgVQrr1sAu3UKQES/zFW1O5+fO5xfpLqi
-   3rpbkJQpQC2nZCN3azWIRoIJTgAwA4mCvTTLBDzaVKtF7K9MQbGiSNWUT
-   T0j/LzaqICxX21dKFkzMaRxvC4LZ/MOwGi/TEjWYQTNAjitIQV8hMj//N
-   A==;
-X-CSE-ConnectionGUID: Xi2sZDkeQe6Wff5fg4d3MA==
-X-CSE-MsgGUID: lnWFWEOvRpCYlHV8kcUaDw==
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="215334774"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Oct 2025 23:41:02 -0700
-Received: from chn-vm-ex1.mchp-main.com (10.10.87.30) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Sun, 19 Oct 2025 23:40:50 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.27; Sun, 19 Oct 2025 23:40:50 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Sun, 19 Oct 2025 23:40:50 -0700
-Date: Mon, 20 Oct 2025 08:39:45 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Gerhard Engleder <gerhard@engleder-embedded.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>
-Subject: Re: [PATCH net-next] net: phy: micrel: Add support for non PTP SKUs
- for lan8814
-Message-ID: <20251020063945.dwqgn5yphdwnt4vk@DEN-DL-M31836.microchip.com>
-References: <20251017074730.3057012-1-horatiu.vultur@microchip.com>
- <79f403f0-84ed-43fe-b093-d7ce122d41fd@engleder-embedded.com>
+	s=arc-20240116; t=1760942432; c=relaxed/simple;
+	bh=UJTlw/pu3vywNn13Ms+E5luWG1v4DvAhkTCP9OzzQOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gg44nmC1SrR0RjiQNvsFtIdMjUq/i1u8vZC87M0BWcAx7jE+PGnD9EiZ3OOK1B+yq9qOx4t4RoisWmxqwrrffQyc3eO794h+ydBpJ63vfC5TobDFn93VvR8tXU+eX3g6i/5mttVdc8uZJMZlux+Nt7iYmP1shn3SeokZEh2wX4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpT25Pxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9787FC4CEF9;
+	Mon, 20 Oct 2025 06:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760942432;
+	bh=UJTlw/pu3vywNn13Ms+E5luWG1v4DvAhkTCP9OzzQOc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=BpT25Pxe1mhGst83DZD9Z6TJ3ZHdU1xjdlaoh/Zf17hKKYEc+1Nf8GAb05LhVQ2Z7
+	 FgtNhXTr4Q7WYA9muS0+V1kRjtizrKrvKBj7rfN31h6iyCmB7iUC5A+vle0G8m6YWf
+	 jqVP5vI2ET3vRrE3hjXsZB3LwzqUCAGtXkdvA7jRwlLmvL2rQy1SlchjqsI/aR6hSp
+	 D8sr/01r83oweAJBJeWDaSCuII4fZSdtem+jk0QH1qPdD9IfrGY2tdxBs8wwUWl18Y
+	 VxAhUgzVeHpfau1l5rJ+LJMcFG+7osVCsSDQ4evzrZlBzXg/9gY8Nv9Zc1IrwPm/pq
+	 rhsieA9VGUwRw==
+Message-ID: <2eb2d833-03e0-4570-8979-3a28d708b21f@kernel.org>
+Date: Mon, 20 Oct 2025 08:40:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <79f403f0-84ed-43fe-b093-d7ce122d41fd@engleder-embedded.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Introduce ASPEED AST2700 BMC SoC
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Taniya Das <quic_tdas@quicinc.com>,
+ "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Eric Biggers <ebiggers@google.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "soc@lists.linux.dev" <soc@lists.linux.dev>, Mo Elbadry
+ <elbadrym@google.com>, Rom Lemarchand <romlem@google.com>,
+ William Kennington <wak@google.com>, Yuxiao Zhang <yuxiaozhang@google.com>,
+ "wthai@nvidia.com" <wthai@nvidia.com>, "leohu@nvidia.com"
+ <leohu@nvidia.com>, "dkodihalli@nvidia.com" <dkodihalli@nvidia.com>,
+ "spuranik@nvidia.com" <spuranik@nvidia.com>
+References: <20250901031311.1247805-1-ryan_chen@aspeedtech.com>
+ <41705e13-c61d-4249-9492-b83f1371d3f9@app.fastmail.com>
+ <OS8PR06MB7541AEC5560E3445C33009BEF21FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <OS8PR06MB7541AEC5560E3445C33009BEF21FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The 10/17/2025 23:15, Gerhard Engleder wrote:
+On 25/09/2025 10:00, Ryan Chen wrote:
+>> Subject: Re: [PATCH v5 0/5] Introduce ASPEED AST2700 BMC SoC
+>>
+>> On Mon, Sep 1, 2025, at 05:13, Ryan Chen wrote:
+>>> This introduces initial support for the Aspeed AST2700 SoC and the
+>>> AST2700 Evaluation Board (EVB) to the Linux kernel. The AST27XX is the
+>>> 8th generation Baseboard Management Controller (BMC) SoC from Aspeed,
+>>> featuring improved performance, enhanced security, and expanded I/O
+>>> capabilities compared to previous generations.
+>>>
+>>> AST27XX SOC Family
+>>>  - https://www.aspeedtech.com/server_ast2700/
+>>>  - https://www.aspeedtech.com/server_ast2720/
+>>>  - https://www.aspeedtech.com/server_ast2750/
+>>
+>> Hi Ryan,
+>>
+>> Thanks for you submission earlier. I see that you had sent the series to several
+>> lists including soc@lists.linux.dev, which is what I use to keep track of patches
+>> that have been successfully reviewed and that are ready to be merged through
+>> the soc tree.
+>>
+>> Unless you have been told to send it here by Joel and Andrew, I assume that
+>> they will pick up the series through the "bmc"
+>> tree once they are happy with it like they do with the 32-bit Aspeed SoC
+>> (ast24xx/25xx/26xx) patches, and I have dropped the series from
+>> https://patchwork.kernel.org/project/linux-soc
+>> now.
+>>
+>> For future submission, please send the patches only "to"
+>> them, with the other people in the "cc" field to avoid this confusion, and leave
+>> out the "soc@lists.linux.dev"
+>> recipient. You can add me as arnd@arndb.de to the Cc list for reviews though.
+>>
+>> Please also add a patch that changes the MAINTAINERS entry to reflect the
+>> added arch/arm64 contents.
+>>
+>>      Arnd
+> 
+> Hello Arnd,
+> 	Thanks your notify. I will remove soc@lists.linux.dev, in next patch.
 
-Hi Gerhard,
 
-> 
-> On 17.10.25 09:47, Horatiu Vultur wrote:
-> > The lan8814 has 4 different SKUs and for 2 of these SKUs the PTP is
-> > disabled. All these SKUs have the same value in the register 2 and 3
-> > meaning we can't differentiate them based on device id therefore check
-> 
-> Did you miss to start a new sentence?
+No, this patchset still has known (reported) warnings/bugs, which need
+to be addressed here before merging it.
 
-Yes, I think so. I will update this.
-
-> 
-> > the SKU register and based on this allow or not to create a PTP device.
-> > 
-> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > ---
-> >   drivers/net/phy/micrel.c | 38 ++++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 38 insertions(+)
-> > 
-> > diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-> > index 79ce3eb6752b6..16855bf8c3916 100644
-> > --- a/drivers/net/phy/micrel.c
-> > +++ b/drivers/net/phy/micrel.c
-> > @@ -101,6 +101,8 @@
-> >   #define LAN8814_CABLE_DIAG_VCT_DATA_MASK    GENMASK(7, 0)
-> >   #define LAN8814_PAIR_BIT_SHIFT                      12
-> > 
-> > +#define LAN8814_SKUS                         0xB
-> > +
-> >   #define LAN8814_WIRE_PAIR_MASK                      0xF
-> > 
-> >   /* Lan8814 general Interrupt control/status reg in GPHY specific block. */
-> > @@ -367,6 +369,9 @@
-> > 
-> >   #define LAN8842_REV_8832                    0x8832
-> > 
-> > +#define LAN8814_REV_LAN8814                  0x8814
-> > +#define LAN8814_REV_LAN8818                  0x8818
-> > +
-> >   struct kszphy_hw_stat {
-> >       const char *string;
-> >       u8 reg;
-> > @@ -449,6 +454,7 @@ struct kszphy_priv {
-> >       bool rmii_ref_clk_sel;
-> >       bool rmii_ref_clk_sel_val;
-> >       bool clk_enable;
-> > +     bool is_ptp_available;
-> >       u64 stats[ARRAY_SIZE(kszphy_hw_stats)];
-> >       struct kszphy_phy_stats phy_stats;
-> >   };
-> > @@ -4130,6 +4136,17 @@ static int lan8804_config_intr(struct phy_device *phydev)
-> >       return 0;
-> >   }
-> > 
-> > +/* Check if the PHY has 1588 support. There are multiple skus of the PHY and
-> > + * some of them support PTP while others don't support it. This function will
-> > + * return true is the sku supports it, otherwise will return false.
-> > + */
-> 
-> Hasn't net also switched to the common kernel multiline comment style
-> starting with an empty line?
-
-I am not sure because I can see some previous commits where people used
-the same comment style:
-e82c64be9b45 ("net: stmmac: avoid PHY speed change when configuring MTU")
-100dfa74cad9 ("net: dev_queue_xmit() llist adoption")
-
-> 
-> > +static bool lan8814_has_ptp(struct phy_device *phydev)
-> > +{
-> > +     struct kszphy_priv *priv = phydev->priv;
-> > +
-> > +     return priv->is_ptp_available;
-> > +}
-> > +
-> >   static irqreturn_t lan8814_handle_interrupt(struct phy_device *phydev)
-> >   {
-> >       int ret = IRQ_NONE;
-> > @@ -4146,6 +4163,9 @@ static irqreturn_t lan8814_handle_interrupt(struct phy_device *phydev)
-> >               ret = IRQ_HANDLED;
-> >       }
-> > 
-> > +     if (!lan8814_has_ptp(phydev))
-> > +             return ret;
-> > +
-> >       while (true) {
-> >               irq_status = lanphy_read_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-> >                                                 PTP_TSU_INT_STS);
-> > @@ -4207,6 +4227,9 @@ static void lan8814_ptp_init(struct phy_device *phydev)
-> >           !IS_ENABLED(CONFIG_NETWORK_PHY_TIMESTAMPING))
-> >               return;
-> > 
-> > +     if (!lan8814_has_ptp(phydev))
-> > +             return;
-> > +
-> >       lanphy_write_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-> >                             TSU_HARD_RESET, TSU_HARD_RESET_);
-> > 
-> > @@ -4336,6 +4359,9 @@ static int __lan8814_ptp_probe_once(struct phy_device *phydev, char *pin_name,
-> > 
-> >   static int lan8814_ptp_probe_once(struct phy_device *phydev)
-> >   {
-> > +     if (!lan8814_has_ptp(phydev))
-> > +             return 0;
-> > +
-> >       return __lan8814_ptp_probe_once(phydev, "lan8814_ptp_pin",
-> >                                       LAN8814_PTP_GPIO_NUM);
-> >   }
-> > @@ -4450,6 +4476,18 @@ static int lan8814_probe(struct phy_device *phydev)
-> >       devm_phy_package_join(&phydev->mdio.dev, phydev,
-> >                             addr, sizeof(struct lan8814_shared_priv));
-> > 
-> > +     /* There are lan8814 SKUs that don't support PTP. Make sure that for
-> > +      * those skus no PTP device is created. Here we check if the SKU
-> > +      * supports PTP.
-> > +      */
-> 
-> Check comment style.
-> 
-> > +     err = lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-> > +                                LAN8814_SKUS);
-> > +     if (err < 0)
-> > +             return err;
-> > +
-> > +     priv->is_ptp_available = err == LAN8814_REV_LAN8814 ||
-> > +                              err == LAN8814_REV_LAN8818;
-> > +
-> >       if (phy_package_init_once(phydev)) {
-> >               err = lan8814_release_coma_mode(phydev);
-> >               if (err)
-> 
-
--- 
-/Horatiu
+Best regards,
+Krzysztof
 
