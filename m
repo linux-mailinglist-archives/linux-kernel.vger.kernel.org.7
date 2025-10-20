@@ -1,197 +1,123 @@
-Return-Path: <linux-kernel+bounces-860027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0ECBEF28D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:13:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0CFBEF296
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 05:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F379A3E4C8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:12:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FE814EC1CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926962BDC0C;
-	Mon, 20 Oct 2025 03:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBAIHLHl"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4449A29D26C;
+	Mon, 20 Oct 2025 03:12:25 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552F229E0FD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89851F63CD;
+	Mon, 20 Oct 2025 03:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760929919; cv=none; b=edsZxXfWo9FU5EbcpdjccyrHvejZWxJmI+NMRZIgD5A8ZOoQwSpRBOPwPBA9ABLJhTSZ+g5wBnoCiX0dFIirYqtGqSW+v9mOSz2IFykyb7Ui7DUvXgJTW/by+B64XKC/bHPWT9aMx4KRY2/W86xKOyOIdFeCEpD5dKO0uM/gvbU=
+	t=1760929944; cv=none; b=LqDToMh+Q4CfpruO1WTczm7rZd5eHRPS+YVR0qJ7W7USASl2lFjHp3TEKPA0AfPY+5lXZLV7MEy0z8P7IDG+penGKr8muhpMtVsjtV5aEQX+kIqrLUu4U3cpddL78CmmqeGaQxES8+j/zZs+HX4UzyLs3TYIOij/ehhyMFmzVuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760929919; c=relaxed/simple;
-	bh=JGxJ9EDtb9IldvkGfflzS2SW1jZFi/djNQ+FN8dfEWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IQbeHYtEF5Yktx1hBFknE0v959ih9BJ8cHKzDlbrJ1WZ435dnzx1gnpmIRdYh4AeRJXZkUz7i8x8AzhTc/cYpBkPtRcPtQUkY/cjCYSUMFfgHLNtqg6jbXixum0GfTVc7Fp8U19ZdeFP66hA3bdutFForPUfHLLxF05QshGGKnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBAIHLHl; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-273a0aeed57so61854415ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 20:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760929917; x=1761534717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYVUw+fPmZYdBu0dYV8qfxQD/UKizDlu37nXhCW5PwU=;
-        b=ZBAIHLHlfEF/TOAw337lTpH3detd/t9rAmNnYSEr0ridSshdFYS5D95b/vuWcqfMoR
-         Xmy8xo8GskvGVsgFBlSDyu4vZNiBmtOdc3QHvuqE+hXNZCdyHnxi14oOW+71K9EAmzC3
-         ZcGHfThSWS270VtRyjO54OFNZY8wkA1D2VksSNIHA1MgjqGBycf4CLCaR0pfoJnDH7Sj
-         MBXlLaaL547LjHqdCNRNFIcMojTUyAHr1rlOGfBnLg+Rx3H7p2FqrDXobiTcl5DbaHib
-         6KSE7iLSpd83fR1O0fBdsY+dXz6UPLdmOVM7vcsnSc1Zd1FiULRhTbwADaPrlti6z/Pz
-         uCXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760929917; x=1761534717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hYVUw+fPmZYdBu0dYV8qfxQD/UKizDlu37nXhCW5PwU=;
-        b=i+YGpBWwsoxwKmkeVzsBR+SnQsLqVp395zE1k85SkREXOYK6Ha9ar0wusBfcV5MG+b
-         c8JnPy/13hqLpBPYTv5iV95l07oxJMXZoNguPy8NsAjv8LIGL0VTcWA6WumrtCooI9rl
-         7Q5dNuhYWCuEbdsi/ricfGivHrfs6PVrt29CEmHDg0aaXzV3MF5b8lrYlkWe2wXXQLN9
-         K3qzNEG0gejV+BDNs64bb79sWY7Paari/RcHzhhgmPSAledVgIHbD+DSt9l/0O1wt0jB
-         PJYMfJ/U4ZICSvjAh0L0WiMgmLozjcuaN8Scxw1w2lkuUwmGNtbOUXtfTegsjHvJizqS
-         dRQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnZ0H1TnsRP49+cDbapqrlqhVdHFGnDnAaOZ3UOuIJgq8Mf07DfjbwQ2CWRal1lTvT2JwrEFiqw8bP7ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf1ebK2aoxBoQqdX57fZRPRoupa+vOGZr7cMiHYxVyMb1EvRDV
-	uLjDjYyM4LtFp3FB+FcSNKUB1/AEoxn64Lp4FV5DeYRauWe9XfmNoEP5
-X-Gm-Gg: ASbGncsPwp0aeRg0iH/JItl54J/SiPiemfPfmcoI+EpfNPf6W3U3RGVwfFYtb/fLp/m
-	Iys2RC/BDQzSosV3ynS24vshkZ5TVZVcHdB4GtPfqHuimrxPvd8zmb/G8q8Wsn5ezhtr6pq9dv8
-	hpNAxCtzUtJxeC6p9Y9lpumUWRWEazuMYdWNcHYvOCERUY3lCbYQY0xWX5Gd7ves6w1t4vJf3xK
-	o7A4XnSR9LyyIDPJgxJIzBmGJsntvF91whKsf5aQQvbIjG8T9WpgXS0gA3sb36dAoyzRpdncgqk
-	geS+tpxUaKhXIZg9Ncvh7iiDtFzNPGWUzw6vGdkIrrxACN+Qu/9yICtZhpdcdN/rBkRkYvoYl5G
-	lLYDCKuCwTD7sgCQka09VWeeA9czq5D+rH85oBXmxOPKNQxDOACYETnIKioCAyd3imPaRvcQwot
-	ZDScYxWf3MTO18o5oLsC3apoFkKrGBQSGkt9ecxFPt
-X-Google-Smtp-Source: AGHT+IF4qiKYYrriCit52NOBwzoUaKDxVA0F/Uj9jTkB91/QV6fGlsElE56OWu3htp/1+IovxbcUZw==
-X-Received: by 2002:a17:902:f710:b0:271:9b0e:54ca with SMTP id d9443c01a7336-29091af4271mr204346835ad.13.1760929917575;
-        Sun, 19 Oct 2025 20:11:57 -0700 (PDT)
-Received: from localhost.localdomain ([2409:891f:1da1:a41d:2120:6ebb:ce22:6a12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5794sm66007245ad.53.2025.10.19.20.11.49
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 19 Oct 2025 20:11:57 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	david@redhat.com,
-	ziy@nvidia.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	hannes@cmpxchg.org,
-	usamaarif642@gmail.com,
-	gutierrez.asier@huawei-partners.com,
-	willy@infradead.org,
-	ameryhung@gmail.com,
-	rientjes@google.com,
-	corbet@lwn.net,
-	21cnbao@gmail.com,
-	shakeel.butt@linux.dev,
-	tj@kernel.org,
-	lance.yang@linux.dev,
-	rdunlap@infradead.org
-Cc: bpf@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1760929944; c=relaxed/simple;
+	bh=f6IuFtSaQiz8+JQHGBTlFmc5TjNx/7yBYYh3Vm2K3FQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pRoDiBQx7ZyQC+qJPrOgIHz6/y9jw2EqJf7Q/BCCSYKBKP3BZjD7upHBkoGA6LKIPIOGZoG0uWQCtPKUhtLEcsbZI3GKBWb0nv5jK9VvJETmBXrYRWI0GFWXA7F5FzPKYEOIjDnjFExK60En7FlUPPzOmpwpp4zsRMDqdrehKZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8febad8ead6211f0a38c85956e01ac42-20251020
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
+	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	UD_TRUSTED
+X-CID-UNFAMILIAR: 1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:c28fa9b8-aaa1-4d53-b79b-a1a5ae9da1b0,IP:10,U
+	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:8,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:38
+X-CID-INFO: VERSION:1.3.6,REQID:c28fa9b8-aaa1-4d53-b79b-a1a5ae9da1b0,IP:10,URL
+	:0,TC:0,Content:-5,EDM:25,RT:0,SF:8,FILE:0,BULK:0,RULE:Release_HamU,ACTION
+	:release,TS:38
+X-CID-META: VersionHash:a9d874c,CLOUDID:c5a9f3683d2c2f19ed87449a4201ed05,BulkI
+	D:25102011121004M9IT46,BulkQuantity:0,Recheck:0,SF:16|19|24|38|44|66|78|10
+	2|850,TC:nil,Content:0|50,EDM:5,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:ni
+	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:
+	0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_USA,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 8febad8ead6211f0a38c85956e01ac42-20251020
+X-User: huangsiyuan@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <huangsiyuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 2112434053; Mon, 20 Oct 2025 11:12:08 +0800
+From: Siyuan Huang <huangsiyuan@kylinos.cn>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v11 mm-new 04/10] mm: thp: decouple THP allocation between swap and page fault paths
-Date: Mon, 20 Oct 2025 11:10:54 +0800
-Message-Id: <20251020031100.49917-5-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
-In-Reply-To: <20251020031100.49917-1-laoar.shao@gmail.com>
-References: <20251020031100.49917-1-laoar.shao@gmail.com>
+	Siyuan Huang <huangsiyuan@kylinos.cn>
+Subject: [PATCH] rust: acpi: replace `core::mem::zeroed` with `pin_init::zeroed`
+Date: Mon, 20 Oct 2025 11:12:04 +0800
+Message-Id: <20251020031204.78917-1-huangsiyuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The new BPF capability enables finer-grained THP policy decisions by
-introducing separate handling for swap faults versus normal page faults.
+All types in `bindings` implement `Zeroable` if they can, so use
+`pin_init::zeroed` instead of relying on `unsafe` code.
 
-As highlighted by Barry:
+If this ends up not compiling in the future, something in bindgen or on
+the C side changed and is most likely incorrect.
 
-  We’ve observed that swapping in large folios can lead to more
-  swap thrashing for some workloads- e.g. kernel build. Consequently,
-  some workloads might prefer swapping in smaller folios than those
-  allocated by alloc_anon_folio().
-
-While prtcl() could potentially be extended to leverage this new policy,
-doing so would require modifications to the uAPI.
-
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Acked-by: Usama Arif <usamaarif642@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>
+Link: https://github.com/Rust-for-Linux/linux/issues/1189
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Signed-off-by: Siyuan Huang <huangsiyuan@kylinos.cn>
 ---
- include/linux/huge_mm.h | 3 ++-
- mm/huge_memory.c        | 2 +-
- mm/memory.c             | 2 +-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ rust/kernel/acpi.rs | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 5c280ab0897d..56b360a08500 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -96,9 +96,10 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- 
- enum tva_type {
- 	TVA_SMAPS,		/* Exposing "THPeligible:" in smaps. */
--	TVA_PAGEFAULT,		/* Serving a page fault. */
-+	TVA_PAGEFAULT,		/* Serving a non-swap page fault. */
- 	TVA_KHUGEPAGED,		/* Khugepaged collapse. */
- 	TVA_FORCED_COLLAPSE,	/* Forced collapse (e.g. MADV_COLLAPSE). */
-+	TVA_SWAP_PAGEFAULT,	/* serving a swap page fault. */
- };
- 
- #define thp_vma_allowable_order(vma, type, order) \
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2ad35e5d225e..e105604868a5 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -102,7 +102,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 unsigned long orders)
- {
- 	const bool smaps = type == TVA_SMAPS;
--	const bool in_pf = type == TVA_PAGEFAULT;
-+	const bool in_pf = (type == TVA_PAGEFAULT || type == TVA_SWAP_PAGEFAULT);
- 	const bool forced_collapse = type == TVA_FORCED_COLLAPSE;
- 	unsigned long supported_orders;
- 	vm_flags_t vm_flags = vma->vm_flags;
-diff --git a/mm/memory.c b/mm/memory.c
-index 8bb458de4fc0..7a242cb07d56 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4558,7 +4558,7 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
- 	 * Get a list of all the (large) orders below PMD_ORDER that are enabled
- 	 * and suitable for swapping THP.
- 	 */
--	orders = thp_vma_allowable_orders(vma, TVA_PAGEFAULT,
-+	orders = thp_vma_allowable_orders(vma, TVA_SWAP_PAGEFAULT,
- 					  BIT(PMD_ORDER) - 1);
- 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
- 	orders = thp_swap_suitable_orders(swp_offset(entry),
+diff --git a/rust/kernel/acpi.rs b/rust/kernel/acpi.rs
+index 7ae317368b00..f9488be9249c 100644
+--- a/rust/kernel/acpi.rs
++++ b/rust/kernel/acpi.rs
+@@ -42,9 +42,7 @@ pub const fn new(id: &'static CStr) -> Self {
+             "ID exceeds 16 bytes"
+         );
+         let src = id.as_bytes_with_nul();
+-        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
+-        // SAFETY: FFI type is valid to be zero-initialized.
+-        let mut acpi: bindings::acpi_device_id = unsafe { core::mem::zeroed() };
++        let mut acpi: bindings::acpi_device_id = pin_init::zeroed();
+         let mut i = 0;
+         while i < src.len() {
+             acpi.id[i] = src[i];
 -- 
-2.47.3
+2.25.1
 
 
