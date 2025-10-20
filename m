@@ -1,71 +1,112 @@
-Return-Path: <linux-kernel+bounces-860257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DF2BEFB21
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:38:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363F9BEFB2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF3034EDE81
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8806B3AEECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3222DECB0;
-	Mon, 20 Oct 2025 07:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82962DF13B;
+	Mon, 20 Oct 2025 07:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="f7TXLyY8"
-Received: from outbound.pv.icloud.com (p-west1-cluster6-host12-snip4-10.eps.apple.com [57.103.67.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kkm0ddok"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991AC2DCC04
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.67.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229A81CAA7D;
+	Mon, 20 Oct 2025 07:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760945895; cv=none; b=LhSvgTlG0NDko8Lj9+LzG2Qmu7y+/s6ypBmX1Iua/K373wz13Biimxi2///Sm4ZkgTl1A7amwQfaklWiKFrKnRDs1zqsQIRWnIwIqevLFu9JT+OpFJf0pOcOPnW1rkRMrza1dHPqI9DyvKi0cQf5GSN2Ho59WRSoUT+fhcYFrck=
+	t=1760946001; cv=none; b=f4akYagsjOmOmdaoKBM2pVdOpqV4QVQSYPobFAB4w2GMv9NQGEL436Fkk0EJxG1C8ES+AWYX9fq9SlZFCLhcewGm0Fzt2KRf2Si5ZhA7tXKVxQ2k4xHE+VfYcLsGN6d6lFA/eOMs5VXwOnBWHcMEDvkY5zmnGoJ1XjU1Uno484Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760945895; c=relaxed/simple;
-	bh=oQVrm4JM1X0wDCMXvmOHv4D9tQl39pOLC72bTquZ9bE=;
-	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To; b=rDxSjDGJYetFenq15IGhjLm7HQF5UnvueW84wp83L3Fvsbl39+vJyO7Fne9AA8t2MbVSCyuvVoJeP3fmrvQVK2BuiY9O5IC/Zbt8VMg2GsiEvffI5p9tWFUxJJnnq1+awthnvznum7uxTUvwRPqs9AZB1hpdJxq+FFuqFpMRQJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=f7TXLyY8; arc=none smtp.client-ip=57.103.67.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-west-1a-100-percent-11 (Postfix) with ESMTPS id CAD1F1800127
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:38:11 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=oQVrm4JM1X0wDCMXvmOHv4D9tQl39pOLC72bTquZ9bE=; h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To:x-icloud-hme; b=f7TXLyY8XLx03uwM4GQ6QaTlGJU7iLzXiWBTo7/3riWTFx/3ouRWV8HVbDDiuEe7bdkxHrXlh0Dkn8Y0IzDxIBhkz2mWhV/tYvD5BS8FNc7HTZu1ICc0BjPfFs/dU3DO6rSwtgt+FA6XkvoDjO7YWYMULb4zETHxcsGWhO6N5ZmgMaQcnEk0DQTzgm7r4QnekK8GXt3fEVFvjLWGKEVE2mEe1B75Cqdbi1WjDMTAW4vraWWQCloeHv+2/ebbSdYSVoWyqp/4sih/RrytmYlARxC5qLmEh+/rZsTTrYAwam3InTgcVKweZiwHpHphsEjXyR2iXXWSYjl+Wb/MctvTTg==
-Received: from smtpclient.apple (unknown [17.56.9.36])
-	by p00-icloudmta-asmtp-us-west-1a-100-percent-11 (Postfix) with ESMTPSA id 3023C18000AA
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:38:11 +0000 (UTC)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-From: Isaac Johnny <ijohnny2025@icloud.com>
+	s=arc-20240116; t=1760946001; c=relaxed/simple;
+	bh=8AB0aRAm0ze3OaVTlrRfLVBpXJVJY1X3VC4HOg9SU5I=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Yw/eG9RUgV3oz/WIRL6jjGTYfyZl4UXMxXSELJxviEJM4UdrqgXR3CQaGEpDSY1XtzVpSKncuiHwaGLpkRxG0jA1NOa34ofFDkbonIurT9L0juv9//xzHhIn47KYFSp2bzQIav+sKegGSrL87NcTzJx3+dewirHElaWlc+96rHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kkm0ddok; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216A6C4CEF9;
+	Mon, 20 Oct 2025 07:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760946000;
+	bh=8AB0aRAm0ze3OaVTlrRfLVBpXJVJY1X3VC4HOg9SU5I=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=Kkm0ddokeTX7LPGVhU2fIoS7cd/6rusOF+Rm5EmKIXYnBlzQIiDjSzSYm7r+azOIV
+	 hSWbJpDHvDswIRl/kwGspYlp4vBobWIWLlpD6gXmY0HJdqR5k5mXYVNrXc3H0RnylK
+	 AQmD7NBI6CCZlQN+5tp82GsuDp+ESC1j0f9rWLchIuPwSozIqUiqwsc9h+GS8Ryex6
+	 Pn6Orks6mnm1ks4WY11+uE/63BM84PFTMynWe9YzGfnFyuYV2lvFQZ79PdNYc37bfg
+	 Chgyzk2ih/ljQ1S6Mq5yxKmPpxPCHuNpoomhzXJ7XibVOchOj7loZMUneQ75bDyWce
+	 dRMVwe54+BLeQ==
+Message-ID: <1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
+Date: Mon, 20 Oct 2025 09:39:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Date: Mon, 20 Oct 2025 00:38:10 -0700
-Subject: Stacks
-Message-Id: <AB84F8F2-B8EF-4B6F-B52E-7A81B838EC21@icloud.com>
-To: linux-kernel@vger.kernel.org
-X-Mailer: iPhone Mail (23B5044l)
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIwMDA2MCBTYWx0ZWRfXyj/ggCHk36j9
- I/xSEl68fFhcTuVBwh2+h1s8jOi2VWFdqUtFlIuUWPZIgH5Dew3zbl+UhHbOjn0DKrEfcNTMI7u
- J8zkVoFL2UX3NfAFnfhXFydWsLa8wOaklok1sjqX0VuU3l9s3LCpjJBsW3Zl2FCGlL5/J+I+OeX
- D10H95v1QUpOjGZ3TT7iPyVagRgxnhh7Svhb4w0tP52b9BNCK4CLFF2L/bAf7ucHXf6kL0b1xWW
- PYqbndpg/zhDudzay0/I6ZZrK7ufmBlS92fRsOzY4Qk2MdeO/hCylT/gv+pshr/T8KDncbK8Q=
-X-Proofpoint-GUID: BAwN-EgN9nymfPz0mubL-diZoKrAMZJa
-X-Proofpoint-ORIG-GUID: BAwN-EgN9nymfPz0mubL-diZoKrAMZJa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 mlxscore=0 bulkscore=0 clxscore=1011
- mlxlogscore=548 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2506270000 definitions=main-2510200060
-X-JNJ: AAAAAAABEeyFhItMAg/H/jLUGiFOUEyYHF6jUR8ipAKcdTR4kDFxeUfJ8E7EjVoXwU3buWFFD6ttLfd2ASUX0ALuz5BT1Qc7v3slmQC8SQ7SxgP9PTnSi/AWT6gUnax58sQ2dlJtGX71Fn+qW6n9M6dPe+JpLVarPJbFIIPpn01xXDsFRxUMSVCvz2V5j5ZCvBSfgnJq27tz9K/Mqm5pjetkQ8EJXwcHJaCWMl6Yal+8ZNz1VTkdCoJFCr0GZFeF1CnRstRw2qBs2CG6/9UMxYw19J6xPpmAfwBMT7gtBWwugr/WUZpTeTscV58GovGkPEg/QOnomPo3PGx0E/jVK9aQeGClf3sMQXYnbyYTIKf4mwx6VK2SDHOEpISL71ynClAcIWPILnTO50hRSbyEzGFLLyLUFjnYZWo2aLVq1/BzBBATZuOThTSweP65+xxOMqPJqOelbrOEboL0kAtkEdcumFQGK6OQWjVZDkmXEHVUfBNqt6ChMKGkquW3G2oAMrLUappcxcm7LXQDkKxAepR5PkWv9FD3F+tqfAuwMV73UvQhnXaGh4phOfOqIvKdraVeR1+J+GSd+RwyPjI9DAlO5t9bJEsZ6kPI4azeww==
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
+ legacy fileio is active
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tfiga@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+ Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
+References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
+ <20251016111154.993949-1-m.szyprowski@samsung.com>
+ <36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
+ <84133573-986d-4cc8-8147-246f0da34640@samsung.com>
+Content-Language: en-US, nl
+In-Reply-To: <84133573-986d-4cc8-8147-246f0da34640@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 20/10/2025 09:34, Marek Szyprowski wrote:
+> On 20.10.2025 09:11, Benjamin Gaignard wrote:
+>>
+>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
+>>> create_bufs and remove_bufs ioctl calls manipulate queue internal buffer
+>>> list, potentially overwriting some pointers used by the legacy fileio
+>>> access mode. Simply forbid those calls when fileio is active to protect
+>>> internal queue state between subsequent read/write calls.
+>>
+>> Hi Marek,
+>>
+>> I may be wrong but using fileio API and create/remove API at the same 
+>> time
+>> sound incorrect from application point of view, right ? If that not the
+>> case maybe we should also add a test in v4l2-compliance.
+> 
+> Definitely that's incorrect and v4l2-core must forbid such calls. The 
+> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending 
+> v4l2-compliance tools is probably a good idea.
 
-Sent from my iPhone
+Yes, please! A patch is welcome.
+
+ I also wonder if its a
+> good time to add a kernel option to completely disable legacy fileio 
+> access mode, as it is not really needed for most of the systems nowadays.
+
+No, that will break applications. Using read() is very common (and convenient!)
+for MPEG encoders such as the cx18 driver.
+
+The fileio code is not blocking any new development, it's just there for those
+drivers were it makes sense.
+
+Regards,
+
+	Hans
+
+> 
+>  > ...
+> 
+> Best regards
+
 
