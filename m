@@ -1,75 +1,138 @@
-Return-Path: <linux-kernel+bounces-861386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29871BF299D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:05:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13144BF298E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9130E3A51B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:03:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B454634300B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0890433030E;
-	Mon, 20 Oct 2025 17:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2RvImse"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E9719F115;
-	Mon, 20 Oct 2025 17:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A328A1E6;
+	Mon, 20 Oct 2025 17:04:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD0219F115;
+	Mon, 20 Oct 2025 17:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760979776; cv=none; b=i0HROKl0wMCK564qide68VdibaAnSzH5d3SLlbzpPYh2qZd9xmeEIRLxOaoVpDRTG/U6L6tnnBg7NjxlEwoxH1sy0Rhi/qfJg7kQOCp8f6ex9bYBctxmiXqCAPlNzet8n3AWUCADqata3LDC2/x22CW01c8Yo+WQgbbxGkYYbbw=
+	t=1760979878; cv=none; b=osRIJFZ37ccyhZPi8GqdWway6MyEc6KEf0/JjLEgIW6mUUIGAlxlNk4q5WDRpTXg3Aq/Gkj8MqQHbzevAG7dixQ5wDUeTUkt2BIzHIOHSl+u9dAa9vHWrKhZwD5P0aeyfI8Ty4T1+V9deB/YBIy9obOpzxeg2KfEH3GAuneKYOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760979776; c=relaxed/simple;
-	bh=b/uijNLG1Y9w1QbpfiKv/5ZeoIftCLv6RAYHd+pnw4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQsMtusgDF6i87LZmPzHKCry9aWiISjTcY/Abg+DHdlB1/qEHuRFMTDGwanMLk+4H9AsJa+bm72X8Cnwg+d8pdOXUucYTYslq4f3s1k44HWZFyatcM74N+hYDWOS555A9L9JBjOSITi/iA96ldPRQ0DLW6Vl8KGjvvOu1i8PZZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2RvImse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C637DC4CEF9;
-	Mon, 20 Oct 2025 17:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760979775;
-	bh=b/uijNLG1Y9w1QbpfiKv/5ZeoIftCLv6RAYHd+pnw4c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S2RvImseKwLZ+2THSpBFZGArEcQPDjx0Pz0vSju19B29hCIUWiUl5o+QWZ43eHDGA
-	 qCRyTR3D4JaMVOhb+jGNqqn+3aGhCtsdJTOHtQFBH+FBkce6Jdf5HA29iku4oQpbGj
-	 APp4GwT0NDMI1nOn731I8hG3hC93tOVnhprmDXIAu9kpzH2ImJfSBe9m8DztvPqtoy
-	 WhMxH2X9pgb3zhDs4QqvNddzmnGxOf3KWPbtXZHjAYaeyws4fIPtp/7FLf4fNU2GOo
-	 7n86iNWQDrLuY/lFerBHfwqDTMYkfLx3kZ6sBsFaACfQoeN63Ge93DunOfzOUy+TF4
-	 lo40uhVYn3e0w==
-Date: Mon, 20 Oct 2025 07:02:54 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Waiman Long <longman@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chen Ridong <chenridong@huawei.com>
-Subject: Re: [PATCH 1/2] cgroup/cpuset: Don't track # of local child
- partitions
-Message-ID: <aPZrPh1NoyncWPA8@slm.duckdns.org>
-References: <20251020023207.177809-1-longman@redhat.com>
- <20251020023207.177809-2-longman@redhat.com>
- <57cf1fbe-8356-4c5d-864a-20b07d63de72@huaweicloud.com>
+	s=arc-20240116; t=1760979878; c=relaxed/simple;
+	bh=t4SvdQdtF+gXT4T2MbXED1Pj3P07F+eclBTZIQ/ninU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K4pYUeGX2gm+oMGGUqbddhUKfF6M9FaDtQwnletYWELVwK4Aq8jXrFsnQRBkYRmEibh6q4O/MibDKmW9V6tSGm6LBiuGAV0TouV1Il/c4jwBdZ6DgOa2PpMMFmSDZI6SB8kcZBnpFeZRflzuYeVp+vMk40P1kY917Q3Lq1QYRYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C22391007;
+	Mon, 20 Oct 2025 10:04:27 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B8AF3F66E;
+	Mon, 20 Oct 2025 10:04:30 -0700 (PDT)
+Message-ID: <9ad95fa5-6f1d-4c31-a6c6-41c1e9cc5c20@arm.com>
+Date: Mon, 20 Oct 2025 18:04:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57cf1fbe-8356-4c5d-864a-20b07d63de72@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 20/29] arm_mpam: Allow configuration to be applied and
+ restored during cpu online
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-21-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251017185645.26604-21-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 02:57:38PM +0800, Chen Ridong wrote:
-> LGTM
+Hi James,
 
-Can you please use either Acked-by or Reviewed-by in the future?
+On 10/17/25 19:56, James Morse wrote:
+> When CPUs come online the MSC's original configuration should be restored.
+> 
+> Add struct mpam_config to hold the configuration. This has a bitmap of
+> features that were modified. Once the maximum partid is known, allocate
+> a configuration array for each component, and reprogram each RIS
+> configuration from this.
+> 
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> ---
+> Changes since v2:
+>  * Call mpam_init_reset_cfg() on alloated config as 0 is not longer correct.
+>  * init_garbage() on each config - the array has to be freed in one go, but
+>    otherwise this looks weird.
+>  * Use struct initialiser in mpam_init_reset_cfg(),
+>  * Moved int err definition.
+>  * Removed srcu lock taking based on squinting at the only caller.
+>  * Moved config reset to mpam_reset_component_cfg() for re-use in
+>    mpam_reset_component_locked(), previous memset() was not enough since zero
+>    no longer means reset.
+> 
+[...]
+>  
+> +struct reprogram_ris {
+> +	struct mpam_msc_ris *ris;
+> +	struct mpam_config *cfg;
+> +};
+> +
+> +/* Call with MSC lock held */
+> +static int mpam_reprogram_ris(void *_arg)
+> +{
+> +	u16 partid, partid_max;
+> +	struct reprogram_ris *arg = _arg;
+> +	struct mpam_msc_ris *ris = arg->ris;
+> +	struct mpam_config *cfg = arg->cfg;
+> +
+> +	if (ris->in_reset_state)
+> +		return 0;
+> +
+> +	spin_lock(&partid_max_lock);
+> +	partid_max = mpam_partid_max;
+> +	spin_unlock(&partid_max_lock);
+> +	for (partid = 0; partid <= partid_max + 1; partid++)
 
-Thanks.
+Loop overrun. This was correct in the previous version of the patch and
+the same shape of loop is done correctly elsewhere in this version. I
+think it would be good to standardise on using either:
+partid <= partid_max
+or
+partid < partid_max + 1
+I have a preference for the first as you don't need to think about the
+size of the type.
 
 -- 
-tejun
+Thanks,
+
+Ben
+
 
