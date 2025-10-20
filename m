@@ -1,192 +1,155 @@
-Return-Path: <linux-kernel+bounces-860163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41504BEF781
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D82BEF7A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F2A84EC962
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:27:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782C33BC634
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F366F2D7D2F;
-	Mon, 20 Oct 2025 06:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8152A2D839C;
+	Mon, 20 Oct 2025 06:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dMloM3ZW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CsYIZdYF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PbtyOGx7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="82t5Hqqb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="ueHfJGWH"
+Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE871FF7BC
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7610D2D8382;
+	Mon, 20 Oct 2025 06:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760941618; cv=none; b=i2ZAcCY54O6jzEvv4QJvdGaBjbTxUiPqpXC6yeSaZv/aBm4Ows40qeyw30KMxIVtfwRzmoV6K/uVEaL3RLuTz6w+NsG3RgIuPrpuukkOIfGg+lNqnV9lEoeRBkGO/cVQJTsuY/JQscZVk+inCk+32KymqEutvLTKUDnkCBTq0Ys=
+	t=1760942010; cv=none; b=g5pGcA3Bytgr2pSudlsn4lKLneYEIRa+CeNaB4qxhnZycBxxdLMAyKXu3sn/e4ddWNXkiNnU3/XQnrsYvgwibxFiimyH7gtkjZyPN6QL7+NIZZreNNoeiPP0Rm0bMVBREw1h+OKYe7UxjSYOmzJQbPoPh97Kc9Opdkt0vcPu2Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760941618; c=relaxed/simple;
-	bh=Y7oPMtJrSkgzcDkDUXrl1adMlzaw2yFIZNdP7wPImH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LwwNNBS+C0Y3EgHIgTxXHW6MdnFSfxfQPdm5pWTsEbNW04HI7v33dBJ8+APzhQ28Q4Pn0+xVtE15rX/qD2fSM/D/XsjbN0hMLpTrRM+NFPawW4Fg9y61DCbhrwZn04LLaaREORdPFJ0Dy9Q2RhZOedyLBEXNGxnS9jnPrAednKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dMloM3ZW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CsYIZdYF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PbtyOGx7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=82t5Hqqb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C4E9C1F385;
-	Mon, 20 Oct 2025 06:26:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760941610; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8GhDny57eeVjp265ieqriz/8GKP0/zLR1etZvWz0m/k=;
-	b=dMloM3ZWltZg1oxrcq10APyPykbFxI1MbRS6HJiOiZq0e+fTX4XMWzd/MKcFpYwo7dgjTz
-	rPFJ+eKQpX+4Xl7fASFgr2GrO3xWgxFBzbZH7WeuLvfCER+PjPVYBMuOTh5W9m7Pqzh8fP
-	+EYOc6XLqQy5M5EZGtV9u2lraq/bZBo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760941610;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8GhDny57eeVjp265ieqriz/8GKP0/zLR1etZvWz0m/k=;
-	b=CsYIZdYFxWokW+trpZI5TuXwoyU0Z8ToPH8Zfq5hIpAdkLqbiW2gH+jrjh9f8rGpAaTpJi
-	Dki7lbJQCoCbYLDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PbtyOGx7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=82t5Hqqb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760941605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8GhDny57eeVjp265ieqriz/8GKP0/zLR1etZvWz0m/k=;
-	b=PbtyOGx7q9mKGcOQXt+lRM7cfFZaQpKARZxFlqjXoERt2iEiBYRvsTstjKubwHgbb9k/5i
-	C8tQJZNt45QomBcVY4ukLj09UyESNBURFRYfdBWWnHd8lJ6Ucwxb1c/Xwvkbd2P06Niee0
-	Znn8c1GuMTkT6shnLo4PS5glT2XmoEY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760941605;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8GhDny57eeVjp265ieqriz/8GKP0/zLR1etZvWz0m/k=;
-	b=82t5HqqbHl2EBRDpP3926ihZ0wJB0ZQwDqmheuCU3ftelKPa4WXmQ/aXyCVvPUokup5N03
-	DrKcU/eNteHoFBDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3CA5413A8E;
-	Mon, 20 Oct 2025 06:26:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Fb3jDCXW9WiSWAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 20 Oct 2025 06:26:45 +0000
-Message-ID: <17154023-868d-4889-b499-a334d360e8e8@suse.de>
-Date: Mon, 20 Oct 2025 08:26:44 +0200
+	s=arc-20240116; t=1760942010; c=relaxed/simple;
+	bh=FEzwsFOvy/v03ZLbtJebqy/hxjdZUwkW0eHimLl/uoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fkzKmTVkVjsOSZ/tdAdVkPkHZVj5oo/2wxlqrpEKjCkNWMnUjWuUk30OcVQrSlJwFT9GHVJSQbeVkdraIj2beqxLexvR5we0iL6EChkGtuPFXgDndWOXNVuRLO40m+cZkoIUuYUTC5ZBMWM96Ae+LB8YKIR1seuOPTwQE2dVb+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=ueHfJGWH; arc=none smtp.client-ip=178.154.239.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:9297:0:640:61e7:0])
+	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id E04B8807EF;
+	Mon, 20 Oct 2025 09:31:26 +0300 (MSK)
+Received: from i111667286.ld.yandex.ru (unknown [2a02:6bf:8080:980::1:37])
+	by mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id MVO5mf3Ft8c0-jVpMFkLv;
+	Mon, 20 Oct 2025 09:31:25 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1760941885;
+	bh=nQTyHQD6nvJXJ6KJs/5NsdeNIuMnINOnwCKFZIX+qw8=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=ueHfJGWH4XWJPqU6rRlON860DNELB0YS/LlZaMALjNi0SaooMCjZb6k7XmoeZdEbY
+	 N4Kr5A5W6miwSNB5E5NBvc0AlquMNyPBhu5ZQ8fdREhGtRTIJbglJ3RjALkyEG7vSg
+	 mvND1cPmSy6kFhM6VreCjH1VRmUEo6cfuGJpmDJQ=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Andrey Troshin <drtrosh@yandex-team.ru>
+To: lvc-patches@linuxtesting.org,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrey Troshin <drtrosh@yandex-team.ru>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] comedi: Make insn_rw_emulate_bits() do insn->n samples
+Date: Mon, 20 Oct 2025 09:31:22 +0300
+Message-ID: <20251020063122.2007-1-drtrosh@yandex-team.ru>
+X-Mailer: git-send-email 2.51.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] nvmet-tcp: Support KeyUpdate
-To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
- kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
- kch@nvidia.com, Alistair Francis <alistair.francis@wdc.com>
-References: <20251017042312.1271322-1-alistair.francis@wdc.com>
- <20251017042312.1271322-8-alistair.francis@wdc.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20251017042312.1271322-8-alistair.francis@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C4E9C1F385
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com,oracle.com,kernel.org,lists.linux.dev,vger.kernel.org,lists.infradead.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:mid,suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
 
-On 10/17/25 06:23, alistair23@gmail.com wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
-> 
-> If the nvmet_tcp_try_recv() function return EKEYEXPIRED or if we receive
-> a KeyUpdate handshake type then the underlying TLS keys need to be
-> updated.
-> 
-> If the NVMe Host (TLS client) initiates a KeyUpdate this patch will
-> allow the NVMe layer to process the KeyUpdate request and forward the
-> request to userspace. Userspace must then update the key to keep the
-> connection alive.
-> 
-> This patch allows us to handle the NVMe host sending a KeyUpdate
-> request without aborting the connection. At this time we don't support
-> initiating a KeyUpdate.
-> 
-> Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> ---
-> v4:
->   - Restructure code to avoid #ifdefs and forward declarations
->   - Use a helper function for checking -EKEYEXPIRED
->   - Remove all support for initiating KeyUpdate
->   - Use helper function for restoring callbacks
-> v3:
->   - Use a write lock for sk_user_data
->   - Fix build with CONFIG_NVME_TARGET_TCP_TLS disabled
->   - Remove unused variable
-> v2:
->   - Use a helper function for KeyUpdates
->   - Ensure keep alive timer is stopped
->   - Wait for TLS KeyUpdate to complete
-> 
->   drivers/nvme/target/tcp.c | 205 ++++++++++++++++++++++++++------------
->   1 file changed, 143 insertions(+), 62 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+From: Ian Abbott <abbotti@mev.co.uk>
 
-Cheers,
+commit 7afba9221f70d4cbce0f417c558879cba0eb5e66 upstream.
 
-Hannes
+The `insn_rw_emulate_bits()` function is used as a default handler for
+`INSN_READ` instructions for subdevices that have a handler for
+`INSN_BITS` but not for `INSN_READ`.  Similarly, it is used as a default
+handler for `INSN_WRITE` instructions for subdevices that have a handler
+for `INSN_BITS` but not for `INSN_WRITE`. It works by emulating the
+`INSN_READ` or `INSN_WRITE` instruction handling with a constructed
+`INSN_BITS` instruction.  However, `INSN_READ` and `INSN_WRITE`
+instructions are supposed to be able read or write multiple samples,
+indicated by the `insn->n` value, but `insn_rw_emulate_bits()` currently
+only handles a single sample.  For `INSN_READ`, the comedi core will
+copy `insn->n` samples back to user-space.  (That triggered KASAN
+kernel-infoleak errors when `insn->n` was greater than 1, but that is
+being fixed more generally elsewhere in the comedi core.)
+
+Make `insn_rw_emulate_bits()` either handle `insn->n` samples, or return
+an error, to conform to the general expectation for `INSN_READ` and
+`INSN_WRITE` handlers.
+
+Fixes: ed9eccbe8970 ("Staging: add comedi core")
+Cc: stable <stable@kernel.org> # 5.13+
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Link: https://lore.kernel.org/r/20250725141034.87297-1-abbotti@mev.co.uk
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[Andrey Troshin: backport fix from drivers/comedi/drivers.c to drivers/staging/comedi/drivers.c.]
+Signed-off-by: Andrey Troshin <drtrosh@yandex-team.ru>
+---
+Backport fix for CVE-2025-39686
+Link: https://nvd.nist.gov/vuln/detail/CVE-2025-39686
+---
+ drivers/staging/comedi/drivers.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+index fd098e62a308..816225d1e1a4 100644
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -620,11 +620,9 @@ static int insn_rw_emulate_bits(struct comedi_device *dev,
+ 	unsigned int chan = CR_CHAN(insn->chanspec);
+ 	unsigned int base_chan = (chan < 32) ? 0 : chan;
+ 	unsigned int _data[2];
++	unsigned int i;
+ 	int ret;
+ 
+-	if (insn->n == 0)
+-		return 0;
+-
+ 	memset(_data, 0, sizeof(_data));
+ 	memset(&_insn, 0, sizeof(_insn));
+ 	_insn.insn = INSN_BITS;
+@@ -635,18 +633,21 @@ static int insn_rw_emulate_bits(struct comedi_device *dev,
+ 	if (insn->insn == INSN_WRITE) {
+ 		if (!(s->subdev_flags & SDF_WRITABLE))
+ 			return -EINVAL;
+-		_data[0] = 1U << (chan - base_chan);		     /* mask */
+-		_data[1] = data[0] ? (1U << (chan - base_chan)) : 0; /* bits */
++		_data[0] = 1U << (chan - base_chan);		/* mask */
+ 	}
++	for (i = 0; i < insn->n; i++) {
++		if (insn->insn == INSN_WRITE)
++			_data[1] = data[i] ? _data[0] : 0;	/* bits */
+ 
+-	ret = s->insn_bits(dev, s, &_insn, _data);
+-	if (ret < 0)
+-		return ret;
++		ret = s->insn_bits(dev, s, &_insn, _data);
++		if (ret < 0)
++			return ret;
+ 
+-	if (insn->insn == INSN_READ)
+-		data[0] = (_data[1] >> (chan - base_chan)) & 1;
++		if (insn->insn == INSN_READ)
++			data[i] = (_data[1] >> (chan - base_chan)) & 1;
++	}
+ 
+-	return 1;
++	return insn->n;
+ }
+ 
+ static int __comedi_device_postconfig_async(struct comedi_device *dev,
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.34.1
+
 
