@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-860498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A1EBF043B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACA6BF040F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF53618A00F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3BB188A471
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710A62FDC38;
-	Mon, 20 Oct 2025 09:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BCB2F692B;
+	Mon, 20 Oct 2025 09:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYC0cjCO"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y4jtNaxJ"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BE82FCC17
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDD32F5306
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953208; cv=none; b=iHLgXrp0BfpmUvAKmJ3e6YYYimJ9HZT8IPBEB4KUfCst0wibDmRJp6YJ83EpphTVyXCiT2itT+JcI7vtJfkgn7CB4SmRW3q3m7RpV6lNH+4KzyeZG0dAnvy20awsYXH1JtFBATeQtfdh7htGwlyZv1FZDEJ3RtGuhTqiTHLbkrY=
+	t=1760953191; cv=none; b=X9uAxg1j4h/PysIOCkfkVqLNR8RKYKUx7uGTy/lXh9EYb8bGFyuVx+jhVhBDdduew4Sk/Rx9EbMzpgEAGX1v7ERYeCdzID4xRYbKCiWkNCXnX+pSJL1o5FQ3EeWD1uAb4HXmQVaHgXxneO3gATK4tr1FB7CVNBhZ0/LmAFZpkWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953208; c=relaxed/simple;
-	bh=UMitIlA2M4WXFaslfg7FKwsyM5qUsWB8ogi61DvsqC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p6ZOiO4CrKiGQIfjR1IclWB3z66aUfDb7NQvJqI+2K1Q3jwwY5RHmT3F5GUN/v9jvQevkKl2OM+E7aNaS16sg6YGFqCLBTf53lOtNSMp32aakjM7Cr8bsGLbuumDoZ8Z1AmdMpUfwxaHpejodO7y+HaYHGDBpBdIb8T8cARVYVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYC0cjCO; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so4205381a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:40:07 -0700 (PDT)
+	s=arc-20240116; t=1760953191; c=relaxed/simple;
+	bh=rlReUiN8izqYmd/SmC7+ZVqul99jLDzgi/035/wGtbo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ttboxL7CKyv/ep3YXKfkV7ORkLPfzzOVFUX18nYQudCiSRe7c+Zy8ycEOXS67kUVjGlh17/AisRK/LKM916/kGRPyTrfbea5iwrgjIk9cC9U6WNz7O5deZvHk3GKkqpWdjSCAqZIVra10xa43RKNBBQEBiJ640nvfEq99SSMEM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y4jtNaxJ; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-471144baa7eso15047165e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760953206; x=1761558006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kH/+6EWs5O6C4gBrSqboPsAfsrt+0avNoGpNPf0X1zc=;
-        b=RYC0cjCOXkoKU/JgkO2g2RDERiSW6ZAvMJagsFWwZesmcfiTypv5D/BzrVx797HsdG
-         bGFYdhvKyHJVvO9dgOSCCLWFqwCurM2z8mVC+f5mi06Ox/mhTx49/AJMes4F7i6ROT8+
-         agRMvZtXnGGn4w4oXj2aLRNr/GYIgBjRdbkaU2ZZhyfRdWjVnEC338OlnAFQW8hDDZI1
-         9hAHlFK2dGBoLwJE47iHW89mugfQls0tKFy7sJwVvYv5R8dZGSg12laoLNpxSkb03/RF
-         5g8hY4UWTJYdhN0BCcubuiKRw1ANf4URl1O9nyOBxqq6EcIZO+ul76F/hfytzwOwXQJh
-         M1uA==
+        d=google.com; s=20230601; t=1760953188; x=1761557988; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4W5fx1xJzyywPWz2TPx9643bFzzuinQiyCivwzQn5o=;
+        b=Y4jtNaxJVPZWk8SH4JKF3xFR/zX7krmxiIAyt0dQRz7V5QjadhvCcB6sXEewKVHT16
+         fZWTkLA0s/7l1+sFOksomXThh37CuZqwJQj6MQhtZWaQ8dND9IemAEBVe9aSoqUWlmDk
+         bR2pyaDTgJIV2eLGIJ5B7cCD4U+9DhdpzHW/6uTkFUuUuscGF4p1SfCo4F9g5sazA9+B
+         CTuHK+6HcJ/9hBY/7U7Ohex36JM12B9DRQulEPpIXdLd140QzZsVfK0zWYqkK4kmA/Hz
+         +nG31MusMEVBsW0fY6fludhkW7+nxyJjy4vaoey5/Ga2znsjfQK/hwHnu0B5+Ot0ekvi
+         fLRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760953206; x=1761558006;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kH/+6EWs5O6C4gBrSqboPsAfsrt+0avNoGpNPf0X1zc=;
-        b=MxR0yu4DWXyB4tGR87bI7BgX3pl0675XP8VC6cR1yx7Ha6yRPgNai2XDqw9rvxlKrq
-         0aYnflPWF2ABhsRPrEb/0zP+DjTzpgr1mZURxxF3dxMWQWKdrwa5tiQYyfS2BiKA2E/n
-         hHVm0VBX2SSd384ojkDxyqD78iIFY/PU6diu4ut5eRX/tO8Q+2tjWRsWi9qkLJMuQpd7
-         Umq3BEZ/KobF/EOij3/ZreWJ6xQMqy2lFqW5Ut4iLIZSc2qbrPSmYghdej39ASNVM5Nw
-         5vREuuUm/dLv4u50axMUP3PyCqm1YIZA7cd+FcxS25/rrQcYk9FrgHBmfufH5JzSyCrU
-         Z8Vw==
-X-Gm-Message-State: AOJu0Yx6YSe/8SKGMuzGmU5gBUeKZF1V9zJnG8zEVUHE4d3vBYsVjhtj
-	zb8rVzCqVOBId+XujKwugZTMmlrWAAkYJ7LbyHuio6V9GtWvYgCgNeWP
-X-Gm-Gg: ASbGnctzFLfynSd3Dj4f0dgz9uUbLzyBZjliVufnzfMJ9saHKfh41qKyGPPslCFJTY7
-	GatEZTtYSpwEukYatE6z0tSApj7ew+s9gCn+g/8nXvtrqKGawyoNA/Bkj6aZ/U//HuQKGx8YEgQ
-	oXhXLjGrGu6QETZHK7ojV/yqkZCmE4P6oLdO8I8cnzUSlFf/I7gfHnAxiUECU3L3nTbmpkoED+V
-	G5GT/uY1Nf9MOx5zCFhBiBkZsDU66jpUBnD45R9rV3SlinJ/i8AKVEQ4BOyhp+gWTLszZFajXLm
-	Bs60aZABsO84WQPwRzHEcr/Jpi3GCBHqgtZQyLIUvHtufZdGwosObQtk5/Uh9/iUBAMO+H3AU38
-	j1oIYgCsquxxOuhdPQzib45HI0s2eKnIiZuj2HUc29Hid4ZyO6/IrMv/vwj51gNr5hQpz9SDnTe
-	gH9nPtua9TPbhzEDCSr70LER/A20A=
-X-Google-Smtp-Source: AGHT+IG2Wxz9mrCktw0rxT6tFvVvYsqONsh7h6jzym46SEzftpP3aJXfFuuE4RwM1VODUU/DgDWoJg==
-X-Received: by 2002:a17:90b:2882:b0:33b:d8ad:b69c with SMTP id 98e67ed59e1d1-33bd8adc731mr14497209a91.3.1760953206522;
-        Mon, 20 Oct 2025 02:40:06 -0700 (PDT)
-Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5de8091fsm7617200a91.19.2025.10.20.02.40.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 02:40:05 -0700 (PDT)
-From: Donglin Peng <dolinux.peng@gmail.com>
-To: ast@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Donglin Peng <dolinux.peng@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Song Liu <song@kernel.org>,
-	pengdonglin <pengdonglin@xiaomi.com>
-Subject: [RFC PATCH v2 5/5] btf: add CONFIG_BPF_SORT_BTF_BY_KIND_NAME
-Date: Mon, 20 Oct 2025 17:39:41 +0800
-Message-Id: <20251020093941.548058-6-dolinux.peng@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251020093941.548058-1-dolinux.peng@gmail.com>
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+        d=1e100.net; s=20230601; t=1760953188; x=1761557988;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4W5fx1xJzyywPWz2TPx9643bFzzuinQiyCivwzQn5o=;
+        b=Xvci/X/5e3g0AJMyCCtjY4BpI+Fj+KLVbi3C23N/XuwkkDkVO2sAWe9W5mhBdwZSn+
+         vY/CGRzBw8YttrxdbFxXF73nyVs6jM5nsB7dpms4RBABjNZYbX+iLNL74gTqF7+FcFXU
+         G1zzLVvOd9LdIZaCvSHiSwa0qygowa3lgZ77jEZ1RWh1a9Oixc6Isj9GGSTrRo3Nc1nj
+         IXqc6hSORP2edBhOcCzWBffgIp7GH1tw+Yi8Sc3NBjZ3QixWrBXqNMowQUBbLA8q588B
+         db5niDn/EMXLpc+eZfB15bCN1z5RYaYKUcAg/XuO7Xmev2VHZi5Jbv2Ba2k86p6P/Dky
+         3plg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyW9bsRxkbkzTyWgR+b4lD+Yz8JoLAJps3qpeFezwbnpRCEoTqIcoG5JdERsBhtRm/A/ExzEtg0oRxf/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbAeSnAZ9/aQD6qUfUINx+K8cVYNMU9WO8ZTshgqw9Oy0lrDda
+	+iD5PIzLZkUgAay1mB3rSdUY6HJSswV8UNmrqe+JnkZvzXCShiD/H8BrvBxbb6Oi0AmjFOzlazH
+	4RUfCE/Bfk/WNAHiWzA==
+X-Google-Smtp-Source: AGHT+IGDfA53NxhNSHfMk6oo7zPt81rPlpVd0hfiY49P2Ld6yI2Vye275tLp0hNs/aO1TCjCrUYUSSRhhc2pYnY=
+X-Received: from wmwm9.prod.google.com ([2002:a05:600d:6349:b0:46f:aa50:d70b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1914:b0:471:c72:c7f8 with SMTP id 5b1f17b1804b1-47117907a52mr85563345e9.21.1760953188498;
+ Mon, 20 Oct 2025 02:39:48 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:39:47 +0000
+In-Reply-To: <DDN1PLK58C34.2XF7BCBQNAW5X@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-4-dakr@kernel.org>
+ <aPI9tNoh0I3KGDjl@google.com> <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
+ <aPS0aTUUwDsXmHFN@google.com> <DDM9EDPP7XQN.2SW537AZ7DAZ9@kernel.org>
+ <aPXvJPcSgZdNlGtB@google.com> <DDN1PLK58C34.2XF7BCBQNAW5X@kernel.org>
+Message-ID: <aPYDY8mdHWjyOU3l@google.com>
+Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Pahole v1.32 and later supports BTF sorting. Add a new configuration
-option to control whether to enable this feature for vmlinux and
-kernel modules.
+On Mon, Oct 20, 2025 at 11:35:15AM +0200, Danilo Krummrich wrote:
+> On Mon Oct 20, 2025 at 10:13 AM CEST, Alice Ryhl wrote:
+> > I ended up using i64 for simple_read_from_buffer in iov.rs instead of
+> > loff_t. But if they can differ, then yeah let's introduce a loff_t type
+> > alias.
+> 
+> No, I don't think they can differ (I used i64 in earlier version that didn't
+> make it to the list as well), but I think it could still make sense to indicate
+> the relationship with loff_t. When I see an i64, an offset into a buffer is not
+> the first thing that comes to my mind.
+> 
+> What about uaccess::Offset?
 
-Cc: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alan Maguire <alan.maguire@oracle.com>
-Cc: Song Liu <song@kernel.org>
-Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
----
- kernel/bpf/Kconfig   | 8 ++++++++
- scripts/Makefile.btf | 5 +++++
- 2 files changed, 13 insertions(+)
+Hmm. That seems wrong. loff_t is a *file position*, so it should go in
+kernel::fs, right? We're only using it in uaccess/iov because they
+happen to have utility methods to help with implementing fops entries.
+None of the "base" uaccess/iov functions use loff_t for anything since
+they deal with sizes in the address space, for which usize is the
+correct type.
 
-diff --git a/kernel/bpf/Kconfig b/kernel/bpf/Kconfig
-index eb3de35734f0..08251a250f06 100644
---- a/kernel/bpf/Kconfig
-+++ b/kernel/bpf/Kconfig
-@@ -101,4 +101,12 @@ config BPF_LSM
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+config BPF_SORT_BTF_BY_KIND_NAME
-+	bool "Sort BTF types by kind and name"
-+	depends on BPF_SYSCALL
-+	help
-+	  This option sorts BTF types in vmlinux and kernel modules by their
-+	  kind and name, enabling binary search for btf_find_by_name_kind()
-+	  and significantly improving its lookup performance.
-+
- endmenu # "BPF subsystem"
-diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
-index db76335dd917..3f1a0b3c3f3f 100644
---- a/scripts/Makefile.btf
-+++ b/scripts/Makefile.btf
-@@ -29,6 +29,11 @@ ifneq ($(KBUILD_EXTMOD),)
- module-pahole-flags-$(call test-ge, $(pahole-ver), 128) += --btf_features=distilled_base
- endif
- 
-+ifeq ($(call test-ge, $(pahole-ver), 132),y)
-+pahole-flags-$(CONFIG_BPF_SORT_BTF_BY_KIND_NAME) 	+= --btf_features=sort
-+module-pahole-flags-$(CONFIG_BPF_SORT_BTF_BY_KIND_NAME) += --btf_features=sort
-+endif
-+
- endif
- 
- pahole-flags-$(CONFIG_PAHOLE_HAS_LANG_EXCLUDE)		+= --lang_exclude=rust
--- 
-2.34.1
-
+Alice
 
