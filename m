@@ -1,162 +1,218 @@
-Return-Path: <linux-kernel+bounces-859958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D7BBEF0B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF4FBEEFBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2631898CB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125413BDB94
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532231CAA7D;
-	Mon, 20 Oct 2025 02:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC8519F40B;
+	Mon, 20 Oct 2025 01:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="De83mhfT"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+/VWC64"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156E7260B;
-	Mon, 20 Oct 2025 02:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE45A41;
+	Mon, 20 Oct 2025 01:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760925744; cv=none; b=dXSFDJD1g2zd0xWbdVQ5tbdVTRJ1+4QzqeaZxJK3ng3t0kqrHozq6vHs9EYRe2cWgPEC0G9sYrwZqdHfC4ObqUuJWNTJV72e6lNrO+DI/gFjSb3yg82G0ltTk+0VJ/9PJA7hGrOENAWSJ906UHJrIleyZsXEi7fcy1CdKCYo14E=
+	t=1760922949; cv=none; b=sSQU11Nb6BiV6wDh6AZCLG4HYkVsO43GmJ84NaQk6lH45LZEaMkjRwxc5Vcn5dkZ2L5GLSiY7Yp3NUhy+2yxXRecMgcVr/V8brNvup1fC5ZEqNRD73b9pxp3V761IBGaPYbmuvqCU8Zg/mpcW2rddoZWulgknbc/AA2IcO6dFTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760925744; c=relaxed/simple;
-	bh=bZpVhHp5/N6pg05JlUoGB10FHYF1j6tBORdhLrGRSxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UaP4ZPxORAYtxV0PtR+c6d0RaCvA75tOWrdeBspRjXiSifDl78pEVJj1le/+vwr2r6mzBncmR+jbylSKgI0PMi/YldQQyopv1gmZoiLGXVDC8JRZ8DCl9Hj0sa+tQNR9tkLg9dpcu1t1wgPDA9djQn5oo6AWNsDM/bCbhh28BkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=De83mhfT; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1760925733;
-	bh=tDrZLdBW9vlAha4ObE832pRI4SlMcSGwYcFakX4Jvgg=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=De83mhfTB+SMEL6FoSqATpUvVrkiDPhKn6HyC6bJVQqN267SDmcEASKZNcKVh7NxT
-	 uWvc0rfh+vSDxQspenowFGe8RkdHVQHzUtssil7AlYXxuZdeE90XBVxJKpnxFuc07Y
-	 4yw9uuIH/jPfQzOoWtXqLySt5rvk08CQA0mkUA78=
-X-QQ-mid: esmtpgz14t1760925726tab82be72
-X-QQ-Originating-IP: JztUbLLiixmarjYZDA3tn8Rw/nWdOn2trEbtlH9vQgE=
-Received: from = ( [14.123.254.135])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 20 Oct 2025 10:02:04 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14701641022016592372
-EX-QQ-RecipientCnt: 14
-Date: Mon, 20 Oct 2025 10:02:04 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Yixun Lan <dlan@gentoo.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	s=arc-20240116; t=1760922949; c=relaxed/simple;
+	bh=gL9/JJOqDZox0KhkXGA9Y0Yl9yLi9pSxD507wytw9BY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bCQSBnSVpSQN5WtVC6jQYksa2A7T6L45Q76MvjXld0Z8/lgMOfzZRZ962pPvAEOAco3Dq0D4KhUXZ6VC+dOAMB0Znzlo4ih/QUq4GWPvumDP1udsApPZu8gk50wkAUM68LwePN3bOIWyeTaRlst7hZ7O4/x6DcvXblALoLk6fuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+/VWC64; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760922948; x=1792458948;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gL9/JJOqDZox0KhkXGA9Y0Yl9yLi9pSxD507wytw9BY=;
+  b=W+/VWC64a8WLyA44qwaIJIYkerSNN0r+2KaARlWIUSi94POIyWhuyiEw
+   cgnTVZych/xlfH3NsUQ1/ygJoPxczjAZyzhgBR/1zbxL5x5uCPK5AOH0a
+   7H82HKQM4Af74MDgh6Q4Xvm63U4jr2WvaFF1b7TTEB086n4fohqIeBhin
+   FiiO0wSFgRl5smvNbg0bQNxzEgUbXEtYIva1tVUrYIGshhGpin+CTT+yO
+   EVmMEJXD9bpwjxxg611rdKTSrMhnqt5pznLtSP9Og6EBX5BTFDO6hDrWN
+   i2v4mY1PV2EogJHd/+PPQ7EfQHGiG+TT1HUkS2G5ITOea8p8C6M3GRysg
+   Q==;
+X-CSE-ConnectionGUID: g4+N4iHKQry2/ImbpGPi1g==
+X-CSE-MsgGUID: vXfM8LblQcSg85sqRBpgVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62961271"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62961271"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 18:15:48 -0700
+X-CSE-ConnectionGUID: sPQCH4hQTQ6T0ln3vyvO7g==
+X-CSE-MsgGUID: MIuepHY7SMeAFCC4nPXblw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
+   d="scan'208";a="182401372"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by orviesa010.jf.intel.com with ESMTP; 19 Oct 2025 18:15:43 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Namhyung Kim <namhyung@kernel.org>,
+	James Clark <james.clark@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] riscv: dts: spacemit: add MusePi Pro board device
- tree
-Message-ID: <52A7E982E5B11F53+aPWYHMbImTxJy7pJ@kernel.org>
-References: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
- <20251017-k1-musepi-pro-dts-v3-2-40b05491699f@linux.spacemit.com>
- <20251020015204-GYF1506524@gentoo.org>
+Subject: [PATCH v3 1/2] perf tools annotate: fix a crash when annotate the same symbol with 's' and 'T'
+Date: Mon, 20 Oct 2025 10:14:33 +0800
+Message-ID: <20251020021434.29082-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aPRbfdU92XRLR-2N@google.com>
+References: <aPRbfdU92XRLR-2N@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251020015204-GYF1506524@gentoo.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OZuCtzQljvyFKuNQakQ7M3sjvikqrVpqIEbHbxF5wYR0meBpsYDvDp1L
-	VkJHO4tcXB0zAQcytdg8kzmfcNfPpzmfhRGJrwEcMkT1lsu7ZHy5ljLgkQ+r/HQG649Evzj
-	T6RRJlSMaWlaKigKm6tgn6JH/bV/1NZM1+QbvalNkfjx+CRqpiy+IZ41v/dsMdbv5UT9/dO
-	51qzuX7zOhmHPCTPfwkBsiqYh9zIAndWtPLAGBzitNyAVtlcQtFWrqHf604AebN72ILHgty
-	H3lGa5FUQEVZm7KylWrxZk2eVLB+Hx0kOtgvLocwF0/W6UCcTQ3BdZ0q1/a1uUkA0gVJWJ0
-	9g6QUmJezDqiRXNFpWhgplWA7YT5fHTz0fPp/6ZHpj6QZMteWn0HONI4AqC59KrW25LGAHH
-	OUdYbtCwm13TOsb/kRk5a1QCy3Ann4B8QV9W0D03ELWj6UoHaGNKO0wDLOvRz3lWIGtl6Xt
-	GlTFCos0b0ZZZPlLl590iryuagPn9jvICRHTecT7YmrsE8yOMFGHvCq9FpLoM9TTN/heYMK
-	aKlpawBRbCUNLX0xXSxPy7aaWP9nk9Jpk8br04EHpu/KqebAu+EwOccvE+MfwJ5zt4RhgqJ
-	AEo+/o1xlHlk1g4d6yiv0yO+bbByct8tpzyd/ph5FtPhViBKd3+gUXympzPoVh5uenmqqLF
-	5oH69vViqfqjdVGOXbDEyMUcW5gEm5NgdQ0TxpfRejeLSE1W3rU6Hm+OA2y+NzB6sff34vr
-	tIJz7C4O6sLW2xv+07vj2nc5H11NYUtkLfCjfjH9ckghGh/rrLZP0FBJ/lH6lM26WCILOx3
-	W4gdy4aOQMQjzdHIGnM7OfAn9scJN9xe8Zwsi2KW9mHWXD4pRguc9K6SHwJ9gyg9sRAXFHQ
-	rxnC2CnUv8HsTqh0ARGJNZ/oAFlcyh3wV9cY7L3JDuZKtAm46xvhK17Ss4VFkTEG3hvZeA7
-	ImIMkqcvOuaKrkKBPEsaTLlWisZS77XQCRrv319dC2xlI1zEpkE0MDjd8a0/FTq4TWAcX4m
-	DR+5RKsusLQ2gSXurmu+AyEUizhJJFfq/cwdBsKghe8Me4hLiZwgSHxMGTR7fekX7I0R6ns
-	E1Js0ycw0Il
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
 
-Hi Yixun, thanks for your review.
+When perf report with annotation for a symbol, press 's' and 'T', then exit
+the annotate browser. Once annotate the same symbol, the annotate browser
+will crash.
 
-On Mon, Oct 20, 2025 at 09:52:04AM +0800, Yixun Lan wrote:
-> Hi Troy,
-> 
-> On 13:52 Fri 17 Oct     , Troy Mitchell wrote:
-> > Add initial device tree support for the MusePi Pro board [1].
-> > The board is using the SpacemiT K1/M1 SoC.
-> > 
-> > The device tree is adapted from the SpacemiT vendor tree [2].
-> > 
-> > Here's a refined list of its core features for consideration:
-> >   - SoC: SpacemiT M1/K1, 8-core 64-bit RISC-V with 2.0 TOPS AI power.
-> >          This suggests potential for light AI/ML workloads on-device.
-> >   - Memory: LPDDR4X @ 2400MT/s, available in 8GB & 16GB options.
-> >             Sufficient for various workloads.
-> >   - Storage: Onboard eMMC 5.1 (64GB/128GB options). M.2 M-Key for NVMe
-> >              SSD (2230 size), and a microSD slot (UHS-II) for expansion.
-> >              Good variety for boot and data.
-> >   - Display: HDMI 1.4 (1080P@60Hz) and 2-lane MIPI DSI FPC (1080P@60Hz).
-> >              Standard display options.
-> >   - Connectivity: Onboard Wi-Fi 6 & Bluetooth 5.2. A single Gigabit
-> >                   Ethernet port (RJ45). Given the stated markets,
-> >                   this should cover basic networking.
-> >   - USB: 4x USB 3.0 Type-A (host) and 1x USB 2.0 Type-C (device/OTG).
-> >          Decent host capabilities.
-> >   - Expansion: Full-size miniPCIe slot for assorted modules
-> >                (4G/5G, wireless etc.). A second M.2 M-Key (2230) for more
-> >                general PCIe devices (SSD, PCIe-to-SATA, comm boards).
-> >   - GPIO: Standard 40-pin GPIO interface, as expected for an SBC.
-> >   - MIPI: Includes 1x 4-lane MIPI CSI FPC and 2x MIPI DSI FPC interfaces
-> >           for cameras and displays.
-> >   - Clock: Onboard RTC with battery support.
-> I think you've already gave an overall description for MusePi board in
-> patch [1/2] which is sufficient, in this patch you could better focus on
-> what it actually done here? enabling mmc, ethernet, led, pdma, uart..
-Yes, I'll remove these.
+The browser.arch was required to be correctly updated when data type
+feature was enabled by 'T'. Usually it was initialized by symbol__annotate2
+function. If a symbol has already been correctly annotated at the first
+time, it should not call the symbol__annotate2 function again, thus the
+browser.arch will not get initialized. Then at the second time to show the
+annotate browser, the data type needs to be displayed but the browser.arch
+is empty.
 
-> 
-> > 
-> > This minimal device tree enables booting into a serial console with UART
-> > output and a blinking LED.
-> > 
-> > Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
-> > Link: https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
-> > 
-> ditto
-> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-[...]
-> > +++ b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-> > @@ -0,0 +1,78 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +/*
-> > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-> ..
-> > + * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> this isn't a big problem, but I think it would be better to use SpacemiT
-> Corp's Copyright, to reflect you're not doing as individual contributor..
-I understand. Since I originally wrote and now maintain this DTS,
-would it still be acceptable to include my own copyright line along with SpacemiT’s?
-Or company-only?
+Stack trace as below:
 
-                                       - Troy
+Perf: Segmentation fault
+-------- backtrace --------
+    #0 0x55d365 in ui__signal_backtrace setup.c:0
+    #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
+    #2 0x570f08 in arch__is perf[570f08]
+    #3 0x562186 in annotate_get_insn_location perf[562186]
+    #4 0x562626 in __hist_entry__get_data_type annotate.c:0
+    #5 0x56476d in annotation_line__write perf[56476d]
+    #6 0x54e2db in annotate_browser__write annotate.c:0
+    #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
+    #8 0x54dc9e in annotate_browser__refresh annotate.c:0
+    #9 0x54c03d in __ui_browser__refresh browser.c:0
+    #10 0x54ccf8 in ui_browser__run perf[54ccf8]
+    #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
+    #12 0x552293 in do_annotate hists.c:0
+    #13 0x55941c in evsel__hists_browse hists.c:0
+    #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
+    #15 0x42ff02 in cmd_report perf[42ff02]
+    #16 0x494008 in run_builtin perf.c:0
+    #17 0x494305 in handle_internal_command perf.c:0
+    #18 0x410547 in main perf[410547]
+    #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
+    #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
+    #21 0x410b75 in _start perf[410b75]
+
+Fixes: 1d4374afd000 ("perf annotate: Add 'T' hot key to toggle data type display")
+Reviewed-by: James Clark <james.clark@linaro.org>
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+---
+ tools/perf/ui/browsers/annotate.c | 23 +++++++++++++++++++----
+ tools/perf/util/annotate.c        |  2 +-
+ tools/perf/util/annotate.h        |  2 ++
+ 3 files changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 8fe699f98542..ac85df1020a1 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -852,6 +852,18 @@ static void annotate_browser__debuginfo_warning(struct annotate_browser *browser
+ 	}
+ }
+ 
++static void annotate_browser__symbol_annotate_error(struct annotate_browser *browser, int err)
++{
++	struct map_symbol *ms = browser->b.priv;
++	struct symbol *sym = ms->sym;
++	struct dso *dso = map__dso(ms->map);
++	char msg[BUFSIZ];
++
++	dso__set_annotate_warned(dso);
++	symbol__strerror_disassemble(ms, err, msg, sizeof(msg));
++	ui__error("Couldn't annotate %s:\n%s", sym->name, msg);
++}
++
+ static int annotate_browser__run(struct annotate_browser *browser,
+ 				 struct evsel *evsel,
+ 				 struct hist_browser_timer *hbt)
+@@ -1149,10 +1161,7 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 	if (not_annotated || !sym->annotate2) {
+ 		err = symbol__annotate2(ms, evsel, &browser.arch);
+ 		if (err) {
+-			char msg[BUFSIZ];
+-			dso__set_annotate_warned(dso);
+-			symbol__strerror_disassemble(ms, err, msg, sizeof(msg));
+-			ui__error("Couldn't annotate %s:\n%s", sym->name, msg);
++			annotate_browser__symbol_annotate_error(&browser, err);
+ 			return -1;
+ 		}
+ 
+@@ -1161,6 +1170,12 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 			if (!annotation__has_source(notes))
+ 				ui__warning("Annotation has no source code.");
+ 		}
++	} else {
++		err = evsel__get_arch(evsel, &browser.arch);
++		if (err) {
++			annotate_browser__symbol_annotate_error(&browser, err);
++			return -1;
++		}
+ 	}
+ 
+ 	/* Copy necessary information when it's called from perf top */
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a2e34f149a07..39d6594850f1 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
+ 	annotation__calc_percent(notes, evsel, symbol__size(sym));
+ }
+ 
+-static int evsel__get_arch(struct evsel *evsel, struct arch **parch)
++int evsel__get_arch(struct evsel *evsel, struct arch **parch)
+ {
+ 	struct perf_env *env = evsel__env(evsel);
+ 	const char *arch_name = perf_env__arch(env);
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index eaf6c8aa7f47..d4990bff29a7 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
+ int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
+ 			     int num_aggr, struct evsel *evsel);
+ int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
++
++int evsel__get_arch(struct evsel *evsel, struct arch **parch);
+ #endif	/* __PERF_ANNOTATE_H */
+-- 
+2.47.1
+
 
