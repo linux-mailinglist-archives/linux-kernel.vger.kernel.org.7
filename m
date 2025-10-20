@@ -1,125 +1,196 @@
-Return-Path: <linux-kernel+bounces-860815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F25DBF1082
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:14:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9ECBF102E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944613B4DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC29D18A3455
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B1D30506F;
-	Mon, 20 Oct 2025 12:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE3303A27;
+	Mon, 20 Oct 2025 12:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="RsZoBfFS"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="snpfilPQ"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011054.outbound.protection.outlook.com [52.101.62.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F4431282A;
-	Mon, 20 Oct 2025 12:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760962373; cv=none; b=ZlU6tQANKy179SehAMHcmpAsl4uOz4fryoZXRB+BwErryVVOg903wd+n4Nn0yLaI2MOqO1IeXDqofICB9JMn7uAA8dbTdh+xT38NHV1B42pPC74vuxDx5X29WLKFe5Fq2O96mlpdNruVrehWXOEoFbBHRt2IiZgwzNXAJ2RfHkI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760962373; c=relaxed/simple;
-	bh=MkKQdDsYP+tI7FujBY/HKFKDArIAcjnc8c//TsyZKBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcvTMNhOGbmPlfIFRxMt7Tpk6IMjbGpbCgZ4vfKiM7SMMEiHdXKtKeaStcE5Wu3XxoGA+dJ5Gpu9ZVZDbx6bWU1SW3BiKmOElE6ffeey9JwfkYNEdIFFhtR0F2P9CtFS7BXdoE/IdL194Y9D1I+viI7fWa+ZsjEDcPBSrc2Ke0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=RsZoBfFS; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ltyj1FS4gis+7LWdtGx1ofBO64mHrGOTJDhLLZcoo1Q=;
-	b=RsZoBfFSULMxuDGRzNdZ6yeAHhKdHnDbRwmQ720VL1Q3YexqnLILbCbWeQ5fw2
-	DcwQfwwPOgPGAKXk0qK08aCrEBDlYK8cQgLd/2Oizde2Eqx08MMSjY8yPMF5BApb
-	WmXpKm1i+c3YGrhWd5SxIVg/lJs1254wbQ88c25dvDAJw=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgD316EQJ_Zo4qRTAA--.26839S3;
-	Mon, 20 Oct 2025 20:12:02 +0800 (CST)
-Date: Mon, 20 Oct 2025 20:11:59 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Yannic Moog <y.moog@phytec.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de,
-	Teresa Remmet <t.remmet@phytec.de>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v5 0/4] Add display overlays for imx8mp-phyboard-pollux
-Message-ID: <aPYnD25ljde33_tq@dragon>
-References: <20251013-imx8mp-pollux-display-overlays-v5-0-fb1df187e5a5@phytec.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B0325FA0A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760962354; cv=fail; b=WinmpHS3UJaBqn2Jm+QDxh9x9ikymVO8sQxvM7RZTwYgZE4yOgG8qkm//jVdi94Xc20/9tARoZ/vIVBYJckwekcA+ZhW35mH3Gy2WyPd7LVs+tf1uvuOi0qu0VeRQLsNpQb0lKL+O1hmho1OoQLUqZOx/d0tFCsb1kMX1YzVlws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760962354; c=relaxed/simple;
+	bh=NoTbEgiLHtqTcH7s0/DXzpHFKRpQB7euV8ovOzdheUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=I2SoggvzLjAtYsL59GM1cz504GGVlEZXxtDb5N8m8Q+3O2rijrVhZ/+cZLSlwStDxCWAF5tLPvrCJS23v9brPAiaIo5WMtWkq88o+qBnd3Jc+kC1Nt7ThyQYFGAlfQnjjnwbTPV2XQnEbpTvmnZL2FBi+7OkScsHxu1rE+UOg00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=snpfilPQ; arc=fail smtp.client-ip=52.101.62.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ks/csCaaZh7pyHqmtPwmTS030cl93VQqoo7q7qy/zVLNWIUKZCSo4zjd0oIX1y3SAPQBLbHiMnj7oMsbDFymoXhkShiZdC3tW+EAZnT6I0+EVGRLqrWHfWbXwaJ2JY0vfX3d5Wm1CZ9j34KzCrfxelmXJ9HUbGpqtX4H3UceYAlIlOqwhPkG2J1HhV9P5cCYbSa5u2FCs2tisnl/USRwffgYJuDc5EbtF+qGJ6nluZ+3G2wcFDTxjYNQAl9wD2/GQA0o/YSqqmp4lsbGEbX+Sth9mnR3hx7e90LdPl51pxHYNdK0hGBkLi1TLARWcCODYh9nPj6RpS+lVpCgNGREoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5bxjB334lq2cwp/dJxagqzzbGZudoVRk26pRjV3j57k=;
+ b=CNHGIrA0QVMeGx7x0NV5olHQ0eGG3J4NXao2J0Cn1fr/DPUfzrcDXtMAt4MC2LbQQIPvRhsVVqO08hK60u0m/w+rRYTrs67LBuADj9+SPQ0B7R0CInlN++dtGE5oV1aDB38bQ1hka6jKzR5JnRICmkt+qzXNbBOV11nQfDTfDoB2N4ToFfAQAWlzDr08lDKiEbU53bgFEwUXmsNTfpxWz/RAYXM12Bk/DJNR21tEwp32OHiWQP621yDEsIIj2v3iRpnkkAGaMPmnqB75D4nuB52tiez4wJeJUfuOwGC0dIod+hV8uNDiq0hqhb2/bzk4XuN9jv9UTXQXEd7wlRj8Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5bxjB334lq2cwp/dJxagqzzbGZudoVRk26pRjV3j57k=;
+ b=snpfilPQQTlhHlZ7hFVkJKYEz+WT4eeXpH5w+9NcgceNTGeA8n8wRe8G/W+r/mNHO49ZnjlmDJrJwRjUUr/eOFuBFDsZJ8MjccacLXTLKI9yT/iIoqDq3lhOWA/WZn5FNAF0wBAK8P2Y2D4ZsVq6wEUdeXcUxiQEiTNTlg7yxpV7UNjD33r/05AC0I/83x4qLhJ9ykP/srKytLyQO27hOkyIugaEpVLn6Im8jaag2u9juTtbgquuoF2FqrFDpayHrlRTBSvc6cvx/IW6dvMeF0FkkV094CO7GKn11RIdvUPT+wzWziuoOoIi42Z6JQdK1x+OEb5BV6mx4ItMte9RfQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by MN6PR12MB8470.namprd12.prod.outlook.com (2603:10b6:208:46d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 12:12:27 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 12:12:27 +0000
+Date: Mon, 20 Oct 2025 09:12:25 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kernel test robot <lkp@intel.com>, will@kernel.org,
+	oe-kbuild-all@lists.linux.dev, jean-philippe@linaro.org,
+	robin.murphy@arm.com, joro@8bytes.org, balbirs@nvidia.com,
+	miko.lenczewski@arm.com, peterz@infradead.org, kevin.tian@intel.com,
+	praan@google.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] iommu/arm-smmu-v3: Populate smmu_domain->invs
+ when attaching masters
+Message-ID: <20251020121225.GK316284@nvidia.com>
+References: <14d76eebae359825442a96c0ffa13687de792063.1760555863.git.nicolinc@nvidia.com>
+ <202510172340.XyneWIPI-lkp@intel.com>
+ <aPKxBh14fxnVIXK+@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPKxBh14fxnVIXK+@Asurada-Nvidia>
+X-ClientProxiedBy: BN9PR03CA0478.namprd03.prod.outlook.com
+ (2603:10b6:408:139::33) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013-imx8mp-pollux-display-overlays-v5-0-fb1df187e5a5@phytec.de>
-X-CM-TRANSID:Mc8vCgD316EQJ_Zo4qRTAA--.26839S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtr15trW3JFy8Gr4fZFyUGFg_yoWxtryxpr
-	y3CryUur4S9r1xArnxXwsagrWqyws8Aan5uw13C34kKr43uFyDA3W7Grna9rWUZF4xtw4f
-	XF48Ary7Wr1UXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joeHDUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNBKlC2j2JxIThgAA32
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|MN6PR12MB8470:EE_
+X-MS-Office365-Filtering-Correlation-Id: a8dfd62a-3d28-4f62-350f-08de0fd1ef3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MagpK7QC+4Jm0qof2cPDSJWP/Hyv4A16rpiCJR7prSwzQxC4U4wOI7ATi36K?=
+ =?us-ascii?Q?9f6iWXKqqbi2+mY6uMVlY7Qc3AxikTwbmPzmlnSonzaKbuikmoi5BhQtQI0l?=
+ =?us-ascii?Q?qT7vDvrWD+0Qolh0V0brayKPsfrSZEyZMFjHLxTV8ay9ZAloijfy+V/LFlXn?=
+ =?us-ascii?Q?q1j/eYfNC0VrTT35k4xAG9TjTrjeW9skdvg4TinPN/HigU0xgYjx+2Z9v1kF?=
+ =?us-ascii?Q?UpCz/Qd5uwmE+f9QrWEgnnBov1NZOON3/CLulqxoqtXMYXW4UIVJXNzrpY9S?=
+ =?us-ascii?Q?cJ78OsDrrAvOhHaw2s1FIBO/cMCHnH9NUOfqHp0OUgqYxhSSdXgtVbcSNOCn?=
+ =?us-ascii?Q?9Lu1LPU25oGIN4wCiE7/GiqvFA5bDaxBqWDiqZgdzd1zjo5WpbutgG3ichNc?=
+ =?us-ascii?Q?Y0WF4S4ghNfxCWTAQYnh/puUK5hbvaC7SJRytHl3TSJXgLauU0Bt6luGOFQo?=
+ =?us-ascii?Q?/u3r81TaMiGPAo3MNWHtGn3aJMDbHJD3ZKndAgOHJLAHZV3lrrRgZCwGLqku?=
+ =?us-ascii?Q?5nGssjgeSkuZkW6iQP1AIOjPazFJ/Nj6XHgAaMp+z5mmYteXyAZngpTkqM67?=
+ =?us-ascii?Q?YOqbtgDSWG5gU59Wg8Z1dd2IBwf3w1nB6f8Tcjsw3BSDl20qqCtm789QbCBu?=
+ =?us-ascii?Q?mEKq81oCPmc4KQFk6evv9B2/t+3Xcjv/+bVuxKCNoWxi2p/ADkh/zMPVs4qQ?=
+ =?us-ascii?Q?eLR7LFCCtrF2vta4/r+l5zYXfRWJZChAugIMLwSeY9dRtQDreTzMl0nZ8AWA?=
+ =?us-ascii?Q?Bb8tEvq/A7kO+fBdl/pD3K3Bu6G9my3YMDJQ3eWEW3vx0q22fG/f347BGpdA?=
+ =?us-ascii?Q?S+Vv00xY4MfokPBfvmfs/TestahAr+PnRo2OxOVs2PWSnPC2IrqYYmxXAC21?=
+ =?us-ascii?Q?exdgwe5JTnZDUyn3ZG8AyWl55AxHlo4sStzOVUr7eD19nmeLIkSBCtpjRMlf?=
+ =?us-ascii?Q?1XhsPBOdYs5y7hJOV3eBok6R32dlJ0HWfnodAM+IYQ1eiWJqTPUfBj00qAiS?=
+ =?us-ascii?Q?ReNMnvHITpnVR4oAl1nbNrLWKe053aSYDJC/X6zcK7x9hwoBPLzA4lWh1Eg0?=
+ =?us-ascii?Q?X8OLF1/YZr4a5TTYjSbal29TidfFhpgd/bWWLl5u9NdLNk6VQhWsDFNWTGif?=
+ =?us-ascii?Q?QbsouCMFx1Ga0Rt62v9CEuXJbECkZ2vcOBXMju/4QBdYVBnIVodv9phzY0g2?=
+ =?us-ascii?Q?w8HMFCACm4nwDYPAf7TCIz5WF1IRvmebNlFrn6K2tbeHxMfDpxaFikA4sonJ?=
+ =?us-ascii?Q?npLyE9SPzfux//npkv9UGU180SeYgU0s0mB0ZbRLcGpAGh0u5cpsUfhcXRRP?=
+ =?us-ascii?Q?59r5p9KX4CrXwD712rjW4InMLxRgp1oyJrJ+hZNFEWvr8Q2r3q9l8F79p9Bb?=
+ =?us-ascii?Q?XXvlX1CSughtlgPq6w8vo/UwxXFRBZrSAtaQa6Wh4c4QyMNovompk5oggJ1k?=
+ =?us-ascii?Q?lZIKx2T8oW3Hm8XxkMQHNTo+RlEujhzP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BQc0jB32WRlg+Hnnv5gCZI2DEAHLQbg1VkKoY4Cn17hRCL0M9TYu23dE10Cf?=
+ =?us-ascii?Q?COjYFhJPghuDnuEZ/c21tDQmrWh0i4UO62mAeGiLv52/CsWZHW9IYL3xaJbi?=
+ =?us-ascii?Q?94TGsbxNj0ItCre6FABVDFYfOhY5nphB2YEJAtWNGFRVsZRJT3jDzZD0B8Pr?=
+ =?us-ascii?Q?qnxcPdRONzJOkEHwJaT2UBImsy9atga+qL8NeinUxawIkF5R1tiUmKmuvk/B?=
+ =?us-ascii?Q?PBcH2SMM1Iyn76Zecx3TdXL4YPVFpeMSdJUSavCSfRlKnHh6wub/+J011aRp?=
+ =?us-ascii?Q?msNa5eZxTYKGX8wYCxiMU60Q46Qi8a7FfCQI1vSsKl7tNqRavwMAEusOVWDZ?=
+ =?us-ascii?Q?AeWnnQ7eMEn9Tf18Up4cFsIOkDvj9tepqptpXv7oOXWPKuBNDI6yrUWDpkRh?=
+ =?us-ascii?Q?3grfvgDn+OfgsR+mwIbSR9p+K0qxzEye74WVmvwPleNb2P7RK9iS9WVOvrEq?=
+ =?us-ascii?Q?oGaMDbdzDZJKPyFC/AGb6H1a8UuClfat+HpRw4xn8EYqzfe5x9YMpfLzHLjn?=
+ =?us-ascii?Q?HiwqiJE6iicCGa/zt7jO4rUG4pRK9RPoToLOLgPCUJAs7eFglQXKyyoEB8rv?=
+ =?us-ascii?Q?iliHgp8G0F6F2D/Ho2pmaaatirmZnL4gmrs14SwPpSVjgJ9EX21Aknfc4m8C?=
+ =?us-ascii?Q?4OfT0Au+7A+8jzfw7/zP9RNk0srUeoY8QZxpDrVcbNsBx1uS3rYuqGKAaBoE?=
+ =?us-ascii?Q?XhaPRUkcjLPjErW6XmXFBEhzFnOAqIhonWQ4iUO+vpXg64JCI9hkVQ51Uk4O?=
+ =?us-ascii?Q?yr8xdeQ3ZaSG0wtxmOiDtIl/wOaxLy2ZJDxT0bmqbfT1zwhnQxld8Nhe3ep0?=
+ =?us-ascii?Q?9mbF57z7R3gA4HTgbgCkHyw88EvKAGEeBUkkr6gMMesyogsCfhXfOv4HSu8x?=
+ =?us-ascii?Q?OnvdZAhUVp2JYzD52HmjRE8KwYRJwYofkBmuUFeMMf7aLXPwkU2X28ztyaEJ?=
+ =?us-ascii?Q?i3vzdzvpK//fy4GssocuOBUXXLKgA1WBsVgucpwOiW9VGS5rPUHq1M/3YYOJ?=
+ =?us-ascii?Q?eDuOypj/nTOj7nTfspGm951nvxvBuVk67z0ItAf70qcfTl5LK9RtVPvrtqTw?=
+ =?us-ascii?Q?O6lYbTNlYFdEFEwbQ25ZmpXTEi8QAL1wtlNJIO22ehkUaFXZKPIXtKgIvCvg?=
+ =?us-ascii?Q?kuVHPGUZCUQt+Kzvp/rW3d3XRfGMl5OoHzQBexULC89b26V/rkKDIQ/hzn3U?=
+ =?us-ascii?Q?yiS68+T6xtZstNj/AArjcG2W/wSu1pYUeFLZOsCjyQVy9uoXF42MjXRfFh1p?=
+ =?us-ascii?Q?y99wUitXhi7Dv0GrQuQ+b7cENwtUA1KCLs5yG3hYSwuZmEk0DhaWlz8s3QLN?=
+ =?us-ascii?Q?J8lttNdtGu1pAt91lt+rjZj6viUEGSkDOR4YeUZHNWLvzTMeh+RWE8hLZKZ7?=
+ =?us-ascii?Q?KeCnEk1P4tBVL9rHzEKUd44eIrxF2N80MNWdql3WhkI4XYk7T1wlJ8p16D1+?=
+ =?us-ascii?Q?cIWc54OaiXXnMAgk56vjFuWtW6D0tCgByn+GXu6z1tzG4NC8gjiKat2WB3Ut?=
+ =?us-ascii?Q?7Ozk/hMAPVee65B7YfkoaPLZYzsC/nsbCokelJ7nQx/pZDmRhAmyJub0clUt?=
+ =?us-ascii?Q?CWoVS/Lz05IL7c7+PKPJMkfdsNT3uwvJ4pF66oHA?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8dfd62a-3d28-4f62-350f-08de0fd1ef3f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 12:12:27.1184
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yyBIVAbQcQ8RABOjTodi0gi6mqtoS/+3h7WeDBFEZr7YmBa9nZ+vTbvDvmscjpcf
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8470
 
-On Mon, Oct 13, 2025 at 08:25:05AM +0200, Yannic Moog wrote:
-> Yannic Moog (4):
->       arm64: dts: im8mp-phy{board,core}: update license
->       arm64: dts: imx8mp pollux: add display overlays
->       arm64: dts: imx8mp pollux: add expansion board overlay
->       arm64: dts: imx8mp pollux: add displays for expansion board
+On Fri, Oct 17, 2025 at 02:11:34PM -0700, Nicolin Chen wrote:
+> On Sat, Oct 18, 2025 at 12:03:27AM +0800, kernel test robot wrote:
+> > sparse warnings: (new ones prefixed by >>)
+> > >> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3208:33: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct arm_smmu_invs **invs_ptr @@     got struct arm_smmu_invs [noderef] __rcu ** @@
+> >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3208:33: sparse:     expected struct arm_smmu_invs **invs_ptr
+> >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3208:33: sparse:     got struct arm_smmu_invs [noderef] __rcu **
+> ...
+> > > 3208			invst->invs_ptr = &new_smmu_domain->invs;
+> ...
+> > > 3247		rcu_assign_pointer(*invst->invs_ptr, invst->new_invs);
 > 
->  arch/arm64/boot/dts/freescale/Makefile             |  15 ++
->  .../imx8mp-phyboard-pollux-etml1010g3dra.dtso      |  44 +++++
->  ...mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtso |  45 +++++
->  ...8mp-phyboard-pollux-peb-av-10-ph128800t006.dtso |  45 +++++
->  .../imx8mp-phyboard-pollux-peb-av-10.dtsi          | 196 +++++++++++++++++++++
->  .../imx8mp-phyboard-pollux-peb-av-10.dtso          |   9 +
->  .../imx8mp-phyboard-pollux-ph128800t006.dtso       |  45 +++++
->  .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   |  52 ++----
->  .../boot/dts/freescale/imx8mp-phycore-som.dtsi     |   3 +-
->  9 files changed, 411 insertions(+), 43 deletions(-)
+> Looks like we need:
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index 8906c1625f428..398d8beb8f862 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -1105,7 +1105,7 @@ static inline bool arm_smmu_master_canwbs(struct arm_smmu_master *master)
+>   *            to_unref argument to an arm_smmu_invs_unref() call
+>   */
+>  struct arm_smmu_inv_state {
+> -       struct arm_smmu_invs **invs_ptr;
+> +       struct arm_smmu_invs __rcu **invs_ptr;
+>         struct arm_smmu_invs *old_invs;
+>         struct arm_smmu_invs *new_invs;
+>  };
 
-Can we do something to avoid the warnings?
+Isn't it:
 
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:102.3-16: Warning (reg_format): /fragment@1/__overlay__/codec@18:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:117.3-16: Warning (reg_format): /fragment@1/__overlay__/eeprom@57:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtbo: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtbo: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtbo: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtbo: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:100.18-113.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/codec@18: Relying on default #address-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:100.18-113.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/codec@18: Relying on default #size-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:115.12-120.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/eeprom@57: Relying on default #address-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:115.12-120.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/eeprom@57: Relying on default #size-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:102.3-16: Warning (reg_format): /fragment@1/__overlay__/codec@18:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:117.3-16: Warning (reg_format): /fragment@1/__overlay__/eeprom@57:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtbo: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtbo: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtbo: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtbo: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:100.18-113.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/codec@18: Relying on default #address-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:100.18-113.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/codec@18: Relying on default #size-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:115.12-120.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/eeprom@57: Relying on default #address-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:115.12-120.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/eeprom@57: Relying on default #size-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:102.3-16: Warning (reg_format): /fragment@1/__overlay__/codec@18:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:117.3-16: Warning (reg_format): /fragment@1/__overlay__/eeprom@57:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtbo: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtbo: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtbo: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtbo: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:100.18-113.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/codec@18: Relying on default #address-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:100.18-113.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/codec@18: Relying on default #size-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:115.12-120.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/eeprom@57: Relying on default #address-cells value
-../arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10.dtsi:115.12-120.4: Warning (avoid_default_addr_size): /fragment@1/__overlay__/eeprom@57: Relying on default #size-cells value
+ struct arm_smmu_invs * __rcu *invs_ptr;
 
-Shawn
+This is a pointer to a rcu controlled pointer, not a rcu controlled
+pointer to a pointer..
 
+Jason
 
