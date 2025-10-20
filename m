@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-861109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C892BBF1CF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:21:47 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB579BF1CEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C38614F5F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:21:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6668834D881
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07523320A1D;
-	Mon, 20 Oct 2025 14:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2279321F2A;
+	Mon, 20 Oct 2025 14:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J33kZ7Up"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="C97mkGAF"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E71430595A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D389831DDB7;
+	Mon, 20 Oct 2025 14:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970062; cv=none; b=g19YtpeO0f1ttjf93d8ptas/A8/Jc0yEVy6jF3+338dJk7oWQ8LmUMv8DbPyGiJR7ygj+CfNMNXq4zEY1da9yPF/yhzUjmRxp8jjzwRB//3psO1ikRLZ2zSkfforQQbz6SpoYLeRad4gzGg/xTTlPHhnTW2kHQRRUZHgq++s7eQ=
+	t=1760970079; cv=none; b=tWn2ipYz3HqnYEacYSI91rT+4T6IBKMvFWQj6LhfmVNqTaxJm2EdTvDkLBnLLlCceSR4eqUjEoPFcchBz625xXziRLP5kO5nw4Jw9X4YDz3qIQqZRbngqvsw7UGjozTVrW2zK3AAQEB4SNUDGSdVTwowuITyO9TsA+nhtoL4bxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970062; c=relaxed/simple;
-	bh=MWtJ+mpol8+yVnzZuaWPr0ilzSGNIoshaV8ATYd24wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3j/CpfHE1P2TyG+UpeL6Jie69V/JzKIjwd7CJxFbRg6N4B1D2OtmnpCucgVm2QXFpn0mQoNscHARGd47rpPb3Z+cL1lE2eemchrNgJgUAmryCMVtA4H5nfYPaXE60JxByyEHx5D7fhXVh/3SUXIUxW6EvJ5W/RPPiVE67KZ7G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J33kZ7Up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C3DC4CEF9;
-	Mon, 20 Oct 2025 14:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760970061;
-	bh=MWtJ+mpol8+yVnzZuaWPr0ilzSGNIoshaV8ATYd24wQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J33kZ7UpK1kYx53YvkuMnchUUU2VJ+k/E9KevIEcuOA4bxT6fp2jPJtrhZecGPERn
-	 FJKvDzUWqM1vuz3JX47N9ZRM1e97PQ/zem/dxC5PD+sERJjdVbXigkWYjzEb8IltGl
-	 9cXi0UtO9dC0tpVF3yaFhX1y1ojvaBfb1JmdTyphLkkplys7hwy8D2JXqKPpaixn1t
-	 5IN6lo+TbDiTVVmsEQMY++GO9lUfM7nEKW0NHpyPola5hSVPUtU2Tz5TFOEsSwj6g5
-	 ZUicraVH06nuF0Wy5uVOpucM0rJ5cRaHHT2ZRQAYjXUX2Rbj6t4DJV1sWOjGTjXWNk
-	 MWaCY6a8Y6QCg==
-Date: Mon, 20 Oct 2025 17:20:52 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>, Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
-Message-ID: <aPZFRJVEhSFlPDuE@kernel.org>
-References: <20251018093002.3660549-1-rppt@kernel.org>
- <aPQxN7-FeFB6vTuv@casper.infradead.org>
- <aPT0zNMZqt89cIXH@kernel.org>
- <3301af1f-c24a-4e43-ad59-402e244d5552@suse.cz>
+	s=arc-20240116; t=1760970079; c=relaxed/simple;
+	bh=7B3C3nnXc1OYN5rMpBuyWcmbrYLyyipMMNT5GUWjNoo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ie09QDZMwekWvsJ/bOHqPhOm8TVvozfCeXBeonvPtbKwjdyl9OiybCJOXm32aKjp1b1+3CX65J1eCFaXbcQQtEEi/t0k15frwTgkqlsQ0US2GSSX7gX0QBHNVXQEmAPBPElrDT+vlNQj+smXkhKwXhDsqUzwP0eHdL9VQUu9zeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=C97mkGAF; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=4heB+yTWQNHU5Z8HhOLrN88HJUxtyiYNTtlusoiS6N4=;
+	t=1760970077; x=1762179677; b=C97mkGAFSXJpO+NJPhO6QeG4k/L2tI+LY7eAkYg7DpIkCZU
+	Hrx34Cm/e79co5PjD1OauDWmcYOw9/y9TGYSowqK8S2sj+r1vtFmdC2QERTjuKLuFfj/2ws1k98gC
+	BA8PuXVDaH+RZvR13iTeXq68MvC0fdWpP2c9X3Vtta2DPnF3f1emPsla5uMqpFJXM/MCd3GKHM4aP
+	ugR3toQgRQBMndl8PKxdXM0chzQy3uots0P5tapKS/6sN7Vmb8o3Xk+gF3y9SPf8bFoXm6uBvhzGl
+	SwPd7e0yyHi9i1/dChg0y4hJfADI5AQalHZHF/3LEIo059PZV6hS1Af9oBtc//hA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vAql9-000000094By-16LY;
+	Mon, 20 Oct 2025 16:21:15 +0200
+Message-ID: <7c8363c38c4352181ebde6b27b6d8fe69c60429f.camel@sipsolutions.net>
+Subject: Re: [PATCH 2/2] wifi: WQ_PERCPU added to alloc_workqueue users
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Marco Crivellari <marco.crivellari@suse.com>, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Frederic Weisbecker
+	 <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Michal Hocko <mhocko@suse.com>
+Date: Mon, 20 Oct 2025 16:21:14 +0200
+In-Reply-To: <20250926083841.74621-3-marco.crivellari@suse.com> (sfid-20250926_103858_017981_41C79A44)
+References: <20250926083841.74621-1-marco.crivellari@suse.com>
+	 <20250926083841.74621-3-marco.crivellari@suse.com>
+	 (sfid-20250926_103858_017981_41C79A44)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3301af1f-c24a-4e43-ad59-402e244d5552@suse.cz>
+X-malware-bazaar: not-scanned
 
-On Mon, Oct 20, 2025 at 10:54:27AM +0200, Vlastimil Babka wrote:
-> On 10/19/25 16:25, Mike Rapoport wrote:
-> > On Sun, Oct 19, 2025 at 01:30:47AM +0100, Matthew Wilcox wrote:
-> >> On Sat, Oct 18, 2025 at 12:29:59PM +0300, Mike Rapoport wrote:
-> >> > Vast majority of allocations that use get_free_pages() and its derivatives
-> >> > cast the returned unsigned long to a pointer and then cast it back to
-> >> > unsigned long when freeing the memory.
-> >> > 
-> >> > These castings are useless and only obfuscate the code.
-> >> > 
-> >> > Make get_free_pages() and friends return 'void *' and free_pages() accept
-> >> > 'void *' as its address parameter.
-> >> 
-> >> No.  Linus has rejected this change before.  I can't find it now, it was
-> >> a long time ago. 
-> 
-> Here's a lore link
-> https://lore.kernel.org/all/CA+55aFwp4iy4rtX2gE2WjBGFL=NxMVnoFeHqYa2j1dYOMMGqxg@mail.gmail.com/ 
-> > If it was a long time ago, he might not object it now.
-> 
-> Did the circumstances change in a positive way? Using a semantic patch might
-> make it less painfull to apply in a flag day manner, although depends on how
-> much is that "a bit of manual tweaking" you mention.
+Hi,
 
-Semantic patch missed a handful of places, other than that tweaking was for
-formatting, e.g
+So I don't know if I really need to tell you this, but generally the
+subject should be _imperative_, not describing what you did after the
+fact (i.e. "add WQ_PERCPU to ..." rather than "added ...")
 
-diff --git spatch/arch/s390/mm/cmm.c manual/arch/s390/mm/cmm.c
-index 980d2b302937..7212ab4f0eaa 100644
---- spatch/arch/s390/mm/cmm.c
-+++ manual/arch/s390/mm/cmm.c
-@@ -74,7 +74,8 @@ static long cmm_alloc_pages(long nr, long *counter,
- 		if (!pa || pa->index >= CMM_NR_PAGES) {
- 			/* Need a new page for the page list. */
- 			spin_unlock(&cmm_lock);
--			npa =__get_free_page(GFP_NOIO);
-+			npa =
-+				__get_free_page(GFP_NOIO);
- 			if (!npa) {
- 				free_page(addr);
- 				break;
- 
-> >> Most of them shouldn't be using get_free_pages() at all, they should be
-> >> using kmalloc().
-> 
-> Changing to kmalloc() would have to be careful, what if the callers rely on
-> doing e.g. get_page() later. It would however be useful to dintinguish "I
-> want a page-sized buffer" (note that it's guaranteed to be aligned by
-> kmalloc() these days, which it wasn't in 2015) from "I really want a page".
-> But many of the latter cases maybe want a struct page then and are using
-> alloc_pages()? 
+> All existing users have been updated accordingly.
 
-alloc_pages() users also not necessarily want a page, there are quite a few
-places where we have 
+Surely this is not _all_ existing users? :)
 
-	struct page *page = alloc_pages();
-	some_type *ptr = page_address(page);
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  drivers/net/wireless/ath/ath6kl/usb.c         | 2 +-
+>  drivers/net/wireless/quantenna/qtnfmac/core.c | 3 ++-
+>  drivers/net/wireless/realtek/rtlwifi/base.c   | 2 +-
+>  drivers/net/wireless/realtek/rtw88/usb.c      | 3 ++-
+>  drivers/net/wireless/silabs/wfx/main.c        | 2 +-
+>  drivers/net/wireless/st/cw1200/bh.c           | 4 ++--
 
-So ideally those also should use an API that returns void *. But again, as
-converting get_free_pages to kmalloc, it's a case-by-case audit.
+These have different maintainers, please split up accordingly.
 
-> > Don't know if most but some of them could. Still, we'd have a bunch of
-> > get_free_pages() users with needless castings.
-> > And converting callers that should use kmalloc() is a long and tedious
-> > process, while here we get an API improvement in a single automated change.
+>  6 files changed, 9 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless=
+/ath/ath6kl/usb.c
+> index 38bb501fc553..bfb21725d779 100644
+> --- a/drivers/net/wireless/ath/ath6kl/usb.c
+> +++ b/drivers/net/wireless/ath/ath6kl/usb.c
+> @@ -637,7 +637,7 @@ static struct ath6kl_usb *ath6kl_usb_create(struct us=
+b_interface *interface)
+>  	ar_usb =3D kzalloc(sizeof(struct ath6kl_usb), GFP_KERNEL);
+>  	if (ar_usb =3D=3D NULL)
+>  		return NULL;
+> -	ar_usb->wq =3D alloc_workqueue("ath6kl_wq", 0, 0);
+> +	ar_usb->wq =3D alloc_workqueue("ath6kl_wq", WQ_PERCPU, 0);
+>  	if (!ar_usb->wq) {
+>  		kfree(ar_usb);
 
-> Maybe a more feasible way would be to rename to something more coherent,
-> while keeping the old interfaces alive for a while for easier backporting.
-> because __get_free_pages() / free_pages() is not really great naming.
-> If possible it would be nice to also make __GFP_COMP implicit in the new API.
+I'd also think that WQ_PERCPU doesn't actually make sense for any of
+these instances, but for those that still have an active maintainer I'll
+defer to them, of course.
 
-If we shorten "page-sized-buffer" to "p" we can do something like:
 
-void *__palloc(gfp_t flags, unsigned int order);
-void *palloc(gfp_t flags);
-void *pzalloc(gfp_t flags);
-void __pfree(void *ptr, unsigned int order);
-void pfree(void *ptr);
+(and patch 1 should be prefixed with "wifi: cfg80211:" I'd think)
 
-I'd keep the order in __whatever_free() for the first step, because I'm not
-100% sure we can use __GFP_COMP for every existing caller of
-get_free_pages.
- 
-Do we also want to rename gfp flags to something page-sized-buffer based? :)
-
--- 
-Sincerely yours,
-Mike.
+johannes
 
