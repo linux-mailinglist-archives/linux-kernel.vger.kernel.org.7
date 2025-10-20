@@ -1,131 +1,164 @@
-Return-Path: <linux-kernel+bounces-860275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA36DBEFBA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:46:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F425BEFBB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EFE3B379A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC89F1894955
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0192E0415;
-	Mon, 20 Oct 2025 07:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E4E2DF133;
+	Mon, 20 Oct 2025 07:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMjVIAXw"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7s9h8RG"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A99629ACE5
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05661A76BC
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760946365; cv=none; b=nUkYgLL3Z93pnmBmrLhFbXBUDreFZzNDKceo/9w0C8ILsO9Gq1v7x5k4Sqi1reXfzR00lvi08OgDMO/MVWesxxUsxgraZgl9W+8Ggug51ZvlkGmOfEi/byMlVV/PXJFbBJTuE3pFp8vU0MG67fgfPB1vqHpd4Viu46DvtDEOpp8=
+	t=1760946432; cv=none; b=ihS65siAFT1COJ2aOGKIuhg7UTErOWszoecjfB2s1pFtgwN6ST5idLiBf11Kjzd5AVrBwf240tFjbYGTRMYJj0LyBgchv5IbA/P90zVwRf6z8gw9HhGVS2moCwS3JkSuBMRY0GMfnDlfNtTvmj+Op8UvyoBoiGSlAYzx6RgmOmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760946365; c=relaxed/simple;
-	bh=X7/0YOAqO5V2172ZrybLrIHVzwGVuhBmLKlylhJxm1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CEV7g/7fTWsYAty9zAPRZDrRVjS47GvO4oEgHfODMuqlBR6/5TqFLoLMG88qOcodMgUoKZJjDoW1KEKtfQoSzDvyrrUwk0ALT2IZX+qmjvfqLflqX5mAtobPiqfX1rTnY/JN40GuVyiQhQmUHZnHVNflqasXvl1qUpEMb4DO/cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BMjVIAXw; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-427091cd4fdso1672107f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:46:03 -0700 (PDT)
+	s=arc-20240116; t=1760946432; c=relaxed/simple;
+	bh=W+ylqzQuo2ib5xe8ttVsSyJYGNvN42BnhUnPMTjp0ek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b/7A/vdO1Ns00LSSQv7D/QCTSboFj58bx+nuyf/a+SQdoab+Yuca63u1qwfw56W94yatex2fH148ZMb6Bp6GpcLzd4GeK/BGk1GeloPJHf/AQBBw3jE0sFRF9O/AZY76624kMrwzW0VnIBKicBG01ssPxxFiA1vmqNACP+hfV4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7s9h8RG; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-6317348fa4fso681203a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760946362; x=1761551162; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NeEefsjDjBTzkWLJQXyP/5aObcnLAGWfiU+nORhhDXo=;
-        b=BMjVIAXw/qb0mfPjoMsyfy6xPQmKl4Qu+YGY72C6YEByg7AIqSq5CCpHo5oiYK9GBG
-         p7BYn32ak7gyLIWfxzqngx13/XzqxW8phpWGb0AYyyw6NK4/D/jf0J7x04Lz8u8CJdDG
-         W4/QpjldgFiw16NfNAgRgzjGhXSLGhDKLjiR+EIzzFrYxcbziuZt+kgvsVoz3P6tBXza
-         0Ms5y8Ch+ybQRN1eTTM8hej4h5yGz3Tye5c+iX+XGUuZQGAdUcN5HxtkszUH9wG3VCJq
-         ZRKSCC8Xf43dGOdCTPZ/9vNyNx0I/DjQn+oqtW1yJXyyXNoPxLkorp1T1hqMiiDHxx6c
-         h5BQ==
+        d=gmail.com; s=20230601; t=1760946428; x=1761551228; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Go4Asv7YwLv33nHUULAGfMoh2O4c1Ds20DzwpeLzbGA=;
+        b=S7s9h8RGtLygp1GWwjad+Cg5Y92pGfHbw5jaZLL6oWeJXhYv3VIOtEAGmUdLow/o/8
+         gBnHPSpbnigOVJObZz0kFno6YMESBsK8PuV/EGIgFAMI/Z2yrbIivrCTDhrxMi+VJ5Yf
+         rJd4eFS111lfkeZmqYtMF6jOGIAcK98UEa7ZBKEC6JPtKipnxQ1X5SmgELgZkG2lwiZv
+         phmMLTNCyddV3yFBZBQ/i659Bu/JoASlSXMxaOrkbacjvkay6AyrW9b01L15k0tm8A9T
+         MP7Jh28++oHLR0XBnVdLTEXEwHgoaRY6vCCMYtq3PMQm9xRar/tutsVatNj1G8E9fsHJ
+         k1TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760946362; x=1761551162;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NeEefsjDjBTzkWLJQXyP/5aObcnLAGWfiU+nORhhDXo=;
-        b=Vhf8fFVRvLk98By4O8M/g8F+7pPtwtWStxbnmh3g0hUhSKV2BgzShBMny7Q0loKUql
-         vJDSVJ8hWW584I0PsjDNovmgIvJMB54e5Ugx1Of3mZITO+Tns1I39xW8Z4j9E7W3Bz1C
-         O7XhY79Nzx1uIRQw23X436rzE2xpEfQ3JzZQTjSium3mesfX7mzVIkFc/qqb6K1bGBXE
-         b4q6JTXdfP9B8C6S/5szqewyent9NsJ9zXCs7m3X7cNHjyLP/8iIfVtc/OHNqOYMLA9d
-         qG5qI45fr8uU3eZAGx0Y6eFtdizoMCwYiEl14Hz/N4qaBJoQJ+64DXAL+vVRzUFNns5u
-         u3bg==
-X-Gm-Message-State: AOJu0Yy8dVmgt+OGzxCHyYVJYL9oujfxVZta4hsqdlhNTlu5KJZ+IS8C
-	coejybkaH8hubXWlOBJmD1LuxRA9x6j05yTuWVb7jxeRoARyxHt3sgA3cTljM50Dais=
-X-Gm-Gg: ASbGncu1+JzLJYHn2QfJG2pKi5y6q9m0nb3sGBm9xr1fo7F54cKnM9lbhvdQC280JjY
-	+CWO2iqo3O7ycD1uj5O9uKsauXRVgDqkyE53twh/wKLolohhJz91jNXIIV07CnqcWJjV2LWgExm
-	rIGzHQ5wk0590UA03sukPbw3dDuT+rda2J3/P0i1c1LHrzzPU+JbplldALOfl3HAAancHudh9vT
-	4hTEAvUdgP/jMmDs3upuzxCBGf9sLUqGFHDHydeMPm2x9EQ7XfLi8GqEMpvWZUSVJf4qePLfLPM
-	5VBDyWn5M6J8IQF3LvSH632lSEY679EwV83IElDBzM8E8Ox9oNzn4ywALOIeeZzPt/CLy0i4un9
-	KUkuwa3y7nBu6LY5xoi/46UprFQVQE8zKWwMiQQY9uFffHlPgP0oVA56qw5y90yBlSxoeHcB5JB
-	QEntX31b/LM11NPKYPcSI=
-X-Google-Smtp-Source: AGHT+IElXYjtpSTA367NjPFbuT2cNOkeZqKtyb865DWWHqYMgZ9skD7DsDruCaof11OozJ+7TkNWCA==
-X-Received: by 2002:a5d:5888:0:b0:426:d587:850d with SMTP id ffacd0b85a97d-42704d78d2amr6946088f8f.28.1760946361718;
-        Mon, 20 Oct 2025 00:46:01 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.145])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a102fsm14122755f8f.1.2025.10.20.00.45.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 00:46:01 -0700 (PDT)
-Message-ID: <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
-Date: Mon, 20 Oct 2025 08:45:58 +0100
+        d=1e100.net; s=20230601; t=1760946428; x=1761551228;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Go4Asv7YwLv33nHUULAGfMoh2O4c1Ds20DzwpeLzbGA=;
+        b=MvfdLAQn39B5Nfw+hcnfkLprZbs+xr+U0k7kyujSY1hVsxIutM3o8BhApN4LSOYAkT
+         SbnZkwd4UJa2+oiQ4eX22ezUQh4z+xbREzp9SDEihezpYEDL7T6vXXo57G7yEgKIiPVF
+         87eutFsDMccwA+cTxPG3+5GlbRwGpxOK+5nGcJlW3HJ65HinIIY8vGr8Qisx7DTjyN7u
+         9T/AuBedGJxkFKUWyfzJ3TuzMlB3+XN0ia+lRiZapUhz0Ahxdv+hhrlylstdl55xWKsW
+         fwnawcPlZa0P3CUEoJ8I4je6xAfoje/B0sY9xZ0wIBjNBOsjuZQK+cYboy76ufK9ecT7
+         kqzw==
+X-Gm-Message-State: AOJu0Yx0wOxmFxfeqEaFOyscP9AiEKypfkvQ/CJ+PTOCug1PDhYxbeww
+	qEmSE7uJQZT+dyZVpJhiIIIPkcgfGbN8vVZd15iPLYBthWi2fqctX3IFFDrS8J3AHWlKx6iJOZ0
+	tomH9x0rinGTth3mu7zXh2CtgK19FAR8=
+X-Gm-Gg: ASbGncuc8ZXHCzHYWGS/wBzZvkUzNzEd3bXHSvF8/TnXEdRo5Lu7XD4pvvKhnLgsDsE
+	zYC7P5ajqEpVbjoVMVtZIzPHH4baiqGMeFN9bjkK99VJe91qoxA5bE5PHUUzBICuptRxxCgfGWG
+	+vx8E7mCcogLhqjUNGErwHnYOTpTEd3ZvIsRiZpqSzLvFaIgCCXzWTsyKWEbnSwoAY9AjYF6S9K
+	EfNDUSxiA+Ol06yRlDgdhcthsaVh9oDc/za/0CIJlNDWuKMEAAuOo7b6Uk=
+X-Google-Smtp-Source: AGHT+IH2uihxq+af0Bw4QSg6xcu+H0UnlX9S7oDFhMzkHKjD6Ht/uNLkfyPQdOpfHjEdrX20JeRGkBMtlyWgD5Dx2ig=
+X-Received: by 2002:a05:6402:2751:b0:634:4e0:8377 with SMTP id
+ 4fb4d7f45d1cf-63c1f634390mr6353105a12.2.1760946427768; Mon, 20 Oct 2025
+ 00:47:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
- <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <PH0PR04MB7349DA5D7A7A7FBEA8601353FCF5A@PH0PR04MB7349.namprd04.prod.outlook.com>
+ <68f5e662.050a0220.91a22.0440.GAE@google.com>
+In-Reply-To: <68f5e662.050a0220.91a22.0440.GAE@google.com>
+From: clingfei <clf700383@gmail.com>
+Date: Mon, 20 Oct 2025 15:46:56 +0800
+X-Gm-Features: AS18NWA1W2hA8oKfxYYuirea0ldpm8dxKYsV0v0lAHCbktgEDiYetiMLMWsbylQ
+Message-ID: <CADPKJ-60g+BtaE47GysMGQzAz9K3mMhUkzqRT-zFrnCRdFktHQ@mail.gmail.com>
+Subject: Re: [syzbot] [net?] kernel BUG in set_ipsecrequest
+To: syzbot <syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+syzbot <syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
+=E4=BA=8E2025=E5=B9=B410=E6=9C=8820=E6=97=A5=E5=91=A8=E4=B8=80 15:36=E5=86=
+=99=E9=81=93=EF=BC=9A
+>
+> Hello,
+>
+> syzbot tried to test the proposed patch but the build/boot failed:
+>
+> failed to apply patch:
+> checking file net/key/af_key.c
+> patch: **** unexpected end of file in patch
+>
+>
+>
+> Tested on:
+>
+> commit:         7361c864 selftests/bpf: Fix list_del() in arena list
+> git tree:       bpf-next
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9ad7b090a1865=
+4a7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbe97dd4da14ae88=
+b6ba4
+> compiler:
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D104b5de258=
+0000
+>
 
+Hi syzbot,
 
-On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
->> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->> --- a/drivers/clk/samsung/Kconfig
->> +++ b/drivers/clk/samsung/Kconfig
->> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>  	  status of the certains clocks from SoC, but it could also be tied to
->>  	  other devices as an input clock.
->>  
->> +config EXYNOS_ACPM_CLK
->> +	tristate "Clock driver controlled via ACPM interface"
->> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
-> 
-> I merged the patches but I don't get why we are not enabling it by
-> default, just like every other clock driver. What is so special here?
+Please test the following patch.
 
-Thanks! Are you referring to the depends on line? I needed it otherwise
-on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git m=
+aster
 
-ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+Thanks.
 
-Cheers,
-ta
+From 6dc2deb09faf7d53707cc9e75e175b09644fd181 Mon Sep 17 00:00:00 2001
+From: clingfei <clf700383@gmail.com>
+Date: Mon, 20 Oct 2025 13:48:54 +0800
+Subject: [PATCH] fix integer overflow in set_ipsecrequest
+
+syzbot reported a kernel BUG in set_ipsecrequest() due to an skb_over_panic=
+.
+
+The mp->new_family and mp->old_family is u16, while set_ipsecrequest receiv=
+es
+family as uint8_t,  causing a integer overflow and the later size_req
+calculation
+error, which exceeds the size used in alloc_skb, and ultimately triggered t=
+he
+kernel bug in skb_put.
+
+Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Dbe97dd4da14ae88b6ba4
+Signed-off-by: Cheng Lingfei <clf700383@gmail.com>
+---
+ net/key/af_key.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 2ebde0352245..08f4cde01994 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3518,7 +3518,7 @@ static int set_sadb_kmaddress(struct sk_buff
+*skb, const struct xfrm_kmaddress *
+
+ static int set_ipsecrequest(struct sk_buff *skb,
+                uint8_t proto, uint8_t mode, int level,
+-               uint32_t reqid, uint8_t family,
++               uint32_t reqid, uint16_t family,
+                const xfrm_address_t *src, const xfrm_address_t *dst)
+ {
+    struct sadb_x_ipsecrequest *rq;
+--=20
+2.34.1
 
