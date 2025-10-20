@@ -1,84 +1,111 @@
-Return-Path: <linux-kernel+bounces-861772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32462BF3A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85534BF3A33
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C495434747A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:04:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1273C350579
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353482E0B44;
-	Mon, 20 Oct 2025 21:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E24A26D4E3;
+	Mon, 20 Oct 2025 21:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRUdT4vZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLF1VWJf"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E292286D40;
-	Mon, 20 Oct 2025 21:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1590615B971
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760994267; cv=none; b=dsk/IkbgYqVe4F+D0DLr6Fe1MM25GQ2phberoXD4S+E1T3qrz3I6nvWJ71dAYBGcO9j9lTwjihKU55pBgLlRxJMsK6YdpH4gDKieW3dILlDRRC8nHjZMG0DL7vImqYm0rTTMvOHltmGc67X6iSQ89XvFoZHUNrJQ00BTT0YNOJc=
+	t=1760994367; cv=none; b=Mg3CDlZjE+JgyjRTFI6XTMsRjC5lgNVt/bJd/bDN87Ji/t08BxmQU0+xtNMCLA3nGTBhEp2PP1Vzymr3hC0jy60hrMMHj9eQsUZzV6b1i25ykFISz/JB3LMK2Io/8+ZKUMFddOHVwwTTYJPWNk7T6Pl+3MgsTZG2CPseFWxnoB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760994267; c=relaxed/simple;
-	bh=zHkosKVnM0JVpz7KhY5x79jgEf/zbo/B9W1EwqO6+80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/EkvYgvO/7lgQTtxxopXwmG1TnlSfDkCFdStF5paG+GpSjdxgblg1nfkJ5zYczE0zh+E3gLfG5QVKrdpbGKHfMS6z//RfeTcXiEn7gftgm9BcOxt6hHPRzUl/6b2fkDzG8SIRjFTPaUgDS4qzQjGEtCjcSEeU4q01QkR6M+x8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRUdT4vZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31C4C113D0;
-	Mon, 20 Oct 2025 21:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760994267;
-	bh=zHkosKVnM0JVpz7KhY5x79jgEf/zbo/B9W1EwqO6+80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aRUdT4vZaUIUjM2/BdKPkaCfvyp48TPe7zYqWSFi0uj5XVwd9oKOGbjgLfqQ9fDgV
-	 bPQz1t6K0GA/+TQ7p+kG8Gc3LdhQkmCO8rgtS55u+xvVL2k/mtmdVWjKBdVWEQdM/L
-	 wNrxlQo9+wWgiryehhMWHlg5A7ia9J48sOM6HR1qYdWtDdrdxp1LIsB/5JnkHGbMfO
-	 5cdQEBhMoSTrosxnuuiO1PXH1I22q4pIN7JYaN3sAzdHXclAYqsq0NsHi3ybx/AN/A
-	 tRm6GZRboRGgNPOhpxFj+sri9+XftGzwepG+NMsLs6lPnnEtlfvE+2DKiGCwdG5M1E
-	 EGE4kgGjM7cyg==
-Date: Mon, 20 Oct 2025 16:04:25 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	David Heidelberg <david@ixit.cz>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH 1/1] dt-bindings: media: Convert ti,tvp5150.txt to yaml
- format.
-Message-ID: <176099426460.1822951.14576338144604002524.robh@kernel.org>
-References: <20251014185515.2354668-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1760994367; c=relaxed/simple;
+	bh=hJC6wrWvLGEYPpXdlMBPye+uWwg8bwB8IuKv8v2m3Qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S62mflCNedeH2RrF10et24OBH7YIjYZmvP0/ERX9qdRUU73I2HwX84Kc8h5AVz5cKgL5Ztw1y8LUTZ+9w+JldrQDNpb72/ySDaVAYuz5Y+4nG4u0ljsSZaOL4pxrVpxxvR8+JCLyLFgxWgkr8B3PfTnxsexpTSZ//etvXS62G60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OLF1VWJf; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-36453927ffaso42307721fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760994364; x=1761599164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hJC6wrWvLGEYPpXdlMBPye+uWwg8bwB8IuKv8v2m3Qk=;
+        b=OLF1VWJfDnwC/YPBamHdiFxfR8WzcWlIMRMW1Vl7B/Hj0gXcZl4Tp6fHYG2zHFDiR/
+         7LOKyucrMXZtbuWazf4guz9tp7Mi1/+zL1u5JnvghuOZW7KVTE2tkQ2NZ4yTBRbLXr4D
+         2ttZBdxHPRD7I6uOuHkX6UmhHL7hM0W54NUYUcSNw81qAI3DZ+wcz0fM4CvrZHbDl9w5
+         o4WUZW5CnKitDcrNCnUOTlqrNsinWTBPoDXIZIMYiiBfnDqhfYxNXzXBkgm17wRERepk
+         Pah9527G3PSNYEsYt+2XaWeKO5KN0F/i93QU/GzNnRh2uY9bH9iXnDRe6oiux/cuuhuM
+         X59A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760994364; x=1761599164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hJC6wrWvLGEYPpXdlMBPye+uWwg8bwB8IuKv8v2m3Qk=;
+        b=LeY2McNBCRNooE74egQ5WuGRUtbYoV9MzSH8CteP0mPUJjq8NgeMbysa4jHpSKwBFm
+         oWcfftbYq+I5L4/ftbyVD+g6cgQg7MpRlDmpfzI+QVqyUoooVpLz0JFIXHsvvNVYTiGi
+         zyZIrUYiAnN2PsnHO3DAVB9pVvaCXnQ+91lvhtSN4ysYpLh68jfsqqMtMquU/T9S/hio
+         kJIxDSwWEKwPYODQS0Me4/TaEdY6hol0Mv6dc6uo8RS0f/NxBKfSbHybz2R2wCkKPV6Z
+         VDNN8F3vz/98sNSidib7oKosGFG19ZIQmr2DcUTBhxv8c1w4omTVEfWLa5MfWsczNCYu
+         s/Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCU9/PRPHOxEAi1mJJRSTe3qkQ4jWhwfXJhhXJAtjgnUvlWKnGZ3pW7YFtu09BG7OhDrt8FAeNq4rP5MXNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB/kY8PQwj1RCp5DOi6BZ7VmK1sBatIo/7E5EiYUlsCqIjmdsu
+	wY+QZt16HhpryTBvvHdf7AMcJMgZsF9TjaD435fbP3CxsiMYwqWoF8u51UJOotNeur31MBGH1uX
+	a/jQnyz9kCvf9t3Eha+vAC4wnRCYlWtCpqDCsDcG6bg==
+X-Gm-Gg: ASbGncvXzty8YIbh5wDyQV5gJN+y0iTZ0eBP+ClGnnMfeuagr05/G7nCUtphbVD/F+A
+	F6WTcCUSR6Do+08ors2r0MqFB9Y4qjY30jnR9x2NIrwDXE/aUPymezFWr2C/XZsRVe4YwbshLL6
+	g63PP2yVyYn1fp+tzfKhsknLLEVHGkWeY9gO9Ju4b2PK3PREi1VeE7hqt7cCPpZqq+V5Xa9Sfzg
+	gODsuRe48FSVeNfBzzHPeBTt039p0hZf0ZMlYQF2Lt2LApz7ihT/jBoma8nD4cHcXKjfYg=
+X-Google-Smtp-Source: AGHT+IHqI5sn0aHZVxmgNoOeEHqPV/4OMj4aOHzfWKj6c+31WvQm9My5mBGOvht8/Q+3HwJ1qNC0mchFVak7q0/vhTw=
+X-Received: by 2002:a2e:bc87:0:b0:372:8e46:3705 with SMTP id
+ 38308e7fff4ca-37797a8fa2amr46522241fa.44.1760994364136; Mon, 20 Oct 2025
+ 14:06:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014185515.2354668-1-Frank.Li@nxp.com>
+References: <20251014-retype-limit-e6cbe901aa07@spud>
+In-Reply-To: <20251014-retype-limit-e6cbe901aa07@spud>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 20 Oct 2025 23:05:53 +0200
+X-Gm-Features: AS18NWAM_KkQJcc4_uDxnZUaq6pPWmRrcpznRb0EhOrILJeBdRjz8Rzkex7daQs
+Message-ID: <CACRpkdadawJmrED-dPpnm+MKD1ndt4V86GOebkiQzU=d+-vHjA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Microchip mpfs/pic64gx pinctrl
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	Valentina.FernandezAlanis@microchip.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 14, 2025 at 4:36=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
 
-On Tue, 14 Oct 2025 14:55:09 -0400, Frank Li wrote:
-> Convert ti,tvp5150.txt to yaml format.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/media/i2c/ti,tvp5150.txt         | 157 ------------------
->  .../bindings/media/i2c/ti,tvp5150.yaml        | 133 +++++++++++++++
->  2 files changed, 133 insertions(+), 157 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/media/i2c/ti,tvp5150.txt
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/ti,tvp5150.yaml
-> 
+> From: Conor Dooley <conor.dooley@microchip.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Following from my RFC recently [0] I've got a v2 here that's implemented
+> the change from using the pinmux property to using functions and groups
+> that you asked for Linus.
 
+Overall I'm very happy with what I see, I see there are some comments
+and my only comment would be to add
+
+depends on ARCH_MICROCHIP || COMPILE_TEST
+
+on the drivers so they get some proper compile testing, and I expect
+we can apply v3.
+
+Yours,
+Linus Walleij
 
