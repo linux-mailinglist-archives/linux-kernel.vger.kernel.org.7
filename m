@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-861110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB579BF1CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27258BF1CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6668834D881
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF439427680
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2279321F2A;
-	Mon, 20 Oct 2025 14:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="C97mkGAF"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D389831DDB7;
-	Mon, 20 Oct 2025 14:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE35322C7B;
+	Mon, 20 Oct 2025 14:21:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C1E3203BE;
+	Mon, 20 Oct 2025 14:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970079; cv=none; b=tWn2ipYz3HqnYEacYSI91rT+4T6IBKMvFWQj6LhfmVNqTaxJm2EdTvDkLBnLLlCceSR4eqUjEoPFcchBz625xXziRLP5kO5nw4Jw9X4YDz3qIQqZRbngqvsw7UGjozTVrW2zK3AAQEB4SNUDGSdVTwowuITyO9TsA+nhtoL4bxw=
+	t=1760970094; cv=none; b=nrkVJnuC1e4WX8q4ZwVPiKbbaIQ3YJZRZ3noiCdD2BtiFg9OENlME9e7nlKf7OaIicQkNT1E+6+1LR/nw7tUT0KV7Jf12GaTc/EyZwmod7rPGNO0vbMBTBsudNufV6GecfDTNIAeGUlhR6CYY1A8Nc90rhHpEXGFh08olrkWATA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970079; c=relaxed/simple;
-	bh=7B3C3nnXc1OYN5rMpBuyWcmbrYLyyipMMNT5GUWjNoo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ie09QDZMwekWvsJ/bOHqPhOm8TVvozfCeXBeonvPtbKwjdyl9OiybCJOXm32aKjp1b1+3CX65J1eCFaXbcQQtEEi/t0k15frwTgkqlsQ0US2GSSX7gX0QBHNVXQEmAPBPElrDT+vlNQj+smXkhKwXhDsqUzwP0eHdL9VQUu9zeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=C97mkGAF; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=4heB+yTWQNHU5Z8HhOLrN88HJUxtyiYNTtlusoiS6N4=;
-	t=1760970077; x=1762179677; b=C97mkGAFSXJpO+NJPhO6QeG4k/L2tI+LY7eAkYg7DpIkCZU
-	Hrx34Cm/e79co5PjD1OauDWmcYOw9/y9TGYSowqK8S2sj+r1vtFmdC2QERTjuKLuFfj/2ws1k98gC
-	BA8PuXVDaH+RZvR13iTeXq68MvC0fdWpP2c9X3Vtta2DPnF3f1emPsla5uMqpFJXM/MCd3GKHM4aP
-	ugR3toQgRQBMndl8PKxdXM0chzQy3uots0P5tapKS/6sN7Vmb8o3Xk+gF3y9SPf8bFoXm6uBvhzGl
-	SwPd7e0yyHi9i1/dChg0y4hJfADI5AQalHZHF/3LEIo059PZV6hS1Af9oBtc//hA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vAql9-000000094By-16LY;
-	Mon, 20 Oct 2025 16:21:15 +0200
-Message-ID: <7c8363c38c4352181ebde6b27b6d8fe69c60429f.camel@sipsolutions.net>
-Subject: Re: [PATCH 2/2] wifi: WQ_PERCPU added to alloc_workqueue users
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Marco Crivellari <marco.crivellari@suse.com>, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Frederic Weisbecker
-	 <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Michal Hocko <mhocko@suse.com>
-Date: Mon, 20 Oct 2025 16:21:14 +0200
-In-Reply-To: <20250926083841.74621-3-marco.crivellari@suse.com> (sfid-20250926_103858_017981_41C79A44)
-References: <20250926083841.74621-1-marco.crivellari@suse.com>
-	 <20250926083841.74621-3-marco.crivellari@suse.com>
-	 (sfid-20250926_103858_017981_41C79A44)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760970094; c=relaxed/simple;
+	bh=UhZSEiLMQAnrBHiYN63L6abCG20cM3adtIiWxnZ+pts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GRH+/TWOZiw5nyLocjkfjjvqjI1ZUoOX+0VrA6KF4UPzthgkX3pmqPA3H/jDcsQv1VNHhz7NtBdLgkBZfDGPClFMUsKAqSqw6J0y73tztunC2VO18PoZ2oq44UgbF45cBv6DsaijOYPObU+1TpkAFEAaRXpxT82LUg02cUI1/Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 556521063;
+	Mon, 20 Oct 2025 07:21:24 -0700 (PDT)
+Received: from [10.57.66.206] (unknown [10.57.66.206])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 936DA3F63F;
+	Mon, 20 Oct 2025 07:21:28 -0700 (PDT)
+Message-ID: <664c2c34-1514-421f-b3e4-3aec1139f8e3@arm.com>
+Date: Mon, 20 Oct 2025 15:21:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/14] selftests/sched_ext: Add test for sched_ext
+ dl_server
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+ Shuah Khan <shuah@kernel.org>, sched-ext@lists.linux.dev,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-14-arighi@nvidia.com>
+ <67335454-6657-42d2-bf98-d1df1b58baa6@arm.com> <aPY_YHK-oWZp0KK1@gpd4>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <aPY_YHK-oWZp0KK1@gpd4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 10/20/25 14:55, Andrea Righi wrote:
+> Hi Christian,
+> 
+> On Mon, Oct 20, 2025 at 02:26:17PM +0100, Christian Loehle wrote:
+>> On 10/17/25 10:26, Andrea Righi wrote:
+>>> Add a selftest to validate the correct behavior of the deadline server
+>>> for the ext_sched_class.
+>>>
+>>> [ Joel: Replaced occurences of CFS in the test with EXT. ]
+>>>
+>>> Co-developed-by: Joel Fernandes <joelagnelf@nvidia.com>
+>>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>>> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+>>> ---
+>>>  tools/testing/selftests/sched_ext/Makefile    |   1 +
+>>>  .../selftests/sched_ext/rt_stall.bpf.c        |  23 ++
+>>>  tools/testing/selftests/sched_ext/rt_stall.c  | 214 ++++++++++++++++++
+>>>  3 files changed, 238 insertions(+)
+>>>  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
+>>>  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
+>>
+>>
+>> Does this pass consistently for you?
+>> For a loop of 1000 runs I'm getting total runtime numbers for the EXT task of:
+>>
+>>    0.000 -    0.261 |  (7)
+>>    0.261 -    0.522 | ###### (86)
+>>    0.522 -    4.437 |  (0)
+>>    4.437 -    4.698 |  (1)
+>>    4.698 -    4.959 | ################### (257)
+>>    4.959 -    5.220 | ################################################## (649)
+>>
+>> I'll try to see what's going wrong here...
+> 
+> Is that 1000 runs of total_bw? Yeah, the small ones don't look right at
+> all, unless they're caused by some errors in the measurement (or something
+> wrong in the test itself). Still better than without the dl_server, but
+> it'd be nice to understand what's going on. :)
+> 
+> I'll try to reproduce that on my side as well.
+> 
 
-So I don't know if I really need to tell you this, but generally the
-subject should be _imperative_, not describing what you did after the
-fact (i.e. "add WQ_PERCPU to ..." rather than "added ...")
+Yes it's pretty much
+for i in $(seq 0 999); do ./runner -t rt_stall ; sleep 10; done
 
-> All existing users have been updated accordingly.
-
-Surely this is not _all_ existing users? :)
-
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> ---
->  drivers/net/wireless/ath/ath6kl/usb.c         | 2 +-
->  drivers/net/wireless/quantenna/qtnfmac/core.c | 3 ++-
->  drivers/net/wireless/realtek/rtlwifi/base.c   | 2 +-
->  drivers/net/wireless/realtek/rtw88/usb.c      | 3 ++-
->  drivers/net/wireless/silabs/wfx/main.c        | 2 +-
->  drivers/net/wireless/st/cw1200/bh.c           | 4 ++--
-
-These have different maintainers, please split up accordingly.
-
->  6 files changed, 9 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless=
-/ath/ath6kl/usb.c
-> index 38bb501fc553..bfb21725d779 100644
-> --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> @@ -637,7 +637,7 @@ static struct ath6kl_usb *ath6kl_usb_create(struct us=
-b_interface *interface)
->  	ar_usb =3D kzalloc(sizeof(struct ath6kl_usb), GFP_KERNEL);
->  	if (ar_usb =3D=3D NULL)
->  		return NULL;
-> -	ar_usb->wq =3D alloc_workqueue("ath6kl_wq", 0, 0);
-> +	ar_usb->wq =3D alloc_workqueue("ath6kl_wq", WQ_PERCPU, 0);
->  	if (!ar_usb->wq) {
->  		kfree(ar_usb);
-
-I'd also think that WQ_PERCPU doesn't actually make sense for any of
-these instances, but for those that still have an active maintainer I'll
-defer to them, of course.
-
-
-(and patch 1 should be prefixed with "wifi: cfg80211:" I'd think)
-
-johannes
+I also tried to increase the runtime of the test, but results look the same so I
+assume the DL server isn't running in the fail cases.
 
