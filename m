@@ -1,316 +1,156 @@
-Return-Path: <linux-kernel+bounces-860240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFADABEFA73
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:21:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75900BEFA61
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C57F4F1479
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075FA189CD1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5812DAFC7;
-	Mon, 20 Oct 2025 07:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42702DAFC1;
+	Mon, 20 Oct 2025 07:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqnhWe7x"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jlDP9fC7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AB72DF6FA
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DFD29ACD7;
+	Mon, 20 Oct 2025 07:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760944689; cv=none; b=hK9iBUZatAiTKZdYzk/v29BI4p2Ln+fWlX3Gce4CHGT2y7lsYRVWYlOxCWxIqHxr6AWPRM1NYyLYWm41TFeVUEWqUzCan5dRnC0thlr/7asmjTRl/EibJcIKUXRSjDU5lNykv4k9OemAv8RY6z7xcka/Vxawhe4FtOJw8gCAiPA=
+	t=1760944809; cv=none; b=toSVk+puDfhE8blrp4CwcCFQaCbsIx7ZKIr9km+nq6ojT1Fvekxr9nKbqOC9UfZnbNTHYeqMpDi9oz7cb1qImIAMGqwU5bFmndvfCEKhgpJ3+dTBKQ1sAXBlY2r7E0diKITTL7yUtn8fdofqgGAV5YK008wA0CLPrDfdgfVz1Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760944689; c=relaxed/simple;
-	bh=RcFIrKoSgnto39HXDCzkc41AKHrLdxTXBU7nIzeA4ck=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y7e4rswaL88UKrbzZ2EdWZ+r1M3Nbe4ByemiviPizhFKmj0W+71RxKkl1or37GZjBDMJeJixmDH9YfPZdUwhMqA8n97MPnSoNxjT+TrkPRTTvpYpGOu5dYcHBAPcdQMtKXQKdNpU1lMa3eCwUZ06cvR2WPQwQIsfkRPzYa6ZdBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqnhWe7x; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-37612b15a53so45043801fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760944684; x=1761549484; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=//TUA5vuRqCmK3LhoKxiqeBc8EfoelaRnhe5iPSMmkU=;
-        b=WqnhWe7xiVmG7MuI2MHLLUfaYfaM5AdzEBAYUXPW8urn0+i52z3iyMqEsYsB8btTSk
-         YaDo5rcD/BiACFZhSEqonVOTi8HJ1SKWXpEihQvXPB9P3IC2IhEgNvE2z2RR2G+FsvVh
-         gaxlolCTLOAr5HfogFO3mN/sVrsd9HyWO54WUuHmjdQNTt/Y7U+inDOX2P9JRO0ZhYCH
-         nV5LHXd6tn9nYHmPyVK1Fju8RlDA8jv6LSg6HwirBN+RyTbrwVGMAoEHSUwb78MK1CBu
-         VsCdY9qqFZ8Oab4v0CFQr+enJ0ahrQl2Sv2NlydYRGAetrONYJnMIWFaoJynBW8lfnrj
-         mg1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760944684; x=1761549484;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=//TUA5vuRqCmK3LhoKxiqeBc8EfoelaRnhe5iPSMmkU=;
-        b=ZXA6mn3EdCbvD1dDEel9FrhHDm0MOun0sMBbA173Ng0tu38tz/vvPvyA2yli1RmMXJ
-         zSr6Q3SpSiIPe/4WsZqncogO4P3J5AzTKDvIudVvfcN+8XQwJa2yvMbF2j3r3JWbatyx
-         IZg0wI5HuruE6DAapvJ812SAtzttLF+n/SNQ7J4AFIBGVnOeoG50PxTe9DUKzm8uyvJM
-         1Im+oPYBobsi78XZ/mw9ELTR435bh4Lz3as3stZd71D48yMT3akVrA+m+AQx5zNsYOFz
-         /lk+ZKUUz+sWapvftBUOQiyYvVfEINdGqqwyOE591Wc5Zbkde4PAPVQsf/eF0HWlM0Dd
-         VfYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEDFU6QKDWTnmB3ZeRN6QYV2YRkU4uwvxuKjhro9Hnc7fSJsMxE7VxrBOPK6aOZDduTU/4OhM6lK8kZfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbxwgpz35KfJ4B9xu4rRgdwlkbH/FlN0GVPZ2KfT0M8AkCW8Tz
-	Kp0WmDjmUDpfiLIclz6BfDtX17ze3fTScJjSA2KhgbbelM7Mccyb8Y7uEpIbJH9YCXc=
-X-Gm-Gg: ASbGncuiadU487jhsEVUL3Wm28HVDFecieRKBhNGsPeLpuqmQtqy96SUPKGX/1bkKLW
-	Z+00JhVVz+IblKokYEwkDT9Ps7FINQE2npmeRvZXKn/nQBVsDlilIk4xF/gLAwSDBvVQeTPUQQE
-	5oiMo0iuEuR5cNSQQ5eQullPNL1AUlGT2X3QDR6fgPRqphjvplpQTHlTI+Tkr/Rge/bjX8Q1XKy
-	lpp3Yt/3Uh4MdlFN0YKiuCgMkkjER5CTeZNJlraVW8HEyDlT+MmfJGMNrATsEqVzu9vfDTesX0v
-	4s3Y2N9q5bwOAJEyCQxRbnR+PCDFNKmzwh5uT1HeAC/pvy7ydmZXOn1Rfh24wCrl+yRlBLZ5ck2
-	XAxL3OlHJXigR7oX3l48Dn/Qrmpmp+sY6Ug/rFE+hHlXWAyK2wtJ/RSBeUsSUV9a2Et1ibULZMc
-	0iGLwygPCQbzuSt16yCbn44+CMNvzfBK43BdGEYoDhxZ4LbIJW00llIik=
-X-Google-Smtp-Source: AGHT+IHh2wqGu0ExNrwddXEATOjNKtBcULAJBbJEFjC5sgHg1pbE/2OBk6y9xSUU1xLzPcNt/U/tew==
-X-Received: by 2002:a05:651c:1595:b0:372:17eb:1191 with SMTP id 38308e7fff4ca-3779793eaedmr35769721fa.18.1760944683996;
-        Mon, 20 Oct 2025 00:18:03 -0700 (PDT)
-Received: from [192.168.1.168] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a921ae62sm18863341fa.21.2025.10.20.00.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 00:18:03 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Mon, 20 Oct 2025 09:17:28 +0200
-Subject: [PATCH v3 5/5] docs: i2c: i2c-topology: add section about bus
- speed
+	s=arc-20240116; t=1760944809; c=relaxed/simple;
+	bh=UUFihtK4Ok4cUMT7emCE/58qLLeQEky4Qc5eIDDDrrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SEFIeIbBTDRVGqP5y2cE7dzV3GHJQDqBCas4NWMwzfQd4vc8ITKYyDQee9wjsNy3hisMRf5WdoI3ZmTdQSi2EFnA5Qe53n3Maqw3jy48c0luYvtiSRiSyjD786lOXNN+9wwaZUnyGRFZcljzQSDzPNZ6UNcWrtXOGEf4tSboiJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jlDP9fC7; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760944807; x=1792480807;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UUFihtK4Ok4cUMT7emCE/58qLLeQEky4Qc5eIDDDrrg=;
+  b=jlDP9fC7cqImlFqioOyL3Ucbb7kcNVjGS2wZo3OfYnLDFui27mlSYKhd
+   ZI1M54AS6qpHPxkvsC6Edvhu6ijzLcpPduxvNGjiPtIVjJnqzkrDKN0ZA
+   SBVp7ZelTUuvhg2D4fRyhn0ynphwqf/snEQkqDAtweT/NYr3EW5qubteA
+   siWUQbq4jKo/B1wtn8e9QHFkqauDfkrvnRQlB40K5SdMn9ePTHWQ1D2xD
+   d7S/7q2rJHLeprgNhJlMyryRzq2TAXopIXg6A9IDoMQC477ZxRcBlkPED
+   rBaVh1ns8QgHKdKN69xy3a6AI5VpZwhtOHrpRljxSynwv7KXEfNene6Dg
+   A==;
+X-CSE-ConnectionGUID: 4fEUnsuaSZqcSmy3qW9F5w==
+X-CSE-MsgGUID: T9Srv4kHQmu1C7K4uaanww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="63099337"
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="63099337"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 00:20:06 -0700
+X-CSE-ConnectionGUID: QSZApNFnR6+WKt45uNjbJQ==
+X-CSE-MsgGUID: 9IjP+zuSTS6864fyXuru/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="214228153"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 20 Oct 2025 00:20:02 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vAkBU-0009an-0H;
+	Mon, 20 Oct 2025 07:20:00 +0000
+Date: Mon, 20 Oct 2025 15:19:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: hans.zhang@cixtech.com, bhelgaas@google.com, helgaas@kernel.org,
+	lpieralisi@kernel.org, kw@linux.com, mani@kernel.org,
+	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	mpillai@cadence.com, fugang.duan@cixtech.com,
+	guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+	cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hans Zhang <hans.zhang@cixtech.com>
+Subject: Re: [PATCH v10 04/10] PCI: cadence: Add support for High Perf
+ Architecture (HPA) controller
+Message-ID: <202510201553.x7S0SaZ1-lkp@intel.com>
+References: <20251020042857.706786-5-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251020-i2c-mux-v3-5-908ac5cf9223@gmail.com>
-References: <20251020-i2c-mux-v3-0-908ac5cf9223@gmail.com>
-In-Reply-To: <20251020-i2c-mux-v3-0-908ac5cf9223@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Peter Rosin <peda@axentia.se>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8215;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=RcFIrKoSgnto39HXDCzkc41AKHrLdxTXBU7nIzeA4ck=;
- b=owEBbQKS/ZANAwAKAYiATm9ZXVIyAcsmYgBo9eIeQlAhgS2qIv+uQnFVrYg/iCLMq0RlKE/4e
- wSYKwI9FQ2JAjMEAAEKAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaPXiHgAKCRCIgE5vWV1S
- MldtEADRexPNmR5XRZqMic/rZNCi1v0rUBibNGFESL5UgamBrAak845xal3CxyKG3m3SI5rVXvI
- DS//zyQyKLg+R8KWvq6LG+z4Vp/tTlhaNmlgDd0hlepqQzWdREmNbyFI+p0ojE8mu55ZO1zzBr2
- 6/2bt3n17WgXeijZ1cVb7cetWzCo9Ffx3sKinanq2TDwong0mdUHBWjBCS2xZIJl5d1Q3nbYnPb
- CYCpPI2KRIRPyWpkbOjY+pBUMvnZ0BPgge7LX2TCaz40T+JAcEcDnQP+MW5QmMpW10hd6SX9Tc3
- B5j3hpY+TQU09HrtkLNctxszOMW/sEhIst9Oo8WFaA0vMTVvHhyVIkOvvvpmB68y4TPtNzy74PP
- lElqXlf0pinALTB5BNoaUEKiTn9BfwAUPgLGQn+eySwdGy/EYrXNkffQLUOFi+jljALZvHKrUeR
- CCG3rp94cCFRNLONejMXKqXRPHpg5uM1lwHYOeY2Jj1ukfB+IhiT2VL+Mj9RWI1JmWg/kyJ6w1G
- Ygvrvr0Nj/KyMKZ5YeruFfpdjraUviQLJ3t1aVAnhiiJVFnq3uDgrb1A5pizhP0l0S4mHwuT3aN
- nsO12bVYq7N9qFtKObkYoz0jk62YMGiQGKi5JPu3Cz9bFWfzmWCeHEsuHZmPdRyIWjGS++LuMTR
- BQIJ+K7E9T7mj+g==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020042857.706786-5-hans.zhang@cixtech.com>
 
-Describe what needs to be consideraed and taken into account
-when using different bus speeds for different mux channels.
+Hi,
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- Documentation/i2c/i2c-topology.rst | 176 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 176 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/Documentation/i2c/i2c-topology.rst b/Documentation/i2c/i2c-topology.rst
-index 48fce0f7491bf1bcd4a851f685b010386c9ce0d2..2c4a1364ce82e353f51608e60d08535f80523fea 100644
---- a/Documentation/i2c/i2c-topology.rst
-+++ b/Documentation/i2c/i2c-topology.rst
-@@ -367,6 +367,182 @@ When D1 or D2 are accessed, accesses to D3 and D4 are locked out while
- accesses to D5 may interleave. When D3 or D4 are accessed, accesses to
- all other devices are locked out.
- 
-+Bus Speed and I2C Multiplexers
-+================================
-+
-+I2C bus multiplexers allows multiple downstream channels to be exposed
-+as separate I2C adapters which also could set their own bus speed.
-+
-+The multiplexer itself cannot change the bus speed as it use the upstream
-+clock and data lines to communicate with the downstream devices. The speed
-+is therfor changed in the root adapter resulting in that the whole bus is
-+affected.
-+
-+This increases the complexity of the topology and some considerations must
-+be taken into.
-+
-+Bus speed
-+----------
-+
-+Downstream channels of an I2C multiplexer can only operate at the same or
-+lower bus speed as the upstream bus. This is because the upstream bus may
-+have devices that cannot operate at higher speeds and those will be affected
-+by the speed change.
-+
-+The example below illustrates the problem.
-+The root adapter is operating at 100kHz. D2 can only operate with 100kHz,
-+but D2 can operate at 400kHz. When D1 is selected, the bus speed of the
-+root adapter would have to be is set to 400kHz, a speed that D2 may not support.
-+
-+This topology is therefor not allowed: ::
-+
-+                          .----------. 400kHz .--------.
-+        .--------. 100kHz |   mux-   |--------| dev D1 |
-+        |  root  |--+-----|  locked  |        '--------'
-+        '--------'  |     |  mux M1  |
-+                    |     '----------'
-+                    |  .--------.
-+                    '--| dev D2 |
-+                       '--------'
-+
-+
-+This topology is allowed: ::
-+
-+                          .----------. 100kHz .--------.
-+        .--------. 400kHz |   mux-   |--------| dev D2 |
-+        |  root  |--+-----|  locked  |        '--------'
-+        '--------'        |  mux M1  |--. 400kHz .--------.
-+                          '----------'  '--------| dev D1 |
-+                                                 '--------'
-+
-+Preferred topology
-+-------------------
-+
-+The preferred topology when using different bus speeds is to have the multiplexer
-+connected directly to the root adapter without any devices as siblings.
-+By this arrangement, the bus speed can be changed without affecting any other devices
-+and many of the caveats are avoided.
-+
-+Other multiplexers in parallell is still okay as those are locked out during transfers.
-+
-+This is the preferred topology: ::
-+
-+                          .----------. 100kHz .--------.
-+        .--------. 400kHz |   mux-   |--------| dev D2 |
-+        |  root  |--+-----|  locked  |        '--------'
-+        '--------'        |  mux M1  |--. 400kHz .--------.
-+                          '----------'  '--------| dev D1 |
-+                                                 '--------'
-+Locking
-+--------
-+
-+If the multiplexer is mux-locked, transfers to D3 may interleave between the
-+select-transfer-deselect to D1 or D2.
-+This results in a situation where the bus speed to D3 may be lower than it
-+is supposed to be. This is usually not a problem.
-+
-+This topology is allowed but some transfers to D3 may be at 100kHz: ::
-+
-+                          .----------. 100kHz .--------.
-+        .--------. 400kHz |   mux-   |--------| dev D1 |
-+        |  root  |--+-----|  locked  |        '--------'
-+        '--------'  |     |  mux M1  |--. 400kHz .--------.
-+                    |     '----------'  '--------| dev D2 |
-+                    |  .--------.                '--------'
-+                    '--| dev D3 |
-+                       '--------'
-+
-+Multiple muxes in series
-+--------------------------
-+
-+When multiple muxes are used in series the same rules applies.
-+
-+Transfers to D3 may interleave between select-transfer-deselect to D1, which
-+results that the bus speed to D2 or D3 will be at 100KHz.
-+
-+Transfers to D2 may interleave between select-transfer-deselect to D1, which
-+results in that the bus speed to D1 may be at 400kHz as the transfer to D2
-+will set the bus speed to before the transfer to D1 starts.
-+
-+This is probably a bad topology ::
-+
-+                     .----------. 400kHz .----------. 100kHz .--------.
-+    .--------.400kHz |   mux-   |--------|   mux-   |--------| dev D1 |
-+    |  root  |--+----|  locked  | 400kHz |  locked  |        '--------'
-+    '--------'  |    |  mux M1  |--.     |  mux M2  |
-+                |    '----------'  |     '----------'
-+                |  .--------.      |  .--------.
-+                '--| dev D3 |      '--| dev D2 |
-+                   '--------'         '--------'
-+
-+Multiple muxes in parallell
-+----------------------------
-+
-+When multiple muxes are used in parallell all access to other muxes are locked out
-+so this is not a problem.
-+
-+If the muxes are mux-locked, access to D3 may still interleave though.
-+
-+In the example below, D3 may not interleave between select-transfer-deselect for D1
-+or D2 as both muxes are parent-locked: ::
-+
-+
-+                   .----------. 100kHz   .--------.
-+                   |  parent- |----------| dev D1 |
-+                .--|  locked  |          '--------'
-+                |  |  mux M1  |
-+                |  '----------'
-+                |      .----------. 400KHz  .--------.
-+    .--------. 400kHz  |  parent- |---------| dev D2 |
-+    |  root  |--+------|  locked  |         '--------'
-+    '--------'  |      |  mux M2  |
-+                |      '----------'
-+                |  .--------.
-+                '--| dev D3 |
-+                   '--------'
-+
-+Idle state
-+-----------
-+
-+Muxes have an idle state, which is the state the channels is put into when no channel
-+is active. The state is typically one of the following:
-+
-+- All channels are disconnected
-+- The last selected channel is left as-is
-+- A predefined channel is selected
-+
-+Muxes that support an idle state where all channels are disconnected are preferred when using
-+different bus speeds. Otherwise high bus speeds may "leak" through to devices that
-+may not support that higher speed.
-+
-+Consider the following example: ::
-+
-+                          .----------. 100kHz .--------.
-+        .--------. 400kHz |   mux-   |--------| dev D1 |
-+        |  root  |--+-----|  locked  |        '--------'
-+        '--------'  |     |  mux M1  |--. 400kHz .--------.
-+                    |     '----------'  '--------| dev D2 |
-+                    |  .--------.                '--------'
-+                    '--| dev D3 |
-+                       '--------'
-+
-+If the idle state of M1 is:
-+- All channels disconnected: No problem, D1 and D2 are not affected by communication
-+  to D3.
-+- Last selected channel: Problem if D1 was the last selected channel. High speed
-+  communication to D3 will be "leaked" to D1.
-+- Predefined channel: Problem, if the predefined channel D1. Set predefined channel
-+  to D2 as D2 may handle 400kHz.
-+
-+Supported controllers
-+-----------------------
-+
-+Not all I2C controllers support setting the bus speed dynamically.
-+At the time of writint, the following controllers has support:
-+
-+============================   =============================================
-+i2c-davinci                    Supports dynamic bus speed
-+============================   =============================================
- 
- Mux type of existing device drivers
- ===================================
+[auto build test WARNING on 211ddde0823f1442e4ad052a2f30f050145ccada]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/hans-zhang-cixtech-com/PCI-cadence-Add-module-support-for-platform-controller-driver/20251020-123246
+base:   211ddde0823f1442e4ad052a2f30f050145ccada
+patch link:    https://lore.kernel.org/r/20251020042857.706786-5-hans.zhang%40cixtech.com
+patch subject: [PATCH v10 04/10] PCI: cadence: Add support for High Perf Architecture (HPA) controller
+config: i386-buildonly-randconfig-002-20251020 (https://download.01.org/0day-ci/archive/20251020/202510201553.x7S0SaZ1-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251020/202510201553.x7S0SaZ1-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510201553.x7S0SaZ1-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:96:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      96 |         if (rc->quirk_retrain_flag)
+         |             ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:98:9: note: uninitialized use occurs here
+      98 |         return ret;
+         |                ^~~
+   drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:96:2: note: remove the 'if' if its condition is always true
+      96 |         if (rc->quirk_retrain_flag)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+      97 |                 ret = cdns_pcie_retrain(pcie);
+   drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:84:18: note: initialize the variable 'ret' to silence this warning
+      84 |         int retries, ret;
+         |                         ^
+         |                          = 0
+   1 warning generated.
+
+
+vim +96 drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+
+    79	
+    80	static int cdns_pcie_hpa_host_wait_for_link(struct cdns_pcie *pcie)
+    81	{
+    82		struct device *dev = pcie->dev;
+    83		struct cdns_pcie_rc *rc;
+    84		int retries, ret;
+    85	
+    86		rc = container_of(pcie, struct cdns_pcie_rc, pcie);
+    87	
+    88		/* Check if the link is up or not */
+    89		for (retries = 0; retries < LINK_WAIT_MAX_RETRIES; retries++) {
+    90			if (cdns_pcie_hpa_link_up(pcie)) {
+    91				dev_info(dev, "Link up\n");
+    92				return 0;
+    93			}
+    94			usleep_range(LINK_WAIT_USLEEP_MIN, LINK_WAIT_USLEEP_MAX);
+    95		}
+  > 96		if (rc->quirk_retrain_flag)
+    97			ret = cdns_pcie_retrain(pcie);
+    98		return ret;
+    99	}
+   100	
 
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
