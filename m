@@ -1,183 +1,173 @@
-Return-Path: <linux-kernel+bounces-861722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE38BF379A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C04CBF39EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68B924F381A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F553A9DAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2241A76BC;
-	Mon, 20 Oct 2025 20:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0311233374F;
+	Mon, 20 Oct 2025 20:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZRzS8A8U"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="duFjPyBH"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C1A2D9482;
-	Mon, 20 Oct 2025 20:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2D0333737;
+	Mon, 20 Oct 2025 20:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760992837; cv=none; b=on5hdF2c4D6mr5Uw+dRlRk4hpYm86kWG+3pfk90G54XXKT3xhBE/jfLVN3m4/N+GvdsJy59NYxAkuGWzljBrHNhnyQ1QB/zCro2LyKzzJN9mxyPTI6gh0JDEgw2Mtmo4ckVV8FxxQj5ac3246TyKIEkUI+w1sxIzKt71C8ucVcM=
+	t=1760993817; cv=none; b=tuzEaq86M0n529LTpd534IK+lLVzrWKahFAdTBZIbzGCXPC6rFPmR+hL3JiVrosFAnHirldMJRUhiAcosLOIpJ45z254dB/iQ1m+CNrX96nnCxtjew3d6wys9w7qtsX9M/q3cxS9UwDM/XUmC+BjFmuq4Bijuc4Blx12dFi0zi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760992837; c=relaxed/simple;
-	bh=24Vr+z8X2OjCkhbKv/RGORptzkJB/zizrQWThqPMu50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u07QWTS2g1GAA5BsgbJW+WKiccOuJf6d2kRWCFShV2Pbr/2tLMue1crV0OQclCmgTZ/8v1VPtP8DLnPzswT4LP4/dFEHJE/TtRSjqV2xfEO9hPCRxXTdi8FdkJRhxAQcNkpDaouL18qFLCZQ010tLOqFmle4ayx9DkSuladVibw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZRzS8A8U; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760992835; x=1792528835;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=24Vr+z8X2OjCkhbKv/RGORptzkJB/zizrQWThqPMu50=;
-  b=ZRzS8A8UFKBtg9SpVssgW5eKZLr+Od3Rw5J9owuYqhYqwnPPquTJ6DLW
-   B5Rl1TFKdipUK8MTx/p52nwa/6jz1lwXiFaxrlrBKCwVbdx63dGc73aaD
-   lE/ZvADeNK1dIaQEpakqAzdYV5/SBxRm+tPz8oVPP8qNb7pP52ir4DZW8
-   UErqFd5AoKdKNyvnVxL3mLuAZgZc/yuvXpiPjei7ZLuvEX+3w7POlAYUn
-   4KlA6MadrSD6zK32esSpeA+M7oa1UJub76hv3vImlqml4/uOiO1zo7A+Z
-   SCl3fABqat1HkytNH17VOkWdHqD2mWB8L1rCllxW3DUwTcuovx24WKoir
-   w==;
-X-CSE-ConnectionGUID: FGx7jnZ5Sjq7CYaGMI1K8w==
-X-CSE-MsgGUID: pFFPOZGCS/2uHNEnVpwSLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74235378"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="74235378"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 13:40:34 -0700
-X-CSE-ConnectionGUID: C4M0oGTJQc2NzxAo+eHsxw==
-X-CSE-MsgGUID: Wv7JWW/iSGm06SaRmVCCag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="183827708"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO desk) ([10.124.220.167])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 13:40:33 -0700
-Date: Mon, 20 Oct 2025 13:40:26 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/its: use Sapphire Rapids+ feature to opt out
-Message-ID: <20251020204026.a7xuhnagsqo4otpx@desk>
-References: <20251017011253.2937710-1-jon@nutanix.com>
- <20251020194446.w2s5f6nr7i7vw4ve@desk>
- <EA2E1D80-07A3-459D-B330-A667821E7C05@nutanix.com>
+	s=arc-20240116; t=1760993817; c=relaxed/simple;
+	bh=McGfNh7ciF5ksFu2NwbJt5zEbKC5VtUeVzsub6mNoyU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gXMC0IAwoeVHCCS5IxInCcPMrRqjTZrQA6VS750WH6AVBoovJDFHTKSefm1ryiBicfVnW/78jg/GF6GARLGaNQvMx8W6PeNo0OiiFM2McPHXvRGkvKzBlmlGFplBCoUdnX6JuHlh8LUWhRkiRj2bwgXpUVsUj65cwqPvycAJ2uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=duFjPyBH; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=McGfNh7ciF5ksFu2NwbJt5zEbKC5VtUeVzsub6mNoyU=; b=duFjPyBHVlXnmjSb8UEBUN7+2l
+	bkrdtG+JT+oOjh8Xzk25DYAspxQv78pdrBh1Gkl2gkaIhBhJ+iK31Bk7il7KE9kG/O7BfGjjOkzl+
+	8NuF5z+l+/ByATShiQb9q6Yo1XmGuNrQa+wkfWjN+9mmqCzPhz10pUXWEkFyT81L1WQSqsLEgoRmy
+	CBjre/IRiEXvBuTG9FbbwRokxeWZVYenV6c3NcZnvvsqBgRPx0+QGZg9qShsL4gi1o/7bjhtnPFgi
+	N8gjzLWl6oNx0VOYxGWeb9Z76g/H+ODQyvS9gfI+TLF+cQBYP60sTs3Lab7Ro3f/YTZob2Zm66a6h
+	+ZYGoVRA==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1vAwgZ-0008mw-0b;
+	Mon, 20 Oct 2025 22:40:55 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1vAwgY-00021J-2E;
+	Mon, 20 Oct 2025 22:40:54 +0200
+Message-ID: <790fd7d05fa03f788f0a628a99b2e127db824207.camel@apitzsch.eu>
+Subject: Re: [PATCH v2 0/8] media: i2c: dw9719: add DT compatible and
+ DW9718S support
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, 	devicetree@vger.kernel.org, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Daniel Scally <djrscally@gmail.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Val Packett
+	 <val@packett.cool>
+Date: Mon, 20 Oct 2025 22:40:53 +0200
+In-Reply-To: <20250920-dw9719-v2-0-028cdaa156e5@apitzsch.eu>
+References: <20250920-dw9719-v2-0-028cdaa156e5@apitzsch.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <EA2E1D80-07A3-459D-B330-A667821E7C05@nutanix.com>
+X-Virus-Scanned: Clear (ClamAV 1.0.9/27798/Mon Oct 20 11:37:28 2025)
 
-On Mon, Oct 20, 2025 at 07:54:41PM +0000, Jon Kohler wrote:
-> 
-> 
-> > On Oct 20, 2025, at 3:44 PM, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-> > 
-> > !-------------------------------------------------------------------|
-> >  CAUTION: External Email
-> > 
-> > |-------------------------------------------------------------------!
-> > 
-> > On Thu, Oct 16, 2025 at 06:12:49PM -0700, Jon Kohler wrote:
-> >> A VMM may not expose ITS_NO or BHI_CTL, so guests cannot rely on those
-> >> bits to determine whether they might be migrated to ITS-affected
-> >> hardware. Rather than depending on a control that may be absent, detect
-> >> ITS-unaffected hosts via a CPU feature that is exclusive to Sapphire
-> >> Rapids and newer processors.
-> > 
-> > BHI_CTRL is also exclusive to Sapphire Rapids and newer processors. Why
-> > wouldn't it be exposed to guests but BUS_LOCK_DETECT would be?
-> > 
-> > Not exposing BHI_CTRL has another disadvantage that guests would deploy the
-> > BHB-clear sequence when they could have used cheaper hardware mitigation
-> > for BHI.
-> 
-> Yes, I know, but given that BHI_CTRL comes via a spec_ctrl value change, it
-> has a negative effect at any guests live migrated in that never A) updated their
-> guest kernel to know about the new speculation controls and/or B) have updated
-> but have not yet soft rebooted and/or
+Hi,
 
-Since ITS is newer than BHI_CTRL, deploying ITS mitigation unnecessarily
-shouldn't be a problem for A) and B), right?
+Am Samstag, dem 20.09.2025 um 14:03 +0200 schrieb Andr=C3=A9 Apitzsch via B=
+4
+Relay:
+> The DW9718S voice coil motor is found on various smartphones like
+> motorola-nora that are currently being worked on in the postmarketOS
+> community. Since the way it operates is very similar to DW9719, this
+> patch series adds support for it to the existing dw9719 driver.
+> Because
+> that driver did not yet support DT, we also add DT bindings and the
+> dongwoon,dw9719 ofw compatible. With DW9718S, the driver was
+> tested fully, including runtime PM.
+>=20
+> This is a follow-up of [1] and [2].
+>=20
+> Changes compared to previous submission:
+> * Deprecate dongwoon,vcm-freq in favor of dongwoon,vcm-prescale
+> * Instead of per-device config struct use model ID to handle cases
+>=20
+> [1]
+> https://lore.kernel.org/linux-media/20250210082035.8670-1-val@packett.coo=
+l/
+> [2]
+> https://lore.kernel.org/linux-media/20250209-dw9761dts-v3-0-14d3f00f0585@=
+apitzsch.eu/
+>=20
+> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> ---
+> Changes in v2:
+> - Add patch (3) which removes i2c device table
+> - Restructure patches because of that
+> =C2=A0 - keep patches 1 and 2
+> =C2=A0 - add patch 3
+> =C2=A0 - patch 6 becomes patch 4
+> =C2=A0 - patch 3 becomes patch 5
+> =C2=A0 - patch 4 becomes patch 6
+> =C2=A0 - patch 5 becomes patch 7
+> =C2=A0 - patch 7 becomes patch 8
+> - Patch 1 (bindings)
+> =C2=A0 - Remove unneeded 'minimum: 0'
+> =C2=A0 - Remove if/then that handles 'default' to reduce complexity
+> =C2=A0 - Add myself as maintainer
+> - Patch 5
+> =C2=A0 - Fix void-pointer-to-enum-cast warning
+> - Patch 7
+> =C2=A0 - Drop pm_runtime_mark_last_busy(); it is already called by
+> =C2=A0=C2=A0=C2=A0 pm_runtime_put_autosuspend()
+> - Patch 8
+> =C2=A0 - Remove extra parentheses
+> =C2=A0 - Print error if writing to power register fails
+> =C2=A0 - Add reason for doubled waiting time during power up to comment
+> =C2=A0 - Pass NULL instead of unused 'ret' to cci_write()
+> - Link to v1:
+> https://lore.kernel.org/r/20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu
+>=20
+> ---
+> Andr=C3=A9 Apitzsch (3):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: media: i2c: Add DW9718S, DW97=
+19 and DW9761 VCM
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Deprecate dongwoon,vcm=
+-freq
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Remove unused i2c devi=
+ce id table
+>=20
+> Val Packett (5):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Add an of_match_table
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Add driver_data matchi=
+ng
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Add DW9718S support
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Update PM last busy ti=
+me upon close
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: dw9719: Fix power on/off seque=
+nce
+>=20
+> =C2=A0.../bindings/media/i2c/dongwoon,dw9719.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 88
+> +++++++++++++++++
+> =C2=A0drivers/media/i2c/dw9719.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 110
+> +++++++++++++++++----
+> =C2=A02 files changed, 178 insertions(+), 20 deletions(-)
+> ---
+> base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+> change-id: 20250709-dw9719-8a8822efc1b1
+>=20
 
-> C) have updated, have soft rebooted, but the BHI_CTRL isn’t actually
-> available because the system hasn’t cold-booted the VM(s) (see comments
-> below).
+Gentle ping.
 
-This looks to be the main problem scenario.
-
-> In any of those three situations, subsequent guest/host transitions become
-> penalized. Now, from a security perspective, thats irrelevant because one
-> could say that if you really want to be secure, you have to do the work to make
-> sure all these cold boots are done, but that is far easier said than done in general
-> enterprise virtualization workloads.
-> 
-> Meaning, *if* a host opts into enabling BHI at all, they will penalize any guest
-> workload that hasn’t done the work to do the proper enablement cover to cover.
-> Less of a problem for hyperscaler who could control what launch/where, much
-> much harder for non-hyperscalers who might live migrate in extremely long tailed
-> workloads that feel like a federal project just to get a guest reboot, not to mention
-> a guest cold boot.
-
-That seems orthogonal to the problem at hand, but I feel the pain. IIUC,
-you are referring to the wrmsr(SPEC_CTRL) at guest entry/exit because that
-have different MSR values. Host with BHI_DIS_S=1 and guest without it? Do
-you think adding support for virtual-SPEC_CTRL in QEMU would help here?
-
-> >> Use X86_FEATURE_BUS_LOCK_DETECT as the canary: it is present on
-> >> Sapphire Rapids+ parts and provides a reliable indicator that the guest
-> >> won't be moved to ITS-affected hardware.
-> > 
-> > I am puzzled why BUS_LOCK_DETECT is more reliable than BHI_CTRL?
-> 
-> Because BUS_LOCK_DETECT (or any other feature from commit [1]) was
-> available day 1 of the SPR QEMU model, whereas BHI_CTRL wasn’t added
-> until commit [2]. That means any VMM that added SPR support “day 1” has
-> the feature set from [1] at minimum, and it also means that if a guest VM was
-> *started* on that QEMU version, but never power cycled, it will never see 
-> BHI_CTRL, even if it is available to be picked up in the latest model scheme.
-> 
-> I can’t speak to other VMMs (e.g. vmw, hyperv, hyperscalers) and how they do
-> it, but I suspect there are similar challenges around post-launch feature/bit
-> additions that require the VM to be completely cold-booted.
-
-Ok, that makes BUS_LOCK_DETECT a better choice than BHI_CTRL. I think it
-be better to replace BHI_CTRL with BUS_LOCK_DETECT.
-
----
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 1755f91a5643..e8fc4a4055bf 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1355,8 +1355,8 @@ static bool __init vulnerable_to_its(u64 x86_arch_cap_msr)
- 	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
- 		return false;
- 
--	/* None of the affected CPUs have BHI_CTRL */
--	if (boot_cpu_has(X86_FEATURE_BHI_CTRL))
-+	/* None of the affected CPUs have BUS_LOCK_DETECT */
-+	if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
- 		return false;
- 
- 	/*
+Best regards,
+Andr=C3=A9
 
