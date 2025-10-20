@@ -1,174 +1,212 @@
-Return-Path: <linux-kernel+bounces-861577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0EEBF31C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:05:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81CFBF31C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A904A3BBE7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF6D188C1FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D612D063A;
-	Mon, 20 Oct 2025 19:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEF5261B9E;
+	Mon, 20 Oct 2025 19:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q9jSzE+I"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21A81E511;
-	Mon, 20 Oct 2025 19:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987122; cv=none; b=Qm3mdiKRSma/4ru1EXNlNgPcOz+NTx21V6eiZt2k8a76OI3e/GjRALZj90sojqDB72ZQSIQt1P9oEMa4AL/2ABM2qURDCLNALmYHB5IXDOwDWME2AnlG9aRWh+I0ibAuJ3F34HATbsYMTraoyXw1Ton6m8hODtksN0AAbLHeJFw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987122; c=relaxed/simple;
-	bh=k/YGnuYi1+oEiyIdu3aiAPuEkSiMIHNC7xXixsFfNow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7abs0PQ6BvwEYq8Aw+C9GGDcz0KjN7xHWY/aoxXXLqVNLwrFeCPyWfogAtWbPXjzTgNGHXqNCka0hGnRaWuMiS+ohdRyl34zr2decOboEScvd4HpY2xyc8xR+fSnweyYtAsqyvulnyez1b4aSOcdZaBaUEgiTgwE/IWfasd/Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q9jSzE+I; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9B8B22017241;
-	Mon, 20 Oct 2025 12:05:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9B8B22017241
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1760987120;
-	bh=YkNbQ2JGZwnFnBbhOku9O15cwzbdr1Cd18AUEiHnxNw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q9jSzE+I9pwLalOPWqCW9h77biMTbAcRidXNCbivrUIXyjHWBKV27AZkQqr4G2fM9
-	 wXn2IH/sRIzzh65NGo4Sfu1s1jci5OTA07wgJPzGmPF4SeK7JUEdqEHYzitOn99Sb3
-	 Z3fRZJYavWBJx2gvBv2JtFd8IRfkIvc4Amypih5w=
-Message-ID: <4a4fa302-18fa-ba01-ec06-d4bf0cc84032@linux.microsoft.com>
-Date: Mon, 20 Oct 2025 12:05:19 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CHCnGm8P"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010007.outbound.protection.outlook.com [52.101.193.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D6E1E511
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760987172; cv=fail; b=nmOAMaSvck0w4WFJIhZTqtIuDh0BFyA1RZgzt9X0NCbZQjMFEh++OIRGGfHabIpL73HBAs/Oyfe79r5RvoX4EweQ+oPwj6V0KmajeufTZXilGHU61IbMbiuT/o7EHz20kbvqjoGZKE3HQd6xa9S4mL2OIHNujxd7HtDLexVtdM4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760987172; c=relaxed/simple;
+	bh=H9pHGN9z0lMz7g3JOjrwXBMq9tBEGjWJ1qMAt5F4jB0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DR6Xbh13kM50vp8kBBHh5gclwcy/9OfVs2nsz5xa8vtmMSYDjAkhL34uR7wt542rjo3YVcEEviBokmukl7P5xzKaxcsoUU0tGWmXD3JLXCcTXTJ1rTCc6ISaqmSsLUUgUbK3rby8wZBvX6t6IWp0Kt61pnPxuNS0KA1/R9Q+4js=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CHCnGm8P; arc=fail smtp.client-ip=52.101.193.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TXUJpLdJN5VS7xy5t1FPE+1SU30NulGxDG9gSf0OJ2IYyZyAnidpt31GERw2sctLJAstJ24Zhr3esRxOwZzkfpXim/Lvyv4Znwort3RIBLt2bP6+z9sijuFL1DWQLANpLDuUitYeQx55N8tciJuvIHGxHrftXWs/Q8Bl9wTVpkSXaoOOspDmp8jFHtpm06DLAOSi8sUuasHc0DHPlrH1J4w0j34NNU2izWlRgz+/9Tjvpx08NVdZ/28/SwxdB7ei+nTJrT+h8WcBlbfubXjB0ecIpNy82vdg8XDkX3PVQDkFDJ75V7elX4a2kOPepKGLkKQzghBV4l3A1Uf3iJCxPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZRtTZfToYpi/zar+4kFzgnP7oIxJF3wyFOsfagsPBD0=;
+ b=cQ99L7h36JmXryKnFTYR4DEtuWxA7CsVtAH73deBLBJ51GE2NI9BEn8GjjYenTU13C8SXXtTAu0IX0wbV7GltTaOQSx26qRIXhfBCt2guJ8cBDM05QlnUcfgJ4KTbyLC9f7vD/2TJeGPYLWrAzfqNkrfs/k9KQYMRTGk54Tn0b3nMGtMSKq+7wGsaGaXFfpWnbtdYSNEaHS0AmULbj1/TiIzQLIrl5qAAtVDrk3REUF9aKwjTrgMxBgxujiVFhtfKuynw7Nzsi94xfvCd2QBbStbb6CAPb3Kt1cCiJVbRzCm/kFADxkvKkwA7oXAAtA4lbNTRJkbZJhJnXiG7JboeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZRtTZfToYpi/zar+4kFzgnP7oIxJF3wyFOsfagsPBD0=;
+ b=CHCnGm8PyZe7NXbJBac8OfXhrNH/s9YDnVnn5urpgsrCFC2xmk7sFtv5IKjhrkhrbVh/GHMjc+0VPZoCOURTuYLZkpzz/ytIIhbTYT8HpRcAwr5N6lzxVL2vKfPN1zJ3hX3sS65OhKIgEVFgUp+9cTguORp0bqFiRkU0cVxJGaTuXR0EeE94gdpP4FyWGAxHL5ufnu3BHC/7KP3DNR+ZuZ0dsAK9MPW/Szmck/XsyFPPVLh62mm0IhWYG9kViLEboFU+642u4v64i0+hWX3R3pDkFotQPfZWKJW8gJTAC2xe7WPH1eWWD2yqoGxG64+xDUd116G8EOSBKL7OMjXedQ==
+Received: from SJ0PR13CA0026.namprd13.prod.outlook.com (2603:10b6:a03:2c0::31)
+ by PH8PR12MB7447.namprd12.prod.outlook.com (2603:10b6:510:215::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 19:06:05 +0000
+Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c0:cafe::3c) by SJ0PR13CA0026.outlook.office365.com
+ (2603:10b6:a03:2c0::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Mon,
+ 20 Oct 2025 19:06:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 19:06:04 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 20 Oct
+ 2025 12:05:46 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 20 Oct 2025 12:05:45 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 20 Oct 2025 12:05:44 -0700
+Date: Mon, 20 Oct 2025 12:05:43 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: kernel test robot <lkp@intel.com>, <will@kernel.org>,
+	<oe-kbuild-all@lists.linux.dev>, <jean-philippe@linaro.org>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <balbirs@nvidia.com>,
+	<miko.lenczewski@arm.com>, <peterz@infradead.org>, <kevin.tian@intel.com>,
+	<praan@google.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 5/7] iommu/arm-smmu-v3: Populate smmu_domain->invs
+ when attaching masters
+Message-ID: <aPaIB7yJvlHba/9m@Asurada-Nvidia>
+References: <14d76eebae359825442a96c0ffa13687de792063.1760555863.git.nicolinc@nvidia.com>
+ <202510172340.XyneWIPI-lkp@intel.com>
+ <aPKxBh14fxnVIXK+@Asurada-Nvidia>
+ <20251020121225.GK316284@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v3 0/6] Hyper-V: Implement hypervisor core collection
-Content-Language: en-US
-To: Michael Kelley <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "arnd@arndb.de" <arnd@arndb.de>
-References: <20251006224208.1060990-1-mrathor@linux.microsoft.com>
- <20251017223300.GB632885@liuwe-devbox-debian-v2.local>
- <20251017225732.GC632885@liuwe-devbox-debian-v2.local>
- <74e019ac-afc7-3178-0f0a-dc903af5c4ca@linux.microsoft.com>
- <SN6PR02MB4157C70EBD25315F098DB3A1D4F7A@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: Mukesh R <mrathor@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157C70EBD25315F098DB3A1D4F7A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251020121225.GK316284@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|PH8PR12MB7447:EE_
+X-MS-Office365-Filtering-Correlation-Id: 680ac667-bee0-4d33-9b8a-08de100bb794
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FZ1HhnR3fiZ0CBIrFNiutDWAh3hE59wZH4xc4pPhDf/c60w0vz+e0uxYawzd?=
+ =?us-ascii?Q?0BvbiOGu/Z8GYVJSdmp3DNedrJbZD1Un7sgEV3w94l3CS2Y5SV1Y9cJ3sEvv?=
+ =?us-ascii?Q?2G6hQk2TOMEN+aVqArgg6+I/aTT04Aq7ZER9Fll8pPpgEiyqDsi1IjqqLfmU?=
+ =?us-ascii?Q?6P94quH+TFJV45xhBKd6j1BM4AIdQBr/tucoCG5A0qV+LK+g4Kh48OYjob2N?=
+ =?us-ascii?Q?WXAJX54ZyFafkbpaWg3Y2G3XgsQ5Gcx/ItPUjywWGIsWzaxeQVpLdnyOgtY4?=
+ =?us-ascii?Q?ET6yNerBasVmyrev/S/YD+68HGEnvLvCY1P8mMzb1D1BbltPOPnx1ehqzDnz?=
+ =?us-ascii?Q?o/YMumzAoyo0CmKuq/HGwVAQr2SH068h3zmFGvHG4LsDj44fTe68ctLswbuM?=
+ =?us-ascii?Q?XOC53vEgkbWYWY4gb+AUnR4EU0ZV9RzAn6tCvRsm3ZfvNvxbDGHNhIjpNacg?=
+ =?us-ascii?Q?dvdYPXyL5lgCULMx3LuESdcizal/f22qHrLaFfP20/wpOhN/QsuC2EGNpaDm?=
+ =?us-ascii?Q?F99IP3t+5fkrAAsWZzdNbM56V5u5JmqDhpHwksiK716j5/QO/PQjcKS6x3Zv?=
+ =?us-ascii?Q?rVfE5jpW36k4WKhe3xI364GjPKWQZpdmybI3GJEs41L5dBcjepdsgr+xPGda?=
+ =?us-ascii?Q?yZnpZHZbC+1dNni2EY/ZcAhFhkeCTGqJf4fBBs45McYO81dCjmEcigSUm4Tc?=
+ =?us-ascii?Q?SJZfQRTuTBR4YDCERkxVzez22NgJgVgVmtNcRbV8m+YOu+UPlwwqqZAzYVvz?=
+ =?us-ascii?Q?2pn7tgGKZHr6/Jh8k8VkPsCUiv5+rINE9XvRbfmXM1qNKIhNAGl7+FdMsJrz?=
+ =?us-ascii?Q?KSliJwjeUsVH08QwR1xes0KcXo0VvJRm/n2LLH6DLudC0xnQsQYVf8LHJApB?=
+ =?us-ascii?Q?UjWHgz/XNF0IbCZX3gm4ALQojunTMwCU6+pLhJi5C9h8Q/l5CfK30uB7Hu7x?=
+ =?us-ascii?Q?vAl7WRuUCbYnKIzgMBO1BYqceYTQqF3cTq4c/340a5CAskzOO1KaDz5wzO3k?=
+ =?us-ascii?Q?9vUwz9KwRD3r6lYGCIaH+nKsjYH8ORAx+vPhw4oyyqS0sqqQcF1te5hMEfvw?=
+ =?us-ascii?Q?v3kN3PacHPFlZ3KiWI3okmCbuUqQhCrFqrTs69WlevxK/N3BytHqRST9w6xQ?=
+ =?us-ascii?Q?m09VLJ7qOn/sssWGxKzemM4E2qKTYbODnfuPAnY1V4eF30s5tIOo7odqT6IB?=
+ =?us-ascii?Q?XNp1GQtV9NxnT1WMfGyTx5WfANkplY22AqTyVoIJLL/d74eVLQgPQkG65QNE?=
+ =?us-ascii?Q?+6LDnkSAOs83dtrZ/v8iYwY4kckYzA6sBd2D4W0XnpMXw7/yYdu2HIFrF3pY?=
+ =?us-ascii?Q?MchzuFaGqDQ/ifyJ6dyK+l+dcYt/TYQnEX8ODeI/w+ZDUruumKcLK3ravx9V?=
+ =?us-ascii?Q?a5u7aMd59uGKf76HRVtl2BtoAsVyospgXAqRkYkD8/dwy6PAWmCU9EXZHcmd?=
+ =?us-ascii?Q?u7K1tNdi52h+Eqd040hrXm27sndm0uLf/GuUhjd7R/ePOofAljzUegMc8nMc?=
+ =?us-ascii?Q?bp5MlP1gtnZkkRCX5XlLCeLplqS6feI9ALTNK4wQ+dnlHbU95a0tCjF2dVca?=
+ =?us-ascii?Q?3+HPS7/pC0R5x+I0buw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 19:06:04.3494
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 680ac667-bee0-4d33-9b8a-08de100bb794
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7447
 
-On 10/17/25 19:54, Michael Kelley wrote:
-> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Friday, October 17, 2025 4:58 PM
->>
->> On 10/17/25 15:57, Wei Liu wrote:
->>> On Fri, Oct 17, 2025 at 10:33:00PM +0000, Wei Liu wrote:
->>>> On Mon, Oct 06, 2025 at 03:42:02PM -0700, Mukesh Rathor wrote:
->>>> [...]
->>>>> Mukesh Rathor (6):
->>>>>   x86/hyperv: Rename guest crash shutdown function
->>>>>   hyperv: Add two new hypercall numbers to guest ABI public header
->>>>>   hyperv: Add definitions for hypervisor crash dump support
->>>>>   x86/hyperv: Add trampoline asm code to transition from hypervisor
->>>>>   x86/hyperv: Implement hypervisor RAM collection into vmcore
->>>>>   x86/hyperv: Enable build of hypervisor crashdump collection files
->>>>>
->>>>
->>>> Applied to hyperv-next. Thanks.
->>>
->>> This breaks i386 build.
->>>
->>> /work/linux-on-hyperv/linux.git/arch/x86/hyperv/hv_init.c: In function ?hyperv_init?:
->>> /work/linux-on-hyperv/linux.git/arch/x86/hyperv/hv_init.c:557:17: error: implicit declaration of function ?hv_root_crash_init? [-Werror=implicit-function-declaration]
->>>   557 |                 hv_root_crash_init();
->>>       |                 ^~~~~~~~~~~~~~~~~~
->>>
->>> That's because CONFIG_MSHV_ROOT is only available on x86_64. And the
->>> crash feature is guarded by CONFIG_MSHV_ROOT.
->>>
->>> Applying the following diff fixes the build.
->>
->>
->> Thanks. A bit surprising tho that CONFIG_MSHV_ROOT doesn't have
->> hard dependency on x86_64. It should, no?
+On Mon, Oct 20, 2025 at 09:12:25AM -0300, Jason Gunthorpe wrote:
+> On Fri, Oct 17, 2025 at 02:11:34PM -0700, Nicolin Chen wrote:
+> > On Sat, Oct 18, 2025 at 12:03:27AM +0800, kernel test robot wrote:
+> > > sparse warnings: (new ones prefixed by >>)
+> > > >> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3208:33: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct arm_smmu_invs **invs_ptr @@     got struct arm_smmu_invs [noderef] __rcu ** @@
+> > >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3208:33: sparse:     expected struct arm_smmu_invs **invs_ptr
+> > >    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3208:33: sparse:     got struct arm_smmu_invs [noderef] __rcu **
+> > ...
+> > > > 3208			invst->invs_ptr = &new_smmu_domain->invs;
+> > ...
+> > > > 3247		rcu_assign_pointer(*invst->invs_ptr, invst->new_invs);
+> > 
+> > Looks like we need:
+> > 
+> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > index 8906c1625f428..398d8beb8f862 100644
+> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > @@ -1105,7 +1105,7 @@ static inline bool arm_smmu_master_canwbs(struct arm_smmu_master *master)
+> >   *            to_unref argument to an arm_smmu_invs_unref() call
+> >   */
+> >  struct arm_smmu_inv_state {
+> > -       struct arm_smmu_invs **invs_ptr;
+> > +       struct arm_smmu_invs __rcu **invs_ptr;
+> >         struct arm_smmu_invs *old_invs;
+> >         struct arm_smmu_invs *new_invs;
+> >  };
 > 
-> CONFIG_MSHV_ROOT *does* have a hard dependency on X86_64.
+> Isn't it:
 > 
-> But the problem is actually more pervasive than just 32-bit builds. Because
-> of the hard dependency, 32-bit builds imply CONFIG_MSHV_ROOT=n, which is
-> the real problem. In arch/x86/include/asm/mshyperv.h the declaration for
-> hv_root_crash_init() is available only when CONFIG_MSHV_ROOT is defined
-> (m or y). There's a stub hv_root_crash_init() if CONFIG_MSHV_ROOT is defined
-> and CONFIG_CRASH_DUMP=n, but not if CONFIG_MSHV_ROOT=n. The solution
-> is to add a stub when CONFIG_MSHV_ROOT=n, as below:
-> 
-> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> index 76582affefa8..a5b258d268ed 100644
-> --- a/arch/x86/include/asm/mshyperv.h
-> +++ b/arch/x86/include/asm/mshyperv.h
-> @@ -248,6 +248,8 @@ void hv_crash_asm_end(void);
->  static inline void hv_root_crash_init(void) {}
->  #endif  /* CONFIG_CRASH_DUMP */
-> 
-> +#else   /* CONFIG_MSHV_ROOT */
-> +static inline void hv_root_crash_init(void) {}
->  #endif  /* CONFIG_MSHV_ROOT */
-> 
->  #else /* CONFIG_HYPERV */
-> 
-> Annoyingly, this solution duplicates the hv_root_crash_init() stub.  So
-> an alternate approach that changes a few more lines of code is this:
-> 
-> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> index 76582affefa8..1342d55c2545 100644
-> --- a/arch/x86/include/asm/mshyperv.h
-> +++ b/arch/x86/include/asm/mshyperv.h
-> @@ -237,18 +237,14 @@ static __always_inline u64 hv_raw_get_msr(unsigned int reg)
->  }
->  int hv_apicid_to_vp_index(u32 apic_id);
-> 
-> -#if IS_ENABLED(CONFIG_MSHV_ROOT)
-> -
-> -#ifdef CONFIG_CRASH_DUMP
-> +#if IS_ENABLED(CONFIG_MSHV_ROOT) && IS_ENABLED(CONFIG_CRASH_DUMP)
->  void hv_root_crash_init(void);
->  void hv_crash_asm32(void);
->  void hv_crash_asm64(void);
->  void hv_crash_asm_end(void);
-> -#else   /* CONFIG_CRASH_DUMP */
-> +#else   /* CONFIG_MSHV_ROOT && CONFIG_CRASH_DUMP */
->  static inline void hv_root_crash_init(void) {}
-> -#endif  /* CONFIG_CRASH_DUMP */
-> -
-> -#endif  /* CONFIG_MSHV_ROOT */
-> +#endif  /* CONFIG_MSHV_ROOT && CONFIG_CRASH_DUMP */
-> 
->  #else /* CONFIG_HYPERV */
->  static inline void hyperv_init(void) {}
-> 
-> Michael
+>  struct arm_smmu_invs * __rcu *invs_ptr;
 
-Thanks. Yeah, either of the above two is ok. The latter does not
-duplicate, so may be tiny bit better. Wei will pick one and apply
-directly.
+Hmm, sparse warns this:
 
-Thanks,
--Mukesh
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3257:33: warning: incorrect type in assignment (different address spaces)
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3257:33:    expected struct arm_smmu_invs *[noderef] __rcu *invs_ptr
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3257:33:    got struct arm_smmu_invs [noderef] __rcu **
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3275:33: warning: incorrect type in assignment (different address spaces)
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3275:33:    expected struct arm_smmu_invs *[noderef] __rcu *invs_ptr
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3275:33:    got struct arm_smmu_invs [noderef] __rcu **
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3296:9: error: incompatible types in comparison expression (different address spaces):
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3296:9:    struct arm_smmu_invs [noderef] __rcu *
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3296:9:    struct arm_smmu_invs *
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3354:9: error: incompatible types in comparison expression (different address spaces):
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3354:9:    struct arm_smmu_invs [noderef] __rcu *
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3354:9:    struct arm_smmu_invs *
 
+3257: invst->invs_ptr = &new_smmu_domain->invs;
+3296: rcu_assign_pointer(*invst->invs_ptr, invst->new_invs);
+3354: rcu_assign_pointer(*invst->invs_ptr, new_invs);
 
+But no warning with "struct arm_smmu_invs __rcu **invs_ptr".
+
+Thanks
+Nicolin
 
