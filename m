@@ -1,65 +1,68 @@
-Return-Path: <linux-kernel+bounces-861159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5C4BF1EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:54:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322C6BF1F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA2A428276
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:54:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA9584F60E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F697229B36;
-	Mon, 20 Oct 2025 14:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82980229B38;
+	Mon, 20 Oct 2025 14:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="w09nRaEK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p8Wprkh2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AD7225397;
-	Mon, 20 Oct 2025 14:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E74226CF0;
+	Mon, 20 Oct 2025 14:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972047; cv=none; b=JqYyNhQBNHrXN3z1fjDaTZSmoAT77zTWUQzVRay9vBXW0qswXB7OQ+f12wPuJEmPadqGgXLOIj7MC2/nshPqqw5Dx8WJAVt9GUBzQJC6vhGYFPmDdT43GquBNR36/2QT2JTo2tHQq1JiZFVyekeCzpLvwzjniqKJ63CyCYWVDtY=
+	t=1760972111; cv=none; b=fCY0oaqkoxqWvsWiti+onMZySpppISIaqavcwUOFXePLE+sUa7WFM4uNrHCexlzoHxiAOGbKddS5IxsUWz/YBZhik3Ziebn/hswLRrEmaJTbCIzn4et27NFF44eJPUmLFqTcW3qa/i8eiidJslzVi6EZKNS5cI5BXJpTvNogMU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972047; c=relaxed/simple;
-	bh=FUJglCsEiJPmSTmX6lbsxypqHcM2t510unTNEvRevy4=;
+	s=arc-20240116; t=1760972111; c=relaxed/simple;
+	bh=IYe0snIFUIbXZg5W+Qsm8RK0j95K4knnHQxWMLlVglc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNF9H4V0VGck2XdRYYcGHSwyMbhvzdEaGbRkhZZM97qtK77H6wfcptmMVZ9NhX605nj5Ps2n0ZoYoKWNw2ToCNHd6f9ZtLx+ILMQS+CIbp/ecdzlxU+zSukjceyiKb3JkKl7REt2Qs940mGFozi5QBIuRTn1yvY3JBRw8hsA8ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=w09nRaEK; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqhMJVLM91FelAWBUChmH1gY8aCnA1FMs+tJPK+qOrEdGHz6h0G7NVRijufoIYQF6JS3CQ54U1+LNgEXYh7rDQhXSaSvTOOUpQtVrQX9Czt1ez0uMUQQyF8LSxmIOFaI2sitShMvRRbyne8k0ZYYVcQ5edlCg+J3cy9vQfe+5iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p8Wprkh2; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ykQNRL19NsE0PMhAZcAcgnbmKxbkt0YndoWKR1pRfc0=; b=w09nRaEKQYFPG4v18TOVgFBD7W
-	e/mKrodgh0LQLe3oTJSZ6pkLe1prWOrj4VSjCbsBh6bJK+5ucT1B5FJUKQVoOjgu5uhmAnRGl6Tld
-	XvoUEalGr+Wt8JIJjypGWlk0m7MQj05jPXYXYS0gNyAT0iQqDUfXixr5T5rkbw8pqWbKfvq3wbpZD
-	ujWKffJgf3STcG2AY0rG8lw8sUvCCbh9ONRYr7bhbUYL1ce3kmKZYv5LXZfgVsU+zIP36ilB87eOU
-	dx6faZl3GCWVU3ajm7dCmB3m5Y+8CTiopAKC2Hzb1tcFrhJjHamQBEoEBE9ucKx+fuHvp3taLhbnn
-	DVbYK6/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vArGt-0000000E1PY-3LYw;
-	Mon, 20 Oct 2025 14:54:03 +0000
-Date: Mon, 20 Oct 2025 07:54:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	bh=Sp3U+8HhX66tVo1WEyU+Xcdj7duMXF6U3RpoRC4a8WQ=; b=p8Wprkh2dVq9SZFDPkia166rcb
+	jyDGLg0XwBQvbe4SYn4XdxfdByoB/p054AHhPXAe2gNjvHifQ1DYT5gKigxXOMMrsWftb0ZcpurYL
+	3VEdCyrKrib4CtlKsEmpK6yE6TY/WUHs1+hUo25Cx5/jMX6y3c8LLPUIALxFJBOzFJ9Kcxjkoh/Hq
+	wNNAxeCvGWH4bVhPbpN3g+Oi3bjIMngVDwAYfqinSFXk1RxB87BFM7/D0pGyqnlNr5bxSFacA2tr3
+	mXDXP1CAune12Vw0UJDnl0arWmmqTch6W6P+/BmB5a6+/nI8plVrccA9X8tU+CH4aZtEiAdnYW1ds
+	9ijAzTIA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vArHn-0000000AQUT-1Gls;
+	Mon, 20 Oct 2025 14:54:59 +0000
+Date: Mon, 20 Oct 2025 15:54:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Hildenbrand <david@redhat.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-block@vger.kernel.org
-Subject: Re: [GIT PULL] block-bio_iov_iter_export
-Message-ID: <aPZNC8bKIzRmFJ21@infradead.org>
-References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
- <aPHemg-xpVLkiEt9@infradead.org>
- <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
- <aPYCbIrvAkOf5L3g@infradead.org>
- <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
- <aPY3YKzGbIKxFbl-@infradead.org>
- <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
+	Jiri Slaby <jirislaby@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] mm, vc_screen: move __free() handler that frees a page
+ to a common header
+Message-ID: <aPZNQ0s8n-QOPhp2@casper.infradead.org>
+References: <20251020143055.407696-1-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,29 +71,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20251020143055.407696-1-rppt@kernel.org>
 
-On Mon, Oct 20, 2025 at 10:49:57AM -0400, Kent Overstreet wrote:
-> Christoph, I don't know what you're claiming here. I see no tweaks in
-> the original patch, that's all code I wrote.
+On Mon, Oct 20, 2025 at 05:30:55PM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> vc_screen defines __free() handler that frees a page using free_page().
+> Move that definition to include/linux/gfp.h next to free_page() and
+> rename it from free_page_ptr to free_page.
 
-Then look closer.
-
-> There was no need for you to drop the EXPORT_SYMBOL.
-> What I want to know is, is this going to become a pattern?
-
-Of course there was.  The kernel doesn't keep unused code around,
-including symbols.  So anything that is unused will eventually be
-garbage collected.  There's even folks around that run scripts and
-automate it (David Alan Gilbert is the most active one currently).
-
-> I can vendorize this one function, but If you're going to make a habit
-> of ripping out exports and functionality bcachefs depends on, I can't
-> expect I'll always be able to.
-
-I'm not sure why you're turning this personal and singling me out.
-Yes, unused exports and code are removed all the time, and that's a
-feature and not a bug.
-
+I don't think this is a good idea.  This is a bad interface and we
+should be moving people away from it, not making it easier to use.
 
