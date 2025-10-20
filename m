@@ -1,502 +1,194 @@
-Return-Path: <linux-kernel+bounces-861518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1136BBF2EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4BDBF2F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 032BD4F5601
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D9B18A613A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB67332EA3;
-	Mon, 20 Oct 2025 18:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3643321D3;
+	Mon, 20 Oct 2025 18:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkD+Qk09"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma+4cd8q"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E966630CD9F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7353321B2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760984946; cv=none; b=MClhuVs2e+zZLwGwWYdvsj82/GnYVx+ZT9fQbJ4ihbUGIBlIVgaQf2TiIfnv1InmhwG991Fv8usPKr8UXRC5LtoGa++qih4IaQSCpxJVm9NFnub8XIYneU8n7zrREV4u5XLaAuyj3wMxAaeKMXsikP+fumTyBfp7dEvwVTldpF8=
+	t=1760984977; cv=none; b=jp9nRZGee7nkgnI7jedcFD5VGuP79cmx8vf0shtRb9UHw9YxGkeqFYFnUAYXgRJ1ltr4xm4rwUpeUq6miPdt4A6q3PMWYiqbcG+h2qQ7QeQwPLchUykIZlLR1CCPctHKfqmnJCkyUEZ42MeGikZSkyl/wFJ2KH/CrXE9Qjt/dxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760984946; c=relaxed/simple;
-	bh=ZMV+mmzzpGd4DCD5WlKnTNAdsxGRE/UXzlqiriyVU3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kfvRHClAbftny6by0LV5JYPkXaDxdTzqOkLOwCvKF674bsptygl2/ZJoimG0IY7fiKuDn6wD+pWnz/fPWhCGbgRmbGSwH0J73+WBVu5uOXKes51oxbDQNjruuA/HnBcL0YMfPSpOEZfMVTfj+p58z+DRuznimqk2vyalAq2UgB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkD+Qk09; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1760984977; c=relaxed/simple;
+	bh=YnkvNEzzrCZ2F2mwi3Xyfy1PKyGDWUGjXjVlFN3BUYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RfVha/gkX6tEsgPbvomZ+wL4CPPdV5Gw/XMDityB+OrEVsiIij4vrYKD/+lt0+iI0pNJUaGJ2C5ti82R31gBKwWp5oTX9JoaZIMmX7MEJY6Rf3FNrRk3gHPEWRmCqMaXlqpuYb8Q8Emt1HfK0WGKJPRgAhmwaqG1Xuh8UhV3fSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ma+4cd8q; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4711b95226dso34352035e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:29:03 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-33bb1701ca5so3914556a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:29:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760984942; x=1761589742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5yxdyPTr8lflDTwtMVtJRlloOOyifPoptczhCt+xGBw=;
-        b=lkD+Qk09Obz15FHz4uF/IpVuSVOnBy0/pr9cgTsKQJr2gJQJ2sUJ6rv9/viJxNaV+I
-         vTJDwOFhmIXKsjVcRTtsWLvVG1b9PZMnvjuVGVIEBbI3PVBQRSqbYCJ4rhFVBm72z7Mt
-         eRvfWIreeonGcUbdEUmIHkAob4MhKjvqQQedEfZdPOQZIIk72lPGzYUnsGmLz+mGeo8O
-         aFa699/4d+UaUKDRFSgssmgczTjiWxbyI2vnap718M1mM7lljOb7HCTfDAqY9sYIbyDl
-         zTHJxEiNPXQuUceym/5hhvNgPFs3Z5lia/ZM+vnpGCv9jpMFuhum2+ACLwk6hmKIirtD
-         /f3A==
+        d=gmail.com; s=20230601; t=1760984975; x=1761589775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8S3WqjIfqedzQFzCR1LzIz7iLwesKjYQf37yiEbhNU=;
+        b=ma+4cd8qd/iXqkDBtfbtfYFATRR7UQG207GfSPnb53P0QBMe18ie4xRw8A1lhmFMSP
+         QbCIK1iEJyyHjOhXB4lOT78IZZKOpYYUovbMEZGe/NNAT9PWBazVK4oS2zfc7EgsW7nK
+         NL0VBVCGbbBnIaMA1Va+HbfH7TbxC5mCBLWIUEj56VDmClCTXo9H+P2rr4Xo09M1SxxB
+         tvsWRU6/pEofhuv2woCq3F8zQB9SSSwJSUEsZGovoTLlq6c5zZ2eF7HvcSuOzjKHaMxL
+         yv2JlQzwRaMshOKTSG5xXv92CZebGkwxvw6U94RZaogerxoF3oWZILj/AlzmUYyUdVLK
+         Df4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760984942; x=1761589742;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5yxdyPTr8lflDTwtMVtJRlloOOyifPoptczhCt+xGBw=;
-        b=AgQRQ31i5G8uPkrg/pPJvhIeKuYU3mvRGjHSZM+x374oyWSHm4NLeEjgN9A08MxU04
-         edlzLsdstfocOtKbvTz8UVU4c0tDhQjc7qYLzpgXIkDFEqZlt0wbeuKDU0GLZjlQx7UT
-         RU5HVecHdVRiDDMuv4Xgt4G2P7VdxySea+izPF0ZeFo/96tMhPX7LqNjtZ4ZfqAVxH01
-         x1FVSHWYr6xA58oVChihTiRN9TJoav/MWC73msk7l9CgFitvn4OhPg7fltLOJRcc9fPm
-         N7weHEyE2quTqP1b1ppWrhIUsU+gCBdb3WVRCWANepphZBe7l/fvfIlY2Lys94qTStgG
-         BIzA==
-X-Gm-Message-State: AOJu0YxhalSEvCnIBo3HMwQQ9mpJw+axsa8dukFl4zyOJHZKXs+6sXuR
-	teYJ/rKx9wmyl8vS+qlZ3oUhhW/w4xM8xyNHpTJv3U5a/rceNxwh+XKw
-X-Gm-Gg: ASbGncvzEXcdPDagGCYD+kGDJtSX1wijm9QYT4tCbJnjuvyB+/63A54F2ZoKIPfaoys
-	j7Y7JY1fn7JX5YSiGTOAEhRZbb3nlc7t0K9WWva/50lOTWSuazzPr8Sm+QHn86ZIj+ykbk7/FKY
-	qE5wlTW8kYwFawe2Zu6MoJ8239fooQA/At72ZWTt/ucdvjFMLZ6SVC4s3BKA+kwmbC3shQj50qL
-	FLaOuP6pidO/Biv7A0wPH+aUKUKZR5QU4k+iSLGmsjFCPCJ1hZ2aVKucE4MdgXIOw/Z6O7v3BfZ
-	LVQ/TrYp5759nhgVQiIqm/lnBksZRBcqG5/+0d2qjVmgw5KlNgMg0c+3J8/OKygShqHNzfR7dlO
-	uZvEfhVTaxwlXqCKZt51vUgKAkNLoSvFqiyIx49CDAao+FdL7XRJqHCtud4rG0flL9uOCEMBDDE
-	S62JmLghaS4mJ/voezFsG9CL2xcD4kJ2caWxVbj5KUMxR/h4uvJYpx
-X-Google-Smtp-Source: AGHT+IEpzbsejOPW2DE1Xi2kfs5OCLo5cknKMYnsHf1ZhzSMoaTGb7o47ht4fDoeapYu+RtWSxVe8Q==
-X-Received: by 2002:a05:600c:19d4:b0:46e:4a13:e6c6 with SMTP id 5b1f17b1804b1-47117907234mr110583035e9.19.1760984941885;
-        Mon, 20 Oct 2025 11:29:01 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144c831asm234365475e9.13.2025.10.20.11.29.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 11:29:01 -0700 (PDT)
-Date: Mon, 20 Oct 2025 19:28:59 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
- King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, Heiko
- Carstens <hca@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- linux-s390@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
- Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
- regions
-Message-ID: <20251020192859.640d7f0a@pumpkin>
-In-Reply-To: <20251017093030.253004391@linutronix.de>
-References: <20251017085938.150569636@linutronix.de>
-	<20251017093030.253004391@linutronix.de>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1760984975; x=1761589775;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G8S3WqjIfqedzQFzCR1LzIz7iLwesKjYQf37yiEbhNU=;
+        b=lVL3nwW1BVeLBhAfbVqBTv+ijhVC2n3o10ZQeg8PudFKxYgPNO/slZbuSuRVBZevr7
+         oBD4tBN/quDif+OqDDk/H+L/NF9Ye6eknb9Nm4adQp7ej5slSPhiMzDhYMeDASrn3SCk
+         +7GZp6lysLcKkQW16LuVmTVnSeW7NNIGGKJO+bYDTXC3/+GpmuQonlOYQuw2ehzElyW9
+         7Yz1USG4Mv4zOrHSZxY0cNUfL0LNDt+p/Kk7DLkiV/D3EA084q+IOIVPL6tufdvbL5N4
+         mVVurWz1Xeu6LcVk1QP+/HMoc51b8u1K99TuP8TYG9Ve90I28ccigNnv1Li9QKtRgbd+
+         V6zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0oNRn683X87wILnSGhzMpp8snoOaW/bSO+T/7lpUQ/HRIz4aZXiTdqN3h4yAuASUQMgOTxg8BDmPA8dE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+5eZMBbCUbKZ7S9nP6+Vc1nAwuuryyy3dc/dUVwGOnoWJ+Brb
+	IVb0XX5KNso+iArctbSkRr50D/A+1K24Me59TWw0WeMEtBagkmv6HXJ3
+X-Gm-Gg: ASbGncudkz4JtgMO4ZiZ+liqtsqgn6mApDkGm/P4U63W6om9oJzK0olE+WPvbRFawDw
+	ZEn3nN0uZ2C6yrwAtGyajT2mkMHiw6/V3bqEUmRuLUUKGykisR7ncByRk5yop4pbpVYktyJVwne
+	8ZbsYppdu9IvUy5AY7CJsbHHgpt/XV5bjkxEZOJuz9QvilnDUZ4G6dIexX/2MXqKWffl9tMcBEX
+	jmwrtcdo6G+9lprZFUAf4SXkh4RmUYSpqp788/frk2xqub4qEabKGWJy2ob2fiG6L6VPovfbaDT
+	X1HHF9Fn1MtRN/IBFPBrc9F843qIuhITyrpSITo3rmJf0UOXL0M0i3AFsLoOueJv2HBXr2VUEZV
+	dtZjMyDsTQ1Ulg9V5NUYiDys7zcCbiHX1iVi5AaNNJ4tODTQLQNyIamv8eJyucDKqV5FWeDnWhK
+	vv0nM2gMVE56qwk931lD0/wrc7P7qlmitGzOJip0+Z02LNH9j/
+X-Google-Smtp-Source: AGHT+IFTq8qMNsiqU66jWDQF76YmSGgemaihg3w3pVoI3B5QClfDbRcDke3uMOzrWzlJXeCZI1IGQA==
+X-Received: by 2002:a17:90b:3f85:b0:33b:b078:d6d3 with SMTP id 98e67ed59e1d1-33bcf8e5ebfmr19897472a91.23.1760984975158;
+        Mon, 20 Oct 2025 11:29:35 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5d00c909sm8578734a91.0.2025.10.20.11.29.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 11:29:34 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7cd3e303-6e20-4a84-8c91-cb20c1f209b0@roeck-us.net>
+Date: Mon, 20 Oct 2025 11:29:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] dt-bindings: mfd: rohm,bd96801-pmic: Correct
+ timeout-sec length and reference watchdog schema
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Timothy Pearson <tpearson@raptorengineering.com>
+References: <20251020-dt-bindings-watchdog-timeout-v1-0-d0f3235eb327@linaro.org>
+ <20251020-dt-bindings-watchdog-timeout-v1-3-d0f3235eb327@linaro.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20251020-dt-bindings-watchdog-timeout-v1-3-d0f3235eb327@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 17 Oct 2025 12:09:08 +0200 (CEST)
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On 10/20/25 09:52, Krzysztof Kozlowski wrote:
+> The parent node of ROHM BD96801 PMIC is also holding properties for the
+> watchdog, thus it should reference watchdog.yaml schema.  OTOH, the
+> timeout-sec property is used only as one number.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> User space access regions are tedious and require similar code patterns all
-> over the place:
-> 
->      	if (!user_read_access_begin(from, sizeof(*from)))
-> 		return -EFAULT;
-> 	unsafe_get_user(val, from, Efault);
-> 	user_read_access_end();
-> 	return 0;
-> Efault:
-> 	user_read_access_end();
-> 	return -EFAULT;
-> 
-> This got worse with the recent addition of masked user access, which
-> optimizes the speculation prevention:
-> 
-> 	if (can_do_masked_user_access())
-> 		from = masked_user_read_access_begin((from));
-> 	else if (!user_read_access_begin(from, sizeof(*from)))
-> 		return -EFAULT;
-> 	unsafe_get_user(val, from, Efault);
-> 	user_read_access_end();
-> 	return 0;
-> Efault:
-> 	user_read_access_end();
-> 	return -EFAULT;
-> 
-> There have been issues with using the wrong user_*_access_end() variant in
-> the error path and other typical Copy&Pasta problems, e.g. using the wrong
-> fault label in the user accessor which ends up using the wrong accesss end
-> variant. 
-> 
-> These patterns beg for scopes with automatic cleanup. The resulting outcome
-> is:
->     	scoped_masked_user_read_access(from, Efault)
-> 		unsafe_get_user(val, from, Efault);
-> 	return 0;
->   Efault:
-> 	return -EFAULT;
-
-That definitely looks better than the earlier versions.
-Even if the implementation looks like an entry in the obfuscated C competition.
-
-I don't think you need the 'masked' in that name.
-Since it works in all cases.
-
-(I don't like the word 'masked' at all, not sure where it came from.
-Probably because the first version used logical operators.
-'Masking' a user address ought to be the operation of removing high-order
-address bits that the hardware is treating as 'don't care'.
-The canonical operation here is uaddr = min(uaddr, guard_page) - likely to be
-a conditional move.
-I think that s/masked/sanitised/ would make more sense (the patch to do
-that isn't very big at the moment). I might post it.)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 > 
-> The scope guarantees the proper cleanup for the access mode is invoked both
-> in the success and the failure (fault) path.
-> 
-> The scoped_masked_user_$MODE_access() macros are implemented as self
-> terminating nested for() loops. Thanks to Andrew Cooper for pointing me at
-> them. The scope can therefore be left with 'break', 'goto' and 'return'.
-> Even 'continue' "works" due to the self termination mechanism. Both GCC and
-> clang optimize all the convoluted macro maze out and the above results with
-> clang in:
-> 
->  b80:	f3 0f 1e fa          	       endbr64
->  b84:	48 b8 ef cd ab 89 67 45 23 01  movabs $0x123456789abcdef,%rax
->  b8e:	48 39 c7    	               cmp    %rax,%rdi
->  b91:	48 0f 47 f8          	       cmova  %rax,%rdi
->  b95:	90                   	       nop
->  b96:	90                   	       nop
->  b97:	90                   	       nop
->  b98:	31 c9                	       xor    %ecx,%ecx
->  b9a:	8b 07                	       mov    (%rdi),%eax
->  b9c:	89 06                	       mov    %eax,(%rsi)
->  b9e:	85 c9                	       test   %ecx,%ecx
->  ba0:	0f 94 c0             	       sete   %al
->  ba3:	90                   	       nop
->  ba4:	90                   	       nop
->  ba5:	90                   	       nop
->  ba6:	c3                   	       ret
-> 
-> Which looks as compact as it gets. The NOPs are placeholder for STAC/CLAC.
-> GCC emits the fault path seperately:
-> 
->  bf0:	f3 0f 1e fa          	       endbr64
->  bf4:	48 b8 ef cd ab 89 67 45 23 01  movabs $0x123456789abcdef,%rax
->  bfe:	48 39 c7             	       cmp    %rax,%rdi
->  c01:	48 0f 47 f8          	       cmova  %rax,%rdi
->  c05:	90                   	       nop
->  c06:	90                   	       nop
->  c07:	90                   	       nop
->  c08:	31 d2                	       xor    %edx,%edx
->  c0a:	8b 07                	       mov    (%rdi),%eax
->  c0c:	89 06                	       mov    %eax,(%rsi)
->  c0e:	85 d2                	       test   %edx,%edx
->  c10:	75 09                	       jne    c1b <afoo+0x2b>
->  c12:	90                   	       nop
->  c13:	90                   	       nop
->  c14:	90                   	       nop
->  c15:	b8 01 00 00 00       	       mov    $0x1,%eax
->  c1a:	c3                   	       ret
->  c1b:	90                   	       nop
->  c1c:	90                   	       nop
->  c1d:	90                   	       nop
->  c1e:	31 c0                	       xor    %eax,%eax
->  c20:	c3                   	       ret
-> 
-> 
-> The fault labels for the scoped*() macros and the fault labels for the
-> actual user space accessors can be shared and must be placed outside of the
-> scope.
-> 
-> If masked user access is enabled on an architecture, then the pointer
-> handed in to scoped_masked_user_$MODE_access() can be modified to point to
-> a guaranteed faulting user address. This modification is only scope local
-> as the pointer is aliased inside the scope. When the scope is left the
-> alias is not longer in effect. IOW the original pointer value is preserved
-> so it can be used e.g. for fixup or diagnostic purposes in the fault path.
-
-I think you need to add (in the kerndoc somewhere):
-
-There is no requirement to do the accesses in strict memory order
-(or to access the lowest address first).
-The only constraint is that gaps must be significantly less than 4k.
-
-Basically the architectures have to support code accessing uptr[4]
-before uptr[0] (so using ~0 as the 'bad address' isn't a good idea).
-Otherwise you have to go through 'hoops' to double check that all code
-accesses the first member of a structure before the second one.
-(I've looked through likely users of this and something like poll
-or epoll does the 2nd access first - and it isn't obvious.)
-
-There always has to be a guard page at the top of valid user addresses.
-Otherwise sequential accesses run into kernel space.
-So the code just has to generate the base of the guard page for kernel
-addresses (see the horrid ppc code for cpu that have broken conditional move).
-
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
 > ---
-> V3: Make it a nested for() loop
->     Get rid of the code in macro parameters - Linus
->     Provide sized variants - Mathieu
-> V2: Remove the shady wrappers around the opening and use scopes with automatic cleanup
+> 
+> This depends on previous watchdog patch.  I propose to take entire set
+> via watchdog tree, with Lee's acks.
 > ---
->  include/linux/uaccess.h |  197 ++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 197 insertions(+)
+>   Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -2,6 +2,7 @@
->  #ifndef __LINUX_UACCESS_H__
->  #define __LINUX_UACCESS_H__
->  
-> +#include <linux/cleanup.h>
->  #include <linux/fault-inject-usercopy.h>
->  #include <linux/instrumented.h>
->  #include <linux/minmax.h>
-> @@ -35,9 +36,17 @@
->  
->  #ifdef masked_user_access_begin
->   #define can_do_masked_user_access() 1
-> +# ifndef masked_user_write_access_begin
-> +#  define masked_user_write_access_begin masked_user_access_begin
-> +# endif
-> +# ifndef masked_user_read_access_begin
-> +#  define masked_user_read_access_begin masked_user_access_begin
-> +#endif
->  #else
->   #define can_do_masked_user_access() 0
->   #define masked_user_access_begin(src) NULL
-> + #define masked_user_read_access_begin(src) NULL
-> + #define masked_user_write_access_begin(src) NULL
->   #define mask_user_address(src) (src)
->  #endif
->  
-> @@ -633,6 +642,194 @@ static inline void user_access_restore(u
->  #define user_read_access_end user_access_end
->  #endif
->  
-> +/* Define RW variant so the below _mode macro expansion works */
-> +#define masked_user_rw_access_begin(u)	masked_user_access_begin(u)
-> +#define user_rw_access_begin(u, s)	user_access_begin(u, s)
-> +#define user_rw_access_end()		user_access_end()
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+> index 0e06570483ae..adb491bcc8dc 100644
+> --- a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+> @@ -57,8 +57,7 @@ properties:
+>         - prstb
+>         - intb-only
+>   
+> -  timeout-sec:
+> -    maxItems: 2
+> +  timeout-sec: true
+>   
+>     regulators:
+>       $ref: /schemas/regulator/rohm,bd96801-regulator.yaml
+> @@ -72,7 +71,10 @@ required:
+>     - interrupt-names
+>     - regulators
+>   
+> -additionalProperties: false
+> +allOf:
+> +  - $ref: /schemas/watchdog/watchdog.yaml
 > +
-> +/* Scoped user access */
-> +#define USER_ACCESS_GUARD(_mode)					\
-> +static __always_inline void __user *					\
-> +class_masked_user_##_mode##_begin(void __user *ptr)			\
-> +{									\
-> +	return ptr;							\
-> +}									\
-> +									\
-> +static __always_inline void						\
-> +class_masked_user_##_mode##_end(void __user *ptr)			\
-> +{									\
-> +	user_##_mode##_access_end();					\
-> +}									\
-> +									\
-> +DEFINE_CLASS(masked_user_ ##_mode## _access, void __user *,		\
-> +	     class_masked_user_##_mode##_end(_T),			\
-> +	     class_masked_user_##_mode##_begin(ptr), void __user *ptr)	\
-> +									\
-> +static __always_inline class_masked_user_##_mode##_access_t		\
-> +class_masked_user_##_mode##_access_ptr(void __user *scope)		\
-> +{									\
-> +	return scope;							\
-> +}
-> +
-> +USER_ACCESS_GUARD(read)
-> +USER_ACCESS_GUARD(write)
-> +USER_ACCESS_GUARD(rw)
-> +#undef USER_ACCESS_GUARD
-> +
-> +/**
-> + * __scoped_user_access_begin - Start the masked user access
-> + * @_mode:	The mode of the access class (read, write, rw)
-> + * @_uptr:	The pointer to access user space memory
-> + * @_size:	Size of the access
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * Internal helper for __scoped_masked_user_access(). Don't use directly
-> + */
-> +#define __scoped_user_access_begin(_mode, _uptr, _size, _elbl)		\
-> +({									\
-> +	typeof((_uptr)) ____ret;					\
-> +									\
-> +	if (can_do_masked_user_access()) {				\
-> +		____ret = masked_user_##_mode##_access_begin((_uptr));	\
-> +	} else {							\
-> +		____ret = _uptr;					\
-> +		if (!user_##_mode##_access_begin(_uptr, (_size)))	\
-> +			goto _elbl;					\
-> +	}								\
-> +	____ret;							\
-> +})
-> +
-> +/**
-> + * __scoped_masked_user_access - Open a scope for masked user access
-> + * @_mode:	The mode of the access class (read, write, rw)
-> + * @_uptr:	The pointer to access user space memory
-> + * @_size:	Size of the access
-> + * @_elbl:	Error label to goto when the access region is rejected. It
-> + *		must be placed outside the scope.
-> + *
-> + * If the user access function inside the scope requires a fault label, it
-> + * can use @_elvl or a difference label outside the scope, which requires
-> + * that user access which is implemented with ASM GOTO has been properly
-> + * wrapped. See unsafe_get_user() for reference.
-> + *
-> + *	scoped_masked_user_rw_access(ptr, efault) {
-> + *		unsafe_get_user(rval, &ptr->rval, efault);
-> + *		unsafe_put_user(wval, &ptr->wval, efault);
-> + *	}
-> + *	return 0;
-> + *  efault:
-> + *	return -EFAULT;
-> + *
-> + * The scope is internally implemented as a autoterminating nested for()
-> + * loop, which can be left with 'return', 'break' and 'goto' at any
-> + * point.
-> + *
-> + * When the scope is left user_##@_mode##_access_end() is automatically
-> + * invoked.
-> + *
-> + * When the architecture supports masked user access and the access region
-> + * which is determined by @_uptr and @_size is not a valid user space
-> + * address, i.e. < TASK_SIZE, the scope sets the pointer to a faulting user
-> + * space address and does not terminate early. This optimizes for the good
-> + * case and lets the performance uncritical bad case go through the fault.
-> + *
-> + * The eventual modification of the pointer is limited to the scope.
-> + * Outside of the scope the original pointer value is unmodified, so that
-> + * the original pointer value is available for diagnostic purposes in an
-> + * out of scope fault path.
-> + *
-> + * Nesting scoped masked user access into a masked user access scope is
-> + * invalid and fails the build. Nesting into other guards, e.g. pagefault
-> + * is safe.
-> + *
-> + * Don't use directly. Use the scoped_masked_user_$MODE_access() instead.
-> +*/
-> +#define __scoped_masked_user_access(_mode, _uptr, _size, _elbl)					\
-> +for (bool ____stop = false; !____stop; ____stop = true)						\
-> +	for (typeof((_uptr)) _tmpptr = __scoped_user_access_begin(_mode, _uptr, _size, _elbl);	\
-
-Can you use 'auto' instead of typeof() ?
-
-> +	     !____stop; ____stop = true)							\
-> +		for (CLASS(masked_user_##_mode##_access, scope) (_tmpptr); !____stop;		\
-> +		     ____stop = true)					\
-> +			/* Force modified pointer usage within the scope */			\
-> +			for (const typeof((_uptr)) _uptr = _tmpptr; !____stop; ____stop = true)	\
-
-gcc 15.1 also seems to support 'const auto _uptr = _tmpptr;'
-
-	David
-
-> +				if (1)
-> +
-> +/**
-> + * scoped_masked_user_read_access_size - Start a scoped user read access with given size
-> + * @_usrc:	Pointer to the user space address to read from
-> + * @_size:	Size of the access starting from @_usrc
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * For further information see __scoped_masked_user_access() above.
-> + */
-> +#define scoped_masked_user_read_access_size(_usrc, _size, _elbl)		\
-> +	__scoped_masked_user_access(read, (_usrc), (_size), _elbl)
-> +
-> +/**
-> + * scoped_masked_user_read_access - Start a scoped user read access
-> + * @_usrc:	Pointer to the user space address to read from
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * The size of the access starting from @_usrc is determined via sizeof(*@_usrc)).
-> + *
-> + * For further information see __scoped_masked_user_access() above.
-> + */
-> +#define scoped_masked_user_read_access(_usrc, _elbl)				\
-> +	scoped_masked_user_read_access_size((_usrc), sizeof(*(_usrc)), _elbl)
-> +
-> +/**
-> + * scoped_masked_user_read_end - End a scoped user read access
-> + *
-> + * Ends the scope opened with scoped_masked_user_read_access[_size]()
-> + */
-> +#define scoped_masked_user_read_end()	__scoped_masked_user_end()
-> +
-> +/**
-> + * scoped_masked_user_write_access_size - Start a scoped user write access with given size
-> + * @_udst:	Pointer to the user space address to write to
-> + * @_size:	Size of the access starting from @_udst
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * For further information see __scoped_masked_user_access() above.
-> + */
-> +#define scoped_masked_user_write_access_size(_udst, _size, _elbl)		\
-> +	__scoped_masked_user_access(write, (_udst),  (_size), _elbl)
-> +
-> +/**
-> + * scoped_masked_user_write_access - Start a scoped user write access
-> + * @_udst:	Pointer to the user space address to write to
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * The size of the access starting from @_udst is determined via sizeof(*@_udst)).
-> + *
-> + * For further information see __scoped_masked_user_access() above.
-> + */
-> +#define scoped_masked_user_write_access(_udst, _elbl)				\
-> +	scoped_masked_user_write_access_size((_udst), sizeof(*(_udst)), _elbl)
-> +
-> +/**
-> + * scoped_masked_user_rw_access_size - Start a scoped user read/write access with given size
-> + * @_uptr	Pointer to the user space address to read from and write to
-> + * @_size:	Size of the access starting from @_uptr
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * For further information see __scoped_masked_user_access() above.
-> + */
-> +#define scoped_masked_user_rw_access_size(_uptr, _size, _elbl)			\
-> +	__scoped_masked_user_access(rw, (_uptr), (_size), _elbl)
-> +
-> +/**
-> + * scoped_masked_user_rw_access - Start a scoped user read/write access
-> + * @_uptr	Pointer to the user space address to read from and write to
-> + * @_elbl:	Error label to goto when the access region is rejected.
-> + *
-> + * The size of the access starting from @_uptr is determined via sizeof(*@_uptr)).
-> + *
-> + * For further information see __scoped_masked_user_access() above.
-> + */
-> +#define scoped_masked_user_rw_access(_uptr, _elbl)				\
-> +	scoped_masked_user_rw_access_size((_uptr), sizeof(*(_uptr)), _elbl)
-> +
->  #ifdef CONFIG_HARDENED_USERCOPY
->  void __noreturn usercopy_abort(const char *name, const char *detail,
->  			       bool to_user, unsigned long offset,
-> 
+> +unevaluatedProperties: false
+>   
+>   examples:
+>     - |
 > 
 
 
