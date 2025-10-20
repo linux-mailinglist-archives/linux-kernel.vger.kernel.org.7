@@ -1,183 +1,175 @@
-Return-Path: <linux-kernel+bounces-861635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCDCBF33BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5099BF33C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9B554FB906
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C6B18C2FDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5B9EAF9;
-	Mon, 20 Oct 2025 19:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B0C2DE70B;
+	Mon, 20 Oct 2025 19:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fYhR3iMX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSK81WXg"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE7E2DEA73
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD592D7DE8
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988944; cv=none; b=B+b/DOQWXZ8826BlBH9fq3FFp5cvdnfRuydzrjk9/gUrSDBEh30Dkpr6KfX61A4R4Ibg7m/lGx3B+hY515LbuGe1hGQZoSsS/v0Yk3qSLn4NQYiCuNm7o+xfw+PK+efkjAhGg0+wTFYpuitfWnaaX/9cdwyjKc8W6QtXe+RpHmw=
+	t=1760988970; cv=none; b=FsrIKbUNpkXY1N01Dnki6ZOm0oX9LrJ4Jz3eEjjW+RSOtmpawxYtUgmu2Ey/e8OEVsrsiSfWkYBCKJDQKX/esGPq6CeBY+A2dZ0cKK2lV+au3aZZSGX3Kn5lHaKLtJ2yKAJkie8Jr5vYtaE4w9/B/EEN8gJNy9qZWZMXv4c68do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988944; c=relaxed/simple;
-	bh=TstNcT24iidk65qQwuHBm8MLWpw+Rgs03+06matpxa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewL8rMBuXZpi54HRy3vprDS0fCjq6QUZ4ot1N3eWbmXcj2nHqpdHH2QHOE1UpHLKxEZwc3XYLO3VGbgMUc2gHtFjkmIPWC+WknMT8l2ToMJK1dh52NfcbGYl+M6ZiAP6jvtM4oFl9Nc5c3Bp7J5Yj8UBnkg4/trl8y8GpDEI7DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fYhR3iMX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760988942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=IZ4KHrVXGbKOyfWQ4VuLHo93xGYeDh1z6yDjQj1rykE=;
-	b=fYhR3iMXLzvOPCFD18Aww8rgEf0/Pxo49rHgUhtQbqRW1ZldxAJLAttj3OooVyk1rXHY09
-	s07tHjCrSZZg5GAbzOzjSh+NUfxd8UpplXQ1n8TakbJg42Lw6fzh7ii20jTxPKsbCKDQJd
-	OE4Tw9hz7Z0a1QGaTY3N4693ErXNUKQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-320-h2GNfGNtOwK3cb_ZMfdRYg-1; Mon, 20 Oct 2025 15:35:40 -0400
-X-MC-Unique: h2GNfGNtOwK3cb_ZMfdRYg-1
-X-Mimecast-MFC-AGG-ID: h2GNfGNtOwK3cb_ZMfdRYg_1760988939
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-470fd92ad57so101003075e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:35:40 -0700 (PDT)
+	s=arc-20240116; t=1760988970; c=relaxed/simple;
+	bh=1badgIiNTAPNpkcfawu2PFSrOUn1RLnP9k+lZMeoVE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TfBTi0GSrIdPkAMthZZLUearE2Qw5kjLd0ULx9+qk0Glw2FQ/+UrM+VeExJ6TuSa2Y98f4xykXGilb3sZkXlxFkIXECF8yIOiK7AZL8kPs9SOd1bnaMiZe4FN+rxYEwBP9UJSYSfiNLeyhJEQIg4AXpG0zqDR1rB1SGwqoiYjIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSK81WXg; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57f1b88354eso5355313e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760988966; x=1761593766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2EQCZF24uyYd+K66ud5iMJvTJa8EJgzNd81qWfpbtzM=;
+        b=WSK81WXgktshiOyYie0L2ydU9rH/CPH8uS6owYfRq+C11GxEnbl0E1xlnqDYCPf4wo
+         de3RB9HIwnay+QRTrVoGCZn8S4QgLLZ6bsOHVyUgq7exSAcBGGDomC27GgnRCrks51uj
+         VaAqZ1ikuYKYUro8o4b+/4RBUdR0Sjsveq8CjWrMrHg6kEr/30mkBZGDaEUHERB5gmlg
+         D3Z/KuW1YSjA98CVchCW5wYcE4ZlGPTpUy1lNOlVYfDsPj54ccHQV209/vXll/BtG4mQ
+         zwyWrkIDMgt6IMaal2oEj5avaA8ReU7z5eIyS27zW/8GNCctkepd1KSwFL5pBauRo3Ud
+         15hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760988939; x=1761593739;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IZ4KHrVXGbKOyfWQ4VuLHo93xGYeDh1z6yDjQj1rykE=;
-        b=NcQclCvTWSBjPXs+EZgyHNNKcg/zMwU17ytokZmUkoZ9q5NGa365PCRctt/RmtLWXM
-         jTcTTcBtRNwqkVSzU2m6eM/LYAc9Gw6P0iiFYouQZTxLhahUhplNqA7H+ZRRKKzI9SzQ
-         bPvaacwiKjii30ZiIFZO5znGPrfjs9W+RjZyA5oRH4jxzMchny78p3h+wKSl++OIdfVQ
-         hlNWj+Tr8WeFUl3dOIAimJpvZ7YT7HMTTCJpwhTyA1oAV1pZsZ3O23W9Dh986MK/IEV0
-         VWnWRZ9zP1KHANiqWgpTRyWWvd2HU94vScDjCme1oRMJSBnkylaarH998DZrmI9EFU7x
-         dQSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9YAC8p9pcXDOr1riB0Et/a6J69FRSvnPER7U/o0+AdFUfh6UQ2uU0BbjbuL7LYQLiCCZR4k+YgknMNaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB2KZU8WDfT3B5ii91ISWAvjYbQlFVq0wMHGx23+64ZLSDtP99
-	s49SQ4FmAR07Kv/FS3de4Gab+MkPZOKSY/3Vbua1umsLaUL2jGPTleyslEdN8hh25f1EOKMMrdt
-	TefNBSZD/UqHY69iN/JsAOCRBjZPawLFpsGp6KyuFRxubKYVCwp+8oN1C84AK23MxiQ==
-X-Gm-Gg: ASbGncvjRsdQMz6LdJgceXotW3F6vXTWTFcK4EiGCskmTc96nHhbNjmhj2tSpMfyaII
-	WvFwVKFRXGZVDIyYUyh5ioTm38f6JBVSdSYBRyXmktTR2WGzM3RTmkB/CXjez8U72WMHAxAIrb3
-	ZwRdcMWkLNQL5gf19XixdGLaIq9l/SPG+/zsBTnV0ypJq7HHivXK5oS+w5NKAaSHdJe9aWI4S1k
-	btBV6/xyz0custst1q2Q6BtjkV5kb+PSINdIjvXkESz/X2XQiBqt8H0Ea3Ta7HXuDyqitYxjSyg
-	c6P9jYeU6DdVQr/6dB7HngLPIP0dWJUs5Aphr1YNkos4EdVngcgvHbb2oOaFz1kZcwb8c+tefej
-	oKXO2fdTXsfmWmTjDY7HpTSYBhCZsZ9rMn9zcldwGybRPwPNiO+x8o22KLzCrDfdpgmsah/VPjS
-	+uwZtCBPxkLHyBECed//kpzY+JA0I=
-X-Received: by 2002:a05:600c:528e:b0:471:7a:7905 with SMTP id 5b1f17b1804b1-4711791cba1mr138573305e9.34.1760988939350;
-        Mon, 20 Oct 2025 12:35:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUD1Q58X1dirbdln4YyEHe+ZrBTn2g3MQBkfJH1bO18P6uDwJ35vA6zo0kQDMsN8QQTSSzUg==
-X-Received: by 2002:a05:600c:528e:b0:471:7a:7905 with SMTP id 5b1f17b1804b1-4711791cba1mr138573155e9.34.1760988938928;
-        Mon, 20 Oct 2025 12:35:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00cdf6csm16661954f8f.43.2025.10.20.12.35.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:35:38 -0700 (PDT)
-Message-ID: <85166a8a-ad54-42d0-a09f-43e0044cf4f4@redhat.com>
-Date: Mon, 20 Oct 2025 21:35:37 +0200
+        d=1e100.net; s=20230601; t=1760988966; x=1761593766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2EQCZF24uyYd+K66ud5iMJvTJa8EJgzNd81qWfpbtzM=;
+        b=ERnG9WYpStsbvI4dHbdyNeXAWCDHN8NSG00RkGbZSZ4XrvRWJ3f4MbKL4mWKxHxbbA
+         UWgNPK2GD7W29S/xuDkwRcc3bC4GNs/6weNJSyLlFF+QAAhszgeeOxS4nfiaWYWQmQmU
+         2O36d6lBCcoGbxPAeY7/m0EwneHMrwjXkjjXJtM8K479N7ol3WwzsDWVRCnTTmPRYMC0
+         UtDrmAJnaBWUTJ67vWYlFKLVmVb+z3OslQzqyzps0b9WPpFSZ5ctqxwuBUVwS3xFsH0F
+         DX8nosqQjrX529tD2luXU5B+d64/zvKZDnSSiCVl73lPXvymIH8AxC2D+h5WML4XSL/d
+         a5cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKntsU7k0IvwItSHYo2okzabjDGa/mScZ7oLAQWdvXuPcpaiMfdRbXQ502k32CTxGRom57ixENoknlGpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2HUoUuWztnwSJHhvkUTzn5ShiSYfuxdUrAnNhvEBe1e5xzrTd
+	2BrZSPYaUJndLN0zPiJYP9D7F2T7Vy0QLLfsyQCK3FmpGjyxjoNsTw+n6tfW2GaE6vFR4OV6iIk
+	69/3vuzA3BeGDSxaIESWtlJF/MNNnGYY=
+X-Gm-Gg: ASbGncvgOzkLxi8s2qfF15wJZZgu96zWZn4yv5g7bmYVvok8CfTqxq60zPn5otAToFU
+	cMl1DgJ7lQzhgmu/EiaKH68CvJmO0aXKy+j/3nwtUVemePAdb5kyXZn1yhvKsDZCVhIV9rB+EL/
+	UpHlE0kiZu4WhgGOJMbkHeT4ynzeVH9V3LXQAhN+r0Yh0q560grdlT1+qsFkKOLLAtpkr2r1m63
+	+o6b7xSiQV/S3Sxg59QEeZy9q9W6zfhNm4DG01XzacwO7jFuu+5ju9mU1D9TAusEBb0uLCd/gTM
+	X9r9Mjrh5bZkKnmCQA==
+X-Google-Smtp-Source: AGHT+IGJf1d7OGOI2bEsOsRKUAzUwqlW11kyu2gHkb5eSm8a2k5NOCXXslI+k5uFUiRwdMzagVbTM2EzHHMJP+MrdtU=
+X-Received: by 2002:a05:6512:3b0c:b0:57a:310:66a8 with SMTP id
+ 2adb3069b0e04-591d85773ffmr4241105e87.55.1760988965463; Mon, 20 Oct 2025
+ 12:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 PATCH 1/3] Documentation: add guidelines for writing
- testable code specifications
-To: Jonathan Corbet <corbet@lwn.net>, Gabriele Paoloni <gpaoloni@redhat.com>,
- shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- gregkh@linuxfoundation.org
-Cc: linux-mm@kvack.org, safety-architecture@lists.elisa.tech,
- acarmina@redhat.com, kstewart@linuxfoundation.org, chuckwolber@gmail.com
-References: <20250910170000.6475-1-gpaoloni@redhat.com>
- <20250910170000.6475-2-gpaoloni@redhat.com> <878qifgxbj.fsf@trenco.lwn.net>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <878qifgxbj.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
+In-Reply-To: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 20 Oct 2025 14:35:54 -0500
+X-Gm-Features: AS18NWDrjImObZLOKx397rQyb3hlXNjedT2Ykb-TqO4MVmOUlln0IpbJiO75nUI
+Message-ID: <CALHNRZ_KcJmoUp68a1NZau_KAMRczNbtiQ3cbXi7ET-vO=9uhw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Enable NVDEC and NVENC on Tegra210
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> +------------
->> +The Documentation/doc-guide/kernel-doc.rst chapter describes how to document the code using the kernel-doc format, however it does not specify the criteria to be followed for writing testable specifications; i.e. specifications that can be used to for the semantic description of low level requirements.
-> 
-> Please, for any future versions, stick to the 80-column limit; this is
-> especially important for text files that you want humans to read.
-> 
-> As a nit, you don't need to start by saying what other documents don't
-> do, just describe the purpose of *this* document.
-> 
-> More substantially ... I got a way into this document before realizing
-> that you were describing an addition to the format of kerneldoc
-> comments.  That would be good to make clear from the outset.
-> 
-> What I still don't really understand is what is the *purpose* of this
-> formalized text?  What will be consuming it?  You're asking for a fair
-> amount of effort to write and maintain these descriptions; what's in it
-> for the people who do that work?
+On Sat, Aug 16, 2025 at 1:03=E2=80=AFAM Aaron Kling via B4 Relay
+<devnull+webgeek1234.gmail.com@kernel.org> wrote:
+>
+> From: Aaron Kling <webgeek1234@gmail.com>
+>
+> The other engines are already enabled, finish filling out the media
+> engine nodes and power domains.
+>
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 28 ++++++++++++++++++++++++++=
+--
+>  1 file changed, 26 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/d=
+ts/nvidia/tegra210.dtsi
+> index 402b0ede1472af625d9d9e811f5af306d436cc98..80d7571d0350205b080bcf48b=
+8b8e2c1b93227f2 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -277,13 +277,25 @@ dsib: dsi@54400000 {
+>                 nvdec@54480000 {
+>                         compatible =3D "nvidia,tegra210-nvdec";
+>                         reg =3D <0x0 0x54480000 0x0 0x00040000>;
+> -                       status =3D "disabled";
+> +                       clocks =3D <&tegra_car TEGRA210_CLK_NVDEC>;
+> +                       clock-names =3D "nvdec";
+> +                       resets =3D <&tegra_car 194>;
+> +                       reset-names =3D "nvdec";
+> +
+> +                       iommus =3D <&mc TEGRA_SWGROUP_NVDEC>;
+> +                       power-domains =3D <&pd_nvdec>;
+>                 };
+>
+>                 nvenc@544c0000 {
+>                         compatible =3D "nvidia,tegra210-nvenc";
+>                         reg =3D <0x0 0x544c0000 0x0 0x00040000>;
+> -                       status =3D "disabled";
+> +                       clocks =3D <&tegra_car TEGRA210_CLK_NVENC>;
+> +                       clock-names =3D "nvenc";
+> +                       resets =3D <&tegra_car 219>;
+> +                       reset-names =3D "nvenc";
+> +
+> +                       iommus =3D <&mc TEGRA_SWGROUP_NVENC>;
+> +                       power-domains =3D <&pd_nvenc>;
+>                 };
+>
+>                 tsec@54500000 {
+> @@ -894,6 +906,18 @@ pd_audio: aud {
+>                                 #power-domain-cells =3D <0>;
+>                         };
+>
+> +                       pd_nvenc: mpe {
+> +                               clocks =3D <&tegra_car TEGRA210_CLK_NVENC=
+>;
+> +                               resets =3D <&tegra_car 219>;
+> +                               #power-domain-cells =3D <0>;
+> +                       };
+> +
+> +                       pd_nvdec: nvdec {
+> +                               clocks =3D <&tegra_car TEGRA210_CLK_NVDEC=
+>;
+> +                               resets =3D <&tegra_car 194>;
+> +                               #power-domain-cells =3D <0>;
+> +                       };
+> +
+>                         pd_sor: sor {
+>                                 clocks =3D <&tegra_car TEGRA210_CLK_SOR0>=
+,
+>                                          <&tegra_car TEGRA210_CLK_SOR1>,
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250814-tegra210-media-enable-576bb6a34b5c
+>
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
 
-I might be wrong, but sounds to me like someone intends to feed this to 
-AI to generate tests or code.
+Reminder to review or pick up this patch.
 
-In that case, no thanks.
-
-I'm pretty sure we don't want this.
-
--- 
-Cheers
-
-David / dhildenb
-
+Aaron
 
