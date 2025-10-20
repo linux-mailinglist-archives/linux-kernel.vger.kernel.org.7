@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-860637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA79BF0912
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:35:48 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F02EBF0918
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F108E4E17AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:35:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9933D34B2D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0D22F745C;
-	Mon, 20 Oct 2025 10:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4102F745C;
+	Mon, 20 Oct 2025 10:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QKdtV9U7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ymbfzvez"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6C32ECEA7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E3924167A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956541; cv=none; b=DaZlj8OmWIDy/+9UAcOJiViMUfDGaV47QTPqWi0rTd9sK9VXZyv6qS4AwqXXZr+Fv81g3GGOxao+438I9Q8WfpCYZYchZwj6tq+Rx2daCIBZdv99UoyNUW+6I8kvDhfvSznsFP7SR9bePl/0nH5D0LGTg4FRgY7xwSubf7KC85k=
+	t=1760956558; cv=none; b=bbh4r3gyXzNaOwP3XTEmZXydWyfWms1fwTOf2t/f0uU3SGU0bNMNQVkI65mUp+qoeG5GIDvuDboIFVn0KSJp6uYwZB+MmxNE5p8uFqKDIrPnloAlS+pLTwsZxO+Ag9uXZ/rTWdaezTwLMDxPXN0QjI1iarq+i+vs5WT3r38oGNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956541; c=relaxed/simple;
-	bh=d6xOn+OgWXQb76sNinZ8VoFwbnnrNk5YxBP2M1Z16Rw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=uGMtC+ZhfdH8SJZqeHi+T2UhYaCnN13/Q62CXzXS1xChDp2cvQHswSuY5hzsVnlOnH/Sw1svbqPL8qeIcvSsDBZmSsID42Fjep1Jg3BorowFophnHt2UoES2w+JNBXiU9vKg98+reKD5n+7zMVmAvcyZPwqoC4rOgNlWvyL7L40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QKdtV9U7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760956538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d6xOn+OgWXQb76sNinZ8VoFwbnnrNk5YxBP2M1Z16Rw=;
-	b=QKdtV9U7F44nzWM1/OMmdsP43cPkI0OQJ5LOyjd59//z1VribOOQTifOjmRihwXjDdwhk5
-	AKfgziNiz3ftcV5bh3tPiDEg4U8cJscXcYrbeqFFgoUUNGRuF7hdDM/WLHVAQOdVwqXBX1
-	iVvhTY3Eag1hwiR0qGnpjO4XsbYeZ9I=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-v350hqWrNxSXvlNLKw2vdQ-1; Mon,
- 20 Oct 2025 06:35:35 -0400
-X-MC-Unique: v350hqWrNxSXvlNLKw2vdQ-1
-X-Mimecast-MFC-AGG-ID: v350hqWrNxSXvlNLKw2vdQ_1760956533
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1760956558; c=relaxed/simple;
+	bh=mGHh4+u3muodQrfYI8vuBXTSLKVHsvy01DupG4JFCeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxrMuCMsI5hx6caK2foAMLS/AW6stv92P6ILcrXdwiWh0u1RPyhvTpuFAGnJYtWBNZRH8XLXN/LzQaju1pA8kv+dBZtgPIbHNKkVPrFjZ9gW01nXHXY9eOI8Z0YQ2XbTBLSTtjpzvr7hdwvtjwRgd0uHEQ/rnkvNybqSWRXVbcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ymbfzvez; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760956554;
+	bh=mGHh4+u3muodQrfYI8vuBXTSLKVHsvy01DupG4JFCeE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ymbfzvez+47CIF5d88vLk3/jJF1VCySlB0GnWuxV/7I2EqRdFhqODClhSF2k46i6d
+	 8ZpQpf0W3FuD9mE2Df+j+VJ5JgIt2NIEWrnZc04VE1JsjtViJZzNGc46Q4+hZoktzk
+	 Pp5y23ZHduL3pSHqgQ6lCCsl+lvNIVD2aURzD+qEWlTcZQMlAyzSEFJSFcBiVNEMOV
+	 DHKhb0HeM1Tk+wLmOGHlm3r9g3xf9Q4E7KKO2ImukohnQ6HEevHMTeep8ehTIEm/o6
+	 y64dUPFznjcq6nObFb6feWAvaLmp0dBD/JL28EW7LuvEdeVt1FmQKnwp8jORU0883p
+	 H8oW6WMDuDLzQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0B011800657;
-	Mon, 20 Oct 2025 10:35:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.57])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC77A18003FC;
-	Mon, 20 Oct 2025 10:35:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251020005038.661542-17-ebiggers@kernel.org>
-References: <20251020005038.661542-17-ebiggers@kernel.org> <20251020005038.661542-1-ebiggers@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: dhowells@redhat.com, linux-crypto@vger.kernel.org,
-    Ard Biesheuvel <ardb@kernel.org>,
-    "Jason A . Donenfeld" <Jason@zx2c4.com>,
-    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-    linux-s390@vger.kernel.org
-Subject: Re: [PATCH 16/17] crypto: jitterentropy - use default sha3 implementation
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8C8EB17E0C87;
+	Mon, 20 Oct 2025 12:35:53 +0200 (CEST)
+Message-ID: <12cdd987-796b-44fb-a508-eb1dc7cde8be@collabora.com>
+Date: Mon, 20 Oct 2025 12:35:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1062227.1760956530.1@warthog.procyon.org.uk>
-Date: Mon, 20 Oct 2025 11:35:30 +0100
-Message-ID: <1062228.1760956530@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/14] iommu/mediatek-v1: add missing larb count sanity
+ check
+To: Johan Hovold <johan@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
+ Janne Grunau <j@jannau.net>, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy
+ <vdumpa@nvidia.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251020045318.30690-1-johan@kernel.org>
+ <20251020045318.30690-11-johan@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251020045318.30690-11-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Why don't you take my approach and just call lib/crypto/sha3 directly rather
-than using a crypto/ object as an intermediary if that crypto/ object is just
-going to wrap lib/crypto?
+Il 20/10/25 06:53, Johan Hovold ha scritto:
+> Add the missing larb count sanity check to avoid writing beyond a fixed
+> sized array in case of a malformed devicetree.
+> 
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
+> Reviewed-by: Yong Wu <yong.wu@mediatek.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-David
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
 
