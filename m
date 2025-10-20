@@ -1,160 +1,204 @@
-Return-Path: <linux-kernel+bounces-861039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0195EBF1AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:57:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CCBBF19E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CCFC4FCC7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F569189B1B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46858322C9A;
-	Mon, 20 Oct 2025 13:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ajn8vXuN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FCA322A2E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4848F2C21F7;
+	Mon, 20 Oct 2025 13:47:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6195731D750
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760968026; cv=none; b=cQd+4vg7uxqz1LQqH4/7VfrWdXKJDIFNs040ekzmQN5irvrwIfqMKzV9Tg4bwoQQJvZH1dqZpNDaT/d9+yDXV7G2b1zXSszYps3mJVjq/xsXAaiYgJHInIAKi2+m18Ji9i5uTrrjxOFQgzqZiixhTIKVbvHgvgbEP7U0TD6waAs=
+	t=1760968021; cv=none; b=EbDK1lNuofjPKPOJXA2KT3yDY/tPaz0c+0t3wvbYPMEL2ITQSAnuLZKhy7++hdoaCsCPIUPI0igELx6G0oneuBTRH3w4MI7oUZh3tRHMgLl4NrhcSuaMuwThj/p56oO4q3IG9GlX9ihlL5SOFRNr8pKeQn6lroZkZqDZEAh7pn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760968026; c=relaxed/simple;
-	bh=ANgSQSPVOIlXoVYbP+I9m5tJ0ZaaqeZGLzdTf42qYbc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWAh81ciIZbUzFJQZnMZvfdEOAXC68HAlVB3JdwPV28DUCxYC977YhMPmBYd2PwBYAT3jur8sBRUvsH2B9B7ueyuzgGQDCBhFoBSW57qlUZTYdpetjocEVK1xhcJ3OHZCpfN/o2DHNlqo5R58ZAtQh0LV7qp+gG3dGEXCOV/lA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ajn8vXuN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BCA3C116D0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760968026;
-	bh=ANgSQSPVOIlXoVYbP+I9m5tJ0ZaaqeZGLzdTf42qYbc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ajn8vXuNnKb1LAbPZxFi0K1SpVKYv6BEENBjvz46Sv9caDB7o+XlW10cYl3uLNOIb
-	 DV1BMPpT9P2ROVtknynYnMUmuw5Yj98O/adWd41Q9N0z5pm5Yg04Zxb8o1YwEdNRWv
-	 /hdbw1ywMjql2m+TwIB/dEWaAe2yJ8HI411QTh7e0dArZNoWSU89ftPtasueR2lic9
-	 yKp2jtGn9yJNS8zZF49TO7B+NfQLEouWx04Xrnig/kWBHsxxrvc8hfCoS/74Mnci7a
-	 pyrpMcPYhrwFib862EgEwt/zugtG1JtfSbo6ARZERY0E0vHdrPUzMtbIGgjJOamR7i
-	 xYKl9K5W5qd0w==
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4711f3c386eso19120495e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:47:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVINJbkImsLk/A+4E9LiVNmzYl6rNuGwl3EKDnKIyDIcIHTGazABonDEzIVvuLak6HjypXAaePWwHsSIHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBFSsHqWsNBnrkhQKWqRcY21OtoSOI1DkJacxAoLI49V9bbc1Q
-	TuWlQj9gt1z0h4WL+8vutlryPmlWo805KXthBhgsGeTE2T22zpG51eRpc1P+D+LjHvSun2B3SX0
-	YVAr9Ndmi9vif0B2FbeEIxdR2YFWfabc=
-X-Google-Smtp-Source: AGHT+IGpvHBGOazwRpML7L6p+OasmV1SnRg6q1qXry12cbpNN8zhS8TFOb5uYraKUxj/eNcIvfi0sxzsmTyVox3z8JY=
-X-Received: by 2002:a05:600c:3b0c:b0:471:669:ec1f with SMTP id
- 5b1f17b1804b1-471178785e1mr97856905e9.8.1760968024377; Mon, 20 Oct 2025
- 06:47:04 -0700 (PDT)
+	s=arc-20240116; t=1760968021; c=relaxed/simple;
+	bh=cs1rJY31wiXgSBZ/nNZXT88feNRLR2NlxYEBuLZ9n/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qMSOfK+g0nG/p6mnrNIslCcO4DrThyt3BX2dCR4RAhcHNqlnocrclg/BqvZ5zDePtiYyDnvzsUr+gq8QOjnYwIWhI52ecftAesU52u48vQ5M9oWSZRLEuvMN+Hfb44dFYdbNRpm5cQX08dxK6O0Bnv9QfEFdRZUIiMfcx04jdyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 953D81063;
+	Mon, 20 Oct 2025 06:46:50 -0700 (PDT)
+Received: from [10.57.65.147] (unknown [10.57.65.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6384B3F66E;
+	Mon, 20 Oct 2025 06:46:55 -0700 (PDT)
+Message-ID: <8079f564-cec0-45e4-857b-74b2e630a9d5@arm.com>
+Date: Mon, 20 Oct 2025 15:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020042056.30283-1-luxu.kernel@bytedance.com> <20251020042056.30283-4-luxu.kernel@bytedance.com>
-In-Reply-To: <20251020042056.30283-4-luxu.kernel@bytedance.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Mon, 20 Oct 2025 21:46:51 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTREY07Eo0EgB9ew1sd6FkMtoFSTgyC5ny2SQKKd83xEtw@mail.gmail.com>
-X-Gm-Features: AS18NWDSEQv09h9pIrv_Q1ibVOSy0wdkcUShHmZExEFgCajrR16Dgx95ctdgozI
-Message-ID: <CAJF2gTREY07Eo0EgB9ew1sd6FkMtoFSTgyC5ny2SQKKd83xEtw@mail.gmail.com>
-Subject: Re: [PATCH v4 03/10] riscv: hwprobe: Export Zalasr extension
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: corbet@lwn.net, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, will@kernel.org, peterz@infradead.org, 
-	boqun.feng@gmail.com, mark.rutland@arm.com, anup@brainfault.org, 
-	atish.patra@linux.dev, pbonzini@redhat.com, shuah@kernel.org, 
-	parri.andrea@gmail.com, ajones@ventanamicro.com, brs@rivosinc.com, 
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	apw@canonical.com, joe@perches.com, lukas.bulwahn@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/4] rseq: Make rseq work with protection keys
+To: Dmitry Vyukov <dvyukov@google.com>, mathieu.desnoyers@efficios.com,
+ peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, elver@google.com
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>
+References: <cover.1747817128.git.dvyukov@google.com>
+ <138c29bd5f5a0a22270c9384ecc721c40b7d8fbd.1747817128.git.dvyukov@google.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <138c29bd5f5a0a22270c9384ecc721c40b7d8fbd.1747817128.git.dvyukov@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 12:21=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> =
-wrote:
++Florian Weimer
+
+On 21/05/2025 10:47, Dmitry Vyukov wrote:
+> If an application registers rseq, and ever switches to another pkey
+> protection (such that the rseq becomes inaccessible), then any
+> context switch will cause failure in __rseq_handle_notify_resume()
+> attempting to read/write struct rseq and/or rseq_cs. Since context
+> switches are asynchronous and are outside of the application control
+> (not part of the restricted code scope), temporarily switch to
+> pkey value that allows access to the 0 (default) PKEY.
 >
-> Export the Zalasr extension to userspace using hwprobe.
+> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+> Cc: x86@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
 >
-> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 > ---
->  Documentation/arch/riscv/hwprobe.rst  | 5 ++++-
->  arch/riscv/include/uapi/asm/hwprobe.h | 1 +
->  arch/riscv/kernel/sys_hwprobe.c       | 1 +
->  3 files changed, 6 insertions(+), 1 deletion(-)
+> Changes in v7:
+>  - Added Mathieu's Reviewed-by
 >
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/ri=
-scv/hwprobe.rst
-> index 2aa9be272d5de..067a3595fb9d5 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -249,6 +249,9 @@ The following keys are defined:
->         defined in the in the RISC-V ISA manual starting from commit e874=
-12e621f1
->         ("integrate Zaamo and Zalrsc text (#1304)").
+> Changes in v6:
+>  - Added a comment to struct rseq with MPK rules
 >
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZALASR`: The Zalasr extension is support=
-ed as
-> +       frozen at commit 194f0094 ("Version 0.9 for freeze") of riscv-zal=
-asr.
-"Frozen Version 0.9" might not be proper; it denotes the current
-temporary state, not the goal of the patch.
+> Changes in v4:
+>  - Added Fixes tag
+>
+> Changes in v3:
+>  - simplify control flow to always enable access to 0 pkey
+>
+> Changes in v2:
+>  - fixed typos and reworded the comment
+> ---
+>  include/uapi/linux/rseq.h |  4 ++++
+>  kernel/rseq.c             | 11 +++++++++++
+>  2 files changed, 15 insertions(+)
+>
+> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+> index c233aae5eac90..019fd248cf749 100644
+> --- a/include/uapi/linux/rseq.h
+> +++ b/include/uapi/linux/rseq.h
+> @@ -58,6 +58,10 @@ struct rseq_cs {
+>   * contained within a single cache-line.
+>   *
+>   * A single struct rseq per thread is allowed.
+> + *
+> + * If struct rseq or struct rseq_cs is used with Memory Protection Keys,
+> + * then the assigned pkey should either be accessible whenever these structs
+> + * are registered/installed, or they should be protected with pkey 0.
 
+I think it's worth pointing out that every case of async uaccess seems
+to be handled differently w.r.t. pkeys. Some interesting cases:
+
+* During signal delivery, the pkey register is reset to permissive
+before writing to the signal stack (this is the logic that patch 2
+touches in fact). This is handled in the same way on x86 [1] and arm64 [2].
+
+* AFAICT io_uring worker threads inherit the user thread's pkey register
+on x86, since they are forked without setting PF_KTHREAD. OTOH on arm64
+the pkey register is reset to the init value (RW access to pkey 0 only)
+for all non-user threads [3].
+
+* Now with this patch accesses to struct rseq are made with whatever the
+pkey register is set to when the thread is interrupted + RW access for
+pkey 0.
+
+This is clearly a difficult problem, since no approach will satisfy all
+users. I believe a new API would be desirable to allow users to
+configure this; see the thread at [4] regarding signal handlers.
+
+In any case, it seems best to ignore the value of the pkey register at
+the point where the thread is interrupted, because userspace has no
+control on that value and it could lead to spurious faults (depending on
+when the interruption happens). For rseq, maybe the most logical option
+would be to set the pkey register to permissive in
+__rseq_handle_notify_resume(), because there is nothing sensible to
+check at that point. Checking could be done at the point of registration
+instead.
+
+- Kevin
+
+[1]
+https://lore.kernel.org/lkml/20240802061318.2140081-1-aruna.ramakrishna@oracle.com/
+[2]
+https://lore.kernel.org/all/20241023150511.3923558-1-kevin.brodsky@arm.com/
+[3] https://lore.kernel.org/all/20241001133618.1547996-2-joey.gouly@arm.com/
+[4]
+https://inbox.sourceware.org/libc-alpha/87jza5pxmx.fsf@oldenburg.str.redhat.com/
+
+>   */
+>  struct rseq {
+>  	/*
+> diff --git a/kernel/rseq.c b/kernel/rseq.c
+> index b7a1ec327e811..88fc8cb789b3b 100644
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -10,6 +10,7 @@
+>  
+>  #include <linux/sched.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/pkeys.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/rseq.h>
+>  #include <linux/types.h>
+> @@ -424,11 +425,19 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+>  void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+>  {
+>  	struct task_struct *t = current;
+> +	pkey_reg_t saved_pkey;
+>  	int ret, sig;
+>  
+>  	if (unlikely(t->flags & PF_EXITING))
+>  		return;
+>  
+> +	/*
+> +	 * Enable access to the default (0) pkey in case the thread has
+> +	 * currently disabled access to it and struct rseq/rseq_cs has
+> +	 * 0 pkey assigned (the only supported value for now).
+> +	 */
+> +	saved_pkey = enable_zero_pkey_val();
 > +
->    * :c:macro:`RISCV_HWPROBE_EXT_ZALRSC`: The Zalrsc extension is support=
-ed as
->         defined in the in the RISC-V ISA manual starting from commit e874=
-12e621f1
->         ("integrate Zaamo and Zalrsc text (#1304)").
-> @@ -360,4 +363,4 @@ The following keys are defined:
->
->      * :c:macro:`RISCV_HWPROBE_VENDOR_EXT_XSFVFWMACCQQQ`: The Xsfvfwmaccq=
-qq
->          vendor extension is supported in version 1.0 of Matrix Multiply =
-Accumulate
-> -       Instruction Extensions Specification.
-> \ No newline at end of file
-> +       Instruction Extensions Specification.
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/u=
-api/asm/hwprobe.h
-> index aaf6ad9704993..d3a65f8ff7da4 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -82,6 +82,7 @@ struct riscv_hwprobe {
->  #define                RISCV_HWPROBE_EXT_ZAAMO         (1ULL << 56)
->  #define                RISCV_HWPROBE_EXT_ZALRSC        (1ULL << 57)
->  #define                RISCV_HWPROBE_EXT_ZABHA         (1ULL << 58)
-> +#define                RISCV_HWPROBE_EXT_ZALASR        (1ULL << 59)
->  #define RISCV_HWPROBE_KEY_CPUPERF_0    5
->  #define                RISCV_HWPROBE_MISALIGNED_UNKNOWN        (0 << 0)
->  #define                RISCV_HWPROBE_MISALIGNED_EMULATED       (1 << 0)
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwpr=
-obe.c
-> index 0b170e18a2beb..0529e692b1173 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -99,6 +99,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair=
-,
->                 EXT_KEY(ZAAMO);
->                 EXT_KEY(ZABHA);
->                 EXT_KEY(ZACAS);
-> +               EXT_KEY(ZALASR);
->                 EXT_KEY(ZALRSC);
->                 EXT_KEY(ZAWRS);
->                 EXT_KEY(ZBA);
-> --
-> 2.20.1
->
-
-
---=20
-Best Regards
- Guo Ren
+>  	/*
+>  	 * regs is NULL if and only if the caller is in a syscall path.  Skip
+>  	 * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
+> @@ -441,9 +450,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+>  	}
+>  	if (unlikely(rseq_update_cpu_node_id(t)))
+>  		goto error;
+> +	write_pkey_val(saved_pkey);
+>  	return;
+>  
+>  error:
+> +	write_pkey_val(saved_pkey);
+>  	sig = ksig ? ksig->sig : 0;
+>  	force_sigsegv(sig);
+>  }
 
