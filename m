@@ -1,88 +1,54 @@
-Return-Path: <linux-kernel+bounces-860412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D96BBF013A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDCFBF013D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 568883B8143
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DD4189EE18
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C262EDD45;
-	Mon, 20 Oct 2025 09:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C192EE607;
+	Mon, 20 Oct 2025 09:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Egq8D6Hr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Sq2ZDYeJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4122ECE9D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD042EDD7D;
+	Mon, 20 Oct 2025 09:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760950940; cv=none; b=al0o4cIFUii+E3eteyO3nLiFYJVPEAwuzI5WnQdOy4lFNYP3dMhnE6EKUkYgh2fp4ecp3pfQkAtzzjo1xhiDmmlzKIQ0AjTzzyjaO3+NmeY8iL7LN6CULfZWvZ/oCXONQr2XYA2fzcebTS+uE+eaatEyE9BRv2ch4wMLeSRtmho=
+	t=1760950947; cv=none; b=b57FylK214UIxW+6L930AlsGKlO4P2uA/IHQk2qVbG1Fh2nwO8U9NhUtCQgRyCYlKw2OBjOWV++0t1lh1Hm0HtTj9Ur30OcX5PBRATmWQW0qKeagSqY3SpVPpFyBM+yx3NTP/x2/bo4bxd+EYb2uyGm+z5H+2ESuRiWm8FzNJ24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760950940; c=relaxed/simple;
-	bh=duk16NvzE/e5Q3uFal86NfJO7o6aGeQdHoqgBaAqYF4=;
+	s=arc-20240116; t=1760950947; c=relaxed/simple;
+	bh=YgW7RNRwW3S6WCQfv24k0K5SqHiGiIgg9OudwDYb5iA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V7pThN5XOALrACnAXca4WriB817t692nEYJ5F79K8xK8Jk/lxYCszLjs53MPb07uU4H7CK7Y3HjPgO0IlrJ80z7OJfH82v6scniK5kHQ9Kq47sPZpZ8Fl+KozEG3Vm0DYXGTldA1+E+pDmOYS1lq8tF2syT3S3f+UOpnr8/G0uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Egq8D6Hr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760950937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QuekmEGKIc9oAsv4aXr2IF/RaPwPqPMIddn561w2cJ4=;
-	b=Egq8D6Hrvi5ZErD0YQhAge1mTxIC53C+UQV7AC9NXJj8PwQx8S6oIRzXJuKAdz4iHbWQgA
-	T70wZjgX/Jmf9Irmkz5b1KFkP77goQuQaRN/HqhT/LoyQxYdZtIgrmMm8Zxe13Ms6KM59l
-	XdTgapZ3oq6Lch2K+Yr83vuVSHA3+V8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-658-6GI5PxJyMpmmPsZwemjj-w-1; Mon, 20 Oct 2025 05:02:15 -0400
-X-MC-Unique: 6GI5PxJyMpmmPsZwemjj-w-1
-X-Mimecast-MFC-AGG-ID: 6GI5PxJyMpmmPsZwemjj-w_1760950934
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-47107fcb257so63383995e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:02:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760950934; x=1761555734;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QuekmEGKIc9oAsv4aXr2IF/RaPwPqPMIddn561w2cJ4=;
-        b=jAtmf2Zw1xoscbTYd1xYZGtkyyUdbAkyxNBRpLvRcxVq2kX4uPgaHS7IumLguWffHA
-         xLDukyagJUrcshisier7utDzRjLe523yAaQ8euY2I1xv0qrcbWWE5sNJJhF8rIiBMyBo
-         x1VfMiQP3kPOgb+pmnjDoiYGhqw5KDIIULizTkcsvepx6cIjmfm45uABUApoV+Nibi6y
-         bwfMEyzK/HSCRRz/BvE0Dv/3Ah4tMJORJKBQid9syNbxNkVvUMv7NVs8fPZ3jJY0F62A
-         fvyCT9Qgx4fgwI3XNxzh3oHvBPklztztvD8h0oJJeZQbE/VHDM2GNLmTAev2mCzds5cv
-         pwBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTYxk59tZP7RLNcPxg7PcWHHGmy1PNbUq0gl4vUJky6vUIAClhIQvA2ADHN+2a+N/7uhWLRkhdVs2lVWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypn1GKbqSXVluFfFtAho8PW89jzG+2bRGcWf25I7hbArmP5FiG
-	iH81qsGJwI4XBaIEJrUX6NWH80yBxDInAXNYklvX8jRcFOf+S/eh4fomKEvYDkm1Nh8ssfps9gn
-	1gNfglgBE+hGWkiY2LAZKw99oPevfLUZ1CyTYRhTOL91SaQinAChxJnFIXvx8K8U2PA==
-X-Gm-Gg: ASbGncs/7hzWSdqJWoHZQeUcMOwv29rnCDKEUw1FXV9iiulN3+sS8Xd9n2CnumY21gD
-	rvPcrs8eERFOji1DXSJR3Ss19ccz/P29LqSjMm8zJhXJG4CTjJ3cR56W1Pp1HMDCz058bbERCpX
-	zIqV6VHu+lgPHbzukWbvb3H6XUL5YO5UZDrpYvyxe6pUGauf2F+p8/3oFQbIsUNeSbGdEaRyi4B
-	4z6Z4sjNq806eM1tW9eycG8ahpVL8sCse1gycHH0Dw/6b4bgPacRrzzAQjXgP1cuFn3jrHCIsN3
-	dLhLDWhVVhRSAZ3PDU0YBlbBMMXoyBZAczU0dr+cJJXDNy5VC5hnIojqoCYB7QcK2JSBF1CJxEm
-	RBKrurSyClPhBRWRYBsiu1kn7I4prytl2X1ELOf6RVHlApoBsJo7R3+yv4YCD5aZMAd09IU9W2H
-	Zmi3m8uqOB7OGbPAfvqlWA2KkYhow=
-X-Received: by 2002:a05:600c:548d:b0:46e:436c:2191 with SMTP id 5b1f17b1804b1-47117903f96mr96029325e9.25.1760950934400;
-        Mon, 20 Oct 2025 02:02:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1DonHpb64xG1WbeBu2Y+NhpauxghOKViVl2XfaV+Qeidr8X4r3P3iJaCt5aZBDZmdVQeU6A==
-X-Received: by 2002:a05:600c:548d:b0:46e:436c:2191 with SMTP id 5b1f17b1804b1-47117903f96mr96028945e9.25.1760950933865;
-        Mon, 20 Oct 2025 02:02:13 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711c487dfesm202712265e9.17.2025.10.20.02.02.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 02:02:13 -0700 (PDT)
-Message-ID: <635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com>
-Date: Mon, 20 Oct 2025 11:02:11 +0200
+	 In-Reply-To:Content-Type; b=aZkDgO2MMaCDxLJxoyRkHp5B5H4QjWP9JkLnfnjXRqfSY8vdB3AVr/EK1zghW1LtTsdxXnbTLIrbnWRxqLg0lsmBSgj/eT0zveoxKA1bU2t1kuhb9+7T6v8YBNqVVVH2iLAblmpxyDezFtZ/uG7qlXvuYFH+eia+VOu399qwzdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Sq2ZDYeJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760950936;
+	bh=YgW7RNRwW3S6WCQfv24k0K5SqHiGiIgg9OudwDYb5iA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Sq2ZDYeJHtu0a0w2PkpJpIiSAucFLbJgMlfcm76ReK44WnIthkxc9/6e3hcjvBnjX
+	 wFD2BUrEpKjgnPrcuSlob6ClrT8xJVtNy0ma9u17UNqlzgTo4P95RsZ4m8fNyJ/dZV
+	 BzTj5CNEG+WF/7RZ6So6VeS29HidWmHYIg1iQ24uGrAD5sLtDFwejy2SQoJ3u5o/sJ
+	 XnvqZQHg9LKc2A1M8ZvU2AGZ5GOidoY0jeaZ6Y1M9/f3+1Kayc22MwY8wDCEl6BoHb
+	 SzmUEqVsVSs6303MQXk/xG/4Kj+cMfNUlMI0pCP5ClqMzRmOMavmOv/Qb62AFt3h0U
+	 q+UiQv1O7oRjQ==
+Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6457C17E055D;
+	Mon, 20 Oct 2025 11:02:16 +0200 (CEST)
+Message-ID: <f5df8dfd-4bd4-412b-b5e7-a7fba7885c1a@collabora.com>
+Date: Mon, 20 Oct 2025 11:02:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,120 +56,214 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
-To: Jiri Slaby <jirislaby@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
- <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20251018093002.3660549-1-rppt@kernel.org>
- <aPQxN7-FeFB6vTuv@casper.infradead.org>
- <3e798b9e-4915-404f-9197-ed3c32587141@kernel.org>
- <85707316-3f2b-4e29-b821-a32f9097244e@kernel.org>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v7 4/8] media: Documentation: uapi: Add V4L2 ISP
+ documentation
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Antoine Bouyer <antoine.bouyer@nxp.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
+ <20251014-extensible-parameters-validation-v7-4-6628bed5ca98@ideasonboard.com>
+ <e82e7c1d-b4ac-49a0-9b76-d101395c7040@collabora.com>
+ <bprg66hg3xoetosl7dwt2rcs6mpcksfalymmyidla6qvdrnm7u@fpn6237j25ir>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <85707316-3f2b-4e29-b821-a32f9097244e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <bprg66hg3xoetosl7dwt2rcs6mpcksfalymmyidla6qvdrnm7u@fpn6237j25ir>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 20.10.25 09:06, Jiri Slaby wrote:
-> On 20. 10. 25, 8:58, Jiri Slaby wrote:
->> On 19. 10. 25, 2:30, Matthew Wilcox wrote:
->>> On Sat, Oct 18, 2025 at 12:29:59PM +0300, Mike Rapoport wrote:
->>>> Vast majority of allocations that use get_free_pages() and its
->>>> derivatives
->>>> cast the returned unsigned long to a pointer and then cast it back to
->>>> unsigned long when freeing the memory.
->>>>
->>>> These castings are useless and only obfuscate the code.
->>>>
->>>> Make get_free_pages() and friends return 'void *' and free_pages()
->>>> accept
->>>> 'void *' as its address parameter.
->>>
->>> No.  Linus has rejected this change before.  I can't find it now, it was
->>> a long time ago.  Most of them shouldn't be using get_free_pages() at
->>> all, they should be using kmalloc().
->>
->> I'd be interested in the refusal thread (what was the rejection exactly
->> about). In a need of whole pages, why would I want to alloc more for
->> metadata (using k*alloc)? Or what am I missing?
+Hi Jacopo,
+
+On 10/20/25 10:09, Jacopo Mondi wrote:
+> Hi Michael
 > 
-> OK, AI yielded:
-> https://lkml.iu.edu/1512.2/03853.html
-> and an LWN summary:
-> https://lwn.net/Articles/669015/
+>   thanks for review. I took all comments in but..
 
-Right, the interesting stuff starts here I think:
+Cool, thanks!
 
-https://lore.kernel.org/all/CA+55aFwp4iy4rtX2gE2WjBGFL=NxMVnoFeHqYa2j1dYOMMGqxg@mail.gmail.com/T/#u
+> 
+> 
+> On Tue, Oct 14, 2025 at 11:23:29AM +0200, Michael Riesch wrote:
+>> Hi Jacopo,
+>>
+>> Thanks for your efforts!
+>>
+>> On 10/14/25 10:00, Jacopo Mondi wrote:
+>>> [...]
+>>> +
+>>> +The uAPI/ABI problem
+>>> +--------------------
+>>> +
+>>> +By upstreaming the metadata formats that describe the parameters and statistics
+>>> +buffers layout, driver developers make them part of the Linux kernel ABI. As it
+>>> +sometimes happens for most peripherals in Linux, ISP drivers development is
+>>> +often an iterative process, where sometimes not all the hardware features are
+>>> +supported in the first version that lands in the kernel, and some parts of the
+>>> +interface have to later be modified for bug-fixes or improvements.
+>>
+>> Suggestion:
+>>
+>> As for most peripherals, ISP driver development in Linux is often an
+>> iterative process, in which not all of the hardware features are
+>> supported in the first version. The support for them and/or bug fixes
+>> may land in the kernel at a later stage.
+>>
+>>> +
+>>> +If any later bug-fix/improvement requires changes to the metadata formats,
+>>
+>> s/bug-fix/bug fix
+>>
+>>> +this is considered an ABI-breakage that is strictly forbidden by the Linux
+>>
+>> s/ABI-breakage/ABI breakage
+>>
+>>> +kernel policies. For this reason, any change in the ISP parameters and
+>>> +statistics buffer layout would require defining a new metadata format.
+>>> +
+>>> +For these reasons Video4Linux2 has introduced support for generic ISP parameters
+>>> +and statistics data types, designed with the goal of being:
+>>> +
+>>> +- Extensible: new features can be added later on without breaking the existing
+>>> +  interface
+>>> +- Versioned: different versions of the format can be defined without
+>>> +  breaking the existing interface
+>>> +
+>>> +ISP configuration
+>>> +=================
+>>> +
+>>> +Before the introduction of generic formats
+>>> +------------------------------------------
+>>> +
+>>> +Metadata cature formats that describe ISP configuration parameters were most
+>>
+>> s/cature/capture
+>>
+>> s/most the time/"most of the time" or "typically" or "usually" or
+>> "normally"?
+>>
+>>> +the time realized by defining C structures that reflect the ISP registers layout
+>>> +and gets populated by userspace before queueing the buffer to the ISP. Each
+>>
+>> s/gets/get
+>>
+>>> +C structure usually corresponds to one ISP *processing block*, with each block
+>>> +implementing one of the ISP supported features.
+>>> +
+>>> +The number of supported ISP blocks, the layout of their configuration data are
+>>> +fixed by the format definition, incurring the in the above described uAPI/uABI
+>>> +problems.
+>>
+>> incurring the described uAPI/ABI problems described above.
+>>
+> 
+> .. this one, for which I think the correct form is
+> 
+>  > +The number of supported ISP blocks, the layout of their configuration data are
+>  > +fixed by the format definition, incurring in the above described uAPI/uABI
+>  > +problem.
 
-Personally, I was always confused why we are even using "unsigned long" 
-in the first place.
+Maybe it's just me, but the sentence still does not sound correct to my
+ears. First, you enumerate two items, so they should be joined with
+"and", right? And then I understand that the two items have the
+uAPI/uABI problem as consequence, correct? "to result in" or "to lead
+to" seem to be better choices.
 
-Regarding the metadata overhead, in 2015 Linus wrote in that thread:
+That said, don't hesitate to point out things that I misunderstood.
 
-"Long ago, allocating a page using kmalloc() was a bad idea, because
-there was overhead for it in the allocation and the code.
+Best regards,
+Michael
 
-These days, kmalloc() not only doesn't have the allocation overhead,
-but may actually scale better too, thanks to percpu caches etc."
-
-What's that status of that 10 years later?
-
--- 
-Cheers
-
-David / dhildenb
+> 
+> Thanks
+>   j
+> 
+>>> +
+>>> +Generic ISP parameters
+>>> +----------------------
+>>> +
+>>> +The generic ISP configuration parameters format is realized by a defining a
+>>> +single C structure that contains an header, followed by a binary buffer where
+>>
+>> s/an header/a header
+>>
+>>> +userspace programs a variable number of ISP configuration data block, one for
+>>> +each supported ISP feature.
+>>> +
+>>> +The :c:type:`v4l2_isp_params_buffer` structure defines the parameters buffer
+>>> +header which is followed by a binary buffer of ISP configuration parameters.
+>>> +Userspace shall correctly populate the buffer header with the versioning
+>>> +information and with the size (in bytes) of the binary data buffer where it will
+>>> +store the ISP blocks configuration.
+>>> +
+>>> +Each *ISP configuration block* is preceded by an header implemented by the
+>>> +:c:type:`v4l2_isp_params_block_header` structure, followed by the configuration
+>>> +parameters for that specific block, defined by the ISP driver specific data
+>>> +types.
+>>> +
+>>> +Userspace applications are responsible for correctly populating each block's
+>>> +header fields (type, flags and size) and the block-specific parameters.
+>>> +
+>>> +ISP Block enabling, disabling and configuration
+>>> +-----------------------------------------------
+>>> +
+>>> +When userspace wants to configure and enable an ISP block it shall fully
+>>> +populate the block configuration and set the V4L2_ISP_PARAMS_FL_BLOCK_ENABLE
+>>> +bit in the block header's `flags` field.
+>>> +
+>>> +When userspace simply wants to disable an ISP block the
+>>> +V4L2_ISP_PARAMS_FL_BLOCK_DISABLE bit should be set in block header's `flags`
+>>> +field. Drivers accept a configuration parameters block with no additional
+>>> +data after the header in this case.
+>>> +
+>>> +If the configuration of an already active ISP block has to be updated,
+>>> +userspace shall fully populate the ISP block parameters and omit setting the
+>>> +V4L2_ISP_PARAMS_FL_BLOCK_ENABLE and V4L2_ISP_PARAMS_FL_BLOCK_DISABLE bits in the
+>>> +header's `flags` field.
+>>> +
+>>> +Setting both the V4L2_ISP_PARAMS_FL_BLOCK_ENABLE and
+>>> +V4L2_ISP_PARAMS_FL_BLOCK_DISABLE bits in the flags field is not allowed and not
+>>> +accepted.
+>>> +
+>>> +Any further extension to the parameters layout that happens after the ISP driver
+>>> +has been merged in Linux can be implemented by adding new blocks definition
+>>> +without invalidating the existing ones.
+>>> +
+>>> +ISP statistics
+>>> +==============
+>>> +
+>>> +Support for generic statistics format is not yet implemented in Video4Linux2.
+>>> +
+>>> +V4L2 ISP uAPI data types
+>>> +========================
+>>> +
+>>> +.. kernel-doc:: include/uapi/linux/media/v4l2-isp.h
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index e9ac834d212f88222437e8d806800b2516d44f01..340353334299cd5eebf1f72132b7e91b6f5fdbfe 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -26857,6 +26857,7 @@ V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
+>>>  M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>>>  L:	linux-media@vger.kernel.org
+>>>  S:	Maintained
+>>> +F:	Documentation/userspace-api/media/v4l/v4l2-isp.rst
+>>>  F:	include/uapi/linux/media/v4l2-isp.h
+>>>
+>>>  VF610 NAND DRIVER
+>>>
+>>
+>>
+>> With the comments above addressed,
+>>
+>> Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
+>>
+>> Thanks and best regards,
+>> Michael
+>>
+>>
 
 
