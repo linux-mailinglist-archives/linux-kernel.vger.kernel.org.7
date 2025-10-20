@@ -1,253 +1,162 @@
-Return-Path: <linux-kernel+bounces-859959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD57BEF0B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:02:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D7BBEF0B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C29331899349
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2631898CB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D01A0B15;
-	Mon, 20 Oct 2025 02:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532231CAA7D;
+	Mon, 20 Oct 2025 02:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hGc9e1Ii"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="De83mhfT"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04661DF270
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156E7260B;
+	Mon, 20 Oct 2025 02:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760925749; cv=none; b=WYB/ZtnedMYbOpu/hngZCMROPIwhpoCcCZrEgiZ/Fuqi+d5OmY5KcIdaM0LRQm5AGxU4BfZjWXPxUNkOkQYG0iQrrt5cCddhoSHjURVlWXtbqTvOhx8BWC/FnnV3IyE8JQchlm0OTaF18BOECcj092/XEV/f8C3yz4uzNHqJsEk=
+	t=1760925744; cv=none; b=dXSFDJD1g2zd0xWbdVQ5tbdVTRJ1+4QzqeaZxJK3ng3t0kqrHozq6vHs9EYRe2cWgPEC0G9sYrwZqdHfC4ObqUuJWNTJV72e6lNrO+DI/gFjSb3yg82G0ltTk+0VJ/9PJA7hGrOENAWSJ906UHJrIleyZsXEi7fcy1CdKCYo14E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760925749; c=relaxed/simple;
-	bh=r7F8VBaOqPbONl17XxGa6LIdMwTAnSRZB1acdtZ6BKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I9QMS1PuaIWBv8ICTUiDkjOmswMY3GNiOZl5VIcXIWizX0pmtiJdNT9f11yNSK3LOXhHfKbV2Uirr2fRy7h47jRXNilCyI/4p1qimQhbt/TvmAC06abyvNpS/ALKxDW0O+tK6gVecVPbaLFMkfOyzVUb3Wzfv6PRtOQoflzn1/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hGc9e1Ii; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3efc2a94-54c7-48a8-a804-c231d06b5ed5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760925743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wvw6EEcLVS321+82zeKA5qCqsquigv/cxrzA5Vq7LGo=;
-	b=hGc9e1IiLST/psAYvB/aakCsP4XWX8OkVLTCEs0D0o0PKzJbXKei56mJzB8lGov+Y3y6o7
-	Dag7c4YvbxLjuBbfOKPzW9XAxDi9ovSSPNYx1a9bDt5F6iiq0yqlCPxGeo+EshhCkcvhkk
-	qdozeyfCimZd3viWAswm9uEhGE4jHBA=
-Date: Mon, 20 Oct 2025 10:01:27 +0800
+	s=arc-20240116; t=1760925744; c=relaxed/simple;
+	bh=bZpVhHp5/N6pg05JlUoGB10FHYF1j6tBORdhLrGRSxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UaP4ZPxORAYtxV0PtR+c6d0RaCvA75tOWrdeBspRjXiSifDl78pEVJj1le/+vwr2r6mzBncmR+jbylSKgI0PMi/YldQQyopv1gmZoiLGXVDC8JRZ8DCl9Hj0sa+tQNR9tkLg9dpcu1t1wgPDA9djQn5oo6AWNsDM/bCbhh28BkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=De83mhfT; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1760925733;
+	bh=tDrZLdBW9vlAha4ObE832pRI4SlMcSGwYcFakX4Jvgg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=De83mhfTB+SMEL6FoSqATpUvVrkiDPhKn6HyC6bJVQqN267SDmcEASKZNcKVh7NxT
+	 uWvc0rfh+vSDxQspenowFGe8RkdHVQHzUtssil7AlYXxuZdeE90XBVxJKpnxFuc07Y
+	 4yw9uuIH/jPfQzOoWtXqLySt5rvk08CQA0mkUA78=
+X-QQ-mid: esmtpgz14t1760925726tab82be72
+X-QQ-Originating-IP: JztUbLLiixmarjYZDA3tn8Rw/nWdOn2trEbtlH9vQgE=
+Received: from = ( [14.123.254.135])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 20 Oct 2025 10:02:04 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14701641022016592372
+EX-QQ-RecipientCnt: 14
+Date: Mon, 20 Oct 2025 10:02:04 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Yixun Lan <dlan@gentoo.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] riscv: dts: spacemit: add MusePi Pro board device
+ tree
+Message-ID: <52A7E982E5B11F53+aPWYHMbImTxJy7pJ@kernel.org>
+References: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
+ <20251017-k1-musepi-pro-dts-v3-2-40b05491699f@linux.spacemit.com>
+ <20251020015204-GYF1506524@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
-To: Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Harry Yoo <harry.yoo@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
- <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-References: <a9ca7cc6-f4d1-4fba-a9aa-2826b9a604bc@suse.cz>
- <8F4AE1E9-7412-40D6-B383-187021266174@linux.dev>
- <7791b2b8-5db8-458c-89e2-49a0876c13a3@suse.cz>
- <CAJuCfpEWGujJe3JOjmiKLOUr49Hw_3smT6iatY7kaRBPPCWpNg@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <CAJuCfpEWGujJe3JOjmiKLOUr49Hw_3smT6iatY7kaRBPPCWpNg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20251020015204-GYF1506524@gentoo.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: OZuCtzQljvyFKuNQakQ7M3sjvikqrVpqIEbHbxF5wYR0meBpsYDvDp1L
+	VkJHO4tcXB0zAQcytdg8kzmfcNfPpzmfhRGJrwEcMkT1lsu7ZHy5ljLgkQ+r/HQG649Evzj
+	T6RRJlSMaWlaKigKm6tgn6JH/bV/1NZM1+QbvalNkfjx+CRqpiy+IZ41v/dsMdbv5UT9/dO
+	51qzuX7zOhmHPCTPfwkBsiqYh9zIAndWtPLAGBzitNyAVtlcQtFWrqHf604AebN72ILHgty
+	H3lGa5FUQEVZm7KylWrxZk2eVLB+Hx0kOtgvLocwF0/W6UCcTQ3BdZ0q1/a1uUkA0gVJWJ0
+	9g6QUmJezDqiRXNFpWhgplWA7YT5fHTz0fPp/6ZHpj6QZMteWn0HONI4AqC59KrW25LGAHH
+	OUdYbtCwm13TOsb/kRk5a1QCy3Ann4B8QV9W0D03ELWj6UoHaGNKO0wDLOvRz3lWIGtl6Xt
+	GlTFCos0b0ZZZPlLl590iryuagPn9jvICRHTecT7YmrsE8yOMFGHvCq9FpLoM9TTN/heYMK
+	aKlpawBRbCUNLX0xXSxPy7aaWP9nk9Jpk8br04EHpu/KqebAu+EwOccvE+MfwJ5zt4RhgqJ
+	AEo+/o1xlHlk1g4d6yiv0yO+bbByct8tpzyd/ph5FtPhViBKd3+gUXympzPoVh5uenmqqLF
+	5oH69vViqfqjdVGOXbDEyMUcW5gEm5NgdQ0TxpfRejeLSE1W3rU6Hm+OA2y+NzB6sff34vr
+	tIJz7C4O6sLW2xv+07vj2nc5H11NYUtkLfCjfjH9ckghGh/rrLZP0FBJ/lH6lM26WCILOx3
+	W4gdy4aOQMQjzdHIGnM7OfAn9scJN9xe8Zwsi2KW9mHWXD4pRguc9K6SHwJ9gyg9sRAXFHQ
+	rxnC2CnUv8HsTqh0ARGJNZ/oAFlcyh3wV9cY7L3JDuZKtAm46xvhK17Ss4VFkTEG3hvZeA7
+	ImIMkqcvOuaKrkKBPEsaTLlWisZS77XQCRrv319dC2xlI1zEpkE0MDjd8a0/FTq4TWAcX4m
+	DR+5RKsusLQ2gSXurmu+AyEUizhJJFfq/cwdBsKghe8Me4hLiZwgSHxMGTR7fekX7I0R6ns
+	E1Js0ycw0Il
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
+Hi Yixun, thanks for your review.
 
-On 2025/10/18 05:52, Suren Baghdasaryan wrote:
-> On Fri, Oct 17, 2025 at 3:40 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->> On 10/17/25 12:02, Hao Ge wrote:
->>>
->>>> On Oct 17, 2025, at 16:22, Vlastimil Babka <vbabka@suse.cz> wrote:
->>>>
->>>> ﻿On 10/17/25 09:40, Harry Yoo wrote:
->>>>>> On Fri, Oct 17, 2025 at 02:42:56PM +0800, Hao Ge wrote:
->>>>>> Hi Harry
->>>>>>
->>>>>>
->>>>>> Thank you for your quick response.
->>>>>>
->>>>>>
->>>>>> On 2025/10/17 14:05, Harry Yoo wrote:
->>>>>>> On Fri, Oct 17, 2025 at 12:57:49PM +0800, Hao Ge wrote:
->>>>>>>> From: Hao Ge <gehao@kylinos.cn>
->>>>>>>>
->>>>>>>> In the alloc_slab_obj_exts function, there is a race condition
->>>>>>>> between the successful allocation of slab->obj_exts and its
->>>>>>>> setting to OBJEXTS_ALLOC_FAIL due to allocation failure.
->>>>>>>>
->>>>>>>> When two threads are both allocating objects from the same slab,
->>>>>>>> they both end up entering the alloc_slab_obj_exts function because
->>>>>>>> the slab has no obj_exts (allocated yet).
->>>>>>>>
->>>>>>>> And One call succeeds in allocation, but the racing one overwrites
->>>>>>>> our obj_ext with OBJEXTS_ALLOC_FAIL. The threads that successfully
->>>>>>>> allocated will have prepare_slab_obj_exts_hook() return
->>>>>>>> slab_obj_exts(slab) + obj_to_index(s, slab, p), where slab_obj_exts(slab)
->>>>>>>> already sees OBJEXTS_ALLOC_FAIL and thus it returns an offset based
->>>>>>>> on the zero address.
->>>>>>>>
->>>>>>>> And then it will call alloc_tag_add, where the member codetag_ref *ref
->>>>>>>> of obj_exts will be referenced.Thus, a NULL pointer dereference occurs,
->>>>>>>> leading to a panic.
->>>>>>>>
->>>>>>>> In order to avoid that, for the case of allocation failure where
->>>>>>>> OBJEXTS_ALLOC_FAIL is assigned, we use cmpxchg to handle this assignment.
->>>>>>>>
->>>>>>>> Thanks for Vlastimil and Suren's help with debugging.
->>>>>>>>
->>>>>>>> Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures unconditionally")
->>>>>>> I think we should add Cc: stable as well?
->>>>>>> We need an explicit Cc: stable to backport mm patches to -stable.
->>>>>> Oh sorry, I missed this.
->>>>>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->>>>>>>> ---
->>>>>>>>   mm/slub.c | 2 +-
->>>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/mm/slub.c b/mm/slub.c
->>>>>>>> index 2e4340c75be2..9e6361796e34 100644
->>>>>>>> --- a/mm/slub.c
->>>>>>>> +++ b/mm/slub.c
->>>>>>>> @@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
->>>>>>>>   static inline void mark_failed_objexts_alloc(struct slab *slab)
->>>>>>>>   {
->>>>>>>> -    slab->obj_exts = OBJEXTS_ALLOC_FAIL;
->>>>>>>> +    cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
->>>>>>>>   }
->>>>>>> A silly question:
->>>>>>>
->>>>>>> If mark_failed_objexts_alloc() succeeds and a concurrent
->>>>>>> alloc_slab_obj_exts() loses, should we retry cmpxchg() in
->>>>>>> alloc_slab_obj_exts()?
->>>>>> Great point.
->>>>>>
->>>>>> We could modify it like this, perhaps?
->>>>>>
->>>>>>   static inline void mark_failed_objexts_alloc(struct slab *slab)
->>>>>>   {
->>>>>> +       unsigned long old_exts = READ_ONCE(slab->obj_exts);
->>>>>> +       if( old_exts == 0 )
->>>>>> +               cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
->>>>>>   }
->>>>> I don't think this makes sense.
->>>>> cmpxchg() fails anyway if old_exts != 0.
->>> Aha, sorry I misunderstood what you meant.
->>>
->>>>>> Do you have any better suggestions on your end?
->>>>> I meant something like this.
->>>>>
->>>>> But someone might argue that this is not necessary anyway
->>>>> if there's a severe memory pressure :)
->>>>>
->>>>> diff --git a/mm/slub.c b/mm/slub.c
->>>>> index a585d0ac45d4..4354ae68b0e1 100644
->>>>> --- a/mm/slub.c
->>>>> +++ b/mm/slub.c
->>>>> @@ -2139,6 +2139,11 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
->>>>>         slab->obj_exts = new_exts;
->>>>>     } else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
->>>>>            cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
->>>>> +
->>>>> +        old_exts = READ_ONCE(slab->obj_exts);
->>>>> +        if (old_exts == OBJEXTS_ALLOC_FAIL &&
->>>>> +            cmpxchg(&slab->obj_exts, old_exts, new_exts) == old_exts)
->>>>> +            goto out;
->>>> Yeah, but either we make it a full loop or we don't care.
->>>> Maybe we could care because even without a severe memory pressure, one side
->>>> might be using kmalloc_nolock() and fail more easily. I'd bet it's what's
->>>> making this reproducible actually.
->>>  From my understanding, it only affected the obj_ext associated with this allocation, which was subsequently deallocated, leading to the loss of this count. Is this correct?
->> Yes.
+On Mon, Oct 20, 2025 at 09:52:04AM +0800, Yixun Lan wrote:
+> Hi Troy,
+> 
+> On 13:52 Fri 17 Oct     , Troy Mitchell wrote:
+> > Add initial device tree support for the MusePi Pro board [1].
+> > The board is using the SpacemiT K1/M1 SoC.
+> > 
+> > The device tree is adapted from the SpacemiT vendor tree [2].
+> > 
+> > Here's a refined list of its core features for consideration:
+> >   - SoC: SpacemiT M1/K1, 8-core 64-bit RISC-V with 2.0 TOPS AI power.
+> >          This suggests potential for light AI/ML workloads on-device.
+> >   - Memory: LPDDR4X @ 2400MT/s, available in 8GB & 16GB options.
+> >             Sufficient for various workloads.
+> >   - Storage: Onboard eMMC 5.1 (64GB/128GB options). M.2 M-Key for NVMe
+> >              SSD (2230 size), and a microSD slot (UHS-II) for expansion.
+> >              Good variety for boot and data.
+> >   - Display: HDMI 1.4 (1080P@60Hz) and 2-lane MIPI DSI FPC (1080P@60Hz).
+> >              Standard display options.
+> >   - Connectivity: Onboard Wi-Fi 6 & Bluetooth 5.2. A single Gigabit
+> >                   Ethernet port (RJ45). Given the stated markets,
+> >                   this should cover basic networking.
+> >   - USB: 4x USB 3.0 Type-A (host) and 1x USB 2.0 Type-C (device/OTG).
+> >          Decent host capabilities.
+> >   - Expansion: Full-size miniPCIe slot for assorted modules
+> >                (4G/5G, wireless etc.). A second M.2 M-Key (2230) for more
+> >                general PCIe devices (SSD, PCIe-to-SATA, comm boards).
+> >   - GPIO: Standard 40-pin GPIO interface, as expected for an SBC.
+> >   - MIPI: Includes 1x 4-lane MIPI CSI FPC and 2x MIPI DSI FPC interfaces
+> >           for cameras and displays.
+> >   - Clock: Onboard RTC with battery support.
+> I think you've already gave an overall description for MusePi board in
+> patch [1/2] which is sufficient, in this patch you could better focus on
+> what it actually done here? enabling mmc, ethernet, led, pdma, uart..
+Yes, I'll remove these.
 
-In that case, we may really need to handle this situation and require a 
-full loop.
+> 
+> > 
+> > This minimal device tree enables booting into a serial console with UART
+> > output and a blinking LED.
+> > 
+> > Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
+> > Link: https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
+> > 
+> ditto
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+[...]
+> > +++ b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
+> > @@ -0,0 +1,78 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +/*
+> > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> ..
+> > + * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> this isn't a big problem, but I think it would be better to use SpacemiT
+> Corp's Copyright, to reflect you're not doing as individual contributor..
+I understand. Since I originally wrote and now maintain this DTS,
+would it still be acceptable to include my own copyright line along with SpacemiT’s?
+Or company-only?
 
-In theory, this scenario could occur:
-
-
-Thread1                                                 Thead2
-
-alloc_slab_obj_exts                               alloc_slab_obj_exts
-
-old_exts = READ_ONCE(slab->obj_exts) = 0
-
-mark_failed_objexts_alloc(slab);
-
-  cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts
-
-kfree and return 0;
-
-alloc_tag_add---->a panic occurs
-
-
-Alternatively, is there any code logic I might have overlooked?
-
-> I think retrying like this should work:
->
-> +retry:
->           old_exts = READ_ONCE(slab->obj_exts);
->           handle_failed_objexts_alloc(old_exts, vec, objects);
->           if (new_slab) {
-> @@ -2145,8 +2146,7 @@ int alloc_slab_obj_exts(struct slab *slab,
-> struct kmem_cache *s,
->                    * be simply assigned.
->                    */
->                   slab->obj_exts = new_exts;
-> -        } else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
-> -                   cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-> +        } else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
->                   /*
->                    * If the slab is already in use, somebody can allocate and
->                    * assign slabobj_exts in parallel. In this case the existing
-> @@ -2158,6 +2158,8 @@ int alloc_slab_obj_exts(struct slab *slab,
-> struct kmem_cache *s,
->                   else
->                           kfree(vec);
->                   return 0;
-> +        } else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-> +                goto retry;
->           }
-
-Agree with this. If there are no issues with my comment above,
-
-I will send V2 based on Suren's suggestion.
-
-Additionally, I believe the "Fixes" field should be written as follows:
-
-Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to 
-mark failed slab_ext allocations")
-
-Am I wrong?
-
->
->>>>>         /*
->>>>>          * If the slab is already in use, somebody can allocate and
->>>>>          * assign slabobj_exts in parallel. In this case the existing
->>>>> @@ -2152,6 +2157,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
->>>>>         return 0;
->>>>>     }
->>>>>
->>>>> +out:
->>>>>     kmemleak_not_leak(vec);
->>>>>     return 0;
->>>>> }
->>>>>
->>>>>>>> --
->>>>>>>> 2.25.1
+                                       - Troy
 
