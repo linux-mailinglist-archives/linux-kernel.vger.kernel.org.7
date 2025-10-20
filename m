@@ -1,158 +1,130 @@
-Return-Path: <linux-kernel+bounces-861147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B75DBF1E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDC4BF1E82
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A78B18A7D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC3A18A821A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B46F1D6187;
-	Mon, 20 Oct 2025 14:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E177824A3;
+	Mon, 20 Oct 2025 14:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hIN+hw5U";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PGvErf38";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wf3MIGlK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aF7gSwkG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BNcjBVgI"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F2972617
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA03435972;
+	Mon, 20 Oct 2025 14:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760971520; cv=none; b=dwudGBOnpmV6Zrfo15J0wzySHv7i2Ph62+w9QRGIbZ5bDR2jvwzmVYvgGN3t+jib3F4+mfz0YfzCdEyznENbUrUAud4y8D+pBFLJc0jRk+UpRBNEJb85DNIXzoSSG/Zx12Zhig7YwQ+cQgvno/iRTJjssOxgcpEHWJKay/xh55g=
+	t=1760971545; cv=none; b=B8JrrNERvNIh27ryze1TSMVwJDWVJeLCyJnDYQD5Wiin06YgV5Npj/J3UQ9Kt983xlDFjObuwv9xM6DahJDeWKTTmfbNVMmIJeWwudq+85kK827+Q96NO4vF4SXVddRhDrHeXVMGWcuvwPfnAsa7wj9HiDshEjAceE15XJ6hnNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760971520; c=relaxed/simple;
-	bh=uPjzAGd0a9HS8zV6Omrr6pLQmcHggE369SJlHnb/hDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZy6BpWTLgXkApRILXHtVPWAasGwAiuQzl3XP3eWBD7dgMJngUvYb2iXlQc8qNH4Ps/G9y0X652zMSmOiy1/VD84KAJW03nt4LDoyqccxuIg7KqOSKqj6zk8I5Hl5CGmX+KXppqZW4pUbQJXWN2RlEJnoN91aZdPKTEjmXGx/vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hIN+hw5U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PGvErf38; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wf3MIGlK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aF7gSwkG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DFB631F385;
-	Mon, 20 Oct 2025 14:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760971513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uPjzAGd0a9HS8zV6Omrr6pLQmcHggE369SJlHnb/hDA=;
-	b=hIN+hw5U5J5eSZdRlWSpYcNfQd8ddptSmB/0qQVjR/hEoUiE9kqfu9i1r1XDgqy0tQ/Eoz
-	3zhQYuhc0YB++e7QbTv9ioiKP9ZCgzSGHEjX6aB9Z0BxIhzTs4RKPLl5mZe4rWJsfJQIWO
-	q2qUiL3daXrPhgCFoM73MRDGAsVYPvE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760971513;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uPjzAGd0a9HS8zV6Omrr6pLQmcHggE369SJlHnb/hDA=;
-	b=PGvErf38E2RSTnxvHl6TT9SwqvOat+XfjLgSB04MRNQaOT5OZ+fu6miMUHoEoRQKbw2fkC
-	u88duyjOjRifzsDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wf3MIGlK;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aF7gSwkG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760971508; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uPjzAGd0a9HS8zV6Omrr6pLQmcHggE369SJlHnb/hDA=;
-	b=wf3MIGlK9UG/Pc4kKtSJaTOw3KcUU+U9EVGP0IvsRfqF4EZW7MbZbqxCraJ+49Yd8t8wnR
-	k9HbNJUEOOtqgUcwB5/pWcOdZqMMYSvwGbGYSJDtLObqwhJjwzJ9AJZwnAWBv1Dy1Pneqh
-	kJHxBSPTN+K1kmab+9Rvh3tolXuRQv4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760971508;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uPjzAGd0a9HS8zV6Omrr6pLQmcHggE369SJlHnb/hDA=;
-	b=aF7gSwkGn+4J5+pd5CnDwLiqjF6uEK7XL5SkUYHDWAAm9QEb6kqD46q4YmKau1/VaHUjdS
-	PprJ7VUTkKb3VsAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D8F213A8E;
-	Mon, 20 Oct 2025 14:45:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5ZK4DfRK9mghMwAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Mon, 20 Oct 2025 14:45:08 +0000
-Date: Mon, 20 Oct 2025 11:45:02 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix TCP_Server_Info::credits to be signed
-Message-ID: <p6vfujqnba3rxuifaouccuuhonhyupsu554cdnlx45fvboggku@5h7gaicp4opp>
-References: <vmbhu5djhw2fovzwpa6dptuthwocmjc5oh6vsi4aolodstmqix@4jv64tzfe3qp>
- <1006942.1760950016@warthog.procyon.org.uk>
- <1158747.1760969306@warthog.procyon.org.uk>
+	s=arc-20240116; t=1760971545; c=relaxed/simple;
+	bh=thykIJJg2EpAUfe4ozCQkG52TcMWFQEs45g6JDhqjDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JwSymq5mHnHlCV3X+kckTYmtKUz3dZ4BcEwXTrmOAaJ3A3hWkqYKq932UDKNThPThjrHSBhA9DaOqgTziPqsyjH9g4ZSaRa85BxwWI3hLdMvEC08pnc75o3fAq+ckMXrYB/+HUutTQt1rzK1kJa5y9iS4yUxFA76TwDDWzHN5ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BNcjBVgI; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760971537; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hCe3ut/WXfuVO1xIbv9Xf6/wnz4HbVZxWnU0T5Zbwk4=;
+	b=BNcjBVgI13hXxZ9jhQobrABlVAKGkM4ap1ctFSAuIRvYL3zHxCzLDYLSAVysTRYCA+FgJfbAYzyGIXZRl1v2j4JjdZY1bm+gU7BcnO9p2kv//nV/s6D96y7L44bBd1WB//ujBC6AU9Lz89j+hwKLwRFno5w7WIfCwGsTFxvnfcA=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqdeIFD_1760971535 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 20 Oct 2025 22:45:36 +0800
+Message-ID: <645adbb6-096f-4af3-9609-ddc5a6f5239a@linux.alibaba.com>
+Date: Mon, 20 Oct 2025 22:45:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1158747.1760969306@warthog.procyon.org.uk>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: DFB631F385
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.01
-
-On 10/20, David Howells wrote:
->Enzo Matsumiya <ematsumiya@suse.de> wrote:
->
->> Both semantically and technically, credits shouldn't go negative.
->> Shouldn't those other fields/functions become unsigned instead?
->
->That's really a question for Steve, but it makes it easier to handle
->underflow
-
-But if there's an overflow somewhere the math should be checked instead
-(I never seen it happen though).
-
-> and I'm guessing that the maximum credits isn't likely to exceed
->2G.
-
-Yes, it's capped at 60-65k (depends on the function...)
-So yes, an unsigned short would be fine.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
+ native AER control
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, mahesh@linux.ibm.com,
+ oohall@gmail.com, Jonathan.Cameron@huawei.com, terry.bowman@amd.com,
+ tianruidong@linux.alibaba.com
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-5-xueshuai@linux.alibaba.com>
+ <aPYMO2Eu5UyeEvNu@wunner.de>
+ <0fe95dbe-a7ba-4882-bfff-0197828ee6ba@linux.alibaba.com>
+ <aPZAAPEGBNk_ec36@wunner.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aPZAAPEGBNk_ec36@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-Cheers,
 
-Enzo
+在 2025/10/20 21:58, Lukas Wunner 写道:
+> On Mon, Oct 20, 2025 at 09:09:41PM +0800, Shuai Xue wrote:
+>> ??? 2025/10/20 18:17, Lukas Wunner ??????:
+>>> On Wed, Oct 15, 2025 at 10:41:58AM +0800, Shuai Xue wrote:
+>>>> Replace the manual checks for native AER control with the
+>>>> pcie_aer_is_native() helper, which provides a more robust way
+>>>> to determine if we have native control of AER.
+>>>
+>>> Why is it more robust?
+>>
+>> IMHO, the pcie_aer_is_native() helper is more robust because it includes
+>> additional safety checks that the manual approach lacks:
+> [...]
+>> Specifically, it performs a sanity check for dev->aer_cap before
+>> evaluating native AER control.
+> 
+> I'm under the impression that aer_cap must be set, otherwise the
+> error wouldn't have been reported and we wouldn't be in this code path?
+> 
+> If we can end up in this code path without aer_cap set, your patch
+> would regress devices which are not AER-capable because it would
+> now skip clearing of errors in the Device Status register via
+> pcie_clear_device_status().
+
+Hi Lukas,
+
+You raise an excellent point about the potential regression.
+
+The origin code is:
+
+	if (host->native_aer || pcie_ports_native) {
+		pcie_clear_device_status(bridge);
+		pci_aer_clear_nonfatal_status(bridge);
+	}
+
+This code clears both the PCIe Device Status register and AER status
+registers when in native AER mode.
+
+pcie_clear_device_status() is renamed from
+pci_aer_clear_device_status(). Does it intends to clear only AER error
+status?
+
+- BIT 0: Correctable Error Detected
+- BIT 1: Non-Fatal Error Detected
+- BIT 2: Fatal Error Detected
+- BIT 3: Unsupported Request Detected
+
+ From PCIe spec, BIT 0-2 are logged for functions supporting Advanced
+Error Handling.
+
+I am not sure if we should clear BIT 3, and also BIT 6 (Emergency Power
+Reduction Detected) and in case a AER error.
+
+> 
+> Thanks,
+> 
+> Lukas
+
+Thanks.
+Shuai
 
