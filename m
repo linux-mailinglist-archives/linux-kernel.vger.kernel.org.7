@@ -1,206 +1,253 @@
-Return-Path: <linux-kernel+bounces-859957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81983BEF09F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:56:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD57BEF0B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E0474E7C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C29331899349
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58B1DFE12;
-	Mon, 20 Oct 2025 01:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D01A0B15;
+	Mon, 20 Oct 2025 02:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZtLLZYXC"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hGc9e1Ii"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C5F1DDC33
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04661DF270
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760925362; cv=none; b=rwg42/IJxNYV61fhlOdetJngGEJBOi19/ZV+HNWiwgFmC02xwxjR8Qy4KqcOv9omtX8gswpCKajVQGZ7TDy1HJ84H4h63tpHbo8kl5daxAdcdpllxrTbCwE1blu0DKUxfKjSTETxqag1GV7C7cM8dvDQWCxSHp7X+M6nZNd+IVM=
+	t=1760925749; cv=none; b=WYB/ZtnedMYbOpu/hngZCMROPIwhpoCcCZrEgiZ/Fuqi+d5OmY5KcIdaM0LRQm5AGxU4BfZjWXPxUNkOkQYG0iQrrt5cCddhoSHjURVlWXtbqTvOhx8BWC/FnnV3IyE8JQchlm0OTaF18BOECcj092/XEV/f8C3yz4uzNHqJsEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760925362; c=relaxed/simple;
-	bh=FhzgS1/MGPIfdcjIr19V6Zpkv9/EfeIlF628IPVhrec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H0vfn5kUWy562UJZHGZS6J+52bvGceF9LXxOFZnWs8mVxXFFC5BXE9EfeHq9tUlRKglDyVOiVkdBfk9QEJYqQ5V1L1jwIr6fFdYdT/1FQdGvZmf6/pMN64qhlu2SvV4LE2iCTkZElC776RIG0R/k97Qw0vsXASud/2MIEW21aiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZtLLZYXC; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4270a3464caso1419396f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760925359; x=1761530159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+Q06UI6PhTkJgy9be05aY/Rj5+zLhZlUFJf9K2EKUA=;
-        b=ZtLLZYXCEwmFAGJ4IrUwSi2FVlzITPw5zpr2GbTDQBKg76usSjPsPQmJrB95vg843S
-         hti0GW+u+0hYVdwSUxQvq9DJvHsBch/6jlnydiDkZqQNi/6qS51dWA9FkqlTAful1qLH
-         xJYTousGr54EeYX+wr1G/TIKRc1cIib51qgY4u536WTqZH/UyuamjhWN+TumaZ9NPvTc
-         myrdEx0LNY6EI7XMIicTE5dEElfhErz+brIrIH6bnjw6oJhpEhfxEvwxBJil7MGT1v8q
-         s5+NWWuoYnSHtBtd0kxB7NqKlqTmSQxvHVO4nLFaUWMCh6E3E9TjY7qQ8bLKIpWz4iyk
-         4a6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760925359; x=1761530159;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s+Q06UI6PhTkJgy9be05aY/Rj5+zLhZlUFJf9K2EKUA=;
-        b=BH4llX2KgErz/7foq++sVHguCZT8rnDxMFbTOef6WJSpSkuKbQneKmGC4LAAexLGXm
-         3//exrHIbnPC0yIZRpo17/lQmk80at71/idoiE2MSomcYT53VckwiJPtnpPm1pZglML1
-         bJM9947BpUAJywQ7EVcd8iDD7HWLAG96rpzfsxPlvyjEoal4IHYOuQU/7ETSwQxLWMTa
-         z6NnzW6rYn8hq60eR77DG3POKwXd4L0oajZwPI5SsG1ODLMXGkAtK6CkCW7hl7181Mb/
-         9E8hnX2LIfNsmp7S/QrSu7aA04RZ9DTRg2JguWrt1KTuMfkEtWBEbWX8xFkkOsOPLYlK
-         TfYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrj1hevZOR5nTVcnuku1bKUT+XB6WpBOeViT9uNRF5jCu9t4yl7wPhiWn9RhocwUAAnrLdfr7vW9o3B64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy29LZqbi82hQrYpyEMw01y8i2Hjb8ZCy1SL+/jJTkm7O9UY190
-	OVTgaVTuk7etjR5wfQ28uW8bsQMz/ynbvAXW1kJ4SibSLvEi950ldG+abpmLVEn8t1U=
-X-Gm-Gg: ASbGncsCUMp11SR1tOwOtNNY2ZnPr+nx+CPgcWSUHKP1CBVEwlfu1t9zGnLmeRxqs0q
-	lCYznelPGG09epjcy/IwxEP3CQUnBVxtSod9Drun7KtyoiyGfWstyXJbw5jOB9u9CQSEK6mWzIs
-	V9vCtFQkNBXmmoIguD4Q8jsjrAEmd2NS4qWIdZ2qbqx9TuJtgxztzN7MlHgdmVqr5hIFAGd0MvU
-	SJm+QnRSAgRvzx31kYf4uQSv7QGqZi9EAudphx6RTbA7nRiQXrxrnKaPCQuQ3T0JVLU6qxzYCO1
-	MUGBezg//GUqQKKA+Z8STX0Wp1jOsyqf3LoY0AWx4UJWZYBwO30LdKOS44H5IDU72tbIbi1viN+
-	uiSbaAkp1jQa020YbxCgKo+qzznkwFx5E3efgL0A2KISajzXIwsbAeqDRHDTC8R7AbBuitExAqh
-	3yGphuYGiOCPP0Njo=
-X-Google-Smtp-Source: AGHT+IG6BI0NR7Fcw8+O+sc+d7pzt0R1JZXANX7cqKWtOTX4YgRgFe1wtH43dzv/ihmHpMDqYHwKTw==
-X-Received: by 2002:a05:6000:26ca:b0:428:3c66:a027 with SMTP id ffacd0b85a97d-4283c66a441mr4335994f8f.54.1760925359019;
-        Sun, 19 Oct 2025 18:55:59 -0700 (PDT)
-Received: from orion.home ([2a02:c7c:7259:a00:9f99:cf6:2e6a:c11f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47152959b6dsm115381535e9.7.2025.10.19.18.55.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 18:55:58 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: broonie@kernel.org,
-	gregkh@linuxfoundation.org,
-	srini@kernel.org
-Cc: rafael@kernel.org,
-	dakr@kernel.org,
-	make24@iscas.ac.cn,
-	steev@kali.org,
-	dmitry.baryshkov@oss.qualcomm.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] regmap: slimbus: fix bus_context pointer in __devm_regmap_init_slimbus
-Date: Mon, 20 Oct 2025 02:55:57 +0100
-Message-ID: <20251020015557.1127542-1-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1760925749; c=relaxed/simple;
+	bh=r7F8VBaOqPbONl17XxGa6LIdMwTAnSRZB1acdtZ6BKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I9QMS1PuaIWBv8ICTUiDkjOmswMY3GNiOZl5VIcXIWizX0pmtiJdNT9f11yNSK3LOXhHfKbV2Uirr2fRy7h47jRXNilCyI/4p1qimQhbt/TvmAC06abyvNpS/ALKxDW0O+tK6gVecVPbaLFMkfOyzVUb3Wzfv6PRtOQoflzn1/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hGc9e1Ii; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3efc2a94-54c7-48a8-a804-c231d06b5ed5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760925743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wvw6EEcLVS321+82zeKA5qCqsquigv/cxrzA5Vq7LGo=;
+	b=hGc9e1IiLST/psAYvB/aakCsP4XWX8OkVLTCEs0D0o0PKzJbXKei56mJzB8lGov+Y3y6o7
+	Dag7c4YvbxLjuBbfOKPzW9XAxDi9ovSSPNYx1a9bDt5F6iiq0yqlCPxGeo+EshhCkcvhkk
+	qdozeyfCimZd3viWAswm9uEhGE4jHBA=
+Date: Mon, 20 Oct 2025 10:01:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
+To: Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+ <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <a9ca7cc6-f4d1-4fba-a9aa-2826b9a604bc@suse.cz>
+ <8F4AE1E9-7412-40D6-B383-187021266174@linux.dev>
+ <7791b2b8-5db8-458c-89e2-49a0876c13a3@suse.cz>
+ <CAJuCfpEWGujJe3JOjmiKLOUr49Hw_3smT6iatY7kaRBPPCWpNg@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpEWGujJe3JOjmiKLOUr49Hw_3smT6iatY7kaRBPPCWpNg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Commit 4e65bda8273c ("ASoC: wcd934x: fix error handling in
-wcd934x_codec_parse_data()") revealed the problem in slimbus regmap.
-That commit breaks audio playback, for instance, on sdm845 Thundercomm
-Dragonboard 845c board:
 
- Unable to handle kernel paging request at virtual address ffff8000847cbad4
- Mem abort info:
-   ESR = 0x0000000096000007
-   EC = 0x25: DABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
-   FSC = 0x07: level 3 translation fault
- Data abort info:
-   ISV = 0, ISS = 0x00000007, ISS2 = 0x00000000
-   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
- swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000a1360000
- [ffff8000847cbad4] pgd=0000000000000000, p4d=100000010003e403, pud=100000010003f403, pmd=10000001025cf403, pte=0000000000000000
- Internal error: Oops: 0000000096000007 [#1]  SMP
- Modules linked in: (long list of modules...)
- CPU: 5 UID: 0 PID: 776 Comm: aplay Not tainted 6.18.0-rc1-00028-g7ea30958b305 #11 PREEMPT
- Hardware name: Thundercomm Dragonboard 845c (DT)
- pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : slim_xfer_msg+0x24/0x1ac [slimbus]
- lr : slim_read+0x48/0x74 [slimbus]
- sp : ffff800089113330
- x29: ffff800089113350 x28: 00000000000000c0 x27: 0000000000000268
- x26: 0000000000000198 x25: 0000000000000001 x24: 0000000000000000
- x23: 0000000000000000 x22: ffff800089113454 x21: ffff00008488e800
- x20: ffff000084b4760a x19: 0000000000000001 x18: 0000000000000be2
- x17: 0000000000000c19 x16: ffffbcef364cd260 x15: ffffbcef36dafb10
- x14: 0000000000000d38 x13: 0000000000000cb4 x12: 0000000000000c91
- x11: 1fffe0001161b6e1 x10: ffff800089113470 x9 : ffff00008b0db70c
- x8 : ffff000081479ee0 x7 : 0000000000000000 x6 : 0000000000000800
- x5 : 0000000000000001 x4 : 0000000000000000 x3 : ffff00008263c200
- x2 : 0000000000000060 x1 : ffff800089113368 x0 : ffff8000847cb7c8
- Call trace:
-  slim_xfer_msg+0x24/0x1ac [slimbus] (P)
-  slim_read+0x48/0x74 [slimbus]
-  regmap_slimbus_read+0x18/0x24 [regmap_slimbus]
-  _regmap_raw_read+0xe8/0x174
-  _regmap_bus_read+0x44/0x80
-  _regmap_read+0x60/0xd8
-  _regmap_update_bits+0xf4/0x140
-  _regmap_select_page+0xa8/0x124
-  _regmap_raw_write_impl+0x3b8/0x65c
-  _regmap_bus_raw_write+0x60/0x80
-  _regmap_write+0x58/0xc0
-  regmap_write+0x4c/0x80
-  wcd934x_hw_params+0x494/0x8b8 [snd_soc_wcd934x]
-  snd_soc_dai_hw_params+0x3c/0x7c [snd_soc_core]
-  __soc_pcm_hw_params+0x22c/0x634 [snd_soc_core]
-  dpcm_be_dai_hw_params+0x1d4/0x38c [snd_soc_core]
-  dpcm_fe_dai_hw_params+0x9c/0x17c [snd_soc_core]
-  snd_pcm_hw_params+0x124/0x464 [snd_pcm]
-  snd_pcm_common_ioctl+0x110c/0x1820 [snd_pcm]
-  snd_pcm_ioctl+0x34/0x4c [snd_pcm]
-  __arm64_sys_ioctl+0xac/0x104
-  invoke_syscall+0x48/0x104
-  el0_svc_common.constprop.0+0x40/0xe0
-  do_el0_svc+0x1c/0x28
-  el0_svc+0x34/0xec
-  el0t_64_sync_handler+0xa0/0xf0
-  el0t_64_sync+0x198/0x19c
- Code: 910083fd f9423464 f9000fe4 d2800004 (394c3003)
- ---[ end trace 0000000000000000 ]---
+On 2025/10/18 05:52, Suren Baghdasaryan wrote:
+> On Fri, Oct 17, 2025 at 3:40 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>> On 10/17/25 12:02, Hao Ge wrote:
+>>>
+>>>> On Oct 17, 2025, at 16:22, Vlastimil Babka <vbabka@suse.cz> wrote:
+>>>>
+>>>> ﻿On 10/17/25 09:40, Harry Yoo wrote:
+>>>>>> On Fri, Oct 17, 2025 at 02:42:56PM +0800, Hao Ge wrote:
+>>>>>> Hi Harry
+>>>>>>
+>>>>>>
+>>>>>> Thank you for your quick response.
+>>>>>>
+>>>>>>
+>>>>>> On 2025/10/17 14:05, Harry Yoo wrote:
+>>>>>>> On Fri, Oct 17, 2025 at 12:57:49PM +0800, Hao Ge wrote:
+>>>>>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>>>>>
+>>>>>>>> In the alloc_slab_obj_exts function, there is a race condition
+>>>>>>>> between the successful allocation of slab->obj_exts and its
+>>>>>>>> setting to OBJEXTS_ALLOC_FAIL due to allocation failure.
+>>>>>>>>
+>>>>>>>> When two threads are both allocating objects from the same slab,
+>>>>>>>> they both end up entering the alloc_slab_obj_exts function because
+>>>>>>>> the slab has no obj_exts (allocated yet).
+>>>>>>>>
+>>>>>>>> And One call succeeds in allocation, but the racing one overwrites
+>>>>>>>> our obj_ext with OBJEXTS_ALLOC_FAIL. The threads that successfully
+>>>>>>>> allocated will have prepare_slab_obj_exts_hook() return
+>>>>>>>> slab_obj_exts(slab) + obj_to_index(s, slab, p), where slab_obj_exts(slab)
+>>>>>>>> already sees OBJEXTS_ALLOC_FAIL and thus it returns an offset based
+>>>>>>>> on the zero address.
+>>>>>>>>
+>>>>>>>> And then it will call alloc_tag_add, where the member codetag_ref *ref
+>>>>>>>> of obj_exts will be referenced.Thus, a NULL pointer dereference occurs,
+>>>>>>>> leading to a panic.
+>>>>>>>>
+>>>>>>>> In order to avoid that, for the case of allocation failure where
+>>>>>>>> OBJEXTS_ALLOC_FAIL is assigned, we use cmpxchg to handle this assignment.
+>>>>>>>>
+>>>>>>>> Thanks for Vlastimil and Suren's help with debugging.
+>>>>>>>>
+>>>>>>>> Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures unconditionally")
+>>>>>>> I think we should add Cc: stable as well?
+>>>>>>> We need an explicit Cc: stable to backport mm patches to -stable.
+>>>>>> Oh sorry, I missed this.
+>>>>>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>>>>>> ---
+>>>>>>>>   mm/slub.c | 2 +-
+>>>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/mm/slub.c b/mm/slub.c
+>>>>>>>> index 2e4340c75be2..9e6361796e34 100644
+>>>>>>>> --- a/mm/slub.c
+>>>>>>>> +++ b/mm/slub.c
+>>>>>>>> @@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
+>>>>>>>>   static inline void mark_failed_objexts_alloc(struct slab *slab)
+>>>>>>>>   {
+>>>>>>>> -    slab->obj_exts = OBJEXTS_ALLOC_FAIL;
+>>>>>>>> +    cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
+>>>>>>>>   }
+>>>>>>> A silly question:
+>>>>>>>
+>>>>>>> If mark_failed_objexts_alloc() succeeds and a concurrent
+>>>>>>> alloc_slab_obj_exts() loses, should we retry cmpxchg() in
+>>>>>>> alloc_slab_obj_exts()?
+>>>>>> Great point.
+>>>>>>
+>>>>>> We could modify it like this, perhaps?
+>>>>>>
+>>>>>>   static inline void mark_failed_objexts_alloc(struct slab *slab)
+>>>>>>   {
+>>>>>> +       unsigned long old_exts = READ_ONCE(slab->obj_exts);
+>>>>>> +       if( old_exts == 0 )
+>>>>>> +               cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
+>>>>>>   }
+>>>>> I don't think this makes sense.
+>>>>> cmpxchg() fails anyway if old_exts != 0.
+>>> Aha, sorry I misunderstood what you meant.
+>>>
+>>>>>> Do you have any better suggestions on your end?
+>>>>> I meant something like this.
+>>>>>
+>>>>> But someone might argue that this is not necessary anyway
+>>>>> if there's a severe memory pressure :)
+>>>>>
+>>>>> diff --git a/mm/slub.c b/mm/slub.c
+>>>>> index a585d0ac45d4..4354ae68b0e1 100644
+>>>>> --- a/mm/slub.c
+>>>>> +++ b/mm/slub.c
+>>>>> @@ -2139,6 +2139,11 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>>>>>         slab->obj_exts = new_exts;
+>>>>>     } else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
+>>>>>            cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
+>>>>> +
+>>>>> +        old_exts = READ_ONCE(slab->obj_exts);
+>>>>> +        if (old_exts == OBJEXTS_ALLOC_FAIL &&
+>>>>> +            cmpxchg(&slab->obj_exts, old_exts, new_exts) == old_exts)
+>>>>> +            goto out;
+>>>> Yeah, but either we make it a full loop or we don't care.
+>>>> Maybe we could care because even without a severe memory pressure, one side
+>>>> might be using kmalloc_nolock() and fail more easily. I'd bet it's what's
+>>>> making this reproducible actually.
+>>>  From my understanding, it only affected the obj_ext associated with this allocation, which was subsequently deallocated, leading to the loss of this count. Is this correct?
+>> Yes.
 
-The __devm_regmap_init_slimbus() started to be used instead of
-__regmap_init_slimbus() after the commit mentioned above and turns out
-the incorrect bus_context pointer (3rd argument) was used in
-__devm_regmap_init_slimbus(). It should be &slimbus->dev. Correct it.
-The wcd934x codec seems to be the only (or the first) user of
-devm_regmap_init_slimbus() but we should fix till the point where
-__devm_regmap_init_slimbus() was introduced therefore two "Fixes" tags.
+In that case, we may really need to handle this situation and require a 
+full loop.
 
-Fixes: 4e65bda8273c ("ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()")
-Fixes: 7d6f7fb053ad ("regmap: add SLIMbus support")
-Cc: stable@vger.kernel.org
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Ma Ke <make24@iscas.ac.cn>
-Cc: Steev Klimaszewski <steev@kali.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
+In theory, this scenario could occur:
 
-The patch/fix is for the current 6.18 development cycle
-since it is fixes the regression introduced in 6.18.0-rc1.
 
- drivers/base/regmap/regmap-slimbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thread1                                                 Thead2
 
-diff --git a/drivers/base/regmap/regmap-slimbus.c b/drivers/base/regmap/regmap-slimbus.c
-index 54eb7d227cf4..edfee18fbea1 100644
---- a/drivers/base/regmap/regmap-slimbus.c
-+++ b/drivers/base/regmap/regmap-slimbus.c
-@@ -63,7 +63,7 @@ struct regmap *__devm_regmap_init_slimbus(struct slim_device *slimbus,
- 	if (IS_ERR(bus))
- 		return ERR_CAST(bus);
- 
--	return __devm_regmap_init(&slimbus->dev, bus, &slimbus, config,
-+	return __devm_regmap_init(&slimbus->dev, bus, &slimbus->dev, config,
- 				  lock_key, lock_name);
- }
- EXPORT_SYMBOL_GPL(__devm_regmap_init_slimbus);
--- 
-2.47.3
+alloc_slab_obj_exts                               alloc_slab_obj_exts
 
+old_exts = READ_ONCE(slab->obj_exts) = 0
+
+mark_failed_objexts_alloc(slab);
+
+  cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts
+
+kfree and return 0;
+
+alloc_tag_add---->a panic occurs
+
+
+Alternatively, is there any code logic I might have overlooked?
+
+> I think retrying like this should work:
+>
+> +retry:
+>           old_exts = READ_ONCE(slab->obj_exts);
+>           handle_failed_objexts_alloc(old_exts, vec, objects);
+>           if (new_slab) {
+> @@ -2145,8 +2146,7 @@ int alloc_slab_obj_exts(struct slab *slab,
+> struct kmem_cache *s,
+>                    * be simply assigned.
+>                    */
+>                   slab->obj_exts = new_exts;
+> -        } else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
+> -                   cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
+> +        } else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
+>                   /*
+>                    * If the slab is already in use, somebody can allocate and
+>                    * assign slabobj_exts in parallel. In this case the existing
+> @@ -2158,6 +2158,8 @@ int alloc_slab_obj_exts(struct slab *slab,
+> struct kmem_cache *s,
+>                   else
+>                           kfree(vec);
+>                   return 0;
+> +        } else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
+> +                goto retry;
+>           }
+
+Agree with this. If there are no issues with my comment above,
+
+I will send V2 based on Suren's suggestion.
+
+Additionally, I believe the "Fixes" field should be written as follows:
+
+Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to 
+mark failed slab_ext allocations")
+
+Am I wrong?
+
+>
+>>>>>         /*
+>>>>>          * If the slab is already in use, somebody can allocate and
+>>>>>          * assign slabobj_exts in parallel. In this case the existing
+>>>>> @@ -2152,6 +2157,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>>>>>         return 0;
+>>>>>     }
+>>>>>
+>>>>> +out:
+>>>>>     kmemleak_not_leak(vec);
+>>>>>     return 0;
+>>>>> }
+>>>>>
+>>>>>>>> --
+>>>>>>>> 2.25.1
 
