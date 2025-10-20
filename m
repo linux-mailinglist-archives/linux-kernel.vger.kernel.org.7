@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-860381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C367BF0018
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:42:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7397CBF002D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3C964EDAA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:42:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A91034A62D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF30F2EC55A;
-	Mon, 20 Oct 2025 08:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A32EC0B6;
+	Mon, 20 Oct 2025 08:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kejyempy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="mhHZGHlB"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448802DCF7C;
-	Mon, 20 Oct 2025 08:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01484191F91;
+	Mon, 20 Oct 2025 08:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949744; cv=none; b=R+tZL3CQVfYbJC8mAibOlVnz4bGFU23mIscD0iE3JfYCNin7slrgvOOelXFoMEe6VWhKIfhk8nf4mFCs0CVbJVoWIiTqBphSFGaQZb8GDoDa3Vkk4ECxOPVUztVEcFpZQ0kC1ksTZQJ5J73ZrrecOhWrYd4bHs/oD5w8o7cCYMc=
+	t=1760949913; cv=none; b=Px5FllBdIglSvNslQBOEe/bh73sRXmWa0NzprClEZXDr1ibp6YCrhnmdRyA+ZtJbjUlnEZ8lElUQ5GGjlLLj0qjBtG1XUDm+uKmrMVYIPgH8szj7QDLYmg4aW09sWB1TuDzIvqrp1hx+vRyK3qSauzz0+nx0FebGwFrRiEXjYsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949744; c=relaxed/simple;
-	bh=a1hSQoJK8FFb701sH+cRC95PH2MlR9RQOekSrOxAiB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIYpNc0L+GbloFlnqexobB/Ww3LMVYeL4fEdUuQhX86os9HxvA9M84o0Tx+lz5Xadx4V6p5aXsKUoAK8jzQGWeQ3UvfghoA1f4CPEYtAenMMw9IByygw7a1e5dgRv0LB2OciMagm8RItWfIwQ7vfS4W82LzvZcMJNQUhda09348=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kejyempy; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760949742; x=1792485742;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a1hSQoJK8FFb701sH+cRC95PH2MlR9RQOekSrOxAiB4=;
-  b=kejyempyYZjzl/uh5OIq11NszFQv2gAxtfEPsnJVWBR7jCKXbg0s5g87
-   m0+u7cQ3KMP/g0UDUZVnt/Er6aV8qyq5wVdQCydbRHVDZyN0V/CStWw7a
-   way1546VXW6wQdLdZiaIf4Q3r9fQJl5ZzIyBmmez4ngaYC0VfJKfQkG8i
-   bz5EPTfM/VeDGRXdUDpJnGpCXZrkPCIfdWjnipHAnlFmWw70JG96M1RnU
-   xIl2H24dmOTQYButX6cyhQNU5WZmWU9+sEw4AXEB58oFQGOBc4gjdybYj
-   DhU4ahB2ZqZfuvFuztxxrSQRDvPYNEVTlYfejBPUCENDr5/1mIzcEXs3M
-   w==;
-X-CSE-ConnectionGUID: UfSKHEziTLGQFZClk2D4mA==
-X-CSE-MsgGUID: 9nmHy5bpRl6QkbkH1+dlBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="62271171"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="62271171"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 01:42:21 -0700
-X-CSE-ConnectionGUID: f85Sgmj+RLyIXFj6Co8rLw==
-X-CSE-MsgGUID: OiSoDDugTOOCK7QiyF2EaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="183690797"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.6])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 01:42:17 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vAlT4-00000001EYy-0oIq;
-	Mon, 20 Oct 2025 11:42:14 +0300
-Date: Mon, 20 Oct 2025 11:42:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Florian Eckert <fe@dev.tdt.de>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	kumaravel.thiagarajan@microchip.com, pnewman@connecttech.com,
-	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
-	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
-	macro@orcam.me.uk, schnelle@linux.ibm.com,
-	Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_pcilib: Replace deprecated PCI functions
-Message-ID: <aPX15a2Zv9b_wM3u@smile.fi.intel.com>
-References: <aPPreT00iiTDzJwG@ashevche-desk.local>
- <84ad1b3070a8374ec20f06588fab9f86@dev.tdt.de>
+	s=arc-20240116; t=1760949913; c=relaxed/simple;
+	bh=1Q70ljXCutO5bm3tw5/SX//jY4uQ5Rv0LtchI9vv45o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IklmKyFNTqT134jU+KYzErMo0eBX5jhw782xgjaQ8/wVLSEovl7XKNRFCmqNK9Me0DVnkR3PKgKtrtSJ0kWA2WFJIjvT+jwA18jAE2kkGll2tuiOI4tZEvEfuoo/69vO4dpbd8UdCq3zzJZmGlODEM+duosGIDBRxR6K3sls+08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=mhHZGHlB; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=210hhVx9EtGxU6YFcbc2AW78c+sT7wXeITsbJMSRtTQ=; b=mhHZGHlBInS7qFyI5d7u3KFb9b
+	jFmD3LivoC1Y6wPLSUpWnN99M/VVT2stjCF7UkqQ3Lw/5Kv1YC/kWFw9usDIKmEFhtKFuOUmjE3of
+	0ORdQrBBxNEorctFcQytccPf7OThXhHMb+Qk9LNh5Rvp9WdLxlEBDNuyh7fy7sO6EhGL69zd+7e5c
+	nvyxBxHNtqS51HboXDW7Y9vbq1mVHyUu+1saGLQUE5knlf5cv9A4ICysMOTrNHVvW7/uPOvz1EqI2
+	tDkfuApxkTCCIsw+7IOCrqfN50j4xL1jAm7JgS9x/lLzUmXY0w0kosrno/uwjVY+BBjPpeyUzaPgX
+	brARyT+w==;
+Received: from [58.29.143.236] (helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vAlVW-00C1nO-Uh; Mon, 20 Oct 2025 10:44:47 +0200
+From: Changwoo Min <changwoo@igalia.com>
+To: lukasz.luba@arm.com,
+	rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org
+Cc: christian.loehle@arm.com,
+	tj@kernel.org,
+	kernel-dev@igalia.com,
+	linux-pm@vger.kernel.org,
+	sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Changwoo Min <changwoo@igalia.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 1/2] PM: EM: Remove an unused variable in em_notify_pd_deleted()
+Date: Mon, 20 Oct 2025 17:44:28 +0900
+Message-ID: <20251020084429.230322-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84ad1b3070a8374ec20f06588fab9f86@dev.tdt.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 08:47:16AM +0200, Florian Eckert wrote:
-> On 2025-10-18 21:33, Andy Shevchenko wrote:
-> > On Tue, Sep 30, 2025 at 09:27:43AM +0200, Florian Eckert wrote:
+The variable `ret` in em_notify_pd_deleted() is set but not used, so
+that it causes the following warning:
 
-...
+>> kernel/power/em_netlink.c:228:6: warning: variable 'ret' set but
+   not used [-Wunused-but-set-variable]
 
-> > > +	if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
-> > 
-> > Dunno if this is included already in Linux Next, but here is room for
-> > improvement.
-> 
-> I followed the code in the 'serial8250_pci_setup_port()' [1] function.
-> The same pattern is used there [2].
+So, let's remove the unused `ret` to avoid the warning.
 
-I see. So if we want to amend that, it should be done separately.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510151223.THlBK6QR-lkp@intel.com/
+Signed-off-by: Changwoo Min <changwoo@igalia.com>
+---
+ kernel/power/em_netlink.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> > The problem with the above code is it (wrongly?) checks for bit and not
-> > for the resource type. OTOH I don't remember if 64-bit version requires
-> > the IORESOURCE_MEM to be set along with that.
-> 
-> Do you mean the function 'platform_get_resource()' [3]? This is a platform
-> device function?
-
-I mean that the IORESOURCE_MEM and IORESOURCE_MEM_64 are separate bit flags in
-struct resource::flags. Checking on one might not imply the other be set,
-however brief look at the sources shows that _MEM_64 is supposed to be set on
-top of _MEM.
-
-> [1] https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/tty/serial/8250/8250_pcilib.c#L24
-> [2] https://elixir.bootlin.com/linux/v6.18-rc1/source/drivers/tty/serial/8250/8250_pcilib.c#L30
-> [3]
-> https://elixir.bootlin.com/linux/v6.17.3/source/drivers/base/platform.c#L55
-
+diff --git a/kernel/power/em_netlink.c b/kernel/power/em_netlink.c
+index 2c55c758de6b..48752189a07b 100644
+--- a/kernel/power/em_netlink.c
++++ b/kernel/power/em_netlink.c
+@@ -269,7 +269,6 @@ static int __em_notify_pd_deleted_size(const struct em_perf_domain *pd)
+ void em_notify_pd_deleted(const struct em_perf_domain *pd)
+ {
+ 	struct sk_buff *msg;
+-	int ret = -EMSGSIZE;
+ 	void *hdr;
+ 	int msg_sz;
+ 
+@@ -287,7 +286,6 @@ void em_notify_pd_deleted(const struct em_perf_domain *pd)
+ 		goto out_free_msg;
+ 
+ 	if (nla_put_u32(msg, EM_A_PD_TABLE_PD_ID, pd->id)) {
+-		ret = -EMSGSIZE;
+ 		goto out_free_msg;
+ 	}
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.51.1.dirty
 
 
