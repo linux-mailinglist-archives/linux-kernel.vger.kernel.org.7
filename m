@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-860074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3360DBEF405
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:22:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30799BEF418
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCEE53E16E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:22:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FC764EB598
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A1D2BF3CC;
-	Mon, 20 Oct 2025 04:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA27D2BE636;
+	Mon, 20 Oct 2025 04:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HcriZPmb"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TI7PAg8e"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB33D2BE035
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95672BE7CB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760934107; cv=none; b=k2JPWjNmRENzd5hbiTwql/BWTB49I1Ei8iZM5zY0DndHCX0DUz6TpOYHVgOxS36anCgMn97O0xar79Ou2rnv6eSeyHfbpo3PKcglNJJEj63UkLGdRthxI02dEHSvREq6BfFeUKAJ5eB7TNSbyq+PV+XYZVpPkn1NC8fOYh30VD4=
+	t=1760934315; cv=none; b=UG8kspCM4USVZdc0IkBVPXr+LtxOmEmgb/UnXFZ+fHisOkWUmkmvt6qYI+KyENvHzzTucIBPY8eUJbvRr9fLjBvg2STFJIcURZI6foLlWdSJqBT6800RfQpYhiaI5camS1KaG7UdsLCgNx8bUo3U1E1DdtY/wY223uMzJBhvj3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760934107; c=relaxed/simple;
-	bh=HFpqts/W53QUbSMz1faFreS+L9DMcn6zulFxd1eY3xM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YINwZRLnK43lQR31xE58VH2XmePOgQKu/3jvgfJ6Gj1aNeiXNrThXta9KOSnIzSwpRkMhN4kJdl/39ZHQrvIfSFFfu3jlVUdnbIrnilCYUlttgyZ3SrdEdRpIi8w9TEZON2sLLPnGZJUyPuM+6iwpe4w5h135m3ywsVbElB9evc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HcriZPmb; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1760934315; c=relaxed/simple;
+	bh=2UrLom+8S0YfMeVr+t5kLx1uY2+UanG/i4doYApCDfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XfeSHpjIP3QKGUEh0+1Pg/hyRqW1RNEA8GI94gtfMTfLV7jvwCFWwr7ucr/d7GRx1yRuQ6WN8PuYukBs9imG4k3QWSOq1Uqu/rqqCl1/w2/Eskyy3OeVsygywy3XOIyPBd5J/i6Johgt9sd+7/zsRi44X/vVtLnSYO4/HDSjpII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TI7PAg8e; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-290dc63fabbso25523885ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:21:45 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so2378679a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:25:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760934105; x=1761538905; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+193yncmANzEfIfweyuJi14B+CiP/3dMuVzUWsZjMz4=;
-        b=HcriZPmbGc6f5kx3AsrQgXFgT448MrrhfzeCGYAuyn8n6IYSMx3k7tG+VKGVUvTGCe
-         pTCr2IblLfY5FGJAv64N3efjzUu6FalM6V9gEpGN87M7o2Hj2fxvBx49ZVF71S4qRAkP
-         PygZVFruklfZRdsEjDvw+ugIz6gyewARzconSSSe0o1wdkvFB99ATFsfxdn+1UhrWKN7
-         7jvBzlnprrSzQFDBensWEOLKXq7co99z0oBI4oEJGwy97g4FJ6U8J4JJpVGt5fdW4M+9
-         1tflyTNA5B5R1cCQT9ciSdedexcD1MH4jhF6O4VE1ur6I2MZKuHvU8SxjxYoqcIJ56Wz
-         9H2g==
+        d=bytedance.com; s=google; t=1760934311; x=1761539111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qPcskIG/1ay0sXA6LTmEjesE/nyn+okHLSoMKeTK/t4=;
+        b=TI7PAg8etcfGL3hzAEpu7CylxGLeoIKdbrIdxkjRnZ25lrDKDceBjE+6QcDpnWxYKA
+         UdsZJSYCghNutnaP1nfYyoQsdyMVyBYHImZmZ78/T0QJKMz3lKvfbi4URxsCtMHroFMF
+         2BU9+0yRwNwOVEfxC+z6t+NDe6lM4u9uRmc35kVU01wIL2V3vFCcMwTuHd846XigF8nw
+         nDhfatDjSv6aq76ZXOyJEOanV1Ofsr6siwXu6EfwDPRgSDXCOyAfRNujsGZtly4VqxKZ
+         F9K/i3E8YXfhbsdbvxexNTTVnIbGqsrFexIvoIvvvI6Lq8qeDr0J6mF+stcpKsG/niKA
+         yacg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760934105; x=1761538905;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+193yncmANzEfIfweyuJi14B+CiP/3dMuVzUWsZjMz4=;
-        b=dJ/2FiO5y8/Caxc5m4okRBemXdaCguVNRUtOXhJpftO9tAaJ73TUFYEbG/SoFWsHFz
-         p+npmh3XMNy2vYYSYq7SUlnb8zSfylL+DdmbIKCpD5+VkghWa7YRdfeL//O/BXK2CvAN
-         oEtljYvdSTOCo9KnYhAHeiTlVTzt7V5g7/xsT31QtxTfnl/zENmilKs5oNZrcw4eG09L
-         sPDiZclJloqbtYTMFzT4Q1uapdYKOj7WEpGiV3hvgN7Fxw1FmiU0WaIpWRE/ExOdHDVo
-         8D8GmEo8lMOSbTvF3yN6NdhTPXkNNhSi7DrQ675SHtfKHE6iVzg0H/3Va7ygBbG963Jq
-         f86Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLS3B9mXCHtWH5e0TA9UrH9rTrwQ76Cvyb4mG1gqQcNPwMnxVWyN0vlEMg0q/nrpc2LHSTBk0Thr31G44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUp/H5VSJRSMUkdnVI1z+PfHLsIYFZDWb6m2o8Enq5avnB3LC5
-	Q/ADM7h6dqI/vQXVUhbeH6IqExBkUmZP5AYcBngGp2+ZHkrQmy7GW34xYHH1xKBONjY=
-X-Gm-Gg: ASbGncu49WmX2tgTJ7jZFI/ZvBIwOsYCxDHnnFkbCzd9ra8Hnr8SWg8vFufKAmj0l+E
-	+/ejwAVOsSIez+sD098a446Q3DMaRHctFDuQudNIska7+VAPYhjHe3gy6b77jrxZY4T4uJiu5JV
-	TqvvS/a4JzLRDo1gVt7AHtrZDd4El5sJ7JsNE+75gK+7gip6RFeQ0poBx6HuzPdc/V/MqYv5JIy
-	ZEFRFAnnIS/aldXTqOcyAGXRxvyUaPcN6a4ZpifzHu+q3MPhjzvmqzbVuuqP/1ryo1jbpNmDWHW
-	tOCrsxiRvIh1N9aAIYCaP5Mpb/noR82LK+u7L5LA7h5CPVvKIQhYOEQACSo+UlUSje4SWhdynOL
-	0S+tAFECYwO2pO97z7idBKDHv8B1+6ZBSfUtoTorgVXcKoGDzt2A+d+EmmFP0nO7gw1gVgpMeIZ
-	WodhRygPIBGAYWaV9EaieS/bdowJTLTc08bM5d+C6XDGevPNM9xrSjQ5c0iqPOxCQ=
-X-Google-Smtp-Source: AGHT+IF2KqRso1vGWBuxjKtXDzGr3i1rYvJFvWFqIw1C4cToJJg4q9dybEBrOykVwphfwE8jll43DA==
-X-Received: by 2002:a17:902:e5c9:b0:273:daa6:cdf9 with SMTP id d9443c01a7336-290c9cdd599mr133996615ad.22.1760934104704;
-        Sun, 19 Oct 2025 21:21:44 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec14e9sm68762035ad.9.2025.10.19.21.21.36
+        d=1e100.net; s=20230601; t=1760934311; x=1761539111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qPcskIG/1ay0sXA6LTmEjesE/nyn+okHLSoMKeTK/t4=;
+        b=r5NIgxihnoi+AU/JL8DEwZ+3sVRFynkImAnekR4Jznji9IHtcGDybgANJ8F2rO+T4O
+         SCZqLc8oqbIeHkhP002tL2yDpyZT5pUGLuVd5zzKDrPMJ9Y0yx1P8ekf4upifULjy5bu
+         65pRP1fc29F0bPSf1hlxDvYVXMZG467i4+zo8QEOPsXPFw9I7PKF8/Hn8NOaDMqs83aD
+         A7+oUPOrk1OkfUHQyuupXeWNZndqutRQ55pHLVzk3Ogx20HmQoXNvXm9w8FEaNToJZWa
+         Uf8saRLnZcooJGkIyZBgAusW9lL5qKeCf8iOPBW+XcHc4Cd4L7NKT0d2ASzUN6vnhN6m
+         +5uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrmVAtue9MSHxTboCEaMEWZ8b+zE8K8cZKcDGq0Ua+tndEudza8t7RHf3ddQO17zFfrWJgIWkaSX1xPYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxAzRgO2NEAdUHxGjyhkfcKZx5zTFSA394ZfZgGcdbpN3Xl/xk
+	zibHJbsPBA/xjAKSpEfUsNQ1mU/bgujo0kAYSElA8O1Um9jmhbWzjCND5Ip6Nhw8udw=
+X-Gm-Gg: ASbGncturdtPAXoa4KBcxbeh7phhesVDizGXvW8m1W+neT4zy4g4HZlIpxKO/49c3Ow
+	gmS8TovqKfSbP0W0UrDu3j/ICgFTz5wXcq0E6xsGuaqf4rMPGVh/XpVopxJmfQ9z1wNUOb/hHj0
+	WJB9JybKKEwyAvL92IQ3IaJt1ddYhrTdulLkewY9XCWskWq+IN8vymD6VJBDBmBGbNa/Vhysj2M
+	R58cRhWb/NvJgPnuv4ex9nM9tSUj0HzOCG0SzId+m5aAhY2bDhqEoiamRkbz5U5xBpr2FFd8NZA
+	CN831LyBxGAhs0SrRbwrLNzpTaj1KUx8LQN0a5ZUj+D7kwafpOutbWRmHH8mFqbx8tp8hzWZtHK
+	i8W3U08pl7UnqsbUGFuzOYTjgxyy90ADqZ32BagcVXMXQEGRD3tpLcnG7aSHc89SJLJOM9pB+zn
+	Sc8sxDAgo3xbuChedGu8g7pGBehjKkBcD4n0VXXLmd4Dj3zjSluyXgkrzbvV5hjZpjHXBmWfvF3
+	ST4AyFilNIE
+X-Google-Smtp-Source: AGHT+IEujhnClojcicPbj3y6ytDrc6WWv+RwekLkEKlFozxNxVRIRtmsdedEqStzjhfQZMJDA0LXfw==
+X-Received: by 2002:a17:902:f647:b0:24b:11c8:2d05 with SMTP id d9443c01a7336-290cb65c5b1mr125810595ad.45.1760934311032;
+        Sun, 19 Oct 2025 21:25:11 -0700 (PDT)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec20a4sm68319325ad.7.2025.10.19.21.25.02
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 19 Oct 2025 21:21:44 -0700 (PDT)
+        Sun, 19 Oct 2025 21:25:10 -0700 (PDT)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: corbet@lwn.net,
 	paul.walmsley@sifive.com,
@@ -105,12 +104,10 @@ Cc: linux-doc@vger.kernel.org,
 	joe@perches.com,
 	lukas.bulwahn@gmail.com,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH v4 04/10] riscv: Introduce Zalasr instructions
-Date: Mon, 20 Oct 2025 12:20:50 +0800
-Message-ID: <20251020042056.30283-5-luxu.kernel@bytedance.com>
+Subject: [PATCH v4 05/10] riscv: Apply Zalasr to smp_load_acquire/smp_store_release
+Date: Mon, 20 Oct 2025 12:24:52 +0800
+Message-ID: <20251020042457.30915-1-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251020042056.30283-1-luxu.kernel@bytedance.com>
-References: <20251020042056.30283-1-luxu.kernel@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,111 +116,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce l{b|h|w|d}.{aq|aqrl} and s{b|h|w|d}.{rl|aqrl} instruction
-encodings.
+Replace fence instructions with Zalasr instructions during
+smp_load_acquire() and smp_store_release() operations.
+
+|----------------------------------|
+|    |     __smp_store_release     |
+|    |-----------------------------|
+|    | zalasr        | !zalasr     |
+| rl |-----------------------------|
+|    | s{b|h|w|d}.rl | fence rw, w |
+|    |               | s{b|h|w|d}  |
+|----------------------------------|
+|    |    __smp_load_acquire       |
+|    |-----------------------------|
+|    | zalasr        | !zalasr     |
+| aq |-----------------------------|
+|    | l{b|h|w|d}.aq | l{b|h|w|d}  |
+|    |               | fence r, rw |
+|----------------------------------|
 
 Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 ---
- arch/riscv/include/asm/insn-def.h | 79 +++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ arch/riscv/include/asm/barrier.h | 91 ++++++++++++++++++++++++++++----
+ 1 file changed, 80 insertions(+), 11 deletions(-)
 
-diff --git a/arch/riscv/include/asm/insn-def.h b/arch/riscv/include/asm/insn-def.h
-index d5adbaec1d010..3fec7e66ce50f 100644
---- a/arch/riscv/include/asm/insn-def.h
-+++ b/arch/riscv/include/asm/insn-def.h
-@@ -179,6 +179,7 @@
- #define RV___RS1(v)		__RV_REG(v)
- #define RV___RS2(v)		__RV_REG(v)
+diff --git a/arch/riscv/include/asm/barrier.h b/arch/riscv/include/asm/barrier.h
+index b8c5726d86acb..9eaf94a028096 100644
+--- a/arch/riscv/include/asm/barrier.h
++++ b/arch/riscv/include/asm/barrier.h
+@@ -51,19 +51,88 @@
+  */
+ #define smp_mb__after_spinlock()	RISCV_FENCE(iorw, iorw)
  
-+#define RV_OPCODE_AMO		RV_OPCODE(47)
- #define RV_OPCODE_MISC_MEM	RV_OPCODE(15)
- #define RV_OPCODE_OP_IMM	RV_OPCODE(19)
- #define RV_OPCODE_SYSTEM	RV_OPCODE(115)
-@@ -208,6 +209,84 @@
- 	__ASM_STR(.error "hlv.d requires 64-bit support")
- #endif
+-#define __smp_store_release(p, v)					\
+-do {									\
+-	compiletime_assert_atomic_type(*p);				\
+-	RISCV_FENCE(rw, w);						\
+-	WRITE_ONCE(*p, v);						\
++extern void __bad_size_call_parameter(void);
++
++#define __smp_store_release(p, v)						\
++do {										\
++	typeof(p) __p = (p);							\
++	union { typeof(*p) __val; char __c[1]; } __u =				\
++		{ .__val = (__force typeof(*p)) (v) };				\
++	compiletime_assert_atomic_type(*p);					\
++	switch (sizeof(*p)) {							\
++	case 1:									\
++		asm volatile(ALTERNATIVE("fence rw, w;\t\nsb %0, 0(%1)\t\n",	\
++					 SB_RL(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : : "r" (*(__u8 *)__u.__c), "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	case 2:									\
++		asm volatile(ALTERNATIVE("fence rw, w;\t\nsh %0, 0(%1)\t\n",	\
++					 SH_RL(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : : "r" (*(__u16 *)__u.__c), "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	case 4:									\
++		asm volatile(ALTERNATIVE("fence rw, w;\t\nsw %0, 0(%1)\t\n",	\
++					 SW_RL(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : : "r" (*(__u32 *)__u.__c), "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	case 8:									\
++		asm volatile(ALTERNATIVE("fence rw, w;\t\nsd %0, 0(%1)\t\n",	\
++					 SD_RL(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : : "r" (*(__u64 *)__u.__c), "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	default:								\
++		__bad_size_call_parameter();					\
++		break;								\
++	}									\
+ } while (0)
  
-+#define LB_AQ(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(0), FUNC7(26),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define LB_AQRL(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(0), FUNC7(27),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define LH_AQ(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(1), FUNC7(26),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define LH_AQRL(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(1), FUNC7(27),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define LW_AQ(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(2), FUNC7(26),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define LW_AQRL(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(2), FUNC7(27),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define SB_RL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(0), FUNC7(29),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#define SB_AQRL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(0), FUNC7(31),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#define SH_RL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(1), FUNC7(29),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#define SH_AQRL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(1), FUNC7(31),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#define SW_RL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(2), FUNC7(29),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#define SW_AQRL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(2), FUNC7(31),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#ifdef CONFIG_64BIT
-+#define LD_AQ(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(3), FUNC7(26),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define LD_AQRL(dest, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(3), FUNC7(27),			\
-+	       RD(dest), RS1(addr), __RS2(0))
-+
-+#define SD_RL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(3), FUNC7(29),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+
-+#define SD_AQRL(src, addr)					\
-+	INSN_R(OPCODE_AMO, FUNC3(3), FUNC7(31),			\
-+	       __RD(0), RS1(addr), RS2(src))
-+#else
-+#define LD_AQ(dest, addr)					\
-+	__ASM_STR(.error "ld.aq requires 64-bit support")
-+
-+#define LD_AQRL(dest, addr)					\
-+	__ASM_STR(.error "ld.aqrl requires 64-bit support")
-+
-+#define SD_RL(dest, addr)					\
-+	__ASM_STR(.error "sd.rl requires 64-bit support")
-+
-+#define SD_AQRL(dest, addr)					\
-+	__ASM_STR(.error "sd.aqrl requires 64-bit support")
-+#endif
-+
- #define SINVAL_VMA(vaddr, asid)					\
- 	INSN_R(OPCODE_SYSTEM, FUNC3(0), FUNC7(11),		\
- 	       __RD(0), RS1(vaddr), RS2(asid))
+-#define __smp_load_acquire(p)						\
+-({									\
+-	typeof(*p) ___p1 = READ_ONCE(*p);				\
+-	compiletime_assert_atomic_type(*p);				\
+-	RISCV_FENCE(r, rw);						\
+-	___p1;								\
++#define __smp_load_acquire(p)							\
++({										\
++	union { typeof(*p) __val; char __c[1]; } __u;				\
++	typeof(p) __p = (p);							\
++	compiletime_assert_atomic_type(*p);					\
++	switch (sizeof(*p)) {							\
++	case 1:									\
++		asm volatile(ALTERNATIVE("lb %0, 0(%1)\t\nfence r, rw\t\n",	\
++					 LB_AQ(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : "=r" (*(__u8 *)__u.__c) : "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	case 2:									\
++		asm volatile(ALTERNATIVE("lh %0, 0(%1)\t\nfence r, rw\t\n",	\
++					 LH_AQ(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : "=r" (*(__u16 *)__u.__c) : "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	case 4:									\
++		asm volatile(ALTERNATIVE("lw %0, 0(%1)\t\nfence r, rw\t\n",	\
++					 LW_AQ(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : "=r" (*(__u32 *)__u.__c) : "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	case 8:									\
++		asm volatile(ALTERNATIVE("ld %0, 0(%1)\t\nfence r, rw\t\n",	\
++					 LD_AQ(%0, %1) "\t\nnop\t\n",		\
++					 0, RISCV_ISA_EXT_ZALASR, 1)		\
++					 : "=r" (*(__u64 *)__u.__c) : "r" (__p)	\
++					 : "memory");				\
++		break;								\
++	default:								\
++		__bad_size_call_parameter();					\
++		break;								\
++	}									\
++	__u.__val;								\
+ })
+ 
+ #ifdef CONFIG_RISCV_ISA_ZAWRS
 -- 
 2.20.1
 
