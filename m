@@ -1,432 +1,138 @@
-Return-Path: <linux-kernel+bounces-860374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0650BEFFD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:37:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3998BEFFE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54828189AE46
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:37:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6E016343D0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4802F2EC0A0;
-	Mon, 20 Oct 2025 08:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99D22EC0A0;
+	Mon, 20 Oct 2025 08:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="WL/nMQME"
-Received: from mx-relay48-hz3.antispameurope.com (mx-relay48-hz3.antispameurope.com [94.100.134.237])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3+XLvL7"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F282EC0B2
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.237
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949444; cv=pass; b=ouPpZ7sXBWgm7WeqQeAjS4S9sRIEQgS3x2akqPQ7kIqsI7wDw5x9xVv1MU9Q3KTPQ4eorfc0lEf2zk1lOdIOEFOSlAMfMXLp8xoHWkF4uhbeMn7Z1fHAIbDfh5opeKvh3RA6dgrmj1Eg7mP5Ub+C/DUBgrTe7hwrdIHcyCq64gk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949444; c=relaxed/simple;
-	bh=hiN3AVIwQ7ASrylksDJkYWnhjnlcFgbG0cResmPOMqA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DnVOQ9F4I7HlQz9jBoLTjf5qULhsfW9bKmKZmO/Yrq8QXtuuxK3pz6rDDt/ngTH4r6uvvsKvSzF+KW71I7FWeWqiA70Y+okkDu7r6J5QUo0VCnn1kfACJWkKNXCbQbFreSjnwjaYZPXhOHSfxUQY3JMgZ4wlsc0nJBudRjv8lFs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=WL/nMQME; arc=pass smtp.client-ip=94.100.134.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate48-hz3.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=bTJve/afpJuaKd7XKA6kkj7fLwHslT2EeDKl1982FAY=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1760949432;
- b=eiIZMB7lzsWHcwjocnSNRlBTzCfKHIlhS3DqbvnE8hGx35laI1taexunsq0FJQ9lFNG8IyN8
- tmA5+N0eFmfx8jqMv/dTivhD7e9Ns1Lru3Z4LERFLdB4xCaf9/g0slORqsdHQEICax2EIV44qkS
- I6QGb2uJLLQJow4k95RKibcS8qoahzhrrw/nioUQO90iKS6fjG6/1ESr1I2JUD/wg1HWnDDeHfP
- AJhoV83XmYlRJOlh3CPBrIJ5nIvm6TU8oG205XHv2vZQGLBHPkrA0FrufF9zOA94AF+RhhuZLoU
- 6LRYZ4BxGbw8jXzd9PCpdnTfwlzkRLu5kv2G5VFUGoHeA==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1760949432;
- b=Bf6s/rLOIKUUY1XSqiA8benSoOCVHm/VrjC1zUY3gsR8AM87yaJNcgFK5Vdi4JSg3sfnCimq
- J1J49dNJGvavYwI54sKmyvsCPTDL13xXeH8UX+InhTDo57gFH+Ie9WN6m80eapKLBUNx0liSL5Q
- gTzW7mo6RtS3Z1YK7o+u7IVessK1dbiP3/7EE4stfjxYWUHqp2La2n4PFSvwmSgcKBBnQl2ovvg
- mcA+YsQhSW6HWjl9bHb615a2ayUOg2w6lB8DHEBaelIg2lRId3TKie77ziAm94NG1dhJNVcRcOi
- 07Cq0Zm49QSPQ9NTGLuD/P5sOWpIaKN9s4nG+rmhYZTew==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay48-hz3.antispameurope.com;
- Mon, 20 Oct 2025 10:37:11 +0200
-Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
-	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 75D825A0C52;
-	Mon, 20 Oct 2025 10:37:01 +0200 (CEST)
-Message-ID: <9a438ecd4ac48d9546d76058e615419bb0942b42.camel@ew.tq-group.com>
-Subject: Re: [PATCH v2 1/4] i2c: machxo2: new driver
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Date: Mon, 20 Oct 2025 10:37:00 +0200
-In-Reply-To: <wsbevkqszimjkww3qihxbghtw3yaxaooagwrgv2prhldeutybh@vh5nmdx5hiha>
-References: 
-	<5855f15ad83617d3a71b40d89d61273722c6e15f.1760601899.git.matthias.schiffer@ew.tq-group.com>
-	 <wsbevkqszimjkww3qihxbghtw3yaxaooagwrgv2prhldeutybh@vh5nmdx5hiha>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20E21F1517
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760949556; cv=none; b=HCa+1ROwc2KpcXKsx9PuUgwFnw5kdKAOvIKUJ0Di1KYkHVdOzar+h4U7OV0Pe3U+aNXYHP8lQ++uTTLw7Z6iHAyj9ar8VdDazvGBuHbKkgV/6YLZeFewCghQFQtE5ioAsnS+zaqLhWpHbvUmFEcSunrgfIbeFWtehQVyUmQ/ZFo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760949556; c=relaxed/simple;
+	bh=Ln1cpTJYDMfYJSK2ETGhBkeC8n5lFPLWaYaKEejfbjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lwh0GMisKe7tn7ZTIxCuLpgXwfk5LY7sjdQzCZG1haW8ZxwlRPBqSvqa79PhdOm/LaXbwnB/4hMgC7tCftWQ/szKSKRWOn3Z1MDONEwIPVQ8BgEKpDJodAx78RZqKAAcclJt3G68YTCF2zaSR7DjXRPcDVN2Mmv3T03WXOpeIYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3+XLvL7; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-791c287c10dso3153353b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760949553; x=1761554353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lC0+koW9LqBuD2DjLYQLY3ByhReVTR9v1Ofuem5KTnM=;
+        b=M3+XLvL7V8KX9SrVY5ChmjC+lrZgcdH1JjukLvndceOTSBPwnQxT2ndzWjRDOqqq7K
+         wU7bISEkycH12Q6tXx6WJ4GWA3w7vjeZAobYx09usHMVeldkwklJwowm14EJmvG8GWX7
+         VvEKIlYOAthb5lub1jMI29LHvPEtXGKJAy6Z/HaFT3eu5K79kYeiWu4P5vp88/e7LPfZ
+         YtaIaFqQWe5HEU1SC5n1os03HtFXwlRy69dFv5ITc5kwmvk6uUMjz6q3Bi0dfP+LOBii
+         ESjrEGZMLHhiRr5Cm5gEoxNqn+wnd0eU4Jq5cyi3az/6kBmJNICgjbzJvX5kZS3hucsl
+         Cr5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760949553; x=1761554353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lC0+koW9LqBuD2DjLYQLY3ByhReVTR9v1Ofuem5KTnM=;
+        b=ZRVrJeI8DOj0mfMCOtwbUISc12hPPEvUy4OhhNHQ9tdEGTjXEjHa/mfhNhxTUtdYRm
+         T965Ik1y3WrQH9zplPmeohmczvH4LWIPvm5ngocctA3KgBrZKk369NeY6RoeQrBQbxeu
+         vY9+odxRTEyuwMZPuWJBf+DFX0OZbcvnAHOtnTCzA6WNddqjgFXa/A6gthSguB62//Rt
+         4AqnKiplYhkaxq5/wzmAxbtTk6HMIqTiM6Cc6KOBqWYRjjDiMpKWTbZ1WJeYSpXKsmwy
+         6OAsKzdPa1i+jrBFudQ50sX2BlJfBwfiP2meFLa1RcK2yZp2sIxH3DTdFUdIbUfgiufE
+         mxXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw5Lcm218kJKTB928kff/x9lSSl+CoTKXIiDlzKdWFqL/gFCZ29OfmxqSJVcCbdQ5WKbWq+FYKLsl2jsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ0IUd8uGloy0OU3iZ99HdNlFpmoz9Ityw4yzlfpyxJPDxKqaE
+	eGo+hZrd7LTEs18UW0EoPf/DrHgXtszLe0YXAttZ0ZgAHqw4vKvRzHGa
+X-Gm-Gg: ASbGncs4rJcfSKPsrm/zoqQCaYDIlLWA9+GYa+VfxTJ2eBo12UiI1xUUKbG6KhyHE67
+	dtoo1R/EPGuL91HxvBHYIwXIjLJEzrU8+qwHfiuqmUEBoxGehTffnrPQdofolQif60F1KkqYbDk
+	rYNfNF35q21UJmaDGhbfVDHqcqZRdIzArmcgH0Ng1bkgTUHZOuFO03/vrXN4avkyHeDcFXEIWxz
+	mhKAHtPSs/j5I+1HpW0VtUHSyJNuafiggeFwHniXh9NgDfpP/yVZWhAFVW9E1TCeKochL1jRxTa
+	L3na+bS9ACIE20BmIopJMVLrKaEtUo7/w5/7ga9BZXZxvWZ80wch+jvqjSgVzS3aBEQPfuxOOHe
+	ugY3Tav2bs85J1/HZH+Y1pIlgnkHh4BnmZzoPDrGgsOFKC/m30YhaCVEoig3cpr1i3ZlsQ5IoKy
+	Mtaln95PUQYP30tWP5
+X-Google-Smtp-Source: AGHT+IFfolMgNTgrjg6QCUPSwye2gWTgy0cB2CyUntFytqmxf6KYJJHGK5kXGlssp1Efpt+QdGtvtQ==
+X-Received: by 2002:a05:6a20:9144:b0:2f4:f041:a065 with SMTP id adf61e73a8af0-334a86103e8mr16827774637.38.1760949552820;
+        Mon, 20 Oct 2025 01:39:12 -0700 (PDT)
+Received: from localhost.localdomain ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b5d0b4sm7062386a12.29.2025.10.20.01.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 01:39:12 -0700 (PDT)
+From: Longbin Li <looong.bin@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Ze Huang <huangze@whut.edu.cn>
+Cc: Longbin Li <looong.bin@gmail.com>,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/3] riscv: sophgo: add top syscon device for cv18xx
+Date: Mon, 20 Oct 2025 16:38:30 +0800
+Message-ID: <20251020083838.67522-1-looong.bin@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay48-hz3.antispameurope.com with 4cqpgx6gXKz1kNh4D
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:5ba4ae6453ff635a7b9006afcfd7c665
-X-cloud-security:scantime:2.075
-DKIM-Signature: a=rsa-sha256;
- bh=bTJve/afpJuaKd7XKA6kkj7fLwHslT2EeDKl1982FAY=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1760949431; v=1;
- b=WL/nMQMEgLiKhhBrxbYDOq5vrxE8KuR22/mFK5r+OqdG5f/rsqyuxOu3m72fdiVEUBs1s6mF
- DThdkJI/x94kIWJgoSFPKQoyYQM4AFK0lDZx8BT6H/CBTkczPfT3vSzd3M+Elxry4w0KULJVd4t
- FmjbjiLFZWTCsW7AlRo6a2TklmmYOwUUB3/oCPUjsoCzq+z4rBKYcGmpUQSOvDzjaJ2CXAt0hBs
- j9gWM+cs1PE2f78RivK8pV3ovG9jRY6wBnphnasjbamibxvAoGSgwyR+ey8ce49/dtd7Qk0iKBT
- heU4QkVjSA02uwlBYKTizSxy8oUPP6MiZDg1MHTrDXClg==
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2025-10-18 at 01:24 +0200, Andi Shyti wrote:
-> Hi Matthias,
->=20
-> ...
->=20
-> > +enum machxo2_i2c_state {
-> > +	STATE_DONE,
-> > +	STATE_START,
-> > +	STATE_WRITE,
-> > +	STATE_READ_WAIT_SRW,
-> > +	STATE_READ,
->=20
-> Can you please use a prefix for these enums?
->=20
-> > +};
->=20
-> ...
->=20
-> > +/* Registers */
-> > +#define I2C_CR			0 /* Control, RW */
-> > +#define  I2C_CR_I2CEN		0x80 /* Enable I2C */
-> > +
-> > +#define I2C_CMDR		1 /* Command, RW */
-> > +#define  I2C_CMDR_STA		0x80 /* Start */
-> > +#define  I2C_CMDR_STO		0x40 /* Stop */
-> > +#define  I2C_CMDR_RD		0x20 /* Read */
-> > +#define  I2C_CMDR_WR		0x10 /* Write */
-> > +#define  I2C_CMDR_ACK		0x08 /* Send NACK if the bit is set */
-> > +#define  I2C_CMDR_CKSDIS	0x04 /* Clock stretch disable */
-> > +
-> > +#define I2C_BR0			2 /* Clock Pre-scale, RW */
-> > +#define I2C_BR1			3 /* Clock Pre-scale, RW */
-> > +#define I2C_TXDR		4 /* Transmit Data, WO */
-> > +#define I2C_SR			5 /* Status, RO */
-> > +#define  I2C_SR_TIP		0x80 /* Transmit In Progress */
-> > +#define  I2C_SR_BUSY		0x40 /* Bus Busy */
-> > +#define  I2C_SR_RARC		0x20 /* Received ACK (if unset) */
-> > +#define  I2C_SR_SRW		0x10 /* Slave Read/Write */
-> > +#define  I2C_SR_ARBL		0x08 /* Arbitration Lost */
-> > +#define  I2C_SR_TRRDY		0x04 /* Transmitter/Receiver Ready */
-> > +#define  I2C_SR_TROE		0x02 /* Transmitter/Receiver Overrun Error */
-> > +#define  I2C_SR_HGC		0x01 /* Hardware General Call Received */
-> > +#define I2C_RXDR		7 /* Receive Data, RO */
-> > +#define I2C_IRQ			8 /* IRQ, RW */
-> > +#define I2C_IRQEN		9 /* IRQ Enable, RW */
-> > +#define  I2C_IRQ_ARBL		0x08 /* Arbitration Lost */
-> > +#define  I2C_IRQ_TRRDY		0x04 /* Transmitter/Receiver Ready */
-> > +#define  I2C_IRQ_TROE		0x02 /* Transmitter/Receiver Overrun Error */
-> > +#define  I2C_IRQ_HGC		0x01 /* Hardware General Call Received */
-> > +#define  I2C_IRQ_MASK		(I2C_IRQ_ARBL | I2C_IRQ_TRRDY | I2C_IRQ_TROE)
->=20
-> Can you please use a prefix for all these defines?
->=20
-> ...
->=20
-> > +/* Delay by a number of SCL cycles */
-> > +static inline void machxo2_delay(const struct machxo2_i2c *i2c,
-> > +				 unsigned int cycles)
-> > +{
-> > +	udelay(machxo2_cycles_to_usecs(i2c, cycles));
->=20
-> can we use fsleep here?
+Add top syscon device bindings related DTS change for CV1800.
 
-Outside of machxo2_recover, this is only run from the hrtimer handler, whic=
-h is
-softirq context, right? In any case, the MachXO2 I2C controller has some
-unfortunate timing-related fragility, so waiting longer than expected could=
- be
-bad.
+---
 
-Switching to fsleep just for machxo2_recover would be an option, which is a=
-lso
-the only place where a machxo2_delay() with cycles > 2 happens.
+Changes in v2:
 
->=20
-> > +}
->=20
-> ...
->=20
-> > +static enum machxo2_i2c_state
-> > +machxo2_write(struct machxo2_i2c *i2c, u8 stat)
-> > +{
-> > +	struct i2c_msg *msg =3D i2c->msg;
-> > +
-> > +	if (stat & I2C_SR_TRRDY) {
->=20
-> if you do
->=20
-> 	if (!(stat & I2C_SR_TRRDY))
-> 		return STATE_WRITE;
->=20
-> you can save a level of indentation.
->=20
-> > +		bool eom =3D (i2c->pos =3D=3D msg->len);
-> > +
-> > +		if (eom) {
-> > +			machxo2_delay(i2c, 1);
-> > +			stat =3D machxo2_get(i2c, I2C_SR);
-> > +		}
-> > +
-> > +		if ((i2c->pos > 0 || eom) && (stat & I2C_SR_RARC)) {
-> > +			dev_dbg(&i2c->adap.dev, "No ACK at %d\n", i2c->pos);
-> > +			return machxo2_error(i2c, -ENXIO);
-> > +		}
-> > +
-> > +		if (eom)
-> > +			return machxo2_end_of_message(i2c);
-> > +
-> > +		machxo2_set(i2c, I2C_TXDR, msg->buf[i2c->pos++]);
-> > +		machxo2_set(i2c, I2C_CMDR, I2C_CMDR_WR);
-> > +
-> > +		machxo2_reset_timer_wait(i2c);
-> > +	}
-> > +
-> > +	return STATE_WRITE;
-> > +}
->=20
-> ...
->=20
-> > +static irqreturn_t machxo2_isr(int irq, void *dev_id)
-> > +{
-> > +	struct machxo2_i2c *i2c =3D dev_id;
-> > +	u8 irq_stat =3D machxo2_get(i2c, I2C_IRQ);
-> > +
-> > +	if (!(irq_stat & I2C_IRQ_MASK))
-> > +		return IRQ_NONE;
-> > +
-> > +	/*
-> > +	 * Due to a race condition in the I2C controller, no edge on the IRQ
-> > +	 * line may be generated if an event comes in right at the moment whe=
-n
-> > +	 * the IRQs are cleared. Loop to ensure that IRQs are actually cleare=
-d.
-> > +	 */
-> > +	do {
-> > +		machxo2_set(i2c, I2C_IRQ, I2C_IRQ_MASK);
-> > +		irq_stat =3D machxo2_get(i2c, I2C_IRQ);
-> > +	} while (irq_stat & I2C_IRQ_MASK);
-> > +
-> > +	spin_lock(&i2c->lock);
-> > +	hrtimer_start(&i2c->timer, 0, HRTIMER_MODE_REL);
-> > +	spin_unlock(&i2c->lock);
->=20
-> why do we need spin_locks here?
+  - Add ranges property.
+  - Use proper regex in patternProperties.
+  - Add complete example including child nodes.
 
-This prevents a race against the following code in machxo2_restart_timer():
+Changes in v1:
 
-	if (!hrtimer_is_queued(&i2c->timer))
-		hrtimer_forward_now(&i2c->timer, i2c->timer_wait);
+  - https://lore.kernel.org/all/20251012022555.6240-1-looong.bin@gmail.com/
 
-We do not want to hrtimer_forward_now() if the timer is already queued, so =
-we
-never lengthen the time until the next expiry.
+Changed by RFC:
 
+  - https://lore.kernel.org/all/20250611082452.1218817-1-inochiama@gmail.com/
+---
 
->=20
-> > +	return IRQ_HANDLED;
-> > +}
->=20
-> ...
->=20
-> > +static int machxo2_init(struct machxo2_i2c *i2c)
-> > +{
-> > +	unsigned int prescale;
-> > +
-> > +	/* Make sure the device is disabled */
-> > +	machxo2_set(i2c, I2C_CR, 0);
-> > +
-> > +	/* I2C bus frequencies officially supported by MachXO2 are 400, 100 a=
-nd 50 kHz */
-> > +	if (i2c->bus_khz >=3D 400)
-> > +		i2c->bus_khz =3D 400;
-> > +	else if (i2c->bus_khz >=3D 100)
-> > +		i2c->bus_khz =3D 100;
-> > +	else
-> > +		i2c->bus_khz =3D 50;
-> > +
-> > +	prescale =3D DIV_ROUND_UP(i2c->clock_khz, 4 * i2c->bus_khz);
-> > +	if (prescale > 0x3ff) {
->=20
-> can you please explain this check?
+Longbin Li (3):
+  dt-bindings: soc: sophgo: add TOP syscon for CV18XX/SG200X series SoC
+  riscv: dts: sophgo: Add syscon node for cv18xx
+  riscv: dts: sophgo: Add USB support for cv18xx
 
-The register field is 10 bits wide, making 0x3ff its maximum value. Should =
-I add
-a comment?
+ .../soc/sophgo/sophgo,cv1800b-top-syscon.yaml | 81 +++++++++++++++++++
+ .../boot/dts/sophgo/cv1800b-milkv-duo.dts     |  5 ++
+ arch/riscv/boot/dts/sophgo/cv180x.dtsi        | 42 ++++++++++
+ .../boot/dts/sophgo/cv1812h-huashan-pi.dts    |  5 ++
+ .../dts/sophgo/sg2002-licheerv-nano-b.dts     |  5 ++
+ 5 files changed, 138 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-top-syscon.yaml
 
-
->=20
-> > +		dev_err(&i2c->adap.dev, "unsupported prescale: %d\n",
-> > +			prescale);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	machxo2_set(i2c, I2C_BR0, prescale & 0xff);
-> > +	machxo2_set(i2c, I2C_BR1, prescale >> 8);
-> > +
-> > +	machxo2_set(i2c, I2C_IRQEN, 0);
-> > +	machxo2_set(i2c, I2C_CR, I2C_CR_I2CEN);
-> > +
-> > +	return 0;
-> > +}
->=20
-> ...
->=20
-> > +static int machxo2_i2c_probe(struct platform_device *pdev)
-> > +{
-> > +	struct machxo2_i2c_platform_data *pdata;
-> > +	struct machxo2_i2c *i2c;
-> > +	struct resource *res;
-> > +	void __iomem *regs;
-> > +	int ret;
-> > +
-> > +	i2c =3D devm_kzalloc(&pdev->dev, sizeof(*i2c), GFP_KERNEL);
-> > +	if (!i2c)
-> > +		return -ENOMEM;
-> > +
-> > +	pdata =3D dev_get_platdata(&pdev->dev);
-> > +	if (!pdata || !pdata->clock_khz)
-> > +		return -EINVAL;
-> > +
-> > +	i2c->clock_khz =3D pdata->clock_khz;
-> > +	i2c->bus_khz =3D pdata->bus_khz;
-> > +
-> > +	res =3D platform_get_resource(pdev, IORESOURCE_IO, 0);
-> > +	if (IS_ERR(res))
-> > +		return PTR_ERR(res);
-> > +
-> > +	if (!devm_request_region(&pdev->dev, res->start, resource_size(res),
-> > +				 pdev->name)) {
-> > +		dev_err(&pdev->dev, "Can't get I/O resource.\n");
-> > +		return -EBUSY;
->=20
-> please, use dev_err_probe() here.
->=20
-> > +	}
-> > +
-> > +	regs =3D devm_ioport_map(&pdev->dev, res->start, resource_size(res));
-> > +	if (!regs) {
-> > +		dev_err(&pdev->dev, "Can't map I/O resource.\n");
-> > +		return -EBUSY;
-> > +	}
-> > +
-> > +	i2c->regmap =3D devm_regmap_init_mmio(&pdev->dev, regs, &machxo2_regm=
-ap_config);
-> > +	if (IS_ERR(i2c->regmap))
-> > +		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->regmap),
-> > +				     "Unable to initialize register map\n");
-> > +
-> > +	i2c->irq =3D platform_get_irq_optional(pdev, 0);
-> > +	if (i2c->irq < 0 && i2c->irq !=3D -ENXIO)
-> > +		return i2c->irq;
-> > +
-> > +	ret =3D machxo2_init(i2c);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	init_waitqueue_head(&i2c->wait);
-> > +	spin_lock_init(&i2c->lock);
-> > +	hrtimer_setup(&i2c->timer, machxo2_handle, CLOCK_MONOTONIC, HRTIMER_M=
-ODE_REL);
-> > +
-> > +	if (i2c->irq > 0) {
-> > +		ret =3D devm_request_irq(&pdev->dev, i2c->irq, machxo2_isr, 0,
-> > +				       pdev->name, i2c);
-> > +		if (ret) {
-> > +			dev_err(&pdev->dev, "Cannot claim IRQ\n");
-> > +			machxo2_set(i2c, I2C_CR, 0);
-> > +			return ret;
->=20
-> Do we need to write '0' to I2C_CR here?
-
-
-machxo2_init() would have set I2C_CR_I2CEN here already; this resets it to =
-0. I
-will check if moving the machxo2_set(i2c, I2C_CR, I2C_CR_I2CEN) to a later =
-point
-in the probe is possible.
-
-Best,
-Matthias
-
-
-
-
->=20
-> Thanks,
-> Andi
->=20
-> > +		}
-> > +
-> > +		machxo2_set(i2c, I2C_IRQEN, I2C_IRQ_MASK);
-> > +
-> > +		dev_info(&pdev->dev,
-> > +			 "Using IRQ %d, bus speed %dKHz, clock %dKHz.\n",
-> > +			 i2c->irq, i2c->bus_khz, i2c->clock_khz);
-> > +	} else {
-> > +		dev_info(&pdev->dev,
-> > +			 "Running in polling mode, bus speed %dKHz, clock %dKHz.\n",
-> > +			 i2c->bus_khz, i2c->clock_khz);
-> > +	}
-> > +
-> > +	platform_set_drvdata(pdev, i2c);
-> > +
-> > +	strscpy(i2c->adap.name, "i2c-machxo2", sizeof(i2c->adap.name));
-> > +	i2c->adap.algo =3D &machxo2_algorithm;
-> > +	i2c->adap.dev.parent =3D &pdev->dev;
-> > +	i2c->adap.nr =3D pdev->id;
-> > +	i2c->adap.owner =3D THIS_MODULE;
-> > +	i2c_set_adapdata(&i2c->adap, i2c);
-> > +
-> > +	ret =3D i2c_add_adapter(&i2c->adap);
-> > +	if (ret) {
-> > +		machxo2_set(i2c, I2C_CR, 0);
-> > +		machxo2_set(i2c, I2C_IRQEN, 0);
-> > +
-> > +		if (i2c->irq > 0)
-> > +			disable_irq(i2c->irq);
-> > +		hrtimer_cancel(&i2c->timer);
-> > +
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+--
+2.51.0
 
