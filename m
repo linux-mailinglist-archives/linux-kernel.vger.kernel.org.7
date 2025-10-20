@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-861687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76747BF35B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:17:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6D9BF35B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E49FA350F30
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:17:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BB65C350F25
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E390E2D7DC1;
-	Mon, 20 Oct 2025 20:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBDE2D3220;
+	Mon, 20 Oct 2025 20:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LI0FsbUI"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQUzqk/C"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5B29ACE5
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A1B2D0C9B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760991447; cv=none; b=t+658+nG1p5Icgaev92eFisdkeIHu9jTmh9VqwrpVwmwCMIvb908A13sXzJqKzxbUntHfHqszlxEhhLD0zK6oc3jjT245gcvGPZholeU5oP5iUw386xRzNvfUBNKtYlh0Hxl4mfR5cVWzv2itvV6y1TrQgQi+L1J6wR2B0PQfqY=
+	t=1760991455; cv=none; b=Z7JBQYkUO9CIbsrY1y33E6dN6QPWx73UNP2S7lTnI5TJHHS1GTFMQLsErJDbhK65zrki0yV37VytcL6dzQkNXUfJFmIUqvVrbEuqyiqWMVFn2Hx9Rt2XxfvcoGMSGG5UnuNDDU0IO6aATnx3PhgKn/cw1J4vHVz9gKDAiIhPAnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760991447; c=relaxed/simple;
-	bh=eir2cELdE6ctxydT2A/YX9aeKQVEZfkkSYcoewgfQYE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OkBAuM/yFHSpx8zFPMDWKb8OvpyWx+urXuZezKC5HXllNIhK/dyexym5P1hK/FuWPjM3iJ8EniVNsExoze2/JJzDZ1DOhI8rJ24kbe585T3jU0FMHQu797ewaJloZOiJ8Mau79P/EHQj4CXlQm2MwTIye6i+5dB6zI0jG4HcxxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LI0FsbUI; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1760991455; c=relaxed/simple;
+	bh=C4n75EtUZau6mSTuBCJYnmGv0sbGRgbQfabkJqiKw1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ddXzKxCGijBq5fcWvAIfD1mUkEsfyN33shEL12rAxHYvHwHmJH9BPo4TbYnJoeVJEA9Lmk5o0DZe614d1Vc8fLFwsW+i4op4yTmfm8XhqXGCDPMEFK+GSWbpdCUar9PA5Qt5FKvJucmoia5vXs9OWFuWycVTbPt6cFYVw1uv0ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQUzqk/C; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7810289cd4bso4586786b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:17:25 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-781206cce18so4883920b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760991445; x=1761596245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PXI3yOz2/6xxfRvTcNICPRU7XaRQOsBCnm/A8qDs1ro=;
-        b=LI0FsbUIR5lqNzvLvL+OOd10gNBZSSLWxu9VYAcR6XkDcw46yo652LUjRhZDbswG73
-         /pigvx1tqZ3CGKTsMkULYPdO7keEBlIzOo+ax7OnhFjHeG50AuQvFKYVRZPL9pDxLX8V
-         x7xUtKIu+gmagY+spPosHu8t0OjArHV4FFGQHPCnIaH7p8fnabOy+eHeT5ovMi5BXJUj
-         ZT2fj+fCJJXSPahOZEWbxEb+zFocOZ2zNuJ4NHzKqH2QPXHAogHy8KkLumkkI64tNya6
-         hCUIOD8vBe6Bzj0U3tAYmXgfSCrAtirIqL2hP0ge+J1HqI+mhR9k1zOAtNUcOBfPAA6a
-         bLtg==
+        d=gmail.com; s=20230601; t=1760991453; x=1761596253; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uga9JOHOylm5AvbLQFDeQho/nQbtIcGlvKSVVqsfm7U=;
+        b=YQUzqk/CZe3lHRMkExNVSqK/8lJ9F+m2cvlHjncSJVgsiHre5LJ/kzQ2CtUs1qhv/5
+         wLblmxGhCKO/ZXKECtBd34UFHrQNMLCY6FNje6o+tEMJS/S373yQgpCdfbsOLm5dR+jv
+         RQvcqFPHPYX24iIXDOYO8jpB1zYE9VpR4N/aU24WnesYhd2nMZhnOCJElKuXWx/bogKz
+         Bo+5OM06+qZlpSy1Efd/ZNTOZ5TP0Y9nV+aZLkoEFl9TI3j5IKeTQ1Orhshz9qB4cRg4
+         5chXYJP5wZGl1K/2hJ82+HQ3eFXBmUfpA1Q56KP6fm448BVMGPhOMr7NbkWaDb8FpSzO
+         goww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760991445; x=1761596245;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PXI3yOz2/6xxfRvTcNICPRU7XaRQOsBCnm/A8qDs1ro=;
-        b=qJ+Tni2Zvvb3dOZKNjA1LQOK7vl57SDKN7znHnLN95hiVVe5l44U9hFnwciA7XGwn3
-         XxdF7CZoFc9AUSlYewOtDjkuWuJlSX32mlPUoPG89WhvQMR+lFCKXzhbNlZQcbUKyCUN
-         TTxI1vcNjL4bn/7B58lkGMgyWzZlIpd1PwrAGtncbb87u6ZT2AxgydqsgyaPP5dT1nv6
-         tgRWJK+sbBA3hEeqXM3rb/3FrFCjbMbGdfVWUWoa+1iIdLESZ2ODgNoeHpQ0ohvrgUmL
-         GmmS1NA4Nl0ld8gEgpZf1nrukwEtORhaMb1JHp4iYaHa4KFXw66Sm/RKSZ50+HjsphoF
-         f1lA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaYQp/KXkNQHFJfIoUzW+Y87XiX7UpPncV1fOOfb4bShFkzHmlCCI8+EJg+E34R1bfH963Gja1MwrR4Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHQjINBjFotCLdtdBwomM9+HllDl02o1goHENgYiTrdaGvbzTp
-	S5FCqt8RtDzaE+CLp46YuNpcKFxOs0vEeCtwKSUxSsf+ZKz8l1afzVAG
-X-Gm-Gg: ASbGncu7p+K7vRSb3DJHLQ/IGTm0VN78kwkm2K/5AVBEj5VinmipmMbrRQeOh/R0Ea6
-	6ZlWW3lQWhfDGtfllQMckFGT4fFwHiutzkz1xCAGpCjPnoaIF8oZsbWLtm+Q3s56c+jVsYMawOv
-	LABAiR5qgioqv9rcA7z8URRqduL8qQ1oPioK41TPYrpmKJL5irQAkxwZLlCH4stOWRQ2+rji3jq
-	mZaCxjMWolbYhcWhxmGsJK0wmBe4uk83QcKInOrVy8IArZUhCAjnJdRRPPwVNKyeHP2+Lt9RXXz
-	ZY3Kzdgl5QMQZYaI4QIxeQxbh+ghvS5soD5wo0ihjmtcW/I/rD5iYFuULMIh7Nr2g8W0nQqOa1A
-	yZIp6odGHJLHtdlH6InOU620E3YJ+XTwjhJ5n4QsHwbPBG9hl91kuxe0/jfUdRjle508CkzvyTA
-	1EKFFHOq7M06s=
-X-Google-Smtp-Source: AGHT+IH2Vu7r+p87tUPq6VF6+nbRh0pDhjMUf60C3OqTCJquCWzcP76GusrxnipnDCr3SE1kNgrVqQ==
-X-Received: by 2002:a05:6a00:2e1f:b0:78a:eff2:6c0 with SMTP id d2e1a72fcca58-7a220b1dd00mr16143036b3a.25.1760991444707;
-        Mon, 20 Oct 2025 13:17:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760991453; x=1761596253;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uga9JOHOylm5AvbLQFDeQho/nQbtIcGlvKSVVqsfm7U=;
+        b=n9gKaHZcuzPpyNsdd4C1jCw/ZFf2kejPFaZOuIIIbaSRw1NDPjoFdyL9aE84BQtini
+         /pBAFPQ7BHtbRI3rHY3C3dbusZWaG6jeUaQlZCx2TVSZj39LwPoLtYOKgo4rQ6KdtvEt
+         xpCZ7WgkDlr0UV0cCJqhv62Seb0J7LfwXLhrQVW8FnJ+8o6/fffnvh2WI+CzNQAuNlXM
+         jk0552z3CMeiJ3Tr++3JiX3yeWJe8TOleoc66oRHsYzzKrKPut1IaqKRKFHHL9xv6vva
+         cvXhF2Uv60sRZrKyPGPUO74zZPcUVVWiGQjTM1CT6MspOcWczW3yKOje04B+d277/+/G
+         7Dzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGKnBnjGzTC2RyE7Tzxk9zabzlaxFOilVzeuCRCSoh7ajFXjHOZzjGGC+P9NqTD39sUoSgYNwO0aCAzX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoyk5HKSv7BEr/EDn78b9QvBSUQ7HWaf3WRY10FresrINgXcHZ
+	Y2T868WCsdyGt3hQ5z8wiWAY1TPZJWQ3tfgaLNNvRxx+0EsNOlyknLg5
+X-Gm-Gg: ASbGnctfC/5gzEQU/fnhx83VMZ5jTZ8iR6yp9CJabh2d0wYDFCWCpeKYoNsCk7guP6f
+	HCucAV38Pp2fIf4cmxFki1Hux8ArxiF+T1bZaUSgjLHTXhE3T+hNLiMaBlO0d2rlQfImGNOVQ84
+	9LWwlQkV18OB+1rGN7egXxmHaEVB5kPTv0QcUUMUYCYbvcoh7VYoM2affoHJOJGKCcUugk+FPVS
+	bAesiamYQDLLWtN9yrnhi0TzS1Eq6UA7lABgCJOfkCn0MFqMv5+dAfoMJnMIjpEbvGIXl+dXXmM
+	vj9r1qjf4ABunhwRBZlGL0hm73v6hO4kztsIk0weuYwHcyPQtMd3lmuScGsHLrvDXIOdoCms4y8
+	2rO/g7p1CTMcku9gV6pGrPip4na89dHq8amkWFC4Xr4dY84dN/YDbh6jE3mdL36ls/ZBbWlOI0i
+	hKAtkmJRy6e28=
+X-Google-Smtp-Source: AGHT+IFcbeiHhVChHhGgVr+DQLb033/vhWJVXc5f9BaiGvg1ErIjX25PrUAwPKcLPmdEptL7IJdg2g==
+X-Received: by 2002:a05:6a00:194b:b0:77e:d2f7:f307 with SMTP id d2e1a72fcca58-7a21fa1434cmr17940908b3a.9.1760991453355;
+        Mon, 20 Oct 2025 13:17:33 -0700 (PDT)
 Received: from pop-os.. ([106.222.200.146])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a23010df83sm9104263b3a.59.2025.10.20.13.17.18
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a23010df83sm9104263b3a.59.2025.10.20.13.17.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 13:17:24 -0700 (PDT)
+        Mon, 20 Oct 2025 13:17:32 -0700 (PDT)
 From: Aditya Dutt <duttaditya18@gmail.com>
 To: Jonathan Cameron <jic23@kernel.org>,
 	David Lechner <dlechner@baylibre.com>,
@@ -86,10 +88,12 @@ Cc: Aditya Dutt <duttaditya18@gmail.com>,
 	linux-iio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: [PATCH 0/2] New driver for ams AS5600 Position Sensor
-Date: Tue, 21 Oct 2025 01:46:51 +0530
-Message-Id: <20251020201653.86181-1-duttaditya18@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: iio: position: Add ams AS5600 Position Sensor
+Date: Tue, 21 Oct 2025 01:46:52 +0530
+Message-Id: <20251020201653.86181-2-duttaditya18@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251020201653.86181-1-duttaditya18@gmail.com>
+References: <20251020201653.86181-1-duttaditya18@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,68 +102,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series adds support for the ams AS5600 Position Sensor.
-
 The AS5600 is a Hall-based rotary magnetic position sensor using
 planar sensors that convert the magnetic field component perpendicular
 to the surface of the chip into a voltage, or a numerical value
 available through i2c.
 
-The driver registers the chip as an IIO_ANGL device.
-It also exposes the raw registers through debugfs for further configuration.
+Add dt-bindings for the sensor.
 
 Datasheet: https://ams-osram.com/products/sensor-solutions/position-sensors/ams-as5600-position-sensor
-Co-developed-by: Frank Zago <frank@zago.net> 
-Signed-off-by: Frank Zago <frank@zago.net>
 Signed-off-by: Aditya Dutt <duttaditya18@gmail.com>
 ---
-
-This patch is based on the work done by Frank Zago:
-v2: https://lore.kernel.org/all/20211225175353.4254-1-frank@zago.net/
-v1: https://lore.kernel.org/all/20211216202651.120172-1-frank@zago.net/
-
-I have done the changes suggested by Jonathan Cameron in the follow-ups.
-
-I picked this up because there has been no progress on this since 2021 and
-Frank Zago has previously stated he isn't trying to upstream his drivers:
-https://lore.kernel.org/all/e052d872-6de2-42f4-8b36-d1e2f8359624@zago.net/
-
-Currently, I have not added support for:
-- OUT (PWM)
-- PGO (GPIO used for OTP)
-- DIR (GPIO used for clockwise/anti-clockwise detection)
-
-I have tested this on a Beaglebone Black with as5600 support compiled as a
-kernel module (m) as well as in-kernel (y).
-
-changes since Frank Zago's v2:
-- direct register access in debugfs is now raw register access without any
-  mappings as suggested by Jonathan Cameron
-- added device tree support and bindings
-- in as5600_probe(), reading ZPOS and MPOS should be a word not a byte
-- removed "Read then write" behavior in as5600_reg_access_write() since
-  register access is now raw, reading and manipulating the correct bits and
-  writing is now the duty of userspace.
-- changed "Datasheet" links to the product page instead of the direct PDF
-  since the PDF links are not stable
-
-
-Aditya Dutt (2):
-  dt-bindings: iio: position: Add ams AS5600 Position Sensor
-  iio: position: Add support for ams AS5600 angle sensor
-
- .../bindings/iio/position/ams,as5600.yaml     |  42 ++
- Documentation/iio/as5600.rst                  |  84 ++++
- Documentation/iio/index.rst                   |   1 +
- MAINTAINERS                                   |   8 +
- drivers/iio/position/Kconfig                  |  10 +
- drivers/iio/position/Makefile                 |   1 +
- drivers/iio/position/as5600.c                 | 373 ++++++++++++++++++
- 7 files changed, 519 insertions(+)
+ .../bindings/iio/position/ams,as5600.yaml     | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/iio/position/ams,as5600.yaml
- create mode 100644 Documentation/iio/as5600.rst
- create mode 100644 drivers/iio/position/as5600.c
 
+diff --git a/Documentation/devicetree/bindings/iio/position/ams,as5600.yaml b/Documentation/devicetree/bindings/iio/position/ams,as5600.yaml
+new file mode 100644
+index 000000000000..d4c92dd41dd6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/position/ams,as5600.yaml
+@@ -0,0 +1,42 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/position/ams,as5600.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ams AS5600 Position Sensor
++
++maintainers:
++  - Aditya Dutt <duttaditya18@gmail.com>
++
++description: |
++  12-Bit Programmable Contactless Potentiometer
++
++properties:
++  compatible:
++    enum:
++      - ams,as5600
++  reg:
++    maxItems: 1
++    description: |
++      The I2C register address of the device. Typical address for AS5600: 0x36.
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      ams5600@36 {
++        compatible = "ams,as5600";
++        reg = <0x36>;
++      };
++    };
++
++...
 -- 
 2.34.1
 
