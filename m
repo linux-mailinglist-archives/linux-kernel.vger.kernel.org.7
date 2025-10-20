@@ -1,295 +1,78 @@
-Return-Path: <linux-kernel+bounces-861668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590BABF34E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B213BBF34FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0E2418C357A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:59:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA843B3D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8C93321BB;
-	Mon, 20 Oct 2025 19:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD5033030A;
+	Mon, 20 Oct 2025 19:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RsCpfzkU"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2AKGonu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450421ABD7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA31A32ED58;
+	Mon, 20 Oct 2025 19:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760990344; cv=none; b=usk7eRPM9m+AWjBYNicjZ/b5AD3Bohvq0IhKTlnNrgOFizuxW4HvI/X9bQuzkYmjiT5mDHTgnGUYwVf+G7Wzmm5FGjGYcAjjdBfSUfE5xrP/wAI1J6F9XD1tbNGHaSqXGEQdCRx6XZRa193YoL0Ny37HP6aDSn9HueeykRHAKo0=
+	t=1760990349; cv=none; b=JDX8Axt32m8EG7jKHc1CXob68fE/YYN+7T+T5wC98oR3l6/eu3Kpwm2yCLuwvFoifP1PbPkO+4VYG1GV14PTHDg0qHr/Wd59M43LN2RjzmOC1W19NhknQ1/82aqVft+4+sXVRom4kamzhKr+vpNNgAEzwCmwRXgx5aqGZAfzlqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760990344; c=relaxed/simple;
-	bh=wYdxk58ArImvpS6riD80SDAnDf3kWnvorDlWtwXdgus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PduFWA2qljrxkfygyg8vfCJYq1NoyyfdqyIwjpkyPrCffzq6v+B3BcHZMkTZQ+xGDVTegNU3+i+8HmJ7+b0CFErm8HW2lxQ3/DDt0cVp8U9eEXX3wG/WFk0FIsBoJR/g+HeqLlYW6+DMIlbyjLE8YAmJU4WLwYa0bHAv4R9no0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RsCpfzkU; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-59070c9111eso5228681e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760990341; x=1761595141; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZqJXKRaXTsONzkFldwqCiRpv/FJUXtPHGWU4YzhiyOY=;
-        b=RsCpfzkUzSo2ddI/kem9eoB98RgKXgo1xlFuyTPJtUmxKvwotk59c1Fq2etNF8TJAX
-         +98qcH8wGTSycfyaUaUmNCJuVdW8uQ0aJGSuBrXaZQtyB5eU4byNfRp0VRX4f3pB/C8O
-         6StO5vM55CkeUp0KZXfiK8+z+8YGO5DoiSmQc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760990341; x=1761595141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZqJXKRaXTsONzkFldwqCiRpv/FJUXtPHGWU4YzhiyOY=;
-        b=Y8rGCfZtK0H/O2S+8t8JplqDnsNrI2H5LWlb0J3P1cRQOdTD92MJzNm1/3JvMR7zeK
-         uW/B5aDRqSXBPTXujq2d+cMyrzG8TFwaypYFRL26SsiNPL+3l6ylENdEYCmXxGI7e4cZ
-         rDe8RsgwtPBxGVUH6PtzKeMj8KcUHf8YUxL5HUTT10Jdpy7vw2UWHZPS9EbWdY+srAZs
-         2gdtCXpD8r+3DVElD40kRxtlPFqIm8v/1Y2+8VXt59JIHN6wVx4UYJVM+C9lOU+KYknR
-         TdnwdyLVuX/q5e1M+i2gGbNUc64EWwXTd3AtXuUBQM0pTnV7VaKJ4THjMqtOMxAF/9Ah
-         X9ew==
-X-Forwarded-Encrypted: i=1; AJvYcCV7F0ucs1VsE2BA/LjPgBJh4dyk5q0XIpJyQlU2oPnOHdoZDgV+jlQrgQrQVy70bnbecaN7Mu7KchLxYEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7LmVehFqh1fAdS/Mgjidu9QQj6NAbaP5ITJjaS/730S7eVNsx
-	I8r0fdok+orOHMUwk0L1xUD4t0ka11ZvsyEi9eqJeLYKtUZblxquP3XXrNRMUMdNj5BJiLUvjXo
-	a59g=
-X-Gm-Gg: ASbGncvq1fMpztW4jqwV01sX2JtqlgSFzH0j4A7ovOatqP0W41oo19ARg9yuEQRGW+4
-	UF7byf1JWYxAK4idKQhoNOAlcuVQznRaPQ0eOH37SUfen1WK3PO78ejXXnj4sC7NuzNVgzxbgnj
-	4t3OJQYjVls2JDX8aTU64YNRGAdbsSZCm12CCNmbQfbUfX0dSK0d0d0glZqDOTVEH8085d99ekF
-	x5BJvYAANGYJT8sMP+9jrVlRJeMe3ecNLrS0BwqhVjHHy1kELAc0T2MCmGQk3jTnHk2w3ZBXTDn
-	6goOpXjc4ekBJqGAOrbJKKLrO6bsgPWrdwx64Nhy7FTsF5YzSr8N3Cf3/CrRqertOsrRTgS5sPO
-	pHXTLvV26IRl8TWn1sZNyZV5Jaee1G0L4rucbgKUN+ZpcvLtrlpgyP+S+G4vZ/S4q1H5+Ejy8SD
-	6gbW5FWVZr6KN4vPTR8eooAG1cHikM/InSTjdbig==
-X-Google-Smtp-Source: AGHT+IGUGanYkJPtk115MfXoiUYhDiobxhUrscsiFLQUZgTgqQ+Fjao/eP6AuWD9kQGMSdFIqRAUew==
-X-Received: by 2002:a05:6512:3405:b0:591:c898:e82b with SMTP id 2adb3069b0e04-591d84cf8d6mr4354157e87.8.1760990340658;
-        Mon, 20 Oct 2025 12:59:00 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591e6c99423sm947338e87.46.2025.10.20.12.59.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:59:00 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57b35e176dbso5916439e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:59:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUhb7Xrs6hCV7+KuC7en6zO5pr/VK31R24+eBP0Y7BfhiDEgKIj3vr+7SyrLm7nSai2crP+bl3r8YtNoGc=@vger.kernel.org
-X-Received: by 2002:a05:6512:1309:b0:57e:54ab:56a9 with SMTP id
- 2adb3069b0e04-591d84ef681mr4340152e87.20.1760990339501; Mon, 20 Oct 2025
- 12:58:59 -0700 (PDT)
+	s=arc-20240116; t=1760990349; c=relaxed/simple;
+	bh=TMptTs8P8menOA8W9P589h7yU5mbbCM1dsB497Lxw/c=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=l0+z6GSLJmfN4EmhfQ1te7ei/BhnxRHYF7R/HVtTzEbYN0eUuhMErqGmir5snCfYi7VR/QJ2nUGhj9IhMANo1oSGvjYvigsJewjHpoiwEXBxhzWcEOdbc+I1V8INHj1QfL7YuteaAMCLu3tBKveYypcJdvpbbDwjvLZZsdlvRuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2AKGonu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD51FC113D0;
+	Mon, 20 Oct 2025 19:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760990348;
+	bh=TMptTs8P8menOA8W9P589h7yU5mbbCM1dsB497Lxw/c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=S2AKGonuzr03OdDfaUnfv+8peR+lRseXLJqC9a/kgDX2FfDVEqoLQL+ZcBBKOf9Q0
+	 w0gsc8usFxyHJ/GFNTJzCAv5/te6N65Xe0NngwruIcvbKDVfIDdMJWjrm8QbvoWpKl
+	 Np7tWvFiEnY1ZsdLjJXT1OyNmim58NlcCeXRp0ZmusYn5+Uoft9Hr5rgfNXLReBPk0
+	 OwsDnxXYmoN6AwnTv5GEDyXvvEj/QRexf+CSWNJ94BzOvJJjG5wJgjjODIZqPSxY6O
+	 uyyoNuofjFTXFwiuTUMYGrdNB9pO1jdit0YPzyDEnvrerHd1D9Xl6uB/vZKDqOhNQW
+	 fGlUlNvgPtrpQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB12E3A4101D;
+	Mon, 20 Oct 2025 19:58:51 +0000 (UTC)
+Subject: Re: [GIT PULL] cgroup: Fixes for v6.18-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ca8c62e00bea051b0bd3bf682155428f@kernel.org>
+References: <ca8c62e00bea051b0bd3bf682155428f@kernel.org>
+X-PR-Tracked-List-Id: <cgroups.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ca8c62e00bea051b0bd3bf682155428f@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git tags/cgroup-for-6.18-rc2-fixes
+X-PR-Tracked-Commit-Id: 0fbbcab7f9082cdc233da5e5e353f69830f11956
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6548d364a3e850326831799d7e3ea2d7bb97ba08
+Message-Id: <176099033050.389793.15857252629002654389.pr-tracker-bot@kernel.org>
+Date: Mon, 20 Oct 2025 19:58:50 +0000
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
- <aPZ_YRwpDNPFjePX@valkosipuli.retiisi.eu> <CANiDSCt+E+Ogr9+Y4_4KA_vBOYyTNZgwZVBD2wLMJirQE+PS3Q@mail.gmail.com>
- <aPaOxb9DyQfnU7_Q@valkosipuli.retiisi.eu>
-In-Reply-To: <aPaOxb9DyQfnU7_Q@valkosipuli.retiisi.eu>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 20 Oct 2025 21:58:47 +0200
-X-Gmail-Original-Message-ID: <CANiDSCvS3gnrQ0sPrdhiQxY47rHHrvVMq_wDDBYa_L=Y-VZwAg@mail.gmail.com>
-X-Gm-Features: AS18NWC84SZZl_qh5nIXYoQU5trCa2_3LnB2YMD5cBGR5J9qgedZa51in2-p0vs
-Message-ID: <CANiDSCvS3gnrQ0sPrdhiQxY47rHHrvVMq_wDDBYa_L=Y-VZwAg@mail.gmail.com>
-Subject: Re: [PATCH v2] media: i2c: imx214: Exit early on control init errors
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Ricardo Ribalda <ribalda@kernel.org>, 
-	Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sakai
+The pull request you sent on Mon, 20 Oct 2025 08:15:54 -1000:
 
-On Mon, 20 Oct 2025 at 21:34, Sakari Ailus <sakari.ailus@iki.fi> wrote:
->
-> Hi Ricardo,
->
-> On Mon, Oct 20, 2025 at 08:51:44PM +0200, Ricardo Ribalda wrote:
-> > Hi Sakari
-> >
-> > On Mon, 20 Oct 2025 at 20:28, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > >
-> > > Hi Ricardo,
-> > >
-> > > On Tue, Oct 14, 2025 at 11:00:17AM +0000, Ricardo Ribalda wrote:
-> > > > Now we try to initialize all the controls and at the very end check
-> > > > ctrl_hdlr->error to check if one of them has failed.
-> > > >
-> > > > This confuses smatch, who do not know how to track the state of
-> > > > imx214->link_freq.
-> > > >
-> > > > drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previ=
-ously assumed 'imx214->link_freq' could be null (see line 1017)
-> > > >
-> > > > Fix this by exiting early on control initialization errors.
-> > > >
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > ---
-> > > > Right now we are handling this with a quirk in media-ci, if Dan can=
-not
-> > > > fix smatch in a kernel cycle we should merge this patch.
-> > > > ---
-> > > > Changes in v2:
-> > > > - Fix typo in commit message commit
-> > > > - Move error tag where it belongs (Thanks Hans!)
-> > > > - Link to v1: https://lore.kernel.org/r/20250829-imx214-smatch-v1-1=
--f3d1653b48e4@chromium.org
-> > > > ---
-> > > >  drivers/media/i2c/imx214.c | 7 +++++--
-> > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.=
-c
-> > > > index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..c66f0e18726c3fc15df=
-91c37888a797bcea82134 100644
-> > > > --- a/drivers/media/i2c/imx214.c
-> > > > +++ b/drivers/media/i2c/imx214.c
-> > > > @@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *=
-imx214)
-> > > >                                                  V4L2_CID_LINK_FREQ=
-,
-> > > >                                                  imx214->bus_cfg.nr=
-_of_link_frequencies - 1,
-> > > >                                                  0, imx214->bus_cfg=
-.link_frequencies);
-> > > > -     if (imx214->link_freq)
-> > > > -             imx214->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONL=
-Y;
-> > > > +     if (!imx214->link_freq)
-> > > > +             goto err_init_ctrl;
-> > > > +
-> > > > +     imx214->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
-> > >
-> > > You could do this cleaner by simply moving the assignment after the h=
-andler
-> > > error check. Some drivers do that already.
-> > >
-> > > I wonder why this seems to be a problem for smatch in the imx214 driv=
-er as
-> > > the pattern is widely used across the sensor drivers.
-> >
-> > Smatch thinks that there could be case where
-> >
-> > imx->link_freq =3D NULL, and imx214_pll_update returns 0.
-> >
-> > That is not solved by moving the assignment `imx214->link_freq->flags
-> > |=3D` after if (ret)
->
-> Did you test this? The smatch message suggests otherwise (but of course
-> this could just turn into a different smatch error).
+> https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git tags/cgroup-for-6.18-rc2-fixes
 
-Actually smatch do not hate it :)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6548d364a3e850326831799d7e3ea2d7bb97ba08
 
-ribalda@ribalda:~/work/linux$ make -i W=3D1 C=3D1
-CHECK=3D"../media-ci/third_party/smatch/smatch -p=3Dkernel"
-KCFLAGS=3D"-Wmaybe-uninitialized" drivers/media/i2c/imx214.o
-  CC      kernel/sched/rq-offsets.s
-In file included from kernel/sched/rq-offsets.c:5:
-kernel/sched/sched.h: In function =E2=80=98mm_cid_get=E2=80=99:
-kernel/sched/sched.h:3743:25: error: variable =E2=80=98cpumask=E2=80=99 set=
- but not
-used [-Werror=3Dunused-but-set-variable]
- 3743 |         struct cpumask *cpumask;
-      |                         ^~~~~~~
-cc1: all warnings being treated as errors
-make[2]: [scripts/Makefile.build:182: kernel/sched/rq-offsets.s] Error
-1 (ignored)
-/bin/sh: line 1: kernel/sched/rq-offsets.s: No such file or directory
-make[2]: [Kbuild:46: include/generated/rq-offsets.h] Error 1 (ignored)
-  CALL    scripts/checksyscalls.sh
-  DESCEND objtool
-  INSTALL libsubcmd_headers
-  CC      drivers/media/i2c/imx214.o
-  CHECK   drivers/media/i2c/imx214.c
+Thank you!
 
-
-ribalda@ribalda:~/work/linux$ git diff
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 94ebe625c9e6..a21461b55923 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -1014,8 +1014,6 @@ static int imx214_ctrls_init(struct imx214 *imx214)
-                                                   V4L2_CID_LINK_FREQ,
-
-imx214->bus_cfg.nr_of_link_frequencies - 1,
-                                                   0,
-imx214->bus_cfg.link_frequencies);
--       if (imx214->link_freq)
--               imx214->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
-
-        /*
-         * WARNING!
-@@ -1038,9 +1036,6 @@ static int imx214_ctrls_init(struct imx214 *imx214)
-        imx214->hblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
-                                           V4L2_CID_HBLANK, hblank, hblank,
-                                           1, hblank);
--       if (imx214->hblank)
--               imx214->hblank->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
--
-        exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET;
-        exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAULT);
-        imx214->exposure =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
-@@ -1060,13 +1055,9 @@ static int imx214_ctrls_init(struct imx214 *imx214)
-
-        imx214->hflip =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
-                                          V4L2_CID_HFLIP, 0, 1, 1, 0);
--       if (imx214->hflip)
--               imx214->hflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-
-        imx214->vflip =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
-                                          V4L2_CID_VFLIP, 0, 1, 1, 0);
--       if (imx214->vflip)
--               imx214->vflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-
-        v4l2_ctrl_cluster(2, &imx214->hflip);
-
-@@ -1106,6 +1097,11 @@ static int imx214_ctrls_init(struct imx214 *imx214)
-                return ret;
-        }
-
-+       imx214->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
-+       imx214->hblank->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
-+       imx214->hflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-+       imx214->vflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-+
-        ret =3D imx214_pll_update(imx214);
-        if (ret < 0) {
-                v4l2_ctrl_handler_free(ctrl_hdlr);
-
-
->
-> >
-> > I believe Dan is already flagged about this, but I do not think that
-> > it will be super simple to fix in his code.
-> >
-> > If smatch can handle this case before rc5 I will delete this patch.
->
-> There are other options, too, such as storing the link frequency index (t=
-he
-> driver won't even support setting it) or the frequency itself.
-
-There are plenty of options :) But I am still failing to see what is
-wrong with this patch.
-
-We exit early when there is an error instead of continuing doing work
-that will be useless.
-
-If you really prefer your way I can send a v3... but we have probably
-more fun work to do :P
-
-Regards!
-
->
-> --
-> Regards,
->
-> Sakari Ailus
-
-
-
---=20
-Ricardo Ribalda
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
