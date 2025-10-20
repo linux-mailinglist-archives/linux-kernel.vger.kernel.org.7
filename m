@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-860518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0B0BF04EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAACBF04FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3ABF234ACF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E80018A02DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB623EA82;
-	Mon, 20 Oct 2025 09:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1250E2F291A;
+	Mon, 20 Oct 2025 09:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="diHCGmFr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R/lZFgN4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428DB238171
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669EE2D9795;
+	Mon, 20 Oct 2025 09:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953800; cv=none; b=cl0E08mam8LCwWeaHp7IDfPlI3QCK3y3UHMj+dFRCHsq55Lvk24JKhuDkqTz8Ie/N+YtpRDeWHyuehRqPDCv4mxKaf6I/4Dweh0n026qOCvM4OVIXebMAi1/X8xtG8lZTLFQygKkpEvLc189c96fx5OvlPZY1smZBfE0u13zfuY=
+	t=1760953804; cv=none; b=U/cH3+yHvVe7Xund8uNR4JYTXEApf1MtekrSwyOv540OkNbq4RpKSkhKuyLyTpV0K8OzQ1BO+/qFpdTdYhAjETS71YKi4K2ei8/kjCWqeuZ1SjPhtlsGAgdGwrg9tiLw2rIbcnYyMQGYdun/FMTRZ1st1Z4RaBDE9e2QLEMbUc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953800; c=relaxed/simple;
-	bh=L88CURN76sT3+kKjYcMn64mems4KIaIBpiqCE7sLYgo=;
+	s=arc-20240116; t=1760953804; c=relaxed/simple;
+	bh=fa3VNUjm5V+YGeMPh0BJjulfz9KSAO20RwqiqeZmk50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkcYNaYuBzycF94ZHERPBIellk3nxPKu2QeWMDwAf94M0FOAckTXfFRqNuQanzUGRrTccfzaHbS+EvcNr9wMktCrMXTFUhZ8aWoWpAWckKQU/DssyiHMTrXjeuxYAQ+drGavq1yn/NeCfBtrOILGtyWo+3M6Z/2lPmApaFucxg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=diHCGmFr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760953797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rFTTrhJcTtAwy2zqRcI97c2G9J1jPFu8DQY9tZIK604=;
-	b=diHCGmFrFi90oKz2i9vdPD5ZZ6Mf9SPMhiRmgZrOmszySw/IfXmXyJa2lYzJ7UTzpS4sMh
-	FXMUtNS43s25qmSLa3jogjnVKPGaF22NBFP9pqGqrnGI1BahD61XCO6dhjdoeJWRPBvqyc
-	XEnLAQXK5+0FmdaGhcMFCxr7GUDUodo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-197-oHvSwupbMCe6QTYCaRR3MA-1; Mon, 20 Oct 2025 05:49:55 -0400
-X-MC-Unique: oHvSwupbMCe6QTYCaRR3MA-1
-X-Mimecast-MFC-AGG-ID: oHvSwupbMCe6QTYCaRR3MA_1760953794
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4284525aecbso1377502f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:49:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760953794; x=1761558594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rFTTrhJcTtAwy2zqRcI97c2G9J1jPFu8DQY9tZIK604=;
-        b=XfEAzYkW62P510e261uPY5WbBWopvZ4abwtcF09ysJSZ5F6Ts40H9SrcXraHcAYC4n
-         qwgdTS6OK2kq92xRbXheS7f5dBqCF8z5QCyHPjxwGQREdZWgrYiTyHEilddurC7RnsdN
-         tJiNpqvALzZ6vpZ6qvyyDNiBhAYiqTYd3P+RjkOGLqZ866cs+71B3It20ri9bxPU/EMq
-         gikELV7Gol3cdHmncyO/mSJIfvF+/2NCMY/j2zkfcy3bx/bhW4JFKohjoyqnmpwFqGG7
-         czXH1GozmI4FX+erPICU9Rf2ykB3WS3rIRw3I1bIz3edEKrKx7DCemM3ESmwcpFzIyQe
-         //+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+N8kzm197fcF43o2IJ4IWIiVB2lspdoQ8bqVuNSpJXJBbxiqW3M6VscDeEHG7wZWYd65CdAZuqdj1ZKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Z+On+5jzZR3oYs+73FNcNuuzrG9HVR/X5ToSGLMuAZGFFmEt
-	2iZDyd7RQt3jDGN015jRBBFCvc05s2WtaKTG19tT5L0Cn91SRj28rA9bSHMX9hv+qiGnawyqijE
-	ZS+s9UVCAviKIpgeMHmMmNIiCoDmjwhnUjtIJUyJ6Q9MjP3M1ieTt3KdwyUWYJ+iX1Q==
-X-Gm-Gg: ASbGncsLKHKXu7Me2edgxG0cQNSkYKxeaeR/tU2ObWRU1qIJZKCHuFlfmsOOfg1v1R/
-	Xq2i8mkoAFTEjK327q5l8Qqu/+4i9HxL/ldydm6B162LQ/V0V5YcgZeOWWLCxQBdPZKtsZd0NAN
-	hke4uc9anoi6OIsEMfezzoPf0f10D7QZvzPgmMsp4r2fNByxLIOyUe3OaRSFvBFEx+CpkfW+S9I
-	VdYF2x27JHUB4Qu1OWYLSw+jth+ij08K8V9yDS+XUwt0VmKewssBPgMVtyU4Jgsn3hNm+MVzc8Q
-	SXZE3hO7iVffrWZ6ditLIxyNpYbvPHaCaqEWdA1gjbbw054eTf0GbchppakeC8UXYUuw2LPz+lO
-	wA0ofoa6PsHrrB2d08tSbsi/GSpk4lEk=
-X-Received: by 2002:a05:6000:240c:b0:426:ee84:25a1 with SMTP id ffacd0b85a97d-42704daed04mr9407323f8f.38.1760953794293;
-        Mon, 20 Oct 2025 02:49:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEircX9r4vwBahUAWz08Ch5Vp4KLieMSMxL6ClC8S+P82LJBqd/Fmi99o4l9qj8yYvXucqwnw==
-X-Received: by 2002:a05:6000:240c:b0:426:ee84:25a1 with SMTP id ffacd0b85a97d-42704daed04mr9407306f8f.38.1760953793898;
-        Mon, 20 Oct 2025 02:49:53 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a9a9sm14899561f8f.29.2025.10.20.02.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 02:49:53 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:49:51 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/14] sched/deadline: Return EBUSY if dl_bw_cpus is zero
-Message-ID: <aPYFv6YcxqWez8aK@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-5-arighi@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMWNccxmze3P1FbUPOozce3naUmrG/UIdWqGdJZhkbVCMvxv6pzYs30jJWvWOR/sMo+yaaTj8WCwCUT7p5qkbQxoHOi8mJQg33Ubri1jPSrKxbQc99pPGRZdkcgJoYJTh1db2eeNI8uf0kauZ3mdvkmuVhcGQB9DiU8nFp+VCvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R/lZFgN4; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760953802; x=1792489802;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fa3VNUjm5V+YGeMPh0BJjulfz9KSAO20RwqiqeZmk50=;
+  b=R/lZFgN4D4Co5gWLnJh7jqwrY5gKrzQ2Fy751g2igVjPKhaW1PZNw5Qy
+   u3h9boUa94M9lGIMrgcqaS98xIEniJYjwy4C+XtgZlFwiVxxSmTsveOsm
+   hnRPtUMT6bd190Cvr+OnPVYSmLAP6N6HwlkychvOH2tLf0UFFusg6lun8
+   NkHc2ycjCZnxhv63NItCXs4siHX4oFYGl4A9J2lSBTwoHk2Xpkas19wog
+   +eNftRPpK75I0bbGXNaZoD8lOF5EMxvgIOuXCIsYEA1IouJa9pBBLQtjU
+   tKxYC9dHgu8PLLq6PY7HairSb+UpQ8Fg8hU/bnf4sI6UbziV+DIQiAhYZ
+   Q==;
+X-CSE-ConnectionGUID: Ofyz30ZHQLqhR0XQiuJV5g==
+X-CSE-MsgGUID: JDfwpm6BQQ+FzfiQ+/46PQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62985299"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62985299"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 02:50:02 -0700
+X-CSE-ConnectionGUID: woi3yM4DR3Wk6cSjn9EVpA==
+X-CSE-MsgGUID: WBScl/r4STW8LzMLC83pGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="183239412"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.112])
+  by fmviesa006.fm.intel.com with SMTP; 20 Oct 2025 02:49:57 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 20 Oct 2025 12:49:57 +0300
+Date: Mon, 20 Oct 2025 12:49:56 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+	Jack Pham <jack.pham@oss.qualcomm.com>,
+	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] usb: typec: ps883x: Add USB4 mode and TBT3 altmode
+ support
+Message-ID: <aPYFxF8fRhkQcv06@kuha.fi.intel.com>
+References: <20251014-topic-ps883x_usb4-v1-0-e6adb1a4296e@oss.qualcomm.com>
+ <20251014-topic-ps883x_usb4-v1-3-e6adb1a4296e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,40 +82,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017093214.70029-5-arighi@nvidia.com>
+In-Reply-To: <20251014-topic-ps883x_usb4-v1-3-e6adb1a4296e@oss.qualcomm.com>
 
-Hi!
+On Tue, Oct 14, 2025 at 06:06:47PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> This chip can do some more than the driver currently describes. Add
+> support for configuring it for various flavors of TBT3/USB4 operation.
+> 
+> Reviewed-by: Jack Pham <jack.pham@oss.qualcomm.com>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-On 17/10/25 11:25, Andrea Righi wrote:
-> From: Joel Fernandes <joelagnelf@nvidia.com>
-> 
-> Hotplugged CPUs coming online do an enqueue but are not a part of any
-> root domain containing cpu_active() CPUs. So in this case, don't mess
-> with accounting and we can retry later. Without this patch, we see
-> crashes with sched_ext selftest's hotplug test due to divide by zero.
-> 
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  kernel/sched/deadline.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  drivers/usb/typec/mux/ps883x.c | 29 +++++++++++++++++++++++++++++
+>  include/linux/usb/typec_tbt.h  |  1 +
+>  2 files changed, 30 insertions(+)
 > 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 4aefb34a1d38b..f2f5b1aea8e2b 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1665,7 +1665,12 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
->  	cpus = dl_bw_cpus(cpu);
->  	cap = dl_bw_capacity(cpu);
+> diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
+> index 72f1e737ca4b..7c61629b36d6 100644
+> --- a/drivers/usb/typec/mux/ps883x.c
+> +++ b/drivers/usb/typec/mux/ps883x.c
+> @@ -14,15 +14,18 @@
+>  #include <linux/mutex.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/usb/pd.h>
+>  #include <linux/usb/typec_altmode.h>
+>  #include <linux/usb/typec_dp.h>
+>  #include <linux/usb/typec_mux.h>
+>  #include <linux/usb/typec_retimer.h>
+> +#include <linux/usb/typec_tbt.h>
 >  
-> -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-> +	/*
-> +	 * Hotplugged CPUs coming online do an enqueue but are not a part of any
-> +	 * root domain containing cpu_active() CPUs. So in this case, don't mess
-> +	 * with accounting and we can retry later.
+>  #define REG_USB_PORT_CONN_STATUS_0		0x00
+>  
+>  #define CONN_STATUS_0_CONNECTION_PRESENT	BIT(0)
+>  #define CONN_STATUS_0_ORIENTATION_REVERSED	BIT(1)
+> +#define CONN_STATUS_0_ACTIVE_CABLE		BIT(2)
+>  #define CONN_STATUS_0_USB_3_1_CONNECTED		BIT(5)
+>  
+>  #define REG_USB_PORT_CONN_STATUS_1		0x01
+> @@ -34,6 +37,10 @@
+>  
+>  #define REG_USB_PORT_CONN_STATUS_2		0x02
+>  
+> +#define CONN_STATUS_2_TBT_CONNECTED		BIT(0)
+> +#define CONN_STATUS_2_TBT_UNIDIR_LSRX_ACT_LT	BIT(4)
+> +#define CONN_STATUS_2_USB4_CONNECTED		BIT(7)
+> +
+>  struct ps883x_retimer {
+>  	struct i2c_client *client;
+>  	struct gpio_desc *reset_gpio;
+> @@ -95,6 +102,8 @@ static int ps883x_configure(struct ps883x_retimer *retimer, int cfg0,
+>  
+>  static int ps883x_set(struct ps883x_retimer *retimer, struct typec_retimer_state *state)
+>  {
+> +	struct typec_thunderbolt_data *tb_data;
+> +	const struct enter_usb_data *eudo_data;
+>  	int cfg0 = CONN_STATUS_0_CONNECTION_PRESENT;
+>  	int cfg1 = 0x00;
+>  	int cfg2 = 0x00;
+> @@ -120,6 +129,18 @@ static int ps883x_set(struct ps883x_retimer *retimer, struct typec_retimer_state
+>  				break;
+>  			}
+>  			break;
+> +		case USB_TYPEC_TBT_SID:
+> +			tb_data = state->data;
+> +
+> +			/* Unconditional */
+> +			cfg2 |= CONN_STATUS_2_TBT_CONNECTED;
+> +
+> +			if (tb_data->cable_mode & TBT_CABLE_ACTIVE_PASSIVE)
+> +				cfg0 |= CONN_STATUS_0_ACTIVE_CABLE;
+> +
+> +			if (tb_data->enter_vdo & TBT_ENTER_MODE_UNI_DIR_LSRX)
+> +				cfg2 |= CONN_STATUS_2_TBT_UNIDIR_LSRX_ACT_LT;
+> +			break;
+>  		default:
+>  			dev_err(&retimer->client->dev, "Got unsupported SID: 0x%x\n",
+>  				state->alt->svid);
+> @@ -135,6 +156,14 @@ static int ps883x_set(struct ps883x_retimer *retimer, struct typec_retimer_state
+>  		case TYPEC_MODE_USB3:
+>  			cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+>  			break;
+> +		case TYPEC_MODE_USB4:
+> +			eudo_data = state->data;
+> +
+> +			cfg2 |= CONN_STATUS_2_USB4_CONNECTED;
+> +
+> +			if (FIELD_GET(EUDO_CABLE_TYPE_MASK, eudo_data->eudo) != EUDO_CABLE_TYPE_PASSIVE)
+> +				cfg0 |= CONN_STATUS_0_ACTIVE_CABLE;
+> +			break;
+>  		default:
+>  			dev_err(&retimer->client->dev, "Got unsupported mode: %lu\n",
+>  				state->mode);
+> diff --git a/include/linux/usb/typec_tbt.h b/include/linux/usb/typec_tbt.h
+> index 55dcea12082c..0b570f1b8bc8 100644
+> --- a/include/linux/usb/typec_tbt.h
+> +++ b/include/linux/usb/typec_tbt.h
+> @@ -55,6 +55,7 @@ struct typec_thunderbolt_data {
+>  
+>  /* TBT3 Device Enter Mode VDO bits */
+>  #define TBT_ENTER_MODE_CABLE_SPEED(s)	TBT_SET_CABLE_SPEED(s)
+> +#define TBT_ENTER_MODE_UNI_DIR_LSRX	BIT(23)
+>  #define TBT_ENTER_MODE_ACTIVE_CABLE	BIT(24)
+>  
+>  #endif /* __USB_TYPEC_TBT_H */
+> 
+> -- 
+> 2.51.0
 
-Later when? It seems a little vague. :)
-
-Thanks,
-Juri
-
+-- 
+heikki
 
