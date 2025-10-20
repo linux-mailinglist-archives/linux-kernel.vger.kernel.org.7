@@ -1,219 +1,203 @@
-Return-Path: <linux-kernel+bounces-860844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEA8BF120C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D29BF1210
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CDB5034BB01
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:22:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E881A4EDE77
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81A13112BB;
-	Mon, 20 Oct 2025 12:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2CA1D5170;
+	Mon, 20 Oct 2025 12:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="FaHjD9IK"
-Received: from mx-relay18-hz2.antispameurope.com (mx-relay18-hz2.antispameurope.com [83.246.65.160])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UYiPj0CK"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A012FDC20
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=83.246.65.160
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760962928; cv=pass; b=QP/1RlN+jWP5WhdN+J4kbQmOdISd2yF+cEpK2hsq+OxAKQvjDvw0Ywt762dTzeU0znt7wHQDRfJ8/xFoWTjygMRJ/Zh0e78LiMKJVNeGTyh/KWFbGNnZlZACS4qJluVdcFsmlNoTdoRTCnj4jpPwVTzHeZml6HAM+lmJg3FGCdM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760962928; c=relaxed/simple;
-	bh=XrS9PhrVy8J4MNVTtRttJ7PJLldirtTrN2dE9PctUhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S2o2lJ6PfAYpaABWi3tpsmWqYaNVaHWZLo/f3H89VyNq9bUk4MQP3sqixGZR7/U8alaG6GLEA2ZP8KV86c+VvE1T7tpGiBLAM26JB4URLKdnHwzYlP0aenSvU7i723zC5CCq3Xxt5vv/FOMncWaLVVXaDmaDWJoRIg1/VzJErKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=FaHjD9IK; arc=pass smtp.client-ip=83.246.65.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate18-hz2.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=FEA4yVHPGp0l+38xITknJy4FTIA46F5K1JVqc30O/jg=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1760962851;
- b=XfNIf6NQZRD8DfUQXzvV8INu1NtJXr6527UndwhPZ7DIBW68uR+dbLJQANKCmz6LjGqHaU42
- EGSlARbtyUk8k46FOI/Dby3posYB/7M4KErRhZbuI6UPHs1YOtcRacjZUHrHG7A2Y1/2tRhtpjP
- iYwhakQ4+Mj7IdaYm0W1pWJDK7acR7CD21CsDUDiems/Ywj6m5A15bCQAbV7+I+9DOcygQ9ZUxh
- BnSvYn16utZoO0SIqc/ugfGCmDgAffplCRsmEHbNdXEfvvWrz2s2NX/hwJCwv3gI7u0uPjQPJx8
- e32TewTEeWMdZCMvgo6OtC2De7FqZpa2zeLl0hxUV2AVA==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1760962851;
- b=kI43ryCx9W4sWzsow+mv5jBu2KGGdOqi3dNWsw/y3pZlV6Wb+BU5HywnRq7UNFUCR2SDcMIR
- gLzAEFGI3pTQOSsEY2quYmlahL5w74fOEG/k5TxQ36rNvrpRHnDLEYdP5M+PFNlGzLNa2wG6ffP
- 3sWOyXIkIpJCB3XeM9fzqRTI+DkiwSgD/bQfl6GQ43Hg9LXpel18Dnn5h4YHXJ+bqvVahSMXzGL
- I4YY0Dh6dxINtUHNXAXqHzkH4v5aaOJDCAqAYjCBAfmyN+nlrQiQTNY0Q4RQ2/YBEKiL8yN3Mmy
- jCZvFegTSOThSqDwWcE5I1/DNIDOEbSY/OE3jkaYyV3BQ==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay18-hz2.antispameurope.com;
- Mon, 20 Oct 2025 14:20:51 +0200
-Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 1FFB1A4118D;
-	Mon, 20 Oct 2025 14:20:36 +0200 (CEST)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
- laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
- Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>,
- Fazla Mehrab <a.mehrab@bytedance.com>,
- Chen Zhongjin <chenzhongjin@huawei.com>,
- Puranjay Mohan <puranjay@kernel.org>, Dylan Hatch <dylanbhatch@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Masahiro Yamada <masahiroy@kernel.org>
-Subject:
- Re: [PATCH v4 08/63] kbuild: Remove 'kmod_' prefix from __KBUILD_MODNAME
-Date: Mon, 20 Oct 2025 14:20:35 +0200
-Message-ID: <5936475.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To:
- <f382dddad4b7c8079ce3dd91e5eaea921b03af72.1758067942.git.jpoimboe@kernel.org>
-References:
- <cover.1758067942.git.jpoimboe@kernel.org>
- <f382dddad4b7c8079ce3dd91e5eaea921b03af72.1758067942.git.jpoimboe@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E1430F555;
+	Mon, 20 Oct 2025 12:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760962936; cv=none; b=sHVVd7yTg4xvPKqCcj+Sj9y0Ix1hZMaDru/yBQzF4AdjgAHdAiUdQA9MCHmwpl8EMcDIN/XMP4JjhyYklkdYzkliyZErlLr9iR+k9pi7TOcyYGwj7oelnyQ7HOSk64WF/N7LqVg5+Sts3uQqvCpD1sPWnC5AOARsjPGWXGAkPWU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760962936; c=relaxed/simple;
+	bh=of3wZAUHKMfCVZYVBcIRSyBLTUb2ezn0Z1hO3nSqfII=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=IxlUqrFTmvmIT3Pikbm+hImgtjIrkG6oI9v/2oTZKMe9x6Qt2xGymuRHWM+fNnlxQA0G37ykrG3O0RoVDzTuY1zs7aPrfDa3BnAfKbV815+vnTLYFleI0MYY3jdVnWOBCzbvsgIXyUMIXgYrzinr0DIdP/QB5mHO7xIrnfpDISw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UYiPj0CK; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JMhEtm001343;
+	Mon, 20 Oct 2025 12:21:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=cNpXfp
+	oUFXhapoL9sTv4eIMTnzU91hptS30+pXpGrF8=; b=UYiPj0CKqgZy73ViJ56a0u
+	3jJrk/2vG9i7ESpwny3f8CRJo2DcQEbRfhsK/CNH5AEECg2swVN8EHyj6ZgRSw0z
+	zYyrgsaI+0oPRsIjYn3oLbNbV1X9I+arvl55c9OMmDCp7TQlRYQqEGKITnTtvDA0
+	0Z5sbU3Dh8nXS9bH9A4WNH4BpYHsaE5Qz5CmvCM8D4aG6s+AH5RdDQVPxZCo1c6Z
+	N45NCvyNJ9TmKWUoVSsUxmks/KM6Hj3SVXv+1XNLWxDHQQRoYbQDLVo1XzuodCBN
+	ZJFjNuhPfPwbG/5GhsuyBM5zi3/UXpdqiJ86pElu1KI75ONnfRwVjoF7GXN0H/3g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32h88pt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 12:21:53 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59KCIaFx030654;
+	Mon, 20 Oct 2025 12:21:52 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32h88pq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 12:21:52 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBxp43002306;
+	Mon, 20 Oct 2025 12:21:52 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqej5dbr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 12:21:51 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KCLp2029557300
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 Oct 2025 12:21:51 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E39558059;
+	Mon, 20 Oct 2025 12:21:51 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EFAC558063;
+	Mon, 20 Oct 2025 12:21:49 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.31.144])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 20 Oct 2025 12:21:49 +0000 (GMT)
+Message-ID: <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fall back to default kernel module signature
+ verification
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org,
+        Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>,
+        Karel Srot <ksrot@redhat.com>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
+        open list	 <linux-kernel@vger.kernel.org>
+In-Reply-To: <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
+References: <20250928030358.3873311-1-coxu@redhat.com>
+	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
+	 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
+	 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
+	 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
+	 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
+	 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
+	 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 20 Oct 2025 08:21:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay18-hz2.antispameurope.com with 4cqvdx0wRjz2lHKX
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:e0529b78e306560c4cb6295130408c3b
-X-cloud-security:scantime:2.046
-DKIM-Signature: a=rsa-sha256;
- bh=FEA4yVHPGp0l+38xITknJy4FTIA46F5K1JVqc30O/jg=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1760962850; v=1;
- b=FaHjD9IKWWFa/3kBLISQqlIj/j+xU8f3rhZHKPqzciX0QG+qZCaAapE+yrvnQWLOyB1o9Fvz
- kq96cJtEfykOM/XAp3knSs9/o4SEXRbw2bT/4j6R0i8z4B67x3X9SU+IlCt8/e8XeAYdmHFOh19
- 9gwO87LRqC78Hem1UOdFIiWCe92G1JDwklZOVcDZWg3MovJWhMBZ1T7wq1Zu2xn5olRz0CuMh/V
- mgTmlDtTy51hA6VekUzFw5HPSEJghCOKniF2xKKP6JVRs8KugUsP11ZSFivyHfec2PPiUNjpgkT
- nM2yGsWEPCL/ygV1VTGNsGSZxsYtrnagDQ3l0fejORnlg==
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXx2sXdzBFqE/3
+ Chand0NEWi5yJUE1JpE90Efp/BTQYh2L0GvsDXlVKVvAPAWQb+tBY5SlZgKUZMY03h+XYauSXu4
+ ECGSrrtVP9zWs943kOlEDzrEmYfPPz3vXQVONhvGKfehCJPxeSNfmbqe6wp+GzcSkUuSdITksRS
+ 0EA9isfnRfH0+6efN/MWQL+8C4gWMWpwPfwA0UDU84cTksGlsZtj5wWREEuazm23c1unrrusamj
+ FiCKb1fjOIf46UIVzB5sUWusHKQNPRly7vaEjzHrw2y0AJWLde8RpTjms2P1NkAOufzCdJJGF7O
+ 9oo4UKLaNHEmEs3eBrdnCs2X/BZkZ2EHCZoYguXWWA3F0ea65tIbLqVkUg9OJOy5aAAuq57ZQFn
+ 3zf/Kh0Nmv/cKZsCmlbNzW5tuCJi+g==
+X-Authority-Analysis: v=2.4 cv=OrVCCi/t c=1 sm=1 tr=0 ts=68f62961 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=gQ7tohhNsIfWToB5Hf4A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: -wQ3BsphU_0TP5q_Rdhw-GwkOHurO_Lm
+X-Proofpoint-ORIG-GUID: FbuxV6urzwBcOUH24ky1XvU7_oMffsb7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ clxscore=1015 bulkscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Hi,
-
-Am Mittwoch, 17. September 2025, 18:03:16 CEST schrieb Josh Poimboeuf:
-> In preparation for the objtool klp diff subcommand, remove the arbitrary
-> 'kmod_' prefix from __KBUILD_MODNAME and instead add it explicitly in
-> the __initcall_id() macro.
+On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
+> > > > 2. Instead of defining an additional process_measurement() argument=
+ to identify
+> > > > compressed kernel modules, to simplify the code it might be possibl=
+e to define a
+> > > > new "func" named COMPRESSED_MODULE_CHECK.
+> > > >=20
+> > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPRESSE=
+D_MODULE_CHECK
+> > >=20
+> > > I also thought about this approach. But IMA rule maps kernel module
+> > > loading to MODULE_CHECK. If we define a new rule and ask users to use
+> > > this new rule, ima_policy=3Dsecure_boot still won't work.
+> >=20
+> > I don't have a problem with extending the "secure-boot" policy to suppo=
+rt
+> > uncompressed kernel modules appended signatures, based on whether
+> > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to the=
+ existing
+> > MODULE_CHECK rule.
 >=20
-> This change supports the standardization of "unique" symbol naming by
-> ensuring the non-unique portion of the name comes before the unique
-> part.  That will enable objtool to properly correlate symbols across
-> builds.
+> I assume once the new rule get added, we can't remove it for userspace
+> backward compatibility, right? And with CPIO xattr supported, it seems
+> there is no need to keep this rule. So if this concern is valid, do you
+> think we shall switch to another approach i.e. to make IMA support
+> verifying decompressed module and then make "secure-boot" to allow
+> appended module signature?
+
+Yes, once the rule is added, it wouldn't be removed.  As for "to make IMA
+support verifying decompressed module", yes that might be a better solution=
+,
+than relying on "sig_enforce" being enabled. IMA already supports verifying=
+ the
+appended signatures.  A new IMA specific or LSM hook would need to be defin=
+ed
+after module_decompress().
+
+Remember based on policy, IMA supports:
+1. verifying the signature stored in security.ima xattr
+2. verifying the appended signature (not for compressed kernel modules)
+3. verifying both the xattr and appended signatures
+4. none
+
+To prevent 3 - verifying both types of signatures, the IMA arch specific po=
+licy
+rule only adds the "appraise func=3DMODULE_CHECK ..." rule if CONFIG_MODULE=
+_SIG is
+NOT enabled.  Calling set_module_sig_enforced() from ima_appraise_measureme=
+nt()
+to set sig_enforce could inadvertently result in requiring both the xattr a=
+nd
+the appended signature kernel module verification.  To prevent this from
+happening, "sig_enforce" should not be set, only verified in
+ima_appraise_measurement().
+
 >=20
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Another thought is to make CPIO support xattr. Today I realize that
+> ima_policy=3Dsecure_boot can also cause failure of loading kdump kernel.
+> So the issue this patch tries to resolves has much less impact than I
+> thought. Maybe we can wait until CPIO xattr support is ready? I'll help
+> review and test Roberto's patches if this is the best way forward.
 
-Starting with this commit 6717e8f91db71 ("kbuild: Remove 'kmod_' prefix
-from __KBUILD_MODNAME") in next-20251020 I don't get any
-module aliases anymore.
-modinfo spi-fsl-dspi.ko returns:
-> filename:       /work/repo/linux/build_arm64/drivers/spi/spi-fsl-dspi.ko
-> alias:          platform:fsl-dspi
-> license:        GPL
-> description:    Freescale DSPI Controller Driver
-> depends:       =20
-> intree:         Y
-> name:           spi_fsl_dspi
-> vermagic:       6.18.0-rc1+ SMP preempt mod_unload modversions aarch64
+I'm not sure of the status of the CPIO patch set.  Roberto?
 
-but it should be like this:
-> filename:       /work/repo/linux/build_arm64/drivers/spi/spi-fsl-dspi.ko
-> alias:          platform:fsl-dspi
-> license:        GPL
-> description:    Freescale DSPI Controller Driver
-> alias:          of:N*T*Cnxp,s32g2-dspiC*
-> alias:          of:N*T*Cnxp,s32g2-dspi
-> alias:          of:N*T*Cfsl,lx2160a-dspiC*
-> alias:          of:N*T*Cfsl,lx2160a-dspi
-> alias:          of:N*T*Cfsl,ls2085a-dspiC*
-> alias:          of:N*T*Cfsl,ls2085a-dspi
-> alias:          of:N*T*Cfsl,ls2080a-dspiC*
-> alias:          of:N*T*Cfsl,ls2080a-dspi
-> alias:          of:N*T*Cfsl,ls1046a-dspiC*
-> alias:          of:N*T*Cfsl,ls1046a-dspi
-> alias:          of:N*T*Cfsl,ls1043a-dspiC*
-> alias:          of:N*T*Cfsl,ls1043a-dspi
-> alias:          of:N*T*Cfsl,ls1028a-dspiC*
-> alias:          of:N*T*Cfsl,ls1028a-dspi
-> alias:          of:N*T*Cfsl,ls1012a-dspiC*
-> alias:          of:N*T*Cfsl,ls1012a-dspi
-> alias:          of:N*T*Cfsl,ls1021a-v1.0-dspiC*
-> alias:          of:N*T*Cfsl,ls1021a-v1.0-dspi
-> alias:          of:N*T*Cfsl,vf610-dspiC*
-> alias:          of:N*T*Cfsl,vf610-dspi
-> depends:
-> intree:         Y
-> name:           spi_fsl_dspi
-> vermagic:       6.18.0-rc1+ SMP preempt mod_unload modversions aarch64
-
-Reverting does not work on all building platforms, it works on one but fails
-on another one.
-
-Best regards
-Alexander
-> ---
->  include/linux/init.h | 3 ++-
->  scripts/Makefile.lib | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/linux/init.h b/include/linux/init.h
-> index 17c1bc712e234..40331923b9f4a 100644
-> --- a/include/linux/init.h
-> +++ b/include/linux/init.h
-> @@ -200,12 +200,13 @@ extern struct module __this_module;
-> =20
->  /* Format: <modname>__<counter>_<line>_<fn> */
->  #define __initcall_id(fn)					\
-> +	__PASTE(kmod_,						\
->  	__PASTE(__KBUILD_MODNAME,				\
->  	__PASTE(__,						\
->  	__PASTE(__COUNTER__,					\
->  	__PASTE(_,						\
->  	__PASTE(__LINE__,					\
-> -	__PASTE(_, fn))))))
-> +	__PASTE(_, fn)))))))
-> =20
->  /* Format: __<prefix>__<iid><id> */
->  #define __initcall_name(prefix, __iid, id)			\
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 1d581ba5df66f..b955602661240 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -20,7 +20,7 @@ name-fix-token =3D $(subst $(comma),_,$(subst -,_,$1))
->  name-fix =3D $(call stringify,$(call name-fix-token,$1))
->  basename_flags =3D -DKBUILD_BASENAME=3D$(call name-fix,$(basetarget))
->  modname_flags  =3D -DKBUILD_MODNAME=3D$(call name-fix,$(modname)) \
-> -		 -D__KBUILD_MODNAME=3Dkmod_$(call name-fix-token,$(modname))
-> +		 -D__KBUILD_MODNAME=3D$(call name-fix-token,$(modname))
->  modfile_flags  =3D -DKBUILD_MODFILE=3D$(call stringify,$(modfile))
-> =20
->  _c_flags       =3D $(filter-out $(CFLAGS_REMOVE_$(target-stem).o), \
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Mimi
 
 
 
