@@ -1,150 +1,105 @@
-Return-Path: <linux-kernel+bounces-861168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69F5BF1F7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C69BF1F84
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF3C3AA8DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2A5189A069
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F90F230274;
-	Mon, 20 Oct 2025 15:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12C3227BB5;
+	Mon, 20 Oct 2025 15:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I3IExKW5"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="oXiRzAPm"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC5D223DD0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760972449; cv=none; b=Wb6t7ohi4wJlGoze250mIqwVfKfJMGnUO9e3hVUisg/jtUnh/zI7wAq+OM94/P63KmG+LePU3c0CtIN0MlG5pmvCsQVYiRJB++oAzMiEwxcLHSYSEgn0S0Mek+hcxwgMM810WNIGXce9p2/pvTvZjWLjHUmpUYtK8yzdiyYzRac=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760972449; c=relaxed/simple;
-	bh=n4Tfnv/g7tAgw+TUNNP2SjpBI9kaU8j/Un3STFoNKcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pcw7/zEV58m3txLKlYU7aANpKYiq5lc+bkVicIA1fU10rQYy+/r923CISVHC2EzVYPQLySpX1JgFKhp+hjXvxWLWYok7Ia1oJp67gWuZLM87UvowtL4h4LEu85CM4Mbkqzwza38KsiSD8zLrZay/iE01q6dY4gVRoOfapSFrpfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I3IExKW5; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A18F31A1529;
-	Mon, 20 Oct 2025 15:00:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 68FC6606D5;
-	Mon, 20 Oct 2025 15:00:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ABE47102F23C5;
-	Mon, 20 Oct 2025 17:00:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760972443; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZrW1sfJQpQwPdHs8qZ2VHLQbfGXdmToaCvZeT5M1MiI=;
-	b=I3IExKW5fxSKfSLxUjGJvVfgi9rNd5IO8P6DEagQYrunTkuWtwe36oWjOt9w5iR5gHARz/
-	rFTtQzaaO6WFbhSnd7NvbeIORFI68BHNgvcx7iRakoEh7Zh+njRyKv7zDqb/E4xTMbVq57
-	ws8wE6XVLSxc3aYwg3kvDNSMtBFUO7QtB85v5YL1O0tl1viY3fBsoxPNjn5NcatWEouswZ
-	nksVnscfnnl/U4xTMqqs2dnUy1Vwq69HAD5fCZUTpzo0AO4YlfasSttdb/uNYr8q27ATgT
-	HR6HI1k9y1iQD3cevXlOhQTVsfrnzrFDiPScPrC5Ujqu64sHiXOwceN5pbKWrw==
-From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
-To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jarkko Nikula <jarkko.nikula@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-Subject:
- Re: [PATCH 2/3] i2c: designware: Enable transfer with different target
- addresses
-Date: Mon, 20 Oct 2025 17:00:29 +0200
-Message-ID: <22296119.4csPzL39Zc@benoit.monin>
-In-Reply-To: <f5e7bb0d-205b-4c10-8c31-bf60e1e42b73@kernel.org>
-References:
- <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
- <20251017-i2c-dw-v1-2-7b85b71c7a87@bootlin.com>
- <f5e7bb0d-205b-4c10-8c31-bf60e1e42b73@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F381A0B15;
+	Mon, 20 Oct 2025 15:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760972497; cv=pass; b=DO6bPHSPrZx5ESwJLnxliGnPoH6h82qqoLOTf5VWXrYdIOZId2itfKS9p25o5te5jsQXwzgZrsunHoITwOrCkcrlBoZplmfj8uS10VPZ6tzMHuBohQjBOnB74S30kIvaOWszaKocNLusXX4hWezfI7Yxc8SPQPGI8SlakTjgdAY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760972497; c=relaxed/simple;
+	bh=uHwQSbSvwX77jFTrZuHSBtTMfOYK7bMh93S8+FB93qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jAFG3HeF870C6nD9IIanY3pHZrTH6NwBvcJOvuTdTsjC7U0dzN1Ss1Ah2cLRBLOiiizeTw2rgI3byHnxVlAxTiq9T6r0KkYLglvuUfanZ503FmSbZthEgLtWhJAENms9cDoXHU4Db5t5Ma+Fmg2l2AgowRhnfZ/2T6qi4QB3C3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=oXiRzAPm; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from chcpu18 (191host009.mobilenet.cse.ust.hk [143.89.191.9])
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59KF0w7O544379
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 23:01:04 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760972464; cv=none;
+	b=d9Llu4a+NQAsoR4s9wTSmASeUXXkaX1gOjN7V29sj6ZZVHpOVutZFPgZZVXBqNVnmeEX0lmpS3EGfnHlBfnm7eElz2kIwxAN8DdrouzPkCp2BmqNGGSi615oKhtl9msKEbXrDsganqBZ+IwSCX/VYNBPYUYfU9zx4MdG8tV2f7I=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1760972464; c=relaxed/relaxed;
+	bh=TLZbZUEJ2i74b5WPOqtLdJuj23kXTE0/xOLQ3/JJXd8=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=dt4DLsTLyFRWWV70K512o2GW4xBXFYvXsDhqyhQ0hJ67Gbb6UqGTKguztmFGMcqFbCKmMQebnwBIqVn4ZjSloiIcll1dVNqaWXCenRNGdXQqGv0gKHU7NHhhrOUiy1saasMCpp+6+LqnbgLhs4zVphPpa5gbf6heL6MvuvVy0es=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1760972464;
+	bh=TLZbZUEJ2i74b5WPOqtLdJuj23kXTE0/xOLQ3/JJXd8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oXiRzAPmO3uj712OISpZTmgEUj184xy74ga6vszL+BmTkYCIu6V/KvVFwu+fUQh2e
+	 vR0WJdE/Hnpm3dd7Qh40y6ir/rVPjPf+DgdmFORZzH3k4BGotPgtQvv5/EgYOnObgL
+	 AANz2gipnL7SReT00eu8RqK1znKjOHVdfkhLoYRA=
+Date: Mon, 20 Oct 2025 15:00:53 +0000
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>
+Cc: Yuezhang Mo <yuezhang.mo@sony.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] exfat: fix refcount leak in exfat_find
+Message-ID: <aPZOpRfVPZCP8vPw@chcpu18>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Env-From: sfual
 
-Hello Hans,
+Fix refcount leaks in `exfat_find` related to `exfat_get_dentry_set`.
 
-On Monday, 20 October 2025 at 11:38:38 CEST, Hans Verkuil wrote:
-> Hi Beno=C3=AEt,
->=20
-> On 17/10/2025 16:59, Beno=C3=AEt Monin wrote:
-> > When i2c_dw_xfer() is called with more than one message, it sets the
-> > target address according to the first message. If any of the following
-> > messages have a different target address, the transfer finishes with
-> > an error.
-> >=20
-> > Instead, if the next message has a different target address, wait until
-> > all previous messages are sent and the STOP condition is detected. This
-> > will complete the current part of the transfer. The next part is then
-> > handled by looping in i2c_dw_xfer(), calling i2c_dw_xfer_init() and
-> > i2c_dw_wait_transfer() until all messages of the transfer have been
-> > processed, or an error is detected.
-> >=20
-> > The RESTART bit is now set after the first message of each part of the
-> > transfer, instead of just after the very first message of the whole
-> > transfer.
-> >=20
-> > For each address change, i2c_dw_xfer_init() is called, which takes care
-> > of disabling the adapter before changing the target address register,
-> > then re-enabling it. Given that we cannot know the value of the
-> > I2C_DYNAMIC_TAR_UPDATE parameter, this is the only sure way to change
-> > the target address.
->=20
-> I have the problem described here:
->=20
-> https://lore.kernel.org/linux-i2c/ee6afdd7-3117-43cd-831f-e0ec5ee46f46@ke=
-rnel.org/
->=20
-> And it looks like this patch is intended to solve that problem (one trans=
-action
-> with two writes to different target addresses).
->=20
-> I tried this patch, but it doesn't work. Instead I get a time out:
->=20
-> [  111.695238] i2c_designware 1f00074000.i2c: controller timed out
->=20
-> Is it indeed meant to solve the problem I have or is it addressing another
-> issue?
->=20
-=46or your particular case, that will not help reaching the other segments =
-as
-we wait for a STOP before changing the target address. So, it should not
-fail but do a write to segment 0 in your eeprom.
+Function `exfat_get_dentry_set` would increase the reference counter of 
+`es->bh` on success. Therefore, `exfat_put_dentry_set` must be called
+after `exfat_get_dentry_set` to ensure refcount consistency. In 
+`exfat_find`, two branchs fail to call `exfat_put_dentry_set`, leading
+to possible resource leaks.
 
-> I'm happy to help test patches.
->=20
-Can you enable debug in i2c-designware-master to see which transaction
-is failing?
+Fixes: 82ebecdc74ff ("exfat: fix improper check of dentry.stream.valid_size")
+Fixes: 13940cef9549 ("exfat: add a check for invalid data size")
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+---
+ fs/exfat/namei.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-=2D-=20
-Beno=C3=AEt Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 745dce29d..083a9d790 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -646,11 +646,13 @@ static int exfat_find(struct inode *dir, const struct qstr *qname,
+ 	info->size = le64_to_cpu(ep2->dentry.stream.size);
+ 
+ 	if (info->valid_size < 0) {
++		exfat_put_dentry_set(&es, false);
+ 		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
+ 		return -EIO;
+ 	}
+ 
+ 	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
++		exfat_put_dentry_set(&es, false);
+ 		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
+ 		return -EIO;
+ 	}
+-- 
+2.39.5 (Apple Git-154)
 
 
