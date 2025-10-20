@@ -1,182 +1,258 @@
-Return-Path: <linux-kernel+bounces-861203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4985CBF20DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:18:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FA5BF20E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34F244F6E30
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D4942371F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6BD2627F9;
-	Mon, 20 Oct 2025 15:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A9229B38;
+	Mon, 20 Oct 2025 15:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EomVYDqA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p5s+UHdn"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA341F461A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9741D6187
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973506; cv=none; b=RRMKvqTDzIf1t/UlS1+fN+PBzuNoLRITeLeDaPESsyKWPeU84XvmM9D9ikzCRjuKvGTFqTCAC2i1I4a9/6h9ERixNT3PB5nadk0S8yz+d+KQ/a+YggSMF4M7rGkKqQ9NMzwT/hDNCDYKTlSIJfPnIrrPOYEow0p/F7kFWZdRmKU=
+	t=1760973523; cv=none; b=fJJFptoo190Db2v47/uWabo+5gKPwAMTCHrUQAhalkDPisWwDcas3giQ9o9wiVV5PywqVTSaV0Jc4b3P4u8/FAxeaka1He3VutRsRTcFuVZdBmQ/JIQcB1pLuw/rye+YUXAqntisME+viXAs18VUJsn5mL48thcDHM3V472g87s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973506; c=relaxed/simple;
-	bh=vxeZU8BIk7yt5+gefMlL/GNoEVo0y7v8NbR4bXP2d6A=;
+	s=arc-20240116; t=1760973523; c=relaxed/simple;
+	bh=sBOyJqsB1c2Ss9f9FD0cz64gIKVi5nYXlDfO/vGVdoI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0z02MZ005Ik7ZXlxWOsilKw7i2ZQNvMPtYNrldKtYXy+EGb7s5EusTSg+bjDdI3Zy/pQ4gRSd92hMAalW8/AUM7MtEOOdetoY7iLXcZTlzaN3fn565BcKUDnEGABUTfWzq2ZeeHQ6+hiKVmu4uP73xVBviAiYRjvIVIC3fwDh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EomVYDqA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760973504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=376JEJXXuhTvk7uwIbwEp0J9xIBggDxY0JbNoKssPdI=;
-	b=EomVYDqAmKLyV8pm+NHzq4YWOnMpiI37iPRmM7T6OyYeWgpxMVoMFVIIfXdAZHx5TtEKOv
-	KT7ztxm+e0xziVO5JjiajdxrR6+kPiA5TMI9baQgHBb/HNXOqDdcRSwJI8BawkKwuoXSXd
-	1zPDqyiqYv3JanRruP+EPYSJz4Hf7oo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-SPLa6nX0MqG6BDyiQWw_SQ-1; Mon, 20 Oct 2025 11:18:22 -0400
-X-MC-Unique: SPLa6nX0MqG6BDyiQWw_SQ-1
-X-Mimecast-MFC-AGG-ID: SPLa6nX0MqG6BDyiQWw_SQ_1760973501
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47105bfcf15so24641295e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:18:22 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwlE06bwL5Ol/x7X9auam0rhJJfRjTdvNAr/x9vfqyxGufYo0hj6IeErksuujmQl+a3gAZXxmPcMDc6dDe0+soywVqGFXOmvPElyTMoe2E8wZscvHlHn3f5BaVu6npfezLuzxXIpBM8NBE6hbSkCBdXOnA6jpWAsmwazc06IU88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p5s+UHdn; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-781251eec51so3525941b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760973521; x=1761578321; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EGiTe4HXDqqZ4iZipJXi8jfv7cy2lBX3+OM+ZyQ6XbI=;
+        b=p5s+UHdnEm3t3i5zgQBncLoQw+Ieh39QL587NYXN31Ydywm0pvDO3Cq5aWAZ44+ZPM
+         2FAVhxo1pJeJj2HzyKFsTbq8FQCcR4mJl+JI8EYX7CPZwbVa3BSGjzTGyOk50OsJpZ17
+         Mwt17GT09n1LO7l1dujIcc5V7R1T4cgRqswovLRIs4icgx8J/Lk4MFB1QZyvsMurFENe
+         h6tKykmUoqsAW+UiO0lt+ZSMDN+voyIMWMb+Bl3PsDPwSPVrn5hXbPR2irz3XHWq/EUJ
+         YeOCkfN6c2NupjODG5H0wBoFSxSmadFU68+ghy3j70EoFdnBJhCz7MQFxZSGxewcIY6L
+         rWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760973501; x=1761578301;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=376JEJXXuhTvk7uwIbwEp0J9xIBggDxY0JbNoKssPdI=;
-        b=wKwoQHUY1Ddvo3odKJCFVXc1y+LFR+yLn8xtsVPLnyNrGYimiBSJYvDAz2DUJGTNR1
-         J4tTae/5Pug22pcOdJDViMRR/Aob93qtb1snX45/a2i4mq9Yl4ILYTSQvrtQza3zVEc0
-         +T2FOsc//Ba54ydjyTlRpy0qauTB3wGjEGWeN9LDJW+HK43RXMKICAOiuPFJW7abgBMD
-         +5IyBIbzV3XYw6yI//P4jOv/14k7A7EA8lhrlr/RJODCOj2NxXngIQ2hFlJJkEuDDgvZ
-         ETHw26KPagf+frx9IByy80Zgb3+XYKSeNmsb8wlIBhTKdK/ztzIdpGQZAhbvNzVtxbaG
-         wlOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5CYXT+CERfrUYPfR1edH08ZFLOPnOHb60H4y5Ga+yz/zz0lBN8Sl5OODCJQUxhtV/oNNq1opu08qpJNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOu/9dQKFrL5N/5ieRdcBSeoaHOTO/I2Hj7f1J3dzbfXeLgAh/
-	8ySARBp7wDdIw+8hjJMaG85YtUCD7UkUYtV5jxX0u+B6LIdRmqW7YQDXlIvDhTEK9lidIfZuMHy
-	2kKxUiyfvKdVC0mDF2GT1xuqrzVxSO4+qitRtYwvDccS//jEyhkNhwJRIEySGGScmLWh0UTo0NQ
-	==
-X-Gm-Gg: ASbGncvuCfh8M5GDWwJVORhm1Ri4HJFchRsQrIC+7ODBS/IDXjGEEZ0OOAQDkJLQo6J
-	cdWJLoq9AX4ikU9RJVEfrrNo/ZjrKHPqIKxRDdK3FBcs4EImLXHd5kQ40ZYLZXVTQnCUPe9ZrX5
-	Sewn0PumksznByNa4YfYpN8pV+D5rrVyznAyhcTcReIBmO2eNSJQf8PZF7MbDeH1ffm7fiblwC2
-	3FnuJNLwYDZ7NfyNHh0UQdnvLjU0H5M8GKqQyD2HOnHePCEyvElst0U5294hkJ8Sxm9PZ5qS5IK
-	sUJKRuZzHrM86IJWVztunsoilS3O+w51cOEE4UlFGyi94SqM0lTOAddz7MyzxQ7Rt6PM
-X-Received: by 2002:a05:600c:3f08:b0:470:ffd1:782d with SMTP id 5b1f17b1804b1-47117876a19mr111618955e9.6.1760973501154;
-        Mon, 20 Oct 2025 08:18:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETLd9da+Ou77Y8StkQ2q014OfnaoUD42+rUXfxhJ8RF6vKnDc5lJ9/jBhXf+wCuZ6ndVoZBw==
-X-Received: by 2002:a05:600c:3f08:b0:470:ffd1:782d with SMTP id 5b1f17b1804b1-47117876a19mr111618715e9.6.1760973500619;
-        Mon, 20 Oct 2025 08:18:20 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471553f8a3asm174428685e9.16.2025.10.20.08.18.19
+        d=1e100.net; s=20230601; t=1760973521; x=1761578321;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EGiTe4HXDqqZ4iZipJXi8jfv7cy2lBX3+OM+ZyQ6XbI=;
+        b=EOQpjulYrTu/rtMpYRd+W2ClywQHp7dHnOvMRqLnWLci8vvJBjiakGaij+nzSwrbRI
+         yEG51CVw2I7eL92dP+28z83fNHEmHzsIquMlGvVoerQLqw/OIZ8RqJaqrYmyCIorvf0J
+         Jd4jcTW7I2B32cwAmzom4AkPr35MjZA6ROM4LyspkO9AxnQy7KvJKtMVNsJq3n66Hbiw
+         pq/htTLlDbLfMKjmIki9a1Q8GuZaOHxXsvanCeE3N/YTN00wHJTg7sCiNOLplVt08R2y
+         rt7fiETLQ5uZfOfqNroRxM66vOfVMlQEgrH2+IWaGXdFOHMbppNcTNk90T38f4sDBtHG
+         bPmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNldIymAR1T4T5bPU8ZFNHnOYUVyTaLNWim/LJ0SB4gX2ZHv+KQbekk/lDjpsT+gpTYoeP8vnX63YSCWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy34Lmt5+0MKYkAkiCUCGqYsiWdvgvYSF+fUhsAOlgmlhWrSaRC
+	3n0UOMuFSjkYXGnxp9on5IwInTLUpqV/EA5i5xCgVg6IB138kucZTHTUEY3vDytcmTM=
+X-Gm-Gg: ASbGnctFFcD3T1pDcw8Nc4RX+pnThT5mWaUxbxaiDBejg8BKhkJTYXIO7+iIJvAcbzU
+	XLSu7q1/2FodMyUGd04iDEDQnJHgoQA29va/2nYtp4MiQdNsmxE7IUQpQm6iL5CKOiIXJM3eEKX
+	UP1LL+duXyzaDxqZ7QXTYHIgbrMhhySQo9I4R14ZgyGu3BERO7hpnbB466QpjsrVmj4cve46FxP
+	Q9JZ0p9AVMngTXN6M0bmvILWeD3WKeC+BuurqfVepEZbe5TgRHoaXCZnAuX+/TrkdaBkejjj6gx
+	LPU+X/PYJ3TnSfK1CtG6YZVnUxuuGMP8uIaFLH/ixUPl8UKGVzKAEpzqaQb8Q/JwoJFO3jwOqO5
+	s/2xB9HGAOq91c0Q2ojfE2i+0fYlp60yeLTvthahtUtisJhCvS8QCoaAGt9/2tdtivOyL2HuTFY
+	NESZWz36IxKDCO3A==
+X-Google-Smtp-Source: AGHT+IEZsyy7VgeyAy3dmy4J3fXKkw3RgKJZWu4jhzJnxWQDZQ+Dq+bopDMB+jrQP+4jBD/v93m2gA==
+X-Received: by 2002:a17:903:35c6:b0:276:76e1:2e87 with SMTP id d9443c01a7336-290cb46c267mr168729135ad.44.1760973520734;
+        Mon, 20 Oct 2025 08:18:40 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:2360:6c8a:189d:ae5a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5612sm82189935ad.65.2025.10.20.08.18.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 08:18:20 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:18:17 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8 14/19] virtio_ring: determine descriptor flags at one
- time
-Message-ID: <20251020110341-mutt-send-email-mst@kernel.org>
-References: <20251020071003.28834-1-jasowang@redhat.com>
- <20251020071003.28834-15-jasowang@redhat.com>
+        Mon, 20 Oct 2025 08:18:40 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:18:37 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-remoteproc@vger.kernel.org, arnd@arndb.de, andersson@kernel.org,
+	matthias.bgg@gmail.com, wenst@chromium.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
+ firmware-name not present
+Message-ID: <aPZSzbXDBar3_X9O@p14s>
+References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251020071003.28834-15-jasowang@redhat.com>
+In-Reply-To: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
 
-On Mon, Oct 20, 2025 at 03:09:58PM +0800, Jason Wang wrote:
-> Let's determine the last descriptor by counting the number of sg. This
-> would be consistent with packed virtqueue implementation and ease the
-> future in-order implementation.
+On Wed, Oct 15, 2025 at 10:41:03AM +0200, AngeloGioacchino Del Regno wrote:
+> After a reply on the mailing lists [1] it emerged that the DT
+> property "firmware-name" should not be relied on because of
+> possible issues with firmware versions.
+> For MediaTek SCP, there has never been any firmware version vs
+> driver version desync issue but, regardless, the firmwares are
+> always using the same name and they're always located in a path
+> with a specific pattern.
 > 
-> Acked-by: Eugenio Pérez <eperezma@redhat.com>
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> Instead of unconditionally always relying on the firmware-name
+> devicetree property to get a path to the SCP FW file, drivers
+> should construct a name based on what firmware it knows and
+> what hardware it is running on.
+> 
+> In order to do that, add a `scp_get_default_fw_path()` function
+> that constructs the path and filename based on two of the infos
+> that the driver can get:
+>  1. The compatible string with the highest priority (so, the
+>     first one at index 0); and
+>  2. The type of SCP HW - single-core or multi-core.
+> 
+> This means that the default firmware path is generated as:
+>  - Single core SCP: mediatek/(soc_model)/scp.img
+>    for example:     mediatek/mt8183/scp.img;
+> 
+>  - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
+>    for example:     mediatek/mt8188/scp_c0.img for Core 0, and
+>                     mediatek/mt8188/scp_c1.img for Core 1.
+> 
+> Note that the generated firmware path is being used only if the
+> "firmware-name" devicetree property is not present in the SCP
+> node or in the SCP Core node(s).
+> 
+> [1 - Reply regarding firmware-name property]
+> Link: https://lore.kernel.org/all/7e8718b0-df78-44a6-a102-89529d6abcce@app.fastmail.com/
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  drivers/virtio/virtio_ring.c | 19 ++++++-------------
->  1 file changed, 6 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 37b16ef906a4..20bc48b1241e 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -575,7 +575,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  	struct vring_desc_extra *extra;
->  	struct scatterlist *sg;
->  	struct vring_desc *desc;
-> -	unsigned int i, n, avail, descs_used, prev, err_idx;
-> +	unsigned int i, n, avail, descs_used, err_idx, c = 0;
->  	int head;
->  	bool indirect;
+> Changes in v2:
+>  - Removed initialization of scp_fw_file[7] char array (or string if you prefer)
+> 
+>  drivers/remoteproc/mtk_scp.c | 65 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 59 insertions(+), 6 deletions(-)
+>
+
+Applied.
+
+Thanks,
+Mathieu
+ 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 8206a1766481..10e3f9eb8cd2 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/remoteproc.h>
+>  #include <linux/remoteproc/mtk_scp.h>
+>  #include <linux/rpmsg/mtk_rpmsg.h>
+> +#include <linux/string.h>
 >  
-
-c is not a great variable name. Maybe sg_count?
-
-same in patch 19 actually.
-
-
-> @@ -639,12 +639,11 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  			if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr, &len, premapped))
->  				goto unmap_release;
->  
-> -			prev = i;
->  			/* Note that we trust indirect descriptor
->  			 * table since it use stream DMA mapping.
->  			 */
->  			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
-> -						     VRING_DESC_F_NEXT,
-> +						     ++c == total_sg ? 0 : VRING_DESC_F_NEXT,
->  						     premapped);
->  		}
+>  #include "mtk_common.h"
+>  #include "remoteproc_internal.h"
+> @@ -1093,22 +1094,74 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
 >  	}
-> @@ -656,21 +655,15 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  			if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &addr, &len, premapped))
->  				goto unmap_release;
+>  }
 >  
-> -			prev = i;
->  			/* Note that we trust indirect descriptor
->  			 * table since it use stream DMA mapping.
->  			 */
-> -			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
-> -						     VRING_DESC_F_NEXT |
-> -						     VRING_DESC_F_WRITE,
-> -						     premapped);
-> +			i = virtqueue_add_desc_split(vq, desc, extra,
-> +				i, addr, len,
-> +				(++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
-> +				VRING_DESC_F_WRITE, premapped);
-
-this continuation line should be indented more,
-and maybe premapped on a line by itself.
-Alternatively use a variable for flags.
-
+> +/**
+> + * scp_get_default_fw_path() - Get default SCP firmware path
+> + * @dev:     SCP Device
+> + * @core_id: SCP Core number
+> + *
+> + * This function generates a path based on the following format:
+> + *     mediatek/(soc_model)/scp(_cX).img; for multi-core or
+> + *     mediatek/(soc_model)/scp.img for single core SCP HW
+> + *
+> + * Return: A devm allocated string containing the full path to
+> + *         a SCP firmware or an error pointer
+> + */
+> +static const char *scp_get_default_fw_path(struct device *dev, int core_id)
+> +{
+> +	struct device_node *np = core_id < 0 ? dev->of_node : dev->parent->of_node;
+> +	const char *compatible, *soc;
+> +	char scp_fw_file[7];
+> +	int ret;
+> +
+> +	/* Use only the first compatible string */
+> +	ret = of_property_read_string_index(np, "compatible", 0, &compatible);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	/* If the compatible string's length is implausible bail out early */
+> +	if (strlen(compatible) < strlen("mediatek,mtXXXX-scp"))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	/* If the compatible string starts with "mediatek,mt" assume that it's ok */
+> +	if (!str_has_prefix(compatible, "mediatek,mt"))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	if (core_id >= 0)
+> +		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+> +	else
+> +		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+> +	if (ret <= 0)
+> +		return ERR_PTR(ret);
+> +
+> +	/* Not using strchr here, as strlen of a const gets optimized by compiler */
+> +	soc = &compatible[strlen("mediatek,")];
+> +
+> +	return devm_kasprintf(dev, GFP_KERNEL, "mediatek/%.*s/%s.img",
+> +			      (int)strlen("mtXXXX"), soc, scp_fw_file);
+> +}
+> +
+>  static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+>  				      struct mtk_scp_of_cluster *scp_cluster,
+> -				      const struct mtk_scp_of_data *of_data)
+> +				      const struct mtk_scp_of_data *of_data,
+> +				      int core_id)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct mtk_scp *scp;
+>  	struct rproc *rproc;
+>  	struct resource *res;
+> -	const char *fw_name = "scp.img";
+> +	const char *fw_name;
+>  	int ret, i;
+>  	const struct mtk_scp_sizes_data *scp_sizes;
+>  
+>  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+> -	if (ret < 0 && ret != -EINVAL)
+> -		return ERR_PTR(ret);
+> +	if (ret) {
+> +		fw_name = scp_get_default_fw_path(dev, core_id);
+> +		if (IS_ERR(fw_name)) {
+> +			dev_err(dev, "Cannot get firmware path: %ld\n", PTR_ERR(fw_name));
+> +			return ERR_CAST(fw_name);
+> +		}
+> +	}
+>  
+>  	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
+>  	if (!rproc) {
+> @@ -1212,7 +1265,7 @@ static int scp_add_single_core(struct platform_device *pdev,
+>  	struct mtk_scp *scp;
+>  	int ret;
+>  
+> -	scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev));
+> +	scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev), -1);
+>  	if (IS_ERR(scp))
+>  		return PTR_ERR(scp);
+>  
+> @@ -1259,7 +1312,7 @@ static int scp_add_multi_core(struct platform_device *pdev,
+>  			goto init_fail;
 >  		}
->  	}
-> -	/* Last one doesn't continue. */
-> -	desc[prev].flags &= cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_NEXT);
-> -	if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
-> -		vq->split.desc_extra[prev & (vq->split.vring.num - 1)].flags &=
-> -			~VRING_DESC_F_NEXT;
 >  
->  	if (indirect) {
->  		/* Now that the indirect table is filled in, map it. */
+> -		scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id]);
+> +		scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id], core_id);
+>  		put_device(&cpdev->dev);
+>  		if (IS_ERR(scp)) {
+>  			ret = PTR_ERR(scp);
 > -- 
-> 2.31.1
-
+> 2.51.0
+> 
 
