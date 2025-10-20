@@ -1,140 +1,100 @@
-Return-Path: <linux-kernel+bounces-860428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8353ABF01BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F375DBF01CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7FC53E7844
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1B33AAE2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034632EF66D;
-	Mon, 20 Oct 2025 09:10:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52D12EB87B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92EC2ED144;
+	Mon, 20 Oct 2025 09:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TUGEX9wR"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382F441C62
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760951453; cv=none; b=fBFDy4fVEhnaxAF+0ldwUWJ+l24+XbORBEfyWMXtIGibns/nmrIzRY1zrv5y4Gla3nvTcb4we/ZTzeoQKb5UFSiL87Wl0+PK2zITHyIf+m9OcoXPz8ED9Rm8oS41BqxZP07T0Nx/mumBivYqFuKT/VMWjGV1vlRqsKwsuqlP4bw=
+	t=1760951518; cv=none; b=nalYd3vtwjN1LWtyJYjJRsV6dt+N+RhA6XMWXOTxT91XxvgZZoTCvnNCjrtWuy23WsjSQnKeVNCjulf7YHtb/+CuGipnjm1VGes/m+90U4LKIqVunpYwo9E6w/bnALpumOXsStbYE6cG6JywSQVZp5Jyr6uhYr1wlajm/Ina6hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760951453; c=relaxed/simple;
-	bh=06j+nqwHvwV+/oWmh7wXol8SOWA9VOduvgN25p52gNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gjNnz6KYqDPPLTYVlINE46C42paN3wTD3hwv4wnPlTU//XXdfksXwWgfabeXQprzkpB+ioMnrR+B42VdHftuhloTgA6YyvPHZ1JFGWAyMN+VFn9hlmY9wyW2iM4EFf3AYq01aPN4ibbd/NSiDeM2jxpVb1no+bofedp0VTTr2fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A4201063;
-	Mon, 20 Oct 2025 02:10:43 -0700 (PDT)
-Received: from [10.57.36.117] (unknown [10.57.36.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C8E233F66E;
-	Mon, 20 Oct 2025 02:10:48 -0700 (PDT)
-Message-ID: <91b406f2-7221-49f9-89fd-6f3b6bd1f4f5@arm.com>
-Date: Mon, 20 Oct 2025 10:10:47 +0100
+	s=arc-20240116; t=1760951518; c=relaxed/simple;
+	bh=ZPTlGOLBk8Yt1wXbm2bGMhULFzcL/8nl+CWvZ9Iu+mU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bHPz1TMZ/y7LNxoIYpRz96x9vQowP4cUFGFhF2hVGTyXwAGhfOTkOrlb5QkfRED3GTr6ULI/HBtMcHymknF46KJjrORGgkSIeH/CjhFlxLadzPhxDJpvybJfWgCa2fKj3YI4ke3V9U6cM/H0xwFvwFhcxQWSnvbDm9/yueWyrJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TUGEX9wR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=LsCwT3nRgsSBtQjwPLp4Kqd9pyI8P+SOpTbkZCVfBgE=; b=TUGEX9wRBGqX3UDToPHfTXcUGz
+	UXkYaSBx6BXb2sRjOC/6KP2s2WITFZJErPOntwnAuf5w49HQ5wuo6QWUGxx1PLbs4NvwMU1NpG4WR
+	Zz67vf9DszK150zPb38bybTKz/n8reB11UQPXKu/2Nsr0W2lurBQ6fEUD6m+tvXzB2U24JN5mnwek
+	RKAbXtH54X83oNPq84ub5H9MF0lpusazMUn1u/G7E/DEOaXOzBxv4zx+TdqlKGLxVoGKDW3s4rEiQ
+	fjr3AEGizGHdIN01gJIpLKyfKB3ZGgaH4wUwqWp0rwuc9NVdNJYx1z+ZRkLXF7/QGlGLyIOpZtMY5
+	46RUqTxw==;
+Received: from [141.76.253.240] (helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vAlvm-0007Un-EV; Mon, 20 Oct 2025 11:11:54 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: quentin.schulz@cherry.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: [PATCH] arm64: dts: rockchip: Fix indentation on rk3399 haikou demo dtso
+Date: Mon, 20 Oct 2025 11:11:39 +0200
+Message-ID: <20251020091139.3652738-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/10] drm/panthor: Add architecture-specific function
- operations
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20251014094337.1009601-1-karunika.choo@arm.com>
- <20251014094337.1009601-5-karunika.choo@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251014094337.1009601-5-karunika.choo@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/10/2025 10:43, Karunika Choo wrote:
-> Introduce architecture-specific function pointers to support
-> architecture-dependent behaviours. This patch adds the following
-> function pointers and updates their usage accordingly:
-> 
-> - soft_reset
-> - l2_power_on
-> - l2_power_off
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c |  4 ++--
->  drivers/gpu/drm/panthor/panthor_fw.c     |  5 +++--
->  drivers/gpu/drm/panthor/panthor_gpu.c    | 13 ++++++++++---
->  drivers/gpu/drm/panthor/panthor_gpu.h    |  1 +
->  drivers/gpu/drm/panthor/panthor_hw.c     |  9 ++++++++-
->  drivers/gpu/drm/panthor/panthor_hw.h     | 23 +++++++++++++++++++++++
->  6 files changed, 47 insertions(+), 8 deletions(-)
-> 
-<snip>
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> index 7a191e76aeec..5a4e4aad9099 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -20,12 +20,35 @@ enum panthor_hw_feature {
->  };
->  
->  
-> +/**
-> + * struct panthor_hw_ops - HW operations that are specific to a GPU
-> + */
-> +struct panthor_hw_ops {
-> +	/** @soft_reset: Soft reset function pointer */
-> +	int (*soft_reset)(struct panthor_device *ptdev);
-> +#define panthor_hw_soft_reset(__ptdev) \
-> +	((__ptdev)->hw->ops.soft_reset ? (__ptdev)->hw->ops.soft_reset(__ptdev) : 0)
-> +
-> +	/** @l2_power_off: L2 power off function pointer */
-> +	int (*l2_power_off)(struct panthor_device *ptdev);
-> +#define panthor_hw_l2_power_off(__ptdev) \
-> +	((__ptdev)->hw->ops.l2_power_off ? (__ptdev)->hw->ops.l2_power_off(__ptdev) : 0)
-> +
-> +	/** @l2_power_on: L2 power on function pointer */
-> +	int (*l2_power_on)(struct panthor_device *ptdev);
-> +#define panthor_hw_l2_power_on(__ptdev) \
-> +	((__ptdev)->hw->ops.l2_power_on ? (__ptdev)->hw->ops.l2_power_on(__ptdev) : 0)
-> +};
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Minor comments:
+The regulator-cam-dovdd-1v8 uses spaces for indentation, where it should
+use tabs. Fix this.
 
- * You are defining these to have a return value, but you haven't
-updated any of the call-sites to deal with a failure (the return value
-is ignored). This is actually an existing problem, but AFAICT the new
-_pwr_ versions have more error codes which are simply getting thrown away.
+Fixes: 066a69db9db3 ("arm64: dts: rockchip: add overlay for RK3399 Puma Haikou Video Demo adapter")
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+ .../dts/rockchip/rk3399-puma-haikou-video-demo.dtso    | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- * Is there a good reason why we need to support these functions being
-NULL? It seems unlikely to be useful, and TBH I'd prefer to just assign
-a dummy (empty) function in those cases.
-
- * A static inline function would be neater and would avoid any
-potential issues from the multiple evaluation of __ptdev.
-
-Thanks,
-Steve
-
-> +
->  /**
->   * struct panthor_hw - GPU specific register mapping and functions
->   */
->  struct panthor_hw {
->  	/** @features: Bitmap containing panthor_hw_feature */
->  	DECLARE_BITMAP(features, PANTHOR_HW_FEATURES_END);
-> +
-> +	/** @ops: Panthor HW specific operations */
-> +	struct panthor_hw_ops ops;
->  };
->  
->  int panthor_hw_init(struct panthor_device *ptdev);
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
+index 5e8f729c2cf2..141a921a06e4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
++++ b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
+@@ -45,11 +45,11 @@ cam_avdd_2v8: regulator-cam-avdd-2v8 {
+ 
+ 	cam_dovdd_1v8: regulator-cam-dovdd-1v8 {
+ 		compatible = "regulator-fixed";
+-	        gpio = <&pca9670 3 GPIO_ACTIVE_LOW>;
+-	        regulator-max-microvolt = <1800000>;
+-	        regulator-min-microvolt = <1800000>;
+-	        regulator-name = "cam-dovdd-1v8";
+-	        vin-supply = <&vcc1v8_video>;
++		gpio = <&pca9670 3 GPIO_ACTIVE_LOW>;
++		regulator-max-microvolt = <1800000>;
++		regulator-min-microvolt = <1800000>;
++		regulator-name = "cam-dovdd-1v8";
++		vin-supply = <&vcc1v8_video>;
+ 	};
+ 
+ 	cam_dvdd_1v2: regulator-cam-dvdd-1v2 {
+-- 
+2.47.2
 
 
