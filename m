@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-861338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D178BF2752
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:35:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B921BF278B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73AD14E7156
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08CE18C27C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2AA299950;
-	Mon, 20 Oct 2025 16:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74E228C5B8;
+	Mon, 20 Oct 2025 16:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="he4OPorl"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n/dXFgmu"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692CE2882DB
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FA426B955
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760978064; cv=none; b=t78t6CVKr10Exa300r8Z8JR0a607vbt93DcsTC6E5BoTbB9HMWm1NgSWyE1LmuCpoNGkeR5sQAnt8TyBPD0cI4F85xwXhhC20BPgQ6yB0G1uzk4o1NF5jnMz7UO3MV21kUl/3cz5S5k1PVkBvnXS3agtN/9EKU6fgsZ5CPGjo2A=
+	t=1760978084; cv=none; b=hej1Sz/nhABy7FwGbJrjJEP6o6p/sYu7yFhMd5hMvs7CBB5O2Z0BYd87ZKGZFdUgzRsN9XfRZiE3QgqnS1Jy7xok+2XHZKVJpt3PINUOACotTeIcnlUIh6vTeEydxlad86MMtYh20ATyuq0L+gu1T9qbevchAskunDp2wxEtKIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760978064; c=relaxed/simple;
-	bh=F8ZdKqCUkWnsHutIEohQCtijUBZ361J+n8QK9owT3uU=;
+	s=arc-20240116; t=1760978084; c=relaxed/simple;
+	bh=EKnvTmQWXIb3QulB8OxEwhVGwFls1eJdoaM7jZiZ60E=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=j+VAaTxA5DXCn54xYywrcJXjjhdvhPFvxF/BzPa1dmqf91Lml6dNW4a67Slz1v0WbqJ9ISmT9kBOqYTeCd/RShd2InZga2jlKdVrLxhAzTXJAp7TkhMHgaOzuJ6bVBbYIUTxAGCXS21Vsd677ZK8XQGd+WGEwa0QpqQIK9f9Wn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=he4OPorl; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=FCMbYwiZaz5HMBcRqs8nyL0yE3KwqYGramzRoEuetW8vB2kYXNYUMT0Feqp0mWHiUultXpPPYgS74m5HOqp35DHvJNEZHaT+NbYeJDCLveCgNl5/XYKnGCSfdVxA0C/FPVRmyCx+6Xph+drsKP7/dv8mTEBxKnc0iswWUOG/eP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n/dXFgmu; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-336b646768eso5189607a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:34:23 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b55443b4110so3355832a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:34:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760978063; x=1761582863; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fYQ/Yn18Ayoanetc7EMDhQDCxuQe3WF4K+kRhMHbYxk=;
-        b=he4OPorl1MSCAjUR+EoQbxO+764x2Pzb9OfmOlbjcK8GF3Qqj5nApUNmafQX3BRO34
-         N3B4iBTFoZgbJjqhnGgqfrOWii5G02LTM83eN/fmIeVVTP+/wRA8nfez4U2HsAkmBOKq
-         nGv89b7VQsSFJWvcjVnmVwCs1fLyPWiHFQPbhzvW6N0zGb59UXtci+CZHYvK3DySmk4r
-         FeZXLrMFSWUKewQNMwjLbXmjq9FTzl/VUe9yWQghti5Sw3Qh6iCciEniSImzyYLfOKT0
-         mrBLGxdh2m8Me60/uvs+WVNE1Ab+8BhGgXL0wEW/CSv/55d/p6fXU1gK+HjH09J1UaID
-         g3Tw==
+        d=google.com; s=20230601; t=1760978082; x=1761582882; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fp2M7y/YIkoquLfcKGxuSyhApeoEnp7Mnl/v7xe2miU=;
+        b=n/dXFgmuWRvUCLuK+lHCZg5+/VHIUUtOdcpfm3hyZK6D/T0AI4whW7uN/7Jh5+j4H4
+         c2Q3NBuNAaCs5fauwCaRVnh8z44w+rPA1PDHgiVKT7QHMLJbvssvG7fOPU4k5LkYh68z
+         cVhtrXeQSNIPCwGI9uCm47xpOKrNi4be5dMOQtGrpNwclgk2g9Kk9SHUsvthFExr8li7
+         5zsLK+eJTm8WbFl234DRqicsfry+ExMCPnq+xBuAEEl3cY+eNkBNOlVeaUcyQqL66iM+
+         CaiagWinsdl17qr51+n5dbw3N++X+nsZjQ8FqCRtMzKsabF4/uYYeqN18kHc4oD3COq1
+         oH3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760978063; x=1761582863;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fYQ/Yn18Ayoanetc7EMDhQDCxuQe3WF4K+kRhMHbYxk=;
-        b=TwvZA2KE+736StAsOzAiVR2Yj16ddSas5NbZ63eYZvE4Hc6eIRslw4agRcxX0nQKU+
-         Ooc2MvXsPLdNNaAzJ8/fZdV9oZ6OAmowh421wTHKg+oAhQuGpcOLPxqEf0eZAhDg4lGa
-         A3aDKXh9C7fSQqK7bVH5E99tCojmRY8b7RyKinZpeuKiVBXK0EdUYPWxbVbBBkvVgv4l
-         y+JzmuBP0tVxHtV70n5ovLvzS9egVUUf9ZBR7tZzhhZKZvZqaJv9L3zQMYToeiXo6+Cu
-         e9oqjIMNz347pRG5S+sYfJWxDh4aGHpQVIkh5QxvZAJw1W9Yo6NgbX9Ry63CnpRXwTa1
-         7yaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsneN5nehnrtzV2q3j8q8iZnH5CxfCw/PvL4ZxKC1NkCF4cdf2JqvyX25felhGJWIiiVFCa//hxYurv1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxedIPeTsma8E/Zg6IK1T/Yvuig9esup50xiRlvqK/3nf5WJySf
-	SyjOydrCPuRDg4nQY5CjDXiijsSi1HJAeJdSW+vv+C2WGMPU2TZEzPp47LAM/AClbRuOLeRZVDr
-	hfx3ZdA==
-X-Google-Smtp-Source: AGHT+IHoYRl16lpIP+uyPt5I3BM/0tRyAePCPWMvseRm11XXxQgSDztnBAGX8rG9UOp1y8nNUE8XiktEjVA=
-X-Received: from pjxd18.prod.google.com ([2002:a17:90a:c252:b0:33b:c211:1fa9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3fc4:b0:33b:b453:c8f0
- with SMTP id 98e67ed59e1d1-33bcf8f9008mr16976543a91.25.1760978062794; Mon, 20
- Oct 2025 09:34:22 -0700 (PDT)
-Date: Mon, 20 Oct 2025 09:33:07 -0700
-In-Reply-To: <20251001001529.1119031-1-jmattson@google.com>
+        d=1e100.net; s=20230601; t=1760978082; x=1761582882;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fp2M7y/YIkoquLfcKGxuSyhApeoEnp7Mnl/v7xe2miU=;
+        b=t+s4CDAdEAKS5PGwXQyBU8oJqGcrKlEr3eswy5N7tAthJuyvObt7VOr1UZ7jj40Dvw
+         HYZNnhW5X4C43ARroCXTevC3ewoj2inb2t4KQ2cUXJsvTAh4czGO4X6OVnvFpsKGHSgb
+         Z/04qwqnb0oqLHm4IYq0PigVUrZYfBt/bvhEJ//tEnACAxPnU/iy2938KDK7FI40FcOS
+         0xV4AYVOGVFG6bogvQdj+psgq6ypwUbbVlj8pcpN4e4TcGcbMaK7+l70uxTFTZyGIr6M
+         DvLFxZrDtibw6oBSB/pz8KVklX57K2xqJsRv9rZrkPcNDCYqh3X7cUGZolcSRPV71ciC
+         Bm7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXEssv/Te9shUet8FoYgfzaCal8V4MJlHLgXHLa7der75O2I5ZBg69ZI3wfWirS6QuGZ5OTpkK0I82W/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWYpHDBz48mMXlcGuowGbIH7eJx0aAiaeEDgLwDWXc4k2aq/pk
+	lDa4vwMk6K0wOsyR0/qgtZ2LmHartgWzRH/GK8VceG5TP0yMwEOI/RFMtCWONsTGl4fIH1Gzbqh
+	15ewSUQ==
+X-Google-Smtp-Source: AGHT+IEfJBrBNRQn8+cn6fgmQOnDkh3t6dmbXJnUtpRU+T1/SW9hG6iOheIivj/skyPPBe7GkdNTpM1ILXI=
+X-Received: from pjzj22.prod.google.com ([2002:a17:90a:eb16:b0:338:3770:a496])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:32a3:b0:32d:95f2:1fe
+ with SMTP id adf61e73a8af0-334a786492fmr18401737637.2.1760978082232; Mon, 20
+ Oct 2025 09:34:42 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:33:11 -0700
+In-Reply-To: <20250919005955.1366256-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251001001529.1119031-1-jmattson@google.com>
+References: <20250919005955.1366256-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
-Message-ID: <176097608821.439830.10295341588067424162.b4-ty@google.com>
-Subject: Re: [PATCH v2 0/2] KVM: SVM: Handle EferLmsleUnsupported
+Message-ID: <176097600449.438961.7346944615480363146.b4-ty@google.com>
+Subject: Re: [PATCH 0/9] KVM: VMX: EPTP cleanups and nVMX fixes
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Perry Yuan <perry.yuan@amd.com>, Sohil Mehta <sohil.mehta@intel.com>, 
-	"Xin Li (Intel)" <xin@zytor.com>, Joerg Roedel <joerg.roedel@amd.com>, Avi Kivity <avi@redhat.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Jim Mattson <jmattson@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 30 Sep 2025 17:14:06 -0700, Jim Mattson wrote:
-> It is no longer the case that EFER.LMSLE is supported by all SVM-capable
-> processors. AMD enumerates the absence of this feature by CPUID
-> Fn8000_0008_EBX[EferLmlseUnsupported](bit 20)=1.
+On Thu, 18 Sep 2025 17:59:46 -0700, Sean Christopherson wrote:
+> This started as a trivial series to cleanup KVM's handling of EPTPs in
+> anticipation of eliding TLB flushes on task migration[*], but then I made the
+> mistake of trying to test the nested_early_check change, and things snowballed.
 > 
-> Advertise this defeature bit to userspace via KVM_GET_SUPPORTED_CPUID,
-> and don't allow a guest to set EFER.LMSLE on hardware that doesn't
-> support the feature.
+> Long story short, nested_early_check is obviously not being used as it's been
+> broken for years, and it's not adding value.  E.g. doesn't help us find KVM
+> bugs, and doesn't provide any meaningful protection for KVM (especially since
+> no one is using it).
 > 
 > [...]
 
-Applied to kvm-x86 svm, thanks!
+Applied to kvm-x86 vmx, thanks!
 
-[1/2] KVM: x86: Advertise EferLmsleUnsupported to userspace
-      https://github.com/kvm-x86/linux/commit/4793f990ea15
-[2/2] KVM: SVM: Disallow EFER.LMSLE when not supported by hardware
-      https://github.com/kvm-x86/linux/commit/c53c632592a4
+[1/9] KVM: VMX: Hoist construct_eptp() "up" in vmx.c
+      https://github.com/kvm-x86/linux/commit/f48888bb8ad1
+[2/9] KVM: nVMX: Hardcode dummy EPTP used for early nested consistency checks
+      https://github.com/kvm-x86/linux/commit/a8749281e4c6
+[3/9] KVM: x86/mmu: Move "dummy root" helpers to spte.h
+      https://github.com/kvm-x86/linux/commit/a10f5cc3ac9b
+[4/9] KVM: VMX: Use kvm_mmu_page role to construct EPTP, not current vCPU state
+      https://github.com/kvm-x86/linux/commit/2f723a863423
+[5/9] KVM: nVMX: Add consistency check for TPR_THRESHOLD[31:4]!=0 without VID
+      https://github.com/kvm-x86/linux/commit/15fe455dd1a0
+[6/9] KVM: nVMX: Add consistency check for TSC_MULTIPLIER=0
+      https://github.com/kvm-x86/linux/commit/ae8e6ad84177
+[7/9] KVM: nVMX: Stuff vmcs02.TSC_MULTIPLIER early on for nested early checks
+      https://github.com/kvm-x86/linux/commit/f91699d5692d
+[8/9] KVM: nVMX: Remove support for "early" consistency checks via hardware
+      https://github.com/kvm-x86/linux/commit/a175da6d430e
+[9/9] KVM: nVMX: Add an off-by-default module param to WARN on missed consistency checks
+      https://github.com/kvm-x86/linux/commit/1100e4910ad2
 
 --
 https://github.com/kvm-x86/linux/tree/next
