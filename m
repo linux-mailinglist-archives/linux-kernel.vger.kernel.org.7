@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-860636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3161ABF0909
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA79BF0912
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51A734F29B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:35:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F108E4E17AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488CC2F6929;
-	Mon, 20 Oct 2025 10:34:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B31E2F6906
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0D22F745C;
+	Mon, 20 Oct 2025 10:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QKdtV9U7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6C32ECEA7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956493; cv=none; b=cHWrhNCBCvrWet6yv73J9vd3lAOs60/qT6DDEJ/+zzD5T4uW2AcPAhwxjv4X/OYVCa1MYIP3rjkkijPtjbuZhlV1h91VCowmagupXMwYzAjt7w0abq2gZjQNJgAEDhN6yNnhXHtGbBlRCB4+FfqZNK0BVGau1gkxItsLrsAy3kc=
+	t=1760956541; cv=none; b=DaZlj8OmWIDy/+9UAcOJiViMUfDGaV47QTPqWi0rTd9sK9VXZyv6qS4AwqXXZr+Fv81g3GGOxao+438I9Q8WfpCYZYchZwj6tq+Rx2daCIBZdv99UoyNUW+6I8kvDhfvSznsFP7SR9bePl/0nH5D0LGTg4FRgY7xwSubf7KC85k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760956493; c=relaxed/simple;
-	bh=OSpkohzgE+qUHMLKqrL2b8TAwWc0e3Xq99CapyzCujk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cS4r4k8L1DS+tHifDYhEQFtycZO59ed27CGZqmqA/Wagu1gCH64aWbeayup1JytGWR4HcZQVPrDCqTbBfpdJuG6DC4WKCZnPCJLe+Ahlkolib8+AI02lZTaaHYXKFzGbcZOpBw8ShOZOHb5AgeMLXs+JY3RIBB/dvJUGrDlMxgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C28D61063;
-	Mon, 20 Oct 2025 03:34:43 -0700 (PDT)
-Received: from [10.57.65.147] (unknown [10.57.65.147])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 256FA3F63F;
-	Mon, 20 Oct 2025 03:34:48 -0700 (PDT)
-Message-ID: <75a8f465-f831-4bf9-a48f-94c05470e900@arm.com>
-Date: Mon, 20 Oct 2025 12:34:44 +0200
+	s=arc-20240116; t=1760956541; c=relaxed/simple;
+	bh=d6xOn+OgWXQb76sNinZ8VoFwbnnrNk5YxBP2M1Z16Rw=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=uGMtC+ZhfdH8SJZqeHi+T2UhYaCnN13/Q62CXzXS1xChDp2cvQHswSuY5hzsVnlOnH/Sw1svbqPL8qeIcvSsDBZmSsID42Fjep1Jg3BorowFophnHt2UoES2w+JNBXiU9vKg98+reKD5n+7zMVmAvcyZPwqoC4rOgNlWvyL7L40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QKdtV9U7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760956538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d6xOn+OgWXQb76sNinZ8VoFwbnnrNk5YxBP2M1Z16Rw=;
+	b=QKdtV9U7F44nzWM1/OMmdsP43cPkI0OQJ5LOyjd59//z1VribOOQTifOjmRihwXjDdwhk5
+	AKfgziNiz3ftcV5bh3tPiDEg4U8cJscXcYrbeqFFgoUUNGRuF7hdDM/WLHVAQOdVwqXBX1
+	iVvhTY3Eag1hwiR0qGnpjO4XsbYeZ9I=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-v350hqWrNxSXvlNLKw2vdQ-1; Mon,
+ 20 Oct 2025 06:35:35 -0400
+X-MC-Unique: v350hqWrNxSXvlNLKw2vdQ-1
+X-Mimecast-MFC-AGG-ID: v350hqWrNxSXvlNLKw2vdQ_1760956533
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0B011800657;
+	Mon, 20 Oct 2025 10:35:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.57])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC77A18003FC;
+	Mon, 20 Oct 2025 10:35:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20251020005038.661542-17-ebiggers@kernel.org>
+References: <20251020005038.661542-17-ebiggers@kernel.org> <20251020005038.661542-1-ebiggers@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dhowells@redhat.com, linux-crypto@vger.kernel.org,
+    Ard Biesheuvel <ardb@kernel.org>,
+    "Jason A . Donenfeld" <Jason@zx2c4.com>,
+    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+    linux-s390@vger.kernel.org
+Subject: Re: [PATCH 16/17] crypto: jitterentropy - use default sha3 implementation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched: Remove unused variable in mm_cid_get()
-To: Christian Loehle <christian.loehle@arm.com>,
- linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>
-References: <20251017073050.2411988-1-kevin.brodsky@arm.com>
- <d76040f3-40d2-4cc3-bf59-cdd9f6673ad2@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <d76040f3-40d2-4cc3-bf59-cdd9f6673ad2@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1062227.1760956530.1@warthog.procyon.org.uk>
+Date: Mon, 20 Oct 2025 11:35:30 +0100
+Message-ID: <1062228.1760956530@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 20/10/2025 12:16, Christian Loehle wrote:
-> On 10/17/25 08:30, Kevin Brodsky wrote:
->> The cpumask variable in mm_cid_get() has never been used, remove it.
->>
->> This fixes a -Wunused-but-set-variable warning when building with
->> W=1.
->>
->> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->> ---
->> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Juri Lelli <juri.lelli@redhat.com>
->> ---
->>  kernel/sched/sched.h | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index 1f5d07067f60..361f9101cef9 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -3740,11 +3740,9 @@ static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
->>  			     struct mm_struct *mm)
->>  {
->>  	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
->> -	struct cpumask *cpumask;
->>  	int cid;
->>  
->>  	lockdep_assert_rq_held(rq);
->> -	cpumask = mm_cidmask(mm);
->>  	cid = __this_cpu_read(pcpu_cid->cid);
->>  	if (mm_cid_is_valid(cid)) {
->>  		mm_cid_snapshot_time(rq, mm);
->>
->> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> Andy also posted this:
-> https://lore.kernel.org/lkml/20251015091935.2977229-1-andriy.shevchenko@linux.intel.com/
+Why don't you take my approach and just call lib/crypto/sha3 directly rather
+than using a crypto/ object as an intermediary if that crypto/ object is just
+going to wrap lib/crypto?
 
-Ah I missed it, thanks! Please ignore my patch then (especially since it
-misses a Fixes: tag).
+David
 
-- Kevin
 
