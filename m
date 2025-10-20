@@ -1,121 +1,102 @@
-Return-Path: <linux-kernel+bounces-861496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E38BF2E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD302BF2F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F3C3AB638
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:10:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3D3463F7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D6D2C2368;
-	Mon, 20 Oct 2025 18:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B2D2D062F;
+	Mon, 20 Oct 2025 18:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="tDqGSyE+"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="mQiMOLcd"
+Received: from mx08lb.world4you.com (mx08lb.world4you.com [81.19.149.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C1E28C860;
-	Mon, 20 Oct 2025 18:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551492D24AC;
+	Mon, 20 Oct 2025 18:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760983834; cv=none; b=ebm2WafnfQ/QTG4nSy/wZl9LcvxKbUzj9hHBb2xzVlnaHff5/2phYWv8LU3nUHGWJ5w3uetFd18Ez/jCN4PywxIehaWJafl+SNp9X1jUhftekSfXsd7o7THckNpYcioIBO/x5ahouKN6yD4wVQfYpwJruOBxxLh5f13wobSSS/Q=
+	t=1760985552; cv=none; b=pcBPeonJjn55tPdKAWl6c3fHMJxS4zc+wWSNlDbrHErSXcsZg9uXtWNgPdrEw4u9hyhw+HT91w1kkBa8P/qHYDW74xaGmdiwFapaTnAlT5vXOMXiNz4pEMobtJY8BBQMRoM+PT7HWC2MAY7BD6zKyyjPeo1xgsYEMsGeLDVgr44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760983834; c=relaxed/simple;
-	bh=eUbDMPURrhP9DNsR5OBvdJaNQ3FAZf38xxL0jsa/SXo=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=s3r+qvc1XQ5Ti5zuHJmEDmgwhkvJ/HTg4NmUn5Qtc3yb8+JPJUzHI4FrZLq2i3tuVRHdhZ+PAyina1SSfiF0rniBi5vVdt1woxVFFF2ew459Juc9RIckitEigJ7Sc5+P5Xz0ad5+diVlt6+j5A2nsLgt6SpbPMm41a22Ap6ChNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=tDqGSyE+; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id E21C28288084;
-	Mon, 20 Oct 2025 13:10:31 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id Bd_fnKAO9RhY; Mon, 20 Oct 2025 13:10:31 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 1DF7C8288904;
-	Mon, 20 Oct 2025 13:10:31 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 1DF7C8288904
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1760983831; bh=Fy1utL3Q9olsaRKZoig3w/Z4nh+QktLTjEXYbwEyouQ=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=tDqGSyE+Py36mGEhqeYWKnygMvlz9/brHOAmv0TR5/FAOQ0YdVxUpYYYSeypL6rmP
-	 KmAqiapNe8rDCgrhIhKA9CCu0f5QdDE/NVpht3V/TyvYOjAKAraycpu45U30uubR6B
-	 w0UmK69earGGi82fq3rc0am6TF45mRwZc1eDqBTI=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id pxiVZHTDFFqO; Mon, 20 Oct 2025 13:10:30 -0500 (CDT)
-Received: from vali.starlink.edu (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id E81BD8288084;
-	Mon, 20 Oct 2025 13:10:30 -0500 (CDT)
-Date: Mon, 20 Oct 2025 13:10:30 -0500 (CDT)
-From: Timothy Pearson <tpearson@raptorengineering.com>
-To: devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Lee Jones <lee@kernel.org>, 
-	Georgy Yakovlev <Georgy.Yakovlev@sony.com>
-Cc: Shawn Anastasio <sanastasio@raptorengineering.com>
-Message-ID: <1787448596.1802034.1760983830792.JavaMail.zimbra@raptorengineeringinc.com>
-Subject: [PATCH v3 0/4] Add drivers for Sony Cronos control CPLD
+	s=arc-20240116; t=1760985552; c=relaxed/simple;
+	bh=SBMDeTaCv/976anlGN+OIzcwQrNgTmJYV8dD+LmgGNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Aq72QyfkkNzktXHuRr/NJGpVtREnycE9RgiqW9qdaeoi2BrTw5RekE3OyN7fUPLK7rI+XzroYzIhASkNw54pqAAXk1jVbCUt4JODq0dsSqtbeSpK1L6aiEE+BgxLjvuS5n/pw6vbsZi1OA7TWslt1GKTHeAK36j9pN5AGebMj4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=mQiMOLcd; arc=none smtp.client-ip=81.19.149.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bMHVdS4koP0XUIuhg8cOzB47/6S7GYtGHXP9n2t5x7g=; b=mQiMOLcdI693+zuAUWYaNNZd1+
+	a6WOs1hjSphjpWzpEUO+Y44m0ApVdYrODHV1hbv6cdckxh7iUtlQoPCIC/bjEAfkDUCrWisUCfGh6
+	WGpXBLLiFiYNH4sLIqWPGf3odlG0FrMdphaQWXSfnEdR3kkVxL4119IojUvXL/rrJESA=;
+Received: from [178.191.104.35] (helo=[10.0.0.160])
+	by mx08lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1vAuLi-000000005Wv-3IOc;
+	Mon, 20 Oct 2025 20:11:14 +0200
+Message-ID: <e0a8830e-6267-4b2a-b1fa-f3cbe34bd3ba@engleder-embedded.com>
+Date: Mon, 20 Oct 2025 20:11:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: phy: micrel: Add support for non PTP SKUs
+ for lan8814
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com
+References: <20251017074730.3057012-1-horatiu.vultur@microchip.com>
+ <79f403f0-84ed-43fe-b093-d7ce122d41fd@engleder-embedded.com>
+ <20251020063945.dwqgn5yphdwnt4vk@DEN-DL-M31836.microchip.com>
+Content-Language: en-US
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <20251020063945.dwqgn5yphdwnt4vk@DEN-DL-M31836.microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
-Thread-Index: 2sKQBCK/cFq8bcVeB0FycJRZCrk72g==
-Thread-Topic: Add drivers for Sony Cronos control CPLD
+X-AV-Do-Run: Yes
 
-Hello all,
+On 20.10.25 08:39, Horatiu Vultur wrote:
+> The 10/17/2025 23:15, Gerhard Engleder wrote:
 
-This series adds a driver for the multi-function CPLD found on the Sony
-Interactive Entertainment Cronos x86 server platform. It provides a
-watchdog timer and an LED controller, both of which will depend on the
-MFD parent driver implemented in this series. Device tree bindings are
-also included.
+...
 
-Thanks,
+>>>
+>>> +/* Check if the PHY has 1588 support. There are multiple skus of the PHY and
+>>> + * some of them support PTP while others don't support it. This function will
+>>> + * return true is the sku supports it, otherwise will return false.
+>>> + */
+>>
+>> Hasn't net also switched to the common kernel multiline comment style
+>> starting with an empty line?
+> 
+> I am not sure because I can see some previous commits where people used
+> the same comment style:
+> e82c64be9b45 ("net: stmmac: avoid PHY speed change when configuring MTU")
+> 100dfa74cad9 ("net: dev_queue_xmit() llist adoption")
 
-Changes in v4:
-  - Address reviewer concerns
+The special coding style for multi line comments for net and drivers/net 
+has been removed with
+82b8000c28 ("net: drop special comment style")
 
-Shawn Anastasio (1):
-  dt-bindings: mfd: Add sony,cronos-smc
+But I checked a few mails on the list and also found the old style in
+new patches.
 
-Timothy Pearson (3):
-  mfd: sony-cronos-smc: Add driver for Sony Cronos SMC
-  led: sony-cronos-smc: Add RGB LED driver for Sony Cronos SMC
-  watchdog: sony-cronos-smc: Add watchdog driver for Sony Cronos SMC
+Gerhard
 
- .../bindings/mfd/sony,cronos-smc.yaml         | 113 ++++++
- MAINTAINERS                                   |   7 +
- drivers/leds/Kconfig                          |  19 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-sony-cronos.c               | 378 ++++++++++++++++++
- drivers/mfd/Kconfig                           |  11 +
- drivers/mfd/Makefile                          |   2 +
- drivers/mfd/sony-cronos-smc.c                 | 212 ++++++++++
- drivers/watchdog/Kconfig                      |  17 +
- drivers/watchdog/Makefile                     |   1 +
- drivers/watchdog/sony-cronos-wdt.c            | 283 +++++++++++++
- include/linux/mfd/sony-cronos.h               |  61 +++
- 12 files changed, 1105 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/sony,cronos-smc.yaml
- create mode 100644 drivers/leds/leds-sony-cronos.c
- create mode 100644 drivers/mfd/sony-cronos-smc.c
- create mode 100644 drivers/watchdog/sony-cronos-wdt.c
- create mode 100644 include/linux/mfd/sony-cronos.h
-
--- 
-2.39.5
 
