@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-861241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C11BF2279
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:41:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BDDBF2258
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4B3C4FA71D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:38:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F8142835B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5671026CE1A;
-	Mon, 20 Oct 2025 15:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD7B26E161;
+	Mon, 20 Oct 2025 15:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="pMIrPz/n"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="vK3ATPo5"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F68E26B942
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776591A316E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974697; cv=none; b=AuCOl0skl03vriEqrLBFG6ASYMYZ6zPaCkMTnTchHm2HiKukCsF9ZgFgBYZMbmE1bH/y80WUV1dDjKckdm4fJpWDureCP04jP9GY2U4JCPPF9zKAT+c7Yiy46zAC6YOlKOJ01k/QuZTyX3gfOfbpldP5Wi2QpAmEdZdL0GM866g=
+	t=1760974698; cv=none; b=B4MbtFN1gfeoLK5uNig5lKrAXIBcdb1jUSlEaYGve0zdu6WRuu83uDT9dMjdQg8kE5ztRbuFY+0ecYWE/9XVZdII5xF+lSVknesjWigJdmHDz1Y/7JHoexFMFyLCapCF1lSo6RofKYDzx/tm/I+P2KMsDgHjCNItCpvnkReu1n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974697; c=relaxed/simple;
-	bh=4Gn9R0aTjPs5l0ki4rUGt4tVd4RPiNQ5UPjgvg6b9R4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UAJ/VJu1+dL+ddvNx8Z5YAzjDVnNyptApnUuL47/q8UuHQsQEB7NffKeQjT/YTXvyqxo2EEMfRgjEA/Me1NJ1QHabxvhHiYHuOcXUGGN2VLwOFfH0Tvq8FLG4vBPB7mbbIHG1cTTLrYIn5sJ9e5w/BfUZo4IeCA0Jn+muXbZjKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=pMIrPz/n; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1760974698; c=relaxed/simple;
+	bh=aGybOktdhkgeSQs+rX+F7ywh/2yjyEU3TPcl+RFqWQg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SpRBLChtKqHHkr9NJ0FyTTOU3vlni+xOkrIzmQZzW4va2j4zTWgQGcR5ypkzLF0hcpDAyTCZZdfkj+FcZQEgF2hjSXyUvMK2NRdGASHqT52PhwCa+arwJRbPVKF7Y3p1IdVn00b0V3DWpg0yy8lyM5UlYXd8/f1LeYPVMLHzsXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=vK3ATPo5; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so42517695e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:38:15 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-426fc536b5dso2429522f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:38:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1760974693; x=1761579493; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+XrYXLK1FVfs/nOKpxVQaiFAr1Ow+MNITWBLsHoU02g=;
-        b=pMIrPz/n/R/i8/E2uosAiEw3Taj190ijIszyzP3M7xdy2RihXzq4Qtvgofg7iYSHhv
-         VX1c9wkBf71zlq7r3rT6Lbw2B/6LFULViaAotJVgCFEPFxeniOxFA51KeKCe0AAERd9S
-         wX2ZGJCTaWzMAyuZKNzRrI+hRWE2VL1wZAdbu5kKmMlyqMhOmd0FeCicY8HFECTXcsjp
-         5KbVcEwGp7YMsrDwUbeKc4p0lTGUnmkfDsqt8kBgzCvDdWbxp7t2SX5qeclgt/iGPW8W
-         2Bzc5b2fkprK5Dvg5dfXab/K+83WqOhfTzGF7czr+EIHBAj1utV2BE2nRDYJyQomw4nY
-         UZaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760974693; x=1761579493;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1760974694; x=1761579494; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+XrYXLK1FVfs/nOKpxVQaiFAr1Ow+MNITWBLsHoU02g=;
-        b=wejHEuVOpEsdhAKLRCmGiqYnLpp2PCJFUdDXKrMMeglekqMk1Oke7cJJ09a//yB7Y4
-         KkluqIoCHpw9dR7M2uVYqCvUeNDMuqmvnslvVUyG/u/TemJ+fYcS4PKAJxQsEGuYeioR
-         nahox0a8swrzzC9KIbvYVdlqWa25+Pi3cQW2+JcHod2g+P/6Fr6AIai5fWdsCcHhK1Sd
-         gU7Oet5oMsjedrSg9zlc9sbpzpcMiL0DUG7DcYCkjXr7goLUAjyAhG8jZP8tMdS4oRVR
-         Z+aUla8JXEgV+1Zck+KAz7Ogkeq9MuX3Dnan6j0WYYHHVSkhgYqLkCSCqH0qgXnrmlJR
-         pnyA==
-X-Gm-Message-State: AOJu0YwmU4ygb9hE5fu9OaFeUksXrA0sYys0hSqb56O0sEo9lQc7tN4w
-	lo62ayWn/AMCZb3nW7CR7POUDwbbSZtEZFl3JkacP+SGt1917KkKbMNgvW8fLLmmxvuhQ7vzd2t
-	otx5CO/lAeS5p
-X-Gm-Gg: ASbGncu4hn28H/bX0zR6ltHVd5ESdXsrSWJaV54/JXB+JDZWdk1rGll/WohqegDVfUa
-	vEOlf5AUjWqvmQ9cTf6Tl8932LVsAUQ3CmW8TThipbklvpIMf0opJaWfV9gSVFNuRUN8ah5ZKX+
-	0F7CyIiaTpqDQAT6hRPovNy/DCrOCzmMchtrCrtwWiIOkcj61kd8LVFiOuBF4LjlxNaKvliwXqR
-	0NFvKSUCwodJh5Fco9NTOFj1RwarXeq5U3kjVFiqutdnBZFYpGShYkxGv0zP+9ngY2nM0gYTgGG
-	AoX6Zq6cMwDUOsXPZMPKdCGc+HcnnraMuL5cnBd9g6PKLWSjrRMC0ZOtH+q3z0GrGf1naEcXKM4
-	wibcTAI2Fiw4Kh+s2RA8d6oW1cKM+SdY1LFgtoHn5fqvPxERHmigYDk3e0GlhKsqd0UQipGYfI/
-	yUxU2ShaDsbMp+IcThRyjO7jvQ
-X-Google-Smtp-Source: AGHT+IFTjy4zMKFRhSx8SfTkGkzermkNqjXCWKMsgHb3M7BdlNyC7+80Wg0L9u3CvDmZlwnsJPyZ5g==
-X-Received: by 2002:a05:600c:3b0c:b0:471:669:ec1f with SMTP id 5b1f17b1804b1-471178785e1mr100893535e9.8.1760974693320;
-        Mon, 20 Oct 2025 08:38:13 -0700 (PDT)
+        bh=cyuJNWxnHafy+PPLjmM+EIGmoAJm4KiwAsY+kP7vYUw=;
+        b=vK3ATPo5VB3IVnqsPhU49vScodlYrb4LSrd/M5WWhwz3zvE29M9zQDeWjOINPz5Xci
+         CZLr3lhLxdxk/Qv/CNyAJShHq04fx1EL6PSmSDQP2bWgTcqyMxv5JQfgNLtHJIg/Yvwu
+         H4FyuXiNYnyz6l8/AgE9pjp+Mxg79etLcDcVKDFllMKLrCVVTJMNwHPXu/U7jz75UPzV
+         l8EK79197TT1ox1hOeknWvCQ5wkXfN1CEMSUp9DtlrpYWNwwtiFqd9jD4PnHx7VdVIhu
+         /fQmErK2L2MJLLoliSRGKqNfXvozYe0+G1lfjWNm5Nl2KJ0pjqi0LdonEIvqbQkTgaCs
+         04BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760974694; x=1761579494;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cyuJNWxnHafy+PPLjmM+EIGmoAJm4KiwAsY+kP7vYUw=;
+        b=e4mbfB6pjk1+/6quxOknrKmrImVA09HZdUZMozfT6DzWlrqgrMpnKhZZFMFiMcM9hf
+         PjPMEwnzln4h4nhgDng+eYbNBVGfTnlLltlb85ckTuwFNWsE0FeBp40gtuWLoHgOlrIZ
+         zPxKwam+pUS9fdqMDKYQOXqb5IfipXirpZpfIQI6VqcmDG2le8bHG11hw6hF+PPWeoVo
+         iT2XYTLJrYgis1QdhQWffZRZ1F4hEfQsDY4//Td+K1DkCyuF0PQn9UsOl8iGPMNuG0DB
+         1M7667o5x+jPgSskzL40/zQ3YX7zNBaPWSk26BOlfp6ahSwMdOCMxS4Oz1GwQpd1c1Qx
+         Gedw==
+X-Gm-Message-State: AOJu0YzHE0iZI0AHO10V8R4IcCHfFXTtNvSDMe6Df5+KV6827/k2nmby
+	CR4jh5qKSCg5/7z10/kz7h1t23Wbxs6r+ZbiMfDxyZfDj5mWFLseYG+HEhF7vxBrj2urAXHl1i2
+	tSsML762Oez9i
+X-Gm-Gg: ASbGncvul0fbVrTnYMRtcMbgSTBg6v+TRP1CXUQ9b5FXJAbqBIq2aDjV1tvWDOU2G2I
+	oGhML5eGdYaresr2rXq45W1uLMiyqIj/6iYqFSUTWfEKLv2/3YzB5p0mlikyxsngnas3d4LmCBz
+	yrnoFchWgEIcb7Rsyjg2Nv0t7cI9KWFwsUUjKnusX/Lq9ToDa2z6Z8xf3FkQ5t9pDkNb+Zlg2w0
+	VAZguH+GuHG6Rgz/BXmBPmKZjzXv3fXxVNsL0+q54mCHBOFya2paFMTVc5tViRcRNMYWrtGnbIR
+	TsZZBw4D0rSXEetDtjWEN1ZklENWkNiyrEpkdP/KiACyJrLc9MB9+TCQSG67UpkjdQorhl0vNey
+	4yYOwxKV4ZIfypI/CGW0w0G0ZcQkjo/3TxW81wMPabiYnaUASxTW+FB3e5OVEvbeT7ENhTwrime
+	MnJosaiy+cO12tNfp1pDxzbOwb
+X-Google-Smtp-Source: AGHT+IGkV4ZKtP7KkxgQHB3S9drQol6zdtqvnkbisQIINbPnlfhd87f1zuu14TLOrLcDBclV2LIrCA==
+X-Received: by 2002:a05:6000:4010:b0:425:8502:f8c3 with SMTP id ffacd0b85a97d-42704d7e9e0mr9233918f8f.1.1760974694303;
+        Mon, 20 Oct 2025 08:38:14 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:23c5:7815:1301:f27:e3a8:2334:314d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710e8037aasm120631405e9.2.2025.10.20.08.38.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710e8037aasm120631405e9.2.2025.10.20.08.38.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 08:38:12 -0700 (PDT)
+        Mon, 20 Oct 2025 08:38:13 -0700 (PDT)
 From: Andrew Murray <amurray@thegoodpenguin.co.uk>
-Subject: [PATCH v3 0/3] printk: Release console_lock between printing
- records in legacy thread
-Date: Mon, 20 Oct 2025 16:38:04 +0100
-Message-Id: <20251020-printk_legacy_thread_console_lock-v3-0-00f1f0ac055a@thegoodpenguin.co.uk>
+Date: Mon, 20 Oct 2025 16:38:05 +0100
+Subject: [PATCH v3 1/3] printk: Introduce console_flush_one_record
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,71 +84,231 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFxX9mgC/43NTQqDMBhF0a2UjBvJj1bSUfdRSojxiwYlkUSlI
- u69USh0UnB43+C8FUUIFiK6X1YUYLbRepeCXy9It8o1gG2dGjHCCiJojodg3djJHhqlFzm2AVQ
- ttXfR9yB7rztMNStNISojBEHJGQIY+z4+nq/UrY2jD8txOdN9/erFCX2mmGDD8zpnSlS64o+xh
- cb7egDXTNZl2mdTh/ajmf3grDyDs4RrY4QhN05Kqv7g27Z9AHAZ5vY6AQAA
-X-Change-ID: 20250914-printk_legacy_thread_console_lock-1c27f59bf990
+Message-Id: <20251020-printk_legacy_thread_console_lock-v3-1-00f1f0ac055a@thegoodpenguin.co.uk>
+References: <20251020-printk_legacy_thread_console_lock-v3-0-00f1f0ac055a@thegoodpenguin.co.uk>
+In-Reply-To: <20251020-printk_legacy_thread_console_lock-v3-0-00f1f0ac055a@thegoodpenguin.co.uk>
 To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
  John Ogness <john.ogness@linutronix.de>, 
  Sergey Senozhatsky <senozhatsky@chromium.org>
 Cc: linux-kernel@vger.kernel.org, 
  Andrew Murray <amurray@thegoodpenguin.co.uk>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760974692; l=2078;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760974692; l=6139;
  i=amurray@thegoodpenguin.co.uk; s=20250914; h=from:subject:message-id;
- bh=4Gn9R0aTjPs5l0ki4rUGt4tVd4RPiNQ5UPjgvg6b9R4=;
- b=jpMeWdaSV2XS2+tOCijvYMJjMsII3fK+w22MG3UPES19Jd6QwNG90fmZZATmmMf+kDP8iHKwe
- jcxZWnTl8JyDIxv8CmzIUk7B46uU7gVqX5L7y+ES1TM2d2pVHDuU8TP
+ bh=aGybOktdhkgeSQs+rX+F7ywh/2yjyEU3TPcl+RFqWQg=;
+ b=6EMW4r3t5Yx8fh4/AX1u3HHYz+8W9zfUKZ7J5NsH2z6Yf7QzNRSoc9bOumYnAwSkJp5Y04O2X
+ CFnM0e8BgjFBAPUICqnJw1bcE7dkTS23HFj9OzL8zQJilsA7ZWA1xWz
 X-Developer-Key: i=amurray@thegoodpenguin.co.uk; a=ed25519;
  pk=0SU0Q8S/uEiCdbXbXS+PvJGUCaBG1nDszD+HPU3Js0Q=
 
-The legacy printer kthread uses console_lock and
-__console_flush_and_unlock to flush records to the console which
-holds the console_lock being held for the entire flush. This
-results in large waiting times for console_lock waiters
-especially where there is a large volume of records or where the
-console is slow (e.g. serial). During boot, this contention causes
-delays in the filp_open call in console_on_rootfs.
-   
-Let's instead release and reacquire console_lock in between
-printing individual records.
+console_flush_all prints all remaining records to all usable consoles
+whilst its caller holds console_lock. This can result in large waiting
+times for those waiting for console_lock especially where there is a
+large volume of records or where the console is slow (e.g. serial).
 
+Let's extract the parts of this function which print a single record
+into a new function named console_flush_one_record. This can later
+be used for functions that will release and reacquire console_lock
+between records.
+
+This commit should not change existing functionality.
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
 ---
-Changes in v3:
-- Rebased on v6.18-rc2
-- Reordering of variables and minor tweak to comments in console_flush_one_record
-  in first patch
-- Improve semantics of console_flush_one_record in the second patch through different
-  use of return value and by replacing any_usable with try_again.
-- Update third patch to use newer version of console_flush_one_record
-- Link to v2: https://lore.kernel.org/r/20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk
+ kernel/printk/printk.c | 158 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 99 insertions(+), 59 deletions(-)
 
-Changes in v2:
-- Move any_usable=false to console_flush_all in the 'introduce
-  console_flush_one_record' patch to match original implementation.
-- Add Petr's console_flush_one_record() code cleanup patch
-- Open code flushing implementation in legacy_kthread_func instead
-  of introducing new console_flush functions.
-- Link to v1: https://lore.kernel.org/r/20250915-printk_legacy_thread_console_lock-v1-0-f34d42a9bcb3@thegoodpenguin.co.uk
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 5aee9ffb16b9a5e7bfadb0266a77bfa569e50e51..1c048c66d09919967e57326e1732bd17c10f3c76 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3134,6 +3134,99 @@ static inline void printk_kthreads_check_locked(void) { }
+ 
+ #endif /* CONFIG_PRINTK */
+ 
++
++/*
++ * Print out one record for each console.
++ *
++ * @do_cond_resched is set by the caller. It can be true only in schedulable
++ * context.
++ *
++ * @next_seq is set to the sequence number after the last available record.
++ * The value is valid only when there is at least one usable console and all
++ * usable consoles were flushed.
++ *
++ * @handover will be set to true if a printk waiter has taken over the
++ * console_lock, in which case the caller is no longer holding the
++ * console_lock. Otherwise it is set to false.
++ *
++ * @any_usable will be set to true if there are any usable consoles.
++ *
++ * Returns true when there was at least one usable console and a record was
++ * flushed. A returned false indicates there were no records to flush for any
++ * of the consoles. It may also indicate that there were no usable consoles,
++ * the context has been lost or there is a panic suitation. Regardless the
++ * reason, the caller should assume it is not useful to immediately try again.
++ *
++ * Requires the console_lock.
++ */
++static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *handover,
++				     bool *any_usable)
++{
++	struct console_flush_type ft;
++	bool any_progress = false;
++	struct console *con;
++	int cookie;
++
++	printk_get_console_flush_type(&ft);
++
++	cookie = console_srcu_read_lock();
++	for_each_console_srcu(con) {
++		short flags = console_srcu_read_flags(con);
++		u64 printk_seq;
++		bool progress;
++
++		/*
++		 * console_flush_one_record() is only responsible for
++		 * nbcon consoles when the nbcon consoles cannot print via
++		 * their atomic or threaded flushing.
++		 */
++		if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
++			continue;
++
++		if (!console_is_usable(con, flags, !do_cond_resched))
++			continue;
++		*any_usable = true;
++
++		if (flags & CON_NBCON) {
++			progress = nbcon_legacy_emit_next_record(con, handover, cookie,
++								 !do_cond_resched);
++			printk_seq = nbcon_seq_read(con);
++		} else {
++			progress = console_emit_next_record(con, handover, cookie);
++			printk_seq = con->seq;
++		}
++
++		/*
++		 * If a handover has occurred, the SRCU read lock
++		 * is already released.
++		 */
++		if (*handover)
++			return false;
++
++		/* Track the next of the highest seq flushed. */
++		if (printk_seq > *next_seq)
++			*next_seq = printk_seq;
++
++		if (!progress)
++			continue;
++		any_progress = true;
++
++		/* Allow panic_cpu to take over the consoles safely. */
++		if (panic_on_other_cpu())
++			goto abandon;
++
++		if (do_cond_resched)
++			cond_resched();
++	}
++	console_srcu_read_unlock(cookie);
++
++	return any_progress;
++
++abandon:
++	console_srcu_read_unlock(cookie);
++	return false;
++}
++
+ /*
+  * Print out all remaining records to all consoles.
+  *
+@@ -3159,77 +3252,24 @@ static inline void printk_kthreads_check_locked(void) { }
+  */
+ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+ {
+-	struct console_flush_type ft;
+ 	bool any_usable = false;
+-	struct console *con;
+ 	bool any_progress;
+-	int cookie;
+ 
+ 	*next_seq = 0;
+ 	*handover = false;
+ 
+ 	do {
+-		any_progress = false;
++		any_progress = console_flush_one_record(do_cond_resched, next_seq, handover,
++							&any_usable);
+ 
+-		printk_get_console_flush_type(&ft);
+-
+-		cookie = console_srcu_read_lock();
+-		for_each_console_srcu(con) {
+-			short flags = console_srcu_read_flags(con);
+-			u64 printk_seq;
+-			bool progress;
++		if (*handover)
++			return false;
+ 
+-			/*
+-			 * console_flush_all() is only responsible for nbcon
+-			 * consoles when the nbcon consoles cannot print via
+-			 * their atomic or threaded flushing.
+-			 */
+-			if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
+-				continue;
+-
+-			if (!console_is_usable(con, flags, !do_cond_resched))
+-				continue;
+-			any_usable = true;
+-
+-			if (flags & CON_NBCON) {
+-				progress = nbcon_legacy_emit_next_record(con, handover, cookie,
+-									 !do_cond_resched);
+-				printk_seq = nbcon_seq_read(con);
+-			} else {
+-				progress = console_emit_next_record(con, handover, cookie);
+-				printk_seq = con->seq;
+-			}
+-
+-			/*
+-			 * If a handover has occurred, the SRCU read lock
+-			 * is already released.
+-			 */
+-			if (*handover)
+-				return false;
+-
+-			/* Track the next of the highest seq flushed. */
+-			if (printk_seq > *next_seq)
+-				*next_seq = printk_seq;
+-
+-			if (!progress)
+-				continue;
+-			any_progress = true;
+-
+-			/* Allow panic_cpu to take over the consoles safely. */
+-			if (panic_on_other_cpu())
+-				goto abandon;
+-
+-			if (do_cond_resched)
+-				cond_resched();
+-		}
+-		console_srcu_read_unlock(cookie);
++		if (panic_on_other_cpu())
++			return false;
+ 	} while (any_progress);
+ 
+ 	return any_usable;
+-
+-abandon:
+-	console_srcu_read_unlock(cookie);
+-	return false;
+ }
+ 
+ static void __console_flush_and_unlock(void)
 
----
-Andrew Murray (2):
-      printk: Introduce console_flush_one_record
-      printk: Use console_flush_one_record for legacy printer kthread
-
-Petr Mladek (1):
-      printk: console_flush_one_record() code cleanup
-
- kernel/printk/printk.c | 186 +++++++++++++++++++++++++++++++------------------
- 1 file changed, 119 insertions(+), 67 deletions(-)
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20250914-printk_legacy_thread_console_lock-1c27f59bf990
-
-Best regards,
 -- 
-Andrew Murray <amurray@thegoodpenguin.co.uk>
+2.34.1
 
 
