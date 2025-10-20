@@ -1,139 +1,916 @@
-Return-Path: <linux-kernel+bounces-860419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAD6BF017F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:08:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A87BF0188
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E8A3E5543
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:08:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A3BB4F06DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1C52EC0AE;
-	Mon, 20 Oct 2025 09:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC462E9ECE;
+	Mon, 20 Oct 2025 09:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3exHA1N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W60DhOhx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E85729ACC3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDE129ACC3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760951313; cv=none; b=Iqg91p5IE3jOLrZvlvZ6l5xRnQG5Giso4bMP+B/IuLvbkdXPqYYhO5iaXvCHBidkqNahwxNBv4Qiufwkp3G055ar15CGWJ+0SZZ7Bh2cRKyGv31jUXjIliYKR+TJT7QbYcnxkETtXqhz4g7xz4X6p8jnSV34AeQVtTJPYbnnziI=
+	t=1760951348; cv=none; b=oPGdXGt3UQBvz5FuJs4uNf93hNLT1PY6LLPrQWobXdhbaA7H2GjQb+or8R7/Ec802v4pgorhMds36Jxb/lUmk8z3fqYLPV9XBuy9Rw0AuhUegrcLZXHXLR9c7yEkC0DA5xjvsUK1CwwNZzJBeZ6A4wHCpqL+d6zUPweOyneoHGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760951313; c=relaxed/simple;
-	bh=TOEucrKhh9Ci7uSuIVms25ipmDEQw2ymMffw7zJm9Ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EPwWxOpvth0jf8UYK/wYkvpwrchdjbewIgyFqe8xBIYZh7DdriD+4XXyQbfuFz9nzjJXthThls9OS/DF3sr6tJOXSIHKyGF5K5KGwpt2775JRyXhFKK9eTI/Jd6Qz9scosOP4tAVm0DelYZ54JvVSs39nscpMCx559c7tH6OIQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3exHA1N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19FEC4CEF9;
-	Mon, 20 Oct 2025 09:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760951312;
-	bh=TOEucrKhh9Ci7uSuIVms25ipmDEQw2ymMffw7zJm9Ck=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n3exHA1NzTdGYdpT2XXmKdsmsnrI9co8rqalqSOTBtXpHEOb39N2D1UH29QN4og3c
-	 pDvnNPfcApPyRzGmN+FEURJak22Md15XOPS36NQSp6oQ/rlq0f5F//2NYy3XFscBfl
-	 kxk0j5Y8QO9J1GL8T40gMKafjVrOABQamTf9ZCzhUzSAHrD+jsCEA+QaM968jF8fF4
-	 dYzdtnwIONDuF9sT5SEMtkIb5ElfXVLV0XDcjjZ0d0Ajxjje8Y15exD6a3sTds4wua
-	 MxlPDr2KGoKiwbTOKDR52zH825vm7zxMoGXLqsll4v2Rke2H4UWjZqGaZL2kXR/uQK
-	 IxQIrc+2yzjNw==
-Message-ID: <3b97b754-890a-46c6-b892-a0324d529a3d@kernel.org>
-Date: Mon, 20 Oct 2025 11:08:27 +0200
+	s=arc-20240116; t=1760951348; c=relaxed/simple;
+	bh=1kMtzy3Lk5trNTpOoaHuwbn9RlEpvJ8NodAIVgpTacY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pOqcxYBMDcNOJvd8W/tYSb8PqweJSvTXB03idBLXLf0dKQh1YrzwFpGc0CfGVTOEr3knKx8QAzdIW/YlpqDIgawOh6+/mp2njA/MZQOFR+DzwYC+lX7HAQ3taJ6tx9el0KoKfd1Jlts55srxcIWenEclXaTajoemh4w27Fxz2A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W60DhOhx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760951344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mc66IMppP2LfUFIodSsG5hh2RkJ+uA926Go93eGlER8=;
+	b=W60DhOhxQ/WL0fIbkU0x61wZTr04KduYjjAuDDmA1c+31H1pXukiwb6Nc+Zsdj3m9EVnig
+	+YtEJjICPT+XuK9kEW2cgundq5c7g3XLHWWxlk06QituGjumrrdznYepTaZie6DyYqjheO
+	lEK3cYzBcYCj4yEX4CEMlvMboUmu11Y=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-446-2W3Y8PH6MR6vMWfBF8eeBA-1; Mon, 20 Oct 2025 05:09:02 -0400
+X-MC-Unique: 2W3Y8PH6MR6vMWfBF8eeBA-1
+X-Mimecast-MFC-AGG-ID: 2W3Y8PH6MR6vMWfBF8eeBA_1760951341
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4270a273b6eso2075210f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:09:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760951341; x=1761556141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mc66IMppP2LfUFIodSsG5hh2RkJ+uA926Go93eGlER8=;
+        b=pLS+x0Nxm1rCFFfNoaeU1iViiAq+QYmiW7WygcbghnSryyL9LJBYEhT3nzUfxC5X3l
+         +iRIw7bsDH3ppyhAeSe3YOU+eGZ/pd+f59HNkVJQ3eamC9XGduQyz7CHNeArfJF+G+l8
+         K3c5ucBqGNAG/VYedCM0s3pJ2Us1zmzw0g/So7ipUivgpjVWJUC+0slkfarzl5OvMn/O
+         O8efqkQEDB4toQPbbL/sEc/mThM+K6kB/TNGWRJJQopez7t9sZ0wsVJxeBgYNIhOoEM1
+         PDhY4SQIhL0I8LbrNzYg3u1S7i7DqOaTs52Xo4BTNuVjWW/2hY1EK6RnlOM9yR+KA9Jl
+         NcZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrXFVqiCVLUIhXCH3qCExvlUoTld8EfeUs0x+mABUAzKs0u57n5eitiT38OUtzngbchC5qSlJUdPR+rSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4GFPi9kOqLjldWFOrcbK0cc3BNpw5CC6zNbpV/o0nBv2ei/WX
+	n+2lWFwSJi0KGq3/CqfUQ9mSNqonrdlq9TsJsqO9xVo/mXjq9cCW4+oyqJ3jF5UnZMq8RhXj+SW
+	clgcFCo5C7oTNzvgHqmhMNfAUCNcC86YtE3kIzIbyQ092+rk3Yu+CAoTyd6ayc+E2+w==
+X-Gm-Gg: ASbGncuyf5w3h5pZgDauuny2PRWszs+dP4iS1cKKF0IN/WF/URA7OM5OGyKFka4UG5i
+	5ZVwWTweIK30QZLRWRSx0YABYYHsfivnOAf+hFkKdWc2xK6hgnO6Be9yBwBL9EbeTZIqT8EraDL
+	7XD2REm3CVvKwp8NCrz5gtHgyhI+QPV5tsVNg96Vyh7QBI50mlxb9Gu1nxyT3PkJm1+NBGe5qar
+	Sui5d32gJ+1QU2K8nvElkgRcsZiTlNmyGHn1eMAxHAv5YylGEb9KR+Kqfs2aus9H4EoEzvfTry9
+	S6kg0gUyZlpoOPdAohj0vd8q4m7egM2Q7kTKu1yXPmgkv40YgqKNb0nDh8Nc3Ex39lEZ
+X-Received: by 2002:a05:6000:1789:b0:427:5e3:7d74 with SMTP id ffacd0b85a97d-42705e37d97mr7183489f8f.23.1760951340873;
+        Mon, 20 Oct 2025 02:09:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEl+z/dEKGukbrZPPIaHKhj5DYUGR/4tth3v2EjBycd3HxRzlLedwCzHFsFTW01zqGaS43+Dg==
+X-Received: by 2002:a05:6000:1789:b0:427:5e3:7d74 with SMTP id ffacd0b85a97d-42705e37d97mr7183462f8f.23.1760951340095;
+        Mon, 20 Oct 2025 02:09:00 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce06bsm14038968f8f.45.2025.10.20.02.08.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 02:08:59 -0700 (PDT)
+Date: Mon, 20 Oct 2025 05:08:57 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8 19/19] virtio_ring: add in order support
+Message-ID: <20251020043646-mutt-send-email-mst@kernel.org>
+References: <20251020071003.28834-1-jasowang@redhat.com>
+ <20251020071003.28834-20-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: treewide: make get_free_pages() and return void *
-To: David Hildenbrand <david@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
- <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20251018093002.3660549-1-rppt@kernel.org>
- <aPQxN7-FeFB6vTuv@casper.infradead.org>
- <3e798b9e-4915-404f-9197-ed3c32587141@kernel.org>
- <85707316-3f2b-4e29-b821-a32f9097244e@kernel.org>
- <635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020071003.28834-20-jasowang@redhat.com>
 
-On 20. 10. 25, 11:02, David Hildenbrand wrote:
-> Regarding the metadata overhead, in 2015 Linus wrote in that thread:
+On Mon, Oct 20, 2025 at 03:10:03PM +0800, Jason Wang wrote:
+> This patch implements in order support for both split virtqueue and
+> packed virtqueue. Performance could be gained for the device where the
+> memory access could be expensive (e.g vhost-net or a real PCI device):
 > 
-> "Long ago, allocating a page using kmalloc() was a bad idea, because
-> there was overhead for it in the allocation and the code.
+> Benchmark with KVM guest:
 > 
-> These days, kmalloc() not only doesn't have the allocation overhead,
-> but may actually scale better too, thanks to percpu caches etc."
+> Vhost-net on the host: (pktgen + XDP_DROP):
 > 
-> What's that status of that 10 years later?
+>          in_order=off | in_order=on | +%
+>     TX:  5.20Mpps     | 6.20Mpps    | +19%
+>     RX:  3.47Mpps     | 3.61Mpps    | + 4%
+> 
+> Vhost-user(testpmd) on the host: (pktgen/XDP_DROP):
+> 
+> For split virtqueue:
+> 
+>          in_order=off | in_order=on | +%
+>     TX:  5.60Mpps     | 5.60Mpps    | +0.0%
+>     RX:  9.16Mpps     | 9.61Mpps    | +4.9%
+> 
+> For packed virtqueue:
+> 
+>          in_order=off | in_order=on | +%
+>     TX:  5.60Mpps     | 5.70Mpps    | +1.7%
+>     RX:  10.6Mpps     | 10.8Mpps    | +1.8%
+> 
+> Benchmark also shows no performance impact for in_order=off for queue
+> size with 256 and 1024.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 440 +++++++++++++++++++++++++++++++++--
+>  1 file changed, 416 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 96d7f165ec88..411bfa31707d 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -70,6 +70,8 @@
+>  enum vq_layout {
+>  	SPLIT = 0,
+>  	PACKED,
+> +	SPLIT_IN_ORDER,
+> +	PACKED_IN_ORDER,
+>  	VQ_TYPE_MAX,
+>  };
+>  
+> @@ -80,6 +82,7 @@ struct vring_desc_state_split {
+>  	 * allocated together. So we won't stress more to the memory allocator.
+>  	 */
+>  	struct vring_desc *indir_desc;
+> +	u32 total_len;			/* Buffer Length */
+>  };
+>  
+>  struct vring_desc_state_packed {
+> @@ -91,6 +94,7 @@ struct vring_desc_state_packed {
+>  	struct vring_packed_desc *indir_desc;
+>  	u16 num;			/* Descriptor list length. */
+>  	u16 last;			/* The last desc state in a list. */
+> +	u32 total_len;			/* Buffer Length */
+>  };
+>  
+>  struct vring_desc_extra {
+> @@ -168,7 +172,7 @@ struct vring_virtqueue_packed {
+>  struct vring_virtqueue;
+>  
+>  struct virtqueue_ops {
+> -	int (*add)(struct vring_virtqueue *_vq, struct scatterlist *sgs[],
+> +	int (*add)(struct vring_virtqueue *vq, struct scatterlist *sgs[],
+>  		   unsigned int total_sg, unsigned int out_sgs,
+>  		   unsigned int in_sgs,	void *data,
+>  		   void *ctx, bool premapped, gfp_t gfp);
+> @@ -205,8 +209,23 @@ struct vring_virtqueue {
+>  
+>  	enum vq_layout layout;
+>  
+> -	/* Head of free buffer list. */
+> +	/*
+> +	 * Without IN_ORDER it's the head of free buffer list. With
+> +	 * IN_ORDER and SPLIT, it's the next available buffer
+> +	 * index. With IN_ORDER and PACKED, it's unused.
+> +	 */
+>  	unsigned int free_head;
+> +
+> +	/*
+> +	 * With IN_ORDER, devices write a single used ring entry with
+> +	 * the id corresponding to the head entry of the descriptor chain
+> +	 * describing the last buffer in the batch
 
-AFAI skimmed through the code, for allocations > 2 pages 
-(KMALLOC_MAX_CACHE_SIZE) -- if size is a constant -- slub resorts to 
-alloc_pages().
+In the spec, yes, but I don't get it, so what does this field do?
+This should say something like:
+"once we see an in-order batch, this stores this last
+ entry, and until we return the last buffer.
+ After this, id is set to vq.num to mark it invalid.
+ Unused without IN_ORDER.
+"
 
-For smaller ones (1 and 2 pages), there is a very little overhead in 
-struct slab -- mm people, please correct me if I am wrong.
 
-thanks,
--- 
-js
-suse labs
+
+
+> +	 */
+> +	struct used_entry {
+> +		u32 id;
+> +		u32 len;
+> +	} batch_last;
+> +
+>  	/* Number we've added since last sync. */
+>  	unsigned int num_added;
+>  
+> @@ -259,7 +278,12 @@ static void vring_free(struct virtqueue *_vq);
+>  
+>  static inline bool virtqueue_is_packed(const struct vring_virtqueue *vq)
+>  {
+> -	return vq->layout == PACKED;
+> +	return vq->layout == PACKED || vq->layout == PACKED_IN_ORDER;
+> +}
+> +
+> +static inline bool virtqueue_is_in_order(const struct vring_virtqueue *vq)
+> +{
+> +	return vq->layout == SPLIT_IN_ORDER || vq->layout == PACKED_IN_ORDER;
+>  }
+>  
+>  static bool virtqueue_use_indirect(const struct vring_virtqueue *vq,
+> @@ -576,6 +600,8 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+>  	struct scatterlist *sg;
+>  	struct vring_desc *desc;
+>  	unsigned int i, n, avail, descs_used, err_idx, c = 0;
+> +	/* Total length for in-order */
+> +	unsigned int total_len = 0;
+>  	int head;
+>  	bool indirect;
+>  
+> @@ -645,6 +671,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+>  			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+>  						     ++c == total_sg ? 0 : VRING_DESC_F_NEXT,
+>  						     premapped);
+> +			total_len += len;
+>  		}
+>  	}
+>  	for (; n < (out_sgs + in_sgs); n++) {
+> @@ -662,6 +689,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+>  				i, addr, len,
+>  				(++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
+>  				VRING_DESC_F_WRITE, premapped);
+> +			total_len += len;
+>  		}
+>  	}
+>  
+> @@ -684,7 +712,12 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+>  	vq->vq.num_free -= descs_used;
+>  
+>  	/* Update free pointer */
+> -	if (indirect)
+> +	if (virtqueue_is_in_order(vq)) {
+> +		vq->free_head += descs_used;
+> +		if (vq->free_head >= vq->split.vring.num)
+> +			vq->free_head -= vq->split.vring.num;
+> +		vq->split.desc_state[head].total_len = total_len;;
+
+what's with ;; ?
+
+
+> +	} else if (indirect)
+>  		vq->free_head = vq->split.desc_extra[head].next;
+>  	else
+>  		vq->free_head = i;
+> @@ -858,6 +891,14 @@ static bool more_used_split(const struct vring_virtqueue *vq)
+>  	return virtqueue_poll_split(vq, vq->last_used_idx);
+>  }
+>  
+> +static bool more_used_split_in_order(const struct vring_virtqueue *vq)
+> +{
+> +	if (vq->batch_last.id != vq->split.vring.num)
+
+So why not use ~0x0 to mark the id invalid?
+Will save a vring num read making the code a bit
+more compact, no? worth trying.
+
+
+> +		return true;
+> +
+> +	return virtqueue_poll_split(vq, vq->last_used_idx);
+> +}
+> +
+>  static void *virtqueue_get_buf_ctx_split(struct vring_virtqueue *vq,
+>  					 unsigned int *len,
+>  					 void **ctx)
+
+So now we have both more_used_split and more_used_split_in_order
+and it's confusing that more_used_split is not a superset
+of more_used_split_in_order.
+
+I think fundamentally out of order code will have to be
+renamed with _ooo suffix.
+
+
+Not a blocker for now.
+
+
+
+> @@ -915,6 +956,73 @@ static void *virtqueue_get_buf_ctx_split(struct vring_virtqueue *vq,
+>  	return ret;
+>  }
+>  
+> +static void *virtqueue_get_buf_ctx_split_in_order(struct vring_virtqueue *vq,
+> +						  unsigned int *len,
+> +						  void **ctx)
+> +{
+> +	void *ret;
+> +	unsigned int num = vq->split.vring.num;
+> +	u16 last_used;
+> +
+> +	START_USE(vq);
+> +
+> +	if (unlikely(vq->broken)) {
+> +		END_USE(vq);
+> +		return NULL;
+> +	}
+> +
+> +	last_used = (vq->last_used_idx & (vq->split.vring.num - 1));
+
+just (num - 1) ?
+
+
+> +
+> +	if (vq->batch_last.id == num) {
+> +		if (!more_used_split(vq)) {
+
+
+Well this works technically but it is really confusing.
+Better to call more_used_split_in_order consistently.
+
+
+> +			pr_debug("No more buffers in queue\n");
+> +			END_USE(vq);
+> +			return NULL;
+> +		}
+> +
+> +		/* Only get used array entries after they have been
+> +		 * exposed by host. */
+
+/*
+ * Always format multiline comments
+ * like this.
+ */
+
+/* Never
+ * like this */
+
+
+
+> +		virtio_rmb(vq->weak_barriers);
+> +		vq->batch_last.id = virtio32_to_cpu(vq->vq.vdev,
+> +				    vq->split.vring.used->ring[last_used].id);
+> +		vq->batch_last.len = virtio32_to_cpu(vq->vq.vdev,
+> +				     vq->split.vring.used->ring[last_used].len);
+> +	}
+> +
+> +	if (vq->batch_last.id == last_used) {
+> +		vq->batch_last.id = num;
+> +		*len = vq->batch_last.len;
+> +	} else
+> +		*len = vq->split.desc_state[last_used].total_len;
+> +
+> +	if (unlikely(last_used >= num)) {
+> +		BAD_RING(vq, "id %u out of range\n", last_used);
+> +		return NULL;
+> +	}
+> +	if (unlikely(!vq->split.desc_state[last_used].data)) {
+> +		BAD_RING(vq, "id %u is not a head!\n", last_used);
+> +		return NULL;
+> +	}
+> +
+> +	/* detach_buf_split clears data, so grab it now. */
+> +	ret = vq->split.desc_state[last_used].data;
+> +	detach_buf_split_in_order(vq, last_used, ctx);
+> +
+> +	vq->last_used_idx++;
+> +	/* If we expect an interrupt for the next entry, tell host
+> +	 * by writing event index and flush out the write before
+> +	 * the read in the next get_buf call. */
+> +	if (!(vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT))
+> +		virtio_store_mb(vq->weak_barriers,
+> +				&vring_used_event(&vq->split.vring),
+> +				cpu_to_virtio16(vq->vq.vdev, vq->last_used_idx));
+> +
+> +	LAST_ADD_TIME_INVALID(vq);
+> +
+> +	END_USE(vq);
+> +	return ret;
+> +}
+> +
+>  static void virtqueue_disable_cb_split(struct vring_virtqueue *vq)
+>  {
+>  	if (!(vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT)) {
+> @@ -1008,7 +1116,10 @@ static void *virtqueue_detach_unused_buf_split(struct vring_virtqueue *vq)
+>  			continue;
+>  		/* detach_buf_split clears data, so grab it now. */
+>  		buf = vq->split.desc_state[i].data;
+> -		detach_buf_split(vq, i, NULL);
+> +		if (virtqueue_is_in_order(vq))
+> +			detach_buf_split_in_order(vq, i, NULL);
+> +		else
+> +			detach_buf_split(vq, i, NULL);
+>  		vq->split.avail_idx_shadow--;
+>  		vq->split.vring.avail->idx = cpu_to_virtio16(vq->vq.vdev,
+>  				vq->split.avail_idx_shadow);
+> @@ -1071,6 +1182,7 @@ static void virtqueue_vring_attach_split(struct vring_virtqueue *vq,
+>  
+>  	/* Put everything in free lists. */
+>  	vq->free_head = 0;
+> +	vq->batch_last.id = vq->split.vring.num;
+>  }
+>  
+>  static int vring_alloc_state_extra_split(struct vring_virtqueue_split *vring_split)
+> @@ -1182,7 +1294,6 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>  	if (!vq)
+>  		return NULL;
+>  
+> -	vq->layout = SPLIT;
+>  	vq->vq.callback = callback;
+>  	vq->vq.vdev = vdev;
+>  	vq->vq.name = name;
+> @@ -1202,6 +1313,8 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>  	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+>  		!context;
+>  	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> +	vq->layout = virtio_has_feature(vdev, VIRTIO_F_IN_ORDER) ?
+> +		     SPLIT_IN_ORDER : SPLIT;
+>  
+>  	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+>  		vq->weak_barriers = false;
+
+Same comments for packed below, I don't repeat them.
+
+
+
+
+> @@ -1359,13 +1472,14 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+>  					 unsigned int in_sgs,
+>  					 void *data,
+>  					 bool premapped,
+> -					 gfp_t gfp)
+> +					 gfp_t gfp,
+> +					 u16 id)
+>  {
+>  	struct vring_desc_extra *extra;
+>  	struct vring_packed_desc *desc;
+>  	struct scatterlist *sg;
+> -	unsigned int i, n, err_idx, len;
+> -	u16 head, id;
+> +	unsigned int i, n, err_idx, len, total_len = 0;
+> +	u16 head;
+>  	dma_addr_t addr;
+>  
+>  	head = vq->packed.next_avail_idx;
+> @@ -1383,8 +1497,6 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+>  	}
+>  
+>  	i = 0;
+> -	id = vq->free_head;
+> -	BUG_ON(id == vq->packed.vring.num);
+>  
+>  	for (n = 0; n < out_sgs + in_sgs; n++) {
+>  		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> @@ -1404,6 +1516,7 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+>  				extra[i].flags = n < out_sgs ?  0 : VRING_DESC_F_WRITE;
+>  			}
+>  
+> +			total_len += len;
+>  			i++;
+>  		}
+>  	}
+> @@ -1450,13 +1563,15 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+>  				1 << VRING_PACKED_DESC_F_USED;
+>  	}
+>  	vq->packed.next_avail_idx = n;
+> -	vq->free_head = vq->packed.desc_extra[id].next;
+> +	if (!virtqueue_is_in_order(vq))
+> +		vq->free_head = vq->packed.desc_extra[id].next;
+>  
+>  	/* Store token and indirect buffer state. */
+>  	vq->packed.desc_state[id].num = 1;
+>  	vq->packed.desc_state[id].data = data;
+>  	vq->packed.desc_state[id].indir_desc = desc;
+>  	vq->packed.desc_state[id].last = id;
+> +	vq->packed.desc_state[id].total_len = total_len;
+>  
+>  	vq->num_added += 1;
+>  
+> @@ -1509,8 +1624,11 @@ static inline int virtqueue_add_packed(struct vring_virtqueue *vq,
+>  	BUG_ON(total_sg == 0);
+>  
+>  	if (virtqueue_use_indirect(vq, total_sg)) {
+> +		id = vq->free_head;
+> +		BUG_ON(id == vq->packed.vring.num);
+>  		err = virtqueue_add_indirect_packed(vq, sgs, total_sg, out_sgs,
+> -						    in_sgs, data, premapped, gfp);
+> +						    in_sgs, data, premapped,
+> +						    gfp, id);
+>  		if (err != -ENOMEM) {
+>  			END_USE(vq);
+>  			return err;
+> @@ -1631,6 +1749,152 @@ static inline int virtqueue_add_packed(struct vring_virtqueue *vq,
+>  	return -EIO;
+>  }
+>  
+> +static inline int virtqueue_add_packed_in_order(struct vring_virtqueue *vq,
+> +						struct scatterlist *sgs[],
+> +						unsigned int total_sg,
+> +						unsigned int out_sgs,
+> +						unsigned int in_sgs,
+> +						void *data,
+> +						void *ctx,
+> +						bool premapped,
+> +						gfp_t gfp)
+> +{
+> +	struct vring_packed_desc *desc;
+> +	struct scatterlist *sg;
+> +	unsigned int i, n, c, err_idx, total_len = 0;
+> +	__le16 head_flags, flags;
+> +	u16 head, avail_used_flags;
+> +	int err;
+> +
+> +	START_USE(vq);
+> +
+> +	BUG_ON(data == NULL);
+> +	BUG_ON(ctx && vq->indirect);
+> +
+> +	if (unlikely(vq->broken)) {
+> +		END_USE(vq);
+> +		return -EIO;
+> +	}
+> +
+> +	LAST_ADD_TIME_UPDATE(vq);
+> +
+> +	BUG_ON(total_sg == 0);
+> +
+> +	if (virtqueue_use_indirect(vq, total_sg)) {
+> +		err = virtqueue_add_indirect_packed(vq, sgs, total_sg, out_sgs,
+> +						    in_sgs, data, premapped, gfp,
+> +						    vq->packed.next_avail_idx);
+> +		if (err != -ENOMEM) {
+> +			END_USE(vq);
+> +			return err;
+> +		}
+> +
+> +		/* fall back on direct */
+> +	}
+> +
+> +	head = vq->packed.next_avail_idx;
+> +	avail_used_flags = vq->packed.avail_used_flags;
+> +
+> +	WARN_ON_ONCE(total_sg > vq->packed.vring.num && !vq->indirect);
+> +
+> +	desc = vq->packed.vring.desc;
+> +	i = head;
+> +
+> +	if (unlikely(vq->vq.num_free < total_sg)) {
+> +		pr_debug("Can't add buf len %i - avail = %i\n",
+> +			 total_sg, vq->vq.num_free);
+> +		END_USE(vq);
+> +		return -ENOSPC;
+> +	}
+> +
+> +	c = 0;
+> +	for (n = 0; n < out_sgs + in_sgs; n++) {
+> +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> +			dma_addr_t addr;
+> +			u32 len;
+> +
+> +			if (vring_map_one_sg(vq, sg, n < out_sgs ?
+> +					     DMA_TO_DEVICE : DMA_FROM_DEVICE,
+> +					     &addr, &len, premapped))
+> +				goto unmap_release;
+> +
+> +			flags = cpu_to_le16(vq->packed.avail_used_flags |
+> +				    (++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
+> +				    (n < out_sgs ? 0 : VRING_DESC_F_WRITE));
+> +			if (i == head)
+> +				head_flags = flags;
+> +			else
+> +				desc[i].flags = flags;
+> +
+> +
+> +			desc[i].addr = cpu_to_le64(addr);
+> +			desc[i].len = cpu_to_le32(len);
+> +			desc[i].id = cpu_to_le16(head);
+> +
+> +			if (unlikely(vq->use_map_api)) {
+> +				vq->packed.desc_extra[i].addr = premapped ?
+> +				      DMA_MAPPING_ERROR: addr;
+> +				vq->packed.desc_extra[i].len = len;
+> +				vq->packed.desc_extra[i].flags =
+> +					le16_to_cpu(flags);
+> +			}
+> +
+> +			if ((unlikely(++i >= vq->packed.vring.num))) {
+> +				i = 0;
+> +				vq->packed.avail_used_flags ^=
+> +					1 << VRING_PACKED_DESC_F_AVAIL |
+> +					1 << VRING_PACKED_DESC_F_USED;
+> +				vq->packed.avail_wrap_counter ^= 1;
+> +			}
+> +
+> +			total_len += len;
+> +		}
+> +	}
+> +
+> +	/* We're using some buffers from the free list. */
+> +	vq->vq.num_free -= total_sg;
+> +
+> +	/* Update free pointer */
+> +	vq->packed.next_avail_idx = i;
+> +
+> +	/* Store token. */
+> +	vq->packed.desc_state[head].num = total_sg;
+> +	vq->packed.desc_state[head].data = data;
+> +	vq->packed.desc_state[head].indir_desc = ctx;
+> +	vq->packed.desc_state[head].total_len = total_len;
+> +
+> +	/*
+> +	 * A driver MUST NOT make the first descriptor in the list
+> +	 * available before all subsequent descriptors comprising
+> +	 * the list are made available.
+> +	 */
+> +	virtio_wmb(vq->weak_barriers);
+> +	vq->packed.vring.desc[head].flags = head_flags;
+> +	vq->num_added += total_sg;
+> +
+> +	pr_debug("Added buffer head %i to %p\n", head, vq);
+> +	END_USE(vq);
+> +
+> +	return 0;
+> +
+> +unmap_release:
+> +	err_idx = i;
+> +	i = head;
+> +	vq->packed.avail_used_flags = avail_used_flags;
+> +
+> +	for (n = 0; n < total_sg; n++) {
+> +		if (i == err_idx)
+> +			break;
+> +		vring_unmap_extra_packed(vq, &vq->packed.desc_extra[i]);
+> +		i++;
+> +		if (i >= vq->packed.vring.num)
+> +			i = 0;
+> +	}
+> +
+> +	END_USE(vq);
+> +	return -EIO;
+> +}
+> +
+>  static bool virtqueue_kick_prepare_packed(struct vring_virtqueue *vq)
+>  {
+>  	u16 new, old, off_wrap, flags, wrap_counter, event_idx;
+> @@ -1792,10 +2056,81 @@ static void update_last_used_idx_packed(struct vring_virtqueue *vq,
+>  				cpu_to_le16(vq->last_used_idx));
+>  }
+>  
+> +static bool more_used_packed_in_order(const struct vring_virtqueue *vq)
+> +{
+> +	if (vq->batch_last.id != vq->packed.vring.num)
+> +		return true;
+> +
+> +	return virtqueue_poll_packed(vq, READ_ONCE(vq->last_used_idx));
+> +}
+> +
+> +static void *virtqueue_get_buf_ctx_packed_in_order(struct vring_virtqueue *vq,
+> +						   unsigned int *len,
+> +						   void **ctx)
+> +{
+> +	unsigned int num = vq->packed.vring.num;
+> +	u16 last_used, last_used_idx;
+> +	bool used_wrap_counter;
+> +	void *ret;
+> +
+> +	START_USE(vq);
+> +
+> +	if (unlikely(vq->broken)) {
+> +		END_USE(vq);
+> +		return NULL;
+> +	}
+> +
+> +	last_used_idx = vq->last_used_idx;
+> +	used_wrap_counter = packed_used_wrap_counter(last_used_idx);
+> +	last_used = packed_last_used(last_used_idx);
+> +
+> +	if (vq->batch_last.id == num) {
+> +		if (!more_used_packed(vq)) {
+> +			pr_debug("No more buffers in queue\n");
+> +			END_USE(vq);
+> +			return NULL;
+> +		}
+> +		/* Only get used elements after they have been exposed by host. */
+> +		virtio_rmb(vq->weak_barriers);
+> +		vq->batch_last.id =
+> +			le16_to_cpu(vq->packed.vring.desc[last_used].id);
+> +		vq->batch_last.len =
+> +			le32_to_cpu(vq->packed.vring.desc[last_used].len);
+> +	}
+> +
+> +	if (vq->batch_last.id == last_used) {
+> +		vq->batch_last.id = num;
+> +		*len = vq->batch_last.len;
+> +	} else
+> +		*len = vq->packed.desc_state[last_used].total_len;
+> +
+> +	if (unlikely(last_used >= num)) {
+> +		BAD_RING(vq, "id %u out of range\n", last_used);
+> +		return NULL;
+> +	}
+> +	if (unlikely(!vq->packed.desc_state[last_used].data)) {
+> +		BAD_RING(vq, "id %u is not a head!\n", last_used);
+> +		return NULL;
+> +	}
+> +
+> +	/* detach_buf_packed clears data, so grab it now. */
+> +	ret = vq->packed.desc_state[last_used].data;
+> +	detach_buf_packed_in_order(vq, last_used, ctx);
+> +
+> +	update_last_used_idx_packed(vq, last_used, last_used,
+> +				    used_wrap_counter);
+> +
+> +	LAST_ADD_TIME_INVALID(vq);
+> +
+> +	END_USE(vq);
+> +	return ret;
+> +}
+> +
+>  static void *virtqueue_get_buf_ctx_packed(struct vring_virtqueue *vq,
+>  					  unsigned int *len,
+>  					  void **ctx)
+>  {
+> +	unsigned int num = vq->packed.vring.num;
+>  	u16 last_used, id, last_used_idx;
+>  	bool used_wrap_counter;
+>  	void *ret;
+> @@ -1822,7 +2157,7 @@ static void *virtqueue_get_buf_ctx_packed(struct vring_virtqueue *vq,
+>  	id = le16_to_cpu(vq->packed.vring.desc[last_used].id);
+>  	*len = le32_to_cpu(vq->packed.vring.desc[last_used].len);
+>  
+> -	if (unlikely(id >= vq->packed.vring.num)) {
+> +	if (unlikely(id >= num)) {
+>  		BAD_RING(vq, "id %u out of range\n", id);
+>  		return NULL;
+>  	}
+> @@ -1963,7 +2298,10 @@ static void *virtqueue_detach_unused_buf_packed(struct vring_virtqueue *vq)
+>  			continue;
+>  		/* detach_buf clears data, so grab it now. */
+>  		buf = vq->packed.desc_state[i].data;
+> -		detach_buf_packed(vq, i, NULL);
+> +		if (virtqueue_is_in_order(vq))
+> +			detach_buf_packed_in_order(vq, i, NULL);
+> +		else
+> +			detach_buf_packed(vq, i, NULL);
+>  		END_USE(vq);
+>  		return buf;
+>  	}
+> @@ -1989,6 +2327,8 @@ static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num)
+>  	for (i = 0; i < num - 1; i++)
+>  		desc_extra[i].next = i + 1;
+>  
+> +	desc_extra[num - 1].next = 0;
+> +
+>  	return desc_extra;
+>  }
+>  
+> @@ -2120,10 +2460,17 @@ static void virtqueue_vring_attach_packed(struct vring_virtqueue *vq,
+>  {
+>  	vq->packed = *vring_packed;
+>  
+> -	/* Put everything in free lists. */
+> -	vq->free_head = 0;
+> +	if (virtqueue_is_in_order(vq))
+> +		vq->batch_last.id = vq->packed.vring.num;
+> +	else {
+
+coding style violation:
+
+	This does not apply if only one branch of a conditional statement is a single
+	statement; in the latter case use braces in both branches:
+
+	.. code-block:: c
+
+		if (condition) {
+			do_this();
+			do_that();
+		} else {
+			otherwise();
+		}
+
+
+
+
+
+> +		/*
+> +		 * Put everything in free lists. Note that
+> +		 * next_avail_idx is sufficient with IN_ORDER so
+> +		 * free_head is unused.
+> +		 */
+> +		vq->free_head = 0 ;
+
+extra space here
+
+
+
+> +	}
+>  }
+> -
+>  static void virtqueue_reset_packed(struct vring_virtqueue *vq)
+>  {
+>  	memset(vq->packed.vring.device, 0, vq->packed.event_size_in_bytes);
+> @@ -2168,13 +2515,14 @@ static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+>  #else
+>  	vq->broken = false;
+>  #endif
+> -	vq->layout = PACKED;
+>  	vq->map = map;
+>  	vq->use_map_api = vring_use_map_api(vdev);
+>  
+>  	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+>  		!context;
+>  	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> +	vq->layout = virtio_has_feature(vdev, VIRTIO_F_IN_ORDER) ?
+> +		     PACKED_IN_ORDER : PACKED;
+>  
+>  	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+>  		vq->weak_barriers = false;
+> @@ -2284,9 +2632,39 @@ static const struct virtqueue_ops packed_ops = {
+>  	.reset = virtqueue_reset_packed,
+>  };
+>  
+> +static const struct virtqueue_ops split_in_order_ops = {
+> +	.add = virtqueue_add_split,
+> +	.get = virtqueue_get_buf_ctx_split_in_order,
+> +	.kick_prepare = virtqueue_kick_prepare_split,
+> +	.disable_cb = virtqueue_disable_cb_split,
+> +	.enable_cb_delayed = virtqueue_enable_cb_delayed_split,
+> +	.enable_cb_prepare = virtqueue_enable_cb_prepare_split,
+> +	.poll = virtqueue_poll_split,
+> +	.detach_unused_buf = virtqueue_detach_unused_buf_split,
+> +	.more_used = more_used_split_in_order,
+> +	.resize = virtqueue_resize_split,
+> +	.reset = virtqueue_reset_split,
+> +};
+> +
+> +static const struct virtqueue_ops packed_in_order_ops = {
+> +	.add = virtqueue_add_packed_in_order,
+> +	.get = virtqueue_get_buf_ctx_packed_in_order,
+> +	.kick_prepare = virtqueue_kick_prepare_packed,
+> +	.disable_cb = virtqueue_disable_cb_packed,
+> +	.enable_cb_delayed = virtqueue_enable_cb_delayed_packed,
+> +	.enable_cb_prepare = virtqueue_enable_cb_prepare_packed,
+> +	.poll = virtqueue_poll_packed,
+> +	.detach_unused_buf = virtqueue_detach_unused_buf_packed,
+> +	.more_used = more_used_packed_in_order,
+> +	.resize = virtqueue_resize_packed,
+> +	.reset = virtqueue_reset_packed,
+> +};
+> +
+>  static const struct virtqueue_ops *const all_ops[VQ_TYPE_MAX] = {
+>  	[SPLIT] = &split_ops,
+> -	[PACKED] = &packed_ops
+> +	[PACKED] = &packed_ops,
+> +	[SPLIT_IN_ORDER] = &split_in_order_ops,
+> +	[PACKED_IN_ORDER] = &packed_in_order_ops,
+>  };
+>  
+>  static int virtqueue_disable_and_recycle(struct virtqueue *_vq,
+> @@ -2342,6 +2720,12 @@ static int virtqueue_enable_after_reset(struct virtqueue *_vq)
+>  	case PACKED:							\
+>  		ret = all_ops[PACKED]->op(vq, ##__VA_ARGS__);		\
+>  		break;							\
+> +	case SPLIT_IN_ORDER:						\
+> +		ret = all_ops[SPLIT_IN_ORDER]->op(vq, ##__VA_ARGS__);	\
+> +		break;							\
+> +	case PACKED_IN_ORDER:						\
+> +		ret = all_ops[PACKED_IN_ORDER]->op(vq, ##__VA_ARGS__);	\
+> +		break;							\
+>  	default:							\
+>  		BUG();							\
+>  		break;							\
+> @@ -2358,10 +2742,16 @@ static int virtqueue_enable_after_reset(struct virtqueue *_vq)
+>  	case PACKED:					\
+>  		all_ops[PACKED]->op(vq, ##__VA_ARGS__);	\
+>  		break;					\
+> -	default:					\
+> -		BUG();					\
+> -		break;					\
+> -	}						\
+> +	case SPLIT_IN_ORDER:						\
+> +		all_ops[SPLIT_IN_ORDER]->op(vq, ##__VA_ARGS__);	\
+> +		break;							\
+> +	case PACKED_IN_ORDER:						\
+> +		all_ops[PACKED_IN_ORDER]->op(vq, ##__VA_ARGS__);	\
+> +		break;							\
+> +	default:							\
+> +		BUG();							\
+> +		break;							\
+> +	}								\
+>  })
+>  
+>  static inline int virtqueue_add(struct virtqueue *_vq,
+> @@ -3078,6 +3468,8 @@ void vring_transport_features(struct virtio_device *vdev)
+>  			break;
+>  		case VIRTIO_F_NOTIFICATION_DATA:
+>  			break;
+> +		case VIRTIO_F_IN_ORDER:
+> +			break;
+>  		default:
+>  			/* We don't understand this bit. */
+>  			__virtio_clear_bit(vdev, i);
+> -- 
+> 2.31.1
+
 
