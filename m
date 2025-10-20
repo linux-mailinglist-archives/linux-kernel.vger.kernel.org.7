@@ -1,94 +1,90 @@
-Return-Path: <linux-kernel+bounces-860930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79701BF15B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:54:04 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C84FBF15BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBDA18A5D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:54:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 221EB34B682
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBDB2F6160;
-	Mon, 20 Oct 2025 12:53:46 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C9D30DD2F;
+	Mon, 20 Oct 2025 12:54:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2053D26657D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5748B3FFD
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760964826; cv=none; b=a04vH7Ia1zMRXVO8IET+mJQ/s1IlbF/T0z9mSncbbPna+Sf38sTEQi4W4RPUdy5ma6+bGCtiJyAn4+udhFqJUHB+uuHYYnvLJSWEhcpRlsbgH1tBmtR/9nA+J6hB8yq7JCayiB5y+1ByGulCUK/aqxEtbC0lXXa6XbCsxpaxSh4=
+	t=1760964844; cv=none; b=JpTdJ+c60iDa2AklSndoFWV1STvunWmhOtxK2F3YyScXg5VOFrVbWFLVAw3n93Jl8OO24lr+ZEvsxJu0Is3zBb5bqd0hITGItIMa9spQgpTMdkM6QrS6EOLVL68SFyAuPeLxTIr+qt20jBVQDjjcD6Mfl8hvKRtbFsjWrZwNX3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760964826; c=relaxed/simple;
-	bh=nraJQwwD6dqcMnmFpGbRn2OoudlMBMQTV+lXSL2dNnk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kXFyHnQyEN9waYXgOrYED/UFnWnB247S+csCXTPzMOcItUmC/d4gu9Ad7QZMk3zOzJO66HnIk4NSjg0+mklEfe2aGLnxTa31ecfLnNiNNMcbXGEzXsT40vjo0kEY5Um8wLtO3/kZifRMiUSkThAZVOFrzD6eJxBC8RPMsytU1O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cb4c0f12adb311f0a38c85956e01ac42-20251020
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:f910d0c3-7f34-48e6-b4ec-4a4fdabd0173,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:20
-X-CID-META: VersionHash:a9d874c,CLOUDID:54cfd040c6b2de2905d497e7cb8a6c40,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: cb4c0f12adb311f0a38c85956e01ac42-20251020
-X-User: liqiang01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 813802747; Mon, 20 Oct 2025 20:53:36 +0800
-From: Li Qiang <liqiang01@kylinos.cn>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Li Qiang <liqiang01@kylinos.cn>
-Subject: [PATCH] mtd: rawnand: realtek: Make rtl_ecc_engine_ops const
-Date: Mon, 20 Oct 2025 20:53:33 +0800
-Message-Id: <20251020125333.3400488-1-liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1760964844; c=relaxed/simple;
+	bh=15TmFUnVi0n2NL3DTB1KJr22JGzM6IVF4JxGd/sc92U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HrK3nb9b9JhlVhn0whZjmdVdUGJLA+uhAw6ZXEN3Qx7ztY5AFAKh9f74m/hLEtOl4aL1vct2jXGoFLN7cTlvZXaMf6upXuQdkR16SIXr0FAD/SOHpphH5dEzbc+Dliz7cIhW4frG4hKMGG7eXWZqODXQfTbPqV+8efVAVV8e/dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-940d3efe58bso126657939f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:54:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760964842; x=1761569642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qc79c81/Kkhmf27aio+Ww3bL8x8agTKbPF7aeVEHXp4=;
+        b=AikfI/QMEEgKUaOmuHDunDLIJcPiNbahPF0xNpTxpIZwASyIBqkfNlNkknVprNmgSX
+         GpjjKUpeGNVmF8qC+zOEDyW6mWB+JVEy64EfqKoDxZo+H+GDf+JXT+7jx9AsaYwwG25F
+         suzoHXJaHDuJhkzCw1CCV8soHPeh1gd7/aWOnrPT3MYLTSrhgHiKmFK+7t0KMDuX95Y9
+         iiFUEZU5sUGYm7CJU6ZHAhtL32k/vbCTWYz92/OQCXJ/IuCjzcG7vqH+mhJO+poTaZnJ
+         cGCRQ1n01cg/WCYWmywRSA7unENKKEkO1bokcrrtIhghjDbTtx5a74b3kDmJnrwVCoIT
+         Ijvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUu6VieijIC5OU8YVh5cX28TxZdhT1Z9Jz+NNQe6VRIOznAzvHTYbEWLhmyfw+ll2x/Pj5zYYinWWdILBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvMq9390KHWQ7FqHKTpJ5HlErv1JH25ongDvbnjEHYTMGHVgRO
+	1zC0MYBPLvd3JxBGFjZNbQhjv0d67A9XEhUiv9+hYMFKvRZP5/yPKaBbpJu5sISxcBSCUNmAh8e
+	i74kmmJSl4UB7YASnvLGUTu0TY/qbY8tSNKXPQjw5zgeHPJFZwYI/FVF1Wpg=
+X-Google-Smtp-Source: AGHT+IEx07bEjN9ys4pXUcgB6NMJWCWUOKJt8czLlBtec6J6iYiwLGVawWGKTojyzy6HLsd8mugaK1QTFHVKYxEzCEWJEE/FWjNV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:1481:b0:940:d8d6:ca2c with SMTP id
+ ca18e2360f4ac-940d8d6cf93mr533451739f.9.1760964842529; Mon, 20 Oct 2025
+ 05:54:02 -0700 (PDT)
+Date: Mon, 20 Oct 2025 05:54:02 -0700
+In-Reply-To: <20251020113026.2461281-1-wangliang74@huawei.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f630ea.050a0220.91a22.0448.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in xfrm6_tunnel_net_exit (4)
+From: syzbot <syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com, wangliang74@huawei.com, 
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-The rtl_ecc_engine_ops structure is only used to provide a set of
-callback functions and is never modified after initialization.
-Mark it as const so it can be placed in the read-only section, which
-improves safety and allows better compiler optimization.
+Hello,
 
-Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
----
- drivers/mtd/nand/ecc-realtek.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/mtd/nand/ecc-realtek.c b/drivers/mtd/nand/ecc-realtek.c
-index 7d718934c909..32da4c15fbe9 100644
---- a/drivers/mtd/nand/ecc-realtek.c
-+++ b/drivers/mtd/nand/ecc-realtek.c
-@@ -380,7 +380,7 @@ static void rtl_ecc_cleanup_ctx(struct nand_device *nand)
- 		nand_ecc_cleanup_req_tweaking(&ctx->req_ctx);
- }
- 
--static struct nand_ecc_engine_ops rtl_ecc_engine_ops = {
-+static const struct nand_ecc_engine_ops rtl_ecc_engine_ops = {
- 	.init_ctx = rtl_ecc_init_ctx,
- 	.cleanup_ctx = rtl_ecc_cleanup_ctx,
- 	.prepare_io_req = rtl_ecc_prepare_io_req,
--- 
-2.25.1
+Reported-by: syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com
+Tested-by: syzbot+3df59a64502c71cab3d5@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         211ddde0 Linux 6.18-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1564dde2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3df59a64502c71cab3d5
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1450dde2580000
+
+Note: testing is done by a robot and is best-effort only.
 
