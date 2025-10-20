@@ -1,233 +1,102 @@
-Return-Path: <linux-kernel+bounces-860379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80DFBEFFFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:41:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D61DBF0054
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65C954EC95B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:41:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CE8DA34A777
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBBA2EBDEB;
-	Mon, 20 Oct 2025 08:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD922EBB84;
+	Mon, 20 Oct 2025 08:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g++C1C8v"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="YxDMr3CS"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AA21F1517
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4F912CDA5;
+	Mon, 20 Oct 2025 08:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949658; cv=none; b=T9VGzu1xlO9NZ5vvAG3L6LOZ3DPS0wEUKX8J94f1lTavUZGlH776kdH+LLErcOcSjzNPUuBsaB0Ftg0Cz8Jz9iH1HepSeCXu7HJhOfJiIHidmm7igeTENfLucH6i98BDEX+uKKEU/qL90HeEYM9JDbZuf4d2/TxnWzeKws9AKUU=
+	t=1760950049; cv=none; b=nanuPHUZGeunxQ9DjJ/X6VvtrcOWj1aEIrZ/57O3aTk2lSbVAlSKjNEVO1PYHbB0u/2VW3SuSVkiPMGurnkmM/1aCNzQhMxPImYxiF5hUVLbcqb9zYQ6dKo1Zthlkvd8RPz30bqK/eIkiVOBKKmequBRTWPmG8nazdld30r6MyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949658; c=relaxed/simple;
-	bh=j9yEkHBaZTQHcGD0XBLUbfsvIwG+WLkyVW8M9OqBigQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bF13E0TmNtwu49SWewpGYrh2EGscthN4MHq7sNw3kYjkI4ruiCAk+Kn6UxHfxjdjz6un+G9tyi72ghiZdJjFsYaMJSGqWVS1ECrjkWoWxna7HfA5ZXO1IMEveyaL1YpYuNQTVNZtezRKS7rE1U0PRRmFNM3/Xu21CS3Rv1Vzxk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g++C1C8v; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760949654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d2ASlFl8CZjWKl3AeuWdFgcOERTPwTmFTKMyRlTsQbM=;
-	b=g++C1C8v24WDqr9GGUDcKFTgHO62v13d1uXca2eTAfV2jsuIKtdL6Sp8stnwi1co7315ns
-	452UZnaNonN8zXG1+PhwXHGmsLgfLofrzOQEz6PWN7CFenNk6y31Tw2EigaSYxxuM1vIaY
-	oLe+eh5TC1SsUc5rMjohqwnTB1v0Rv8=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Menglong Dong <menglong8.dong@gmail.com>, Jiri Olsa <olsajiri@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC bpf-next 5/5] selftests/bpf: add testcases for tracing session
-Date: Mon, 20 Oct 2025 16:40:17 +0800
-Message-ID: <2243183.irdbgypaU6@7950hx>
-In-Reply-To: <aPXwo0puQI3t0CXC@krava>
-References:
- <20251018142124.783206-1-dongml2@chinatelecom.cn>
- <20251018142124.783206-6-dongml2@chinatelecom.cn> <aPXwo0puQI3t0CXC@krava>
+	s=arc-20240116; t=1760950049; c=relaxed/simple;
+	bh=mQloorznQzMXW/ynd/wR0CyEH1zh5MuIhN6wLVl0CQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NO7qKFeZpq4a8/JNPxmPSNNg1FCQa9bzXiesqdEm1XS/OXd2pz91WyFy2y/9Ay5r8NfZ0/1HXn5asN4wxQeWSuvGW1vayAbj3Gdjc1Q1N5C5i2y6jz4eNGyX15quMZXVU91kJgwGAecS8zfR6a3Ofl+jamGiELhCTC8yLSBucYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=YxDMr3CS; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1844A1484217;
+	Mon, 20 Oct 2025 10:40:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1760949626; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=T6wPZ3WB9JpcoMQ6v8FehHy/D2s2JJXCVySDKGuR5lE=;
+	b=YxDMr3CSbqbbS4mkkG+lAVk64yeOp8THqs0e0H6ih6grcyJNzgQp2LqgGd9TMjUx4uPupo
+	IAs5AcKBeGrcqK3IG/8TcX1u1vDV+p7zb3gOyZCIweDv4s9ggkg0wIDeWyklcPoG5EwckJ
+	6Uw1uXlcyFQ8Rt5lYKnTS61p0oIigNZ/7yhEjYSU+HtG81xbEt4l6c7nwNri62S/xlFlHc
+	wYyIsIMoVivyO0V/JmHZMGslhGjXZOtwMPCdwgnkeql/Qn+qHIxYW83FYTEPZPdDtxzZNZ
+	PbsknZjDh+KDaZndG/EG8Ins9k1gSVaQrqma7k0m5sFR7aiRgUg19tQyFBNC3A==
+Date: Mon, 20 Oct 2025 10:40:23 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Jonathan Brophy <professorjonny98@gmail.com>,
+	lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Jonathan Brophy <professor_jonny@hotmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Radoslav Tsvetkov <rtsvetkov@gradotech.eu>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] leds: Add a virtual LED driver for groups of
+Message-ID: <20251020-retorted-obsession-21780c6baf47@thorsis.com>
+Mail-Followup-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Jonathan Brophy <professorjonny98@gmail.com>,
+	lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Jonathan Brophy <professor_jonny@hotmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Radoslav Tsvetkov <rtsvetkov@gradotech.eu>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+References: <20251019092331.49531-1-professorjonny98@gmail.com>
+ <3df51774-9774-40e6-ae65-7621bdce0f91@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3df51774-9774-40e6-ae65-7621bdce0f91@gmail.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2025/10/20 16:19, Jiri Olsa wrote:
-> On Sat, Oct 18, 2025 at 10:21:24PM +0800, Menglong Dong wrote:
-> 
-> SNIP
-> 
-> > +static void test_fsession_reattach(void)
-> > +{
-> > +	struct fsession_test *skel = NULL;
-> > +	int err, prog_fd;
-> > +	LIBBPF_OPTS(bpf_test_run_opts, topts);
-> > +
-> > +	skel = fsession_test__open_and_load();
-> > +	if (!ASSERT_OK_PTR(skel, "fsession_test__open_and_load"))
-> > +		goto cleanup;
-> > +
-> > +	/* First attach */
-> > +	err = fsession_test__attach(skel);
-> > +	if (!ASSERT_OK(err, "fsession_first_attach"))
-> > +		goto cleanup;
-> > +
-> > +	/* Trigger test function calls */
-> > +	prog_fd = bpf_program__fd(skel->progs.test1);
-> > +	err = bpf_prog_test_run_opts(prog_fd, &topts);
-> > +	if (!ASSERT_OK(err, "test_run_opts err"))
-> > +		return;
-> 
-> goto cleanup
+Hei Jacek,
 
-ACK.
-
+Am Sun, Oct 19, 2025 at 04:24:38PM +0200 schrieb Jacek Anaszewski:
+> Hi Jonathan,
 > 
-> > +	if (!ASSERT_OK(topts.retval, "test_run_opts retval"))
-> > +		return;
+> On 10/19/25 11:23, Jonathan Brophy wrote:
+> > From: Jonathan Brophy <professor_jonny@hotmail.com>
+> > 
+> > Introduce a new driver that implements virtual LED groups,
+> > aggregating multiple monochromatic LEDs into virtual groups and providing
+> > priority-based control for concurrent state management.
 > 
-> goto cleanup
+> Aren't you trying to reinvent LED trigger mechanism?
 
-ACK.
+Instead of using virtual LEDs, could this be implemented as a
+"virtual" trigger which allows grouping (and prioritizing) multiple
+other triggers, and apply that to only one existing LED?
 
-> 
-> > +
-> > +	/* Verify first call */
-> > +	ASSERT_EQ(skel->bss->test1_entry_called, 1, "test1_entry_first");
-> > +	ASSERT_EQ(skel->bss->test1_exit_called, 1, "test1_exit_first");
-> > +
-> > +	/* Detach */
-> > +	fsession_test__detach(skel);
-> > +
-> > +	/* Reset counters */
-> > +	memset(skel->bss, 0, sizeof(*skel->bss));
-> > +
-> > +	/* Second attach */
-> > +	err = fsession_test__attach(skel);
-> > +	if (!ASSERT_OK(err, "fsession_second_attach"))
-> > +		goto cleanup;
-> > +
-> > +	err = bpf_prog_test_run_opts(prog_fd, &topts);
-> > +	if (!ASSERT_OK(err, "test_run_opts err"))
-> > +		return;
-> 
-> goto cleanup
-
-ACK.
-
-> 
-> > +	if (!ASSERT_OK(topts.retval, "test_run_opts retval"))
-> > +		return;
-> 
-> goto cleanup
-
-ACK.
-
-> 
-> > +
-> > +	/* Verify second call */
-> > +	ASSERT_EQ(skel->bss->test1_entry_called, 1, "test1_entry_second");
-> > +	ASSERT_EQ(skel->bss->test1_exit_called, 1, "test1_exit_second");
-> > +
-> > +cleanup:
-> > +	fsession_test__destroy(skel);
-> > +}
-> > +
-> > +void test_fsession_test(void)
-> > +{
-> > +#if !defined(__x86_64__)
-> > +	test__skip();
-> > +	return;
-> > +#endif
-> > +	if (test__start_subtest("fsession_basic"))
-> > +		test_fsession_basic();
-> > +	if (test__start_subtest("fsession_reattach"))
-> > +		test_fsession_reattach();
-> > +}
-> > diff --git a/tools/testing/selftests/bpf/progs/fsession_test.c b/tools/testing/selftests/bpf/progs/fsession_test.c
-> > new file mode 100644
-> > index 000000000000..cce2b32f7c2c
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/fsession_test.c
-> > @@ -0,0 +1,178 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) 2025 ChinaTelecom */
-> > +#include <vmlinux.h>
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +
-> > +__u64 test1_entry_result = 0;
-> > +__u64 test1_exit_result = 0;
-> > +__u64 test1_entry_called = 0;
-> > +__u64 test1_exit_called = 0;
-> > +
-> > +SEC("fsession/bpf_fentry_test1")
-> > +int BPF_PROG(test1, int a)
-> > +{
-> 
-> I guess we can access return argument directly but it makes sense only
-> for exit session program, or we could use bpf_get_func_ret
-
-Yeah, we can access the return value directly here or use
-bpf_get_func_ret(). For fentry, it is also allow to access the return value.
-It makes no sense to obtain the return value in the fentry, and
-what it gets is just the previous fsession-fentry returned.
-And it needs more effort in the verifier to forbid such operation.
-
-The testcases is not complete, and I'll add more testcases in the
-next version to cover more cases.
-
-Thanks!
-Menglong Dong
-
-> 
-> jirka
-> 
-> 
-> > +	bool is_exit = bpf_tracing_is_exit(ctx);
-> > +
-> > +	if (!is_exit) {
-> > +		/* This is entry */
-> > +		test1_entry_called = 1;
-> > +		test1_entry_result = a == 1;
-> > +		return 0; /* Return 0 to allow exit to be called */
-> > +	}
-> > +
-> > +	/* This is exit */
-> > +	test1_exit_called = 1;
-> > +	test1_exit_result = a == 1;
-> > +	return 0;
-> > +}
-> > +
-> > +__u64 test2_entry_result = 0;
-> > +__u64 test2_exit_result = 0;
-> > +__u64 test2_entry_called = 0;
-> > +__u64 test2_exit_called = 0;
-> > +
-> 
-> SNIP
-> 
-> 
-
-
-
+Greets
+Alex
 
 
