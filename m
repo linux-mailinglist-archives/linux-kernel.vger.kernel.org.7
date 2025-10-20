@@ -1,393 +1,269 @@
-Return-Path: <linux-kernel+bounces-861265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42238BF236F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFC4BF2384
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEEA94EEBCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:51:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB9294EB57F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E21E276051;
-	Mon, 20 Oct 2025 15:50:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB21413BC0C;
-	Mon, 20 Oct 2025 15:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975449; cv=none; b=CXc0SjgVCtZnIerSJypULZWsRKcnRPo/1a2JFT9N7deH/eJjBln6fvjBTs53f6sZy9pqEozMtlxTBCyuMY377LXmMzGaqDzd/Wn6nBv9LxGYk9yNCF/Q4iEsm6A5YsVnaaenbIJem0tRdHrfrUdMX4xKQfyhsx39KwcK/XSXu/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975449; c=relaxed/simple;
-	bh=yxK6REiwa5X44MYvPYH+1ox4zFMhCSOvte2Vk0oXasI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oitktWF1rjk7Sw+LPMBk44lKaEuz8idMZSQVxtYSPydmJxEEAwqufbJnQJJhSPPGGMgUn89Y441hAbOfC7Ndzbx01z/9n+t5davD667SwmVPr20laEGwrDnjBgddXQGyspsVGAAfh+WuUQZDGh2WDRSu/ipqPwAAYxmdxl3M4lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 479C11063;
-	Mon, 20 Oct 2025 08:50:39 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFCB03F66E;
-	Mon, 20 Oct 2025 08:50:44 -0700 (PDT)
-Date: Mon, 20 Oct 2025 16:50:38 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Luck, Tony" <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aPZaTk97RC6sg+uQ@e133380.arm.com>
-References: <aNqQAy8nOkLRYx4F@e133380.arm.com>
- <d15d97d1-286c-4857-8688-4d8369271c2c@intel.com>
- <aNv53UmFGDBL0z3O@e133380.arm.com>
- <1c4b6b46-16f9-4887-93f5-e0f5e7f30a6f@intel.com>
- <aO0Oazuxt54hQFbx@e133380.arm.com>
- <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
- <aO/CEuyaIyZ5L28d@e133380.arm.com>
- <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
- <aPJP52jXJvRYAjjV@e133380.arm.com>
- <e788ca62-ec63-4552-978b-9569f369afd5@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A704A275861;
+	Mon, 20 Oct 2025 15:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nfwg2R/u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0E02750FA;
+	Mon, 20 Oct 2025 15:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760975488; cv=fail; b=hDKqESMWzAP2q8ztHd3ARQ01/eLQvpz3r9ZK7M1+O6zJzqpJYv4lDNAbKjJjx8eGis/QkrObCn4DaxAfW6oiKj+LHaYM3q4KKEbuuQ+MuGG4LJhDJLIQXUMB2fiHM6fjEa4CAPkVJOGKn+c6LHHETzFsn/JvBVV/ovKq4EMfebg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760975488; c=relaxed/simple;
+	bh=MlRuVTBjzCOsCYdSV7LMUJSjEn3QZ3eo0bXZ4H76B/0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LPlVO/ykWK+WDPDrc+sYhTGkKgPCvPuTWgzfCBOknrjfvlMtywxC/f2zkaBf7K6gLxuSh52Pmz37HCAlm7XELW+dNZm/T4wZzJSjmyCqNQWexhYPhmhLKqOPdzg88mngrQ9SV+XbmWhiqSD3ZVHiYTEOTSzXMbZQw2wvSO93sXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nfwg2R/u; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760975487; x=1792511487;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=MlRuVTBjzCOsCYdSV7LMUJSjEn3QZ3eo0bXZ4H76B/0=;
+  b=nfwg2R/uTwcYlz0cFrwF8E0iSoMVhp4QZjBkquZi3X0VQ3vi+dYrV1Tv
+   ZO6b7BfHtPUM7kjSGtwHN1bfgdZqPf4CrH+MtoJwQNaMAqPWYqltOVCnS
+   DiukoTToSGRbz+uwf9jMzBrsyY9/UQsdBhv22egMx6JweDXTMPrhy9vwW
+   ZdgHO1ONntud/KJk/3eEcWJITHwMSopWSIpNAF3leHq8lFn9rRQSjW7NN
+   bcAFTpW5zTRO6Wp6yY1diLm+7PSpIGTCIDQ9oG96DkKPo54OmOUEmsKZJ
+   T1kJLmCvFpl/MXSGncyvwOei4H6JhWHd91KO/hO77rvllTREfMM2I+2eQ
+   w==;
+X-CSE-ConnectionGUID: 3h+A3Z70Q3aIm/6TiZOrjQ==
+X-CSE-MsgGUID: PXRvqjccSpuk4vqnbLzGRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66926168"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="66926168"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 08:51:27 -0700
+X-CSE-ConnectionGUID: j4GLhvCYTtiaLHixTS/w7g==
+X-CSE-MsgGUID: 5QrG6+NhRZm6udcgJxOpEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
+   d="scan'208";a="187375703"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 08:51:27 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 20 Oct 2025 08:51:25 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 20 Oct 2025 08:51:25 -0700
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.47) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 20 Oct 2025 08:51:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ODVmv+HiGo40lM5vuxSpKyyrM3UzrNYirnfar3psh7S9dQzvbRfVaLcjxn2MbGv5AmJ0luhBDrXvAbSf5N8D/rBNgZJzVumkOypiedamGIdE3/JZ4BVbf9Mb6TG71yHzIlhMnzwf82XE/oaNNIUVIqpNh4g7kULrgV18beOLkq7o8XBPUcdD5F8vlsksfAIqi/B3NR+q0KKDH/PHGu0zDNn6XvH60uIgHwiNU2nNoj73d9L5h4TUBBJldoQpW48npGhGZRfk7h7u4up7Gs9igeuk2QioUeryTwIwd+6Xd0DTHA2ddcB6qnsmDJ5TSxMMsETGcuY0cLPG6sjM2BRIeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+XSo/GRTY7jpicdQ8gpIpZfmGTxcLC0ia60F8FEvL9k=;
+ b=B++rxITnB+qTTsCfW0WNBcOlrJy6mYjc7XN8fVgqJgfMBLu/r3mjW7hrw+4mzuJY8BOUrYUe4uPqpxLHi176uu/QGuO+vrvhceU9rVkASi1+41cXie3wiq1i7zsFkYcAnBTMicAEt0gK/S1LIlXYMFTnw/zYqFIRPp/6l1P+QUYYem4JxO4DutgRTjlQ33yEP816N3YLg7b8oYXLJ2FKqDJ6Tyb2QcKLnkYt8vwX04biS6WYuVDwkrRZ1ZOnpeefZwsj7ekRiRR9+ISz0nlB5yU2wmXKRLBOLHEpYY1u+vNy6BJFs2tMufS082vrvPqjlGFx+OQSvs0tmfBCCeHI/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by CY8PR11MB7243.namprd11.prod.outlook.com (2603:10b6:930:96::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 15:51:23 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 15:51:23 +0000
+Message-ID: <6303480e-8e08-4171-9374-75b6183df690@intel.com>
+Date: Mon, 20 Oct 2025 17:51:15 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Omit a variable
+ reassignment in prueth_netdev_init()
+To: Markus Elfring <Markus.Elfring@web.de>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>, Byungchul Park <byungchul@sk.com>, "David S.
+ Miller" <davem@davemloft.net>, Diogo Ivo <diogo.ivo@siemens.com>, "Eric
+ Dumazet" <edumazet@google.com>, Grygorii Strashko <grygorii.strashko@ti.com>,
+	Himanshu Mittal <h-mittal1@ti.com>, Jakub Kicinski <kuba@kernel.org>, "Jan
+ Kiszka" <jan.kiszka@siemens.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, MD Danish Anwar <danishanwar@ti.com>,
+	Meghana Malladi <m-malladi@ti.com>, Paolo Abeni <pabeni@redhat.com>, "Ravi
+ Gunasekaran" <r-gunasekaran@ti.com>, Roger Quadros <rogerq@kernel.org>,
+	"Simon Horman" <horms@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+	LKML <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+References: <71f7daa3-d4f4-4753-aae8-67040fc8297d@web.de>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <71f7daa3-d4f4-4753-aae8-67040fc8297d@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VE1PR08CA0019.eurprd08.prod.outlook.com
+ (2603:10a6:803:104::32) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e788ca62-ec63-4552-978b-9569f369afd5@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|CY8PR11MB7243:EE_
+X-MS-Office365-Filtering-Correlation-Id: c66a34ae-b6a2-4fce-ab17-08de0ff08502
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VnVkcG5UK2dYdS9vdWJ4QjRDUE9jd0RTb2tzc3RJQzB3MzNFL0ZWRGM3VzFN?=
+ =?utf-8?B?VkF6REMvaWMrRmRqSjlQSjNYNGRHdi80a2JJVFhqbXZrbU1oczl1WUgyRCto?=
+ =?utf-8?B?UFJGTDN2ZC90cmo2VXJNcFphVFFVQXlNL0JoZkNXUVF4cEJFTGtuZFJrK1dB?=
+ =?utf-8?B?SDVOdFV1czk0M3NIRkFCQmJJdjZqdHdRRGJRSmdQUGFQUkNVOG9qOE0xNm9p?=
+ =?utf-8?B?cnBwdUw0MEdEMTZONWlGbUxzT0FlQWdRS2VNMzlqOGo1d2JIWFFZa2kxbkhE?=
+ =?utf-8?B?ZHV2d0lkRGprS2NyREptZ0xCbVFOSUVRVlpHUnZmL2YzM0RvT2kwY3o2L2t6?=
+ =?utf-8?B?dUFPcy8zWDNOSXJLeWdkbzJMaWFnZFJqQWxJeDVvdGljdndkM0VydWNOcnhp?=
+ =?utf-8?B?QmVaNnVyQ0dMRDBtaEltbC85dTRGaVpLc0o0WHlHRXZQc3A1aHpvK256RXVr?=
+ =?utf-8?B?enppUzY5dmZOeGREeVBwWGFFaU1wQis3SWM0b3pxWEJOYnlXUU8vQXBTR1g2?=
+ =?utf-8?B?OTFBV0RrNlNZZ3N1UU9iaW14d05lclRzQTRPNUh3WVBRVlVRd096M01wb1NS?=
+ =?utf-8?B?Y044WGlmWlBpUDRNa3Q0aDFzSGFqdmlpaGpCR2RuQitWUVpUWjY0ZnptUEdB?=
+ =?utf-8?B?Mkxmdm1tWGNyMlVLRXBVWGRPbS9uaTlqeWZrNWZiYWsvRmVKaTlvVVVNRUw3?=
+ =?utf-8?B?QmVLQW1qOUpsOVlRTjF6TzJXUW9pUXVDZFJGcGRhSUl2KzEwd3gxL0wvNTlk?=
+ =?utf-8?B?a3owWXVla3daYnRuOEZ6NXhaalZ2eHJCYXdBcWlWWnJvNTkyT0h0NFc3T0xq?=
+ =?utf-8?B?NjBCS3M5WWh0Qk9hTEFXR1dnb2lHVTB0OHcyOURUSTY5UWZXS0xNL0IvekZq?=
+ =?utf-8?B?ZTVzUkl0MTlhSEhyKzRRQkNxTmc3dWNtVFNyM1k1dGhoYmhuOStIMFU2NDlM?=
+ =?utf-8?B?R2NQSDdwN2Fic0ZVV1BOM1FCK1hOdW1zSmpQVUc1L3lTK1lmRGMwWWYvSDlZ?=
+ =?utf-8?B?ODdtcUxhK2pkdzlSc1NxU1IxNllmMHkwMjYvcjg1dHNOdDgxTitoWHJ2UDM1?=
+ =?utf-8?B?SmRaRGZiSVFpVzcvU1dtMnRkU1FlUVQ4akNkMXFJeVhGZTNXL1plZEFPaUxu?=
+ =?utf-8?B?eWlSTkxWZllqa0EwTzU1UEZ1NFY1TXNCTWJ5dVRTcVlNU0FkaHN6MVh4bHUw?=
+ =?utf-8?B?NUNEMVVQVTZqd2hmQ0RYN0JWSXZaOXhVY041T1ZpVWF3Z2M3eWZ4SXVnN1lo?=
+ =?utf-8?B?VWgwSUVwTHJPT3ZOdml4bXN4Uzg4cDU0VytsTFhtOGVLb2RNNDMycE1FV3Vw?=
+ =?utf-8?B?Nk9UTFZJWExyU01aYzdabmJ2U09NaHpGdnprNzZsWVRCcnNPTUE3VW1DM0w2?=
+ =?utf-8?B?SVRuUWtPeHNBaG9MWjdhQkVhcy93VDZ3RXVFT0JaUmk1UzF5YkdzeFpNdXBX?=
+ =?utf-8?B?WXhJei9FbGdhS1ZNdFZsUkVvcW9TWkdYcGo2OWVhbkQxVnZ5ZHB2ajZ0WXRV?=
+ =?utf-8?B?MHRoNzY0Q0J2Zkp3NnlmLzQ4a2l6VVR0WDN0L3RES0xJTUJZcDVPM2VmQTFE?=
+ =?utf-8?B?K1pNM3ZLT3VhQzRjS2s4UHJqU1dIaktNdkhQRHhxVjMxRG5CN09QTzRXbyt5?=
+ =?utf-8?B?YmVQTXlSRTZnNkpwYUJXR0liQVRhSjBNbTBTam9nMGxRYmlEOFVyaDh2UXNs?=
+ =?utf-8?B?OG0vcmc2R2xETXREMEljZG8wTThvQjRGQm9VS3Y5bnhGaFVGZmdtK0gwYXdw?=
+ =?utf-8?B?SVh4Q2dYREFRdVFnVmJOeTRNR1l1YWNSWWxITHptTzVUVUxWbGJPcC9INXZv?=
+ =?utf-8?B?amMxMVJmbnNOcnNINkZoWTViTzFzaWFKcGU0ZjZNUndRSXhrTkErTlV1b041?=
+ =?utf-8?B?cGR6Wk1vTGhwYlM5RkFJR1FCZDVUR2EyYnZWMUw1dkl1MUg1S1I4SnFrV2xr?=
+ =?utf-8?Q?kWJHsQH3UBNqTUEe+9dI5jPFDJ8IOG/h?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NW9aeGlOOVcveUkxd2ZKajRHUGVKVU43M2NzMjYzKzVsZExuR0dDOEYyWUgz?=
+ =?utf-8?B?Um1qL2hwMkVCZEhScytFQkl2M0xXNUpNc1pOSy85a1krR2hGUEFlWS9rWFZt?=
+ =?utf-8?B?Zm5RYmhtaDZSajk1anN1WHkxaXhxRkZlSmdUQ3M3aW8rT08vSmlwL2VXY2Ra?=
+ =?utf-8?B?UmM4VW0vNlhPeXFwUENIMmdTUEJYc1dHOTRUU3RiMStiVmRvM2RTSkRaM0o3?=
+ =?utf-8?B?bnFQZmhsUDZ5NW9xUENiVmxKa1hUbXBZSVhaRVZ6YUs0TDBtMWlnUHlRSGlS?=
+ =?utf-8?B?YWt3NzFSY1RHU3hHMkVmUlRkdXJMU2hUenIzOE1SSjVIUnRhT2s0MzdZM0VB?=
+ =?utf-8?B?N1Q1QWtzbEpjb3I2V3hJZ3o1c2EramtXVnZXb2pXaytxMCsycWczT3JPQ3dM?=
+ =?utf-8?B?M3JJQVJueTBKVFB4ak5RdHhQMW1SQmZzbndDYUhsQlYxK2I1N3ZMK01TM2d3?=
+ =?utf-8?B?WFZXSXJ4S2FqZW93VmtFeGxUMWFVNDAzbHhLaVYybXc4bldMSGp6WUM1WWlF?=
+ =?utf-8?B?Rk5uWC9EWkszSVJid2RaYW1QYXkxWmVsR3V3RGI1d1plbXFwMnVjaVRKbmZH?=
+ =?utf-8?B?WTlzbHA0ZW13S1c4eFVUWmMrT09vVHdvZ2o5VmlzaUN2Z2ZQMm1kK0ZQTitt?=
+ =?utf-8?B?VEJVbENjWU1UbUVNL3BveGQ2SEJObUNzVnZOTHhZQkR2RytzVFZUb05SdjVD?=
+ =?utf-8?B?bjdLSnhZdm10LzRnZDl2QXB6c1B6L2cwWmhTNGJLR3VhaTN0RHl0a3lOaytx?=
+ =?utf-8?B?Y1Y5SFBpVmN0Rk5RVUpBZkpUK2lZLytUSXZHZXJPV3pzKzZyRi8xMHZRS0U3?=
+ =?utf-8?B?K0dCZXk3MnVHdzd5eEZNTkl3YlFmbmJRMDNUK0RuRkJ1aU5hU1pTU2taVXpP?=
+ =?utf-8?B?QndmSFNYMm5RWktjeG13dzJxRzFCY1NQRXRGR01ac2RLSDhVbjg0d00wRzIx?=
+ =?utf-8?B?VVk3OHRnaHRzajNpV0xJUGlpNG96TnJPem0xZjdaZ0wybmRjaGY3bmh1KzhZ?=
+ =?utf-8?B?ell6Mm9HWDJPOEIxSGJDVjFOVjFaM1Q1RWJIZkFpU3BrTTJBVWZNVkVrYlJU?=
+ =?utf-8?B?NjhhM0JyWStUQ0lMdkorSlpVS3Z2elhUQXVTOTVjeENWYStTVUpDZUhVY2hS?=
+ =?utf-8?B?aTRvWm5aVXRMZmNYQURBNkFBOEozY0ZRMHN1VTRCdFAzYklQZWE5OG5kczRC?=
+ =?utf-8?B?Vitya0RQUDNLekJPUTZBa29BODJTK1ZUT2RtZnBpYi9FblpDeHkxdzZBckky?=
+ =?utf-8?B?M1Z1NFViNDVNb2dMNzlCTmc4elNscjJodGt1eEtoQ2hHR3BlMllxWVEySXpQ?=
+ =?utf-8?B?cVo0OHdid1gxZ2dQMktLOVA2bEMyOVhmaVpoS2JvVFA3WFBmeWw2aXl2SUpV?=
+ =?utf-8?B?ZHAzK2hCRDlZNWpYUUpxRnk2bVBwZG9XRDVmRU5kdmJackRXV0xJN1BnMkkx?=
+ =?utf-8?B?QlovRFQ0ajRUZXZWaFNUZEk5VjdiUHdUYXVuUlVzVXl4ejhUNUsrRFZaMTdE?=
+ =?utf-8?B?QVhzUkwzTWU4NXlJQzBTMnZ3TlZ1aE9UZ3l4VStUeUdtcmVGNVNjUWcwN2xk?=
+ =?utf-8?B?OVh2ZTJoYXMvUWo3NWlRT0RDYUM1ODZVMnZwWElzVFUrRWdnTmRaYTRPTkZx?=
+ =?utf-8?B?OXRtT1RYek1LMllnRkd2MUhjK094VEFWS0VxT2QvWk9RcUhZS08yNTkyMUFE?=
+ =?utf-8?B?OGE3UTFkMEVjUEh4cG80R21pRmpaN3ZjMmI1a24wOTZvdFptc2l6K3BaNDNt?=
+ =?utf-8?B?ZGdKYXVFYzZkUmU2blQzU1hkZ2lzT3F6NXFKN1MrTkFrdS9tRzNVcWNRaVB0?=
+ =?utf-8?B?d3gyZ1dldTJPQWtvNWdNbitMYk9ITUtRNExTUnhIb2JTdlZmckd6eEMycndt?=
+ =?utf-8?B?d0Y0VGpNaWFZaWhWNUZJbTBuMEVrQ01xb05KZGF3MDFyVVI1ZC9xcnFmM0Fo?=
+ =?utf-8?B?dGJ5S0RWZmtwbFVKVmxkcndaY0dCbWRRS092VERXdXBDRkZVdjZORW95UENM?=
+ =?utf-8?B?NGF5ZG10TmkwS1d5VXBBWk5RYUh4dWhtSHRDVnMvT3B3VUVWY2l3ZTRIbDdV?=
+ =?utf-8?B?Lys5WHFPRXBqR0ltcFpvV0FZbXJRc2oxbVNmcGk0am9uUmpLRXdNT2xnU0xa?=
+ =?utf-8?B?SmUzNFdkRk5IZy83Qk1JbmwwczF0cWJHeVZUZzdsbUZJOVhrMW8vUnBTZG85?=
+ =?utf-8?B?SEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c66a34ae-b6a2-4fce-ab17-08de0ff08502
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 15:51:23.6066
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F6SpJIQnZWwR+qNTVImy2fSBnmZUVoj3d2iZWrSxmxjEorwAZpzDz2F16PzdotirpxoDXKeMlr6nWuXbofhpihbZK1JvbvxtBUzsTvFl9OY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7243
+X-OriginatorOrg: intel.com
 
-Hi Reinette,
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 20 Oct 2025 16:02:56 +0200
 
-On Fri, Oct 17, 2025 at 08:59:45AM -0700, Reinette Chatre wrote:
-> Hi Dave,
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 20 Oct 2025 15:46:11 +0200
 > 
-> On 10/17/25 7:17 AM, Dave Martin wrote:
-> > Hi Reinette,
-> > 
-> > On Thu, Oct 16, 2025 at 09:31:45AM -0700, Reinette Chatre wrote:
-> >> Hi Dave,
-> >>
-> >> On 10/15/25 8:47 AM, Dave Martin wrote:
-
-[...]
-
-> >>> To avoid printing entries in the wrong order, do we want to track some
-> >>> parent/child relationship between schemata.
-> >>>
-> >>> In the above example,
-> >>>
-> >>> 	* MB is the parent of MB_HW;
-> >>>
-> >>> 	* MB_HW is the parent of MB_MIN and MB_MAX.
-> >>>
-> >>> (for MPAM, at least).
-> >>
-> >> Could you please elaborate this relationship? I envisioned the MB_HW to be
-> >> something similar to Intel RDT's "optimal" bandwidth setting ... something
-> >> that is expected to be somewhere between the "min" and the "max".
-> >>
-> >> But, now I think I'm a bit lost in MPAM since it is not clear to me what
-> >> MB_HW represents ... would this be the "memory bandwidth portion
-> >> partitioning"? Although, that uses a completely different format from
-> >> "min" and "max".
-> > 
-> > I confess that I'm thinking with an MPAM mindset here.
-> > 
-> > Some pseudocode might help to illustrate how these might interact:
-> > 
-> > 	set_MB(partid, val) {
-> > 		set_MB_HW(partid, percent_to_hw_val(val));
-
-[...]
-
-> > 	get_MB_MAX(partid) { return mpam->MBW_MAX[partid]; }
-> > 
-> > 
-> > The parent/child relationship I suggested is basically the call-graph
-> > of this pseudocode.  These could all be exposed as resctrl schemata,
-> > but the children provide finer / more broken-down control than the
-> > parents.  Reading a parent provides a merged or approximated view of
-> > the configuration of the child schemata.
-> > 
-> > In particular,
-> > 
-> > 	set_child(partid, get_child(partid));
-> > 	get_parent(partid);
-> > 
-> > yields the same result as
-> > 
-> > 	get_parent(partid);
-> > 
-> > but will not be true in general, if the roles of parent and child are
-> > reversed.
-> > 
-> > I think still this holds true if implementing an "MB_HW" schema for
-> > newer revisions of RDT.  The pseudocode would be different, but there
-> > will still be a tree-like call graph (?)
+> An error code was assigned to a variable and checked accordingly.
+> This value was passed to a dev_err_probe() call in an if branch.
+> This function is documented in the way that the same value is returned.
+> Thus delete two redundant variable reassignments.
 > 
-> Thank you very much for the example. I missed in earlier examples that
-> MB_HW was being controlled via MB_MAX and MB_MIN.
-> I do not expect such a dependence or tree-like call graph for RDT where
-> the closest equivalent (termed "optimal") is programmed independently from
-> min and max.
-
-I hadn't realised that this RDT feature as three control thresholds.
-
-I'll comment in more detail on your sample info/ hierarchy, below.
-
-> > 
-> > Going back to MPAM:
-
-[...]
-
-> > So, it may make more sense to expose [MBWPBM] as a separate, bitmap schema.
-> > 
-> > (The same goes for "Proportional stride" partitioning.  It's another,
-> > different, control for memory bandwidth.  As of today, I don't think
-> > that we have a reference platform for experimenting with either of
-> > these.)
+> The source code was transformed by using the Coccinelle software.
 > 
-> Thank you.
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Reviewed-by Alexander Lobakin <aleksander.lobakin@intel.com>
+
+> ---
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.c     | 3 +--
+>  drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
-> > 
-> > 
-> >>> When schemata is read, parents should always be printed before their
-> >>> child schemata.  But really, we just need to make sure that the
-> >>> rdt_schema_all list is correctly ordered.
-> >>>
-> >>>
-> >>> Do you think that this relationship needs to be reported to userspace?
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index e42d0fdefee1..0bfd761bffc5 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -1248,8 +1248,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+>  	} else if (of_phy_is_fixed_link(eth_node)) {
+>  		ret = of_phy_register_fixed_link(eth_node);
+>  		if (ret) {
+> -			ret = dev_err_probe(prueth->dev, ret,
+> -					    "failed to register fixed-link phy\n");
+> +			dev_err_probe(prueth->dev, ret, "failed to register fixed-link phy\n");
+>  			goto free;
+>  		}
+>  
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+> index 5e225310c9de..bd88877e8e65 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+> @@ -816,8 +816,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+>  	} else if (of_phy_is_fixed_link(eth_node)) {
+>  		ret = of_phy_register_fixed_link(eth_node);
+>  		if (ret) {
+> -			ret = dev_err_probe(prueth->dev, ret,
+> -					    "failed to register fixed-link phy\n");
+> +			dev_err_probe(prueth->dev, ret, "failed to register fixed-link phy\n");
+>  			goto free;
+>  		}
 
-[...]
-
-> >> We do have the info directory available to express relationships and a
-> >> hierarchy is already starting to taking shape there.
-> > 
-> > I'm wondering whether using a common prefix will be future-proof?  It
-> > may not always be clear which part of a name counts as the common
-> > prefix.
-> 
-> Apologies for my cryptic response. I was actually musing that we already
-> discussed using the info directory to express relationships between
-> controls and resources and it does not seem a big leap to expand
-> this to express relationships between controls. Consider something
-> like below for MPAM:
-> 
-> info
-> └── MB
->     └── resource_schemata
->         └── MB
->             └── MB_HW
->                 ├── MB_MAX
->                 └── MB_MIN
-> 
-> 
-> On RDT it may then look different:
-> 
-> info
-> └── MB
->     └── resource_schemata
->         └── MB
->             ├── MB_HW
->             ├── MB_MAX
->             └── MB_MIN
-> 
-> Having the resource name as common prefix does seem consistent and makes
-> clear to user space which controls apply to a resource. 
-
-Ack.
-
-The above hierarchies make sense, but I wonder whether we should be
-forcing software to understand the MIN and MAX limits?
-
-I can still see a benefit in having MB_HW be a generic, software-
-defined control, even on RDT.  Then, this can always be available,
-with similar behaviour, on all resctrl instances that support memory
-bandwidth controls.  The precise set of child controls will vary per
-arch (and on MPAM at least, between different hardware
-implementations) -- so these look like they will work less well as a
-generic interface.
-
-
-Considering RDT: to avoid random regulation behaviour, RDT says that
-you need MIN <= OPT <= MAX, so a generic "MB_HW" control that does not
-require software to understand the individual MIN, OPT and MAX
-thresholds would still need to program all of these under the hood so
-as to avoid an invalid combination being set in the hardware.
-
-If I have understood the definition of the MARC table correctly, then
-there is a separate flag to report the presence of each of MIN, MAX and
-OPT, so software _might_ be expected to use a random subset of them(?)
-(If so, that's somewhat like the MPAM situation.)
-
-So, I wonder whether we could actually have the following on RDT?
-
-  info
-  ├── MB
-  ┆   └── resource_schemata
-          ├── MB
-          ┆   └── MB_HW
-                  ├── MB_MAX
-                  ├── MB_MIN
-                  └── MB_OPT
-
-If MB_HW is programmed by software, then MB_MAX, MB_OPT and MB_MIN
-would be programmed with some reasonable default spread (or possibly,
-all with the same value).
-
-That way, software that wants independent control over MIN, OPT and MAX
-can have it (and sweat the problem of dealing with hardware where they
-aren't all implemented -- if that's a thing).  But software that
-doesn't need this fine control gets a single MB_HW knob that is more-or-
-less portable between platforms.
-
-Does that makes sense, or is it an abstraction too far?
-
-
-(Going one step further, maybe we can actually put MPAM and RDT
-together with a 3-threshold model.  For MPAM, we could possibly express
-the HARDLIM option using the extra threshold...  that probably needs a
-bit more thought, though.)
-
-> > There were already discussions about appending a number to a schema
-> > name in order to control different memory regions -- that's another
-> > prefix/suffix relationship, if so...
-> > 
-> > We could handle all of this by documenting all the relationships
-> > explicitly.  But I'm thinking that it could be easier for maintanance
-> > if the resctrl core code has explicit knowledge of the relationships.
-> 
-> Not just for resctrl self but to make clear to user space which
-> controls impact others and which are independent. 
-> > That said, using a common prefix is still a good idea.  But maybe we
-> > shouldn't lean on it too heavily as a way of actually describing the
-> > relationships?
-> I do not think we can rely on order in schemata file though. For example,
-> I think MPAM's MB_HW is close enough to RDT's "optimal bandwidth" for RDT to
-> also use the MB_HW name (or maybe MPAM and RDT can both use MB_OPT?) in either
-> case the schemata may print something like below on both platforms (copied from
-> your original example) where for MPAM it implies a relationship but for RDT it
-> does not:
-> 
-> MB: 0=50, 1=50
-> # MB_HW: 0=32, 1=32
-> # MB_MIN: 0=31, 1=31
-> # MB_MAX: 0=32, 1=32
-
-This still DTRT though?  If MB_HW maps into the "optimal bandwidth"
-control on RDT, then it is still safe to program it first, before
-MB_{MIN,MAX}.
-
-The contents of the schemata file won't be suffucient to figure out the
-relationships, but that wasn't my intention.  We have info/ for that.
-
-Instead, the schemata file just needs to be ordered in a way that is
-compatible with those relationships, so that one line does not
-unintentionally clobber the effect of a subsequent line.
-
-
-My concern was that if we rely totally on manual maintenance to keep the
-schemata file in a compatible order, we'll probably get that wrong
-sooner or later...
-
-> >>> Since the "#" convention is for backward compatibility, maybe we should
-> >>> not use this for new schemata, and place the burden of managing
-> >>> conflicts onto userspace going forward.  What do you think?
-> >>
-> >> I agree. The way I understand this is that the '#' will only be used for
-> >> new controls that shadow the default/current controls of the legacy resources.
-> >> I do not expect that the prefix will be needed for new resources, even if
-> >> the initial support of a new resource does not include all possible controls.
-> > 
-> > OK.  Note, relating this to the above, the # could be interpreted as
-> > meaning "this is a child of some other schema; don't mess with it
-> > unless you know what you are doing".
-> 
-> Could it be made more specific to be "this is a child of a legacy schema created
-> before this new format existed; don't mess with it unless you know what you are
-> doing"?
-> That is, any schema created after this new format is established does not need
-> the '#' prefix even if there is a parent/child relationship?
-
-Yes, I think so.
-
-Except: if some schema is advertised and documented with no children,
-then is it reasonable for software to assume that it will never have
-children?
-
-I think that the answer is probably "yes", in which case would it make
-sense to # any schema that is a child of some schema that did not have
-children in some previous upstream kernel?
-
-> > 
-> > Older software doesn't understand the relationships, so this is just
-> > there to stop it from shooting itself in the foot.
-> 
-> ack.
-> 
-> By extension I assume that software that understands a schema that is introduced
-> after the "relationship" format is established can be expected to understand the
-> format and thus these new schemata do not require the '#' prefix. Even if
-> a new schema is introduced with a single control it can be followed by a new child
-> control without a '#' prefix a couple of kernel releases later. By this point it
-> should hopefully be understood by user space that it should not write entries it does
-> not understand.
-
-Generally, yes.
-
-I think that boils down to: "OK, previously you could just tweak bits
-of the whole schemata file you read and write the whole thing back,
-and the effect would be what you inuitively expected.  But in future
-different schemata in the file may not be independent of one another.
-We'll warn you which things might not be independent, but we may not
-describe exactly how they affect each other.
-
-"So, from now on, only write the things that you actually want to set."
-
-Does that sound about right?
-
-[...]
-
-> >>>
-> >>> OK -- note, I don't think we have any immediate plan to support [HARDLIM] in
-> >>> the MPAM driver, but it may land eventually in some form.
-> >>>
-> >>
-> >> ack.
-> > 
-> > (Or, of course, anything else that achieves the same goal...)
-> 
-> Right ... I did not dig into syntax that could be made to match existing
-> schema formats etc. that can be filled in later.
-
-Ack
-
-> ...
-> 
-> >>> I'll try to pull the state of this discussion together -- maybe as a
-> >>> draft update to the documentation, describing the interface as proposed
-> >>> so far.  Does that work for you?
-> >>
-> >> It does. Thank you very much for taking this on.
-> >>
-> >> Reinette
-> > 
-> > OK, I'll aim to follow up on this next week.
-> 
-> Thank you very much.
-> 
-> Reinette
-
-Cheers
----Dave
+Thanks,
+Olek
 
