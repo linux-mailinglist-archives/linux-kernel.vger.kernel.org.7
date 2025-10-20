@@ -1,125 +1,194 @@
-Return-Path: <linux-kernel+bounces-861838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EE6BF3C59
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:35:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD24BF3C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB9218C4A91
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF263AF03B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD4B2ED165;
-	Mon, 20 Oct 2025 21:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CDF2ECEA3;
+	Mon, 20 Oct 2025 21:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KJ7t5kIS"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="RXotOpLY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L1HmZAjA"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8EB21ABD7;
-	Mon, 20 Oct 2025 21:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706772DAFDE;
+	Mon, 20 Oct 2025 21:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760996147; cv=none; b=HdYeSTKR43VMdchVYuScNPr38O+vN+hmqrtv9M7hq2sGu5FCJaj2x8mYoR0rminIyD6nP+PFm+I8e6edZEMVVOk7wYRbR+LHxQ/Dezchhe0U2RJvFq+4eyweU2uZ82Gy3IgL4Rq3RXnkD9zvhC/8UwUu/Zj6e7nUIWScSYV9hmw=
+	t=1760996203; cv=none; b=eY2Hmv5h822/83JBOpmTv30Kn3TMjh7YMVXayg9QEXxJAuiQY6dm9gtNi7Z/zaOakhcoYJAjluj2n4F47EahnRqWXi5VfTxMjdfdkwzVaf7lQdUhsAorTnuOtCLIfoHPcwZCZokxnnLbRnEgqGKnOAbSIuaPwMJBllxIeiiAB9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760996147; c=relaxed/simple;
-	bh=O3gKx5Rj2VOWiy+K0H59IGE1QBF6cjEbBSIJ2Vxbkns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDUFVi3z1386202LP8dZCU3QNCBRte8KSj1BFtRtTmUNCXZDsaU4moXnTcaMt+LWzoy88MkgiyOwMs6INiQHuS9tEue1Te05jOSY3GSbOClUyUVjqaANcODFUYIAz1lUL7yEKYcSJMnpi+o47xaeyUccoEZc+q7Ol3DTUBfSZ9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KJ7t5kIS; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Apw2ko+AxH0CsXs7vBtTeoN9MrrD1jme4QTPmBSX9yA=; b=KJ7t5kIS0nuNSItWb5IMKwFEEb
-	xd0Jah9HUvMknufapOJo3x+MpBXpdrA/1uV9QWhneBUCmjF0qW6QPohN0uHSrQRoSMsQ4zLn+dWuR
-	9c+IVTrwGFri/X62NsZJQJWpJIMrJOlUuv207ZEcr0ho0SZ60mM6A5If9P9d+31tJn0TKkK+xG+dE
-	3YmOJ0OS3T0JFcxZgGFeKk5BSGRwDQqAedT+Zjwjcx/0CyyN2ZFssp5tS6FXhxAR/3HWZ6Q9K5bzo
-	HbE/NbjfYyTf3Y5D6LjN2g+o61ZCGj30+lp6abHVR7PLDTMdXHCCqhkF4UKnNh1wIbqj+JFOy0bm9
-	AljfkgFw==;
-Received: from [58.29.143.236] (helo=[192.168.1.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vAxXW-00CGru-9Z; Mon, 20 Oct 2025 23:35:38 +0200
-Message-ID: <57a19531-de5f-44ee-bff0-d3a956131d29@igalia.com>
-Date: Tue, 21 Oct 2025 06:35:31 +0900
+	s=arc-20240116; t=1760996203; c=relaxed/simple;
+	bh=iZuTD5RiWVWphXNNGnlMBnB3WDltkiLbJtRklXeI8Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JIUnhPUQ09o8LZt+2IIjFNChFziYts+rnSNMs7/PElKvpIliIZAXnECMwQM+8R4zeQCjC7IYhEceM9w5/Z8RzXgTobmkrjKkWlPty8IXIcTjZr6iFKwZtvLbAnEdyYF0AU2cGwAvC3SVIc/8Wby4hCFrCeXM8NxJ6We2MQM2NUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=RXotOpLY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L1HmZAjA; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3E11B14001BA;
+	Mon, 20 Oct 2025 17:36:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Mon, 20 Oct 2025 17:36:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760996199;
+	 x=1761082599; bh=jRUujCet7fvARjwGlDg+oiZlT8oT/xbGvKPfGfsxa9E=; b=
+	RXotOpLYSWZ1dlEh8ePPEVFk0fgsuebocrDMLC/wZ40xR6WvuELLRSAMABeZp05w
+	6B8/NO9Y8J8+EWjtqj8Ag88Y0DULOR/KXFH/NvMvji++nyl7u1otcG4pTQiCEtdD
+	txky4JzlpozU56/Y1gEa/kH5P/9XM7rXGk6U/CpA1nw9DAomwIOjCRbO0f0sAe3z
+	BLlP0Q6FG3f5kPqpwh7G7glKmfHo2aix8cl5OdbYmeLaSyVr0jI9iU7G6FYU7+37
+	d/MlnoZwIYZ7+osQ9BicrvBROkt8IsH5/VAlKHH424NeLZTzXHU9ruNAV9OXRbY0
+	lJ2UiVzlRKMT7tKmN+jNjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760996199; x=
+	1761082599; bh=jRUujCet7fvARjwGlDg+oiZlT8oT/xbGvKPfGfsxa9E=; b=L
+	1HmZAjAlanUjAYYvHuqzHuaSw5+TdVmNDrffgmxE/1jFjYLufg6IYW+jIdQlM4uM
+	ANIJIWNzypzZP8RXHyfX/9atLFzuCJhzn3svcTDsIq6gSedidc5XDBlgc3yR7qUx
+	7lDsBq8ZG5KeiPWGJlhHOh4D37aeRJw3O1x/VZ184B0/HNBnHCpAjHTOoNkNy8QT
+	MBJonNjpC79NifTuTxewQ66w/2YFHOs12brN1bCQ39dkgwZaAtp/WL5gV2Vwof5F
+	UpzJrxoa8jugbDqBYznaYaKm6ciwX2Ct2qdlOTWxZV/rGWipW+45DhR6DA/E720o
+	Rd7iX8wNQYR8wol8Ih95Q==
+X-ME-Sender: <xms:Zqv2aATxRHwx70MoTSJKrWcSbTqF9DddrNrk_3hc2_oqBeIBWKt5EA>
+    <xme:Zqv2aHGmgWWA0yhtp3FV4Eimfxma8Fw-BHPOALfweXRaUZkThsMAKBjsq6oY6etvW
+    ziCIi4cm6l8EZmLVe0_iC13Ll-8TWZooTVJCuG_qUIb4hk33aEPriE>
+X-ME-Received: <xmr:Zqv2aFEzX4iTfPYyt0_n_K0ypEwceLJ_ApLvjipWZOMpjxbPx-f-Ga1Bkos>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeekledvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucgh
+    ihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrth
+    htvghrnhepteetudelgeekieegudegleeuvdffgeehleeivddtfeektdekkeehffehudet
+    hffhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hlvgigsehshhgriigsohhtrdhorhhgpdhnsggprhgtphhtthhopeeipdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopegrmhgrshhtrhhosehfsgdrtghomhdprhgtphhtthhope
+    grlhgvjhgrnhgurhhordhjrdhjihhmvghnvgiisehorhgrtghlvgdrtghomhdprhgtphht
+    thhopehjghhgseiiihgvphgvrdgtrgdprhgtphhtthhopehkvhhmsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepughmrghtlhgrtghksehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:Zqv2aFS-f7QyLxgpWHmxZbjqSB_mimzmPRQQ3lcNYQnyv-vmzRz77w>
+    <xmx:Zqv2aGL42_p_FKKBWEXJdtmppfQcB_kd0kgdHavADTeu_4C3WpK-aw>
+    <xmx:Zqv2aAbS9mVOmkET-MtuaTJoXY8nin2j7NFQiBaI2Db1IxLoB65AmA>
+    <xmx:Zqv2aI-slOeCZjDay4ZQviUqhc3sdUYeC1mxTLkRzxgpyjHRpXBSTQ>
+    <xmx:Z6v2aJMBw-p_q6mU3u3ciRgbXX91hlj8GVz7QjO-BsiKPUkQPJ1I81uX>
+Feedback-ID: i03f14258:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 Oct 2025 17:36:37 -0400 (EDT)
+Date: Mon, 20 Oct 2025 15:36:33 -0600
+From: Alex Williamson <alex@shazbot.org>
+To: Alex Mastro <amastro@fb.com>
+Cc: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, Jason Gunthorpe
+ <jgg@ziepe.ca>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ David Matlack <dmatlack@google.com>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Message-ID: <20251020153633.33bf6de4@shazbot.org>
+In-Reply-To: <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
+	<20251015132452.321477fa@shazbot.org>
+	<3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
+	<aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
+	<20251016160138.374c8cfb@shazbot.org>
+	<aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/10] PM: EM: Add an iterator and accessor for the
- performance domain
-To: "Rafael J. Wysocki" <rafael@kernel.org>, kernel test robot <lkp@intel.com>
-Cc: lukasz.luba@arm.com, len.brown@intel.com, pavel@kernel.org,
- oe-kbuild-all@lists.linux.dev, christian.loehle@arm.com, tj@kernel.org,
- kernel-dev@igalia.com, linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251014001055.772422-6-changwoo@igalia.com>
- <202510151232.UNZ2J7TZ-lkp@intel.com>
- <CAJZ5v0hAnKEUP7n_d3bzVEi0HGmgZXC-+U=_RmS1n0wGniv8qQ@mail.gmail.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <CAJZ5v0hAnKEUP7n_d3bzVEi0HGmgZXC-+U=_RmS1n0wGniv8qQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Rafael,
+On Fri, 17 Oct 2025 09:29:26 -0700
+Alex Mastro <amastro@fb.com> wrote:
 
-On 10/21/25 02:44, Rafael J. Wysocki wrote:
-> On Wed, Oct 15, 2025 at 6:50 AM kernel test robot <lkp@intel.com> wrote:
->>
->> Hi Changwoo,
->>
->> kernel test robot noticed the following build errors:
->>
->> [auto build test ERROR on amd-pstate/linux-next]
->> [also build test ERROR on amd-pstate/bleeding-edge linus/master v6.18-rc1 next-20251014]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Changwoo-Min/PM-EM-Assign-a-unique-ID-when-creating-a-performance-domain/20251014-082420
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git linux-next
->> patch link:    https://lore.kernel.org/r/20251014001055.772422-6-changwoo%40igalia.com
->> patch subject: [PATCH v5 05/10] PM: EM: Add an iterator and accessor for the performance domain
->> config: i386-buildonly-randconfig-001-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151232.UNZ2J7TZ-lkp@intel.com/config)
->> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
->> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151232.UNZ2J7TZ-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202510151232.UNZ2J7TZ-lkp@intel.com/
->>
->> All errors (new ones prefixed by >>):
->>
->>>> kernel/power/energy_model.c:1003:5: error: redefinition of 'for_each_em_perf_domain'
->>      1003 | int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
->>           |     ^~~~~~~~~~~~~~~~~~~~~~~
->>     In file included from kernel/power/energy_model.c:20:
->>     kernel/power/em_netlink.h:18:5: note: previous definition of 'for_each_em_perf_domain' with type 'int(int (*)(struct em_perf_domain *, void *), void *)'
->>        18 | int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
->>           |     ^~~~~~~~~~~~~~~~~~~~~~~
->>>> kernel/power/energy_model.c:1022:24: error: redefinition of 'em_perf_domain_get_by_id'
->>      1022 | struct em_perf_domain *em_perf_domain_get_by_id(int id)
->>           |                        ^~~~~~~~~~~~~~~~~~~~~~~~
->>     kernel/power/em_netlink.h:24:24: note: previous definition of 'em_perf_domain_get_by_id' with type 'struct em_perf_domain *(int)'
->>        24 | struct em_perf_domain *em_perf_domain_get_by_id(int id)
->>           |                        ^~~~~~~~~~~~~~~~~~~~~~~~
->>
+> On Thu, Oct 16, 2025 at 04:01:38PM -0600, Alex Williamson wrote:
+> > That mechanism for triggering replay requires a specific hardware
+> > configuration, but we can easily trigger it through code
+> > instrumentation, ex:
+> > 
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > index 5167bec14e36..2cb19ddbb524 100644
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -2368,7 +2368,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+> >                     d->enforce_cache_coherency ==
+> >                             domain->enforce_cache_coherency) {
+> >                         iommu_detach_group(domain->domain, group->iommu_group);
+> > -                       if (!iommu_attach_group(d->domain,
+> > +                       if (0 && !iommu_attach_group(d->domain,
+> >                                                 group->iommu_group)) {
+> >                                 list_add(&group->next, &d->group_list);
+> >                                 iommu_domain_free(domain->domain);
+> > 
+> > We might consider whether it's useful for testing purposes to expose a
+> > mechanism to toggle this.  For a unit test, if we create a container,
+> > add a group, and build up some suspect mappings, if we then add another
+> > group to the container with the above bypass we should trigger the
+> > replay.  
 > 
-> Please update the patch to address this report and resend it, thanks!
+> Thanks for the tip. I did this, and validated via bpftrace-ing iommu_map that
+> the container's mappings (one of which lies at the end of address space) are
+> replayed correctly. Without the fix, the loop body
+> 
+> while (iova < dma->iova + dma->size) { ... iommu_map() ... }
+> 
+> would never be entered for the end of address space mapping due to
+> 
+> dma->iova + dma->size == 0
+> 
+> $ sudo bpftrace -e 'kprobe:iommu_map { printf("pid=%d comm=%s domain=%p iova=%p paddr=%p size=%p prot=%p gfp=%p\n", pid, comm, (void*)arg0, (void*)arg1, (void*)arg2, (void*)arg3, (void*)arg4, (void*)arg5); }'
+> Attached 1 probe
+> # original mappings
+> pid=616477 comm=test_dma_map_un domain=0xff11012805dac210 iova=0x10000000000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
+> pid=616477 comm=test_dma_map_un domain=0xff11012805dac210 iova=0x10000001000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
+> pid=616477 comm=test_dma_map_un domain=0xff11012805dac210 iova=0xfffffffffffff000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
+> # replayed mapping
+> pid=616477 comm=test_dma_map_un domain=0xff11012805dab610 iova=0x10000000000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
+> pid=616477 comm=test_dma_map_un domain=0xff11012805dab610 iova=0x10000001000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
+> pid=616477 comm=test_dma_map_un domain=0xff11012805dab610 iova=0xfffffffffffff000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
+> 
+> > In general though the replay shouldn't have a mechanism to trigger
+> > overflows, we're simply iterating the current set of mappings that have
+> > already been validated and applying them to a new domain.  
+> 
+> Agree. Overflow means that some other invariant has broken, and nonsensical
+> vfio_dma have infiltrated iommu->dma_list. The combination of iommu->lock
+> serialization + overflow checks elsewhere should have prevented that.
+> 
+> > In any case, we can all take a second look at the changes there.  
+> Thanks!
 
-Sure, I will send v6 with these two fixes in.
+Thanks for the further testing.  Looking again at the changes, it still
+looks good to me.
 
-Regards,
-Changwoo Min
+I do note that we're missing a Fixes: tag.  I think we've had hints of
+this issue all the way back to the original implementation, so perhaps
+the last commit should include:
+
+Fixes: 73fa0d10d077 ("vfio: Type1 IOMMU implementation")
+
+Unless you've identified a more specific target.
+
+Along with the tag, it would probably be useful in that same commit to
+expand on the scope of the issue in the commit log.  I believe we allow
+mappings to be created at the top of the address space that cannot be
+removed via ioctl, but such inconsistency should result in an
+application error due to the failed ioctl and does not affect cleanup
+on release.  Should we also therefore expand the DMA mapping tests in
+tools/testing/selftests/vfio to include an end of address space test?
+Thanks,
+
+Alex
 
