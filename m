@@ -1,175 +1,183 @@
-Return-Path: <linux-kernel+bounces-861591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A48EBF3237
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:14:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA043BF3240
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5C918C0BF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:15:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BA5B4FA1CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7462D7802;
-	Mon, 20 Oct 2025 19:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4182D8DA4;
+	Mon, 20 Oct 2025 19:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="opcfKr7J"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QnxFvG+i"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC102D640F;
-	Mon, 20 Oct 2025 19:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C972D7802
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987655; cv=none; b=jy+ocVPgBbJL3MYJBeG6Mv55JoJ8i4uC+UVi3al10RchRSggVMdK1rg11hongKK8vY6marX327Vpb5CTsbIVAQ2GXe0VXHs6yReBbElUbvyqSdeoLqWrfCJJ0MS/QstOINOakQeIv7BudaxrD/jW6BqiJQbAR14vc4aRcST56tw=
+	t=1760987648; cv=none; b=A4xwM+Nzmyd0nVRxCCKdSohIkJvuc1XsfqLd/ZCX5e1s9fNmkvEV3dEG+3TIjv3s84QK0fPWZ/9OkqrxyYisanL/tqGSvfaG5DVwzc+GpoZRGOp7vC0yztb4DJcMC7YXhBMi2c41IqDUgOAwLuOR1zzFKPnloKNyT/EN52ehTu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987655; c=relaxed/simple;
-	bh=vreuyB1oJMX28dl3w587JJSbrdpOaZ848torossb2pI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WziHLUyYO+ymvH2JfDs9lnlNeePrI+KxuqHBGWmsMp86kryXdpvhhErCjr1AwKQyl2mLADcuJ8OjaAo7OiKWHCcqpKXZ8P59oNuENLnopuxegdTciszYGjCT4uzPEi9p9lfufJgHqEvBHHcS+VNsHVWiH8Hvq0xQBzphD2Y7L6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=opcfKr7J; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KFsRcd019061;
-	Mon, 20 Oct 2025 15:14:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=/m5lg
-	W9LZdYxB6YJs1TYPvAh9FlaVDaMUHUk0YNse/U=; b=opcfKr7J+GBJkXNumyjWj
-	BsmiwNMjp92VmSKMINJ9YzGkGUjzDaqhtW+0M71sgkuOC0+dP/e04u2hn96+w6Uz
-	8lz8xu6LqNekbZoNYmr3vJBhFxNu64l9mULn2lT5avmONhPOh+KqVwrnAdQ2cTGo
-	ZkycvfT5JxsvseADwnbpZI5iFZwCE4b1cDiC/O1OPQOsbpzgkrvxWAhMQvQnJqZE
-	tSQhTNQZv0qI95UO0ZONu08acdyQpTm7cgMXkcrZe1cPrrKrWhbnX504CYGpXM/2
-	BO2y5VWddmw16ZqUciKew7sSbpFeHxcU6kUqkzH2v3Ia/3yJLxXTsOe6IjR+qvSN
-	A==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49v4r4kn21-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 15:14:08 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 59KJE7Md026501
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 20 Oct 2025 15:14:07 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Mon, 20 Oct 2025 15:14:07 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Mon, 20 Oct 2025 15:14:07 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Mon, 20 Oct 2025 15:14:07 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 59KJDneO013270;
-	Mon, 20 Oct 2025 15:13:52 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <michael.hennerich@analog.com>, <nuno.sa@analog.com>,
-        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v6 2/8] Docs: iio: ad4030: Add double PWM SPI offload doc
-Date: Mon, 20 Oct 2025 16:13:49 -0300
-Message-ID: <9accfba376f997bc52293ad8fe151cbca98b0725.1760984107.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1760984107.git.marcelo.schmitt@analog.com>
-References: <cover.1760984107.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1760987648; c=relaxed/simple;
+	bh=m+tVu+83RvXRHDE4L736NwxubnHnEhTnYwFshq2Ypjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nTzV+UckOI4AJNb+Jh2MpHKHaneLqVEPatlT+30uf10TzO4WaIb5PKoZnRxlO1LUv0J9Tnpi9BpermHvFw7uEu2owzVvlE7cXT3je9q7nkyf6uq6a9pzOpZMWTQHAR9ikAgPOf3eyQObgiqG/tcSE4sdfFdpx2COsmJIc+w9nTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QnxFvG+i; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b48d8deafaeso1058196266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1760987644; x=1761592444; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=394T93MvlNTwJ4OmrNSHdthp7AqCvywv9bIug30d09M=;
+        b=QnxFvG+ijsY10To98gWmFOor6sCFbSubLuaqYQ/uI2DUD44ck4d6ZWiaSpiFP7gdxC
+         EtnPzvUQe5xTFls4R8grqgtcrQn/HdBc2XqJf4x1BAPnGAndx2UguBpOdf1iSeyjaRPw
+         wQl8SNLHeYUqmSOrF/O68J19HFQDu4Uw+75p7o1uvKwmdkrvKR+DH6RyB5i1qG/r6uNA
+         PxXs2AZrrHfZVgMUsAoij1i4BmMVLNL7Og3VEvNWNN4OC9RRxkeqsEyAxh78yF30o/WC
+         OIHPq8HaVDz/XiO8WPMnzGCdRpYgq7diswWt6hnCFfB/sLav4XtO/q0iW07B8HNLqY05
+         QEwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760987644; x=1761592444;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=394T93MvlNTwJ4OmrNSHdthp7AqCvywv9bIug30d09M=;
+        b=AGfCefZ0IcjstuxQWk2C2lGrcXOJIiiBmUTNb1OwTZ/umWqzmh8UxcOnbwBy6s0AFY
+         DtUWXhYecxTzmLzbeu9QFDQ++OtWYFVYSdFoXncNnFfLtVn9bl5o5cVKWp0on1rp97Ih
+         Vy9Vx94nZq7ozA8RmftzQQo0KHZtbp6QPWpXZOeQtj2iIswUhqIub3gQqcLcODYUPcTr
+         nh1/ARuwKkcPXw7OWz96A7Mb7Xjavu4Fh4jNqPEYPiBTS0DDQLW+Zx6UkZ2m2wq1Fwku
+         Nwnem9C/LLtBjGoaiFAcIr1vBYPNZ0FotuGZJI+0aJH3NbAuvpuaBFZ868vA9+LSoQZT
+         hITA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3tsPNBpefhwl05Wp2neFKpjJ2BjumD06UZjFyJgfuh5oKIt7ndIdhwJVDgLFjUFUNUdoXcljC7XrzmCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC167Ik8uIwA8FuTauTCbaSrKmMf1Qa53OGSsilFCAY4HtHJpB
+	i1usa2tNEzC2gKJvhfiZedfaVWVub3SXwcXzLCkGYNR/MegLJYgoedx2hD53J5B6/Zc=
+X-Gm-Gg: ASbGnctROHehxbltMnANlxx8lJCxXG5kEnV8No5YyoHc//tfxamUVK60hsh8wZqbUnP
+	YmS1hje2lhPhc9d54sEkyZaHaPscCAlYNNcvQs0AACxdHXucYKb+XQreyzaghaxNYYQjVIerh+5
+	ioRgpqTLOOTf22YkYTR0CK6+QauikxzsZruHK3h7M7O+M81bjWP2C++NIU8gKXQM6Uly4sHcG9U
+	bCDubzl4Qt6OZ7MROYLwgFt9WGgXPlnCvFdJ5ds5wkckbxDKoOsrtLolEbouAgd1GzSQayZIg0o
+	68XFFjtE7jA2mc/pagRmeP3lROP6DAFjsOuH56dThLRQjIIqf45b2YDGm5GQ579Q4Ok7xddRobE
+	fBb1S9iccGpWzun1MrqoaKC5D703YxDpt3vkYJl1fSjySdzpj0BW3WDFmHzByXgTkCI8wniQZlJ
+	cz/Lb32gQ3
+X-Google-Smtp-Source: AGHT+IGwCJgZYKC8FZLAT4kOm6dkEpwAC47hppBn//mgpxVSX8jW4DahXg//7RoX6AQwA7IGTbpD8Q==
+X-Received: by 2002:a17:907:7ba8:b0:b41:297c:f7bb with SMTP id a640c23a62f3a-b647245844fmr1618450466b.26.1760987644536;
+        Mon, 20 Oct 2025 12:14:04 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb525d1asm866441566b.58.2025.10.20.12.14.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 12:14:04 -0700 (PDT)
+Message-ID: <88a560cc-4176-4674-b2c3-009af68f5bf0@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:14:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 7ZrOBwhmsRvqsdBuIVuHfb6WBJXZbfIp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzNSBTYWx0ZWRfX0ujCNs2mU7sA
- keVfkiKo31VNyOYSRJHy1XfVGM7haOj/2p2epjWC2OxS57SpuYb29jMDPXAxPH1R14lFh5YpLcd
- rHwck/GcfBlzG89S4Q3p6Gh4Dbf0CgWBsuowJs0AINsEWc/tyMbXNbsZq2SDu/z3fx/KtNVr4vP
- /PfR2ahhJ0sN2y47iggyVqtygQLCsrY3IO64p496q9NFmB7oTzAHGlaSRkkdQ7PKx1KrE2TimfN
- 81qEa3eSgOPFuIl0p+uavlQ2DSlcYoSQbfVS9veKl27a8KeEkpEioO4pXAVB5DZE6LcEYuKvUoi
- cQDYmyIZvJJbaijplEEZj8UBhwSWwfLBEekm2iZRlplLCb6kdsHzsISdgwMlT5Xxn5jujW8fx6Z
- fhK8ubcvhpRYLdKTqjxgqMbScsr50w==
-X-Authority-Analysis: v=2.4 cv=KKtXzVFo c=1 sm=1 tr=0 ts=68f68a00 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=wI1k2SEZAAAA:8 a=IpJZQVW2AAAA:8
- a=gAnH3GRIAAAA:8 a=Z7BqY8bEq__jAXHbdh4A:9 a=6HWbV-4b7c7AdzY24d_u:22
- a=IawgGOuG5U0WyFbmm1f5:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-GUID: 7ZrOBwhmsRvqsdBuIVuHfb6WBJXZbfIp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180035
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 13/31] clk: at91: sama7d65: switch to parent_hw and
+ parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
+References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+ <cd47c45215f4c6a38447151222094616850a9d0d.1758226719.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <cd47c45215f4c6a38447151222094616850a9d0d.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Document double PWM setup SPI offload wiring schema.
+Hi, Ryan,
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
- Documentation/iio/ad4030.rst | 39 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+In title: s/switch/switch system clocks"
 
-diff --git a/Documentation/iio/ad4030.rst b/Documentation/iio/ad4030.rst
-index b57424b650a8..9caafa4148b0 100644
---- a/Documentation/iio/ad4030.rst
-+++ b/Documentation/iio/ad4030.rst
-@@ -92,6 +92,45 @@ Interleaved mode
- In this mode, both channels conversion results are bit interleaved one SDO line.
- As such the wiring is the same as `One lane mode`_.
- 
-+SPI offload wiring
-+^^^^^^^^^^^^^^^^^^
-+
-+.. code-block::
-+
-+    +-------------+         +-------------+
-+    |         CNV |<-----+--| GPIO        |
-+    |             |      +--| PWM0        |
-+    |             |         |             |
-+    |             |      +--| PWM1        |
-+    |             |      |  +-------------+
-+    |             |      +->| TRIGGER     |
-+    |          CS |<--------| CS          |
-+    |             |         |             |
-+    |     ADC     |         |     SPI     |
-+    |             |         |             |
-+    |         SDI |<--------| SDO         |
-+    |         SDO |-------->| SDI         |
-+    |        SCLK |<--------| SCLK        |
-+    +-------------+         +-------------+
-+
-+In this mode, both the ``cnv-gpios`` and a ``pwms`` properties are required.
-+The ``pwms`` property specifies the PWM that is connected to the ADC CNV pin.
-+The SPI offload will have a ``trigger-sources`` property to indicate the SPI
-+offload (PWM) trigger source. For AD4030 and similar ADCs, there are two
-+possible data transfer zones for sample N. One of them (zone 1) starts after the
-+data conversion for sample N is complete while the other one (zone 2) starts 9.8
-+nanoseconds after the rising edge of CNV for sample N + 1.
-+
-+The configuration depicted in the above diagram is intended to perform data
-+transfer in zone 2. To achieve high sample rates while meeting ADC timing
-+requirements, an offset is added between the rising edges of PWM0 and PWM1 to
-+delay the SPI transfer until 9.8 nanoseconds after CNV rising edge. This
-+requires a specialized PWM controller that can provide such an offset.
-+The `AD4630-FMC HDL project`_, for example, can be configured to sample AD4030
-+data during zone 2 data read window.
-+
-+.. _AD4630-FMC HDL project: https://analogdevicesinc.github.io/hdl/projects/ad4630_fmc/index.html
-+
- SPI Clock mode
- --------------
- 
--- 
-2.39.2
+On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Switch the system clocks to use parent_hw and parent_data. Having this
+> allows the driver to conform to the new clk-system API.
+> 
+> The parent registration is after the USBCK registration due to one of
+> the system clocks being dependent on USBCK.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  drivers/clk/at91/sama7d65.c | 36 +++++++++++++++++++++++-------------
+>  1 file changed, 23 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+> index 986e8ef57dea..38c44b5d5d42 100644
+> --- a/drivers/clk/at91/sama7d65.c
+> +++ b/drivers/clk/at91/sama7d65.c
+> @@ -537,23 +537,23 @@ static struct {
+>  /*
+>   * System clock description
+>   * @n:	clock name
+> - * @p:	clock parent name
+> + * @p:	clock parent hw
+>   * @id: clock id
+>   */
+> -static const struct {
+> +static struct {
+>  	const char *n;
+> -	const char *p;
+> +	struct clk_hw *parent_hw;
+>  	u8 id;
+>  } sama7d65_systemck[] = {
+> -	{ .n = "uhpck",		.p = "usbck", .id = 6 },
+> -	{ .n = "pck0",		.p = "prog0", .id = 8, },
+> -	{ .n = "pck1",		.p = "prog1", .id = 9, },
+> -	{ .n = "pck2",		.p = "prog2", .id = 10, },
+> -	{ .n = "pck3",		.p = "prog3", .id = 11, },
+> -	{ .n = "pck4",		.p = "prog4", .id = 12, },
+> -	{ .n = "pck5",		.p = "prog5", .id = 13, },
+> -	{ .n = "pck6",		.p = "prog6", .id = 14, },
+> -	{ .n = "pck7",		.p = "prog7", .id = 15, },
+> +	{ .n = "uhpck",		.id = 6 },
+> +	{ .n = "pck0",		.id = 8, },
+> +	{ .n = "pck1",		.id = 9, },
+> +	{ .n = "pck2",		.id = 10, },
+> +	{ .n = "pck3",		.id = 11, },
+> +	{ .n = "pck4",		.id = 12, },
+> +	{ .n = "pck5",		.id = 13, },
+> +	{ .n = "pck6",		.id = 14, },
+> +	{ .n = "pck7",		.id = 15, },
+>  };
+>  
+>  /* Mux table for programmable clocks. */
+> @@ -1299,9 +1299,19 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>  		sama7d65_pmc->pchws[i] = hw;
+>  	}
+>  
+> +	/* Set systemck parent hws. */
+> +	sama7d65_systemck[0].parent_hw = usbck_hw;
+> +	sama7d65_systemck[1].parent_hw = sama7d65_pmc->pchws[0];
+> +	sama7d65_systemck[2].parent_hw = sama7d65_pmc->pchws[1];
+> +	sama7d65_systemck[3].parent_hw = sama7d65_pmc->pchws[2];
+> +	sama7d65_systemck[4].parent_hw = sama7d65_pmc->pchws[3];
+> +	sama7d65_systemck[5].parent_hw = sama7d65_pmc->pchws[4];
+> +	sama7d65_systemck[6].parent_hw = sama7d65_pmc->pchws[5];
+> +	sama7d65_systemck[7].parent_hw = sama7d65_pmc->pchws[6];
+> +	sama7d65_systemck[8].parent_hw = sama7d65_pmc->pchws[7];
+>  	for (i = 0; i < ARRAY_SIZE(sama7d65_systemck); i++) {
+>  		hw = at91_clk_register_system(regmap, sama7d65_systemck[i].n,
+> -					      sama7d65_systemck[i].p, NULL,
+> +					      NULL, &AT91_CLK_PD_HW(sama7d65_systemck[i].parent_hw),
+>  					      sama7d65_systemck[i].id, 0);
+
+Just saying: we could have been used parent_hw only for system clocks (and
+some other clocks updated in this series) if we wouldn't have the dt-compat.c.
+
+>  		if (IS_ERR(hw))
+>  			goto err_free;
 
 
