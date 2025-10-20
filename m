@@ -1,99 +1,140 @@
-Return-Path: <linux-kernel+bounces-861581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85FABF31E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27288BF32E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60FAF4F3C3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C316D3A9F7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B7B2D5C76;
-	Mon, 20 Oct 2025 19:11:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FEF242D76;
-	Mon, 20 Oct 2025 19:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937AD2D9481;
+	Mon, 20 Oct 2025 19:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UsDV1yOl"
+Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D43325394B;
+	Mon, 20 Oct 2025 19:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987464; cv=none; b=EyOQEwDjtPToLKNCK3gVDiaSKSVkbzSJyx7/frleVVZmifF+4Q0JCnFNjko8mUIbqrwtvP0Oyw/wmk9uNP4ZlpncDHnHnBTx4lVNbO7QcJ/y2qn8XzCbsD42xd11WMLtiBz/y4DTSue0asXkBdqsLRtQwetrIUq+qcch9Yogy5Y=
+	t=1760988038; cv=none; b=kDbg3O2kBg9cLTnyJtj3U0YW8W0aCk39zNJ2lcqIPaiFQfOFKh54slYcp6an5eRSKcj65fHOcWXhYMnAciGb8uq+/i8gk5tOxpqo8hxqy4b1FA9YBRqkU++V/ZQbwicHtoxzj2iMAKSgME+avh/6cD1RYwqXj5liYHZ8QEGvIrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987464; c=relaxed/simple;
-	bh=nieYJ4XJDwAF96WABbqXyE0cfBIwUORhTlynNpFjzOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y1ZLC0g1GLSULkGOIQl01V8YkHxZhdIvD1EkwtwhRNSlP8DWdXen3+SHi9PfA+GPi6rLbpSl0c2sBBMVVYe8cKe6GS5K2fdnZHl8Qz+9V5pO6XLJZZxg/hAEFqHeiAZcY1gMaORgV6Ko9R4TaYZ81fFQ4PrLervmgSVMHBcdi9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F418C1007;
-	Mon, 20 Oct 2025 12:10:53 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3843D3F59E;
-	Mon, 20 Oct 2025 12:11:00 -0700 (PDT)
-Message-ID: <a0120876-0f00-4e1a-aa17-5fe7c3512276@arm.com>
-Date: Mon, 20 Oct 2025 20:10:58 +0100
+	s=arc-20240116; t=1760988038; c=relaxed/simple;
+	bh=L4UsWSzuusmlizFglphTpMbVFFClnAflcd2d6Tv4uYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ppZ9X43WNlSJrubRCLwnNMQVJMITteW7/UrauwC54+GawBBVuwJAGRRBMm1U73SYdDjBWB7XJ49JK4WuhC2NerQzK+F7w3jiHQOcxVg6/gbPnKJIWQ3LAl0uGdNnUFzSLNjHDWoiVttsh2E2gXiBJKtDJHlZB55yz1mLJxOvpjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UsDV1yOl; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id AvHuvxg21KmV9AvHuvJma1; Mon, 20 Oct 2025 21:11:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1760987484;
+	bh=xnC6hSP77KC5LZzIcnY+I3sTuSG/mCUZB+qcZYzF0fs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UsDV1yOlmsSNe1We7aX1s6h3ih42qyfDQYb9I4YEApoHPKvcly61lJmuw9zpCdxsW
+	 87jpQqqPSEiY3gYh/cThVbIyFmjJl0Cg7q0jAE3QipIzF4ZxV4DrqM03NWKTQfrPO2
+	 v8yN2KQ6FBKSCiKArNpiNdyBEwMcohzM6t+MeO5/6Nr0gq2HyDulLXbV8BnHJyS/pR
+	 0TkHUIsGQheFRjv4m0/ZBjKCXtKIIPrLNWKSRV21m4Dp1l++Fu9eznY443i4LthCoQ
+	 iTpGhTHjnthLID+owISCtHYUnZYAF/K0kSzmkSjnkcUDfBu1e1oi6gVykH8tEV0l2Z
+	 B4gQAEun4E0vg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 20 Oct 2025 21:11:24 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	devicetree@vger.kernel.org
+Subject: [PATCH] misc: rp1: Fix some error handling paths
+Date: Mon, 20 Oct 2025 21:11:16 +0200
+Message-ID: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] smp: Introduce a helper function to check for
- pending IPIs
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
- Maulik Shah <quic_mkshah@quicinc.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Vincent Guittot <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251020141718.150919-1-ulf.hansson@linaro.org>
- <20251020141718.150919-2-ulf.hansson@linaro.org>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251020141718.150919-2-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
+Error handling in the probe and the clean-up path in the remove function
+should be adjusted depending on if data is taken from DT or from overlay at
+runtime.
 
-Only a comment on the naming rather than a full review.
+of_overlay_remove() should not be called when of_overlay_remove() was not
+called.
 
-On 10/20/25 15:17, Ulf Hansson wrote:
-> When governors used during cpuidle, tries to find the most optimal
-> idlestate for a CPU or a group of CPUs, they are known to quite often fail.
-> One reason for this, is that we are not taking into account whether there
-> has been an IPI scheduled for any of the CPUs that are affected by the
-> selected idlestate.
-> 
-> To enable pending IPIs to be taken into account for cpuidle decisions,
-> let's introduce a new helper function, cpus_may_have_pending_ipi().
+of_node_put() should be called in the remove function to avoid a potential
+reference leak.
 
-To me, "may" indicates permission, i.e. is allowed, rather than
-correctness. Would "likely" be better here, cpus_likely_have_pending_ipi()?
+Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is compile tested only.
 
-> 
-> Note that, the implementation is intentionally as lightweight as possible,
-> in favor of always providing the correct information. For cpuidle decisions
-> this is good enough.
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in v2:
-> 	- Implemented a common function, rather than making it arch-specific. As
-> 	suggested by Thomas and Marc.
-> 	- Renamed the function to indicate that it doesn't provide correctness.
-> 	- Clarified function description and commit message.
-> 
+I think (hope...) that a cleaner solution is possible. So feel free to
+improve it or completely change it if needed.
+---
+ drivers/misc/rp1/rp1_pci.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
+index 803832006ec8..9105269488a9 100644
+--- a/drivers/misc/rp1/rp1_pci.c
++++ b/drivers/misc/rp1/rp1_pci.c
+@@ -44,6 +44,8 @@ struct rp1_dev {
+ 	struct irq_data *pcie_irqds[64];
+ 	void __iomem *bar1;
+ 	int ovcs_id;	/* overlay changeset id */
++	struct device_node *rp1_node;	/* useful only if skip_ovl == true */
++	bool skip_ovl;
+ 	bool level_triggered_irq[RP1_INT_END];
+ };
+ 
+@@ -289,10 +291,14 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		goto err_unload_overlay;
+ 	}
+ 
++	rp1->skip_ovl = skip_ovl;
++	rp1->rp1_node = rp1_node;
++
+ 	return 0;
+ 
+ err_unload_overlay:
+-	of_overlay_remove(&rp1->ovcs_id);
++	if (!skip_ovl)
++		of_overlay_remove(&rp1->ovcs_id);
+ err_unregister_interrupts:
+ 	rp1_unregister_interrupts(pdev);
+ err_put_node:
+@@ -308,8 +314,12 @@ static void rp1_remove(struct pci_dev *pdev)
+ 	struct device *dev = &pdev->dev;
+ 
+ 	of_platform_depopulate(dev);
+-	of_overlay_remove(&rp1->ovcs_id);
++	if (!rp1->skip_ovl)
++		of_overlay_remove(&rp1->ovcs_id);
+ 	rp1_unregister_interrupts(pdev);
++
++	if (rp1->skip_ovl)
++		of_node_put(rp1->rp1_node);
+ }
+ 
+ static const struct pci_device_id dev_id_table[] = {
 -- 
-Thanks,
-
-Ben
+2.51.0
 
 
