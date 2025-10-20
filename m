@@ -1,205 +1,158 @@
-Return-Path: <linux-kernel+bounces-861290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32475BF24C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64363BF24D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DE218A79FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B2C18A50BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2372773D2;
-	Mon, 20 Oct 2025 16:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD5D283C89;
+	Mon, 20 Oct 2025 16:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JG4NnQgp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oJ9/rVdP"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B0726B2B0;
-	Mon, 20 Oct 2025 16:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81EF25776
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976248; cv=none; b=Ig+CX6rF3WEJOLmFj7/OYYcWqf6jiAEqDk2u4BvLbwMoPMlRhFV50yJN4yNEqKQ6S1eqZ7qwgofOVXYrpjGN94gYqPXywEGKeQtHsHSBQtRK9ZPweRc4ZiAoKc/xQ51BldCcbVCzAnAA6NX6TwIIqi6F5DxU7moGAXd6d0p5ZIk=
+	t=1760976322; cv=none; b=nZb07kD/8iBhs0BZEHbOQCr1RQiDlinmrTsbj0BVwY13vDQ/7s3MSDpp9QNYHq2jEUW96C+FutS+c1zN+iQMgWdPavCaL4/5NP1XwIj3algkmHgrallGIR45qoGx7zdnyKtwsEJjMKrg1/2rSKcE/AE0XumfCeqAP04L0cpZTyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976248; c=relaxed/simple;
-	bh=y87Qov3Jt4LC0JXlONBamFdqUvce5uT3fMcKNGfdSck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f6x+0mo0f/YiHquohKY3Sk9JKOHztr9OuCC0jqO3tvgQE3RuFZhjOivYTKwgN1F/+fzZb4rLT53FtUPeuZgMFmg0+PHISW+R4mWe2qlp3wCzpQQPu0TvS/w3mWySUFF83ZjeeBy86+o+hFRvFvEp/vyeaqEUY4xhQzhAXcTEi6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JG4NnQgp; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760976246; x=1792512246;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=y87Qov3Jt4LC0JXlONBamFdqUvce5uT3fMcKNGfdSck=;
-  b=JG4NnQgpEDpAkeQUJXH0uPPb/WDSFXn8qlR9IPiLGKamX9lCzFtqmqK0
-   QX6wGrS7kwq5UuBSQrqhXD8l8MhZRaCeRnrws4ZFta+hjt7eUfGzwX51U
-   uvz4cvnWOTeMMJhP61uVH8OUImH6DSm6Ex+XRdJe6ATuqKF5QGhJ7Zkhq
-   HGQnDoEQ8P7BC6gXh8UC71GPLgk0v7Cc9chZRBkwJXfktT7ib6K4zWEuI
-   ukvdPfbQa5AuAIbuTzi+1FfONqyy5wTNdTRjhKkDYnR3fdhYzypnc1k3V
-   RqTmzFb+5RS5cWc1u+e7+YNgWfZhFNZp5+t30K3mqtDSyvEq9hmNeHWLo
-   w==;
-X-CSE-ConnectionGUID: kclfaq4xRUaerQvPFumMWQ==
-X-CSE-MsgGUID: ktlgrbi1Qj++j1i5OUg0UQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65709012"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="65709012"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:04:04 -0700
-X-CSE-ConnectionGUID: +BNDHO+tROOuyxe325cjEA==
-X-CSE-MsgGUID: tGqTHgdfTEq/PAYuNSvGDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="183379002"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.103]) ([10.125.108.103])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 09:04:02 -0700
-Message-ID: <7d4a53ea-1d2b-42b5-ad22-3a023f415cd2@intel.com>
-Date: Mon, 20 Oct 2025 09:04:01 -0700
+	s=arc-20240116; t=1760976322; c=relaxed/simple;
+	bh=3oF43lksJ9ygM8ewfRf+0YO+ZnJQICThOq7TsgiSkAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=fM3DXaW0rFqtqiY1cc6LRt1z/dj/n9KAz+nN8GekCeooLzyvarhnjeWSixEAdczxWj9yiBL/WvKmPPwc8EzmOFNUfymSRiOf1mUdFk4bvrBIzZ1f319B4yZnTNSR6UPfUhDGFM7DFhswkH6xRF6SHwEvL10NS9ja61bltQa5URc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oJ9/rVdP; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251020160519euoutp0297776da84b6deb114f0015c1e433c1ac~wPqHkVxgj1355213552euoutp02I
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:05:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251020160519euoutp0297776da84b6deb114f0015c1e433c1ac~wPqHkVxgj1355213552euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760976319;
+	bh=epShz+CTOjY93xi7RVW37ayBnF7a/lRcVt7p/Q0G6UY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=oJ9/rVdPrTfHFcLWMVPkdpTgyvf+UUF5turT5qNnFT/su0+7pBMQGh/khYB2qw3g3
+	 pRJLXAgTT6pXFTvzQssoBtmQX075DjmTDpGOYC1NRq+2ewa8F8Pp4PlXZhUsXHbdTE
+	 YhepKCrYCrDr2oTatyLuN9VsD5kB1ggl6tMRTpxA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251020160518eucas1p170b171f7b893a3ca0ddc4aed2a227836~wPqHFFq-02701827018eucas1p1t;
+	Mon, 20 Oct 2025 16:05:18 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251020160518eusmtip225816944b290f34ad376016b247e0857~wPqGZ8Q4P1470014700eusmtip2Y;
+	Mon, 20 Oct 2025 16:05:17 +0000 (GMT)
+Message-ID: <0f159e72-e5e4-44ea-8b3e-1ccb9341a9e8@samsung.com>
+Date: Mon, 20 Oct 2025 18:05:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6 v5] acpi/ghes: Add helper for CPER CXL protocol errors
- checks
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- linux-cxl@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
- Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Guo Weikang <guoweikang.kernel@gmail.com>,
- Xin Li <xin@zytor.com>, Will Deacon <will@kernel.org>,
- Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan <gshan@redhat.com>,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Li Ming <ming.li@zohomail.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Jon Pan-Doh <pandoh@google.com>, Lukas Wunner <lukas@wunner.de>,
- Shiju Jose <shiju.jose@huawei.com>, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org
-References: <20251017133357.1150982-1-fabio.m.de.francesco@linux.intel.com>
- <20251017133357.1150982-5-fabio.m.de.francesco@linux.intel.com>
-From: Dave Jiang <dave.jiang@intel.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
+ legacy fileio is active
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Hans Verkuil
+	<hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans
+	Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
 Content-Language: en-US
-In-Reply-To: <20251017133357.1150982-5-fabio.m.de.francesco@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <258b9036-697d-48b2-91d6-5fb8ea2f1350@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251020160518eucas1p170b171f7b893a3ca0ddc4aed2a227836
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
+X-EPHeader: CA
+X-CMS-RootMailID: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
+References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
+	<20251016111154.993949-1-m.szyprowski@samsung.com>
+	<36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
+	<84133573-986d-4cc8-8147-246f0da34640@samsung.com>
+	<1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
+	<21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
+	<642c2102-8d0f-4883-ab02-dd1da66a7a94@samsung.com>
+	<258b9036-697d-48b2-91d6-5fb8ea2f1350@collabora.com>
+
+On 20.10.2025 10:30, Benjamin Gaignard wrote:
+> Le 20/10/2025 à 10:21, Marek Szyprowski a écrit :
+>> On 20.10.2025 09:48, Benjamin Gaignard wrote:
+>>> Le 20/10/2025 à 09:39, Hans Verkuil a écrit :
+>>>> On 20/10/2025 09:34, Marek Szyprowski wrote:
+>>>>> On 20.10.2025 09:11, Benjamin Gaignard wrote:
+>>>>>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
+>>>>>>> create_bufs and remove_bufs ioctl calls manipulate queue internal
+>>>>>>> buffer
+>>>>>>> list, potentially overwriting some pointers used by the legacy 
+>>>>>>> fileio
+>>>>>>> access mode. Simply forbid those calls when fileio is active to
+>>>>>>> protect
+>>>>>>> internal queue state between subsequent read/write calls.
+>>>>>> Hi Marek,
+>>>>>>
+>>>>>> I may be wrong but using fileio API and create/remove API at the 
+>>>>>> same
+>>>>>> time
+>>>>>> sound incorrect from application point of view, right ? If that not
+>>>>>> the
+>>>>>> case maybe we should also add a test in v4l2-compliance.
+>>>>> Definitely that's incorrect and v4l2-core must forbid such calls. The
+>>>>> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending
+>>>>> v4l2-compliance tools is probably a good idea.
+>>>> Yes, please! A patch is welcome.
+>>>>
+>>>>    I also wonder if its a
+>>>>> good time to add a kernel option to completely disable legacy fileio
+>>>>> access mode, as it is not really needed for most of the systems
+>>>>> nowadays.
+>>>> No, that will break applications. Using read() is very common (and
+>>>> convenient!)
+>>>> for MPEG encoders such as the cx18 driver.
+>>>>
+>>>> The fileio code is not blocking any new development, it's just there
+>>>> for those
+>>>> drivers were it makes sense.
+>>>>
+>>>> Regards,
+>>>>
+>>>>      Hans
+>>> I wonder if this patch in useful because when calling
+>>> vb2_ioctl_create_bufs()
+>>> it already check in vb2_verify_memory_type() if fileio is used or not.
+>> Frankly speaking the original report I got was about mixing fileio with
+>> vb2_ioctl_remove_bufs and that case is indeed not protected.
+>>
+>> While analyzing that I've inspected a symmetrical ioctl
+>> (vb2_ioctl_create_bufs), but it looks I've I missed that a check is in
+>> vb2_verify_memory_type(). I will remove it in v2 then.
+>
+> To keep vb2_ioctl_remove_bufs() symmetrical to vb2_ioctl_create_bufs()
+> we should do in vb2_ioctl_remove_bufs() something like :
+> res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
+> instead of vdev->queue->type != d->type.
+>
+> This way we test fileio too.
 
 
+Right, that will fit best. I've sent a v2 with such change. Btw, the 
+vb2_verify_memory_type() name is a bit misleading in this context. Maybe 
+it should be renamed to something like vb2_is_queue_compatible()?
 
-On 10/17/25 6:30 AM, Fabio M. De Francesco wrote:
-> Move the CPER CXL protocol errors validity checks out of
-> cxl_cper_post_prot_err() to cxl_cper_sec_prot_err_valid() and check the
-> serial number only for CXL agents that are CXL devices (UEFI v2.10,
-> Appendix N.2.13).
-> 
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-> ---
->  drivers/acpi/apei/ghes.c | 32 ++++++++++++++++++++++----------
->  include/cxl/event.h      | 10 ++++++++++
->  2 files changed, 32 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index d6fe5f020e96e..e69ae864f43d3 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -706,30 +706,42 @@ static DEFINE_KFIFO(cxl_cper_prot_err_fifo, struct cxl_cper_prot_err_work_data,
->  static DEFINE_SPINLOCK(cxl_cper_prot_err_work_lock);
->  struct work_struct *cxl_cper_prot_err_work;
->  
-> -static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> -				   int severity)
-> +int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
->  {
-> -	struct cxl_cper_prot_err_work_data wd;
-> -	u8 *dvsec_start, *cap_start;
-> -
->  	if (!(prot_err->valid_bits & PROT_ERR_VALID_AGENT_ADDRESS)) {
->  		pr_err_ratelimited("CXL CPER invalid agent type\n");
-> -		return;
-> +		return -EINVAL;
->  	}
->  
->  	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
->  		pr_err_ratelimited("CXL CPER invalid protocol error log\n");
-> -		return;
-> +		return -EINVAL;
->  	}
->  
->  	if (prot_err->err_len != sizeof(struct cxl_ras_capability_regs)) {
->  		pr_err_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
->  				   prot_err->err_len);
-> -		return;
-> +		return -EINVAL;
->  	}
->  
-> -	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
-> -		pr_warn(FW_WARN "CXL CPER no device serial number\n");
-> +	if ((prot_err->agent_type == RCD || prot_err->agent_type == DEVICE ||
-> +	     prot_err->agent_type == LD || prot_err->agent_type == FMLD) &&
-> +	    !(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
-> +		pr_warn_ratelimited(FW_WARN
-> +				    "CXL CPER no device serial number\n");
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(cxl_cper_sec_prot_err_valid);
-> +
-> +static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> +				   int severity)
-> +{
-> +	struct cxl_cper_prot_err_work_data wd;
-> +	u8 *dvsec_start, *cap_start;
-> +
-> +	if (cxl_cper_sec_prot_err_valid(prot_err))
-> +		return;
->  
->  	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
->  
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index 6fd90f9cc2034..e1deb66c2197e 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -320,4 +320,14 @@ static inline int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data
->  }
->  #endif
->  
-> +#ifdef CONFIG_ACPI_APEI_PCIEAER
-> +int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err);
-> +#else
-> +static inline int
-> +cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
-> +{
-> +	return -EINVAL;
 
--EOPNOTSUPP?
-
-> +}
-> +#endif
-> +
->  #endif /* _LINUX_CXL_EVENT_H */
-
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
