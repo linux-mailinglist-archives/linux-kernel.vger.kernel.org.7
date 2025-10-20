@@ -1,140 +1,105 @@
-Return-Path: <linux-kernel+bounces-861651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DC7BF3427
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56164BF342D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAA004FCF7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:44:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 419814FD15B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5410328B4A;
-	Mon, 20 Oct 2025 19:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFA032F74F;
+	Mon, 20 Oct 2025 19:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GsiqSamx"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nVNMrkAv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CE11EDA0B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3E5328B4A;
+	Mon, 20 Oct 2025 19:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989466; cv=none; b=khjv5b5fJ1XNnrykd447YatKytIzVHuNE+AWKeMoEcu1s7NBCi93FPrqoyUiGPezf3/z/Uiz6bztUIwybYC0EaPevLEqY40O2FcD5aqzZTELGH2EqiyxoixlMFNYFCBgw62NNRV/3OHEcQBvWDPn8A8wgZqcrQwu6X4ldw07RAY=
+	t=1760989503; cv=none; b=M9zN6w2I/vWxjOXNUBxYeIXjnCqLGvdDFRe79uOxVJVOvcT1zlSEL/9u8SjlcyvALC5ugncykFeg0CFro/jNMEqvUVKRickFRwUvRI+DQwDeoYknx/tKRTL0MpyO5uujW4sxutI+MLruDVaKaDfkG+dHZopnGpnLAQliyKh9zys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989466; c=relaxed/simple;
-	bh=th+Pf7BlNE9Ml++HbEuu+5vMDSJNkIeM3J0nT4hFNWo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Vruy3yGKYGAcwx11hCdXr9WhMn2SbPklX+nVOVL0emqWE78jUN0PQ/3khy9CvuadITTv46dqSRjHadopJiE5ck6tVY8Rlqm3KnFqVXvi7cdBwoec+thG2Z1yMTkRfn+7Pct674JML8+Nvuw3/jCTpTalhASFGlKho36TdtsGC+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GsiqSamx; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso8595622a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760989463; x=1761594263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=E/rHfvCGQ7vSJJOElRUDluOOr/mXgiutMeNr5c1rvEw=;
-        b=GsiqSamxNymKjJ8fECISyLpNq4JnJZHJVk5uONDftuy2wMjBDSYGb/5SC34S7+Ae+6
-         vnPUp8YdoUm2qEh3/d3vF01hhglg2lURNbDXa522T3yMvApaDr+1sJpGiorwFRrIqtrE
-         XZ6Jiz/yC1nrw37ObPAtOYyYS9lM10n2y9IlcnqMlsYL+2yI9zUzWxCvZ8ux3657ZW1I
-         g8AjRkolvDT0/gWWjMF7b0cIeeV1tf7/8K9PtDK7KmlEv6M43neGKJ6solyd5xNHOOQs
-         GJcXbfzCYs4UV3Nx9I933wl5dFGhH7KLkAHzTszawFTpCpxYt2cs7sQRmxzEFxV3sVy2
-         aSnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989463; x=1761594263;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/rHfvCGQ7vSJJOElRUDluOOr/mXgiutMeNr5c1rvEw=;
-        b=skws2awN+9dXMZj61vGzcDjQIch0C2knHNfMB8Sgt/hFiBZkjAkOcqGoM9tbhfzUmQ
-         n0lZKin97IPW/OQR1oAxXTt0HlrKVNfpava9iBJrIiaKA+HT2uJNRwC4XRkhDOhsOuQz
-         sOydJBVEwqTb93OEX4NhPcVb/25oC+/xPkm8ET+2C+J0tDFSxWv4+/feLRqud1FADbRR
-         hplU7u6tgLjfocJKOwgq1wj/nCS2LqJKepTnt9mCNCKCEFL7jN/F4UCu+r2YICahiZkA
-         LvxzhWk+RQCEQv+ObapUMg2RncUqf60HJ56fgwZiLSDZbsOzo3Xk4N+dshOSFRQED7yr
-         zjTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXN9XzvuJvb3FbUTt++rPPvF+5Aj1c5Op6jFTB7+Oc2ImriAOblrqCVQj2gZRKTfZaHol+RsgxWdPzjdj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydakU9SWDpiGW7LqsTCkFW9aH6K7Q/Okrh71vqUmL7WlO1pqKp
-	Hj9yGmeJI77V3kAAYcKpYXOLm8PGxVWYcDmN7k6vUySAYblQ1iYbSv3qyTi+D/Wdz48=
-X-Gm-Gg: ASbGncs9FcyLCeAShQlxRJbhH6U6t/HQ/NRITWYEpeAmfJbh4EPcFr9zlZOUvDfJGTO
-	/7tcuHmzLEmwEcrGfHX2v8Ial3Inf6g3FNtVQKHh1gGj/LAuuixry+ARTNp38tdM4OqGWIIw2BB
-	ymyR9jhp24cg0JEvz3gECkRzBO/gquR2fTFX1bG4LxMniFKNpa9QiRGsxMiKVJjuN989xqUPSfi
-	oWILu2B1Ju/oZZi8gCKg9Hdxz/NCQEGPnfx6spmy2oZgYKgCbY6Hpmptct0vlp1BxjU9YFBfdhu
-	SjdCcD3F7+AmMcNW7gNoxYLvuw8Dod35LffMgS1dCfQikPrfdjkLMmhxtWNw0InC7rH4zNMX+d3
-	UN/S55H/JOuiyizj5Grq9ga/J8VSHNa4m9wGsLDej7HGpZ8IUEiuklmaD4KAphjJAjvG1VIARCT
-	2rMfyKxe++
-X-Google-Smtp-Source: AGHT+IHJmKY5JzYa17Wwq5eRnrHMWSM06j/Es4HUtYcSQtsu62W1SioDH4KU66ZTBqpLPBdqBNGQ5A==
-X-Received: by 2002:a05:6402:2551:b0:62f:2afa:60e6 with SMTP id 4fb4d7f45d1cf-63c1f64ececmr12589171a12.7.1760989462748;
-        Mon, 20 Oct 2025 12:44:22 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48ab54fbsm7278599a12.15.2025.10.20.12.44.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:44:22 -0700 (PDT)
-Message-ID: <9656db91-b930-47f3-bdca-ed42f066aa8e@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:44:20 +0300
+	s=arc-20240116; t=1760989503; c=relaxed/simple;
+	bh=RlV65ikxRr47oX9Migjybv1V2We0BdbRY3X2uOWfVlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0PMinGOgp3oG0AMURndIB2W/1A4RqfagSee9DtfKVI2dyN10YwtGNkT1SznqA4cCUDenQ1vksxflQkQzT0FeY9UlvioUmx0uc7cVvZwfKK0Mjw26G4u/WIoRF90uHvV1hO22/4dkxaVCQIxZLuv1wezk9kY5bs/Fab05xtol7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nVNMrkAv; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760989502; x=1792525502;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RlV65ikxRr47oX9Migjybv1V2We0BdbRY3X2uOWfVlU=;
+  b=nVNMrkAv3WTPFv/Pm4gtHZFUGn92f8rqxZ6mKVzw4iNnZIU4pxRM8TJ6
+   cHIuf0PSDCYfPzfLSrF4x3CpvOLGYZCideXVZ3YaqVzPdlwka46C1tx07
+   ExY7aGJUCzPm+G69cK4KqTJTDww9k82AeqOq0lKoubB5gfQzRVHujtLsg
+   l/Gp9HpDpydOhsCwh7HRNA2ExKK+tQMtPlJ7EgzJnTJDzpk1z7TDtokxf
+   qhkto0XhKMbzQL0C0okY2X+GB3NuGMcHZqizRuoCc1w34xss1oSnzncRp
+   VNIZ63hDHgS2t5ToQ2KWfJlRP0n29e1paHjw2ezwJa3X9uWUt+eY7xcQ1
+   A==;
+X-CSE-ConnectionGUID: yVrVHjpCQEixK9aPmnxbQQ==
+X-CSE-MsgGUID: WviUuVmVT8WWJrYmADiADA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73403575"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="73403575"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 12:45:01 -0700
+X-CSE-ConnectionGUID: isk7uufpR+ekF7o1gkIXgg==
+X-CSE-MsgGUID: XOMTcv+YS0qZg8TzfBBmAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="183817614"
+Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO desk) ([10.124.220.167])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 12:45:00 -0700
+Date: Mon, 20 Oct 2025 12:44:54 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/its: use Sapphire Rapids+ feature to opt out
+Message-ID: <20251020194446.w2s5f6nr7i7vw4ve@desk>
+References: <20251017011253.2937710-1-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v4 08/31] clk: at91: clk-master: use clk_parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <160f139d5a5647104826c5878ca077faa26916bc.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <160f139d5a5647104826c5878ca077faa26916bc.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017011253.2937710-1-jon@nutanix.com>
 
-Hi, Ryan,
+On Thu, Oct 16, 2025 at 06:12:49PM -0700, Jon Kohler wrote:
+> A VMM may not expose ITS_NO or BHI_CTL, so guests cannot rely on those
+> bits to determine whether they might be migrated to ITS-affected
+> hardware. Rather than depending on a control that may be absent, detect
+> ITS-unaffected hosts via a CPU feature that is exclusive to Sapphire
+> Rapids and newer processors.
 
-On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Use struct clk_parent_data instead of struct parent_hw as this leads
-> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
-> conversion of existing SoC specific clock drivers from parent_names to
-> modern clk_parent_data structures.
-> 
-> __clk_get_hw will be removed in subsequent patches.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: Add clk-master changes to SAM9X75 and
-> SAMA7D65 SoCs. As well as add md_slck commit message.]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
+BHI_CTRL is also exclusive to Sapphire Rapids and newer processors. Why
+wouldn't it be exposed to guests but BUS_LOCK_DETECT would be?
 
-[...]
+Not exposing BHI_CTRL has another disadvantage that guests would deploy the
+BHB-clear sequence when they could have used cheaper hardware mitigation
+for BHI.
 
-> @@ -752,15 +752,17 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
->  	struct regmap *regmap;
->  	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
->  	struct clk_hw *td_slck_hw, *md_slck_hw, *usbck_hw;
-> -	struct clk_parent_data parent_data[2];
-> +	struct clk_parent_data parent_data[9];
->  	struct clk_hw *parent_hws[9];
->  	int i, j;
->  
->  	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
->  	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
-> -	i = of_property_match_string(np, "clock-names", "main_xtal");
-> +	if (!td_slck_hw || !md_slck_hw)
-> +		return;
->  
-> -	if (!td_slck_hw || !md_slck_hw || !i)
-> +	i = of_property_match_string(np, "clock-names", "main_xtal");
-> +	if (i < 0)
->  		return;
+> Use X86_FEATURE_BUS_LOCK_DETECT as the canary: it is present on
+> Sapphire Rapids+ parts and provides a reliable indicator that the guest
+> won't be moved to ITS-affected hardware.
 
-The diff here should be gone from this patch if handled in previous
-conversion patches.
+I am puzzled why BUS_LOCK_DETECT is more reliable than BHI_CTRL?
 
