@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-860694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654E2BF0B6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:03:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8682EBF0D2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EE6C4F27F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:03:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9BBF4F3B03
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B012F6577;
-	Mon, 20 Oct 2025 11:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5BF3595D;
+	Mon, 20 Oct 2025 11:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ddZS/Sn9"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhwKQZH4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C9C25A2B5;
-	Mon, 20 Oct 2025 11:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E850125FA13
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958181; cv=none; b=t8DRKhcPsI1Jn1DjwcHq5EZ5epHiqjuB6LyiUjJtzyqxhwqAGUhXNjoaQeDQuoDoTQcb//5odHsKj0dt4a5fW/JFhmIh+9BR+4RqZKNCuevo8KZB6qG9YwlvAv9MioFOwvBeYoVazSwD8mNmIlqy4Gu0jGDUO6tDrCn369Xy6ZM=
+	t=1760959570; cv=none; b=mJrlxRiLeeSCOkUA9hvs8iQkygz5zmm7MfzkFQTCmvYN6siVxvySm+OU+bsb35cOc3casQYtGausuS3m2rtbShTRBtbTmhdlyZh4eAOlOyOrBSDJDo+QbWljB3MdMHZMl1JBorEptNkjqBjHCTlX6f2kzjJuBctB6tHqxpv65IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958181; c=relaxed/simple;
-	bh=37JXeaabSnQEBCgvzFMhmKS7+aCd6QldkTzU3wu9728=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=to9ygj4nBqgXzbkxEMuNusN97wGuatazBAo8gY0jQKhkWYpa02AAUu0FmnljSvv9Q6SMD6yole+Mgz2S8mXSeITo/EyJM6XQb5vEuR5A+3CzZBrE2cW7licxYOHZT9INTbiI3hmH4sNhcA52pfV8+2anNkjA4cqutw1sMvEj5/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ddZS/Sn9; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=nQ0chgf8+QUyTzowyJfqVEnK894JZa7lGc3+hmjC1Yo=;
-	b=ddZS/Sn9zzzc8Kf5fxuDeSAb2exjusBlWN7RobWM674HE7ExtsIcj3uJw6wB3xYX/wTy7PhQg
-	DxAj9XoxB911hHx53WA7FFF8Qbjhxm6jMqsc7aYXBU4upkKMFUNyWMsZyHF2WIwI3kBGYtxFTs1
-	sfgFUoJN6tXSYbRFG/Hth3g=
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cqsvr6CF4zLlVc;
-	Mon, 20 Oct 2025 19:02:32 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 484B61400CB;
-	Mon, 20 Oct 2025 19:02:56 +0800 (CST)
-Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
- 2025 19:02:55 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com>
-CC: <syzkaller-bugs@googlegroups.com>, <steffen.klassert@secunet.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>
-Subject: [PATCH net] Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
-Date: Mon, 20 Oct 2025 19:25:53 +0800
-Message-ID: <20251020112553.2345296-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760959570; c=relaxed/simple;
+	bh=hgOColYtjypJYFmtghZDQhWFnff6Vuq/Pns/rc/RTxY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PzaYhSQN6WwMPKOiiE1ddNa/4ibai3MHbNb6QiV54Kmbmec26DFskVsSZY3SXOjxUFdFqYdwVvvcUOeBHdNF6umSxt0Hrql4pUnuAlK9vY7ERbN42qAlrgizueSfs95JoEvg/bdEXtRBZitW6BPapJ1/FTiwSibtWQdqz2cAI3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhwKQZH4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-269640c2d4bso7726335ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760959568; x=1761564368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hgOColYtjypJYFmtghZDQhWFnff6Vuq/Pns/rc/RTxY=;
+        b=OhwKQZH4XCkNBxqdgYf8t4PRIoL0R7vfzMjrnIsRVCinoMnJNGTYlU79n7qlW8wfpa
+         zNOeNBYKYP6/eYxWB/2sc9DemE26+rxb53oellKA91Nvv7rHQG0wJZCIgVDmJQ+2XEw1
+         dEm6GoPgvuxODr7HArd+jLce17R43kU8183W8FwR/u1CVZTaZDg9vg818DlpOWT/z/1p
+         k0dzpsWGEn5ROTH33AbNQbPizHs684iy59JSAW6NdXdsN2bxSG0/7KdSUIHh8JcgxNE6
+         I3Hz76xnKnwdypq8mtZNQp2XGIGK2gn+JoMRHkY7nKIjO1OAXExZEZtqPbwJKVTae6vD
+         9y1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760959568; x=1761564368;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hgOColYtjypJYFmtghZDQhWFnff6Vuq/Pns/rc/RTxY=;
+        b=mFTlec4prSRcICLzMRo8xIsTIYRinWLIIEDKnCLP77aU0h6hY0wOgo27Rlvamxinzy
+         1TAFLqudKNgpVhhySdnZujfKsz3FrEYsTmMME9/pREduPutrq5ADV7ZWDw5IyCjzLnZM
+         qOByuhPGP3C1v34GIBXZNvY0bhW850mD2fGnu5cYZPJziwP6wPUdnsfSw/AKvBmP/s+5
+         msFs/tQWULS7MB4Di4fgdBkY/o46Ilfx751Ul8YOWSiQOJeAKec/29p95kRpxpRT1Yp6
+         WHaCkM+dtQbSPiiqe4e6aqi+fGYQw+8U84bDgYLrLVodVNQwSfRXt1/iwSCZA8lOSGFh
+         Adpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdry9B/ApAS0W7pB6lC5C+ZtAxR4R9MEmvm1GMo+KzIPpxcS8TyLt69Sb3Esj8Dx46rsdSul4x3Dqr9b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD5OYN9sc4+Cg4j6kFbvMt1DRfDcr4i0EdU5T6zptXxcEX8NZk
+	t5zF3CEdm10KmiO0RwQvObvynkL6c0m2a5hQxHXn0VcjGn4kFDGxG9gEcuL8NS3JDiOup0RoWIQ
+	PQ8agpwCFsHoQcNoDe8vEtMWmNfxCsEA=
+X-Gm-Gg: ASbGnctjTf5KxYfryT5sTXbK8F1MUTgPvUc9qV0iU9BrzMJSevWTkOGvYLVAlHSJtRk
+	evL2tVXUn6y9dsYNr4ng+zG4KJzVMEGXZ4tj7dH5MQba7+/hnmOnVkdffeWEv4QEvU/ey4G/U+R
+	llH87In/mpL+QNpQnY7mTQo9l+U6ziNdhV5eev4LnyjvJRdUyVBO5/tvEZACwQWIbrIZjgAgsQx
+	v+nypc3Y4POcHErzgcAtSwSgTWaXmOyBQ1npPLYGomMpk4vNpQ6wQkceso55ShoGdnRd8wvhG9E
+	MZSJcwUfMKrpO1XGZm4Gn/NIkrOT43gy0FgaZzARoGsoJRd8esmHnzZPn6/H0rOEAw/BSBUwXwu
+	Fc8vV+n46+6uk9W16ya+f0Iyg
+X-Google-Smtp-Source: AGHT+IEKwZbSy/N18wL4YfpzGb1pRy6ao0FR9zqJgT5EVU+s2mj3AZEqw0jAcF02AG4TQ9WpRH8/nfLRy1ytZSe20ms=
+X-Received: by 2002:a17:903:40ca:b0:290:55ba:d70a with SMTP id
+ d9443c01a7336-290c9cf3306mr86594545ad.2.1760959568266; Mon, 20 Oct 2025
+ 04:26:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+References: <20251020031204.78917-1-huangsiyuan@kylinos.cn>
+In-Reply-To: <20251020031204.78917-1-huangsiyuan@kylinos.cn>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 20 Oct 2025 13:25:55 +0200
+X-Gm-Features: AS18NWDO0ydrU_D3vxY3mykKLDQk63GF017mZ_6ZLZcYagnPF_Cv3D8Dk6e5NHQ
+Message-ID: <CANiq72=9=W_j_o=oT+AdghQbEFbEmqT+Gx6q8oK8-yVwcrnDXQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: acpi: replace `core::mem::zeroed` with `pin_init::zeroed`
+To: Siyuan Huang <huangsiyuan@kylinos.cn>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
+	dakr@kernel.org, linux-acpi@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Mon, Oct 20, 2025 at 5:12=E2=80=AFAM Siyuan Huang <huangsiyuan@kylinos.c=
+n> wrote:
+>
+> All types in `bindings` implement `Zeroable` if they can, so use
+> `pin_init::zeroed` instead of relying on `unsafe` code.
+>
+> If this ends up not compiling in the future, something in bindgen or on
+> the C side changed and is most likely incorrect.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1189
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Siyuan Huang <huangsiyuan@kylinos.cn>
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index f3014e4f54fc..2e7ab56db152 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -441,6 +441,7 @@ int xfrm_input_register_afinfo(const struct xfrm_input_afinfo *afinfo);
- int xfrm_input_unregister_afinfo(const struct xfrm_input_afinfo *afinfo);
- 
- void xfrm_flush_gc(void);
-+void xfrm_state_delete_tunnel(struct xfrm_state *x);
- 
- struct xfrm_type {
- 	struct module		*owner;
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index d213ca3653a8..5d982e4e6526 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -806,7 +806,6 @@ void __xfrm_state_destroy(struct xfrm_state *x)
- }
- EXPORT_SYMBOL(__xfrm_state_destroy);
- 
--static void xfrm_state_delete_tunnel(struct xfrm_state *x);
- int __xfrm_state_delete(struct xfrm_state *x)
- {
- 	struct net *net = xs_net(x);
-@@ -3085,7 +3084,7 @@ void xfrm_flush_gc(void)
- }
- EXPORT_SYMBOL(xfrm_flush_gc);
- 
--static void xfrm_state_delete_tunnel(struct xfrm_state *x)
-+void xfrm_state_delete_tunnel(struct xfrm_state *x)
- {
- 	if (x->tunnel) {
- 		struct xfrm_state *t = x->tunnel;
-@@ -3096,6 +3095,7 @@ static void xfrm_state_delete_tunnel(struct xfrm_state *x)
- 		x->tunnel = NULL;
- 	}
- }
-+EXPORT_SYMBOL(xfrm_state_delete_tunnel);
- 
- u32 xfrm_state_mtu(struct xfrm_state *x, int mtu)
- {
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 010c9e6638c0..7f769617882c 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1031,6 +1031,7 @@ static int xfrm_add_sa(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if (err < 0) {
- 		x->km.state = XFRM_STATE_DEAD;
- 		xfrm_dev_state_delete(x);
-+		xfrm_state_delete_tunnel(x);
- 		__xfrm_state_put(x);
- 		goto out;
- 	}
--- 
-2.34.1
+Rafael: I guess you will take this; otherwise, please let me know -- thanks=
+!
 
+Cheers,
+Miguel
 
