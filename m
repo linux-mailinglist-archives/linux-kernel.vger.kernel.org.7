@@ -1,75 +1,158 @@
-Return-Path: <linux-kernel+bounces-861199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44B5BF20B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:15:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FAEBF20B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 373354F7AC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1CF189A3FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE672472A8;
-	Mon, 20 Oct 2025 15:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XT9aA3oy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6FD148830;
-	Mon, 20 Oct 2025 15:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845452459FD;
+	Mon, 20 Oct 2025 15:15:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4F624BD1A;
+	Mon, 20 Oct 2025 15:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973239; cv=none; b=Iiw5NLROJO9W6fhhYCz3CZHjw+OiZH/hCIzALhRd2NHnA+ouBWGLC0yKrgMj+tk9zyFWWA3iJlVH3tuoxwmq/PmfHJ9T48OqH9A/P9/DHtxWBQ3LsBzogPGFq8Wauos57KUR8qC9uCAN6WlJPJM9V7RiYuQymgeb12zfVjXvuI4=
+	t=1760973305; cv=none; b=T0sRvy92XA+Sew8uxfpR4dppGVFmyrX1zu1Q0N0o7PYFIWf0GmsQDmHt0vzggrtaBxnNZdKG1iifQeQg4VMNK205yvSruSHn49ndIurERDQvNaZ1g0NPIbZ3F+M9vte//uXeBaxmrvrlcFoCSzduQ7YvINPpiKtvPN+V6aPamd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973239; c=relaxed/simple;
-	bh=GK5XpQbAgwQo3pNeDKAZeoqVl0TujKNotxfdbKkL1xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogd97e8o/1dpqke1FTSk+6Eb4HZybgcQUSPGvyFFTIfwbqWrbaKSA+zJ1cCh1IQ7mQ7uTKLIB3w0A46IrCA0rzlA2p0KSYhztR3KQuNDV+pJhTLbCUodLBg3gKtS2iuIZM9eG2PlsmDEZIbYv9/WS1FHqGPh2fbFyTaytDRTQ1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XT9aA3oy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA7D8C4CEF9;
-	Mon, 20 Oct 2025 15:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760973239;
-	bh=GK5XpQbAgwQo3pNeDKAZeoqVl0TujKNotxfdbKkL1xE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XT9aA3oy0kAcor+zAtjl3zGV2WZFKXLb96B16d79vfmXnJS5WvVKj2O/xh91RMkzB
-	 4Cn4n3s3aNtdvOa9XDh8oEolvfkQFNlL5jSjDrZ8FT8VYx7/vSV4Vcm3az/H79y+yl
-	 ao2o3sagz9/mlsyDgTBaLxuDrqpNSK1dj0YY8HLg=
-Date: Mon, 20 Oct 2025 17:13:56 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Subject: Re: [GIT PULL] block-bio_iov_iter_export
-Message-ID: <2025102019-aerobics-broker-b66c@gregkh>
-References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
- <aPHemg-xpVLkiEt9@infradead.org>
- <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
- <aPYCbIrvAkOf5L3g@infradead.org>
- <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
- <aPY3YKzGbIKxFbl-@infradead.org>
- <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
+	s=arc-20240116; t=1760973305; c=relaxed/simple;
+	bh=lpAJKs5aEfXOBaNfgX43lajmP/dejGOz35JJ3WbL3fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AjYicODAEFeA7yZzwQF3a5CBZm6MMMqAPdhAaYON2uoCfp4s7UmLA2xuLhnoBrsy83addf0Ol8cCVzy5ByWZXRWdU21n26Gun899x54/sF3lnCnpEz2MfHF3ISCJLkxn/zr3ZN99e3spJmILz1WMKZ0Ewk7suKGBDDRqcsUbz/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 629F91063;
+	Mon, 20 Oct 2025 08:14:48 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABB853F66E;
+	Mon, 20 Oct 2025 08:14:51 -0700 (PDT)
+Message-ID: <0d620641-6142-432d-9c25-a35b37f8bde6@arm.com>
+Date: Mon, 20 Oct 2025 16:14:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 17/29] arm_mpam: Extend reset logic to allow devices to
+ be reset any time
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-18-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251017185645.26604-18-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 10:49:57AM -0400, Kent Overstreet wrote:
-> There was no need for you to drop the EXPORT_SYMBOL.
+Hi James,
 
-We don't keep symbols exported when there is no in-kernel user of that
-export, sorry.  Otherwise, that way lies madness.
+On 10/17/25 19:56, James Morse wrote:
+> cpuhp callbacks aren't the only time the MSC configuration may need to
+> be reset. Resctrl has an API call to reset a class.
+> If an MPAM error interrupt arrives it indicates the driver has
+> misprogrammed an MSC. The safest thing to do is reset all the MSCs
+> and disable MPAM.
+> 
+> Add a helper to reset RIS via their class. Call this from mpam_disable(),
+> which can be scheduled from the error interrupt handler.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> ---
+> Changes since v2:
+>  * Reduced the scop of arguments in mpam_reset_component_locked().
+> 
+> Changes since v1:
+>  * more complete use of _srcu helpers.
+>  * Use guard macro for srcu.
+>  * Dropped a might_sleep() - something else will bark.
+> ---
+>  drivers/resctrl/mpam_devices.c | 58 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 55 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index ec089593acad..545482e112b7 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -802,15 +802,13 @@ static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
+>  
+>  /*
+>   * Called via smp_call_on_cpu() to prevent migration, while still being
+> - * pre-emptible.
+> + * pre-emptible. Caller must hold mpam_srcu.
+>   */
+>  static int mpam_reset_ris(void *arg)
+>  {
+>  	u16 partid, partid_max;
+>  	struct mpam_msc_ris *ris = arg;
+>  
+> -	WARN_ON_ONCE(!srcu_read_lock_held((&mpam_srcu)));
+> -
+>  	if (ris->in_reset_state)
+>  		return 0;
+>  
+> @@ -1328,8 +1326,56 @@ static void mpam_enable_once(void)
+>  	       mpam_partid_max + 1, mpam_pmg_max + 1);
+>  }
+>  
+> +static void mpam_reset_component_locked(struct mpam_component *comp)
+> +{
+> +
 
-thanks,
+Nit: Extra blank line.
 
-greg k-h
+> +	struct mpam_vmsc *vmsc;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(vmsc, &comp->vmsc, comp_list,
+> +				 srcu_read_lock_held(&mpam_srcu)) {
+> +		struct mpam_msc *msc = vmsc->msc;
+> +		struct mpam_msc_ris *ris;
+> +
+> +		list_for_each_entry_srcu(ris, &vmsc->ris, vmsc_list,
+> +					 srcu_read_lock_held(&mpam_srcu)) {
+> +			if (!ris->in_reset_state)
+> +				mpam_touch_msc(msc, mpam_reset_ris, ris);
+> +			ris->in_reset_state = true;
+> +		}
+> +	}
+> +}
+> +
+
+-- 
+Thanks,
+
+Ben
+
 
