@@ -1,88 +1,53 @@
-Return-Path: <linux-kernel+bounces-860904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B44CBF14A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:44:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492EABF1428
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9398B421855
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:38:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36F824F4F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F62312813;
-	Mon, 20 Oct 2025 12:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B66B30F529;
+	Mon, 20 Oct 2025 12:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d1npdZRF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rUNR66Ii"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCEA23BD02
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC8C27462;
+	Mon, 20 Oct 2025 12:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760963859; cv=none; b=WzvmmvQwRUEUm58pFCln42Yni2WSYzAxROtVwGk2hG8mSQRmQd7B/TKbGeedhR+H+sFBx0Ca7YvrkPAMj5xeUbrQHJeo76YNPJfufuBrrUQCuh9EQ7BaSF25sIlbViXeXjgVtDQ4DcLFalKIh9EpPr5xrEJP7iA+89BDVunBz1g=
+	t=1760963913; cv=none; b=IgMiJPervn8tl4/wZNQtimMv1uFBk08ecaDss/G4wuGZ7FXFmI5XU/U7+z42Yg+Yl9YJZclyc4tkgjK06g/RqxmatXNY2FLSgu8ZHGOSvytvBidlHvuptr+ZQLtxI/Tu/YLbaCeYS7M7ZfUxBjfdE4UY0u9swGx9Kru8hsvC6uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760963859; c=relaxed/simple;
-	bh=BTFDwTBAdtJjfKZNownb+OFKnK2y5hO+biG1xBtNyyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FGemBC+I29IXVZtPfzfZw3diDzoHHfctd0qTHOEfOZY9mxAXhKdT4IUZ/nuqBIOTxcYnvJO0D9pUuijIlADTs4dYWohy323BKD7ldfIo2O6ZHR/dffOV8cjkYCmclC15nJVInRTOgiSaFNODNVygT5//691R9RNhnQW3XJ5t9HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d1npdZRF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760963856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tzznurqx8GJgltwtpurg4k5zkXdNLWNROXLORXJz3Nc=;
-	b=d1npdZRFEEfyXa34BcPpbVS7aWt6gBdIk4TG/y6nCvWM5d0JEwlfFZFLmiUNFI3tIYCDgm
-	AchVUJfEXJpd+6P3rC2hD8j0n8kWGDojXu0wg2uPwj/RbkiF52gdCPJ+scQcnZknBmHrQj
-	qdzYWFv6iQYwko6oexrYK/J1ivvHdqQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-6-uPdCp-ZdMDWQnSpkULs4sQ-1; Mon, 20 Oct 2025 08:37:35 -0400
-X-MC-Unique: uPdCp-ZdMDWQnSpkULs4sQ-1
-X-Mimecast-MFC-AGG-ID: uPdCp-ZdMDWQnSpkULs4sQ_1760963854
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-47113dcc15dso31876655e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 05:37:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760963854; x=1761568654;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tzznurqx8GJgltwtpurg4k5zkXdNLWNROXLORXJz3Nc=;
-        b=CoiCiIe/JvZCYsy9e9i645op4ya1wy/4MIk+3sGaFlFe28zcK4qjrlmPWUPxOpt3nj
-         VXNjLGySsSPIHWToV2ZPAeel4pe146UAMT5hUoRjrqGoPHbbUurm7GWJZGwnCwcLBYk0
-         TZFeAEdD1wu8OByGJc8a2vEfRSY26hXaLXYmvJmPvUQP8bztTXBWuZ1NkxlOuOk6+Tue
-         uU0K929CUZwp3EQRd042M2Qnhbn4iZ+kzS1WaKbmT2pK4rgip3NXt5Pg1KNSyahSig4I
-         FFQJs9ruKvoXe4nnYpinxk1O4aT1HnwR1RuxSOcEtvGHxIZoDUzfqi0TPpg3R+Fr43gU
-         6VDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5TOGttfv7+Qd9OmXB7SynczoDmYJuClyg6ZG4XILFGm4rr5LTkextFOutXKk4ksmae+X8V55sEJweqoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7yrMz3fxbfrkUmyVSKoU8neyyLuuNoIZRbwvIBl6Dwkpl5pis
-	x0FZbm+3zsnsMv45IApiD4lASrJ+eeVshd/oZZFrciQ4pKb/X5dfIHjXbhAgQE6rjrDPBQy7FDi
-	Zsd+tYGmzqoPNP3Uo5ywlncds3NumROQ6LBfGuT7Iyze6QkHClK/POmSjPzt4PMvhSQ==
-X-Gm-Gg: ASbGncu2Vox43esOdhVtc0Si9QTt3DYv2h87m2Jnej8/HLZgcAGUyPc53sK3kM3L7fg
-	nQssk14kcB/QV7NvyuiINuGYIus//KCgH3VKE02R9lLi+gcZOaQ/dJIcA68W4cNsqf0pbUs3FOK
-	vLwPTyoXxerwcDl0DUnH2k6V8L8b6Hd8dfWaInMnD1SaxBTSkrEAL6AAXT+2Of+MFcHZZJVW5/Y
-	iDoRY3jHD9JMAgGKa1+7kVRovwyQk1EONgnFFkddSzkJt+9ofB2X+n8fYGZOtMnkaw6KuJT+mGo
-	kBTEP+HJd5QF6Ea3uQcZD8n5u+bZDRFnMxsSQ/2Kft6o/lzNTfPk38HeYDIYnwRJfla8dymnMgD
-	QdkfNWnfFBAUu45J9OvgGIbibtFKCluFXqGrC4V5wC8IWjIXGbmJWHFeNHkstYthJdfKdXy3l9k
-	M77K7GYzgtknt/n1HyfADWopxEPB8=
-X-Received: by 2002:a05:600c:1f93:b0:46f:b42e:e367 with SMTP id 5b1f17b1804b1-4711792a527mr88896175e9.41.1760963853730;
-        Mon, 20 Oct 2025 05:37:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQEUVrP5ywE2htPBOZIvhFEciVwEdQZ4U4H8zs/D2D8uFWsnOx+7qYC1vDVJTNM7Dv5yngwA==
-X-Received: by 2002:a05:600c:1f93:b0:46f:b42e:e367 with SMTP id 5b1f17b1804b1-4711792a527mr88895945e9.41.1760963853238;
-        Mon, 20 Oct 2025 05:37:33 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4714fb1b668sm164496295e9.0.2025.10.20.05.37.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 05:37:32 -0700 (PDT)
-Message-ID: <150c0d14-326b-4abf-8d95-26e47507a22f@redhat.com>
-Date: Mon, 20 Oct 2025 14:37:31 +0200
+	s=arc-20240116; t=1760963913; c=relaxed/simple;
+	bh=S8+GFXL40Yc79OaYevO9BwJGoi26KNevBi9Yw4xOLYI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=XeCGRfgMbL6q/cThiVg6M7LwdvKQvSByrC4QJuTuPCCQ5Y0yNcoMk2HTdIzx3te3VKVyAlLahMdFnYuETdqqU5u2Bq2jmo0pRqTjvON8qE92UIGOnJhDVaM/kGNs+SwxmRPYXv61RTXi+PQ10oIOVk02cC00Kh51i6UV2DV71e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rUNR66Ii; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760963890; x=1761568690; i=markus.elfring@web.de;
+	bh=CH2GarSYPAyylhLNYS6SaVXCuKXda9zNFyl6FGQP4mQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rUNR66IiHTChgUeKz2UT01vuRwgIkPolH1ReRZr9BXesnWxxlMmdd1f+C9RqFVBN
+	 hxJOqyyFNNsgOIxBjXtldwPNnh0XNQH0UXYtMjLJ29pzoNBvPCzsr9h8T/8j8rga1
+	 x+7RSuWXCDJNkVjyCe5UxAOIejlKSylRszETDr7+ZbjRq/UxP/6ra/ldamljtWytq
+	 OJ2TEyATu2Zwt+MzNk72cIQWwpLnY2t1IqNlXbbDC52iSOBky9TjWsEXfcpJ7VEo3
+	 sX9qPLMaVCi5sGkMGBAA31DiDJJwC+Yg/jZI7t6SHy+2x712/ENUsfCdoHtABTn3c
+	 Xmiu82RgND6UgA3qDA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrOhx-1uNAZx0taZ-00eb0v; Mon, 20
+ Oct 2025 14:38:10 +0200
+Message-ID: <b462b48a-eaf3-4324-86cf-ca45c1a74a69@web.de>
+Date: Mon, 20 Oct 2025 14:38:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,264 +55,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH RESEND 1/3] mm: memory_failure: Fix MF_DELAYED
- handling on truncation during failure
-To: Lisa Wang <wyihan@google.com>, linmiaohe@huawei.com,
- nao.horiguchi@gmail.com, akpm@linux-foundation.org, pbonzini@redhat.com,
- shuah@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: rientjes@google.com, seanjc@google.com, ackerleytng@google.com,
- vannapurve@google.com, michael.roth@amd.com, jiaqiyan@google.com,
- tabba@google.com, dave.hansen@linux.intel.com
-References: <cover.1760551864.git.wyihan@google.com>
- <57ed0bcbcfcec6fda89d60727467d7bd621c95ab.1760551864.git.wyihan@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <57ed0bcbcfcec6fda89d60727467d7bd621c95ab.1760551864.git.wyihan@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, Alain Volmat
+ <alain.volmat@foss.st.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] media: stm32: csi: Omit two variable reassignments in
+ stm32_csi_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:G45M7ZjjO1Q4oUE+g2c3rEP1/MH4XJVSkDeXs4wjOdD3vyRqPRT
+ Ed6+AwL4akBT61p7sKSm3/GJ+ESwbsT5Pm6bHgEe/cwmAOeWc9QCiFJPvCZr4ivESwbWGO7
+ sxP1oumKXTF44fbAX3+gGfVvrdb0CAANB/ZQLJVaFXWeELDwnnhaPKFY5wirYM7LtpBarWF
+ EAfsL2JOdCaVWdRdpb6Dg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:n9JaN4fn6GA=;4qLs33JsOYYj1ha7EceMxwrJg8k
+ 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
+ iMZkg==
 
-Lisa accidentally dropped all Tos/CCs, so here is her mail with my reply forwarded:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 20 Oct 2025 14:30:06 +0200
 
+An error code was assigned to a variable and checked accordingly.
+This value was passed to a dev_err_probe() call in an if branch.
+This function is documented in the way that the same value is returned.
+Thus delete two redundant variable reassignments.
 
--------- Forwarded Message --------
-Subject: Re: [RFC PATCH RESEND 1/3] mm: memory_failure: Fix MF_DELAYED handling on truncation during failure
-Date: Mon, 20 Oct 2025 14:35:45 +0200
-From: David Hildenbrand <david@redhat.com>
-To: Lisa Wang <wyihan@google.com>
+The source code was transformed by using the Coccinelle software.
 
-On 17.10.25 17:31, Lisa Wang wrote:
-> On Thu, Oct 16, 2025 at 10:18:17PM +0200, David Hildenbrand wrote:
->> On 15.10.25 20:58, Lisa Wang wrote:
->>> The .error_remove_folio a_ops is used by different filesystems to handle
->>> folio truncation upon discovery of a memory failure in the memory
->>> associated with the given folio.
->>>
->>> Currently, MF_DELAYED is treated as an error, causing "Failed to punch
->>> page" to be written to the console. MF_DELAYED is then relayed to the
->>> caller of truncat_error_folio() as MF_FAILED. This further causes
->>> memory_failure() to return -EBUSY, which then always causes a SIGBUS.
->>>
->>> This is also implies that regardless of whether the thread's memory
->>> corruption kill policy is PR_MCE_KILL_EARLY or PR_MCE_KILL_LATE, a
->>> memory failure within guest_memfd memory will always cause a SIGBUS.
->>>
->>> Update truncate_error_folio() to return MF_DELAYED to the caller if the
->>> .error_remove_folio() callback reports MF_DELAYED.
->>>
->>> Generalize the comment: MF_DELAYED means memory failure was handled and
->>> some other part of memory failure will be handled later (e.g. a next
->>> access will result in the process being killed). Specifically for
->>> guest_memfd, a next access by the guest will result in an error returned
->>> to the userspace VMM.
->>>
->>> With delayed handling, the filemap continues to hold refcounts on the
->>> folio. Hence, take that into account when checking for extra refcounts
->>> in me_pagecache_clean(). This is aligned with the implementation in
->>> me_swapcache_dirty(), where, if a folio is still in the swap cache,
->>> extra_pins is set to true.
->>>
->>> Signed-off-by: Lisa Wang <wyihan@google.com>
->>> ---
->>>    mm/memory-failure.c | 24 +++++++++++++++---------
->>>    1 file changed, 15 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>> index df6ee59527dd..77f665c16a73 100644
->>> --- a/mm/memory-failure.c
->>> +++ b/mm/memory-failure.c
->>> @@ -922,9 +922,11 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
->>>     * by the m-f() handler immediately.
->>>     *
->>>     * MF_DELAYED - The m-f() handler marks the page as PG_hwpoisoned'ed.
->>> - * The page is unmapped, and is removed from the LRU or file mapping.
->>> - * An attempt to access the page again will trigger page fault and the
->>> - * PF handler will kill the process.
->>> + * It means memory_failure was handled (e.g. removed from file mapping or the
->>> + * LRU) and some other part of memory failure will be handled later (e.g. a
->>> + * next access will result in the process being killed). Specifically for
->>> + * guest_memfd, a next access by the guest will result in an error returned to
->>> + * the userspace VMM.
->>>     *
->>>     * MF_RECOVERED - The m-f() handler marks the page as PG_hwpoisoned'ed.
->>>     * The page has been completely isolated, that is, unmapped, taken out of
->>> @@ -999,6 +1001,9 @@ static int truncate_error_folio(struct folio *folio, unsigned long pfn,
->>>    	if (mapping->a_ops->error_remove_folio) {
->>>    		int err = mapping->a_ops->error_remove_folio(mapping, folio);
->>> +		if (err == MF_DELAYED)
->>> +			return err;
->>> +
->>>    		if (err != 0)
->>>    			pr_info("%#lx: Failed to punch page: %d\n", pfn, err);
->>>    		else if (!filemap_release_folio(folio, GFP_NOIO))
->>> @@ -1108,18 +1113,19 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
->>>    		goto out;
->>>    	}
->>> -	/*
->>> -	 * The shmem page is kept in page cache instead of truncating
->>> -	 * so is expected to have an extra refcount after error-handling.
->>> -	 */
->>> -	extra_pins = shmem_mapping(mapping);
->>> -
->>>    	/*
->>>    	 * Truncation is a bit tricky. Enable it per file system for now.
->>>    	 *
->>>    	 * Open: to take i_rwsem or not for this? Right now we don't.
->>>    	 */
->>>    	ret = truncate_error_folio(folio, page_to_pfn(p), mapping);
->>> +
->>> +	/*
->>> +	 * The shmem page, or any page with MF_DELAYED error handling, is kept in
->>> +	 * page cache instead of truncating, so is expected to have an extra
->>> +	 * refcount after error-handling.
->>> +	 */
->>> +	extra_pins = shmem_mapping(mapping) || ret == MF_DELAYED;
-> 
-> Hello David,
-> 
-> Thank you for reviewing these patches!
-> 
->> Well, to do it cleanly shouldn't we let shmem_error_remove_folio() also
->> return MF_DELAYED and remove this shmem special case?
->>
-> 
-> I agree shmem_error_remove_folio() should probably also return MF_DELAYED.
-> MF_DELAYED sounds right because shmem does not truncate, and hence it
-> should not call filemap_release_folio() to release fs-specific metadata on
-> a folio.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/media/platform/st/stm32/stm32-csi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Just to clarify for others, this is the code we are talking about in filemap_release_folio():
-
-if (mapping->a_ops->error_remove_folio) {
-	int err = mapping->a_ops->error_remove_folio(mapping, folio);
-
-	if (err != 0)
-		pr_info("%#lx: Failed to punch page: %d\n", pfn, err);
-	else if (!filemap_release_folio(folio, GFP_NOIO))
-		pr_info("%#lx: failed to release buffers\n", pfn);
-	else
-		ret = MF_RECOVERED;
-} ...
-
-> 
-> There's no bug now in memory failure handling for shmem calling
-> filemap_release_folio(), because
-
-Right, because shmem error_remove_folio() will currently return 0.
-
-> 
-> shmem does not have folio->private
-> => filemap_release_folio() is a no-op anyway
-> => filemap_release_folio() returns true
-> => truncate_error_folio() returns MF_RECOVERED
-
-Agreed.
-
-> => truncate_error_folio()'s caller cleans MF_RECOVERED up to eventually
-> return 0.
-
-Yes.
-
-> 
->> Or is there a good reason shmem_mapping() wants to return 0 -- and maybe
->> guest_memfd would also wan to do that?
->>
-> 
-> The tradeoff is if I change shmem_error_remove_folio()'s return, mf_stats
-> will be changed.
-
-But it actually sounds like the right thing to do, no? Who cares about
-the stats being delayed vs. recovered?
-
-> I'd be happy to update shmem_error_remove_folio() to
-> return MF_DELAYED as well, but is it okay that the userspace-visible
-> behavior in the form of statistics will change?
-
-They never really were "recovered", but always "delayed", correct?
-In that case, it almost sounds like a fix.
-
-> 
->> Just reading the code here the inconsistency is unclear.
-> 
-> Another option is to add kvm_gmem_mapping() like shmem_mapping().
-
-Oh no.
-
-As an alternative we could introduce a new MF_* to handle this case.
-
-But it almost sounds like MF_DELAYED does exactly what we want, so I
-would suggest to try that first to see if there is any pushback/good
-reason to let shmem result in "recovered" when it's really "delayed".
-
-
-BTW, the behavior from truncate (recovered) -> keep (delayed) was added in
-
-commit a7605426666196c5a460dd3de6f8dac1d3c21f00
-Author: Yang Shi <shy828301@gmail.com>
-Date:   Fri Jan 14 14:05:19 2022 -0800
-
-      mm: shmem: don't truncate page if memory failure happens
-           The current behavior of memory failure is to truncate the page cache
-      regardless of dirty or clean.  If the page is dirty the later access
-      will get the obsolete data from disk without any notification to the
-      users.  This may cause silent data loss.  It is even worse for shmem
-      since shmem is in-memory filesystem, truncating page cache means
-      discarding data blocks.  The later read would return all zero.
-           The right approach is to keep the corrupted page in page cache, any
-      later access would return error for syscalls or SIGBUS for page fault,
-      until the file is truncated, hole punched or removed.  The regular
-      storage backed filesystems would be more complicated so this patch is
-      focused on shmem.  This also unblock the support for soft offlining
-      shmem THP.
-      
-
--- 
-Cheers
-
-David / dhildenb
+diff --git a/drivers/media/platform/st/stm32/stm32-csi.c b/drivers/media/p=
+latform/st/stm32/stm32-csi.c
+index fd2b6dfbd44c..a997b34a73d7 100644
+=2D-- a/drivers/media/platform/st/stm32/stm32-csi.c
++++ b/drivers/media/platform/st/stm32/stm32-csi.c
+@@ -1033,8 +1033,7 @@ static int stm32_csi_probe(struct platform_device *p=
+dev)
+=20
+ 	ret =3D reset_control_assert(rstc);
+ 	if (ret) {
+-		ret =3D dev_err_probe(&pdev->dev, ret,
+-				    "Failed to assert the reset line\n");
++		dev_err_probe(&pdev->dev, ret, "Failed to assert the reset line\n");
+ 		goto err_cleanup;
+ 	}
+=20
+@@ -1042,8 +1041,7 @@ static int stm32_csi_probe(struct platform_device *p=
+dev)
+=20
+ 	ret =3D reset_control_deassert(rstc);
+ 	if (ret) {
+-		ret =3D dev_err_probe(&pdev->dev, ret,
+-				    "Failed to deassert the reset line\n");
++		dev_err_probe(&pdev->dev, ret, "Failed to deassert the reset line\n");
+ 		goto err_cleanup;
+ 	}
+=20
+=2D-=20
+2.51.1
 
 
