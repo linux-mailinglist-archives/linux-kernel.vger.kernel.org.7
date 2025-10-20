@@ -1,160 +1,250 @@
-Return-Path: <linux-kernel+bounces-860430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41110BF01D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE4FBF01DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98D544F38BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:12:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B0304F1135
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CD82EDD41;
-	Mon, 20 Oct 2025 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bT0Qw3A0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC352ED165;
+	Mon, 20 Oct 2025 09:13:17 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4286E2ECE9D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1F32E266A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760951540; cv=none; b=T+GxarVFJT8y3HDe1iWn+6SmX7tJmDjwFlaKjV6Jo96SJcZFNnifo3mnrHlh9l9SDKvgsN4CzqT57w3KkRQiJeliIhfgrtIpmvu0pBmTwVjz0927rau342FEXKAHih9L14xzStIXFYyP3ht4se2DmycTLhUbb+K9S4ypK9App5Q=
+	t=1760951597; cv=none; b=E+SGWKnwNAhokcCoTyshhZKLVShq9q+rWhJ7uBg1l9vRqFDjuYdZ/ULryCd9ZAs+WG0QqSbO3cNmoPIvI/CauBYvqVfLloloiHRJupNZA60qAoAgKR+JRQh7vSMqQX9MTnYbe6jqpYZ6fCLYKH3UsrkUAvouCoqFJzI3MLHLeNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760951540; c=relaxed/simple;
-	bh=ta6LSkk+9A3FVM3mm3iDzNK4zuCKnQq6jaHDvp/Xdvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYbFHPN48Z1xhJ6R/SaVGxB5Ed59cpuebn4njGQ68hpj7pw6sl1qLGR3/PXDg3prVoOirGK+OdDHw5Xs9xSG+C/ukkPmAA+aQQ9lyfksr90W+jg4RfMVBk/GA3NhtistT+VFPV54KyW6hZ2MvlOxdopc2js9hMT+zAh8p2Y2HGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bT0Qw3A0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760951538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ubitj5/uevHZU/7Ly6xrweyvQaOv3M8jgDaIwUyJNQ=;
-	b=bT0Qw3A0AJuull4wCyXQW2wT13oo9ED27LBcV8o7PrT9kDQYq12n81ojNMCRb/95cdqIzZ
-	Zo+8KBd48YHapjuFyvPjmaCKtbjAm7gKasOXqIXDkTtyaV2C+4vE+8MRoWL+TuYblUJFsj
-	QsAT0+WW28GyIaaqwU/6JiCsqzlTang=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-mfu7_9UAOoaCwJWhrL5XFg-1; Mon, 20 Oct 2025 05:12:15 -0400
-X-MC-Unique: mfu7_9UAOoaCwJWhrL5XFg-1
-X-Mimecast-MFC-AGG-ID: mfu7_9UAOoaCwJWhrL5XFg_1760951534
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-4270a273b6eso2077755f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:12:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760951533; x=1761556333;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ubitj5/uevHZU/7Ly6xrweyvQaOv3M8jgDaIwUyJNQ=;
-        b=ma601LtCFv99kV66ERjq5BVwTkxl7c1N+PVE+kPRD73toteUn7K5S72wLWjZZ5fzdW
-         rHKV/aJfUvVO7x5+5117EOKHoIUSuK54/UO2jLVMT3MhkRuTZtNmoMnJNwN+fhwLxgcd
-         xRbs24On1EnckWPIfoiN7/UGzo2tWYGeWs/JVdJSQa5kjza2PUZnWN6/+M+aOvAVa91y
-         q3T1bVtWNJ+5ZUeNjIZD6qerYEp26WTb5nXg+s9MV7YHHf9TNOwBPL2m9U94io5ceKVx
-         6Mh6YjnIzZf5M4ekij7gadxT8Ql/zZkq61WaXYCC9InVurxm10AQRKukz6WGRpiErLGc
-         Dtrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPErm8K0Y+HL8BMrLpTB8Z0E00UijDLvn+pyC2oeLn+yPpkLy/d19jd8reeHbOkC7LfiG0/so5kcq7tAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQO9hKtXQOKkyWLKgumb3/f7yMvm6T9RYKGUQhUcCjwn5mL1hk
-	Iah1fDuU6RbuRnVZLZ17CH4maDooEde/8ENQU+1YIQLe7OKxHN8gk/f/MRGdZlbhnQ+dH8X1/tG
-	WjSYroqVFu1pwPMzl4SpBUAR1YXb//5CZs/rK+ivQiqHDQLKUZ4z46wY3ruTgrxQFcg==
-X-Gm-Gg: ASbGnctzWOqqyhxPP2jf5mQ8/OmUHg3Nt6H+pSLpC0Tp+j1iolgounghMvtvkYdnkAu
-	7/Nfzfe+FPuwWnhcv6ZUfIDm0t1NFm8PqZjvxi+ZbyVY438otFasLCvc7922xQdoIzU6uFXpE14
-	lsskRwCSIgbdnGXl1S1MgUYeqbeshQNNuufbEY0UgI37YqgH+mIhFTIGqAQZFC/n7EIqjpooz2u
-	gEsK2AkTQHPM9R3/PjSiMMRlO99jSTn7UcjuAnol4DZZrMoq+L75yhNWtEDFkJB9ts0rhEGNKnE
-	iWTyrq4DYLpY6ggf1gaggV/ieZeGB6cfJYNnTApxzdId/YDUtkTjqXCfLFsSwKtbi9KjEweTJEm
-	pd6edgiw7ucF4iJcRHG2qtvtgpAvSoHg=
-X-Received: by 2002:a5d:5888:0:b0:3e8:68:3a91 with SMTP id ffacd0b85a97d-42704e0efc6mr8234679f8f.60.1760951533503;
-        Mon, 20 Oct 2025 02:12:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1x7pXYq8e945UALV9q1YHdxFAo/gpZoHmNBgsdqAAWXDZS350AGwm1xrETAUHltalmZTxLw==
-X-Received: by 2002:a5d:5888:0:b0:3e8:68:3a91 with SMTP id ffacd0b85a97d-42704e0efc6mr8234649f8f.60.1760951533088;
-        Mon, 20 Oct 2025 02:12:13 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47152959b55sm139474055e9.6.2025.10.20.02.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 02:12:12 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:12:10 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/14] sched/debug: Stop and start server based on if it
- was active
-Message-ID: <aPX86h9lSEZh0YP2@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-3-arighi@nvidia.com>
+	s=arc-20240116; t=1760951597; c=relaxed/simple;
+	bh=56oWEVBzatiA1wt4cCaOJBZkP0gZKhWyAOnOBJWTfI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ks0Q8IzEmRSSrDsezKdGH15W/VesR9KITXq5ehn8ZDeL0Xsr5q0pXMcQMuGQa9ZF/6Xqtk6cAEvjRCKMoifMXpcgdIU1Myn/tnB62Utl2hnMbuLQVA9v/zI1lYhJx0PHOurSH13stNNJlhlfaVDVcTPEbEZjMqiJetFR2DBFaVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cqqSm74pwzKHMQ0;
+	Mon, 20 Oct 2025 17:12:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id B944E1A1A4E;
+	Mon, 20 Oct 2025 17:13:09 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgAny0Mk_fVoDjb7Aw--.16020S2;
+	Mon, 20 Oct 2025 17:13:09 +0800 (CST)
+Message-ID: <3d9dceab-82c8-4811-9be2-7571d09a9e76@huaweicloud.com>
+Date: Mon, 20 Oct 2025 17:13:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017093214.70029-3-arighi@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 14/16] cpuset: fix isolcpus stay in root when
+ isolated partition changes to root
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+ <20250928071306.3797436-15-chenridong@huaweicloud.com>
+ <a07b794c-d133-4d23-b0b0-cb9e0dc42d2b@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <a07b794c-d133-4d23-b0b0-cb9e0dc42d2b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAny0Mk_fVoDjb7Aw--.16020S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xr48GrW7Aw48WryxCFWDXFb_yoW3Cr13pF
+	95KFWUJrWYkw1rC34UJF4kZryrJw4DJ3WDtrn8XFyrXF47AF10vFyjg390gr1UXrWkGr1U
+	ZF1jqrsrZF17AwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8YYLPUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hi!
 
-On 17/10/25 11:25, Andrea Righi wrote:
-> From: Joel Fernandes <joelagnelf@nvidia.com>
-> 
-> Currently the DL server interface for applying parameters checks
-> CFS-internals to identify if the server is active. This is error-prone
-> and makes it difficult when adding new servers in the future.
-> 
-> Fix it, by using dl_server_active() which is also used by the DL server
-> code to determine if the DL server was started.
-> 
-> Acked-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  kernel/sched/debug.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> index 6cf9be6eea49a..e71f6618c1a6a 100644
-> --- a/kernel/sched/debug.c
-> +++ b/kernel/sched/debug.c
-> @@ -354,6 +354,8 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
->  		return err;
->  
->  	scoped_guard (rq_lock_irqsave, rq) {
-> +		bool is_active;
-> +
->  		runtime  = rq->fair_server.dl_runtime;
->  		period = rq->fair_server.dl_period;
->  
-> @@ -376,8 +378,11 @@ static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubu
->  			return  -EINVAL;
->  		}
->  
-> -		update_rq_clock(rq);
-> -		dl_server_stop(&rq->fair_server);
-> +		is_active = dl_server_active(&rq->fair_server);
-> +		if (is_active) {
-> +			update_rq_clock(rq);
-> +			dl_server_stop(&rq->fair_server);
-> +		}
 
-Won't this reintroduce what bb4700adc3abe ("sched/deadline: Always stop
-dl-server before changing parameters") fixed?
+On 2025/10/20 11:06, Waiman Long wrote:
+> On 9/28/25 3:13 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> A bug was detected with the following steps:
+>>
+>>    # cd /sys/fs/cgroup/
+>>    # mkdir test
+>>    # echo 9 > test/cpuset.cpus
+>>    # echo isolated > test/cpuset.cpus.partition
+>>    # cat test/cpuset.cpus.partition
+>>    isolated
+>>    # cat test/cpuset.cpus
+>>    9
+>>    # echo root > test/cpuset.cpus.partition
+>>    # cat test/cpuset.cpus
+>>    9
+>>    # cat test/cpuset.cpus.partition
+>>    root
+>>
+>> CPU 9 was initially placed in an isolated partition. When the partition
+>> type is changed from isolated to root, CPU 9 remains in what becomes a
+>> valid root partition. This violates the rule that isolcpus can only be
+>> assigned to isolated partitions.
+> 
+> I am a bit confused at the beginning about this as it does not clearly state that CPU 9 was listed
+> in the "isolcpus" boot command line parameter, but I believe this is what you mean here. Yes, there
+> is a restriction that a boot time isolcpus CPU cannot be put into a non-isolated partition, though
+> that will likely to be relaxed in the near future.
+> 
 
-Thanks,
-Juri
+Yep, the CPU 9 was listed in the "isolcpus" boot command line parameter.
+
+> Anyway, it is a real corner case. I also don't believe commit f28e22441f35 is the one that
+> introduced this issue as the restriction was added later on via commit 4a74e418881f ("cgroup/cpuset:
+> Check partition conflict with housekeeping setup").
+> 
+> As you have added a Fixes tag, it should be moved to the front of the series as it is likely to be
+> backported to stable. Putting it near the end of a series with a lot of changes in between will make
+> it harder to backport to the stable kernels.
+> 
+
+Maybe I should find some way to fix this issue first.
+
+>> Fix the issue by re-enabling partition validation, which performs
+>> comprehensive partition error checking. In the scenario described above,
+>> this change causes the operation to fail with housekeeping conflicts,
+>> preventing the invalid configuration.
+> From the code diff below, I don't know how you re-enable partition validation.
+> 
+
+When a valid local partition has its type changed (e.g., from "isolated" to "root"), the
+remote_partition_enable function is not invoked again. Consequently, the critical check for whether
+the partition can be enabled is skipped during this process.
+
+  echo isolated > test/cpuset.cpus.partition
+  echo root > test/cpuset.cpus.partition
+
+>>
+>> Additionally, when enable a local partition, the warning for tmp->addmask
+>> not being a subset of parent's effective CPUs was removed. This warning was
+>> triggered during local partition re-enablement because the CPUs were
+>> already added to exclusive_cpus during the previous enable operation. The
+>> subset check is not applicable in this re-enablement scenario.
+> 
+> That should be in the new code that you introduce in this series. So it either be integrated into
+> one of your earlier patches or be separated out as a separate patch without the Fixes tag as it is
+> not applicable for the stable releases.
+> 
+> Cheers,
+> Longman
+> 
+
+Okay, I will try to integrate it into earlier patches.
+
+>>
+>> Fixes: f28e22441f35 ("cgroup/cpuset: Add a new isolated cpus.partition type")
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 35 +++++++++--------------------------
+>>   1 file changed, 9 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 20288dbd6ccf..2aaa688c596f 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1873,6 +1873,7 @@ static int local_partition_enable(struct cpuset *cs,
+>>   {
+>>       struct cpuset *parent = parent_cs(cs);
+>>       enum prs_errcode part_error;
+>> +    bool cpumask_updated = false;
+>>         lockdep_assert_held(&cpuset_mutex);
+>>       WARN_ON_ONCE(is_remote_partition(cs));    /* For local partition only */
+>> @@ -1899,22 +1900,14 @@ static int local_partition_enable(struct cpuset *cs,
+>>       if (part_error)
+>>           return part_error;
+>>   -    /*
+>> -     * This function will only be called when all the preliminary
+>> -     * checks have passed. At this point, the following condition
+>> -     * should hold.
+>> -     *
+>> -     * (cs->effective_xcpus & cpu_active_mask) ⊆ parent->effective_cpus
+>> -     *
+>> -     * Warn if it is not the case.
+>> -     * addmask is used as temporary variable.
+>> -     */
+>> -    cpumask_and(tmp->addmask, tmp->new_cpus, cpu_active_mask);
+>> -    WARN_ON_ONCE(!cpumask_subset(tmp->addmask, parent->effective_cpus));
+>> +    cpumask_updated = cpumask_andnot(tmp->addmask, tmp->new_cpus,
+>> +                     parent->effective_cpus);
+>>       partition_enable(cs, parent, new_prs, tmp->new_cpus);
+>>   -    cpuset_update_tasks_cpumask(parent, tmp->addmask);
+>> -    update_sibling_cpumasks(parent, cs, tmp);
+>> +    if (cpumask_updated) {
+>> +        cpuset_update_tasks_cpumask(parent, tmp->addmask);
+>> +        update_sibling_cpumasks(parent, cs, tmp);
+>> +    }
+>>       return 0;
+>>   }
+>>   @@ -2902,7 +2895,6 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>       int err = PERR_NONE, old_prs = cs->partition_root_state;
+>>       struct cpuset *parent = parent_cs(cs);
+>>       struct tmpmasks tmpmask;
+>> -    bool isolcpus_updated = false;
+>>         if (old_prs == new_prs)
+>>           return 0;
+>> @@ -2920,7 +2912,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>       if (err)
+>>           goto out;
+>>   -    if (!old_prs) {
+>> +    if (new_prs > 0) {
+>>           /*
+>>            * cpus_allowed and exclusive_cpus cannot be both empty.
+>>            */
+>> @@ -2950,12 +2942,6 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>               err = local_partition_enable(cs, new_prs, &tmpmask);
+>>           else
+>>               err = remote_partition_enable(cs, new_prs, &tmpmask);
+>> -    } else if (old_prs && new_prs) {
+>> -        /*
+>> -         * A change in load balance state only, no change in cpumasks.
+>> -         * Need to update isolated_cpus.
+>> -         */
+>> -        isolcpus_updated = true;
+>>       } else {
+>>           /*
+>>            * Switching back to member is always allowed even if it
+>> @@ -2985,16 +2971,13 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>       WRITE_ONCE(cs->prs_err, err);
+>>       if (!is_partition_valid(cs))
+>>           reset_partition_data(cs);
+>> -    else if (isolcpus_updated)
+>> -        isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
+>>       spin_unlock_irq(&callback_lock);
+>> -    update_unbound_workqueue_cpumask(isolcpus_updated);
+>>         /* Force update if switching back to member & update effective_xcpus */
+>>       update_cpumasks_hier(cs, &tmpmask, !new_prs);
+>>         /* A newly created partition must have effective_xcpus set */
+>> -    WARN_ON_ONCE(!old_prs && (new_prs > 0)
+>> +    WARN_ON_ONCE(!old_prs && (cs->partition_root_state > 0)
+>>                     && cpumask_empty(cs->effective_xcpus));
+>>         /* Update sched domains and load balance flag */
+
+-- 
+Best regards,
+Ridong
 
 
