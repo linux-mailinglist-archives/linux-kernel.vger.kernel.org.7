@@ -1,257 +1,216 @@
-Return-Path: <linux-kernel+bounces-861882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E93BF3EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E203BF3EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA7C480FF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A009418C0C5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95072F2616;
-	Mon, 20 Oct 2025 22:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D841E2F260B;
+	Mon, 20 Oct 2025 22:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e05Yi2EC"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9AjTje0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687862E0415
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C6D21CC47;
+	Mon, 20 Oct 2025 22:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760999693; cv=none; b=ECRVKs6K9IUwKWBMPeE5Aqlue9u7Yc6bR6CfQqNCW4bIGa9rS/ZHxuH1G2r/TG5g8hi0D3klB03OH0NcY5WpohU/Y89yGAeIT8LGoo2dWNKosPze2NLRlYeOXCk2Wo1X3krlbHzhRscvfK0DYCZQ6BP8dwLOCAzfaupjDOW8ctI=
+	t=1760999734; cv=none; b=CZGQflHQFpJrJu0W+6dq2q4NZw6CkQ9vJAlt4cfPMBlxwwFelZAoBiTH2LCO/+T4HamP/Xltu5dAfPfr7ElJasIFArjy6kr00qrlpF/OB+1nU/XrOU8FZHvI/nSzP/PCXO/yBprsQEmjSUfw2yMXcwGu1gBxNp6Y4X7YMwylWyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760999693; c=relaxed/simple;
-	bh=74Q6x+bJcEsRztGkWgWfg/ykh5QxUxY/0VrF2XbBMIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s9r4oFHOGS7BvAevsWB5ILyQd7rwSik6SYO5laTp1MkmTfubblvjeRoFjVfL8VLd9+nn9ogWANzhue3fpiVyJ3cIHTx3vyEayxYdk9GgHeSyhH1RJa5EQT5uIADws75DjXjJS8PQob7BuqdHxTltuiPhHhMlglUzDbS1YYn7AfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e05Yi2EC; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-290c5dec559so38166205ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760999689; x=1761604489; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ko/1a73sGAvwsMkHkL1bH1/SjWbFFlE1DZy/jiDhtz0=;
-        b=e05Yi2ECE9Xw33EhsDLW18Pf7r9QI1DCejiz3uiw2SL5RItzWuaoNVEPXiGh1fib3t
-         uz2qJ0MXzq/edoy4JeKMq52s3W2JtFZlKm0/2pc6Fkwmru30mVASyX0aKybzuhIqSlU9
-         kfANBdzKXioZ2Q+vTA16YtFUWJpkc7R2qnQ/WHV8TjY3xVfZUclV4WGPFkhupH0GDvxL
-         zc89u8DolezBq8jUizRaEzRXC2FueNGhM5+MZj46ZnjJhiY5mHueJrNfLs/XfWKAsPWW
-         CdOXTcWIhjR1SZ41EHbvVIDLnhPwG7Uq29aFVbOqVXQcs5PuSM02bAnLvsI95UD1dpJT
-         l3pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760999689; x=1761604489;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ko/1a73sGAvwsMkHkL1bH1/SjWbFFlE1DZy/jiDhtz0=;
-        b=sO+5Huskm3jAhMPUfcm9tddOGe03+JefxFK7LTXYpZWTi8xQ1UgUNy4OkwXeZxCXJn
-         Oc+jahhRMm3rGa1NW1Fyr9cWOQI8rgNSPpV/GKuwJigWgWG7EeNIHlkk8cLg181mn7uj
-         CGLUIASMEe1m94OoasnjeOtY1ju3/RJVuyaOOukCh8xLo4hpMCuAdJvJJD1M20LTFLs4
-         duq9dr76YFEsqkVRnuHQGNv3R80GxiEX6XEd++NrZTXtdZMMMsFoTEMF0hyneinoJvY8
-         VuCBgQPwIYrlAXPY4UocGR6CR5QJXOJNP6vP8GRnz/Im80MSB4hy5a3hYf0Wpw0YL6r3
-         xHlA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7iU/rMZdWgZ7MNyyjAU+SC8h6ibmhHEggLg6C/smzJERpCYdW0hkz2FF8zgQrOAp1LWJ4BCeP7cymbHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU2gJPafLaFPmgKRms6drbwHCndPLiisCIXd2RUQTyTIYfSoOT
-	AjH/M9J6HBPNCdDY0HIK87lfljJB/1G4Xuf+aR4DEphKv8XOjPKl8BNE1NBjKsLuIhgkTqp1DZ5
-	V6ADFhvQglviLk644jYopji8oGXaa3//zlUueKi1m
-X-Gm-Gg: ASbGnct2JEHheCTdxPZrHT60IcTfXx9Qgq/zmNGqTKEQr+HtdXjDTXld0Lbu6gjszhw
-	EvqCp+e+EvIiWwS0S0BUYbNkV57Tcv0wJOUM5k5r+8ye9wY8v5XdztsSCH6Eq6vt3PNjr/vsRMC
-	aTmcKHjYvmji8yKXBiYB6Q51s5xsc+XUoDbB/OcelJT05ECBGvB4xhK3Wl8kLrpyRLkokWjs82x
-	kZMvI6mrrbnuApj0Ldg1rL4cpVdNjM+l+KmP5sCahZ2EspYTGXhkAm8aZQCyccWR0voXr9EHdGf
-	W2HUwOqTj0l6WPyp
-X-Google-Smtp-Source: AGHT+IFa/TzVHbhwXh93pxwrZM7OK/xk0Udg77zKNa2zFNicGFQ/cT75OCD3XBzSyaXIG/c667qFcOzxptzp0oNm8KA=
-X-Received: by 2002:a17:902:cec7:b0:269:8edf:67f8 with SMTP id
- d9443c01a7336-290cb27f40emr183263105ad.52.1760999689188; Mon, 20 Oct 2025
- 15:34:49 -0700 (PDT)
+	s=arc-20240116; t=1760999734; c=relaxed/simple;
+	bh=Jzu6GE+Y5gSfBw0CMzkmAGlk+O6zXt7aAA6tQpARfnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sq+57/cxfigYqkRq6w+8hxvnd+Rg4k+1TnEABBz5ERpNVRcWXVbE7UTdO8+gvgrCfrL4iN1zhkQYClkaQIVJXANQgmYwDrSNT1Jn0n2HsTXeoGtS+E1woUpMrnnirfFrWK7ELVtDVaKZZCvc9gOYuWSw6Zik1rP601c96Zt8Er8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9AjTje0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDEDC4CEFB;
+	Mon, 20 Oct 2025 22:35:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760999733;
+	bh=Jzu6GE+Y5gSfBw0CMzkmAGlk+O6zXt7aAA6tQpARfnI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=d9AjTje0WVrJYmz2K///1/8FIKjBGVBBGqhzq43byE3fEIYCAP7X96VoWCdZZjO3u
+	 s1LFhB8kYbhgvHjNC0tm7CmCD2WMyk4cpRNCTMsC4oD/T6rmgHftc6ak5fn6vUOSc/
+	 UHQIS7M9ajCa8KnbzQhs+9uCQ2eLzOIENpz5E0RrjrBBqoUvpVt6f3fbdbs9B1mKCF
+	 o2hvAqV/g1NjuH0H0pfukJwtmWXdO5/UQZ35R/dHIxV8Glkuc8fjiD5hZMfPOM3jVT
+	 9wy1VaZrKPutz32TwVhElFhfOh5LswmlgWp1pgShixSSetuYiA/Ug4+YIHIFLApGnz
+	 SQ5wp6PHsP18g==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	bhelgaas@google.com,
+	kwilczynski@kernel.org,
+	david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	leon@kernel.org,
+	acourbot@nvidia.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	pcolberg@redhat.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/8] Device::drvdata() and driver/driver interaction (auxiliary)
+Date: Tue, 21 Oct 2025 00:34:22 +0200
+Message-ID: <20251020223516.241050-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020220005.work.095-kees@kernel.org> <20251020220118.1226740-1-kees@kernel.org>
-In-Reply-To: <20251020220118.1226740-1-kees@kernel.org>
-From: Marco Elver <elver@google.com>
-Date: Tue, 21 Oct 2025 00:34:12 +0200
-X-Gm-Features: AS18NWDeK3RnQHoHi9zm4g_o86NT3rb4x9tx65bWGsiSrbqNn-6xGHB5ZiOdtHM
-Message-ID: <CANpmjNOvgorQ=pZBu3kUa5vjwAENO21s6Gdm1TU3SqOowsuiBw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-To: Kees Cook <kees@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev, 
-	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Shuah Khan <shuah@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Tamir Duberstein <tamird@gmail.com>, Michael Kelley <mhklinux@outlook.com>, 
-	kernel test robot <lkp@intel.com>, Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Jan Hendrik Farr <kernel@jfarr.cc>, Yafang Shao <laoar.shao@gmail.com>, 
-	Marc Herbert <Marc.Herbert@linux.intel.com>, Christopher Ferris <cferris@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>, Jeff Xu <jeffxu@chromium.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Randy Dunlap <rdunlap@infradead.org>, 
-	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 21 Oct 2025 at 00:01, Kees Cook <kees@kernel.org> wrote:
->
-> Introduce __counted_by_ptr(), which works like __counted_by(), but for
-> pointer struct members:
->
-> struct foo {
->         int a, b, c;
->         char *buffer __counted_by_ptr(bytes);
->         short nr_bars;
->         struct bar *bars __counted_by_ptr(nr_bars);
->         size_t bytes;
-> };
->
-> Since "counted_by" can only be applied to pointer members in very recent
-> compiler versions, its application ends up needing to be distinct from
-> flexible array "counted_by" annotations, hence a separate macro.
->
-> Unfortunately, this annotation cannot be used for "void *" members
-> (since such a member is considered a pointer to an incomplete type,
-> and neither Clang nor GCC developers could be convinced otherwise[1],
-> even in the face of the GNU extension that "void *" has size "1 byte"
-> for pointer arithmetic). For "void *" members, we must use the coming
-> "sized_by" attribute.
->
-> Link: https://gcc.gnu.org/pipermail/gcc-patches/2025-May/683136.html [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Miguel Ojeda <ojeda@kernel.org>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-> Cc: Bill Wendling <morbo@google.com>
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: <llvm@lists.linux.dev>
-> ---
->  init/Kconfig                   | 11 +++++++++++
->  Makefile                       |  4 ++++
->  include/linux/compiler_types.h | 21 ++++++++++++++++++++-
->  include/uapi/linux/stddef.h    |  4 ++++
->  4 files changed, 39 insertions(+), 1 deletion(-)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index cab3ad28ca49..54691b086bc6 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -139,6 +139,17 @@ config CC_HAS_COUNTED_BY
->         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
->         default y if CC_IS_GCC && GCC_VERSION >= 150100
->
-> +config CC_HAS_COUNTED_BY_PTR_BARE
-> +       def_bool $(success,echo 'struct foo { int *ptr __attribute__((__counted_by__(count))); int count; };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
-> +
-> +config CC_HAS_COUNTED_BY_PTR_EXP
-> +       def_bool $(success,echo 'struct foo { int *ptr __attribute__((__counted_by__(count))); int count; };' | $(CC) $(CLANG_FLAGS) -fexperimental-late-parse-attributes -x c - -c -o /dev/null -Werror)
-> +       depends on !CC_HAS_COUNTED_BY_PTR_BARE
+tl;dr:
 
-Do these still require an unreleased Clang version? Otherwise a
-version check will be faster.
+Implement a safe Device<Bound>::drvdata() accessor (used for driver to
+driver interactions) based on the auxiliary bus.
 
-> +config CC_HAS_COUNTED_BY_PTR
-> +       def_bool y
-> +       depends on CC_HAS_COUNTED_BY_PTR_BARE || CC_HAS_COUNTED_BY_PTR_EXP
-> +
->  config CC_HAS_MULTIDIMENSIONAL_NONSTRING
->         def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring__)) = { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
->
-> diff --git a/Makefile b/Makefile
-> index d14824792227..1b297dcbb0df 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -933,6 +933,10 @@ KBUILD_CFLAGS      += $(CC_AUTO_VAR_INIT_ZERO_ENABLER)
->  endif
->  endif
->
-> +ifdef CONFIG_CC_HAS_COUNTED_BY_PTR_EXP
-> +KBUILD_CFLAGS  += -fexperimental-late-parse-attributes
-> +endif
-> +
->  # Explicitly clear padding bits during variable initialization
->  KBUILD_CFLAGS += $(call cc-option,-fzero-init-padding-bits=all)
->
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index 59288a2c1ad2..f197ea03b593 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -353,11 +353,14 @@ struct ftrace_likely_data {
->  #endif
->
->  /*
-> + * Runtime track number of flexible array member elements for use by
-> + * CONFIG_FORTIFY_SOURCE and CONFIG_UBSAN_BOUNDS.
-> + *
->   * Optional: only supported since gcc >= 15
->   * Optional: only supported since clang >= 18
->   *
->   *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
-> - * clang: https://github.com/llvm/llvm-project/pull/76348
-> + * clang: https://clang.llvm.org/docs/AttributeReference.html#counted-by-counted-by-or-null-sized-by-sized-by-or-null
->   *
->   * __bdos on clang < 19.1.2 can erroneously return 0:
->   * https://github.com/llvm/llvm-project/pull/110497
-> @@ -371,6 +374,22 @@ struct ftrace_likely_data {
->  # define __counted_by(member)
->  #endif
->
-> +/*
-> + * Runtime track number of objects pointed to by a pointer member for
-> + * use by CONFIG_FORTIFY_SOURCE and CONFIG_UBSAN_BOUNDS.
-> + *
-> + * Optional: only supported since gcc >= 16
-> + * Optional: only supported since clang >= 20
-> + *
-> + *   gcc: https://gcc.gnu.org/pipermail/gcc-patches/2025-April/681727.html
-> + * clang: ...
-> + */
-> +#ifdef CONFIG_CC_HAS_COUNTED_BY_PTR
-> +# define __counted_by_ptr(member)      __attribute__((__counted_by__(member)))
-> +#else
-> +# define __counted_by_ptr(member)
-> +#endif
-> +
->  /*
->   * Optional: only supported since gcc >= 15
->   * Optional: not supported by Clang
-> diff --git a/include/uapi/linux/stddef.h b/include/uapi/linux/stddef.h
-> index 9a28f7d9a334..111b097ec00b 100644
-> --- a/include/uapi/linux/stddef.h
-> +++ b/include/uapi/linux/stddef.h
-> @@ -72,6 +72,10 @@
->  #define __counted_by_be(m)
->  #endif
->
-> +#ifndef __counted_by_ptr
-> +#define __counted_by_ptr(m)
-> +#endif
-> +
->  #ifdef __KERNEL__
->  #define __kernel_nonstring     __nonstring
->  #else
-> --
-> 2.34.1
->
+This provides a way to derive a driver's device private data when
+serving as a parent in a driver hierarchy, such as a driver utilizing
+the auxiliary bus.
+
+Please have a look at patch 8 ("samples: rust: auxiliary: illustrate
+driver interaction") to see how it turns out.
+
+--
+
+Full cover letter:
+
+In C dev_get_drvdata() has specific requirements under which it is valid
+to access the returned pointer. That is, drivers have to ensure that
+
+  (1) for the duration the returned pointer is accessed the driver is
+      bound and remains to be bound to the corresponding device,
+
+  (2) the returned void * is treated according to the driver's private
+      data type, i.e. according to what has been passed to
+      dev_set_drvdata().
+
+In Rust, (1) can be ensured by simply requiring the Bound device
+context, i.e. provide the drvdata() method for Device<Bound> only.
+
+For (2) we would usually make the device type generic over the driver
+type, e.g. Device<T: Driver>, where <T as Driver>::Data is the type of
+the driver's private data.
+
+However, a device does not have a driver type known at compile time and
+may be bound to multiple drivers throughout its lifetime.
+
+Hence, in order to be able to provide a safe accessor for the driver's
+device private data, we have to do the type check on runtime.
+
+This is achieved by letting a driver assert the expected type, which is
+then compared to a type hash stored in struct device_private when
+dev_set_drvdata() is called [2].
+
+Example:
+
+        // `dev` is a `&Device<Bound>`.
+        let data = dev.drvdata::<SampleDriver>()?;
+
+There are two aspects to note:
+
+  (1) Technically, the same check could be achieved by comparing the
+      struct device_driver pointer of struct device with the struct
+      device_driver pointer of the driver struct (e.g. struct
+      pci_driver).
+
+      However, this would - in addition the pointer comparison - require
+      to tie back the private driver data type to the struct
+      device_driver pointer of the driver struct to prove correctness.
+
+      Besides that, accessing the driver struct (stored in the module
+      structure) isn't trivial and would result into horrible code and
+      API ergonomics.
+
+  (2) Having a direct accessor to the driver's private data is not
+      commonly required (at least in Rust): Bus callback methods already
+      provide access to the driver's device private data through a &self
+      argument, while other driver entry points such as IRQs,
+      workqueues, timers, IOCTLs, etc. have their own private data with
+      separate ownership and lifetime.
+
+      In other words, a driver's device private data is only relevant
+      for driver model contexts (such a file private is only relevant
+      for file contexts).
+
+Having that said, the motivation for accessing the driver's device
+private data with Device<Bound>::drvdata() are interactions between
+drivers. For instance, when an auxiliary driver calls back into its
+parent, the parent has to be capable to derive its private data from the
+corresponding device (i.e. the parent of the auxiliary device).
+
+Therefore this patch series also contains the corresponding patches for
+the auxiliary bus abstraction, i.e. guarantee that the auxiliary
+device's parent is guaranteed to be bound when the auxiliary device
+itself is guaranteed to be bound, plus the corresponding
+Device<Bound>::parent() method.
+
+Finally, illustrate how things turn out by updating the auxiliary sample
+driver.
+
+Similarly, the same thing can be done for PCI virtual function drivers
+calling back into the corresponding physical function driver or MFD.
+
+The former (PCI PF/VF interaction) will be addressed by a separate patch
+series. Both, auxiliary and PCI PF/VF is required by the Nova project.
+
+A branch containing the series can be found in [1].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=drvdata
+[2] Type hash (TypeId) stored in struct device_private:
+
+        The Rust type stored in struct device_private could be replaced
+        by a dedicated (and transparent) private pointer (e.g.
+        struct device_private::rust).
+
+        While I'm not overly concerned about the extra allocation (not a
+        hot path at all), I still wanted to try to store it directly in
+        struct device_private, see how it turns out and gather opinions.
+
+        Additionally, I don't expect any additional Rust specific
+        private data to be required. But even if, changing things up to
+        use a separate transparent allocation in the future is trivial.
+
+Danilo Krummrich (8):
+  rust: device: narrow the generic of drvdata_obtain()
+  rust: device: introduce Device::drvdata()
+  rust: auxiliary: consider auxiliary devices always have a parent
+  rust: auxiliary: unregister on parent device unbind
+  rust: auxiliary: move parent() to impl Device
+  rust: auxiliary: implement parent() for Device<Bound>
+  samples: rust: auxiliary: misc cleanup of ParentDriver::connect()
+  samples: rust: auxiliary: illustrate driver interaction
+
+ drivers/base/base.h                   |  16 ++++
+ drivers/gpu/drm/nova/file.rs          |   2 +-
+ drivers/gpu/nova-core/driver.rs       |   8 +-
+ rust/bindings/bindings_helper.h       |   6 ++
+ rust/kernel/auxiliary.rs              | 108 ++++++++++++++++----------
+ rust/kernel/device.rs                 |  83 ++++++++++++++++++--
+ rust/kernel/pci.rs                    |   2 +-
+ rust/kernel/platform.rs               |   2 +-
+ rust/kernel/usb.rs                    |   4 +-
+ samples/rust/rust_driver_auxiliary.rs |  44 +++++++----
+ 10 files changed, 207 insertions(+), 68 deletions(-)
+
+
+base-commit: b782675fc7b5ba0124e26cab935a5285278c8278
+-- 
+2.51.0
+
 
