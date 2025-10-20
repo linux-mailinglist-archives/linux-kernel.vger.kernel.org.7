@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-860365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9503BBEFF94
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA3FBEFF97
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2453AC2E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1209A3A68BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523812EC087;
-	Mon, 20 Oct 2025 08:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5E92EC569;
+	Mon, 20 Oct 2025 08:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJb24mQ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZGTIwQXd"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A360D2C0261;
-	Mon, 20 Oct 2025 08:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8112C0261;
+	Mon, 20 Oct 2025 08:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760949090; cv=none; b=TLgf3z1sfWLP/KOGZv7DHQKd1qX/o6fv21DA2BpYxpmOXWTcSFKMrLVK0jXQTQHEgg+0kg+wCgMPMQ5czvR5LbnRT/rqIia6fAL7njduRuOt8xtNN2vH4WJRJvkv6NvAet4qqmpR9v3xNSj4UtqjlIpERX7zvaNGriEB/50BSXU=
+	t=1760949128; cv=none; b=CUuhpULycveajovf8c1J02CgN1BqgS5M/nqbJAufftptc05Q0vV9YFLGVQG72iBMtybtMIwFV4M+RqFtAgoC2y+HqII/rcuWmQDvMytskByeZlGcJ5TvZ4FUGiZHydXKmvNA7ubzwJG+zx6EHLjzEw7YVwbLfrJCcfstLsM13sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760949090; c=relaxed/simple;
-	bh=p+lVEvzAjUBlk7C1+v1sV9NpurMDFd6D+E2N5di3OWs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VYjqQLXGLTQ9QSgipKhxTt2YLyqbK4kUXZRyNYCmhgq+dbt+l6SaazRvUyjY3YTYCt7Kg1jEFdWliBCEOlMs+r4mFyTtOgNdmN70DpMaqgkQngd+3DTLtfyA/C/5rEnwix1TrPXDK9gCeFDWANfUO1NqUW2hMG0oV6JYCd0GW2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJb24mQ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2D2C4CEF9;
-	Mon, 20 Oct 2025 08:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760949090;
-	bh=p+lVEvzAjUBlk7C1+v1sV9NpurMDFd6D+E2N5di3OWs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=SJb24mQ7FlYx1WBTxPVxREIlxWtAa6f3W+H3UzZHqJV0IIM9+VOswuEk+gtKadVgm
-	 Ghq5wuXApC5LduxNom3Zdv4xWoFzcvpF0LXd0t3hLLNLlCJO/cX/tHgOkji8b1ZLC9
-	 dsKHyxRTjGIdn74dEv+ryysfPpFOQ/uI4Tsc2FjcpwQkmyd2D2BLRCoNvlXksSWrOg
-	 YWvsv1Py5EE4Loao6bo5H4o/OmOCy21VmVWiFC43hMCBYnTMbx1LqOs3qRXRBZqCPg
-	 AcPaKSk5r5mpM5BIET4WqvqTK5pweCojw6qrOtqNOMTlWbdCKbAfmHxV6UddF61LVd
-	 JUj0/1QDyDIqA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Mon, 20 Oct 2025 10:31:22 +0200
-Subject: [PATCH] arm64: dts: qcom: lemans: Align ethernet
- interconnect-names with schema
+	s=arc-20240116; t=1760949128; c=relaxed/simple;
+	bh=h10TWGtQbNLx7Uwu6iLo8QTiXH6hWwJWnxPaZe3lnmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aXuZfXi4bEK+sU9bau3qZ7XWC/TTSggil6xrM9G5WOmr+coxHj0yhnpr4fnOaKUby2Lb5Vilms0WdHp3Sy4xJJIUf0G7RP2ZJokDArurQ+qIFJBxEL2L/c2o/qchYZdr5DqVeTOhosGcKAZtinYR37KDe7mr7hGz5cvIPP5u1Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZGTIwQXd; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760949122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=blCx5J3DD1p19G2rVM4AkHWF/aMiJJt8EXysTr9sQd8=;
+	b=ZGTIwQXddHBTCbqttMwB3GuldbQIbxE4TwdDvTVYvDyCqfCqURetc9d5u4HkMVHmOnyXdI
+	aClN5dvuPsWHiLm/1vwbeFMUy53h0bb+BXoSpCjBUJGKh2FxBhAro9o+Z77w4lnNJfd/lV
+	G6RgbTGJYme2Hf3dnb5lbAP+GkswhZA=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Menglong Dong <menglong8.dong@gmail.com>, Jiri Olsa <olsajiri@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, leon.hwang@linux.dev,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH RFC bpf-next 3/5] bpf,x86: add tracing session supporting for
+ x86_64
+Date: Mon, 20 Oct 2025 16:31:44 +0800
+Message-ID: <6206161.lOV4Wx5bFT@7950hx>
+In-Reply-To: <aPXwlJ57B9egtr8x@krava>
+References:
+ <20251018142124.783206-1-dongml2@chinatelecom.cn>
+ <20251018142124.783206-4-dongml2@chinatelecom.cn> <aPXwlJ57B9egtr8x@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251020-topic-lemans_eth_dt-v1-1-25f4532addb2@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAFnz9WgC/x3MTQqAIBBA4avErBPU/qCrRIjplANlohJBdPek5
- bd474GEkTDBWD0Q8aJEpy8QdQXGab8hI1sMkstOcMlZPgMZtuOhfVKYnbKZaTk0ol1a7HoOpQw
- RV7r/6zS/7wdcoZJkZQAAAA==
-X-Change-ID: 20251020-topic-lemans_eth_dt-a27314b4e560
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760949086; l=2255;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=rlZmiaYIIXnZ7mveupmWym6yKp8wCMMkO1+lzDo7VR0=;
- b=VaFwg+p5GkkyWYzKFIqSYHBcytGXZTjIdwYfB6QuQ31WifE90qicYzSrECQDrB2GD5RUIm2uI
- RWtHKBk2xorANv+bwfBaMIFo8l2lFeUiyGsPSFwECwRlZqjoVBfv/33
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-Migadu-Flow: FLOW_OUT
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On 2025/10/20 16:19, Jiri Olsa wrote:
+> On Sat, Oct 18, 2025 at 10:21:22PM +0800, Menglong Dong wrote:
+> 
+> SNIP
+> 
+> >  /* mov rax, qword ptr [rbp - rounded_stack_depth - 8] */
+> >  #define LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack)	\
+> >  	__LOAD_TCC_PTR(-round_up(stack, 8) - 8)
+> > @@ -3179,8 +3270,10 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+> >  					 void *func_addr)
+> >  {
+> >  	int i, ret, nr_regs = m->nr_args, stack_size = 0;
+> > -	int regs_off, nregs_off, ip_off, run_ctx_off, arg_stack_off, rbx_off;
+> > +	int regs_off, nregs_off, session_off, ip_off, run_ctx_off,
+> > +	    arg_stack_off, rbx_off;
+> >  	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+> > +	struct bpf_tramp_links *session = &tlinks[BPF_TRAMP_SESSION];
+> >  	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
+> >  	struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
+> >  	void *orig_call = func_addr;
+> > @@ -3222,6 +3315,8 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+> >  	 *
+> >  	 * RBP - nregs_off [ regs count	     ]  always
+> >  	 *
+> > +	 * RBP - session_off [ session flags ] tracing session
+> > +	 *
+> >  	 * RBP - ip_off    [ traced function ]  BPF_TRAMP_F_IP_ARG flag
+> >  	 *
+> >  	 * RBP - rbx_off   [ rbx value       ]  always
+> > @@ -3246,6 +3341,8 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+> >  	/* regs count  */
+> >  	stack_size += 8;
+> >  	nregs_off = stack_size;
+> > +	stack_size += 8;
+> > +	session_off = stack_size;
+> 
+> should this depend on session->nr_links ?
 
-Reshuffle the entries to match the expected order.
+Hmm...my mistake, it should. And this also break the bpf_get_func_ip(),
+which I'll fix in the next version.
 
-Fixes the following warnings:
+> 
+> jirka
+> 
+> >  
+> >  	if (flags & BPF_TRAMP_F_IP_ARG)
+> >  		stack_size += 8; /* room for IP address argument */
+> > @@ -3345,6 +3442,13 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+> >  			return -EINVAL;
+> >  	}
+> >  
+> > +	if (session->nr_links) {
+> > +		if (invoke_bpf_session_entry(m, &prog, session, regs_off,
+> > +					     run_ctx_off, session_off,
+> > +					     image, rw_image))
+> > +			return -EINVAL;
+> > +	}
+> > +
+> >  	if (fmod_ret->nr_links) {
+> >  		branches = kcalloc(fmod_ret->nr_links, sizeof(u8 *),
+> >  				   GFP_KERNEL);
+> > @@ -3409,6 +3513,15 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
+> >  		}
+> >  	}
+> >  
+> > +	if (session->nr_links) {
+> > +		if (invoke_bpf_session_exit(m, &prog, session, regs_off,
+> > +					    run_ctx_off, session_off,
+> > +					    image, rw_image)) {
+> > +			ret = -EINVAL;
+> > +			goto cleanup;
+> > +		}
+> > +	}
+> > +
+> >  	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+> >  		restore_regs(m, &prog, regs_off);
+> >  
+> 
+> 
 
-(qcom,sa8775p-ethqos): interconnect-names:0: 'cpu-mac' was expected
-(qcom,sa8775p-ethqos): interconnect-names:1: 'mac-mem' was expected
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/lemans.dtsi | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-index cf685cb186ed..979fb557e9e3 100644
---- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-@@ -6812,11 +6812,12 @@ ethernet1: ethernet@23000000 {
- 				      "ptp_ref",
- 				      "phyaux";
- 
--			interconnects = <&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
--					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
--					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
--					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>;
--			interconnect-names = "mac-mem", "cpu-mac";
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>,
-+					<&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "cpu-mac",
-+					     "mac-mem";
- 
- 			power-domains = <&gcc EMAC1_GDSC>;
- 
-@@ -6853,11 +6854,12 @@ ethernet0: ethernet@23040000 {
- 				      "ptp_ref",
- 				      "phyaux";
- 
--			interconnects = <&aggre1_noc MASTER_EMAC QCOM_ICC_TAG_ALWAYS
--					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
--					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
--					 &config_noc SLAVE_EMAC_CFG QCOM_ICC_TAG_ALWAYS>;
--			interconnect-names = "mac-mem", "cpu-mac";
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &config_noc SLAVE_EMAC_CFG QCOM_ICC_TAG_ALWAYS>,
-+					<&aggre1_noc MASTER_EMAC QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "cpu-mac",
-+					     "mac-mem";
- 
- 			power-domains = <&gcc EMAC0_GDSC>;
- 
-
----
-base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
-change-id: 20251020-topic-lemans_eth_dt-a27314b4e560
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
