@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-860749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66726BF0D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90355BF0E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 273A14F475F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B5B18837E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75002FFF9F;
-	Mon, 20 Oct 2025 11:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KD88SiSC"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4FE301009;
+	Mon, 20 Oct 2025 11:38:31 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D42FC02F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F072FBE02
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760959727; cv=none; b=mWmffFzjYiPHzob7Qwdz9cqJ1nq991+mBudq9CVH6wkgn8MnizWTpW/oRLpT9QXpwvzJolNVMvb+sl2TL2MJqEZjZVnQhJsjkIFRqfU9rEPTEn7VV1m0HxSDPtBgfhIxfFuek972y7zDL/ecYqKkJOTy2+f+7dakntfGXJ/W3vA=
+	t=1760960311; cv=none; b=Ir/4v083n8Z89KQknzF0QxjfADG6e531qUhzLukrIIjK+B1kBJ91vreGOgZJq8If8QYf6r2VxOh8erB8BiL66wXHrhxcXI1+3H2qCHpyREc8MY5GXVPUeFyATDlTVHZYppH6+U3nU/ynp3FhF6WjP5eCmTTei07av6wWq+txCKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760959727; c=relaxed/simple;
-	bh=2Y3zHvVYYIYQnqesMghSGh2XAgx9XoH6mHeizRVZVBg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=pkF2gM8tKrs71K6E3r7GF0bxJmkfwh71QE0KwNct3Ip66xUJReYdbBYj7RLZL/OVS7CiuwzRHm5lK/ktwt9ODYf5y6dBDd6NgufyDyBWgm31CHzfoND3ZVQViaR4Zv4MGq7+fBx5vDJuEyTveGlVXPGguzQ/XOIHbeB59kSu+Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KD88SiSC; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251020112842epoutp03a275cfa8fc8a644e32db7238a45816be~wL4mY52Bj2479624796epoutp03S
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:28:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251020112842epoutp03a275cfa8fc8a644e32db7238a45816be~wL4mY52Bj2479624796epoutp03S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760959722;
-	bh=d99WqiMlUBdTn6PeQ7Q3ge6pHf5Tl/n9lfXTYKrLsvU=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=KD88SiSCoV3S38aXH9Bg4ihl0vpPz4M7B1iRxbzMFbcOhpunGfgqY+zYPEb8FZddz
-	 lAufT55YPYHWPR0J8KVpusiVJE4lEn3fJlZDhBdvpph/ct8K9E5+OU4LU60bAP1whr
-	 T5JRHU7X/DcbhocbOyDbm89Dom0wfBOJxV5m0YJ4=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251020112841epcas5p1a97db509a86daa8f3f9a5963dd333458~wL4lygz6T2814728147epcas5p14;
-	Mon, 20 Oct 2025 11:28:41 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cqtV06lXrz6B9m5; Mon, 20 Oct
-	2025 11:28:40 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c~wL4kUxNyC0411004110epcas5p2S;
-	Mon, 20 Oct 2025 11:28:40 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251020112838epsmtip26e0c8e69e04935bcd5cc27809ad2cd82~wL4ir1jis2749127491epsmtip2Q;
-	Mon, 20 Oct 2025 11:28:38 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
-	muhammed.ali@samsung.com, selvarasu.g@samsung.com, Pritam Manohar Sutar
-	<pritam.sutar@samsung.com>
-Subject: [PATCH] usb: dwc3: Allow usb role swich control from userspace
-Date: Mon, 20 Oct 2025 17:07:23 +0530
-Message-Id: <20251020113723.553843-1-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760960311; c=relaxed/simple;
+	bh=X/Lf6eJ2MeIX6uQyHWlFiCMgPrqb1bVvrXirRM9qSNg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ltk/wcpyr/PxL2MDjPhB6pkazsssxZxopdXYM2QKMeUMte6rBvjjwwWGGivpzF0E18bEFi9KBRqOl4N8rjUF6aZJKILH2RkQGl8KGWaz8s0022C2R2WzoQJhHztA2I2se48gQAGlwQbMUDVZtH2B59jfV5L8RIqVNeoH9nijtt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e86696bd9so223424939f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:38:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760960309; x=1761565109;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T485cP2PDfKw5L0LRph7Bn15y7b3Q3pOZ3t1w+cyIf4=;
+        b=LETlgEUNCtXA4Arhc/Qk+5A3kVDBz0HAokpiqdbgFGNNc8xgQ/eb7aAeWQduQm9oPS
+         v+mINigzwDo4/jATZhz9TTzyHqqCMP8BbAbASCZwGJsWXC4qwCu4XjtgUgP7SWX3DGT1
+         QhpRw8O0Rjv4hyslNed4lDvPNVp30OcOkGXwds+T7yU8IrtsrQLEUNgzQGPsprVZXKhD
+         79IKMDVUvXJCrIOYELhqKUw6PBoBcLwDo0e6BFQN/b3XrnpIZWJCHTlTwQTvkcwIjk7a
+         fB0UUFTJOIRRgtUrUmMCC+SZqa8VSgm524FmherI6kwHrxXj9sQKHQr1zSt/Oit9T5pJ
+         1Q8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbNsBM1xdkIyoQoo0D96Z5AvwkTP6tG3wLkH+NbxKADdoS9Y1kx3mDr/CxARmvbBpLGWn99nKKMBB3ktY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLLMPeOXJzLsNjYC5MerhK4eQy056eJ8KJEtHzz5GppPk6Tps9
+	P8mt+L3uy4Z0IwXoVI/tOUqSlIhfQ9Eb35HuhMOj9BshWSwrDMw3ruXveRi5wuvNuu72J++MCVO
+	MBepUK83ZYLk77Wop+3OyHi/MclUtlyJpr++w74iZkWdiXWUKcGIhfwfQyyg=
+X-Google-Smtp-Source: AGHT+IHIyMhT2Z7ldaGWSNIsMhOp6eIxGv/OXeRO4NSe4aOlKDrIeCpWJ8zH7xQnYmCBAGYSuEoYeUAhfH35xDnurjNGR3f1fo6u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c
-References: <CGME20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c@epcas5p2.samsung.com>
+X-Received: by 2002:a05:6602:15d3:b0:940:d1a7:dfa2 with SMTP id
+ ca18e2360f4ac-940d1a7e14bmr873323939f.1.1760960308844; Mon, 20 Oct 2025
+ 04:38:28 -0700 (PDT)
+Date: Mon, 20 Oct 2025 04:38:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f61f34.a70a0220.205af.0030.GAE@google.com>
+Subject: [syzbot] Monthly v9fs report (Oct 2025)
+From: syzbot <syzbot+list0d3fd201f302d26981a7@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-There is a possibility of user needs for USB mode switching on boards
-that lack external hardware support for dynamic host/device role
-detection.
+Hello v9fs maintainers/developers,
 
-Add an `allow_userspace_control` flag to handle such cases. When
-enabled, it exposes a sysfs attribute that allows userspace to switch
-the USB role manually between host and device. This provides flexibility
-for platforms that cannot rely on hardware-based mode detection.
+This is a 31-day syzbot report for the v9fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/v9fs
 
-The role switch can be done as below
-echo host > /sys/class/usb_role/<ADDR>.usb-role-switch/role
-echo device > /sys/class/usb_role/<ADDR>.usb-role-switch/role
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 37 have already been fixed.
 
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 2597    Yes   INFO: task hung in v9fs_evict_inode
+                  https://syzkaller.appspot.com/bug?extid=56bd5818697f0f93fdd9
+<2> 96      Yes   WARNING: refcount bug in p9_req_put (3)
+                  https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
+<3> 5       No    possible deadlock in flush_all_rcu_sheaves
+                  https://syzkaller.appspot.com/bug?extid=aecb85f534f8915b6f5b
+<4> 2       Yes   WARNING in v9fs_begin_writeback
+                  https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+
 ---
- drivers/usb/dwc3/drd.c | 1 +
- 1 file changed, 1 insertion(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
-index 4c91240eb429..589bbeb27454 100644
---- a/drivers/usb/dwc3/drd.c
-+++ b/drivers/usb/dwc3/drd.c
-@@ -515,6 +515,7 @@ static int dwc3_setup_role_switch(struct dwc3 *dwc)
- 	dwc3_role_switch.set = dwc3_usb_role_switch_set;
- 	dwc3_role_switch.get = dwc3_usb_role_switch_get;
- 	dwc3_role_switch.driver_data = dwc;
-+	dwc3_role_switch.allow_userspace_control = true;
- 	dwc->role_sw = usb_role_switch_register(dwc->dev, &dwc3_role_switch);
- 	if (IS_ERR(dwc->role_sw))
- 		return PTR_ERR(dwc->role_sw);
--- 
-2.34.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
