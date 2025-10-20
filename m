@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-861387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13144BF298E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:04:46 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB650BF2991
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B454634300B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:04:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BED9034B2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A328A1E6;
-	Mon, 20 Oct 2025 17:04:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD0219F115;
-	Mon, 20 Oct 2025 17:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C803E32AAC4;
+	Mon, 20 Oct 2025 17:04:58 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9B5221FB6;
+	Mon, 20 Oct 2025 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760979878; cv=none; b=osRIJFZ37ccyhZPi8GqdWway6MyEc6KEf0/JjLEgIW6mUUIGAlxlNk4q5WDRpTXg3Aq/Gkj8MqQHbzevAG7dixQ5wDUeTUkt2BIzHIOHSl+u9dAa9vHWrKhZwD5P0aeyfI8Ty4T1+V9deB/YBIy9obOpzxeg2KfEH3GAuneKYOA=
+	t=1760979898; cv=none; b=tbT5af7TWE6AUl1p0DdF9/nwF/5LX1+HnSOepMIt69fKVLHwjqIIoo4aMU12IiUXwF751aGUFjPQo1JAvIc6YRM7f/eCFBokeUAc95Mtz2Z6pMJZkuh6LEnJ3n64Jp9ILZF0gby/71kkaKypKAlQmHV+HgJdpId8N2CSloOmGEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760979878; c=relaxed/simple;
-	bh=t4SvdQdtF+gXT4T2MbXED1Pj3P07F+eclBTZIQ/ninU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K4pYUeGX2gm+oMGGUqbddhUKfF6M9FaDtQwnletYWELVwK4Aq8jXrFsnQRBkYRmEibh6q4O/MibDKmW9V6tSGm6LBiuGAV0TouV1Il/c4jwBdZ6DgOa2PpMMFmSDZI6SB8kcZBnpFeZRflzuYeVp+vMk40P1kY917Q3Lq1QYRYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C22391007;
-	Mon, 20 Oct 2025 10:04:27 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B8AF3F66E;
-	Mon, 20 Oct 2025 10:04:30 -0700 (PDT)
-Message-ID: <9ad95fa5-6f1d-4c31-a6c6-41c1e9cc5c20@arm.com>
-Date: Mon, 20 Oct 2025 18:04:28 +0100
+	s=arc-20240116; t=1760979898; c=relaxed/simple;
+	bh=RhAB+xKbxMLIMXYDXmqkmJqaASOGsSRQzFcwjT1q+U0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxcS9y+fy3ACe9iiVTGRUhqa2U6UJvntWP1kuipLpEBsjGAepcVDO2cH4FjYzTr2NHysIpNCmWq814B68IXmfyhZI0hhGGMi1HUUHqAEfrMqvkxr9njbLJ9l7PbLXFKyDy6Kp1UPwmaBhjsHXmvR28R7O8RLLe3Tg1rz2F5eWa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [114.245.38.183])
+	by APP-01 (Coremail) with SMTP id qwCowAAnfqCsa_ZoP4ErEg--.24677S2;
+	Tue, 21 Oct 2025 01:04:44 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] ASoC: mediatek: Fix double pm_runtime_disable in remove functions
+Date: Tue, 21 Oct 2025 01:04:40 +0800
+Message-ID: <20251020170440.585-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 20/29] arm_mpam: Allow configuration to be applied and
- restored during cpu online
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
- Gavin Shan <gshan@redhat.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-21-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251017185645.26604-21-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAnfqCsa_ZoP4ErEg--.24677S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJrW8ZF4UAF4UGFWktry7ZFb_yoW8ZFy3pw
+	nYga93t3yaqr1UAanrAw10qa4a9ryfCF43Gryq9347Z343Xr1IvF4qy34jvFWkKFykKanx
+	GFyUtFy7Gr4FqFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRABA2j2T10bSgABsH
 
-Hi James,
+Both mt8195-afe-pcm and mt8365-afe-pcm drivers use devm_pm_runtime_enable()
+in probe function, which automatically calls pm_runtime_disable() on device
+removal via devres mechanism. However, the remove callbacks explicitly call
+pm_runtime_disable() again, resulting in double pm_runtime_disable() calls.
 
-On 10/17/25 19:56, James Morse wrote:
-> When CPUs come online the MSC's original configuration should be restored.
-> 
-> Add struct mpam_config to hold the configuration. This has a bitmap of
-> features that were modified. Once the maximum partid is known, allocate
-> a configuration array for each component, and reprogram each RIS
-> configuration from this.
-> 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> ---
-> Changes since v2:
->  * Call mpam_init_reset_cfg() on alloated config as 0 is not longer correct.
->  * init_garbage() on each config - the array has to be freed in one go, but
->    otherwise this looks weird.
->  * Use struct initialiser in mpam_init_reset_cfg(),
->  * Moved int err definition.
->  * Removed srcu lock taking based on squinting at the only caller.
->  * Moved config reset to mpam_reset_component_cfg() for re-use in
->    mpam_reset_component_locked(), previous memset() was not enough since zero
->    no longer means reset.
-> 
-[...]
->  
-> +struct reprogram_ris {
-> +	struct mpam_msc_ris *ris;
-> +	struct mpam_config *cfg;
-> +};
-> +
-> +/* Call with MSC lock held */
-> +static int mpam_reprogram_ris(void *_arg)
-> +{
-> +	u16 partid, partid_max;
-> +	struct reprogram_ris *arg = _arg;
-> +	struct mpam_msc_ris *ris = arg->ris;
-> +	struct mpam_config *cfg = arg->cfg;
-> +
-> +	if (ris->in_reset_state)
-> +		return 0;
-> +
-> +	spin_lock(&partid_max_lock);
-> +	partid_max = mpam_partid_max;
-> +	spin_unlock(&partid_max_lock);
-> +	for (partid = 0; partid <= partid_max + 1; partid++)
+Fix by removing the redundant pm_runtime_disable() calls from remove
+functions, letting the devres framework handle it automatically.
 
-Loop overrun. This was correct in the previous version of the patch and
-the same shape of loop is done correctly elsewhere in this version. I
-think it would be good to standardise on using either:
-partid <= partid_max
-or
-partid < partid_max + 1
-I have a preference for the first as you don't need to think about the
-size of the type.
+Fixes: 2ca0ec01d49c ("ASoC: mediatek: mt8195-afe-pcm: Simplify runtime PM during probe")
+Fixes: e1991d102bc2 ("ASoC: mediatek: mt8365: Add the AFE driver support")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ sound/soc/mediatek/mt8195/mt8195-afe-pcm.c | 1 -
+ sound/soc/mediatek/mt8365/mt8365-afe-pcm.c | 1 -
+ 2 files changed, 2 deletions(-)
 
+diff --git a/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c b/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c
+index 5d025ad72263..c63b3444bc17 100644
+--- a/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c
++++ b/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c
+@@ -3176,7 +3176,6 @@ static int mt8195_afe_pcm_dev_probe(struct platform_device *pdev)
+ 
+ static void mt8195_afe_pcm_dev_remove(struct platform_device *pdev)
+ {
+-	pm_runtime_disable(&pdev->dev);
+ 	if (!pm_runtime_status_suspended(&pdev->dev))
+ 		mt8195_afe_runtime_suspend(&pdev->dev);
+ }
+diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
+index 10793bbe9275..d48252cd96ac 100644
+--- a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
++++ b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
+@@ -2238,7 +2238,6 @@ static void mt8365_afe_pcm_dev_remove(struct platform_device *pdev)
+ 
+ 	mt8365_afe_disable_top_cg(afe, MT8365_TOP_CG_AFE);
+ 
+-	pm_runtime_disable(&pdev->dev);
+ 	if (!pm_runtime_status_suspended(&pdev->dev))
+ 		mt8365_afe_runtime_suspend(&pdev->dev);
+ }
 -- 
-Thanks,
-
-Ben
+2.25.1
 
 
