@@ -1,304 +1,168 @@
-Return-Path: <linux-kernel+bounces-861712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FEDBF370C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DD5BF3694
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B85418C408D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:28:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B936318C3104
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722C33892F;
-	Mon, 20 Oct 2025 20:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FDA334C1F;
+	Mon, 20 Oct 2025 20:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="QkCVpZeN"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YnvKDnBI"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204DD337BAB
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF700333736
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760991793; cv=none; b=JrRsCFuYMSsUeOMuYkDxpdvgGALGO3m+zrq1gRLXY/St63yDesKoEt0Ln8yu2bdqzApiyFT+F+CCppjXPdlwFDFPdlOsN3er3jXy/gAqGyQxqLu+ZDA4Yt4QSQAXLLaZRm7jvZTfClyK+xOOlEfNy3TTF74T1h1BEsLADCBaGSo=
+	t=1760991777; cv=none; b=eoAP5ac6U0W2SVhAW2QFw1E7D5wej3cg0cycVtC5ZAW3dZ46HfEIYyhICgAVZ1qyGSyGHHuQCsDKLLtkFWyaJaDOGepSmtcjRc3GitbVQVo+AIig7KEFzrmjBqk01YPEGPyJ1iLeKhsM52yIdMrIL1grdC/ga/aa7C8KdIxD0r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760991793; c=relaxed/simple;
-	bh=9A8pB2A96T9JHpirVnzjfxFz4DTUqg4iDKeJ1kGUIE4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MbwhGb1GaJjX4V9XU4Qw2LPMbZJzYZgQ70KfpGhHU6d+wZUeQbuwbpq1kRGDgASjDDyfL6wxXJNEvrB3LOJ1Yx47Ie+fBKVP1c1pNQH/oGPF2EkbqxJFc2xxQBFA5t8TyB727Zvle1g35XvS5vKwAhLgatkjXXGGptKL3LHrVJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=QkCVpZeN; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-782023ca359so4680253b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:23:10 -0700 (PDT)
+	s=arc-20240116; t=1760991777; c=relaxed/simple;
+	bh=57KurvKt64exJVef9Um1G7kmOg2hPNcAt7EPHN5ldjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dAXIWmOVJO1kHv6X3JQdC+RAGDLgEZaYDSjC0ZfzKwqYM7zzGiiHnoXM9Fki2LYpaTHNZPed7dy8h3Bfi0sGp2DN1fZW0c7+qqxiYk2Fyk9PZ5mDQhsJwdBtDqpUXrtP+XSkS4k9DYEywxDtTLe9mEZgcNyvsq978/+EOS5qYXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YnvKDnBI; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-93bccd4901aso414413139f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:22:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1760991790; x=1761596590; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TCkPPrp9gQEUL0ggbSzTHBQGf1uIlxDvndQy0b8riqo=;
-        b=QkCVpZeNA6yOltp1ttwHuuUjhjqvk0yMo0Kd4QFKMP1rpFpl8zVizXG9LELIzX+zpa
-         2UwuZAuN23hZJ/91EnNjaV5OmGzdR5M97PbBMnaR5XifTJF2BBVzyKL20ma76m4dx0dB
-         2BQKpgks9an0tmyBRMbg5yydaClwwEq3KENFW6afBOAEYIRejuuQ5qxTMT6Lae6yiBXo
-         L/ZXk+Uh+0D9q10EGeE3IlSJi19892AFLqoFEOe3Ez28O1zM4JNvLZlXFGwZwiPyiO7u
-         fxQVwB4Ktw5X2zuLvHvKCv1zfm09bodkcV1HgaWjZil4Sy4Ivb4ShCs63QCyrUCuTFyH
-         403g==
+        d=linuxfoundation.org; s=google; t=1760991774; x=1761596574; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mg4rdzF03I9VKfQ6A0u6ZEt7ExfErvnSo3bCDGro3gQ=;
+        b=YnvKDnBIbC8+L/eYKLRZq5KTo2UJYZGMyjmNVaW3LvrfBjoXHfZqz4YYChcMRm5G8k
+         2ClR8VBljutQ408v5vkkZFbhN9fsDGOpwY5FogEcotYd9z+ebREOJcZH8JKsGgFSRq72
+         N6hOaRPlIBcqpoj9ZdxWN0FsITsEKWNhICA5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760991790; x=1761596590;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TCkPPrp9gQEUL0ggbSzTHBQGf1uIlxDvndQy0b8riqo=;
-        b=VfoVHyhEDzRyNZJIaotSFkMeqKiXU2Qhgk1rxFnAMtOxBGMA8XimVyZjH7S+i39HfN
-         9ZsEjWaHOG5KCxG9iNN9suTGPkJiE+afXJfP9hp5psTqURIyNm1fPhJs/1TB8CgTHA4+
-         WI0BUdVEHCAulT6I0cTB5rgsE3R8sjiPogfyPd4bxPmVyqTDZMXJLInkbngsKOx/0mgz
-         rhDMED8j43Lv1Nl0xH9w92zBkqbQbFzS5cZ+BP0gmfFfhGkvqHgfEEluvwTBBhW5DPem
-         nyFXrVd8FCDLdLNdKzyU+ehzktXd3hkID7TXY8S0Vivt0h1VhIl+IswXQ1rRUhZVh4UX
-         ajVQ==
-X-Gm-Message-State: AOJu0Yypi2dNYDwXub/xA2qvHXv4mY90B+H6/3P1Uww1uLkgv9fwGLnM
-	JHmGFryXp/OBWpZLN4dCTccYEV1kys7Y2n0vJv1yyH8sirykB0e/j0ZuZdGF0AYTvlc=
-X-Gm-Gg: ASbGnctRf/RYsvg2K168ZuB9LTgLnDNQbkzArj4+PkcHSxAA+SLqLQSSe0RQpzPXw72
-	WbeS36tzlJz2+UhCCZTA9EPPL7qaKYcfetNWFOdd8BGMErvjzCD6iiDvvLvGfE2GZNtmvz3Qpwm
-	8+ruD115v8g+JlkqbWHOLNDJSoqB4rNURvw9MllwuZ6ePl336IY6QA1rGEwnEyaBbOxAgatJ9uD
-	FCSGXSBOj15DzdgfDaRp9BU1l7kI6uXK4BqwEzZIzr3OQwfcDq++pOXk5zWFow0is7d0I7Z2oPh
-	Okr/qcTb8c5F9+xN81IX31OKMe/7cb/G1LrxpmX+QXkwSjUXYx0+T85hLl8cjWIpiCs6GXEIIVE
-	hLWqihwdzJYvCtTotG9eHdrq2nbN38jH4Cb9HU4sc5Fu54Xnu85ztSvLYZ0CEgGK5Md2GS45cW1
-	A773e9cMbLH0rOb67aPZEX
-X-Google-Smtp-Source: AGHT+IFeAiK1pEjnzeQ76oKm8s3fmG8FE4Cb0oIxKjxN+P2vkwg0OCkygP5H08wijF/1nv8wkzENEQ==
-X-Received: by 2002:a05:6a21:6da1:b0:262:da1c:3bfb with SMTP id adf61e73a8af0-334a84854b9mr19250556637.7.1760991790129;
-        Mon, 20 Oct 2025 13:23:10 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a766745dasm8443240a12.14.2025.10.20.13.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 13:23:09 -0700 (PDT)
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 20 Oct 2025 13:22:43 -0700
-Subject: [PATCH v22 14/28] riscv: Implements arch agnostic indirect branch
- tracking prctls
+        d=1e100.net; s=20230601; t=1760991774; x=1761596574;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mg4rdzF03I9VKfQ6A0u6ZEt7ExfErvnSo3bCDGro3gQ=;
+        b=hc2MQIVVZjpniSyvnvZwgWnkjnj6dTq/Uej+r1Kc/2xbxIFVyXYrmM1XoblalwSc38
+         Jenn/1ha6ImC8AoozSb5n+DJjCNFJLF/g7n/bzQdjzKKPbT3cKVxFQWDVmvPLT0+Nye1
+         +EHiHAlaeh4PdSvQBhg83nym8yPE0Qx7MY7LiAdgB2BJxyVVooqVBDuvKO+r36ucMdGu
+         VkWnTVjBB4u4kB/hai5gTrvggdUXNLbAkZLJjWNXbaqE/zEJqdc4sho2Y5lqpl1xITLm
+         +OZtPaqVRt0/aRbevR13ROX/niy7mcjYIrj00F7oRaZQaOMhiJhEs2WYztYcxyQPIYiQ
+         Ev+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUPQwmKrmhJWXcf29SQH45kEmNwB9BnT/Hh33Hd9dt16CY5RbMqvPyLuo6YNVy0AGxShLFSZ4JtS0hSwrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF8HSqFa1cZOpWpBr4RiXGFu5jZ30mOAiuf2yUJzDNuiy5LyJi
+	+G7fFYbwsFyfXMXvZkGufQ6zXbkvDJYWXhJ6U+SgxfP2FHGBGi27nTrqRnDP0uziFWo=
+X-Gm-Gg: ASbGnctMpX2wWqIGXJA08t5UVw48mO7r4f4mYFPHd8pkVTvbm68Wc0gh9JH8y6UMK7f
+	wVUkkiCWw4sTpdOhdUp/t1Sq7DysXqB+GR38hm6GsLCXtqT4GSdyZQSR+l6IlTfNXKAZnOnpZb5
+	z1D59d30T9qed/jf6UAu2Zj3pMNA3YMRrJwfyQBbDhhrLXf++LJRN2NRVQFMTUchYXSUYFBnXlj
+	t49SMp+LwL3gAB/aM5s5DIdrJEwC7oULfibt1FJS94SPNxsEV87jWlBC37Viw+5KSJedbZciRk5
+	kSZm2EW7DXGAUovSbl/LLwHTmTL9leVtpiNQ9kvIP7S0cEbmARw8x80nnjOaUzXV7bYsOoB9K9G
+	jAaaDpsAY05X7AJCXgbA3D/XJ5qFlZDVOhaQ6oxD6ETowcTaypW8UMLF7rGl/e8aqPIPkD3RFG5
+	RaWM72E2N+2UXkwqFDPYXAGQc=
+X-Google-Smtp-Source: AGHT+IH3lraseKHKDfkvaNbqZdA/pDcJuk3ieKtNJ64spgnZ1oKvXWo8ZrnWbAQWu1y8fgRUWB7mKQ==
+X-Received: by 2002:a05:6602:3f91:b0:887:6ce4:8e07 with SMTP id ca18e2360f4ac-93e763ccef2mr2303274739f.9.1760991773699;
+        Mon, 20 Oct 2025 13:22:53 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e8661d228sm327198839f.1.2025.10.20.13.22.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 13:22:53 -0700 (PDT)
+Message-ID: <21415b1d-17c0-42a0-961c-a4aee16d20d1@linuxfoundation.org>
+Date: Mon, 20 Oct 2025 14:22:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251020-v5_user_cfi_series-v22-14-66732256ad8f@rivosinc.com>
-References: <20251020-v5_user_cfi_series-v22-0-66732256ad8f@rivosinc.com>
-In-Reply-To: <20251020-v5_user_cfi_series-v22-0-66732256ad8f@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Zong Li <zong.li@sifive.com>, Deepak Gupta <debug@rivosinc.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Greg KH <gregkh@linuxfoundation.org>
+Cc: lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
+ <2025101910-dipper-suburb-1755@gregkh>
+ <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
+ <d072dfe7-e0e9-49f6-89ed-25d194035e3b@gmail.com>
+ <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
+ <ea12faad-1735-4a49-a70d-d4cac5629042@linuxfoundation.org>
+ <b0b1c2e9-c367-4e9c-b931-d3e1b0ba7f5b@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <b0b1c2e9-c367-4e9c-b931-d3e1b0ba7f5b@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-prctls implemented are:
-PR_SET_INDIR_BR_LP_STATUS, PR_GET_INDIR_BR_LP_STATUS and
-PR_LOCK_INDIR_BR_LP_STATUS
+On 10/20/25 15:11, Mehdi Ben Hadj Khelifa wrote:
+> On 10/20/25 9:06 PM, Shuah Khan wrote:
+>> On 10/20/25 03:50, Jani Nikula wrote:
+>>> On Sun, 19 Oct 2025, Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> wrote:
+>>>> On 10/19/25 3:47 PM, Thomas Zimmermann wrote:
+>>>>> Hi
+>>>>>
+>>>>> Am 19.10.25 um 16:34 schrieb Greg KH:
+>>>>>> On Sun, Oct 19, 2025 at 04:12:28PM +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>>>>> Replace kmalloc() with kmalloc_array() to correctly
+>>>>>>> handle array allocations and benefit from built-in overflow checking[1].
+>>>>>>>
+>>>>>>> [1]:https://docs.kernel.org/process/deprecated.html
+>>>>>>>
+>>>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>>>>>> ---
+>>>>>>>    drivers/gpu/drm/tiny/repaper.c | 2 +-
+>>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/
+>>>>>>> repaper.c
+>>>>>>> index 4824f863fdba..290132c24ff9 100644
+>>>>>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>>>>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>>>>>> @@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct
+>>>>>>> drm_framebuffer *fb, const struct iosys_map *
+>>>>>>>        DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>>>>>              epd->factored_stage_time);
+>>>>>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>>>>>> +    buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
+>>>
+>>> Also worth emphasizing that this is wildly wrong for any height that is
+>>> not a multiple of 8.
+>>>
+>>> And I thought I shot down a similar patch not long ago.
+>>>
+>>> Is there some tool that suggests doing this? Fix the tool instead
+>>> please.
+>>>
+>>
+>> They are documented in https://docs.kernel.org/process/deprecated.html
+>> Mu understanding is that this document lists deprecates APIs so people
+>> don't keep adding new ones.
+>>
+>> I didn't get the impression that we are supposed to go delete them from
+>> the kernel and cause a churn.
+>>
+> I have sent an appropriate v2 specifically to suit the case that we have here. But the document[1] specifically quotes the following:"
+> Dynamic size calculations (especially multiplication) should not be performed in memory allocator (or similar) function arguments due to the risk of them overflowing. This could lead to values wrapping around and a smaller allocation being made than the caller was expecting. Using those allocations could lead to linear overflows of heap memory and other misbehaviors. (One exception to this is literal values where the compiler can warn if they might overflow. However, the preferred way in these cases is to refactor the code as suggested below to avoid the open-coded arithmetic.)"
+> Specifically mentionned the refactor of the code base in such cases which is why i'm doing the patches in the first place.Also i'm trying the best to send patches related to the issue where such issues of overflow are present or to be consistent with the same API used within the same subsystem.
+> [1]:https://docs.kernel.org/process/deprecated.html
+> 
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
----
- arch/riscv/include/asm/usercfi.h | 14 +++++++
- arch/riscv/kernel/entry.S        |  4 ++
- arch/riscv/kernel/process.c      |  5 +++
- arch/riscv/kernel/usercfi.c      | 79 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 102 insertions(+)
+How are you testing these changes? Next time give more details on the
+where you found the problem - it is easy to miss the link unless you
+state that it is coming from the deprecated document.
 
-diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/usercfi.h
-index d71093f414df..4501d741a609 100644
---- a/arch/riscv/include/asm/usercfi.h
-+++ b/arch/riscv/include/asm/usercfi.h
-@@ -16,6 +16,8 @@ struct kernel_clone_args;
- struct cfi_state {
- 	unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
- 	unsigned long ubcfi_locked : 1;
-+	unsigned long ufcfi_en : 1; /* Enable for forward cfi. Note that ELP goes in sstatus */
-+	unsigned long ufcfi_locked : 1;
- 	unsigned long user_shdw_stk; /* Current user shadow stack pointer */
- 	unsigned long shdw_stk_base; /* Base address of shadow stack */
- 	unsigned long shdw_stk_size; /* size of shadow stack */
-@@ -32,6 +34,10 @@ bool is_shstk_locked(struct task_struct *task);
- bool is_shstk_allocated(struct task_struct *task);
- void set_shstk_lock(struct task_struct *task);
- void set_shstk_status(struct task_struct *task, bool enable);
-+bool is_indir_lp_enabled(struct task_struct *task);
-+bool is_indir_lp_locked(struct task_struct *task);
-+void set_indir_lp_status(struct task_struct *task, bool enable);
-+void set_indir_lp_lock(struct task_struct *task);
- 
- #define PR_SHADOW_STACK_SUPPORTED_STATUS_MASK (PR_SHADOW_STACK_ENABLE)
- 
-@@ -57,6 +63,14 @@ void set_shstk_status(struct task_struct *task, bool enable);
- 
- #define set_shstk_status(task, enable) do {} while (0)
- 
-+#define is_indir_lp_enabled(task) false
-+
-+#define is_indir_lp_locked(task) false
-+
-+#define set_indir_lp_status(task, enable) do {} while (0)
-+
-+#define set_indir_lp_lock(task) do {} while (0)
-+
- #endif /* CONFIG_RISCV_USER_CFI */
- 
- #endif /* __ASSEMBLER__ */
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 8410850953d6..036a6ca7641f 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -174,6 +174,10 @@ SYM_CODE_START(handle_exception)
- 	 * or vector in kernel space.
- 	 */
- 	li t0, SR_SUM | SR_FS_VS
-+#ifdef CONFIG_64BIT
-+	li t1, SR_ELP
-+	or t0, t0, t1
-+#endif
- 
- 	REG_L s0, TASK_TI_USER_SP(tp)
- 	csrrc s1, CSR_STATUS, t0
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index a137d3483646..49f527e3acfd 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -163,6 +163,11 @@ void start_thread(struct pt_regs *regs, unsigned long pc,
- 	set_shstk_status(current, false);
- 	set_shstk_base(current, 0, 0);
- 	set_active_shstk(current, 0);
-+	/*
-+	 * disable indirect branch tracking on exec.
-+	 * libc will enable it later via prctl.
-+	 */
-+	set_indir_lp_status(current, false);
- 
- #ifdef CONFIG_64BIT
- 	regs->status &= ~SR_UXL;
-diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
-index 08620bdae696..2ebe789caa6b 100644
---- a/arch/riscv/kernel/usercfi.c
-+++ b/arch/riscv/kernel/usercfi.c
-@@ -72,6 +72,35 @@ void set_shstk_lock(struct task_struct *task)
- 	task->thread_info.user_cfi_state.ubcfi_locked = 1;
- }
- 
-+bool is_indir_lp_enabled(struct task_struct *task)
-+{
-+	return task->thread_info.user_cfi_state.ufcfi_en;
-+}
-+
-+bool is_indir_lp_locked(struct task_struct *task)
-+{
-+	return task->thread_info.user_cfi_state.ufcfi_locked;
-+}
-+
-+void set_indir_lp_status(struct task_struct *task, bool enable)
-+{
-+	if (!cpu_supports_indirect_br_lp_instr())
-+		return;
-+
-+	task->thread_info.user_cfi_state.ufcfi_en = enable ? 1 : 0;
-+
-+	if (enable)
-+		task->thread.envcfg |= ENVCFG_LPE;
-+	else
-+		task->thread.envcfg &= ~ENVCFG_LPE;
-+
-+	csr_write(CSR_ENVCFG, task->thread.envcfg);
-+}
-+
-+void set_indir_lp_lock(struct task_struct *task)
-+{
-+	task->thread_info.user_cfi_state.ufcfi_locked = 1;
-+}
- /*
-  * If size is 0, then to be compatible with regular stack we want it to be as big as
-  * regular stack. Else PAGE_ALIGN it and return back
-@@ -371,3 +400,53 @@ int arch_lock_shadow_stack_status(struct task_struct *task,
- 
- 	return 0;
- }
-+
-+int arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
-+{
-+	unsigned long fcfi_status = 0;
-+
-+	if (!cpu_supports_indirect_br_lp_instr())
-+		return -EINVAL;
-+
-+	/* indirect branch tracking is enabled on the task or not */
-+	fcfi_status |= (is_indir_lp_enabled(t) ? PR_INDIR_BR_LP_ENABLE : 0);
-+
-+	return copy_to_user(status, &fcfi_status, sizeof(fcfi_status)) ? -EFAULT : 0;
-+}
-+
-+int arch_set_indir_br_lp_status(struct task_struct *t, unsigned long status)
-+{
-+	bool enable_indir_lp = false;
-+
-+	if (!cpu_supports_indirect_br_lp_instr())
-+		return -EINVAL;
-+
-+	/* indirect branch tracking is locked and further can't be modified by user */
-+	if (is_indir_lp_locked(t))
-+		return -EINVAL;
-+
-+	/* Reject unknown flags */
-+	if (status & ~PR_INDIR_BR_LP_ENABLE)
-+		return -EINVAL;
-+
-+	enable_indir_lp = (status & PR_INDIR_BR_LP_ENABLE);
-+	set_indir_lp_status(t, enable_indir_lp);
-+
-+	return 0;
-+}
-+
-+int arch_lock_indir_br_lp_status(struct task_struct *task,
-+				 unsigned long arg)
-+{
-+	/*
-+	 * If indirect branch tracking is not supported or not enabled on task,
-+	 * nothing to lock here
-+	 */
-+	if (!cpu_supports_indirect_br_lp_instr() ||
-+	    !is_indir_lp_enabled(task) || arg != 0)
-+		return -EINVAL;
-+
-+	set_indir_lp_lock(task);
-+
-+	return 0;
-+}
+Even so you have to explain why the change is applicable to the code
+you are changing. How are you testing these changes. I have seen more
+patches from you in drm drivers and lib code.
 
--- 
-2.45.0
-
+thanks,
+-- Shuah
 
