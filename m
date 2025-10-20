@@ -1,150 +1,122 @@
-Return-Path: <linux-kernel+bounces-861871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD06BF3E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:20:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3306BF3E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F62B4ECC2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF597487932
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7198B2F12BB;
-	Mon, 20 Oct 2025 22:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CB12F1FD1;
+	Mon, 20 Oct 2025 22:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NZHj+G+L"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tvrSVPk7"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FA1226D16;
-	Mon, 20 Oct 2025 22:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C1F2853F7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760998812; cv=none; b=bPZRAwW5t4CVqdRqJ+3dce89pi3T+eCPoR/vFPnk0e9WiPeL5l3MjhWo5bFSwV2/PIGQlcBXuI8xJdMnMhoi999Tm2ZMnbM/eI67JlAfI7Hs211EHtIQxy9qQ1DP0fRqfDVfHhVrlWnX5Ar3w7wmi/yiS7x9x1+zSi/31zldkYE=
+	t=1760999080; cv=none; b=hhIMB1GxtFedWsy67G73amyj1buJoRpyjDyexyTpl8KMMMyG90+j9ZuoFkVas15LzleE4pIAH4Pg9clH8TMxszRNBqkUuPAKktpudv8L6bixhQRpz/w0ug+KL7kThLor7wDnmgpiIkZdE6qUW0eh/gu16khEWjLqndhilw4X0M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760998812; c=relaxed/simple;
-	bh=EdMGs+gLjfXh5G/SdgdBE2zJUIvMRuatOcY8AUK7rU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X6mXdAk/fW84Rg7vuYqQxWhPCJBU7ct+fxcHeCjH230+RkP65blY+c1rcMIdOCJjUsfaMokZIVlQRSj/T4VM7PMEB1QwFo7be/leQPVL4yFxQPV3oymP3Roy/M0kBLguAOeTO7nZO2oQ6CzWDyvMqSjHo+CAyrZkLpGa0pl3gn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NZHj+G+L; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1760998802;
-	bh=p/n/h4oBr0yZKKrAd4vDFRw29PGPvcFw0Y/tzEl7VXE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NZHj+G+Lg5sECSN0sR9l9K59vcEwKoOQmshkvMFn42ON3lswKvxfTmlRQGVNMzZx7
-	 TzLGfrYQXjXfoRrZIqHK49ZFP2/FwTddh1YAddYVtpbnpnUau1HwA7E2vftlCV31pl
-	 yq1Tg42UvBTWIIYRPLWtI/Bc9Kw7q8g4tgOLdvvMVKUttJicKGNDRKLWMo1iYrnARG
-	 zpg8iunqa29So8Z9g3ZUkLjX8SUC/ITWh2J4Ia4SGZs92Q/s4Dz91t34nozJI29bC7
-	 axBeHHf3uzwPj4mIt2vMp02XTzxX+ZxzuPMcjbxy/A53LLXipnhtvTjbneKT2WWpRU
-	 k2NYM/033zpfQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cr8xZ1dB3z4wBD;
-	Tue, 21 Oct 2025 09:20:02 +1100 (AEDT)
-Date: Tue, 21 Oct 2025 09:20:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>, Johannes
- Berg <johannes@sipsolutions.net>
-Cc: Mark Brown <broonie@kernel.org>, Johannes Berg
- <johannes.berg@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the iwlwifi-next tree with the
- origin tree
-Message-ID: <20251021092001.6ebae622@canb.auug.org.au>
-In-Reply-To: <aMlIrHaHOu0a8WGG@sirena.org.uk>
-References: <aMlIrHaHOu0a8WGG@sirena.org.uk>
+	s=arc-20240116; t=1760999080; c=relaxed/simple;
+	bh=rwI4Q0igxrGek7Z30UI6EiSACc6o5I1weTBUNiXBwbI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MBmpjYdKNUNvb+D0g5AEa9aN12BRLoLLrN1aOzhvhwQG7X14IIzw6CgzRvqV6uQtlRVOdl9gE6WqsGBaVa/WfMKzVkOjYWMgJ2URLrz+VP9pPPaHxXWc89HhmLvsLzN00g78E1FyM1EziAOwVQ/BuqWe8VoWhjIxSFnyYKIvbR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tvrSVPk7; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so8866547a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760999078; x=1761603878; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O/hlonJDisEdxFqgeg+9pNsgF5x3rn1Y1jGkL4uD0z8=;
+        b=tvrSVPk73JnEG3Wn4gjCNfwFrTtOwO72DmL1yZuVhFO2ACnRfUJrt8q4e885pWW++2
+         C2HsDBrRClk7skcq7ydTXB/yGRz4ybzHCcXZkPMqkSi0WmIame/GV/NmbwektPjQpeVF
+         EQiJIKgNzYqFO2heNh3CmuWXGzQ4vzRjVrBSLtPj0kkfjhIl1Ukrf8t3AW3GXBRc/5Hp
+         uiaelukyKYOfD5D4rQHOUr963UKoKuLRmmghhcv/iswzB2fhjnMQqiFAtXU38IER2rkQ
+         RB+BQeJscJx+ZMP6nLR96ElYPaqVoNZBExbV2MxzcRWz+NIwZm5Uxvf5O4UADKddX/se
+         iG4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760999078; x=1761603878;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O/hlonJDisEdxFqgeg+9pNsgF5x3rn1Y1jGkL4uD0z8=;
+        b=laQSFbbi2BAC9A01BHR76CTQx+1TwWXbP3liiAF8TASrqatRR2ZwTWh5z9SAv2M08X
+         yrzNXzscZujq1DtdJ0THYntszV8qCU5u+G6xQIkaxSPt3xQCJS8+/gVWxhK1duDynSft
+         tfkdWlOgUfLZHJyslxBfqTQ3HOUMSM+VDxamvRn5iEwsAmrDVOLCrj2E2fisD5OKOct0
+         dE9edfX5Ot5HGPxvefoZf2cQa4Kx4CgoZmx4eRiK983ej7I8LJMGgtPnh+X4UjsRkn3b
+         DQiOWkz7qGYpLK1bxGyElM2qqzxmT7+LkFPZPyGjD/xOXx9POZKWQcZ5RgoZmAy9WcpB
+         4frA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrp14gxS5bwtrgO6lhri6KP7BDaGJWEULAEncAth1eSh7apnnAxo/4lggqZOlFWgU4wrdxl5awV+zFblk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/j+kNw178DwcYs+gRAe5lkSTVI+n5Xiejy+xqfTZTrmyXcQu1
+	g67B1filR86fY+9CKdxcpTI7cfCFXHtNr0LP4BErvUYxgfpE2VU1TQitVfTut/fzzjC5gFb218v
+	DqcT1BQ==
+X-Google-Smtp-Source: AGHT+IE6c9sEci3X0zPR63N37Gu2Es1JlDgLufLRd3jB/+ym0SdtXH8HFpO/JAdI7UjiT18+DG3UC5Msm4Q=
+X-Received: from pjff13.prod.google.com ([2002:a17:90b:562d:b0:33d:69cf:1f82])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2fd0:b0:33b:ab6a:87d7
+ with SMTP id 98e67ed59e1d1-33bcf8fd36amr20949231a91.26.1760999077924; Mon, 20
+ Oct 2025 15:24:37 -0700 (PDT)
+Date: Mon, 20 Oct 2025 15:24:36 -0700
+In-Reply-To: <20251020205602.xrgypiwk5dwejdqf@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/p/MHfA/NjXlWYSQB5cM3qlk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+References: <20251015-vmscape-bhb-v2-0-91cbdd9c3a96@linux.intel.com>
+ <20251015-vmscape-bhb-v2-2-91cbdd9c3a96@linux.intel.com> <aPZe6Xc2H2P-iNQe@google.com>
+ <20251020205602.xrgypiwk5dwejdqf@desk>
+Message-ID: <aPa2pHtY8X-TBXeY@google.com>
+Subject: Re: [PATCH v2 2/3] x86/vmscape: Replace IBPB with branch history
+ clear on exit to userspace
+From: Sean Christopherson <seanjc@google.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	David Kaplan <david.kaplan@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Asit Mallick <asit.k.mallick@intel.com>, 
+	Tao Zhang <tao1.zhang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
---Sig_/p/MHfA/NjXlWYSQB5cM3qlk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 20, 2025, Pawan Gupta wrote:
+> On Mon, Oct 20, 2025 at 09:10:17AM -0700, Sean Christopherson wrote:
+> > On Wed, Oct 15, 2025, Pawan Gupta wrote:
+> > > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> > > index 49707e563bdf71bdd05d3827f10dd2b8ac6bca2c..00730cc22c2e7115f6dbb38a1ed8d10383ada5c0 100644
+> > > --- a/arch/x86/include/asm/nospec-branch.h
+> > > +++ b/arch/x86/include/asm/nospec-branch.h
+> > > @@ -534,7 +534,7 @@ void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
+> > >  		: "memory");
+> > >  }
+> > >  
+> > > -DECLARE_PER_CPU(bool, x86_ibpb_exit_to_user);
+> > > +DECLARE_PER_CPU(bool, x86_pred_flush_pending);
+> > 
+> > Rather than "flush pending", what about using "need" in the name to indicate that
+> > a flush is necessary?  That makes it more obvious that e.g. KVM is marking the
+> > CPU as needing a flush by some other code, as opposed to implying that KVM itself
+> > has a pending flush.
+> > 
+> > And maybe spell out "prediction"?  Without the context of features being checked,
+> > I don't know that I would be able to guess "prediction".
+> > 
+> > E.g. x86_need_prediction_flush?
+> > 
+> > Or x86_prediction_flush_exit_to_user if we would prefer to clarify when the flush
+> > needs to occur?
+> 
+> Ok, ya this is more clear. I would want to make a small change, instead of
+> "prediction_flush", "predictor_flush" reads better to me. Changing it to:
+> x86_predictor_flush_exit_to_user.
 
-Hi all,
+LOL, see, told you I couldn't guest the word. :-D
 
-On Tue, 16 Sep 2025 12:23:24 +0100 Mark Brown <broonie@kernel.org> wrote:
->
-> Today's linux-next merge of the iwlwifi-next tree got a conflict in:
->=20
->   drivers/net/wireless/intel/iwlwifi/fw/runtime.h
->=20
-> between commit:
->=20
->   7bf2dfccc2dd7 ("wifi: iwlwifi: acpi: check DSM func validity")
->=20
-> from the origin tree and commit:
->=20
->   db29d6fd9cac3 ("wifi: iwlwifi: fix remaining kernel-doc warnings")
->=20
-> from the iwlwifi-next tree.
->=20
->=20
-> diff --cc drivers/net/wireless/intel/iwlwifi/fw/runtime.h
-> index 806f9bcdf4f50,8e858e6b3ce38..0000000000000
-> --- a/drivers/net/wireless/intel/iwlwifi/fw/runtime.h
-> +++ b/drivers/net/wireless/intel/iwlwifi/fw/runtime.h
-> @@@ -113,10 -116,23 +116,27 @@@ struct iwl_txf_iter_data=20
->    * @phy_filters: specific phy filters as read from WPFC BIOS table
->    * @ppag_bios_rev: PPAG BIOS revision
->    * @ppag_bios_source: see &enum bios_source
->  + * @acpi_dsm_funcs_valid: bitmap indicating which DSM values are valid,
->  + *	zero (default initialization) means it hasn't been read yet,
->  + *	and BIT(0) is set when it has since function 0 also has this
->  + *	bitmap and is always supported
-> +  * @geo_enabled: WGDS table is present
-> +  * @geo_num_profiles: number of geo profiles
-> +  * @geo_rev: geo profiles table revision
-> +  * @ppag_chains: PPAG table data
-> +  * @ppag_flags: PPAG flags
-> +  * @reduced_power_flags: reduced power flags
-> +  * @sanitize_ctx: context for dump sanitizer
-> +  * @sanitize_ops: dump sanitizer ops
-> +  * @sar_chain_a_profile: SAR chain A profile
-> +  * @sar_chain_b_profile: SAR chain B profile
-> +  * @sgom_enabled: SGOM enabled
-> +  * @sgom_table: SGOM table
-> +  * @timestamp: timestamp marker data
-> +  * @timestamp.wk: timestamp marking worker
-> +  * @timestamp.seq: timestamp marking sequence
-> +  * @timestamp.delay: timestamp marking worker delay
-> +  * @tpc_enabled: TPC enabled
->    */
->   struct iwl_fw_runtime {
->   	struct iwl_trans *trans;
-
-This is now a conflict between the iwlwifi tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/p/MHfA/NjXlWYSQB5cM3qlk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj2tZEACgkQAVBC80lX
-0GyKFAf/YiGALghSl4RiJdULy3cXPrxrvi2Gakxzok4PrOwPFrIrw5FAXHHTaHUH
-2Bc19J8FlPqYTTYGQcOal7ZIlx1V8CJesw27On3+iqTeTL5HGqXit4P6QitD5a4B
-mIypq0XO97a43j5wFU6mTx0TQ1MY/J81WtZP9BvaKX7GIpLLk12IzzSQ+4EAZVI1
-8QpStGHKggDjbHJc/G5RGbOnexMk20Y2pHdSWv1Pr+3kk0EUcfzI6+tTOQ46+hov
-2yGh2shYlDbEjHAt0dHylm6OWc2jEl0utyd/I/35wSmJ6qbxCVBpxWOiSOuNXbcT
-L3y/8Bq4389P1k8c5ILGCOKwT3HxOA==
-=LYK3
------END PGP SIGNATURE-----
-
---Sig_/p/MHfA/NjXlWYSQB5cM3qlk--
+"predictor" is way better, thanks!
 
