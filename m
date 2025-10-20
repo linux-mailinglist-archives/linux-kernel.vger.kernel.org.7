@@ -1,93 +1,170 @@
-Return-Path: <linux-kernel+bounces-860544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45894BF05F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9207ABF05FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6DB3B6C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC6D3BCF46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEF22F6189;
-	Mon, 20 Oct 2025 10:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F29B2F60AC;
+	Mon, 20 Oct 2025 10:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mAjnA/rB"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGy0RrSn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2002F6173
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D682E9EDA;
+	Mon, 20 Oct 2025 10:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954536; cv=none; b=Y4cLkpv2Czwyd0R9w1PJbQxFxKNW/zatz63O0EFtC9YacIeYPZkmeOZNEu+uDdQWE1nV2ZZjtbHoq6PCsrrKOzOMERATS/FJtncYwlBROO3Kr5MV3sjs0OO/vAcpvbGWDwsnyQmzT8lt1Y89cQkINgJPtibuPdu8oDN+x8crs+A=
+	t=1760954556; cv=none; b=NwmPdy9s/C0eGn2ls4A6BJ3Pfc/VHeJX+pk9qV9dQDGB3xQB3wgqp0BVCuMtAd8H985f2p4TZPhFIXRwhFrHgPpVvIWqb6OQwfd+ykrpjkfDbEByhWf7UtJURXgPi8YKfKvFDBvsixaNQM7gC/euYzj3cklNJ9zpYbC6rCfWnd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954536; c=relaxed/simple;
-	bh=YZmkiE6IYqORaoMB85+7KlwkNWG7iNkrs2r7JhIoc70=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aia1N8RoBB5xc2kKdnBSK6oHXWdU/G5nLbRTPnL2ZxcKWLUTEyf0VMtF/dCzA/qgqGFnjAlxBG4w/uNrGt5FAUdbancbZJGloIae6w6qoDXSVcBMKLldA+HM3Qg09PmY/pUY1abdr4C3R1ABmewYi2osFhwID6fWvU4kQAOkI4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mAjnA/rB; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-470fd49f185so34670605e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760954534; x=1761559334; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ysWWL2E0S+o4/V8T/pUjhBkANb8o2B4A/OaGe1c7O/E=;
-        b=mAjnA/rBeGBR5DmmGPM8Snar/MNkeUrVWf8C0YkfclbNhrmVdCMfVgbFN1gvRgdTqk
-         s080PaWY3dk+t5JBweYqHoph6yHFHPFRWYYhlUU+Ei9RJRSDhzSrOZD+oBdck1ANhd83
-         kq6gnbfc40f8VCDVAEsOInjXbm4GpdS/MJ5s0Rsr4U63MhsqQed38zK3dInC1Dcndub5
-         aOIAyG81HlucO0yEsZn9cWAEWxU4GqLul2mMpJkn8mfxQC1Fae/1JwEgqX8sTqkKo90w
-         F1iANrlR7NnjPgH7BM0imdWBrn1N8Y6lqmkYn96KW8lzAlX6Bv1cYwg1fMCZSuf8OqLH
-         HDZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760954534; x=1761559334;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ysWWL2E0S+o4/V8T/pUjhBkANb8o2B4A/OaGe1c7O/E=;
-        b=m1qhZaIYcIfx68uz9J47nLN+Ps3P0W2WpDHN4yq7E64YAfla1FjVwGtioXX1CAX0yH
-         x30nUos7xpecAhUGQ8ancZ73DWdIoaVAHWY9ofdqiO2iUkW+5K5M0+6Kl/7jIJG0mYww
-         m+Tzg10+OsQMHFtX8VPVN92KwTXsm7ow6/JmhlIRV2/8RTtCX4LKs4dpz8jZwbV3aRzm
-         gdbAD49Gf6HfF3K12MrYSinov5OK6LbA+SPV413DCu6XhyBCMUXPZXbw0tkV/6eYh+lN
-         WZhS9/hIMKhdg7PbXChUZ9pplfdTxSLq+6N2B7zPmPiiuYPeKEptPGmyTYJ4qZEC3Z8X
-         iIaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrF+7iMuZXtipBJqJ5gPoqXhNm06n7OhWSM+03SQRkCyvNoCoayG2cpmPckKO4zEwjKz8Dzc3woOatwF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2HE1d5A/kLzOpHnT3DezEjO/1OlcRhMeUHj30RLdedpUmn/oK
-	Xokx7rmDQutvvCr4Xdm6S5AzCo9+KOD4FnuM9YIHdWf/0OHPJHDaEyCCWkYSzr/tsQ65R6GHMva
-	r9aK0Q0Nzfu96gaioIA==
-X-Google-Smtp-Source: AGHT+IE0ZXAqseWyjpLgReO0ii0OIASivJqIvkm0bcKlmn/cZWguLy7rH50N9m4LwhSIfhdDKruNbEc2euHhR/s=
-X-Received: from wmcn6.prod.google.com ([2002:a05:600c:c0c6:b0:45f:2437:5546])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e86:b0:46d:996b:828c with SMTP id 5b1f17b1804b1-47117879b8dmr83149175e9.10.1760954533559;
- Mon, 20 Oct 2025 03:02:13 -0700 (PDT)
-Date: Mon, 20 Oct 2025 10:02:12 +0000
-In-Reply-To: <20251003222729.322059-8-dakr@kernel.org>
+	s=arc-20240116; t=1760954556; c=relaxed/simple;
+	bh=OXMj22BFd95MnCA9Pp5zB+u1q9K2KOGCsd/US9btLgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PSEopNuD51b7tp3bs60MCHoOwM1qU2zoMz5hwgnteV+bBbWAXJ2JfckQvrW63Enxbtxdb1QIreyQ2qbN79KWWSciWgNZaXJxL/EdbuSishjl2bx1fev9HAsHsATaWiJbxGAl+c2YBk5MGLyxNJzyuxOxVaC7jgKmdLrzHialMpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sGy0RrSn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A6B3C4CEF9;
+	Mon, 20 Oct 2025 10:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760954556;
+	bh=OXMj22BFd95MnCA9Pp5zB+u1q9K2KOGCsd/US9btLgQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sGy0RrSn9lTmeKBPr4KkCFapcIKY2JfBl0FcWvs/pSGDb+HJ4i4UWhPXYSmHKo2cq
+	 oIJXO9ENHBj169tFKmKazLfx8d3zzeVGt8xbbOYP2CubQ5nmYzil84hja4jI/gJJ4P
+	 MXFT4MvngVStgE6lyKqpZdx0ayflqtaYXlBLuduRz4qNFnyMJSBQB0/bomuE+2mbzg
+	 2cjxtin4ToeLnB7FMv0FMTPgLREYJxNXtJ0raP5tViSmmMvC7xufV8EJQviNBomVjO
+	 bJddhSflCQkjMKzV1pX3LgmhkyUdylACzFib3IYcw/nd0dveBsgpqYbHEoDbq/45S6
+	 A5rSRHZyYC8oA==
+Message-ID: <3f5e2d98-4c4a-4a8b-b041-200bb1fc3e7e@kernel.org>
+Date: Mon, 20 Oct 2025 12:02:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-8-dakr@kernel.org>
-Message-ID: <aPYIpGv1wDaKw5kn@google.com>
-Subject: Re: [PATCH 7/7] samples: rust: debugfs_scoped: add example for blobs
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: ufs: mediatek,ufs: add MT8195
+ compatible and update clock nodes
+To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+ "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>, "robh@kernel.org"
+ <robh@kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?TWFjcGF1bCBMaW4gKOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "macpaul@gmail.com" <macpaul@gmail.com>,
+ =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ =?UTF-8?B?QmVhciBXYW5nICjokKnljp/mg5/lvrcp?= <bear.wang@mediatek.com>,
+ =?UTF-8?B?UmFtYXggTG8gKOe+heaYjumBoCk=?= <Ramax.Lo@mediatek.com>
+References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
+ <20250722085721.2062657-3-macpaul.lin@mediatek.com>
+ <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
+ <438077d191833bb4f628b2c6da3b86b3ecfb40e6.camel@mediatek.com>
+ <cb173df9-4c70-4619-b36d-8e99272551b6@kernel.org>
+ <a9bf15e48afd8496ca9b015e7f5b03821863a0b2.camel@mediatek.com>
+ <7f285723-ecd7-4df6-8c9b-f2e786ce3602@kernel.org>
+ <4b3d2678d2b724fb53ec7272ef8daf52197d4a0e.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4b3d2678d2b724fb53ec7272ef8daf52197d4a0e.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 04, 2025 at 12:26:44AM +0200, Danilo Krummrich wrote:
-> Extend the rust_debugfs_scoped sample to demonstrate how to export a
-> large binary object through a ScopedDir.
+On 20/10/2025 11:44, Peter Wang (王信友) wrote:
+>>
+>> Consider stepping down and choosing them if they better understand
+>> how
+>> upstream works.
+>>
+>> As Rob wrote earlier:
+>>
+>> "Sounds like we need a new maintainer then. They clearly don't
+>> understand that downstream doesn't exist."
+>>
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> I must reiterate that I do not oppose patches that are 
+> beneficial to the community; I only object to patches that are 
+> not helpful.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+Let's quote you again:
+
+"*In addition*, it will require MediaTek to put in extra
+effort to migrate the kernel. "
+
+This is ADDITIONAL argument you used. This is what you wrote, this is
+what you claimed to be ADDITIONAL argument.
+
+In your opinion ADDITIONAL argument is downstream and you still do not
+understand why such argument is instant NAK for you as reviewer.
+
+
+Best regards,
+Krzysztof
 
