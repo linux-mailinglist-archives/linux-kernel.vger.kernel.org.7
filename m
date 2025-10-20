@@ -1,160 +1,252 @@
-Return-Path: <linux-kernel+bounces-861427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6DEBF2B39
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B86BF2B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F8618A2C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A2D3AAB58
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198C13314DE;
-	Mon, 20 Oct 2025 17:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703FC331A44;
+	Mon, 20 Oct 2025 17:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFc3d0W6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hg22YaG+"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA86221FC8;
-	Mon, 20 Oct 2025 17:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B1E32F75B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760981195; cv=none; b=XiMMqhPycVTQkmCFShfSOdanfR8jT9VLyM/eHpsktdmp34pJ4we95eTX7/PXMKO1ohTUmRik8XuBE931Nqv7BiQ7CBHd/kUGgjWE9LwmZY01MVqJvI6sVjeTya2QMo8bzd6xWWujn7t9y23l2wfoAjX4Y+3r1WnAHX7L3XyWhPk=
+	t=1760981218; cv=none; b=A8WYsSK2iqX+gnvJ5ZglBCrGhtiCh6q6+uaH4+OmJEHALdSjCEMHFwBeII9jeGxha7MZWbT9zSq61NlWn6NwBS880a2U86ybOF7/SUMAkHuP7mJLRkqvYQHg+ccFuTLD1R57mViNYGTPuG5by9Dtkb2PiFvKcT+e7TTFbLK++sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760981195; c=relaxed/simple;
-	bh=aMGWLdDm/gNeBxI6lcRh8r6af68Cspylr2/fbbMhzzg=;
+	s=arc-20240116; t=1760981218; c=relaxed/simple;
+	bh=WELJG3EefeS4+jZAAr3Y0erGnXwGX0GfmBf0DojCpvw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4phK16Pt1hR6WfxZ87R0XL3BUMDQ40HcoCjnfCQmED6V7i79dWIVP2J+oh2CQP912xi1lRFbEupZGSAqLtDkKPdI0cALjn8+D5arL8L+SD29laejyQw+vO6SYJnfyCBvX0UfujcPHxHACLFaccjbkjYQWrligbC6RXMyge/fuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFc3d0W6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56787C4CEF9;
-	Mon, 20 Oct 2025 17:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760981195;
-	bh=aMGWLdDm/gNeBxI6lcRh8r6af68Cspylr2/fbbMhzzg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rFc3d0W6O1ecq4SpW/YELQ+ZTpJ6BDbEAELpWrAyCHHA/TU0K1whNjA3Db5jUWU4y
-	 F6pLQ88HLiWuWMRxWOABwNdFPFv20JHMpjZBXlVa+MlS1lvxbJE+3gekxg7B/Elv3/
-	 6/h3xO/j15SU3bEshUj0kpt+NIbADUDluHa6HGFdFZYois6CndRsydgdKPjnaRdKvj
-	 VOKLNbDjXK4kYCOjir9t+HmAuZGlsWV190qnL/SAzTSX87lOgCfjWohb9gapNOe9K3
-	 TkzXWPMkbXIKrmqiurxsBgekDr4pSuHt0qfUYfOAjwds+vEpeEtMAvXaTnf+nczdGa
-	 qbFM/JH1ch5NQ==
-Date: Mon, 20 Oct 2025 18:26:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
-	heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Add support for rockchip
- pvtpll
-Message-ID: <20251020-dose-treason-2a0ac50c6bb4@spud>
-References: <20251020023724.2723372-1-zhangqing@rock-chips.com>
- <20251020023724.2723372-5-zhangqing@rock-chips.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WT7OPDzsax/ANMLO3o3BxMibhEmWNCchw+i0ljVJchkQ6UaRzIGTzKkxkkIu1AmmZ5d4/x1wtNE0GpODODwdA3OTQ/jpZsu7hQIgaCcc2gdzAVLAXeig25ENvyU6EO2TTpMKb8ML6u2n99ZBKDCpEdu7wL0vkN7kWE247gvTKcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hg22YaG+; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 20 Oct 2025 17:26:36 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760981204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BtZGkLKr3gOVteNjftvPjbbitGBqfKbhGDs2rAE/yFE=;
+	b=hg22YaG+8MmAWS8RPCbEncbMck4iCNpkWOKiAoxHcUGULGrH3KubLz2kS8hDBB6/RYwtRX
+	SjPElmlUNdvUiNykx30qP+UQb0WYT1nW6ABsobuG62MnbMq2hm2qiWfXOAPA2sW3pw5jwf
+	jprnRmU0cMhSa7xNjh8vFL32tYsA35k=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 4/4] KVM: selftests: Add a VMX test for LA57 nested state
+Message-ID: <4owz4js4mvl4dohgkydcyrdhh2j2xblbwbo7zistocb4knjzdo@kvrzl7vmvg67>
+References: <20250917215031.2567566-1-jmattson@google.com>
+ <20250917215031.2567566-5-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ryBOeWKUiYWTAeKK"
-Content-Disposition: inline
-In-Reply-To: <20251020023724.2723372-5-zhangqing@rock-chips.com>
-
-
---ryBOeWKUiYWTAeKK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250917215031.2567566-5-jmattson@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 20, 2025 at 10:37:23AM +0800, Elaine Zhang wrote:
-> Add pvtpll documentation for rockchip.
->=20
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+On Wed, Sep 17, 2025 at 02:48:40PM -0700, Jim Mattson wrote:
+> Add a selftest that verifies KVM's ability to save and restore
+> nested state when the L1 guest is using 5-level paging and the L2
+> guest is using 4-level paging. Specifically, canonicality tests of
+> the VMCS12 host-state fields should accept 57-bit virtual addresses.
+> 
+> Signed-off-by: Jim Mattson <jmattson@google.com>
 > ---
->  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 100 ++++++++++++++++++
->  1 file changed, 100 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-=
-pvtpll.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.=
-yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+>  tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+>  .../kvm/x86/vmx_la57_nested_state_test.c      | 137 ++++++++++++++++++
+>  2 files changed, 138 insertions(+)
+>  create mode 100644 tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+> index 41b40c676d7f..f1958b88ec59 100644
+> --- a/tools/testing/selftests/kvm/Makefile.kvm
+> +++ b/tools/testing/selftests/kvm/Makefile.kvm
+> @@ -116,6 +116,7 @@ TEST_GEN_PROGS_x86 += x86/vmx_exception_with_invalid_guest_state
+>  TEST_GEN_PROGS_x86 += x86/vmx_msrs_test
+>  TEST_GEN_PROGS_x86 += x86/vmx_invalid_nested_guest_state
+>  TEST_GEN_PROGS_x86 += x86/vmx_set_nested_state_test
+> +TEST_GEN_PROGS_x86 += x86/vmx_la57_nested_state_test
+>  TEST_GEN_PROGS_x86 += x86/vmx_tsc_adjust_test
+>  TEST_GEN_PROGS_x86 += x86/vmx_nested_tsc_scaling_test
+>  TEST_GEN_PROGS_x86 += x86/apic_bus_clock_test
+> diff --git a/tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c b/tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
 > new file mode 100644
-> index 000000000000..8be34bcde7b0
+> index 000000000000..7c3c4c1c17f6
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
-> @@ -0,0 +1,100 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
+> @@ -0,0 +1,137 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * vmx_la57_nested_state_test
+> + *
+> + * Copyright (C) 2025, Google LLC.
+> + *
+> + * Test KVM's ability to save and restore nested state when the L1 guest
+> + * is using 5-level paging and the L2 guest is using 4-level paging.
+> + *
+> + * This test would have failed prior to commit 9245fd6b8531 ("KVM: x86:
+> + * model canonical checks more precisely").
+> + */
+> +#include "test_util.h"
+> +#include "kvm_util.h"
+> +#include "processor.h"
+> +#include "vmx.h"
 > +
-> +title: Rockchip Pvtpll
+> +#define LA57_GS_BASE 0xff2bc0311fb00000ull
 > +
-> +maintainers:
-> +  - Elaine Zhang <zhangqing@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
+> +static void l2_guest_code(void)
+> +{
+> +	/*
+> +	 * Sync with L0 to trigger save/restore.  After
+> +	 * resuming, execute VMCALL to exit back to L1.
+> +	 */
+> +	GUEST_SYNC(1);
+> +	vmcall();
+> +}
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - rockchip,rv1103b-core-pvtpll
-> +          - rockchip,rv1103b-enc-pvtpll
-> +          - rockchip,rv1103b-isp-pvtpll
-> +          - rockchip,rv1103b-npu-pvtpll
-> +          - rockchip,rv1126b-core-pvtpll
-> +          - rockchip,rv1126b-isp-pvtpll
-> +          - rockchip,rv1126b-enc-pvtpll
-> +          - rockchip,rv1126b-aisp-pvtpll
-> +          - rockchip,rv1126b-npu-pvtpll
-> +          - rockchip,rk3506-core-pvtpll
-> +      - const: syscon
+> +static void l1_guest_code(struct vmx_pages *vmx_pages)
+> +{
+> +#define L2_GUEST_STACK_SIZE 64
+> +	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
+> +	u64 guest_cr4;
+> +	vm_paddr_t pml5_pa, pml4_pa;
+> +	u64 *pml5;
+> +	u64 exit_reason;
 > +
-> +  reg:
-> +    maxItems: 1
+> +	/* Set GS_BASE to a value that is only canonical with LA57. */
+> +	wrmsr(MSR_GS_BASE, LA57_GS_BASE);
+> +	GUEST_ASSERT(rdmsr(MSR_GS_BASE) == LA57_GS_BASE);
 > +
-> +  "#clock-cells":
-> +    const: 0
+> +	GUEST_ASSERT(vmx_pages->vmcs_gpa);
+> +	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
+> +	GUEST_ASSERT(load_vmcs(vmx_pages));
 > +
-> +  clocks:
-> +    maxItems: 1
+> +	prepare_vmcs(vmx_pages, l2_guest_code,
+> +		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
 > +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  rockchip,cru:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      Phandle to the main Clock and Reset Unit (CRU) controller.
-> +      Required for PVTPLLs that need to interact with the main CRU
-> +      for clock management operations.
-> +
+> +	/*
+> +	 * Set up L2 with a 4-level page table by pointing its CR3 to L1's
+> +	 * PML4 table and clearing CR4.LA57. This creates the CR4.LA57
+> +	 * mismatch that exercises the bug.
+> +	 */
+> +	pml5_pa = get_cr3() & PHYSICAL_PAGE_MASK;
+> +	pml5 = (u64 *)pml5_pa;
+> +	pml4_pa = pml5[0] & PHYSICAL_PAGE_MASK;
+> +	vmwrite(GUEST_CR3, pml4_pa);
 
-> +required:
-> +  - "#clock-cells"
-> +  - compatible
-> +  - reg
-> +  - clock-output-names
+Clever :)
 
-Please follow the property definition order here.
-pw-bot: changes-requested
+> +
+> +	guest_cr4 = vmreadz(GUEST_CR4);
+> +	guest_cr4 &= ~X86_CR4_LA57;
+> +	vmwrite(GUEST_CR4, guest_cr4);
+> +
+> +	GUEST_ASSERT(!vmlaunch());
+> +
+> +	exit_reason = vmreadz(VM_EXIT_REASON);
+> +	GUEST_ASSERT(exit_reason == EXIT_REASON_VMCALL);
+> +}
+> +
+> +void guest_code(struct vmx_pages *vmx_pages)
+> +{
+> +	if (vmx_pages)
+> +		l1_guest_code(vmx_pages);
 
---ryBOeWKUiYWTAeKK
-Content-Type: application/pgp-signature; name="signature.asc"
+I think none of the other tests do the NULL check. Seems like the test
+will actually pass if we pass vmx_pages == NULL. I think it's better if
+we let L1 crash if we mess up the setup.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +	GUEST_DONE();
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	vm_vaddr_t vmx_pages_gva = 0;
+> +	struct kvm_vm *vm;
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm_x86_state *state;
+> +	struct ucall uc;
+> +	int stage;
+> +
+> +	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
+> +	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_LA57));
+> +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_NESTED_STATE));
+> +
+> +	vm = vm_create_shape_with_one_vcpu(VM_SHAPE(VM_MODE_PXXV57_4K), &vcpu,
+> +					   guest_code);
+> +
+> +	/*
+> +	 * L1 needs to read its own PML5 table to set up L2. Identity map
+> +	 * the PML5 table to facilitate this.
+> +	 */
+> +	virt_map(vm, vm->pgd, vm->pgd, 1);
+> +
+> +	vcpu_alloc_vmx(vm, &vmx_pages_gva);
+> +	vcpu_args_set(vcpu, 1, vmx_pages_gva);
+> +
+> +	for (stage = 1;; stage++) {
+> +		vcpu_run(vcpu);
+> +		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
+> +
+> +		switch (get_ucall(vcpu, &uc)) {
+> +		case UCALL_ABORT:
+> +			REPORT_GUEST_ASSERT(uc);
+> +			/* NOT REACHED */
+> +		case UCALL_SYNC:
+> +			break;
+> +		case UCALL_DONE:
+> +			goto done;
+> +		default:
+> +			TEST_FAIL("Unknown ucall %lu", uc.cmd);
+> +		}
+> +
+> +		TEST_ASSERT(uc.args[1] == stage,
+> +			    "Expected stage %d, got stage %lu", stage, (ulong)uc.args[1]);
+> +		if (stage == 1) {
+> +			pr_info("L2 is active; performing save/restore.\n");
+> +			state = vcpu_save_state(vcpu);
+> +
+> +			kvm_vm_release(vm);
+> +
+> +			/* Restore state in a new VM. */
+> +			vcpu = vm_recreate_with_one_vcpu(vm);
+> +			vcpu_load_state(vcpu, state);
+> +			kvm_x86_state_cleanup(state);
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPZwxgAKCRB4tDGHoIJi
-0lTjAP9DBWIql0smcCTv41AISicEcx32++9dYLGuZP2GnfVVvwEAqq9+B9akz4PS
-l2ntUaeyTNhVEinlaBiupteZ3Yz4aA4=
-=wj6X
------END PGP SIGNATURE-----
+It seems like we only load the vCPU state but we don't actually run it
+after restoring the nested state. Should we have another stage and run
+L2 again after the restore? What is the current failure mode without
+9245fd6b8531?
 
---ryBOeWKUiYWTAeKK--
+> +		}
+> +	}
+> +
+> +done:
+> +	kvm_vm_free(vm);
+> +	return 0;
+> +}
+> -- 
+> 2.51.0.470.ga7dc726c21-goog
+> 
 
