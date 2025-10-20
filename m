@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-861366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4796BF28D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:54:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539F1BF2898
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF75646060C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:53:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F3A6F346DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B257A3321B2;
-	Mon, 20 Oct 2025 16:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E953321DB;
+	Mon, 20 Oct 2025 16:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="1gcssCO8"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="CvyYMbEZ"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C892331A59
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C093321A8
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760979129; cv=none; b=pD696aN686jdSviG5RXthO5uN1mb7IyUZV9oj/SFfdH9Kob+lHq8dhAlvi89ymIje8qGE6vGdzeCrZ7ZLsxPqKzMnS08rh6UjgqQcnL7goZh01b5DtAfCWMGvDTCPRLn2eyhYS3PAno3x3Hoq5UimKXoF0qf9EbJVrzFtxOYw0U=
+	t=1760979130; cv=none; b=jqB2BlcFyy0/tkyVwAbEwMRMRtDHvres9w0ejTQYO22iPUkq1tkicOax+ton/vw0bLIp37P+Hc9ZdBbNJfyQjiJ2Ntj6MGISeDkuLQktNZdUbKuq8ItN/7g9Yo4GMte1FJw6zrLgxSQZcl6krZtGkKRYspeBOisT2v0PCAyI8/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760979129; c=relaxed/simple;
-	bh=wy1ICIdGX60YDFSfUgR2rdxBjAGUo3dI3PFdtxnHMOo=;
+	s=arc-20240116; t=1760979130; c=relaxed/simple;
+	bh=CUgs8UQHsU0y7NsqM2mOtZAFUD3SjpR8SKV+TPlaJpU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bQGG8lHtDJvRl9kYeipUFuw86tEuwgiweHdTt7QSR5TSNA0PqXnhN+JO0U3zIsiK4OZiV8F6ucF3NsMrTIl0Zx0SOF66125KAsJ4Vfu4/Uv3b3v38ve7kdsRdkLJnSjltfZSzSjoCRVBfUxwOW/C1DHCfeTudS75CMqOjaWz9/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=1gcssCO8; arc=none smtp.client-ip=209.85.166.47
+	 MIME-Version; b=g/y4PLnNR8sfga90swI5AwZdRDZo/XoQt0oWt2rl2c7NQVlmsNw9XW7LXEp8lqSze/3uCAeOEWpz80EPzblBWJ7j4MN7uEeaPhXYzlusnSJb1BGG7veqictgDPJzaGBbsUXxlVtBkoOovaeQECt48eu9FVKwUoqXJYx+vpyyRtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=CvyYMbEZ; arc=none smtp.client-ip=209.85.166.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-938bf212b72so189179639f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:52:07 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-93e9b5bafa5so75045439f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760979126; x=1761583926; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760979128; x=1761583928; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ME7tN0yU+7BkLvgNaV8YZoYvs3CU33grIokhdTXS5MI=;
-        b=1gcssCO836I7YzjmPM6B9QCTpuHhh0Z0Y2aZYQJN4yx413g/2SJ7IHJO3DazythDoH
-         cx2Bsk8RrTiBkn0cgr77LVQpc4IQnU92E5wcOaocBQ8l2gELhbB2zySqg4Ojw4BlugGZ
-         vSJcaQJp0E/NdQ+cx8g4bXGR3z6tnlzVHombfQ4z55j6ge2F+k9s4O6PqSG8kvASOADQ
-         ZtcwvTIAFylsOWYhQPPvHbMOoBJWJd5obfMnXoy0VnDG6dRRD98txMv4e+47gMJ2xUyM
-         lVoRKVHuaH52eNtJyf6K+Sdko7tnG54NNGkAh5yYPm2dtwEiqkj2ry/lBE5uvNnm7xYW
-         jU4Q==
+        bh=nTOagx7mvvjlab8+UNiNCbZ7xK3rTGi2vCmorF9bL6Q=;
+        b=CvyYMbEZYtlWuQeKzJwv6h6QDFOjjym+Z/iB/0jQ6XfWdseIZtU50EWgK+Zb5+kvfp
+         NFhFknx/YGJOAotOfOgEDCYyF7WGZHBJJJ4iYbeC+aD9YNjizo6F0/knpylAnFxt2Rd/
+         jvHeBD272XLcZH6A+gAmvIV/nqqRlhsUhzsBz8dv5qSppUCMFBQ7mkCeP29zEYLu8vMy
+         zUWO1Y4BbI1/lF6ewHjDCuf2wpbyuJo7ZZQ9cvn7PrDGwGuY3kseUyilvCOKw32zItQP
+         T5yiOVE093loRDy9V3d7iLOkpKveD4XKfOzUBxHqga84luMpj8s2Z8+sTJT/cLmm7vbc
+         XZ1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760979126; x=1761583926;
+        d=1e100.net; s=20230601; t=1760979128; x=1761583928;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ME7tN0yU+7BkLvgNaV8YZoYvs3CU33grIokhdTXS5MI=;
-        b=NwvQ705u+NEP8DsUR5j3bISSzRzMBISjf3KHFXuJVwoA7YP9J94Qk+kfu4LIpzP5GO
-         N+aOinZ1MdO5rOlCMVxAyHcyMpYBKecZ4VB2QT+5v+ajhcWs7jNjtPMMLBBnBE8i0p3a
-         vx9p/wKxVQz4/Q52BbUxkx/f+jhc+oUXyld/Oq96Ra5GSjmWldarT7BA0+3hTER9UHHa
-         6AH5sk2pjBkbiRvL4Jey/GBVFTP49kUHsXuZPGpJFQXGadNgEqCocdYS25RBE6ksCz+Q
-         r1QpyJgN8lDJ/UwCG2PctAaFpOG78dQ/FMVkg/zWZ4/ozxZnZoeBcIlFpjSbR4tMceAd
-         D59Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX1HsIqGPCZ+g8kIWdwgM80u4P3mjKPBGIistv+MlugREAOSf7QQhkdNafA2X6LtTl9DPbNun6M0s9tdwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIvaO1phfb+QnsCOPlHIErk3pcm8zBPw2otSMj4FXuG7Mbpzf8
-	MdljV2uaKIm7VbAGsm2u932FfV/oi+3YtlfaVgnQ1svOYYphdRRAHlc8qAIPLJUCXKs=
-X-Gm-Gg: ASbGnctuLXrOWZ4v5uIL2AYJ8QXcofFAhWCW8BSoyD7LgM13vZdBfnwmNg20+pM4C8q
-	5+dVxlHDfNW3nmFRcqusNoBK2b1/dQYmA9+vNRkWvAGC1cAQ/nNwSOzMdwiLWKWm0PxqRt+ATPx
-	GW1FglMSceHK+5g05QC1DTbo8zdAGbZWFq3tC1M4UTz8Ky8M19lw7t6NfWTcpkOnVBhzz7ChrTo
-	lRpA4JW8Bnkck0Y6QZiLWHHZixpoNCYRJ47WTYptY/aocRfW6HYmQB9/ttvmdbQlftYEChtruAB
-	lOHZPebS1oDy17kLwGfdDrJZzMfd8nHBaZn/QB4efJdutyxAIb5m/So2KfVpP8cQz0b5pzqW4LR
-	Ufz33EcqyETdmON+8V79Xl1uXrkvolEmRFVK102asYRFMHlyAhmlMj12GSFws9j+8w8NyD5UOwM
-	NZSPGwnud045LH6tkkbpsbAnYui2NF3eY5ZilqJYgLhvhECJ35cgInFsATgBgpiOnd
-X-Google-Smtp-Source: AGHT+IH2irmcbwMULie9OSrSx0zC1Cu9OY8pd1/5qlpoxwTt5tQIMKxjTuK3uX5gEo7j5Pm6IgtfPg==
-X-Received: by 2002:a05:6e02:2301:b0:424:7ef5:aeb with SMTP id e9e14a558f8ab-430c526b27fmr218824855ab.17.1760979126308;
-        Mon, 20 Oct 2025 09:52:06 -0700 (PDT)
+        bh=nTOagx7mvvjlab8+UNiNCbZ7xK3rTGi2vCmorF9bL6Q=;
+        b=WLWo4IkEabWi1t330Khe8SoUHj5GsQXu/1ZCLYj5Fo168AcG02CjXtX4tP2KN7Lo1I
+         kOVz/qjNJiR9J/4wiN86nfcm3qELldxFqKo3KevixqZOUZpqNQDVhqi2S32m0yHpPCwy
+         g1de15BaTs8ucFLFOP9kq0TyNSDGtnVszM8brZsJxCgfX03oi7/FG6zz9PuPAW9w4Nym
+         T8+zw4aB/V286w+AfhpOokKD7svELuMiEltcQ4NKZZYN7bPXNdLZaJzEBAKmWCz+pPjS
+         3EcCxWEZuYq16QDxbwxjYNv4jQRdLVdmcosrMQrdyHO33PBz79NuE+bBC4H6WPPppVMO
+         PRHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXwpsoggnjQ+V0HbLCCf2MydjOR0TtR9+uiQuHxO8oEAt32XndSW5XMV333HK4la7akhXG6Vi0QkkBe9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNQGz6r0NPqWttCEU/ozwDJhThJCDrbPna11yXQlYAvsvLBAqX
+	fKcGSqJcHO4Qi8EpUTtdCaGmVffx+Q2DsYD4WrtatokFQlOuDr1h+hvMDLEVdcjzdC4=
+X-Gm-Gg: ASbGncvXqrzWCwECsne5wtjpZ7H2LEhwwPWigojJSD3+wso4vt98byy2h5v4xIXIp3Y
+	CdgKAsmOFPyZHikf1WieYDXsmQyUZeAOkONpxHZfGb7qTQbvc+raDyocr4bD+AGhPH9mMMpaPZw
+	C36l6OhXqAUGdAL3fTbdjdMVG/tQpbGl1lzt5mCfHFWEoovhE1HpI3TK6IsPGm7qg/qpAswRtvT
+	0jnF/0u3tqO621m7UI1A2z9GiJLhlsACVZ82q0AszKZ2F3AVJqr2SPwS2AObKcbTQTBUmg54BXL
+	PYMitKO1+JwqxnX7zwof1YD5VASRdkj5d0/55FLE94Qh0Pr/diqvmVnNBk3MzsrCEo7E5f7c/1x
+	Qxp0c4NaNyvPqJoVOrhZ1YzvZSSMXvqUOvvqryPw7jbOxoImJrVtCK9s5pxP/E9Sqe2t5gE/FMJ
+	Ght5BxLgKmw93tPLIC2RsIvscsBzsxHFYLA2Z6iR6/cGC6htOpdsuJcA==
+X-Google-Smtp-Source: AGHT+IHY1lIklOLT8YiqHf9RVDuR1yd+ypvubmcb+paaE3pfP/eJoAmmNPnDVT26Haw2R/FsMZwu/A==
+X-Received: by 2002:a05:6e02:2301:b0:424:7ef5:aeb with SMTP id e9e14a558f8ab-430c526b27fmr218825965ab.17.1760979127806;
+        Mon, 20 Oct 2025 09:52:07 -0700 (PDT)
 Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9799428sm3116783173.63.2025.10.20.09.52.04
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9799428sm3116783173.63.2025.10.20.09.52.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 09:52:05 -0700 (PDT)
+        Mon, 20 Oct 2025 09:52:07 -0700 (PDT)
 From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dlan@gentoo.org
-Cc: pjw@kernel.org,
+To: pjw@kernel.org,
 	palmer@dabbelt.com,
 	aou@eecs.berkeley.edu,
 	alex@ghiti.fr,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
+	dlan@gentoo.org
+Cc: guodong@riscstar.com,
+	emil.renner.berthing@canonical.com,
+	geert+renesas@glider.be,
+	fustini@kernel.org,
+	ben717@andestech.com,
+	apatel@ventanamicro.com,
+	joel@jms.id.au,
 	spacemit@lists.linux.dev,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/8] riscv: dts: spacemit: enable K1 SoC QSPI on BPI-F3
-Date: Mon, 20 Oct 2025 11:51:50 -0500
-Message-ID: <20251020165152.666221-8-elder@riscstar.com>
+Subject: [PATCH 8/8] riscv: defconfig: enable SPI_FSL_QUADSPI as a module
+Date: Mon, 20 Oct 2025 11:51:51 -0500
+Message-ID: <20251020165152.666221-9-elder@riscstar.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251020165152.666221-1-elder@riscstar.com>
 References: <20251020165152.666221-1-elder@riscstar.com>
@@ -101,93 +103,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Define DTS nodes to enable support for QSPI on the K1 SoC, including
-the pin control configuration used.  Enable QSPI on the Banana Pi
-BPI-F3 board.
+The SpacemiT K1 SoC QSPI IP uses the Freescale driver.  Enable it
+as a module in the default kernel configuration for RISC-V.
 
 Signed-off-by: Alex Elder <elder@riscstar.com>
 ---
- .../boot/dts/spacemit/k1-bananapi-f3.dts      |  6 ++++++
- arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  | 21 +++++++++++++++++++
- arch/riscv/boot/dts/spacemit/k1.dtsi          | 16 ++++++++++++++
- 3 files changed, 43 insertions(+)
+ arch/riscv/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 33ca816bfd4b3..2f3750f7fd6f3 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -258,6 +258,12 @@ dldo7 {
- 	};
- };
- 
-+&qspi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&qspi_cfg>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_2_cfg>;
-diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-index 4eef81d583f3d..e922e05ff856d 100644
---- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-@@ -73,6 +73,27 @@ i2c8-0-pins {
- 		};
- 	};
- 
-+	qspi_cfg: qspi-cfg {
-+		qspi-pins {
-+			pinmux = <K1_PADCONF(98, 0)>,    /* QSPI_DATA3 */
-+				 <K1_PADCONF(99, 0)>,    /* QSPI_DATA2 */
-+				 <K1_PADCONF(100, 0)>,   /* QSPI_DATA1 */
-+				 <K1_PADCONF(101, 0)>,   /* QSPI_DATA0 */
-+				 <K1_PADCONF(102, 0)>;   /* QSPI_CLK */
-+
-+			bias-disable;
-+			drive-strength = <19>;
-+			power-source = <3300>;
-+		};
-+
-+		qspi-cs1-pins {
-+			pinmux = <K1_PADCONF(103, 0)>;   /* QSPI_CS1 */
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+			power-source = <3300>;
-+		};
-+	};
-+
- 	/omit-if-no-ref/
- 	uart0_0_cfg: uart0-0-cfg {
- 		uart0-0-pins {
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index af35f9cd64351..47f97105bff0b 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -823,6 +823,22 @@ uart9: serial@d4017800 {
- 				status = "disabled";
- 			};
- 
-+			qspi: spi@d420c000 {
-+				compatible = "spacemit,k1-qspi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x0 0xd420c000 0x0 0x1000>,
-+				      <0x0 0xb8000000 0x0 0xc00000>;
-+				reg-names = "QuadSPI", "QuadSPI-memory";
-+				clocks = <&syscon_apmu CLK_QSPI_BUS>,
-+					 <&syscon_apmu CLK_QSPI>;
-+				clock-names = "qspi_en", "qspi";
-+				resets = <&syscon_apmu RESET_QSPI>,
-+					 <&syscon_apmu RESET_QSPI_BUS>;
-+				interrupts = <117>;
-+				status = "disabled";
-+			};
-+
- 			/* sec_uart1: 0xf0612000, not available from Linux */
- 		};
- 
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index fc2725cbca187..48afe30d42e88 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -158,6 +158,7 @@ CONFIG_I2C_DESIGNWARE_CORE=y
+ CONFIG_I2C_MV64XXX=m
+ CONFIG_SPI=y
+ CONFIG_SPI_CADENCE_QUADSPI=m
++CONFIG_SPI_FSL_QUADSPI=m
+ CONFIG_SPI_PL022=m
+ CONFIG_SPI_SIFIVE=y
+ CONFIG_SPI_SUN6I=y
 -- 
 2.48.1
 
