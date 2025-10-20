@@ -1,146 +1,256 @@
-Return-Path: <linux-kernel+bounces-860917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEF3BF151C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:49:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4CD9BF1519
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEFE534C8EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:49:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4BEC434C7FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60643112C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8BF30149A;
 	Mon, 20 Oct 2025 12:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bl745gEs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="GJNyNazG"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB399131E49
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43E6354AF2;
+	Mon, 20 Oct 2025 12:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760964531; cv=none; b=EmC5B8fND3lp7K/juYTqoMjGlEEMogzqcZLrxYJKlry0XiahXgxGdR5GNz5cPbmeqh1ozKCjSFUuX8EGh7HTHvw2EqE6Gk5jGz2ZmdQStz2X+g1l5Ji6ybg6geUR2CR/cw4HMhZAzQXPjdOGAOozqDiKc2wghex9LTUZ3QYyzDs=
+	t=1760964530; cv=none; b=nl5EexpALGeqQup0eCqmfqFxaV74gac9MGqwSPPczlb8lC2M0fYTPMgVX1OTwEqhZVg2fukPLha9Q/igH8vJ23oZECTzxBdRHukX60B4mk3i5zH7aGKd+fu/VCpuO8GhKBvJ6qtip5HIUMOlpqKaGKNbzt/1myABTms24yMtbpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760964531; c=relaxed/simple;
-	bh=sB9pCJnnJXwDgD98BDM9PkQE+7RkItJ8pEoctG0Hncg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LlDKvHY8GQTHPcDIjMCEHvOPisf/4qbyMY4kO+mvN76H7UvZLfVsqPXa/sNgMheOGwOBcHj8TycYEP5HpB2OpBKXC5l/QLpVDmQ5DZ7+xNixUcNh8clKM8k/8UO6mMrnZ0sZSxY8J7XMPms+amwk0JkY485laSCHPsNdumlD2+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bl745gEs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760964528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dhSEcE7tet5FBXLX0b5z+/6XO8jmNy1PmZYd5Q2SxU4=;
-	b=bl745gEs9JmpGrc22d70xTP4Fmaa1NqgGpjaE1dWfgO3swNwfuo21TNPhp2qCo+Mv4h7oY
-	oilZZHnE56CwVaVh0mUPjI1cIMUZD2SO4lcwq8kEjQDHMNJW/9s85VfnE4wovnBs8rPKiW
-	6tYgBxNwudee9lmu6TQsr0gBfbhVAOU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-75-GfR_RqHQPtWbukxcLs7fww-1; Mon,
- 20 Oct 2025 08:48:45 -0400
-X-MC-Unique: GfR_RqHQPtWbukxcLs7fww-1
-X-Mimecast-MFC-AGG-ID: GfR_RqHQPtWbukxcLs7fww_1760964524
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 460621800637;
-	Mon, 20 Oct 2025 12:48:44 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.44.32.23])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4261219560AD;
-	Mon, 20 Oct 2025 12:48:41 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Nam Cao <namcao@linutronix.de>
-Subject: [GIT PULL] rv fixes and selftests for v6.18-rc3
-Date: Mon, 20 Oct 2025 14:47:44 +0200
-Message-ID: <20251020124744.111326-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1760964530; c=relaxed/simple;
+	bh=BCK1R0tZ9dNFG0afBBj42c5t3HMFTlWQhHn7snNQLeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUBG9qrWskBKGycmOD0h9AF414xLt4c7ssOLb11XhUE0FIeR9XvdySNAefoC4Zq8krfON5MqzNXkyh9x8MFB8AJw+goR1IrWTYl7nAP/CGDCYc0jC4CkrxwzDv1n2fcTfi4Pa02l/ruuLX3POG1Z5TcsxkM4Fime3+mZAime5wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=GJNyNazG; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=qG38QouOAiJDe70jz6Us+02ZPOy6qlEZVBeSeQllsf4=;
+	b=GJNyNazGNH1J8Z23xlahfIB4N9k1UPOa5jeUmZ8DXTAMdQO1I67Jlq0Uk8toIZ
+	J1haK204p9moPdukvCA4NwSzmBDsujtNmXTsCMTvc3Wt/t6GCzCxrCVIbAQTBsUx
+	4V88hcHLLlhGEfIDbtMswv6J0CtRYphPBJ0yc1BYV1n9Y=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3X7GAL_ZocZNTAA--.29215S3;
+	Mon, 20 Oct 2025 20:48:02 +0800 (CST)
+Date: Mon, 20 Oct 2025 20:48:00 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Andreas Kemnade <akemnade@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alistair Francis <alistair@alistair23.me>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.li@nxp.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 3/3] ARM: dts: imx: e70k02: add sy7636
+Message-ID: <aPYvgKWNvr0RxOKQ@dragon>
+References: <20250917-sy7636-rsrc-v3-0-331237d507a2@kernel.org>
+ <20250917-sy7636-rsrc-v3-3-331237d507a2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-sy7636-rsrc-v3-3-331237d507a2@kernel.org>
+X-CM-TRANSID:M88vCgD3X7GAL_ZocZNTAA--.29215S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtr4kuw4Uuw4fCw1fGF1rZwb_yoW7WrWkpa
+	1Svrs5WrWxWF1fta43AasrCr1fCws2kr1v9w47uFy8Aa1qva4UJF4UKrn3Crn8XFs8Zw4Y
+	vrn5ury7W3Wqv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jezuAUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNALDKWj2L4I5uAAA3u
 
-Steve,
+On Wed, Sep 17, 2025 at 09:14:31AM +0200, Andreas Kemnade wrote:
+> Add the EPD PMIC for the e70k02 based devices as a step towards full EPD
+> support.
+> 
+> Acked-by: Alistair Francis <alistair@alistair23.me>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
+> ---
+>  arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++++++++-
+>  .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 +++++++++++++++++++++
+>  .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 +++++++++++++++++++++
+>  3 files changed, 72 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
+> index dcc3c9d488a88..b4f42f71c6c49 100644
+> --- a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
+> +++ b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
+> @@ -69,6 +69,14 @@ memory@80000000 {
+>  		reg = <0x80000000 0x20000000>;
+>  	};
+>  
+> +	epd_pmic_supply: regulator-epd-pmic-in {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "epd_pmic_supply";
+> +		gpio = <&gpio2 14 GPIO_ACTIVE_HIGH>;
+> +		startup-delay-us = <20000>;
+> +		enable-active-high;
 
-The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
+enable-active-high right after gpio = <... GPIO_ACTIVE_HIGH>, as it's a
+supplement description for "gpio" property.
 
-  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+Shawn
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gmonaco/linux.git rv-6.18-rc3
-
-for you to fetch changes up to d9423638c039a15f7a1720f92c6ed0fddc6fea23:
-
-  selftests/verification: Add initial RV tests (2025-10-20 12:48:20 +0200)
-
-----------------------------------------------------------------
-Summary of changes:
-
-* Adapt the ftracetest script to be run from a different folder, this
-  uses the already existing OPT_TEST_DIR but extends it further to run
-  independent tests, then add an --rv flag to allow using the script for
-  testing RV (mostly) independently on ftrace.
-* A bug causing kernel panic when reading enabled_monitors was reported,
-  change callbacks functions to always use list_head iterators and by
-  doing so, fix the wrong pointer that was leading to the panic.
-* The rtapp/pagefault monitor relies on the MMU to be present
-  (pagefaults exist) but that was not enforced via kconfig, leading to
-  potential build errors on systems without an MMU. Add that kconfig
-  dependency.
-* Add basic RV selftests in selftests/verification to validate things
-  like available/enabled monitors and reactors. This could have caught
-  the bug introducing kernel panic solved above. Tests use ftracetest.
-
-----------------------------------------------------------------
-Gabriele Monaco (2):
-      selftest/ftrace: Generalise ftracetest to use with RV
-      selftests/verification: Add initial RV tests
-
-Nam Cao (2):
-      rv: Fully convert enabled_monitors to use list_head as iterator
-      rv: Make rtapp/pagefault monitor depends on CONFIG_MMU
-
- MAINTAINERS                                        |  1 +
- kernel/trace/rv/monitors/pagefault/Kconfig         |  1 +
- kernel/trace/rv/rv.c                               | 12 ++--
- tools/testing/selftests/ftrace/ftracetest          | 34 +++++++---
- .../ftrace/test.d/00basic/mount_options.tc         |  2 +-
- tools/testing/selftests/ftrace/test.d/functions    |  6 +-
- tools/testing/selftests/verification/.gitignore    |  2 +
- tools/testing/selftests/verification/Makefile      |  8 +++
- tools/testing/selftests/verification/config        |  1 +
- tools/testing/selftests/verification/settings      |  1 +
- .../selftests/verification/test.d/functions        | 39 +++++++++++
- .../test.d/rv_monitor_enable_disable.tc            | 75 ++++++++++++++++++++++
- .../verification/test.d/rv_monitor_reactor.tc      | 68 ++++++++++++++++++++
- .../verification/test.d/rv_monitors_available.tc   | 18 ++++++
- .../verification/test.d/rv_wwnr_printk.tc          | 30 +++++++++
- .../selftests/verification/verificationtest-ktap   |  8 +++
- 16 files changed, 286 insertions(+), 20 deletions(-)
- create mode 100644 tools/testing/selftests/verification/.gitignore
- create mode 100644 tools/testing/selftests/verification/Makefile
- create mode 100644 tools/testing/selftests/verification/config
- create mode 100644 tools/testing/selftests/verification/settings
- create mode 100644 tools/testing/selftests/verification/test.d/functions
- create mode 100644 tools/testing/selftests/verification/test.d/rv_monitor_enable_disable.tc
- create mode 100644 tools/testing/selftests/verification/test.d/rv_monitor_reactor.tc
- create mode 100644 tools/testing/selftests/verification/test.d/rv_monitors_available.tc
- create mode 100644 tools/testing/selftests/verification/test.d/rv_wwnr_printk.tc
- create mode 100644 tools/testing/selftests/verification/verificationtest-ktap
-
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Nam Cao <namcao@linutronix.de>
+> +	};
+> +
+>  	reg_wifi: regulator-wifi {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "SD3_SPWR";
+> @@ -133,7 +141,22 @@ touchscreen@24 {
+>  		vdd-supply = <&ldo5_reg>;
+>  	};
+>  
+> -	/* TODO: SY7636 PMIC for E Ink at 0x62 */
+> +	sy7636: pmic@62 {
+> +		compatible = "silergy,sy7636a";
+> +		reg = <0x62>;
+> +		enable-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+> +		vcom-en-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+> +		epd-pwr-good-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
+> +		vin-supply = <&epd_pmic_supply>;
+> +
+> +		#thermal-sensor-cells = <0>;
+> +
+> +		regulators {
+> +			reg_epdpmic: vcom {
+> +				regulator-name = "vcom";
+> +			};
+> +		};
+> +	};
+>  
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
+> index a2534c422a522..f8709a9524093 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
+> @@ -26,6 +26,11 @@ / {
+>  	compatible = "kobo,tolino-vision5", "fsl,imx6sl";
+>  };
+>  
+> +&epd_pmic_supply {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
+> +};
+> +
+>  &gpio_keys {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_gpio_keys>;
+> @@ -59,6 +64,12 @@ MX6SL_PAD_FEC_RXD1__GPIO4_IO18          0x10059 /* TP_RST */
+>  		>;
+>  	};
+>  
+> +	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
+> +		fsl,pins = <
+> +			MX6SL_PAD_EPDC_PWRWAKEUP__GPIO2_IO14    0x40010059
+> +		>;
+> +	};
+> +
+>  	pinctrl_gpio_keys: gpio-keysgrp {
+>  		fsl,pins = <
+>  			MX6SL_PAD_FEC_CRS_DV__GPIO4_IO25	0x17059	/* PWR_SW */
+> @@ -159,6 +170,14 @@ MX6SL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
+>  		>;
+>  	};
+>  
+> +	pinctrl_sy7636_gpio: sy7636-gpiogrp {
+> +		fsl,pins = <
+> +			MX6SL_PAD_EPDC_VCOM0__GPIO2_IO03        0x40010059 /* VCOM_CTRL */
+> +			MX6SL_PAD_EPDC_PWRCTRL1__GPIO2_IO08     0x40010059 /* EN */
+> +			MX6SL_PAD_EPDC_PWRSTAT__GPIO2_IO13      0x17059 /* PWR_GOOD */
+> +		>;
+> +	};
+> +
+>  	pinctrl_uart1: uart1grp {
+>  		fsl,pins = <
+>  			MX6SL_PAD_UART1_TXD__UART1_TX_DATA 0x1b0b1
+> @@ -329,6 +348,11 @@ &ricoh619 {
+>  	pinctrl-0 = <&pinctrl_ricoh_gpio>;
+>  };
+>  
+> +&sy7636 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_sy7636_gpio>;
+> +};
+> +
+>  &uart1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_uart1>;
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
+> index 660620d226f71..19bbe60331b36 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
+> @@ -36,6 +36,11 @@ &cpu0 {
+>  	soc-supply = <&dcdc1_reg>;
+>  };
+>  
+> +&epd_pmic_supply {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
+> +};
+> +
+>  &gpio_keys {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_gpio_keys>;
+> @@ -69,6 +74,12 @@ MX6SLL_PAD_GPIO4_IO18__GPIO4_IO18	0x10059 /* TP_RST */
+>  		>;
+>  	};
+>  
+> +	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
+> +		fsl,pins = <
+> +			MX6SLL_PAD_EPDC_PWR_WAKE__GPIO2_IO14    0x40010059
+> +		>;
+> +	};
+> +
+>  	pinctrl_gpio_keys: gpio-keysgrp {
+>  		fsl,pins = <
+>  			MX6SLL_PAD_GPIO4_IO25__GPIO4_IO25	0x17059	/* PWR_SW */
+> @@ -169,6 +180,14 @@ MX6SLL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
+>  		>;
+>  	};
+>  
+> +	pinctrl_sy7636_gpio: sy7636-gpiogrp {
+> +		fsl,pins = <
+> +			MX6SLL_PAD_EPDC_VCOM0__GPIO2_IO03       0x40010059 /* VCOM_CTRL */
+> +			MX6SLL_PAD_EPDC_PWR_CTRL1__GPIO2_IO08   0x40010059 /* EN */
+> +			MX6SLL_PAD_EPDC_PWR_STAT__GPIO2_IO13    0x17059 /* PWR_GOOD */
+> +		>;
+> +	};
+> +
+>  	pinctrl_uart1: uart1grp {
+>  		fsl,pins = <
+>  			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
+> @@ -319,6 +338,11 @@ &ricoh619 {
+>  	pinctrl-0 = <&pinctrl_ricoh_gpio>;
+>  };
+>  
+> +&sy7636 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_sy7636_gpio>;
+> +};
+> +
+>  &uart1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_uart1>;
+> 
+> -- 
+> 2.47.3
+> 
 
 
