@@ -1,173 +1,242 @@
-Return-Path: <linux-kernel+bounces-860093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2445CBEF4E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:34:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6DEBEF4E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6011894BA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:35:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8192834938B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DF62BEFFF;
-	Mon, 20 Oct 2025 04:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0D72BEC23;
+	Mon, 20 Oct 2025 04:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NfAyEKYW"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="faYkP5NZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6B4287258
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF4F258CE5
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760934883; cv=none; b=XIWSP3ctNO4rWPiBNvJiHrc7tmTx+MPLwsPlGTZHDuZv2RlnPOuRps6LaJsOy8sypNnPeSUag+VbcI7nVbi2oLEdz49JMHPfE1CffLKWdmF7hrlcZEyeUpXTseT3207EsdAs+U+Du8f3yepn76D4inroYRpYYbZh9dwKqVGPWzI=
+	t=1760935158; cv=none; b=P2P76lj5IDIMP0kb7vG7XSaBd985eP5f6aTV/M2s9CD+Ad7H9T3ARirh9wqAiZrMbGE9wadQqXLOww+wnf/yTfwbDWdGeS+Y2KT250MZygmud8ww+1sogE4va9AOl3/+4DfDyq5GQvX3wvd+EPCNsxjfsnciI6pJDzCV2T+xjPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760934883; c=relaxed/simple;
-	bh=7ewcKsl4gSix4JTKxm4T8FGk4nC5GRnthKInzNEJlTI=;
+	s=arc-20240116; t=1760935158; c=relaxed/simple;
+	bh=0lEuHphZEJBnAn7ReiIvbjfn1Hb0S/RVFc4qor7YKp0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sPgXgdpuCynfzmjW7vSElqJ2I9UzV83+dbdJEv+0D517oYakkj6TDU2Al1oyPkvTki4E1yVafh9O1O/FQv/El5SLc+owdHx+9ebYXUXo6RxchYEKu3ewUFrx+TBZr3Hkr8ieVO3YYv880bTjRjPqy+VLluGs+NkxRsNLIJh0RHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NfAyEKYW; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33bb090aa78so3262694a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760934881; x=1761539681; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+onDgxMPyKLOY40mbxy0dXul6lSc7HSME7/BE/rGWAw=;
-        b=NfAyEKYWo82OpAZIbTWLx75EMDh5FhuZBaTsW0RAyNMPjXQ+sr+CBlaTAFBZLagSh6
-         vggU/q6Zei07093xZj/SDfED2I8Tso9wzBBJC1Z9JgcVtGalglXcY5k0XXgwdnD2ZhM3
-         ya6owBHGnr27ZLYfm7peX6Kf78k7CteKOUXKXu+LWz3FNyJw7BTgHi8JiWIJWyDGWKn4
-         tnYQL0mAAu7SzBTmUsCIh/C/8SkNM2SQAtpAC7DqJTduRGsNeaC9oIZr3uXpEleK7j4b
-         /PAr0/cmDG+Hjl+0Voi0YXcnBdef/n3RKjzje5V1XhCO8E7XaOJOt95ClaTGmFr3f8MC
-         s5oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760934881; x=1761539681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+onDgxMPyKLOY40mbxy0dXul6lSc7HSME7/BE/rGWAw=;
-        b=HjB76BB5IFHmW0tjjt3ikJMbgEcB9pIb7Z1SbqBA4GDG8LzAptavfEbzJMQH+lRfn1
-         Glk2QM5IqWVc03BC8+ajX0ivtOQdokmuO4XkfWa8bD6RdKDJDoLo838cIel/vlJ1CU+O
-         LTAUbYqgnWYpc6fGrGX33hv157h8RGECJ3wiM9gH4PUEObBGY5SdVHARNnT/8sgohZPa
-         lABHm+y0JPQQF1l07T7vYhhBPbq7pW8ZGgtvBwYtneGkHehgvyY4aBO9+8rP/BZLUebK
-         fT5NBoeV/NbwaxTlUGP/ejB4okg3HI/beRkmnYnhMEUWDAIWQGlJgt6rt7SleHZufQ83
-         QFFg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+XX9LVhY2gZaJlN/rcC0mVAZxugQDG0QFw2lScmBVcwO4xgUq4Xhj+/RIwcWqfPPcxeT66yfMsMG+1Ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnk7ODgRaCNm8btZ0HOxik/32y2fd3jJXU9ZlhFmaQgsMTf1Z/
-	WGbmjAM71sH2YzALXwtmWZ1dYS4Euz+DSkPEXrP3NpgGWBsJouGO7NparPwGZbgDRQdJSpeZLtZ
-	HPVks5kXsJspazz9Pkj0+TY0is14ZvXyL/ZFeG+Qofw==
-X-Gm-Gg: ASbGncvbTtIPRn3WmB49faZSUnwjGzTb+vAdIDTJ5GW/DrPrMMy+sZ2i4jkgDPEB9IR
-	xPHCB0DqVMY12l1HAZNSsYyjJxx5cLJF/AgjgdOOBg5kUX5zxOft7Gs33xGDxSMT1z2qASPRYLQ
-	hXUjxlQgFq5jG6nUcVaIPEAe2YVclPg0OKFqG+s98+K5+K/1SvnZA4FwaSbk+6uOLwUBk1jgJgT
-	SfYRVg6RaVW44ZIpptNh62A8/87y36wg4dL2+fZbdoGHCNfCWaakjiQDyyqDJeDjToHJRWn0MvR
-	vTFkHdSWekOYVWu308o=
-X-Google-Smtp-Source: AGHT+IH9a1FKrBN3wWlaNuwKbnc7SmqwwgKUv1BbHl2nQXJtIw5nLWAzBwdqnbFCmBJfMi6jc127yHWzB+hEpQgkJLs=
-X-Received: by 2002:a17:90b:3510:b0:32c:2cd:4d67 with SMTP id
- 98e67ed59e1d1-33bcf892b26mr17239614a91.13.1760934880715; Sun, 19 Oct 2025
- 21:34:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=GC/p20U75f87Z+iz2BeyHcbo3cO+OwpS0KkYPQxv6BQcPKaBy99ZeYyc64gMNAQq76FqrrxuHwHJU+noamyFRlDcR1SxQqIQh3Ya5y5lAqp/sDyQ7YALg5+q4T3oy/JKFYpV3i6KPQV4OUdaNOIkH/Wk+wwgUkknfdioW6WH4yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=faYkP5NZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55430C19424
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760935158;
+	bh=0lEuHphZEJBnAn7ReiIvbjfn1Hb0S/RVFc4qor7YKp0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=faYkP5NZE16YZIaz6nqK6z7ynSXCjhcD1uOyAeEPWJ4sP5bJpqucJS6RQlOGOkXKR
+	 mfHHL1Yf0hu+lO+sx+PQxbuFXJg+zensK2iWp0N+QiEN3bIy906y9h1qutHBGQP8qh
+	 ZPUkkNk/pEOb/i04Xnh+KeIqH+oZk7e7jtBjdzt1yhn0hakKWt9ZWrvSpz+YysU2N6
+	 qCpWsUpZwAWu9TOquIfHaJiohC2DD4q7j2oWuAXnx/2bqQ5l/XLYMV/Fyip4mkjaLv
+	 xb7MELuNZdBgvlOk07bHGiuB9bYXljRnaMj72qR18bAJAcanYpPEXKR8Vo+3cpJQo0
+	 wU7oD0UnnQFAA==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b403bb7843eso714602866b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:39:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTELXCZpL1c1GJ1P5rNGxbj0Ycm7nVazs+QyF2QHm7/KgL2ZXubuZAvoRtmZlB0K5z+SVnx9OwiRYV6pU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhljeenYrVd4E+uQA7n0rPsN99ZNF3z/pwYaKsT9K+RTkCGXbC
+	oT8YekjPGKOgOcTuEdrlod9D/+pxccnTMh0RMKI1YeoY58tmYcU2BjyWySsaSZk2ErNCltUySeq
+	sINZqPmTaindXeRJakRGPr9E2TdrRJus=
+X-Google-Smtp-Source: AGHT+IFePAXF7U5/SChhNT0TWqp8e7MJxybLoyo+yfz+CrPCbQrNHNTphVAVhfTnBX18iJLK2g8Xmt/Vyr7nk4DfoIw=
+X-Received: by 2002:a17:907:fd15:b0:b47:de64:df34 with SMTP id
+ a640c23a62f3a-b6474241266mr1497341966b.51.1760935156739; Sun, 19 Oct 2025
+ 21:39:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020042056.30283-1-luxu.kernel@bytedance.com>
-In-Reply-To: <20251020042056.30283-1-luxu.kernel@bytedance.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Mon, 20 Oct 2025 12:34:29 +0800
-X-Gm-Features: AS18NWCAyFau_n9LGvHEY6sx4LEsfPQSzxZhTugNhp11gJ7ivOgOscG6Z4MCNx8
-Message-ID: <CAPYmKFs5ATB26ZWtP3vyT=zhJHrafgvBAm6GUw27AM7h5vE9Kw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] riscv: Add Zalasr ISA extension support
-To: corbet@lwn.net, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, will@kernel.org, peterz@infradead.org, 
-	boqun.feng@gmail.com, mark.rutland@arm.com, anup@brainfault.org, 
-	atish.patra@linux.dev, pbonzini@redhat.com, shuah@kernel.org, 
-	parri.andrea@gmail.com, ajones@ventanamicro.com, brs@rivosinc.com, 
-	guoren@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	apw@canonical.com, joe@perches.com, lukas.bulwahn@gmail.com
+References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev> <20251014071917.3004573-4-chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <20251014071917.3004573-4-chenxiaosong.chenxiaosong@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 20 Oct 2025 13:39:04 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9hFbYvLtX7TRL0dmVTQj_hvAaY=uKhmUtCUVNhJuGMzg@mail.gmail.com>
+X-Gm-Features: AS18NWDC2DN-ewOyxqqf19p2skDpuXOuak1yYFKOalzKxymLebLbhSfRaQbhXJY
+Message-ID: <CAKYAXd9hFbYvLtX7TRL0dmVTQj_hvAaY=uKhmUtCUVNhJuGMzg@mail.gmail.com>
+Subject: Re: [PATCH v3 03/22] smb: move some duplicate definitions to common/cifsglob.h
+To: chenxiaosong.chenxiaosong@linux.dev
+Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
+	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
+	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
+	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This series was automatically blocked by Gmail due to too many
-recipients, so I resent it twice, causing the emails to appear
-discontinuous. I apologize for any inconvenience this may have caused
-to the reviewer.
-
-Best regards,
-Xu Lu
-
-On Mon, Oct 20, 2025 at 12:21=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> =
-wrote:
+On Tue, Oct 14, 2025 at 4:21=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
+v> wrote:
 >
-> This patch adds support for the Zalasr ISA extension, which supplies the
-> real load acquire/store release instructions.
+> From: ZhangGuoDong <zhangguodong@kylinos.cn>
 >
-> The specification can be found here:
-> https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
+> In order to maintain the code more easily, move duplicate definitions to
+> new common header file.
 >
-> This patch seires has been tested with ltp on Qemu with Brensan's zalasr
-> support patch[1].
+> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+> ---
+>  fs/smb/client/cifsglob.h   | 19 +------------------
+>  fs/smb/common/cifsglob.h   | 30 ++++++++++++++++++++++++++++++
+>  fs/smb/server/smb_common.h | 14 +-------------
+>  3 files changed, 32 insertions(+), 31 deletions(-)
+>  create mode 100644 fs/smb/common/cifsglob.h
 >
-> Some false positive spacing error happens during patch checking. Thus I
-> CCed maintainers of checkpatch.pl as well.
+> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> index 8f6f567d7474..c5034cf9ac9e 100644
+> --- a/fs/smb/client/cifsglob.h
+> +++ b/fs/smb/client/cifsglob.h
+> @@ -24,6 +24,7 @@
+>  #include "cifsacl.h"
+>  #include <crypto/internal/hash.h>
+>  #include <uapi/linux/cifs/cifs_mount.h>
+> +#include "../common/cifsglob.h"
+cifs is a legacy name. How about renaming it smbglob.h?
+>  #include "../common/smb2pdu.h"
+>  #include "smb2pdu.h"
+>  #include <linux/filelock.h>
+> @@ -702,12 +703,6 @@ get_rfc1002_length(void *buf)
+>         return be32_to_cpu(*((__be32 *)buf)) & 0xffffff;
+>  }
 >
-> [1] https://lore.kernel.org/all/CAGPSXwJEdtqW=3Dnx71oufZp64nK6tK=3D0rytVE=
-cz4F-gfvCOXk2w@mail.gmail.com/
+> -static inline void
+> -inc_rfc1001_len(void *buf, int count)
+> -{
+> -       be32_add_cpu((__be32 *)buf, count);
+> -}
+> -
+>  struct TCP_Server_Info {
+>         struct list_head tcp_ses_list;
+>         struct list_head smb_ses_list;
+> @@ -1021,8 +1016,6 @@ compare_mid(__u16 mid, const struct smb_hdr *smb)
+>  #define CIFS_MAX_RFC1002_WSIZE ((1<<17) - 1 - sizeof(WRITE_REQ) + 4)
+>  #define CIFS_MAX_RFC1002_RSIZE ((1<<17) - 1 - sizeof(READ_RSP) + 4)
 >
-> v4:
->  - Apply acquire/release semantics to arch_atomic operations. Thanks
->  to Andrea.
+> -#define CIFS_DEFAULT_IOSIZE (1024 * 1024)
+> -
+>  /*
+>   * Windows only supports a max of 60kb reads and 65535 byte writes. Defa=
+ult to
+>   * those values when posix extensions aren't in force. In actuality here=
+, we
+> @@ -2148,30 +2141,20 @@ extern mempool_t cifs_io_request_pool;
+>  extern mempool_t cifs_io_subrequest_pool;
 >
-> v3:
->  - Apply acquire/release semantics to arch_xchg/arch_cmpxchg operations
->  so as to ensure FENCE.TSO ordering between operations which precede the
->  UNLOCK+LOCK sequence and operations which follow the sequence. Thanks
->  to Andrea.
->  - Support hwprobe of Zalasr.
->  - Allow Zalasr extensions for Guest/VM.
+>  /* Operations for different SMB versions */
+> -#define SMB1_VERSION_STRING    "1.0"
+> -#define SMB20_VERSION_STRING    "2.0"
+>  #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
+>  extern struct smb_version_operations smb1_operations;
+>  extern struct smb_version_values smb1_values;
+>  extern struct smb_version_operations smb20_operations;
+>  extern struct smb_version_values smb20_values;
+>  #endif /* CIFS_ALLOW_INSECURE_LEGACY */
+> -#define SMB21_VERSION_STRING   "2.1"
+>  extern struct smb_version_operations smb21_operations;
+>  extern struct smb_version_values smb21_values;
+> -#define SMBDEFAULT_VERSION_STRING "default"
+>  extern struct smb_version_values smbdefault_values;
+> -#define SMB3ANY_VERSION_STRING "3"
+>  extern struct smb_version_values smb3any_values;
+> -#define SMB30_VERSION_STRING   "3.0"
+>  extern struct smb_version_operations smb30_operations;
+>  extern struct smb_version_values smb30_values;
+> -#define SMB302_VERSION_STRING  "3.02"
+> -#define ALT_SMB302_VERSION_STRING "3.0.2"
+>  /*extern struct smb_version_operations smb302_operations;*/ /* not neede=
+d yet */
+>  extern struct smb_version_values smb302_values;
+> -#define SMB311_VERSION_STRING  "3.1.1"
+> -#define ALT_SMB311_VERSION_STRING "3.11"
+>  extern struct smb_version_operations smb311_operations;
+>  extern struct smb_version_values smb311_values;
 >
-> v2:
->  - Adjust the order of Zalasr and Zalrsc in dt-bindings. Thanks to
->  Conor.
+> diff --git a/fs/smb/common/cifsglob.h b/fs/smb/common/cifsglob.h
+> new file mode 100644
+> index 000000000000..00fd215e3eb5
+> --- /dev/null
+> +++ b/fs/smb/common/cifsglob.h
+> @@ -0,0 +1,30 @@
+> +/* SPDX-License-Identifier: LGPL-2.1 */
+> +/*
+> + *
+> + *   Copyright (C) International Business Machines  Corp., 2002,2008
+> + *   Author(s): Steve French (sfrench@us.ibm.com)
+> + *              Jeremy Allison (jra@samba.org)
+> + *
+> + */
+> +#ifndef _COMMON_CIFS_GLOB_H
+> +#define _COMMON_CIFS_GLOB_H
+> +
+> +static inline void inc_rfc1001_len(void *buf, int count)
+> +{
+> +       be32_add_cpu((__be32 *)buf, count);
+> +}
+> +
+> +#define SMB1_VERSION_STRING    "1.0"
+> +#define SMB20_VERSION_STRING    "2.0"
+> +#define SMB21_VERSION_STRING   "2.1"
+> +#define SMBDEFAULT_VERSION_STRING "default"
+> +#define SMB3ANY_VERSION_STRING "3"
+> +#define SMB30_VERSION_STRING   "3.0"
+> +#define SMB302_VERSION_STRING  "3.02"
+> +#define ALT_SMB302_VERSION_STRING "3.0.2"
+> +#define SMB311_VERSION_STRING  "3.1.1"
+> +#define ALT_SMB311_VERSION_STRING "3.11"
+> +
+> +#define CIFS_DEFAULT_IOSIZE (1024 * 1024)
+> +
+> +#endif /* _COMMON_CIFS_GLOB_H */
+> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+> index d742ba754348..863716207a0d 100644
+> --- a/fs/smb/server/smb_common.h
+> +++ b/fs/smb/server/smb_common.h
+> @@ -10,6 +10,7 @@
 >
-> Xu Lu (10):
->   riscv: Add ISA extension parsing for Zalasr
->   dt-bindings: riscv: Add Zalasr ISA extension description
->   riscv: hwprobe: Export Zalasr extension
->   riscv: Introduce Zalasr instructions
->   riscv: Apply Zalasr to smp_load_acquire/smp_store_release
->   riscv: Apply acquire/release semantics to arch_xchg/arch_cmpxchg
->     operations
->   riscv: Apply acquire/release semantics to arch_atomic operations
->   riscv: Remove arch specific __atomic_acquire/release_fence
->   RISC-V: KVM: Allow Zalasr extensions for Guest/VM
->   RISC-V: KVM: selftests: Add Zalasr extensions to get-reg-list test
+>  #include "glob.h"
+>  #include "nterr.h"
+> +#include "../common/cifsglob.h"
+>  #include "../common/smb2pdu.h"
+>  #include "smb2pdu.h"
 >
->  Documentation/arch/riscv/hwprobe.rst          |   5 +-
->  .../devicetree/bindings/riscv/extensions.yaml |   5 +
->  arch/riscv/include/asm/atomic.h               |  70 ++++++++-
->  arch/riscv/include/asm/barrier.h              |  91 +++++++++--
->  arch/riscv/include/asm/cmpxchg.h              | 144 +++++++++---------
->  arch/riscv/include/asm/fence.h                |   4 -
->  arch/riscv/include/asm/hwcap.h                |   1 +
->  arch/riscv/include/asm/insn-def.h             |  79 ++++++++++
->  arch/riscv/include/uapi/asm/hwprobe.h         |   1 +
->  arch/riscv/include/uapi/asm/kvm.h             |   1 +
->  arch/riscv/kernel/cpufeature.c                |   1 +
->  arch/riscv/kernel/sys_hwprobe.c               |   1 +
->  arch/riscv/kvm/vcpu_onereg.c                  |   2 +
->  .../selftests/kvm/riscv/get-reg-list.c        |   4 +
->  14 files changed, 314 insertions(+), 95 deletions(-)
+> @@ -26,16 +27,8 @@
+>  #define SMB311_PROT            6
+>  #define BAD_PROT               0xFFFF
 >
+> -#define SMB1_VERSION_STRING    "1.0"
+> -#define SMB20_VERSION_STRING   "2.0"
+> -#define SMB21_VERSION_STRING   "2.1"
+> -#define SMB30_VERSION_STRING   "3.0"
+> -#define SMB302_VERSION_STRING  "3.02"
+> -#define SMB311_VERSION_STRING  "3.1.1"
+> -
+>  #define SMB_ECHO_INTERVAL      (60 * HZ)
+>
+> -#define CIFS_DEFAULT_IOSIZE    (64 * 1024)
+>  #define MAX_CIFS_SMALL_BUFFER_SIZE 448 /* big enough for most */
+>
+>  #define MAX_STREAM_PROT_LEN    0x00FFFFFF
+> @@ -464,9 +457,4 @@ static inline unsigned int get_rfc1002_len(void *buf)
+>  {
+>         return be32_to_cpu(*((__be32 *)buf)) & 0xffffff;
+>  }
+> -
+> -static inline void inc_rfc1001_len(void *buf, int count)
+> -{
+> -       be32_add_cpu((__be32 *)buf, count);
+> -}
+>  #endif /* __SMB_COMMON_H__ */
 > --
-> 2.20.1
+> 2.43.0
 >
 
