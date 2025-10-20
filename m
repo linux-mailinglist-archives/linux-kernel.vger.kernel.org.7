@@ -1,220 +1,124 @@
-Return-Path: <linux-kernel+bounces-861845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279CFBF3CBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5EBBF3CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D13B44E4378
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:57:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 952394EF462
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3081B2EFD9C;
-	Mon, 20 Oct 2025 21:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="TBt5uTMD"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9682E3387
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AA021C16E;
+	Mon, 20 Oct 2025 22:00:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DBE28BA95
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760997435; cv=none; b=Bq+A8boJl1G8cUMaqd9lB7xdOaqVr3SnZYLuuuQnjJZugYm+V1kOLcXqMYCLq/0pd5LxWI10+OUVaQ85jvAtjozEZ6IOTJrVIZFo1yf1vZk96AzP8zoqsUpgPaCGkaoSxu06HSrehhofs8rrK+3hVehtt1jPzCap8y4CPAIPFPM=
+	t=1760997613; cv=none; b=Obss2U+LOZMQLU3pwebYsZUfjnXsiX6yCo30A8150/q9bnXEACm5IejYJtQ/a2mGtXok/w+KmRdrVWuGGeK4Z0jqMCVAyIyoCy6DJeXSYFk1NjrBKiL/nTA99reazGi37L9Y7f94vGerBpdkMIA8+bvEAYwqckgxmJR7Ur2s2P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760997435; c=relaxed/simple;
-	bh=V768A8yxayt7P4IfA0lT/xT5Fhuc4WSMi3Z0ranezsU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ASdsp6PXC0sZWOnpnsidhH4z4hGqV/ZDGNaNIaeyIOQPOVFQ5ntnlPcUjdlqc7CFqSeO9sdNc7ErZumkkZJ677RxsXuYnmsuFUhLANbSu5oiTKK9ZPpvchgl5DYtbTi3R9z+j6rY06R1zgIIyX3sNgOPeloMXtqwEe/vzVJOsLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=TBt5uTMD; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63d6ee383bdso804149a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760997432; x=1761602232; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yknPt/PYO8q5rRsHwsdUNqs0P5wiVU3fHyZ3dxpXBPg=;
-        b=TBt5uTMDCPlJKdFEd4YNcVZ6UPjAh3XCPoohpq6P2BglQYr60tiv1p3iCxYpliLASx
-         of5Bz68276tsl+RDxY/YkgKeNAbyjcVHnYjHVNdXvz+xW89u3eQlj0xF6Gluqf8ZxUyK
-         UUhkXbxS33dfMoKDjpuVnw80GVaG3JWEEuI0PNSD0zlHZ2sDHz+8AK3wRwtPN4rqLxAr
-         Tcz+ZiHX8tAUHcXUDdFkxPY2BWuVR8jM25YjA/zr61DyJal1+3bXyhbhdJ5UKY3hyYIW
-         tVgpA27m81WH6bxLaf5BXAOEqacT465eoJNUfof2yrn//xvgf7pALW0DtUHfd7pGGIO6
-         LBwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760997432; x=1761602232;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yknPt/PYO8q5rRsHwsdUNqs0P5wiVU3fHyZ3dxpXBPg=;
-        b=fpdPNFKVFOGdeK86aBhkOaDfL+gG5On4cm8Gd1ZBWdqBh1svAkkAWm1aE1oZiDqiyt
-         i1dB5luVfAGOty/dbaZTLi37tUILegKESpofY6irdzAr7ySpflKhBz55D/3CKosnK1zH
-         XcPnHu2w4ETDi4pR48HQ6DLEDSA/8ch8A9TkVKxEdZ/M7DAtGSDPA1CFP64Ky6iRBbcr
-         0Vmz9HGuPUX5gWFBG7EkWXvio6azEZ3paYhPHfdWUnTEl35d3vgT0MGE9NVxX5nxn645
-         fAOjWHR4oObMSreW3AA3tGYf3ewMVCDEz0qJkKmNLDrmmw6AVb38dl8dSN5uLy3ndcVD
-         5LTw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8OPkFior/pyvbOOVi8ICCPmNUK7hnn/hPAW08NnuZOD8tu6qwloKjFIKx4Pzu87VFRLj7KrvXP7ABJl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvgHqeK1OrBDrduvDDA03J5/DppiRKqdl3JGXGMtGIxHi6ZKR5
-	39WCs574qP6fZaoin50u1EpQef6dJN46XD2y3sifZ4nMfbGFfOhZJJxaI4iEFot4lRzEOY6761G
-	Ce+hDyfOYGKapVWPev+avOH7TZjib6StrVfyaZ2iiKQ==
-X-Gm-Gg: ASbGncsE5ZcOrHaTiedLEGCDDUklAxk3EipOpWsDae9aB3pUnak7Itv9JGSon2yfr3o
-	FAPCZzo8YCLh4iLlOb9EFoHfq23ySjVnVxAo7H8NdvSOw080bDuw/DbxO+Mu10WbD8mwD0bIzMy
-	bBpai8cQ4NAG1ZzLIorHXsZZrK1rgBY/Nnl6K2DJ/OKQ3MDtIX5ducK3c4C4K05oY13CXnpZPvj
-	qGYWagY19En8NJ8mDrPaeVIaGAsTNY8PMhci2I7952+nM8rDj9ObuiNY97Q4yFxn89Q
-X-Google-Smtp-Source: AGHT+IHQae2JTSc9wDUKvH2Zkgs7s+B9woSGFjjo4cTKOt1mF9fuNToFGqWKvdpPe0XvAAEv7aHWf3quANxxuxkPcIo=
-X-Received: by 2002:a17:907:3d91:b0:b30:2f6b:448f with SMTP id
- a640c23a62f3a-b6473245877mr1851254166b.25.1760997431856; Mon, 20 Oct 2025
- 14:57:11 -0700 (PDT)
+	s=arc-20240116; t=1760997613; c=relaxed/simple;
+	bh=L679A6msYvHUkm/JwWRb7m0hy/SGgv6lgw6Wc6utwDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eatJ1F9xvU+iNkOq4xRoBICPRjAD+6V0blAm7W5i581qkhbiZIPB2NrNj8+I5zKUKYpKHulruu3DtDOe/nCiXFbTnQ355p/U3znhSNhNQq5srLXiucCnrvrOUKmpJ2sHfw2Ojwc0f1tstgjfjfBfhTe9UEPBrXROkEVT7l9obro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 902AC1007
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:00:01 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 372563F63F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:00:09 -0700 (PDT)
+Date: Mon, 20 Oct 2025 22:59:55 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: boris.brezillon@collabora.com, steven.price@arm.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
+Subject: Re: [PATCH v2] drm/panthor: Fix potential memleak of vma structure
+Message-ID: <aPaw236x57tWohC6@e110455-lin.cambridge.arm.com>
+References: <20251020200243.1324045-1-akash.goel@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018171756.1724191-1-pasha.tatashin@soleen.com>
- <20251018171756.1724191-9-pasha.tatashin@soleen.com> <aPXrLy8BmblbLpCG@kernel.org>
-In-Reply-To: <aPXrLy8BmblbLpCG@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 20 Oct 2025 17:56:34 -0400
-X-Gm-Features: AS18NWAztFjNYjBIm4rRiGeQCx-E5VPlPZGMKjs9EYAdnOCA2q6eV6QJOgzo-JU
-Message-ID: <CA+CK2bDMYwd59_+OkRN-qcy70V=06Ui1AhCiMb9YJRPdn3-SYQ@mail.gmail.com>
-Subject: Re: [PATCH v6 08/10] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251020200243.1324045-1-akash.goel@arm.com>
 
-> > +config KEXEC_HANDOVER_DEBUG
-> > +     bool "Enable Kexec Handover debug checks"
-> > +     depends on KEXEC_HANDOVER_DEBUGFS
-> > +     help
-> > +       This option enables extra sanity checks for the Kexec Handover
-> > +       subsystem. Since, KHO performance is crucial in live update
-> > +       scenarios and the extra code might be adding overhead it is
-> > +       only optionally enabled.
->
-> And empty line here would be nice.
+On Mon, Oct 20, 2025 at 09:02:43PM +0100, Akash Goel wrote:
+> This commit addresses a memleak issue of panthor_vma (or drm_gpuva)
+> structure in Panthor driver, that can happen if the GPU page table
+> update operation to map the pages fail.
+> The issue is very unlikely to occur in practice.
+> 
+> v2: Add panthor_vm_op_ctx_return_vma() helper (Boris)
+> 
+> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+> Signed-off-by: Akash Goel <akash.goel@arm.com>
 
-Done.
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
->
-> >  endmenu
-> > diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> > index c87d00c40c82..ebfc31814d16 100644
-> > --- a/kernel/liveupdate/kexec_handover.c
-> > +++ b/kernel/liveupdate/kexec_handover.c
-> > @@ -8,6 +8,7 @@
-> >
-> >  #define pr_fmt(fmt) "KHO: " fmt
-> >
-> > +#include <linux/cleanup.h>
-> >  #include <linux/cma.h>
-> >  #include <linux/count_zeros.h>
-> >  #include <linux/kexec.h>
-> > @@ -131,26 +132,26 @@ static struct kho_out kho_out = {
-> >
-> >  static void *xa_load_or_alloc(struct xarray *xa, unsigned long index, size_t sz)
-> >  {
-> > -     void *elm, *res;
-> > +     void *res = xa_load(xa, index);
-> >
-> > -     elm = xa_load(xa, index);
-> > -     if (elm)
-> > -             return elm;
-> > +     if (res)
-> > +             return res;
-> > +
-> > +     void *elm __free(kfree) = kzalloc(sz, GFP_KERNEL);
-> >
-> > -     elm = kzalloc(sz, GFP_KERNEL);
-> >       if (!elm)
-> >               return ERR_PTR(-ENOMEM);
-> >
-> > +     if (WARN_ON(kho_scratch_overlap(virt_to_phys(elm), sz)))
->
-> I'd move the WARN_ON into kho_scratch_overlap().
+Best regards,
+Liviu
 
-I do not like O(N^2), let's keep it outside, even though it is a debug
-kernel, there is no need to make it unnecessary slow, when we are
-saving just two lines of code.
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 6dec4354e378..63af8ee89b08 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -1146,6 +1146,18 @@ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  	}
+>  }
+>  
+> +static void
+> +panthor_vm_op_ctx_return_vma(struct panthor_vm_op_ctx *op_ctx,
+> +			     struct panthor_vma *vma)
+> +{
+> +	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++) {
+> +		if (!op_ctx->preallocated_vmas[i]) {
+> +			op_ctx->preallocated_vmas[i] = vma;
+> +			return;
+> +		}
+> +	}
+> +}
+> +
+>  static struct panthor_vma *
+>  panthor_vm_op_ctx_get_vma(struct panthor_vm_op_ctx *op_ctx)
+>  {
+> @@ -2081,8 +2093,10 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+>  	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
+>  				   op_ctx->map.sgt, op->map.gem.offset,
+>  				   op->map.va.range);
+> -	if (ret)
+> +	if (ret) {
+> +		panthor_vm_op_ctx_return_vma(op_ctx, vma);
+>  		return ret;
+> +	}
+>  
+>  	/* Ref owned by the mapping now, clear the obj field so we don't release the
+>  	 * pinning/obj ref behind GPUVA's back.
+> -- 
+> 2.25.1
+> 
 
->
-> > +             return ERR_PTR(-EINVAL);
-> > +
-> >       res = xa_cmpxchg(xa, index, NULL, elm, GFP_KERNEL);
-> >       if (xa_is_err(res))
-> > -             res = ERR_PTR(xa_err(res));
-> > -
-> > -     if (res) {
-> > -             kfree(elm);
-> > +             return ERR_PTR(xa_err(res));
-> > +     else if (res)
-> >               return res;
-> > -     }
-> >
-> > -     return elm;
-> > +     return no_free_ptr(elm);
-> >  }
->
-> ...
->
-> > @@ -379,14 +384,17 @@ static int kho_mem_serialize(struct kho_out *kho_out)
-> >       struct khoser_mem_chunk *chunk = NULL;
-> >       struct kho_mem_phys *physxa;
-> >       unsigned long order;
-> > +     int ret = -ENOMEM;
->
-> Nit: s/ret/err/
-
-Done.
-
->
-> >
-> >       xa_for_each(&kho_out->track.orders, order, physxa) {
-> >               struct kho_mem_phys_bits *bits;
-> >               unsigned long phys;
-> >
-> > diff --git a/kernel/liveupdate/kexec_handover_debug.c b/kernel/liveupdate/kexec_handover_debug.c
-> > new file mode 100644
-> > index 000000000000..7986dcc63047
-> > --- /dev/null
-> > +++ b/kernel/liveupdate/kexec_handover_debug.c
-> > @@ -0,0 +1,25 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * kexec_handover_debug.c - kexec handover optional debug functionality
-> > + * Copyright (C) 2025 Google LLC, Pasha Tatashin <pasha.tatashin@soleen.com>
-> > + */
-> > +
-> > +#define pr_fmt(fmt) "KHO: " fmt
-> > +
-> > +#include "kexec_handover_internal.h"
-> > +
-> > +bool kho_scratch_overlap(phys_addr_t phys, size_t size)
-> > +{
-> > +     phys_addr_t scratch_start, scratch_end;
-> > +     unsigned int i;
-> > +
-> > +     for (i = 0; i < kho_scratch_cnt; i++) {
-> > +             scratch_start = kho_scratch[i].addr;
-> > +             scratch_end = kho_scratch[i].addr + kho_scratch[i].size - 1;
->
-> I agree with Pratyush that
->
->                 scratch_end = kho_scratch[i].addr + kho_scratch[i].size;
->
->                 if (phys < scratch_end ...
->
-> is clearer.
-
-Done.
-
-Thanks,
-Pasha
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
