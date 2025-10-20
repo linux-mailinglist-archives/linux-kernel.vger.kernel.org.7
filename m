@@ -1,208 +1,110 @@
-Return-Path: <linux-kernel+bounces-861299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE99BBF2523
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:10:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933FBBF2526
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4F53B8505
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:09:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52D494F74DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB14283682;
-	Mon, 20 Oct 2025 16:09:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE462773D4;
+	Mon, 20 Oct 2025 16:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Lk//sBX"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73203283FEA
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C819C1CEADB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976572; cv=none; b=pWVXfoydoNQi0rZSMdO+0B10WVQmcjSv3HTN8A/xhpyGsUrWK3HuI0z84FD8m9F7NaIcU+iHM/EwPLA/MiNTPmKxA+p+DOCwGyS8bBUtnr5uyZyHfIX18056ahiYM4XTQM2dm8WNYERvAOqW+KBb75MhsuUSrifqwomvPPSP7Po=
+	t=1760976621; cv=none; b=GwV63h4YGAbC6iA3ruJKo1bPVcX2eaQx91HGUsA+5K5MIF8dgm0AkjYFLr6NkDxisFrWzDIvVtQWcap9hQSU0qviABE9VN/GZktbtdDYfZZkv32GUn8mPDCYhHuO92hOWiqaUapsEgPZI9/tleUkBu/GbsVB0QULHq6a57mpGTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976572; c=relaxed/simple;
-	bh=cKX7axGAua4wBOQ7vViFnnyY08CuouvVP8szBHpbHH4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lLDcWdNs5Hb8vG506kSSsfQQGT/xA+XBARrCd9/3ypNGRHdCmfmRKk0jMSc7A/9bCIxP+jySv+ENv6h7IuaWOD4Q93JjxMRTNqAYXIfrwO5MVh3yaOWzWRcYXAx24kPwW1Q87sjCydEKvEoCZeP3nZrCNo2aaNr70fOpXccn+wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430d1adb32aso19413135ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:09:30 -0700 (PDT)
+	s=arc-20240116; t=1760976621; c=relaxed/simple;
+	bh=NE26bYfoFFrIsWDpJOzZL4KrJBFLdl0TaANwy0FsKOM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LD4/d50YsaimuWX/pbvQ5u2sAY8pqCioFtldcf0r/T8QYsaraO3ej6U5+n5pCooF/EE0RrypgaTPatETr+icMRDcvnXFfpGn0wGWr3rn3+R0KKvbnlHa/IoVgp2nnz6zhwP0D2ueNYyd5YVj7gFwWQOQ2U9B3ghyJktaU7jID+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Lk//sBX; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bc5d7c289so7864542a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760976619; x=1761581419; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xu0WN8ythofnvoWOCKr5Ol3+oLE60o8C+tmt+Bq/TD8=;
+        b=2Lk//sBXNYMHMrDphL13wGF9pO/RYoP1Bz1PzVmBZFyzau+qOvyeF4Yd2QJYpkKs1/
+         Ezvsc0CdLyOfSh2Mg9ypOmgccD47e9+2Lu2qr69nxaEjwFqrcM0ssCMiYiynOmUeVJ1p
+         vXHAZ+990JbAZPJaL/z2+lyiVu5aKKyTDDxrzTpU8afpAPS7TVvVIkwBCFF6dxb906rq
+         TvG6h17RwrW/WsLswjdTkX6Gc0XvMq9KVPhPYDleOMi8sHJa9+uwPrQHmVWe9kf1zCnb
+         4IH5rCN+qZXRnSSY+KD1kZWGSvdCyX2oWcnBqlkRUskLlqe1LSee4p7DXsiVDYDq7y2x
+         AEWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976569; x=1761581369;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pbfF70cDDtAHBRC9nSIxTU9q86P/OB6WZ1gA9jNUyrg=;
-        b=GYeHPQjmcUWRKHKRZ4wAYojGlLrW9t+mKvMXt8iJbkAAxQcY/BPdt9OEbzehRzH8qg
-         sDyM6m3RcZK7pWFuj1rhwGvYRLFsytIqW2mpO4TKpb7Z7ZS4+k+buicXw6GGRuhHCE8c
-         IF45IO4xMT2L/CqDVYHG7y6FaDa2DmauYsqchJvVjN2WBpzmjtIHh3TrDs045LG8osOB
-         n0hTZIUELK7n0Th+ExxaNM1HRmTRZl3I5+vY8OwifpwGONLIolvk3DHX9GWbWHOGro8P
-         mB+kf5RwxUowK15s/qvBFiBHipDd7yYgZvDb0mAjsGNAqoUeiCFVhZHVli4DUYR2yCDx
-         maww==
-X-Forwarded-Encrypted: i=1; AJvYcCUIZv+IFYclffSY2cZTQx9hNHW//TbtK0NOQ+NBSclPEh+J52NmW0Ij934HgkkDomHWd4qAMR0SE3EWwcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz257s1LKv90I+oMxJaQGpoYmWTKifyBe5CfNN2JKC6otdvMPKO
-	57UK33Jz5CCY7tORyJ/BX+K44pL0K6BAzQERSQj7BDdF1NxSnTIv2a5gUWeunYBE3mcD+2qrGeR
-	fPwQKGfqA6K17ziHb1W6QTvUxyJqnhDHGyce0b8Rr/Bvyl7Bq7qBcsv9Ul6M=
-X-Google-Smtp-Source: AGHT+IHYQTSzzfTWBjWfSVU0sprZlwQ9IxoWFFjnmAvndOeKFlOeFDGJlIqFloDQ99h7zzClGfhPq4Srx74v+eVNKlbeVAHa/O5P
+        d=1e100.net; s=20230601; t=1760976619; x=1761581419;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xu0WN8ythofnvoWOCKr5Ol3+oLE60o8C+tmt+Bq/TD8=;
+        b=i40EO4xt9gClKw830g8hfLJGsaPIBsDNq7NlGN++pzZS+Vpte9tqYRPNWAdsfs8dtY
+         IUMkODqeOrU7enSjjiFTvUyc7P9TWU5dZ4gHo5QTSYcLRm0EahZka0yQNBruIXc/J1kM
+         M8KVJYjbDKKyzClj/gUDDw8SBwX3BWeDWKJhtU4X/wIWfw68KP4arrbSAio6QHB8pNUz
+         Gg4S9VaSttQ/k2b+gFUEqN+cIIuBcNRIr77+po8IpIFKavbb55fxI7sLzN3feTZA7PoB
+         EcRIwza788yYpVKcGXaKOOEL19cx2pOqjmM1hw394Vr8NIDiHuG/sQTwU+O/pCgtQ3fn
+         d7nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvBHUWU3XyNXRlNtubg0X7PPniZusMS94XuEOEpV6BC2n5fF0YJLtfAi4SHP5JfLauJILA+tPGGHtC0Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Sj3NfKzYEsx0cBJEhebV1boesaP7lzKfOAughCje5yisRGTf
+	rG3qKVJcBjKec5u3OPkKzWLjBWbwuIAZQzpp9B2hKb7R6RZTbbTvznqhKXQVa2/sAAggkxK4EUl
+	EEkAtFg==
+X-Google-Smtp-Source: AGHT+IGJLbXrm62yjngKT3FP3u1oyPXRP6DoV0W7nmjBQLe1fhWafGHsJm096m+Nlm5LTnuEg5uF8cgAl3k=
+X-Received: from pjzl22.prod.google.com ([2002:a17:90b:796:b0:33d:6d99:1ed4])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5111:b0:329:ca48:7090
+ with SMTP id 98e67ed59e1d1-33bcf940e76mr15500567a91.37.1760976619094; Mon, 20
+ Oct 2025 09:10:19 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:10:17 -0700
+In-Reply-To: <20251015-vmscape-bhb-v2-2-91cbdd9c3a96@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a46:b0:42b:2f98:3fc2 with SMTP id
- e9e14a558f8ab-430c52b4580mr193897435ab.17.1760976569555; Mon, 20 Oct 2025
- 09:09:29 -0700 (PDT)
-Date: Mon, 20 Oct 2025 09:09:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f65eb9.a70a0220.205af.0034.GAE@google.com>
-Subject: [syzbot] [net?] possible deadlock in gro_cells_receive
-From: syzbot <syzbot+f9651b9a8212e1c8906f@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20251015-vmscape-bhb-v2-0-91cbdd9c3a96@linux.intel.com> <20251015-vmscape-bhb-v2-2-91cbdd9c3a96@linux.intel.com>
+Message-ID: <aPZe6Xc2H2P-iNQe@google.com>
+Subject: Re: [PATCH v2 2/3] x86/vmscape: Replace IBPB with branch history
+ clear on exit to userspace
+From: Sean Christopherson <seanjc@google.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	David Kaplan <david.kaplan@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Asit Mallick <asit.k.mallick@intel.com>, 
+	Tao Zhang <tao1.zhang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hello,
+On Wed, Oct 15, 2025, Pawan Gupta wrote:
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index 49707e563bdf71bdd05d3827f10dd2b8ac6bca2c..00730cc22c2e7115f6dbb38a1ed8d10383ada5c0 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -534,7 +534,7 @@ void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
+>  		: "memory");
+>  }
+>  
+> -DECLARE_PER_CPU(bool, x86_ibpb_exit_to_user);
+> +DECLARE_PER_CPU(bool, x86_pred_flush_pending);
 
-syzbot found the following issue on:
+Rather than "flush pending", what about using "need" in the name to indicate that
+a flush is necessary?  That makes it more obvious that e.g. KVM is marking the
+CPU as needing a flush by some other code, as opposed to implying that KVM itself
+has a pending flush.
 
-HEAD commit:    cf1ea8854e4f Merge tag 'mmc-v6.18-rc1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12456492580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
-dashboard link: https://syzkaller.appspot.com/bug?extid=f9651b9a8212e1c8906f
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+And maybe spell out "prediction"?  Without the context of features being checked,
+I don't know that I would be able to guess "prediction".
 
-Unfortunately, I don't have any reproducer for this issue yet.
+E.g. x86_need_prediction_flush?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a6a5b37662b9/disk-cf1ea885.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4b4d732ae480/vmlinux-cf1ea885.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/acd7feec5537/bzImage-cf1ea885.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f9651b9a8212e1c8906f@syzkaller.appspotmail.com
-
-============================================
-WARNING: possible recursive locking detected
-syzkaller #0 Not tainted
---------------------------------------------
-syz.2.329/7421 is trying to acquire lock:
-ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
-ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
-
-but task is already holding lock:
-ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
-ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock((&cell->bh_lock));
-  lock((&cell->bh_lock));
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-8 locks held by syz.2.329/7421:
- #0: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #0: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: bpf_test_timer_enter+0x1e/0x2b0 net/bpf/test_run.c:40
- #1: ffffffff8d64ab00 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0xa1/0x540 kernel/softirq.c:163
- #2: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: __local_bh_disable_ip+0xa1/0x540 kernel/softirq.c:163
- #3: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #3: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #3: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: netif_receive_skb_list_internal+0x4fd/0xcb0 net/core/dev.c:6297
- #4: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #4: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #4: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: ip6_input+0x23/0x270 net/ipv6/ip6_input.c:499
- #5: ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
- #5: ffffe8ffffd48888 ((&cell->bh_lock)){+...}-{3:3}, at: gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
- #6: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #6: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #6: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: ip6_input+0x23/0x270 net/ipv6/ip6_input.c:499
- #7: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #7: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #7: ffffffff8d7aa4c0 (rcu_read_lock){....}-{1:3}, at: gro_cells_receive+0x50/0x790 net/core/gro_cells.c:21
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 7421 Comm: syz.2.329 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3041
- check_deadlock kernel/locking/lockdep.c:3093 [inline]
- validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3895
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- rt_spin_lock+0x88/0x3e0 kernel/locking/spinlock_rt.c:56
- spin_lock include/linux/spinlock_rt.h:44 [inline]
- gro_cells_receive+0x404/0x790 net/core/gro_cells.c:30
- ip6_tnl_rcv+0x7c/0xa0 net/ipv6/ip6_tunnel.c:903
- ip6gre_rcv net/ipv6/ip6_gre.c:-1 [inline]
- gre_rcv+0xbfa/0x11e0 net/ipv6/ip6_gre.c:588
- ip6_protocol_deliver_rcu+0xe0b/0x15c0 net/ipv6/ip6_input.c:438
- ip6_input_finish+0x191/0x370 net/ipv6/ip6_input.c:489
- NF_HOOK+0x30c/0x3a0 include/linux/netfilter.h:318
- ip6_input+0x16a/0x270 net/ipv6/ip6_input.c:500
- dst_input include/net/dst.h:474 [inline]
- ip6_sublist_rcv_finish+0x1c8/0x2a0 net/ipv6/ip6_input.c:88
- ip6_list_rcv_finish net/ipv6/ip6_input.c:145 [inline]
- ip6_sublist_rcv+0xb11/0xdd0 net/ipv6/ip6_input.c:321
- ipv6_list_rcv+0x3e5/0x430 net/ipv6/ip6_input.c:355
- __netif_receive_skb_list_ptype net/core/dev.c:6122 [inline]
- __netif_receive_skb_list_core+0x5f4/0x800 net/core/dev.c:6169
- __netif_receive_skb_list net/core/dev.c:6221 [inline]
- netif_receive_skb_list_internal+0x96f/0xcb0 net/core/dev.c:6312
- netif_receive_skb_list+0x54/0x450 net/core/dev.c:6364
- xdp_recv_frames net/bpf/test_run.c:280 [inline]
- xdp_test_run_batch net/bpf/test_run.c:361 [inline]
- bpf_test_run_xdp_live+0x1790/0x1b20 net/bpf/test_run.c:390
- bpf_prog_test_run_xdp+0x75b/0x10e0 net/bpf/test_run.c:1331
- bpf_prog_test_run+0x2cd/0x340 kernel/bpf/syscall.c:4673
- __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6152
- __do_sys_bpf kernel/bpf/syscall.c:6244 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6242 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6242
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3bce98efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3bccbee038 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007f3bcebe5fa0 RCX: 00007f3bce98efc9
-RDX: 0000000000000048 RSI: 0000200000000600 RDI: 000000000000000a
-RBP: 00007f3bcea11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f3bcebe6038 R14: 00007f3bcebe5fa0 R15: 00007fffd6bba178
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Or x86_prediction_flush_exit_to_user if we would prefer to clarify when the flush
+needs to occur?
 
