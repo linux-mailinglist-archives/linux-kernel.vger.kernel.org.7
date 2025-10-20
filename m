@@ -1,223 +1,102 @@
-Return-Path: <linux-kernel+bounces-861834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A511BF3C2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 545DFBF3C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F0E3A2CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377E13AD60F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86752BDC15;
-	Mon, 20 Oct 2025 21:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111762DFF28;
+	Mon, 20 Oct 2025 21:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+lD1c9V"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E86mJ40O"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C437D1DF985
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AFE134AB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760995858; cv=none; b=EGYvpOYsoN/a72d/sgZTDlrqsENc1LmL7PsuinPfkpSUbUUWabzQ5vix5cNRc9QK840OEQoNU5tlpT6O54RcSx03gzLBRHd7pDc1GyOSNLh8nzWpW3oIawYxrL4t3H6aK5zXkEvcAyuHsEvF1nWOaaCsk7tQRBIZ2cgJqsvPg84=
+	t=1760996017; cv=none; b=DVEBsABxDAJzmlZcd0LR0ysJLVI9COmBSun+/cpT2zYtbbC3PqKQcciKo5cwu7CwZ6UnFVOQsH5k5hvAdf/zSQoigaovaaIBZBYmFaKkDRELFpGKC7Z3VcfsADxzC/X0g3yqUsjbb58bKcl2am/rcc9Su0fII7G1e9ppdr+2+Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760995858; c=relaxed/simple;
-	bh=gp/b0KsqLpgnPhP8Z/rp8/SKndJ7l3F+g4g1d9a5GZA=;
+	s=arc-20240116; t=1760996017; c=relaxed/simple;
+	bh=YrGlth5fvXPzZeAmBmyPZPRYd5dwsROMF4koS4KTwi8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VwRudDOb02PZOYN8mTNOtsXs34b0wOcx0ZS64hcBVebtTK+OzJQ+s821vDFIabAYSiKeh1DEzY9qSkFAaxb241dU6f0iEWzhbtBRDxIBEBy+fp8Y8lzTvSC2dCGuCQqW/U8uh0560HEpBn9yFfbymcawwA8iIb7CH7+zKDQruTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+lD1c9V; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-269640c2d4bso8590455ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:30:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=qAW6Bz8W3P1wuMz6ZEFaPaqLxhDhfzq9VLHXS3eYtTIPqawOvgatWqoGZ3d96cvoi15d8gy/DRiMqKq7AltABQtX5Z0ocBTPjCZnIieWH4gLA3XzFvg3UV3iWg9VgQwRs61g98psNj6C0ibsC75v3yzuaLGoBu0Z97SP9+CR0JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E86mJ40O; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-78488cdc20aso30144997b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:33:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760995856; x=1761600656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ba6kY56LKajg5gR+mfYZ1l0Mti/V4+1lpEveR2gotOM=;
-        b=d+lD1c9VFScQyTTIde9A4ObQS0UnPZOyBWxC0NlB2bcXi78V434pfh0Imz/7WXp0Jm
-         sPuvs4KXxMiC9Zr4zqcqOMtYtTi3KYFfGnwLu2B4dkx9gaFjyiFfmZSEy54trQzG5Ar4
-         BM407iZ8jaGFZ4wF+1pg2w4PHHrwrkXOYxs1zwEss0qVKtV/EmPUr+TwU6shhZflvomO
-         iucODrogudIDUjGazbT3WYIkzVJ9ZGpaSgciY81mu8abcqXpHq6uPW/axGSsnu5ascZq
-         8FJyAa6IaLzN1SJFYJfDmajEVFO4omft4/ocH4fimm0zkxOKXZ/2aTWr89Fb/8hWDbES
-         I7xg==
+        d=linaro.org; s=google; t=1760996015; x=1761600815; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YrGlth5fvXPzZeAmBmyPZPRYd5dwsROMF4koS4KTwi8=;
+        b=E86mJ40OvCSR8ntDIfW649tLJ3wA7fiz3uKUgMSOyJ9DZi+nQQwGOqK08FRAv48nMP
+         d4EZISYUjzAQ71gtqtDL9uvu8yZqO3WES3b7L8fFqnr8JcSxV4av+x3iW2c1Twp7cWFZ
+         XqtiwPqsoUUItd5AGt4ifPohAmmWvCA+VjTpHl4MnKC/4iAU+K1YtT2aS9PkjhK+IBOo
+         LfHPtBpjQYk04TObgLLk18+WwBetmrP6r7/Dog3zLmgsQoB5XVvXxjdrU+teHpViHQYG
+         8xhYcwfRHlfmp/9u9BB/gedTapeadLnLHjqkTOhiq5/zyNXFBiGAU6sYTQOm6Bd4g1rh
+         +beQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760995856; x=1761600656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ba6kY56LKajg5gR+mfYZ1l0Mti/V4+1lpEveR2gotOM=;
-        b=SAI1gK6npfolhZqrZrA5X2NodE+BoPibMUrc8CEVfoVn5Xk9wTZ7FkdWWC8gZZu8lb
-         p29Ym1oij+0RDOfVwI49SKQh6yDQOyCGrtElqcwfcypvoSbqh0Gnq2eS9MJaXHaPlGu3
-         vX1x4GdOu6wogQJA1BxjmkJLr6zaU/6lyVm4H/L4b+foGAtR4NhhVobP4PfxA5dZviqb
-         7ZBgMoIckZlI5312Hy5R5qNyGAXPYbg8fybOtM/gmwukP2FOHz47EZzq70cTe/5nGvwd
-         Dlos/SuKMEn0+QOkXSQVu24CZkbJnslBcN27VJC8bTWFswiuC01tFaZPz7ujHnSCHE+U
-         0VTQ==
-X-Gm-Message-State: AOJu0YzvjhZq0prEXAesL7lOL0hFte2/ewi5QkJx1M2RJ7HBNcohK34r
-	lRyx906ZtHA0INchjnsthA722nSg5Ye1i82pXlS58xnu6xwRjxW/RK90Yz/DTyP6FX1bH3Ihzx5
-	CzziwMEAzn/bL46lwIeR3vn3xKcyRpK8=
-X-Gm-Gg: ASbGncuwfjW3fiKQb4r/BBfT5YmRY/nKb8LhUC/YTmEFbthBZDh9+bR05qxKSY34wI6
-	p4LBI8X+JO0EHkJnU7jncG+mPWmyULX4Cd3oY6pdLmK73IKJORUoLN/nMBE9gN/nrZGeOVkvdyw
-	x7LV0Y+XWzFqI4X3kedg2xVCWX4UZCuGIfGEEWmWMGTqupa4mJ6ogLcvWs8tIQlORsWQ21ofl4e
-	ZQUety+KgCEqsLjRbgE5Bm1Bz3XE3tTwRdZ3zyK6DkwjL3IJqBZHn3HYO65ly77qhM+6sPilyUx
-	+yIx1K34BBXCu8stvUaQ4zfKVkwvDpcITdtg9iyVhcg3q9GDOus/qO5bn5+rqdFvPsMZinN4bQw
-	kCBl9XETxyoM4Bw==
-X-Google-Smtp-Source: AGHT+IGuIlogvO3qiXAz17lC+JAXlrcckH7vWCchmd8okkyTNJDWWsiiPF/LNLwVhABlkDWXY45TBR8ANM/9BveSOCo=
-X-Received: by 2002:a17:903:8c3:b0:25a:4437:dbb7 with SMTP id
- d9443c01a7336-290c9d2debcmr99091045ad.4.1760995856042; Mon, 20 Oct 2025
- 14:30:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760996015; x=1761600815;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YrGlth5fvXPzZeAmBmyPZPRYd5dwsROMF4koS4KTwi8=;
+        b=KdX9cVe+Z74e5KhpghxwhW+B/Jumhu0h/ApSQaMQlDrsush2F0pojEdDHFP+IzxCpJ
+         8BDw51zqdun8Syaqc/36Bh2+azvBAp2MjLJwwwmtref8nkuPhyQh5JUCoriZ1j+Yms++
+         aqadJG2YppEg5tnayVDJO2SVYdIBgWvEqxImZ1BJOuqsyY5fkbTzGAUcC7yWi9ScRx6S
+         IKuEiSOA0ONUUNkyEXG9xez1bTTrdnZ9cTxkhDEbjgQXWZdlkvM708wtca7F3nZsuIge
+         XjtcQ1dw6gb3WtB1IAk4U+nZHP7hJWmYJI5bHUQnGt9gvjTTO8M0gmX3hYlg2XQwNPYV
+         Xx7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVKqEO8GzLOMXQZfaXUdYJmjQfd/q7+pTBQifolD3GKKGfYPUQxC9zHbl0QXMRT8M5h+daniXO+70JVFow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1DvL9MEw2f0WpUl+11gF/DiobJwu76QzE9Vby8G5sPj/xdFpo
+	QNFWV/yFBzjj9k5JdESLYKqMlm9wcjQxe5YH6CPeR6hUMrDsc53PISno2e7WI0yZ2IhUz7LenhQ
+	QeivKQw+xTt7hsl5vcu6VbehW2G5V3+6mkKM0IwQ525NYl5ylXv9bX/4=
+X-Gm-Gg: ASbGnctLjHYtnvz1j5kT/5gL9ASruAkn0PhDJKBF27Lp/oIDz9uezT8ss65nu3q/4uv
+	y8t+cxdIHlI1fCCTJYo/9yN/7uf3Ybl3zeq70ino5fsomUsx3kV9CPyOBl4ZmoYiFu0S7mdLVMg
+	cON2qRNO0zZu/3oq67ae50+lU3ft+xAd3LcogRFzoDGP6lc0g/K9O+wSbCcMlp3WBuDQDnhtbWI
+	2OhEJjjN1RIFI2pTnhNfLQy1cO0ac+j51QmzMxLtK7RakOZV/y59VcaUsCig/3W9jHIPS4=
+X-Google-Smtp-Source: AGHT+IGnAj+PvLwk6sz8k8VBBs+rDQFENAxd89cmxP0Cskfc+qbx8RLj0mUzmzdGLHOstur2GpIPaCgQ2XYuSy6QrTw=
+X-Received: by 2002:a05:690e:1558:10b0:63e:1531:b3dd with SMTP id
+ 956f58d0204a3-63e160e3c4amr9861710d50.7.1760996014901; Mon, 20 Oct 2025
+ 14:33:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020185539.49986-1-joelagnelf@nvidia.com> <20251020185539.49986-8-joelagnelf@nvidia.com>
-In-Reply-To: <20251020185539.49986-8-joelagnelf@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 20 Oct 2025 23:30:43 +0200
-X-Gm-Features: AS18NWBOQUVimKkWa1HJu_1dg-N_FwTUSitxLBjCaOz3GTuCAcSPB_k9_xk69eM
-Message-ID: <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com>
-Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table management
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com, 
-	Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251017074646.3344924-1-gary.yang@cixtech.com>
+In-Reply-To: <20251017074646.3344924-1-gary.yang@cixtech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 20 Oct 2025 23:33:19 +0200
+X-Gm-Features: AS18NWCltDS_N4NaY0c3A83FgC_-lfyfiL8AVRFFfvMHb2dlUjXD7k7Kzg6VMk0
+Message-ID: <CACRpkdbcSkKnwODw_utWEUcwg+Q=_h=psM6ZKphGUr4iPqK4XQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Add pinctrl support for Sky1
+To: Gary Yang <gary.yang@cixtech.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	cix-kernel-upstream@cixtech.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+Hi Gary,
 
-A few nits below (I do sometimes this kind of docs review to try to
-keep a consistent style across all Rust code).
+overall this version is starting to look really nice!
 
-On Mon, Oct 20, 2025 at 8:56=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.c=
-om> wrote:
->
-> +//!     .set_table_frame_number(new_table.frame_number());
-> +//! // Call a function to write PDE to VRAM address
+Please address Conors comments, then see about the
+compile error on the driver itself. The code looks good
+otherwise.
 
-Newline between these. Period ad the end.
+Looking forward to v5!
 
-> +//! ## Given a PTE, Get or allocate a PFN (page frame number).
-
-In headers, no period at the end. Also, is "Get" intended to be capitalized=
-?
-
-> +//!     // Call a function to read 64-bit PTE value from VRAM address
-
-Period at the end too (more of these elsewhere).
-
-> +//!     if pte.valid() {
-> +//!         // Return physical frame number from existing mapping
-> +//!         Ok(Pfn::new(pte.frame_number()))
-
-Early returns where possible, like in C, i.e. to avoid indentation on
-big `else` branches.
-
-> +/// Memory size constants
-> +pub(crate) const KB: usize =3D 1024;
-> +pub(crate) const MB: usize =3D KB * 1024;
-
-The docs will only apply to the first item, so this probably was meant
-to be a `//` instead of a `///`.
-
-Or you could use a module to contain these (and then possibly `use`
-them outside), and then you can have docs in the module itself, but
-that is heavier.
-
-> +/// Page size: 4 KiB
-> +pub(crate) const PAGE_SIZE: usize =3D 4 * KB;
-
-`rustdoc` would eventually render the value and the non-evaluated
-expression, and in the source code it already says `4 * KB`, so I
-think repeating the value isn't needed, unless you mean to show it is
-really a multiple of 2.
-
-> +pub(crate) enum PageTableLevel {
-> +    Pdb, // Level 0 - Page Directory Base
-> +    L1,  // Level 1
-> +    L2,  // Level 2
-> +    L3,  // Level 3 - Dual PDE (128-bit entries)
-> +    L4,  // Level 4 - PTEs
-
-In this case, I think you meant the other way around, i.e. actual
-docs: `///` instead of `//`.
-
-(Also, unless there is a particular reason (e.g. it is a big table),
-please generally put comments on top of things, not at the side, which
-matches closer to what is needed for docs.)
-
-> +    /// Convert an Address to a frame number.
-
-These should eventually be intra-doc links, but at least please use
-for the moment backticks when referring to Rust items like types etc.
-
-> +    /// # Example
-
-We always use the plural for these section headers, even if there is a
-single item (e.g. single example).
-
-> +    /// ```no_run
-> +    /// let va =3D VirtualAddress::default();
-> +    /// let pte_idx =3D va.level_index(PageTableLevel::L4);
-> +    /// ```
-
-This will need some `use` lines -- not needed now, but just as a
-reminder that these will get actually built eventually.
-
-> +    /// Get raw u64 value.
-
-Intra-doc link or at least backticks.
-
-> +    /// The valid bit is inverted so add an accessor to flip it.
-> +    pub(crate) fn set_valid(&self, value: bool) -> Pde {
-
-This docs string sounds like a commit message.
-
-> +/// Dual PDE at Level 3 - 128-bit entry containing both LPT and SPT poin=
-ters.
-> +/// Lower 64 bits =3D big/large page, upper 64 bits =3D small page.
-
-It sounds like a few of these details should be on its own paragraph
-to avoid having them in the short description (title).
-
-> +/// // Call a function to read dual PDE from VRAM address
-> +/// let mut dual_pde: DualPde =3D read_dual_pde(dpde_addr)?;
-> +/// // Call a function to allocate a page table and return its VRAM addr=
-ess
-> +/// let spt_addr =3D allocate_page_table()?;
-> +/// dual_pde.set_spt(Pfn::from(spt_addr), AperturePde::VideoMemory);
-> +/// // Call a function to write dual PDE to VRAM address
-> +/// write_dual_pde(dpde_addr, dual_pde)?;
-
-Newlines before the comments, i.e. between "conceptual blocks".
-
-> +    pub lpt: Pde, // Large/Big Page Table pointer (2MB pages) - bits 63:=
-0 (lower)
-> +    pub spt: Pde, // Small Page Table pointer (4KB pages) - bits 127:64 =
-(upper)
-
-Docs instead of comments.
-
-> +    /// Check if has valid Small Page Table.
-
-Missing word?
-
-Thanks!
-
-Cheers,
-Miguel
+Yours,
+Linus Walleij
 
