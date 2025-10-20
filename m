@@ -1,309 +1,211 @@
-Return-Path: <linux-kernel+bounces-860997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EFFBF18BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:34:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA60FBF18D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38E9421FD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67983421FE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F337131B133;
-	Mon, 20 Oct 2025 13:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FDE2F8BDA;
+	Mon, 20 Oct 2025 13:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m2lzKac2"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BC6YHzXs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1656B3191D2
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3377431283D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760967241; cv=none; b=leF0GEq0OWa2Ukm5A5NA+jZRzu90YNkiCTwG7YUP2UaGQdJghx7I25F5DUdcz6SikSRljG3j2LY1lLvpd23lriZLIwF8nbkWMbZ3qHfk68KE+xT4zQkdosyyhmkfc4hU6MNmG7XCKE9nf/Li/x3PKdw22f5xmg7siPU9P4Pi65I=
+	t=1760967272; cv=none; b=sKBMmQF8uk5zWjAYsRMN+IVcRtYnTA+3MBwvt22Y5ZKHWrjh+iDJg9fsSWBlcHWntrekACwHBsng/OiJqZ/UdD2NPAsHn3Q1IYzKs+toTVlw4/Ycc66L4VeZs0HQEW/bzJItCGbShCyG23P5PIj0WtZYKoBiN1WRP2jqa12uyF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760967241; c=relaxed/simple;
-	bh=R4pXEmMNsuBfi+wBM9oIG78safYpExcG2zg7DqP0UyI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZoyG+Zsfzrg09OgSJv7AVvy0oqmd3k2hZtRX4LVm6yM4P6rKwKRxJMl9wkZ2Mhl7J1SVvk1acoWyOutDFd26OHz1Fic3o/V5VpPaukuPoA7iAsAaf/O4GxqxUw1g3J3hupf0h0xbiuC/anSJcEP3tm44jt+WIX96RepYr3yjvuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m2lzKac2; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-471125c8bc1so51778045e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760967237; x=1761572037; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XujdrAVflWUs/mjjly58vQki5jrDGo9CKvfr8/mpjRU=;
-        b=m2lzKac2YXlReoAZsD/h7ZAyLwVRqe3lw2JwAx0O0j2a+G8OoA95VyXc31ZM1n5cGn
-         82mcZ9HcZrhlXq8vHnfeyiFa4KLLE8gHfi8BoYs+He6PwNK5vASEjMUnJ8tBSeQfVlWu
-         1Q/VEDjKaWi5AewFKou03OIVla4EOGROdfc3+51QqZOxJQdyCWaF6DtTwENyrrgykdS4
-         tYij16iZyVKCQlvInilH5aBsSVVMQPCnQyy2JE30XBKQigOHjFzOl/NDYGXqCBz08eEc
-         sIueUmnQpnphCuLguKoYCw9dRfDQnie+OqIQoQkuLE2h7I55YBB/+N7BOmNQTY116Kwz
-         wkgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760967237; x=1761572037;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XujdrAVflWUs/mjjly58vQki5jrDGo9CKvfr8/mpjRU=;
-        b=PZAOgnmqdcoPQF1ZhkLwuj3L8+7p1HnHV9K7ausp58XnNYs5dlgPTC4xAyWe6iedgB
-         Uf9+hhhZP9CfDyVByPz7KH4vtiSBo31TIBdKTI7rLGnhIythoo5+Pxb0YYy6Xw/VGWVQ
-         cEpX8pWKb2mxd64yZrY8QQifC8rgfGCWwyZZ/rsuvtKN+iG9BO4DC/0188QxViZ3T26n
-         IC+AmkUgFWh9i2MouV2xG/J4omN9WSlUosUdnGq4Y5CUAXv8qO06YTRrRJAQ6OZqkGQT
-         8TGBOCrSGrLAzINkN0yMHdyuN0HlsYuhq79l2ic4Wt5LQBjHUGNGzjXC6vimMOCoqKD0
-         zGmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVm+2Dj9BNI0l3baFm6hnWPWX8j/40T+ll0XNSw8OgjO2hD0O2PJ+7sEzY4nhbA6vVnAvJKywT04Wxnjrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlzrWsGaJkTxJM1gTRypAonqMIeTlpGmrpLvloD5Lnnrsmqqvz
-	7TODmprx9b+Eqj+0FvqkDpeQaLH600C4dFv931sio03qLNh1UbeY6knuIBGTB94ZZU4W0qqEU9d
-	ja9nwvrvGCBjTTmRTmQ==
-X-Google-Smtp-Source: AGHT+IGyFsfWuYmaNbQe9k6gzEwF9MvBVO5TrVWkBk5cWGn3hqRMTnHHpA5EzHmHzJv4ZT2BnK9gOCnVwnD8tng=
-X-Received: from wmbgz13.prod.google.com ([2002:a05:600c:888d:b0:46f:aa50:d703])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:820b:b0:471:1717:40a with SMTP id 5b1f17b1804b1-471178a8245mr89377715e9.18.1760967237543;
- Mon, 20 Oct 2025 06:33:57 -0700 (PDT)
-Date: Mon, 20 Oct 2025 13:33:42 +0000
-In-Reply-To: <20251020-binder-bitmap-v1-0-879bec9cddc1@google.com>
+	s=arc-20240116; t=1760967272; c=relaxed/simple;
+	bh=aHFncXuJhmjTTMl7jRZ5+cBJ8m3xmqzThLxpclVWf7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRMKb7AhahA9YKVi/JpWFYCM8I++3En7pxFU4ROzb0c+7f2NFqcaS8YTjkAS9381J+8cIQXEjbIMRb5Uzx2V1yNEntXSSydjzLdqxEPixYwVgybLCHVbF8kbLKtEufI3ZV0wwAYO+rCrGA79swkSfhVQeuCumRc8RKxS+vytWPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BC6YHzXs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760967269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cWBafkAvQc2T8HL+m98/GCMPu/SAe+A4B5UoZ2UPoeA=;
+	b=BC6YHzXsVp4dmNtAJUmoOU9Qp7v5u6wwY8gPHv7uBGZT2WqlJaZmxTreujdYMn4BgLaV3B
+	kXqYXBCHPuHb6glFZrfn6+ku2WY9n4VG1RegJILakZ0D4ZkqjGXrui15coj0agA502EnmO
+	MvFDkB0TGOBkwdcRvvflfGLPbCn0Qgo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-tPWxDa5fNdmGrsGekWQnSA-1; Mon,
+ 20 Oct 2025 09:34:24 -0400
+X-MC-Unique: tPWxDa5fNdmGrsGekWQnSA-1
+X-Mimecast-MFC-AGG-ID: tPWxDa5fNdmGrsGekWQnSA_1760967261
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5563C180034C;
+	Mon, 20 Oct 2025 13:34:20 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.104])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6383E1956056;
+	Mon, 20 Oct 2025 13:34:16 +0000 (UTC)
+Date: Mon, 20 Oct 2025 21:34:13 +0800
+From: Pingfan Liu <piliu@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <llong@redhat.com>, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCHv3] sched/deadline: Walk up cpuset hierarchy to decide
+ root domain when hot-unplug
+Message-ID: <aPY6VeMfcu_iddY4@fedora>
+References: <20251017122636.17671-1-piliu@redhat.com>
+ <1b510c7e-6d48-4f3c-b3cb-8a7a0834784c@redhat.com>
+ <aPWqsui-7HCUB5g-@fedora>
+ <aPXQra4TWR0NVwDQ@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020-binder-bitmap-v1-0-879bec9cddc1@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8183; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=R4pXEmMNsuBfi+wBM9oIG78safYpExcG2zg7DqP0UyI=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo9jpBTeFPzhytp2JfiEHURGOLAXJTd8EcDJTJY
- 3I+swFFn82JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaPY6QQAKCRAEWL7uWMY5
- Ri7/D/wO3vwSeuqFI3SlvaFEd+bgQP6HLNB2W4OQmJPhT98ZjJk/QJ6/0BnRAWJk5U8vWy9DZyk
- lDe7GqVjg33v2q3EUbxlm7N2psb0B+Ev88goRywyoeEO1mm5UBwyahmoqWmJkK67wfKqvwbW9WD
- UkiOuzFhiEkDTbh7/ze0W9KOCkkgsRwkm/CDWmYdQBjBFvfU/WFqxAowoDAw2oHY0GvWFD/IGFO
- elFPld6E5YQ4fVp2aCIleMAJe4e3TprTG/sALpSigwcTDJlWXkoXrur+p2YF/sLJKX8+RHf51mm
- bax+Pt9iZBSxgLdLPxyOsY09OEnhV8VoEkI7MX9bf5qGfthO6K1KiE/2SVyHo75SpTwXjeIZJyn
- zMlXRPxe4oGy3SdFzVLZmb19N4do/L/F3TH/xQ7Rk078J2z09mZw1/O7pYWHyynLwSCFykY/DEv
- EDyHYUwNqPjsukTh2lxX77D1Sq3Y2l9IxqzJdCBSB6B//vc3/4NEbiy39UsQ92F0st3qVa98/+w
- /Ir+AyH/zZFyH1o4D39qbecRFERN6+WBkzFJqgVUTq97En75jO2SV1z6OXjcU+Soxz2HElvg8lh
- lEmlNTjrtY24tzp3cQi1wlBN41oMvYjYstikc6wNvlhXLtAnB6ixpjANsWhJVUZBL1jpWxIgimp jJ2nQsBec18eeEg==
-X-Mailer: b4 0.14.2
-Message-ID: <20251020-binder-bitmap-v1-2-879bec9cddc1@google.com>
-Subject: [PATCH 2/2] rust_binder: use bitmap for allocation of handles
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
-Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPXQra4TWR0NVwDQ@jlelli-thinkpadt14gen4.remote.csb>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-To find an unused Binder handle, Rust Binder currently iterates the
-red/black tree from the beginning until it finds a gap in the keys. This
-is extremely slow.
+Hi Juri,
 
-To improve the performance, add a bitmap that keeps track of which
-indices are actually in use. This allows us to quickly find an unused
-key in the red/black tree.
+Thanks for following up on this topic. Please check my comment below.
 
-This logic matches the approach used by C Binder. It was chosen
-partially because it's the most memory efficient solution.
+On Mon, Oct 20, 2025 at 08:03:25AM +0200, Juri Lelli wrote:
+> Hi!
+> 
+> On 20/10/25 11:21, Pingfan Liu wrote:
+> > Hi Waiman,
+> > 
+> > I appreciate your time in reviewing my patch. Please see the comment
+> > belows.
+> > 
+> > On Fri, Oct 17, 2025 at 01:52:45PM -0400, Waiman Long wrote:
+> > > On 10/17/25 8:26 AM, Pingfan Liu wrote:
+> > > > When testing kexec-reboot on a 144 cpus machine with
+> > > > isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
+> > > > encounter the following bug:
+> > > > 
+> > > > [   97.114759] psci: CPU142 killed (polled 0 ms)
+> > > > [   97.333236] Failed to offline CPU143 - error=-16
+> > > > [   97.333246] ------------[ cut here ]------------
+> > > > [   97.342682] kernel BUG at kernel/cpu.c:1569!
+> > > > [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+> > > > [   97.353281] Modules linked in: rfkill sunrpc dax_hmem cxl_acpi cxl_port cxl_core einj vfat fat arm_smmuv3_pmu nvidia_cspmu arm_spe_pmu coresight_trbe arm_cspmu_module rndis_host ipmi_ssif cdc_ether i2c_smbus spi_nor usbnet ast coresight_tmc mii ixgbe i2c_algo_bit mdio mtd coresight_funnel coresight_stm stm_core coresight_etm4x coresight cppc_cpufreq loop fuse nfnetlink xfs crct10dif_ce ghash_ce sha2_ce sha256_arm64 sha1_ce sbsa_gwdt nvme nvme_core nvme_auth i2c_tegra acpi_power_meter acpi_ipmi ipmi_devintf ipmi_msghandler dm_mirror dm_region_hash dm_log dm_mod
+> > > > [   97.404119] CPU: 0 UID: 0 PID: 2583 Comm: kexec Kdump: loaded Not tainted 6.12.0-41.el10.aarch64 #1
+> > > > [   97.413371] Hardware name: Supermicro MBD-G1SMH/G1SMH, BIOS 2.0 07/12/2024
+> > > > [   97.420400] pstate: 23400009 (nzCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> > > > [   97.427518] pc : smp_shutdown_nonboot_cpus+0x104/0x128
+> > > > [   97.432778] lr : smp_shutdown_nonboot_cpus+0x11c/0x128
+> > > > [   97.438028] sp : ffff800097c6b9a0
+> > > > [   97.441411] x29: ffff800097c6b9a0 x28: ffff0000a099d800 x27: 0000000000000000
+> > > > [   97.448708] x26: 0000000000000000 x25: 0000000000000000 x24: ffffb94aaaa8f218
+> > > > [   97.456004] x23: ffffb94aaaabaae0 x22: ffffb94aaaa8f018 x21: 0000000000000000
+> > > > [   97.463301] x20: ffffb94aaaa8fc10 x19: 000000000000008f x18: 00000000fffffffe
+> > > > [   97.470598] x17: 0000000000000000 x16: ffffb94aa958fcd0 x15: ffff103acfca0b64
+> > > > [   97.477894] x14: ffff800097c6b520 x13: 36312d3d726f7272 x12: ffff103acfc6ffa8
+> > > > [   97.485191] x11: ffff103acf6f0000 x10: ffff103bc085c400 x9 : ffffb94aa88a0eb0
+> > > > [   97.492488] x8 : 0000000000000001 x7 : 000000000017ffe8 x6 : c0000000fffeffff
+> > > > [   97.499784] x5 : ffff003bdf62b408 x4 : 0000000000000000 x3 : 0000000000000000
+> > > > [   97.507081] x2 : 0000000000000000 x1 : ffff0000a099d800 x0 : 0000000000000002
+> > > > [   97.514379] Call trace:
+> > > > [   97.516874]  smp_shutdown_nonboot_cpus+0x104/0x128
+> > > > [   97.521769]  machine_shutdown+0x20/0x38
+> > > > [   97.525693]  kernel_kexec+0xc4/0xf0
+> > > > [   97.529260]  __do_sys_reboot+0x24c/0x278
+> > > > [   97.533272]  __arm64_sys_reboot+0x2c/0x40
+> > > > [   97.537370]  invoke_syscall.constprop.0+0x74/0xd0
+> > > > [   97.542179]  do_el0_svc+0xb0/0xe8
+> > > > [   97.545562]  el0_svc+0x44/0x1d0
+> > > > [   97.548772]  el0t_64_sync_handler+0x120/0x130
+> > > > [   97.553222]  el0t_64_sync+0x1a4/0x1a8
+> > > > [   97.556963] Code: a94363f7 a8c47bfd d50323bf d65f03c0 (d4210000)
+> > > > [   97.563191] ---[ end trace 0000000000000000 ]---
+> > > > [   97.595854] Kernel panic - not syncing: Oops - BUG: Fatal exception
+> > > > [   97.602275] Kernel Offset: 0x394a28600000 from 0xffff800080000000
+> > > > [   97.608502] PHYS_OFFSET: 0x80000000
+> > > > [   97.612062] CPU features: 0x10,0000000d,002a6928,5667fea7
+> > > > [   97.617580] Memory Limit: none
+> > > > [   97.648626] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]
+> > > > 
+> > > > Tracking down this issue, I found that dl_bw_deactivate() returned
+> > > > -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
+> > > > When a CPU is inactive, its rd is set to def_root_domain. For an
+> > > > blocked-state deadline task (in this case, "cppc_fie"), it was not
+> > > > migrated to CPU0, and its task_rq() information is stale. As a result,
+> > > > its bandwidth is wrongly accounted into def_root_domain during domain
+> > > > rebuild.
+> > > 
+> > > First of all, in an emergency situation when we need to shutdown the kernel,
+> > > does it really matter if dl_bw_activate() returns -EBUSY? Should we just go
+> > > ahead and ignore this dl_bw generated error?
+> > > 
+> > 
+> > Ah, sorry - the previous test example was misleading. Let me restate it
+> > as an equivalent operation on a system with 144 CPUs:
+> >   sudo bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
+> > 
+> > That extracts the hot-removal part, which is affected by the bug, from
+> > the kexec reboot process. It expects that only cpu0 is online, but in
+> > practice, the cpu143 refused to be offline due to this bug.
+> 
+> I confess I am still perplexed by this, considering the "particular"
+> nature of cppc worker that seems to be the only task that is able to
+> trigger this problem. First of all, is that indeed the case or are you
+> able to reproduce this problem with standard (non-kthread) DEADLINE
+> tasks as well?
+> 
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/android/binder/process.rs | 110 +++++++++++++++++++++++++++++++-------
- 1 file changed, 90 insertions(+), 20 deletions(-)
+Yes, I can. I wrote a SCHED_DEADLINE task that waits indefinitely on a
+semaphore (or, more precisely, for a very long period that may span the
+entire CPU hot-removal process) to emulate waiting for an undetermined
+driver input.  Then I spawned multiple instances of this program to
+ensure that some of them run on CPU 72. When I attempted to offline CPUs
+1–143 one by one, CPU 143 failed to go offline.
 
-diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-index f13a747e784c84a0fb09cbf47442712106eba07c..357ba1b577c73ad3f2b525a8573424420577e92d 100644
---- a/drivers/android/binder/process.rs
-+++ b/drivers/android/binder/process.rs
-@@ -16,6 +16,7 @@
- 
- use kernel::{
-     bindings,
-+    bitmap::BitmapVec,
-     cred::Credential,
-     error::Error,
-     fs::file::{self, File},
-@@ -367,6 +368,8 @@ impl ListItem<{Self::LIST_NODE}> for NodeRefInfo {
- struct ProcessNodeRefs {
-     /// Used to look up nodes using the 32-bit id that this process knows it by.
-     by_handle: RBTree<u32, ListArc<NodeRefInfo, { NodeRefInfo::LIST_PROC }>>,
-+    /// Used to quickly find unused ids in `by_handle`.
-+    handle_present: BitmapVec,
-     /// Used to look up nodes without knowing their local 32-bit id. The usize is the address of
-     /// the underlying `Node` struct as returned by `Node::global_id`.
-     by_node: RBTree<usize, u32>,
-@@ -378,13 +381,56 @@ struct ProcessNodeRefs {
- }
- 
- impl ProcessNodeRefs {
--    fn new() -> Self {
--        Self {
-+    fn new() -> Result<Self> {
-+        Ok(Self {
-             by_handle: RBTree::new(),
-+            handle_present: BitmapVec::new(BitmapVec::NO_ALLOC_MAX_LEN, GFP_KERNEL)?,
-             by_node: RBTree::new(),
-             freeze_listeners: RBTree::new(),
-+        })
-+    }
-+
-+    fn bitmap_shrink_len(&self) -> Option<usize> {
-+        let nbits = self.handle_present.len();
-+
-+        if nbits <= BitmapVec::NO_ALLOC_MAX_LEN {
-+            return None;
-+        }
-+
-+        match self.handle_present.last_bit() {
-+            Some(bit) if bit < nbits >> 2 => Some(nbits >> 1),
-+            None => Some(BitmapVec::NO_ALLOC_MAX_LEN),
-+            _ => None,
-+        }
-+    }
-+
-+    fn bitmap_grow_len(&self) -> Option<usize> {
-+        let new_len = self
-+            .handle_present
-+            .len()
-+            .checked_mul(2)
-+            .unwrap_or(BitmapVec::MAX_LEN)
-+            .min(BitmapVec::MAX_LEN);
-+
-+        if new_len > self.handle_present.len() {
-+            Some(new_len)
-+        } else {
-+            None
-+        }
-+    }
-+
-+    fn try_shrink_bitmap(&mut self, new_map: BitmapVec) {
-+        if let Some(target_len) = self.bitmap_shrink_len() {
-+            if new_map.len() == target_len {
-+                self.replace_bitmap(new_map);
-+            }
-         }
-     }
-+
-+    fn replace_bitmap(&mut self, mut new_map: BitmapVec) {
-+        new_map.copy_and_extend(&self.handle_present);
-+        self.handle_present = new_map;
-+    }
- }
- 
- /// A process using binder.
-@@ -471,7 +517,7 @@ fn new(ctx: Arc<Context>, cred: ARef<Credential>) -> Result<Arc<Self>> {
-                 cred,
-                 inner <- kernel::new_spinlock!(ProcessInner::new(), "Process::inner"),
-                 pages <- ShrinkablePageRange::new(&super::BINDER_SHRINKER),
--                node_refs <- kernel::new_mutex!(ProcessNodeRefs::new(), "Process::node_refs"),
-+                node_refs <- kernel::new_mutex!(ProcessNodeRefs::new()?, "Process::node_refs"),
-                 freeze_wait <- kernel::new_condvar!("Process::freeze_wait"),
-                 task: current.group_leader().into(),
-                 defer_work <- kernel::new_work!("Process::defer_work"),
-@@ -775,7 +821,7 @@ pub(crate) fn get_node(
-     pub(crate) fn insert_or_update_handle(
-         self: ArcBorrow<'_, Process>,
-         node_ref: NodeRef,
--        is_mananger: bool,
-+        is_manager: bool,
-     ) -> Result<u32> {
-         {
-             let mut refs = self.node_refs.lock();
-@@ -794,7 +840,34 @@ pub(crate) fn insert_or_update_handle(
-         let reserve2 = RBTreeNodeReservation::new(GFP_KERNEL)?;
-         let info = UniqueArc::new_uninit(GFP_KERNEL)?;
- 
--        let mut refs = self.node_refs.lock();
-+        let mut refs_lock = self.node_refs.lock();
-+        let mut refs = &mut *refs_lock;
-+
-+        let (handle, by_handle_slot) = loop {
-+            // ID 0 may only be used by the manager.
-+            let start = if is_manager { 0 } else { 1 };
-+
-+            if let Some(handle) = refs.handle_present.next_zero_bit(start) {
-+                let handle_u32 = u32::try_from(handle).map_err(|_| ENOMEM)?;
-+                match refs.by_handle.entry(handle_u32) {
-+                    rbtree::Entry::Vacant(entry) => break (handle_u32, entry),
-+                    rbtree::Entry::Occupied(_) => {
-+                        pr_err!("Detected mismatch between handle_present and by_handle");
-+                        refs.handle_present.set_bit(handle);
-+                        continue;
-+                    }
-+                }
-+            }
-+
-+            let new_len = refs.bitmap_grow_len().ok_or(ENOMEM)?;
-+            drop(refs_lock);
-+            let new_bitmap = BitmapVec::new(new_len, GFP_KERNEL)?;
-+            refs_lock = self.node_refs.lock();
-+            refs = &mut *refs_lock;
-+            if refs.handle_present.len() < new_len {
-+                refs.replace_bitmap(new_bitmap);
-+            }
-+        };
- 
-         // Do a lookup again as node may have been inserted before the lock was reacquired.
-         if let Some(handle_ref) = refs.by_node.get(&node_ref.node.global_id()) {
-@@ -804,20 +877,9 @@ pub(crate) fn insert_or_update_handle(
-             return Ok(handle);
-         }
- 
--        // Find id.
--        let mut target: u32 = if is_mananger { 0 } else { 1 };
--        for handle in refs.by_handle.keys() {
--            if *handle > target {
--                break;
--            }
--            if *handle == target {
--                target = target.checked_add(1).ok_or(ENOMEM)?;
--            }
--        }
--
-         let gid = node_ref.node.global_id();
-         let (info_proc, info_node) = {
--            let info_init = NodeRefInfo::new(node_ref, target, self.into());
-+            let info_init = NodeRefInfo::new(node_ref, handle, self.into());
-             match info.pin_init_with(info_init) {
-                 Ok(info) => ListArc::pair_from_pin_unique(info),
-                 // error is infallible
-@@ -838,9 +900,9 @@ pub(crate) fn insert_or_update_handle(
-         // `info_node` into the right node's `refs` list.
-         unsafe { info_proc.node_ref2().node.insert_node_info(info_node) };
- 
--        refs.by_node.insert(reserve1.into_node(gid, target));
--        refs.by_handle.insert(reserve2.into_node(target, info_proc));
--        Ok(target)
-+        refs.by_node.insert(reserve1.into_node(gid, handle));
-+        by_handle_slot.insert(info_proc, reserve2);
-+        Ok(handle)
-     }
- 
-     pub(crate) fn get_transaction_node(&self, handle: u32) -> BinderResult<NodeRef> {
-@@ -905,6 +967,14 @@ pub(crate) fn update_ref(
-                 let id = info.node_ref().node.global_id();
-                 refs.by_handle.remove(&handle);
-                 refs.by_node.remove(&id);
-+                refs.handle_present.clear_bit(handle as usize);
-+
-+                if let Some(shrink_len) = refs.bitmap_shrink_len() {
-+                    drop(refs);
-+                    let new_bitmap = BitmapVec::new(shrink_len, GFP_KERNEL)?;
-+                    refs = self.node_refs.lock();
-+                    refs.try_shrink_bitmap(new_bitmap);
-+                }
-             }
-         } else {
-             // All refs are cleared in process exit, so this warning is expected in that case.
+> I essentially wonder how cppc worker affinity/migration on hotplug is
+> handled. With your isolcpus configuration you have one isolated root
 
--- 
-2.51.0.915.g61a8936c21-goog
+The affinity/migration on hotplug work fine. The keypoint is that they
+only handle the task on rq. For the blocked-state tasks (here it is cppc
+worker), they just ignore them.
+
+Thanks,
+
+Pingfan
+
+> domain per isolated cpu, so if cppc worker is not migrated away from (in
+> the case above) cpu 143, then BW control might be right in saying we
+> can't offline that cpu, as the worker still has BW running there. This
+> is also why I fist wondered (and suggested) we remove cppc worker BW
+> from the picture (make it DEADLINE special) as we don't really seem to
+> have a reliable way to associate meaningful BW to it anyway.
+> 
+> Thanks,
+> Juri
+> 
 
 
