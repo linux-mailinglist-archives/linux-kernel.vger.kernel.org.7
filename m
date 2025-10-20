@@ -1,99 +1,141 @@
-Return-Path: <linux-kernel+bounces-860984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889B6BF1840
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 339BFBF18C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD923AFFDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87B44224F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0913128D6;
-	Mon, 20 Oct 2025 13:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45BC31D758;
+	Mon, 20 Oct 2025 13:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L16aJg2W"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="jVJWf94q"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DF0246768;
-	Mon, 20 Oct 2025 13:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED93431AF14;
+	Mon, 20 Oct 2025 13:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760966502; cv=none; b=BtMEVLyF7cnWnfOieRbNOfxJb1ZrGF5OqtCSOhlzLw6zIgXXFy9jsgG4CaY9qy0C3D/Jt13ytiZVAOHAP1Jn6LcWJqj/Z81AecwZflY31IPeJsJ6TdPZSeorLqmgy87/bBAZU5pRkfNx3nzYFLZzt0qK03u9a96JGy4Uw++8/RE=
+	t=1760967244; cv=none; b=R/JlIhS+OqXkBgVEO9+cq9/MFKLLSp+bl1qfk+2/BhpyYAUBA+aKh+2pWqOTQw0fH50h5inDugeQyN7YDlD5YtG8qk7ci2rdS5qJQgzPoMod5QhPxamvknT0YCZZ3BKrUrITJH5l03pUStig3P6hOk2tG5+awtZdyPHuB+irz24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760966502; c=relaxed/simple;
-	bh=IbxW4iy/ORdzRWjGHRfMUARzsy1VBtY+cCnLFG8KxE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i96nQzFVmkwPDS202HnUdw/QxGUkx8A4AdBFqhfv7qDvV2qDJ/3ZFA/EO6IDOxxZ/hLjc3VCXoK6fPuVxeyfJ7iig2163hEGgkyLIk1ufUIWdMG4+oMsPpEeNWrhdpD4UbRtgNmrtifjoTbJLcNBrNryfo/FcKhKDFvzMgLzVTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L16aJg2W; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=39sFsgq/tZnDvvZj4BvMobyTdX/qSf9wpLI9lFYHekA=; b=L16aJg2WmNI2rAcPbopnWoaUep
-	VhSLOWGUy8ZJEYMCXNnoO8iOkAjxG3mBNLO0bTO8H+mEM5nsRj1IiBRFmlq9uU22ZromG8gsrehmD
-	3l9thEreW0aslhW2F0t+NmsW/4yNEyVs3DQikUQxxg+69RoDp8nGfbTf8KUJMztsVf2aCbHFAECjw
-	VX9QtGNj1KyEYpCdoEgUk+n2QgnXuppiLau2pQVn1P9V+dZ8aA19lrTd4HGbf4s//aACZpWI+sMhq
-	LsQxXmL4R8cW8vfgubXeGzQpLevbca0WEYH4fHE6LzdUWbe930b1RFuoyvW4F4RD8Xs3rlbMHSj8X
-	3R8o0VAA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vAppQ-0000000Dldh-2QIh;
-	Mon, 20 Oct 2025 13:21:36 +0000
-Date: Mon, 20 Oct 2025 06:21:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-block@vger.kernel.org
-Subject: Re: [GIT PULL] block-bio_iov_iter_export
-Message-ID: <aPY3YKzGbIKxFbl-@infradead.org>
-References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
- <aPHemg-xpVLkiEt9@infradead.org>
- <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
- <aPYCbIrvAkOf5L3g@infradead.org>
- <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
+	s=arc-20240116; t=1760967244; c=relaxed/simple;
+	bh=Hgiu87Mkxt2XSwmQ3Px5CVqbkZ0WupkvziVmAE7+zfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NmKd1+NbRo0c0vI7HrT762uj3o7nRyWM+utai/eGoPPTlho7485rA1Q812IBjt08HzfJUWY04qRyWBr7ia02+yg2OfewMdLJJvWxTGQFn1yPxs2lhsm8qXZANs9aLhMjOPYpCU76nJGtHe58Pu1if4xOhNrPK33Ikm1JPFbODgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=jVJWf94q; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0144EC9D0E;
+	Mon, 20 Oct 2025 15:24:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1760966687; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=D3pswD8T4kvpqjL6vVmhm5ybo8RFGGQLzpUDtqC/p3o=;
+	b=jVJWf94qYI4F1rELanQ5NM3tzzzpdF7zRZZjiveQGmr4zOYsBHWg7x+zlITcnA94JIbywp
+	dg/Bthe1Rbr4+909npqjaOceIsyHGrOZmD98o2yxB0wtxPhjSjScXm2xbZ3WpP0GsB3Tpy
+	et6TXlRh9PWJM6sFh5w9cSBKHnNA6RYZwOS8e1gWOVwkJv7inPEKsTXKnXMmyXqXOmailZ
+	2KvOxvagl80X3+rBeoA0FyBhoz4ckoGzNEQ28q8V71y2wl7qEvd/GrpUU+IJbPCLNlU3EG
+	w2VsgzLF11nWX+qL2+Vg/DBVPovNdz49Sn3jCg6hGOi1AB1h74xRPfTyPoJvCw==
+From: Frieder Schrempf <frieder@fris.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Annette Kobou <annette.kobou@kontron.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH] arm64: dts: imx8mp-kontron: Fix USB OTG role switching
+Date: Mon, 20 Oct 2025 15:21:51 +0200
+Message-ID: <20251020132155.630512-1-frieder@fris.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Oct 20, 2025 at 08:56:59AM -0400, Kent Overstreet wrote:
-> The implementation has morphed given multipage bvecs and iov_iters, but
-> otherwise it looks structurally much the same as the version I
-> originally introduced.
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Not a pissing context, but I introduced it.  I attributed the git
-authorship you because it fundamentally it based on your idea but with a
-lot of tweaks.  I and many others do this to give proper credit.
+The VBUS supply regulator is currently assigned to the PHY node.
+This causes the VBUS to be always on, even when the controller
+needs to be switched to peripheral mode.
 
-> Please attribute correctly, and that would've included CCing me on the
-> patch that dropped the EXPORT_SYMBOL().
+Fix the OTG role switching by adding a connector node and moving
+the VBUS supply regulator to that node. This way the VBUS gets
+correctly switched according to the current role.
 
-No, we don't Cc the author of each line of code or even function.  The
-relevant maintainer here is Jens.
+Fixes: 827c007db5f2 ("arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM and BL carrier board")
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+ .../dts/freescale/imx8mp-kontron-bl-osm-s.dts | 24 +++++++++++++++----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-> The way you're doing it with bdev_logical_block_size() is just wrong -
-> even for single device filesystems! - because it's the filesystem
-> blocksize that's relevant here and that isn't necessarily going to match
-> (even if it matched when the filesystem was formatted, filesystems can
-> be moved to different block devices).
-
-I'm not sure what you are talking about, but the changes you seem to
-be complaining about are making the alignment boundary a caller provided
-argument.  Which seems to be what you're arguing for here?  Either way
-this is the wrong venue.  If you want to change something sent patches
-following the usual guidelines to the maintainer.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts b/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+index 614b4ce330b1c..0924ac50fd2db 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+@@ -16,11 +16,20 @@ aliases {
+ 		ethernet1 = &eqos;
+ 	};
+ 
+-	extcon_usbc: usbc {
+-		compatible = "linux,extcon-usb-gpio";
++	connector {
++		compatible = "gpio-usb-b-connector", "usb-b-connector";
++		id-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
++		label = "Type-C";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_usb1_id>;
+-		id-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
++		type = "micro";
++		vbus-supply = <&reg_usb1_vbus>;
++
++		port {
++			usb_dr_connector: endpoint {
++				remote-endpoint = <&usb3_dwc>;
++			};
++		};
+ 	};
+ 
+ 	leds {
+@@ -244,9 +253,15 @@ &usb_dwc3_0 {
+ 	hnp-disable;
+ 	srp-disable;
+ 	dr_mode = "otg";
+-	extcon = <&extcon_usbc>;
+ 	usb-role-switch;
++	role-switch-default-mode = "peripheral";
+ 	status = "okay";
++
++	port {
++		usb3_dwc: endpoint {
++			remote-endpoint = <&usb_dr_connector>;
++		};
++	};
+ };
+ 
+ &usb_dwc3_1 {
+@@ -273,7 +288,6 @@ &usb3_1 {
+ };
+ 
+ &usb3_phy0 {
+-	vbus-supply = <&reg_usb1_vbus>;
+ 	status = "okay";
+ };
+ 
+-- 
+2.51.0
 
 
