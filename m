@@ -1,80 +1,88 @@
-Return-Path: <linux-kernel+bounces-861051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC10BBF1A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:53:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00968BF1A78
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E02A4423DBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27DA423AFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD5931DD82;
-	Mon, 20 Oct 2025 13:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C39931B11F;
+	Mon, 20 Oct 2025 13:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QF+OL2Fv"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IlXonPsO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692B314A78
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFD02F8BCB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760968354; cv=none; b=HiNH6OUgXxKSTWf+s4WLf9xATcFhIJCSaG//THpUHFcd1jypY8yqln/5W/2pLiZ4C8oqwqMKKqEWPX4m5MKjE4uZMEGgoETJDDi5U0aAu/hbZxyWdKGewPijVwPm//h7BgT02oEnl3jRmimgn/4DLhM+Ph48ahYElETcgEiNh+k=
+	t=1760968393; cv=none; b=EYR4rD/ryGHGR81euOYONNma4xJIVcBwEVJfJGoXRJnC11fjCogRwIhR29aSu7+Ha9WsnCrf7fRunOo+i/4NlisJPtvvI44aXHBUkvlB5/DzCcwqva49/sqh180B6Y0U0FD2ZcZuVwrTw65kEL0lqAmi2SVOUlAat/boNoIwDWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760968354; c=relaxed/simple;
-	bh=L9VvExNQMFPQzv9ufxn0S7G6OEJEHpE+ly+MsEQ8nFk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bmQKRU4RT5u7vZVcpmSk0xBGeKjfZ1YHNxX29SFzyJgiL8VCqZiboE0gRY81WTLm5ZN2Y+aMNw5i5T1ZAuU2dWpGFL7iQGOzS0jgQorFnDgq+iVJJDebM8U0mMG4yBDdMe8E570/ODgXXSg3w+k+/OAwfILuOTR99wu+6+NQlOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QF+OL2Fv; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4aed12cea3so755480566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760968350; x=1761573150; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1UGdKvZUTvD1HC9bV9xmz6SaDGhGxaZdI9Atn8JmXDI=;
-        b=QF+OL2Fv/FFyzoFj3K2yPwuMpSZidCXDWsLH/Uomi52I252JGnhdW6XRy493MwDQTB
-         pK2fmBv6H0LZFlaszkl/7acHQPHCRcwakdEzNElkKlw4WYMySbH/Dm04V7wHmpF/0B+1
-         K7HyteF+g5f+ItwWTwPJE54JDRou5AlCnYvAsSfJGYgxa0cCsEOYM3gtFvXpRI3OnuKJ
-         gY92vB1vLo5vtfbqaF0lBS33KfwuIGMz3JpMNVQjX5sJSblEgzTNdb/CREWtesJexRau
-         oZZ+4L1Th9/KxnZgU5D2bXKG7ZrJuGwDLvHXVTP5nE8+6OUawAJRJrMQj1iR6EQLikwo
-         cCLA==
+	s=arc-20240116; t=1760968393; c=relaxed/simple;
+	bh=VwKauILfhcSWg3j9lqrsCRW9wbHQzV3XTs+CzgQu1NI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qHJIuJ7Z7zmFfBzj+Hvu+hyhKbwrbyR1pAWv3LlaqO/aeEODzH4ZeyNEM5QXKzMHpTvONnS5KEemrBePv3tUpd66ZpjsH3W6WAo3WOipwpJdn3wHrxkMVT4Nqv1XbzhwoX2j3fKgjSSanpACotdXiIBc5bpJ27kBuTqiXBH1LO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IlXonPsO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760968390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bIUQcQqGzVepp2tFG39wK71eceYTNe6sFkAh3btcuUk=;
+	b=IlXonPsOE8JVQP84aAb3McPoe3NRoJT2he7UTBnzSmQ1pwH4P1TU/PTWwYtSu+r7hXdLi1
+	mg8TJqTkqUp6+BKdlBE+JkQuPm4ibr/Jw5t4i/jxCp6tcc1f6KdE1HJDCGwkpK9UVNpIe4
+	XFRciXoemqYLCAu8o+EatjG9YS1bToU=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-56-DjRfymJUNcGMI1PEZrnE8A-1; Mon, 20 Oct 2025 09:53:09 -0400
+X-MC-Unique: DjRfymJUNcGMI1PEZrnE8A-1
+X-Mimecast-MFC-AGG-ID: DjRfymJUNcGMI1PEZrnE8A_1760968388
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-42814749a6fso1028605f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 06:53:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760968350; x=1761573150;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1UGdKvZUTvD1HC9bV9xmz6SaDGhGxaZdI9Atn8JmXDI=;
-        b=FQY2G6nD7ruACdLUMUG9vo+N8NeOqAvHpi9JuUf0GOgLE3IU0oqpTAGkhMMtIx4si2
-         2ang4N4yimj0kRdUeGik2oLv5xatMGq/ILpTC+Q1ehGdUK7h8FCD05K8aQeqOmTk8StY
-         JiS1veJ8SmMNIrlbJuxdmV2u0L0bm37FnuaBdgzwS0XItuwkMJM7WDDb1wXjxq793OqS
-         INIhQ/N6eITZTWfITLQbU2Dd2T/oT/b2wyvw/0i5oD59pJNUVSUnyeD5PStBvUqWa7zK
-         I2A9jLHgBlIK0DVKlOpkXeALxQYivnOgQF7ppTxX0G8Siw3kpufWBQOcTsXwK2CJJMsi
-         x2Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXczTShD7mxkAhHrfCvFwOfDhHrAskTBw5UZNIKyiaLMO8pNEsEpOoKuUZGSTDEhNoGZoXqbPFyycFahKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy34lKfOQjSDWGwBm+xNbZ3BD7t5UVzlQGBDvoBgnH1Ig8Qw/ME
-	Z7L5wtQqQjBjOESaUS7iAcrtdgnvQGB1tzqY6VTe7PnjwaehP6/avR+h
-X-Gm-Gg: ASbGncsKZHExcRFVbpuSbNq2zJaAZOvmwpxmd3i7DQMkhCvN7ErA9cr74+aH7FFkOoo
-	fEo4a9l+n47CAPTu0H8u0hKfMfNtoDVwSz1Vn+stCHOjKdC6VdeKelP7Vq7FP6+J/etiqpKBtT8
-	DjbuD/T7MHYcsqaiEDriwZYB17ulRJ5s4SyFYs42uLdy9Y/FleFo2Fa+i6fbeGe/EMn4fHrPMNd
-	kRH9h/DyaDddZgYEQao4Z2IIdsPI5xrd2XpS18Mb1HWFNYPEMvg4fwSJ8QhY7IvgdhzpqCeYzlW
-	cCfJfguNNiu1yzJHgU9vCUmMRLkKjAGKJPIg5el3zPA6xPhjhyZtKvH2uDrln8jAEMDC+3ODMZ5
-	dvkwjBc8D0sDAPYfbzmh1UxAnm5juLkKo0BWTWiUS066Z5rd5f7mRD7dyWOS6OmnH6zFiQfo7kK
-	OJJxArbrQ+wcw452kdP3k=
-X-Google-Smtp-Source: AGHT+IGN9Ml+OP2NvHjesJEq5dF5EGJ7a6HBrdQ+6tbmakoJkB810olLr3jHQQV8/X9lmDdR0PGzeg==
-X-Received: by 2002:a17:907:86ab:b0:b45:8370:ef08 with SMTP id a640c23a62f3a-b6473243f2dmr1566956366b.17.1760968350263;
-        Mon, 20 Oct 2025 06:52:30 -0700 (PDT)
-Received: from [192.168.1.50] ([79.119.240.71])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83960e6sm790452766b.33.2025.10.20.06.52.28
+        d=1e100.net; s=20230601; t=1760968388; x=1761573188;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bIUQcQqGzVepp2tFG39wK71eceYTNe6sFkAh3btcuUk=;
+        b=mgJY3ET0Yek4sQ6kQhVrUogFTTDtsceau5Bi02DPjCYKvWpn5loFUKBYBjUt4/kg/j
+         LPtCsEaJ/GsLZelxN8e9eDw1Lli/R4uQzGHY6VNOIkiyi2sdQbke33OkUcPOiqtwxZS6
+         J9SORC3htawhID8OuG2eYC2T5jx+qWfr2Nz9JQSg7lWwWPe7qBpQGiS5OxOSZ2nhDi6S
+         uQeQsM/nvpQI0IUBQu4V/D48uzm7bOJyWJixlm4WoSRGVIpd/SM8Bsg42DX+uB/BALiA
+         P/KFJGzxMGsLaimhlmlimpPWSkHi7uZNk/R7mzfTy0MPSZy4UaD7IB2VHZuSHzOPfmRF
+         TNGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtyd8dWBLGWCQ7ae6Mg+VEGT1N8LxvZHTSvEwmDbviPtphIy8QRsG8IzFL0J7kGBAuIZ4GwrlirxneWcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI3KBGpjOONVDfYFcmH04X/A6zzV+Kz/e6w0RseAR9AqyZrUgc
+	prRPcIJRO86hswFcBOXm3htoDn3N3WxVd+/rRPoSiYAPlMCNvRXCH3YUKB/d1nVgFgS8+dNCAhO
+	6XI6+lhTZBw0tOfXmLQP/8zVckMyRO/jlvYTGXy8pZeudlCS1mlBLvFEBTM71VmeN9g==
+X-Gm-Gg: ASbGncte4AMsEkifbSIao2DVZM/lLFpRzKkmeFerGLGqISdcyCS+fGlYuC0FLZ/ch13
+	BiAt9EimhzI7E89H2Bxum+fDo52PtXc6a9H7klO/1BWpwbCV5HhavxBbq4+4yXOiBIzm2HzoIZM
+	wi2K5cP0xbwIaSJ64N/wu+bzqwaUW+PMN0DWuIHWQILQtTDpDhQNIy9o9NUmMMFldzDF9/1q832
+	8kupQY8W0I9gSdy4lHqiNYaXNGrRvTMq84/xifpxP9jJ/y1eV2Xk7BaZaSUD7vJ1kR6q566R3ub
+	NtX//eEWeA+Vd371fBb3e6ZiCtlHxa6xD2gz3kyB40WVsL5J3cFjYZGpQk5+ifqblSfByv6NVcs
+	QXfseHnnvlVnOihFELa1HSk4BK/JnsXTx8ie2/CGJLtDaM8liRNm2koVzY+W4TjYOqcCJoAA6W9
+	aLAoYFQFE3AA+VDexE8NtWvdNv0CM=
+X-Received: by 2002:a5d:64c2:0:b0:427:80a:6bdb with SMTP id ffacd0b85a97d-427080a6be4mr7318998f8f.46.1760968388337;
+        Mon, 20 Oct 2025 06:53:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNJVqO4jkClQAHIXRWj8GsF6qeiRz7gfVAznbjdQ8V6m0yz78pmC4EKThEBfYV6xT0dDAiDw==
+X-Received: by 2002:a5d:64c2:0:b0:427:80a:6bdb with SMTP id ffacd0b85a97d-427080a6be4mr7318978f8f.46.1760968387961;
+        Mon, 20 Oct 2025 06:53:07 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3affsm15329118f8f.12.2025.10.20.06.53.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 06:52:29 -0700 (PDT)
-Message-ID: <20f1dc07-2762-4f18-876d-f763eb414d3d@gmail.com>
-Date: Mon, 20 Oct 2025 16:52:27 +0300
+        Mon, 20 Oct 2025 06:53:07 -0700 (PDT)
+Message-ID: <d16132cd-81c5-4655-a788-0797553238bf@redhat.com>
+Date: Mon, 20 Oct 2025 15:53:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,100 +90,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Subject: Re: [PATCH rtw-next v2 0/7] wifi: rtw89: improvements for USB part
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Zong-Zhe Yang
- <kevin_yang@realtek.com>, Po-Hao Huang <phhuang@realtek.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20251002200857.657747-1-pchelkin@ispras.ru>
- <88f30433-98fa-4f9a-bbe3-9d630b72c2e4@gmail.com>
- <20251011171303-6e37619c4071ee0bae4f9675-pchelkin@ispras>
- <ebc5ede8-cf00-47a3-8a78-d9475f42cf97@gmail.com>
- <20251015002601-e7a307b2e8320369124054bc-pchelkin@ispras>
+Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
+ large folios (CONFIG_NO_PAGE_MAPCOUNT)
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Muchun Song <muchun.song@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+References: <20250303163014.1128035-1-david@redhat.com>
+ <20250303163014.1128035-21-david@redhat.com>
+ <20251014122335.dpyk5advbkioojnm@master>
+ <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+ <aO5fCT62gZZw9-wQ@casper.infradead.org>
+ <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
+ <20251015004543.md5x4cjtkyjzpf4b@master>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20251015002601-e7a307b2e8320369124054bc-pchelkin@ispras>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251015004543.md5x4cjtkyjzpf4b@master>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15/10/2025 00:33, Fedor Pchelkin wrote:
-> On Sun, 12. Oct 01:49, Bitterblue Smith wrote:
->> On 11/10/2025 17:57, Fedor Pchelkin wrote:
->>> On Sat, 04. Oct 20:37, Bitterblue Smith wrote:
->>>> I tested these patches with RTL8851BU, RTL8832AU, RTL8832BU, RTL8832CU, and
->>>> RTL8912AU. They all work, with a few additions.
+On 15.10.25 02:45, Wei Yang wrote:
+> On Tue, Oct 14, 2025 at 04:38:38PM +0200, David Hildenbrand wrote:
+>> On 14.10.25 16:32, Matthew Wilcox wrote:
+>>> On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
+>>>>> As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
+>>>>> folio yet.
 >>>>
->>>> Before these patches RTL8851BU and RTL8832AU would remain "connected" when
->>>> I power off the router. That's because they don't have beacon filtering in
->>>> the firmware and the null frames sent by mac80211 were always marked with
->>>> IEEE80211_TX_STAT_ACK. With these patches they disconnect immediately when
->>>> I power off the router. So that works nicely.
->>>>
+>>>> We do support partially mapped PUD-sized folios I think, but not anonymous
+>>>> PUD-sized folios.
 >>>
->>> Glad to hear, thanks for the insight.
->>>
->>>> What doesn't work is TX reports for management frames. Currently rtw89
->>>> doesn't configure the firmware to provide TX reports for the management
->>>> queue. That can be enabled with SET_CMC_TBL_MGQ_RPT_EN for the wifi 6 chips
->>>> and with CCTLINFO_G7_W0_MGQ_RPT_EN for RTL8922AU.
->>>
->>> I'll investigate. Looks like the enabling of the management part should go
->>> to rtw89_fw_h2c_default_cmac_tbl().
->>>
+>>> I don't think so?  The only mechanism I know of to allocate PUD-sized
+>>> chunks of memory is hugetlb, and that doesn't permit partial mappings.
 >>
->> Yes, and rtw89_fw_h2c_default_cmac_tbl_g7().
->>
->>> Btw, could you give a quick hint please on how I can check during testing
->>> that the reporting facility works properly for all cases needed?  By far
->>> I've dealt with iw utility and debugging printks incorporated into rtw89
->>> but it doesn't look sufficient anymore..
->>>
->>
->> I enabled RTW89_DBG_TXRX, which let me see that no TX reports appeared
->> during authentication and association. I also added a printk where the
->> IEEE80211_TX_CTL_REQ_TX_STATUS flag is checked. Then I just use the
->> driver normally, with wpa_supplicant and NetworkManager.
+>> Greetings from the latest DAX rework :)
 > 
-> Thanks, Bitterblue!
+> After a re-think, do you think it's better to align the behavior between
+> CONFIG_NO_PAGE_MAPCOUNT and CONFIG_PAGE_MAPCOUNT?
 > 
-> By the way, do you see lots of "parse phy sts failed\n" messages printed
-> when RTW89_DBG_TXRX is enabled?  (it's with RTL8851BU in my case)
-> 
-> I wonder whether this is kind of a normal failure case or an indicator of
-> a firmware bug.
-> 
+> It looks we treat a PUD-sized folio partially_mapped if CONFIG_NO_PAGE_MAPCOUNT,
+> but !partially_mapped if CONFIG_PAGE_MAPCOUNT, if my understanding is correct.
 
-Yes, I see that with RTL8851BU, RTL8832BU, RTL8832AU. I didn't
-investigate.
+I'd just leave it alone unless there is a problem right now.
 
-> Just to point out, I've activated your workarounds from [1], otherwise
-> the device is unusable due to firmware unresponding during scan and
-> crashing eventually.
-> 
-> [1]: https://lore.kernel.org/linux-wireless/0abbda91-c5c2-4007-84c8-215679e652e1@gmail.com/
-> 
+-- 
+Cheers
 
-Maybe I should send a patch for that. I thought it was an easy problem
-and the firmware will be fixed before 6.17. Then I forgot about it.
-
->>
->>>>
->>>> The other thing that doesn't work is the TX reports are different for
->>>> RTL8852CU and RTL8922AU. It's only a small difference for RTL8852CU:
->>>>
->>>> #define RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1 GENMASK(15, 10)
->>>>
->>>> RTL8922AU is more strange. It needs something like this:
->>>>
->>>> #define RTW89_C2H_MAC_TX_RPT_W12_TX_STATE_V2 GENMASK(9, 8)
->>>> #define RTW89_C2H_MAC_TX_RPT_W12_SW_DEFINE_V2 GENMASK(15, 12)
->>>> #define RTW89_C2H_MAC_TX_RPT_W14_DATA_TX_CNT_V2 GENMASK(15, 10)
->>>>
->>>> The C2H is 80 bytes here (header included).
->>>
->>> rtw89_mac_c2h_tx_rpt() needs to account for different types of C2H report
->>> formats, bah.  Will add this missing part.
->>
+David / dhildenb
 
 
