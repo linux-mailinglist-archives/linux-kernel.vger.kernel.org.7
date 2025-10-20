@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-859950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B723BEF072
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B35BEF07B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2743E034A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12083E036A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2E81A9FB5;
-	Mon, 20 Oct 2025 01:41:39 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2296C1A9FAB;
+	Mon, 20 Oct 2025 01:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwRYl6BI"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7374F17C21C;
-	Mon, 20 Oct 2025 01:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173DD17C21C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760924499; cv=none; b=Mdkt9xQlzSGOQWG8SEimTAKUKFh3PRv2g6TdtyoAIPtim3vdW1W468TgNi9PX5hcjI/2ZT33KUqJBj1V776aFNuBJI+vVvmRNX7uWtK/cPOzdRg2MglBxDR/kOBO4Y8ASft203h4WE5IMw7SvWTWY2AHSZvoqbLIHV9FCkwSD9A=
+	t=1760924580; cv=none; b=hhQQ4n8ZHRSN6Q4OzB3XxPraTvqiKHBN3ftGrdADg9nFmpMyxM2/BVRyRiLNnE0Q5sxzJ33tSLkMVF8PFyzk1mHQ1I5C9P8cS3U0W5+l12D9O9k4NPPil+25WykTJUzOjjCtXU6WssQF5zVmiX5aCIrHyPWPIMzS+sqdU7it0Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760924499; c=relaxed/simple;
-	bh=Vx7blcGcPvvTXHnvBqe21Ki1yTcXHROvXp1gnli/n2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKiEk6zLfMMtM6oPnJKKMhFzCxTiBzKxwbcrzHUeioEtw0sZjk3d8OoEO9PK5NVAzKT+TD7NXYP/I/evz33n2Ge0ZvH0OLgGKmS3+78fto9a0FmGepBAyAg5cHbhb/GC7l6dj7tmeyBV9n3hkcjGcAC0N7luNbat79/2y94t2sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.147.23])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 664F0341540;
-	Mon, 20 Oct 2025 01:41:36 +0000 (UTC)
-Date: Mon, 20 Oct 2025 09:41:32 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	s=arc-20240116; t=1760924580; c=relaxed/simple;
+	bh=dU5jUUVFvncdY640R8IfjY/VolL7tG7nvEyjZFyCRTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mD5jla0hsoG5GbPSM9zoC1wWYCkjs274Ru58EK2cRY/juthsYG/DdfCbGoJVwzYwsgwDkUBmcojZgELf0AMZEmOMkFX3SPkQD+o5HgRIlyFEbcwIzmqNXoQ04LJgN2IWtkkGe7ZxoBsefluGivhqeMMjc0dzOsTgXs2PK+ls5dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwRYl6BI; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-b67ae7e76abso2791790a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760924578; x=1761529378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hLJMAroOuEjEfmiC8wuRqME2tmvcm6bRHXY9lq4lfzg=;
+        b=CwRYl6BI7fgUHsbEeHmCneRQa46+PE77NjdvyBNvBEDx7OtHRCiDRialmNIT6DOkLE
+         qPE1Z6OhelkkXO/PF/5/TyIhFnPrr3C/RuguKNzXjW2AdY6UVqt9+py3DmLEinMah/9S
+         lzpI5omknSEV3EFwmpc+a/olMFqiA3mbnKuKoEUaqkv9AGzOyUm9fM3IM9OBTrsYV1qq
+         8F0Ak3Zl39ZX17J2u2T15uozgfCecpu79fRZu3fewSQoUeyLax6HGUTffPB6JZLQlpDp
+         7zYxgVgOG6KmT8770TgY4i2o27gBBuFT5vjPzRF6G8r1lNcZkhTxDeOcbx6X+haRzhxv
+         M4+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760924578; x=1761529378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hLJMAroOuEjEfmiC8wuRqME2tmvcm6bRHXY9lq4lfzg=;
+        b=A2ZKazPBaL1aqEQUx1sJ++RSzYu8fSz01KahdhsHhiH4J/o+jjnBabXkukPiBhHoN+
+         QrwisNNPiPjfKwFi4BLJ1GPs5aggNn3qfudV5VHG4oPSP9dbAI2fbLjuhA3tbcvNB2nl
+         H12Et/YJtKfHVmSHqwwnF4MZn123+tlRSgr2sdd8XlsSS9ElfAujRfSwTqkq2+K3v+Zv
+         Qk7+nYdOYJ2ZFThymClggbLE8VllZQTLa9O17RFnqrgHi2Xo0h5yAFEZX610vbHYjVHY
+         3v+5SLy4+Lpjpq66CcbwEiiL6qbZkRbPJMDKIz7S+6PcnJeg80a4ZMus3CjM1JTPCf4k
+         8qJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAXwnTzpdvw2bgve4/rfeg7lfLtJlkvE9X91zML2Z5fL7c/CDATBJdGGhwKF3otaGFtF276vIl2rJ0X5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+3PtmWYa/6v44O+xt0xQx0NTOXlzd28HudWw9dWAHIyj0ZVhQ
+	LKTS3gZsFju7wC25BfH+D26NGYyHwxeT28Z0m3Tj5DM4GGahoz+YY71C
+X-Gm-Gg: ASbGnct5ZPlLxhaDeBVQonvZ4fH3GBvJCAYHLhSGoLYYEZRJTwlsvGyEEA1MXzaZVhu
+	BXYFvE6K9pJ8K63cpSrXvMRPQCMBZKX7hz1FMlNn8PVXNodIA6hML3icBkFuj8+nz0dF67H4K/U
+	LsJopHVGySt4md32Omdhl5k9z4K3jvjrIV7igGXOCvylhfyJ3J9WuygdFemJU/e/mzkhr31ZTX1
+	2pfOTyUilGory08qwG6vOgtK5gRINx44NA21fU1TShJocoS2brkYvmCCwqzCZkgQ/vL4FtXScn/
+	qUoxkRu7B1cz9JjQ02BnytZRyqJDmUu3bZKYSzmNJZ3nE7tf3teZj04Mlxhggp3RvMvyoNpoEYn
+	PU178QMQArBcq8+TaQVjcwyGqC8bmYdT4KIlkbeTI9bxJInM/llW3jv/AxaikGPHqOrLvDAOEUT
+	VjqawrKcdYMlcayWV+AQ==
+X-Google-Smtp-Source: AGHT+IHbBpBYJ9xuTUr+8e8R2x206I3Dg3JjY2xjNJ+AjmYNNy7hKRGNFm1GDWB2gyHgbSQdRzGtdA==
+X-Received: by 2002:a17:903:2310:b0:246:4077:4563 with SMTP id d9443c01a7336-290ca121a15mr136211665ad.34.1760924578216;
+        Sun, 19 Oct 2025 18:42:58 -0700 (PDT)
+Received: from VM-0-14-ubuntu.. ([43.134.26.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471d5c0bsm64773965ad.69.2025.10.19.18.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Oct 2025 18:42:57 -0700 (PDT)
+From: Junjie Cao <caojunjie650@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: riscv: spacemit: add MusePi Pro board
-Message-ID: <20251020014132-GYE1506524@gentoo.org>
-References: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
- <20251017-k1-musepi-pro-dts-v3-1-40b05491699f@linux.spacemit.com>
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Junjie Cao <caojunjie650@gmail.com>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH RESEND] drm/mipi-dsi: Add dsc_slice_per_pkt field to mipi_dsi_device
+Date: Mon, 20 Oct 2025 09:42:48 +0800
+Message-ID: <20251020014248.2846466-1-caojunjie650@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017-k1-musepi-pro-dts-v3-1-40b05491699f@linux.spacemit.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Troy,
+Some DSI panels require multiple DSC slices to be transmitted within
+a single DSC packet. The DSI host will only correctly program its
+registers and avoid display corruption if the dsc_slice_per_pkt
+parameter is provided.
 
-On 13:52 Fri 17 Oct     , Troy Mitchell wrote:
-> Document the compatible string for the MusePi Pro [1]. It is a 1.8-inch
-> single board computer based on the SpacemiT K1/M1 RISC-V SoC [2].
-> 
-> Here's a refined list of its core features for consideration:
->   - SoC: SpacemiT M1/K1, 8-core 64-bit RISC-V with 2.0 TOPS AI power.
-..
->          This suggests potential for light AI/ML workloads on-device.
-drop these additional marketing info, just give neutral technical description
->   - Memory: LPDDR4X @ 2400MT/s, available in 8GB & 16GB options.
+Since dsc_slice_per_pkt is not part of the VESA DSC standard, it should
+not be added to struct drm_dsc_config. Instead, introduce a new field
+in struct mipi_dsi_device so that panel drivers can specify the required
+number of slices per packet, and DSI host drivers can retrieve it
+accordingly.
 
-..
->             Sufficient for various workloads.
-ditto
->   - Storage: Onboard eMMC 5.1 (64GB/128GB options). M.2 M-Key for NVMe
->              SSD (2230 size), and a microSD slot (UHS-II) for expansion.
-..
->              Good variety for boot and data.
-ditto
->   - Display: HDMI 1.4 (1080P@60Hz) and 2-lane MIPI DSI FPC (1080P@60Hz).
-..
->              Standard display options.
-ditto, please check more bellow yourself..
+Originally, this change was part of a single patch that also included
+the DSI host modification. This patch splits out the mipi_dsi_device
+changes. The corresponding DSI host patch for Qualcomm MSM, along with
+a panel driver that makes use of this field, will be submitted
+separately.
 
->   - Connectivity: Onboard Wi-Fi 6 & Bluetooth 5.2. A single Gigabit
->                   Ethernet port (RJ45). Given the stated markets,
->                   this should cover basic networking.
->   - USB: 4x USB 3.0 Type-A (host) and 1x USB 2.0 Type-C (device/OTG).
->          Decent host capabilities.
->   - Expansion: Full-size miniPCIe slot for assorted modules
->                (4G/5G, wireless etc.). A second M.2 M-Key (2230) for more
->                general PCIe devices (SSD, PCIe-to-SATA, comm boards).
->   - GPIO: Standard 40-pin GPIO interface, as expected for an SBC.
->   - MIPI: Includes 1x 4-lane MIPI CSI FPC and 2x MIPI DSI FPC interfaces
->           for cameras and displays.
->   - Clock: Onboard RTC with battery support.
-> 
-> Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
-> Link: https://www.spacemit.com/en/key-stone-k1 [2]
-> 
-no blank line here
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
-> Changelog in v3:
-> - nothing
-> - Link to v2: https://lore.kernel.org/all/20251010-k1-musepi-pro-dts-v2-1-6e1b491f6f3e@linux.spacemit.com/
-> 
-> Changelog in v2:
-> - modify commit message
-> - Link to v1: https://lore.kernel.org/all/20250928-k1-musepi-pro-dts-v1-1-5efcca0ce3ae@linux.spacemit.com/
-> ---
->  Documentation/devicetree/bindings/riscv/spacemit.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/spacemit.yaml b/Documentation/devicetree/bindings/riscv/spacemit.yaml
-> index c56b62a6299ac24d3cdef7edcdfc407dc62a1846..52fe39296031f21d1c28c4f1ea5ca9fe28caf45a 100644
-> --- a/Documentation/devicetree/bindings/riscv/spacemit.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/spacemit.yaml
-> @@ -22,6 +22,7 @@ properties:
->            - enum:
->                - bananapi,bpi-f3
->                - milkv,jupiter
-> +              - spacemit,musepi-pro
->                - xunlong,orangepi-rv2
->            - const: spacemit,k1
->  
-> 
-> -- 
-> 2.51.0
-> 
+Co-developed-by: Jonathan Marek <jonathan@marek.ca>
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
+---
+ include/drm/drm_mipi_dsi.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 3aba7b380..a6357e8c2 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -180,6 +180,7 @@ struct mipi_dsi_device_info {
+  * be set to the real limits of the hardware, zero is only accepted for
+  * legacy drivers
+  * @dsc: panel/bridge DSC pps payload to be sent
++ * @dsc_slice_per_pkt: number of DSC slices to be sent in a single packet
+  */
+ struct mipi_dsi_device {
+ 	struct mipi_dsi_host *host;
+@@ -194,6 +195,7 @@ struct mipi_dsi_device {
+ 	unsigned long hs_rate;
+ 	unsigned long lp_rate;
+ 	struct drm_dsc_config *dsc;
++	unsigned int dsc_slice_per_pkt;
+ };
+ 
+ /**
 -- 
-Yixun Lan (dlan)
+2.51.0
+
 
