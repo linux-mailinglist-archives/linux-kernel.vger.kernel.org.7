@@ -1,103 +1,77 @@
-Return-Path: <linux-kernel+bounces-860688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF16ABF0B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:00:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADBABF0B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5AC3E37EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:00:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 439A34F2756
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736AB2580D7;
-	Mon, 20 Oct 2025 11:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A3D2D9EEA;
+	Mon, 20 Oct 2025 11:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MTAHstol"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HjsDBnDN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AE7246783
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D61242910
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958004; cv=none; b=nTYAgDl1gUxi7LSjGsA9z1l9SmuVGSndbxr/8xlXQNDCX7u6TsFfkYhm+W86A2wL8dJPi/pjs4U/xMe/YKjEoae6e4YeXcASrCZpcLuHM+/n3peRPxHg/yPdh7SC1uYhloWWAp6CflXJ+99cuSELqmXATE2W7MfqZfDPWkzgxQY=
+	t=1760958019; cv=none; b=kEq30zwX0v2ZBSZin9qOXq81OWiDO5wW+Ps4NVXEQI8Y2dgCFIf8fx2F1rJB9mx2lf93+p3JvK9Xi8kinJoCp55aD3yMox9FtFZAVDIcwW3ryuxvS2vGRyvFmQVqrYVHbcrqAvPebTup9loO6CuuCzicqNI2JI6I74nhU9gEUfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958004; c=relaxed/simple;
-	bh=14IBdIk0VWgOI+eCkc53st4gjSAtuHjTlT42n1vEQwA=;
+	s=arc-20240116; t=1760958019; c=relaxed/simple;
+	bh=kpUHEdBZvjoJIOR5sKFRSpTMR5xCgrG9uDsTK6cK26I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDxhdkoJQ7RB2egZWB3dffSNvk01PbruymFcCNpbCbkqruFYqJFUqcwStXdh8F/NwZHkkYIAfE+39fFO5Q1IcxtkOq7V661njkipdK6ETI4O3yNdDwJ7nWF4Eba8kbEuA5BVzJhXHDwVEX2OsW9yrV5C/D1ns8JVPcIm1+MxMP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MTAHstol; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59K0CugL001320
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:00:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=9z3Rdc/B4X/+lumDyrvl1D4/
-	e+rPgF8EjJhDbz0wnyQ=; b=MTAHstolc6eUPrq0Rv4wui6J8qUera4HlBzcxo1m
-	nAH/JrmV23OkNMh5TA5+TPFsmRUSy6q6J/u7hwKFX7Bc41TcSa6cn/ywOKt25jbP
-	fF4+8iANCSnUf4r/NPD7qqLMaYHZb2CBnJFmv3Maxos818qo+DQWNR19kWxGGvMX
-	336cOxNgGlBoRhAFEcU++7xqK/NsYKJwZ03UXHvII4kibKEzTrnKpGP7I8doWnUt
-	ujoWesrIqHjg+gnNykKWmXgGeDRCYuzQiiXntz00tp+HriDQh91g4+1vTvS5fEVK
-	/mYF0Ze4g4pE8yGC6Ps12bX3GFMjSTMnaZG045XfgrGS1g==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08w24yv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:00:02 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87bf4ed75beso159084096d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:00:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760958001; x=1761562801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9z3Rdc/B4X/+lumDyrvl1D4/e+rPgF8EjJhDbz0wnyQ=;
-        b=MKNWLc6pwkOa62yzDbXyCvHuMc5GZVDSMVJ5hB9/kIGeuNLojmspfe98H7JOSCNe79
-         BkBC3IoeN79e+Tb6wKJmS9XZcXKuDY9of3Nih8/wygTXfXADSv3kVMwjDo4WKTILPmgs
-         3r5m0jzSkra5F8txQlyPUYglbsVlJ9eqwMeCG4qsugqdtG4I4mQMhcC5xrWWk2N5T+3o
-         KQqrDsGtn6CFs/yyYeTLY19dRDe1otyTCscd00TseR+EYMr2K7dIOLiiDH+kXc+emEGb
-         DHCT1lhcAxgYqs+tsWVqznqLkMyaGJ/8Oqwk1YerR6lecD87lMILGuwUBOQXu1ppeoA3
-         obcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvJgUAgUFjjwLxUbHaXR9bYuvZIh5dvAfth0IwqpATKXKwUZwGlXwMSxgGsjPEqCkh06KKVOjB+JXC1XQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxDWokXSPPcn6oJ4lOvHfKjMjBDwnAcGUcZB74OGV+mBimCBUf
-	fiKAaNw6Fqrd2sM3ixLypn2AKTheeZ+lHtYXvGeeVjHoOy3hkMAs6VaEzA1SJrdFLqnUdU4jumw
-	VVruMBze7njaX0bQSnFzXjzEj3fqMweWG4l+mMyAfz80Tnl26MPlb1CJP4LAAnHbQCug=
-X-Gm-Gg: ASbGncu9lQ9+rhiAu06it5HvmGvRSBqCzdqhGCXj+kVdw2+PdCm12mQHwwCzj3d8o7H
-	9sQ6k6YyKtKeNBoIdToMK64YJMzrmxzyO1kSfogq4lltNSBSvrLzhEUFGmZZ1giMAeJKmD+xiR9
-	2tXA0TKF2YqNiV1eaNuUwpwZnlqdp17b3miIHny6SETeXDd1dL6muerHcpKTNNw26cWws7MYf5n
-	VWGL7GBLydHLPvfew145s4SDacOfGmXF9oaMX0eXYk8mZ5i/xVOw3nMarol3Cl4ZUHH4HLAyr97
-	Y0I4d5g6VS/9xGdUfz4RNejJQAkLlSK5hD7xWuqQ9/WK6+Xlfc9BNhM5r0U5IyVcC6qag4MWu/F
-	noW8ggjG8O3ed3jMsogUGO+bfQVdD079l8LZ9sSc4jLM0FkqDLN4Dq3orgJpfqD/+y46VZUpEHR
-	jonDKybR/d0YE=
-X-Received: by 2002:a05:622a:1a2a:b0:4e8:8b15:3180 with SMTP id d75a77b69052e-4e89d3ae832mr157357731cf.70.1760958000908;
-        Mon, 20 Oct 2025 04:00:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9kgWQDQxssxXi9g79uzGEY8tRPOM8E9DkJHZayEc3eZVMwNKfchjA2PDtn+fdHPDEn54rYQ==
-X-Received: by 2002:a05:622a:1a2a:b0:4e8:8b15:3180 with SMTP id d75a77b69052e-4e89d3ae832mr157357491cf.70.1760958000412;
-        Mon, 20 Oct 2025 04:00:00 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def1b37dsm2416453e87.87.2025.10.20.03.59.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 03:59:59 -0700 (PDT)
-Date: Mon, 20 Oct 2025 13:59:57 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-Subject: Re: [PATCH 4/9] clk: qcom: rpmh: Add support for Kaanapali rpmh
- clocks
-Message-ID: <thy7r7my2i3gfuy723rrq36k7hjobzqcnlzbggpagg4fgfvvzg@g5wzzxoppja5>
-References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
- <20250924-knp-clk-v1-4-29b02b818782@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOIFfq7yMddbHcGAdKGoZSAaAe8LNXXqO/wdUh6JIZNdboreAml/z5NNcSHp9xXCskMFElqrTqK5kT6I+qeeLCQRke6qCz0yx9p7z66aLKdiBNThGlAExdzEvEIcm2y15s17x/bwnDqdLrx8cSlK2W+IUjlozk4vYEuJ1L/SHwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HjsDBnDN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760958015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z88Gx9BymTLPsBIsD4RUaH/1l0Vw9d/+nv1r7FFb0CQ=;
+	b=HjsDBnDNyo9+kjRQit2ASzS2xssAcIHkZAYu+v/bp+Kw1lAQEZ2pQ1JKyH0Ne43mQ6QS5g
+	U2/CP6uvcqKlQcJdRufWGnc0vVMzYEZg/l3ooX7FloRuVvlMHjSrSBuR8kvPILaAaGp/xX
+	3iWmHW3PXDoO+M6pna9jELSGc0WnpmM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-637--rELkR8iM2yxpWnTqV4Kuw-1; Mon,
+ 20 Oct 2025 07:00:12 -0400
+X-MC-Unique: -rELkR8iM2yxpWnTqV4Kuw-1
+X-Mimecast-MFC-AGG-ID: -rELkR8iM2yxpWnTqV4Kuw_1760958010
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 876171956058;
+	Mon, 20 Oct 2025 11:00:10 +0000 (UTC)
+Received: from localhost (unknown [10.22.88.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F3DC530001BC;
+	Mon, 20 Oct 2025 11:00:08 +0000 (UTC)
+Date: Mon, 20 Oct 2025 08:00:07 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Phil Auld <pauld@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Shizhao Chen <shichen@redhat.com>, linux-kernel@vger.kernel.org,
+	Omar Sandoval <osandov@fb.com>, Xuewen Yan <xuewen.yan@unisoc.com>
+Subject: Re: sched: update_entity_lag does not handle corner case with task
+ in PI chain
+Message-ID: <aPYWNxnVVLZ8AzXa@uudg.org>
+References: <aPN7XBJbGhdWJDb2@uudg.org>
+ <20251018195730.GJ3419281@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,122 +80,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250924-knp-clk-v1-4-29b02b818782@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: sx1WYUCfqFQQfrjKD4OIvg4XuiBhAN2m
-X-Proofpoint-GUID: sx1WYUCfqFQQfrjKD4OIvg4XuiBhAN2m
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX8Ix0dJQ4+OEe
- pf02kseFuS2q0b3tGKtA1UXBttwQOfCqKgZI6L2TZbK7k9U6ycjds1KOhdtSrfMdefu3xJenDEV
- E66XowqC8BUTqvepGGxdW/tzpjTj9SGWNRBdxhjG07GIaUtAMNGjHfNX7FsL+aZZ74XKLB6Icvf
- sIoPCMjrzvwtqJqqhOskKwXwjeEJkIljr3oh6OChZ0s0MUD8YBnkBvzebGXb86Yfai4NVec0CnK
- 06Rhi6gXBs+toLujHvTyTNxIXZu1/X56EVZwQN+MS4VHjso+nmlO9+BXiNrkpnGYos7XE6Li43T
- s+oL6Fp9pCKV4wHSHctlH/ubrxrK9qKL4nsKJP6UIEyxH3HHwn4HManJ4duU8mJMv5uwZ6ZilTg
- K0viAVwID8FVSj+Xf2VS25g6Rj5okw==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f61632 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=1BWIhq4ta8SIVIyFiOkA:9 a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
+In-Reply-To: <20251018195730.GJ3419281@noisy.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Sep 24, 2025 at 03:58:56PM -0700, Jingyi Wang wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
+On Sat, Oct 18, 2025 at 09:57:30PM +0200, Peter Zijlstra wrote:
+> On Sat, Oct 18, 2025 at 08:34:52AM -0300, Luis Claudio R. Goncalves wrote:
+> > Hello!
+> > 
 > 
-> Add the RPMH clocks present in Kaanapali SoC.
+> > While running sched_group_migration test from CKI repository[1], which
 > 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 39 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+> What's a CKI ?
+
+Continuous Kernel Integration (https://cki-project.org/). That's not
+relevant to the problem, I just wanted to mention the source of the test in
+case there were other tests with the same name or other versions in different
+repositories.
+
+> > migrates tasks between cpusets, Shizhao Chen reports hitting the warning
+> > in update_entity_lag():
+> > 
+> >     WARN_ON_ONCE(!se->on_rq);
+> > 
+> > In short, update_entity_lag() is acting on a task that is waiting on a lock,
+> > sleeping, with both on_rq and se->on_rq equal to zero.
 > 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 63c38cb47bc4..6b1f24ee66d5 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -395,6 +395,16 @@ DEFINE_CLK_RPMH_VRM(clk4, _a, "C4A_E0", 1);
->  DEFINE_CLK_RPMH_VRM(clk5, _a, "C5A_E0", 1);
->  DEFINE_CLK_RPMH_VRM(clk8, _a, "C8A_E0", 1);
->  
-> +DEFINE_CLK_RPMH_VRM(c1a_e0, _a, "C1A_E0", 1);
-> +DEFINE_CLK_RPMH_VRM(c2a_e0, _a, "C2A_E0", 1);
+> You can't get to where you are with p->on_rq being zero.
 
-No. Please make sure that you follow what others have done.
+I can check the other vmcores I have, but I am certain that I saw this in
+at least two of the vmcores I analyzed:
 
-Why are these clocks named differently from clkN defined above?
 
-> +DEFINE_CLK_RPMH_VRM(c3a_e0, _a2, "C3A_E0", 2);
-> +DEFINE_CLK_RPMH_VRM(c4a_e0, _a2, "C4A_E0", 2);
-> +DEFINE_CLK_RPMH_VRM(c5a_e0, _a2, "C5A_E0", 2);
-> +DEFINE_CLK_RPMH_VRM(c6a_e0, _a2, "C6A_E0", 2);
-> +DEFINE_CLK_RPMH_VRM(c7a_e0, _a2, "C7A_E0", 2);
-> +DEFINE_CLK_RPMH_VRM(c8a_e0, _a2, "C8A_E0", 2);
+   crash> task -R pi_blocked_on,prio,rt_priority,on_rq,se.on_rq 0xffff8955813c2180 0xffff895926cb4300
+   PID: 19       TASK: ffff8955813c2180  CPU: 2    COMMAND: "rcub/0"
+     pi_blocked_on = 0xffffcc9e802f7de0,       <------- held by the thread below
+     prio = 98,
+     rt_priority = 1,
+     on_rq = 1,
+     se.on_rq = 0 '\000',
 
-And these should use the same pattern. If the old names are unsuitable
-because of the clash between clock names, you can rename them. But
-please, be consistent.
+   PID: 445515   TASK: ffff895926cb4300  CPU: 0    COMMAND: "bz1738415-test"
+     pi_blocked_on = 0xffffcc9ea19f7b70,       <------- waiting on a lock
+     prio = 98,
+     rt_priority = 0,
+     on_rq = 0,                                <------- 
+     se.on_rq = 0 '\000',                      <-------
 
-> +DEFINE_CLK_RPMH_VRM(c11a_e0, _a4, "C11A_E0", 4);
 
-> +
->  DEFINE_CLK_RPMH_BCM(ce, "CE0");
->  DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
->  DEFINE_CLK_RPMH_BCM(ipa, "IP0");
-> @@ -900,6 +910,34 @@ static const struct clk_rpmh_desc clk_rpmh_glymur = {
->  	.num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
->  };
->  
-> +static struct clk_hw *kaanapali_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-> +	[RPMH_DIV_CLK1]		= &clk_rpmh_c11a_e0_a4.hw,
-> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_c6a_e0_a2.hw,
-> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_c6a_e0_a2_ao.hw,
-> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_c7a_e0_a2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_c7a_e0_a2_ao.hw,
-> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_c8a_e0_a2.hw,
-    -I$(KERNEL_ROOT)                            \
-> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_c8a_e0_a2_ao.hw,
-> +	[RPMH_RF_CLK1]		= &clk_rpmh_c1a_e0_a.hw,
-> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_c1a_e0_a_ao.hw,
-> +	[RPMH_RF_CLK2]		= &clk_rpmh_c2a_e0_a.hw,
-> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_c2a_e0_a_ao.hw,
-> +	[RPMH_RF_CLK3]		= &clk_rpmh_c3a_e0_a2.hw,
-> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_c3a_e0_a2_ao.hw,
-> +	[RPMH_RF_CLK4]		= &clk_rpmh_c4a_e0_a2.hw,
-> +	[RPMH_RF_CLK4]		= &clk_rpmh_c4a_e0_a2.hw,
-> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_c5a_e0_a2_ao.hw,
-> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_c5a_e0_a2_ao.hw,
-> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_kaanapali = {
-> +	.clks = kaanapali_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(kaanapali_rpmh_clocks),
-> +};
-> +
->  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->  					 void *data)
->  {
-> @@ -990,6 +1028,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->  
->  static const struct of_device_id clk_rpmh_match_table[] = {
->  	{ .compatible = "qcom,glymur-rpmh-clk", .data = &clk_rpmh_glymur},
-> +	{ .compatible = "qcom,kaanapali-rpmh-clk", .data = &clk_rpmh_kaanapali},
->  	{ .compatible = "qcom,milos-rpmh-clk", .data = &clk_rpmh_milos},
->  	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
->  	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+In the vmcores I collected the thread blocking rcub/X (holding the lock) is
+blocked on another test thread, waiting on a different lock. As in some of
+the vmcores this second lock has no owner, this looks like the lock had just
+been released. The timing was perfect to hit this apparent corner case.
+
+> > When a stalled RCU grace period occurs, rcu_boost_kthread() is called. If an
+> > rt_mutex is involved in the process, rt_mutex_setprio() is called and may
+> > eventually walk down a Priority Inheritance chain, adjusting the priorities
+> > of the waiters in the chain. In such cases update_entity_lag() may be called.
+> > 
+> > What is the expected behavior for this case, to bail out of update_entity_lag()
+> > or avoid calling the function entirely?
+> > 
+> > 
+> > --[ Additional Notes:
+> > 
+> > Reproducing the Problem:
+> > 
+> >   - Install sched_group_migration[1] and run it on a loop.
+> >     (while : ;  do runtest.sh; done)
+> >   - In my experience, running the test with 4 CPUs reproduces the problem
+> >     within 15 minutes. Setting "nr_cpus=4 max_cpus=4" on boot does the trick.
+> > 
+> > 
+> > The scenario below is a simplification of the cases I observed while
+> > investigating the problem:
+> > 
+> >     CPUn					CPUx
+> > 
+> >     task01 has rcu-state lock
+> >     contends on another lock		
+> >     (goes to sleep)
+> >     --> on_rq=0 se.on_rq=0
+> > 					rcub/x contends on rcu-state lock
+> > 					  rcu_boost_kthread()
+> > 					    rt_set_prio()
+> > 					      update_entity_lag(task01->se)
+> > 					        WARNING()
 > 
-> -- 
-> 2.25.1
-> 
+> There is a whole lot wrong with this, firstly there is no rt_set_prio()
+> function, and update_entity_lag() isn't directly called by it.
+> Additionally, you should never get to update_entity_lag() if !p->on_rq,
+> see below:
 
--- 
-With best wishes
-Dmitry
+Sorry, I meant rt_mutex_setprio(). My mistake. And yes, I oversimplified
+the note. The idea is that rt_mutex_setprio() could eventually result in
+a call to update_entity_lag() down the chain.
+
+> > [ 1805.450470] ------------[ cut here ]------------
+> > [ 1805.450474] WARNING: CPU: 2 PID: 19 at kernel/sched/fair.c:697 update_entity_lag+0x5b/0x70
+> > [ 1805.463366] Modules linked in: intel_rapl_msr intel_rapl_common intel_uncore_frequency intel_uncore_frequency_common skx_edac skx_edac_common nfit libnvdimm x86_pkg_temp_th
+> > ermal intel_powerclamp coretemp kvm_intel kvm platform_profile dell_wmi sparse_keymap rfkill irqbypass iTCO_wdt video mgag200 rapl iTCO_vendor_support dell_smbios ipmi_ssif in
+> > tel_cstate vfat dcdbas wmi_bmof intel_uncore dell_wmi_descriptor pcspkr fat i2c_algo_bit lpc_ich mei_me i2c_i801 i2c_smbus mei intel_pch_thermal ipmi_si acpi_power_meter acpi_
+> > ipmi ipmi_devintf ipmi_msghandler sg fuse loop xfs sd_mod i40e ghash_clmulni_intel libie libie_adminq ahci libahci tg3 libata wmi sunrpc dm_mirror dm_region_hash dm_log dm_mod
+> >  nfnetlink
+> > [ 1805.525160] CPU: 2 UID: 0 PID: 19 Comm: rcub/0 Kdump: loaded Not tainted 6.17.1-rt5 #1 PREEMPT_RT 
+> > [ 1805.534113] Hardware name: Dell Inc. PowerEdge R440/0WKGTH, BIOS 2.21.1 03/07/2024
+> > [ 1805.541678] RIP: 0010:update_entity_lag+0x5b/0x70
+> > [ 1805.546385] Code: 42 f8 48 81 3b 00 00 10 00 75 23 48 89 fa 48 f7 da 48 39 ea 48 0f 4c d5 48 39 fd 48 0f 4d d7 48 89 53 78 5b 5d c3 cc cc cc cc <0f> 0b eb b1 48 89 de e8 b9
+> >  8c ff ff 48 89 c7 eb d0 0f 1f 40 00 90
+> > [ 1805.565130] RSP: 0000:ffffcc9e802f7b90 EFLAGS: 00010046
+> > [ 1805.570358] RAX: 0000000000000000 RBX: ffff8959080c0080 RCX: 0000000000000000
+> > [ 1805.577488] RDX: 0000000000000000 RSI: ffff8959080c0080 RDI: ffff895592cc1c00
+> > [ 1805.584622] RBP: ffff895592cc1c00 R08: 0000000000008800 R09: 0000000000000000
+> > [ 1805.591756] R10: 0000000000000001 R11: 0000000000200b20 R12: 000000000000000e
+> > [ 1805.598886] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> > [ 1805.606020] FS:  0000000000000000(0000) GS:ffff895947da2000(0000) knlGS:0000000000000000
+> > [ 1805.614107] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ 1805.619853] CR2: 00007f655816ed40 CR3: 00000004ab854006 CR4: 00000000007726f0
+> > [ 1805.626985] PKRU: 55555554
+> > [ 1805.629696] Call Trace:
+> > [ 1805.632150]  <TASK>
+> > [ 1805.634258]  dequeue_entity+0x90/0x4f0
+> > [ 1805.638012]  dequeue_entities+0xc9/0x6b0
+> > [ 1805.641935]  dequeue_task_fair+0x8a/0x190
+> > [ 1805.645949]  ? sched_clock+0x10/0x30
+> > [ 1805.649527]  rt_mutex_setprio+0x318/0x4b0
+> 
+> So we have:
+> 
+> rt_mutex_setprio()
+> 
+>   rq = __task_rq_lock(p, ..); // this asserts p->pi_lock is held
+> 
+>   ...
+> 
+>   queued = task_on_rq_queued(rq); // basically reads p->on_rq
+>   running = task_current_donor()
+>   if (queued)
+>     dequeue_task(rq, p, queue_flags);
+>       dequeue_task_fair()
+>         dequeue_entities()
+> 	  dequeue_entity()
+> 	    update_entity_lag()
+> 	      WARN_ON_ONCE(se->on_rq);
+> 
+> So the only way to get here is if: rq->on_rq is in fact !0 *and*
+> se->on_rq is zero.
+
+Assuming the vmcores I collected are not damaged and that the simple crash
+command I used earlier to display the thread on_rq and se->on_rq fields is
+correct, is there a chance that the sequence above could be tampered by
+the thread being concurrently moved from one cpuset to another?
+
+> And I'm not at all sure how one would get into such a state.
+
+Sorry again for the convoluted report, but I am also trying to make sense
+of the results observed. Is there anything I could do in terms of tests or
+information that could help shed a light here?
+
+Best,
+Luis
+
 
