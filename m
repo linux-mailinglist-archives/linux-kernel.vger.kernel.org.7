@@ -1,149 +1,91 @@
-Return-Path: <linux-kernel+bounces-861902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40445BF3F4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6CABF3F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1566A4EB06C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:43:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FAF84E31C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA2D6BFCE;
-	Mon, 20 Oct 2025 22:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EDA2F3C2A;
+	Mon, 20 Oct 2025 22:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sPX78qam"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE2923BD1B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YJUYGL1+"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59066BFCE
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761000201; cv=none; b=BgL5mMY7uN6x4lEg1MrNdFhPr/0jteHa25Tn2z/NkTblDwgyV26w2ulD/iozQnlyW9oMxOrgaZ6EkQLRUNcYwf4iS5qwlQ98Ir9rr9elc0JoYlSHcGyMTAqgyIqbw28bdmuqsQLPeSQle4p6oIHbUf56nQD+7+46gtiFGP+jxiM=
+	t=1761000238; cv=none; b=TybL7kyXt0uMtVeF900497PvOkhWIcOdI/xqxQG6ws+XiyIqKvAJwXlVmQRJw2EoDZ5vsKn98s+b730bkhGBpNTWaTR31solISCIygAtoSxDmZEQJCOmVMpPTN5vBbKxJI5i1OW67YuajmJM4dp7b10vBmocFAhxVH+amHOGgjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761000201; c=relaxed/simple;
-	bh=AqgTpYLx8CwO8hQnt4Mwj4oe0AK580FEU7XGKrhn/Po=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NsZacGb28m29hCUwMENrCCxH+5IYV7GgnB/09YlpPDRpWWFN+cam4zBz833oUt+nOkcZmfhn2/FMGBU93SGdG0neXLCHC8WUcBJkeN+N9BPYXyrSKSjAT5CNECRsHojozXOWmc/WpueL8OyuPEdOF3MSzu/su5VxNbWM3CuAj7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sPX78qam; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso37971745e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761000198; x=1761604998; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AqgTpYLx8CwO8hQnt4Mwj4oe0AK580FEU7XGKrhn/Po=;
-        b=sPX78qamHS1cJ1CyVZIO3TCRtqEyXnSW1XO8mLxAZL15ihSkHeJ6lIIEjQh6KWm3ER
-         mO8aG5QL4wWS3wo1i2CKNpy01bCN05ne52ge14mM8oRDQ9zbhbutElwFMZiKZEs7vktL
-         f29zxZewa8Q5e2UD19bqovcXZWFmRPWaldn3ew/BfB+MHKT0P94TsHw+tSTj+h3LvsqF
-         rmJ4c1dSNPW8KMmb9pYZUFLH0SR4BSVr7t+95MO3XeKKoXP+O4CHnynrj9UthwqhkfxE
-         QSSNLFEX1+eqczcvWim4FzNBo0zSMgZQibRDepWdkKgmFr9dq3UCUvI0SGjYNSoQhOV9
-         HhZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761000198; x=1761604998;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AqgTpYLx8CwO8hQnt4Mwj4oe0AK580FEU7XGKrhn/Po=;
-        b=Xcjes2BX3yIohwA5Kr6f5e+DESFkOUN0C+z5d3vtTRvFM3kLAd5jqLDGIxsDdiA//a
-         jNkJTJBZ1CqrZGhfqQJ1htn8e2cBpfl21cJp/9Gjmk+drip4LuzEpbo+G/VDRici3wVJ
-         WiL2ormVaOWP6I9Byavx9oSphvPlisrq6nqRQJTKsJA2oc6CGPTn7CeiTvZtPxioR/Md
-         9kdYw5N6LiAmFXQ+jRFcidQ64XOc4oj24EbMKl/7UZoQWyB4T7BCsjoHsbcXzrS4x51b
-         pUtKiHD5NeecVl/EEGPKKeIwVEegnU3yAx0cDfezA29NuvtQ2ZSaekIvHPG3NYOfuoLi
-         JT1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Ni1PnkhALeXQ2TKGb61pL/ucM9VtSuVdQgcU8/5QYzb8Cfu8JrSha6cE1nhPBNBnO7N2A+FhLUZeaNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIfxibrCzCyrmHceu/4V5r8KujCZ+hpgvgv/2dtb/vNm1ZYkOa
-	zZF66F7f74g//rXFjMkG+xx+5JCkOx+OeVIR0hFBOHFNB/9amPrA0242SabQakDrNEypVsgUjqN
-	SM1ngjAJBiW036j2JdA==
-X-Google-Smtp-Source: AGHT+IGge7y5ElnicFlN3+NEM1B7QPLLGE3Z15cYGDjK/uvYJ2qkxfQ4JRz7kneBOslFx2scA53r9xy1yTZQK1I=
-X-Received: from wmwc7.prod.google.com ([2002:a05:600d:62c7:b0:470:fd92:351d])
- (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:670a:b0:45d:d97c:236c with SMTP id 5b1f17b1804b1-471179017f3mr91705375e9.21.1761000198080;
- Mon, 20 Oct 2025 15:43:18 -0700 (PDT)
-Date: Mon, 20 Oct 2025 22:43:17 +0000
-In-Reply-To: <87ikgieiar.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761000238; c=relaxed/simple;
+	bh=4vwBQXMF89yRgenBAM8z1rVKwRuGAGV2j0K6ZHxJ5yo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nYhgtguau9koAgq+xciUEEs+TVsxiowCWYw7X8josgtT6pRUKmc+vJalxAFm2CKg0cFkAvAgkVQvUgsLUvKNd9iYrmqybxZo052RFqQy+LV8c93YGJw2IE6qZcqc9ZJD8xVeg+c0NnLRpC6s27atjyJxbBxHl1v/2QfkeZHar4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YJUYGL1+; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-0403QTC.corp.microsoft.com (unknown [20.236.10.163])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AABE6201DAC1;
+	Mon, 20 Oct 2025 15:43:55 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AABE6201DAC1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761000235;
+	bh=Pk+hmvk+GZ5gPHSTP84Aa7rETr4kHC1bVEeC2ISi53U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YJUYGL1+86ATh0+gbWGw6dNvUeCOm6FyRKRR6mTZ6eNKIuM6OrRQDRDufNVF29ee8
+	 KrVPAPN3KqD3oyYjqbAtRrRTL10e8ltpbsGmGlFkUUZPRgfL5EoLYrZjSdCdHUQIWN
+	 dFxcUa68HoGLJJr0UKN7Yy5PUQFB4kTAytJ5LloM=
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Mostafa Saleh <smostafa@google.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Zhang Yu <zhangyu1@linux.microsoft.com>,
+	Jean Philippe-Brucker <jean-philippe@linaro.org>,
+	Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: [PATCH v2 0/2] SMMU v3 CMDQ fix and improvement
+Date: Mon, 20 Oct 2025 15:43:51 -0700
+Message-Id: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <87ikgieiar.fsf@trenco.lwn.net>
-X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
-Message-ID: <20251020224317.723069-1-sidnayyar@google.com>
-Subject: [PATCH v2 00/10] scalable symbol flags with __kflagstab
-From: Siddharth Nayyar <sidnayyar@google.com>
-To: corbet@lwn.net
-Cc: arnd@arndb.de, gprocida@google.com, linux-arch@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, maennich@google.com, mcgrof@kernel.org, 
-	nathan@kernel.org, nicolas.schier@linux.dev, petr.pavlu@suse.com, 
-	samitolvanen@google.com, sidnayyar@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 8:02PM Jonathan Corbet <corbet@lwn.net> wrote:
-> Siddharth Nayyar <sidnayyar@google.com> writes:
-> > This patch series implements a mechanism for scalable exported symbol
-> > flags using a separate section called __kflagstab. The series introduces
-> > __kflagstab support, removes *_gpl sections in favor of a GPL flag,
-> > simplifies symbol resolution during module loading, and adds symbol
-> > import protection.
->
-> This caught my eye in passing ... some questions ...
->
-> The import protection would appear to be the real point of this work?
+Hi Will et al,
 
-Yes, import protection prompted the introduction of __kflagstab. But I
-would agrue that __kflagstab in its own right is an improvement to the
-overall health of the module loader code, therefore can be taken even
-without import protection.
+These two patches are derived from testing SMMU driver with smaller CMDQ
+sizes where we see soft lockups.
 
-> But it seems that you have kind of buried it; why not describe what you
-> are trying to do here and how it will be used?
+This happens on HyperV emulated SMMU v3 as well as baremetal ARM servers
+with artificially reduced queue size and microbenchmark to stress test
+concurrency.
 
-Point taken. For sake of clarity, import protection is a mechanism which
-intends to restrict the use of symbols exported by vmlinux to signed
-modules only, i.e. unsigned modules will be unable to use these symbols.
-I will ensure this goes into the cover letter for following versions of
-the patch series.
+Thanks,
 
-> I ask "how it will be used" since you don't provide any way to actually
-> mark exports with this new flag. What is the intended usage here?
+Jacob 
 
-Patch 09/10 (last hunk) provides a mechanism to enable import protection
-for all symbols exported by vmlinux. To summarise, modpost enables
-import protection when CONFIG_UNUSED_KSYMS_WHITELIST is set. This
-results in all symbols except for the ones mentioned in the whitelist to
-be protected from being imported by out-of-tree modules. In other words,
-out-of-tree modules can only use symbols mentioned in
-CONFIG_UNUSED_KSYMS_WHITELIST, when the config option is set.
+Alexander Grest (1):
+  iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
 
-I realise I should have documented this behaviour, both in the cover
-letter as well as in kernel documentation. I will do so in the following
-version of the patch series.
+Jacob Pan (1):
+  iommu/arm-smmu-v3: Fix CMDQ timeout warning
 
-Please share any feedback on the mechnism to enable the mechanism. In my
-opinion, CONFIG_UNUSED_KSYMS_WHITELIST has a complementary goal to
-import protection and therefore I felt like using the option to enable
-import protection. In case this seems to convoluted, I am okay with
-introducing an explicit option to enable import protection.
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 97 ++++++++++-----------
+ 1 file changed, 47 insertions(+), 50 deletions(-)
 
-> If I understand things correctly, applying this series will immediately
-> result in the inability to load any previously built modules, right?
-> That will create a sort of flag day for anybody with out-of-tree modules
-> that some may well see as a regression. Is that really the intent?
+-- 
+2.43.0
 
-Unfortunately this series will break all modules which export symbols
-since older versions of such modules will not have the kflagstab
-section.
-
-Out-of-tree modules which do not export symbols of their own will only
-fail to load in case the CONFIG_UNUSED_KSYMS_WHITELIST is set and the
-symbols which these modules consume are not present in the whitelist.
-
-Regards,
-Siddharth Nayyar
 
