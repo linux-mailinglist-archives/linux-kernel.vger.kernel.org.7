@@ -1,57 +1,80 @@
-Return-Path: <linux-kernel+bounces-861288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F08BF24AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:04:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780A0BF230A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4025818A6F9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:04:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 548254ECE05
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3662283C89;
-	Mon, 20 Oct 2025 16:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0465274B2E;
+	Mon, 20 Oct 2025 15:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="PgN5d+Wz"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6bdbHiw"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941D626B2B0;
-	Mon, 20 Oct 2025 16:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976227; cv=pass; b=UdvCA7TBT2Dnzv/eh7fvKabHSbnmy8R1LqP6hMd/LfbDYaq80YwdEfehV5ky/cWGC5ltjh+/CKq6eiSsP4nqw5dVcCDFRStfiXSD5I61qEVjKsdxE9CG756hCk1at2xmat47Z4oGbrKiZ5NZfnW0eow6l7JFJMm5HEYFVGPQLMw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976227; c=relaxed/simple;
-	bh=ro82tuJO2Pfqb531Qikn6skLjZyls+TNek52L3zOQfQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7508623E320
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760975133; cv=none; b=PZufHRn67tOPzSeb2jTqinM7TZcqZ4nmZWlYlTHtJP9dKIcxnhudQX/qfMk2nv5mE5eEn6Evf00Q2fd57z5RYIBQq/9k/f6FmvQ6sXH1H4nUnV2HgRJRsdLLVXjVvxfH8hIRoRKqC64sZuuNBNupPbfe1mj8FeJtjYFdIUkbK6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760975133; c=relaxed/simple;
+	bh=rWlIEOfLt4QSbEFCHlWSDOc4rlXWOXGgHbTI9+CTFCQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=umqrBsDXI00Lcnat6e8rKyBn99mDXfEyDBdtMMrt4GHU+R9EtCOKIaq9egNmf+Mm5MHPK8IIGipMYW4q6cLA/ExgjEBG0n0tl6Xr7dwIpbLAnmYCLJSAorva3RTGm6fWVUOy6BREjpGzXxU6UeRPq/oA5LxkW/GvVy5j+f4unac=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=PgN5d+Wz; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760976215; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RFrW5ZNk272kd1WcOV58uBEKs8lUI+Z+Xh/DiYF0TK4hquqDBxd+oBpNRcJTFSPULjYVgzo8YCCSEne++R34ba2SIT6GiY4wQe2ppOWxYBFscOVB/9wm3xuUc7z7dOzYo1w6dLPryRQ+GBihw8BeGF9JeMi773nkw7gmSh0cXyU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760976215; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zNUjUWoucb2PzoYo+4bAqMEYEMS3kWl+sgHUY98jqEE=; 
-	b=HepY1Bt83ItRKR0DkMZ2UzMWNafGtXQmwRV6yfHfE1WugzIoMPB3XYW9Teq5wOFrzbPiM4gfFG3eukgFU2nkt9xQYRjHGagZAdda0eTlscVh1ZgVpnAjr72ilG3+ZUvgT1p9WKK8grPIJTSTc1IqEqD0XpxGCq+HsLnDkgABNYY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760976215;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=zNUjUWoucb2PzoYo+4bAqMEYEMS3kWl+sgHUY98jqEE=;
-	b=PgN5d+WzjwI6HJ1gckTIeZ0AefZRbGjqO1JqiQLJD0ovbmXtxVl9fyPA8ykSDNdX
-	IiQ+e72nf9L/cqzaH7kpEg8rI1Lb4cq+8E6mK2BeYeFVTlFF/Qbu72kAkCK0LbkwjuK
-	KaIXpjVVAqjZIqg03OETFYanJWYEFXiCsIAg7+zY=
-Received: by mx.zohomail.com with SMTPS id 1760976213261263.4457427334356;
-	Mon, 20 Oct 2025 09:03:33 -0700 (PDT)
-Message-ID: <d71a32f1-dbce-42e3-88f5-7c0628e05528@collabora.com>
-Date: Mon, 20 Oct 2025 18:03:29 +0200
+	 In-Reply-To:Content-Type; b=giC6lP+m2osPfUzPsGvhA/wM/xBBqyhHlUNEW+Upb2UZsYpq3NGJQ2TEygEaozcjh2kn5MqZ92agv+q+Kjbxr2Gn5o7H4u6RAWiRxfijnhbXAnkCcv7cJuRaGkkQ0lRphJwMNTwTCvl2ViCiGARTYkk92uQImC4nbm7v5G4sGOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6bdbHiw; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b404a8be3f1so103532066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760975130; x=1761579930; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rLVd96XUXQkv2BukfYJUOUjTeSFa5/2WoKAq5E06sq8=;
+        b=Q6bdbHiwrRq1zIGsJJWe2QJyedChhIdxEnYcqcecYhUr/u7zNukFYIRP/wSG8+p+Si
+         vh/YBRGNZPu2iqKjLw5opnGX9IXUA6oIwVf83m+NB5Hz292YMSrSEgyUjYUweK9Q2icO
+         b9Gk4/gpcJUEyn9KVR2Q5pe0QEitnb2nQdfeIghptNLusMdQEZ/mpPVSm81mTVb4jzeq
+         7wNwHiargEKo++DVi49ic1NpMWbFsCXlzXJi7oI11mtG7/+00aCx6BS5md952OKX/hmI
+         uSeB5niviOsCIBxyj+LJcOhpEvLjKYhTH9wlQldit4KMuIGAnp8r406ks9uZvNWqkJGn
+         Lcbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760975130; x=1761579930;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rLVd96XUXQkv2BukfYJUOUjTeSFa5/2WoKAq5E06sq8=;
+        b=slfcNt2R4ppNCCYWiPRlk5Ye8Mb2M5zKDdczDiMSMdtj+LzztgSBK5pe6Ekc15daUt
+         6E5c5I/FRkRs5V/o+kBeVC6njpcNeIqUGJvfQGnf8BeBVorJG9USbObai/H0mfZPTh/b
+         8xN4O9GbfnZ997YVznM5bUOVvjDDbCEraWAMZ479uTcP7lVxp6KV3wHW7JK2Cyd0cYU+
+         pZe5nOuX/C1KRN8YNDclNODPfGlHAFZX2AZJAE6QRS/O7RDFubPKDQdlFkg/nvwinrT8
+         mpsx/DuNFwH/9scjcc6Meas+tNUHw2V1sMhpaagTtDcLfuZDAOGYGcPZ2OC/rpk98+RE
+         trrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEe4JajecA+cI7/Q0MlW08YT7qe9uAUsE12UnTOIQY9O0DPHQDKx89BRIfioT8y5S+Mewb0ez4gIIm7Qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLzARsK1KfGabBhQUmhUq3o565LRsenNYGajgf9/FLNqQT2tDA
+	BX5iNBPeykG6szDoGYELCjXOXKiGSUbSXCVHlEnzJ96jIuPSEY6UK69T
+X-Gm-Gg: ASbGncsOkI0z8teoOrr42p2lEL7CujDdJMNp9nvO5ijBYXNdQ+MwtDUoap1qoFH831F
+	8PwBRjITuJXERV50oKmFdC+3f2TZV6i6u8JU1SErexJrfJg5GxlVT4sP/O4dhlhSgmSfeZxv8dx
+	vepkly05YR8feQto1O2tT6NnDsr7/u327BgO4tjZm9unJsh5UwTM4UzHs+k/J7Sx7Lxa50sp5wH
+	fgihYWBxRw+MD78KgnI/5YUaDCnv2YO+8/ptOK2FDPgQENEp3xMKXPLLn16+hOBvQXNObaQvUeT
+	NVpL+05/MiKBULLIRPcn4C7KUmBbRPhJyIWBXAz8lHBfefCam+WxdYaQp5kEg6rfwmQ6snrPtGQ
+	M2tqAMSWO6T4yvjXSPusy/IULSaMT6TJKMqKw/20AfJFYRbZSx9wFARd6RlyEtk3Cb/HzaOBr0y
+	o1zeIDli/uHL1L1/LHgbAuM2kwYCsKvA==
+X-Google-Smtp-Source: AGHT+IGbvK/f+EyST6/Ou/X1/Otr+t9j4IgsCu8YzzEolwEyyl33v0jG1ZAXlIIZiPmx169QmFhW2Q==
+X-Received: by 2002:a17:907:9708:b0:b04:2d89:5d3a with SMTP id a640c23a62f3a-b6475505d94mr884342366b.7.1760975129544;
+        Mon, 20 Oct 2025 08:45:29 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.86.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65ebc474c6sm808850666b.78.2025.10.20.08.45.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 08:45:29 -0700 (PDT)
+Message-ID: <d9819687-5b0d-4bfa-9aec-aef71b847383@gmail.com>
+Date: Mon, 20 Oct 2025 17:45:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,69 +82,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: videobuf2: forbid remove_bufs when legacy
- fileio is active
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
- Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org,
- Shuangpeng Bai <SJB7183@psu.edu>
-References: <CGME20251020160135eucas1p29eb8517e240f188f102e77713f85e29d@eucas1p2.samsung.com>
- <20251020160121.1985354-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH bpf-next] bpf/cpumap.c: Remove unnecessary TODO comment
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com, sdf@fomichev.me,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, haoluo@google.com,
+ jolsa@kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251019165923.199247-1-mehdi.benhadjkhelifa@gmail.com>
+ <42b9b376-897e-4984-909b-218bd1e3214a@intel.com>
 Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20251020160121.1985354-1-m.szyprowski@samsung.com>
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <42b9b376-897e-4984-909b-218bd1e3214a@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 10/20/25 4:41 PM, Alexander Lobakin wrote:
+> From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+> Date: Sun, 19 Oct 2025 17:58:55 +0100
+> 
+>> After discussion with bpf maintainers[1], queue_index could
+>> be propagated to the remote XDP program by the xdp_md struct[2]
+> 
+> But it's not done automatically, so not aware users may get confused.
+> 
+> Instead of just removing the TODO, I believe you should leave a comment
+> here that the RxQ index gets lots after the frame is redirected, so if
+> someone really wants it, he/she should use <what the second link says>.
+> 
+Logical,I will send a v2 soon.
+Thanks for the review.
 
-Le 20/10/2025 à 18:01, Marek Szyprowski a écrit :
-> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
-> potentially overwriting some pointers used by the legacy fileio access
-> mode. Add a vb2_verify_memory_type() check symmetrical to
-> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
-> protect internal queue state between subsequent read/write calls.
->
-> CC: stable@vger.kernel.org
-> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
-> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
-> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Best Regards,
+Mehdi Ben Hadj Khelifa>> which makes this todo a misguide for future effort.
+>>
+>> [1]:https://lore.kernel.org/all/87y0q23j2w.fsf@cloudflare.com/
+>> [2]:https://docs.ebpf.io/linux/helper-function/bpf_xdp_adjust_meta/
+>>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+> Thanks,
+> Olek
 
-Thanks for the patch.
-
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-
-> ---
-> v2:
-> - dropped a change to vb2_ioctl_create_bufs(), as it is already handled
->    by the vb2_verify_memory_type() call
-> - replaced queue->type check in vb2_ioctl_remove_bufs() by a call to
->    vb2_verify_memory_type() which covers all cases
->
-> v1: https://lore.kernel.org/all/20251016111154.993949-1-m.szyprowski@samsung.com/
-> ---
->   drivers/media/common/videobuf2/videobuf2-v4l2.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index d911021c1bb0..0de7490292fe 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> @@ -1000,9 +1000,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
->   			  struct v4l2_remove_buffers *d)
->   {
->   	struct video_device *vdev = video_devdata(file);
-> +	int res;
->   
-> -	if (vdev->queue->type != d->type)
-> -		return -EINVAL;
-> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
-> +	if (res)
-> +		return res;
->   
->   	if (d->count == 0)
->   		return 0;
 
