@@ -1,134 +1,199 @@
-Return-Path: <linux-kernel+bounces-860761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AD6BF0DF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D6EBF0E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9CA54F3227
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141CB1888A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8A20C023;
-	Mon, 20 Oct 2025 11:36:08 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AA62FB963;
+	Mon, 20 Oct 2025 11:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bUQLio5n"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F00221A436
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A122FBE10
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760960168; cv=none; b=Lca1NcgCgS4zl27LUbLt9p4UbFfHRiTUJKqUT+oopKngLtDAaCC7UmKcIU7Eg+qDzNGV1XAgNAKXKZ0vxN6pU6Oy5zG4giEIY5g7tpmCjO4ne9xsrtzpRGb03hIPUOStIZFAoOaWUJAwxsYdUX/dQxl5FLjoSMzzWLe5AdW87wM=
+	t=1760960180; cv=none; b=WSROGULQcyvUB7XWUcum+quH8Cl74bEBKw0uzLFbky6p1D9DeE+6MctVMJvkE03o4mw9EoSJRhVQPE7ZqdlBlkkOBBrolnIjWFdUl4D7OOzV3u+KORT9QlubnUwAOsaPRteaCPHDqBG0+6KO3ZZ0V8syTTCNVOgF3eRfkQGWDIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760960168; c=relaxed/simple;
-	bh=tTkRyjMu+APc6t21uIUC4uhfOk90zU+A/TguluTuk+Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jM/hWvMvnkGyKfMpXwGBK23rdseqVeY5Wtg1duS0rZSiNQFtQ7+cmvAcmgC957SIqRpRMYCB/RiBmVhal8rKCKKTaOJWE7rLVtoHRFgdrmoG25fiF7Ji7mC+Ug8FZowWhdEaxXKX3x+JtmunO/eAvptxkkSI+vsgnfHlW+wUPW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 59KBZr2h094400
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 19:35:53 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
- with Microsoft SMTP Server id 14.3.498.0; Mon, 20 Oct 2025 19:35:52 +0800
-Date: Mon, 20 Oct 2025 19:35:48 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: Niklas Cassel <cassel@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <jingoohan1@gmail.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alex@ghiti.fr>,
-        <aou@eecs.berkeley.edu>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <ben717@andestech.com>,
-        <inochiama@gmail.com>, <thippeswamy.havalige@amd.com>,
-        <namcao@linutronix.de>, <shradha.t@samsung.com>, <pjw@kernel.org>,
-        <randolph.sklin@gmail.com>, <tim609@andestech.com>,
-        Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v6 1/5] PCI: dwc: Allow adjusting the number of ob/ib
- windows in glue driver
-Message-ID: <aPYehqSefwW_-pAI@swlinux02>
-References: <20251003023527.3284787-1-randolph@andestech.com>
- <20251003023527.3284787-2-randolph@andestech.com>
- <aO4bWRqX_4rXud25@ryzen>
- <aPDTJKwmpxolGEyj@swlinux02>
- <aPDc-yclubiHbUcD@ryzen>
+	s=arc-20240116; t=1760960180; c=relaxed/simple;
+	bh=t51j+mgk3aQ2RGoqLwj1u5ebaMZplsQyOFhqdNf/vlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ss6ZXJrMj5xQu0sONpQ8RFX9UVisLTgYz4jUxOs9D+Wuy/Pn9GczKNjeMgBI5F3EnCytg29kUE2xu9pE798Awq0S/GGw7DK75HjMZ1k6CUsumqOnRqhvzbJNdZTLhBOtOE9fDkoAOlxqgKKuktRcwhaeQtvq6VEopJHk5tFMmtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bUQLio5n; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JNl4bT019655
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:36:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GK+5rKa1ckv1Q0xDSQsg2JrLR6JcjvANAgY1SmDdptQ=; b=bUQLio5nYqY+yhTW
+	sugPBh3IxjvFCDE77A33/Vy0zmWuKxMSSrIIvPjuQKOi0UW3SHP+EBqOMfvlxPTy
+	QeTD8cmED3H+gE3hLrx5mkL8vhQhr0p9THQMRdGrpPfqvjlY1FjjfXoGNugMKZr9
+	NWizG9S2D8TyPnFCAESEestSOSVCz5o0GqU8V1a7uCpn8GBnjrLk5SD5tckqhLyC
+	KAfSN3YXpkrfIaYwxFa9NXdu1kpcsHwCneXV3ggLKZ9Ju10m1+xFu/yRNak/28Nl
+	5Hc0DTaiGmJu8GYnwtgFHvAItVzbiEXUG7ByAoBmiwfi4U4cuJmAL3/lzhbzffda
+	IazMWQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v2yv4hy0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:36:17 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-26b3e727467so15678635ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:36:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760960176; x=1761564976;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GK+5rKa1ckv1Q0xDSQsg2JrLR6JcjvANAgY1SmDdptQ=;
+        b=bEMMs/ElvwMjVWxO2QE/ACmQbl+kvNK4TTOTfBMz9hJjgia0dK+WjSLoDwXM1GNVHT
+         zfGQdDgKZdhwFDL73X2JFcrjA+XQ9PoYJIQYFDepGUn7z1XAjs0gjof3Uhu32wC4Dp5H
+         0CDh7Anu2JENNAjRPWrcyhVrwwplX8czw3AdDHQZLqzETNhcntzlKVjBp+CNuZ6kRkG0
+         ZkL08JHge5/sXEjyzuR8HqBHo7Czd0NoEbnIRNt5ZoScwUw+jgtd6Yc5ZPJ1Bdl2AtGL
+         /E96mbzuvW76XAxS9d95h3FL6uHW/7fMoKgwdCQfIg0471wvSD4+djoKs9ue+Q9CNFyu
+         y56w==
+X-Forwarded-Encrypted: i=1; AJvYcCW0MgNkqJfIpgEG4hep7d4LluS6RVxqNGbTUFVUMHLxnVZCnvOyu1R4Fd6s2rZV+EwJiUxExcCadntE7bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiZOwM2AARc0ftKqHMvNTKd/QWlpt+bowO3m9CUowQEyWE6x26
+	Sun9mG2FQH53hPWu1pnNvO8ZZok4/kY/Myr+7vwcXBiagCYasmVNGS4IGKxThDPVIYWewrGYOiy
+	STFuYaGbRjMVqEusWLAykAaXhItA3qgKRSkPwtt3zlIKt9oOvVJZCO4POK6AeJKY6+QQ=
+X-Gm-Gg: ASbGncsAHarlSgk8pPKONd6qZcdM3uFUdHbqt7McpCEs1g40YztQfv0xqZJFZ+UoUL2
+	jJMQeimUlY1xUA++WlF1KGByWSiBOkB7DqDy8WJqPw6KO+Stbh/hLnu8ZwbOwUY+f0ksEGKIOdS
+	o/OIxYqDZW7qlPdntOLL8ggcaNo35dKP8yVyd5In9Lf7j25VXnQu8T/uCia0QdB2PBdg+5fRDPd
+	6t1P391o65g5CnY9aWdEkTYX+YmcKSXek13tJj4wa+v5ei3DpFTmdjzS0OBMlaIkLkHMwhCiMGD
+	1g4wUxUYooBqPP4g/mGbleJaW5RcpXq88SUa+lIIfXK+U9OaudaM50FqIiV56q3W6ukUEbI5pxh
+	5f3pno0+MSHoUGgKWn9pMl3yZ1lUfsoapotGS0NbR/iMs2BGORCWqA3yAHBCFZd1S5bD3iA==
+X-Received: by 2002:a17:902:f550:b0:290:aaff:344e with SMTP id d9443c01a7336-290c9d07528mr93219835ad.2.1760960175712;
+        Mon, 20 Oct 2025 04:36:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqYXTamiz1sZaI2FXDLVVOOe09rjZU54qmwtT0sYAF4DGpiXYK7IZbq29yBk4Y3Y1cW0n/IQ==
+X-Received: by 2002:a17:902:f550:b0:290:aaff:344e with SMTP id d9443c01a7336-290c9d07528mr93219385ad.2.1760960175155;
+        Mon, 20 Oct 2025 04:36:15 -0700 (PDT)
+Received: from [10.133.33.101] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fe4d8sm77471275ad.96.2025.10.20.04.36.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 04:36:14 -0700 (PDT)
+Message-ID: <e6c481cd-e084-4f5f-a75a-d1e0a254efc1@oss.qualcomm.com>
+Date: Mon, 20 Oct 2025 19:36:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPDc-yclubiHbUcD@ryzen>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 59KBZr2h094400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: display/msm: Add SM6150 DisplayPort
+ controller
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com
+References: <20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com>
+ <20251015-add-displayport-support-to-qcs615-devicetree-v4-1-aa2cb8470e9d@oss.qualcomm.com>
+ <58446b2d-560f-4a7e-890a-78ae0bb92908@kernel.org>
+ <f4dihh4z2nnkjcpsrmopycm6opellvv4mkpee72xjbn26nw544@sfc4oy6c2xci>
+ <a3994a92-0a36-411e-97a3-b01fd406ddd1@kernel.org>
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+In-Reply-To: <a3994a92-0a36-411e-97a3-b01fd406ddd1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: g6Vk9clacBSaJDCwQ8Hp7hy1FnoZU11g
+X-Proofpoint-GUID: g6Vk9clacBSaJDCwQ8Hp7hy1FnoZU11g
+X-Authority-Analysis: v=2.4 cv=f+5FxeyM c=1 sm=1 tr=0 ts=68f61eb1 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=csQNx8weYdTNeSVC_AYA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX1ucFMS9TTshU
+ wacLRBNXFWFFBTNzFqp98MmiJQt/lly0/pP1Dehd5ZHvDQieMpjMdCGAxDkgsb45ThXfENwvz2X
+ Pw3K+0kVPnhcy0ConxOJuHslUvtHqHF80oBVr7WZrIPSj9o7uIc1SNrGih/HK7MmcrorJiJRhLE
+ kOeudJ0KhkbG+sBahJoGcEiv1ZiXDvuir6moDH8zQ/UGxtOHRviXjbzAfmxFMbsYNdIels9xdg8
+ I6o22Yy5bq4w2wc7VOEyUXa6wvDSZdc/W9ZzrNPEI2NFcO1OiiUAdlriGLZh1v8+xmr94J+iyqQ
+ w7tX1jtCu0CEbZgLVVBhNvpS2LQBkQK/Kojt1oxYAdDScQ/3/YYElWCIR8XLNf+gAOI4i/JOiiB
+ 8hSQb8kJ3hymfE6ozQLtBIHo+nKjMg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ adultscore=0 phishscore=0 bulkscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180023
 
-Hello Niklas,
 
-On Thu, Oct 16, 2025 at 01:54:35PM +0200, Niklas Cassel wrote:
-> [EXTERNAL MAIL]
-> 
-> Hello Randolph,
-> 
-> On Thu, Oct 16, 2025 at 07:12:36PM +0800, Randolph Lin wrote:
-> > >
-> > > Could we please get a better explaination than "satisfy platform-specific
-> > > constraints" ?
-> > >
-> >
-> > Due to this SoC design, only iATU regions with mapped addresses within the
-> > 32-bits address range need to be programmed. However, this SoC has a design
-> > limitation in which the maximum region size supported by a single iATU
-> > entry is restricted to 4 GB, as it is based on a 32-bits address region.
-> >
-> > For most EP devices, we can only define one entry in the "ranges" property
-> > of the devicetree that maps an address within the 32-bit range,
-> > as shown below:
-> >       ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>;
-> >
-> > For EP devices that require 64-bits address mapping (e.g., GPUs), BAR
-> > resources cannot be assigned.
-> > To support such devices, an additional entry for 64-bits address mapping is
-> > required, as shown below:
-> >       ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>,
-> >                <0x43000000 0x1 0x00000000 0x1 0x00000000 0x7 0x00000000>;
-> >
-> > In the current common implementation, all ranges entries are programmed to
-> > the iATU. However, the size of entry for 64-bit address mapping exceeds the
-> > maximum region size that a single iATU entry can support. As a result, an
-> > error is reported during iATU programming, showing that the size of 64-bit
-> > address entry exceeds the region limit.
-> 
-> Note that each iATU can map up to IATU_LIMIT_ADDR_OFF_OUTBOUND_i +
-> IATU_UPPR_LIMIT_ADDR_OFF_OUTBOUND_i.
-> 
-> Some DWC controllers have this at 4G, others have this at 8G.
-> 
-> Samuel has submitted a patch to use multiple iATUs to support
-> a window size larger than the iATU limit of a single iATU:
-> https://lore.kernel.org/linux-pci/aPDObXsvMoz1OYso@ryzen/T/#m11c3d95215982411d0bbd36940e70122b70ae820
-> 
-> Perhaps this patch could be of use for you too?
+On 10/20/2025 7:18 PM, Krzysztof Kozlowski wrote:
+> On 20/10/2025 13:07, Dmitry Baryshkov wrote:
+>> On Sun, Oct 19, 2025 at 07:13:32PM +0200, Krzysztof Kozlowski wrote:
+>>> On 15/10/2025 03:53, Xiangxu Yin via B4 Relay wrote:
+>>>> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>>>>
+>>>> Describe the DisplayPort controller for Qualcomm SM6150 SoC.
+>>>>
+>>>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>>>> ---
+>>>>  .../devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml     | 11 +++++++++++
+>>>>  1 file changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
+>>>> index 9ac24f99d3ada1c197c9654dc9babebccae972ed..935eca23ce6b30b81b3ad778e5fcacc817a230c3 100644
+>>>> --- a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
+>>>> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
+>>>> @@ -51,6 +51,16 @@ patternProperties:
+>>>>        compatible:
+>>>>          const: qcom,sm6150-dpu
+>>>>  
+>>>> +  "^displayport-controller@[0-9a-f]+$":
+>>>> +    type: object
+>>>> +    additionalProperties: true
+>>>> +    properties:
+>>>> +      compatible:
+>>>> +        items:
+>>>> +          - const: qcom,sm6150-dp
+>>>> +          - const: qcom,sm8150-dp
+>>> 6150 is compatible with 8150 or 8350? I have doubts.
+>> SM6150 has the same DP controller as SM8150. SM8150 is compatible with
+>> SM8350.
 >
+> So if SM6150 is EXACTLY the same as SM8150, then describe it in commit
+> msg. If NOT EXACTLY the same, then probably this should be just
+> compatible with 8350. Anyway, proper justification is missing.
+>
+> Existing commit msg is pretty useless, repeat the diff. I can read the
+> diff. Commit msg should explain all the background which is not obvious.
 
-Thank you for the information.
-After applying Samuel’s patch, the code passes the basic functionality
-tests. Therefore, the common code patch is no longer needed.
 
-> 
-> Kind regards,
-> Niklas
+Yes, SM6150 uses the same DP controller as SM8150. We already discussed this in
+'20250916-add-dp-controller-support-for-sm6150-v3-1-dd60ebbd101e@oss.qualcomm.com'.
+I will update the commit message to clarify the compatible information and fix
+the indentation in the binding example.
 
-Sincerely,
-Randolph Lin
+
+>
+> Best regards,
+> Krzysztof
 
