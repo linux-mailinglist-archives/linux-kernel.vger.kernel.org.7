@@ -1,171 +1,216 @@
-Return-Path: <linux-kernel+bounces-861081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E913DBF1BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 564D4BF1BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 93DF634C7E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:08:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 01E2534D1A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11953203AA;
-	Mon, 20 Oct 2025 14:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F73128C7;
+	Mon, 20 Oct 2025 14:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJ9NiPkm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aKNns40I"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011036.outbound.protection.outlook.com [40.93.194.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364831BCA1C;
-	Mon, 20 Oct 2025 14:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969280; cv=none; b=kcjA+AvC04P4/5MTlyPEH/WVjNvqE82OyBD2hH2DAVJ0scUqbpeOUg3VSSASJT0MlckNG5EIXW7Zaeks2K+7rIIvJN28OAN9kknyT6vs6/bzR9c9+anGHvNUW15dZLiXwK0o2524QrnNOLW7XXmju86WmSTEMebi1w4sGPCJOEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969280; c=relaxed/simple;
-	bh=1qzxelxdfoCjIEpwVkCC0duIL4FdlaZx+A7TRz7WOMw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=mi5LCNPzVW1SBxs03UgvuuHhTqwKjYhDw9k7wPeGcVUFMYm+7zaYk2H7XgV54cC9FCTFLRVYiG+6l0jSHk72r2CI9mVYr72/vTv3Hbbeh9luELuJm9DsAGe7VcNSKmnlYfBz0C2hlfYjFSC5K6hnKIKm6TDkXfI96bJBmYbywVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJ9NiPkm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FCD3C113D0;
-	Mon, 20 Oct 2025 14:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760969279;
-	bh=1qzxelxdfoCjIEpwVkCC0duIL4FdlaZx+A7TRz7WOMw=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=jJ9NiPkmepYLdaunld4tWNTPzCet3noZ9oMlOFR866oDylMabwwi/tyCcndmCrkqg
-	 YcCZYo5retoIulvzR/Sglr69YLv90AqbFsCGU/Pnbrlbayvi4Ny4v2MDjgATj0f99A
-	 oRruPob3bWfcCoo1ln8zSi1SB0BTBIutsGpE+0beUwbcI4A6Gnh8y7KXg83LUA1c5E
-	 ZI6LG02VuCJucqs5LG8bcnSGepGWStxRyg5MXNMGwWG+gyjpLTG9In8X21Rxolrtkp
-	 c/RgoKJ6kuu7E3RSxEANMxQvv33ohhOjTQfaP4Pcjw9IZpeXBe4YR9PCyKC7/pFZTn
-	 RMx+/k4K+6QdA==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A1C31986F;
+	Mon, 20 Oct 2025 14:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760969293; cv=fail; b=UnaiMMsY8uqnN1Gnem2KBCKVaiGpmRfj5l8oI4rFnFW+MJysrMWfe9OJ9Ka1+KecAsw3RqzYA2u32M8Cz7nqNdgL/sW+lFeEFV1QRPEN60keBnWH0Z6YOhy9Khq8oAWPdpbPdOGpGoJj8siPdeBz1nRYDBqnmRSK2IV/qpShO4Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760969293; c=relaxed/simple;
+	bh=bOlRKr1YV1vk1xySFrv1vHuTjhKNoGOo3N5hrS3+wl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nUk/q8WjIMrJPUqxvAvxXRPJ4vjvJ/WWUckMNL4lCh4OD//q99O2xlRH3U6p6HMMl2npcusmlx2xG9oQhr08+5OLG3i3ewdLQiI00py2EAyLG7+PSG7uVAQu9avjsXQGww/W75/gfLCOpuxRpJnaTxGlHaJde8ChcxRO0VhaCqM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aKNns40I; arc=fail smtp.client-ip=40.93.194.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y82TM+Uzi8aBznkHMFFC0EOhxIl7xrqeOnEWIlUvAg2x/3qBUrdRkoxsO60BKrl5aMGxzNGwF5CzjQt1TR4I+3n7FS7ZdCCIYjhjiJMd7BuGgUeKNb3tA8WQ0U1uTWhE/vR/T4WvoFcRR8ua25isMMa1ruMwf7v7/GxwbYz1BjWy571OxwMjJhnAaNywKxcZw/SE38wklw+NBDmoIl+ATRNx6jiHmYP8IlUnRqOuAz6CGYeSryNFN+Mxxtb9Ayil76lnpAcei6zqTxHAI0vf+j9CiIFGAHcVwo3Jx2a24cx1BKpHJ5d+RjshvVIRtwbVSdLeIxrv5bzI3rkx/SIMMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ffE3S7eV2NquZuNccTOETeouskHDSr644Vrofs7AGE8=;
+ b=I7ZbYVJKg9oiGJrjYFtu70VwMrRt2sLZPYUlgf+QCJEK3LpA6eVYRpcQbEMZkzB5nlejMw2ye0x3wcsh7Nisc024yduYDNjj2D+jSSGy1satIOJGJ0Klk8P1A2z0vhebWzCqIh6ddl2NBh40rclXfOgB+smgFY4GBMiVgHmvyJEVhym2P/rOZZF2P2kSC9iDQcabBZfjcNv7EcU6SdOUO/3PW1/V2eY6BlntCNXWIrGEwTX/aG8Kq8e6L0crzeHcNp5SrJl5NllWaA6cbMAm8IZJJkWd+R0CQyqBe752o5TEBB6wiBuTPKoNTurutiJp1/D/e2JrLT7NWbGHmNwpwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ffE3S7eV2NquZuNccTOETeouskHDSr644Vrofs7AGE8=;
+ b=aKNns40IbjNcK2iIfuJKgt0IpngNmcBDVKtUoQ+rnbDtP0bgv7wNw6Z/dcd9Z9JrqhrF4b6nxCXkM28jR8ucwE7qsZIIVFQZZudhi3BQ3tWXMuTSEPGqpytE1cijZotiHyAndFZ2I2irRUWznnVC81hQlDfILuqV/2T/8OT1tU70PWkG6ftoCGV+w1L445ATb1RYxyQbDKr/Ldy1aAuG/qPQIfeu3dFUD6ep5/7SQqwAGZ85E8TB3oT/fly7zWn1nhCFz1M6c6fUnz9TeRMwtVflQXLDa40jJBdOEcp3O5CnCm3qIoo0k6JmZnvL9VoVPMiJSGB3swQ4JxMOCozkOg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by CH3PR12MB9315.namprd12.prod.outlook.com (2603:10b6:610:1cf::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 14:07:58 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 14:07:58 +0000
+Date: Mon, 20 Oct 2025 11:07:56 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+	ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+	kasan-dev@googlegroups.com, iommu@lists.linux.dev,
+	Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumanth Korikkar <sumanthk@linux.ibm.com>
+Subject: Re: [PATCH v5 03/15] mm/vma: remove unused function, make internal
+ functions static
+Message-ID: <20251020140756.GQ316284@nvidia.com>
+References: <cover.1760959441.git.lorenzo.stoakes@oracle.com>
+ <f2ab9ea051225a02e6d1d45a7608f4e149220117.1760959442.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2ab9ea051225a02e6d1d45a7608f4e149220117.1760959442.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: SN7PR04CA0017.namprd04.prod.outlook.com
+ (2603:10b6:806:f2::22) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=83dd8af9965a11d8004a383cbd71deb877bb9867a8d43971278444bb079d;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 20 Oct 2025 16:07:47 +0200
-Message-Id: <DDN7I9IKD3DZ.31YWBI683TKT7@kernel.org>
-Subject: Re: [RFC PATCH 1/2] gpio: regmap: Force writes for aliased data
- regs
-Cc: <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Sander Vanheule" <sander@svanheule.net>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- <linux-gpio@vger.kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20251020115636.55417-1-sander@svanheule.net>
- <20251020115636.55417-2-sander@svanheule.net>
- <DDN63XH3EQ2Q.1BKBHJTQQASHO@kernel.org>
- <6bf0198d6e67a67e9f72fd27de86d65dc926d041.camel@svanheule.net>
-In-Reply-To: <6bf0198d6e67a67e9f72fd27de86d65dc926d041.camel@svanheule.net>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|CH3PR12MB9315:EE_
+X-MS-Office365-Filtering-Correlation-Id: aee44070-5705-4b56-1a43-08de0fe21265
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?I1G7H3QzzTzRzakzerfbdfgT6dxNneIlP8beVwcJEnU19TCF8+2rG/r3nxIO?=
+ =?us-ascii?Q?JFe884TehnJAu9dFWXdna0sv1JW6jHJR1eOnVE7QK4lNodB8W84hmWdOJBVv?=
+ =?us-ascii?Q?lNARyHXdu7FBWdy6hn/JY0JMF6FrfYjs7fJjkYGNElo3wsg/H8+sGWZPb5mm?=
+ =?us-ascii?Q?r7opXUia8pSM3Z0fvIf13d3ksZwNwtvu68ucOzvAJqJTvuWBSzBxsUtQvjav?=
+ =?us-ascii?Q?a060oRNAp5+q+hYMPXsCCHouUd4bFoxNocu7lAlfKEc42ZAgqy+linV26YyK?=
+ =?us-ascii?Q?02Dhntuk4p7eVCeVJzoHYrXWwWbnn8mXrFjc7Quqjz6nf6JPD+Ju8B9JLcsU?=
+ =?us-ascii?Q?3jy4f/8Iw0Ug+7y2nW0jrf5ZWKs0CfMDBe5wTc/PTg1ueSNkbofeZT1sqQaF?=
+ =?us-ascii?Q?cpvGEK4T5nfGxwUmpUSgUHo9qhxKv1XIg6FrR29j6Vh8PHtPfAG54wG3DaiK?=
+ =?us-ascii?Q?A+99q0qHDcEXfPT/n4Bv6gxNCJdZ9hGR+DA71JGsAS/HBGprHVKTMlByPPKR?=
+ =?us-ascii?Q?fGcWN9Hln/vYI4b+OW4/Zg/1/fNWxPJz/CbNPgvt7lx8yvJo3p+TpknYuE+/?=
+ =?us-ascii?Q?v/MKFnU9R2fYyafrpnonjBZc9K7NfQbmnHeVUXfGQCA2VlnpCg1kL06hEgDC?=
+ =?us-ascii?Q?RVvRxQ77+2sGQvHX3JKp7joJepIe9OElGQ5jinD0OkRVefwUjTgw4j9X1o7p?=
+ =?us-ascii?Q?IaAXOZRPa6CKQ9Gf7m9rFzxnrcADWnJB5ykV3xSitp/2mSa5TkYkMGKvAcUH?=
+ =?us-ascii?Q?+AXvXOPxzsLEj1nu7OIkjHWg8h9ik/lBi2pZEcnS6zUYxJMoOKSDHWKUyCBr?=
+ =?us-ascii?Q?fNzNC7A3DBHNUxUKBknOQxAZpUevAxZ+sDfoPTWs9lHsqP3aQ7HZThRYG0HT?=
+ =?us-ascii?Q?LsI2IFPYwBv9fzM8tJqgpl0xZVmO8CkCyEff333vVhdGyXJkJ+ON7WQ4sssi?=
+ =?us-ascii?Q?Crhr5ydDlk//NuIAjIApY5eNb6tcwQhYCa9Y8x8loL/388uitkenok4VD6yf?=
+ =?us-ascii?Q?bcJVZBuCug/+3GwVs4/xJg9nXhDHXo+9PonetSVnB2OqHTFT+4O+AMoNy9ss?=
+ =?us-ascii?Q?Nmfy8oxqrLaPJwp5U4pLHfuEOux4SNICMHpoY41CkjIm9ZeOBRxhDwtY0ZCD?=
+ =?us-ascii?Q?rRAMw/9MflRkf1IgjiTHFxG23LiWZN6SqZ9tpxJ1WGmxLIphRlltWm1r8ytK?=
+ =?us-ascii?Q?N7mGQukZbIEQVQluRqskOEw5GrwMYHx/54jQHsvqmX0TUV/yzp18c/xTS4J6?=
+ =?us-ascii?Q?yfsc6VKFxhwN125UYp1+44jG2a6K4KRSuxF3wgcajM+tTK9AYSvutShzqVdX?=
+ =?us-ascii?Q?xz3ypxgiJIbaJn3t0Th+8h7wqG2mlu2ApZlvAMeTpqbF3AVtfCv8QzalsaCK?=
+ =?us-ascii?Q?6CCZR6vWgpkmsMlJTVmkE63KoCpdl2PvgApqZoMOkMDbpY7agPFDErYg04Ko?=
+ =?us-ascii?Q?UwIVP48N/npOcg5fYkzRIW3sdRf6dmU6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZibO+wB07mSnxnaDI/VyA4JQKAtB3rtb08Rw8wA2AGFu9nbTNo2B+0L1mO6a?=
+ =?us-ascii?Q?xv47wl+o2jXscUBaq4Rad36qEA/QPSMu14lSDnJnuSdi4sD9hvNaA23Ig11I?=
+ =?us-ascii?Q?6ArApgCvsOzZ+UtGwGsY4rwKKA6MnEW/rWE+x4DtBe6ELKh62S1NJ0iHtRge?=
+ =?us-ascii?Q?Vpn09ljeCX8OIJsUoeXhcozEzd2jqCivWz8CqJGFQEjMgtmNBqagOJ3oFcQ2?=
+ =?us-ascii?Q?NwppFFb2EXHQqxwdoyQXx+5aKVNmZfJ0N7tSOWRZI2p3TPesI+HHYyvdJjXy?=
+ =?us-ascii?Q?bMVYYvhlJsmpf0lDWL7IiDL801MX3zS46jc0IsN14C52m5kp8Z7DgQhpVVnK?=
+ =?us-ascii?Q?fOLgrTzTP5Ngo/OPZERQ6lsgaOSNqjbwf6uDu38Bq+xV+dA0FKVusC/pK8nO?=
+ =?us-ascii?Q?MF7fJvbgfSjqULcNovil71Q1yI3uap+1B0RbRkLN21zaNAiOC86MsYNzeDV9?=
+ =?us-ascii?Q?+js2nVZD/tQhoHn47HGn1EVZPxVpeiBt7jtja46FLwDwYlyt+XFzbd/0sk4p?=
+ =?us-ascii?Q?31I25fDjgSRgdqGrBEecs983vbYePfbUTv+7N7ykHg8ImNsQuCFoMs0D/m5c?=
+ =?us-ascii?Q?QDd/Z7AQ1SrqhbTLm1QATxGMKHHmcXiDIstrRV+fX9bII/rzWPrfIchGWa/i?=
+ =?us-ascii?Q?hosLyAs+xZyDqOP50QXmf2HN8Svirhw1AC3FwxwddCfhZnP2sNIlBsGCmXso?=
+ =?us-ascii?Q?SY43EmMxs1aRb6sCgJ4D6TMbQw/90mlGmwmpO1r6BS7utf7u7fNmlG94hp2E?=
+ =?us-ascii?Q?mwx2X5HJ+VyiZycbnsBEofQNcGySYXdbu0JZN86ZDQ0WDdGdN0BDzl/FSnAO?=
+ =?us-ascii?Q?EMe8IeI8P0qSCJj5okFAsJZyxUHaOeyBZ5JrAr1+sM6BgAsKX//HMxNpZcs2?=
+ =?us-ascii?Q?biWNnHeMKwcyefnxP+O38kivdpDeaoHB6ocxM8H73C3LXO3FalnRP996BjuH?=
+ =?us-ascii?Q?km3s0s6YLKDsNAjmQI4dzdjxQUty18+QMXLc3kWYZBxbUxk4XmFizamIfYKV?=
+ =?us-ascii?Q?8m6mqSAaNYwlmyB37+Yr/B6GmjCKjcKVxyOdjtu6CyfwJ5yiUcSFnNrUWlwD?=
+ =?us-ascii?Q?Fhn0MN+jSH4oM5W+pO5BnkrR4WM/nfGaXjtx4NIrqk+wdHoTYMB8t9QPadEY?=
+ =?us-ascii?Q?c2pq8eLa9eKccx4tJgeVBBtnK8q+cqahlI6yrcVDfqZFycvOxjbwUQTQX5gG?=
+ =?us-ascii?Q?lkHz6Oz0T1yMOEiQ5YRZcItllGMppLnAtKVKinhp3gAVeVMf5b0DwGq6rJhw?=
+ =?us-ascii?Q?BL0uff0wAo+FuBj12k1goT97UDJsAHhGIa8EP6FjJ5iWovMXZwdGreV04F7k?=
+ =?us-ascii?Q?nlZo0wqZtc5hskCrdg9zjKJ/wMNzcTkYNRwny7oIlB7Qvg8oEz8/EZIJC3TJ?=
+ =?us-ascii?Q?9ca9NPT3TC32MdPiaHmy9CqGjqMLVSyMtJUZodxlRdQk/W4zLweHEr4bILyh?=
+ =?us-ascii?Q?fSrYtPjxF5pglEPWeGc0Vl6cLJZRps0BX3b5i6Mzegr1Mx6Ccskp2AeZUNQI?=
+ =?us-ascii?Q?Fp1meKrc9ehgCP7ZcVP8oIfWoJZ/zNI4/+/h0Gzqb19OkmPRHyo1BkWsom1L?=
+ =?us-ascii?Q?L4YphHUdMz5Q0KmStgjOyRGN6VWGGboHeKg/xwx7?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aee44070-5705-4b56-1a43-08de0fe21265
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 14:07:58.8192
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vdPFpJwY6uqxYCYlmIkkyEChF0VLLh2rXtevOJUqGJmg8B/PbPJTRjlxcMJR1yVt
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9315
 
---83dd8af9965a11d8004a383cbd71deb877bb9867a8d43971278444bb079d
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Mon, Oct 20, 2025 at 01:11:20PM +0100, Lorenzo Stoakes wrote:
+> unlink_file_vma() is not used by anything, so remove it.
+> 
+> vma_link() and vma_link_file() are only used within mm/vma.c, so make them
+> static.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  mm/vma.c | 21 ++-------------------
+>  mm/vma.h |  6 ------
+>  2 files changed, 2 insertions(+), 25 deletions(-)
 
-On Mon Oct 20, 2025 at 3:25 PM CEST, Sander Vanheule wrote:
-> Hi Michael,
->
-> On Mon, 2025-10-20 at 15:02 +0200, Michael Walle wrote:
->> Hi Sander,
->>=20
->> On Mon Oct 20, 2025 at 1:56 PM CEST, Sander Vanheule wrote:
->> > GPIO chips often have data input and output fields aliased to the same
->> > offset. Since gpio-regmap performs a value update before the direction
->> > update (to prevent glitches), a pin currently configured as input may
->> > cause regmap_update_bits() to not perform a write.
->> >=20
->> > This may cause unexpected line states when the current input state
->> > equals the requested output state:
->> >=20
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OUT=C2=A0=C2=A0 IN=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 OUT
->> > =C2=A0=C2=A0=C2=A0 DIR ''''''\...|.../''''''
->> >=20
->> > =C2=A0=C2=A0=C2=A0 pin ....../'''|'''\......
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 (1) (2) (3)
->> >=20
->> > =C2=A0=C2=A0=C2=A0 1. Line was configurad as out-low, but is reconfigu=
-red to input.
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 External logic results in high va=
-lue.
->> > =C2=A0=C2=A0=C2=A0 2. Set output value high. regmap_update_bits() sees=
- the value is
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 already high and discards the reg=
-ister write.
->> > =C2=A0=C2=A0=C2=A0 3. Line is switched to output, maintaining the stal=
-e output config
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (low) instead of the requested co=
-nfig (high).
->> >=20
->> > By switching to regmap_write_bits(), a write of the requested output
->> > value can be forced, irrespective of the read state. Do this only for
->> > aliased registers, so the more efficient regmap_update_bits() can stil=
-l
->> > be used for distinct registers.
->>=20
->> Have you looked at the .volatile_reg callback of the regmap api?
->> You might use the same heuristics, i.e. .reg_dat_base =3D=3D .reg_set_ba=
-se
->> to implement that callback. That way you'd just have to
->> (unconditionally) set that callback in gpio_regmap_register() and
->> regmap should take care of the rest.
->
-> Maybe I'm missing something here, but I'm not sure what difference that w=
-ould
-> make. .volatile_reg is part of the regmap config, so when gpio_regmap_reg=
-ister()
-> is called, the regmap has already been created. We can't change the
-> .volatile_reg callback (and we shouldn't, it's up to the user to define i=
-t).
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Ha, yes ofc, you're right. It seems I really need some more sleep.
-
-> FWIW, I did test this with a regmap config that marks the aliased data re=
-gisters
-> as volatile. The issue isn't that an invalid cache is being read. The pro=
-blem is
-> that writes are being optimized away when they shouldn't:
->
->    1. Read register from hardware (volatile) or cache (non-volatile).
->    2. Update bits in mask to requested value
->    3. Write updated value to hardware if:
->          A. This is a forced write (i.e. regmap_write_bits), or
->          B. The updated value differs from the original.
->
-> Marking the register as volatile doesn't change the behavior, only the so=
-urce of
-> the initial value _regmap_update_bits() uses. Step 3B is the problematic =
-one
-> when using regmap_update_bits(). Per the diagram above, the comparison ma=
-y
-> happen against an input value differing from the (invisible) output state=
-, which
-> would hide the state change.
-
-Ah, now I got it. Thanks for the explanation. Let me get back to
-your initial patch tomorrow.
-
--michael
-
---83dd8af9965a11d8004a383cbd71deb877bb9867a8d43971278444bb079d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPZCNBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gsBQF8C33Sss4zBacpSJUE8Gv4+2f/M6XiSVwh
-kg914lKwV2kr2+VE9cTIKsgfcegO8OiDAYDVzLaefPzaVHUksJCZbgBUC/M1/9hO
-fou3AGFo70XDyQBPkWNwTPcn7yf0F/8Q94Q=
-=uypP
------END PGP SIGNATURE-----
-
---83dd8af9965a11d8004a383cbd71deb877bb9867a8d43971278444bb079d--
+Jason
 
