@@ -1,152 +1,213 @@
-Return-Path: <linux-kernel+bounces-861118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44533BF1D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:24:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D15BF1D26
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A0F40286B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6803188292E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59916324B21;
-	Mon, 20 Oct 2025 14:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tjXa3BmH"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D0E2FD7B2;
+	Mon, 20 Oct 2025 14:23:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E5E31DD82;
-	Mon, 20 Oct 2025 14:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1561DDC28
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970249; cv=none; b=HzGYIuJ62ZY8GmYew9/vo8ZA984UJxbizxlp/9xsDh31MLO7IEwXJUVj15gcK+6QBpjpnQstJwvR4WqjY5oHKKmNGPrLJsO9YmAIqXEih1XU/zNDnFjOH71zlFvCOAsjQ95XE90E/orw5bMgMxh6Y5JqQ3FSubdg6TohpcnQVzM=
+	t=1760970236; cv=none; b=cNtwz0yRNKvVOi/CkDcjo/jPV6xaX8UhZp2uMoOw07r7qSGGIT3RyWL9AF1B1Hx79+SQXekgteyybfX6JeE+Qik5CUWEJsb7eDHyzrDZzjxs7eUUpas3tMUqRLhGi+RaDrTZgRx9/5wTctPfsYTZ4Tv6YUX9QkUAhORya151YmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970249; c=relaxed/simple;
-	bh=yjaNgHiB686AU9MYY0jxbk2QdLrO/ArFLB4xXQkkrQA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OrHZouJ6z/2Ml92cMzk4PqRczTWulL9xPxSLkIDkGqMNR/19BXvBVg6AWuAnEtX5E0XyNbMiR+KopSqxsMXIpacqYx25XlgGxjSLQcSY516GjuinkMKtu6JM/S2FJHZ90pkEMZd6NGQpD2DIBsFTN/LSQV0xUhUzL4GaBtPcnaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tjXa3BmH; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KDK4p7017502;
-	Mon, 20 Oct 2025 14:23:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=lu2+e1
-	JrNwjm4w5JqiQAtevBk6ezsFtqM0xfwb3L/VY=; b=tjXa3BmHBBoIE+wmqP/MZx
-	LYWCrKiMVFehBQDTjQWMNuS3wYuqNokzizPSGYw3TRj1muzGTLlPxbaA9RHhOSwg
-	B0yodU5AsLAx2xmGYnZKjDtpZW5f773l5PhGIn/kDfk5rtovnHMMQChwBtlJuRR0
-	Omm+lj+Jx4D5LUEq1S3O7iu2V0i83kSiKjvolmx251Yyo2TQJTxw4f5IMcDhlpDV
-	L2ShZF41lqkLdAMBHsAERIqf+cJlyg3fTg0I0y1dwycvxXL6K8+al2NaqRKSNo11
-	QoireIY8OgmDKg7bnVRVhe9YFNRoaoke4tFfQHQDUnx0PUu3elMlGGRsGLZE6JvA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vgupw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 14:23:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBQ5vg024686;
-	Mon, 20 Oct 2025 14:23:58 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqjp0p8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 14:23:58 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KENsHx27263372
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 14:23:54 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CF9B120043;
-	Mon, 20 Oct 2025 14:23:54 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9458520040;
-	Mon, 20 Oct 2025 14:23:54 +0000 (GMT)
-Received: from [9.111.135.235] (unknown [9.111.135.235])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 20 Oct 2025 14:23:54 +0000 (GMT)
-Message-ID: <48b8205d-96e4-4ed9-b8df-8cbdb305e661@linux.ibm.com>
-Date: Mon, 20 Oct 2025 16:23:42 +0200
+	s=arc-20240116; t=1760970236; c=relaxed/simple;
+	bh=kEQkpq1A/OasRTR52hp+2ykqHuCBSIGHAU9r9yXnMqc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zwza/R4k4K/k/j3Y0B68jwtCb4pYYRKpSGL/j6fupP+3Obygw56JUIyd7mkEaT2U+Czve/C8/9jqX5t/JJpKgwlrPmAks/Jpq6VXkIieEBpwHqlSaM/rzusEpqZPbooMbcux21dAhCJuuztswCmEZHNOLLpACOuhpV0K8cgEyAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cqyJW4hhLz6L5XF;
+	Mon, 20 Oct 2025 22:20:43 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id C3AD5140417;
+	Mon, 20 Oct 2025 22:23:50 +0800 (CST)
+Received: from localhost (10.48.157.75) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
+ 2025 15:23:49 +0100
+Date: Mon, 20 Oct 2025 15:23:45 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>
+CC: Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>, Gregory
+ Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>, Bharata B
+ Rao <bharata@amd.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<dave.hansen@intel.com>, <hannes@cmpxchg.org>, <mgorman@techsingularity.net>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <raghavendra.kt@amd.com>,
+	<riel@surriel.com>, <sj@kernel.org>, <ying.huang@linux.alibaba.com>,
+	<ziy@nvidia.com>, <dave@stgolabs.net>, <nifan.cxl@gmail.com>,
+	<xuezhengchu@huawei.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<byungchul@sk.com>, <kinseyho@google.com>, <joshua.hahnjy@gmail.com>,
+	<yuanchu@google.com>, <balbirs@nvidia.com>, <alok.rathore@samsung.com>,
+	<yiannis@zptcorp.com>, Adam Manzanares <a.manzanares@samsung.com>
+Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
+ infrastructure
+Message-ID: <20251020152345.00003d61@huawei.com>
+In-Reply-To: <CAOi6=wS6s2FAAbMbxX5zCZzPQE7Mm73pbhxpiM_5e44o6yyPMw@mail.gmail.com>
+References: <20250910144653.212066-1-bharata@amd.com>
+	<aMGbpDJhOx7wHqpo@casper.infradead.org>
+	<aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
+	<7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
+	<CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
+	<20250917174941.000061d3@huawei.com>
+	<5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
+	<20250925160058.00002645@huawei.com>
+	<CAOi6=wS6s2FAAbMbxX5zCZzPQE7Mm73pbhxpiM_5e44o6yyPMw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
- library
-From: Holger Dengler <dengler@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Ingo Franzki <ifranzki@linux.ibm.com>
-References: <20251020005038.661542-1-ebiggers@kernel.org>
- <20251020005038.661542-16-ebiggers@kernel.org>
- <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3gcsP6YNnx9uH9bxnaVlScEk32ZbDY4m
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX5GP2ZyrzfV8k
- CD7A+7IogP0brIFtbCSSO7FMMACu7q+fHrAYvWy2QAqSNKdHoZ2gKOcl/r2tY+bcHJth2KGtr3N
- gqNIiVc9NS/fC6lyepXqRWWJ3J8QIUZkQErM0s3ibeJaRp+Y4Ki2slQnRqmThtM7UQSxg4HZZfY
- YV2m/8CULVI1BMFO19KL7wvJbrdQZwdFsmqmjgePCcplzdyAxZx+ocwkeMuic2lLlwgTB63fzyq
- c47U1eHYzGpdrQnz/Vd8vSxfl4wj3OTk61bMnT0PDM8HXzyYn3ogM2JNOCrD/Om3C+oQIR+lydO
- HVVAt1Kqk4Uvb3t3efFLL5ITojLEqz8XOZk7bK6ZsmPlne1MWi0slUSeuJGytRdVw8W0x+Nr4LD
- I3JJJvEJ2e53bRMXKPuCkDxkM6UMHg==
-X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f645ff cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=a1n8l1vKblwj1NcKW7YA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 3gcsP6YNnx9uH9bxnaVlScEk32ZbDY4m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- clxscore=1015 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On 20/10/2025 16:00, Holger Dengler wrote:
-> On 20/10/2025 02:50, Eric Biggers wrote:
->> Instead of exposing the s390-optimized SHA-3 code via s390-specific
->> crypto_shash algorithms, instead just implement the sha3_absorb_blocks()
->> and sha3_keccakf() library functions.  This is much simpler, it makes
->> the SHA-3 library functions be s390-optimized, and it fixes the
->> longstanding issue where the s390-optimized SHA-3 code was disabled by
->> default.  SHA-3 still remains available through crypto_shash, but
->> individual architectures no longer need to handle it.
->>
->> Note that the existing code used both CPACF_KIMD_SHA3_224 and
->> CPACF_KIMD_SHA3_256 after checking for just CPACF_KIMD_SHA3_256, and
->> similarly for 384 and 512.  I've preserved that behavior.
->>
->> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> The current code also cover a performance feature, which allows (on supported hardware, e.g. z17) to skip the ICV initialization. The support has been introduced with 88c02b3f79a6 ("s390/sha3: Support sha3 performance enhancements"). Unfortunately, this patch removes this support. Was this intended?
-> 
-> The get this feature back, we need to hook also into the init() function, set the according bit for the first message block and skip the initialization of the ICV.
+On Thu, 16 Oct 2025 18:16:31 +0200
+Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com> wrote:
 
-And it would - performance wise - make some sense on s390 to replace also the sha3_xxx() functions. The init()/update()/final() sequence is not necessary on s390, as it can all be processed by one single KLMD instruction call.
+> On Thu, Sep 25, 2025 at 5:01=E2=80=AFPM Jonathan Cameron
+> <jonathan.cameron@huawei.com> wrote:
+> >
+> > On Thu, 25 Sep 2025 16:03:46 +0200
+> > Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com> wrote:
+> >
+> > Hi Yiannis, =20
+> Hi Jonathan! Thanks for your response!
+>=20
+Hi Yiannis,
 
-> 
-> Please also add me and Harald Freudenberger to the cc: list for this patch.
-> 
+This is way more fun than doing real work ;)
 
--- 
-Mit freundlichen Grüßen / Kind regards
-Holger Dengler
---
-IBM Systems, Linux on IBM Z Development
-dengler@linux.ibm.com
+> [snip]
+> > > There are several things that may be done on the device side. For now=
+, I
+> > > think the kernel should be unaware of these. But with what I described
+> > > above, the goal is to have the capacity thresholds configured in a way
+> > > that we can absorb the occasional dirty cache lines that are written =
+back. =20
+> >
+> > In worst case they are far from occasional. It's not hard to imagine a =
+malicious =20
+> This is correct. Any simplification on my end is mainly based on the
+> empirical evidence of the use cases we are testing for (tiering). But
+> I fully respect that we need to be proactive and assume the worst case
+> scenario.
+> > program that ensures that all L3 in a system (say 256MiB+) is full of c=
+ache lines
+> > from the far compressed memory all of which are changed in a fashion th=
+at makes
+> > the allocation much less compressible.  If you are doing compression at=
+ cache line
+> > granularity that's not so bad because it would only be 256MiB margin ne=
+eded.
+> > If the system in question is doing large block side compression, say 4K=
+iB.
+> > Then we have a 64x write amplification multiplier. If the virus is stre=
+aming over =20
+> This is insightful indeed :). However, even in the case of the 64x
+> amplification, you implicitly assume that each of the cachelines in
+> the L3 belongs to a different page. But then one cache-line would not
+> deteriorate the compressed size of the entire page that much (the
+> bandwidth amplification on the device is a different -performance-
+> story).
+
+This is putting limits on what compression algorithm is used. We could do
+that but then we'd have to never support anything different. Maybe if the
+device itself provided the worse case amplification numbers that would do
+Any device that gets this wrong is buggy - but it might be hard to detect
+that if people don't publish their compression algs and the proofs of worst
+case blow up of compression blocks.
+
+I guess we could do the maths on what the device manufacturer says and
+if we don't believe them or they haven't provided enough info to check,
+double it :)
+
+> So even in the 4K case the two ends of the spectrum are to
+> either have big amplification with low compression ratio impact, or
+> small amplification with higher compression ratio impact.
+> Another practical assumption here, is that the different HMU
+> mechanisms would help promote the contended pages before this becomes
+> a big issue. Which of course might still not be enough on the
+> malicious streaming writes workload.
+
+Using promotion to get you out of this is a non starter unless you have
+a backstop because we'll have annoying things like pinning going on or
+bandwidth bottlenecks at the promotion target.
+Promotion might massively reduce the performance impact of course under
+normal conditions.
+
+> Overall, I understand these are heuristics and I do see your point
+> that this needs to be robust even for the maliciously behaving
+> programs.
+> > memory the evictions we are seeing at the result of new lines being fet=
+ched
+> > to be made much less compressible.
+> >
+> > Add a accelerator (say DPDK or other zero copy into userspace buffers) =
+into the
+> > mix and you have a mess. You'll need to be extremely careful with what =
+goes =20
+> Good point about the zero copy stuff.
+> > in this compressed memory or hold enormous buffer capacity against fast
+> > changes in compressability. =20
+> To my experience the factor of buffer capacity would be closer to the
+> benefit that you get from the compression (e.g. 2x the cache size in
+> your example).
+> But I understand the burden of proof is on our end. As we move further
+> with this I will try to provide data as well.
+
+If we are aiming for generality the nasty problem is that either we have to
+write rules on what Linux will cope with, or design it to cope with the
+worse possible implementation :(
+
+I can think of lots of plausible sounding cases that have horrendous
+multiplication factors if done in a naive fashion.=20
+* De-duplication
+* Metadata flag for all 0s
+* Some general purpose compression algs are very vulnerable to the tails
+  of the probability distributions.  Some will flip between multiple modes
+  with very different characteristics, perhaps to meet latency guarantees.
+
+Would be fun to ask an information theorist / compression expert to lay
+out an algorithm with the worst possible tail performance but with good
+average.
+
+
+
+> >
+> > Key is that all software is potentially malicious (sometimes accidental=
+ly so ;)
+> >
+> > Now, if we can put this into a special pool where it is acceptable to d=
+rop the writes
+> > and return poison (so the application crashes) then that may be fine.
+> >
+> > Or block writes.   Running compressed memory as read only CoW is one wa=
+y to
+> > avoid this problem. =20
+> These could be good starting points, as I see in the rest of the thread.
+>=20
+Fun problems.  Maybe we start with very conservative handling and then
+argue for relaxations later.
+
+Jonathan
+
+> Thanks,
+> Yiannis
 
 
