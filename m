@@ -1,102 +1,55 @@
-Return-Path: <linux-kernel+bounces-859996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43AFBEF1CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:41:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEDABEF1D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61251348360
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE68C3B03EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 02:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C9829B775;
-	Mon, 20 Oct 2025 02:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33BF29B228;
+	Mon, 20 Oct 2025 02:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dzu7zjRg"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMBKhNlV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01329AB1D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0524A946A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760928061; cv=none; b=LAGzBHRiDXPMhwlCgrywJfTbfZmhzjY+pTZWvBEQWCBA5LVLzxlnI7Ti8OLEaLqQ1iqi7aR/SdPuY68DvqCDqbMvFXT/9VnPxFrfHfGKwALTzOaXcPdTNp6aPOSe8qNEA9Oe74fl9zbr967QTW/p/7/vgnxFfpkkzC3yu+bJHh0=
+	t=1760928140; cv=none; b=jSefiETcCAlrGE1uj7xnQ7OfIRfwRDgPPs3rSL1v3iPM+I79ggON1P2s1iCVUXZDUfQhR2TMsn9AhBzk0C3qFl7pJtEUiCp4tqkJvwagOwEJXD0GfHrwl3yhtCHLX1DYQdTywfB9jfbN1GAK2CodcHr4NsnqEZw9PH8Wbcf3ZVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760928061; c=relaxed/simple;
-	bh=UpRxe00P+c7+vyYZYzkM4qwGhgttHXs/vvOHzwK6E4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RKN/yvy+JMcUWWP0XXIshhZ+tH8s5LfdpRcZVAq4nhEyCJ0keolINH0EIdglHtNYuJjk74OPdP8XoHsowNwy0I6s73x8Fc1VOHyb21vB3m9clbl/BWvYEud7/NR/9GGoL/qFRpkefQEReAwDh9QMxvV/FA2g/8QdHifeGeSYjio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dzu7zjRg; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-3307de086d8so3150243a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 19:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760928060; x=1761532860; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CbkL5b+OBi8ON0V+7ODZODiLlH2T27rLkYqjonV3JTU=;
-        b=Dzu7zjRgYaeJiSV4kL2RQgeNMYs9lBfL34V/gtT+z8DEVd+Vey1tETnopzNUO164hj
-         ZWfqkq2NifdhFBmMqkt8b2MwJxRj/qRVc8DWiZ3mHpXG/s7VM4/oCxz0mokyptBW0VaJ
-         w3dQHr8q9kzmAtuoJIP/YmhpsxD1CtH6xigLmgIdtmoqogS+LN2isa9yR88SJWZWHoPY
-         77adrQ8S0cCuQOHex7JmxUbxHXTLabVuTuQqAX3t4tp+ib/Y/EB9xuIasU6h/Ix1C3wp
-         95niGEKjiJ4KXbeHfpnQ84qSAcoHr0yXP06DC7QMoeJID/Gzrw5x1kDyqy7xn9nsMIrZ
-         76FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760928060; x=1761532860;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CbkL5b+OBi8ON0V+7ODZODiLlH2T27rLkYqjonV3JTU=;
-        b=qVhHKhJu7PW7aGR0Jz3/WddaojrKmKQwTYa0XVyGsX5QSA97ALxMaM3Uz0CBEo13XB
-         TmHHoVylqUV2cW0KQt6AO58aKXBmKgiSFZUgtrLH9hfu516K7HfOiiItdMFHlzHdK3Ba
-         uGXMxkmaVZiVQAZK6CfpZIVH8vlRzkbc/Vv6GXmBWPWHcasOQJlwrFHmh/zDZTDK3gMn
-         kR22YoKD7HT5aSjddY+RbSRvs4w6VKbJVABLS7pmj67cv7HHmy32UXQKewoI3PooiGeu
-         03ZurGBzA4sb5P4cUkCrh2v/Tn0QsrX5g9WmkS4FIL7FQaQNoKRUOtrJ/u2PazSAQ7ce
-         N5MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHe2fdh8Rqbb22KtgEsuepuyqxqKHROSNE3vpX5o4TxAFOi302w2F0RW47K31vmO/cLjMlTyw6rj1GC0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaiT/xt5XR5gu9PuxtDlluY5rTuzdO+qTnKv2E172yoxjLHLGj
-	nY66tCx91WuyPjuCsJWIFtF5QLumim1OgZn3dXOpYBF0XKSDIGgs+1W+
-X-Gm-Gg: ASbGncsrneYRXLRjPtp2Tkibbp87nu47EfS/woYSB7o7bzlCWF9+xh/IhqHgeIYk4/S
-	J3yE5X5IMSg8QJic4RQ80Kii4hD6XJG87QOcw1N6VOoIl5g/E0/r6QQYaBSzD2vXsFZOrW5ewP9
-	pz2DvwyteEZRFii34OI2WdLIK3hJ43WwexKnDY+OxMHO0E/mBKjcdTfofO8s4GWFUTlpOfTg6Sk
-	anv5NrNO+j0hWTwQb848CFJYAApivLbr9v/1ZX3puOZg1nLIMgmZpB9zcFViDueS5aGndpDeUQ+
-	4gWpVL7Zli3BcuXNfguUpO+bH2nrzTJ8Yy3aP1QCdIar55BYunOciqYZAvcoJiABgs3BrGS5z6P
-	fjb8YcVr2qzqKiHVHCjkqZHEkySD2xYpfj9IJA1gxfte1qUTkrbvzaMqCYQMPSkoMeMXQmNra6p
-	dzPKYr/baf
-X-Google-Smtp-Source: AGHT+IFt0GDoRx9gJXuSFEkLE1HjOlhETzFdQe+hDtnu+sHRGQW2KotFg7OOFFY+3KrIiMsrBK4qyA==
-X-Received: by 2002:a17:90b:388a:b0:32e:b36b:3711 with SMTP id 98e67ed59e1d1-33bcf90c00emr15314358a91.28.1760928059800;
-        Sun, 19 Oct 2025 19:40:59 -0700 (PDT)
-Received: from HUC.. ([210.57.99.100])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5de30555sm6603334a91.12.2025.10.19.19.40.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Oct 2025 19:40:59 -0700 (PDT)
-From: hupu <hupu.gm@gmail.com>
-To: hupu.gm@gmail.com
-Cc: acme@kernel.org,
-	adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	justinstitt@google.com,
-	leo.yan@arm.com,
+	s=arc-20240116; t=1760928140; c=relaxed/simple;
+	bh=2Dvy7Pqb4UHZzIXbGPiDVAGI8fjvHm+1MTOwiicyTL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l0Z0A95GhSfC5Dz10P2yF4ks8Us6iKF5LAmmKIpaM1SvbDPc82YULxJNMsWosy+vl7bHYRTF0ZWfyMFkSB1fb9nBa+9U1IC/Y91VJbYVnZPkN4SO19XcDMZuhx9yTeAdySWbix6JnR21QcRpjx+fTMDWBXSuBcieeuTj1RR+PSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMBKhNlV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C1BEC4CEE7;
+	Mon, 20 Oct 2025 02:42:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760928139;
+	bh=2Dvy7Pqb4UHZzIXbGPiDVAGI8fjvHm+1MTOwiicyTL8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NMBKhNlVk5Zim2UFv+s4FQaBUw5GVafaNWWvsZUl2hbu2zZjlEbVCsKTJ/Y62QhZN
+	 9wGTtyidFB2iX4Ehk72ZKM1OfvR9rLkSkoW3x6l/5igElJoZYl32t7oKoVNb45EVJN
+	 8JKQXtwerxyYUEPKNm1kVC8/X1qtHADR87YLoZjn9LXwKrrP2rnmxxqecHXWn+88og
+	 BYYXpGOnyyV/Lnr7hG1B2vKSZ4amqkBpQxNbd58bnBDjz+GRJMkJyhGmj13Je9DUdP
+	 jtgQ30X9qPi1WovnQSWDZRHi/g8+tINvKFnO6ilk3Qd7gJRq6Dwu7k0RMyEJPKWyEf
+	 0OzG53iSSKErg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	mark.rutland@arm.com,
-	mingo@redhat.com,
-	morbo@google.com,
-	namhyung@kernel.org,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	peterz@infradead.org
-Subject: [PATCH] perf build: Support passing extra Clang options via EXTRA_BPF_FLAGS
-Date: Mon, 20 Oct 2025 10:40:49 +0800
-Message-ID: <20251020024049.6877-1-hupu.gm@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
-References: <CADHxFxQHFkn-J9R6AJY8LxkDN-eTWjp34VvoQDcshfZs1eF0rQ@mail.gmail.com>
+	Chao Yu <chao@kernel.org>,
+	stable@kernel.org,
+	syzbot+24124df3170c3638b35f@syzkaller.appspotmail.com
+Subject: [PATCH v2] f2fs: fix to avoid updating zero-sized extent in extent cache
+Date: Mon, 20 Oct 2025 10:42:12 +0800
+Message-ID: <20251020024213.332873-1-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,48 +58,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When cross-compiling perf with BPF enabled, Clang is invoked during the
-build. Some cross-compilation environments require additional compiler
-options, such as `--sysroot` or custom include paths.
+As syzbot reported:
 
-This patch introduces a new Make variable, `EXTRA_BPF_FLAGS`. During BPF
-skeleton builds, it appends user-provided options to `CLANG_OPTIONS`,
-allowing extra Clang flags to be set without modifying Makefile.perf
-directly.
+F2FS-fs (loop0): __update_extent_tree_range: extent len is zero, type: 0, extent [0, 0, 0], age [0, 0]
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/extent_cache.c:678!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5336 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full)
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__update_extent_tree_range+0x13bc/0x1500 fs/f2fs/extent_cache.c:678
+Call Trace:
+ <TASK>
+ f2fs_update_read_extent_cache_range+0x192/0x3e0 fs/f2fs/extent_cache.c:1085
+ f2fs_do_zero_range fs/f2fs/file.c:1657 [inline]
+ f2fs_zero_range+0x10c1/0x1580 fs/f2fs/file.c:1737
+ f2fs_fallocate+0x583/0x990 fs/f2fs/file.c:2030
+ vfs_fallocate+0x669/0x7e0 fs/open.c:342
+ ioctl_preallocate fs/ioctl.c:289 [inline]
+ file_ioctl+0x611/0x780 fs/ioctl.c:-1
+ do_vfs_ioctl+0xb33/0x1430 fs/ioctl.c:576
+ __do_sys_ioctl fs/ioctl.c:595 [inline]
+ __se_sys_ioctl+0x82/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f07bc58eec9
 
-Example usage:
-    EXTRA_BPF_FLAGS="--sysroot=$SYSROOT"
-    make perf ARCH="$ARCH" EXTRA_BPF_FLAGS="$EXTRA_BPF_FLAGS"
+In error path of f2fs_zero_range(), it may add a zero-sized extent
+into extent cache, it should be avoided.
 
-Change history:
-  v2:
-    - Rename EXTRA_CLANG_FLAGS to EXTRA_BPF_FLAGS
-    - Update commit message
-  v1:
-    - Introduce EXTRA_CLANG_FLAGS to allow passing extra Clang options
-
-Signed-off-by: hupu <hupu.gm@gmail.com>
+Fixes: 6e9619499f53 ("f2fs: support in batch fzero in dnode page")
+Cc: stable@kernel.org
+Reported-by: syzbot+24124df3170c3638b35f@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/68e5d698.050a0220.256323.0032.GAE@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- tools/perf/Makefile.perf | 5 +++++
- 1 file changed, 5 insertions(+)
+v2:
+- add missing "Cc: stable" flag
+ fs/f2fs/file.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 47c906b807ef..f1f2efdbab8c 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -1249,6 +1249,11 @@ else
- 	$(Q)cp "$(VMLINUX_H)" $@
- endif
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ffa045b39c01..c045e38e60ee 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1654,8 +1654,11 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
+ 		f2fs_set_data_blkaddr(dn, NEW_ADDR);
+ 	}
  
-+# Allow users to specify additional Clang options (e.g. --sysroot)
-+# when cross-compiling BPF skeletons, enabling more flexible
-+# build configurations.
-+CLANG_OPTIONS += $(EXTRA_BPF_FLAGS)
-+
- $(SKEL_TMP_OUT)/%.bpf.o: $(OUTPUT)PERF-VERSION-FILE util/bpf_skel/perf_version.h | $(SKEL_TMP_OUT)
- $(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vmlinux.h
- 	$(QUIET_CLANG)$(CLANG) -g -O2 -fno-stack-protector --target=bpf \
+-	f2fs_update_read_extent_cache_range(dn, start, 0, index - start);
+-	f2fs_update_age_extent_cache_range(dn, start, index - start);
++	if (index > start) {
++		f2fs_update_read_extent_cache_range(dn, start, 0,
++							index - start);
++		f2fs_update_age_extent_cache_range(dn, start, index - start);
++	}
+ 
+ 	return ret;
+ }
 -- 
-2.43.0
+2.49.0
 
 
