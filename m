@@ -1,57 +1,44 @@
-Return-Path: <linux-kernel+bounces-860279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DA7BEFBC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:48:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E17BEFBC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C02A74EDB4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B7E33B6A7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CC02E1F13;
-	Mon, 20 Oct 2025 07:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="I2K0FfsJ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044CA2E2EEE;
+	Mon, 20 Oct 2025 07:48:47 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8842E03E6;
-	Mon, 20 Oct 2025 07:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760946524; cv=pass; b=hPtgDoEezTEiNoJ4tEGYsXVc9MKSnZMy0du62n+kLie7X3Vfz7YM+0xFMuRnFwQbcby60X2NVhmEwxxIoGrvaAv8KHs+PszI/Ro+pA1R09vfSmPKNo+l2RzTgkBtjMJ1NdS25fbcRyn47Be/fmwdVlCuKIyf+fa3YHwbp7O3mVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760946524; c=relaxed/simple;
-	bh=yizVlvXbz8Es7RJa61rxSIoFAkW0XSoMAY0g09sSWAU=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D612DF133
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760946526; cv=none; b=dcnn0rRjisMVqP/8JR5xQc68NhakgmDqHFEr/ZQc8GEZA0JYZ31zMWxeqRSgEPd+C8Dob9JknKpx2fx5Oi4lyYAh8SgwXlWoIDs3vqmPyTyyazyOhJpFbTJ/pO7po9zZUx1YYeWF2IS2brQLRZgnK+Xn5BY9GOivB2avNfBMgeM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760946526; c=relaxed/simple;
+	bh=yUk3lhUt1sY7o4U0LgDMsfxKrxc/YMRb9KlIccU7EbE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kcphp4vUWqD2Qf7xFmp4iKCLM4q2kNh0fckDJTwj6fclmWGq0gTRka3dMTdBriLaQ1B9fRa5EBEujBdt/+xfga8gGmFd/kDu+F+GUC8kxHaJe4rGnWase8cuSNlac35k+Qb06jZDBvR/2preyXHX78L5R6OZv2lEViFXiNnrEKA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=I2K0FfsJ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760946516; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hSuXc7b8dPF7zdmfKcabME6hXjM9CNEIJba4gEirKLP0AW9cqPIro7HycKXBE8p5ottioTc6Gwt9mAyvSULf9Umx1DBQjRDg+247vErVeNYg0X47RY+DF2JBr/huDusacya8blIdHi2//5JmK/Ic6NraXKNlDsg8jA1nc7SuHbM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760946516; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=F7qIvKTzEW6jumALJeFIwOEbUuUhF9KkO1gT88g/dVs=; 
-	b=nOPY2l3Wdjw+eDxZISe9X00uMsclAuq+Iy2h6a/H0EusQ9p+klR61qf2ukPQf/U+1Qp6Qfzq4fLlUZlQYCC0a6mknP9zxjmNbByPNAnTizR4cJOEBGmeeWKaYRQVGx/3tLcr/FaFMv+HlBdj1dlqpIBRCtuyo7pZn2I5tvrL91A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760946516;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=F7qIvKTzEW6jumALJeFIwOEbUuUhF9KkO1gT88g/dVs=;
-	b=I2K0FfsJaDyih/+I2MdgM/NIv9WuS/APZoTM0PZ9d6td4W2oCiV2flBljmIVdaA+
-	GZjkagCrutGhEJNfhDjWKI3Su+D/C8aSTzWGjUwwxkW9OptpPiYS1JiM9LiMtORRump
-	S6ECYcmwLEbLX5XpeRB0ienV+xBmgyvaE5RfPygs=
-Received: by mx.zohomail.com with SMTPS id 176094651202838.60314450046212;
-	Mon, 20 Oct 2025 00:48:32 -0700 (PDT)
-Message-ID: <21707335-a45d-4f87-9490-ac2828a5d9e3@collabora.com>
-Date: Mon, 20 Oct 2025 09:48:28 +0200
+	 In-Reply-To:Content-Type; b=k+RYCMRwQGGqCdPP1/uWEj49gO4ACqV1hf6D1uxO7iyjG2ALvZ39yItG611Pt1voc7TaZpaNThtVEDyewsrzAbyN8T0txcB7ebz7Iz/GP685gQHeXLWtRamijHcw+ejR3r2RKV9DsBA7iHvJ9DtyHg5oS2BFQiaIyW9U/ELNAmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqnb959qhzYQtpW;
+	Mon, 20 Oct 2025 15:47:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 62CE21A17ED;
+	Mon, 20 Oct 2025 15:48:40 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgDniEFX6fVoDI30Aw--.58966S2;
+	Mon, 20 Oct 2025 15:48:40 +0800 (CST)
+Message-ID: <fa7fa2e5-c602-4318-90e1-89c742c6cc1a@huaweicloud.com>
+Date: Mon, 20 Oct 2025 15:48:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,64 +46,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
- legacy fileio is active
-To: Hans Verkuil <hverkuil+cisco@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
- Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org
-References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
- <20251016111154.993949-1-m.szyprowski@samsung.com>
- <36cfec0a-3717-4b0e-adc0-6887e6b58f44@collabora.com>
- <84133573-986d-4cc8-8147-246f0da34640@samsung.com>
- <1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
+Subject: Re: [PATCH -next RFC 03/16] cpuset: factor out partition_enable()
+ function
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
+ <20250928071306.3797436-4-chenridong@huaweicloud.com>
+ <9168ffab-b0a8-4024-a1f4-966b9f95c953@redhat.com>
 Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <1f2748a5-1955-48dd-93e4-69e032d895e0@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <9168ffab-b0a8-4024-a1f4-966b9f95c953@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDniEFX6fVoDI30Aw--.58966S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr4rAr1UtFW5ur43Xr1rCrg_yoWrCw1UpF
+	95JFW5tayUKryfC3srXF4xC34fKrs7J3WUtwn7X3W8Xr17Aw1vgFyj9390g3WUXrWkGry5
+	ZF1DWrs7uF17AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
-Le 20/10/2025 à 09:39, Hans Verkuil a écrit :
-> On 20/10/2025 09:34, Marek Szyprowski wrote:
->> On 20.10.2025 09:11, Benjamin Gaignard wrote:
->>> Le 16/10/2025 à 13:11, Marek Szyprowski a écrit :
->>>> create_bufs and remove_bufs ioctl calls manipulate queue internal buffer
->>>> list, potentially overwriting some pointers used by the legacy fileio
->>>> access mode. Simply forbid those calls when fileio is active to protect
->>>> internal queue state between subsequent read/write calls.
->>> Hi Marek,
->>>
->>> I may be wrong but using fileio API and create/remove API at the same
->>> time
->>> sound incorrect from application point of view, right ? If that not the
->>> case maybe we should also add a test in v4l2-compliance.
->> Definitely that's incorrect and v4l2-core must forbid such calls. The
->> standard reqbufs/qbuf/dqbuf API is also forbidden. Extending
->> v4l2-compliance tools is probably a good idea.
-> Yes, please! A patch is welcome.
->
->   I also wonder if its a
->> good time to add a kernel option to completely disable legacy fileio
->> access mode, as it is not really needed for most of the systems nowadays.
-> No, that will break applications. Using read() is very common (and convenient!)
-> for MPEG encoders such as the cx18 driver.
->
-> The fileio code is not blocking any new development, it's just there for those
-> drivers were it makes sense.
->
-> Regards,
->
-> 	Hans
 
-I wonder if this patch in useful because when calling vb2_ioctl_create_bufs()
-it already check in vb2_verify_memory_type() if fileio is used or not.
-
->>   > ...
+On 2025/10/20 10:39, Waiman Long wrote:
+> On 9/28/25 3:12 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
 >>
->> Best regards
->
+>> Extract the core partition enablement logic into a dedicated
+>> partition_enable() function. This refactoring centralizes updates to key
+>> cpuset data structures including remote_sibling, effective_xcpus,
+>> partition_root_state, and prs_err.
+>>
+>> The function handles the complete partition enablement workflow:
+>> - Adding exclusive CPUs via partition_xcpus_add()
+>> - Managing remote sibling relationships
+>> - Synchronizing effective exclusive CPUs mask
+>> - Updating partition state and error status
+>> - Triggering required scheduler domain rebuilds
+>>
+>> This creates a coherent interface for partition operations and establishes
+>> a foundation for future local partition support while maintaining existing
+>> remote partition behavior.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 55 +++++++++++++++++++++++++++++++++---------
+>>   1 file changed, 44 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 0787904321a9..43ce62f4959c 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1515,6 +1515,49 @@ static inline bool is_local_partition(struct cpuset *cs)
+>>       return is_partition_valid(cs) && !is_remote_partition(cs);
+>>   }
+>>   +static void partition_state_update(struct cpuset *cs, int new_prs,
+>> +                      enum prs_errcode prs_err)
+>> +{
+>> +    lockdep_assert_held(&callback_lock);
+>> +
+>> +    cs->partition_root_state = new_prs;
+>> +    WRITE_ONCE(cs->prs_err, prs_err);
+>> +    if (!is_partition_valid(cs))
+>> +        reset_partition_data(cs);
+>> +}
+>> +
+>> +/**
+>> + * partition_enable - Transitions a cpuset to a partition root
+>> + * @cs: The cpuset to enable partition for
+>> + * @parent: Parent cpuset of @cs, NULL for remote parent
+>> + * @new_prs: New partition root state to set
+>> + * @new_excpus: New exclusive CPUs mask for the partition
+>> + *
+>> + * Transitions a cpuset to a partition root, only for v2.
+>> + */
+>> +static void partition_enable(struct cpuset *cs, struct cpuset *parent,
+>> +                 int new_prs, struct cpumask *new_excpus)
+>> +{
+>> +    bool isolcpus_updated;
+>> +
+>> +    lockdep_assert_held(&cpuset_mutex);
+>> +    WARN_ON_ONCE(new_prs <= 0);
+>> +    WARN_ON_ONCE(!cpuset_v2());
+>> +
+>> +    if (cs->partition_root_state == new_prs)
+>> +        return;
+>> +
+>> +    spin_lock_irq(&callback_lock);
+>> +    /* enable partition should only add exclusive cpus */
+>> +    isolcpus_updated = partition_xcpus_add(new_prs, parent, new_excpus);
+>> +    list_add(&cs->remote_sibling, &remote_children);
+>> +    cpumask_copy(cs->effective_xcpus, new_excpus);
+>> +    partition_state_update(cs, new_prs, PERR_NONE);
+>> +    spin_unlock_irq(&callback_lock);
+>> +    update_unbound_workqueue_cpumask(isolcpus_updated);
+>> +    cpuset_force_rebuild();
+>> +}
+>> +
+> partition_enable() is supposed to be a common helper used for the creation of both local and remote
+> partitions. The one in this patch does work for remote partition but not for local partition. I
+> would prefer to make it good for both cases when you introduce it instead adding code in patch 6 to
+> make it work for local partition later in the series. It will make it easier to review instead of
+> jumping back and forth to make sure that it will do the right thing.
+> 
+> Cheers,
+> Longman
+> 
+
+Thank you, Longman.
+
+My original intention was to keep the changes easier to review. Patches 3–5 are meant to be pure
+refactoring moves of code from the remote partition logic, without altering any behavior.
+
+Would it be clearer to proceed in the following stages:
+
+1. Introduce partition_enable(), partition_disable(), and partition_update() with their complete
+logic first.
+2. Replace the corresponding logic in remote partitions with these new helpers.
+3. Then, replace the logic in local partitions with the same helpers.
+
+-- 
+Best regards,
+Ridong
+
 
