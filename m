@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-860248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC042BEFAD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D65BEFAD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75C8E4EDD78
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99FAE3B0698
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EA82C08CE;
-	Mon, 20 Oct 2025 07:30:16 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C921153BD9;
+	Mon, 20 Oct 2025 07:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgwlOEWu"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651EC221FC4
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CB71F5821
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760945415; cv=none; b=GnCfMlHPwg2anJq6n/BfK7jB9skFEfh7F/sppOAfRVt6wz8akHEdjSxse+Ka6h/05tnf4P32IzkobYYg+yp7kquGAdkQ4cvAU4b61QzobvdLkeXTx9Cc7vNaGvXdV3pWpOiUt5rKXYWmNENssfeNGJm1BJ2E83C0M8AZFFMd/Eg=
+	t=1760945458; cv=none; b=UwWYEImD3jV/eHYWbzsjw+q0Vv4wEHEVZA0Euzl1RSiT6Cx66D5ETEDGONqJx5cdd3ZlztD13Fe9rAaFFtnFEG2+/mDhrNfbVc7z30GWx00f4hrJDytPv5YjOLW3OrKEWQWL9UDLbqLHrp0Fh+7V77SASqPlr/KJ21aPV4jOfrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760945415; c=relaxed/simple;
-	bh=/1W54VJAqHz65nkWyg7aBIlmny5l0FVI3XrOIdb2Qgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YB1DqnF4VJUKVYOhDT60bOn7R2zQlKXsbUN44pARBOmVOrIlWxX6EXzz8g7VUuydjr2IhhW3FdB+rxKMzl8n/2A4Ka0ZFzOH6SrDqi3a7h52H7rD18szSLne8ohusn9Ksk5RULluX7sfIhr7u/cYyJilo6q/OtArIw5kQyy7nfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cqn9w6C7czKHMLR;
-	Mon, 20 Oct 2025 15:29:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 801341A083E;
-	Mon, 20 Oct 2025 15:30:09 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP3 (Coremail) with SMTP id _Ch0CgBn+98A5fVoKTDeAw--.483S2;
-	Mon, 20 Oct 2025 15:30:09 +0800 (CST)
-Message-ID: <7fdd05cd-4923-4a3f-89e9-d5f5099500ae@huaweicloud.com>
-Date: Mon, 20 Oct 2025 15:30:07 +0800
+	s=arc-20240116; t=1760945458; c=relaxed/simple;
+	bh=Uoj+odkDWVHRyERaqWWHuPTGNKfOOO9OconxC3LLDRc=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=o2lzIhAmBmd1hyJ5JX5NrnV6vPoTRLKpau/VWZGfM2Whn8XkImLYT7ECrlUEhSTi/EY6BgO1IkzxZqF1HufRDp4l6VLyylKf2MVANg+46Msvjop0zqIJnVjaSa/RU7qX3/5pfiA2OOEpNKPTpcN7BNA4IUmHnAeVTuY3j2O+eRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YgwlOEWu; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-781254d146eso449928b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:30:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760945456; x=1761550256; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:msip_labels:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uoj+odkDWVHRyERaqWWHuPTGNKfOOO9OconxC3LLDRc=;
+        b=YgwlOEWu2LaIu+SYEDN+378qmNm/M+uBglRCSQZYkqe5p032C0zvG0/R+qWtr1cmMp
+         r5c51nkJwGA/MqoQ/Zz1Hj34HNm5+/dk1N0ub99U1ptHMKzmWwCRe8ICcKXl5sqRro0S
+         o9KdB4bughWOicjHUJFqR3CJ8wN5qgpG/qSit67L6+e+7q3awIUvNLxDjwRet+jQUxPf
+         K2ugDL9OrMqQRq0xXwO4VliMKjdfh4J70HOpbd5xgKM6AVfVxFozRD4AnkTyQlYll6M3
+         2/k7iuzK0jt5wDRkBvQeoGE7fgDMe0GyG3tigakSQMpTT8+KGuHbPCaAh/AYLNl/QQPj
+         IeSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760945456; x=1761550256;
+        h=mime-version:content-transfer-encoding:msip_labels:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :cc:to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Uoj+odkDWVHRyERaqWWHuPTGNKfOOO9OconxC3LLDRc=;
+        b=bx5vxY457gkkAPHHkzMNet1nADX6MgF+17NaV4h4O1Zra6u1AAquj/ubK/3s91Irsg
+         KwBrTAG2qHBvd0813jNMQwb35rT3zrGvD3lDLK4fbLVrCCzxwWR9etFHoMuK2cx9lh5B
+         RqHoPxV/GX2KLg+7a0Qkx38IiX5DalzUKAM6IyGOenkEZX7gdx6JiSxuczYQralu9iYs
+         LLP10fCJfAZVj9Vs9QqEOBYVhUMgGDqeUS5m5Ck71REAPyEakaV9RGw9fSpgc9MHgWr/
+         1dgHJwkUPjy9NzWkRy3jMZCRYiRElEpN8WDXiUSK8bl7UNX1YrR4vGKoGI0H5TgBKs+n
+         bh9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWEdq2/vlz+uVx2OncA4m9xE1WaXo+oI/qKO0PueoMLZBSSzfcLsMNgYq82VG4nVmuhz5U2tJd5QtqXldw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0WHP/grVap8cj3nAn/M/sgKR0BGPn0awXB7r1XeociNJyNa4J
+	564VyiMVUqLT52S7BbeP2UUz99c2vn7gnVnzmiZX2Neub33GCaUUztBB
+X-Gm-Gg: ASbGncvAVSb9X5i+VzExiFY5S5KjrdZZ/ejxOu59CokJLMq3WCC9DVKJYj82l3F5aE3
+	AI5gRNi1foxROGIw3GM7PY/CqR7500NY2VvueQGPBwTO2JjHQtWNGVzb58z728sR7fimslQFbxZ
+	yLuZCVgOwRQlnEutBElVFBCYCRBYxOyOCXNEjXnUht0VrzMqtcaRieTALGSvyC0m8vN9+JY65n3
+	zFpLbdbRNKIXveW8fjrkTsp6VcE+Ce7iJCrDGsnf/pBc0hvb0mMf4vxQgaHJr2S0cNWk33B5eLL
+	hHb8F5P3eWNGN8P3AXdRQJDtDfnXnxL59flGc72qxLhHC/d8s4PW0kzQ2oZ4mH+2G3KHcnrAyCq
+	uOBhUax409dYe/obM2J7JC40NOk+4i7xp6n4boJuspPHCuEKEpNTCY+lITeIR6f+O9PzgrItNkV
+	KvI0HiyHXnsT9r91ksJH3IkDhgrkPykjukLHyDJCvlafVbFo/9pd8UMltV/2qyJxkhGms=
+X-Google-Smtp-Source: AGHT+IEgGKzqG1FMj8PNDAYMIcLUNEbNxolVnHG4bXXkueppZEX67j8yB5H0KO1C6Xtw25BHXuCC7Q==
+X-Received: by 2002:a05:6a00:2d8d:b0:783:bb38:82f6 with SMTP id d2e1a72fcca58-7a22044bb01mr7761521b3a.0.1760945456185;
+        Mon, 20 Oct 2025 00:30:56 -0700 (PDT)
+Received: from PH0PR04MB7349.namprd04.prod.outlook.com ([2603:1036:30c:c::5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff15878sm7456125b3a.10.2025.10.20.00.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 00:30:55 -0700 (PDT)
+From: clingfei <clf700383@gmail.com>
+To: "syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com"
+	<syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
+CC: "steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "horms@kernel.org"
+	<horms@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+	=?gb2312?B?zfXEsw==?= <clf700383@gmail.com>
+Subject: [PATCH] Fix integer overflow in set_ipsecrequest()
+Thread-Topic: [PATCH] Fix integer overflow in set_ipsecrequest()
+Thread-Index: AQHcQY7A6K9h5RR5eEO1C57qUuzCgQ==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date: Mon, 20 Oct 2025 07:30:42 +0000
+Message-ID:
+	<PH0PR04MB7349DA5D7A7A7FBEA8601353FCF5A@PH0PR04MB7349.namprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator:
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 01/16] cpuset: use update_partition_sd_lb in
- update_cpumasks_hier
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
- <20250928071306.3797436-2-chenridong@huaweicloud.com>
- <c40f7e09-3262-4de3-86e6-31a4a6a5338f@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <c40f7e09-3262-4de3-86e6-31a4a6a5338f@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBn+98A5fVoKTDeAw--.483S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr45ur4DCrWfur1DXFWUJwb_yoW5ZryrpF
-	1kGFWUJFWYyw18Cw1UX3W8JryrJa1kX3WDtw13tF18Jr12yF12gF1UW3sagr4UJr4kGr18
-	Ar1UXr42vF15ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-
-
-On 2025/10/20 10:37, Waiman Long wrote:
-> On 9/28/25 3:12 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> For cgroup v2, when a cpuset is not a valid partition root, it inherits
->> the CS_SCHED_LOAD_BALANCE flag from its parent. The existing logic in
->> update_cpumasks_hier() manually handled this inheritance condition.
->>
->> This patch replaces the inline implementation with a call to the dedicated
->> update_partition_sd_lb() helper function, which already encapsulates the
->> same logic. The helper function comprehensively handles both the load
->> balance flag update and the necessary scheduling domain rebuild decision.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 16 +++-------------
->>   1 file changed, 3 insertions(+), 13 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 52468d2c178a..052f9e0c7a65 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1257,6 +1257,8 @@ static void update_partition_sd_lb(struct cpuset *cs, int old_prs)
->>       bool rebuild_domains = (new_prs > 0) || (old_prs > 0);
->>       bool new_lb;
->>   +    if (!cpuset_v2())
->> +        return;
->>       /*
->>        * If cs is not a valid partition root, the load balance state
->>        * will follow its parent.
->> @@ -2276,19 +2278,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
->>               !cpumask_equal(cp->cpus_allowed, cp->effective_cpus));
->>             cpuset_update_tasks_cpumask(cp, cp->effective_cpus);
->> -
->> -        /*
->> -         * On default hierarchy, inherit the CS_SCHED_LOAD_BALANCE
->> -         * from parent if current cpuset isn't a valid partition root
->> -         * and their load balance states differ.
->> -         */
->> -        if (cpuset_v2() && !is_partition_valid(cp) &&
->> -            (is_sched_load_balance(parent) != is_sched_load_balance(cp))) {
->> -            if (is_sched_load_balance(parent))
->> -                set_bit(CS_SCHED_LOAD_BALANCE, &cp->flags);
->> -            else
->> -                clear_bit(CS_SCHED_LOAD_BALANCE, &cp->flags);
->> -        }
->> +        update_partition_sd_lb(cp, old_prs);
->>             /*
->>            * On legacy hierarchy, if the effective cpumask of any non-
-> Calling update_partition_sd_lb() directly from update_cpumasks_hier() may incorrectly force
-> rebuidling sched domain when it is not really necessary.
-> 
-> Cheers,
-> Longman
-
-Thank you Longman,
-
-You are correct. Besides the change for the CS_SCHED_LOAD_BALANCE flag, which can lead to rebuilding
-the sched domain, the condition of new_prs or old_prs being greater than 0 may also trigger a domain
-rebuild, which is unnecessary. I will drop this patch in next version.
-
--- 
-Best regards,
-Ridong
-
+SGkgc3l6Ym90LAoKUGxlYXNlIHRlc3QgdGhlIGZvbGxvd2luZyBwYXRjaC4KCiNzeXogdGVzdDog
+Z2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2JwZi9icGYtbmV4
+dC5naXQgbWFzdGVyCgpUaGFua3MuCgpGcm9tIGRiMjRmMDk4NTYwMGRiMWY4OGQ1ZDJiNzQyMGYw
+NzA3ZDY3ZWEwNWEgTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxCkZyb206IGNsaW5nZmVpIDxjbGY3
+MDAzODNAZ21haWwuY29tPgpEYXRlOiBNb24sIDIwIE9jdCAyMDI1IDEzOjQ4OjU0ICswODAwClN1
+YmplY3Q6IFtQQVRDSF0gZml4IGludGVnZXIgb3ZlcmZsb3cgaW4gc2V0X2lwc2VjcmVxdWVzdCgp
+CgpzeXpib3QgcmVwb3J0ZWQgYSBrZXJuZWwgQlVHIGluIHNldF9pcHNlY3JlcXVlc3QoKSBkdWUg
+dG8gYW4gc2tiX292ZXJfcGFuaWMuCgpUaGUgbXAtPm5ld19mYW1pbHkgYW5kIG1wLT5vbGRfZmFt
+aWx5IGlzIHUxNiwgd2hpbGUgc2V0X2lwc2VjcmVxdWVzdCByZWNlaXZlcwpmYW1pbHkgYXMgdWlu
+dDhfdCwgIGNhdXNpbmcgYSBpbnRlZ2VyIG92ZXJmbG93IGFuZCB0aGUgbGF0ZXIgc2l6ZV9yZXEg
+Y2FsY3VsYXRpb24gCmVycm9yLCB3aGljaCBleGNlZWRzIHRoZSBzaXplIHVzZWQgaW4gYWxsb2Nf
+c2tiLCBhbmQgdWx0aW1hdGVseSB0cmlnZ2VyZWQgdGhlCmtlcm5lbCBidWcgaW4gc2tiX3B1dC4K
+ClJlcG9ydGVkLWJ5OiBzeXpib3QrYmU5N2RkNGRhMTRhZTg4YjZiYTRAc3l6a2FsbGVyLmFwcHNw
+b3RtYWlsLmNvbQpDbG9zZXM6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9leHRp
+ZD1iZTk3ZGQ0ZGExNGFlODhiNmJhNApTaWduZWQtb2ZmLWJ5OiBDaGVuZyBMaW5nZmVpIDxjbGY3
+MDAzODNAZ21haWwuY29tPgotLS0KIG5ldC9rZXkvYWZfa2V5LmMgfCAyICstCiAxIGZpbGUgY2hh
+bmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9uZXQva2V5
+L2FmX2tleS5jIGIvbmV0L2tleS9hZl9rZXkuYwppbmRleCAyZWJkZTAzNTIyNDUuLjA4ZjRjZGUw
+MTk5NCAxMDA2NDQKLS0tIGEvbmV0L2tleS9hZl9rZXkuYworKysgYi9uZXQva2V5L2FmX2tleS5j
+CkBAIC0zNTE4LDcgKzM1MTgsNyBAQCBzdGF0aWMgaW50IHNldF9zYWRiX2ttYWRkcmVzcyhzdHJ1
+Y3Qgc2tfYnVmZiAqc2tiLCBjb25zdCBzdHJ1Y3QgeGZybV9rbWFkZHJlc3MgKgoKIHN0YXRpYyBp
+bnQgc2V0X2lwc2VjcmVxdWVzdChzdHJ1Y3Qgc2tfYnVmZiAqc2tiLAogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgdWludDhfdCBwcm90bywgdWludDhfdCBtb2RlLCBpbnQgbGV2ZWwsCi0gICAg
+ICAgICAgICAgICAgICAgICAgICAgICB1aW50MzJfdCByZXFpZCwgdWludDhfdCBmYW1pbHksCisg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB1aW50MzJfdCByZXFpZCwgdWludDE2X3QgZmFtaWx5
+LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgeGZybV9hZGRyZXNzX3QgKnNyYywg
+Y29uc3QgeGZybV9hZGRyZXNzX3QgKmRzdCkKIHsKICAgICAgICBzdHJ1Y3Qgc2FkYl94X2lwc2Vj
+cmVxdWVzdCAqcnE7Ci0tCjIuMzQuMQ==
 
