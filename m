@@ -1,326 +1,181 @@
-Return-Path: <linux-kernel+bounces-861279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25270BF244D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:59:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049F0BF2484
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B9EC4EBB77
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6533B768F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0EC279DCD;
-	Mon, 20 Oct 2025 15:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7341283FCF;
+	Mon, 20 Oct 2025 16:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UgN3bR73"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5543D24BD1A;
-	Mon, 20 Oct 2025 15:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MAZItxP1"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7956C280332;
+	Mon, 20 Oct 2025 16:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975987; cv=none; b=hPgIsHSQFpwoeRrbvFrkQs148RajDBEC1L3YsWaaeuXwUqO0IrlBAR2oD6mA3MdiZ0z8byJLwwY0OGn68sNDrNXvgH1Uow3MZVHxWrNUj+tQ9vMg5JToUTIxHfl5/YxkHkiNA5cykn1CrNJx2v69dRPGZAO+DWe5ESGe89BuLDc=
+	t=1760976022; cv=none; b=o+4U39ho1l/CYrquw/z1SERoPCfRW1fM8sB4+VzQdRSl0IzrCFNQl2jvHty79Jcda3NZ+eOHRgePwNQ5m2gVmamRGFtbnb1V5bv7WZo7aNtHyG5Fb5E0njkaVE+8Jssz3wTxL+633b+QNIphAI+3TQrZnh8TmjjRf8chuejtk5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975987; c=relaxed/simple;
-	bh=MbAwS0dUmHYIgBfk0CMgeryU+UcEXGpLkf27dibS5JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtBkJZVX/Ivf6vS2DQEcAFj9VuNApgYJXZ+ED+U5ybMAafkImwV6m/JKm57gXfEQBcIm6s+2Q4jdfWPp4E0EmL4Imlmy0O/Ns6ntXLeDBwMkDgOQkAm3w3fswdAYIMgy/LtGsEEGA7Pw7TL1MFRwyFfGCXBn71j02HAEDzar7ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UgN3bR73; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1044)
-	id 42988201DAC2; Mon, 20 Oct 2025 08:59:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 42988201DAC2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1760975979;
-	bh=ubZvVoSGl/HCTU2/w/rpJcDAr4nGo7SIDhdJ8b//wG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UgN3bR731qec6npeyWKB008Et78dtpOMhFR/5D4qhs3Dy9lXCelIFlXJwnMIN/nyL
-	 tKxQYJtrSO8jyYVGUc6Wr2y8qKDcRdxn/g/1zT0C0vYT5gyGcCV1jK10p87cvxFN+0
-	 Pg2U19n/FraL7fXIYkXgbEOIM7wZz6BgHWHf3b/I=
-Date: Mon, 20 Oct 2025 08:59:39 -0700
-From: Praveen Paladugu <prapal@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"anbelski@linux.microsoft.com" <anbelski@linux.microsoft.com>,
-	"easwar.hariharan@linux.microsoft.com" <easwar.hariharan@linux.microsoft.com>,
-	"nunodasneves@linux.microsoft.com" <nunodasneves@linux.microsoft.com>,
-	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
-Subject: Re: [PATCH v2 2/2] hyperv: Enable clean shutdown for root partition
- with MSHV
-Message-ID: <20251020155939.GA17482@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20251014164150.6935-1-prapal@linux.microsoft.com>
- <20251014164150.6935-3-prapal@linux.microsoft.com>
- <SN6PR02MB4157FBBE5B77C65B024D3589D4E9A@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1760976022; c=relaxed/simple;
+	bh=h7k1yPDWabdqTtoG2EnqD7n7OFxarXOU70TTjODpX5g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FWMsFnQfes3VaE/D15GWSjqS+ML7lvesPmilbjbzjFwkon0iu4yf+RyoKyaKQ2UG2zX+pX4tLlQUA4DjL/ffzow/HG1iyfjxagNzT9VPuhU9sX9Pt3H64Qf3PiClrEODgeA19Vbwf8eV8dP6L/07WeJMk0kj7BAPFElgZVONqCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MAZItxP1; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760976009; x=1761580809; i=markus.elfring@web.de;
+	bh=LAWUziSKbx0wPaRGxy4vlGz1nfUe2P0aaJSr5/+/rKs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MAZItxP1ndJPJ1dQyAj96YuQd2eTZuavy7DuuRSUnyp0JcGUI+ElrjoiGcQNYA5F
+	 GmWb6e6jxVS2NDk7Gy0Dlhb5/sEc7Ax3p3tRAhRC4w4iFolXfui2vQ7QoLlYvEqN4
+	 k4G84KUpoMijXecBllVqspierpZaOSE7gKL30FHLwyCvb4wB8e9v9twEWDd+cSrRO
+	 Z06ds8jYL3D2QjYr2ItbD9Zqr6OqXyo/MSCFvDueeZJo3rB3OeN89voXoDSQteQHp
+	 lOVFnH8w7XLo1KrA9/kR901DKEChuD5p18J4/5wSUqCFNnzBiS5HBjNTMRp22hV7Z
+	 al0v9eepNKGy0ylx9Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLifq-1utCvZ0VJg-00Radp; Mon, 20
+ Oct 2025 18:00:09 +0200
+Message-ID: <b33ac7ab-e66f-4407-ba3e-ec4c70636fcf@web.de>
+Date: Mon, 20 Oct 2025 18:00:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157FBBE5B77C65B024D3589D4E9A@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+To: linux-usb@vger.kernel.org, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Content-Language: en-GB, de-DE
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Anand Moon <linux.amoon@gmail.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] usb: typec-mux: ptn36502: Omit a variable reassignment in
+ ptn36502_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:D+wY3jkeOj9azC8xpJrk49F2JAJNgErxmsbwrA9hWOet5/dRdiq
+ Ck9JMHptUkHL8QQmBXo1kvMQoZK2R01qhTcuVywQ2clA1TpuAH9namykLEj+db+9rslpx2P
+ /JwugfTkgeMGvVEQoU/9bvMw75k5PuU23TN0MYPfRKu21sXzrzrxHcrK9PABOQ4kfbTF2Ob
+ adhVnuJjQ2qta/uMCwKoA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Zghbgn7crjw=;DSuY2KvRUey3JPINcnBz9xfOl9/
+ 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
 
-On Thu, Oct 16, 2025 at 07:29:06PM +0000, Michael Kelley wrote:
-> From: Praveen K Paladugu <prapal@linux.microsoft.com> Sent: Tuesday, October 14, 2025 9:41 AM
-> > 
-> > When a shutdown is initiated in the root partition without configuring
-> > sleep states, the call to `hv_call_enter_sleep_state` fails. In such cases
-> > the root falls back to using legacy ACPI mechanisms to poweroff. This call
-> > is intercepted by MSHV and will result in a Machine Check Exception (MCE).
-> > 
-> > Root panics with a trace similar to:
-> > 
-> > [   81.306348] reboot: Power down
-> > [   81.314709] mce: [Hardware Error]: CPU 0: Machine Check Exception: 4 Bank 0: b2000000c0060001
-> > [   81.314711] mce: [Hardware Error]: TSC 3b8cb60a66 PPIN 11d98332458e4ea9
-> > [   81.314713] mce: [Hardware Error]: PROCESSOR 0:606a6 TIME 1759339405 SOCKET 0 APIC 0 microcode ffffffff
-> > [   81.314715] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-> > [   81.314716] mce: [Hardware Error]: Machine check: Processor context corrupt
-> > [   81.314717] Kernel panic - not syncing: Fatal machine check
-> > 
-> > To prevent this, properly configure sleep states within MSHV, allowing
-> > the root partition to shut down cleanly without triggering a panic.
-> > 
-> > Signed-off-by: Praveen K Paladugu <prapal@linux.microsoft.com>
-> > Co-developed-by: Anatol Belski <anbelski@linux.microsoft.com>
-> > Signed-off-by: Anatol Belski <anbelski@linux.microsoft.com>
-> > ---
-> >  arch/x86/hyperv/hv_init.c       |   7 ++
-> >  arch/x86/include/asm/mshyperv.h |   1 +
-> >  drivers/hv/hv_common.c          | 119 ++++++++++++++++++++++++++++++++
-> >  3 files changed, 127 insertions(+)
-> > 
-> > diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-> > index afdbda2dd7b7..57bd96671ead 100644
-> > --- a/arch/x86/hyperv/hv_init.c
-> > +++ b/arch/x86/hyperv/hv_init.c
-> > @@ -510,6 +510,13 @@ void __init hyperv_init(void)
-> >  		memunmap(src);
-> > 
-> >  		hv_remap_tsc_clocksource();
-> > +		/*
-> > +		 * The notifier registration might fail at various hops.
-> > +		 * Corresponding error messages will land in dmesg. There is
-> > +		 * otherwise nothing that can be specifically done to handle
-> > +		 * failures here.
-> > +		 */
-> > +		(void)hv_sleep_notifiers_register();
-> >  	} else {
-> >  		hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
-> >  		wrmsrq(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-> > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> > index abc4659f5809..fb8d691193df 100644
-> > --- a/arch/x86/include/asm/mshyperv.h
-> > +++ b/arch/x86/include/asm/mshyperv.h
-> > @@ -236,6 +236,7 @@ int hyperv_fill_flush_guest_mapping_list(
-> >  void hv_apic_init(void);
-> >  void __init hv_init_spinlocks(void);
-> >  bool hv_vcpu_is_preempted(int vcpu);
-> > +int hv_sleep_notifiers_register(void);
-> >  #else
-> >  static inline void hv_apic_init(void) {}
-> >  #endif
-> > diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> > index e109a620c83f..cfba9ded7bcb 100644
-> > --- a/drivers/hv/hv_common.c
-> > +++ b/drivers/hv/hv_common.c
-> > @@ -837,3 +837,122 @@ const char *hv_result_to_string(u64 status)
-> >  	return "Unknown";
-> >  }
-> >  EXPORT_SYMBOL_GPL(hv_result_to_string);
-> > +
-> > +#if IS_ENABLED(CONFIG_ACPI)
-> > +/*
-> > + * Corresponding sleep states have to be initialized in order for a subsequent
-> > + * HVCALL_ENTER_SLEEP_STATE call to succeed. Currently only S5 state as per
-> > + * ACPI 6.4 chapter 7.4.2 is relevant, while S1, S2 and S3 can be supported.
-> > + *
-> > + * ACPI should be initialized and should support S5 sleep state when this method
-> > + * is called, so that it can extract correct PM values and pass them to hv.
-> > + */
-> > +static int hv_initialize_sleep_states(void)
-> > +{
-> > +	u64 status;
-> > +	unsigned long flags;
-> > +	struct hv_input_set_system_property *in;
-> > +	acpi_status acpi_status;
-> > +	u8 sleep_type_a, sleep_type_b;
-> > +
-> > +	if (!acpi_sleep_state_supported(ACPI_STATE_S5)) {
-> > +		pr_err("%s: S5 sleep state not supported.\n", __func__);
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	acpi_status = acpi_get_sleep_type_data(ACPI_STATE_S5,
-> > +						&sleep_type_a, &sleep_type_b);
-> > +	if (ACPI_FAILURE(acpi_status))
-> > +		return -ENODEV;
-> > +
-> > +	local_irq_save(flags);
-> > +	in = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> > +	memset(in, 0, sizeof(*in));
-> > +
-> > +	in->property_id = HV_SYSTEM_PROPERTY_SLEEP_STATE;
-> > +	in->set_sleep_state_info.sleep_state = HV_SLEEP_STATE_S5;
-> > +	in->set_sleep_state_info.pm1a_slp_typ = sleep_type_a;
-> > +	in->set_sleep_state_info.pm1b_slp_typ = sleep_type_b;
-> > +
-> > +	status = hv_do_hypercall(HVCALL_SET_SYSTEM_PROPERTY, in, NULL);
-> > +	local_irq_restore(flags);
-> > +
-> > +	if (!hv_result_success(status)) {
-> > +		hv_status_err(status, "\n");
-> > +		return hv_result_to_errno(status);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int hv_call_enter_sleep_state(u32 sleep_state)
-> > +{
-> > +	u64 status;
-> > +	int ret;
-> > +	unsigned long flags;
-> > +	struct hv_input_enter_sleep_state *in;
-> > +
-> > +	ret = hv_initialize_sleep_states();
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	local_irq_save(flags);
-> > +	in = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> > +	in->sleep_state = sleep_state;
-> > +
-> > +	status = hv_do_hypercall(HVCALL_ENTER_SLEEP_STATE, in, NULL);
-> 
-> If this hypercall succeeds, does the root partition (which is the caller) go
-> to sleep in S5, such that the hypercall never returns? If that's not the case,
-> what is the behavior of this hypercall?
->
-This hypercall returns to the kernel when the CPU wakes up the next
-time.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 20 Oct 2025 17:50:12 +0200
 
-> > +	local_irq_restore(flags);
-> > +
-> > +	if (!hv_result_success(status)) {
-> > +		hv_status_err(status, "\n");
-> > +		return hv_result_to_errno(status);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int hv_reboot_notifier_handler(struct notifier_block *this,
-> > +				      unsigned long code, void *another)
-> > +{
-> > +	int ret = 0;
-> > +
-> > +	if (code == SYS_HALT || code == SYS_POWER_OFF)
-> > +		ret = hv_call_enter_sleep_state(HV_SLEEP_STATE_S5);
-> 
-> If hv_call_enter_sleep_state() never returns, here's an issue. There may be
-> multiple entries on the reboot notifier chain. For example,
-> mshv_root_partition_init() puts an entry on the reboot notifier chain. At
-> reboot time, the entries are executed in some order, with the expectation
-> that all entries will be executed prior to the reboot actually happening. But
-> if this hypercall never returns, some entries may never be executed.
-> 
-> Notifier chains support a notion of priority to control the order in
-> which they are executed, but that priority isn't set in hv_reboot_notifier
-> below, or in mshv_reboot_nb. And most other reboot notifiers throughout
-> Linux appear to not set it. So the ordering is unspecified, and having
-> this notifier never return may be problematic.
-> 
-Thanks for the detailed explanation Michael!
+An error code was assigned to a variable and checked accordingly.
+This value was passed to a dev_err_probe() call in an if branch.
+This function is documented in the way that the same value is returned.
+Thus delete a redundant variable reassignment.
 
-As I mentioned above, this hypercall returns to the kernel, so the rest
-of the entries in the notifier chain should continue to execute.
+The source code was transformed by using the Coccinelle software.
 
-> > +
-> > +	return ret ? NOTIFY_DONE : NOTIFY_OK;
-> > +}
-> > +
-> > +static struct notifier_block hv_reboot_notifier = {
-> > +	.notifier_call  = hv_reboot_notifier_handler,
-> > +};
-> > +
-> > +static int hv_acpi_sleep_handler(u8 sleep_state, u32 pm1a_cnt, u32 pm1b_cnt)
-> > +{
-> > +	int ret = 0;
-> > +
-> > +	if (sleep_state == ACPI_STATE_S5)
-> > +		ret = hv_call_enter_sleep_state(HV_SLEEP_STATE_S5);
-> > +
-> > +	return ret == 0 ? 1 : -1;
-> > +}
-> > +
-> > +static int hv_acpi_extended_sleep_handler(u8 sleep_state, u32 val_a, u32 val_b)
-> > +{
-> > +	return hv_acpi_sleep_handler(sleep_state, val_a, val_b);
-> > +}
-> 
-> Is this function needed? The function signature is identical to hv_acpi_sleep_handler().
-> So it seems like acpi_os_set_prepare_extended_sleep() could just use
-> hv_acpi_sleep_handler() directly.
-> 
-Upon further investigation, I discovered that extended sleep is only
-supported on platforms with ACPI_REDUCED_HARDWARE.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/typec/mux/ptn36502.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As these patches are targetted at X86, above does not really apply. I
-will drop this handler in next version.
+diff --git a/drivers/usb/typec/mux/ptn36502.c b/drivers/usb/typec/mux/ptn3=
+6502.c
+index 129d9d24b932..b1a2977b974c 100644
+=2D-- a/drivers/usb/typec/mux/ptn36502.c
++++ b/drivers/usb/typec/mux/ptn36502.c
+@@ -339,7 +339,7 @@ static int ptn36502_probe(struct i2c_client *client)
+=20
+ 	ret =3D regulator_enable(ptn->vdd18_supply);
+ 	if (ret) {
+-		ret =3D dev_err_probe(dev, ret, "Failed to enable vdd18\n");
++		dev_err_probe(dev, ret, "Failed to enable vdd18\n");
+ 		goto err_mux_put;
+ 	}
+=20
+=2D-=20
+2.51.1
 
-> > +
-> > +int hv_sleep_notifiers_register(void)
-> > +{
-> > +	int ret;
-> > +
-> > +	acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
-> > +	acpi_os_set_prepare_extended_sleep(&hv_acpi_extended_sleep_handler);
-> 
-> I'm not clear on why these handlers are set. If the hv_reboot_notifier is
-> called, are these ACPI handlers ever called? Or are these to catch any cases
-> where the hv_reboot_notifier is somehow bypassed? Or maybe I'm just
-> not understanding something .... :-)
->
-
-I am trying to trace these calls. I will keep you posted with my
-findings.
-
-> > +
-> > +	ret = register_reboot_notifier(&hv_reboot_notifier);
-> > +	if (ret)
-> > +		pr_err("%s: cannot register reboot notifier %d\n",
-> > +			__func__, ret);
-> > +
-> > +	return ret;
-> > +}
-> > +#endif
-> 
-> I'm wondering if all this code belongs in hv_common.c, since it is only needed
-> for Linux in the root partition. Couldn't it go in mshv_common.c? It would still
-> be built-in code (i.e., not in a loadable module), but only if CONFIG_MSHV_ROOT
-> is set.
->
-
-This sounds reasonable. I will discuss this internally and get back you.
-
-> Michael
-> 
-> > --
-> > 2.51.0
-> > 
 
