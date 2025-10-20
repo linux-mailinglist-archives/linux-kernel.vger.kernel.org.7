@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-860759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC866BF0DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 013C4BF0DD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30B3B4F35F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:35:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DDFC4F304F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF132FB963;
-	Mon, 20 Oct 2025 11:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EF32FC861;
+	Mon, 20 Oct 2025 11:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6cikYH1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfN84N3F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97B12FBDEA;
-	Mon, 20 Oct 2025 11:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942192FB96A;
+	Mon, 20 Oct 2025 11:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760960118; cv=none; b=HIYGJyiN4s0ximsQ6NhPRfpaXUdbJEFUQCuR7CzmaH0rVTeqppOvB2eTJhCbGh3asFeV7/9MjIQOA0D2Q1c+JbNRdSwG/LckaPux5lK8Urrylcjblfn8p0cXTQ6hLOtIiobJgMlZE6XkNz/FkEmATBEWL8+KkKOTYDyOVK30P9c=
+	t=1760960120; cv=none; b=SITQBbd5QZb7W2qxOGC2rt9iTgcIfBij8/pY1SUxLhAG2LyER21N93xmV3bv5Lkau3AIm7Wto0P7Y+/ryd+h9ut1nJWHPbFMCDkJPz3h7zukzAkubCqjE7+nq0qEPGXMYn3pDxOf7MhUO9mT11P42DX/dBCVuyzbSkz54gXH5jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760960118; c=relaxed/simple;
-	bh=OmRJtAyMH/0v9J8nQVCQldqM14idOu50BxcbfyNn8Ao=;
+	s=arc-20240116; t=1760960120; c=relaxed/simple;
+	bh=ZioengeclCBPyaIw8m5VBq2tqjHhRbeGcSeZSVPGoOk=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=thWJcSP6WZhPkkQ5wW1CVg1CgMe97gHZuoTmsavbSxo/Q48LDGhgYkd2rx6927FgC/iWnI/YWCZZL9ynIeGGEd9JC2n/4RvkZh4j8iM1luxZJnDq+xdisUR0+J6gyhsaR4xOcFSGkk3EvDJfxnnuYUGim2xLqMRASuA4vRNWprA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6cikYH1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C2AC113D0;
-	Mon, 20 Oct 2025 11:35:18 +0000 (UTC)
+	 Message-Id:Subject; b=LUgtJNbxDkvF+fxDJdI/Ujg3C1DHf1Qxsog5FjfJM7km6/3MzFJYlwvwuc8PqnmfrGj+ooLO/hD0f6NRMz42EniLDD2XaZjoBJ3LOl+g7z5uEiRexyxYwpMswGvcyGhXWVfhn0gx7Z+WJQ/db34RzM15EZC33xnGNdBwFgRL+ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfN84N3F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A9DC4CEF9;
+	Mon, 20 Oct 2025 11:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760960118;
-	bh=OmRJtAyMH/0v9J8nQVCQldqM14idOu50BxcbfyNn8Ao=;
+	s=k20201202; t=1760960120;
+	bh=ZioengeclCBPyaIw8m5VBq2tqjHhRbeGcSeZSVPGoOk=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=c6cikYH1j4WBJmp6eixwxUNQtSo6XoJQrg1LezBGOlR2gVnQvhEdenSHnmI0GUBW7
-	 Dr+Zx7wprfUbE4a1BTixv7sjxluTHJylHv7UPkHMkpsfdI5UBFJGYmlh6Wc805XukK
-	 sSxThg2W4YJZSwADSykkaHGjqc4q1RP9dYLPhIbTfxIUryNXe5GImhqlNCuh/v4S+W
-	 HaptJA3RJCktxzSNdgwS5Pu41Jx8xbVkBa9eKGa7XF9+Z9G6GDGj5bC56vRots3kHn
-	 yYRy5TfU0sDVfAUZQ0h8dI5xchC2ZznwGJi8vPlZcF6w/VYfjf1O7dOPkZ04kM3dEi
-	 YE1Ew2eVCXsIA==
-Date: Mon, 20 Oct 2025 06:35:16 -0500
+	b=MfN84N3FvlrHrKO6hwp0uof+Ta7bEnnpHDT3YaLa+WZMR3CMdo0kZHWC3c1U6E2pF
+	 J5umlW8m4tmUBXWCdMwHbR4/0xVpTKgZPBLKDvRhZKJDxJztlux+q0MDAfDEkL6tk4
+	 8OYnemTQgRJ0/6UVcCgGgfTHTwvb9712A6SjcKvzTp9OqaiU46BCKQI2Ydk8t6rmO0
+	 EPlKRiwgd6lPVQLKfkryxc/KWv8F9NGbZx7wNrM1RS06vHJfcAyHaIhAQpol9wOgAt
+	 CEIBujREfOOxhdxe8FDc9qugI9RYC1kUt+djUMqMw1/KQ0j89XW7VWnow0FdMexgWY
+	 J7M8KbhYwuI/g==
+Date: Mon, 20 Oct 2025 06:35:18 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,36 +50,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linmin@eswincomputing.com, ulf.hansson@linaro.org, 
- lizhi2@eswincomputing.com, devicetree@vger.kernel.org, 
- pinkesh.vaghela@einfochips.com, weishangjuan@eswincomputing.com, 
- jszhang@kernel.org, linux-mmc@vger.kernel.org, 
- zhangsenchuan@eswincomputing.com, conor+dt@kernel.org, 
- p.zabel@pengutronix.de, caohang@eswincomputing.com, 
- dongxuyang@eswincomputing.com, luyulin@eswincomputing.com, 
- ningyu@eswincomputing.com, Conor Dooley <conor.dooley@microchip.com>, 
- adrian.hunter@intel.com, linux-kernel@vger.kernel.org, 
- xuxiang@eswincomputing.com, krzk+dt@kernel.org
-To: hehuan1@eswincomputing.com
-In-Reply-To: <20251019115238.320-1-hehuan1@eswincomputing.com>
-References: <20251019115133.300-1-hehuan1@eswincomputing.com>
- <20251019115238.320-1-hehuan1@eswincomputing.com>
-Message-Id: <176096011380.22917.1988679321096076522.robh@kernel.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
- EIC7700
+Cc: andi.shyti@kernel.org, linux-i2c@vger.kernel.org, 
+ andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
+ p.zabel@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
+ openbmc@lists.ozlabs.org, conor+dt@kernel.org, 
+ linux-aspeed@lists.ozlabs.org, joel@jms.id.au, krzk+dt@kernel.org, 
+ andrew@codeconstruct.com.au, linux-kernel@vger.kernel.org, 
+ benh@kernel.crashing.org, devicetree@vger.kernel.org
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+In-Reply-To: <20251020013200.1858325-2-ryan_chen@aspeedtech.com>
+References: <20251020013200.1858325-1-ryan_chen@aspeedtech.com>
+ <20251020013200.1858325-2-ryan_chen@aspeedtech.com>
+Message-Id: <176096011475.23064.13799548826512417145.robh@kernel.org>
+Subject: Re: [PATCH v19 1/4] dt-bindings: i2c: Split AST2600 binding into a
+ new YAML
 
 
-On Sun, 19 Oct 2025 19:52:38 +0800, hehuan1@eswincomputing.com wrote:
-> From: Huan He <hehuan1@eswincomputing.com>
+On Mon, 20 Oct 2025 09:31:57 +0800, Ryan Chen wrote:
+> The AST2600 I2C controller is a new hardware design compared to the
+> I2C controllers in previous ASPEED SoCs (e.g., AST2400, AST2500).
 > 
-> EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
-> Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
+> It introduces new features such as:
+>  - A redesigned register layout
+>  - Separation between controller and target mode registers
+>  - Transfer mode selection (byte, buffer, DMA)
+>  - Support for a shared global register block for configuration
 > 
-> Signed-off-by: Huan He <hehuan1@eswincomputing.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Due to these fundamental differences, maintaining a separate
+> devicetree binding file for AST2600 helps to clearly distinguish
+> the hardware capabilities and configuration options from the older
+> controllers.
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 > ---
->  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 57 +++++++++++++++++--
->  1 file changed, 51 insertions(+), 6 deletions(-)
+>  .../devicetree/bindings/i2c/aspeed,i2c.yaml   |  3 +-
+>  .../devicetree/bindings/i2c/ast2600-i2c.yaml  | 67 +++++++++++++++++++
+>  2 files changed, 68 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -87,14 +94,18 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/eswin,eic7700-eth.example.dtb: ethernet@50400000 (eswin,eic7700-qos-eth): eswin,hsp-sp-csr: [[4294967295, 256], [264, 280]] is too short
-	from schema $id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/eswin,eic7700-eth.example.dtb: ethernet@50400000 (eswin,eic7700-qos-eth): Unevaluated properties are not allowed ('eswin,hsp-sp-csr' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml: warning: ignoring duplicate '$id' value 'http://devicetree.org/schemas/i2c/aspeed,i2c.yaml#'
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml: properties:reg: {'minItems': 1, 'maxItems': 2, 'items': [{'description': 'address offset and range of bus'}, {'description': 'address offset and range of bus buffer'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/i2c/aspeed,i2c.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
+Documentation/devicetree/bindings/i2c/ast2600-i2c.example.dtb: /example-0/i2c@40: failed to match any schema with compatible: ['aspeed,ast2600-i2c-bus']
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251019115238.320-1-hehuan1@eswincomputing.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251020013200.1858325-2-ryan_chen@aspeedtech.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
