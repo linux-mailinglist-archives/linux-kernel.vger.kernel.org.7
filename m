@@ -1,525 +1,193 @@
-Return-Path: <linux-kernel+bounces-861502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843A1BF2E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:15:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCCCBF2E4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C45504F1C9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:15:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D64434F8E50
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D582C327D;
-	Mon, 20 Oct 2025 18:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706CC332EA7;
+	Mon, 20 Oct 2025 18:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="MP9AXbjP"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZrwFA8i2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEF11C3C11;
-	Mon, 20 Oct 2025 18:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FD4267F58
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760984097; cv=none; b=QU/6T+GCBH3KnFQAKTSzu0G7zhFTFG6/UnzNeD1bFgqDelzhTZHs7APK5Fz+aLdDdRRTv67eze9ZoCDLMcBNk1OwxE78j1YhYHcMty5Dku2dTNmamDrI3sYrG8f2hgxt9bCy//mjr5PdoKXaLGMLLaCZTgpwr5HWFGGL7f0Oz8o=
+	t=1760984118; cv=none; b=hl/NZu3q5aQ4EoHC0XU1BmZdyckJdH40yGKUpuUKd8q2K+ixCKtJpQjqJTXCZtITL6qzbduzaniTtWZAs8iQ13mIaf3a9l7AlH8cf7HZGxyAth8Y3aPl0sCpwK9m62hHuuksOQlg1Kbv1BthLfmJHVZPyc6zi+ijInhruzKGPBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760984097; c=relaxed/simple;
-	bh=4dzir/IZtSAjUOMEwvJQLQYBKHg0pU3S1X0jI9RAu6o=;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=V0kv49O4FwI0qtz8GulOnU2yJl/zLsv7AWkTSp1/G9kOPt86M6/egSPrqAnskgHGUen22l2KFGtt7ky2b6BF6qTsQh/bk/APrv1oppJlRFKA5IfB+nRsJLhvpzUyuBwMc54dJI3qV1RKkAtqDJGKZVtVQse9ayoHQjnbC1cahNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=MP9AXbjP; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 8AEBB8288084;
-	Mon, 20 Oct 2025 13:14:54 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id XDIWwcniY-h5; Mon, 20 Oct 2025 13:14:51 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id B07D08288904;
-	Mon, 20 Oct 2025 13:14:51 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com B07D08288904
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1760984091; bh=T2Gk/py8Yp0gnAolmVvV5mgEsv6Xbl5b6kUsIICHcT4=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=MP9AXbjPbo3ok/msH1ccf+L49pPsi9ZvhHYkzpQPJVgvlb3tJ2IUfD8vhHpDQyGMG
-	 zpZMKI2QbSC5KW4QqkckaJOVSYuTaKw6UCGQISUsWpr9hjL+tLXBC3yXrasTkZ0AfR
-	 p7y11SedZBMDDKCjMmLrrUICJauj0Uibth39NY8A=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PlkWYYAUbEuK; Mon, 20 Oct 2025 13:14:51 -0500 (CDT)
-Received: from vali.starlink.edu (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 835A08288084;
-	Mon, 20 Oct 2025 13:14:51 -0500 (CDT)
-Date: Mon, 20 Oct 2025 13:14:51 -0500 (CDT)
-From: Timothy Pearson <tpearson@raptorengineering.com>
-To: devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Lee Jones <lee@kernel.org>, 
-	Georgy Yakovlev <Georgy.Yakovlev@sony.com>
-Message-ID: <69142127.1802045.1760984091439.JavaMail.zimbra@raptorengineeringinc.com>
-In-Reply-To: <13657666.1802042.1760984066594.JavaMail.zimbra@raptorengineeringinc.com>
-References: <1787448596.1802034.1760983830792.JavaMail.zimbra@raptorengineeringinc.com> <1587929609.1802041.1760983921227.JavaMail.zimbra@raptorengineeringinc.com> <13657666.1802042.1760984066594.JavaMail.zimbra@raptorengineeringinc.com>
-Subject: [PATCH v4 3/4] led: sony-cronos-smc: Add RGB LED driver for Sony
- Cronos  SMC
+	s=arc-20240116; t=1760984118; c=relaxed/simple;
+	bh=2/ZaP6z/POrQxAirdGrlQwLfCvS8kgizQaGNGL4EIXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J70cFa6aY3AdcXSsbT9gbkRmC2H//F3dgd6ogVhzsQkHwUrlTVwTdtfX5SE/5yxDMWT2YDGlVr47djRF/nEsbUGF7QJ1iVH8BrqnorEMYUQahgoMqR8D89ithE0s8guMbZvl8Yj0omAH0C2z//eDYXeZ4I5pWhNfVDwh02r/LfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZrwFA8i2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760984115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yFbIY9KfSl1aaYeBiu8nSJ69xUVXrqjagrwKc2qCZAo=;
+	b=ZrwFA8i2U0n0b3/x79tERGRVJXFZoGz0Ss04XRta+JLrstThPuXbKtTYXN40ERwAWmwSS0
+	RkhaiDGZd26TPImrZhLonJ+B3jPna51biWFFlTFC/yCNzsq85yE5SxyPjYVnHt4wc4C1U5
+	h/NetzBvJ/LohzJJzK9G9jMbB8rVYRA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-CDCjVPfdM_20VVBd2rz2rw-1; Mon, 20 Oct 2025 14:15:09 -0400
+X-MC-Unique: CDCjVPfdM_20VVBd2rz2rw-1
+X-Mimecast-MFC-AGG-ID: CDCjVPfdM_20VVBd2rz2rw_1760984108
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471193dacffso30005135e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:15:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760984108; x=1761588908;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFbIY9KfSl1aaYeBiu8nSJ69xUVXrqjagrwKc2qCZAo=;
+        b=qEqNSIFLz+Rhl4O8hyY9BMWvoVugYOw7jovZ5ey2AF48/gAOTaTwWu6A6oXwkzaXfl
+         tQ832Zz9JGd2YV144q+HGvQifp6Ad25d2YgAtYFZAB3zsQs6JFTDjH84f9LxQ8FetyHB
+         JjsxBsO9F2ylsF97i+CENXFes9BnDnzDmB3dTWGS+vj2/58apjSLWVIWoMGnc0kf2Z7T
+         30PmAK8ZcWMcKe6FwyrqySywcYygxmXzUdAGoUCKSs5JcOWmHM7Ko5UplUx3Qg8VBxWj
+         qkEdVvGQDZy8GnQ723ctwZVLeEhCu11FglyedCSnSQylWE0ETehMxjeOX37tA094iRRo
+         4XLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbCi8wq8D/ehuMKHtBTcVhX/S7+Z5R54XLCtyUDesxg86kjXYdTy1knj9RGhhBrmldwCh6XW/RIqBgFQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdjjIw4hTVNmGAIPPXNwDhfw0apHYFAjutUqbNKBJA0ygb8Mjp
+	3KExTXcjRJgVN81imKoApPaybVDUBVXmM4Vp6AAVbpB0gNylFrC+xfk1AO6nUZGh5135m9Z0Nsn
+	yBrX4W0vUn3TAnsDgh8CJPjRm4yNBLJBSbVh2qdS+sodwHgIE6vZO+1saDnLPztod+w==
+X-Gm-Gg: ASbGncsqsyeG2XwYgG6cLgYoOyQ+yT/AK1YHu/SZ9JecSm9gmACZrRSl/Dca912B+Ci
+	MnUu3F9BILaq8G3vGS7ATQeElVfX46FFk9KkCqittSjTDcJnN5GN4T6g/2TN+TG/MuPrW9G1RvJ
+	MnxKq4F8Q3qgwT77edFbYYR68ARifiPUpayW/ch/CTgPHPYRS6EBwVdFPqItM2j0x9lKm0LXJLd
+	g/eCJeXSMzcGf4kKEFozSfpYRXGWCTNMxBFQm929eXI/ysdQIJXpfXxGxKY5TWyGuv+Jzbr3ua0
+	Q7iJoO24DYMiNGEKLXzS030tYO2+XeEJxOch2GBlTU53Zaee3NokOYLT9b+Z7D5F05M/OsGFSZp
+	rLrgAOwr//ciR+gnSWzhNaxdj0vtkscASWpdP2e8qh3DPWGVOgv2lOl9h+HcJFdDuOM8uG6mtma
+	tIPNUC6cNiKMeM61Vz0XXBxnqiMCg=
+X-Received: by 2002:a05:600c:870b:b0:471:9da:5252 with SMTP id 5b1f17b1804b1-47117919c1cmr109211585e9.29.1760984107902;
+        Mon, 20 Oct 2025 11:15:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFI5NLM98OQsw1KE57HcLloTm5u9UUcInx88xRDDU5JgrtG6ezDCPBSxrNpLVxH6YIVkVgtWg==
+X-Received: by 2002:a05:600c:870b:b0:471:9da:5252 with SMTP id 5b1f17b1804b1-47117919c1cmr109211415e9.29.1760984107543;
+        Mon, 20 Oct 2025 11:15:07 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47494aa079csm1455205e9.3.2025.10.20.11.15.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 11:15:07 -0700 (PDT)
+Message-ID: <c3175394-7fc3-43fd-9fad-4d3790837e3e@redhat.com>
+Date: Mon, 20 Oct 2025 20:15:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] hugetlb.h: flatten logic in
+ arch_hugetlb_migration_supported
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, muchun.song@linux.dev, osalvador@suse.de,
+ linux-kernel@vger.kernel.org
+References: <20251008212614.86495-1-gourry@gourry.net>
+ <def56e60-42ae-4848-b0a0-91bd1c95d8d7@redhat.com>
+ <aPZf1aOyhVHVedok@gourry-fedora-PF4VCD3F>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aPZf1aOyhVHVedok@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
-Thread-Topic: sony-cronos-smc: Add RGB LED driver for Sony Cronos SMC
-Thread-Index: 2sKQBCK/cFq8bcVeB0FycJRZCrk72uhu0OzSZMBtKSw5MQvttg==
 
-The Sony Cronos Platform Controller is a multi-purpose platform controller with
-an integrated multi-channel RGB LED controller.  The LED controller is a
-pseudo-RGB device with only two states for each of the RGB subcomponents of
-each LED, but is exposed as a full RGB device for ease of integration with
-userspace software.  Internal thresholding is used to convert the color values
-to the required on/off RGB subcomponent controls.
+On 20.10.25 18:14, Gregory Price wrote:
+> On Mon, Oct 13, 2025 at 10:10:05AM +0200, David Hildenbrand wrote:
+>> On 08.10.25 23:26, Gregory Price wrote:
+>>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>>> index 526d27e88b3b..b030850975ef 100644
+>>> --- a/include/linux/hugetlb.h
+>>> +++ b/include/linux/hugetlb.h
+>>> @@ -876,12 +876,9 @@ static inline void folio_clear_hugetlb_hwpoison(struct folio *folio)
+>>>    #ifndef arch_hugetlb_migration_supported
+>>>    static inline bool arch_hugetlb_migration_supported(struct hstate *h)
+>>>    {
+>>> -	if ((huge_page_shift(h) == PMD_SHIFT) ||
+>>> +	return ((huge_page_shift(h) == PMD_SHIFT) ||
+>>>    		(huge_page_shift(h) == PUD_SHIFT) ||
+>>> -			(huge_page_shift(h) == PGDIR_SHIFT))
+>>> -		return true;
+>>> -	else
+>>> -		return false;
+>>> +		(huge_page_shift(h) == PGDIR_SHIFT));
+>>
+>> switch (huge_page_shift(h)) {
+>> case PMD_SHIFT:
+>> case PUD_SHIFT:
+>> case PGDIR_SHIFT:
+> 
+> PGDIR_SHIFT is not a constant on x86.
 
-Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
----
- drivers/leds/Kconfig            |  19 ++
- drivers/leds/Makefile           |   1 +
- drivers/leds/leds-sony-cronos.c | 378 ++++++++++++++++++++++++++++++++
- 3 files changed, 398 insertions(+)
- create mode 100644 drivers/leds/leds-sony-cronos.c
+Ah, probably because of 4 vs. 5 level page tables. On x86 the check 
+doesn't even make any sense as we don't support PGD-sized pages.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 06e6291be11b..b5a7c2145dd0 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -1013,6 +1013,25 @@ config LEDS_IP30
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called leds-ip30.
- 
-+config LEDS_SONY_CRONOS
-+	tristate "LED support for the Sony Cronos SMC"
-+	depends on ARCH_ASPEED || COMPILE_TEST
-+	depends on LEDS_CLASS && I2C
-+	depends on LEDS_CLASS_MULTICOLOR
-+	depends on MFD_SONY_CRONOS_SMC
-+
-+	help
-+	  Say Y here to include support for LEDs for the
-+	  Sony Cronos system management controller.
-+
-+	  All known Cronos systems use the ASpeed AST2600 SoC,
-+	  therefore the configuration option is gated on
-+	  ARCH_ASPEED selection.  If this changes, add the new
-+	  SoCs to the selection list.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-sony-cronos.
-+
- config LEDS_ACER_A500
- 	tristate "Power button LED support for Acer Iconia Tab A500"
- 	depends on LEDS_CLASS && MFD_ACER_A500_EC
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 9a0333ec1a86..6dbcf747cab6 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -84,6 +84,7 @@ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
- obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
- obj-$(CONFIG_LEDS_QNAP_MCU)		+= leds-qnap-mcu.o
- obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
-+obj-$(CONFIG_LEDS_SONY_CRONOS)		+= leds-sony-cronos.o
- obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
- obj-$(CONFIG_LEDS_ST1202)		+= leds-st1202.o
- obj-$(CONFIG_LEDS_SUN50I_A100)		+= leds-sun50i-a100.o
-diff --git a/drivers/leds/leds-sony-cronos.c b/drivers/leds/leds-sony-cronos.c
-new file mode 100644
-index 000000000000..ce71a8b6ce94
---- /dev/null
-+++ b/drivers/leds/leds-sony-cronos.c
-@@ -0,0 +1,378 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * LED driver for Sony Cronos SMCs
-+ * Copyright (C) 2012 Dialog Semiconductor Ltd.
-+ * Copyright (C) 2023 Sony Interactive Entertainment
-+ * Copyright (C) 2025 Raptor Engineering, LLC
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/led-class-multicolor.h>
-+#include <linux/mfd/sony-cronos.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* Masks and Bit shifts */
-+#define CRONOS_LEDS_STATUS_FLASHING_MASK	0x40
-+#define CRONOS_LEDS_STATUS_FLASHING_SHIFT	6
-+#define CRONOS_LEDS_STATUS_COLOR_MASK		0x07
-+#define CRONOS_LEDS_STATUS_COLOR_SHIFT		0
-+
-+#define CRONOS_LEDS_LINK_FLASHING_MASK		0x80
-+#define CRONOS_LEDS_LINK_FLASHING_SHIFT		7
-+#define CRONOS_LEDS_LINK_COLOR_MASK		0x38
-+#define CRONOS_LEDS_LINK_COLOR_SHIFT		3
-+
-+#define CRONOS_LEDS_CCM1_POWER_COLOR_MASK	0x03
-+#define CRONOS_LEDS_CCM1_POWER_COLOR_SHIFT	0
-+#define CRONOS_LEDS_CCM2_POWER_COLOR_MASK	0x0C
-+#define CRONOS_LEDS_CCM2_POWER_COLOR_SHIFT	2
-+#define CRONOS_LEDS_CCM3_POWER_COLOR_MASK	0x30
-+#define CRONOS_LEDS_CCM3_POWER_COLOR_SHIFT	4
-+#define CRONOS_LEDS_CCM4_POWER_COLOR_MASK	0xC0
-+#define CRONOS_LEDS_CCM4_POWER_COLOR_SHIFT	6
-+
-+/* LED Color mapping - Links and status LEDs */
-+#define LED_COLOR_OFF		0x00
-+#define LED_COLOR_BLUE		0x01
-+#define LED_COLOR_GREEN		0x02
-+#define LED_COLOR_RED		0x04
-+
-+/* LED Color mapping - Power state LEDs */
-+#define LED_COLOR_POWER_OFF	0x00
-+#define LED_COLOR_POWER_RED	0x02
-+#define LED_COLOR_POWER_GREEN	0x01
-+
-+/* Number of LEDs per type */
-+#define LED_COUNT_STATUS	6
-+#define LED_COUNT_LINK		5
-+#define LED_COUNT_POWER		4
-+#define LED_COUNT_ALL (LED_COUNT_STATUS + LED_COUNT_LINK + LED_COUNT_POWER)
-+
-+enum sony_cronos_led_id {
-+	LED_ID_CCM1_STATUS = 0x00,
-+	LED_ID_CCM2_STATUS,
-+	LED_ID_CCM3_STATUS,
-+	LED_ID_CCM4_STATUS,
-+	LED_ID_SWITCH_STATUS,
-+	LED_ID_SMC_STATUS,
-+
-+	LED_ID_CCM1_LINK,
-+	LED_ID_CCM2_LINK,
-+	LED_ID_CCM3_LINK,
-+	LED_ID_CCM4_LINK,
-+	LED_ID_SWITCH_LINK,
-+
-+	LED_ID_CCM1_POWER,
-+	LED_ID_CCM2_POWER,
-+	LED_ID_CCM3_POWER,
-+	LED_ID_CCM4_POWER,
-+
-+	LED_ID_COUNT,
-+};
-+
-+enum sony_cronos_led_type {
-+	LED_TYPE_STATUS,
-+	LED_TYPE_LINK,
-+	LED_TYPE_POWER,
-+};
-+
-+/**
-+ * struct sony_cronos_led - per-LED part of driver private data structure
-+ * @mc_cdev:		multi-color LED class device
-+ * @subled_info:	per-channel information
-+ * @led_register:	led register in the MFD regmap
-+ * @led_type:		sie_cronos_led_type
-+ * @led_id:		sie_cronos_led_id
-+ */
-+struct sony_cronos_led {
-+	struct led_classdev_mc mc_cdev;
-+	struct mc_subled subled_info[LED_COUNT_ALL];
-+	u8 led_register;
-+	enum sony_cronos_led_type led_type;
-+	enum sony_cronos_led_id led_id;
-+};
-+
-+#define to_cronos_led(l) container_of(l, struct sony_cronos_led, mc_cdev)
-+
-+/**
-+ * struct sony_cronos_leds - driver private data structure
-+ * @hw:				handle to hw device
-+ * @leds:			flexible array of per-LED data
-+ */
-+struct sony_cronos_leds {
-+	struct sony_cronos_smc *hw;
-+	struct sony_cronos_led leds[];
-+};
-+
-+static int cronos_led_color_store(struct sony_cronos_smc *chip, struct sony_cronos_led *led)
-+{
-+	u8 byte;
-+	u8 color_mask;
-+	u8 color_shift;
-+	u8 color_key_red;
-+	u8 color_key_green;
-+	u8 color_key_blue;
-+	int ret;
-+
-+	if (led->led_type == LED_TYPE_STATUS) {
-+		color_mask = CRONOS_LEDS_STATUS_COLOR_MASK;
-+		color_shift = CRONOS_LEDS_STATUS_COLOR_SHIFT;
-+	} else if (led->led_type == LED_TYPE_LINK) {
-+		color_mask = CRONOS_LEDS_LINK_COLOR_MASK;
-+		color_shift = CRONOS_LEDS_LINK_COLOR_SHIFT;
-+	} else if (led->led_id == LED_ID_CCM1_POWER) {
-+		color_mask = CRONOS_LEDS_CCM1_POWER_COLOR_MASK;
-+		color_shift = CRONOS_LEDS_CCM1_POWER_COLOR_SHIFT;
-+	} else if (led->led_id == LED_ID_CCM2_POWER) {
-+		color_mask = CRONOS_LEDS_CCM2_POWER_COLOR_MASK;
-+		color_shift = CRONOS_LEDS_CCM2_POWER_COLOR_SHIFT;
-+	} else if (led->led_id == LED_ID_CCM3_POWER) {
-+		color_mask = CRONOS_LEDS_CCM3_POWER_COLOR_MASK;
-+		color_shift = CRONOS_LEDS_CCM3_POWER_COLOR_SHIFT;
-+	} else if (led->led_id == LED_ID_CCM4_POWER) {
-+		color_mask = CRONOS_LEDS_CCM4_POWER_COLOR_MASK;
-+		color_shift = CRONOS_LEDS_CCM4_POWER_COLOR_SHIFT;
-+	} else
-+		return ret;
-+
-+	switch (led->led_type) {
-+	case LED_TYPE_POWER:
-+		color_key_red = LED_COLOR_POWER_RED;
-+		color_key_green = LED_COLOR_POWER_GREEN;
-+		/* Blue channel does not exist for CCM power LEDs */
-+		color_key_blue = LED_COLOR_POWER_OFF;
-+		break;
-+	default:
-+		color_key_red = LED_COLOR_RED;
-+		color_key_green = LED_COLOR_GREEN;
-+		color_key_blue = LED_COLOR_BLUE;
-+	}
-+
-+	/* Assemble SMC color command code */
-+	byte = LED_COLOR_POWER_OFF;
-+	if (led->subled_info[0].brightness > 128)
-+		byte |= color_key_red;
-+	if (led->subled_info[1].brightness > 128)
-+		byte |= color_key_green;
-+	if (led->subled_info[2].brightness > 128)
-+		byte |= color_key_blue;
-+
-+	ret = regmap_update_bits(chip->regmap, led->led_register, color_mask, byte << color_shift);
-+	if (ret) {
-+		dev_err(chip->dev, "Failed to set color value 0x%02x to LED register 0x%02x", byte,
-+			led->led_register);
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static ssize_t cronos_led_set_brightness(struct led_classdev *cdev, enum led_brightness brightness)
-+{
-+	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
-+	struct sony_cronos_leds *leds = dev_get_drvdata(cdev->dev->parent);
-+	struct sony_cronos_led *led = to_cronos_led(mc_cdev);
-+
-+	led_mc_calc_color_components(mc_cdev, brightness ?: cdev->max_brightness);
-+
-+	return cronos_led_color_store(leds->hw, led);
-+}
-+
-+static int sony_cronos_led_register(struct device *dev, struct sony_cronos_leds *leds,
-+				    struct sony_cronos_led *led, struct device_node *np)
-+{
-+	struct led_init_data init_data = {};
-+	struct led_classdev *cdev;
-+	int led_index;
-+	int ret, color;
-+
-+	ret = of_property_read_u32(np, "reg", &led_index);
-+	if (ret || led_index >= LED_COUNT_ALL) {
-+		dev_err(dev, "'reg' property is out of range (0-%i)\n", LED_COUNT_ALL - 1);
-+		return -EINVAL;
-+	}
-+
-+	switch (led_index) {
-+	case 0:
-+		led->led_register = CRONOS_LEDS_CCM1_STATUS_REG;
-+		led->led_type = LED_TYPE_STATUS;
-+		led->led_id = LED_ID_CCM1_STATUS;
-+		break;
-+	case 1:
-+		led->led_register = CRONOS_LEDS_CCM2_STATUS_REG;
-+		led->led_type = LED_TYPE_STATUS;
-+		led->led_id = LED_ID_CCM2_STATUS;
-+		break;
-+	case 2:
-+		led->led_register = CRONOS_LEDS_CCM3_STATUS_REG;
-+		led->led_type = LED_TYPE_STATUS;
-+		led->led_id = LED_ID_CCM3_STATUS;
-+		break;
-+	case 3:
-+		led->led_register = CRONOS_LEDS_CCM4_STATUS_REG;
-+		led->led_type = LED_TYPE_STATUS;
-+		led->led_id = LED_ID_CCM4_STATUS;
-+		break;
-+	case 4:
-+		led->led_register = CRONOS_LEDS_SWITCH_STATUS_REG;
-+		led->led_type = LED_TYPE_STATUS;
-+		led->led_id = LED_ID_SWITCH_STATUS;
-+		break;
-+	case 5:
-+		led->led_register = CRONOS_LEDS_SMC_STATUS_REG;
-+		led->led_type = LED_TYPE_STATUS;
-+		led->led_id = LED_ID_SMC_STATUS;
-+		break;
-+	case 6:
-+		led->led_register = CRONOS_LEDS_CCM1_STATUS_REG;
-+		led->led_type = LED_TYPE_LINK;
-+		led->led_id = LED_ID_CCM1_LINK;
-+		break;
-+	case 7:
-+		led->led_register = CRONOS_LEDS_CCM2_STATUS_REG;
-+		led->led_type = LED_TYPE_LINK;
-+		led->led_id = LED_ID_CCM1_LINK;
-+		break;
-+	case 8:
-+		led->led_register = CRONOS_LEDS_CCM3_STATUS_REG;
-+		led->led_type = LED_TYPE_LINK;
-+		led->led_id = LED_ID_CCM2_LINK;
-+		break;
-+	case 9:
-+		led->led_register = CRONOS_LEDS_CCM4_STATUS_REG;
-+		led->led_type = LED_TYPE_LINK;
-+		led->led_id = LED_ID_CCM3_LINK;
-+		break;
-+	case 10:
-+		led->led_register = CRONOS_LEDS_SWITCH_STATUS_REG;
-+		led->led_type = LED_TYPE_LINK;
-+		led->led_id = LED_ID_CCM4_LINK;
-+		break;
-+	case 11:
-+		led->led_register = CRONOS_LEDS_CCM_POWER_REG;
-+		led->led_type = LED_TYPE_POWER;
-+		led->led_id = LED_ID_CCM1_POWER;
-+		break;
-+	case 12:
-+		led->led_register = CRONOS_LEDS_CCM_POWER_REG;
-+		led->led_type = LED_TYPE_POWER;
-+		led->led_id = LED_ID_CCM2_POWER;
-+		break;
-+	case 13:
-+		led->led_register = CRONOS_LEDS_CCM_POWER_REG;
-+		led->led_type = LED_TYPE_POWER;
-+		led->led_id = LED_ID_CCM3_POWER;
-+		break;
-+	case 14:
-+		led->led_register = CRONOS_LEDS_CCM_POWER_REG;
-+		led->led_type = LED_TYPE_POWER;
-+		led->led_id = LED_ID_CCM4_POWER;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = of_property_read_u32(np, "color", &color);
-+	if (ret || color != LED_COLOR_ID_RGB) {
-+		dev_warn(dev,
-+			 "Node %pOF: must contain 'color' property with value LED_COLOR_ID_RGB\n",
-+			 np);
-+		return -EINVAL;
-+	}
-+
-+	led->subled_info[0].color_index = LED_COLOR_ID_RED;
-+	led->subled_info[1].color_index = LED_COLOR_ID_GREEN;
-+	led->subled_info[2].color_index = LED_COLOR_ID_BLUE;
-+
-+	/* Initial color is white */
-+	for (int i = 0; i < LED_COUNT_ALL; i++) {
-+		led->subled_info[i].intensity = 255;
-+		led->subled_info[i].brightness = 255;
-+		led->subled_info[i].channel = i;
-+	}
-+
-+	led->mc_cdev.subled_info = led->subled_info;
-+	led->mc_cdev.num_colors = LED_COUNT_ALL;
-+
-+	init_data.fwnode = &np->fwnode;
-+
-+	cdev = &led->mc_cdev.led_cdev;
-+	cdev->max_brightness = 255;
-+	cdev->brightness_set_blocking = cronos_led_set_brightness;
-+
-+	/* Set initial color */
-+	ret = cronos_led_color_store(leds->hw, led);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Cannot set LED %pOF initial color\n", np);
-+
-+	ret = devm_led_classdev_multicolor_register_ext(dev, &led->mc_cdev, &init_data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Cannot register LED %pOF\n", np);
-+
-+	/* Set global brightness for all LEDs */
-+	ret = regmap_write(leds->hw->regmap, CRONOS_SMC_BRIGHTNESS_RED_REG, 0x00);
-+	ret = regmap_write(leds->hw->regmap, CRONOS_SMC_BRIGHTNESS_GREEN_REG, 0x00);
-+	ret = regmap_write(leds->hw->regmap, CRONOS_SMC_BRIGHTNESS_BLUE_REG, 0x00);
-+
-+	return 0;
-+}
-+
-+static int sony_cronos_leds_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev_of_node(dev);
-+	struct sony_cronos_smc *chip;
-+	struct sony_cronos_leds *leds;
-+	struct sony_cronos_led *led;
-+	int ret, count;
-+
-+	chip = dev_get_drvdata(dev->parent);
-+	if (!chip)
-+		return -EINVAL;
-+
-+	count = of_get_available_child_count(np);
-+	if (count == 0)
-+		return dev_err_probe(dev, -ENODEV, "LEDs are not defined in device tree!\n");
-+	if (count > LED_COUNT_ALL)
-+		return dev_err_probe(dev, -EINVAL, "Too many LEDs defined in device tree!\n");
-+
-+	leds = devm_kzalloc(dev, struct_size(leds, leds, count), GFP_KERNEL);
-+	if (!leds)
-+		return -ENOMEM;
-+
-+	leds->hw = chip;
-+
-+	led = &leds->leds[0];
-+	for_each_available_child_of_node_scoped(np, child) {
-+		ret = sony_cronos_led_register(dev, leds, led, child);
-+		if (ret)
-+			return ret;
-+
-+		led++;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sony_cronos_led_of_id_table[] = {
-+	{ .compatible = "sie,cronos-led", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sony_cronos_led_of_id_table);
-+
-+static struct platform_driver sony_cronos_led_driver = {
-+	.driver = {
-+		.name = "sie-cronos-led",
-+		.of_match_table = sony_cronos_led_of_id_table,
-+	},
-+	.probe = sony_cronos_leds_probe,
-+};
-+module_platform_driver(sony_cronos_led_driver);
-+
-+MODULE_DESCRIPTION("LED driver for SIE Cronos SMCs");
-+MODULE_AUTHOR("Timothy Pearson <tpearson@raptorengineering.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:sony-cronos-leds");
+If we could rule that out at compile time, it would be nice. But I don't 
+think we have a way to test that support at compile time.
+
+But anyhow, nothing against what we have in this patch here
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
 -- 
-2.39.5
+Cheers
+
+David / dhildenb
+
 
