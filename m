@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-861756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 888FFBF39CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:02:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259D1BF39A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3143A4EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:00:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 55037351AF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91F6322C99;
-	Mon, 20 Oct 2025 20:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038BB3321D2;
+	Mon, 20 Oct 2025 20:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jTKItf39"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VKvJOWLk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B303019BF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE27931280D;
+	Mon, 20 Oct 2025 20:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760993774; cv=none; b=JCznOJWEKU2VoZzIzFJSh1NEufde+WJM6rlxo98Ql/yqltQRB/bEyp533D1Mdhrk4oSpKsHFQeNE/+5hY8//DBNnyL10jtcaM3Py1MJGvniZ48L4U5Fl5FI6cz8+aLZIPyFEUPCaukENttjLTZRNnhaFnzhm+Ig0VN4Y0wtDAG4=
+	t=1760993775; cv=none; b=iGb95qJytgKZrex00boOVpaKgFs0QJJy0DklMGihZW8s4oFTgQMoXOuI2DECNR51qN/eyhfiFGfLUtXZZh14LtiUf+vJsu5KHoTUsoX2mAwbdtK/0Dh5rWiEhcs2CU1bIrwtI2abBtqnTKPHwyCIqRHDk5KTkzZjexW49oWBgv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760993774; c=relaxed/simple;
-	bh=KPDi/ONzbyezo/404PgKiTkyQluk8DrLj7+zoZTBiI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XesBI8vtcj4ZXlI0/mG0/yPSAqudueEeNqN9j0DKRSvZ8LQv38xOv5KdvQhV7dnt/UUQC2YmljQF+OKxOSEa4CfOG1wIN757pR3OECKsdpFex56thEpn5SfcenOPyScHHJzURphxD+LOWS17wI0orY3kuYbmosGFteU9pTaTswM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jTKItf39; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso5635468e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760993770; x=1761598570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KPDi/ONzbyezo/404PgKiTkyQluk8DrLj7+zoZTBiI4=;
-        b=jTKItf39uxktGKGA48RasuDBZo3D50hi/ecIui2L8BEF3zVdiYmOszKTAZ/6eMK9DD
-         U1aZuVl/Jg6HwECql6gYQ/ajKMf9pRTfAgwQBJoJDM8+tgDkTJtrqaEz1Qy9ldQfbeOx
-         sTUI3sQFDakhojlpIcHywMr14Mpn9QTnoDVQNjtRbptS9rZAJRJdKRNSd/Fi+Tt+Yaue
-         lJlXTe/Lxk8coTwutqbUCa0jYIIZJwjZaBXFI+r9j4PQFsXRboFRINUgPazuMpTqkAH5
-         jUfc8mgVDibicqzsUEBqA4R+h1qujQSKT/PJznGfRvnwTM4Wgh6Jvjz/tN8dHhOkBVjb
-         AXOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760993770; x=1761598570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KPDi/ONzbyezo/404PgKiTkyQluk8DrLj7+zoZTBiI4=;
-        b=JsraoSMHNDQkYV8lupSWl7Fp+m/FeNnrFk6MpmMmNSOkuiikaEIn+kEcvBPtaP9ETo
-         d+5SoQDDWwasOCgB/P04ryQwgnUVxWUSZL5N+Qb2LMti/BkhzVc+Aw8ipE/ntW2PnsHz
-         cFtRauVzLfSWeMYOS+bCiopldgm0O1yCoNjaCm7+b7tPX61nHsdvdMXrsF9bNV2FHaGN
-         U1+OPsc3WrNgzWOpCgLoh6BdWLH4wmLoRVjh6DyAlPQRJ6mjSRQf6MupQPwkoNrDxS7i
-         Fd14gsI6DD94N7D/xE7U5fKDYZTywi+6xecFgpZLD6/uP7cojjEesDNQUjhcDkM0Adm+
-         3LFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWR70NTQsUWMljDYcX6O3IoC9ghyoMDAggr1szIrM9sCvfh2jh3WGPiQdR5TK7+vys8shMuQj7z2BTwBUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEyIVXvId+W1Oo29HKyazKYLIDNdQsfPjNOK34aP67xNPKs9TU
-	0b616qq/0XUntCNy+VQ48y0//mM726EYIas3GWrdDYamoJuWvQkjFxPvEosiqXXvyCrPiHbeojo
-	0VQtrj+L2TLkd0n6JZ0DJSYncoXqBmIvIkLBSWgJdng==
-X-Gm-Gg: ASbGncsbXP0Ubsmyg71ZmM6iGrmsoeqJsn6ZHyN4pen3ItfSKHTya/Es2LKjiGo4Op6
-	OPIMJD+Grds+fx2FVoqphnT0DUgNoQJm9eaqnbTz06xL0HoJdZv0C+zmZq3Cy6SPcEmhmOjQPKd
-	JHhnL6mZrH38LvLr9YiYQ4XLvuqm6moAbOOqxWoW2n8yFRPyeVhpRj8OI7Sz2E6VYCbes1iG7RC
-	bo1MuNlcvt9uLlm2wJyvUnG6NOtaXzIInCIHuH3K0cis6JJqHjU9WseOiQyCl3USEhIvbI=
-X-Google-Smtp-Source: AGHT+IGRBR+snc/mrP1nvrB/wKqtP60la1CSY+obenGlvqYErOCTks8k7mteVD4O1yzHKYMcoV2tSKBToVA+O8Sh4TE=
-X-Received: by 2002:a05:651c:12c5:b0:36f:284:56db with SMTP id
- 38308e7fff4ca-37797a0e741mr41754291fa.23.1760993769829; Mon, 20 Oct 2025
- 13:56:09 -0700 (PDT)
+	s=arc-20240116; t=1760993775; c=relaxed/simple;
+	bh=ZfW7ZPj2/urpyrJRR27Pd1uc6Sw7mUpby74QqoU0mBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOc8HcMYbDKME3PyJKOl1vUaf893DgWe3nfDrjRuCdV3T8UA17Vie2ckUEdP3lQT0TxgGIQ3FvnIN8CkdTw/LR4wy/q6ylwg9hw3LXAQzUPrsRDNLnyPLvVJxr+7gEaRx2UVg2fl0fNFV4BMMiZjiHn9AnLdXW15l8il/3mxaFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VKvJOWLk; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760993773; x=1792529773;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZfW7ZPj2/urpyrJRR27Pd1uc6Sw7mUpby74QqoU0mBE=;
+  b=VKvJOWLkPZc9Z4bCeXh7UJe3Wh/RFqo3rEl4tvJ4CgPzjhHEbCMqE+lE
+   YVKoWjuFXH16QfjVhPSbY5cdOgtnqHrADfSoYLpM0hB/tYnzYl1f0rH8i
+   EVAHoogv3NC3skOPbZ+jVDzOt6/hi6JRhEXtu/teiGup473dSp6/BzEW9
+   EnauZvcOnvUWnqmN6p3M/hh/joQIpgHjluDV7v09gyHJKbrawz15YYk/G
+   3dX9VKoirH1mDDr+Ft3Tl6fJaplNaTC9wHaIct5xyj9mJc74ITo3SQHOl
+   f14sy6ip8BVuBFgDY/HDyB3xlhSgm5HJY8f/hpjox0ryccTkbN48TEr9q
+   g==;
+X-CSE-ConnectionGUID: POLOhZlPSEuLr2jXXDdnPg==
+X-CSE-MsgGUID: yKnlc22uR7+gG5ujg4nvEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63014551"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="63014551"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 13:56:11 -0700
+X-CSE-ConnectionGUID: IsRe3ERCQDKuYGZ3NPuDjA==
+X-CSE-MsgGUID: AK8qCjQmRGinzW/5a1cUWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="183267182"
+Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO desk) ([10.124.220.167])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 13:56:10 -0700
+Date: Mon, 20 Oct 2025 13:56:02 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: Re: [PATCH v2 2/3] x86/vmscape: Replace IBPB with branch history
+ clear on exit to userspace
+Message-ID: <20251020205602.xrgypiwk5dwejdqf@desk>
+References: <20251015-vmscape-bhb-v2-0-91cbdd9c3a96@linux.intel.com>
+ <20251015-vmscape-bhb-v2-2-91cbdd9c3a96@linux.intel.com>
+ <aPZe6Xc2H2P-iNQe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013191207.4135075-1-robh@kernel.org>
-In-Reply-To: <20251013191207.4135075-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 20 Oct 2025 22:55:58 +0200
-X-Gm-Features: AS18NWCmdoPe9mUqm07LgesYzmI47cpuULBkrErXJf6vFAkis6yJb50IYSgtdOw
-Message-ID: <CACRpkdZDM8zMtuPQ6rQQ+TZhz4bAYOepeETVQ34_MfDYx0LMmA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Convert actions,s700-pinctrl to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPZe6Xc2H2P-iNQe@google.com>
 
-On Mon, Oct 13, 2025 at 9:12=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
+On Mon, Oct 20, 2025 at 09:10:17AM -0700, Sean Christopherson wrote:
+> On Wed, Oct 15, 2025, Pawan Gupta wrote:
+> > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> > index 49707e563bdf71bdd05d3827f10dd2b8ac6bca2c..00730cc22c2e7115f6dbb38a1ed8d10383ada5c0 100644
+> > --- a/arch/x86/include/asm/nospec-branch.h
+> > +++ b/arch/x86/include/asm/nospec-branch.h
+> > @@ -534,7 +534,7 @@ void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
+> >  		: "memory");
+> >  }
+> >  
+> > -DECLARE_PER_CPU(bool, x86_ibpb_exit_to_user);
+> > +DECLARE_PER_CPU(bool, x86_pred_flush_pending);
+> 
+> Rather than "flush pending", what about using "need" in the name to indicate that
+> a flush is necessary?  That makes it more obvious that e.g. KVM is marking the
+> CPU as needing a flush by some other code, as opposed to implying that KVM itself
+> has a pending flush.
+> 
+> And maybe spell out "prediction"?  Without the context of features being checked,
+> I don't know that I would be able to guess "prediction".
+> 
+> E.g. x86_need_prediction_flush?
+> 
+> Or x86_prediction_flush_exit_to_user if we would prefer to clarify when the flush
+> needs to occur?
 
-> Convert the actions,s700-pinctrl binding to DT schema format. It's a
-> straight-forward conversion.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-No comments for a week so patch applied.
-
-Yours,
-Linus Walleij
+Ok, ya this is more clear. I would want to make a small change, instead of
+"prediction_flush", "predictor_flush" reads better to me. Changing it to:
+x86_predictor_flush_exit_to_user.
 
