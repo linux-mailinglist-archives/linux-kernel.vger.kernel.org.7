@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-861479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE4EBF2D58
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E40A4BF2D2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD6474E8A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:59:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69F9D4E8269
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305773321D7;
-	Mon, 20 Oct 2025 17:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C653328EB;
+	Mon, 20 Oct 2025 17:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIwu3N3R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TB6sa/bx"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABAF13C3CD;
-	Mon, 20 Oct 2025 17:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED758331A7E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760983149; cv=none; b=sYDevW2ULrC3tBFoJ0iinC4pEwO0nKeTFgh/kuEUZGEx0Uy6qVZN88K6dF2GVqa6L678I5y/A4rv7yk0rvTk7eVFq6yvCoxfnyO6yWTZDJwml/QUuF9vc8VhU1cxy44LAGcsfNY6SvA6X/TjjVzalHYjgovMFZzIQ7ZuvTdUC70=
+	t=1760983084; cv=none; b=P5/rXQs5m3cblhSgBdVGdt2kXdbngqLzhQd6mNoFO4wDPKJwW0Pl3xXotvkr09l+sawsbaSz2cOO2i+3bGD8cJq1mBz9PDbHfSyorw1CnUDyRrepaS2pOwCM2KTP+6plStjrcAVcKk/EbIXQEkWkm37CZaE4Ew829s1k7VW/I4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760983149; c=relaxed/simple;
-	bh=x7GUYv8Ms47fFopUIi3Wz6TTbTv7Y2GnvOK59yf3mcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWS2kr9d/YTHlCHgNKDkq2/LRkiBl19kVwhJlwGCcjm/WC0nIP7NZPCI+2vezC7QNJdo42CAe3iMqEW1z8mxOHo3RrAFKfEIrz/B+oOFs7JrAQ2EFRb1EhgzvSzDKmiHkHsMQLiHVGc713y7iAi7M6qUvDg8V4idb03Hn9NXHPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIwu3N3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F22C4CEF9;
-	Mon, 20 Oct 2025 17:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760983149;
-	bh=x7GUYv8Ms47fFopUIi3Wz6TTbTv7Y2GnvOK59yf3mcs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pIwu3N3RIH04/zJHOEAoM7ocAG9NiaDVkyJ306sift4cHMx3Tb2f/ippaSK8Fg06m
-	 6IQXodbTyF3Qn2c8aDBNoAVRP6uZT4YfvSbV/KeUzZiYZHUyMEJW0Pbfi8/fKQNP3+
-	 pDGdjuzWzXILebjnLWC8McdJmoz/tKPyQwLAhX/T0UQmYRShJMBWRvW45Z1d1FMa6W
-	 s2Dn0RtbK5qByuihJwoqQzl2p1ofOCvEBa9Bfw1Q3yhHuxwDJn4cH0vmPgAfOXoB9i
-	 iMRB0KkL4qetti2maqpV8j/O4nn5UDYIT0eifLYn9cGmrEOg+7i5oDkN/hHaIRQa4v
-	 MoYDtbKU4Sn8A==
-Date: Mon, 20 Oct 2025 10:57:36 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Holger Dengler <dengler@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
-	Harald Freudenberger <freude@linux.ibm.com>
-Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
- library
-Message-ID: <20251020175736.GC1644@sol>
-References: <20251020005038.661542-1-ebiggers@kernel.org>
- <20251020005038.661542-16-ebiggers@kernel.org>
- <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
+	s=arc-20240116; t=1760983084; c=relaxed/simple;
+	bh=iJYNXDViBNg9H23IU+cEG/iUlaVVosMhC4bKdCUk1To=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cppUy67ztXTPaFsneHK89ipdnIUdVfjPvkeLetpBS5Vngl/tg8YTMIpjraKkgrIT7S3D+o9i73bYJ/JPT2fZS7PqhG/rMxzKP8jhedwAai0vS4U8bGivm76AsngWgJamBbBry+v9wbdUQRxZM4ZEg+MKnHZ0iHhVg5hxiWBSD9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TB6sa/bx; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-426edfffc66so3444011f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760983080; x=1761587880; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJYNXDViBNg9H23IU+cEG/iUlaVVosMhC4bKdCUk1To=;
+        b=TB6sa/bx5bkTjJ5MaRhcpoj6Tf+mFleUpkzyR1LtkRSW/kXnqrrcGWLQ7C9+UprhCu
+         K1XY1qd1HVhm3OvgiCsqJNj0FM4j2JMbZEDSRepw3+TdidZRy4/ZurPhN5XLQYdrbMmO
+         Lsn/gkkqUQ/7qMWdk3UfjUTRMGxLLUJTKxihy2FsmjW/5+zCubXFEEs+/IaRPFEzQzEJ
+         wJ7pyfU1HWpXxsuNJTR7E9RGoDFMVintFSrrcBougdWmQv/+YiDsKLoHahosFgX35b6R
+         9i4JyJGfT0SlDNxpF2MpizZ67ZIo8q3L3+faAIJW6gXLbFpDbZUvzsbnJ8bJjvb24p4r
+         LE7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760983080; x=1761587880;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iJYNXDViBNg9H23IU+cEG/iUlaVVosMhC4bKdCUk1To=;
+        b=AKKjDP5Gi7zLVArRoLoV6JA6eprG+kVaWvjrRCKVrwd3UXC18VLhusJh5WQovpkvj5
+         vWPXWWgyGdO69qCcwGTRYv4Zws4ty7+sEvv+BcbXOdPPrcP9XAK6gmHYryiAWkAyMvhk
+         vlI7QrWSK7Jj9CEr9RevSOFHIQ7lwQIR90MBbkoJ0J6djrMHkAY8fh9ioXiS68lB1V3P
+         rpmAN5AntEaSs227ya+T+LMTzePEZlq7iIzkKO9WNGJFftBkvkOLtABx1x5UblLkZQer
+         WQD7dKIX+XbkZTRxvErS04o4CJrnVu4OPj8TpmNeScbc5m/mIT15a+E5O37P5mhalG/c
+         UBVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAR/y54Ugbsa64WeDcRNBFSr5emN5vDzf3K/Cq971RgjEhFkNF1bBggcpS8QrSqtLqvlxwxI+p/0wEx/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwECvOLM7CIl0frphVSr0xIyz2HwnMpq/aoWMqcAuowJMGRZ4MT
+	MeGMuvhe96628PWFPUsOON3XSbubL/WybQTgkRgH/0PsK5mkRd70aMKI
+X-Gm-Gg: ASbGncsIGl37A/s1z8feOVXuFZSH3LQYAQ0uQaSV6fbj3F5xPoYwf50rDyGFRqa6PgX
+	WR94Gsoe89ofeXWHXdhG1P/8doWDK9N2TP6+F0A2M7uA80LSgm9tcP8mCIwX3ktir5T/mFXzm+/
+	qWlM4t5qnbUKvPWDzqzCt0VYo9umFC7n2R4Dj05KSvs/YppPdfHJUAT+uuyLgGPEZ6Svtdpl26f
+	2nHeCOmj7rgMJm43f0czeNyp8V8K5qAqNb03HG4Dpd/IxLnp1n0KmDyoQkFE1WzDAu+n3jd6/3R
+	uA7vKe56hFQri6QqQ/PP3y+VHdkW4K+Ni4UehVm8KU2ywoQ0sqmUZfjLfC2mAZul9L2WDefIRur
+	Rv6fckJUlqhDlqJZBdK6K8CT7c2IN5JiNuxZX7cVUMpFMWnxWsoYaRB9qGZzdAPVHjX0mfqs4ac
+	VWtC2s503WSAyW7bRv/KCAoKtmiwBrbRjkmp0N0N9DPM39/j5/J1qR1t8v6H0EV7d/yoFs
+X-Google-Smtp-Source: AGHT+IEQQl9YZkR1BgzZ6Z2Nufpu9HBikDewEvyF4EuaS29j/RILS2DM6SBqWX87g+1TkKzsAinQ/A==
+X-Received: by 2002:a05:6000:705:b0:426:f9d3:2feb with SMTP id ffacd0b85a97d-42704beea1emr10367539f8f.23.1760983080172;
+        Mon, 20 Oct 2025 10:58:00 -0700 (PDT)
+Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce08asm16294878f8f.44.2025.10.20.10.57.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 10:57:59 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+ Samuel Holland <samuel@sholland.org>, Mark Brown <broonie@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 07/11] arm64: dts: allwinner: a523: Add DMA controller device
+ nodes
+Date: Mon, 20 Oct 2025 19:57:58 +0200
+Message-ID: <2324646.iZASKD2KPV@jernej-laptop>
+In-Reply-To: <20251020171059.2786070-8-wens@kernel.org>
+References:
+ <20251020171059.2786070-1-wens@kernel.org>
+ <20251020171059.2786070-8-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Oct 20, 2025 at 04:00:42PM +0200, Holger Dengler wrote:
-> On 20/10/2025 02:50, Eric Biggers wrote:
-> > Instead of exposing the s390-optimized SHA-3 code via s390-specific
-> > crypto_shash algorithms, instead just implement the sha3_absorb_blocks()
-> > and sha3_keccakf() library functions.  This is much simpler, it makes
-> > the SHA-3 library functions be s390-optimized, and it fixes the
-> > longstanding issue where the s390-optimized SHA-3 code was disabled by
-> > default.  SHA-3 still remains available through crypto_shash, but
-> > individual architectures no longer need to handle it.
-> > 
-> > Note that the existing code used both CPACF_KIMD_SHA3_224 and
-> > CPACF_KIMD_SHA3_256 after checking for just CPACF_KIMD_SHA3_256, and
-> > similarly for 384 and 512.  I've preserved that behavior.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> The current code also cover a performance feature, which allows (on
-> supported hardware, e.g. z17) to skip the ICV initialization.
+Dne ponedeljek, 20. oktober 2025 ob 19:10:53 Srednjeevropski poletni =C4=8D=
+as je Chen-Yu Tsai napisal(a):
+> From: Chen-Yu Tsai <wens@csie.org>
+>=20
+> The A523 has two DMA controllers. Add device nodes for both. Also hook
+> up DMA for existing devices.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-I'm not sure if by "ICV" you mean "Integrity Check Value" or "Initial
-Chaining Value", but SHA-3 doesn't have either of those.  It just starts
-with a state of all zeroes.  I assume that skipping the
-zero-initialization of the state is what you're referring to?
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-> support has been introduced with 88c02b3f79a6 ("s390/sha3: Support
-> sha3 performance enhancements"). Unfortunately, this patch removes
-> this support. Was this intended?
+Best regards,
+Jernej
 
-For now, yes.  I should have explained more in the patch, sorry.
 
-As currently proposed, lib/crypto/sha3.c supports arch-specific
-overrides of sha3_absorb_blocks() and sha3_keccakf().  Those cover the
-Keccak-f permutation which is by far the most performance critical part.
-This strategy is working well in the SHA-2, SHA-1, and MD5 libraries,
-which support the same level of arch overrides.
-
-We could update lib/crypto/sha3.c to allow architectures to override
-more of the code.  But we need to consider the tradeoffs:
-
-- Risk of bugs.  QEMU doesn't support the s390 SHA-3 instructions, so no
-  one except the s390 folks can test the code.  I can try to write code
-  for you, but I can't test it.  And the s390 SHA-3 code has had bugs;
-  see commits 992b7066800f, 68279380266a5, 73c2437109c3.
-
-  The first priority should be correctness.
-
-- The proposed change to the init functions would cause the format of
-  'struct __sha3_ctx' to be architecture-dependent.  While we can do
-  that if really needed, it's something that's best avoided for
-  simplicity.  It opens up more opportunity for error.
-
-- As I mentioned, Keccak-f is by far the most performance critical part
-  anyway.  The initial state is just all zeroes, and initializing it is
-  very lightweight.  Also consider that these contexts are often on the
-  stack, and people increasingly set the "init all stack variables to
-  zero" kernel hardening option anyway.
-
-  I'll also note that commit 88c02b3f79a6 has no performance data in it.
-  So it's not clear that it actually helped much.
-
-- The library has an optimization to greatly reduce the size of the
-  context: instead of buffering data separately, it just XOR's data into
-  the state.  So, if there's a sha3_*_init() followed by a sha3_update()
-  of less than 1 block, it will have to initialize the state anyway.  We
-  can delay it until that point on s390.  But again: complexity.
-
-- These potential additional s390 optimizations would presumably help
-  the most on short messages.  However, on short messages, merely
-  switching to the library often gives a large performance improvement
-  due to eliminating the very slow call to crypto_alloc_shash().  That's
-  actually a lot more important.
-
-I would suggest that we drop the sha3_*_init() optimization from
-consideration for now.  Providing overrides for the one-shot functions
-sha3_{224,256,384,512}() should be simpler as well as possibly a bit
-more useful, and I would suggest exploring that.
-
-I guess I can try to write the code for you again.  But again, without
-QEMU support I cannot test it.  The first priority in cryptography code
-is correctness, so that's not a great position to be in.
-
-Note that for new optimized code I'm requiring QEMU support for the
-instructions it uses.  This one would only be allowed because code that
-used these instructions already existed in arch/s390/crypto/.
-
-> Please also add me and Harald Freudenberger to the cc: list for this patch.
-
-Will do, thanks.
-
-- Eric
 
