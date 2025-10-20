@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-860641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD56BF0927
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:36:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311BBBF0924
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3B394E4EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 319B31896BFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B18E2F83AA;
-	Mon, 20 Oct 2025 10:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9FC2FABE0;
+	Mon, 20 Oct 2025 10:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SLIN3qii"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VN6MfDXl"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102752F7AA8
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0D2F6933;
+	Mon, 20 Oct 2025 10:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760956560; cv=none; b=hb//PGCBITsWsB/+9iN3Md0TGkxtBcPTMbONPjj8j7M8s1Z/x+lByytzu9hke/xDzXqBvDH3BEjSMpafavMV+/i9w0CRCnQYhBQNQabENhHdMp9u90/HnqpfYJ3HOq4et4b0HiQ+F8iKJ/0qE6oBw/OV09AjtF8u7PWVBP8HTQI=
+	t=1760956560; cv=none; b=fHqm5x2Xo0rQoS1A2acrdBd1zAUS4yVgo6W+tLmAiTKeFUM+UPITdAzkSjAQzRI4LYpNys6N387GDHsCWbzbCV7DLWyGO2wYvSpviSjjVa8nB2plxuis6QwVJa1Z53SIDnZrCNDmJeD9exuCH63RaR3T/o4qbsePebpOmr5fvds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760956560; c=relaxed/simple;
-	bh=T2bTjeEiXishWJMDed7e8b6WcF3hdcjPE0PZ6daxeDw=;
+	bh=V4y+htwEdDmlnLK1Fy+0wRN95xzwTz+++IQ2l0uvEM0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f6rnTbgbq2JmTZ1VXxxWdZakF1mvzK1iFC7KR8sW+7I2gIFOVHr+qIGCFQHPAnu+U/ykZE4eT0oxs58PCKKozNwazDnhkimqTSfN6+51QJM1tD/0Cfdvjec608KBrvYql/bBkBqVgd0D6LaA4/pwyGdq8Xd3eZhs4RxgEwy0QLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SLIN3qii; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=YS3vcwZ6olrTs6Eh8pvMjmuw3jMywUOiUQ+bL/r9uP68gwwO12U/FqLZLr+4xnOVoN22S777sx7hktD84P5wCYb+gx9m1DWq5MCCipUJpvTKeyuC5Z49d5UrugoBe/FlLx3UaFdx460XQ6oit45utyRqY6LP+xuxnLsVQswZ2F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VN6MfDXl; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760956557;
-	bh=T2bTjeEiXishWJMDed7e8b6WcF3hdcjPE0PZ6daxeDw=;
+	s=mail; t=1760956556;
+	bh=V4y+htwEdDmlnLK1Fy+0wRN95xzwTz+++IQ2l0uvEM0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SLIN3qiigHADvtevtw9JAxryBVw1YW2Jsp1rISqSf9IqCj38HEDINt6ak1gJZTGnL
-	 Kn3Y28G/jlgU5NamokPY10phpd62eXiZ52/6VLxFOLu/ruzZ3Uz02WycehDfewMTs8
-	 dmxM3RihZrVGia0h/8BfFZNL+s20zjePKSymUz802Rb00aUnd8AlD1k8nUZ31h/ClN
-	 0vssb9Ng/9zU3gjI2MIK867gO/78fIzJiXJo467YmtQtF00/ddae39wiNYCIyn+F4X
-	 qkV34DFUsiE25+pJUsjf4shhIePF+u4P1XjYTKZgC2+nrluWL76L+QpecNUSOHvZAi
-	 pTZLo3HbaR9Fw==
+	b=VN6MfDXleMzUgYPAqde+/NStyEs/FvxzccEouEiYA07mr8NfQC96cQhOoR0eiq3Xu
+	 ZqdmP/thH4nT3adCmRBgKJOFLOn1bEe0W/uYR9PO6cz4HGSICLF4fICP2u+MPlHbYL
+	 AxMyD0ziBu0p0Kf1rhywGhZr3TKpe16ePuCNl26ig6KAVR83GSACyozArd0NpwRvI4
+	 /AjOtQLhbiUAOX2W8+o9CAbYFLKWOoDnLSGiSfeaboe4OVm/Vkcpc5yfKUR9ZDzAVO
+	 /4iURn10rwFcdrURFFRpGRcvSxy04Tufjr9GvoLyo9/MApfG4lqY2R30lWTZ/hHhWx
+	 aNHS76UKI7VCQ==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C05C417E1404;
-	Mon, 20 Oct 2025 12:35:56 +0200 (CEST)
-Message-ID: <3fdeaa04-15e2-4455-a78c-627abb767830@collabora.com>
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A622017E13F9;
+	Mon, 20 Oct 2025 12:35:55 +0200 (CEST)
+Message-ID: <9177efff-3ded-4ea8-844c-c1a2178c58d4@collabora.com>
 Date: Mon, 20 Oct 2025 12:35:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/14] iommu/mediatek: simplify dt parsing error
- handling
+Subject: Re: [PATCH v3 08/14] iommu/mediatek-v1: fix device leak on
+ probe_device()
 To: Johan Hovold <johan@kernel.org>, Joerg Roedel <joro@8bytes.org>,
  Will Deacon <will@kernel.org>
 Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
@@ -65,30 +65,25 @@ Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
  Marek Szyprowski <m.szyprowski@samsung.com>, Yong Wu <yong.wu@mediatek.com>,
  Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
  Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy
- <vdumpa@nvidia.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+ <vdumpa@nvidia.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>
 References: <20251020045318.30690-1-johan@kernel.org>
- <20251020045318.30690-8-johan@kernel.org>
+ <20251020045318.30690-9-johan@kernel.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20251020045318.30690-8-johan@kernel.org>
+In-Reply-To: <20251020045318.30690-9-johan@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 20/10/25 06:53, Johan Hovold ha scritto:
-> As previously documented by commit 26593928564c ("iommu/mediatek: Add
-> error path for loop of mm_dts_parse"), the id mapping may not be linear
-> so the whole larb array needs to be iterated on devicetree parsing
-> errors.
+> Make sure to drop the reference taken to the iommu platform device when
+> looking up its driver data during probe_device().
 > 
-> Simplify the loop by iterating from index zero while dropping the
-> redundant NULL check for consistency with later cleanups.
-> 
-> Also add back the comment which was removed by commit 462e768b55a2
-> ("iommu/mediatek: Fix forever loop in error handling") to prevent anyone
-> from trying to optimise the loop by iterating backwards from 'i'.
-> 
-> Cc: Yong Wu <yong.wu@mediatek.com>
+> Fixes: b17336c55d89 ("iommu/mediatek: add support for mtk iommu generation one HW")
+> Cc: stable@vger.kernel.org	# 4.8
+> Cc: Honghui Zhang <honghui.zhang@mediatek.com>
 > Acked-by: Robin Murphy <robin.murphy@arm.com>
+> Reviewed-by: Yong Wu <yong.wu@mediatek.com>
 > Signed-off-by: Johan Hovold <johan@kernel.org>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
