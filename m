@@ -1,99 +1,115 @@
-Return-Path: <linux-kernel+bounces-860065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88938BEF3A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58716BEF3AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F86D4E5835
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:14:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125D53ADC0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2BC2BE7A7;
-	Mon, 20 Oct 2025 04:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1260B1A76DE;
+	Mon, 20 Oct 2025 04:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="J4i8lcDn"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="GbzV8td/"
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C22A29ACC6;
-	Mon, 20 Oct 2025 04:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348598460;
+	Mon, 20 Oct 2025 04:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760933642; cv=none; b=HWcI4dvFS8cXhA1Pij0MxgRrEITdqwVLLb80Gp/Esbjn4jTf7YklR4g4KgcVZWbImQqwlegL4Hxf8pySFAl+itiZHMVSnF0UwU1gamznmarAmtHncXhHheYrVY5CJDD8g0y4LV+HLh+ny/KFs+ZTEgU+zDDqefbdThqX+tpVqi8=
+	t=1760933752; cv=none; b=pAHLmNtIFcfvxsOMyKH9YXDNvZTwrhvNBHG/FdzwHLy7DRAqhuQKp68L3ogaQbShJUMOSlsi5dKxoxKYgBnPFQbhQ7fX9EtbzbSFV+WEivhAcitvyZGEktiDwxoYFJPe2NIWZkFpFLkr+9nP5+EpscO4uCfgeayt/0bv/3M4VDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760933642; c=relaxed/simple;
-	bh=wXBCY+F4wLSHNH2PEfSoFhq5ce8KB4OT3rvWRV6OOms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDt9l7+UhyWzLnSwOAu9qVSC+y+bYs103l7aGrTboDxtDwQ90Au1h/XB9kd8q8gy1xXJj5ne4N/rX9Usqeby/oPIIoLVI5lAcNN4tjGj1xn6fqIMG4snlRUsHAVcS2yvGdlHrLTRwsATu/4Bhf5AxubnPvtz+X+0X3Zl07UnG7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=J4i8lcDn; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=JAKNGO3kJKU6Ja3I7Yn/HEP2ZwKCfxrCLCJ01jsW2gM=; 
-	b=J4i8lcDnYP/ICMS9feoNUbbErEBwpaZla98BbGX/8UWkAp31GDD+jEv3A+xZN8UQFbIfvvOMM+0
-	12Imq6xOvsiVOTNO4zXyt/0OIErayxpZ8FnsjCql3iIfEQSj13pLF4chyh6fA1b/DMvCVyqDx0pr3
-	jQ10IS7yV/xudoP9nLqIepFfU7r6WKqQBkCsMrP6UxK0E+yOkubsOOyFYJIC+XWKvKn2UCGgu1YTu
-	hNMJ4KjX7wFVtp8yRo7ajYuT0mLDzbbc4yHAkFjpNETfxpc1QKCzdKTMncEWzldqZ15uXY/SbvtWZ
-	/1KGMQt7zfh0nu1XlmVxEz7UP+DvfjjgzlVQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vAhHI-00DwsK-23;
-	Mon, 20 Oct 2025 12:13:49 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 20 Oct 2025 12:13:48 +0800
-Date: Mon, 20 Oct 2025 12:13:48 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org, Jason@zx2c4.com
-Subject: Re: [PATCH 0/8] VAES+AVX2 optimized implementation of AES-GCM
-Message-ID: <aPW2_B3utVHNxaEV@gondor.apana.org.au>
-References: <20251014003123.GA2763@sol>
- <aPH9ZQP0m8Pq5Iy-@gondor.apana.org.au>
- <CAMj1kXGE6-xiUSyKa92=HWeywt=5-F2_G2H7V-UnVhKG65zwCA@mail.gmail.com>
- <20251017160437.GA1566@sol>
+	s=arc-20240116; t=1760933752; c=relaxed/simple;
+	bh=JtO8PeCa2PKlgR0i89nAa+GKUcEDAU/+N45DOg5MU/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cFO+EnFTrP84Yu9Q3ZJLT/TMFi5fWcm378dtuE6j/aw0/GZ06arypWgwkzNKDsn9f/NIzUe5Ne2MRmGphgRTBMcP4mRcPFwZbth/yToD4nbfg+zxiadQv6KiFK74CCgHuk09+8O7IhJi6+nkPKLMuKj/LIr6CmbWlKnZ7qGAylw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=GbzV8td/; arc=none smtp.client-ip=113.46.200.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=4bztEUw24D7GJwcXXrpnWAsggCfD+kMyHqNEIvLAwyI=;
+	b=GbzV8td/lb81gfw2C64wmVNB3qfpNKyPqwdi8uCBsvm6F/Ua4jDhDqTTgFl3aCyFCsIYBgCAT
+	+4rjNeDZnmgSPMKzD7R49u2xcvjl8N70gkatsBh1ZIdPGdJu8g9VTIClkS4su3tBsr1yILxmWNz
+	QrV1gS7kUNCGzFNvUdpg6+M=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4cqhsx4KkJz1K97v;
+	Mon, 20 Oct 2025 12:15:17 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 270FD1A016C;
+	Mon, 20 Oct 2025 12:15:40 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 20 Oct 2025 12:15:39 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
+ 2025 12:15:39 +0800
+Message-ID: <ceb9f28b-c935-476b-bd67-a5a9da9989f6@huawei.com>
+Date: Mon, 20 Oct 2025 12:15:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017160437.GA1566@sol>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] mailbox: pcc: Initialize SHMEM before binding the
+ channel with the client
+To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Adam Young <admiyo@os.amperecomputing.com>, Robbie King
+	<robbiek@xsightlabs.com>, Jassi Brar <jassisinghbrar@gmail.com>, "Cristian
+ Marussi" <cristian.marussi@arm.com>
+References: <20251016-pcc_mb_updates-v1-0-0fba69616f69@arm.com>
+ <20251016-pcc_mb_updates-v1-5-0fba69616f69@arm.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20251016-pcc_mb_updates-v1-5-0fba69616f69@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Fri, Oct 17, 2025 at 09:04:37AM -0700, Eric Biggers wrote:
-> 
-> Well, it seems you didn't read the patchset (even the cover letter) or
-> any of the replies to it.  So maybe I should just take it, as I already
-> said I preferred, and later did do since you hadn't said you wanted to
-> take it.  It would have been okay if you had volunteered to take this,
-> but you need to actually read the patches and replies.
 
-The reason I didn't see your cover-letter is because you didn't send
-it to me.  Your To/CC list was:
+在 2025/10/17 3:08, Sudeep Holla 写道:
+> The PCC channel's shared memory region must be set up before the
+> mailbox controller binds the channel with the client, as the binding
+> process may trigger client operations like startup() that may rely on
+> SHMEM being initialized.
+>
+> Reorder the setup sequence to ensure the shared memory is ready before
+> binding. Initialize and map the PCC shared memory (SHMEM) prior to
+> calling mbox_bind_client() so that clients never observe an uninitialized
+> or NULL SHMEM during bind-time callbacks or early use in startup().
+>
+> This makes the PCC mailbox channel bring-up order consistent and
+> eliminates a race between SHMEM setup and client binding.
 
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-x86@kernel.org,
-Ard Biesheuvel <ardb@kernel.org>,
-"Jason A . Donenfeld" <Jason@zx2c4.com>,
-Eric Biggers <ebiggers@kernel.org>
+I don't think this race exists. The above reason is enough.
 
-So all I get is the patches without the cover letter.  Of course
-anybody who replies to the cover letter won't be visible to me
-either.
+This patch should be for patch 6/6, right?
 
-Please consider adding my email address to the Cc list next time.
+>
+> This will be needed in channel startup to clear/acknowledge any pending
+> interrupts before enabling them.
+>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: lihuisong@huawei.com
+> ---
+>   drivers/mailbox/pcc.c | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index 33bd2d05704b..2829ec51b47f 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -378,18 +378,20 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
 
-I will drop this patch-set.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+>
 
