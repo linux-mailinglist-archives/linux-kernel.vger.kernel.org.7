@@ -1,148 +1,95 @@
-Return-Path: <linux-kernel+bounces-861613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FB0BF3301
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:22:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C154BF3308
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4229B18C19E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:23:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BA1D4EF498
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE4E2D8DD6;
-	Mon, 20 Oct 2025 19:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RbqGEYWA"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37C02D9496;
+	Mon, 20 Oct 2025 19:23:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDC6202961
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA8B2D3A70
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988157; cv=none; b=jdeS8NVoeZfsMBQGW+Nn79wi3TX/ZwCHZD74M1r/fZVqyaB+9kbA9cgUiooAAWHV9Y2Bv8onzrzef73+dBYr9HlSFOD/FQ5aL53jHUfJIk4vk6bGcHYzYGocU0mRAN/B3ixPcR/2cLfD/eGWWUPM3bQ3k2XFB5ne3u36YBC2lO8=
+	t=1760988185; cv=none; b=PBEXtT5uWemzzBCfqBlr8mfOVvS9zWX0WJXMmWKIuB+OUBk21JTWxxvUnv30/FW9W3hfsEbLMR/YWh0FhM4xe5FQa6C3Sn75/QSZf3cbAYNnzs9mQ2aSMlYk+i9u2PjBgEn2Nj0j4xTxtkgrc2Y7Vf8Qb54hhfBuZtzbun6SI4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988157; c=relaxed/simple;
-	bh=umZ857QeuIIQUUqPe4gSdyB7ETX65pLAn2ZcuUZtFE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mpDEpaJ/MvPfgmaptO9rlL7TZOOVq8WJBi4SkAYSvh0GtG04x+Z5LRh2Br+SluYWZPihiQmEhYYxjp01TAnMaFguPI4y4PL3w5iKWHupF6ZLtwmrIYDfhcT8AvTh7zCWFWE8nIDbT7rIUhPLzZ+ll+jWsBxPEJ6wIedRO0bvq50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RbqGEYWA; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33bbc4e81dfso4811214a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760988155; x=1761592955; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rXSjkwnG8Cy2vSuisj9Mg3o4cb7lSzCYpfE+yrCbTp8=;
-        b=RbqGEYWAmcb7Jg1BWkb1xm8A/yIbo6PR8TcyqZQ9Jee4hWRk+ZCClrna6eFEu6ZJlT
-         8HhsmKpnHXxW6tHy3CRQSFJ8PgCh87Iu53/SkyaGJjvxXVIzuO8PEPyHo2djWOCh6SfT
-         GC2azFh5uJNlMpMmdEcigmXX71mcSX/fGt3rB8XTsnLHzxI4Dwnz6v1W5hKVmPFPRjCs
-         0g+vcbkIbOJ3o3NFCz/iAm1EFg2kiZ9zocvdsBWwHXEoBUyb1EVWJKoBhP29+X1CnnL0
-         6wK64SQntHt82CRDmZVwewRaRRK1s38HM40bGthYDQ01NdURmbGX1uFub8lOLguU57SO
-         UbQA==
+	s=arc-20240116; t=1760988185; c=relaxed/simple;
+	bh=B0v7xqzbrARLzoXePEoiMvAUbWMeteOyLqaDChJa7Bk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s3DHw5Jrm61x6LNxyZ2MqX6r8AUgfuJONLcF5srRVWUqLKE6fI/Dm6Cu57v8A7lgASlOx4UuUY8MX2T0mNXTC1yiRZ+hFSqv6sneSmJODiKBsgokKGTz43RjtEhITu9YC2dGMBSS9Yj6KTfzHnKBMz0t8a67tPgnx5a5R0j633U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so477921539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:23:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760988155; x=1761592955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rXSjkwnG8Cy2vSuisj9Mg3o4cb7lSzCYpfE+yrCbTp8=;
-        b=r1KHiyT2qLU5wvBDnKOMUt4K+NXjaiZgWfehqJIWoPiQPUkNg8NRWbH+xHPtkKjCFO
-         oY1ERdp1AaKp+lKzXL/kVrsSK6wJRu1LoHk9SIvbiwx+AeGMCvDYyWp8r3dUZkkvklyg
-         ddoxWjKOvuTrQSdD6/nEjURxshFzrBKEJi8uIN1OW+I8a029DweCN/26iLhGYyuY7cRx
-         mhfgrQKZFe2uhPwEbUDCygraCCpqG0w16D57dU3X7O/wn6eCxlyqoxuDXInehJRzpHD9
-         p8JVEpYIjevspsP0oUaBmfeMtzDsHXouV64BaptO4thgO4rVaTkHZtPbzKO38WXgK2oR
-         CYKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8yfSeSllSYVPKABW3ihhzSQUufREHDM+DG0NR1xPq+EJXGuZ0qucyfhR4oVFyPUj7CwU51SckJ2jWrCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHlIn7D5eNnr6YaxMNzwzfWEDh3G+1ZzEFskTXJOxeXy89tnqS
-	qESI06c6kSIOiTgIDwKf25TVi9nrgaimeqrWTLR9Z7Tw7T/PcuDvr4fqaDiDWgduO35enuxdkKb
-	UQs1QjGjiKZBn8I2j+gv7aWDqItvN+7Kbr01rkXhq
-X-Gm-Gg: ASbGncsUkQkWwHO3/KMDt9G+erXD34JO3calf+5W/lUy+bvzsMwO0MqeSfAH1PEwR11
-	KYU82qHwZAbbDSCfPwbDlC+JwI1n9VSU3+8r8o0snN5FjdAc0nQPc3hkJkcnb5qetYL8x1BUoo7
-	WchailMLwX+nyDcWr/1OepgcqGQihphAP4T/zAEeHeNxjcsG8ix+qKTwwsNYr38WV+bJpaDZd8P
-	AbWfsG/sflLcU4BNSGz2OBf+hMFh1++TBdhCTo8EZ07vpgHucm4TvOnNRSQKBpKZcsnCvUXTjOA
-	/PibTg==
-X-Google-Smtp-Source: AGHT+IFSiHOTUDXYpFNI+OFkM6wdZC9V5vzg+BHgaKVj7iXBx06hRGe7eu82SnindZ5rZ6l1EtKLHfi8m3vUHWu1hew=
-X-Received: by 2002:a17:90a:e710:b0:32e:8c1e:1301 with SMTP id
- 98e67ed59e1d1-33bcf93f784mr18159001a91.34.1760988155257; Mon, 20 Oct 2025
- 12:22:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760988183; x=1761592983;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gx5+jMfXS8QttnO51LCTqUVXKqKMLZYlDxYkmZC2KJ0=;
+        b=tcRMaUfqsJ5iPyVNcXtD9BjOf+okD0CUiJy9CSrEbL3ePrGSnvRpCvBF3r3OrwOquN
+         sjWB3ZxQio5yjLSemKQt7P9p5OVYhZMpB40DoKsHkW6trskxcMcTEGe6eBd4U8QWnEs9
+         BnFAh9hGJ65OKuZ3PifVin03PL+sP7q90GaCjU07DjXle+N0SDvydiseqQ8peC2w50IR
+         ciMt+lZZq3YDVTGSCwaFqLUA5A6XCc/PxPfiwyKlakN5m9z+UfEyeCGvv/JGZtZQcWDK
+         ci5xkVRNXpe1LZCYsnszOXxqRiRnv8kGARWw4JIWUxREP6ZJMoBnxAvxoMOpQIT9HW64
+         rWCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsfNbT0IzoouI1RiYscWO0TXgmFLqyuZBz6Ra98HFWjmg4KjdO2n/5qMZ52i38XGfhHb++aH5ilsxdb4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/kahXjtayFooKyY8C5+TdRBstBSZVr6QufJQvTDM4TJY6LyEO
+	IWxDxQjQ3wVEzKL693hEoMiVgAMA0rysxM0pS89xKy5aLUkd+CiIZWjPDY65tcY99GzoyBok3+y
+	TH7LXAlyqQj5YuNXG3OCncjUpTkU7ie30DL/dD4gKE5+cyuDG1wuhqbK2Sdk=
+X-Google-Smtp-Source: AGHT+IFiF2OvAuC5QiClzfK5zQLICkuwY9oBGpgO4Iv+mjNYaRXnNM8sd6VyjYsy7j6YhUc3a3RsitQ70ua24+lFfcnUI0x44h/n
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d849e8a98bf88bd12fd13a8f6b6e84290dcaaf6e.1758859391.git.zhanghongru@xiaomi.com>
- <b30e8d56703dfd84778fa73845eaa1ec@paul-moore.com> <CAEjxPJ5CYtyfMPcaM2ugyMJQ2d+YQz4oXVBOcm7=gHsOk-2sRg@mail.gmail.com>
-In-Reply-To: <CAEjxPJ5CYtyfMPcaM2ugyMJQ2d+YQz4oXVBOcm7=gHsOk-2sRg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 20 Oct 2025 15:22:23 -0400
-X-Gm-Features: AS18NWDeWQWRVRVN4vI0aAwunYxaLBao1DfrZHcW6WRNO1RLsNCVYZgwwhSGgqQ
-Message-ID: <CAHC9VhTz48LOy5E7ywAFYjp=OK43y4MndV6V9HjLC1CpUCJ0xQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
- during boot
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Hongru Zhang <zhanghongru06@gmail.com>, omosnace@redhat.com, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, zhanghongru@xiaomi.com
+X-Received: by 2002:a05:6602:27c2:b0:936:eded:d78a with SMTP id
+ ca18e2360f4ac-93e762b3ac7mr2214491539f.6.1760988183172; Mon, 20 Oct 2025
+ 12:23:03 -0700 (PDT)
+Date: Mon, 20 Oct 2025 12:23:03 -0700
+In-Reply-To: <66f49736.050a0220.211276.0036.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f68c17.050a0220.91a22.0450.GAE@google.com>
+Subject: Re: [syzbot] [wireguard?] INFO: task hung in wg_netns_pre_exit (5)
+From: syzbot <syzbot+f2fbf7478a35a94c8b7c@syzkaller.appspotmail.com>
+To: Jason@zx2c4.com, andrew+netdev@lunn.ch, andrew@lunn.ch, andrii@kernel.org, 
+	ast@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, 
+	davem@davemloft.net, edumazet@google.com, hpa@zytor.com, jason@zx2c4.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, sdf@google.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	wireguard@lists.zx2c4.com, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 7:59=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
-> On Thu, Oct 16, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Sep 26, 2025 Hongru Zhang <zhanghongru06@gmail.com> wrote:
+syzbot has bisected this issue to:
 
-...
+commit d4dfc5700e867b22ab94f960f9a9972696a637d5
+Author: Andrii Nakryiko <andrii@kernel.org>
+Date:   Tue Mar 19 23:38:49 2024 +0000
 
-> > I would expect the number of active AVC nodes, and AVC churn in general=
-,
-> > to be very policy dependent; some policies and use cases simply result =
-in
-> > more AVC nodes than others.  With that in mind, I'm wondering if instea=
-d
-> > of using a kernel command line parameter to specify the number of AVC
-> > buckets, we should instead include an AVC size "hint" in the policy tha=
-t
-> > we can use to size the AVC when loading a new policy.
-> >
-> > Thoughts?
-> >
-> > I think it would be important to consider it strictly as a "hint" as
-> > that would make life easier, e.g. if the previous policy hinted at a
-> > larger AVC we may not want to bother with reducing the number of bucket=
-s.
-> > I would suggest starting with an implementation that uses the hint as a
-> > power of two for the number of AVC slots/buckets, with a value of '0'
-> > indicating a default value (512 slots, e.g. '2^9').
->
-> So, aside from Hongru's points about this requiring a change to the
-> binary policy format and compiler and introducing possible
-> atomicity/locking issues in the AVC code when accessing the number of
-> buckets ...
+    bpf: pass whole link instead of prog when triggering raw tracepoint
 
-I know you've heard me say this before, but for the sake of those who
-haven't, "because it's a lot of work" isn't something that I consider
-to be a valid excuse.  It's fine, and good (!), to explain the work
-needed to successfully make a change, but I have an almost allergic
-reaction to those who use the amount of work needed as an argument
-against doing The Right Thing.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ccbc58580000
+start commit:   88224095b4e5 Merge branch 'net-dsa-lantiq_gswip-clean-up-a..
+git tree:       net-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=142cbc58580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=102cbc58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=913caf94397d1b8d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2fbf7478a35a94c8b7c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10796b04580000
 
-> I am also uncertain that this is something that is fully
-> determinable from policy alone.
+Reported-by: syzbot+f2fbf7478a35a94c8b7c@syzkaller.appspotmail.com
+Fixes: d4dfc5700e86 ("bpf: pass whole link instead of prog when triggering raw tracepoint")
 
-Agreed, but if we are going to make this changeable, I'd rather see it
-as something that could be changed without requiring a reboot.  Not
-wanting to add yet another selinuxfs node, and seeing *some*
-relationship between AVC size and policy, adding a AVC size hint to
-the policy seems reasonable.
-
-However, as I mentioned in my reply to Hongru, we may be able to solve
-the immediate problem with a Kconfig tunable.
-
---=20
-paul-moore.com
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
