@@ -1,222 +1,138 @@
-Return-Path: <linux-kernel+bounces-860792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19E4BF0F55
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:57:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34DB4BF0B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50B5F4F386C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F3C63B0735
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220883126A6;
-	Mon, 20 Oct 2025 11:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF241257821;
+	Mon, 20 Oct 2025 10:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuosinnC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XplTNVku"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C830595A;
-	Mon, 20 Oct 2025 11:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164E25485F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961416; cv=none; b=KOG39T/ZU3UoTVs0YJu29Od/6setiv5N+VH8c+hhm7EjsZLbM2KO1/3RuAyyFJRPd27pqV3Ldpt+lkNhe41YKBkLMx5NLXu7dsX9B/uLCrwTHYy5OgK2Z7oBxLleXO2XO+ftM39FZvxXDPRk7nPDClDbXMyo0DWE8EAXmrt/JTo=
+	t=1760957897; cv=none; b=YDZrTZE+qtvIfyYg6sJ6x1P25anPFcd+/Ue93pbx4fdkiyWkLvKzbzOxvcz74pOslvate2fYvMieFrFHFuahvDv1gcQ/sTXaGdA4DpIhI+lRiTU5XMcvPzbXy7OGZxNuiokw//ZMrrVGMMo2b3u8SVz5/uan1SZik0r/wAG5B6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961416; c=relaxed/simple;
-	bh=ZcmJIfsB4LChHE03FyuLCzwTi7dkvnBS3aWOnxBGojg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E2lc6i+Oex8fjzJ0uTYkhWziGNe9IVmnamEM3JU1fotPSjQHhRQG7a6szALZYWD3BeM62B2PnstIYL/DuK5GMkbwSLGXBeGKHRFRHt7qNwYvaqLofxjHraz6IcOk9hFkfmMp+a4KvDTYGqf7fEGshIH2YYaDXDUQfrkkk4HOHz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LuosinnC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD59C113D0;
-	Mon, 20 Oct 2025 11:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760961415;
-	bh=ZcmJIfsB4LChHE03FyuLCzwTi7dkvnBS3aWOnxBGojg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LuosinnCXLWb731Ac8RPagWrD082efqHx0geawEzhfsppoChEdah3buWDcIzNFMvP
-	 dBjhbVF1FICX76U3U+smpICUiJLSKAtDF2j1RXc2InKv8KlPtOQ5xABWTneGPbfOIT
-	 ZKbaex0+GtRGAsloox3PuttpCqBcZktL2E/9n8/v2SVhzl7hs94CebygnaJ0Obx7FV
-	 2RGbjJ89+o/UXEom/8NOTLYDw0b+9zxX60pUV30BG6U6mSeyexURsFGm+eO+7F/as1
-	 XAvqfjHE38OEQO6gvtF3Ta+OoJ4Rbf6iAS02EkuIBwoFE5NPCxdM8fDOkASx6slZqD
-	 b53gQhd+bnhJQ==
-Date: Mon, 20 Oct 2025 08:56:43 -0300
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 02/23] tools: docs: parse_data_structs.py: output a line
- number
-Message-ID: <20251020085643.14007a29@sal.lan>
-In-Reply-To: <1507fe55-d756-46bb-abf1-0d1fb7f9bee0@kernel.org>
-References: <cover.1759329363.git.mchehab+huawei@kernel.org>
-	<dcffa6844dede00052f5fb851a857991468f22b5.1759329363.git.mchehab+huawei@kernel.org>
-	<1507fe55-d756-46bb-abf1-0d1fb7f9bee0@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760957897; c=relaxed/simple;
+	bh=Iu/q4CpFhSAJM0jEkgFHmScAOFtrgsT2qvatKDMc2d8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UnZGvmeTSBC+V8eU+3LxKO2V9rJZ8I+ZAes0CnaFOWumwGjID6yauSQLvQV+Gy7x6SpMfvpZeYNwPbhbOhGsGXz4sfNNH5eAH+iEnCQ55SuS7I3W+ZXlA0qihwYB9JHRz7FQdp9KKdwlpknPRcYz1MtuwniIWqFrmIxM3Jr7zNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XplTNVku; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3f5a6e114dso77685966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760957894; x=1761562694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkFaQ1bopt/VkRBUzrDCpvzpaSMPfW8Xt+ULvEdICqg=;
+        b=XplTNVkuSRyRK6erExL6db9qLfvaxRXIfixgGaXuWFfAl8774XiacwOoBS+tJOX2Ef
+         oPPJRsZiAgdDrIFN8XP1hXDAyeQ1RwPRj+HLd4VlOcMAzt/qN4F3vB4q24un2Ag1y2oU
+         q9r8yvESEtYeZvDxdo2noYj8PR878pDXmnxnwnEIkQ5Ynbf1LwRjr+hIv275NM1yMFEf
+         +BqtChybjxJ6AbNh0Hkc6oxC9Sw2R4YP4OljzLvF4rP9D4+kTXlFjNMbxqxD6NfAREzC
+         JhbClJOjCiDu8NAJ/GFRXcAVwgU4L9Sej+w7rAV8SjyHqxSU37dYwHPh/PXJopvkY5An
+         qcyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760957894; x=1761562694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GkFaQ1bopt/VkRBUzrDCpvzpaSMPfW8Xt+ULvEdICqg=;
+        b=B9xXjYBz8C6GZtDp6ggLclkR1PNF9OlFqjXPeUkxRr1o/d62ujlDT9DcatTsTb/rLw
+         wdeLOW6lC+UVNuwd7Op7HtFTAZUiuWiuQsmclR65dqexMXt665A+SkZHlZmz3uapyUei
+         c/WNpGpypceQ34py+TQDuoLNXcsKFrD05QWbH2MuKYO58+4NFzvSTxglW1a1wSTfW/G9
+         VIj+C6qlwHISHGdbz4GBAhLeFNwm+qHRJY/m7Jju04a/za1zFUzlqZx36dwMXkYUoSc9
+         CiR/3AMsM03Cs98OlWrXlXG57W+5Ksrf1dwGHfDHlphHcolRxEIZfgsNc+ZW2xHYDChg
+         WkbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYRjK631HGWpLPV2F6CFexwSofHCqKz5eIeVNJ5XmExqoslTlue+cpiGKE66Emegj9IxL2Il4KrNFJYc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFNYTHYiOovC0HVRZE61Y/9ndY+DgJ50ActLPNnWJqyk20cnvO
+	O4dXQ1D6XzMyc84VdyxWKa6is2lhdV1oovX0HBPtq+niqaNy7Ysab5O7a1vyGw==
+X-Gm-Gg: ASbGncuZeYBUe+/al50Skndn/AHEvkQiSjGASP/XP4kvmFn2IaTe/N4j52PUKKMm1XP
+	BDSEPCKGmDVfumDVCLTZKn9ems1hIQOaAeaUdsm4F9BEpXGUrhzfNhHVP3oTrL1Qz366sDW4ja+
+	TZfZ0aB44TW6iN6zoQQtUoc9hwXv1TKQfBf7krsMWoX4jfXlR2HWJJJ87ehnd5A6FSqUFUettcY
+	3chvlCU7zVAt5AYAiYdBNHIZkL1+rstH0yu1En3Kak8I3acsa9tmT1n/HzmjAi1dZAVsqdyraTN
+	NfB3G1mp/m6DrIWFk5aa213pxZShdvoU7n7/Me8FS/YMfZgjxN1FR4SVKmx4A58017r5axNxEwG
+	CXoOrm6gW0Ln8JnD62JjEdGJ8oMmbHtjQ/7+NtTPfcLFQt5EmmSmoSmwmoFwhmUpQc2hMkONbUd
+	ptLek=
+X-Google-Smtp-Source: AGHT+IFonlP9IIaHnKYJ1FGKly6VFGVY9U/JNDCz4I3ar5aMmaJr0RPUUSGZ9EBntxqPtU8gcUrFxg==
+X-Received: by 2002:a17:906:9f86:b0:b3d:5088:2140 with SMTP id a640c23a62f3a-b6472353d0emr769387166b.3.1760957893588;
+        Mon, 20 Oct 2025 03:58:13 -0700 (PDT)
+Received: from bhk ([165.50.81.231])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8971897sm751474166b.37.2025.10.20.03.58.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 03:58:13 -0700 (PDT)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: lanzano.alex@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH] drm/tiny: Refactor framebuffer's size calculation
+Date: Mon, 20 Oct 2025 12:57:23 +0100
+Message-ID: <20251020115803.192572-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Em Mon, 20 Oct 2025 12:46:50 +0200
-Hans Verkuil <hverkuil+cisco@kernel.org> escreveu:
+Use drm_format_info_min_pitch() to calculate the framebuffer line pitch
+instead of directly multiplying width and height. This aligns with DRM
+helpers for determining per-line byte size and avoids manual assumptions
+about bytes per pixel.
 
-> On 01/10/2025 16:49, Mauro Carvalho Chehab wrote:
-> 
-> Missing commit message!
+Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+ drivers/gpu/drm/tiny/repaper.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Weird, I'm almost sure I filled some description.
+diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
+index 4824f863fdba..aeff49bc6ba7 100644
+--- a/drivers/gpu/drm/tiny/repaper.c
++++ b/drivers/gpu/drm/tiny/repaper.c
+@@ -517,6 +517,8 @@ static int repaper_fb_dirty(struct drm_framebuffer *fb, const struct iosys_map *
+ 	unsigned int dst_pitch = 0;
+ 	struct iosys_map dst;
+ 	struct drm_rect clip;
++	const struct drm_format_info *info = fb->format;
++	size_t pitch;
+ 	int idx, ret = 0;
+ 	u8 *buf = NULL;
+ 
+@@ -534,7 +536,9 @@ static int repaper_fb_dirty(struct drm_framebuffer *fb, const struct iosys_map *
+ 	DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+ 		  epd->factored_stage_time);
+ 
+-	buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
++	pitch = drm_format_info_min_pitch(info, 0, fb->width);
++
++	buf = kmalloc_array(fb->height, pitch, GFP_KERNEL);
+ 	if (!buf) {
+ 		ret = -ENOMEM;
+ 		goto out_exit;
+-- 
+2.51.1.dirty
 
-> 
-> I'm less concerned about the missing message (it's clear what is happening here),
-> than I am about the fact that checkpatch wasn't run.
-
-My mailbomb script does run checkpatch for each patch, but I probably
-missed the warnings(*).
-
-(*) By the time I sent this series, I was playing with a new version
-    written in Python. It had several issues, however, mostly because I
-    was unable to find a way for Python to read an e-mail formatted with
-    git format-patch without mangling with content encoding. I got problems
-    on translations, with binary file patches and even with \n at the code.
-
-    On my original script, written in 2015, it was easy to lose checkpatch 
-    messages in the crowd on big series. I did several improvements on
-    it, like running checkpatch in parallel and re-ordering warnings to
-    avoid losing them, but it was done only after sending this series.
-
-In any case, checkpatch currently doesn't have any logic for Python
-or ReST files. It only reports patch descriptions issues like this.
-IMO what it is needed for checkpatch to be more useful for tools is:
-
-1. to define a coding style for Python;
-2. to add some code at checkpatch to handle Python as well.
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  tools/docs/lib/parse_data_structs.py | 29 ++++++++++++++--------------
-> >  1 file changed, 15 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/tools/docs/lib/parse_data_structs.py b/tools/docs/lib/parse_data_structs.py
-> > index 6c868f84f029..d28471a045f1 100755
-> > --- a/tools/docs/lib/parse_data_structs.py
-> > +++ b/tools/docs/lib/parse_data_structs.py
-> > @@ -143,7 +143,7 @@ class ParseDataStructs:
-> >          for symbol_type in self.DEF_SYMBOL_TYPES:
-> >              self.symbols[symbol_type] = {}
-> >  
-> > -    def store_type(self, symbol_type: str, symbol: str,
-> > +    def store_type(self, ln, symbol_type: str, symbol: str,
-> >                     ref_name: str = None, replace_underscores: bool = True):
-> >          """
-> >          Stores a new symbol at self.symbols under symbol_type.
-> > @@ -172,7 +172,7 @@ class ParseDataStructs:
-> >          else:
-> >              ref_link = symbol
-> >  
-> > -        self.symbols[symbol_type][symbol] = f"{prefix}{ref_link}{suffix}"
-> > +        self.symbols[symbol_type][symbol] = (f"{prefix}{ref_link}{suffix}", ln)
-> >  
-> >      def store_line(self, line):
-> >          """Stores a line at self.data, properly indented"""
-> > @@ -240,20 +240,20 @@ class ParseDataStructs:
-> >                  if is_enum:
-> >                      match = re.match(r"^\s*([_\w][\w\d_]+)\s*[\,=]?", line)
-> >                      if match:
-> > -                        self.store_type("symbol", match.group(1))
-> > +                        self.store_type(line_no, "symbol", match.group(1))
-> >                      if "}" in line:
-> >                          is_enum = False
-> >                      continue
-> >  
-> >                  match = re.match(r"^\s*#\s*define\s+([\w_]+)\s+_IO", line)
-> >                  if match:
-> > -                    self.store_type("ioctl", match.group(1),
-> > +                    self.store_type(line_no, "ioctl", match.group(1),
-> >                                      replace_underscores=False)
-> >                      continue
-> >  
-> >                  match = re.match(r"^\s*#\s*define\s+([\w_]+)(\s+|$)", line)
-> >                  if match:
-> > -                    self.store_type("define", match.group(1))
-> > +                    self.store_type(line_no, "define", match.group(1))
-> >                      continue
-> >  
-> >                  match = re.match(r"^\s*typedef\s+([_\w][\w\d_]+)\s+(.*)\s+([_\w][\w\d_]+);",
-> > @@ -261,20 +261,20 @@ class ParseDataStructs:
-> >                  if match:
-> >                      name = match.group(2).strip()
-> >                      symbol = match.group(3)
-> > -                    self.store_type("typedef", symbol, ref_name=name)
-> > +                    self.store_type(line_no, "typedef", symbol, ref_name=name)
-> >                      continue
-> >  
-> >                  for re_enum in self.RE_ENUMS:
-> >                      match = re_enum.match(line)
-> >                      if match:
-> > -                        self.store_type("enum", match.group(1))
-> > +                        self.store_type(line_no, "enum", match.group(1))
-> >                          is_enum = True
-> >                          break
-> >  
-> >                  for re_struct in self.RE_STRUCTS:
-> >                      match = re_struct.match(line)
-> >                      if match:
-> > -                        self.store_type("struct", match.group(1))
-> > +                        self.store_type(line_no, "struct", match.group(1))
-> >                          break
-> >  
-> >      def process_exceptions(self, fname: str):
-> > @@ -342,7 +342,8 @@ class ParseDataStructs:
-> >  
-> >                  # Change self.symbols to use the replacement rule
-> >                  if old in self.symbols[c_type]:
-> > -                    self.symbols[c_type][old] = new_ref
-> > +                    (_, ln) = self.symbols[c_type][old]
-> > +                    self.symbols[c_type][old] = (new_ref, ln)
-> >                  else:
-> >                      print(f"{name}:{ln}: Warning: can't find {old} {c_type}")
-> >  
-> > @@ -360,8 +361,8 @@ class ParseDataStructs:
-> >  
-> >              print(f"{c_type}:")
-> >  
-> > -            for symbol, ref in sorted(refs.items()):
-> > -                print(f"  {symbol} -> {ref}")
-> > +            for symbol, (ref, ln) in sorted(refs.items()):
-> > +                print(f"  #{ln:<5d} {symbol} -> {ref}")
-> >  
-> >              print()
-> >  
-> > @@ -384,7 +385,7 @@ class ParseDataStructs:
-> >  
-> >          # Process all reference types
-> >          for ref_dict in self.symbols.values():
-> > -            for symbol, replacement in ref_dict.items():
-> > +            for symbol, (replacement, _) in ref_dict.items():
-> >                  symbol = re.escape(re.sub(r"([\_\`\*\<\>\&\\\\:\/])", r"\\\1", symbol))
-> >                  text = re.sub(fr'{start_delim}{symbol}{end_delim}',
-> >                                fr'\1{replacement}\2', text)
-> > @@ -420,8 +421,8 @@ class ParseDataStructs:
-> >              text.append("")
-> >  
-> >              # Sort symbols alphabetically
-> > -            for symbol, ref in sorted(refs.items()):
-> > -                text.append(f"* :{ref}:")
-> > +            for symbol, (ref, ln) in sorted(refs.items()):
-> > +                text.append(f"* {ref}: line #{ln}")
-> >  
-> >              text.append("")  # Add empty line between categories
-> >    
-> 
 
