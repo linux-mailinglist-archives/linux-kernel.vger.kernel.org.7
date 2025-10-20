@@ -1,140 +1,75 @@
-Return-Path: <linux-kernel+bounces-861198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0772BF2074
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:13:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44B5BF20B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6A9189336E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:13:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 373354F7AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FC9253944;
-	Mon, 20 Oct 2025 15:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE672472A8;
+	Mon, 20 Oct 2025 15:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIIIdDA9"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XT9aA3oy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9EF1DFF7;
-	Mon, 20 Oct 2025 15:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6FD148830;
+	Mon, 20 Oct 2025 15:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760973199; cv=none; b=XrlwJQCf84K7czXtqc53iG08U9x7H8h6tQoqYxGYmkxtkqhoSk8lIFvp3J6kJN0DjWYWpXCFNiA/eEc2LE92bC8UE3NxJ692dSZ8sH88nxLWVCeYKKvqiNGgQY8ya1XAZPXG3JUV440Uc2c3DXi4z4fOfT65G2PVss+vQYCpS4I=
+	t=1760973239; cv=none; b=Iiw5NLROJO9W6fhhYCz3CZHjw+OiZH/hCIzALhRd2NHnA+ouBWGLC0yKrgMj+tk9zyFWWA3iJlVH3tuoxwmq/PmfHJ9T48OqH9A/P9/DHtxWBQ3LsBzogPGFq8Wauos57KUR8qC9uCAN6WlJPJM9V7RiYuQymgeb12zfVjXvuI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760973199; c=relaxed/simple;
-	bh=YqHSvPd7oXvJfa97f+UihKrYm4qSWMBIKneomnSlbWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CixbwNyzppKqAz6AQF0928ONoYNX4s3KWBz56uG7f5CNz2qhJ4ptfMx2/r1ig5q9yBeI3l2xCFDL9SOtqDhD9pP9WqUAHKvIyqBDC35nG9YJ2pWdNx5EMll3aPtPl5o2JK5WNaR2CKRdCfimCJ8n5Et6iltlNlNnUgK6w3jBuNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIIIdDA9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC74EC4CEF9;
-	Mon, 20 Oct 2025 15:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760973198;
-	bh=YqHSvPd7oXvJfa97f+UihKrYm4qSWMBIKneomnSlbWg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VIIIdDA9KQzEaz89j2hXJTZ67sI6wWiDy25wwwN0tp292Bec6F1OmUqRdYJBICquf
-	 GG1TmYy+LJdEP622X97TR3SCiL7iwhZYL9Oj40dzQgc+ZJS+c2VWv/RcAyVYThvRx1
-	 mVhSRu2avHN+FrR5uDg+XP6VsyrQym7sk7YKl2U8Jo3WnUlFGNfHeDNyeM4Ld6ZDxN
-	 Yc86V8EjMKY8agrMd2hJoJ9lUBE+HbDaStx59927+wNEWcyouoK3DcCa9rQknxGcul
-	 2vh5gbckgtelfWEPj+bFaYQR8ku0LTZsCg+jOowA9Wvrz6DsNS863lq0NeK2KFbEqN
-	 oVQ+8q/9v/tow==
-From: SeongJae Park <sj@kernel.org>
-To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev (open list:DAMON),
-	linux-mm@kvack.org (open list:DAMON),
-	linux-kernel@vger.kernel.org (open list),
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Subject: Re: [PATCH] mm/damon/sysfs-schemes: Validate nid usage in nid_show()
-Date: Mon, 20 Oct 2025 08:13:15 -0700
-Message-ID: <20251020151315.66260-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251020112824.144391-1-swarajgaikwad1925@gmail.com>
-References: 
+	s=arc-20240116; t=1760973239; c=relaxed/simple;
+	bh=GK5XpQbAgwQo3pNeDKAZeoqVl0TujKNotxfdbKkL1xE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ogd97e8o/1dpqke1FTSk+6Eb4HZybgcQUSPGvyFFTIfwbqWrbaKSA+zJ1cCh1IQ7mQ7uTKLIB3w0A46IrCA0rzlA2p0KSYhztR3KQuNDV+pJhTLbCUodLBg3gKtS2iuIZM9eG2PlsmDEZIbYv9/WS1FHqGPh2fbFyTaytDRTQ1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XT9aA3oy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA7D8C4CEF9;
+	Mon, 20 Oct 2025 15:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760973239;
+	bh=GK5XpQbAgwQo3pNeDKAZeoqVl0TujKNotxfdbKkL1xE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XT9aA3oy0kAcor+zAtjl3zGV2WZFKXLb96B16d79vfmXnJS5WvVKj2O/xh91RMkzB
+	 4Cn4n3s3aNtdvOa9XDh8oEolvfkQFNlL5jSjDrZ8FT8VYx7/vSV4Vcm3az/H79y+yl
+	 ao2o3sagz9/mlsyDgTBaLxuDrqpNSK1dj0YY8HLg=
+Date: Mon, 20 Oct 2025 17:13:56 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org
+Subject: Re: [GIT PULL] block-bio_iov_iter_export
+Message-ID: <2025102019-aerobics-broker-b66c@gregkh>
+References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
+ <aPHemg-xpVLkiEt9@infradead.org>
+ <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
+ <aPYCbIrvAkOf5L3g@infradead.org>
+ <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
+ <aPY3YKzGbIKxFbl-@infradead.org>
+ <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
 
-Hello Swaraj,
+On Mon, Oct 20, 2025 at 10:49:57AM -0400, Kent Overstreet wrote:
+> There was no need for you to drop the EXPORT_SYMBOL.
 
-On Mon, 20 Oct 2025 11:28:24 +0000 Swaraj Gaikwad <swarajgaikwad1925@gmail.com> wrote:
+We don't keep symbols exported when there is no in-kernel user of that
+export, sorry.  Otherwise, that way lies madness.
 
-> The nid_show() function previously returned the node ID (nid) without
-> verifying if the goal object of damos_sysfs_quota_goal was using a
-> node-based metric. This could lead to incorrect reporting when the
-> goal metric was unrelated to node memory.
-> 
-> This patch introduces a validation step to ensure that nid_show() only
-> returns the node ID for valid node-based metrics:
-> - DAMOS_QUOTA_NODE_MEM_USED_BP
-> - DAMOS_QUOTA_NODE_MEM_FREE_BP
-> 
-> For other metrics, it returns -EINVAL to prevent misleading information.
-> 
-> Tested with KUnit:
-> - Built kernel with KUnit and DAMON sysfs tests enabled.
-> - Executed KUnit tests:
->   ./kunit.py run --kunitconfig ./mm/mm/damon/tests/.kunitconfig
-> - All 25 tests passed, including damon_sysfs_test_add_targets.
+thanks,
 
-So nice patch, thank you!  I have a comment below, though.
-
-> 
-> Based on commit 3a8660878839 ("Linux 6.18-rc1").
-
-Maybe this is better to be put under the below comment section [1].
-
-> 
-> Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-> ---
->  mm/damon/sysfs-schemes.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-> index 6536f16006c9..23a73b94fe53 100644
-> --- a/mm/damon/sysfs-schemes.c
-> +++ b/mm/damon/sysfs-schemes.c
-> @@ -1112,7 +1112,16 @@ static ssize_t nid_show(struct kobject *kobj,
->  	struct damos_sysfs_quota_goal *goal = container_of(kobj, struct
->  			damos_sysfs_quota_goal, kobj);
->  
-> -	/* todo: return error if the goal is not using nid */
-> +	switch (goal->metric) {
-> +		case DAMOS_QUOTA_USER_INPUT:
-> +		case DAMOS_QUOTA_SOME_MEM_PSI_US:
-> +			return -EINVAL;
-> +		case DAMOS_QUOTA_NODE_MEM_USED_BP:
-> +		case DAMOS_QUOTA_NODE_MEM_FREE_BP:
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +	}
->  
->  	return sysfs_emit(buf, "%d\n", goal->nid);
->  }
-
-According to 'git bisect', I in the past actually added the todo comment.  But,
-I of now cannot remember why I in the past did think that's something to do.  I
-now think this function is better to be simply show the value the user has set
-last time, since users could set the metrics after setting nid.  Other similar
-parameters also work in the way, to be wiring-order independent, so that simple
-behavior would be better for consistency, too.
-
-I'm sorry if the wrong todo comment was confusing you, Swaraj.  Would you mind
-sending a patch removing only the todo comment, without introducing any
-behavior change?
-
-[1] https://docs.kernel.org/process/submitting-patches.html#commentary
-
-
-Thanks,
-SJ
+greg k-h
 
