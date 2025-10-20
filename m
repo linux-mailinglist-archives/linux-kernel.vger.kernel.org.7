@@ -1,168 +1,118 @@
-Return-Path: <linux-kernel+bounces-861584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC01BF3201
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C02BF3207
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 080C94F078F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AF6425CA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97212D6409;
-	Mon, 20 Oct 2025 19:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876BE2D6E48;
+	Mon, 20 Oct 2025 19:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XvAly5Lg"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kmMuzy7c"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660532BE7D1
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EAA2D5946
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760987562; cv=none; b=ZVNe9bh8yrJKeNLHs+KBP0Ht27eQYOP8JUxdj4HTh/3RhP2v3k5X8BUef2qlf8H6lnZcZ9c7Fz3FPgk4B1VpiWYhZLm4rNf/BSsaHW0bDHV5Lj1uKwbfYbjcfCvY/SAldcM1ayyl4wQpKNKhtK8d3DGv3ldlr1kVbT0MZY6uKH8=
+	t=1760987581; cv=none; b=Hn6Swf1ki67RMiG4zcMO7/XNN3WLBnMX70O8HKENdNg/W6371RNKLIhl+t9xHfARM+U6uV6qPq+7dFb6Pp0NMpxgjsEJ5ElAni4sd212MSU3aEF+rvzGeOhEX/bs/4RNqC+YpVCfQtXgULznCe+LQjpb3O71/qFwKYuCxFLG4BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760987562; c=relaxed/simple;
-	bh=Wto3PZwvEe+pg4mNkQ3S7CuwCsIYj9pOUY9FLfwcENY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ukChEstvqOAZaq2NNrmEPDve+CA4j6faBBw7cKbRgjJk+6MSGkKvn8TpN3C70h27UouPvOwuWY0rJlyfQDHYQhFE8xmBu2ZiSJeB/vx3GDhIV6Cm/ejDW/X3fPVtq4SjS+mUWiF8RRMxDnrpOw0zB/pkftjqMDj2cbaRc0RMXrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XvAly5Lg; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so5824618a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:12:40 -0700 (PDT)
+	s=arc-20240116; t=1760987581; c=relaxed/simple;
+	bh=hVT3hY6tz59tIIi7tKWV6ECT2wfeievMvQ7IIDTlaZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kKl16MYdXbLgwFkDszpkqBzqSGoRkR78sWV8/BK8DSp3O3KLIBTL7M0gxqo/9ddARBX/MKA0PI76tX5TWgvCMls2xLCLyovg0b6iIhEgCT6k4gO2DLjR88pGWdA8Zi4GeyPWB84lIepitT40fgOlgD96NLbleEJNPnSdr4rri9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kmMuzy7c; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b5e19810703so778056366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:12:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760987560; x=1761592360; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sc7VJXdo3UtIww5U8CPY9TfvbkDo2/ocS4PDbChl9Jk=;
-        b=XvAly5LgIVNg1r6SM0b498KKuGwwSxkTFJJWqf9TasecQehvR7tMLbz1GcsaBqlBQv
-         B/e3X58A+ECkNartOxhvHa+/6hewqgVgKedsMO+1fPQAMmyegfPIbELFOU38M7j4AXuV
-         vxBuwRzhc/8DzTjA0R9ktONyybRCMa5k+gc7u12nJv+CcYoUhv/fWyhB8bbrVKB+2g6V
-         XkaxSxY6c9/ED+nVlXpMwPMgg+PuTDVQJFhN+uE3s+VfN3AGyGlayGO0scujDZ3MSAsR
-         BJ3k1YhOsQZW06ZEO4I42EWizekiRDjjhwLUHwzctu8qHUBRFox+V1x8cHEcExsWU2qe
-         EYqw==
+        d=tuxon.dev; s=google; t=1760987578; x=1761592378; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zkbTEtqdRTfgmATvZD4Qc4DJJkydsbu/UNnHytD9sg4=;
+        b=kmMuzy7cenbrZS3mEbnvrl/Flo6h+Ut5Zy3e0i4/cyLMzgiPOHD07nx4GLSULE1XrC
+         BI40h9Z9GUplh1B0F9PRVvHqyjuIAZrM4wg9RtqeghSfLoL2HWsoF8eY/pssQoSPYP08
+         00s526vonubyBDyvM8X0AdXlcgAv+GdxHe6KnUO8CrLhjpbjXqubHK5QkACnfW+WltYr
+         m3ST8uuzAK6RfCwq8+JeonzRHypVmsNfHyvli3jOwRL+Cm4XVWmxaMw8Dg6YB+l/g/nL
+         /I4SrRXHn8keUbTN25quR4dp0kGmkMS1NkRdKo+scMmdKXx2xZUSOCr08QHMAtqIRG+o
+         9xmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760987560; x=1761592360;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sc7VJXdo3UtIww5U8CPY9TfvbkDo2/ocS4PDbChl9Jk=;
-        b=B/8xGO6k4xRACXWU41dVuECZVxfw5xxK7LykdLIZw33WwMpdtYjfgwKAiedsAFxznx
-         yqMEZFgxhAJuZpSJUPaTfbXcfvcqqAdcOd/+VhuqEHqU8Cm+6fAr7dhGrmtDlAAYAQSm
-         SSsK6k0m06WNC07D0qtVdDJAC6i/MH0PlenrIYe1qpuSvxIZPdoJ2N4GxUpYhoIISQJt
-         1cTTjINIDtW/WqCv8NHNSF4/R7zCfTQrFzJI0uX2xk/iV/KvwFPPxBYWp/WfvbhFzHVU
-         b6gvdLuUJuO1hixNOZ9fUWej6H32rh7/e9vDB1In99pAKA9EnoTYMBdrj4ao4x+YgvD9
-         mqLg==
-X-Gm-Message-State: AOJu0Yw3Con+Hj5ygst7m9iiAf3VE4pt0yEH2vYgGEa0qlswLpMJnTOW
-	jNr6N6q880K4FCR6wMhR9hPfXTjdVIbxXwx6c6dYzWMaXHSqbkQbWml/dedRlezxwhUYlS4Ja0T
-	d8z+NW90u1wt0jlpdm8I86SjiujbFNDEYFpv564W2
-X-Gm-Gg: ASbGncviux1CWExefDKCvH9HvQ7/7cjC0bJReHJdmKB3hGzE05zuufTCKnxhd4n6QBL
-	sGqxBVyIiAByLIGVIZt/Mo8FzFXxD/Zd+F6n8Iw3zkjqf/r0AvM1VC4NjZgMch57cJuXDRJS6y4
-	IOp6iSQIf02wQE529TDMY6LE0V6QRm1dy/3JzRe0etD2B6RA8GqcksDsIsnHYpFtBaXhaK339qJ
-	xnnNzHB6p6UIFd0Yr0dEw/1XzdBCspuNgRHUbAWClgN6gzrFlww4kaxj6CJs3/AWa+rx+FSDzAL
-	YPmyeg==
-X-Google-Smtp-Source: AGHT+IFHrTtTH6I3lTgO8qQ7DSrZQAKZFTUY6VZ8yzd1t4lfye4csFe9B9t1LuoroTCUBrs/OA+MDscdSNIVCjPeyfE=
-X-Received: by 2002:a17:90b:2ec7:b0:33b:6650:57c3 with SMTP id
- 98e67ed59e1d1-33bcf8ec60dmr18193076a91.21.1760987559706; Mon, 20 Oct 2025
- 12:12:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760987578; x=1761592378;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zkbTEtqdRTfgmATvZD4Qc4DJJkydsbu/UNnHytD9sg4=;
+        b=cjGrkUdZ3cURbqHpMZCPLotETuqlTErk24370tKrnBwOVweI/h6BE2Z/SedouXH8sz
+         qqTCuArCSVua9PfAop0vFIz/gsr+YOvQtBwzYKRhpLEsAS7oUlrf5QB2QnWvPyh7U5BY
+         mitUB9cg1RtR0ePzfuOOTJUTwDib5Yuym9EbFAMzp2hMsuH/6EBJkQi8Dkv0OG1ePl//
+         SVaAQra0ozvP3SVqShWwDhSWHne5HcbS+lDpumTUXn6h4F4vYZ+TA6lWAy6eaGGOvAou
+         ff/5Xqgg+D/pB9hNVbRJpqg71moRfK3m+JxUlnKcIWXPNcKbXPaXV5Wf5HlgPQSmZ1xQ
+         S0Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUpCDraM67yE/GOMs7lsAcKCNCDPTbnIIc+zfcgI+mIUlB2nqNiBgUN8dUOlZFiDz0Ki/sKTguN6OB9/l4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweD21xDhlWtnv9xuGk04y2lLXwS9WW7KvusUHOcw2zK8z/XxSO
+	LrByf9wyBvsaqlLdya/fPhDFcIP5kO25QL5cg4ZQO+esRkNJVKlRWeJL38x4bPt3rq0=
+X-Gm-Gg: ASbGncv6NoH4O+HJOzvqWL0jwCH2wSe+QPfDIhsXmEFqXyk2q3YqOPUngxlubaPgydP
+	8AdtqEtb1JPscZsjtiQ5Q3HYRnGQ8GRoLaBKmYhbMSFDUCW7L/dA0+N9KvxVHmhbAAJA48JSJva
+	+V04wBYHVipz/Km1Myi9j+aLgstDOOTh2uEM4QjaZFA/vYJptGRet+5uhR1VOav9MXGUNzWNGJO
+	6zM7IAkPv+GI42pRx8PrmTmrf9JDwee7FmGhxlbop3Kpi4hOuqcB7sg9izi6m9/qhpk21WgmUcV
+	BZHdZp3BX8KNgmO85MIYYEWLsLCXO24x4OHnbPcZQb73Eor8GXrfDGsFi9J9RZq/tc9uR20HIQQ
+	hjnHHJ07YlcdSGY2pIh9Kq1YcvbHAt1PRaZ8vv6hpaQDCJEQ53WCmEuGbDWod8vWJ3KUJcM9Tt7
+	2sYXxfUPMr
+X-Google-Smtp-Source: AGHT+IE+X5JpzMaImDhaId50MFj6FY2X9vUqqcmU/xQrocAAwZvjv+bdBOOQS4rP8CKvZNBKJCdcDw==
+X-Received: by 2002:a17:907:728d:b0:b3f:f6d:1daa with SMTP id a640c23a62f3a-b647443cf06mr1587664466b.37.1760987577301;
+        Mon, 20 Oct 2025 12:12:57 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb952046sm861152966b.70.2025.10.20.12.12.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 12:12:56 -0700 (PDT)
+Message-ID: <89e15554-e4a2-4f74-8ded-1fbec7ec5000@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:12:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b30e8d56703dfd84778fa73845eaa1ec@paul-moore.com> <20251017081050.1171969-1-zhanghongru@xiaomi.com>
-In-Reply-To: <20251017081050.1171969-1-zhanghongru@xiaomi.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 20 Oct 2025 15:12:28 -0400
-X-Gm-Features: AS18NWB9BWqh8x0h5dc2vyZvqxDGjfJS5_tcMkj-8g4gJY7kkSA9hd7IeNuvtrg
-Message-ID: <CAHC9VhQ_hv1ri1csrgGP+9RssCuJBDuOLSDowZRD5xZcDD2mPA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
- during boot
-To: Hongru Zhang <zhanghongru06@gmail.com>
-Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, selinux@vger.kernel.org, 
-	stephen.smalley.work@gmail.com, zhanghongru@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 16/31] clk: at91: clk-plldiv: add support for parent_hw
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
+References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+ <ab562d7a5492e45878aa3d4160ad9079571625b0.1758226719.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <ab562d7a5492e45878aa3d4160ad9079571625b0.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 4:10=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
-om> wrote:
-> > On Sep 26, 2025 Hongru Zhang <zhanghongru06@gmail.com> wrote:
+Hi, Ryan,
 
-...
+On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> 
+> Add support for parent_hw in plldiv clock driver.
 
-> > I would expect the number of active AVC nodes, and AVC churn in general=
-,
-> > to be very policy dependent; some policies and use cases simply result =
-in
-> > more AVC nodes than others.  With that in mind, I'm wondering if instea=
-d
-> > of using a kernel command line parameter to specify the number of AVC
-> > buckets, we should instead include an AVC size "hint" in the policy tha=
-t
-> > we can use to size the AVC when loading a new policy.
-> >
-> > Thoughts?
->
-> I previously considered supporting dynamic adjustment of slot size during
-> runtime, but this seems to introduce code complexity and overhead. Every
-> time avc_lookup() or avc_insert() happens, we would need to check if the
-> table exists. Adjusting slot size and accessing a specific slot might
-> occur simultaneously, potentially requiring additional lock protection.
+s/parent_hw/parent_data. Same for the patch title.
 
-I would imagine that a very simple implementation would simply convert
-the selinux_avc variable from an instance of selinux_avc to a RCU
-protected selinux_avc pointer.  As the AVC already uses RCU, I think
-the number of changes should be relatively minimal:
+> With this parent-child relation is described with pointers rather
+> than strings making registration a bit faster.
+> 
+> All the SoC based drivers that rely on clk-plldiv were adapted
+> to the new API change. The switch itself for SoCs will be done
+> in subsequent patches.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-* Ensure we wrap selinux_avc derefs with rcu_dereference().  This
-should be the only real change needed for lookups and insertions as
-every search through the AVC will start with deref'ing the selinux_avc
-pointer.
 
-* Update avc_init() to allocate the cache slots with a default value,
-fail if unable to allocate the cache memory.  If we ensure that the
-selinux_avc pointer will always be valid, we can avoid having to check
-it.
-
-* Policy (re)loads which would change the number of AVC cache slots
-would allocate and initialize a new selinux_avc then swap the global
-selinux_avc pointer under spinlock.  The old AVC cache could then be
-free'd according to RCU rules.  I haven't thought about it too much,
-but I suspect we could do away with flushing the old AVC in these
-cases, even if we can't, flushing the old AVC is easy enough.
-
-> When increasing slot size, we could directly copy the contents from the
-> old table. When decreasing slot size, nodes exceeding the new slot size
-> would need to be re-hashed and attached to appropriate positions.
-
-Changing the number of cache slots should happen infrequently enough
-that I see no need to migrate the old entries to the new cache
-instance.  It's a cache, it will fill back up naturally.
-
-> On my Android device, policies are fixed before system image release and
-> don't change or load dynamically during system running. Using kernel
-> parameters for adjustment ensures no additional locks or checks are neede=
-d
-> during runtime table access, maintaining simplicity and efficiency of the
-> lookup code.
-
-If your system does not update its policy over the course of a single
-boot, and presumably doesn't drastically change its behavior during
-that time, there is another, simpler option that we should consider:
-setting AVC_CACHE_SLOTS at compile time based on a Kconfig tunable.
-The code change would essentially be one line:
-
- #define AVC_CACHE_SLOTS   (2 << CONFIG_SECURITY_SELINUX_AVC_HASH_BITS)
-
-... with a corresponding entry in security/selinux/Kconfig.  That
-should be a very easy change, and if you set the default value such
-that AVC_CACHE_SLOTS remains at 512, there should be no impact on
-existing systems.
-
---=20
-paul-moore.com
 
