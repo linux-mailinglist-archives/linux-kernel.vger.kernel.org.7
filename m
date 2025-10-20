@@ -1,87 +1,123 @@
-Return-Path: <linux-kernel+bounces-861282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12546BF246C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:01:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FE0BF2478
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA59D18A0E8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:01:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 356964F5E69
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BE0283C87;
-	Mon, 20 Oct 2025 16:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE57283151;
+	Mon, 20 Oct 2025 16:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XjCctqcV"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="diCbvMxy"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D94281531;
-	Mon, 20 Oct 2025 16:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E5C283FCF
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976089; cv=none; b=qhMGvLEvSKNGUftfy7Q3gdcXC82pVbK47QpLLBOaHG/nzLBwlakZpQ96wKOMoR7DZB4EY0qUydbRt1nt1QvYdYTCZ7aLoKrGbilFuIsV6dtEilVgIJKfx7ZPWNM9QLRExYvWfFL5KrzHUpiboOhZ1zlKwqOu/CzY4qGX4P6LumM=
+	t=1760976099; cv=none; b=sgU5gNOS4drByzYkHeLEtb2mFiUc7FeLdDuKoqM3g6AtCvwB5nDKaP3Q39B/49dzCTMkAd4nR+Y5CBipSMBe7D/DAGLw6cZP5ha3LfMiVn3EtpZ6FVV2elGB+3nGa3bJiseahifq9VdHovA1uypMQvV1Ch19PLwlolzj3SI7L2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976089; c=relaxed/simple;
-	bh=8uW8TyZNB1QKAet4lyUQxOj5jxP90ZWaskUmPdpaLhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rmfY5R5vj1FebzQ8VInbeFDts7/rpKBTuU6JQVLl/c7NtF9Pyc+qRFStvGLV0xrDXGootggts5/x8Puo3TqgHDof1YGQKjobxgWgYCTn80pfHZuE4vZe85lQWFbfD8S6WsdsLACDmUVLHtm6r6yjjvgQQNE7fjRd5NRAuuxgSps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XjCctqcV; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cr0Xk4s79zlmm7h;
-	Mon, 20 Oct 2025 16:01:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1760976085; x=1763568086; bh=8uW8TyZNB1QKAet4lyUQxOj5
-	jxP90ZWaskUmPdpaLhU=; b=XjCctqcV7EzMLw1uLHXHHPlCQ7dG2V/GajH6YC+E
-	6xI1Q8rJxEYws4ArM/3dYAVyAiBvsSQC+g6WQFnv++A7X+pjfaD2vhutdVqupSqo
-	fyFLy7PxIVNKxRkKEE1EoC82ATtd7a6acK9ZpzU0vE9kYrDx/p+/jFTBfzuKiUJx
-	SNvB6fLE9H16JXn0Jfy/T74LdoKaU+T1HYH0ixDGAL0/Kbe7C/L2dc5v3+rgousU
-	2Z3HX6JLMKd2Z7+u7Kp0rjy6Y8mBWIcKRLGb4ZLEN9Hdubk2yxkdNejfvrFR2+gT
-	1Dm7N8ObrJFZRsM1ZwfBpvpHTAe3+mSYNEiN5iI3TwTv5w==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id dCUdWXd6rDGI; Mon, 20 Oct 2025 16:01:25 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cr0Xd30V8zlmm7x;
-	Mon, 20 Oct 2025 16:01:20 +0000 (UTC)
-Message-ID: <ad1498a6-3faf-4ac2-8c47-f1f3fa464f7d@acm.org>
-Date: Mon, 20 Oct 2025 09:01:19 -0700
+	s=arc-20240116; t=1760976099; c=relaxed/simple;
+	bh=lY512ww2GgxRIYZ3nYvRoncqZSBQoFPXtRikl+duERA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=hPfkIJq//AU4n3udEX/60VKsUqc2fAVgk6kAM0LvkR7HiwDScnfznzD+WHiB82mbN27U4sdc9TFpca+tgf5csy3YNjDVWlJjrAWlKRTJrvNkJIL34VJRo/Izjhe+AkocPiD6PzLTFSOFe02q3OdFUoIThw/UnfKvG/EnDlZasTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=diCbvMxy; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251020160135euoutp01a1ee36e7ad15d8e8a7aa21ff6f4f25b2~wPm29nWoA2236722367euoutp01T
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:01:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251020160135euoutp01a1ee36e7ad15d8e8a7aa21ff6f4f25b2~wPm29nWoA2236722367euoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760976095;
+	bh=Vz2ne046ZdvV+eht6cashAps0Hu4TwK9pfYylzXhh4I=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=diCbvMxyv6VHxaci38HRs6zoXY8d96RdjS2RPZsMICSvRkrneyUnNJQK/LZ/Uaw6L
+	 xKhKEh8hsY4h4LpLmmaQp2FgwMXXjvAaQ23ZKKXp/q88v7+QlSN/0+UZVzpoTvouWD
+	 rh/u5PEM7yXEQ2eTmgVRTObDe6WtX1W6+z/UzZLo=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251020160135eucas1p29eb8517e240f188f102e77713f85e29d~wPm2qtRxi1568615686eucas1p2V;
+	Mon, 20 Oct 2025 16:01:35 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251020160134eusmtip28bdd46101f68866229b0150d21bad517~wPm2Mo_TP1636616366eusmtip2o;
+	Mon, 20 Oct 2025 16:01:34 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa
+	<tfiga@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guennadi
+	Liakhovetski <g.liakhovetski@gmx.de>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Hans Verkuil <hverkuil@kernel.org>,
+	stable@vger.kernel.org, Shuangpeng Bai <SJB7183@psu.edu>
+Subject: [PATCH v2] media: videobuf2: forbid remove_bufs when legacy fileio
+ is active
+Date: Mon, 20 Oct 2025 18:01:21 +0200
+Message-Id: <20251020160121.1985354-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] ufs: core: Initialize a value of an attribute at
- ufshcd_dme_get_attr()
-To: Wonkon Kim <wkon.kim@samsung.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, peter.wang@mediatek.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20251020061545epcas1p2c494b8e57d424f1b2dfdcc9eef6e669e@epcas1p2.samsung.com>
- <20251020061539.28661-1-wkon.kim@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20251020061539.28661-1-wkon.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251020160135eucas1p29eb8517e240f188f102e77713f85e29d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251020160135eucas1p29eb8517e240f188f102e77713f85e29d
+X-EPHeader: CA
+X-CMS-RootMailID: 20251020160135eucas1p29eb8517e240f188f102e77713f85e29d
+References: <CGME20251020160135eucas1p29eb8517e240f188f102e77713f85e29d@eucas1p2.samsung.com>
 
-On 10/19/25 11:15 PM, Wonkon Kim wrote:
-> It needs to initialize a value of an attribute at ufshcd_dme_get_attr().
+vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
+potentially overwriting some pointers used by the legacy fileio access
+mode. Add a vb2_verify_memory_type() check symmetrical to
+vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
+protect internal queue state between subsequent read/write calls.
 
-For both patches:
+CC: stable@vger.kernel.org
+Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
+Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
+Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- dropped a change to vb2_ioctl_create_bufs(), as it is already handled
+  by the vb2_verify_memory_type() call
+- replaced queue->type check in vb2_ioctl_remove_bufs() by a call to
+  vb2_verify_memory_type() which covers all cases
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+v1: https://lore.kernel.org/all/20251016111154.993949-1-m.szyprowski@samsung.com/
+---
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index d911021c1bb0..0de7490292fe 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -1000,9 +1000,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
+ 			  struct v4l2_remove_buffers *d)
+ {
+ 	struct video_device *vdev = video_devdata(file);
++	int res;
+ 
+-	if (vdev->queue->type != d->type)
+-		return -EINVAL;
++	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
++	if (res)
++		return res;
+ 
+ 	if (d->count == 0)
+ 		return 0;
+-- 
+2.34.1
 
 
