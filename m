@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-860548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D9FBF05F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:03:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BC7BF05F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2547934ABEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:03:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B72364ED825
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603D2E2DD4;
-	Mon, 20 Oct 2025 10:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02F72F6563;
+	Mon, 20 Oct 2025 10:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hik/L0Ym"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r7Z9CO4C"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DC52F60C1
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848C52F617C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760954596; cv=none; b=JGADXQy0rUVkX0ndm7WJnD40hNra+mAUKHonP6MX68nVfpxov25K9dTk28P4CPhTFQjsdce5XTxGcy3PCZytQa069ro/nniRbWf1gRruu0juv0HpU4sbnr+Q/3D+fhpFs7j8dGwGSV9R8OXQB3jkSnLcArBr6REWQ738KpWDulY=
+	t=1760954598; cv=none; b=G3dYeo/1va0NrY0+/jDvcQXOYvi5tJ65ga0AkgHi/sV3U0UkXlrDDElNHPPXQ8TWPRSwO7z+Vd/RNcuP1uavEOlO5ou99Sp+ZggzhQPuzh76ivx05/fCnC+BRN4cKeMXAFpldil4jfwkRb0T7kopz2UMu4fLMtnWBqpjmeoIwYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760954596; c=relaxed/simple;
-	bh=nSkiL/f4TnAu0mDQVzVP/nlBjsjA0HpOQEjUL4Xrfcw=;
+	s=arc-20240116; t=1760954598; c=relaxed/simple;
+	bh=MQMJoT3KyEZpuYrADtpfJclikSuTuZ3cKoeRK6KI5WQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=pdgfbqqIU7QDzoQ7CSisZ260OlPYb+BbacnH9kf48cyeD2YvuVa7jFSh1xNDELPZQxkUPoVRCSo5QCbl/SJLOYxK81s4zXGEONKj7pwjW0fCHhX84q9jV199l3KXt7JnJA9lO8vKWfLv7o+NwLMoNXRblc9mgOxlXMvhORb3n0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jasonmiu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hik/L0Ym; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=XzBZjAwjrg5J8Vx1w3y6uqN/uiSsrWfPrImtTjtWRVA5XTpiqMRFsJYR2V4dUK3ljeGCmwG/FRtApmrBcK+b2mA7qSccLTH/RmTfjEsZuS5OSPNQv6ywMiXYFxqAzBi2N8zv4qxzQTSilwwM7+9A4V8u2Myif8ydLg3HIN78SFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jasonmiu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r7Z9CO4C; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jasonmiu.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2697410e7f9so111258785ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:03:14 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2909e6471a9so30282485ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 03:03:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760954594; x=1761559394; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760954596; x=1761559396; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lWYMfKzAMwpC3rMo+EO7RJrq8DN+4fyyYi/w0NuGFhk=;
-        b=Hik/L0YmzBz66RGb9Bn3vxB5aEW+Lfq7Srm3CsFcrdOGnvp3Vt77LO0bGSfCb3SbHw
-         9ws4cR8TlUF5/UMyrklIVzcD6vpyjmF80NlucG5OJp6hgfELat1wmgaikSrkQGfz7mpo
-         Bwk72rQUp93qdqf0m8LD9ARTMvYibQVCLICzYHhX7lTaQOxxqxGLClL+jKeBnCpmRwJk
-         B/xaL5JNH/kooqiaNwSc4aSZLsl89HomJxyIoIbh+i1W+6u8RvwtA3UdAUG1oB02bSiD
-         rprPITjZe4BzntEm9ropMybph7TaUvLHHNBVcGJ3JgyENqYOnznZQYkAXBL2qe2/9emm
-         iQNA==
+        bh=l/xrVZHpXvHRMhRkGHJU8i3nfYQNiwJDcAoOnm63ckE=;
+        b=r7Z9CO4CPmGUFDOuu1UzFVbW34VcEJkO06FQ5J53rySz1lostX0DpcdQVpvBucxbc7
+         FqkTFrCgfyfCq/n/dku6bT6ua0C3Gv91rdwXcuva+a6pfechv+P6c2buImBII4onH4qy
+         uqHOmB5xooLFA9EcUXBwWnBU4TdE7OBZ1TqlcC3Jh0wXyaETxrVaot7ZAUzNSoJJ6T/x
+         MSVmZ0fOpTqeZdEy7qsG6F36gVY+qlsC8mkON562E5tGmK04f2JeZOFlzTsbq1w/pDvO
+         jmbfSxOPGG5nQVKnpGflzKdcm93/L880FuJhy3Knf4tZQsKDlSy9pfGjKuQpTq7S38Up
+         nkWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760954594; x=1761559394;
+        d=1e100.net; s=20230601; t=1760954596; x=1761559396;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWYMfKzAMwpC3rMo+EO7RJrq8DN+4fyyYi/w0NuGFhk=;
-        b=EaWudesLtYDkG6fAj+9ZwbybI5BSOMltpU9czQHlw+oTWRSQuyYzvM29NwJNophLhX
-         btLcuqaPFKg9jgwEjT6Nb3O9O62i7QOiFejAq7l82gaDKet6GYaJZFJAu5ZkuMuBcwNd
-         9ypWEN24wvzHF8xi4bfgtnanO6Gh1YCzrDZZ3rtt+R3phdF2c1XsNRAP6ohe1lB7zcQD
-         hQ3+q6oYfxZZQEIDmWpZ5u3kFm8Fc+q+I2jazrh5cVvydvjVeylcDOqQ/OZ5tgsCbHsH
-         boc9DA0t1RRZ0zT89mn/1AgHXJMH+YyS8BpPnTR+8Wzg//7IJ9VRyGR86zF1pcy5dJMy
-         gSYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVU+155RUrSKFWvvqOqie29L6Xgx63ORKbuqs84HGWLuogFZnMNBNb0PGnq68GFmMYkg+lo56KdzkXsF1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKb7lUsiLxhX0f9lXjNDhfezVxvZfJzeqSmdbp4dIVG+WzFCAP
-	c7lkgwbP//yFi9BZGDhuu03sDaNBEmtTGHFXzCgQ9xOepqz9HgelURjy+YntVfO8j4eNATTLerW
-	1YnaY5TeQVSIk4g==
-X-Google-Smtp-Source: AGHT+IEYcb3O7V1ky5jKWFnqxa+/2YZV8/a9EZaxLZJsoQaIasplHaDB8TXWgZyuKJmpJffHcKoX/v4QSLaLJg==
-X-Received: from plll4.prod.google.com ([2002:a17:902:d044:b0:290:b0eb:f853])
+        bh=l/xrVZHpXvHRMhRkGHJU8i3nfYQNiwJDcAoOnm63ckE=;
+        b=JzrbSqyNNwfRbiKr4joCJd6mdRSjUpNxuA/WFmWKeM5Ck+LzvyBQBpIavGoHF0sf0F
+         fo8MYY8FtW3GVWOTYnHwd+K2WtAAwMff11rJkm0Oun7QXN8LHen/KTPcs6iCuNIVhHJo
+         nwpzZfmh/H+KKXkGWzNWGiNHbsJ6XcIvKSN2XlVP9NTKloewUQ2dEwW1JSDdw5AtxPPy
+         z/vwh15dX0l4cUtlH5b9oIEEgueHgv1mV0p/GeIugTu+q99PZ9dl4GhUpj2XH/rdDzIx
+         OgkuxXXDrl06kURiyP4OCNo4z10eQgitw1L9kRLntiOk9kbEaPJRUjKSaoXswub84M9j
+         fj1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQYCchjirAefayfno+5ZQHEc7zu4nfdNRwbvs8ZMuHlX1g+UtqAWO/SG4bsRKeWZ2BRwN7lNsPQS2jU9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrM3ZHZ/xwPUY3a56jhlh4UGwuxDErXVRkSGtn4oxFqjikHlbM
+	6VyzQVv3PqgGTc6m6tJ1WQN0dnp3bSiX+xIa6uDFW0g5FYwHR7z9dB70m3nU9TnOXBSPwnrNR8L
+	SChspEL0EwqOvLA==
+X-Google-Smtp-Source: AGHT+IEzFK4LZayLd5iN1w0uFbIESnuBTugytBDsMRryC9YXYqChyResDflUkGa6F21iVpOozbAUdMrrBXy9VA==
+X-Received: from plcr12.prod.google.com ([2002:a17:903:14c:b0:290:4eeb:bc7a])
  (user=jasonmiu job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d586:b0:268:db2:b78e with SMTP id d9443c01a7336-290cba42358mr144766195ad.60.1760954593812;
- Mon, 20 Oct 2025 03:03:13 -0700 (PDT)
-Date: Mon, 20 Oct 2025 03:03:05 -0700
+ 2002:a17:902:d60d:b0:270:e595:a440 with SMTP id d9443c01a7336-290c9cd4b48mr146517415ad.25.1760954595745;
+ Mon, 20 Oct 2025 03:03:15 -0700 (PDT)
+Date: Mon, 20 Oct 2025 03:03:06 -0700
 In-Reply-To: <20251020100306.2709352-1-jasonmiu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251020100306.2709352-1-jasonmiu@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251020100306.2709352-3-jasonmiu@google.com>
-Subject: [PATCH v2 2/3] memblock: kho: Remove KHO notifier usage
+Message-ID: <20251020100306.2709352-4-jasonmiu@google.com>
+Subject: [PATCH v2 3/3] kho: Remove notifier system infrastructure
 From: Jason Miu <jasonmiu@google.com>
 To: Alexander Graf <graf@amazon.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>, 
@@ -84,235 +84,114 @@ To: Alexander Graf <graf@amazon.com>, Andrew Morton <akpm@linux-foundation.org>,
 	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-Remove the KHO notifier registration and callbacks from the memblock
-subsystem. These notifiers were tied to the former KHO finalize and
-abort events, which are no longer used.
+Eliminate the core KHO notifier API
+functions (`register_kho_notifier`, `unregister_kho_notifier`), the
+`kho_event` enum, and the notifier chain head from KHO internal
+structures.
 
-Memblock now preserves its `reserve_mem` regions and registers its
-metadata by calling kho_preserve_phys(), kho_preserve_folio(), and
-kho_add_subtree() directly within its initialization function.
-
-KHO selftest is also updated with this deprecation of notifier.
+This infrastructure was used to support the now-removed finalize and
+abort states and is no longer required. Client subsystems now interact
+with KHO through direct API calls.
 
 Signed-off-by: Jason Miu <jasonmiu@google.com>
 ---
- include/linux/kexec_handover.h     |  5 ++--
- kernel/kexec_handover.c            |  3 +-
- lib/test_kho.c                     | 28 ++++---------------
- mm/memblock.c                      | 45 +++++++-----------------------
- tools/testing/selftests/kho/init.c | 19 -------------
- 5 files changed, 18 insertions(+), 82 deletions(-)
+ include/linux/kexec_handover.h | 22 ----------------------
+ kernel/kexec_handover.c        | 15 ---------------
+ 2 files changed, 37 deletions(-)
 
 diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
-index bc2f9e060a79..1f2ca09519a1 100644
+index 1f2ca09519a1..d345f301c57b 100644
 --- a/include/linux/kexec_handover.h
 +++ b/include/linux/kexec_handover.h
-@@ -27,7 +27,7 @@ bool kho_is_enabled(void);
- int kho_preserve_folio(struct folio *folio);
- int kho_preserve_phys(phys_addr_t phys, size_t size);
- struct folio *kho_restore_folio(phys_addr_t phys);
--int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt);
-+int kho_add_subtree(const char *name, void *fdt);
+@@ -10,16 +10,7 @@ struct kho_scratch {
+ 	phys_addr_t size;
+ };
+ 
+-/* KHO Notifier index */
+-enum kho_event {
+-	KEXEC_KHO_FINALIZE = 0,
+-	KEXEC_KHO_ABORT = 1,
+-};
+-
+ struct folio;
+-struct notifier_block;
+-
+-struct kho_serialization;
+ 
+ #ifdef CONFIG_KEXEC_HANDOVER
+ bool kho_is_enabled(void);
+@@ -31,9 +22,6 @@ int kho_add_subtree(const char *name, void *fdt);
  int kho_remove_subtree(const char *name);
  int kho_retrieve_subtree(const char *name, phys_addr_t *phys);
  
-@@ -59,8 +59,7 @@ static inline struct folio *kho_restore_folio(phys_addr_t phys)
- 	return NULL;
- }
+-int register_kho_notifier(struct notifier_block *nb);
+-int unregister_kho_notifier(struct notifier_block *nb);
+-
+ void kho_memory_init(void);
  
--static inline int kho_add_subtree(struct kho_serialization *ser,
--				  const char *name, void *fdt)
-+static inline int kho_add_subtree(const char *name, void *fdt)
- {
+ void kho_populate(phys_addr_t fdt_phys, u64 fdt_len, phys_addr_t scratch_phys,
+@@ -74,16 +62,6 @@ static inline int kho_remove_subtree(const char *name)
  	return -EOPNOTSUPP;
  }
+ 
+-static inline int register_kho_notifier(struct notifier_block *nb)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+-static inline int unregister_kho_notifier(struct notifier_block *nb)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+ static inline void kho_memory_init(void)
+ {
+ }
 diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index 2fc5975690a7..1138b16fa546 100644
+index 1138b16fa546..325b83a609fc 100644
 --- a/kernel/kexec_handover.c
 +++ b/kernel/kexec_handover.c
-@@ -688,7 +688,6 @@ static struct kho_out kho_out = {
+@@ -17,7 +17,6 @@
+ #include <linux/list.h>
+ #include <linux/log2.h>
+ #include <linux/memblock.h>
+-#include <linux/notifier.h>
+ #include <linux/page-isolation.h>
+ #include <linux/rwsem.h>
+ #include <linux/live_update/abi/kexec_handover.h>
+@@ -674,13 +673,11 @@ static int kho_debugfs_fdt_remove(struct list_head *list, const char *name)
+ }
  
+ struct kho_out {
+-	struct blocking_notifier_head chain_head;
+ 	struct dentry *dir;
+ 	struct kho_serialization ser;
+ };
+ 
+ static struct kho_out kho_out = {
+-	.chain_head = BLOCKING_NOTIFIER_INIT(kho_out.chain_head),
+ 	.ser = {
+ 		.fdt_list = LIST_HEAD_INIT(kho_out.ser.fdt_list),
+ 	},
+@@ -787,18 +784,6 @@ int kho_remove_subtree(const char *name)
+ }
+ EXPORT_SYMBOL_GPL(kho_remove_subtree);
+ 
+-int register_kho_notifier(struct notifier_block *nb)
+-{
+-	return blocking_notifier_chain_register(&kho_out.chain_head, nb);
+-}
+-EXPORT_SYMBOL_GPL(register_kho_notifier);
+-
+-int unregister_kho_notifier(struct notifier_block *nb)
+-{
+-	return blocking_notifier_chain_unregister(&kho_out.chain_head, nb);
+-}
+-EXPORT_SYMBOL_GPL(unregister_kho_notifier);
+-
  /**
-  * kho_add_subtree - record the physical address of a sub FDT in KHO root tree.
-- * @ser: serialization control object passed by KHO notifiers.
-  * @name: name of the sub tree.
-  * @fdt: the sub tree blob.
-  *
-@@ -701,7 +700,7 @@ static struct kho_out kho_out = {
-  *
-  * Return: 0 on success, error code on failure
-  */
--int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt)
-+int kho_add_subtree(const char *name, void *fdt)
- {
- 	void *root_fdt = page_to_virt(kho_out.ser.fdt);
- 	u64 phys = (u64)virt_to_phys(fdt);
-diff --git a/lib/test_kho.c b/lib/test_kho.c
-index c2eb899c3b45..e4307587a713 100644
---- a/lib/test_kho.c
-+++ b/lib/test_kho.c
-@@ -38,33 +38,16 @@ struct kho_test_state {
- 
- static struct kho_test_state kho_test_state;
- 
--static int kho_test_notifier(struct notifier_block *self, unsigned long cmd,
--			     void *v)
-+static int kho_test_preserve(void)
- {
--	struct kho_test_state *state = &kho_test_state;
--	struct kho_serialization *ser = v;
- 	int err = 0;
- 
--	switch (cmd) {
--	case KEXEC_KHO_ABORT:
--		return NOTIFY_DONE;
--	case KEXEC_KHO_FINALIZE:
--		/* Handled below */
--		break;
--	default:
--		return NOTIFY_BAD;
--	}
--
--	err |= kho_preserve_folio(state->fdt);
--	err |= kho_add_subtree(ser, KHO_TEST_FDT, folio_address(state->fdt));
-+	err |= kho_preserve_folio(kho_test_state.fdt);
-+	err |= kho_add_subtree(KHO_TEST_FDT, folio_address(kho_test_state.fdt));
- 
--	return err ? NOTIFY_BAD : NOTIFY_DONE;
-+	return err;
- }
- 
--static struct notifier_block kho_test_nb = {
--	.notifier_call = kho_test_notifier,
--};
--
- static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- {
- 	phys_addr_t *folios_info __free(kvfree) = NULL;
-@@ -191,7 +174,7 @@ static int kho_test_save(void)
- 	if (err)
- 		return err;
- 
--	return register_kho_notifier(&kho_test_nb);
-+	return kho_test_preserve();
- }
- 
- static int kho_test_restore_data(const void *fdt, int node)
-@@ -295,7 +278,6 @@ static void kho_test_cleanup(void)
- 
- static void __exit kho_test_exit(void)
- {
--	unregister_kho_notifier(&kho_test_nb);
- 	kho_test_cleanup();
- }
- module_exit(kho_test_exit);
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 117d963e677c..602a16cb467a 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -2510,39 +2510,6 @@ int reserve_mem_release_by_name(const char *name)
- #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
- static struct page *kho_fdt;
- 
--static int reserve_mem_kho_finalize(struct kho_serialization *ser)
--{
--	int err = 0, i;
--
--	for (i = 0; i < reserved_mem_count; i++) {
--		struct reserve_mem_table *map = &reserved_mem_table[i];
--
--		err |= kho_preserve_phys(map->start, map->size);
--	}
--
--	err |= kho_preserve_folio(page_folio(kho_fdt));
--	err |= kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
--
--	return notifier_from_errno(err);
--}
--
--static int reserve_mem_kho_notifier(struct notifier_block *self,
--				    unsigned long cmd, void *v)
--{
--	switch (cmd) {
--	case KEXEC_KHO_FINALIZE:
--		return reserve_mem_kho_finalize((struct kho_serialization *)v);
--	case KEXEC_KHO_ABORT:
--		return NOTIFY_DONE;
--	default:
--		return NOTIFY_BAD;
--	}
--}
--
--static struct notifier_block reserve_mem_kho_nb = {
--	.notifier_call = reserve_mem_kho_notifier,
--};
--
- static int __init prepare_kho_fdt(void)
- {
- 	int err = 0, i;
-@@ -2583,7 +2550,7 @@ static int __init prepare_kho_fdt(void)
- 
- static int __init reserve_mem_init(void)
- {
--	int err;
-+	int err, i;
- 
- 	if (!kho_is_enabled() || !reserved_mem_count)
- 		return 0;
-@@ -2592,7 +2559,15 @@ static int __init reserve_mem_init(void)
- 	if (err)
- 		return err;
- 
--	err = register_kho_notifier(&reserve_mem_kho_nb);
-+	for (i = 0; i < reserved_mem_count; i++) {
-+		struct reserve_mem_table *map = &reserved_mem_table[i];
-+
-+		err |= kho_preserve_phys(map->start, map->size);
-+	}
-+
-+	err |= kho_preserve_folio(page_folio(kho_fdt));
-+	err |= kho_add_subtree(MEMBLOCK_KHO_FDT, page_to_virt(kho_fdt));
-+
- 	if (err) {
- 		put_page(kho_fdt);
- 		kho_fdt = NULL;
-diff --git a/tools/testing/selftests/kho/init.c b/tools/testing/selftests/kho/init.c
-index 8034e24c6bf6..211d6bda8961 100644
---- a/tools/testing/selftests/kho/init.c
-+++ b/tools/testing/selftests/kho/init.c
-@@ -27,22 +27,6 @@ static int mount_filesystems(void)
- 	return mount("proc", "/proc", "proc", 0, NULL);
- }
- 
--static int kho_enable(void)
--{
--	const char enable[] = "1";
--	int fd;
--
--	fd = open(KHO_FINILIZE, O_RDWR);
--	if (fd < 0)
--		return -1;
--
--	if (write(fd, enable, sizeof(enable)) != sizeof(enable))
--		return 1;
--
--	close(fd);
--	return 0;
--}
--
- static long kexec_file_load(int kernel_fd, int initrd_fd,
- 			    unsigned long cmdline_len, const char *cmdline,
- 			    unsigned long flags)
-@@ -83,9 +67,6 @@ int main(int argc, char *argv[])
- 	if (mount_filesystems())
- 		goto err_reboot;
- 
--	if (kho_enable())
--		goto err_reboot;
--
- 	if (kexec_load())
- 		goto err_reboot;
- 
+  * kho_preserve_folio - preserve a folio across kexec.
+  * @folio: folio to preserve.
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
