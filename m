@@ -1,76 +1,71 @@
-Return-Path: <linux-kernel+bounces-860763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897FBBF0E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:37:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66726BF0D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4743E3A4191
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:37:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 273A14F475F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386DA2FBDE3;
-	Mon, 20 Oct 2025 11:37:41 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75002FFF9F;
+	Mon, 20 Oct 2025 11:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KD88SiSC"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEA02FC862;
-	Mon, 20 Oct 2025 11:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D42FC02F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760960260; cv=none; b=cf9yKfV3oZmb6Iesr2BNUDTEQzhCZarYRmznZeihiOWeaENJKQ0we5Yq6H+Hq1ewrGN6XoMd7V+qFppjx75/eK9Kau/JddN3RuYUdggQeadxo6MeemJ6jLiPgcyunrjsfEO+y6D+sVIMyxhM920VkV9xN78k40NmixMFU+Q3u10=
+	t=1760959727; cv=none; b=mWmffFzjYiPHzob7Qwdz9cqJ1nq991+mBudq9CVH6wkgn8MnizWTpW/oRLpT9QXpwvzJolNVMvb+sl2TL2MJqEZjZVnQhJsjkIFRqfU9rEPTEn7VV1m0HxSDPtBgfhIxfFuek972y7zDL/ecYqKkJOTy2+f+7dakntfGXJ/W3vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760960260; c=relaxed/simple;
-	bh=hrE5ynjN4EEBaatJqh+SMhKQdi9HVeog8IGfAP6kE+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=crOIMbQF7lu7eekHYflVtFBddC09JWw7tCcMVSJHfVW1DorByKdYE7WloISOt1O7iXmpw+QVVCJb/WOVtDG/KsZvu0nSwKrrCn3yu6ZhRUyEtRx9TuuKCdGcKfw//4SzHaebUU+/oAd7wEZmlkUUNtez/NY7TeJ/NDIlYMsd33g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2883f10aada911f0a38c85956e01ac42-20251020
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
-	IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP, DN_TRUSTED
-	SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:9e0a14a9-ab98-4269-b939-fd4775a0f249,IP:10,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:30
-X-CID-INFO: VERSION:1.3.6,REQID:9e0a14a9-ab98-4269-b939-fd4775a0f249,IP:10,URL
-	:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:30
-X-CID-META: VersionHash:a9d874c,CLOUDID:5827c87bff38bde25837b5837f87607c,BulkI
-	D:251020193614H7E4RRCI,BulkQuantity:1,Recheck:0,SF:17|19|25|45|66|78|102|8
-	50,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 2883f10aada911f0a38c85956e01ac42-20251020
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(220.202.195.150)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 252442399; Mon, 20 Oct 2025 19:37:28 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH] drm/msm: Fix NULL pointer dereference in crashstate_get_vm_logs()
-Date: Mon, 20 Oct 2025 19:37:08 +0800
-Message-ID: <20251020113708.7403-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760959727; c=relaxed/simple;
+	bh=2Y3zHvVYYIYQnqesMghSGh2XAgx9XoH6mHeizRVZVBg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=pkF2gM8tKrs71K6E3r7GF0bxJmkfwh71QE0KwNct3Ip66xUJReYdbBYj7RLZL/OVS7CiuwzRHm5lK/ktwt9ODYf5y6dBDd6NgufyDyBWgm31CHzfoND3ZVQViaR4Zv4MGq7+fBx5vDJuEyTveGlVXPGguzQ/XOIHbeB59kSu+Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KD88SiSC; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251020112842epoutp03a275cfa8fc8a644e32db7238a45816be~wL4mY52Bj2479624796epoutp03S
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:28:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251020112842epoutp03a275cfa8fc8a644e32db7238a45816be~wL4mY52Bj2479624796epoutp03S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760959722;
+	bh=d99WqiMlUBdTn6PeQ7Q3ge6pHf5Tl/n9lfXTYKrLsvU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=KD88SiSCoV3S38aXH9Bg4ihl0vpPz4M7B1iRxbzMFbcOhpunGfgqY+zYPEb8FZddz
+	 lAufT55YPYHWPR0J8KVpusiVJE4lEn3fJlZDhBdvpph/ct8K9E5+OU4LU60bAP1whr
+	 T5JRHU7X/DcbhocbOyDbm89Dom0wfBOJxV5m0YJ4=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251020112841epcas5p1a97db509a86daa8f3f9a5963dd333458~wL4lygz6T2814728147epcas5p14;
+	Mon, 20 Oct 2025 11:28:41 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cqtV06lXrz6B9m5; Mon, 20 Oct
+	2025 11:28:40 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c~wL4kUxNyC0411004110epcas5p2S;
+	Mon, 20 Oct 2025 11:28:40 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251020112838epsmtip26e0c8e69e04935bcd5cc27809ad2cd82~wL4ir1jis2749127491epsmtip2Q;
+	Mon, 20 Oct 2025 11:28:38 +0000 (GMT)
+From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
+	muhammed.ali@samsung.com, selvarasu.g@samsung.com, Pritam Manohar Sutar
+	<pritam.sutar@samsung.com>
+Subject: [PATCH] usb: dwc3: Allow usb role swich control from userspace
+Date: Mon, 20 Oct 2025 17:07:23 +0530
+Message-Id: <20251020113723.553843-1-pritam.sutar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,39 +73,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c
+References: <CGME20251020112840epcas5p28d8eded5200f096e7b80f71899371f2c@epcas5p2.samsung.com>
 
-crashstate_get_vm_logs() did not check the result of kmalloc_array()
-before using state->vm_logs. In low memory situations, kmalloc_array()
-may fail and return NULL, leading to a kernel crash when the array
-is accessed in the subsequent loop.
+There is a possibility of user needs for USB mode switching on boards
+that lack external hardware support for dynamic host/device role
+detection.
 
-Fix this by checking the return value of kmalloc_array(). If allocation
-fails, set state->nr_vm_logs to 0, and exit the function safely.
+Add an `allow_userspace_control` flag to handle such cases. When
+enabled, it exposes a sysfs attribute that allows userspace to switch
+the USB role manually between host and device. This provides flexibility
+for platforms that cannot rely on hardware-based mode detection.
 
-Fixes: 9edc52967cc7 ("drm/msm: Add VM logging for VM_BIND updates")
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+The role switch can be done as below
+echo host > /sys/class/usb_role/<ADDR>.usb-role-switch/role
+echo device > /sys/class/usb_role/<ADDR>.usb-role-switch/role
+
+Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
 ---
- drivers/gpu/drm/msm/msm_gpu.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/dwc3/drd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 17759abc46d7..51df6ff945d2 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -348,6 +348,12 @@ static void crashstate_get_vm_logs(struct msm_gpu_state *state, struct msm_gem_v
- 
- 	state->vm_logs = kmalloc_array(
- 		state->nr_vm_logs, sizeof(vm->log[0]), GFP_KERNEL);
-+	if (!state->vm_logs) {
-+		state->nr_vm_logs = 0;
-+		mutex_unlock(&vm->mmu_lock);
-+		return;
-+	}
-+
- 	for (int i = 0; i < state->nr_vm_logs; i++) {
- 		int idx = (i + first) & vm_log_mask;
- 
+diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
+index 4c91240eb429..589bbeb27454 100644
+--- a/drivers/usb/dwc3/drd.c
++++ b/drivers/usb/dwc3/drd.c
+@@ -515,6 +515,7 @@ static int dwc3_setup_role_switch(struct dwc3 *dwc)
+ 	dwc3_role_switch.set = dwc3_usb_role_switch_set;
+ 	dwc3_role_switch.get = dwc3_usb_role_switch_get;
+ 	dwc3_role_switch.driver_data = dwc;
++	dwc3_role_switch.allow_userspace_control = true;
+ 	dwc->role_sw = usb_role_switch_register(dwc->dev, &dwc3_role_switch);
+ 	if (IS_ERR(dwc->role_sw))
+ 		return PTR_ERR(dwc->role_sw);
 -- 
-2.43.0
+2.34.1
 
 
