@@ -1,177 +1,187 @@
-Return-Path: <linux-kernel+bounces-861231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790F8BF21E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DC6BF220D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCBA03BA8E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBAD91888544
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2DA223DC0;
-	Mon, 20 Oct 2025 15:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01DF26B2D3;
+	Mon, 20 Oct 2025 15:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h04n5cTz"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mwZ42Jk/"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E191ADC7E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E53F26AA93
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974378; cv=none; b=e8rqxodEeXodo3QEO/9g1z+3t3bmaKi/sCE34G2yNpseoeQaXkKqlaQH6W9gGfBAng9bqzVK47ntEYCPiVgSsIioHH1Rj+n6d7oEtNp0rr9C9BIh6b5KgsJA0n7/YU2HIHvAePC5Mec+lLxP2gXkxvMbN2PaRCCSsMmKe16kSOU=
+	t=1760974403; cv=none; b=AY0dPXfRv0Gp/Bua7FwStxnfeVK9Dr2CwxZ9/rrhpMaoETMx74dSODi4pDvuDUsrjMgPOxRh239eTc2v6eTaSl2+O7UVs4QIpBznd7T64ENy4RAqF10KU+rOOCyV1MiRyeBL9u4XiSM1NMiS7NhCt2Ydjb5B80qPEqQK+tKjhI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974378; c=relaxed/simple;
-	bh=ZPVXW8UxHiUYWn/Ly8epU5bZkQYHaGpTP9XwhVJOzBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JvuEWEUa64pNQM6GEl64Ij4t96XDdYtn5QR3kBBmc5QqNvJ475O2Xb5Kc4yppa5W+d2FxAxwlJYKtF9hJ21DHGUK0LrRFtLwGU1DtgTxbaXSAXn6AqK6VVr09ssQDOSemd9OEhQkS1cgG5mL074C4VTjvYM4zoWR6O2QoxV6eHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h04n5cTz; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1a207072-8623-40ef-bf3c-0edc1c6304ea@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760974373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WBRDLpDd/ovgwGQlK3jYx7rs+f8otlMFk8pGLq4TlNo=;
-	b=h04n5cTzSMkmrsYA4+eYbtS7m52Z4LUP0T1WtaJnEk7mDMUT/N2V+M6rp/W3CcqDnmAbDa
-	lYX5FI5fSi7ZM2MvDN5Gex4O3StnKa94PXNXoqZIZFcBdZ7eYcAq94rFOyFaGr75HWU9Q/
-	wNwB0mqfe0s5O8xIfLaYmsLt0mIFn8o=
-Date: Mon, 20 Oct 2025 23:32:17 +0800
+	s=arc-20240116; t=1760974403; c=relaxed/simple;
+	bh=SjkshpQwLTLRbD+eZtAvctlD+BBhoUWZEtmyD1byVuk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rz/YFCi6I9cixYtyazPhZkJYQKKLR9/SYMF0JHr6LR80ijeY5zmBUu8zX+OImCMjCarKvYM/uPJ+jLxP/avJ+z8hUCoG+bz1TwTvgHnhd3idqQga+SWinJxXiOGrj11T8fIf7whq2CyFgV3QwW7BikGwA1SdMXvRbBAK83+GhDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mwZ42Jk/; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b593def09e3so3004401a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:33:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1760974401; x=1761579201; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JuL9YY29cMVp873R6ZcsLh7ieA1MFSF5v2e/KTlo8Y=;
+        b=mwZ42Jk/XEeKaqBySkCoo9RDfP7GDu922QCtW1vEtzNxOV+q6CYSAjb2z8LkkmWIxc
+         glyBT6b7I4jtU9c8PACaGnfENlr/zpcUQrcIyeqcWDeH2ZQQhNZi6rA3rc73VuNYqdEu
+         skEW1ytP84IlrMiN66OzFBWU8RtpHR2YWlQj0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760974401; x=1761579201;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/JuL9YY29cMVp873R6ZcsLh7ieA1MFSF5v2e/KTlo8Y=;
+        b=SnDqyi77e8zH1dDuKIVRkklI9+enxtb/bTkkW7SvajupCwVCjVEcCr0C7G/j/0DGmW
+         lE5wL1qwR0S3DBTXqyqyy3YLG08UhcK7lKUMsV2WkjrXAAa55zsobiVGsUPAi4mwEWBb
+         ZHrFusm9IlXLiy62Zm8UJyPyeYUDwuLYtRglhW04dWN/59cFS+XcZkm44SnppzWdgeNV
+         hT2QjeZyS5jakkp1YEkXFyZpuDCMHIdmZSts6JNjwh81MIBfZR5dKInc5+aHyck7c3cQ
+         p3J8f/bvdH7xYcWykVxBzraDzl2YYrWxIMplCrXG/8HON7bt2pC1K9eeC9zxbFvoOLWA
+         1t9w==
+X-Gm-Message-State: AOJu0YzxkJOdBVChNmQghp88AvZbJ8groukXA6dmuXjUb4otZGO3U9AC
+	63UJh3YqdQdD3Xwk7nV4+y+VcljWiU0Q/PiVgSSW70zxiIzj/FF39Y7+PyVhMXVLC9MoctyP0tf
+	ytZA=
+X-Gm-Gg: ASbGncu/TAF4o6uG2r9xr/CKXc9neKpVncFs8GYH9+k8LjGP/GSk/fo2YtF/yrwrouJ
+	MHrHQwHt4UxNiwaTRjwQvdT/LYJmmXBbAOQZeO6BOtyJG1WXZjqw2OdHuwIjK2V4nv7DR6HtSXq
+	kzp1ikkyk16DT1+pzzWIyInYFN1pOnaDlogkdJ1XAHEpXBqDUkc2UR0pIlYKjhhWVN7oFEwHygZ
+	ihsQvFd1B8pmqXGQiHjiM7b7UDKjh8Ue4dUGIFUOnVZjZ8oaFfKrVZpNHxkz0TkRAJ5lCkb+G6M
+	kwWf116kWOrBa22AVhab32PIrjs3xyxpJieDFT9+J4WIqcUlS6fXV2ZDRwivjJaaNCxrZNDBZms
+	0tW5r8ug2UIaPQp3t3GazxiOHVgdGrwB4zQCzq+QjkWMPZJcohvar0/ysxLQWskWsrnSw2dsU8b
+	JNySdf5LcpacLmtkniPol8jxdUan2J1ZOw3pxO48NW6kVJ8DTy/iwijA==
+X-Google-Smtp-Source: AGHT+IH10PR0qy1Jp3DN/pY4JDCvLOAhaPA8pioi97w/FCYMrmvj0cI3Mlh+WzkOHYaNl6KAJ+g+NA==
+X-Received: by 2002:a17:902:ce8c:b0:25c:392c:33be with SMTP id d9443c01a7336-290cba4dbc0mr188107095ad.59.1760974401626;
+        Mon, 20 Oct 2025 08:33:21 -0700 (PDT)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com. [209.85.214.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246fcc2b1sm83251895ad.27.2025.10.20.08.33.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 08:33:21 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-290a3a4c7ecso48061395ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:33:21 -0700 (PDT)
+X-Received: by 2002:a17:903:4407:b0:27e:ef27:1e52 with SMTP id
+ d9443c01a7336-290ca1218dfmr158263555ad.35.1760974400457; Mon, 20 Oct 2025
+ 08:33:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: Factor out common logic in
- [scan,alloc]_sleep_millisecs_store()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- lance.yang@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251020115350.8175-1-leon.hwang@linux.dev>
- <7d9b4ac6-b0c2-4a0e-bee1-23f7a82eea72@lucifer.local>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leon Hwang <leon.hwang@linux.dev>
-In-Reply-To: <7d9b4ac6-b0c2-4a0e-bee1-23f7a82eea72@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251019100605.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
+ <2d514d61-121d-44fc-aec7-637dd0920de8@infradead.org>
+In-Reply-To: <2d514d61-121d-44fc-aec7-637dd0920de8@infradead.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 20 Oct 2025 08:33:07 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VNyt1zG_8pS64wgV8VkZWiWJymnZ-XCfkrfaAhhFSKcA@mail.gmail.com>
+X-Gm-Features: AS18NWAPBren7rlkQuvdorXHRNqUU6uFYIk47KWN9sTewjNzcUEs0p11g4GStXU
+Message-ID: <CAD=FV=VNyt1zG_8pS64wgV8VkZWiWJymnZ-XCfkrfaAhhFSKcA@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Wrap long kernel cmdline when printing to logs
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Chant <achant@google.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Francesco Valla <francesco@valla.it>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Guo Weikang <guoweikang.kernel@gmail.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>, 
+	Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Sun, Oct 19, 2025 at 3:23=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+> Hi,
+>
+> On 10/19/25 10:06 AM, Douglas Anderson wrote:
+> > The kernel cmdline length is allowed to be longer than what printk can
+> > handle. When this happens the cmdline that's printed to the kernel
+> > ring buffer at bootup is cutoff and some kernel cmdline options are
+> > "hidden" from the logs. This undercuts the usefulness of the log
+> > message.
+> >
+> > Add wrapping to the printout. Allow wrapping to be set lower by a
+> > Kconfig knob "CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN". By default, the
+> > wrapping is set to 1021 characters, which is measured to be the
+> > current maximum that pr_notice() can handle. Anyone whose cmdline
+> > isn't being cut off today should see no difference in log output.
+> >
+> > Wrapping is based on spaces, ignoring quotes. All lines are prefixed
+> > with "Kernel command line: " and lines that are not the last line have
+> > a " \" suffix added to them. The prefix and suffix count towards the
+> > line length for wrapping purposes. The ideal length will be exceeded
+> > if no appropriate place to wrap is found.
+> >
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> >  init/Kconfig | 10 +++++++
+> >  init/main.c  | 83 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+> >  2 files changed, 92 insertions(+), 1 deletion(-)
+>
+> Is this (length) only a problem for the kernel boot command line?
+>
+> What does _printk() do with a very long string?
+
+printk() will cut it off at ~1024 characters. The printing of the
+kernel command line is backed by pr_notice(), which is backed by
+printk(), which is where the limitation is. Yes, we could consider
+changing printk() to either remove the 1024 character limitation or
+have it do its own word wrapping, but I wouldn't expect people to be
+very receptive to that.
+
+Thinking about increasing the maximum printk() size from 1024 to
+something bigger, I'd expect the response that people should, in the
+general case, not be printing such long strings to the kernel buffer.
+
+Thinking about wrapping directly to printk(), I'd expect:
+* People wouldn't like the extra overhead added to every printk() call.
+* People wouldn't like the fact that there would be no obvious way to
+connect the continuation to the previous line (no way to know what the
+common prefix should be).
+* It wouldn't be obvious, in the general case, if wrapping should
+happen based on spaces.
 
 
+Printing the command line to the kernel log buffer is one of the very
+rare cases where:
+* There's a legitimate reason to print a (potentially) very long
+string to the kernel buffer.
+* We know that wrapping based on spaces is a reasonable thing to do.
 
-On 2025/10/20 21:53, Lorenzo Stoakes wrote:
-> On Mon, Oct 20, 2025 at 07:53:50PM +0800, Leon Hwang wrote:
->> Both scan_sleep_millisecs_store() and alloc_sleep_millisecs_store()
->> perform the same operations: parse the input value, update their
->> respective sleep interval, reset khugepaged_sleep_expire, and wake up
->> the khugepaged thread.
->>
->> Factor out this duplicated logic into a helper function
->> __sleep_millisecs_store(), and simplify both store functions.
->>
->> No functional change intended.
->>
->> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> 
-> Thanks this is a decent cleanup, with the nit(s0 below addressed LGTM, so:
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> 
+If we want this to be something generic, we could certainly put this
+function into "lib/", sort of like how print_hex_dump() sits there.
+That function is actually a nice parallel to what we're doing here. It
+handles adding a prefix and handles intelligent wrapping that makes
+sense for the data presented.
 
-Thanks for the review, Lorenzo.
+My own preference would be to leave the code where it is and, once we
+have a second need for similar wrapping we can move the code into
+"lib/". That being said, if people think it belongs in "lib/" now I'd
+be happy to split this into two patches.
 
->> ---
->>  mm/khugepaged.c | 29 ++++++++++++++---------------
->>  1 file changed, 14 insertions(+), 15 deletions(-)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 0341c3d13e9e..0b7915015e9e 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -129,9 +129,8 @@ static ssize_t scan_sleep_millisecs_show(struct kobject *kobj,
->>  	return sysfs_emit(buf, "%u\n", khugepaged_scan_sleep_millisecs);
->>  }
->>
->> -static ssize_t scan_sleep_millisecs_store(struct kobject *kobj,
->> -					  struct kobj_attribute *attr,
->> -					  const char *buf, size_t count)
->> +static ssize_t __sleep_millisecs_store(const char *buf, size_t count,
->> +				       unsigned int *millisecs)
->>  {
->>  	unsigned int msecs;
->>  	int err;
->> @@ -140,12 +139,21 @@ static ssize_t scan_sleep_millisecs_store(struct kobject *kobj,
->>  	if (err)
->>  		return -EINVAL;
->>
->> -	khugepaged_scan_sleep_millisecs = msecs;
->> +	*millisecs = msecs;
->>  	khugepaged_sleep_expire = 0;
->>  	wake_up_interruptible(&khugepaged_wait);
->>
->>  	return count;
->>  }
->> +
->> +static ssize_t scan_sleep_millisecs_store(struct kobject *kobj,
->> +					  struct kobj_attribute *attr,
->> +					  const char *buf, size_t count)
->> +{
->> +	unsigned int *millisecs = &khugepaged_scan_sleep_millisecs;
->> +
->> +	return __sleep_millisecs_store(buf, count, millisecs);
-> 
-> I think this'd be much clearer as:
-> > return __sleep_millisecs_store(buf, count,
-&khugepaged_alloc_scan_millisecs);
-> 
->> +}
->>  static struct kobj_attribute scan_sleep_millisecs_attr =
->>  	__ATTR_RW(scan_sleep_millisecs);
->>
->> @@ -160,18 +168,9 @@ static ssize_t alloc_sleep_millisecs_store(struct kobject *kobj,
->>  					   struct kobj_attribute *attr,
->>  					   const char *buf, size_t count)
->>  {
->> -	unsigned int msecs;
->> -	int err;
->> -
->> -	err = kstrtouint(buf, 10, &msecs);
->> -	if (err)
->> -		return -EINVAL;
->> +	unsigned int *millisecs = &khugepaged_alloc_sleep_millisecs;
->>
->> -	khugepaged_alloc_sleep_millisecs = msecs;
->> -	khugepaged_sleep_expire = 0;
->> -	wake_up_interruptible(&khugepaged_wait);
->> -
->> -	return count;
->> +	return __sleep_millisecs_store(buf, count, millisecs);
->>  }
-> 
-> I think this'd be much clearer as:
-> 
-> return __sleep_millisecs_store(buf, count, &khugepaged_alloc_sleep_millisecs);
-> 
 
-Indeed, your suggestion makes the code clearer.
-
-I'll update both occurrences in the next revision.
-
-Thanks,
-Leon
-
->>  static struct kobj_attribute alloc_sleep_millisecs_attr =
->>  	__ATTR_RW(alloc_sleep_millisecs);
->> --
->> 2.51.0
->>
-
+-Doug
 
