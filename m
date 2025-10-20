@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-861641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45511BF33E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804C2BF33EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40F6484D43
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A8C18C342B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434CF2D0636;
-	Mon, 20 Oct 2025 19:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3672F12D6;
+	Mon, 20 Oct 2025 19:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NPSWCDon"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="DrErvCRb"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB25B1EDA0B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39B42D839F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989207; cv=none; b=PI6C4Q5+mrra2RFEzircStSRRMTbhgQZDF317p2/wYl4Qar0qWtHqm6VosIAVwnNNc+SURITt+96+csEIPO7R4Za5iatm04+XvURxtdv96y9CV9KDqC7LAYcyd8rfm+MrnkJKUVIea0Rmb5y6iCKnPsuru8ySVpns6rDD8xn7sY=
+	t=1760989211; cv=none; b=URrGcKcLOq0pKm3W7DbxbshFSHpwkdpGAVuVTm4HWylyjmypPBCM+/TQFOx8Vn+cdzst7FuWybEdsZRBPO5ZQRMvA99GJfY4ZL7hFkgcvnpXkFPXjGLHh4VM1lgT+klwuf8zo40lc+H6IDzl3neZOh40PdWVqug2KFrVBKw20RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989207; c=relaxed/simple;
-	bh=ZSU5tICH5Ny/RPIhlf0jvQpFOlmoxiNsnQLwr8a3gfM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bPp0R8EDdyTPmBzCMGmiVlxWSrLzGYSt/clGP9N6Eks6aztrGozq6MjTFKq/NLY6zAVJxQkT6A1QSAUFnx2EqgKW5f5jut26IFxWSPP87avIbO8UNupTLF9uMZe9/MsDrTsvej+tw9m48gjQd+0N9yHL2gTKwR1HV7nQKiAt2v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NPSWCDon; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c11011e01so7601057a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760989204; x=1761594004; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M2WAqcTO2AOLyIz/FH6din/Z+AHju6tvGlNEoLz/PUw=;
-        b=NPSWCDonrg9r2lE3OufX5Q34+lv7yEkodSwzDuuwaCt32K1ZiyAF6/kaIpQADa5BKd
-         BToYFBjbjGwroEe5nw3P9s5vmo0JtcjZ/pTs+UfvJsHoYUa18XSIXDwnhykwEiJ+ENqM
-         fz/1qtD68zI/FCJOr9d9M7WJ81MKWVX2EtbUkrh/ajCk7ekBZTDxFud0Szq5O0Btef/3
-         oZwEFQtVjMzknabYdOaULgqXLFdrk9EFczExZLWtYDEhkhQYj2U/w/gPkg0oIIUnh7Zf
-         WVfVWCz7TFszFgOIAyf1rKyHCOX8CljsY71TKDhyGnZJ7TQCK4yIlU9r+KEHuCJhWk26
-         y4NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989204; x=1761594004;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2WAqcTO2AOLyIz/FH6din/Z+AHju6tvGlNEoLz/PUw=;
-        b=PPmyauDoQDlddj5+EYXJbKG+llwsisU5pqpjhV3jClWDqxUlPF4Nfyyho0o3+NLsF/
-         Cw9ge8mQLR9L+sbiGvcLDQbG9hbHXxzg2x+4k21eFgv93ZzszQ0QeKBe9sszu3mQjS2q
-         fGpof27XW5zaqGbK/E98CmraeBnX4R/Jm+DXkvvnCaBeoHRINsCnnIqxLjsnxHWNzw3B
-         UzVuu72b9WKEcx+/P3JHiAU48IimrCCZQk+ka3daSpGwiYaDBSMayNEzUFQ15k2B7e7/
-         wIuuXFVEc9JPeDqLasg1vaDVB/nvfkTQPLtC6mT0pzkOQq/H4kX+cc+dKT02FvZWyidq
-         qVHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnXLw7yXwizrgtitQdQ2+iJXsgb2nnkefWhDYYOPzYHq4BtVw6JVS0oWskqYkwETUk8nlB9IHcrWecMBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPCKS8DIyonfkO2Supo4mN0ygGZe74+lBSidL6hg0XMGxvJr2+
-	W/NF/i4pTJGvkK1EomSYO1pRlMNOIdkOCYykCWUFlTV1mGnoXRTbE/eU9Gywd+QvT70=
-X-Gm-Gg: ASbGnctnfwFHwAfkFF0vwgWlodx9XBC/CigfH3IYldqwkRZzaM0SYppv9GrPlI8RddQ
-	OdhzxJnC4xfVKnP47JZLez3fiHNfp3ZigyPbLv+Rcdxso5Aur3/u0l1sqxeceqpaRR/u9gZDZTG
-	6ruWdXZhJMzvviI4E0CCyCxSYlNl8lkRIr4zzPWtUaYyWVsdbo4VCJfyMvMKFEuWN6IFH8C+Q3n
-	P3FEKSRxRmkD9v4PwXfnw+cqhPbTIO8zHpANuXarYQZhPfoesQhpPjNFGgsC7QZic9PdqBOVa6P
-	DI0AlTvm/IGeY7RMUU3a2xUptHx7feZB00UmNRvt4tfhMxRg8b5WpuBUQqJkQVXuvTGoT1aZ9vu
-	akxbi8Gm0POCB6oAcQOFmQaPlxE8d0KhhD23+4WaqwW03pIqHH5CD5+iEx7EDM46Xixl2RqKuQm
-	9VR1u95wTW
-X-Google-Smtp-Source: AGHT+IF09RobC4gyw0AbqaF6/r2W5otyzw0fU6nmn3OYfhjdCkVeH+7JcW4ecWr0aHOx3GqX12KTnQ==
-X-Received: by 2002:a17:906:7316:b0:b3e:580a:184f with SMTP id a640c23a62f3a-b6472d5bc18mr1594908766b.4.1760989204253;
-        Mon, 20 Oct 2025 12:40:04 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb0362fbsm880048666b.39.2025.10.20.12.40.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:40:03 -0700 (PDT)
-Message-ID: <0e64be2c-4ef5-4731-a503-65fcb45835a1@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:40:02 +0300
+	s=arc-20240116; t=1760989211; c=relaxed/simple;
+	bh=fwOmHCsXzx/Fac0v9yeNlwfuzxzhrZw7Z/eeVgNNziA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=csoGjjfT+le5C04fuc9daHCr+UvwUDzjNM6/5KKzqjDpdHmoDmqnA7T/ZRs6Y3Jk7J/tdCmx5PuJR96HgKjyF2mjVDfRLYlVaXBiU9ACo0yFjg8p7G7uEPoYiZ7bs7nCCZiM9iTGTEvA1keIchkeLtHKFIcCsc5P47RA20XNVA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=DrErvCRb; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 2ECE66895BA;
+	Mon, 20 Oct 2025 21:40:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1760989206;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j17aJCB4WLcY6pIqkY+HxxakA4ilC4679SdKR5qqsDA=;
+	b=DrErvCRbY5XdWSAxr/j6+8Mg9DDf+e4IJu/1ZgwnhHY3Y/i7ZM19vncmTto3nNvjkG663c
+	PLYh9DC1KTsWvJQc51nmnJ9Bp3vHQs2eaYA1c1Of4jBo6unOL4QKQFvoLplT+DL7ulSBMV
+	nczDklR6c42y5LJGeM9VGTEz/fl9beJLH1RgGy4gcrTuapWeO7NrbnCXqWA6PJt60/M+uj
+	/66OaQ8HhxG36KCYNygez8Rs9d2kjTaBzEvjW7vDSrNJRMQWq7DGQ0ZoBzvsuSm30F1UvQ
+	asyl/XF6JCUdmyfjy9B6VJABxySXoeUChD6QP3FuQdsLhh7kU7WJJ7wRnr1RFA==
+Message-ID: <c046ace3d4569405e167db9cc6ede90048dc0450.camel@svanheule.net>
+Subject: Re: [PATCH v2] pinctrl: mcp23s08: delete regmap reg_defaults to
+ avoid cache sync issues
+From: Sander Vanheule <sander@svanheule.net>
+To: bigunclemax@gmail.com
+Cc: Mike Looijmans <mike.looijmans@topic.nl>, Linus Walleij	
+ <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Date: Mon, 20 Oct 2025 21:40:04 +0200
+In-Reply-To: <20251009132651.649099-2-bigunclemax@gmail.com>
+References: <20251009132651.649099-2-bigunclemax@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v4 01/31] clk: at91: pmc: add macros for clk_parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <0221c90ab3025c8e72fcdcf54c685da058c0fe4d.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <0221c90ab3025c8e72fcdcf54c685da058c0fe4d.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi, Ryan,
+Hi,
 
-On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Add helpers to set parent_data objects in platform specific drivers.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: enclose complex macro with parentheses.]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Thu, 2025-10-09 at 16:26 +0300, bigunclemax@gmail.com wrote:
+> From: Maksim Kiselev <bigunclemax@gmail.com>
+>=20
+> The probe function does not guarantee that chip registers are in their
+> default state. Thus using reg_defaults for regmap is incorrect.
+>=20
 > ---
->  drivers/clk/at91/pmc.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index 5daa32c4cf25..4a416d227c50 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -15,6 +15,14 @@
->  
->  #include <dt-bindings/clock/at91.h>
->  
-> +#define AT91_CLK_PD_NAME(n) ((struct clk_parent_data){ \
-> +	.hw = NULL, .name = (n), .fw_name = NULL, .index = -1, \
-> +})
-> +
-> +#define AT91_CLK_PD_HW(h) ((struct clk_parent_data){\
+>=20
+> @@ -82,25 +71,12 @@ const struct regmap_config mcp23x08_regmap =3D {
+> =C2=A0 .reg_stride =3D 1,
+> =C2=A0 .volatile_table =3D &mcp23x08_volatile_table,
+> =C2=A0 .precious_table =3D &mcp23x08_precious_table,
+> - .reg_defaults =3D mcp23x08_defaults,
+> - .num_reg_defaults =3D ARRAY_SIZE(mcp23x08_defaults),
+> =C2=A0 .cache_type =3D REGCACHE_FLAT,
+> =C2=A0 .max_register =3D MCP_OLAT,
+> =C2=A0 .disable_locking =3D true, /* mcp->lock protects the regmap */
 
-Missing one space here -------------------------------^
+As Andy mentioned, the problem you will now have to deal with is that your =
+cache
+is not initialized at all. Unlike the other cache types, REGCACHE_FLAT will
+zero-initialize its cache, perhaps making your cache sync issues worse.
 
-> +	.hw = (h), .name = NULL, .fw_name = NULL, .index = -1, \
-> +})
-> +
->  extern spinlock_t pmc_pcr_lock;
->  
->  struct pmc_data {
+You have two options to initialize the cache properly:
+ * Provide .num_reg_defaults_raw (=3D MCP_OLAT + 1). This will give you a w=
+arning
+   on probe about the cache defaults being initialized from hardware.
+ * Switch to another cache type (REGCACHE_MAPLE), which is aware of (in)val=
+id
+   cache entries. regmap will then init the cache on the first access to a
+   register.
 
+You could also combine the two, like the Cypress driver Andy referred to
+(pinctrl-cy8c95x0.c). In that case you get cache loading at init, instead o=
+f at
+first use, but without the risk of missing something.
+
+Best,
+Sander
 
