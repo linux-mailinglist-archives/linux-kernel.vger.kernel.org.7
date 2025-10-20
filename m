@@ -1,88 +1,113 @@
-Return-Path: <linux-kernel+bounces-860588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F1EBF0770
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5699CBF0773
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA693A413D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735D73A8154
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA032F5A02;
-	Mon, 20 Oct 2025 10:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6601F2F5A2F;
+	Mon, 20 Oct 2025 10:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3VT5mh1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9bFlltG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ADB191F91;
-	Mon, 20 Oct 2025 10:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADF6191F91;
+	Mon, 20 Oct 2025 10:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955211; cv=none; b=jT/tF4Dhk3GvIn5046TXYICczxkd9YYBRGwRroeKJYjNLCq1DnRL9L3PViC8UBSCkIhmWp0Ms3+supe6NfXkfAsd6osxsyLVpWJrszqpIgBbnIDA6D9YElMAgPvTlKY6qXzPokQr9RkvJZlMrQMVmOspnN/O4GnRpkC3y4DyFnI=
+	t=1760955226; cv=none; b=J+M6Vwd+sbPdVNWSFEcR+LyUtlTUuhkuSV6VXxgZy/ji3iaM6xSK79cDou0exF7D6GFM/wqeIENNYx2w2tsUWta3SKi2r/1Hw0tyJXK0Imw5uWiOHuudG9aQoJU+XTqUIfVep4r+4Z5HGaTJMjvvBITit1yzAGhQ6Ww/hvW69Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955211; c=relaxed/simple;
-	bh=MfxJouz/1s/HQ9XACEExFeHjaUCFWc22PevzBiJAZKg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=U/GgppkUfSHlaE7ke90nRXEG7Uw/OCiv8/AyXtElxEgqTfpuFJ5OStvTjgUkNj9pFcbAuVT7MYBMhnkt8Q07VItCpwQsF6n6zL5EeUBYKJ0iq7T3VUHxEE9tuGVCrPWs3xoS/J3Phfkx1yNNM+Z/a5Ls+pUUVANYav086VjIYQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3VT5mh1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E64C113D0;
-	Mon, 20 Oct 2025 10:13:26 +0000 (UTC)
+	s=arc-20240116; t=1760955226; c=relaxed/simple;
+	bh=tIWBCIsaoT4wnAs1pu5i22DQkL3EHE+ksWJLZLB4LAw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=myRZ27FrgwtgWkJWGsljlEaLwM/X0DbDqn+RfTs9oR30JocAUTvAKJRCEIzYcz4i6YwMdwfviI0KbVj/0/HMaFELYmh7m9AHzT7TOhYP/C6BrMKjqTCzskKnlYLz1xTvupe+AQduwt1Vw7m5J63T5Lqx1gClBaLfVqt9bmJNAsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9bFlltG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76DC8C4CEF9;
+	Mon, 20 Oct 2025 10:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760955211;
-	bh=MfxJouz/1s/HQ9XACEExFeHjaUCFWc22PevzBiJAZKg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=A3VT5mh1lThYKr2EZVY1Llk/2Tn090PKGz1/IKdZ3R9zR65yFw0aGoklyyv/AyHIA
-	 iHir/QFTDnPdkSJvlneLGBUKFl+WTcZnDFFlxnw71lF6mJl8Id6qWIFzhKfDPAkSMl
-	 Vo/WcCP4QMarxCJ0GQJOm2BvLD07DGiBCPYPdELwFMt2TUOT9d9vg69x7d9E/w3ZXg
-	 x4Elv5zrnMvV9c3b54aC7BZ4Jml/XolDUPw2kbzdJ51YMtcGeaP1y9LFNzmy++Tbd/
-	 nHByJuifTUWv7WPBuUKFa/EjEr/8l+wj8biLKLW7uyb0U3MGf7kpSF05JPZ2u/+Az8
-	 6sPL8+DqrqlWw==
+	s=k20201202; t=1760955226;
+	bh=tIWBCIsaoT4wnAs1pu5i22DQkL3EHE+ksWJLZLB4LAw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=c9bFlltGFqtt5hJ6R9USJ68fmCn76BJzACz3iwR5BQ9KfWOf1UxofbCAjTGK7+Qv8
+	 Zv982gL32EEs1fvzm+EPDMx0VSa7m1gbqW5QfuGxw2LKZTTI96fGEhdU2V7kQZpjGZ
+	 ZhK28j3GFGCuLYZiXczDz+mc32IO2eTjkWumxHtZU/w9Rah+G/3fxJJ6VdfgMbB/2n
+	 6+u7p+7pIWcDWiGb7mEkpfmeCPV6yZsw5QeEg/lh936EJ66ApQeC4HoP41ClMihKOT
+	 T0iFn+s0CzRd0m6+IJ9u47Z/qjFPlo3hqDEofLkdrh5tHPVgkostv+UmUs/X5ztkj5
+	 XqdaAx2mZPuMw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 20 Oct 2025 12:13:38 +0200
+Subject: [PATCH] arm64: dts: qcom: sdx75: Fix the USB interrupt entry order
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 20 Oct 2025 12:13:25 +0200
-Message-Id: <DDN2ITDOVCEV.50CEULQSFLVO@kernel.org>
-Subject: Re: [PATCH v5 03/14] gpu: nova-core: gsp: Create wpr metadata
-Cc: "Alistair Popple" <apopple@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251013062041.1639529-1-apopple@nvidia.com>
- <20251013062041.1639529-4-apopple@nvidia.com>
- <DDJJ4ECCSE2I.1EUAJRU9JBGNI@nvidia.com>
- <zwaefk62to77b5nyakeiboyj53fge3lysc3z7arp54tyyherdo@nsqhuig7bmbc>
- <DDK4KADWJHMG.1FUPL3SDR26XF@kernel.org>
- <DDMWPMS0U5PK.3IW61GCOI3GZB@nvidia.com>
-In-Reply-To: <DDMWPMS0U5PK.3IW61GCOI3GZB@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251020-topic-sdx75_usb-v1-1-1a96d5de19c9@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAFEL9mgC/x3MQQqAIBBA0avErBPUkqirRETqVLNRcSqC6O5Jy
+ 7f4/wHGTMgwVA9kvIgphgJVV+D2JWwoyBeDltooqaU4YiIn2N+dmU+2QraLs6pvfGNWKFXKuNL
+ 9H8fpfT/Sn2g2YQAAAA==
+X-Change-ID: 20251020-topic-sdx75_usb-04acb193d35f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760955223; l=1226;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=3Bp8P7Ht03R3ivd5SxVXsCR7SjX9DbSkryw+IQzbxBQ=;
+ b=txCiNXt1ROeRMb0luzl/Fx7NoCezQa9HpsH15VDXAKyuZqJCj3jRajOQJeOELwkWsyZRQup+I
+ Zko9huXy4MHBNmryXUyOOG2t30M+TWho933v75enPR/H0bJ0LsVJENf
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Mon Oct 20, 2025 at 7:40 AM CEST, Alexandre Courbot wrote:
-> The alternative would be to have const functions like `usize_to_u64`. It
-> doesn't look as smooth as the extention trait, but can be used in const
-> contexts.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-That's what I thought of, exactly for the reason of being usable in const
-contexts (at least for a quick fix in nova-core).
+The DP and DM interrupts are expected to come in a different order.
+Reorder them to align with bindings.
 
-Whether we want an extention trait and a separate temporary const_usize_to_=
-u64()
-etc. can be discussed in the context of making it common infrastructure.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/sdx75.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
+index 75bfc19f412c..f26ba90ba66d 100644
+--- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
+@@ -1043,13 +1043,13 @@ usb: usb@a6f8800 {
+ 
+ 			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
+ 					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&pdc 9 IRQ_TYPE_EDGE_RISING>,
+ 					      <&pdc 10 IRQ_TYPE_EDGE_RISING>,
++					      <&pdc 9 IRQ_TYPE_EDGE_RISING>,
+ 					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "pwr_event",
+ 					  "hs_phy_irq",
+-					  "dm_hs_phy_irq",
+ 					  "dp_hs_phy_irq",
++					  "dm_hs_phy_irq",
+ 					  "ss_phy_irq";
+ 
+ 			power-domains = <&gcc GCC_USB30_GDSC>;
+
+---
+base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
+change-id: 20251020-topic-sdx75_usb-04acb193d35f
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
