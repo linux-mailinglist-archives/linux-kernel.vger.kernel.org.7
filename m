@@ -1,164 +1,140 @@
-Return-Path: <linux-kernel+bounces-861486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98D6BF2DAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:05:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3ADCBF2DBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8624018C15B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:06:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E98A34E39F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C572C0F7F;
-	Mon, 20 Oct 2025 18:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3E62C027F;
+	Mon, 20 Oct 2025 18:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R8lNXOv9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="yL2syj3y"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A15423EAA3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81752C0F7F
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760983533; cv=none; b=cHYw9EzUx0e0EBhFRrNG6iQarr/naJFlcH2XNOwnUftGIygyhHkLAT/b4zImUQNyKdmiyilA3jCBKIqK/oRffuz/bKSxMRUTQfisq0zr0oI18YHfUk+q6Ftqj6V1hdtS15qOoLEd5oyo2wCJ9Oi96xkeb4jHl4spDqMwGsEHjS8=
+	t=1760983611; cv=none; b=Fpue493rkzMPtoDqewf4gQka72pcbMDoNUdH6VRnrpHbdtAmSul0K36lOH8U4wh7nOEmUCVCz/NkASxtdtlxV5y53n7a41RnCZZgbMCUIbo4lAkDMYhrdvpAtQ7cZzu0/Zp4cY+Dhyei7hvLDwkgVHsPRmlXlKw3tswCEIE5jac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760983533; c=relaxed/simple;
-	bh=uiD1heCbyfEANV0HzWxufVPtGQSjmgjqtnG/kBnzihg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7N6Csa2ktXF5FAVN3+ANNmt8RX9LiEu2c8o5cRgAbbi0IgGrH/Q5mWXmw1MeY9WLKgd/KCjOmwM6aIxQg5xG1mny4yKJOAsoKBG5DLGrkQy4//lSTs+3cZo1EV3FUxZnPsoR4bumxogmvcpuXM/R0JYtbpY8b+R72nm065y38M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R8lNXOv9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760983530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=36S/ZmC1rovvSywQh09PqWqsI9Syym0VZe1uvVyj7To=;
-	b=R8lNXOv9OPBthmC/8aMIxYngBBsCZIM+XhrZbHTPApCiOIxBZsjqDN/isvzJI5RhpeAIKn
-	njMK2znTSk3kaow1XpHhXuo2saLT79sn5fvHuAJT9YLHmPK5M/IEV58SD02iK/H0zKo+r2
-	PwpPDXfLS/dwcuQMalAbzx3OiECGu2Q=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-466-DINA2zOROnKHUNjkOJ3fHg-1; Mon, 20 Oct 2025 14:05:28 -0400
-X-MC-Unique: DINA2zOROnKHUNjkOJ3fHg-1
-X-Mimecast-MFC-AGG-ID: DINA2zOROnKHUNjkOJ3fHg_1760983527
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47107fcb257so69082165e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:05:27 -0700 (PDT)
+	s=arc-20240116; t=1760983611; c=relaxed/simple;
+	bh=JSD7zMinFfnI7sgmhr156UXVmdLj4D4xD4iX+dvck18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bmTKVTOxBpKQAedpbU9FsIxZ8sLIGWhPsSeX5xdDaLKLZqz3wGKWjQCnToYkkuqxRqn4f2mSEZ7aVzgYwvzDHrNM12J5LDkXaL77VwY1Q1h0XXnGI8d0Y6n0sgXsvZW9bxcxBd+3me9oO3AJERPl3inMDa0lbBxR6MACvx25fjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=yL2syj3y; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-940d327df21so101523239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760983609; x=1761588409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5AQlGU0mYQ6QSlBwOOl9dIxsMJVc/9az/WvQw51SeIA=;
+        b=yL2syj3yBgiXoEj8bb/B4DosqxIP+OWLeFYusqaYaOFKse1m9BUCVCw2xd6rosL4Ge
+         b61WVl1U8teBPjgTYcAZ485yPevfWJVl16PANjLe/pSOxFb/M69XPbFZqikhj2YcfuCm
+         2VnEYENQX5mhJdGrn1p1WG61d0g9FB7Xo3aT4YnawCag4KKV5ItO7xDw6u9YUNNWoThr
+         RDPfNB/+oc/dDBpfkOBfeR1SIk/RhCiklfJYLe+wc8UCOyuRJHG5p7zx+o4ejt2MxtRv
+         nfTIFI2/fpsNT4W6VULv+NLKqAD2JlTJ4uS2eJBIP6o5mS3YrrsMxwAcOx+QZTcMyA8H
+         uskw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760983527; x=1761588327;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1760983609; x=1761588409;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=36S/ZmC1rovvSywQh09PqWqsI9Syym0VZe1uvVyj7To=;
-        b=aODKbu2liFakILYcbRXh5j8PIuIQy7WNtg64+aguKKmh9yzXgLSzVtL4gQDWxKMrvZ
-         W6+O8UdTWYKl/5yh06tQolJyRifQYC5c+XimsYLYTOStIriX3VPuc10W1mpblEjUmuYc
-         gqx4GMZzxxExUA3YM6sLWPINJD+2soa8gPhh9xWTZscBTaXK+OgBh6GaMOQkXmHow7cp
-         0JXPEsrIDsgnO4XZHYn0uo5SI4yJAdCIW1hT7IEUgT6mo0aC1/HqKqEOFhuuHo5BEKk2
-         n9LUSc1sU5sDJ3BnJzK8xj2UlgcfLkj0tojdOIcxtvGND+3bZMUFXA86KCxoaBHavtgW
-         iAoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjB2m+2S/O8P5O6134xmYCJYDbBe5xZ72cE+7PcFr3GW9LFVdnDbA04PdU3AsQdI8LNv1/YcNYivG52aA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUn46Q1L5ZMl5zi5xiyTDyNAVUM/IGHuF6gpr5l8zUqYO1cDv2
-	h2syfI5jpUbeGR0w6oARrBy43sQ00xzPTHhnLlvJpwNVGiJoluo6Chzd73z9Aq5CchjZi3h0afs
-	VoqVk39F6fRN289EN0Pz95iAaaLpLDTqh7hBiWfyfR06mjf2qAm7xxsHkJkC/HndcOQ==
-X-Gm-Gg: ASbGnctyHgItHbTIy+IZn/OIyCmteopo6BIwezs4gcZR7mqmVJu0ovQhcwAPV7KJZBQ
-	+BIo3NrV2Q4t8Y7GI9zrch/Wq0whpkA9FPXL8xAGTimjzK/fC9WNpx/HSsjSa0FTFoHswoBuc+O
-	UHj/ONpI2LT1uEMAy7Vbk/1+ZL9zYr3w2s52SDq3YFE6glft1DpRu5c04wqWhm03HwWZY+YrS5e
-	ko7rTS0fphuJz48EV7tAf6MxpFkSkGD0eRXohh55/eBqbyYW1a+fEC28PjJ0NnXHYn4LlwWVblx
-	kYU34bCXDDnIFAgo5A3VIylR+NAUIij8J/QH6Kte+wAOk0uMSiFfyZjl2KfjyyX4Zmg+
-X-Received: by 2002:a05:600c:8b0c:b0:46e:731b:db0f with SMTP id 5b1f17b1804b1-47117912b5fmr117275925e9.28.1760983526901;
-        Mon, 20 Oct 2025 11:05:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKOn2rHJXxk1XGL7fh+oZbTp9TC5fyJbTHX01pmlPdHVguxKM1fW81SYnR+boP0ptXFuQoEg==
-X-Received: by 2002:a05:600c:8b0c:b0:46e:731b:db0f with SMTP id 5b1f17b1804b1-47117912b5fmr117275635e9.28.1760983526269;
-        Mon, 20 Oct 2025 11:05:26 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4731c95efb9sm115965645e9.8.2025.10.20.11.05.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 11:05:25 -0700 (PDT)
-Date: Mon, 20 Oct 2025 14:05:23 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8 17/19] virtio_ring: factor out split indirect
- detaching logic
-Message-ID: <20251020140158-mutt-send-email-mst@kernel.org>
-References: <20251020071003.28834-1-jasowang@redhat.com>
- <20251020071003.28834-18-jasowang@redhat.com>
+        bh=5AQlGU0mYQ6QSlBwOOl9dIxsMJVc/9az/WvQw51SeIA=;
+        b=stibUXirowfm62qUxUfV/FHZFISFoj0lMKJpGOkeKaoe+6nuCKvIKVEXQo2IAHUtid
+         WX1M0s0ehYXoMsew/rbCNmsaeFscs8tJyTOrYfDrpGXagpFgpYQ97np1gGzAEUuc83yL
+         u9lo/XmYOA21GNNQBcejg0Cyol0Xd4DgjjrurqNriTWeH3DwjuqdlI1YCfBALytihnjH
+         m6hFs80nxYdf6vM2kA0rppnyYg4uUuZE75m8bjV9sZ9WrCyQZIhhcdBekZ7RKbybGT+/
+         c9wXLfm5UJNKswQmZ+zzupPN3/1grSCL/m8X3MQ6vdPh8/k/k9GBs3dYUGGVXebbATvU
+         tasA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWmxu0QmLwsYB8ok+OWXy0eKMCLyUxxt0QFpouQYlyNIeL9/4miE5QtM6bl2WDTXN5Hb0dyD6D4Zdhgpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVAf/zcbE2RdMuxcGANGpILro6hG9VzUOWcXI7KqvH6NuGASgq
+	5IeJ0kXPa9l5N5YAc9nwZdcc79LXwaLwaTm710iAQ6cSW6InhGWG6aSouNy48hF+wLY=
+X-Gm-Gg: ASbGnctis3J8Q0OvXgEqG458gFupm+isgDSHDo0rH7L7DyfLwcUgd9WaIzTSbGQhkyl
+	6nbJrkuX0FS6PfNp1nQ5aEGzlOhWp3D6300aS35AfDlM77WLkQJYpuQkQS2L3EM6GGJ/oz066ep
+	dQ/yPDJSGOsU58Glk+TgCcAIefYBJbMcOGuMZVEZJqrLICry5LDAR/fs7UGY7/FuNeFgF3KYBgq
+	3qgw9QiwR6MtYfnEN2bGpcvsYk3hDtL4IV83mke5FqRJK0YYShtD4UOsRVYrgZvYaPN3mM2jFwB
+	y9Ghvy/NP6zXT3dYhoLP7DjHkf4+62iO1X4ktM0eh0S6PT1Qx/TMXBFc+ZxVSanlEnRWicPZLJl
+	Ya5DjZXUWjxuJHe0TydA001comgEPOdwrH/b089RTmg1a+Rpgl3j3Y1b9+0k60W5HGKy9OK2WHm
+	x6Z1t7vN71ZdOzVAUGMqFVs90YKrKPsD0Q7KoBPhQ=
+X-Google-Smtp-Source: AGHT+IHBHKCx2YHdGAi+SFpNeca9RlxGKdmS/mH/TPdmxuSdnx64GJbh4fpZfHVsL9gExE3U3dhRbA==
+X-Received: by 2002:a92:cda3:0:b0:430:b4ca:2696 with SMTP id e9e14a558f8ab-430c514e290mr212982775ab.0.1760983608698;
+        Mon, 20 Oct 2025 11:06:48 -0700 (PDT)
+Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a961e88csm3172542173.15.2025.10.20.11.06.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 11:06:47 -0700 (PDT)
+Message-ID: <b28d71c4-d632-4ee5-8c4b-270649fca882@riscstar.com>
+Date: Mon, 20 Oct 2025 13:06:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251020071003.28834-18-jasowang@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] dt-bindings: spi: fsl-qspi: support SpacemiT K1
+To: Conor Dooley <conor@kernel.org>
+Cc: han.xu@nxp.com, broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, dlan@gentoo.org, guodong@riscstar.com,
+ devicetree@vger.kernel.org, linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251020165152.666221-1-elder@riscstar.com>
+ <20251020165152.666221-3-elder@riscstar.com>
+ <20251020-blinked-primary-2b69cf37e9fe@spud>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20251020-blinked-primary-2b69cf37e9fe@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 03:10:01PM +0800, Jason Wang wrote:
-> Factor out the split indirect descriptor detaching logic in order to
-> allow it to be reused by the in order support.
+On 10/20/25 12:39 PM, Conor Dooley wrote:
+> On Mon, Oct 20, 2025 at 11:51:45AM -0500, Alex Elder wrote:
+>> Add the SpacemiT K1 SoC QSPI IP to the list of supported hardware.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>> index 0315a13fe319a..5bbda4bc33350 100644
+>> --- a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>> +++ b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>> @@ -22,6 +22,7 @@ properties:
+>>             - fsl,imx6ul-qspi
+>>             - fsl,ls1021a-qspi
+>>             - fsl,ls2080a-qspi
+>> +          - spacemit,k1-qspi
 > 
-> Acked-by: Eugenio Pérez <eperezma@redhat.com>
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 63 ++++++++++++++++++++----------------
->  1 file changed, 35 insertions(+), 28 deletions(-)
+> Are the newly added resets mandatory for the spacemit platform?
+
+This is interesting.  I never even tried it without specifying them.
+
+I just tried it, and at least on my system QSPI functioned without
+defining these resets.  I will ask SpacemiT about this.  If they are
+not needed I will omit the first patch (which added optional resets),
+and won't use them.
+
+Thanks for pointing this out.
+					-Alex
+
 > 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index c59e27e2ad68..0f07a6637acb 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -771,11 +771,42 @@ static bool virtqueue_kick_prepare_split(struct vring_virtqueue *vq)
->  	return needs_kick;
->  }
->  
-> +static void detach_indirect_split(struct vring_virtqueue *vq,
-> +				  unsigned int head)
-> +{
-> +	struct vring_desc_extra *extra = vq->split.desc_extra;
-
-so extra is initialized here ....
-
-> +	struct vring_desc *indir_desc =
-> +	       vq->split.desc_state[head].indir_desc;
-> +	unsigned int j;
-> +	u32 len, num;
-> +
-> +	/* Free the indirect table, if any, now that it's unmapped. */
-> +	if (!indir_desc)
-> +		return;
-> +	len = vq->split.desc_extra[head].len;
-> +
-> +	BUG_ON(!(vq->split.desc_extra[head].flags &
-> +			VRING_DESC_F_INDIRECT));
-> +	BUG_ON(len == 0 || len % sizeof(struct vring_desc));
-> +
-> +	num = len / sizeof(struct vring_desc);
-> +
-> +	extra = (struct vring_desc_extra *)&indir_desc[num];
-
-
-only to be over-written here.
-
-what's up with this?
-
-> +
-> +	if (vq->use_map_api) {
-> +		for (j = 0; j < num; j++)
-> +			vring_unmap_one_split(vq, &extra[j]);
-> +	}
-> +
-> +	kfree(indir_desc);
-> +	vq->split.desc_state[head].indir_desc = NULL;
-> +}
-> +
-
-
+>>         - items:
+>>             - enum:
+>>                 - fsl,ls1043a-qspi
+>> -- 
+>> 2.48.1
+>>
 
 
