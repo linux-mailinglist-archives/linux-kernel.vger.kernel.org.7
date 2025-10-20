@@ -1,90 +1,120 @@
-Return-Path: <linux-kernel+bounces-860178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0ADBEF83E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EFFBEF847
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F59189900D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8401899B3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCC02D9497;
-	Mon, 20 Oct 2025 06:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635022D9EE7;
+	Mon, 20 Oct 2025 06:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8wdyfNs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aBpWibfQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JHg1coFA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3EC35950;
-	Mon, 20 Oct 2025 06:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7082D8DB1;
+	Mon, 20 Oct 2025 06:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760942936; cv=none; b=JgvcqlG6/tZBZLuD67t34QI0zfZ5xHsS5K3x1Xrd6DlOi/qwq7zMF/DpdPj79v2R6BRhO1yL155AGwXCtoGTopkqK/tEBckXxftFvSPG1+nPxyGMEB7yZI0FpH8HKT1+EzxLpymC0jUkIZqwps+fcSp8LnmocXuIU5RJT3AJUPg=
+	t=1760943059; cv=none; b=Pd4pcTDtw2RAWQW8+qsGk8tTZUheBk0gt7JIu2lQUHp6ixGqyZ7DPyrVXFhl++7TKufbaHOg4WLCmjWTR6/rcrmRLyfM3JDp8AjgB37IjhDBnR+gVnujpt9hkkxnFfTYJhWkGGxNyyCJOL7dWxNyiaYJg/Sq5vlYJ5TVsDKtFUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760942936; c=relaxed/simple;
-	bh=Iv/5iWY5nZgg3nkkN0LA+0Joncb4DUQdG2wDhxXdaOM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SAT+b/5upBd9twsimLkrE8ykywUrfUCKmr8E3FDP6dbsxJNCKxsc5Siv/Qe1ZlYvOCf48i2jyF59lWOF5ccwiHfVbRDLSa9raDdc4XT+izvijCMR3gz5k8UB/BsvgHClQ/Sb4tbcszqx2kk6l9PvLpVsJvuC5cRPeCp4p0ZUDTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8wdyfNs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5C1C4CEF9;
-	Mon, 20 Oct 2025 06:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760942935;
-	bh=Iv/5iWY5nZgg3nkkN0LA+0Joncb4DUQdG2wDhxXdaOM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=F8wdyfNsAQO5RrxHosn2NmUkErkZfu77XMbnNZ69elG4DJmNwFMYK5RthmmMHGs5R
-	 0P3EmcJaPG3npRrD/tULFvayADEjOnvzZzqDYJrCCdDIKXa+Qt0hMioxHu1ZRcstV4
-	 aV9moaLdJgnb2fSs8mnnkJUHLHcQNJOwWAo9B+dcy1Oi7lAnOcJu1ZK6s5g8CI2aCC
-	 Bt2dTAQu0INm+gukGoxorF4ZDYMk4caIUEkpjnPxsrdL0t2dDziel0j/93yg2pqv4B
-	 V+40E5GT8Yo/awfH7alaPMHnovB/hnJFvLSaBK451F1mETVaNeTW+CuxdFm0dgaZkv
-	 kVOSyGB4f+tMA==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, bcm-kernel-feedback-list@broadcom.com, 
- jim2101024@gmail.com, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Jim Quinlan <james.quinlan@broadcom.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Rob Herring <robh@kernel.org>, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251003170436.1446030-1-james.quinlan@broadcom.com>
-References: <20251003170436.1446030-1-james.quinlan@broadcom.com>
-Subject: Re: [PATCH] PCI: brcmstb: Fix use of incorrect constant
-Message-Id: <176094293138.11548.16893576609668956400.b4-ty@kernel.org>
-Date: Mon, 20 Oct 2025 12:18:51 +0530
+	s=arc-20240116; t=1760943059; c=relaxed/simple;
+	bh=B/foAdjJs+95KY0dHy3ZVMhSlwtVNbYpNRvQlirlYIQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=F8w0o9IvowcibTwjgpr/09XEaOl6ko4QuuibNKuUq6gDYp0tSqearpNXAVCXJ7gCHD+otVyZ2pb7koNvROFCk1gF3fiOBgTpgiPWJEJs/kNpIGWaBrZdCrYMBQCYzffO5cbE8ER287dA6LWx/Qh0OnSQuHrCbMN5Sv/aX1oZBWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aBpWibfQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JHg1coFA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760943055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZCiJUNbDBKZU7NscC9t+cPIbwSt1d1aTLOIOEONDRo=;
+	b=aBpWibfQy7NDvaZaGXNCdeOTgstNqJSd72h/HvfsU+bxtPLg46jN298a5AmbZZ0I8qsmk+
+	d+9FiLZZFEkKF34+6aD/geC//vXqFAxlhvsIuTZ0otTv1PFTa68B8uXOwFcWk4+8WYI5an
+	IUvxnjVByp5cBtfO9vsxxCUqKZIHzZsfrdbZZf3kacNHifOfvhESr5BlU2Lf/PbfyV38By
+	KVznd395E5j77XdHOnXPD6Z0vpewpRYK/FK7/w8iwdhVqFvHHEA4Stu+hyylX4JdUwRORb
+	fu7YAxMMiLqA2Vrpd+zZrafVfIA99TO2e4VyA7/HhfSxLwAND/A9kWLVflkZvA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760943055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZCiJUNbDBKZU7NscC9t+cPIbwSt1d1aTLOIOEONDRo=;
+	b=JHg1coFAEo4pN71GSm+4Y8XD2IbiEBac1CDhS7fUoq52oNxVyS/BaH8IlhDFLi/qxEKwbs
+	tEjcxtPV9FDv1sAg==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, x86@kernel.org, Madhavan Srinivasan
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org, Paul
+ Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, linux-s390@vger.kernel.org, Andrew Cooper
+ <andrew.cooper3@citrix.com>, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
+ Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V3 08/12] uaccess: Provide put/get_user_masked()
+In-Reply-To: <d58b798a-3994-438c-9c02-678f3178b21e@efficios.com>
+References: <20251017085938.150569636@linutronix.de>
+ <20251017093030.315578108@linutronix.de>
+ <eb6c111c-4854-4166-94d0-f45d4f6e7018@efficios.com>
+ <d58b798a-3994-438c-9c02-678f3178b21e@efficios.com>
+Date: Mon, 20 Oct 2025 08:50:54 +0200
+Message-ID: <87ecqyyskx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain
 
-
-On Fri, 03 Oct 2025 13:04:36 -0400, Jim Quinlan wrote:
-> The driver was using the PCIE_LINK_STATE_L1 constant as a field mask for
-> setting the private PCI_EXP_LNKCAP register, but this constant is
-> Linux-created and has nothing to do with the PCIe spec.  Serendipitously,
-> the value of this constant was correct for its usage until after 6.1, when
-> its value changed from BIT(1) to BIT(2);
-> 
-> In addition, the driver was assuming that the HW is ASPM L1 capable when it
-> should not be telling the HW what it is capable of.
-> 
+On Fri, Oct 17 2025 at 09:45, Mathieu Desnoyers wrote:
+> On 2025-10-17 09:41, Mathieu Desnoyers wrote:
 > [...]
+>>> +/**
+>>> + * get_user_masked - Read user data with masked access
+> [...]
+>>> + * Return: true if successful, false when faulted
+>
+> I notice that __get_user() and get_user() return -EFAULT
+> on error, 0 on success. I suspect the reversed logic
+> will be rather confusing.
 
-Applied, thanks!
+In most cases the return value of those is treated as a boolean
+success/fail indicator. It's pretty confusing when a boolean return
+value indicates success with 'false'. It's way more intuitive to read:
 
-[1/1] PCI: brcmstb: Fix use of incorrect constant
-      commit: ad6014f77f6b66e862a912b5aa4571d00ab30405
+       if (!do_something())
+       		goto fail;
 
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
+Just because we have this historic return '0' on success and error code
+on fail concept does not mean we have to proliferate it forever.
+
+In fact a lot of that 'hand an error code through the callchain' is just
+pointless as in many cases that error code is completely ignored and
+just used for a boolean decision at the end. So there is no point to
+pretend that those error codes are meaningful except for places where
+they need to be returned to user space.
+
+Thanks,
+
+        tglx
 
 
