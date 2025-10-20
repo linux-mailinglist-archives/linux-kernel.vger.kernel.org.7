@@ -1,115 +1,81 @@
-Return-Path: <linux-kernel+bounces-860281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CB4BEFBCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:49:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDEFBEFBD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219E23BF2EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:49:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8B514ED238
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9F62E1EF4;
-	Mon, 20 Oct 2025 07:49:47 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B692E1F0E;
+	Mon, 20 Oct 2025 07:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWOAPF4w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E61620E334;
-	Mon, 20 Oct 2025 07:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6E6354AEA;
+	Mon, 20 Oct 2025 07:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760946587; cv=none; b=Tu5U/x9RmSTKl9Mx0YcJqQXhb0dane76L/JHjSLrL78QUhhB5TRMnlEVos2pom+GBWITK5Ex3FAK2j2oJ+rbpU1Ogh4K1gqw0XYkTQWUyi87AywWUzNIh4mAntLQlkdEMxUYSeazdn8Yo8WSH5AEtsHOAanfyUO1h1zdJgc4q3s=
+	t=1760946792; cv=none; b=bSrK1dY5Ug//HOnQKsDEGSdlx7C0nkZMM2xsTjYXE9sI0p+i53Sfl6d3POVw07LU8087J6y677tDQuPjS22OE9q1aD5ekPMNExSlCZwkOm+sVlvu8PIgaXsjW1OOEalwBkisjRxuD3cTWx9qehq8ORqSBiwizCpf0N+sZ4mXeMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760946587; c=relaxed/simple;
-	bh=rqF2+4aZsZgXwI99r/vp0x9hXEbZsi9gPenHK717Rp4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p9oaAsbmdY0XZi+LjIiD5BkQ7V24I50eiYJ8A0HUtTqRp09Xd4Kb8ZheWeN2vFZ20pT3258AbVyLwEaGy0zaz6PNx2CnLcH9QILHbvf1DGA1K6xLGfQ+YTGV2dlRsCPtutTtXHE9G//WNfgFV61k5HFRZy+3NeeQBbqEA9MiuqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4f4e1ddaad8911f0a38c85956e01ac42-20251020
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:077d9843-85d1-45bd-9f42-d164766ef793,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:a9d874c,CLOUDID:cb42775910660d13e7362869089db852,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:5,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4f4e1ddaad8911f0a38c85956e01ac42-20251020
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 571335398; Mon, 20 Oct 2025 15:49:30 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: eugen.hristev@linaro.org
-Cc: alexandre.belloni@bootlin.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nicolas.ferre@microchip.com,
-	xiaopei01@kylinos.cn
-Subject: [PATCH v2] iio: adc: at91-sama5d2_adc: Fix potential use-after-free in sama5d2_adc driver
-Date: Mon, 20 Oct 2025 15:49:25 +0800
-Message-Id: <268cbf0a5d9b931fcf6c025c53cc698ce78e4689.1760946527.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <e9d6831a-d0ef-440c-b235-fec18048deed@linaro.org>
-References: <e9d6831a-d0ef-440c-b235-fec18048deed@linaro.org>
+	s=arc-20240116; t=1760946792; c=relaxed/simple;
+	bh=S1V3jsImf5h8yqSk61EYpNQyrAvY2nfUa59BmY7SvuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7ODVf7/0Npmr3s2ruFCEFLuHEck4ilkhO1bZJsu+tQ2mH7vJRWl0BbbXV8HCfgGVSHG1aD63n/wvZtWeo43K6hj2LE33D+JDEHfRSR23xOyrFUYNmtUcPh/lZkib/3bo7zOqiIC1xgraSLyNi++0RscFUn5ONHJqAq1zQEyvR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWOAPF4w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 647EBC4CEF9;
+	Mon, 20 Oct 2025 07:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760946792;
+	bh=S1V3jsImf5h8yqSk61EYpNQyrAvY2nfUa59BmY7SvuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DWOAPF4w2M5bFzPRH91Jscb0ku1Tp+vIsX2LezRP1KXfSDXDiF0i/t717XDy0r9wG
+	 PlYgmnfThQWc9FJXU5zaOCHro4tA2EzTNUrh2GF+29ECi2CUvMWQrRFRASfeSZg/AH
+	 PGpu5flxWg+6eMfBveDm4qdsJ4wtbOvEsXI8rkCJIsJbhfVaz2UkYLQ4H6G6CB+LSb
+	 xM+DdDI4YwK6avFSvGr+Rbhi8bOLG9ooEPpIiAYzFe0Y0EiZCE3ag4D07jn1xG9MZj
+	 zJQmo60urfKRv5f7p6j0ByJJ8z/OPO8YplY3pK+xtacxk9cNIWwxwsPvegH2hjOjt4
+	 G3MZH55D/h8Zw==
+Date: Mon, 20 Oct 2025 10:53:05 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 2/3] nvme-pci: unmap MMIO pages with appropriate interface
+Message-ID: <20251020075305.GL6199@unreal>
+References: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com>
+ <20251017-block-with-mmio-v1-2-3f486904db5e@nvidia.com>
+ <20251017062008.GB402@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017062008.GB402@lst.de>
 
-at91_adc_interrupt can call at91_adc_touch_data_handler function
-to start the work by schedule_work(&st->touch_st.workq).
+On Fri, Oct 17, 2025 at 08:20:08AM +0200, Christoph Hellwig wrote:
+> On Fri, Oct 17, 2025 at 08:31:59AM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Block layer maps MMIO memory through dma_map_phys() interface
+> > with help of DMA_ATTR_MMIO attribute. There is a need to unmap
+> > that memory with the appropriate unmap function, something which
+> > wasn't possible before adding new REQ attribute to block layer in
+> > previous patch.
+> 
+> DMA_ATTR_MMIO only gets set in the following patch as far as I can
+> tell.
+> 
+> The more logical way would be to simply convert to dma_unmap_phys
+> here and then add the flag in one go as suggested last round.
 
-If we remove the module which will call at91_adc_remove to
-make cleanup, it will free indio_dev through iio_device_unregister
-while the work mentioned above will be used. The sequence of operations
-that may lead to a UAF bug is as follows:
-
-CPU0                                      CPU1
-
-                                     | at91_adc_workq_handler
-at91_adc_remove                      |
-iio_device_unregister(indio_dev)     |
-//free indio_dev                     |
-                                     | iio_push_to_buffers(indio_dev)
-                                     | //use indio_dev
-
-Fix it by ensuring that the work is canceled before proceeding with
-the cleanup in at91_adc_remove.
-
-Fixes: 3ec2774f1cc ("iio: adc: at91-sama5d2_adc: add support for position and pressure channels")
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- drivers/iio/adc/at91-sama5d2_adc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index b4c36e6a7490..1cd6ce61cf17 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -2480,6 +2480,7 @@ static void at91_adc_remove(struct platform_device *pdev)
- 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
- 	struct at91_adc_state *st = iio_priv(indio_dev);
- 
-+	cancel_work_sync(&st->touch_st.workq);
- 	iio_device_unregister(indio_dev);
- 
- 	at91_adc_dma_disable(st);
--- 
-2.25.1
-
+Done, thanks
 
