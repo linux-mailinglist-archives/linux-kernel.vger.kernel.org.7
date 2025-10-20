@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-860241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75900BEFA61
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:20:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD86BEFA67
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075FA189CD1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8314E3AB9D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 07:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42702DAFC1;
-	Mon, 20 Oct 2025 07:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD32D876A;
+	Mon, 20 Oct 2025 07:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jlDP9fC7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X2kiymqk"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DFD29ACD7;
-	Mon, 20 Oct 2025 07:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D12A3A8F7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760944809; cv=none; b=toSVk+puDfhE8blrp4CwcCFQaCbsIx7ZKIr9km+nq6ojT1Fvekxr9nKbqOC9UfZnbNTHYeqMpDi9oz7cb1qImIAMGqwU5bFmndvfCEKhgpJ3+dTBKQ1sAXBlY2r7E0diKITTL7yUtn8fdofqgGAV5YK008wA0CLPrDfdgfVz1Tc=
+	t=1760944840; cv=none; b=lHwc5EHZpaSAVj1HGPhk2OQyoVTTjiMnVqJvCoUKBhbZwNZ+t3iFplW+T4szr7kPHoXrTA6ssxZZEuFC5iY/FaKX7oWIjXcGtn0YZoBgKrhUiDhKlhTNM2QCdq/VV81w90kFBOOXmh0feOrz9K/YPg0JyWgXdv/3bzYk2Q7XI8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760944809; c=relaxed/simple;
-	bh=UUFihtK4Ok4cUMT7emCE/58qLLeQEky4Qc5eIDDDrrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SEFIeIbBTDRVGqP5y2cE7dzV3GHJQDqBCas4NWMwzfQd4vc8ITKYyDQee9wjsNy3hisMRf5WdoI3ZmTdQSi2EFnA5Qe53n3Maqw3jy48c0luYvtiSRiSyjD786lOXNN+9wwaZUnyGRFZcljzQSDzPNZ6UNcWrtXOGEf4tSboiJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jlDP9fC7; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760944807; x=1792480807;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UUFihtK4Ok4cUMT7emCE/58qLLeQEky4Qc5eIDDDrrg=;
-  b=jlDP9fC7cqImlFqioOyL3Ucbb7kcNVjGS2wZo3OfYnLDFui27mlSYKhd
-   ZI1M54AS6qpHPxkvsC6Edvhu6ijzLcpPduxvNGjiPtIVjJnqzkrDKN0ZA
-   SBVp7ZelTUuvhg2D4fRyhn0ynphwqf/snEQkqDAtweT/NYr3EW5qubteA
-   siWUQbq4jKo/B1wtn8e9QHFkqauDfkrvnRQlB40K5SdMn9ePTHWQ1D2xD
-   d7S/7q2rJHLeprgNhJlMyryRzq2TAXopIXg6A9IDoMQC477ZxRcBlkPED
-   rBaVh1ns8QgHKdKN69xy3a6AI5VpZwhtOHrpRljxSynwv7KXEfNene6Dg
-   A==;
-X-CSE-ConnectionGUID: 4fEUnsuaSZqcSmy3qW9F5w==
-X-CSE-MsgGUID: T9Srv4kHQmu1C7K4uaanww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="63099337"
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="63099337"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 00:20:06 -0700
-X-CSE-ConnectionGUID: QSZApNFnR6+WKt45uNjbJQ==
-X-CSE-MsgGUID: 9IjP+zuSTS6864fyXuru/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,242,1754982000"; 
-   d="scan'208";a="214228153"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 20 Oct 2025 00:20:02 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vAkBU-0009an-0H;
-	Mon, 20 Oct 2025 07:20:00 +0000
-Date: Mon, 20 Oct 2025 15:19:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: hans.zhang@cixtech.com, bhelgaas@google.com, helgaas@kernel.org,
-	lpieralisi@kernel.org, kw@linux.com, mani@kernel.org,
-	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	mpillai@cadence.com, fugang.duan@cixtech.com,
-	guoyin.chen@cixtech.com, peter.chen@cixtech.com,
-	cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hans Zhang <hans.zhang@cixtech.com>
-Subject: Re: [PATCH v10 04/10] PCI: cadence: Add support for High Perf
- Architecture (HPA) controller
-Message-ID: <202510201553.x7S0SaZ1-lkp@intel.com>
-References: <20251020042857.706786-5-hans.zhang@cixtech.com>
+	s=arc-20240116; t=1760944840; c=relaxed/simple;
+	bh=dRVbV2L7hApMjcL19eJnOYMtttyWyDkFZZDL+3XBMfo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OAQ6nMdYj/GAhyUALgujOJkE6WRL35wElt7/+E6rd6av68lg+9ASZzUIDzZw3CZSBqdRht9uDJc4C038vNYoyhsT0SHBAaYXP+8Ge8UEswE9ecyam4BqfYQCJw/JbXrpTksYD+A4z9aY3/VUy831PDJcxB140GMtbaPBS1LvkZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X2kiymqk; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-426ff4f3ad4so2274833f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 00:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760944837; x=1761549637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qxt9UraI+fAR4bYyvyRARfla8s2oT5HtZcnk1ZCLs7c=;
+        b=X2kiymqkax9GLUppaYVCepw+zbIdb1pF4FpLnIpPEi177svNdnftdIod7Evplg9q4R
+         ng3pMFM+kNqzG6EUbDNmbtvoY/2dFwmvQ5MVFFexLbqNAcPDxi1KRGWJDfdgAdfZ39+U
+         0oAo2AvmY9g3MmYBsKvBYKzKtyDWW4M8vz8MsiIV29arC5MszUtJc5n8FrknfQZzYQVe
+         /QCT9AEo/LzrrsRiG4FPAX5E0mlHnFbGcfd7UID++jNX4/gaWoPC2VEEpRNywodhRFrE
+         i22dbAM0AOidWmGCMv2zBw9XAeP1NlXz3hCrJztYAwBdC9fkUf0GIboT98rCIvQHP/nx
+         COZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760944837; x=1761549637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qxt9UraI+fAR4bYyvyRARfla8s2oT5HtZcnk1ZCLs7c=;
+        b=vKDtK9kUQhMSGfDeGDvgN6CwH7OtxD8mQIVfcQsVdV8vLzxLnqcgEQDQ5ZZgz9lujN
+         FZSKshCMjsFmmh796RyeCl4yVTZmkobu5H+M7nUhu5ToYar9mvtjd1f6ZirPfqnvfjvV
+         IAa7dtFuseKAENwdMrzkOOKD4e8CyYZfpA3tGqH9gk6fXhXDRGc6PCXY16ZEc1O0nSH+
+         bs0NvIUgsM2yTdRWNg7Mux8OzkGdrLLSmUr7CfNyiWXhlOsK4EdnwyjPTbtiNwf/DrgH
+         5OCoeP4zNRY6ept4uSnrkaM9fR7sYL5iObqyYFf5lx3lrTby04dJNdJdAj7sqhN84mCI
+         amHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIxLxjjclkgnXG3jyepS95xxVMo1XmU5Ife5UdNof4UXrENmQz8x0Fa2QPV20fsyh36OlZ0A6ZpYMlPuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw6jhgz1PigLBy86U4m0A74WlLDzqe6fngoLE2scO8OajRrU7u
+	OOpfzHNDZ0G0oHaTt7NtvflwEWlDAkKW3+A9gSLWg84AaNVAGC1egyD/c//EH+buv54=
+X-Gm-Gg: ASbGncuLEHGIfkzB4gS10t0dfWN4yBMm5y47y6Y0Pb9GTA1x3BWlx5WHHgT5ptcahKH
+	vvg4/sj1btcTav7fsXMN6ofVfAgKyb1I4wLK1eSssN7EZtev51t9e8BPqt55oFbDqDmRwCHLtz/
+	L31ihn3/r9ZissqcwKYqfSZR/NaMAJsk4u7hfSFb6NzAuL6zi7xSRe4Au/EErWr3iKTKgTHh4no
+	GohB3P7my77TjKM8oLh5r/eNgeqEIz+1+2PT8RdJzjT1PMrh6ItHOm24i8Q+Uhuu8XuluEl1OB+
+	J8twRwI5OqzTtaYkfvKGx50kEoebK51IzkDadI3VN54LqzPaDFnnfAXNELbo5MB9RUZZA+HBGYF
+	nMLGe+12GylcnhK/fggztk90oFmHRzAxVuBUbuxejHTMeV26TgFfSg7AVxZn2g7WQgq3l4IhopR
+	R5j+pBfjM+G4ue
+X-Google-Smtp-Source: AGHT+IGXw6gPUlPix/VJlMdLyXBhorguaaSj9OnlsN/E3XOQaDK4VB5Z6zX1AxUD6Erj1aLJX+B0XQ==
+X-Received: by 2002:a5d:5f82:0:b0:426:fb28:7962 with SMTP id ffacd0b85a97d-42704dd3690mr8796225f8f.61.1760944836246;
+        Mon, 20 Oct 2025 00:20:36 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5b13:a549:df98:9c00])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce3aesm13976636f8f.48.2025.10.20.00.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 00:20:35 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH] gpio: qixis-fpga: add missing module description
+Date: Mon, 20 Oct 2025 09:20:28 +0200
+Message-ID: <20251020072028.21423-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020042857.706786-5-hans.zhang@cixtech.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-kernel test robot noticed the following build warnings:
+A kernel module must have a license and should have a description. Add
+missing MODULE_LICENSE(), MODULE_DESCRIPTION() and throw in a
+MODULE_AUTHOR() for good measure.
 
-[auto build test WARNING on 211ddde0823f1442e4ad052a2f30f050145ccada]
+This fixes the following build issues:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/hans-zhang-cixtech-com/PCI-cadence-Add-module-support-for-platform-controller-driver/20251020-123246
-base:   211ddde0823f1442e4ad052a2f30f050145ccada
-patch link:    https://lore.kernel.org/r/20251020042857.706786-5-hans.zhang%40cixtech.com
-patch subject: [PATCH v10 04/10] PCI: cadence: Add support for High Perf Architecture (HPA) controller
-config: i386-buildonly-randconfig-002-20251020 (https://download.01.org/0day-ci/archive/20251020/202510201553.x7S0SaZ1-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251020/202510201553.x7S0SaZ1-lkp@intel.com/reproduce)
+ERROR: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-qixis-fpga.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-qixis-fpga.o
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510201553.x7S0SaZ1-lkp@intel.com/
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/all/aPJW8HIke5pj3doX@sirena.org.uk/
+Fixes: e88500247dc3 ("gpio: add QIXIS FPGA GPIO controller")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-qixis-fpga.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-All warnings (new ones prefixed by >>):
-
->> drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:96:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-      96 |         if (rc->quirk_retrain_flag)
-         |             ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:98:9: note: uninitialized use occurs here
-      98 |         return ret;
-         |                ^~~
-   drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:96:2: note: remove the 'if' if its condition is always true
-      96 |         if (rc->quirk_retrain_flag)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-      97 |                 ret = cdns_pcie_retrain(pcie);
-   drivers/pci/controller/cadence/pcie-cadence-host-hpa.c:84:18: note: initialize the variable 'ret' to silence this warning
-      84 |         int retries, ret;
-         |                         ^
-         |                          = 0
-   1 warning generated.
-
-
-vim +96 drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
-
-    79	
-    80	static int cdns_pcie_hpa_host_wait_for_link(struct cdns_pcie *pcie)
-    81	{
-    82		struct device *dev = pcie->dev;
-    83		struct cdns_pcie_rc *rc;
-    84		int retries, ret;
-    85	
-    86		rc = container_of(pcie, struct cdns_pcie_rc, pcie);
-    87	
-    88		/* Check if the link is up or not */
-    89		for (retries = 0; retries < LINK_WAIT_MAX_RETRIES; retries++) {
-    90			if (cdns_pcie_hpa_link_up(pcie)) {
-    91				dev_info(dev, "Link up\n");
-    92				return 0;
-    93			}
-    94			usleep_range(LINK_WAIT_USLEEP_MIN, LINK_WAIT_USLEEP_MAX);
-    95		}
-  > 96		if (rc->quirk_retrain_flag)
-    97			ret = cdns_pcie_retrain(pcie);
-    98		return ret;
-    99	}
-   100	
-
+diff --git a/drivers/gpio/gpio-qixis-fpga.c b/drivers/gpio/gpio-qixis-fpga.c
+index 048a2cac4f0f..54c2c76822d5 100644
+--- a/drivers/gpio/gpio-qixis-fpga.c
++++ b/drivers/gpio/gpio-qixis-fpga.c
+@@ -105,3 +105,7 @@ static struct platform_driver qixis_cpld_gpio_driver = {
+ 	},
+ };
+ module_platform_driver(qixis_cpld_gpio_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Ioana Ciornei <ioana.ciornei@nxp.com>");
++MODULE_DESCRIPTION("Layerscape GPIO QIXIS FPGA driver");
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
