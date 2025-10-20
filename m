@@ -1,86 +1,139 @@
-Return-Path: <linux-kernel+bounces-861326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E708DBF26E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A98BBF26F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2C434E1CC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B007018A6929
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BDE24DD13;
-	Mon, 20 Oct 2025 16:30:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A341A267AF2;
+	Mon, 20 Oct 2025 16:30:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CBD2882C5
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A948D1C28E;
+	Mon, 20 Oct 2025 16:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760977804; cv=none; b=lxWLs6C02d7DhbTLx6jYxHxndE06IBdw18nFrFq5544mW8ryvdUSzAhSCeN0VAImGFyXrD3a6lobzUrfrBtl+aCrsMsIDHeX9xVLmTeAlH6VkR0/h2tcC1C+71nrDqoBL37eBNYvuB3VC0XOaZFmjyEZkHIeXawGJScDFvjZvpY=
+	t=1760977842; cv=none; b=L3pWw1t4D7aP2gK0dylPyPH/EGK0MhDD9mghhu3dkaTEwT+kUtm/cD3KLPr7zwXcB9pwPsO9bYsgGt1iZE7BBH2T79DZ58yd5OiWmHNru+if0Z01kZ93oL01w3zZt4YSuVH1pyudB0S5b0rNvNAtPpZSDMKcDjDFxJB0oDnNmMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760977804; c=relaxed/simple;
-	bh=2ST/YmL/cQgqdwR48nk5UhB6HmSP1oC68Y8E0N2o+Og=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IOdP1y9hwli0ogEMco0j2U1XtyynJhqZOz8zjq9CYUiqbmSZPi9pMSAUdhvYxnCr+uUpt5SNryIu+/x3oEQl7pNtbB2q93P1Iw3D4LTcgGb1MR5KYaQGoXxyUX5yIcer4JfvZ0xiv2trLl6pFV8Hzw+V1lQrRoRhQVA3kJJ80EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430c3232caeso43831325ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:30:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760977802; x=1761582602;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dpqHNw/a6UNU2sMFqnVzN8SMlViJCslcUSHtvSGJ0VM=;
-        b=Q2X+8ht/UMIxto+0GWlgGT2XIjuN2tq3EzrRWo2Y+FSjVQyyKSoEjw3igP7obFxreK
-         wSKejUK05HOazTc3MH1ylXKZhnHqIMmF0e7s6bVksOCFKTZbNe7OQIQHqmi81Wp0fbgk
-         MOVfl9gB61o1YhsZK4cQRgIr7I36Xnq7rBb/OukQVneEPZNrkXdomNuFt4RZ1I4jdEgu
-         cI++SiX33/BtKS4n12AR7GFHSeA2BaGM+xYOhaFuJx8Byo4wPFDnsPqq2/1RgMdS10ZM
-         dtxqE67AQjPLwqvyuHS+3EJbhMW/ltGJeCKBTT+3GWbFokodfMFUeKriT5N5MvvnXrFw
-         rcrw==
-X-Gm-Message-State: AOJu0YygxlS+k8afDSXemyXsHdEj/pyTOeaumPeG0GK1stA0KRiDKU85
-	NEVZKOwgCrTpSJ30/a7c4fnTU6Hjjd9MsKyX0rPRmTeRhZev/4+de3GysV5f8YylCnlpeX7zcw6
-	vtjguqUrYdr8D17+Rl7MQQqmXs0e5x43FtBSTo3MbY7mW2PmQajY2DjoxCHo=
-X-Google-Smtp-Source: AGHT+IFKYp+g4XawnGanKc2Rsc4j3sPEVrJRJ942wbE1PzboCbv9eWqJL4zLMRXAACeRaQdGOATsgW/v1hey0amQn8qJvM0U0fj3
+	s=arc-20240116; t=1760977842; c=relaxed/simple;
+	bh=CNXzha2xG/lnbXIdZ1b/HGoxw0vpJia7eENqBa9pQfI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZvkntTal2A9EoJPqgEKwK2PN0UjmtohZVBguxmB//W8dcdWq7DewdA/KBHos3S8LCp/MW2KRWStCUJy30+W/DgIG62eINVYxxthN9tgNYH41N6b/xLbSxkQl3Nb/Od7i3VJB4uYm2vCbFfiYlf7m7SR9YvTXrqwyEPDH8SLJpp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cr16n6Yjrz6L5Xx;
+	Tue, 21 Oct 2025 00:27:29 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4EA82140275;
+	Tue, 21 Oct 2025 00:30:37 +0800 (CST)
+Received: from localhost (10.48.157.75) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
+ 2025 17:30:36 +0100
+Date: Mon, 20 Oct 2025 17:30:34 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>,
+	<james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
+	<vincent.guittot@linaro.org>, <etienne.carriere@st.com>,
+	<peng.fan@oss.nxp.com>, <michal.simek@amd.com>, <quic_sibis@quicinc.com>,
+	<dan.carpenter@linaro.org>, <d-gole@ti.com>, <souvik.chakravarty@arm.com>
+Subject: Re: [PATCH 07/10] firmware: arm_scmi: Add System Telemetry ioctls
+ support
+Message-ID: <20251020173034.00005c15@huawei.com>
+In-Reply-To: <20250925203554.482371-8-cristian.marussi@arm.com>
+References: <20250925203554.482371-1-cristian.marussi@arm.com>
+	<20250925203554.482371-8-cristian.marussi@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c8:b0:430:a0f7:a5b1 with SMTP id
- e9e14a558f8ab-430c527eb4emr185989665ab.24.1760977802009; Mon, 20 Oct 2025
- 09:30:02 -0700 (PDT)
-Date: Mon, 20 Oct 2025 09:30:01 -0700
-In-Reply-To: <7b1f58cb-d42f-4357-816b-22d65792f041@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f66389.050a0220.1be48.000e.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
-From: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello,
+On Thu, 25 Sep 2025 21:35:51 +0100
+Cristian Marussi <cristian.marussi@arm.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> Extend the filesystem based interface with special 'control' file that can
+> be used to configure and retrieve SCMI Telemetry data in binary form using
+> the alternative ioctls-based ABI described in uapi/linux/scmi.h.
+Why you say alternative.  Why do you need both?
 
-Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
-Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+That's in the cover letter but I'd put something here as well.
+> 
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> ---
+>  .../firmware/arm_scmi/scmi_system_telemetry.c | 402 ++++++++++++++++++
+>  1 file changed, 402 insertions(+)
+> 
+> diff --git a/drivers/firmware/arm_scmi/scmi_system_telemetry.c b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> index 2fec465b0f33..f591aad10302 100644
+> --- a/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> +++ b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
 
-Tested on:
+> +static long scmi_tlm_des_read_ioctl(const struct scmi_tlm_inode *tlmi,
+> +				    unsigned long arg, bool single,
+> +				    bool is_group)
+> +{
+> +	const struct scmi_tlm_setup *tsp = tlmi->tsp;
+> +	void * __user uptr = (void * __user)arg;
+> +	struct scmi_tlm_data_read bulk, *bulk_ptr;
+> +	int ret, grp_id = SCMI_TLM_GRP_INVALID;
+> +
+> +	if (copy_from_user(&bulk, uptr, sizeof(bulk)))
+> +		return -EFAULT;
+> +
+> +	bulk_ptr = kzalloc(struct_size(bulk_ptr, samples, bulk.num_samples),
 
-commit:         211ddde0 Linux 6.18-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=154adde2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=568e69ca0c2fa75
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11b4dde2580000
+__free() would help here.
 
-Note: testing is done by a robot and is best-effort only.
+> +			   GFP_KERNEL);
+> +	if (!bulk_ptr)
+> +		return -ENOMEM;
+> +
+> +	if (is_group) {
+> +		const struct scmi_telemetry_group *grp = tlmi->priv;
+> +
+> +		grp_id = grp->info->id;
+> +	}
+> +
+> +	bulk_ptr->num_samples = bulk.num_samples;
+> +	if (!single)
+> +		ret = tsp->ops->des_bulk_read(tsp->ph, grp_id,
+> +					      &bulk_ptr->num_samples,
+> +			  (struct scmi_telemetry_de_sample *)bulk_ptr->samples);
+> +	else
+> +		ret = tsp->ops->des_sample_get(tsp->ph, grp_id,
+> +					       &bulk_ptr->num_samples,
+> +			  (struct scmi_telemetry_de_sample *)bulk_ptr->samples);
+
+That is very unusual code alignment.  Drag 2 lines above left to match one line above.
+
+> +	if (ret)
+> +		goto out;
+> +
+> +	if (copy_to_user(uptr, bulk_ptr, sizeof(*bulk_ptr) +
+> +			 bulk_ptr->num_samples * sizeof(bulk_ptr->samples[0])))
+> +		ret = -EFAULT;
+> +
+> +out:
+> +	kfree(bulk_ptr);
+> +
+> +	return ret;
+> +}
+
 
