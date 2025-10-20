@@ -1,193 +1,155 @@
-Return-Path: <linux-kernel+bounces-860506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06710BF04AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:46:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB4DBF0478
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEFFD4F416B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298CA18A001A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE272F7446;
-	Mon, 20 Oct 2025 09:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718942F9DBC;
+	Mon, 20 Oct 2025 09:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSewt6+F"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0+hbWWe2"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14592F744A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311DC2F83DE
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760953331; cv=none; b=QQvXgwWawA3ljavdzdMEaRx7wRk1iUml/GhBUeLWHO+mCTaDhieweFLW9mlp+K+2HH8aVFwD2k3CM9gYcpXJhHLOMf+Gy52S703/Yj50Hh6uXtrcn3mF8GJlqMQntsx5AEWLZssBmJTymsycKMAMh4qLpaSDLdslq3i8y3UjZoQ=
+	t=1760953361; cv=none; b=WXhhZ5Xvr0kqbBlYCEpMwzn7A2ZJG5Y2E4zUkGXl7JKLHwOaOQGbLeVjDnGc6J+/o95kp42GXWm5Fgf3oNtMQZpMl8jt6K+wl3+Y+hYkUgYEplif+J9gdssfwn/ZNX1iMkpHohUCftehOgb2eERjEHyBIBbadFeqG6kuGohGtU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760953331; c=relaxed/simple;
-	bh=RVTPrB80lKWEGsmuqpwnmhsICyacnpzQ61NitW4p0VA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s1sTtZ2PY45hczkcJY/1pcYsQKonFXZNR8HOAOV5tBcFKOsiGXWUvvI8pgJR28e8EoyGykNP4AgBEb+qNSy9v5m3ymhIPPHZOjfujA+b5YBwhk0k7J9QdMvlKiQ+nuCONIljkDPV95BeTCzNmeiHnl/I9snDwhGqpbV1ZZT9eM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VSewt6+F; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-78125ed4052so5170742b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:42:09 -0700 (PDT)
+	s=arc-20240116; t=1760953361; c=relaxed/simple;
+	bh=awb5VBYU9MlBMSh4//gl2J1eqN52cI5c/rwFGAFoxqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JywkS4ZaY+H/akVmRtvGeKOS/F1BvvRUSF5qgZPYAS6UbeZt2I9LXoflcIHOMIJ6ArbsyNowhMK5Zu8zV2T5amiHfrRlDCDz0IMV81/62TrtPPiS3aBa5EDyhqzjXrWw4vDR7IfAY4f93pUcckwecSlJ0qj+P/9TIcD/CGxYis4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0+hbWWe2; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-421851bca51so3367004f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 02:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760953329; x=1761558129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1760953358; x=1761558158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1+/kS6CxBIRQj4J5Q4nEC3UkDzwEypj3lIgBGlN4WRQ=;
-        b=VSewt6+FCtCiNPvXzOzFhMVMgcPJFwsM5U3w+u4o4EalS7sI8W7kARBw4C/wgUMsV9
-         o39F5AzycXqEMUd9kXOAkxJBAxf3hxZkfs2jwlkgp+A7u0Gh2qMwO5xI4dWNpeIMyDaD
-         wPEDdBcqa0EFWR71DzXSu0JjmECpfur69BihhddqBVvGRe3sJtIqgdnO4jeJJlXMTB+h
-         HWtgorCjqwbpWoZ87czI/E7LHS2rEtX/xY45ya1kRZvSFCwDER8km9y0YpDEp6pjUN+2
-         CanuOSPxtQlJASsifBxlsmz3IvQS6hy6VwlHG4PEAwSGN0ts0fSU5KMc+Ls+jgj40Mjk
-         E31w==
+        bh=ioa1FAiTtXpL3cjOc/pRz0HeIDc17GZukfloq40NFdY=;
+        b=0+hbWWe2Z+z9gkwXl84gal4tuAbySry/vSjmd1TPx7yXHg4b5d45vR4N5qa1HC5RMo
+         lHh1UCcbwnTnOb99nRI2yjWQ5JiyytA9AGxNFu0Tp+UJI672Kk1tqy3I6I+nJcss5Vun
+         PMo7yFS5mOOTqWj2c+khkZXoBkUBYdFfrb661Zj/TReS0pufUAwlOc9ZDvarriBsh0UB
+         /GpHNMUyk5+ZATnKkqWUGVNUjUmCVz92+OJmRcaN3qNKYnfJ6PBmgHY0Ap397gYburRj
+         QvzTWozlkSQT/gYqoMj/UMRSOvHrUtNbhco1lla8iD7hzFpIS/TxzXxM6b0sxlaG9AZu
+         bMug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760953329; x=1761558129;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1+/kS6CxBIRQj4J5Q4nEC3UkDzwEypj3lIgBGlN4WRQ=;
-        b=v4e9jAxlapXohoIdtKyZiZf9IBa10h5MkmTHJrM3Ts68sJ8a2JykSpEvvQNPA72u5u
-         ydFgNUTDkwz8YTJXNdaF5Ej/2vRoNILP8Anc9Zun1QGOf424QgWNPAWUscLVqj9yIJpe
-         LaVboT24ccGTGxTXomLidZiJdjUdqZCMt1lmneLXN4erLnEAMV8LN12X1fEcOSap3yo2
-         vtvaW4+nHiLAsGPnpOShpSmQlldBI2+HN4LWsAHxNlxQVqtXfcy4jHtXOF1J7iEy8cc4
-         OhPz596sdHMGyJe7NWKg9kuIPuwNVdgQwHzzVokHUr/AZ6RWe16QsVWQJCxBMdVMP3vQ
-         ufCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjyEKfCM+K0onqukA8rX9k1s0ZrauSV9gXfwPHWSUID/DDnbRTDyl1LBnHkqRCNwTmsRCnLGZUtn7YQtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQeUeW3K3wF7RUSwd90QnuFQxZhgX4Z9lGNzq3uukfs+f9zj9p
-	p55R+NW5WZ9e8Hh5RMsNqGmM3KR7EUYjHxC/aI9/rxuTXD1wBD+M5Tir
-X-Gm-Gg: ASbGncuLKKJIDy7eFMHpLz9xKVN8NV7q67nUXbftWsoJu8Mfvrf/bkU/OUnuBtqhChm
-	4WnfcqcD0GM461w1T6qJrvINptsrbyja2+OaEO3BOYGS7XOlf4h0exPe2MkJwkSoMq2agZo1QVF
-	zKZM/BsZclccBcr7K9kT/lNAKwL697/AAoiu28j2nEcUx+Eb5KEOSnYYvvNTghYnqzp429+qwoh
-	7I2cIrBqGPhKCFREZlyxduFMOkRzSZZIw4cL7o+yFeV6e1JoVckokaDcjsnUe6fgz0Rq3f60gJs
-	Ph4q9ck16kSBCNw8dYX85ZDcEytBIUdRJjTSIqPMCGunFR/o/03m//0rlputIyII/0jeMnPZOGV
-	giS2yq6TrxtTnYt2KhSdHwy/gg1gtpG7eNVrrUBtyL68i0gVwRaZd5TTZRJaAIIYBwwhE3EkBVl
-	W23Dvo5vyvKpOIMaLt1332AsIP22Y=
-X-Google-Smtp-Source: AGHT+IFj+kZThsI8QP8qdUS+mgmScYR4Q/utj7nfP7LJYcrpJ+Tv5cbb9yZmSNgMEVow8yoc3dekhw==
-X-Received: by 2002:a05:6a20:7f8d:b0:2c7:55a3:6168 with SMTP id adf61e73a8af0-334a8617472mr15913092637.30.1760953328784;
-        Mon, 20 Oct 2025 02:42:08 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b349b2sm7419946a12.23.2025.10.20.02.42.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 02:42:08 -0700 (PDT)
-Message-ID: <03fccf9d-50b7-4a7a-a7c2-21dcc06f235a@gmail.com>
-Date: Mon, 20 Oct 2025 17:41:58 +0800
+        d=1e100.net; s=20230601; t=1760953358; x=1761558158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ioa1FAiTtXpL3cjOc/pRz0HeIDc17GZukfloq40NFdY=;
+        b=vsuR3lUGzHeasEeIiOZ0TqLZmOxXQ/4NaGdCSkm+YViTSdePNsLVU1nlDoVOr4BDMZ
+         xx+AwVgYkwAOM6wy97Qdf2ey6wCltvGPFZquYCVm4zyXouoe0l2dJrSB14uYYfHj5ile
+         2d12PLlxzw5wQkezAotgRaTlKdmBeDct5006CTfqLKgYfCwnOZzqHq0kdKxcW7TyJT62
+         FJx0IIyzlsED/yPec4Ted4ZN1todOpKcJI2YLau2643H+y8iE7hIle5en0S7kWCqyw8K
+         MSaI/t+RmXZLwIF/pYJTsOTVR+Fpn8WKCaqnU1vqXCiUBJ5ii6jpkr7h4T1ebwYUSNih
+         BulQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEdeQ5xs2UKhRVMJGN0nSY0ldWEZfn50sXz3R/8cnidjlVFJDFUPiAOaKdsoAVzRRQwxli2ZtrQOmAYgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy192Cxbd1HJmdwrAcU887xOPcKmJ99OB81cUYCCm1Iq559swvw
+	KBBWVs17uQWw4ywyWNzUPWLQkD/8RSv+zcscDcgkw34vG3wH+AmcOEdxAVj4Vs6D5CcRk0QL7au
+	hM0i5KQjyAkbUx+6weBPlUctlU5CvLuzXXQSJBbc0
+X-Gm-Gg: ASbGnct37I8VHU/ICbLxedq+EP03EOgQk0mg0xbcdUxnLBW7Qv9FBRXBvmpoq0rw46D
+	F0LGj4Ty5nRaM3FwZABv24B5tYiFypyZN0fA3SRByDQParqyWrJyMJHiFDuu0Uom1hsfzMKiOTX
+	IDZZdORefql4P/eEkeFjSMSPtivBzMYfXT6fgmQkE1sCt2qazzG2GqrvNr2r+7gF3f+9f9mOQE4
+	N+3+kAs4mL+JIZZWVszs23pYhrAKfrwunsU3PG3wgJFUHdXeNLoJeka4NKhgfjS6RpLnMJU9cTN
+	pQgGCEee1uo4iA==
+X-Google-Smtp-Source: AGHT+IGkYPUSKNRc80kzAB+AdD6JXVWhff93Ifaos+he9fb1OEMssuQk3PK0+0z4BYdwPIXDcCdUqPJgDGN5YoA02o8=
+X-Received: by 2002:a05:6000:2f84:b0:425:7179:16eb with SMTP id
+ ffacd0b85a97d-42704d87ee4mr7605293f8f.17.1760953358396; Mon, 20 Oct 2025
+ 02:42:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/19] sched/fair: Assign preferred LLC ID to processes
-To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>, Vern Hao
- <vernhao@tencent.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Hillf Danton <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>,
- Jianyong Wu <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>,
- Tingyin Duan <tingyin.duan@gmail.com>, Len Brown <len.brown@intel.com>,
- Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
- Chen Yu <yu.chen.surf@gmail.com>, Adam Li <adamli@os.amperecomputing.com>,
- Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <cfa266cd6ea6fa30cbf7b07573992f18f786955e.1760206683.git.tim.c.chen@linux.intel.com>
- <3df5a8c1-7074-4fcf-adf8-d39137314fd6@intel.com>
- <20251015111542.GQ3289052@noisy.programming.kicks-ass.net>
- <4ec19969-831c-4d9e-b585-fc02db31b343@intel.com>
-From: Vern Hao <haoxing990@gmail.com>
-In-Reply-To: <4ec19969-831c-4d9e-b585-fc02db31b343@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-4-dakr@kernel.org>
+ <aPI9tNoh0I3KGDjl@google.com> <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
+ <DDKOLD1897SY.84W93E6L8ITR@kernel.org> <aPSzE7DpA7DxTHmm@google.com>
+ <DDMA6OR8V1L3.22YQDEKL20MB5@kernel.org> <aPXu0FWUrbxyemPq@google.com> <DDN1TL0WE895.1R5Z8AR975ZJH@kernel.org>
+In-Reply-To: <DDN1TL0WE895.1R5Z8AR975ZJH@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 20 Oct 2025 11:42:26 +0200
+X-Gm-Features: AS18NWC-DsJ2iWgnI_p90tlgZ8p23Bf1mygztSiPg7pVtriRmkKsKOHh9aSkU9M
+Message-ID: <CAH5fLgjw4cZ3Y3Z60v8Wtp1EsR3AjyopJBE-UzZH5H3qkFrWmQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 2025/10/17 12:50, Chen, Yu C wrote:
-> On 10/15/2025 7:15 PM, Peter Zijlstra wrote:
->> On Tue, Oct 14, 2025 at 01:16:16PM +0800, Chen, Yu C wrote:
->>
->>> The question becomes: how can we figure out the threads that share
->>> data? Can the kernel detect this, or get the hint from user space?
->>
->> This needs the PMU, then you can steer using cache-miss ratios. But then
->> people will hate us for using counters.
->>
->>> Yes, the numa_group in NUMA load balancing indicates
->>> that several tasks manipulate the same page, which could be an
->>> indicator. Besides, if task A frequently wakes up task B, does it
->>> mean A and B have the potential to share data? Furthermore, if
->>> task A wakes up B via a pipe, it might also indicate that A has
->>> something to share with B. I just wonder if we can introduce a
->>> structure to gather this information together.
->>
->> The wakeup or pipe relation might be small relative to the working set.
->> Consider a sharded in memory database, where the query comes in through
->> the pipe/socket/wakeup. This query is small, but then it needs to go
->> trawl through its memory to find the answer.
->>
->> Something we *could* look at -- later -- is an interface to create
->> thread groups, such that userspace that is clever enough can communicate
->> this. But then there is the ago old question, will there be sufficient
->> users to justify the maintenance of said interface.
+On Mon, Oct 20, 2025 at 11:40=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
-> I did not intend to digress too far, but since this issue has been 
-> brought
-> up, a wild guess came to me - could the "interface to create thread 
-> groups"
-> here refer to something like the filesystem for memory cgroup
-> v2 thread mode? I just heard that some cloud users might split the 
-> threads
-> of a single process into different thread groups, where threads within 
-> each
-> group share data with one another (for example, when performing K-V 
-> hashing
-> operations). 
+> On Mon Oct 20, 2025 at 10:12 AM CEST, Alice Ryhl wrote:
+> > On Sun, Oct 19, 2025 at 02:01:03PM +0200, Danilo Krummrich wrote:
+> >> On Sun Oct 19, 2025 at 11:44 AM CEST, Alice Ryhl wrote:
+> >> > On Fri, Oct 17, 2025 at 04:53:09PM +0200, Danilo Krummrich wrote:
+> >> >> On Fri Oct 17, 2025 at 4:37 PM CEST, Danilo Krummrich wrote:
+> >> >> > The reason I went with a trait is because that's consistent withi=
+n the file.
+> >> >> >
+> >> >> > Otherwise, I don't mind one or the other. If we always want to us=
+e a struct, I'm
+> >> >> > fine with that. :)
+> >> >>
+> >> >> Actually, there's another reason I forgot about since I sent the se=
+ries. :)
+> >> >>
+> >> >> We need it because we derive it from blanket implementations:
+> >> >>
+> >> >>   impl<T: BinaryWriter + Sync> BinaryReadFile<T> for T
+> >> >>   impl<T: BinaryReader + Sync> BinaryWriteFile<T> for T
+> >> >>   impl<T: BinaryWriter + BinaryReader + Sync> BinaryReadWriteFile<T=
+> for T
+> >> >
+> >> > You can still use a struct:
+> >> >
+> >> > struct BinaryWriterVtable<T: BinaryWriter + Sync>;
+> >> >
+> >> > impl<T: BinaryWriter + Sync> BinaryWriterVtable<T> {
+> >> >     const VTABLE: bindings::foo =3D ...;
+> >> > }
+> >>
+> >> Yeah, but do we get something for adding yet another type in this case=
+?
+> >>
+> >> Another point to consider is if we want a more generic fops abstractio=
+n type.
+> >>
+> >> In any case, I'd like to add this as good first issue for the whole fi=
+le to be
+> >> changed accordingly.
+> >
+> > Yes, keep it as-is for consistency with the rest of the file, even if
+> > the file is inconsistent with the rest of `kernel`. Please go ahead and
+> > file a good-first-issue for this.
+>
+> Before doing so, can you please answer the question above? While I'm all =
+for
+> consistency, in this specific case it seems we'd need another indirection=
+ for
+> that. And I'm not convinced that's an improvement.
 
-Yes, in our internal business, we encountered similar issues. The actual 
-scenario is on AMD virtual machines,
+The choice is between adding a new type or a new trait. There's no
+intrinsic advantage to choosing either one, but the rest of `kernel`
+chose "new type" over "new trait", so it makes sense to be consistent.
 
-where businesses would spawn multiple concurrent threads, for example, 
-around 900 threads, with over 600 threads
-
-handling hash or key-value computations, more than 100 threads dealing 
-with network transmission, and some others handling
-
-background logging or monitoring. These threads do not share same hot L3 
-cache data. so concentrating these threads would only
-
-exacerbate contention.
-
-
-Can we differentiate these types of threads? It's obvious that the 
-current configuration approach cannot meet the requirements
-
-and will only cause more L3 cache race. Can we use cgroup or other 
-methods, or configure through system calls to make
-
-distinctions (the application may not be willing to modify the code) ?
-
-> Using cgroup for this purpose might be a bit overkill, though,
-> considering that cgroup itself is designed for resource partitioning 
-> rather
-> than identifying tasks sharing data. Meanwhile, the hierarchy of cgroup
-> could also cause some overhead. If there were a single-layer thread 
-> partitioning
-> mechanism - similar to the resctrl filesystem - wouldn’t that allow us 
-> to avoid
-> modifying too much user business code while minimizing coupling with 
-> existing
-> kernel components?
-
-
-
-> thanks,
-> Chenyu
+Alice
 
