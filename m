@@ -1,52 +1,68 @@
-Return-Path: <linux-kernel+bounces-860453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1E7BF02A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:28:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3154BF02A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3484C4F3292
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:27:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02BC34F147A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 09:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046B32F617F;
-	Mon, 20 Oct 2025 09:26:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0F32F5A24;
-	Mon, 20 Oct 2025 09:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10472F5A01;
+	Mon, 20 Oct 2025 09:27:12 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2892C2F546D;
+	Mon, 20 Oct 2025 09:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952408; cv=none; b=f0tB9pv7clwT9BSOFvvOndSCHO6rzW7sxYUQMHIfaNUlEGyVz5k7T6MwkBt76TH6dHwdFq/6PR8ZRd0j6PBvygy7s4Z5mLcT2krVof2videHBS8j5nq11VYZtlFPtO3eZueQRuQ1r6uIM3jffqnF7t/h0KEOft5IgHsQkcn4DBw=
+	t=1760952432; cv=none; b=ooT1wq2bgy03mHkN1slHG+1q8l1NcXmUVRXzaHFpSo+Wq99iS8fLtfDyiiHrIPLaYEU7NgFTuXd53Sz6qmvzwqehoYnrX/G5esAaGlZR8Wvs/WHQPNZVl6Bnt8SGMu7KBkZx8UvPcRvyeY9DtfD0qm9bF6ZEkbCaeZ+gQ0OYMpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952408; c=relaxed/simple;
-	bh=4DRBY2Arcub4yI2g1UahSfZxhY/i8ei6Ue1r2W1Xj+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MHoW5dzkgEA88tu9oWfla6vfHomxQJ6rS9x9Lg5CJA9eyRO8dZtpYwgw4yB4sBslxeZ2MeU6AeQb+1GOaO5kOEdt2zO6e+ED03405MOaeq/F77P43q+m6mTFQr6XHd/+wipNFtD8lFtlyw0U1PuWvOi1GiAyfp/3GxcRFEd+Dgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 735F122C7;
-	Mon, 20 Oct 2025 02:26:37 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D3573F66E;
-	Mon, 20 Oct 2025 02:26:43 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: stable@vger.kernel.org
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	mark.rutland@arm.com,
+	s=arc-20240116; t=1760952432; c=relaxed/simple;
+	bh=Z2gYF3gOzeqX6mk5y5jFtzBdK9lK9jcleEkXns3wUYc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WbT3cJy9JU/XYlN2UZT1vQGdZ877CARtms+mdtL3AHptIsBPJX1K6it4fW6RdQYi5c7SxPEkCh4pHaXS91Uc42BwjmggY9hrDuqarPzfVK3UgfF555+lKV9nlSIH2y9/BvSDbUl8L5bHjo0aIc0NDCC0O/Up2ZnR1piL4KgGxNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ed7ae332ad9611f0a38c85956e01ac42-20251020
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:dce9fd46-61cb-4524-b7d4-39d2bb690b89,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-20,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-20
+X-CID-META: VersionHash:a9d874c,CLOUDID:d9832ce7111d0b5b2c3f35b3ae267732,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|102|850,TC:nil,Content:0|50,EDM
+	:1,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: ed7ae332ad9611f0a38c85956e01ac42-20251020
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1051764157; Mon, 20 Oct 2025 17:26:58 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: eugen.hristev@linaro.org
+Cc: alexandre.belloni@bootlin.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
 	linux-arm-kernel@lists.infradead.org,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>
-Subject: [PATCH 5.15-6.1 2/2] arm64: errata: Apply workarounds for Neoverse-V3AE
-Date: Mon, 20 Oct 2025 10:26:28 +0100
-Message-ID: <20251020092630.592033-3-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251020092630.592033-1-ryan.roberts@arm.com>
-References: <20251020092630.592033-1-ryan.roberts@arm.com>
+	nicolas.ferre@microchip.com,
+	xiaopei01@kylinos.cn
+Subject: [PATCH] iio: adc: ti_am335x_adc: Limit step_avg to valid range for gcc complains
+Date: Mon, 20 Oct 2025 17:26:55 +0800
+Message-Id: <1208d71f952e3bb85076d229e5fc1b21e2735567.1760166576.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <e9d6831a-d0ef-440c-b235-fec18048deed@linaro.org>
+References: <e9d6831a-d0ef-440c-b235-fec18048deed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,70 +71,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mark Rutland <mark.rutland@arm.com>
+On 11/28/24 08:45, Pei Xiao wrote:
+>> at91_adc_interrupt can call at91_adc_touch_data_handler function
+>> to start the work by schedule_work(&st->touch_st.workq).
+>> 
+>> If we remove the module which will call at91_adc_remove to
+>> make cleanup, it will free indio_dev through iio_device_unregister
+>> while the work mentioned above will be used. The sequence of operations
+>> that may lead to a UAF bug is as follows:
+>> 
+>> CPU0                                      CPU1
+> 
+>                                      | at91_adc_workq_handler
+>> at91_adc_remove                      |
+>> iio_device_unregister(indio_dev)     |
+>> device_release                       |
+>> //free indio_dev                     |
+>                                      | iio_push_to_buffers(indio_dev)
+>                                      | //use indio_dev
+> 
+> Fix it by ensuring that the work is canceled before proceeding with
+> the cleanup in at91_adc_remove.
+>> 
+>> Fixes: 27e177190891 ("iio:adc:at91_adc8xx: introduce new atmel adc driver")
 
-[ Upstream commit 0c33aa1804d101c11ba1992504f17a42233f0e11 ]
+>I believe that the commit that introduced the workqueue is different
+>than the one you tagged here.
 
-Neoverse-V3AE is also affected by erratum #3312417, as described in its
-Software Developer Errata Notice (SDEN) document:
+>With that changed,
 
-  Neoverse V3AE (MP172) SDEN v9.0, erratum 3312417
-  https://developer.arm.com/documentation/SDEN-2615521/9-0/
+>Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
 
-Enable the workaround for Neoverse-V3AE, and document this.
+I am so sorry I have been ignoring this reply for almost a year..
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-[ Ryan: Trivial backport ]
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- Documentation/arm64/silicon-errata.rst | 2 ++
- arch/arm64/Kconfig                     | 1 +
- arch/arm64/kernel/cpu_errata.c         | 1 +
- 3 files changed, 4 insertions(+)
-
-diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-index e7b50babd0d5..a8eddcf24231 100644
---- a/Documentation/arm64/silicon-errata.rst
-+++ b/Documentation/arm64/silicon-errata.rst
-@@ -181,6 +181,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V3     | #3312417        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-V3AE   | #3312417        | ARM64_ERRATUM_3194386       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | MMU-500         | #841119,826419  | N/A                         |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | MMU-600         | #1076982,1209401| N/A                         |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 6bb23a041e32..d889a466468c 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1027,6 +1027,7 @@ config ARM64_ERRATUM_3194386
- 	  * ARM Neoverse-V1 erratum 3324341
- 	  * ARM Neoverse V2 erratum 3324336
- 	  * ARM Neoverse-V3 erratum 3312417
-+	  * ARM Neoverse-V3AE erratum 3312417
-
- 	  On affected cores "MSR SSBS, #0" instructions may not affect
- 	  subsequent speculative instructions, which may permit unexepected
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 78aea409b092..f527e9590e11 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -457,6 +457,7 @@ static const struct midr_range erratum_spec_ssbs_list[] = {
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
-+	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3AE),
- 	{}
- };
- #endif
---
-2.43.0
-
+>> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+>> ---
+>>  drivers/iio/adc/at91-sama5d2_adc.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+>> index 8e5aaf15a921..4ba52b500054 100644
+>> --- a/drivers/iio/adc/at91-sama5d2_adc.c
+>> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
+>> @@ -2491,6 +2491,7 @@ static void at91_adc_remove(struct platform_device *pdev)
+>>  	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+>>  	struct at91_adc_state *st = iio_priv(indio_dev);
+>>  
+>> +	cancel_work_sync(&st->touch_st.workq);
+>>  	iio_device_unregister(indio_dev);
+>>  
+>>  	at91_adc_dma_disable(st);
 
