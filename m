@@ -1,149 +1,181 @@
-Return-Path: <linux-kernel+bounces-861270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC5FBF2396
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:52:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB81BF23D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 724E334E022
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78143A45F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 15:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE030279908;
-	Mon, 20 Oct 2025 15:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBE6277C8C;
+	Mon, 20 Oct 2025 15:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VGgHkTUd"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/mDPqXo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C6127702E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 15:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C9D2765EA;
+	Mon, 20 Oct 2025 15:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975530; cv=none; b=oaEnk++PFhfpttIcawL7QZ+g2mSzp6AUiFutD++3xIjRK3HpkpncuBc7pic+noUEREa9hiio3XLF6forGrX0iIpQtiDfxv0+Y92hcBidjQPA1zN0jl/phzBrLfNQMn5EnoAwuPC/jDWDdCrpj+bUnxfDNsG2HqyL3xuYdH5Dzbc=
+	t=1760975737; cv=none; b=dhH0pxVOXYm2S7096Vyog4YJGj96b67vFMaPgrsFjgFszOEiW4qTd9fJrQON5v5Lpw5igmZSETf4yvuOT3GYf5F7x22FSLoGaq4yovsvc5rbanXjMafEvcFIUqQGcleyIA8Vn0ysHeur1vFCzudoJv7y77fQZVX26LBUsNsZzpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975530; c=relaxed/simple;
-	bh=nh7KmG91llH0eTJy2kGD6whEVv3qZowTvAaONNXWCzA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mC4+SvxI8YfoQMb2t4a/8nFX4JiV8AmwrJv967ARkVkqCcSVRV0k2MYiGaeV6IiN+ZquSO/Fe8BgpE6kt70lWPTT0Uik6WlxSyDHy/7UsTx3qWp2btB3jkTSiFu1l9BJFoz8WFR+8FjRJhWPO1lhhyzsPFsuN8QDVzRDDpNjZ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VGgHkTUd; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33baf262850so4461661a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760975527; x=1761580327; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUxEjev6w4f1umuBxGfAcuaZR32QUUEbuSMBs3oceNE=;
-        b=VGgHkTUdhZTj02Irb7NYvhGZfItj+GtjPAlSpLrvrHnKkNp5OVt+BQ95EwoJZAfzHk
-         WB2D1/bKrttYimuybRv/06WxtsUw7I1J7SDDK+LDf8ME+notiictwNYi9EyFUk+M/cM9
-         KJ1LyTj3K5idElljaGq7GKrWUjQuiZVjTb6Yn/P7w94Vsqxct7svktYODSJSAkbau8I9
-         JuFHMUbNnOtBoyf+jtuDTo5/N7x3xD3znQUow0tEs+HY79iFFlj4Z8KdZIY2qL4EcrPE
-         SltyuRfv/PylxxFOT8lNfNnBT0GwzfTV0ll1VsMV4tZ69ZoEDZizWL9obNkRzJjRXpqw
-         2/0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760975527; x=1761580327;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUxEjev6w4f1umuBxGfAcuaZR32QUUEbuSMBs3oceNE=;
-        b=FTQe0+xHtqkLMtXDKdcrme6hTbbmn0xvfkdXHaiZ5XAX7CF9+zMJzPuoKDaoEbnXwh
-         3hRM5kDPDVjeRvPqXYJ9aNhj0EulFx4VUt1xSzgoUoHkuzAuXKqcNv7uVsj5ADzfM8iE
-         Tgqf27VTlRMFznTR6mjQOpOQZAqbaKch5DFuWSzGOTQvRPbRdLLmt3LxAmE9GiAFmLdi
-         /UCBWQywLJZnr/mw7phEv4O8PaoyAMdQCkcxdTmCCesgHJ9RhaV6X+cJZNiuXXvPM8ys
-         CAfVWIqZcQ9XVXZuizPU1U1iWH4ijSL759q7CubrmRn9GxwRTdAp/HrzseVEOtpYv7zs
-         SSNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCovitFhiIMYcBW/H9cRhpk/tC4SNIb48CI8SjkRXviTreGsY5FETP6rPuvuYY9wioJRY2c4nMyaQv+9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxArBwflC993NGatVuLYfzUiBTqjp1HW5q6e+9ZJ+wncqqjO/0d
-	iUJgutOri2SCHkXxeqauIm2rF5ggP5oJwCwqMwbOlhAX3WzVDxP289knuos55HFgJyVCDJwtOTU
-	QuU8Mgw==
-X-Google-Smtp-Source: AGHT+IHcZobfkAMYLqgP+952/xufHk4lZqraqyIEs0BsZFGgLzowAsqRVArAQbVQNZgQWXn7bmNPNT9qaaI=
-X-Received: from pjbds19.prod.google.com ([2002:a17:90b:8d3:b0:33b:51fe:1a84])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d85:b0:330:4a1d:223c
- with SMTP id 98e67ed59e1d1-33bcf87f421mr15625676a91.15.1760975526813; Mon, 20
- Oct 2025 08:52:06 -0700 (PDT)
-Date: Mon, 20 Oct 2025 08:52:05 -0700
-In-Reply-To: <176055105546.1527431.3611256810380818215.b4-ty@google.com>
+	s=arc-20240116; t=1760975737; c=relaxed/simple;
+	bh=Ux+6jo+bKEelFRnI1rAKVhe+llVndMIj95DyyF3IQkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kcCUt2d48R4UpC9DOHtzzqa88duaMpmBWkmRX6JKZ0Hf237JQRQUtLdRkJ3ZRhRN9BlcdRit20e52W0bzzRQe765Ox6Du/wXE93fV+dHxLvRrcmu6dScdBpmy30jF01uN6fRVqbOfaXPG8klVKE5y8QxAAaFmkTsJww0NnQ5dRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/mDPqXo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CAFFC116C6;
+	Mon, 20 Oct 2025 15:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760975737;
+	bh=Ux+6jo+bKEelFRnI1rAKVhe+llVndMIj95DyyF3IQkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W/mDPqXoYMArX3Baaai+ndiEGA0AzD5b77GwWuZBqGIrB5R8qlD/9pkilAsrluKoG
+	 t95Lw8iFBhMZBdps7Ysi2Hl6+z5VzpZ6fDddsY9FRDUhQnYvi+dQJ3sXdIUrX0dl67
+	 rMVb9g77Fn1vVxsaCFnm0/Vz1cICDFR1Y/kert2uU3zGJpefUxePAtmyjEZ+lNLFeT
+	 9+iyz1+h4xGqsy0yCCCK4dVzVLBZ0JzU4DUVoieI7Ns9sJSy3igbYSO1qVRwci+sIJ
+	 MMEYvXKGojWbKkIMnDPm1mU4oRy29DC/XPYWzH3g3g+WcxebeviuWz05eT/zgCMlZu
+	 Kp4hH4bwoACSg==
+Message-ID: <4979bd26-0a77-4390-9db2-6d40cd7f963c@kernel.org>
+Date: Mon, 20 Oct 2025 17:55:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <176055105546.1527431.3611256810380818215.b4-ty@google.com>
-Message-ID: <aPZapWWFGyqjA2e3@google.com>
-Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
-From: Sean Christopherson <seanjc@google.com>
-To: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
-	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
-	Shivank Garg <shivankg@amd.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
-	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
-	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
+ Gen3 ADC
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org,
+ lumag@kernel.org, dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+ daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org,
+ thara.gopinath@gmail.com, lee@kernel.org, rafael@kernel.org,
+ subbaraman.narayanamurthy@oss.qualcomm.com, david.collins@oss.qualcomm.com,
+ anjelique.melendez@oss.qualcomm.com, kamal.wadhwa@oss.qualcomm.com,
+ rui.zhang@intel.com, lukasz.luba@arm.com, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
+ neil.armstrong@linaro.org, stephan.gerhold@linaro.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
+ <20250829-classic-dynamic-clam-addbd8@kuoka>
+ <5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
+ <4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
+ <a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
+ <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
+ <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
+ <20250927144757.4d36d5c8@jic23-huawei>
+ <a3158843-dfac-4adc-838a-35bb4b0cbea4@oss.qualcomm.com>
+ <CAGE=qrrCvq28pr9Y7it-CGMW=szKUnU+XBj1TmpoUwuASM05ig@mail.gmail.com>
+ <31bd08ce-823a-4a71-baca-a9d1e02fcb6a@oss.qualcomm.com>
+ <08eb477f-ea34-4a31-b181-bfc629aef4c8@kernel.org>
+ <68a9b8e8-bdf4-430f-baef-6a293ccea78d@oss.qualcomm.com>
+ <d8a78b7c-e3a9-44b5-986d-8ac32f328eb6@kernel.org>
+ <3a32746a-5b0e-4c0a-8322-00cd3a84394a@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3a32746a-5b0e-4c0a-8322-00cd3a84394a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 15, 2025, Sean Christopherson wrote:
-> On Wed, 27 Aug 2025 17:52:41 +0000, Shivank Garg wrote:
-> > This series introduces NUMA-aware memory placement support for KVM guests
-> > with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> > that enabled host-mapping for guest_memfd memory [1] and can be applied
-> > directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
-> > Merge branch 'guest-memfd-mmap' into HEAD)
-> > 
-> > == Background ==
-> > KVM's guest-memfd memory backend currently lacks support for NUMA policy
-> > enforcement, causing guest memory allocations to be distributed across host
-> > nodes  according to kernel's default behavior, irrespective of any policy
-> > specified by the VMM. This limitation arises because conventional userspace
-> > NUMA control mechanisms like mbind(2) don't work since the memory isn't
-> > directly mapped to userspace when allocations occur.
-> > Fuad's work [1] provides the necessary mmap capability, and this series
-> > leverages it to enable mbind(2).
-> > 
-> > [...]
+On 20/10/2025 14:51, Konrad Dybcio wrote:
+> On 10/17/25 3:40 PM, Krzysztof Kozlowski wrote:
+>> On 17/10/2025 13:18, Jishnu Prakash wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On 10/9/2025 5:22 AM, Krzysztof Kozlowski wrote:
+>>>> On 08/10/2025 23:20, Jishnu Prakash wrote:
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> On 10/4/2025 12:22 PM, Krzysztof Kozlowski wrote:
+>>>>>> On Sat, 4 Oct 2025 at 11:42, Jishnu Prakash
+>>>>>> <jishnu.prakash@oss.qualcomm.com> wrote:
+>>>>>>>
+>>>>>>> Hi Jonathan,
+>>>>>>>
+>>>>>>> On 9/27/2025 7:17 PM, Jonathan Cameron wrote:
+>>>>>>>> On Fri, 19 Sep 2025 20:17:43 +0530
+>>>>>>>> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
 > 
-> Applied the non-KVM change to kvm-x86 gmem.  We're still tweaking and iterating
-> on the KVM changes, but I fully expect them to land in 6.19.
+> [...]
 > 
-> Holler if you object to taking these through the kvm tree.
+>>> Can you please provide your suggestions on changes we can make
+>>> in the above points ?
+>>
+>> You just pasted DT. I asked about SW, software. Please read carefully
+>> previous comments.
 > 
-> [1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
->       https://github.com/kvm-x86/linux/commit/601aa29f762f
-> [2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
->       https://github.com/kvm-x86/linux/commit/2bb25703e5bd
-> [3/7] mm/mempolicy: Export memory policy symbols
->       https://github.com/kvm-x86/linux/commit/e1b4cf7d6be3
+> Is the problem that Jishnu included some indices in dt-bindings without
+> also adding them in the driver's adc5_gen3_chans_pmic[] array?
+> 
+> As in, would the resolution to this thread be simply handling all of
+> them in the driver correctly?
 
-FYI, I rebased these onto 6.18-rc2 to avoid a silly merge.  New hashes:
+The solution is to remove them from the bindings, just like we do with
+many other hardware constants. Of course if these are not hardware
+constants, but part of ABI, then solution would be different but no one
+provided proof or argument that this is any binding. All proofs were
+"but I want to use it in my DTS", which proofs nothing. Not a binding.
 
-[1/3] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
-      https://github.com/kvm-x86/linux/commit/7f3779a3ac3e
-[2/3] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
-      https://github.com/kvm-x86/linux/commit/16a542e22339
-[3/3] mm/mempolicy: Export memory policy symbols
-      https://github.com/kvm-x86/linux/commit/f634f10809ec
+While this issue is not that important, we keep discussing it because
+author does not try to understand the problem or even keep up the
+discussion. Instead repeats the same without really reading my
+messages... and then disappears for month or more.
+
+Best regards,
+Krzysztof
 
