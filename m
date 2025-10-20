@@ -1,377 +1,199 @@
-Return-Path: <linux-kernel+bounces-861320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E290FBF262C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:23:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F45BF2674
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3BC94EDDA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4539F18A8207
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03582877E9;
-	Mon, 20 Oct 2025 16:23:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C336029A300;
+	Mon, 20 Oct 2025 16:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UCANsZOu"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010061.outbound.protection.outlook.com [52.101.201.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665E51EE7B9;
-	Mon, 20 Oct 2025 16:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760977419; cv=none; b=nmZPPFTooSdQutDxViqFlWsahuSbqyg3gFpyafiAT0QIJOwzObcpimlOFr93XPnHDVahBQ/tcVcphXT2pv/0d6/X3YtWI47fi0OA50wi7r/KANtxfnmTFlQyEl6BuTdUA/DQffeFGVOSKEWKC6g2owUu6kK+NF7U+NUbzHncJpc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760977419; c=relaxed/simple;
-	bh=XuCEM6jhbZT7d0QEHgESP81oXjZJH+/SvONGDH1rEXs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EUiCVaYrHXdOZj7Z7dViP7V3/MWp6PFOh11lSZbf2Qn7qNHIO089RpRm/Ddm7BLaiyKLKLWnFfhFJl8Bv0qSjVz7GQZ/bfYYxT+FxPrfoLPmW+wBDKb3gjh+Qf/lIqitw5peRh7wmdmSDpRBAf8Oa8IBzvurd6LRgLaY9c8R0k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cr0y21BY2z6M5CH;
-	Tue, 21 Oct 2025 00:19:54 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5A5E21402A4;
-	Tue, 21 Oct 2025 00:23:31 +0800 (CST)
-Received: from localhost (10.48.157.75) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 20 Oct
- 2025 17:23:30 +0100
-Date: Mon, 20 Oct 2025 17:23:28 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>,
-	<james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
-	<vincent.guittot@linaro.org>, <etienne.carriere@st.com>,
-	<peng.fan@oss.nxp.com>, <michal.simek@amd.com>, <quic_sibis@quicinc.com>,
-	<dan.carpenter@linaro.org>, <d-gole@ti.com>, <souvik.chakravarty@arm.com>
-Subject: Re: [PATCH 06/10] firmware: arm_scmi: Add System Telemetry driver
-Message-ID: <20251020172328.00002fc3@huawei.com>
-In-Reply-To: <20250925203554.482371-7-cristian.marussi@arm.com>
-References: <20250925203554.482371-1-cristian.marussi@arm.com>
-	<20250925203554.482371-7-cristian.marussi@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751022882B6;
+	Mon, 20 Oct 2025 16:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760977462; cv=fail; b=ZJCgXk7ZTf+ZNeQmUfeHWbi86FMROaeP/8erRrxTYTCGLe+dlsrqVL2PXrkpPEQ8MmD5grcACvBfB/TxL8FlSpz7hQzy3YYU6aHksHQxz6RHN33GwL/PKnoTwaX9uOD38W3BJxRh384+BCyesxD56EvSr32lMe6P63CMh4PeW88=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760977462; c=relaxed/simple;
+	bh=oGmvgESliwaYsYQ5tewnlDx8rOw6aN/2myMk7/0Lajc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=V59dFpGDl1CcAZ9oiXgCRl1fd3dk+JszZTiuj7erJxAjT/vHtOkQ6npaNE99EeEc0GWku7hu4YTvLR0NvSb4bPEsZS37gPajtjaWNZoErJPWv+p5ls7URzjtLnX0bCA++WB9L+ajTWxKnBJKKKS7Y2lqamO1QtkbX61x5F7FJYc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UCANsZOu; arc=fail smtp.client-ip=52.101.201.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TPYBS07ddWC2eITtePmUf3bGa074fT4zY0EYTTx8FJIGTqKO20E+OTFcBj9sjlOgX2E5Owyqbi0MR4VWhdNCRNJ4Z0wiW5nhxd62YwLvtv+ndNWZ1Un0HlnPkAdxp5DNxgZVZcXQtnG6TIXzhBtSrQAdcAF2//5m3Kkqxjo09zf1D9ZCWoLjrQrGEAWSimxA8RStFEyCUt3zw8rVfqaOAqkmD9QwL/o3Yr+eI/pQ99OZcnM/Q/lXcthnMe6D9m69QWxKQFSdsppHTO1JQZdzYsv83x//DH1oTwRhKiVE6oYy8sYbPYcf5tt+dpjuGdMsytHCfrwD1rLxp0exqYMQOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WyUc5iuG831VbfI5SzDmKm4lT6vli4Yl86xP/5srhLM=;
+ b=J1xmrqt06wYz9srLyK57ng5FXN1Vuww7+n8mvZviD10JWJ9BZrXBJ3wSIs3In8ZeRcnYRWkxEprJGe9AqJq8o5+/ynhYuS50iNOYIxGrtKD4ax8Q5AqQh5qmb/s3u3X9BmfUEYBuKtWgFHPgov9nx7FxVvJohDTfTxbf6+bZ5wmK4CEf1ICBuwDhE0JtI5vsiY9LZWZodKne6QY2CtgEk85flPs41bukPTaUzm3LrlqaLcvx1HgnJKBwyOMZ2q0W4fuVwG4QBWCEF8FSXM86j0EZgcHkKj8hLz/Bin+1X8nMKdYVY4+d8nfxK4VVGtTS5f8+9eOv4yc/hkQN1t8wMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WyUc5iuG831VbfI5SzDmKm4lT6vli4Yl86xP/5srhLM=;
+ b=UCANsZOuDseSbvkw6ijKMFj+bCulmCcHdW7mjFH9l23UPXzQeMwo004SQHziVRZWS20HTU5AW+0bAprQwM2eDzuJqTA6HhBBfV4Zri0CFyptXYgc9dXOdRTjvf/m2EIR1q3ycqPqDnyADUuoUQ+NixMbzCczo67/H1jSSeTlHatxpbiqZo/D8WPF1ghHZBQc2GDFvlZpP5j5A7YI0PNqjD6l9oq7klAuzvhELETi8xLyIyKz1y7d6j/i1uluMB3hKIPMPk0ae8P6+oCvla2D3tY0tNR+zYuOh0ih1TWBqnKfSwtDoS8Plr5jPSiPH2TQDZVRVdz34K+fe7t6pvJpjQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by MW4PR12MB7381.namprd12.prod.outlook.com (2603:10b6:303:223::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Mon, 20 Oct
+ 2025 16:24:15 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 16:24:15 +0000
+Date: Mon, 20 Oct 2025 13:24:13 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: joro@8bytes.org, kevin.tian@intel.com, suravee.suthikulpanit@amd.com,
+	will@kernel.org, robin.murphy@arm.com, sven@kernel.org,
+	j@jannau.net, jean-philippe@linaro.org,
+	robin.clark@oss.qualcomm.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, yong.wu@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	tjeznach@rivosinc.com, pjw@kernel.org, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, heiko@sntech.de, schnelle@linux.ibm.com,
+	mjrosato@linux.ibm.com, wens@csie.org, jernej.skrabec@gmail.com,
+	samuel@sholland.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v1 00/20] iommu: Introduce and roll out test_dev domain op
+Message-ID: <20251020162413.GV316284@nvidia.com>
+References: <cover.1760312725.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1760312725.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: MN0PR02CA0014.namprd02.prod.outlook.com
+ (2603:10b6:208:530::19) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|MW4PR12MB7381:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6dc9faa6-6734-417c-1841-08de0ff51c2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LtCyy/i1pi895cOAcfvxnnl+cs69FVyT/2IISez8W3JkuE0dUfU9jnIB+e73?=
+ =?us-ascii?Q?n2xO5lwYeBJukA5Fk7FiYj7+Xvn4UrygYIE+N69H3hbEcnDNN/OxybPDf3B9?=
+ =?us-ascii?Q?1GBdqCG4FcQ4eQF0kz1qpzaVMXDOQcN4wI+Cn/uhEk2v6MOcAEI3N/k4H9Gb?=
+ =?us-ascii?Q?HQokBRvkXPK5Dj9YnoPWYwaepVMsp5b/uuLkATBsEosOqMPfWtBUulaZN+a3?=
+ =?us-ascii?Q?Ob6ZPxAdnyFl/RwR8B0UYbeuYcYVB91aFkHHGomsGm987f2v+iPmWA5lOOM0?=
+ =?us-ascii?Q?Z8Qx31+V+ck4EAGt2HsJTz2UcHD/F/hWzUWpMSkvysM/Bz8xfpsQO5aa5Iph?=
+ =?us-ascii?Q?AiN951Un2hqk9Vl/YYl9WMVsoIkWeUen7wLot/CLMKAGEpsDn4XvgAkFUS7C?=
+ =?us-ascii?Q?jmwL5+G7DrhUpipIPWktWegsUiseoT6xcWIvRbyzDbNEWhoAbdTPo2M1j2Yl?=
+ =?us-ascii?Q?xS2PxPK8IJAY9l2CLDnH04GpwGjC3gCMhJHQXD24bFFmqUSnlzPBzLwp7WB8?=
+ =?us-ascii?Q?3jbDckz2eCFZPPydQ7KPSa9iUQVbcxPcNHJzufpgxKuVf9UVRImqAWZTGYy7?=
+ =?us-ascii?Q?WoijI63/9WJoros1qxOc/YeQa8I/SLwXXZZiil3cuvOMTFBiyrYY8lC8MuxE?=
+ =?us-ascii?Q?zDmUusgEaOdnGjsZ58grq255LpG3XwJFXQU2jBirwJ7+O5+HOJO81385eet2?=
+ =?us-ascii?Q?FtnB/PvM1SSKyiFfetQP75j124NA9v5w73J8fyPj9o+7FjXIhNLOYsNZtcTw?=
+ =?us-ascii?Q?4CG5u7DYQR2FZpyHvYJbWGneJk8anP28lfi+vCdi/P+VFHlM3INA3mIO4hVp?=
+ =?us-ascii?Q?f/tHYaZgvH8z8rAAO6TfMrQdAfKpKUTxGFR/VkNpSz7V3dEB1hf+iEw1Z1qo?=
+ =?us-ascii?Q?NyCkyYfflC/ypSe65vsdEPsMy0YbZxZOynaGECCbaDDiIJCdyjg4+5EXG9/j?=
+ =?us-ascii?Q?dLaEBn8cAiOM82eUbDSYVYj4LqmFG043vj/y+aerRqzlTECjUabs1ttgn5IV?=
+ =?us-ascii?Q?yywpCfxVMBfks2RtrJ5CDwPn3WLo4UCjjIppSj6CePL3T2WwmGBprlyfNWKA?=
+ =?us-ascii?Q?IBlJaJq2u7BsCOqNMfJJiQpw7aYZxdBXgd4ncAVmsyaQfI5tJ+ufNtvzm/d9?=
+ =?us-ascii?Q?u8zaiZT+SOFYcam6GkDfJeNz/UbYbcRlVYMnZQg/HMdSPmFw694VCQIlLZYS?=
+ =?us-ascii?Q?jCygP07KAu3QXo6B+ZzrwpHrBY/XA6PiXBCL+1W4u22FQaPU5XWG/icOeTF8?=
+ =?us-ascii?Q?YfgTcPL3NvlsbjRl/ljJ2virtYxCZXbvTvBRZ/ERUO9rtscZO2tVsHZm31Au?=
+ =?us-ascii?Q?DKa2ngz8yOsrqqyipwFKCEi0RkXNN+Gc2aGg9Ey1U8izs8GYloM4Fa6y1LNM?=
+ =?us-ascii?Q?TqipZ3kCp+qtoz1feeFZbv2nsPqW2kxaCKLQHEwjq6SEY4I8jbUuIC9ONAhe?=
+ =?us-ascii?Q?VYMPZUDoNJHT5ZaK4bMwWJlee4Ic6kZJyeJqUlkQkLybhZ1PWDaJfw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?decPrwCF+RX/ht+phySzMsnzldOrq/5d3LHvbAK9eyOIxghCtnEowZhsOhuo?=
+ =?us-ascii?Q?3QyvpGUBoMKHuCRaIUk+v4eFlzDOKhv0G/YH5Xmn+385Y6KkDZU3ssfk6wSJ?=
+ =?us-ascii?Q?VMZvgdQob434HsIUk90Us0+g4NiKboy5x/hN2gYNQl7kU4uLBfVheU5QdNM3?=
+ =?us-ascii?Q?+DwuF38BcKkx1JLEFMqblkAJot4FjnCTmdLjgXXCZtTd/m/Xx3bE0pp+17Tz?=
+ =?us-ascii?Q?unTk0mXqM0VWeEfhK+fZ9AWcjcgaxqwQEBmXLjE9STpfL34CkbgAcScaMn+2?=
+ =?us-ascii?Q?geaiTvzYgSPDUlB41bJAW5GHYmrX+5H6EJ40wAN2izQZVMhan8eY7XBHP2QG?=
+ =?us-ascii?Q?YpmZRJAfYgwBCYNN3jXoOb8gXYqohovgWZ8zAV/ajKTrNJT/PjPjHjsdQUKY?=
+ =?us-ascii?Q?GqonjWgX0NGZCh8wFgAknrSy74iqyKghI54lFWUMSjBq/hNS7Q2rVwrd17Sj?=
+ =?us-ascii?Q?IKtljmSle7u/DNbUfISDB5mm/wb/tjG6Ke0e7ykDqPJnS5B2lUjmR7Q1rA6F?=
+ =?us-ascii?Q?6WjgstlwOW/HwgQ/4D0LWRI1pLgbyvNdirqLGr4RvNN6C+CPuv/0CIhOF6x2?=
+ =?us-ascii?Q?eYd38EgoXSkz0TVn8UBBxJBNTy1qoazH8pqsUWDYqz5OQzqUjNPn+lapsDug?=
+ =?us-ascii?Q?MPLx3SrMBLre7i9nLsjv8L3uqwNDRwt92UHq0bdjH59KuKr+Fhlwdoh399JS?=
+ =?us-ascii?Q?YksvKyytsbOnTm0tdVg7bfiSPoy26G6sdplfYqn66rmWVW0+TYS7UZb0ANDG?=
+ =?us-ascii?Q?IV6/8sqzsPB2tAefV2J40lEZnIBNXZTt+Om5cwRcg/ADZz+Un5/UU3a8VJ7p?=
+ =?us-ascii?Q?UKVD46JDz1ZK/Pod7u+oZkulKcS6qzfPX5+4Mw+wOXx8dsnptd/3ljBT2X25?=
+ =?us-ascii?Q?4fFTkbMcZS/6carPYS/eaIm91PWExu/8ghjnSHcI1CP52XuP+xXZpRredfS7?=
+ =?us-ascii?Q?IVZSsfefOTuXQR6iO8ByjpL8wm0pBmXpT4AB70MMg3p+4VZDhwBwKT+OjDOC?=
+ =?us-ascii?Q?aj7G7InbyeTaBIZhXPd3pbo8MGS+bs8lASJslcn1BbIZWe1QNdZitabISuR7?=
+ =?us-ascii?Q?SMxvj/D6hAfaVa3LrHn8Jxwxt5Gp8+gnuvKcr5edZs3iY8HXoy3XCiWzwyO5?=
+ =?us-ascii?Q?LQ4fsrP2pbyZW3Pv2hifXsqODvRc504Ud57xqWwh7KoqS/d2vyfESC5f9A09?=
+ =?us-ascii?Q?W5x0Rmglqrz1gMfjcw6n0VXUdmeTuJYQNP2vXwb44aaShIj9sJbS3iAK/mga?=
+ =?us-ascii?Q?SeJiIUTLzs12zGRcJLqiHQtZm4Evre4bUAnV+EL57vUF5alafX2lRj/JZEof?=
+ =?us-ascii?Q?BuWKS1iNAkcc2KSGX0Vf3QZgQG/Hq35j7Lyam1Q5Wg3EqiK0katnq9/gjtJP?=
+ =?us-ascii?Q?tEeLKlruh6ND7TLtPGhZSIniDZv+hkB5Fdnb1uePMX/yFAJ54ekoLjVz0cTc?=
+ =?us-ascii?Q?vUh4m+cZ7MHVDdYmIe2qg9V3Evwl4bbpnPjMxMWcjgyg0fJAMxb6q6AdIOdD?=
+ =?us-ascii?Q?nTql4Wd5D8oHGCDwKVs5cve06zfVl6g+PPN4lpMrZhYcBzlLbCMzqtw8sj/f?=
+ =?us-ascii?Q?tMOrJQfA5afR9ZYNnbOOEAXaDjXZlX3klz2JvKBX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dc9faa6-6734-417c-1841-08de0ff51c2f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:24:15.5986
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3KK5U07vkHeSB3ho9wVznOCZd29qpN7dI24pod0DiJYtdKdKRFVWKlfHoi+CTax/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7381
 
-On Thu, 25 Sep 2025 21:35:50 +0100
-Cristian Marussi <cristian.marussi@arm.com> wrote:
+On Sun, Oct 12, 2025 at 05:04:57PM -0700, Nicolin Chen wrote:
+> Add a new test_dev domain op for drivers to run a compatibility test prior
+> to the actual attachment at the driver level. Any incompatible attachment
+> will be rejected early, allowing the iommu core to postpone any concurrent
+> attachment during a device reset state.
 
-> Add a new SCMI System Telemetry driver which gathers platform Telemetry
-> data through the new the SCMI Telemetry protocol and expose all of the
-> discovered Telemetry data events on a dedicated pseudo-filesystem that
-> can be used to interactively configure SCMI Telemetry and access its
-> provided data.
+I had to go back and find the original email from kevin to understand
+this..
 
-I'm not a fan of providing yet another filesystem but you didn't
-lay out reasoning in the cover letter.
+ 
+This is a preparatory series for new iommu_dev_reset APIs:
+https://lore.kernel.org/all/cover.1756682135.git.nicolinc@nvidia.com/
 
-One non trivial issue is that you'll have to get filesystem review on this.
-My review is rather superficial but a few things stood out.
+That series parks the domain attachment at BLOCKED during a device
+reset. To keep the uAPI this also required that any change in domain
+during this reset sequence is just recorded and kept in the background
+until the reset is finished.
 
-> 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+This creates a weird hole where userspace could propose to attach to a
+domain that is incompatible with the device during FLR, have that
+attach queued and then ultimately have the domain attach fail when the
+FLR concludes.
 
-> diff --git a/drivers/firmware/arm_scmi/scmi_system_telemetry.c b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
-> new file mode 100644
-> index 000000000000..2fec465b0f33
-> --- /dev/null
-> +++ b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+This can be mitigated by splitting out the compatability test from the
+attach and having the core code check the compatability before
+accepting a queued domain attach.
 
+It was felt that the subtle uAPI change warrants this rework.
 
-> +static ssize_t
-> +scmi_tlm_update_interval_write(struct file *filp, const char __user *buf,
-> +			       size_t count, loff_t *ppos)
-> +{
-> +	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-> +	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-> +	bool is_group = IS_GROUP(tlmi->cls->flags);
-> +	unsigned int update_interval_ms = 0, secs = 0;
-> +	int ret, grp_id, exp = -3;
-> +	char *kbuf, *p, *token;
-> +
-> +	kbuf = memdup_user_nul(buf, count);
-
-I'd use a __free(kfree) as then you can directly return in error paths.
-Will keep the buffer around a little longer than strictly necessary but
-I'm not seeing where that will cause problems.
-
-> +	if (IS_ERR(kbuf))
-> +		return PTR_ERR(kbuf);
-> +
-> +	p = kbuf;
-> +	token = strsep(&p, " ");
-> +	if (!token) {
-> +		/* At least one token must exist to be a valid input */
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-> +
-> +	ret = kstrtouint(token, 0, &secs);
-> +	if (ret)
-> +		goto err;
-> +
-> +	token = strsep(&p, " ");
-> +	if (token) {
-> +		ret = kstrtoint(token, 0, &exp);
-> +		if (ret)
-> +			goto err;
-> +	}
-> +
-> +	kfree(kbuf);
-> +
-> +	update_interval_ms = SCMI_TLM_BUILD_UPDATE_INTERVAL(secs, exp);
-> +
-> +	grp_id = !is_group ? SCMI_TLM_GRP_INVALID : tlmi->grp->info->id;
-> +	ret = tsp->ops->collection_configure(tsp->ph, grp_id, !is_group, NULL,
-> +					     &update_interval_ms, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +
-> +err:
-> +	kfree(kbuf);
-> +	return ret;
-> +}
-
-
-> +
-> +static int scmi_tlm_bulk_buffer_allocate_and_fill(struct scmi_tlm_inode *tlmi,
-> +						  struct scmi_tlm_priv *tp)
-> +{
-> +	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-> +	const struct scmi_tlm_class *cls = tlmi->cls;
-> +	struct scmi_telemetry_de_sample *samples;
-> +	bool is_group = IS_GROUP(cls->flags);
-> +	int ret, num_samples, res_id;
-> +
-> +	num_samples = !is_group ? tlmi->info->base.num_des :
-> +		tlmi->grp->info->num_des;
-> +	tp->buf_sz = num_samples * MAX_BULK_LINE_CHAR_LENGTH;
-> +	tp->buf = kzalloc(tp->buf_sz, GFP_KERNEL);
-> +	if (!tp->buf)
-> +		return -ENOMEM;
-> +
-> +	res_id = is_group ? tlmi->grp->info->id : SCMI_TLM_GRP_INVALID;
-> +	samples = kcalloc(num_samples, sizeof(*samples), GFP_KERNEL);
-> +	if (!samples) {
-> +		kfree(tp->buf);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret = tp->bulk_retrieve(tsp, res_id, &num_samples, samples);
-> +	if (ret) {
-> +		kfree(samples);
-Free them in reverse of allocation. Makes it easier to review.
-
-> +		kfree(tp->buf);
-> +		return ret;
-> +	}
-> +
-> +	ret = scmi_tlm_buffer_fill(tsp->dev, tp->buf, tp->buf_sz, &tp->buf_len,
-> +				   num_samples, samples);
-I'm a little surprised by lifetime of tp->buf if this return an error.
-Perhaps add a comment on that.
-
-> +	kfree(samples);
-> +
-> +	return ret;
-> +}
-
-
-> +
-> +static struct scmi_tlm_instance *scmi_tlm_init(struct scmi_tlm_setup *tsp,
-> +					       int instance_id)
-> +{
-> +	struct device *dev = tsp->dev;
-> +	struct scmi_tlm_instance *ti;
-> +	int ret;
-> +
-> +	ti = devm_kzalloc(dev, sizeof(*ti), GFP_KERNEL);
-Given use of devm I'm guessing this will only be called from probe().
-With that in mind...
-> +	if (!ti)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ti->info = tsp->ops->info_get(tsp->ph);
-> +	if (!ti->info) {
-> +		dev_err(dev, "invalid Telemetry info !\n");
-> +		return ERR_PTR(-EINVAL);
-
-		return dev_err_probe()
-
-> +	}
-> +
-> +	ti->id = instance_id;
-> +	ti->tsp = tsp;
-> +
-> +	ret = scmi_tlm_root_instance_initialize(dev, ti);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	ret = scmi_telemetry_des_initialize(dev, ti);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	ret = scmi_telemetry_groups_initialize(dev, ti);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return ti;
-> +}
-> +
-> +static int scmi_telemetry_probe(struct scmi_device *sdev)
-> +{
-> +	const struct scmi_handle *handle = sdev->handle;
-> +	struct scmi_protocol_handle *ph;
-> +	struct device *dev = &sdev->dev;
-> +	struct scmi_tlm_instance *ti;
-> +	struct scmi_tlm_setup *tsp;
-> +	const void *ops;
-> +
-> +	if (!handle)
-> +		return -ENODEV;
-> +
-> +	ops = handle->devm_protocol_get(sdev, sdev->protocol_id, &ph);
-> +	if (IS_ERR(ops))
-> +		return dev_err_probe(dev, PTR_ERR(ops),
-> +				     "Cannot access protocol:0x%X\n",
-> +				     sdev->protocol_id);
-> +
-> +	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
-> +	if (!tsp)
-> +		return -ENOMEM;
-> +
-> +	tsp->dev = dev;
-> +	tsp->ops = ops;
-> +	tsp->ph = ph;
-> +
-> +	ti = scmi_tlm_init(tsp, atomic_fetch_inc(&scmi_tlm_instance_count));
-> +	if (IS_ERR(ti))
-> +		return PTR_ERR(ti);
-> +
-> +	mutex_lock(&scmi_tlm_mtx);
-> +	list_add(&ti->node, &scmi_telemetry_instances);
-> +	if (scmi_tlm_sb) {
-> +		int ret;
-> +
-> +		/*
-> +		 * If the file system was already mounted by the time this
-> +		 * instance was probed, register explicitly, since the list
-> +		 * has been scanned already.
-> +		 */
-> +		mutex_unlock(&scmi_tlm_mtx);
-> +		ret = scmi_telemetry_instance_register(scmi_tlm_sb, ti);
-> +		if (ret)
-> +			return ret;
-> +		mutex_lock(&scmi_tlm_mtx);
-I guess this will make sense in later patches.  Right now it looks like you should
-just check scmi_tlb_sb after releasing the lock.
-E.g.
-	mutex_lock(&scmi_tlm_mtx); //I'd spell out mutex
-	list_add(&ti->ode, &scam_telemetry_instances);
-	mutex_unlock(&scmi_tlm_mtx);
-	if (scmi_tlm_sb) {
-		ret = scmi....
-
-> +	}
-If you really have to check if (scmi_tlb_sb) under the lock just take a copy into a local
-variable and use that after releasing the lock.
-
-> +	mutex_unlock(&scmi_tlm_mtx);
-> +
-> +	dev_set_drvdata(&sdev->dev, ti);
-> +
-> +	return 0;
-> +}
-
-> +static const struct scmi_device_id scmi_id_table[] = {
-> +	{ SCMI_PROTOCOL_TELEMETRY, "telemetry" },
-> +	{ },
-
-Drop that trailing comma.  Only thing it does is make
-it easy to introduce a bug by putting something after it.
-
-> +};
-> +MODULE_DEVICE_TABLE(scmi, scmi_id_table);
-
-
-> +
-> +static int __init scmi_telemetry_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = scmi_register(&scmi_telemetry_driver);
-Why do this first?  My immediate assumption is this allows
-for drivers to register in parallel with the rest of init
-happening.  Feels like it should be the last thin in init.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = sysfs_create_mount_point(fs_kobj, TLM_FS_MNT);
-> +	if (ret && ret != -EEXIST) {
-> +		scmi_unregister(&scmi_telemetry_driver);
-
-Given the classic pattern of building up more things to undo.
-Use gotos and an error handling block as that's what we normally
-expect to see in the kernel.
-
-> +		return ret;
-> +	}
-> +
-> +	ret = register_filesystem(&scmi_telemetry_fs);
-> +	if (ret) {
-> +		sysfs_remove_mount_point(fs_kobj, TLM_FS_MNT);
-> +		scmi_unregister(&scmi_telemetry_driver);
-> +	}
-> +
-> +	return ret;
-> +}
-> +module_init(scmi_telemetry_init);
-> +
-> +static void __exit scmi_telemetry_exit(void)
-> +{
-> +	int ret;
-> +
-> +	ret = unregister_filesystem(&scmi_telemetry_fs);
-
-Documentation says this only fails if the filesystem isn't found.
-How can that happen if the init above succeeded?
-
-I noted from a quick scan that most filesystems don't check the
-return value.  The only one that does uses it to print a message
-and otherwise continues as if it succeeded.
-
-
-
-> +	if (!ret)
-> +		sysfs_remove_mount_point(fs_kobj, TLM_FS_MNT);
-> +	else
-> +		pr_err("Failed to unregister %s\n", TLM_FS_NAME);
-Given 1 out of 100s of file systems bothers to do this. I'm suspecting
-it's a thing that won't happen.
-
-I'd just call the sysfs_remove_mount_point() unconditionally.
-
-> +
-> +	scmi_unregister(&scmi_telemetry_driver);
-> +}
-> +module_exit(scmi_telemetry_exit);
-> +
-> +MODULE_AUTHOR("Cristian Marussi <cristian.marussi@arm.com>");
-> +MODULE_DESCRIPTION("ARM SCMI Telemetry Driver");
-> +MODULE_LICENSE("GPL");
-
+Jason
 
