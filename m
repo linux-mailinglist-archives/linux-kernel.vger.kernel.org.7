@@ -1,201 +1,226 @@
-Return-Path: <linux-kernel+bounces-861683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CF0BF3570
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:11:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38C7BF358E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279AD18C0D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:12:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 376C7350E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EBD2DFA21;
-	Mon, 20 Oct 2025 20:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD4A2DFA27;
+	Mon, 20 Oct 2025 20:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YSmNyDtl"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010017.outbound.protection.outlook.com [52.101.84.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dbYd9Atq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0204B2D47E0;
-	Mon, 20 Oct 2025 20:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760991096; cv=fail; b=Wj/O7iKDBEO4cYz3h1qhRL7jTUikHLPxjb84ZQ74bMtUSs0RF7BDL7aaHoDeuHtZIPPjrQhNg93sLP95RqYnWPKcrPFLoCxJZkOBvVkWfHcxOWKZAuQR3declw8iAnWYbp6ieWGFhYLjb0cTRUBaDxpAZyhRl8ONBs98gxjAI6I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760991096; c=relaxed/simple;
-	bh=Ld7Q7VrDn0oFNZztTeGtpWIEwkpYPEq5X5ktJHPyv5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tyrMumr0fUygRpvf0bp8oecEdAbFHRXX3GoAvhroi6VOBNK0gRh2YRWIVcFBcAJiEbRj7FDAygPhA9R1GT2iSJN4elOhNrBJJyW3nP8HDaFl4m2nom5tKY6WsV5nkyij03yym2uX1und41eLd3trbLTz2PfIXjleTFU9xH88XkE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YSmNyDtl; arc=fail smtp.client-ip=52.101.84.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r7unm9Q/i4SsrDOkNRw7laaJZ1Ch9eQLYemv+7UbToyVv4OtYL6t0H9mxuKG1r/0JF4CN+7i4YhEKoQQYs8et2YO2415HOM0rblhPWZZpOKNRmcVYQCpKB9LM8HF9PgYGJhY1GNZqQNY6i4fFQOEkfkH+RkOhKVI5xTRcAKEBCU2TxdsMnQxtgM8VyDHBl3M/qM977MRHYTwBLey1EnenSxsm1ZQl3+RM94ShxmnKO28FDOOMXyaK4iNiQtx8nDxG27dU4/nCAHnpndHJvns4fzpemi48KbgBLB5jWcnTUKzWQspshIfnm0sYs0vdCkRoOvDJgh/kLzz8U7s25NVxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NCRUL55erqluwDc09HrOkyqDRBdAAtSmu0ZV+qy8P+4=;
- b=LH8SLmwXR8A+gaqRgGSdeQpZxaJWWUJrX73g9oJ5QfuHrxbRS7n1/P9xmKws0da/1+amRh/PdOvE3UKT+TdKT2u+j25Bn7Y/HW/DnMm1ht4CjMT91LxjyLYYyS562gH9cIOHglu7dc1y+ridLgipX8HDWQrKeeKk+zrzQUUDLaCPzAwCSKfvg26OdS1yGF0zue6YUbcAUDRXeAdD4n35tWdAv3LztIrC1QkfwToDC6F5IXwqXSLqyynxwWLmOyWbAWhjwOM/pkLCCs897fqKPZdjzK0LbHDAxAPfYZ7T8grBJwUd1xStTvHxgsuZ1eUF7+lisLpJBx6jEOJl6eX1zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NCRUL55erqluwDc09HrOkyqDRBdAAtSmu0ZV+qy8P+4=;
- b=YSmNyDtlcLrlxhWX6y9eKtjXrt/FAt3mT+fOVQVxOHfytXNl104TKQXGRAVXt7l31UvKQlf4cbLSMgxY8I8ZF5CuBqG6SyFhJlK6uViktBe3IkgE/BgpYp2DowEIR6e5Lkz79YD2dpWoozZGtRPH/ptIrEW3A0chnLDGDVbUc39XAlgV9+Od/3Zg5fRArz5pd/s00CS41OXp/StzEBJM2yyThTj1r/0jtvWl1msPDuZdlUUyEw62R9+7aQnzybxhJuFYVk+ogHSjv+2Yr28knm6hF/4vN4VUFSvZaRE1SLgxl1D/yYCz2k+mM+FYj4WymU+FmX65iA+AhYHSLE1UOg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by DU0PR04MB9658.eurprd04.prod.outlook.com (2603:10a6:10:31f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Mon, 20 Oct
- 2025 20:11:29 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 20:11:29 +0000
-Date: Mon, 20 Oct 2025 16:11:20 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: dts: fsl-ls1028a: fix USB node compatible
-Message-ID: <aPaXaFigEh50sdZC@lizhi-Precision-Tower-5810>
-References: <20251020133754.304387-1-alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251020133754.304387-1-alexander.stein@ew.tq-group.com>
-X-ClientProxiedBy: SJ0PR05CA0133.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::18) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C8B2DAFD8
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760991245; cv=none; b=oM3G5XOWWpa3m1z4raMX16gvKIKe88dcACZYx/7nWI4+5CZDM1TfcqrjVEyrJT0zAOyfjOCv7VISp7B70t4TKQ5B9lYCHQ2pE09QgX3f2dIywRolA3MF3lpGAI+WkWGJwIRwBjBSEASQ5FIT3dm204S82y3r6rXZvvO/IrGSMpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760991245; c=relaxed/simple;
+	bh=5fLzEqK5A2hwmmwREI+Kllkw/W/iw9u+5J8DZTvuVl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WLDEBIJbXyw7ZbdoqpJOqE0KglmLVp06pOoNImHHou9CCtMxTf9EgzR3G2Y5BLF1p5ThCjkE7wN/gGv4lV0LQHqKxsjl2FHNPzWwZV57vRAMu6cXlOD6PFYxuZPeI7uJMl7HsgDDVI47AvpZ4qoFsJFYUA3lopfQ2872XdmN0AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dbYd9Atq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760991241;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2T0NyN+YGFi4g6i2WG6cBJeSzKhwHk280K4nlQEhRCo=;
+	b=dbYd9Atqx0hKw+W5SllQOVo908v0IqcKm1DGlN5ojn5FC26K423pLGHfRRcPhgAfrRBzeQ
+	ALTqjhXGtg/ZZkonvEF2nZCdjjVuHl5vhTCgM33RJYZYvvIzdVYwFGJchlBYPuR+jQNPGy
+	1cU+9Xf2Mg422Se6/0JyScjymf+/6hc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-RGhIsezxP3WQQraj70NZCQ-1; Mon, 20 Oct 2025 16:13:59 -0400
+X-MC-Unique: RGhIsezxP3WQQraj70NZCQ-1
+X-Mimecast-MFC-AGG-ID: RGhIsezxP3WQQraj70NZCQ_1760991238
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47108163eeaso23278405e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:13:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760991238; x=1761596038;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2T0NyN+YGFi4g6i2WG6cBJeSzKhwHk280K4nlQEhRCo=;
+        b=fTJ2DLUtckLEL4IveEd+7Yqf1WeLGeMRtveexJYKIPWS0rvyqn8BBIkTspWLTZ7Yx5
+         Q7VMFWGiAXlb7HUcUf6CEmpjKIFU9INyJbLZqqCvyAZ47Q35TVbzn9SDDTYp9O/vB9pc
+         3/eyXvg+r8WcSeT+THi7xyV3a0fGhXdgVe/4TJoZZcdMQl+LJ3LNW1Bny4dgUxvCzCFV
+         +SQUz6zuK7LHPUcmrJLhcgZAmtlvxaP7fNDEKHinV+uYIVwn6MfOLRfsdHCOgz4qhlHm
+         q+Ykev3T2wcnphw6CEWxKOZXZATP2VAlW9pNPVP/lASKgOZBYvn62A3ZRwupaDMkGEUE
+         yK5A==
+X-Gm-Message-State: AOJu0Yw0COFiNwMYJ/Ok2CkIqTxrTZUH3Zt219pAY+DDt2jsgQx6FN0f
+	sKfUPxR8pIfU8Yne3u3h9ePuVOIA+d6TzbScZvpNbh8PgQtZ+D9uAjAKYB74H7NElJpAiott65o
+	C220eydjjNPTqk2KtTgazWPEKjG1HtK/pp/DDminVwvtPKnIez4AZJPK1/aVqcCHmqw==
+X-Gm-Gg: ASbGncvgUypRbkGxiuqWK7KDruRlrLB9hEWMy44WA6xz+NoTAp5SXaDo6NAeuLfSq5a
+	HdjhKmI70MCWdUUZBnNPioxY1hzQimvTKVEf306lzcJXJ1dIKxqz++G0m2rkszRCLlLQSsHQnOu
+	DDzNgGjSrMKsqcI4RzyWVfcFuS85uHPMlVTvY+OtyqIg9eM4eadVknSR0HtSmvDcnEDgxBdo4Ps
+	7rvQhzuDsJw9OMlYV1I65jSvfFMGKlZbxE3Z+dtkRTAzdD5JMYyEXp/HXe60RGpATh3lbDNQ+hv
+	FAYFKNUG0/UN//MB0sBUoZ7b9XuY3xCfxwPvDqKsb4Jt2EWCJWuYBXPlxZQU28rPXhbTt5oJxKX
+	JmCtlk9kGZCfkXLQ5jg0U/VHjm2duinyK/6DzC7b84BAmrwabQU7MqOZqMpwUZNpjPf+VeQwEzP
+	IlyJHNGZmw/+HI92EOBmUNH31wgBg=
+X-Received: by 2002:a05:600c:3e17:b0:46f:c576:189a with SMTP id 5b1f17b1804b1-4711791c3c3mr109408455e9.29.1760991238256;
+        Mon, 20 Oct 2025 13:13:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8oQSLlrBWBrnXlJZdSNYWQiMF6x5Uvq9jFmOA2rBpFcRspl2TeLKhipWvEjNhrOkmji86Yg==
+X-Received: by 2002:a05:600c:3e17:b0:46f:c576:189a with SMTP id 5b1f17b1804b1-4711791c3c3mr109408305e9.29.1760991237875;
+        Mon, 20 Oct 2025 13:13:57 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144239bdsm294773555e9.3.2025.10.20.13.13.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 13:13:57 -0700 (PDT)
+Message-ID: <21ade241-76b9-4f0a-8e99-be033dcc882c@redhat.com>
+Date: Mon, 20 Oct 2025 22:13:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DU0PR04MB9658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 445b596e-e6ae-4883-05a0-08de1014dad2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uI5pjZjF/lTzz5se0efMa0he+kER/cOke/erKHzuRO8h8wAGHutdPTnGsGZz?=
- =?us-ascii?Q?UpZMGvJWVj1JSRu7+b/dHaDT/QPLLkcVqw16OBHmT4mjcymxp38MZSMAxtpj?=
- =?us-ascii?Q?TttSx4rXvsC92QTQPblHmBHy7ognYEMrs6Uy+ADLL0S0zWXmK1cYT/FAZPyk?=
- =?us-ascii?Q?6pg+vOU3osp9ZLoHudugDYGGHgmzBGDovghyRJA1WZP/EfQSWSOzjbr7IImZ?=
- =?us-ascii?Q?A9RguhDzB/P1ISXyuTs82csqzPzfUjLHsXMy8ifxUBsB6PvPq6gt7vBR6AG/?=
- =?us-ascii?Q?AvSkSrCLc+9O1Je0+78SssoUqA4AcfnaF3LRwdr3d3HeYBu7d2Rj45onXA3s?=
- =?us-ascii?Q?jF2MY7fsjLcNaxD53T3rXKBpTq0gD6CJcIWdmbvMwCdVNYYPyjiKbKNtD98o?=
- =?us-ascii?Q?Jr1sLTghC0EY3cu/VWxO+QZsPxzWnm2KoEpt3V+yDql0oEbXuCXsr9nJ6I35?=
- =?us-ascii?Q?CyLrHdfnohlRByKDWKHqDpsAcoiJ/RXvWleO2N+v+sVf4X/VnQ9eDOvQilfl?=
- =?us-ascii?Q?sZNuYmiZVB4MAWsDuKQbkeT41D+P+OWSHlz7qhs6YsFdTaVC1/H2QsZZ5lPo?=
- =?us-ascii?Q?xMlvu8y1tfM+x/1x0GGNL/mJeS/uwdIs484FWWmrjtpdIRc96jDKpt2KP9PM?=
- =?us-ascii?Q?8M7/L06zfzxR2VdociBQmDxRobmfrPl9cLhOhi1dgbeEX5v2z+0OTNhjUMTA?=
- =?us-ascii?Q?nyEtOtDoasc4C+cWnUA0xZBKPgXkiRvtil30ktohukTZDBOxEeuPk2PzRxuv?=
- =?us-ascii?Q?KJYQCwdP4YrLkngvyaIhu1Af6Xqub04Jl8G8B/ccT3cUp8VogoKZ1faTftGt?=
- =?us-ascii?Q?Tz3XlRbCLS5nhI/QzAAMvxMHx2/h8gLWnrPe0D6JyQdIjy7jNRARBt1fBBXB?=
- =?us-ascii?Q?8TUOET2CXFK0IHbuJ7rjbZkRM+/6iCI0YlB44EH22fwqW9T9rHNVM/DV1V7D?=
- =?us-ascii?Q?E+bzwCfJ+Eenv0T02VMy1/kzp/FGMWvC5P7f1vRyUw0I7ZIocDP1gUa9fg3J?=
- =?us-ascii?Q?e2HuPhtL3Qwa0g1B6CLBWHDGKqTeUXcQR13UULZsiGl/aslzqiEPpN4VDdJb?=
- =?us-ascii?Q?80EUjPpuRouGF/TRjaAo4/MVjn+ywZUT9/r0Wr6Cfn/9ujO6PN05rmyOfI6k?=
- =?us-ascii?Q?UA6oiKETspo/PijlyfeC/AverHuIbqRFSCnR0l5KPO48b1CZO+JsrdIJ22Wp?=
- =?us-ascii?Q?LC5XcnxaY7OtpWUfk0Yd1FpGAwF/5j1bsmItjL3cVTQnp5axYMzn5tsbHN94?=
- =?us-ascii?Q?9Q7p04oQmwGRBowljigKJIO3B1rqG6xIKQ11jsSr3YkEJHGhlS4WCR0lZ3V2?=
- =?us-ascii?Q?MIruiOED1C3FLSJzVtlfRYhTOjhdvW7pidkBTiUn5//tYHCw7F8xPMldwmgb?=
- =?us-ascii?Q?PE4cdYifWsi95VwGJrKV9QRmZ39ghlnA93o9dI34yb2eS7Ca6nWqECQrLph1?=
- =?us-ascii?Q?sfvBRElSrwcHwvxdjYrqKoaJpYSrTAbxT3H2g2xQxi6BLIqX0X6XwE35GpFt?=
- =?us-ascii?Q?F7KB9lbVJA9VHRseR+yUCVl4QouMp+DjQuLG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GwJu3MiT+mw/zazmHE3YswzVcl9iQQTTOYm6C0jF59PW9rITwqvjeYwU/Bd3?=
- =?us-ascii?Q?dPqXzVUkpB+Mt+HCYRYgN++FHD9xFgBSMPS95AbSt7Zw0wzFS9b+WnrVhNMP?=
- =?us-ascii?Q?ttLoLIzmUI1PC3FeJ4JAhClSSuPasUM+8KcfOGR4GOaRNEBZJIvKxf/bzJQV?=
- =?us-ascii?Q?jFtZtpQKpKkd8c5sXJGR1ji8Xnd5/A6qsIlcFadQYiIK46mrnMeG/JHzX81h?=
- =?us-ascii?Q?z/JqWjK12lIhqJyhoEp56XnYgPdjL23cQd2xHBoRvBs292u4+fzxMREKrQb9?=
- =?us-ascii?Q?cW9b1gAG3b6aMGiSh2ePShuQfTO3mSe+bNHio3Bn8t7FqK1SnrOlUuQg/+bZ?=
- =?us-ascii?Q?ZhbsY8eexfNXGhDu6dnWlehsxL2xwYABZ0zioL0JcUua6JpqpdOTfmVZxRHW?=
- =?us-ascii?Q?On+4o2VmtmACMnEDCSLJvmsXHZOYwZys3unfdyGiO+3V5mu6eobxooPRFFs3?=
- =?us-ascii?Q?i3LqvjX9fu/oldV39CTzpdSxCYrFErAT8tgXCNqibDYI6a76iC9UvMtujoVQ?=
- =?us-ascii?Q?8jt7XJdbWcbw6kX9bOXHbndpz28h8DQyZz6mwiLe5YJhp4PhR4Zv8taOVQoq?=
- =?us-ascii?Q?/95NoYRAOvBbb2QBIyIvHU6fdEl6Q55uvKdNFaEabVz74gz5xfJt3hhEu3f8?=
- =?us-ascii?Q?edFFMu6/zxgjbyQ84glSo8E5GlRFvo859L/hbGCgV/ZAh8WrRE5hunNT7iXj?=
- =?us-ascii?Q?m3rkYCs6B9/fjgEWEPhNYM6vvneUQzFBmop1dzoujdSXdUHHzEbsbt/BKIBa?=
- =?us-ascii?Q?xHMAFedlBf8BCq4MxIqeEkKoomwuIgcyqDpsBhStbgG+knXcnek0sNghbO1t?=
- =?us-ascii?Q?otAonN0ltjkg5dRbtcJyWXDg03cAivn6uispmC8n/ACUUogVuaCb07zzX596?=
- =?us-ascii?Q?wnf9zi5y2pVkycIdpeb07DZTtvSe33fWd2cNgTP8HPENjTdYlqxg0wOv/hb8?=
- =?us-ascii?Q?mYLD0e+i5NjeGIq6HE6cobFgLTm/CC/jPvezejkQ0WgKnt+1COJHi3e1WleS?=
- =?us-ascii?Q?GhkfHrpY7BW79VFPeprB0xORtgZ6pMNduDwAyO++NpaBd1/oJtRK0YNjtazC?=
- =?us-ascii?Q?H9VL/paJ+VMWXbTFoG7mBG/9kxzjPLYqdcjahyItqWHTuawON4aWOu8Ca1V6?=
- =?us-ascii?Q?B7iaqGbiNRAnVocrf4zNszRDIiR5wcJoGrAouV/ia0aDaGNwjFd99G5K1he4?=
- =?us-ascii?Q?XfCE4j1sbQma8YhgYyBTOdGf1v6UQHXq2qE/F/+oaNNcQSvxn0++PyeTtu5F?=
- =?us-ascii?Q?j4NKbrum2aq+dJxsvbdd7AofXsDfXtmGIbbjrAhazHMrdie0i7NaYj1Xqyw4?=
- =?us-ascii?Q?ZWl6mBU/hUFYLkSbQd6zUxW784a1Yg47CYfw95KCQDmz/PlC50BBUMyisHYM?=
- =?us-ascii?Q?MyxknrKT9NePL/lAq2PTS92X0Ri/VfM4osEySwOQZqSgqpJ27rIWltweiQBG?=
- =?us-ascii?Q?bgx2uP5ZYJkCXbvW1YFDpWVcJ2WTXBf9u5H10P2rFE40jdKamyANPYrBYHwc?=
- =?us-ascii?Q?byPdDJeyrE35kAVIP8sa8iV4PJxOnRQ3coyGkYCdOGPZa85onl1I9je+Sf7O?=
- =?us-ascii?Q?v87MtED//25WW3BCYDFzWmRuMlQtiI2vG0iu9P1X?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 445b596e-e6ae-4883-05a0-08de1014dad2
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 20:11:29.1785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aH4XjKUWvMyg5SmoXOYeJ4f69zLrPY82XtWFUjoq/zSU5Yap1hGMrsVUm2kp8MWPO9EVzkB3rU6q5kngTU8ouQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9658
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] sched/core: Enable full cpumask to clear user cpumask
+ in sched_setaffinity()
+To: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
+ Phil Auld <pauld@redhat.com>, John Coleman <jocolema@redhat.com>
+References: <20250923175447.116782-1-longman@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250923175447.116782-1-longman@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 03:37:53PM +0200, Alexander Stein wrote:
-> usb/fsl,ls1028a.yaml says the compatible is just a simple
-> 'fsl,ls1028a-dwc3'
->
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+On 23.09.25 19:54, Waiman Long wrote:
+> Since commit 8f9ea86fdf99 ("sched: Always preserve the user requested
+> cpumask"), user provided CPU affinity via sched_setaffinity(2) is
+> perserved even if the task is being moved to a different cpuset.
+> However, that affinity is also being inherited by any subsequently
+> created child processes which may not want or be aware of that affinity.
 
-Thanks, but it is similar with last patches of
+So I assume setting the affinity to the full bitmap would then allow any 
+child to essentially reset to the default, correct?
 
-https://lore.kernel.org/imx/20250929-ls_dma_coherence-v5-4-2ebee578eb7e@nxp.com/
-
-Waiting for shanw pick dts part.
-
-Frank
-
+> 
+> One way to solve this problem is to provide a way to back off from
+> that user provided CPU affinity.  This patch implements such a scheme
+> by using a full cpumask (a cpumask with all bits set) to signal the
+> clearing of the user cpumask to follow the default as allowed by
+> the current cpuset.  In fact, with a full cpumask in user_cpus_ptr,
+> the task behavior should be the same as with a NULL user_cpus_ptr.
+> This patch just formalizes it without causing any incompatibility and
+> discard an otherwise useless cpumask.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 7d172d7e5737c..ddfb007dda920 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -613,7 +613,7 @@ gpio3: gpio@2320000 {
->  		};
->
->  		usb0: usb@3100000 {
-> -			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
-> +			compatible = "fsl,ls1028a-dwc3";
->  			reg = <0x0 0x3100000 0x0 0x10000>;
->  			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
->  			snps,dis_rxdet_inp3_quirk;
-> @@ -623,7 +623,7 @@ usb0: usb@3100000 {
->  		};
->
->  		usb1: usb@3110000 {
-> -			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
-> +			compatible = "fsl,ls1028a-dwc3";
->  			reg = <0x0 0x3110000 0x0 0x10000>;
->  			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
->  			snps,dis_rxdet_inp3_quirk;
-> --
-> 2.43.0
->
+>   kernel/sched/syscalls.c | 20 ++++++++++++++------
+>   1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index 77ae87f36e84..d68c7a4ee525 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -1229,14 +1229,22 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+>   		return retval;
+>   
+>   	/*
+> -	 * With non-SMP configs, user_cpus_ptr/user_mask isn't used and
+> -	 * alloc_user_cpus_ptr() returns NULL.
+> +	 * If a full cpumask is passed in, clear user_cpus_ptr and reset the
+> +	 * current cpu affinity to the default for the current cpuset.
+>   	 */
+> -	user_mask = alloc_user_cpus_ptr(NUMA_NO_NODE);
+> -	if (user_mask) {
+> -		cpumask_copy(user_mask, in_mask);
+> +	if (cpumask_full(in_mask)) {
+> +		user_mask = NULL;
+>   	} else {
+> -		return -ENOMEM;
+> +		/*
+> +		 * With non-SMP configs, user_cpus_ptr/user_mask isn't used and
+> +		 * alloc_user_cpus_ptr() returns NULL.
+> +		 */
+> +		user_mask = alloc_user_cpus_ptr(NUMA_NO_NODE);
+> +		if (user_mask) {
+> +			cpumask_copy(user_mask, in_mask);
+> +		} else {
+> +			return -ENOMEM;
+> +		}
+>   	}
+>   
+>   	ac = (struct affinity_context){
+
+Not an expert on this code.
+
+I'm only wondering if there is somehow, some way we could be breaking 
+user space by doing that.
+
+
+-- 
+Cheers
+
+David / dhildenb
+
 
