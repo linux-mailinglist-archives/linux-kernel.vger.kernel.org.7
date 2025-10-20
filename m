@@ -1,93 +1,143 @@
-Return-Path: <linux-kernel+bounces-859925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77877BEEFA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682A1BEEFB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 03:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2680C347FF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002631895FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 01:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B7119B5B1;
-	Mon, 20 Oct 2025 01:04:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFD61B983F;
+	Mon, 20 Oct 2025 01:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmuF8n5N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2AE29A1
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 01:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBB13FB31;
+	Mon, 20 Oct 2025 01:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760922245; cv=none; b=PaCLHPlufbO7fQYa2QOcpxOv0Wz1fNqSFG12IUs2RK78D0qhTyf2LYfznKnf/hRE00FNQyaVLIqExBDlqIUnyznRKIg0nUNUQQa0Ws0zUfu2HJ8PJzm8fJy6Xo6XCIcXcy1s+I9WvcS5muJjdCHu1Yl9cU9NmPrUMMhGii8MlOw=
+	t=1760922646; cv=none; b=J4Xbzx42MCqpXChn9lrbdwZu/Z/it8qNZ46itDRLgSOrV0EoNtbmaZzrExGgSiAk2b0JnBdrUH6D2wLzg5GxWlKq7q9Gx3u87VoVQKmcWqBBC6ImeOoRZ+CbNnlL8V761Z+6Eo8mAbOXVIjF47newm+BnmOmrV+Vuc3eZvQ0UO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760922245; c=relaxed/simple;
-	bh=i2MqYNZvrySdVCtAa8ikFcDtHjYDN70I+XhamqnlKiE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RMss3veS8fHFe/WgWmTa1qEiKvmzIr9wExGRl8Wq3sSyQqklOEblo2+WNeIFAPCVsPgtgHE/PjjecxGDwIg8Bceof50H3+ScCpK605h44+T/7tb3Ug3gpYyMgQd8cB8llCZhQr5nPKxYOJmhhJhJyF7D6OX2oArCJH+JBFvmzmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-91b3cc5aa6aso1118097139f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 18:04:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760922243; x=1761527043;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mzU0wKQum/2LuRGf5VdXq+RiIPs0NooYzZsxD9Bfmg=;
-        b=l3MzP0RUwntTDTpQ46XObaJti3EtDgnMZxvWzU9mOdDUwUBgM28v9EpAEA7AIab4AK
-         zAQc/lHUIqu1dg0ZZd25orFsSiVkvbPH78mZjQFk/hcWX5cMiR3jjTFLYuXlUta/8A2H
-         csh/Trbt8CzXjP3AMC/Za35g6U6LtAG6rRPgLsT6FwonZMxqk2o3ZxzQzIBMmF1Z4yPE
-         bQw9/0pZQiLqVaVvuld31wW0h/vegl4tcFYvRKcUS6cj1893oSuG/sjp8S9p3Z9kqRcc
-         BR4WWrHDOT5WZQi+orM55ucVDiGWs1JE9RQYK/OHiV9qxXHl7N8Gy4Cjfvy5W0VMp+r4
-         K+tw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9XcH65k9uM7TQXJi6OFEoWoRDcf7pi877iKLtj+f66t+YPZ+XBbOb4Pm5/q0PHkYsE6MSTlCCHDxBFTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNY+HX5dhQzGTpNe/Src87xPvu6yy1uClZW6lH9Cu9gQs+TTRp
-	TEPjpzPl6e52ZwVM42Q4xMfB1rWA5D0cik73XvbIlM/AU9nt7vHHO1zWMVC+p4Iiv8qqkDFt5+z
-	tSX7kZUB1UJLzaPPO4k5uC08ZvA99in+8d9x/NY/ykGWOmmBBfOSBvNDtCoQ=
-X-Google-Smtp-Source: AGHT+IEpxfZ8HgO84tlGHy5kvRqAgr/Q9nap4TFMDV56voWSOdFhTyNn+AuW5+eI+/mJha+JX+2f1g7e7KqeefCzVxUORvleuVnW
+	s=arc-20240116; t=1760922646; c=relaxed/simple;
+	bh=z3DQg5yGsx569RoNzKgXt3TPgaOGodG1SLg0XXnCCec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEj6aI0xMbi+Pyqb0R7abRrxptqhWJ694FaFc2/2eNWmPxJboQFkqdnoBDLuz8UKf38ouk5xr/8UI4KlYLlR8ygk8L2ezpa7q3Z35+SeJHw93L3LVQbYn1Ic5poXsG6h6GjfKVb/LZ07NgF3VyHZSQ2AzSz/HL1VkAtVm/J7nT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmuF8n5N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DB3C4CEE7;
+	Mon, 20 Oct 2025 01:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760922645;
+	bh=z3DQg5yGsx569RoNzKgXt3TPgaOGodG1SLg0XXnCCec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WmuF8n5NRvWirLFjzE/LUIG5vYU8tDajYDJJcEMiQJRdHXH/2RfOcssphMe78Qf4A
+	 NM0o+LqcaHqdiLY+bIm1WwjHq0PgI6yhd2HgYwZh9OUVNLMkOwP4VzFSmK+okKBKUU
+	 3aYJKK4B8/7JrfPAhanjOlxnfx0NTlNKpLUvk7GhcJY94rWyq9jaDn6D3ZyPuFYcou
+	 mHunz/EPRJpY7kY3l5sYeLeDg8jGkUTFG/nmukkKpmFcVODv5ZZZw3o/kgxTXNJjLW
+	 CkwhkMKQ4CsbcLPreV+Z2ML87I0PZZFeDJ+oQFk235mZgyjPqoMNcDM0cgjj6IkXs4
+	 wpIsD6N6m0pHA==
+Date: Mon, 20 Oct 2025 10:10:37 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Howard Chu <howardchu95@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] perf ilist: Don't display deprecated events
+Message-ID: <aPWMDVWFUBAjasOl@google.com>
+References: <20251016222228.2926870-1-irogers@google.com>
+ <aPRTQLcOBtHiTGms@google.com>
+ <CAH0uvohtoVR=iXNwJWYXXgnt4LLWCMheSt66Hnx5hq=QB0KU3w@mail.gmail.com>
+ <CAP-5=fWDqE8SYfOLZkg_0=4Ayx6E7O+h7uUp4NDeCFkiN4b7-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1414:b0:887:638a:29b5 with SMTP id
- ca18e2360f4ac-93e763ccee7mr1733569939f.9.1760922243025; Sun, 19 Oct 2025
- 18:04:03 -0700 (PDT)
-Date: Sun, 19 Oct 2025 18:04:03 -0700
-In-Reply-To: <68ec1f21.050a0220.ac43.000f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f58a83.a70a0220.205af.001f.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
-From: syzbot <syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	herbert@gondor.apana.org.au, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sd@queasysnail.net, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWDqE8SYfOLZkg_0=4Ayx6E7O+h7uUp4NDeCFkiN4b7-w@mail.gmail.com>
 
-syzbot has bisected this issue to:
+On Sun, Oct 19, 2025 at 04:04:17PM -0700, Ian Rogers wrote:
+> On Sat, Oct 18, 2025 at 11:50 PM Howard Chu <howardchu95@gmail.com> wrote:
+> >
+> > Hi Namhyung,
+> >
+> > On Sat, Oct 18, 2025 at 7:56 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > Hi Ian,
+> > >
+> > > On Thu, Oct 16, 2025 at 03:22:26PM -0700, Ian Rogers wrote:
+> > > > Unsupported legacy events are flagged as deprecated. Don't display
+> > > > these events in ilist as they won't open and there are over 1,000
+> > > > legacy cache events.
+> > >
+> > > Off-topic, any chance to integrate this into a perf command?
+> > > It'd be convenient if we can call this like `perf list --interactive`
+> > > or some other way.
+> >
+> > You have my vote, user-friendliness is important.
+> > I think Ian mentioned that the major drawback is the difficulty of
+> > forwarding arguments passed to the ilist.py program. A random thought:
+> > perf is known for binding everything under a single command, but to
+> > make scripting more flexible, perhaps some Bash scripts added to
+> > .bashrc could be considered. After all, perf is fundamentally a
+> > command-line tool.
+> 
+> Thanks Howard and Namhyung,
+> 
+> I think Arnaldo also raised this in the past.  My thought on how to do
+> this is to build in to `perf script`:
+> 
+> 1) `perf script` currently uses libpython and then exposes a
+> trace_start, trace_end and process_event method. When building the
+> flamegraph work the only place that textual can run is in trace_end as
+> it needs to run on the main python thread. This means we can't do
+> incremental loading of data files while textual is showing the data as
+> perf wants to be the main thread. So step 1 is to create a python
+> version of the trace_start, trace_end and process_event callbacks. To
+> do this something like the session API needs wrapping or writing in
+> python. I'm not sure I'd keep the API the same as the C one. It'd be
+> interesting to think of async file processing. It'd be nice to make
+> the generation of strings.. in the event lazier. We could start with
+> the existing API though, and then migrate to something more complex
+> later.
 
-commit b441cf3f8c4b8576639d20c8eb4aa32917602ecd
-Author: Sabrina Dubroca <sd@queasysnail.net>
-Date:   Fri Jul 4 14:54:33 2025 +0000
+Sounds like a long term plan.  I'm ok with the change but not sure how
+soon it would happen.  I was suggesting a short term workaround if you
+don't plan to work on this.  I thought we can exec ilist.py with proper
+settings from `perf list`.  But it's up to you. :)
 
-    xfrm: delete x->tunnel as we delete x
+Thanks,
+Namhyung
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14b49734580000
-start commit:   0b4b77eff5f8 doc: fix seg6_flowlabel path
-git tree:       net
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16b49734580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b49734580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ab7fa743df0ec1
-dashboard link: https://syzkaller.appspot.com/bug?extid=999eb23467f83f9bf9bf
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12cc05e2580000
-
-Reported-by: syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com
-Fixes: b441cf3f8c4b ("xfrm: delete x->tunnel as we delete x")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> 2) Once we have a session like API in python we can convert the
+> existing `perf script` commands to be standalone tools similar to
+> ilist. So we can convert all the existing tools to be standalone.
+> 
+> 3) Once we have standalone versions of the `perf script` scripts then
+> we can have `perf script` just exec the commands. The install step can
+> install the scripts like it currently does and we can move ilist into
+> the scripts location.
+> 
+> 4) Once we run python things as tools in their own right we can
+> deprecate the libpython stuff, probably make it a build opt-in thing,
+> etc. It seems hard to delete unused features, like libbfd, from the
+> codebase. We did merge a patch deprecating libperl as a step in this
+> direction.
+> 
+> Thanks,
+> Ian
 
