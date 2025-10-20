@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-861302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245A8BF253E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C44BF2532
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E575A3AA98A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F2D18A6514
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEFB191F92;
-	Mon, 20 Oct 2025 16:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4004627E1A1;
+	Mon, 20 Oct 2025 16:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rqj5Bj/l"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MC2v0136"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902D725776
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA172773D4
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760976657; cv=none; b=m5su3wECJ8S9Dn2KgaV2YCbraI6BpAQFZW0Xbb7CHxhKntG+1sPR69b8na8XaXtbNTbH49UgQPTOHV0mzKmu+IZORzuWuuc54OV4V4yTCoLGbGMkbpMwUOP6dVisDHCIExCa87rWoN7nKm28V0kVIklpFGaTKW0CQhjoFAH5I2E=
+	t=1760976672; cv=none; b=MYTkiM8PSkCrwiB/WvPirjlbTxK/euXEJsu4mIZ0BrX5nCyJLIb/IIH9/leqrJyZP8J8BfwhoyxW/Z7YaTOxkYes+rksWr93KCRLKNzuOKhSs1Dj+1NyxTAPqnfa+TYBMzO7aj2KSD6DkDIlrgEwuY/C4J2HmW2O6++Eu5ON7Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760976657; c=relaxed/simple;
-	bh=atlvMgRm+hS9Ugv97pz3Qaw9ZHe2wJvCA4y4Y/WoWHw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iaY3EwtfZ8IaCb0VmSIJ+NUj2GOoIHW6O1f+Wx1mASfJRXd8SQ1whkvIIcuBMXAV353NxEfIEMVoC/dF231bUHOq6QGwlB1QsSRWh3AGkByA8DDx2RFUvdjQCtiChOXRHiM8egIql+YCNQbyOuBTcgFwFmaL1HGfeN4onXW5IMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rqj5Bj/l; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1760976672; c=relaxed/simple;
+	bh=US9z+1/jx18tGTIEHp5xz3x75YUegAqC8biDYDf9R9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r2K2/pP+JLY4Xcm6KbmF8kuQRdseW2BA2K1m9jeODvPI0xzFvQB5VJopOQWPoX2sXE6rckE/mCuVSXXw1L8o407l1e3L3cslqNCtRQF1Znw9SdvSHewSJZpdlrvjIpPMtoLJtZVG6upJ+GbKU8cCfD9vNHR/6xh4rucC90J/zWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MC2v0136; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46b303f7469so35905695e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:10:55 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47105eb92d8so7241955e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 09:11:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760976654; x=1761581454; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xwoZbVRQTt+W1c+EeTF1T/2iGQVGJEAF5xGXmi6G/Rw=;
-        b=rqj5Bj/lH6Vv2W7sKXk4m6QAl7LPvOgfSYTjOwTjeJQSpdAccXAQUNFUk8lAR95jWR
-         jkn7dpZlqAePkKVsXxRtF2EVeHRVSnCsawIO4LV/FdMqzxuoEqzFZ6P9QpRktz5f6P+g
-         A+lePpXkiKp/oVKMeHV+PYam4Ol/oWVLAa9ynnOXwwHGJhoIG1KblIbuO1leM4J9sezd
-         4FU/9yViQlb03GAeGMHyQiSduPKagGokxQdF31EFh82fbigLTOwAakEwCwsKvfB+s9Kn
-         skAx/P7gTH2UbNm9yEnQSi+BOWCmM3TvDNEEMInFCMVMghjsEtOP6995j0M42IhnsfSZ
-         EemQ==
+        d=linaro.org; s=google; t=1760976669; x=1761581469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=czFcyiI0D7UHfvNgP065c7neA2nLqXk0WjnumDdbO9A=;
+        b=MC2v01364S3/kI6f3waNXCEpIbQp1JmDSTcqMXowZp2B1RtuqVpuGjfJanC2UXPih8
+         +DUWzUpRXCUHUDAJw/2CtNKNlI9in48m3bOuyFslJakC/gZGyJfXqfbNXs5i4EuTbsWt
+         zl6/oP1Z+035tVpoGpiGN934qy5Fdcr/db7r+68F39LAgMqVBTtf2OGs38xYd0LbGL2Z
+         ZHBFCrQPU60Cj7xQ8GAcAOVPiS8TfB8D+9NQmWu2nRXAplGA6Wv3UKkjaMn/1xsCgLvT
+         coYN0vUFQWvydMxUCyme2bBWfEcMDhdakIfRiuaMgH5UYEhPMvZirouQ8Y0Sd9InvEWz
+         zKvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760976654; x=1761581454;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xwoZbVRQTt+W1c+EeTF1T/2iGQVGJEAF5xGXmi6G/Rw=;
-        b=AnzTuCC7vEZuHql6yUEUq90khixft1ANcWQf7OHv72CXkElU5MlGXdAumKkL/RKi79
-         MaNSaOp8sQe8nFzqQcJ3xTPzz5Q8kXHcDAhu8WdUbLd69X+UOaYQbd89gjAnIHUr9/yZ
-         smpS+ntSBDJDOjCuTs3xq+U9lYiAJmhL84NMG8QIXYbgriClK/9EuRMZOBGzo80qdq1T
-         CCsWVfm39H7o1SOIVkWRF0iURc+68le5IzcXbr0G4vsH1KCLzc4iNdKrnMM8blsv6fPV
-         OF3+rFqOuXJRu1Dg8v+yp7o9LBIQFTHGt8pXUqqxhlIQ8H6d5XdBaKLkLLNEES+JOy6z
-         Bfxg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6uHoL7h0VTImzvRuF5ygJcG1pgsGNSQdOa0ox3+Rl0VmWq6F4hEMcUqFVrtmpRy5X3gV+mXlU3yHidto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjxXPtF2sZiKWHu1aPHda2ux5C29J1xwUegd0NvbLc/Y15AJS8
-	NSG391vqlZUbWGdzQ8CrAHl9/iuoLOpiw1Bh4t9nq3pByPYo00TzGoMlNscFpsAQ2qk=
-X-Gm-Gg: ASbGnctVCI/uldTdpvJHMhTGMbTFk8IO9GnchMuYBUMsld3o0ZYu9v7nY/I6x5MaF0G
-	c7oO4fORwpFTpyf/OYtTisbv0E2hs9AUY+KGut0udIzclqwhCD+4LppPSshpZ4D78qvPKsqE6xL
-	KDCUZHEtRPRw0Lf0RHUrTlJJz3i79U1vf6+NnjeXVKozwK/nTtc9Ud2gKuYRwMG7tmBkbEhWWUe
-	wYahgWPLf542xy/opYE7kz7WQG7KoghMHLhNlCa5TONbB0D5CSte3ZLVnTvbXretPzOunBITnqe
-	zLShwwEVfwGZ25G1lDdUTc130bh+HhFZqo8Uxn8iaemJcAdYeJomOjCE6Joe+BQZmS2n0OZPxn+
-	1k8+/IKJ3FkUZkcJkCAgUvaFGffo/VluLVjqre2kRZWTFNh+4whs7MZ64yE3meG2GPSHbHPTu5H
-	cJKQCuj0DuHOLA9kJLmbUgaDnL8l8=
-X-Google-Smtp-Source: AGHT+IEPnIGwsuZY+46A6PpcAFpc8Ia5wCuHzXWDH7VRfIxTAeoRBvtxAHsNgzzUSluVxH++2wSTuA==
-X-Received: by 2002:a05:6000:26c8:b0:427:72d1:e3b2 with SMTP id ffacd0b85a97d-42772d1f234mr7266592f8f.35.1760976653835;
-        Mon, 20 Oct 2025 09:10:53 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710cda4ecasm113706775e9.4.2025.10.20.09.10.52
+        d=1e100.net; s=20230601; t=1760976669; x=1761581469;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=czFcyiI0D7UHfvNgP065c7neA2nLqXk0WjnumDdbO9A=;
+        b=sltqIwNWzNrUb1/Jc3OFQMM9Q5NcnMgcYNzHUmtdFV1Trxti70bJ1jjWesdtERti9s
+         ZnbRyB5zwvZRZIT6oefPtsblE6k8yFJ48E5U6JgGsdpwyI46rJ4S++7G9ts5BAx+diPM
+         uBXHJqd1BPWU17v4Hj0Y+8qLlEJF0M4ChZ6YrBoHe9V/kCJX9RKZf9n+SvnjTB5KdaWq
+         HJ3Z99r96oypLbkUFuxsGb8xGZPic/zcH7L9Nqf2UU574sgc7Cg5DhwFgRkT3viBEt3r
+         ElWfwOBvDBZlqXRYpbuTq+/h3tLMrVLv0u75DUhqQTYmkF1S+Z/5Fc1VUUdOpPxKgTwa
+         h1+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW79AhgC7KexEAWzl5EtWd2fp+H0dn+o3UZxsxrWF05nfkIpLUxQTjVFjzTg1mYhrlJOgedyezoLBYOQco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU9jHy7tbSDkMu/PiRhha3Ocy5s5FHoc9iXOy7ITXbVqbQjRB1
+	wVed6Y4e34oF2KOLLTtEGlCQnanpYGlY/fPMRJdc3sPIupDUleL6JZK0ewkecuRhGTs=
+X-Gm-Gg: ASbGncuKpGjkjayYYmaInX2aS9ebwrrFHTqYFJb+VWN4/gkVeoo+NBt+gpEicxsFP4d
+	hiIbV93ZiOyq93uRKqJpvOvmN6Nny3rQ0WzaF+JdVZbWCJg7YtylZLGrX93arRS21CvH4fj7HhE
+	OfTQ0mRU6Z5ID37Nb0w5V0GnFBAilKuA0pxT0cj+tKgsuFhvZ59objNcxTZLvXEQmaIT/smDCGs
+	o50gX+NWvXBkTaflnkFkucqrHg8Wbx21zChggBCpIeWYUd3BQXwM1I6AS2Vr7fFW6k+Jl16xr7h
+	pNmjiwlmQ628PU0wY06Px3KrpmCxXQAQKJ67EuC2ks0JMMWsIQaBSrNeIFJzFICQDzTY6jb8rFp
+	UPqSHJhsf1d4CmFZD8djW52tbPbuJ2Eu2f2MeCsdhdEuchToPKZe0Dud2/VroPh8fjF5U/Zg1NI
+	0zSXagg/QYgInnOWfYv8PI
+X-Google-Smtp-Source: AGHT+IERHetueVqe3nzm/yR+aLf6DfrYJu0onqTx/WS1ZKwLI4kcsMlx5kLKdRLOV+WQFMsT/gPxbg==
+X-Received: by 2002:a05:600c:4e8e:b0:46b:938b:6897 with SMTP id 5b1f17b1804b1-47117874414mr57922005e9.1.1760976668967;
+        Mon, 20 Oct 2025 09:11:08 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ba01bsm15740360f8f.41.2025.10.20.09.11.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 09:10:53 -0700 (PDT)
-Message-ID: <cf9aa030-1ac0-4b40-a613-d50a6feb138a@linaro.org>
-Date: Mon, 20 Oct 2025 17:10:52 +0100
+        Mon, 20 Oct 2025 09:11:08 -0700 (PDT)
+Message-ID: <c99820d9-4753-403e-adf7-b2b9fb496925@linaro.org>
+Date: Mon, 20 Oct 2025 18:11:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,171 +83,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/27] Legacy hardware/cache events as json
-From: James Clark <james.clark@linaro.org>
-To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>,
- Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Atish Patra <atishp@rivosinc.com>,
- Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>,
- Vince Weaver <vincent.weaver@maine.edu>
-References: <20251005182430.2791371-1-irogers@google.com>
- <176054362630.22559.13423487878652916137.b4-ty@kernel.org>
- <a9f3b996-4fb4-463a-8392-16115862903a@linaro.org>
- <CAP-5=fX8ZV6WTmKcrrfPo0MUFiruJoWhYeUk3JrToEP=9-aPCA@mail.gmail.com>
- <b1a461b4-4358-4556-80ef-e7abd686f2e5@linaro.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
+To: Timothy Pearson <tpearson@raptorengineering.com>
+Cc: robh <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Lee Jones <lee@kernel.org>, Georgy Yakovlev <Georgy.Yakovlev@sony.com>
+References: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com>
+ <20250929141113.GA3987541-robh@kernel.org>
+ <924260297.1801829.1760974499327.JavaMail.zimbra@raptorengineeringinc.com>
+ <f6f9cfc9-b26e-4358-8781-6ce75075d13f@linaro.org>
+ <1626454153.1801886.1760976086710.JavaMail.zimbra@raptorengineeringinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-In-Reply-To: <b1a461b4-4358-4556-80ef-e7abd686f2e5@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <1626454153.1801886.1760976086710.JavaMail.zimbra@raptorengineeringinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 16/10/2025 11:29 am, James Clark wrote:
+On 20/10/2025 18:01, Timothy Pearson wrote:
 > 
 > 
-> On 15/10/2025 10:24 pm, Ian Rogers wrote:
->> On Wed, Oct 15, 2025 at 10:39 AM James Clark <james.clark@linaro.org> 
->> wrote:
->>>
->>>
->>>
->>> On 15/10/2025 4:53 pm, Namhyung Kim wrote:
->>>> On Sun, 05 Oct 2025 11:24:03 -0700, Ian Rogers wrote:
+> ----- Original Message -----
+>> From: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+>> To: "Timothy Pearson" <tpearson@raptorengineering.com>, "robh" <robh@kernel.org>
+>> Cc: "devicetree" <devicetree@vger.kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Conor Dooley"
+>> <conor+dt@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Georgy
+>> Yakovlev" <Georgy.Yakovlev@sony.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
+>> Sent: Monday, October 20, 2025 10:58:40 AM
+>> Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
+> 
+>> On 20/10/2025 17:34, Timothy Pearson wrote:
+>>>>> +  watchdog:
+>>>>> +    type: object
+>>>>> +    description: Cronos Platform Watchdog Timer
+>>>>> +
+>>>>> +    allOf:
+>>>>> +      - $ref: watchdog.yaml#
+>>>>> +
+>>>>> +    properties:
+>>>>> +      compatible:
+>>>>> +        const: sony,cronos-watchdog
 >>>>
->>>>> Mirroring similar work for software events in commit 6e9fa4131abb
->>>>> ("perf parse-events: Remove non-json software events"). These changes
->>>>> migrate the legacy hardware and cache events to json.  With no hard
->>>>> coded legacy hardware or cache events the wild card, case
->>>>> insensitivity, etc. is consistent for events. This does, however, mean
->>>>> events like cycles will wild card against all PMUs. A change doing the
->>>>> same was originally posted and merged from:
->>>>> https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
->>>>> and reverted by Linus in commit 4f1b067359ac ("Revert "perf
->>>>> parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
->>>>> his dislike for the cycles behavior on ARM with perf record. Earlier
->>>>> patches in this series make perf record event opening failures
->>>>> non-fatal and hide the cycles event's failure to open on ARM in perf
->>>>> record, so it is expected the behavior will now be transparent in perf
->>>>> record on ARM. perf stat with a cycles event will wildcard open the
->>>>> event on all PMUs, however, with default events the cycles event will
->>>>> only be opened on core PMUs.
->>>>>
->>>>> [...]
->>>>
->>>> Applied to perf-tools-next, thanks!
->>>>
->>>> Best regards,
->>>> Namhyung
->>>>
+>>>> There's no need for a child node here. 'timeout-sec' can just go in the
+>>>> parent node.
 >>>
->>> Hi Namhyung,
->>>
->>> I'm still getting the build failure that I mentioned on patch 5. This
->>> only seems to happen with out of source builds:
->>>
->>>     $ make -C tools/perf O=../build/local/ V=1
->>>
->>>
->>>     static const struct pmu_sys_events pmu_sys_event_tables[] = {
->>>           {
->>> -               .event_table = {
->>> -                       .pmus = pmu_events__test_soc_sys,
->>> -                       .num_pmus = ARRAY_SIZE(pmu_events__test_soc_sys)
->>> -               },
->>> -               .name = "pmu_events__test_soc_sys",
->>> -       },
->>> -       {
->>>                   .event_table = { 0, 0 },
->>>                   .metric_table = { 0, 0 },
->>>           },
->>> make[3]: *** [pmu-events/Build:54:
->>> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log]
->>> Error 1
+>>> Could you elaborate on this please?  As far as I can tell we ref watchdog.yaml
+>>> and need some kind of compatible string, so why would I break out timeout-sec
+>>> directly here?
 >>
->> Sorry for the issue. Is this happening when you don't do a clean
->> first? I tried recreating your output path, but I can't reproduce the
->> issue on a clean build. The diff above indicates some issue with the
-> 
-> The clean issue was separate to the build failure. I meant that the 
-> build failure was sticky when I was bisecting. So after commit 5 the 
-> build breaks on a clean build but then it stayed broken even on builds 
-> before commit 5 unless I cleaned. I think we can ignore this for now.
-> 
->> Makefile processing tools/perf/pmu-events/arch/test/test_soc/. This
->> directory should be copied to
->> ../build/local/pmu-events/arch/test/test_soc/ and so I wonder if the
->> copy failed for some reason.
 >>
->> The copy rule is:
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools- 
->> next.git/tree/tools/perf/pmu-events/Build?h=perf-tools-next#n33
->> ```
->> # Copy checked-in json for generation.
->> $(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
->> $(call rule_mkdir)
->> $(Q)$(call echo-cmd,gen)cp $< $@
->> ```
->>
->> The mapping of file names happens in the patsubst in:
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools- 
->> next.git/tree/tools/perf/pmu-events/Build?h=perf-tools-next#n42
->> ```
->> GEN_JSON = $(patsubst %,$(OUTPUT)%,$(JSON)) $(LEGACY_CACHE_JSON)
->> ```
->>
->> Those files are dependencies for the empty-pmu-events.c test so I'm
->> not sure how this can be failing for you.
->>
->> Thanks,
->> Ian
+>> Please look where the comment was placed. Under $ref? No. Under this
+>> compatible. $ref goes to the parent, obviously.
 > 
-> If I apply this patchset to commit 2a67955de136 ("perf bpf_counter: Fix 
-> opening of "any"(-1) CPU events"), then:
+> This is not an area of the kernel I'm normally changing, so I appreciate the insight.  None of this yaml syntax is particularly obvious the first time it's encountered, at least not to me.
+
+Sure, apologies for sounding harsh.
+
 > 
->    $ rm -r ../build/local ; mkdir ../build/local
->    $ git clean -xfd
->    $ make -C tools/perf O=../build/local/ -j1 V=1
-> 
-> I get no copy of the test jsons:
-> 
->    $ ls ../build/local/pmu-events/arch/test/test_soc/
-> 
->    ls: cannot access '../build/local/pmu-events/arch/test/test_soc/': No
->    such file or directory
-> 
-> Looking at the dependencies of the rule for $(PMU_EVENTS_C), it's 
-> $(JSON_TEST), but JSON_TEST is the in-source version without the 
-> $(OUTPUT) prefix. That's already satisfied so it skips the copy.
-> 
-> If I modify the generator for JSON_TEST to include the OUTPUT prefix:
-> 
-> JSON_TEST    =  $(shell [ -d $(JDIR_TEST) ] &   \
->      find $(JDIR_TEST) -name '*.json' | sed -e 's|^|$(OUTPUT)|g')
-> 
-> Now I get the copy:
-> 
->    $ ls ../build/local/pmu-events/arch/test/test_soc/
-> 
->    total 0
->    drwxrwxr-x 1 james  56 Oct 16 11:13 ..
->    drwxrwxr-x 1 james 108 Oct 16 11:13 cpu
->    drwxrwxr-x 1 james  12 Oct 16 11:13 .
->    drwxrwxr-x 1 james  22 Oct 16 11:13 sys
-> 
-> Now the diff check is slightly different/better, but the build still 
-> fails. Weirdly I don't see this failure on my Arm machine which is where 
-> I tested the whole set, I only see this failure on x86. Maybe some 
-> difference in the version of make?
+>> You do not need kind of compatible string. Parent already has one. You
+>> do not need compatible strings at all to instantiate Linux drivers.
+>> That's pretty common pattern for most of MFD-like devices, plenty of
+>> examples in the kernel.
 > 
 
-Turned out to be an extra json file I had in the Perf tree for my 
-compilation database, so that explains why I was the only person seeing 
-it. Sent a fix.
+Maybe this will be useful - bd96801_wdt.c is example driver which
+follows correct design and takes timeout from the parent (wd->dev is
+parent of watchdog platform device), although parent's bindings lack
+$ref to watchdog. I'll fix that.
 
 
+> Understood.
+
+
+Best regards,
+Krzysztof
 
