@@ -1,256 +1,144 @@
-Return-Path: <linux-kernel+bounces-860916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CD9BF1519
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:48:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220CBBF1504
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4BEC434C7FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:48:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B6324E260D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 12:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8BF30149A;
-	Mon, 20 Oct 2025 12:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76C6258EF0;
+	Mon, 20 Oct 2025 12:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="GJNyNazG"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JBGL6kT+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43E6354AF2;
-	Mon, 20 Oct 2025 12:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ECB354AF2
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 12:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760964530; cv=none; b=nl5EexpALGeqQup0eCqmfqFxaV74gac9MGqwSPPczlb8lC2M0fYTPMgVX1OTwEqhZVg2fukPLha9Q/igH8vJ23oZECTzxBdRHukX60B4mk3i5zH7aGKd+fu/VCpuO8GhKBvJ6qtip5HIUMOlpqKaGKNbzt/1myABTms24yMtbpA=
+	t=1760964506; cv=none; b=YXE1MjPQDtxLCBhRDmfaQGZAQqKkS4H24l/HpyUMeo3TkeiLa23jfdVak6nUHLVCz7eVA3mOs3sheLlBybbczrwj5QAOq225F/53e7x6S/E7BCteCHs7s5y5fQPzm+Uk6MuTQPv0HaoexPTQaEnmoIs9TauK5zEq47621XlSdXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760964530; c=relaxed/simple;
-	bh=BCK1R0tZ9dNFG0afBBj42c5t3HMFTlWQhHn7snNQLeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUBG9qrWskBKGycmOD0h9AF414xLt4c7ssOLb11XhUE0FIeR9XvdySNAefoC4Zq8krfON5MqzNXkyh9x8MFB8AJw+goR1IrWTYl7nAP/CGDCYc0jC4CkrxwzDv1n2fcTfi4Pa02l/ruuLX3POG1Z5TcsxkM4Fime3+mZAime5wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=GJNyNazG; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=qG38QouOAiJDe70jz6Us+02ZPOy6qlEZVBeSeQllsf4=;
-	b=GJNyNazGNH1J8Z23xlahfIB4N9k1UPOa5jeUmZ8DXTAMdQO1I67Jlq0Uk8toIZ
-	J1haK204p9moPdukvCA4NwSzmBDsujtNmXTsCMTvc3Wt/t6GCzCxrCVIbAQTBsUx
-	4V88hcHLLlhGEfIDbtMswv6J0CtRYphPBJ0yc1BYV1n9Y=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3X7GAL_ZocZNTAA--.29215S3;
-	Mon, 20 Oct 2025 20:48:02 +0800 (CST)
-Date: Mon, 20 Oct 2025 20:48:00 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Andreas Kemnade <akemnade@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alistair Francis <alistair@alistair23.me>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.li@nxp.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 3/3] ARM: dts: imx: e70k02: add sy7636
-Message-ID: <aPYvgKWNvr0RxOKQ@dragon>
-References: <20250917-sy7636-rsrc-v3-0-331237d507a2@kernel.org>
- <20250917-sy7636-rsrc-v3-3-331237d507a2@kernel.org>
+	s=arc-20240116; t=1760964506; c=relaxed/simple;
+	bh=+qf+TjXxCiR0qhVf7qManTV2DzqIOclaw3kvS4WkbAw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tGB4cCCYlYOkz4f78N1jKIgp+xmAOnsjlu4knaBhdNQcuF7Z8E5HdyPbcwKaOzY5irHBngFd1clzp0W0ZMFO8nP9cFj4/UBm1WFqPrE+/ZgqS/i7KTIsml1OKhm1LLeFflBlipu03KxLYu633htrHL+vPxKm7OUTrhQpD/j2iNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JBGL6kT+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760964503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AT1ICbYdC6I6dRAB8zElo0gTfdZGTrpQstLYEHePEfo=;
+	b=JBGL6kT+2aDCD/4u/BVkxEpxofiRTCevvkZZDzqUMH6x7k0rrRg4DfLsr/C/mrY/YZCgh9
+	MfEtoIgLPH4FtlYUfOH7z/f2KiZYc7p3Z9dZuhgHO8Rrhj8iAC+gHIIPii77gT1rYHGnzD
+	V8eN3nRoztKCxjZTTh1hScopxwZrhHE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-a5XKjd30OVCMkzi3lUktBA-1; Mon,
+ 20 Oct 2025 08:48:20 -0400
+X-MC-Unique: a5XKjd30OVCMkzi3lUktBA-1
+X-Mimecast-MFC-AGG-ID: a5XKjd30OVCMkzi3lUktBA_1760964499
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 16C9A19541AA;
+	Mon, 20 Oct 2025 12:48:19 +0000 (UTC)
+Received: from [10.44.32.107] (unknown [10.44.32.107])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 650FA3000218;
+	Mon, 20 Oct 2025 12:48:16 +0000 (UTC)
+Date: Mon, 20 Oct 2025 14:48:13 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+cc: Alasdair Kergon <agk@redhat.com>, DMML <dm-devel@lists.linux.dev>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] dm-bufio: align write boundary on bdev_logical_block_size
+In-Reply-To: <20251020123350.2671495-1-urezki@gmail.com>
+Message-ID: <cdb598ce-88ec-0c3c-8e4b-b557093bea92@redhat.com>
+References: <20251020123350.2671495-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917-sy7636-rsrc-v3-3-331237d507a2@kernel.org>
-X-CM-TRANSID:M88vCgD3X7GAL_ZocZNTAA--.29215S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtr4kuw4Uuw4fCw1fGF1rZwb_yoW7WrWkpa
-	1Svrs5WrWxWF1fta43AasrCr1fCws2kr1v9w47uFy8Aa1qva4UJF4UKrn3Crn8XFs8Zw4Y
-	vrn5ury7W3Wqv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jezuAUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNALDKWj2L4I5uAAA3u
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Sep 17, 2025 at 09:14:31AM +0200, Andreas Kemnade wrote:
-> Add the EPD PMIC for the e70k02 based devices as a step towards full EPD
-> support.
-> 
-> Acked-by: Alistair Francis <alistair@alistair23.me>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
-> ---
->  arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++++++++-
->  .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 +++++++++++++++++++++
->  .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 +++++++++++++++++++++
->  3 files changed, 72 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-> index dcc3c9d488a88..b4f42f71c6c49 100644
-> --- a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-> @@ -69,6 +69,14 @@ memory@80000000 {
->  		reg = <0x80000000 0x20000000>;
->  	};
->  
-> +	epd_pmic_supply: regulator-epd-pmic-in {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "epd_pmic_supply";
-> +		gpio = <&gpio2 14 GPIO_ACTIVE_HIGH>;
-> +		startup-delay-us = <20000>;
-> +		enable-active-high;
 
-enable-active-high right after gpio = <... GPIO_ACTIVE_HIGH>, as it's a
-supplement description for "gpio" property.
 
-Shawn
+On Mon, 20 Oct 2025, Uladzislau Rezki (Sony) wrote:
 
-> +	};
-> +
->  	reg_wifi: regulator-wifi {
->  		compatible = "regulator-fixed";
->  		regulator-name = "SD3_SPWR";
-> @@ -133,7 +141,22 @@ touchscreen@24 {
->  		vdd-supply = <&ldo5_reg>;
->  	};
->  
-> -	/* TODO: SY7636 PMIC for E Ink at 0x62 */
-> +	sy7636: pmic@62 {
-> +		compatible = "silergy,sy7636a";
-> +		reg = <0x62>;
-> +		enable-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
-> +		vcom-en-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-> +		epd-pwr-good-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
-> +		vin-supply = <&epd_pmic_supply>;
-> +
-> +		#thermal-sensor-cells = <0>;
-> +
-> +		regulators {
-> +			reg_epdpmic: vcom {
-> +				regulator-name = "vcom";
-> +			};
-> +		};
-> +	};
->  
->  };
->  
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-> index a2534c422a522..f8709a9524093 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-> @@ -26,6 +26,11 @@ / {
->  	compatible = "kobo,tolino-vision5", "fsl,imx6sl";
->  };
->  
-> +&epd_pmic_supply {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-> +};
-> +
->  &gpio_keys {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_gpio_keys>;
-> @@ -59,6 +64,12 @@ MX6SL_PAD_FEC_RXD1__GPIO4_IO18          0x10059 /* TP_RST */
->  		>;
->  	};
->  
-> +	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-> +		fsl,pins = <
-> +			MX6SL_PAD_EPDC_PWRWAKEUP__GPIO2_IO14    0x40010059
-> +		>;
-> +	};
-> +
->  	pinctrl_gpio_keys: gpio-keysgrp {
->  		fsl,pins = <
->  			MX6SL_PAD_FEC_CRS_DV__GPIO4_IO25	0x17059	/* PWR_SW */
-> @@ -159,6 +170,14 @@ MX6SL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
->  		>;
->  	};
->  
-> +	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-> +		fsl,pins = <
-> +			MX6SL_PAD_EPDC_VCOM0__GPIO2_IO03        0x40010059 /* VCOM_CTRL */
-> +			MX6SL_PAD_EPDC_PWRCTRL1__GPIO2_IO08     0x40010059 /* EN */
-> +			MX6SL_PAD_EPDC_PWRSTAT__GPIO2_IO13      0x17059 /* PWR_GOOD */
-> +		>;
-> +	};
-> +
->  	pinctrl_uart1: uart1grp {
->  		fsl,pins = <
->  			MX6SL_PAD_UART1_TXD__UART1_TX_DATA 0x1b0b1
-> @@ -329,6 +348,11 @@ &ricoh619 {
->  	pinctrl-0 = <&pinctrl_ricoh_gpio>;
->  };
->  
-> +&sy7636 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-> +};
-> +
->  &uart1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_uart1>;
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-> index 660620d226f71..19bbe60331b36 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-> @@ -36,6 +36,11 @@ &cpu0 {
->  	soc-supply = <&dcdc1_reg>;
->  };
->  
-> +&epd_pmic_supply {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-> +};
-> +
->  &gpio_keys {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_gpio_keys>;
-> @@ -69,6 +74,12 @@ MX6SLL_PAD_GPIO4_IO18__GPIO4_IO18	0x10059 /* TP_RST */
->  		>;
->  	};
->  
-> +	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-> +		fsl,pins = <
-> +			MX6SLL_PAD_EPDC_PWR_WAKE__GPIO2_IO14    0x40010059
-> +		>;
-> +	};
-> +
->  	pinctrl_gpio_keys: gpio-keysgrp {
->  		fsl,pins = <
->  			MX6SLL_PAD_GPIO4_IO25__GPIO4_IO25	0x17059	/* PWR_SW */
-> @@ -169,6 +180,14 @@ MX6SLL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
->  		>;
->  	};
->  
-> +	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-> +		fsl,pins = <
-> +			MX6SLL_PAD_EPDC_VCOM0__GPIO2_IO03       0x40010059 /* VCOM_CTRL */
-> +			MX6SLL_PAD_EPDC_PWR_CTRL1__GPIO2_IO08   0x40010059 /* EN */
-> +			MX6SLL_PAD_EPDC_PWR_STAT__GPIO2_IO13    0x17059 /* PWR_GOOD */
-> +		>;
-> +	};
-> +
->  	pinctrl_uart1: uart1grp {
->  		fsl,pins = <
->  			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
-> @@ -319,6 +338,11 @@ &ricoh619 {
->  	pinctrl-0 = <&pinctrl_ricoh_gpio>;
->  };
->  
-> +&sy7636 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-> +};
-> +
->  &uart1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_uart1>;
+> When performing a read-modify-write(RMW) operation, any modification
+> to a buffered block must cause the entire buffer to be marked dirty.
 > 
-> -- 
-> 2.47.3
-> 
+> Marking only a subrange as dirty is incorrect because the underlying
+> device block size(ubs) defines the minimum read/write granularity. A
+> lower device can perform I/O only on regions which are fully aligned
+> and sized to ubs.
+
+Hi
+
+I think it would be better to fix this in dm-bufio, so that other dm-bufio 
+users would also benefit from the fix. Please try this patch - does it fix 
+it?
+
+Mikulas
+
+
+
+From: Mikulas Patocka <mpatocka@redhat.com>
+
+There may be devices with logical block size larger than 4k. Fix
+dm-bufio, so that it will align I/O on logical block size. This commit
+fixes I/O errors on the dm-ebs target on the top of emulated nvme device
+with 8k logical block size created with qemu parameters:
+
+-device nvme,drive=drv0,serial=foo,logical_block_size=8192,physical_block_size=8192
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+
+---
+ drivers/md/dm-bufio.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+Index: linux-2.6/drivers/md/dm-bufio.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-bufio.c	2025-10-13 21:42:47.000000000 +0200
++++ linux-2.6/drivers/md/dm-bufio.c	2025-10-20 14:40:32.000000000 +0200
+@@ -1374,7 +1374,7 @@ static void submit_io(struct dm_buffer *
+ {
+ 	unsigned int n_sectors;
+ 	sector_t sector;
+-	unsigned int offset, end;
++	unsigned int offset, end, align;
+ 
+ 	b->end_io = end_io;
+ 
+@@ -1388,9 +1388,10 @@ static void submit_io(struct dm_buffer *
+ 			b->c->write_callback(b);
+ 		offset = b->write_start;
+ 		end = b->write_end;
+-		offset &= -DM_BUFIO_WRITE_ALIGN;
+-		end += DM_BUFIO_WRITE_ALIGN - 1;
+-		end &= -DM_BUFIO_WRITE_ALIGN;
++		align = max(DM_BUFIO_WRITE_ALIGN, bdev_logical_block_size(b->c->bdev));
++		offset &= -align;
++		end += align - 1;
++		end &= -align;
+ 		if (unlikely(end > b->c->block_size))
+ 			end = b->c->block_size;
+ 
 
 
