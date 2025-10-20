@@ -1,65 +1,59 @@
-Return-Path: <linux-kernel+bounces-861129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4F9BF1D9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:31:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E34BBF1DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6C584EE83E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B631B189B0F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0F21CEAB2;
-	Mon, 20 Oct 2025 14:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7+ZDnsB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53C94CB5B;
-	Mon, 20 Oct 2025 14:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122304CB5B;
+	Mon, 20 Oct 2025 14:31:25 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678C51A239A;
+	Mon, 20 Oct 2025 14:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970663; cv=none; b=dyGBsDKcdtgod5nhBAr04Ar0WpYmJkU9V0mBafr9LR+IZJnWXa3ZzKeyI8Fmk2N04BERjfEAVHDAsqATlLprztC8No0j7NoGhU5vE5AKhJnPKGxYwtrNaUn5M0GYg0+uGPBPSzZLOH5x0WWKt47gLQQdXJnyxT9c7KyaUcpUC/0=
+	t=1760970684; cv=none; b=ZJZ8+rx5vK+kEy9ofroqbgF8I5Q/qAWFiD3vhflR/Cqul0TTKGgRbo62uPE//Osn/HJTh8LqMBdwznmEAQWxpAhGDRAq6IjabcX8qmbs1Unpj5n+Mwqk0dCX1F2eAq5Vx/PjK+hgCl89YJf181ToxE7igCwvpwFXqy2yc7Mj+uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970663; c=relaxed/simple;
-	bh=Zgh/z5OAav7Q4sWyHwtd8KQU+ZJ/UY2frwfkFs/0zg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TjpAkenHPTMGAhOVu3l2U3O++0ZW2Kz3Q5pq7OpLtoupdoiK1FD5VWQfKwf/WgpRGxMWeNqpNxq4t5ntKaZanQcsgq2M85NopYAGqpOOEZpg2JF1NouQOza/BazGgulynAdTERFzF56tkDygab0JRv3+JzZH9joPxzBuTHENuGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7+ZDnsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA76C116B1;
-	Mon, 20 Oct 2025 14:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760970663;
-	bh=Zgh/z5OAav7Q4sWyHwtd8KQU+ZJ/UY2frwfkFs/0zg0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k7+ZDnsBo6sHFfM7V3XjA540jxwzbjD7wpXcvDjXgBZHceYe7SmphByUgNxyioXn6
-	 /B1Kqi83dvd9U37KNqP4f0HRQne1lyscHCkndUZFgy1BnAVUSjezJEsGhrdzko8TRv
-	 h+ObONN54XTBZsJrK7hx+95DhdoOV9eIKkGfbC1bW6wga4Ej96JLoSOi8I+XWbOpGV
-	 QCxeSUxmBXxZxZNduGonaSKD1vmACPpz+T2+/Nx+7okTyUcWO9A3AMvy33UsmYqTN1
-	 d8jAgOo9CjZrSA5ZzeH8d/Tf0j0E6kdVKlwBXMBkBsxC9EBgwnxOu4uafllhn/ILPI
-	 0D1gykG+4O5yg==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Brendan Jackman <jackmanb@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
+	s=arc-20240116; t=1760970684; c=relaxed/simple;
+	bh=BRhmsRc0I/U90tySmc1W3dDFOEcpSBuOh2riT89cVfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MJcLqd06KLC7vGttCeK6JgI7Bm8BS937vH68mGfBLs2+ihIyjzO22bbN2IR6rIS2REhpFtTke35vy8ok8RMMVHDs7ZiBYxZOHjUMeFa/oZWGH6XBrnnwoURy5Axgd9qq8a+Ha027WzoNXMLkW+vUgn4NNuRNkg7ajfvsjVRCp4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: EgD152R9Q7KUIvjCt7wLmw==
+X-CSE-MsgGUID: pecVp6alSMGua6RKoTeLyg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Oct 2025 23:31:14 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.23])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D919141CCD99;
+	Mon, 20 Oct 2025 23:31:08 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: john.madieu.xa@bp.renesas.com,
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] mm, vc_screen: move __free() handler that frees a page to a common header
-Date: Mon, 20 Oct 2025 17:30:55 +0300
-Message-ID: <20251020143055.407696-1-rppt@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/3] Add TSU support for the Renesas RZ/V2H SoC
+Date: Mon, 20 Oct 2025 14:31:04 +0000
+Message-ID: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,65 +62,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Hi,
 
-vc_screen defines __free() handler that frees a page using free_page().
-Move that definition to include/linux/gfp.h next to free_page() and
-rename it from free_page_ptr to free_page.
+This series adds TSU support for the Renesas RZ/V2H SoC.
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- drivers/tty/vt/vc_screen.c | 6 ++----
- include/linux/gfp.h        | 2 ++
- 2 files changed, 4 insertions(+), 4 deletions(-)
+The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
+to measure the junction temperature. The device provides real-time
+temperature measurements for thermal management, utilizing two dedicated
+channels for temperature sensing.
 
-diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
-index c814644ef4ee..d2029f029de6 100644
---- a/drivers/tty/vt/vc_screen.c
-+++ b/drivers/tty/vt/vc_screen.c
-@@ -53,8 +53,6 @@
- #define HEADER_SIZE	4u
- #define CON_BUF_SIZE (IS_ENABLED(CONFIG_BASE_SMALL) ? 256 : PAGE_SIZE)
- 
--DEFINE_FREE(free_page_ptr, void *, if (_T) free_page((unsigned long)_T));
--
- /*
-  * Our minor space:
-  *
-@@ -371,7 +369,7 @@ vcs_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
- 	loff_t pos;
- 	bool viewed, attr, uni_mode;
- 
--	char *con_buf __free(free_page_ptr) = (char *)__get_free_page(GFP_KERNEL);
-+	char *con_buf __free(free_page) = (char *)__get_free_page(GFP_KERNEL);
- 	if (!con_buf)
- 		return -ENOMEM;
- 
-@@ -596,7 +594,7 @@ vcs_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
- 	if (use_unicode(inode))
- 		return -EOPNOTSUPP;
- 
--	char *con_buf __free(free_page_ptr) = (char *)__get_free_page(GFP_KERNEL);
-+	char *con_buf __free(free_page) = (char *)__get_free_page(GFP_KERNEL);
- 	if (!con_buf)
- 		return -ENOMEM;
- 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 0ceb4e09306c..93a6a532f10d 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -385,6 +385,8 @@ extern void free_pages(unsigned long addr, unsigned int order);
- #define __free_page(page) __free_pages((page), 0)
- #define free_page(addr) free_pages((addr), 0)
- 
-+DEFINE_FREE(free_page, unsigned long, if (_T) free_page(_T));
-+
- void page_alloc_init_cpuhp(void);
- int decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp);
- void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp);
+The Renesas RZ/V2H SoC is using the same TSU IP found on the RZ/G3E SoC,
+the only difference being that it has two channels instead of one.
 
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+Best regards,
+Ovidiu
+
+v2:
+- Dropped unneeded "items" from bindings compatible list.
+- Added "Reviewed-by:" tag from Krzysztof for the bindings patch.
+
+
+Ovidiu Panait (3):
+  clk: renesas: r9a09g057: Add clock and reset entries for TSU
+  dt-bindings: thermal: r9a09g047-tsu: Document RZ/V2H TSU
+  arm64: dts: renesas: r9a09g057: Add TSU nodes
+
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  6 +-
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 75 +++++++++++++++++++
+ drivers/clk/renesas/r9a09g057-cpg.c           |  6 ++
+ 3 files changed, 86 insertions(+), 1 deletion(-)
+
 -- 
-2.50.1
+2.51.0
 
 
