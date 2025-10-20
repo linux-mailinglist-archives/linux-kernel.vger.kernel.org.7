@@ -1,178 +1,178 @@
-Return-Path: <linux-kernel+bounces-861792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A7ABF3AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:11:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D6EBF3573
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40A118C525E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:11:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 94446350E74
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCCF33344C;
-	Mon, 20 Oct 2025 21:09:28 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDB330506E;
+	Mon, 20 Oct 2025 20:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kxr9d6B/"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA0828506F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 21:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957482E090E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760994568; cv=none; b=J1UQtTzHIKxjVJr2eFspG50ZEi4XjRWLEHbYyzwX8BOHGpvlWXP7bYulBn+u7Uao63X01z3NEjEUhB0qqDvuVvmlvhgdNxa/Wt9jSaN8CWhgu3h9m5tWxZlFLk7kpGBAfNEePyDwCIRMBon7uPDPJ13UQmQZBZ/2336dw9+7ibw=
+	t=1760991101; cv=none; b=sVXE1LvoITZDVNJZzyAXb8EFEnM6l1Lp8erZzxe70HM7FgjTuzgq4wP8e+dTVc8/5C6Mjnt5BT99JbwliUBPD9DMMUF7nuxXBuwT4LCQfArRfhUuOpLqscU89iQM3ZtbOE28mT5djgj1gshxDPb0uUYhjpkOSG7KH8HBNs0Myog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760994568; c=relaxed/simple;
-	bh=bReRybpNL/hzm5Z1ABBJMKdETWBrbE1IJm3RQyP8kf8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PfYMep2MAbk8swKKOcgtPwi3//ZrHL6rizHqAaExtCu71rIa813bZMju+wPbG8TaHTMy2nisepO7E6o7clvMx8mGDDhQbKWnLsox6+J/YlsFczR7X07+V9zGrWbvtlQ7EIm4/58a9WiL1LmEnkC6umpBW99zrtDsZCeBxWlRLQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e4da7a183so453153939f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:09:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760994565; x=1761599365;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1760991101; c=relaxed/simple;
+	bh=V6ULhW8H38NcYr33oKX3sVtwABaGZ1jZoxnobG/0Uto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lI4YqgIGPrNv1hZY+82LKJysZrzAzyXuns2BavANO5huii1f5NU4wDzQK2YNs9vPhkrvsf5+IamXSAvGLiZg7HQZMZYiwYBtZ6C0+5TLASsPnEFv959LtDFKsScerzfRn3xrJWb0bAOKcH6RGONhZ0MTdg/AEa5I6ZgCN/3qdi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kxr9d6B/; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3ce040db85so74277866b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760991098; x=1761595898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+V+MdXb/YmgAev9Sw7gcszmGhR3iqiEIadv8VJjYG7I=;
-        b=H3u170i166UaEkhdidQ5wA6X725XP4/RkaGxNnBkn9glpG2xEpkQzKi0p+FxdYZGud
-         la6XQ6J0AjjasTFPndQl4/a3m7wAsKHOeiJa6UWSGIQnRJ/n3xwsRFcxYj6wK9ZLHYcZ
-         S5l8FFvq/rUIVDiMMMJu0AUEAN1HkrAtMDWBgDikg6BGcFIfuV+/fFBI7s6FZ9f3kPu6
-         SRsAx4Exv7aYQIEegiru21VZyShGqX6bqgOhq0XrlOyqfVpTaCWxsNWgujQ3fzGeNbPZ
-         bXfGFFAyZGgZqUxzIDOxItJgtxLtCAnFyGv/TVGrNmPE6UihAvC1Zcf7DQ1OtAw3gsdZ
-         3Ubw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWtmZhUqWO2q8sxDFUoZwGHubQnEA43I6bsGPE/ntfyD0F+YVLgbGwNKDH8s0jmup3J9BQMuXnJTawvOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8KiHGK/6JXb6XJ/68tnB1w1xMS2yI4QgooqYCLxzmHtbMfdWD
-	vB4gTetIwORMGfoBL30+nMCUi2Yuz+MON62YGN/G5Y7nWTTxSr3kiV0+Zl3qY1IjeIQhNHMsZuB
-	YIhaObYmQy3xspmTBNB6ZdlKBv6z/8sgM3dWVE7Y1qHwEAigw+mrxdxx3dXk=
-X-Google-Smtp-Source: AGHT+IGiQbQSbJGoWUDS16sfg8Ogdo7rD7/vboTuECjLxjeioWAaGSzyvoClxUnJdmKvOwDhuoGUM6gfVTPdjeAHN7HFvuBTstFL
+        bh=4pYR5fc+13GPBMaNnLf78tmb9Ja2klUsIxWce12udek=;
+        b=Kxr9d6B/HpkAvO9hmycZwO3nxL4NQqHGnEFDtK0uN5FI3JYgoFTqhxe8TDMiKJeKsL
+         GwyNoHVShDgwdvOVHTWbkPnH9NcdJ2A0D+3y0vn/tZAyT74ATtWQwdUQe0Rn04ZT4CJg
+         lKR7+kJ9pxibIf0IMRCOdjS3Bs1wiaU0TCeXfFIKk9aMbrGMO3gW6Iov/WWYAOIbxAg1
+         RMU+gnzmqbufwxAI8expfw6QcLDZ9H34kmxORw6V3O5ue2WizygpHLBoXf5db5uBrR1k
+         8LfAiJbiuerhQJpOGfzl1kO4Xc/NM0KZfVPYS/pK9J8bGVZJolJ9r4Piz9jjTfr886GV
+         5dMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760991098; x=1761595898;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4pYR5fc+13GPBMaNnLf78tmb9Ja2klUsIxWce12udek=;
+        b=BbUKnxqtyAQqSg6IADiLuPgX5UclkAkNTU6H6nr8+8/omhB7ptcGziyMIcxJ9pPdkP
+         wTxnn3+ByQKLfb9gj+Tb9WJGo2ZYbawWmiYCGO8jHhQbS4O4q0SXas9Rnai66/nF+C2n
+         wkUoCXJ3Q3Fwu/+kz7HLArHXDHgjMVD7ik0pROugITsOy4Fk2CF/yHgh7LX0+ihw7yo2
+         IK6d1Bpo1+S1BE8rDdWfV+4qcVYL+bT6sksLR4WUH2vJwBUxEAnEYtTubhb8xFGpbay5
+         6yhF55uNe1h1BIx9eoTTfyYelbvWeVpg5gei5zln0o7jLhHlXMzWIV8nZN3xUyTaDHOH
+         dPGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4KX9XZFpH6u/iLUENQRGxdzdDU+XwfxnqMJy79vuMAT8X7rxkbSmw0ROE6cPKFEd5GMC7rIJKkivUqpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC0SBHHuOfo+iSlAPAtP42PoHefXwBpsswGq6YNyNBvydjXSy0
+	2TXwT2z41xHGEAriq+uNZVqzplG497HSmJvShAO11BXt2oEj3Yhpf+hN
+X-Gm-Gg: ASbGncuWi2xxiLc2uoqJOogWG5xFi6SNPtzEeLCR53/1ZC8WKhrzRAjCmaq00r89E4d
+	A3QntzZ15oGYoFIq6ihB2V53nz8SUAGTSc/+lYpQs0Y0DH0UUKuIDjkH8FQm4PhYp6UUohE/Mvg
+	ee5GrhcRK6qfqSE00Zaa/hFN9604tKdlbbl7UrLZE9JmTkshdngPbJac+bg0LZjMB7e+sl3cywq
+	yBIvsPQtg6kbo/K4nQQ18QLBplYH4wiXxDfJTS+v+zkcKW1Go8WHeGC7KpleWXRsU6A9mz2oSG4
+	DXm/FuivqVU1AcBjLiWLEgFzPfo5eNsIqO9BGFVBilTAd06OZ/l+Mw8wK8uYy9JB68CrPtuL2FV
+	mKxX7lELX5wOVictHRc4R5d/+NHwXGkbYzqUjcZCw5t2o/H3s7wS18LXLIK46/xU1/0CVu3jI3z
+	rzmC/g6y+J4EyZegAgIcYR6PeE8XU+
+X-Google-Smtp-Source: AGHT+IGfP+vFkv8zioVQynwazhbvBh6MaoC6q2IrSLhmWZgtPgsGhhqQc2LuymVoNGeawx228yiFQQ==
+X-Received: by 2002:a17:907:72cb:b0:b3e:c7d5:4cb9 with SMTP id a640c23a62f3a-b6c7758d3fdmr67446066b.5.1760991097698;
+        Mon, 20 Oct 2025 13:11:37 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.73.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb725f3fsm873186966b.68.2025.10.20.13.11.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 13:11:37 -0700 (PDT)
+Message-ID: <b0b1c2e9-c367-4e9c-b931-d3e1b0ba7f5b@gmail.com>
+Date: Mon, 20 Oct 2025 22:11:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6015:b0:93f:c5a3:2ad7 with SMTP id
- ca18e2360f4ac-93fc5a32d96mr1294638839f.6.1760994565634; Mon, 20 Oct 2025
- 14:09:25 -0700 (PDT)
-Date: Mon, 20 Oct 2025 14:09:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f6a505.050a0220.91a22.0454.GAE@google.com>
-Subject: [syzbot] [sctp?] KMSAN: uninit-value in sctp_sf_eat_data_6_2
-From: syzbot <syzbot+aa85f41343d9a3174009@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Greg KH <gregkh@linuxfoundation.org>
+Cc: lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
+ <2025101910-dipper-suburb-1755@gregkh>
+ <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
+ <d072dfe7-e0e9-49f6-89ed-25d194035e3b@gmail.com>
+ <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
+ <ea12faad-1735-4a49-a70d-d4cac5629042@linuxfoundation.org>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <ea12faad-1735-4a49-a70d-d4cac5629042@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 10/20/25 9:06 PM, Shuah Khan wrote:
+> On 10/20/25 03:50, Jani Nikula wrote:
+>> On Sun, 19 Oct 2025, Mehdi Ben Hadj Khelifa 
+>> <mehdi.benhadjkhelifa@gmail.com> wrote:
+>>> On 10/19/25 3:47 PM, Thomas Zimmermann wrote:
+>>>> Hi
+>>>>
+>>>> Am 19.10.25 um 16:34 schrieb Greg KH:
+>>>>> On Sun, Oct 19, 2025 at 04:12:28PM +0100, Mehdi Ben Hadj Khelifa 
+>>>>> wrote:
+>>>>>> Replace kmalloc() with kmalloc_array() to correctly
+>>>>>> handle array allocations and benefit from built-in overflow 
+>>>>>> checking[1].
+>>>>>>
+>>>>>> [1]:https://docs.kernel.org/process/deprecated.html
+>>>>>>
+>>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa 
+>>>>>> <mehdi.benhadjkhelifa@gmail.com>
+>>>>>> ---
+>>>>>>    drivers/gpu/drm/tiny/repaper.c | 2 +-
+>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/
+>>>>>> repaper.c
+>>>>>> index 4824f863fdba..290132c24ff9 100644
+>>>>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>>>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>>>>> @@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct
+>>>>>> drm_framebuffer *fb, const struct iosys_map *
+>>>>>>        DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>>>>              epd->factored_stage_time);
+>>>>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>>>>> +    buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
+>>
+>> Also worth emphasizing that this is wildly wrong for any height that is
+>> not a multiple of 8.
+>>
+>> And I thought I shot down a similar patch not long ago.
+>>
+>> Is there some tool that suggests doing this? Fix the tool instead
+>> please.
+>>
+> 
+> They are documented in https://docs.kernel.org/process/deprecated.html
+> Mu understanding is that this document lists deprecates APIs so people
+> don't keep adding new ones.
+> 
+> I didn't get the impression that we are supposed to go delete them from
+> the kernel and cause a churn.
+> 
+I have sent an appropriate v2 specifically to suit the case that we have 
+here. But the document[1] specifically quotes the following:"
+Dynamic size calculations (especially multiplication) should not be 
+performed in memory allocator (or similar) function arguments due to the 
+risk of them overflowing. This could lead to values wrapping around and 
+a smaller allocation being made than the caller was expecting. Using 
+those allocations could lead to linear overflows of heap memory and 
+other misbehaviors. (One exception to this is literal values where the 
+compiler can warn if they might overflow. However, the preferred way in 
+these cases is to refactor the code as suggested below to avoid the 
+open-coded arithmetic.)"
+Specifically mentionned the refactor of the code base in such cases 
+which is why i'm doing the patches in the first place.Also i'm trying 
+the best to send patches related to the issue where such issues of 
+overflow are present or to be consistent with the same API used within 
+the same subsystem.
+[1]:https://docs.kernel.org/process/deprecated.html
 
-syzbot found the following issue on:
+Best Regards,
+Mehdi Ben Hadj Khelifa> thanks,
+> -- Shuah
 
-HEAD commit:    d9043c79ba68 Merge tag 'sched_urgent_for_v6.18_rc2' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=114b752f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa85f41343d9a3174009
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15449734580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/57a87b0986c0/disk-d9043c79.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/019c87e1df0a/vmlinux-d9043c79.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/54f8a8b0734b/bzImage-d9043c79.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aa85f41343d9a3174009@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in sctp_sf_eat_data_6_2+0x5fb/0xf10 net/sctp/sm_statefuns.c:3210
- sctp_sf_eat_data_6_2+0x5fb/0xf10 net/sctp/sm_statefuns.c:3210
- sctp_do_sm+0x196/0x9720 net/sctp/sm_sideeffect.c:1172
- sctp_assoc_bh_rcv+0x88b/0xbc0 net/sctp/associola.c:1034
- sctp_inq_push+0x2a6/0x350 net/sctp/inqueue.c:88
- sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
- sk_backlog_rcv+0x142/0x420 include/net/sock.h:1158
- __release_sock+0x1ef/0x380 net/core/sock.c:3180
- release_sock+0x6b/0x270 net/core/sock.c:3735
- sctp_sendmsg+0x3a2b/0x49f0 net/sctp/socket.c:2036
- inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x278/0x3d0 net/socket.c:742
- sock_sendmsg+0x170/0x280 net/socket.c:765
- splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
- do_splice_from fs/splice.c:938 [inline]
- do_splice+0x1fd2/0x30d0 fs/splice.c:1351
- __do_splice fs/splice.c:1433 [inline]
- __do_sys_splice fs/splice.c:1636 [inline]
- __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
- __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
- x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4969 [inline]
- slab_alloc_node mm/slub.c:5272 [inline]
- kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
- kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
- __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
- alloc_skb include/linux/skbuff.h:1383 [inline]
- sctp_packet_transmit+0x44b/0x46d0 net/sctp/output.c:598
- sctp_outq_flush_transports net/sctp/outqueue.c:1173 [inline]
- sctp_outq_flush+0x1c7d/0x67c0 net/sctp/outqueue.c:1221
- sctp_outq_uncork+0x9e/0xc0 net/sctp/outqueue.c:764
- sctp_cmd_interpreter net/sctp/sm_sideeffect.c:-1 [inline]
- sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
- sctp_do_sm+0x8c8e/0x9720 net/sctp/sm_sideeffect.c:1175
- sctp_primitive_SEND+0xd7/0x110 net/sctp/primitive.c:163
- sctp_sendmsg_to_asoc+0x1db8/0x2250 net/sctp/socket.c:1873
- sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2031
- inet_sendmsg+0x26c/0x2a0 net/ipv4/af_inet.c:853
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x278/0x3d0 net/socket.c:742
- sock_sendmsg+0x170/0x280 net/socket.c:765
- splice_to_socket+0x10e6/0x1a60 fs/splice.c:886
- do_splice_from fs/splice.c:938 [inline]
- do_splice+0x1fd2/0x30d0 fs/splice.c:1351
- __do_splice fs/splice.c:1433 [inline]
- __do_sys_splice fs/splice.c:1636 [inline]
- __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
- __x64_sys_splice+0x114/0x1a0 fs/splice.c:1618
- x64_sys_call+0x3140/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:276
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 6190 Comm: syz.1.23 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
