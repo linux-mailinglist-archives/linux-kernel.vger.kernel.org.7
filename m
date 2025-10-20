@@ -1,145 +1,97 @@
-Return-Path: <linux-kernel+bounces-861692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F35BF35DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:18:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52926BF35E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541F34070F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:18:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F28FC34236C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD442D948F;
-	Mon, 20 Oct 2025 20:18:46 +0000 (UTC)
-Received: from vulcan.kevinlocke.name (vulcan.kevinlocke.name [107.191.43.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29A92D6E53;
+	Mon, 20 Oct 2025 20:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWTdBCev"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5585A29ACE5
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.191.43.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF76A2236E0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760991526; cv=none; b=WjDlGb/3q6FSfubwtBOcGWLSr4beCX2yZrAVau8g/JDOITft/pzWUJ3l1Q7HF8yWOLGZCVJSh2ksDYuGJQSuhnOtb3/cBC5leKBbVZW6I0CkXeTb88SDHfR06PgBznnMfrT6tE4KHFvufO3kkVS7Ti3pnHXq0vpWBuJmH9Y+Tvg=
+	t=1760991546; cv=none; b=Nhs5DHoPiuRATTQ8OtvqV/ZZjDeGTVtEWheP0OdVMpb5vkEYbDVBivo4kAy3cF0jK3lNHxfU3rHcOs/wwtCXNXeb+0MpU+rULhy4huABsI3PIY/wMHVqCWHJ0mP2bNbpjsmohID5A13jQP2y2HXUqYiklZS/NC0FysKhEi0iaAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760991526; c=relaxed/simple;
-	bh=mRsspvS4GSDk7FCyLt6d8jksX0zrgFXWBP1p98LUeJ4=;
+	s=arc-20240116; t=1760991546; c=relaxed/simple;
+	bh=01YCaKh5Wt7oKTEJH28qOs2bFtcBa8gWk/i1AJMIOo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZi3PramNlsEUMCceLdKniFnEdWefYGIPlYcJzPrSoShASkv/QMCQsLGfJrEMLyejj4mqjsWEcGgUclsHvI7hsy0bnTzIQqh9O+NBZcvjSSeqhWIOJf41OxskVZW+rULJ3a6di3oLrRWiORecXNWr1f7JuoF7PotWfM8NqjDXdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kevinlocke.name; spf=pass smtp.mailfrom=kevinlocke.name; arc=none smtp.client-ip=107.191.43.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kevinlocke.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kevinlocke.name
-Received: from kevinolos.kevinlocke.name (unknown [198.60.113.91])
-	(Authenticated sender: kevin@kevinlocke.name)
-	by vulcan.kevinlocke.name (Postfix) with ESMTPSA id 8EB484562BC5;
-	Mon, 20 Oct 2025 20:18:34 +0000 (UTC)
-Received: by kevinolos.kevinlocke.name (Postfix, from userid 1000)
-	id 7D14713001C9; Mon, 20 Oct 2025 14:18:32 -0600 (MDT)
-Date: Mon, 20 Oct 2025 14:18:32 -0600
-From: Kevin Locke <kevin@kevinlocke.name>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
-Message-ID: <aPaZGKyY_5ybTwda@kevinlocke.name>
-Mail-Followup-To: Kevin Locke <kevin@kevinlocke.name>,
-	David Laight <david.laight.linux@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	linux-kernel@vger.kernel.org
-References: <20251016214707.5c3d373b@pumpkin>
- <a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
- <20251017151256.111f2669@pumpkin>
- <aPLC_HdznsRcJbjk@kevinlocke.name>
- <20251019111748.3d5ac8d9@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lYgvMEVbBD4Jam07sAoA+SoghSv0yqhw4mP1svALEAbu+YuYHfpFADU7VAgkGqkyZR93wNjoldPt8LSkIZJNVF3Jcv1kOKOaPJLO+JRThEJMR7mr8FtNnCsbR/mefJ8sPH5S+wgF3/gw8f3/JJ7EaYOFfINA9LrJwPx9d3uRKYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWTdBCev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3CAC113D0;
+	Mon, 20 Oct 2025 20:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760991543;
+	bh=01YCaKh5Wt7oKTEJH28qOs2bFtcBa8gWk/i1AJMIOo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mWTdBCevDJwhGE+ozHSGgPYatr9uLFWZIux6xGFqpSioIec5pxPK3Z/CQCvJgdPht
+	 BdLkqM2KOimK/OvuSGJwxwleYe6Vum43E694X8I4u1cze5PrCmoo4Wt6ExweAI76sq
+	 NMszJIZgZdhO2l+9KNd9Qg/4pYMJsKOIukcgH33L9N3onJ6cgjD7AApobA2WnNqnHl
+	 Eqc0mXpKV/twHeCRXRQ32uTZbDyxhUNPw459XbEBv6Vo/Gsq8reokJV+tJq7EKIDZr
+	 Ke+0HuKVJpwjR3fjYsQ+AN2bfnltKJx7CkOs097yV0NOYmAVjU8EuAqqUkFlknbOMf
+	 J78ua8gL8Qvdg==
+Date: Mon, 20 Oct 2025 13:19:01 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: linux-kernel@vger.kernel.org, 
+	Arthur Marsh <arthur.marsh@internode.on.net>, x86@kernel.org
+Subject: Re: tools build: Fix fixdep dependencies
+Message-ID: <oavj77novhxcvo5fmvbdrpg64ishdvfdtij5olhicz7raxqjom@k673wwslnm6a>
+References: <176060840507.709179.15363439615733763867.tip-bot2@tip-bot2>
+ <c1d395c6-2d3b-4504-befe-6e67c7ed96fc@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251019111748.3d5ac8d9@pumpkin>
+In-Reply-To: <c1d395c6-2d3b-4504-befe-6e67c7ed96fc@leemhuis.info>
 
-On Sun, 2025-10-19 at 11:17 +0100, David Laight wrote:
-> On Fri, 17 Oct 2025 16:28:12 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:
->> On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:
->>> On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:  
->>>> Remove the "x" suffixes which unnecessarily complicate the code.  
->>> 
->>> The problems arise when $1 is (say) "-x", a simple LR parser will treat
->>> [ -x = -x ] as a check for the file "=" being executable and then give
->>> a syntax error for the second -x.
->>> I can't imagine why shellcheck should warn about a leading x (or any other
->>> character) provided field splitting is disabled (eg by "").
->>> The leading x has definitely been needed in the past.  
->> 
->> Yep, it definitely has been.  The rationale on the wiki is that it's
->> not necessary for modern shells (and presumably that it unnecessarily
->> complicates the code): https://www.shellcheck.net/wiki/SC2268
->> However, it notes Zsh had issues as recently as 2015, which is not as
->> old as I would have expected.
+On Sat, Oct 18, 2025 at 07:12:02AM +0200, Thorsten Leemhuis wrote:
+> On 10/16/25 11:53, tip-bot2 for Josh Poimboeuf wrote:
+> > The following commit has been merged into the objtool/core branch of tip:
+> > 
+> > Commit-ID:     a808a2b35f66658e6c49dc98b55a33fa1079fe72
+> > Gitweb:        https://git.kernel.org/tip/a808a2b35f66658e6c49dc98b55a33fa1079fe72
+> > Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+> > AuthorDate:    Sun, 02 Mar 2025 17:01:42 -08:00
+> > Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
+> > CommitterDate: Tue, 14 Oct 2025 14:45:20 -07:00
+> > 
+> > tools build: Fix fixdep dependencies
+> > 
+> > The tools version of fixdep has broken dependencies.  It doesn't get
+> > rebuilt if the host compiler or headers change.
 > 
-> It doesn't really make much difference to the shell.
-> I really doubt you'll notice any difference in the time it takes to run.
-
-I agree.  However, I'm more concerned about readability and
-understandability for developers less familiar with the quirks of old
-shells.
-
->>> POSIX does require the three argument 'test' look for the middle argument
->>> being an operator - but there might be historic shells that don't so that.
->>> OTOH you are probably looking for code from the early 1980s!
->>> But the POSIX spec (last time I read it) does point out the problems
->>> with arbitrary strings being treated as operators causing complex expressions
->>> be mis-parsed - which a leading x fixes.  
->> 
->> Good point.  I just reread it and can confirm that the current version
->> still notes issues mitigated by the X prefix with "historical shells"
->> and with greater than 4 argument cases:
->> https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
+> My daily -next rebuilds based on the Fedora rawhide srpm failed due to
+> this patch while building perf:
 > 
-> The fact that the 'greater than 4 argument case' can still require
-> a prefix character might be considered enough to make adding one all the
-> time 'good practise' even though it (probably) isn't actually needed.
-
-That seems reasonable to me, although I'd prefer omitting x and
-prohibiting >3 argument cases, which appears to be the route
-shellcheck takes with SC2268 + SC2166.
-
-> While I wouldn't error not having a prefix, generating an error when
-> there is one seems wrong.
-> What does shellcheck do with [ "$a" = "$b" -o "$c" = "$d" ] ?
-
-It only produces SC2166 (discouraging -o).  However, for 
-[ "x$a" = "x$b" -o "x$c" = "x$d" ] it also produces SC2268.
-
-> Or even [ "$a" "$b" "$c" "$d" "$e" "$f "$g" ] ??
-
-This, and [ "$a" "$b" "$c" ] and [ "$a" "$b" ] produce parser error
-SC1073.  Unfortunately, this appears to be a long-standing shellcheck
-issue:  https://github.com/koalaman/shellcheck/issues/1645
-
->> I find && and || more readable, but I'm open to changing it if you
->> feel strongly.
+> make[4]: *** No rule to make target '/builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/perf/libsubcmd/fixdep'.  Stop.
+> make[3]: *** [/builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/build/Makefile.include:15: fixdep] Error 2
+> make[2]: *** [Makefile.perf:981: /builddir/build/BUILD/kernel-6.18.0-build/kernel-next-20251017/linux-6.18.0-0.0.next.20251017.420.vanilla.fc44.aarch64/tools/perf/libsubcmd/libsubcmd.a] Error 2
+> make[2]: *** Waiting for unfinished jobs....
 > 
-> They get parsed entirely differently and are likely to be measurably slower.
-> Just FYI I tend not to use 'if' statements at all, just (eg):
-> 	[ a = b ] && echo a == b
+> Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/09700031-next-next-all/builder-live.log.gz
 > 
->> Do I understand correctly that you are in favor of using the x prefix?
->> I have a slight preference for leaving it off, but I'm open to adding
->> it if you (or others) feel strongly.
+> Happened on ppc64 and s390x, too (and likely on x86_64, too, but that
+> failed earlier during the build due to an unrelated problem).
 > 
-> I wouldn't take them out and consider shellcheck wrong, but the suffix
-> were just stupid.
+> Reverting this change fixed the problem.
 
-Are you opposed to the patch I posted removing the suffixes?  I had
-tagged you as Suggested-by due to misreading your first post.  If the
-change is not something you'd suggest, I can repost without it.
+Thanks, I will post a fix for this shortly.
 
-Thanks,
-Kevin
+-- 
+Josh
 
