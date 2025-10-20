@@ -1,111 +1,133 @@
-Return-Path: <linux-kernel+bounces-860719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAEBBF0C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B6BBF0C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 470434F2BEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 565164F2CC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127BA2FBE19;
-	Mon, 20 Oct 2025 11:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F992FCC10;
+	Mon, 20 Oct 2025 11:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG6dHB+G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvNEszqL"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D162F83AF;
-	Mon, 20 Oct 2025 11:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202F42FB085
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958785; cv=none; b=kS/w0iDCh+pLoJlx4Ter1tyhEbB5xq5KILRFtR2qVo0fOFYEJ+YiYRxnoHG/TYLxODh/30mfa1R18PZ2SEi1UefZYA+GMboH4QKwp/FCpLXK4C0gbqe7qKJ21m4McdWkUk7uDAmuj68TIa7BD5fA0USfM6BbkyXxUheV1FK9Dq0=
+	t=1760958844; cv=none; b=kHG3ggkAVryQCGd6kTcyAfHvFiU2BCfHhfGzlXXY6BUuL7VBh70aiRHdYUOo9Z1iiXn8JWjsVhiC0I46/fNPW4/K1tO+GokPJbyEjprg4df+Ro7w/N34zySwrbSSxdQxBgUuKVNVz2p284kZ95yrXF+8Ss3k1Y8wTRyK17ef6Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958785; c=relaxed/simple;
-	bh=LqlyFtZvoGXVVbtwTwF4PwGRsiCdkS8m3NwNvyq+HSY=;
+	s=arc-20240116; t=1760958844; c=relaxed/simple;
+	bh=gcBpP1ZhLnY9zOIftFnmJ1Hum0VuILkD2+x7sHEaLsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JD33tw4XAJ0600r27kxXS5poPp7A0112j/F8pKIl7D5kAMFDgDP4ZsGx8OYc8/ADeDKuiJLzYB6KGy1OMavJcQXomXlHAEnZRGpoY++cI9t9wa1wF6/LRFcZHXRK1eGFmnPcqVbIGZxbTL3IuZp3Iu9kgt9V0/E+SAMLsm76pwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PG6dHB+G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6A4C4CEF9;
-	Mon, 20 Oct 2025 11:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760958784;
-	bh=LqlyFtZvoGXVVbtwTwF4PwGRsiCdkS8m3NwNvyq+HSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PG6dHB+GBfjJLCoGNkWF1q+xVBfBm0JKSZs7LFXlyjUm33SzwqhgoyiKFl7qL6iDq
-	 VezOw+VfWyGUu5VYbNso+2U4obG+3+ygSO3nFYOdAfApHTU5r6X29EdIj5V9MTBbLm
-	 OtCqu1X3reCaiQ4kHg/rBadRSTRod7oHyWvkPxBT+rVZY+0RUYUxlx625JYVSj+cKE
-	 3Anbya4zhGGsnEJ367Ye9cxbCNNeYtgDJ6rJ1AWiG3FaxsTwVEMt3o9LZ/UYwX/now
-	 ZNMcr2xTJM0LlTMXvypLYMmyjQrHx6gWhClb6EOmifcMfXVKPf4ybSpwgFRiGdwWwC
-	 EC0SI8gvnvE1Q==
-Date: Mon, 20 Oct 2025 12:12:55 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: gregkh@linuxfoundation.org, srini@kernel.org, rafael@kernel.org,
-	dakr@kernel.org, make24@iscas.ac.cn, steev@kali.org,
-	dmitry.baryshkov@oss.qualcomm.com, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] regmap: slimbus: fix bus_context pointer in
- __devm_regmap_init_slimbus
-Message-ID: <da94225b-f4c5-4cdd-8ddb-937f69a7c8b2@sirena.org.uk>
-References: <20251020015557.1127542-1-alexey.klimov@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZ5Ak5yK0kfsf1fkYhw4y7RPX686oO9QK4Ah1t7r8xyf3g1q0iGEuAzpZ/Lj8Y8eFzppHKQWbjiTJTrfKrcrxRxRXcTTX2KzCv2B1klrVf6yeNvgVtZTR/+Xpfe9SvjoCte540mO3zOwQ1EcnAEBPbwVCG3BN8CgMreCGg3Akro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvNEszqL; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46fcf9f63b6so22272525e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760958841; x=1761563641; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1heHxgcOS8YwObtzwumeQPol9GYSJNTAFquV9NKRtlU=;
+        b=IvNEszqL73TqREl8U9naZKuPZO7ZoHjMMQiWWyt0lPCO3suS7Nn4SG8kPiyxsGYNZf
+         VNxtRcZnKb9Z9qKOUjMdTshjA2IgCnmRIAQMvkZ0Y1G1QPjEKANe/Joqi0LON5+tR5qE
+         GvJIPZk3J6emD8S5hL+oqRJThoOLNmJEMR0CfCYfCmOPv8HsXbA+qgqzOwNrOvZOhPyt
+         6qwIn75/+sYNuGrAxYOtNWYFxvx5b+zX+l9Nr9g61w/CQQVwSwGxyR58+KzAvUwtGU5M
+         ssTqHtbR4Idtw8jGpBPQNv1SvXLRPvmAF+cnt65813xFF6VYzrQ6/RQ5bDuVtGyb3OOG
+         BeJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760958841; x=1761563641;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1heHxgcOS8YwObtzwumeQPol9GYSJNTAFquV9NKRtlU=;
+        b=HQ4QNxVjmLrEkjNza8j4etHipLG2DV666T+SdKeYArwgq/SOmrZ8LjS3dU2CFBr0uD
+         BxQml3e4uAMuhBETAcKPPNTg582DdfqmBUBFBxVRvvh2Q+rXRbpsTFR+/TFwCev2omks
+         Hn5RhU5ZHoudVxC6XSxHrMm5QRLYywDU2xe8/hY+07XmNxUGXRYXGXkWICgqS24fAFI7
+         VQI/qo3EdsC3y3uaVfYHoXbLewTX26ffe+stu1izsjZNcfqVHYgdzXMkc4GamCL7lTv7
+         qUpqYxJmyxU1czpFn09zP1xozu56CJdb4BVAqYz8t54LPqp6BTEaK17BuztdYI31wL5m
+         bN/g==
+X-Gm-Message-State: AOJu0YyGD3c8YTbw3/cwGPGplrewHaDmQzpYIGEhHR/G0njH5BPfvouC
+	uQuZ6K9VtUaVBdjpQQj8IUm+uOtB2AJaB9bh8f9MAlyZN7nbFCoVLXpr
+X-Gm-Gg: ASbGncsmtjDJsEccm25v/b2qTg2p8su+Zze0lmGSmdikNyhDTqk+XbBFBMs4tqju2hT
+	gdfNku2/O4oASHoE/LZkycgVIA2o9ZZkxRtBL9pIsA2rPMe/cx0SsBjty1USXNmTK1YvTDC/kWf
+	NVZb6ZSh3Y5R3K3JKbIINGpRkVPMY6OEYGjwhnLai1WF3KcXXu/m1nR/6LkOmTf2NOgOb5wnNQp
+	rkTOIDPUrISwa2BuirGfa2vEO6RW8TqmDx/KWSKQ6kbmFYiAaMmh7R52g7ZPyQOqlOpLQ5WIy2U
+	cJk0Wo0fP1uvQvhAWR9agUy1Zx6/iH0VD8ytDLVAtD+r+o0R4qnicIl/RsrySHdxw+ws1PE7zCi
+	chPfv7y5WTLeMEtiQ/Ruc1MpdadsUprfUDmwX70LWF1Z4GuIyVUszgBM4mz7EaxoaMNf5e+K1yV
+	KwBHc=
+X-Google-Smtp-Source: AGHT+IHWoiPpeqTARzLXxV4BCLyaxgCCge6xGUQlWKCJbqKAdJmBiSsHsX5Cf5MLZPjNVhog6dZEIw==
+X-Received: by 2002:a05:6000:310e:b0:3e7:5f26:f1e5 with SMTP id ffacd0b85a97d-42704d623acmr8416696f8f.23.1760958841442;
+        Mon, 20 Oct 2025 04:14:01 -0700 (PDT)
+Received: from gmail.com ([51.154.251.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c34sm14733020f8f.17.2025.10.20.04.14.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 04:14:01 -0700 (PDT)
+Date: Mon, 20 Oct 2025 11:14:00 +0000
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
+	Jens Taprogge <jens.taprogge@taprogge.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	industrypack-devel@lists.sourceforge.net,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] MAINTAINERS: ipack: add ipack.h header file
+Message-ID: <aPYZeLtsXqNQYsce@gmail.com>
+References: <20251014030038.759222-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ssxoyRsbtT0nsvLE"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251020015557.1127542-1-alexey.klimov@linaro.org>
-X-Cookie: I doubt, therefore I might be.
+In-Reply-To: <20251014030038.759222-1-rdunlap@infradead.org>
 
+On Mon, Oct 13, 2025 at 08:00:38PM -0700, Randy Dunlap wrote:
+> Add the header file so that get_maintainer.pl will report useful
+> info instead of just linux-kernel@vger.
+> 
+> Fixes: 14dc124f1b2f ("MAINTAINERS: Add maintainers for Industry Pack subsystem")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> Cc: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+> Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+> Cc: Jens Taprogge <jens.taprogge@taprogge.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: industrypack-devel@lists.sourceforge.net
+> ---
+>  MAINTAINERS |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20251013.orig/MAINTAINERS
+> +++ linux-next-20251013/MAINTAINERS
+> @@ -12216,6 +12216,7 @@ L:	industrypack-devel@lists.sourceforge.
+>  S:	Maintained
+>  W:	http://industrypack.sourceforge.net
+>  F:	drivers/ipack/
+> +F:	include/linux/ipack.h
+>  
+>  INFINEON DPS310 Driver
+>  M:	Eddie James <eajames@linux.ibm.com>
 
---ssxoyRsbtT0nsvLE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Randy,
 
-On Mon, Oct 20, 2025 at 02:55:57AM +0100, Alexey Klimov wrote:
-> Commit 4e65bda8273c ("ASoC: wcd934x: fix error handling in
-> wcd934x_codec_parse_data()") revealed the problem in slimbus regmap.
-> That commit breaks audio playback, for instance, on sdm845 Thundercomm
-> Dragonboard 845c board:
->=20
->  Unable to handle kernel paging request at virtual address ffff8000847cba=
-d4
->  Mem abort info:
->    ESR =3D 0x0000000096000007
->    EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->    SET =3D 0, FnV =3D 0
->    EA =3D 0, S1PTW =3D 0
->    FSC =3D 0x07: level 3 translation fault
+Thank you for your patch.
 
-Please think hard before including complete backtraces in upstream
-reports, they are very large and contain almost no useful information
-relative to their size so often obscure the relevant content in your
-message. If part of the backtrace is usefully illustrative (it often is
-for search engines if nothing else) then it's usually better to pull out
-the relevant sections.
+Acknowledged-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
 
---ssxoyRsbtT0nsvLE
-Content-Type: application/pgp-signature; name="signature.asc"
+Hey Greg, could you please add this patch to your misc tree?
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj2GTYACgkQJNaLcl1U
-h9Cmvwf9GK8Dvln3p66O91K0PL96/37zqN/fTH3rc55VrHmVMqSnIXkf3rLH55QT
-5m9vExSwbC5NuBKXwUmHfr8ecE/eTu4hdF0cvo32z51Kz9cELYkSm8XPlprOZyiU
-MnyCHQfiE6adxRyFpUBicsHTOt+NvwjJRT/sxAzzu+XPQKc+i9Pr6lAs3h1DMGIi
-5jQWVrlIGNjA7STQhn+tbGKZPsAWrgfY0HgFoKPC3yd4zwenv29j3eRj/ca3+MGG
-LwoVAJ+OxaBT6Ie+VUsTWfSbmAAGsSYVAdhoqfXt04cFvOE0Ltm+pK/HN9qXp0MQ
-+3DJf1TZRVy7zj6/ekEgt6ovrS37ug==
-=VLJv
------END PGP SIGNATURE-----
-
---ssxoyRsbtT0nsvLE--
+Thanks,
+Vaibhav
 
