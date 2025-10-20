@@ -1,178 +1,192 @@
-Return-Path: <linux-kernel+bounces-861684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D6EBF3573
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 22:11:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1337BF3AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 94446350E74
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 20:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3638A18A643B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDB330506E;
-	Mon, 20 Oct 2025 20:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B5145A1F;
+	Mon, 20 Oct 2025 21:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kxr9d6B/"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Co1KxcnQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957482E090E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 20:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA41258ECB;
+	Mon, 20 Oct 2025 21:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760991101; cv=none; b=sVXE1LvoITZDVNJZzyAXb8EFEnM6l1Lp8erZzxe70HM7FgjTuzgq4wP8e+dTVc8/5C6Mjnt5BT99JbwliUBPD9DMMUF7nuxXBuwT4LCQfArRfhUuOpLqscU89iQM3ZtbOE28mT5djgj1gshxDPb0uUYhjpkOSG7KH8HBNs0Myog=
+	t=1760994783; cv=none; b=St0+veJ/G0UzTAmzEjkr/MkrUHrcWjpPpW1TIhmsSFt20pF5AcSWnPb8SLv56VxtITbRzGM6m7NYAkfocsOjv0iQznr2t2OLLYYR9zVSkSVzLm23eRl3QIenrV1RlvsB18mATn6CM2ri2okYoRHQ60YLHK+EwixyF8Hnpa5v9cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760991101; c=relaxed/simple;
-	bh=V6ULhW8H38NcYr33oKX3sVtwABaGZ1jZoxnobG/0Uto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lI4YqgIGPrNv1hZY+82LKJysZrzAzyXuns2BavANO5huii1f5NU4wDzQK2YNs9vPhkrvsf5+IamXSAvGLiZg7HQZMZYiwYBtZ6C0+5TLASsPnEFv959LtDFKsScerzfRn3xrJWb0bAOKcH6RGONhZ0MTdg/AEa5I6ZgCN/3qdi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kxr9d6B/; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3ce040db85so74277866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 13:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760991098; x=1761595898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4pYR5fc+13GPBMaNnLf78tmb9Ja2klUsIxWce12udek=;
-        b=Kxr9d6B/HpkAvO9hmycZwO3nxL4NQqHGnEFDtK0uN5FI3JYgoFTqhxe8TDMiKJeKsL
-         GwyNoHVShDgwdvOVHTWbkPnH9NcdJ2A0D+3y0vn/tZAyT74ATtWQwdUQe0Rn04ZT4CJg
-         lKR7+kJ9pxibIf0IMRCOdjS3Bs1wiaU0TCeXfFIKk9aMbrGMO3gW6Iov/WWYAOIbxAg1
-         RMU+gnzmqbufwxAI8expfw6QcLDZ9H34kmxORw6V3O5ue2WizygpHLBoXf5db5uBrR1k
-         8LfAiJbiuerhQJpOGfzl1kO4Xc/NM0KZfVPYS/pK9J8bGVZJolJ9r4Piz9jjTfr886GV
-         5dMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760991098; x=1761595898;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4pYR5fc+13GPBMaNnLf78tmb9Ja2klUsIxWce12udek=;
-        b=BbUKnxqtyAQqSg6IADiLuPgX5UclkAkNTU6H6nr8+8/omhB7ptcGziyMIcxJ9pPdkP
-         wTxnn3+ByQKLfb9gj+Tb9WJGo2ZYbawWmiYCGO8jHhQbS4O4q0SXas9Rnai66/nF+C2n
-         wkUoCXJ3Q3Fwu/+kz7HLArHXDHgjMVD7ik0pROugITsOy4Fk2CF/yHgh7LX0+ihw7yo2
-         IK6d1Bpo1+S1BE8rDdWfV+4qcVYL+bT6sksLR4WUH2vJwBUxEAnEYtTubhb8xFGpbay5
-         6yhF55uNe1h1BIx9eoTTfyYelbvWeVpg5gei5zln0o7jLhHlXMzWIV8nZN3xUyTaDHOH
-         dPGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4KX9XZFpH6u/iLUENQRGxdzdDU+XwfxnqMJy79vuMAT8X7rxkbSmw0ROE6cPKFEd5GMC7rIJKkivUqpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC0SBHHuOfo+iSlAPAtP42PoHefXwBpsswGq6YNyNBvydjXSy0
-	2TXwT2z41xHGEAriq+uNZVqzplG497HSmJvShAO11BXt2oEj3Yhpf+hN
-X-Gm-Gg: ASbGncuWi2xxiLc2uoqJOogWG5xFi6SNPtzEeLCR53/1ZC8WKhrzRAjCmaq00r89E4d
-	A3QntzZ15oGYoFIq6ihB2V53nz8SUAGTSc/+lYpQs0Y0DH0UUKuIDjkH8FQm4PhYp6UUohE/Mvg
-	ee5GrhcRK6qfqSE00Zaa/hFN9604tKdlbbl7UrLZE9JmTkshdngPbJac+bg0LZjMB7e+sl3cywq
-	yBIvsPQtg6kbo/K4nQQ18QLBplYH4wiXxDfJTS+v+zkcKW1Go8WHeGC7KpleWXRsU6A9mz2oSG4
-	DXm/FuivqVU1AcBjLiWLEgFzPfo5eNsIqO9BGFVBilTAd06OZ/l+Mw8wK8uYy9JB68CrPtuL2FV
-	mKxX7lELX5wOVictHRc4R5d/+NHwXGkbYzqUjcZCw5t2o/H3s7wS18LXLIK46/xU1/0CVu3jI3z
-	rzmC/g6y+J4EyZegAgIcYR6PeE8XU+
-X-Google-Smtp-Source: AGHT+IGfP+vFkv8zioVQynwazhbvBh6MaoC6q2IrSLhmWZgtPgsGhhqQc2LuymVoNGeawx228yiFQQ==
-X-Received: by 2002:a17:907:72cb:b0:b3e:c7d5:4cb9 with SMTP id a640c23a62f3a-b6c7758d3fdmr67446066b.5.1760991097698;
-        Mon, 20 Oct 2025 13:11:37 -0700 (PDT)
-Received: from [192.168.1.105] ([165.50.73.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb725f3fsm873186966b.68.2025.10.20.13.11.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 13:11:37 -0700 (PDT)
-Message-ID: <b0b1c2e9-c367-4e9c-b931-d3e1b0ba7f5b@gmail.com>
-Date: Mon, 20 Oct 2025 22:11:24 +0100
+	s=arc-20240116; t=1760994783; c=relaxed/simple;
+	bh=tfk6qX8NCv5KhgKGHT4nhdjDwIFmULmDydrvZ0XRVvw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XcWrUdsNY6gM6rxsni5hJGJJfBx232W3wahZjH/cTl/ECTuu235BLBGmijfoTYUFEAlCqgoaetJjy8wpvxXSwjtFblySzPuQvU+UM2gDlyGI0A0ABEa/kzKFlfmWx07CfBugqkDK0Hn979CA8sXIOYeJvuaFWqm7SCEOOeTS8dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Co1KxcnQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A8276C113D0;
+	Mon, 20 Oct 2025 21:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760994782;
+	bh=tfk6qX8NCv5KhgKGHT4nhdjDwIFmULmDydrvZ0XRVvw=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Co1KxcnQqo1WvkCxtL6n/WsWCughHHLPM6+s2NInRacU2XLUYtilJ5O2BA+RerSHx
+	 A+bySGldTuH9E8oUzNXR8LvbZAYZZ8jPJcfEZl3Ev0xG5B32o28e2JtyctfyMQrj6Q
+	 7/AaMDZMdYshNlXy49MlsftTz2QjAvKf8qgHnIb8ERfK1sdF0qSf+fWKIF46WY8+1X
+	 J1r3E+HhOiJoWwnk0QXW2fgUCQwZ8nX49bwH38BS5rnYcryxCFhalvG+XZiFdtDlJT
+	 vrSySID5YtP6L3fLkD+Mh4iMAySpLgHFLhktwvRvbpjWrortZ3/rKJMzQfmpQY+Hk3
+	 zdzyCEbTvH54A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94145CCD19F;
+	Mon, 20 Oct 2025 21:13:02 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Mon, 20 Oct 2025 23:12:56 +0200
+Subject: [PATCH] arm64: dts: qcom: sdm845: Define guard pages within the
+ rmtfs region
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tiny: Use kmalloc_array() instead of kmalloc()
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Greg KH <gregkh@linuxfoundation.org>
-Cc: lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251019151247.171558-1-mehdi.benhadjkhelifa@gmail.com>
- <2025101910-dipper-suburb-1755@gregkh>
- <cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de>
- <d072dfe7-e0e9-49f6-89ed-25d194035e3b@gmail.com>
- <02e617bec795d2ef371069f2d5fb954dfb31a450@intel.com>
- <ea12faad-1735-4a49-a70d-d4cac5629042@linuxfoundation.org>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <ea12faad-1735-4a49-a70d-d4cac5629042@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251020-sdm845-use-guard-pages-v1-1-64d714f8bd73@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIANel9mgC/x3MSQqAMAxA0atI1gbaoDhcRVy0NtYsHGhQBPHuF
+ pdv8f8DyklYoS8eSHyJyr5l2LKAaXFbZJSQDWSotoYMaljbqsZTGePpUsDDRVbsJvI0O+Mby5D
+ jI/Es9z8exvf9ANN3t0RoAAAA
+X-Change-ID: 20251020-sdm845-use-guard-pages-9c2b2fa0b71e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Sajna <sajattack@postmarketos.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2915; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=E2eVtp9CZo235rNLq7eCdbNC0gKfjdqyqcrfaduc4TA=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBo9qXdl3mY7plSvTx0oldYpigYKjtk6zobkvdyJ
+ cbZnG1oJDuJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaPal3QAKCRBgAj/E00kg
+ chXkD/9f5U607VemeAM2+jdhdbFPYzpHwX7OZtx3hLqgJkBJN1dC0xGvHiG8H0K4EUHbCQkhRxv
+ QwdSeKNbcJmUs8xH8KxYUiLo3jHCeaAyp1keRtpIdDlFBZ5L1pR+vK9LN4blahQM4bLI7ZB1W0b
+ MxurXBTOm3AGlwAhRpBv0kV7b/4N+gQnbI646YbQtobSx3glV46lXUj3BmbsLC6OcFAuRnpFU+7
+ OzNOkX2Zc9nd+ftZ1nCr4IWACQ2xXxjJWJ3upw7pk5SoLc+mrJmo0+7rpZxDtVJ0SyFsb1xoBLs
+ PaqkliW6Ncalr4WSghdwrVJ1E6n52lD3Pw5n553/CG1JD6TM5YWSCAZaeVOgXhlIdoquZL7ATeC
+ YT5jTDo0C8O4sSsvBSfgW28XtNFZJvP8EIshF1KTww8/fo+v5pxkgvpdHJVO8hG1IVgeHJC2eck
+ EYR9wcVX35nG4YQ4OyOsAX6zDrIBRhgq9C/yRJtj4kSYiNdbTFfkzU2oFQ3Q3WVSEzASkxsQtNc
+ pa/Hce6ETuvOEHLJWDk5rRfjvt/Y/BuNCAZgYU6wvHNx7ghZFuWFZJ5qffWsiJLLwIndUeH3Dpr
+ 5qbOA7GXDqXdkN0uQe5lajrqiopiU6fwLCXlCGzfzrdD2TcWftF9oCuUybgIamLwQgZzOxuAz/6
+ 1Fw6sSftNiMU1ew==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On 10/20/25 9:06 PM, Shuah Khan wrote:
-> On 10/20/25 03:50, Jani Nikula wrote:
->> On Sun, 19 Oct 2025, Mehdi Ben Hadj Khelifa 
->> <mehdi.benhadjkhelifa@gmail.com> wrote:
->>> On 10/19/25 3:47 PM, Thomas Zimmermann wrote:
->>>> Hi
->>>>
->>>> Am 19.10.25 um 16:34 schrieb Greg KH:
->>>>> On Sun, Oct 19, 2025 at 04:12:28PM +0100, Mehdi Ben Hadj Khelifa 
->>>>> wrote:
->>>>>> Replace kmalloc() with kmalloc_array() to correctly
->>>>>> handle array allocations and benefit from built-in overflow 
->>>>>> checking[1].
->>>>>>
->>>>>> [1]:https://docs.kernel.org/process/deprecated.html
->>>>>>
->>>>>> Signed-off-by: Mehdi Ben Hadj Khelifa 
->>>>>> <mehdi.benhadjkhelifa@gmail.com>
->>>>>> ---
->>>>>>    drivers/gpu/drm/tiny/repaper.c | 2 +-
->>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/
->>>>>> repaper.c
->>>>>> index 4824f863fdba..290132c24ff9 100644
->>>>>> --- a/drivers/gpu/drm/tiny/repaper.c
->>>>>> +++ b/drivers/gpu/drm/tiny/repaper.c
->>>>>> @@ -534,7 +534,7 @@ static int repaper_fb_dirty(struct
->>>>>> drm_framebuffer *fb, const struct iosys_map *
->>>>>>        DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
->>>>>>              epd->factored_stage_time);
->>>>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
->>>>>> +    buf = kmalloc_array(fb->height / 8, fb->width, GFP_KERNEL);
->>
->> Also worth emphasizing that this is wildly wrong for any height that is
->> not a multiple of 8.
->>
->> And I thought I shot down a similar patch not long ago.
->>
->> Is there some tool that suggests doing this? Fix the tool instead
->> please.
->>
-> 
-> They are documented in https://docs.kernel.org/process/deprecated.html
-> Mu understanding is that this document lists deprecates APIs so people
-> don't keep adding new ones.
-> 
-> I didn't get the impression that we are supposed to go delete them from
-> the kernel and cause a churn.
-> 
-I have sent an appropriate v2 specifically to suit the case that we have 
-here. But the document[1] specifically quotes the following:"
-Dynamic size calculations (especially multiplication) should not be 
-performed in memory allocator (or similar) function arguments due to the 
-risk of them overflowing. This could lead to values wrapping around and 
-a smaller allocation being made than the caller was expecting. Using 
-those allocations could lead to linear overflows of heap memory and 
-other misbehaviors. (One exception to this is literal values where the 
-compiler can warn if they might overflow. However, the preferred way in 
-these cases is to refactor the code as suggested below to avoid the 
-open-coded arithmetic.)"
-Specifically mentionned the refactor of the code base in such cases 
-which is why i'm doing the patches in the first place.Also i'm trying 
-the best to send patches related to the issue where such issues of 
-overflow are present or to be consistent with the same API used within 
-the same subsystem.
-[1]:https://docs.kernel.org/process/deprecated.html
+From: David Heidelberg <david@ixit.cz>
 
-Best Regards,
-Mehdi Ben Hadj Khelifa> thanks,
-> -- Shuah
+Use qcom,use-guard-pages property instead of polluting device-tree with
+lower and upper rmtfs guard nodes.
+
+No functional change intended.
+
+cosmetic: set name the node rmtfs-region.
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Tested on OnePlus 6T.
+---
+ arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi      | 17 +++--------------
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 18 +++---------------
+ 2 files changed, 6 insertions(+), 29 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
+index 99dafc6716e76..83b98bad19dd2 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
+@@ -99,26 +99,15 @@ memory@9d400000 {
+ 			no-map;
+ 		};
+ 
+-		/* rmtfs lower guard */
+-		memory@f0800000 {
+-			reg = <0 0xf0800000 0 0x1000>;
+-			no-map;
+-		};
+-
+-		rmtfs_mem: memory@f0801000 {
++		rmtfs_mem: rmtfs-region@f0800000 {
+ 			compatible = "qcom,rmtfs-mem";
+-			reg = <0 0xf0801000 0 0x200000>;
++			reg = <0 0xf0800000 0 0x202000>;
++			qcom,use-guard-pages;
+ 			no-map;
+ 
+ 			qcom,client-id = <1>;
+ 			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
+ 		};
+-
+-		/* rmtfs upper guard */
+-		memory@f0a01000 {
+-			reg = <0 0xf0a01000 0 0x1000>;
+-			no-map;
+-		};
+ 	};
+ 
+ 	gpio-keys {
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+index dcfffb271fcf3..61d63003fa371 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+@@ -75,32 +75,20 @@ key-vol-up {
+ 	};
+ 
+ 	reserved-memory {
+-		/*
+-		 * The rmtfs_mem needs to be guarded due to "XPU limitations"
+-		 * it is otherwise possible for an allocation adjacent to the
+-		 * rmtfs_mem region to trigger an XPU violation, causing a crash.
+-		 */
+-		rmtfs_lower_guard: rmtfs-lower-guard@f5b00000 {
+-			no-map;
+-			reg = <0 0xf5b00000 0 0x1000>;
+-		};
+ 		/*
+ 		 * The rmtfs memory region in downstream is 'dynamically allocated'
+ 		 * but given the same address every time. Hard code it as this address is
+ 		 * where the modem firmware expects it to be.
+ 		 */
+-		rmtfs_mem: rmtfs-mem@f5b01000 {
++		rmtfs_mem: rmtfs-region@f5b00000 {
+ 			compatible = "qcom,rmtfs-mem";
+-			reg = <0 0xf5b01000 0 0x200000>;
++			reg = <0 0xf5b00000 0 0x202000>;
++			qcom,use-guard-pages;
+ 			no-map;
+ 
+ 			qcom,client-id = <1>;
+ 			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
+ 		};
+-		rmtfs_upper_guard: rmtfs-upper-guard@f5d01000 {
+-			no-map;
+-			reg = <0 0xf5d01000 0 0x1000>;
+-		};
+ 
+ 		/*
+ 		 * It seems like reserving the old rmtfs_mem region is also needed to prevent
+
+---
+base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
+change-id: 20251020-sdm845-use-guard-pages-9c2b2fa0b71e
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
+
 
 
