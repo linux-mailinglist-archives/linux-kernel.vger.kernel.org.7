@@ -1,132 +1,232 @@
-Return-Path: <linux-kernel+bounces-861814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033C3BF3B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:22:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF54BF3B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A407C3516E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF223B23A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E72E62C5;
-	Mon, 20 Oct 2025 21:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D732334698;
+	Mon, 20 Oct 2025 21:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Caamiasd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="a+s0epdt";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="m0JvxP3Y"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BC4334372;
-	Mon, 20 Oct 2025 21:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760995360; cv=none; b=sHSY+Aji7cYTTGWJ60H6yHSwplgMySyUHC6G5skmHx/nvebW/bB+JF3jkNuxPGsE8HcslDQkPABLEze44klOpLBoMktfYMQjLqokMzWYSRKnhOIBCf0Y3sDqj3SrVKvH/JQylGzlttd1N6DbUlp+HrcW5AsCBvtoP9Uajfzi4MI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760995360; c=relaxed/simple;
-	bh=qYY1qLufeY1f3EgZKySLUuTNayjNH8pPG4M0+/NEz38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqoTUoCJRfrdu4gQq/C5OU0Zl+388MjONNEWzKXoVBvMrquYC0OBh4av4rYO5DwB96IKeM/LzVO250QM1csj6kPZG9g7itcq4LFsAC+/my7eB/FKOye3471lrlTW8FZkskW+rdFEdlus48AoJ4yryAQSn8IZgPEsD25meSi/Jw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Caamiasd; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760995359; x=1792531359;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qYY1qLufeY1f3EgZKySLUuTNayjNH8pPG4M0+/NEz38=;
-  b=CaamiasdZnal1/P7o8xlteCrTUl22/3CBjNd27mHxXZTgiyhP8S3qHrV
-   0/2CF/QSsJkT8tyWBsIFOsnI5OcBtscb+mnDnT6Nh0XWjDZneK1js5R/z
-   dKyFa6DXmCLlzbmPC72EdFAKlDR75SLyaPU5IseWDpq+hd36doZAKscUa
-   //1V0YzBYbmWHl0BBoMKo98Yddnuo4MrrjZAYesVjKNLdNYfHcBlwmfhh
-   hhcZ24HFgiESimKGpron5rQjobQbcLQf8LySrnkX6xkeaTq76ehY4LENW
-   Y8J4smgScwsndvKKdH7V/G+O+TOHK69qw5Wq8G/7YK9krihZOikkJc4MB
-   A==;
-X-CSE-ConnectionGUID: wFpi56kSTxCJmpf0yy2pUA==
-X-CSE-MsgGUID: PYhwAYBiQVWG8rXn5tscXw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63027346"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="63027346"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 14:22:38 -0700
-X-CSE-ConnectionGUID: EeYIFcZZSAWV9W04YExiTg==
-X-CSE-MsgGUID: GUpku4krSyW7QNn1N2/BCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
-   d="scan'208";a="188528968"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.123]) ([10.125.108.123])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 14:22:37 -0700
-Message-ID: <2393460e-aed6-44ac-9f11-f5b9a1f29e6b@intel.com>
-Date: Mon, 20 Oct 2025 14:22:36 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72B233375D;
+	Mon, 20 Oct 2025 21:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760995490; cv=pass; b=ipXR2KBSJhT34R8PP8lRqHG4H6UjqmxbWO0ZiTRT2j3IDOMy2uEU/UgsdW9DHy7c0zSt+542rwZATNRhBdho3IfL54n7tOK6U0nYmHf5yR+XU6EfSqfY3eh4bcL0PlA6WkryevykQn20OKQ0QAahKXicrmAxXWWm2MGygzuOMu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760995490; c=relaxed/simple;
+	bh=2ouFT+alOTtWn5rhfE5oAisrrN6mYTQD5/35TSdIxvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fSuJUyAoXQCTuH3s/GX5xKJfCez3cF07aP0N8RseVPD1DuSmRBllvzduSJQPzHI7iGTnsO9g/5ep0XeRZ7Xd9Y6NyPoyQ4QhbIhTw7Ahmy6e4oP5FUnjbKq0/yu54+SpdWKQ9Tnc6pMQS0OG6N1KABb9jzRHE8pmILuwMjPgX7U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=a+s0epdt; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=m0JvxP3Y; arc=pass smtp.client-ip=185.56.87.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-75hr.prod.antispam.mailspamprotection.com; s=arckey; t=1760995488;
+	 b=IhkeGxCVyP7ycTt1elxOBBdHTAo+YAoWiFbJObxpcAONLCW/k4SdetLdNz3rqQV4Xp5ioEL4Dp
+	  fxBnweBZYYws3HtCB8cciDMfqDjMcypjDUmpwy0IKnKrH7N1aG1BuUJ+GpbVJg78bq77bzGQsP
+	  MmoftBhpZ6TABsJg6Nhtlg18KnXXlLPQcDbPUEE0vulwLixAh8SwPpxYfsjisVoP2iymWaDmsv
+	  BUQ5sWwyk3JDEGzoJAgb40obvsqMx5goGH/Grqmpav//br/AB0HD/9SRqr77Ruzqqv9MmusnCV
+	  iBK24fZxY2djhkd/77/FTm7hTURO+V7+dUkwdwDQDVJAPw==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-75hr.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-75hr.prod.antispam.mailspamprotection.com; s=arckey; t=1760995488;
+	bh=2ouFT+alOTtWn5rhfE5oAisrrN6mYTQD5/35TSdIxvc=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	  Message-ID:Date:Subject:Cc:To:From:DKIM-Signature:DKIM-Signature;
+	b=k2hnKffgdNhjf14vG1EzS5l8NCBpdVdQPVg1WIW97FAm7wdfaBMQC/t2OXrV3+dm5c4sabw84D
+	  kXmzsnJhCWnw57UytXsShJeSemcT3uYctUWRU5wkdxRBycQ+6Vf2qQKr8V+M36cS1J3hj/JOhD
+	  smluQEUI4M4a9lVmyxyPZXFWdtlUV6PNXEabkc6PoMSdOyiFWt17KocKYyU+luGjLbor8BuFQK
+	  da5Npb7rvqLDYV3kkQfmN5Vmem0nn7VR8GWKoM8501EHKg8BSj40TomSLGKqU8qfwMNA5W9i5T
+	  FaScbaEn5EueeVwEgkC2Qe8BJgedyfnuieRQLjTdqogJaw==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Reply-To:List-Unsubscribe;
+	bh=SnX1nQdEuaGWMQh+pLSXIZd/hCY6zPBWbspwRBykrrs=; b=a+s0epdtt2GB39nYfc7Kn9klls
+	h+JIHQjJFykYDljzXgaFWpy7z4eKwXcmVnuX0iBMidceVUzzoraFZlyXRe9a6OqOoNApLEZfL3UcL
+	h0jaeiYnmpXoCXjR58qEsh7B5P9XRgYL0rnciNFDOYPsyJv0U873eHnNdoFZQEuWn3j8=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-75hr.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vAxMq-00000009sHv-3BNg;
+	Mon, 20 Oct 2025 21:24:39 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=SnX1nQdEuaGWMQh+pLSXIZd/hCY6zPBWbspwRBykrrs=; b=m0JvxP3YhlvEKT+SYapQA6y1pK
+	eudCWGk+b4z4DhlFO1FxlCzqd/gZaM/JRU625IW4OLptCIRO1GYpgeK/uUo502GJD+P+nDJKL0IEy
+	QvKyUxlpoY3EpzPsNxIJ5yc/koZL4MqoObUZXsMP5F9z1jKIqmUG766341xbyDv+T6xM=;
+Received: from [87.16.13.60] (port=60132 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vAxMX-00000000AIj-08n4;
+	Mon, 20 Oct 2025 21:24:17 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
+ Harald Mommer <harald.mommer@opensynergy.com>,
+ Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
+ Wolfgang Grandegger <wg@grandegger.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
+ linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, virtualization@lists.linux.dev,
+ development@redaril.me
+Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
+Date: Mon, 20 Oct 2025 23:24:15 +0200
+Message-ID: <27327622.1r3eYUQgxm@fedora.fritz.box>
+In-Reply-To: <aPZNiD1SN16K7hmT@fedora>
+References:
+ <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
+ <1997333.7Z3S40VBb9@fedora.fritz.box> <aPZNiD1SN16K7hmT@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] cxl_test: enable zero sized decoders under hb0
-To: Alison Schofield <alison.schofield@intel.com>,
- Gregory Price <gourry@gourry.net>
-Cc: Vishal Aslot <vaslot@nvidia.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "open list:COMPUTE EXPRESS LINK (CXL)" <linux-cxl@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251015024019.1189713-1-vaslot@nvidia.com>
- <20251015024019.1189713-2-vaslot@nvidia.com>
- <aPXgLp1Em6wKlx0t@aschofie-mobl2.lan>
- <aPZE3Spas-IvHmfd@gourry-fedora-PF4VCD3F>
- <aPaNzeGqUHf6gGIu@aschofie-mobl2.lan>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <aPaNzeGqUHf6gGIu@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 92a448e4b3ce077e46e201b844574c38
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vAxMq-00000009sHv-3BNg-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-75hr.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-
-
-On 10/20/25 12:30 PM, Alison Schofield wrote:
-> On Mon, Oct 20, 2025 at 10:19:09AM -0400, Gregory Price wrote:
->> On Mon, Oct 20, 2025 at 12:09:34AM -0700, Alison Schofield wrote:
->>>> This patch updates cxl_test to enable decoders 1 and 2
->>>> in the host-bridge 0 port, in a switch uport under hb0,
->>>> and the endpoints ports with size zero simulating
->>>> committed zero sized decoders.
->>>
->>> Decoders 1 & 2 - those are after decoder 0, the autoregion.
->>> That's a problem ATM, when we try to teardown the autoregion we
->>> get out of order resets. Like I asked in the other patch, if there
->>> are rules about where these zero size decoders may appear, that
->>> may make the solution here simpler.
->>>
->>
->> I think this is going to require a quirk-doc like other deviations.
+On Monday, 20 October 2025 at 16:56:08 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
+> On Tue, Oct 14, 2025 at 06:01:07PM +0200, Francesco Valla wrote:
+> > On Tuesday, 14 October 2025 at 12:15:12 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
+> > > On Thu, Sep 11, 2025 at 10:59:40PM +0200, Francesco Valla wrote:
+> > > > Hello Mikhail, Harald,
+> > > > 
+> > > > hoping there will be a v6 of this patch soon, a few comments:
+> > > > 
+> > > > On Monday, 8 January 2024 at 14:10:35 Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com> wrote:
+> > > > 
+> > > > [...]
+> > > > > +
+> > > > > +/* Compare with m_can.c/m_can_echo_tx_event() */
+> > > > > +static int virtio_can_read_tx_queue(struct virtqueue *vq)
+> > > > > +{
+> > > > > +	struct virtio_can_priv *can_priv = vq->vdev->priv;
+> > > > > +	struct net_device *dev = can_priv->dev;
+> > > > > +	struct virtio_can_tx *can_tx_msg;
+> > > > > +	struct net_device_stats *stats;
+> > > > > +	unsigned long flags;
+> > > > > +	unsigned int len;
+> > > > > +	u8 result;
+> > > > > +
+> > > > > +	stats = &dev->stats;
+> > > > > +
+> > > > > +	/* Protect list and virtio queue operations */
+> > > > > +	spin_lock_irqsave(&can_priv->tx_lock, flags);
+> > > > > +
+> > > > > +	can_tx_msg = virtqueue_get_buf(vq, &len);
+> > > > > +	if (!can_tx_msg) {
+> > > > > +		spin_unlock_irqrestore(&can_priv->tx_lock, flags);
+> > > > > +		return 0; /* No more data */
+> > > > > +	}
+> > > > > +
+> > > > > +	if (unlikely(len < sizeof(struct virtio_can_tx_in))) {
+> > > > > +		netdev_err(dev, "TX ACK: Device sent no result code\n");
+> > > > > +		result = VIRTIO_CAN_RESULT_NOT_OK; /* Keep things going */
+> > > > > +	} else {
+> > > > > +		result = can_tx_msg->tx_in.result;
+> > > > > +	}
+> > > > > +
+> > > > > +	if (can_priv->can.state < CAN_STATE_BUS_OFF) {
+> > > > > +		/* Here also frames with result != VIRTIO_CAN_RESULT_OK are
+> > > > > +		 * echoed. Intentional to bring a waiting process in an upper
+> > > > > +		 * layer to an end.
+> > > > > +		 * TODO: Any better means to indicate a problem here?
+> > > > > +		 */
+> > > > > +		if (result != VIRTIO_CAN_RESULT_OK)
+> > > > > +			netdev_warn(dev, "TX ACK: Result = %u\n", result);
+> > > > 
+> > > > Maybe an error frame reporting CAN_ERR_CRTL_UNSPEC would be better?
+> > > > 
+> > > I am not sure. In xilinx_can.c, CAN_ERR_CRTL_UNSPEC is indicated during
+> > > a problem in the rx path and this is the tx path. I think the comment
+> > > refers to improving the way the driver informs this error to the user
+> > > but I may be wrong.
+> > > 
+> > 
+> > Since we have no detail of what went wrong here, I suggested
+> > CAN_ERR_CRTL_UNSPEC as it is "unspecified error", to be coupled with a
+> > controller error with id CAN_ERR_CRTL; however, a different error might be
+> > more appropriate.
+> > 
+> > For sure, at least in my experience, having a warn printed to kmsg is *not*
+> > enough, as the application sending the message(s) would not be able to detect
+> > the error.
+> > 
+> > 
+> > > > For sure, counting the known errors as valid tx_packets and tx_bytes
+> > > > is misleading.
+> > > > 
+> > > 
+> > > I'll remove the counters below.
+> > > 
+> > 
+> > We don't really know what's wrong here - the packet might have been sent and
+> > and then not ACK'ed, as well as any other error condition (as it happens in the
+> > reference implementation from the original authors [1]). Echoing the packet
+> > only "to bring a waiting process in an upper layer to an end" and incrementing
+> > counters feels wrong, but maybe someone more expert than me can advise better
+> > here.
+> > 
+> > 
 > 
-> Really need to hear more about spec here. You mention quirk, but is it
-> really a quirk or spec defined behavior?
+> I agree. IIUC, in case there has been a problem during transmission, I
+> should 1) indicate this by injecting a CAN_ERR_CRTL_UNSPEC package with
+> netif_rx() and 2) use can_free_echo_skb() and increment the tx_error
+> stats. Is this correct?
 > 
->>
->> A committed decoder must have a base address, and with 0-size subsequent
->> or previous decoders would also have an address that covers that address
->> as well.  This is on top of the ordering issue if the 0-side decoders
->> come after a programmable decoder.
->>
->> I'm not convinced this even makes sense as a security thing if you can
->> reset the bus and re-activate everything (after a graceful teardown).
->>
->> Seems easier to just report the decoders as unavailable and then not
->> probe them.
+> Matias
 > 
-> Users see a memdev in the topology and want to use it but find no
-> available endpoint decoder. We'll probably want a mechanism to show why
-> that is so, hence the suggestion to add to topology and show as locked.
+> 
 
-I think the kernel driver should be fully aware of what is and isn't fully present and handle them appropriately. And on the user side, 'cxl list' should show a decoder in a zero size state so the admin knows why things are the way they are.  > 
->>
->> ~Gregory
+That's my understanding too! stats->tx_dropped should be the right value to
+increment (see for example [1]).
+
+[1] https://elixir.bootlin.com/linux/v6.17.3/source/drivers/net/can/ctucanfd/ctucanfd_base.c#L1035
+
+Regards,
+Francesco
+
+
+
+
 
 
