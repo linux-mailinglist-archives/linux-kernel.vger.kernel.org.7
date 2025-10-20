@@ -1,334 +1,135 @@
-Return-Path: <linux-kernel+bounces-861431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33AFBF2B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:30:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BEDBF2B93
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4C218A63E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:31:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AA0C4ED35A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F78221F2F;
-	Mon, 20 Oct 2025 17:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B85328B4A;
+	Mon, 20 Oct 2025 17:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Ag0Jy02o"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazolkn19012062.outbound.protection.outlook.com [52.103.2.62])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SMDDws0d"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA89A926;
-	Mon, 20 Oct 2025 17:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760981449; cv=fail; b=oLM4335QcLNXeZYewRqHOh0VSdT1/gnBTZeN37uGFjevnZq0aCqKFCp9quY636+jccrn5sqKBvWlAL4rbo2vw6+6puT5kNVqVEDiMQp8B4syBjnMJTnUnH8JzZ/zg/yRX/1lOhCcsWbJWA8YusrFT02vdPk2RzKnwLQnFfYYVKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760981449; c=relaxed/simple;
-	bh=lB27iU3RKNJZfO4c8Mcr5+pjQKX/ctSpC1MzG7Dt/NU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mY3gasZcKXiXdClg99+4Fd+76aGWWNSq4CDY2oQCDF1AITSJmN+TJWIexuox1FhZ9PSlpCaUKZKHj0aT2CZNvIDMej3UEPfkoWagEGhIVIlYdgZs9wKfWUphe4DFtHxpTlcMVv8y+sVxKnkPzdxCByBa7RowlTBftMCLVLAms54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Ag0Jy02o; arc=fail smtp.client-ip=52.103.2.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=reCQ9Y8sVY3Gq/S+thDsGl5tgLvNFEzMBjmQ1lF2NQV6aaIdj7uqHHVLDIzfBfpRCSBzeFWNFOfGv97OW5v216eVI+kQOGWaBlCc3iVMPb+lTI3T60KcJIDu83lsn/HY5YcPllNpAV7ywtUjop3uPZ++mCDmzKWl2MBs+5GZ1EXRHa3/LLkjbKhAjUqrcydzLcQs05IAhRNPJgQxTWBvCK/k0fgPSZmeW0pvmn79Is4wASg+826yaU06LdwueSCIm0rZkijOgXCVL6bqTY7qsueo3iel5nalr6Nwd/OMBQs/Sh8BF/IYJlb/aW31fJugQkP7n1oj7z3GBbSSYLvKXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lkiCMk0rMO5RATPChqL5M5GRNDKDlL7IwwtTgpqhRTw=;
- b=LXUEuWtG13Is33h97inkl+neRex9HKONKPXMxEedIf1baNYQaAzNZ6Os7hxjQV0RX0EoD2lwuvZWY0DFPRqEfGdUGDhgFN3Xr88xyfs6opfwtYJ4EsOB8hC2eUlcKBN/P3+4T23RbyBD8ISolT98NZhstDg6DLxxW32/M7GI++zpc1qrKrPeiV5MwglmmmKGwUqYzhe1Z3h1897xul5ibvsW9C8I+YsCOhcw2pMW6nH3r3w7Ksse3iXqt+qBe/cbafJAnK5okjmlQYcPmX2h+K2OGJqvd7xQIRc9jbY2ungeLhaKfcjGn5f0Dw0w7xyqf+0w8WP4jTgsiWUQVq1JWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lkiCMk0rMO5RATPChqL5M5GRNDKDlL7IwwtTgpqhRTw=;
- b=Ag0Jy02oNksArpsaovTuBfVOLx4ycayfrVDMqwyTUvCU4eRejb5+LaXMiWLDbsAIcoZfyupllLKwNEmpNJrfixCmkGiAYiJpSI+GGs6y7Pa/0dO+eMij30N67rPsRmEpYXiLMGu1ZaIB5X4VPFZRofJq+lNCvkh9VHUeTS/7XZB8YC/R1oB1fu3ReySTCR5NDvMx5Rtmv8/0bbb311WHEinD30OWsr/9uKOjRwA3TARZyiN4Tb9Sy9bD5zkX1dlUcObjWUk5EiMkAPu3b8PVJ8h1Hw4XOTS1RDsB/d1RAJvexkllyypT/LgTTbk3DAJhe5DlghWIUBnOj7AUDLYZSQ==
-Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
- by BL3PR02MB8297.namprd02.prod.outlook.com (2603:10b6:208:344::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Mon, 20 Oct
- 2025 17:30:44 +0000
-Received: from BN7PR02MB4148.namprd02.prod.outlook.com
- ([fe80::6007:d1a1:bcf9:58ef]) by BN7PR02MB4148.namprd02.prod.outlook.com
- ([fe80::6007:d1a1:bcf9:58ef%4]) with mapi id 15.20.9228.014; Mon, 20 Oct 2025
- 17:30:44 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Praveen Paladugu <prapal@linux.microsoft.com>
-CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"arnd@arndb.de" <arnd@arndb.de>, "anbelski@linux.microsoft.com"
-	<anbelski@linux.microsoft.com>, "easwar.hariharan@linux.microsoft.com"
-	<easwar.hariharan@linux.microsoft.com>, "nunodasneves@linux.microsoft.com"
-	<nunodasneves@linux.microsoft.com>, "skinsburskii@linux.microsoft.com"
-	<skinsburskii@linux.microsoft.com>
-Subject: RE: [PATCH v2 2/2] hyperv: Enable clean shutdown for root partition
- with MSHV
-Thread-Topic: [PATCH v2 2/2] hyperv: Enable clean shutdown for root partition
- with MSHV
-Thread-Index: AQHcPSm8o+gOyOR+00uJ8u6QFjaVJbTFIVIggAYZboCAABbHkA==
-Date: Mon, 20 Oct 2025 17:30:44 +0000
-Message-ID:
- <BN7PR02MB41485DB7E9B53B4CEDA596EAD4F5A@BN7PR02MB4148.namprd02.prod.outlook.com>
-References: <20251014164150.6935-1-prapal@linux.microsoft.com>
- <20251014164150.6935-3-prapal@linux.microsoft.com>
- <SN6PR02MB4157FBBE5B77C65B024D3589D4E9A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20251020155939.GA17482@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-In-Reply-To:
- <20251020155939.GA17482@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|BL3PR02MB8297:EE_
-x-ms-office365-filtering-correlation-id: cb94439a-efcf-49c0-e17e-08de0ffe6653
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|19110799012|31061999003|8060799015|41001999006|13091999003|15080799012|8062599012|3412199025|440099028|51005399003|40105399003|12091999003|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?/qNvLmiER44y/d5oCzYjqiHQ7DSMDGzusrvdqRsfb3iQZJOoADThK5tRjsrM?=
- =?us-ascii?Q?bWNxzOPWTxHtA7eLt8jE+zBzpfIon3DYPq1ZtNixHrFQywhDkQsY6HlCYO0+?=
- =?us-ascii?Q?9mIJ1FOy7lP1fFYotNd/6kfdWbyVlqiVCXcr/DGN9uvJTWpc5w9gHWl9VcYW?=
- =?us-ascii?Q?7B6wIdCxvClnJU3zb5bUH76IVmj9GVM6oKuDj1AgNhM6qKC4jVjJ0yBqr8w3?=
- =?us-ascii?Q?kdkJnCqOXtebImv1e+Kssnj90i1U1irDaIj721cS4slvz1/6Xf94mVeyNS5l?=
- =?us-ascii?Q?dhUoEdKVkTUpS0GF8tFTmJs6TCRCt8t/927xHsJ8LMLseFenS3bZdYGW0E5U?=
- =?us-ascii?Q?IFWwSlS10lFJts+8y6PzuzDUHN5w3ZAfooBGfDo/sylBE1t0GPHO7CGwfjHx?=
- =?us-ascii?Q?wZYCws58ei6UeOZK4Fb6KaNmPMyEv5pxmtEBG7fOBxvgySA2dPs71ORn5RsH?=
- =?us-ascii?Q?upUqWSNJAR/xDsmOV8z7gPFD8XpURRnj/V0vUIQtCKi4B61i7P1ybPbLmBa7?=
- =?us-ascii?Q?ndJ0NrlJEG3a6F2sSBc2ppVRjUveZFV4Xcrd4aEK1giGxv6CAK4HDodfZOez?=
- =?us-ascii?Q?fIEJf770pYWnZDgnJrQddZu0xQS8gPFpEWdtWofEu8ZG3rL31ACfWWscnWFm?=
- =?us-ascii?Q?++d3g0RKLIjXHr2ky56QQ3WxlqjC4iX2kSSwV6+noe/waj2ErjVWZ9IDQ+N5?=
- =?us-ascii?Q?P92G0ZuIfbEmVLEAWpg6y8RNq4q7o7mUDm1JlWuPTkKP3Bo3xKaBrynJwmTZ?=
- =?us-ascii?Q?kF4wxGXcI+gyy6YpVifi9JB82l//CX9VNV5u84Rq0NZiGOVI5Xld5lmgVLx6?=
- =?us-ascii?Q?EAcB0m9a8kOBQ1ywCvxWcI6dctfg2wXCmT26lSqCVT4e6N9o8uV/u7kTIfAA?=
- =?us-ascii?Q?UTh1H1k5dhAgjgqahrTQSEV3tpMfV+vwSUL/j9QlwTDNYSqL0Z5/JsIktHgn?=
- =?us-ascii?Q?09AojchiHtv476f0Fz+3UlvwY8JNfd1pfvSoZJf1HNjHj3WVMvnseF1jyNmI?=
- =?us-ascii?Q?Qv9iyYrK8DJPVVFLYxr3q1+dUxtMMQBGTEVa9RUO2C80F3erlwcbrpEKYyQZ?=
- =?us-ascii?Q?TDPPO5xEXRtyBduK+WVon5/tcD1/aYKiE+mBqa2iaBYBaOGQ4b7E/I8bY9zp?=
- =?us-ascii?Q?48sidS8wMA6yS8Oe+pw+BJHX/3u9dDx5j80qnAovQhZXz/xbG5IPBIgDqv4h?=
- =?us-ascii?Q?jUqkfRFTUhWuCsGKWzSPajrrv0RU0axLQ8np/lmGcrCpZd2Ab2QVd979vtmK?=
- =?us-ascii?Q?d1lQ3Y5Ut5Stt6CKWSvFbbWYyAk7pGcVjtE3FRQtYw=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?IRulloQnoiJEOGZ62HPL6k4mvF6CS3v8EsE8mMi8K+2wf4qfUVDj5TNOKKDL?=
- =?us-ascii?Q?Be84oCg8IxKF1qeSvY+OYoFhewO+pzrh1jmL3pKIEuX9/g1tSOR1eeDuZygD?=
- =?us-ascii?Q?e64ubsH/IbqwujYUrP3DS+8pdM3K/FSddKVqCrBTwpOKfCmS7DhBDpa4uzq1?=
- =?us-ascii?Q?Tvzhmb92Zo50UyUfTitCTgfS6JDU+nTV5gPqzprsQVrzNyB7bVn50fvdZAPY?=
- =?us-ascii?Q?/cjqgzow3tuQAkxMZw3oEq/KfmIoD/4Kk+QFeRaAjOrKkPnDpalVWp/82Pkp?=
- =?us-ascii?Q?O+8gN+moEEOarWBMM1iHffT2gGTX9wd6LLV+9806cDGTXUIwS6zRGYI+5Km9?=
- =?us-ascii?Q?wjd5GwWepA2PBLGDR6RqGXARbcLYmLorpzMVPNuSmZUDhIZM4uqQTjNU4VkC?=
- =?us-ascii?Q?2ZzVJ0lRwS6ew8iCmF6UjthxgIe6unoQV7QRYl6fWYRg6y1DwIwMXpWZ31mm?=
- =?us-ascii?Q?PqSA01/q3zWhbSq3bJCTFmR9vYU4NIVgF2KgzhnIF2coeHpxoXu0HwAZMYYO?=
- =?us-ascii?Q?rQftRvpWLbAGbU6lW8HKh1ins2c6PWUJHJhTwekuUFcbZ8hGUufXRXhgA4XH?=
- =?us-ascii?Q?FoeSm8aCeaawsQInyr8cGl2kwqv1vfX/5/gsAx0zh65CocIrffj5ffsZkNg/?=
- =?us-ascii?Q?f5EFZtsGK3eSKi5aq8I8KMIOBlIpj3RdMWTOhAm3uMpa/7g5uKj80kDFIMOX?=
- =?us-ascii?Q?I69BaqGYLhfVax4KusCnl9mUCBQWrH8Od5eKmsxrWCxgtuIh6nyRw5TbqIaZ?=
- =?us-ascii?Q?r6KJ9maP2z0COY8+DivpfuNBi9rLpeLNU6GUsehfeG8JsF/VmMgD06of+Pzt?=
- =?us-ascii?Q?bUgZQPoY14Ze4CNWKxcRtywI5L5C7xMau6+7Vm6T9tSoAjeNxSxFlaQOPwO9?=
- =?us-ascii?Q?IQ+GaGmmy17G593T7df9Df+d55Mgq9iBoMG5P2tjF4obn+Sly5H2y2YPet/m?=
- =?us-ascii?Q?IkBlIBCUzvuMttueRNZNJCNofX7ZW8DyUMyTAWWzlr7smv7PvAoZfxhM8ZZo?=
- =?us-ascii?Q?ynl6eVE3ZgKxDxIOVm8Ojoq74RmOxeLerY9Gf3xEmUA7gcDAgMyyaoeMASRy?=
- =?us-ascii?Q?cdNbcJGK73TvvPQy/nhUEqYIReIh8YAlHM7/b3kLYStld4icGSEgHLU0c6O+?=
- =?us-ascii?Q?7Rv3a+YUqsXjR2qlAYZjjBe8ixtehlczvG5W+cXgIbb0NSrq+zSVascAZowG?=
- =?us-ascii?Q?6y3mHVZ3j3yIqwIoI/Om9N9giNJMHaJWLhZI1TExK5k76zxKidcGtN+zz2k?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BE91A76DE;
+	Mon, 20 Oct 2025 17:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760981547; cv=none; b=AXY9fCs6EiU5dLll9VzFHVP3+JdfaikLA/fRwtt3eCMFBgMbHTQjkFqcya3nNcw5HnO6Gg+qaKvj7tLaFTP/U4h8s+We6E8XmoKhZhP5ZRgm4kZ0QxoKxGFPaIRIZYSK3c544oSLuMPbFH6I8iPcyBnyjRB62Qvbpy9Mg6l9szU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760981547; c=relaxed/simple;
+	bh=yD9NeC1DIeHj+exe4HoGBSo1jJ9DLS0E5wIp8nXAE94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7PyxmXjOEkT/Ps4nOgzfTWXuLC9TbJwqnJSLjXDvk5TUo1UNHvg2DRmxBwRIbLS84NiGK8k2ijnlzN6FJPBegtLIvxXKZHccX8Xmdtc0m6EJEvnV91+oAO0ULuyt2iHpkiDKaUikRlIVbf60km19fnxG7Pov1CqgcD7P/EaEyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SMDDws0d; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760981545; x=1792517545;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yD9NeC1DIeHj+exe4HoGBSo1jJ9DLS0E5wIp8nXAE94=;
+  b=SMDDws0dPoUYup8m2EP0IQ+XodEr1MrCsCN4i93E+RrcRE1cgkVGBorb
+   S94VwWwYsLa7FGCvBi0FpUW+MuQ3tLQL8Ef1TNsBPv8K4tGN9XDZNRJj+
+   tS64ec5NMYPoigjREj/rmguSHc910nXnUThEd6y9rmpyf6cpvQZj2HWU1
+   HOML9K83gv6AVmFhbsxPecGAPtv25o01fO78qGAM67UZoWnMXrJl5wlnF
+   sUL8J5LZPbNIzRWhSLwzC+ZhDC93dLsvPq9NqGwZE66HE8msnB+smJ8nw
+   BJXfbjo8vnq+RZ9O3xaAnlW/fA0GCyPl/BqO3NhwIiLOm/UCifBKz/1rH
+   w==;
+X-CSE-ConnectionGUID: p5MPvmQOSUSzYVNcFBmNvg==
+X-CSE-MsgGUID: HssXx9BFTACPLS8t7L+Dng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="85723342"
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="85723342"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 10:32:24 -0700
+X-CSE-ConnectionGUID: ny+37O3HQHmtPj7Zpf12aQ==
+X-CSE-MsgGUID: GMVSiQ5XR8KgKGPFlq1v6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,243,1754982000"; 
+   d="scan'208";a="214348038"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.62])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2025 10:32:21 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vAtk1-00000001LYb-1aez;
+	Mon, 20 Oct 2025 20:32:17 +0300
+Date: Mon, 20 Oct 2025 20:32:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Florian Eckert <fe@dev.tdt.de>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
+	kumaravel.thiagarajan@microchip.com, pnewman@connecttech.com,
+	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
+	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
+	macro@orcam.me.uk, schnelle@linux.ibm.com,
+	Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2] serial: 8250_pcilib: Replace deprecated PCI functions
+Message-ID: <aPZyIdnDVNezI185@smile.fi.intel.com>
+References: <aPPreT00iiTDzJwG@ashevche-desk.local>
+ <84ad1b3070a8374ec20f06588fab9f86@dev.tdt.de>
+ <aPX15a2Zv9b_wM3u@smile.fi.intel.com>
+ <e018879d65948462984da19e53cb610a@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb94439a-efcf-49c0-e17e-08de0ffe6653
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2025 17:30:44.5223
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR02MB8297
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e018879d65948462984da19e53cb610a@dev.tdt.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Praveen Paladugu <prapal@linux.microsoft.com> Sent: Monday, October 2=
-0, 2025 9:00 AM
->=20
-> On Thu, Oct 16, 2025 at 07:29:06PM +0000, Michael Kelley wrote:
-> > From: Praveen K Paladugu <prapal@linux.microsoft.com> Sent: Tuesday, Oc=
-tober 14, 2025 9:41 AM
-> > >
+On Mon, Oct 20, 2025 at 06:18:42PM +0200, Florian Eckert wrote:
+> On 2025-10-20 10:42, Andy Shevchenko wrote:
+> > On Mon, Oct 20, 2025 at 08:47:16AM +0200, Florian Eckert wrote:
+> > > On 2025-10-18 21:33, Andy Shevchenko wrote:
+> > > > On Tue, Sep 30, 2025 at 09:27:43AM +0200, Florian Eckert wrote:
 
-[snip]
+...
 
-> > > +static int hv_call_enter_sleep_state(u32 sleep_state)
-> > > +{
-> > > +	u64 status;
-> > > +	int ret;
-> > > +	unsigned long flags;
-> > > +	struct hv_input_enter_sleep_state *in;
-> > > +
-> > > +	ret =3D hv_initialize_sleep_states();
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	local_irq_save(flags);
-> > > +	in =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
-> > > +	in->sleep_state =3D sleep_state;
-> > > +
-> > > +	status =3D hv_do_hypercall(HVCALL_ENTER_SLEEP_STATE, in, NULL);
-> >
-> > If this hypercall succeeds, does the root partition (which is the calle=
-r) go
-> > to sleep in S5, such that the hypercall never returns? If that's not th=
-e case,
-> > what is the behavior of this hypercall?
-> >
-> This hypercall returns to the kernel when the CPU wakes up the next
-> time.
+> > > > > +	if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
+> > > >
+> > > > Dunno if this is included already in Linux Next, but here is room for
+> > > > improvement.
+> > > 
+> > > I followed the code in the 'serial8250_pci_setup_port()' [1] function.
+> > > The same pattern is used there [2].
+> > 
+> > I see. So if we want to amend that, it should be done separately.
+> 
+> If that's the case, then I'm done with this patchset, right?
+> I do not have to send a v3?
 
-I must be missing something about the big picture, because "returns to
-the kernel when the CPU wakes up" doesn't fit my mental model of what's
-going on. I thought this function would be called, and the hypercall made,
-when Linux in the root partition is shutting down. So if a CPU makes this
-hypercall and goes to sleep, what wakes it up? And when it wakes up, is it
-still running the same Linux instance that was shutting down, or has it
-rebooted into new Linux instance? In the latter case, returning from
-the hypercall doesn't make sense.
+Yeah, that proposal is not directly related to this change anyway.
 
-Can you explain further how this all works?
+> > > > The problem with the above code is it (wrongly?) checks for bit and not
+> > > > for the resource type. OTOH I don't remember if 64-bit version requires
+> > > > the IORESOURCE_MEM to be set along with that.
+> > > 
+> > > Do you mean the function 'platform_get_resource()' [3]? This is a
+> > > platform
+> > > device function?
+> > 
+> > I mean that the IORESOURCE_MEM and IORESOURCE_MEM_64 are separate bit flags
+> > in struct resource::flags. Checking on one might not imply the other be
+> > set, however brief look at the sources shows that _MEM_64 is supposed to be
+> > set on top of _MEM.
+> 
+> Okay, I understand.
 
-Michael
+-- 
+With Best Regards,
+Andy Shevchenko
 
->=20
-> > > +	local_irq_restore(flags);
-> > > +
-> > > +	if (!hv_result_success(status)) {
-> > > +		hv_status_err(status, "\n");
-> > > +		return hv_result_to_errno(status);
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int hv_reboot_notifier_handler(struct notifier_block *this,
-> > > +				      unsigned long code, void *another)
-> > > +{
-> > > +	int ret =3D 0;
-> > > +
-> > > +	if (code =3D=3D SYS_HALT || code =3D=3D SYS_POWER_OFF)
-> > > +		ret =3D hv_call_enter_sleep_state(HV_SLEEP_STATE_S5);
-> >
-> > If hv_call_enter_sleep_state() never returns, here's an issue. There ma=
-y be
-> > multiple entries on the reboot notifier chain. For example,
-> > mshv_root_partition_init() puts an entry on the reboot notifier chain. =
-At
-> > reboot time, the entries are executed in some order, with the expectati=
-on
-> > that all entries will be executed prior to the reboot actually happenin=
-g. But
-> > if this hypercall never returns, some entries may never be executed.
-> >
-> > Notifier chains support a notion of priority to control the order in
-> > which they are executed, but that priority isn't set in hv_reboot_notif=
-ier
-> > below, or in mshv_reboot_nb. And most other reboot notifiers throughout
-> > Linux appear to not set it. So the ordering is unspecified, and having
-> > this notifier never return may be problematic.
-> >
-> Thanks for the detailed explanation Michael!
->=20
-> As I mentioned above, this hypercall returns to the kernel, so the rest
-> of the entries in the notifier chain should continue to execute.
->=20
-> > > +
-> > > +	return ret ? NOTIFY_DONE : NOTIFY_OK;
-> > > +}
-> > > +
-> > > +static struct notifier_block hv_reboot_notifier =3D {
-> > > +	.notifier_call  =3D hv_reboot_notifier_handler,
-> > > +};
-> > > +
-> > > +static int hv_acpi_sleep_handler(u8 sleep_state, u32 pm1a_cnt, u32 p=
-m1b_cnt)
-> > > +{
-> > > +	int ret =3D 0;
-> > > +
-> > > +	if (sleep_state =3D=3D ACPI_STATE_S5)
-> > > +		ret =3D hv_call_enter_sleep_state(HV_SLEEP_STATE_S5);
-> > > +
-> > > +	return ret =3D=3D 0 ? 1 : -1;
-> > > +}
-> > > +
-> > > +static int hv_acpi_extended_sleep_handler(u8 sleep_state, u32 val_a,=
- u32 val_b)
-> > > +{
-> > > +	return hv_acpi_sleep_handler(sleep_state, val_a, val_b);
-> > > +}
-> >
-> > Is this function needed? The function signature is identical to hv_acpi=
-_sleep_handler().
-> > So it seems like acpi_os_set_prepare_extended_sleep() could just use
-> > hv_acpi_sleep_handler() directly.
-> >
-> Upon further investigation, I discovered that extended sleep is only
-> supported on platforms with ACPI_REDUCED_HARDWARE.
->=20
-> As these patches are targetted at X86, above does not really apply. I
-> will drop this handler in next version.
->=20
-> > > +
-> > > +int hv_sleep_notifiers_register(void)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
-> > > +	acpi_os_set_prepare_extended_sleep(&hv_acpi_extended_sleep_handler)=
-;
-> >
-> > I'm not clear on why these handlers are set. If the hv_reboot_notifier =
-is
-> > called, are these ACPI handlers ever called? Or are these to catch any =
-cases
-> > where the hv_reboot_notifier is somehow bypassed? Or maybe I'm just
-> > not understanding something .... :-)
-> >
->=20
-> I am trying to trace these calls. I will keep you posted with my
-> findings.
->=20
-> > > +
-> > > +	ret =3D register_reboot_notifier(&hv_reboot_notifier);
-> > > +	if (ret)
-> > > +		pr_err("%s: cannot register reboot notifier %d\n",
-> > > +			__func__, ret);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +#endif
-> >
-> > I'm wondering if all this code belongs in hv_common.c, since it is only=
- needed
-> > for Linux in the root partition. Couldn't it go in mshv_common.c? It wo=
-uld still
-> > be built-in code (i.e., not in a loadable module), but only if CONFIG_M=
-SHV_ROOT
-> > is set.
-> >
->=20
-> This sounds reasonable. I will discuss this internally and get back you.
->=20
-> > Michael
-> >
-> > > --
-> > > 2.51.0
-> > >
+
 
