@@ -1,256 +1,168 @@
-Return-Path: <linux-kernel+bounces-860717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA308BF0C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D69BF0C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B19334F2A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595D2189FC11
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E8B2FB615;
-	Mon, 20 Oct 2025 11:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2AA2F99BE;
+	Mon, 20 Oct 2025 11:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBeNtnzs"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="OykXOz46"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011032.outbound.protection.outlook.com [52.103.33.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96792F99BE
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958754; cv=none; b=Iyhovrg2hUpXbS/FMrltRr1KEhnjCZfokmGVxopmoPowtG0ik6M7k21QYHnvokt1WZeH8pnhWX1SdpxKRPPkN21XKKAmM3GKxrv6zPdPmd33IM4gFR4ML+fQbEw9KPysBXgg1NUoDPNxiGoVIeVMdLwLlk66J3vATstU1OLmORM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958754; c=relaxed/simple;
-	bh=n+gvQT6Cp9atDtjg/KyYC4YYp+xamGrTEI0pAHgmHrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kc7RpHeTn43X4mz0ttTGcQCt9AtkJSLDvdMUlGRhI7Jz30JSwIa1zuiTHipV49UH7EWzjlsr37N4Aiqrb89tb5QumdKLjedRFiPW1+ad5hN28YQJXWRmC2CAsdmhqIQhAA3IPvjSCasLk94rqeYFs/lw7NvGTO6p0kE+o2btnUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HBeNtnzs; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e542196c7so33741015e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760958751; x=1761563551; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2qwR6qWGPZt8aBWLxI/e6FP+u71DAbbOdbYMkZiZQiI=;
-        b=HBeNtnzsbQbmHmaCR/CILC9wT+G6SXaODVblhZpYYVp+se9PjcVS4U4BYftf3RbGo/
-         uDJB6PLxQnEZgdTHyErZ9xJmga4xhZPm7qdiR3rUTutnN0cMjmGEI015v6eueBIO3Y6N
-         Mnyf25d2CgyFow3hRhLz4Oo3ysq0r0HP9AwHiNnzNrWDUn0792Q7i+0lC7psQ4+RLGwm
-         05xpVSOLxhK4Wqdd8hBAL/dUolZeN7lwGo1DIbMazySRu52/NsoWvDQ4FV5alBgbyaed
-         FV4xs8pIkzIOTO1H7FwMgsGowLaSVlKlsn0FpeTFaOvY4Yh3DUVqesO1QxejKhLMXzfS
-         peDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760958751; x=1761563551;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2qwR6qWGPZt8aBWLxI/e6FP+u71DAbbOdbYMkZiZQiI=;
-        b=e0P2SECk5hnbxGVCwjMrmRMomT3E1xw97g1crlmHAISsREQJ4er4a3SvDkDOkbXamI
-         IVaC9ncd+Ksiy4fXHJ3BoCLJdAWc/iRocv7P+QgNYWUsXQAYH+mBmWqnz0zlu9+XcN06
-         bLN5oEtJNRXeYWm45qAUBP1KNahqVFrOJ6PZvpwzvLBxYgvi46mwsvY216o0RsYQqvGz
-         FnCyXOS4LLwqK0w9slfuq22bGfC+D80JOTqMCEkvrf2DTGXXTV25Mo0NKPzpTB4P6Kcv
-         l/Q1DNvs52imWtGl/Xr9Whj4LAU9e86NwEVLxQjx2IM68fURHDXqH6mTvDk0ZHtTxrAS
-         2Vig==
-X-Gm-Message-State: AOJu0YwGtN8Rd4p6sJH5rDpoIHJ9oAxPIrTQo/ZeaONyxSMws7DU+r0G
-	QBrk6P+yfsHA90sC6KbrlE4j7UFN8uXCoVuCijQITKtCXbFr1mGRf30Z
-X-Gm-Gg: ASbGncuwmUpVALkOMtliKjHp6RIeE0rY8uiC+gkprXpdFwXcHU2SSKCBDTTnW2LPU9G
-	wg0Yk6Mf6cyBcam9bl0VFmiXUch2J90i4n690JeFv3XdZHLMBKXoB9T0kUoYPP56ne9ncL+/z7M
-	WPzHDnjJcK9bm4uYqm0vsfg2Xc8l2plXHP+8C6u3NetZRoLjf6dJ7JlZs9RPgwZ2bxgGvHGu1NL
-	dtESO2aWHSKE7sA0CtZdfxekNiFa8NxNSynsz2Lm87iWl9kSIHwEaOQe05XpQsqOEgJ0eb0+X+9
-	A9nHMODa3n2Byu7RvWN06Hhr3SD2XpLkARsfDglM97fyhyP8SlJqMzDVjy3FAcCXx8plIv/NKcx
-	eBvYZ4Lz4okQbirvrNzJiuWxTqfPfRigk3O9ylaoB34MWmACGnP+951N4HP1gZXLpoGlRmx/bYG
-	o9s/c=
-X-Google-Smtp-Source: AGHT+IF/EyA0TIzNac7W/+V2NGoOmFFFbqSmHi7kM1sTW+R8m65rZUTt98m3cX0WAgEihq9NbKzorQ==
-X-Received: by 2002:a05:6000:2f83:b0:427:151:3da6 with SMTP id ffacd0b85a97d-42701514163mr10336952f8f.29.1760958751085;
-        Mon, 20 Oct 2025 04:12:31 -0700 (PDT)
-Received: from gmail.com ([51.154.251.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0ec2sm14645274f8f.3.2025.10.20.04.12.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 04:12:30 -0700 (PDT)
-Date: Mon, 20 Oct 2025 11:12:29 +0000
-From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Jens Taprogge <jens.taprogge@taprogge.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	industrypack-devel@lists.sourceforge.net,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2] ipack: fix ipack.h kernel-doc warnings
-Message-ID: <aPYZHYx90jqtkYp0@gmail.com>
-References: <20251016033543.1142049-1-rdunlap@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C48E2FB96A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760958758; cv=fail; b=obBc0Lh3+iWf9GoPK2URy5I4+zs2GVGMDmfyAp64cw+Nrj2e+BIbCQrhgOfaPnXQS2DVUvksC4uKMc/dmqH5fz4aA2Rs+Xlt4yBpzBmnIoWCvbG2gQ4SiY2xtg6Pzks8vjyEJruamS8n8G9UDO14FJgQ6vKqHaqHkhcPSY40phA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760958758; c=relaxed/simple;
+	bh=cq6eKAUS7+ZQHvmGJVwlulSrKAju61ns+2tIDP818iI=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=hAgIR+iFswnP8EA5GysxE8eORSCOPnzA8BHoeS6CfBNXy9nqmiOMm8aesaBP4za8NNWBLih8OKcPfCb+NNq1TA4Hb23WSuF/YUOl4BJtOjI7EMwJo6j2BuokrarJE0rJNTDCJqwkIsGyQamH5KAND9ll8bZ29pxGHtXutMpESAU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=OykXOz46; arc=fail smtp.client-ip=52.103.33.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nOTyw7LZznAnnkKyLENIU9eKq3iBS45IcjwN3Qwie2oSkELNGJhVidFTMbq1aJ3d+/vbeO89QA+/3XkBKunttFJxq3vbJ+OoljqmorPOkNaxbWY9vRJHBqbSlgC/w7xBnJxiTUCzMSz2KaZVfcJj8VAdqjYiKBYKyV7Y92SY/9yM26pa2kRyuyDq5CtlGtkAxfqlLRcQnfpwQd4Iikakjo1a+O4KUCseCZZS+UkV2+0ImeKGO/WDj68XiYGeGksaP/LxTplJL36WZ6fYjLk8TCOsWT05vEXchjgzrlaTZpEs47aPfWAZIWiJAyJSHT5OMiNH2WlCzNwzq0C/IDLm+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ar1BWwGlfNp640IcE5oKnLZ16LfXw1anW9aZ0nbtsHU=;
+ b=j84NSw2WN49oFv7lkV6cb63Ua5+sM80fj+YUuGt9uDTLe1Z+ZU2IFlNUNpncl/pcqW72btM+SVMtIMSTLt0zFu0UWrIjW4nC6Gtsl7Kjz8ZO5OigDrjZdAxhQnCA//xFeqF6QScWKdRL9KksOPkhfBTzoQht6oh62FYaB1ZTpofbiZLjLUXknnn4kh97WrHxl4zU29+j4OZTrVMW6o4NVyVqPYGz4rzll+ujaQUhC/96Nwk/EVQQMmPmiK4Oy9t6T+F7kS076yByn4zCXn6b9MaPa7DPMBEcQzLxqyNPdXSvp4KjvNIV2BPKn0XP6ng+Jm3qauTqxYaNwEgOMFmCZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ar1BWwGlfNp640IcE5oKnLZ16LfXw1anW9aZ0nbtsHU=;
+ b=OykXOz462DIviDECVO42QxK2g8AwqbXZMET3dqbYxzDLhddinVGoA7LSkmDdUYd7p9Rwj5w8zvPTm0JJGXOJwzFiz262oG6KTYcpbL6AKN8MDVMhgBvJVk6FsAQpN7E0zWJjLzn8kmLK8gMbr8EgVXx+fsBKuhPL/LxPQ69m8lowTsGAVL0vkyNAmGiPwlW4PV0f1/Ksu1vsrWIDy6udYm4KUfOvS3/3eTYKWuLQVR8HS9z6tmxMnGex9ddJ14ynViQgqFAiLPH2nZ1OBj34ZbkdgFIwzz/QE8a/xf9usxUtW3uTtOkWaUcN5dHuBkodAkD/CmHHRfgn2phcOlDE1g==
+Received: from VI1PR02MB3952.eurprd02.prod.outlook.com (2603:10a6:803:85::14)
+ by PA1PR02MB11474.eurprd02.prod.outlook.com (2603:10a6:102:4f4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.15; Mon, 20 Oct
+ 2025 11:12:33 +0000
+Received: from VI1PR02MB3952.eurprd02.prod.outlook.com
+ ([fe80::60e5:4de0:ff18:2fb1]) by VI1PR02MB3952.eurprd02.prod.outlook.com
+ ([fe80::60e5:4de0:ff18:2fb1%6]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 11:12:33 +0000
+From: David Binderman <dcb314@hotmail.com>
+To: "maz@kernel.org" <maz@kernel.org>, "oliver.upton@linux.dev"
+	<oliver.upton@linux.dev>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "yuzenghui@huawei.com"
+	<yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>
+Subject: linux-6.18-rc2/arch/arm64/kvm/vgic/vgic-v3.c:728: Possible || and |
+ mixup ?
+Thread-Topic: linux-6.18-rc2/arch/arm64/kvm/vgic/vgic-v3.c:728: Possible ||
+ and | mixup ?
+Thread-Index: AQHcQbIAXK9FdldYaEebDX/5mg5dXA==
+Date: Mon, 20 Oct 2025 11:12:33 +0000
+Message-ID:
+ <VI1PR02MB39529C3384B3308D100CCD399CF5A@VI1PR02MB3952.eurprd02.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR02MB3952:EE_|PA1PR02MB11474:EE_
+x-ms-office365-filtering-correlation-id: 37461397-bd2f-41a5-6d04-08de0fc9919c
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|31061999003|461199028|8062599012|15030799006|8060799015|19110799012|15080799012|440099028|3412199025|40105399003|39105399003|102099032|21999032;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?CCg14MrjFY50Y/yFPx2q8V516YDXPWdfZS4u2HI/52otG9n7gEVYPy/MG7?=
+ =?iso-8859-1?Q?00BeGxNm11cDaflFyLRCZNFGg316NIHShjuuD/3e7cHd3AgDK4f+Glxs/G?=
+ =?iso-8859-1?Q?mZXdWkIhb8OmxMakidNlOxacyOsVFRgdeeG/bCmy245tQ1IzznWueP+2Uy?=
+ =?iso-8859-1?Q?mb09DV3K1qavHC1VryT5JVr+2aErJ/PIhpzf9YLPywxuk+lHzClCZ9l/36?=
+ =?iso-8859-1?Q?g/xbRC2bY/9qaMoCKmEaZtbr+pvA7GsHx4Q/AhSuRLVdrnbs2rIy4qK93U?=
+ =?iso-8859-1?Q?0riSBM+lfQz/iyP7VofqRM3+xVbRve4lNVHOxfQiLHkt3SmqFwXUUf+TGu?=
+ =?iso-8859-1?Q?5RUfDXeOp4j90QxfrPFWivl8Iutcr/fZ+Gg9sESa+Vy/s7qpGUwieBoMOm?=
+ =?iso-8859-1?Q?OaMGJxfUMWeHWhdVOA5S34jc9qz7Z6KyNVucjueJYohDTdBa2QCCtCrqM4?=
+ =?iso-8859-1?Q?eeM87nhWxR4P3Z2jPp8rPAarjAE2wfJkuu1iIGQ2WH4m/1FC2MrFFicvvD?=
+ =?iso-8859-1?Q?ZCFA54apESIfdfrvIy9iQ8WuEiO6GS4eSO0iAsuJpKsn2+zOx8Dax0p9R6?=
+ =?iso-8859-1?Q?symYD2eVsFShzunQVwYnkW80abPcJRmPID1q0BCfudivFhM38q4c7QEJnn?=
+ =?iso-8859-1?Q?HlecYD5xwuwsGYyb8d6+zncHp6MlaATKdJPB06Gg4fZ7FzYvzJ916ac1Js?=
+ =?iso-8859-1?Q?o80sZxfmvtAI0m9HtK6wJZRAVi6Wiosyr6dcgQRjGlVpqaJY9a13dpFsKw?=
+ =?iso-8859-1?Q?4sx3o+TYlp4hxu4i556XmWiII96ToYO2yvdHKpwTOdFkzNbUzHGcIiNf04?=
+ =?iso-8859-1?Q?NPvcA4a9vcH8Ibc1IbsOeiQY2Lfci02I1PFEJarLgQy0/T98G1o9qWwdpy?=
+ =?iso-8859-1?Q?dOQYurdQ0Ws2wS3+tnYqYw9nGELSvqk0q9CAhBGTpgExMjXLerKu76i8Pl?=
+ =?iso-8859-1?Q?ES93dZJqCuWuvEmoB0JX01iRYvIUqp9GaffYpph3SBlo3dPBiO5czWfXcG?=
+ =?iso-8859-1?Q?tiRHACufDzGLGoiiJpNYpOPE4rO6yu/cl2uxKJpeUIdSBstf/bP0k6XYKK?=
+ =?iso-8859-1?Q?bsnWZAd9ZIGUlwa+vhf6z+XIbto2eM3rnT5Y7fcQM7SlikpTjvw5AiLmtY?=
+ =?iso-8859-1?Q?ufgG6WlHsLxps+FJ+/QcxwiiUKfT0oG9Y01qZ8hEvYshQ+tFj/g9lgOd0T?=
+ =?iso-8859-1?Q?ci+pqfiE3TdZ0GNyN/jO7T53ZOufGWh6s/m4LcmWfKYFna3C/lGmuTadpb?=
+ =?iso-8859-1?Q?JmMyPZnZw8IvaB1nE0kw=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?8dPaLxTsQU2u2ca/w1Uvnai+slFVRMGpKMi06bN8egx5wDMzFX7Udzn1XF?=
+ =?iso-8859-1?Q?BxvLOFC24hOX4JRvn4tE/dBv0WYmceblYvFNENu+qwNK39fUil/kc9cdaI?=
+ =?iso-8859-1?Q?6/Cv2XQvBq4RXZcSu+nWQMoNETRhJbfG3td+sV5MQmBDs451Fbgu8Kr2yi?=
+ =?iso-8859-1?Q?MuCtPd/Dulp1rw2GQydK4kXdseG5qjWMu75/UmPXRgJrfET/9caSyLzGWn?=
+ =?iso-8859-1?Q?uULJ0OeDH5+rED/1krBkqpYIaArQ3UOghsR+XzNGNoujWM3MN6mZwqXVK1?=
+ =?iso-8859-1?Q?NTFN4Voq+YgVuuBGV7cMnp5DPQ+mYQcgBn3OEY1nK0UqsoKndSidjELvaI?=
+ =?iso-8859-1?Q?w6S+q06sdabSaGVZ17M5/0I6kjhkLHJJoku4iDVADCfdjtbLZM0jJ/auX7?=
+ =?iso-8859-1?Q?rIive8cUpGu6pCZre9E78POOsQ0QDIDQyixg7DSoF8biC0bMFrsaDhLOt5?=
+ =?iso-8859-1?Q?Xfci11X+Zjw9fnXF8auk9gRndZKH9dHPuQ4GrooEvwRb9si75ivo/uuITm?=
+ =?iso-8859-1?Q?H9PuqHh61HUKo7EUVtftLvH1ZkM2Wnpr8dt8x6yk0FzHI4uPaGRZlTfi+H?=
+ =?iso-8859-1?Q?MqJDW78nwiwnEzxkLeTA5cLG9013X1uNy+9rucUEHK8nnl96o5BVpDvGAT?=
+ =?iso-8859-1?Q?YSdSl6Y+oCzIV1YUZuESON9Q4DL53ert5FoHGR9Qq2VrDLMd/TWZadzXiK?=
+ =?iso-8859-1?Q?M3dIR+1ZL8z2O65WRLdBppL9kESsUJ9fdc6ZeAk8hpwL+GBrlyhDXi6no3?=
+ =?iso-8859-1?Q?7wJ+AMlpCSqPJczGM/EFmYvOPVnAAP9l69WYUl9L8plZF1aQL2FNRhqV+T?=
+ =?iso-8859-1?Q?xbX+icTA/1mH5uqcAe5O+CgkAVEdFCHrd3hJs/3b+3LK1FJBVkiFgsNbGV?=
+ =?iso-8859-1?Q?KcgoGW4Jc2FRjcITCpFfHRv3dN7G8M7INLRkH+uU3w2Rx6p6hAGJ4l7xwj?=
+ =?iso-8859-1?Q?FK3iOYy1IccP6yD3xLNmnKM2yp8P5MF8GlXa/lW+7aP53CZi9UAxL3wHud?=
+ =?iso-8859-1?Q?7408UYq5EvijoJqFROdUByOx5xxb3Ri072iMEmuCnYGzCqbFRPuChdi9LB?=
+ =?iso-8859-1?Q?al+B0s2cC/WW+CbE3lrSPB+HTbz5Sdydm035d8bGJRxB59GmY1LwXdlnCi?=
+ =?iso-8859-1?Q?/4OmsVu1QeHMHASCgthtHaOmm/hG/toCx8LQbO0AXldHcFIY9KwVBOT6TL?=
+ =?iso-8859-1?Q?NZHpDxOI6NhlUFdFZAQukeiHtBrQ7gCNn5Thud35ij2jtU5uGe7ke8bV2Z?=
+ =?iso-8859-1?Q?RqFcJQdy3q1qWjp1mG6A=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251016033543.1142049-1-rdunlap@infradead.org>
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-5faa0.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR02MB3952.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37461397-bd2f-41a5-6d04-08de0fc9919c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2025 11:12:33.8514
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR02MB11474
 
-On Wed, Oct 15, 2025 at 08:35:43PM -0700, Randy Dunlap wrote:
-> Fix various kernel-doc warnings in ipack.h:
-> 
->  - Remove an empty kernel-doc comment.
->  - Add 2 missing struct short descriptions.
->  - Fix a typo in a description.
->  - Add a missing struct field description.
->  - Add some missing Return descriptions.
->  - Clarify one function short description.
-> 
-> Warning: ../include/linux/ipack.h:73 Cannot find identifier on line:
->  */
-> Warning: ../include/linux/ipack.h:74 Cannot find identifier on line:
-> struct ipack_region {
-> Warning: ../include/linux/ipack.h:75 Cannot find identifier on line:
->         phys_addr_t start;
-> Warning: ../include/linux/ipack.h:76 Cannot find identifier on line:
->         size_t      size;
-> Warning: ../include/linux/ipack.h:77 Cannot find identifier on line:
-> };
-> Warning: ../include/linux/ipack.h:78 Cannot find identifier on line:
-> 
-> Warning: ../include/linux/ipack.h:79 Cannot find identifier on line:
-> /**
-> Warning: ipack.h:80 missing initial short description on line:
->  *      struct ipack_device
-> Warning: ipack.h:163 missing initial short description on line:
->  *      struct ipack_bus_device
-> Warning: ipack.h:130 struct member 'id_table' not described in 'ipack_driver'
-> Warning: ipack.h:189 No description found for return value of 'ipack_bus_register'
-> Warning: ipack.h:194 No description found for return value of 'ipack_bus_unregister' ***
-> Warning: ipack.h:202 No description found for return value of 'ipack_driver_register'
-> Warning: ipack.h:221 No description found for return value of 'ipack_device_init'
-> Warning: ipack.h:236 No description found for return value of 'ipack_device_add'
-> Warning: ipack.h:271 No description found for return value of 'ipack_get_carrier'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> v2: reformat patch description with indents (Vaibhav)
-> 
-> Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-> Cc: Jens Taprogge <jens.taprogge@taprogge.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: industrypack-devel@lists.sourceforge.net
-> ---
->  include/linux/ipack.h |   23 +++++++++++++++--------
->  1 file changed, 15 insertions(+), 8 deletions(-)
-> 
-> --- linux-next-20251013.orig/include/linux/ipack.h
-> +++ linux-next-20251013/include/linux/ipack.h
-> @@ -70,15 +70,13 @@ enum ipack_space {
->  	IPACK_SPACE_COUNT,
->  };
->  
-> -/**
-> - */
->  struct ipack_region {
->  	phys_addr_t start;
->  	size_t      size;
->  };
->  
->  /**
-> - *	struct ipack_device
-> + *	struct ipack_device - subsystem representation of an IPack device
->   *
->   *	@slot: Slot where the device is plugged in the carrier board
->   *	@bus: ipack_bus_device where the device is plugged to.
-> @@ -89,7 +87,7 @@ struct ipack_region {
->   *
->   * Warning: Direct access to mapped memory is possible but the endianness
->   * is not the same with PCI carrier or VME carrier. The endianness is managed
-> - * by the carrier board throught bus->ops.
-> + * by the carrier board through bus->ops.
->   */
->  struct ipack_device {
->  	unsigned int slot;
-> @@ -124,6 +122,7 @@ struct ipack_driver_ops {
->   * struct ipack_driver -- Specific data to each ipack device driver
->   *
->   * @driver: Device driver kernel representation
-> + * @id_table: Device ID table for this driver
->   * @ops:    Callbacks provided by the IPack device driver
->   */
->  struct ipack_driver {
-> @@ -161,7 +160,7 @@ struct ipack_bus_ops {
->  };
->  
->  /**
-> - *	struct ipack_bus_device
-> + *	struct ipack_bus_device - IPack bus representation
->   *
->   *	@dev: pointer to carrier device
->   *	@slots: number of slots available
-> @@ -185,6 +184,8 @@ struct ipack_bus_device {
->   *
->   * The carrier board device should call this function to register itself as
->   * available bus device in ipack.
-> + *
-> + * Return: %NULL on error or &struct ipack_bus_device on success
->   */
->  struct ipack_bus_device *ipack_bus_register(struct device *parent, int slots,
->  					    const struct ipack_bus_ops *ops,
-> @@ -192,6 +193,8 @@ struct ipack_bus_device *ipack_bus_regis
->  
->  /**
->   *	ipack_bus_unregister -- unregister an ipack bus
-> + *
-> + *	Return: %0
->   */
->  int ipack_bus_unregister(struct ipack_bus_device *bus);
->  
-> @@ -200,6 +203,8 @@ int ipack_bus_unregister(struct ipack_bu
->   *
->   * Called by a ipack driver to register itself as a driver
->   * that can manage ipack devices.
-> + *
-> + * Return: zero on success or error code on failure.
->   */
->  int ipack_driver_register(struct ipack_driver *edrv, struct module *owner,
->  			  const char *name);
-> @@ -215,7 +220,7 @@ void ipack_driver_unregister(struct ipac
->   * function.  The rest of the fields will be allocated and populated
->   * during initalization.
->   *
-> - * Return zero on success or error code on failure.
-> + * Return: zero on success or error code on failure.
->   *
->   * NOTE: _Never_ directly free @dev after calling this function, even
->   * if it returned an error! Always use ipack_put_device() to give up the
-> @@ -230,7 +235,7 @@ int ipack_device_init(struct ipack_devic
->   * Add a new IPack device. The call is done by the carrier driver
->   * after calling ipack_device_init().
->   *
-> - * Return zero on success or error code on failure.
-> + * Return: zero on success or error code on failure.
->   *
->   * NOTE: _Never_ directly free @dev after calling this function, even
->   * if it returned an error! Always use ipack_put_device() to give up the
-> @@ -266,9 +271,11 @@ void ipack_put_device(struct ipack_devic
->  	 .device = (dev)
->  
->  /**
-> - * ipack_get_carrier - it increase the carrier ref. counter of
-> + * ipack_get_carrier - try to increase the carrier ref. counter of
->   *                     the carrier module
->   * @dev: mezzanine device which wants to get the carrier
-> + *
-> + * Return: true on success.
->   */
->  static inline int ipack_get_carrier(struct ipack_device *dev)
->  {
-Hello Randy,
-
-Thank you for your changes.
-
-Acknowledged-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-
-Hey Greg, could you please add this patch to your misc tree?
-
-Thanks,
-Vaibhav
+Hello there,=0A=
+=0A=
+Static analyser cppcheck said:=0A=
+=0A=
+linux-6.18-rc2/arch/arm64/kvm/vgic/vgic-v3.c:728:48: style: inconclusive: B=
+oolean expression 'common_trap' is used in bitwise operation. Did you mean =
+'||'? [bitwiseOnBoolean]=0A=
+=0A=
+Source code is=0A=
+=0A=
+    if (group0_trap || group1_trap || common_trap | dir_trap) {=0A=
+=0A=
+Maybe better code:=0A=
+=0A=
+    if (group0_trap || group1_trap || common_trap || dir_trap) {=0A=
+=0A=
+Regards=0A=
+=0A=
+David Binderman=0A=
 
