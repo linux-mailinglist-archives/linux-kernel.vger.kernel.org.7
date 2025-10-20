@@ -1,150 +1,131 @@
-Return-Path: <linux-kernel+bounces-861925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89DEBF406C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:30:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01A2BF4072
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5063A6ADA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:30:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5BAD4E3DD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F5223909F;
-	Mon, 20 Oct 2025 23:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BAD2F39CC;
+	Mon, 20 Oct 2025 23:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zo6r6J4A"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiT0jv2i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA96191F92
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714C52253EB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 23:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761003032; cv=none; b=sp90G6MuoOvY2eP6VphfDVjTb+3G6oUFxY5W4dp3du3mYTr9hQi57Us3kC7BHtYveI2IZDx4Yp3TnwkqwB4oyo9ebOHKcpPhb60I2RzlxnQszZZzTJo8zniNbFOIsdSjMyQ2gSaDQjcBerCKPZyXGLeGLsNYR/3YDd/S2RPlXgs=
+	t=1761003105; cv=none; b=gn+Js8+Ry0s8Q9rVEH1MUaJIkC6tRSZmQnVxGcP8hKn0fPadkV7yOw4GWoLnrF42iunfgIA2qC3JmT4irrrgbeLYP+wNRZ6RwcR8HQp53z6Vvr/sIK5aWDmoL0v3kuy4BioonCDODMXgF2WwuT3QR0yiF+DMTZ3qXbI9TRjZVR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761003032; c=relaxed/simple;
-	bh=wBx5HU0NHsSDK23iXznXH3Oj8GG15Qr8iFROxkEtWPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6UiYPly6gJd/HNcMY+tbBM1322x6kExrcF7PV9GdTLfsA9OsBeo7ej7Y+QXNdFFZVeeoaraH+1/QQzqiBjz2ohLDZElLuai449YRXkf7yJS/OYINQYau5OzTTj1VGhWxdvJ34ueugqo6UOApZVN1d5Q0RuMV6PfpVdp5NAeGx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zo6r6J4A; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-290d48e9f1fso56805ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761003030; x=1761607830; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2EojOJFcibgh1WcpC+qylb2gWt1s0H89duNTff3IMYc=;
-        b=zo6r6J4AL4GIdCPnG7fdJSElKnv5fVxae3llaa3Z/Giwm6PznOJ28DnbcuUhb6bOPp
-         3b5ZvLHz+R1mQtg2h0d6K+AF+nBje6kres9caqiHV15kuTJKkN6pfswEJ+TOUb6F+n3y
-         Sm2zlj/uKfjxrCfyAmKQLlQPhvXEEWYZ7D+79YsPalj49vX9ERJ9gjo7s424ZlI/CAXN
-         0HBzS0ynwrAgfb/9ZG2IwC5QYa2HHHZufcyh47u51lxmIizodz4pObTFsXQux5A3/2Wn
-         ux8gKBvm3zZiZ6JW3yTmuR9xjqlVtF2tiMhyABvdgz4LIGymD3704/c42/D57M4+eEKo
-         K3OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761003030; x=1761607830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2EojOJFcibgh1WcpC+qylb2gWt1s0H89duNTff3IMYc=;
-        b=v1/vh8psJjEZUPtNd42jpvBkaMOpZcMNake5CV0r3IN+2AaqDmYRtVhnjfPqO9cE/L
-         9LT/y7He850cf1O7WslkoyxaD7eeG8JMpGs/eUApaL2hit6nDLhdP7odq7FbsBfU8sKL
-         wOZPvZ0NB5gm9mELyKo1d9YyUCes6yCoZTZ7hbKeQRPm0j+f+JW6iN9mWf8nWryRY8aW
-         hOy//em3thYhjQQVBuL/4AVAyiTZvKFbaDN6V/yTivdIZhBvkewjUzom2mNs11Qb3t0n
-         7pjI3jjXWbTJMUtRsTROkDRBEfHdGbd9obX12hN0AAnRjGBvNdkN/h8hbJvMT/vMjuoz
-         k0jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+rxBnyWYBbJ7D2zD1URpBz7fHH0wCgj9HMC+VR0/w/eBDstgUofFnx1TsyLfre6c0fuqj6Gu+TlesJWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTNKsaN6k8n4hGHlSR8kv0bRh3YLb8nzjkDurn2k9KHE7jz5uV
-	MtFKVF/pR1kSu+/Oe73Lb/O0Gp4t3TRNEg0rXEUET+I/0HUu2Fphha2YJNW8z23upg==
-X-Gm-Gg: ASbGncs8PXG43Jc7vrXXRkhyzd0tiY/tYD50ql6VbeDPMyyw30jgCHoPvnSAWe/rxQa
-	iJQo0RbaBa1Etvyr1DBth+ERjiQb9GJPEJ2f/pZeXjdCugYvt4/eqXGKI5SI51lfFyIzA60iJeO
-	qsRLqXgD04Rg5LUvRz2pJDRmMD5Vvh/Ry/eKpHOVQ5dE+l/IqXj6+Zf0HQ/3nFANlaBl27Cm0Gi
-	rWcrZeYoWWsanLqOhLOfkAKiafdHUQ1wAWY9QtJRDtQZzINaV27sb8EmP1rsc6suGKkSwoksf3f
-	iizoE8T4+JFWp9YpplKt56TZA6zyWaxdqIpzhGVbQG7lopz+HKZsPUYDT+oNrE9GLBE6mMJIXTR
-	LofAflfdg2uu+rUYYXiMJhCqv+94QyMDopT5w19TgPdczzlBE+kUfJGEVHEpO0JQOlqcVkuy49T
-	9wJOmek2fIZ2SSy7ELCuDsXFtc0DOtcK8Alw==
-X-Google-Smtp-Source: AGHT+IGp67st8Wnp6/nSJ8EGcvRTlOdg+o3GxZOASU21XsdtW7vuEAf7PH3lMWQNe6ILam9RRnzuAA==
-X-Received: by 2002:a17:903:9ce:b0:274:506d:7fea with SMTP id d9443c01a7336-292dc92664bmr869085ad.5.1761003029542;
-        Mon, 20 Oct 2025 16:30:29 -0700 (PDT)
-Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2301108f8sm9508302b3a.66.2025.10.20.16.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 16:30:28 -0700 (PDT)
-Date: Mon, 20 Oct 2025 16:30:24 -0700
-From: Vipin Sharma <vipinsh@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: bhelgaas@google.com, alex.williamson@redhat.com,
-	pasha.tatashin@soleen.com, dmatlack@google.com, graf@amazon.com,
-	pratyush@kernel.org, gregkh@linuxfoundation.org, chrisl@kernel.org,
-	rppt@kernel.org, skhawaja@google.com, parav@nvidia.com,
-	saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com,
-	david@redhat.com, jgowans@amazon.com, dwmw2@infradead.org,
-	epetron@amazon.de, junaids@google.com, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 00/21] VFIO live update support
-Message-ID: <20251020233024.GA648579.vipinsh@google.com>
-References: <20251018000713.677779-1-vipinsh@google.com>
- <20251018172130.GQ3938986@ziepe.ca>
- <20251018225309.GF1034710.vipinsh@google.com>
- <20251018230641.GR3938986@ziepe.ca>
+	s=arc-20240116; t=1761003105; c=relaxed/simple;
+	bh=MSAK6/4fBV4LmmndaiAxLCMrrPnq6f4CzbgVcuVT6gY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Eozy2DokITzLY4MWs2N4V/UMV5kf3bjk9DPgS+EQduOisXlkZBgx5PrL6+ejF923j2NTSd7GK9mJ0HSy6knDhGZuSVxGmh2KXqXLPFnVzUGhHvrL86ZEE5afOMUdPVnR3Lg/rncN/yl65B2xsi1dERWFYGTv4/EqLovwvD1Z9wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiT0jv2i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29277C4CEFB;
+	Mon, 20 Oct 2025 23:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761003104;
+	bh=MSAK6/4fBV4LmmndaiAxLCMrrPnq6f4CzbgVcuVT6gY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=OiT0jv2iLB3yllOHNdOExpaaufehdFK7X5eHx/RqEZynr648JdouVhGzKa+aAoitK
+	 YOGtoCJY6BukhUpJ1mmZByUt43IPYxyUTFb2dNSgYWJrLx0ZJFYzLP+XGMUdgirov8
+	 F9WzI3l8hMmx9gfcftH2KC7XS3Dqn5BSU1lBfPlR68A4r5YnfsxWYsDNNB++cMrcLY
+	 yTgMGHmt7J1PujIKhWyVHwsMnPgLBxtO0xOWnwFSiKnc9aF/IjjnBDpnXP2X4Pzor3
+	 rKIoxbCpfqVpzy61omuF/q23OZfm9fzXECQz9OJ8cmxMSGNt2cmdT1fQmciMy4iJnF
+	 /+6Rtzb7Y/6Yg==
+Date: Mon, 20 Oct 2025 17:31:25 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+cc: Olof Johansson <olof@lixom.net>, Ben Dooks <ben.dooks@codethink.co.uk>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
+In-Reply-To: <alpine.DEB.2.21.2510072335250.7364@angie.orcam.me.uk>
+Message-ID: <93e895ce-2b81-c111-4423-cf7181cc2b45@kernel.org>
+References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org> <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk> <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com> <3c9d9f92-aaf8-4d4d-a2d9-8d6a410edc30@codethink.co.uk>
+ <aN6U8NtIfqd-fowQ@chonkvm.lixom.net> <alpine.DEB.2.21.2510072335250.7364@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018230641.GR3938986@ziepe.ca>
+Content-Type: multipart/mixed; boundary="8323329-1876668917-1761003104=:3822160"
 
-On 2025-10-18 20:06:41, Jason Gunthorpe wrote:
-> On Sat, Oct 18, 2025 at 03:53:09PM -0700, Vipin Sharma wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1876668917-1761003104=:3822160
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+On Wed, 8 Oct 2025, Maciej W. Rozycki wrote:
+
+> On Thu, 2 Oct 2025, Olof Johansson wrote:
+> 
+> > > Now we’re starting to see commercial cores on the horizon that will have the
+> > > ability to be endian configured at run-time. For example, MIPS (the company
+> > > not the ISA) has announced they will be producing cores with configurable
+> > > endian (https://mips.com/products/hardware/i8500/).
 > > 
-> > This series has very minimal PCI support. For example, it is skipping
-> > DMA disable on the VFIO PCI device during kexec reboot and saving initial PCI
-> > state during first open (bind) of the device.
-> > 
-> > We do need proper PCI support, few examples:
-> > 
-> > - Not disabling DMA bit on bridges upstream of the leaf VFIO PCI device node.
+> > MIPS has been doing some not so awesome things to the RISC-V architecture
+> > in the last year or so. They've published patchsets that make it seem
+> > like that they seem to have taken some old MIPS designs and done the
+> > bare minimal conversion over to RISC-V, since they need their own weird
+> > system peripherals and hooks. Again, with the burden for everybody to
+> > maintain because their hardware engineers couldn't bother to develop a
+> > full proper RISC-V core.
 > 
-> So limited to topology without bridges
-> 
-> > - Not writing to PCI config during device enumeration.
-> 
-> I think this should be included here
-> 
-> > - Not autobinding devices to their default driver. My testing works on
-> >   devices which don't have driver bulit in the kernel so there is no
-> >   probing by other drivers.
-> 
-> Good enough for now, easy to not build in such drivers.
-> 
-> > - PCI enable and disable calls support.
-> 
-> ?? Shouldn't vfio restore skip calling pci enable? Seems like there
-> should be some solution here.
+>  This is obviously a false image.  The most recent MIPS ISAs, such as the 
+> microMIPSr6 or the nanoMIPS architecture, and consequently implementations 
+> were absolutely RISC-V-like, with branch delay slots removed, conditional 
+> moves replaced with conditional selects, floating-point condition codes 
+> removed in favour to setting a general register, PC-relative instructions 
+> added and overall being a variable-length compressed instruction set, up 
+> to the point for some company engineers to become disgruntled with the ISA 
+> "losing the MIPS spirit."  So it's not that they can't be bothered to make 
+> a full proper RISC-V core, surely they can.
 
-I think PCI subsystem when restores/enumerates a preserved device after
-kexec, should enable the device and VFIO can skip calling this. By
-default enable mostly does:
+Olof is probably referring to support for extensions like Xmipsexectl:
 
-1. Increments enable_cnt.
-2. Enables to bus master of upstream bridges.
-3. Reset INTx Disable bit in command register.
-4. Enables IO and Memory space bit in command register.
-5. Apply fixups.
-6. Sets power state to D0.
+  https://lore.kernel.org/linux-riscv/20250724-p8700-pause-v5-0-a6cbbe1c3412@htecgroup.com/
 
-On a preserved and restored device, I think only item 1 needs to happen,
-2-6 should remain same if device config space is not written during
-enumeration and state is recreated by reading values in config space.
+  https://mips.com/wp-content/uploads/2025/06/P8700_Programmers_Reference_Manual_Rev1.84_5-31-2025.pdf
 
-I believe this should be part of PCI preservation and restoration
-series. VFIO can assume that device is enabled and skip the call or check if it is not enabled
-then fail the restoration.
+Xmipsexectl is annoying for at least two reasons:
 
+1. it is a non-conforming RISC-V extension, stepping on existing 
+   standardized base RISC-V ISA opcode space; and
+
+2. it brings over new barrier operations straight from the MIPS
+   instruction set, rather than just using the standard RISC-V fences
+
+Doing things like this runs additional ecosystem fragmentation risk, which 
+impacts all of us, for little apparent gain.  Nevertheless we took these 
+patches because their extension includes a custom PAUSE instruction 
+variant, and it's understandable that MIPS might have finalized their 
+design before Zihintpause.
+
+I hope Xmipsexectl doesn't survive past P8700, and that we never see 
+kernel patches to use those leftover MIPS barrier instructions.
+
+>  NB I doubt it's about peripherals: dropping a different CPU into an 
+> existing system is nothing new and does not require the ISAs involved to 
+> be remotely similar to each other; cf. VAX vs Alpha for example.
+
+This one isn't a hypothetical example either; see:
+
+  https://lore.kernel.org/linux-riscv/20250924-riscv-time-mmio-v6-2-9c6158a14b37@htecgroup.com/
+
+
+- Paul
+--8323329-1876668917-1761003104=:3822160--
 
