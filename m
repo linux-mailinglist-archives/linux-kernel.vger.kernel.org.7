@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-861425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC39BF2B27
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:24:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535F1BF27D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C032A460FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105B61898776
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3A23314DE;
-	Mon, 20 Oct 2025 17:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BED232BF48;
+	Mon, 20 Oct 2025 16:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HEIgDkpP"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dlcb2Ij3"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD612FB618;
-	Mon, 20 Oct 2025 17:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B932B9A3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 16:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760981073; cv=none; b=qg5X9keuQ2P9Xlhnzu2GyM2N3OMvMBpEZK73gzdy62Y/CVOWnO8+1sfUBVYaq3VCyMFkL93wDL1ufD5Cj+r7SRMuxPzMkboVuqifDy8Usam3rslO8/0pA/DwWwZRiFEydsrB4uNkININN69dJUt5RGGKfhVWSgT6iAUOc6uezM4=
+	t=1760978580; cv=none; b=gYTvE0x8Gn3OJe9mVrR/xAO2j75chWMhug1wn+Uivo3rVeLbPNlEtrsKzr7VVdyg/h4FATb9myuKUvXlFA2uAhcLoC9QBACSl3PWond1Xdy+Ptjgii+ropvOLvtoJrhzA2OLt7CDMn8aIoS2YXBDAv5njHJbsu6Aj3i6lcBpbLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760981073; c=relaxed/simple;
-	bh=GMRINbJVU7BdoYvauFkAAngbH+xAKnMVrhGHnsTc5Tg=;
+	s=arc-20240116; t=1760978580; c=relaxed/simple;
+	bh=zA0fwSMPCeE8RAk8GwR/QRgxkltbz3v/uH9m/NSde6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Og0TvV5vFoazw/gqo9c5G682XZ87/PXgRG1dKAqE/nPS4rQYKczhPHL7Dm383r3Mbm6VmcgPax9JyCYuuRqTC/2Bh1OgWQi2hXqqwf0qmmhe+BuSggV73UkdXb7EjNI9zZ+vtTB1z9utUoBI6XvvHIY9QqDrHk1pp3CUEzSYf/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HEIgDkpP; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=1EQjJzSZx3vQRH4NLG4P9mwqn4qdkH6P67OwZLAR1wI=; b=HEIgDkpPwGTGM1uN
-	Dj5Jru8kQatMzdwu+NUF6qOhm5Dq6u82X/j2jcef1gFphJgHQxXZpCuURpceNL6FB8kvWBmDZJIdV
-	mjLnoaBruevIhVMe5QryaKGDjPM5ENLEXRKWbQPZUlr0fZ5LzSC+OFFR70ATA2bbKU1zyNifyI9Ng
-	Rncr4roD2FYVSdY2A6QU7qFGgK24o59mIj87sopAGh3Ga/lg8PctTZID+r+qYXO+Xep8RS3XDhizg
-	6ZZnikaitG0goK/2mIA5VdP0ZfOkD2VBqdoXVvALktbFtAYuG+IX5b5gWcZbUhwX1SShGpw7Do9z0
-	8VKmdLF5oTOJNe3OhA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1vAsvA-00HXXJ-2m;
-	Mon, 20 Oct 2025 16:39:44 +0000
-Date: Mon, 20 Oct 2025 16:39:44 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wifi: mac80211: Remove unused wdev_to_ieee80211_vif
-Message-ID: <aPZl0LFtls2LA6uf@gallifrey>
-References: <20250619005229.291961-1-linux@treblig.org>
- <aOvZ8FHp7-tliei2@gallifrey>
- <30b9e7eebfc99330857f7a81c72b9eb23ea6406d.camel@sipsolutions.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRQybFH4/z+GaaFg6tbEn/HWxp13nmXss1vSnp5NPFPlHhP1bjxzbUCTssm1g6bqM990wmWmUQJSr4s/rmurJm0CHXx8Nb94dAZKUgrOzkuQ0eVUKBqaZuZ7sbETusTJpbHpZKLp1Y+8trsRfXPmkMda67FhbTsh9ff9pnJ9l34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dlcb2Ij3; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 20 Oct 2025 12:42:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760978560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KgxwBPJlCH7sly4qDL9geQAQP/GrIRLBe36lpAtWQCc=;
+	b=Dlcb2Ij3AdEJo6Xo/bBZlyinCXU2hhLGvVvzSo718fOXw/QvBOHTqnSDfFaOBj2YcPJzsW
+	8iB+75VBrAhLVSXBnDiqv4PHeubByFBHYyccD6RL9xpJ2I3sDI0bug6DgIRnV7kgMJKIxa
+	0fAMrDQ0vUDcU1dB0dOhERctPj8XZPA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-block@vger.kernel.org
+Subject: Re: [GIT PULL] block-bio_iov_iter_export
+Message-ID: <6bvfbwfvwtqmou27dnrznhl32ctz2rwb2a3shuelssrtrcchbi@zn24wtni7cub>
+References: <ov54jszhism7mbeu74vtyoysxnx3y3tsjbj5esszlrx3edq77s@j2vtyy45gsna>
+ <aPHemg-xpVLkiEt9@infradead.org>
+ <6strysb6whhovk4rlaujravntyt2umocsjfsaxtl4jnuvjjbsp@sqf6ncn3yrlm>
+ <aPYCbIrvAkOf5L3g@infradead.org>
+ <lyqal3mcvjwmzoxltydw2aoyhjllwcvv5ix2axpw24kh2iotkx@lygocjo66enh>
+ <aPY3YKzGbIKxFbl-@infradead.org>
+ <wrcaluw3pxx65tgznv5z3td3xb2tdf6rwucze5sy7bqrutj4jp@srde54eo3iyz>
+ <aPZNC8bKIzRmFJ21@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30b9e7eebfc99330857f7a81c72b9eb23ea6406d.camel@sipsolutions.net>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 16:32:48 up 176 days, 46 min,  1 user,  load average: 0.04, 0.03,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <aPZNC8bKIzRmFJ21@infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-* Johannes Berg (johannes@sipsolutions.net) wrote:
-> On Sun, 2025-10-12 at 16:40 +0000, Dr. David Alan Gilbert wrote:
-> > * linux@treblig.org (linux@treblig.org) wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > wdev_to_ieee80211_vif() was added in 2013 by
-> > > commit ad7e718c9b4f ("nl80211: vendor command support")
-> > > but has remained unused.
-> > > 
-> > > Remove it.
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > 
-> > Hi,
-> >   Gentle ping on this one please.
+On Mon, Oct 20, 2025 at 07:54:03AM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 20, 2025 at 10:49:57AM -0400, Kent Overstreet wrote:
+> > Christoph, I don't know what you're claiming here. I see no tweaks in
+> > the original patch, that's all code I wrote.
+> 
+> Then look closer.
+> 
+> > There was no need for you to drop the EXPORT_SYMBOL.
+> > What I want to know is, is this going to become a pattern?
+> 
+> Of course there was.  The kernel doesn't keep unused code around,
+> including symbols.  So anything that is unused will eventually be
+> garbage collected.  There's even folks around that run scripts and
+> automate it (David Alan Gilbert is the most active one currently).
 
-Hi Johannes,
-  Thanks for the reply,
-
-> This was/is used elsewhere out-of-tree, so I had dropped this change, at
-> least for now.
-
-OK, I've made a note.
-
-> I guess that's really not a good excuse though.
-
-So what is it about these out of tree things that needs these calls;
-why don't the in tree ones need it?
-
-Dave
+A comment would be an easy solution to that.
 
 > 
-> I guess drivers could instead ieee80211_iterate_active_interfaces_mtx()
-> and find the right wdev from that list, like
+> > I can vendorize this one function, but If you're going to make a habit
+> > of ripping out exports and functionality bcachefs depends on, I can't
+> > expect I'll always be able to.
 > 
-> 
-> struct wdev_find_vif_iter {
-> 	struct wireless_dev *wdev;
-> 	struct ieee80211_vif *vif;
-> };
-> 
-> static void wdev_find_vif_iter_fn(void *data, u8 *mac, struct ieee80211_vif *vif)
-> {
-> 	struct wdev_find_vif_iter *iter = data;
-> 
-> 	if (ieee80211_vif_to_wdev(vif) == iter->wdev)
-> 		iter->vif = vif;
-> }
-> 
-> struct ieee80211_vif *wdev_to_ieee80211_vif(struct wireless_dev *wdev)
-> {
-> 	struct wdev_find_vif_iter iter = {
-> 		.wdev = wdev,
-> 	};
-> 
-> 	ieee80211_iterate_active_interfaces_mtx(wiphy_to_ieee80211_hw(wdev->wiphy),
-> 						IEEE80211_IFACE_SKIP_SDATA_NOT_IN_DRIVER,
-> 						wdev_find_vif_iter_fn, &iter);
-> 
-> 	return iter.vif;
-> }
-> 
-> 
-> but I guess I'm not sure it's really better for drivers to have that vs.
-> upstream carrying the unused function.
-> 
-> johannes
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> I'm not sure why you're turning this personal and singling me out.
+> Yes, unused exports and code are removed all the time, and that's a
+> feature and not a bug.
+
+If this is a serious question, READ FUA is another answer :)
 
