@@ -1,76 +1,194 @@
-Return-Path: <linux-kernel+bounces-861407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29AEBF2A6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:14:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCFCBF2A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9EE718A385B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:14:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 284FA4F378B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F3C331A6E;
-	Mon, 20 Oct 2025 17:11:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02ECF17A2F0;
-	Mon, 20 Oct 2025 17:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259D33321AE;
+	Mon, 20 Oct 2025 17:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaX3Cypq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4063E331A53;
+	Mon, 20 Oct 2025 17:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760980313; cv=none; b=gmHeRP1F5dF0CFITYHt0JbtpgKvNN2mYq7PePCQfE/+d3B+cO1DShFZibILyr6+GIS4SjcbUSIJeaKQmWn3dCf+5d5WP20gqqj07dO+2NXm9ELhppnaTK+cF8MIZkB8FAyCXhNmuGiUrgzjCMkRBatqt90wOiTqS6hRO5ic+ahY=
+	t=1760980376; cv=none; b=Hd/ra5TTM6GHbbUtKQM/hOXjRCP6KxOyupPadYwVLenUVreHnQCFSWhbYeK880OyTjLi1FvPsdPRS16joBZY+R34fPqLxd2Du2Bwh8/6bMtPy7k1uLDVizjnsX5U1dSN37eRo0oeICiS29K3EtBqfB+PNP43ECcw2JVudDZZv84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760980313; c=relaxed/simple;
-	bh=KAlYS6zuzNONWFCiNofiPVTUIcr94HG5Jq+e/8sSYk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=Ah6zai3mm5QvB6iWcbAu09/HFob22XfV4dnOPJqLhLHwCr2J32M6200ZgEC9+JKIviL6GP4ea7b0SECQ1No4EMZH1maB/wUKBnJJhLfoogY1z+MFrfkMlXKoGpU65dbxum4B/yvWEq+iig+FF86QJbuQ4k78kBQ2Msgt+7LBiI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78F471007;
-	Mon, 20 Oct 2025 10:11:43 -0700 (PDT)
-Received: from JFWG9VK6KM.emea.arm.com (JFWG9VK6KM.cambridge.arm.com [10.1.26.166])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC69D3F66E;
-	Mon, 20 Oct 2025 10:11:49 -0700 (PDT)
-From: Leonardo Bras <leo.bras@arm.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Leonardo Bras <leo.bras@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] doc/kvm/api: Fix VM exit code for full dirty ring
-Date: Mon, 20 Oct 2025 18:11:46 +0100
-Message-ID: <aPZtUlTjEm5_bqDe@JFWG9VK6KM.cambridge.arm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <176097609826.440019.16093756252971850484.b4-ty@google.com>
-References: <20251014152802.13563-1-leo.bras@arm.com> <176097609826.440019.16093756252971850484.b4-ty@google.com>
+	s=arc-20240116; t=1760980376; c=relaxed/simple;
+	bh=dwqtHQVfFZjxcm6Jo6c9XdBZqKfCUiwIrZyMMZjil70=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iX2rEH2De0sqaVzrvjx1/z7jB5KQjpQ12cMrbnfYQouQ3NvdgYTja5GC9vYH2+yCt1tkRc+FIuMDwnmAbw4iseNrUKz3vEJ5FX+zNEGJ+DAmLGSYCqv8fjeuRQ25bkJe3DjCzFzIvGYDelIjGfbj8FtL5ydwLwLxSB/z8dNQlOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaX3Cypq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F140C4CEF9;
+	Mon, 20 Oct 2025 17:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760980375;
+	bh=dwqtHQVfFZjxcm6Jo6c9XdBZqKfCUiwIrZyMMZjil70=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oaX3CypquTs6LmNjpxP0M7JcbmHhYPQkPrndJisq3Mq5CS4ChGkC6d2iyFuzYgjFS
+	 64GozyDfDWKZP+/igTX/fcUZXzI4pcNfgW9fwPpl6zAywwv0qC02O3C/Ol3CpyiMpO
+	 O5SaVua+JTHSQs4CLFzE5hfP3RiUb/AODW/Ml2QFKd2dwKdnT42DH1CkSRBTDd9LvI
+	 ys0G1HfP32V+N7vDdT/eoBlMxujAAsZ0iNZhYPC+dpAbJFa30tA/JfSSXCVf9snOQo
+	 lDwXn4jP5OHGXofzGV0kdwoCznluMpaz+Hrq8PIHlPAA9y7tVVYEkSqr2PajDz3jb0
+	 2MhbnFI9/8M4Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vAtRF-0000000FaSv-2Qhv;
+	Mon, 20 Oct 2025 17:12:53 +0000
+Date: Mon, 20 Oct 2025 18:12:53 +0100
+Message-ID: <86h5vtwl7u.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	kasan-dev@googlegroups.com,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC PATCH 14/16] arm64/insn: always inline aarch64_insn_encode_ldst_size()
+In-Reply-To: <20250923174903.76283-15-ada.coupriediaz@arm.com>
+References: <20250923174903.76283-1-ada.coupriediaz@arm.com>
+	<20250923174903.76283-15-ada.coupriediaz@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ada.coupriediaz@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, ardb@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, kasan-dev@googlegroups.com, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Oct 20, 2025 at 09:33:01AM -0700, Sean Christopherson wrote:
-> On Tue, 14 Oct 2025 16:28:02 +0100, Leonardo Bras wrote:
-> > While reading the documentation, I saw a exit code I could not grep for, to
-> > figure out it has a slightly different name.
-> > 
-> > Fix that name in documentation so it points to the right exit code.
+On Tue, 23 Sep 2025 18:49:01 +0100,
+Ada Couprie Diaz <ada.coupriediaz@arm.com> wrote:
 > 
-> Applied to kvm-x86 generic, with a massaged shortlog.  Thanks!
+> The type and instruction checks cannot be made at compile time,
+> as they are dynamically created. However, we can remove the error print
+> as it should never appear in normal operation and will still lead to
+> a fault BRK.
 > 
-> [1/1] KVM: Fix VM exit code for full dirty ring in API documentation
->       https://github.com/kvm-x86/linux/commit/04fd067b770d
+> This makes `aarch64_insn_encode_ldst_size()` safe for inlining
+> and usage from patching callbacks.
 > 
-> --
-> https://github.com/kvm-x86/linux/tree/next
+> This is a change of visiblity, as previously the function was private to
+> lib/insn.c.
+> However, in order to inline more `aarch64_insn_` functions and make
+> patching callbacks safe, it needs to be accessible by those functions.
+> As it is more accessible than before, add a check so that only loads
+> or stores can be affected by the size encoding.
+> 
+> Signed-off-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> ---
+>  arch/arm64/include/asm/insn.h | 24 ++++++++++++++++++++++++
+>  arch/arm64/lib/insn.c         | 19 +------------------
+>  2 files changed, 25 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+> index 44435eede1f3..46d4d452e2e2 100644
+> --- a/arch/arm64/include/asm/insn.h
+> +++ b/arch/arm64/include/asm/insn.h
+> @@ -717,6 +717,30 @@ static __always_inline u32 aarch64_insn_encode_immediate(
+>  
+>  	return insn;
+>  }
+> +
+> +extern const u32 aarch64_insn_ldst_size[];
+> +static __always_inline u32 aarch64_insn_encode_ldst_size(
+> +					 enum aarch64_insn_size_type type,
+> +					 u32 insn)
+> +{
+> +	u32 size;
+> +
+> +	if (type < AARCH64_INSN_SIZE_8 || type > AARCH64_INSN_SIZE_64) {
+> +		return AARCH64_BREAK_FAULT;
+> +	}
+> +
+> +	/* Don't corrput the top bits of other instructions which aren't a size. */
+> +	if (!aarch64_insn_is_ldst(insn)) {
+> +		return AARCH64_BREAK_FAULT;
+> +	}
+> +
+> +	size = aarch64_insn_ldst_size[type];
 
-Thanks!
-Leo
+Given that we have this:
+
+	enum aarch64_insn_size_type {
+		AARCH64_INSN_SIZE_8,
+		AARCH64_INSN_SIZE_16,
+		AARCH64_INSN_SIZE_32,
+		AARCH64_INSN_SIZE_64,
+	};
+
+[...]
+
+> +	insn &= ~GENMASK(31, 30);
+> +	insn |= size << 30;
+> +
+> +	return insn;
+> +}
+> +
+>  static __always_inline u32 aarch64_insn_encode_register(
+>  				 enum aarch64_insn_register_type type,
+>  				 u32 insn,
+> diff --git a/arch/arm64/lib/insn.c b/arch/arm64/lib/insn.c
+> index 71df4d72ac81..63564d236235 100644
+> --- a/arch/arm64/lib/insn.c
+> +++ b/arch/arm64/lib/insn.c
+> @@ -42,30 +42,13 @@ u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn)
+>  	return (insn >> shift) & mask;
+>  }
+>  
+> -static const u32 aarch64_insn_ldst_size[] = {
+> +const u32 aarch64_insn_ldst_size[] = {
+>  	[AARCH64_INSN_SIZE_8] = 0,
+>  	[AARCH64_INSN_SIZE_16] = 1,
+>  	[AARCH64_INSN_SIZE_32] = 2,
+>  	[AARCH64_INSN_SIZE_64] = 3,
+>  };
+
+[...] this array is completely superfluous, and
+
+	size = aarch64_insn_ldst_size[type];
+
+could be replaced by
+
+	size = type;
+
+But that's only a very minor improvement. On the plus side, your
+approach definitely makes it impossible to add a patching callback
+using aarch64_insn_encode_ldst_size() in a module!
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
