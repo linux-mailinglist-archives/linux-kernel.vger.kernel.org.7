@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-860782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF628BF0ED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:53:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92562BF0EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 910D74E844C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:53:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB01C4EECAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931B3303C9D;
-	Mon, 20 Oct 2025 11:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61249305057;
+	Mon, 20 Oct 2025 11:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VSo6KXkl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TONyoiwI"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CE92F6929
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECB22153FB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961218; cv=none; b=VOdqycTVVkVyOuLATn/4FV6jN9KAmGpwDk+SFuwADwGlSa/BT2AhEtzs3mkeagYR5SEYumG5nLnhOfKYW2UpwibKXErWOOP8XJKbesiFnnYrfRcP4du+UNOCZxkCXhAXITSXcFDDwp656jOtD1xCj+GNqK3zIOPVRyB7TOCkIuU=
+	t=1760961237; cv=none; b=R731M9pl0DQcmNSBANANJijopw9c5dgn+xWOPmhzTEGAofTaH0AILrZ/mmvxlOOunNvC9wdkdGtT7bDVd3H20Ntn7EHkWABd2Uhj4lEuXvOJdLxL7oScG2t8fkGJy3SPq5GxAY71gnjczagtoJDqOnmyZr07XKWq6+CmJNFzEW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961218; c=relaxed/simple;
-	bh=D9TMjnoCdpB0xJo4Os4Kj35sbq3Hlt8HHvrpYmYCTe4=;
+	s=arc-20240116; t=1760961237; c=relaxed/simple;
+	bh=QRgtxPDFtUb5R9e3t7y6Kd+VvfoFw4kutBVEddZNlrw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L/z0LI6A6ulnYnl+fBFrg8vUHhCT1cvoo6TkURKisnX+6XRah0TsEF+D34i+RbFd6VMtu+hVOTqZ+L/HfdBz4ygO3FFsGIX9q3kbnS9Qlh35DzXcXmUcGuj6v/iCgWkq9wMkiCoI2hfs3L0ItMCSx6Z3aC5/aQwb/t3hUS+G6i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VSo6KXkl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59JNbRg8016504
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:53:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	E2hvjL5IfGISuHnMb6jxRMJ8xyIxhKauJ5pFs9sdJn8=; b=VSo6KXklsgrfjL/g
-	b3Itux7ZaduSJGS6N+6gGDdBPxbgxYieE3El/09k7pK1xzp+eOeJXEjKVLNe/wZ7
-	39M9jZOQWaIvNpYZ/TCLP0noggfKcTwxkaOh19+wXldJoy6+lJ1eb7STb4m/ABfR
-	uDKjt6J1RK0ay5IVqtUunXJv/6+04PqKd9+PwJc1a5Kn0vC+zec9RePXlxA127sB
-	j00bk2p5mA91bxFsAuJQ/YlDLY1f3LaVERQVV5DrL7qhlYQ5Rjl1K2gmXE0zluNs
-	PPO82rjiqUmeTTctTNqS20epgM8bxNbrh4K2A/BSPIg/7+K8VRHCzBL20xsLxlWs
-	uJhepA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w7vq2w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:53:36 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-88f3a065311so155721685a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:53:36 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=FQraQxFKAhIfM1gSlETPPmqLEWNr0xY7nB+9qgy1MDPx+kPSXEyEyuFnoKiuNyAV3ULWZfDAy7hlPlLdvAmy8VISfvXeI6WOe/0V61bEmqfLV3uzGiNxs/9BcCezODA1xgsJBd4cGr0HWjiwAturH4nGX8VzaZHbWDA+QBKhLQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TONyoiwI; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-426f1574a14so3147927f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:53:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760961233; x=1761566033; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nxLi65g4dGwi3ujksBH+bmbmQ5CpFWJvidjZ0C43bek=;
+        b=TONyoiwI39GliHgQL37rOurmiPc9vvDF4waB1WeE7bpA8JqTuOEqlIYNgNoIt/0/tS
+         +Gyhbmqi5qc5XDS2/tiOF3+wmHDS+tF/8uZpQWMVzr6aWVfdBTYQ334yrgEiNI8Ogy4z
+         edV4MI2dG22DLTKxh8TuXgWJoRqvDgKHObTpcmtyHa65VWLiNzuzNAZMnwYU6lbxPmSF
+         PouDLnee735chX2M2JYEZ2E6Y3lIgh22eibC82med8OPEJcUIm+M24wKltHWqimcLhxf
+         HC9Cwck9owiukcWSvPWQj0wueeTVLsVQRtaC8dXpR1FYUlqbZjdH3SM6WYCp0WrlDr1A
+         p1Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760961215; x=1761566015;
+        d=1e100.net; s=20230601; t=1760961233; x=1761566033;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E2hvjL5IfGISuHnMb6jxRMJ8xyIxhKauJ5pFs9sdJn8=;
-        b=XuRNTbTS47mCqdIaFDVsP/Ddy0eVG0nQ/4gkQw54fW+Y4xA6tme6v7rbAm/hG8O5GJ
-         1x9WpxjT3nPVQ//uuvnzZqO0RmR49oDJ1ZwGDMKm+zs1qYUk4F4u6d4d5Aj/VPcjf9bY
-         udMvpOJH9aC5gIoIpe5WS/ocJXmG1dzfZgSYUHMsjOALXGbRg5cw9kwpfh14K6GGkrKC
-         Up3rJUNvHOlyJdu4w/uQTbsW9SlVFD7m/zKI8WZ+pjduN9kycm9ZGCuIlBUv2vMs0jZM
-         OnidgDRLr62jagNZvNRQov7IS1S/HGSYxMAy3AVsstI+IjN8hYMv9SJeCkb7xd2QTpP+
-         PWCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgk8ip2UFWFd+T14b7syZVgnn2ic4D3HJXtvAhSn3Yvy1TN/YxUYU1txVbUYzNZQq5qy0nMERzB/Nq83U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiJn6OYFKXxYzNLt5WBCeUXfZlVDO0sF6o75H3O5hHNCK5vqqE
-	A985RWPi7BlgNje5LorFtza3VWzzoLl1uhz4RLFKMFp3GrCfj1vk1PLlX1YyKesm80Q3KWclfBz
-	mI+rv9iOMYhdLLcXmzocNQjG9dF2drpjXkiwmlOKVZWL3KXktU8bX9h7rf/y4Lh25k0M=
-X-Gm-Gg: ASbGnctnbhT0LmHnTGvT2bSfWKRbRlHYqAygLXGG0VYuyIoBjeJ5iewhGQw+ZFFpXzo
-	MB+g+BN523k6+f2z9vcKg6X/4yJawj0ZrcjYaiMIA7MFM8Siwc5OsWzuhbcO6J2Y8lLURPjggZC
-	yzgOs0adCU0J7/FcVB+Os41bi2Yr+A34lFUsC2gMd2x8ucSsks6NWelUnrays09eUkXx4z8P8uU
-	3EXmyIvx/sFq7tZd9RNHZIuAQABrZkwJTuBLk2o3gR34ROxJazPsKHVwjCWFoPHZC1DIFKzYOCU
-	z7wXzMGHCtknAiJ1lQxYWgJ4tbU+IFmLXgbHLhKTbockfmCqskOf7h5JMPPqPtwITbFCQtCNKW3
-	D6FVIYfvbz7Nq1H+cwVO671uouXSja0lvRGQHXcBCJ2XZAR92VyKfGq0c
-X-Received: by 2002:ac8:5908:0:b0:4e8:90f4:c3aa with SMTP id d75a77b69052e-4e89d35acfcmr92980121cf.8.1760961215339;
-        Mon, 20 Oct 2025 04:53:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDF5w2J/DkfstxpZTbyf16Joh/f/CYfZXYRWhNuKRmYKNA/7K5jpwJVAYOdOKa21qBZqycgA==
-X-Received: by 2002:ac8:5908:0:b0:4e8:90f4:c3aa with SMTP id d75a77b69052e-4e89d35acfcmr92979771cf.8.1760961214780;
-        Mon, 20 Oct 2025 04:53:34 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48a928c3sm6568672a12.3.2025.10.20.04.53.33
+        bh=nxLi65g4dGwi3ujksBH+bmbmQ5CpFWJvidjZ0C43bek=;
+        b=eKUTt89RgxRD7b5xA6/RK3eXOQ2yO81ZssY8KRTSkr8jT8WzBb8rkATAecDuVRvj/S
+         0pYbpHw5etwruI16GX58E72bBdkr2xkHP5dTvfkSg56E5/wdiaVhNVXDWXfzMkNOXw0J
+         UY0CZAsr66P3l25B4TH1oJp8xuv76Fn5KEAVhuH0l8sJWvcWodlbQghztTCQFaUFF/+t
+         PYZq2IiIF0C/rOc2/4hHWPVP1MV2juso76JsxgqdvpG7ynR/u4Fu/UuRDAENSi5EaI6U
+         ZTW3OGRUKNy2fDU4N0YvbnsJGZIM6Q0bwckEeaWtNBi4Z3Ogp47JvFfue+jGVpkpiCVW
+         /+lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVerSJ+tpt2JSYgDwVx7s4E36SDssHlmQcbKjrznyRBCy80p3q2V1mjb2vPV+Lbp3lQrh20VdTXAdzUrxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywH8qobFYtD/wAD58Lr+9c5oSooJ+Ra8qCaMh3muz8FFjzvcRS
+	mOTIPJWciATwBTs/oEpui44jUkRpomKP91Vk5LH9nZdNPz99UNWzqo1GpX+caHhQgqs=
+X-Gm-Gg: ASbGncuxFbYIPWKrywgE4XtiSjl5i+6JMdjYsT6aT6krgffbuJDPwJ6Ubpl5q/9aQga
+	6PIen+h0L1yqY6DLUyZQEpS0+v7mXsf0z1EytTPbbQ5OZsVhBE7aaPfGK2STWItcBhAUSz4EJzO
+	aQYTLofFNgO+hJak3lkzqjQr1ukQRVeGDllAKQHFj3LlN50YbXMHHIB36hj3Rqv+11zkoSRubJm
+	See2GzuTkldphjVuV3TJWDCHtMSsEO3Szh9By6FPm7MBGt5MIOVQyaVzApseEBPMv8U+PvQXf+5
+	pl1rqyC11NctSJRgDsl1avSvRtfID3CUu3D2pRmYCAKOja4ZF2uPzhLFfnOJSTswVv/LsbxAAdN
+	fAc9ltgDhEkh/GTHZx/rqkRraoroZ4JUKCR6SpU0go/A9QeVJZAhEl2LVLO56mJNS7L7l1pBXwD
+	OzJoFxPoufDTe4xDNYHPry
+X-Google-Smtp-Source: AGHT+IErqGtubFP6M8NiY7VOpNWyIz/IZypNc+TYzCMimJqqWR79oYHNIBLeUwbSgQtIWQOkjfgZRw==
+X-Received: by 2002:a5d:5d01:0:b0:427:7ac:528f with SMTP id ffacd0b85a97d-42707ac53b8mr8364947f8f.33.1760961233199;
+        Mon, 20 Oct 2025 04:53:53 -0700 (PDT)
+Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cf590691sm544700785a.52.2025.10.20.04.53.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 04:53:34 -0700 (PDT)
-Message-ID: <079b0120-efe2-43f9-b31e-8d65f6d7859b@oss.qualcomm.com>
-Date: Mon, 20 Oct 2025 13:53:32 +0200
+        Mon, 20 Oct 2025 04:53:52 -0700 (PDT)
+Message-ID: <eca6031d-7f72-4f24-bbd4-95354d5c9ca5@suse.com>
+Date: Mon, 20 Oct 2025 13:53:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,113 +82,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/24] arm64: dts: qcom: glymur-crd: Add RPMH regulator
- rails
-To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
- <a49f3f75-c882-4635-9be3-a433b7fe32c8@oss.qualcomm.com>
- <20251015154031.hbifj6khno3gi3mz@hu-kamalw-hyd.qualcomm.com>
+Subject: Re: [PATCH 1/4] PCI: Support FIXUP quirks in modules
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ linux-pci@vger.kernel.org, David Gow <davidgow@google.com>,
+ Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Sami Tolvanen <samitolvanen@google.com>, Richard Weinberger
+ <richard@nod.at>, Wei Liu <wei.liu@kernel.org>,
+ Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, linux-um@lists.infradead.org
+References: <20250912230208.967129-1-briannorris@chromium.org>
+ <20250912230208.967129-2-briannorris@chromium.org>
+ <c84d6952-7977-47cd-8f09-6ea223217337@suse.com> <aNLb9g0AbBXZCJ4m@google.com>
+ <2071b071-874c-4f85-8500-033c73dfaaab@suse.com> <aORJhL1yAPyV7YAW@google.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251015154031.hbifj6khno3gi3mz@hu-kamalw-hyd.qualcomm.com>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <aORJhL1yAPyV7YAW@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfX3WNozBFRdhtt
- 7uDrfPN5X+0wh2OCL9d86urbwbgpfusqoZmBBYx7+qItaU0cpBDjtqVQ+ZQc+GUZfgsDxBoLgQ7
- 06kw5G0rk7eSgLjsfkLzAaPN1ZjJGtsqlHRQlrtEfzpPfKqstdX0m2AfQlC5qm6Vaa7ohEpfi4L
- KSRnfjf7FjqQSchBYlaldtK3P1nu/lhjAweJGMZeoj9aIwGVUHxJ+nqJisDB9nSP4LKdv2osS/8
- AqBv22uoVEN51OdMRzE2R8sIUWdUfWVo+0ic3u60QOrBh/CRXvndoXyN/7ZgY5XzEUpeRLqkGgn
- 7mxBqMEBlCBjxmVEeqs89VkGiOxI1QGbPq0XqjgriGrslfEzv36n5GjxV9hdA3OYmOa7Nb7kZmL
- +FUafgF/H7zjqqw0BX+TpycGqP+DjA==
-X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68f622c0 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=FuG2qi5Kk0EKLw-Bb9sA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: GMQuo2_nkHnZ3v0xuqP2N6Q4hCNvlWPs
-X-Proofpoint-ORIG-GUID: GMQuo2_nkHnZ3v0xuqP2N6Q4hCNvlWPs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
 
-On 10/15/25 5:40 PM, Kamal Wadhwa wrote:
-> On Thu, Sep 25, 2025 at 01:01:56PM +0200, Konrad Dybcio wrote:
->> On 9/25/25 8:32 AM, Pankaj Patil wrote:
->>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+On 10/7/25 12:58 AM, Brian Norris wrote:
+> Hi Petr,
+> 
+> On Wed, Sep 24, 2025 at 09:48:47AM +0200, Petr Pavlu wrote:
+>> On 9/23/25 7:42 PM, Brian Norris wrote:
+>>> Hi Petr,
 >>>
->>> Add RPMH regulator rails for Glymur CRD.
+>>> On Tue, Sep 23, 2025 at 02:55:34PM +0200, Petr Pavlu wrote:
+>>>> On 9/13/25 12:59 AM, Brian Norris wrote:
+>>>>> @@ -259,6 +315,12 @@ void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev)
+>>>>>  		return;
+>>>>>  	}
+>>>>>  	pci_do_fixups(dev, start, end);
+>>>>> +
+>>>>> +	struct pci_fixup_arg arg = {
+>>>>> +		.dev = dev,
+>>>>> +		.pass = pass,
+>>>>> +	};
+>>>>> +	module_for_each_mod(pci_module_fixup, &arg);
+>>>>
+>>>> The function module_for_each_mod() walks not only modules that are LIVE,
+>>>> but also those in the COMING and GOING states. This means that this code
+>>>> can potentially execute a PCI fixup from a module before its init
+>>>> function is invoked, and similarly, a fixup can be executed after the
+>>>> exit function has already run. Is this intentional?
 >>>
->>> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->>> ---
+>>> Thanks for the callout. I didn't really give this part much thought
+>>> previously.
+>>>
+>>> Per the comments, COMING means "Full formed, running module_init". I
+>>> believe that is a good thing, actually; specifically for controller
+>>> drivers, module_init() might be probing the controller and enumerating
+>>> child PCI devices to which we should apply these FIXUPs. That is a key
+>>> case to support.
+>>>
+>>> GOING is not clearly defined in the header comments, but it seems like
+>>> it's a relatively narrow window between determining there are no module
+>>> refcounts (and transition to GOING) and starting to really tear it down
+>>> (transitioning to UNFORMED before any significant teardown).
+>>> module_exit() runs in the GOING phase.
+>>>
+>>> I think it does not make sense to execute FIXUPs on a GOING module; I'll
+>>> make that change.
 >>
->> [...]
+>> Note that when walking the modules list using module_for_each_mod(),
+>> the delete_module() operation can concurrently transition a module to
+>> MODULE_STATE_GOING. If you are thinking about simply having
+>> pci_module_fixup() check that mod->state isn't MODULE_STATE_GOING,
+>> I believe this won't quite work.
+> 
+> Good point. I think this at least suggests that this should hook into
+> some blocking point in the module-load sequence, such as the notifiers
+> or even module_init() as you suggest below.
+> 
+>>> Re-quoting one piece:
+>>>> This means that this code
+>>>> can potentially execute a PCI fixup from a module before its init
+>>>> function is invoked,
+>>>
+>>> IIUC, this part is not true? A module is put into COMING state before
+>>> its init function is invoked.
 >>
->>> +	regulators-1 {
->>> +		compatible = "qcom,pmcx0102-rpmh-regulators";
->>> +		qcom,pmic-id = "C_E0";
->>> +		vdd-s1-supply = <&vph_pwr>;
->>> +		vdd-s8-supply = <&vph_pwr>;
->>> +
->>> +		vreg_s1c_e0_0p3: smps1 {
->>> +			regulator-name = "vreg_s1c_e0_0p3";
->>> +			regulator-min-microvolt = <300000>;
->>> +			regulator-max-microvolt = <1200000>;
->>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>> +		};
->>> +
->>> +		vreg_s8c_e0_0p3: smps8 {
->>> +			regulator-name = "vreg_s8c_e0_0p3";
->>> +			regulator-min-microvolt = <300000>;
->>> +			regulator-max-microvolt = <1200000>
->>
->> Both of these regulators, having no consumers, will be parked to 0.3 V
->> (the lower bound)
->>
->> There are other similar cases in this patch
+>> When loading a module, the load_module() function calls
+>> complete_formation(), which puts the module into the COMING state. At
+>> this point, the new code in pci_fixup_device() can see the new module
+>> and potentially attempt to invoke its PCI fixups. However, such a module
+>> has still a bit of way to go before its init function is called from
+>> do_init_module(). The module hasn't yet had its arguments parsed, is not
+>> linked in sysfs, isn't fully registered with codetag support, and hasn't
+>> invoked its constructors (needed for gcov/kasan support).
 > 
-> Ok. I will remove the unused rails.
-> But just wanted to let you know currently i have exposed all the rails that
-> are allowed to be controlled from APPS, mostly these rails will be staying
-> OFF if no clients in SW are there to vote on them.
+> It seems unlikely that sysfs, codetag, or arguments should matter much.
+> gcov and kasan might be nice to have though.
 > 
-> But do note that some of the clients may be getting added as more features
-> get added, as lot of these rails are not unused in the HW. The client driver
-> just isnt enabled as of now.
+>> I don't know enough about PCI fixups and what is allowable in them, but
+>> I suspect it would be better to ensure that no fixup can be invoked from
+>> the module during this period.
 > 
-> So wanted to check if I should remove ALL rails that are unused in SW?
->  or
-> Can i keep the ones for which clients will be getting added in near future.
+> I don't know of general rules, but they generally do pretty minimal work
+> to adjust various fields in and around 'struct pci_dev', to account for
+> broken IDs. Sometimes they need to read a few PCI registers. They may
+> even tweak PM-related features. It varies based
+> on what kind of "quriky" devices need to be handled, but it's usually
+> pretty straightforward and well-contained -- not relying on any kind of
+> global state, or even all that much specific to the module in question
+> besides constant IDs.
 > 
-> (i would prefer the later option, if that is ok with you?)
+> (You can peruse drivers/pci/quirks.c or the various other files that use
+> DECLARE_PCI_FIXUP_*() macros, if you're curious.)
+> 
+>> If the above makes sense, I think using module_for_each_mod() might not
+>> be the right approach. Alternative options include registering a module
+>> notifier or having modules explicitly register their PCI fixups in their
+>> init function.
+> 
+> I agree module_for_each_mod() is probably not the right choice, but I'm
+> not sure what the right choice is.
+> 
+> register_module_notifier() + keying off MODULE_STATE_COMING before
+> pulling in the '.pci_fixup*' list seems attractive, but it still comes
+> before gcov/kasan.
+> 
+> It seems like "first thing in module_init()" would be the right choice,
+> but I don't know of a great way to do that.
 
-Please keep them but restrict them to the actually useful range, not just
-what the hardware can do.
+We could introduce a new module state and have the module notifier fire
+with this state at the required point. This seems to align best with how
+other code is hooked into the module loader, although I dislike the idea
+of introducing a new module state.
 
-Most of them are presumably hardwired to specific peripherals and need
-e.g. 1.8 V
->> Does the board still boot with all the expected functionality with only
->> patches 1-9 applied?
+It might also be possible to insert a quirk registration function into
+.init_array so it is called by do_mod_ctors().
+
+> I could insert PCI-related
+> calls directly into do_init_module() / delete_module(), but that doesn't
+> seem very elegant. I could also mess with the module_{init,exit}()
+> macros, but that seems a bit strange too.
+
+I don't think you want to modify module_{init,exit}(), but you could
+introduce something like module_pci_controller(), along with
+pci_register_quirks() and pci_unregister_quirks(), which would handle
+quirk registration, somewhat similar to how module_pci_driver() works.
+
 > 
-> No. just tested, it seems not able to boot properly with just 1-9 patches.
-> is your concern about squashing of the patches?
-> (just trying to understand)
+> I'm open to suggestions. Or else maybe I'll just go with
+> register_module_notifier(), and accept that there may some small
+> downsides still.
 
-Yes, all boards must boot and not regress at any point, including at the
-introductory commit. Otherwise bisecting is impossible.
+If it turns out there is no better way than register_module_notifier(),
+then as mentioned above, it is possible to add a new module state to
+properly support this case.
 
-Konrad
+-- 
+Thanks,
+Petr
 
