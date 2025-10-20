@@ -1,218 +1,207 @@
-Return-Path: <linux-kernel+bounces-861085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB6CBF1C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D844BF1B7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 662E24F4638
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:12:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 887944F6210
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFED320A04;
-	Mon, 20 Oct 2025 14:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CD131986F;
+	Mon, 20 Oct 2025 14:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="rgZ1oRYR"
-Received: from sonic305-20.consmr.mail.gq1.yahoo.com (sonic305-20.consmr.mail.gq1.yahoo.com [98.137.64.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h1PvOpun"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13327261A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B30E2FE06D;
+	Mon, 20 Oct 2025 14:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760969529; cv=none; b=rcRbyo9g7P9cW7HkEYBc4dYaKO8BXlvY3Qq6ZMG8sLC+wHF7MhH1yqaGkRBfWtbl5otmNgJuA/iEdPRZV85HkeXOBJm7U6Uyi7e55G/nn8xvPVFmNCCCVCIR92TZUPFrk1qmUlxLR8fu1jLk+tlJ/VqFEdpQkeC5SmI266F1MA4=
+	t=1760969014; cv=none; b=CQLd/dZDQQY2mIfUS/gvprHaIc0sQuh1OEbnK2++tgmUNQJ1PvzUAg3O1MIiC3IUyv3cW1Ng7qA5VA5ePVCuqH0Zfkfil2qKNkNCkn81tvWczmtKdwLk3iHnz87N9UIRtpJKtbJ89YUINcOVKGrGmpvN68NDedNnizg1x5NFJl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760969529; c=relaxed/simple;
-	bh=Bl13BjSqgyR3EqovYb0afMSeWqZXTTS/wnB1XYzX8Fo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=KV2cVEddq8cRzL6P/SST3Q1Es+3thyrVDF3NVuQAzhqNnHKg47xEsiI+paI2orwNAD+GY5OdVJ16hMpfycSyF9M6wLofcNgOE+MnXkZbRRJ0t52fJ1aTB81lIcQsheWBQF8NAG7EORRw2nZOiKXwSvQrNF5chbAtv1b59j96Qn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=rgZ1oRYR; arc=none smtp.client-ip=98.137.64.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1760969527; bh=pFLYA2YQt6LoYcfiWureQPG0b5378+W1bpApadzNODc=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=rgZ1oRYR1F4Sk0cWvK/BAg5KOclvRYopkWNDf7dwKAIS2ZnWb8zC0Nn8EgWpyk2SD/dqPYCW/+SFJK5dx3xeknC1cr/nFKILefgKgmVzC7VbI6EKi5dqhJkiYC9BRdEO5gqa+DF/vRs6y+2aeasiYskKlM77yWF7ZHG1PPeiEf4AyXAT1eqms6P5u0nN31hBHtmaKCBXJUr4fdO3jYrIvWw63casMtC7rjGpQp5FZK0Ly9wf0Rf+fCLngUz/gE95W+gCimGYMWf+r88wOs0YqbDKYOKUl+K2uYqi9wWFxfwv0Cev0T74bS6F0mgeIheD+9cKuRaapnqo3RgNinkP4A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760969527; bh=I5Oj3VrmF9tXnvrKrKjg/Iif0Gv44NQnwUjWKxfn4kI=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=gLhIsKtO/zSYWa6fR1dd1qcgWvEMO8E/JhGVN85R8ZTvrrTD5xJOgNQ4vdDG1cgLD+I0mkSZRW8S9Q/E6iH3StKztfehvGwfoKGjKNvbshdECnCLyHPJPuEvulh52S4iDsCV6jm2AWUhhNoWzqPETyFi8Bh00vYdMXrWkDNlXJX3VVE9oORoMiNmwcSy9GuA7BJn+A7bgcRc18Y38yOSmQdtS6iB4GZk3+sf+V4flC5scKPRyBjQHlfnLN/BDnnPnbwKEdWsU9nGLXnujgRCbDT9v/tI12frDMZyt1dJDFTUWROEAfr9Lf1Aycgne+GQwqcawtpXdsyfo+upC5hLng==
-X-YMail-OSG: ba_ULjoVM1mYBlcGgLq4hO2OWzUHqmLZmTSrHIWU2XjIRunWTXQnhvhPa0ZhKIi
- 0j3HzQeRDkIHRzSMWQIsjDPvFIZsdHJ_koOJM6LsunZrfiOIIfz01ug4W.RbKv_v51cFIX.GaaOX
- 9hoJiuzBGpOtdWqHNpViDljeZSSuAscpT1NgPzKtEs1DiAAFCxyiLk5nECeb2kW8l4FJP.aYrwIj
- 71X8JI1jQkbLWQ4CKtzyjcVA37rhsvI9x4CDC7.YGyipboepywFtTcBQX8u2hzGIRra1mQE9_Vd2
- Y5DJHGYlVTZ4YaGVQqgBOmO_gw7_b5YEf9aHBSeykBcotI__bQU3FDT6Pa.E8iSrfhZm9Dcx0oTu
- nsIuomuYEMiNVTy.N_X5yMKIeonR2USNkTtbbRYnJXfx8zRVQk6KYOuqI_ck.DQITrk3bVS8_LKo
- hAJJZ11sMVom9AGs7PtkXVKAdsopKnn13UObmqO5IPNE93beS_sd8E2LzyIxOaXpVAO8gabqUxga
- asLHihHu5ksFcEEehq7L9GC5YhLSnHpmA9ZHCKgUN4zFferCm1zbFDnpQ982c9CCF2t0.osNZvHw
- L0TT_GbQ29bZLeabSfzanOOMrR0LyBdi6ILMNwP3UYt9fLVdnzURdMxTguDhyy.ZwfQH7cBH9xG0
- dIRZaK_StOHjHIlEhFqddxzE7QBkZ9o8MCO3yYlbsy42a07BG2XoM1i474N7j01A8R.0zsfzsWIZ
- hhnALGxjRPMOVFu2OaoJoaBCRdHofxPmgdCpHmvXu0VSkciCm_o1AWWXd4Xv4hBNGptalmNUfUZY
- QIabUcQGG.EQ2EkQaTfWN5SwjX0cwNMimUCnXWylmTd422nl70qHeLRDmdCdL_vdxfjykaxhPJAR
- ykM.V792xL_KDjB83j3VDBAi7f1_zQO5Zy2uTn59IwZc4pK3Iem7xIdoivqYB1u4oI5apQiwnnWX
- RhveGUPQ9cOd692bvu5rHWyeHoSP9K6r60bKqO6ne1N5fVDlvr6XVoiEUsIFWcxiRFjmwAJRu8j6
- asgCtNTNIIK318qWMsmt4Yp2NO4eOIBmxfnPLGluNeUk04rbaHeTpU1ticBcEfegy9lIvnVWuVro
- WzBk02f0CcTXJz39MSP.KQyibwQJgpZhSMCJilBl.mTjIA8MWymcbgkUj5J1bgaAG3SYffUoTFAD
- UF5td730D0VtVf5_.ubG8sru5H7FrfPQrove3WP41iEpV_9EGLGZO5qKxnriRfp6JYJwTNADHZ5K
- Em6.4pjrI4YSOdiZdkmtPyqzrItUgdUdFk.6KXjTJVtXSA1gYqq7bZbDu0tFjJBuzSW7I6__XOLA
- vSZeLu82ut1NRSrML0BVFHIKD.YRBEio11Z0cdnAYM.cXfwxMhnkFB2AzZVyRcAadFeDuOmW5O.m
- g4G6BZDCZVcXGPZaQrmjL2Yy6T0Wn5slUu4tj3E8IIY45PONKaw88wF3vm2HF3BrnpmV2IIEKz9v
- NWLRYTyL_4R36hBqFGN8GhPBC7C.x7ut9qElkUDOZFGpx5HCmTcUJ1PValtlEnb3TpaWNiHjtnsz
- 3qKEfsw6xKhy9BrZG9q4bsOMurg7qL3a4iEFf2Z6DjmGyafIhfm2bt.QWpKZfYlzDaKFQ04Ffdbb
- EOjj5WLFpTqAmR4dOlLmaau7uejmo_FtjBm_KpQgbMHnrFIVwT1G4R3bSn38UASgGYhSYeYH3XvU
- l0jS4fz4F5AIIXx7gK3BATz0GJsD0rRDcLJdyWZ4qgpBrtCS6SQHrBsDd7hc__6Kouy_rH5Z73W7
- sRTx6jWDeXE5Wdr0XOvFajezUHOsQxbfD6pecL7YxXMJdTvjxZq1T3S7oQC.gAOe08P2Bq4euECp
- GX2XND4FseMG2Ue6O6uTGkukxlaVzEZ.Njf2iiaEe4LWS_mDrZ2V2ljeibIfkF7hBytpQzapBQb8
- WmF73DbZyjk58eBksNvX1rj4J8QTb1mpXXpjFTcYM8Y6hnRi.1Cye1pIBDSzScCy_xu1Co2jWLuI
- aJE3uJddJbRC_F_E877WVg.HO1SA2JUReZP0mArAQ2AmK1WoXhWABBgOqU6qs4Jx3IkDxzafhDp1
- A0QugVBR.z0hixBKgtCD.0mi7bmpMTA3luIMWLmx64FOZiZh94_Uxk6cUqCJBWWRqp48k80fwiL8
- 1W9pedBgG53RUjg_HTXoCAMRJgw5lpj3DVfDY8ESfom73hCkY8NIVUWqad0casEI3Ix51tm4._3A
- sBkKxkoK9i2Kwv8qjuWqEXBC4OiSAEpTINeVG.lcXi4acSj6HWINL
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 7059ca9b-e0e7-42f8-be81-8e1f8b89ef92
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Mon, 20 Oct 2025 14:12:07 +0000
-Received: by hermes--production-ir2-cdb597784-q5vnj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c2ad94a46301785748ed7ea5463a1645;
-          Mon, 20 Oct 2025 14:01:55 +0000 (UTC)
-From: Ruben Wauters <rubenru09@aol.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Ruben Wauters <rubenru09@aol.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/gud: rearrange gud_probe() to prepare for function splitting
-Date: Mon, 20 Oct 2025 14:56:04 +0100
-Message-ID: <20251020140147.5017-1-rubenru09@aol.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760969014; c=relaxed/simple;
+	bh=uJBzpi8We7uvGJQ8DIRNYzSHo1u7pZ1ai1qJEuzMFls=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nMTpCDDB+776h3wgod+jT2PIvCbOXigtwG54XWi22Fc0Tp21S8kOWYVvWBqlpnIPBv3O3O9PXdzuTBHBxJKh4wdXAHjCFAo8q34BEKYb+jvArYgGR9/ynJEYUMtzKFm7+U0OeTChSrM3C9KsKJRGRW39waEN+MaISTRrDKrZDGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h1PvOpun; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760968982; x=1761573782; i=markus.elfring@web.de;
+	bh=8gJn2OUvcIkPy6QCSqdpnGjV/FPP6FYgGsXIHiCIgns=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=h1PvOpunp5HksT50QboXl7//gpScppJckiK4FOx7G2VDF4FQKfXyi3EM0rRj8ka1
+	 LVdemtaZTVgQhKyiJwstRCwuCZsb5/WbmbJeWN+H8MNxk7d0kQdjblcASg0C4CwRq
+	 o9fpiuoyykvdmJlPfyIgbOyLioK9E6y+zwa+FRmAeLnq/hu0j5c19RDxtt2//bTCA
+	 L3T1Ewkx4hJApLD1fLvB6Xjpx+sJzPnt9LfaBLPjJekzPyeUskag0dl90OcyJ6ZoH
+	 LzrXqpDgYEBbOR17dVTHH2shf1xcCF1pQe7z8QFwrd7xtxswa97XT6eFtCeoKGCi9
+	 0ONWBXLn2Qz8ueOJQA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1uRvPt3BZM-00cfOm; Mon, 20
+ Oct 2025 16:03:01 +0200
+Message-ID: <71f7daa3-d4f4-4753-aae8-67040fc8297d@web.de>
+Date: Mon, 20 Oct 2025 16:02:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20251020140147.5017-1-rubenru09.ref@aol.com>
+User-Agent: Mozilla Thunderbird
+To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Byungchul Park <byungchul@sk.com>,
+ "David S. Miller" <davem@davemloft.net>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Eric Dumazet <edumazet@google.com>,
+ Grygorii Strashko <grygorii.strashko@ti.com>,
+ Himanshu Mittal <h-mittal1@ti.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jan Kiszka <jan.kiszka@siemens.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ MD Danish Anwar <danishanwar@ti.com>, Meghana Malladi <m-malladi@ti.com>,
+ Paolo Abeni <pabeni@redhat.com>, Ravi Gunasekaran <r-gunasekaran@ti.com>,
+ Roger Quadros <rogerq@kernel.org>, Simon Horman <horms@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH net-next] net: ti: icssg-prueth: Omit a variable reassignment
+ in prueth_netdev_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WT/cfCHxI+zlN2LtSHpfmcDwFenjFLUzvYKS7OIftCBe1WpB3pQ
+ KB6688YUKoHg5UVzg8BbNE739r1A4ZbMZf6SkCf+w3GGxdshBR0eMNp6mNDiQoEbTF7jn3O
+ 0Tb4LcRHASjI2lQg+JamLiph/qunvjgaQAT2YQ1fzgpEzRwsaJf4o3QYaKDqDdAx0WK7BUX
+ Q0+X1sWecfVYzc6nf63HQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:supwJH4Iip8=;jWX/no7EhjVDIe9LF1lBhryCbMs
+ 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
+ G9l5A==
 
-gud_probe() is currently very large and does many things, including
-pipeline setup and feature detection, as well as having USB functions.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 20 Oct 2025 15:46:11 +0200
 
-This patch re-orders the code in gud_probe() to make it more organised
-and easier to split apart in the future.
+An error code was assigned to a variable and checked accordingly.
+This value was passed to a dev_err_probe() call in an if branch.
+This function is documented in the way that the same value is returned.
+Thus delete two redundant variable reassignments.
 
-Signed-off-by: Ruben Wauters <rubenru09@aol.com>
----
-Changelog:
+The source code was transformed by using the Coccinelle software.
 
-v2
-- rename gud_get_properties to gud_plane_add_properties and move
-  function call to proper location
-- move usb_set_intfdata and block with dma setup to just under gdrm init
-- add proper spacing for init comments
----
- drivers/gpu/drm/gud/gud_drv.c | 45 +++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 21 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c     | 3 +--
+ drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-index b7345c8d823d..42135a48d92e 100644
---- a/drivers/gpu/drm/gud/gud_drv.c
-+++ b/drivers/gpu/drm/gud/gud_drv.c
-@@ -249,7 +249,7 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8 request, u8 val)
- 	return gud_usb_set(gdrm, request, 0, &val, sizeof(val));
- }
- 
--static int gud_get_properties(struct gud_device *gdrm)
-+static int gud_plane_add_properties(struct gud_device *gdrm)
- {
- 	struct gud_property_req *properties;
- 	unsigned int i, num_properties;
-@@ -463,10 +463,6 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		return PTR_ERR(gdrm);
- 
- 	drm = &gdrm->drm;
--	drm->mode_config.funcs = &gud_mode_config_funcs;
--	ret = drmm_mode_config_init(drm);
--	if (ret)
--		return ret;
- 
- 	gdrm->flags = le32_to_cpu(desc.flags);
- 	gdrm->compression = desc.compression & GUD_COMPRESSION_LZ4;
-@@ -483,11 +479,28 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	if (ret)
- 		return ret;
- 
-+	usb_set_intfdata(intf, gdrm);
-+
-+	dma_dev = usb_intf_get_dma_device(intf);
-+	if (dma_dev) {
-+		drm_dev_set_dma_dev(drm, dma_dev);
-+		put_device(dma_dev);
-+	} else {
-+		dev_warn(dev, "buffer sharing not supported"); /* not an error */
-+	}
-+
-+	/* Mode config init */
-+	ret = drmm_mode_config_init(drm);
-+	if (ret)
-+		return ret;
-+
- 	drm->mode_config.min_width = le32_to_cpu(desc.min_width);
- 	drm->mode_config.max_width = le32_to_cpu(desc.max_width);
- 	drm->mode_config.min_height = le32_to_cpu(desc.min_height);
- 	drm->mode_config.max_height = le32_to_cpu(desc.max_height);
-+	drm->mode_config.funcs = &gud_mode_config_funcs;
- 
-+	/* Format init */
- 	formats_dev = devm_kmalloc(dev, GUD_FORMATS_MAX_NUM, GFP_KERNEL);
- 	/* Add room for emulated XRGB8888 */
- 	formats = devm_kmalloc_array(dev, GUD_FORMATS_MAX_NUM + 1, sizeof(*formats), GFP_KERNEL);
-@@ -587,6 +600,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 			return -ENOMEM;
- 	}
- 
-+	/* Pipeline init */
- 	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
- 				       &gud_plane_funcs,
- 				       formats, num_formats,
-@@ -598,12 +612,9 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
- 	drm_plane_enable_fb_damage_clips(&gdrm->plane);
- 
--	devm_kfree(dev, formats);
--	devm_kfree(dev, formats_dev);
--
--	ret = gud_get_properties(gdrm);
-+	ret = gud_plane_add_properties(gdrm);
- 	if (ret) {
--		dev_err(dev, "Failed to get properties (error=%d)\n", ret);
-+		dev_err(dev, "Failed to add properties (error=%d)\n", ret);
- 		return ret;
- 	}
- 
-@@ -621,16 +632,7 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	}
- 
- 	drm_mode_config_reset(drm);
--
--	usb_set_intfdata(intf, gdrm);
--
--	dma_dev = usb_intf_get_dma_device(intf);
--	if (dma_dev) {
--		drm_dev_set_dma_dev(drm, dma_dev);
--		put_device(dma_dev);
--	} else {
--		dev_warn(dev, "buffer sharing not supported"); /* not an error */
--	}
-+	drm_kms_helper_poll_init(drm);
- 
- 	drm_debugfs_add_file(drm, "stats", gud_stats_debugfs, NULL);
- 
-@@ -638,7 +640,8 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	if (ret)
- 		return ret;
- 
--	drm_kms_helper_poll_init(drm);
-+	devm_kfree(dev, formats);
-+	devm_kfree(dev, formats_dev);
- 
- 	drm_client_setup(drm, NULL);
- 
--- 
-2.51.0
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/et=
+hernet/ti/icssg/icssg_prueth.c
+index e42d0fdefee1..0bfd761bffc5 100644
+=2D-- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -1248,8 +1248,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 	} else if (of_phy_is_fixed_link(eth_node)) {
+ 		ret =3D of_phy_register_fixed_link(eth_node);
+ 		if (ret) {
+-			ret =3D dev_err_probe(prueth->dev, ret,
+-					    "failed to register fixed-link phy\n");
++			dev_err_probe(prueth->dev, ret, "failed to register fixed-link phy\n")=
+;
+ 			goto free;
+ 		}
+=20
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c b/drivers/ne=
+t/ethernet/ti/icssg/icssg_prueth_sr1.c
+index 5e225310c9de..bd88877e8e65 100644
+=2D-- a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+@@ -816,8 +816,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 	} else if (of_phy_is_fixed_link(eth_node)) {
+ 		ret =3D of_phy_register_fixed_link(eth_node);
+ 		if (ret) {
+-			ret =3D dev_err_probe(prueth->dev, ret,
+-					    "failed to register fixed-link phy\n");
++			dev_err_probe(prueth->dev, ret, "failed to register fixed-link phy\n")=
+;
+ 			goto free;
+ 		}
+=20
+=2D-=20
+2.51.1
 
 
