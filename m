@@ -1,220 +1,151 @@
-Return-Path: <linux-kernel+bounces-860096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6B8BEF4F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE07BEF4E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 06:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 862B04E1749
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704301893171
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 04:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D142BF019;
-	Mon, 20 Oct 2025 04:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873BD2BEC3D;
+	Mon, 20 Oct 2025 04:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOwLcce1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIcV/bJf"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5042BDC3F;
-	Mon, 20 Oct 2025 04:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8576F8635D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 04:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760935478; cv=none; b=PW2mI+PCldxXh7FfAWjrtXf5IEaxXXf2aVyaq4Okkka1pVpEMlxd0ZMbaJcLnJ+YwqMN+9BlYP2CKGMR/BID412ioJPoN5XxYjSUsGoR5D/VtlI7tsJgBk4Dbhv0a5Q/unglONYT2r+IzU3V2jQaw9ZiqYk8x1/qQr5ttuCRC4k=
+	t=1760935454; cv=none; b=aqybX4GGrC0xpsi6lY/cx68Kb0VsUfYuAb9crq7mOJ2BZjCR/crkf39NJEKzH2CF11wYTORIyvrqFc1RS1a9Gs7Tn+w481rhYsaN2bl5UzoCEdHckltxD4sQl/bYRKB6uuV5YOclJ6iOq/i0BR60BkwAx/SykdA0XgDjKb3TQo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760935478; c=relaxed/simple;
-	bh=304Yr1T1ZRL1VpqnFx3paSyfEmkD8GLktg/kA1hWBsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gt1HESDwTBhux32li3VQjPhWAzV4pHUagVZPh1C1dxkhHW6KyQxgvKJZJKFrjN8pZhokdEe1Wotu+3UNji/OqkbApfTyrBOdbaKfekDrPNn7PvM9nQkcZ9r2cR+xLUAFZQ0O4sSIbXReeFSydXoFRDUJwcwVl+xNh6rntIQgpPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOwLcce1; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760935476; x=1792471476;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=304Yr1T1ZRL1VpqnFx3paSyfEmkD8GLktg/kA1hWBsE=;
-  b=fOwLcce1pQopCvZjknxcveNDPkzwWf6T7FfclCQFj2CMzaU+JbGdzHDi
-   bvkd5bsFmu3p8IjEgGec8FucxCBIJogVYFMVDIP9sCIGIc3a8DhjbdftB
-   iLynG4YetW4ilibMeaR/pQ156ctpqKWUNnmKdNCSBX4eLLjh+lc1mM+/C
-   x9jBt+e/vYqv4Vdz1qg64qGF9ZYqCBg/0bMlGXnjTOfOBbPKe3stVQeRM
-   9B2rI3s3ekvi49j8t3Mz07yt0VYUhCsv9yG2fOv5T27TPomL2OWX9qV7m
-   i2/f+INBS1gMNqRSkmzrKWBrbX2N96iGswm/PlvmPeqheek8obETzgdU4
-   Q==;
-X-CSE-ConnectionGUID: 6/z/Ja4ZQUWmbwsS1N7Few==
-X-CSE-MsgGUID: sixJwz6lSEOd+vQmzKCGsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11587"; a="65666591"
-X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
-   d="scan'208";a="65666591"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2025 21:44:35 -0700
-X-CSE-ConnectionGUID: 4z0u4NppRxm0lWYQ3abMHw==
-X-CSE-MsgGUID: LAjfWbQvQ2mnz75G2nGsJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,241,1754982000"; 
-   d="scan'208";a="187657353"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 19 Oct 2025 21:44:31 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vAhkO-0009U1-0j;
-	Mon, 20 Oct 2025 04:44:05 +0000
-Date: Mon, 20 Oct 2025 12:43:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, nbd@nbd.name,
-	lorenzo@kernel.org, ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com, sean.wang@mediatek.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	howard-yh.hsu@mediatek.com, StanleyYP.Wang@mediatek.com,
-	rosenp@gmail.com, luoxueqin@kylinos.cn, chad@monroe.io,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921,
- mt7981 and mt7986
-Message-ID: <202510201250.Hpsrohca-lkp@intel.com>
-References: <20251019155316.3537185-1-olek2@wp.pl>
+	s=arc-20240116; t=1760935454; c=relaxed/simple;
+	bh=Sir+KVSVuMLYiFjlTfRR7MJreJK6t1DKB3Oo82ZAx1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dn/usnUy4xz9wL7tDt6f0L71Zim0QCFabg+HPFbzaNh9zTkX5t0jkAX1MA3rxenbgSwEbo9lL9UwWv8aDBnETjVpOHz6lTdCZrlDTt8zgn9ZxIlVXg1hti9g5WZCEjUMYusd78/YOB4PNyRPv4a4vOhOjcL2jlJ4zOhAEVKDHWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIcV/bJf; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7811fa91774so3382763b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Oct 2025 21:44:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760935453; x=1761540253; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=spA7o91KDi70Ll6ROh4SAqPxwOp0/KEcn9hPwha/0d0=;
+        b=hIcV/bJfasqPs7rbtw+HnFzvKoMT5ZwnOFsQ+xOj2FGxY3nqD5H8ib/+FKMra3+Gpu
+         98rlH8KxQ3rlUSycjhVPk/+JHhjZgYnFHIpa/PfF3+dovUsTsMAMa19I9pCubhc7bTV4
+         SAygLokh6oeTMiEKxnQXAdReaNLKLIqhBFDlZXsxSxhcC/lxOTLLVbtav5QNls6YDryU
+         zXO+4vGUm0QjO5YjnLBkbHND09i+8ya1D5CtqoRwsqru4Sge1yBg6pnOp0i/RcteyHrF
+         pntWW9e3CTaMKfG4nH9P+EwHtw760UjNAF3tL5dE9icNH6O2L3VpGi6TzwI0ro/11oP2
+         5eJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760935453; x=1761540253;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=spA7o91KDi70Ll6ROh4SAqPxwOp0/KEcn9hPwha/0d0=;
+        b=jfnyQoqoc021bQZU6kH/7clzEoqvt7TK0aJH4pBWP6LbyV/V7PWrO5H9MLIuCQH4mT
+         fxV+EZOwy4Mq8hzH0RdbzwE9TwDeLa96ZWAOwA0lrbhAHYU9JQ+7S9Fz+cxeNOxOaTRc
+         JEZRb943RV2a/Yxb6HUZLlWF9Yke2SCka1vrxXEFic8lqImRPWdZ/NQ8CefWz1AM/8PU
+         +4B9cks7b1Ft1EFT0KBiVdV2bDlIj/LoIStVJHOZV23b8rZ/MJ8CqT1yDcHahm7qN+c0
+         s6U3mPFhKl3y9OVOz8ye9ljWGTPVDG99EveauQKOk9cxTwMBqQ7707J8Oq1eHOZupCct
+         zGVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXB7FRK00dMTFi+rrWNsNuYiwu/4gFVCSXqxWwzDU4glXAPgbmy1RMKzjFRd3RkVb9oRQDROB3ECvD21Jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKOj4WYN71n6qN0HppBoq/HlvQ3QAnIVhG8H+JRqmLzkchgqIJ
+	g10UbAyg35Ai8t54MHFQ65nKlC71M+0fQeGTc7Vn19vmAHQcJ9FUiFxK
+X-Gm-Gg: ASbGnctdlK1qYqTHlOsXrbhCBSLRvuvZDsmxD1Mqi7Nnv91IaGcj/iZQqJPyQ0K6ydx
+	vAq+xP/xZcKAVlf/k0eZReCJlmIXgcDSM+HVdUF4V1cPmBNSPs/eDWwFIyxR2wYlX4ry/8EdJ5I
+	sacRqQMhGHc0fe2VN0nnFSbMpmlhLA7nRPtU2lxyvk999ypT2GvtNYfQTTBJ/O7U2dfIkAZP+/f
+	7ORPB3M1nTHgY8HojH+XU4HWIMIxzECSw2w8AH27zCwKhJ2WZYnqJaX2MxdX26Er2Ewj0MWnjIg
+	gKp+2+PRMrPm+xLIbSwqPknsEiAKyw3eW/dtBawP9nZSNVOWZCLObgx7pATPLOxmK1lmiECRb+F
+	VRW5lMKI3bjL1FqaM4qRtzEzgPnL1WBwnmeTpwbSRrI5czI/Xl9s=
+X-Google-Smtp-Source: AGHT+IHWbr3T6FVN2FnRLa94Qqq1QareIcDELv0GtDJz5J4Z5xhqWfcvLugBUZ8lTWu9Dmv4dv3pCg==
+X-Received: by 2002:a05:6a21:328a:b0:334:97a1:36af with SMTP id adf61e73a8af0-334a8523ebbmr15097184637.13.1760935452280;
+        Sun, 19 Oct 2025 21:44:12 -0700 (PDT)
+Received: from CNSZTL-PC.lan ([2401:b60:5:2::a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2300f2598sm7217538b3a.40.2025.10.19.21.44.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Oct 2025 21:44:11 -0700 (PDT)
+Message-ID: <08911ae2-fef3-432d-a236-d820c9cb67ac@gmail.com>
+Date: Mon, 20 Oct 2025 12:44:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251019155316.3537185-1-olek2@wp.pl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: fix eMMC corruption on NanoPC-T6
+ with A3A444 chips
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Grzegorz Sterniczuk <grzegorz@sternicz.uk>, Dragan Simic
+ <dsimic@manjaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jonas Karlman <jonas@kwiboo.se>
+References: <20251017073954.130710-1-cnsztl@gmail.com>
+ <d70c0eb5-9aa2-47b1-8205-81b724180319@rock-chips.com>
+From: Tianling Shen <cnsztl@gmail.com>
+In-Reply-To: <d70c0eb5-9aa2-47b1-8205-81b724180319@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Aleksander,
+Hi Shawn,
 
-kernel test robot noticed the following build warnings:
+On 2025/10/20 9:53, Shawn Lin wrote:
+> Hi Tianling
+> 
+> On 2025/10/17 Friday 15:39, Tianling Shen wrote:
+>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+>>
+>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O errors and
+>> corruption when using HS400 mode. Downgrade to HS200 mode to ensure
+>> stable operation.
+> 
+> May I ask you to test another patch I just posted to see if it fixes
+> your issue?
+> 
+> https://patchwork.kernel.org/project/linux-mmc/patch/1760924981-52339-1- 
+> git-send-email-shawn.lin@rock-chips.com/
 
-[auto build test WARNING on wireless-next/main]
-[also build test WARNING on wireless/main linus/master v6.18-rc2 next-20251017]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thank you for the patch! I will ask my friend to test it but he uses 
+this board as a home router, so it may take a few days or weeks to 
+report the result.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aleksander-Jan-Bajkowski/wifi-mt76-add-tx-checksum-offload-for-mt7915-mt7921-mt7981-and-mt7986/20251019-235515
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/20251019155316.3537185-1-olek2%40wp.pl
-patch subject: [PATCH] wifi: mt76: add tx checksum offload for mt7915, mt7921, mt7981 and mt7986
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20251020/202510201250.Hpsrohca-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 754ebc6ebb9fb9fbee7aef33478c74ea74949853)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251020/202510201250.Hpsrohca-lkp@intel.com/reproduce)
+Thanks,
+Tianling.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510201250.Hpsrohca-lkp@intel.com/
+> 
+> 
+>>
+>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+>> ---
+>>   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/ 
+>> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>> index fafeabe9adf9..5f63f38f7326 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>> @@ -717,8 +717,7 @@ &sdhci {
+>>       no-sd;
+>>       non-removable;
+>>       max-frequency = <200000000>;
+>> -    mmc-hs400-1_8v;
+>> -    mmc-hs400-enhanced-strobe;
+>> +    mmc-hs200-1_8v;
+>>       status = "okay";
+>>   };
+> 
 
-All warnings (new ones prefixed by >>):
-
->> drivers/net/wireless/mediatek/mt76/mt792x_core.c:636:19: warning: expression result unused [-Wunused-value]
-     636 |                 NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-         |                 ~~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +636 drivers/net/wireless/mediatek/mt76/mt792x_core.c
-
-   618	
-   619	int mt792x_init_wiphy(struct ieee80211_hw *hw)
-   620	{
-   621		struct mt792x_phy *phy = mt792x_hw_phy(hw);
-   622		struct mt792x_dev *dev = phy->dev;
-   623		struct wiphy *wiphy = hw->wiphy;
-   624	
-   625		hw->queues = 4;
-   626		if (dev->has_eht) {
-   627			hw->max_rx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_EHT;
-   628			hw->max_tx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_EHT;
-   629		} else {
-   630			hw->max_rx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_HE;
-   631			hw->max_tx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF_HE;
-   632		}
-   633		hw->netdev_features = NETIF_F_RXCSUM;
-   634	
-   635		if (is_mt7921(&dev->mt76))
- > 636			NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-   637	
-   638		hw->radiotap_timestamp.units_pos =
-   639			IEEE80211_RADIOTAP_TIMESTAMP_UNIT_US;
-   640	
-   641		phy->slottime = 9;
-   642	
-   643		hw->sta_data_size = sizeof(struct mt792x_sta);
-   644		hw->vif_data_size = sizeof(struct mt792x_vif);
-   645		hw->chanctx_data_size = sizeof(struct mt792x_chanctx);
-   646	
-   647		if (dev->fw_features & MT792x_FW_CAP_CNM) {
-   648			wiphy->flags |= WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL;
-   649			wiphy->iface_combinations = if_comb_chanctx;
-   650			wiphy->n_iface_combinations = ARRAY_SIZE(if_comb_chanctx);
-   651		} else {
-   652			wiphy->flags &= ~WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL;
-   653			wiphy->iface_combinations = if_comb;
-   654			wiphy->n_iface_combinations = ARRAY_SIZE(if_comb);
-   655		}
-   656		wiphy->flags &= ~(WIPHY_FLAG_IBSS_RSN | WIPHY_FLAG_4ADDR_AP |
-   657				  WIPHY_FLAG_4ADDR_STATION);
-   658		wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
-   659					 BIT(NL80211_IFTYPE_AP) |
-   660					 BIT(NL80211_IFTYPE_P2P_CLIENT) |
-   661					 BIT(NL80211_IFTYPE_P2P_GO) |
-   662					 BIT(NL80211_IFTYPE_P2P_DEVICE);
-   663		wiphy->max_remain_on_channel_duration = 5000;
-   664		wiphy->max_scan_ie_len = MT76_CONNAC_SCAN_IE_LEN;
-   665		wiphy->max_scan_ssids = 4;
-   666		wiphy->max_sched_scan_plan_interval =
-   667			MT76_CONNAC_MAX_TIME_SCHED_SCAN_INTERVAL;
-   668		wiphy->max_sched_scan_ie_len = IEEE80211_MAX_DATA_LEN;
-   669		wiphy->max_sched_scan_ssids = MT76_CONNAC_MAX_SCHED_SCAN_SSID;
-   670		wiphy->max_match_sets = MT76_CONNAC_MAX_SCAN_MATCH;
-   671		wiphy->max_sched_scan_reqs = 1;
-   672		wiphy->flags |= WIPHY_FLAG_HAS_CHANNEL_SWITCH |
-   673				WIPHY_FLAG_SPLIT_SCAN_6GHZ;
-   674	
-   675		wiphy->features |= NL80211_FEATURE_SCHED_SCAN_RANDOM_MAC_ADDR |
-   676				   NL80211_FEATURE_SCAN_RANDOM_MAC_ADDR;
-   677		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_SET_SCAN_DWELL);
-   678		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_BEACON_RATE_LEGACY);
-   679		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_BEACON_RATE_HT);
-   680		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_BEACON_RATE_VHT);
-   681		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_BEACON_RATE_HE);
-   682		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_ACK_SIGNAL_SUPPORT);
-   683		wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_CAN_REPLACE_PTK0);
-   684	
-   685		ieee80211_hw_set(hw, SINGLE_SCAN_ON_ALL_BANDS);
-   686		ieee80211_hw_set(hw, HAS_RATE_CONTROL);
-   687		ieee80211_hw_set(hw, SUPPORTS_TX_ENCAP_OFFLOAD);
-   688		ieee80211_hw_set(hw, SUPPORTS_RX_DECAP_OFFLOAD);
-   689		ieee80211_hw_set(hw, WANT_MONITOR_VIF);
-   690		ieee80211_hw_set(hw, SUPPORTS_PS);
-   691		ieee80211_hw_set(hw, SUPPORTS_DYNAMIC_PS);
-   692		ieee80211_hw_set(hw, SUPPORTS_VHT_EXT_NSS_BW);
-   693		ieee80211_hw_set(hw, CONNECTION_MONITOR);
-   694		ieee80211_hw_set(hw, NO_VIRTUAL_MONITOR);
-   695		ieee80211_hw_set(hw, SUPPORTS_MULTI_BSSID);
-   696		ieee80211_hw_set(hw, SUPPORTS_ONLY_HE_MULTI_BSSID);
-   697	
-   698		if (is_mt7921(&dev->mt76)) {
-   699			ieee80211_hw_set(hw, CHANCTX_STA_CSA);
-   700		}
-   701	
-   702		if (dev->pm.enable)
-   703			ieee80211_hw_set(hw, CONNECTION_MONITOR);
-   704	
-   705		hw->max_tx_fragments = 4;
-   706	
-   707		return 0;
-   708	}
-   709	EXPORT_SYMBOL_GPL(mt792x_init_wiphy);
-   710	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
