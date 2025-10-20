@@ -1,196 +1,266 @@
-Return-Path: <linux-kernel+bounces-861457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96923BF2C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:42:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9E6BF2C8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 19:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E85318A7728
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98FD3BB740
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 17:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22CC3321BC;
-	Mon, 20 Oct 2025 17:42:34 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434CB3321DE;
+	Mon, 20 Oct 2025 17:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WHyLNtPh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BED21ABD7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D83F3321A1
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982154; cv=none; b=OHsNqJ14la/F5bro65Nrk5kjTZp8WVG/gXWJOGwYtKaWK6JNNsd2j+Wz6WFM7LXWNYJbq7+JsPgCVo8tWF7nPh9UXuX5Q51WjYEpP4pvj6Qq0XUvoH9ILyzGZ53bW+QUgfmboC7LdSPq0/dRKofeK5IPkwyuWm2HdhboaqW7ygI=
+	t=1760982138; cv=none; b=AtC+AbQwdgROS3peRGVUKPFHS/auYhq8UyBS5q9uoibPj+0iXtK13diDd+AyeiqZuUBofRHaaEiZunx2lOLzod2xyd9Aoy4I31lsLo1Jn4nF1ZJzWWJhsI75vI8zHPPN2FB6m5OgHECQVuPVQpMfxtJkfFijuBYsWt+3j3KoAFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982154; c=relaxed/simple;
-	bh=qNsEYytiGRTReSMmoy2JakqeGw/R7wEdWRZO5PGzT9s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UOXrmpUXaQTjVH8xYk0iT/ACvCTRXZ81JiXM+QHUMHe1KV4StLW+rawJotVdJJWFocQqqy/cfW7gsvgeuJvUl/unrLv0U4USkLGEzHvXhShbADpBbiI0NtnlhG+1vqWIUMRWK47H++UEXeKv+RmIJQ1Frv4T8szfSAY/1p91s74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 20 Oct
- 2025 20:42:26 +0300
-Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 20 Oct
- 2025 20:42:26 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten
-	<hsweeten@visionengravers.com>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-	<syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] comedi: check device's attached status in compat ioctls
-Date: Mon, 20 Oct 2025 20:41:22 +0300
-Message-ID: <20251020174125.150608-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760982138; c=relaxed/simple;
+	bh=9qA6BuFeIx5fHAIGIw0nel7ZY5DQlvVmFai+iklLtRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k3YYWXeBkE3eCsNvRc1HKV2yas2djYuXXM0SxkZpd6+oK4uQ1y7BjJdy0xoK305ux7y+ThVbUG0f2w/dd3SKuJtYHTHhWAX3HN0YhFK/ORQzCzpJ7yiMYcZ+xwPsYn2lvz8e8UHv8u1o2vhbnKUMix1QXHIQJaB+iYMexDEiWiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WHyLNtPh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBArSC015603
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:42:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wuH6NKm3t0y7yTW2TM5liGhGfdwbrDlainmDiWhRs0g=; b=WHyLNtPhuwLKPt2f
+	l46aPJiAmy9GaLuPuLg5rUH09NC/JYrKTf3gQsiHkIlVhN55/kld2WCIKBYKHNpm
+	Rs9K4+PfLVVqWabGUAtVhwz6kjve4f1/FLjAe3+OVS8HEJYuWGXPJ/5rKELh2/hI
+	yY25V/ZuSq0YqmFF9z92HgAgxufq+Y5wHofNqdIrcsae9rbrRHuu8OFcbEQGnWLq
+	pOnVrr2qltSfiVIf+B8sL16AOd0QX2hsJtYedIafB6EQLsxcx7DJdF7y4RwJrXeF
+	JmVl/2zpMFPrCcwKpXfY3HbTSTgF70yZrQqzL17Usu842Ma7+0YPgNVx2Z4OdjmP
+	7s/XRg==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3985h9y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 17:42:15 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b6097ca315bso8210675a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 10:42:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760982134; x=1761586934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wuH6NKm3t0y7yTW2TM5liGhGfdwbrDlainmDiWhRs0g=;
+        b=tUs3IofqG+It8EDeYGLrgh6hMH+DatFgmfQzRJDn6phXs3e/0UGEmJZSkFC7qTbvW/
+         0irxgvgl9EBB6sd4EIbLGngf7Rl9qZya5rBNPgiy2sMe0X568CAqo8xfyTpMIUlmbHif
+         TX65v7zoshxzx+2j/FckqLHjqdPhehzhbhDe77ZgY00jNDWPZZL9URzKr7FmFC7Baeq5
+         L+msyK/pP4apegwJ8eLrjqkVWFvbi9+VI5MyeKpUtnElEVCEyqWrH9d+vpWESNVuhcxu
+         3i/b4ibxDRe12V4kUwlIu3Ye4Vsj3SfoKQCaUbWi5ZwgIcxzOwobPZ0H6NJfANyQKh6q
+         xxdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9LCYRAx4OYCCblRYDk7rwV4zaSpDEFOHr3GHUtiX7qx6tBR/YSEYxTPOgVxDxjkk1CD3EO97XJpLP6zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHCLdzRR4NwIWs9fae/kOIFSyMq6SF2M8yOzkSlEXcwKhuIwHK
+	bPqhn66lBkeCqJt12DPl6NNKcXFVul22lbJA278TREjUvaOIN0PEVM5FLhe9ONxpD5d26P2BG2e
+	HqHXQrWgfb0+fc22NDUpVwa/lJU/lcRgt6kRpdDelZXPuH241DnJUm0fIAL6fDXPdp6k=
+X-Gm-Gg: ASbGncv1tX1iyfBEm3pj0C89i5KdzMk5wHaA0CSUuA8E+jtcqLjcMJBMC6YLUsHd92f
+	CoSYC0UHuhJiX6iRYI/mooutVTH2GWQgvLUNpXfoe/b5HSmmO7CkAPmxXahFi12dQpInIEErEAe
+	hpi0D2ls5D00hAbGZzSl7ukds3czPLJf0+amPMhViR7AKFkpvlnqD8uRrR9Xhlf8Ean+0R3liSk
+	dC5KvLAwGi4zpqHW4s0I772Tj2Dmeb6AztBIPihbIx37CKdJCCQ3QvHpvf6CiTfUhigJONQKYmJ
+	Lin7zODG/oQSRu4Z0byjGhWduFePLANmIdZDPizafeUcPp+9D2iGHRVPS/aBQ2lPVZhOxlEKriV
+	Q6GErrqfuxvV//nOBAYK0oJ5+EFyvNbxTe87ByH4qsFvPLSQKkYJs2Q==
+X-Received: by 2002:a17:902:d4c4:b0:269:9ae5:26af with SMTP id d9443c01a7336-290c9d1b4d0mr172936215ad.13.1760982133868;
+        Mon, 20 Oct 2025 10:42:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGmgh6tUXTbf1pGfo1ASimL2b+7pT6kMnii6yInuvVAI5pWnTr0w6G4M9GWEUp4lc/J1jtUyQ==
+X-Received: by 2002:a17:902:d4c4:b0:269:9ae5:26af with SMTP id d9443c01a7336-290c9d1b4d0mr172935595ad.13.1760982133165;
+        Mon, 20 Oct 2025 10:42:13 -0700 (PDT)
+Received: from [10.62.37.19] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebcf67sm85874235ad.15.2025.10.20.10.42.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 10:42:12 -0700 (PDT)
+Message-ID: <63d9252c-77d5-4405-a395-d7664c35ea12@oss.qualcomm.com>
+Date: Mon, 20 Oct 2025 10:42:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] dt-bindings: media: camss: Add qcom,kaanapali-camss
+ binding
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Bryan O'Donoghue <bod@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-cam-v1-0-b72d6deea054@oss.qualcomm.com>
+ <20250924-knp-cam-v1-2-b72d6deea054@oss.qualcomm.com>
+ <CAFEp6-1o11B9o3HjdJY-xQhDXquOTknXo0JeW=HfpTxXcEaK3g@mail.gmail.com>
+ <a7be3a42-bd4f-46dc-b6de-2b0c0320cb0d@oss.qualcomm.com>
+ <d8dfe11f-c55a-4eb2-930a-bfa31670bef0@kernel.org>
+ <CAFEp6-1zpobZNLHt1192Ahtn2O7bV+As0P1YvVHrkRsORyH_Aw@mail.gmail.com>
+ <ac96922e-d2a3-4a99-8f34-a822c3dd2d02@kernel.org>
+ <7140b8a8-1380-4859-84a3-681b3f1ce505@kernel.org>
+ <f5a1076f-f06c-404d-88d4-fef4f7694c82@linaro.org>
+Content-Language: en-US
+From: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>
+In-Reply-To: <f5a1076f-f06c-404d-88d4-fef4f7694c82@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+X-Authority-Analysis: v=2.4 cv=KcvfcAYD c=1 sm=1 tr=0 ts=68f67477 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=_kPCHQoBruyNaNDuvIAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyNSBTYWx0ZWRfX2USErmjgpwT+
+ HrboZzI31UGen1K3cREVfELpMqR1ixFftPXLQsQ6/MIgnLB7lmkBxZGeJyuM7se/eC1v0M72R+M
+ QQRkWt0grmVwbnnMF3j2vvThNTLKgej+luu1FFXg8BHnz+i/jmAwLq3h+Uqh9Bcnu/mn24SVJ74
+ FlSzPnjd3+MX48xUCSqRbvVT6/osmFlNl4+0LuYXNA2mJe4Dim6Cp1w0W58EU6chM7hoe/nWIx+
+ JdyfBBgm6k20EHjBPUQnN8ox+Fg2kjfVU5R29QBnmoTRQ+qyOKoyrft99NPNiQr5CBQj6pNtL2D
+ ahkGgd+vZwzQL/uCSGHfhSS2oofggRERJ7LxYDKZq3vGn/6fa7xhC7vHMiYC9puaWorMkmdMune
+ 3CCXwptM5OBpvjlypq3rukiu2eMFBw==
+X-Proofpoint-GUID: YcTm4qIdPbwmjQOqJsqsHl_vFYgyebZh
+X-Proofpoint-ORIG-GUID: YcTm4qIdPbwmjQOqJsqsHl_vFYgyebZh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 bulkscore=0 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180025
 
-Syzbot identified an issue [1] that crashes kernel, seemingly due to
-unexistent callback dev->get_valid_routes(). By all means, this should
-not occur as said callback must always be set to
-get_zero_valid_routes() in __comedi_device_postconfig().
 
-As the crash seems to appear exclusively in i386 kernels, at least,
-judging from [1] reports, the blame lies with compat versions
-of standard IOCTL handlers. Several of them are modified and
-do not use comedi_unlocked_ioctl(). While functionality of these
-ioctls essentially copy their original versions, they do not
-have required sanity check for device's attached status. This,
-in turn, leads to a possibility of calling select IOCTLs on a
-device that has not been properly setup, even via COMEDI_DEVCONFIG.
+On 10/20/2025 3:56 AM, Bryan O'Donoghue wrote:
+> On 20/10/2025 11:16, Krzysztof Kozlowski wrote:
+>> On 16/10/2025 12:43, Krzysztof Kozlowski wrote:
+>>> On 16/10/2025 10:47, Loic Poulain wrote:
+>>>> On Thu, Oct 16, 2025 at 7:52 AM Krzysztof Kozlowski 
+>>>> <krzk@kernel.org> wrote:
+>>>>>
+>>>>> On 15/10/2025 05:21, Hangxiang Ma wrote:
+>>>>>>>> +      - const: csiphy4
+>>>>>>>> +      - const: csiphy5
+>>>>>>>> +      - const: vfe0
+>>>>>>>> +      - const: vfe1
+>>>>>>>> +      - const: vfe2
+>>>>>>>> +      - const: vfe_lite0
+>>>>>>>> +      - const: vfe_lite1
+>>>>>>> Wouldn't it make sense to simplify this and have different camss 
+>>>>>>> nodes
+>>>>>>> for the 'main' and 'lite' paths?
+>>>>>>>
+>>>>>>> [...]
+>>>>>> No such plan till now. Other series may take this into 
+>>>>>> consideration.
+>>>>>
+>>>>> We don't care much about your plan. You are expected to send correct
+>>>>> hardware description.
+>>>>
+>>>> To be fair, other platforms like sc8280xp-camss already have the
+>>>> all-in big camss node.
+>>>> Point is that if Lite and Main blocks are distinct enough we could
+>>>> have two simpler nodes.
+>>>> Would it make things any better from a dts and camss perspective?
+>>>>
+>>>>   camss: isp@9253000 {
+>>>>      compatible = "qcom,kaanapali-camss";
+>>>>      [...]
+>>>> }
+>>>>
+>>>> camss-lite:ips@9273000 {
+>>>>     compatible = "qcom,kaanapali-lite-camss";
+>>>>      [...]
+>>>> }
+>>>>
+>>>> That approach would create two distinct CAMSS instances and separate
+>>>> media pipelines.
+>>>> However, it may not work with the current implementation, as the CSI
+>>>> PHYs would need to be shared between them.
+>>>>
+>>>> I guess this should be part of the broader discussion around
+>>>> splitting/busifying CAMSS.
+>>>
+>>> And this discussion CAN happen now, stopping this camss and any future
+>>> camss till we conclude the discussion. Whatever internal plans of that
+>>> teams are, rejecting technical discussion based on "no plans for that"
+>>> is a really bad argument, only stalling this patchset and raising 
+>>> eyebrows.
+>>
+>>
+>> To be clear, I expect Loic's comment to be fully and technically
+>> addressed, not with "no plan for that".
+>>
+>> This blocks this patchset and any new versions.
+>>
+>> Best regards,
+>> Krzysztof
+>
+> I think we should stick with the existing bindings.
+>
+> There is no "lite" ISP there are so-called lite blocks within the 
+> CAMSS block.
+>
+> It makes sense to split out the PHYs from this block as they have 
+> their own power-rails but, if you look at the block diagrams for this 
+> IP there is no specific ISP lite, there are merely blocks within the 
+> camera called lite.
+>
+> It might be nice to structure things like this 
+> arch/arm64/boot/dts/rockchip/rk356x-base.dtsi with each component 
+> separated out into its own node with its own compat string but, I'd 
+> have a hard time justifying changing up the bindings we already have 
+> for that reason - aside from anything else - all of those components 
+> in CAMSS live inside of the TITAN_TOP_GDSC which is the power-domain 
+> for the whole camera system.
+>
+> So not meaning to answer for Hangxiang but, I think the compelling 
+> logic here is to stick to and extend the existing bindings.
+>
+> So in fact I have no problem with the bindings as submitted - not 
+> including the regular fixups these types of submissions entail.
+>
+> ---
+> bod
+>
+Hi @Bryan, @Krzysztof, just my two cents. I think we should consider 
+separating CSIPHY, CSID, IFE and IFE Lite into distinct DT nodes. Having 
+a modular DT structure brings in several advantages,
 
-Doing so on unconfigured devices means that several crucial steps
-are missed, for instance, specifying dev->get_valid_routes()
-callback.
+     1. Simple to manage with much better readability.
+     2. Better control to disable certain HW modules from DT.
+     3. Less error prone as we don't need to maintain long lists of 
+clocks or other resources against their names. Accordingly, easy to review.
+     4. No need to maintain resource lists within the CAMSS driver to 
+identify the resources specific to the HW block. Offers centralized 
+control for the HW resources.
+     5. Allows re use between the platforms when a same version of a 
+subset of HW modules is carried over to future chip sets.
+     6. Is more scalable when we add more functionality to the CAMSS driver.
+     7. Finally, it brings in parallel development ability with 
+engineers (within the local teams) working on different HW modules 
+within camera subsystem.
 
-Fix this somewhat crudely by ensuring device's attached status before
-performing any ioctls, improving logic consistency between modern
-and compat functions.
-
-[1] Syzbot report:
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-...
-CR2: ffffffffffffffd6 CR3: 000000006c717000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- get_valid_routes drivers/comedi/comedi_fops.c:1322 [inline]
- parse_insn+0x78c/0x1970 drivers/comedi/comedi_fops.c:1401
- do_insnlist_ioctl+0x272/0x700 drivers/comedi/comedi_fops.c:1594
- compat_insnlist drivers/comedi/comedi_fops.c:3208 [inline]
- comedi_compat_ioctl+0x810/0x990 drivers/comedi/comedi_fops.c:3273
- __do_compat_sys_ioctl fs/ioctl.c:695 [inline]
- __se_compat_sys_ioctl fs/ioctl.c:638 [inline]
- __ia32_compat_sys_ioctl+0x242/0x370 fs/ioctl.c:638
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
-...
-
-Reported-by: syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ab8008c24e84adee93ff
-Fixes: 3fbfd2223a27 ("comedi: get rid of compat_alloc_user_space() mess in COMEDI_CHANINFO compat")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
-Compile-tested only due to my QEMU setup currently being broken.
-Also, there is no decent syzkaller repro for this problem so
-testing this is a little tricky.
-
-P.S. 'Fixes' tag is technically not correct, as each compat ioctl
-that requires special handling arguments-wise has been modified
-in separate commit. I've opted not to mention each and every one
-of them.
-
-P.P.S. While these multiple identical checks look abhorrent, I've
-decided against changing current approach to compat functions.
-
- drivers/comedi/comedi_fops.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 7e2f2b1a1c36..123e9af2ed44 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -3023,6 +3023,11 @@ static int compat_chaninfo(struct file *file, unsigned long arg)
- 	chaninfo.rangelist = compat_ptr(chaninfo32.rangelist);
- 
- 	mutex_lock(&dev->mutex);
-+	if (!dev->attached) {
-+		dev_dbg(dev->class_dev, "no driver attached\n");
-+		mutex_unlock(&dev->mutex);
-+		return -ENODEV;
-+	}
- 	err = do_chaninfo_ioctl(dev, &chaninfo);
- 	mutex_unlock(&dev->mutex);
- 	return err;
-@@ -3044,6 +3049,11 @@ static int compat_rangeinfo(struct file *file, unsigned long arg)
- 	rangeinfo.range_ptr = compat_ptr(rangeinfo32.range_ptr);
- 
- 	mutex_lock(&dev->mutex);
-+	if (!dev->attached) {
-+		dev_dbg(dev->class_dev, "no driver attached\n");
-+		mutex_unlock(&dev->mutex);
-+		return -ENODEV;
-+	}
- 	err = do_rangeinfo_ioctl(dev, &rangeinfo);
- 	mutex_unlock(&dev->mutex);
- 	return err;
-@@ -3120,6 +3130,11 @@ static int compat_cmd(struct file *file, unsigned long arg)
- 		return rc;
- 
- 	mutex_lock(&dev->mutex);
-+	if (!dev->attached) {
-+		dev_dbg(dev->class_dev, "no driver attached\n");
-+		mutex_unlock(&dev->mutex);
-+		return -ENODEV;
-+	}
- 	rc = do_cmd_ioctl(dev, &cmd, &copy, file);
- 	mutex_unlock(&dev->mutex);
- 	if (copy) {
-@@ -3145,6 +3160,11 @@ static int compat_cmdtest(struct file *file, unsigned long arg)
- 		return rc;
- 
- 	mutex_lock(&dev->mutex);
-+	if (!dev->attached) {
-+		dev_dbg(dev->class_dev, "no driver attached\n");
-+		mutex_unlock(&dev->mutex);
-+		return -ENODEV;
-+	}
- 	rc = do_cmdtest_ioctl(dev, &cmd, &copy, file);
- 	mutex_unlock(&dev->mutex);
- 	if (copy) {
-@@ -3205,6 +3225,12 @@ static int compat_insnlist(struct file *file, unsigned long arg)
- 	}
- 
- 	mutex_lock(&dev->mutex);
-+	if (!dev->attached) {
-+		dev_dbg(dev->class_dev, "no driver attached\n");
-+		mutex_unlock(&dev->mutex);
-+		kfree(insns);
-+		return -ENODEV;
-+	}
- 	rc = do_insnlist_ioctl(dev, insns, insnlist32.n_insns, file);
- 	mutex_unlock(&dev->mutex);
- 	kfree(insns);
-@@ -3224,6 +3250,11 @@ static int compat_insn(struct file *file, unsigned long arg)
- 		return rc;
- 
- 	mutex_lock(&dev->mutex);
-+	if (!dev->attached) {
-+		dev_dbg(dev->class_dev, "no driver attached\n");
-+		mutex_unlock(&dev->mutex);
-+		return -ENODEV;
-+	}
- 	rc = do_insn_ioctl(dev, &insn, file);
- 	mutex_unlock(&dev->mutex);
- 	return rc;
+If not for the current patches in the pipeline, if you are comfortable 
+with this approach, we will try to push the changes for the future chip 
+sets with the modular bindings, leaving the existing SOC drivers and 
+bindings untouched (if that's recommended). Please let us know your 
+thoughts. Thanks.
+>
+>
 
