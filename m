@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-860760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013C4BF0DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AD6BF0DF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 13:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DDFC4F304F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:35:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9CA54F3227
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 11:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EF32FC861;
-	Mon, 20 Oct 2025 11:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfN84N3F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8A20C023;
+	Mon, 20 Oct 2025 11:36:08 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942192FB96A;
-	Mon, 20 Oct 2025 11:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F00221A436
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 11:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760960120; cv=none; b=SITQBbd5QZb7W2qxOGC2rt9iTgcIfBij8/pY1SUxLhAG2LyER21N93xmV3bv5Lkau3AIm7Wto0P7Y+/ryd+h9ut1nJWHPbFMCDkJPz3h7zukzAkubCqjE7+nq0qEPGXMYn3pDxOf7MhUO9mT11P42DX/dBCVuyzbSkz54gXH5jM=
+	t=1760960168; cv=none; b=Lca1NcgCgS4zl27LUbLt9p4UbFfHRiTUJKqUT+oopKngLtDAaCC7UmKcIU7Eg+qDzNGV1XAgNAKXKZ0vxN6pU6Oy5zG4giEIY5g7tpmCjO4ne9xsrtzpRGb03hIPUOStIZFAoOaWUJAwxsYdUX/dQxl5FLjoSMzzWLe5AdW87wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760960120; c=relaxed/simple;
-	bh=ZioengeclCBPyaIw8m5VBq2tqjHhRbeGcSeZSVPGoOk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LUgtJNbxDkvF+fxDJdI/Ujg3C1DHf1Qxsog5FjfJM7km6/3MzFJYlwvwuc8PqnmfrGj+ooLO/hD0f6NRMz42EniLDD2XaZjoBJ3LOl+g7z5uEiRexyxYwpMswGvcyGhXWVfhn0gx7Z+WJQ/db34RzM15EZC33xnGNdBwFgRL+ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfN84N3F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A9DC4CEF9;
-	Mon, 20 Oct 2025 11:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760960120;
-	bh=ZioengeclCBPyaIw8m5VBq2tqjHhRbeGcSeZSVPGoOk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=MfN84N3FvlrHrKO6hwp0uof+Ta7bEnnpHDT3YaLa+WZMR3CMdo0kZHWC3c1U6E2pF
-	 J5umlW8m4tmUBXWCdMwHbR4/0xVpTKgZPBLKDvRhZKJDxJztlux+q0MDAfDEkL6tk4
-	 8OYnemTQgRJ0/6UVcCgGgfTHTwvb9712A6SjcKvzTp9OqaiU46BCKQI2Ydk8t6rmO0
-	 EPlKRiwgd6lPVQLKfkryxc/KWv8F9NGbZx7wNrM1RS06vHJfcAyHaIhAQpol9wOgAt
-	 CEIBujREfOOxhdxe8FDc9qugI9RYC1kUt+djUMqMw1/KQ0j89XW7VWnow0FdMexgWY
-	 J7M8KbhYwuI/g==
-Date: Mon, 20 Oct 2025 06:35:18 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1760960168; c=relaxed/simple;
+	bh=tTkRyjMu+APc6t21uIUC4uhfOk90zU+A/TguluTuk+Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM/hWvMvnkGyKfMpXwGBK23rdseqVeY5Wtg1duS0rZSiNQFtQ7+cmvAcmgC957SIqRpRMYCB/RiBmVhal8rKCKKTaOJWE7rLVtoHRFgdrmoG25fiF7Ji7mC+Ug8FZowWhdEaxXKX3x+JtmunO/eAvptxkkSI+vsgnfHlW+wUPW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 59KBZr2h094400
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 Oct 2025 19:35:53 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
+ with Microsoft SMTP Server id 14.3.498.0; Mon, 20 Oct 2025 19:35:52 +0800
+Date: Mon, 20 Oct 2025 19:35:48 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: Niklas Cassel <cassel@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <jingoohan1@gmail.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alex@ghiti.fr>,
+        <aou@eecs.berkeley.edu>, <palmer@dabbelt.com>,
+        <paul.walmsley@sifive.com>, <ben717@andestech.com>,
+        <inochiama@gmail.com>, <thippeswamy.havalige@amd.com>,
+        <namcao@linutronix.de>, <shradha.t@samsung.com>, <pjw@kernel.org>,
+        <randolph.sklin@gmail.com>, <tim609@andestech.com>,
+        Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v6 1/5] PCI: dwc: Allow adjusting the number of ob/ib
+ windows in glue driver
+Message-ID: <aPYehqSefwW_-pAI@swlinux02>
+References: <20251003023527.3284787-1-randolph@andestech.com>
+ <20251003023527.3284787-2-randolph@andestech.com>
+ <aO4bWRqX_4rXud25@ryzen>
+ <aPDTJKwmpxolGEyj@swlinux02>
+ <aPDc-yclubiHbUcD@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: andi.shyti@kernel.org, linux-i2c@vger.kernel.org, 
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
- p.zabel@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
- openbmc@lists.ozlabs.org, conor+dt@kernel.org, 
- linux-aspeed@lists.ozlabs.org, joel@jms.id.au, krzk+dt@kernel.org, 
- andrew@codeconstruct.com.au, linux-kernel@vger.kernel.org, 
- benh@kernel.crashing.org, devicetree@vger.kernel.org
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-In-Reply-To: <20251020013200.1858325-2-ryan_chen@aspeedtech.com>
-References: <20251020013200.1858325-1-ryan_chen@aspeedtech.com>
- <20251020013200.1858325-2-ryan_chen@aspeedtech.com>
-Message-Id: <176096011475.23064.13799548826512417145.robh@kernel.org>
-Subject: Re: [PATCH v19 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPDc-yclubiHbUcD@ryzen>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59KBZr2h094400
 
+Hello Niklas,
 
-On Mon, 20 Oct 2025 09:31:57 +0800, Ryan Chen wrote:
-> The AST2600 I2C controller is a new hardware design compared to the
-> I2C controllers in previous ASPEED SoCs (e.g., AST2400, AST2500).
+On Thu, Oct 16, 2025 at 01:54:35PM +0200, Niklas Cassel wrote:
+> [EXTERNAL MAIL]
 > 
-> It introduces new features such as:
->  - A redesigned register layout
->  - Separation between controller and target mode registers
->  - Transfer mode selection (byte, buffer, DMA)
->  - Support for a shared global register block for configuration
+> Hello Randolph,
 > 
-> Due to these fundamental differences, maintaining a separate
-> devicetree binding file for AST2600 helps to clearly distinguish
-> the hardware capabilities and configuration options from the older
-> controllers.
+> On Thu, Oct 16, 2025 at 07:12:36PM +0800, Randolph Lin wrote:
+> > >
+> > > Could we please get a better explaination than "satisfy platform-specific
+> > > constraints" ?
+> > >
+> >
+> > Due to this SoC design, only iATU regions with mapped addresses within the
+> > 32-bits address range need to be programmed. However, this SoC has a design
+> > limitation in which the maximum region size supported by a single iATU
+> > entry is restricted to 4 GB, as it is based on a 32-bits address region.
+> >
+> > For most EP devices, we can only define one entry in the "ranges" property
+> > of the devicetree that maps an address within the 32-bit range,
+> > as shown below:
+> >       ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>;
+> >
+> > For EP devices that require 64-bits address mapping (e.g., GPUs), BAR
+> > resources cannot be assigned.
+> > To support such devices, an additional entry for 64-bits address mapping is
+> > required, as shown below:
+> >       ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>,
+> >                <0x43000000 0x1 0x00000000 0x1 0x00000000 0x7 0x00000000>;
+> >
+> > In the current common implementation, all ranges entries are programmed to
+> > the iATU. However, the size of entry for 64-bit address mapping exceeds the
+> > maximum region size that a single iATU entry can support. As a result, an
+> > error is reported during iATU programming, showing that the size of 64-bit
+> > address entry exceeds the region limit.
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  .../devicetree/bindings/i2c/aspeed,i2c.yaml   |  3 +-
->  .../devicetree/bindings/i2c/ast2600-i2c.yaml  | 67 +++++++++++++++++++
->  2 files changed, 68 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
+> Note that each iATU can map up to IATU_LIMIT_ADDR_OFF_OUTBOUND_i +
+> IATU_UPPR_LIMIT_ADDR_OFF_OUTBOUND_i.
 > 
+> Some DWC controllers have this at 4G, others have this at 8G.
+> 
+> Samuel has submitted a patch to use multiple iATUs to support
+> a window size larger than the iATU limit of a single iATU:
+> https://lore.kernel.org/linux-pci/aPDObXsvMoz1OYso@ryzen/T/#m11c3d95215982411d0bbd36940e70122b70ae820
+> 
+> Perhaps this patch could be of use for you too?
+>
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thank you for the information.
+After applying Samuel’s patch, the code passes the basic functionality
+tests. Therefore, the common code patch is no longer needed.
 
-yamllint warnings/errors:
+> 
+> Kind regards,
+> Niklas
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml: warning: ignoring duplicate '$id' value 'http://devicetree.org/schemas/i2c/aspeed,i2c.yaml#'
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml: properties:reg: {'minItems': 1, 'maxItems': 2, 'items': [{'description': 'address offset and range of bus'}, {'description': 'address offset and range of bus buffer'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/i2c/aspeed,i2c.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
-Documentation/devicetree/bindings/i2c/ast2600-i2c.example.dtb: /example-0/i2c@40: failed to match any schema with compatible: ['aspeed,ast2600-i2c-bus']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251020013200.1858325-2-ryan_chen@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Sincerely,
+Randolph Lin
 
