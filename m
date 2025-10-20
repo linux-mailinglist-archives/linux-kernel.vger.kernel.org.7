@@ -1,200 +1,70 @@
-Return-Path: <linux-kernel+bounces-861356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E3FBF282C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:48:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7913EBF282F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 18:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E6518870E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:49:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DB0C4EA824
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F1E32ED5E;
-	Mon, 20 Oct 2025 16:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYg53VZA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535CE27E071;
-	Mon, 20 Oct 2025 16:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D8832F762;
+	Mon, 20 Oct 2025 16:48:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7457B27E071;
+	Mon, 20 Oct 2025 16:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760978928; cv=none; b=TYRSPMU/eh12jsUNDMyPdSeeq9AJFwupxWbaJ8MyAY2c5yNUKP0mEpNOtE1xfm0nE9WF/6AY9zz5XQuF5/dYGZHU16f38LM9P8++TwbjwImrGezFMZk2g17F9kWreDKXN695OcdI3Z3VA3T4h9jp6hYOWgRifqGDDNQVPyFkIdE=
+	t=1760978935; cv=none; b=EuIZfFfBjAz/ZVlc8quUNA20Q7+oCl0le38BHOXDzzyxQziDLD/wlG83Xv5d+ReCGthEdoeq39JxoUuKbe8ppAjMQMNINGPJ3bDH+9Kfm7UWqrt+fuPnNbO+r1zSyxSEICsZFlD+40jBZpXuNFEavGwDq0uKs36e78NAwroIKw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760978928; c=relaxed/simple;
-	bh=zYqoYCQe4K7XudfmeVGpZr7tdm5vBdoL/LEBbTTO5iU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fiZL34bV/43eY/MATVnnq9KjAR0lbBjYYaPCzPWWClkXoAt5mwfABtqmL5SrEGk17xnXcThCTcSlzKTgZ0YNCKCkHFfnAVPGqoIkLxkCCAKOpfNCg0EUoBRjVOHQ8xYtjF7bzYWKal1QG+APBUHkmbHK7ke2StgCKeluJ/YOasg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYg53VZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B245AC4CEF9;
-	Mon, 20 Oct 2025 16:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760978926;
-	bh=zYqoYCQe4K7XudfmeVGpZr7tdm5vBdoL/LEBbTTO5iU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dYg53VZAhN66E9XaBivc4JKX9/Sl92OsDM3o6ol9TGgJPfP0P/GsFMc22z1RtQtnt
-	 AdwdaC/WHquIcTzfheRpQ9XYtPMyWIdx/IZ+MjE+JUXg2/q9ggKsvvmskeyKNgu5jD
-	 p+RlWVRQ7lLItITmNpGAIXRDBXtZtpNVKvJiGdLf8BfX7RFTaYKfl/67WQNtjp+ZHq
-	 aER2ncF7Y+XwMuEAv4vMrNC5HhyMlMpyna3kBdCCZ24IQIkShnupcx38AG/Q+o2yrv
-	 xmHZp/muQvnP4hPCic6dRy8T6B9uhVIuq2Bm7Il4Dczr45dqY/iqK/UTdVevwea6hm
-	 mN7I0dKh1Nd9g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vAt3s-0000000Fa00-1car;
-	Mon, 20 Oct 2025 16:48:44 +0000
-Date: Mon, 20 Oct 2025 17:48:43 +0100
-Message-ID: <86jz0pwmc4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	kasan-dev@googlegroups.com,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 06/16] arm64/insn: always inline aarch64_insn_gen_movewide()
-In-Reply-To: <20250923174903.76283-7-ada.coupriediaz@arm.com>
-References: <20250923174903.76283-1-ada.coupriediaz@arm.com>
-	<20250923174903.76283-7-ada.coupriediaz@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760978935; c=relaxed/simple;
+	bh=TN6KJeOMT+6mvj8g80so4+2Y3eKtmbwNPrJe05vbPlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8Hk2TtaByDC/Q4gNzKX7d/+r3XrvIA+Qkk9PGnpCji5lqL+cuX7eWnqOniQLEO9mZkD/PvKPfk168acT9CbxuLS4YrnmdfcmtXBOzpVSMEn5L2Lx+o7L70znNI933RXgJPIuuqrCp8YscXaNfT89xZX02I1znNaNHpaT+qPrTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF9E71007;
+	Mon, 20 Oct 2025 09:48:43 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B9CE3F63F;
+	Mon, 20 Oct 2025 09:48:51 -0700 (PDT)
+Date: Mon, 20 Oct 2025 17:48:49 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] perf jevents: Fix build when there are other json
+ files in the tree
+Message-ID: <20251020164849.GJ281971@e132581.arm.com>
+References: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ada.coupriediaz@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, ardb@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, kasan-dev@googlegroups.com, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
 
-On Tue, 23 Sep 2025 18:48:53 +0100,
-Ada Couprie Diaz <ada.coupriediaz@arm.com> wrote:
-> 
-> As it is always called with an explicit movewide type, we can
-> check for its validity at compile time and remove the runtime error print.
-> 
-> The other error prints cannot be verified at compile time, but should not
-> occur in practice and will still lead to a fault BRK, so remove them.
-> 
-> This makes `aarch64_insn_gen_movewide()` safe for inlining
-> and usage from patching callbacks, as both
-> `aarch64_insn_encode_register()` and `aarch64_insn_encode_immediate()`
-> have been made safe in previous commits.
-> 
-> Signed-off-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-> ---
->  arch/arm64/include/asm/insn.h | 58 ++++++++++++++++++++++++++++++++---
->  arch/arm64/lib/insn.c         | 56 ---------------------------------
->  2 files changed, 54 insertions(+), 60 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> index 5f5f6a125b4e..5a25e311717f 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -624,6 +624,8 @@ static __always_inline bool aarch64_get_imm_shift_mask(
->  #define ADR_IMM_LOSHIFT		29
->  #define ADR_IMM_HISHIFT		5
->  
-> +#define AARCH64_INSN_SF_BIT	BIT(31)
-> +
->  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
->  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
->  
-> @@ -796,10 +798,58 @@ u32 aarch64_insn_gen_bitfield(enum aarch64_insn_register dst,
->  			      int immr, int imms,
->  			      enum aarch64_insn_variant variant,
->  			      enum aarch64_insn_bitfield_type type);
-> -u32 aarch64_insn_gen_movewide(enum aarch64_insn_register dst,
-> -			      int imm, int shift,
-> -			      enum aarch64_insn_variant variant,
-> -			      enum aarch64_insn_movewide_type type);
-> +
-> +static __always_inline u32 aarch64_insn_gen_movewide(
-> +				 enum aarch64_insn_register dst,
-> +				 int imm, int shift,
-> +				 enum aarch64_insn_variant variant,
-> +				 enum aarch64_insn_movewide_type type)
+On Mon, Oct 20, 2025 at 05:08:25PM +0100, James Clark wrote:
+> I hit this issue because I'm using clangd with a json compile database.
+> Not sure if anyone else will actually hit this, but it's not impossible
+> and the fix is trivial anyway. The first commit is the fix so has a tag.
+> The other two commits are minor related cleanups.
 
-nit: I personally find this definition style pretty unreadable, and
-would rather see the "static __always_inline" stuff put on a line of
-its own:
+I can reproduce the issue and the redundant warning, and confirmed
+the series can fix them:
 
-static __always_inline
-u32 aarch64_insn_gen_movewide(enum aarch64_insn_register dst,
-			      int imm, int shift,
-			      enum aarch64_insn_variant variant,
-			      enum aarch64_insn_movewide_type type)
-
-But again, that's a personal preference, nothing else.
-
-> +{
-> +	compiletime_assert(type >=  AARCH64_INSN_MOVEWIDE_ZERO &&
-> +		type <= AARCH64_INSN_MOVEWIDE_INVERSE, "unknown movewide encoding");
-> +	u32 insn;
-> +
-> +	switch (type) {
-> +	case AARCH64_INSN_MOVEWIDE_ZERO:
-> +		insn = aarch64_insn_get_movz_value();
-> +		break;
-> +	case AARCH64_INSN_MOVEWIDE_KEEP:
-> +		insn = aarch64_insn_get_movk_value();
-> +		break;
-> +	case AARCH64_INSN_MOVEWIDE_INVERSE:
-> +		insn = aarch64_insn_get_movn_value();
-> +		break;
-> +	default:
-> +		return AARCH64_BREAK_FAULT;
-
-Similar request to one of the previous patches: since you can check
-the validity at compile time, place it in the default: case, and drop
-the return statement.
-
-> +	}
-> +
-> +	if (imm & ~(SZ_64K - 1)) {
-> +		return AARCH64_BREAK_FAULT;
-> +	}
-> +
-> +	switch (variant) {
-> +	case AARCH64_INSN_VARIANT_32BIT:
-> +		if (shift != 0 && shift != 16) {
-> +			return AARCH64_BREAK_FAULT;
-> +		}
-> +		break;
-> +	case AARCH64_INSN_VARIANT_64BIT:
-> +		insn |= AARCH64_INSN_SF_BIT;
-> +		if (shift != 0 && shift != 16 && shift != 32 && shift != 48) {
-> +			return AARCH64_BREAK_FAULT;
-> +		}
-> +		break;
-> +	default:
-> +		return AARCH64_BREAK_FAULT;
-
-You could also check the variant.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Tested-by: Leo Yan <leo.yan@arm.com>
 
