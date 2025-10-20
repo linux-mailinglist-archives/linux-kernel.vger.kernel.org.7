@@ -1,94 +1,257 @@
-Return-Path: <linux-kernel+bounces-861811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF19BF3B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6879BF3B57
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 23:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574BB3A3F26
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658A518C07B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 21:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE9F333758;
-	Mon, 20 Oct 2025 21:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5133375D;
+	Mon, 20 Oct 2025 21:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJfb7Wcb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k4yPmrdL"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011027.outbound.protection.outlook.com [40.93.194.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87C33343E;
-	Mon, 20 Oct 2025 21:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760995261; cv=none; b=XuzIzrKWFlq4R5i+KS7JqnMfWhFB3vff8Ou1oHFMd+zLVUvp9craCMxsy+Tp+7iuEd5YsQUkiQ0s3FU42jwpAi33arBq2auIJaQApStVOFrcu2WYfPqefB83AIfqxZotomJJT2RM2F5wtZrzrSlHcmZQpCsgEB2jdk8yxlO5bKs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760995261; c=relaxed/simple;
-	bh=3iQtO3/kT4dQdze6I2jUqdxwmT21PUB21GiN34k5zuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3irWKV4POzBmGaGeWyEwyycuC35tIj1yjOB1LBzH9zve7fUtUz8uizE9D0KmAwahZgnT+dAWWmxuJw7eG6JM6X2Uoq38nNevsS/L33OfvTQuUZX87IHoYmSwm6qVEP84wuSduxgTFSqXaucCX55hizeZZqjjLE8ugbiBiz/uGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJfb7Wcb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A057C113D0;
-	Mon, 20 Oct 2025 21:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760995260;
-	bh=3iQtO3/kT4dQdze6I2jUqdxwmT21PUB21GiN34k5zuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LJfb7WcbHlUO2BEDHBsJR6EKLKqG8NPDzL40eClZQ5mz8tqWZx5RcwwnI1n3IcyP0
-	 WPRp4LqWfpBNFglRnrGKQTS4c4yPJR04wJ4Tn8DRV69i+ZkbsNZBQm7euYWIuROI0C
-	 4o6qHZev+N4/UEzpExWxC0g3XE3h8qjBi47xgpPW0O/lCPUHzY23ViHODapCdaxS6G
-	 iBp+AKOEmDAIgL2tPols+oykkzqt7n9mCZWPJG+g/fy6DWsE404wLDETrKAckzb17T
-	 aSZt6uA6cxVlKI8FzNqBBOisFSE45rydlnsxwzHudMQnmD+qJ1TjQLKqKV1jzty35J
-	 gI2DZtm1pIZ8Q==
-Date: Mon, 20 Oct 2025 21:20:57 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH 16/17] crypto: jitterentropy - use default sha3
- implementation
-Message-ID: <20251020212057.GA83624@google.com>
-References: <20251020005038.661542-17-ebiggers@kernel.org>
- <20251020005038.661542-1-ebiggers@kernel.org>
- <1062228.1760956530@warthog.procyon.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1E92741C6;
+	Mon, 20 Oct 2025 21:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760995294; cv=fail; b=ib5/tFNjeo+TkYr0p3MW5ultnlG7k/KhuaXYLAFLa8wwrCmJbZLwIex/JbeUBylAO0ZiQwDcaXHTctV5l9eR7BYT5nrZ/6ou5DqC+VBppOeefeuk5QHRm9bfDm1xDMhRS+eSTusY1hD9d/w51U2pwahEWENuLPcEJv21f6epQAU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760995294; c=relaxed/simple;
+	bh=v0+hr/R4zdZ7v9JTWAvMyw/pfMWNE1tPXs59r88COfs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EBBgDYC3nFK9xwD+MXNpor0RumlYuoe9SOLKIUaMWJ88uMcGEgF2lyG/fzORZO+UfXcQM15p+GjGv9RjYqJA+BnYwoPGOmS2hXr3TjzqJg8QKZ8Fr1atvaenHIQIqN8M1jCgx3uqJU86ga07GVefNvl0kxA9OcVnuh1471MQc7I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k4yPmrdL; arc=fail smtp.client-ip=40.93.194.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BQtjmnye1z49EkyAkOZxjO8K1kOCAWhP+FhABBuPe9o9LhvrLICa3Z1fIeTkjBMN2Elki0K9itn2SL4m4ePyW0zTO1/ZTcp34cX8s7m3Asn1BiNWRR59jZ8HoswILTC9VyIitwqje0mjWWQICToOlBavdUNc78tA2Of2dVklOxsK2xjk7qyqlZMN0P+KHFfpp1V3vIBaHDYEfkxYTL8Khq2Y16OGZqnD5LrkndD5I0GjYczIxgsptlt5kOGSbzH3sw9yts0/BGMHMOh8Cw37NK0Y48oMj4Zg0kkdfp/DtOefj/k69pLT2zFPGQFWLP9FCftwRxmwIBUsEJ0o5GKOIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pWHfosIW35X1wUT9dXfqbL8zMmsHvZc3lo71XmpVSqg=;
+ b=r24oa2At7TrBI83mOMbnDe322C9O75uNGUHGiBOsM00xAbfQLfy4pqwwlA20J94xiQcZAgA6q2xPj70a1zX/12UoU+Z1avknzZa2r6uWzbRXdk3SslPxmWndYnhShwavmWaYkRL4OE7CXiLmsW4X2u+r1seF4oamxg3RsTzZ4Csi6GTXaW8jS31hmEuSHt4dfy5SgLFu4FiX/0g4KNJIqrtl6nECZ3uMXtaXbe96STv5iXbmiYlF78ouKaFs3ZQ7G9IV543jPjkMvK152fbGcXq75m+BrZR6UhMxazP4TvqzPeFSoYBbqNOaT7Vu+PfIw9v6+5cYpk5OazPfhOQuEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pWHfosIW35X1wUT9dXfqbL8zMmsHvZc3lo71XmpVSqg=;
+ b=k4yPmrdLaMyxQy137Zz9uEom+jhShhHCU23TwpLxdA1dM2GaYK5kLEoEMIXx3uyYzDEx4OPfOP6rwe5pWrgoiZFibXfbr7O3kSsE+mBoua7u2bXEUlF3POzbhXf/sXkVjmeDyO/eiQCc5SwBHugeBrt2NSL/Pl8GlotvYUHqWbx48b+Udwoxv0p/gqQRgiB5S+N4F/ZjJ0B0Y4F3sbzHtg1nMHDaMDosmrG8w+dtvP8i3vXHs5avErJmt0bIlCfrgkXaSD2rew7Lf7sHdMaICA0h9lxQSEX5QdMKlU2EJ/yJgxfHvmVnxjLbCMZbThtBR347a99jRAUuoxvqiAbecg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by IA0PR12MB7553.namprd12.prod.outlook.com (2603:10b6:208:43f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
+ 2025 21:21:29 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 21:21:29 +0000
+Message-ID: <c6350b8d-fb41-46f9-806d-20b058f778d9@nvidia.com>
+Date: Mon, 20 Oct 2025 14:20:58 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Pre-requisite patches for mm and irq in nova-core
+To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
+ Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20251020185539.49986-1-joelagnelf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR02CA0016.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::29) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1062228.1760956530@warthog.procyon.org.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|IA0PR12MB7553:EE_
+X-MS-Office365-Filtering-Correlation-Id: db813a2b-1e7e-4a92-5a6c-08de101ea27f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?STB4bXBNZnBmb3dNb0FoWFJ3VmtHR1U0am8xb2xDeldwSi9JV3kzam1ieUZK?=
+ =?utf-8?B?dVZmM0NkVEUyVXRsMkJsUE9YS2NUUDBHVGU0K3lHaDA5am9ydVBMc3BkNG5X?=
+ =?utf-8?B?LzhjR1hBVm44OG5BUUNnRk05eklBS2FrMlFXWE1xRnBKMzRBQUFCN3hBNDdm?=
+ =?utf-8?B?Y3JmeGZSVGUzY29ValQ2K1kvY3VlUkczVndjU0lWYVJuOFMxSHVDK0NaL0gw?=
+ =?utf-8?B?SGpsUWNMb0FVcXdiWkdzWnMxR2VTR21iZUFCR2lJeXFrNmFWanRFY0wvQ3Nz?=
+ =?utf-8?B?cEFQUFF3MkZNU3JNdVY4Q2EwV2ZjMXd5KzR3ZldqOWZTR2o1Ty9XeU41TGFw?=
+ =?utf-8?B?SVRPdnhQQUEwTUZyeVcxNTA5RnA1bWlCeGtOcVY3L0JpY0c0WTBIRHhNMThv?=
+ =?utf-8?B?SFhqOFdRYmdmcENzOWExZHB0M1g2a0w3MWRxWmtFZjlkak1KcU50c3plRld4?=
+ =?utf-8?B?MVZTakwwVWduaFJNMkJ4dEdXbTQ0eEZvVHVLZHB0bXRGaVBjbkFwOXpLdTBD?=
+ =?utf-8?B?N3pnQ3o5cTZhdmhpQ0puUEhySFFFN1dsU3U1ankvdUVWWWE5YWp0Nk1FZjBi?=
+ =?utf-8?B?ai8yeitZNlpuUDJ2YTM0QzVWY203dFhKUzdiN0w3bm9wQStKVHJTVzVIWXNQ?=
+ =?utf-8?B?cW8zMHZkKzQwNXgwM1hzemZRenlwaFQvano5OHRMcGczVXBUeHFFRlRLNWJG?=
+ =?utf-8?B?VjAyaWtIV0xPcGtlaGF1WHRKTDdUcGQ1WExCVVlyUG94SGxNK015UEw4d3lJ?=
+ =?utf-8?B?K3BVT2d2dW5XSWZBVUZXeUxjSHZjdVd4Ly9YeHM0ZW9LMzRNZkQxeGIwMU1p?=
+ =?utf-8?B?RXdoTEVRMFJYcFB3Y1k2Q3hCMFJSQjhLbUNuRGhBVlN1OVVYS2ZWNWI1cmRl?=
+ =?utf-8?B?MjZDc1JBMkFvUGYrU3U4YlQ5K1QwbHRRUDR2Z0dUNXpsb3UwZEltQmd2R2th?=
+ =?utf-8?B?OFM0VE40WkRVaGphdXNKS0JOUG9pc1l1ekVZVjdnWDR0WXRPVDRkL0NadnlI?=
+ =?utf-8?B?eUxWWER6KzFaTTVSUTFWYUk2bm9RMU5LbGhyMm40TnhFblZQbzNtWmZJT2k1?=
+ =?utf-8?B?RmpNZ2l0dXNpcHZtZVl3eGdKUFRNakNidW9WS3FCTHVnZkZlY2tHM1pvRmtu?=
+ =?utf-8?B?eURaN3pTQWs1ekMvbUdDRVZTcU1WOWlXNTlReGFtcFJpejJOc0xzem9lWjFv?=
+ =?utf-8?B?WWZuK081NlcxT2dRWXU1ME44MmpZNXNWYkFMNTQrUk9OMDhvbEd1M1BRUHJN?=
+ =?utf-8?B?d0FoaHFGaEhGVmVlNjhsMzVIeHBZM1BVN0p2UlMwYTloR1pjWE9QK3FaZnNq?=
+ =?utf-8?B?QzArekp5bUx2RWlET2htd2M5SHJIMjByK2FTNWRLTWdDYlFBVGFoalE2TzVx?=
+ =?utf-8?B?NVQ5Y3Z4YmhHOE43Y09WQ1duZno2YXY1OURuSytvQTJuS0F1Mmdvb1YvZnl0?=
+ =?utf-8?B?bmp4djdEajQwdmYzTndBYThnT2ZVYmVBbkdiWWtPQk15ZCswR2pWanZTSVEx?=
+ =?utf-8?B?NVlBNUtYQStGMW9nQnNLZlRMd3JRL0s4VmNLS3A3VmVLQVZ5VnFvdVhyVDQ1?=
+ =?utf-8?B?aENwbGdROTB4aFAyUUtPbFhjQ3FMaTNTSFVzRHZ6eUtaeStpQXhJbkhZM1Zw?=
+ =?utf-8?B?RmN2S0tzSFJIMWppOEJkdnpDZmEvNHhQSzN0V3hzL2JFWkRINjN0WmJZWnc5?=
+ =?utf-8?B?bE1KejRUbzZWYk9sbDdhVk45ZlBKMVJiMkJ1V2praHdoM1ZIV2ZhVVdaUlhj?=
+ =?utf-8?B?dE9Fbk13cHlLb2h4SlR0K3ZGQ0dxbFkwTERXaHJLNkdrNW5ERitRZUNpZEJu?=
+ =?utf-8?B?bUlNaWZFUmFhVVErV2JCUEQ0SitoZGo2K2gzamZ5eU83VmVzWkI4ZjRxaVZB?=
+ =?utf-8?B?ankyeUxBOUo2a1VrQlh1VDQvM05CN1E0aTNYV2UyVVVZQXZNc0xmdGZGdjFm?=
+ =?utf-8?Q?PgyzpcHolTiTuHjaUdcClIpxiXMkh/WH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Mnc1Q2Urb0ViUUxsMmhESnJRdE4xbmVramFhWWpaZUY1T2JxYzloZjA0aWtW?=
+ =?utf-8?B?clBJOWR1TmNBSm1nVlU3eFVONnBybTVjc3MvdDZZYXlCL3AvTVplUlN1ZWFh?=
+ =?utf-8?B?QmhoRm9aTURzT2RDMEwxSzVoMk1YVHRqengzSy81NjFqV0pmeXI1amIva1Rz?=
+ =?utf-8?B?QnZZeUgrVGpOVnAwYzl5QW5HYkNMcWxNa2phNXgrd3ZQQURYSGFXdUpWT3NF?=
+ =?utf-8?B?QzhnVXRMVnRXcmwxQXdEclJKSHVPQ1J2ajlwb0JvUVBqNENqazNyeWNCQXFB?=
+ =?utf-8?B?RTRHbUx6RWZjWHltTEJ3bWhxQmFzZXAyUEpFZlM3aXJlZVljcjhERmsxeGVH?=
+ =?utf-8?B?OUp5WEYyYWU0bEtHVHI4WVFRTDhveEdveUdRQlV1N1VhN2VVeVRNQXBnS29H?=
+ =?utf-8?B?SzJEcXM5SklyNVlEL29yRDgxWjBXekJHVG1GemVWSE9leldUdFMwVFlCNnVi?=
+ =?utf-8?B?WGM1Y2pwSWN0TUlTNHEzc3ppeXV6N1ZLZWlKdGVDZ1Z5YWxkRzAzbXR3aUNN?=
+ =?utf-8?B?RHlsbzhhRWV0M2ZEc1Z3d0RoOCtTTGlFRS9pVG9GR2tJczBQREpWcW1hVUQw?=
+ =?utf-8?B?cURDYzR5NUZvcHF2TUx1Ri9uUUkydkdZTVNoSVM3Sndwdm9FWVR2Q0lwc095?=
+ =?utf-8?B?T0M4ZmY1ckJiUTA5eVpDalhFbXBxMFRxU3VWTGtmNDI5OEFzeklPdzhsZUhp?=
+ =?utf-8?B?YmcyeGlnZDhoZldVbXlDN0hxRVhBaWtSRmtneUUrcjhpbm1mbHJTZURDSnBI?=
+ =?utf-8?B?QXZpS3J3Z1dqN3FkRDY2VVF5NVFnSEdBa0JVaXJvdGlzUUM3T2xQTjFzMHFG?=
+ =?utf-8?B?Mlg3QmVxL0ZQSm1JN1g2VzIyRFJMOHZrWVA5cFdYTFpkNjZjU1B1SnUrSWdt?=
+ =?utf-8?B?c0x4V1I5a2xzYmhaUW5VbTd4a2Y5WTR2NWV4L0ZmTEJrT1lnNUFaRC83TmZE?=
+ =?utf-8?B?Q0xZc29kM3ZIR3VBTGs2c2dZMjlUaXRZWmpWWmNLcTdJOFRTOTQxc0JNdUlz?=
+ =?utf-8?B?Nm1mdG1OSXFBTjltNVFCRWJ3Tjc5a3N4S3VqUVhucHVIeGQrOTZYczNkRDRX?=
+ =?utf-8?B?TCtGSDV6VlI2cGNiZkkwa0djZXJBRVhmYlF6S3dTUm44Vm5jK3VHNVBKeS9o?=
+ =?utf-8?B?ajluanZaLzlvVnFaU1ZWYTV1ZHRmVFhSWko3MlVhSkFXUmZ1Y01KcFpIcnBE?=
+ =?utf-8?B?bXo0aVppV0laK0FQZ1RTd1JkdE9CZkxkSEFvNUNDaDlwOUo0MHVlV0RsSDZB?=
+ =?utf-8?B?T2drVm5ZYW9PV3psaFhEWVBVSXFybGw5dXlWTUY2L0RtckpKN3Nlbmw1QW1N?=
+ =?utf-8?B?K2tLMnBWOG9La3JKdTFxcGhtei83S3dBYklkUVVlbjk0TVd5SUZmUmJQMFRI?=
+ =?utf-8?B?Q2xLck5WV0UyaWNrR0NxMmptdGR0VW5sSjVjVkg4clZ6dXRVQk5vNXBlWE5y?=
+ =?utf-8?B?MlpSdk1oMHBEU1hkUnl0djAweFlwcE5uYlZvdUZKb3krZ3JDNGNBTnloaDN6?=
+ =?utf-8?B?WG93MzYrQ3ZpM2htRGJCSEk2K1p4d2hNMWs1N0NjYzYrZkNPdTJJQzhZUkxE?=
+ =?utf-8?B?bk5UeEprQXpNeDVNMmYvRFRIckdCWEovcTdkRnpyUzV4WEtna25WZXF4Ym81?=
+ =?utf-8?B?UUxGSVMyM3k1MXdIZWx4c1J1Slo0bERYK2FKOUlNOUcyVEoxd3c1NEdvbmxz?=
+ =?utf-8?B?bldjMDJ4RElFUzgyaExsaE9BSDdNQXptWHFhazJHdk5QVnFQazlSUmJGazVX?=
+ =?utf-8?B?OW81Tmd3QVhrSUZqNi82TW9NK2ZHOXFhYkgxdW1oYUNvclZRSi96K1hTMEZB?=
+ =?utf-8?B?bmJNYTdyQ3UyTmhIQzRKa0JkNjFjWE1CaGxRSVRYTmtmUUQ4ZytnZ0JTQ2ZD?=
+ =?utf-8?B?Zy9TYllSQ1FzdEJZZWUyS0p6MUNBS2pHVjRJbU1Zc3Y2NlluVGhSeWdOamFV?=
+ =?utf-8?B?SDgyYXZjbWdFU0lSeDl1OC8zWStkT0txWGNYUTJQV3BtNEdhMDNRUzErTHhu?=
+ =?utf-8?B?NXBjVXZOamFXR2NMY0t0cUJ5NTBEMFJieGk2VkUzbFpkZzhEUk5oTnJoQ1R6?=
+ =?utf-8?B?WEpKWUZ4M0hCd1h4QU1NUUI2M1pTOUxGSFNweXJ2aW5pblIvcFIwY0dBTm91?=
+ =?utf-8?Q?qhnznc/OrjUbEJq83RW19g3UI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db813a2b-1e7e-4a92-5a6c-08de101ea27f
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 21:21:29.5930
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PNwxzGUYcqdQ5Vxd7JsyVFUlV2fTiy5ozfM+4CZ5AtjM0DXXK1MyzRX53sKnOUOapeguZqwJT8qN6v8Fs/gCLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7553
 
-On Mon, Oct 20, 2025 at 11:35:30AM +0100, David Howells wrote:
-> Why don't you take my approach and just call lib/crypto/sha3 directly rather
-> than using a crypto/ object as an intermediary if that crypto/ object is just
-> going to wrap lib/crypto?
+On 10/20/25 11:55 AM, Joel Fernandes wrote:
+> These patches have some prerequistes needed for nova-core as support is added
+> for memory management and interrupt handling. I rebased them on drm-rust-next
+> and would like them to be considered for the next merge window. I also included
+> a simple rust documentation patch fixing some issues I noticed while reading it :).
 
-We'll do that, and thanks for writing the patch already!  But that's
-something to do in a later patch after adding the library API.  Your
-patch description kind of raised a red flag:
+Just to be clear, it appears to me that one must first apply
+"[PATCH v7 0/4] bitfield initial refactor within nova-core" [1],
+in order to apply this series, yes?
 
-    Make the jitterentropy RNG use lib/crypto/sha3 rather than
-    crypto/sha3.
 
-    For some reason it goes absolutely wild if crypto/sha3 is
-    reimplemented to use lib/crypto/sha3, but it's fine if it uses lib
-    directly.
+[1] https://lore.kernel.org/20251016150204.1189641-1-joelagnelf@nvidia.com
 
-That implies that your changes broke crypto_shash, so you *had* to
-convert to the library right away as a workaround for that.
 
-That shouldn't be necessary.  We should generally keep crypto_shash
-working for now.  In which case, all jitterentropy should need for now
-is a simple substitution s/sha3-256-generic/sha3-256/.
+thanks,
+-- 
+John Hubbard
 
-We'll convert jitterentropy to use the library API too.  It's better,
-after all.  But it should be done later and because the library API is
-better -- not as some sort of workaround.
+> 
+> The series adds support for the PRAMIN aperture mechanism, which is a
+> prerequisite for virtual memory as it is required to boot strap virtual memory
+> (we cannot write to VRAM using virtual memory because we need to write page
+> tables to VRAM in the first place).
+> 
+> I also add page table related structures (mm/types.rs) using the bitfield
+> macro, which will be used for page table walking, memory mapping, etc. This is
+> currently unused code, because without physical memory allocation (using the
+> buddy allocator), we cannot use this code as page table pages need to be
+> allocated in the first place. However, I have included several examples in the
+> file about how these structures will be used. I have also simplified the code
+> keeping future additions to it for later.
+> 
+> For interrupts, I only have added additional support for GSP's message queue
+> interrupt. I am working on adding support to the interrupt controller module
+> (VFN) which is the next thing for me to post after this series. I have it
+> prototyped and working, however I am currently making several changes to it
+> related to virtual functions. For now in this series, I just want to get the
+> GSP-specific patch out of the way, hence I am including it here.
+> 
+> I also have added a patch for bitfield macro which constructs a bitfield struct
+> given its storage type. This is used in a later GSP interrupt patch in the
+> series to read from one register and write to another.
+> 
+> Joel Fernandes (7):
+>   docs: rust: Fix a few grammatical errors
+>   gpu: nova-core: Add support to convert bitfield to underlying type
+>   docs: gpu: nova-core: Document GSP RPC message queue architecture
+>   docs: gpu: nova-core: Document the PRAMIN aperture mechanism
+>   gpu: nova-core: Add support for managing GSP falcon interrupts
+>   nova-core: mm: Add support to use PRAMIN windows to write to VRAM
+>   nova-core: mm: Add data structures for page table management
+> 
+>  Documentation/gpu/nova/core/msgq.rst     | 159 +++++++++
+>  Documentation/gpu/nova/core/pramin.rst   | 113 +++++++
+>  Documentation/gpu/nova/index.rst         |   2 +
+>  Documentation/rust/coding-guidelines.rst |   4 +-
+>  drivers/gpu/nova-core/bitfield.rs        |   7 +
+>  drivers/gpu/nova-core/falcon/gsp.rs      |  26 +-
+>  drivers/gpu/nova-core/gpu.rs             |   2 +-
+>  drivers/gpu/nova-core/mm/mod.rs          |   4 +
+>  drivers/gpu/nova-core/mm/pramin.rs       | 241 ++++++++++++++
+>  drivers/gpu/nova-core/mm/types.rs        | 405 +++++++++++++++++++++++
+>  drivers/gpu/nova-core/nova_core.rs       |   1 +
+>  drivers/gpu/nova-core/regs.rs            |  39 ++-
+>  12 files changed, 996 insertions(+), 7 deletions(-)
+>  create mode 100644 Documentation/gpu/nova/core/msgq.rst
+>  create mode 100644 Documentation/gpu/nova/core/pramin.rst
+>  create mode 100644 drivers/gpu/nova-core/mm/mod.rs
+>  create mode 100644 drivers/gpu/nova-core/mm/pramin.rs
+>  create mode 100644 drivers/gpu/nova-core/mm/types.rs
+> 
 
-- Eric
+
 
