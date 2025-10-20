@@ -1,113 +1,152 @@
-Return-Path: <linux-kernel+bounces-861116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D58BF1D23
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44533BF1D32
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 16:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4544E460680
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A0F40286B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 14:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCDF320A39;
-	Mon, 20 Oct 2025 14:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59916324B21;
+	Mon, 20 Oct 2025 14:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="B3vxHAJY"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tjXa3BmH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2472F8BCB
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 14:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E5E31DD82;
+	Mon, 20 Oct 2025 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760970173; cv=none; b=HKCZPqjdaEXl7d77X3DNkVPZX5A4Q9syH9YxQB9FCRzBwgqplS6NfqPnS4EMlkbeKvh8nqz9EYeUf1nEppYP+Ah2cMSTwHGVFsuTHDr+tK3B3KAYVSNJn2sVCZ3D0Uc0xfv9NaY5dR7hYEIWbTU4LRQgs2vGmcTvVLx+zjorVz8=
+	t=1760970249; cv=none; b=HzGYIuJ62ZY8GmYew9/vo8ZA984UJxbizxlp/9xsDh31MLO7IEwXJUVj15gcK+6QBpjpnQstJwvR4WqjY5oHKKmNGPrLJsO9YmAIqXEih1XU/zNDnFjOH71zlFvCOAsjQ95XE90E/orw5bMgMxh6Y5JqQ3FSubdg6TohpcnQVzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760970173; c=relaxed/simple;
-	bh=UJJpmzAqJ4fNKtxAFBD6r6VHXs+/qK3P1QsraWv63QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2C5N+YwI/VTDyPgxrYQIJ0w1j9JuiyNn9NF24ayOL9/6Xb2jDUiWM6xFDZjjpV0nmmCdxWpajPX8oHBkILikSi3mfdid3Ft3pMA2iTC11VYubOt2gqNeeNzZfVL/VWnAffGXZfNfRCaJHfZOAxq/8Uf1PTO8+DhnzLGtkEB3Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=B3vxHAJY; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-78ed682e9d3so60773946d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 07:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1760970170; x=1761574970; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ome1K21U8OKmqIh6cxr7UpkIOBQ/Su9V9X20JROSYuM=;
-        b=B3vxHAJYKEs/96pn/HUMQIY5sOQM7Yc6roOi8anQ8ev3wQP2b4sgumnLtf0Juo/0lQ
-         mbArhcdwH8v6YcDL3hMyxusAbKZ26ugm49gWNj4jnAQ7lRJDVvGW45BgKkKvPfPLIp+u
-         ua5B8DZ+n5dhlEbkom8vBytat3QmYCEGOJ/IvfnwoNuyyMTtzRmn46lppLfsINEOF7or
-         ZAUKxiIIpu8mXNr9thhW2JFaNg4cFpkolrxJbPwa004sXQNbv641mSyiG4avZ45SYU27
-         +KIE8YHK5t93F0ZZ/I8Ca4zviqMI1m8f/UARfvLWkaYUGF67cKfj55BOpwYkc+pXBYFc
-         Kikg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760970170; x=1761574970;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ome1K21U8OKmqIh6cxr7UpkIOBQ/Su9V9X20JROSYuM=;
-        b=ntuhS4+/KcW9z93NK8Ki/Aqm7/zHGLhLSr4MwQ4NMvwWWy5AwO45Enff4WMl/y3F3E
-         GLHSGKMi+pCxJCBKkvYWMoIJUwcbjJKVEn5m3RYYw65OBqep4pWQIZPQB55vz4rOUDjw
-         NB9geTEgx10XxrL3EKlryUagUsvGxZgtfEl6nXuV7/23YwMFC7j31B0j0DDzGeyFOeFv
-         SZNJqFIsTCr4K+2ZIGUGUaxAj8cStSavW7bwSOC+KtQffM/bRwDPkIdYOWpxzMOzNKE2
-         0qSGrDjdEVY0LLFtzk2xHLdbpG+ZxbpspjKjKI4zDqpWcA4+EC3fbgmm0HZyuGcHruEs
-         QF6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV+DugaZFl0g8ZzWL5bfbnREgxnq/HhzlUK6lWWFyCaAZ90zYd6x7Ld+pjWUb/cYR+J4rSMsB5dZgJeHgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOrCRI30CDR64XG5h5Yqo+pNTF8/0vOj1wWnFlUPqvJAAwBiU5
-	p9u6qTUZg5V9XTDTXfTQkD88yHsMHfh3/dxQCD7sAoznXyOG56daFiiSZoX9MUr1kmA=
-X-Gm-Gg: ASbGncurfPlvX/FxMtBpC4zTnQBhWbkTVUoVsSD0toyGbWNNShv0QfBE6xwMS4nkCUx
-	MXtSAgSqtYgW+OAj/EmM88+m1VfOElta8rsfhzpcb5r8QZJjXii2ecLp9JlHgLkZh8QPE0cYwUY
-	j4r3HEl4k9ATG/6Jc31J9o/UlRQFteEcn1Vq4R7HEDg4l++NwXXGsLqSYqeYe0Vuf5gk51X0/jH
-	qB+xTklVJD1+98SQLd8OYH0cS2an0w4neXQnxWHLKI8z3wU0n8lawk9i33Iq5bt+oFxrAHfk89W
-	QHCiuQMccVGrNmk6yxfZTP9PxLC1YC0/dbLDOAwdhcNsQeukAMVCp25RkpZSb+Ixilw5j+iXa7P
-	iCSjD2/1BjJZJ78WLUEXwEx1AAd1ocubYZ1lfrRvt6GyvtvJGLb/NkOn/NZEOk5Xmf6TC+nmqqn
-	26w8mlNarqmVpRGpJur/UGDmSPMgnaFWqxNekcoXzAspdWpW01jAvP7bQ2ocLyr4LQwYYQPw==
-X-Google-Smtp-Source: AGHT+IGL/jp9+4xUfY50jcRRy/t4MGHpw6jQ2O094KKD/LfcVRUdB+PlhBahj0B9OuP95IOnQE5uVw==
-X-Received: by 2002:a05:622a:306:b0:4e8:a85f:e4a6 with SMTP id d75a77b69052e-4e8b7cdf3cbmr81951421cf.81.1760970170265;
-        Mon, 20 Oct 2025 07:22:50 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cf0af579sm568871285a.41.2025.10.20.07.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 07:22:49 -0700 (PDT)
-Date: Mon, 20 Oct 2025 10:22:47 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, osalvador@suse.de, corbet@lwn.net,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	hannes@cmpxchg.org, laoar.shao@gmail.com, mclapinski@google.com,
-	joel.granados@kernel.org, jack@suse.cz, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexandru Moise <00moses.alexander00@gmail.com>,
-	David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH] mm, hugetlb: implement movable_gigantic_pages sysctl
-Message-ID: <aPZFt05GcyTkGNQ5@gourry-fedora-PF4VCD3F>
-References: <20251009161515.422292-1-gourry@gourry.net>
- <6fe3562d-49b2-4975-aa86-e139c535ad00@redhat.com>
+	s=arc-20240116; t=1760970249; c=relaxed/simple;
+	bh=yjaNgHiB686AU9MYY0jxbk2QdLrO/ArFLB4xXQkkrQA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OrHZouJ6z/2Ml92cMzk4PqRczTWulL9xPxSLkIDkGqMNR/19BXvBVg6AWuAnEtX5E0XyNbMiR+KopSqxsMXIpacqYx25XlgGxjSLQcSY516GjuinkMKtu6JM/S2FJHZ90pkEMZd6NGQpD2DIBsFTN/LSQV0xUhUzL4GaBtPcnaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tjXa3BmH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KDK4p7017502;
+	Mon, 20 Oct 2025 14:23:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=lu2+e1
+	JrNwjm4w5JqiQAtevBk6ezsFtqM0xfwb3L/VY=; b=tjXa3BmHBBoIE+wmqP/MZx
+	LYWCrKiMVFehBQDTjQWMNuS3wYuqNokzizPSGYw3TRj1muzGTLlPxbaA9RHhOSwg
+	B0yodU5AsLAx2xmGYnZKjDtpZW5f773l5PhGIn/kDfk5rtovnHMMQChwBtlJuRR0
+	Omm+lj+Jx4D5LUEq1S3O7iu2V0i83kSiKjvolmx251Yyo2TQJTxw4f5IMcDhlpDV
+	L2ShZF41lqkLdAMBHsAERIqf+cJlyg3fTg0I0y1dwycvxXL6K8+al2NaqRKSNo11
+	QoireIY8OgmDKg7bnVRVhe9YFNRoaoke4tFfQHQDUnx0PUu3elMlGGRsGLZE6JvA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30vgupw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 14:23:59 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBQ5vg024686;
+	Mon, 20 Oct 2025 14:23:58 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqjp0p8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 14:23:58 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KENsHx27263372
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 Oct 2025 14:23:54 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CF9B120043;
+	Mon, 20 Oct 2025 14:23:54 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9458520040;
+	Mon, 20 Oct 2025 14:23:54 +0000 (GMT)
+Received: from [9.111.135.235] (unknown [9.111.135.235])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 20 Oct 2025 14:23:54 +0000 (GMT)
+Message-ID: <48b8205d-96e4-4ed9-b8df-8cbdb305e661@linux.ibm.com>
+Date: Mon, 20 Oct 2025 16:23:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6fe3562d-49b2-4975-aa86-e139c535ad00@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
+ library
+From: Holger Dengler <dengler@linux.ibm.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Ingo Franzki <ifranzki@linux.ibm.com>
+References: <20251020005038.661542-1-ebiggers@kernel.org>
+ <20251020005038.661542-16-ebiggers@kernel.org>
+ <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3gcsP6YNnx9uH9bxnaVlScEk32ZbDY4m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX5GP2ZyrzfV8k
+ CD7A+7IogP0brIFtbCSSO7FMMACu7q+fHrAYvWy2QAqSNKdHoZ2gKOcl/r2tY+bcHJth2KGtr3N
+ gqNIiVc9NS/fC6lyepXqRWWJ3J8QIUZkQErM0s3ibeJaRp+Y4Ki2slQnRqmThtM7UQSxg4HZZfY
+ YV2m/8CULVI1BMFO19KL7wvJbrdQZwdFsmqmjgePCcplzdyAxZx+ocwkeMuic2lLlwgTB63fzyq
+ c47U1eHYzGpdrQnz/Vd8vSxfl4wj3OTk61bMnT0PDM8HXzyYn3ogM2JNOCrD/Om3C+oQIR+lydO
+ HVVAt1Kqk4Uvb3t3efFLL5ITojLEqz8XOZk7bK6ZsmPlne1MWi0slUSeuJGytRdVw8W0x+Nr4LD
+ I3JJJvEJ2e53bRMXKPuCkDxkM6UMHg==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68f645ff cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=a1n8l1vKblwj1NcKW7YA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 3gcsP6YNnx9uH9bxnaVlScEk32ZbDY4m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Mon, Oct 20, 2025 at 04:17:06PM +0200, David Hildenbrand wrote:
-> On 09.10.25 18:15, Gregory Price wrote:
+On 20/10/2025 16:00, Holger Dengler wrote:
+> On 20/10/2025 02:50, Eric Biggers wrote:
+>> Instead of exposing the s390-optimized SHA-3 code via s390-specific
+>> crypto_shash algorithms, instead just implement the sha3_absorb_blocks()
+>> and sha3_keccakf() library functions.  This is much simpler, it makes
+>> the SHA-3 library functions be s390-optimized, and it fixes the
+>> longstanding issue where the s390-optimized SHA-3 code was disabled by
+>> default.  SHA-3 still remains available through crypto_shash, but
+>> individual architectures no longer need to handle it.
+>>
+>> Note that the existing code used both CPACF_KIMD_SHA3_224 and
+>> CPACF_KIMD_SHA3_256 after checking for just CPACF_KIMD_SHA3_256, and
+>> similarly for 384 and 512.  I've preserved that behavior.
+>>
+>> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> The current code also cover a performance feature, which allows (on supported hardware, e.g. z17) to skip the ICV initialization. The support has been introduced with 88c02b3f79a6 ("s390/sha3: Support sha3 performance enhancements"). Unfortunately, this patch removes this support. Was this intended?
 > 
-> However, it also means that we won't try moving 2MB folios to free up a 1GB
-> folio.
->
+> The get this feature back, we need to hook also into the init() function, set the according bit for the first message block and skip the initialization of the ICV.
 
-This may actually explain some other behavior we've been seeing, re:
-reliability of 1GB allocations.  Let me ask some folks to look at this.
+And it would - performance wise - make some sense on s390 to replace also the sha3_xxx() functions. The init()/update()/final() sequence is not necessary on s390, as it can all be processed by one single KLMD instruction call.
 
-Thanks David,
-~Gregory
+> 
+> Please also add me and Harald Freudenberger to the cc: list for this patch.
+> 
+
+-- 
+Mit freundlichen Grüßen / Kind regards
+Holger Dengler
+--
+IBM Systems, Linux on IBM Z Development
+dengler@linux.ibm.com
 
 
