@@ -1,47 +1,93 @@
-Return-Path: <linux-kernel+bounces-862712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61C7BF5F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:12:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBD5BF5F8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A807D4E379F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:12:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B929188B298
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9209B2F2619;
-	Tue, 21 Oct 2025 11:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F01E2F1FEC;
+	Tue, 21 Oct 2025 11:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAj3Fmxa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="hIZQ5khV"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92F7134AB;
-	Tue, 21 Oct 2025 11:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0430134AB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761045139; cv=none; b=gNz+zAIWVGs67k/xAY9VsLsWbVEqz44PPdlD4YD6zclegWpnNSo3+yLpRJzJ0FXY47/x3T0wtDTUSZBxbQkWi1pEAGd8rCsppDOrmMTze+9IbgtS/SSrzFfH7d+pHx1Np7loB2Aep2c0CIVyxaoOCp8VYKGtRLtYsjbztZCPsoE=
+	t=1761045227; cv=none; b=nK9nqH3pQckEhRABFmYQ0pQpxbA9cDPbwqKnopFaIsSVVtALzkJsB/c1H/5Mz6MrPy+7LgBC8RwOK5KvxAFGPyc8d99RnHiokuJ5HUQ7rtYfmcH7NOZc13BVVOGVFHG9O1s2k7zVcz0GFPT2lbj51iSQKde7EsA5kT+kVXd6Cz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761045139; c=relaxed/simple;
-	bh=7cis9bhxmlrIFczwSWIaf0k5ykKAsBoyLTrxjnNmBug=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fZ2m5gJ2U9wuVz0ZOuwUPBvuq6wsbHr9T2cqq5iB6wPHM1nvFq775KT17XkidqkmSwU8JAOoRzE2vwsGMW6k2xqRfeceP0EghgaanRfVxvPeDVMtXQCqj5oapthdfHjZW9f+l6yDD2B5tj0TKOJkCBWZr03YVpVmxgSjpjVvu6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAj3Fmxa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E6EFC4CEF1;
-	Tue, 21 Oct 2025 11:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761045139;
-	bh=7cis9bhxmlrIFczwSWIaf0k5ykKAsBoyLTrxjnNmBug=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=SAj3FmxaKgxKJrBArNWsYA19r4nVdWbjIbeegDTDLrj+lplzGfhO0rZ6CtrFjDQxB
-	 tOVQ1iRi7VT94QxzmlHqxpaEow+Y2Ekh+HoBQq+e4pjNvN01+Ns14HlKHTpDCaMa60
-	 vUZnKkA487fwcFLg7Afzrh323Hggz3WJsMlDJmAPJXcgOvnsIID7UCXbctNiD1S1AA
-	 2K2NEOspnHDslWpjIWvJqiZlAWDCu7WMgWuYLSuc7zlbPiw9TbQq3FQey4JZAuq2nc
-	 6TH1stkqEQoayw/5pxcMDvATK8c1QvaOxi2nsn/jAah51UNVgwLltHuARLju4Q1dPW
-	 kIHnSSDqkDIrg==
-Message-ID: <942989d4-7a2a-4087-b761-ac8d8bea4d03@kernel.org>
-Date: Tue, 21 Oct 2025 13:12:14 +0200
+	s=arc-20240116; t=1761045227; c=relaxed/simple;
+	bh=uw0CA7oFuxITLDZD/L/VOTAIizyG0JRsyPLP0XAL9lU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DwFWJ+5tzr3CGSRdqz/KTGCNW1UMRUEhUGr0TkyAmqFDRCWfK4aUnEcxhZXeUe7sEMCoP4WtCvn+euqyDr1DHi1FcwEG7QZ/x6ylcEG2OeAI6I3UkZUARWKTyelOsl7x+zw0/06wqm34uwzAKto/bbESjQiZhKgnCWbQIxcN9xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=hIZQ5khV; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1B5FC3F686
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1761045222;
+	bh=ikcIzK7s67FNHE582ucGZVht5ku4GdzRhtqL5nJR72A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=hIZQ5khVcxCcCgjIY6yG3I48u6Wtxurgt2oGt694g+pnuSZMfxS5gRhIS1jSQlw81
+	 xRkTXPRFx9glB+/UO1vXu4RjuFiLnksruBrbT1r/ygcJqmAX45Do3sXyJUIKxYzlSa
+	 oOBK+U2PmRfT324g1msHF+vQrDy/RQEWs0Mg33yUMRmk/XEA7V56N1tBvvOhIeF7k7
+	 rjXZ0J/Ab3q2O8dGU1clY1+150SZUc+VKiD9gfuTn9CzXEnBNZGsFlCOUlopqB5VX5
+	 qWgyb4CCnhVoAj1KGAEDvaEuNijXLGxvE38UqOyMKyp6kmKRkkCE/wm7UjZgIHlIxQ
+	 wC6qamhXAYbay3wFFXHDSNAdEGKu01dxgDv8bPBAscrwV6ZJQXQR/XH3R2YgHya2pz
+	 nOvsrPkA+/LQro6h+2wpfeSvPUaQn59jePBfIT0EPOJbpksKj+WjOhcL183Sm23LmE
+	 zsnRQSCYYTSqKGn0/pygO7IHpRyWbxdtB/pZuHb10oMVoWzXxDCKF/xiPDaRX2CTVn
+	 U8UCaNQK2rao1MaL0YffU/60gJywb+IQXLbbRDqKIaZbFJfyXGKu2A6WdaPf9cJcww
+	 MEXqajkSippsi7rjyK8Fr+GpWLkOoS1g+lvhP/Yr6nixqfUk7NE6WRdd+OE5U9P5jz
+	 exsWM4y8KgQXeP8H6Cd7FxAQ=
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-470fd92ad57so111029285e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:13:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761045220; x=1761650020;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikcIzK7s67FNHE582ucGZVht5ku4GdzRhtqL5nJR72A=;
+        b=LoN43wKigUZGLsAhgaADDmKJG4oDtr10HH6p1jIDWH0Ff9+pwheRXa8DEOItiUudIB
+         UDpkvkdDQ8TJZKOnZMI6r/p0QsXCw61Pi1bBpuOol76haTIHBFWUJFy2YVFDe9p9bfL5
+         TkQ+zSgaDi7jAgF38zG0X/Q9VPGbot+djW3dyzvWYPIkhFR4sYlGsHno4aofoxDH8tzY
+         SoGQFzzNLrl+gU1xU0lHuotgOvNFx2YXjfP655tg7fOcEqttWBO+y70uePGcQOZkfP1U
+         QRsNyyhM2O0UVPf9i78PJ0LeG4pABkC283OuL1XeCsvZAkhFYJC/ZDvOn2m36UooubcT
+         Pyew==
+X-Forwarded-Encrypted: i=1; AJvYcCUIxnZX1cuGCXHea6uaLzG+tkTRTq+PBNoTZ6OlATfpJFyo5psUonNKAzqvqCcS4OBdg2YM3Mu19Pr4wog=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgt4T3algqXaDoWTuBeOdtyiIQ5WcP9X9u96g9vC73jKF4LpHz
+	k7QLibsna/SU5zRg6pDEAsNKqbZvBnGMnM3ClLW99/sllkbqqnmkXJ0GXOcbW2Vw0QWAiqkrV9a
+	L9Ky4/C3RoZlyNwZczW5kQHT5HoVdxTQiOLuXhIjVw0FUuE6kCVltlAX+qMA3vyZaMZzfWyZe9y
+	nI6Ez4Ww==
+X-Gm-Gg: ASbGnctATjbWd/bXc3TvGczpxcMePso58JFO3co8a9d0Fs8lDo7TJapKgn3+UQYHLrM
+	VCPvR9a6Qs2aAvAZ5JfHuLWMUb7o7o+2NqASBAavandCfvf6U/W74AZCUjng+fhobzltO/8O6Rm
+	IJLTT1Y7QfgjC3qS57uNLMlhAP4caldECseTs4P0fQ6FGXBAgUOGyx66pUtp1uEOQt/V52H+lLa
+	wuwyySLpdKhMHeHP/BtdfZIVvStu3/7o5Yn92ewuX2cJfjvywRR4JkUzb6skJi6rl6Wee0MPe/o
+	nWTmuO4SUprYi3BabEG9kwskR0INycit5frOUZ9jhCrVDtpc6QyCkSYcIDLvzwLQqbkRdgMV73t
+	9RnFYkgZlLfweQLMrRpaFuvv9s77nVIylWWGPKD/jWUapllnkt87YtwN/eDwU8QH/Enk=
+X-Received: by 2002:a05:600c:468b:b0:46e:4cd3:7d6e with SMTP id 5b1f17b1804b1-47117876a24mr123878545e9.9.1761045220286;
+        Tue, 21 Oct 2025 04:13:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF12WpfWrU8b5X405jb6W3VuO4hxrcKC71Wzb1g7mzM71B00ZT2riB3oMBV7+2D+0OPaXkcSg==
+X-Received: by 2002:a05:600c:468b:b0:46e:4cd3:7d6e with SMTP id 5b1f17b1804b1-47117876a24mr123878215e9.9.1761045219861;
+        Tue, 21 Oct 2025 04:13:39 -0700 (PDT)
+Received: from ?IPV6:2a02:3035:6e0:7f7c:5941:9cba:d029:72de? ([2a02:3035:6e0:7f7c:5941:9cba:d029:72de])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47114423862sm279651695e9.1.2025.10.21.04.13.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 04:13:39 -0700 (PDT)
+Message-ID: <418119d5-4892-4697-a0ab-6a76302fea77@canonical.com>
+Date: Tue, 21 Oct 2025 13:13:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,106 +95,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/display: add hw_params callback function to
- drm_connector_hdmi_audio_ops
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>, linux-arm-msm@vger.kernel.org
-Cc: Xilin Wu <sophon@radxa.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Mark Brown <broonie@kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250925040530.20731-1-liujianfeng1994@gmail.com>
- <658446d1-5d3b-4924-a446-f26a1a8b9be6@kernel.org>
+Subject: Re: [PATCH RFC] arch/riscv: add proc status (proc/<pid>/status)
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com,
+ alexghiti@rivosinc.com, cleger@rivosinc.com, zong.li@sifive.com,
+ valentin.haudiquet@canonical.com, jesse.huang@sifive.com,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+References: <20251020-proc_status-v1-1-59d2c8ccd4f0@rivosinc.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <658446d1-5d3b-4924-a446-f26a1a8b9be6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <20251020-proc_status-v1-1-59d2c8ccd4f0@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 21/10/2025 13:04, Krzysztof Kozlowski wrote:
-> On 25/09/2025 06:05, Jianfeng Liu wrote:
->> After reusing drm_hdmi_audio_* helpers and drm_bridge_connector
->> integration in drm/msm/dp, we have dropped msm_dp_audio_hw_params and
->> use msm_dp_audio_prepare instead. While userspace is still calling
->> hw_params to do audio initialization, and we get the following errors:
->>
->> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
->> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
->> qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
->> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
->> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
->> MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
->>
->> msm_dp_audio_prepare is not called because hdmi-codec driver only checks
->> and runs hw_params before q6apm_lpass_dai_prepare(). This commit will
->> add hw_params callback same as drm_connector_hdmi_audio_prepare, so that
->> hdmi-codec driver can work with userspace alsa.
->>
->> Tested with Radxa Dragon Q6A.
->>
+On 10/20/25 20:18, Deepak Gupta wrote:
+> x86 has proc/<pid>/status to see various runtime characteristics
+> of running task. Implement same for riscv. This patch implements
+> status for shadow stack and landing pad state.
 > 
-> 
-> Missing Cc stable.
-> 
->> Fixes: 98a8920e7b07 ("drm/msm/dp: reuse generic HDMI codec implementation")
->> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
->> ---
-> 
-> I confirm this fixes the audio over DP/HDMI on X1E laptops. Please apply
-> this for fixes.
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+> This is just a one patch but sending it as RFC with cover letter to seek
+> feedback. x86 has `arch_proc_pid_thread_features` to enumerate status of
+> arch thread specific features on runtime. This can be done using prctl
+> as well but from quick/script perspective `cat /proc/<pid>/status` is more
+> desirable. In this patch, simply `arch_proc_pid_thread_features` is implemented
+> for riscv which queries shadow stack and landing pad state and reports back.
+> Thus it is dependent on riscv user cfi enabling series.
 
-Forgot:
+Hello Deepak,
 
-Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This looks like a valuable addition.
 
-Best regards,
-Krzysztof
+Shouldn't architecture specific fields be in
+/proc/<pid>/arch_status and not in /proc/<pid>/status?
+
+Please, add a documentation patch adding the RISC-V specific fields to
+"3.12  /proc/<pid>/arch_status - Task architecture specific information"
+in Documentation/filesystems/proc.rst.
+
+Should you stick to /proc/*/status, please, add the documentation to 
+Documentation/arch/riscv/.
+
+> 
+> If this patch itself is self-standing and good enough, I can roll this patch
+> as part of riscv user cfi enabling series.
+> 
+> OR
+> 
+> If there is ask for other riscv thread specific features that could be
+> enumerated in similar fashion, we will need it to be done as separate series
+> (with `thread_features` added to `thread_info`)
+> 
+> Example output below.
+> 
+> Name:   cat
+> Umask:  0022
+> State:  R (running)
+> Tgid:   133
+> Ngid:   0
+> Pid:    133
+> PPid:   129
+> TracerPid:      0
+> Uid:    0       0       0       0
+> Gid:    0       0       0       0
+> FDSize: 256
+> Groups: 0 10
+> NStgid: 133
+> NSpid:  133
+> NSpgid: 133
+> NSsid:  129
+> Kthread:        0
+> VmPeak:    10788 kB
+> VmSize:    10788 kB
+> VmLck:         0 kB
+> VmPin:         0 kB
+> VmHWM:      1400 kB
+> VmRSS:      1400 kB
+> RssAnon:             116 kB
+> RssFile:            1284 kB
+> RssShmem:              0 kB
+> VmData:       92 kB
+> VmStk:      8324 kB
+> VmExe:         4 kB
+> VmLib:      2312 kB
+> VmPTE:        40 kB
+> VmSwap:        0 kB
+> HugetlbPages:          0 kB
+> CoreDumping:    0
+> THP_enabled:    0
+> untag_mask:     0xffffffffffffffff
+> Threads:        1
+> SigQ:   0/31771
+> SigPnd: 0000000000000000
+> ShdPnd: 0000000000000000
+> SigBlk: 0000000000000000
+> SigIgn: 0000000000000000
+> SigCgt: 0000000000000000
+> CapInh: 0000000000000000
+> CapPrm: 000001ffffffffff
+> CapEff: 000001ffffffffff
+> CapBnd: 000001ffffffffff
+> CapAmb: 0000000000000000
+> NoNewPrivs:     0
+> Seccomp:        0
+> Seccomp_filters:        0
+> Speculation_Store_Bypass:       unknown
+> SpeculationIndirectBranch:      unsupported
+> Cpus_allowed:   3
+> Cpus_allowed_list:      0-1
+> Mems_allowed:   1
+> Mems_allowed_list:      0
+> voluntary_ctxt_switches:        0
+> nonvoluntary_ctxt_switches:     3
+> riscv_thread_features:  shstk_enabled lpad_enabled
+> riscv_thread_features_locked:   shstk_unlocked lpad_unlocked
+> ---
+>   arch/riscv/kernel/Makefile     |  1 +
+>   arch/riscv/kernel/cpu/Makefile |  1 +
+>   arch/riscv/kernel/cpu/proc.c   | 28 ++++++++++++++++++++++++++++
+>   3 files changed, 30 insertions(+)
+> 
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index f60fce69b725..b32c11667d81 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -71,6 +71,7 @@ obj-y	+= vendor_extensions.o
+>   obj-y	+= vendor_extensions/
+>   obj-y	+= probes/
+>   obj-y	+= tests/
+> +obj-y	+= cpu/
+>   obj-$(CONFIG_MMU) += vdso.o vdso/
+>   
+>   obj-$(CONFIG_RISCV_MISALIGNED)	+= traps_misaligned.o
+> diff --git a/arch/riscv/kernel/cpu/Makefile b/arch/riscv/kernel/cpu/Makefile
+> new file mode 100644
+> index 000000000000..2b474fb49afe
+> --- /dev/null
+> +++ b/arch/riscv/kernel/cpu/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_PROC_FS)			+= proc.o
+> diff --git a/arch/riscv/kernel/cpu/proc.c b/arch/riscv/kernel/cpu/proc.c
+> new file mode 100644
+> index 000000000000..4661190c43d1
+> --- /dev/null
+> +++ b/arch/riscv/kernel/cpu/proc.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/smp.h>
+> +#include <linux/timex.h>
+> +#include <linux/string.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/cpufreq.h>
+> +#include <linux/proc_fs.h>
+> +#include <asm/usercfi.h>
+> +
+> +#ifdef CONFIG_RISCV_USER_CFI
+> +
+> +void arch_proc_pid_thread_features(struct seq_file *m, struct task_struct *task)
+> +{
+> +	seq_puts(m, "riscv_thread_features:\t");
+> +	if (is_shstk_enabled(task))
+> +		seq_puts(m, "shstk_enabled ");
+
+According to Documentation/arch/x86/shstk.rst, x86 is avoiding the 
+'_enabled' postfix here:
+
+x86_Thread_features: shstk wrss
+
+> +
+> +	if (is_indir_lp_enabled(task))
+> +		seq_puts(m, "lpad_enabled ");
+> +
+> +	seq_putc(m, '\n');
+> +
+> +	seq_puts(m, "riscv_thread_features_locked:\t");
+> +	is_shstk_locked(task) ? seq_puts(m, "shstk_locked ") : seq_puts(m, "shstk_unlocked ");
+> +	is_indir_lp_locked(task) ? seq_puts(m, "lpad_locked ") : seq_puts(m, "lpad_unlocked ");
+
+Why do we need any entry for an unlocked feature in 
+riscv_thread_features_locked?
+
+Best regards
+
+Heinrich
+
+> +	seq_putc(m, '\n');
+> +}
+> +#endif /* CONFIG_RISCV_USER_CFI */
+> 
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251017-proc_status-df1aedc85c7c
+> --
+> - debug
+> 
+
 
