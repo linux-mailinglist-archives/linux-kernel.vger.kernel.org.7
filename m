@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-862323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6556CBF4FF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:37:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AEF0BF5010
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFFE13B420A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:36:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A5DA4E73A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A16280CFB;
-	Tue, 21 Oct 2025 07:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211DB280024;
+	Tue, 21 Oct 2025 07:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fQGDnCcU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221F6280025;
-	Tue, 21 Oct 2025 07:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="IcSZPJAX"
+Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 3683A246762
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032183; cv=none; b=XKP/r485eLWHi0loNtGfXoprEWwDV+guienA01AWn/Mb26R9SRHhascs0qVbTMolhDRzJzR6qc27qrUNuHMQeiQTKt+RJfJiDRox24tlhT6FePONCpU1qgmA4c3lTlyLbsm42MhKofQHy9wRANdTG2KPceOaR37HXSA49higdvM=
+	t=1761032437; cv=none; b=qb8qW99nXvcruPOC8sXHBKUJ6gauwL2BTA7ka/RhwAZAdHu6TYWtzvezqTS0spUgkjLAkKqq1Q2uz4AXPtI/Ng0Z5XolVDM2JWm/lx4mMWUAqco0V+0D+UXoNV56kZPjWO60WRgKi73zoiyQfqTEk7qEvraDAmCg5BEDMN9vnZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032183; c=relaxed/simple;
-	bh=lvztYyEYyRwSK53rDIAgy0tpVstr29Ir4aQY/x8lfSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bs5gfG8MN0PkN2EtjQE/08fpyO5AcaKUrJL7h57exHH6w/VJYqxfOWjAYQc2oproF1KnYiNL8sjXZ9BjAcG2Z8TC2e1K8NKKkzCUa3tk1M1TnuIYAdQknOb32Jp5k/AzPPlokGdFtExunwY3tR+iXE9LxCpdYRfKr2nTFa+z0gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fQGDnCcU; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761032181; x=1792568181;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lvztYyEYyRwSK53rDIAgy0tpVstr29Ir4aQY/x8lfSU=;
-  b=fQGDnCcU6G6QddbmYwhf6TwE7TlpHoiZ1cJ2buuIYr29s2Wgl5+tvgmJ
-   hDbGTRZeDCdO2QN7CJNaq5vtaPrq1KQdEHag2bvTLOSRSVitQo86FpaMc
-   hbkj9/x2ZJbjeFERVTY5ORPmFIgO6x1VyiPBYLHuWZ5Neve5Y3axFDVa1
-   LxC+C+yA5U1Pg1aaCptbZy3+/CJtZlz5T+MHrxgf8YsF0Whpti/IMxPN6
-   ZfiWWXoGxOdfUB53k9GfRvkQac4NY9YbVZKpwbpXWwH051wW1641lptpO
-   dbYE409YlNtalr3iKJjXWFVsc6Ycs7xi3d+UOc/FbV8JoWHVcHqpO5wJ6
-   A==;
-X-CSE-ConnectionGUID: Z2lNBUTLQwadwplloNJ9jw==
-X-CSE-MsgGUID: 6J2QDdQBTGeD+YxwfKxaOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66987745"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="66987745"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 00:36:20 -0700
-X-CSE-ConnectionGUID: yZQbxzPTR+Sn8MGXppYsMA==
-X-CSE-MsgGUID: cAq+BR4nThWZd3iWS1TN6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
-   d="scan'208";a="182675558"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa006.jf.intel.com with ESMTP; 21 Oct 2025 00:36:19 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 44B1595; Tue, 21 Oct 2025 09:36:18 +0200 (CEST)
-Date: Tue, 21 Oct 2025 09:36:18 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Jinhui Guo <guojinhui.liam@bytedance.com>
-Cc: andriy.shevchenko@linux.intel.com, jsd@semihalf.com,
-	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] i2c: designware: Disable SMBus interrupts to
- prevent storms from mis-configured firmware
-Message-ID: <20251021073618.GQ2912318@black.igk.intel.com>
-References: <20251021072431.3427-1-guojinhui.liam@bytedance.com>
- <20251021072431.3427-2-guojinhui.liam@bytedance.com>
+	s=arc-20240116; t=1761032437; c=relaxed/simple;
+	bh=1Fae+9kDgarwteFz3rVD4NDlZJfYEw7ZwZwiEpnAcx8=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SQDA8Sq2O+8JsZZ/PrfOL4+x310MG0XB+EUWo0mz7IR5Ug+ZegDSp6OhWk99GEyboCiS/oYnlynWW1lb99wNn7XwGA9m0wqqtAZrx0+h0k1EEUM4Vxr8LILdGJW7tb5HG05mTvZLA1kXQexPCn/SMz5JIWHZ0KHry78zNUyTmRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=IcSZPJAX; arc=none smtp.client-ip=111.202.70.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
+Received: from mail.didiglobal.com (unknown [10.79.71.38])
+	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id F2854181D0F585;
+	Tue, 21 Oct 2025 15:35:09 +0800 (CST)
+Received: from BJ02-ACTMBX-07.didichuxing.com (10.79.65.14) by
+ BJ03-ACTMBX-02.didichuxing.com (10.79.71.38) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 21 Oct 2025 15:37:14 +0800
+Received: from pilot-ThinkCentre-M930t-N000 (10.79.71.101) by
+ BJ02-ACTMBX-07.didichuxing.com (10.79.65.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.10; Tue, 21 Oct 2025 15:37:14 +0800
+Date: Tue, 21 Oct 2025 15:37:07 +0800
+X-MD-Sfrom: jingsusu@didiglobal.com
+X-MD-SrcIP: 10.79.71.38
+From: Jing Su <jingsusu@didiglobal.com>
+To: <akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<jinnasujing@gmail.com>
+Subject: [PATCH] mm/vmstat: Fix indentation in fold_diff function.
+Message-ID: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
+Mail-Followup-To: akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	jinnasujing@gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251021072431.3427-2-guojinhui.liam@bytedance.com>
+X-ClientProxiedBy: BJ02-PUBMBX-01.didichuxing.com (10.79.65.22) To
+ BJ02-ACTMBX-07.didichuxing.com (10.79.65.14)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
+	s=2025; t=1761032114;
+	bh=bz2COxVLbbO+0xNIIj1XYl4plzJn4e3cBaijQkcaMjs=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type;
+	b=IcSZPJAXydXPbYEMdNbAAPnOydi0mtyZz3M6Ys8VsX7K8VYicsrB5j/38Ze/L3IsZ
+	 5+NWrgvZQMwBeX6PfBkVm/fjlAsg8XUlACkXuqwsPEfqRL1zp7S3ocMQuB/qRkNfPb
+	 3JmAqo2BWK7vngrURKKfGtKAjs0RbJtdCNQvnHiA=
 
-On Tue, Oct 21, 2025 at 03:24:31PM +0800, Jinhui Guo wrote:
-> When probing the I2C master, disable SMBus interrupts to prevent
-> storms caused by broken firmware mis-configuring IC_SMBUS=1; the
-> handler never services them and a mis-configured SMBUS Master
-> extend-clock timeout or SMBUS Slave extend-clock timeout can
-> flood the CPU.
-> 
-> Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Adjust misaligned braces in the fold_diff function to improve
+code readability and maintain consistent coding style.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Jing Su <jingsusu@didiglobal.com>
+---
+ mm/vmstat.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index bb09c032eecf..63860c3d22e6 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -782,13 +782,13 @@ static int fold_diff(int *zone_diff, int *node_diff)
+ 		if (zone_diff[i]) {
+ 			atomic_long_add(zone_diff[i], &vm_zone_stat[i]);
+ 			changes++;
+-	}
++		}
+ 
+ 	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
+ 		if (node_diff[i]) {
+ 			atomic_long_add(node_diff[i], &vm_node_stat[i]);
+ 			changes++;
+-	}
++		}
+ 	return changes;
+ }
+ 
+-- 
+2.34.1
+
 
