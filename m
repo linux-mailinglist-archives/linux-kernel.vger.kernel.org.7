@@ -1,132 +1,189 @@
-Return-Path: <linux-kernel+bounces-862159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB44BF48EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:00:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A47FBF48EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 201D44F5AB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:00:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBBC4626DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0391222DF9E;
-	Tue, 21 Oct 2025 04:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264922367CF;
+	Tue, 21 Oct 2025 04:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="fqG04iT6"
-Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDKslZKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF0819F41C;
-	Tue, 21 Oct 2025 04:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.1.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570DF8615A;
+	Tue, 21 Oct 2025 04:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761019219; cv=none; b=mibgzQ6PZUOVSXTwipXSCfcWs7ZCRs10TGQzX73JrQ1xXxv6FES1qY3TKo157CefhuXDG2iD+t8j8svxSY1vIvBvYtMNfIzuabeHVm5ezeMfHkBmMqnWegoevPPoIjgnu5y9/8uskHUPP9ZKu/soiZ+UNbQ1cNIxtLjbppq7GLM=
+	t=1761019292; cv=none; b=RIWjcJE9EUZTA2pBdxZYzv99pw7+osbekeA3aGqoChF1cSgwdbUIcxKPli3UvUWNbuoi+7sSsLXNdYIVSw/c5wipy3r+r4byZLgaq8TTraLhAWJxiRTieRbYeS9x6g32xDa7dgqME67YUY3MzLMtMnxsaYbkgAZammSj/W8I7I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761019219; c=relaxed/simple;
-	bh=XdZ+bSwZitbUWOlq5HzK0v+64/RHdlaknUCUZVBOaTw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PmGugFRTwVb1pXrxoJod7p6oTtrR9Ck+UY7umA6kqr3LVZky49YzDa7anaZBGAxQ1XyZdsOuSfm2N2FEEc/dQBnXQVDKrvzQcdihnYIAaqqYMyYaMkwej/p9vKB5IXv33jsDVD1iexLeo30T4ohVDm65fNJaQ5g/W1OGOAZ+dWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=fqG04iT6; arc=none smtp.client-ip=44.246.1.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1761019217; x=1792555217;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KTzOv9/b1xNagjNFcLWg7luH3jx9poz7xbR0D710bEY=;
-  b=fqG04iT6zLB3NjCsdMTfNZv1WNGOe5Ee2MTwkXzVod98mI6jYBjDwfmQ
-   naOWHlqizcHEC674H5bEOI8pVLHfMKuePODZmgAYcC+1wA8jZSukDrg5T
-   cWsfQssYm+CPR3waiLjdyQDOhEGeVfEXIOKsY26Wcw+tFNSw0SC8dvZGz
-   Cx26RasjLyLclrWr5rbhzSr5zL8ESFY/CjW8JjhVVu0M2tOsFYHRvGmSA
-   OOcxMMJJHTXcZozK3tJB1NTWp9w8RyIVm9fhbwFUrR6bsWCViw1fGJ91k
-   jHw3iHiSKt8gb4aYDDthb/CnNCFn6FvxnuEXzWJffUC+pKkCs5lTFoOi1
-   g==;
-X-CSE-ConnectionGUID: FOWWBHa8SpORO7ARxemC/w==
-X-CSE-MsgGUID: 820b810wSsWhi59t+ZFK8Q==
-X-IronPort-AV: E=Sophos;i="6.18,281,1751241600"; 
-   d="scan'208";a="5301474"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 04:00:13 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:13820]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.191:2525] with esmtp (Farcaster)
- id 9f5b59e0-db79-4614-aa8a-fa0e9880c6ac; Tue, 21 Oct 2025 04:00:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 9f5b59e0-db79-4614-aa8a-fa0e9880c6ac
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 21 Oct 2025 04:00:13 +0000
-Received: from b0be8375a521.amazon.com (10.37.245.8) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 21 Oct 2025 04:00:09 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <kuba@kernel.org>
-CC: <aleksander.lobakin@intel.com>, <andrew+netdev@lunn.ch>,
-	<anthony.l.nguyen@intel.com>, <corbet@lwn.net>, <davem@davemloft.net>,
-	<edumazet@google.com>, <enjuk@amazon.com>, <horms@kernel.org>,
-	<jacob.e.keller@intel.com>, <jiri@resnulli.us>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>, <sx.rinitha@intel.com>
-Subject: Re: [PATCH net-next v2 13/14] ixgbe: preserve RSS indirection table across admin down/up
-Date: Tue, 21 Oct 2025 12:59:34 +0900
-Message-ID: <20251021040000.15434-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251020183246.481e08f1@kernel.org>
-References: <20251020183246.481e08f1@kernel.org>
+	s=arc-20240116; t=1761019292; c=relaxed/simple;
+	bh=eCjhpCkDpBoDgtZEpxtO52wzVLa4g0Hym+CP1lR4QRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQjOxd9PV32T79Q6+l3Gv+uKRAOoGZV0tc6UMgsm7k7MhfBciS08DdfAnPpHadBqSRZqrrDb3GkGPuA8N/7+h3gii4iSHoEyF7IEEYZESOOq9CX5judHHFjsFe7DwRr0kT52T5Ae735C8fVZkIKJgigyxzXe0Au6mUifzCBkSCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDKslZKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62FD7C4CEF1;
+	Tue, 21 Oct 2025 04:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761019291;
+	bh=eCjhpCkDpBoDgtZEpxtO52wzVLa4g0Hym+CP1lR4QRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jDKslZKj3wXmWKyTC1AchGeWsDwJ2oc9gFLucFMAnIgJdL5tHFqcEQdW8yTGPGMS+
+	 0JhYF0+VbjyOd02uj0XE6jZv7BG6mtdpylWjM494zMTkrqSnIf06qVrJyWW2NVvpns
+	 zLZvnLT+MwfjGE/7nb1gwPz+wCSgOvV8CVqkHPKxWgHq1XjSo4zpxyrzMfUNXFnhCe
+	 7ZdM8H4Ibbdd1EybAAj8mFsP3GSfxGcRZ1mhlSz2Z88e6WxTT93IWmY+CXSRRLdPFB
+	 yGVIUtbKS2BQ9zITP6pkVIo4/JtEafY0TQsZW54s8j8MS1pecSdtUs3AzkmZ5LTp5j
+	 CR/l9OCzsVSkg==
+Date: Tue, 21 Oct 2025 09:31:22 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Christian Zigotzky <chzigotzky@xenosoft.de>, FUKAUMI Naoki <naoki@radxa.com>, linux-rockchip@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+Message-ID: <lmkrtyq6uzhzlz5ttvajnmojegrbfgaz3e3kkwej5qar2lkeof@r5gdlvesm6xl>
+References: <20251020221217.1164153-1-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D046UWB001.ant.amazon.com (10.13.139.187) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+In-Reply-To: <20251020221217.1164153-1-helgaas@kernel.org>
 
-On Mon, 20 Oct 2025 18:32:46 -0700, Jakub Kicinski wrote:
+On Mon, Oct 20, 2025 at 05:12:07PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
+> platforms") enabled Clock Power Management and L1 Substates, but that
+> caused regressions because these features depend on CLKREQ#, and not all
+> devices and form factors support it.
 
->On Thu, 16 Oct 2025 23:08:42 -0700 Jacob Keller wrote:
->> Currently, the RSS indirection table configured by user via ethtool is
->> reinitialized to default values during interface resets (e.g., admin
->> down/up, MTU change). As for RSS hash key, commit 3dfbfc7ebb95 ("ixgbe:
->> Check for RSS key before setting value") made it persistent across
->> interface resets.
->> 
->> Adopt the same approach used in igc and igb drivers which reinitializes
->> the RSS indirection table only when the queue count changes. Since the
->> number of RETA entries can also change in ixgbe, let's make user
->> configuration persistent as long as both queue count and the number of
->> RETA entries remain unchanged.
->
->We should take this a step further and also not reinitialize if 
->netif_is_rxfh_configured(). Or am I missing something?
+I believe we haven't concluded that CLKREQ# is the cluprit here. It is probably
+the best bet, but there could be the device specific issues as well.
 
-Hi Jakub, thank you for reviewing.
+> 
+> Enable only ASPM L0s and L1, and only when both ends of the link advertise
+> support for them.
+> 
+> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
 
-Actually, you raise a good point about netif_is_rxfh_configured().
+Closes?
 
-However, we can't determine whether we should reinitialize or not based
-solely on netif_is_rxfh_configured(), since the RETA table is determined
-by (1) the queue count and (2) the size of RETA table.
+> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+> Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
 
-So, simply skipping reinitialization on netif_is_rxfh_configured() would
-leave invalid RETA entries when those parameters are to be changed.
+Same here.
 
-For example, consider a scenario where the queue count is 8 with user
-configuration containing values from 0 to 7. When queue count changes
-from 8 to 4 and we skip the reinitialization in this scenario, entries
-pointing to queues 4-7 become invalid. The same issue applies when the
-RETA table size changes.
+> ---
+> 
+> Mani, not sure what you think we should do here.  Here's a stab at it as a
+> strawman and in case anybody can test it.
+> 
 
-Furthermore, IIUC, adding netif_is_rxfh_configured() to the current
-condition wouldn't provide additional benefit. When parameters remain
-unchanged, regardless of netif_is_rxfh_configured(), we already preserve
-the RETA entries which might be user-configured or default values, 
+Thanks Bjorn! I had a similar change slated to be sent post Diwali, but you beat
+me to it.
 
-Therefore I believe the current logic is correct as is, and we should
-reinitialize the RETA entries when either parameter changes, regardless
-of netif_is_rxfh_configured().
+> Not sure about the message log message.  Maybe OK for testing, but might be
+> overly verbose ultimately.
+> 
+
+Let's have it for sometime, so we have some clue when someone reports issue with
+ASPM.
+
+> ---
+>  drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
+>  1 file changed, 9 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 7cc8281e7011..dbc74cc85bcb 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -243,8 +243,7 @@ struct pcie_link_state {
+>  	/* Clock PM state */
+>  	u32 clkpm_capable:1;		/* Clock PM capable? */
+>  	u32 clkpm_enabled:1;		/* Current Clock PM state */
+> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+> -					   override */
+> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+>  	u32 clkpm_disable:1;		/* Clock PM disabled */
+>  };
+>  
+> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+>  	pcie_set_clkpm_nocheck(link, enable);
+>  }
+>  
+> -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+> -						   int enabled)
+> -{
+> -	struct pci_dev *pdev = link->downstream;
+> -
+> -	/* For devicetree platforms, enable ClockPM by default */
+> -	if (of_have_populated_dt() && !enabled) {
+> -		link->clkpm_default = 1;
+> -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
+> -	}
+> -}
+> -
+>  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>  {
+>  	int capable = 1, enabled = 1;
+> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>  	}
+>  	link->clkpm_enabled = enabled;
+>  	link->clkpm_default = enabled;
+> -	pcie_clkpm_override_default_link_state(link, enabled);
+>  	link->clkpm_capable = capable;
+>  	link->clkpm_disable = blacklist ? 1 : 0;
+>  }
+> @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+>  	struct pci_dev *pdev = link->downstream;
+>  	u32 override;
+>  
+> -	/* For devicetree platforms, enable all ASPM states by default */
+> +	/* For devicetree platforms, enable L0s and L1 by default */
+>  	if (of_have_populated_dt()) {
+> -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
+> +			link->aspm_default |= PCIE_LINK_STATE_L0S;
+> +		if (link->aspm_support & PCIE_LINK_STATE_L1)
+> +			link->aspm_default |= PCIE_LINK_STATE_L1;
+
+Not sure if it is worth setting these states conditionally. Link state
+enablement code should make use of the cached ASPM cap in 'link->aspm_capable'.
+
+>  		override = link->aspm_default & ~link->aspm_enabled;
+>  		if (override)
+> -			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
+> -				 FLAG(override, L0S_UP, " L0s-up"),
+> -				 FLAG(override, L0S_DW, " L0s-dw"),
+> -				 FLAG(override, L1, " L1"),
+> -				 FLAG(override, L1_1, " ASPM-L1.1"),
+> -				 FLAG(override, L1_2, " ASPM-L1.2"),
+> -				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
+> -				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
+> +			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
+
+I think you added the 'DT platform,' prefix while applying my patch earlier.
+This is somewhat redundant since the print implies that the platform is based on
+devicetree.
+
+Rest LGTM!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
