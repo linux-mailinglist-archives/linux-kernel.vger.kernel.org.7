@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-863825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7612BF931C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:16:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73BEBF9323
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4841890B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21C6586C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBB4299AAB;
-	Tue, 21 Oct 2025 23:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF012BE053;
+	Tue, 21 Oct 2025 23:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkStA10V"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD8C28CF66
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 23:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="jwn/V6Ii"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC0D1B7F4;
+	Tue, 21 Oct 2025 23:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761088599; cv=none; b=fnALGW5YBCn1wLDID+o9WJTHInXGuCpOQPcimKxXlVPxrXg6gi7BZ3dfQO2tOj5j7Zal3NusJL/SzQtj3xDrt1ebn+1H6fkxUM0qK+BUahL0DPHXcH+gxlSNb4BVWCq++xok/orR2YqtJT1Pqw+sxDU3fW+ZRGTU1ulSAGhz3A0=
+	t=1761088643; cv=none; b=oBLZnSxzXjbtTlRTLdGNf9Hiz5AkGNnVxZW3sSWmvMbCxY1NJ8Tdwhuu16hhYIFg2xcFdFc/C/8rLFK6h7V1EYhPAXNrfp1DUdzE56KxYnO9Xjuk4ngM9ahpU4uacu7whHJVwGNPDh4Zss2xfCXaJwOcPm7xIVRO/n4VnTV846A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761088599; c=relaxed/simple;
-	bh=4Jm32qXMHIXKKOfLhgjYBhQWDQDVGDfzHihzO3VYXnM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EWchzAs+GSSyOu78yaEizJScVPrCOXb2el5mueQeMGvPXLlCiXM0FtWtlXszBmy/cogPrCGqbhEeEnocEbycBwsEN09Uj5TxE/tNWHYtdcArRECzrCtuWM5VXGwfLzRM1kwSp24Fs2DIymCVnXLx7Eedp4aT92p53Mvbixt1aBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkStA10V; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-26987b80720so12443345ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761088597; x=1761693397; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Jm32qXMHIXKKOfLhgjYBhQWDQDVGDfzHihzO3VYXnM=;
-        b=OkStA10Vw3UWeBxyZJ0pQvU/iEkgE38lSXKaWoXic0SbRkNZXNv++Arxy7I8csNU3D
-         b0c7Fdkm+NdRhc1MZfP+EzYbpRXFHWcybsyPLabRslNczbXYpn/VdCkhMDOGQKzy7psi
-         /sKQW4/A1THyv8BGomLVfZmxoCxEJJjD1jiLDEAI+SN77qlyVttM6nK6fYpyd86ZRYCm
-         647UyhAh5yK89hfPIvNLlx4rUctTEq8e3FfyNfJp8ZqkC5ILKkvZ9bO1HBtHZ+xSoJYg
-         S6Gi/vMalFPnufve0j1SJcZAPWxilkM6nu7RIXw8h0lzrz48L2HVSMj5D15kGMUnVmO2
-         hqCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761088597; x=1761693397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Jm32qXMHIXKKOfLhgjYBhQWDQDVGDfzHihzO3VYXnM=;
-        b=VBK5CMCWMBy0zCqAlc5k+W1O3vbADqBkl+hdzIe2YA15qX0dEwiW35SzivWEIR236E
-         jodRlC65Lit/PGWHVqhc4eCPTSrp/fUFnpxuPi7QOv7pakaIc/pmCZREWNNRVQcqOngj
-         RhgU/gPKQeZdpgUkEHQZY2BTZ0z6g15K133k5TUbPL1eaMRbOCcYB1wTR2ZmH9LgxMiQ
-         w6/yfuWdObdJiZuO8uS0htMKvWNQ7RViV18Ox9usO5VxWGykWQv4BNBIkks3x8Q4O00i
-         5oBQsRszZPFt3iZ5ndZdC38hWtKjheAG2v794rAuqNdvivpSN/11As92PyiqnA1uQAmj
-         wnUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgD64U/+un+g789XgrO0jYRp6jj7rjkDJTgl+bIwcLi8qj0dAjnRr1oZ1s7ufz81kq80CZt7scBoAgC8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1cOSE5HlxQG/yPAWnrJA7W0HqqHvIVXfLXWl0sDqKKb4556Me
-	4RdAhhfdre3NBL9zXPxqDC//uGJgn8sf+/EXXbwygMFyaKYuAnSaNgDd6439k0u1FyP3nvC66Rf
-	bbi2HRAqKEtxjMvGUgAmTxGGYSVlRN5c=
-X-Gm-Gg: ASbGncuFFjey3tGtYnCQKwhDKHB9tDxJXIzMZL5XooSFotMWmOVo2aRM3k7dkdoBwnN
-	gUGAuJoZCIcwUO49p0QfMDfBdsjEfhADAYAyaS00QJnyujzeD3MKKAaauoqYLLjRJEW87ResK3j
-	v/gLiR9yKHwoQF4tXudvlz9W9P0Jm6BAuVVZ3KGdlAk0EMMcQG0jmrwRyI9OyMToZNKkHFbo9kg
-	DGsIBCZE7HC73Jc/pyDdNZfwbUGhsq67xxir3ICva1ctjmHSxAAkXqqKRiV4ayhDXN+JJ8QRBci
-	coMDcvEqwbcngW+VWmGEW2hvE5vExv9isv91S7LYOCLLS0z+f2E7CXbqGMG+rJKVRcyh5vY4tVb
-	dh2GuvR53zXy49Q==
-X-Google-Smtp-Source: AGHT+IF06VtyL76w1sSXtIw9bOE6xMloj8rrlvRiJ5iGqaR5hCWDZI+RDSI94yfKuWAc4TqZzzRiWCMUqEonx1/aW+A=
-X-Received: by 2002:a17:903:1ac8:b0:290:ccf2:9371 with SMTP id
- d9443c01a7336-292d3d97a7emr34673855ad.0.1761088597450; Tue, 21 Oct 2025
- 16:16:37 -0700 (PDT)
+	s=arc-20240116; t=1761088643; c=relaxed/simple;
+	bh=TA9Z2xjXmSPik79pd2nczCKbtFRPJOsg1yrzP0azcSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrCagGIEmLwrfOhzjRr76zcW/cmNm+iywbScWrzkMi1zEMO0w4MHKN6jA0kTR9ZGdek1NdimqikPJaqTb1N2RHaY/1EAiMLTZsPFTJOBFFUXKK6U/Em0m8YRIFzslz7OSvegJzwvoxO11JYw9nnjRy133VsNuuAnl2ZVgFzhLK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=jwn/V6Ii; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C8C9714C2D3;
+	Wed, 22 Oct 2025 01:17:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1761088635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WvdSOJwgRRDHWmISrEiJpRZTFo/MJ+TFfDsA9nuP/9Y=;
+	b=jwn/V6Ii+on6aH/1miOeIiq0m1L3XX0jqMPiKZ+zTpSjH5aD3yRayNilm/4UIMKjlYP7dF
+	zoOz+v0GrJ05h7I8SppFbiQpeyLssfgTHjZ8FtO4lk7MP8fykqRX2dg3lJEuE0ZEzUebif
+	gR+jgU0xci9klWEuZnGFi+sUYtmfviiKj3sUi2OYxwa5hB71B26VKaZyDKXrwCmYn10gZx
+	iJYmJmBuNb6+bFojVZ7vADN4auWx8tM5cGWPObQCeIlltxQ4/9HjGxUtLjySHbCfbaVsTV
+	Hf/r9S9LKG4XRQPNZwbLh/Pev+o8HLa0MPQO5APw926IK3BRKDTBJ7pQN1A5DA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 4ac624d5;
+	Tue, 21 Oct 2025 23:17:11 +0000 (UTC)
+Date: Wed, 22 Oct 2025 08:16:56 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Tingmao Wang <m@maowtm.org>, Alexei Starovoitov <ast@kernel.org>,
+	linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
+	bpf@vger.kernel.org
+Subject: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
+Message-ID: <aPgUaFE1oUq8e1F-@codewreck.org>
+References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
+ <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
- <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
- <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org> <CANiq72k-_=nhJAfzSV3rX7Tgz5KcmTdqwU9+j4M9V3rPYRmg+A@mail.gmail.com>
- <DDO521751WXE.11AAYWCL2CMP0@kernel.org> <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
- <DDO6IUEAVBR0.14AZ0UXFYQF48@kernel.org>
-In-Reply-To: <DDO6IUEAVBR0.14AZ0UXFYQF48@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 22 Oct 2025 01:16:25 +0200
-X-Gm-Features: AS18NWA1db9xaE-Optx34cBClVs97tRs8EsVnoB259x46K9u88Yu8XRI6Dm9EB0
-Message-ID: <CANiq72kA8ZMf4ivQa4JTt0ZDmJ5bxWdpjgNb9bfW9n27HdTQ=A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
 
-On Tue, Oct 21, 2025 at 7:34=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> However, I understand where you're coming from. Even though there's not a=
- huge
-> gain here, it would be good to set an example -- especially if it's somet=
-hing as
-> cental as a file offset type.
->
-> If this is what you have in mind, let me go ahead and do it right away (a=
-t least
-> for the things needed by this patch series), because that's a very good r=
-eason I
-> think.
+Hi Linus,
 
-Yeah, exactly, it should be fairly straightforward for at least the ones he=
-re.
+We had a regression with cache=mmap that impacted quite a few people so
+I'm sending a fix less than a couple of hours after making the commit.
 
-Up to you, i.e. we can already start (the code you showed me offline
-looks good) or wait for someone to send the change (or since you
-started, they can still consider more operations and expand the type
-etc.).
+If it turns out there are other side effects I'd suggest just reverting
+commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for
+uncached mode too") first, but the fix is rather minimal so I think it's
+ok to try falling forward -- let me know if you prefer a revert and I'll
+send one instead (there's a minor conflict)
 
-I will send a small coding guidelines note on type aliases -- I can
-reference this example when added, since it is a good example I think.
-:)
+Thanks to Sung Liu for the minimal reproducer and testing, as well as
+Alexei/Andrii and everyone else who looked at it.
 
-Thanks!
 
-Cheers,
-Miguel
+
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
+
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+
+are available in the Git repository at:
+
+  https://github.com/martinetd/linux tags/9p-for-6.18-rc3
+
+for you to fetch changes up to 2776e27d404684bc43acf023d7ca15255e96b3e3:
+
+  fs/9p: don't use cached metadata in revalidate for cache=mmap (2025-10-22 08:04:05 +0900)
+
+----------------------------------------------------------------
+Fix regression with cache=mmap in 6.18-rc1
+
+Will do some more testing as time allows but this fixes the immediate
+issue minimally (only impacts cache=mmap), and is therefore an
+improvement good enough to send right away.
+
+----------------------------------------------------------------
+Dominique Martinet (1):
+      fs/9p: don't use cached metadata in revalidate for cache=mmap
+
+ fs/9p/vfs_dentry.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+Dominique Martinet | Asmadeus
 
