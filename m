@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-862542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FABEBF590D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:42:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5B7BF5911
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8838C4FAFFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD6718C4DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C250630216C;
-	Tue, 21 Oct 2025 09:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cYxy82pA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD21328B70;
+	Tue, 21 Oct 2025 09:42:44 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504962E7659
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7CA28640C;
+	Tue, 21 Oct 2025 09:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761039761; cv=none; b=NI0OQk3o4xwGosbxkrgulddNIBWreZJGpJJGciAhgTC5cX/MVfv9j5wl0K4SAndwsC/LppzpXAaU5BgYd6zCPQ34fRxq0Aa9MeJt1TemAdhdwPWM5NGySa/OOlvm28dHj6WV9ML4lvh0o3RbyrwjsE77qnu6K6L8bOY2BzpDt08=
+	t=1761039763; cv=none; b=N/2NmISJ9SZYq8UQI08AKzq0rKi+wl9GXZ2erJT1/MUvETGg/ll9xjg8K55H78vqVzdm+u6SJ3Ji2g+D/RrIkQ0mcsfwTvfmNgfURoH7wRSPA9D0h2vcYH7ZGcshM4kKlB0UVFA6wGF9G/XZOpbiFM8vqvJPULNqLZlfHXf2BPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761039761; c=relaxed/simple;
-	bh=MSVMapS+wT8A48mbedXknuF6hMRfcMnPOR8fjkLNzBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=efdF7IpwQexQmrYeU9bfB3iNqadUl4QxLq3hmBE2wam6ECrh/RVv9wFaEy6xEYgEG8uoIUHB+kh6b1D3vDdaYKK03odwMN3NeMPpsTTyjK/J6IXFia/wYp7X7xP7XApco0OD34OdE9AMytbUd2GNmvyKwQKXcLVmqk4D4eHM4Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cYxy82pA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761039757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UHjS/qyeeKcJ3eN+7yFgpurORtwwe8MoT2GpgobO51M=;
-	b=cYxy82pA+fjtnSs8kfgHcNsl0wGBbBsMQRBG41ACA+7CSNb/OBrgqAsEvNwLN+uFxeSpKC
-	vYQaljoIpmyKo7wWCx5axfcPv0WBde3JufWEFIttmhBsoZCjqcgvTBdiXpvwMOo+2s6ojQ
-	47yTjQROpASezdVVcLzBmaTKGKh7+bw=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-Q_rUA6ljOBu0yyCHh9PudA-1; Tue, 21 Oct 2025 05:42:36 -0400
-X-MC-Unique: Q_rUA6ljOBu0yyCHh9PudA-1
-X-Mimecast-MFC-AGG-ID: Q_rUA6ljOBu0yyCHh9PudA_1761039755
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8787a94467cso214131936d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:42:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761039755; x=1761644555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UHjS/qyeeKcJ3eN+7yFgpurORtwwe8MoT2GpgobO51M=;
-        b=wk6lzulnb9W8/A0f8tr9wxBoCYjIr2z4OWqr+gJFFpQfMRvl/98UUSw5NZDWzuknW4
-         UxUMWGH7QFO7ppdp90Z47fW4wkB6ZLqcYKUmNj1xme24aWHmP+HMklDMW7lrVSQJ2HzG
-         LoDCWbTiD5rS+m/k7Yd2RirQuw2t4ja4YQxRykv08kulm2R/6nze0sXxCUZjww/RpPSX
-         m17pGqNerKn4Ebf6I7Zoz5S4Y54FdA7tFREhlOsxphFMsNgMmRHaiQu25m8LWNJ5NIjV
-         wfX7dh9+CTOdqlmVIMIZLyveJKIuC6e1Px7v4zq6y+2GRKp88ClY9oxv7eFJzlTNB49Z
-         PykQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUcl+9iFEPH9mdT1K7LwJjZ4Mvaou+w6l1IiuvXg8K7rvSgXwv8Lr3HeIqrU7W/x2PSEVrt9/PIzNjtnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZSLbQRpTiuyFqQUF0xr++OKEPj7EBysTu8+J2mVmlPLSN71Yi
-	QIyMOxmFXzu3zVg96q6hIts+Im5hsNvlYgHOH+HzKtRF8sxWuzenER+bwDm8nj+uAKtfx0n8RA+
-	QSjs1N078sWXzonjFePgZcKr7SNJYf53f27zjeRrE63wb6NwWqmIa42+vdWTHrSL3HUjNeddqpu
-	Dcd3AzcAn32Xgz4R/diasgHG2eI6gUuA9w49H3XfJxjyV74h9X
-X-Gm-Gg: ASbGnctQoUfb1eVD8z92jh3+peTcZ4bQR5/49l/BTFeX0ds07PC4dz4bYbcTul9fCpc
-	GuH9EFM7eg09mlpfxFBKNon4LaFE5KtOsj81PVozajiZFEv/jB4TXDDqbqr6xPbXXhvSh0fIbLB
-	vAVK9mvAQ1rUBWerIC5DnxYUK1dyPoYmQPUxoQVOyCIgn0vtz+VXVvrXi0ZUOqdk168s0E/0huc
-	3Y8MH13yM0DmmsW
-X-Received: by 2002:ac8:5712:0:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4e8b679b7a2mr115979261cf.52.1761039755352;
-        Tue, 21 Oct 2025 02:42:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtJWXOjke0RTmK0/xZXoqnt4Ou0KacBj/M07aRFHuZEpUI1vDSqa7DdT8a6/Yrxfq2QlaYBVOMZ0kPdqztzzI=
-X-Received: by 2002:ac8:5712:0:b0:4b0:6205:d22b with SMTP id
- d75a77b69052e-4e8b679b7a2mr115979131cf.52.1761039755012; Tue, 21 Oct 2025
- 02:42:35 -0700 (PDT)
+	s=arc-20240116; t=1761039763; c=relaxed/simple;
+	bh=JY3CF+2FP66H5ZXTKxBoAbQmuRj8bLfZ6H68G2I1PCQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=l9To2JFw51repd3APAa+0CUq2U6scywSAfRhKWRtEX/ztCihegegvdOPG7uul/hFC7Z3nQzXn2So6L3o79wRRge6Jc370RI4Yi1hrzJDwVKwWu/oxx8Q/c+FidYVlwDMGQsN/B7Os7BDIH9BaJrPLucAp2q+ZqPERlVSvEot4zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 43caf076ae6211f0a38c85956e01ac42-20251021
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:9efcfa40-2da7-45ab-92d8-592a550acbed,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:63a0de5be62f8f25bb7fa231967758b2,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:-3
+	,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 43caf076ae6211f0a38c85956e01ac42-20251021
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 438995428; Tue, 21 Oct 2025 17:42:31 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: lkp@intel.com,
+	alexanderduyck@fb.com,
+	kernel-team@meta.com,
+	netdev@vger.kernel.org
+Cc: horms@kernel.org,
+	kuba@kernel.org,
+	lee@trager.us,
+	linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev,
+	pabeni@redhat.com,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] eth: fbnic: fix integer overflow warning in TLV_MAX_DATA definition
+Date: Tue, 21 Oct 2025 17:42:27 +0800
+Message-Id: <182b9d0235d044d69d7a57c1296cc6f46e395beb.1761039651.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <202510190832.3SQkTCHe-lkp@intel.com>
+References: <202510190832.3SQkTCHe-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910170000.6475-1-gpaoloni@redhat.com> <2025102111-facility-dismay-322e@gregkh>
-In-Reply-To: <2025102111-facility-dismay-322e@gregkh>
-From: Gabriele Paoloni <gpaoloni@redhat.com>
-Date: Tue, 21 Oct 2025 11:42:24 +0200
-X-Gm-Features: AS18NWBpQWaCgTUPFKBGe-mp83ffIdDKrAgAWm46CipP2yYr5wYthLbhuHqwos0
-Message-ID: <CA+wEVJZEho_9kvaGYstc=5f6iHGi69x=_0zT+jrC2EqSFUQMWQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/3] Add testable code specifications
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, safety-architecture@lists.elisa.tech, acarmina@redhat.com, 
-	kstewart@linuxfoundation.org, chuckwolber@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Greg
+The TLV_MAX_DATA macro calculates (PAGE_SIZE - 512) which can exceed
+the maximum value of a 16-bit unsigned integer on architectures with
+large page sizes, causing compiler warnings:
 
-On Tue, Oct 21, 2025 at 9:35=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Wed, Sep 10, 2025 at 06:59:57PM +0200, Gabriele Paoloni wrote:
-> > [1] was an initial proposal defining testable code specifications for
-> > some functions in /drivers/char/mem.c.
-> > However a Guideline to write such specifications was missing and test
-> > cases tracing to such specifications were missing.
-> > This patchset represents a next step and is organised as follows:
-> > - patch 1/3 contains the Guideline for writing code specifications
-> > - patch 2/3 contains examples of code specfications defined for some
-> >   functions of drivers/char/mem.c
-> > - patch 3/3 contains examples of selftests that map to some code
-> >   specifications of patch 2/3
-> >
-> > [1] https://lore.kernel.org/all/20250821170419.70668-1-gpaoloni@redhat.=
-com/
->
-> "RFC" implies there is a request.  I don't see that here, am I missing
-> that?  Or is this "good to go" and want us to seriously consider
-> accepting this?
+drivers/net/ethernet/meta/fbnic/fbnic_tlv.h:83:24: warning: conversion
+from 'long unsigned int' to 'short unsigned int' changes value from
+'261632' to '65024' [-Woverflow]
 
-I assumed that an RFC (as in request for comments) that comes with proposed
-changes to upstream files would be interpreted as a request for feedbacks
-associated with the proposed changes (what is wrong or what is missing);
-next time I will communicate the request explicitly.
+Fix this by explicitly masking the result to 16 bits using bitwise AND
+with 0xFFFF, ensuring the value fits within the expected data type
+while maintaining the intended behavior for normal page sizes.
 
-WRT this specific patchset, the intent is to introduce formalism in specify=
-ing
-code behavior (so that the same formalism can also be used to write and
-review test cases), so my high level asks would be:
+This preserves the existing functionality while eliminating the
+compiler warning and potential undefined behavior from integer
+truncation.
 
-1) In the first part of patch 1/3 we explain why we are doing this and the =
-high
-level goals. Do you agree with these? Are these clear?
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510190832.3SQkTCHe-lkp@intel.com/
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ drivers/net/ethernet/meta/fbnic/fbnic_tlv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-2) In the rest of the patchset we introduce the formalism, we propose some
-specs (in patch 2) and associated selftests (in patch 3). Please let us kno=
-w
-if there is something wrong, missing or to be improved.
-
-Thanks and kind regards
-Gab
-
->
-> thanks,
->
-> greg k-h
->
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_tlv.h b/drivers/net/ethernet/meta/fbnic/fbnic_tlv.h
+index c34bf87eeec9..3508b46ebdd0 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_tlv.h
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_tlv.h
+@@ -80,7 +80,7 @@ struct fbnic_tlv_index {
+ 	enum fbnic_tlv_type	type;
+ };
+ 
+-#define TLV_MAX_DATA			(PAGE_SIZE - 512)
++#define TLV_MAX_DATA			((PAGE_SIZE - 512) & 0xFFFF)
+ #define FBNIC_TLV_ATTR_ID_UNKNOWN	USHRT_MAX
+ #define FBNIC_TLV_ATTR_STRING(id, len)	{ id, len, FBNIC_TLV_STRING }
+ #define FBNIC_TLV_ATTR_FLAG(id)		{ id, 0, FBNIC_TLV_FLAG }
+-- 
+2.25.1
 
 
