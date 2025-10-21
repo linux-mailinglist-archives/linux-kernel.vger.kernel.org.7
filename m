@@ -1,182 +1,519 @@
-Return-Path: <linux-kernel+bounces-862918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B80DBF686E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:47:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC72BBF6883
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22236503E09
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01FDA3B50B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A837F332912;
-	Tue, 21 Oct 2025 12:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9B333342E;
+	Tue, 21 Oct 2025 12:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aysCUjlf"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgB+dSRp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE266331A5C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E55541C63;
+	Tue, 21 Oct 2025 12:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050768; cv=none; b=N7T0BEW8fyRtzpwCec1j8yCAaoQ8tNTs5GQU/rJ8+yvoJ5mNrrM7ckwOsqRHAOPsRPBHQju7W2+6EvDivqzkLin/X4d/aYytEBX0edFDSrOiH+6ysNQvWUGvkTxGBSC+CD+3WcOt+3jBpDRTeIuQe7buG5X+DK/qn1hltd5sBQA=
+	t=1761050903; cv=none; b=shrv1lfTSBD2fIoIbXm7ov0EqJXpZgm+XP25fhvKZlJs9EQyJQyDh4az29ixHEVCZ9V508pgOo/War93WXDwNKGue9ZE3CvRefR4G2iJxVhft9EuRnf7qGQFmzHA+5Rc6P5S7UJVBCSLMhSvfIVwRR4wuFOWXJhhVrnTzrMumCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050768; c=relaxed/simple;
-	bh=QIFsKITDeO14f22yjRcsI1tvABH66DujhBaXrZO3X1s=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOBDPP/BkoG0ttOvkIf3FQImlY0cp8TwnSkMsk80ZkImKI2FQq7keA3Z23jYWTxaQKM8iM3AKgsbKvzJpdNPyloflt70eDvYfg7OANR8GDb/dnxZDoSx/Jtst7VnCsY8SoFxnRWiGkHS2kLYK6cqn1pOhqEg9fYcvCr5xyyDoqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aysCUjlf; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b6bbfc57b75so318545866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761050762; x=1761655562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gPEA5AJ6rJJ5XwW1iyN0mjNhsPIcrDuB2VtGOFvKXMA=;
-        b=aysCUjlf8yuGqOGBAkgYTutoyUmepx89wGm46yCulA5CSmPb3qMrnsChi++mfdvfO/
-         8CpZfvYsPToVCpaW+U2FpGP5Nqt8jslgDryRrDKYfqUB+UQqdV2+qJzkvQuIMuQYQAzn
-         wG1YSfMzHUygBs7GD4BfiO3dpZnMOiYsxulvjB3ps+jcH2ruV9++q8QvVHAXfG4D70RF
-         ah50snwzx0ysqSpGFDls8bEo+O9yYpg2AElOHTR7J3mvLYNxC/OshhdxjcngF9RNTCGX
-         z0QwRCq/pbhKP0zxF2Zkl/1L5sPRjdhE+4cbOSuoe+o3KMlwH8w11lRIcjDR385fFiWf
-         4RTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761050762; x=1761655562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gPEA5AJ6rJJ5XwW1iyN0mjNhsPIcrDuB2VtGOFvKXMA=;
-        b=E29YonxbLSVcoNTXqrJpIBT0LfoFftRrHuiY1Yb49zYbicSkn2fWG512ihvh3IQ0zo
-         2F0wKHMxCONn3OHxryElFXGOog3uIkulNBrGt5/IgSyKNi/muvHy3ouBFqZauhv4eL5u
-         kuyUhksIJ8dGf2gA90WFSmwoMuR5RR291yrkhg5itOeuhq7qQRVdLK+w4npVg6R/5+K6
-         AVeWdUzCgG1h+3gEFuccjM5sw/AMPJ/D2+mwWjhf8JBvbNtGmNGeiwVaKeBRCP8qepra
-         xKpBj2Qa0xEMHLyMCV9g2evvXvqTdUVUpzQIwuvPZO9pTpsOyWbrmHF7bb44Gyc7BJsp
-         tNeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQtG0GXxofWnYgh5TpHSEHHVzHtKpkRqcGA6mxsw2INfms62Y7uHGK5I/Ftvrjqm5BD8VZ00/23oyqYMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk7Z6mnZ2GT0DjwfBGPzLo+ZQNhP4b6RZqKEfa8DNTgW86E0lm
-	3h04UhpyVC7ysNuthHjJknwRgQ+ylzoFYPJVtICr3G/F9Gbvb/dv4n6lP/WjpgDJJ58=
-X-Gm-Gg: ASbGncuKUNK4XrUlZ7Hqp2synR/tMXWcu5sHqBFYoaT6LY/GwMzk19yuiBV4/1yxpUK
-	7G3QMzlj+oxUr9azSM/ype7M7yOYPxy812cwwZgWGMGMV24isqJ8ELgqNnJFpmNrx2NzKfDkSjH
-	ow8phTVtp2VWKkVyZyqAJqoa/34DRSGx/TY0ae7t1Iu21/vwQKnyjgpQ5FdT3WI23bvfCobns5E
-	LNpoFP3F5zUGhFFprXgSAYfRpMbxMosiKe3KLsD7fKU7/7KqGD5bwgGrgAyVof1TnSIuhiINT3p
-	QvVI/tW1x3Ih0ccANy42D9GBsAyGHg5ALCyEsy//+b5J/F2BlWCguBg0AH3eXqz1lTcWKMwiG0Z
-	na5ALMrIki2bxrkpanYa/b+oEYSVvy88yfr1OMg3yOO7psnhr/h5LLoTI9OVLBTMXSgKwFxLL1V
-	XpuY9pssB1xJdsAuv2oiXqE+b9i4NndTQVWcXQ7e6q
-X-Google-Smtp-Source: AGHT+IErY7EU44w5k9OeH3Q13um8hP0cnU0hb65JCssR27vMTstr7rVqdpDS7r8Zy3EePCbIn+wClw==
-X-Received: by 2002:a17:907:6d0d:b0:b40:bdc3:ca04 with SMTP id a640c23a62f3a-b6459d3039bmr2269518066b.0.1761050762288;
-        Tue, 21 Oct 2025 05:46:02 -0700 (PDT)
-Received: from localhost (host-87-9-62-200.retail.telecomitalia.it. [87.9.62.200])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83914d0sm1052945566b.21.2025.10.21.05.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 05:46:01 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 21 Oct 2025 14:48:14 +0200
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] misc: rp1: Fix some error handling paths
-Message-ID: <aPeBDmeBGWDEKp05@apocalypse>
-References: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1761050903; c=relaxed/simple;
+	bh=AZgESGJJ+HnCdsMFs+HjpT8kUMF2xqIjx68qM2/k8II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smotAz5z7FoDrABJUt3fwpzMNgLda3ExG58t2CcLo6xGl9LBnhQL1yPnMWSYXFD8nmCANA8Yb024ss85Jsz6FTfvW2jLeu/ydVFXsOuEKCBSPAngAu7w3c6q1T4za5pAIB3YkygT9AexRsLjUcycUfidWvh4x35ws/PCAwIZdnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgB+dSRp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442B0C4CEFD;
+	Tue, 21 Oct 2025 12:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761050902;
+	bh=AZgESGJJ+HnCdsMFs+HjpT8kUMF2xqIjx68qM2/k8II=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MgB+dSRp/e1iU3n3CDdEx71519C+hbnP+ILPKHV9GmV2OqXocVatdPWw5xZluW1Hq
+	 yXxVuluiRMKXeynfNsBZ7p4EX/8YJzzi6MtlBk5YQP0BM95iBuNjWFH/XpYAql7WYW
+	 EMDuyJ4aCxFfZUoMLvAOdf004LAh6Enk79U5Nix77IBnV97H1LVxFnlwWqczsx334Y
+	 osdgy8XUDv33pY8QFVBY0FBc7VQmZn9ZfXIbqDrLQkCJFTnugpZF6m8P0cpUkak0MR
+	 Z3qxxdI2jZCVWDPA00mk47hcI0vLHrdT2BDwhYtsyH53zx+xLaiCYtq8GJsxdHb5ax
+	 7+JU0Eju8cu8g==
+Date: Tue, 21 Oct 2025 14:48:18 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
+Message-ID: <20251021-beinhalten-passierbar-62c358c24613@brauner>
+References: <20251010221737.1403539-1-mjguzik@gmail.com>
+ <CAGudoHETiJ8G8WeyFYJ6EZ4oxcmqxV3yztZDOxL8PUBGobW_xQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHETiJ8G8WeyFYJ6EZ4oxcmqxV3yztZDOxL8PUBGobW_xQ@mail.gmail.com>
 
-Hi Christophe,
+On Wed, Oct 15, 2025 at 01:50:25PM +0200, Mateusz Guzik wrote:
+> can i get some flames on this?
 
-On 21:11 Mon 20 Oct     , Christophe JAILLET wrote:
-> Error handling in the probe and the clean-up path in the remove function
-> should be adjusted depending on if data is taken from DT or from overlay at
-> runtime.
-> 
-> of_overlay_remove() should not be called when of_overlay_remove() was not
-> called.
-
-on the second occurence:
-s/of_overlay_remove/of_overlay_fdt_apply/
+Ok, that looks fine to me. I don't particularly enjoy that boolean but I
+think it simplifies d_instantiate_new() enough to make up for it.
 
 > 
-> of_node_put() should be called in the remove function to avoid a potential
-> reference leak.
-> 
-> Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is compile tested only.
-> 
-> I think (hope...) that a cleaner solution is possible. So feel free to
-> improve it or completely change it if needed.
-> ---
->  drivers/misc/rp1/rp1_pci.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-> index 803832006ec8..9105269488a9 100644
-> --- a/drivers/misc/rp1/rp1_pci.c
-> +++ b/drivers/misc/rp1/rp1_pci.c
-> @@ -44,6 +44,8 @@ struct rp1_dev {
->  	struct irq_data *pcie_irqds[64];
->  	void __iomem *bar1;
->  	int ovcs_id;	/* overlay changeset id */
-> +	struct device_node *rp1_node;	/* useful only if skip_ovl == true */
-> +	bool skip_ovl;
+> On Sat, Oct 11, 2025 at 12:17 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > In the inode hash code grab the state while ->i_lock is held. If found
+> > to be set, synchronize the sleep once more with the lock held.
+> >
+> > In the real world the flag is not set most of the time.
+> >
+> > Apart from being simpler to reason about, it comes with a minor speed up
+> > as now clearing the flag does not require the smp_mb() fence.
+> >
+> > While here rename wait_on_inode() to wait_on_new_inode() to line it up
+> > with __wait_on_freeing_inode().
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > This temporarily duplicated sleep code from inode_wait_for_lru_isolating().
+> > This is going to get dedupped later.
+> >
+> > There is high repetition of:
+> >         if (unlikely(isnew)) {
+> >                 wait_on_new_inode(old);
+> >                 if (unlikely(inode_unhashed(old))) {
+> >                         iput(old);
+> >                         goto again;
+> >                 }
+> >
+> > I expect this is going to go away after I post a patch to sanitize the
+> > current APIs for the hash.
+> >
+> >
+> >  fs/afs/dir.c       |   4 +-
+> >  fs/dcache.c        |  10 ----
+> >  fs/gfs2/glock.c    |   2 +-
+> >  fs/inode.c         | 146 +++++++++++++++++++++++++++------------------
+> >  include/linux/fs.h |  12 +---
+> >  5 files changed, 93 insertions(+), 81 deletions(-)
+> >
+> > diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+> > index 89d36e3e5c79..f4e9e12373ac 100644
+> > --- a/fs/afs/dir.c
+> > +++ b/fs/afs/dir.c
+> > @@ -779,7 +779,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry)
+> >         struct afs_vnode *dvnode = AFS_FS_I(dir), *vnode;
+> >         struct inode *inode = NULL, *ti;
+> >         afs_dataversion_t data_version = READ_ONCE(dvnode->status.data_version);
+> > -       bool supports_ibulk;
+> > +       bool supports_ibulk, isnew;
+> >         long ret;
+> >         int i;
+> >
+> > @@ -850,7 +850,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry)
+> >                          * callback counters.
+> >                          */
+> >                         ti = ilookup5_nowait(dir->i_sb, vp->fid.vnode,
+> > -                                            afs_ilookup5_test_by_fid, &vp->fid);
+> > +                                            afs_ilookup5_test_by_fid, &vp->fid, &isnew);
+> >                         if (!IS_ERR_OR_NULL(ti)) {
+> >                                 vnode = AFS_FS_I(ti);
+> >                                 vp->dv_before = vnode->status.data_version;
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index 78ffa7b7e824..25131f105a60 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -1981,17 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+> >         spin_lock(&inode->i_lock);
+> >         __d_instantiate(entry, inode);
+> >         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with smp_rmb in wait_on_inode().
+> > -        */
+> > -       smp_wmb();
+> >         inode_state_clear(inode, I_NEW | I_CREATING);
+> > -       /*
+> > -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > -        * ___wait_var_event() either sees the bit cleared or
+> > -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> > -        */
+> > -       smp_mb();
+> >         inode_wake_up_bit(inode, __I_NEW);
+> >         spin_unlock(&inode->i_lock);
+> >  }
+> > diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+> > index b677c0e6b9ab..c9712235e7a0 100644
+> > --- a/fs/gfs2/glock.c
+> > +++ b/fs/gfs2/glock.c
+> > @@ -957,7 +957,7 @@ static struct gfs2_inode *gfs2_grab_existing_inode(struct gfs2_glock *gl)
+> >                 ip = NULL;
+> >         spin_unlock(&gl->gl_lockref.lock);
+> >         if (ip) {
+> > -               wait_on_inode(&ip->i_inode);
+> > +               wait_on_new_inode(&ip->i_inode);
+> >                 if (is_bad_inode(&ip->i_inode)) {
+> >                         iput(&ip->i_inode);
+> >                         ip = NULL;
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 3153d725859c..1396f79b2551 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -558,6 +558,32 @@ struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
+> >  }
+> >  EXPORT_SYMBOL(inode_bit_waitqueue);
+> >
+> > +void wait_on_new_inode(struct inode *inode)
+> > +{
+> > +       struct wait_bit_queue_entry wqe;
+> > +       struct wait_queue_head *wq_head;
+> > +
+> > +       spin_lock(&inode->i_lock);
+> > +       if (!(inode_state_read(inode) & I_NEW)) {
+> > +               spin_unlock(&inode->i_lock);
+> > +               return;
+> > +       }
+> > +
+> > +       wq_head = inode_bit_waitqueue(&wqe, inode, __I_NEW);
+> > +       for (;;) {
+> > +               prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBLE);
+> > +               if (!(inode_state_read(inode) & I_NEW))
+> > +                       break;
+> > +               spin_unlock(&inode->i_lock);
+> > +               schedule();
+> > +               spin_lock(&inode->i_lock);
+> > +       }
+> > +       finish_wait(wq_head, &wqe.wq_entry);
+> > +       WARN_ON(inode_state_read(inode) & I_NEW);
+> > +       spin_unlock(&inode->i_lock);
+> > +}
+> > +EXPORT_SYMBOL(wait_on_new_inode);
+> > +
+> >  /*
+> >   * Add inode to LRU if needed (inode is unused and clean).
+> >   *
+> > @@ -1008,7 +1034,8 @@ static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_lock
+> >  static struct inode *find_inode(struct super_block *sb,
+> >                                 struct hlist_head *head,
+> >                                 int (*test)(struct inode *, void *),
+> > -                               void *data, bool is_inode_hash_locked)
+> > +                               void *data, bool is_inode_hash_locked,
+> > +                               bool *isnew)
+> >  {
+> >         struct inode *inode = NULL;
+> >
+> > @@ -1035,6 +1062,7 @@ static struct inode *find_inode(struct super_block *sb,
+> >                         return ERR_PTR(-ESTALE);
+> >                 }
+> >                 __iget(inode);
+> > +               *isnew = !!(inode_state_read(inode) & I_NEW);
+> >                 spin_unlock(&inode->i_lock);
+> >                 rcu_read_unlock();
+> >                 return inode;
+> > @@ -1049,7 +1077,7 @@ static struct inode *find_inode(struct super_block *sb,
+> >   */
+> >  static struct inode *find_inode_fast(struct super_block *sb,
+> >                                 struct hlist_head *head, unsigned long ino,
+> > -                               bool is_inode_hash_locked)
+> > +                               bool is_inode_hash_locked, bool *isnew)
+> >  {
+> >         struct inode *inode = NULL;
+> >
+> > @@ -1076,6 +1104,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
+> >                         return ERR_PTR(-ESTALE);
+> >                 }
+> >                 __iget(inode);
+> > +               *isnew = !!(inode_state_read(inode) & I_NEW);
+> >                 spin_unlock(&inode->i_lock);
+> >                 rcu_read_unlock();
+> >                 return inode;
+> > @@ -1181,17 +1210,7 @@ void unlock_new_inode(struct inode *inode)
+> >         lockdep_annotate_inode_mutex_key(inode);
+> >         spin_lock(&inode->i_lock);
+> >         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with smp_rmb in wait_on_inode().
+> > -        */
+> > -       smp_wmb();
+> >         inode_state_clear(inode, I_NEW | I_CREATING);
+> > -       /*
+> > -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > -        * ___wait_var_event() either sees the bit cleared or
+> > -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> > -        */
+> > -       smp_mb();
 
-can we initialize ovcs_id and use that instead of skip_ovl? This
-would save one flag.
+You're getting rid of smp_mb() because you're rechecking the flag under
+i_lock after you called prepare_to_wait_event() in wait_on_new_inode()?
 
-Many thanks,
-Andrea
-
->  	bool level_triggered_irq[RP1_INT_END];
->  };
->  
-> @@ -289,10 +291,14 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  		goto err_unload_overlay;
->  	}
->  
-> +	rp1->skip_ovl = skip_ovl;
-> +	rp1->rp1_node = rp1_node;
-> +
->  	return 0;
->  
->  err_unload_overlay:
-> -	of_overlay_remove(&rp1->ovcs_id);
-> +	if (!skip_ovl)
-> +		of_overlay_remove(&rp1->ovcs_id);
->  err_unregister_interrupts:
->  	rp1_unregister_interrupts(pdev);
->  err_put_node:
-> @@ -308,8 +314,12 @@ static void rp1_remove(struct pci_dev *pdev)
->  	struct device *dev = &pdev->dev;
->  
->  	of_platform_depopulate(dev);
-> -	of_overlay_remove(&rp1->ovcs_id);
-> +	if (!rp1->skip_ovl)
-> +		of_overlay_remove(&rp1->ovcs_id);
->  	rp1_unregister_interrupts(pdev);
-> +
-> +	if (rp1->skip_ovl)
-> +		of_node_put(rp1->rp1_node);
->  }
->  
->  static const struct pci_device_id dev_id_table[] = {
-> -- 
-> 2.51.0
-> 
+> >         inode_wake_up_bit(inode, __I_NEW);
+> >         spin_unlock(&inode->i_lock);
+> >  }
+> > @@ -1202,17 +1221,7 @@ void discard_new_inode(struct inode *inode)
+> >         lockdep_annotate_inode_mutex_key(inode);
+> >         spin_lock(&inode->i_lock);
+> >         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with smp_rmb in wait_on_inode().
+> > -        */
+> > -       smp_wmb();
+> >         inode_state_clear(inode, I_NEW);
+> > -       /*
+> > -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > -        * ___wait_var_event() either sees the bit cleared or
+> > -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> > -        */
+> > -       smp_mb();
+> >         inode_wake_up_bit(inode, __I_NEW);
+> >         spin_unlock(&inode->i_lock);
+> >         iput(inode);
+> > @@ -1286,12 +1295,13 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+> >         struct inode *old;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> >         spin_lock(&inode_hash_lock);
+> > -       old = find_inode(inode->i_sb, head, test, data, true);
+> > +       old = find_inode(inode->i_sb, head, test, data, true, &isnew);
+> >         if (unlikely(old)) {
+> >                 /*
+> >                  * Uhhuh, somebody else created the same inode under us.
+> > @@ -1300,10 +1310,12 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+> >                 spin_unlock(&inode_hash_lock);
+> >                 if (IS_ERR(old))
+> >                         return NULL;
+> > -               wait_on_inode(old);
+> > -               if (unlikely(inode_unhashed(old))) {
+> > -                       iput(old);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(old);
+> > +                       if (unlikely(inode_unhashed(old))) {
+> > +                               iput(old);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >                 return old;
+> >         }
+> > @@ -1391,18 +1403,21 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+> >         struct inode *inode, *new;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = find_inode(sb, head, test, data, false);
+> > +       inode = find_inode(sb, head, test, data, false, &isnew);
+> >         if (inode) {
+> >                 if (IS_ERR(inode))
+> >                         return NULL;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >                 return inode;
+> >         }
+> > @@ -1434,18 +1449,21 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> >         struct inode *inode;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = find_inode_fast(sb, head, ino, false);
+> > +       inode = find_inode_fast(sb, head, ino, false, &isnew);
+> >         if (inode) {
+> >                 if (IS_ERR(inode))
+> >                         return NULL;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >                 return inode;
+> >         }
+> > @@ -1456,7 +1474,7 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+> >
+> >                 spin_lock(&inode_hash_lock);
+> >                 /* We released the lock, so.. */
+> > -               old = find_inode_fast(sb, head, ino, true);
+> > +               old = find_inode_fast(sb, head, ino, true, &isnew);
+> >                 if (!old) {
+> >                         inode->i_ino = ino;
+> >                         spin_lock(&inode->i_lock);
+> > @@ -1482,10 +1500,12 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+> >                 if (IS_ERR(old))
+> >                         return NULL;
+> >                 inode = old;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >         }
+> >         return inode;
+> > @@ -1586,13 +1606,13 @@ EXPORT_SYMBOL(igrab);
+> >   * Note2: @test is called with the inode_hash_lock held, so can't sleep.
+> >   */
+> >  struct inode *ilookup5_nowait(struct super_block *sb, unsigned long hashval,
+> > -               int (*test)(struct inode *, void *), void *data)
+> > +               int (*test)(struct inode *, void *), void *data, bool *isnew)
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+> >         struct inode *inode;
+> >
+> >         spin_lock(&inode_hash_lock);
+> > -       inode = find_inode(sb, head, test, data, true);
+> > +       inode = find_inode(sb, head, test, data, true, isnew);
+> >         spin_unlock(&inode_hash_lock);
+> >
+> >         return IS_ERR(inode) ? NULL : inode;
+> > @@ -1620,16 +1640,19 @@ struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+> >                 int (*test)(struct inode *, void *), void *data)
+> >  {
+> >         struct inode *inode;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = ilookup5_nowait(sb, hashval, test, data);
+> > +       inode = ilookup5_nowait(sb, hashval, test, data, &isnew);
+> >         if (inode) {
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >         }
+> >         return inode;
+> > @@ -1648,19 +1671,22 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> >         struct inode *inode;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = find_inode_fast(sb, head, ino, false);
+> > +       inode = find_inode_fast(sb, head, ino, false, &isnew);
+> >
+> >         if (inode) {
+> >                 if (IS_ERR(inode))
+> >                         return NULL;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >         }
+> >         return inode;
+> > @@ -1800,6 +1826,7 @@ int insert_inode_locked(struct inode *inode)
+> >         struct super_block *sb = inode->i_sb;
+> >         ino_t ino = inode->i_ino;
+> >         struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> > @@ -1832,12 +1859,15 @@ int insert_inode_locked(struct inode *inode)
+> >                         return -EBUSY;
+> >                 }
+> >                 __iget(old);
+> > +               isnew = !!(inode_state_read(old) & I_NEW);
+> >                 spin_unlock(&old->i_lock);
+> >                 spin_unlock(&inode_hash_lock);
+> > -               wait_on_inode(old);
+> > -               if (unlikely(!inode_unhashed(old))) {
+> > -                       iput(old);
+> > -                       return -EBUSY;
+> > +               if (isnew) {
+> > +                       wait_on_new_inode(old);
+> > +                       if (unlikely(!inode_unhashed(old))) {
+> > +                               iput(old);
+> > +                               return -EBUSY;
+> > +                       }
+> >                 }
+> >                 iput(old);
+> >         }
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 21c73df3ce75..a813abdcf218 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -1030,15 +1030,7 @@ static inline void inode_fake_hash(struct inode *inode)
+> >         hlist_add_fake(&inode->i_hash);
+> >  }
+> >
+> > -static inline void wait_on_inode(struct inode *inode)
+> > -{
+> > -       wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> > -                      !(inode_state_read_once(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with routines clearing I_NEW.
+> > -        */
+> > -       smp_rmb();
+> > -}
+> > +void wait_on_new_inode(struct inode *inode);
+> >
+> >  /*
+> >   * inode->i_rwsem nesting subclasses for the lock validator:
+> > @@ -3417,7 +3409,7 @@ extern void d_mark_dontcache(struct inode *inode);
+> >
+> >  extern struct inode *ilookup5_nowait(struct super_block *sb,
+> >                 unsigned long hashval, int (*test)(struct inode *, void *),
+> > -               void *data);
+> > +               void *data, bool *isnew);
+> >  extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+> >                 int (*test)(struct inode *, void *), void *data);
+> >  extern struct inode *ilookup(struct super_block *sb, unsigned long ino);
+> > --
+> > 2.34.1
+> >
 
