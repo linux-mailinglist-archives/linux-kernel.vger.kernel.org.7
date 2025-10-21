@@ -1,150 +1,214 @@
-Return-Path: <linux-kernel+bounces-863490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27C3BF7F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:51:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FBBBF7F90
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4C9465319
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:51:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C991C4F8A3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AC334E746;
-	Tue, 21 Oct 2025 17:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D70F3557F1;
+	Tue, 21 Oct 2025 17:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WyEntgqI"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukGtqBiE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2490634C828
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20BD280318
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761069074; cv=none; b=o8QaGt97vAhH0Gd/bIH8G9mSSAF1a/1nN/XuoaS603+fbX9CACVM8U3B0zLmoO/3sPCE2RsY5Hv6N99vKOwHBl0IZ/TkKf372FXbDxYCrB3f5qXotC3N8Sm+s6TvzaLP7FhAYNyEv5jddmlZzysTMD6auVRdul+koiH/X5qOZZo=
+	t=1761069150; cv=none; b=pUXFJbPKT/Ybhg5EgUFQiZx7Mf4UkZMdVPKI07f8JMOvt++8HqGfX+KlNddzKVW+Akq909vUhiCV6Tpo2cepmv/TApHV9fvhdqT2xkrtl/EWY0skN3ixN1fHp4gguo3ZwtA4antW3ryheH9JLAlOX1fXPLi3kLr0Zm30UHVxgAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761069074; c=relaxed/simple;
-	bh=IvjvTfof1NX7f0a6Mj/sydhqvdCdvq4pVhC8YJjU2Nc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OlFTs0anp7AFxm/FGPMKzV/Q4mWv6Cm70H37hn8Q9MC9Ksk8xDY2wXltL9np0Zq6UIObY1no+XnQxWoQaGNaF3aB44+bxW4iwsaXjkP+epNTVK283yR5kjo/cEbIWp42Q3EywUNCWnwHFLL//5CT3X7a872K09y9ho+VCC4HXpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WyEntgqI; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bb3b235ebso11405143a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761069072; x=1761673872; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Mbuo7BVKgUb8P9fXKLxWi8r7pdvvGC3+QWIjFuJjuE=;
-        b=WyEntgqIHy2YeM3d2+8mcOQBCYDY7qsNMOIdcEHbmdhOovEdaelNO7dUAsdyeSCEwn
-         pvuPzBw8sYeWJYdLNH2qfGiWGKEyCUN7dgQikBoSiHSA8W6mGcygQ44KPGTdeJx2KxSu
-         RCBAmK/YeiKGNRqNgH9GC58V8GC3jOrc6Y1Wnp3llx1jr4kiQuwOiq0pWxKDI3IHXPm0
-         sODR9GQSAo4HCUbIcYSZvGbFoluWCxSUZjT6OWixpyFGHW578wGX45sHBt2lQaQoozdC
-         vue//b90cIfSx+bPgyFC9bVxlV/X0xTN1/8HBuEMW4B/inpIExy7FCGeK6LJVZu6kaoi
-         ey9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761069072; x=1761673872;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Mbuo7BVKgUb8P9fXKLxWi8r7pdvvGC3+QWIjFuJjuE=;
-        b=rbzszIKUGiZpW2e9bX9WYAVD1wl41mmF0n/Ldh8of+XBx9QI4gPLkZkZB2gHpIKjFj
-         RBhvHm7ziWGJoYTKY+JmvnoFdjKxbtz7paErC5TG7IgSZxo/dsy1FYbWFTgk6omN7rrp
-         9+9fif+4inaSbwTrLXzjHEHBZRimOpy5nYKdz91vIwZLNILgbihvlvr2il/8DgnK8R46
-         RRVvsXu7nSYmrg5Cz2PUn1GspVzhFgSbElLPOGrYdvI4nSv/+7cVVKOYsD8wD/7LL2H1
-         dMxOMCwO9DRMMZxEGwi8HDw6dKG5PExVhP+4K38NO+n+4O54IuKHoNncPYpCAjHNZ2fX
-         PQKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj3LQOR5HGCcVhO+2urXk5FsTeWTulypQo8b5f4tnI4B/JdTQSRSK4gbodkY7z85RLSLtRcsrU9oynT0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1VjwPRBT+snurQ24W6aeZzSl1zJfixtXB5i0EEsMyd0lKTlPS
-	xYtuO5CdrJNxxkmHWmWe0AexUPjx9EnW7DMKA3u9q4ICg1S1xMjRXF+DL3Dt8IcVtViIt/PcN0C
-	ourVTyQ==
-X-Google-Smtp-Source: AGHT+IGX3APteug86Z/yM6rsjQlQapXW6AnpEVut4Vor4TAnyP5V7CP03xYzW1CnKx74JWZadXlmwf6StGE=
-X-Received: from pjbnl2.prod.google.com ([2002:a17:90b:3842:b0:33b:51fe:1a73])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e43:b0:334:2a38:2a05
- with SMTP id 98e67ed59e1d1-33bcf86b628mr24656863a91.8.1761069072343; Tue, 21
- Oct 2025 10:51:12 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:51:11 -0700
-In-Reply-To: <ad9b3b96-324a-4661-b43e-0b31cb7a7b51@intel.com>
+	s=arc-20240116; t=1761069150; c=relaxed/simple;
+	bh=ndfCxg4M63xn2nqUZ2Ayh9FKf+NUQ5blADXKYxyxxf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hunOnfpzxMOfoe+6t5tjuGDvhD+/zl5kQHmLj7EAg7Z47jQ7yxAyjqwQCiPYr0BgU70eOxVkY7TUEuoo1pM+v32GbjOWe16HYpG7uZx/+0IYlKkOqMxH0l8C4zivG2KFgczvFDfzL6IU/QHVdlVRnsk7vSytKU3Opqb8E9TtlpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukGtqBiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8CBC4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761069150;
+	bh=ndfCxg4M63xn2nqUZ2Ayh9FKf+NUQ5blADXKYxyxxf4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ukGtqBiES93R3iz1DWMY1Pj9Y1eWR1jip8/DOJ9D9v2/2MgPFtWPncPoQPgcIjQYl
+	 4XX3hmJS75XRzMIFjQGNGeohA4wTuVToDnFXMhwoqjT3dMa018BzbcfhPwCDxGKEA+
+	 v9JOJsg9tuYODIQgDVSmFj2cx3Bh6aaKozxI7tiZDzOok+fq0SRZB8PDILnnIgT+dM
+	 x6nfxmcb9vHMvoEFMCDUtS2FKQIJWso/BUhjTiWC9WK15CrF+FtzuoEbFrrp7/qKV8
+	 UB1S/Goe1e0bBZYIqb0JFcOwuVCxiUWISlV6N9ZlCBbunnlgVmA/GtYRxLQvBEs7Td
+	 gTxUdQbASInHw==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-651c83b6c14so1252027eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:52:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXmX+SLX5iTlbB2HGo/VZ3EOi19L7eVc+S6C3oO7E7eLe/miWK7URVerPcpej9Hm/c/cfIsZUcicZ1jdXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOBh0o+jNbFp//eRcj/4Oxg0aewS/42ogoLbY05yZhX9tKlhiC
+	HruAQRqn2g/Paau7bXK5iYRAhpURV3aPpqaGtph2KrcMgJuwuXvgsAcb6bitO0PB7A8dzOwieEC
+	qkNLO8iQwBuywE63Xw5tAN8Y1xUMZugA=
+X-Google-Smtp-Source: AGHT+IGPKl3GQ9sdtZoYyLsrJBzwYizXgcnSpczdZWQwaAv3rUzoD9WeKdfE/wLYE6wyyaaHLp86bkCftKiteQeGZFk=
+X-Received: by 2002:a05:6808:2444:b0:441:8f74:f48 with SMTP id
+ 5614622812f47-443a31bd4d4mr8372621b6e.66.1761069149581; Tue, 21 Oct 2025
+ 10:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250910144453.1389652-1-dave.hansen@linux.intel.com>
- <aPY_yC45suT8sn8F@google.com> <872c17f3-9ded-46b2-a036-65fc2abaf2e6@intel.com>
- <aPZKVaUT9GZbPHBI@google.com> <033f56f9-fb66-4bf5-b25a-f2f8b964cd4e@intel.com>
- <aPZUY90M0B3Tu3no@google.com> <ad9b3b96-324a-4661-b43e-0b31cb7a7b51@intel.com>
-Message-ID: <aPfID-MxqHleKTz0@google.com>
-Subject: Re: [PATCH] x86/virt/tdx: Use precalculated TDVPR page physical address
-From: Sean Christopherson <seanjc@google.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov" <kas@kernel.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Kai Huang <kai.huang@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Thomas Huth <thuth@redhat.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-coco@lists.linux.dev, kvm@vger.kernel.org, 
-	Farrah Chen <farrah.chen@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20251020220914.320832-1-changwoo@igalia.com>
+In-Reply-To: <20251020220914.320832-1-changwoo@igalia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 19:52:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jy3gztTTfR_UOv_yX5w9Uj2ZqEmhmNZ63WVnFHM2rRcw@mail.gmail.com>
+X-Gm-Features: AS18NWCGY90SiFbX5qje6-fmqgpchXM6x_TukWYEclLqBmorwEojmFOe7VXcsV4
+Message-ID: <CAJZ5v0jy3gztTTfR_UOv_yX5w9Uj2ZqEmhmNZ63WVnFHM2rRcw@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] PM: EM: Add netlink support for the energy model
+To: Changwoo Min <changwoo@igalia.com>
+Cc: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com, 
+	pavel@kernel.org, christian.loehle@arm.com, tj@kernel.org, 
+	kernel-dev@igalia.com, linux-pm@vger.kernel.org, sched-ext@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025, Dave Hansen wrote:
-> On 10/20/25 08:25, Sean Christopherson wrote:
-> >>> @@ -1583,7 +1578,7 @@ u64 tdh_vp_addcx(struct tdx_vp *vp, struct page *tdcx_page)
-> >>>  {
-> >>>         struct tdx_module_args args = {
-> >>>                 .rcx = page_to_phys(tdcx_page),
-> >>> -               .rdx = tdx_tdvpr_pa(vp),
-> >>> +               .rdx = vp->tdvpr_pa,
-> >>>         };
-> >> I'm kinda dense normally and my coffee hasn't kicked in yet. What
-> >> clearly does not work there?
-> > Relying on struct page to provide type safety.
-> > 
-> >> Yeah, vp->tdvpr_pa is storing a physical address as a raw u64 and not a
-> >> 'struct page'. That's not ideal. But it's also for a pretty good reason.
-> > Right, but my point is that regradless of the justification, every exception to
-> > passing a struct page diminishes the benefits of using struct page in the first
-> > place.
-> 
-> Yeah, I'm in total agreement with you there.
-> 
-> But I don't think there's any type scheme that won't have exceptions or
-> other downsides.
-> 
-> u64's are really nice for prototyping because you can just pass those
-> suckers around anywhere and the compiler will never say a thing. But we
-> know the downsides of too many plain integer types getting passed around.
-> 
-> Sparse-enforced address spaces are pretty nifty, but they can get messy
-> around the edges of the subsystem where the type is used. You end up
-> with lots of ugly force casts there to bend the compiler to your will.
-> 
-> 'struct page *' isn't perfect either. As we saw, you can't get from it
-> to a physical address easily in noinstr code. It doesn't work everywhere
-> either.
-> 
-> So I dunno. Sounds like there is no shortage of imperfect ways skin this
-> cat. Yay, engineering!
-> 
-> But, seriously, if you're super confident that a sparse-enforced address
+On Tue, Oct 21, 2025 at 12:09=E2=80=AFAM Changwoo Min <changwoo@igalia.com>=
+ wrote:
+>
+> Addressed all the comments from Lukasz and rebased the code to the head
+> of the linus tree.
+>
+> There is a need to access the energy model from the userspace. One such
+> example is the sched_ext schedulers [1]. The userspace part of the
+> sched_ext schedules could feed the (post-processed) energy-model
+> information to the BPF part of the scheduler.
+>
+> Currently, debugfs is the only way to read the energy model from userspac=
+e;
+> however, it lacks proper notification mechanisms when a performance domai=
+n
+> and its associated energy model change.
+>
+> This patch set introduces a generic netlink for the energy model, as
+> discussed in [2]. It allows a userspace program to read the performance
+> domain and its energy model. It notifies the userspace program when a
+> performance domain is created or deleted or its energy model is updated
+> through a multicast interface.
+>
+> Specifically, it supports two commands:
+>   - EM_CMD_GET_PDS: Get the list of information for all performance
+>     domains.
+>   - EM_CMD_GET_PD_TABLE: Get the energy model table of a performance
+>     domain.
+>
+> Also, it supports three notification events:
+>   - EM_CMD_PD_CREATED: When a performance domain is created.
+>   - EM_CMD_PD_DELETED: When a performance domain is deleted.
+>   - EM_CMD_PD_UPDATED: When the energy model table of a performance domai=
+n
+>     is updated.
+>
+> This can be tested using the tool, tools/net/ynl/pyynl/cli.py, for exampl=
+e,
+> with the following commands:
+>
+>   $> tools/net/ynl/pyynl/cli.py \
+>      --spec Documentation/netlink/specs/em.yaml \
+>      --do get-pds
+>   $> tools/net/ynl/pyynl/cli.py \
+>      --spec Documentation/netlink/specs/em.yaml \
+>      --do get-pd-table --json '{"pd-id": 0}'
+>   $> tools/net/ynl/pyynl/cli.py \
+>      --spec Documentation/netlink/specs/em.yaml \
+>      --subscribe event  --sleep 10
+>
+> [1] https://lwn.net/Articles/922405/
+> [2] https://lore.kernel.org/lkml/a82423bc-8c38-4d57-93da-c4f20011cc92@arm=
+.com/
+> [3] https://lore.kernel.org/lkml/202506140306.tuIoz8rN-lkp@intel.com/#t
+>
+> ChangeLog v5 -> v6:
+>   - Fix two problems reported by the kernel test robot.
+>   - Conditionally include the iterator/accessor code for the performance
+>     domain when both CONFIG_ENERGY_MODEL and CONFIG_NET are set to avoid
+>     the compilation errors (patch 5).
+>   - Remove an unused variable, `ret`, in em_notify_pd_deleted() to avoid
+>     a warning (patch 8).
+>
+> ChangeLog v4 -> v5:
+>   - Rebase the code to the head of the linus tree.
+>   - Remove the redundant em_check_capacity_update() call from
+>     em_dev_register_pd_no_update().
+>   - Move patch 3 ("PM: EM: Add an iterator and accessor for the
+>     performance domain") after patch 5 ("PM: EM: Add a skeleton code for
+>     netlink notification").
+>   - Move the declaration of for_each_em_perf_domain() and
+>     em_perf_domain_get_by_id() from energy_model.h to em_netlink.h.
+>   - Fix a typo in patch 7 ("PM: EM: Implement
+>     em_nl_get_pd_table_doit()") and change the variable declaration
+>     order in em_nl_get_pd_table_doit() following the reverse Christmas
+>     tree order.
+>   - Remove the empty skeleton code of em_notify_pd_created/updated() from
+>     patch 8 ("PM: EM: Implement em_notify_pd_deleted()") and introduce
+>     them later where they are actually implemented.
+>   - Change the return type of em_notify_pd_created/updated/deleted()
+>     from int to void, since we don't check it anyway.
+>
+> ChangeLog v3 -> v4:
+>   - Move patches [3-5] to the first.
+>   - Remove the ending period (".") from all of the patch subjects.
+>   - Rebase the code to v6.17-rc4.
+>
+> ChangeLog v2 -> v3:
+>   - Properly initialize a return variable in
+>     em_notify_pd_created/updated() at an error path (09/10), reported by
+>     the kernel test robot [3].
+>   - Remove redundant initialization of a return variable in
+>     em_notify_pd_deleted() at an error path (08/10).
+>
+> ChangeLog v1 -> v2:
+>   - Use YNL to generate boilerplate code. Overhaul the naming conventions
+>     (command, event, notification, attribute) to follow the typical
+>     conventions of other YNL-based netlink implementations.
+>   - Calculate the exact message size instead of using NLMSG_GOODSIZE
+>     when allocating a message (genlmsg_new). This avoids the reallocation
+>     of a message.
+>   - Remove an unnecessary function, em_netlink_exit(), and initialize the
+>     netlink (em_netlink_init) at em_netlink.c without touching energy_mod=
+el.c.
+>
+> Changwoo Min (10):
+>   PM: EM: Assign a unique ID when creating a performance domain
+>   PM: EM: Expose the ID of a performance domain via debugfs
+>   PM: EM: Add em.yaml and autogen files
+>   PM: EM: Add a skeleton code for netlink notification
+>   PM: EM: Add an iterator and accessor for the performance domain
+>   PM: EM: Implement em_nl_get_pds_doit()
+>   PM: EM: Implement em_nl_get_pd_table_doit()
+>   PM: EM: Implement em_notify_pd_deleted()
+>   PM: EM: Implement em_notify_pd_created/updated()
+>   PM: EM: Notify an event when the performance domain changes
+>
+>  Documentation/netlink/specs/em.yaml | 113 ++++++++++
+>  MAINTAINERS                         |   3 +
+>  include/linux/energy_model.h        |   4 +
+>  include/uapi/linux/energy_model.h   |  62 ++++++
+>  kernel/power/Makefile               |   5 +-
+>  kernel/power/em_netlink.c           | 309 ++++++++++++++++++++++++++++
+>  kernel/power/em_netlink.h           |  39 ++++
+>  kernel/power/em_netlink_autogen.c   |  48 +++++
+>  kernel/power/em_netlink_autogen.h   |  23 +++
+>  kernel/power/energy_model.c         |  85 +++++++-
+>  10 files changed, 689 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/netlink/specs/em.yaml
+>  create mode 100644 include/uapi/linux/energy_model.h
+>  create mode 100644 kernel/power/em_netlink.c
+>  create mode 100644 kernel/power/em_netlink.h
+>  create mode 100644 kernel/power/em_netlink_autogen.c
+>  create mode 100644 kernel/power/em_netlink_autogen.h
+>
+> --
 
-Heh, I dunno about "super confident", but I do think it will be the most robust
-overall, and will be helpful for readers by documenting which pages/assets are
-effectively opaque handles things that are owned by the TDX-Module.
-
-KVM uses the sparse approach in KVM's TDP MMU implementation to typedef PTE
-pointers, which are RCU-protected.
-
-  typedef u64 __rcu *tdp_ptep_t;
-
-There are handful of one open-coded rcu_dereference() calls, but the vast majority
-of dereferences get routed through helpers that deal with the gory details.  And
-of the open-coded calls, I distinctly remember two being interesting cases where
-the __rcu enforcement forced us to slow down and think about exactly the lifetime
-of the PTE.  I.e. even the mildly painful "overhead" has been a net positive.
-
-> space is the way to go, it's not *that* hard to go look at it. TDX isn't
-> that big. I can go poke at it for a bit.
+Is there any particular reason why you have not picked up the tags
+received by the previous iteration?
 
