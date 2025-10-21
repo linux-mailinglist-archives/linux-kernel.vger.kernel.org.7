@@ -1,120 +1,153 @@
-Return-Path: <linux-kernel+bounces-862179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF267BF49BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:54:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 287F2BF49E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD2918A734D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85B218C3FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E53257448;
-	Tue, 21 Oct 2025 04:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE3F221DB9;
+	Tue, 21 Oct 2025 05:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSnNvN2s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgZg37ko"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0646E24C676;
-	Tue, 21 Oct 2025 04:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3F749620
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761022458; cv=none; b=jgHTFrIeVrMEZtyWq1wNeQUa3e0jJW2oUB635UpLBagOGOmBzp34XgkWJ3FwTNGK5OUltB6D5xWkKwEYVqxQnvv28D0l/UiLCWB2nFEGYENAsJRK8ow4tIzajhlM2bqZK0Z15jmnDHEe/BOuPOTclUUeN3tdV3tW0QmcPOKfl6s=
+	t=1761023328; cv=none; b=DX/nFllbcji5LSMPo0HB2Nie9vK6OLs0O/C83jPrWGqYpMKsFk+EQJr2IQiiab1zrbD6FINQUs0CIQsWHmf/Q8ZCBTeMGezSDaOs3qVbBFw0fYLVp7dP1jLLBpXe5Slt3I/Iu/wH/XZhXaWg4BzGunSGyBz6bD5XXhtQPmccYzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761022458; c=relaxed/simple;
-	bh=cp2MWKweKeqkkK10axCIthyBxdGN4x5OPDkgdyYEZkQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ShGR9PFPY0h6LnOdEbH63CYrj+gcnfjsMAajLY4cUupWcBcFLVSr71R0qEba8I3kt4P4bpwqIND81lj4swch/S0fSMChHCbCD+evLLtC/a97WfBin9UVHHkyOHfuj5utivT/aHb+cM3EkffIbT1wWabg8qKGi6IOJ6kbbBRCRAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSnNvN2s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADE1C4CEF1;
-	Tue, 21 Oct 2025 04:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761022457;
-	bh=cp2MWKweKeqkkK10axCIthyBxdGN4x5OPDkgdyYEZkQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=rSnNvN2slUpFH+oequP9kgu2WPs5mGq65AOmJHlVo3U18Q6cOi3maowa0XZ5I/pxU
-	 ORdH/T9S3udm1pf9H0B8hEJemMOqWFjQr+QdFt9jzgAajfOLqnjdsUiXsaUV3Fr/np
-	 dSd9p1MQsONbSZOLy+5PD5xguKEkgJnxMAIwTdy0rPvQV0SnH89MUu8d0ffTAi50Y3
-	 vHWC3J3z/aDBHnxff1nHPg6XCre6DTopcBAJjMw2dYnhaL0b5sZE700cyokN7txUFI
-	 zI8Tov648wXhkS52weipHrxpMFFaUtic9YG7LJFe33h7rlSfyxpDI06bcqy0jVoLnp
-	 n8OkQr+FrM88Q==
-Date: Mon, 20 Oct 2025 23:54:16 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1761023328; c=relaxed/simple;
+	bh=YtraqUyKlqWdKFxQzkA2rw65q0ZN+exZ2MJfWd2tuxo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cOFOLXuya91kqKuqcYMlBLTOBJh4vrGc1UyKzWJJRTyt4jOtiQqyn8e3cm5Z0UjQZ28zDp3Gyl3CdnXfuQmwKm7i6AtN97pRo4XFvtJMmIcoHyHVTspLTnDQhjbjyrdQf+hu2kdvYtLggvUbnu/um8Jn1IrBYFffwffjk+3sOOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgZg37ko; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77f5d497692so6256897b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 22:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761023327; x=1761628127; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zlep3ICY1uWogkdShazVCi4lH3q4stL2OEVuva3DcVw=;
+        b=UgZg37koRo5n2vH/Jl1nxLU5p7Yk8j1mGZtrLz9zrz/HksqiESLMTarEWKjr7F8e46
+         wRn3QLZxzcSYP2WkzWKluQsaw5KxZChu8tk4YyrfASFkK6tI5AqCV3tmHBFAknDHrlfC
+         IigUL73rKRtbiDVa2XyZJseHwHf5/eDnptZtZ5zjjbJpIjbJm/So5lLlroTtsCeZcXbA
+         +8jjREKDOzZ/5dlwRsDKJwyYUc95y5lS34/kq0NPpHH3+TLaTZ3nZilCLO3FLduqeANo
+         3NJtGSGBAzidjK7I6pq3M4MlJuUbZ7K3I/uovDhikM4nf8H1QBWSit62qSs2uTL59bLa
+         sYnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761023327; x=1761628127;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zlep3ICY1uWogkdShazVCi4lH3q4stL2OEVuva3DcVw=;
+        b=bLufTrVSPF/B13HAdfsSyERKjcdQ2/5ZzoimjauRijKZlnXkM44vo/vHWyiOiqU0jl
+         NbyTUq6oiMhaQfDzNZovp+EszbbbGICH2oZWBC18SsmX0gbjppqf2WKh14fnS74GxbtB
+         Y3oCc3ab2CrhnaMm9rRDx9n3x2UuAc1lZaajUjsW4a5CSQCtWBZAzLut+PAR/R5N5GCm
+         HjRBkR35GDw4n/PcxIcWOE4tgt/ASWC+zrQ1+gaqUszfcpEwFaWA1tAOJECziej3wxhl
+         S3QrAb2a2lUcX14RdDqJkpsWK8nbjAKfmI9S2SGYSWmdyDXc63SP9qQacautOe2/O8su
+         9ang==
+X-Forwarded-Encrypted: i=1; AJvYcCWTdV0pzHLeW65NzYin/dVSGTj9EBm45+vM4YxZgWrmYrqeH8Ti0Ex1gpT6y4BfwTLA4Q7x+cIzBkAuRCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx10OwJebdY/JJ8qZurpHQOj7ZBpdzJgJyUuu8kFOUxLtdsTLIz
+	x7ih6lTzHXDBQACZv/5IoQBqY2qGYYH++5ozyHPgSi32p3wrn9qtpALG
+X-Gm-Gg: ASbGncsf/kU3T7rBS08fbUigDZRZtP2Q6wBTmF3TxOtZoGE7dyDpeEVt9b7kptC9rUo
+	ZavdfJZV91ahP+mOA4KViPRC8wM4XbfxpJ5lr8YgZtmXiJCnBQonjv7RDHY1gTILbvkhBenYMNN
+	M6dW9XSFYGVpDKbElO9B1TaJfIkcDYYGW6P3Tb7vJJI/XFqV0Tj0wTNFzlg0VKIGnIErE4+UE0p
+	j9s5R4A5pu9wnPnmarcPxKPVpNLpWUFtapvoomRBKMQQqU2wifPe8/2kr5mRjtMcVpgxy7NaPne
+	P56XBpj0P7kGh69ZCQtcl5D6NwSajpFV4TzPu0YnpO2ClV/iJrbW+qbGx2d5XxU8jBF4yXuSnJe
+	liRMskB2NwEQebkem82itArRoJx51PRaoBRpZ1suoEr4SVOWefj1ZwTGMGrJPwfJtExAXf18TYn
+	tzIzeb5rSfnAN8Opo3Hze4XBJdXfcP4mbioXgWnoJj
+X-Google-Smtp-Source: AGHT+IEKO2ycxvrPxfdPNfX4NNUznEApUZ78dkI5U1+dK8wAC/cmFlKejy9rKQIyikF6t2boUA1h+A==
+X-Received: by 2002:aa7:888e:0:b0:780:f6db:b1bd with SMTP id d2e1a72fcca58-7a220a43782mr19916796b3a.4.1761023326679;
+        Mon, 20 Oct 2025 22:08:46 -0700 (PDT)
+Received: from HYB-iPCgmhaB8Cy.ad.analog.com ([59.9.235.253])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a2300f254esm10113015b3a.45.2025.10.20.22.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 22:08:46 -0700 (PDT)
+From: Joan-Na-adi <joan.na.devcode@gmail.com>
+X-Google-Original-From: Joan-Na-adi <joan.na@analog.com>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Joan Na <joan.na@analog.com>
+Subject: [PATCH v4 0/2]  Add support for MAX77675 device
+Date: Tue, 21 Oct 2025 14:08:28 +0900
+Message-Id: <20251021050830.185626-1-joan.na@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: sugar.zhang@rock-chips.com, sboyd@kernel.org, 
- linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, 
- linux-arm-kernel@lists.infradead.org, finley.xiao@rock-chips.com, 
- linux-kernel@vger.kernel.org, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, heiko@sntech.de, 
- krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org, 
- mturquette@baylibre.com
-To: Elaine Zhang <zhangqing@rock-chips.com>
-In-Reply-To: <20251021033834.1390006-7-zhangqing@rock-chips.com>
-References: <20251021033834.1390006-1-zhangqing@rock-chips.com>
- <20251021033834.1390006-7-zhangqing@rock-chips.com>
-Message-Id: <176102245398.2690195.14711542090978775144.robh@kernel.org>
-Subject: Re: [PATCH v4 6/7] dt-bindings: clock: rockchip: Add RK3506 clock
- and reset unit
+Content-Transfer-Encoding: 8bit
+
+From: Joan Na <joan.na@analog.com>
+
+MAX77675 regulator driver and device tree bindings
+
+---
+Changes in v4:
+- Remove the 'maxim,max77675-regulator.h' file as it is no longer used for bindings
+- Eliminate unnecessary '|' characters where they are not needed
+- Add and modify code to drop references that are no longer used
+- Remove dead code
+- Add detailed descriptions for each mode of 'maxim,en-mode'
+- Rename 'maxim,latency-mode' to 'maxim,voltage-change-latency-us' for clearer meaning
+- Update max77675_parse_latency_mode function to max77675_parse_voltage_change_latency accordingly
+- Fix errors detected by running make dt_binding_check
+- Fix incorrect indentation in the YAML file
+
+Changes in v3:
+- Removed unused variable 'value'
+- Removed duplicate .list_voltage initializer
+- Wrapped of_match_table with of_match_ptr() to fix build failure when CONFIG_OF is not set
+- Updated driver code to match new DT binding schema
+- Changed regmap_config from REGCACHE_NONE to REGCACHE_MAPLE for improved performance
+- Added volatile_reg() to mark status registers as non-cacheable
+- Missing explanation of `maxim,fps-slot` default value
+- Updated DT binding enums to use string values (e.g., "low", "high") instead of integers
+- Converted several binary properties to boolean typei
+- Renamed time-based properties to use standard unit suffixes (e.g., "-sec", "-us")
+- Added default values for properties
+- Removed unused macros
+- Renamed macros for clarity
+
+Changes in v2:
+- Fixed build error due to missing 'max77675_of_match' declaration
+- Removed duplicate '.list_voltage' initialization
+- Corrected value usage in regmap_update_bits call
+- Added CONFIG_OF guards and used of_match_ptr()
+---
+
+Joan Na (2):
+  dt-bindings: regulator: Add MAX77675 regulator binding
+  regulator: max77675: Add MAX77675 regulator driver
+
+ .../bindings/regulator/maxim,max77675.yaml    | 195 ++++
+ drivers/regulator/Kconfig                     |   9 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/max77675-regulator.c        | 863 ++++++++++++++++++
+ drivers/regulator/max77675-regulator.h        | 260 ++++++
+ 5 files changed, 1328 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77675.yaml
+ create mode 100644 drivers/regulator/max77675-regulator.c
+ create mode 100644 drivers/regulator/max77675-regulator.h
 
 
-On Tue, 21 Oct 2025 11:38:33 +0800, Elaine Zhang wrote:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
-> 
-> Add device tree bindings for clock and reset unit on RK3506 SoC.
-> Add clock and reset IDs for RK3506 SoC.
-> 
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,rk3506-cru.yaml   |  45 +++
->  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
->  3 files changed, 541 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,pvtpll.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,pvtpll.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/slimbus/slimbus.example.dtb: slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not match any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/slimbus/slimbus.example.dtb: slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/slimbus/slimbus.example.dtb: slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property
-	from schema $id: http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/slimbus/slimbus.example.dtb: slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required property
-	from schema $id: http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251021033834.1390006-7-zhangqing@rock-chips.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+base-commit: 6548d364a3e850326831799d7e3ea2d7bb97ba08
+--
+2.34.1
 
 
