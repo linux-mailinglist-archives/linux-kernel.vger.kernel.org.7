@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-863024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BEABF6CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:36:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A78BF6D22
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4F940142B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FAB189033D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B344337B9A;
-	Tue, 21 Oct 2025 13:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S18DavwY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5191F0E26;
+	Tue, 21 Oct 2025 13:37:01 +0000 (UTC)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26DC337B86
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD5E22B8CB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053723; cv=none; b=axCgbvFwvOZH28NO2/hvMNPoxhyNXAoNbwq5iGHIBaKAxQu7x5DqkN4ECtyNNWDQhexmbdgg1+LahjwLdOzgv2SoewecbouicHQlRGrmi+IFSABTDC78bF99q1jC9rqAgOiogFAW4FiywakvOL9SaygG9jy0tHOXa0tICvhdu9g=
+	t=1761053821; cv=none; b=IoRQ4AXa8ohSVyNz0GoLwyUqliGIlC6y+B+OGm39xQXzF6ko7nro2b+jxUKL1u/moXmPIxjCY2qaPrxd9JbUM0duKHLj72uStIAnDrN5Z60gTULdCMPQv3ROZKrmS+l4mn2cVKpSDefpgAAhm1v2OZCFq8blpORvQOhtHPBpNsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053723; c=relaxed/simple;
-	bh=ZuqBsIVbt1VZeH9Nd3+eLrJ3RNjtyUBnOrvCECRWIMo=;
+	s=arc-20240116; t=1761053821; c=relaxed/simple;
+	bh=rFDpMMd/J7LmBoOgvX90w3JvXvtchMw0C13OGNdvG04=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dTIDvwolDl+87ZxTOKzh/pFxouyfxSviXBPLjA0dJFVU+ZOXOTBKAtDTQsPeEAbWmE3ugTQYhtxDxBU3JoGeJj51jsn6Oml4RLOHY6JVfiT5yoknmYzqZWKtRBr/woHSbgnta21e0/PMiHs44gth/u2yDvFpjCq5ciV708zJ7YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S18DavwY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DC5C4AF09
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761053723;
-	bh=ZuqBsIVbt1VZeH9Nd3+eLrJ3RNjtyUBnOrvCECRWIMo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=S18DavwYbzRxUahcWRpwvrAe0zB/UyjTqme1jX6ivlUDXe9QF0MKnRpZNlzcuUyr8
-	 qP5MgWy12F+Rs9j7/aCAn6IFq9dZJl3do1D5zUf4WGRirGdJX9e52/ghZzazGqgLq8
-	 jltEEgMXbsleqCDk34o9aZkyOzhqHH5ihgj2Ag5zKitF1ewMcY0HKzIRV0L+UQBVqm
-	 92UaqEccm542WIRtl/tiJOy6cjSQyveypKBIyuOGWuZm4fA2jWKGnilpLEmqBs7Xmo
-	 lPOeXhXZEwXbADA8Pt1oU6PNsQ3Ei09bw7u1q+Wq9LxPo5DNaN9tkIR6oFASPG7Mob
-	 KEPxeFT7w9bQw==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4439fc3abfeso2252869b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:35:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXmtWSnT2y8VEmwAy2xIv8oLYQnIHsjEMpfv0p9w3hvTGLX9KgS/kE9DDxtlpfFzmJemSHxXa6+e9A8li0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfBixmqKD5Xbf3IKUtx5v3TuzuMcbcQNO1uOIVbqV7QXPsumgS
-	kAx8Q/rdzDXj2kA5hqAuBZntHVRhLLUsgYARZpybJf+s6Q1vfBa02z9wM9nRI1nipHaxyWyEZy/
-	486iKbKPONu+eOGeLZOyMozUmSSHZTsk=
-X-Google-Smtp-Source: AGHT+IEKKO8UIzncbp3yZO81oyf6QsCEy/ZN7tr85jZ4pwoPxanGyvexPT/O4C5oiumqVgjKTnBwE1h32ENYeNiUZgM=
-X-Received: by 2002:a05:6808:444b:b0:441:8f74:f1a with SMTP id
- 5614622812f47-443a315b372mr7649786b6e.52.1761053722613; Tue, 21 Oct 2025
- 06:35:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=J7+fU13g2u5r3DO+GH5Zam7KDkhxIrg/p4HbPkkeqz2CC/Fv6TuSwnd7aGaAzXDP2vRquqWom/DEkGi3F3fbS49bj74h1HpigELE802O+Jc51UHQZo9FYlYej1PYFW7wE+ty+Zzlk0QO+fnHn61Y5d7gptxbrNfgeu/Qr30NX5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-930c4cd6ccbso3500452241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:36:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761053818; x=1761658618;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b78/bqYwVh1ldrSw5qZkZyL5FOTBO1IYeO3ztxHSC8M=;
+        b=fHLjTclSB6TafAJE5tNMafzFD7Nmu4G12cNP88GuPqVZer03EOl0Dv0DKCi2qkC3oN
+         FnUcy87ynLzoWh+RxO8WrbhB14XiRbpImG8GsefbS/lkTYOCfqU2z/uAxB3xKFEP+QhR
+         CwxDx0oRALC1FkCPZjndTFJ5P8OwAB8s6uXp9/++J3VhF9vHsvEyYL8CHSeFQWyFGvTD
+         Wy2bntgbfM2Qa3nCC9UFNlv8PAkDKTcqEeC98Xw36H1cCbjp4lqcOKypEi0KtpIB7KG+
+         gpqemOhNkfo6gnCkJ2eSN1J80dKlACTl31qA9dgyNmPSl+2wtNvhFlxLnkNF8jtoZDcN
+         R7jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWf4zH6U+FmmxLb8c64o2A3AITnbjGMFcjccQHKNS8txWtwB3HUt+PlD8ItN61DXADjHjJs8Dl3mv6tC4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJxNQv6TvaFHIROIXj9EwTmieQRXIyWN0h0QpI+HW9P+XHcQaJ
+	opYuMji84Fh3Ssfp8E/TNarQMHY1IZjVliZmhjV7QBbJiMTCmMRUGeSevdSfofYc
+X-Gm-Gg: ASbGnculnk23p/zZmfJjil68HZhBcnCNFZSgzrqf3MfKYZPMrvwd/TBrjfCc5/tOxgo
+	7ExNTC+QGtCwjBeUtTHljT0MlCJbuZiM7R6gU7VmAuouU6hz1CZuYyE1FSF8bim2EFWEh+67Zoo
+	Kl6W8UVgmjh3RypP2J7riYMpmn4ijZylcyJmys7eC6nhnOLrTFzFBJuN6dp7yu2zSbmbNgczo+T
+	QiqEW305/GI6zvuqb7RtipJDUX6METvtmSZtpuhE87d9RVEHSsH2q9xlazucTl6t3WZaMCgdtWF
+	Kn6+VtqT8hE6KBBnbTobjjPPWVhklFWu79GdB9sKAGlUdT5Au3iVLTsU9Y30IrFQjPyfqA0b+Ux
+	7MUOVp3i98Buywsi/Wyl6nPpNSHZrcRzg7LHIkGwKNP6WlawgEGGnYFQKHAZdskCrf1a9MF3Nha
+	9rn+hcxvfnV0WnF3IDaxtpySKi+B4OJjJaL56GUw==
+X-Google-Smtp-Source: AGHT+IEciwP6ftfc+7lRudALNerik/KbdWRMAwR5XIzU2+ZGiEk9LzrpPIUBHuYBZMAKmSHdxYhf1Q==
+X-Received: by 2002:a05:6102:418d:b0:5d6:5d9:dc0a with SMTP id ada2fe7eead31-5d7dd4650bcmr5276830137.10.1761053818228;
+        Tue, 21 Oct 2025 06:36:58 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d96c0ba5b8sm3593678137.2.2025.10.21.06.36.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 06:36:56 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-930ff50d181so3748760241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:36:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWanHp27v8MhkPB2YtYg8R3ET4LamxR4KPjY37FAu0p49az6pjM3ybV4i83vahHbavOcjM+yHmtxCJbLgE=@vger.kernel.org
+X-Received: by 2002:a05:6102:441d:b0:519:534a:6c4f with SMTP id
+ ada2fe7eead31-5d7dd5ee60fmr6017748137.33.1761053815204; Tue, 21 Oct 2025
+ 06:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021092825.822007-1-xry111@xry111.site>
-In-Reply-To: <20251021092825.822007-1-xry111@xry111.site>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Oct 2025 15:35:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iy8wChaPYGmc=mWJRrA+uXnGF2Ar7aMCMRoUqS6877aQ@mail.gmail.com>
-X-Gm-Features: AS18NWA8xXgTYvIuPvaLuEdFpvBPRx9_4TgORXKHv2p-jVKPnls01cOnTQbgH10
-Message-ID: <CAJZ5v0iy8wChaPYGmc=mWJRrA+uXnGF2Ar7aMCMRoUqS6877aQ@mail.gmail.com>
-Subject: Re: [PATCH] acpica: Work around bogus -Wstringop-overread warning
- since GCC 11
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org, 
-	Saket Dumbre <saket.dumbre@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, 
-	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <linux-acpi@vger.kernel.org>, 
-	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <acpica-devel@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
+References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com> <20251020143107.13974-2-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251020143107.13974-2-ovidiu.panait.rb@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Oct 2025 15:36:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWNq-DFG4_i9CN+Rb2RSgO1Sxph7HO7SNhnr0d1=LoW0g@mail.gmail.com>
+X-Gm-Features: AS18NWBYsMSpOo4y4kMiKki8g1BkhV5Ulk8TYURDjYYjSArsxY_VVDXQMAlwt_w
+Message-ID: <CAMuHMdWNq-DFG4_i9CN+Rb2RSgO1Sxph7HO7SNhnr0d1=LoW0g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: renesas: r9a09g057: Add clock and reset
+ entries for TSU
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: john.madieu.xa@bp.renesas.com, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 11:28=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wro=
-te:
+On Mon, 20 Oct 2025 at 16:31, Ovidiu Panait
+<ovidiu.panait.rb@renesas.com> wrote:
+> Add module clock and reset entries for the TSU0 and TSU1 blocks on the
+> Renesas RZ/V2H (R9A09G057) SoC.
 >
-> When ACPI_MISALIGNMENT_NOT_SUPPORTED, GCC can produce a bogus
-> -Wstringop-overread warning, see https://gcc.gnu.org/PR122073.
->
-> To me it's very clear that we have a compiler bug here, thus just
-> disable the warning.
->
-> Cc: stable@vger.kernel.org
-> Fixes: a9d13433fe17 ("LoongArch: Align ACPI structures if ARCH_STRICT_ALI=
-GN enabled")
-> Link: https://lore.kernel.org/all/899f2dec-e8b9-44f4-ab8d-001e160a2aed@ro=
-eck-us.net/
-> Link: https://github.com/acpica/acpica/commit/abf5b573
-> Co-developed-by: Saket Dumbre <saket.dumbre@intel.com>
-> Signed-off-by: Saket Dumbre <saket.dumbre@intel.com>
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
-Please submit ACPICA changes to the upstream ACPICA project on GitHub
-as pull requests (PRs).  After a given PR has been merged upstream, a
-corresponding Linux patch can be submitted with a Link: tag pointing
-to the upstream commit, but note that upstream ACPICA material is
-automatically transferred to Linux, so it should not be necessary to
-do so unless timing is important.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.19.
 
-> ---
->  drivers/acpi/acpica/tbprint.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/acpi/acpica/tbprint.c b/drivers/acpi/acpica/tbprint.=
-c
-> index 049f6c2f1e32..e5631027f7f1 100644
-> --- a/drivers/acpi/acpica/tbprint.c
-> +++ b/drivers/acpi/acpica/tbprint.c
-> @@ -95,6 +95,11 @@ acpi_tb_print_table_header(acpi_physical_address addre=
-ss,
->  {
->         struct acpi_table_header local_header;
->
-> +#pragma GCC diagnostic push
-> +#if defined(__GNUC__) && __GNUC__ >=3D 11
-> +#pragma GCC diagnostic ignored "-Wstringop-overread"
-> +#endif
-> +
->         if (ACPI_COMPARE_NAMESEG(header->signature, ACPI_SIG_FACS)) {
->
->                 /* FACS only has signature and length fields */
-> @@ -143,4 +148,5 @@ acpi_tb_print_table_header(acpi_physical_address addr=
-ess,
->                            local_header.asl_compiler_id,
->                            local_header.asl_compiler_revision));
->         }
-> +#pragma GCC diagnostic pop
->  }
-> --
-> 2.51.1
->
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
