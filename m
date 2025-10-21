@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-863603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7918CBF8475
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:36:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A29BF847B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A1634F3774
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:36:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C60B735667E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A634726CE34;
-	Tue, 21 Oct 2025 19:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzKmvT3U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA9326CE22
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4364626E6EB;
+	Tue, 21 Oct 2025 19:38:21 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9A4350A2C;
+	Tue, 21 Oct 2025 19:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761075409; cv=none; b=jsIUw7ZhobxJYGhe2jcKrnqK6MjSL9MujbrIUWFpgO1MWOvFP+tUn1hWNGkaiAIK2I/r+5CQgNCSBL3gGOnEZ3YEQ8yKXAsCIK1fYhRq6iaIFlOUj7w3m2TSSRPDkPUhIkyH3Ve0g1E1zw85H7n4CDoXNrEediNiotwv4bSMQ98=
+	t=1761075500; cv=none; b=aGVsGR1ULJmPqx8T/Zk+Lglvqt/nUspCp2lNAl6Jm1VOJu4nnd/LVeECdh9dBb7uruGb/OlN2ba1e7oZSlrqKIs76V/Tw9ZluSiyxeHQjuX3/yNtFZAw1zW6En2Igbv5myKtXSkEpP3qN58FiEToiTlWcn6vYNILcGkUysdNGDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761075409; c=relaxed/simple;
-	bh=fD53NSeheVGD5ilvGQlQJ3w4BfULuDpC7tDXATvYvyk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I3DuMdJSiFbnmLpYUlmAPTy8nfrdWDFvyO3Gezw9SonAA0yLgh+wzXgiCbGk5rOoGBEWsUIQO4/b/T2G3l3wC0lP9W92g+VXX1qXL8bG6lO3uOBZK9I7RHhh0OuveR+v7JJPInWtQO0IqGikKDrv18P20tXPD/8QJZwB7XsxB74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzKmvT3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E01C4CEF5
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 19:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761075408;
-	bh=fD53NSeheVGD5ilvGQlQJ3w4BfULuDpC7tDXATvYvyk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BzKmvT3UVMf1vnnvtxIKl+hWheRSPxOu+MLvYWAXBkCArnEtqo0TH59hk3dHcIeeh
-	 g5TDL6Ty0t1ODwlEU2T+50yP9ubr0DoyjNXRNJyqNNdMcBcgFEWKpe5zEaNDt3fkt6
-	 7qaQFMg9TT8EYHUUcCHku+LZM6BAeNppFuFr9wrEnw7QeMirKm3HZ8dWoS9amhGpPr
-	 s0RgDjm/lgRtVJzqXxw7rI89rN8GrsTtOiHp6ouTuVdRw3g5MrT/ARHxTwGF3USGun
-	 19VxRMPnl2kZ75TGtZQBDkEiJDerwL1NKWSZUWXkMUzv6lefSt4Hd+ZDu76XPlgiWE
-	 dun9LCAJ63o+g==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-651cda151f0so2476279eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:36:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUsdy0tpsn9R1QNbbLWo8E9ioJ7cHgEBGU+w8sfAY+DNdffadE5ZRH3+i1h34Dsakz3Z7hx6kT0oAfQzKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqANMjb1jsv0VFQBXPVmH5uHh4KG8gPOgR1/5D4ZB9VLoNHvKq
-	yo83p6kt9Gn1ZU0vXw62+eALig8eDOnAdPtf6SKLq5j9uVZ/4hMoI3NMDcGsvhU9lUitEew4om8
-	6qSwdcHsHxUZ5HuImDLXb9HemJd0p0lo=
-X-Google-Smtp-Source: AGHT+IFdFB1NU8Lb0ZeOSJsZphamzHl+1d7l1lG6nQ5xDsp8+ZzuFVZhzR2PIKrxfCr0ImNXbNZc4JLg4AlB6LaMaFs=
-X-Received: by 2002:a05:6808:6c88:b0:439:b9b4:2d77 with SMTP id
- 5614622812f47-443a30e144amr7768970b6e.34.1761075408021; Tue, 21 Oct 2025
- 12:36:48 -0700 (PDT)
+	s=arc-20240116; t=1761075500; c=relaxed/simple;
+	bh=OjXVbRCjz6XFSAFq9qxmaLge9r+jFNuwZDP6v12fHQo=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=PJrxy1r2lN9HM6NvvlGfeN58zqk4YhWDTsYjrgtsJTjNFwjqik6KfZ8JeWYoYGYvSLdaJJ2kwMSZOfmBjVMkywmwRo5sE7IEOKgLVXIIMVCsoBBXuzLexVTVPylfuD8bEp6SgR6KqOBHiUn+5sIW2VNX2mmAeLdn1/XPNSSatTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id B51C492009C; Tue, 21 Oct 2025 21:38:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id ADF1792009B;
+	Tue, 21 Oct 2025 20:38:15 +0100 (BST)
+Date: Tue, 21 Oct 2025 20:38:15 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Bjorn Helgaas <helgaas@kernel.org>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] MIPS: Malta: Fix PCI southbridge legacy resource
+ clashes
+Message-ID: <alpine.DEB.2.21.2510211901530.8377@angie.orcam.me.uk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929093754.3998136-1-lihuisong@huawei.com> <20250929093754.3998136-4-lihuisong@huawei.com>
-In-Reply-To: <20250929093754.3998136-4-lihuisong@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Oct 2025 21:36:36 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hNj817g=rr8+YTGaeBkkfNuuU7FGuZyyb1j61BMOKTGA@mail.gmail.com>
-X-Gm-Features: AS18NWDKUPYpjMI2_yN8FWJU_8eX0_kVDFH6sFPwxkCyjIdFMyu8WfmwbxaPnyw
-Message-ID: <CAJZ5v0hNj817g=rr8+YTGaeBkkfNuuU7FGuZyyb1j61BMOKTGA@mail.gmail.com>
-Subject: Re: [PATCH v1 3/9] ACPI: processor: idle: Return failure when get
- lpi_state->arch_flags failed
-To: Huisong Li <lihuisong@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.com> =
-wrote:
->
-> The architecture specific context loss flags is important for ARM.
-> And this flag is used to control the execution of different code
-> flows in acpi_processor_ffh_lpi_enter().
->
-> So it is better to return failure when get lpi_state->arch_flags
-> failed.
+Hi,
 
-A failure means no idle states at all.
+ This mini patch series sorts out issues with southbridge legacy resource 
+management on the MIPS Malta platform.  Two changes turned out required, 
+because merely removing the clash would regress the PS/2 interfaces, fixed 
+by accident with the PCIBIOS_MIN_IO fix.
 
-Wouldn't it be better to skip the state with invalid arch flags?
+ This does prove nobody has used these interfaces since forever, or most 
+likely since the move to the new serio driver.  Things most likely worked 
+fine with 2.4 and I still have such old Malta kernel builds lying around 
+(though sadly no hardware to try with), although I do know I've never used 
+the PS/2 stuff with this platform, e.g. quoting an arbitrarily picked 
+2.4.19-rc1 bootstrap log:
 
-> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Id=
-le(LPI) states")
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->  drivers/acpi/processor_idle.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index 681587f2614b..f36f9514b6c7 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -984,8 +984,11 @@ static int acpi_processor_evaluate_lpi(acpi_handle h=
-andle,
->                 if (obj_get_integer(pkg_elem + 2, &lpi_state->flags))
->                         lpi_state->flags =3D 0;
->
-> -               if (obj_get_integer(pkg_elem + 3, &lpi_state->arch_flags)=
-)
-> -                       lpi_state->arch_flags =3D 0;
-> +               if (obj_get_integer(pkg_elem + 3, &lpi_state->arch_flags)=
-) {
-> +                       pr_err("Get architecture specific context loss fl=
-ags failed.\n");
-> +                       ret =3D -EINVAL;
-> +                       goto end;
-> +               }
->
->                 if (obj_get_integer(pkg_elem + 4, &lpi_state->res_cnt_fre=
-q))
->                         lpi_state->res_cnt_freq =3D 1;
-> --
-> 2.33.0
->
+CPU revision is: 00018101
+Primary instruction cache 16kb, linesize 32 bytes(4 ways)
+Primary data cache 16kb, linesize 32 bytes (4 ways)
+Linux version 2.4.19-rc1 (macro@macro.ds2.pg.gda.pl) (gcc version 2.95.4 20010319 (prerelease)) #1 Fri Aug 23 02:55:02 CEST 2002
+[...]
+parport0: PC-style at 0x378 [PCSPP,EPP]
+initialize_kbd: Keyboard reset failed, no ACK
+Detected PS/2 Mouse Port.
+pty: 256 Unix98 ptys configured
+keyboard: Timeout - AT keyboard not present?(ed)
+keyboard: Timeout - AT keyboard not present?(f4)
+Serial driver version 5.05c (2001-07-08) with MANY_PORTS SHARE_IRQ DETECT_IRQ SERIAL_PCI enabled
+[...]
+
+However to prevent the PS/2 interfaces from getting fixed and then broken 
+again with backports in a random fashion I have marked both changes for 
+backporting as appropriate.
+
+ Bjorn, may I request that these changes be placed, with Thomas's ack of 
+course (hopefully a formality), ahead of Ilpo's commit 16fbaba2b78f 
+("MIPS: Malta: Use pcibios_align_resource() to block io range") (or 
+whatever the latest version is, as said commit seems to be missing tags 
+updates you mentioned), and then merged via your tree?  That will prevent 
+things from breaking just to be fixed again shortly, and overall getting 
+out of sync.
+
+ See individual commit descriptions for details.
+
+  Maciej
 
