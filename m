@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-863158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4850EBF723E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE26BF719C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212E618868A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9C2119C15AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744BB2749C5;
-	Tue, 21 Oct 2025 14:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E1E33CEAE;
+	Tue, 21 Oct 2025 14:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="F0J6y++B"
+	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="VpB9qJnx"
 Received: from mail19.out.titan.email (mail19.out.titan.email [3.64.226.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AE822FE0E
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EB033CE87
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761057935; cv=none; b=myJsgmk+wCsb2a1etq5ZKL/ldGpTKdnfkERvrfvD+3diobQ/mQrYvDrJ5kZOva9JxFdjrPJ8pmKIgUZSiWlN+0qFkJywNcSSmhp52NNwA5RB/Louw6Vv/B2HC/YZnuOD2D3A5vSRbj8hIkcnOU4ZQCMPSl9V40dBuveinizokQQ=
+	t=1761057335; cv=none; b=en6k4+/HLX/Km6W9QFApNHyu8gjLWqK0gsCHovFgmF78BYSm5QUPat8KGlu62cLpZIS0mQeHgir69LZ22iLHgUbOAxftWkKYJqFfdiXeabv2WwQFrjpaZyTEuh2rSzAdoimneryJtx6uI67V0wHO6Wg5Vnocj3fDg63tpZJgWeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761057935; c=relaxed/simple;
-	bh=AveatL9pt5Ba1OWtudoGfLD4mfWX2mDy+IqL3/ucg3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bzLeJ8oTX13XQC1zlD4uE3kzRU8VCD1E9mudYcK1mK+OPAIbdK0n9NXEpshG9lK2pjqRswrVBdszgvEpCT1Qdb67rvN0lTpHg+MuY7mlQHqGJedgPdkGKrgmKPyRRtfV83E14zmnyRIliOcikd/9IbVDazch9B84ha8p+kU55vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=F0J6y++B; arc=none smtp.client-ip=3.64.226.213
+	s=arc-20240116; t=1761057335; c=relaxed/simple;
+	bh=M0vUg9ScIYDue1iXJfO/7r+HMGwFtNoo/vNE/sqnPgk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CJGHOrhyMlsyWEKdEqD7pRoAXTPSTG2Sbd+EMoF8a97fGLNmbTrURG/E9AdQPSbZKiv01qArloom87MNKX6uzkgm7Pg2Ab7XF53iSbBGaRQ8qxuLf1BNnWFCwRtVaKYqlXOKNlFGvMpHL+W8DQP7dl2pU6I/lJRxx6pmBDJjwDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=VpB9qJnx; arc=none smtp.client-ip=3.64.226.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
 Received: from localhost (localhost [127.0.0.1])
-	by smtp-out0101.titan.email (Postfix) with ESMTP id 4crZRG5WC2z4vxJ;
-	Tue, 21 Oct 2025 14:28:42 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=FT6F8lxdsXIxZJ5Uz5oR0Tp97ixFg9xUf4/QWCRvvM4=;
+	by smtp-out0101.titan.email (Postfix) with ESMTP id 4crZRT2y3xz4vxR;
+	Tue, 21 Oct 2025 14:28:53 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=f+CmWseMNZ4jCfsnpCg2cK9m4FU9d6XdbLu8dkaLNis=;
 	c=relaxed/relaxed; d=techsingularity.net;
-	h=from:message-id:mime-version:cc:subject:to:date:from:to:cc:subject:date:message-id:in-reply-to:reply-to:references;
-	q=dns/txt; s=titan1; t=1761056922; v=1;
-	b=F0J6y++BM6PQ1Y5ac9nn8uS9DDNbNiAG1BTqeusCXqE5AcY9wm4m/MxQsIGAgRTLs29EMcMe
-	7mx0Fs6+42wx+llq9Wt0/u5R990ioOSdGcsRRwnpYA9LVx3yxW8Xim7DfbG8nU5SaGegONbQc9I
-	OfiO6LzrNiSode8VxiU4Neqo=
+	h=cc:message-id:from:to:date:in-reply-to:mime-version:subject:references:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1761056933; v=1;
+	b=VpB9qJnxlXG+6F8hiMv6IR6G/IElozKBcgNlBXjbT6LIfY5ero5QN8INOxAP/ZONc1P/en3j
+	Gf0GldMiyQgwQMjNgn6Tvv3sdFkN10VWmBzZ24YRrfzTGgE3Qr5oQvB9qf2lpfulIZ7T6mnvHZz
+	mELsWu0W4VxNYzOlSrR78bBQ=
 Received: from morpheus.112glenside.lan (ip-84-203-16-53.broadband.digiweb.ie [84.203.16.53])
-	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4crZRF3nhpz4vxF;
-	Tue, 21 Oct 2025 14:28:41 +0000 (UTC)
+	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4crZRS5hhYz4vxP;
+	Tue, 21 Oct 2025 14:28:52 +0000 (UTC)
 Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
 From: Mel Gorman <mgorman@techsingularity.net>
 To: linux-kernel@vger.kernel.org
@@ -52,10 +53,12 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Chris Mason <clm@meta.com>,
 	Mel Gorman <mgorman@techsingularity.net>
-Subject: [RFC PATCH 0/2] Reintroduce NEXT_BUDDY for EEVDF v2
-Date: Tue, 21 Oct 2025 15:28:22 +0100
-Message-ID: <20251021142824.3747201-1-mgorman@techsingularity.net>
+Subject: [PATCH 1/2] sched/fair: Enable scheduler feature NEXT_BUDDY
+Date: Tue, 21 Oct 2025 15:28:23 +0100
+Message-ID: <20251021142824.3747201-2-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251021142824.3747201-1-mgorman@techsingularity.net>
+References: <20251021142824.3747201-1-mgorman@techsingularity.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +67,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1761056922593006664.2237.8990852766471748465@prod-euc1-smtp-out1002.
+X-Titan-Src-Out: 1761056933262078975.2237.4440503035604619902@prod-euc1-smtp-out1002.
 X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=Rqw/LDmK c=1 sm=1 tr=0 ts=68f7989a
+X-CMAE-Analysis: v=2.4 cv=Rqw/LDmK c=1 sm=1 tr=0 ts=68f798a5
 	a=SAet2ifMzLisiRUXZwfs3w==:117 a=SAet2ifMzLisiRUXZwfs3w==:17
-	a=CEWIc4RMnpUA:10 a=QcgZxE_Df_qfIiiupLUA:9 a=zgiPjhLxNE0A:10
+	a=CEWIc4RMnpUA:10 a=R_Myd5XaAAAA:8 a=cMBBGPabaxsa1RgClXsA:9
+	a=L2g4Dz8VuBQ37YGmWQah:22
 
-I've been chasing down a number of schedule issues recently like many
-others and found they were broadly grouped as
+The NEXT_BUDDY feature reinforces wakeup preemption to encourage the last
+wakee to be scheduled sooner on the assumption that the waker/wakee share
+cache-hot data. In CFS, it was paired with LAST_BUDDY to switch back on
+the assumption that the pair of tasks still share data but also relied
+on START_DEBIT and the exact WAKEUP_PREEMPTION implementation to get
+good results.
 
-1. Failure to boost CPU frequency with powersave/ondemand governors
-2. Processors entering idle states that are too deep
-3. Differences in wakeup latencies for wakeup-intensive workloads
+NEXT_BUDDY has been disabled since commit 0ec9fab3d186 ("sched: Improve
+latencies and throughput") and LAST_BUDDY was removed in commit 5e963f2bd465
+("sched/fair: Commit to EEVDF"). The reasoning is not clear but as vruntime
+spread is mentioned so the expectation is that NEXT_BUDDY had an impact
+on overall fairness. It was not noted why LAST_BUDDY was removed but it
+is assumed that it's very difficult to reason what LAST_BUDDY's correct
+and effective behaviour should be while still respecting EEVDFs goals.
 
-Adding topology into account means that there is a lot of
-machine-specific behaviour which may explain why some discussions
-recently have reproduction problems. Nevertheless, the removal of
-LAST_BUDDY and NEXT_BUDDY being disabled has an impact on wakeup
-latencies.
+NEXT_BUDDY is easier to reason about given that it's a point-in-time
+decision on the wakees deadline and eligibilty relative to the waker. Enable
+NEXT_BUDDY as a preparation path to document that the decision to ignore
+the current implementation is deliberate. While not presented, the results
+were at best neutral and often much more variable.
 
-This RFC is to determine if this is valid approach to prefer selecting
-a wakee if it's eligible to run even though other unrelated tasks are
-more eligible.
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ kernel/sched/features.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/sched/fair.c     | 131 ++++++++++++++++++++++++++++++++++------
- kernel/sched/features.h |   2 +-
- 2 files changed, 112 insertions(+), 21 deletions(-)
-
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 3c12d9f93331..0607def744af 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -29,7 +29,7 @@ SCHED_FEAT(PREEMPT_SHORT, true)
+  * wakeup-preemption), since its likely going to consume data we
+  * touched, increases cache locality.
+  */
+-SCHED_FEAT(NEXT_BUDDY, false)
++SCHED_FEAT(NEXT_BUDDY, true)
+ 
+ /*
+  * Allow completely ignoring cfs_rq->next; which can be set from various
 -- 
 2.51.0
 
