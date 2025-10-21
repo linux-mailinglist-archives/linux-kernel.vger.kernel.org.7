@@ -1,78 +1,103 @@
-Return-Path: <linux-kernel+bounces-863012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF45BF6CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:33:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A10BF6CAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18505417B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:31:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 97E54504F67
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69F0337BB1;
-	Tue, 21 Oct 2025 13:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BA1336EFF;
+	Tue, 21 Oct 2025 13:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8hSe5eE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cil8iBtA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C5335BCC;
-	Tue, 21 Oct 2025 13:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05436169AD2;
+	Tue, 21 Oct 2025 13:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053466; cv=none; b=s0CrwKaxdA5Nx35AC4bihnpNmxmLeSUFqwOUlW/NsW6hzRtdY+ukWbfOpbvb4iJeWhblOSUNXO06qkkYBoP7XF7vZ7GEAfia9KROxltJpSu6iMKmAqSep65Q69V2JLUWDAKd2J/uYICF9y7FJM1RgBL9SLGN1MMP/06PGRJGQ+Q=
+	t=1761053525; cv=none; b=KsU97Dl606SArTe0GQtvZMUvZdkCU+NPDOdNT+LUolFKFgfulVhT9WOB/y6VlSZ+PnoDf4gFMFymTynmvGYtWha8cL0HNsbdSB3QudEajKaNO/TecM0d/q/R12HTelCwU7LNkBAH5hzdt992v2MHPyUoD/Pw7yZLJjQBIuzxHnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053466; c=relaxed/simple;
-	bh=EVEIgzylw5RGVggezBSR1+kz2XbEuZuqnwmtpd0lQes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huktZOyErHbz++xmR1yg6uVErl3gQI9Z0EJws3MdY9k601xuOVmE/JC05HKT4BP5gzJ2ZKAqgeifYO2jZxXKBr1n1KaqOZsbDqICPAtIOZyBoqWatGq34wYKlAKOT8uXbs7d5ieH6oDnWjQSuF2GU8O6qSoo4Rp3VB0411zj/9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8hSe5eE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A99BEC4CEF1;
-	Tue, 21 Oct 2025 13:31:05 +0000 (UTC)
+	s=arc-20240116; t=1761053525; c=relaxed/simple;
+	bh=nyuiyacr165FLqxyWKt1B4gvgh4RzY/Ij1hXstDErIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rput1g+eTDkR/uDkO3E2wjNF4p5BVsx5LJBW/Y02J2jiYMetBIG3MMi3SNgq0VQOXqnqGHPgeb6FHr69wXLrnkAGlGw0iygQQmJrZP2GwxQojz3WooJi5Af90QAq4Gi3olI3mopdyJsAA7YeMQZk5h2Ni6JsCK4LxxUvNpWvZZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cil8iBtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8D1C4CEF1;
+	Tue, 21 Oct 2025 13:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761053465;
-	bh=EVEIgzylw5RGVggezBSR1+kz2XbEuZuqnwmtpd0lQes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e8hSe5eEssCv4zfaeiI0S1y+lqdicSy1tgJB2MH4XmG2YkjydKzH4o9I6oB/1qp7F
-	 e4C7U1PH26rFad9hEVzQFsE9qmDYu3MkJRl6W0zbq4zU2kDRkAiQNaZNPaLFKemEwG
-	 lgF6G0JLUkslxtM7pg4nCpaFN6F8FT1lFxOom67CwJpbXmxgmPri5b5i7Fz8aCPmXU
-	 mecM5tVLLRJ4jtRaGKBIuhw7WjW3NA1zw/HgifG2vj08cUdEgoPpvCLBy14z7+ZL3x
-	 NY8xuncsH2cbAcQSVAJ/ywxFzpmJMKziKyBS9D5jssgrCSXSt18gkwHomZMJwhrHYk
-	 rzlqozVSD5xRA==
-Date: Tue, 21 Oct 2025 08:31:04 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Support Opensource <support.opensource@diasemi.com>,
+	s=k20201202; t=1761053524;
+	bh=nyuiyacr165FLqxyWKt1B4gvgh4RzY/Ij1hXstDErIo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Cil8iBtA/atoolDBeOsa4U9BKo1ptHWOAXfTcEX6czp1OYcyYe3FnYKwM4/oxkR2R
+	 dSLthkOzJaOdujRm2PUgDWgMFkOUiQqQ8fK9apV8sf/ae00SHABN2XIlK8MDNk+1bD
+	 5lKJ7sIi6pMd0+oMBVfvuhkmGT4oGxIP59P2jD1Q93wbZHx8HjnIDatzhsoJ9EW56z
+	 HzXW5VLv0n5Nbat7KvmLT74fqrR33YWgmiCqAePyIc9IiwGxzC6uSilvrN6wmRqNdw
+	 ORe2T5RsCIZLmK31YgJiu/AjUlpPY8R5WMQm0bt4JcYjydmzKELDLmHT5OIFkFk+qH
+	 8QtMEigusE5Hw==
+From: Conor Dooley <conor@kernel.org>
+To: claudiu.beznea@tuxon.dev,
+	Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, Steve Twiss <stwiss.opensource@diasemi.com>
-Subject: Re: [PATCH 1/1] dt-bindings: mfd: dlg,da9063: allow wakeup-source
- property
-Message-ID: <176105346341.18749.2102779375239624179.robh@kernel.org>
-References: <20251014184114.2353199-1-Frank.Li@nxp.com>
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/9] Redo PolarFire SoC's mailbox/clock devicestrees and related code
+Date: Tue, 21 Oct 2025 14:31:29 +0100
+Message-ID: <20251021-ranked-attendee-8caed80461b2@spud>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251013-album-bovine-faf9f5ebc5d4@spud>
+References: <20251013-album-bovine-faf9f5ebc5d4@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014184114.2353199-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1060; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=zvlQ9UDW5VIJo68sV6XLu9TdJq0uO5RaIpr0pIhrGlg=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnfuw06L5at+38rrWfu8afsV76WCMUoX4lrm9jUtfqY2 6uLW7qmd5SyMIhxMciKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAimfoM/z37vjSa3JwhXCId rvtJ63+VqiCLSra9U2mIo0f7hc7wUwz/y9qblsk3b7iqXppjsnVu/Kvo7cukfl9XcrQ9udS7PGw uFwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
+From: Conor Dooley <conor.dooley@microchip.com>
 
-On Tue, 14 Oct 2025 14:41:14 -0400, Frank Li wrote:
-> Allow wakeup-source property to below CHECK_DTBS warnings:
->   arch/arm/boot/dts/nxp/imx/imx6dl-emcon-avari.dtb: pmic@58 (dlg,da9063): onkey: 'wakeup-source' does not match any of the regexes: 'pinctrl-[0-9]+'
+On Mon, 13 Oct 2025 18:45:32 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/mfd/dlg,da9063.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> In v5 the only real change is that I removed the attempt at a common
+> implementation of regmap-based divider/gate clocks. The series hasn't
+> managed to receive feedback on my approach in 2025, despite sending
+> several revisions and bumps, and it is blocking support for both new
+> drivers (gpio interrupt support, pinctrl and hwmon off the top of my
+> head) and a new platform so I have decided to strip out the attempt at
+> making something common in exchange for something that can be merged
+> through the clk-microchip tree without relying on feedback from the
+> clock maintainers.
 > 
+> [...]
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Applied to riscv-soc-drivers-for-next, because the pinctrl series that
+I am working on needs them.
 
+[1/9] dt-bindings: soc: microchip: document the simple-mfd syscon on PolarFire SoC
+      https://git.kernel.org/conor/c/feaa716adc51
+[2/9] soc: microchip: add mfd drivers for two syscon regions on PolarFire SoC
+      https://git.kernel.org/conor/c/5b59e62532fc
+
+Thanks,
+Conor.
 
