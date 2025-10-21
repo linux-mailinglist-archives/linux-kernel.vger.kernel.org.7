@@ -1,248 +1,109 @@
-Return-Path: <linux-kernel+bounces-863348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBC9BF79CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:16:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB305BF79C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3841502B14
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B16623AA419
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3EA345724;
-	Tue, 21 Oct 2025 16:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E6A343D9B;
+	Tue, 21 Oct 2025 16:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AXFwxZ1T"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aFXkem9c"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D69343D8F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 16:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631873321DC;
+	Tue, 21 Oct 2025 16:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761063375; cv=none; b=TKmuUjyQKg6Q0RFssHFqone0pv4mwDLUhIlyIdWlcO9SYbBkZMDeAxeAdfVDOShfg/yo6ngN3ENhgC3ATquqFYeuO++o95xSIL7fRQDYfuCpOKL+1Dhm0KcORgLM1BA7DzKCW5+NnYw8HYvWqSyv2SvUJJIRCPdD8Y/BA4yuxqc=
+	t=1761063361; cv=none; b=HYCHBR3KGd0vNtu8tr43PWj8bUjTPt6zLMXtVVLN/ZT+aR12K2g5o4LEn2P8/EjYVQ6sW1mmpLLYfb/Fog2AiRiVkE43YzogIuuGNKJZMc0nSd5dAnkUsmkwXeHCI0fqu9qB7AHVzgduvLdGRmwawjxj3uuYn+4jEnKDua4tR3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761063375; c=relaxed/simple;
-	bh=Zq8iZc6Eo3c5hTIu5jsoB64J7Z71E2l4DV/FakgrlbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Urf55WXFoaXR6jSOv+E36bk/p/8XYyvlOvc2GImLzZVgXXT5X3ZltGcik5bOELt0bwmiF+3sAru9HMsSWcubC4kQAddMyZq6ZOTAiw2DrW1rRE1BHpP84aKioHr0DK5255hFGlO0QfJn6bBoXr3gpIXSDFzTSqu5gkI0+Js+cjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AXFwxZ1T; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b6a7ed1ff9eso3028810a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:16:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761063373; x=1761668173; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXEEfWLImx3JUqZZ/tH4v4lMv+RtTDD2xX9HGJ/Xm8k=;
-        b=AXFwxZ1TrGMjsryZWYjSpab/jdhKGJxmVfLysIZOaWiMgJWpeXDVycMFW9AOFwMfAB
-         Bkf5DQtL8wNRUIBxoZZP8g7FhkGcxsyI/aIUxHbiMGp/Ks7FKOmTE75IW2OU32RgF5Ta
-         PC+6vtJWbM/iyU2nLCb3o/yx+MPY3dXWI6K8o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761063373; x=1761668173;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SXEEfWLImx3JUqZZ/tH4v4lMv+RtTDD2xX9HGJ/Xm8k=;
-        b=Xceqf4xYMnpQXsQ+lDjsFPdO7Bgi3jJQ3hrkyjbQIiAA37aQ0I4xBGi2l1ivx62N5E
-         pqUleJPUvmXbs04tjxQXF4hDiZz7uQvFCXUXNmxGYjyvduVskcGHVnxgijMHMR1g6Nfa
-         xbMt6Tzq2m6keTj2bM2pWZfgvB7U4UzlrFdXchmx0C+k2IItHZn24/Qhw3L/YA3fpHCI
-         IXTeHJdWwtMSuwRqrDnPPAcKIzNYm7l429n7OB/T7LKWzgiBUrHtypXVOUjyRR5qhotl
-         TstW2TDDqCfybIjaJmu5lbEuQVXBVCqM13XisKOiI3E056gA84nnTCnvTFcX7Ai8xhHx
-         lL/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9+YwgkN5wirr6Fla9cogPNxeOpLVWSxAkJuuOD6raoPUeeSmKtczD6wIMv9HEFP23HyaEA3DwK6m8i/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwInULWxYefei4VXKDS+KtCU9bDEkWPbZW49/WS+2tmzQFNWW3N
-	759eS2geCRiYybNJJS5gJetbLiw8d5bl4XrElg6bYH4e6PnZquD/R0muKv9BeDz6RMOeqOegerU
-	hzbk7Vg==
-X-Gm-Gg: ASbGnctJiL18ezM6pLlyep1BBWJ6Ejw8R9RnEGqwc6RIZPxpp45kcvty8sBTnvrvd+2
-	OrFmuXyJuVmghoO0OdN6RBV5qSrXuDbltPG/p9ZD1K0OybaC+kvGKhvBtsUHaQjZd73imnbaetw
-	jynGrNqsLTBo+CPFcl4sS3oRs6HMiXRK1Y3RdZ6qwz/dqH57BGIieiVYcPDS63wveCdDF4W5Jg+
-	RMqABPJvNv51IvLTXRpAyriEp0t7jVM2llpCzHhGgpwXydKzha3ZwDQsfo4Ys7UDRD2rjvWwcxa
-	Q1HjZHhYoBSXxbzngyKm6r+/9Sbp8GHXSc2ZO2Y9Vx+3BfkKHMTEZ1Dflp0CJM/T8J2uP90O3/Y
-	PnhrPLtZIn9kGMfithfaGYsndWcUwi/z+eApyF4NYkreqVJH/A4JSF5mf0AScR+l5RS3De+0sBA
-	Ttb5ia0d4mzmIYTYOzte/HE2PWmKjzBUBel6lG3vP05RmEOPeNR38D
-X-Google-Smtp-Source: AGHT+IFSfdVNtzoougEJr3w8BlwdvcQ67h+xVLt9g1pHB77l5leAOpJcf4340yyipJKm47FvxaWFsQ==
-X-Received: by 2002:a17:903:234a:b0:261:cb35:5a08 with SMTP id d9443c01a7336-290cb947720mr225737485ad.38.1761063372407;
-        Tue, 21 Oct 2025 09:16:12 -0700 (PDT)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com. [209.85.214.180])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b68a4dsm10574504a12.34.2025.10.21.09.16.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 09:16:11 -0700 (PDT)
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27ee41e0798so92022585ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:16:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX65nt1qJJMlvHcxbJtXoVZ0zChhnAlECyCklg194R0vKmvQkkFbuNN4pAJSrV7GyOuHPSl+sjDj8PqLu4=@vger.kernel.org
-X-Received: by 2002:a17:903:98f:b0:277:3488:787e with SMTP id
- d9443c01a7336-290c9cf8e7fmr223158245ad.12.1761063369954; Tue, 21 Oct 2025
- 09:16:09 -0700 (PDT)
+	s=arc-20240116; t=1761063361; c=relaxed/simple;
+	bh=Ap0RoLB+p22lz++JO7otGiTC480tTpZ65sTCjXABvzk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LPKpatvpRd7fSZbHqfvX33968juaRtDLq+pGKxzabEX8LCultO+AoxuAb9sB41uv3gG1Ne5TE/CGvFJAq/Kv8vTlfkBFsEm0QmPNCeB2UrY3zmsN42Wi4dp5PSN5SmfPYbPCDjKapJzqaiUelPgM7AHx6j4aVdOKgQJ2fdLXrg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aFXkem9c; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1761063357;
+	bh=Ap0RoLB+p22lz++JO7otGiTC480tTpZ65sTCjXABvzk=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=aFXkem9cPqOv0TwiUa9eFymWly1pslKdLW70n0unnUbC8WixiDvXu1u4Zxp4X0Cdg
+	 UFp7JvV9rh5ZdigxxroBPUd8t+0u3Z5qedFwNpJ7cTV7P2HO0qrYpABguKUDbT3Bqc
+	 2RA67JUXby2hoSNHZbT2MzKIwGZ+VkJsj+25GMB0=
+Received: from [10.27.0.153] (unknown [167.220.103.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 72A611C0224;
+	Tue, 21 Oct 2025 12:15:56 -0400 (EDT)
+Message-ID: <212818188b192db3b852ec69fde174fd887eafac.camel@HansenPartnership.com>
+Subject: Re: [PATCH] hwrng: tpm: Do not enable by default
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Peter Huewe <peterhuewe@gmx.de>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>, Jens Wiklander
+ <jens.wiklander@linaro.org>, OP-TEE TrustedFirmware
+ <op-tee@lists.trustedfirmware.org>, linux-crypto@vger.kernel.org
+Date: Tue, 21 Oct 2025 09:15:55 -0700
+In-Reply-To: <bbc41534-a2d9-42dc-ac8a-ff8a0b4fd41f@siemens.com>
+References: <bbc41534-a2d9-42dc-ac8a-ff8a0b4fd41f@siemens.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
+	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
+	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
+	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
+	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
+	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
+	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
+	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-uvc-grandstream-v2-1-6a74a44f4419@chromium.org> <b282f6ef-fd91-44ea-bf51-187cf2c56fc6@kernel.org>
-In-Reply-To: <b282f6ef-fd91-44ea-bf51-187cf2c56fc6@kernel.org>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 21 Oct 2025 18:15:54 +0200
-X-Gmail-Original-Message-ID: <CANiDSCvr-BR7wZVK2gW0wYEQjyFHTpZv7nnR4JVi6bMUyGNCoQ@mail.gmail.com>
-X-Gm-Features: AS18NWDmZAnceyCVjQ_kSBGA-M4GHuvSkJw28yjWvXcX-dRpnIvp7ZCUnBJsf9k
-Message-ID: <CANiDSCvr-BR7wZVK2gW0wYEQjyFHTpZv7nnR4JVi6bMUyGNCoQ@mail.gmail.com>
-Subject: Re: [PATCH v2] media: uvcvideo: Use heuristic to find stream entity
-To: Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil+cisco@kernel.org>, 
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, Angel4005 <ooara1337@gmail.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Hans(es)
+On Tue, 2025-10-21 at 14:46 +0200, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>=20
+> As seen with optee_ftpm, which uses ms-tpm-20-ref [1], a TPM may
+> write the current time epoch to its NV storage every 4 seconds if
+> there are commands sent to it. The 60 seconds periodic update of the
+> entropy pool that the hwrng kthread does triggers this, causing about
+> 4 writes per requests. Makes 2 millions per year for a 24/7 device,
+> and that is a lot for its backing NV storage.
 
-On Tue, 21 Oct 2025 at 18:07, Hans de Goede <hansg@kernel.org> wrote:
->
-> Hi,
->
-> On 21-Oct-25 12:36, Ricardo Ribalda wrote:
-> > Some devices, like the Grandstream GUV3100 webcam, have an invalid UVC
-> > descriptor where multiple entities share the same ID, this is invalid
-> > and makes it impossible to make a proper entity tree without heuristics.
-> >
-> > We have recently introduced a change in the way that we handle invalid
-> > entities that has caused a regression on broken devices.
-> >
-> > Implement a new heuristic to handle these devices properly.
-> >
-> > Reported-by: Angel4005 <ooara1337@gmail.com>
-> > Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
-> > Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->
-> Thanks, patch looks good to me:
->
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
+The Reference implementation does this because it's NV ram is main
+memory and thus not subject to wear.  A physical TPM can defer these
+writes and condition them to the lifespan expectancy of its NV store.=20
+If you've simply copied over the reference implementation backed by
+wearable NV, then that might be the thing to fix.
 
-Thanks for the prompt reply.
+> It is therefore better to make the user intentionally enable this,
+> providing a chance to read the warning.
 
-@Hverkil I think you are planning to push to /fixes soon. I believe
-this patch should also land there.
+A standard TPM expects to be a secure RNG source, so is this merely
+speculation or have you found a physical TPM that has failed due to NV
+wear because of this?
 
->
-> Regards,
->
-> Hans
->
->
->
-> > ---
-> > I have managed to get my hands into a Grandstream GUV3100 and
-> > implemented a new heuristics. (Thanks Yunke and Hidenori!).
-> >
-> > With this heuristics we can use this camera again (see the /dev/video0
-> > in the topology).
-> >
-> > I have tested this change in a 6.6 kernel. Because the notebook that I
-> > used for testing has some issues running master. But for the purpose of
-> > this change this test should work.
-> >
-> > ~ # media-ctl --print-topology
-> > Media controller API version 6.6.99
-> >
-> > Media device information
-> > ------------------------
-> > driver          uvcvideo
-> > model           GRANDSTREAM GUV3100: GRANDSTREA
-> > serial
-> > bus info        usb-0000:00:14.0-9
-> > hw revision     0x409
-> > driver version  6.6.99
-> >
-> > Device topology
-> > - entity 1: GRANDSTREAM GUV3100: GRANDSTREA (1 pad, 1 link)
-> >             type Node subtype V4L flags 1
-> >             device node name /dev/video0
-> >         pad0: SINK
-> >                 <- "Extension 3":1 [ENABLED,IMMUTABLE]
-> >
-> > - entity 4: GRANDSTREAM GUV3100: GRANDSTREA (0 pad, 0 link)
-> >             type Node subtype V4L flags 0
-> >             device node name /dev/video1
-> >
-> > - entity 8: Extension 3 (2 pads, 2 links, 0 routes)
-> >             type V4L2 subdev subtype Unknown flags 0
-> >         pad0: SINK
-> >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
-> >         pad1: SOURCE
-> >                 -> "GRANDSTREAM GUV3100: GRANDSTREA":0 [ENABLED,IMMUTABLE]
-> >
-> > - entity 11: Processing 2 (2 pads, 3 links, 0 routes)
-> >              type V4L2 subdev subtype Unknown flags 0
-> >         pad0: SINK
-> >                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
-> >         pad1: SOURCE
-> >                 -> "Extension 3":0 [ENABLED,IMMUTABLE]
-> >                 -> "Extension 4":0 [ENABLED,IMMUTABLE]
-> >
-> > - entity 14: Extension 4 (2 pads, 1 link, 0 routes)
-> >              type V4L2 subdev subtype Unknown flags 0
-> >         pad0: SINK
-> >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
-> >         pad1: SOURCE
-> >
-> > - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
-> >              type V4L2 subdev subtype Sensor flags 0
-> >         pad0: SOURCE
-> >                 -> "Processing 2":0 [ENABLED,IMMUTABLE]
-> > ---
-> > Changes in v2:
-> > - Fix : invalid reference to the index variable of the iterator.
-> > - Link to v1: https://lore.kernel.org/r/20251021-uvc-grandstream-v1-1-801e3d08b271@chromium.org
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..ee4f54d6834962414979a046afc59c5036455124 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -167,13 +167,26 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
-> >
-> >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
-> >  {
-> > -     struct uvc_streaming *stream;
-> > +     struct uvc_streaming *stream, *last_stream;
-> > +     unsigned int count = 0;
-> >
-> >       list_for_each_entry(stream, &dev->streams, list) {
-> > +             count += 1;
-> > +             last_stream = stream;
-> >               if (stream->header.bTerminalLink == id)
-> >                       return stream;
-> >       }
-> >
-> > +     /*
-> > +      * If the streaming entity is referenced by an invalid ID, notify the
-> > +      * user and use heuristics to guess the correct entity.
-> > +      */
-> > +     if (count == 1 && id == UVC_INVALID_ENTITY_ID) {
-> > +             dev_warn(&dev->intf->dev,
-> > +                      "UVC non compliance: Invalid USB header. The streaming entity has an invalid ID, guessing the correct one.");
-> > +             return last_stream;
-> > +     }
-> > +
-> >       return NULL;
-> >  }
-> >
-> >
-> > ---
-> > base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> > change-id: 20251021-uvc-grandstream-05ecf0288f62
-> >
-> > Best regards,
->
+Even if this were a problem, wouldn't a better solution be not to
+gather entropy if the kernel pool is full enough?  We don't drain the
+pool the whole time after all.
 
+Regards,
 
--- 
-Ricardo Ribalda
+James
+
 
