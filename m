@@ -1,208 +1,173 @@
-Return-Path: <linux-kernel+bounces-862974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA019BF6B32
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7C0BF6B47
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14DD19A55D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F03E19A488C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7633D336EE2;
-	Tue, 21 Oct 2025 13:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A6E334C13;
+	Tue, 21 Oct 2025 13:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OHYh3WfO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="THN0jJkn"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DB22EDD53
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9701433375D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052445; cv=none; b=onGTJgKXSVc6TAoAlGVKvs9qCQkOgVmoQxmgRunkSxj/XqCByZGbQtKfTOg6krZ72slfBGxMI1kCYzD4Udyyw14t9dLXgUvjMiCg8yBiyWl+zbFnaYkqnxB9ZuHkAwU3zeCJR5qCJSyA86v7HvS8QuwPJcjla8rpeg1SSNK7pHU=
+	t=1761052493; cv=none; b=LYU0EXff/PQrAlXMV86W5gUyTidR1CrQIfQNjxEWwHQlNIvtg/NUC/sjxBNN35+63Nn9HNRKXvL6pZGcyHOPsx9zRyH1aDAlQvR1xP4zndHuoisCk4t6f/tGDWzIUVnpaHh1uvcCL6/asG2iDLfKCUNSxmzigu3tERIblLps7sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052445; c=relaxed/simple;
-	bh=w2i+FxONBXXx3PvM+d1TKTp00ehfZPIgAaTK1j0wkl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QoFBFornWBeGazrWqeaVqTPHaHBHtZasXXg7Nyfqyz4P1of63XDzqHjRXKw7tECbpqWIYufj7vFJOxNUfC3Jg1O0vjUVKz99hklCy4GBt0LpMRPpBFDwRk9QjKCtqynSoY/nox4vHq1uFpvoBg+2/lacK8+lJJtR3XGX1wWlqxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OHYh3WfO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8LvL2027450
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:14:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1J3FwMBpLhx8fYWCDWyhBCXacIdXPm0xifRPcXHEaJ8=; b=OHYh3WfONtQnQIWN
-	jqNqPFtwtmIP6JuNtltLlO5uECBdbthXS+cv6w0vMPNXrYjgT5OBozJ9FUOWeSF3
-	0vVU4zQyf1ABp5ByavV32Z1Yw8QYcFVMMZQMOgSJA9+/jGsbkhevmCz1xVF5rt9D
-	dmYUdrckZy/8d/BHg5/j5SvzlJqXwBM9xwMWTRywIVniZ9uSD72wA2TWzyVaXldO
-	Tf3ftUzKy/lwH3jKzWcQskpsraeuzVDqItzYJ7YcrrwX54OoOgUSLzxcJ7Gv5yP4
-	6jEIIbojQtWjgzoOTtbed8Dg4M/+TVBqcFR6yV0WtdZDRRRDfkwF+rweUBiPzAld
-	o4uFRA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27j0tmu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:14:01 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-78e5b6f1296so171479376d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:14:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761052441; x=1761657241;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1J3FwMBpLhx8fYWCDWyhBCXacIdXPm0xifRPcXHEaJ8=;
-        b=UlEEo2SjVvQ5s7qw57cUYFhqBDk57sd+VeTKjYYkoWFIOi72xyAG4c4f1yoTo64LxI
-         67xog7G6uK8NnZn94/WscKIpjmgdLIp+zfSZP+IE9u4Haziv1FUVNyMuDONLhXpgLv77
-         78qWSzZhxfgMhkaNuEkwa9cIW182jSY6MoA9WPW+B3a3DIeR4HwqO7vjWFAFaC0XYMJA
-         gYe/qQ/cpUypy/daaJbWM9P37kTesoz2ZYqwUQIP0zDcwBMI6/W1HbVFZrgzBjPQGwd2
-         VjuhIyVi94XAj2eSMxQBLXGjcTm/F1b1QNZYYM7n4dgUOUGGr7HhVmbAPKk6VI0bKHQs
-         7kEg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2rq3rQggxpSsVapI12c2tAkSC850x+sLGn2IjCkvlaJFWOux/8gwHE2w6qw1+XW9IVwEiGwjVvYP0Vzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMa6BD/TUauawGGjYSWqxS7xVE4+GCgXe0/mGXk9x5tngFwRHv
-	sz5gJvkBXqCn7qyNMNQM/k3cJd2wK3C14le3ywQCqZwMpkuM7AWJXszYMNdTC6oZhboIleA///G
-	arzjKqCiZVW3ef3UBKxn0xWWk4d2qYo16cG9wEqUi4T1ANFObg7zlh47h2gh/UQI9F8w=
-X-Gm-Gg: ASbGncvEmlnI39JfgbR40eXwWUDrgW8iKvOPPqVSJOpfI+e7yWPYg+hWc1wEx8w9BGA
-	csOcUq3iRsQ22yh4TvM/KncBpC+0meMze4ehCY3/xubO7PXsdUN/Mfz9jXsHGI0/MfsIzn75C4r
-	Vx4EQXo19+nHrZrHCgDeTZr612XnJsUIbE4gSYJ+Fmif/hggUPVtIRRIiDLLzuXpV6f9HeSk474
-	C3TGezIab2Gpxc19UpU9PGItfVXrE5LmF/suXqH357kLAaeAKpDWpIXm4z8KAElsXb7Y3udYZqz
-	VrjM2ri4TH3fIIpTsTgfF6BIsk2lwLgVzT71BXmG51BT6DYww+TqTTv5m61C8xBltdAFh5P0y9f
-	+ICa4gYogYkF74zXjzFlw05Mxqg==
-X-Received: by 2002:ac8:5fd0:0:b0:4df:a3f1:2b41 with SMTP id d75a77b69052e-4e89d2f2d22mr191979261cf.37.1761052440976;
-        Tue, 21 Oct 2025 06:14:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMR85aYmO0SlEiPplaQeeABFnTh46S57hFvtLZYcoP7my3aQJA/qcKSdNST7j3T+8HnZ1Sug==
-X-Received: by 2002:ac8:5fd0:0:b0:4df:a3f1:2b41 with SMTP id d75a77b69052e-4e89d2f2d22mr191978891cf.37.1761052440479;
-        Tue, 21 Oct 2025 06:14:00 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-474949e0a3csm18730905e9.0.2025.10.21.06.13.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:14:00 -0700 (PDT)
-Message-ID: <450cac8b-598b-4f47-8bf0-43c805038e7c@oss.qualcomm.com>
-Date: Tue, 21 Oct 2025 14:13:57 +0100
+	s=arc-20240116; t=1761052493; c=relaxed/simple;
+	bh=nnyXNR+db/8rGh9UGzSckVae75EOQEb5y+wYUf5/M3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U5g26I4zlywVwCGZ4uV2Hvr2rPzK2sQ2OqxMFtWTPRZuQ70K45OFJ4LMmleQcGcwwHYzzQqvsRaJ/YetAppiMy9K6RIUOj/pQHVZUp9NIZtC5YUe6vSddbpsdvjuzhmR1HoZzIbPpyI8Jn6wFN1BOeZ0brQI/ne67BLuvmx9U0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=THN0jJkn; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id D42211A158A;
+	Tue, 21 Oct 2025 13:14:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 97C2F60680;
+	Tue, 21 Oct 2025 13:14:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2E6FA102F2403;
+	Tue, 21 Oct 2025 15:14:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761052487; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=lKeQTm9TBCdl3jhEh30xKHzcJ/AvP84waFAJQyNp9dQ=;
+	b=THN0jJknB2+qSSzRX7sNi1IniQBFcb6kSYu5+ANMhlR6MFFP01X2sqo7gqWEVKQjTdzrXw
+	2NpAajNFdCjkJrceZhVvo1Wc8G3OycyhpZbNImBZCLgyIKRwvMOFKNNIPlRoZb+Bo19gWc
+	MgPByYkndtpcmunCfQXY7/Qn9f7RMfP/2Zn5Mem9I5qZJGtHpHPSSYcjOr9oUvf1js43ZS
+	WQl4vwvcH/wWLkf8hmXjRUwGctHb7cez4GZMDO/p0hjwEXWkVZ1QlCDZzYn7meg3nSPufl
+	2RjRKJh0wZctq+3kZ7tlo5TPfs2m2c58nmcn2QDRpc+znhm4sLo41A0zcfLtLw==
+Date: Tue, 21 Oct 2025 15:14:35 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Douglas Anderson
+ <dianders@chromium.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Bajjuri Praneeth <praneeth@ti.com>, Louis
+ Chauvet <louis.chauvet@bootlin.com>, thomas.petazzoni@bootlin.com, Jyri
+ Sarha <jyri.sarha@iki.fi>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/tilcdc: Fix removal actions in case of failed probe
+Message-ID: <20251021151435.23a03b85@kmaincent-XPS-13-7390>
+In-Reply-To: <20251014182122.5f63b027@kmaincent-XPS-13-7390>
+References: <20251014143229.559564-1-kory.maincent@bootlin.com>
+	<p4u2goyadub3dfuz4empf3g7a44b2ausy4hjjkcwj7nzgeochx@xztpij2i2lao>
+	<20251014182122.5f63b027@kmaincent-XPS-13-7390>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: qcm2290: add LPASS LPI pin
- controller
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20251007-rb1_hdmi_audio-v2-0-821b6a705e4c@linaro.org>
- <20251007-rb1_hdmi_audio-v2-3-821b6a705e4c@linaro.org>
- <b6223af9-2d9e-4ccd-b297-79f63167242b@oss.qualcomm.com>
- <DDEN5NSLDIHD.C1IELQW0VOG3@linaro.org>
- <zmi5grjg2znxddqzfsdsr35ad5olj3xgwwt6hvkiaynxzm5z33@gsgrdguj563n>
- <DDO0LYS7UTEW.3A9WGTAA5DKVO@linaro.org>
- <56vmqgrjy3je7omzirxnfxtuocebbj356iaew5thgkagi35464@hh34y7efssow>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <56vmqgrjy3je7omzirxnfxtuocebbj356iaew5thgkagi35464@hh34y7efssow>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX3PJnc6jOKdh6
- WdVd670UuQgeS0Jp4KIbyjyeKLXnKbTEC5jxFM4X88Msht2LnR5EBGvViR8WWnlA2UYXqjhFF1I
- EF7Pj7mwLgYsioTafP6dpNSW5D6JMCsrvy9wIzedlhy2LU3xJWK73LW/+qbjDelPN04XQQjxbGE
- HH2OcW3nKj23xCPBnImtAlpend78vfI1vgGyIesSNo+IklH1Ai8UcgCivOZ8HwA3Xovq2wk3b1q
- N6Um3gBdcXD8aO19Hr/UWM9gc86pBzJf81Zm9ZJQPl2Bg/SbYeDFpsNrjpUCgAAz2rVmuhD6IiM
- aedPDUjX9HqtPFoZe7IkjKV6pAJlfZjLgMstu7XylA44VDO38zU67zVtLosINwS+SOuD21g1Jb5
- y/EFfgvwH2K/4ESUr6SXxCyGRQUEhg==
-X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f78719 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=S47CMrjrQcjTfVtel-AA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: L3Fzs9GzpS79AHxDnpH2H_ITHLw9ewj6
-X-Proofpoint-ORIG-GUID: L3Fzs9GzpS79AHxDnpH2H_ITHLw9ewj6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510180018
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
+On Tue, 14 Oct 2025 18:21:22 +0200
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
+> Hello Maxime,
+>=20
+> On Tue, 14 Oct 2025 17:36:47 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > On Tue, Oct 14, 2025 at 04:32:28PM +0200, Kory Maincent wrote: =20
+> > > From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
+> > >=20
+> > > The drm_kms_helper_poll_fini() and drm_atomic_helper_shutdown() helpe=
+rs
+> > > should only be called when the device has been successfully registere=
+d.
+> > > Currently, these functions are called unconditionally in tilcdc_fini(=
+),
+> > > which causes warnings during probe deferral scenarios.
+> > >=20
+> > > [    7.972317] WARNING: CPU: 0 PID: 23 at
+> > > drivers/gpu/drm/drm_atomic_state_helper.c:175
+> > > drm_atomic_helper_crtc_duplicate_state+0x60/0x68 ... [    8.005820]
+> > > drm_atomic_helper_crtc_duplicate_state from
+> > > drm_atomic_get_crtc_state+0x68/0x108 [    8.005858]
+> > > drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x90/0x1=
+c8 [
+> > >  8.005885]  drm_atomic_helper_disable_all from
+> > > drm_atomic_helper_shutdown+0x90/0x144 [    8.005911]
+> > > drm_atomic_helper_shutdown from tilcdc_fini+0x68/0xf8 [tilcdc] [
+> > > 8.005957]  tilcdc_fini [tilcdc] from tilcdc_pdev_probe+0xb0/0x6d4 [ti=
+lcdc]
+> > >=20
+> > > Fix this by moving both drm_kms_helper_poll_fini() and
+> > > drm_atomic_helper_shutdown() inside the priv->is_registered condition=
+al
+> > > block, ensuring they only execute after successful device registratio=
+n.
+> > >=20
+> > > Fixes: 3c4babae3c4a ("drm: Call drm_atomic_helper_shutdown() at
+> > > shutdown/remove time for misc drivers") Signed-off-by: Kory Maincent
+> > > (TI.com) <kory.maincent@bootlin.com> ---
+> > >  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+> > > b/drivers/gpu/drm/tilcdc/tilcdc_drv.c index 7caec4d38ddf..2031267a3490
+> > > 100644 --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+> > > +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+> > > @@ -172,11 +172,11 @@ static void tilcdc_fini(struct drm_device *dev)
+> > >  	if (priv->crtc)
+> > >  		tilcdc_crtc_shutdown(priv->crtc);
+> > > =20
+> > > -	if (priv->is_registered)
+> > > +	if (priv->is_registered) {
+> > >  		drm_dev_unregister(dev);
+> > > -
+> > > -	drm_kms_helper_poll_fini(dev);
+> > > -	drm_atomic_helper_shutdown(dev);
+> > > +		drm_kms_helper_poll_fini(dev);
+> > > +		drm_atomic_helper_shutdown(dev);
+> > > +	}
+> > >  	tilcdc_irq_uninstall(dev);
+> > >  	drm_mode_config_cleanup(dev);   =20
+> >=20
+> > I don't think that's the right fix. tilcdc_fini is pretty complex
+> > because it gets called from multiple locations with various level of
+> > initialisation.
+> >=20
+> > This is done because tilcdc_init is using a bunch of deprecated
+> > functions with better alternatives now, and those would make the job of
+> > tilcdc_fini much easier.
+> >=20
+> > That's what we should be focusing on. =20
+>=20
+> I am also currently focusing on improving this driver (which has indeed s=
+ome
+> weird code leftover), but this work will land in drm misc next while this=
+ is a
+> fix for the current implementation which fix an unwanted warning.
 
-On 10/21/25 2:03 PM, Dmitry Baryshkov wrote:
-> On Tue, Oct 21, 2025 at 01:56:09PM +0100, Alexey Klimov wrote:
->> On Fri Oct 17, 2025 at 11:42 PM BST, Bjorn Andersson wrote:
->>> On Fri, Oct 10, 2025 at 01:29:38PM +0100, Alexey Klimov wrote:
->>>> On Tue Oct 7, 2025 at 1:39 PM BST, Konrad Dybcio wrote:
->>>>> On 10/7/25 4:03 AM, Alexey Klimov wrote:
->>>>>> Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
->>>>>> controller device node required for audio subsystem on Qualcomm
->>>>>> QRB2210 RB1. QRB2210 is based on qcm2290 which is based on sm6115.
->>>>>>
->>>>>> While at this, also add description of lpi_i2s2 pins (active state)
->>>>>> required for audio playback via HDMI/I2S.
->>>>>>
->>>>>> Cc: Srinivas Kandagatla <srini@kernel.org>
->>>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>>> ---
->>>>>
->>>>> [...]
->>>>>
->>>>>> +			lpi_i2s2_active: lpi-i2s2-active-state {
->>>>>> +				data-pins {
->>>>>> +					pins = "gpio12";
->>>>>> +					function = "i2s2_data";
->>>>>> +					bias-disable;
->>>>>> +					drive-strength = <8>;
->>>>>> +					output-high;
->>>>>
->>>>> I.. doubt output-high is what you want?
->>>>
->>>> Why? Or is it because of some in-kernel gpiod?
->>>>
->>>
->>> What does "output-high" mean for a non-gpio function?
->>
->> This is not efficient. It will be more useful to go straight to
->> the point.
-> 
-> It is efficient. It makes everybody think about it (and ask the same
-> question in future) instead of just depending on maintainers words.
-> 
->> This description of pins was taken from Qualcomm downstream code
->> and the similar patch was applied (see provided URL in the prev email).
-> 
-> And we all know that downstream can be buggy, incomplete, etc.
-> 
->> Back to your question -- does it matter here if it is gpio or non-gpio
->> function?
-> 
-> It does. The I2S data pin is supposed to be toggled in some way by a
-> certain IP core. What would it mean if we program output-high? Will the
-> pin still be toggled (by the function) or stay pulled up (because of the
-> output being programmed)?
-I2S lines are configured in push-pull mode which means that the lines
-are driven high and low actively, am not sure why output-high is needed
-an what it means here as these lines are actively driven by the controller.
+Maxime is it okay to merge this to the right drm fix branch as I am current=
+ly
+working on the tilcdc cleaning process that will land into drm misc next.
 
-@Alexey, what issues do you see without this?
+Also I intend to remove the tilcdc panel subdriver and its binding as it
+can be replaced by the simple panel driver. I know it is unusual to remove a
+binding but the driver and the binding are crappy and legacy. What do you t=
+hink?
 
-Am not sure if pinctrl driver even cares about this if we are in alt mode.
-
-
---srini>
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
