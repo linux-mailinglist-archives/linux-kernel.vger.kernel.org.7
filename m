@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-863015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AE8BF6CAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E537BF6CB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AAAE462FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E573B5F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E8D33711A;
-	Tue, 21 Oct 2025 13:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384753385AD;
+	Tue, 21 Oct 2025 13:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GwSjfYdb"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iNtHh23p"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667F1494A8;
-	Tue, 21 Oct 2025 13:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053557; cv=pass; b=CC6nh+IbP2DLUm2SfBLi1LfgvptmZoX/pSlnDdbR2CRWQiZ/zIQQgkfq2JPJqye402mg5bTZs/QDQxIjspgNII5/KYN8eeL6oUpdgJ4DdvjzbgBhNJe5VKOnQtrctOjLJ36UEqazAg3OchLPikDLlt3qV9XQm1eecZh0yD5Zgmc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053557; c=relaxed/simple;
-	bh=7CPTQ73nWl5I4OjIOSIGL7LFYvAsftq10jNl6Nocmqk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=RkUQgN29XZO5H2ZuuqoxQYu6AvBemPKYttt/Z/u/6K5DJzOH5nmXIgdaH7MJxQ5HDDGiukuRqB0u+HjCdcEi+oVLWs3wn9x3Aazrm+qsf9ATekxVoOWelhnkuH4dC8gt2Rxl2QhXhCLObb/ohexiHfJnIAvprZzL/il/MpLTZwI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GwSjfYdb; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761053514; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IHGpkrjzC2o3d+VJZwE03aLjrs3WUJT7uCIEArSnb8g2SlMfdAoPNQvw4cw/aO3dKwOXdn6jSlN6X6o2FT2WawVbRKw1Ny1YH5AdiSx5VaTXYVEORmfPGyfp6VznAVpVHMw9Ypn3tyYrcC12Q6chTWc82RJc13J1rXT8BbEeQkY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761053514; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7CPTQ73nWl5I4OjIOSIGL7LFYvAsftq10jNl6Nocmqk=; 
-	b=ivghX8LCfYPPIjPj1TYf8xT0OiR8MerXi1SnBeDwPlXP/OrpaiAXmXVz5WfKvRZ3r5Nk7iWnJDSqx75B+KRIdC95YvZ2rSKVSFG4Z3bQDGR9DOOpc1va2/HP2ULkLxaqE3FrDMwkfKZr5fX3sjTn571mSACYS8MoYsziqGloUdU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761053514;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=7CPTQ73nWl5I4OjIOSIGL7LFYvAsftq10jNl6Nocmqk=;
-	b=GwSjfYdbbWJUWuD87VG4cwcpZdjRASmqH+YKdSnWSH2af3IJ+f+HC6rw2As8VEmS
-	uuXspObKXDwCjatgxAEV+LbiTIRasFGZLkqEntL7seGsjopF6zjTvQXX3zp2W9kZIyO
-	3CxcRN2XwXXRj8wA5rJPvY2tS11CaA2bUGHMAM7I=
-Received: by mx.zohomail.com with SMTPS id 1761053512681371.05774871833614;
-	Tue, 21 Oct 2025 06:31:52 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BB9337BBF
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761053600; cv=none; b=nlXbuOY/mM5c6BCI2M0mQkTNd3QHBt5/KN1wbfXLxEZ4aCh5OEVUS5SwDVfm7OA63B3C2Kta8aN0VSxLmGxanKAf9bKE4AMTw/qYLGBUQbwiXlaifWQ80AfXNvnoZcvrkV5Jl/fKtAHHp8IPbnQfI2do7S99BpEJ19JBxndhpmY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761053600; c=relaxed/simple;
+	bh=A6RxU3d407/h6ii7XA5cbZXcWxUMs4eZ4XcLn/vNduI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EA6xa4u1/cp75IreKY+MRS/ErWALYXG9pa/xJpJELPkkitJPvEnXqJMlgADNN1XZ4ol7YzQ/4EW6Vjvw6f6RMyT8Irn3H2nGaoFhvBZx8/1DlyeUKXKgsSohu3lMM1k6/QhL77K0+3luDKLnMHl5blWpqgnvzdYg9D0yTOR5EYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iNtHh23p; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-634700fe857so7143829a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761053593; x=1761658393; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q3GWSfwNwQBfdouK4tXiIN+11u7Lf2cS+u2+hUWWhFA=;
+        b=iNtHh23p4uoutYR9NrO0dgCGrosQ9MznRiBDh1mHyCSOHwsormjzzauLAImCCifHDj
+         /fgHpw/U6LC4B34RECCathpyAP0stmfLCOpbNpUXTp42ew7ALDptrt6vN1Rnr642Qeso
+         CdE1P2YS2Ne5K/jnfA01CzM/KUGdVHLt4DpXwYfBQs7/ohqEcpx3b7yQpylrsl7BPPXX
+         ZMiPQL0IYOu4+oy56GswU67h7Rt09ND1EgvkBJUvhLx3qiABTjX8HThfMH+pyXyolrhQ
+         yDiLqWCk60erNVILgWz/Bt1DZxdtho62NlDWT41GYxZokFGE3XXiB8SnCk4jVFo34JX+
+         xJkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761053593; x=1761658393;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q3GWSfwNwQBfdouK4tXiIN+11u7Lf2cS+u2+hUWWhFA=;
+        b=NuJnFkODvY+PBwOCswS+6xffovATlCdlbQm99HwOBfFPM1onjujaOIs25jDzttHdCD
+         yeMzgR3s/JGzfWJegHRj+YJzekSJKxgM6F63Gh2RVtXz2VKsR7osVu/wE6UfoaNW+/na
+         7F+Ul4HuHcK6YmY+ykpMiX7ZbAgrv65iXGTI5+F7JWu+1ZMC/f9en7OJ1bzpoLRlTco5
+         dI1E9IeaYKIy1kRhBgDpzyGmGfIx+qnuWcWlj5pXaFjevllVEQKct0mlkMe1c8qL8AHw
+         GZc1DJq17odYilUp9z07QwkMReop2cito/OSqReeekYUmexuRj6h9bViwG47jWVP+cpO
+         I7zA==
+X-Forwarded-Encrypted: i=1; AJvYcCV36Q5LuyC2zQKmjFelkQv9/IUpWZbZAUT+XUqod3hqwgEgUmfibRMwg3/lc64RUVzLaJXqhDQGfqojRio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz08YfL/5xIbHn+ZthwpdpurOXfAO2rIFI4Vj7A1mriv6uuS8Xb
+	PLsyVTU/vxltKNpLC46d5tQqUvS5IN5miG5SRsALKeoGr1+70QQqZ9ESmHAfMVh+IMyvzRVMP9f
+	AS1b+VH3TtKJMIyy6lg==
+X-Google-Smtp-Source: AGHT+IHzmq2GHxre9p7+AJiZ4NDjk5oFvnPBMZ24Sk1vhlDL3Q/7BVSNl0luNyHwtZk6i0LzY8aisFR+Iua2fq8=
+X-Received: from edbin8.prod.google.com ([2002:a05:6402:2088:b0:634:544b:a748])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:aa7:cacf:0:b0:634:bff4:524c with SMTP id 4fb4d7f45d1cf-63bfde71e89mr15507759a12.9.1761053593075;
+ Tue, 21 Oct 2025 06:33:13 -0700 (PDT)
+Date: Tue, 21 Oct 2025 13:32:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 5/7] rust: ww_mutex: add context-free locking functions
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250906142059.35bf5fc1@nimda.home>
-Date: Tue, 21 Oct 2025 10:31:35 -0300
-Cc: rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- lossin@kernel.org,
- lyude@redhat.com,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- peterz@infradead.org,
- mingo@redhat.com,
- will@kernel.org,
- longman@redhat.com,
- felipe_life@live.com,
- daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BD330420-E9AA-40B5-B908-71F6108DD22F@collabora.com>
-References: <20250903131313.4365-1-work@onurozkan.dev>
- <20250903131313.4365-6-work@onurozkan.dev>
- <392B3416-61A7-4A41-8BDA-3A114F23D3F8@collabora.com>
- <20250906142059.35bf5fc1@nimda.home>
-To: Onur <work@onurozkan.dev>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAHqL92gC/13MQQqDMBCF4avIrJsyCahNV72HuIjJqAM1kURCi
+ 3j3ptJVV8M/8L4dEkWmBPdqh0iZEwdfQl0qsLPxEwl2pUGhqiViKwb2jmI522JWURuDTjfNOMg
+ RymaNNPLr9Lq+9MxpC/F98ll+vz9J4Z+UpUBxa/VAVlvnrHxMIUxPutqwQH8cxwfCeQoQqwAAA A==
+X-Change-Id: 20251007-binder-bitmap-5aa0d966fb1f
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=982; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=A6RxU3d407/h6ii7XA5cbZXcWxUMs4eZ4XcLn/vNduI=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo94uSpJuEuRzWjpydbbzUkJLHpKSB/EiarGT+B
+ SGkcCaCnUKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaPeLkgAKCRAEWL7uWMY5
+ RtklEACMQyajm/O2FGQdoPengjeaibNJB9dn+nzyuJ8a5H5/5lc0frf+RA33vyPkjUAe0io2+5I
+ 09j+p2RhYUEOdlNZv/umjqQty8Y4TIORlAdLDpcQMGMaOMTj1tha7qgD1T2MaSS1HgYWbQFi8fQ
+ GJYlfSfZAYRMWCIpOPPeQAXhBNScLXLT+O161tzQkaa0eSFs3Ovwlz0S0MxK34D5aXEDQtK1yS/
+ bfiBvBCi/VLy33xaI0xwLhUo0fdk3GTbypOHM3tLkqeQvxOmtgfIyIeVEscZwrSnXhitbYrdHzV
+ yRm8tta0k3HUkAbH9qUNk3qTf72WMdkGfV2RH/NBXJcP+VZL6dXWw5eyS5ViKl8xKfq6p3Yq6qc
+ o93vg+8yzSGPZaMmQavcb2Gnud2rrGdZMpVCR0dAVReCXDGZRRNK7dfGu0tCttVj7iM97dLOMuN
+ ynwzv0SrWr1AVC6zjlu85YZyouGlkeb85pJAvSkRe6/YXGGG+JNKUAR2rWmkTz9rR6EpJA0oZQT
+ IbIKeq1/A1s4NLybmk5qQ+yD2WaddyEJcdDbfSDf4j9rgnSDNGk1xo/b/t+eXehRlMxsO5zAvgM
+ 4NpagMrqG8iImYsM9itKa4zrjMmudSBeRr17rfGnOPAgCeMMJuxroqHttcMR2jCULjoF5UFtXCs 1tb9GkbRdZyLTug==
+X-Mailer: b4 0.14.2
+Message-ID: <20251021-binder-bitmap-v2-0-e652d172c62b@google.com>
+Subject: [PATCH v2 0/5] Use Rust Bitmap from Rust Binder driver
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
+Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+See commit message for rust binder commit for details.
 
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Use id_pool.
+- Link to v1: https://lore.kernel.org/r/20251020-binder-bitmap-v1-0-879bec9cddc1@google.com
 
-> On 6 Sep 2025, at 08:20, Onur <work@onurozkan.dev> wrote:
->=20
-> On Fri, 5 Sep 2025 16:14:59 -0300
-> Daniel Almeida <daniel.almeida@collabora.com> wrote:
->=20
->> Hi Onur
->>=20
->>> On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
->>>=20
->>> Adds new `WwMutex` functions (`lock`, `lock_interruptible`,
->>> `lock_slow`, `lock_slow_interruptible` and `try_lock`) that
->>> can be used without `WwAcquireCtx`. This provides simpler API
->>> when deadlock avoidance grouping is not needed.
->>>=20
->>> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
->>> ---
->>> rust/kernel/sync/lock/ww_mutex.rs | 162
->>> ++++++++++++++++++++++-------- 1 file changed, 122 insertions(+),
->>> 40 deletions(-)
->>>=20
->>> diff --git a/rust/kernel/sync/lock/ww_mutex.rs
->>> b/rust/kernel/sync/lock/ww_mutex.rs index
->>> d289718d2c98..b415d6deae9b 100644 ---
->>> a/rust/kernel/sync/lock/ww_mutex.rs +++
->>> b/rust/kernel/sync/lock/ww_mutex.rs @@ -138,6 +138,75 @@ pub fn
->>> new_wound_wait(name: &'static CStr) -> impl PinInit<Self> { }
->>> }
->>>=20
->>> +/// Locking kinds used by [`lock_common`] to unify internal FFI
->>> locking logic.
->>=20
->> Can you please mention how this is not exposed to the outside world?
->>=20
->> It should be obvious from its private visibility, but still.
->>=20
->=20
-> I would like to keep this private and force users to go through the
-> public ones. This function contains the entire internal locking logic
-> and its signature may need to change if we update any of the =
-internals.
-> Since it's private, we can safely make breaking changes without
-> affecting external calls.
->=20
-> The public functions on the other hand are much more stable (at worst,
-> only one or two of them might need a breaking change).
->=20
+---
+Alice Ryhl (5):
+      rust: bitmap: add MAX_LEN and NO_ALLOC_MAX_LEN constants
+      rust: bitmap: add BitmapVec::new_small()
+      rust: id_pool: do not supply starting capacity
+      rust: id_pool: do not immediately acquire new ids
+      rust_binder: use bitmap for allocation of handles
 
-That=E2=80=99s fine, what I mean is that you should mention that users =
-aren=E2=80=99t
-expected to use it directly.
+ drivers/android/binder/process.rs | 63 +++++++++++++++++++++++++++-----------
+ rust/kernel/bitmap.rs             | 26 +++++++++++++---
+ rust/kernel/id_pool.rs            | 64 ++++++++++++++++++++++++++++-----------
+ 3 files changed, 114 insertions(+), 39 deletions(-)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251007-binder-bitmap-5aa0d966fb1f
 
-Again, this is obvious (given that the visibility is private) but it
-doesn=E2=80=99t hurt to explain things a bit more on the docs.
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
-
-=E2=80=94 Daniel=
 
