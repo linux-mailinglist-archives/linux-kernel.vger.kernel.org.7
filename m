@@ -1,62 +1,95 @@
-Return-Path: <linux-kernel+bounces-862482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B040BF5676
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:04:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB45FBF5667
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E422F35269E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:04:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5D4EC350C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A8032AAA1;
-	Tue, 21 Oct 2025 09:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7328328B43;
+	Tue, 21 Oct 2025 09:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H/+mFcSq"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfAX/Mth";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q/XH1/u4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kc+TbWlQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Syw2dJrZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7F83254B9;
-	Tue, 21 Oct 2025 09:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3F928725A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037459; cv=none; b=pYz95jsK19ckEIqvkc8MpXh7pY3MNotlrR+ehuMmnbFqaK41DX09cO32mm6vxm0bZYbebaOo0+OuysntslGbtLnBcTleCaboAEeWGnp8F1qdWC4H9no3PPieLSNVy0SqWllu/uqtktYZF2KVUDZPTjVIAwD43pjfJ+JaP1LwJAA=
+	t=1761037429; cv=none; b=DcK94LjjrULrO4Gixe3SnGmq12CDWWzSuOyM09cfmnfuCOZNApvtcSLxLAvlDhWusfWFocp30+M5tPi7ZZbs+myNDtfdLMKJQlcIZ/faUwDqU05wXkrJmbuqwGm2DC7JAANQ+uk0o5YAxHfCLXnmxyjZS1GwY79Ohiiwu5JXIuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037459; c=relaxed/simple;
-	bh=IxE0nB6bzqY8GNterC1xirbRbuUZVCHO80qCu2tmQno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TcemKqA1D/be/qLii6QR+bQ6WVQt+SUnrQ6AzwzJQppDZco0q/6RR/ciUwChWI4SfJ3ULLd5K6hGWgxvtUudkmE7xETelrTrVu1+9SZfSQH0uRBKJWPvMe31pcqvJh2xYkfchK2QTayR9hf+0UxZ/pl1Sqqdx8TvTFZclQcMn5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H/+mFcSq; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59L93Ld33211352;
-	Tue, 21 Oct 2025 04:03:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761037401;
-	bh=C2Vtp350isE3DGQVRjEr6bw6DiMDiFidqztxNEm7W9k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=H/+mFcSqsE/upia5nZd2oTsvqsVH+3Ei6Mxyo5Jc3NfF2UlQ52Imk/CGxE+OZo87K
-	 gU8ai5ODE74gjFCWQZDlfqoAccUdOI+9o+fitzFDa3SetegW/rS+ubUaad+FlZH5Jd
-	 G3/dutBxukVtX5yFozX6uw8iCcJSIsb+oqf4Y9vM=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59L93LMD1110909
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 21 Oct 2025 04:03:21 -0500
-Received: from DFLE208.ent.ti.com (10.64.6.66) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 21
- Oct 2025 04:03:20 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE208.ent.ti.com
- (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 21 Oct 2025 04:03:20 -0500
-Received: from [172.24.234.212] (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59L93BYT3520609;
-	Tue, 21 Oct 2025 04:03:11 -0500
-Message-ID: <e60dd8d6-2bd5-41f0-bf8a-b0a5822a7f88@ti.com>
-Date: Tue, 21 Oct 2025 14:33:10 +0530
+	s=arc-20240116; t=1761037429; c=relaxed/simple;
+	bh=ZamUkQibukDwfw4sDoa+XFGe//1R/qvL6i7ecvFq9Xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rRQxa4C1/0RJZpoRE9W7+eIK10GNA88m5UdH/qF1haJXFcZZqZ6ggcylo5Yu5gpoTwFK/t2QFcKydyTz1uDG0P+V5Tg3OjLoPy23rPLVmpJGj+dzzFvDG/7pSbSJt0ttQK/h5Eebh+4/+Vp/OWcRajW0vtNvSP35UfwWuOs2Zgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfAX/Mth; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q/XH1/u4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kc+TbWlQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Syw2dJrZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 467571F385;
+	Tue, 21 Oct 2025 09:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761037421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7LZXPmKX/gRRxoSBj5vH62zLtNfruabEvHm6anVxTgE=;
+	b=GfAX/MthUts357cXyDddYonMI5xsN4OkQx2iXEMCP+J5v+8MI6Rt0TaQJj3yFVtNF6KCbX
+	TGSoBlWObEBkLQMkRr0chx5ncSUZrBblVM+OP3nbsPi+xUGxtEHLMhFvDONgJvJQciuos1
+	d4p/EItc9iantnQT8cw03XsN9UAh59o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761037421;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7LZXPmKX/gRRxoSBj5vH62zLtNfruabEvHm6anVxTgE=;
+	b=Q/XH1/u4PHcTmaghuEL6ZlMNUaYs76vGGeVHcydY9Cdu7EIUL15jiTMo3x7KmME/Lmnqp9
+	f4UsK3fMAH8mhXCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kc+TbWlQ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Syw2dJrZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761037417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7LZXPmKX/gRRxoSBj5vH62zLtNfruabEvHm6anVxTgE=;
+	b=kc+TbWlQ06Pn0y/gGZVHbEGAz/O4mX/NtBTJvddliBvpOEL1M+JlPz5heADReSxFQTyYIn
+	Va4dqgWioxHZJNWithIrQbTZaQGNGxw0y8Jt6es2T6BuROYetmMZhfxKVdMfFIBbskJ3lX
+	d+Codu8yCyDme6581nW8LdBvgMGtlLg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761037417;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7LZXPmKX/gRRxoSBj5vH62zLtNfruabEvHm6anVxTgE=;
+	b=Syw2dJrZedtVYHZxqBZEZ0q6ABTJWyuKxWCyav92hgiYPEXaa777DScgVAFuiySXIYIZnK
+	PlWhThSNKEMbyCBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B5C8139D2;
+	Tue, 21 Oct 2025 09:03:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FLPnCWlM92jOMAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 21 Oct 2025 09:03:37 +0000
+Message-ID: <b0c6c6d7-843a-48e9-bafc-f2595b059d32@suse.cz>
+Date: Tue, 21 Oct 2025 11:03:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,222 +97,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Suspend to RAM does not work anymore with
- k3-am62-ti-ipc-firmware.dtsi
-To: Hiago De Franco <hiagofranco@gmail.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afd@ti.com>,
-        <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>, <d-gole@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Robert Nelson
-	<robertcnelson@gmail.com>,
-        =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
-	<joao.goncalves@toradex.com>,
-        Emanuele Ghidoli
-	<emanuele.ghidoli@toradex.com>,
-        Francesco Dolcini
-	<francesco.dolcini@toradex.com>,
-        Matthias Schiffer
-	<matthias.schiffer@ew.tq-group.com>,
-        Logan Bristol
-	<logan.bristol@utexas.edu>,
-        Josua Mayer <josua@solid-run.com>, John Ma
-	<jma@phytec.com>,
-        Nathan Morrisson <nmorrisson@phytec.com>,
-        Garrett Giordano
-	<ggiordano@phytec.com>,
-        Matt McKee <mmckee@phytec.com>, Wadim Egorov
-	<w.egorov@phytec.de>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Stefan
- Eichenberger <stefan.eichenberger@toradex.com>,
-        Hiago De Franco
-	<hiago.franco@toradex.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>,
-        Li Hua Qian
-	<huaqian.li@siemens.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Baocheng Su
-	<baocheng.su@siemens.com>,
-        Benedikt Niedermayr
-	<benedikt.niedermayr@siemens.com>,
-        <regressions@lists.linux.dev>
-References: <sid7gtg5vay5qgicsl6smnzwg5mnneoa35cempt5ddwjvedaio@hzsgcx6oo74l>
+Subject: Re: [PATCH] mm/vmstat: Fix indentation in fold_diff function.
 Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <sid7gtg5vay5qgicsl6smnzwg5mnneoa35cempt5ddwjvedaio@hzsgcx6oo74l>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+To: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ jinnasujing@gmail.com
+References: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 467571F385
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[linux-foundation.org,redhat.com,oracle.com,kernel.org,google.com,suse.com,kvack.org,vger.kernel.org,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_NONE(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid]
+X-Spam-Score: -4.51
 
-Hi Hiago,
+On 10/21/25 09:37, Jing Su wrote:
+> Adjust misaligned braces in the fold_diff function to improve
+> code readability and maintain consistent coding style.
+> 
+> Signed-off-by: Jing Su <jingsusu@didiglobal.com>
+> ---
+>  mm/vmstat.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index bb09c032eecf..63860c3d22e6 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -782,13 +782,13 @@ static int fold_diff(int *zone_diff, int *node_diff)
+>  		if (zone_diff[i]) {
+>  			atomic_long_add(zone_diff[i], &vm_zone_stat[i]);
+>  			changes++;
+> -	}
+> +		}
+>  
+>  	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
+>  		if (node_diff[i]) {
+>  			atomic_long_add(node_diff[i], &vm_node_stat[i]);
+>  			changes++;
+> -	}
+> +		}
+>  	return changes;
+>  }
 
-On 20/10/25 19:47, Hiago De Franco wrote:
-> Hello all,
->
-> After commit 1d6161617c10 (“arm64: dts: ti: k3-am62-ti-ipc-firmware:
-> Refactor IPC cfg into new dtsi”), suspend-to-RAM stopped working on
-> AM62x.
+Thanks. IMHO it would be even more readable if the for () also had {
+}brackets.
 
-
-The above commit is only refactoring changes and should not
-cause any trouble. I think the commit you are interested in
-should be: a49f991e740f ("arm64: dts: ti: k3-am62-verdin:
-Add missing cfg for TI IPC Firmware").
-
->
-> When I originally tested that change, I did not test suspend-to-RAM
-> functionality, but our testing infrastructure caught this regression.
->
-> See the log below:
->
-> root@verdin-am62-15479173:~# cat /sys/class/remoteproc/remoteproc*/state
-> offline
-> offline
-> offline
-> root@verdin-am62-15479173:~# echo mem > /sys/power/state
-> [   37.798686] PM: suspend entry (deep)
-> [   37.805942] Filesystems sync: 0.003 seconds
-> [   37.811965] Freezing user space processes
-> [   37.819214] Freezing user space processes completed (elapsed 0.002 seconds)
-> [   37.826469] OOM killer disabled.
-> [   37.829721] Freezing remaining freezable tasks
-> [   37.835557] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-> [   37.843057] printk: Suspending console(s) (use no_console_suspend to debug)
-> [   37.953874] omap-mailbox 29000000.mailbox: fifo 5 has unexpected unread messages
-> [   37.953909] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
-> [   37.953941] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
-> [   37.953967] PM: Some devices failed to suspend, or early wake event detected
-> [   37.973876] am65-cpsw-nuss 8000000.ethernet: set new flow-id-base 19
-> [   37.984655] am65-cpsw-nuss 8000000.ethernet end0: PHY [8000f00.mdio:00] driver [TI DP83867] (irq=353)
-> [   37.985655] am65-cpsw-nuss 8000000.ethernet end0: configuring for phy/rgmii-rxid link mode
-> [   38.009002] usb-conn-gpio connector: repeated role: device
-> [   38.013377] lt8912 1-0048: PM: dpm_run_callback(): lt8912_bridge_resume [lontium_lt8912b] returns -121
-> [   38.013420] lt8912 1-0048: PM: failed to resume async: error -121
-> [   38.153252] OOM killer enabled.
-> [   38.156422] Restarting tasks: Starting
-> [   38.163532] Restarting tasks: Done
-> [   38.167252] random: crng reseeded on system resumption
-> [   38.173031] PM: suspend exit
->
-> The omap-mailbox driver returns -EBUSY because it detects an unexpected
-> unread message on FIFO 5.  As I understand it, this FIFO corresponds to
-> the communication channel between the DM R5 and the Cortex-M4 cores.
->
-> DM R5 sends a message that is never consumed, since no firmware is
-> running on the M4 (the core is offline).
-
-
-May I know why you are not running any firmware on the M4
-rproc? If the intention is just to run the DM R5 core on the SoC,
-you can disable the IPC by NOT including the
-"k3-am62-ti-ipc-firmware.dtsi". That was the motivation for the
-refactoring.
-
->  This unhandled message prevents
-> the system from entering suspend.
-
-
-The underlying problem is in the mailbox driver handling,
-see below.
-
->
-> This issue also appears on the downstream TI kernel, which I reported
-> earlier [1] (for reference).
->
-> The following patch resolves the problem:
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-> index ea69fab9b52b..e07cf3290cc3 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-> @@ -26,11 +26,6 @@ mbox_m4_0: mbox-m4-0 {
->                 ti,mbox-rx = <0 0 0>;
->                 ti,mbox-tx = <1 0 0>;
->         };
-> -
-> -       mbox_r5_0: mbox-r5-0 {
-> -               ti,mbox-rx = <2 0 0>;
-> -               ti,mbox-tx = <3 0 0>;
-> -       };
->  };
->
->  &mcu_m4fss {
-> @@ -45,7 +40,6 @@ &wkup_r5fss0 {
->  };
->
->  &wkup_r5fss0_core0 {
-> -       mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
->         memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
->                         <&wkup_r5fss0_core0_memory_region>;
->         status = "okay";
->
-> Ultimately  this issue is related to the omap driver itself:
->
-> 1. We should have a functionatlly to save and restore the messages into
-> the mailbox, instead of preveting it to go into suspend.
-
-
-Quoting Hari:
-"Restoring the stale mailbox messages could actually create
-problems, depending on how the mailbox messages are used in
-the IPC. If they hold indexes/pointers to some other IPC
-structures or buffers(remember RTOS-RTOS IPC has notify
-messaging in addition to RP messages) created dynamically
-could lead to fatal errors."
-
->
-> 2. Or we could not check all 16 FIFOs if the kernel does not own them:
->
-> 	for (fifo = 0; fifo < mdev->num_fifos; fifo++) {
-> 		if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
-> 			dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
-> 				fifo);
-> 			return -EBUSY;
-> 		}
-> 	}
->
-> Setting the number of FIFOs to 4 in the device tree also resolves this
-> issue.
-
-
-This is avoiding the issue, IMHO its better to flush the pending
-messages in the mbox driver while entering suspend as we are
-just rebooting rprocs for S/R today. Whenever rprocs can
-actually "resume" context from the point they were
-"suspended", then we can add support to restore mailbox
-messages too.
-
->
-> Do you have suggestions on how best to fix this in the driver, or should
-> we consider reverting the DTS change until suspend-to-RAM works again?
-
-
-List of suggestions/solutions in order of preference:
-1. If no intention to enable IPC on rprocs:
-      Do _not_ include k3-am62-ti-ipc-firmware.dtsi
-2. If intention is to enable IPC on rprocs:
-      Make sure rproc firmware is available in rootfs.
-      rproc would boot up and consume the mbox
-      msg, suspend would be successful. Tested this
-      on TI AM62x-sk with commit 1d6161617c, works
-3. Add support in mbox driver to flush the pending
-    queues.
-
->
-> #regzbot introduced: 1d6161617c
-
-
-Would not see this as a regression, but rather a new
-bug for the omap-mailbox driver...
-
-Thanks,
-Beleswar
-
->
-> [1] https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1557295/am62p-mailbox-channel-is-not-freed-during-r5-remoteproc-stop-call/6069413
->
-> Best regards,
-> Hiago.
 
