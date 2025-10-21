@@ -1,85 +1,59 @@
-Return-Path: <linux-kernel+bounces-862110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F25ABF4738
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:04:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9A2BF4753
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 957544EC541
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A510518A6D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E61E1E0B;
-	Tue, 21 Oct 2025 03:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC181F09A3;
+	Tue, 21 Oct 2025 03:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="YQXYw8x5"
-Received: from esa2.hc1455-7.c3s2.iphmx.com (esa2.hc1455-7.c3s2.iphmx.com [207.54.90.48])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGY3EYC3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C815128697;
-	Tue, 21 Oct 2025 03:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5961A3166;
+	Tue, 21 Oct 2025 03:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761015832; cv=none; b=uXabWkHrtl2yXezJ2MI0QcGvlYZSVFVSslaOO24+PaixAF5pzLUabKV7UYMIZx5MRIWVqasW4vRBezktu04q5nodDvjXHy3yXybJjgCz8n+V85AM2AiDncHZQcczfzBMaVSbv1u00D8tQVfg6w088oGWZUO48KMh864InzsDJMY=
+	t=1761016075; cv=none; b=mSoBOFFhNqkS3xl2A9+oZU9e6oJ4qG38WZEciGQunDstXbW0+oH7E60T2uPm5CfE0HwE2pDxz9INHX57kEqW4lsY5+bI0PiFQr9P7HTpDh36oAiWX7XK0JShUSM6MyPJw+pHs0zF579k2KUsVyB22JqOKsrxAXD72iNi6eERTiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761015832; c=relaxed/simple;
-	bh=32bPCGHvuK5Cq11IPLbjbaw0Rg1TmL8hq3QFI2ZTMKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aXr0dtYZB70+m4rEtKKLbD2iFEONu/VqB+dBq3oOiCwJ0ZCYVlTpETHg4O2NzUC9+/X0kXApgVHgQoJujGfXySoMvi3vn5UVN1DqxXUV59/KZuPlWH54b+ov2Z/Qciqex1/VHY1iUJouFCAoTu+ggc15CDIxfMPYFrJFqhkkxrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com; spf=pass smtp.mailfrom=jp.fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=YQXYw8x5; arc=none smtp.client-ip=207.54.90.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jp.fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1761015831; x=1792551831;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=32bPCGHvuK5Cq11IPLbjbaw0Rg1TmL8hq3QFI2ZTMKU=;
-  b=YQXYw8x54MiLOa4J6TJp4ovyI6wb/lmk46ULfOgLL9rrt3DfTS7Yh8fM
-   916UVRWhze4fRAXZhaKqnw2vukQWaHRAhet/xTvAP005/mxdKTZON07eS
-   ewBWlafQvA2YK9wkm243EtdSeK5de55gfWHN+ClOIoEMjt793lJ3lgtIi
-   V8O6Jh0VPc5OSgrnsNImTVuJ2Cy9n+2J7SEOFo69WpYgzhJnqZH2jDPvp
-   DkJHN/zX74m+P8E9SiSITJtGWoqKK0qoq3MbVRwqnN+jRoUHMTsxvhavy
-   9h6TXhyLa4MOMqcqQQkUhPF3ToeM9Q23zzfCNJIRMbQqO735n8wowAim/
-   Q==;
-X-CSE-ConnectionGUID: zOaeevgyQHa0e2ndFldnwA==
-X-CSE-MsgGUID: UMhD4kq6TS6p5n6+5RB/ZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="216525923"
-X-IronPort-AV: E=Sophos;i="6.19,243,1754924400"; 
-   d="scan'208";a="216525923"
-Received: from unknown (HELO az2uksmgr4.o.css.fujitsu.com) ([52.151.125.19])
-  by esa2.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 12:02:38 +0900
-Received: from az2uksmgm4.o.css.fujitsu.com (unknown [10.151.22.201])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2uksmgr4.o.css.fujitsu.com (Postfix) with ESMTPS id 986D6C02F69;
-	Tue, 21 Oct 2025 03:02:37 +0000 (UTC)
-Received: from az2nlsmom1.o.css.fujitsu.com (az2nlsmom1.o.css.fujitsu.com [10.150.26.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2uksmgm4.o.css.fujitsu.com (Postfix) with ESMTPS id 56C1014003BC;
-	Tue, 21 Oct 2025 03:02:37 +0000 (UTC)
-Received: from sm-arm-grace06.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by az2nlsmom1.o.css.fujitsu.com (Postfix) with ESMTP id B8576829EE9;
-	Tue, 21 Oct 2025 03:02:32 +0000 (UTC)
-From: Yuya Ishikawa <ishikawa.yuy-00@jp.fujitsu.com>
-To: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ishikawa.yuy-00@jp.fujitsu.com,
-	misono.tomohiro@fujitsu.com
-Subject: [PATCH] Documentation: kunit: add description of kunit.enable parameter
-Date: Tue, 21 Oct 2025 12:06:00 +0900
-Message-ID: <20251021030605.41610-1-ishikawa.yuy-00@jp.fujitsu.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1761016075; c=relaxed/simple;
+	bh=sCq2PWQBi6avOIyc/gQ5GDOwRQDRQWYucGOCptWi6Hk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jkoQ8mWyUl0QzlsBjr+ece0xqyyIzjD46G4HjpBUpovu19WnP0pmsFzlF0rvZlqjrAjkslsMkwWKLHN582a+36TAFIF0XC/93rAH6siDUhV55uPkxFMmegMX6Wlh3Q3l+nSAjZpTQ5uQM4Kz35kGMWvTeRR3/sRawBwCefwsAck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGY3EYC3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86FBC4CEFB;
+	Tue, 21 Oct 2025 03:07:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761016074;
+	bh=sCq2PWQBi6avOIyc/gQ5GDOwRQDRQWYucGOCptWi6Hk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dGY3EYC3EIuYaSW2tPpNpkkselhAV+5am7P6vsyFEnLTyvcVn5h3iqUY+MrozPNZe
+	 i5/HsWseN7zJWlaEeBrAQYka5D426CbwIFOtGo23SFyYka5jX+4XdezelPaRS1c3nZ
+	 YGlW6iiDlARHmAU8o1kXOQg9Hpf7EspZRaLWLyAYYnRe0TkJ9ikoKk1DBZwUseUQYg
+	 b3zTa6f5nHwm0UzoKjn3WWQdvAnUUSC8FcUoHFtXTHgOXBZRPKmnt1T15ibDnMSVE1
+	 Auq6TqiTXnDBNIYlkzAHd0ukqt1yjrltVqaNhFDWHauhFb46I7kd8hprt2W/p+2k/5
+	 g1VN5JlkthdRQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	James Clark <james.clark@linaro.org>,
+	Tianyou Li <tianyou.li@intel.com>
+Subject: [PATCH] perf annotate: Fix build with NO_SLANG=1
+Date: Tue, 21 Oct 2025 12:07:50 +0900
+Message-ID: <20251021030750.254186-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,35 +62,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The current KUnit documentation does not mention the kunit.enable
-kernel parameter, making it unclear how to troubleshoot cases where
-KUnit tests do not run as expected.
-Add a note explaining kunit.enable parmaeter. Disabling this parameter
-prevents all KUnit tests from running even if CONFIG_KUNIT is enabled.
+The recent change for perf c2c annotate broke build without slang
+support like below.
 
-Signed-off-by: Yuya Ishikawa <ishikawa.yuy-00@jp.fujitsu.com>
+  builtin-annotate.c: In function 'hists__find_annotations':
+  builtin-annotate.c:522:73: error: 'NO_ADDR' undeclared (first use in this function); did you mean 'NR_ADDR'?
+    522 |                         key = hist_entry__tui_annotate(he, evsel, NULL, NO_ADDR);
+        |                                                                         ^~~~~~~
+        |                                                                         NR_ADDR
+  builtin-annotate.c:522:73: note: each undeclared identifier is reported only once for each function it appears in
+
+  builtin-annotate.c:522:31: error: too many arguments to function 'hist_entry__tui_annotate'
+    522 |                         key = hist_entry__tui_annotate(he, evsel, NULL, NO_ADDR);
+        |                               ^~~~~~~~~~~~~~~~~~~~~~~~
+  In file included from util/sort.h:6,
+                   from builtin-annotate.c:28:
+  util/hist.h:756:19: note: declared here
+    756 | static inline int hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
+        |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+
+And I noticed that it missed to update the other side of #ifdef
+HAVE_SLANG_SUPPORT.  Let's fix it.
+
+Fixes: cd3466cd2639783d ("perf c2c: Add annotation support to perf c2c report")
+Cc: Tianyou Li <tianyou.li@intel.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- Documentation/dev-tools/kunit/run_manual.rst | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/util/hist.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/dev-tools/kunit/run_manual.rst b/Documentation/dev-tools/kunit/run_manual.rst
-index 699d92885075..98e8d5b28808 100644
---- a/Documentation/dev-tools/kunit/run_manual.rst
-+++ b/Documentation/dev-tools/kunit/run_manual.rst
-@@ -35,6 +35,12 @@ or be built into the kernel.
- 	a good way of quickly testing everything applicable to the current
- 	config.
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 6795816eee856e8f..1d5ea632ca4e1b0b 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -709,12 +709,12 @@ struct block_hist {
+ 	struct hist_entry	he;
+ };
  
-+	KUnit can be enabled or disabled at boot time, and this behavior is
-+	controlled by the kunit.enable kernel parameter.
-+	By default, kunit.enable is set to 1 because KUNIT_DEFAULT_ENABLED is
-+	enabled by default. To ensure that tests are executed as expected,
-+	verify that kunit.enable=1 at boot time.
++#define NO_ADDR 0
 +
- Once we have built our kernel (and/or modules), it is simple to run
- the tests. If the tests are built-in, they will run automatically on the
- kernel boot. The results will be written to the kernel log (``dmesg``)
+ #ifdef HAVE_SLANG_SUPPORT
+ #include "../ui/keysyms.h"
+ void attr_to_script(char *buf, struct perf_event_attr *attr);
+ 
+-#define NO_ADDR 0
+-
+ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 			       struct evsel *evsel,
+ 			       struct hist_browser_timer *hbt, u64 al_addr);
+@@ -748,14 +748,16 @@ int evlist__tui_browse_hists(struct evlist *evlist __maybe_unused,
+ static inline int __hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
+ 					     struct map_symbol *ms __maybe_unused,
+ 					     struct evsel *evsel __maybe_unused,
+-					     struct hist_browser_timer *hbt __maybe_unused)
++					     struct hist_browser_timer *hbt __maybe_unused,
++					     u64 al_addr __maybe_unused)
+ {
+ 	return 0;
+ }
+ 
+ static inline int hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
+ 					   struct evsel *evsel __maybe_unused,
+-					   struct hist_browser_timer *hbt __maybe_unused)
++					   struct hist_browser_timer *hbt __maybe_unused,
++					   u64 al_addr __maybe_unused)
+ {
+ 	return 0;
+ }
 -- 
-2.47.3
+2.51.0.869.ge66316f041-goog
 
 
