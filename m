@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-862944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41C9BF6976
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:00:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A38BF6994
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0C8B4F7DDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C38485491
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3134334C3B;
-	Tue, 21 Oct 2025 12:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B525D336EC5;
+	Tue, 21 Oct 2025 12:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qet9rZsH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JcH6OVLf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83892334370
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ED4334C26
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761051582; cv=none; b=XN2af1oXD08vQ1MPVwUaGaxjFiY5QE/4lyiXKDGJTfOIJzDN94BrPFc/0oPYrbA2K4lZ40IE/Nkfo6PpGx2r8qslpoiWsGAhVoQlweV4kSLBNJCxZ4hvzb2f23AOutI+zxexAVmD1W6qASSahoF1yQxE8Hkj/Qmn14iMfun5J4I=
+	t=1761051584; cv=none; b=fSAIgkCAZmwdoebjX6vJwy0Yqvl/FhHcldjitarIu0pNh3fEHZHXQPVo8toV8YC7wk3DJIaDtfnETVZ4lBUOCBoBzBqKsqtC+AyYP/3o9041ojz8OTCirM9IuoLZxdEK8YojvvRQD0lbGQqhCRYYSUQsByROMuWq/5SCDY+XwWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761051582; c=relaxed/simple;
-	bh=L+63bx9D11EYkqLrccK+lnT9JaJRwWO+dQ0bdJZ2z3s=;
+	s=arc-20240116; t=1761051584; c=relaxed/simple;
+	bh=ZX1IzZQQgreBcTlZHB/kVI28Gz8nSRy+pF223nJsGSk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CZm5lNUo/qQHeeOgjZfV76nD/ypE0OkDjXI3024xfTcys1hGNf9djOrD8HxEaMcOlxGVTsc+4fA3oxV3nQjiiJSzXS4JehabosFt39XUL0qJijwLipdjaRRJAIuMsMciO5ADAzOS508AUSC6pawFlxMq4rcDgVGNh886pZA43dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qet9rZsH; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=D+FD6GIHWlrkTb/U7rczc5W1Tq/WudUm0joXW5DLRc98y8q26jLpPyXbfWx2QR3++HIFPgldgtX2P0RxTLl7MlOEBmtHcWLnRT2d324otuF3+dr212jmgpf+t7XWSHyeX0LZUbrKogFup1F1KnVAfp+0sd6qFQEhHq+G05L1ouc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JcH6OVLf; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761051579;
+	s=mimecast20190719; t=1761051581;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8R/9+ffq24GRtsamw+sO0Dq3xyN1P0TNXMmPfo3y584=;
-	b=Qet9rZsHaGY2/tFTW0KcZRfOtnUpt4m7baMThLJYyaR+fpkOXPKO61UGlEZtF7XsQsEhrA
-	7090Koe+ZiSwEyAW/J3Yi2zr8j97jo+Q4mhXxYm50JblBVzdoLkV7BYwXLqtJJdn/GLRHd
-	ilibnQgDUt8Eg+neooU/46kQATWGEmM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cInpBRrRn5ydv+Sa63F4MdgmnDVvTCru+7wR3lsxUS4=;
+	b=JcH6OVLft+9j/hEazCH2GPV6OVITuPKaLYaEd3dDMvzPFLzfeSOvOH1JQUYHWC//PqwSwY
+	EYnoWDj0CAMk+Z4u3w0GBFfefWrn5E2mWTCUU8FjtwmkJlPFFjcFa+ruLWB5URNznCH5zy
+	jbcNUSNDbu7ehog5fWrI/3fnBvLEcOI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-528-KrIkFGwGP-Gly2Pyj8Dodw-1; Tue, 21 Oct 2025 08:59:38 -0400
-X-MC-Unique: KrIkFGwGP-Gly2Pyj8Dodw-1
-X-Mimecast-MFC-AGG-ID: KrIkFGwGP-Gly2Pyj8Dodw_1761051577
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-471193dacffso37638675e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:59:38 -0700 (PDT)
+ us-mta-551-APHFe9a6OyCYBzkiT--BQw-1; Tue, 21 Oct 2025 08:59:40 -0400
+X-MC-Unique: APHFe9a6OyCYBzkiT--BQw-1
+X-Mimecast-MFC-AGG-ID: APHFe9a6OyCYBzkiT--BQw_1761051579
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471144baa7eso23776575e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:59:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761051577; x=1761656377;
+        d=1e100.net; s=20230601; t=1761051579; x=1761656379;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8R/9+ffq24GRtsamw+sO0Dq3xyN1P0TNXMmPfo3y584=;
-        b=m2MFcN7ZfbWPTuM4xXN8gFZOX9kt1w++9jJBZrW/uvQKLCs7av9xNgZcijsBgc35/U
-         sKrJdn/fddTKIw63I2DJEfa8ueNjou0TPz824jDz3+3KGx8KMwKjsYyyG/a80bcMKRAd
-         iftNkqSbxinhMjhKuVJzgyFtKJm788dTg7P4wJMXBKR9u6oxRgSW1k54tkzLr/XLaDTu
-         +z8pwJD73eElh+vj0FExv2AIonHE8UL/Iy1VhrI/WzTM9bDqDtyNo9TjvhrkO3uAiznu
-         LAvEx4t/uDVA/d2wEK2LeTDugE3VqIBylo9mo4oatyyjLGGzCEpUtl6s3ixZq1+9/Jhe
-         4XYA==
-X-Gm-Message-State: AOJu0YzNUlPYgpVNV8seP1ajiXlT3mrods2cvsW6dUbP4E4VAVqXvc7f
-	xNBilvXlbvkZJQPGIFCixRextXvhWnPx6Gzge2GOCA0f2VxtRHNMpWR9/8AtZHztQwDQuZc0pDB
-	fHlR2VNSwSDvRJwJrwR1dQWbYQ1Rx9oqk+oMs61Nj5GNWRMBkOOyh8i247V5w3U8C8eAfnrZNj1
-	xfVCbFeHHpihW8sati4HG1SROk1Ep/5FQctTXSDr0CzBiJVg==
-X-Gm-Gg: ASbGncvkkjBfAQGq0UEsAsdpry7qQvgBNiGRzm594byAbbr/23mqINJDaZMCaOW+qvq
-	wJJd9DamXiaq2sbQCRgwg2epSU+5WBM6xB86CTXqOsQurIx45ezhRW0JJEjHh6m8ntOu8d53kmV
-	tHGXaLgxFqBnnVN//PC+C2bX7HEV9G4WqXUlVjB1cB18/f8QWP/AcJiBe+qr8NJvJAcEPG5Q8VX
-	B6VOEXfe4yeC/im5g5A2C2m0HN2o3A68ZHQsTPL3xwYFiWh+wg+ydpiEdlJ7qrnzdOIdGMkbiLO
-	rtJJLB4bCSMB15s1OTeaH2EvBUBV71fmgqpbZHzQrz3WlzyDdeEtyIRM3iy8JckBs0d57xVvkph
-	0Za6T9HfW+aJxMECi8UYY5OwIlsy4QTe/4H1sSNwdDwzCABfrmNbCCCYXRSbD
-X-Received: by 2002:a05:600c:444d:b0:45b:79fd:cb3d with SMTP id 5b1f17b1804b1-471179202famr118678485e9.36.1761051577022;
-        Tue, 21 Oct 2025 05:59:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEokGBhUzCRsmptihAjBHDZlL2+6LwM1McdhB6sS9tCAS0C96fTIUzPBBNJE//85lgKmaBsaA==
-X-Received: by 2002:a05:600c:444d:b0:45b:79fd:cb3d with SMTP id 5b1f17b1804b1-471179202famr118678045e9.36.1761051576500;
-        Tue, 21 Oct 2025 05:59:36 -0700 (PDT)
+        bh=cInpBRrRn5ydv+Sa63F4MdgmnDVvTCru+7wR3lsxUS4=;
+        b=FvqgQ74q2onnQQknr/6fNZZBjQIuaai7pe5Gr8YBYMAL9yXhgmf9R48dw9dyNxf9b6
+         0V8YubKCylccDL/RTi73j+Nsds/8BmacWUtJFiyxxN+j9jOvyyFFIhoVJ0hw4hhhMFci
+         kDaVS2Ee9tqAMjyDu5vktWwPSizGGEp5jy5QSsILju8IXKPo9U0PkyaOmxeVkK9WId/+
+         QHKROX6gWUa7Sg6X40qVI3+ZiED31KRy7S3b028xJXaiMFJdr0BUl+w7L2nHXBofWzAy
+         5sZ2/YA33VNzXeB8m+eQfuMd9UUcCo/EcfurNhp0KB3WMgB10J3b31mj5bpPVprBIfqI
+         VMFQ==
+X-Gm-Message-State: AOJu0Yx6jXENFPTg+y6sRGCR7pPmkdBvw7kc246zuiuQaa7zAwouPaav
+	3kamcPDcOncQ3ug6ajUu577QgmEu9ASETITCWW6uMcvrYRRmlEJMX9JkZdC0jr1j0fKXIin1AcH
+	fR7UKvIKzhan0cXs56FbnR8mp4eXDWThmoaiUbX1FZYjancDCGd4SBDEheKewGXYA53rRtpJTUY
+	8BE9nH1BhclgDOYL5otwBUzaswwVNrkMwpppbSJKXa8I2kkA==
+X-Gm-Gg: ASbGncshWEJKWrZEDfLNRfmw67KLtNykEDfQnBg+QDn7cjoorXUjN+DirLi+Q4qx/tC
+	tuQ6O7/OjdkJJmH46xuNqtaR/yvVPS3Ro3TBOrrkPhMdA08e2EhHypBrRrjfqX9DsJYgdrLAoj1
+	MwLzsJYeOtY8QvloBPTk+vwczJwcDA4Z6odZ9TPlz+S9723h50yTghwqzGnggVkba4euM55szin
+	Z1mo83pK2pTXurQjd3fsMyx7MbGIY7/sTVA9LCb/vj9bb5nLJKu9eLRC9818/Sf2vRJrz8pV0DA
+	aQQc8FZrhrjUDCskM96tm/3NRq6V4SxhPChCssOwCugUdSBDPDHEyIwtwbxXh41pHytSGtnzDx4
+	f4bdAe3eP2JWmWAmdYMNwZeGOMosTRMDRp5FEo9pqdeY23dcMIYExGh5J3TSt
+X-Received: by 2002:a05:600c:811b:b0:471:13fa:1b84 with SMTP id 5b1f17b1804b1-4711787c803mr122622705e9.12.1761051579077;
+        Tue, 21 Oct 2025 05:59:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+zjcAWFH7UfZS6G5yWsBJ4PGUBhvAl9sC1ULzHpIWHcC8Aeot/GO9fktrhO0M9VdZy+aJsA==
+X-Received: by 2002:a05:600c:811b:b0:471:13fa:1b84 with SMTP id 5b1f17b1804b1-4711787c803mr122622255e9.12.1761051578618;
+        Tue, 21 Oct 2025 05:59:38 -0700 (PDT)
 Received: from localhost (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47496be2eb6sm16562465e9.2.2025.10.21.05.59.35
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f009a781sm20658322f8f.30.2025.10.21.05.59.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 05:59:36 -0700 (PDT)
+        Tue, 21 Oct 2025 05:59:38 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -108,9 +108,9 @@ Cc: linux-mm@kvack.org,
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
 	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v1 02/23] vmw_balloon: remove vmballoon_compaction_init()
-Date: Tue, 21 Oct 2025 14:59:07 +0200
-Message-ID: <20251021125929.377194-3-david@redhat.com>
+Subject: [PATCH v1 03/23] powerpc/pseries/cmm: remove cmm_balloon_compaction_init()
+Date: Tue, 21 Oct 2025 14:59:08 +0200
+Message-ID: <20251021125929.377194-4-david@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251021125929.377194-1-david@redhat.com>
 References: <20251021125929.377194-1-david@redhat.com>
@@ -123,67 +123,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Now that there is not a lot of logic left, let's just inline setting up
-the migration function and drop all these excessive comments that are
-not really required (or true) anymore.
+the migration function.
 
 To avoid #ifdef in the caller we can instead use IS_ENABLED() and make
 the compiler happy by only providing the function declaration.
 
+Now that the function is gone, drop the "out_balloon_compaction" label.
+Note that before commit 68f2736a8583 ("mm: Convert all PageMovable users
+to movable_operations"), now not anymore.
+
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/misc/vmw_balloon.c | 30 +++++-------------------------
- 1 file changed, 5 insertions(+), 25 deletions(-)
+ arch/powerpc/platforms/pseries/cmm.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 2cc34c4968fac..07e60a4b846aa 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1833,27 +1833,10 @@ static int vmballoon_migratepage(struct balloon_dev_info *b_dev_info,
- 	up_read(&b->conf_sem);
- 	return ret;
+diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
+index 310dab4bc8679..67c7309c36147 100644
+--- a/arch/powerpc/platforms/pseries/cmm.c
++++ b/arch/powerpc/platforms/pseries/cmm.c
+@@ -548,15 +548,9 @@ static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
+ 
+ 	return 0;
  }
 -
--/**
-- * vmballoon_compaction_init() - initialized compaction for the balloon.
-- *
-- * @b: pointer to the balloon.
-- *
-- * If during the initialization a failure occurred, this function does not
-- * perform cleanup. The caller must call vmballoon_compaction_deinit() in this
-- * case.
-- *
-- * Return: zero on success or error code on failure.
-- */
--static __init void vmballoon_compaction_init(struct vmballoon *b)
+-static void cmm_balloon_compaction_init(void)
 -{
--	b->b_dev_info.migratepage = vmballoon_migratepage;
+-	b_dev_info.migratepage = cmm_migratepage;
 -}
--
  #else /* CONFIG_BALLOON_COMPACTION */
--static inline void vmballoon_compaction_init(struct vmballoon *b)
+-static void cmm_balloon_compaction_init(void)
 -{
 -}
-+int vmballoon_migratepage(struct balloon_dev_info *b_dev_info,
-+			  struct page *newpage, struct page *page,
-+			  enum migrate_mode mode);
++int cmm_migratepage(struct balloon_dev_info *b_dev_info, struct page *newpage,
++		    struct page *page, enum migrate_mode mode);
  #endif /* CONFIG_BALLOON_COMPACTION */
  
- static int __init vmballoon_init(void)
-@@ -1873,12 +1856,9 @@ static int __init vmballoon_init(void)
- 	if (error)
- 		return error;
+ /**
+@@ -573,11 +567,12 @@ static int cmm_init(void)
+ 		return -EOPNOTSUPP;
  
--	/*
--	 * Initialization of compaction must be done after the call to
--	 * balloon_devinfo_init() .
--	 */
- 	balloon_devinfo_init(&balloon.b_dev_info);
--	vmballoon_compaction_init(&balloon);
+ 	balloon_devinfo_init(&b_dev_info);
+-	cmm_balloon_compaction_init();
 +	if (IS_ENABLED(CONFIG_BALLOON_COMPACTION))
-+		balloon.b_dev_info.migratepage = vmballoon_migratepage;
++		b_dev_info.migratepage = cmm_migratepage;
  
- 	INIT_LIST_HEAD(&balloon.huge_pages);
- 	spin_lock_init(&balloon.comm_lock);
+ 	rc = register_oom_notifier(&cmm_oom_nb);
+ 	if (rc < 0)
+-		goto out_balloon_compaction;
++		return rc;
+ 
+ 	if ((rc = register_reboot_notifier(&cmm_reboot_nb)))
+ 		goto out_oom_notifier;
+@@ -606,7 +601,6 @@ static int cmm_init(void)
+ 	unregister_reboot_notifier(&cmm_reboot_nb);
+ out_oom_notifier:
+ 	unregister_oom_notifier(&cmm_oom_nb);
+-out_balloon_compaction:
+ 	return rc;
+ }
+ 
 -- 
 2.51.0
 
