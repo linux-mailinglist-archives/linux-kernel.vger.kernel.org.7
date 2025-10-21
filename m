@@ -1,212 +1,143 @@
-Return-Path: <linux-kernel+bounces-862470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC2BF5619
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8082BF562B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E283B41A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9BE3A2376
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C894D328B68;
-	Tue, 21 Oct 2025 08:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40032AAD2;
+	Tue, 21 Oct 2025 09:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZA6tcTt"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Afhm0J56"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA232C0279
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037192; cv=none; b=T9hM0pJCFJMqOk2vucB8+zxc2MvbCE/UD9+fdm0nVX2gAcBjpsgeTT5gwILezw2L0AWiyvO3tLOZEqy0PWqMG8PsF6/Cjc0Gv4+jDqENOWEG7Un8Qfyw58aiVBIcNrHC5lpiR+331kvs/Al6HzEpUVeFSvWRg0zTYEUcGov3bos=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037192; c=relaxed/simple;
-	bh=1QEUrYYVMgPUVpUr6hSgnMaTqKdSkGKC8eOI3537wng=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cYbjoZUM/ZSU4ljWitGUwQdYoRo1xrWQWCFDF0SH0lRhnko5/lBBWRSqtLlte4zqZead4LAZJzFEGoTv5byY4otrPFt+astezcGkj61aQN3wDShGDvurIvhFhhyhBODjZNH9g8l2N2Ue1l1I4mdBDnQDt931r7QaaGcormMn3Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZA6tcTt; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so7106961f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761037188; x=1761641988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wBXILQ5+6y63oPSvnHmd6OoFeC7Db+e5bwqzatdyD90=;
-        b=fZA6tcTttCMZczW7m7UEpp9nzGQmF9jU1GXHzznOBNqOi9wEIxa8CN3XUm1sbgyBMB
-         twizW7YRH7hr0tvjvAvlv4jWoCZ1hSLMN7q8f21kBB7e5d2G+RXAD8x1RghT1CRPkW05
-         zDR5pNZ9wriX8sLAyTcZix5NHQeGCqfQXrfKjLKf6giW/xP/QxZVIElDWQq3lLKjUso/
-         Kd6DuZmsiqLL8ccoZjVJ27gYg94JIRw7WF79t5FWRFG8e3bmiKKPJhF1MtmWYVxzA5Y/
-         JPiw7IDQWEzu89CivuwBpzdceoX2c50ZhfSvdpx/30J+zm1fdoS72V5ImW4nsvtZKMDX
-         v4eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761037188; x=1761641988;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wBXILQ5+6y63oPSvnHmd6OoFeC7Db+e5bwqzatdyD90=;
-        b=q+zCuBwq61iCj3qgK//S386eujHxjyEUys58JLYF7xbAslSSFaH+x9lutpsh+D6GC1
-         Tc2gu2ou/9Kyouikp0sRvoCXm/93dTsjGjNXls5tACrMXIDa0q+b2/rAAOAqF2ZY6q6C
-         Om9Y2hvOx34O5ZiAKYN0cEWScqn5BA5RynqSo4ZVKbrw5Rz4kCnF5uXgdT/zDvC6AKP1
-         zih2tUqGgw4nGwQLNflHBZNZFXWEk8aOxXxAFJw+TJ6i9ubeTpRwWB1rZqdRk960uV/X
-         MqJgyTENWGNn8eNGUsUtVnFNEoSgvjdWlE7Ou1P/qMiDjkjMiJF95Q30ZdB6f24b7AS/
-         FxBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqarFTIY/v0QRHfM2+nSecMpNNMYfGJFVpEPSuIJZ4DgHbU6IUMjbiljlsV74e8d0nLw7gqzXwb1Imbtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtzvf0PKDrnpXGMWD7G5n28vs6C9nJi6fdHEfn1fYHGIQ0YJiB
-	aXKGHVN/gaN3szBiAhH7Q0B4egaH/bRCzop1T41XXWKYkYHIHKmtyJNI
-X-Gm-Gg: ASbGnctfm2xVsDBvl4/1nMZZmBF3Foh7JhymfQQwcTZu4Z87m3awDEehPIykSCfcYge
-	z51XSxnZL8qaCZviep6dm5hPuBfGJFENhmT5C3l90c7y78WutOZAv1cWkhborMA4kyro+EiOkxA
-	fMEBpnuLGdPev1Oo0Pa5z0xvQev36bJcYaZOrQ8iaBzXaL3uSSrLR5QSgB/K5MNJCxiURLWvVPU
-	2xDO4HJzaEtt3Jr+H0xfERboW/z+VgieSwehBCJooi82PL7sXRpsOe7HNBcPAIPNHuGesYwApBG
-	7fFo1gCxxEdKb6OpdheWjUiZ589ovXv38eAB1zHvIUnbyyweNvb1epSi/rDwkSGH/5yd3UiCgzz
-	OGdz50M94rBCIQjMUFLGRiqfj6wdasJ1anbr8r4hNIUKjknySZFMFWR6zwlwaOpSHN9wHthvUnR
-	x/NfHj6pUWHXavfZgl5he0ACyGNaStHgAgZHRnKMDcZw==
-X-Google-Smtp-Source: AGHT+IEUC4eOEYXnyWDtGa4T07dDft0etAi9lHUjpiTZ4nloIXO96U7Basle93bRRFQgv2MxpmdjiA==
-X-Received: by 2002:a05:6000:1a8a:b0:428:3f7c:bd0c with SMTP id ffacd0b85a97d-4283f7cbf4cmr6807885f8f.31.1761037188360;
-        Tue, 21 Oct 2025 01:59:48 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c34sm19212667f8f.17.2025.10.21.01.59.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 01:59:47 -0700 (PDT)
-Date: Tue, 21 Oct 2025 09:59:46 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Kevin Locke <kevin@kevinlocke.name>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
- Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
-Message-ID: <20251021095946.3c4071fd@pumpkin>
-In-Reply-To: <aPaZGKyY_5ybTwda@kevinlocke.name>
-References: <20251016214707.5c3d373b@pumpkin>
-	<a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
-	<20251017151256.111f2669@pumpkin>
-	<aPLC_HdznsRcJbjk@kevinlocke.name>
-	<20251019111748.3d5ac8d9@pumpkin>
-	<aPaZGKyY_5ybTwda@kevinlocke.name>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3A0329C76;
+	Tue, 21 Oct 2025 09:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761037219; cv=pass; b=VPBt5P7BuJcPzY7khQEEM9kidItTq8z3ps2Xs/7chEyOFY/f9GMduiu/UeRQLBcqtZMbcPIMBdM4rerSQRmuRXkibeMdcyAiD0VzjNpcARUy3RDwVDb6SBGBdGBwzUOlZ5imC0kWS5bDW7AX0PMTJa8DckWtg5KP/Q/ZaGmJQwM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761037219; c=relaxed/simple;
+	bh=Ery3wCWKUyPGPwDNSyS3Pks0jJfbeTvhsm/cOUBQB6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRQTczcGsVm6vl7my0gKR9YvhXrVy7mFftq5pDZz8mqRGNfNseFSFjjpj8+3IK4JM4sLEp0hGveHa4JL5ZauGEy9wCsbAxWSP/jZX40PivZNovr2xy0tT3IXepJJgVespTNcZT++9/vm6EmG2U/eGhak9a4GHvc7D1ZRwLeobiA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Afhm0J56; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4crR8B2lPgz49Q3N;
+	Tue, 21 Oct 2025 12:00:10 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1761037210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=piJWpdhM1u4toBOe7fZrGYz+sw0Os5Sq1JWEfMVwKy0=;
+	b=Afhm0J56blq6WOxEWdpqMJj8z2Bu3vxCY36jgycDJJifiEEXFaOvT4ziEK9j5aeRa4bpd6
+	iwOtHdNfS21Uly7lOHFAu7wtGbq4hZHwLvNLrAh2R0geP0hxU0fZQXC+0ZEGuYg/3MeOZE
+	pOeNx05/n/miyCqzGlvlzMecKdXQKsEp0O4zVO0qOxw5V5lJq95qciOdL281eNEShV8lA2
+	HlRUQz/MQZ+DaUdaSwsaqxtllZd5h3SicPQj1LJUIPxyZsvayrgLyUF07fXxW7DHD4PBE/
+	Gy0bpvrtlp5zVwVKiZV2YCoaAZ23gBQubpTk6qdsqfv5IDc8bBAx+bPQgntpTQ==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1761037210; a=rsa-sha256;
+	cv=none;
+	b=Q/ghmEWI+UT6uAQO1tR5PJpcRSmhr2P9Y9QxiR839K7B1mOn26QxpsdmEAWxc7th1/JRHv
+	b316LtxhN/snPuT0ZsPBaMI8Phateb1fGXjQcqouk0kTR288s/WWGWjvgBjE6UmECNgy4S
+	ZY63vuG2sjiOcMai9wT6GdyD4uG1Wpz/NJsNpepbzPU9dVAZBgPdL8Zg6XVIbNjcyesP7T
+	51KuF6eHgRbXrbIX+zIE407rbiffqcd0z8oMqcN7XVvRYsHT0uQ8gy6BWOkvSyyq7EeTHl
+	gNGU5r21zEAwjWqtBrNoRiovuhGYOVsrXoYxc80Ant6fFrjaPGjnB2jsd8r4TA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1761037210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=piJWpdhM1u4toBOe7fZrGYz+sw0Os5Sq1JWEfMVwKy0=;
+	b=l0Wor7q9EfhpGTe/atzTtxJ79Kxu2o78QPbmol2nlUdweNm7uiNMs8uadSsPzDe7HpsKbr
+	Bddabdu7Mc9ga7vCiyC0YA9fuq9Vl+w7XANi107iBLDhDfdV6dzkOGVhDQqLWqFosrIRk0
+	kLWIYFycNu7jCMhuN5zHgrd+ztTCqlLkamgW/LSUqmrFqvMzGixi9SSvwl1bALY14uQ2hj
+	0ndmPZ1j8cPpvZe2S0Dedugb3FcGfE0UP6d/nzkxw7SBtyLQc6P/o5m44JC17lRp8BdF15
+	iwDof96I17ZCfyxMnOBIUbitfD21n41NEjF8DKR0RmGdoVXIVOm2Q4+bHhd85A==
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 266D7634C50;
+	Tue, 21 Oct 2025 12:00:10 +0300 (EEST)
+Date: Tue, 21 Oct 2025 12:00:09 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>, Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:OMNIVISION OV2680 SENSOR DRIVER" <linux-media@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] media: dt-bindings: ovti,ov2680: Use
+ unevaluatedProperties for endpoint
+Message-ID: <aPdLmWM8a_ikhJfK@valkosipuli.retiisi.eu>
+References: <20250827194919.82725-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827194919.82725-1-Frank.Li@nxp.com>
 
-On Mon, 20 Oct 2025 14:18:32 -0600
-Kevin Locke <kevin@kevinlocke.name> wrote:
+Hi Frank,
 
-> On Sun, 2025-10-19 at 11:17 +0100, David Laight wrote:
-> > On Fri, 17 Oct 2025 16:28:12 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:  
-> >> On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:  
-> >>> On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:    
-> >>>> Remove the "x" suffixes which unnecessarily complicate the code.    
-> >>> 
-> >>> The problems arise when $1 is (say) "-x", a simple LR parser will treat
-> >>> [ -x = -x ] as a check for the file "=" being executable and then give
-> >>> a syntax error for the second -x.
-> >>> I can't imagine why shellcheck should warn about a leading x (or any other
-> >>> character) provided field splitting is disabled (eg by "").
-> >>> The leading x has definitely been needed in the past.    
-> >> 
-> >> Yep, it definitely has been.  The rationale on the wiki is that it's
-> >> not necessary for modern shells (and presumably that it unnecessarily
-> >> complicates the code): https://www.shellcheck.net/wiki/SC2268
-> >> However, it notes Zsh had issues as recently as 2015, which is not as
-> >> old as I would have expected.  
-> > 
-> > It doesn't really make much difference to the shell.
-> > I really doubt you'll notice any difference in the time it takes to run.  
+On Wed, Aug 27, 2025 at 03:49:18PM -0400, Frank Li wrote:
+> The endpoint ref to /schemas/media/video-interfaces.yaml#, so replace
+> additionalProperties with unevaluatedProperties to allow use common
+> properties.
 > 
-> I agree.  However, I'm more concerned about readability and
-> understandability for developers less familiar with the quirks of old
-> shells.
+> Fix below CHECK_DTBS warnings:
+>   arch/arm/boot/dts/nxp/imx/imx7s-warp.dtb: camera@36 (ovti,ov2680): port:endpoint: 'clock-lanes', 'data-lanes' do not match any of the regexes: '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov2680.yaml
 > 
-> >>> POSIX does require the three argument 'test' look for the middle argument
-> >>> being an operator - but there might be historic shells that don't so that.
-> >>> OTOH you are probably looking for code from the early 1980s!
-> >>> But the POSIX spec (last time I read it) does point out the problems
-> >>> with arbitrary strings being treated as operators causing complex expressions
-> >>> be mis-parsed - which a leading x fixes.    
-> >> 
-> >> Good point.  I just reread it and can confirm that the current version
-> >> still notes issues mitigated by the X prefix with "historical shells"
-> >> and with greater than 4 argument cases:
-> >> https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html  
-> > 
-> > The fact that the 'greater than 4 argument case' can still require
-> > a prefix character might be considered enough to make adding one all the
-> > time 'good practise' even though it (probably) isn't actually needed.  
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> That seems reasonable to me, although I'd prefer omitting x and
-> prohibiting >3 argument cases, which appears to be the route
-> shellcheck takes with SC2268 + SC2166.
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
+> index 634d3b821b8c7..ec5c40684b6bd 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
+> @@ -58,7 +58,7 @@ properties:
+>      properties:
+>        endpoint:
+>          $ref: /schemas/media/video-interfaces.yaml#
+> -        additionalProperties: false
+> +        unevaluatedProperties: false
 
-Ugg.
-I know the parser is 'problematic' but you need -o (and -a) to get
-moderately efficient expression evaluation.
-If shellcheck objects to those I'd guess it also objects to ( and ).
+There are a lot more than just data-lanes in video-interfaces.yaml.
 
-You really don't want to use [ ... ] && [ ... ] because it goes right
-out to the command pipeline parser.
-Not to mention the lack of grouping for a || b && c
+Could you instead drop data-lanes and clock-lanes from the bindings? They
+are redundant.
 
+>  
+>          properties:
+>            link-frequencies: true
 
-> > While I wouldn't error not having a prefix, generating an error when
-> > there is one seems wrong.
-> > What does shellcheck do with [ "$a" = "$b" -o "$c" = "$d" ] ?  
-> 
-> It only produces SC2166 (discouraging -o).  However, for 
-> [ "x$a" = "x$b" -o "x$c" = "x$d" ] it also produces SC2268.
-> 
-> > Or even [ "$a" "$b" "$c" "$d" "$e" "$f "$g" ] ??  
-> 
-> This, and [ "$a" "$b" "$c" ] and [ "$a" "$b" ] produce parser error
-> SC1073.  Unfortunately, this appears to be a long-standing shellcheck
-> issue:  https://github.com/koalaman/shellcheck/issues/1645
-> 
-> >> I find && and || more readable, but I'm open to changing it if you
-> >> feel strongly.  
-> > 
-> > They get parsed entirely differently and are likely to be measurably slower.
-> > Just FYI I tend not to use 'if' statements at all, just (eg):
-> > 	[ a = b ] && echo a == b
-> >   
-> >> Do I understand correctly that you are in favor of using the x prefix?
-> >> I have a slight preference for leaving it off, but I'm open to adding
-> >> it if you (or others) feel strongly.  
-> > 
-> > I wouldn't take them out and consider shellcheck wrong, but the suffix
-> > were just stupid.  
-> 
-> Are you opposed to the patch I posted removing the suffixes?  I had
-> tagged you as Suggested-by due to misreading your first post.  If the
-> change is not something you'd suggest, I can repost without it.
+-- 
+Kind regards,
 
-The suffixes are just wrong.
-If the shell treats the first parameter to [ as an operator and $1 is "-"
-it processes [ -x = ... and looks for a file "=".
-Without the suffix the same happens when $1 is "-x".
-
-A conformant shell won't do this for a 3-argument [.
-But I also suspect that any conformant shell supports -o and -a.
-The 7-argument [ definitely needs the prefix to protect against unexpected
-operators.
-
-So I still think shellcheck is just wrong here.
-It ought to be checking FOR a prefix when there are 4 or more arguments.
-It is one of those idioms you have to get used to.
-
-But at the end of the day it is probably your call.
-
-	David
-
-> 
-> Thanks,
-> Kevin
-
+Sakari Ailus
 
