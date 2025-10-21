@@ -1,142 +1,294 @@
-Return-Path: <linux-kernel+bounces-863478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3943BF7ED8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B43BEBF7EE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BB494E3D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:37:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 740BE4E4773
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8E834B696;
-	Tue, 21 Oct 2025 17:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E2D34C128;
+	Tue, 21 Oct 2025 17:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="QdEAuSp9"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="byPK2mq5"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FA33557E4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761068270; cv=none; b=b2JrIfxM0f5L4rDweNq6hea4u4c6e1eWIhtoAHLSHbc3o7UUWACSFnMO3EPiovuLQgMpHyk7M1/rwKfJe7pQVMM0gH9R3LESDMJtQETlpdhCgRKxpxLCTl+QOx2hMge2U4s6dUyS9AE4oc58uc9B/eqIAqmQOwdeTcUsUVpegRk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761068270; c=relaxed/simple;
-	bh=w9lLASQAb3MzFOmkR8MUQwtJkigXHJHfhdRGIS8U5uw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7D332E6B4
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761068379; cv=pass; b=qHtKi9/94C4gCdQzeFIM4rMRMtUxLOXB9bUiw2xJFb7Ljx1364t7sbcQUp13eny/k1PA1bQXfg3ri3agKzqgwGci3fL1/5zSIdVQVQnzo8eDX/eDyHr/A+d5FPhWc+OujJd4Wqaxjx3KrMIOQ7OqNtkNhUi23L+ytdcEEsu8ths=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761068379; c=relaxed/simple;
+	bh=ReeTVeQLx7NhIvC8xg4+uyKIb9wbFIozxkGbmNcQF94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IN45JnJoDXOY3sve/elG625w5KTpQzn3clZH6MhqIVZ3uZZJWTXaJs8kHcOakptqatmdfOrn+LVjuSpaYGYgdDYNBfYE3Chk25WhWvIsUIzChXhP8bwpPIQAg6Vwn4dZQTr5mZdknElWueJ7xroa5DE0hBhjT7yXImDYclICxf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=QdEAuSp9; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4aed12cea3so987869466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:37:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1761068267; x=1761673067; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HzP3NHmpVePzzX4Nk37cJRY8V/e1399mO4lbkZpYbsI=;
-        b=QdEAuSp9mwNOauWEJjrVkBlYiNhSp1d1NiNBJ03d01QB/RYhivsFSTp2UiirXuLKP6
-         OeH9DmWYra8t7ggDTwpO35SRgKRwCjDIqAoOUCCLJbGWMiN78sjWdhGkEWmYsAZood7n
-         /dWoN3roVOiQHAOKSvt3usiLYviGWCZJ76UhlyjiKd7af6mtJgrTApO8R0kQRU083xZM
-         8KeOFEGjBatcLY6Ktd161H4hbVWY/5/d7P2afTBNIFxgFiZZpJPvjFpf/6lDHB3BGlkl
-         A9Ayorwct/i586EDWC5axIJcZNZBoJSVt0yCJKQD5ylOnbP+lbIMCrf7PEporrIlt8kE
-         Dx9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761068267; x=1761673067;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HzP3NHmpVePzzX4Nk37cJRY8V/e1399mO4lbkZpYbsI=;
-        b=fupD1YVv+6i9U1RcWBc5LFpYZzK+2sVr6JRXUNSb2O/TcGh67a2VA2b6riV2UOyKuo
-         WyShLy1OMNpLlF70i2FLFtBTlRRPlinpwWF5S1Dl4zTyIeimjw50pgdeZZhJaglnEwVp
-         ICRyUd8Ac0NpKZqg9+gjShl22LsmqxuxwjpVciBmUsxD1sRYXcCuI8SDGDvTNHbI6+U/
-         SAN0pYaNuZeehGvfPxUkZv8Zu9mYJBy03K2cZQNtTJ82qbpFjjyHxfUSlOeSVSgO/csJ
-         4Zfm5GDgbLSTB5dCTAqC5GjklFuOQ8mDBpLlTy0BTqrCFqXEcWnS9BV0qAfRi982Yn2L
-         XbWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjJGvYeI3abqfSOaYBxxfe0RQTgAgCbKiaL6WYaCdhXuxDgcXOIP8VgSZu+HCNAy7YHoQda/jcA10oOB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/h7RAtzcYT3OxroI498S+37vCBQ1Pjf+tw92igFFU7sdugIwj
-	eSmRqZw8yx//8MZ71C0e+VorqdL3ZsYJnxAzr5Lja2YJMupMzKLtclmU
-X-Gm-Gg: ASbGncuRFomU5j5Jzzw4/QHM9v6ARHlhJyIBLG+RDqAFJ8yPDDKoFLCPi9LgwvptbLw
-	eZmt1l7WMx4uphHV33/FXz28eCOwVVVzhwbO9chaxTklf/3ZUFdpXad/pFUnd63GpGSmfuT5SOl
-	XFlzlj4EeIFP7gu0ZRTuVQ0dK75Ky2xKqwYVVaHCmKrxKUX/6wRB9oeDN3N+Pg19PbJLAIK+33X
-	YYbLAR/Jnvjdg6fcNvGEhJfabXpXQV3shuOdLn8f5dz0vfUiDu33v5TvpTaMflKmF2PMQWv0It0
-	DOqb535/RpUMiwuVxAHrTuaQGmp9Q6gORkmfEGrbpz6SLpBIA0TitBfmQoe5ukFUDmaTilmIoNV
-	ybx/sVIpF8K1MlPv9vSjdEnw6Y599ovrZzb1+H0o+VM4P/ljG+cMiFbiagTDhSVn4UbbLGT4h4c
-	PCNZ1D3iQ=
-X-Google-Smtp-Source: AGHT+IE3bWO5VTrkecU9jvIu327KrROeLdwSscMAWS5uaEu1sOxAkVe3ftuURMlxB+jwqRZpHVyG5A==
-X-Received: by 2002:a17:906:7316:b0:b54:981c:4072 with SMTP id a640c23a62f3a-b6472d5e88cmr1997955166b.11.1761068266270;
-        Tue, 21 Oct 2025 10:37:46 -0700 (PDT)
-Received: from hp-kozhuh ([2a01:5a8:304:48d5::100])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8971897sm1122485866b.37.2025.10.21.10.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 10:37:45 -0700 (PDT)
-Sender: Zahari Doychev <zahari.doychev@googlemail.com>
-Date: Tue, 21 Oct 2025 20:36:38 +0300
-From: Zahari Doychev <zahari.doychev@linux.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: donald.hunter@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, horms@kernel.org, jacob.e.keller@intel.com, ast@fiberby.net, 
-	matttbe@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, 
-	johannes@sipsolutions.net
-Subject: Re: [PATCH 2/4] tools: ynl: zero-initialize struct ynl_sock memory
-Message-ID: <7mgcwqzafkqheqmbvkdx6bfeugfkuqrgik6ipdoxy3rtvinkqq@uxwnz7243zec>
-References: <20251018151737.365485-1-zahari.doychev@linux.com>
- <20251018151737.365485-3-zahari.doychev@linux.com>
- <20251020161639.7b1734c6@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gV68Ee+z9bgMtadqY9dfPBMGLlzEplgSy/wj+kD87IzHclFxQvOs7a0351UQN4rcA8Bd0T+3Zz2R7OSnv2qI0TFlFEOeJMyLWxZ7rSvZuNp9hHw7iwlZc8uW56SeKHrvx0BRyjV67yzFqKv5ZIgKqHTrhUd0XJpd2v+b2FNQO/E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=byPK2mq5; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761068353; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Rn0UKui+I+/y63IsXl/oigLfg+ObGKv05jW2+XvXUX/zdK4E2bNuSk/laHrtY6EppJtTGdbnXb+5NWoEAr4wHfXmHdD6k82ghGjx500RIFy9YwxVzxxzobkJKIfTvpjCoRdz3p9d992soXGdAnupN3I0aNruMHANOYL72/Zk+0k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761068353; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/l5LFWBSXBtebNpEKUkNuf9wVJwhzoEKbg+jP+ECxl8=; 
+	b=DAWR9MEhkBIa/drxksPA3y4q8YQEUDU8q3vyxpR4T5Vn7OMmyR90Q9ccTrIIaAm4mgbPJZZRQsQDdmTFZBkhgOCvrrV6QvaqPmIw3vAPzl2AXqa3nbDMFe7mMVoAfN4p9YVGPEnOozp/bYHvl6TeSVR5oxxJDrIY1BeDRg0hJU0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761068353;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=/l5LFWBSXBtebNpEKUkNuf9wVJwhzoEKbg+jP+ECxl8=;
+	b=byPK2mq5S8DC9pQvegjkwG7o48DUtocZrrexZNEPtVuobpgeyHOnB+Knyvdkvued
+	phNVAgZSUAWZZoOUHlCAe7+VtY8oW3FzKB0xeuI0qX/vuMiBXBSjPQcNWXqC8MKG0pY
+	EwTDDJk4ENbMtTF4iOvsx4ebYHSeZOwNJCdd7fUs=
+Received: by mx.zohomail.com with SMTPS id 1761068352092412.6009342302924;
+	Tue, 21 Oct 2025 10:39:12 -0700 (PDT)
+Date: Tue, 21 Oct 2025 18:39:05 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Steven Price <steven.price@arm.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	kernel@collabora.com, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
+Message-ID: <owzghwojhouk2gxfvpmxli3czrao6hpoopcxududrzsoa7gkos@zkoymtlivm7j>
+References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+ <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251020161639.7b1734c6@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bef0484d-8e17-477a-b4a2-f90d3204ff88@arm.com>
 
-On Mon, Oct 20, 2025 at 04:16:39PM -0700, Jakub Kicinski wrote:
-> On Sat, 18 Oct 2025 17:17:35 +0200 Zahari Doychev wrote:
-> > The memory belonging to tx_buf and rx_buf in ynl_sock is not
-> > initialized after allocation. This commit ensures the entire
-> > allocated memory is set to zero.
-> > 
-> > When asan is enabled, uninitialized bytes may contain poison values.
-> > This can cause failures e.g. when doing ynl_attr_put_str then poisoned
-> > bytes appear after the null terminator. As a result, tc filter addition
-> > may fail.
-> 
-> We add strings with the null-terminating char, AFAICT.
-> Do you mean that the poison value appears in the padding?
-> 
+Hi Akash,
 
-Yes, correct. The function nla_strcmp(...) does not match in this case as
-the poison value appears in the padding after the null byte.
-
-> > Signed-off-by: Zahari Doychev <zahari.doychev@linux.com>
+On 21.10.2025 15:32, Akash Goel wrote:
+>
+>
+> On 10/19/25 04:19, Adrián Larumbe wrote:
+> > Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+> > behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+> >
+>
+> Sorry have a doubt.
+>
+> Corresponding to the commit 33729a5fc0ca, can we now remove the code to
+> pre-allocate L3 page table pages i.e. 'op_ctx->rsvd_page_tables.pages' inside
+> panthor_vm_prepare_unmap_op_ctx() ?.
+>
+> > In the case of Panthor, that means an attempt to run a VM_BIND unmap
+> > operation on a memory region whose start address and size aren't 2MiB
+> > aligned, in the event it intersects with a huge page, would lead to ARM
+> > IOMMU management code to fail and a warning being raised.
+> >
+> > Presently, and for lack of a better alternative, it's best to have
+> > Panthor handle partial unmaps at the driver level, by unmapping entire
+> > huge pages and remapping the difference between them and the requested
+> > unmap region.
+> >
+> > This could change in the future when the VM_BIND uAPI is expanded to
+> > enforce huge page alignment and map/unmap operational constraints that
+> > render this code unnecessary.
+> >
+> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 > > ---
-> >  tools/net/ynl/lib/ynl.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/net/ynl/lib/ynl.c b/tools/net/ynl/lib/ynl.c
-> > index 2bcd781111d7..16a4815d6a49 100644
-> > --- a/tools/net/ynl/lib/ynl.c
-> > +++ b/tools/net/ynl/lib/ynl.c
-> > @@ -744,7 +744,7 @@ ynl_sock_create(const struct ynl_family *yf, struct ynl_error *yse)
-> >  	ys = malloc(sizeof(*ys) + 2 * YNL_SOCKET_BUFFER_SIZE);
-> >  	if (!ys)
-> >  		return NULL;
-> > -	memset(ys, 0, sizeof(*ys));
-> > +	memset(ys, 0, sizeof(*ys) + 2 * YNL_SOCKET_BUFFER_SIZE);
-> 
-> This is just clearing the buffer initially, it can be used for multiple
-> requests. This change is no good as is.
+> >   drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
+> >   1 file changed, 126 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > index 2d041a2e75e9..f9d200e57c04 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+> >   	return 0;
+> >   }
+> > +static bool
+> > +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
+> > +			   const struct drm_gpuva_op_map *op,
+> > +			   u64 unmap_start, u64 unmap_range,
+> > +			   u64 sz2m_prev, u64 sz2m_next)
+> > +{
+> > +	size_t pgcount, pgsize;
+> > +	const struct page *pg;
+> > +	pgoff_t bo_offset;
+> > +
+> > +	if (op->va.addr < unmap_vma->base.va.addr) {
+>
+>
+> Sorry, another doubt.
+>
+> Will this condition ever be true ?
+>
+> For 'op->remap.prev', 'op->va.addr' will always be equal to
+> 'unmap_vma->base.va.addr'.
 
-I see. Should then the ynl_attr_put_str be changed to zero the padding
-bytes or it is better to make sure the buffers are cleared for each
-request?
+I believe it will always be less than that. What will be equal to
+unmap_vma->base.va.addr is op->remap.prev->va.addr + op->remap.prev->va.range
 
-Thanks
+> And for 'op->remap.next', 'op->va.addr' will always be greater than
+> 'unmap_vma->base.va.addr'.
+
+Yes, I believe so.
+
+> Please can you clarify.
+>
+> Best regards
+> Akash
+>
+>
+> > +		bo_offset = unmap_start - unmap_vma->base.va.addr + unmap_vma->base.gem.offset;
+> > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+> > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+> > +		pgsize = get_pgsize(unmap_start, unmap_range, &pgcount);
+> > +
+> > +	} else {
+> > +		bo_offset = ((unmap_start + unmap_range - 1) - unmap_vma->base.va.addr)
+> > +			+ unmap_vma->base.gem.offset;
+> > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+> > +		pgsize = get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev, &pgcount);
+> > +	}
+> > +
+> > +	pg = to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> PAGE_SHIFT];
+> > +
+> > +	if (pgsize == SZ_4K && folio_order(page_folio(pg)) == PMD_ORDER &&
+> > +	    unmap_vma->base.va.addr <= sz2m_prev && unmap_vma->base.va.addr +
+> > +	    unmap_vma->base.va.range >= sz2m_next)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +struct remap_params {
+> > +	u64 prev_unmap_start, prev_unmap_range;
+> > +	u64 prev_remap_start, prev_remap_range;
+> > +	u64 next_unmap_start, next_unmap_range;
+> > +	u64 next_remap_start, next_remap_range;
+> > +	u64 unmap_start, unmap_range;
+> > +};
+> > +
+> > +static struct remap_params
+> > +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
+> > +			const struct panthor_vma *unmap_vma)
+> > +{
+> > +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
+> > +	struct remap_params params = {0};
+> > +
+> > +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
+> > +
+> > +	if (op->prev) {
+> > +		sz2m_prev = ALIGN_DOWN(unmap_start, SZ_2M);
+> > +		sz2m_next = ALIGN(unmap_start + 1, SZ_2M);
+> > +
+> > +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
+> > +					       unmap_range, sz2m_prev, sz2m_next)) {
+> > +			params.prev_unmap_start = sz2m_prev;
+> > +			params.prev_unmap_range = SZ_2M;
+> > +			params.prev_remap_start = sz2m_prev;
+> > +			params.prev_remap_range = unmap_start & (SZ_2M - 1);
+> > +
+> > +			u64 diff = min(sz2m_next - unmap_start, unmap_range);
+> > +
+> > +			unmap_range -= diff;
+> > +			unmap_start += diff;
+> > +		}
+> > +	}
+> > +
+> > +	if (op->next) {
+> > +		sz2m_prev = ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> > +		sz2m_next = ALIGN(unmap_start + unmap_range, SZ_2M);
+> > +
+> > +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
+> > +					       unmap_range, sz2m_prev, sz2m_next)) {
+> > +			if (unmap_range) {
+> > +				params.next_unmap_start = sz2m_prev;
+> > +				params.next_unmap_range = SZ_2M;
+> > +				unmap_range -= op->next->va.addr & (SZ_2M - 1);
+> > +			}
+> > +
+> > +			params.next_remap_start = op->next->va.addr;
+> > +			params.next_remap_range = SZ_2M - (op->next->va.addr & (SZ_2M - 1));
+> > +		}
+> > +	}
+> > +
+> > +	params.unmap_start = unmap_start;
+> > +	params.unmap_range = unmap_range;
+> > +
+> > +	return params;
+> > +}
+> > +
+> >   static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> >   				       void *priv)
+> >   {
+> > @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+> >   	struct panthor_vm *vm = priv;
+> >   	struct panthor_vm_op_ctx *op_ctx = vm->op_ctx;
+> >   	struct panthor_vma *prev_vma = NULL, *next_vma = NULL;
+> > -	u64 unmap_start, unmap_range;
+> > +	struct remap_params params;
+> >   	int ret;
+> > -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_range);
+> > -	ret = panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
+> > +	/*
+> > +	 * ARM IOMMU page table management code disallows partial unmaps of huge pages,
+> > +	 * so when a partial unmap is requested, we must first unmap the entire huge
+> > +	 * page and then remap the difference between the huge page minus the requested
+> > +	 * unmap region. Calculating the right offsets and ranges for the different unmap
+> > +	 * and map operations is the responsibility of the following function.
+> > +	 */
+> > +	params = get_map_unmap_intervals(&op->remap, unmap_vma);
+> > +
+> > +	ret = panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_range);
+> >   	if (ret)
+> >   		return ret;
+> >   	if (op->remap.prev) {
+> > +		ret = panthor_vm_unmap_pages(vm, params.prev_unmap_start,
+> > +					     params.prev_unmap_range);
+> > +		if (ret)
+> > +			return ret;
+> > +		ret = panthor_vm_map_pages(vm, params.prev_remap_start,
+> > +					   flags_to_prot(unmap_vma->flags),
+> > +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
+> > +					   op->remap.prev->gem.offset, params.prev_remap_range);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> >   		prev_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+> >   		panthor_vma_init(prev_vma, unmap_vma->flags);
+> >   	}
+> >   	if (op->remap.next) {
+> > +		ret = panthor_vm_unmap_pages(vm, params.next_unmap_start,
+> > +					     params.next_unmap_range);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		ret = panthor_vm_map_pages(vm, params.next_remap_start,
+> > +					   flags_to_prot(unmap_vma->flags),
+> > +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
+> > +					   op->remap.next->gem.offset, params.next_remap_range);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> >   		next_vma = panthor_vm_op_ctx_get_vma(op_ctx);
+> >   		panthor_vma_init(next_vma, unmap_vma->flags);
+> >   	}
+> >
+> > base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
+> > prerequisite-patch-id: 3b0f61bfc22a616a205ff7c15d546d2049fd53de
+
+Adrian Larumbe
 
