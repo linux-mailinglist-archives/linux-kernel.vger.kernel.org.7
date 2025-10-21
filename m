@@ -1,107 +1,142 @@
-Return-Path: <linux-kernel+bounces-862886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AD3BF6736
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:29:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91418BF6739
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 93E0834F9C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:29:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3D0B23556B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423452441A6;
-	Tue, 21 Oct 2025 12:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F682E11CB;
+	Tue, 21 Oct 2025 12:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D6NyzFZq"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ArvnWsdi"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697B235502D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295CC35502D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049769; cv=none; b=XCcUCYLW53s+r/Z0udDfFui4jzCPlxjnF6w//u0M/RP3JbMphyIbE1/plbA/Cjb5ZH8gpWNnwzNE+Mxhkd7dTP1QOJM0s9f7p3x5LEQzDMkhgzli56sB77RiX9Dm7TBNn2GgDjKkia7oic6Iyi1DBOCdrV6zINDTtaiyIZQjZL4=
+	t=1761049778; cv=none; b=rADYbuL3Y9tfzcToxhEMyOsgiJMb6pGwEHeQLndR5aXTJoQtK4BezqL2l3S3D7fWSMWeYjlPBLmzpWe92/+MtYZSDHrT8zq6HkPceN7s+1wS5VbaFGkIUZhkqAHOJC1ot85rgWZsQO8kK9iTboh80mCXg64lx5fAN7+3Ggqc1+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049769; c=relaxed/simple;
-	bh=4FxX4SOoXyMpZHaNWphk7xsS/z0dtEhSqeW2fEIgxno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6qZOgOv9fICoF62I4h3vlD6jcM/thSEoKG0aH0GqsHx+DPHTaveTZZoxXr/8gI4tzxIEB0PDEuci0K+xfLSqsh9hhrk9pWhZmyZeVBTMPIWAbUDt2Zi5A28XfPD4PoNSI0xYqegVclgWiyuYYsZzdKJkAEuTZufIYDQgjpOHwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D6NyzFZq; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 68DB340E019B;
-	Tue, 21 Oct 2025 12:29:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Q28TeI9IJRJq; Tue, 21 Oct 2025 12:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761049761; bh=du3nF2z7pYFyug9u/5SUIAXbdnhDxdtTScUH/d8650A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D6NyzFZqjI4vKijE5gfS3Eg8KVm0c3VSIpQ1eJQ0JYBbX3XGFmarjMF/nRav5lnEx
-	 5pfh7y36rotINHdDgU9qu6m+I/92oXIlPyfrwQSNKd8a8/PQ+W2DeGd1xPGf8CqVVJ
-	 KBIKXMA+EnY3YUDuVhpqgtbypPMp2avLbeq0b1blgSCKAs5iklMe4zORmKXRQiiJKI
-	 yL+IoDH8pknDV0wVZYMktDZ2J7IVSysg0H2tT6C+qedS77tu6IwMVj+bHQSk1zg2CF
-	 P3vsQ9JvTwkZjAhVKF9zBljsTtRRX3vuGxJg0Ns6T9AnQ1w7Wd8E5hwet+n49i03Dz
-	 +5OvFHfogy8FtcPVJNg7FhVStvX4tSTOOAdQOeoo4K2vpmAMF6Vem/CgxipaWSCpk9
-	 /VPBP9g998BU5tgXJkstk67A6gTsAbALo483GEfb21k/rpksLwkRfS/Qx0Ct4UJPHx
-	 mMMbVOYwm3xEQ6QU1VPJXP8tLrr8RSdwtsk6THA9Tiqv047ama/3T/kwLMHIniUh4Z
-	 7W6PSmOtKly6vpEYPFFJ73X42tMrNmRyvSNYY0+7oKWN0Yk8RKe92z++AEtkZ9XXVX
-	 9TrbHUJn7Wm+jTU4ClfuH2xM6Zdo70/+avZfwdgoWgrYMm8zQpOM8JCJmvIhGHY67x
-	 ER0yBNzCKOElsGALCXrPKLM4=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D815640E016E;
-	Tue, 21 Oct 2025 12:29:15 +0000 (UTC)
-Date: Tue, 21 Oct 2025 14:29:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Filip Barczyk <filip.barczyk@pico.net>
-Subject: Re: [PATCH 1/2] x86/amd_node: Fix AMD root device caching
-Message-ID: <20251021122909.GKaPd8ldoGqAf5JPfQ@fat_crate.local>
-References: <20250930-fix-amd-root-v1-0-ce28731c349f@amd.com>
- <20250930-fix-amd-root-v1-1-ce28731c349f@amd.com>
+	s=arc-20240116; t=1761049778; c=relaxed/simple;
+	bh=mJvjEcn9y/uwoBqEtgwLDNdS3hqWkcvksx0x4ZkTH/I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mzmfIfhxva4EEhaPs7UIu2QDXoTWa+7G3vfOSUYGqcFDAw7Ye0OOnwDaB3+KYLrqqiG9bocGvGZ43tWylv3M65p2x+ri0UfnLlSoPhSb7RgBLnMrJLE06l5ZRaVnr/4znmf3/ZWNRsbOHncoICHsz4i3vwOfW+XVxG0gdytrzAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ArvnWsdi; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee12807d97so5193033f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761049774; x=1761654574; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gxKZQ1jSq5XmEMDD7h85b87KnFfLeeynwokLsqHcE8c=;
+        b=ArvnWsdiOU9cs2gvLgfy/FgObj2wAH29pZzHQ7iwFWznGRcjO2yag9XSTMbHocJ91Z
+         XHmN7BKI/BU+5/NHynBlblD9rg+1+cxa1jbfS0tozyHJJKcam4GEaihtRfz5T8zf93SM
+         X+bzMpU0TQ4iOqzCBLGt+ssm6+jn6jdq3l5RQe3VEiVnLkHTpRdFV+vmG3J9pNPBOBPV
+         rBGBOfLaTTFZgN6ub7mChfhyi26Amh2gxiijyqnGy/A/0aDGzxJXnwG6md8injyu0dP5
+         ovpV3mF5oFY4b+ZAm5AC1OFDacgl/Ax2VNesAhgBeR6wHX+dYvS62XdqKyD0+NVg2fTO
+         vUqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761049774; x=1761654574;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gxKZQ1jSq5XmEMDD7h85b87KnFfLeeynwokLsqHcE8c=;
+        b=icxlVF0XYdmT7gvHZMMw61LL5V6Y3k9KOmEMXRF0eK6o7qhnyOqzuylnct6bNeMJfn
+         Hd8ZiqJjqtXwYIQwHASXKfKZM8tPMsaGxwsD7LiYJnDoB/HfP9IOStM78EOXXtqIHMyb
+         8uGcgVFLP6qaBNkbuwmSWht3+lqEpaHFvWo0lDDnvDXfD5Vs+u22YeYAK4bJXTRpg2MQ
+         ojmw3zleyVmz5BsX/vsO9ETgmi5cqfZ7C+HtVIOgmNIJYp0uLePDW5HLYWQJdtnXV04E
+         F/bIMiHnu1C6gllrcf8DDuAhPBkbQcbrYzV2rywZ6czg2oPpgbtlF5B9EkMZ0UFo7vC/
+         e/ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXLhHDbkPmxQkoWoqeiPsJZc4GIMjqv5ji1ctm1R1pdh33HJV3RUTBory0YXEvHeq0voQ3KZIDNAe0Lwmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwEZeQDStFF8T4LpOpGeitXAW0CV9hto9KYv6fAlffmH0cSY+0
+	aOk4ojJgSS7JyOll1QZd5cC0dNhAYqUYWYVt1WCKEvry6e5eOf7k0+Vai0hEg9U1qqA=
+X-Gm-Gg: ASbGncsrHVij6JTiYkgwzPWoB4oVMx1dnMrrQQZxRoQpcqNbX8lSkdTCyGDjozC02++
+	f1XJxVk9R+r37JWZXoJjSikEw7d/uFRw75RwfFkyhGCkJLcfjCJMqngeKxv4A4QEIVz9US/qcyA
+	ufHASpI4MfQhVA7mPwHxvzLaRewQlf51jgjDo6s3oopK5LhBeSAwXuNpKvw8EbEot0BGgFXi7kd
+	dO3wCteTcrAT3sC7cQj/BDDplGN0sjuAl9innlxvglfHCBJdTqs5uXaUmqEWwASGe/zskd5ZAUb
+	21vUiIy2tiU//7sBi63haM+xDJOJ77deRDRCr/BowDSCZWYas0/Wgg0neUWYZ91biTRqUUjKX2M
+	UoknEar1QL6TNidoeyrFqfGOQVxWYEXZpNaVoK8MAZIsczZKbg2lkO+ZkLgD0MiMStb3CBDG+xN
+	ZBX9Ax+krX1aQZ6kRj9Vh4
+X-Google-Smtp-Source: AGHT+IHoXeRtqP5YKqx5fTjYny6JdBkpBMtbvIMA0MFHpcS+8/Jc5PjJmN78n+JJQ4ygw5kfvtGo5w==
+X-Received: by 2002:a5d:5d0a:0:b0:3de:78c8:120e with SMTP id ffacd0b85a97d-42704d43e7fmr9940846f8f.6.1761049774263;
+        Tue, 21 Oct 2025 05:29:34 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b988dsm20550960f8f.35.2025.10.21.05.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 05:29:33 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Kevin Hilman <khilman@baylibre.com>, Johan Hovold <johan@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250926142454.5929-1-johan@kernel.org>
+References: <20250926142454.5929-1-johan@kernel.org>
+Subject: Re: [PATCH 0/2] soc: amlogic: canvas: fix device leak on lookup
+Message-Id: <176104977371.3063512.7347854086347476606.b4-ty@linaro.org>
+Date: Tue, 21 Oct 2025 14:29:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250930-fix-amd-root-v1-1-ce28731c349f@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Tue, Sep 30, 2025 at 04:45:45PM +0000, Yazen Ghannam wrote:
-> Recent AMD node rework removed the "search and count" method of caching
-> AMD root devices. This depended on the value from a Data Fabric register
-> that was expected to hold the PCI bus of one of the root devices
-> attached to that fabric.
-> 
-> However, this expectation is incorrect. The register, when read from PCI
-> config space, returns the bitwise-OR of the buses of all attached root
-> devices.
-> 
-> This behavior is benign on AMD reference design boards, since the bus
-> numbers are aligned. This results in a bitwise-OR value matching one of
-> the buses. For example, 0x00 | 0x40 | 0xA0 | 0xE0 = 0xE0.
-> 
-> This behavior breaks on boards where the bus numbers are not exactly
-> aligned. For example, 0x00 | 0x07 | 0xE0 | 0x15 = 0x1F.
+Hi,
 
-Do I see it correctly that one of the root device's PCI bus is always 0x0 so
-you can simply read that one and you can keep the current code?
+On Fri, 26 Sep 2025 16:24:52 +0200, Johan Hovold wrote:
+> This series fixes a device leak in the canvas lookup helper and
+> simplifies the lookup error handling somewhat.
+> 
+> Johan
+> 
+> 
+> Johan Hovold (2):
+>   soc: amlogic: canvas: fix device leak on lookup
+>   soc: amlogic: canvas: simplify lookup error handling
+> 
+> [...]
+
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.19/drivers)
+
+[1/2] soc: amlogic: canvas: fix device leak on lookup
+      https://git.kernel.org/amlogic/c/32200f4828de9d7e6db379909898e718747f4e18
+[2/2] soc: amlogic: canvas: simplify lookup error handling
+      https://git.kernel.org/amlogic/c/075daf22641870e435a16ec2129bfd3b3134c487
+
+These changes has been applied on the intermediate git tree [1].
+
+The v6.19/drivers branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
 -- 
-Regards/Gruss,
-    Boris.
+Neil
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
