@@ -1,57 +1,54 @@
-Return-Path: <linux-kernel+bounces-862276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96DDBF4D46
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B13BBF4D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53E2434C97F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D51460319
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029C825A2AE;
-	Tue, 21 Oct 2025 07:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DA1275111;
+	Tue, 21 Oct 2025 07:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DZ46bR3t"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eAvSaztz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336A827466A;
-	Tue, 21 Oct 2025 07:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE54A271441;
+	Tue, 21 Oct 2025 07:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030523; cv=none; b=RLYXOIddI/lh62c0YIgx0qGgY6+oTJbjjLE/CeFMmQ4BjvPEgLN/LoTQYWGLrNGwFBLSwtvhgFV+3fY3THnE+59s9dXsBLNYLxGHFCnt7vTkEQRAs0zAK44kWcgySfjEnrR1TOdX4GI4ufzDwvFaM1DQJaSfAu5xCfz8IpKNLnI=
+	t=1761030604; cv=none; b=DKJRyq+CuB3ZZpk5olE8k/LS6J+nl1Auck+ehCNhTjaMC2LlEjsGZxPwmAXsUQhPR9AfIp7YxJwnkQmEFavNNHXU4MAKlxRVCgxvohPICGPTJh9NJEOJbw/1q+4RLK2awrv97/x0ssFSWr58if93BAuqCbTV5Fqoz0XPw4ILkwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030523; c=relaxed/simple;
-	bh=AlYnsYydAWPMUtRG9rMiMoSf2ckt22knitCS1hNP/Cw=;
+	s=arc-20240116; t=1761030604; c=relaxed/simple;
+	bh=pfGVVIir2RQOkaum3bBGVZD+n/ql71ATMmo1R7ohuCk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTZ7preS5oFgb9cv4uVlWbR0uh8SxEDebw/NKlRKWImA9nuMGOmz9Gf7NsUhM4DoHpLg0NUwIaBFquOTWganLVyBVEddiHgYdRoBC1fAd/aPk3EJ81898XuO6mH85+X6P7mOxwQytUrIIyNU8GLVw5e4Vl6c2HiFF2hgO/Rdqmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DZ46bR3t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B43C4CEF1;
-	Tue, 21 Oct 2025 07:08:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLwJKInnoP6kDq+eQYqhgDjOYVZtqfj+iObsY7OS6/iSH9pyWBdMOxF1ayCU0J1AwWFSUhJ69cUYaozfb/AaHx8gzu0bYAXtAdn3KwfYgb75cXvZRDUnqh+8sh3B0iUkcRlRohw0NL9l3eVR6ESo+jZemnhotFrJtaqXeK0cEyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eAvSaztz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6203C4CEF5;
+	Tue, 21 Oct 2025 07:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761030522;
-	bh=AlYnsYydAWPMUtRG9rMiMoSf2ckt22knitCS1hNP/Cw=;
+	s=korg; t=1761030602;
+	bh=pfGVVIir2RQOkaum3bBGVZD+n/ql71ATMmo1R7ohuCk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DZ46bR3tyoG9B7ocuiTXq+XbHIOm6yzHBjgbLDs9oEuE+qIAhHD2FkS81f9wBVpIp
-	 aaeNDNQZ070vVm2I50pUDySVX4SxT4sjK3zOKVvl0vXATSES/r5by7IrKfr0NasAiK
-	 89knbz42T1zx6AyRV8/RBrBvwWF/ChKo9XVO5ZHU=
-Date: Tue, 21 Oct 2025 09:08:39 +0200
+	b=eAvSaztzGeTfBspxxIvesQX1/GdT5lnQTk5zVMPl3cEx66VNZTDvO+cEfcSQ2K2YM
+	 wNVR7Vb+9h5Eyd+Gi+Fbude3GqJSd7CdsgN/4EkyBpNjGdp1+0lLBVK3B0CaIgi2dL
+	 h7Z/Y/X85vKZq+ZcVJHDFdKpUY9kYeKTHEtFiWDg=
+Date: Tue, 21 Oct 2025 09:09:57 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org,
-	david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org,
-	acourbot@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
 	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
 	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, pcolberg@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org,
+	tmgross@umich.edu, mmaurer@google.com,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] Device::drvdata() and driver/driver interaction
- (auxiliary)
-Message-ID: <2025102110-marital-print-8a1b@gregkh>
-References: <20251020223516.241050-1-dakr@kernel.org>
+Subject: Re: [PATCH v2 0/8] Binary Large Objects for Rust DebugFS
+Message-ID: <2025102150-maturely-squiggle-f87e@gregkh>
+References: <20251020222722.240473-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +57,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251020223516.241050-1-dakr@kernel.org>
+In-Reply-To: <20251020222722.240473-1-dakr@kernel.org>
 
-On Tue, Oct 21, 2025 at 12:34:22AM +0200, Danilo Krummrich wrote:
-> tl;dr:
+On Tue, Oct 21, 2025 at 12:26:12AM +0200, Danilo Krummrich wrote:
+> This series adds support for exposing binary large objects via Rust debugfs.
 > 
-> Implement a safe Device<Bound>::drvdata() accessor (used for driver to
-> driver interactions) based on the auxiliary bus.
+> The first two patches extend UserSliceReader and UserSliceWriter with partial
+> read/write helpers.
 > 
-> This provides a way to derive a driver's device private data when
-> serving as a parent in a driver hierarchy, such as a driver utilizing
-> the auxiliary bus.
+> The series further introduces read_binary_file(), write_binary_file() and
+> read_write_binary_file() methods for the Dir and ScopedDir types.
 > 
-> Please have a look at patch 8 ("samples: rust: auxiliary: illustrate
-> driver interaction") to see how it turns out.
-
-It turned out much nicer than I expected, nice work!
+> It also introduces the BinaryWriter and BinaryReader traits, which are used to
+> read/write the implementing type's binary representation with the help of the
+> backing file operations from/to debugfs.
+> 
+> Additional to some more generic blanked implementations for the BinaryWriter and
+> BinaryReader traits it also provides implementations for common smart pointer
+> types.
+> 
+> Both samples (file-based and scoped) are updated with corresponding examples.
+> 
+> A branch containing the patches can be found in [1].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=debugfs_blobs
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 
