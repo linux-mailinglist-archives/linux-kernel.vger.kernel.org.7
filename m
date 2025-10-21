@@ -1,95 +1,39 @@
-Return-Path: <linux-kernel+bounces-863842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B378DBF93FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:34:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B214ABF9403
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 01:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B4218C7848
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D796581E5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249562BE7AB;
-	Tue, 21 Oct 2025 23:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="RXGheFX+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dfg1W+co"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FF02BE655;
+	Tue, 21 Oct 2025 23:35:17 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98273272811;
-	Tue, 21 Oct 2025 23:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D39350A02;
+	Tue, 21 Oct 2025 23:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761089659; cv=none; b=ZxVOFMoIK2IS+l4D9gA1iXdk5yTZv3u8pGmmJpgfSzc5sxcgw3ObonwfC0WJkp2DKHPB9HcxvxD7WyQ3AEsRLcaMiZgyLJVGQCV9fctnXIN29fGkXmrow3Nd2fptOnneXtl7vJ3Oqg13GzJt+tkHRilmZRCbz6yJg+77y5aBvUU=
+	t=1761089717; cv=none; b=anXfKfaeEzdUl5/kxTv2unseIR71YfoiYNwf7jf6h0TUYiu2hrD4qnq9raawXJj8MiH5z4Khk7rTAWMVkUPn4ejjPINbbgNV4xq549K/ZZ0L2GGT3RdWka9XlGe77FnWkmX1c/MlnJ1aSHad9HJ95hzETAHMmKF2y+0cRu7vpGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761089659; c=relaxed/simple;
-	bh=iKQ6NZjIVGt6CXrDIvmK58j1AiuGRqwmeZkLZFuYnks=;
+	s=arc-20240116; t=1761089717; c=relaxed/simple;
+	bh=r+m8U0iErE67jQlOhGvNAC61ytioTgA98Z2QAM1yMrY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UvvqR0+VbS/IEQrdU6B+glPxmNadt8fVny9+fxDnV8GQXnMvbWZskc02MGZqo32LaGYT8nWNaU+ulOfEx5nyPGrMeq2qciLIlZZGwduwTVQJJwNVdikv6NKPUY6daq/cdv7SkpXFrIKQPK5oh4oR7kRtkT2kxp66JossvJAnOVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=RXGheFX+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dfg1W+co; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A9F4314000E6;
-	Tue, 21 Oct 2025 19:34:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 21 Oct 2025 19:34:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761089656;
-	 x=1761176056; bh=Kb22k5eTEI944/lmkAd6Z30JOXuRH68q0Ki+lxe8kgs=; b=
-	RXGheFX+Ffh9kCWC2hK7JYwYmK3agGq3iCGqemImOwc5fmpL9TwVExu405Di3l0V
-	QBANKDCZCAwOQQWVvC73LMcG0WOXBt5ZguEgqvOn3ZEu46sDY+qJzF52j4HCmr1l
-	1yWkpeZk8nvvr2eLRxE1253vZhZRGFUAaURlB7hP/RbTZMRWP1Yd6B7y1o1kBiEg
-	seUDuZd+yyMEryr7MjabZq4y8XVnT3bJk3jyjyAPCKYPGBpPEuDFKaH4Hfk+r+Ik
-	slx+GTK1wmyk+W0OAs727OeDbC9O6MlEE5AncXcDi2hGY6DmhxMtaCwzDILju81M
-	kTQq2YbpM9PDBqCP6M0pRQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761089656; x=
-	1761176056; bh=Kb22k5eTEI944/lmkAd6Z30JOXuRH68q0Ki+lxe8kgs=; b=d
-	fg1W+conZcCs7jx5QVJBjXy8NFftwuGcnOUjTOzYqVbJO0Y059IRowK8xwo8kshq
-	w6v9CDEkwwoNlFQPiwVszt0tLKjpXiALU2CTRxAdFAlOJ2uGwrXc+zJaNQ3BKssJ
-	WLU1qoqQU/Z/FhzDp/XOr0I6u0cjmim8byW9ilc90sNx8/OKRz/xf8arQiORbVSc
-	5Zc2h/5nh1vuPoKDe4THJm9RHrrDi9nR5QIccMbYNVSkCIEcAalVkuwRZaAH4JFQ
-	4phafeODAsucfNJxzSY6YXRPlAWPlnyYS+2/b0TjyemDMFywJ6r6EiAR/DBOnYBB
-	UfbNRKxVGH3ZlfKzykRpA==
-X-ME-Sender: <xms:eBj4aK3iNXSfuMJ35rukxGlmt4ifxmsGbqhmb2vV0lNDNdhFH1KD9g>
-    <xme:eBj4aI_E-dhbiloGhPVYhrM-xtE2Fh9HLlIVU42Paj_YvJS6RrCvDNzs3FhJNsZfq
-    ZfUlem_lIwcnSCz0wyY_XzZ9bwLwFvY8TuYewb-v4A73WZzya3o6g>
-X-ME-Received: <xmr:eBj4aP5FkM7gaSX4O27_16y1hWEEgnA4zZjMuTfTk_JwBiyiFQKBhePDmwxZVXFiKkc40qce-pBq0CXGpQwY2g1V>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvtdegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepff
-    ffveffieethfdviedthfdvjefhueeiffffheffvdegheeggedvudfggeehgedunecuffho
-    mhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohep
-    uddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrshhmrgguvghushestghoug
-    gvfihrvggtkhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhho
-    uhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegrnhgurhhiihdrnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepvghrihgtvhhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgthh
-    hosehiohhnkhhovhdrnhgvthdprhgtphhtthhopehlihhnuhigpghoshhssegtrhhuuggv
-    sgihthgvrdgtohhmpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:eBj4aAtsqRlbLqsoBRKIzk8HX6kb1wRnzHyi0yFpkg15QFv4J9aVXA>
-    <xmx:eBj4aB0cqhC2FM-hTWCcKtlJXpUMBelC0CMbdj3fV3TJpMUaOIfkFw>
-    <xmx:eBj4aJpDGjFu98qwyJGxyby3Fi3ALG3s-kavSezJ5XJkg-FPgy3qjA>
-    <xmx:eBj4aBK7baVHPqC6hWb87Cqe7de_d2aq98D8RAUoLYt8So1FiMDiCw>
-    <xmx:eBj4aAs56Pxt6s_lz2Zb1jy-rz-80LLFOFLx9kZDY99JqR3-vXo3tGwW>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 19:34:14 -0400 (EDT)
-Message-ID: <39116c81-1798-4cc1-945c-a05d0ac7d8d9@maowtm.org>
-Date: Wed, 22 Oct 2025 00:34:13 +0100
+	 In-Reply-To:Content-Type; b=Z95cRltjpv5YZJpYz3Kw8gWaOQ2liZ/I9YMS5xf4IKYX3EVC47gTtwkKkf74pzKqJGa5xG+mhsdV2Bbuo1ZEmpQbyFpfqCRGmPixlL7DbHevHiCYVD9VBkjanNOc40gHkV4/tlqROhd2U8eQlwT+ttmwkNrmBo3BvlxMPhm0zTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [216.234.200.240])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id E38E5B220DAA;
+	Wed, 22 Oct 2025 01:35:03 +0200 (CEST)
+Message-ID: <cbb18fb1-200f-40b4-89a1-c29522fdaae5@freeshell.de>
+Date: Tue, 21 Oct 2025 16:35:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,39 +41,277 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] 9p cache=mmap regression fix (for 6.18-rc3)
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>,
- Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org,
- v9fs@lists.linux.dev, bpf@vger.kernel.org
-References: <20251022-mmap-regression-v1-1-980365ee524e@codewreck.org>
- <CAHzjS_s5EzJkvTqi73XS_9bBsaGuXu1zQ4jOLgcpC9vmJ7FoaA@mail.gmail.com>
- <aPgUaFE1oUq8e1F-@codewreck.org>
+Subject: Re: [PATCH v2 2/2] riscv: dts: starfive: add DT for Orange Pi RV
+To: Icenowy Zheng <uwu@icenowy.me>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
+ Michael Zhu <michael.zhu@starfivetech.com>,
+ Drew Fustini <drew@beagleboard.org>, Yao Zi <ziyao@disroot.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250930100318.2131968-1-uwu@icenowy.me>
+ <20250930100318.2131968-2-uwu@icenowy.me>
+ <579dad6b4ab0c981b8d51383af2db3a9f4394609.camel@icenowy.me>
+ <b8db0cdf-163e-416d-94b8-c9e1f10c8011@freeshell.de>
+ <2e6ce092996f2717bc274e1c82873c42b2ab18ce.camel@icenowy.me>
 Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <aPgUaFE1oUq8e1F-@codewreck.org>
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <2e6ce092996f2717bc274e1c82873c42b2ab18ce.camel@icenowy.me>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/22/25 00:16, Dominique Martinet wrote:
-> Hi Linus,
+
+
+On 10/6/25 00:39, Icenowy Zheng wrote:
+> 在 2025-10-05星期日的 11:47 -0700，E Shattow写道：
+>> Hi Icenowy,
+>>
+>> On 9/30/25 08:51, Icenowy Zheng wrote:
+>>> 在 2025-09-30星期二的 18:03 +0800，Icenowy Zheng写道：
+>>>> Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE
+>>>> port
+>>>> (connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a
+>>>> VL805
+>>>> PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
+>>>> (connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio
+>>>> output
+>>>> and a microSD slot.
+>>>>
+>>>> Other Onboard peripherals contain a SPI NOR (which contains the
+>>>> U-
+>>>> Boot
+>>>> firmware), a 24c02 EEPROM storing some StarFive-specific
+>>>> information
+>>>> (factory programmed and read only by default) and an Ampak AP6256
+>>>> SDIO
+>>>> Wi-Fi module.
+>>>>
+>>>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Property order change mentioned in the review of v1.
+>>>> - Added Wi-Fi (along with the always on VCC3V3_PCIE regulator,
+>>>> which
+>>>> is
+>>>>   used to power up WIFI_3V3). The OOB IRQ is still not possible
+>>>> to
+>>>> use
+>>>>   because of some incompatibility between StarFive pinctrl driver
+>>>> and
+>>>>   brcmfmac.
+>>>> - Removed the LED because it's in common DTSI.
+>>>>
+>>>>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
+>>>>  .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 87
+>>>> +++++++++++++++++++
+>>>>  2 files changed, 88 insertions(+)
+>>>>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-
+>>>> rv.dts
+>>>>
+>>>> diff --git a/arch/riscv/boot/dts/starfive/Makefile
+>>>> b/arch/riscv/boot/dts/starfive/Makefile
+>>>> index b3bb12f78e7d5..24f1a44828350 100644
+>>>> --- a/arch/riscv/boot/dts/starfive/Makefile
+>>>> +++ b/arch/riscv/boot/dts/starfive/Makefile
+>>>> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-
+>>>> visionfive-v1.dtb
+>>>>  
+>>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
+>>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
+>>>> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
+>>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
+>>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
+>>>> v1.2a.dtb
+>>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
+>>>> v1.3b.dtb
+>>>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>>>> b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>>>> new file mode 100644
+>>>> index 0000000000000..5a917b7db6f78
+>>>> --- /dev/null
+>>>> +++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>>>> @@ -0,0 +1,87 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>>>> +/*
+>>>> + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
+>>>> + */
+>>>> +
+>>>> +/dts-v1/;
+>>>> +#include "jh7110-common.dtsi"
+>>>> +
+>>>> +/ {
+>>>> +       model = "Xunlong Orange Pi RV";
+>>>> +       compatible = "xunlong,orangepi-rv", "starfive,jh7110";
+>>>> +
+>>>> +       /* This regulator is always on by hardware */
+>>>> +       reg_vcc3v3_pcie: regulator-vcc3v3-pcie {
+>>>> +               compatible = "regulator-fixed";
+>>>> +               regulator-name = "vcc3v3-pcie";
+>>>> +               regulator-min-microvolt = <3300000>;
+>>>> +               regulator-max-microvolt = <3300000>;
+>>>> +               regulator-always-on;
+>>>> +       };
+>>>> +
+>>>> +       wifi_pwrseq: wifi-pwrseq {
+>>>> +               compatible = "mmc-pwrseq-simple";
+>>>> +               reset-gpios = <&sysgpio 62 GPIO_ACTIVE_LOW>;
+>>>> +       };
+>>>> +};
+>>>> +
+>>>> +&gmac0 {
+>>>> +       assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>>>> +       assigned-clock-parents = <&aoncrg
+>>>> JH7110_AONCLK_GMAC0_RMII_RTX>;
+>>>> +       starfive,tx-use-rgmii-clk;
+>>>> +       status = "okay";
+>>>> +};
+>>>> +
+>>>> +&mmc0 {
+>>>> +       #address-cells = <1>;
+>>>> +       #size-cells = <0>;
+>>>> +       cap-sd-highspeed;
+>>>> +       mmc-pwrseq = <&wifi_pwrseq>;
+>>>> +       vmmc-supply = <&reg_vcc3v3_pcie>;
+>>>> +       vqmmc-supply = <&vcc_3v3>;
+>>>> +       status = "okay";
+>>>> +
+>>>> +       ap6256: wifi@1 {
+>>>> +               compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-
+>>>> fmac";
+>>>> +               reg = <1>;
+>>>> +               /* TODO: out-of-band IRQ on GPIO21 */
+>>>> +       };
+>>>> +};
+>>>> +
+>>
+>>>> +&mmc0_pins {
+>>>> +       /*
+>>>> +        * As the MMC0 bus is used to connect a SDIO Wi-Fi card
+>>>> instead of
+>>>> +        * an eMMC card, and the eMMC RST is repurposed to be an
+>>>> enablement
+>>>> +        * pin of the SDIO Wi-Fi, remove it from the pinctrl node
+>>>> and
+>>>> manage
+>>>> +        * it as a GPIO instead.
+>>>> +        */
+>>>> +       /delete-node/ rst-pins;
+>>>> +};
+>>>> +
+>>
+>> Listed on the schematic [1] as:
+>> Default function SDIO0 RSTn GPIO62 for eMMC:J9
+>> Highlighted (non-default?) function GPIO62 D17 << WIFI_EN_H_GPIO62
+>> WIFI_EN_H_GPIO62 >> WIFI_PWREN (pin 12 WL_REG_ON of module AP6256)
+>>
+>> I've sent a patch [2] to portion out mmc0 reset pins from jh7110-
+>> common.dtsi
+>>
+>>>> +&mmc1 {
+>>>> +       /delete-property/ cd-gpios;
+>>>> +       broken-cd;
+>>>
+>>> Well it's found that the card detect is working, although with
+>>> different polarity with other boards.
+>>>
+>>> Here should be:
+>>> ```
+>>>         cd-gpios = <&sysgpio 41 GPIO_ACTIVE_HIGH>;
+>>> ```
+>>>
+>>> Will be fixed in the next revision.
+>>
+>> Yes, listed on the schematic [1] as:
+>> SD SDIO0 CD GPIO41 for MicroSD:J10
+>>
+>> There is not a mention of active high or active low on the schematic
+>> label, however there is listed a 10Kohm pull-up to +Vdd1.833 for the
+>> circuit diagram of the Micro SD Card. The card holder is referenced
+>> to
+>> ground and could reasonably be N/O or N/C switch operation depending
+>> on
+>> the exact part selected for manufacture.
+>>
+>>>
+>>>> +};
+>>>> +
+>>>> +&pcie0 {
+>>>> +       status = "okay";
+>>>> +};
+>>>> +
+>>>> +&pcie1 {
+>>>> +       status = "okay";
+>>>> +};
+>>>> +
+>>
+>>>> +&phy0 {
+>>>> +       rx-internal-delay-ps = <1500>;
+>>>> +       tx-internal-delay-ps = <1500>;
+>>>> +       motorcomm,tx-clk-adj-enabled;
+>>>> +       motorcomm,tx-clk-10-inverted;
+>>>> +       motorcomm,tx-clk-100-inverted;
+>>>> +       motorcomm,tx-clk-1000-inverted;
+>>>> +       motorcomm,rx-clk-drv-microamp = <3970>;
+>>>> +       motorcomm,rx-data-drv-microamp = <2910>;
+>>>> +};
+>>
+>> 'motorcomm,rx' before 'motorcomm,tx' in `LANG=C sort` of vendor-
+>> specific
+>> properties.
+>>
+>>>> +
+>>>> +&pwmdac {
+>>>> +       status = "okay";
+>>>> +};
+>>>
+>> Additional non-default GPIO as listed in the Orange Pi design:
+>> GPIO21 WIFI_WAKE_HOST_H /* default vf2 function PCIE_PWREN_H_GPIO21
+>> */
+>> GPIO22 >> BT_UART_RXD /* default vf2 function MIPI_PWR_EN */
+>> GPIO23 << BT_UART_TXD /* default vf2 function LCD RESET */
+>> GPIO24 << BT_UART_CTS /* default vf2 function MIPI_LCD_BL */
+>> GPIO25 << BT_UART_RTS /* default vf2 function TP_DET_GPIO25 */
+>> GPIO30 << BT_EN_H_GPIO30 /* default vf2 function TP_INT_L */
+>> GPIO31 << BT_WAKE_GPIO31 /* default vf2 function TP_RST_L */
+>>
+>> Of all the above, GPIO21 is defined in jh7110-common.dtsi
+>> &pcie1_pins/wake-pins and may need consideration.
+>>
+>> There is a note about "PMIC_PWRON as Key" and so does this have the
+>> meaning of it is used as an input device?
+>>
+>> Also noted is that the USB over-current circuit appears to be
+>> implemented, different than being absent in other VF2 designs.
+>>
+>> 1:
+>> http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-RV.html
+>> 2:
+>> https://lore.kernel.org/lkml/20251005174450.1949110-1-e@freeshell.de/
+>>
+>> With the card detect describing hardware corrected, and clean up the
+>> vendor property sort, then please confirm if you think GPIO21 is
+>> described correctly.
 > 
-> We had a regression with cache=mmap that impacted quite a few people so
-> I'm sending a fix less than a couple of hours after making the commit.
+> Well yes, GPIO21 should be splitted from PCIe pinctrl and assigned to
+> be the out-of-band IRQ of the Wi-Fi module. My DT omits this because
+> the jh7110 pinctrl driver is currently not compatible with brcmfmac
+> out-of-band IRQ code.
 > 
-> If it turns out there are other side effects I'd suggest just reverting
-> commit 290434474c33 ("fs/9p: Refresh metadata in d_revalidate for
-> uncached mode too") first, but the fix is rather minimal so I think it's
-> ok to try falling forward -- let me know if you prefer a revert and I'll
-> send one instead (there's a minor conflict)
+> Should I add /delete-node/ for it?
+> 
 
-See the reply to the original patch [1] (posted right after, and before
-seeing, this message) - there is indeed more side effects, and I wouldn't
-mind a revert for now.  0172a934747f ("fs/9p: Invalidate dentry if inode
-type change detected in cached mode") will need to be reverted too.
+No, and thank you for the confirmation. This special change for GPIO21
+can be something for future fix/enhancement. The "dts: starfive:
+jh7110-common: split out mmc0 reset pins from common into boards" patch
+has landed in riscv-dt-for-next so it is good now to address the other
+review comments and send v3.
 
-[1]: https://lore.kernel.org/v9fs/6c74ad63-3afc-4549-9ac6-494b9a63e839@maowtm.org/
+>>
+>> Acked-by: E Shattow <e@freeshell.de>
+>>
+> 
+
+-E
 
