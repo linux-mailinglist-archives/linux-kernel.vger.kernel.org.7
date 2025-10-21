@@ -1,196 +1,191 @@
-Return-Path: <linux-kernel+bounces-863236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0385BBF74FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:25:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9A0BF7528
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32BA3A3B94
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:25:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54C5B50640B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3604F340A76;
-	Tue, 21 Oct 2025 15:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947B1343D86;
+	Tue, 21 Oct 2025 15:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZWvUGmYp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqd79Qve"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D902F2F2910
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BE42F2910;
+	Tue, 21 Oct 2025 15:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761060333; cv=none; b=MBtaaGt5xv0TvqoUymNrS2UhUeDKBJfXyFhe2BXVy0aJPZoC7X8omp/KFhK519Nci+ANP/noE4ZVr3UOkgqAfxe4gqB8NqAtWqHID4UwADUwafFAcmP8rYpnzyzXg+ZmXZorLIPkfB8ujjF0UoookoolCHmFU++PS71C8GULFcQ=
+	t=1761060362; cv=none; b=rNWNYDSUiDGMHL/fS4r58cbwhqaKjLz6JW3YQvid8l08MBaf3EqoulbxcE3rvF7fbaqzBYPMVONVWma/uJIQnLGECv9lPNegkjk9gagVCwITBYozq7EKIOlZj+qe2jJl7KZzcwU8DdMm3uB6n3kNGyvg1J5cFKnzRUTCtWyXO7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761060333; c=relaxed/simple;
-	bh=BwxfchvsS8i8RSG6LfSi/G+dS+9MhkTb8GS+6FdInh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mNMRTRi7ZA3OXP9dxohvov7TcfgQAF+RZb/xH5fPC5JVz6TSTz01PYxoVM80PIrmh57ilBmxt56ZQ8hKq6QaJElS1NkgMCW8HSuVcvm15ZrBNxo0j4r1i+djl7z5AoEzg4RJZqrcGOMsxzI1RJk+YSBXje4HgQNBEB/qMbU1RHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZWvUGmYp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761060330;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ryq8ZFFn05SNtiRqO+IXV06muSLymOv5LlgDxE1tkJM=;
-	b=ZWvUGmYpUAvoYI6MUhAlui504DVq/prrSgRpVaB2fMN498hoS4/+KSF0OspJgQXZJsbapJ
-	x8mCE4b45VatLRE8dFfktxa5fe8antPzBCAn3tLSZdTNdeLUxnJ3k17hw+jbKe8PAunaxx
-	5CoE7u2ai8axn5JLhoDYn2O/cX7DxiA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-573-D8J2z4CONLO--lVfK48h3w-1; Tue, 21 Oct 2025 11:25:29 -0400
-X-MC-Unique: D8J2z4CONLO--lVfK48h3w-1
-X-Mimecast-MFC-AGG-ID: D8J2z4CONLO--lVfK48h3w_1761060327
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-427060bc12dso5856489f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:25:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761060327; x=1761665127;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ryq8ZFFn05SNtiRqO+IXV06muSLymOv5LlgDxE1tkJM=;
-        b=KKtZtCGTg+8wbRwCG+aX74C3zwe6wIsNegtVnvItdX/IoMBb+M0m9TqtMnKjvNHc3F
-         uRTkbodrKeRmu13VHEvLSAOgkq5eePrzDB73AIKHxIyGUfGdtaqXZU9cynY//r5tOVzt
-         bKKDcwpg9lxbp0GFO3/C3QgA3tnzsTmIOkS+NT3Ies0xQYI6EcEbnst+7F4GpMb3PX15
-         F3PdwSx1MXiCertlw6wYmPlb4+Gqj0hpkGi7b8CN5FFq1MKQqoMV1lTwuXOlLj58Psuw
-         ZXM28qVzwle/ynaRVivEa0TrKh+faXBFgPuJLVND6f62owSFHWn33PNclUlUNthB6KPg
-         gV2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWZchDJ0Hz4Ccm6B7pf3zmrvLJhYWfdTUDIApdWbQzz1vlec1gXiLX1PZrdNoKagrbAP0GJikDXzBKQ53U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjHiPVl07CpcSuM5NvNltdktcjFrzXUMoWP0uiucAiyK3GQk3W
-	u9z12oBu1YvuBd0ACoDeTvVlnDmPn38PQVUtRR7IT7cYo8w+bmFl/RNVxcJ2AoCUNvhLoN9UPIe
-	q4hnFO4MbOIC2dw1qvfrrqVymckEjTtqT9FSYyAjIk9XP7ndl4tVCXu5D+B7pJoWqPQ==
-X-Gm-Gg: ASbGncur9mXoCTXrUxkAbwiFqleEAxtG7XhwZ0Sq1AFosoKd+Eo+SAulbuIJnXvoPl8
-	RVUVWxp1UW/OyDlqaoNhl5OwIqNEzRRAiBVxEjvlBYddoGFKQqxYRHmty2iPW5MKA7WkBOnq9Yr
-	PvTW72MHSHezUVLbhI8wyikB9zYabL0ny5y1ITDfBAXtKyYJNYJN/F4NIJyVVB/uZB9uctcdwTq
-	rhy+DsAUragSdYEpg7thN3gxWQ4fGn9h+AVuh0CiFaVW+cohQ2J63UiAXQr1Ut3GbKzBmlNHnPj
-	/eSK8vVCdNd993ZVfQsPzYeWVUwchiSFZsKejhYq5WjLU4/UGkmnJytx4QpARaY1YvqCg0AvQQ4
-	vfOwsawRg7oHzIevOBREV7lvhO6pCJdWGCDXt2axHfzump5CcTuNMHzDebIMX1gvJyyqnBZoteB
-	Zpj6Y2f9mXi5QmRK+k/747htcdAfw=
-X-Received: by 2002:a05:6000:705:b0:427:603:715 with SMTP id ffacd0b85a97d-42706030721mr8869520f8f.18.1761060326893;
-        Tue, 21 Oct 2025 08:25:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFiKHKT5n4lxAIXcZezjjomGqsscckAjK3PPu93OYAWQLb8JpaHvdOvGofIdZ4ec/p/eA4hhg==
-X-Received: by 2002:a05:6000:705:b0:427:603:715 with SMTP id ffacd0b85a97d-42706030721mr8869502f8f.18.1761060326480;
-        Tue, 21 Oct 2025 08:25:26 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0ec2sm20701088f8f.3.2025.10.21.08.25.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:25:25 -0700 (PDT)
-Message-ID: <8f71e65c-a860-40ec-8570-5cf8f0f947d1@redhat.com>
-Date: Tue, 21 Oct 2025 17:25:24 +0200
+	s=arc-20240116; t=1761060362; c=relaxed/simple;
+	bh=Q87QCWTMqM/Fch2ObvjDPBq/NiDII/xJMjnOVOUNThI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eTFiXmgpo43ofEgJUo6KunDHVUbKaXEkXVkMyC8hTw/OnTvSUN/tP+ZcDMt1RH8YgKalOYU+9kiJPZU4I9nnyjZkz+eHUqlTmKdlwRfHLB4IOFJzXmp8Wwgybe8sKmSWbjc4PATxHPz+FynyhaUcRZKqZYqPsT0E2gyGfI+yfDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqd79Qve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE8D2C4CEF5;
+	Tue, 21 Oct 2025 15:25:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761060362;
+	bh=Q87QCWTMqM/Fch2ObvjDPBq/NiDII/xJMjnOVOUNThI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=aqd79QvexMw3yN1Z6OIdtZ68aEqbM9S90kkYaFvknnnoeeYhQYX7ZvHxUDNuQBDUv
+	 jINyyGLgoo4lPhCvpAaIaPbZt4e2iFK673pNXgEl52qrZWWnDA7iwsiHsY7J0VY1Q1
+	 n2+wx5nkHBwXRDkAHaowNh2pUHZuzq3pjCl9ypkRUQWBR6nqjKPz7/GBh/iDo9nOz7
+	 +Vnjit/h95K5z09gRLQdBpBXO4WjzpnVgBKLgtRtNqetd88WonQXgV0vj7Y2UhMgiv
+	 cEdjeZptTpwzyXuCUN4TEid646aVjwF+cMl49RQH6Sx9gZxO+YNJlKE9mejpgPMVYo
+	 B3QxunChlynTQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v3 00/13] vfs: recall-only directory delegations for knfsd
+Date: Tue, 21 Oct 2025 11:25:35 -0400
+Message-Id: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ksm: use range-walk function to jump over holes in
- scan_get_next_rmap_item
-To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Xu Xin <xu.xin16@zte.com.cn>, craftfever <craftfever@airmail.cc>,
- Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251016012236.4189-1-pedrodemargomes@gmail.com>
- <844af749-374e-49b3-91f0-a72e951981c8@redhat.com>
- <2d0cbd23-83e9-460b-a82a-d006a14fa9fb@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <2d0cbd23-83e9-460b-a82a-d006a14fa9fb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO+l92gC/3XMQQ6CMBCF4auQrq2ZtgLVlfcwLqAdYCKhZmoaD
+ eHuFlZq4vK95PtnEZEJozgVs2BMFClMeZhdIdzQTD1K8nkLDbpUoIz0xNLjiL3kID10qI5Wm1Y
+ rkcmdsaPnlrtc8x4oPgK/tnpS6/snlJQEeYCqttDUgCWeb8gTjvvAvVhLSX/q+kfrrK2zXeW9N
+ s62X3pZljfWoL2A5wAAAA==
+X-Change-ID: 20251013-dir-deleg-ro-d0fe19823b21
+To: Miklos Szeredi <miklos@szeredi.hu>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>, 
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+ Bharath SM <bharathsm@microsoft.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+ NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
+ Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein <amir73il@gmail.com>, 
+ Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+ ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+ linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3682; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Q87QCWTMqM/Fch2ObvjDPBq/NiDII/xJMjnOVOUNThI=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo96X8nMA6JHSE4mFHDRit04fMBMvd7Th3QybeV
+ CKDwZihXoCJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaPel/AAKCRAADmhBGVaC
+ FZKuD/9wyxvXLHuHQyIlhr6OCk+4aZduJGNL6vaxDdsNuZ7ewALoDKjX+Ty4+7PaFJlu7fbNqGM
+ XAs4xRkkVvigjqXIb+TVsi44clXUmjoXDNeuW4RmmW8v3Ss65/vKIGGEGbnFH5EvA70sCZkDQoN
+ vNgjjssxELH9zQZRCrgGaYHGcpiXl00KB9LRkJN9a/u03PzZVjQi2chbKkAB41EI+rPk8ehVUio
+ 1XEODXlHlY9u9Xtp+SoIASZ9TYkMF+rd9d7JkHdTk47ui7slW5S7Ga7l/VQ6yunARPKpNqngkhz
+ mdX0/rf1Ria7H0sac8AwONw0owkWRyS809NjnAWB9yLLq5NxV2LzrkFq4X1kjdglJSsEvuRSjHd
+ 9utlHZGZE3xInDapqfqyj4mMWOwx0Omzxp7xpVB1yUL6tvPQEJlf0/FJvPdtSJ4sUUYlP11FKPI
+ Zx8nX97umOGWgtIEOp2N9hHTGm3I8+KiOWV1Lxn5V4ZX4IwTmYf5BNsUjR4kEtsBLtPwz6W/KyW
+ n3e0/HghTWzTkNmqBM5F5Kkql6MZQZ8RjDROWWzZuYnkLTgrYYz3bjGR4MMWeE+MAnCgIomRE8z
+ qRIdC8hA10RfRYZ8c1SAnpYLTwPM16ij/Jgp9PwWPq4QaerUM6pwEH6T8tLVfrJnr1ykqB7mAu+
+ QWKKCCCZ8Jofm6A==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 21.10.25 05:00, Pedro Demarchi Gomes wrote:
-> 
-> On 10/17/25 19:23, David Hildenbrand wrote:
-> 
->> This patch does to much in a single patch which makes it
->> rather hard to review.
->>
->> As a first step, we should focus on leaving most of
->> scan_get_next_rmap_item() alone and only focus on replacing
->> folio_walk by walk_page_range_vma().
->>
->> Follow-up cleanups could try cleaning up scan_get_next_rmap_item()
->> -- and boy oh boy, does that function scream for quite some cleanups.
->>
->> This is something minimal based on your v3. I applied plenty of more
->> cleanups and I wish we could further shrink the pmd_entry function,
->> but I have to give up for today (well, it's already tomorrow :) ).
-> 
-> Should I send a v4 to be applied on top of your minimal patch? This
-> v4 would eliminate the need of the for_each_vma using the test_walk
-> callback like the previous versions.
+Behold, another version of directory delegations. This version contains
+support for recall-only delegations. Support for CB_NOTIFY will be
+forthcoming (once the client-side patches have caught up).
 
-It would be good if you could test the rework I sent and see if you want 
-to do any tweaks to it. It was a rather quick rework on my side.
+This main differences in this version are bugfixes, but the last patch
+adds a more formal API for userland to request a delegation. That
+support is optional. We can drop it and the rest of the series should be
+fine.
 
+My main interest in making delegations available to userland is to allow
+testing this support without nfsd. I have an xfstest ready to submit for
+this if that support looks acceptable. If it is, then I'll also plan to
+submit an update for fcntl(2).
 
-Then resend that as v4, which is then minimal and we can reasonable add 
-Fixes: + Cc: stable.
+Christian, Chuck mentioned he was fine with you merging the nfsd bits
+too, if you're willing to take the whole pile.
 
-Right from that start we used follow_page() on each individual address.
+Thanks!
+Jeff
 
-So likely best to add
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v3:
+- Fix potential nfsd_file refcount leaks on GET_DIR_DELEGATION error
+- Add missing parent dir deleg break in vfs_symlink()
+- Add F_SETDELEG/F_GETDELEG support to fcntl()
+- Link to v2: https://lore.kernel.org/r/20251017-dir-deleg-ro-v2-0-8c8f6dd23c8b@kernel.org
 
-	Fixes: 31dbd01f3143 ("ksm: Kernel SamePage Merging")
+Changes in v2:
+- handle lease conflict resolution inside of nfsd
+- drop the lm_may_setlease lock_manager operation
+- just add extra argument to vfs_create() instead of creating wrapper
+- don't allocate fsnotify_mark for open directories
+- Link to v1: https://lore.kernel.org/r/20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org
 
-Once that fix is in you can send further cleanups that are independent 
-of the fix itself, like removing the for_each_vma() etc.
+---
+Jeff Layton (13):
+      filelock: push the S_ISREG check down to ->setlease handlers
+      vfs: add try_break_deleg calls for parents to vfs_{link,rename,unlink}
+      vfs: allow mkdir to wait for delegation break on parent
+      vfs: allow rmdir to wait for delegation break on parent
+      vfs: break parent dir delegations in open(..., O_CREAT) codepath
+      vfs: make vfs_create break delegations on parent directory
+      vfs: make vfs_mknod break delegations on parent directory
+      vfs: make vfs_symlink break delegations on parent dir
+      filelock: lift the ban on directory leases in generic_setlease
+      nfsd: allow filecache to hold S_IFDIR files
+      nfsd: allow DELEGRETURN on directories
+      nfsd: wire up GET_DIR_DELEGATION handling
+      vfs: expose delegation support to userland
 
+ drivers/base/devtmpfs.c    |   6 +-
+ fs/cachefiles/namei.c      |   2 +-
+ fs/ecryptfs/inode.c        |  10 +--
+ fs/fcntl.c                 |   9 +++
+ fs/fuse/dir.c              |   1 +
+ fs/init.c                  |   6 +-
+ fs/locks.c                 |  68 +++++++++++++++-----
+ fs/namei.c                 | 150 +++++++++++++++++++++++++++++++++++----------
+ fs/nfs/nfs4file.c          |   2 +
+ fs/nfsd/filecache.c        |  57 ++++++++++++-----
+ fs/nfsd/filecache.h        |   2 +
+ fs/nfsd/nfs3proc.c         |   2 +-
+ fs/nfsd/nfs4proc.c         |  22 ++++++-
+ fs/nfsd/nfs4recover.c      |   6 +-
+ fs/nfsd/nfs4state.c        | 103 ++++++++++++++++++++++++++++++-
+ fs/nfsd/state.h            |   5 ++
+ fs/nfsd/vfs.c              |  16 ++---
+ fs/nfsd/vfs.h              |   2 +-
+ fs/open.c                  |   2 +-
+ fs/overlayfs/overlayfs.h   |  10 +--
+ fs/smb/client/cifsfs.c     |   3 +
+ fs/smb/server/vfs.c        |   8 +--
+ fs/xfs/scrub/orphanage.c   |   2 +-
+ include/linux/filelock.h   |  12 ++++
+ include/linux/fs.h         |  13 ++--
+ include/uapi/linux/fcntl.h |  10 +++
+ net/unix/af_unix.c         |   2 +-
+ 27 files changed, 425 insertions(+), 106 deletions(-)
+---
+base-commit: d2ced3cadfab04c7e915adf0a73c53fcf1642719
+change-id: 20251013-dir-deleg-ro-d0fe19823b21
+
+Best regards,
 -- 
-Cheers
-
-David / dhildenb
+Jeff Layton <jlayton@kernel.org>
 
 
