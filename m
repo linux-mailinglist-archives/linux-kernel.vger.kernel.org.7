@@ -1,191 +1,146 @@
-Return-Path: <linux-kernel+bounces-863233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B30BF74D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:24:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39922BF74EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2C319A129A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:24:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E304A4F1C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A481D3451B5;
-	Tue, 21 Oct 2025 15:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BCE3431E5;
+	Tue, 21 Oct 2025 15:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khth4l1I"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EWkGTyCn"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D1A3446C8
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BA8342177
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761060197; cv=none; b=YjjyxqgGsugGJHOF33P/VJgmgJ3OM8yrUoCDDE0HT0UalINTiDkRlRiKL5gq3zWby3QNzjb4y2GJvOvcACY4ZQ9eMj4YbqMuIa/Gl3BWL1PjemoGg9OKDhObRPKi4aeU18/HkGb7zmQMP3UCc1fSMpMTNH8en/FRxgNhqabvJdc=
+	t=1761060230; cv=none; b=H4a+6t3MLCGKySLI4Zvpw1QfImkr3EuQW/7LIb5eLLAny15t7DgEkSuUfvXJKPBvzEm0gqNscPAj5GZZuED5+P4V04+aaM+zYifWufIBJLB4D2U8ZhlViJDpnA675gc/x1+W1QhqPRpDl442iqVDQtewDSwoPdwRTnipF3sHRxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761060197; c=relaxed/simple;
-	bh=Zt5q4iLPeiXhv3xhlSGQMsTacmCAuBuHa4mMAKTae8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CHZSFgLwqq47kl+SlTuUTOTSkAIdvsChjCfeBpwrUPoxFYhRlEns3sZKoVH3sXpeFFZ9SVJYt156f4dnN88TkBxJFKUwL9EGJpMSJDyjWNGPq/LlQfZg7rNA1HswaEzuyx46hSpUuM0SN9cJ9HerjrJgcu1CC1ZS15uXeIouajE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khth4l1I; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so1147454566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:23:14 -0700 (PDT)
+	s=arc-20240116; t=1761060230; c=relaxed/simple;
+	bh=LranUERPcQFVX4C3LPo4yvi6i4EnvwENiJ5DOAMZJo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A5SC28LUkvfCs6gTslWNpq3ngjDI+z2moZRv5rOyrVQyVBmTZlm75BjlBugKnfD0BEF5ePkoRITvZhUu1sj9gk3uiblvjtMvsgcNSUlAzWy53wrY1/DPT02TRzKm2cRhmmYnmz5Fu0b2Wo/0ajggd7fOaJuhw+TyA9aVBniGdpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EWkGTyCn; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-37777912136so55743071fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761060193; x=1761664993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761060225; x=1761665025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JF1Khuy4nqLiE2y1n9lovRhx5obbKE7xwKO+d5/rlWI=;
-        b=khth4l1I1jXUTHCCy3zsgCyIXuDj8yQM3azBsg0HFmOdTOqRTvapr05eA6f5HzVZsY
-         jalkjLJF2B1FwNJsU8XNB+mmECn0s6D5AMoelzgqY9iYizObnXqbuubojkEYN5o3vDkt
-         KuGFRrvkSBiqtXWE0MA9SnfjbsN9M01R3wwSJ11NSLxb/89aXfHCm8cOZ7NhsabOvdYN
-         w+c6otsk/siG/WHOtXQae3ZmBN3o/T2q6reZAXjCK9nv8yC10UZ3R0jj5jcRAoe8BG5m
-         Xktp2hXjOOHdNPEcsa6z/c8IJEL5hzsFd2oE/SvMJKgWPYzepJlcBdAMxLMLf0AotB5f
-         1uKg==
+        bh=LranUERPcQFVX4C3LPo4yvi6i4EnvwENiJ5DOAMZJo4=;
+        b=EWkGTyCn6lVnAVAl5gMahiqmt0QU9adOiznVYX4MZed7J6op4KygdkGeZ9kbt55rKu
+         QaLNRJ1b7+RBmZblY93o+ZIB2E1gVS5K6mA8RXI66wQeeJAqWpsM74OR79qC80p1It+i
+         9Eolzy65Bn4vQ0zf+EYtFOkq0sSep6IoNgKgUcXeq9P/RfbcEDCEg/i4ae9GXZLvzc74
+         wctnGjw4GT8hXGUPOsPApN4c9QMODYvbvzpqDE9jgo9lfmH4dTEcgDYygXlCTyA0Ervm
+         Ut910gGBRTu0r1HXcLyDUJEtnmOuvj0I9LqlsqmwOSg+9sc47iLAAmx445MMsxKpwdx9
+         Z6Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761060193; x=1761664993;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761060225; x=1761665025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JF1Khuy4nqLiE2y1n9lovRhx5obbKE7xwKO+d5/rlWI=;
-        b=cDrt6aTrScl4Nct30d3lMSH0gqCz7GpO8YAWtpSsKZkVlJ4JDwYrO6o/ssLyRhpMeR
-         mILlPCwI5Qn9CGPw6j3R6uirmx8gkHWapdsrdxKqD2LDbl4wrF1bJEkabNFOjX7YLp5R
-         PInT6B87OFaLJm/tUyMvllV+mooKL0UjipPswBerZAQAL0WIv4ifC5TE+EJk5Bnznlk2
-         8uxwbBIdhU62hf1YbqD7vUFiCGIIHj/wyF9WsGyxsVauW+LwUHcj6K0hVYPctrp3zo5f
-         b2jVSojmtyd2N6ecN9/g6ZFaP10gdpvZy9vbhhbmvS3q+lNBX7w7RoOJib/QHnDWSOks
-         p9kw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3YSKy+OAD13v79+Zah9+c1FQxmp+WqK4cvjfVPrMbhzCcQYvOjHM5lpLbEmnQCr+B4IjZAAHSA5UFOYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiAEgIBRRi097dbKQhBy3HVdp3WkHkAo1dYFCflOxbeXYQrXEh
-	wjiwO4QB5wmB60HN6rdiNG4/vK8UgNQ/4Cz74BZT+ZsRvBpuUZG9sZsk
-X-Gm-Gg: ASbGncvcojAhgu1Q0l9PT42oL7r88h8WN0dZhX7NydFmz0sBNuWcUsTMebwkpr5beEH
-	pHrURnwzP2aTyZBCDl8Sjp2JM5dLm4L4/bMmUYgAIbfL6OIFy0alTdrSm66d7M57GSUSLGdVicv
-	etw25qDbmj1DU/PEaPJCb6rSviquZV5QXlrzJWtK7WU7H6imbBivG7HSxnCKA6El2aenXk4KkNd
-	SzwMQc43bHuOlzacyBF7gnaU5l+X5z582BBvU0RaQuKRzuMUoFQxAgMTKby08FiGehRDVxR0wf5
-	rQxXTrIqhuRhvkHEXamDcsjGWU8VDM9PgRg53nqv9z5kfo/P2Ajav31XbsE/WOvhpLGCCohQSL2
-	uyyonnAuUlO/HQZCEBhoCMm4lKNTvfF/WVBH0tEFql41CggFyWbvlEuFZ7WFoq/B4wHAmWkVs2T
-	nAaKQIuyeAA6ZYKOnuaRZe3zOCdi1ge2v329SWAA==
-X-Google-Smtp-Source: AGHT+IG8ZMx/3IH1gWXA/kMHWe4Ced895g7GfNQEjLkqqPoqoeKq+HY9fH6rztVBxeqVkVrZOdbVkg==
-X-Received: by 2002:a17:906:794e:b0:ad5:d597:561e with SMTP id a640c23a62f3a-b6475708a50mr2149204266b.56.1761060193479;
-        Tue, 21 Oct 2025 08:23:13 -0700 (PDT)
-Received: from tearch (pc142.ds2-s.us.edu.pl. [155.158.56.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8581780sm1082737866b.31.2025.10.21.08.23.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 08:23:13 -0700 (PDT)
-From: muhammed.efecetin.67@gmail.com
-X-Google-Original-From: muhammed.efecetin67@gmail.com
-To: linux-rockchip@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	heiko@sntech.de,
-	neil.armstrong@linaro.org,
-	lee@kernel.org,
-	rafael@kernel.org,
-	efectn@protonmail.com,
-	daniel.lezcano@linaro.org
-Subject: [PATCH v3 5/5] arm64: dts: rockchip: add Khadas MCU and fan control nodes
-Date: Tue, 21 Oct 2025 17:22:45 +0200
-Message-ID: <611deaaa0e408eb042db7faf215b85370569edeb.1761059314.git.efectn@protonmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <cover.1761059314.git.efectn@protonmail.com>
-References: <cover.1761059314.git.efectn@protonmail.com>
+        bh=LranUERPcQFVX4C3LPo4yvi6i4EnvwENiJ5DOAMZJo4=;
+        b=jHuUsD0KfgRGxPhq+bkujvu0nk7ecwtHHi/37Y9/HfmUhGv3kEKpz49darjO2zLmLm
+         cm7BEoXy5AFRkjt0BUPIRs8M4RX7zHXueXAnPtTHK7KPW0pXG4Mu/Yys34Fv8nSx8h5u
+         adZH5vlxJ6FS0tTdcQc2TQWrZX4pfc2oJ7tKxifzA8nUCakLZBuiyK2IiFWnEnC+vCN+
+         3zIgd3Y8UIDA5C0qr/R1hbpIZ8kz/PtmjSgs1SwvfNOPrhNGSqzuGJQ9r9VW9kcpHv0E
+         M1Fhm82F78CuEH1xgyPwPte2Q0nsP7O5MSCPG8DVwb5SrK4Nsb9FBk0+W9r19wUbtvDA
+         aBcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSCxeyx+Zu1BSr01w3VxC0XqZ1euPxQBFvZJZ2VnbH7CrEaRTggjoN05gdKaDAb79Rn3mTZHCMgV0xh/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAXQwCfxdP7EO2P8UDqrscnawuax+9aUTz1IGAD+2EPzpNcvK8
+	i7DlZJgIsos6O/ZBx5UQtOwULrVRlxJdIDqgjnPLHRzDiqDHFdtxcjoyTsGjru84IbSJj3yiu5K
+	vUd912qhtios+CW3sRukcGI6kRtW4gQDzadX41NANXg==
+X-Gm-Gg: ASbGnctGmp85LUC3XKVpcfqdjeZ8HZGqSODtHxX5Nax/Jv7I2trUtTxMS1RWIyFcjtC
+	s3jbMoE2+QYGT/AZIhv5BQBODzRNLoU9UORGtDQiWiVRTXLlVTWZmLrZ/c9Taz+uzHI0SYZc2fp
+	mQfQyd4L4PORhoBYk1QAOLx1M3zHMHLDVJYCSiyE03FmwCq0I+Wk4W9plUjEDHbIQOheQs2iarU
+	88b8QqT7AB1YARaSdo0XTuOWiAyDVhz1r/h7KNZrsChMnvfoKo/wsP/aeXkqM4bYmT8qJLKKwpa
+	7eHn5QkdokQQ/iQbSo2itlaN930=
+X-Google-Smtp-Source: AGHT+IGgc9KeMCqsp0M9361FU4xtXnSdpuEq/15+MfSP4MmOYfHv0qjJU2f6NUqRnqHECXUrME8KkqIWvVWDw8pMiGQ=
+X-Received: by 2002:a2e:b914:0:b0:356:839:56f with SMTP id 38308e7fff4ca-377979419dfmr34052621fa.20.1761060225159;
+ Tue, 21 Oct 2025 08:23:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
+ <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org>
+ <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
+ <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com>
+ <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
+ <CAMRc=Md4DUSuwv07EuBVDJbY1Uzezq+TONxyCvLtOHD=iFXrcQ@mail.gmail.com>
+ <050d74d7619bdfdf5ca81d8914a2a8836a0d4e2e.camel@pengutronix.de>
+ <CAMRc=MfPqRLFHPW988oMry7vVoTgtQHrxxND4=nr_40dOa5owg@mail.gmail.com>
+ <aPeexuA1nu-7Asws@smile.fi.intel.com> <aPegyVyONkPWRgi9@smile.fi.intel.com>
+In-Reply-To: <aPegyVyONkPWRgi9@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 21 Oct 2025 17:23:33 +0200
+X-Gm-Features: AS18NWBXrVCB06tyTpBmVdEBjowWLVzdXt71bqZY_QqEoblKCiav8MRbM9cW_iY
+Message-ID: <CAMRc=McPpFEmg7dpfiYWJaPR4yMynOaU5Hp37E7rTzWSCNxBuA@mail.gmail.com>
+Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent of
+ the reset device
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Muhammed Efe Cetin <efectn@protonmail.com>
+On Tue, Oct 21, 2025 at 5:03=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Oct 21, 2025 at 05:55:02PM +0300, Andy Shevchenko wrote:
+> > On Tue, Oct 21, 2025 at 11:39:41AM +0200, Bartosz Golaszewski wrote:
+> > > On Tue, Oct 21, 2025 at 11:31=E2=80=AFAM Philipp Zabel <p.zabel@pengu=
+tronix.de> wrote:
+> > > > On Di, 2025-10-21 at 11:27 +0200, Bartosz Golaszewski wrote:
+>
+> [...]
+>
+> > > > No need to convert all existing drivers right away, but I'd like to=
+ see
+> > > > a user that benefits from the conversion.
+> > > >
+> > >
+> > > The first obvious user will be the reset-gpio driver which will see
+> > > its core code simplified as we won't need to cast between OF and
+> > > fwnodes.
+> >
+> > +1 to Bart's work. reset-gpio in current form is useless in all my case=
+s
+> > (it's OF-centric in 2025! We should not do that in a new code).
+> >
+> > More over, conversion to reset-gpio from open coded GPIO APIs is a clea=
+r
+> > regression and I want to NAK all those changes (if any already done) fo=
+r
+> > the discrete components that may be used outside of certainly OF-only n=
+iche of
+> > the platforms.
+>
+> To be clear, the conversion that's done while reset-gpio is kept OF-centr=
+ic.
+> I'm in favour of using it, but we need to make it agnostic.
+>
 
-Add Khadas MCU fan control to Khadas Edge 2 with 4 fan control levels.
+As of now, the whole reset framework is completely OF-centric, I don't
+know what good blocking any such conversions would bring? I intend to
+convert the reset core but not individual drivers.
 
-Signed-off-by: Muhammed Efe Cetin <efectn@protonmail.com>
----
- .../dts/rockchip/rk3588s-khadas-edge2.dts     | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-index 2c22abaf40a82..ed5168d50e182 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-@@ -271,12 +271,70 @@ hym8563: rtc@51 {
- 		clock-output-names = "hym8563";
- 		wakeup-source;
- 	};
-+
-+	khadas_mcu: system-controller@18 {
-+		compatible = "khadas,mcu-edge2";
-+		reg = <0x18>;
-+		#cooling-cells = <2>;
-+	};
- };
- 
- &i2s5_8ch {
- 	status = "okay";
- };
- 
-+&package_thermal {
-+	polling-delay = <2000>;
-+
-+	trips {
-+		package_fan0: package-fan0 {
-+			temperature = <50000>;
-+			hysteresis = <5000>;
-+			type = "active";
-+		};
-+
-+		package_fan1: package-fan1 {
-+			temperature = <60000>;
-+			hysteresis = <5000>;
-+			type = "active";
-+		};
-+
-+		package_fan2: package-fan2 {
-+			temperature = <65000>;
-+			hysteresis = <5000>;
-+			type = "active";
-+		};
-+
-+		package_fan3: package-fan3 {
-+			temperature = <75000>;
-+			hysteresis = <5000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map0 {
-+			trip = <&package_fan0>;
-+			cooling-device = <&khadas_mcu THERMAL_NO_LIMIT 50>;
-+		};
-+
-+		map1 {
-+			trip = <&package_fan1>;
-+			cooling-device = <&khadas_mcu 50 72>;
-+		};
-+
-+		map2 {
-+			trip = <&package_fan2>;
-+			cooling-device = <&khadas_mcu 72 100>;
-+		};
-+
-+		map3 {
-+			trip = <&package_fan3>;
-+			cooling-device = <&khadas_mcu 100 THERMAL_NO_LIMIT>;
-+		};
-+	};
-+};
-+
- &pd_gpu {
- 	domain-supply = <&vdd_gpu_s0>;
- };
--- 
-2.51.1.dirty
-
+Bart
 
