@@ -1,231 +1,120 @@
-Return-Path: <linux-kernel+bounces-862236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96437BF4BE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:51:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611D0BF4C17
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45D534E9BE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:51:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DC4407ED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED7F2690D9;
-	Tue, 21 Oct 2025 06:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFCE26F2AB;
+	Tue, 21 Oct 2025 06:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pmNf+ZsF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ca79kmLs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Gx7FlfGE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKG1/MWZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="I2fTwOx7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A22A223707
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BCE2690D9;
+	Tue, 21 Oct 2025 06:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761029488; cv=none; b=ZERKpKDZWOHOybuEeByjIvHP30qwYkDVsz6Rvlv0JxZBZm+i7r6fIEPiK0SZpZdyE7Z90vovJE8ftE6bg/HVAD/5H2hCf6ET5nv8gxwNjwP8Iuq61FithwoCKtelzjliGIYgZIEablTIkVWrVPr/iQQ07q/ejnEluzUrduqEjlM=
+	t=1761029589; cv=none; b=qFiu7Aeo9t7W2OV8FJSWMT9SDW1PB3isfNU6YsXmqNH935qTnUihxOZiFJ94vBZtx2H46em6UKVK52vzHPLfNtsEZJgx1lHCgzAaFZ3JaRIbYLbEXMevM3k+JdAF+taWR4hkGBo+ZLQmQ5q/oKWx9kXC5Ii2lBKDBVQWNqtKCss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761029488; c=relaxed/simple;
-	bh=NlQWY67tEtwmtqsEsjWDhJNvNybhgCH2Xs5QKHtn3E4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H0pSYleq0/Hke6snjL8TgiKhOnIcSodMuikoHA/+U2p7n1EtpJCDSGm0/0uaJFLG5G50G5ncH93SdO+glt18gXywDTYh56S5w01oU3xAt5jkJ7otH501dXdzjakYno9wDPNBMkCR390IkgM+cUAyJ41UlXUlv7wG40RYuGLtPDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pmNf+ZsF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ca79kmLs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Gx7FlfGE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKG1/MWZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 76E0C211AD;
-	Tue, 21 Oct 2025 06:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761029474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OQLwDvVtCv/VgoE0lbRHOK5vJFMt9c9OYpPPDMy7O9M=;
-	b=pmNf+ZsFMLFngUIbqt38Ym2YG6rD2qPzNFeBIwNNEOaooWsitKbahqRNlcROminxA9jN50
-	qGfUr+E3JhXuAzyyJKV6TQFGxLPM08SKfva9kX9136oUTByDgBLJ0HfGBP+On2G1txYKKR
-	+WMegf+7WlTXIDvauOMOEbHjs6dIojQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761029474;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OQLwDvVtCv/VgoE0lbRHOK5vJFMt9c9OYpPPDMy7O9M=;
-	b=ca79kmLs1GwR5bSO2GP3D6vQvfrVCdMi7VOZB+GUb1EH0yual+5bEwYwWQmyJ/cuuJdrE0
-	gJhObTRecyJoUZDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Gx7FlfGE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="MKG1/MWZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761029470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OQLwDvVtCv/VgoE0lbRHOK5vJFMt9c9OYpPPDMy7O9M=;
-	b=Gx7FlfGE4tHrGo3Np0O8n1BTLLIL3p3ElD7qLpmWGeMJCQ5rNOAPWwTNGgZaN5WCBNR9Ef
-	NukwzZve0ip2pV+KsWZsMhIE5QMQYYDVLg5MVXj5jZW+YTdA74RCSawMiDezhCm5pqCjK2
-	33e91SXq6BpbmQLascXJUqd03TFvy6c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761029470;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OQLwDvVtCv/VgoE0lbRHOK5vJFMt9c9OYpPPDMy7O9M=;
-	b=MKG1/MWZSqZM5Z/20j5KhoTmQIAFyitBfcuRLo/MWTAaoUhuAZkgDcCMouCG7kz540DOGm
-	8+52Pm+PPOw0ctBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2358C139D2;
-	Tue, 21 Oct 2025 06:51:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H9qZBl4t92jsLgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 21 Oct 2025 06:51:10 +0000
-Message-ID: <1de3112b-6349-46d8-b90b-69d0849c7659@suse.de>
-Date: Tue, 21 Oct 2025 08:51:09 +0200
+	s=arc-20240116; t=1761029589; c=relaxed/simple;
+	bh=dT8D/fqK+qeM68iYwPgxwXnSgIs00YnR13VuAf2aYRE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qf6461J4RXzBm4OaOm0NK29+0yboNtQzeBzMM83UqC9BtLNpzcmv0LKRw/f6XSERCQ/dCBKvJqxuLEQApKENbnl+Isqv97oV0E2piznSz9IrpUTx+7rjIhNQZkWQM44TglNzNoBKPBa2ckglsT9i6axbx6gy409JE2RZzK62ZzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=I2fTwOx7; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761029587; x=1792565587;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dT8D/fqK+qeM68iYwPgxwXnSgIs00YnR13VuAf2aYRE=;
+  b=I2fTwOx7famewtsKIVmrHCSKzeQscUbwE9YH/XXjJSmDKEUfVe9jCVJr
+   0AISxbOIOKN00rrJJCVAtbRiacJ1soX+oUnmeg0nvnTdMP39uc3fHTi1O
+   DLJTKTt1ALdgnl+EV/ebTmMth1BBddFt54qPKjXB1B3SHBN44sfZDFFeA
+   949BeTs58VUFNVLu16fJFVRligenoCgY42XTEiNnEyEsOgrlunMCPmFlG
+   6kdrN/s2bEkHKutY2HRhglXbtN4DRT4cLHRCS+mOiz2UgihYZmT/VzW50
+   3wvAiudYsQv7C/1HHnjUcPB5qtuEGLhUp7XqlDLWED0c9LRPtiDkL46/j
+   w==;
+X-CSE-ConnectionGUID: Ss1WuPpDSteYpQ34q4x20g==
+X-CSE-MsgGUID: r+VN4XBDRoWsZ/dRb4olEw==
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="215391938"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Oct 2025 23:53:00 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 20 Oct 2025 23:52:57 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 20 Oct 2025 23:52:57 -0700
+Date: Tue, 21 Oct 2025 08:51:51 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Gerhard Engleder <gerhard@engleder-embedded.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>
+Subject: Re: [PATCH net-next] net: phy: micrel: Add support for non PTP SKUs
+ for lan8814
+Message-ID: <20251021065151.a3q45iihtmm52rgg@DEN-DL-M31836.microchip.com>
+References: <20251017074730.3057012-1-horatiu.vultur@microchip.com>
+ <79f403f0-84ed-43fe-b093-d7ce122d41fd@engleder-embedded.com>
+ <20251020063945.dwqgn5yphdwnt4vk@DEN-DL-M31836.microchip.com>
+ <e0a8830e-6267-4b2a-b1fa-f3cbe34bd3ba@engleder-embedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tiny: Refactor framebuffer's size calculation
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
- lanzano.alex@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251020115803.192572-1-mehdi.benhadjkhelifa@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251020115803.192572-1-mehdi.benhadjkhelifa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 76E0C211AD
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,linuxfoundation.org,gmail.com,kernel.org,lists.linuxfoundation.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <e0a8830e-6267-4b2a-b1fa-f3cbe34bd3ba@engleder-embedded.com>
 
-Hi
+The 10/20/2025 20:11, Gerhard Engleder wrote:
+> 
+> On 20.10.25 08:39, Horatiu Vultur wrote:
+> > The 10/17/2025 23:15, Gerhard Engleder wrote:
+> 
+> ...
+> 
+> > > > 
+> > > > +/* Check if the PHY has 1588 support. There are multiple skus of the PHY and
+> > > > + * some of them support PTP while others don't support it. This function will
+> > > > + * return true is the sku supports it, otherwise will return false.
+> > > > + */
+> > > 
+> > > Hasn't net also switched to the common kernel multiline comment style
+> > > starting with an empty line?
+> > 
+> > I am not sure because I can see some previous commits where people used
+> > the same comment style:
+> > e82c64be9b45 ("net: stmmac: avoid PHY speed change when configuring MTU")
+> > 100dfa74cad9 ("net: dev_queue_xmit() llist adoption")
+> 
+> The special coding style for multi line comments for net and drivers/net
+> has been removed with
+> 82b8000c28 ("net: drop special comment style")
+> 
+> But I checked a few mails on the list and also found the old style in
+> new patches.
 
-Am 20.10.25 um 13:57 schrieb Mehdi Ben Hadj Khelifa:
-> Use drm_format_info_min_pitch() to calculate the framebuffer line pitch
-> instead of directly multiplying width and height. This aligns with DRM
-> helpers for determining per-line byte size and avoids manual assumptions
-> about bytes per pixel.
->
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> ---
->   drivers/gpu/drm/tiny/repaper.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
-> index 4824f863fdba..aeff49bc6ba7 100644
-> --- a/drivers/gpu/drm/tiny/repaper.c
-> +++ b/drivers/gpu/drm/tiny/repaper.c
-> @@ -517,6 +517,8 @@ static int repaper_fb_dirty(struct drm_framebuffer *fb, const struct iosys_map *
->   	unsigned int dst_pitch = 0;
->   	struct iosys_map dst;
->   	struct drm_rect clip;
-> +	const struct drm_format_info *info = fb->format;
+Ah...OK. I prefer to keep the current style here.
 
-This is the wrong format. You're allocating the output buffer here, but 
-you're using the input format. IIUC the output format is DRM_FORMAT_R1. 
-The input is _XRGB8888.
-
-Best regards
-Thomas
-
-> +	size_t pitch;
->   	int idx, ret = 0;
->   	u8 *buf = NULL;
->   
-> @@ -534,7 +536,9 @@ static int repaper_fb_dirty(struct drm_framebuffer *fb, const struct iosys_map *
->   	DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
->   		  epd->factored_stage_time);
->   
-> -	buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
-> +	pitch = drm_format_info_min_pitch(info, 0, fb->width);
-> +
-> +	buf = kmalloc_array(fb->height, pitch, GFP_KERNEL);
->   	if (!buf) {
->   		ret = -ENOMEM;
->   		goto out_exit;
+> 
+> Gerhard
+> 
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+/Horatiu
 
