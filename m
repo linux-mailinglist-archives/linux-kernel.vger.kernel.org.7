@@ -1,89 +1,171 @@
-Return-Path: <linux-kernel+bounces-863016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736D8BF6CA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:33:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D134BF6D15
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60FE918C72A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:33:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 874074F0233
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DB733859C;
-	Tue, 21 Oct 2025 13:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F68338930;
+	Tue, 21 Oct 2025 13:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UeAchJ+t"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mdCpJs3L"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06B7337109;
-	Tue, 21 Oct 2025 13:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DC3339702
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053591; cv=none; b=Err2FYxOpFOAoyqh8QYYjwtF9/EM/yHMDPcG50zsH+u9X5N1cyh4GChUf6pm30wseqnC6IFJYgc1+5KzADrmW/Cjr71Xw9mxaqyJYXy8ZF3O2um/35btbhcLJpdtr1pJN6dl+ZhqnbIUL9KjZmpu4XDvtwOkjQfuLjoOKm3S7YU=
+	t=1761053686; cv=none; b=Q+9+TGo2X3kIFY2vyP4+K11Vklc81jEFN7C5LW8jPSIQA+P7akJBnhKQ5MiBjpNEj4/JZOEli3IjmEWGFqH5u6hvJQxV8fLucUZD0IFsnlk97kojIJyfNBtl02WJMAr2238wltsX+2V5G0TCqWl3TUd3z6cDeCNAiKiuYGOwdPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053591; c=relaxed/simple;
-	bh=Au3OrEsCcvTK/TXBFAkTWNShigKKtPoww0ckto4phYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p768qGPhCA92nXg3hKuz+Six7gsFZAU4kWcoB0W9AOGdHJAbrYRqhAe0EgRQZCr/qWuhSskwQRMOoKa99iAHXVF66G6qwho3nRf3c+nMeuE32QsDjNJTqMpDWoidptPkUJ4NICOb87G074Qh8PA0UFCXSV4bl45pS0Ks8CVekBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UeAchJ+t; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ud+LTcfAQFSU5N/YiQwiVPQeaCTdctueWoB84H8uXJQ=; b=UeAchJ+tkW3PiG+7+hh4Vshd+1
-	KRcsdGuDthlrRQIuKSJTF6Yb3iv+MlDnV4ZDPshGgQKLnMBgwSxd8kTBbZgZSmjISMPRP/lHXZNCZ
-	bPUSyQrY1+e21Mz5U3aMdh3deOpPzb/V1vsyW0xqaS0TD4pqtK0z1Jksb+NJatm+usgU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vBCTx-00BddN-1s; Tue, 21 Oct 2025 15:32:57 +0200
-Date: Tue, 21 Oct 2025 15:32:57 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: daniel.machon@microchip.com, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	horatiu.vultur@microchip.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, luka.perkov@sartura.hr
-Subject: Re: [PATCH net] net: phy: micrel: always set shared->phydev for
- LAN8814
-Message-ID: <17e75178-582f-495d-97fa-0868c79b7026@lunn.ch>
-References: <20251021132034.983936-1-robert.marko@sartura.hr>
+	s=arc-20240116; t=1761053686; c=relaxed/simple;
+	bh=JD9tnLvhb0BCLBhU3oDZt9t/3nIJ0uQg415gEcHPfTw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pGeHWt95AxEKSAnsphpKtYiZ2EPiyuYjAGVGVeR5ZlS9bvIJ/Qn9rWHeMzKE/se8S+tgiCewlhHO0azhNaPFvsDCwNszEewkNvwkHv4jZ5/dJxJGh1XHIe9zW4mQGjOo6vw9JXHCdDYOexcPN+nXeVezbmCYMvJI62Gd+XfMpmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mdCpJs3L; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42700160169so2796432f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761053680; x=1761658480; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UzfH8PMUJmAJUfqV7EQWQQrNJP7atdrSjM6p96pL1d0=;
+        b=mdCpJs3L8Lrl52acqFzLTPiYmp/MSQg3SmkpM/wvs5er2i6BWn0YhLdm98ABdwPgXC
+         4ZG3hZm4xo+LT6nR+T8D/HP6slo7SlU78bvhfDqHN+V55jQnerCQirFzEuTRbMOqKaKd
+         d56+/yd713kGbzhDOkXiXP+yI1tFF3gpqo0KPGoIGM24ZCZkPetAWO/P2RNf8e1xtFT+
+         ZgKS2m60c524vxvDshO3exyuKV1r2369ReExO/wlRvcvGPpMTsMHJsC/E2h8tEG2CLzY
+         Vo+PGRWK3B7mZLXwDLseD+yYcBVGu7OjTIQewZ0Gi8ztK09ZtUXnJrFv4xm2yrGn8fAt
+         zTXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761053680; x=1761658480;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UzfH8PMUJmAJUfqV7EQWQQrNJP7atdrSjM6p96pL1d0=;
+        b=Ni51ER1LQIj1ZURgDBTw34WFpoopXS+xu+3Moyx3zX5j9pKP2Pe26XM+RIuumOdY4d
+         8bE1YzfUuAAl8qjoEdCnr3LJDYZTdaqG7PurJDq6vzbAVU6q63tVrQytj0HK3S5NTJrh
+         Bn1OQBE98Oi9nEClVReS8eJBHW3Vu3ywo9PCguS+sPF0NK2dJVQc0UfSSFlmrJJc4Of/
+         ZDBd3I52WL7Lu6Jkk6VCGkYQ5XdmWLvDvVzwBYrOCVo5O7ouCnnYppA6/Ey6f713MVr2
+         /FX6e/370AVxHKi6EM5/xvVRtfOhxoE/TQo45AgqxkP1/oW4HzByUORLC1xarlagn9G9
+         W4pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh4FTAvcSTKHwmS8ePtjaJDm9AOIEhblezO4d2wZivo0LWAW7NvZr2W1BdFy0Z3MhXr8gdyhBuImDprnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKg7H6a6fEGiJF7dHliSfvNs+TkzqDi73ywT994dunOwSrNFUE
+	czFn/cD+6dhHnyZkmjllEeuOMAkL3oA5lIK8EsdteRlOk9ZhFdKDEgn2NpXWfUr/2XnBOtn7BHt
+	OzZSJFL8hkDnCPQ==
+X-Google-Smtp-Source: AGHT+IGiIgbaC40m9Xvw65qy211QKJVo0mx93SoS5R34PfEI1F2nHUhgIqWH8aoIsEOJEz48uo70kFhjxJPiSg==
+X-Received: from wma7.prod.google.com ([2002:a05:600c:8907:b0:46e:2897:9c17])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:40da:b0:427:928:789e with SMTP id ffacd0b85a97d-42709287b2cmr10579240f8f.61.1761053680190;
+ Tue, 21 Oct 2025 06:34:40 -0700 (PDT)
+Date: Tue, 21 Oct 2025 13:34:39 +0000
+In-Reply-To: <20251016200417.97003-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021132034.983936-1-robert.marko@sartura.hr>
+Mime-Version: 1.0
+References: <20251016200417.97003-1-seanjc@google.com> <20251016200417.97003-2-seanjc@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
+Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D cache
+ flush is skipped
+From: Brendan Jackman <jackmanb@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 21, 2025 at 03:20:26PM +0200, Robert Marko wrote:
-> Currently, during the LAN8814 PTP probe shared->phydev is only set if PTP
-> clock gets actually set, otherwise the function will return before setting
-> it.
-> 
-> This is an issue as shared->phydev is unconditionally being used when IRQ
-> is being handled, especially in lan8814_gpio_process_cap and since it was
-> not set it will cause a NULL pointer exception and crash the kernel.
-> 
-> So, simply always set shared->phydev to avoid the NULL pointer exception.
-> 
-> Fixes: b3f1a08fcf0d ("net: phy: micrel: Add support for PTP_PF_EXTTS for lan8814")
-> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+On Thu Oct 16, 2025 at 8:04 PM UTC, Sean Christopherson wrote:
+> If the L1D flush for L1TF is conditionally enabled, flush CPU buffers to
+> mitigate MMIO Stale Data as needed if KVM skips the L1D flush, e.g.
+> because none of the "heavy" paths that trigger an L1D flush were tripped
+> since the last VM-Enter.
 
-Please could you look at how this patch and
+Presumably the assumption here was that the L1TF conditionality is good
+enough for the MMIO stale data vuln too? I'm not qualified to assess if
+that assumption is true, but also even if it's a good one it's
+definitely not obvious to users that the mitigation you pick for L1TF
+has this side-effect. So I think I'm on board with calling this a bug.
+If anyone turns out to be depending on the current behaviour for
+performance I think they should probably add it back as a separate flag.
 
-[PATCH net-next v2] net: phy: micrel: Add support for non PTP SKUs for lan8814
+> MDS mitigation was inadvertently fixed by commit 43fb862de8f6 ("KVM/VMX:
+> Move VERW closer to VMentry for MDS mitigation"), but previous kernels
+> that flush CPU buffers in vmx_vcpu_enter_exit() are affected.
+>
+> Fixes: 650b68a0622f ("x86/kvm/vmx: Add MDS protection when L1D Flush is not active")
+> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f87c216d976d..ce556d5dc39b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -6663,7 +6663,7 @@ int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>   * information but as all relevant affected CPUs have 32KiB L1D cache size
+>   * there is no point in doing so.
+>   */
+> -static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+> +static noinstr bool vmx_l1d_flush(struct kvm_vcpu *vcpu)
+>  {
+>  	int size = PAGE_SIZE << L1D_CACHE_ORDER;
+>  
+> @@ -6691,14 +6691,14 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+>  		kvm_clear_cpu_l1tf_flush_l1d();
+>  
+>  		if (!flush_l1d)
+> -			return;
+> +			return false;
+>  	}
+>  
+>  	vcpu->stat.l1d_flush++;
+>  
+>  	if (static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+>  		native_wrmsrq(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
+> -		return;
+> +		return true;
+>  	}
+>  
+>  	asm volatile(
+> @@ -6722,6 +6722,7 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+>  		:: [flush_pages] "r" (vmx_l1d_flush_pages),
+>  		    [size] "r" (size)
+>  		: "eax", "ebx", "ecx", "edx");
+> +	return true;
 
-work together. It might be this patch is not required because of
-changes in that patch?
+The comment in the caller says the L1D flush "includes CPU buffer clear
+to mitigate MDS" - do we actually know that this software sequence
+mitigates the MMIO stale data vuln like the verw does? (Do we even know if
+it mitigates MDS?)
 
-Thanks
-	Andrew
+Anyway, if this is an issue, it's orthogonal to this patch.
+
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
+
+>  }
+>  
+>  void vmx_update_cr8_intercept(struct kvm_vcpu *vcpu, int tpr, int irr)
+> @@ -7330,8 +7331,9 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
+>  	 * and is affected by MMIO Stale Data. In such cases mitigation in only
+>  	 * needed against an MMIO capable guest.
+>  	 */
+> -	if (static_branch_unlikely(&vmx_l1d_should_flush))
+> -		vmx_l1d_flush(vcpu);
+> +	if (static_branch_unlikely(&vmx_l1d_should_flush) &&
+> +	    vmx_l1d_flush(vcpu))
+> +		;
+>  	else if (static_branch_unlikely(&cpu_buf_vm_clear) &&
+>  		 (flags & VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO))
+>  		x86_clear_cpu_buffers();
+
 
