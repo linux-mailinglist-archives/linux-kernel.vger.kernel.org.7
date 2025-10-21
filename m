@@ -1,180 +1,203 @@
-Return-Path: <linux-kernel+bounces-862291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B722CBF4E99
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:20:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56C1BF4CDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D480F504E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:14:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4EF54EFC2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED48D27AC28;
-	Tue, 21 Oct 2025 07:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="ZFYESqTi"
-Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715D42750ED;
+	Tue, 21 Oct 2025 07:04:20 +0000 (UTC)
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022127.outbound.protection.outlook.com [40.107.75.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BB625D540;
-	Tue, 21 Oct 2025 07:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030790; cv=none; b=q8AX6M2lA9qJQFVkpMPaMJu1mCNUzSfCbnGOUdQ0IptHpP5hm19rjDSuQYELpGR0g2lI77+prFplQ7fHNAtEJuk4iWZB8fofTP16ZNlPTolZ35jXBse1V//HEeZ/66DSi9EOi3mTYkL5gcMcv1hhUYldspp6kkwopOT44ohwz9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030790; c=relaxed/simple;
-	bh=YYP+JvL1Azmf39UNxyLGq9iTQvod6ds7wDUTSE8XiV4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mANOf2I/adJ3RK0mightC62I+YHhDWpXs99XVYEd6lzctln/mdcQ0MeIFDvO/Pdv0TBdJ2kqyHQwwnL26/wUyu15btV060PEP9FhSjjZj9GBux+jHrsZyfRNzPSd3cEVsYTJq1R2MnFmaoduQFjvcNw/EZTru7nTaDfYew4lV0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=ZFYESqTi; arc=none smtp.client-ip=3.64.237.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1761030788; x=1792566788;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JG6/21Kc3LPmm7ifFU0zEa7/qVfomGnzIkk8iphJ08Q=;
-  b=ZFYESqTis0Cp8Ld/BdgJrwAS7Y6xqQIo5/P0c4kFTT3BPHa3kHCGZPm3
-   3VqqweZuZTlQpC/Y7lipA6uFG+gY+O4NKr3Q0BSyMrv3//GR2NdIGE7U5
-   23qj2egJCXzUn9G8zJtR1BV0MJz4a1UVGM0tJFPwwD4RXd8qFJjZLBEKk
-   cCf3rg11OJYRtoK9QTDfSdoVilAY7cnIzjyeUV2gPD0Wr58OwuhlDnip9
-   8fFtABBR6m1CrXMY7itaGZfEFjI+WZ8VfrH340ODVjnX2b3wfXIx1T6Bs
-   GOMhN3eRhFSBUBaka6JliQY6q9xZFFiwHk8BwEDup6FnkVRc59ARIYapa
-   Q==;
-X-CSE-ConnectionGUID: 9ajDuW3IRAqJTQOmqwROGg==
-X-CSE-MsgGUID: w3M+VODYSFGUxfTSLykcsw==
-X-IronPort-AV: E=Sophos;i="6.19,244,1754956800"; 
-   d="scan'208";a="3832773"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:12:56 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:1068]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.47.14:2525] with esmtp (Farcaster)
- id 1553515b-eb11-4da4-8ddb-b9d47464950e; Tue, 21 Oct 2025 07:12:56 +0000 (UTC)
-X-Farcaster-Flow-ID: 1553515b-eb11-4da4-8ddb-b9d47464950e
-Received: from EX19D013EUB004.ant.amazon.com (10.252.51.92) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 21 Oct 2025 07:12:55 +0000
-Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com
- (10.253.107.175) by EX19D013EUB004.ant.amazon.com (10.252.51.92) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 21 Oct 2025
- 07:12:46 +0000
-From: Mahmoud Adam <mngyadam@amazon.de>
-To: <stable@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <nagy@khwaternagy.com>, Ryusuke Konishi
-	<konishi.ryusuke@gmail.com>,
-	<syzbot+00f7f5b884b117ee6773@syzkaller.appspotmail.com>,
-	<syzbot+f30591e72bfc24d4715b@syzkaller.appspotmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Xiubo Li
-	<xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jeff Layton
-	<jlayton@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Theodore Ts'o
-	<tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim
-	<jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, Christoph Hellwig
-	<hch@infradead.org>, "Darrick J. Wong" <djwong@kernel.org>, Trond Myklebust
-	<trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, "Matthew
- Wilcox (Oracle)" <willy@infradead.org>, Hannes Reinecke <hare@suse.de>,
-	Damien Le Moal <dlemoal@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ceph-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
-	<linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-	<linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: [PATCH 6.1 8/8] nilfs2: fix deadlock warnings caused by lock dependency in init_nilfs()
-Date: Tue, 21 Oct 2025 09:03:43 +0200
-Message-ID: <20251021070353.96705-10-mngyadam@amazon.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251021070353.96705-2-mngyadam@amazon.de>
-References: <20251021070353.96705-2-mngyadam@amazon.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3AD274650;
+	Tue, 21 Oct 2025 07:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.127
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761030259; cv=fail; b=SI6Icd6ZKZLvfSPk1wp9zcJhNuOr1YQSaj10Ac0y98Leu8RGYwBnr/QDUJRaVx8FMkkVw6VxHMwLa9X1gdCHssqZAfnmyc+HiqKcCp621vQHv84Ngg2kTq1iMAtJfZl8hkwDPjnkVeQloBaJPIAqGnrzhImB4MJ/4SPQaH6SA1I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761030259; c=relaxed/simple;
+	bh=PuVUEdkV6nfAOwhh0xvoXrndNnh6MUU3oe49PfVEXU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vi6Ujlaov49kELKxdCUv0jfSFngTF0QCShsm3arAavXZX0/X36vQ0zwAhl55TmRE7yuYpLvcSABHYpaIhI56SygoIrHCtFr1bOgRmWN47Qx6X+qpb5y/t4cAGJLr9+Ebr8uGhZzW4d/9pGK8tz7n+stz+Q6ljak0/huzBTwYHpI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mu4cha0vVPBDdn7bAVWM4w8/6Lw8LwagFnyklcnzc9Uo8oskDGdzWOI8QFAEx3ragGj+NkMunTcO/wHYgbNSQHvLDDMmrfNUvXozaoardZvmxT9b6V/PYCnUpvK67ryneDzptnIL86/b0s7DEyIcLKDyRGTY2VPEFWHv/tVo/MlUEJe/Hf35sw0K5c8jstTsYBcFEVOP0WLvO+ZufaLkXLzIuCstSQuNqg2Rm/g6pXcR5U0n9oIwOyYHYCc8wb9fcdmgnM9GV0vFsGKCk9/pnzdLRuEe3u8kQF/gOSIt4JmUpWL8tOJ81hsMvQLrwncQHcEnvbhQYajz7zwIp3/6YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JRbUH1Gk2F/DqqOe3Lo8C8pbcAI8AgY8SLKVFuqNhZg=;
+ b=p0AvJNXeBdbxyQ8twrH00xecuiwqwOTqFsbIA6rv7blSbx7s17c/76GvddWBEa+qnCnfs5AjaMuJEq3sjUA/pTTXKf1Mg7+zZr+ju4pwC7WhzJ7Od+S47ULOIa1IoTk6GvqLxKQGQ8Wscj6u6YekAfrxoh1UZFkiaIFlZpzz234M6wYX9hoJydulnwK7/mSUcD2FcJDKPOUyrfT9jBZx5hHp7tuMB8fT3bX2H0ptyF476nSa+WDRECaNvRIUfYQqebCO+bFx3fvMff2XTp34oHMtU1mG3Ven0ITGewHulsYar7xjx3yBf3ucHUmtwrQWzt0Nx79u0F+HXePCOV1ebg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2P153CA0034.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::17) by
+ TYSPR06MB7046.apcprd06.prod.outlook.com (2603:1096:400:46b::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.16; Tue, 21 Oct 2025 07:04:13 +0000
+Received: from SG1PEPF000082E1.apcprd02.prod.outlook.com
+ (2603:1096:4:190:cafe::20) by SI2P153CA0034.outlook.office365.com
+ (2603:1096:4:190::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.4 via Frontend Transport; Tue,
+ 21 Oct 2025 07:04:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E1.mail.protection.outlook.com (10.167.240.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Tue, 21 Oct 2025 07:04:11 +0000
+Received: from localhost.localdomain (unknown [172.16.64.196])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 0266F4143A8B;
+	Tue, 21 Oct 2025 15:04:11 +0800 (CST)
+From: Gary Yang <gary.yang@cixtech.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	cix-kernel-upstream@cixtech.com,
+	Gary Yang <gary.yang@cixtech.com>
+Subject: [PATCH v5 0/3] Add pinctrl support for Sky1
+Date: Tue, 21 Oct 2025 15:04:07 +0800
+Message-ID: <20251021070410.3585997-1-gary.yang@cixtech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
- EX19D013EUB004.ant.amazon.com (10.252.51.92)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E1:EE_|TYSPR06MB7046:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 01167e65-69e2-4bce-0aed-08de107009d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?M5tcC59ZyazJf8M6kxiBP8Gjuuo+vAZtlKj058O6D4hbGIgJ6yaoyAQWyJqd?=
+ =?us-ascii?Q?8PqV627chLCEIdKzX/156eJU/VFtjTXllgRnlVbrbFFKZMPQqEBwpqHBGZNA?=
+ =?us-ascii?Q?IUL2NGzd/HrRoxjddw2VErCYlXQExeKz7N7m15w+S1lcTx8b/QJsu26MUlTP?=
+ =?us-ascii?Q?9tFBHtnO3ooXCgD40gczm415Aq5CMas9Qa5wWoNt04IWnsPdMfDIZQVfLZiq?=
+ =?us-ascii?Q?HzUuuNsc9oK4yOC1v6wVJ2dlymDRUdXfEBibNpERQVaVlrhcwqpD3RWXC74K?=
+ =?us-ascii?Q?vsLbQ0Jlc047LSeGve2nQTygjsyCzSnaCARrw9OdMOZBU4QRxXwY25ICPqv1?=
+ =?us-ascii?Q?ZYGXpnevg2T+kHn4Sz33WR+P0hquTKDc1CJuBH/vcAdRZ0uklpPaCU3ZxyfP?=
+ =?us-ascii?Q?djCtXsb3z3NX7uAa0jvKX1XWAIl2HDsTGwkvE+bsTxnm2dk/JGgmNy7lkPFY?=
+ =?us-ascii?Q?nU0LzLal85Zv9ilwJ2qxmiGNdd3q41B8yzF1kHzBvXmBB+6dfOcpyQOTTY7Q?=
+ =?us-ascii?Q?e9g8Ivi+fCQt7jpXltv9zrc1FYg1q8ioUEf+ErW8wRcTkipkFbATFk4/2x73?=
+ =?us-ascii?Q?/vCkpdS4W5FJDOHoOSekODpLfRgSuwBKxjs5GeRc/pKnUDanAEdPIK0YYDm+?=
+ =?us-ascii?Q?RWSwIYgHU6xH8zaLsaUrCuY9bUTOjG9jDGO5YhHRgmj2L/VOlq1DXmmrT+HV?=
+ =?us-ascii?Q?LTMls6F8qbyyv/2Li0kkAn9dkL2AV8o5UrLuPTd+3/THv3WdsBvBc3BqnzfO?=
+ =?us-ascii?Q?hgEWyZuyyryZhR76i68pfv9n26hTG+hmNbvsSXR6kPNvQ+sDi1Lw2vxyNs6C?=
+ =?us-ascii?Q?/CU+zvJhFMHV9JQ00boPUVFvwQf9Rg8D7qCa1erGR6cSaJg94JZyVWsUekSD?=
+ =?us-ascii?Q?2vKnHCLLC2Ys5x7x3dO2TVF2Orp3LSpNGEmL+QtbkRp612d3xHrfu2elLEIR?=
+ =?us-ascii?Q?4uJgxRiWeT0xKA+oAAVOEBdIi61PYMMp6sGqDJbtJSG1F4dEjY4HiSIcnXmM?=
+ =?us-ascii?Q?FWm16pZXaYbtZ2usgGxiF9MF8EnESGdOmMZgzSitbv4HQ9mxCeGd0ABQNUMp?=
+ =?us-ascii?Q?8mTYvaC2rI2y3pYfQVbVtDPRkUmXAB94HjeqhRghXCorzpQNAbg+SY8o5KgA?=
+ =?us-ascii?Q?h8Jq+0W5aj6Klahqy4bUM0zYJjIt6iZ5Evudh8hFnXTsAIyS5tapmdf8WUay?=
+ =?us-ascii?Q?3QujxVFUDRA57Mw78p6oMDvlvxgaIRv8HpTMC8nRrAkihetxCCn4DYb+TnvG?=
+ =?us-ascii?Q?WWD0Il7daJ8kTwaK7j7CjtnaLphDxTw6Ir1Xql0+JGwgAQxVQ3y2sniXM9Zz?=
+ =?us-ascii?Q?gnCRebQiN6HMlfjymrlJuRfs/AWC2hh7rskf67iZMFMk3+dcm+ZvcxsSxSGe?=
+ =?us-ascii?Q?RbOrWDmWAHTRVXPg8lecZI0yjHLl/+PshKw4xuZoaeUd1Md2rkDJee4hALmH?=
+ =?us-ascii?Q?CSVBFvmPYWJCInC/MVuUZH8iq6Da8vxxQSPJaiH6nmPI6ZU67cuiSlnl66L+?=
+ =?us-ascii?Q?wurDUxtd/eS+Suk6oaTFLdYuMra7jY31t8WkYxkkzf2qP9AyUOe+hnFp3v+m?=
+ =?us-ascii?Q?HrACoUROoZ+GL5uBNT8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 07:04:11.8675
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01167e65-69e2-4bce-0aed-08de107009d4
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E1.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7046
 
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Patch 1: Add dt-binding doc for pinctrl on Sky1
+Patch 2: Add pin-controller driver for sky1
+Patch 3: Add pinctrl nodes for sky1
 
-commit fb881cd7604536b17a1927fb0533f9a6982ffcc5 upstream.
+Changes for v5:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=cix,sky1-pinctrl.yaml
+scripts/checkpatch.pl 000*.patch
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- Drop DS_LEVELX macro
+- Fix dt-bindings style
+- Fix build warning
 
-After commit c0e473a0d226 ("block: fix race between set_blocksize and read
-paths") was merged, set_blocksize() called by sb_set_blocksize() now locks
-the inode of the backing device file.  As a result of this change, syzbot
-started reporting deadlock warnings due to a circular dependency involving
-the semaphore "ns_sem" of the nilfs object, the inode lock of the backing
-device file, and the locks that this inode lock is transitively dependent
-on.
+Changes for v4:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=cix,sky1-pinctrl.yaml
+scripts/checkpatch.pl 000*.patch
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- support driver_strength = <8> (mA)
+- Fix dt-bindings style
 
-This is caused by a new lock dependency added by the above change, since
-init_nilfs() calls sb_set_blocksize() in the lock section of "ns_sem".
-However, these warnings are false positives because init_nilfs() is called
-in the early stage of the mount operation and the filesystem has not yet
-started.
+Changes for v3:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=cix,sky1-pinctrl.yaml
+scripts/checkpatch.pl 000*.patch
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- Re-order the patch set, and move dt-bindings to the 1st patch.
+- Refine the pinctrl driver with SKY_PINFUNCTION macro
+- Fix warnings when make dt_binding_check
 
-The reason why "ns_sem" is locked in init_nilfs() was to avoid a race
-condition in nilfs_fill_super() caused by sharing a nilfs object among
-multiple filesystem instances (super block structures) in the early
-implementation.  However, nilfs objects and super block structures have
-long ago become one-to-one, and there is no longer any need to use the
-semaphore there.
+Changes for v2:
+- restructure the pinctrl driver to support pinmux=<..>
+- redefine pinmux macros
+- move header file from dt-bindings to dts
+- fix the code-style issues
 
-So, fix this issue by removing the use of the semaphore "ns_sem" in
-init_nilfs().
+Gary Yang (3):
+  dt-bindings: pinctrl: Add cix,sky1-pinctrl
+  pinctrl: cix: Add pin-controller support for sky1
+  arm64: dts: cix: Add pinctrl nodes for sky1
 
-Link: https://lkml.kernel.org/r/20250503053327.12294-1-konishi.ryusuke@gmail.com
-Fixes: c0e473a0d226 ("block: fix race between set_blocksize and read paths")
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+00f7f5b884b117ee6773@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=00f7f5b884b117ee6773
-Tested-by: syzbot+00f7f5b884b117ee6773@syzkaller.appspotmail.com
-Reported-by: syzbot+f30591e72bfc24d4715b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f30591e72bfc24d4715b
-Tested-by: syzbot+f30591e72bfc24d4715b@syzkaller.appspotmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Mahmoud Adam <mngyadam@amazon.de>
----
- fs/nilfs2/the_nilfs.c | 3 ---
- 1 file changed, 3 deletions(-)
+ .../bindings/pinctrl/cix,sky1-pinctrl.yaml    |  92 +++
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  32 +
+ arch/arm64/boot/dts/cix/sky1-pinfunc.h        | 401 ++++++++++++
+ arch/arm64/boot/dts/cix/sky1.dtsi             |  10 +
+ drivers/pinctrl/Kconfig                       |   1 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/cix/Kconfig                   |  14 +
+ drivers/pinctrl/cix/Makefile                  |   4 +
+ drivers/pinctrl/cix/pinctrl-sky1-base.c       | 573 ++++++++++++++++++
+ drivers/pinctrl/cix/pinctrl-sky1.c            | 559 +++++++++++++++++
+ drivers/pinctrl/cix/pinctrl-sky1.h            |  48 ++
+ 11 files changed, 1735 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/cix/sky1-pinfunc.h
+ create mode 100644 drivers/pinctrl/cix/Kconfig
+ create mode 100644 drivers/pinctrl/cix/Makefile
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1-base.c
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1.c
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1.h
 
-diff --git a/fs/nilfs2/the_nilfs.c b/fs/nilfs2/the_nilfs.c
-index be41e26b782469..05fdbbc63e1f5f 100644
---- a/fs/nilfs2/the_nilfs.c
-+++ b/fs/nilfs2/the_nilfs.c
-@@ -680,8 +680,6 @@ int init_nilfs(struct the_nilfs *nilfs, struct super_block *sb, char *data)
- 	int blocksize;
- 	int err;
- 
--	down_write(&nilfs->ns_sem);
--
- 	blocksize = sb_min_blocksize(sb, NILFS_MIN_BLOCK_SIZE);
- 	if (!blocksize) {
- 		nilfs_err(sb, "unable to set blocksize");
-@@ -757,7 +755,6 @@ int init_nilfs(struct the_nilfs *nilfs, struct super_block *sb, char *data)
- 	set_nilfs_init(nilfs);
- 	err = 0;
-  out:
--	up_write(&nilfs->ns_sem);
- 	return err;
- 
-  failed_sbh:
 -- 
-2.47.3
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+2.49.0
 
 
