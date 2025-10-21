@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-862335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB6DBF507A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:44:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3D4BF5056
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD7418C4E16
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:44:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 283794F1477
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A145628B3E2;
-	Tue, 21 Oct 2025 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEDC2848A2;
+	Tue, 21 Oct 2025 07:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="XSIgqbQ8"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zzlF/GQw"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBC724678F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB5B22579E;
 	Tue, 21 Oct 2025 07:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032612; cv=none; b=KqhckBJXBjjCtI+Mne6IYV10gD6Kznr7FqarnaTGXClCWdqlpJgzm8gkjDNVQX1eSKh1krxWw/yEsGPx+KmPKVIQDUILWDAdJR0glP47Ylmja/Tj9L4CCeuMI5HdB4JcwjEvIFbQ1NTHx3irkBUkkSkRkZiIWeF/nw+ezt93SKo=
+	t=1761032611; cv=none; b=j9J7TwVuBKlFi2nRrlTJNqsiBM5iM3Rhj1+3tFDk7aDxET8YwZkiddLiJ5FTaAwSyqPvXYJU83p+BCOK+A1WJw8ipeeCoHmZa6GeeLjykCeiI07kftisWBG/5AeNwfNPkVmAaJB1ovlb19xuggmR1VbcFKhEXzxvFfdgbEyx7pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032612; c=relaxed/simple;
-	bh=UEyms7NO0DBfcmNP+ZmCya+I8AxDdvyi3vjgJEnzqtM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsRCLKzIqC3Uv7O8OWTPnhp/8gOBmZjASqbw9xC0Vf6ij7dvq5vJu89Bvk7z5HVLF3cB1YQjqXFigHql35Ju9Zdo52mVrZtohJv5kFRnRyjrUCiti6aD/4nl8DQ5Xn5EA1aMCf6Rn72JznUwnrTQyZUipgPsR6FJT6n178YWh5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=XSIgqbQ8; arc=none smtp.client-ip=185.11.138.130
+	s=arc-20240116; t=1761032611; c=relaxed/simple;
+	bh=g9ZHrtgCu19pxECRrEzDTMEJRWQ2BNx9AdxH6gqHpF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jcvejEpqfJMA+xH85WhWpsPFFXGFBAy0lGlbF4QDgz37TY/+tLUKoty2v2RtDCV3qg2Z3nAOk+YpJxDOjqeD2gX+Vxt6STVvr84oVKblOGRDd8EuKrG+MynFTKCSGNzNhiuq9f7PggfZWLnLx9IlHNjwVCLyyGnfjEnyEFVA2kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zzlF/GQw; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=UxK1OP46sV11zbhWQ+0/zP7tImTHzu011gOU5DK+oxg=; b=XSIgqbQ8NchDx3T8OcaMUkhoS2
-	Ql52y6+JPPw8y/0PzCt+36TBG54fvqr7vQmQcEbGB3X6iYlpgv5HpLlqKo7TIE9FX4FOu5bh8cHk2
-	wa/yDCXV8GCgC8RN2z8GU5wqw+vdr5ZfmrV0m5AM7wO4LizdR5SLXEbUDQ+jom7RkSnyaJOpLMX2g
-	6QYDmIh/aXNzPd8cBJSFnhjqVBejlIxeKYfAYqFAVYvfgpKVFJBz2vT7v6aVmGLrLnDRZ+wyWcTbL
-	A2kvYtJYWrOSjSWbxijjZ5QNCa7Li87XIrXjtbnU4iQ4wEjCPXc0ZzTstz7TyI/s6pVxwesA6jP33
-	ahp/mnhA==;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
+	bh=AP5GZTY+6u3putkH9wiit+MCCXjcLlm9TffEsIJtyyg=; b=zzlF/GQwOQQvsH29acgbHn7dAx
+	ACbGisNDNz3tl3h2hrkFyVvLWA7oGx+H+Mjp9DE5lsHALp/RE3JLcsKaUW0c41i9v1/4crFVVedG2
+	AlMSHCTLWmg0ZUJiaGLcwNPRcaW+pIXnCMdDKCKMjz0bNglzD62Dy9PAE9AYVWanGk4uF3AsL08f9
+	MCkKHHAX6WVwftxB2eModVhyUOeW9OlIqjeUIJljygAa8bS7J7I4H4CN8alGbp8VIRwOlTCk95b97
+	GzbLFTjxfpAMAwe3p1gEhed5lRb6+VwZJGuv+dES2UvxABVI9HXUFrUFAevlrxM54coSPlW7qmrR/
+	AecrvQkg==;
 Received: from [212.111.240.218] (helo=phil.guestnet.ukdd.de)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1vB71M-0000uy-8P; Tue, 21 Oct 2025 09:43:04 +0200
+	id 1vB71M-0000uy-Mp; Tue, 21 Oct 2025 09:43:04 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: heiko@sntech.de
 Cc: maarten.lankhorst@linux.intel.com,
@@ -58,11 +59,15 @@ Cc: maarten.lankhorst@linux.intel.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	cn.liweihao@gmail.com
-Subject: [PATCH v2 0/9] General RK3368 HDMI support and 2 outputs for RK3368-Lion
-Date: Tue, 21 Oct 2025 09:42:45 +0200
-Message-ID: <20251021074254.87065-1-heiko@sntech.de>
+	cn.liweihao@gmail.com,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 1/9] dt-bindings: display: rockchip: dw-hdmi: Add compatible for RK3368 HDMI
+Date: Tue, 21 Oct 2025 09:42:46 +0200
+Message-ID: <20251021074254.87065-2-heiko@sntech.de>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251021074254.87065-1-heiko@sntech.de>
+References: <20251021074254.87065-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,44 +76,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds the necessary bits for HDMI output on RK3368 and enables
-this on RK3368-Lion. At the same time, use the recently added DSI support
-to enable the generic Video-Demo-adapter as an overlay on Lion as well.
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
+Define a new compatible for RK3368 HDMI.
 
-The reason I'm shaving this Yak is that the recently added DSI support
-created DTC warnings about a single endpoint with an address.
+The RK3368 HDMI also uses a PHY internal to the controller, so works
+similar to other controllers, with the exception that the RK3368
+only has one VOP, so there is no source selection needed.
 
-So it was either removing the @0 from the endpoint, or adding a second
-output option :-) .
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+ .../devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml   | 1 +
+ 1 file changed, 1 insertion(+)
 
-changes in v2:
-- pick up Conor's Ack for the compatible
-- fix the spelling errors reported by Diederik
-
-Heiko Stuebner (9):
-  dt-bindings: display: rockchip: dw-hdmi: Add compatible for RK3368
-    HDMI
-  drm/rockchip: hdmi: add RK3368 controller variant
-  soc: rockchip: grf: Add select correct PWM implementation on RK3368
-  arm64: dts: rockchip: Add power-domain to RK3368 DSI controller
-  arm64: dts: rockchip: Add power-domain to RK3368 VOP controller
-  arm64: dts: rockchip: Use phandle for i2c_lvds_blc on rk3368-lion
-    haikou
-  arm64: dts: rockchip: Add HDMI node to RK3368
-  arm64: dts: rockchip: Enable HDMI output on RK3368-Lion-Haikou
-  arm64: dts: rockchip: Add the Video-Demo overlay for Lion Haikou
-
- .../display/rockchip/rockchip,dw-hdmi.yaml    |   1 +
- arch/arm64/boot/dts/rockchip/Makefile         |   5 +
- .../rk3368-lion-haikou-video-demo.dtso        | 174 ++++++++++++++++++
- .../boot/dts/rockchip/rk3368-lion-haikou.dts  |  36 +++-
- arch/arm64/boot/dts/rockchip/rk3368.dtsi      |  45 +++++
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c   |  16 ++
- drivers/soc/rockchip/grf.c                    |   1 +
- 7 files changed, 268 insertions(+), 10 deletions(-)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-lion-haikou-video-demo.dtso
-
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+index 9d096856a79a..29716764413a 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+@@ -23,6 +23,7 @@ properties:
+       - rockchip,rk3228-dw-hdmi
+       - rockchip,rk3288-dw-hdmi
+       - rockchip,rk3328-dw-hdmi
++      - rockchip,rk3368-dw-hdmi
+       - rockchip,rk3399-dw-hdmi
+       - rockchip,rk3568-dw-hdmi
+ 
 -- 
 2.47.2
 
