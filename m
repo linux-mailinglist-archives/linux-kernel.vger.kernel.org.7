@@ -1,207 +1,147 @@
-Return-Path: <linux-kernel+bounces-862732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1819BF6025
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:24:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09464BF6037
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C43ED4ED367
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:24:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD1A19A134A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109292F83C5;
-	Tue, 21 Oct 2025 11:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66862FBDF6;
+	Tue, 21 Oct 2025 11:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKAUFWWH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="by5weifs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y1UCChm1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OOAcYaG9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hRoJ/yl9"
+Received: from mx-relay138-hz1.antispameurope.com (mx-relay138-hz1.antispameurope.com [94.100.132.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8152F549B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761045869; cv=none; b=Pw1QT+mIKEd5Ll6fzntyxil1caeXMWx3c5ytP5qrCRh1PFapN6cJu3w9fDCcec73o/HCyyhndY0+zfPeLl7gWXQXk/w0tutatL+75psqG0N3810FuJpNIExuzAkp25ssoapTDFOz0p+rzTBdpOgHfOKCa884vKQgfFgTWxlUM9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761045869; c=relaxed/simple;
-	bh=2yVYtAEdk5n82up6JX6DPq8zoDVdgduCVwE7UCgkdHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u8hQkVFWSxtET3VxRFNsPLBJiGQ3IqzUQueEE14LoGpHrvj941L+LLg9MQ3Q95Qtc5e2XhrEaZpjyPz9hJITOShaLCkh6TwZ5aYEGPncjnhPMXEx/rWkn44HY9lpBuYUmIxE01tw0BG2up117VwJKjKHTZdZ9U34teCMDaUxT5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKAUFWWH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=by5weifs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y1UCChm1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OOAcYaG9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 830572116C;
-	Tue, 21 Oct 2025 11:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761045861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6k+JrnOD8S8rjh/qeXDN7dKhqTLfunFUoQT/6jJZft4=;
-	b=zKAUFWWHEVCjfsZClwPz66i2n99nPJ/BWdSebRjqZf3egYg7o3GpRKNhHx66xLon3u31PS
-	t/K29gBFLvQt5qU99kgRVflsZs/YA08IObOOylKJn9KxUMEjlD0/lbhN7i4Dr3cP9LFaMG
-	cZJ9c87f8CZ748zHdhq9zDcNQLT97A4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761045861;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6k+JrnOD8S8rjh/qeXDN7dKhqTLfunFUoQT/6jJZft4=;
-	b=by5weifsKFCp7nLaOkdALZ9HmmZfzmX9CArPbqHYVEEFo7BQXG7BpMLZho7CJF9cVJO+ZI
-	n/ar3XKgBbUYMUCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761045857; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6k+JrnOD8S8rjh/qeXDN7dKhqTLfunFUoQT/6jJZft4=;
-	b=y1UCChm13j4l0NppKmY7t01u1THTFXFahbMPy0NFDBWYafbrmO4g5S+MR5lsqR/dN7PxnD
-	HtfE7sFg+79ANCyP/aXMp95bvbIFHZl5AkeCsl8wR+Ih9NM2RMiFcZQ/FbkuQAAnmRXwWm
-	MMUWyajLGxbDRVm+gUpY4E08SViSfSA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761045857;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6k+JrnOD8S8rjh/qeXDN7dKhqTLfunFUoQT/6jJZft4=;
-	b=OOAcYaG9Wpg0n/Q2itF8xOZrWTkLp7IPr/uKGsMEu0QoG4sI8L8POaIYCZ+VsxjGa1uvb+
-	p35jRxPcSLAuQ8Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42E99139D2;
-	Tue, 21 Oct 2025 11:24:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bHLjDmFt92jXOgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 21 Oct 2025 11:24:17 +0000
-Message-ID: <13bc66cd-a63b-44b9-92fb-98b5b36ce2dd@suse.de>
-Date: Tue, 21 Oct 2025 13:24:16 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D71302CDB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.132.197
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761045966; cv=pass; b=mpmIzZs+ihdJNBtaAOwwalIHaESURI3TU4eXUIQM+u82+YUT55qeXM4/mLdwNpZA6LhavXsEZzv6ObA+/sQIvoYzpcG2jIoeeL4HoB44iYmh4wy+tC1eTpPRPlFZp3v1Bnx4IdDuWfBYSFiubS6l+64E/xSpJ6jxE9rXOeKxJYY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761045966; c=relaxed/simple;
+	bh=n4mhlRhzzFm3V7tkh8PEoEN4chx5mQY5EISlduNBssk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C94ziRP/FiHzO3WXmIFLCTXnrIQHPBmBV9X3HSJMQCRM4lRRJXTosePveQ/VBtMee5587PDevcN/stL419BHihm1pTqdMJpCZtCoYStXsRQZ9I7ndMPUjeDgSGaaYkwtB2kOrnmRZEnmPtm0F8M3gjDpSfNanFqprCTa1j2lxyI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hRoJ/yl9; arc=pass smtp.client-ip=94.100.132.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate138-hz1.hornetsecurity.com 1;
+ spf=pass reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=qPRSdSQE0bLnU693LJLxkchAwzL3R1o8wQQaHCAimXE=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1761045914;
+ b=LuByLqB8XY2tsdEQ1xs+u1IRMmUGwwv7LO6ToIhizQsaRdXqVp4kIYpK2RMiSepl7YGINyZQ
+ O+KgNyE9FTmPxg3uIqB6emnQtSk+PyVTb0jFPbYPLFOaN0zOcfBfbPyg7bnjUOUVnz6UHeOkZJ0
+ zMyiwo+TMHaINxefzgfOatjChP0/7elbRjpjIWog7zXnrAnWBp039jEUF07KOFZrZwOAfqyy8xd
+ yLqOw7lNE9TBoxe219j0T1rx8pfjcMwJSlryn4/FmoHUeee2/g4QIEoje5yW4TC+efyWW4WNUWt
+ Q+ThykToeQpw3v7+RgakSCzNCR4qZ40cXldCBqhw23DsA==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1761045914;
+ b=rEZQseNOOFqDNf7FWczfwfE4s//BnoNq0K6K8R9NA6xsV+T0dY+rurFXs9OmSmKsR2XWSEYf
+ McS8AU+FbbHhDA8C8HxZ+w5UVj/ZP30DVQf61JTboQIEscDdpkFKfgLq7OhSwuW/hyRrrv7AoS2
+ Rll5BiuXhqC+zdEzi6c3GhhlXYValt783VDM0DWHJCGaqkLjP+n9NW6vqErACMqFwInKg6vTthH
+ 6YpUTUs22TCCI+ylddfWPm936pCV2nYA5bJuhIe8YchKUFcZjAwPtqAF/KDZtYg9aNSWiwvIotg
+ C3xioYQFh2xdGAFx31O01edhcsVAP82dlkh1x5nobGuyQ==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay138-hz1.antispameurope.com;
+ Tue, 21 Oct 2025 13:25:14 +0200
+Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 56DCEA404BD;
+	Tue, 21 Oct 2025 13:24:53 +0200 (CEST)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Gregor Herburger <gregor.herburger@tq-group.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject:
+ Re: [PATCH v2 2/2] arm64: dts: ls1028a: Add mbls1028a and mbls1028a-ind
+ devicetrees
+Date: Tue, 21 Oct 2025 13:24:52 +0200
+Message-ID: <13873811.uLZWGnKmhe@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <14f52170-cc5b-4808-8fc1-28685ba349dd@lunn.ch>
+References:
+ <20251020133536.303471-1-alexander.stein@ew.tq-group.com>
+ <20251020133536.303471-2-alexander.stein@ew.tq-group.com>
+ <14f52170-cc5b-4808-8fc1-28685ba349dd@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] drm/panic: Fixes found with kunit.
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org
-References: <20251009122955.562888-1-jfalempe@redhat.com>
- <f8f1e0ec-46fe-4d71-94aa-bdd081ec35fb@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <f8f1e0ec-46fe-4d71-94aa-bdd081ec35fb@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org,lists.freedesktop.org];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay138-hz1.antispameurope.com with 4crVMB1Y5zz1NGLl
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:0a6c4bbb931b6e0c1b6e99bc4c54eeb4
+X-cloud-security:scantime:2.297
+DKIM-Signature: a=rsa-sha256;
+ bh=qPRSdSQE0bLnU693LJLxkchAwzL3R1o8wQQaHCAimXE=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1761045914; v=1;
+ b=hRoJ/yl9e7TfSsYErdF0tkYk6kFCc3txXOGT8dYKIB6MgUA0CWOH9GEMCh19/445QYV7s7B+
+ xvrGd4DUWPEQeIUxItHmCORscltnPa6MtPyKSMteQZQYaoPILHOsyO6VMRERlDH5pgW0X0l2szl
+ ITLlHgzIibTPSgVTSLDNLirSGoUw4y/3j/2t8fuRSRozXB1Z8AU7d4RsASy4Hq7aeqeCQnasFwg
+ wyqC/AIRe/9JUSrnwvfe6XrJDs6WHHtX+3J1IzeR6qyikx7/9d5qFuDuBzQ22GS+imnFppSSr8J
+ muzNhjXwC1rF7Ow12WE2r+afbRD9s/F0y3UbdHqevddxw==
 
-Hi
+Hi Andrew,
 
-Am 21.10.25 um 11:35 schrieb Jocelyn Falempe:
-> On 09/10/2025 14:24, Jocelyn Falempe wrote:
->> A few fixes for drm panic, that I found when writing unit tests with 
->> kunit.
->
-> Pushed to drm-misc-fixes.
+Am Montag, 20. Oktober 2025, 20:34:16 CEST schrieb Andrew Lunn:
+> > +&enetc_mdio_pf3 {
+> > +	mdio0_rgmii_phy00: ethernet-phy@0 {
+> > +		compatible =3D "ethernet-phy-ieee802.3-c22";
+> > +		reg =3D <0x00>;
+> > +		reset-gpios =3D <&gpio_exp_1v8 1 GPIO_ACTIVE_LOW>;
+> > +		reset-assert-us =3D <1>;
+> > +		reset-deassert-us =3D <200>;
+> > +		interrupt-parent =3D <&gpio_exp_1v8>;
+> > +		interrupts =3D <0 IRQ_TYPE_EDGE_FALLING>;
+>=20
+> PHY interrupts are generally level not edge. So this is probably
+> wrong.
 
-There are many patches without Fixes tag here. Commits in -fixes should 
-preferably have a Fixes tag to help with backporting. No need to revert, 
-but something to keep in mind for next time.
+Thanks for the pointer.
 
-Best regards
-Thomas
+> > +		ti,rx-internal-delay =3D <DP83867_RGMIIDCTL_2_50_NS>;
+> > +		ti,tx-internal-delay =3D <DP83867_RGMIIDCTL_2_00_NS>;
+> > +		ti,led-function =3D <0x05b0>;
+> > +		ti,led-ctrl =3D <0x1001>;
+>=20
+> I really would prefer /sys/class/leds was used. In fact, these are not
+> documented, and don't even seem to be implemented in mainline. So you
+> need to drop them.
 
->
-> Thanks Javier for your reviews.
->
->>
->> Jocelyn Falempe (6):
->>    drm/panic: Fix drawing the logo on a small narrow screen
->>    drm/panic: Fix overlap between qr code and logo
->>    drm/panic: Fix qr_code, ensure vmargin is positive
->>    drm/panic: Fix kmsg text drawing rectangle
->>    drm/panic: Fix divide by 0 if the screen width < font width
->>    drm/panic: Fix 24bit pixel crossing page boundaries
->>
->>   drivers/gpu/drm/drm_panic.c | 60 +++++++++++++++++++++++++++++++++----
->>   1 file changed, 54 insertions(+), 6 deletions(-)
->>
->>
->> base-commit: e4bea919584ff292c9156cf7d641a2ab3cbe27b0
->
+Ah, sorry, this slipped in from downstream kernel. Will be removed.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Thanks and best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
 
 
