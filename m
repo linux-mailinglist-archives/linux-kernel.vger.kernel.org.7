@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-863483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A439BF7F05
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E88BF7F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 009924E8489
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:43:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A43BD4E51D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1EB34C807;
-	Tue, 21 Oct 2025 17:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E1834C81E;
+	Tue, 21 Oct 2025 17:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UrHSLIQN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnHRPa43"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB9434C151;
-	Tue, 21 Oct 2025 17:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E59234C806;
+	Tue, 21 Oct 2025 17:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761068614; cv=none; b=dXkygYLtvbxif3yXztpABWXqLs0lMLaj27fuA5EJT6Dkf0Fj/gjE5tvUGyft36MaRFt4ZL33nKh8yamVK8r1mo29xWwvH2DON/A1EAezflI1Pyibk2rDlDonAFPTzDXqCXqowCw07f/rKYlSJLtcPNtzVQoyvJSYP06iB7XPSD4=
+	t=1761068646; cv=none; b=JAc9XlNfRun2cVYTxsTBdvJy5Ph0QB9gkjHlnyM4fWC1I0gtTNL9l/8VevYuRDl3LVZeS6dzXT1viu4mZjPQ21rgwkEOIiJbDegTThByPkVGR1qS0ep+rxpKmQ9Q0cDiF6gcNtEs9yE75PKQN72yX8P8pSkCIW82iqPsiAeGs/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761068614; c=relaxed/simple;
-	bh=xyrItL/Oko7IcvMF4j5xjyFM3GWwAEGO3Qw5Gma9kjI=;
+	s=arc-20240116; t=1761068646; c=relaxed/simple;
+	bh=bHNcj1wjfOdU2U4vdwQgraEX91IYvZD0sUGfn4zYsro=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=kYurQsWaAtFG515DDU32KoKuk3SZpTSwlQHgLoOCa5QyEmjQXbSXEYBoPunr+jZeDXhgBVjcQGbW0u/3jz+8I+bjcg5cRFXAyn/my55kGp0C9WnTxGUwAhiDF70iQ0N4RJDjItXjCrg0xJg/HZIkhW+8CuJQaSoufmHZMx+5eG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UrHSLIQN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6D6C4CEF1;
-	Tue, 21 Oct 2025 17:43:29 +0000 (UTC)
+	 References:In-Reply-To; b=jU4dy80W2oFn+V0jE7uZuizi4F+TitwBHMEzEVdxvYCsV7YVVMFgxQ+qn04dhs1w8896ZaFxfOEDWiQCdzGGmOqef1+snB61h8ngE6+DcKCCH8ks1GE/6LLkrSy4JHnvUt2yTIpXPa4sC2IXqOoAHXKLGRhJg9hSs0JAsGQlmVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnHRPa43; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E238C4CEF1;
+	Tue, 21 Oct 2025 17:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761068611;
-	bh=xyrItL/Oko7IcvMF4j5xjyFM3GWwAEGO3Qw5Gma9kjI=;
+	s=k20201202; t=1761068645;
+	bh=bHNcj1wjfOdU2U4vdwQgraEX91IYvZD0sUGfn4zYsro=;
 	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=UrHSLIQN5PEaFeked1+oIdxevYxeM9BzJ2LDUPwp2FhLCBu6jC0VPfHyjHKZ+D5Dc
-	 W1Bp1oAbknkPz1Ue6urijcb+730GCpS0VpCUQx1uUcMg39A4G/pTYoTSQ1ySK39qFR
-	 BTzXJnJ7+bmdS75YH6dTyfamlF7hj4zfMgAEjsITZBIJ8sbyh0FMXv8N9BbrapNZuz
-	 /4NOP7tkGDtE9KmDjWb4i+poh6P1mzs8rqK1gpLD2KBqwScuT5jP7jnMR/8ZKe2Www
-	 eTTammgrAVb20s3Tv2eYPRA+9Mcej3X2fy6lbgoMxGg6s6pP5P1SL3qy3FUskJH3hL
-	 Cfx98cfhLTW5g==
+	b=YnHRPa438hTYGZhg9fL0jrPt31M9vKs49W/DgdnAdE7iFZ+j5VZsieEpvyXqZ+z0F
+	 EZ5b4QWH2XJdtdTh/5fEyB0KAPwNEfgYZ7FBGGmllt0pq7FkmUCO+qW/hh/ywNNvEW
+	 YsBmZTKCQ8ner/3MPqz+TvFo2LK47Ei17tAZtrPNmD88ujHxAwDWd7IJ4eOjnAcdj7
+	 ufRY3JWW9DDZkHUaT2CsMWCCaXOtWv34OQ0FwcIw7LDg/9dDIoILU3JUyGzEFo+iIY
+	 5T4qk+Ztqz5sTs7RpqQBi5P0qj0R8J6YwzPChhiQWi00pg5pcvg3FeABlZcYZq5aVu
+	 JWOwPsaFDIUiQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,45 +48,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 Oct 2025 19:43:27 +0200
-Message-Id: <DDO6PXJKZGOU.9AWQMAML1K7J@kernel.org>
-Subject: Re: [PATCH] add `[pin_]init_scope` to execute code before creating
- an initializer
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Fiona Behrens" <me@kloenk.dev>, "Christian Schrefl"
- <chrisi.schrefl@gmail.com>, <rust-for-linux@vger.kernel.org>,
+Date: Tue, 21 Oct 2025 19:43:58 +0200
+Message-Id: <DDO6QBSWU8MN.3UA0DT8WDUPZT@kernel.org>
+Subject: Re: [PATCH] rust: driver: let probe() return impl PinInit<Self,
+ Error>
+Cc: <viresh.kumar@linaro.org>, <acourbot@nvidia.com>, <ira.weiny@intel.com>,
+ <leon@kernel.org>, <daniel.almeida@collabora.com>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <abdiel.janulgue@gmail.com>,
+ <robin.murphy@arm.com>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
  <linux-kernel@vger.kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>
 From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251016210541.650056-1-lossin@kernel.org>
-In-Reply-To: <20251016210541.650056-1-lossin@kernel.org>
+References: <20251016125544.15559-1-dakr@kernel.org>
+In-Reply-To: <20251016125544.15559-1-dakr@kernel.org>
 
-On Thu Oct 16, 2025 at 11:05 PM CEST, Benno Lossin wrote:
-> In more complex cases, initializers need to run arbitrary code before
-> assigning initializers to fields. While this is possible using the
-> underscore codeblock feature (`_: {}`), values returned by such
-> functions cannot be used from later field initializers.
+On Thu Oct 16, 2025 at 2:55 PM CEST, Danilo Krummrich wrote:
+> The driver model defines the lifetime of the private data stored in (and
+> owned by) a bus device to be valid from when the driver is bound to a
+> device (i.e. from successful probe()) until the driver is unbound from
+> the device.
 >
-> The two new functinos `[pin_]init_scope` allow users to first run some
-> fallible code and then return an initializer which the function turns
-> into a single initializer. This permits using the same value multiple
-> times by different fields.
+> This is already taken care of by the Rust implementation of the driver
+> model. However, we still ask drivers to return a Result<Pin<KBox<Self>>>
+> from probe().
 >
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
+> Unlike in C, where we do not have the concept of initializers, but
+> rather deal with uninitialized memory, drivers can just return an
+> impl PinInit<Self, Error> instead.
+>
+> This contributed to more clarity to the fact that a driver returns it's
+> device private data in probe() and the Rust driver model owns the data,
+> manages the lifetime and - considering the lifetime - provides (safe)
+> accessors for the driver.
+>
+> Hence, let probe() functions return an impl PinInit<Self, Error> instead
+> of Result<Pin<KBox<Self>>>.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
 Applied to driver-core-testing, thanks!
-
-    [ Fix typo in commit message: s/functinos/functions/. - Danilo ]
-
-Benno, thanks a lot for providing this patch as prerequisite for [1]; your =
-quick
-support with pin-init whenever something comes up is much appreciated!
-
-[1] https://lore.kernel.org/all/20251016125544.15559-1-dakr@kernel.org/
 
