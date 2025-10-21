@@ -1,176 +1,172 @@
-Return-Path: <linux-kernel+bounces-863174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE48BBF72C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54584BF72D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29851188CD1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0191885256
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C32355033;
-	Tue, 21 Oct 2025 14:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA37033FE2D;
+	Tue, 21 Oct 2025 14:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gW4fOR2z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpF58KJa"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF1733B957
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4614333FE11
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058299; cv=none; b=rfKyeqWMGwslW6R9CKm9fEm9pUtVillCDs+hOFq/lnjeLHPc3/Zow9l89Baa2NJy7tIlnhvJTPxNErXX8d3jXcl6R97H+nKQ8QF0Rzjdv5O/Dma8Un3vQ3e1twgCtSmFmbEI8sxJ2PkaG7ZRU46C+ytsIiJdzPGZ/Q/p5XlVqSo=
+	t=1761058472; cv=none; b=OJVbriG/v8FKEvqjpPXxNAmLb6DQt0e146jLO2HJbzF9Mtj8tSyiw3y6yPggikr37m0bVrWvVcGE+axrB1tmRGU13uth/IcKnf7PIRFpj0v+f5OIGriFRvFzrylumk7jQRW/+9aCfLW7Rz7oJjPR0wBfB0cU411zqMtHmoGx/qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058299; c=relaxed/simple;
-	bh=OvZwTpnL034d6cdbga6XYgVPJWxgJKlepp+Uogg4vpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MUilpaMzeu+vVJAUy7nE/X6ni+Zphddx8Z8Ub3pt0z2JmH3m/rIf1cl1lay3qmUwJEpTllH4HOAH1D47vy5+obeOS5ebJ6IQahVosWuwYQDu853sz6O0B0v1xgmHVG/IWz1iru46bLnAUSnlepNpIg2mi37wKLgLPKU4/oSxp1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gW4fOR2z; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761058297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3fQqPMI0bySJ5EX6wn5xGDqe/3HW56mcO1ohR5OxkgI=;
-	b=gW4fOR2z+r4WtUIGLnf036MmcO/J4kOn/beSVzxg4ZI5pIxM3aYBsoih/OtMB2HMZSlRv0
-	t/5maLLLeukrqF0IcInw5Rsnssk2c50hF325nu1hPiH+wqW8wen9NdpCsJqOI6nyO0ACWz
-	RDeLcyWISrgV7FY5bg5+43ER5/Vy28A=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-gZTRlqtEO--BRrX-uMIYww-1; Tue, 21 Oct 2025 10:51:35 -0400
-X-MC-Unique: gZTRlqtEO--BRrX-uMIYww-1
-X-Mimecast-MFC-AGG-ID: gZTRlqtEO--BRrX-uMIYww_1761058294
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-427015f62a7so2364733f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:51:35 -0700 (PDT)
+	s=arc-20240116; t=1761058472; c=relaxed/simple;
+	bh=702PiU3r/kYopEgHLFAnL552xteE1/5s+d2SVginB7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RKgfKbr2u9STsGPF7U7CCHcsDinth8h7h1T4kW5gZfPtY+5GS9wcq8fuT8eSTRcTY4CZy7Zq9VuXKNEsWSFHGRp+o949eDUMoga9OvYVw8U5xgBselaHhmkDvsNaooI+1TUJkwWS7AQH/++i9Na8/6AZLbVm5StLcBrO85QzwoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpF58KJa; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-783fa3aa122so46374597b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761058469; x=1761663269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Qi5vS8iEF7QtyXh07bja2k/V4HvOygxjGkF4YKo9MQ=;
+        b=KpF58KJapCymCasCWKPWXdQdmXZioZUDRRNT/9V3ZQmyIc2jwCpOjNWqQCeb3VLtY6
+         /oX0n549Y0pp3NCuPkjfekWbAYmK7jwWICXIMuVnhDcmMngnKFwwSlwKQsgGhkSNboh5
+         ZHpZ2l8XEDF5CfKji8HWWURB8GU0AEchaZpXhwN+n2zFJteDP4OgyaeIztDRtGEqHoY+
+         qig928o0f9uY9XWs4sjrMb+QCSo/VnXvp3/o+b6pXx7vd0yu2exi8OIHYy3WxYnnazPI
+         hUsksNdS51mYg0+1kvOVFVujVBFCosQytiX8kvGfBIDmIj/dkbOlpTIjjRfwQhi13jfW
+         Cshg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761058294; x=1761663094;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3fQqPMI0bySJ5EX6wn5xGDqe/3HW56mcO1ohR5OxkgI=;
-        b=RvG39XneEHO9cxARBEX3eSxRwnnso5dh2nbDZnSLUwHVuPmJUXEMfM+XwmcgFqzysR
-         2OrN0TFbOBYol5g4zfM5lOQWhgh1Y6sa+NNirWcF3DiapVOZ7zl8gp0YHo/gJ0pakch7
-         Yu6p1nBKJp6eXYubTr/YD08QVMR/ezkROlzTmjQsYrsfUhIBFTfUGqLHysnceDfEeD78
-         GspEUd7SLqoRkV01239FsHLtO44B3B7TzCdZDB3RioYom3vdXsFbXEbvLXKZe9HNxIk+
-         UxZHSfRGYQzbgeijMn1Q+MZujt8oiVXdtfERzvRqNRVCFCiQ4H5za6iJ2ilVj9rI58mT
-         HMTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXujq6aNmHq9c0KYaZ/K/iOZsUgF2WqgNqWmmTLNskQ4BjNTboPqqCxtqbYGk/14ARRJN7oH98zGJG0cpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDAz0ztiDKBIcFOA7An15M11LfDJZ4bg/4+3t1N2FouP2tncvB
-	mJyxXVBr49oFkePE/tlJTJN7vcGFpXhfrmpi19Z8XNfELFS5qL3dh9eY536SzY13f7A+BmILrXO
-	G9qjHzYYWcKT50989/7EEtfrvxIiTs864z/wEdCUAg+c6+CEX4Un28iHcwAXSYtGzjQ==
-X-Gm-Gg: ASbGncvIo35//Ptkck92mmhoIfK6ZfDh2xTc/CbQCeqVbf04pygD5/k+i7NNntUdUrs
-	AekThgB35TaSrL2TW0mPtI8aEXbpfHUAr5C1LKQD00knpI4SJr/ssWFByg6VJtBoiGIECPXCwZM
-	qqjslNc75WSTwlFH/8/DWdIgyrxcVIBDCP7ExpxUSKhWCyTVUzNVCkZ1JBLN7gVSzZTJoTxToMo
-	nEtakbp8Lpa4xDXmBKWk/leWI9wuUc+EMsDHF4GRGCkZg01N3zEbjs/jmWZdZ29+LTvo1JSI/P2
-	CjN2U0bD36glFpCbwwOT63okjMglsXessspaUVG0kbM8cGjomOJMOb5Dx5EqZYqss3x3q2w0U/6
-	4URPhv9OftbogyMtDYdUIgv+sqGG0I8TLIWLAFBL+Z2djqQATFl6q2e+LQcr785U5OeqNvPend/
-	TGFkq5US56cJD4weQ4s+DpHFNEolg=
-X-Received: by 2002:a05:6000:400a:b0:3ee:3dce:f672 with SMTP id ffacd0b85a97d-42704d146c1mr9781067f8f.4.1761058294284;
-        Tue, 21 Oct 2025 07:51:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzosmlWh3/P+YB7nAbBiJ3utPf/hRomXYGIIhrnu8Fdc/hu40WdTxCW6Sx3UdA0t9/yDMZfA==
-X-Received: by 2002:a05:6000:400a:b0:3ee:3dce:f672 with SMTP id ffacd0b85a97d-42704d146c1mr9781045f8f.4.1761058293882;
-        Tue, 21 Oct 2025 07:51:33 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a1505sm20941015f8f.8.2025.10.21.07.51.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 07:51:33 -0700 (PDT)
-Message-ID: <05eb8d64-bff0-411d-9488-d2fb47c66a2e@redhat.com>
-Date: Tue, 21 Oct 2025 16:51:32 +0200
+        d=1e100.net; s=20230601; t=1761058469; x=1761663269;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Qi5vS8iEF7QtyXh07bja2k/V4HvOygxjGkF4YKo9MQ=;
+        b=sRSfVr6I1kqqWrF6Woh7bI1UrT5EIxHxw8Oyka9qza+m+ARRtiTBD/intzioxXsd3D
+         U8r+gDfogCbhyRPbcMKA1zyOG+JyJiBYeAWCoq4DJAi0FX3ExED1o7mwPfymdiTJXhG3
+         gPUHEYbzx5ipx62cUHkCxJFlmB2pxB/q8XWQbcW7Q6H0BzJr+sny+a5WJUyl0c5qy8qC
+         oFsUfjoxpbUNhiFn3+PunRJtGNT2+EQsWaNt502957ioCZ8T9KdQ3XZHcIKrT0BVstjK
+         zxDH8I0ydDPcwWjUlFEQZ392NMSsPkB5IJpNNf5VVkTLltxwQ9YKNtteKXVlVdRwV8B8
+         HXMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc4I4oADcY99zS9SJn/Sqkr+88JylSQfqlDaiQSNO3D2mweE5SXa42aGfCFFoU4TIAHF7lOpDCift7Xq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDiI0kF97PYfpSeDv/iSO1Cj8FQai9EkN7cXZDB8C8V5xfHYHa
+	UysCKlSJa/EyctqhG3/WU9V6qHVeBMVg/O1L/Oi0D8jyWjtr+uNXVqjO
+X-Gm-Gg: ASbGnct4usypI8y1usPc1kfzdzRhlFDGOcZk4zEVk6FtD0HG4w0S2jbQhmuKGhHTCT7
+	3h6/r27DRI6T0+gOLedg9wMwYpXnmgrjJ6BCKJNSvGp3GpLy4/1gOWW+bvUZ3iCxabDseoepTci
+	2rU1TmD2LKYHjROWFlc/3gkq82yiE85/ipEK3QUW0vt57cFIN6ml/FLvlsh+HJaHlvLawp9ik8b
+	g3uEo0sI4BgrBvQRn4ZUjEqpA06A81l5ceLgb+yO3DP/X9KRHxfFKtHC1sxq16RD+NbPpNdZMhn
+	fkmub9xXMMfZUtujlhs7bAAPTADhVJ+vVwsLKASv1/KFatF4FnOXhPvAs/noM424zFxbZbICkzC
+	5CHL/ol2sC99GWXjIT2EcZPY1cLl+QQe2c4WtQj3UciWrtCr6hv2bOT67+VS/e7tY/gBlSXC2qu
+	kM0b3e8AoNIiNySkss5Un59T7ZAEhmmbdLWZQmwKYBmP9vlfzBeA==
+X-Google-Smtp-Source: AGHT+IGxPdsEqlA6SzXzoXcdF+PZJOGhAIN4Wj/cO37w5ASLEJUIVOHCB/yQlrssEQq6UGl9fxNsCQ==
+X-Received: by 2002:a05:690e:4195:b0:63e:2286:e6e9 with SMTP id 956f58d0204a3-63f27e387d3mr48108d50.15.1761058469224;
+        Tue, 21 Oct 2025 07:54:29 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-784674d6361sm29679307b3.38.2025.10.21.07.54.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 07:54:28 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	jackmanb@google.com,
+	hannes@cmpxchg.org,
+	ziy@nvidia.com,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	weixugc@google.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	liulu.liu@honor.com,
+	feng.han@honor.com
+Subject: Re: [PATCH] mm/page_alloc: Consider PCP pages as part of pfmemalloc_reserve
+Date: Tue, 21 Oct 2025 07:54:26 -0700
+Message-ID: <20251021145427.3580609-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251021095004.12157-1-zhongjinji@honor.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v2] mm/khugepaged: Factor out common logic in
- [scan,alloc]_sleep_millisecs_store()
-To: Leon Hwang <leon.hwang@linux.dev>, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
- baohua@kernel.org, lance.yang@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251021134431.26488-1-leon.hwang@linux.dev>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251021134431.26488-1-leon.hwang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21.10.25 15:44, Leon Hwang wrote:
-> Both scan_sleep_millisecs_store() and alloc_sleep_millisecs_store()
-> perform the same operations: parse the input value, update their
-> respective sleep interval, reset khugepaged_sleep_expire, and wake up
-> the khugepaged thread.
+On Tue, 21 Oct 2025 17:50:04 +0800 zhongjinji <zhongjinji@honor.com> wrote:
+
+Hello Zhongjinji, thank you for your patch!
+
+> When free_pages becomes critically low, the kernel prevents other tasks
+> from entering the slow path to ensure that reclaiming tasks can
+> successfully allocate memory.
 > 
-> Factor out this duplicated logic into a helper function
-> __sleep_millisecs_store(), and simplify both store functions.
+> This blocking is important to avoid memory contention with reclaiming
+> tasks. However, in some cases it is unnecessary because the PCP list may
+> already contain sufficient pages, as freed pages are first placed there
+> and are not immediately visible to the buddy system.
+
+Based on my limiting understanding of pcp free pages, I had a concern here
+on whether this would really provide the desired effect. That is, the pages
+in the pcp are not available to the buddy allocator unless we drain the pcp
+lists (and this operation is not free), I was unsure if there was a clear
+benefit to allowing the system to go unblocked.
+
+If we are already at the point where we need the pcp pages to have enough
+free pages to go over the watermark, perhaps it makes sense to just block
+tasks for now, and enter direct reclaim? Allowing more allocations might
+lead the system to be in a worse state than before, and will have to
+go through direct reclaim anyways.
+
+Please let me know if this makes sense! 
+ 
+> By accounting PCP pages as part of pfmemalloc_reserve, we can reduce
+> unnecessary blocking and improve system responsiveness under low-memory
+> conditions.
 > 
-> No functional change intended.
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> ---
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
 
-Acked-by: David Hildenbrand <david@redhat.com>
+[...snip...]
 
--- 
-Cheers
+> +int zone_pcp_pages_count(struct zone *zone)
+> +{
+> +	struct per_cpu_pages *pcp;
+> +	int total_pcp_pages = 0;
+> +	int cpu;
+> +
+> +	for_each_online_cpu(cpu) {
+> +		pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
+> +		total_pcp_pages += pcp->count;
 
-David / dhildenb
+Could this be racy? What is stopping the pcp count from decreasing while we
+are iterating over each online cpu, over each managed zone? Under the
+memory pressure conditions that this patch is aiming to fix, I think that
+there is a good chance the numer we get here will be very outdated by the time
+we try to take action based on it, and we may require the system to be
+further stalled since we don't take action to reclaim memory.
 
+[...snip...]
+
+Please feel free to let me know if I am missing something obvious. Again,
+I am not very familiar with the pcp code, so there is a good chance that
+you are seeing something that I am not : -)
+
+Thank you for the patch, I hope you have a great day!
+Joshua
 
