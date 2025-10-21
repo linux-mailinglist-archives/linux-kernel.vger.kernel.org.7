@@ -1,181 +1,241 @@
-Return-Path: <linux-kernel+bounces-862977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B78EBF6B65
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C3FBF6B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95AC420F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5512D189DF92
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6B3321DC;
-	Tue, 21 Oct 2025 13:16:37 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7482F220F5C;
+	Tue, 21 Oct 2025 13:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgKvRn6m"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2786220F5C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC1A23EA85
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052596; cv=none; b=ivi59m2oxQ4SzjVadebeFR+Kq4smwdHQCf44PC7q2w6IFBeW+kCPZ4lw+VCWQdSE52JavOhDb1zC+83rp67caoCoLc4OSZVObiwbXvycmDqInGrji/lNk+7mdBpBJf8Y6gD5A04MMKxGiKi6kH+IKo7e96kdVKOGFzKE4yG2DFw=
+	t=1761052608; cv=none; b=ARlp1zjnRXfNQuxxuAE/MWOIZVjvDWNV2bOJ+6ws7YrLb5Btp9bX16qGviyJ3TeTTKcbvlJ8uL5kHvvn8O4e9B5DGeNb7hVks5kkYPdkobK3SiL+CFUYRs0e9r4nba1OIEiBmIhfXzN4QYi0hvAxc6Pn6+7gGzNs1g/qG2MFPDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052596; c=relaxed/simple;
-	bh=4lO37nzrIpBC423IxnKVQSeJkCQrkTfEy9wzC0YiE10=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=deaYJmeWuDcqQzp3Hvsm/TCaaQDVcn4f86BiCiXwenHjOrvGT+Tyi6efo2rhZPiwRxR/fnnSbj2p42o2aOUQ2unQknM7PFBxyZtI3+gob6IDTYIh0k78VnebTquplPQymhkByRR3/MbCXJc7yRQWcgGJsrhnt+AW3FWthYfApyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430d1adb32aso28988255ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:16:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761052594; x=1761657394;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1761052608; c=relaxed/simple;
+	bh=knG1/6Zq0XiYPG2BG5s77b/+W0LTFGc5Cok0Z3vP3bA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nq9LAigVBxVdWaTMe/9W+I/1LzY2gp9V2JefqWrC6xcDyUJxKRLtJH5uZbwqoSq0VNIeTN/GQer9g20qII/07gYlKtMFyApsS4RzdY1zPwNRB7lS3O2a5kWphwfvHcRktY18/IzOghlJFd90MS6n+zt256U3H3BVE/otw3KyfU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgKvRn6m; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so10607442a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761052605; x=1761657405; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QaEtq608qHIwmej6NQk9j0kRKo2k3QnrAL9CW0txtrM=;
-        b=moEJBygBzDjoTPPSj5ZgrGNrhvBzssPHuL8RXAnDBM0UgV4eCC8H4sKaoF0YxbuXxB
-         gGuFqiI+ke+8Rk1jqa/vXb1CA6Sl+fCiG74JQYUn5M56hFkHm/pPpP3g1KrU24EDxfXr
-         WkCzWTU3DIuLgX8Hk437MsJbOt/si3HOKBX7Sy79dAVK9SX+dEoRcwaKJh5hwyXcj4gE
-         PhqQKhp8VoNaM+YYayVmzpj2IfR232z5LZX7RubN3TwkkmmbKqoYMA/W8vhVa1aop5ZU
-         jvhTjedsQWlNsPFvqVWyGiAKFgkXR1Pd69lgparLNDWhvXzFojqTwH2GWJt7HevQblrm
-         Aoaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH5lHAbjvDplCpPnpjUzr5EikSIBwt9b9nkb2XCbSVRWFvwPCrRV39K/HAtHUQUYWXoFMxMRx1jOcSgaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8U1qvwsyuWlReH31JTbtTgyInUtBzEd5rdHa8uUO4ZnJoRyKY
-	30eV3mIpqbnveHbHN8VBb1O0veNZHaMJT+OL0o4lJPpl4D3EEMHDFfsVmHwsJSjlQ1vJJ11BAaC
-	d0OINbHQhG6tHQuGM7tL6Tm+B64vcXMWCJB9ZBYIzgNgMkVG5Vuyz54gPVxY=
-X-Google-Smtp-Source: AGHT+IEJZ8XvlCYCgVR6vGEL2ByPS/F/dPCsyXntFCLM1/ojcI275IP5TD3P3NoKbuhxBfMSYs0elzRc39SD7RQktq6NpIM4VWVL
+        bh=/0jubacFDSdFcQnHYVbBIaUUxwO2V0rJTSsvBZVmUXc=;
+        b=GgKvRn6m/DuPSC3wiV8SG8odvNRTXd+OGVddf7MakmLU9w7e4EggAcTcWO5Y720nWv
+         2lKrXzc9KJZvUrc14y2cgkG64FId6FDcuG6VNzVt0xeXSVlknvAQmuaTq2XI/uO7T1Ka
+         Dngq3hl96cOPya2vjVzzAB4kufGjl3WrDQvrHQ76MEzQDrrjweP4/g14p0rEOt2eaN9i
+         xsx8gzcJUJrlOBcOp5e2QdCSU797GYjcTVsMY9zWKgaKHYmzxKQPXfMgu+Figo7wcJFF
+         VEuAplV8yZf+J1yZ5VVwYZ0ez5XlV7fzQ8ojASIJMXqurhTRP9YfwHAhq1VxIuWlspZ4
+         j3LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761052605; x=1761657405;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/0jubacFDSdFcQnHYVbBIaUUxwO2V0rJTSsvBZVmUXc=;
+        b=q606cIZpwo9XEmVnjGC08Zd6B4FMOkQhta9YP5GrO16epyUKs2CV8lNKFzNlSBw/sg
+         cd02g1YVKoyeOSn3ygRWvhOMG6Hf5JmnH3i632ujI5rOi0lmid5FRL/krPL0saRrx1Eq
+         BhELN4UBHYpyFdpBTP92GP3ZXa1LQSIWOgSkqWtUeg2YapvWipXVjTzp9UCxxzh2Kps4
+         v0AO7uPi7FPNuuvpnmedLAOG0qggeINcsDPhzgEHXWDJnGsb27wysVTpWAsMw6e9gl49
+         RNPCAtF/cye7lKc/ojdsfblsWqwIK2NtgkYGgx7jIPpq4fLptHyC8b4LTYG7Q0O4HKTK
+         C/Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKWlgehoz9R3VJdN7anMUd3UNo4Lui5G6X08NtMOWi1Memaa7yqDdmS9opBeWQS3M8cx8VwsIM8ymWOZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfUNvyapsgE9klkuEY0ycqXUR8OpCDDWMimZff9tNnBSnz5jRl
+	qZii6OuYhV07mkFtuBHmkAAF+EIsvD7ny8742IAsAgd0x0xakSAoKWKl
+X-Gm-Gg: ASbGnctCyMNLo7w4r7ch0bN/EzQl4YkvHCqj/RJEPwK7GRiYN3M1QvrpW6CrxSoqHor
+	6rlri7DLOcY7O4PLUzqQumoPzG28MPQwK6fVuaF11NILNDODSrDUbaw/8tEkxHPbLzSQxO99pEX
+	GnXMZfc8EfD0nx9ioi6a8cBt5oD/xZBOjiaQ4HxqI5Ix7ogzKT4drYTr4SiZx0/BslYlyHD/M+9
+	EwlQ+FC+gvnd/sMFihlJKfGKMmlfY+vxzV43OnPXBgvv1MG2xgu8uIEeYZ73feMlWmhiqzYvM7M
+	cARhrJI1aaekUOmk400mGR72yBzZ+bXHoV7fjgJvtcAKAS+AVSwN/E74KPyDqm3hsAG41G2WnCY
+	8m6tidmupEkKn31rdZ6h1xR0l5HG8udDVeBSjmKF80HNeLBzjHBtj8Obd9pAtALbdD6FCPqm5lx
+	LVinquhVltEn7NCLh+srSbW0HQEPXN/LkNevOREVN1New=
+X-Google-Smtp-Source: AGHT+IGLK2EmnFCqdftdxAKB6j+6Ma2jSdfUwKotGCFRUzw3RKdiF0RM9WMxavQ7l+6jXDABf8pL5A==
+X-Received: by 2002:a17:907:3f25:b0:b30:ea06:af06 with SMTP id a640c23a62f3a-b647324404cmr1795728766b.24.1761052604632;
+        Tue, 21 Oct 2025 06:16:44 -0700 (PDT)
+Received: from [10.25.219.115] ([128.77.115.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8391523sm1069741966b.18.2025.10.21.06.16.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 06:16:44 -0700 (PDT)
+Message-ID: <f1bbd303-2798-4476-921a-62b45fdb67ea@gmail.com>
+Date: Tue, 21 Oct 2025 06:16:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2301:b0:430:ab2c:bd9f with SMTP id
- e9e14a558f8ab-430c5254fffmr247876525ab.10.1761052593942; Tue, 21 Oct 2025
- 06:16:33 -0700 (PDT)
-Date: Tue, 21 Oct 2025 06:16:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f787b1.a70a0220.3bf6c6.0006.GAE@google.com>
-Subject: [syzbot] [can?] general protection fault in can_rx_unregister
-From: syzbot <syzbot+7a52d4cc48fa6eae3c86@syzkaller.appspotmail.com>
-To: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mkl@pengutronix.de, socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    98ac9cc4b445 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1732b67c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=7a52d4cc48fa6eae3c86
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1c3d2e04d272/disk-98ac9cc4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/eccd74106a6c/vmlinux-98ac9cc4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f6ac0e43209c/bzImage-98ac9cc4.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7a52d4cc48fa6eae3c86@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-CPU: 0 UID: 0 PID: 4715 Comm: syz.0.9421 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:can_rx_unregister+0x250/0x730 net/can/af_can.c:537
-Code: 54 24 20 48 8d 84 24 b8 00 00 00 48 8d 74 24 78 48 8d 78 b0 e8 11 dc ff ff 48 ba 00 00 00 00 00 fc ff df 48 89 c1 48 c1 e9 03 <80> 3c 11 00 0f 85 7a 04 00 00 48 8b 18 44 8b 64 24 68 44 8b 74 24
-RSP: 0018:ffffc9000584fba8 EFLAGS: 00010206
-RAX: 0000000000000030 RBX: 0000000000000000 RCX: 0000000000000006
-RDX: dffffc0000000000 RSI: ffffffff8a56c94b RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000c00007ff
-R10: 00000000c00007ff R11: 0000000000000001 R12: ffff88808f3a8568
-R13: ffff88807c774000 R14: 0000000000000002 R15: 1ffff92000b09f7c
-FS:  000055558d910500(0000) GS:ffff8881249d6000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b327dfff8 CR3: 000000005b42d000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- isotp_release+0x937/0xb90 net/can/isotp.c:1213
- __sock_release+0xb3/0x270 net/socket.c:662
- sock_close+0x1c/0x30 net/socket.c:1455
- __fput+0x402/0xb70 fs/file_table.c:468
- task_work_run+0x150/0x240 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x426/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc323b8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdf923ea98 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 00007fc323de7da0 RCX: 00007fc323b8efc9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007fc323de7da0 R08: 00000000000427cc R09: 0000000ff923ed8f
-R10: 00007fc323de7cb0 R11: 0000000000000246 R12: 000000000021db0a
-R13: 00007fc323de6270 R14: ffffffffffffffff R15: 00007ffdf923ebb0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:can_rx_unregister+0x250/0x730 net/can/af_can.c:537
-Code: 54 24 20 48 8d 84 24 b8 00 00 00 48 8d 74 24 78 48 8d 78 b0 e8 11 dc ff ff 48 ba 00 00 00 00 00 fc ff df 48 89 c1 48 c1 e9 03 <80> 3c 11 00 0f 85 7a 04 00 00 48 8b 18 44 8b 64 24 68 44 8b 74 24
-RSP: 0018:ffffc9000584fba8 EFLAGS: 00010206
-RAX: 0000000000000030 RBX: 0000000000000000 RCX: 0000000000000006
-RDX: dffffc0000000000 RSI: ffffffff8a56c94b RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000c00007ff
-R10: 00000000c00007ff R11: 0000000000000001 R12: ffff88808f3a8568
-R13: ffff88807c774000 R14: 0000000000000002 R15: 1ffff92000b09f7c
-FS:  000055558d910500(0000) GS:ffff8881249d6000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b327dfff8 CR3: 000000005b42d000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	54                   	push   %rsp
-   1:	24 20                	and    $0x20,%al
-   3:	48 8d 84 24 b8 00 00 	lea    0xb8(%rsp),%rax
-   a:	00
-   b:	48 8d 74 24 78       	lea    0x78(%rsp),%rsi
-  10:	48 8d 78 b0          	lea    -0x50(%rax),%rdi
-  14:	e8 11 dc ff ff       	call   0xffffdc2a
-  19:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
-  20:	fc ff df
-  23:	48 89 c1             	mov    %rax,%rcx
-  26:	48 c1 e9 03          	shr    $0x3,%rcx
-* 2a:	80 3c 11 00          	cmpb   $0x0,(%rcx,%rdx,1) <-- trapping instruction
-  2e:	0f 85 7a 04 00 00    	jne    0x4ae
-  34:	48 8b 18             	mov    (%rax),%rbx
-  37:	44 8b 64 24 68       	mov    0x68(%rsp),%r12d
-  3c:	44                   	rex.R
-  3d:	8b                   	.byte 0x8b
-  3e:	74 24                	je     0x64
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/8] reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
+To: Frank Li <Frank.li@nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-8-laurentiumihalcea111@gmail.com>
+ <aPJZdAQwdoOP3cqN@lizhi-Precision-Tower-5810>
+ <64b28a11-337a-42ba-8765-d94b19070d66@gmail.com>
+ <aPZMJb9VwylTIiCM@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <aPZMJb9VwylTIiCM@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 10/20/2025 7:50 AM, Frank Li wrote:
+> On Mon, Oct 20, 2025 at 07:29:28AM -0700, Laurentiu Mihalcea wrote:
+>> On 10/17/2025 7:57 AM, Frank Li wrote:
+>>> On Fri, Oct 17, 2025 at 04:20:24AM -0700, Laurentiu Mihalcea wrote:
+>>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>>
+>>>> Support i.MX8ULP's SIM LPAV by adding its reset map definition.
+>>>>
+>>>> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+>>>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>> ---
+>>>>  drivers/reset/reset-imx8mp-audiomix.c | 51 +++++++++++++++++++++++++++
+>>>>  1 file changed, 51 insertions(+)
+>>>>
+>>>> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+>>>> index c370913107f5..b333d7c1442a 100644
+>>>> --- a/drivers/reset/reset-imx8mp-audiomix.c
+>>>> +++ b/drivers/reset/reset-imx8mp-audiomix.c
+>>>> @@ -3,6 +3,7 @@
+>>>>   * Copyright 2024 NXP
+>>>>   */
+>>>>
+>>>> +#include <dt-bindings/reset/fsl,imx8ulp-sim-lpav.h>
+>>>>  #include <dt-bindings/reset/imx8mp-reset-audiomix.h>
+>>>>
+>>>>  #include <linux/auxiliary_bus.h>
+>>>> @@ -17,6 +18,8 @@
+>>>>  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
+>>>>  #define IMX8MP_AUDIOMIX_DSP_RUNSTALL_OFFSET	0x108
+>>>>
+>>>> +#define IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET	0x8
+>>>> +
+>>>>  struct imx8mp_reset_map {
+>>>>  	unsigned int offset;
+>>>>  	unsigned int mask;
+>>>> @@ -55,6 +58,50 @@ static const struct imx8mp_reset_info imx8mp_reset_info = {
+>>>>  	.num_lines = ARRAY_SIZE(imx8mp_reset_map),
+>>>>  };
+>>>>
+>>>> +static const struct imx8mp_reset_map imx8ulp_reset_map[] = {
+>>>> +	[IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST] = {
+>>>> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
+>>>> +		.mask = BIT(25),
+>>> Register defination still perfer use macro. If not, let me know.
+>> I see no value in adding defines for the masks (see patch 4 commit message)
+>>
+>> in this particular scenario.
+>>
+>>
+>> Is the assignment of the "mask" field for the "struct imx8mp_reset_map" item found
+>>
+>> at index  IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST not enough to deduce that the
+>>
+>> constant we're using is the mask for the DSP_DBG_RST bit?
+> This bit is NOT software choose bit, which must be align hardware spec.
+> Define macro help map name to spec and easy to look for spec by use macro.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+yeah, we already have the DT binding macros for that which perfectly match the name
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+of the corresponding bit in the SYSCTRL0 register. I don't see how adding 6 more macros
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+with the SAME name as the DT binding macros and the "_MASK" suffix would help you in
 
-If you want to undo deduplication, reply with:
-#syz undup
+this regard?
+
+
+>
+> There are over thousand result to seach bit 25.
+>
+> eventhough search SYSCTRL0, may have many SYSCTRL0 in RM.
+>
+> Frank
+>>
+>>> Frank
+>>>> +		.shift = 25,
+>>>> +		.active_low = false,
+>>>> +	},
+>>>> +	[IMX8ULP_SIM_LPAV_HIFI4_DSP_RST] = {
+>>>> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
+>>>> +		.mask = BIT(16),
+>>>> +		.shift = 16,
+>>>> +		.active_low = false,
+>>>> +	},
+>>>> +	[IMX8ULP_SIM_LPAV_HIFI4_DSP_STALL] = {
+>>>> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
+>>>> +		.mask = BIT(13),
+>>>> +		.shift = 13,
+>>>> +		.active_low = false,
+>>>> +	},
+>>>> +	[IMX8ULP_SIM_LPAV_DSI_RST_BYTE_N] = {
+>>>> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
+>>>> +		.mask = BIT(5),
+>>>> +		.shift = 5,
+>>>> +		.active_low = true,
+>>>> +	},
+>>>> +	[IMX8ULP_SIM_LPAV_DSI_RST_ESC_N] = {
+>>>> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
+>>>> +		.mask = BIT(4),
+>>>> +		.shift = 4,
+>>>> +		.active_low = true,
+>>>> +	},
+>>>> +	[IMX8ULP_SIM_LPAV_DSI_RST_DPI_N] = {
+>>>> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
+>>>> +		.mask = BIT(3),
+>>>> +		.shift = 3,
+>>>> +		.active_low = true,
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static const struct imx8mp_reset_info imx8ulp_reset_info = {
+>>>> +	.map = imx8ulp_reset_map,
+>>>> +	.num_lines = ARRAY_SIZE(imx8ulp_reset_map),
+>>>> +};
+>>>> +
+>>>>  struct imx8mp_audiomix_reset {
+>>>>  	struct reset_controller_dev rcdev;
+>>>>  	void __iomem *base;
+>>>> @@ -183,6 +230,10 @@ static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
+>>>>  		.name = "clk_imx8mp_audiomix.reset",
+>>>>  		.driver_data = (kernel_ulong_t)&imx8mp_reset_info,
+>>>>  	},
+>>>> +	{
+>>>> +		.name = "clk_imx8ulp_sim_lpav.reset",
+>>>> +		.driver_data = (kernel_ulong_t)&imx8ulp_reset_info,
+>>>> +	},
+>>>>  	{ }
+>>>>  };
+>>>>  MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
+>>>> --
+>>>> 2.43.0
+>>>>
 
