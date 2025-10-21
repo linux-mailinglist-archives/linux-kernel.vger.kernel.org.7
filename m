@@ -1,126 +1,199 @@
-Return-Path: <linux-kernel+bounces-863647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFAEBF8B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE031BF8B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A34448630B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 658F8487844
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7569A26B75B;
-	Tue, 21 Oct 2025 20:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466D1277C9A;
+	Tue, 21 Oct 2025 20:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="WzCL/I7I"
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Efa9oVra"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011019.outbound.protection.outlook.com [52.101.70.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C4B350A0B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63281BFE00;
+	Tue, 21 Oct 2025 20:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077947; cv=pass; b=k1jN86jibhGVh3nfcvcl0fzkknvSmqMwMXxOVOjw6sLiDBeXXmtUM+95ybtdzpo2Zo6ass5FRHiDFmJEzy4W5dud0uMFesrDhrdG3z/T73PYjiYLBs+wvvZYKa8BScYiKHB6FixPFLN1bP04stWdbDX0tPoKvE86SBC1fdWQ7Es=
+	t=1761077986; cv=fail; b=U7rOdMqr9PQf6UOOqUZ7KT8Mld33FGvVFbBYuQVcCeCmttXqOzMqaykLkCkMcQsZtXy9/5eW0Td3PTtJTe3LpFJPKhd05/RaRqzXKgs8CcxUFrW/QgHQZIb/eMpwww9ScmBhG+vh6yBzgPHu68VWOPZhgibBcU/S6BuKCuh/p7c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077947; c=relaxed/simple;
-	bh=fQSr0ohH6ldzOLHdTI7voZvzMcDFXtD4eMmeZzLcs+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OqblLTsp+TStfUvIeHBwlSEzIsmP5QlG83WBxN11X4GXCWmOGeviJ1o0JDToSkk5Qh/vfxBJV6PsjgyM37i/DrqpgOIJ8r4u0OlFuN8Trd3hYYyXE1e0WfyY64UmkrRxf8S3YVMScBLMDNIFOY3luQ22+8sSAeY+57Pq++y/LUM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=WzCL/I7I; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from www.redadmin.org (bc043154.ppp.asahi-net.or.jp [222.228.43.154])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59LKItHM026350
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 22 Oct 2025 05:18:55 +0900 (JST)
-	(envelope-from weibu@redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id 05D5F10A0ECCF;
-	Wed, 22 Oct 2025 05:18:55 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id UMCxPa58udCL; Wed, 22 Oct 2025 05:18:51 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id 2410F10A0ECCD; Wed, 22 Oct 2025 05:18:51 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1761077931;
-	cv=none; b=lfeThg3CYsn4JXjwm32xuTZQMVpQCont5vtfXxOtgnt0qUfdOSiTBnkmnq75FDUI66hRzJsQ736sReOATElhL3Q6lnuTX3sRI1q0J18NbDoRb71ChCGqHdhS/GcsCqJIBbiY059PEGXKpwYK08EgVTia965a1jNkgKew/NW9600=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1761077931; c=relaxed/relaxed;
-	bh=TgHTh1zsRTUhGnDg2RPXn7vAWeAZ5MWHXT2jf02tKlo=;
-	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=FKsjsewgw0weHhfPMcPCbE8tXr+YPMVJHeVItzdwhGmmV6Aj9PzV3IvZk2qrIIOge4MxeDxQQpqbMwBqUjY4QnT+dQZbjlWJwh/34AuTrZSuEIPZGDg9hkrPfpass33EcovPmwnkmfkfRKq8UY1uszIv4kHDhYrTxRB50oPRNkE=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 2410F10A0ECCD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1761077931;
-	bh=TgHTh1zsRTUhGnDg2RPXn7vAWeAZ5MWHXT2jf02tKlo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WzCL/I7IYMPKkSSrAOW+I3bR5AWBkKufQCLydGSIJssrcHraazEPNIuDzGcAd+3uS
-	 qvW7G3igJ4wlnK9RtbfMSEndKjBgvBSb5WJ2aWWdfQSRXrnuSpuVDmgpM7z8DL//yX
-	 T/1yermfrTUABhKjdkd4nT74EUDq4e1a1umkCvmo=
-From: Akiyoshi Kurita <weibu@redadmin.org>
-To: amd-gfx@lists.freedesktop.org
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <siqueira@igalia.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Akiyoshi Kurita <weibu@redadmin.org>
-Subject: [PATCH] drm/amd/display: Fix typo and incorrect function name in dmub_srv.h comments
-Date: Wed, 22 Oct 2025 05:18:48 +0900
-Message-ID: <20251021201848.311586-1-weibu@redadmin.org>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1761077986; c=relaxed/simple;
+	bh=mVzvHDUy0iundIOD+Izp0ey76KFRQFgZjuCZccLVVCE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=aJr40s5W7Qsm2syw9gpr3tpZypYRx0lvnhpwrljdNQpenKju0j1cdWCvMIUFClOYDD95jsfBBrUF1tAiXOVzpei7uX4lUgCBTsPP9hEG1/6yMAKP1b3UmAA9HwhZxjbqgdG/3ZgQfD1fiZ9ylvqwTLHix7V7YWoWAniBhVZ2zCM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Efa9oVra; arc=fail smtp.client-ip=52.101.70.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WIBvCGPzoKI6ufrOvNtaD1nSD9MbfWUZLoG/u2QGk2nDjjmcw64hlCBN4Ywhk/ZPiwsB9IqMtSLoLhsf67s604pLR7g/RP0pvArluCmhM54AEb7LTm/SYZiszEXO5kAzKVLbLAMXkXiVUz/lPgF40MX3ApAbD0+pdjQnRrKuo6DHZE3nq4dt3EL9mgQaZ1O7ujRVdTfmc4BOLffdaoialYq5BhNRAQ5z33Z44qskC1/aXDjtZ6JhY+6n4O8nHZtCB9Xg86grl8tb7GolMpdh/S+Hm30Yw+3g1/mfzPBf4Rj4u2r241S/MyB20QA8NimAvE3+XUfsJomJZ4WA+POaDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OMyMkscfhr5ZMmlk+PVDDAYeJZ9wGqFsifdw3UMe9gc=;
+ b=x0o7RZKrRxaPy35+6Et6EJNoIO7sqbytY9bBfLxEybhEmOztUcRUeK407fLo4gGY9oxmjO45mfbBY+rgOmXkKC4o426vA6OZDYJfdQoUp24hhxCMgn52ReVs+CEt9zMc7r/8b17yPDFQskwRnbFLnX9C9JsLLOp5QLLhZzXxRs9hhaOkiATZrmOncU5ogvxJMxBKisxWXIfWfHK1U7woK9rW6Ly4F2EWoyGm4l9ZsHhp4DFgucgl2C2e0ZFTRkqOceosE93Cnhs+hptFPVcKO0dHo4w4kArphRr5BlFDfERoA+IEj3i3efo6poHkCEwQZl6294LO//5p8r+RNnnafQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OMyMkscfhr5ZMmlk+PVDDAYeJZ9wGqFsifdw3UMe9gc=;
+ b=Efa9oVra6XfHO30w9x8BrcrWPPMx4EppBi3KcO+h3SGiASZgltPdxNLHNgQmqyi/bH139hSIYF49Ha/rU/TdF6pu4IhvtwZ5oEoT21y1B0DVB9AGuVDyPxgZeYj+rrs4TeMa5XqouGyLFZwNMNyLXwP/1iGYQDdmAhuKryFg5rPpg9DvN4ZJYV0YEFQq9h994E15GvCvhWj22JX4f4bTls2I6abwFq8XsGmzRmwW3HQidAmbVSNedvITwaiEtFNsX/KZBqtMqjrR+XWUOxdoRY7FH9Cb3TnhWeAG13ubX84WbHDpt8tF8F9xfQRPQF1+NrdLQPXfTnBIiwTBqO8dWQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AM0PR04MB6995.eurprd04.prod.outlook.com (2603:10a6:208:18e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Tue, 21 Oct
+ 2025 20:19:40 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Tue, 21 Oct 2025
+ 20:19:40 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v4 1/2] dt-bindings: touchscreen: trivial-touch: add reset-gpios and wakeup-source
+Date: Tue, 21 Oct 2025 16:19:17 -0400
+Message-Id: <20251021201924.2881098-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH8P223CA0008.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:510:2db::7) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM0PR04MB6995:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd49fca5-8410-4f6b-25b9-08de10df29c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|19092799006|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0fI73uWa3Hc4apMAVLyJoYcqLaQGRzAWbCXFqn2HchAQ7+WXT+ai1OipBSXI?=
+ =?us-ascii?Q?m2bC2wzkqoqITzVG49wOTExqJ8WXewFV0KEtsIs8GzVoeOlkCow3Kk1++FG0?=
+ =?us-ascii?Q?UwW333EJzTUF9GjTdUbqBLyHtpWreVIy10xTGt+VHc6RiSPjiYajMlkFp0A6?=
+ =?us-ascii?Q?a31yxCOghHKTYRO2RQFQKvP6qSUWrwRhaSpucoKbGKAmMq4gqKV8glbg452V?=
+ =?us-ascii?Q?kd2jNdFK+7mJT8ivWAqlAqFnnyUEKpKZyONqQlvnhIkMnbNXvCRJfxD+dzj1?=
+ =?us-ascii?Q?Z06HoxWvZziICmYMN0Y7h0X8X27CtRkMI2HxkKegKfftpBR+wX5oqVxBiv9Y?=
+ =?us-ascii?Q?+RhMDMtUOqt17ezysIHfogBFsLTofUfRJW1MS25xHFtowe/SLgm5GyCgGaFD?=
+ =?us-ascii?Q?vq55qG99HFQuxguTihM2M9Zw+qUN1nXI8RuMF6ceUGgMjsGfIF4IK4CXZJLz?=
+ =?us-ascii?Q?RHDrpUIIQg/USwCnbMJ1A4/luCLmi7faKANyTXuuN0naNmrB9CJwsSIwtmWd?=
+ =?us-ascii?Q?O0Ncokx7KFYxqfRCjdZ6GM5qz+I4NrromnNFIa3sIqGTJaG6paoOsy9Oaezj?=
+ =?us-ascii?Q?ISggatI5AymOc3HqJs0XgeMlA8iMS6I2iROLeIqCFes6elIiVVvwS8lFSFfV?=
+ =?us-ascii?Q?0uq6rnqvZr/oZ9cnqFx6879Jo1V74GLFm6ifO/iPTZ2W8BI0surQkuqwo5wP?=
+ =?us-ascii?Q?1B/dAZ3VOKKARTtETmsyvMkMhLhVZTWhjR+Ilu/BL7dzwV/KVns/ot0WPLTg?=
+ =?us-ascii?Q?nQAnuRzmM0XoqBj/hr9JbhZL4JW5yQpmug4npgz+X9R0dYgjSuRQNJatsOUq?=
+ =?us-ascii?Q?4nDuFeYXZ1RGqOifl0rtmZY0CAPTMyu38vFB0yWHwvA635u7/9NBvxMDj8Op?=
+ =?us-ascii?Q?zq5zV81NTPVR0a8iblc+rT1quQuxOoEyVh3ilyIEtZt0mSn0BTkid6Zh1Zz4?=
+ =?us-ascii?Q?9n2gSAhhUCoJGEU5HEuJ7DxFpP4Sdv1mCP4LnRqn3RnCyoGCJoqN4Up9xVBH?=
+ =?us-ascii?Q?jIRLNLa0PmAA5bw3OsME+wob9ve2ot5v2mYrlaSvQy5Dn7X5e3wvBuPChycB?=
+ =?us-ascii?Q?/H4uu2PVTQaKM8gnzodE3qntF1jqVs5lGh4hEFL/X8v5A5pngjguYyrssp+T?=
+ =?us-ascii?Q?1JjGhSsXolC44F9JMIEBIb9ScW3ZYHstV5Kejvu6G7F7flKw1j/z6Qd8mSN2?=
+ =?us-ascii?Q?nTUKOughjzov5t4QXVUSKu/Uwrop0KX+BTF/xRK93PRQPiF/f8P8ghqAufu2?=
+ =?us-ascii?Q?F/cHCs8DgSf1I2dzkcOP+2of9G1JK/C+47jOiZfHaSQjbnfWB2EfEbNmPga4?=
+ =?us-ascii?Q?/algbaOB2k5eTuTLEaLkpq8unJzUaVtSfoYok8aEgcjGrvbHOQM6SB0eUbQZ?=
+ =?us-ascii?Q?K5lX2tS8NuLNfNBOsA00fUEDRSdoh9gxEmatZ1EyoND51fDZ3huYU9u9Phea?=
+ =?us-ascii?Q?4JiOJd/54GCA7A5297YciJ64LtN8Ct9Ybg3G+5Fy79UYo9kIz3guoZUMnnr6?=
+ =?us-ascii?Q?qxurxPkNddAgnz8Sl5hhkkWi+TcBlwAsjoZJARltxkNw8pZhfG02hgcfXQ?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OIQf5um+vnSA8SqPIFf+nH71Vbd8bbetoP6UA6csZpZc4X7gDtnSWsCz9jXq?=
+ =?us-ascii?Q?VN80raQkqx/M1lVXfq4IU/MekTkb+XNB6zIjaTny2prqdZqAOocmTSCXAqaD?=
+ =?us-ascii?Q?SlMCyc5Cd9ikFnlu3995Z6moVE1H9qtffAezCG1Vtq6ZR6XvDH9I1ztoLWM9?=
+ =?us-ascii?Q?xQWWYdvFgI6E5qaRoTbLi3h2QraDpOSLsB3y3c6zbNKX0Q5NWr4hrME7163s?=
+ =?us-ascii?Q?cTNifYWiQeDJUyNYSsRvN25G1lV4BWshOtvyKG+3NYgqngQ/2/J3zo940LL+?=
+ =?us-ascii?Q?s55fPTnSKESir/OhlBmqbNR4IXa7XuUOK5v1pr/PWoHNczBV/+z5EESZushV?=
+ =?us-ascii?Q?YmcdosTnnQvttKq7su+e5+NikgFtDFBXPY7/4fNW6LueBrNQqGHAuZTTRFRz?=
+ =?us-ascii?Q?9UJKQqBFLvy4H/BxivpcIwxnFARvU6fA4eXhFZDamWNMagP4y1sOpJpr4Sob?=
+ =?us-ascii?Q?UH34CneDYwzo92CYY8ehtgL72ddZ97g4tvEKd/fBqw1w/aPOXyomqaHR3Cy9?=
+ =?us-ascii?Q?29YReBK/VeYld5nEIO+SEaKJmxJJfr+5GdLs0UYyoyngmMYQbhMybfCu7XDB?=
+ =?us-ascii?Q?ndLjzFEs85ehjGvEW2U+kZgPpUrHPfOr6WGnHjEQrFSz9IS3EctStAZBI3BO?=
+ =?us-ascii?Q?v7ZXrCpGqallfPRNeZ8Unn01NEWyws2Qq03tUQYMc6NcbRTu8v4GDCNq5GtS?=
+ =?us-ascii?Q?2B9bPxo3NYBMU/GznzReREXeDvGX8LitYd/l2XvrVvGy4WM4dkUO9pdfLygK?=
+ =?us-ascii?Q?xozH7wbl0oNef4Sx+xEXexritPBjowWX5o1AxWGNOHzFdstS9yJyzwd4fbFK?=
+ =?us-ascii?Q?GRuR0zTtYkSgcwleq22DRm5zVUsiyo7fFkX+C0m48K4FMmStnvxiiqUGQhQY?=
+ =?us-ascii?Q?hi+FcUr5K0dP3LoQTzqE+Qlk5+KMR5Ao+qfu2OFwbcqIvzXwJPp0NDq0TUcM?=
+ =?us-ascii?Q?SnBKvAuS2kwI7JVteSaqOPac+LqSwdms2tfLXezSKUp0vj52hIczcSmvYI7T?=
+ =?us-ascii?Q?xP7vUTow9CHosuq19wYiEJFj319fA1bQIxpQZ4AWZjXxO9AmccHJSAPuTPVm?=
+ =?us-ascii?Q?RqldXae0Hm/f35jwPQ85hWG54E0VZjMKekNlN0uy27DXw4Y7z1bddnkck69T?=
+ =?us-ascii?Q?3AFTbKa57gDS688m6fzN3Gnboxub02/Wn0zpgzkXBJ8Vf5IPVqkCITVN32nb?=
+ =?us-ascii?Q?NOv1I5vWk3lC4zATa5Y9erOb8i8hyIyJoX/85cRmxdU8N0h9fS7oR1sFgKAL?=
+ =?us-ascii?Q?KFtuzfrJKzWzogZf1XRYU0RyDJ/k3aOQTZA+YOoF0PZTSCbx4KAZFNdGd1tJ?=
+ =?us-ascii?Q?t9Nbs1a3l0zHlpnbMmcp+/JoiuXL2nOOneD7kcVlFc/YZj4cPAr/0yCYBePJ?=
+ =?us-ascii?Q?KwEZw5wmj2Nc9RQRi8JcZPK3gUvX4/09nOK2XsQALv59yg3fEICBhgn4Rv2q?=
+ =?us-ascii?Q?mblBCrc+y7JqDbjy/r1cuaRWU0JFyg8sMyuy8hZhIxeX7lHv21zO82PkqS/H?=
+ =?us-ascii?Q?GdlLIsYZoRKJz/kL0gscUDoj8+FbQ2OvgOgMl1sSV4+DbwbVIx3yGyYU6BRa?=
+ =?us-ascii?Q?MXydN5IC5/Um26f0r1Y=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd49fca5-8410-4f6b-25b9-08de10df29c7
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 20:19:40.1676
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lKvp+D9Xtd2GMtTScxSceqYlME77d0FC/i/sia8+klOp9b7ICrVUMzw1I9OV/MULrKRus3eM+F+FtdOIErGExw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6995
 
-Fixes two instances of the typo "retreives" -> "retrieves"
-in documentation comments (for dmub_srv_calc_region_info()
-and dmub_srv_calc_mem_info()).
+Add optional reset-gpios and wakeup-source properties.
 
-Additionally, fixes a copy-paste error where the comment for
-dmub_srv_calc_mem_info() incorrectly listed the function name
-as dmub_srv_calc_region_info().
-
-Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/gpu/drm/amd/display/dmub/dmub_srv.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+change in v4
+- rebase to next since v2 already pick up
+- pick rob review tags
 
-diff --git a/drivers/gpu/drm/amd/display/dmub/dmub_srv.h b/drivers/gpu/drm/=
-amd/display/dmub/dmub_srv.h
-index 338fdc651f2c..a6f794ef2203 100644
---- a/drivers/gpu/drm/amd/display/dmub/dmub_srv.h
-+++ b/drivers/gpu/drm/amd/display/dmub/dmub_srv.h
-@@ -637,7 +637,7 @@ enum dmub_status dmub_srv_create(struct dmub_srv *dmub,
- void dmub_srv_destroy(struct dmub_srv *dmub);
-=20
- /**
-- * dmub_srv_calc_region_info() - retreives region info from the dmub servi=
-ce
-+ * dmub_srv_calc_region_info() - retrieves region info from the dmub servi=
-ce
-  * @dmub: the dmub service
-  * @params: parameters used to calculate region locations
-  * @info_out: the output region info from dmub
-@@ -655,7 +655,7 @@ dmub_srv_calc_region_info(struct dmub_srv *dmub,
- 			  struct dmub_srv_region_info *out);
-=20
- /**
-- * dmub_srv_calc_region_info() - retreives fb info from the dmub service
-+ * dmub_srv_calc_mem_info() - retrieves fb info from the dmub service
-  * @dmub: the dmub service
-  * @params: parameters used to calculate fb locations
-  * @info_out: the output fb info from dmub
---=20
-2.47.3
+change in v3
+- add wakeup-source and reset-gpios optional properties
+
+change in v2
+new patch
+
+previous discussion
+https://lore.kernel.org/imx/20250925-swimming-overspend-ddf7ab4a252c@spud/T/#t
+---
+ .../devicetree/bindings/input/touchscreen/trivial-touch.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml b/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
+index d6aed3afd4acb..46cf833344b11 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
++++ b/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
+@@ -23,6 +23,11 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  reset-gpios:
++    maxItems: 1
++
++  wakeup-source: true
++
+ allOf:
+   - $ref: touchscreen.yaml
+ 
+-- 
+2.34.1
 
 
