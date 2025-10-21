@@ -1,44 +1,87 @@
-Return-Path: <linux-kernel+bounces-862058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACA4BF4556
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:57:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAA1BF4568
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56C294E9B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F8A18A79DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30BC25DB0D;
-	Tue, 21 Oct 2025 01:57:15 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A2025A32E;
+	Tue, 21 Oct 2025 01:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JXBsHQWP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FD311CBA;
-	Tue, 21 Oct 2025 01:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD0325A35E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761011835; cv=none; b=Ta1jZ3exwJ9tm0F9LZ1OSOhwUj9RYl7YVdAl03UDsunCyp3S1/XFJGWdjk97KwFk1ug+an8qd8WwaWj/95bmYTz/f7PrbGhwraQOFPpIp/KLNYmYEgXpURJsrfmXrWZPzUPjwPIMM+WYf25o2dGMcAdCYf9ibUmoE2oRNjyDwXQ=
+	t=1761011924; cv=none; b=o9xr7hNdxqIMV2Q9YGwY3LvfYI6YwylJvFdt2lrq3ca3Qw1CDSn+Ib+swJrYfErr7YdsLrjHW8CW2zuhZNUzm0Uv3I1WDwZ0HvdTr70//vAiUIZcDN1CTl+MDBGMtg3dvzZO43DREHeZ9X2kGxTJsOkVqOw6AUhYBi/VqB2KMUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761011835; c=relaxed/simple;
-	bh=NTIb3vnGtaOOxJDlMwJ5OQf6bJzpOlxh1ghrGLOrWBs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NnbESxAD5bAl5xCYbBzLF1LCaqqqnYRLAhP4rKeVldmiQ5PpumSQ3HG/3E3aklAS2cV2VvOQh4ND00Gjq+TP7DA3FqO1kVknZLWzpv3ZTJs0dLGzg2fmjBP3qtxoBbfa9t5aVQrnDjX0M8IAamMk7+mVgSashAQcsuKQ2iQVWCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4crFl34V3bzYQtnh;
-	Tue, 21 Oct 2025 09:56:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 806801A0E17;
-	Tue, 21 Oct 2025 09:57:07 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP1 (Coremail) with SMTP id cCh0CgBXfVBx6PZo2e08BA--.36902S2;
-	Tue, 21 Oct 2025 09:57:07 +0800 (CST)
-Message-ID: <8028d139-94c1-48d9-a2a5-fd469eb746c5@huaweicloud.com>
-Date: Tue, 21 Oct 2025 09:57:05 +0800
+	s=arc-20240116; t=1761011924; c=relaxed/simple;
+	bh=TaJ6Kpu5C42O4zfV+T1Ms1+yf77uSZazTk3VhrzJq24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FxB6zZLZqXtLm9eQNUg4PaGd6tRqXOJbNukLWCNrGwQoZ+KgP87oijlPwEHcRl8r5FXS9lcf9nG9dCGHpv2Q03BMrByO95D0XzDb164c1PwgQxc0FGK2l6wjYaakd1iF3i85Ua9RrP0W9cnVCKbXsclKYqUQHl0G5ON9t8/RxbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JXBsHQWP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KL0tUP029841
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:58:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TGwpn8/U0jGDBsJ9vOkeOjiPiuDIq8W2qVCHqYYf6sc=; b=JXBsHQWP/qTEPR9F
+	aj4n17ekAa9v3b3yCN3CLVOyV9Y3CFau8yYJ5UxGlaWaVCHIzJUZiNECUDH8uvfu
+	NMfAHF7EddZz90C3hfNCc8AQxdeBEKSapbVXxF4TZlUQJifc4T1/edYz/UyUh1q5
+	DRcydR/YamYHAJfLAjN1BwAgctF90VM8+41EECsk8Nozpv15KDy0lkJ8/1hpOVMZ
+	vdGudTmveBsuKN/2trnGZvx4tU0N2thLNudNnyl4xj3eBse5VjcHYb4juEZPJoEc
+	UpaomhHCr7Tnfi5Qg8pm9w4Uoeqk9iCTeFQUVZdrEjFORLuikPu3z++4sGr48i/m
+	DmFi2Q==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v2gdxs6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:58:41 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-286a252bfbfso134374075ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:58:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761011921; x=1761616721;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGwpn8/U0jGDBsJ9vOkeOjiPiuDIq8W2qVCHqYYf6sc=;
+        b=QzdaHjskcaKLVYpH+9ULaridWBmWxyWtrvZR9KZMb02dEZhLUf4WKj/rwIvcwM3zdN
+         0Ntq94XPvzmyMnUQma22nrJHdPfgkDsrbGD3bwZGizMAYqQxNsZ48vb+H7aSVUtmUtMI
+         mUYUDFvibdR0ZWx80qs4AkrapPkWAvwInAXA3yGrR3Y6KGtk9oHUnA5On3ACcMhgwynl
+         6ou9cINOx5gLCEf70AZ525XJAsFjuuU1aQ5+8HMn4OCfanY9bB9f4+e7MGqIvuM9zDGS
+         gAWmpbGgx1ZOF+iCzYJ2mUveDfear4ek571nUOWLBAPGea2VU3PGHMVHYz0rM84xJViF
+         YMYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwQOMI72wDomVtKe7z4wFEwWdYy37wzjIGC+ks/yGyLQh+PiIZeOhjNGZHJB/GWBrFpMjI/NNiLOLYPKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOacmQT0nbUG9+3uWdRifPJ5WdTTukGHMA+LFycERUt1uByWNW
+	nh3e87pjDqrVX6PaUL45vJJiJMGf4MRO8y6Q1BYvTWfhwnPijapXenoxuuB8L0rnVzMbnOxzukD
+	0lM5Xv815ACxTkWmVadznQW15hO6x7lKxRLmTWU0hlhrEDSAYxYuLKnrV5wigPoRBJPg=
+X-Gm-Gg: ASbGncujDgk4Cj8uG8uE8vCXSCZyJy6XAggLmZcuK2unbQvZUvqrTJ4hDJlnrLqOvgW
+	BG7zD+wzFARt7bFMK08FpvgRitIGvtFjn4IIk0blI5IYFq4OhOyTTOO9hUXkJdolRX5cDVVCjwq
+	eGibEpmcp8ORlhqCRkLsJSk/z12ISXvCPoFSRh4RVMTH6P0EoXlorwaw9DyuBVGfrFThmETSbtA
+	Ef1lcaf+K6MA3uF5yjiNUiVjvfKCxeAEhiFePGO5TBr0BGTb5dXj3pUB7filDe55aULYVRUkWaF
+	zt8ipf70Fh0xTIR3E5dYEmfWekkEH05k+vAxdqfIv8Emy03217+FRTLY4z/qx7BeErmm+D3Ssb7
+	my4jnseSebdoJrJW5D4KD6bBKpqd7AaUZ860pDWnAwMPIlAooJhJdh49XKHqGYVfzviubGaoa
+X-Received: by 2002:a17:902:eccb:b0:278:9051:8e9c with SMTP id d9443c01a7336-290cb07a023mr215059255ad.42.1761011920710;
+        Mon, 20 Oct 2025 18:58:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTGO8LNhqSw5LRNEv7/Nl+bkPzCeoLUOMnBS6Q0IAq/GhPgb1srkEd6w74xcF3soP78u6rQQ==
+X-Received: by 2002:a17:902:eccb:b0:278:9051:8e9c with SMTP id d9443c01a7336-290cb07a023mr215058935ad.42.1761011920307;
+        Mon, 20 Oct 2025 18:58:40 -0700 (PDT)
+Received: from ?IPV6:2405:201:c416:5052:e167:a6da:f5f1:b45? ([2405:201:c416:5052:e167:a6da:f5f1:b45])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ec20a4sm93752155ad.7.2025.10.20.18.58.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 18:58:39 -0700 (PDT)
+Message-ID: <766890b0-099c-42e0-971c-cc94114c0d7a@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 07:28:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,274 +89,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/33] sched/isolation: Convert housekeeping cpumasks to
- rcu pointers
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
- <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
- Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-13-frederic@kernel.org>
- <bb9a75dc-8c34-41da-b064-e31bf5fe6cb2@huaweicloud.com>
+Subject: Re: [PATCH 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Kaanapali SoC
+To: Eugen Hristev <eugen.hristev@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Georgi Djakov
+ <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-interconnect-v1-0-4c822a72141c@oss.qualcomm.com>
+ <20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com>
+ <ea291acc-bfdc-4a04-ba60-fc59a55ada28@linaro.org>
+ <f4e7a388-54fd-42a7-8960-be6a3de7ec6a@oss.qualcomm.com>
+ <70569fdf-7a3a-495a-b1ca-d35ae1963592@oss.qualcomm.com>
+ <f5c5254c-537e-46ad-a7cb-a8b18b07632c@linaro.org>
 Content-Language: en-US
-In-Reply-To: <bb9a75dc-8c34-41da-b064-e31bf5fe6cb2@huaweicloud.com>
+From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+In-Reply-To: <f5c5254c-537e-46ad-a7cb-a8b18b07632c@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBXfVBx6PZo2e08BA--.36902S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF1xtw47Xw1UCFWfGw15urg_yoW3AFy7pr
-	Z8WFW3GF4kXr1rG398ZwnrAry5Wwn7Arn2kas3Ga1rCFy7uw1kZry09FnxWryDu3srCry7
-	ZF98tw4S9w1UA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
-	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUsPfHUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMCBTYWx0ZWRfX90o8siZFOob5
+ f+Re+UAtN8MXBFlSUPfffovdITt0kqtHCTgDgSyOz5t4u3m6afKPX2WYPvhVcFCMDDVYgT5Kfhz
+ Qn+lhXTDa/r8F69L5dNTeU3ZTSiUU0Hh3OZXJt08dw/YH7O8jShNC7o/5Sq8WDFvjUFVIJr4ZIv
+ rz85PeY0peIlYSnzyec7jSJSYqx2a+ZtFk/94XulNolEm4MKmZrGd9qe/otSGWRHx0LrvNYdhYz
+ MtjvjlBs0u/8bbQLpya2Ue3RT+NOMPneUF/AYMRrqlTdqe2zxN1vvyFXjcrntvW+nWeluB2rFre
+ EQcshHX7C1lNQc5zKApwhpODX0DI1So6sJqr7GIxdEucTG5syWPGmOGzHINWKYmIh7fbDvCyD9w
+ hgiCPQiA8hunHtrvm1qcTTr8BTKE6Q==
+X-Authority-Analysis: v=2.4 cv=KqFAGGWN c=1 sm=1 tr=0 ts=68f6e8d2 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=lx9-Q6l9dX336bKDy7QA:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+ a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-GUID: lrbXP3DyB16toV3JbrhX4GYq22O7-75j
+X-Proofpoint-ORIG-GUID: lrbXP3DyB16toV3JbrhX4GYq22O7-75j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1011 phishscore=0 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180020
 
 
 
-On 2025/10/21 9:46, Chen Ridong wrote:
+On 9/30/2025 3:27 PM, Eugen Hristev wrote:
 > 
 > 
-> On 2025/10/14 4:31, Frederic Weisbecker wrote:
->> HK_TYPE_DOMAIN's cpumask will soon be made modifyable by cpuset.
->> A synchronization mechanism is then needed to synchronize the updates
->> with the housekeeping cpumask readers.
+> On 9/30/25 06:06, Raviteja Laggyshetty wrote:
 >>
->> Turn the housekeeping cpumasks into RCU pointers. Once a housekeeping
->> cpumask will be modified, the update side will wait for an RCU grace
->> period and propagate the change to interested subsystem when deemed
->> necessary.
 >>
->> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
->> ---
->>  kernel/sched/isolation.c | 58 +++++++++++++++++++++++++---------------
->>  kernel/sched/sched.h     |  1 +
->>  2 files changed, 37 insertions(+), 22 deletions(-)
+>> On 9/25/2025 6:10 PM, Konrad Dybcio wrote:
+>>> On 9/25/25 10:57 AM, Eugen Hristev wrote:
+>>>>
+>>>>
+>>>> On 9/25/25 02:02, Jingyi Wang wrote:
+>>>>> From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+>>>>>
+>>>>> Document the RPMh Network-On-Chip Interconnect of the Kaanapali platform.
+>>>>>
+>>>>> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>>>> ---
+>>>
+>>> [...]
+>>>
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    enum:
+>>>>> +      - qcom,kaanapali-aggre-noc
+>>>>
+>>>> Hi,
+>>>>
+>>>> Does Kaanapali have a single aggre node, or there are several ?
+>>>> On previous SoC, I see there are two (aggre1 and aggre2).
+>>>> Also in your driver (second patch), I notice aggre1_noc and aggre2_noc .
+>>>> It would make sense to accurately describe here the hardware.
+>>>
+>>> They're physically separate
+>>>
+>> Yes, they are physically separate but the topology treats them as a single noc
+>> with two slave connections to system noc which you have noticed in the topology file.
+> 
+> Is it any difference from previous sm8750 where there are two nodes ?
+> If yes, can you mention the difference and reasoning for merging them
+> into a single node.
+> If no, can you reason why the decision to merge them into a single node
+> this time instead of keeping it consistent ?
+>This is due to HW design issue.
+qxm_crypto port is on aggre1_noc and it's qos config is in aggre2_noc. Since
+aggre1_noc and aggre2_noc are separate devices they can not access intra address
+space. To access qxm_crypto qos combined agree1_noc, aggre2_noc into aggre_noc.
+
+Thanks,
+Raviteja.
+
 >>
->> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
->> index 8690fb705089..b46c20b5437f 100644
->> --- a/kernel/sched/isolation.c
->> +++ b/kernel/sched/isolation.c
->> @@ -21,7 +21,7 @@ DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
->>  EXPORT_SYMBOL_GPL(housekeeping_overridden);
->>  
->>  struct housekeeping {
->> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
->> +	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
->>  	unsigned long flags;
->>  };
->>  
->> @@ -33,17 +33,28 @@ bool housekeeping_enabled(enum hk_type type)
->>  }
->>  EXPORT_SYMBOL_GPL(housekeeping_enabled);
->>  
->> +const struct cpumask *housekeeping_cpumask(enum hk_type type)
->> +{
->> +	if (static_branch_unlikely(&housekeeping_overridden)) {
->> +		if (housekeeping.flags & BIT(type)) {
->> +			return rcu_dereference_check(housekeeping.cpumasks[type], 1);
->> +		}
->> +	}
->> +	return cpu_possible_mask;
->> +}
->> +EXPORT_SYMBOL_GPL(housekeeping_cpumask);
->> +
->>  int housekeeping_any_cpu(enum hk_type type)
->>  {
->>  	int cpu;
->>  
->>  	if (static_branch_unlikely(&housekeeping_overridden)) {
->>  		if (housekeeping.flags & BIT(type)) {
->> -			cpu = sched_numa_find_closest(housekeeping.cpumasks[type], smp_processor_id());
->> +			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
->>  			if (cpu < nr_cpu_ids)
->>  				return cpu;
->>  
->> -			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
->> +			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
->>  			if (likely(cpu < nr_cpu_ids))
->>  				return cpu;
->>  			/*
->> @@ -59,28 +70,18 @@ int housekeeping_any_cpu(enum hk_type type)
->>  }
->>  EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
->>  
->> -const struct cpumask *housekeeping_cpumask(enum hk_type type)
->> -{
->> -	if (static_branch_unlikely(&housekeeping_overridden))
->> -		if (housekeeping.flags & BIT(type))
->> -			return housekeeping.cpumasks[type];
->> -	return cpu_possible_mask;
->> -}
->> -EXPORT_SYMBOL_GPL(housekeeping_cpumask);
->> -
->>  void housekeeping_affine(struct task_struct *t, enum hk_type type)
->>  {
->>  	if (static_branch_unlikely(&housekeeping_overridden))
->>  		if (housekeeping.flags & BIT(type))
->> -			set_cpus_allowed_ptr(t, housekeeping.cpumasks[type]);
->> +			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
->>  }
->>  EXPORT_SYMBOL_GPL(housekeeping_affine);
->>  
->>  bool housekeeping_test_cpu(int cpu, enum hk_type type)
->>  {
->> -	if (static_branch_unlikely(&housekeeping_overridden))
->> -		if (housekeeping.flags & BIT(type))
->> -			return cpumask_test_cpu(cpu, housekeeping.cpumasks[type]);
->> +	if (housekeeping.flags & BIT(type))
->> +		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
->>  	return true;
->>  }
->>  EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
->> @@ -96,20 +97,33 @@ void __init housekeeping_init(void)
->>  
->>  	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
->>  		sched_tick_offload_init();
->> -
->> +	/*
->> +	 * Realloc with a proper allocator so that any cpumask update
->> +	 * can indifferently free the old version with kfree().
->> +	 */
->>  	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
->> +		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
->> +
->> +		if (WARN_ON_ONCE(!nmask))
->> +			return;
->> +
->> +		omask = rcu_dereference(housekeeping.cpumasks[type]);
->> +
->>  		/* We need at least one CPU to handle housekeeping work */
->> -		WARN_ON_ONCE(cpumask_empty(housekeeping.cpumasks[type]));
->> +		WARN_ON_ONCE(cpumask_empty(omask));
->> +		cpumask_copy(nmask, omask);
->> +		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
->> +		memblock_free(omask, cpumask_size());
->>  	}
->>  }
->>  
->>  static void __init housekeeping_setup_type(enum hk_type type,
->>  					   cpumask_var_t housekeeping_staging)
->>  {
->> +	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
->>  
->> -	alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
->> -	cpumask_copy(housekeeping.cpumasks[type],
->> -		     housekeeping_staging);
->> +	cpumask_copy(mask, housekeeping_staging);
->> +	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
->>  }
->>  
->>  static int __init housekeeping_setup(char *str, unsigned long flags)
->> @@ -162,7 +176,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->>  
->>  		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
->>  			if (!cpumask_equal(housekeeping_staging,
->> -					   housekeeping.cpumasks[type])) {
->> +					   housekeeping_cpumask(type))) {
->>  				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
->>  				goto free_housekeeping_staging;
->>  			}
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index 1f5d07067f60..0c0ef8999fd6 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -42,6 +42,7 @@
->>  #include <linux/ktime_api.h>
->>  #include <linux/lockdep_api.h>
->>  #include <linux/lockdep.h>
->> +#include <linux/memblock.h>
->>  #include <linux/minmax.h>
->>  #include <linux/mm.h>
->>  #include <linux/module.h>
-> 
-> A warning was detected:
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 6.17.0-next-20251009-00033-g4444da88969b #808 Not tainted
-> -----------------------------
-> kernel/sched/isolation.c:60 suspicious rcu_dereference_check() usage!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 1 lock held by swapper/0/1:
->  #0: ffff888100600ce0 (&type->i_mutex_dir_key#3){++++}-{4:4}, at: walk_compone
-> 
-> stack backtrace:
-> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-next-20251009-00033-g4
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x68/0xa0
->  lockdep_rcu_suspicious+0x148/0x1b0
->  housekeeping_cpumask+0xaa/0xb0
->  housekeeping_test_cpu+0x25/0x40
->  find_get_block_common+0x41/0x3e0
->  bdev_getblk+0x28/0xa0
->  ext4_getblk+0xba/0x2d0
->  ext4_bread_batch+0x56/0x170
->  __ext4_find_entry+0x17c/0x410
->  ? lock_release+0xc6/0x290
->  ext4_lookup+0x7a/0x1d0
->  __lookup_slow+0xf9/0x1b0
->  walk_component+0xe0/0x150
->  link_path_walk+0x201/0x3e0
->  path_openat+0xb1/0xb30
->  ? stack_depot_save_flags+0x41e/0xa00
->  do_filp_open+0xbc/0x170
->  ? _raw_spin_unlock_irqrestore+0x2c/0x50
->  ? __create_object+0x59/0x80
->  ? trace_kmem_cache_alloc+0x1d/0xa0
->  ? vprintk_emit+0x2b2/0x360
->  do_open_execat+0x56/0x100
->  alloc_bprm+0x1a/0x200
->  ? __pfx_kernel_init+0x10/0x10
->  kernel_execve+0x4b/0x160
->  kernel_init+0xe5/0x1c0
->  ret_from_fork+0x185/0x1d0
->  ? __pfx_kernel_init+0x10/0x10
->  ret_from_fork_asm+0x1a/0x30
->  </TASK>
-> random: crng init done
+>> Thanks,
+>> Raviteja.
+>>
+>>> Konrad
 > 
 
-This warning was likely introduced by patch 13, which added the housekeeping_dereference_check
-condition, and is not caused by the current patch.
-
--- 
-Best regards,
-Ridong
 
 
