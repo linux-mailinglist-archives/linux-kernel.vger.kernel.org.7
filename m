@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-863328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7D4BF7916
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47957BF791F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 772AE346912
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F414F487049
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090203451B3;
-	Tue, 21 Oct 2025 16:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AB73451DA;
+	Tue, 21 Oct 2025 16:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="re3yaQ7F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJ7ImcdN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0CA330D3D;
-	Tue, 21 Oct 2025 16:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4718B341AC1;
+	Tue, 21 Oct 2025 16:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062573; cv=none; b=TZSf7jkTgpvVVHhkWnWOj0kKm4mrfI2JOdQ3GYbd8TB37pQ1drXVRqGCf49ozBI+2M3De9k3FHrD0uKivQYC19Bqp6BOTjiNvjSpscu15M/EgffRTH9ZSq2yAFMHwHb92zq6wdTg4/D7DTpgLEnO9bURw2csJEoHSjvGHTiBKKo=
+	t=1761062618; cv=none; b=NQnrScfFWUi3hFblTOpVgECIhR95eZ079cobU+SQ7AqqBN41/pOVxtEsSoMpgJhOJKGxyAT4P4m4KKNzt03xwG4Z8IkMtfdrHXGuVjLT3gSjaa/f0RhjGJxisIYDCnoiRk4F4r5lIvQwTzIhrLtkBCsUznuNlNUE1cwb3VBztkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062573; c=relaxed/simple;
-	bh=RN+xlzuSwV5Gi4/RsAUYxVegWRCsuaR+Gqa7ha8Fuho=;
+	s=arc-20240116; t=1761062618; c=relaxed/simple;
+	bh=zoulm8EJmHkp5upUtaKeojnxWqc+0aK6cJfLOtxU50w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ua5pMB8AqjdweNSghVzDlyS7hu+a3jtgQKxguC6kRCPbp5xZ8i/KABF1xbu1W6tPk/SRSdofYocYKY0rZWFYft+mDTwJ/L32p9+ra7RZV72niMhfC3bvcatLmhFEcsuDQv6p4mVDZqMGDCSUscaTzkWCP1pbyRfDOlwAeXFgLoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=re3yaQ7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D46C4CEF5;
-	Tue, 21 Oct 2025 16:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761062572;
-	bh=RN+xlzuSwV5Gi4/RsAUYxVegWRCsuaR+Gqa7ha8Fuho=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhkfQ1CcpDNH5iRsRg/MN6DRHtmGEr42geda/gugLc3ZIhNVRG8V+XHU5gesGPcvWi6QlCiEHHd1uqCWLcppPRw8U8Uo4cwuKKspBe5UpSRl/NPoTKGlGt6akAxUfPJ4crD5GxVO/kQnQwesJy+rOFPEaZe7ESjF1dpRuoY/yj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJ7ImcdN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27765C4CEF1;
+	Tue, 21 Oct 2025 16:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761062617;
+	bh=zoulm8EJmHkp5upUtaKeojnxWqc+0aK6cJfLOtxU50w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=re3yaQ7FXhbwlwEfaTIdmRra46d2G+MHFnpiwvWDg1YKmshp5Gh2571N9b8hxrEbF
-	 oSwzfCh8BUjjX/QqiwjS5XI9wVB7LlIWF8pxbotDLp2Tzz/AvEe7w0SzavaH2uCWbs
-	 j4CMJAQahl/9fXUr0Q2m/lkK4aSJXcJQKzdqaFwQ=
-Date: Tue, 21 Oct 2025 18:02:50 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Olle Lukowski <olle@lukowski.dev>
-Cc: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] staging: most: video: replace BUG_ON() with
- proper check
-Message-ID: <2025102127-polio-opossum-f40b@gregkh>
-References: <20251021-staging-most-warn-v2-0-cd51e1e717f6@lukowski.dev>
- <20251021-staging-most-warn-v2-3-cd51e1e717f6@lukowski.dev>
+	b=CJ7ImcdNqkvgbz/NjNhcAVJX3kDtbZQM9JuSFDwKztdNqFiQIWb5iLKwmjzbrQW9Q
+	 xKtpRev8etsG/CLdiNGOMNcyVTDxNPoE91iYm83cw5ynjO1Ey3rPRYnYOzqgmvSlWd
+	 iPEARZLqjbyCAObZTGNtIT/fXkvfACdMk8F/zhf10Zm8kfoOZmmZUU36Gy4gnJI7ax
+	 K7Br4HxvlX7GAOml1zyFc72yqYaOG3fwHk1UyF7Sj+nTBmuDeuuKeX+vTkLMneclwN
+	 aXN5P2pXQRKRTQHf8gHq9VT7Dld5EY9tFCz0gahJeXjKRIYgZNtssG/SmLlyzqdbMg
+	 UvlubZmRdNhgw==
+Date: Tue, 21 Oct 2025 18:03:34 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v4] i2c: spacemit: configure ILCR for accurate SCL
+ frequency
+Message-ID: <sdhkjmi5l2m4ua4zqkwkecbihul5bc2dbmitudwfd57y66mdht@6ipjfyz7dtmx>
+References: <20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com>
+ <t26pyjnmzj62oczwuje2bbscowj22pdge2ef3tcktwmhzpsq47@7odo2ccvc52a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,32 +58,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021-staging-most-warn-v2-3-cd51e1e717f6@lukowski.dev>
+In-Reply-To: <t26pyjnmzj62oczwuje2bbscowj22pdge2ef3tcktwmhzpsq47@7odo2ccvc52a>
 
-On Tue, Oct 21, 2025 at 04:09:30PM +0300, Olle Lukowski wrote:
-> Replace a BUG_ON() call with a proper check to prevent an unnecessary
-> kernel panic.
+Hi Troy,
+
+On Mon, Oct 20, 2025 at 11:28:45AM +0200, Andi Shyti wrote:
+> On Fri, Oct 17, 2025 at 03:27:39PM +0800, Troy Mitchell wrote:
+> > The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+> > master mode operations is determined by the ILCR (I2C Load Count Register).
+> > Previously, the driver relied on the hardware's reset default
+> > values for this register.
+> > 
+> > The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
+> > frequencies lower than intended. For example, with the default
+> > 31.5 MHz input clock, these default settings result in an SCL
+> > frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+> > and approximately 338 kHz (fast mode) when targeting 400 kHz.
+> > These frequencies are below the 100 kHz/400 kHz nominal speeds.
+> > 
+> > This patch integrates the SCL frequency management into
+> > the Common Clock Framework (CCF). Specifically, the ILCR register,
+> > which acts as a frequency divider for the SCL clock, is now registered
+> > as a managed clock (scl_clk) within the CCF.
+> > 
+> > This patch also cleans up unnecessary whitespace
+> > in the included header files.
+> > 
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 > 
-> Signed-off-by: Olle Lukowski <olle@lukowski.dev>
-> ---
->  drivers/staging/most/video/video.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
-> index 32f71d9a9..3a7ee2791 100644
-> --- a/drivers/staging/most/video/video.c
-> +++ b/drivers/staging/most/video/video.c
-> @@ -575,7 +575,8 @@ static void __exit comp_exit(void)
->  
->  	most_deregister_configfs_subsys(&comp);
->  	most_deregister_component(&comp);
-> -	BUG_ON(!list_empty(&video_devices));
-> +	if (!list_empty(&video_devices))
-> +		pr_err("video_devices list not empty during exit\n");
+> merged to i2c/i2c-host.
 
-Is this possible to ever have happen?
+I'm sorry, because of the report from LKP(*) I reverted your
+patch. I2C_K1 is selected by MFD_SPACEMIT_P1, so that we get the
+following warning:
 
-thanks,
+  WARNING: unmet direct dependencies detected for I2C_K1
 
-greg k-h
+and compile I2C_K1 without COMMON_CLK. Please, fix it and
+resubmit the patch.
+
+Thanks,
+Andi
+
+(*) https://lore.kernel.org/oe-kbuild-all/202510202150.2qXd8e7Y-lkp@intel.com/
 
