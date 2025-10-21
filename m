@@ -1,193 +1,84 @@
-Return-Path: <linux-kernel+bounces-862594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70E8BF5B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:09:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7168EBF5B4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95A6C4EA59B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:09:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B123AC947
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7232E32ABC3;
-	Tue, 21 Oct 2025 10:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6505329C6A;
+	Tue, 21 Oct 2025 10:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjWAzHO/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozjL/Lwq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE9E27C866
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210E028CF4A;
+	Tue, 21 Oct 2025 10:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761041380; cv=none; b=JOHJs88H+mKJB3KgBo6axOw4p+6soWP8zYixYdcySODFf73MLHvI29kWdXTRTKyEe0gz4I1T/z+gpLO81gIi7G2RcyXp8+HpzmvF8cFhrxJNWpAvcH7VcSAR7qp85OiaBraOiUj9zvUNU5QD6L2TmAUAtBM3y0oDz9qKd7aqz/0=
+	t=1761041418; cv=none; b=PnsoS72N7EAEACc/gWCst9Ej0DOVK9VObenx+9R8pmwvRUjQ/xKnvvgr3klqigYVqkJHK1iwONqhW1wk7HeIkTn8nVkYRXgxZAhg7cAqwnIdrIgDoNDaK3fpWyXp7SY/T+90f0Xu89MGkkX+M2+s9WbI9022/7n++MJRGpCKYD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761041380; c=relaxed/simple;
-	bh=qoH56t7LT6g6R7/qe0J5UEvQjGQX9Eg9cPbyxQT+sZ4=;
+	s=arc-20240116; t=1761041418; c=relaxed/simple;
+	bh=wdMdYaYJd6Zc7ZYjyTWJDWk+yKu5stMt22kNukGBRfA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHbj+Y7VWRbsqSSCw6U/imn7+bTirhdrKnlWJnCtQOMxTXUFP2fF0JzIfdSnQz9Pdl59s2NejO5v1w0jWH13EXEjMciRw7Gmyi9q4+kug1IjXHdAfEtwxq4u3Ylmoah1OxnW3nT9EG+Sn4JNrJK3By1vJKVEgW4A2uiqWkJZvwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjWAzHO/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761041378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Smx6c92DDCn6W6yHcZqgijD0yczmTJbxbgpAffJprT8=;
-	b=SjWAzHO/aywVWg/VOUGQdvUjMsVs8Sug1r3GpW+hjChSDFxztqg6pEYvgCm9HAwX24k7Ty
-	Rl6KJM00KqSsdAOT6IOombKrHCuIuhyKzBeMaejXYJOffdr15PeO0Wg2UnLE7jSWFRSdw7
-	yAWrwxTbmMhu70mgi9s7q0lU0jcmw9g=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-CE4OhPgRPmm4JtEz0qoLFA-1; Tue, 21 Oct 2025 06:09:36 -0400
-X-MC-Unique: CE4OhPgRPmm4JtEz0qoLFA-1
-X-Mimecast-MFC-AGG-ID: CE4OhPgRPmm4JtEz0qoLFA_1761041375
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3f924ae2a89so6220062f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:09:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761041374; x=1761646174;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Smx6c92DDCn6W6yHcZqgijD0yczmTJbxbgpAffJprT8=;
-        b=wEiV8RahtaTRTauKaj2TISPbL8pnRTniMRxrfzSJ8DE6zs+70odaYwtMYso7BRN1iW
-         gXsWnvkD5zwJsA6x/xqAo0gulVztHezrA21hqCnfSRSBoZWByqYYAEZGC3VH7oynMhof
-         YBKhsTqUA0ZtOhfvX7ENfie0TOEUJTugufgw+8sf8OEXS26dIqvCrRHe5f2cTwILqsII
-         YehG9wImRGrE4go60t5TRwR8BPSKrDpwh/hqB68GXRbM3WmfbVbdXKLy8/gJVP1JH3Kp
-         hmrfPUxALifJGwdr7DFuP/p/z6umnnGlW6EjIwrs20rXIweEXiuZCpQMH33Vi0UqNBxN
-         wQcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy2RoNUsns66sbuqR0HNW32QEg1/O2oKV64Pcvz8C/U///5fOf52KW8dbiwWeavdzar8MNI4y5vfjszHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHVr/Os6MlJQ5ZqBjMAWDojnNK37Exp4bps0LxfYSQQbBbgTsC
-	LpmBDRbi40zns3KIZ+b4RsfdDz+/qNf2mBVQ1gIMRpB0VOQz8/cGllqoSri9/p9tnjVwuw5zqzj
-	Vcqm6Z2+eBRvqlj9btYgEvX+qZtt/ulbFcuJWBnP/jXGy5KqeYqAfyz0UG1HxiGWB1Q==
-X-Gm-Gg: ASbGnctpOlZsR9cICiVSYRaTFmxdfVlzrHpkgt8kNGjzqzTWJgejAhzdbl/ID0y79vL
-	IivlCxJoc3baIGfHQeI09i6q3AbXjao8borBE5GVADHy4D9nQVCqQbDNpwYn5HmpoKSSRCEoByJ
-	M/ig+ldBfxAkH+7wc/Bt4n4YLegHlO9bEbAxeopPhusBl0r2+VMPx/Z9hHEZlEV1VDj5oICbAJV
-	+G0voEBhVi9E2Uz4nDZy/8a7BIqKuw7Pk/uCwDyYKUDQ/9ZdFEHqAGBLTSoVFoJsCjUgdSJSbit
-	ULOyY59+vXEJqiSa/nJiFoHtUfOoa/8m1LDM3zargeb6yyXBVl+poFHM7DtSv/lAsweJHrcStu8
-	nbDYh6igykF/vP3/xcWtRqVa+WboDDvGS45ElAtxg9BQoDdUq2Xc=
-X-Received: by 2002:a05:6000:1aca:b0:428:3f32:a947 with SMTP id ffacd0b85a97d-4283f32a9edmr7496023f8f.58.1761041373980;
-        Tue, 21 Oct 2025 03:09:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHG3vsiZzr/8K6/PVlmWld696ekgX7HFbOE3sJab5hvSA8I4JhACaeH9zgeRKYP34Ujun0gUA==
-X-Received: by 2002:a05:6000:1aca:b0:428:3f32:a947 with SMTP id ffacd0b85a97d-4283f32a9edmr7495998f8f.58.1761041373485;
-        Tue, 21 Oct 2025 03:09:33 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a6c5sm20168191f8f.28.2025.10.21.03.09.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 03:09:32 -0700 (PDT)
-Date: Tue, 21 Oct 2025 12:09:26 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
-	Michal Luczaj <mhal@rbox.co>
-Subject: Re: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
-Message-ID: <mpv4ljrxyucr23x4hj7k7s4vmtvv3bgeq7uct3t44ghaw35l4r@wanp7mklhw7x>
-References: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZNwi6Me2/nyT8mNneKXzHWAAzh3cGfZ2Tgxf4i3by8dbh/j8DzK4p2qN+NXqELVPU9S5ub5+LFUOwT5OxsznDuQ2u9UmPteZ73KCJp5/WMCTmssFBsLm8hm1WEjGUHshg3CZd/2W4QpdrNJSfmAKFJHBBUOmAsxdH34NXA+/+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozjL/Lwq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D04C4CEF1;
+	Tue, 21 Oct 2025 10:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761041417;
+	bh=wdMdYaYJd6Zc7ZYjyTWJDWk+yKu5stMt22kNukGBRfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ozjL/LwqC1sm98ttTiCqeq3GcZ7L9g0wIrkhd+b/Sae5JLIlQxQ9ilakyDXUE2czh
+	 4ZRSp3plFPVLFhydnZDKA2UWSf27ZbP5zHzWsIaG09PdQPfwSw5/aiS7MmSfThb28A
+	 soanLs3+kgyJ+OhunoPNgGSm7c3T1jbzeiQmQsQi2ZrdCA8MkWD7GlIGkR5M7wzDkl
+	 asdhvGrz0+/8dVaf8HS9oMIl2hv5NbhsESeymn682pLcgu49LuA5RRXkjzGtTHQ6CG
+	 F3LNr3oUkFetRauS3eAVcr6Vgv1hqg1UxZ9uEZfMlTJYNlRGjyYxm0TYBNjWzaVfNj
+	 2Z5AtOTU0IYNQ==
+Date: Tue, 21 Oct 2025 11:10:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>,
+	Subash Abhinov Kasiviswanathan <subash.a.kasiviswanathan@oss.qualcomm.com>,
+	Sean Tranchetti <sean.tranchetti@oss.qualcomm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH net-next] net: rmnet: Use section heading for packet
+ format subsections
+Message-ID: <aPdcBV6-4BQdCWz5@horms.kernel.org>
+References: <20251016092552.27053-1-bagasdotme@gmail.com>
+ <20251020171629.0c2c5f5e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68f6cdb0.a70a0220.205af.0039.GAE@google.com>
+In-Reply-To: <20251020171629.0c2c5f5e@kernel.org>
 
-On Mon, Oct 20, 2025 at 05:02:56PM -0700, syzbot wrote:
->Hello,
->
->syzbot found the following issue on:
->
->HEAD commit:    d9043c79ba68 Merge tag 'sched_urgent_for_v6.18_rc2' of git..
->git tree:       upstream
->console output: https://syzkaller.appspot.com/x/log.txt?x=130983cd980000
->kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
->dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
->compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f0f52f980000
->C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ea9734580000
+On Mon, Oct 20, 2025 at 05:16:29PM -0700, Jakub Kicinski wrote:
+> On Thu, 16 Oct 2025 16:25:52 +0700 Bagas Sanjaya wrote:
+> > -a. MAP packet v1 (data / control)
+> > +A. MAP packet v1 (data / control)
+> > +---------------------------------
+> 
+> Why capitalize the "A" here? it could have stayed the way it was, IMO
+> lowercase is actually more common and (at least my) Sphinx doesn't seem
+> to detect this leading letter as in any way special.
 
-#syz test
-
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -565,6 +565,11 @@ static u32 vsock_registered_transport_cid(const struct vsock_transport **transpo
-         return cid;
-  }
-
-+/* vsock_find_cid() must be called outside lock_sock/release_sock
-+ * section to avoid a potential lock inversion deadlock with
-+ * vsock_assign_transport() where `vsock_register_mutex` is taken when
-+ * `sk_lock-AF_VSOCK` is already held.
-+ */
-  bool vsock_find_cid(unsigned int cid)
-  {
-         if (cid == vsock_registered_transport_cid(&transport_g2h))
-@@ -735,23 +740,14 @@ static int __vsock_bind_dgram(struct vsock_sock *vsk,
-         return vsk->transport->dgram_bind(vsk, addr);
-  }
-
-+/* The caller must ensure the socket is not already bound and provide a valid
-+ * `addr` to bind (VMADDR_CID_ANY, or a CID assgined to a transport).
-+ */
-  static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr)
-  {
-         struct vsock_sock *vsk = vsock_sk(sk);
-         int retval;
-
--       /* First ensure this socket isn't already bound. */
--       if (vsock_addr_bound(&vsk->local_addr))
--               return -EINVAL;
--
--       /* Now bind to the provided address or select appropriate values if
--        * none are provided (VMADDR_CID_ANY and VMADDR_PORT_ANY).  Note that
--        * like AF_INET prevents binding to a non-local IP address (in most
--        * cases), we only allow binding to a local CID.
--        */
--       if (addr->svm_cid != VMADDR_CID_ANY && !vsock_find_cid(addr->svm_cid))
--               return -EADDRNOTAVAIL;
--
-         switch (sk->sk_socket->type) {
-         case SOCK_STREAM:
-         case SOCK_SEQPACKET:
-@@ -991,15 +987,33 @@ vsock_bind(struct socket *sock, struct sockaddr *addr, int addr_len)
-  {
-         int err;
-         struct sock *sk;
-+       struct vsock_sock *vsk;
-         struct sockaddr_vm *vm_addr;
-
-         sk = sock->sk;
-+       vsk = vsock_sk(sk);
-
-         if (vsock_addr_cast(addr, addr_len, &vm_addr) != 0)
-                 return -EINVAL;
-
-+       /* Like AF_INET prevents binding to a non-local IP address (in most
-+        * cases), we only allow binding to a local CID.
-+        */
-+       if (vm_addr->svm_cid != VMADDR_CID_ANY &&
-+           !vsock_find_cid(vm_addr->svm_cid))
-+               return -EADDRNOTAVAIL;
-+
-         lock_sock(sk);
-+
-+       /* Ensure this socket isn't already bound. */
-+       if (vsock_addr_bound(&vsk->local_addr)) {
-+               err = -EINVAL;
-+               goto out;
-+       }
-+
-         err = __vsock_bind(sk, vm_addr);
-+
-+out:
-         release_sock(sk);
-
-         return err;
-
+It was a style choice on my part.
+Which seemed to make sense to me at the time.
+No other reason.
+And no objections from my side to sticking to lower case.
 
