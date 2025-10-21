@@ -1,139 +1,122 @@
-Return-Path: <linux-kernel+bounces-862000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E3CBF4386
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:05:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DF9BF438C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F66B35117F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:05:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B7B44EEDA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 01:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76E01DFE26;
-	Tue, 21 Oct 2025 01:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D070F214807;
+	Tue, 21 Oct 2025 01:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TqylpQ8j"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K10jsOlW"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FB8143C61
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E214086347
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761008704; cv=none; b=kSsZNmGYUotv64Yn7FbcVEiwBicc0x/5DR5LabhWsASekUl/J6RGWSVt8B5/LWkP/AQnvoyKr432L9lPhhFtMwuEjz7ojvW7vB78cGpIOHeInijllcfFryGLHrLV/tInOfXk4LFrdubi+FNVWMstgvoC4ZUQWeOkLhVnCc6Y7Ao=
+	t=1761008780; cv=none; b=NeUPY96XUxMrW3i0vLIKvLxTbO5UGlc+64X+zQ3jBF7dOJ45RcBsFcSAwl8k9IRMT3SGYmzq0xuPp4sh8vKGk8WOgpAGkAPhkwAXgvO32WPby5SVIOo2917KHCVwTAkHeelRK3+Cjpsh18+B5eTAYEonDu9iomqb4MNJkDvhW7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761008704; c=relaxed/simple;
-	bh=6aN2ovqyybXzCMwblB9oyJ2EfGZvvf/XwIjAojm4NZs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m/0xxYPYIt3uz67ftCPANsK3ZPmPbZcBj+ILfJMCnm1nMBsFXSu0vGSBw66C/GTbEyQPL2CaaCtK3hkIo9YJUm9pU1TWC74s6T3LZFZ+4U4hfEJWxay2DBwmcEcyNtWzX0lFIlAU5MAfXJ7TIEr0kTG8LcIsH7cmCxCFxeRGUK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TqylpQ8j; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761008689;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/uhNugh/EUyo0G9PtnWbQz5kQB6FYcMFt9ZcmcW3jq8=;
-	b=TqylpQ8jaM+tbH6RZRwPSgDqSyExtn/o1YOdg6CC3a+gfj0xGkpuyk1O6LrMagcfAc88iq
-	erQ6AWTHO0yiIyOSjRHExx+Oz54RKFO4QVqX/mKymo0e/bl2mj0+vR7PKMlldkNwXxTDoK
-	PaRg2JM/VgIA1BzjEE7euqijCyQ0Pac=
-From: Hao Ge <hao.ge@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
-Date: Tue, 21 Oct 2025 09:03:53 +0800
-Message-Id: <20251021010353.1187193-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1761008780; c=relaxed/simple;
+	bh=xUuHHljOFEdYCvkkVUcG2yNKYjdPagL7eq358zZ15x4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RW1CYDxlroskKmlG8El0PoyORBhaqiCQyvLbwIYmVbjuS6MvMswkfcGXf6cKcRXy26T9bPHpNFF67DcM6lhamUhIUzK0r29rCJ85eFUDzr1kxGMY31fP5Wad1XL0wvdEPAdkQquWFvD5bDpoXwpfVW4mzXEXFt4BXsvJa5HWNEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K10jsOlW; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-781001e3846so4614584b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 18:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761008778; x=1761613578; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+63y6nXBzztYrhoSW6YELYnT99ah/4Fb8gojWvD1Sa8=;
+        b=K10jsOlWY7XRHq2Ed/vHvjparvIAlgN1kmlb/p8NO8WFbJ3W9a94zrbAOHXHlOTWzq
+         8JfkB/v2vuOlj6GgIcp9ZaZsibfnalLH17k7u/DPvV2KOv9QNtSJrFCxeMIZXEFLeoQB
+         +tbdANtxgbyk6OENqOd9maCgKHUokfjmHLiX/sQfgbVNyn/C8nEMtlQ7IudRny+ILtlj
+         ANaZYDS9RLRpeudAwXEjePaFcM8cAiMOPrMxI/deqaoQgz9S9sOAR3orxmutwWHbyYvm
+         w1qUs9sijBptGa/25o5DR6hgtXM9hN8elU5i3IBcxDwP8WNeWDxzJfWv7cNbJbMHgFua
+         jJtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761008778; x=1761613578;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+63y6nXBzztYrhoSW6YELYnT99ah/4Fb8gojWvD1Sa8=;
+        b=BW7kZfK3yuNQ0C0owN3omea1pdgc0lbB+LQfonOOac0zLhVrGxDV+AG4Gbq/ow5xh0
+         hL0E+cPVYIjj5b9Kx4taKvUdMqUvjZcFWHc/313KC8RWMfhvkCrjKydTyWhuQDlU0q6S
+         0Zpj4yXbGgBJYX0lLXidZU9LeuPL53m79M4NZ00dpxR6YrngByo9UchyAfnsVLx/nhUJ
+         RCYRtkjtpjbew/d/u/gDJOd6jbojuWAm6vU7AfkZxoEWsRjgymjUx+IoGcYiaqdpH87K
+         cDXAebgQcyLvbeOZGRFQCnxK5l+uk5N86fRdpmTsMk4D07EcTj8uurBMgckUKAiNXrb8
+         7SzA==
+X-Gm-Message-State: AOJu0YxpX/KE7xmEtNba8Ajw2umB+MusRJtcRVEfS5C8UPZCNChgM2vw
+	fkxPuOxP88ZNZs2jcerkiEES76ZVNejQ6XhARdleiC9rufeW8EsP4SVn
+X-Gm-Gg: ASbGnctcWWJi9G4fVtopMlTxDiNZiPlDR6flB+o9PseKMDbVy7MEJP48Isc+fe7J+V2
+	/5micvSNvicjTyWVawV5ZbrAvgHrc3tXzuCrJ40rC7/GBSBOQjWwFnMs9KaaWIgMEONEJfFIiH0
+	X65R9l3V6rcPyDnx8+Dcz6+VddbVHYubOTM0xpt1ZGoe0r9RHlu5tmUc8xhjYTPLY6Qt/lnM84F
+	ZaakhLDjmp67saNJZbDIwCxqFt6yLMRUWwOV4Gtz+z+azFTgR4G5AZYe6vSqB4lTAH6Ln1r6PJo
+	4PsbIeFtoAPFHUtHjcp/urdJSTW0uE12szgRv4RFISEbyatd2YccnrQuP/CjvY/RoqZKU3k9x7a
+	gaDhCmvrdYBFZibUrxH++hroqYjaBSH31ncEfm1W5Slv7seLqNicckBmRyOfEABvy4Ru294vL8y
+	U5oHMbhJC3K2NUhkyvR7GRs8ujcw==
+X-Google-Smtp-Source: AGHT+IFHp3nJbq1iBMXBd1/3CdZaGtu/ESeFDqoXznrwJB5IngEJkzQth+ImAUyhapBjqU5QVG7c1A==
+X-Received: by 2002:a17:902:eccb:b0:28e:80d7:662d with SMTP id d9443c01a7336-290cbb483demr195431325ad.58.1761008778137;
+        Mon, 20 Oct 2025 18:06:18 -0700 (PDT)
+Received: from ?IPv6:2a03:83e0:115c:1:badb:b2de:62b2:f20c? ([2620:10d:c090:500::4:1637])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebd215sm93327565ad.14.2025.10.20.18.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 18:06:17 -0700 (PDT)
+Message-ID: <76e2860403e1bed66f76688132ffe71316f28445.camel@gmail.com>
+Subject: Re: [RFC PATCH v2 1/5] btf: search local BTF before base BTF
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Andrii Nakryiko	
+ <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song
+ Liu	 <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Date: Mon, 20 Oct 2025 18:06:16 -0700
+In-Reply-To: <20251020093941.548058-2-dolinux.peng@gmail.com>
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+	 <20251020093941.548058-2-dolinux.peng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Hao Ge <gehao@kylinos.cn>
+On Mon, 2025-10-20 at 17:39 +0800, Donglin Peng wrote:
+> Change btf_find_by_name_kind() to search the local BTF first,
+> then fall back to the base BTF. This can skip traversing the large
+> vmlinux BTF when the target type resides in a kernel module's BTF,
+> thereby significantly improving lookup performance.
+>=20
+> In a test searching for the btf_type of function ext2_new_inode
+> located in the ext2 kernel module:
+>=20
+> Before: 408631 ns
+> After:     499 ns
+>=20
+> Performance improvement: ~819x faster
 
-If two competing threads enter alloc_slab_obj_exts() and one of them
-fails to allocate the object extension vector, it might override the
-valid slab->obj_exts allocated by the other thread with
-OBJEXTS_ALLOC_FAIL. This will cause the thread that lost this race and
-expects a valid pointer to dereference a NULL pointer later on.
+[...]
 
-Update slab->obj_exts atomically using cmpxchg() to avoid
-slab->obj_exts overrides by racing threads.
+> ---
 
-Thanks for Vlastimil and Suren's help with debugging.
+The flip makes sense, but are we sure that there are no implicit
+expectations to return base type in case of a name conflict?
 
-Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures unconditionally")
-Cc: <stable@vger.kernel.org>
-Suggested-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
-v3: According to Suren's suggestion, simplify the commit message and the code comments.
-    Thanks for Suren.
-
-v2: Incorporate handling for the scenario where, if mark_failed_objexts_alloc wins the race,
-    the other process (that previously succeeded in allocation) will lose the race, based on Suren's suggestion.
-    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
----
- mm/slub.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 2e4340c75be2..d4403341c9df 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
- 
- static inline void mark_failed_objexts_alloc(struct slab *slab)
- {
--	slab->obj_exts = OBJEXTS_ALLOC_FAIL;
-+	cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
- }
- 
- static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
-@@ -2136,6 +2136,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
- #ifdef CONFIG_MEMCG
- 	new_exts |= MEMCG_DATA_OBJEXTS;
- #endif
-+retry:
- 	old_exts = READ_ONCE(slab->obj_exts);
- 	handle_failed_objexts_alloc(old_exts, vec, objects);
- 	if (new_slab) {
-@@ -2145,8 +2146,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
- 		 * be simply assigned.
- 		 */
- 		slab->obj_exts = new_exts;
--	} else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
--		   cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-+	} else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
- 		/*
- 		 * If the slab is already in use, somebody can allocate and
- 		 * assign slabobj_exts in parallel. In this case the existing
-@@ -2158,6 +2158,9 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
- 		else
- 			kfree(vec);
- 		return 0;
-+	} else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-+		/* Retry if a racing thread changed slab->obj_exts from under us. */
-+		goto retry;
- 	}
- 
- 	if (allow_spin)
--- 
-2.25.1
-
+E.g. kernel/bpf/btf.c:btf_parse_struct_metas() takes a pointer to
+`btf` instance and looks for types in alloc_obj_fields array by name
+(e.g. "bpf_spin_lock"). This will get confused if module declares a
+type with the same name. Probably not a problem in this particular
+case, but did you inspect other uses?
 
