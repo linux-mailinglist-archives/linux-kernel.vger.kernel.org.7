@@ -1,192 +1,131 @@
-Return-Path: <linux-kernel+bounces-862823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94655BF6519
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:07:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811EEBF652B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5506D503929
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:04:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10E51502488
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9F534029F;
-	Tue, 21 Oct 2025 11:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6004535505E;
+	Tue, 21 Oct 2025 11:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k56CjcQr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iw+p9UuG"
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6A7340282;
-	Tue, 21 Oct 2025 11:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00617355049
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047287; cv=none; b=kiMEmARdPjo63NfmdTNU8WOrf/DAtlPVggRwgslDvc4E3LiZJmBwseL/IBc6LY1Vxq0bZiet1DHNBX4srixGxPAOGs5holTpm9p1+C/GBD9S5Ok/mzA3AWrXA8Kt1CJmevXkqL6+/5lWcYRrd4OeoulO7pVKceFKcwyNIrEbXWE=
+	t=1761047371; cv=none; b=RnRiixU6AGyUvkk6EvV1XR1yGSLZVBC6dzOldxIhi4TLtMVdCbpF3+VeLSTJ0GZ3mkg6ktgbAlWWqmxaPrmz01RaODKH6V5ijTLd5GH4uIKrrdbZO/7wDyoDN4sppu+vOpHeupiOysPkRgzOQfPzviegrBT+dyvZDoBAT1dZpnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047287; c=relaxed/simple;
-	bh=zyvSyEvHN08sO6ilDq1bp8H9I2nWZ5I4e4dJ8kwOeEM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GyCQN9ul07K1TR22OY4rCe/lw7dPggN6lNk+ctrIRUbx+83SiBe3Rz3Zy9Qe440wbfAnodzax+c0vv+gEi1cOldya92Jp6a05vK/hJE1FGo8sZos7gu4DeEXrrwoi2w8u9L4cJVWPleqMBQNZCdgXcg9m5+5A+uZhRMItXo47m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k56CjcQr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4518C4CEFD;
-	Tue, 21 Oct 2025 11:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047287;
-	bh=zyvSyEvHN08sO6ilDq1bp8H9I2nWZ5I4e4dJ8kwOeEM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=k56CjcQrfgL+lHhiTYqs67nqOzI9yjnL60HczgPgk/cbHjhtjU90xZrLGBKG9orB2
-	 s03OMJPSaflfkuWJEkQ/RwHvY7m/pDFhb5ZcDCrtFYaabfCMkSYdyx7JMxspnH6+av
-	 FMAsBSr51lbsaQwqv28YpvfBHp7oy6p6EM1BjyTHY/Mz96YnJp4/WCnj4pbNIc31lr
-	 +bN9In4VojYUg392Ar4bZ69zyIdY8T1fBw99jXw8LFKoIrow40eS3XS4PY23ZZ3/c8
-	 vB2VDw7QevxzaDEM0ZzNjuDgxXXV3N+S1YQxKV7EXXbTxGO6iLZs4Dx9OGmiiMknNg
-	 ogERhEF6SREaA==
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:55 +0200
-Subject: [PATCH RFC DRAFT 49/50] selftests/namespaces: sixth listns()
- permission test
+	s=arc-20240116; t=1761047371; c=relaxed/simple;
+	bh=LDchOofmyAyCe0IJhGnwj68f427MSYzlnLLRgYWuj94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YA666oUBdGARtzs4v/0pR+qyKXxwQuuE4wYj8CbtoCA6wkPipnIw8ON57VryA5fk7onBo8BdxnVjile6oRSKABzkzZKopjoMNKCs+0gVtNmJQdcVkxKqvyWpa1J3nYReHGuyjeemCoaUrS3pRJzEqOVVclJIHkaPB/JD7th1II4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iw+p9UuG; arc=none smtp.client-ip=74.125.224.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63e2c7a3d10so2861777d50.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761047369; x=1761652169; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fubOwqEF5m4iTEgESAo4RAy9nm9IW5bMGuJtgWmpc2A=;
+        b=Iw+p9UuGc3kTJdz3isJNexsx4bL5gVvznj3IyFgkliSFpgyYjwUlCrPem8fsaKDND4
+         9bQgCyVp0mWFjxpLGnlD0QzNtzSdlX+gY8NPhsG2NX2RJFTLpkaVRbMHGJgJFGoLCU+8
+         mqPnb7f7Di9ydB0IkzSCBvJuhYMHuMsFgFuFkoTz1hmR1Y6gX+NOo8oGk6RcLkFs8P9i
+         T6h8NQJq5Azv1YL/jkXUbJFA9M+4T2K20m6koHfHKRNHR3UZO2GRkVEVlMKi3gznahFO
+         ciSfMIdCy9XHp/2fwsaDcEOz9Yz+SxBtKj9jEYYeo5isfY7IR2ETvmHTO9Zx7ICKyMJm
+         yCDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761047369; x=1761652169;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fubOwqEF5m4iTEgESAo4RAy9nm9IW5bMGuJtgWmpc2A=;
+        b=DB6g4hAIAqQAS5aEfyUABvRppcU6G92d3c/0TDdJTiGl7TfROy0yODt3moqXTuohJA
+         NtEZ4TBrgmYt7FsGydOpgLHEbtf+86MtYrUD8fyRxBAx+ICcFTqM9cLOvOt8rZhBOL0M
+         C4MlTjSOCtuYxhr2CUyEFaOcMYoQkoWsWhFbJfBT8MXXBwdTO6XczvX0TJGi/6EKSEjC
+         WkpCaj5f05PwpWciJnR8QXQNRzX90uHKwBIdChLPrRvtFaom3dVo7vdPHWW6oouaAXSi
+         Gi38m1q5RhUCT2QK0eocZaMPypH16oLn4z19AzeG8IPFolcvFzZu+XCLYYOnp+1/yHqH
+         8DJA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/qMtw0/DJ8RYCs1EJc3X2W87qxru6UfhGYPX2wA9qw0BJarVQlIGAfSeuZyWX4Oa6zi+G1h2ZbkulkFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWGuNs4/azv7b6XH8xRxXAaqSmcp2/GZJTqpTNQBS8he1oVmjO
+	6vyVgJF0rIDovUQse+UkziRf+nA2g/f+nMYBN8MRe7zpMg27DCkwZi1432Tvoh/fkIIDlGoMKoZ
+	bwa9PwTWymCfY7SWackpZRQ5561yNmKD0V1x9TszDHQ==
+X-Gm-Gg: ASbGncsY6Ehb9AM1DqYVYC4Fz/gkQRcxZ84iuy0+SppNZ0b+SEE2BPTGjlD06UHNUh+
+	X2SPEkyDMefKxoOyjHsjrss43dPWaV+ydRH5MI3YOJlslzDJFueIwT6B1bqb5DX4Z5o3AxIr8dT
+	Zl2DN2syEeJZzxUGVRgO5P14GzTguiGehzqTZQYvGZAymSTZGxGsQVVFv2DrBkF82eIL/xNV/uB
+	ysB4ixVA0zoO9uNMSBpdpyzO5LIar1fcNPvs1vvc/CVvXkMyUm7dALndSm0Hkxl1kSDpgbc
+X-Google-Smtp-Source: AGHT+IEX5EIQW00Uhs2bIpyFF0ijaBeRJMzLKujj9MqrtO2tueAMtW7djGBXmY2z8UScupISr1c9QvatdHv47ULSwbw=
+X-Received: by 2002:a05:690e:429a:20b0:63c:f5a6:f30d with SMTP id
+ 956f58d0204a3-63e1625d3a2mr11019453d50.55.1761047369000; Tue, 21 Oct 2025
+ 04:49:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-49-ad44261a8a5b@kernel.org>
-References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
-In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- Lennart Poettering <mzxreary@0pointer.de>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
- Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
- Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2704; i=brauner@kernel.org;
- h=from:subject:message-id; bh=zyvSyEvHN08sO6ilDq1bp8H9I2nWZ5I4e4dJ8kwOeEM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3yvX7suviu+Wc3jXf/3P2F+Cp7rN8Y9ME1RqLy7o
- 4qt8/bbjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlIxTP8zzmeuENn9nLGR21K
- U1fOdDhsr/Y08uj8cwJO3VOmztj0+wDD/+Ar5u4VnSs+Czm3uDgkHLT2ebtPeJnZzuutoVfZYi3
- m8gEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <5fc18699-74ae-4f31-8794-bcbdc5ae6008@web.de>
+In-Reply-To: <5fc18699-74ae-4f31-8794-bcbdc5ae6008@web.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 21 Oct 2025 13:48:52 +0200
+X-Gm-Features: AS18NWDTVlWL2LNpyLMYdbOrlY3koMXJk_7WrqzsLLVdbjx3f9u6XYsg7juwU3E
+Message-ID: <CAPDyKForizdooge04ez+cDhLW6XFHwhDPSE9fR-2ueXej=J3pQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-of-arasan: Omit a variable reassignment in sdhci_arasan_probe()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Michal Simek <michal.simek@amd.com>, 
+	Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Anand Moon <linux.amoon@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
 
-Test that we can see user namespaces we have CAP_SYS_ADMIN inside of.
-This is different from seeing namespaces owned by a user namespace.
+On Mon, 20 Oct 2025 at 15:22, Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 20 Oct 2025 15:15:07 +0200
+>
+> An error code was assigned to a variable and checked accordingly.
+> This value was passed to a dev_err_probe() call in an if branch.
+> This function is documented in the way that the same value is returned.
+> Thus delete a redundant variable reassignment.
+>
+> The source code was transformed by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../selftests/namespaces/listns_permissions_test.c | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+Applied for next, thanks!
 
-diff --git a/tools/testing/selftests/namespaces/listns_permissions_test.c b/tools/testing/selftests/namespaces/listns_permissions_test.c
-index 07c0c2be0aa5..709250ce1542 100644
---- a/tools/testing/selftests/namespaces/listns_permissions_test.c
-+++ b/tools/testing/selftests/namespaces/listns_permissions_test.c
-@@ -573,4 +573,94 @@ TEST(listns_parent_userns_cap_sys_admin)
- 			count);
- }
- 
-+/*
-+ * Test that we can see user namespaces we have CAP_SYS_ADMIN inside of.
-+ * This is different from seeing namespaces owned by a user namespace.
-+ */
-+TEST(listns_cap_sys_admin_inside_userns)
-+{
-+	int pipefd[2];
-+	pid_t pid;
-+	int status;
-+	bool found_ours;
-+
-+	ASSERT_EQ(pipe(pipefd), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		int fd;
-+		__u64 our_userns_id;
-+		struct ns_id_req req;
-+		__u64 ns_ids[100];
-+		ssize_t ret;
-+		bool found_ours;
-+
-+		close(pipefd[0]);
-+
-+		/* Create user namespace - we have CAP_SYS_ADMIN inside it */
-+		if (setup_userns() < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+
-+		/* Get our user namespace ID */
-+		fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (fd < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+
-+		if (ioctl(fd, NS_GET_ID, &our_userns_id) < 0) {
-+			close(fd);
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+		close(fd);
-+
-+		/* List all user namespaces globally */
-+		req.size = sizeof(req);
-+		req.spare = 0;
-+		req.ns_id = 0;
-+		req.ns_type = CLONE_NEWUSER;
-+		req.spare2 = 0;
-+		req.user_ns_id = 0;
-+
-+		ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
-+
-+		/* We should be able to see our own user namespace */
-+		found_ours = false;
-+		if (ret > 0) {
-+			for (ssize_t i = 0; i < ret; i++) {
-+				if (ns_ids[i] == our_userns_id) {
-+					found_ours = true;
-+					break;
-+				}
-+			}
-+		}
-+
-+		write(pipefd[1], &found_ours, sizeof(found_ours));
-+		close(pipefd[1]);
-+		exit(0);
-+	}
-+
-+	/* Parent */
-+	close(pipefd[1]);
-+
-+	found_ours = false;
-+	read(pipefd[0], &found_ours, sizeof(found_ours));
-+	close(pipefd[0]);
-+
-+	waitpid(pid, &status, 0);
-+	ASSERT_TRUE(WIFEXITED(status));
-+
-+	if (WEXITSTATUS(status) != 0) {
-+		SKIP(return, "Child failed to setup namespace");
-+	}
-+
-+	ASSERT_TRUE(found_ours);
-+	TH_LOG("Process can see user namespace it has CAP_SYS_ADMIN inside of");
-+}
-+
- TEST_HARNESS_MAIN
+Kind regards
+Uffe
 
--- 
-2.47.3
-
+> ---
+>  drivers/mmc/host/sdhci-of-arasan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index c6f09b53325d..b97d042897ad 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -1991,7 +1991,7 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+>
+>         ret = mmc_of_parse(host->mmc);
+>         if (ret) {
+> -               ret = dev_err_probe(dev, ret, "parsing dt failed.\n");
+> +               dev_err_probe(dev, ret, "parsing dt failed.\n");
+>                 goto unreg_clk;
+>         }
+>
+> --
+> 2.51.1
+>
+>
 
