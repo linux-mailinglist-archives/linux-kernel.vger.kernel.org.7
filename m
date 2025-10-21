@@ -1,122 +1,270 @@
-Return-Path: <linux-kernel+bounces-861946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAEABF419A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:05:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A83EBF4193
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9AEA134E32B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB0A142078B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E240478F54;
-	Tue, 21 Oct 2025 00:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72942208AD;
+	Tue, 21 Oct 2025 00:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zago.net header.i=@zago.net header.b="kCpm4ybj"
-Received: from cp4.obambu.com (cp4.obambu.com [88.99.29.238])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iJ1g1Cuv"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010052.outbound.protection.outlook.com [52.101.193.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00EB273F9;
-	Tue, 21 Oct 2025 00:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.29.238
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761005115; cv=none; b=TgKQ5hYkmUK+jdnA6OFrdjYHm9LsFVCYs9sCBI1OsdCOGzAmdmkzgigTjjh/4KNJ2XY1ahiv/0sWl2SMXVVcctpu+YBkE0LxOMUUjfhzEnV/ysciJguyyPs457IEIQyQ06lSipLxWZzJiZSsh7IwPstSuVeq3I4RdAgYDmvh3Gc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761005115; c=relaxed/simple;
-	bh=F1yV94Y1btTEz9XP1+4UrFoaP4Ef+rr/pPWNdyJQklI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n5UW1GfZIJQrXqadMgK2LNgUN6bt/HQYnkEc90tsCIPyTpAdUt+sTpSqD2ECBMPFu5daYuQM9hfXt4tpLPYzX4wGximYjHq9QwAifMluG32eQwWh0ipCinFs1Kth+N+XJFk1l1ZwdfFvgb0tsTiL5URo0zMaUattD4udb+2dIww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zago.net; spf=pass smtp.mailfrom=zago.net; dkim=pass (2048-bit key) header.d=zago.net header.i=@zago.net header.b=kCpm4ybj; arc=none smtp.client-ip=88.99.29.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zago.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zago.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=zago.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0DrXsX05Grva4tWU6XxJfz/A2NsaAczVNPLro4r7jRM=; b=kCpm4ybjA9C+5MwdBHDiI3WAzU
-	EghG2TGslavBB9P/wFgBzldimwl+3i4PVnxTrjlXgCyiz4gW/PdXzXLOtT7RAMgx3SB84Yz6CT/mF
-	hXzhDIUs6cIO/b9bnVqAZQUfLS+XV9TPoWkOpjemQ/ntplYjEOdgxsfGkT4vF+njOj3rBPKr/JJwn
-	zi+7Wq1FEW8SJSv80lpwJ9NmnWvT6g/249KNgC0LJrrIUMxp85opbqjQf53DyunsKvCFKYqXkHxFr
-	J5h4Q437dzDXra+TEm+NQvnDgnZZFnJgrX/pLVLAL96FH+gP3V9cXuRZuUhLh7DfO6vAFyiwJ9bKO
-	WgdWVBkA==;
-Received: from [68.203.21.78] (port=46264 helo=[192.168.1.205])
-	by cp4.obambu.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <frank@zago.net>)
-	id 1vAzZ2-00000004D5u-0fRx;
-	Tue, 21 Oct 2025 01:45:19 +0200
-Message-ID: <5f2f9957-52e1-43a6-b3f0-bd3f4e434ff6@zago.net>
-Date: Mon, 20 Oct 2025 18:45:14 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE4879CF;
+	Tue, 21 Oct 2025 00:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761005112; cv=fail; b=ZzggX1pMnCGoI/kg9t8Rb7y0NnlEAQfyJ5MRzdeK8qKWgeqGW6n/9OBzgXdgyKYnxSbBeKail802xpydQPDccCoFAg/bRT0ebC2j0WP2HMVGc01TQdvdAiePSIgrdEn2ZxQ1sJ3KQ7TaDoNP0w8s960udktQF/neTH1ZvT0DPP0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761005112; c=relaxed/simple;
+	bh=KtoWqlCOvbZ9sa7ucxo303uIlj2qZcSraHihUgiB/zY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VbFTRyhMgpWaorkr3rkMGWQivd4LgwYh0sEK4BXeVQTqo5sAVIp4eCkn4PZ8mWQ0CzRTgMjZcvuclixfIVyVDMqoTAHWAzx/v4lq0ySrDZpbH2y9xIBDhg4hoCejeQZjsenEDPorZOzPRf0fb4B92UTQdkkm72PCqngGMy7+W5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iJ1g1Cuv; arc=fail smtp.client-ip=52.101.193.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LJ4dXLsBk3bU87WT9zK7H4wWrtVqbix0KqNGLAicTlSeb3Vi9qdzdOS+f5tkqp2wRoBLF6jaMe487Jhtd11tDFuKGvG0FwpwrEDIIN8rZFWMi2W5Vce1kgqK5mjTy5xjc/czgL6GwWcoFU/FPbOHDXussR+V2pId8n1rhwVHoNBGIOzLpmPawbjNGBIbIi6aVOQ2aIzFuaFhszH1HqXsBR7gHFfPT8EDbpSu2dd921vyGrJlKBSvu6H6pExue/dhX124pco+/SYnV4mxJpHD0Dzkza4TF9J4oQxUwe2kfP8FsxrnHrkbq2yvRTnJ4zqnyy1UEBnSElYdtJ2wJZ6kXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lUXl4GW31GzPp3bFwVgeVL1rXqIvsfom+0nDhuU1KBE=;
+ b=KKVQCE/nCjWB+4fYTDvZGulnB/AHfgQ3TTSmMNbgCjgU4nZ1mTV9CHo3zkDApx1lvShI9lN5RuZ7QPd4N391LBxtfvw/elpF1x9+4ztVyC0JGtUPJg3ivuE8UUNwZxCwhcwD9XVjehW4ZwhnUvFs+Kip7LqYqiLuF0or81Hp7WzKFECLiq0bXfzjoRU2aJjmWt7lV57WWn5eDvnadZmZWYSvwIArfGKqYeDFWc2DrzY/SwzaRckH5Jhu29nXkbpG/A9phvzfVvz/bs0amAIteiFrleEim/DtN1t6zh0Ms+lRGX9FxcbCWOsO0q3AMfdvpfd8fX/DWfoNQOR2tU7xWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lUXl4GW31GzPp3bFwVgeVL1rXqIvsfom+0nDhuU1KBE=;
+ b=iJ1g1Cuvx2eJ6TA5blxxWEVgqLYYexF16gB3z0zR42Pe3iQFmQBiwE4qtFsG7omRCKuuRMLgtqZeWkfR8Iay1GGmyQulak1zW5pmM9g4VFWmEoC2v6gRS0yfKW5D0tlxHUyOWMYGsj7kzs/YMfNKqE3bCwkTcfZ5AQjb+MJSlSwEwtntNErFjqC0IzrLP9ZUtNXwibyIXpDD9lkDvzk2w3Vibz68wyE/IA9wkab3phbDwyvtFYgalU10DQq3h+vdi1LVByW9O7Safr/u7C3AebzDLzy+E+xPMD/RCkC9x6WpuS5NKH60dR9r52NyYxkY+g6paWn14VpJ4rpz3BVV7A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by CYYPR12MB8940.namprd12.prod.outlook.com (2603:10b6:930:bd::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Tue, 21 Oct
+ 2025 00:05:04 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
+ 00:05:03 +0000
+Message-ID: <da74ab79-2b35-4e64-8032-5c14be5ea089@nvidia.com>
+Date: Mon, 20 Oct 2025 17:04:58 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7.1 2/4] gpu: nova-core: bitfield: Move bitfield-specific
+ code from register! into new macro
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, Yury Norov
+ <yury.norov@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Alexandre Courbot <acourbot@nvidia.com>, Alistair Popple
+ <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Timur Tabi <ttabi@nvidia.com>,
+ "joel@joelfernandes.org" <joel@joelfernandes.org>,
+ Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ Edwin Peer <epeer@nvidia.com>
+References: <20251016151323.1201196-1-joelagnelf@nvidia.com>
+ <20251016151323.1201196-3-joelagnelf@nvidia.com> <aPEv_UO4vViOcOvN@yury>
+ <2CF462DB-D2C8-473F-9D70-522E6AFEDCE4@nvidia.com>
+ <DDJZY40SO5EF.2066SEKKQ4U8I@kernel.org>
+ <e4f5ca12-bf67-4b48-97a1-7ab2c771056e@nvidia.com>
+ <aa3b4ebf-12c9-4ffd-bfd9-bcd920970309@nvidia.com>
+ <DDNIZMOBCE1Z.1ZOQ83TKTHQ28@kernel.org>
+ <0e592a2d-6c0a-4dab-b16c-ff994917af9a@nvidia.com>
+ <DDNJB4SLN8A4.O0L8NH8IWXSO@kernel.org>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DDNJB4SLN8A4.O0L8NH8IWXSO@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0023.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::28) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: position: Add support for ams AS5600 angle
- sensor
-To: Aditya Dutt <duttaditya18@gmail.com>, Jonathan Cameron
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20251020201653.86181-1-duttaditya18@gmail.com>
- <20251020201653.86181-3-duttaditya18@gmail.com>
-Content-Language: en-US
-From: Frank Zago <frank@zago.net>
-In-Reply-To: <20251020201653.86181-3-duttaditya18@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cp4.obambu.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - zago.net
-X-Get-Message-Sender-Via: cp4.obambu.com: authenticated_id: frank@zago.net
-X-Authenticated-Sender: cp4.obambu.com: frank@zago.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CYYPR12MB8940:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56555702-bc1b-471c-6aee-08de10357c3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NEJ3RkFJemRMR3pXMDFpd3E3SFZpZXI1bVlJQUt1eGNNckN1ZTRQbGQ0S3Jn?=
+ =?utf-8?B?emRWVjlzK3lDU01tSm9ZNTM1cGhSQnRJdFZlbk81TWd0UGVpditRNzBYY29v?=
+ =?utf-8?B?NGxZUExERWdNcWNQcDJXTWJIUzkyZVFYQ2pETnJsOS9NMHkxa0hGY3BUMlRN?=
+ =?utf-8?B?T24vMVgxZ2NKVERMTHhEM0tLdE8veGw2S2xRK3BSSDl6UnFGZHUwTUVTd3My?=
+ =?utf-8?B?bWMyU01sczZVWnlGUHk4MWRLVzVSV3lJQnVQQlhaQ0x3OVRtWTNsaDE3NFdO?=
+ =?utf-8?B?WjdUbFhPZjVIZ1pDcjl2TTFjaW5DVWVSUUhhMzBYbmV1eGpQK1pTQ3huYnhu?=
+ =?utf-8?B?UE9Mc0NIdHVyU0NENVRqT3JVdXB3b1JncWFQODdlUjliQ1pWbUVwYmx5bHpI?=
+ =?utf-8?B?TVVROTY4R2cvVUs4NmRSS3pyRDJ6K1E1Mi8rMi80VUVFd1dYMTZOK3NObW5r?=
+ =?utf-8?B?UEFJcEtkRXZEdnJSOXhlRWJtemNrMjExdzFuL20vU2wvYWtWb1cwNTlRdEtY?=
+ =?utf-8?B?WU84VkxuY2MwZkFtNVIxMnAyRm5GWktqRDc0Z0RPU2U3anU1bTErc0lOOFhN?=
+ =?utf-8?B?VmZITzhEOHJPYzlhU1VDYXFBK3ViQms0MlJUMnE1TXdINko1N0hGN01QVGtx?=
+ =?utf-8?B?WFRJVEsxSEUvQWptRmR5aWZyOVRXVnFFbDdMaUtwYnZ0V2dreFRJc29sRFNN?=
+ =?utf-8?B?ZkRlcm16VmVPaCt3a3hpUG1pa1p0UGU1UktvNlFsMHViVzZaNUJtQUs4Uk95?=
+ =?utf-8?B?a0NDamRacGV6MUFWUXVvVjJMUHVBREpxT2ltMlplZjRDb2tjNWM3NjVpenRi?=
+ =?utf-8?B?SlVvNG92cnhVdVd5RlRvaGw3Uk8vS2xsbmI3WHhjcU9hdWhQb28yUUt0SnU2?=
+ =?utf-8?B?ckJzTkt2dnNtWGVnTzFlSC9YWUdUSGVqNFZ4ajdMVG1XMnd1cGJRZzVtcXpD?=
+ =?utf-8?B?V2F5VTFScU13RUl2ejlBSmtXMHN0SFFqbllSaHVBWlRyRkdDZk5ZRmdBY0wy?=
+ =?utf-8?B?MkticUR2Y213ZXBESGNEdU80QzgzT25PUUdjanliV1YvTVRtQ3JIN0RVd21S?=
+ =?utf-8?B?c3lKRjh5SFJsSXZCV3N4YldKS1RGK1FGNjhlVjhONGVxc2Z5Y1JqU1ZyL0Rq?=
+ =?utf-8?B?TE1KZE5yNkllVFRheXdteVJGSnNEVHJYb2FSY2tOdlBRdXV4MUlGT1JUYi9T?=
+ =?utf-8?B?MEwrVVFIc05temNNbXJydzcvT29OUkdGNytMYUNTRjlSVTl4YnY3YUMxY3po?=
+ =?utf-8?B?b3ZtR3ZnbWFaaEVaWWlSNXNib3M1NUQxbUQ1QXZ5bDdSWVZoUmJtS3piUjNB?=
+ =?utf-8?B?SStYNU11amllNnEySDVjZmZsbVJFTHlIbkV3MUNEMUw4RlVGbUJvbGlpbCth?=
+ =?utf-8?B?bnE0em1MSHhLS0ltSzRhODgwRkJSTFBsZjRHY3prQVozSWZIWDNTRHRIRGln?=
+ =?utf-8?B?UUFUVkpHMUJkUXZqUkNIdTZ2SExhVUowcWhQbksyYUYrNWsxUXpXNDNxS1dV?=
+ =?utf-8?B?OTR1RTNXNDk4RkFROXhaUGN3ZCt5Z2VhYTE4MHhwVzBVR1FxT2N0VWZjdUEr?=
+ =?utf-8?B?c0RvQUFEMTJWQ3FteitVbGVtMmhDSmdWampMNHE5U2hHUlpmUC9sL0FUYjRL?=
+ =?utf-8?B?SHQrbDk5K2RJKzJDenFjbzcwamFlL1A5YlRYZ0VBRUMvVG12SkN6ZHZpKzJo?=
+ =?utf-8?B?dEc1QnFaTTJ5YTNadXB2MTFYL04rMlJiK3VjNEkyUFVDNzBsZnozSnI3RlF0?=
+ =?utf-8?B?ZXZqdG1oaElXemVuNkxxQnEySUNxNCtEU3N0NVR6cUpPNDZrQU13L1I3M1lV?=
+ =?utf-8?B?WDRZUjAxVWZtaXJMTlcrNlJYMk5DRFlkT1doTEtzNDhpUXBZLzhHMnQxZEJP?=
+ =?utf-8?B?QXN4RWRBS0dMTnlWR1hpV3BUTGIwdjF3blJpcFFMRTROSU45dGVNeGp6bnA1?=
+ =?utf-8?B?c3dxOEFDZUtmQm51Z2loQ3FIU09hcXBsMWFhNzVVQXdyc084a29VSE9qeHdF?=
+ =?utf-8?B?cGNscFZWN2hnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VGR3Y1hLVE5aZ2V0TE05dFBHdWwvNmMzQ1pYSk9xU2J1MTd5ODJKVERIWDZI?=
+ =?utf-8?B?R0VlRVhyV0FRd3h0Q3hIK1BDZzh3VTJGVWRtQjFoc0VZRFFnZVhETUpLNE9C?=
+ =?utf-8?B?SWRocjFNcVdJUnRHWlprQUM4S1BINUtWRjBmNGdIRCtGMm12OGR2SzlkVW51?=
+ =?utf-8?B?WUExb3RCWU9XTkdEeUtqbVh2U3VEa1ZqWUlVWlNmSVpldnFkamZDWjYydTAr?=
+ =?utf-8?B?QmI5NWd5MWNEUzF0eVMzTGYwU0Rna3N1S3ZieVlpcUc3WkYvK2N0d3VmOE55?=
+ =?utf-8?B?MWNFYXZWSWs2b2ZrN1drOTVpd0dacEpUNTRaR3NmOHB4Rk00dlJPY0Z4Z3Vj?=
+ =?utf-8?B?NWxaZ0h1bDhJRFFYa2N6ekU3clhyeUs2TnlpUEcxOG1FZG5ic2c5MHBna3VU?=
+ =?utf-8?B?d3dleUg4NFpCS0VhaGpiRW9SK0Y5NVNYcXFYVFBNNk9vSFYyNnlYQ0hMTnR6?=
+ =?utf-8?B?Q2NjVlQxVXY1Z1dpbHBKWnJ1TzQxOWx3KzUvQ1h4dGZzRFh0Zmt2ODN3Y3VL?=
+ =?utf-8?B?MUFyNHZ1Ri84QzgxeStEVkpPRWQ2Z0JoTHpQdnowZkdYdXVwVEhXRnZqNjY2?=
+ =?utf-8?B?UEo3MXBLMCtIMVNaMm9XR21qcXFnT1NGVjlyZXBHd2FRL1p2T2VsTHpTdWI1?=
+ =?utf-8?B?M3lObTN6TERCR1NLRTUra0lsMmhjZldRSTBlQ0lwZ09sY2U0a0NTR0oxRjNL?=
+ =?utf-8?B?Tkt2bXpuWWNZTVgycFVjdzlEUWUxbmNPK0JKVXFISnB5NjhacjlaR2dVb3dM?=
+ =?utf-8?B?VVhxT3VOeFFTTm1TM2doOGhYREdKYks2TVo1QVNPMzZRRUViSkpKSkdVcXQ2?=
+ =?utf-8?B?b3BoWWVBTkRTRU9kR25sM09nN1RRMmJ1bHRHVldiN21JZExwa0tKM3dpcFI1?=
+ =?utf-8?B?eFZSUFJpZ0RhbStmQllVSXRxSkEvU2RIcGZEWlVuUUVwVXBIRUVNR1J3alRk?=
+ =?utf-8?B?Ti9xMEFBSFRxRUs2VElEWDJOdDJqUXQxZ1d6VlJQS0E4WWs0VlU2SEhqZkNI?=
+ =?utf-8?B?alVZZ3R0S1ZWRTFWMTZPcHpaejlQTklHVXNIckdzSllBbEZNaFVTVHlOZVVY?=
+ =?utf-8?B?Rno3bmx0MmdpdUZuSmZFMjlGNTJudWNNVTYxMWttcThaMkhTbGpQakZwcXY3?=
+ =?utf-8?B?elFWRHd3NWk0NElrVWFQWXFuZE9yMkUvaHlpb0ZwV0kyZXoyY01OSlZscG9N?=
+ =?utf-8?B?MXllVWVzMGFNTVFDdHJOeXhjUWF5YTFhM2hGNlNOL3IwMUc3cFN6WlE0RnVy?=
+ =?utf-8?B?ODNiYWQ5d05nMHJjaFRCajVQVlpPdUFiRnQzaEpuUU04MUxWOXg2SVVobDd4?=
+ =?utf-8?B?eEFRSWZ1bmxwMlc4aEZOYkIvTlJlMm5NMHI4WE9CUDczd1NrcmpSck9hVVh2?=
+ =?utf-8?B?ejB2ZXhuZllVMi9BQXJrNzZhNnBZa0ZaSFg0TlJqQSttYmxkZnhvWDhCcDlI?=
+ =?utf-8?B?VHZEZWhrcmpxYjVoM09jZ0VIRDduT0kvM0lyMmJIaUw5cEJRTXBwMm9xdUpn?=
+ =?utf-8?B?RXk4TThvOHovTEJvTzYvb2sxejIrUHN3M0dQNUVQUTh2NmNlWWYwSDkyNlB2?=
+ =?utf-8?B?VE0yMDJVcEJWOGdueE14SU1aSjdNNmRLenJTRTJydzd2QkVMY0tyRVlUUlVt?=
+ =?utf-8?B?UGhVaXFqQ2xjZDdMZ2dRQXpCQzRoditnelNnMFVlSGVuSFJCN1JnaTMxNnYy?=
+ =?utf-8?B?YjlnK2NZTFVCRWV4dDUxUTYyWGg3SVZhdTVKYnpuRGt5aGxWcDNQejBHblZW?=
+ =?utf-8?B?cWdoSWlFbThUZnRCWjBQRWRmMVp4NmdGMDVaa2ttZ2kraWNiYjFsSzNYTzMw?=
+ =?utf-8?B?WE9VQ1hQOThCUlRMQ2dyazVqM25ORk1IdWVyelVsbEhtL1RvTU5BSFQ0OTE2?=
+ =?utf-8?B?b1F2VFVRQzF1b2pOZVcvbzg1RzdrRWhGMlU5bFhlcENZUE9pQ2J5QnR3OHQ2?=
+ =?utf-8?B?TEN3NHVSazRjdnBVdmFUcFdpNUFOM1dDdkF5eGtQc2pHNXVqZmxHVndoMEMr?=
+ =?utf-8?B?emQ5KytURS8yclZiTVZmZlJzclc4NkVSc2VETVMxaXRKWUR4VmJIU0JXYzlO?=
+ =?utf-8?B?MCtXQVBLVUltZ21PY1VnTndFSmxsRDhuL0xvcWNFWS9JdEQyK1dQVnZPd0Nk?=
+ =?utf-8?Q?jErXrvS3mDiPmmfGZuTm5vWJl?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56555702-bc1b-471c-6aee-08de10357c3e
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 00:05:03.8546
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qUVUSGL5gY+OMYNTBjR9qakGXy5xxm/MvZtpoeD0mZuoj+IPUIOThSzFlhtPP5j65APbhx2iRR74YTi1K5JPpg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8940
 
-Hello,
+On 10/20/25 4:22 PM, Danilo Krummrich wrote:
+> On Tue Oct 21, 2025 at 1:16 AM CEST, John Hubbard wrote:
+>> On 10/20/25 4:07 PM, Danilo Krummrich wrote:
+>>> On Tue Oct 21, 2025 at 12:50 AM CEST, John Hubbard wrote:
+>>>> On 10/16/25 12:39 PM, John Hubbard wrote:
+>>>>> On 10/16/25 12:34 PM, Danilo Krummrich wrote:
+>>>>>> On Thu Oct 16, 2025 at 9:28 PM CEST, Joel Fernandes wrote:
+>>>>>>>> On Oct 16, 2025, at 1:48 PM, Yury Norov <yury.norov@gmail.com> wrote:
+>>>>>>>> ﻿On Thu, Oct 16, 2025 at 11:13:21AM -0400, Joel Fernandes wrote:
+>>>>> ...
+>>> But that's OpenRM specific, I'm pretty sure when you look at internal datasheets
+>>> and TRMs you will find hi:lo with decending order, for instance [3] page 1672
+>>
+>> TRM is Tegra. This is gradually going away, from our point of view, as
+>> the larger, older RM (Open RM) driver subsumes things.
+>>
+>> Open RM follows the main dGPU ref manuals, and we have piles of those
+>> and they all apply to Nova.
+>>
+>> None of the TRM stuff applies to Nova.
+> 
+> My point is less about NVIDIA TRMs, it's about that this is uncommon in general,
+> OpenRM is the one being special here.
+> 
+> So, the question for me is do we care more about consistency throughout the
+> kernel, or do we care about consistency between a driver and it's uncommon
+> reference manual.
 
-Thanks for updating that driver and making the required changes. I tried to go back to it a few times but motivation was lost. 
+Yes, I think that is the key point.
 
-The commit message should say "position sensor", not "angle sensor", for consistency.
+> 
+> I think consistency throughout the kernel is more important.
+> 
 
+Perhaps, but may I point out that there are countless thousands of lines
+of HW ref manuals to deal with? GPUs are uncommonly complicated devices,
+and I've spent a lot of time in this area, being awed at the sheer volume
+of HW documentation.
 
-> diff --git a/drivers/iio/position/as5600.c b/drivers/iio/position/as5600.c
-> new file mode 100644
-> index 000000000000..fe716d521548
-> --- /dev/null
-> +++ b/drivers/iio/position/as5600.c
-...
-> +	case AS5600_REG_RAW_ANGLE_L:
-> +	case AS5600_REG_ANGLE_L:
-> +	case AS5600_REG_AGC:
-> +	case AS5600_REG_MAGN_L:
-> +		mask = 0xFF;
-> +		break;
-> +	default:
-> +		/* Not a readable register */
-> +		return -EINVAL;
-> +	}
-> +
-> +
+And there are hundreds of engineers who today work on GSP and Open RM,
+some of whom I expect to eventually end up working on Nova.
 
-extra empty line
+So looking ahead, I'd be much more comfortable saying something like
+this:
+
+"Nova and its associated GPU HW manuals are special snowflakes that
+use a particular documenation style. We'll allow them to deviate from
+other kernel conventions in this area."
+
+Yes? Please? :)
 
 
-I believe you could add this to the second patch:
-Acked-by: Frank Zago <frank@zago.net>
+thanks,
+-- 
+John Hubbard
 
-Best regards,
-  Frank.
+
+>>> (clicked a random location in the scroll bar. :).
+>>>
+>>> Besides, I think that hi:lo with ascending order is confusing. It should either
+>>> be hi:lo decending or lo:hi ascending.
+>>>
+>>> For registers the common one is the former.
+>>>
+>>>> [1] https://lore.kernel.org/20251020185539.49986-1-joelagnelf@nvidia.com
+>>>> [2] https://github.com/NVIDIA/open-gpu-doc/blob/master/manuals/ampere/ga102/dev_ce.ref.txt
+>>> [3] https://developer.nvidia.com/downloads/orin-series-soc-technical-reference-manual/
+> 
 
