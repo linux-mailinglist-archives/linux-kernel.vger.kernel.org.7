@@ -1,192 +1,423 @@
-Return-Path: <linux-kernel+bounces-863154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDF2BF7216
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:42:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0654FBF721C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C725A1896929
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:42:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D37F19A0291
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DF7336EFA;
-	Tue, 21 Oct 2025 14:41:48 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D014633C51B;
+	Tue, 21 Oct 2025 14:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gcEwCGpt"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D750133C50D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EB232ED3B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761057707; cv=none; b=W4M8BREL0fWudZMyEoU37WsKatdovLG6dHI3GBaR6LleFy8ddrbZJie1VC6EtbavSaqZLHhBHJJkGB2rJPtWeDjovcg1PjblGnSaypjb2fDSy3OUvb/kaUZ6VCj6KDMyLgZFumGArw+XtwLUne00gcOlKGJDRQH574TNWgpyFCU=
+	t=1761057735; cv=none; b=pijClIpBNnb7bjX+0j4kWwSFm8pcql96TF8QaN39mdTWUNLUvJGQBePYO7EdeMhBtdLLQSzSwT0mSlInkzjPX0AczXw5GmHX+7gOOclhg8IAp1KJjtvCFv0Jp4yEwaoj8kFhn1KcZCS/fgN/L87oAnyCFtcAcTpm8sxXC6hLcQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761057707; c=relaxed/simple;
-	bh=Xk82p3QMQ218l3t+5+rV+5DkhvLFvg+GAWSI/dQi70o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Xl2MuiNKwfIvG5SWFzjq+g7oQnoLrS55zH8BI3Z5k92w1LGD9wDnUgluQ8+z8pGCOkjAS6wGad9Zc90xtCaHCIzWVATC0sCfzGqpgShacEGw8S8eBLkC7RM8iLCRnbZGvefKgWMQ6aFvSnFYg9mbXqExedrkiz8eClUF9FvKWcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430afaea1beso69426405ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:41:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761057704; x=1761662504;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4nyXkjWC/ci1YXwgRcz9ZasDLILOvM2KJyStZKlc64A=;
-        b=BDRENjOzkjcRXDvYnK5oEzyTDS5FUTiKea5ciwk4rhJjDemtSVbGga9vacciiXyyL9
-         dZ9hl5Q4/pEEyc/8eoI8B6+M8R0ZbaeGYWAgJdKhsKF4cyhQMfaCVZ+IJx2duqe+C0n0
-         rIu9ujO96H9Jmp6hwYEjmSn3pc6hjE6G4i2Lz4Ox1offBB+VEr+45y/Xq3dHhN8QpvtY
-         kW8VzHNpkYs8XunQpLGCMOasPe2M9Cxv5PI69uCNdPrOef6KGrunqOoBBo295+pT3h63
-         R3qdJxYs3uYa1ep//SelCfLylYgABXEHeOq6NVBysvhzNglvWRXpKDaZ1PWj2Xu4o8aE
-         3oiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXB/FU28qG9jFKzMglMN+cIRUCzr1Rd+O5+BrDwcaIgBPqGXZH5VSMzhtH81tVace1lSRdzy2KN8QZHNVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkTn7rOgnPc1HIVeTO/Al4MZiEbsLkhU3mK0cEvHbSyNx2rqoh
-	WAhTi33BJckY4WxEnEaw4NqIRhRi0SRpLK137EIIMgVExUozH4inSCOedSjGrjd97qvZmfEOblT
-	7IzCMZisynU/4PrIvr43b2niPVZfLVK0nlaoCqeegdMmsyw3XJKCugweAdX8=
-X-Google-Smtp-Source: AGHT+IFB7JSh1jrcc84lwp+scGP8tt2pMbdrY49scmV75mR9oHYCvfnRmGuGOLsMGCf2cDZgm31FWVk2KIt/UjEYUCv1sp6O0Atc
+	s=arc-20240116; t=1761057735; c=relaxed/simple;
+	bh=AdOTqC6GnppcuVY2+ZB5OHVNph65GMdeDJ+SDxsEadI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U5DpNgA0rT4hn5yejA8Lg73Nr96RNCOfax6ZWCB3rYrsDv3RuwylFEK1v1y0vOP5j5SHY/Iv8WLAJKNPzDRsxjA78RNLjyogTl0xaDxAQdHELAQtb6Zvt63z0moZRIT/3R1e8EHer8GLOE3n30YTN8FW77vovQTQRtwng1nhkCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gcEwCGpt; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761057731;
+	bh=AdOTqC6GnppcuVY2+ZB5OHVNph65GMdeDJ+SDxsEadI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gcEwCGptiVGdGVW7I0QsjIyInYkV3j4tfo4x2NFO/rgVTGXFJ9gxiLO8Yulsyyn7R
+	 e+0OLncKWE1DQQAjZQtwK1F/n75dGq7/m8sYza6+NQReOlQSTOoJw7roe+hm0lKvxy
+	 q/1B6GDNXDj3nj0kOHDKQegAfygNbQGwYFT1tsfDViktIQ+d1jG/NQg3tPMfIynM0h
+	 JDSyDBMP/Gfx5NQGjivBSW6lDP91vnoVN8YKLgGoOdjsJp9N6vulfNLJel5nrv3/VA
+	 fBxQ25+gBI4kHdNi3FcJz3fMQ5LXwssB7KDoJhVZ4SmZ5djtHHays7nLaYyvSM+HhW
+	 L86mJlAam+RTw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CCDDF17E00AC;
+	Tue, 21 Oct 2025 16:42:10 +0200 (CEST)
+Date: Tue, 21 Oct 2025 16:42:03 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
+ Price <steven.price@arm.com>, kernel@collabora.com, Liviu Dudau
+ <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH] drm/panthor: Support partial unmaps of huge pages
+Message-ID: <20251021164203.2b9fec35@fedora>
+In-Reply-To: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+References: <20251019032108.3498086-1-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd82:0:b0:426:39a:90f1 with SMTP id
- e9e14a558f8ab-430c527dc54mr238746205ab.18.1761057704018; Tue, 21 Oct 2025
- 07:41:44 -0700 (PDT)
-Date: Tue, 21 Oct 2025 07:41:44 -0700
-In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f79ba8.050a0220.346f24.001f.GAE@google.com>
-Subject: [syzbot ci] Re: nstree: listns()
-From: syzbot ci <syzbot+ci929e562404b4811b@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, arnd@arndb.de, bpf@vger.kernel.org, brauner@kernel.org, 
-	cgroups@vger.kernel.org, cyphar@cyphar.com, daan.j.demeyer@gmail.com, 
-	edumazet@google.com, hannes@cmpxchg.org, jack@suse.cz, jannh@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, kuba@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
-	mzxreary@0pointer.de, netdev@vger.kernel.org, tglx@linutronix.de, 
-	tj@kernel.org, viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-syzbot ci has tested the following series
+Hi Adrian,
 
-[v1] nstree: listns()
-https://lore.kernel.org/all/20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org
-* [PATCH RFC DRAFT 01/50] libfs: allow to specify s_d_flags
-* [PATCH RFC DRAFT 02/50] nsfs: use inode_just_drop()
-* [PATCH RFC DRAFT 03/50] nsfs: raise DCACHE_DONTCACHE explicitly
-* [PATCH RFC DRAFT 04/50] pidfs: raise DCACHE_DONTCACHE explicitly
-* [PATCH RFC DRAFT 05/50] nsfs: raise SB_I_NODEV and SB_I_NOEXEC
-* [PATCH RFC DRAFT 06/50] nstree: simplify return
-* [PATCH RFC DRAFT 07/50] ns: initialize ns_list_node for initial namespaces
-* [PATCH RFC DRAFT 08/50] ns: add __ns_ref_read()
-* [PATCH RFC DRAFT 09/50] ns: add active reference count
-* [PATCH RFC DRAFT 10/50] ns: use anonymous struct to group list member
-* [PATCH RFC DRAFT 11/50] nstree: introduce a unified tree
-* [PATCH RFC DRAFT 12/50] nstree: allow lookup solely based on inode
-* [PATCH RFC DRAFT 13/50] nstree: assign fixed ids to the initial namespaces
-* [PATCH RFC DRAFT 14/50] ns: maintain list of owned namespaces
-* [PATCH RFC DRAFT 15/50] nstree: add listns()
-* [PATCH RFC DRAFT 16/50] arch: hookup listns() system call
-* [PATCH RFC DRAFT 17/50] nsfs: update tools header
-* [PATCH RFC DRAFT 18/50] selftests/filesystems: remove CLONE_NEWPIDNS from setup_userns() helper
-* [PATCH RFC DRAFT 19/50] selftests/namespaces: first active reference count tests
-* [PATCH RFC DRAFT 20/50] selftests/namespaces: second active reference count tests
-* [PATCH RFC DRAFT 21/50] selftests/namespaces: third active reference count tests
-* [PATCH RFC DRAFT 22/50] selftests/namespaces: fourth active reference count tests
-* [PATCH RFC DRAFT 23/50] selftests/namespaces: fifth active reference count tests
-* [PATCH RFC DRAFT 24/50] selftests/namespaces: sixth active reference count tests
-* [PATCH RFC DRAFT 25/50] selftests/namespaces: seventh active reference count tests
-* [PATCH RFC DRAFT 26/50] selftests/namespaces: eigth active reference count tests
-* [PATCH RFC DRAFT 27/50] selftests/namespaces: ninth active reference count tests
-* [PATCH RFC DRAFT 28/50] selftests/namespaces: tenth active reference count tests
-* [PATCH RFC DRAFT 29/50] selftests/namespaces: eleventh active reference count tests
-* [PATCH RFC DRAFT 30/50] selftests/namespaces: twelth active reference count tests
-* [PATCH RFC DRAFT 31/50] selftests/namespaces: thirteenth active reference count tests
-* [PATCH RFC DRAFT 32/50] selftests/namespaces: fourteenth active reference count tests
-* [PATCH RFC DRAFT 33/50] selftests/namespaces: fifteenth active reference count tests
-* [PATCH RFC DRAFT 34/50] selftests/namespaces: add listns() wrapper
-* [PATCH RFC DRAFT 35/50] selftests/namespaces: first listns() test
-* [PATCH RFC DRAFT 36/50] selftests/namespaces: second listns() test
-* [PATCH RFC DRAFT 37/50] selftests/namespaces: third listns() test
-* [PATCH RFC DRAFT 38/50] selftests/namespaces: fourth listns() test
-* [PATCH RFC DRAFT 39/50] selftests/namespaces: fifth listns() test
-* [PATCH RFC DRAFT 40/50] selftests/namespaces: sixth listns() test
-* [PATCH RFC DRAFT 41/50] selftests/namespaces: seventh listns() test
-* [PATCH RFC DRAFT 42/50] selftests/namespaces: ninth listns() test
-* [PATCH RFC DRAFT 43/50] selftests/namespaces: ninth listns() test
-* [PATCH RFC DRAFT 44/50] selftests/namespaces: first listns() permission test
-* [PATCH RFC DRAFT 45/50] selftests/namespaces: second listns() permission test
-* [PATCH RFC DRAFT 46/50] selftests/namespaces: third listns() permission test
-* [PATCH RFC DRAFT 47/50] selftests/namespaces: fourth listns() permission test
-* [PATCH RFC DRAFT 48/50] selftests/namespaces: fifth listns() permission test
-* [PATCH RFC DRAFT 49/50] selftests/namespaces: sixth listns() permission test
-* [PATCH RFC DRAFT 50/50] selftests/namespaces: seventh listns() permission test
+On Sun, 19 Oct 2025 04:19:42 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-and found the following issue:
-WARNING in __ns_tree_add_raw
+> Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+> behavior") did away with the treatment of partial unmaps of huge IOPTEs.
+>=20
+> In the case of Panthor, that means an attempt to run a VM_BIND unmap
+> operation on a memory region whose start address and size aren't 2MiB
+> aligned, in the event it intersects with a huge page, would lead to ARM
+> IOMMU management code to fail and a warning being raised.
+>=20
+> Presently, and for lack of a better alternative, it's best to have
+> Panthor handle partial unmaps at the driver level, by unmapping entire
+> huge pages and remapping the difference between them and the requested
+> unmap region.
+>=20
+> This could change in the future when the VM_BIND uAPI is expanded to
+> enforce huge page alignment and map/unmap operational constraints that
+> render this code unnecessary.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 129 +++++++++++++++++++++++++-
+>  1 file changed, 126 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/pant=
+hor/panthor_mmu.c
+> index 2d041a2e75e9..f9d200e57c04 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -2093,6 +2093,98 @@ static int panthor_gpuva_sm_step_map(struct drm_gp=
+uva_op *op, void *priv)
+>  	return 0;
+>  }
+> =20
+> +static bool
+> +is_huge_page_partial_unmap(const struct panthor_vma *unmap_vma,
+> +			   const struct drm_gpuva_op_map *op,
+> +			   u64 unmap_start, u64 unmap_range,
+> +			   u64 sz2m_prev, u64 sz2m_next)
+> +{
+> +	size_t pgcount, pgsize;
+> +	const struct page *pg;
+> +	pgoff_t bo_offset;
+> +
+> +	if (op->va.addr < unmap_vma->base.va.addr) {
+> +		bo_offset =3D unmap_start - unmap_vma->base.va.addr + unmap_vma->base.=
+gem.offset;
+> +		sz2m_prev =3D ALIGN_DOWN(unmap_start, SZ_2M);
+> +		sz2m_next =3D ALIGN(unmap_start + 1, SZ_2M);
+> +		pgsize =3D get_pgsize(unmap_start, unmap_range, &pgcount);
+> +
+> +	} else {
+> +		bo_offset =3D ((unmap_start + unmap_range - 1) - unmap_vma->base.va.ad=
+dr)
+> +			+ unmap_vma->base.gem.offset;
+> +		sz2m_prev =3D ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> +		sz2m_next =3D ALIGN(unmap_start + unmap_range, SZ_2M);
+> +		pgsize =3D get_pgsize(sz2m_prev, unmap_start + unmap_range - sz2m_prev=
+, &pgcount);
+> +	}
+> +
+> +	pg =3D to_panthor_bo(unmap_vma->base.gem.obj)->base.pages[bo_offset >> =
+PAGE_SHIFT];
+> +
+> +	if (pgsize =3D=3D SZ_4K && folio_order(page_folio(pg)) =3D=3D PMD_ORDER=
+ &&
+> +	    unmap_vma->base.va.addr <=3D sz2m_prev && unmap_vma->base.va.addr +
+> +	    unmap_vma->base.va.range >=3D sz2m_next)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +struct remap_params {
+> +	u64 prev_unmap_start, prev_unmap_range;
+> +	u64 prev_remap_start, prev_remap_range;
+> +	u64 next_unmap_start, next_unmap_range;
+> +	u64 next_remap_start, next_remap_range;
+> +	u64 unmap_start, unmap_range;
+> +};
+> +
+> +static struct remap_params
+> +get_map_unmap_intervals(const struct drm_gpuva_op_remap *op,
+> +			const struct panthor_vma *unmap_vma)
+> +{
+> +	u64 unmap_start, unmap_range, sz2m_prev, sz2m_next;
+> +	struct remap_params params =3D {0};
+> +
+> +	drm_gpuva_op_remap_to_unmap_range(op, &unmap_start, &unmap_range);
+> +
+> +	if (op->prev) {
+> +		sz2m_prev =3D ALIGN_DOWN(unmap_start, SZ_2M);
+> +		sz2m_next =3D ALIGN(unmap_start + 1, SZ_2M);
+> +
+> +		if (is_huge_page_partial_unmap(unmap_vma, op->prev, unmap_start,
+> +					       unmap_range, sz2m_prev, sz2m_next)) {
+> +			params.prev_unmap_start =3D sz2m_prev;
+> +			params.prev_unmap_range =3D SZ_2M;
+> +			params.prev_remap_start =3D sz2m_prev;
+> +			params.prev_remap_range =3D unmap_start & (SZ_2M - 1);
+> +
+> +			u64 diff =3D min(sz2m_next - unmap_start, unmap_range);
+> +
+> +			unmap_range -=3D diff;
+> +			unmap_start +=3D diff;
+> +		}
+> +	}
+> +
+> +	if (op->next) {
+> +		sz2m_prev =3D ALIGN_DOWN(unmap_start + unmap_range - 1, SZ_2M);
+> +		sz2m_next =3D ALIGN(unmap_start + unmap_range, SZ_2M);
+> +
+> +		if (is_huge_page_partial_unmap(unmap_vma, op->next, unmap_start,
+> +					       unmap_range, sz2m_prev, sz2m_next)) {
+> +			if (unmap_range) {
+> +				params.next_unmap_start =3D sz2m_prev;
+> +				params.next_unmap_range =3D SZ_2M;
+> +				unmap_range -=3D op->next->va.addr & (SZ_2M - 1);
+> +			}
+> +
+> +			params.next_remap_start =3D op->next->va.addr;
+> +			params.next_remap_range =3D SZ_2M - (op->next->va.addr & (SZ_2M - 1));
+> +		}
+> +	}
+> +
+> +	params.unmap_start =3D unmap_start;
+> +	params.unmap_range =3D unmap_range;
+> +
+> +	return params;
+> +}
+> +
+>  static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+>  				       void *priv)
+>  {
+> @@ -2100,20 +2192,51 @@ static int panthor_gpuva_sm_step_remap(struct drm=
+_gpuva_op *op,
+>  	struct panthor_vm *vm =3D priv;
+>  	struct panthor_vm_op_ctx *op_ctx =3D vm->op_ctx;
+>  	struct panthor_vma *prev_vma =3D NULL, *next_vma =3D NULL;
+> -	u64 unmap_start, unmap_range;
+> +	struct remap_params params;
+>  	int ret;
+> =20
+> -	drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_rang=
+e);
+> -	ret =3D panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
+> +	/*
+> +	 * ARM IOMMU page table management code disallows partial unmaps of hug=
+e pages,
+> +	 * so when a partial unmap is requested, we must first unmap the entire=
+ huge
+> +	 * page and then remap the difference between the huge page minus the r=
+equested
+> +	 * unmap region. Calculating the right offsets and ranges for the diffe=
+rent unmap
+> +	 * and map operations is the responsibility of the following function.
+> +	 */
+> +	params =3D get_map_unmap_intervals(&op->remap, unmap_vma);
+> +
+> +	ret =3D panthor_vm_unmap_pages(vm, params.unmap_start, params.unmap_ran=
+ge);
+>  	if (ret)
+>  		return ret;
+> =20
+>  	if (op->remap.prev) {
+> +		ret =3D panthor_vm_unmap_pages(vm, params.prev_unmap_start,
+> +					     params.prev_unmap_range);
 
-Full report is available here:
-https://ci.syzbot.org/series/03ca38c3-876c-4231-aa06-ddb0bc8a30ad
+This should be part of the previous unmap.
 
-***
+> +		if (ret)
+> +			return ret;
+> +		ret =3D panthor_vm_map_pages(vm, params.prev_remap_start,
+> +					   flags_to_prot(unmap_vma->flags),
+> +					   to_drm_gem_shmem_obj(op->remap.prev->gem.obj)->sgt,
+> +					   op->remap.prev->gem.offset, params.prev_remap_range);
+> +		if (ret)
+> +			return ret;
+> +
+>  		prev_vma =3D panthor_vm_op_ctx_get_vma(op_ctx);
+>  		panthor_vma_init(prev_vma, unmap_vma->flags);
+>  	}
+> =20
+>  	if (op->remap.next) {
+> +		ret =3D panthor_vm_unmap_pages(vm, params.next_unmap_start,
+> +					     params.next_unmap_range);
 
-WARNING in __ns_tree_add_raw
+This one too.
 
-tree:      bpf
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf.git
-base:      5fb750e8a9ae123b2034771b864b8a21dbef65cd
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/156cf21b-68f9-423c-807a-3dd094e6aed8/config
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret =3D panthor_vm_map_pages(vm, params.next_remap_start,
+> +					   flags_to_prot(unmap_vma->flags),
+> +					   to_drm_gem_shmem_obj(op->remap.next->gem.obj)->sgt,
+> +					   op->remap.next->gem.offset, params.next_remap_range);
+> +		if (ret)
+> +			return ret;
+> +
+>  		next_vma =3D panthor_vm_op_ctx_get_vma(op_ctx);
+>  		panthor_vma_init(next_vma, unmap_vma->flags);
+>  	}
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5816 at kernel/nstree.c:189 __ns_tree_add_raw+0xa92/0xb30
-Modules linked in:
-CPU: 1 UID: 0 PID: 5816 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__ns_tree_add_raw+0xa92/0xb30
-Code: 32 00 90 0f 0b 90 42 80 3c 23 00 0f 85 1e fc ff ff e9 21 fc ff ff e8 ed 78 32 00 90 0f 0b 90 e9 66 fc ff ff e8 df 78 32 00 90 <0f> 0b 90 e9 53 ff ff ff 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c ef
-RSP: 0018:ffffc90003f27c30 EFLAGS: 00010293
-RAX: ffffffff818e0051 RBX: 1ffffffff16db871 RCX: ffff88810ffe0000
-RDX: 0000000000000000 RSI: ffff8881bbf5e9a8 RDI: ffff88816d0e6e00
-RBP: ffff88816d0e6e00 R08: ffff88816d0e6e3f R09: 0000000000000000
-R10: ffff88816d0e6e30 R11: ffffffff81b988c0 R12: dffffc0000000000
-R13: ffff88816d0e6e40 R14: ffffffff8b6dc388 R15: ffff8881bbf5e9a8
-FS:  000055558630f500(0000) GS:ffff8882a9d04000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5c3f03529c CR3: 000000010b5bc000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- copy_cgroup_ns+0x373/0x5f0
- create_new_namespaces+0x358/0x720
- unshare_nsproxy_namespaces+0x11c/0x170
- ksys_unshare+0x4c8/0x8c0
- __x64_sys_unshare+0x38/0x50
- do_syscall_64+0xfa/0xfa0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5c3ef907c7
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc62c39c88 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 00007ffc62c39c90 RCX: 00007f5c3ef907c7
-RDX: 0000000000000000 RSI: 00007f5c3f03529c RDI: 0000000002000000
-RBP: 00007ffc62c39d20 R08: 0000000000000000 R09: 00007f5c3fd1d6c0
-R10: 0000000000044000 R11: 0000000000000246 R12: 00007ffc62c39d20
-R13: 00007ffc62c39d28 R14: 0000000000000009 R15: 0000000000000000
- </TASK>
+Overall, it feels more complicated than what I had in mind (see
+below, only compile-tested though).
 
+Cheers,
 
-***
+Boris
 
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
+--->8---
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/pantho=
+r/panthor_mmu.c
+index 6dec4354e378..15718241fd2f 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -2093,27 +2093,104 @@ static int panthor_gpuva_sm_step_map(struct drm_gp=
+uva_op *op, void *priv)
+        return 0;
+ }
+=20
++static void
++align_unmap_range(const struct drm_gpuva_op_remap *op,
++                 u64 *unmap_start, u64 *unmap_end)
++{
++       u64 aligned_unmap_start =3D ALIGN_DOWN(*unmap_start, SZ_2M);
++       u64 aligned_unmap_end =3D ALIGN(*unmap_end, SZ_2M);
++
++       /* If we're dealing with a huge page, make sure the unmap region is
++        * aligned on the start of the page.
++        */
++       if (op->prev && aligned_unmap_start < *unmap_start &&
++           op->prev->va.addr <=3D aligned_unmap_start) {
++               struct panthor_gem_object *bo =3D to_panthor_bo(op->prev->g=
+em.obj);
++               u64 bo_offset =3D op->prev->gem.offset + *unmap_start -
++                               op->prev->va.addr;
++               const struct page *pg =3D bo->base.pages[bo_offset >> PAGE_=
+SHIFT];
++
++               if (folio_size(page_folio(pg)) >=3D SZ_2M)
++                       *unmap_start =3D aligned_unmap_start;
++       }
++
++       /* If we're dealing with a huge page, make sure the unmap region is
++        * aligned on the end of the page.
++        */
++       if (op->next && aligned_unmap_end > *unmap_end &&
++           op->next->va.addr + op->next->va.range >=3D aligned_unmap_end) {
++               struct panthor_gem_object *bo =3D to_panthor_bo(op->next->g=
+em.obj);
++               u64 bo_offset =3D op->next->gem.offset + op->next->va.addr +
++                               op->next->va.range - *unmap_end;
++               const struct page *pg =3D bo->base.pages[bo_offset >> PAGE_=
+SHIFT];
++
++               if (folio_size(page_folio(pg)) >=3D SZ_2M)
++                       *unmap_end =3D aligned_unmap_end;
++       }
++}
++
+ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+                                       void *priv)
+ {
+        struct panthor_vma *unmap_vma =3D container_of(op->remap.unmap->va,=
+ struct panthor_vma, base);
++       u64 unmap_start, unmap_range, unmap_end, aligned_unmap_start, align=
+ed_unmap_end;
+        struct panthor_vm *vm =3D priv;
+        struct panthor_vm_op_ctx *op_ctx =3D vm->op_ctx;
+        struct panthor_vma *prev_vma =3D NULL, *next_vma =3D NULL;
+-       u64 unmap_start, unmap_range;
+        int ret;
+=20
++       /*
++        * ARM IOMMU page table management code disallows partial unmaps of=
+ huge pages,
++        * so when a partial unmap is requested, we must first unmap the en=
+tire huge
++        * page and then remap the difference between the huge page minus t=
+he requested
++        * unmap region. Calculating the right offsets and ranges for the d=
+ifferent unmap
++        * and map operations is the responsibility of the following functi=
+on.
++        */
+        drm_gpuva_op_remap_to_unmap_range(&op->remap, &unmap_start, &unmap_=
+range);
+-       ret =3D panthor_vm_unmap_pages(vm, unmap_start, unmap_range);
++       unmap_end =3D unmap_start + unmap_range;
++       aligned_unmap_start =3D unmap_start;
++       aligned_unmap_end =3D unmap_end;
++       align_unmap_range(&op->remap, &aligned_unmap_start, &aligned_unmap_=
+end);
++
++       ret =3D panthor_vm_unmap_pages(vm, aligned_unmap_start,
++                                    aligned_unmap_end - aligned_unmap_star=
+t);
+        if (ret)
+                return ret;
+=20
+        if (op->remap.prev) {
++               if (aligned_unmap_start < unmap_start) {
++                       struct panthor_gem_object *bo =3D
++                               to_panthor_bo(op->remap.prev->gem.obj);
++                       u64 bo_offset =3D op->remap.prev->gem.offset +
++                                       aligned_unmap_start - op->remap.pre=
+v->va.addr;
++
++                       ret =3D panthor_vm_map_pages(vm, aligned_unmap_star=
+t,
++                                                  flags_to_prot(unmap_vma-=
+>flags),
++                                                  bo->base.sgt, bo_offset,
++                                                  unmap_start - aligned_un=
+map_start);
++                       if (ret)
++                               return ret;
++               }
++
+                prev_vma =3D panthor_vm_op_ctx_get_vma(op_ctx);
+                panthor_vma_init(prev_vma, unmap_vma->flags);
+        }
+=20
+        if (op->remap.next) {
++               if (aligned_unmap_end > unmap_end) {
++                       struct panthor_gem_object *bo =3D
++                               to_panthor_bo(op->remap.next->gem.obj);
++                       u64 bo_offset =3D op->remap.next->gem.offset + unma=
+p_end -
++                                       op->remap.next->va.addr;
++
++                       ret =3D panthor_vm_map_pages(vm, unmap_end,
++                                                  flags_to_prot(unmap_vma-=
+>flags),
++                                                  bo->base.sgt, bo_offset,
++                                                  aligned_unmap_end - unma=
+p_end);
++                       if (ret)
++                               return ret;
++               }
++
+                next_vma =3D panthor_vm_op_ctx_get_vma(op_ctx);
+                panthor_vma_init(next_vma, unmap_vma->flags);
+        }
 
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
