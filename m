@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-862779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87F6BF65F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 743A7BF64C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DF1542EE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18C94851C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5591B337BB4;
-	Tue, 21 Oct 2025 11:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA5E34EF00;
+	Tue, 21 Oct 2025 11:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cA/9qQlH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnzjS9pE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D13032E681;
-	Tue, 21 Oct 2025 11:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E7337BBB;
+	Tue, 21 Oct 2025 11:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047071; cv=none; b=EZVbKbrLcAmADx3hEUUjR9g7qHraYGKCETqI+JXWt0JocBd2bIt4QK5NFWukr2GeHhQl/N8Vy4GyhtidBSl1DX87QTe64HEsCoOIWgh7L6/f7hJp6Bn3zu+p2E6Far75ZylqkK0sA9xTxxRDdbx9ZpNQKzpYlyyE1S9dBCMVVoY=
+	t=1761047257; cv=none; b=hRh4Nv66ghqPldkjCcAwM2n7YOZHNZ6SdmmG6tT4fLaIzKxqxLvC47oDlfXyXo2RwOPPu8W37IHRNpW9i/YQl2Vt4MtTh07eQTbkf4Qnw4WINDFzZBU/5VFy+ge/dXGfr36EHeJKdH2xJwDz+5epSya22LxTpdoD/zQkSNgmSHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047071; c=relaxed/simple;
-	bh=QM8oyzyJ0QczVJ0uxGx22MIzfw44XMMyED0mCYHZDF8=;
+	s=arc-20240116; t=1761047257; c=relaxed/simple;
+	bh=77H7R88MI0EUUkshwD3/5/W86ZbXu7/L538OO/0/fLQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AtidW1vXL5CPs3kXBr1itUj5X9xYNcChOB0U23OxzSKwT9ZflowXb9IGfXBFHv5nQbLqXOOrKL8PN8S+/Ls/r87j/Q8y29vLCQ8JOwjEAzNV+DD5dL6wHyHiqb2Nv9LYifuDSwbCMqslyJDnkBpHlpdNZz/SGFN+zXb/so+VF14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cA/9qQlH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DA8C4CEF5;
-	Tue, 21 Oct 2025 11:44:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nzb24C1xnhYocOGA21ubxsN0NlUOKnb8jc4FhJ+31LpgKPYSOWlzIwY+QPjNgJHEMUXXg1+4uIzrWUIT5BGhqijsG8HiHhu3c4/IySpLMMCEK1nE7u3D35y82Ax38iSt0R3RpSSgK2HEoUtVugTruv8Oq/LDwLNMUtZkF+7dteI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnzjS9pE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD60BC4CEFF;
+	Tue, 21 Oct 2025 11:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047071;
-	bh=QM8oyzyJ0QczVJ0uxGx22MIzfw44XMMyED0mCYHZDF8=;
+	s=k20201202; t=1761047257;
+	bh=77H7R88MI0EUUkshwD3/5/W86ZbXu7/L538OO/0/fLQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cA/9qQlHtIWh32Oj2GkiV31uJUcLZnvqPPbzP7HjxHdvFwaKyMvmRbq1TJY/3PMME
-	 4iDtkxaydcVE/CuDSRfLnwHFjQ29ci4IGsjzGonwFh4dht4YqhB/ypdSeVjD9An7lT
-	 guOvWv5gojtOfmdQzGgMiQb04NnjlIyQ1iBTWhtV1BaN55kim7fctPswjLIUCK4pio
-	 txcBLLOQiq19FWdHh06rznzNV9BVXYCMKT9CH9+Hnt5a56QZKaXmg4/JCEiHDBRkFn
-	 O5b1B+nlCreiTLS86pyncRSw0sgbHVvWHC+cmrTGAxA3OPoPG4Wo4JRib151PS+4cf
-	 RcjiqSukZFrxQ==
+	b=WnzjS9pEWFOER24ezYjY6jxri9E7sRPgkGGsF9ENWf38HphQRpT7maU4ZZ6+8TvIo
+	 iklg56swuw0YwPhFraxbHVHo0UnOGXOEHFyBGKd2qLmPC1Q3wsww59Jj5bwur5457i
+	 i5tDWn6rD4TCyywNVPQJ/VMF8WPHm49+/syy8kY7v+pTOz5+PGi29gIj9+541jhpb9
+	 ujH4rhsPYZm0y09LCOnZX1PxSRy1rRQroGCGvlg99z7AfpIKWs4hk5oA5VqtZebVqh
+	 nWKBsZY2zFxnRpKoJ5DrOsSo9aWjrvmw/mpHiUfLwdEMZdJAWinMbfuoPBP5V8a8lt
+	 tIM/sXnkYDeng==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:14 +0200
-Subject: [PATCH RFC DRAFT 08/50] ns: add __ns_ref_read()
+Date: Tue, 21 Oct 2025 13:43:49 +0200
+Subject: [PATCH RFC DRAFT 43/50] selftests/namespaces: ninth listns() test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-8-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-43-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -68,42 +68,82 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1108; i=brauner@kernel.org;
- h=from:subject:message-id; bh=QM8oyzyJ0QczVJ0uxGx22MIzfw44XMMyED0mCYHZDF8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3zTmVHMyWo8zSs1f3PELLeo5smC3zprHBbulWP+f
- iIz1PhXRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQsUhn+2W/IML2/dgmTwkWn
- rRdEo7MC8qpzN/gcYp696OFJzo6034wM07WmCgv6enbvMlyXzDxrp+736R89jOa/N5H4URvE3m7
- HCQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1852; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=77H7R88MI0EUUkshwD3/5/W86ZbXu7/L538OO/0/fLQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3xXHLm6+QXbd2eHip5czkeOV5qXHd2Yev/BrDu+8
+ dz9y54f6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIu1pGhqP3d4krrczwYtBI
+ PuMW8ZZtWePVTTzVe2NUHh6tYjkYkc3IMNtLO7dm7waPusrEGZXr1SqsHh7qUHymfHPj7N9s7A6
+ xfAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Implement ns_ref_read() the same way as ns_ref_{get,put}().
-No point in making that any more special or different from the other
-helpers.
+Test error cases for listns().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/ns_common.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ tools/testing/selftests/namespaces/listns_test.c | 51 ++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index f5b68b8abb54..32114d5698dc 100644
---- a/include/linux/ns_common.h
-+++ b/include/linux/ns_common.h
-@@ -143,7 +143,12 @@ static __always_inline __must_check bool __ns_ref_get(struct ns_common *ns)
- 	return refcount_inc_not_zero(&ns->__ns_ref);
+diff --git a/tools/testing/selftests/namespaces/listns_test.c b/tools/testing/selftests/namespaces/listns_test.c
+index ddf4509d5cd6..eb44f50ab77a 100644
+--- a/tools/testing/selftests/namespaces/listns_test.c
++++ b/tools/testing/selftests/namespaces/listns_test.c
+@@ -602,4 +602,55 @@ TEST(listns_hierarchical_visibility)
+ 	waitpid(pid, &status, 0);
  }
  
--#define ns_ref_read(__ns) refcount_read(&to_ns_common((__ns))->__ns_ref)
-+static __always_inline __must_check int __ns_ref_read(const struct ns_common *ns)
++/*
++ * Test error cases for listns().
++ */
++TEST(listns_error_cases)
 +{
-+	return refcount_read(&ns->__ns_ref);
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = 0,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids[10];
++	int ret;
++
++	/* Test with invalid flags */
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0xFFFF);
++	if (ret >= 0 || errno == ENOSYS) {
++		if (errno != ENOSYS) {
++			TH_LOG("Warning: Expected EINVAL for invalid flags, got success");
++		}
++	} else {
++		ASSERT_EQ(errno, EINVAL);
++	}
++
++	/* Test with NULL ns_ids array */
++	ret = sys_listns(&req, NULL, 10, 0);
++	if (ret >= 0) {
++		TH_LOG("Warning: Expected EFAULT for NULL array, got success");
++	}
++
++	/* Test with invalid spare field */
++	req.spare = 1;
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (ret >= 0 || errno == ENOSYS) {
++		if (errno != ENOSYS) {
++			TH_LOG("Warning: Expected EINVAL for non-zero spare, got success");
++		}
++	}
++	req.spare = 0;
++
++	/* Test with huge nr_ns_ids */
++	ret = sys_listns(&req, ns_ids, 2000000, 0);
++	if (ret >= 0 || errno == ENOSYS) {
++		if (errno != ENOSYS) {
++			TH_LOG("Warning: Expected EOVERFLOW for huge count, got success");
++		}
++	}
 +}
 +
-+#define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
- #define ns_ref_inc(__ns) refcount_inc(&to_ns_common((__ns))->__ns_ref)
- #define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
- #define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.3
