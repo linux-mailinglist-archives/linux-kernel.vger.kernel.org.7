@@ -1,133 +1,192 @@
-Return-Path: <linux-kernel+bounces-863179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AF8BF7300
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:55:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A7EBF72F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BD425000AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1C7188D7BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20B0340A56;
-	Tue, 21 Oct 2025 14:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4163934028C;
+	Tue, 21 Oct 2025 14:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3lOkytZ"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="it9O2VWZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TR9YYpe4"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A002334028B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A362A340276;
+	Tue, 21 Oct 2025 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058506; cv=none; b=DnPgiBR+nmCTizB4bH+741uU/46N7mERa/FAn9c9c+JbuE2cWcI5iClhRxTxnOZ1+gOElZKGt4c0J7vo4OvcGmEBDPCWZU+KTBBDdUQADobejXrt9fZuOPf6d7PP/5RLQ+UGbwBiQZ+lW5jpTyV6CiobkG6uoZQ5aGE/a/leE04=
+	t=1761058503; cv=none; b=WizBzTvFV4flg0NkSA527CWphbe8eZglSE0s3hzYUNrcbHHqRgC4oxoD19qURnEZrwsCy+SbqQWekTkh6OQRdWcrFgLHVB71vTdqGoG9Ys4qlU8cMJ1nWn0+65/e6wz6e/3+aFuv7zNEqg795HvLwF6MOk7J3k5wrSgRxNV55Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058506; c=relaxed/simple;
-	bh=DfZMU0R0dRnRuQiWcl7q8VsHGYmCXQ9jXTVQm1yN/2o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FGtGUtEeuNbKN1sjnA9CfoIXwFtjYwx9UvzlLA2Br5sc2U6RAvjrIL8Tt3OfSZ15ZL8QRrrbVEcYExty6+bJmr4gHrr1Gyydrq/izkBr6ctbPG0TBOXcKFaH3XeeGLegm3WUQbcwIRinJkj5qIyUpJ5v1BFOjvKBFn5n/Er1bz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U3lOkytZ; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781254d146eso630660b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761058504; x=1761663304; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i8VP2I0PGCA2sfJ++TfsZS3uJgWd3RCZmM7e0QrTU2A=;
-        b=U3lOkytZnhJ3xunlZBIjvy3C2PSJcTAcZ6oS+atQJgKbX2eTCVitmX6MdpKdCbGatW
-         MYa0EHzhU397hRnxYGmo6mkR478J+ald6CE7/bTss8OnzqI/aV3CQ+sK+esjUzZMZrNy
-         cqlKDtHAnohEVGD5h+p8aerW2mruuUEjg8t4GlRrH6Wa2Za53Rd5LiJIs5RW/o+GgKlW
-         jXOL9JyEUBilSfUxRs/a8PVCOBkHm+uJ4fzJXXwntc3xLhz5NwmzxEC/8So0k4UVtrRM
-         OX56UckZtTDrj+Ye8K4XVMtKQtpYpJd9Nk2t2N9f0s7I/qAV+m1iuMqKPdYtPS1HmEIq
-         s2Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761058504; x=1761663304;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i8VP2I0PGCA2sfJ++TfsZS3uJgWd3RCZmM7e0QrTU2A=;
-        b=pMR6YElUKSx8eXYjVkU1ttW+xyS8W66PP5zVNyToz/JM3RKww4UOgFb5KjGdPh49pd
-         ZpebbtbNMj5ek8gQvrgLrwyOsUJgAsRovDX/G7RfALgqT1AQ+bBJfKjQTNbVINu/NBXj
-         sKJbAc5Q2Dq14BD1k3MNkM+M789+meGnIQSL+pTEwXm3ymo+1CZKTL/z633aBqMic8lS
-         nZUY5m/tPw7tREdRVLnX8GBgOy+LYeizBfMKWpXOJ0NlGoB651Dkb2C6JKpxsqpcL8SX
-         4voy21hUKyE/W/7IJZnfPpCBZ50QugNJ8z55f/euCEJ7Yke1fCdTqUE2k0QgZ/idHWkS
-         U7/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4fgXDMHqou2c9DNLJFjkRAj/FmHcfMnJLUzDTjTb5Fa9F5dM0fd0kNq0kzcWU8j1ZyRy0eUPBAMVKaXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZYbd5fE1xoTWZQWVZG7yfc2yVQH0ztErcV9Q0WyCkqwfupJoo
-	rtGej/X3MtAVEbofDF5n882O0L9FKM9K1NhWOeuTaiS+HUeG5ZqZCGZL
-X-Gm-Gg: ASbGnctKZsDG91zr/9jKTGLoP6yiCCW7iKFgV7sj1P25HzmUGphmqnEZuscuuUYJQAr
-	EgjLTQsuspZmNGwnIETHG9x4YhVV8FWFGAO44ple73vTrGWDgYhzudPUjUG3XAvFClW5UfrAg/H
-	I7sOb4e9BfFXdt+7Upr4M31NbDz4jvlz7RL2B2O8A6uzmLeqD2uO6gFMsPW28H8wfl2JTiwemNz
-	AB+be8BoWV6IXdfcFmUBJT31u4X1nhiWHmuSGQJxKdLcPG6cz/Hq5/7TRcWTtUVRV8DWDlnVRb1
-	GOtSvASZyOZhj5DnuartzKf1fhxmA6AWNpy/TirIn2rry+SBXIah2QNcU1QUtzgdQgGzcRY9VgX
-	vKMrSqfQqxLyPwp+2pVtKpVdKH5QhjFHzyvHkFUiJNaftqxtZa6wRu+gnlnOtdDPHhy92sgc09A
-	/dbfg3dsIeE25To1NExBl2i7agR2Y8IALx7xCS43+NXMTmIxR8sBoR6LJNq9DgiUvIf37NHSJD
-X-Google-Smtp-Source: AGHT+IFGdbtj0ivIPfYSgKjRnJx+JRIuBP/TzlLHzhX/tcb7pAq49jg9nE07bVQ8DwbDuxENZ1F91w==
-X-Received: by 2002:a05:6a00:1408:b0:781:229b:cf82 with SMTP id d2e1a72fcca58-7a2572d4b3amr2639509b3a.3.1761058503854;
-        Tue, 21 Oct 2025 07:55:03 -0700 (PDT)
-Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff1581dsm11484614b3a.12.2025.10.21.07.55.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 07:55:03 -0700 (PDT)
-From: Qianchang Zhao <pioooooooooip@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Qianchang Zhao <pioooooooooip@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ksmbd: transport_ipc: validate payload size before reading handle
-Date: Tue, 21 Oct 2025 23:54:49 +0900
-Message-Id: <20251021145449.473932-1-pioooooooooip@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025102125-petted-gristle-43a0@gregkh>
-References: <2025102125-petted-gristle-43a0@gregkh>
+	s=arc-20240116; t=1761058503; c=relaxed/simple;
+	bh=y9hZjivPVSdX8b/3D2Z7/dyOlv2esXM7zlfteD0MmTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDdw1pnCbAUjvHVDwmQeeCwDmSEGod/sCZSIihK3oJxNSB74jH2ZlqUdlaUqL8vz0InFSUl1XQJts6TlcbP7E97W7QuJd2NQ/ttRWWF73QMLASr8CgPnoPQ8w9YxsoKCR2M4OqV8M6lX4lRHKeJPiH10w1t7QCnbj18r1wDo2Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=it9O2VWZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TR9YYpe4; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 77DD47A0064;
+	Tue, 21 Oct 2025 10:54:58 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Tue, 21 Oct 2025 10:54:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1761058498; x=
+	1761144898; bh=e8TBjA/G5p3PECGmO3D+BZE/Bo+2WMOrXcYQORq5RFA=; b=i
+	t9O2VWZGXuMDh0dibeXdssw/5G/tfJM/F8bxhaRD1P+QmIA4Nq748KQeU9FbuagC
+	FiKmsEFPa3kiwOf6QZ6jaQZgPnqsO6yf0sj2Xk9jE8R47ZesoNAW0cVB5IOt+MYq
+	mA39+041nQum643H5ZZK+k3j/gjvjAKjhTBHB8/oHnQp1lCdvV79uc7IQBAjHaGq
+	SkyiamIhRQIFxKCaWWi2Jv8YFXEN1VeSYBub1z3cB5R7n1Fd9DOclWZwbjXr9Sa8
+	tZtWod/YyPq39OeTQ1TMyh3fHgRbgIakMUkBy7u+uAyG5JajOHVP/P8/GHRwNxop
+	2r04o5RfpsvHxSb6N3g+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761058498; x=1761144898; bh=e8TBjA/G5p3PECGmO3D+BZE/Bo+2WMOrXcY
+	QORq5RFA=; b=TR9YYpe4Z7JJWuoQnMvgvOPdxdGf9eTgC8VmOBrObNYOA6/VxHs
+	wLM9WxcFOkQrNy8L/MAX+aMzYrlHNOk4IHRUa0of6mwX52xb7PrNmTWrCchppbNN
+	Rnj6us46bOHJnor4b0+KRk8dUipEnYPsC+5+lIb6qoHO/LpFvc1+LKJNY7irXGLV
+	l5gqxt6USbeh9yC4ONDvEEPdiU7PYfAJkbTV4j+tgmLD/oLrhFC3taCJZA5YYOgX
+	SsDrEZdbJfYveOaKqz7LEU7zAsnZxomXMFVmyBkG11fu7n2qlzzZ0QE78O+21GE4
+	7JvANOfWADvbKVMY8aly6FnF51NnvytG+Dg==
+X-ME-Sender: <xms:wZ73aAS2HXzyeT9vkQINkln7qvhW_qtjD6VTil1q_wgQt492ykp5AQ>
+    <xme:wZ73aMscCWICUgmTJgoFYDghzd9NOPYHf9tUH8GYzPnsC-CxXxlojrjjObfqe3jXt
+    lRrkre-HMLSQQKogCbhvEmTMo_vvbIaO-ZPaaIIuREocQFKpMsN>
+X-ME-Received: <xmr:wZ73aJ4Xjrbow_RMdx2ooP2_w0ZopW6CGhYp9cvewZbf4-G_v4wgXVgNb_uO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedtleelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
+    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeduhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepthgrrhhiqhhtsehnvhhiughirgdrtghomh
+    dprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
+    khhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrg
+    htrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdp
+    rhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepsh
+    grvggvughmsehnvhhiughirgdrtghomhdprhgtphhtthhopehlvghonheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepmhgslhhotghhsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:wZ73aHhyQ459w1oBSExPwqpMUUQWZnTumXnEVk7X7bF184kZ5vhxVg>
+    <xmx:wZ73aLlcwRhBBDc8H6j9YC1syXp88CAoFPWu8r-Gx5Y-hNiUO5Ux0Q>
+    <xmx:wZ73aGu72UbTJpHl85n5botiz5GOr5We-l-sjmRJbOV-avvW-p6p9A>
+    <xmx:wZ73aBBObg03Uuluwz_Zm5Tya-6H4YmRvKOqtVIuqOQvCohJZLs-PA>
+    <xmx:wp73aHzJad1Q3RCxa9jbtbyKT5blmvONKL34JZrItO2MDuuo3fBtCmC6>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 10:54:57 -0400 (EDT)
+Date: Tue, 21 Oct 2025 16:54:55 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>
+Subject: Re: [PATCH net V2 3/3] net/mlx5e: kTLS, Cancel RX async resync
+ request in error flows
+Message-ID: <aPeev-zbATKMq1pY@krikkit>
+References: <1760943954-909301-1-git-send-email-tariqt@nvidia.com>
+ <1760943954-909301-4-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1760943954-909301-4-git-send-email-tariqt@nvidia.com>
 
-handle_response() dereferences the payload as a 4-byte handle without
-verifying that the declared payload size is at least 4 bytes. A malformed
-or truncated message from ksmbd.mountd can lead to a 4-byte read past the
-declared payload size. Validate the size before dereferencing.
+2025-10-20, 10:05:54 +0300, Tariq Toukan wrote:
+> From: Shahar Shitrit <shshitrit@nvidia.com>
+> 
+> When device loses track of TLS records, it attempts to resync by
+> monitoring records and requests an asynchronous resynchronization
+> from software for this TLS connection.
+> 
+> The TLS module handles such device RX resync requests by logging record
+> headers and comparing them with the record tcp_sn when provided by the
+> device. It also increments rcd_delta to track how far the current
+> record tcp_sn is from the tcp_sn of the original resync request.
+> If the device later responds with a matching tcp_sn, the TLS module
+> approves the tcp_sn for resync.
+> 
+> However, the device response may be delayed or never arrive,
+> particularly due to traffic-related issues such as packet drops or
+> reordering. In such cases, the TLS module remains unaware that resync
+> will not complete, and continues performing unnecessary work by logging
+> headers and incrementing rcd_delta, which can eventually exceed the
+> threshold and trigger a WARN(). For example, this was observed when the
+> device got out of tracking, causing
+> mlx5e_ktls_handle_get_psv_completion() to fail and ultimately leading
+> to the rcd_delta warning.
+> 
+> To address this, call tls_offload_rx_resync_async_request_cancel()
+> to cancel the resync request and stop resync tracking in such error
+> cases. Also, increment the tls_resync_req_skip counter to track these
+> cancellations.
+> 
+> Fixes: 0419d8c9d8f8 ("net/mlx5e: kTLS, Add kTLS RX resync support")
+> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  .../mellanox/mlx5/core/en_accel/ktls_rx.c     | 33 ++++++++++++++++---
+>  .../mellanox/mlx5/core/en_accel/ktls_txrx.h   |  4 +++
+>  .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  4 +++
+>  3 files changed, 37 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_rx.c
+> index 5fbc92269585..ae325c471e7f 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_rx.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_rx.c
+> @@ -339,14 +339,19 @@ static void resync_handle_work(struct work_struct *work)
+>  
+>  	if (unlikely(test_bit(MLX5E_PRIV_RX_FLAG_DELETING, priv_rx->flags))) {
+>  		mlx5e_ktls_priv_rx_put(priv_rx);
+> +		priv_rx->rq_stats->tls_resync_req_skip++;
+> +		tls_offload_rx_resync_async_request_cancel(&resync->core);
+>  		return;
+>  	}
+>  
+>  	c = resync->priv->channels.c[priv_rx->rxq];
+>  	sq = &c->async_icosq;
+>  
+> -	if (resync_post_get_progress_params(sq, priv_rx))
+> +	if (resync_post_get_progress_params(sq, priv_rx)) {
+> +		priv_rx->rq_stats->tls_resync_req_skip++;
 
-This is a minimal fix to guard the initial handle read.
+There's already a tls_resync_req_skip++ at the end of
+resync_post_get_progress_params() just before returning an error, so I
+don't think this one is needed? (or keep this one and remove the one
+in resync_post_get_progress_params, so that tls_resync_req_skip++ and
+_cancel() are together like in the rest of the patch)
 
-Fixes: 0626e6641f6b ("cifsd: add server handler for central processing and tranport layers")
-Cc: stable@vger.kernel.org
-Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
----
- fs/smb/server/transport_ipc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Other than that, I don't understand much about the resync handling in
+the driver and how the various bits fit together, but the patch looks
+consistent.
 
-diff --git a/fs/smb/server/transport_ipc.c b/fs/smb/server/transport_ipc.c
-index 46f87fd1ce1c..2028de4d3ddf 100644
---- a/fs/smb/server/transport_ipc.c
-+++ b/fs/smb/server/transport_ipc.c
-@@ -263,6 +263,10 @@ static void ipc_msg_handle_free(int handle)
- 
- static int handle_response(int type, void *payload, size_t sz)
- {
-+	/* Prevent 4-byte read beyond declared payload size */
-+	if (sz < sizeof(unsigned int))
-+		return -EINVAL;
-+
- 	unsigned int handle = *(unsigned int *)payload;
- 	struct ipc_msg_table_entry *entry;
- 	int ret = 0;
+> +		tls_offload_rx_resync_async_request_cancel(&resync->core);
+>  		mlx5e_ktls_priv_rx_put(priv_rx);
+> +	}
+>  }
+
 -- 
-2.34.1
-
+Sabrina
 
