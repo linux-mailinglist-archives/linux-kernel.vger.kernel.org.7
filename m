@@ -1,112 +1,138 @@
-Return-Path: <linux-kernel+bounces-863099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA872BF7033
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40662BF702A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D93E505E07
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3163B5429B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAF6259CB3;
-	Tue, 21 Oct 2025 14:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="swMALA0N"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0125A283C83;
+	Tue, 21 Oct 2025 14:17:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75875283C83
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4951624C0
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761056213; cv=none; b=Hw982seLROjwzgdeOsQHGrYzJWCEG/425h5kWYbJN5oYRbEzubcfQ5shNcRQJTM+pEEcKE9vjPuBqXOGLtCS9NkNpZEAJvKwIRQf8wOhP32tKKrPm462vsj8QUP6oScjBi6AAQ31Vvmd9lAx2zr+QMrwj0aMdTNRNIrYIveBiHc=
+	t=1761056225; cv=none; b=UNHJTRbhMhdnf4Dto8sXMzBP9wKKnlSM8lMPi4AvDBDeFIm7j5QDxOlF3huwm4yTfLITob88URHX/ycasGPwCUHIOSvgndYGDskZJHjNH0Jv0ULw0a8YDdPFgG2HrbH26WbZvxbdBQ/gGkeupbGtFScQxS2r5fMuR3zBCyfLmRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761056213; c=relaxed/simple;
-	bh=IXEiCfbFjHb0RagvMealrW5WYbDtUPRtCtvcvlM/5gI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DH4sRGI6cd7p4NtAqD/SJyaJpb6MYQzDkh21WrORKgp2OAxvmVGy3bdCGAKJ7wfe3lu7doN5fvbF+CdyVJRat6r9oBrDNzc60hF0jci4w/woV+3hEQg1OYh8utkx3LtHV7Ny7DVU7RGk1iZo+UmNj95Hfz7cDy2qVO+kVLbagTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=swMALA0N; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46b303f755aso60340055e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761056210; x=1761661010; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GH+Au8Z65JXGAtAPh2UGeuug8ILOECULe8PKQvQu4p0=;
-        b=swMALA0Nc5IAGifCsrRdM8Nz4I01OyKEM5Q2not0A7YbgdErVuM2masPp49SU3fEAB
-         aMK6tLB3YgpEUYvKZKRQZyRLaRn01+2pPZXxN0tCFCSHZYFT2+K7o+YbPI5ebmwaePyV
-         xs/sxb5xvFD4hJ1n36JCfxD2pWBHRow6y2hIvr7Nxm78fYHLG7s0sr/MSIof1hnGzmfq
-         FM3qe/ovwqqJ3o4xrr0FYevBJBS53ZeD1pqrhby6bDLcIdg+T4VzaWrqgHFLU/FA3uzq
-         9nJbN5cISXts2mAcx977yriB+IYNSj/4BxMQyku5mLMarviGBD0/oWBJJtce5f0FBpjB
-         g5iw==
+	s=arc-20240116; t=1761056225; c=relaxed/simple;
+	bh=LAhit4dLaQBeaZfWPUv57oDPPeF1JGwkHWAxl3wAMGQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KPW0qf7dAm+KU+pJos5KYW4XtXWz+ZiL8vtPfOqbo+Vm/CLBOdzETO8t8QV0XKZgfgHdulj7fzeyiODKLhoZh/ggFaRw/vCWqroRK5YF5dHpptAfd0efFzsEj4JwmYZR+VV8E5iTeK31RBSpbS3I+xE3Bq8D2p81GiqL9zvXTjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-940d3efe58bso273995239f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:17:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761056210; x=1761661010;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GH+Au8Z65JXGAtAPh2UGeuug8ILOECULe8PKQvQu4p0=;
-        b=DsWEc7VtbnykvskFzltHirPHiqV9d1rzq1MYYORxjQYoBwUYNyZw1bRFFF1mPXlVN3
-         5c//URiLOosWa9F9yMHbz9f47TCyURfkHOPChOSFmG2RuF3r7C11YpNLizRw8Q3RKRTg
-         eaMOGcLQSqTD41gBJQPJj0A309+mCi/1Jp24qA1VN7xgZy1qbGXSXRltTdpJsKiCkjXr
-         TM4KHPA+/f6saMUpZ5NFeappVmKWT2FBJIagbsnAsXcrgEFglvoyVBOtXNx2tRU3W9PX
-         SCCRuFoRBBREQOd01Ugxr0L0qv2ca+UvSN0D5uv2RyMSnMwbGtHW/VI6/SDrw/H53o7z
-         jlfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDSjuK/0oeC98abBibRNjllldbI9UDNhXBzj72ClsFZykHdbogrEeKW8glC22mrbaUFWJw4IIg8vr4k5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz7tKFT0DVc0WrB4NMW8Ewx0Im69Qoq/XtYq4pmQwDw2hLxMTa
-	RYqNMqk012LoeIuKlinfLO7PKQIkYvdvjDCy/URQ4UyY+A+Tdj+rZQlAmxz50Ot9qv4=
-X-Gm-Gg: ASbGncuJ+5jKUJv3EElrBmC9/QQ9X314KTRVirIKVFbf+fPdgDWZkODvpmKSH9aTULu
-	6q2leCQDxFX4Ui3+J/oguKGHaR+QLwFmSzM5914AOpkf0o8YWE7U9sqFTtfTjtdPE/pu5RpUSvx
-	N0b2nlpE6XqEWXVuXMmUTPWIykpUlw9UhSwcuz2aINKpFL17JDglLvHiYwzwjFaoBVh17ED3ShU
-	PuvqYq06y2no4Fa98D3MbYdu3+kwsADZJKys9TU6zWrcUdJ6ZHYXcw3SKgEur7LiHOtOvKUecpJ
-	bXh7mUBxrWJ9bZdqhsr6768atgcpRBJn8ZTfVItcl5AwcXLiv0h1z2ytS0uJlJrSakOBGQc7xOq
-	wJcFYjemjpDZTesQJVZX1CWlKhhjW8kwjeE4E5gIR/nVCPLHsQOOYWhgAMq4VavfNh9GCd1Ag
-X-Google-Smtp-Source: AGHT+IGlCzAGBWO2jDwO8KOdW9RPFbusOV38zy/UqpC4nz4HnuMn3sNj6s9XMr9He0B2eairZT1Tyw==
-X-Received: by 2002:a05:600c:818d:b0:46e:394b:49b7 with SMTP id 5b1f17b1804b1-4711791fed6mr135325295e9.37.1761056209687;
-        Tue, 21 Oct 2025 07:16:49 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a9a9sm21138244f8f.29.2025.10.21.07.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 07:16:48 -0700 (PDT)
-Date: Tue, 21 Oct 2025 17:16:46 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e78100-t14s: Add audio playback
- over DisplayPort
-Message-ID: <honsqyec45rg4yrh3rwjlqlhcqyatbbsvnhamhjdin3tgaggzc@5yrxw5mwhkni>
-References: <20251021111050.28554-3-krzysztof.kozlowski@linaro.org>
- <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
+        d=1e100.net; s=20230601; t=1761056223; x=1761661023;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NfrSgQ32bFaTalGj62QX9vovctmokLdOJHXQqUA1PZk=;
+        b=dzOECDzLnFe/gKt+JgC8iIN8kpT7IXiDEf31ULlxQUP4nFtW7maKiBgbTTFHJHYRln
+         QYScrQEFkyxe/TPQ8EJM3r08j7brFXmh/q6NofCUnnX/BqiPhJaacjPweIrY5Nnr7IdI
+         R6qri5g3pFf+I5wwli9/KsybzXkyWKY9h/9f07CKk0dFQRGVROBNYzo2s7vtqAfFDnDa
+         LvjD/eY8ZUIVYiEQ+iFl1yZwUccs97dBW/WFcFJtGUQn5jYvW0a1Z3fd47xoKnap25Tz
+         NwKa0lCqeBG2G14m7sTYN5bi+7OfNuszeMVIjvp2GChFQOAAv7/t2CsAzRS65Wb5KNa1
+         047w==
+X-Gm-Message-State: AOJu0YxUxxgzSvje2wfFJY5LZ6KSzj41uHMuq1zI7LOSXKMElurgCGED
+	iYMhmEMQYJAUnTBxGZqmu2NmXwJYwqJ6PF9LU8YF+FRpdi4CMrjvHgQAENHyLZPeB3Cx9mlp9Go
+	pmq1lKSbEuAL5JxQxwdfYGnspjE+PpRHspa99EE5IpUY7ykPWn84Il7MHHNA=
+X-Google-Smtp-Source: AGHT+IE9E0zvFw8ZIrJdN6LTNXmfa9h3D38KlQrtVoBo3KttdG6C4sqbmNfhKTmcxDgEUMk1/2cMfChM2qrhKb74qssrJzfdXPWU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
+X-Received: by 2002:a92:cda3:0:b0:430:b4ca:2696 with SMTP id
+ e9e14a558f8ab-430c514e290mr258314665ab.0.1761056222788; Tue, 21 Oct 2025
+ 07:17:02 -0700 (PDT)
+Date: Tue, 21 Oct 2025 07:17:02 -0700
+In-Reply-To: <e22jzcxyc6o2gng7lx6bskmpxhejatjm7x7q3rzlk33ji6dqhh@r4jqd66ocktj>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f795de.050a0220.346f24.001d.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
+From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 25-10-21 13:10:52, Krzysztof Kozlowski wrote:
-> Add necessary DAI links and DAI name prefixes to enable audio playback
-> over USB/DisplayPort and HDMI.  The HDMI port is not yet enabled, but it
-> should carry respective DAI name prefix regardless.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+Hello,
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in cfg80211_classify8021d
+
+mac80211_hwsim hwsim9 wlan1: entered allmulticast mode
+=====================================================
+BUG: KMSAN: uninit-value in cfg80211_classify8021d+0x99d/0x12b0 net/wireless/util.c:1027
+ cfg80211_classify8021d+0x99d/0x12b0 net/wireless/util.c:1027
+ ieee80211_select_queue+0x37a/0x9e0 net/mac80211/wme.c:180
+ __ieee80211_subif_start_xmit+0x60f/0x1d90 net/mac80211/tx.c:4304
+ ieee80211_subif_start_xmit+0xa8/0x6d0 net/mac80211/tx.c:4538
+ __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5257 [inline]
+ xmit_one net/core/dev.c:3845 [inline]
+ dev_hard_start_xmit+0x22f/0xa30 net/core/dev.c:3861
+ __dev_queue_xmit+0x3c51/0x5e60 net/core/dev.c:4763
+ dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+ packet_xmit+0x8f/0x710 net/packet/af_packet.c:275
+ packet_snd net/packet/af_packet.c:3076 [inline]
+ packet_sendmsg+0x9173/0xa2a0 net/packet/af_packet.c:3108
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:742
+ __sys_sendto+0x593/0x720 net/socket.c:2244
+ __do_sys_sendto net/socket.c:2251 [inline]
+ __se_sys_sendto net/socket.c:2247 [inline]
+ __x64_sys_sendto+0x130/0x200 net/socket.c:2247
+ x64_sys_call+0x3924/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4969 [inline]
+ slab_alloc_node mm/slub.c:5272 [inline]
+ kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5324
+ kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
+ __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
+ alloc_skb include/linux/skbuff.h:1383 [inline]
+ alloc_skb_with_frags+0xc5/0xa60 net/core/skbuff.c:6671
+ sock_alloc_send_pskb+0xacc/0xc60 net/core/sock.c:2965
+ packet_alloc_skb net/packet/af_packet.c:2926 [inline]
+ packet_snd net/packet/af_packet.c:3019 [inline]
+ packet_sendmsg+0x743d/0xa2a0 net/packet/af_packet.c:3108
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:742
+ __sys_sendto+0x593/0x720 net/socket.c:2244
+ __do_sys_sendto net/socket.c:2251 [inline]
+ __se_sys_sendto net/socket.c:2247 [inline]
+ __x64_sys_sendto+0x130/0x200 net/socket.c:2247
+ x64_sys_call+0x3924/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6608 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+=====================================================
+
+
+Tested on:
+
+commit:         6548d364 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15830d2f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14e3fde2580000
+
 
