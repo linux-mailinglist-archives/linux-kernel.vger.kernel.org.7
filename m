@@ -1,175 +1,85 @@
-Return-Path: <linux-kernel+bounces-862649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298D5BF5D6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:39:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F59BF5D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F52188F420
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4DB405292
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2627E2DFA21;
-	Tue, 21 Oct 2025 10:38:42 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313BB3148B5;
+	Tue, 21 Oct 2025 10:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzCFh0QC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880B729ACD7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD171DE3A4;
+	Tue, 21 Oct 2025 10:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761043121; cv=none; b=X8A6DVOmQ9YAY9ZoAvA7Bt8d8cRjMsitbPzfCnHfl6pp3CXNFpwEjdw6xzDNyFLTFzodRqCvgiaIvEMovE33A+SfI99h2jy/i53dxTCHNHFhCwU33/qMtykiBxngfcRbnEdN4fZVQQsBEr/BJlKrQ2Sm49IeAssY+vMJtEbbBUw=
+	t=1761043147; cv=none; b=bA8ENCCKufrMTN/NF0GPRd4r/z5f2MCTG9HasMgOrtCj525VtTV3QdxIr/AbJLWsP1MY4bF36FCFbA3rU/OX7BNjH2ZubC17BzlbahXiMQndWwJwp99l5k75lrE0tatYkKTdsvElzs/gcFxJvAcNX1pDTyGaOWIj/EPlnXz5az8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761043121; c=relaxed/simple;
-	bh=m6LtaOPjDuKE9+CIi+VZ0gDP2hqWyqRiXZ2VT+5Db/k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=dIvulyxchBXdS+/Sfda8yJuZaSW8zZQpH4DAJb1Mb8KJrY7pCOTP3gKD6Y5PKLejYo1s/C00dtdhQx8mUJD4thkdrBiEYjJxMqxqzUwUA9w7nzqhLUd7ajM4UnoSEstVDrpFlZ21Xk6yK4DK95j2yJRhCnRSewCZhU5hqOmpY2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59LAcXs6002071;
-	Tue, 21 Oct 2025 19:38:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59LAcXEI002068
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 21 Oct 2025 19:38:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <8950a6e1-287c-43c7-b36a-cc42ca7e267c@I-love.SAKURA.ne.jp>
-Date: Tue, 21 Oct 2025 19:38:29 +0900
+	s=arc-20240116; t=1761043147; c=relaxed/simple;
+	bh=3q6sXrG7VRtYkwyyX371flcjfB6mMLFODYR2Y1GJ5ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsEGff+Lw/yR9VIvndhC78tyTQgqg3kdMPzKmbBRcwBdJEeKhFQkCUboWmqpU1qkc5NvGtyZ1T5begPtIfrNkk98eFt4Lp7uwZr7mdQhxKyOKwR6XBMEjUphY3ZEs6RSkWMwi0W1LhkemZmb2TH+BDevwqqChYeyEtzdlKhBF1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzCFh0QC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 719B0C4CEF1;
+	Tue, 21 Oct 2025 10:39:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761043144;
+	bh=3q6sXrG7VRtYkwyyX371flcjfB6mMLFODYR2Y1GJ5ro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lzCFh0QCeSof5RGIYPgGsaVe+nfXHn62yajRTCSVY6Y5LBFLXL7w8glp6OxLn0Ql1
+	 Hc+Wp5iftVS8nioy0xmGRMec1B77StL0+tw4bf91loDKoDzJzgv36l3oX48nXFaQVd
+	 o13FxnAfXbR7x5ewNSPsHfi1WVA5GkKcvTNlSIDovjH1rZuBTvOR6T585csT4M9YnS
+	 Ke9zX83BafZh1gPaY8LFPoqgsWh2dIlqaw+rW4M86Slz5kU+9fcG+O5piM6SmiTeRl
+	 lQulycs9DTZDyOmG9PFRuKgc7yY68DnfnMf3U94ZOUm4fvAbJuvyADTbkM6LDb+Rcw
+	 XzfAdkChKjTSg==
+Date: Tue, 21 Oct 2025 11:38:59 +0100
+From: Lee Jones <lee@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Maxime Ripard <mripard@kernel.org>, linux-sunxi@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] MAINTAINERS: Update Chen-Yu's email address
+Message-ID: <20251021103859.GB475031@google.com>
+References: <20251020045603.2573544-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <66fbae37.050a0220.6bad9.0050.GAE@google.com>
- <76a62d90-d13f-4657-8a38-2a07abc83c65@I-love.SAKURA.ne.jp>
- <7b1f58cb-d42f-4357-816b-22d65792f041@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <7b1f58cb-d42f-4357-816b-22d65792f041@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251020045603.2573544-1-wens@kernel.org>
 
-#syz test
+On Mon, 20 Oct 2025, Chen-Yu Tsai wrote:
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index d480b94117cd..097c0dd24000 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1521,7 +1521,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 			struct block_device *fs_dev,
- 			unsigned long long start, int len, int blocksize)
- {
--	static struct lock_class_key jbd2_trans_commit_key;
- 	journal_t *journal;
- 	int err;
- 	int n;
-@@ -1530,6 +1529,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	if (!journal)
- 		return ERR_PTR(-ENOMEM);
- 
-+	lockdep_register_key(&journal->jbd2_trans_commit_key);
-+	lockdep_register_key(&journal->j_abort_mutex_key);
-+	mutex_init_with_key(&journal->j_abort_mutex, &journal->j_abort_mutex_key);
-+	lockdep_register_key(&journal->j_barrier_key);
-+	mutex_init_with_key(&journal->j_barrier, &journal->j_barrier_key);
-+	lockdep_register_key(&journal->j_checkpoint_mutex_key);
-+	mutex_init_with_key(&journal->j_checkpoint_mutex, &journal->j_checkpoint_mutex_key);
- 	journal->j_blocksize = blocksize;
- 	journal->j_dev = bdev;
- 	journal->j_fs_dev = fs_dev;
-@@ -1547,9 +1553,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	init_waitqueue_head(&journal->j_wait_updates);
- 	init_waitqueue_head(&journal->j_wait_reserved);
- 	init_waitqueue_head(&journal->j_fc_wait);
--	mutex_init(&journal->j_abort_mutex);
--	mutex_init(&journal->j_barrier);
--	mutex_init(&journal->j_checkpoint_mutex);
- 	spin_lock_init(&journal->j_revoke_lock);
- 	spin_lock_init(&journal->j_list_lock);
- 	spin_lock_init(&journal->j_history_lock);
-@@ -1560,7 +1563,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	journal->j_max_batch_time = 15000; /* 15ms */
- 	atomic_set(&journal->j_reserved_credits, 0);
- 	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
--			 &jbd2_trans_commit_key, 0);
-+			 &journal->jbd2_trans_commit_key, 0);
- 
- 	/* The journal is marked for error until we succeed with recovery! */
- 	journal->j_flags = JBD2_ABORT;
-@@ -1611,6 +1614,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	kfree(journal->j_wbuf);
- 	jbd2_journal_destroy_revoke(journal);
- 	journal_fail_superblock(journal);
-+	mutex_destroy(&journal->j_abort_mutex);
-+	lockdep_unregister_key(&journal->j_abort_mutex_key);
-+	mutex_destroy(&journal->j_barrier);
-+	lockdep_unregister_key(&journal->j_barrier_key);
-+	mutex_destroy(&journal->j_checkpoint_mutex);
-+	lockdep_unregister_key(&journal->j_checkpoint_mutex_key);
-+	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
- 	kfree(journal);
- 	return ERR_PTR(err);
- }
-@@ -2187,6 +2197,13 @@ int jbd2_journal_destroy(journal_t *journal)
- 		jbd2_journal_destroy_revoke(journal);
- 	kfree(journal->j_fc_wbuf);
- 	kfree(journal->j_wbuf);
-+	mutex_destroy(&journal->j_abort_mutex);
-+	lockdep_unregister_key(&journal->j_abort_mutex_key);
-+	mutex_destroy(&journal->j_barrier);
-+	lockdep_unregister_key(&journal->j_barrier_key);
-+	mutex_destroy(&journal->j_checkpoint_mutex);
-+	lockdep_unregister_key(&journal->j_checkpoint_mutex_key);
-+	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
- 	kfree(journal);
- 
- 	return err;
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 43b9297fe8a7..c6d497219e1c 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1253,6 +1253,30 @@ struct journal_s
- 	 */
- 	struct lockdep_map	j_trans_commit_map;
- #endif
-+	/**
-+	 * @jbd2_trans_commit_key:
-+	 *
-+	 * "struct lock_class_key" for @j_trans_commit_map
-+	 */
-+	struct lock_class_key	jbd2_trans_commit_key;
-+	/**
-+	 * @j_abort_mutex_key:
-+	 *
-+	 * "struct lock_class_key" for @j_abort_mutex
-+	 */
-+	struct lock_class_key	j_abort_mutex_key;
-+	/**
-+	 * @j_barrier_key:
-+	 *
-+	 * "struct lock_class_key" for @j_barrier
-+	 */
-+	struct lock_class_key	j_barrier_key;
-+	/**
-+	 * @j_checkpoint_mutex_key:
-+	 *
-+	 * "struct lock_class_key" for @j_checkpoint_mutex
-+	 */
-+	struct lock_class_key	j_checkpoint_mutex_key;
- 
- 	/**
- 	 * @j_fc_cleanup_callback:
+> The email forwarder I'm using has run into severe problems with Gmail
+> lately. Switch over to my kernel.org address for kernel development.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+> ---
+> (resent to correct dri-devel mailing list address)
+> 
+> This likely needs to go through drm-misc-next following a patch from
+> Maxime that removed himself from the Allwinner DRM driver entries.
+> 
+>  .mailmap    | 1 +
+>  MAINTAINERS | 8 ++++----
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 
+Acked-by: Lee Jones <lee@kernel.org>
+
+-- 
+Lee Jones [李琼斯]
 
