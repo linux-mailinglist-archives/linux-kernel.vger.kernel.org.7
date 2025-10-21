@@ -1,176 +1,106 @@
-Return-Path: <linux-kernel+bounces-862839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F18BF6555
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:08:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC59BF655B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C23153433DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8A119A3052
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94CD33EB10;
-	Tue, 21 Oct 2025 11:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD00033F8B7;
+	Tue, 21 Oct 2025 11:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSQUZiuq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lONiR806";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="14v32Wss"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016A633373E;
-	Tue, 21 Oct 2025 11:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897AC3346A3;
+	Tue, 21 Oct 2025 11:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047720; cv=none; b=UQRbx0iRG3Z979SKxG9TsTFlb3jrAdcUyea0GIGmb7ACrpngxEEEzn0hPkfVKUd2tdg6qU7LI3cLPmaGRLjL8acXzVGcPgMWht2xkoA5DNDQ9vlGsZUjIjePWzA60NzPhkzG/U//mFW8SP6ZCsNTdD2fW4cQecdD4d1hTnIgGu0=
+	t=1761047746; cv=none; b=TPt1Hktv1ZEocoCEmL9+3OYo0pnu4Y1KaAt4BuNNBQHlj/OCBusdRqHm+AS0uYOxyqOA71q1/dIuilhE5+G1v/8TXW24/P3ciQeDOGc/auKr1sH6Ho8mD9w+l6iegeLrAJANDdoaLoNYNqxLKpbsjIaWY2enJQD0pLi49XMRByo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047720; c=relaxed/simple;
-	bh=jd/Bf81nqyDyDpW6x/DkkmJv1ZNZPuhb0Hccb0F61Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gpj3nXdZrsC9OAI/NpQHsVxOfyyRbZDPLp+YJicFEaoVbdMx0if1MGLbcEC2eTjGjSC6ORXbRi4IU6vU2RVdScZzjX09fCDL9g1Hfe5y4tQaJID0birhUVQCDz0k3wBwNdVln3pARdxIBXi/d5W5rDi13ZIUlUuZ9pK0vGNzbJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSQUZiuq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 915FCC4CEF5;
-	Tue, 21 Oct 2025 11:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047719;
-	bh=jd/Bf81nqyDyDpW6x/DkkmJv1ZNZPuhb0Hccb0F61Ds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oSQUZiuqFcr27MLiTsBV7/eyu+B9tAd9+WiNR/+vYCq4Kyor8RVuhDgiZJ7PrEwfu
-	 0VVkCrosaoYXdn/ORSKBg6lbpOH/HK6MmzA4qX3zbXbp/sgVFzT6q+MDILz/7GnYgR
-	 2mU4fZ5y7I5QguVmO0rDJ/J3AFUUNcR1AZdiy/YyGr/KyU5pTzUaorijRexd6t5MYR
-	 bFTC9T+UMUfokIJqzVLZMAauWnt4wDYPwWG/szPZcobpG8MVs6lbRO0lFpLTL1KP/D
-	 Y7vGTvFSOfJlpOAN7YaqBeFBxNX5G5UpbyeNwhRyPynE6ctLyMNzbNcJAzAsf3FOxS
-	 9Y8IOc1WcwYcw==
-Date: Tue, 21 Oct 2025 06:55:17 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v3 1/5] of/irq: Add msi-parent check to of_msi_xlate()
-Message-ID: <20251021115517.GA3713879-robh@kernel.org>
-References: <20251017084752.1590264-1-lpieralisi@kernel.org>
- <20251017084752.1590264-2-lpieralisi@kernel.org>
+	s=arc-20240116; t=1761047746; c=relaxed/simple;
+	bh=sfrIkGFyQJLVpjb8aEBzy44vnyD09WwLu3/8FRkPxP0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O+xRTOGph/+/QC3qJe9w8fKpumwCJKYL2YNmzZ5qDuA+bTIP2vB0kWVhV//EkEXSfj4EGjdd96lZWBZFXsIJe0xMJSJ1DCxv39aGSBvECfkzIuxGgrjLlYYTzxEgr0jjSgiskdE6PhtTysZggM+EQoJKrBuT6ZZy8hxIYa6s0KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lONiR806; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=14v32Wss; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761047742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dK3mFQ3qr09kveAbbwewXdGK2hBD6okXrlQGLgqnl/k=;
+	b=lONiR806L655urbjQJ2Ze14m7dtIpn8SF0dLyGlzlKM7tvVcuiRox3/VBWxHfjkejZXVKW
+	+//1a5OzlX+DUheCfTS42oJjfxDZ0N7KU50tDi30qtWI8dR5UYpHPWJJTtcf5EfPA9JTXT
+	Yt0h2FmMB7N6XVsggAV1iXWW5qqD4vIHdPxcwLmmW0K2LNyDmTMrnz3UNOaV5ovTxA3BOr
+	ZZBCjaW6Ow8YFS8CVrPp0u9u7Y66ojg1lwMwELyYqdtziFrve6yZNZYNoYwsClCyWfoqkP
+	ccuo4P0kRZWLJF9xaH22FQ1PSYKcxC8YfuCiKA6Q8W6uCz5H2OONNNQQhBcYfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761047742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dK3mFQ3qr09kveAbbwewXdGK2hBD6okXrlQGLgqnl/k=;
+	b=14v32WssVnj3AgaaBtLdBPsF7WD+DpWpLjPvyIvb2Or1YgtZQ5h1KlOjA1H11w2qzMmiFs
+	khxEhB/8nfPKyIAA==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
+ Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v2 18/20] rv: Add support for per-object monitors in DA/HA
+In-Reply-To: <20250919140954.104920-19-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+ <20250919140954.104920-19-gmonaco@redhat.com>
+Date: Tue, 21 Oct 2025 13:55:41 +0200
+Message-ID: <87plag1nb6.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017084752.1590264-2-lpieralisi@kernel.org>
+Content-Type: text/plain
 
-On Fri, Oct 17, 2025 at 10:47:48AM +0200, Lorenzo Pieralisi wrote:
-> In some legacy platforms the MSI controller for a PCI host bridge is
-> identified by an msi-parent property whose phandle points at an MSI
-> controller node with no #msi-cells property, that implicitly
-> means #msi-cells == 0.
-> 
-> For such platforms, mapping a device ID and retrieving the MSI controller
-> node becomes simply a matter of checking whether in the device hierarchy
-> there is an msi-parent property pointing at an MSI controller node with
-> such characteristics.
-> 
-> Add a helper function to of_msi_xlate() to check the msi-parent property in
-> addition to msi-map and retrieve the MSI controller node (with a 1:1 ID
-> deviceID-IN<->deviceID-OUT  mapping) to provide support for deviceID
-> mapping and MSI controller node retrieval for such platforms.
-> 
-> Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Sascha Bischoff <sascha.bischoff@arm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/of/irq.c | 38 +++++++++++++++++++++++++++++++++++---
->  1 file changed, 35 insertions(+), 3 deletions(-)
-
-It all looks good to me other than 1 nit below. How do you propose 
-merging the series? I can take the first 3 for 6.18 and then patches 4 
-and 5 can go via their respective trees for 6.19?
-
-> 
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index 65c3c23255b7..e67b2041e73b 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -671,6 +671,35 @@ void __init of_irq_init(const struct of_device_id *matches)
->  	}
->  }
->  
-> +static int of_check_msi_parent(struct device_node *dev_node, struct device_node **msi_node)
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> +static inline struct da_monitor *da_create_storage(da_id_type id,
+> +						   monitor_target target,
+> +						   struct da_monitor *da_mon,
+> +						   gfp_t flags)
 > +{
-> +	struct of_phandle_args msi_spec;
-> +	int ret;
+> +	struct da_monitor_storage *mon_storage;
 > +
-> +	/*
-> +	 * An msi-parent phandle with a missing or == 0 #msi-cells
-> +	 * property identifies a 1:1 ID translation mapping.
-> +	 *
-> +	 * Set the msi controller node if the firmware matches this
-> +	 * condition.
-> +	 */
-> +	ret = of_parse_phandle_with_optional_args(dev_node, "msi-parent", "#msi-cells",
-> +						  0, &msi_spec);
-> +	if (!ret) {
+> +	if (da_mon)
+> +		return da_mon;
 
-if (ret)
-	return ret;
+I think this 'if' should be moved to da_create_conditional() instead,
+because the "conditional" part should be implemented in the function
+whose name includes "conditional". I think that would make the code
+easier to follow, because one would already have a good guess what the
+function does without looking into the details.
+> +static inline bool da_handle_start_event(da_id_type id, monitor_target target,
+> +					 enum events event)
+> +{
+> +	struct da_monitor *da_mon;
+> +
+> +	if (!da_monitor_enabled())
+> +		return 0;
+> +	guard(rcu)();
+> +	da_mon = da_get_monitor(id, target);
+> +	da_mon = da_monitor_start_hook(id, target, da_mon);
 
-And then save a level of indentation.
+Do you plan this da_monitor_start_hook() macro to do anything other than
+storage preparation? If not, perhaps it is better to name it
+da_monitor_prepare_storage() or something like that, so that this is
+easier to follow.
 
-> +		if ((*msi_node && *msi_node != msi_spec.np) || msi_spec.args_count != 0)
-> +			ret = -EINVAL;
-> +
-> +		if (!ret) {
-> +			/* Return with a node reference held */
-> +			*msi_node = msi_spec.np;
-> +			return 0;
-> +		}
-> +		of_node_put(msi_spec.np);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  /**
->   * of_msi_xlate - map a MSI ID and find relevant MSI controller node
->   * @dev: device for which the mapping is to be done.
-> @@ -678,7 +707,7 @@ void __init of_irq_init(const struct of_device_id *matches)
->   * @id_in: Device ID.
->   *
->   * Walk up the device hierarchy looking for devices with a "msi-map"
-> - * property. If found, apply the mapping to @id_in.
-> + * or "msi-parent" property. If found, apply the mapping to @id_in.
->   * If @msi_np points to a non-NULL device node pointer, only entries targeting
->   * that node will be matched; if it points to a NULL value, it will receive the
->   * device node of the first matching target phandle, with a reference held.
-> @@ -692,12 +721,15 @@ u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in)
->  
->  	/*
->  	 * Walk up the device parent links looking for one with a
-> -	 * "msi-map" property.
-> +	 * "msi-map" or an "msi-parent" property.
->  	 */
-> -	for (parent_dev = dev; parent_dev; parent_dev = parent_dev->parent)
-> +	for (parent_dev = dev; parent_dev; parent_dev = parent_dev->parent) {
->  		if (!of_map_id(parent_dev->of_node, id_in, "msi-map",
->  				"msi-map-mask", msi_np, &id_out))
->  			break;
-> +		if (!of_check_msi_parent(parent_dev->of_node, msi_np))
-> +			break;
-> +	}
->  	return id_out;
->  }
->  
-> -- 
-> 2.50.1
-> 
+Nam
 
