@@ -1,349 +1,176 @@
-Return-Path: <linux-kernel+bounces-863080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D347BF6F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:05:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0A7BF6F5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F4E18971BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:03:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAF37505D18
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BBF33B953;
-	Tue, 21 Oct 2025 14:02:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4825332EBA;
-	Tue, 21 Oct 2025 14:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591A733C518;
+	Tue, 21 Oct 2025 14:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xI3DCGrt"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4033B97D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761055366; cv=none; b=i1JB4ZozufGuTy/gS9wz4+q2iDh2GhM3NIgZnEKu2vZ6FE0uVvM0DW+3Uz+SNWKQ5YMGgWUEClD9SEq8uf2Kq9otryDmafPcwSrBtB5SYNgYlUnIg3dXCSrc7RgBfUuVqv/bICqplZZRnQ11VqyGyDOQmVeEG9kDNBz3GzzV4Cc=
+	t=1761055373; cv=none; b=U+RkOMyI1iqWHeBbpMn49Uv48mNc5lt4I0K3BDYjgiayC1LmCdnfN+8YidwykjxPMAzEfVailS9nDJiiVazGRadeOuoOZT2vPVvum31zNhTikz/ltDDN2Ia/LFsaPrJDZfrpos0GbJF5sWZ5HSBbpMghF7dgS2Zr0pK+JlSK4e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761055366; c=relaxed/simple;
-	bh=ORwRXaxTrWD/lBTXgh/vsZlF8HjFpIxg6AroUy7/mNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0OV/BVSx2Dl9SCeU0wmNsM3D48jxtjtS/IoMLWh+i7xvHJEEyjkZioMoiHjyqoQd+dxoSBGQ9xUjjMD7IBtVW1PIQC5EXnPMtxJ58koTtEnACU39h+MrGXB/sBeSUbo8waDGlcFthYlfP85+jWq79+6GnsaJa2G1zgWAV5WxHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2783E1063;
-	Tue, 21 Oct 2025 07:02:35 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A6883F66E;
-	Tue, 21 Oct 2025 07:02:40 -0700 (PDT)
-Date: Tue, 21 Oct 2025 15:02:37 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>
-Cc: Adam Young <admiyo@os.amperecomputing.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v30 2/3] mailbox: pcc: functions for reading and writing
- PCC extended data
-Message-ID: <aPeSfQ_Vd0bjW-iS@bogus>
-References: <20251016210225.612639-1-admiyo@os.amperecomputing.com>
- <20251016210225.612639-3-admiyo@os.amperecomputing.com>
- <20251020-honored-cat-of-elevation-59b6c4@sudeepholla>
- <78c30517-4b16-4929-b10b-917da68ff01c@amperemail.onmicrosoft.com>
+	s=arc-20240116; t=1761055373; c=relaxed/simple;
+	bh=olee1rr9nLhphfZIFxDNoMLGLJzNwbgY6TM9tcztPYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MzI0T6G+TEYI6A/zhjroQxFXkltrpwXCjmQx8ZS+xT05TjuCqdZy/llKWfDU++CNquYPiZ6anE7MbERP0EqkjXaKnoJlC8BXHjAWfOPVoPr2Hlcib+UTDN1/mV2ZTnxR4hXqgG59Mf5Rl5LaTi4lurX8IoLvJ4gisq7Wf0plxyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xI3DCGrt; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so6258342e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761055370; x=1761660170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=olee1rr9nLhphfZIFxDNoMLGLJzNwbgY6TM9tcztPYA=;
+        b=xI3DCGrtnMLS0hZ22IIXKfLlhs2spA/G++wbxOC8I2jim3Vox6hFsKwPIRQ7cwxYY6
+         wa4FyyIvEHHf+jwYpfc8p71FaSZj1uusUjZiCAV8U9RTfWQMJf/Nb7daEUVNeqPzvn8Z
+         wxXgGm6YW2PO4ScFX2p2CZyRrg/Xy34Pd2sMd5yKLtTvQjf2JbxiYBzny3geq22MTw55
+         PBFqCa7bh/KTBDKPiEmFfsldx3KFNKKe4F0MKwKFYDVmyfnItE3vfoWcyBmbHNiikwsR
+         b9Ebut0jMSK8iMupW3sDRnxmkhJQviOUBHLWlguUv11cBJKqPi3kpw9MVTMbVZImW5C8
+         7YKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761055370; x=1761660170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=olee1rr9nLhphfZIFxDNoMLGLJzNwbgY6TM9tcztPYA=;
+        b=hN0tRHeF/h/NjYmNmCsRx7RuTpeqn2kBRncTT7FcVNeReqrW9JhTMZudlV/JYVEZDa
+         1iq45KDZYDULawg12yKxHcM6zB/gpTI2nAogeW/IOdQaCYq/wiYBXO1/2R0eCN46RMDl
+         vb0k6Xjz1UjCH0ARLWsEqkgV2q62s9M9agh6E2MHIgL/w0v3T3Lcy76Ze++3Tx3xM4Yg
+         X/SAZczGkeDHEHanVK5d2KvsJBeT4JMIJXCnxUdcBxirOvq8sAc7tocWIfVKpRpVZa55
+         0RDZxJfSwFamtlbz8pbcfT0kebPb1oNb5WL3ZqFfAXJ2VOy6S8HX9Oj14k18UBlk2Qc+
+         jH+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUDFu5+CtTWzUo9IlBGVB9FjZ/zXLs9Ld26yEVmBorUW7GYrtq1swTKDPD9WVza0BaXCxzHVVBtsgNS9sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSgB0TxMMYnJovG95OIuSD9uDOtY0ioK5vqqRY4Siut3+50RFn
+	oqfyM/mGu65sdTvR6Tby1jbWdVlZ4LtDUUeNVGXIeDDRBOVZTwaIunr1ek/6ZLA5gUiQvqNO1Bj
+	77L2/fsbTmnwG1RkD1XaRzcITv8PzAxfADF09MJjw+A==
+X-Gm-Gg: ASbGncsQBVOvq3h8GW18U5CE/TKBgmueebAXpi1Ea0+IEbYhTAX+NS9s9fhNs04SGUN
+	5OEYbjLOc06fNNAI8FcEHgnCm1AnK2vv/Ue4bUEeCNDGZZOVRDuxdP9X5VMa+JDtFAyLbD9dNAJ
+	bAgRR5CStqsLbqV0rUCGsI0DjK1cQrj3W/VtX4lGt6TqrcVlcSygzsfqXuI3woaWhj/uPc3vGX+
+	Bfaanl7lsWlgEJ9QMX2MS8aInbCSZP+U98MErUz14ch+E1MEzcKoNJtEeV9zuJFTQag7kyhq0X1
+	77IK9/O5jX9yvcXMWCiq8QU86AD71NxjEaXuFA==
+X-Google-Smtp-Source: AGHT+IFewnoDUUuQMPn380MpZIQ5EUIM65WgPCeHb7zg5fIb+1IVMdwP1nt9v2GuI358+5/Q2YgeRh0HlDcM36QCm+4=
+X-Received: by 2002:a05:6512:3e26:b0:58a:fb2f:4183 with SMTP id
+ 2adb3069b0e04-591d853547amr4735531e87.27.1761055369735; Tue, 21 Oct 2025
+ 07:02:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <78c30517-4b16-4929-b10b-917da68ff01c@amperemail.onmicrosoft.com>
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e>
+ <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
+ <CAMRc=MdWmO4wvX6zpzN0-LZF1pF5Y2=sS8fBwr=CKMGWHg+shA@mail.gmail.com>
+ <rfr5cou6jr7wmtxixfgjxhnda6yywlsxsei7md7ne3qge7r3gk@xv6n5pvcjzrm>
+ <CAMRc=Me9Td5G9qZV8A98XkGROKw1D2UeQHpFzt8uApF8995MZw@mail.gmail.com>
+ <rvsyll4u6v4tpaxs4z3k4pbusoktkaocq4o3g6rjt6d2zrzqst@raiuch3hu3ce>
+ <CAMRc=Me+4H6G+-Qj_Gz2cv2MgRHOmrjMyNwJr+ardDR1ndYHvQ@mail.gmail.com>
+ <fydmplp5z4hjic2wlmvcy6yr3s5t5u4qsgo7yzbqq3xu2g6hdk@v4tzjj3ww4s6>
+ <CAMRc=McGuNX42k_HdV20zW+buACBTmTZEHWgS-ddRYsvnfwDSg@mail.gmail.com> <ibdmghl5dg3oda2j5ejp35ydky4xkazewhdvskm7p32vstdegr@36pj32b6dt44>
+In-Reply-To: <ibdmghl5dg3oda2j5ejp35ydky4xkazewhdvskm7p32vstdegr@36pj32b6dt44>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 21 Oct 2025 16:02:37 +0200
+X-Gm-Features: AS18NWDZ-39d1AWC8agc3FHYO9nz9oO2X5fy-6ifkN2xtLGPNmY9-qcvZ1gXQ8w
+Message-ID: <CAMRc=MdmPOHJ2SiO_A4zya3uZH+0VjC=EQKxc7wY3vk56kgMbQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Mika Westerberg <westeri@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 01:22:23PM -0400, Adam Young wrote:
-> Answers inline.  Thanks for the review.
-> 
-> On 10/20/25 08:52, Sudeep Holla wrote:
-> > On Thu, Oct 16, 2025 at 05:02:20PM -0400, Adam Young wrote:
-> > > Adds functions that aid in compliance with the PCC protocol by
-> > > checking the command complete flag status.
-> > > 
-> > > Adds a function that exposes the size of the shared buffer without
-> > > activating the channel.
-> > > 
-> > > Adds a function that allows a client to query the number of bytes
-> > > avaialbel to read in order to preallocate buffers for reading.
-> > > 
-> > > Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
-> > > ---
-> > >   drivers/mailbox/pcc.c | 129 ++++++++++++++++++++++++++++++++++++++++++
-> > >   include/acpi/pcc.h    |  38 +++++++++++++
-> > >   2 files changed, 167 insertions(+)
-> > > 
-> > > diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> > > index 978a7b674946..653897d61db5 100644
-> > > --- a/drivers/mailbox/pcc.c
-> > > +++ b/drivers/mailbox/pcc.c
-> > > @@ -367,6 +367,46 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
-> > >   	return IRQ_HANDLED;
-> > >   }
-> > > +static
-> > > +struct pcc_chan_info *lookup_channel_info(int subspace_id)
-> > > +{
-> > > +	struct pcc_chan_info *pchan;
-> > > +	struct mbox_chan *chan;
-> > > +
-> > > +	if (subspace_id < 0 || subspace_id >= pcc_chan_count)
-> > > +		return ERR_PTR(-ENOENT);
-> > > +
-> > > +	pchan = chan_info + subspace_id;
-> > > +	chan = pchan->chan.mchan;
-> > > +	if (IS_ERR(chan) || chan->cl) {
-> > > +		pr_err("Channel not found for idx: %d\n", subspace_id);
-> > > +		return ERR_PTR(-EBUSY);
-> > > +	}
-> > > +	return pchan;
-> > > +}
-> > > +
-> > > +/**
-> > > + * pcc_mbox_buffer_size - PCC clients call this function to
-> > > + *		request the size of the shared buffer in cases
-> > > + *              where requesting the channel would prematurely
-> > > + *              trigger channel activation and message delivery.
-> > > + * @subspace_id: The PCC Subspace index as parsed in the PCC client
-> > > + *		ACPI package. This is used to lookup the array of PCC
-> > > + *		subspaces as parsed by the PCC Mailbox controller.
-> > > + *
-> > > + * Return: The size of the shared buffer.
-> > > + */
-> > > +int pcc_mbox_buffer_size(int index)
-> > > +{
-> > > +	struct pcc_chan_info *pchan = lookup_channel_info(index);
-> > > +
-> > > +	if (IS_ERR(pchan))
-> > > +		return -1;
-> > > +	return pchan->chan.shmem_size;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(pcc_mbox_buffer_size);
-> > > +
-> > Why do you need to export this when you can grab this from
-> > struct pcc_mbox_chan which is returned from pcc_mbox_request_channel().
-> > 
-> > Please drop the above 2 functions completely.\
-> 
-> This is required by the Network driver. Specifically, the network driver
-> needs to tell the OS what the Max MTU size  is before the network is
-> active.  If I have to call pcc_mbox_request_channel I then activate the
-> channel for message delivery, and we have a race condition.
+On Tue, Oct 21, 2025 at 2:53=E2=80=AFPM Manivannan Sadhasivam <mani@kernel.=
+org> wrote:
+>
+> On Tue, Oct 21, 2025 at 02:22:46PM +0200, Bartosz Golaszewski wrote:
+> > On Tue, Oct 21, 2025 at 2:20=E2=80=AFPM Manivannan Sadhasivam <mani@ker=
+nel.org> wrote:
+> > >
+> > > >
+> > > > And with the implementation this series proposes it would mean that
+> > > > the perst signal will go high after the first endpoint pwrctl drive=
+r
+> > > > sets it to high and only go down once the last driver sets it to lo=
+w.
+> > > > The only thing I'm not sure about is the synchronization between th=
+e
+> > > > endpoints - how do we wait for all of them to be powered-up before
+> > > > calling the last gpiod_set_value()?
+> > > >
+> > >
+> > > That will be handled by the pwrctrl core. Not today, but in the comin=
+g days.
+> > >
+> >
+> > But is this the right approach or are you doing it this way *because*
+> > there's no support for enable-counted GPIOs as of yet?
+> >
+>
+> This is the right approach since as of today, pwrctrl core scans the bus,=
+ tries
+> to probe the pwrctrl driver (if one exists for the device to be scanned),=
+ powers
+> it ON, and deasserts the PERST#. If the device is a PCI bridge/switch, th=
+en the
+> devices underneath the downstream bus will only be powered ON after the f=
+urther
+> rescan of the downstream bus. But the pwrctrl drivers for those devices m=
+ight
+> get loaded at any time (even after the bus rescan).
+>
+> This causes several issues with the PCI core as this behavior sort of emu=
+lates
+> the PCI hot-plug (devices showing up at random times after bus scan). If =
+the
+> upstream PCI bridge/switch is not hot-plug capable, then the devices that=
+ were
+> showing up later will fail to enumerate due to lack of resources. The fai=
+lure
+> is due to PCI core limiting the resources for non hot-plug PCI bridges as=
+ it
+> doesn't expect the devices to show up later in the downstream port.
+>
+> One way to fix this issue is by making sure all the pwrctrl capable devic=
+es
+> underneath a PCI bridge getting probed, powered ON, and finally deasserti=
+ng the
+> PERST# for each one of them. If the PERST# happens to be shared, it will =
+be
+> deasserted once at the last. And this order has to be ensured by the pwrc=
+trl
+> core irrespective of the shared PERST#.
 >
 
-No you just need to establish the channel by calling pcc_mbox_request_channel()
-from probe or init routines. After that the shmem size should be available.
-No need to send any message or activating anything.
+Ok, makes sense. In that case this series probably doesn't affect your
+work or PCI in general.
 
-> One alternative I did consider was to return all of the data that you get
-> from  request channel is a non-active format.  For the type 2 drivers, this
-> information is available outside of  the mailbox interface.  The key effect
-> is that the size of the shared message buffer be available without
-> activating the channel.
-> 
-
-Not sure if that is needed.
-
-> 
-> > 
-> > > +
-> > >   /**
-> > >    * pcc_mbox_request_channel - PCC clients call this function to
-> > >    *		request a pointer to their PCC subspace, from which they
-> > > @@ -437,6 +477,95 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
-> > > +/**
-> > > + * pcc_mbox_query_bytes_available
-> > > + *
-> > > + * @pchan pointer to channel associated with buffer
-> > > + * Return: the number of bytes available to read from the shared buffer
-> > > + */
-> > > +int pcc_mbox_query_bytes_available(struct pcc_mbox_chan *pchan)
-> > > +{
-> > > +	struct pcc_extended_header pcc_header;
-> > > +	struct pcc_chan_info *pinfo = pchan->mchan->con_priv;
-> > > +	int data_len;
-> > > +	u64 val;
-> > > +
-> > > +	pcc_chan_reg_read(&pinfo->cmd_complete, &val);
-> > > +	if (val) {
-> > > +		pr_info("%s Buffer not enabled for reading", __func__);
-> > > +		return -1;
-> > > +	}
-> > Why would you call pcc_mbox_query_bytes_available() if the transfer is
-> > not complete ?
-> 
-> Because I need to  allocate a buffer to read the bytes in to.  In the
-> driver, it is called this way.
-> 
-
-Yes I thought so, I think we must be able to manage this with helper as well.
-I will try out some things and share.
-
-> +       size = pcc_mbox_query_bytes_available(inbox->chan);
-> +       if (size == 0)
-> +               return;
-> +       skb = netdev_alloc_skb(mctp_pcc_ndev->ndev, size);
-> +       if (!skb) {
-> +               dev_dstats_rx_dropped(mctp_pcc_ndev->ndev);
-> +               return;
-> +       }
-> +       skb_put(skb, size);
-> +       skb->protocol = htons(ETH_P_MCTP);
-> +       pcc_mbox_read_from_buffer(inbox->chan, size, skb->data);
-> 
-> While we could pre-allocate a sk_buff that is MTU size, that is likely to be
-> wasteful for many messages.
-> 
-
-Fair enough.
-
-> > 
-> > > +	memcpy_fromio(&pcc_header, pchan->shmem,
-> > > +		      sizeof(pcc_header));
-> > > +	data_len = pcc_header.length - sizeof(u32) + sizeof(pcc_header);
-> > Why are you adding the header size to the length above ?
-> 
-> Because the PCC spec is wonky.
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/14_Platform_Communications_Channel/Platform_Comm_Channel.html#extended-pcc-subspace-shared-memory-region
-> 
-> "Length of payload being transmitted including command field."  Thus in
-> order to copy all of the data, including  the PCC header, I need to drop the
-> length (- sizeof(u32) ) and then add the entire header. Having all the PCC
-> data in the buffer allows us to see it in networking tools. It is also
-> parallel with how the messages are sent, where the PCC header is written by
-> the driver and then the whole message is mem-copies in one io/read or write.
-> 
-
-No you have misread this part.
-Communication subspace(only part and last entry in shared memory at offset of
-16 bytes) - "Memory region for reading/writing PCC data. The maximum size of
-this region is 16 bytes smaller than the size of the shared memory region
-(specified in the Master slave Communications Subspace structure). When a
-command is sent to or received from the platform, the size of the data in
-this space will be Length (expressed above) minus the 4 bytes taken up by
-the command."
-
-The keyword is "this space/region" which refers to only the communication
-subspace which is at offset 16 bytes in the shmem.
-
-It should be just length - sizeof(command) i.e. length - 4
-
-> > 
-> > > +	return data_len;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(pcc_mbox_query_bytes_available);
-> > > +
-> > > +/**
-> > > + * pcc_mbox_read_from_buffer - Copy bytes from shared buffer into data
-> > > + *
-> > > + * @pchan - channel associated with the shared buffer
-> > > + * @len - number of bytes to read
-> > > + * @data - pointer to memory in which to write the data from the
-> > > + *         shared buffer
-> > > + *
-> > > + * Return: number of bytes read and written into daa
-> > > + */
-> > > +int pcc_mbox_read_from_buffer(struct pcc_mbox_chan *pchan, int len, void *data)
-> > > +{
-> > > +	struct pcc_chan_info *pinfo = pchan->mchan->con_priv;
-> > > +	int data_len;
-> > > +	u64 val;
-> > > +
-> > > +	pcc_chan_reg_read(&pinfo->cmd_complete, &val);
-> > > +	if (val) {
-> > > +		pr_info("%s buffer not enabled for reading", __func__);
-> > > +		return -1;
-> > > +	}
-> > Ditto as above, why is this check necessary ?
-> 
-> Possibly just paranoia. I think this is vestige of older code that did
-> polling instead of getting an interrupt.  But it seems correct in keeping
-> with the letter of the PCC protocol.
-
-Not needed IMO, lets add when we find the need for it, not for paranoia
-reasons please.
-
-> 
-> > 
-> > > +	data_len  = pcc_mbox_query_bytes_available(pchan);
-> > > +	if (len < data_len)
-> > > +		data_len = len;
-> > > +	memcpy_fromio(data, pchan->shmem, len);
-> > > +	return len;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(pcc_mbox_read_from_buffer);
-> > > +
-> > > +/**
-> > > + * pcc_mbox_write_to_buffer, copy the contents of the data
-> > > + * pointer to the shared buffer.  Confirms that the command
-> > > + * flag has been set prior to writing.  Data should be a
-> > > + * properly formatted extended data buffer.
-> > > + * pcc_mbox_write_to_buffer
-> > > + * @pchan: channel
-> > > + * @len: Length of the overall buffer passed in, including the
-> > > + *       Entire header. The length value in the shared buffer header
-> > > + *       Will be calculated from len.
-> > > + * @data: Client specific data to be written to the shared buffer.
-> > > + * Return: number of bytes written to the buffer.
-> > > + */
-> > > +int pcc_mbox_write_to_buffer(struct pcc_mbox_chan *pchan, int len, void *data)
-> > > +{
-> > > +	struct pcc_extended_header *pcc_header = data;
-> > > +	struct mbox_chan *mbox_chan = pchan->mchan;
-> > > +
-> > > +	/*
-> > > +	 * The PCC header length includes the command field
-> > > +	 * but not the other values from the header.
-> > > +	 */
-> > > +	pcc_header->length = len - sizeof(struct pcc_extended_header) + sizeof(u32);
-> > > +
-> > > +	if (!pcc_last_tx_done(mbox_chan)) {
-> > > +		pr_info("%s pchan->cmd_complete not set.", __func__);
-> > > +		return 0;
-> > > +	}
-> > The mailbox moves to next message only if the last tx is done. Why is
-> > this check necessary ?
-> 
-> I think you are  right, and  these three checks are redundant now.
-> 
-
-Thanks for confirming my understanding, was just worried if there is
-anything that I am not considering.
-
-> 
-> > 
-> > > +	memcpy_toio(pchan->shmem,  data, len);
-> > > +
-> > > +	return len;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(pcc_mbox_write_to_buffer);
-> > > +
-> > > 
-> > I am thinking if reading and writing to shmem can be made inline helper.
-> > Let me try to hack up something add see how that would look like.
-> 
-> That would be a good optimization.
-> 
-
-Thanks, I did try to write to buffer part but I am still not decided on
-the exact formating yet to share it. I will try to share something in
-next couple of days if possible.
-
--- 
-Regards,
-Sudeep
+Bartosz
 
