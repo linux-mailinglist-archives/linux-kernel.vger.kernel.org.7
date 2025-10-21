@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-861984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-861986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E7ABF4338
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F7BBF4323
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905B53B7FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:52:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A359018934A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 00:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FA3258ED1;
-	Tue, 21 Oct 2025 00:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43ED275AFB;
+	Tue, 21 Oct 2025 00:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkMSw0qR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afEMjMtV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9375222580;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD578223708;
 	Tue, 21 Oct 2025 00:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761007932; cv=none; b=G3xo1KDhAbKhNYgdyTkLlXESgetDKfx2Vhcz6cNn7p1siGMvK83Q0Hv8V+ZBU3Y8CvmcXworiNAxnh84N3uwRnr4cCqJFnvz0pgu1n+pko1B6S4TjUFM1/DeOOsJamsJ+N3ZAJ6GO0k2YKWSroxKzXAA7Qi8X1pVO9/ypr1Kolg=
+	t=1761007933; cv=none; b=Y/ogEsiIeRTzIZg294Twm5df7Y8YglLnAaAVUV5XwGQzODDwESiHWDmRoZitKEH2jsbdMTNmc0lKqOf5d7Z7JnWHnFlh+7bPQ/X5HijMUGE0mamtrssv9eqiE9sZQtRNPunAmrq6l5HmmI7q63dpBALBDY9Znu7C3gondH4sHMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761007932; c=relaxed/simple;
-	bh=1L/1VxkdcntEeqOsbxPGXVIU8fqcPU+StdYkkylH2kk=;
+	s=arc-20240116; t=1761007933; c=relaxed/simple;
+	bh=CC+nV2XIXzlcipUqTEh6D/1SpprWiQyjy/PwpYbdZyc=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=K/ZweX5w/uxtLTUpF3myTcMU1mP7YbncoVeGLByRS5EV8jUNIO91JDZiL+WYMciW2a0pd63cNG3ueQVaq6xy9dvwlmYx3hEZu46D5wDUs6UqeKrNCqcHPAxDAe/KM40Wd9OUCFnMcJf90GgJeEIqeenAvuNHhx8gbn5aMlnm53g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkMSw0qR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 767A2C2BCAF;
+	 Content-Type; b=q7FwmRL4ADAPbz+IZvIc1RyN9hFAJtVa/9pxWlKYpz3RY2378eweuxKQqgDduELa2vjojxtTWvDTEtheImwn90f5Mat81SSPNJGnf24SfAQKxAT0dsdA2UgH/m05OaqZmjunqn+sIHyoVcrlXOGYIv0QkRjh+S1BQPNkeSxUWa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afEMjMtV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8495BC113D0;
 	Tue, 21 Oct 2025 00:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761007932;
-	bh=1L/1VxkdcntEeqOsbxPGXVIU8fqcPU+StdYkkylH2kk=;
+	bh=CC+nV2XIXzlcipUqTEh6D/1SpprWiQyjy/PwpYbdZyc=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=EkMSw0qRi/iPcdDovRJ8CvnsdL9ISH0+r9m448xpTj+biBjti6d/edonVTwFUXHKZ
-	 M7epgpAppq9SmTEuVKTm/Ig2pqCJV3juDD9oivUcw5d8WRWo3+YpzfE5dI6JrvSYLF
-	 wP0a9+jt2MTpSh5/pngm7a9w453DyH7QPtSKhY8f+p8o3tB29puIFFonLew8msbaho
-	 5I/XdBnspxD9CcRxor+Suc9kqi4o+mAzYpYFT79hK1zCotZf3+FQegE0KOAlX5CQzQ
-	 1JsE/+fmLgCSTafDsHuB6UzqEs02G9190x9qaanRZymn9GCows8LogI17ZxpC4heTr
-	 5lAIYACkoA39w==
+	b=afEMjMtVD0ZbCJKW3jtf8A6x58Pb6LbFqbdch4JCcn88IY4rT3xSvxr3DfVcHXNEq
+	 vrJ31rKp9Th3XTLXIAq1ZBrJvcvFdYyzXAciqaBoqI2Uri125DlpA6Xr86mmBdWtgn
+	 Vh4qwIL3G/dwrBEsN4KqytKaoFLR3caqEA5bQkWzfo/si4pVk60m54r8IF7PhCEaqA
+	 8XB4ZB04UdZMmHi0JVNKtiAGqpAxpEkGaS3m/64GsWJrEvXmY5d50wjApcozMssuhQ
+	 lFH0TQyVXwOxDeXOPHeYCMVdvdWjih1StXA8MdCdLkIfhG60fgyFVr33gDJEw0dNsp
+	 jmYmDVOIOz9Pg==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vB0c5-0000000207M-0ySe;
+	id 1vB0c5-0000000207q-1fFG;
 	Mon, 20 Oct 2025 20:52:33 -0400
-Message-ID: <20251021005233.085871113@kernel.org>
+Message-ID: <20251021005233.251192796@kernel.org>
 User-Agent: quilt/0.68
-Date: Mon, 20 Oct 2025 20:52:00 -0400
+Date: Mon, 20 Oct 2025 20:52:01 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -66,7 +66,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Jiri Olsa <jolsa@kernel.org>,
  Adrian Hunter <adrian.hunter@intel.com>,
  Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v4 05/13] tracing: Have system call events record user array data
+Subject: [PATCH v4 06/13] tracing: Display some syscall arrays as strings
 References: <20251021005155.705735078@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,279 +78,107 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-For system call events that have a length field, add a "user_arg_size"
-parameter to the system call meta data that denotes the index of the args
-array that holds the size of arg that the user_mask field has a bit set
-for.
+Some of the system calls that read a fixed length of memory from the user
+space address are not arrays but strings. Take a bit away from the nb_args
+field in the syscall meta data to use as a flag to denote that the system
+call's user_arg_size is being used as a string. The nb_args should never
+be more than 6, so 7 bits is plenty to hold that number. When the
+user_arg_is_str flag that, when set, will display the data array from the
+user space address as a string and not an array.
 
-The "user_mask" has a bit set that denotes the arg that points to an array
-in the user space address space and if a system call event has the
-user_mask field set and the user_arg_size set, it will then record the
-content of that address into the trace event, up to the size defined by
-SYSCALL_FAULT_BUF_SZ - 1.
+This will allow the output to look like this:
 
-This allows the output to look like:
-
-  sys_write(fd: 0xa, buf: 0x5646978d13c0 (01:00:05:00:00:00:00:00:01:87:55:89:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00), count: 0x20)
+  sys_sethostname(name: 0x5584310eb2a0 "debian", len: 6)
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- include/trace/syscall.h       |   4 +-
- kernel/trace/trace_syscalls.c | 121 ++++++++++++++++++++++++----------
- 2 files changed, 90 insertions(+), 35 deletions(-)
+ include/trace/syscall.h       |  4 +++-
+ kernel/trace/trace_syscalls.c | 22 +++++++++++++++++++---
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
 diff --git a/include/trace/syscall.h b/include/trace/syscall.h
-index 85f21ca15a41..9413c139da66 100644
+index 9413c139da66..0dd7f2b33431 100644
 --- a/include/trace/syscall.h
 +++ b/include/trace/syscall.h
 @@ -16,6 +16,7 @@
   * @name: name of the syscall
   * @syscall_nr: number of the syscall
   * @nb_args: number of parameters it takes
-+ * @user_arg_size: holds @arg that has size of the user space to read
++ * @user_arg_is_str: set if the arg for @user_arg_size is a string
+  * @user_arg_size: holds @arg that has size of the user space to read
   * @user_mask: mask of @args that will read user space
   * @types: list of types as strings
-  * @args: list of args as strings (args[i] matches types[i])
-@@ -26,7 +27,8 @@
+@@ -27,7 +28,8 @@
  struct syscall_metadata {
  	const char	*name;
  	int		syscall_nr;
--	short		nb_args;
-+	u8		nb_args;
-+	s8		user_arg_size;
+-	u8		nb_args;
++	u8		nb_args:7;
++	u8		user_arg_is_str:1;
+ 	s8		user_arg_size;
  	short		user_mask;
  	const char	**types;
- 	const char	**args;
 diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index bc736839c323..6b9eb5a8e156 100644
+index 6b9eb5a8e156..5a318c1592b9 100644
 --- a/kernel/trace/trace_syscalls.c
 +++ b/kernel/trace/trace_syscalls.c
-@@ -124,7 +124,7 @@ const char *get_syscall_name(int syscall)
- 	return entry->name;
- }
- 
--/* Added to user strings when max limit is reached */
-+/* Added to user strings or arrays when max limit is reached */
- #define EXTRA "..."
- 
- static enum print_line_t
-@@ -136,9 +136,8 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 	struct trace_entry *ent = iter->ent;
- 	struct syscall_trace_enter *trace;
- 	struct syscall_metadata *entry;
--	int i, syscall, val;
-+	int i, syscall, val, len;
- 	unsigned char *ptr;
--	int len;
- 
- 	trace = (typeof(trace))ent;
- 	syscall = trace->nr;
-@@ -185,7 +184,23 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
+@@ -184,7 +184,7 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
  		ptr = (void *)ent + (val & 0xffff);
  		len = val >> 16;
  
--		trace_seq_printf(s, " \"%.*s\"", len, ptr);
-+		if (entry->user_arg_size < 0) {
-+			trace_seq_printf(s, " \"%.*s\"", len, ptr);
-+			continue;
-+		}
-+
-+		val = trace->args[entry->user_arg_size];
-+
-+		trace_seq_puts(s, " (");
-+		for (int x = 0; x < len; x++, ptr++) {
-+			if (x)
-+				trace_seq_putc(s, ':');
-+			trace_seq_printf(s, "%02x", *ptr);
-+		}
-+		if (len < val)
-+			trace_seq_printf(s, ", %s", EXTRA);
-+
-+		trace_seq_putc(s, ')');
- 	}
+-		if (entry->user_arg_size < 0) {
++		if (entry->user_arg_size < 0 || entry->user_arg_is_str) {
+ 			trace_seq_printf(s, " \"%.*s\"", len, ptr);
+ 			continue;
+ 		}
+@@ -249,6 +249,7 @@ print_syscall_exit(struct trace_iterator *iter, int flags,
+ static int __init
+ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
+ {
++	bool is_string = entry->user_arg_is_str;
+ 	int i;
+ 	int pos = 0;
  
- 	trace_seq_putc(s, ')');
-@@ -250,8 +265,11 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
- 		if (!(BIT(i) & entry->user_mask))
+@@ -266,7 +267,7 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
  			continue;
  
--		/* Add the format for the user space string */
--		pos += snprintf(buf + pos, LEN_OR_ZERO, " \\\"%%s\\\"");
-+		/* Add the format for the user space string or array */
-+		if (entry->user_arg_size < 0)
-+			pos += snprintf(buf + pos, LEN_OR_ZERO, " \\\"%%s\\\"");
-+		else
-+			pos += snprintf(buf + pos, LEN_OR_ZERO, " (%%s)");
- 	}
- 	pos += snprintf(buf + pos, LEN_OR_ZERO, "\"");
- 
-@@ -260,9 +278,14 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
- 				", ((unsigned long)(REC->%s))", entry->args[i]);
+ 		/* Add the format for the user space string or array */
+-		if (entry->user_arg_size < 0)
++		if (entry->user_arg_size < 0 || is_string)
+ 			pos += snprintf(buf + pos, LEN_OR_ZERO, " \\\"%%s\\\"");
+ 		else
+ 			pos += snprintf(buf + pos, LEN_OR_ZERO, " (%%s)");
+@@ -279,7 +280,7 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
  		if (!(BIT(i) & entry->user_mask))
  			continue;
--		/* The user space string for arg has name __<arg>_val */
--		pos += snprintf(buf + pos, LEN_OR_ZERO, ", __get_str(__%s_val)",
--				entry->args[i]);
-+		/* The user space data for arg has name __<arg>_val */
-+		if (entry->user_arg_size < 0) {
-+			pos += snprintf(buf + pos, LEN_OR_ZERO, ", __get_str(__%s_val)",
-+					entry->args[i]);
-+		} else {
-+			pos += snprintf(buf + pos, LEN_OR_ZERO, ", __print_dynamic_array(__%s_val, 1)",
-+					entry->args[i]);
-+		}
- 	}
- 
- #undef LEN_OR_ZERO
-@@ -333,9 +356,9 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
- 	idx = ffs(mask) - 1;
- 
- 	/*
--	 * User space strings are faulted into a temporary buffer and then
--	 * added as a dynamic string to the end of the event.
--	 * The user space string name for the arg pointer is "__<arg>_val".
-+	 * User space data is faulted into a temporary buffer and then
-+	 * added as a dynamic string or array to the end of the event.
-+	 * The user space data name for the arg pointer is "__<arg>_val".
- 	 */
- 	len = strlen(meta->args[idx]) + sizeof("___val");
- 	arg = kmalloc(len, GFP_KERNEL);
-@@ -431,9 +454,11 @@ static char *sys_fault_user(struct syscall_metadata *sys_data,
- 			    struct syscall_user_buffer *sbuf,
- 			    unsigned long *args, unsigned int *data_size)
- {
-+	trace_user_buf_copy syscall_copy = syscall_copy_user;
- 	unsigned long size = SYSCALL_FAULT_BUF_SZ - 1;
- 	unsigned long mask = sys_data->user_mask;
- 	int idx = ffs(mask) - 1;
-+	bool array = false;
- 	char *ptr;
- 	char *buf;
- 
-@@ -441,27 +466,43 @@ static char *sys_fault_user(struct syscall_metadata *sys_data,
- 	ptr = (char *)args[idx];
- 	*data_size = 0;
- 
-+	/*
-+	 * If this system call event has a size argument, use
-+	 * it to define how much of user space memory to read,
-+	 * and read it as an array and not a string.
-+	 */
-+	if (sys_data->user_arg_size >= 0) {
-+		array = true;
-+		size = args[sys_data->user_arg_size];
-+		if (size > SYSCALL_FAULT_BUF_SZ - 1)
-+			size = SYSCALL_FAULT_BUF_SZ - 1;
-+		/* use normal copy_from_user() */
-+		syscall_copy = NULL;
-+	}
-+
- 	buf = trace_user_fault_read(&sbuf->buf, ptr, size,
--				    syscall_copy_user, &size);
-+				    syscall_copy, &size);
- 	if (!buf)
- 		return NULL;
- 
--	/* Replace any non-printable characters with '.' */
--	for (int i = 0; i < size; i++) {
--		if (!isprint(buf[i]))
--			buf[i] = '.';
--	}
-+	/* For strings, replace any non-printable characters with '.' */
-+	if (!array) {
-+		for (int i = 0; i < size; i++) {
-+			if (!isprint(buf[i]))
-+				buf[i] = '.';
-+		}
- 
--	/*
--	 * If the text was truncated due to our max limit, add "..." to
--	 * the string.
--	 */
--	if (size > SYSCALL_FAULT_BUF_SZ - sizeof(EXTRA)) {
--		strscpy(buf + SYSCALL_FAULT_BUF_SZ - sizeof(EXTRA),
--			EXTRA, sizeof(EXTRA));
--		size = SYSCALL_FAULT_BUF_SZ;
--	} else {
--		buf[size++] = '\0';
-+		/*
-+		 * If the text was truncated due to our max limit, add "..." to
-+		 * the string.
-+		 */
-+		if (size > SYSCALL_FAULT_BUF_SZ - sizeof(EXTRA)) {
-+			strscpy(buf + SYSCALL_FAULT_BUF_SZ - sizeof(EXTRA),
-+				EXTRA, sizeof(EXTRA));
-+			size = SYSCALL_FAULT_BUF_SZ;
-+		} else {
-+			buf[size++] = '\0';
-+		}
- 	}
- 
- 	*data_size = size;
-@@ -492,7 +533,7 @@ syscall_get_data(struct syscall_metadata *sys_data, unsigned long *args,
- 
- static void syscall_put_data(struct syscall_metadata *sys_data,
- 			     struct syscall_trace_enter *entry,
--			     char *buffer, int size)
-+			     char *buffer, int size, int user_size)
- {
- 	void *ptr;
- 	int val;
-@@ -510,13 +551,16 @@ static void syscall_put_data(struct syscall_metadata *sys_data,
- 	val  = (ptr - (void *)entry) + 4;
- 
- 	/* Store the offset and the size into the meta data */
--	*(int *)ptr = val | (size << 16);
-+	*(int *)ptr = val | (user_size << 16);
-+
-+	if (WARN_ON_ONCE((ptr - (void *)entry + user_size) > size))
-+		user_size = 0;
- 
- 	/* Nothing to do if the user space was empty or faulted */
--	if (size) {
-+	if (user_size) {
- 		/* Now store the user space data into the event */
- 		ptr += 4;
--		memcpy(ptr, buffer, size);
-+		memcpy(ptr, buffer, user_size);
- 	}
- }
- 
-@@ -580,7 +624,7 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
- 	memcpy(entry->args, args, sizeof(unsigned long) * sys_data->nb_args);
- 
- 	if (mayfault)
--		syscall_put_data(sys_data, entry, user_ptr, user_size);
-+		syscall_put_data(sys_data, entry, user_ptr, size, user_size);
- 
- 	trace_event_buffer_commit(&fbuffer);
- }
-@@ -727,7 +771,16 @@ static void check_faultable_syscall(struct trace_event_call *call, int nr)
- 	if (sys_data->enter_event != call)
- 		return;
- 
-+	sys_data->user_arg_size = -1;
-+
- 	switch (nr) {
-+	/* user arg 1 with size arg at 2 */
-+	case __NR_write:
-+	case __NR_mq_timedsend:
-+	case __NR_pwrite64:
-+		sys_data->user_mask = BIT(1);
-+		sys_data->user_arg_size = 2;
+ 		/* The user space data for arg has name __<arg>_val */
+-		if (entry->user_arg_size < 0) {
++		if (entry->user_arg_size < 0 || is_string) {
+ 			pos += snprintf(buf + pos, LEN_OR_ZERO, ", __get_str(__%s_val)",
+ 					entry->args[i]);
+ 		} else {
+@@ -781,6 +782,21 @@ static void check_faultable_syscall(struct trace_event_call *call, int nr)
+ 		sys_data->user_mask = BIT(1);
+ 		sys_data->user_arg_size = 2;
+ 		break;
++	/* user arg 0 with size arg at 1 as string */
++	case __NR_setdomainname:
++	case __NR_sethostname:
++		sys_data->user_mask = BIT(0);
++		sys_data->user_arg_size = 1;
++		sys_data->user_arg_is_str = 1;
 +		break;
++#if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
++	/* user arg 4 with size arg at 3 as string */
++	case __NR_kexec_file_load:
++		sys_data->user_mask = BIT(4);
++		sys_data->user_arg_size = 3;
++		sys_data->user_arg_is_str = 1;
++		break;
++#endif
  	/* user arg at position 0 */
  	case __NR_access:
  	case __NR_acct:
-@@ -1025,7 +1078,7 @@ static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
- 	memcpy(&rec->args, args, sizeof(unsigned long) * sys_data->nb_args);
- 
- 	if (mayfault)
--		syscall_put_data(sys_data, rec, user_ptr, user_size);
-+		syscall_put_data(sys_data, rec, user_ptr, size, user_size);
- 
- 	if ((valid_prog_array &&
- 	     !perf_call_bpf_enter(sys_data->enter_event, fake_regs, sys_data, rec)) ||
 -- 
 2.51.0
 
