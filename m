@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-862165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432FABF4930
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500ADBF493F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B0518C51DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A1918C4EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB210246BB0;
-	Tue, 21 Oct 2025 04:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F99246BAA;
+	Tue, 21 Oct 2025 04:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="M8h10v7q"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqCVdTce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1F11EB5DB;
-	Tue, 21 Oct 2025 04:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479481A3166;
+	Tue, 21 Oct 2025 04:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761019692; cv=none; b=nA6zPRUHOraW53NdB6AS2i76dz9wPVsgKpgmD9r+mTtnBzWba/vuLyhrt4Iy5EbBOCnJe8Iw7CC8EZRiiOb00A/mzv8ZXYKyUc4L2aPlSDXaz2Eh6jGK9pokVEJqufTqK1qvOyIt/69sTPLKbaZLq+2LS5Pht8dZ6KZCNfr9rO0=
+	t=1761019800; cv=none; b=BgzNx/50b1ncltT2mqPtcHAG9BkqswVCzCePV7VDlrzQKi1Xspb15XrkbfPmEjtmPfw0p055B3W/XjvTgPXckOO/7d3vlNTjtOE7Fyb//MtNm4SpNA9AhR/SxYINvdIBYq4GkiZp/VcHaX/yoxBYTMjy0z7LbL6Xm7JePrs6A/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761019692; c=relaxed/simple;
-	bh=otCA/DNdOW+b41rKqMPvBAFFOBff1X+BHKvz77ZSenk=;
+	s=arc-20240116; t=1761019800; c=relaxed/simple;
+	bh=tPbHsX8J9214hVMLxIa6V2MLS+beit8zdm08Y/aeRVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKM+Tt9FtZheea7GMxaATsbD1uRnpujwxtyNBLuM1KoFXAs6G4iDm1BISrd9v9TUrmJlPDeRLXe83oeEEsfoNeeqDHTaVEb+OmUDyZudfwZRHE31uDdzyIzhbzXeFdhYhwTHTS1g07yKeNqMCQwNHlkPPwLSCb7QsjwSK16EyWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=M8h10v7q; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=FFfJ1T3gGeeywcD/IcU+HActRpSmxrKsGyO5NhVaCvU=; 
-	b=M8h10v7q9f5AGT5gKkSuaDbHCdisDtDGyY+dgX+D1L60SumcC4ZD4dqOz85VS/VJWQA04l0LNic
-	kBSiroNiN2e6tph/2kSuBLx9d6OcO30/U/QJTFYxwT1pg7Jw2974mXcZQkkUNESEFjQZiR7qoYR2g
-	TJLyMppS2wKL+gdqEEXjF/ePQlu7rJaxRBgjiLyYdsU2FhLI57Fp0Ld6pHbfPrFxFUKpdqc0ibkph
-	img2dTMvEgCVZitTgh7Kh7B2lJVzvdB/HD/dZEwP15yAHi1ToLEmd30lM2U7ToI8Aenrbsz3Hzgdx
-	Gyd6ASpb0L2/cF4e3icaAuUPduPf7V9uejYA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vB3fA-00EEef-2N;
-	Tue, 21 Oct 2025 12:07:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 21 Oct 2025 12:07:56 +0800
-Date: Tue, 21 Oct 2025 12:07:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Linux Crypto List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH] KEYS: trusted: Pass argument by pointer in dump_options
-Message-ID: <aPcHHJ29mTHCzVjM@gondor.apana.org.au>
-References: <20251020140735.39084e85@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MsLMDwutNKJs3JOj6X/nA1bGDl3Z2M+oprq7SFJ2ezRAxLofD7gOYktxlxQaXfqOPIpleYlBYbtxDSA4G17PKIvU9L5sCk3FSuXpDUokkkhkLjJiw+5U/hnvYTnZorIbgbRu/Vnnclua2jtEVXKnFK1ZtI9vHkvrqjU6Lf64q+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqCVdTce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F81C4CEF1;
+	Tue, 21 Oct 2025 04:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761019799;
+	bh=tPbHsX8J9214hVMLxIa6V2MLS+beit8zdm08Y/aeRVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kqCVdTceSBIx1rbts5SxtlOR6ojJDcgFW1MV/tkkZBrO20lG6aEITYysfn7HElko4
+	 e45cNaf1GG1Nb8IhRj9jxKek8islbm9dXNQUGoe2EOvt0mq9Uq9Q2ZiMR6qEq1yS7g
+	 z5atHgQAT+UFHCUYqESIpbBAb6/spqMY/kJxQrQTDoeuULaLnHYogDxxzE42x8X/cg
+	 yARjKvZBFep4hK6u5QDIffAKC7t/iKx7E/EUlu+Xxq6Rn9+v4q+9FQiEV0V/67lULR
+	 hRXqoT4vc088KTT+NB+sTu8FNjF4QC3bO8VanP1josJt41rX2S6aq2pZWzjg3A5ouh
+	 MQAqfETXEzBgA==
+Date: Tue, 21 Oct 2025 13:09:55 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] perf jevents: Suppress circular dependency warnings
+Message-ID: <aPcHk3yy0Q7jxK01@google.com>
+References: <20251020-james-perf-fix-json-find-v1-0-627b938ccf0d@linaro.org>
+ <20251020-james-perf-fix-json-find-v1-3-627b938ccf0d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251020140735.39084e85@canb.auug.org.au>
+In-Reply-To: <20251020-james-perf-fix-json-find-v1-3-627b938ccf0d@linaro.org>
 
-On Mon, Oct 20, 2025 at 02:07:35PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Oct 20, 2025 at 05:08:28PM +0100, James Clark wrote:
+> When doing an in source build, $(OUTPUT) is empty so the rule has the
+> same input and output file. Suppress the warning by only adding the rule
+> when doing an out of source build. The same condition already exists for
+> the clean rule for json files.
 > 
-> After merging the crypto tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> This fixes the following warnings:
 > 
-> security/keys/trusted-keys/trusted_caam.c: In function 'dump_options':
-> security/keys/trusted-keys/trusted_caam.c:37:20: note: the ABI of passing struct with a flexible array member has changed in GCC 4.4
->    37 | static inline void dump_options(struct caam_pkey_info pkey_info)
->       |                    ^~~~~~~~~~~~
-> 
-> Introduced by commit
-> 
->   9eb25ca6c973 ("KEYS: trusted: caam based protected key")
-> 
-> I am not sure what to do about this.  It would be nice if we could
-> suppress the note as we do not support gcc 4.4 any more.  Otherwise,
-> I suspect that converting the pkey_info argument to a pointer will get
-> rid of the note.
+>   make[3]: Circular pmu-events/arch/nds32/mapfile.csv <- pmu-events/arch/nds32/mapfile.csv dependency dropped.
+>   make[3]: Circular pmu-events/arch/powerpc/mapfile.csv <- pmu-events/arch/powerpc/mapfile.csv dependency dropped.
+>   ...
 
-Yes let's change that into a pointer:
+I noticed this too and confirm it's fixed by this change.
 
----8<---
-Instead of passing pkey_info into dump_options by value, using a
-pointer instead.
+Tested-by: Namhyung Kim <namhyung@kernel.org>
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Thanks,
+Namhyung
 
-diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-index 090099d1b04d..601943ce0d60 100644
---- a/security/keys/trusted-keys/trusted_caam.c
-+++ b/security/keys/trusted-keys/trusted_caam.c
-@@ -29,12 +29,12 @@ static const match_table_t key_tokens = {
- };
- 
- #ifdef CAAM_DEBUG
--static inline void dump_options(struct caam_pkey_info pkey_info)
-+static inline void dump_options(const struct caam_pkey_info *pkey_info)
- {
--	pr_info("key encryption algo %d\n", pkey_info.key_enc_algo);
-+	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
- }
- #else
--static inline void dump_options(struct caam_pkey_info pkey_info)
-+static inline void dump_options(const struct caam_pkey_info *pkey_info)
- {
- }
- #endif
-@@ -108,7 +108,7 @@ static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
- 		ret = get_pkey_options(datablob, &info.pkey_info);
- 		if (ret < 0)
- 			return 0;
--		dump_options(info.pkey_info);
-+		dump_options(&info.pkey_info);
- 	}
- 
- 	ret = caam_encap_blob(blobifier, &info);
-@@ -140,7 +140,7 @@ static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
- 		ret = get_pkey_options(datablob, &info.pkey_info);
- 		if (ret < 0)
- 			return 0;
--		dump_options(info.pkey_info);
-+		dump_options(&info.pkey_info);
- 
- 		p->key_len = p->blob_len + sizeof(struct caam_pkey_info);
- 		memcpy(p->key, &info.pkey_info, sizeof(struct caam_pkey_info));
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  tools/perf/pmu-events/Build | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
+> index c5e2d5f13766..a46ab7b612df 100644
+> --- a/tools/perf/pmu-events/Build
+> +++ b/tools/perf/pmu-events/Build
+> @@ -29,10 +29,12 @@ $(PMU_EVENTS_C): $(EMPTY_PMU_EVENTS_C)
+>  	$(call rule_mkdir)
+>  	$(Q)$(call echo-cmd,gen)cp $< $@
+>  else
+> -# Copy checked-in json for generation.
+> +# Copy checked-in json to OUTPUT for generation if it's an out of source build
+> +ifneq ($(OUTPUT),)
+>  $(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
+>  	$(call rule_mkdir)
+>  	$(Q)$(call echo-cmd,gen)cp $< $@
+> +endif
+>  
+>  $(LEGACY_CACHE_JSON): $(LEGACY_CACHE_PY)
+>  	$(call rule_mkdir)
+> 
+> -- 
+> 2.34.1
+> 
 
