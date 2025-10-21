@@ -1,257 +1,140 @@
-Return-Path: <linux-kernel+bounces-863559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C646BF82B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:56:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325DDBF82C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E35404A50
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C23A2424637
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DF83502A7;
-	Tue, 21 Oct 2025 18:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DF934F25E;
+	Tue, 21 Oct 2025 18:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKWVjebL"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Uc6eMg/z"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A132E34E75C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C06B34C82F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 18:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761072965; cv=none; b=H/XsNK9fa9N5ZzN26GMH+BMpAHY5R+iLXUCAiqC9YDELnzuO/+4J8kVnb7ZmTl2AE9LVMiPTc1rvZ32iqUzlCEaCECg4ulRD4zqPZRgQGkR6z3LTjraiYG5ceYR8x8F1mbElDinHa7hDWTWh2zqT+eQYGDpIbXJGPi9p9Z9REsQ=
+	t=1761072975; cv=none; b=MCJ9Pbp+81hVL8RIu+ZtwBQOGNKSfY4C04DvQX/xQDzejkRRq5zC3qK/IeHQyM5khod0Wq29M02rkweEBXeD7IBhjnBzJcCebHxiP8IFcSTrsaK79rn4dk0M8ImRq+IKubSGK/iXsaTvzDl+XcFUFybhN8vPHr+1x55mM1Qy/v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761072965; c=relaxed/simple;
-	bh=52iR6LmGwh1Tv4WZrZVBPLVN9n+QfjxmRktHCwjQfmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WNpbwd5LhTFLVI0yb9R86YWva8kRr+7VYLwXf762LsUOsvIfNbHhAqgg91CmTN840xZa2A9FVfnv7GPb9ynwQjzoekshckey2l4yESkuuaDEt19tuTgZhiVbfhfoXqvNGRzLVgv4DCee+tGckbZDhuzsJTkdzR9E5bYOZtcB744=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKWVjebL; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso5478469f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:56:03 -0700 (PDT)
+	s=arc-20240116; t=1761072975; c=relaxed/simple;
+	bh=iJqLIFVdRqsAJ9nTQozNmtTq5rkisBXmJuWmzMEKJUk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=nNVwR1BvKo904Yy9MjLoUkpl35tsGZYvXNPyYFkQIdqh1+lFBajJ0ceJdtgiJE55I32fNiigJKi4fmRr3Uq1W79CFH3V/6lU8U2htPeLswBvS0PTS0hop6EMt4FxtNna07BKjIblXlxiU5D/Mw6/WXDdp+taMQ2EiG9veKk5YfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Uc6eMg/z; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so3573065f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:56:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761072962; x=1761677762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5qgPMRJSF9sIfpOYtKRyUUBt+NJHpNn43neFwkUQbv0=;
-        b=dKWVjebLqls33Z8OfQQ3H3nal7dPyv7wN0UBgKwHtTc5+/wvffD6xKCye7Mkwo7Ze7
-         RdqTSxNnOBFMLNB9tn+DoUr/qLiQEB8kJMcMX28Cd2g4rX5OM8puFSCvgFO7GDFZw54a
-         C5qZ3/iyVqHN8mT0zjZI2+5moLkQDCLxguJRR39iS3LOZ5yJTD18+W/wRSr7nEWZLNyW
-         FwJIETX7e68jj+EU0duVJvmpczfx2qQa4wz0AiBQQF+YSsNNZ9TCPKvkbS7klQbXW4n2
-         2oQk2Ar4GAnoTVqPCbvDSjOoNtVF6OahvNWD3HuFGl63bxf4XFLSgk2h3mKupR5HWh2N
-         2tJA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761072972; x=1761677772; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJqLIFVdRqsAJ9nTQozNmtTq5rkisBXmJuWmzMEKJUk=;
+        b=Uc6eMg/zUQ1W0PIiMFV4VrLKuQVpJwpqv3AcnhrLHppDH8MVBJxk+S9RjFAWYCFYoE
+         gSHyBB0IQ1jjtaaQCKjBwbybiu+nwiYkguQSM5Yy7muwIzEVbFC2xOhir7e8XJ/d3hSA
+         EAEH/uJeyPuGliTC7A07J0yvx89BOlU2bk/iTwSPvKwUkh06YfqlknrDl7aqVsQc1T9b
+         PeX7c6KMlAIdSBkx7bIrbQz8u7M79kyfc8opLX1uBLT1stBR8Q8st9U+ablybebRg+AY
+         blsCinHHvBWYdHKrZyTTm1M2k6W/W2fsQbbH0KcNcqp68OYVToKpWUZ/XeCAXJ5Q4FgB
+         bsNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761072962; x=1761677762;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5qgPMRJSF9sIfpOYtKRyUUBt+NJHpNn43neFwkUQbv0=;
-        b=PLIX9yWH0Bc2uo0zW2blef55JHrE6zPwtanRKNNDQ/QRV1yHUzFZLqDtLos+QwPXf9
-         SVTrgN0AW2BPq4M33DV1vXuShqrMtoqpZY1vQHmoC7YM6UoyiMtbPxQV40Alr2168LGZ
-         VAJMruIwXUQeMCCSQDnywgqMaCg326Gr2FS9BI6q1DHB1U/C1TDMkVjMrEYOP4vs4Izl
-         Tes0f+mEztsAEkc/6KN0QMJ9OaLudNk+bbFN6854UWufG8fGWmftR+dgMzGUsKJk8+nG
-         maWi19KpxfKExJqtAaiLfBLMbjXsKKTVKssApdbLQBMwKL9jTrygocQ2GR6NF22VAids
-         N/FA==
-X-Gm-Message-State: AOJu0YyOWAOwIYNM0qI9wOPGymIxfkF2CpANjAL5afnQcPByz5wUXpMZ
-	6HrSS5UsijRpky3mYSq6/GzwIksUOLCaOjpOD8peRWcjHGJL06KhcY0W/6SHxw==
-X-Gm-Gg: ASbGncu1N0ftzW/YvnpiXw7+aPvaE8ZQfckKJlmZC2ZPzXP4uOrKMD3Ds3Mtr7HgvxW
-	51PnwF+f3+yyK9D5zY3zYh71hRkvivcAqMdzlvpaJI3PubCaNYUH9Q8P9eAy/1u4cxbhWieZBuo
-	Ws2d2D3HUJgMOt6ow1jRyFyBYygUxhqpzL+amg/YUIgKNLhq/tM7BDo8zeDn3sHTsCQmtyejI/A
-	uf4ga/EuS/KPjTBuJNjs0zeNtMvP8PYqqB7G7mLfHXP+Y1GgFMXOB3BXCjhIcwA+l6X1RaXf8xD
-	Br5qyDujIxKo8VIdbYKd0CX95w5zD1FyQbysF4De6Fv7apCtGoOrpQseu9QI9Kz6O9AJBkY6OpF
-	WSNlDcLra8x4SZTRkHT6eB8w+O3Pkt/AAmUQxO4RkbYjPvBfYY5bher9J7Ofc539vj3x9tF6YHK
-	uQm0KzRonmB0tKhbYlmnhQW6VU6pV2UocAk4TcQDygCw==
-X-Google-Smtp-Source: AGHT+IFjOxufFJONTpxys1bngEKe+lRcQqq+LVDgs/0okuT/Rc8W/l4ZwbhF8BXNqZX3cWqKXviWlw==
-X-Received: by 2002:a05:6000:491d:b0:427:55b:cf6 with SMTP id ffacd0b85a97d-427055b0cf8mr13206929f8f.7.1761072961864;
-        Tue, 21 Oct 2025 11:56:01 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4283e7804f4sm19566507f8f.10.2025.10.21.11.56.00
+        d=1e100.net; s=20230601; t=1761072972; x=1761677772;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iJqLIFVdRqsAJ9nTQozNmtTq5rkisBXmJuWmzMEKJUk=;
+        b=QpVp6S/AxhU5w9lWjnH8dHTQ7lsPTQZ6Gakj7n/q8ph5A4AqzLlSuemL/MFqsUVpkM
+         gBPcXSOsmUzdmWKH6gBv6cTFOqp8p8OKdB0qK6BWI8BU2c19WRrbEqnnBkwJYw+WNGH4
+         Ixf0qvpHMiIP268kARind2sJl7LU4aMKRnTPDH6XCsXvr8h0Nu1mAI1848LeJYnSBFEk
+         pKx6hK5UiFqQGPOoebhWe3X3dzOsoT0fiuVGpMascO1lybgdIqlTCG/Gh35491Yehnw5
+         3BtRUqoO7Old0XNx6CzZcOcrx4K12tab4DLH+jakau59HTYWq0nguZRmbMIc2eblrOHe
+         fTEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmzHxFB7z1O21ye6CJPDODOBj18ePR9K4p70dVItpybCf0x7DVmthOrrjV5ssG4Sanp3HgIk5J6jNIqt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygQZeB3cG2PhiVHu1tY8OA5QUpTdBbQ8sT+PJOE0Zrb/ZWrH4C
+	5/AyXM7sphe6DqjzQju1G6sQQAKSOq7lxMVorr5Rh0/pzcClh92ygcG2TehMHuXLlI0=
+X-Gm-Gg: ASbGnctARf3svx0dwHR9F4HXJ6+D1kOqfQKG7/cYKdFzC5tSN78lUDcHWzKaKsltYOD
+	LvCyxUo0asEsxrqeOf9i3vjfR5J/0v5tA9hP2mWIL5K7cRBD/zuuhuThI6/Dg1TO2GVQxcdDYll
+	Sek8AGN4yWdXMAd99de5fYjOQyQGVN+h/zCW3q5X/5hcIGpENOSDavCy/sbRaEY2igijwDGZ+GM
+	uNka5SioJbz+40GVD0InxO58lXcIBn870zz0wpOwwbOpe0/BoA4+0O2jHwFO09O46LGosyYqF5c
+	oAS+2sY+xzgLgvmqoO8XHeQN1dFt0d/YuUoILrccq5zYObBBe8HIxY2ub+DaF1KcW1FjERWUJlY
+	c5qDY8v+tTu3Xc4UrI5GfoQRVjBaQu0Vp4sqA5yRERpbwG1js0HPiDu19YS+QQvIDTuFqHBFvXj
+	VEmXtGdKSEk+q69Q==
+X-Google-Smtp-Source: AGHT+IE8OGe8fEFLvfk5DNFLba6SYnev9wcr2pWlSh+j4b7Y5U5zyPSIaOk7L6voNwKVhoV6jsZ8gQ==
+X-Received: by 2002:a05:6000:186a:b0:3ec:ea73:a91e with SMTP id ffacd0b85a97d-42704d1432amr12331874f8f.12.1761072971335;
+        Tue, 21 Oct 2025 11:56:11 -0700 (PDT)
+Received: from localhost ([195.52.63.148])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce178sm21529969f8f.46.2025.10.21.11.56.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:56:01 -0700 (PDT)
-Date: Tue, 21 Oct 2025 19:55:59 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
- King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, Heiko
- Carstens <hca@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- linux-s390@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
- Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
- regions
-Message-ID: <20251021195559.4809c75a@pumpkin>
-In-Reply-To: <877bwoz5sp.ffs@tglx>
-References: <20251017085938.150569636@linutronix.de>
-	<20251017093030.253004391@linutronix.de>
-	<20251020192859.640d7f0a@pumpkin>
-	<877bwoz5sp.ffs@tglx>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Tue, 21 Oct 2025 11:56:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=356ffc8a324e0a829a516123b3657bd48d13b9a156b81beae6c01aa993b7;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Tue, 21 Oct 2025 20:56:01 +0200
+Message-Id: <DDO89HU3O3J7.1OORIVD4XMXSL@baylibre.com>
+Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel@pengutronix.de>
+Subject: Re: [PATCH 0/7] can: m_can: various cleanups
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
+ <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol@kernel.org>, "Markus
+ Schneider-Pargmann" <msp@baylibre.com>
+X-Mailer: aerc 0.21.0
+References: <20251008-m_can-cleanups-v1-0-1784a18eaa84@pengutronix.de>
+ <20251017-fervent-encouraging-oxpecker-3b09d4-mkl@pengutronix.de>
+In-Reply-To: <20251017-fervent-encouraging-oxpecker-3b09d4-mkl@pengutronix.de>
 
-On Tue, 21 Oct 2025 16:29:58 +0200
-Thomas Gleixner <tglx@linutronix.de> wrote:
+--356ffc8a324e0a829a516123b3657bd48d13b9a156b81beae6c01aa993b7
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-> On Mon, Oct 20 2025 at 19:28, David Laight wrote:
-> > On Fri, 17 Oct 2025 12:09:08 +0200 (CEST)
-> > Thomas Gleixner <tglx@linutronix.de> wrote:
-> > That definitely looks better than the earlier versions.
-> > Even if the implementation looks like an entry in the obfuscated C
-> > competition.  
-> 
-> It has too many characters for that. The contest variant would be:
-> 
-> for(u8 s=0;!s;s=1)for(typeof(u) t= S(m,u,s,e);!s;s=1)for(C(u##m##a,c)(t);!s;s=1)for(const typeof(u) u=t;!s;s=1)
-> 
-> > I don't think you need the 'masked' in that name.
-> > Since it works in all cases.
-> >
-> > (I don't like the word 'masked' at all, not sure where it came from.  
-> 
-> It's what Linus named it and I did not think about the name much so far.
-> 
-> > Probably because the first version used logical operators.
-> > 'Masking' a user address ought to be the operation of removing high-order
-> > address bits that the hardware is treating as 'don't care'.
-> > The canonical operation here is uaddr = min(uaddr, guard_page) - likely to be
-> > a conditional move.  
-> 
-> That's how it's implemented for x86:
+On Fri Oct 17, 2025 at 4:22 PM CEST, Marc Kleine-Budde wrote:
+> On 08.10.2025 21:07:35, Marc Kleine-Budde wrote:
+>> While working on the m_can driver, I created several cleanups commits, m=
+ake
+>> m_can_init_ram() static, rename hrtimer function, convert debugging and
+>> error output to netdev_(), replace open coded register write by
+>> m_can_write(), remove not needed error messages and sanity checks and do=
+n't
+>> wake up hte controller during m_can_get_berr_counter() if the interface =
+is
+>> down.
+>>=20
+>> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+>
+> Applied to linux-can-next.
+>
+> Marc
 
-I know - I suggested using cmov.
+Sorry, a bit late due to vacation. The patches look good to me.
 
-> 
-> >>  b84:	48 b8 ef cd ab 89 67 45 23 01  movabs $0x123456789abcdef,%rax
-> >>  b8e:	48 39 c7    	               cmp    %rax,%rdi
-> >>  b91:	48 0f 47 f8          	       cmova  %rax,%rdi  
-> 
-> 0x123456789abcdef is a compile time placeholder for $USR_PTR_MAX which is
-> replaced during early boot by the real user space topmost address. See below.
-> 
-> > I think that s/masked/sanitised/ would make more sense (the patch to do
-> > that isn't very big at the moment). I might post it.)  
-> 
-> The real point is that it is optimized. It does not have to use the
-> speculation fence if the architecture supports "masking" because the CPU
-> can't speculate on the input address as the actual read/write address
-> depends on the cmova. That's similar to the array_nospec() magic which
-> masks the input index unconditionally so it's in the valid range before
-> it can be used for speculatively accessing the array.
-> 
-> So yes, the naming is a bit awkward.
-> 
-> In principle most places which use user_$MODE_access_begin() could
-> benefit from that. Also under the hood the scope magic actually falls
-> back to that when the architecture does not support the "masked"
-> variant.
-> 
-> So simply naming it scoped_user_$MODE_access() is probably the least
-> confusing of all.
-> 
-> >> If masked user access is enabled on an architecture, then the pointer
-> >> handed in to scoped_masked_user_$MODE_access() can be modified to point to
-> >> a guaranteed faulting user address. This modification is only scope local
-> >> as the pointer is aliased inside the scope. When the scope is left the
-> >> alias is not longer in effect. IOW the original pointer value is preserved
-> >> so it can be used e.g. for fixup or diagnostic purposes in the fault path.  
-> >
-> > I think you need to add (in the kerndoc somewhere):
-> >
-> > There is no requirement to do the accesses in strict memory order
-> > (or to access the lowest address first).
-> > The only constraint is that gaps must be significantly less than 4k.  
-> 
-> The requirement is that the access is not spilling over into the kernel
-> address space, which means:
-> 
->        USR_PTR_MAX <= address < (1U << 63)
-> 
-> USR_PTR_MAX on x86 is either
->             (1U << 47) - PAGE_SIZE (4-level page tables)
->          or (1U << 57) - PAGE_SIZE (5-level page tables)
-> 
-> Which means at least ~8 EiB of unmapped space in both cases.
-> 
-> The access order does not matter at all.
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-But consider the original x86-64 version.
-While it relied on the guard page for accesses that started with a user
-address, kernel addresses were converted to ~0.
-While a byte access at ~0 fails because it isn't mapped, an access
-at 'addr + 4' wraps to the bottom of userspace which can be mapped.
-So the first access had to be at the requested address, although
-subsequent ones only have to be 'reasonably sequential'.
+Best
+Markus
 
-Not all code that is an obvious candidate for this code accesses
-the base address first.
-So it is best to require that the implementations allow for this,
-and then explicitly document that it is allowed behaviour.
+--356ffc8a324e0a829a516123b3657bd48d13b9a156b81beae6c01aa993b7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The ppc patches do convert kernel addresses to the base on an
-invalid page - so they are fine.
-I've not seen patches for other architectures.
+-----BEGIN PGP SIGNATURE-----
 
-32bit x86 has a suitable guard page, but the code really needs 'cmov'
-and the recent removal of old cpu (including the 486) didn't quite
-go that far.
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaPfXQhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlP2
+XwEAiF2/0OQky25ZjBWmOlwnAMsOtFDfXv/7EOUwFS7iSn8BAPK5w81k7APIPc7F
+wN6/kDeQIt8JfQH0Z8is5yOg75sG
+=cCo2
+-----END PGP SIGNATURE-----
 
-
-> 
-> >> +#define __scoped_masked_user_access(_mode, _uptr, _size, _elbl)					\
-
-Thinking about it there is no need for leading _ on #define parameter names.
-It is only variables defined inside #define that have 'issues' if the caller
-passes in the same name.
-
-> >> +for (bool ____stop = false; !____stop; ____stop = true)						\
-> >> +	for (typeof((_uptr)) _tmpptr = __scoped_user_access_begin(_mode, _uptr, _size, _elbl);	\  
-> >
-> > Can you use 'auto' instead of typeof() ?  
-> 
-> Compilers are mightily unhappy about that unless I do typecasting on the
-> assignment, which is not really buying anything.
-
-ok - I did a very quick check and thought it might work.
-
-If you can't use auto for the third definition, then I think tmpptr can be 'void _user *'.
-
-	David
-
-> 
-> >> +	     !____stop; ____stop = true)							\
-> >> +		for (CLASS(masked_user_##_mode##_access, scope) (_tmpptr); !____stop;		\
-> >> +		     ____stop = true)					\
-> >> +			/* Force modified pointer usage within the scope */			\
-> >> +			for (const typeof((_uptr)) _uptr = _tmpptr; !____stop; ____stop = true)	\  
-> >
-> > gcc 15.1 also seems to support 'const auto _uptr = _tmpptr;'  
-> 
-> Older compilers not so much.
-> 
-> Thanks,
-> 
->         tglx
-
+--356ffc8a324e0a829a516123b3657bd48d13b9a156b81beae6c01aa993b7--
 
