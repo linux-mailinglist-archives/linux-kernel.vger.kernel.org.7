@@ -1,76 +1,74 @@
-Return-Path: <linux-kernel+bounces-863666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239D6BF8C0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:43:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D522BF8B61
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9701019A7D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:43:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6411F4FB43D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D554A27FD49;
-	Tue, 21 Oct 2025 20:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A0D27EFEE;
+	Tue, 21 Oct 2025 20:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="r2CVWWUu"
-Received: from sonic308-9.consmr.mail.ne1.yahoo.com (sonic308-9.consmr.mail.ne1.yahoo.com [66.163.187.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kWQrQV20"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BAF280025
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC542561C2;
+	Tue, 21 Oct 2025 20:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761079389; cv=none; b=ojBzZFCWnYTbC7bBhmjJ8kxyG4am4KmaSnsjIds3mPTMSnNsFSFkycA956F4syEjkiYuJ+g6cl8qVJdvP0XUwqsZr2FK9FVSF9O1fjolmRmrYMruQeSlKY3db7KDSTGkSHYVSIwURw213gdBzDV+PPfNXAsuoKlLDppqKYjhrJo=
+	t=1761078173; cv=none; b=G1OxeRhWupKWMCjH7hJ30Z7v/14BFtKuZrzn0J7JxzWfgh3wd8A+kat0STl4UP9G2DILtfOSYIC+mQfFqZL/8XJrMXbMFAg0ifdMpoxOmaeAd1nyKfImfnQ68i6RX6aUr7OYRmjArMJvTOKrQdstuycy5yzYv8udDYAO7sh5cMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761079389; c=relaxed/simple;
-	bh=XlqfIXuaMRD0eFhOGou17ZQR3uRj8Whl02Jp5BzhT5k=;
+	s=arc-20240116; t=1761078173; c=relaxed/simple;
+	bh=j1/9Zn64S+rdPHLo4FHM6+vjbfyF5VAgvH31TrIGStQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GiXDMn/glressa3GFD8PaQXpVQfxYRPuW9mphxiQsyEe84K5RXPKJ12nYT4EcNw5ck6Z+hBU2nIsaePEjDn42+5ven6/ij9FnV/bTTCdRVORvEvxO/Ydn4S+V7Pq+UW2rK+hAcrAUPfrEbvi0WCi73VpyOzBvdwIoBeULJL+0zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=r2CVWWUu; arc=none smtp.client-ip=66.163.187.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761079378; bh=+qU2vcN541UGYB33IHwPZz2xTN7BvKjf4TwHbds2f04=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=r2CVWWUu7Pi0XCYFTUTq40/7/bE1t5jPDfoi5vVV01eQ9V/wVDE1Ucgxn52K7cz/6BZEJwrCPS3g3FpKuS7MINxL00rtzVCtWmOOR81TnjrkO41VpPpEMrIfHclxIggtEWi+t/xiuJXi6W72XM1ptKeycEykYPqU/LYircBCJ9sbfUxTf3WnqY7gxoz83tK0LrXNSYx01EHErakXQ8z6kjPZrhXX2LmR+AqgWMRLrXLeoOtLKV/tsCrEqsQmavu8Ca+rxbdawJK3e75YkJQtCGZZq+/Lu9m2mg40y2kIH509KI6tdyE8so1OLjR3ZaG8M4Vm5+evfX9EY2zaKjW/Bg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761079378; bh=gy3nSjXqB4obiSFjmrWmHLXG23AIMSjGdqQtLZNiINx=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OwaYZFyEA7CM85NlPKMusnSmb9FG6PhH+vq9lWlXNrUwALGohg5zQC98VEqTKgB/6C0B6h7KwVixXHbhW1IElmDgX6CPMGD2u76II4c3zFVFqmkMbBmasv8kf7IUPPHHfUEKMwO3W2lK87lytXwXDq6dEbg8wlG7TDg/V4azvlccIQHKZrtkKdbRBSHlEVorkoTywqPbtCmxzEq18L7IGm0/tJS7s+3kGbUEV07bFfDYxbsRozrjhJrepzQDqlIVOTs3B12YLecGpiKKqKwYjIjyRBmcBu7C0pj1a9BJS3h2DFp/no3FgEg6e8Dtxx0kIhCKirGFl4GlYzuy2qKIMA==
-X-YMail-OSG: 4xvKBJMVM1kehxOE8bOYQU15B.LpwrJNx.kBwYcopwuPmyUgUIV86fLx53VYQGr
- 5RxWOf95G5VqewfQmNu5lUu.ipsxHP7og8xLnwuwlvU5t42b09cGctI1h5EzDo7X89x8JFJPPc84
- rTd22QuYAjGlN5TnQqe08WJhksMFF5olIljVYhX8sdqIDKlv34qtWxGtFKOO9iuNVQTVZL39o4Zx
- RBJPTEq7UJAjmaAkvQuyIM9g_GECnudTPVACq5boyytdjzUfNnviSV2lR9GFVPlIPqZaB1QP26Y3
- 9aKtcWEsGh_qIZfgaGWXXTLds9EKvcWjmpHcmd8bLTLFTvyBX57x_jTebfzopMTbKT3c8wKxIWcG
- ciFwpQOwuvmYnQZWDJiKUsL1IOSalrCiM8SswSlbUZNO7hVJEqMsgpfzE7WpIX2HGai0DQoptEo9
- 7DYt74TIbeJo8UyRXEIYc.7mOOa3ZKA_OER6h2ZCbQk5Z_p8d03RuB_xXfJdWOQ_AnCNk_MLquf.
- pVzBp12xrm9Bk55YCJoY6BaYOVWLRzZAITN1efdgHl9jd4PvaIrgjsSdIPB6_mvtab7LCF.WGLW7
- LmNb.L687BaGjw6TlhZhC7I5U6SVTHwFKow8gBaQCeClqG7R81Dn6.z8j9erIrfEI_yJnQITM0eM
- ddXMmKrc9hx5PsQ1tYUSvrevkKMJaiEepglu2blseU.UBTBU0O1pzlgLCyZ8Lk2Q.IMTSx_uUSIr
- DeGJTGfKwhmBT9E17pPZB50L35J5t6ZBFTTPdjHYZui3Xg_cAZITHXnoC7YgSOzlYOxp71csKjj6
- QiL.9cqCWuuErOL20VAuakyohs9fBvwq3kOWXMK2iFXUONvukFZsXp6Sh0GKkpBzNA_UlvyVlQvb
- o931TKmI7VMKi7fajgZjY8FmPNvq.ZTNduiMIU_Qa65oAecTUg5HmLfFpm4P3yzhPJIwwkn1_zw9
- hnQNKwOrvReimCZKqM75atDYJLNJASIKaZp90G8ahu7bUcDKb2Meah048b67t5YB1x1SYfHEOIdb
- 80xRFAnpfTWq2V27hzwp.4QNjp27KGGY579NJKKbBVopGMjJm3R1s0sD2NOgaKJmFrDxA7pVmRCW
- Hmb7yFflJtm7dtPFoyaQY5HGuLzFCbDpyQj7xuI24cI2hVd8bEn_ASuJYgRSOGOp4E6zIKFPEJ2.
- mZlRURUvcesV4ligy9q5V92AJSm5SkwV3T3rwwiYvXt4RVcOEBiGwRFgnMg3NRk6XVgkObXGcBgw
- x1eBEEDqaVkbvfPFgHrV92HRO5JZWy4wJgcE2s0rhGg_yhrmHPpLpnqxu8tSrkh0SPTgS17NQ8pp
- DamNQCONkWbjISGzpvbVN4jgeFUWQMXVFDrONeAZlof6hWCqLHWiOxA_rP07rjPe8R.1koGoA94W
- zerFZI.tCttnGznA4M0gTPhhVTc76Bqg5p5jvY6lX1G65yjZxcx4uUaQ0WQ1sTd71eeKCYZcA7SN
- I_Xr3.ZreCHRbhOsLpQ0P_dEBTxJelOSSVBjklCaGa049dKdA0o2Ir31vWxN0e_vraLUsD0_SOlX
- .IwZqypZZZJ7UlZ3XZE9C_atW6dKsSKWl.ye3WjhtL.nCx8vfRpRGTsME8T4NtuF49JGC.uqooPa
- doDhq.EMv6VnjHY8fCq_2WdRNYEu6LK1IKE5xoe16rUORkOwVi_f9jJFNXFzZ2j58Sgl0.Y7p6pk
- p31NbtG873dCMsDFW3qdYOhMJw2mviMMa6ZSXXMypphJbVqAB4JhgshYBOXAB1ENc9EYI3eQiaz.
- Vepl5z7FEXUuwE7NrD5MUYiCXvG1i3qKup5QahRlZyem_vF_KI.fh5Vi7mRbE.JU7hX5z83thwAj
- Gl6KgCU6OlVL.eqsqZYv1GEvW3nywc9ZLmXh06PopwBZHCEximekXhpSbVxK0LCl7Yml.nNdUp0u
- yedjo7k7lsEGzQhOKQD_VM5u0KKUxXB_Hve6Mr_HW1EjwKolOmp.izvNkdG4V33PIQsPL8fjpJBd
- 5pAeZb.wsp7GKDvo_46VC7ilCVDP98D4Vztt9i7Jz_6aBQDUGcVsFD.KGukUDJR4vOFcMcwvqrtR
- cqPhq_W5TIx_W.OOf_tiBzi2O.k_DHBSaqPZ8Nbbcz4eERi7An7B83Dey.4XxCx07afZ5FYuh4AX
- SOkwcI5Uk.U7MTHdr8MhwpAESH0D5tQH.PJsBIOXM6j7XXjQjeJf_BgOv01qCzhOlVVzkKEjQPUh
- woB3kAEMKl5.P8iNS8HeTYKsWAgvDPzMH4iTlZbbsXrsY8ilQ6DJnijBxagi6kGKIIFvZ_C10j5C
- i2vj0L3E7QYlxWYVEVVgT9kQ6wuYr7rkN2ORkfG9g
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: f67d61b1-ada2-42a2-8af5-224d50fac4d8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Oct 2025 20:42:58 +0000
-Received: by hermes--production-bf1-554b85575-dfm4w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5ac397cd68ad3abcccfcc5e9735fbabb;
-          Tue, 21 Oct 2025 20:22:41 +0000 (UTC)
-Message-ID: <0e93a7f9-ae77-471a-b14d-2626cca0fb0e@yahoo.com>
-Date: Tue, 21 Oct 2025 21:22:34 +0100
+	 In-Reply-To:Content-Type; b=Jbnr760yfyOnmZ5I2SqXf0pnwF+o83ozzzWnbdtenzNdAlgLTfrmqqd4xMOxsokhnN9Q0a5MEDicCg7MuCXjA5ZRks6ucdSib/R9HHVqYOaE7Z98RxU/Pk0BLbzKFQTsQfeA1J/ukoY2c2OAnSKwnQjmZorJ7w5fQjFT2WSQIP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kWQrQV20; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LGAHwM011773;
+	Tue, 21 Oct 2025 20:22:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DVWHq3
+	w1V9bird66o/HT3IQgYq83pLC6FZywZkJrf00=; b=kWQrQV20B6KwMkoLiXLs2Y
+	mJ1vu88hk3HEpiuZc19pv0pdlUwGxPDHfKKhI1dutyQCGMk2BXihcF/byyCr2G2f
+	JimkkLWUQhWCXqocw4wYyQLvjAkf5axiD8VA4hxTKiU1C0Etnkkq1Vb8NlAxLFVO
+	VlMUjWHVxqsNfOS1DNV0byodKskUvNh6PLPFmPi14jLpgYhaonQ+dbHYDwPak88d
+	vDQIsrwNFYYbuoks/bXTjiSqkJ1mm7H6Q/wrRo1b+JfzNqX2epHrlfFjsC9DTetW
+	krpx2VBRgfZBrKuCkgdD91uAEZ4MTd0Q7Rv/vDWSgJn4IWkuadVEyx0irfJHDttg
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31c7u8m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 20:22:48 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59LJeGmA011075;
+	Tue, 21 Oct 2025 20:22:47 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx14ewj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 20:22:47 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LKMjDY17105426
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Oct 2025 20:22:45 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 76F5058055;
+	Tue, 21 Oct 2025 20:22:45 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DDC3158043;
+	Tue, 21 Oct 2025 20:22:44 +0000 (GMT)
+Received: from [9.61.241.19] (unknown [9.61.241.19])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 21 Oct 2025 20:22:44 +0000 (GMT)
+Message-ID: <41c90334-9bee-4252-9366-a4f5c38c83b9@linux.ibm.com>
+Date: Tue, 21 Oct 2025 13:22:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,123 +76,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: rename drm_ioctl_flags() to drm_ioctl_get_flags() to
- fix kernel-doc name conflict
-To: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- zack.rusin@broadcom.com
-Cc: bcm-kernel-feedback-list@broadcom.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251010002520.359824-1-adelodunolaoluwa.ref@yahoo.com>
- <20251010002520.359824-1-adelodunolaoluwa@yahoo.com>
+Subject: Re: [PATCH v1 1/3] PCI: Allow per function PCI slots
+To: Niklas Schnelle <schnelle@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: helgaas@kernel.org, stable@vger.kernel.org, mjrosato@linux.ibm.com,
+        Benjamin Block <bblock@linux.ibm.com>
+References: <20251020190200.1365-1-alifm@linux.ibm.com>
+ <20251020190200.1365-2-alifm@linux.ibm.com>
+ <f8d1619917f105ec805b212af9e940aa73925b70.camel@linux.ibm.com>
 Content-Language: en-US
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-In-Reply-To: <20251010002520.359824-1-adelodunolaoluwa@yahoo.com>
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <f8d1619917f105ec805b212af9e940aa73925b70.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pMJL_spnLMC3cmT05Fdl1YmBnIvIlqUL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX8xHNaqHe1Lx0
+ vpwIfS420Ot8iWmKPy6POV1rLw6jwSpIxAEUuCCOxyiR9PVuODMiXVkm26qsQDjmX5SOwlxajGc
+ 5lTnHkZVDPxm3nwdmCnnfk33TpiYwNtiOwC2ziNUxPi0w9+iyiJ+RGbWjg7I36tuf2TMZKvZq/j
+ Pa+sbI01QH25InSKyYxa6y6XlAQSnDwPI7TGbM7Bjfg/RbdwxgCiCdP6VInB/o99fYK4UKnyCgB
+ 0vq8p+GIlr/4S2GvEnAPBepNCIEPO81t1Hv+yFpDwxzWNXWYGJpRrccEgp+Q05H4+81rcW5mX9e
+ Zg86KABvmuggaGzr//qZnAyVgHWPxXmVi4r863lBE+9iELDt0244Y0DOPAmdOkMklpaqjJcw+hr
+ 1yAbu4/++/YbVFL7qYxvHnKAhDYqtw==
+X-Proofpoint-GUID: pMJL_spnLMC3cmT05Fdl1YmBnIvIlqUL
+X-Authority-Analysis: v=2.4 cv=SKNPlevH c=1 sm=1 tr=0 ts=68f7eb98 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=1mzHYz07CPLjn6S_tm4A:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On 10/10/25 01:25, Sunday Adelodun wrote:
-> The function `drm_ioctl_flags()` defined in `drm_ioctl.c` shares the same
-> identifier name as the `enum drm_ioctl_flags` defined in
-> `drm_ioctl.h`. Although this naming overlap is perfectly valid in C —
-> since functions and enumerations exist in separate namespaces and do
-> not affect compilation or linkage — it causes a symbol collision in the
-> kernel-doc build system.
->
-> During `make htmldocs`, Sphinx reports the following warning:
->    ./Documentation/gpu/drm-uapi:574: ./drivers/gpu/drm/drm_ioctl.c:915:
->    WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:69.
->    Declaration is '.. c:function::
->    bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'.
->
-> This happens because kernel-doc processes both identifiers (the enum and
-> the function) under the same name, leading to a duplicate symbol entry
-> in the generated documentation index. The build system therefore treats
-> them as conflicting declarations, even though they represent different
-> entities in code.
->
-> To resolve this, the function has been renamed to
-> `drm_ioctl_get_flags()`, which both removes the naming collision and
-> better describes the function’s purpose—retrieving ioctl permission
-> flags associated with a given command number.
->
-> All affected references have been updated accordingly in:
->    - `drivers/gpu/drm/drm_ioctl.c`
->    - `drivers/gpu/drm/vmwgfx/vmwgfx_drv.c`
->    - `include/drm/drm_ioctl.h`
->
-> No other symbols or behavior are modified.
->
-> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-> ---
->   drivers/gpu/drm/drm_ioctl.c         | 6 +++---
->   drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 +-
->   include/drm/drm_ioctl.h             | 2 +-
->   3 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-> index f593dc569d31..313e8bb7986a 100644
-> --- a/drivers/gpu/drm/drm_ioctl.c
-> +++ b/drivers/gpu/drm/drm_ioctl.c
-> @@ -912,7 +912,7 @@ long drm_ioctl(struct file *filp,
->   EXPORT_SYMBOL(drm_ioctl);
->   
->   /**
-> - * drm_ioctl_flags - Check for core ioctl and return ioctl permission flags
-> + * drm_ioctl_get_flags - Check for core ioctl and return ioctl permission flags
->    * @nr: ioctl number
->    * @flags: where to return the ioctl permission flags
->    *
-> @@ -923,7 +923,7 @@ EXPORT_SYMBOL(drm_ioctl);
->    * Returns:
->    * True if the @nr corresponds to a DRM core ioctl number, false otherwise.
->    */
-> -bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
-> +bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags)
->   {
->   	if (nr >= DRM_COMMAND_BASE && nr < DRM_COMMAND_END)
->   		return false;
-> @@ -935,4 +935,4 @@ bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
->   	*flags = drm_ioctls[nr].flags;
->   	return true;
->   }
-> -EXPORT_SYMBOL(drm_ioctl_flags);
-> +EXPORT_SYMBOL(drm_ioctl_get_flags);
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> index 8ff958d119be..fa4644067d46 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> @@ -1257,7 +1257,7 @@ static long vmw_generic_ioctl(struct file *filp, unsigned int cmd,
->   			goto out_io_encoding;
->   
->   		flags = ioctl->flags;
-> -	} else if (!drm_ioctl_flags(nr, &flags))
-> +	} else if (!drm_ioctl_get_flags(nr, &flags))
->   		return -EINVAL;
->   
->   	return ioctl_func(filp, cmd, arg);
-> diff --git a/include/drm/drm_ioctl.h b/include/drm/drm_ioctl.h
-> index 171760b6c4a1..585dda7550b0 100644
-> --- a/include/drm/drm_ioctl.h
-> +++ b/include/drm/drm_ioctl.h
-> @@ -164,7 +164,7 @@ long drm_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
->   /* Let drm_compat_ioctl be assigned to .compat_ioctl unconditionally */
->   #define drm_compat_ioctl NULL
->   #endif
-> -bool drm_ioctl_flags(unsigned int nr, unsigned int *flags);
-> +bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags);
->   
->   int drm_noop(struct drm_device *dev, void *data,
->   	     struct drm_file *file_priv);
 
-Hi all,
+On 10/21/2025 5:49 AM, Niklas Schnelle wrote:
+> On Mon, 2025-10-20 at 12:01 -0700, Farhan Ali wrote:
+>> On s390 systems, which use a machine level hypervisor, PCI devices are
+>> always accessed through a form of PCI pass-through which fundamentally
+>> operates on a per PCI function granularity. This is also reflected in the
+>> s390 PCI hotplug driver which creates hotplug slots for individual PCI
+>> functions. Its reset_slot() function, which is a wrapper for
+>> zpci_hot_reset_device(), thus also resets individual functions.
+>>
+>> Currently, the kernel's PCI_SLOT() macro assigns the same pci_slot object
+>> to multifunction devices. This approach worked fine on s390 systems that
+>> only exposed virtual functions as individual PCI domains to the operating
+>> system.  Since commit 44510d6fa0c0 ("s390/pci: Handling multifunctions")
+>> s390 supports exposing the topology of multifunction PCI devices by
+>> grouping them in a shared PCI domain. When attempting to reset a function
+>> through the hotplug driver, the shared slot assignment causes the wrong
+>> function to be reset instead of the intended one. It also leaks memory as
+>> we do create a pci_slot object for the function, but don't correctly free
+>> it in pci_slot_release().
+>>
+>> Add a flag for struct pci_slot to allow per function PCI slots for
+>> functions managed through a hypervisor, which exposes individual PCI
+>> functions while retaining the topology.
+>>
+>> Fixes: 44510d6fa0c0 ("s390/pci: Handling multifunctions")
+>> Cc: stable@vger.kernel.org
+>> Suggested-by: Niklas Schnelle <schnelle@linux.ibm.com>
+>> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+>> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+>> ---
+>>   drivers/pci/hotplug/s390_pci_hpc.c | 10 ++++++++--
+>>   drivers/pci/pci.c                  |  5 +++--
+>>   drivers/pci/slot.c                 | 14 +++++++++++---
+>>   include/linux/pci.h                |  1 +
+>>   4 files changed, 23 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pci/hotplug/s390_pci_hpc.c b/drivers/pci/hotplug/s390_pci_hpc.c
+>> index d9996516f49e..8b547de464bf 100644
+>> --- a/drivers/pci/hotplug/s390_pci_hpc.c
+>> +++ b/drivers/pci/hotplug/s390_pci_hpc.c
+>> @@ -126,14 +126,20 @@ static const struct hotplug_slot_ops s390_hotplug_slot_ops = {
+>>   
+>>   int zpci_init_slot(struct zpci_dev *zdev)
+>>   {
+>> +	int ret;
+>>   	char name[SLOT_NAME_SIZE];
+>>   	struct zpci_bus *zbus = zdev->zbus;
+>>   
+>>   	zdev->hotplug_slot.ops = &s390_hotplug_slot_ops;
+>>   
+>>   	snprintf(name, SLOT_NAME_SIZE, "%08x", zdev->fid);
+>> -	return pci_hp_register(&zdev->hotplug_slot, zbus->bus,
+>> -			       zdev->devfn, name);
+>> +	ret = pci_hp_register(&zdev->hotplug_slot, zbus->bus,
+>> +				zdev->devfn, name);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	zdev->hotplug_slot.pci_slot->per_func_slot = 1;
+> I think the way this works is a bit odd. Due to the order of setting
+> the flag pci_create_slot() in pci_hp_register() tries to match using
+> the wrong per_func_slot == 0. This doesn't really cause mismatches
+> though because the slot->number won't match the PCI_SLOT(dev->devfn)
+> except for the slot->number 0 where it is fine.
+>
+> One way to improve(?) on this is to have a per_func_slot flag also in
+> the struct hotplug_slot and then copy it over into the newly created
+> struct pci_slot. But then we have this flag twice. Or maybe this really
+> should be an argument to pci_create_slot()?
 
-Just a gentle ping on this patch,
-please let me know if there’s any feedback or further changes needed.
+This would still work as we associate the struct pci_dev to struct 
+pci_slot in pci_dev_assign_slot(), when we would have the flag set. But 
+I do see your point that there is room for improvement here. As 
+discussed offline we can maybe have the flag in struct pci_bus since we 
+already have the slots list. This would allow us to set the flag for 
+zpci devices at the creation of the pci_bus. And can be used by 
+pci_create_slot() and pci_dev_assign_slot() to correctly set the slot 
+for the pci dev. Will post a v2 with this.
 
-Thanks,
-Sunday
+Thanks
+
+Farhan
+
 
 
