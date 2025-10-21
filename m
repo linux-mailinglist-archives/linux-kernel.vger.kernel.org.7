@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-862304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C27BF4F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:26:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E673BF4F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFEC13BA530
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E91D18872CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B16927BF7C;
-	Tue, 21 Oct 2025 07:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBC027BF7C;
+	Tue, 21 Oct 2025 07:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="Kbuo+v+r"
-Received: from fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.158.153.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UcsjzlrZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900E21FBEAC;
-	Tue, 21 Oct 2025 07:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.158.153.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E801FBEAC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761031576; cv=none; b=ZGsMDlHfBPXjyEoFPPfINubzjuuCV+v4rqreruaO6df7NWsLVNmG58XsukM6CXQa3iUYyhKJFGKlRmOBrLElQqsmwoDM3pTyCd07wresln/G9ysFccO9INAWsDLbV7TdkbyMGc+RdHRNBmfgMYl+SOnxwiR/bGi6CPayhOlEm8w=
+	t=1761031616; cv=none; b=dtYH3WXGLSQfG5+FOzHNTsY7/yW78aq6+2/ngTM5TeueHl8fkpDzpbjp+vgloYhHCbleqktYhzuelb728SiJzJaMXZAi/89X4PQuMlj2O8RCVK2yT8mvrEd2q4D/BlBP0SxCUc6DlV09ggSt3G5iH2aM5xCGmHpnO6wJq3mT904=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761031576; c=relaxed/simple;
-	bh=8+t9A0kZYWOlwZbL/Kjits3Uw62fi4VAwF1SOn82uzw=;
-	h=Subject:From:To:CC:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HUyFeBypgr5jmIfwfjv2ict24exoeKfqtGXAfcYEmwyLa5bCvIgNFutdqcoAo8Fj1pxS/FVN6Wo7KspzePJnJ0cu+yYnS6u+Gn+QhI+EW8ZMylkkbOkSjnOfu73JUyutpPWDV6W8jAMr8MwxqnFS8gHIQYIPfyWvV+QvwpD1ZPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=Kbuo+v+r; arc=none smtp.client-ip=18.158.153.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1761031573; x=1792567573;
-  h=from:to:cc:in-reply-to:references:date:message-id:
-   mime-version:subject;
-  bh=8+t9A0kZYWOlwZbL/Kjits3Uw62fi4VAwF1SOn82uzw=;
-  b=Kbuo+v+rl6NY87CNlkg1XyK50UN/ugaIEW7QG6wwbyXg2h8C5KUbPHYc
-   EeZIMMqbr/XpRzAs5Nd4lDojSnfS2K320Q8tnqX9L1wAH/fpS34i0+r42
-   WnJG4bTVF73dBkZ0zmmGKjQ1HlpLhYXJjIvUk/PMcPU2EUhI9FIFHwG0L
-   Vf9H6cqZx0EVVyA0JqfvELgHHUM7bww3ievY3g94eubCWOfikJ+z8E+tj
-   r4YbYAl0bOt39iy9rHyYAul3sageo2HJs3xw+3C4BPNuwKz3Ar6hIBhp/
-   T7kkRj/gmXiOqmseAxtsdK7uBlHSQ9aB7e94wxrtugq4Sx8MwycIPcEEC
-   Q==;
-X-CSE-ConnectionGUID: TYAeHBJkTkyfK88JJgTexA==
-X-CSE-MsgGUID: BLPocVkKTgeQ6UWeWe47Mw==
-X-IronPort-AV: E=Sophos;i="6.19,244,1754956800"; 
-   d="scan'208";a="3819608"
-Subject: Re: [PATCH 6.1 0/8] Backporting CVE-2025-38073 fix patch
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:25:52 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:2836]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.38.159:2525] with esmtp (Farcaster)
- id 06137168-4ab5-48ee-b858-30f80bdf9b8c; Tue, 21 Oct 2025 07:25:51 +0000 (UTC)
-X-Farcaster-Flow-ID: 06137168-4ab5-48ee-b858-30f80bdf9b8c
-Received: from EX19D013EUB004.ant.amazon.com (10.252.51.92) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 21 Oct 2025 07:25:49 +0000
-Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com.amazon.de
- (10.253.107.175) by EX19D013EUB004.ant.amazon.com (10.252.51.92) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 21 Oct 2025
- 07:25:40 +0000
-From: Mahmoud Nagy Adam <mngyadam@amazon.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <stable@vger.kernel.org>, <nagy@khwaternagy.com>, Jens Axboe
-	<axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov
-	<idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
-	<adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
-	<chao@kernel.org>, Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
-	<djwong@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, "Anna
- Schumaker" <anna@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, Damien Le Moal
-	<dlemoal@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ceph-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
-	<linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-	<linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
-In-Reply-To: <2025102128-agent-handheld-30a6@gregkh> (Greg KH's message of
-	"Tue, 21 Oct 2025 09:16:18 +0200")
-References: <20251021070353.96705-2-mngyadam@amazon.de>
-	<2025102128-agent-handheld-30a6@gregkh>
-Date: Tue, 21 Oct 2025 09:25:37 +0200
-Message-ID: <lrkyqms5klnri.fsf@dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761031616; c=relaxed/simple;
+	bh=8fNE3NX1DUD2apr4HvgC0SPEdbANrnlUs0eoTh5oeGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SxwLSsd0nbNS0d1FmaDlvaXCsg5xRpUMZzDFmRnVFQDIlZ1QWq+BmM/Xudn0OCBrZk2AtQkJsjg+loYw7ec0dQp83QPTCZkSpEwDXKw+L+gvhU1K3MzTLbyvReNFX8WN7qu8sa926QjB0JeKwCplDbmyFgC3OMToUELxnFc+sLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UcsjzlrZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761031613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJDvXzMxMi1pDcKxo2a9jJgMq2W5icRpzq+zghF2eEk=;
+	b=UcsjzlrZWP3ufrKMor2LAbQQw1a4afoFb6en2t/aSd8r++azVRGPZkjOZeXijV2w1NIBQN
+	ZY1wb5DaqE/gxSwIasDG5bqIUvXLAtSFeQmbaORA5RGXxCaA0escpCpTdHCA8HuGOQzcWO
+	GxhCZHLtQHdp9Qhr/DGnjQeO0AjhnJ4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-31-q_smfjCuNdyJN8anFHtY8g-1; Tue, 21 Oct 2025 03:26:52 -0400
+X-MC-Unique: q_smfjCuNdyJN8anFHtY8g-1
+X-Mimecast-MFC-AGG-ID: q_smfjCuNdyJN8anFHtY8g_1761031611
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47105bfcf15so28382615e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:26:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761031611; x=1761636411;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJDvXzMxMi1pDcKxo2a9jJgMq2W5icRpzq+zghF2eEk=;
+        b=r1bee7ZFq2YRqwMBGHQpikChBwc7K2PM8UTd5yEuxuUSpnZmr+kttOnynhka6nAeok
+         +ds3KJyc3KZwLLjB8bBBT2wfzefRa8q85aLie03dZQHxL87zAurPcqhD5kgT79RWNEDx
+         MZeiAOF/U/D14/4SaToCw1G4e9E4JahNEITv0A7xZeq8qu0NWQEYRVTpMrIRhd/4Pkbn
+         9hXxNUjI771Io833tv0tPif6SUx9O9wuoh74tcMWfs9XrFzZmksj88zEuUxxWTOaTfne
+         L0NWtKs0CN0Kp3XOeBBJVdHPvs+O5aRFahiywDRRLWb6WChf9MeXx/OiicaoeH8W7bna
+         STqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjYQWjwcEubOLffIiqvh8wMSdv2aONan1IswJaqY3ixsCYJM7UZL5Hfmoqz91SuDZjesQ1lWdCaX828k0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/sQlmVtNdyjm79TUjk/gtfdVeVcTIl3rUJREMCste5ui3iDMb
+	d8rrpOR/WSB2IXOwxOC0bzTb9nAN5021bb31HhOPXVIuthYdEMEwpp9ZwCauJ6sFl6MMl3sAghi
+	XpZJBYi8D3KKydRxgfxEu+et/ENZWjh4+rNbZmR0uBJRsjVjHTK7k9bGxfWaGgdaVXg==
+X-Gm-Gg: ASbGncsA+JjxurlFJKDT1xf/J5gf7dEwZEPW0WsC1PRa6vXf7E3fyLliXnYU5wvpIAU
+	ON61pOZqJ34W5skt+h5RwoXytBtN4JA6vlCBn93o1mYhQM2b222zt9U1kOziA07rAHmtl3uqGCC
+	okXPBdQrcZcLhAUvz+eJDegARhmJpd9FU5Bvtay8WNIB7Iz3HlPvQzUsKe2YxuIppMK/ToKs6Jf
+	xqcSROQAh5kAruclNx3WfvNkgw/nYwJtFeqiTb8M0GnuzzxX03plClvSywd9Ib43XABA3Kxjtr1
+	jW10MyJb3Zdk5jYiILcQYg/mj1VlU+WRuvSUuKifIyeOjAGHA2BMGkF2uKcjrQhWmB5dfl3LZab
+	YMvnSa+k7tBDl6ftt8xgeRwAqNZ2XTXuwCRnGQMu4VkmxmOo=
+X-Received: by 2002:a05:600c:540c:b0:471:12be:743 with SMTP id 5b1f17b1804b1-471178a3f93mr118161515e9.15.1761031610904;
+        Tue, 21 Oct 2025 00:26:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkWSWmUORa+H15T+v49lrEDk0detT0U6yn7DgHaIoUivTMeJ3869JPfks9PXOdp64Mjfcqeg==
+X-Received: by 2002:a05:600c:540c:b0:471:12be:743 with SMTP id 5b1f17b1804b1-471178a3f93mr118161325e9.15.1761031610532;
+        Tue, 21 Oct 2025 00:26:50 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d916sm176481805e9.4.2025.10.21.00.26.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 00:26:49 -0700 (PDT)
+Message-ID: <11ffb7d0-4e52-496e-84c7-0d93bf03e4cf@redhat.com>
+Date: Tue, 21 Oct 2025 09:26:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWA004.ant.amazon.com (10.13.139.16) To
- EX19D013EUB004.ant.amazon.com (10.252.51.92)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 6/8] net: enetc: add basic support for the ENETC
+ with pseudo MAC for i.MX94
+To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
+ xiaoning.wang@nxp.com, Frank.Li@nxp.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ richardcochran@gmail.com
+Cc: imx@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251016102020.3218579-1-wei.fang@nxp.com>
+ <20251016102020.3218579-7-wei.fang@nxp.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251016102020.3218579-7-wei.fang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Greg KH <gregkh@linuxfoundation.org> writes:
+On 10/16/25 12:20 PM, Wei Fang wrote:
+> @@ -635,28 +649,10 @@ static void enetc4_pl_mac_config(struct phylink_config *config, unsigned int mod
+>  
+>  static void enetc4_set_port_speed(struct enetc_ndev_priv *priv, int speed)
+>  {
+> -	u32 old_speed = priv->speed;
+> -	u32 val;
+> -
+> -	if (speed == old_speed)
+> -		return;
+> -
+> -	val = enetc_port_rd(&priv->si->hw, ENETC4_PCR);
+> -	val &= ~PCR_PSPEED;
+> -
+> -	switch (speed) {
+> -	case SPEED_100:
+> -	case SPEED_1000:
+> -	case SPEED_2500:
+> -	case SPEED_10000:
+> -		val |= (PCR_PSPEED & PCR_PSPEED_VAL(speed));
+> -		break;
+> -	case SPEED_10:
+> -	default:
+> -		val |= (PCR_PSPEED & PCR_PSPEED_VAL(SPEED_10));
+> -	}
+> +	u32 val = enetc_port_rd(&priv->si->hw, ENETC4_PCR);
+>  
+>  	priv->speed = speed;
+> +	val = u32_replace_bits(val, PCR_PSPEED_VAL(speed), PCR_PSPEED);
+>  	enetc_port_wr(&priv->si->hw, ENETC4_PCR, val);
+>  }
 
->
->
-> On Tue, Oct 21, 2025 at 09:03:35AM +0200, Mahmoud Adam wrote:
->> This series aims to fix the CVE-2025-38073 for 6.1 LTS.
->
-> That's not going to work until there is a fix in the 6.6.y tree first.
-> You all know this quite well :(
->
-> Please work on that tree first, and then move to older ones.
->
+The above chunk looks unrelated from the rest of this patch. Perhaps
+worth moving to a separate patch in this series? Or add some comments
+explaining why it's needed.
 
-Yup, I've already sent a series for 6.6 yesterday:
-https://lore.kernel.org/stable/20251020122541.7227-1-mngyadam@amazon.de/
+Thanks,
 
-- MNAdam
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+Paolo
 
 
