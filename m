@@ -1,186 +1,123 @@
-Return-Path: <linux-kernel+bounces-862086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDB4BF4660
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:50:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE460BF4666
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 04:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B2B04EB054
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9414E18C5288
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 02:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04EA262FEC;
-	Tue, 21 Oct 2025 02:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="UoTwRGn+"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5B1E868;
+	Tue, 21 Oct 2025 02:51:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909E9221275;
-	Tue, 21 Oct 2025 02:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA04A221275
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761015012; cv=none; b=YWspUQBhmx6EnbtFv6F46QgGqd+Awul3je9tMoXOqi4X1JKy8PcC1WdgUSQ7rDbS6WPJ567aNyqhZKcIpy7bfBYZtRisBXWo9bau7NgEKM9Ht6aietagODHAYB8tzcDcG1jOYlcVheDphn2NFhQ4tqcLuONT2kjsK+1edG23Cpg=
+	t=1761015064; cv=none; b=srW1VOKZ6Wej+Os9NZkOji3tP1szIk4iubmx48X36EXVqhovNX8zLZDODyFHLt1Uj+fgg1K9v5K+GS/dx1BCIQS6mhcj7jd1nkS4f0zvwVqw9e0H1xgGxbPLCXrPy3DeDvltFLBmSBmU7akM5FGKh3hsjJhue+t/yZFQx6nTWvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761015012; c=relaxed/simple;
-	bh=nhNdircZuLH3WnRSMnhGprZ/QhVVDQhhTz+6q9e+fkk=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=qIXk3W11j9vG+bhp81fDMRvKpz2YGdM8FO7Ir7nYELq3Hu6j/OuL38oTWgagPI2HLLLIyqrn7mzZoI9CpBOAKcQlBDOtS35Pl0MJOybUlPcYj560NUixz+RUP6Mdj2HER6Z5EUOmdKa05phHLUJi1B5wOjGBodogk6fJ+v3vCh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=UoTwRGn+; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	s=arc-20240116; t=1761015064; c=relaxed/simple;
+	bh=IIYe2dPIZrycyaPLEXaR+fRISOJY/jOMEOoUOUmCn+k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kjSss6Hhd2sSi4+DtJ7ez65wz0Gb8rb0SStxRLSBR2v7h40UQtiKQHGmds9ob4pMoG1deJZdhWwHfob7IOfVj1CmX4pRrNcTCqrbvIIjUDgXdtRenQCIr+psCZoP+wf90QrtQ92s735/vj5iklxPaxs1JLspWUIg+AfqmtkY5Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-940e4cf730aso267445139f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 19:51:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761015062; x=1761619862;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wXSZh+LhsJ2L/ekgxcnIbfTrKmZcZiu6txpf6OpGVxQ=;
+        b=XL1eJTszhtoumynrC/wbITI1dQlCXcfTwNGtBjHALV0Dz8/RYFn4qOKqmbuB0nVTYm
+         0U4I0KmHna+8yI5R9XmroaySIYg+hQzD/Eyi631hvuyaWWDdcSCVrOdNsm54xUykS6OK
+         Zf6/5HufU4IzY+7+sCoiqfM3uvc6QUtW3R6320n2Qr4a15ZW/1Wt/ONUbCNyhkepABVO
+         GICgergZ54KQrMxpfwyHOl5ZysyszhFyuO/xItGdkWiRsKH3D9jzi9KxGIzMqNEnDBLo
+         P4xdLTwfrlJscAPrQaVJmuzvR+NbGt6h7hk4dvnmq1IN8hzIw/SZMjWh134IFAQojHWd
+         7HcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV49kfAdjZI6coIBJzlU36vxhZkoIfyqaWzdXfWsWwfMfXA8IbhEgT2FKV8uwOi7kj9whwGFYZ4+c1cARE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6RsCwlL0WWWWunGf0IHRa1BI5AkMSpopM9tDjxp6yjEZ4lSR5
+	G2kP0cY2q0Oj96N3gqFw8P7vWD6iDFQcYYCcMi1SmCNMCBsTW5IIVoahYiUU4m7oxog1mTbvtW5
+	lDWjvljbAbqfmgM4iCwPvDJhK5K4/0sqOD0l9OISZvNAlj3DfHKRG8DUoBiw=
+X-Google-Smtp-Source: AGHT+IHvZHgVqZ2gLYBy1BwzdWwdDpnEx8KDqOxqqZr4ueOTARER0kfWHjvw+Xsp5JCASB+duBwHVP9LeadQPpVkIg3BxVX5HqNM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1761014996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VVzODfmk6H1SoQuvDEeFLaGz/W/MVo+M1LBQXK4SPTk=;
-	b=UoTwRGn+sP6zXjeZ2ck4HhCVJrJqJ7WBFDD7a0zPnLfDoRN2TG3196DmPQKhLksTala5xG
-	FEdfbvfIURGDDlMroJAl1JTHgdjginNfkCAvHQro71/mIIt3KGJrWMfrTg/v5nEchDOfm+
-	KwI/NAHfEeEemwojp81ViysN3hmUTKekIRfwpT5KdXedbIpaOTns18K5ALywmVdg6mmq7+
-	j1egp/yaadtUyYAtR5kE0s58Jdx945OSj6Uj20k250o/jHT9BceLDT4J+u60fiXHdshmxn
-	xp/zDrjh23r5BHN3tzbJotImssnG3MSj9M84nvLhb7SzEsP3tjWu/WQp+LueHw==
-Date: Tue, 21 Oct 2025 02:49:50 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Paul Sajna" <sajattack@postmarketos.org>
-Message-ID: <789a2ffa637842215084a39eeee94993a315ccbe@postmarketos.org>
-TLS-Required: No
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Define guard pages within the
- rmtfs region
-To: david@ixit.cz, "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
- <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, "David
- Heidelberg" <david@ixit.cz>
-In-Reply-To: <20251020-sdm845-use-guard-pages-v1-1-64d714f8bd73@ixit.cz>
-References: <20251020-sdm845-use-guard-pages-v1-1-64d714f8bd73@ixit.cz>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1a2b:b0:430:ab98:7b27 with SMTP id
+ e9e14a558f8ab-430c527d375mr222509045ab.20.1761015062186; Mon, 20 Oct 2025
+ 19:51:02 -0700 (PDT)
+Date: Mon, 20 Oct 2025 19:51:02 -0700
+In-Reply-To: <287c3a106ca4565311685d637af0884c5a6bdea2.1761011646.git.xiaopei01@kylinos.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f6f516.050a0220.346f24.0002.GAE@google.com>
+Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in poly1305_blocks
+From: syzbot <syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, xiaopei01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 
-October 20, 2025 at 9:12 PM, "David Heidelberg via B4 Relay" <devnull+dav=
-id.ixit.cz@kernel.org mailto:devnull+david.ixit.cz@kernel.org?to=3D%22Dav=
-id%20Heidelberg%20via%20B4%20Relay%22%20%3Cdevnull%2Bdavid.ixit.cz%40kern=
-el.org%3E > wrote:
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in poly1305_blocks
+
+=====================================================
+BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+ poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+ poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
+ poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
+ poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+ chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
+ chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
+ crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
+ tls_do_encryption net/tls/tls_sw.c:582 [inline]
+ tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
+ bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
+ tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
+ tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
+ inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x145/0x3d0 net/socket.c:742
+ sock_write_iter+0x3a6/0x420 net/socket.c:1195
+ do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
+ vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+ do_writev+0x1b5/0x580 fs/read_write.c:1103
+ __do_sys_writev fs/read_write.c:1171 [inline]
+ __se_sys_writev fs/read_write.c:1168 [inline]
+ __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
+ x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable desc created at:
+ poly_hash+0x11d/0x1a00 crypto/chacha20poly1305.c:135
+ poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+
+CPU: 1 UID: 0 PID: 6603 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+=====================================================
 
 
->=20
->=20From: David Heidelberg <david@ixit.cz>
->=20
->=20Use qcom,use-guard-pages property instead of polluting device-tree wi=
-th
-> lower and upper rmtfs guard nodes.
->=20
->=20No functional change intended.
->=20
->=20cosmetic: set name the node rmtfs-region.
->=20
->=20Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> Tested on OnePlus 6T.
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 17 +++--------------
->  arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 18 +++----------=
------
->  2 files changed, 6 insertions(+), 29 deletions(-)
->=20
->=20diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi b/arch/ar=
-m64/boot/dts/qcom/sdm845-lg-common.dtsi
-> index 99dafc6716e76..83b98bad19dd2 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> @@ -99,26 +99,15 @@ memory@9d400000 {
->  no-map;
->  };
->=20=20
->=20- /* rmtfs lower guard */
-> - memory@f0800000 {
-> - reg =3D <0 0xf0800000 0 0x1000>;
-> - no-map;
-> - };
-> -
-> - rmtfs_mem: memory@f0801000 {
-> + rmtfs_mem: rmtfs-region@f0800000 {
->  compatible =3D "qcom,rmtfs-mem";
-> - reg =3D <0 0xf0801000 0 0x200000>;
-> + reg =3D <0 0xf0800000 0 0x202000>;
-> + qcom,use-guard-pages;
->  no-map;
->=20=20
->=20 qcom,client-id =3D <1>;
->  qcom,vmid =3D <QCOM_SCM_VMID_MSS_MSA>;
->  };
-> -
-> - /* rmtfs upper guard */
-> - memory@f0a01000 {
-> - reg =3D <0 0xf0a01000 0 0x1000>;
-> - no-map;
-> - };
->  };
->=20=20
->=20 gpio-keys {
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch=
-/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-> index dcfffb271fcf3..61d63003fa371 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-> @@ -75,32 +75,20 @@ key-vol-up {
->  };
->=20=20
->=20 reserved-memory {
-> - /*
-> - * The rmtfs_mem needs to be guarded due to "XPU limitations"
-> - * it is otherwise possible for an allocation adjacent to the
-> - * rmtfs_mem region to trigger an XPU violation, causing a crash.
-> - */
-> - rmtfs_lower_guard: rmtfs-lower-guard@f5b00000 {
-> - no-map;
-> - reg =3D <0 0xf5b00000 0 0x1000>;
-> - };
->  /*
->  * The rmtfs memory region in downstream is 'dynamically allocated'
->  * but given the same address every time. Hard code it as this address =
-is
->  * where the modem firmware expects it to be.
->  */
-> - rmtfs_mem: rmtfs-mem@f5b01000 {
-> + rmtfs_mem: rmtfs-region@f5b00000 {
->  compatible =3D "qcom,rmtfs-mem";
-> - reg =3D <0 0xf5b01000 0 0x200000>;
-> + reg =3D <0 0xf5b00000 0 0x202000>;
-> + qcom,use-guard-pages;
->  no-map;
->=20=20
->=20 qcom,client-id =3D <1>;
->  qcom,vmid =3D <QCOM_SCM_VMID_MSS_MSA>;
->  };
-> - rmtfs_upper_guard: rmtfs-upper-guard@f5d01000 {
-> - no-map;
-> - reg =3D <0 0xf5d01000 0 0x1000>;
-> - };
->=20=20
->=20 /*
->  * It seems like reserving the old rmtfs_mem region is also needed to p=
-revent
->=20
->=20---
-> base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
-> change-id: 20251020-sdm845-use-guard-pages-9c2b2fa0b71e
->=20
->=20Best regards,
-> --=20
->=20David Heidelberg <david@ixit.cz>
->
+Tested on:
 
-I tried something similar before and didn't have much luck with it. I'll =
-test your patch when I have time.
+commit:         6548d364 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d40d2f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=01fcd39a0d90cdb0e3df
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14c58e7c580000
+
 
