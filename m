@@ -1,188 +1,126 @@
-Return-Path: <linux-kernel+bounces-862288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D840BF4E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:19:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068C6BF4EAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A45C44FF383
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:13:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99B33505399
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E82A274666;
-	Tue, 21 Oct 2025 07:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B442E274666;
+	Tue, 21 Oct 2025 07:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXmgab11"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b8z9VVcO"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589A8354AC9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B9D1C3F36
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030745; cv=none; b=SpGqrkqPL3rG4KCVmwYKa+9HvPCaMsyjPAf3uHTwrEYKhF/IEzIPAblfOejZvJFsocEnKTsAF9JD1h2dqQpOe+lDxeLrEARGwjkiuRbyDq1YTP8XUZ5zSXlIDHhOdHE1RxqVK830sPxPTczg/JTrKefH0fGZUInF/viUQew7RTI=
+	t=1761030831; cv=none; b=rC7IJskA6xq6ifERa7NxTZi4DYvkgGeXRIh89gMk+32pHTMAwmkb5HIg9JNWAwwm0/AIPbr8garhbNONDLiGfYU1KZq7N/METjAKxAM9pIU3RnQ3G8hYzaDn6alsuH7P5HymnwxUJ4Va3Mtae/ywB+cXNTM/ZN4AQardcp/pyPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030745; c=relaxed/simple;
-	bh=Xnv8H3ZDnKl4X1PB55r22TPaBVo2ZFPIGawukakBrjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CteC1ChOt9nMfzMM/iMhpix0rFAswjKRBhZ+LVInxnovO0aa1KwdCPXqfqTjDFI9/x0lAqIRQNrZ/yyWtDEaz5FDaRBPc5sioefsjHiEHeRz0iQ1Ilt7vcUrtUCSpENvyn80gdv6QnuS1Wj2keTCUrvC5sDj1dGwgj9IPkjXfjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXmgab11; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33c4252c3c5so3577515a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:12:23 -0700 (PDT)
+	s=arc-20240116; t=1761030831; c=relaxed/simple;
+	bh=shnocEozDkLvjkbbYpfPCYmb3LZ8IOs5v0zgxrtXZUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NRwp1ScNC52PE2LhKVG1qEuh8/KrKqfI5QFGM6eP1mOZvu/0XJow0+28cv74IbiV92cIVMimjcmXOKzy1aasbRvyFMNzLaU3xo4Bq6BkiyWH6soR/TWpmiZvYqfxwYXIAAn1WN7tvzF/wGg8b+DxVYqba8+ke8iz4K46m1hFpxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b8z9VVcO; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3778144a440so61960321fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 00:13:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761030743; x=1761635543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2Qt+4cDvPgX3lF8PjgvxPyZSbtTp9ulbbmZUT2eBPHA=;
-        b=YXmgab11UW43YyVDhQLLRVouDfn3KWEOS0VkYsMnaU9PmlmiEAzF68QgZRChR4hBnX
-         TVevgXALnxaiac0yX1fNIRSzLky50uoXrBST4V/b4mIpNmRvM09+/2cbW3OMI7ZWsG60
-         MNmoehduIM1W7dIE8KfYny/XzdvL+60X7L/Jx3WAssi+l6Mr/ly5DpEtR/djHzOrkZTf
-         FG6JpaeMyd5oUj7kFxNKbvypd5kHgrr7egdElUzgRUNeaf9V+OWVBDJqA0GvuRCtvoqQ
-         yt1yHwPy8H+svYdH0WbuNPmU2I5op6rXiqKMgd0CUaJyscmMNB8mK/YPlW+i7WRNm+yd
-         j0kw==
+        d=linaro.org; s=google; t=1761030827; x=1761635627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AuafyjGQlDm3fykSpNADHjSfG+tYdvPkfZzAXtiw/Co=;
+        b=b8z9VVcOmmTUtezm8NH6uyAlUgkYd3nhzDiMQfBc/a998Q55CuP4YskghZ3rr4OyPp
+         VvvPx+pfflk55QdmUM0iHBu3FCkLjWVluHP+tDFR9iJpGREP6ViN392s37StstEM2285
+         aWbrzFcrCfPqB5peC7ChUkk5UkIgR1pfiAasAALOD571jgXg1THRB7ij65LHN8glO/Dp
+         MIQQ3DIXB4onaD8yTFFNoaLaW2kReUXR/rDBqQ5ate2w7NQFDtfy//w2Icphk8eXkDtb
+         iA1wla7kmHEZSEjcNzt/14DmXufVALtH4WUZ0gceiTCl7zwnWmL2sb9flC98dsNwsiqB
+         x9wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761030743; x=1761635543;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Qt+4cDvPgX3lF8PjgvxPyZSbtTp9ulbbmZUT2eBPHA=;
-        b=Gx3ltRD43OoFozEs/AM5spok+ea7PAGh8DnHM5iWo+8DDy6xPATSPld2wXBs0k7CFA
-         ERQDeaHZaLbb4yISY+tyT6i9Dz9VHYsL0n9QNPWkVebvLsgCT+NlmnTwGDVEURCeeVph
-         +DYZDolW1cUOhdcXWe59ipXlxabtQ3H0uacX3mrQNFeOhcVV48B1LoWyjhm6YKAE9rcT
-         up7Lo2nMXWrgsiHcOMwVGqR75/0WnFHY4Y5FlImx2JQh9aBqlnn58hmDYA3Jsxm/4RJs
-         enefrBYvvH64vmihX3fR2fWbDQnbLM1ut++zHcotFuVtXJMFjev0yJFfGZxpvtW87WDQ
-         yukw==
-X-Forwarded-Encrypted: i=1; AJvYcCXq6AKMA1njc+TJbrbBJaRlU5I4GFH2ErYQfUulDbQAkjdsfTy0Rh3L9BBxByCeVNv1QtrG4ZrApsnjEyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc+pQ5J87xGRexl7KQ8DRQNN51uqRSO7mI7S4GmN/7fos4CoHW
-	SklaepLMAWv+kAjkWiyX0PnDyP8P8dmx8XRBi7QSbFupK70n7wSwZ4DU
-X-Gm-Gg: ASbGncs3vDwsKXN+d4uzk8PwNEU3fv7d8NDpk1Ls7Q73GDCeku3j/boU63/csaANmS7
-	Q+WUq0kaDhjVXAzOIFPkTOfaAkneVt6jB6i25rEzS9MgP8LBSKV6ZI3zCuyakhqaXpL1uGp1HO/
-	c3klQPHkKdmBwynVPUL6p7vcuq+neztPhwKswvO8COJIm03X9a5y2hshVC0v7/r3MejlDVgh+9k
-	uR33XZY/KHvLojRiHhMy1IXi/OjV7ZyXCLC7o072i6lJ6uOrZeZHLA7N3u1bMKJukw2NymKGWyw
-	eBe6+gXg593t8hwq8eEiYdbnbUl+6Bs3gCsPLiEZOY/yEatrXx38G+785kFv10B4yGcx1vPm3Ng
-	0lCaNVri9mC5mzlJBBM2iMhpf3+b1aczwKyI/wOdSrdLdT8oQ+veSad2lRCSmX0mnZT1TU6/uPY
-	+jdbmhMPMqJ7P943gWvA==
-X-Google-Smtp-Source: AGHT+IHYtQqcmKB7yaQZvSOyk8N0Ik66n2fKAvbJQ2zFuAsou1ZH5dPCdBb1dBwC5saJJbcxPhd05g==
-X-Received: by 2002:a17:90b:2fcc:b0:32d:d5f1:fe7f with SMTP id 98e67ed59e1d1-33bcf89380bmr19665205a91.15.1761030743304;
-        Tue, 21 Oct 2025 00:12:23 -0700 (PDT)
-Received: from [192.168.0.22] ([175.119.5.143])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33d5ddeaea7sm10174272a91.3.2025.10.21.00.12.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 00:12:22 -0700 (PDT)
-Message-ID: <a4bcf251-e1cf-47ef-84df-5c43b2b288c0@gmail.com>
-Date: Tue, 21 Oct 2025 16:12:18 +0900
+        d=1e100.net; s=20230601; t=1761030827; x=1761635627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AuafyjGQlDm3fykSpNADHjSfG+tYdvPkfZzAXtiw/Co=;
+        b=khYwhNMFwweYJsLNlwM62H52FbvaM94VvsJCQBGulDGUjla4qiOwbT41L7k8kGgm3F
+         s8xJmthtICEhkwHmuecgX/8St+1DMMVMNA8YaN96KuFJWvSKUKxiZzHoeMjSMl8boGMw
+         tUjKByK187AlB9NZyEqbfUstAM65SFb+ymHS9JUkDvKJqcT3/plQ23IPewHmidTMaDrf
+         SG8daFCnspbsxQEqRSuymqv75th+v1fPjoUPf4UMh+/Q2Iu/liTjYTJweU9DTcp/5sq4
+         CnJc9EPfMLUPiR1GWaZYy+fn7DBCKcBEfAOcdF3Pm9vo9dTZ/QzYL6F4jWEv8Q9HP0fn
+         Igrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhdmp8O7D3nIYFjwbAS7Q8DWeQYgb4hNPAXzNomZ+fVOllGxomHI2KiFRIFVZmnOioKfOtasQvMjr+JFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+FhlePYgsvadHkYC4i4loX5SJFSiVuo+Cp5NCyb1dB6XPBqL5
+	aTV2yi8qcb6DCPogToAMZSCZ5byURipzjhQyjx4ptI1iiEuwmPo5/7o2zJ95+ufDhppxnb0GUaG
+	sdJpKANIZ7vYnhiSTJPDz9v4hSD/QNV7z/f25i9yK5A==
+X-Gm-Gg: ASbGncvA/5Mh3HJ433P1wBAaQjldjBaPqPTpmyMTYX7vbk5jaPeSxHI38pe6MFYVDcE
+	lILwpJK3/yvykpGzgnQ/DeCpSC1hZ61GF0b6HoO1+9U1O0aA6A06WOxT7odRk4COXWyC9xMc3YY
+	hXiaDPW3fpeWHpZud0c6yc49hzePdJzdd1DrAfcFMLqEJvNCmxG/3BWPdD7TVHTEAkPL1cAe1Dy
+	026RsQ6iNlUNStFYAmaD18G5wUUITkyhoiM0rGmyDKj4Fna1Q/WmEenBowU3yaODW4VeUA=
+X-Google-Smtp-Source: AGHT+IFXewE5inD7CgvvKJbWyXxMNEGciqb/dhdvor+BMXV8b4ojerJafcr1lFElVmRq6Yah9RSUyGHsXMPY7mK9Yhs=
+X-Received: by 2002:a05:651c:1118:10b0:376:2802:84c2 with SMTP id
+ 38308e7fff4ca-377822498eemr50953931fa.23.1761030827133; Tue, 21 Oct 2025
+ 00:13:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: serialize writeback for inline-crypto inodes
-Content-Language: ko
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- jeuk20.kim@samsung.com, d_hyun.kwon@samsung.com, gyusun.lee@samsung.com,
- hyenc.jeong@samsung.com, j-young.choi@samsung.com, jaemyung.lee@samsung.com,
- jieon.seol@samsung.com, keosung.park@samsung.com, wone.jung@samsung.com
-References: <20251016051621.7425-1-jeuk20.kim@gmail.com>
- <5257fece-d947-4a33-8f66-4db5e8b73a28@kernel.org>
- <e26ec66d-36db-429f-befb-8baad14779d9@gmail.com>
- <75d0a52d-1662-45f9-ab67-909b906004b3@kernel.org>
-From: Jeuk Kim <jeuk20.kim@gmail.com>
-In-Reply-To: <75d0a52d-1662-45f9-ab67-909b906004b3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251020080648.13452-1-herve.codina@bootlin.com>
+In-Reply-To: <20251020080648.13452-1-herve.codina@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 21 Oct 2025 09:13:36 +0200
+X-Gm-Features: AS18NWCX83cFiM9B--nMGIfUIvsXguic5HJGZGgd7PDtP7ogZyhxvv6xui0ko10
+Message-ID: <CACRpkdYwG_rQn7eF9QNfApo+h-BGuC8Q_nPyeAKvcuUh+Bf=Xg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
+	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Herve,
 
-On 10/21/2025 3:51 PM, Chao Yu wrote:
-> On 10/21/25 11:33, Jeuk Kim wrote:
->> On 10/16/2025 7:12 PM, Chao Yu wrote:
->>> On 10/16/2025 1:16 PM, Jeuk Kim wrote:
->>>> From: Jeuk Kim <jeuk20.kim@samsung.com>
->>>>
->>>> Inline encryption derives DUN from <inode, file offset>,
->>>> so bios from different inodes can't merge. With multi-threaded
->>>> buffered O_SYNC writes where each thread writes to its own file,
->>>> 4KiB-per-page LBA allocation interleaves across inodes and
->>>> causes bio split. Serialize writeback for fscrypt inline-crypto
->>>> inodes via __should_serialize_io() to keep foreground writeback
->>>> focused on one inode and avoid split.
->>>>
->>>> Test: fio --name=wb_osync --rw=write --bs=1M \
->>>>         --time_based=1 --runtime=60s --size=2G \
->>>>         --ioengine=psync --direct=0 --sync=1 \
->>>>         --numjobs=8 --thread=1 --nrfiles=1 \
->>>>         --filename_format='wb_osync.$jobnum'
->>>>
->>>> device: UFS
->>>>
->>>> Before -
->>>>     write throughput: 675MiB/s
->>>>     device I/O size distribution (by count, total 1027414):
->>>>       4 KiB:  923139 (89.9%)
->>>>       8 KiB:  84798 (8.3%)
->>>>       ≥512 KiB: 453 (0.0%)
->>>>
->>>> After -
->>>>     write throughput: 1760MiB/s
->>>>     device I/O size distribution (by count, total 231750):
->>>>       4 KiB:  16904 (7.3%)
->>>>       8 KiB:  72128 (31.1%)
->>>>       ≥512 KiB: 118900 (51.3%)
->>>>
->>>> Signed-off-by: Jeuk Kim <jeuk20.kim@samsung.com>
->>>> ---
->>>>    fs/f2fs/data.c | 2 ++
->>>>    1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index ef38e62cda8f..ae6fb435d576 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -3217,6 +3217,8 @@ static inline bool __should_serialize_io(struct inode *inode,
->>>>          if (f2fs_need_compress_data(inode))
->>>>            return true;
->>>> +    if (fscrypt_inode_uses_inline_crypto(inode))
->>>> +        return true;
->>>>        if (wbc->sync_mode != WB_SYNC_ALL)
->>>>            return true;
->>>>        if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
->>> Jeuk,
->>>
->>> Can you please try tuning /sys/fs/f2fs/<dev>/min_seq_blocks to see whether it
->>> can achive the goal?
->>>
->>> Thanks,
->>>
->> Hi Chao,
->>
->> Thanks a lot for the suggestion.
->> I tried tuning `/sys/fs/f2fs/<dev>/min_seq_blocks` as you mentioned, and it also achieved similar performance improvement on my setup.
->>
->> Your approach looks cleaner and better than the one I proposed.
->>
->>  From what I see, even after reducing this value from the default (2MB) to 512 KB on my local system, there doesn’t seem to be any noticeable performance drop or other side effects.
->> Do you see any possible downsides with lowering this value that I might have missed?
-> Hi Jeuk,
+On Mon, Oct 20, 2025 at 10:07=E2=80=AFAM Herve Codina (Schneider Electric)
+<herve.codina@bootlin.com> wrote:
+
+> The first patches in this series are related to a new helper introduced
+> to parse an interrupt-map property.
+>   - patch 1: Introduce the helper (for_each_of_imap_item)
+>   - patch 2: Add a unittest for the new helper
+>   - patch 3 and 4: convert existing drivers to use this new helper
 >
-> We're using sbi->writepages to serialize large IOs, once you tuned default
-> value from 2MB to 512KB, in Android, there are threads issue [512K, 2M)
-> sized IOs, they will join into racing on grabbing the .writepages lock,
-> I guess that will cause potential performance regression, right?
-
-That's right, that could happen.
-
-I’ll run some tests to check that, including a few other cases that 
-might be affected.
-I’ll share the results here if I find anything noticeable.
-
-Thanks for your help!
-
-> Thanks,
+> Patch 5 adds support for GPIO (device-tree description)
 >
+> The last patches (6, 7 and 8) of the series are related to GPIO
+> interrupts and GPIO IRQ multiplexer.
+>
+> In the RZ/N1 SoCs, GPIO interrupts are wired to a GPIO IRQ multiplexer.
+>
+> This multiplexer does nothing but select 8 GPIO IRQ lines out of the 96
+> available to wire them to the GIC input lines.
+
+I had my worries about the multiplexer but seeing the whole picture
+and the nice refactoring with for_each_of_imap_item() I have to
+say the patch series looks very nice.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
