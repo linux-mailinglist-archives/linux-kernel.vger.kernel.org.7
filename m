@@ -1,117 +1,138 @@
-Return-Path: <linux-kernel+bounces-862204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA28BF4ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D64EBF4AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA163BFF94
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B8418A2600
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D0B25A2D1;
-	Tue, 21 Oct 2025 06:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/YtPR7h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F6C25B1DA;
+	Tue, 21 Oct 2025 06:01:37 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F47E20102B;
-	Tue, 21 Oct 2025 06:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5CE1A23AC;
+	Tue, 21 Oct 2025 06:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761026469; cv=none; b=NIJtIRQjn8TmMZjdFolqeR86wCymX7IBntfRQJBMoNJC+ea5Qwg83hjEzOUpXLY4tXwQwuEikmFNOrWh+yOiwQ62Jcqwj9VAEClWGmo8q6ybCDFPuV7wktQwX9NzudonbEbtdC97X4AE7v7hyZ7+Rf8+QD7uj5fJZUb1+DFRKcE=
+	t=1761026497; cv=none; b=L14oZUeArHKeAct1hYY5QIqvbKBi9vGhd0a83shs0jGcYYpwjPMvKZAuwT7nxjQHFAR48vjbnmJou0t0iyZsjwqGOG0x8KwzgnIwbg2fJwgP+2ehtJJzobS5+7RJaQbbvTptgkJ8A2rKMyMEDAd8zRXAAOO6nQpspqP2Ey0rW9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761026469; c=relaxed/simple;
-	bh=leVGy3m3C0ox1KihNTxl75c7yMvX5DhCdvZGegMEpSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4PlYyVh/sm+yhS+qUfBf2aWtf+cgQDjNzHmsYP7A+wyaWXdXy/2JJTOnAVIcpMDv7+2Ca2+IWu51GO4Z1KQCEuAKfo0jSruA8ActFJRusmWk2Tnw9NzsD53g3CPgvEwc70eTta6ReDkaxwgdufMOeRAzp/WVD74/uGpE0xzXts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/YtPR7h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF29C4CEF1;
-	Tue, 21 Oct 2025 06:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761026468;
-	bh=leVGy3m3C0ox1KihNTxl75c7yMvX5DhCdvZGegMEpSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D/YtPR7hXr7HDYt3kwPIwQPPNZ6foZPGaPyKfbiAINADLKI5mwi4LlejBVPhcUBwu
-	 bKaR25r+8BksQ8fC1qOhTsdzRK1slwhQmhp+ixg7UWtAGcLi1Dfn93utOJZm3TW4z7
-	 dT7Mk1jvCUk3ylCAkaMWSBW2NAQHWMd5ctkBjmxHWPGyywMiDgrmFGWL7ApjX7hNHZ
-	 x6iFh5GR6qfZxk44boaJTNw/qwT/GhlVuof5/JMnSy+FC/Ocq7lIpWEACwFFClYMRL
-	 l1Dagf7YKFTg7HOh+3/5j6tdi6k6m3L+sjM2u6l+FvIYMVt5t+Srji/bLytBb6WkT8
-	 ox893izM8aQvw==
-Date: Tue, 21 Oct 2025 09:00:59 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org, jasonmiu@google.com,
-	dmatlack@google.com, skhawaja@google.com
-Subject: Re: [PATCH v3 0/3] KHO: kfence + KHO memory corruption fix
-Message-ID: <aPchmxfh4ACM0vY2@kernel.org>
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1761026497; c=relaxed/simple;
+	bh=Y352Bel61Zm8i1QWPYkSlbQPAribwoB36DafzkL3EiE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=i4pqiOsnu7G/PPKIyy5GALrTzH08ymNNXCLrNdc63mE88s7aDyk24UA3nq7CWfLdHQaDQwC9sgXb5lOgvCPBznLl4ivw9KIJ9v891pgYIxeNkwHgQxlbhGRKS4dK2rB7dsyADjcqZ4hqkE/jYR7Ry6CI8CMFpmCf06CKgN4stX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 60d40906ae4311f0a38c85956e01ac42-20251021
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:2c54c30f-57e7-44a5-a4b0-d2e66808cd77,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:f5c685ca54730ba201b475cdf8606913,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 60d40906ae4311f0a38c85956e01ac42-20251021
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1039226372; Tue, 21 Oct 2025 14:01:25 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: ebiggers@kernel.org,
+	Jason@zx2c4.com,
+	ardb@kernel.org,
+	ubizjak@gmail.com,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>,
+	syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+Subject: [PATCH] lib/crypto: poly1305: fix uninit-value in poly1305_blocks
+Date: Tue, 21 Oct 2025 14:01:20 +0800
+Message-Id: <751b3d80293a6f599bb07770afcef24f623c7da0.1761026343.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 08:08:49PM -0400, Pasha Tatashin wrote:
-> This series fixes a memory corruption bug in KHO that occurs when KFENCE
-> is enabled.
-> 
-> The root cause is that KHO metadata, allocated via kzalloc(), can be
-> randomly serviced by kfence_alloc(). When a kernel boots via KHO, the
-> early memblock allocator is restricted to a "scratch area". This forces
-> the KFENCE pool to be allocated within this scratch area, creating a
-> conflict. If KHO metadata is subsequently placed in this pool, it gets
-> corrupted during the next kexec operation.
-> 
-> Patch 1/3 introduces a debug-only feature (CONFIG_KEXEC_HANDOVER_DEBUG)
-> that adds checks to detect and fail any operation that attempts to place
-> KHO metadata or preserved memory within the scratch area. This serves as
-> a validation and diagnostic tool to confirm the problem without
-> affecting production builds.
-> 
-> Patch 2/3 Increases bitmap to PAGE_SIZE, so buddy allocator can be used.
-> 
-> Patch 3/3 Provides the fix by modifying KHO to allocate its metadata
-> directly from the buddy allocator instead of slab. This bypasses the
-> KFENCE interception entirely.
-> 
-> Pasha Tatashin (3):
->   liveupdate: kho: warn and fail on metadata or preserved memory in
->     scratch area
->   liveupdate: kho: Increase metadata bitmap size to PAGE_SIZE
->   liveupdate: kho: allocate metadata directly from the buddy allocator
+syzbot reports uninit-value in poly1305_blocks:
 
-With liveupdate: dropped from the subjects
+BUG: KMSAN: uninit-value in poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+ poly1305_blocks+0x1a9/0x5f0 lib/crypto/x86/poly1305.h:110
+ poly1305_update+0x169/0x400 lib/crypto/poly1305.c:50
+ poly_hash+0x9f3/0x1a00 crypto/chacha20poly1305.c:168
+ poly_genkey+0x3b6/0x450 crypto/chacha20poly1305.c:233
+ chacha_encrypt crypto/chacha20poly1305.c:269 [inline]
+ chachapoly_encrypt+0x48a/0x5c0 crypto/chacha20poly1305.c:284
+ crypto_aead_encrypt+0xe2/0x160 crypto/aead.c:91
+ tls_do_encryption net/tls/tls_sw.c:582 [inline]
+ tls_push_record+0x38c7/0x5810 net/tls/tls_sw.c:819
+ bpf_exec_tx_verdict+0x1a0c/0x26a0 net/tls/tls_sw.c:859
+ tls_sw_sendmsg_locked net/tls/tls_sw.c:1138 [inline]
+ tls_sw_sendmsg+0x3401/0x4560 net/tls/tls_sw.c:1281
+ inet6_sendmsg+0x26c/0x2a0 net/ipv6/af_inet6.c:659
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x145/0x3d0 net/socket.c:742
+ sock_write_iter+0x3a6/0x420 net/socket.c:1195
+ do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
+ vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+ do_writev+0x1b5/0x580 fs/read_write.c:1103
+ __do_sys_writev fs/read_write.c:1171 [inline]
+ __se_sys_writev fs/read_write.c:1168 [inline]
+ __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
+ x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+in poly1305_blocks, ctx->is_base2_26 is uninit-value, ctx init in：
+poly1305_init ->
+     poly1305_block_init
+
+so add memset in poly1305_block_init, then use poly1305_init_x86_64 to init
+by asm.
+
+Reported-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+Tested-by: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ lib/crypto/x86/poly1305.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/lib/crypto/x86/poly1305.h b/lib/crypto/x86/poly1305.h
+index ee92e3740a78..3b9f1024a18d 100644
+--- a/lib/crypto/x86/poly1305.h
++++ b/lib/crypto/x86/poly1305.h
+@@ -8,6 +8,7 @@
+ #include <linux/jump_label.h>
+ #include <linux/kernel.h>
+ #include <linux/sizes.h>
++#include <linux/string.h>
  
->  include/linux/gfp.h              |  3 ++
->  kernel/Kconfig.kexec             |  9 ++++
->  kernel/Makefile                  |  1 +
->  kernel/kexec_handover.c          | 72 ++++++++++++++++++++------------
->  kernel/kexec_handover_debug.c    | 25 +++++++++++
->  kernel/kexec_handover_internal.h | 16 +++++++
->  6 files changed, 100 insertions(+), 26 deletions(-)
->  create mode 100644 kernel/kexec_handover_debug.c
->  create mode 100644 kernel/kexec_handover_internal.h
-> 
-> 
-> base-commit: 6548d364a3e850326831799d7e3ea2d7bb97ba08
-> -- 
-> 2.51.0.869.ge66316f041-goog
-> 
-
+ struct poly1305_arch_internal {
+ 	union {
+@@ -86,6 +87,7 @@ static __ro_after_init DEFINE_STATIC_KEY_FALSE(poly1305_use_avx512);
+ static void poly1305_block_init(struct poly1305_block_state *state,
+ 				const u8 raw_key[POLY1305_BLOCK_SIZE])
+ {
++	memset(state, 0, sizeof(struct poly1305_block_state));
+ 	poly1305_init_x86_64(state, raw_key);
+ }
+ 
 -- 
-Sincerely yours,
-Mike.
+2.25.1
+
 
