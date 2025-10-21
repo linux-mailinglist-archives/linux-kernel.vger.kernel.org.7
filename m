@@ -1,156 +1,166 @@
-Return-Path: <linux-kernel+bounces-862915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AD4BF6853
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:46:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B118BF6844
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9453B60A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A4719A3BC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C1A331A7A;
-	Tue, 21 Oct 2025 12:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8516E333432;
+	Tue, 21 Oct 2025 12:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="P2TSt6sH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vMqbhdBh"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iu0n0IjZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE9A330B0B;
-	Tue, 21 Oct 2025 12:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FCA3328E0
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050708; cv=none; b=G12YY22il6WTAeVBFOT7y6ElsFxbGfMXhoBCMicdLkGs6Vbl5dZKzcGD0lpODOZs/4n0GO0F0YP/jS7X+rnBC2fWASUhJvGydKeJrfVbX2u7sce4pyJSbSjiJHJmL8/PU1LMUO9FuqwEj2ZL6HvyOtRXVlpT06t2sL7OKYFM9CQ=
+	t=1761050713; cv=none; b=nWTSKSaNxHr7lA/LUKBRScWd2p/PE+Jnp3u9BXnhgVUd0K4onYvLg30tjTF2KM0E3Sd9f1LDCOyFYIie35cKu31yo8aXpYMXluf5rot3L+999uBQdVHfnaJgwHvCwN4p40znwN+8rA9wb3KuiAQacTl5r9gRbdq/IbvbdHVshO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050708; c=relaxed/simple;
-	bh=R2kJsOH4TDONKCo/+SareOThYcnZIqqWXQFph/AdTYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BBxvlJUKRBitdARPt5G2Yc7+zET8zP+h/oRuUPo7Sb8+1eknI8LVw90wWITkYDEKNDYfey7UeMo9+hyhxO3BffdIAkhmiQi5etRSieA1CjH5p8FMny2AFFbONUG3YjBmB06WY40NAsirQf2FxCi69/Py6Q/9cMjfkbKtkTA/Hj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=P2TSt6sH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vMqbhdBh; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9C4561D000BF;
-	Tue, 21 Oct 2025 08:45:01 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Tue, 21 Oct 2025 08:45:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1761050701; x=
-	1761137101; bh=VJQvSbwrg6PINiCTEISqmNZW2C/OLur61op4W7UVtDI=; b=P
-	2TSt6sHjjBDDorM42j9GKt4/tgcMBn1FXxZ7HhlOL7z7Q8Vb7kZDh+FU7SnlVOUi
-	AeLVe7Z0Qjhi6csKEJ+4lukk2Gq4JwAXIDw5hdRpa1YmoEE+XOE+sRnCgRSvYdXp
-	USJ/jNU4vMFRFG+eHUF+hT1sCAFRs7yKGAqHVEvp1EObA/gQho0hgdgFrhzqs/Ws
-	FQ7DuqLIim4qE0zqoNujHFnkTUGeE48bn0xbl3wMgg+L9NN+RJXTiy/caRLiWHJM
-	VYYb1liFB2twI1J1LbHxSqxqn0tNIojF02WWuqzueBP94f1rj5h0+KX2+mTpDSlB
-	tmOFzLN/dUGp2BV2Z++Vw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761050701; x=1761137101; bh=VJQvSbwrg6PINiCTEISqmNZW2C/OLur61op
-	4W7UVtDI=; b=vMqbhdBhiisP9/h906Pa93HVoN1eHWP6+PCfpqY1ZJipF9Ekzb8
-	l5/QmJUYATXKLcLugOeBtKh6vKeKyeY75KbwGuYHmR3kbiqSAVgv/rU3JExBqDtz
-	JLG+QShw6uSimDNyOm0RPneOtzElg6xGkmRA7B+pnyB1CSNOYdamqrPSlCkE7dVw
-	OGnDIcsVvWb2r5YYeKqFt3QFoBfnp3UDv0kc3up4qGaPshhPNnUlV9PC/AUSrPH3
-	F/J/iY0OrxHha+PYenITLu7ZEReecwV5jashTOmGUZzZYC+MEKksqxIp4ZnvoTbZ
-	IEeeM5fMnbiVU1XX6QzNGC3Eqx+J3sVhjJw==
-X-ME-Sender: <xms:TID3aJLtBfJPrcK55rpKBVyE-jiiq7j0uG1pTfOghs-4aOud14q6Jw>
-    <xme:TID3aBjTbz8i_yRwEa2N5rBO-jhYbq6feEcJyCvqiECQ1aygy71K5yYCczXrqUhaW
-    UJVO0Fanuh7mkCA7cws-hdto3-dyekpChwmqs3LU1sUGJMPWEfQPw>
-X-ME-Received: <xmr:TID3aGICICdxniT7o8tqvlsFb4siRwfYZ6NM3fVy6vTzBs6mRFE-C0U-36g0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedtjeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
-    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
-    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
-    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedugedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfihilhhfrhgvugdrohhpvghnshhouhhrtg
-    gvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgv
-    thdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughh
-    rghtrdgtohhm
-X-ME-Proxy: <xmx:TID3aIgkUiBTsH-6aK2KRGnVCp7Oorqdm7VtIyRSvlkaAwxziLPqgw>
-    <xmx:TID3aM1d8tmPbNB_pJgsycnVQfcxxA1FWF7h3txsCOml3IXlVLx80w>
-    <xmx:TID3aGhC2-YFYWeUZqYVc3UDZyUMJaVUrnJg0o-rgmVG0j8toWIY8w>
-    <xmx:TID3aF-7D0UvCz7lGrFOuPvJpETkWvYlK86vL_1-SGpZqAxVxSElzA>
-    <xmx:TYD3aBCdKB9q3gzfEsv-AdpflRZjXBqpzcg7KPJfs0hzt5ryLPbRyjPE>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 08:45:00 -0400 (EDT)
-Date: Tue, 21 Oct 2025 14:44:58 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Wilfred Mallawa <wilfred.opensource@gmail.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Simon Horman <horms@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>
-Subject: Re: [PATCH net-next v7 1/2] net/tls: support setting the maximum
- payload size
-Message-ID: <aPeASl1RRAKMmuhC@krikkit>
-References: <20251021092917.386645-2-wilfred.opensource@gmail.com>
+	s=arc-20240116; t=1761050713; c=relaxed/simple;
+	bh=fNqD+B6s469Yj7Uuf2+D0qytTYH3QsTqcGglEXhywPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=be7Z9J8hq25TatgBzPQLvURt1v6fZSzNRsLHcDKVONCCsCqJ8Isj2vSGKz/1o+fdaaBrb+xyGPBOXMPCzKIAWVSFaJplP2xihGLRuCANa6pXfv239GF8MvKXNQUa6eFe2wiE0eVlHvJBMVvsJjUkhPQRblE76ACPy985PURiL6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iu0n0IjZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D34C4CEF1
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761050713;
+	bh=fNqD+B6s469Yj7Uuf2+D0qytTYH3QsTqcGglEXhywPQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Iu0n0IjZdJ1BkmkUfib/wrwtDaZ6xxHsH/c9fcxkTJjMAdwzqS98vY2XcO/fnDlZp
+	 w3jJfmFgk+1Px+pty5cxR0VQczTngpA2iuD22WeZm98XvhzSCPuJYTXDbFuJXUXUM1
+	 sdws1JBJcySlRx3SqYvtwrpL2rqFaHzXDCzooFesdHaB6NNtPefPtIfdsfGMwupJrC
+	 3u0Uk0umvEPeP/Ei35P/BRrFymRIDy/uNLraeQX2nAxGbHlG+0kNp4HFW7jLoM28ec
+	 kAoRz8OcCUravdQt/zI4VWy0/VrLeTWbg+xWB7UesTOpYB4aRKhD/L05DtyCkprZFy
+	 aBVoJ4agTixUA==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-651c743b2d9so2465948eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 05:45:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQLJm+nboqaglUC+JQ1rIY4kJL1TpIRZm3KlMUPZwa11bPAVqS/jMYmSJ3fe2VFHU49BkyRnqXcANU+4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5wv8keFPtKLEfAPzty++YBME+k2tsASaaGri+hegtNZTmzZuf
+	AhdDNhZhk7pmlKw/zS4FQIORVBzLDvaGZBzberFYkoVDyTZhTggmpjYMLtn8qhFpcJWX24zjDa0
+	YHlok/1qjSyf0WaItRU+A2keMNceWiCY=
+X-Google-Smtp-Source: AGHT+IH6obx8zcmEauqGoNYLVkeBLUIIr0ww8RYLI2qsmTsgyzzB7QT2RsZlbIpSX2hhGlD1fpjflbZtgs/poJLEHoA=
+X-Received: by 2002:a05:6808:1383:b0:43f:5b28:f0a6 with SMTP id
+ 5614622812f47-443a2ee46d2mr7050078b6e.1.1761050712765; Tue, 21 Oct 2025
+ 05:45:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251021092917.386645-2-wilfred.opensource@gmail.com>
+References: <6196611.lOV4Wx5bFT@rafael.j.wysocki> <2323750.iZASKD2KPV@rafael.j.wysocki>
+ <25435d82-575d-495f-ae61-bd38570ff9ad@linux.ibm.com>
+In-Reply-To: <25435d82-575d-495f-ae61-bd38570ff9ad@linux.ibm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 21 Oct 2025 14:44:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iC-Lz59iu+5Ps-T9W5Ow__pm_0-txF2mDERypPFQYFsw@mail.gmail.com>
+X-Gm-Features: AS18NWBovxp0gk85Y0l34CMY9sPShK1oLNJ-hGiHVklLTkmzTqdfgdStD1r2e9w
+Message-ID: <CAJZ5v0iC-Lz59iu+5Ps-T9W5Ow__pm_0-txF2mDERypPFQYFsw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] PCI/sysfs: Use runtime PM guard macro for auto-cleanup
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PCI <linux-pci@vger.kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>, 
+	Niklas Schnelle <schnelle@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2025-10-21, 19:29:17 +1000, Wilfred Mallawa wrote:
-> diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-> index 39a2ab47fe72..b234d44bd789 100644
-> --- a/net/tls/tls_main.c
-> +++ b/net/tls/tls_main.c
-> @@ -541,6 +541,32 @@ static int do_tls_getsockopt_no_pad(struct sock *sk, char __user *optval,
->  	return 0;
->  }
->  
-> +static int do_tls_getsockopt_tx_payload_len(struct sock *sk, char __user *optval,
-> +					    int __user *optlen)
-> +{
-> +	struct tls_context *ctx = tls_get_ctx(sk);
-> +	u16 payload_len = ctx->tx_max_payload_len;
-> +	int len;
-> +
-> +	if (get_user(len, optlen))
-> +		return -EFAULT;
-> +
-> +	/* For TLS 1.3 payload length includes ContentType */
-> +	if (ctx->prot_info.version == TLS_1_3_VERSION)
-> +		payload_len++;
+On Tue, Oct 21, 2025 at 12:07=E2=80=AFAM Farhan Ali <alifm@linux.ibm.com> w=
+rote:
+>
+>
+> On 9/26/2025 9:24 AM, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Use the newly introduced pm_runtime_active_try guard to simplify
+> > the code and add the proper error handling for PM runtime resume
+> > errors.
+> >
+> > Based on an earlier patch from Takashi Iwai <tiwai@suse.de> [1].
+> >
+> > Link: https://patch.msgid.link/20250919163147.4743-3-tiwai@suse.de [1]
+> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > v3 -> v4:
+> >     * Use ACQUIRE()/ACQUIRE_ERR() (Jonathan)
+> >     * Adjust subject and changelog
+> >     * Take patch ownership (it's all different now)
+> >     * Pick up Bjorn's ACK from v3 (Bjorn, please let me know if that's =
+not OK)
+> >
+> > v2 -> v3: No changes
+> >
+> > v1 -> v2:
+> >     * Adjust the name of the class to handle the disabled runtime PM ca=
+se
+> >       transparently (like the original code).
+> >
+> > ---
+> >   drivers/pci/pci-sysfs.c |    5 +++--
+> >   1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > --- a/drivers/pci/pci-sysfs.c
+> > +++ b/drivers/pci/pci-sysfs.c
+> > @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
+> >               return count;
+> >       }
+> >
+> > -     pm_runtime_get_sync(dev);
+> > -     struct device *pmdev __free(pm_runtime_put) =3D dev;
+> > +     ACQUIRE(pm_runtime_active_try, pm)(dev);
+> > +     if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
+> > +             return -ENXIO;
+> >
+> >       if (sysfs_streq(buf, "default")) {
+> >               pci_init_reset_methods(pdev);
+> >
+> >
+> Hi Rafael,
+>
+> This patch breaks updating the 'reset_method' sysfs file on s390. If we
+> try to update the reset_method, we are hitting the ENXIO error. eg:
+>
+> echo 'bus' > /sys/bus/pci/devices/0007\:00\:10.1/reset_method
+> -bash: echo: write error: No such device or address
+>
+> I don't think s390 does anything different in this path, so this could
+> also impact other platforms? Changing this to something like this fixes i=
+t
+>
+>
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 9d6f74bd95f8..d7fc0dc81c30 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -1517,8 +1517,8 @@ static ssize_t reset_method_store(struct device *de=
+v,
+>                  return count;
+>          }
+>
+> -       ACQUIRE(pm_runtime_active_try, pm)(dev);
+> -       if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
+> +       ACQUIRE(pm_runtime_active, pm)(dev);
+> +       if (ACQUIRE_ERR(pm_runtime_active, &pm))
+>                  return -ENXIO;
+>
+> This changes the logic to what it was previously which used
+> pm_runtime_get_sync and pm_runtime_put. But I am not familiar with the
+> PM runtime code, so not sure what would be the right fix here.
 
-I'm not sure why you introduced this compared to v6?
+Can you please check if this helps:
 
-The ContentType isn't really payload (stuff passed to send() by
-userspace), so I think the setsockopt behavior (ignoring the extra 1B)
-makes more sense.
-
-Either way, we should really avoid this asymmetry between getsockopt
-and setsockopt. Whatever value is fed through setsockopt should be
-what we get back with getsockopt. Otherwise, the API gets quite
-confusing for users.
-
-
-The rest of the patch looks ok.
-
--- 
-Sabrina
+https://lore.kernel.org/linux-pm/5943878.DvuYhMxLoT@rafael.j.wysocki/
 
