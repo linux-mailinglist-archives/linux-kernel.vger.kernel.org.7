@@ -1,157 +1,208 @@
-Return-Path: <linux-kernel+bounces-863638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65204BF8AB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:14:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26B8BF8AE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A419C5178
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5FD462FD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC5027A12B;
-	Tue, 21 Oct 2025 20:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39EA27B354;
+	Tue, 21 Oct 2025 20:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BTbySJRF"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gxLKS5lV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YW/qRPUi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m/o/PBYg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cJti93ZY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6A027B331
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D602278E47
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 20:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077634; cv=none; b=ASa6GakusL1z6U/FO8X+yvKZbOm6tXdNN2zRc4smHJe5xETnkroaAUE9Spg6HVB3Sm/abfyBcDhxI2QJ7DpkNqVNzp+xsjsz8e97sutd/fBrFzHB+qD+4SxIHNQcPgI6G+AokROD3fvcgyYWYJpMzz7lZ5e0OO1gx4jzQiCtajU=
+	t=1761077659; cv=none; b=PO+7aBuFIocslfnJBaAi3TG/w98OejxrPqIwZE4Amz0ZvyMQt0+0kegA4KD8Natb8OSX4PSknoNjuRTJK3Ijra6Z8XKVW1eDRlaiqWFrRM5n04ZOSODK7EQG7JyGuqoGEj9drkcmleNxw1WvlbfjJ839E4D2wZVVCIuXHTb/4Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077634; c=relaxed/simple;
-	bh=4J0OjdwLHiQReJHal9jW/12h5Mk9FoHm68ukURUqSXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XOz1ih8IRP16uvYciX/bQwQGlZSIrHgm9zhTrut7EnTbVPq3EwQBgGBcrqs4gzEd9YRgXDsmdUbP7UvlwvP+LGsht1yO+HWjlbxXWwX+hQjg0gkYDpq5QKrV3/7Aaw9fDh1Hgyx3VCF6tWAbjiiIVOEheExmuxixPyTLtk4aNSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BTbySJRF; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-591c98ebe90so6656780e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 13:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761077631; x=1761682431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RKxOWgYUPXY6dMbHVZSr2oXiuYnahXqeB8QRh2XeD1U=;
-        b=BTbySJRFPV8RtG0oHZeNnw7Qrsg7TrZrdY5F3E+uYFwwedsAdqbsDJBhqzhI5Mv2eK
-         XejAvf7e3j0M/EU5TpOVMlryhyrfdM0hPhwOSC9Z5XO9S2o/OcntE3zqeOkM9G5mAmX5
-         wmKNH16m13ELztaFyvpC2Vf+5yLKxoE5x0veoVaURx5BHvD+Q2prw6XSLxSbyCMjZaXp
-         5Hp8Vy3tEWiZ3qOA3VyZF+FBi3tjZq6/A8ou6Pne37yZS0nZpoI161O7j0aXclV0ZxA+
-         W6nCKh/a9T7Uhvi43fkLewuWSdjmhyfP7VUPBcxdnsZQMEDnTLXfT7mQGDh6t1DTpDG3
-         ATGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761077631; x=1761682431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RKxOWgYUPXY6dMbHVZSr2oXiuYnahXqeB8QRh2XeD1U=;
-        b=wMTxwUnMKwLlEyVuzFBHga8zpvYidmQPcvJbDqXOu+dAgrELYM1QzuiryeULP7Ok7X
-         w2g4jprP/JVzs3pdb1yXO/8Tnv1WHjqAEzulkAHCFERIrZ4ahF/HgXffUeLcK0GlegiQ
-         1j2zXqaDYWmMwQYuJnQkXqjg2N4QQm6umkX6iBOuFgvNNcdrc+kuE3Q3ICHb8YxrC5HA
-         ehW/ivywREmlC+vx7ow9F2Q0wbjd4oKPxJUYlOVs5qmybnhfOjPFg2A1nsufRdfbzwy5
-         /jXO2sfCIF2i752OYL/UkqZeaaLXS+x+mqgtJfftIdaxBH4Eh8GDO5v1BVS9ZRav0YT0
-         oIbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVetIhyRDYNmbLQmn2aEBmCTKI0zhro9WJwWwXhmxr1FIqGN21oaXM+v9tyT/rSvh3yZSObFu5KSCFJuVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/BSNU2GnzCKnwdKCQGGcl9i9hRCJduuIL+tjnOoZDnWsUN6dj
-	FpOLoiffETwBlfkV39Z60uWzjMndU5K9xXER6GgQ18MPsM7zZeGwG+MaMy9u/T/4OcYIP57T50V
-	Fdghj71yo0au3eTOgaC/tdfQZK7Y/Zz94Tv893mE8
-X-Gm-Gg: ASbGncuceW2RkUu2F0VpLoS0ulewbbsYu+AyZ7/0YNtR+fFpQTexNMGI6d27+DZCZx+
-	BVa1Nkt12ysz55pfvW8fD/mL1bnAN45d6W4tLFjDlvS3vfee8a8/D3keD4LlyboqewnJYawJIGt
-	uTeKWaB47IakWnACBuFxtq5U19BN7JAj1FA2pDMpU1Xye3JbBdgmogUrFvAxtOaA6i6xyBFW2ox
-	/5f2qMMzKItCTTu4ecRaX4lUkdH9LtYkx0VZpKr9ORGBZFjuaLRwRrrWuadGuh+MTuZFfdCUr01
-	p0cP+/DG9W80gHw=
-X-Google-Smtp-Source: AGHT+IEqXRFdpx8CQbrjYvDVnFkn8J994f91e0LtjYzhGaLWt510eCkAIILvZM/1VmWwOM7eWS/cxOq1TCtRG2ycS50=
-X-Received: by 2002:a05:651c:887:b0:372:9bf0:aed6 with SMTP id
- 38308e7fff4ca-37797a3dd66mr47608571fa.25.1761077630863; Tue, 21 Oct 2025
- 13:13:50 -0700 (PDT)
+	s=arc-20240116; t=1761077659; c=relaxed/simple;
+	bh=r+3aZybOS3DWT0EJHc65C9tDpi3nLBmCaiy5Ic8OeJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PgTb5iZEXgs2VmA8lN+fTnbpPWTuc68TQ7884z3y7M9rQSXjTWEem5wdVSRl3wyAqhYzmDQXyPOQuEo6nOhv8YYYl8qWaxViblXoREMiERNAaIKnvr9ye5xARCMkeaY1oLPtbKOU6+cm9KTbVyYsAROb73ppZmc5sA+o5r1dOH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gxLKS5lV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YW/qRPUi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m/o/PBYg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cJti93ZY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 84A701F38D;
+	Tue, 21 Oct 2025 20:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761077650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=X80t4PTeyaiF1GwIIRh3Q3fJlZo/HhmWMgJCqgv08nk=;
+	b=gxLKS5lVMkF8Mn/lYdQIe2P5kjop4LLkWUFBp3+tg74dU1Erdvbt9kiBErcyUkr8GhPjm2
+	/Dkg6Rph7bJl6hL0+rfkP/DkvVxs3Pbw9z6z3gdeIXi5xMVAvZynK99SwOUNsIEiIwV3q2
+	PaE+SSj5EBpMrZx2vpBOpyGvEyPwZsA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761077650;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=X80t4PTeyaiF1GwIIRh3Q3fJlZo/HhmWMgJCqgv08nk=;
+	b=YW/qRPUifuq99yW2pPkvIes3WOFd6WC0mQN+abz9RhVeh07sX9YsiAIdMMWTBGvIeLqXs8
+	FRoRGeSOEY5hCYBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761077646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=X80t4PTeyaiF1GwIIRh3Q3fJlZo/HhmWMgJCqgv08nk=;
+	b=m/o/PBYgKg2geRaXYvtpGouwo78djKEftEe01eZenTU/MVzdsU8zxgSXtL9ECK3hPc1KjW
+	bONDP2CuI4RS4PpV9xhHFGvVpGGYIn5T125vZHmgWTb6sodiAYo7REOoojF1dW31OKUh3v
+	C80B0nPld45RaR3SmtXFpvz8sBbubIU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761077646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=X80t4PTeyaiF1GwIIRh3Q3fJlZo/HhmWMgJCqgv08nk=;
+	b=cJti93ZYPlCz+bDlE3jAO1p5UBTHUby/74EcmIJ2kqU8udNWkVPgct+NR3plOxIjL0R0ir
+	PsOjBji1D4d6aEDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63ABA139B1;
+	Tue, 21 Oct 2025 20:14:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5RyPF47p92h4NQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 21 Oct 2025 20:14:06 +0000
+Message-ID: <78f746b4-24a4-4006-883b-a8a0c341dc72@suse.cz>
+Date: Tue, 21 Oct 2025 22:14:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017233907.2305303-1-wusamuel@google.com> <20251018001715.8621-1-hdanton@sina.com>
-In-Reply-To: <20251018001715.8621-1-hdanton@sina.com>
-From: Samuel Wu <wusamuel@google.com>
-Date: Tue, 21 Oct 2025 13:13:39 -0700
-X-Gm-Features: AS18NWCpcTWwPQfzIddHNwywzJiUN6wPBLbqql1bRpm4FhPF577suS0FfEJERho
-Message-ID: <CAG2KctpHA+L=xh-VQ8SVDSRcqyL+ch=WMVrKS+pckLmC6uJwvw@mail.gmail.com>
-Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
-To: Hillf Danton <hdanton@sina.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/vmstat: Fix indentation in fold_diff function.
+Content-Language: en-US
+To: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ jinnasujing@gmail.com
+References: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_TO(0.00)[linux-foundation.org,redhat.com,oracle.com,kernel.org,google.com,suse.com,kvack.org,vger.kernel.org,gmail.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,didiglobal.com:email,suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Fri, Oct 17, 2025 at 5:17=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
-te:
->
-> On Fri, 17 Oct 2025 23:39:06 +0000 Samuel Wu wrote:
-> > +/**
-> > + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
-> > + *
-> > + * Return 0 on successful file system sync, otherwise returns -EBUSY i=
-f file
-> > + * system sync was aborted.
-> > + */
-> > +int pm_sleep_fs_sync(void)
-> > +{
-> > +     bool need_pm_sleep_fs_sync_requeue;
-> > +     unsigned long flags;
-> > +
-> > +     do {
-> > +             spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
-> > +             reinit_completion(&pm_sleep_fs_sync_complete);
->
-> Given difficulty following up here, can you specify why reinit is needed?
+On 10/21/25 09:37, Jing Su wrote:
+> Adjust misaligned braces in the fold_diff function to improve
+> code readability and maintain consistent coding style.
+> 
+> Signed-off-by: Jing Su <jingsusu@didiglobal.com>
 
-There are two possibilities that make reinit_completion() necessary:
-1. Suspend abort triggers completion, but is canceled before
-pm_wakeup_pending(), so need reinit to restart the
-wait_for_completion() process.
-2. Handling back-to-back suspend attempts: after a subsequent suspend
-attempt finishes waiting for a previous suspend's fs_sync to finish,
-we need the reinit to start the wait_for_completion() process of the
-subsequent suspend's fs_sync.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-> > +             /*
-> > +              * Handle the case where a sleep immediately follows a pr=
-evious
-> > +              * sleep that was aborted during fs_sync. In this case, w=
-ait for
-> > +              * the previous filesystem sync to finish. Then do anothe=
-r
-> > +              * filesystem sync so any subsequent filesystem changes a=
-re
-> > +              * synced before sleeping.
-> > +              */
-> > +             if (pm_sleep_fs_sync_queued) {
-> > +                     need_pm_sleep_fs_sync_requeue =3D true;
-> > +             } else {
-> > +                     need_pm_sleep_fs_sync_requeue =3D false;
-> > +                     pm_sleep_fs_sync_queued =3D true;
-> > +                     schedule_work(&sync_filesystems);
-> > +             }
-> > +             spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
-> > +
-> > +             /*
-> > +              * Completion is triggered by fs_sync finishing or an abo=
-rt sleep
-> > +              * signal, whichever comes first
-> > +              */
-> > +             wait_for_completion(&pm_sleep_fs_sync_complete);
-> > +             if (pm_wakeup_pending())
-> > +                     return -EBUSY;
-> > +     } while (need_pm_sleep_fs_sync_requeue);
-> > +
-> > +     return 0;
-> > +}
-> > +
+Thanks Andrew for adding extra brackets fixup.
+
+> ---
+>  mm/vmstat.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index bb09c032eecf..63860c3d22e6 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -782,13 +782,13 @@ static int fold_diff(int *zone_diff, int *node_diff)
+>  		if (zone_diff[i]) {
+>  			atomic_long_add(zone_diff[i], &vm_zone_stat[i]);
+>  			changes++;
+> -	}
+> +		}
+>  
+>  	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
+>  		if (node_diff[i]) {
+>  			atomic_long_add(node_diff[i], &vm_node_stat[i]);
+>  			changes++;
+> -	}
+> +		}
+>  	return changes;
+>  }
+>  
+
 
