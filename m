@@ -1,500 +1,330 @@
-Return-Path: <linux-kernel+bounces-863310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13E6BF783D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:55:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472C8BF7853
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D7A18858DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B293A81E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 15:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970BF343207;
-	Tue, 21 Oct 2025 15:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEA73451C4;
+	Tue, 21 Oct 2025 15:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jqr731hy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HLrGJPQY"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013037.outbound.protection.outlook.com [40.93.196.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE5F337B8C;
-	Tue, 21 Oct 2025 15:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062106; cv=none; b=lA5CoVouzJDzxFTQ9LwtI+KZ5qveh7MjSal9llDzGUCCDPS//xj+AEliXtMVC6fCnlqfRzHTfFvLCQU1HshhqCI42aT0MxVoMvqWVGJwsYfTzar+gROGbqGXCOH8FRSqrpj/0N089/OHbIa3RI15nO8UvTmkej3u5nm52x30CC8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062106; c=relaxed/simple;
-	bh=ilZDTLVRiQkmqHDkZ6wa4NbJWRwpFkMow3QEv0pJSzk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A8PW19thYEfAct6yz4/YnWhUxaoT/nIScWPEmcERvrNkZJQdbu6iFvdGnqJbjQahhtQ1PzFce+UQaykK67FBZcKSayTCzl+DI1wUuj5smgIXMYj1i0Qv0bZps2J8FYj/OGpsH5Tpx+A3LZXSM9JCsC+F0EFHaeoDlAY0N4aFNoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jqr731hy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0B9C4CEF1;
-	Tue, 21 Oct 2025 15:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761062106;
-	bh=ilZDTLVRiQkmqHDkZ6wa4NbJWRwpFkMow3QEv0pJSzk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Jqr731hyVBMaVNe0psNMusceKDIQ4eueHHYLenYogb8TFkt45aZ2iq96fVpkR74fs
-	 AIjwpbQXMHhi+TJvcxOhN8DzjhlN6/spIalZ0sFF3M6ZakOPz3Bi2khObD8e0T6h7/
-	 DPD0Gi+QPL6btrN2vwLNR1HsDNXAlIpl3dBnoLwnIXzQE1iMtEUe/Jd6PN2EYmyalT
-	 1yrE65K/a5CW36WJM0FEa7wZV1rUDME6WzUpYOgUxkJsJsMkDzkDZfcMXAkans72M4
-	 bvxfXrfvO/myT1ZprNoVmN7G0wJp9FEJv+rk2PvzT2M17bnwVygiZpLRsJJmOnzUxW
-	 F0D1eRkOunkpg==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Tue, 21 Oct 2025 17:54:54 +0200
-Subject: [PATCH v2] can: add dummy_can driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDD23446C2;
+	Tue, 21 Oct 2025 15:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761062112; cv=fail; b=O94zqOya9ALF8CUM7qkNxzF9bDXaDe59Uz4mczEeLgorHMunhXcmUHKmt9Tdkc36E0q21YaJCJY/SECVQF/MFaHP0IT/SmgwGGoYacrXKMr1vYptV1XYCxWyq1fhsyEzsyQZGjzA8VW53Hw7wbF/qZ5Ozh43r8U8pzv5yA6DS/s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761062112; c=relaxed/simple;
+	bh=yoLwRkcn08w9cIfQuxNTDQpG7RI/BOHfA/AAfJ/Apjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Kxb6LS1Pmh887/FxGhumXlNjJrROSRLWAfajfdptkv0rhmwl+joIIWd+STlKGNMiZrfjrO4dZI5xuEFg3hzGKocsFTX8R0D4SOs/w9lvS+Ocb5cEDcvd0YZ1RlD0SH/pWHOXBxFJc3A3XmMUm1lRkZpL1GMYQj67tY38iykX4Yg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HLrGJPQY; arc=fail smtp.client-ip=40.93.196.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ifeKZJX3nqSeS8686KYLK80DCInumFZLd6fWB8IiP3F7etpVHvT55F0xwpzf5J5v0YyjapCYe3t25osPo+B8YUt/fqlznnrKennJta00kuehH3F+8/hwgdugMepA//T/3P8qXws5AQLAN0LV//T9tYTSs9b84yix/8jKlysia6vmmuod4ZCWS2ImgpFJu+OEop5oGvm95yZU6ZwBfH/eg1+oYEI4oF15Rzi7vgrmhF3reZq7UrYuQrHtQ7XHd5xFpMIslMQ/jtsYLYmD5++rB4K1xjO0OzJ+lzRvS8sLsJXYRkOQ0ch6QTnjoUAd49DJ4hp9KClOcLRl6FtO3m7L/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dOUGJDF12IrftMW+PGkG8RY8N4rphdsJ6WBt3QAkrnA=;
+ b=Loamt1fMwp4+l6pRgesZS7ShQ4KeHwHbl64Zn3Xw1FXFYG6XA6n2tx+6/Qg7pvaC3U+ZOpFzGKl7KANdujYtyt06avsxRXrcUm7WUndPwDsroOF46MBFJVhmSfMBDjc+6NdagIbQTPPuytF8MMxNNaDjJ2ly1hZw0nv/tqivGDleO9q0tKtY0W7kNgkLOFDTLS9XZbh0KuKI7THWWP+fmhiK5K13msfdmtAcj+X890kgTmVuv6nvYGTHMFRzP9Z407doe5WrsE2SkUNKR29Pb2oiOQ826kTWbs5WW2jrKIJw59Swnk8zErKbS4sBgcAuUyDos4xojyupSawu6TuwPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dOUGJDF12IrftMW+PGkG8RY8N4rphdsJ6WBt3QAkrnA=;
+ b=HLrGJPQYVGccRUECyxog6oZyL6S/jBNdKA0NqNsW1ffBQOuH3sa3b22kYeFyVHBE/3N5Gkgn84W5TMIca5jQFlUDxhEaAbVL9z6jXFoba3M88bqmIBmn/tD1S0Wn4j4ygITMgq9n1V7oBZyOMsRyWDjnihwfYtuG6qp/KnbYIGZI7Uq8zsu7YXRT7JzxExUqo8rHcASaXYfSxqyTX6rMuXx3CrWlWUIMF0bqmRSE+nNI/pTIAvou5dGl+j7Xg+L1SZfO7BG962ThcvEtfxy1sZdRGlv873uGyOKXWLaEHvHiX9SKYjl7VQ6hMSgeH1SdSBrN+52oLT76NKgLeGrAAw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ SA5PPFC3F406448.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e0) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Tue, 21 Oct
+ 2025 15:55:07 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9253.011; Tue, 21 Oct 2025
+ 15:55:07 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Yang Shi <shy828301@gmail.com>, linmiaohe@huawei.com, jane.chu@oracle.com,
+ kernel@pankajraghav.com,
+ syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
+ mcgrof@kernel.org, nao.horiguchi@gmail.com,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio
+ handling.
+Date: Tue, 21 Oct 2025 11:55:01 -0400
+X-Mailer: MailMate (2.0r6283)
+Message-ID: <893332F4-7FE8-4027-8FCC-0972C208E928@nvidia.com>
+In-Reply-To: <b353587b-ef50-41ab-8dd2-93330098053e@redhat.com>
+References: <20251016033452.125479-1-ziy@nvidia.com>
+ <20251016033452.125479-3-ziy@nvidia.com>
+ <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
+ <5EE26793-2CD4-4776-B13C-AA5984D53C04@nvidia.com>
+ <CAHbLzkp8ob1_pxczeQnwinSL=DS=kByyL+yuTRFuQ0O=Eio0oA@mail.gmail.com>
+ <A4D35134-A031-4B15-B7A0-1592B3AE6D78@nvidia.com>
+ <b353587b-ef50-41ab-8dd2-93330098053e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BL1P221CA0011.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c5::23) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251021-dummy_can-v2-1-307f5927b8b6@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAM2s92gC/22PwW6DMBBEfwX53I3WxoXCqf9RRcg2S2IFm9QYK
- 1HEv9fAoT30OLs7b2debKZgaWZt8WKBkp3t5LMQbwUzV+UvBLbPmgkU7xx5Cf3i3LMzyoNoVIM
- oalRqYPn+Hmiwj531dT50oO8lI+Mx/CXmBzsPSwjkpkSQgd2x7lxcgJCMNKgHIt0mzv7G2c2SC
- 9FsrscInuJo/Q20qSSqgWNVl20Sm0mrObMn52xsi1Sd+AcEI9gW72rnOIXn3jx/2PL9UzJx4DA
- 0tZCkG+y1/LxR8DSepnBh53VdfwD2KQ/3QgEAAA==
-X-Change-ID: 20251013-dummy_can-29a900270aaf
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Vincent Mailhol <mailhol@kernel.org>, 
- =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13273; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=ilZDTLVRiQkmqHDkZ6wa4NbJWRwpFkMow3QEv0pJSzk=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBnf11xJ+7ygv9PRuuvBjn1tbq5OkZrd8imXV6k8W+zON
- nvGukT2jlIWBjEuBlkxRZZl5ZzcCh2F3mGH/lrCzGFlAhnCwMUpABPhvsbIcLE+YPrXw6t2b9pb
- 8OzsvqeWmssnNXzcEmXA9dDwSP+nnZ8YGXrSvx7ZYHdI2M/q/+vvXxIneG289NGCS7bZ4VOWy+L
- 8PCYA
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SA5PPFC3F406448:EE_
+X-MS-Office365-Filtering-Correlation-Id: 43dcb1d2-b0a6-4064-160c-08de10ba34f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cjRqYTByWXpGZ2RnR3dhcTJUQzlQdWdtNlpWSUtZanZxM2ppV2hjNHU5ZGFY?=
+ =?utf-8?B?TG1UTHVjMm45QUltL21GUW9JRzFqSFlFNnhIU3lRSEVzS3ZnREFVb0p4bExn?=
+ =?utf-8?B?VmxPZlQzUC9NMkNyYzhmbnZFNkxwSkNKelJUSmpJbThaK3EzUXRoK1NNVGpm?=
+ =?utf-8?B?TWd4MmxReVRpeHZreGJyMnVUZUFuOGFyQ012UTBYT1RiQ1NJbGZLMWN6cUcv?=
+ =?utf-8?B?cDU4K05tcklPL1ZPUHZIeG5TRERLWlRuY0ZKaGU5RlNjazJ5QlZFK0YraytW?=
+ =?utf-8?B?eVl5NnFHdEVZOWlaME0vcTBjV3dybkszcHFhRmd5THRKOXMzSjlrM1daNUxL?=
+ =?utf-8?B?N0pidmhKTXlXU3J0ZkY1dGYzMis5ZVo0RTJiY2F3Rmt0ZDlkOFIxVDR3Q3dN?=
+ =?utf-8?B?dER2ZXRDNElnV0QyK05sUENCZUpESFlIR2FOWVZKazlDckpKV2w3MUF4VVFW?=
+ =?utf-8?B?Q0kzVldGTUFaN05LSGx5S096bStERmNicUNod0JNdEJoSmRpWG1tVWJJTm4r?=
+ =?utf-8?B?U2h6U0VLNjRLaEI5ODAwQ0ZTalYxREtHUmdlRGg5MkJKNFRiTjBoTk5YRlZC?=
+ =?utf-8?B?MlJTbjZkdEhyaWdRZWRQZDZUN1U3K2V2WWt2aHFNTVNRQTlnU1RORDBoWDhu?=
+ =?utf-8?B?dTgxellzNGt2K2huSmZ5d3l4MDdHQjdRRWM0YUhhQkxjajBVVXZpbGRjUFdV?=
+ =?utf-8?B?V1A3TWhoVnN0SDBkVXhOYlExbHRGNEVpem1EZ3ZOa3EwUDVLN0FwNjd5WXVo?=
+ =?utf-8?B?UHZ3THhFb2lPU1Uva0phOUJUeVBOdGhwbkpGd2F0eGhkd2lpTWw4azMrbWZC?=
+ =?utf-8?B?K2RMaUptUmtZS1lLSXJ6YXU5UFltdFo0ZzlRZGR3ZDZTVTZrOEpCL2JrRFVL?=
+ =?utf-8?B?MXZhaXpCNEsrM1JUbHNpbXZqMWxYdGJKWk9GSGtIL3FUNmtCcnY0QmdZaS8v?=
+ =?utf-8?B?WFllZnR2elBMZnFpRmUxSXRkY050V0FkcHg0WDhGSTE4UzB3c0hOR0swRGY4?=
+ =?utf-8?B?NmlrWmtLV3V6Nm9zNjRMVlNxSEJrNmdqc1BVVjd4MU5hQzZINFRCZlRMekV5?=
+ =?utf-8?B?akxGcklZRFhxOHA4Zm5lMlUxMC9QQ3l4bWNsRUhtMDRwdVRBaGxWQ0xObjd4?=
+ =?utf-8?B?SFBoSzNhNVo5aGt0S0VJMkg2Y0RnUWVTQ3d2Ry96YXVFVGlON3FQeW8rendG?=
+ =?utf-8?B?MlFRTytUM2YzVDZwUnNSYzluNDZlalFLYmNTcmFvWExyWHJFdUtvdTc5WUpZ?=
+ =?utf-8?B?dkhEa0NMdWFhZk92YnM5VTBIQU1Yaks2UzJWUEtoQjhCL1A5Zzl6Vm0rN2FD?=
+ =?utf-8?B?T3ZhTUtaL2J4Qk4vYnVxZDFxS2x4UTJLMWhNdDFwaUEwWE9lZnN4N0h3Y2Nq?=
+ =?utf-8?B?d2dqLzFJRGM1eHRmaUtXaHZWMmxHdjc0RlIxQ2JoV0VyVXJuckhUeGtqbDJR?=
+ =?utf-8?B?S3JJTTBpOENoOHVRK3VkN3V4VDRMTm93bTFGbnRjcVVxQk5vUWNOa3dhK3dk?=
+ =?utf-8?B?WUhxalJldGdTSXBqdUJ2Yllkem8vV0V1V2xsTEJVVlBaSWRjZEd2MmYwWnMv?=
+ =?utf-8?B?Wi9pUGNnNllmbk1wSFNxUGZFNFJTNjRTY1FjWlI0aDk1dDdqN0tTODB4NXZR?=
+ =?utf-8?B?MngvdXNockp4ZndEU3pzWmMvcFhTdWdUWHMzaUdzTlZ5QlZnNC9tL3g2by9z?=
+ =?utf-8?B?Y2c4bDJyTi93VXZHTDl3ZUJtdHFieURuUW5LbTlqMWVIczhqanlmeUVIa2tt?=
+ =?utf-8?B?L3N1YnNSNUpMcGVHdnVxUlRQTTB4UUFpUXZLYjhqQkRnbzNoTThodUkrVVNZ?=
+ =?utf-8?B?bG9HY3hCczErUkhOSnFITUxMZTJTQTNYQ2NJSURsVXdNZzhWak1FUVFsdmVD?=
+ =?utf-8?B?cEoxVHFwZDlESVpMY0MrNktIeld5SWVpZXRVOG12MnhMTmg4UkZ0b3RhemdL?=
+ =?utf-8?Q?WP7M2gJGBU/ifPe+LFyWGjTJfz5h5/TB?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Rk92dWkvbnEwOWg3MXVoTFNTWHA1b3BJMlRqVy9HTk94c1RpOUpFWGJ3enFJ?=
+ =?utf-8?B?dHZSQTdjNlJLRGJHdHhibjl1REloNnpMUVR5ZmtsRzFSVFkzTElTL2QraUpv?=
+ =?utf-8?B?dlkvN3FmcGdSK012b2V6bmx0b0pJaERPaWlTbHJNNU8vMEJIUk4yTTVlNm1S?=
+ =?utf-8?B?eU9BVnoySUhrYnlVQkFyT3U1dlN4VmloT0c4eE4yZ0F6L3ZKUGdERnNFQ3Z6?=
+ =?utf-8?B?bVVZaDFXNFlEUjRpQ01EeTRTMWVRMTcwM0tkMUJoeGpXQnpHTW1xelN4WjJs?=
+ =?utf-8?B?ZnQ4S3hXb0tJSm1UUmlvOFZ1V2hnNkRVWmV0MjkrdnhQbGxKelczbkNZSVR2?=
+ =?utf-8?B?SHpDQTEraXNEc1dOVk1PMnVvTldBenRKTTZicGNINkhzNGRkVkpkRm5WeXZm?=
+ =?utf-8?B?a21FOWs5ZGVKSnpoaWJTdXpNakFjVDdQckd6WXZnam5aRHRpNVhCL0p0eUhG?=
+ =?utf-8?B?ckVtMWpSL29GbEE4UzVXTHpOM0VoeWVaVEpIWjN5dVVLa3pCNkZHQ3drd0pH?=
+ =?utf-8?B?NGRjVlV5aXpEUWJhakdRRGFOTTRvcitKeEdiQVNCd2VqeEdYcmlEeU9kTmVW?=
+ =?utf-8?B?ek5kczdYUWE2akt4cHBDam1wUlgwN3NlWVMrUjNpYjZnelREZXhHMldzelFm?=
+ =?utf-8?B?MFJDZmhHWlIwaGY1aTF0Zm1aTi9TUkROSlpjaXlZSjVaRG44RDQvZm1xWnVy?=
+ =?utf-8?B?ZEhTcTU4L2dLVXRJRXIvdk1FbjRTcHQ0K0dZTkoza1IrcEJDcmRYRXhNeGg5?=
+ =?utf-8?B?alRyaERvYnpqVDZubng2bHhGZEVKNkRBc1A2YllndDZYZUxYUDAwdDdxWUls?=
+ =?utf-8?B?aGNkMWZ3cklIY09tM3lQdThsVm4rS2N2UUlpenVYVVIvamJsUEdXaE5sMUxL?=
+ =?utf-8?B?MXAwV01UaWozbGs4eHBaUUsvN0ZjQjNJMGJNRnMwS1hkdElORHFpcjlJV1J6?=
+ =?utf-8?B?QnhQMDcydkdyZU5ya0tWL1FKcmhQMlB3WGhEd3FTM2dmdXUxSkhESjZUUTNo?=
+ =?utf-8?B?VHpSVm5WSlFBT0dHbHpRVzU0cDNEQmNNWk5zOFJFWTFLOFo3VGlpWkxBRmF2?=
+ =?utf-8?B?bGFlNUYySjRFeTZJVW1PaGtBbjdablY3WVhyTUpNQUk5b2lsOW9rZFNydGpx?=
+ =?utf-8?B?TkZoRWowUndRL0ZqZE1Jak1yTjRPN0w3ME9UM1Bpb0VRYWRrREdseGZuaFR3?=
+ =?utf-8?B?ckI0VitnakxBdlMzenhUdjBOVVRYcmZwUEEvQzRYaWxVdTVIbFl2VHAwN3hh?=
+ =?utf-8?B?WU1TWkM5ZjJsWnVQVFY1Ukx3b3lyOGNSK3g2OUllaGM3emY3aUtvOWRHcmxx?=
+ =?utf-8?B?eTQvNW1Rc0EvejVwMWlqekFwanF6Yy9CODFRbnZnNXhhRlF5MHFCTDl2MlFK?=
+ =?utf-8?B?N0VwWmdwNXVwUFVDa1Z1bnlVNmlYYVRPZEI2RVhOSGc2aG41QW9lemtVZjdS?=
+ =?utf-8?B?clRTVWtPSitDY3hxZHlwdHNrQ0p0YloyQ0UyUWR5NkdiSzhPNFc1ZlRaelJv?=
+ =?utf-8?B?ckZ1dzJQM3hkUW1MV214bndEanBkSjhsOUNyRCtTN2k2V1gxWDFOSHEvUGJ2?=
+ =?utf-8?B?MXRkSzJHbnN3WEt6T1h6NUJSbk8rcHR4WHhhVG1NcGxaYWtnTTJMejdEcHdP?=
+ =?utf-8?B?NU5YQm5LUTRGb2RnNThESlpmWlF4RFMvS1MwNGFUYkZiS3B4S29iQWw5ZzVC?=
+ =?utf-8?B?ckwvcTBhNzBzOGJQTnlqVWVVd3hkRFFqNzdXYkpVL3RVdGRrRzdSSms2VXVY?=
+ =?utf-8?B?OEJnNmNQNk9xeGZZQW5SSG4zNm1xRWNoWmZMWUkxdFhYMW9wZ05ienRYVHk3?=
+ =?utf-8?B?SkxpVllXZGFVejduVjI1NHdZQVpyS0lsRTNHektVMlVOU0s5TUFSVlhRSDdp?=
+ =?utf-8?B?ZVRHT09UbE9weElNdVdzdHBtTW4xM1hKYkt6QmZ0akZ1bUpVM2g5eUJEVU5Y?=
+ =?utf-8?B?ZkhBbStWSnlrMlVCcUJvdldvcnVhME1hd0NWUG40dGpPR3d5SG9rR1RadHJ3?=
+ =?utf-8?B?bmVXSDl6cWlaM2VEOGM4M2gzU2NmM3RhbEhMNEhXODBIV2Y3ZGxTREN3Q25n?=
+ =?utf-8?B?ZWhYOW93cWxYdXpCMFMyM09UcnhFM0E3T0lYZ0x1N2x2d2ZIOTB0Q0FxM3Vt?=
+ =?utf-8?Q?gszfPBL8IOQfRZp3d+NPekGCD?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43dcb1d2-b0a6-4064-160c-08de10ba34f2
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 15:55:07.3195
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zc4qQDfgmoZlm7TmtSGRshjdlvjSWTD1GgiuQUHyXWXccnfLpvnh84/FxAkLbJrr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFC3F406448
 
-During the development of CAN XL, we found the need of creating a
-dummy CAN XL driver in order to test the new netlink interface. While
-this code was initially intended to be some throwaway, it received
-some positive feedback.
+On 21 Oct 2025, at 11:44, David Hildenbrand wrote:
 
-Add the dummy_can driver. This driver acts similarly to the vcan
-interface in the sense that it will echo back any packet it receives.
-The difference is that it exposes a set on bittiming parameters as a
-real device would and thus must be configured as if it was a real
-physical interface.
+> On 21.10.25 03:23, Zi Yan wrote:
+>> On 20 Oct 2025, at 19:41, Yang Shi wrote:
+>>
+>>> On Mon, Oct 20, 2025 at 12:46=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>>>>
+>>>> On 17 Oct 2025, at 15:11, Yang Shi wrote:
+>>>>
+>>>>> On Wed, Oct 15, 2025 at 8:38=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote=
+:
+>>>>>>
+>>>>>> Large block size (LBS) folios cannot be split to order-0 folios but
+>>>>>> min_order_for_folio(). Current split fails directly, but that is not
+>>>>>> optimal. Split the folio to min_order_for_folio(), so that, after sp=
+lit,
+>>>>>> only the folio containing the poisoned page becomes unusable instead=
+.
+>>>>>>
+>>>>>> For soft offline, do not split the large folio if it cannot be split=
+ to
+>>>>>> order-0. Since the folio is still accessible from userspace and prem=
+ature
+>>>>>> split might lead to potential performance loss.
+>>>>>>
+>>>>>> Suggested-by: Jane Chu <jane.chu@oracle.com>
+>>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>>>> ---
+>>>>>>   mm/memory-failure.c | 25 +++++++++++++++++++++----
+>>>>>>   1 file changed, 21 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>>>>> index f698df156bf8..443df9581c24 100644
+>>>>>> --- a/mm/memory-failure.c
+>>>>>> +++ b/mm/memory-failure.c
+>>>>>> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long=
+ pfn, struct page *p,
+>>>>>>    * there is still more to do, hence the page refcount we took earl=
+ier
+>>>>>>    * is still needed.
+>>>>>>    */
+>>>>>> -static int try_to_split_thp_page(struct page *page, bool release)
+>>>>>> +static int try_to_split_thp_page(struct page *page, unsigned int ne=
+w_order,
+>>>>>> +               bool release)
+>>>>>>   {
+>>>>>>          int ret;
+>>>>>>
+>>>>>>          lock_page(page);
+>>>>>> -       ret =3D split_huge_page(page);
+>>>>>> +       ret =3D split_huge_page_to_list_to_order(page, NULL, new_ord=
+er);
+>>>>>>          unlock_page(page);
+>>>>>>
+>>>>>>          if (ret && release)
+>>>>>> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flag=
+s)
+>>>>>>          folio_unlock(folio);
+>>>>>>
+>>>>>>          if (folio_test_large(folio)) {
+>>>>>> +               int new_order =3D min_order_for_split(folio);
+>>>>>>                  /*
+>>>>>>                   * The flag must be set after the refcount is bumpe=
+d
+>>>>>>                   * otherwise it may race with THP split.
+>>>>>> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int fla=
+gs)
+>>>>>>                   * page is a valid handlable page.
+>>>>>>                   */
+>>>>>>                  folio_set_has_hwpoisoned(folio);
+>>>>>> -               if (try_to_split_thp_page(p, false) < 0) {
+>>>>>> +               /*
+>>>>>> +                * If the folio cannot be split to order-0, kill the=
+ process,
+>>>>>> +                * but split the folio anyway to minimize the amount=
+ of unusable
+>>>>>> +                * pages.
+>>>>>> +                */
+>>>>>> +               if (try_to_split_thp_page(p, new_order, false) || ne=
+w_order) {
+>>>>>
+>>>>> folio split will clear PG_has_hwpoisoned flag. It is ok for splitting
+>>>>> to order-0 folios because the PG_hwpoisoned flag is set on the
+>>>>> poisoned page. But if you split the folio to some smaller order large
+>>>>> folios, it seems you need to keep PG_has_hwpoisoned flag on the
+>>>>> poisoned folio.
+>>>>
+>>>> OK, this means all pages in a folio with folio_test_has_hwpoisoned() s=
+hould be
+>>>> checked to be able to set after-split folio's flag properly. Current f=
+olio
+>>>> split code does not do that. I am thinking about whether that causes a=
+ny
+>>>> issue. Probably not, because:
+>>>>
+>>>> 1. before Patch 1 is applied, large after-split folios are already cau=
+sing
+>>>> a warning in memory_failure(). That kinda masks this issue.
+>>>> 2. after Patch 1 is applied, no large after-split folios will appear,
+>>>> since the split will fail.
+>>>
+>>> I'm a little bit confused. Didn't this patch split large folio to
+>>> new-order-large-folio (new order is min order)? So this patch had
+>>> code:
+>>> if (try_to_split_thp_page(p, new_order, false) || new_order) {
+>>
+>> Yes, but this is Patch 2 in this series. Patch 1 is
+>> "mm/huge_memory: do not change split_huge_page*() target order silently.=
+"
+>> and sent separately as a hotfix[1].
+>
+> I'm confused now as well. I'd like to review, will there be a v3 that onl=
+y contains patch #2+#3?
 
-The driver comes with a debug mode. If debug message are enabled (for
-example by enabling CONFIG_CAN_DEBUG_DEVICES), it will print in the
-kernel log all the bittiming values, similar to what a:
+Yes. The new V3 will have 3 patches:
+1. a new patch addresses Yang=E2=80=99s concern on setting has_hwpoisoned o=
+n after-split
+large folios.
+2. patch#2,
+3. patch#3.
 
-  ip --details link show can0
+The plan is to send them out once patch 1 is upstreamed. Let me know if you=
+ think
+it is OK to send them out earlier as Andrew already picked up patch 1.
 
-would do.
+I also would like to get some feedback on my approach to setting has_hwpois=
+oned:
 
-This driver is mostly intended for debugging and testing, but some
-developers also may want to look at it as a simple reference
-implementation.
+folio's has_hwpoisoned flag needs to be preserved
+like what Yang described above. My current plan is to move
+folio_clear_has_hwpoisoned(folio) into __split_folio_to_order() and
+scan every page in the folio if the folio's has_hwpoisoned is set.
+There will be redundant scans in non uniform split case, since a has_hwpois=
+oned
+folio can be split multiple times (leading to multiple page scans), unless
+the scan result is stored.
 
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
-Initially, I did not intend this to be merged. Oliver suggested that
-this may still be mainlined under a different name (e.g. can_nltest):
-
-  https://lore.kernel.org/linux-can/ea52eb8f-c59d-445a-bf4d-26f2772f7426@hartkopp.net/
-
-Looking at what the net tree did, I saw the drivers/net/dummy.c driver
-and decided to mimic this as much as feasible.
-
-Despite not being convinced by my own driver at the beginning, over
-time, I tend to find this more useful than initially anticipated. So
-after a bit of clean-up, I am resubmitting, this time to make it
-mainstream. I will let you guys decide if you want to merge this.
-
-Meanwhile, please use this for your CAN XL testing!
----
-Changes in v2:
-
-  - Move the debug message code out of dummy_can_netdev_open() into a
-    new function: dummy_can_print_bittiming_info().
-
-Link to v1: https://lore.kernel.org/r/20251013-dummy_can-v1-1-f9724eb90db4@kernel.org
-
-Change in v1:
-
-  - This was initially part of the CAN XL RFC. Cherry-pick it and make
-    it a stand-alone patch.
-
-  - Renamed from dummyxl to dummy_can.
-
-  - Add PMW.
-
-  - The driver is now silent by default. Enable debug mode to show all
-    the bittimming information.
-
-  - Any frames it receives are now looped-back.
-
-  - Miscellaneous changes in the code (add PMW, refactor…)
-
-  - Add a proper Kconfig entry.
-
-Link to RFC: https://lore.kernel.org/linux-can/20241110155902.72807-30-mailhol.vincent@wanadoo.fr/
----
- drivers/net/can/Kconfig     |  17 +++
- drivers/net/can/Makefile    |   1 +
- drivers/net/can/dummy_can.c | 282 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 300 insertions(+)
-
-diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-index d43d56694667..e15e320db476 100644
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@ -124,6 +124,23 @@ config CAN_CAN327
- 
- 	  If this driver is built as a module, it will be called can327.
- 
-+config CAN_DUMMY
-+	tristate "Dummy CAN"
-+	help
-+	  A dummy CAN module supporting Classical CAN, CAN FD and CAN XL. It
-+	  exposes bittiming values which can be configured through the netlink
-+	  interface.
-+
-+	  The module will simply echo any frame sent to it. If debug messages
-+	  are activated, it prints all the CAN bittiming information in the
-+	  kernel log. Aside from that it does nothing.
-+
-+	  This is convenient for testing the CAN netlink interface. Most of the
-+	  users will never need this. If unsure, say NO.
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called dummy-can.
-+
- config CAN_FLEXCAN
- 	tristate "Support for Freescale FLEXCAN based chips"
- 	depends on OF || COLDFIRE || COMPILE_TEST
-diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
-index 56138d8ddfd2..d7bc10a6b8ea 100644
---- a/drivers/net/can/Makefile
-+++ b/drivers/net/can/Makefile
-@@ -21,6 +21,7 @@ obj-$(CONFIG_CAN_CAN327)	+= can327.o
- obj-$(CONFIG_CAN_CC770)		+= cc770/
- obj-$(CONFIG_CAN_C_CAN)		+= c_can/
- obj-$(CONFIG_CAN_CTUCANFD)	+= ctucanfd/
-+obj-$(CONFIG_CAN_DUMMY)		+= dummy_can.o
- obj-$(CONFIG_CAN_FLEXCAN)	+= flexcan/
- obj-$(CONFIG_CAN_GRCAN)		+= grcan.o
- obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
-diff --git a/drivers/net/can/dummy_can.c b/drivers/net/can/dummy_can.c
-new file mode 100644
-index 000000000000..076ec585f369
---- /dev/null
-+++ b/drivers/net/can/dummy_can.c
-@@ -0,0 +1,282 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/* Copyright (c) 2025 Vincent Mailhol <mailhol@kernel.org> */
-+
-+#include <linux/array_size.h>
-+#include <linux/errno.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/netdevice.h>
-+#include <linux/units.h>
-+
-+#include <linux/can.h>
-+#include <linux/can/bittiming.h>
-+#include <linux/can/dev.h>
-+#include <linux/can/skb.h>
-+
-+struct dummy_can {
-+	struct can_priv can;
-+	struct net_device *dev;
-+};
-+
-+static struct dummy_can *dummy_can;
-+
-+static const struct can_bittiming_const dummy_can_bittiming_const = {
-+	.name = "dummy_can CC",
-+	.tseg1_min = 2,
-+	.tseg1_max = 256,
-+	.tseg2_min = 2,
-+	.tseg2_max = 128,
-+	.sjw_max = 128,
-+	.brp_min = 1,
-+	.brp_max = 512,
-+	.brp_inc = 1
-+};
-+
-+static const struct can_bittiming_const dummy_can_fd_databittiming_const = {
-+	.name = "dummy_can FD",
-+	.tseg1_min = 2,
-+	.tseg1_max = 256,
-+	.tseg2_min = 2,
-+	.tseg2_max = 128,
-+	.sjw_max = 128,
-+	.brp_min = 1,
-+	.brp_max = 512,
-+	.brp_inc = 1
-+};
-+
-+static const struct can_tdc_const dummy_can_fd_tdc_const = {
-+	.tdcv_min = 0,
-+	.tdcv_max = 0, /* Manual mode not supported. */
-+	.tdco_min = 0,
-+	.tdco_max = 127,
-+	.tdcf_min = 0,
-+	.tdcf_max = 127
-+};
-+
-+static const struct can_bittiming_const dummy_can_xl_databittiming_const = {
-+	.name = "dummy_can XL",
-+	.tseg1_min = 2,
-+	.tseg1_max = 256,
-+	.tseg2_min = 2,
-+	.tseg2_max = 128,
-+	.sjw_max = 128,
-+	.brp_min = 1,
-+	.brp_max = 512,
-+	.brp_inc = 1
-+};
-+
-+static const struct can_tdc_const dummy_can_xl_tdc_const = {
-+	.tdcv_min = 0,
-+	.tdcv_max = 0, /* Manual mode not supported. */
-+	.tdco_min = 0,
-+	.tdco_max = 127,
-+	.tdcf_min = 0,
-+	.tdcf_max = 127
-+};
-+
-+static const struct can_pwm_const dummy_can_pwm_const = {
-+	.pwms_min = 1,
-+	.pwms_max = 8,
-+	.pwml_min = 2,
-+	.pwml_max = 24,
-+	.pwmo_min = 0,
-+	.pwmo_max = 16,
-+};
-+
-+static void dummy_can_print_bittiming(struct net_device *dev,
-+				      struct can_bittiming *bt)
-+{
-+	netdev_dbg(dev, "\tbitrate: %u\n", bt->bitrate);
-+	netdev_dbg(dev, "\tsample_point: %u\n", bt->sample_point);
-+	netdev_dbg(dev, "\ttq: %u\n", bt->tq);
-+	netdev_dbg(dev, "\tprop_seg: %u\n", bt->prop_seg);
-+	netdev_dbg(dev, "\tphase_seg1: %u\n", bt->phase_seg1);
-+	netdev_dbg(dev, "\tphase_seg2: %u\n", bt->phase_seg2);
-+	netdev_dbg(dev, "\tsjw: %u\n", bt->sjw);
-+	netdev_dbg(dev, "\tbrp: %u\n", bt->brp);
-+}
-+
-+static void dummy_can_print_tdc(struct net_device *dev, struct can_tdc *tdc)
-+{
-+	netdev_dbg(dev, "\t\ttdcv: %u\n", tdc->tdcv);
-+	netdev_dbg(dev, "\t\ttdco: %u\n", tdc->tdco);
-+	netdev_dbg(dev, "\t\ttdcf: %u\n", tdc->tdcf);
-+}
-+
-+static void dummy_can_print_pwm(struct net_device *dev, struct can_pwm *pwm,
-+				struct can_bittiming *dbt)
-+{
-+	netdev_dbg(dev, "\t\tpwms: %u\n", pwm->pwms);
-+	netdev_dbg(dev, "\t\tpwml: %u\n", pwm->pwml);
-+	netdev_dbg(dev, "\t\tpwmo: %u\n", pwm->pwmo);
-+}
-+
-+static void dummy_can_print_ctrlmode(struct net_device *dev)
-+{
-+	struct dummy_can *priv = netdev_priv(dev);
-+	struct can_priv *can_priv = &priv->can;
-+	unsigned long supported = can_priv->ctrlmode_supported;
-+	u32 enabled = can_priv->ctrlmode;
-+
-+	netdev_dbg(dev, "Control modes:\n");
-+	netdev_dbg(dev, "\tsupported: 0x%08x\n", (u32)supported);
-+	netdev_dbg(dev, "\tenabled: 0x%08x\n", enabled);
-+
-+	if (supported) {
-+		int idx;
-+
-+		netdev_dbg(dev, "\tlist:");
-+		for_each_set_bit(idx, &supported, BITS_PER_TYPE(u32))
-+			netdev_dbg(dev, "\t\t%s: %s\n",
-+				   can_get_ctrlmode_str(BIT(idx)),
-+				   enabled & BIT(idx) ? "on" : "off");
-+	}
-+}
-+
-+static void dummy_can_print_bittiming_info(struct net_device *dev)
-+{
-+	struct dummy_can *priv = netdev_priv(dev);
-+	struct can_priv *can_priv = &priv->can;
-+
-+	netdev_dbg(dev, "Clock frequency: %u\n", can_priv->clock.freq);
-+	netdev_dbg(dev, "Maximum bitrate: %u\n", can_priv->bitrate_max);
-+	netdev_dbg(dev, "MTU: %u\n", dev->mtu);
-+	netdev_dbg(dev, "\n");
-+
-+	dummy_can_print_ctrlmode(dev);
-+	netdev_dbg(dev, "\n");
-+
-+	netdev_dbg(dev, "Classical CAN nominal bittiming:\n");
-+	dummy_can_print_bittiming(dev, &can_priv->bittiming);
-+	netdev_dbg(dev, "\n");
-+
-+	if (can_priv->ctrlmode & CAN_CTRLMODE_FD) {
-+		netdev_dbg(dev, "CAN FD databittiming:\n");
-+		dummy_can_print_bittiming(dev, &can_priv->fd.data_bittiming);
-+		if (can_fd_tdc_is_enabled(can_priv)) {
-+			netdev_dbg(dev, "\tCAN FD TDC:\n");
-+			dummy_can_print_tdc(dev, &can_priv->fd.tdc);
-+		}
-+	}
-+	netdev_dbg(dev, "\n");
-+
-+	if (can_priv->ctrlmode & CAN_CTRLMODE_XL) {
-+		netdev_dbg(dev, "CAN XL databittiming:\n");
-+		dummy_can_print_bittiming(dev, &can_priv->xl.data_bittiming);
-+		if (can_xl_tdc_is_enabled(can_priv)) {
-+			netdev_dbg(dev, "\tCAN XL TDC:\n");
-+			dummy_can_print_tdc(dev, &can_priv->xl.tdc);
-+		}
-+		if (can_priv->ctrlmode & CAN_CTRLMODE_XL_TMS) {
-+			netdev_dbg(dev, "\tCAN XL PWM:\n");
-+			dummy_can_print_pwm(dev, &can_priv->xl.pwm,
-+					    &can_priv->xl.data_bittiming);
-+		}
-+	}
-+	netdev_dbg(dev, "\n");
-+}
-+
-+static int dummy_can_netdev_open(struct net_device *dev)
-+{
-+	int ret;
-+
-+	dummy_can_print_bittiming_info(dev);
-+
-+	ret = open_candev(dev);
-+	if (ret)
-+		return ret;
-+	netif_start_queue(dev);
-+	netdev_dbg(dev, "dummy-can is up\n");
-+
-+	return 0;
-+}
-+
-+static int dummy_can_netdev_close(struct net_device *dev)
-+{
-+	netif_stop_queue(dev);
-+	close_candev(dev);
-+	netdev_dbg(dev, "dummy-can is down\n");
-+
-+	return 0;
-+}
-+
-+static netdev_tx_t dummy_can_start_xmit(struct sk_buff *skb,
-+					struct net_device *dev)
-+{
-+	if (can_dev_dropped_skb(dev, skb))
-+		return NETDEV_TX_OK;
-+
-+	can_put_echo_skb(skb, dev, 0, 0);
-+	dev->stats.tx_packets++;
-+	dev->stats.tx_bytes += can_get_echo_skb(dev, 0, NULL);
-+
-+	return NETDEV_TX_OK;
-+}
-+
-+static const struct net_device_ops dummy_can_netdev_ops = {
-+	.ndo_open = dummy_can_netdev_open,
-+	.ndo_stop = dummy_can_netdev_close,
-+	.ndo_start_xmit = dummy_can_start_xmit,
-+};
-+
-+static const struct ethtool_ops dummy_can_ethtool_ops = {
-+	.get_ts_info = ethtool_op_get_ts_info,
-+};
-+
-+static int __init dummy_can_init(void)
-+{
-+	struct net_device *dev;
-+	struct dummy_can *priv;
-+	int ret;
-+
-+	dev = alloc_candev(sizeof(*priv), 1);
-+	if (!dev)
-+		return -ENOMEM;
-+
-+	dev->netdev_ops = &dummy_can_netdev_ops;
-+	dev->ethtool_ops = &dummy_can_ethtool_ops;
-+	priv = netdev_priv(dev);
-+	priv->can.bittiming_const = &dummy_can_bittiming_const;
-+	priv->can.bitrate_max = 20 * MEGA /* BPS */;
-+	priv->can.clock.freq = 160 * MEGA /* Hz */;
-+	priv->can.fd.data_bittiming_const = &dummy_can_fd_databittiming_const;
-+	priv->can.fd.tdc_const = &dummy_can_fd_tdc_const;
-+	priv->can.xl.data_bittiming_const = &dummy_can_xl_databittiming_const;
-+	priv->can.xl.tdc_const = &dummy_can_xl_tdc_const;
-+	priv->can.xl.pwm_const = &dummy_can_pwm_const;
-+	priv->can.ctrlmode_supported = CAN_CTRLMODE_LISTENONLY |
-+		CAN_CTRLMODE_FD | CAN_CTRLMODE_TDC_AUTO |
-+		CAN_CTRLMODE_RESTRICTED | CAN_CTRLMODE_XL |
-+		CAN_CTRLMODE_XL_TDC_AUTO | CAN_CTRLMODE_XL_TMS |
-+		CAN_CTRLMODE_XL_ERR_SIGNAL;
-+	priv->dev = dev;
-+
-+	ret = register_candev(priv->dev);
-+	if (ret) {
-+		free_candev(priv->dev);
-+		return ret;
-+	}
-+
-+	dummy_can = priv;
-+	netdev_dbg(dev, "dummy-can ready\n");
-+
-+	return 0;
-+}
-+
-+static void __exit dummy_can_exit(void)
-+{
-+	struct net_device *dev = dummy_can->dev;
-+
-+	netdev_dbg(dev, "dummy-can bye bye\n");
-+	unregister_candev(dev);
-+	free_candev(dev);
-+}
-+
-+module_init(dummy_can_init);
-+module_exit(dummy_can_exit);
-+
-+MODULE_DESCRIPTION("A dummy CAN driver, mainly to test the netlink interface");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Vincent Mailhol <mailhol@kernel.org>");
-
----
-base-commit: ffee675aceb9f44b0502a8bec912abb0c4f4af62
-change-id: 20251013-dummy_can-29a900270aaf
-prerequisite-change-id: 20251003-remove-can_change_mtu-e0ec4c0bfeeb:v1
-prerequisite-patch-id: 6b3294205bd76b38257516c63b7001ab242c9b62
-prerequisite-change-id: 20241229-canxl-netlink-bc640af10673:v2
-prerequisite-patch-id: 6b3294205bd76b38257516c63b7001ab242c9b62
-prerequisite-patch-id: 56431d12edcc0f325cf5204bb6868742c462c0ed
-prerequisite-patch-id: 1547fd7ea8f1937f0491cfc0996b09890f850991
-prerequisite-patch-id: 1dae270b0454352e46b927f71d1b47ff2bf7a49e
-prerequisite-patch-id: e4d43de873dfdefc023a0b86e397b37ea2b9e9a3
-prerequisite-patch-id: 4f3db477ff411effe70075c59ae6eac04fc65600
-prerequisite-patch-id: 148dbfce9d3bb09537087ee93e60bb7819bdadee
-prerequisite-patch-id: 7996539e26d449e8db260425c7287b4dce8cdf35
-prerequisite-patch-id: 42215044df6a63fff07c7a7d771d7dc375cc8b0e
-prerequisite-patch-id: 640ebf8ac8a1d114dcb91e6c05b9414bd09416fc
-prerequisite-patch-id: 84ee5e4f937f8e4cd97833d601affea78fe55914
-
-Best regards,
--- 
-Vincent Mailhol <mailhol@kernel.org>
-
+Best Regards,
+Yan, Zi
 
