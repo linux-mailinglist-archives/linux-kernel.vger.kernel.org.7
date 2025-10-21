@@ -1,204 +1,285 @@
-Return-Path: <linux-kernel+bounces-863545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D419BF81F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:42:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF222BF8202
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 20:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD93B3B0FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:42:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A44F43E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 18:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054C92417C6;
-	Tue, 21 Oct 2025 18:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2E7346774;
+	Tue, 21 Oct 2025 18:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I8oRWLDo"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012018.outbound.protection.outlook.com [40.107.209.18])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lyDFiTpP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A617234D92E;
-	Tue, 21 Oct 2025 18:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761072129; cv=fail; b=J2Bu6J6ww/SrTdRNoU0l1ldAPJ/vXLRhbVBGldTxmauXISXq7FchWV5aH2sSWt80pK4XHCbg4tlM++XiPiTwTtCYfxCDF22sj2J0PbV8v4PrJmqP0d0+0Tybvjk7hWEmeMvTb+AA+EOpoSa/4x88gSf9zzQUfogTQx3qtF1sFSQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761072129; c=relaxed/simple;
-	bh=R38BCawy75fNOLMYk75wwSAmnZ/X2a9hjFdrvM24sMk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mAikRGdnqpUDiZ2PoE2LPetyTADQY29/iIYvN1eBLpxBdqOd+whNf+Tmt6WmxB/pvc++vXb91wDHvhDlTxWZIRRRtKRVwvx75lbWS/1+UFBVCzHYrHeb+vXNpeQVKdwKbc6sYlrawcBfZU2qKD44h/9j/zjvE4vkbYAAPewIv8Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I8oRWLDo; arc=fail smtp.client-ip=40.107.209.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cFIJk8/mOtVGDuay8/yx9Chddv/xeFGYOgXfDrqspNslWD7Uj2bN2ifjpPgvB/L+UB/i26D4MhbsnrtrMifIbI0N1NvxlCf54ffZQH/4SXSo7UKApquiFrxfTU70CrfMzI5PknXSLLBKlPhgmQvgdmtqErY89W2S56Hg8wEWHWgWCutXdLKCjejl5XZ4gPaX547vhe1vT5GOfcbDDzEVlTSBzwlW4xDjAFGg5xf2j5cpVhBQZSkBiHemZH3iQmho+z5Zujpah4UpjWNGINC7NoHMNLarsH70h21JpbauWngOJ/fOhQN4NlvDQKow414GZmsD2MsrIYActUT8H0SXMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t3qn25PaHuas3fE1oGlu36O0E4AO8h29xsME/q68W44=;
- b=H/Rqanm9lRXlVsA3vCMjHJRje2Gtl2s5h5ehh/YBmzt+Fdpz1koPh9EWkvo6TNnoga178U7ntcdE0V9OfRNuU2sV2kRaFBBC8VPUSmziNeY0MSVEIHDlIqXylqXiuxf8QrHAtLuGROhU9J4VYQ1l4JWqxUhvDZxRWsFOHxN/05cUnH2zmkK0YrIphgUp522pPqQg5ETfYgBU8BebymCfoUkQ4fsWjzN3swdBHmHE+VrW0HnqfmvN1CzDWyLIE5ybyQCPgkgeB1RZ57nGjUpTG55N+cKoCaNSEX0NEv+Ld0xbJu+qXml3Eq8gv+Bu4lco0d6zFuLmqn+zz3gCVwVrSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t3qn25PaHuas3fE1oGlu36O0E4AO8h29xsME/q68W44=;
- b=I8oRWLDorX4ZTL9H0WT4kY5ntgxHuY3hubNzlg0D0853oauB5RteSSxKmasSCj/dNygfN5hwmj6P92f/TLRYpRXVN5Af2u+ld4d0oRGDb/FBj+yayn1xoKkLM5XnNJvRQttvb4CbX09GrNjBZAmA95alQsAe2Z6f2eGlAQChZ2DeLp+U/dWZHtAQ1ASvzfRROLE/B7ZToyf3uFcByfB/mt/N1uTlQ5FQq74dB3l8+pxxR2+Rfaaz84lj632uzZeF81POxNjT4fUgZVZBgz8DpRJhsyyT7qFtreY54cT/23sbzm3Mo/2S+HueZcMef0qZZZSvziDEGo0YmG8QSksgpg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by IA1PR12MB6236.namprd12.prod.outlook.com (2603:10b6:208:3e4::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Tue, 21 Oct
- 2025 18:42:04 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 18:42:04 +0000
-Message-ID: <11a41de2-752b-4091-8b76-954678d08efc@nvidia.com>
-Date: Tue, 21 Oct 2025 14:42:02 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] gpu: nova-core: Add support for managing GSP falcon
- interrupts
-To: John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org, acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
- Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
-References: <20251020185539.49986-1-joelagnelf@nvidia.com>
- <20251020185539.49986-6-joelagnelf@nvidia.com>
- <4553a31a-fd13-41c4-8bcb-3b830cd7b661@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <4553a31a-fd13-41c4-8bcb-3b830cd7b661@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR22CA0015.namprd22.prod.outlook.com
- (2603:10b6:208:238::20) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2128F34D92E;
+	Tue, 21 Oct 2025 18:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761072149; cv=none; b=VQVjLgTXqsc8EmmwzswXTqPJ62YG0h5kFGaYk5WXp1NHgSq6EBziJRFTNg8Mz+rF5nLjaGhdQn3IG0+J06d8nARi+W3GWWBTsg+r74+/D/V/BnTuIc/T2J5XvkkVtQJP8dHo+3m6+Lh9FpGm8GDMayXXTBDS2b9+Dis3PPNpuk0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761072149; c=relaxed/simple;
+	bh=Y3nkMRGccnwFhyLXOc20ulXVeae5mDdiUSAgCcKTfgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=itGP2gMQu6AjfzLWSGAJJdAtQpKNKZ4gCnGyWpbD5XZ7CZGmW2XPFgXhshqB75d0t2zjBJbl0mbKpCFnIrqMupCGU0ArygTB9C3RfkM1z6FklMv/6EnPhd0Ck+esbZEAlujU3kSOBhffTbEQSmnXJ7zFzrYvlwysj7wYlvZ2hP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lyDFiTpP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (87-94-110-32.bb.dnainternet.fi [87.94.110.32])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 822E563F;
+	Tue, 21 Oct 2025 20:40:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761072041;
+	bh=Y3nkMRGccnwFhyLXOc20ulXVeae5mDdiUSAgCcKTfgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lyDFiTpP9MjdRPxPyzaINNPfhWyP3S+87NEayairfW6WWsCPcIrN8ryaIdYPn/wBd
+	 X7QczAbERhqYmGYtPq3OybCtWAdLNs9KXWhl9ApKuMg2tivmT5EeFu9baS/ZdIf8a4
+	 iZny5y8Q0gFr0rLPbsorzUfZgr5FsfiQhlyhSYGc=
+Date: Tue, 21 Oct 2025 21:42:13 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	Angel4005 <ooara1337@gmail.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: uvcvideo: Use heuristic to find stream entity
+Message-ID: <20251021184213.GC19043@pendragon.ideasonboard.com>
+References: <20251021-uvc-grandstream-v2-1-6a74a44f4419@chromium.org>
+ <20251021164443.GA727@pendragon.ideasonboard.com>
+ <CANiDSCsC6SgYJ-jSswPaeAw8RkxjZN4n23X35XbntNGcUsuRJQ@mail.gmail.com>
+ <20251021170635.GC727@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB6236:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4945f82-d496-49a9-60d5-08de10d1878b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bHpSZGxjcCs2emJsczNSb3gycEpWRTFFR2h5QWhlbGFoL3NVSFdaTWJmZzlw?=
- =?utf-8?B?MkdTVGZDZFN2YWZVZU5LTVM5aTBkRFZBWUJDTi8rUzROWDZZTDNtaU01UkVO?=
- =?utf-8?B?V3BJVHVHQ2JkMWpwWG1PRnBJakZBTHJOL3hVRjFGWHZ3and2YVl0R1JMME91?=
- =?utf-8?B?WHBDZ1dVaWl0VWdQdDkrVDQya2lkRk9UekdYWmUveUc5NytQRFdqUC9tbGNz?=
- =?utf-8?B?VGtHZkJKTEZYd2llLzZtUnBEK1QrMlgyZkEvWTd1N3dHOGQ0Rms2SUNuMWtP?=
- =?utf-8?B?UWxaOTBwTStXL0xhdmtNUUZOemJCWHdFRmtrSkdFZGFMMUNCUVNzNC9KRUR6?=
- =?utf-8?B?Vk9lVnR5SkcxRHJOeVRYVnFhc0Qxbmt1RENuMjIwVkcyM0pSNmJ4NEN6dDlp?=
- =?utf-8?B?OThzTTR4RWhlUzZKSkROdE1lQk9HdzdJcTBDaU1XZ3FpbnUrM2JYVGVVTFNs?=
- =?utf-8?B?SFNJOGZGZE1UZGpHbkVzSUwwUU9zQnNRT2p3YytXRllRMUloM2k1S2paOGxz?=
- =?utf-8?B?RXRBSWRGc2lUb0QxYUFNcXgvRENSYVVkckkwYVhGM20wTTEyWUFxT2tzcGE4?=
- =?utf-8?B?S3hHRUZaMHNvTzVyOVhYRklyQ1ZEWDMycnYrRDJkOUFxdEQ4WW9JTVJIcktK?=
- =?utf-8?B?empCcThacVZoQTVQSUtCWTAvUmk2RUtWNjA3ejVMRXJ5MkRhakRCNGNmNDBx?=
- =?utf-8?B?VTdSakNvVjVud1pxaGR0a1V2dGVpSWpOYngxWm9qcytWMDN2MGY2RFh3Q1Z2?=
- =?utf-8?B?SElmcXBLaUhxb1dwOGN2Z2Q4RU5OdmhuMjhuRGpYOTVkUStJdGQvWE8yUnBz?=
- =?utf-8?B?aFYrb29lVG5qYVdTR2ZrWTZuU2dPZ0tVWnJFU1o3M2dsZ0tPWEtXSHhKcWFr?=
- =?utf-8?B?V3hlZnFqeW5JOHQrTTdKdnlCNEpjUnYxckVlRURXc0tHQVdpS2owNXowZms1?=
- =?utf-8?B?UFlLZVRTK1NWaHNybXg2RHo0VUxKb1RUR3VDd3U5dndOOGsrcVUzY2k2RFVD?=
- =?utf-8?B?WnJHZ3R1WjA5VjVoWVVzcWgwNkNZTnpiVWtWam9wcEs1OWsxVE84QVBaeFUw?=
- =?utf-8?B?TXZNMnZJNnZRZmcvL3Bqb3BTbVdNU3g1RTBwUDR0bkJjbUs4MmFKcE04cW5j?=
- =?utf-8?B?TklhRVJydHNtVmtqYjRiWVZMOXZza2V2Sis5TURxakZ5bTNsWTRXQ00yZDR0?=
- =?utf-8?B?ZXhkTnJ2WXN0SVdFWGpGWmlmMGs4T09SdU1IRFhTSUU0WmRPMG9KcDNtUmhK?=
- =?utf-8?B?VUtGeUNZcmExNHl4U0RvaHQ0Q1pqZFNpOVNnaGR3ZTV5QVlyTUU5RzFlNkNK?=
- =?utf-8?B?T0xFdHJpZisybVZpa3MvYUJrNVhkQUE5WU9EcTlGODM4c202ZnYyZmtod3dk?=
- =?utf-8?B?Q0R4UGdaWHpnbUVsWWlQNmZDVDdBMGNlTm9MU1pvTG9UdEdOejN6VVduU0hx?=
- =?utf-8?B?WFBOeFBIaWpnZGxjaW05OVZMYXExU2J1SldsdmhSbFJrWkkrQi9FRFNyUHJp?=
- =?utf-8?B?RHlCd0RSQndJVmczMjFKdEphM2tOZXZ2cU1lQUFNK2ZOdWd6dm9wb0k0ckVE?=
- =?utf-8?B?WDlzekhHRjlWT2NWZ2h6Q2hFNzFtbVFtZEZ2cHNqQklnUTVGL01SVVJyOWsy?=
- =?utf-8?B?WDgwcEZ0b3VFWUd2djRzNnE3Q3pRcWNsWTEzSlo2c2t4L3dWMGRsUGtkdkt0?=
- =?utf-8?B?VFVIcGlGNG1ZTUtPSGl0K1lsczhSQVdVU2ZCRlN3NG5ZcHhnSHh4cndTM1M0?=
- =?utf-8?B?WnhTT3VXK3lSVWk1QmI0anJ0V1hQMUl3bVBaenpXZGNwNE1TTk5hVm00VTRO?=
- =?utf-8?B?VWFIMWlZbGQrR3NQOGYrRi9Va3FIay9NNjBtN1RiSVRJUjdWS0pZVUR5RlJ3?=
- =?utf-8?B?ck82T3V4TFNXbXJpZk1YTWdodEpBSFBNYUZlSmZhbjZWUkVubTVCSEtvTVdX?=
- =?utf-8?Q?IVcl4uyfMCXfCZiG8DFgSxTj3Ab6DU9d?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WGJDSFpWQk9rTlBtMWYzTzcrcTRVeTNyd2dvM1FRdFFkMXBDTEhYRXZnMXhW?=
- =?utf-8?B?SFhsaVREemJvZlIyWDVlekZRZHdwbHc4Yk9Xa0IrVFVlVkMrUUppSkd1WWNT?=
- =?utf-8?B?U1p5RGIwUjdWb2ZYWGJRa2d4TVBiYSttOHRDNUdsbHY5Z1MrVWJXd1F4elFP?=
- =?utf-8?B?b0xYcHdYYnhUWFduMEViU0JRdmg1VVJHbnZUMzZxUXpGZmJ0ODZKNkZhcG9E?=
- =?utf-8?B?THJEQXc1eThKWjRKazhPN25kWktsZzBmOUNpdUVOZUw4OW9JQ205U0o2eDVE?=
- =?utf-8?B?dTR1VU50bXpXdjVJaDZjVXJDNVBya2J1dWQrUVVqeTlIRWJYdmNoSWJ6V0FL?=
- =?utf-8?B?UHNFZlBXS2F0UFJRdElqYjNySjhoSWJUUjlEOVVmTjgvSnZ1bnZyNHVuaHV1?=
- =?utf-8?B?V2V0YTYzVjZMNGtrYmZsbGxrK1JRaEYvd2k3ZHB5R3cybkI1bEFPVFlYeXE4?=
- =?utf-8?B?N0RlOW00V3RrTFljK0R5QVRweDM3ODNLaGRPNkF5WnBuOTdUejRnTi9MbVZt?=
- =?utf-8?B?bC84azloWTBiK3R2RDJrUGVMWjU1ZzRNY0JXd3ovQzF4dnBoWFJaUi9hYlhT?=
- =?utf-8?B?Uy9IdnVQb3pIemIreFdxakhQczR4NlorN0dLdUIxaHRoRXdPdkxuTGgxdXVj?=
- =?utf-8?B?NmpTc2lHeG8yb25XUE55UmlDb0lWMmhVV09RejdrQkhBMjdEQUVUTGhGUEox?=
- =?utf-8?B?bW42SjZqUkMzWCtBSGw2RllhMVFpSjVrbHBzK0QxSHkwYW1oTXdmM2JCTzRz?=
- =?utf-8?B?Qis2M2plbW16a2R2bnMzektPUnp4Z0oyeFNxU3YybzVBZlZ2dnRiV2ppbU1j?=
- =?utf-8?B?eWZITmdnaDhJQVZ5SDA5d04vSitVR3RId2swcG9YOFI2ZVY2KzlsL2psNWVv?=
- =?utf-8?B?NGZlZzRhWkpqRUJYd1QzVFVVYlh3d1l2UmNtc1NhcVE2SkNNME5sbnA2cnoy?=
- =?utf-8?B?NkdnWHFzU1dWMW1wZkNwU3BGMjRGY0J0c0YzSGIyakpDc1RQTkhHZU1OcStG?=
- =?utf-8?B?WlRzVWJBSEhJMEU1dGtyMG9BSTdaZkdVUjBWdFRWQS83VVV3M3pkL0NpVnFl?=
- =?utf-8?B?ZCtLUEc5UklXQTMwSHhjZEppSnI2emszSUZBV1dDZmZYNUFQS1A2ODlyRmtw?=
- =?utf-8?B?T2lIck90WFVGejUyZFlpRE03Ny9Rdk5BNTJlWVBRZUxidXlxTFNFRkhNOHV5?=
- =?utf-8?B?RmxRRCt2WHVvQ0ZrQUtqb1pHRFg3eWs5L29ONEF5dWdQeC9uZmFUUTFwaUxK?=
- =?utf-8?B?UFBFWWVVbE9vK2tTdXoxQTRPajQ0bG96S2NiekFmWnVQcytXNDNiMmMxdlcw?=
- =?utf-8?B?Y0lWZmpLMnZVRXFYNDBGNUVuY2VIUVRyS0xJVHpEbTl3bGlYWmZQWjZSOE1C?=
- =?utf-8?B?OFI5UXJyTWZzUXNDTDlEci9FcmhHMEdWblJOaEg0K0FzTW1yWmFLVXZrZzhl?=
- =?utf-8?B?V2RyRkY5UTZJVHlQTTk1ZEI0KzFaNWM3RXdmQ2xUWS9nRU9UVW5DNXI4N2FN?=
- =?utf-8?B?U0RHREthNVJWRWJSTnhzcHF5UFp5dnJaQ0cweTh5VyttTVBvVnQ4dnIzNVha?=
- =?utf-8?B?emtabGJwQkFkMTAvVmhyVENrMXROYXJZekFra3BCaHc0WDgvU2NDck1ZZDVY?=
- =?utf-8?B?V1lzSTRwZjBvYVZWcm9NZlpPM1cyLytxU3NQU0RUb2ZmUWVmdGpHOFZ5djVJ?=
- =?utf-8?B?akc5cGF5WmYrand2NlFyVzlodzBCSFN6bEJsb1ZTZ3dISUwwYlRJNERTbnUy?=
- =?utf-8?B?ZmZUaGE1dU81bE5GVHVpWE9FdGgxVmVzOWdpcTdKYU9ISjM2ZmxQZ3Z1Sm52?=
- =?utf-8?B?endzTFM3aHhpN05QOUJFakRiUU9tR2I3eHVhSFR5SlpnenFNMVlnenIvaHpy?=
- =?utf-8?B?RlR3Q1hZTzhadHNDUUkvNEdwZ2M0Y0lja0lkNWwrRGthZ2kvZ2YwSVpwMmVk?=
- =?utf-8?B?bnIvdU1mNkN6dkZpOFRKb2pGbXJCWlUyNU5MRXRIRlFvRVNZRSszVVVLSER0?=
- =?utf-8?B?K2hZVjRhVFVuYUcyNkZObFRsQ3VIZ1ovdGlwYW5YZ3YrN0l6OG8xTUVFQytJ?=
- =?utf-8?B?dkpPVnZSZ2luenJMVkxESVNjOVV6dEliU3BYNHVzODY1b1BYUk5paEdvUDlu?=
- =?utf-8?Q?ruouiXg894SeiBucjEfFdsjqm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4945f82-d496-49a9-60d5-08de10d1878b
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 18:42:04.3573
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CZWVD6NBkd25n1ueFkoPKOZAfzaAYY55fWUs2PUBnAOF/6ug6AeMEVyZpS0AwEXE22I+s1PUwN7k9AxGartyvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6236
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251021170635.GC727@pendragon.ideasonboard.com>
 
-Hi John,
+On Tue, Oct 21, 2025 at 08:06:38PM +0300, Laurent Pinchart wrote:
+> On Tue, Oct 21, 2025 at 06:57:00PM +0200, Ricardo Ribalda wrote:
+> > On Tue, 21 Oct 2025 at 18:44, Laurent Pinchart wrote:
+> > > On Tue, Oct 21, 2025 at 10:36:17AM +0000, Ricardo Ribalda wrote:
+> > > > Some devices, like the Grandstream GUV3100 webcam, have an invalid UVC
+> > > > descriptor where multiple entities share the same ID, this is invalid
+> > > > and makes it impossible to make a proper entity tree without heuristics.
+> > > >
+> > > > We have recently introduced a change in the way that we handle invalid
+> > > > entities that has caused a regression on broken devices.
+> > > >
+> > > > Implement a new heuristic to handle these devices properly.
+> > > >
+> > > > Reported-by: Angel4005 <ooara1337@gmail.com>
+> > > > Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
+> > > > Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID")
+> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > ---
+> > > > I have managed to get my hands into a Grandstream GUV3100 and
+> > > > implemented a new heuristics. (Thanks Yunke and Hidenori!).
+> > > >
+> > > > With this heuristics we can use this camera again (see the /dev/video0
+> > > > in the topology).
+> > > >
+> > > > I have tested this change in a 6.6 kernel. Because the notebook that I
+> > > > used for testing has some issues running master. But for the purpose of
+> > > > this change this test should work.
+> > > >
+> > > > ~ # media-ctl --print-topology
+> > > > Media controller API version 6.6.99
+> > > >
+> > > > Media device information
+> > > > ------------------------
+> > > > driver          uvcvideo
+> > > > model           GRANDSTREAM GUV3100: GRANDSTREA
+> > > > serial
+> > > > bus info        usb-0000:00:14.0-9
+> > > > hw revision     0x409
+> > > > driver version  6.6.99
+> > > >
+> > > > Device topology
+> > > > - entity 1: GRANDSTREAM GUV3100: GRANDSTREA (1 pad, 1 link)
+> > > >             type Node subtype V4L flags 1
+> > > >             device node name /dev/video0
+> > > >         pad0: SINK
+> > > >                 <- "Extension 3":1 [ENABLED,IMMUTABLE]
+> > > >
+> > > > - entity 4: GRANDSTREAM GUV3100: GRANDSTREA (0 pad, 0 link)
+> > > >             type Node subtype V4L flags 0
+> > > >             device node name /dev/video1
+> > > >
+> > > > - entity 8: Extension 3 (2 pads, 2 links, 0 routes)
+> > > >             type V4L2 subdev subtype Unknown flags 0
+> > > >         pad0: SINK
+> > > >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
+> > > >         pad1: SOURCE
+> > > >                 -> "GRANDSTREAM GUV3100: GRANDSTREA":0 [ENABLED,IMMUTABLE]
+> > > >
+> > > > - entity 11: Processing 2 (2 pads, 3 links, 0 routes)
+> > > >              type V4L2 subdev subtype Unknown flags 0
+> > > >         pad0: SINK
+> > > >                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
+> > > >         pad1: SOURCE
+> > > >                 -> "Extension 3":0 [ENABLED,IMMUTABLE]
+> > > >                 -> "Extension 4":0 [ENABLED,IMMUTABLE]
+> > > >
+> > > > - entity 14: Extension 4 (2 pads, 1 link, 0 routes)
+> > > >              type V4L2 subdev subtype Unknown flags 0
+> > > >         pad0: SINK
+> > > >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
+> > > >         pad1: SOURCE
+> > > >
+> > > > - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
+> > > >              type V4L2 subdev subtype Sensor flags 0
+> > > >         pad0: SOURCE
+> > > >                 -> "Processing 2":0 [ENABLED,IMMUTABLE]
+> > > > ---
+> > > > Changes in v2:
+> > > > - Fix : invalid reference to the index variable of the iterator.
+> > > > - Link to v1: https://lore.kernel.org/r/20251021-uvc-grandstream-v1-1-801e3d08b271@chromium.org
+> > > > ---
+> > > >  drivers/media/usb/uvc/uvc_driver.c | 15 ++++++++++++++-
+> > > >  1 file changed, 14 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..ee4f54d6834962414979a046afc59c5036455124 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > > @@ -167,13 +167,26 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+> > > >
+> > > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
+> > > >  {
+> > > > -     struct uvc_streaming *stream;
+> > > > +     struct uvc_streaming *stream, *last_stream;
+> > > > +     unsigned int count = 0;
+> > > >
+> > > >       list_for_each_entry(stream, &dev->streams, list) {
+> > > > +             count += 1;
+> > > > +             last_stream = stream;
+> > > >               if (stream->header.bTerminalLink == id)
+> > > >                       return stream;
+> > > >       }
+> > > >
+> > > > +     /*
+> > > > +      * If the streaming entity is referenced by an invalid ID, notify the
+> > > > +      * user and use heuristics to guess the correct entity.
+> > > > +      */
+> > > > +     if (count == 1 && id == UVC_INVALID_ENTITY_ID) {
+> > > > +             dev_warn(&dev->intf->dev,
+> > > > +                      "UVC non compliance: Invalid USB header. The streaming entity has an invalid ID, guessing the correct one.");
+> > > > +             return last_stream;
+> > > > +     }
+> > >
+> > > As far as I understand, the reason why we can't find the streaming
+> > > interface here is because we have set the streaming output terminal ID
+> > > to UVC_INVALID_ENTITY_ID, due to the extension unit being previously
+> > > registered with the same ID. We're therefore adding a workaround on top
+> > > of another workaround.
+> > >
+> > > Looking at the UVC descriptors for this camera, ID 4 is shared between
+> > > an extension unit with GUID ffe52d21-8030-4e2c-82d9-f587d00540bd and the
+> > > streaming output terminal. That GUID is apparently a Logitech GUID
+> > > (according to https://github.com/soyersoyer/cameractrls/blob/c920e/cameractrls.py).
+> > > I don't know if the XU actually works in that camera, but it could be
+> > > useful to keep it functional.
+> > >
+> > > I think we could make the handling of non-unique IDs more clever. If an
+> > > output streaming terminal and a unit share the same ID, we could
+> > > allocate an unused ID for the output streaming terminal, and patch the
+> > > bTerminalLink of the stream headers accordingly. The ID remapping should
+> > > not cause other issues, as
+> > >
+> > > - streaming output terminals have no controls, so the ID isn't used to
+> > >   reference controls
+> > >
+> > > - the units graph is build from sink to source, with UVC descriptors
+> > >   containing the IDs of source units, so streaming output terminals are
+> > >   never referenced by ID from descriptors except for the bTerminalLink.
+> > >
+> > > This would produce a valid graph without duplicated IDs in this case.
 
-On 10/20/2025 6:35 PM, John Hubbard wrote:
-[...]
-> Joel:
+Thinking some more about this, I wonder if the fix couldn't be as simple
+as putting the streaming OTTs in a separate ID namespace:
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index fb6afb8e84f0..17a8cc96e6ed 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -969,6 +969,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+ 	struct usb_host_interface *alts = dev->intf->cur_altsetting;
+ 	unsigned int i, n, p, len;
+ 	const char *type_name;
++	unsigned int id;
+ 	u16 type;
+ 
+ 	switch (buffer[2]) {
+@@ -1107,8 +1108,14 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+ 			return 0;
+ 		}
+ 
++		id = buffer[3];
++
++		/* Give streaming output terminals their own ID namespace. */
++		if (type & TT_STREAMING)
++			id |= UVC_TERM_OUTPUT;
++
+ 		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
+-					    buffer[3], 1, 0);
++					    id, 1, 0);
+ 		if (IS_ERR(term))
+ 			return PTR_ERR(term);
+ 
+@@ -2105,7 +2112,7 @@ static int uvc_register_terms(struct uvc_device *dev,
+ 		if (UVC_ENTITY_TYPE(term) != UVC_TT_STREAMING)
+ 			continue;
+ 
+-		stream = uvc_stream_by_id(dev, term->id);
++		stream = uvc_stream_by_id(dev, term->id & ~UVC_TERM_OUTPUT);
+ 		if (stream == NULL) {
+ 			dev_info(&dev->intf->dev,
+ 				 "No streaming interface found for terminal %u.",
+
+
+This is untested, and requires better comments to explain the
+heuristics, as well as possibly a macro to convert between the "raw" ID
+and the "namespaced" ID.
+
+> > I will try to work on a solution like you propose in this kernel
+> > cycle, but I do not feel very confident about landing that big change
+> > in "fixes" without being in linux-next for a couple of weeks. I'd
+> > rather go for a simple solution that fixes the regression.
+> > 
+> > With this fix, the media controller topology looks identical as before
+> > we introduce the bug, so we do not lose any functionality.
+> > 
+> > So if you agree I think the safest path is to land this fix in fixes
+> > now. And try to get a better logic landed in next in this kernel
+> > cycle.
+> > 
+> > What do you think?
 > 
-> I am guessing that there is never a situation in which we would *disable*
-> these interrupts, right? Just thought I'd ask.
+> I'm fine with that timelie. Thanks for agreeing to try and implement the
+> above proposal.
+> 
+> > > > +
+> > > >       return NULL;
+> > > >  }
+> > > >
+> > > >
+> > > > ---
+> > > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
+> > > > change-id: 20251021-uvc-grandstream-05ecf0288f62
 
-Thanks for double checking. At the moment, we don't have usecase to disable
-swgen0. I checked my prototype code and Nouveau as well and we never have to do
-this.
+-- 
+Regards,
 
-thanks,
-
- - Joel
-
+Laurent Pinchart
 
