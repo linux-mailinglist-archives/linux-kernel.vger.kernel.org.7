@@ -1,91 +1,108 @@
-Return-Path: <linux-kernel+bounces-863180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7D2BF730F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:56:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03328BF7324
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C8E3B7996
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3723618836ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B96340271;
-	Tue, 21 Oct 2025 14:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5D7340A41;
+	Tue, 21 Oct 2025 14:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Op492MAh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="PazWs+dZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kk76gNOg"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B88234026F;
-	Tue, 21 Oct 2025 14:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0D4340295;
+	Tue, 21 Oct 2025 14:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761058512; cv=none; b=VeuB8TKJj8kMuHooGzpc4LfRwD7GBZ+fgya+RWdTD8wpEUyL+k1wfnn0mb1AFol+B3/tocBl4H1SFJXf8mJqNrlz2wkHFrtR3vzcHVe6cpt0RiW/FQGhGUqOQlRehhgLSPSu2MP5Hf3LZKTSTO8O/HNJwHjpnkbvTLUMNQ+qtu0=
+	t=1761058545; cv=none; b=tKFVLOqJhLZpKonYKaKgmQX9kFtTRcAsyiufWvly6gBIolcKs0gOAQ8XcR/1NfspDkteDpctmQEZiGg3yam6riKcB/f4b2ePxUuVDxye1y2bbmdS6qxsZCNFGj142OWP8WVRGiwAdPVlgu/F1mq19IPgMn3++uznPrHhVR8JTUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761058512; c=relaxed/simple;
-	bh=JVsFHDNltly00ia4WGi5anXLqu03Rde3Pkn3mw3Yix4=;
+	s=arc-20240116; t=1761058545; c=relaxed/simple;
+	bh=ZHKXRQnOr45eMNPdTrXJCDdwQdNWjeacIeNiXkeVips=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNyV62+ccfI6SqcNVxM+5/zgHHpuZOMOcY9YF2umqCoepS6bHrp+Bq2Vb+2swn62viyD4Fgzerjnn1UMYU0J3m39FESsiOc33tRxdj7/HOMjg2DPDBFvRM6xeA8JS1Dv5iMqV+VJuVH2V9W2/jMnvcdLu57MsuQV3DHHbGVzJeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Op492MAh; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761058511; x=1792594511;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JVsFHDNltly00ia4WGi5anXLqu03Rde3Pkn3mw3Yix4=;
-  b=Op492MAhM/LOhBUJuZHOv6cxeMqG9LNTaNVce72d8ba7Y/WKCxHuXxYE
-   XHM5F/9nMTW2lNm18ev6LQyymhgf+vWnIN/I1rJONNwNghCRU8Jz3koM6
-   jPEs9XsSNjpGh7vS+NPmV7KWiyXp5zUX/dpxvBQgLu8+J8gFFHXUp6Fzs
-   BA5kJS548jiNQznwD/h9SRHZvof1HhkP3Ud13USW0SEVfVQzzGlB61a93
-   Bj5K4oTmLeps4O/yj3eq3wEub8IwDv04+eNw27Qw2ua1LuuduHt+4y0kL
-   LWuLeKQDBSAQdAAHeceAXHbCdn2eqAjXHlfGpIgt0ptdX7hncGIKVArDh
-   A==;
-X-CSE-ConnectionGUID: 9saDnaPDS5WGKoztMze5WA==
-X-CSE-MsgGUID: fk9ck4QoT8yzY2oY/cCAVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62887789"
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="62887789"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:55:10 -0700
-X-CSE-ConnectionGUID: pltd7Bc6QTapEixRzxWiTg==
-X-CSE-MsgGUID: VQE3++B5T1ep91WByBegFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="182814518"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.148])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:55:06 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vBDlO-00000001WRH-3tcr;
-	Tue, 21 Oct 2025 17:55:02 +0300
-Date: Tue, 21 Oct 2025 17:55:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent
- of the reset device
-Message-ID: <aPeexuA1nu-7Asws@smile.fi.intel.com>
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
- <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org>
- <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
- <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com>
- <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
- <CAMRc=Md4DUSuwv07EuBVDJbY1Uzezq+TONxyCvLtOHD=iFXrcQ@mail.gmail.com>
- <050d74d7619bdfdf5ca81d8914a2a8836a0d4e2e.camel@pengutronix.de>
- <CAMRc=MfPqRLFHPW988oMry7vVoTgtQHrxxND4=nr_40dOa5owg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjD+n1JDnnsbMc7vyBBvBdWIuDo76pMrnucOTFE2k6xgtm/rONikfILwcZiSxhL/ti5OhZMZL+BkOCfMjbiXax2Ys8HCIy0lgwRt+9znjKKMmWY7Kvvy9vkqhFqf69JoilEKDnFnQbn1YKBQZtFS9IbN60mIF8nb7RmFRf9u1ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=PazWs+dZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kk76gNOg; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id BDA637A007D;
+	Tue, 21 Oct 2025 10:55:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Tue, 21 Oct 2025 10:55:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1761058541; x=
+	1761144941; bh=uKgl255miv6qiJG3yGmCoN/VZZMKpbBf187RZlaNjO4=; b=P
+	azWs+dZr2N7GwfVwiaCqsNKMJUBpT/CbRxIjt7zMcYc3lrFMzI3Pitjn59atg81S
+	aRiiyz0y5PV4NZ/kfYEpLkpNExUjUZSWL/iH0mLgpW4OBj3jXvhUq1rKh23nOemm
+	EXXUvvmSF2vdy26MBUKC5NmrPbNf6rC749fmPGAFtVi5Bkb1oTPdZRbkDE57lSmA
+	tkIfj1zqOqdlHsH/OD3VpZCGE4+8KmtdyWp/idlWko0W7+0hJkkT0p6BJiY4Ycyx
+	1N8OYXcbQZ1bXRh9zrQuGPG6mapSDc8/BZ/LLVFnH2TdnrHlIGAZkwGlGYGdmxml
+	I5lC6wRvsoP3lE7SoI+Uw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761058541; x=1761144941; bh=uKgl255miv6qiJG3yGmCoN/VZZMKpbBf187
+	RZlaNjO4=; b=Kk76gNOgqsutCTopivhiMFGEu1BaW5EQigqy43wfK6PUse72527
+	HJN/AR9Yn3DpDOnJpECGvHGDfv8kiWqA9DBZ6PsvvF9/wAL+HlSS8wr3Pu73OHuC
+	eZnaa5ViEeuU7SR+NfDxwg7voS6lUwCsUmGXZVuwJrMpgxdlKZzqBS2CeZI+2G6D
+	kIELo7jQ1KRLECH0xuu69z0yr2vZfd8kfXFp9d7+qqnvzOQw5/wtKm14cpxFC50k
+	4MdeeRiwpgEyGeR8XmSsb6zIE5HRv7mN3EcdtpzDuSeVd0MJ/JWW3XOGA9yQX5Zc
+	hRNO6swJvgKVICdwMOEdT343aUSz4JeX9RA==
+X-ME-Sender: <xms:7Z73aLM42opTAPPOzaEgrKiRUTPCEAL2M9SbJP_TVRjCOumu98Z9WA>
+    <xme:7Z73aFYaRshthxN2eWD2fQPMIrDFjk3moGUdhYxMdaNCZ8fzkhVzpK2IHN8bp4Hqd
+    qfcokGhdxFuY_Q0LHEOAFYx_Tax3emdKWZV7JO_FBojOtmdxaqwvw>
+X-ME-Received: <xmr:7Z73aLV_9bDi-Hdon0Gkc78G4gqqRId6pf15DIR_EbR_W5tVHQFrq9xDJp5->
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedutddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
+    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeduhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepthgrrhhiqhhtsehnvhhiughirgdrtghomh
+    dprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
+    khhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrg
+    htrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdp
+    rhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepsh
+    grvggvughmsehnvhhiughirgdrtghomhdprhgtphhtthhopehlvghonheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepmhgslhhotghhsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:7Z73aEBxys00l640kfuF3svzG3WD_28Z_BrMdhOt0ol5urTIuKUjAw>
+    <xmx:7Z73aHIo1ch1YA76Gfx8vmGTXswxpJodOw45_OC5U_LhBxbX2u-Tbw>
+    <xmx:7Z73aCt0woBC6upWARhNWGZqCOyAcp3rOH1Fivb5Ll5TaaW8xqjYFA>
+    <xmx:7Z73aPUieQMrkwuFG0qJAjEo06A0rrGUwL07S_dDl4GH7_30WZMJvA>
+    <xmx:7Z73aPh3Uh8ax1XU8PtTxFZ7xUTnENmpxvAhyXgS3wzM6PlVXkI9uUJs>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 10:55:40 -0400 (EDT)
+Date: Tue, 21 Oct 2025 16:55:39 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>
+Subject: Re: [PATCH net V2 1/3] net: tls: Change async resync helpers argument
+Message-ID: <aPee6zUrKP-HNqTo@krikkit>
+References: <1760943954-909301-1-git-send-email-tariqt@nvidia.com>
+ <1760943954-909301-2-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,36 +111,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfPqRLFHPW988oMry7vVoTgtQHrxxND4=nr_40dOa5owg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <1760943954-909301-2-git-send-email-tariqt@nvidia.com>
 
-On Tue, Oct 21, 2025 at 11:39:41AM +0200, Bartosz Golaszewski wrote:
-> On Tue, Oct 21, 2025 at 11:31 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > On Di, 2025-10-21 at 11:27 +0200, Bartosz Golaszewski wrote:
-
-[...]
-
-> > No need to convert all existing drivers right away, but I'd like to see
-> > a user that benefits from the conversion.
-> >
+2025-10-20, 10:05:52 +0300, Tariq Toukan wrote:
+> From: Shahar Shitrit <shshitrit@nvidia.com>
 > 
-> The first obvious user will be the reset-gpio driver which will see
-> its core code simplified as we won't need to cast between OF and
-> fwnodes.
+> Update tls_offload_rx_resync_async_request_start() and
+> tls_offload_rx_resync_async_request_end() to get a struct
+> tls_offload_resync_async parameter directly, rather than
+> extracting it from struct sock.
+> 
+> This change aligns the function signatures with the upcoming
+> tls_offload_rx_resync_async_request_cancel() helper, which
+> will be introduced in a subsequent patch.
+> 
+> Fixes: 0419d8c9d8f8 ("net/mlx5e: kTLS, Add kTLS RX resync support")
+> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  .../mellanox/mlx5/core/en_accel/ktls_rx.c     |  9 ++++++--
+>  include/net/tls.h                             | 21 +++++++------------
+>  2 files changed, 15 insertions(+), 15 deletions(-)
 
-+1 to Bart's work. reset-gpio in current form is useless in all my cases
-(it's OF-centric in 2025! We should not do that in a new code).
-
-More over, conversion to reset-gpio from open coded GPIO APIs is a clear
-regression and I want to NAK all those changes (if any already done) for
-the discrete components that may be used outside of certainly OF-only niche of
-the platforms.
+Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Sabrina
 
