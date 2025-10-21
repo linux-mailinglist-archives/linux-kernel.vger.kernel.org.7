@@ -1,133 +1,155 @@
-Return-Path: <linux-kernel+bounces-862513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19B8BF57FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:27:52 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E832BF5803
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5069A4F3818
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:27:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F51134AE44
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7E832ABC3;
-	Tue, 21 Oct 2025 09:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA22332B9A7;
+	Tue, 21 Oct 2025 09:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="V4hWNgts"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U6zX7j1V"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAF8221FCF
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC07E32B9AA
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761038862; cv=none; b=If13Jbbu1+mHgmjHYFodpnCcmV+2DCmsRR6Qmz92u7BZRfu85JPFt7SlBLQB5Kg4UKkTq+61X03XssKXiE0PXb4yoior4Hod6rYUO+ExWoUhYltu8ws5SBCIUwfBIyQZ7AEX+ME5jRT8IxfFMlLpKZkz123wRHGuaMidHFkctnM=
+	t=1761038878; cv=none; b=jinTa6ACFiD9MD+EX4XKuu0ZXcyY4ySVn7eMIAYPU1c4TpA+nIxQjjmz+kabAu7qxKQR686dbbCv0zNPfRvpaoVisxY/cy9yeRjNej+cgzRtljtvlyYoSDZvwspOBtf6WnPIEG4dcW3wwyCKgMxZTHb4lXeckrA80XAisKWQt3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761038862; c=relaxed/simple;
-	bh=P7z2gScypkXsCTEfcWrJhYzB1SDqV1mmRGQM3Gk7S9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VqrpiPlCgmJHhxia+lWkYJeveUgedtfooGD6u2NGoFSs5a/Y6NSCOETMzAWoWgLBhICrGgTCweW9BDkakVAgEcmPf9F2DIJopQ9tQVeqYvZ4hahPOjlj8VzOoQmYGM9jl5n03m3fXmcM+/y4TAkYfMWoe5/D2fqNWPnXr1hPf3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=V4hWNgts; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-36295d53a10so45297201fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761038859; x=1761643659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P7z2gScypkXsCTEfcWrJhYzB1SDqV1mmRGQM3Gk7S9E=;
-        b=V4hWNgtsX0nHo9y30R/HNtN9/pw0rP1dvKo53R3ZkLgztA3ZFZNjjDovB2FC0LZb1w
-         Hmghorx8Bxgur7UZnh9duRWwpgabzGbpkt3QXpUJAs5Es765Aa6nxc0BbJIkmACCqs3n
-         2p665rwgEo+z+D/AOCk7mbTHPUudelhc3cIhURZuG35gWVjVkrWPcS0Q0r858e4Z0esy
-         TdIm85vXWGk90+65zICj4gT7wmHduAg1Qc8igkKbXaK+QZBt0guQy/uoFwtOyuyXGl5/
-         DN7oi43gI1+BqK7QTOSt1iuA1jhf5WH2epmlxd9Yf0gbG9fvB6jcBg23XkLzeeiAtZ/m
-         YStA==
+	s=arc-20240116; t=1761038878; c=relaxed/simple;
+	bh=jr1ATh3mFN1Fz67pSymlfb7tA8VWXEqzYhWpbE/WI48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WvUVL9442irh5Y9Vg2/Mj+/YpH8qr8k0vxfFzwvEn+x6MHvAOwYdl4UBMPPiOuQT+47y55g/rd34284yt5LwG1UJo3cv1ZE8OVkwJQr7tjVs6U88F/59prIOVdCXfvB1OFu9MEATsTTEVFQi+gIgv34NKbtl94lXoSkg3CA2QLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U6zX7j1V; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8PMAs024200
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:27:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YfrbI/XJEDAcD/07p/XyDCO8jd39lqi6bwsbDgQdlYA=; b=U6zX7j1V/d2Rh7Ly
+	2Ucjxh8n1mo7kJQssHUBoBefel67xZ9CcHRwvQB/Bc0NgvUZ0/7dtjv+Zgl8D2z7
+	xHONvJUupb2liwWMk4uJX28wfPx3hiJvJeIdUHGOW9n+A9bo4P3Pcsr6UihH+Fx5
+	1JWnbd5Y6zFRxqXtxXSPWmryDS+8DYjJ7O3/BMdUQdb/dxVzpk+YoGBdYMRoZuEz
+	MUJDd0v7ByXn9Kis+2oFNhwqG+7MB+SC/IPhl5+lX6cRLE3PFN/DIJE1c5fGNYdZ
+	hV3lCMpEwynP5+cRTeXDhlaSDOTPvxTqmMzz9kk4vRwH1drPMZWbnTzCV11M2eKg
+	RL6zMA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w80736-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:27:55 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8906754b823so190182285a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:27:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761038859; x=1761643659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7z2gScypkXsCTEfcWrJhYzB1SDqV1mmRGQM3Gk7S9E=;
-        b=PsvV+jWB/t+wHle4OjDJx2/W2VBERnjXPZCJPDi07h5hYLHlQELm/xMAxpSVo93xY2
-         YS6Us90sa5nA9BJtBfg4eSDalnkY5ZF+4+1S7q/xVZ2D20My/pigRBhNS/XUAeQBclmG
-         5LrUiaPlpjr+qtXmDebivMPJ2fJjme/A16/Dc7SoSjS4KNCW76IKbDPUXtm3T4SNz3YJ
-         bW2tTuRfO0S4Ucnd1o4vFkXeL4l+0YZZsMdDzpha7zcw2YfADW/lqqwzlb0PJ6vdwcGG
-         gJRsRrftBL5a1gF1cmbh0SLwHexqiWNNj2KwV22VSAdpa8IAAwEL9e1X4g2tv9OMEUS3
-         eMxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUj1GRF83OmVGjIaCMVDIJAEvDq2c6s7RFHrk8lK3RXR18jLFmHOoAAXrABGv7pKEugh2skzT3c76orL4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVrJhG+5Gd1dW2biYUa9pnBRzkkwp1Nqa/DOkgRJf1ww7HSX3l
-	wEi5DOmHT2L+Pgfm3CLzAHYqYyOoSmTkvD2uZwCPBXPtPEEBz1qob19Ns7Y/PpFefUCIQ34Gjsw
-	rOix9LHwJ7IyHEKhUAOlvj6njvKlOeVJF0OgHOeM7Qw==
-X-Gm-Gg: ASbGncscXMl8PTHElK4iVXR1mBvCjXwT+30Xt1/RIQVJ2YeJHVSsaBm3oDyC7A2QV+2
-	Sm7831Xnpz1VJeDfRSBNJ3JbeflQw+B/s6NJM6lfGB8TvKKFN3vdrgSGo9O9Ze/mMJTUtusymLo
-	reSizmFv6dPEC88kD42jYuTsDYIeETi4rCCTTpqPz913D+Xr6CT3eeeHnLmlPvx4sbgoI65uN99
-	EyLC7fjqusZFZdeaYymkl7l6QEuqAhLG2cNbGs8vtFBTJzIJxujdJe0rpNA8Xxh0TBCU1ToJ4de
-	Teuk4ncxu4p3EDihkQ3hNBP2c3M=
-X-Google-Smtp-Source: AGHT+IGcqahLfKSaPq3awX9rBHq412FeWkuYZKlnUWbJU5x4mCNhy4NKrxE77gwoikcyWR8JVYkFw8yaJVdN+5pc3a4=
-X-Received: by 2002:a05:651c:1ca:b0:36d:bcc:bfaa with SMTP id
- 38308e7fff4ca-37797a5f17cmr50360261fa.40.1761038859288; Tue, 21 Oct 2025
- 02:27:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761038875; x=1761643675;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YfrbI/XJEDAcD/07p/XyDCO8jd39lqi6bwsbDgQdlYA=;
+        b=f8oaoleOjKff9GwuZwZqA3MPKLYYvmRM+cpyPtjrn0iqwMjn3sG60I3wxgpbVQ46V7
+         +H2QyfmMRepUrhgodRb1b+Y0D7wUiPJg+Cvir5TWBCZVvU6FWu3h9xSlKijR1xECwl8I
+         ZiEY2nJcBmN1P9Ajw8ysS5CX3KOOVFqmGbOisyimWj6BFl6/Ilf20QrmQdvf/fqOndFX
+         YdpbKQ4OT1SRnLEEaaxXW+V2YZFnQsSLutHeQ9I+ocy9Y4AA8K6BiDctuUYRdlpk5KsK
+         LX45sDhGDODMqB9qWHUAE/XbsNWNMM+BZljXuVFUDF9FuHysEVEZMqeBSL0v5RgOTRrY
+         ajnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfBKZ8F7bQgWWmBDDfrcJLpbUqaboMhlkt60mcCMS5VYZK+LUicMNuVZR2C2k3FqME/7W16vcne2/IZVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVaJrEqfgeJHtQTgF/gihTD8eibIF9dVdPqjmlJoXelIzGvS4E
+	tdhfuW2kZOiU6YvlbjgrL8Ked+uqyrQcyHWk0KcAgWI7jfCDLJMwVfqeC+SMPMUHMaL8BuaI2Sd
+	HbzKxDz6ortCNuXw1zgcsaKjHM+VnMSH1HtgY4newfVbFKFF2LALX0Qf0ByZwejThUp58ffdCv5
+	Q=
+X-Gm-Gg: ASbGncuaQkywjHAOYUtaj/CjI3vsueKWugrk9QXdCWvotiADFdjxgsf6qZfxQfutmhP
+	fpnZZ2ua/eL6q4RThRknnJeadUmgkFa9EXm8mgcmdRBGS36BgugX3xYCyTOvMe/JoP1Wz6FSBAC
+	B/tUVqLauRTxl/3ucSkMnESXYORQif45zPtSxHpikqLai4+RrPhqj0k+uIMXVu/Vd9KtP5P14Wu
+	xrkxt7RhDCBsAgehZxCt9CIpYdncyhvKuSjfKT3GczkqTNVVVpDsmaAm2gTGneiNY9ceHLQPL+v
+	+lAccHoWPFlkucDBlTsBIYKQ8oSijcAuhH5oz5BPuBMe0jYdSA5fQu9F0rxVYl+gqAYuZh50kvU
+	HXns9GsLXoCd63M5QjLIslI/hhsAUVc9NOwVUlT9KOWL2YOKDtEV0j63X
+X-Received: by 2002:a05:622a:450:b0:4db:1bd:c21c with SMTP id d75a77b69052e-4ea117b0e6dmr18977181cf.12.1761038874724;
+        Tue, 21 Oct 2025 02:27:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFinwYQWXxrRjluTj8cLkak6FzinIPonTbmJID/BUM56PasN4UGoEM00cUsgGx4bU/4sp8Yug==
+X-Received: by 2002:a05:622a:450:b0:4db:1bd:c21c with SMTP id d75a77b69052e-4ea117b0e6dmr18977071cf.12.1761038874189;
+        Tue, 21 Oct 2025 02:27:54 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da25d4sm1016938266b.9.2025.10.21.02.27.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 02:27:53 -0700 (PDT)
+Message-ID: <89150929-873f-4d09-9cec-727f92572d17@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 11:27:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
- <20251006-reset-gpios-swnodes-v1-7-6d3325b9af42@linaro.org>
- <95bbec130437846d4b902ce4161ccf0f33c26c59.camel@pengutronix.de>
- <CAMRc=Md_-mO=HqfncD-vJS6XzPJ+aTcBjSjtkxLH_h1=pNjCcg@mail.gmail.com> <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
-In-Reply-To: <075a4511a6ae4b047599757d41b559c6b7cf9d0f.camel@pengutronix.de>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 21 Oct 2025 11:27:27 +0200
-X-Gm-Features: AS18NWAqzshJ751MyC_I5LHfM-95oy0012vlyyZ7HFzAJN8zex77zf83nZAiBoE
-Message-ID: <CAMRc=Md4DUSuwv07EuBVDJbY1Uzezq+TONxyCvLtOHD=iFXrcQ@mail.gmail.com>
-Subject: Re: [PATCH 7/9] reset: make the provider of reset-gpios the parent of
- the reset device
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] qcom: ice: Prevent client probe failures on unsupported
+ ICE
+To: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>, quic_neersoni@quicinc.com,
+        andersson@kernel.org, konradybcio@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021040337.787980-1-quic_dmukhopa@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251021040337.787980-1-quic_dmukhopa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfX8zWukFZGZeJK
+ ooawPPHrQDYI3OUiymaNS4ORt1KIZHAYN1nI+wTxttuRJ2eSojuzLH3EezLHF9r7Vhiy1KyKDsW
+ +6WMm2BN1qJnWA23Zde3oQfWqsYTeSPPJaXN02BQbrT44PItC00NmAp6dvz4tnLyhs8sV+LDGG3
+ 7M+iXgEYyA6iEtBg0NuTAi2E/sKvNzTWLSC+HCB02gCSWmAul3w6mTysqWC7Mz9POmkDqh4RbgR
+ C5RqGhDylHRgaYeCakCDoZUSynUGmT08B1tXdS9DaDKINsTl1cSpl/xfLhnKIDjS19Hk2pxLs92
+ C8LpRbwVE7od1W9e4oUjXgV2jmDNaH4QPh8cjDOYqhzZHTFEorNUH4iWwBPakeF8GQ0tmUwjkfD
+ ecRVRmQXEbffxaLaNkZ/eXlWtjHb+Q==
+X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68f7521b cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=COk6AnOGAAAA:8 a=-Y4A2yJOX9EHAnGLR20A:9 a=QEXdDO2ut3YA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: cZHsQJxs7tWB5OLyI96BA7kOXsC0k9pM
+X-Proofpoint-ORIG-GUID: cZHsQJxs7tWB5OLyI96BA7kOXsC0k9pM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
 
-On Tue, Oct 21, 2025 at 11:17=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix=
-.de> wrote:
->
-> On Mo, 2025-10-20 at 17:25 +0200, Bartosz Golaszewski wrote:
-> > On Mon, Oct 6, 2025 at 5:19=E2=80=AFPM Philipp Zabel <p.zabel@pengutron=
-ix.de> wrote:
-> > > [...] could you take this
-> > > opportunity to prepend a patch that splits the part under guard() int=
-o
-> > > a separate function?
-> >
-> > If I'm being honest, I'd just make everything else use __free() as
-> > well. Except for IDA, it's possible.
-> >
-> > That being said: I have another thing in the works, namely converting
-> > the OF code to fwnode in reset core. I may address this there as I'll
-> > be moving stuff around. Does this make sense?
->
-> Yes. There was already a previous attempt at fwnode support [1], but we
-> abandoned that when there was no use case anymore.
->
-> [1] https://lore.kernel.org/r/20220323095022.453708-3-clement.leger@bootl=
-in.com
->
+On 10/21/25 6:03 AM, Debraj Mukhopadhyay wrote:
+> Storage clients (ex. UFS and MMC) invoke of_qcom_ice_get() to obtain the
+> handle from ICE (Inline Crypto Engine) driver. Currently if ICE is
+> unsupported, the return code from probe could prevent the client
+> initialization which is a bug. To fix this a new flag
+> qcom_ice_create_error is introduced which caches the error encountered
+> during ICE probe.
 
-Ah, what was the exact reason for abandoning this? It's not clear from
-the email thread.
+Probe currently only happens if the ICE node is present in the DT and
+referred to from the storage controller. What does this patch solve?
 
-To be clear: I think that we can convert the core reset code to fwnode
-without necessarily converting all the drivers right away.
+Konrad
 
-Bart
+> 
+> The qcom_ice_create() and of_qcom_ice_get() functions are updated to
+> return -EOPNOTSUPP when ICE is unsupported, allowing clients to proceed
+> without ICE.
+> 
+> For other failures, such as ICE not yet initialized, the existing
+> behavior (e.g., -EPROBE_DEFER) is retained to ensure proper error
+> handling.
+> 
+> This improves error signaling and ensures that client initialization is
+> not blocked unnecessarily.
+> 
+> Signed-off-by: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
+> ---
+
 
