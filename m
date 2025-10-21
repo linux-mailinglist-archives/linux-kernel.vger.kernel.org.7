@@ -1,92 +1,154 @@
-Return-Path: <linux-kernel+bounces-863766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562BFBF90EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:33:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CF3BF90F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Oct 2025 00:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0607A19A5E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:33:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 685344ECEFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 22:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0595A29B217;
-	Tue, 21 Oct 2025 22:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C43529E11D;
+	Tue, 21 Oct 2025 22:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uJccnVcU"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bHsKOKQb"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D765426980F;
-	Tue, 21 Oct 2025 22:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF24350A28
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 22:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761086008; cv=none; b=RbOqB/8TzVv5u/2j4SjGCJv5+Q6Zurh0jjcbkxb5h5Vg0IkNmEdEu0BAUW5O1hocMgSxaE7V/u1rAkAKoTXTqN9Y1ISMs4s5v4Rj7rD84WMvrcWaN3Gwz7TbQBTV07MHfOBI5DQIN//sXfXWHJQ6hr+wocNJ8qDFM/BFBFHwdWU=
+	t=1761086077; cv=none; b=eEOrpSzhXIrVAOVseuzlLe8g7mPxCbdbFxM7zy2s9TGYLDS7amU8z2QS5ce/9mrSM+irUpnmf2r527JqQdOg+smuMvWkDvi/Dckg6XMtxcCACCJF655arU6bscytNlzA9uotYjkDWcsSDSRiu7PIMdZ4SWxEjjNvMcUHah8D3R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761086008; c=relaxed/simple;
-	bh=RdF4C4zfYIMOuutMG05EeRkQa47z45nPm6Udszd7vhc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZfCYOYlO3tN0KREsyG/Hf0k8ik58XSG9lQVP7kJmVKn++UdgTJY/yUCY4z1/h8LwgBuwAJEXJe1fqysCCP/zm65kWDVaN9tG5SjsSGeDYBzHEodi9kW68/1oiPyotCWR79QKRhoUuXesznAfO31PjM2SD0ulIU+UEXsemh5/Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uJccnVcU; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=ZCoka1jT4C6ihTpSLrU+pRABpnrzNQJSt1sW9jdikJc=; b=uJccnVcUirU4XfQWmMRDGrSklU
-	j4NghMTQauqT/J5yxFt4+kptP57NF332BvxIySgI1XFPVDV2UpMHeNdBksxFMJZgKuktoTTEM/U/S
-	3RPNnrzeBOVSo4nXAK63/3XouuNrvnnTQvk5FWC1iT+0CFdUNfL+Ljad1bj882dVSknRlecfRWOkK
-	bdGZjyLla5SyaZjN7zQ0yEYXcvGv4qPxSwa9FCwL2K0emSyhRRO+Q55pliBpKnjfVzIwPgye2gLY3
-	bC2c9+Tr+nIIASxVfdAvuUOqTJdPn74zLU+ODqTXsmiMIFqNM2NRaEU1AeSIFvV4J+ho2ERM/SjSU
-	utwpJsvw==;
-Received: from i53875b19.versanet.de ([83.135.91.25] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vBKuv-0006j8-6Z; Wed, 22 Oct 2025 00:33:21 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] dt-bindings: watchdog: Add RK3506 compatible
-Date: Wed, 22 Oct 2025 00:33:08 +0200
-Message-ID: <20251021223308.193700-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1761086077; c=relaxed/simple;
+	bh=IeoT7WRzABBSz4YfCNDzlegECV0bAt318h7fRGN5RJs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jsfsBGafVDLgMLAcILwcYkG59Bv7irTifHmxiVEiNOD/N94zYPQlWz0BuuF22fBfMnUfh+L28ECo3aOKpWIi4dmRc2LGapVFmVddDcwv0vWoHRqaeRqfjLFX+nv9dGd9xHjoKHGHlO05IkZ/JH70LW4yQaENiMOcosPcql3hVwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bHsKOKQb; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63c44ea68f6so4254a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 15:34:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761086074; x=1761690874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PKO4Kp6dH5qBsfNYhJL1nx41dfgyVlu5TgJiEzgyusc=;
+        b=bHsKOKQbtxRS7PfqyFqsWbg3XtGVQcaD5nH0+kY0bFMJF8GoVMgfRA/bpAk8xx3nDi
+         LCc/1Gbz3IkLueOji+gvuuZ9SU9OeAIaMLrm+AgkHjL8Yd1q2FvDuVYEQw5QmLZO/i/s
+         rTyYSmcRhAGj1j5QM7AebUFZ8qVmb3CpZln7uQUHPN6yG5AmbwCsso41FUFOBEAbtFYR
+         hI77sJZ3/f0YFU3nf8QrRC/qtuAMigQ9YCIr+XxTkKWuIJWJa3HZdgvrqkQ7CMNciLLR
+         jn37l45ZjbDSQzKLW0qppKF1H4i37/VNvFnZi42oqB8FG6y/ad1ncsFk2WoXkwEBbLep
+         ynzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761086074; x=1761690874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PKO4Kp6dH5qBsfNYhJL1nx41dfgyVlu5TgJiEzgyusc=;
+        b=vpumqk65dQLrf6anBEAaCkoGM8HpLEPzEjipJdbrEfxJ5Xk1efZEP2BiDRPdOEjZTT
+         3QpI5eexczBeRbns59BASNAOdpIusjDlNxFIA97/6G8Lf2hKMi5vTLn/gQ/5/OwS0i0K
+         6IG3FGgJCrXZa89Ulb4zO4N3h+0QsZbVaMAm/Nw4mgzxBZAjUsB0a+VcK2YWn7R0YYzv
+         /E8yagPyGtlQaXFRh39Vgvk6Azf/DxcmVkefXjUv0RZfLDXwL5cG9oboxfWrCtAbplRc
+         Y9Xs6GZ7ekHRhVB4kijYDHTvZ2T7GlBVJujCv24W8dABwdahRXDt2BYn/x4SFDBeiovh
+         95TA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuviUetmq2GNmHdosvW1lal/YbRD6w9tPHrS5pVQfrb75bCn4BgzUXcMZvoXTkrc+wjYCdJJdIuQqLPnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkZt7WPg/xSxRwppT0I4ybrSTMhQdY1dMVRCSL5AJOBTBpAS/T
+	Ry6FZjfLj9QrZewWZO0QmEm70x/8zm5mBmoY1k+GHXpUavjNIcBZAZ6mHTTZfklNlB/qhHp8kJF
+	rtGMfcH2q1Tp5d4pE0li+SUeYkiOWkl8AAxuCTCJ3
+X-Gm-Gg: ASbGncshYWXnY//SQmpJ2x1ydhm0VA1m4FguhIlurLExF3M/xMFE+4YZeqZFrVxTJhJ
+	Z7tOqaoisR+WQjIBhkBZQDfSIEl9eZL8pTjvO3XGlxA8NmgzZvAMqdtFNkhB3Wp3jnCuXr9ubw8
+	meDksw4IGpoSzmbKi67uIVbzkKv96oqA24iQhAEPNdzaHza4i638GjPV0smVILQEYHdOW1FFNSe
+	S03KWylC9uwzB9uNZXbg7HGHqWAoEViWXbUKggL4Vb0EfE+u3V2KFWKk0dvbp4RCqvgYpQ=
+X-Google-Smtp-Source: AGHT+IHemPTjIsdR1YNb/+xlTiLW1G5LRjaPzAhpWFbk4sYlRCe9oYxSANNytekk/pnnXGKW/F8DhZvLGLEWjJAFktw=
+X-Received: by 2002:a05:6402:326:b0:63c:1167:3a96 with SMTP id
+ 4fb4d7f45d1cf-63e1d9d8d81mr17578a12.5.1761086074095; Tue, 21 Oct 2025
+ 15:34:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250917215031.2567566-1-jmattson@google.com> <20250917215031.2567566-4-jmattson@google.com>
+ <l7txoioo3gntu3lyl542jg3n3wvkqruf2qh33xy7lmr5mjgfq5@iw4wsfdurlc7>
+In-Reply-To: <l7txoioo3gntu3lyl542jg3n3wvkqruf2qh33xy7lmr5mjgfq5@iw4wsfdurlc7>
+From: Jim Mattson <jmattson@google.com>
+Date: Tue, 21 Oct 2025 15:34:22 -0700
+X-Gm-Features: AS18NWD_K5CQ6npFasemkAoeOhQEDgS2K8RB8qQWd7NRuStJGw86eRedF-qkt_U
+Message-ID: <CALMp9eSPgy7RdT9TwKkRD5oh6-74XfCCP_UZ1mJWj6Nb9P4P7w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] KVM: selftests: Add VM_MODE_PXXV57_4K VM mode
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The watchdog used on the RK3506 is still the same snps,dw-wdt compatible
-one that is in use since the RK3066 days, so add the RK3506 to the
-variant list.
+On Wed, Oct 15, 2025 at 2:23=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
+ wrote:
+>
+> On Wed, Sep 17, 2025 at 02:48:39PM -0700, Jim Mattson wrote:
+> > Add a new VM mode, VM_MODE_PXXV57_4K, to support tests that require
+> > 5-level paging on x86. This mode sets up a 57-bit virtual address
+> > space and sets CR4.LA57 in the guest.
+> >
+> > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > ---
+> >  .../testing/selftests/kvm/include/kvm_util.h  |  1 +
+> >  tools/testing/selftests/kvm/lib/kvm_util.c    | 21 +++++++++++++++++
+> >  .../testing/selftests/kvm/lib/x86/processor.c | 23 ++++++++++++-------
+> >  tools/testing/selftests/kvm/lib/x86/vmx.c     |  7 +++---
+> >  4 files changed, 41 insertions(+), 11 deletions(-)
+> >
+> > ...
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/=
+selftests/kvm/lib/x86/vmx.c
+> > index d4d1208dd023..1b6d4a007798 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > @@ -401,11 +401,12 @@ void __nested_pg_map(struct vmx_pages *vmx, struc=
+t kvm_vm *vm,
+> >       struct eptPageTableEntry *pt =3D vmx->eptp_hva, *pte;
+> >       uint16_t index;
+> >
+> > -     TEST_ASSERT(vm->mode =3D=3D VM_MODE_PXXV48_4K, "Attempt to use "
+> > -                 "unknown or unsupported guest mode, mode: 0x%x", vm->=
+mode);
+> > +     TEST_ASSERT(vm->mode =3D=3D VM_MODE_PXXV48_4K ||
+> > +                 vm->mode =3D=3D VM_MODE_PXXV57_4K,
+> > +                 "Unknown or unsupported guest mode: 0x%x", vm->mode);
+> >
+> >       TEST_ASSERT((nested_paddr >> 48) =3D=3D 0,
+> > -                 "Nested physical address 0x%lx requires 5-level pagin=
+g",
+> > +                 "Nested physical address 0x%lx is > 48-bits and requi=
+res 5-level EPT",
+>
+> Shouldn't this assertion be updated now? We technically support 5-level
+> EPT so it should only fire if the mode is VM_MODE_PXXV48_4K. Maybe we
+> should use vm->va_bits?
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
- 1 file changed, 1 insertion(+)
+I did update the assertion! :)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
-index ef088e0f6917..609e98cdaaff 100644
---- a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
-@@ -28,6 +28,7 @@ properties:
-               - rockchip,rk3328-wdt
-               - rockchip,rk3368-wdt
-               - rockchip,rk3399-wdt
-+              - rockchip,rk3506-wdt
-               - rockchip,rk3562-wdt
-               - rockchip,rk3568-wdt
-               - rockchip,rk3576-wdt
--- 
-2.47.2
+init_vmcs_control_fields() hardcodes a page-walk-length of 4 in the
+EPTP, and the loop in __nested_pg_map() counts down from
+PG_LEVEL_512G. There is no support for 5-level EPT here.
 
+>
+> >                   nested_paddr);
+> >       TEST_ASSERT((nested_paddr % page_size) =3D=3D 0,
+> >                   "Nested physical address not on page boundary,\n"
+> > --
+> > 2.51.0.470.ga7dc726c21-goog
+> >
+>
 
