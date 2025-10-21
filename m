@@ -1,173 +1,121 @@
-Return-Path: <linux-kernel+bounces-863740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0D8BF8FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:53:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB67BF8FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BB784E72F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1C9D3BDA6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5435D28CF56;
-	Tue, 21 Oct 2025 21:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA1D296BA9;
+	Tue, 21 Oct 2025 21:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2g9BtgC"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRd9u+dC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AFC2777FC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10252777FC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761083597; cv=none; b=EZ8Ulq9ecQQ1kyUVnu9+FpBQ9K5Asg23U196dUbI0QKJXb9NdcYXHOV6MdTA1KGORe+cTsLAoJK2AerRowRkvfgVQK+UW/SKuSHUP9HenMp9apWHEP5blMurcYsOBLshk4+eHJ+eXZP/Xv5lQkbSCf8gPTMkTQ8HI9fXv9pMnsE=
+	t=1761083792; cv=none; b=ag9A8CwjD0YiA8tPxAz3yYE481Lclq14RRS+WOrgxmQwmYM6hbOzadziMcAm3Y1y6gOaNPjB0P0UYUGP8OC1WWpEPHawtds7RxB2iiGu/WGMoqHx2MbPd+Pe9aDKYxwmIAuY5aT6asdaSgG6rYmitBM/2CsLBdi5470fM+tM15Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761083597; c=relaxed/simple;
-	bh=Lc3WtDTd1WYQC9A9nm1WTBB9FxsPLQHScnVEcTR59VM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J7vb4hxY/68YqhlDFeZEcDHqrTDClgJNVcBPcMIf6HyDqJ5YqFn0ftvyJ8OVadeCket1ryCv1ET6lgYmfrJcEUMZUfHE3wUP1HJ7ACxlkHLn9Y17UV55C6baHgaVTKLDo1ilSI/LGuEaKBuqS/QjInNgKA56V34spOFtH9TUS8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2g9BtgC; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b50206773adso78980466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761083593; x=1761688393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lc3WtDTd1WYQC9A9nm1WTBB9FxsPLQHScnVEcTR59VM=;
-        b=a2g9BtgCQBcF4R1QXWCynwW3o0KpJTJid/msuZBMqqoVCsifab0apduzrNWmaxrd7e
-         bLpeUqThWv3tL4dMUTIg+QpSLnbmTnqUQ/N+QDGaZmbIqBPHTM3albwzaQ6TgbFs2i56
-         zpGR1k+7s4H+7acQDMFExA+lF1SBzo/sbPRv8WfHxuBW/ZY7JRihcvrVkCl8hDnJa7Mi
-         7YD/dMz2HXwHcrFrSCp9FuD4LY7q1RMQgfeB1bxoJMr+inLgNocCb7hz4H37RdJjAXBN
-         88+0uIfP9YTVX1fAJpxeMs5yQ2V4LKCd7E5FAaqlZNnWXhXHg//MknucTgrA+/nf5Yz8
-         gC8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761083593; x=1761688393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lc3WtDTd1WYQC9A9nm1WTBB9FxsPLQHScnVEcTR59VM=;
-        b=lIDsrhxHWnr+EGb/uTDNa2JIhtzxMG4plZTeB0QjfSw76qPGuIH1d2p+t9RnNpk3TV
-         BKy2vF7QW9rt+uh4X/ZMFI0fayYsNcFQfLTVRE5cFdIFIyMu4kE0lY6C3cbRPAfA6m3v
-         9v2kb5gGFmdvVmXVOHT6zobmhn5QVulih7g39oIpz8KMxWJ+78hFSkuxuImnXkRzbeyZ
-         0FRsiHZTRsXVYuoccpZyNL+1xWlgT9IlZZb90E6kxlXY8GJ9SgBtJ5n91rT/YNDR49EI
-         cXChV4497c6HYKPnWxVAdAo6Sx/pj6LemEx6qS/gA1+StOgqy52zN9wrAFcqtP7xUrfJ
-         s3kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfZMk4MdTAEongJhH9cQBZNM4HhsvvFSVYpTrrUsmEBl8Z5Z/LZk7zEDJUUHc4lCk8POcYtLM51+Ii6x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJb3MFY0qKoy7FKffMNZKGWj8WvQNR3/rPbz1OFNQffGjpjHyK
-	lP4DES3PI5cTCt+m54ApDWEmIqDTZ3Ue+axiKu7gxb6fDwiQZ7TI1MkL0xo2A4ItDjJaTCHrG5P
-	0YIoCkF+HUv03nNPsNS7GQxTogqxGiEQ=
-X-Gm-Gg: ASbGncui108mLuUhHBqfxVoU1HFEAcotFC6GsWaXMizHqPJKyRURWpu4c8Rs9xDwYFG
-	wTzOxVKiRAJCnhQlD1YPzI4fTpdmnBR459n/6WJTQ4g1EQcvOrOefDCrEX851WT9m5DMVTmjuEA
-	NktKZkFvYTXQXhWLLslJFZzuA/ZxlMYgalXrWH/M4Twv7HYn8hpPr6w/0AC65+bxAUtlqbmyxGp
-	ARttZIVrhMEyi/7KAXGwDY3q+lu2pEqebeUUf5EoFb+ryICZN1jBUeT4bV6qr8vBGan
-X-Google-Smtp-Source: AGHT+IHgL6OS1zyNh0o71e3k4WV5Tf6ETzDakWmigXYDAG5OGfCGMEg6wbmkgvp8Wv+rjUuXZp2cr5meg9MQtWIDPkc=
-X-Received: by 2002:a17:907:60d1:b0:b4a:e7fa:3196 with SMTP id
- a640c23a62f3a-b6d2c0f0100mr178904766b.20.1761083592864; Tue, 21 Oct 2025
- 14:53:12 -0700 (PDT)
+	s=arc-20240116; t=1761083792; c=relaxed/simple;
+	bh=tn/a6WHLadou31z535LBNqrmC7LbXls2FWTKbAvQB44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUnTosV80Tq7xWkBm/PO5LZkXRNisY/Qe5uYYF1Dc9iuLdirMp+1SVsTmgVoAP6QRA7/qohG2tjkRsW6ToLq5ZSrXs+VvVXOJTibnow8dDwisq2Iv7NmwusI0fh6pLWDuWh6t3q6GrNYP9R8EjDmzbwOTyHdNfhMF7asKXV5Yjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRd9u+dC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0691BC4CEF1;
+	Tue, 21 Oct 2025 21:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761083791;
+	bh=tn/a6WHLadou31z535LBNqrmC7LbXls2FWTKbAvQB44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eRd9u+dCJ/osx7ugH9jA/vgDMJ4qfg7fLSAVYvCd02joXklysuKX78fnWaQV+vgk4
+	 t/r3vZXaPeXgKlMWM60T1InzHb8BD6S703rZmfcSUVHcVvNiDBf4MJj9oxgJqEMBTg
+	 33Hhhs7drXxn7juiKlXZqUofsXzMjboGC0W99Ie87RllxdUIf7j2mm9JUW4nJQA435
+	 riMSAIbQp5RYlnyuy6mgEAWJiH0/IN/8/6X6kxDY9QC2jS2dDvU+tAohh2vEbig0kQ
+	 E2WDbYVcpjXF/cI1QwlOZFF+p2LYuobBGhlkYLaZLkOuW3yiKevc/ItnxNvbbnqJ5y
+	 1Tj9wI0zMt3uQ==
+Date: Tue, 21 Oct 2025 11:56:30 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, jiangshanlai@gmail.com,
+	simona.vetter@ffwll.ch, christian.koenig@amd.com,
+	pstanner@redhat.com, dakr@kernel.org
+Subject: Re: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue
+ lockdep with reclaim
+Message-ID: <aPgBjmIm6n9H-R_u@slm.duckdns.org>
+References: <20251021213952.746900-1-matthew.brost@intel.com>
+ <20251021213952.746900-2-matthew.brost@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007115840.2320557-1-geomatsi@gmail.com> <20251007115840.2320557-5-geomatsi@gmail.com>
- <CAFTtA3MObvXRHxbULghGcT=ThrBDeFDJzUY7LOhgNnarzpYeGg@mail.gmail.com>
- <CAFTtA3NoOZEMqYD6+vjP=09T15GiThjVy1LeDX0U8CC-4HMKOA@mail.gmail.com> <aPVYIOz8XRZ-737r@curiosity>
-In-Reply-To: <aPVYIOz8XRZ-737r@curiosity>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Tue, 21 Oct 2025 16:53:01 -0500
-X-Gm-Features: AS18NWAt2pbpVXFat7QXlAftkjLF0aVf0hUbqLUhJriBx4VQpw1cMjJ_tGTeY0o
-Message-ID: <CAFTtA3Op5e9gNrCrO1arpUw18oLQ4MX6cJxsiKCS+SZn48_qaA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] riscv: vector: allow to force vector context save
-To: Sergey Matyukevich <geomatsi@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Oleg Nesterov <oleg@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Thomas Huth <thuth@redhat.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Han Gao <rabenda.cn@gmail.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Nam Cao <namcao@linutronix.de>, 
-	Joel Granados <joel.granados@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021213952.746900-2-matthew.brost@intel.com>
 
-On Sun, Oct 19, 2025 at 4:29=E2=80=AFPM Sergey Matyukevich <geomatsi@gmail.=
-com> wrote:
->
-> On Wed, Oct 15, 2025 at 04:32:05PM -0500, Andy Chiu wrote:
-> > On Wed, Oct 15, 2025 at 3:18=E2=80=AFPM Andy Chiu <andybnac@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Oct 7, 2025 at 6:58=E2=80=AFAM Sergey Matyukevich <geomatsi@g=
-mail.com> wrote:
-> > > >
-> > > > When ptrace updates vector CSR registers for a traced process, the
-> > > > changes may not be immediately visible to the next ptrace operation=
-s
-> > > > due to vector context switch optimizations.
-> > > >
-> > > > The function 'riscv_v_vstate_save' saves context only if mstatus.VS=
- is
-> > > > 'dirty'. However mstatus.VS of the traced process context may remai=
-n
-> > > > 'clean' between two breakpoints, if no vector instructions were exe=
-cuted
-> > > > between those two breakpoints. In this case the vector context will=
- not
-> > > > be saved at the second breakpoint. As a result, the second ptrace m=
-ay
-> > > > read stale vector CSR values.
-> > >
-> > > IIUC, the second ptrace should not get the stale vector CSR values.
-> > > The second riscv_vr_get() should be reading from the context memory
-> > > (vstate), which is updated from the last riscv_vr_set(). The user's
-> > > vstate should remain the same since last riscv_vr_set(). Could you
-> > > explain more on how this bug is observed and why only CSRs are
-> > > affected but not v-regs as well?
-> >
-> > From looking into your test, I can see that you were trying to set an
-> > invalid configuration to Vetor CSRs and expect vill to be reflected
-> > upon next read. Yes, this is not happening on the current
-> > implementation as it was not expecting invalid input from the user,
-> > which should be taken into consideration. Thanks for spotting the
-> > case!
-> >
-> > According to the spec, "The use of vtype encodings with LMUL <
-> > SEWMIN/ELEN is reserved, implementations can set vill if they do not
-> > support these configurations." This mean the implementation may
-> > actually support this configuration. If that is the case, I think we
-> > should not allow this to be configured through the vector ptrace
-> > interface, which is designed to support 1.0 (and 0.7) specs. That
-> > means, we should not allow this problematic configuration to pass
-> > through riscv_vr_set(), reach user space, then the forced save.
-> >
-> > I would opt for validating all CSR configurations in the first place.
-> > Could you also help enforce checks on other reserved bits as well?
->
-> Just to clarify, the suggestion is to drop the TIF_RISCV_V_FORCE_SAVE
-> entirely and use only careful validation of input parameter in riscv_vr_s=
-et,
-> rather than using both checks. Is that correct?
+Hello,
 
-Yes, exactly
+On Tue, Oct 21, 2025 at 02:39:50PM -0700, Matthew Brost wrote:
+> Drivers often use workqueues that are in the reclaim path (e.g., DRM
+> scheduler workqueues). It is useful to teach lockdep that memory cannot
+> be allocated on these workqueues. Add an interface to taint workqueue
+> lockdep with reclaim.
 
->
-> If that is correct, then I assume we can rely on the simple rule ELEN =3D=
-=3D XLEN
-> to validate vsew/vlmul supported combinations. Additionally, reserved vse=
-w
-> values (see 3.4.1 in spec) should also be rejected.
+Given that it's about reclaim, "memory cannot be allocated" may be a bit
+misleading. Can you make the description more accurate? Also, it'd be great
+if you can include an example lockdep splat for reference.
 
-I am sorry but this assumption may not be correct. The spec does not
-restrict a 32b machine from supporting ELEN=3D64, according to my
-search. There is a way to infer ELEN though, by inspecting if zve64x
-is present on isa.
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> ---
+>  include/linux/workqueue.h | 19 +++++++++++++++++++
+>  kernel/workqueue.c        |  9 +++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+> index dabc351cc127..954c7eb7e225 100644
+> --- a/include/linux/workqueue.h
+> +++ b/include/linux/workqueue.h
+> @@ -553,6 +553,25 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
+>  						1, lockdep_map, ##args))
+>  #endif
+>  
+> +
+> +#ifdef CONFIG_LOCKDEP
+> +/**
+> + * taint_reclaim_workqueue - taint workqueue lockdep map with reclaim
+> + * @wq: workqueue to taint with reclaim
+> + * gfp: gfp taint
+      ^@
 
-Thanks,
-Andy
+> + *
+> + * Drivers often use workqueues that are in the reclaim path (e.g., DRM
+> + * scheduler workqueues). It is useful to teach lockdep that memory cannot be
+> + * allocated on these workqueues.
+> + */
+> +extern void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp);
+> +#else
+> +static inline void taint_reclaim_workqueue(struct workqueue_struct *wq,
+> +					   gfp_t gfp)
+
+Would a more direct name work better, maybe something like
+workqueue_warn_on_reclaim()?
+
+Hmm... would it make sense to tie this to WQ_MEM_RECLAIM - ie. enable it
+implicitly on workqueues w/ the flag set?
+
+Thanks.
+
+-- 
+tejun
 
