@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-862349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F65CBF5107
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF93BF51CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A939B18A50EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36B7481D63
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D899288C24;
-	Tue, 21 Oct 2025 07:48:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D836628640F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3782C159A;
+	Tue, 21 Oct 2025 07:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKp8C6Kk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E69428DB71;
+	Tue, 21 Oct 2025 07:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032908; cv=none; b=JqrozQOQl+68coKnqst0jGUZ7SqsNAi/wpj1B9Glsd0COLY837QuojWxb2zOo/bPup42WTLEDsDhLRFVGS99pCLWp31BIvEOhdi9ryCPaTAMLcyoQhzDeXAq2FZRzJllNFGsLITDQUm+5juXrbU0Qc5vyvqy/p+HKDAPGQ7QQcY=
+	t=1761033026; cv=none; b=usGL4Frrkv4x6R3U1ixg7khmr3+tHzLwnkmdpX/aIHxwcTcLd1s2VTRThaZkFe7ahIqzgcQKsfZGXLRn1/693TDZ1zZHFYqT2avGTLM7KkKdtjkcKUTbUebGuhc8mT5DiONZwpBduKSBWaTEYK9U9ws6y+TXhCMNs34HKepGVUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032908; c=relaxed/simple;
-	bh=TXZuB4qcgVxVy89zone8v7OwKUm/L4pcaUVG4qarnRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=flF9BceEe8UVT4fFo66T6tVz6/074y/9ReCQGTmb3r2rK9h9p1u/COvGkSnqA55gw+3Nfo6gSpU8MxlPvO9CcFYrfy4Oj0TwPLUvT1j2kvVWv+pyk/1Uv1GeAdUNS0Y84Q7j+lpEJ1WVssKZTYxjAviGlL5NXcaThH64Ccx3x34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16DD71063;
-	Tue, 21 Oct 2025 00:48:17 -0700 (PDT)
-Received: from [10.164.18.45] (unknown [10.164.18.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B5C13F66E;
-	Tue, 21 Oct 2025 00:48:22 -0700 (PDT)
-Message-ID: <5face11f-2e04-4f28-b474-7c22a10d05e0@arm.com>
-Date: Tue, 21 Oct 2025 13:18:20 +0530
+	s=arc-20240116; t=1761033026; c=relaxed/simple;
+	bh=wcjQXdXyz4a64xPChG6OrBbIDGawzNQC7URHkyMcw9s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c01mGMhl+PdCPiySvgOG/z1uzQRTAlS4ycJJ+t+jx8HQKVHggqc9sREhZgak3gv0f0O3bu2rHcaICh0jeBegVrAwOPC5uXTC6LsmjprrN4XUVrECdnVpZbvq4RIlE0ySUSm9mYws5E56CJfL/FYe0sT1OtgdeEgtxjwvoAyisDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKp8C6Kk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99228C4CEF7;
+	Tue, 21 Oct 2025 07:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761033025;
+	bh=wcjQXdXyz4a64xPChG6OrBbIDGawzNQC7URHkyMcw9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mKp8C6KkuWJAne+5zLlmaPxKLDRxc161Dmorh/7VwBWhIa4rOhvF+9t5O7TfUkGVN
+	 5J8AZxqfUW3IoY6cvJCxl3akQySI1hE1HTLiqI81hBekdUbevEBVf6wMOpBFCvC4RB
+	 fJK80tE4UebXUiYLIb86fa5viFBux7BXSb+APfw2aW6K7hirWZAP5kC5kJQUaDbXEf
+	 D3+4ubqnMq76+F5kSiWBuuYzKPsHyGvQM5K+bhGM0B6h9NJq29ui1zi8Kz/6un/Y+W
+	 egkYBE9PEBsU0dQDzK+pfmBvipreHtG5jeD0a3d90cYvS/ZpzijvYK7WapUUBhC3kQ
+	 wVKrkvEKqxnYA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vB78R-0000000FkvS-0gGO;
+	Tue, 21 Oct 2025 07:50:23 +0000
+Date: Tue, 21 Oct 2025 08:50:22 +0100
+Message-ID: <86frbcwv5t.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sascha Bischoff <Sascha.Bischoff@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	nd <nd@arm.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Aishwarya.TCV@arm.com
+Subject: Re: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3 guests
+In-Reply-To: <23072856-6b8c-41e2-93d1-ea8a240a7079@sirena.org.uk>
+References: <20251007160704.1673584-1-sascha.bischoff@arm.com>
+	<23072856-6b8c-41e2-93d1-ea8a240a7079@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/debug_vm_pgtable: Add [pte|pmd]_mkwrite_novma() tests
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20251021024424.2390325-1-anshuman.khandual@arm.com>
- <875xc8ap0k.fsf@DESKTOP-5N7EMDA>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <875xc8ap0k.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, Sascha.Bischoff@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, nd@arm.com, oliver.upton@linux.dev, Joey.Gouly@arm.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com, pbonzini@redhat.com, torvalds@linux-foundation.org, Aishwarya.TCV@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Tue, 21 Oct 2025 01:21:56 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Tue, Oct 07, 2025 at 04:07:13PM +0000, Sascha Bischoff wrote:
+> > The ICH_HCR_EL2 traps are used when running on GICv3 hardware, or when
+> > running a GICv3-based guest using FEAT_GCIE_LEGACY on GICv5
+> > hardware. When running a GICv2 guest on GICv3 hardware the traps are
+> > used to ensure that the guest never sees any part of GICv3 (only GICv2
+> > is visible to the guest), and when running a GICv3 guest they are used
+> > to trap in specific scenarios. They are not applicable for a
+> > GICv2-native guest, and won't be applicable for a(n upcoming) GICv5
+> > guest.
+> 
+> v6.18-rc2 introduces a failure in the KVM no-vgic-v3 selftest on what
+> appears to be all arm64 platforms with a GICv3 in all of VHE, nVHE and
+> pKVM modes:
+> 
+> # selftests: kvm: no-vgic-v3
+> # Random seed: 0x6b8b4567
+> # ==== Test Assertion Failure ====
+> #   arm64/no-vgic-v3.c:66: handled
+> #   pid=3469 tid=3469 errno=4 - Interrupted system call
+> #      1	0x0000000000402ff7: test_run_vcpu at no-vgic-v3.c:128
+> #      2	0x0000000000402213: test_guest_no_gicv3 at no-vgic-v3.c:155
+> #      3	 (inlined by) main at no-vgic-v3.c:174
+> #      4	0x0000ffff7fca7543: ?? ??:0
+> #      5	0x0000ffff7fca7617: ?? ??:0
+> #      6	0x00000000004023af: _start at ??:?
+> #   ICC_PMR_EL1 no read trap
+> not ok 25 selftests: kvm: no-vgic-v3 # exit=254
+> 
+> introduced by this patch, which is commit 3193287ddffb and which never
+> appeared in -next prior to being merged into mainline.
+> 
+> It didn't appear in -next since the arm64 KVM fixes tree is not directly
+> in -next and it was only pulled into Paolo's tree on Saturday, a few
+> hours before Paolo sent his pull request to Linus, so there was no
+> opportunity for it to be picked up.  As I've previously suggested it
+> does seem like it would be a good idea to include the fixes branches for
+> the KVM arch trees in -next (s390 is there, but I don't see the others),
 
+As I explained to you more than once, the answer is still no. We keep
+the two branches separate for good reasons -- for a start, they are
+manager by different people.
 
-On 21/10/25 9:24 AM, Huang, Ying wrote:
-> Anshuman Khandual <anshuman.khandual@arm.com> writes:
-> 
->> Add some [pte|pmd]_mkwrite_novma() relevant tests.
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Huang Ying <ying.huang@linux.alibaba.com>
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> These tests clear on arm64 platform after the following recent patch.
->>
->> https://lore.kernel.org/all/20251015023712.46598-1-ying.huang@linux.alibaba.com/
->>
->>  mm/debug_vm_pgtable.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
->> index 830107b6dd08..b9cae1580782 100644
->> --- a/mm/debug_vm_pgtable.c
->> +++ b/mm/debug_vm_pgtable.c
->> @@ -102,6 +102,11 @@ static void __init pte_basic_tests(struct pgtable_debug_args *args, int idx)
->>  	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite(pte, args->vma))));
->>  	WARN_ON(pte_dirty(pte_wrprotect(pte_mkclean(pte))));
->>  	WARN_ON(!pte_dirty(pte_wrprotect(pte_mkdirty(pte))));
->> +
->> +	WARN_ON(pte_dirty(pte_mkwrite_novma(pte_mkclean(pte))));
-> 
-> Why not use: pte_mkwrite(pte, args->vma)?
-> 
-> Maybe add
-> 
->         WARN_ON(!pte_dirty(pte_mkwrite_novma(pte_mkdirty(pte))));
+If you want to manage a -fixes tree, go for it. If you want to take
+the -fixes branch in your CI, I have no objection.  Do I support this?
+Absolutely not.
 
-Sure, will add the above test as well.
-> 
->> +	WARN_ON(!pte_write(pte_mkdirty(pte_mkwrite_novma(pte))));
->> +	WARN_ON(!pte_write(pte_mkwrite_novma(pte_wrprotect(pte))));
->> +	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite_novma(pte))));
->>  }
->>  
->>  static void __init pte_advanced_tests(struct pgtable_debug_args *args)
->> @@ -195,6 +200,11 @@ static void __init pmd_basic_tests(struct pgtable_debug_args *args, int idx)
->>  	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite(pmd, args->vma))));
->>  	WARN_ON(pmd_dirty(pmd_wrprotect(pmd_mkclean(pmd))));
->>  	WARN_ON(!pmd_dirty(pmd_wrprotect(pmd_mkdirty(pmd))));
->> +
->> +	WARN_ON(pmd_dirty(pmd_mkwrite_novma(pmd_mkclean(pmd))));
->> +	WARN_ON(!pmd_write(pmd_mkdirty(pmd_mkwrite_novma(pmd))));
->> +	WARN_ON(!pmd_write(pmd_mkwrite_novma(pmd_wrprotect(pmd))));
->> +	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite_novma(pmd))));
->>  	/*
->>  	 * A huge page does not point to next level page table
->>  	 * entry. Hence this must qualify as pmd_bad().
-> 
-> ---
-> Best Regards,
-> Huang, Ying
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
