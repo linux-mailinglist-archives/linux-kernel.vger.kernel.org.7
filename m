@@ -1,105 +1,128 @@
-Return-Path: <linux-kernel+bounces-862119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C35BF4774
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF59BBF4789
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 05:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5408F18C55B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C197418C552A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 03:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06FD212B2F;
-	Tue, 21 Oct 2025 03:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D587E21770C;
+	Tue, 21 Oct 2025 03:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="GKkcSI68"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TzUVqLeH"
+Received: from mail-m19731102.qiye.163.com (mail-m19731102.qiye.163.com [220.197.31.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92FA19F12A;
-	Tue, 21 Oct 2025 03:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0A778F4A;
+	Tue, 21 Oct 2025 03:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761016392; cv=none; b=k72zd/GUyARPv9qszu0+pYbt9yFhFpi58QnaEffwFLsSW90JPVRIKFRDX2p4nO2Z42BTPT5mkEfy/j/EUXS/r/qntqdbk2o1KNGRKfYfFmiLw+lD172CPpi0LGbyBWTKCwcR8rzfN5FX25BALsgoEkBEJ/gLe0Fbi1ok3C2TZpM=
+	t=1761016487; cv=none; b=ORa64Y4DxIRzR49earVaQB4oHTVnpBmU4evNre2zCXOrMGkIf2XnZ16ir6sraStP/qoHMGF2QmF/O1xGMMpLxrg3fnETdVbg+jwufN1IgdbzPB5jyy0q3L2s3c2DWtOrGh01bbUcct3Jznf/IgcAg3B4kyt/AarWCavZsvsSJTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761016392; c=relaxed/simple;
-	bh=S5AtrKXvJA/5Da2Iz8tuG0yMOFMS9Zrhpy81mF6Y4Sg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ht+ZHBOOziyTEE1TUXE5Cu38RWhhkuj2MVSiNH5X8ObMCh7BW8X1ZMOK/y2leiFW1EfCVAIJ849el3OR2mEcrMN0dvOnHMLC9ziM9KDLHQw/xzkniZl2equx3mkkZob3ofi43sYLIGWkrRBRLeVptdy6/kyJAdhNszrpQuRrwQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=GKkcSI68; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=wfGA3DegtlrVHUVrxkczFnxqgIZ1YYjT0aDZlqryxF4=; 
-	b=GKkcSI68jTW6NzwQ8/dJbCu4358dmhJsvX4cyggSIkawhMqjSkONVSPw/24oE+GfAs6PjmoA+fE
-	yHlgaUFJX7fO2x3Tki4PUmOkzliPexCO05bVExtO9m3xT9zCLeo9rFxOb0tSdaA7r4QQJ1kmlfJIG
-	RrChuUF1WgrvX3cI8jDOgJBPcWaAcRZ9WgNHOlJznKx++N3bcfIJgVwNdWKBJHl3/KQ1uOy9I331v
-	3rMWoa7K1AKBo9Hwv4reLoxFoeS9/XTUK1f7bjdDouH16hwBuo90BGTUqnwnLdG2hLeoYfPZ/RHCa
-	LN5VAK6QIbiVkkcbCdtnShj/cQP3CGQuuXNA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vB2nv-00EEB8-2y;
-	Tue, 21 Oct 2025 11:12:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 21 Oct 2025 11:12:55 +0800
-Date: Tue, 21 Oct 2025 11:12:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: syzbot+01fcd39a0d90cdb0e3df@syzkaller.appspotmail.com,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] [patch] syz test
-Message-ID: <aPb6NzJovIM6CFud@gondor.apana.org.au>
-References: <68f6f516.050a0220.346f24.0002.GAE@google.com>
- <6556ef55c42ea17d82561b8182d9453b19d66a62.1761016077.git.xiaopei01@kylinos.cn>
+	s=arc-20240116; t=1761016487; c=relaxed/simple;
+	bh=ldb4mGbsFFqIjnQIXDTbTvrshprmTRQfTUZBrh9j0oQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QhOLFj+r9eF4o+yCuMmkDs9YnJK90/d6/aH/y0mhgv64OtM1zrUWVTZ/VwkNCZHcPgRLCkvyjabOg5fBoyfa+rLwaKuY22kST2l7humZXO+jk6f/3rojImgTJKIu8hiLgTMDVjuJmoKchBRR6TAGfYO34jaP4AylXU/KRCUVFYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TzUVqLeH; arc=none smtp.client-ip=220.197.31.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 26985363a;
+	Tue, 21 Oct 2025 11:14:32 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	jingoohan1@gmail.com,
+	p.zabel@pengutronix.de,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	luca.ceresoli@bootlin.com,
+	jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v7 17/18] drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing in analogix_dp_unbind()
+Date: Tue, 21 Oct 2025 11:14:28 +0800
+Message-Id: <20251021031429.1524354-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251021023130.1523707-1-damon.ding@rock-chips.com>
+References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6556ef55c42ea17d82561b8182d9453b19d66a62.1761016077.git.xiaopei01@kylinos.cn>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a04c2e34f03a3kunmd8891efc5aaa6f
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR1NT1YZQxhMH01LTUxOQk1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=TzUVqLeHhexe5O1pKQmFfmnM7I1UAA+BW8KobgiKEAKXfS5TL8mjT6JncPLLOWgSzjE+rQ3vdj9q/UHAmzd7y0Vi3DQYY+ABOkWzu1enepXXiSjPmbrs7bPV/0q3jShqU1Ip7JEb4CfC1J64iRTQkSiChcmdOKvs/0imP1ewXmQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=UWpbY7DH1oS0V7oTyi6QaUWxk7HDaeuV22LJGXTHRzw=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Oct 21, 2025 at 11:08:54AM +0800, Pei Xiao wrote:
-> #syz test
-> ---
->  lib/crypto/x86/poly1305.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/lib/crypto/x86/poly1305.h b/lib/crypto/x86/poly1305.h
-> index ee92e3740a78..3b9f1024a18d 100644
-> --- a/lib/crypto/x86/poly1305.h
-> +++ b/lib/crypto/x86/poly1305.h
-> @@ -8,6 +8,7 @@
->  #include <linux/jump_label.h>
->  #include <linux/kernel.h>
->  #include <linux/sizes.h>
-> +#include <linux/string.h>
->  
->  struct poly1305_arch_internal {
->  	union {
-> @@ -86,6 +87,7 @@ static __ro_after_init DEFINE_STATIC_KEY_FALSE(poly1305_use_avx512);
->  static void poly1305_block_init(struct poly1305_block_state *state,
->  				const u8 raw_key[POLY1305_BLOCK_SIZE])
->  {
-> +	memset(state, 0, sizeof(struct poly1305_block_state));
->  	poly1305_init_x86_64(state, raw_key);
->  }
+The analogix_dp_unbind() should be balanced with analogix_dp_bind().
+There are no bridge enabling and panel preparing in analogix_dp_bind(),
+so it should be reasonable to remove the bridge disabing and panel
+unpreparing in analogix_dp_unbind().
 
-Please stop sending random patches to me.  If you want to test
-random patches, send it to syzbot only and not anyone else.
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-When you hit an uninitialised access in crypto code, it's usually
-the caller at fault.  So I suggest that you focus your energies
-further up the stack.
-
-Thanks,
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index a6c5601e16ff..7e3e9d4f4ea2 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1526,10 +1526,6 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
+ 
+ void analogix_dp_unbind(struct analogix_dp_device *dp)
+ {
+-	analogix_dp_bridge_disable(&dp->bridge);
+-
+-	drm_panel_unprepare(dp->plat_data->panel);
+-
+ 	drm_dp_aux_unregister(&dp->aux);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.34.1
+
 
