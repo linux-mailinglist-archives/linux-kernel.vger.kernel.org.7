@@ -1,86 +1,282 @@
-Return-Path: <linux-kernel+bounces-862701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F326BBF5F01
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53C9BF5EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 13:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DED2501A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00CEB18C7FB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0AD2ED86F;
-	Tue, 21 Oct 2025 11:01:10 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0582EDD75;
+	Tue, 21 Oct 2025 11:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OLReVaWJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298CB23E340
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 11:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C3823E340;
+	Tue, 21 Oct 2025 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761044469; cv=none; b=qi54V640/A6Rpw19ZR0AobbmRGXAhVFFfck9UXOVH4brLBR7RXBszNJIkVPqgga2DL+zuouINx+ImVYINo2SCva97t2t0Hg9JMJNGQP3w5r/XNv9meM1TZRjStRdrAY9mTdF/EvGXkzHhapBfrQmQdfmewUXkxwujyXf7Dm3mWI=
+	t=1761044543; cv=none; b=VY5q1kvKrym5DntTxmJeuMaz6wx/7qX+4J1KDw43bjSvyh3IaXg9VVQ/7UX0873ppOqFVBVLnu+KLaumXkkmPVYsHymyWS3kqJhHyA198JRV3O6K8btnY/5P8BIPkqWUrQZ4MQYInVIm4YzGdqVlM83x3G2vxsQnjHHbd8tT/eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761044469; c=relaxed/simple;
-	bh=boaW3BsIFYLo4ZNWQVNEMFXOlgPefgDpFSHcFzSNYtQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Oaxm+oUo+jd5z1Hc7N2/HXTA4h+byjlSRKsj+Rmj/9aFNhmpS9dKKHVQD7Hl6Z1XYFLGJ2EVecbN34rnhrIaMqFN9rXT5Dk0jZZvGCmNSJ7zTfjcievLTRuPxgIInuF/yKrfuPXGr5cDT1x6LcXOP41+v188m5Pl88RelSXuFeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430bee303f7so173088475ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 04:01:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761044466; x=1761649266;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xqECeflw3i2zVSpUQV8RnVKS2ggV03DQT8rqmCJtiqM=;
-        b=qZEMvo5Nq3cKiFnuPdHvrljjt9Rh8+PlLt8PKoFTh82a+3meadgKdWVvRNe4+SMtJS
-         IdTvGOFAeD9Lkt1E+mhKcDm3kWH2fYfJwFZVTyZbuQAbItI4WTiGOBCxTMxyYMWG8l88
-         c79WyWemeByr4zjVpbVyOpY4eGNWm9WeVHsBHJCdY0VORfxVUXnIMKHXkGP4V6rn/r2H
-         tJFBKvk3wkeyC3cqC9O5wJEXxDKSGKMQzDRR6S5qq5NvUzZ8RQTC0dvAkyeR40KGTMQx
-         htvgKkXKkSm3rz3kYe4hqVIgSK7WWRmIhvMiF1Nx+KLjnABALmLkLDM3wgckl9Xq4VJY
-         dVSQ==
-X-Gm-Message-State: AOJu0YwfuFWKYBaY4d57RKgBQP2x0Pqkk7vG/ukW/u248uCNCzkQtt0s
-	lHYfJ4pKiNUgx9j4Itz9N6i1rW4KDXCKV2fpYiLUqRJFyRUolwXdXHnXwn6I14MAIV/Ig3RUYCV
-	RWmWOuyz6mS2f0/UKHFOUP+rFG5udu79qrOVygbHO+lu7J15hON5i7tv2F6c=
-X-Google-Smtp-Source: AGHT+IG9ZLle7zD+zrOTFrwzZtCxPMd/BTArvTXaDrUFGsxiuK1q46vLts3RolXuGQ5HWrSCodvlS5aMcaJWWf2uKEcFbL2LE/gW
+	s=arc-20240116; t=1761044543; c=relaxed/simple;
+	bh=4fz4wz59GVcGyxkCosyq8sO/kNH/5xlswDAosqFoi6s=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Cvao8U0IFmf/7wSh+VuvBWDfwNBL8LGf+zv8SQ8/E4sPgayUg4ivBYR4UD6J+e+8vZGSUdrV/VIub499fLnJA6LxxC0oLmPYECb6nSP6ZcHGKYbO7RR09+yVL5VH1QYrE6jJfMTec1JRl61vtDrby+dyfyASPpG35j2w/V0j4K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OLReVaWJ; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761044541; x=1792580541;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=4fz4wz59GVcGyxkCosyq8sO/kNH/5xlswDAosqFoi6s=;
+  b=OLReVaWJig44B2MrprUtQeNvKC01d58qNxgUvcgSEaoeeNnpzD+Il9tZ
+   2etrBBjFcuZi6GvPf+liE3FUIYEnqLnEjPKFTk/FEuUzjAWWmfAFcKEzQ
+   Eo8Muysv6Ntbjxu/fT+wuTQJ4S9ByMtiJctKqSY/4R4jWrDo+KINfD6Sl
+   NTeFH3//5I9OwsWRhi5lNAMLF9ptY+NzhNtkqDWD6fiMwkVLRSVYVwtnj
+   rE7i2On8IKgLB8OfbjS5UcytSle3AHHBPETaLUeSNI9Ei03NrR3cgZvS3
+   t7Q2wDiL+ZaQAYXik1hBeG+NYehY5AfeMcuJXC/CqWjsbkz7fInSC9e3N
+   g==;
+X-CSE-ConnectionGUID: euxZZFC8TUGFQg4INnmJDg==
+X-CSE-MsgGUID: jTXgrgqhQg+3T3pqfzTwHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65782711"
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="65782711"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 04:02:21 -0700
+X-CSE-ConnectionGUID: kHz7nIy2RDGaI5xz3kOuYQ==
+X-CSE-MsgGUID: TM9H9HjAQwS0ILUyoYfweQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; 
+   d="scan'208";a="187971086"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 04:02:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 21 Oct 2025 14:02:10 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>, 
+    Jim Quinlan <james.quinlan@broadcom.com>
+cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+    Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, 
+    jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
+    Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+    "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+    "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+    open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] PCI: brcmstb: Add panic/die handler to driver
+In-Reply-To: <20251020184832.GA1144646@bhelgaas>
+Message-ID: <2b0f9620-a105-6e49-f9cb-4bac14e14ce2@linux.intel.com>
+References: <20251020184832.GA1144646@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148a:b0:430:a183:7b with SMTP id
- e9e14a558f8ab-430c5208006mr58553525ab.3.1761044466175; Tue, 21 Oct 2025
- 04:01:06 -0700 (PDT)
-Date: Tue, 21 Oct 2025 04:01:06 -0700
-In-Reply-To: <8950a6e1-287c-43c7-b36a-cc42ca7e267c@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f767f2.050a0220.346f24.0013.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
-From: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
+On Mon, 20 Oct 2025, Bjorn Helgaas wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Fri, Oct 03, 2025 at 03:56:07PM -0400, Jim Quinlan wrote:
+> > Whereas most PCIe HW returns 0xffffffff on illegal accesses and the like,
+> > by default Broadcom's STB PCIe controller effects an abort.  Some SoCs --
+> > 7216 and its descendants -- have new HW that identifies error details.
+> > 
+> > This simple handler determines if the PCIe controller was the cause of the
+> > abort and if so, prints out diagnostic info.  Unfortunately, an abort still
+> > occurs.
+> > 
+> > Care is taken to read the error registers only when the PCIe bridge is
+> > active and the PCIe registers are acceptable.  Otherwise, a "die" event
+> > caused by something other than the PCIe could cause an abort if the PCIe
+> > "die" handler tried to access registers when the bridge is off.
+> > 
+> > Example error output:
+> >   brcm-pcie 8b20000.pcie: Error: Mem Acc: 32bit, Read, @0x38000000
+> >   brcm-pcie 8b20000.pcie:  Type: TO=0 Abt=0 UnspReq=1 AccDsble=0 BadAddr=0
+> 
+> > +/* Error report registers */
+> > +#define PCIE_OUTB_ERR_TREAT				0x6000
+> > +#define  PCIE_OUTB_ERR_TREAT_CONFIG_MASK		0x1
+> > +#define  PCIE_OUTB_ERR_TREAT_MEM_MASK			0x2
+> > +#define PCIE_OUTB_ERR_VALID				0x6004
+> > +#define PCIE_OUTB_ERR_CLEAR				0x6008
+> > +#define PCIE_OUTB_ERR_ACC_INFO				0x600c
+> > +#define  PCIE_OUTB_ERR_ACC_INFO_CFG_ERR_MASK		0x01
+> > +#define  PCIE_OUTB_ERR_ACC_INFO_MEM_ERR_MASK		0x02
+> > +#define  PCIE_OUTB_ERR_ACC_INFO_TYPE_64_MASK		0x04
+> > +#define  PCIE_OUTB_ERR_ACC_INFO_DIR_WRITE_MASK		0x10
+> > +#define  PCIE_OUTB_ERR_ACC_INFO_BYTE_LANES_MASK		0xff00
+> > +#define PCIE_OUTB_ERR_ACC_ADDR				0x6010
+> > +#define PCIE_OUTB_ERR_ACC_ADDR_BUS_MASK			0xff00000
+> > +#define PCIE_OUTB_ERR_ACC_ADDR_DEV_MASK			0xf8000
+> > +#define PCIE_OUTB_ERR_ACC_ADDR_FUNC_MASK		0x7000
+> > +#define PCIE_OUTB_ERR_ACC_ADDR_REG_MASK			0xfff
+> > +#define PCIE_OUTB_ERR_CFG_CAUSE				0x6014
+> > +#define  PCIE_OUTB_ERR_CFG_CAUSE_TIMEOUT_MASK		0x40
+> > +#define  PCIE_OUTB_ERR_CFG_CAUSE_ABORT_MASK		0x20
+> > +#define  PCIE_OUTB_ERR_CFG_CAUSE_UNSUPP_REQ_MASK	0x10
+> > +#define  PCIE_OUTB_ERR_CFG_CAUSE_ACC_TIMEOUT_MASK	0x4
+> > +#define  PCIE_OUTB_ERR_CFG_CAUSE_ACC_DISABLED_MASK	0x2
+> > +#define  PCIE_OUTB_ERR_CFG_CAUSE_ACC_64BIT__MASK	0x1
 
-Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
-Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+Double __
 
-Tested on:
+> > +#define PCIE_OUTB_ERR_MEM_ADDR_LO			0x6018
+> > +#define PCIE_OUTB_ERR_MEM_ADDR_HI			0x601c
+> > +#define PCIE_OUTB_ERR_MEM_CAUSE				0x6020
+> > +#define  PCIE_OUTB_ERR_MEM_CAUSE_TIMEOUT_MASK		0x40
+> > +#define  PCIE_OUTB_ERR_MEM_CAUSE_ABORT_MASK		0x20
+> > +#define  PCIE_OUTB_ERR_MEM_CAUSE_UNSUPP_REQ_MASK	0x10
+> > +#define  PCIE_OUTB_ERR_MEM_CAUSE_ACC_DISABLED_MASK	0x2
+> > +#define  PCIE_OUTB_ERR_MEM_CAUSE_BAD_ADDR_MASK		0x1
 
-commit:         6548d364 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b35734580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=568e69ca0c2fa75
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1644c3cd980000
+Maybe use BIT() instead for single bits?
 
-Note: testing is done by a robot and is best-effort only.
+> IMO "_MASK" is not adding anything useful to these names.  But I see
+> there's a lot of precedent in this driver.
+>
+> >  #define  PCIE_RGR1_SW_INIT_1_PERST_MASK			0x1
+> >  #define  PCIE_RGR1_SW_INIT_1_PERST_SHIFT		0x0
+
+Please don't add unnecessary _SHIFT defines as FIELD_GET/PREP() for the 
+field define should have most cases covered that require shifting.
+
+This define is also entirely unused in this patch.
+
+> > @@ -306,6 +342,8 @@ struct brcm_pcie {
+> >  	bool			ep_wakeup_capable;
+> >  	const struct pcie_cfg_data	*cfg;
+> >  	bool			bridge_in_reset;
+> > +	struct notifier_block	die_notifier;
+> > +	struct notifier_block	panic_notifier;
+> >  	spinlock_t		bridge_lock;
+> >  };
+> >  
+> > @@ -1731,6 +1769,115 @@ static int brcm_pcie_resume_noirq(struct device *dev)
+> >  	return ret;
+> >  }
+> >  
+> > +/* Dump out PCIe errors on die or panic */
+> > +static int _brcm_pcie_dump_err(struct brcm_pcie *pcie,
+> 
+> What is the leading underscore telling me?  There's no
+> brcm_pcie_dump_err() that we need to distinguish from.
+> 
+> > +			       const char *type)
+> > +{
+> > +	void __iomem *base = pcie->base;
+> > +	int i, is_cfg_err, is_mem_err, lanes;
+> > +	char *width_str, *direction_str, lanes_str[9];
+> > +	u32 info, cfg_addr, cfg_cause, mem_cause, lo, hi;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&pcie->bridge_lock, flags);
+> > +	/* Don't access registers when the bridge is off */
+> > +	if (pcie->bridge_in_reset || readl(base + PCIE_OUTB_ERR_VALID) == 0) {
+> > +		spin_unlock_irqrestore(&pcie->bridge_lock, flags);
+> > +		return NOTIFY_DONE;
+> > +	}
+> > +
+> > +	/* Read all necessary registers so we can release the spinlock ASAP */
+> > +	info = readl(base + PCIE_OUTB_ERR_ACC_INFO);
+> > +	is_cfg_err = !!(info & PCIE_OUTB_ERR_ACC_INFO_CFG_ERR_MASK);
+> > +	is_mem_err = !!(info & PCIE_OUTB_ERR_ACC_INFO_MEM_ERR_MASK);
+> > +	if (is_cfg_err) {
+> > +		cfg_addr = readl(base + PCIE_OUTB_ERR_ACC_ADDR);
+> > +		cfg_cause = readl(base + PCIE_OUTB_ERR_CFG_CAUSE);
+> > +	}
+> > +	if (is_mem_err) {
+> > +		mem_cause = readl(base + PCIE_OUTB_ERR_MEM_CAUSE);
+> > +		lo = readl(base + PCIE_OUTB_ERR_MEM_ADDR_LO);
+> > +		hi = readl(base + PCIE_OUTB_ERR_MEM_ADDR_HI);
+> > +	}
+> > +	/* We've got all of the info, clear the error */
+> > +	writel(1, base + PCIE_OUTB_ERR_CLEAR);
+> > +	spin_unlock_irqrestore(&pcie->bridge_lock, flags);
+> > +
+> > +	dev_err(pcie->dev, "reporting data on PCIe %s error\n", type);
+> 
+> Looks like this isn't included in the example error output.  Not a big
+> deal in itself, but logging this:
+> 
+>   brcm-pcie 8b20000.pcie: reporting data on PCIe Panic error
+> 
+> suggests that we know this panic was directly *caused* by PCIe, and
+> I'm not sure the fact that somebody called panic() and
+> PCIE_OUTB_ERR_VALID was non-zero is convincing evidence of that.
+> 
+> I think this relies on the assumptions that (a) the controller
+> triggers an abort and (b) the abort handler calls panic().  So I think
+> this logs useful information that *might* be related to the panic.
+> 
+> I'd rather phrase this with a little less certainty, to convey the
+> idea that "here's some PCIe error information that might be related to
+> the panic/die".
+> 
+> > +	width_str = (info & PCIE_OUTB_ERR_ACC_INFO_TYPE_64_MASK) ? "64bit" : "32bit";
+> > +	direction_str = (info & PCIE_OUTB_ERR_ACC_INFO_DIR_WRITE_MASK) ? "Write" : "Read";
+
+Please use str_read_write() + don't forget it's include.
+
+It might be also worth to add str_64bit_32bit() in the form with the
+dash ("64-bit") as there a couple of other drivers print the same choice.
+
+
+> > +	lanes = FIELD_GET(PCIE_OUTB_ERR_ACC_INFO_BYTE_LANES_MASK, info);
+> > +	for (i = 0, lanes_str[8] = 0; i < 8; i++)
+> > +		lanes_str[i] = (lanes & (1 << i)) ? '1' : '0';
+> > +
+> > +	if (is_cfg_err) {
+> > +		int bus = FIELD_GET(PCIE_OUTB_ERR_ACC_ADDR_BUS_MASK, cfg_addr);
+> > +		int dev = FIELD_GET(PCIE_OUTB_ERR_ACC_ADDR_DEV_MASK, cfg_addr);
+> > +		int func = FIELD_GET(PCIE_OUTB_ERR_ACC_ADDR_FUNC_MASK, cfg_addr);
+> > +		int reg = FIELD_GET(PCIE_OUTB_ERR_ACC_ADDR_REG_MASK, cfg_addr);
+> > +
+> > +		dev_err(pcie->dev, "Error: CFG Acc, %s, %s, Bus=%d, Dev=%d, Fun=%d, Reg=0x%x, lanes=%s\n",
+> 
+> Why are we printing bus and dev with %d?  Can we use the usual format
+> ("%04x:%02x:%02x.%d") so it matches other logging?
+> 
+> > +			width_str, direction_str, bus, dev, func, reg, lanes_str);
+> > +		dev_err(pcie->dev, " Type: TO=%d Abt=%d UnsupReq=%d AccTO=%d AccDsbld=%d Acc64bit=%d\n",
+> > +			!!(cfg_cause & PCIE_OUTB_ERR_CFG_CAUSE_TIMEOUT_MASK),
+> > +			!!(cfg_cause & PCIE_OUTB_ERR_CFG_CAUSE_ABORT_MASK),
+> > +			!!(cfg_cause & PCIE_OUTB_ERR_CFG_CAUSE_UNSUPP_REQ_MASK),
+> > +			!!(cfg_cause & PCIE_OUTB_ERR_CFG_CAUSE_ACC_TIMEOUT_MASK),
+> > +			!!(cfg_cause & PCIE_OUTB_ERR_CFG_CAUSE_ACC_DISABLED_MASK),
+> > +			!!(cfg_cause & PCIE_OUTB_ERR_CFG_CAUSE_ACC_64BIT__MASK));
+> > +	}
+> > +
+> > +	if (is_mem_err) {
+> > +		u64 addr = ((u64)hi << 32) | (u64)lo;
+> > +
+> > +		dev_err(pcie->dev, "Error: Mem Acc, %s, %s, @0x%llx, lanes=%s\n",
+> > +			width_str, direction_str, addr, lanes_str);
+> > +		dev_err(pcie->dev, " Type: TO=%d Abt=%d UnsupReq=%d AccDsble=%d BadAddr=%d\n",
+> > +			!!(mem_cause & PCIE_OUTB_ERR_MEM_CAUSE_TIMEOUT_MASK),
+> > +			!!(mem_cause & PCIE_OUTB_ERR_MEM_CAUSE_ABORT_MASK),
+> > +			!!(mem_cause & PCIE_OUTB_ERR_MEM_CAUSE_UNSUPP_REQ_MASK),
+> > +			!!(mem_cause & PCIE_OUTB_ERR_MEM_CAUSE_ACC_DISABLED_MASK),
+> > +			!!(mem_cause & PCIE_OUTB_ERR_MEM_CAUSE_BAD_ADDR_MASK));
+> > +	}
+> > +
+> > +	return NOTIFY_OK;
+> 
+> What is the difference between NOTIFY_DONE and NOTIFY_OK?  Can the
+> caller do anything useful based on the difference?
+> 
+> This seems like opportunistic error information that isn't definitely
+> definitely connected to anything, so I'm not sure returning different
+> values is really reliable.
+> 
 
