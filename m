@@ -1,201 +1,188 @@
-Return-Path: <linux-kernel+bounces-862409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89149BF535F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:19:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAD7BF5355
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4085C3A4B8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3292B3A5CF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0482D3016F9;
-	Tue, 21 Oct 2025 08:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9403016F9;
+	Tue, 21 Oct 2025 08:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YqLr2UE3"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011062.outbound.protection.outlook.com [52.101.57.62])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P1qcbKaQ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917A4301495;
-	Tue, 21 Oct 2025 08:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761034765; cv=fail; b=Jq1ZYrvI8+jv88LT2jAun4zn2lec4due0MYmlhmxFY9+sNy0N+alKNPIbi7QSaL2Y7Nxlfb/FXkHdnSqFhLwQep900BQuumKAUv5gyRMyHsloVodzl1um0yfkbjDCHefUsjToqokdtYW2tgxetlHPDZ+V7NRel0kNPjRC7RyLKI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761034765; c=relaxed/simple;
-	bh=vEFyxu5j6L49aVSAhVF4tN6LzwL1NMJDWglK3mu3MW4=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=n1NzchaxnK3EfD1kZ42+sg4QGb9tp9MQtdCmu2aZ7rIPElWd3YqseMW0Z6dFpHDks+a+3UEtdCS2523qEy3wM+FrU4tbvo5FNi14K+rgOUfkjO2C32IJ5z6twIwtC2aYUf6S57bpiswYKPytAapBRNmVyP5DOini81Ly2XUYY/E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YqLr2UE3; arc=fail smtp.client-ip=52.101.57.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vp8A/mwD5jEv4I8FbmXJw6CvO37sC/oBud9KK6epolHpf7fcILabviYP6o7lu4UPt0N2HalNlldJrqC562Z/xwT0IsXe5OOLKcicUMJbIpC3KBXrDHlU+uu4Sd007aSYe8Y233PvfenLKzxCwNELWsmGapjHRvoTVz3y2suE3ifV/ieVZqPCRkEwIfcf0n10O4RHkGXNgjl4LrlANxJv7GfJw57LHbP6fcawH8H6vJK7Y9dpVhBBxValxGK0eOCJH57NJyJdKP0vzSmQZC9KxRVNFpfdPnfM+R9mFTQq1Uj0ex07jGuk7V4iwWRL6NO0UHZ11+AxfY/3UeWOE3/9Gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4m9PjimqpVEpyRybw9nN+7h+XBPIDnhHuZWBNcxHgEM=;
- b=Zza+LO2Qn/pdvZXVz++pSNm3kK5q05XlJM6/UizL3RCs+jDU7Pvnk19Y5QyxxEzjiVbm/6/unJkNiLuHDraDzjKiD5TF/uOfOdvJWulhld2gAGE1JGKiuN1CUXDV7cXG5RnKNBicNnEDXp0inDO3pkXnbr0+m0LDPcl/W3pQbU1rQPhqRSKQg0MhkLNeiU7cDorCm/pQv5Ae5CIsP3kKOCyHHnJFoj3z5iHAs9xaVXpPDbJWb0MzQJYUgLF6+usgr0rXOWw54YGPsh2M/DGfkL+7WX7xwOfCNL94DtzhXIEC5Xa5A13vcIQqZmYu6O6JZG1yG7NDtyMXEGcTminUeQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4m9PjimqpVEpyRybw9nN+7h+XBPIDnhHuZWBNcxHgEM=;
- b=YqLr2UE3y1csc/wypE09NiDCchygd1jmPIWRj2uNSFHxtg4OyRAU7p3GtCyVwtVOFOup1oY+VKIAIfcLrcu7i3tP02B9v04I9AFr3SXWEG5Wbp67jvC3ZCfXq3Urm+f2q6SJ9q/93xiX4yU+uz3UmV9dfOKrZy6dA/uIpMhUcF6WfYuoFnmMujF97xyCOACv9aZ3YlUFlY35iupOcu+fxu70xdkPqPM4mEB8BAX0xjedSJX/5j8GmB1EDli4lvp0HfCZMxc+Gn/eCjrIPMZkfT+3++IM9IgH6dbeoCBdQv6sE6MPm4I1lSMAbxXhVOmnjjD3E6kqRC3XoTzIWejyEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
- by SJ2PR12MB8782.namprd12.prod.outlook.com (2603:10b6:a03:4d0::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
- 2025 08:19:19 +0000
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861]) by MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861%3]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 08:19:19 +0000
-Message-ID: <ab7eedaa-5539-4cee-aad9-422db9480038@nvidia.com>
-Date: Tue, 21 Oct 2025 13:47:43 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/4] Add I2C support for Tegra264
-To: akhilrajeev@nvidia.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, ldewangan@nvidia.com, digetx@gmail.com,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251001064759.664630-1-kkartik@nvidia.com>
-Content-Language: en-US
-From: Kartik Rajput <kkartik@nvidia.com>
-In-Reply-To: <20251001064759.664630-1-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5PR01CA0111.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1d1::19) To MN0PR12MB5716.namprd12.prod.outlook.com
- (2603:10b6:208:373::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102222F9998
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761034740; cv=none; b=fN8VLocG2huqXHaIKkzCQ7rVdSJscda62KsVAg3UpFobaAiVTevYm2ZsCSvGtfXviccOCYwt5rL8g2jenPK0PRtmTJ5mzjMGBH2eBS7c1wdBKYFfM+hCmwYrIjoKMHl3FFzozefx3EdhJDh/gMB/p76iA75cw+v6T2+WhfneT6s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761034740; c=relaxed/simple;
+	bh=zoeqtV3NnoVo3PA6cGT6899ushddTj4EG2RgqFSrRLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLhWwBG6YkIJy4Xk7Y4DqwMJcli7ewT1c8Z0ivqLANoYED2cWd7XcwOu25zwtIr8h+HUyKmxqZCOe5QpDs64v10M9WheDhmohUUka8v7CNmng0X/1H88XndkAMZ0QfBgnuucOCLnFFDM1cOKx2yznJcYlUN1d4sbSHz8tZdynUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P1qcbKaQ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L0bOeV001179;
+	Tue, 21 Oct 2025 08:18:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=L9fBm/
+	Whek+136auQz9DyT244vveoKj6ZQ7dh5ArAbg=; b=P1qcbKaQ8uXHTxSPk5ISZ5
+	4zlMXuZkCNkBMa/lfDrCZi7wwseJyzambA/shqMej2li3c7tfhGc3G0VIY4kK9SE
+	uL/TK8Uab+6nLbQ+8DWGLSvdacU1Kpc8a2nZ0lfpxBYx1ZOtFv9LwxWblxDQCUbj
+	ZPtzMND51yL/kQshJmQGZOe5jZEy47lUzQtKzzvlC2QdPRLZcLjO05Ygs0km51Aw
+	Z0tL5G8y3A9LFQCHIXwZT5dqbZMv9+vZuV+pS5TkZYcTo6sC8i2JOweT/31skrM7
+	Tq38csvhH1QcXE6Epi6yBKoF6r9kQkN7IvXeKBtaGrHDl+YUoGAgiUNsSvwZ5dgw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33f5urg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 08:18:40 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59L8HP4m000378;
+	Tue, 21 Oct 2025 08:18:40 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33f5ur9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 08:18:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59L88ZDa024953;
+	Tue, 21 Oct 2025 08:18:39 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqjspwj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 08:18:38 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59L8Ib1x49873330
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Oct 2025 08:18:37 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0353820043;
+	Tue, 21 Oct 2025 08:18:37 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D11520040;
+	Tue, 21 Oct 2025 08:18:34 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.39.24.196])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 21 Oct 2025 08:18:34 +0000 (GMT)
+Date: Tue, 21 Oct 2025 13:48:31 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] powerpc/vmlinux.lds: Drop .interp description
+Message-ID: <aPdBpqhm3JHvKIWJ@linux.ibm.com>
+References: <20251018-ppc-fix-lld-interp-v1-1-a083de6dccc9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|SJ2PR12MB8782:EE_
-X-MS-Office365-Filtering-Correlation-Id: e71a0ee4-d4cd-4add-034c-08de107a8805
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TkRSbnlNVThSdGM0ZlpBeDg1UWdlZm1Ma0hKMk1QK3NWbjNHMURUdnZ6czlT?=
- =?utf-8?B?SnpBU2dlaTFxRVo4NDh3YTZ2QlhIR3dORGora0F5Ly85cGpoT3oxenA5Z2Vn?=
- =?utf-8?B?a0tRa0hOWnZXUXJocHV0WXNNbyswTkNUM1dzMUlwcGszalZzaDFNbHdsY1NH?=
- =?utf-8?B?c2EzeklTU2JSUUxtbmx0UGQwdVNXTVBzTGZKd0NneTJnY2NiSHdmakhKc0dD?=
- =?utf-8?B?M1ZoVGo3Nmp2SU1tYm9DTWxFdkd2bHdETUZBUVFKZXMvcXR0L0F4NlNBRVpo?=
- =?utf-8?B?Z2tWVU5Nb2pzSURUdmVDUktiT3pZZVZaWXNlMVlwS0Z0YXRpZFNNUml3OE9l?=
- =?utf-8?B?ZlptNGNIY3cwZjRoekJYcjBsdFlVb1N5RGFXak9rdTlKc1o0ZUxFNlRhdk9C?=
- =?utf-8?B?UWhiNXdsdkc4bTd6eFF1T1BnbTlJWlVoS0tiVU5sS01WUDNXYlBhTWppWC9M?=
- =?utf-8?B?U0tNV2dzaXZpWWZRNC9NRVpLVWNDMnBNNmZhTGgzVDBhRmFZVkZkZTlRblFE?=
- =?utf-8?B?aWpRbGVER0lIMVNFeE5xeVZYRjdUTWJPRlVnUm15YzFzZlF5QzZDbTk3SnZq?=
- =?utf-8?B?TS9MbUxQNlFMV0tNYXFNVjRIZExQMUpQT3VybjFyMHFsVFVMckNTOGlCaDVG?=
- =?utf-8?B?ODA2K21iaHoyMEZETUo4U2pIOXdndkZTaFQ5YTZMM0p5Wkx3TTFwcmR3anN2?=
- =?utf-8?B?aEd3RGhoNWlNUDlDenkyN2t0SWJ6UlV4Z0hRSVhHemtUUlUwL3p3QUNpUUZh?=
- =?utf-8?B?aVdnemtmcm5LdE9yaUFpNGMzVzRDT2p1R1ZGNTk1REJic0Uvc3VaOGtZRG9C?=
- =?utf-8?B?SHNIUlRYQUlha2ZmSWxGNFpFZEpWQSs2aUwxMUd3blM0MTVOZlJtRy94dkpn?=
- =?utf-8?B?SERmeVFPeGU5RXU1VTNlaWhKeWZQNTdCV2M5YmxDaEdtcG82a1dLZlkzcXBT?=
- =?utf-8?B?bTFNV3pHcWpPUjBQdHcrZ2pBaWhPY0YwVHdHM1ZHKzdrejJmbUVwcFpJRVdG?=
- =?utf-8?B?c0VMUTNyRmFXckxSazhMdGNmM0ZmWDQ1dUJQUEE3TEhmTklZYnIyaUxBMTMz?=
- =?utf-8?B?MG4raENXZmo1bUo2NElla3FrL3pYZlZPZHhEVGZ2WTNoVnFDQzVIMWRhbzkz?=
- =?utf-8?B?bUR2M29aUVJiWHp0SytaQ1NmZHFYZktCMC9Rdlo4eTl3OUF2dDhkMkl2MFBO?=
- =?utf-8?B?UWVNUXVQY0praTV3TTVXWklCN0lnaUUrejRZQWhkM2lMK3BLRW1qS1J6T3Bn?=
- =?utf-8?B?dmVJY3BTVStTMkt2bTBDQTF3NGxpNkZTSEVzZWkrNlg3V1ZEc25rK3BRQmJ4?=
- =?utf-8?B?Mm9XLzAyelRzSDVmb3ErTjYrYW9rL2xKdFJEd0NvRmNZSldibUl5THpqalQ4?=
- =?utf-8?B?bTkySlFZUkRsS0JKYTdXNk1YRFl2b0ZjZEdwdWx2OUMyQjJ4S0VPNFRKcmJp?=
- =?utf-8?B?TXpHdGVBMXVOaXdTWWhmMmplQnpoV014bW5PMFgvYkJuZm9xanVERGx3clNz?=
- =?utf-8?B?WTN5THRCY3RzTTE4QlE3TXlmYVB6bmowZE1qVGRsR1RGcTBldTF3bUt0cS8y?=
- =?utf-8?B?K3pEaDFEVlVnYmVpL1NkY1FHU3c1S0N1RGNTUFdLTHhIdEhqYjNYWUMzc2Fv?=
- =?utf-8?B?cEgvT1J4b1VEbGRVeFlKQ3BrV0gyd0ZEK0JEUU1pdW51VmNUVVh6WWxLcmJF?=
- =?utf-8?B?MEtJeEJXbXRZOWpBNUVwMCs0MTlWd2EvUGJWSHRvdThGbDFKL2ZkbERQL25m?=
- =?utf-8?B?N2ZlclY0aTAwbEhCeTJUU2xaTU9wdHp4ZFhveEx0clpWbWZqV2hGRE44M1JJ?=
- =?utf-8?B?bEZYMFNvdGZ4ZWpCNTNCNnRvd3NTNjhZMStGSVlRUGRpSzc2OHZPN2IwOXMr?=
- =?utf-8?B?dTJVOGp6YWxkaDgyZjRZdllFM0lINGJyZmI1ZE81TVoyRE11dGZqdGRJSmdV?=
- =?utf-8?B?ZUMrVHpCVkNCVU9qMDNmRGZ4Z0c4UVc2Y2pwWXd1cjF0c0ROdUFWQTZJOTBk?=
- =?utf-8?Q?os32uHIYnLkqLi0fL0S4tl/nfDS3ZM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L0dSVEhQanN0MHA3cVNLbG9IaGk5ZTUzSnFreVhzeDBiSW5mK3dzdDhmNnNU?=
- =?utf-8?B?eU5OUUtCejhkMTZkTmR5eXRqVk1XZkRTMksxUC9uNVV5b3NscHp0VlpIdkMv?=
- =?utf-8?B?YStaZHJSc1haak00UkRJdVJNOUFLbjM1S2lta3pVNzE5bVNtRmJwVFh6WldP?=
- =?utf-8?B?WGJjTmV0OFlBTmVMUDk3T01XNkRaSTBhc1lOaEZ3amhweWsvajhGWGFqdm54?=
- =?utf-8?B?ejFiTkt5Rjc2RFlKanNOSnozeS9DcjFKQW9GVml2Y21FWWx6NWtYWFFIRUk5?=
- =?utf-8?B?UThPeW45c0VLNDBheDZ0Y25tTGpFNGhQM1AvSE5RamtnQWIrNWxoMDVWMDZ3?=
- =?utf-8?B?QXNVMlJWNDVFS2lycnRiUW9SOENMaGprYkNiZ0g1TFZ3T3FvMFpNQm9EVHNo?=
- =?utf-8?B?L20vUTRXN3BTYkpXWnZ5VllHREx6VERnVWlOUjR1R0l5RSsrclNFVnpFYlpy?=
- =?utf-8?B?UU92YUR2UG0zM1QxMmtqcWdhUUgrUW9iOTUwa3ZWbngzUTBnM2ZxSENDNDlC?=
- =?utf-8?B?ZHVVQXVGeCtxS2MrTDVuZUZldWxvRy9SK2l1THY2aUFOSkFya1E5ZUg1Rk1C?=
- =?utf-8?B?T0Q4YzFIdlQ3dkxSSXdGQ1RiYmFSaTN2ajhDWlR6U0huNFl1UlB4a29KVXdY?=
- =?utf-8?B?RlpCNWtvaStJdlBTdU1uZlovQndaVC9BLzJ2blRoTDlNTDRzY0M1NkcvLytO?=
- =?utf-8?B?dXdJS3BmRENma0ZiTjg0SUJPOG5tWE5EaXhlTFBWWEFWeEtjeDVSTi9wTms3?=
- =?utf-8?B?a05kNTFjKzJsUm1NdmwxYllxandJSHIybUV4ZHpkTXRMQWx6RVBUVnZJYUFt?=
- =?utf-8?B?WTJ1elF2WEI5b1p0Q0lSeG9BSi9saXhIM2NPWGlTdGthK3dvbXNtM2tvVHZ4?=
- =?utf-8?B?STNDQnFtTUpTM0NmYm5Tb3dzRVM4TjVPR0p3ejJYaDhkV003b2cyMldlVDB4?=
- =?utf-8?B?TlZBSWFnZEM5dmJFWGoxb3FiL0pyU2VNbjBIKzNFS3BoZHhveEJOSm5aZTJM?=
- =?utf-8?B?RUlRR204bXBUVlBnVzY3d2xYWVpxZDlHL1hkZEZqdmRCNERDNHNNM3h2Tjc0?=
- =?utf-8?B?ZDhTdDl2S0c2SEJzNGF4eHBlYTdtKzEwZDYvU0dTQ2QvdkRFWHNYTTh1bjh5?=
- =?utf-8?B?bUFqdXh1Qjhrc1l6WG4yaGlYUWloMDUxQXlBY0oyVmVJUWRtQlpBNUJOR0dJ?=
- =?utf-8?B?R2hER08rbVhkL2Z3aWRRWlZtR3JJNmJyditlRXFMcFB2Ty9iWGtSTjRJOUVD?=
- =?utf-8?B?WFRqZjRnTWVDVnJObVptYXI2WlBXYmd3WnZvRkdjY3VpelRiRnlSZkZSWTVG?=
- =?utf-8?B?ZDRVdjdXWXB3MWV5MGorRVdhR200L3I3Rm1iQjhxNzQrczV5QW1ZMlVLT0Va?=
- =?utf-8?B?MWl6M25NS3ZHYUlKTCtnVUFZbTJ0d3dhV0NiL0RBendGbmtCQ2tBN0x2MU1I?=
- =?utf-8?B?anNxT2krbTJHQVd4UHlDUWdNS3pyWFhxZktzSGdxWm1VZCtuQkQ4L2ExeWox?=
- =?utf-8?B?bVV3U2hSYkduMDlkRXVBUlp3TTAyWGFaSUErUmJ4QnI1bk9LcWZDN1FsTUdG?=
- =?utf-8?B?ckhGRkFzUG1jbkFObWpjb0dVNTF0VEdqWTFta1BCdzFxTUpoWEZEdVpRN1Aw?=
- =?utf-8?B?b2gvWCtocUhzVVVKdERZN3lqV016MFlsVjRuUXNBbVEzbXE1eVhhbExPaHY4?=
- =?utf-8?B?TnZPa2lvZEMrZnBLTFJMVUIvU0NkZGRsMnAyc2ozbVFaRHdBK1VFVnhvQkcw?=
- =?utf-8?B?VzNlWEp4UXV6a2lyb0FzQ3ppQmtjbU9XNFZIdUJSQTh4WkhGOWxaSE9Qbnoz?=
- =?utf-8?B?RGc5bWlnWnZzc1FMUjFWdnFBMk83WmxNT2tObjB6RGlKZWRGeDVTSGNqYnpm?=
- =?utf-8?B?eDh5dHBmMks2NjNrRzVrR1dWWlQwd1g3TWtMWnZVNzREa0ZOaWhVdDN1dlpZ?=
- =?utf-8?B?TG95eU9MckVRVUh2TjJVOVk3SUhuVWJGSkdhMFNZaEZsU2VjL2JhbEJkZnFG?=
- =?utf-8?B?bTY5QXF4cFBwRi9LcEtnNUFSaitkYTJsVnVZUTh6SW5aeCt2RDI0WmF6SlJK?=
- =?utf-8?B?WU1BQVFpSVhzMmlaelZlbUg0YVJ6Z00vYmp0NEt1YWgza2RLZXVjYTQyOURM?=
- =?utf-8?Q?MgsNt223gXeiP8e5/BOyX8PGd?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e71a0ee4-d4cd-4add-034c-08de107a8805
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5716.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 08:19:19.1782
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KDwc+Vqphj0Lux2IqSgqPM+0WdJjC/u+Bo1NlhJ4d7PG9KEWZq1sgU6VBgDDw+2p3aws27yRXmZVjfFrWs74Ag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8782
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251018-ppc-fix-lld-interp-v1-1-a083de6dccc9@kernel.org>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FMYWBuos c=1 sm=1 tr=0 ts=68f741e0 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=CCpqsmhAAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=FAP-1WBkK2k5Bz30Sn0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=ul9cdbp4aOFLsgKbc677:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: PUznJ_3OC0JPYd9aU5zX_VlguL7hWr96
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX2NN4/pHCUp6m
+ IUj9VOSHR3Vs497FgOot7qomd0Pc9yaTtu5BDqpcXPmlitueloi0Cb4zV+60D44yufbgI9uab5O
+ 3wLXQtsBLWzTxNUcY4omsb0HovyW6zNVXSMMCnkTRpEgouETDUb/8iJxpet5xueVCR/VL9BEwcz
+ psb3Pmb2dh32kvIfTGlWacNbJcR5VSAEduCdSfk5RjdwgR4uzDFVfcd9bIO0GRWshIHrYPd6FBK
+ hvyMq/uMscveGxnHOFhwGPi1ekr4kI6WUIrfZ4p/OxfMkcpCDvIrbEtJrJQYsL5dSO68/5xfMEN
+ dYVrR7gz6oarwwfwRncmM8or6mrMbSm8HdRN2q1TrvVtAmpiqPAoGH3O0j3XRst/rlbLZw0vNao
+ 8y3XasGZEPRTVe+vihZzfZysmjVzHQ==
+X-Proofpoint-ORIG-GUID: 7lS_-1FnU6zD-yPA5X_Ge0v5bGE8S3z-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On 01/10/25 12:17, Kartik Rajput wrote:
-> From: Kartik Rajput <akhilrajeev@nvidia.com>
+On Sat, Oct 18, 2025 at 06:52:40PM +0100, Nathan Chancellor wrote:
+> Commit da30705c4621 ("arch/powerpc: Remove .interp section in vmlinux")
+> intended to drop the .interp section from vmlinux but even with this
+> change, relocatable kernels linked with ld.lld contain an empty .interp
+> section, which ends up causing crashes in GDB [1].
 > 
-> Following series of patches add support for Tegra264 and High Speed (HS)
-> Mode in i2c-tegra.c driver.
+>   $ make -skj"$(nproc)" ARCH=powerpc LLVM=1 clean pseries_le_defconfig vmlinux
 > 
-> Akhil R (2):
->    i2c: tegra: Add HS mode support
->    i2c: tegra: Add Tegra264 support
+>   $ llvm-readelf -S vmlinux | grep interp
+>     [44] .interp           PROGBITS        c0000000021ddb34 21edb34 000000 00   A  0   0  1
 > 
-> Kartik Rajput (2):
->    i2c: tegra: Do not configure DMA if not supported
->    i2c: tegra: Add support for SW mutex register
+> There appears to be a subtle difference between GNU ld and ld.lld when
+> it comes to discarding sections that specify load addresses [2].
 > 
->   drivers/i2c/busses/i2c-tegra.c | 175 ++++++++++++++++++++++++++++++++-
->   1 file changed, 172 insertions(+), 3 deletions(-)
+> Since '--no-dynamic-linker' prevents emission of the .interp section,
+> there is no need to describe it in the output sections of the vmlinux
+> linker script. Drop the .interp section description from vmlinux.lds.S
+> to avoid this issue altogether.
+> 
+> Link: https://sourceware.org/bugzilla/show_bug.cgi?id=33481 [1]
+> Link: https://github.com/ClangBuiltLinux/linux/issues/2137 [2]
+> Reported-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> Closes: https://lore.kernel.org/20251013040148.560439-1-vishalc@linux.ibm.com/
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  arch/powerpc/kernel/vmlinux.lds.S | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
+> index de6ee7d35cff..15850296c0a9 100644
+> --- a/arch/powerpc/kernel/vmlinux.lds.S
+> +++ b/arch/powerpc/kernel/vmlinux.lds.S
+> @@ -330,7 +330,6 @@ SECTIONS
+>  	}
+>  	.hash : AT(ADDR(.hash) - LOAD_OFFSET) { *(.hash) }
+>  	.gnu.hash : AT(ADDR(.gnu.hash) - LOAD_OFFSET) { *(.gnu.hash) }
+> -	.interp : AT(ADDR(.interp) - LOAD_OFFSET) { *(.interp) }
+>  	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET)
+>  	{
+>  		__rela_dyn_start = .;
+> 
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251018-ppc-fix-lld-interp-1a78c361cd42
 > 
 
-Hi all,
+With this patch, I don't see .interp section being emitted the final
+vmlinux binary.
 
-Just sending a gentle reminder to review the "[PATCH v9 0/4] Add I2C support for Tegra264" series.
+```
+(i) ❯ make LLVM=1 vmlinux
+(i) ❯ llvm-readelf -p .comment vmlinux
 
-Thanks,
-Kartik
+String dump of section '.comment':
+[     1] clang version 22.0.0git (https://github.com/llvm/llvm-project.git 7314565281ec28b745502c3f429fd431e16673eb)
+[    6d] Linker: LLD 22.0.0 (https://github.com/llvm/llvm-project.git 7314565281ec28b745502c3f429fd431e16673eb)
+
+(i) ❯ llvm-readelf -p .interp vmlinux
+llvm-readelf: warning: 'vmlinux': could not find section '.interp'
+```
+
+Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
 
