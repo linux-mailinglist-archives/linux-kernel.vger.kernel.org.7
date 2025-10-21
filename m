@@ -1,114 +1,192 @@
-Return-Path: <linux-kernel+bounces-863153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98568BF71FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDF2BF7216
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6358D188C327
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C725A1896929
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7347733B968;
-	Tue, 21 Oct 2025 14:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jzvt7HQG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DF7336EFA;
+	Tue, 21 Oct 2025 14:41:48 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EE1332EA5;
-	Tue, 21 Oct 2025 14:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D750133C50D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761057676; cv=none; b=ZK+abSjT3fheK6b10unKT4mwrYTxOqKSCkExLJZdhMRFCQrmXQKW7jzp+lMd4tFj35pyF7KJTdbv0OcFqY6zId1ut9VC6VoGEJ8FdLsYTLUfVsNLPj0JHk90eu6z58FJh9773wgQIRNXogP6XkKCNR5YTjRFFzt6LtuDiHiJmLU=
+	t=1761057707; cv=none; b=W4M8BREL0fWudZMyEoU37WsKatdovLG6dHI3GBaR6LleFy8ddrbZJie1VC6EtbavSaqZLHhBHJJkGB2rJPtWeDjovcg1PjblGnSaypjb2fDSy3OUvb/kaUZ6VCj6KDMyLgZFumGArw+XtwLUne00gcOlKGJDRQH574TNWgpyFCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761057676; c=relaxed/simple;
-	bh=TLAonmS28l2Atrks9dB3gf5XsFrnkrzaVmxa1ByY8Vc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hT68Fj3dszLzeX2rreE4lppEYTOpco4WmxAo/EKzNAr1/3xLPwcM7duBo/oUx0VqjPgEYvUgsb6aGGz1TcZ9dCyjOdxVoxTmXgFcCthU+exQ7yJDdHbQZLy7pnNKyQ9ke1NNV1LAckQ17whG9YFaJqC9XEVlKT/hqqe/uRpWPN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jzvt7HQG; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761057675; x=1792593675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TLAonmS28l2Atrks9dB3gf5XsFrnkrzaVmxa1ByY8Vc=;
-  b=jzvt7HQGp23/zHkWR3nKJPVPNRbKcScTKYy8qiGExNC84Wc/bHd6Aj4h
-   IZEkxN30Pk5olUYAaAMEbkITu+2eH4gBYCqcReOuctSw8RT3aWkYCbuKB
-   E7SAMP74pEa/SPHPQT4Dt3+jOk8oxjv+etwoaDwNszXob1rnyCr6Hx26o
-   coslEOeQgKAtEUJaf9w8feP6a2luJ1nWMbxJ93T4A2khd116wjtC3WhcH
-   rxA50pA+1lMFAXXpSYkGJXixm5xkVkUy8OPdWRCWdEcj1RiUsvNKJ2OtB
-   ZiZlpP3Dyml+yeoyeTnsg2woOWHDP5FZjZekFLJ7x6+szVyFv4n+D6e6F
-   A==;
-X-CSE-ConnectionGUID: VS339jUhQ2O7U4qYLLBKIw==
-X-CSE-MsgGUID: gRz2t9VqT3qi+SgFTv9FLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62215412"
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="62215412"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:41:14 -0700
-X-CSE-ConnectionGUID: 0H82ZSkkQD+aXRtbHN36FA==
-X-CSE-MsgGUID: uttA66GNQIegkA2Q52rXFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
-   d="scan'208";a="187874725"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.148])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:41:12 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vBDXw-00000001WJe-3qP2;
-	Tue, 21 Oct 2025 17:41:08 +0300
-Date: Tue, 21 Oct 2025 17:41:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Cave-Ayland <mark.caveayland@nutanix.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] gpio: idio-16: Define fixed direction of the GPIO
- lines
-Message-ID: <aPebhGETy_3MIwkf@smile.fi.intel.com>
-References: <20251020-fix-gpio-idio-16-regmap-v2-0-ebeb50e93c33@kernel.org>
- <20251020-fix-gpio-idio-16-regmap-v2-3-ebeb50e93c33@kernel.org>
- <CAMRc=MeFZTDk4cgzEJNnkrJOEneFUBLwtKjkpV3-cLSm=xsxNg@mail.gmail.com>
+	s=arc-20240116; t=1761057707; c=relaxed/simple;
+	bh=Xk82p3QMQ218l3t+5+rV+5DkhvLFvg+GAWSI/dQi70o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Xl2MuiNKwfIvG5SWFzjq+g7oQnoLrS55zH8BI3Z5k92w1LGD9wDnUgluQ8+z8pGCOkjAS6wGad9Zc90xtCaHCIzWVATC0sCfzGqpgShacEGw8S8eBLkC7RM8iLCRnbZGvefKgWMQ6aFvSnFYg9mbXqExedrkiz8eClUF9FvKWcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430afaea1beso69426405ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:41:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761057704; x=1761662504;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4nyXkjWC/ci1YXwgRcz9ZasDLILOvM2KJyStZKlc64A=;
+        b=BDRENjOzkjcRXDvYnK5oEzyTDS5FUTiKea5ciwk4rhJjDemtSVbGga9vacciiXyyL9
+         dZ9hl5Q4/pEEyc/8eoI8B6+M8R0ZbaeGYWAgJdKhsKF4cyhQMfaCVZ+IJx2duqe+C0n0
+         rIu9ujO96H9Jmp6hwYEjmSn3pc6hjE6G4i2Lz4Ox1offBB+VEr+45y/Xq3dHhN8QpvtY
+         kW8VzHNpkYs8XunQpLGCMOasPe2M9Cxv5PI69uCNdPrOef6KGrunqOoBBo295+pT3h63
+         R3qdJxYs3uYa1ep//SelCfLylYgABXEHeOq6NVBysvhzNglvWRXpKDaZ1PWj2Xu4o8aE
+         3oiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXB/FU28qG9jFKzMglMN+cIRUCzr1Rd+O5+BrDwcaIgBPqGXZH5VSMzhtH81tVace1lSRdzy2KN8QZHNVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkTn7rOgnPc1HIVeTO/Al4MZiEbsLkhU3mK0cEvHbSyNx2rqoh
+	WAhTi33BJckY4WxEnEaw4NqIRhRi0SRpLK137EIIMgVExUozH4inSCOedSjGrjd97qvZmfEOblT
+	7IzCMZisynU/4PrIvr43b2niPVZfLVK0nlaoCqeegdMmsyw3XJKCugweAdX8=
+X-Google-Smtp-Source: AGHT+IFB7JSh1jrcc84lwp+scGP8tt2pMbdrY49scmV75mR9oHYCvfnRmGuGOLsMGCf2cDZgm31FWVk2KIt/UjEYUCv1sp6O0Atc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MeFZTDk4cgzEJNnkrJOEneFUBLwtKjkpV3-cLSm=xsxNg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a92:cd82:0:b0:426:39a:90f1 with SMTP id
+ e9e14a558f8ab-430c527dc54mr238746205ab.18.1761057704018; Tue, 21 Oct 2025
+ 07:41:44 -0700 (PDT)
+Date: Tue, 21 Oct 2025 07:41:44 -0700
+In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f79ba8.050a0220.346f24.001f.GAE@google.com>
+Subject: [syzbot ci] Re: nstree: listns()
+From: syzbot ci <syzbot+ci929e562404b4811b@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, arnd@arndb.de, bpf@vger.kernel.org, brauner@kernel.org, 
+	cgroups@vger.kernel.org, cyphar@cyphar.com, daan.j.demeyer@gmail.com, 
+	edumazet@google.com, hannes@cmpxchg.org, jack@suse.cz, jannh@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, kuba@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	mzxreary@0pointer.de, netdev@vger.kernel.org, tglx@linutronix.de, 
+	tj@kernel.org, viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 21, 2025 at 09:21:38AM -0400, Bartosz Golaszewski wrote:
-> On Mon, 20 Oct 2025 10:51:46 +0200, William Breathitt Gray
-> <wbg@kernel.org> said:
+syzbot ci has tested the following series
 
-...
+[v1] nstree: listns()
+https://lore.kernel.org/all/20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org
+* [PATCH RFC DRAFT 01/50] libfs: allow to specify s_d_flags
+* [PATCH RFC DRAFT 02/50] nsfs: use inode_just_drop()
+* [PATCH RFC DRAFT 03/50] nsfs: raise DCACHE_DONTCACHE explicitly
+* [PATCH RFC DRAFT 04/50] pidfs: raise DCACHE_DONTCACHE explicitly
+* [PATCH RFC DRAFT 05/50] nsfs: raise SB_I_NODEV and SB_I_NOEXEC
+* [PATCH RFC DRAFT 06/50] nstree: simplify return
+* [PATCH RFC DRAFT 07/50] ns: initialize ns_list_node for initial namespaces
+* [PATCH RFC DRAFT 08/50] ns: add __ns_ref_read()
+* [PATCH RFC DRAFT 09/50] ns: add active reference count
+* [PATCH RFC DRAFT 10/50] ns: use anonymous struct to group list member
+* [PATCH RFC DRAFT 11/50] nstree: introduce a unified tree
+* [PATCH RFC DRAFT 12/50] nstree: allow lookup solely based on inode
+* [PATCH RFC DRAFT 13/50] nstree: assign fixed ids to the initial namespaces
+* [PATCH RFC DRAFT 14/50] ns: maintain list of owned namespaces
+* [PATCH RFC DRAFT 15/50] nstree: add listns()
+* [PATCH RFC DRAFT 16/50] arch: hookup listns() system call
+* [PATCH RFC DRAFT 17/50] nsfs: update tools header
+* [PATCH RFC DRAFT 18/50] selftests/filesystems: remove CLONE_NEWPIDNS from setup_userns() helper
+* [PATCH RFC DRAFT 19/50] selftests/namespaces: first active reference count tests
+* [PATCH RFC DRAFT 20/50] selftests/namespaces: second active reference count tests
+* [PATCH RFC DRAFT 21/50] selftests/namespaces: third active reference count tests
+* [PATCH RFC DRAFT 22/50] selftests/namespaces: fourth active reference count tests
+* [PATCH RFC DRAFT 23/50] selftests/namespaces: fifth active reference count tests
+* [PATCH RFC DRAFT 24/50] selftests/namespaces: sixth active reference count tests
+* [PATCH RFC DRAFT 25/50] selftests/namespaces: seventh active reference count tests
+* [PATCH RFC DRAFT 26/50] selftests/namespaces: eigth active reference count tests
+* [PATCH RFC DRAFT 27/50] selftests/namespaces: ninth active reference count tests
+* [PATCH RFC DRAFT 28/50] selftests/namespaces: tenth active reference count tests
+* [PATCH RFC DRAFT 29/50] selftests/namespaces: eleventh active reference count tests
+* [PATCH RFC DRAFT 30/50] selftests/namespaces: twelth active reference count tests
+* [PATCH RFC DRAFT 31/50] selftests/namespaces: thirteenth active reference count tests
+* [PATCH RFC DRAFT 32/50] selftests/namespaces: fourteenth active reference count tests
+* [PATCH RFC DRAFT 33/50] selftests/namespaces: fifteenth active reference count tests
+* [PATCH RFC DRAFT 34/50] selftests/namespaces: add listns() wrapper
+* [PATCH RFC DRAFT 35/50] selftests/namespaces: first listns() test
+* [PATCH RFC DRAFT 36/50] selftests/namespaces: second listns() test
+* [PATCH RFC DRAFT 37/50] selftests/namespaces: third listns() test
+* [PATCH RFC DRAFT 38/50] selftests/namespaces: fourth listns() test
+* [PATCH RFC DRAFT 39/50] selftests/namespaces: fifth listns() test
+* [PATCH RFC DRAFT 40/50] selftests/namespaces: sixth listns() test
+* [PATCH RFC DRAFT 41/50] selftests/namespaces: seventh listns() test
+* [PATCH RFC DRAFT 42/50] selftests/namespaces: ninth listns() test
+* [PATCH RFC DRAFT 43/50] selftests/namespaces: ninth listns() test
+* [PATCH RFC DRAFT 44/50] selftests/namespaces: first listns() permission test
+* [PATCH RFC DRAFT 45/50] selftests/namespaces: second listns() permission test
+* [PATCH RFC DRAFT 46/50] selftests/namespaces: third listns() permission test
+* [PATCH RFC DRAFT 47/50] selftests/namespaces: fourth listns() permission test
+* [PATCH RFC DRAFT 48/50] selftests/namespaces: fifth listns() permission test
+* [PATCH RFC DRAFT 49/50] selftests/namespaces: sixth listns() permission test
+* [PATCH RFC DRAFT 50/50] selftests/namespaces: seventh listns() permission test
 
-> > Cc: stable@vger.kernel.org # ae495810cffe: gpio: regmap: add the .fixed_direction_output configuration parameter
+and found the following issue:
+WARNING in __ns_tree_add_raw
 
-> Turns out, this requires commit ae495810cffe ("gpio: regmap: add the
-> .fixed_direction_output configuration parameter") so I cannot queue it for
-> v6.18. What do you want me to do? Send the first two ones upstream and apply
-> this for v6.19?
+Full report is available here:
+https://ci.syzbot.org/series/03ca38c3-876c-4231-aa06-ddb0bc8a30ad
 
-Why can't this be pulled from some IB/IT as part of the fix?
+***
 
--- 
-With Best Regards,
-Andy Shevchenko
+WARNING in __ns_tree_add_raw
+
+tree:      bpf
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf.git
+base:      5fb750e8a9ae123b2034771b864b8a21dbef65cd
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/156cf21b-68f9-423c-807a-3dd094e6aed8/config
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5816 at kernel/nstree.c:189 __ns_tree_add_raw+0xa92/0xb30
+Modules linked in:
+CPU: 1 UID: 0 PID: 5816 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__ns_tree_add_raw+0xa92/0xb30
+Code: 32 00 90 0f 0b 90 42 80 3c 23 00 0f 85 1e fc ff ff e9 21 fc ff ff e8 ed 78 32 00 90 0f 0b 90 e9 66 fc ff ff e8 df 78 32 00 90 <0f> 0b 90 e9 53 ff ff ff 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c ef
+RSP: 0018:ffffc90003f27c30 EFLAGS: 00010293
+RAX: ffffffff818e0051 RBX: 1ffffffff16db871 RCX: ffff88810ffe0000
+RDX: 0000000000000000 RSI: ffff8881bbf5e9a8 RDI: ffff88816d0e6e00
+RBP: ffff88816d0e6e00 R08: ffff88816d0e6e3f R09: 0000000000000000
+R10: ffff88816d0e6e30 R11: ffffffff81b988c0 R12: dffffc0000000000
+R13: ffff88816d0e6e40 R14: ffffffff8b6dc388 R15: ffff8881bbf5e9a8
+FS:  000055558630f500(0000) GS:ffff8882a9d04000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5c3f03529c CR3: 000000010b5bc000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ copy_cgroup_ns+0x373/0x5f0
+ create_new_namespaces+0x358/0x720
+ unshare_nsproxy_namespaces+0x11c/0x170
+ ksys_unshare+0x4c8/0x8c0
+ __x64_sys_unshare+0x38/0x50
+ do_syscall_64+0xfa/0xfa0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5c3ef907c7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc62c39c88 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007ffc62c39c90 RCX: 00007f5c3ef907c7
+RDX: 0000000000000000 RSI: 00007f5c3f03529c RDI: 0000000002000000
+RBP: 00007ffc62c39d20 R08: 0000000000000000 R09: 00007f5c3fd1d6c0
+R10: 0000000000044000 R11: 0000000000000246 R12: 00007ffc62c39d20
+R13: 00007ffc62c39d28 R14: 0000000000000009 R15: 0000000000000000
+ </TASK>
 
 
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
