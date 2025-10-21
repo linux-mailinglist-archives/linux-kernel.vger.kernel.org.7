@@ -1,238 +1,196 @@
-Return-Path: <linux-kernel+bounces-862624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE64BF5C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950F5BF5C84
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 670D73503C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D8619818D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129B032BF54;
-	Tue, 21 Oct 2025 10:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FLPYf9JZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8130732C949;
+	Tue, 21 Oct 2025 10:30:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB7224DD09;
-	Tue, 21 Oct 2025 10:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D69732BF40
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761042521; cv=none; b=Hae3pK01MeVZD4rEVtGE3VpimGt5Q21kGlvDrPE603iRMB3eJh113cn3OXpiJWxrQfH1rlU/33RBeu9D7ONNLaOsSa28Qu9yunYmfWbQ3ZZHq4DDIN6W4jacWWLylNJ8fDSC4HA7V2fxs9Zquzd/7gvxRX/7BKrtKMjO3JEUo3o=
+	t=1761042605; cv=none; b=bOMdb8iiLvq5hBU0HkcClNlCCLLvwgK6r8XGW4KxH9cSIXoRFsGnY5pCTB/1LIxKBB/XGpfB8n/Dn+jGCo49fCEwjNlnfKusu2YbVFhjYMgXhYGsVswAnCuy4ipxinAiZmNNSw2ywdwt43OZhUmsMrJjWJyRpdUTHf2EOby6j5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761042521; c=relaxed/simple;
-	bh=o7nc+XDgyLdRWvYmxEANWXtoNQk5R7tRxzdB9KC/CFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jC9i5m9YsZnh2at5Z3HdF7sz3+evM1UXa2UL1GoCjByweh/KQ0JmyLu7/j7eADPCkh/Tlzetl1BU569ISJ8PDnZnOoUvdEXzEeknfPq4ThHh39Nnz4gfADHMmB+FTT7tnHym5PPTDIr8WCrsN0rp7oZ9KYiiUOcWiYe+m3khYZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FLPYf9JZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L4SbDt022756;
-	Tue, 21 Oct 2025 10:28:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=VT/C0Fr+kXnD59/mEe08Khy2+AbO0a
-	6cHOso556vaNM=; b=FLPYf9JZS8xm4wKz0FF0nZFj1JREj6M6EXQ1fCqQF2h4/P
-	iefYwjXr7ISYXGYRJabY+JLZbX0N1p9gedzS8HTAFr/qMg2GpW3e9mKHbPvWsZvP
-	JHH5y71e/oa5ee8lfc2aWKG+m2XJJrGKsoAUreQ+HrLf+7W7niKgI/D+1/CpA+/Y
-	/xoV4/MpGbbbgEP5D1YYGokPj8Up5QjlTQKeOWG6ghymkIFn6Fye2dQwqSQ5MT3b
-	Si4yUPxxjmegLjnowcMk+9+d31S6Lq/BJ93ndUjIMCPBpxYX+bKOP8paYSJpRe7D
-	dRJ+2b5xPLnR0dNNMsBs1jTSohPb8RWaLndrr94g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rxeku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 10:28:32 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59LAMbWU009747;
-	Tue, 21 Oct 2025 10:28:31 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rxekq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 10:28:31 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8akKU002488;
-	Tue, 21 Oct 2025 10:28:30 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqeja1jb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 10:28:30 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59LASS7v38469984
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 Oct 2025 10:28:28 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C915920043;
-	Tue, 21 Oct 2025 10:28:28 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7FEA620040;
-	Tue, 21 Oct 2025 10:28:26 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.23.251])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 21 Oct 2025 10:28:26 +0000 (GMT)
-Date: Tue, 21 Oct 2025 15:58:23 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <aPdgR5gdA3l3oTLQ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1758264169.git.ojaswin@linux.ibm.com>
- <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
- <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aOPCAzx0diQy7lFN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <66470caf-ec35-4f7d-adac-4a1c22a40a3e@oracle.com>
+	s=arc-20240116; t=1761042605; c=relaxed/simple;
+	bh=ba92ZCaLSrFbTakAqUS+7a9wqQ6yNp8OihEI0CLwPVk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JUAuiKQJMdz+NvNJ310R1FZLAo8ShtsbDOu5ViIUFg97tZhl5dt0ELd6tKIMa0ZW5CrJKGbUNs2IypV0RrGnixD7yROqNrMavM8aX9p0Hzn3FYHl1uJwLx6vXmRbp8XzSDuLhi4hpGcAWXzDDC/WJ4o9/q8RLTaVBXSmX1lsu+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e809242d0so986729839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 03:30:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761042602; x=1761647402;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rXSxkzjbwtGmJhGcySsnjpN4sygoTHK1MyL+PLfqk9s=;
+        b=q/HabPkmKu/lI0C8dN3Zd3pr9gjNoyQqlNcx9bWewsGBBAfjVlISyYISN7tsJFsJw/
+         Xc68nF439g5rb7VhD2diAZh0pMjhCdbMXTf6lWS59A9uQmd1LANjmwd0FNBkCuzNbUhn
+         yhuLaDlpQFjzMDl4zk3Du7ueVXwC0fng6FjI6HpCA4a9IvhRb5U/IevvUGPu/Klv3GSM
+         3BdfMo9sKYraQ3C3MjUgxm43VfwBBv3ld84EQZ7780XfXy0zeIngzuNnytaGnLia4alO
+         FDOSp0RsO2zlcorShbT+pcQH3IHkoTBIry9P9/suS1FagRk3IuBwzDdr65SHtxkWHq5h
+         qaOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTZK8h5N+ZpFipvKZcAVv2SrT6tYfijsklQUq0QMVvjf64wimqXh/IUuFmHoTA+fPVtY/zfdg4X1YDU5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw68lzbqXqXgTYfgI6ccDXu5HDPtTo0CFns8Dh22eAWZLayOrMk
+	9mbbjUlnzepE0h4Ld2g6wehhl86z/0uuF9f+HgzAPN7xk3AUx3ipwgyqymuOkZB8ECYTuI5lhrf
+	cl8pNAkw8KUB/9umHQLhdQUhvomOkHt/tRCe/IcUS1GyH76ZymSMnKEOA/Qc=
+X-Google-Smtp-Source: AGHT+IG06J3L1XW+DZ5LbGn7uIFP7KU+5mmoBslNxd/mYtvcjn7tb7bHBFtCd6Q7iYtLJtff3ds5pJwk+L2+RZmZcUkSq3Vot/jX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66470caf-ec35-4f7d-adac-4a1c22a40a3e@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: G-OJWBMuAYAUBAaFdpOdfRMyrOxpg6Da
-X-Proofpoint-GUID: Uvia4lVAbIX9vhO5KO42c_Mu1cNgUJ9L
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX8r/LRwdN3oBM
- ymWDMTWJImB/Ld8hA6NwNCZRdCSAVUjZrRXM8Phkc7NoM7Ym3rhdQDrASKRN4SWl/yu9yrvOYi6
- qHVXTfmXqooEnVYaQqBDAQ0TkyzJx6XOEUJl/JBxZ9P4VUOMd2baM1EdFHqTrMm5sPOJUqIFEj9
- 8SOTxyuL7wpNNEtFmmYrkmJyMVC3HwAYwzI8t3ZGP/TMk4M/8eKLedhn58HYvO5Lid6LnCjtYrX
- kQuUuaoeoZMndfiCp50+lEYVvDdS6YP7CdyXWCrmBb45D7+q+QtTCJZ/z4BK082r/zw4IcnPrqf
- t2u7dCvcZ6UuLmmTpaNBfUHsftkKEYdJguSZIkY7SYd30QbkjYEXzpkuwXxEiAGRi5TnpSQD70r
- Jzep52Lp0tcsBFz/IrO/vACeP9ppFw==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f76050 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=NEAV23lmAAAA:8 a=Oo8esTTYCvExcNXu-J4A:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+X-Received: by 2002:a05:6602:2c05:b0:940:f0a7:30d7 with SMTP id
+ ca18e2360f4ac-940f0a7354emr90628639f.15.1761042602505; Tue, 21 Oct 2025
+ 03:30:02 -0700 (PDT)
+Date: Tue, 21 Oct 2025 03:30:02 -0700
+In-Reply-To: <u6mwe4gtor7cgqece6ctyabmlxcaxn7t2yk7k3xivifwxreu65@z5tjmfkoami7>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f760aa.050a0220.346f24.000d.GAE@google.com>
+Subject: Re: [syzbot] [virt?] [net?] possible deadlock in vsock_linger
+From: syzbot <syzbot+10e35716f8e4929681fa@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sgarzare@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 20, 2025 at 11:33:40AM +0100, John Garry wrote:
-> On 06/10/2025 14:20, Ojaswin Mujoo wrote:
-> > Hi Zorro, thanks for checking this. So correct me if im wrong but I
-> > understand that you have run this test on an atomic writes enabled
-> > kernel where the stack also supports atomic writes.
-> > 
-> > Looking at the bad data log:
-> > 
-> > 	+READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/xfstests/test/junk
-> > 	+OFFSET      GOOD    BAD     RANGE
-> > 	+0x1c000     0x0000  0xcdcd  0x0
-> > 	+operation# (mod 256) for the bad data may be 205
-> > 
-> > We see that 0x0000 was expected but we got 0xcdcd. Now the operation
-> > that caused this is indicated to be 205, but looking at that operation:
-> > 
-> > +205(205 mod 256): ZERO     0x6dbe6 thru 0x6e6aa	(0xac5 bytes)
-> > 
-> > This doesn't even overlap the range that is bad. (0x1c000 to 0x1c00f).
-> > Infact, it does seem like an unlikely coincidence that the actual data
-> > in the bad range is 0xcdcd which is something xfs_io -c "pwrite" writes
-> > to default (fsx writes random data in even offsets and operation num in
-> > odd).
-> > 
-> > I am able to replicate this but only on XFS but not on ext4 (atleast not
-> > in 20 runs).  I'm trying to better understand if this is a test issue or
-> > not. Will keep you update.
-> 
-> 
-> Hi Ojaswin,
-> 
-> Sorry for the very slow response.
-> 
-> Are you still checking this issue?
-> 
-> To replicate, should I just take latest xfs kernel and run this series on
-> top of latest xfstests? Is it 100% reproducible?
-> 
-> Thanks,
-> John
+Hello,
 
-Hi John,
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in vsock_linger
 
-Yes Im looking into it but I'm now starting to run into some reflink/cow
-based concepts that are taking time to understand. Let me share what I
-have till now:
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.17/6384 is trying to acquire lock:
+ffff888055028b18 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
+ffff888055028b18 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1080
 
-So the test.sh that I'm using can be found here [1] which just uses an
-fsx replay file (which replays all operations) present in the same repo
-[2]. If you see the replay file, there are a bunch of random operations
-followed by the last 2 commented out operations:
+but task is already holding lock:
+ffffffff906260a8 (vsock_register_mutex){+.+.}-{4:4}, at: vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
 
-# copy_range 0xd000 0x1000 0x1d800 0x44000   <--- # operations <start> <len> <dest of copy> <filesize (can be ignored)>
-# mapread 0x1e000 0x1000 0x1e400 *
+which lock already depends on the new lock.
 
-The copy_range here is the one which causes (or exposes) the corruption
-at 0x1e800 (the end of copy range destination gets corrupted).
 
-To have more control, I commented these 2 operations and am doing it by
-hand in the test.sh file, with xfs_io. I'm also using a non atomic write
-device so we only have S/W fallback.
+the existing dependency chain (in reverse order) is:
 
-Now some observations:
+-> #1 (vsock_register_mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x193/0x1060 kernel/locking/mutex.c:760
+       vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
+       vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1592
+       __sys_connect_file+0x141/0x1a0 net/socket.c:2102
+       __sys_connect+0x13b/0x160 net/socket.c:2121
+       __do_sys_connect net/socket.c:2127 [inline]
+       __se_sys_connect net/socket.c:2124 [inline]
+       __x64_sys_connect+0x72/0xb0 net/socket.c:2124
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-1. The copy_range operations is actually copying from a hole to a hole,
-so we should be reading all 0s. But What I see is the following happening:
+-> #0 (sk_lock-AF_VSOCK){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+       lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
+       lock_sock include/net/sock.h:1679 [inline]
+       vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1080
+       virtio_transport_close net/vmw_vsock/virtio_transport_common.c:1271 [inline]
+       virtio_transport_release+0x52a/0x640 net/vmw_vsock/virtio_transport_common.c:1291
+       vsock_assign_transport+0x320/0x900 net/vmw_vsock/af_vsock.c:502
+       vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1592
+       __sys_connect_file+0x141/0x1a0 net/socket.c:2102
+       __sys_connect+0x13b/0x160 net/socket.c:2121
+       __do_sys_connect net/socket.c:2127 [inline]
+       __se_sys_connect net/socket.c:2124 [inline]
+       __x64_sys_connect+0x72/0xb0 net/socket.c:2124
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-  vfs_copy_file_range
-   do_splice_direct
-    do_splice_direct_actor
-     do_splice_read
-       # Adds the folio at src offset to the pipe. I confirmed this is all 0x0.
-     splice_direct_to_actor
-      direct_splice_actor
-       do_splice_from
-        iter_file_splice_write
-         xfs_file_write_iter
-          xfs_file_buffered_write
-           iomap_file_buferred_write
-            iomap_iter
-             xfs_buferred_write_iomap_begin
-               # Here we correctly see that there is noting at the
-               # destination in data fork, but somehow we find a mapped
-               # extent in cow fork which is returned to iomap.
-             iomap_write_iter
-              __iomap_write_begin
-                # Here we notice folio is not uptodate and call
-                # iomap_read_folio_range() to read from the cow_fork
-                # mapping we found earlier. This results in folio having
-                # incorrect data at 0x1e800 offset.
+other info that might help us debug this:
 
- So it seems like the fsx operations might be corrupting the cow fork state
- somehow leading to stale data exposure. 
+ Possible unsafe locking scenario:
 
-2. If we disable atomic writes we dont hit the issue.
+       CPU0                    CPU1
+       ----                    ----
+  lock(vsock_register_mutex);
+                               lock(sk_lock-AF_VSOCK);
+                               lock(vsock_register_mutex);
+  lock(sk_lock-AF_VSOCK);
 
-3. If I do a -c pread of the destination range before doing the
-copy_range operation then I don't see the corruption any more.
+ *** DEADLOCK ***
 
-I'm now trying to figure out why the mapping returned is not IOMAP_HOLE
-as it should be. I don't know the COW path in xfs so there are some gaps
-in my understanding. Let me know if you need any other information since
-I'm reliably able to replicate on 6.17.0-rc4.
+1 lock held by syz.0.17/6384:
+ #0: ffffffff906260a8 (vsock_register_mutex){+.+.}-{4:4}, at: vsock_assign_transport+0xf2/0x900 net/vmw_vsock/af_vsock.c:469
 
-[1]
-https://github.com/OjaswinM/fsx-aw-issue/tree/master
+stack backtrace:
+CPU: 1 UID: 0 PID: 6384 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2043
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
+ lock_acquire kernel/locking/lockdep.c:5868 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+ lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
+ lock_sock include/net/sock.h:1679 [inline]
+ vsock_linger+0x25e/0x4d0 net/vmw_vsock/af_vsock.c:1080
+ virtio_transport_close net/vmw_vsock/virtio_transport_common.c:1271 [inline]
+ virtio_transport_release+0x52a/0x640 net/vmw_vsock/virtio_transport_common.c:1291
+ vsock_assign_transport+0x320/0x900 net/vmw_vsock/af_vsock.c:502
+ vsock_connect+0x201/0xee0 net/vmw_vsock/af_vsock.c:1592
+ __sys_connect_file+0x141/0x1a0 net/socket.c:2102
+ __sys_connect+0x13b/0x160 net/socket.c:2121
+ __do_sys_connect net/socket.c:2127 [inline]
+ __se_sys_connect net/socket.c:2124 [inline]
+ __x64_sys_connect+0x72/0xb0 net/socket.c:2124
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f300598efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3006912038 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00007f3005be5fa0 RCX: 00007f300598efc9
+RDX: 0000000000000010 RSI: 0000200000000000 RDI: 0000000000000004
+RBP: 00007f3005a11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3005be6038 R14: 00007f3005be5fa0 R15: 00007ffdba0a0048
+ </TASK>
 
-[2] https://github.com/OjaswinM/fsx-aw-issue/blob/master/repro.fsxops
 
-regards,
-ojaswin
+Tested on:
+
+commit:         6548d364 Merge tag 'cgroup-for-6.18-rc2-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=162a5492580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=10e35716f8e4929681fa
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17a04e7c580000
+
 
