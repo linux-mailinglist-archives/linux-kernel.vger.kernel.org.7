@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-863097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798C2BF7011
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:15:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA872BF7033
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121351897629
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:15:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D93E505E07
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DA133B964;
-	Tue, 21 Oct 2025 14:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAF6259CB3;
+	Tue, 21 Oct 2025 14:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+8ojhL1"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="swMALA0N"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319653396F0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75875283C83
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761056110; cv=none; b=F+2whgc5Da6udDSbg2VMb63Vojd7/dyW6R8txauVZ35/GtyLfPlTBaoTeVV2vgFUtLdCLj1zLl/2oc/OuC55Dw9s8qFN89EFvlVuWQXJfJn3c27kOsBoy6oLUJ+14/8H+JWEi3YpJvk2OP2knpEyrwgmdkXXZgYvJdLGI6UpR6M=
+	t=1761056213; cv=none; b=Hw982seLROjwzgdeOsQHGrYzJWCEG/425h5kWYbJN5oYRbEzubcfQ5shNcRQJTM+pEEcKE9vjPuBqXOGLtCS9NkNpZEAJvKwIRQf8wOhP32tKKrPm462vsj8QUP6oScjBi6AAQ31Vvmd9lAx2zr+QMrwj0aMdTNRNIrYIveBiHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761056110; c=relaxed/simple;
-	bh=wnd5bfNfiizPv1q7k3Gi47EIxiAqC/A19yc9U4Hg/CI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BjSKDIpNSyMe5Yo5g0lGmIWJGWmrlw56MDwAAPjYpBqCLxN/v7yzN4rvkzNmzwNxI15914vclPAReoC43gYLPxALeaBLKqcpkQCociQKFDfbbJG3Fcw2Xp0SDBhTewELgqUXtIgPBZKcarHnw8N7S5q68HroMNS5YxheMA5E5TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+8ojhL1; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1761056213; c=relaxed/simple;
+	bh=IXEiCfbFjHb0RagvMealrW5WYbDtUPRtCtvcvlM/5gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DH4sRGI6cd7p4NtAqD/SJyaJpb6MYQzDkh21WrORKgp2OAxvmVGy3bdCGAKJ7wfe3lu7doN5fvbF+CdyVJRat6r9oBrDNzc60hF0jci4w/woV+3hEQg1OYh8utkx3LtHV7Ny7DVU7RGk1iZo+UmNj95Hfz7cDy2qVO+kVLbagTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=swMALA0N; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so4185871f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:15:07 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46b303f755aso60340055e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:16:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761056106; x=1761660906; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e/dqpTPnvV8iWWmqMGgRLH33p/ANKaib0nnfEtLriAI=;
-        b=o+8ojhL15amvPq0PTyzYGZWwACYTxOdJPPNgf6YF8t19PwCHPj7nhkIXbVgCI84aM5
-         8hChJOTexK6Cl3AnniE9j4tzDP6m1zlyV3ujVXv4p9J2lXhQ/Kb8SVZg0YWLHgvwNoRO
-         yX/KM9Gx/c5rXXMwSWgys3Fn8U9s1kqGpo4HEoDmcnAn22LQ/Pvh2kgbag8XbwOGLIHR
-         HpHO4ouYdnzOf20ilIn5+hrJsgyLNRSniUsyBXUtJgZaeiZgor/ufAbDqvAbpk6XELG/
-         GgYLPSSefZzpdNotGB6Sdwt6Rn4VzOgr1gmEQy+zg84487nrD5WvbHmhzd0SiUj+7Xb6
-         pKMw==
+        d=linaro.org; s=google; t=1761056210; x=1761661010; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GH+Au8Z65JXGAtAPh2UGeuug8ILOECULe8PKQvQu4p0=;
+        b=swMALA0Nc5IAGifCsrRdM8Nz4I01OyKEM5Q2not0A7YbgdErVuM2masPp49SU3fEAB
+         aMK6tLB3YgpEUYvKZKRQZyRLaRn01+2pPZXxN0tCFCSHZYFT2+K7o+YbPI5ebmwaePyV
+         xs/sxb5xvFD4hJ1n36JCfxD2pWBHRow6y2hIvr7Nxm78fYHLG7s0sr/MSIof1hnGzmfq
+         FM3qe/ovwqqJ3o4xrr0FYevBJBS53ZeD1pqrhby6bDLcIdg+T4VzaWrqgHFLU/FA3uzq
+         9nJbN5cISXts2mAcx977yriB+IYNSj/4BxMQyku5mLMarviGBD0/oWBJJtce5f0FBpjB
+         g5iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761056106; x=1761660906;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e/dqpTPnvV8iWWmqMGgRLH33p/ANKaib0nnfEtLriAI=;
-        b=Y9RrhZppP0/R3d84wdPRH/HC0aqx2GziMvpQ3lXnXrOU+B+rqeU/EiAE467n38g39x
-         9mPSzs/1odnMOPmLgg2Yf6a9Mlp5ysLxb+6hqje0Ug7ajjx0zP5yPZ648Yj9ont62wyZ
-         IGZvUK4wlnHlEuOA3OFbM4EKt1Hx8x2RYS6nHEujdSpr0/nYTUkbTvmTDWPqM3vw0MPz
-         klmlNO4bQrswVC91ot07lR/LPmPihLuuUHhqaONzwkcyb/PgsEzsP/esw2m6fljo9s85
-         hdxoZE9fKORMIhXJFtsbXvc1jnk/3nTPVfqOCBvWVYPCA5IipLP4Cd96mWqvUd+PuXS9
-         DAfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEZkY5oNHcHilA4UFXp8PtxzfkYH1symt+UiUe5/PXpGOwVjSTK/fAZ6W9Lhq9Z/bKRJEsvFhztdgEIbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpL78Dw2dTGiqQA+9Do4mYtyrWpty0rjizOCAKEopxcussglmC
-	756zRpwLYbTV6l7sXt9GpLvR9lyRhgDpMDqWaXlNXOQt+KdEiHd3RsxtvmyjmvEjCGY=
-X-Gm-Gg: ASbGncuESz3UvAfx165buRCHjofPH0GYddDZXnDbozUzd76AK1KWgCSgmoiziTstjfS
-	/e/J8OLbA7KC/D0x7OdBfpbvnMccNeqKN70m8s+IwVEpqIGoG2INjpzdQs1Wa1IIy1q+nBX+PoT
-	NGrL6o9dvUsaPzSqvqVcFAnrMiomiJ/qkyX1g/JgKpcybbmB0usILLpZH4s8WV2IVXBDBxaDgVa
-	Lok17mSJkty7KBVkRuhovUo6pT+pC3nXs0wkVodklgXVG7icSHymBpqXJPkiePC3LkRxZ2/pI8Q
-	E6NpDxBN9jW3Tsv7tuh+xh5iRmMjAKwhclUEIV4LMx7tUiRAMHlRwvQmhJ6EjooY88lEGWegFpm
-	8EnKvM+rR/GZE0ihZdCwoImgp5bVLs8Zi0WHsrObh4kGOstYeaza9dw0CIRW2S9z6q0GN5OWwTY
-	5RTuGqBGtMzYInbF3J
-X-Google-Smtp-Source: AGHT+IHCNZ/tdeM6x90rsmi2VCTmRefM5mCM/ZgV62wABJXCvN9MGq3+VgVSrxQSIurd14j6LlHgGg==
-X-Received: by 2002:a5d:5f82:0:b0:3fa:5925:4b07 with SMTP id ffacd0b85a97d-42704d74f9fmr10437179f8f.18.1761056106262;
-        Tue, 21 Oct 2025 07:15:06 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00ce3e2sm20554878f8f.47.2025.10.21.07.15.05
+        d=1e100.net; s=20230601; t=1761056210; x=1761661010;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GH+Au8Z65JXGAtAPh2UGeuug8ILOECULe8PKQvQu4p0=;
+        b=DsWEc7VtbnykvskFzltHirPHiqV9d1rzq1MYYORxjQYoBwUYNyZw1bRFFF1mPXlVN3
+         5c//URiLOosWa9F9yMHbz9f47TCyURfkHOPChOSFmG2RuF3r7C11YpNLizRw8Q3RKRTg
+         eaMOGcLQSqTD41gBJQPJj0A309+mCi/1Jp24qA1VN7xgZy1qbGXSXRltTdpJsKiCkjXr
+         TM4KHPA+/f6saMUpZ5NFeappVmKWT2FBJIagbsnAsXcrgEFglvoyVBOtXNx2tRU3W9PX
+         SCCRuFoRBBREQOd01Ugxr0L0qv2ca+UvSN0D5uv2RyMSnMwbGtHW/VI6/SDrw/H53o7z
+         jlfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDSjuK/0oeC98abBibRNjllldbI9UDNhXBzj72ClsFZykHdbogrEeKW8glC22mrbaUFWJw4IIg8vr4k5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz7tKFT0DVc0WrB4NMW8Ewx0Im69Qoq/XtYq4pmQwDw2hLxMTa
+	RYqNMqk012LoeIuKlinfLO7PKQIkYvdvjDCy/URQ4UyY+A+Tdj+rZQlAmxz50Ot9qv4=
+X-Gm-Gg: ASbGncuJ+5jKUJv3EElrBmC9/QQ9X314KTRVirIKVFbf+fPdgDWZkODvpmKSH9aTULu
+	6q2leCQDxFX4Ui3+J/oguKGHaR+QLwFmSzM5914AOpkf0o8YWE7U9sqFTtfTjtdPE/pu5RpUSvx
+	N0b2nlpE6XqEWXVuXMmUTPWIykpUlw9UhSwcuz2aINKpFL17JDglLvHiYwzwjFaoBVh17ED3ShU
+	PuvqYq06y2no4Fa98D3MbYdu3+kwsADZJKys9TU6zWrcUdJ6ZHYXcw3SKgEur7LiHOtOvKUecpJ
+	bXh7mUBxrWJ9bZdqhsr6768atgcpRBJn8ZTfVItcl5AwcXLiv0h1z2ytS0uJlJrSakOBGQc7xOq
+	wJcFYjemjpDZTesQJVZX1CWlKhhjW8kwjeE4E5gIR/nVCPLHsQOOYWhgAMq4VavfNh9GCd1Ag
+X-Google-Smtp-Source: AGHT+IGlCzAGBWO2jDwO8KOdW9RPFbusOV38zy/UqpC4nz4HnuMn3sNj6s9XMr9He0B2eairZT1Tyw==
+X-Received: by 2002:a05:600c:818d:b0:46e:394b:49b7 with SMTP id 5b1f17b1804b1-4711791fed6mr135325295e9.37.1761056209687;
+        Tue, 21 Oct 2025 07:16:49 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a9a9sm21138244f8f.29.2025.10.21.07.16.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 07:15:05 -0700 (PDT)
-Date: Tue, 21 Oct 2025 17:15:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-	Jie Zhang <quic_jiezh@quicinc.com>
-Subject: Re: [PATCH 1/6] drm/msm/a6xx: Add support for Adreno 612
-Message-ID: <202510212140.4YWihsB7-lkp@intel.com>
+        Tue, 21 Oct 2025 07:16:48 -0700 (PDT)
+Date: Tue, 21 Oct 2025 17:16:46 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e78100-t14s: Add audio playback
+ over DisplayPort
+Message-ID: <honsqyec45rg4yrh3rwjlqlhcqyatbbsvnhamhjdin3tgaggzc@5yrxw5mwhkni>
+References: <20251021111050.28554-3-krzysztof.kozlowski@linaro.org>
+ <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,84 +98,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017-qcs615-spin-2-v1-1-0baa44f80905@oss.qualcomm.com>
+In-Reply-To: <20251021111050.28554-4-krzysztof.kozlowski@linaro.org>
 
-Hi Akhil,
+On 25-10-21 13:10:52, Krzysztof Kozlowski wrote:
+> Add necessary DAI links and DAI name prefixes to enable audio playback
+> over USB/DisplayPort and HDMI.  The HDMI port is not yet enabled, but it
+> should carry respective DAI name prefix regardless.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
-kernel test robot noticed the following build warnings:
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-P-Oommen/drm-msm-a6xx-Add-support-for-Adreno-612/20251018-011020
-base:   cb6649f6217c0331b885cf787f1d175963e2a1d2
-patch link:    https://lore.kernel.org/r/20251017-qcs615-spin-2-v1-1-0baa44f80905%40oss.qualcomm.com
-patch subject: [PATCH 1/6] drm/msm/a6xx: Add support for Adreno 612
-config: powerpc-randconfig-r073-20251021 (https://download.01.org/0day-ci/archive/20251021/202510212140.4YWihsB7-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202510212140.4YWihsB7-lkp@intel.com/
-
-smatch warnings:
-drivers/gpu/drm/msm/adreno/a6xx_gpu.c:641 a6xx_set_hwcg() error: uninitialized symbol 'cgc_hyst'.
-
-vim +/cgc_hyst +641 drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  600  static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  601  {
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  602  	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  603  	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  604  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
-b1c53a2a2d395d4 Jonathan Marek 2020-07-10  605  	const struct adreno_reglist *reg;
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  606  	unsigned int i;
-40c297eb245b1c9 Konrad Dybcio  2024-08-28  607  	u32 cgc_delay, cgc_hyst;
-51682bc4abf4b55 Konrad Dybcio  2024-08-28  608  	u32 val, clock_cntl_on;
-4b565ca5a2cbbbb Jordan Crouse  2018-08-06  609  
-dff2f69f3e8a6ea Rob Clark      2024-06-18  610  	if (!(adreno_gpu->info->a6xx->hwcg || adreno_is_a7xx(adreno_gpu)))
-b1c53a2a2d395d4 Jonathan Marek 2020-07-10  611  		return;
-b1c53a2a2d395d4 Jonathan Marek 2020-07-10  612  
-66ffb9150b00f3f Jonathan Marek 2020-07-10  613  	if (adreno_is_a630(adreno_gpu))
-66ffb9150b00f3f Jonathan Marek 2020-07-10  614  		clock_cntl_on = 0x8aa8aa02;
-5cb9695ccef2305 Jie Zhang      2025-10-17  615  	else if (adreno_is_a610(adreno_gpu) || adreno_is_a612(adreno_gpu))
-e7fc9398e608a7b Konrad Dybcio  2023-06-16  616  		clock_cntl_on = 0xaaa8aa82;
-18397519cb62248 Konrad Dybcio  2024-02-23  617  	else if (adreno_is_a702(adreno_gpu))
-18397519cb62248 Konrad Dybcio  2024-02-23  618  		clock_cntl_on = 0xaaaaaa82;
-66ffb9150b00f3f Jonathan Marek 2020-07-10  619  	else
-66ffb9150b00f3f Jonathan Marek 2020-07-10  620  		clock_cntl_on = 0x8aa8aa82;
-66ffb9150b00f3f Jonathan Marek 2020-07-10  621  
-5cb9695ccef2305 Jie Zhang      2025-10-17  622  	if (adreno_is_a612(adreno_gpu))
-5cb9695ccef2305 Jie Zhang      2025-10-17  623  		cgc_delay = 0x11;
-5cb9695ccef2305 Jie Zhang      2025-10-17  624  	else if (adreno_is_a615_family(adreno_gpu))
-5cb9695ccef2305 Jie Zhang      2025-10-17  625  		cgc_delay = 0x111;
-5cb9695ccef2305 Jie Zhang      2025-10-17  626  	else
-5cb9695ccef2305 Jie Zhang      2025-10-17  627  		cgc_delay = 0x10111;
-5cb9695ccef2305 Jie Zhang      2025-10-17  628  
-5cb9695ccef2305 Jie Zhang      2025-10-17  629  	if (adreno_is_a612(adreno_gpu))
-5cb9695ccef2305 Jie Zhang      2025-10-17  630  		cgc_hyst = 0x55;
-
-Only initialized here and not on other paths.
-
-5cb9695ccef2305 Jie Zhang      2025-10-17  631  	else if (adreno_is_a615_family(adreno_gpu))
-5cb9695ccef2305 Jie Zhang      2025-10-17  632  		cgc_delay = 0x555;
-5cb9695ccef2305 Jie Zhang      2025-10-17  633  	else
-5cb9695ccef2305 Jie Zhang      2025-10-17  634  		cgc_delay = 0x5555;
-40c297eb245b1c9 Konrad Dybcio  2024-08-28  635  
-af66706accdf5af Konrad Dybcio  2023-09-25  636  	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL,
-51682bc4abf4b55 Konrad Dybcio  2024-08-28  637  			state ? adreno_gpu->info->a6xx->gmu_cgc_mode : 0);
-af66706accdf5af Konrad Dybcio  2023-09-25  638  	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL,
-40c297eb245b1c9 Konrad Dybcio  2024-08-28  639  			state ? cgc_delay : 0);
-af66706accdf5af Konrad Dybcio  2023-09-25  640  	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL,
-40c297eb245b1c9 Konrad Dybcio  2024-08-28 @641  			state ? cgc_hyst : 0);
-                                                                                ^^^^^^^^
-Uninitialized
-
-af66706accdf5af Konrad Dybcio  2023-09-25  642  
-dff2f69f3e8a6ea Rob Clark      2024-06-18  643  	if (!adreno_gpu->info->a6xx->hwcg) {
-d2bcca0ccccfa5e Neil Armstrong 2024-02-16  644  		gpu_write(gpu, REG_A7XX_RBBM_CLOCK_CNTL_GLOBAL, 1);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
