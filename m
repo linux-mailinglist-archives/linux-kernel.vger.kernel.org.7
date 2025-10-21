@@ -1,40 +1,80 @@
-Return-Path: <linux-kernel+bounces-862549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C704BF593D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE580BF5536
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A32DC4FFA95
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:45:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1227A4E83A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCE632BF3A;
-	Tue, 21 Oct 2025 09:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906C631E0ED;
+	Tue, 21 Oct 2025 08:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="g6OhVZ/y"
-Received: from mail-m19731102.qiye.163.com (mail-m19731102.qiye.163.com [220.197.31.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfrcVnK7"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AEB32B9B8;
-	Tue, 21 Oct 2025 09:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6F831DDB7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761039862; cv=none; b=TFd3rLQPo83dpJKDpQi3wkYjrlhinP9qySJKv2s+pWz8Bawbv/TaLaPQT5tQpndjQlK05TKYI4TvBs2HREklIS+VG+TqivKe9FcKOtwLqT3vjdTEOvZbi3DxHknVofC6IEqgWRzbGEo/5J4p8nMbXCZhAuwqe2xB/1/LfpSncbQ=
+	t=1761036264; cv=none; b=kqd3dOnvjaI3xHCi0Ye4fbCvBdpRG2uIQ0dx4o4RHD95zPO4XC/6CnXNfpoIwMgD1tLjbkDLGsCDQF/3C0R9knaS1gTI5csu4KOmGm8IvqeGYiXWnfJ+h0pxnNv7E4PSC9M2cpV/nva9N7C0tto8Om9qI1wOyZNmKPjfuujQWRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761039862; c=relaxed/simple;
-	bh=QzGk1F4Oghc7q1SK/0Q0gWE+qslFRrGUIMBxavAMLZ4=;
+	s=arc-20240116; t=1761036264; c=relaxed/simple;
+	bh=J/k1wLVOkD3GUGrnVtkGjnikZd3EasoKzlYkt6QQfHY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FLOyvcUVNxkToYeW73jvZnW48+M2hERoGAhORNNQyS7wNl/WdEvp4zDmshAF+ZeeTStQSuAiwZeopKMLu47aKS6KsbXHtZOGFX+el+a/3gCZMuJ4+1Nm8REhK8fmsHdThEOl7wmFJL56EFVBBax5TKoCOYb31C7KfAMlUs/oeqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=g6OhVZ/y; arc=none smtp.client-ip=220.197.31.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.149] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 26a698a5f;
-	Tue, 21 Oct 2025 17:44:12 +0800 (GMT+08:00)
-Message-ID: <1221dd6c-2035-4e5d-8052-341da279fe81@rock-chips.com>
-Date: Tue, 21 Oct 2025 17:44:11 +0800
+	 In-Reply-To:Content-Type; b=paBzLoco3qLb/usVDXcJ/bKOUgNBmvgUqZPuErYFM5Shq9Pwy9xG5tRr47xjBTLx6llxA7Ac4h0eDsP3FzMyPrUCnrEHtDdxBrYRtGCFqk6hScpa9YWbwtdGgxmyxV9HKUf6iT7KeDFs6mS8dsSwsE88iMZavizmB/rTA7esfUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfrcVnK7; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3c82276592so102151366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761036261; x=1761641061; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GYiwgwtNxK6/rIcMjyR2at6k/Vxbv6cWYDWAIm9NAlQ=;
+        b=ZfrcVnK7nAz7tdx18TbUv4/+FpTv+HShL0du/wGqPg1wCSt0ao/SvKP4/6rrJWST8G
+         QRWihL5Vvo2VphVYtaB8phFWjCfOfGXayghrH6XhPHraBb0ne1SUGRaqjuienAGO5aES
+         V0v9t7Wgo/DCJMEmyNrvlZFMlmvhN1RAbj2MhRf0yL310xy17yLLShPqtqsb1aLf6mp8
+         doZDnKl2mdpBesrb5eIC242HSN3Xza4WqVWIxaPIud6mtNF9Mv2WwbTE7gxkZus4iKoL
+         2FZPHxWeaHx230SvXYvdeKaXHQJfPRiYevXJA5Bv3JDmx4qGCXO0RrvcwQXMYHr71HiO
+         yv8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761036261; x=1761641061;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GYiwgwtNxK6/rIcMjyR2at6k/Vxbv6cWYDWAIm9NAlQ=;
+        b=RvOzjBVquKJoN0JHQkntAeGyxT9M+6zYnsWvcrBMkM9R26DfdLlGZXZbX3xFbFAGv4
+         9t53LRyScu91s5CVpctaAQaNlpuzTJI6PdiBlb7XzR65N8DrUUhU+3bzfdTWUim9cxFS
+         eGiTbx6i/X5mlJw2FN02RSjWNWkkrjxAO5QBM/I3RMW4grj75Np5V283yLTSyDoTGi8d
+         i9KMBIT76aBgbYgvbLnThzJ6PTFrozCMWk4G2U7ci9SbiCqfM7EdmydzjvR2LzsVItxz
+         u2KoHgWxEDJR9bf16/72e8SqPjk5yTEnPmWZK/NzvXnt11VgXi45kVpMg18J90jG9Frc
+         lYNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWhvWYXoQT6hWFpqZuVXWZPlwkGuxxCIO6iPQUtZqSmOpRDLEICoBqayAg/5c3szZFjm1Zczv2U2l+Waw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs4/Gx63pXxrIQW1iM2NXT15iZypHS1FOhZwlWZ92zKiG/NXin
+	N/91yhep8VqBZ7XxozWGd2qibUL9AlcRq4c9kpjETs46q2ULApptoaj9
+X-Gm-Gg: ASbGncvK0KJDF4xyucuLHdAkho2aqU25uuex9oC6RXMpDt1gP+j9TivzTNEO2YsmqFV
+	DlGAK5P7OqLdjpoGNC04W/ykNBmmUcO+kszLGA0SKyaZD052eatcZxM/aW21bdbNRVYv0t8Kf4n
+	8ftEYdqnYzEked4LgZE56sAwgFNVTi/YiUDEBfmSdUnw9zVPl2Q371Y02HCH+9oPbSAr4ideHfB
+	cwQN0QqOv37c0vIe5InnjIEfP/XcGR0wOXe3bTu9pPiO0MOoxPazIcsYVyRVICRl0ZYC8xa7cov
+	6tt3WQiHc1+cVmwNRLcQySt+mkDUMn7ORyiTsnBOZf9jCTQzN4Wmu2rkuO/xiE5Jx2p6GEnoKLP
+	S6BMW9UyIAT4YV5OfXVMGNIPXp/DCQOEOaMWhTiicMySAV1g9aYQGjlqsSP+A/T1ANjf8TOkI4W
+	qioJ3qwmEfRt9GP4xApKEMFZkDd9K6
+X-Google-Smtp-Source: AGHT+IHgFcbQCcTMOQ9kPtrRGAEFN37W9IGTKfgQiKIn3e3zPC+cubu+IIUXeREIVPhgLeQPlMhorw==
+X-Received: by 2002:a17:907:9708:b0:b04:2d89:5d3a with SMTP id a640c23a62f3a-b6475505d94mr1071125466b.7.1761036261251;
+        Tue, 21 Oct 2025 01:44:21 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.73.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da2bbcsm1000822466b.5.2025.10.21.01.44.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 01:44:21 -0700 (PDT)
+Message-ID: <d7e06f84-c555-4eb7-b781-b8444eedd625@gmail.com>
+Date: Tue, 21 Oct 2025 10:44:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,112 +82,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/8] usb: typec: Add default HPD device when register
- DisplayPort altmode
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20251016022741.91-1-kernel@airkyi.com>
- <20251016022741.91-2-kernel@airkyi.com> <aPYImGmesrZWwyqh@kuha.fi.intel.com>
- <954a67d1-1759-4e18-8eef-3fa14fb3cef5@rock-chips.com>
- <aPdI7Vb_djrfCfbT@kuha.fi.intel.com>
+Subject: Re: [PATCH] drm/tiny: Refactor framebuffer's size calculation
+To: Thomas Zimmermann <tzimmermann@suse.de>, lanzano.alex@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251020115803.192572-1-mehdi.benhadjkhelifa@gmail.com>
+ <1de3112b-6349-46d8-b90b-69d0849c7659@suse.de>
+ <6a917f07-18dd-4f8f-bfc5-b85d9051339d@gmail.com>
+ <4b01c775-f87a-4c3c-88f1-f5c52261d9b2@suse.de>
 Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <aPdI7Vb_djrfCfbT@kuha.fi.intel.com>
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <4b01c775-f87a-4c3c-88f1-f5c52261d9b2@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9a0627a3a903abkunm5cd7977fb8e2b1
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUpDS1YaGRpIHUpDTBlKGU1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE
-	9VSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=g6OhVZ/yiqpa03UuI1XX7K9vWZ8zWP3G2Gzz5rhk0AcJK/U+UJws7ashU78Y+//2Cp1XYy8iR5A+1sB1SdjmB78dMX58786reFgEn7dhTHoMucj84RbJ6zYHbg7CDu7vWXLe8oopZFd6uuDFaXjD2L3+MUHefnrApM/1yNbvoa0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=qUewYvs5quWL8CZ5KUc8yRAa2rvIV3/2PN0yp7OZqoo=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
 
-On 10/21/2025 4:48 PM, Heikki Krogerus wrote:
-
-> Hi,
->
-> On Mon, Oct 20, 2025 at 07:07:46PM +0800, Chaoyi Chen wrote:
->> Hi Heikki,
->>
->> On 10/20/2025 6:02 PM, Heikki Krogerus wrote:
->>> On Thu, Oct 16, 2025 at 10:27:34AM +0800, Chaoyi Chen wrote:
->>>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>
->>>> Add default DRM AUX HPD bridge device when register DisplayPort
->>>> altmode. That makes it redundant for each Type-C driver to implement
->>>> a similar registration process in embedded scenarios.
->>>>
->>>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>> ---
->>>>
->>>> Changes in v6:
->>>> - Fix depend in Kconfig.
->>>>
->>>> Changes in v5:
->>>> - Remove the calls related to `drm_aux_hpd_bridge_notify()`.
->>>> - Place the helper functions in the same compilation unit.
->>>> - Add more comments about parent device.
->>>>
->>>>    drivers/usb/typec/Kconfig         |  2 ++
->>>>    drivers/usb/typec/class.c         | 26 ++++++++++++++++++++++++++
->>>>    include/linux/usb/typec_altmode.h |  2 ++
->>>>    3 files changed, 30 insertions(+)
->>>>
->>>> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
->>>> index 2f80c2792dbd..a6730fbb576b 100644
->>>> --- a/drivers/usb/typec/Kconfig
->>>> +++ b/drivers/usb/typec/Kconfig
->>>> @@ -2,6 +2,8 @@
->>>>    menuconfig TYPEC
->>>>    	tristate "USB Type-C Support"
->>>> +	depends on DRM || DRM=n
->>>> +	select DRM_AUX_HPD_BRIDGE if DRM_BRIDGE && OF
->>> This is wrong. DRM should not dictate how this entire subsystem core
->>> is configured. The dependency needs to be on the DRM bridge side.
+On 10/21/25 9:32 AM, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 21.10.25 um 10:41 schrieb Mehdi Ben Hadj Khelifa:
+>> On 10/21/25 7:51 AM, Thomas Zimmermann wrote:
+>>> Hi
 >>>
->>> You can for example use the bus notification there to see when a new
->>> alternate mode is being registered, or use some other notification
->>> mechanism.
->> Is it a good idea to implement notification functions like
->> drivers/usb/core/notify.c in TCPM, and then let other subsystems (such as DRM)
->> listen to these notifications?
-> Don't limit this to tcpm only. I would suggest something similar what
-> we have for usb bus: drivers/usb/core/notify.c
->
-> So that, but for the typec bus. Then in DRM bridge code you just use
-> typec_register/unregister_notify().
+>>> Am 20.10.25 um 13:57 schrieb Mehdi Ben Hadj Khelifa:
+>>>> Use drm_format_info_min_pitch() to calculate the framebuffer line pitch
+>>>> instead of directly multiplying width and height. This aligns with DRM
+>>>> helpers for determining per-line byte size and avoids manual 
+>>>> assumptions
+>>>> about bytes per pixel.
+>>>>
+>>>> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>>>> ---
+>>>>   drivers/gpu/drm/tiny/repaper.c | 6 +++++-
+>>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/ 
+>>>> repaper.c
+>>>> index 4824f863fdba..aeff49bc6ba7 100644
+>>>> --- a/drivers/gpu/drm/tiny/repaper.c
+>>>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>>>> @@ -517,6 +517,8 @@ static int repaper_fb_dirty(struct 
+>>>> drm_framebuffer *fb, const struct iosys_map *
+>>>>       unsigned int dst_pitch = 0;
+>>>>       struct iosys_map dst;
+>>>>       struct drm_rect clip;
+>>>> +    const struct drm_format_info *info = fb->format;
+>>>
+>>> This is the wrong format. You're allocating the output buffer here, 
+>>> but you're using the input format. IIUC the output format is 
+>>> DRM_FORMAT_R1. The input is _XRGB8888.
+>>>
+>> Ah. Thanks for clarification.I thought since it had the same output 
+>> format. I will send a v3 shortly.> Best regards
+> 
+> Maybe just don't do it. This is just churn with no clear goal.
+> 
+Okay,I will abort working on it.Though my goal was to remove the manual 
+assumption that height is multiple of 8 and to align with other 
+'correct' API used in other drm drivers as you suggested[1].
 
-I will try to add drivers/usb/typec/notify.c in v7 to implement this. Thank you.
+[1]:https://lore.kernel.org/all/cb0f0a36-0593-4d4c-8450-d086b9c99d87@suse.de/
 
-
->
-> thanks,
->
--- 
-Best,
-Chaoyi
+Best Regards,
+Mehdi Ben Hadj Khelifa> Best regards
+> Thomas
+> 
+>>> Thomas
+>>>
+>>>> +    size_t pitch;
+>>>>       int idx, ret = 0;
+>>>>       u8 *buf = NULL;
+>>>> @@ -534,7 +536,9 @@ static int repaper_fb_dirty(struct 
+>>>> drm_framebuffer *fb, const struct iosys_map *
+>>>>       DRM_DEBUG("Flushing [FB:%d] st=%ums\n", fb->base.id,
+>>>>             epd->factored_stage_time);
+>>>> -    buf = kmalloc(fb->width * fb->height / 8, GFP_KERNEL);
+>>>> +    pitch = drm_format_info_min_pitch(info, 0, fb->width);
+>>>> +
+>>>> +    buf = kmalloc_array(fb->height, pitch, GFP_KERNEL);
+>>>>       if (!buf) {
+>>>>           ret = -ENOMEM;
+>>>>           goto out_exit;
+>>>
+>>
+> 
 
 
