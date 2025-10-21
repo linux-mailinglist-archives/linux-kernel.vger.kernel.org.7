@@ -1,169 +1,177 @@
-Return-Path: <linux-kernel+bounces-863715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D94BF8E87
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:10:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B37BBF8E90
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 23:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE1015003A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:09:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D59F34F245C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 21:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D783F28A1CC;
-	Tue, 21 Oct 2025 21:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A7F285C8C;
+	Tue, 21 Oct 2025 21:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Hh+G2pAE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Sxuh6gdZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D9B288531
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8C15CD74
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761080957; cv=none; b=f5KiSCOxgLIYaHjHFYriuHn2hDAkzmvmu/Ny1tFzmFDjIDCTumnVnBrm7hIfia0rG5JYcI+d9RMb6E+BrggPV1EWYjcuUSE06TFOxN4mSjohW/d4k5sI5FXRs5s0lkUGYuOzIbKcEl+Pi/zqDLFlDy4Knuwv2JC8QG8v9QLynXQ=
+	t=1761081050; cv=none; b=GfOfVhvdWI5fYlXqTbl88Y1PS25wP0WlkFyVAUUipBGQtN+lJxXcWW0T27bMZwbZnXJKzChs+wyldbYTNqtrHYVjSXo0cLIyhZZcz9ivT7O6ZjsizqLmnROEhxs/K6hwIx7za9Rmp04iMiYybzw6gqFeHCFSjt5TKeuhR1mIyjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761080957; c=relaxed/simple;
-	bh=QNvlniIPRRmC+7hzmYy/77uxWdyoOFIOrKIrPOzfp44=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FkJBOpQqGyjXgJG2FdE8kGubfNIEG6cFeP8TS8XmFCklvlUh42FOs1U+HZ9H/nVirYQ88Ai7y97DDMAfudvkq0tz0iiWY/DAgTfBrcEPhllxJi6Pu3B4UORZfLbVwFGSZUPK0BFPULP8SsxBH5YuDmTU5eWQWGbcBbmde6jiNcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Hh+G2pAE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59LFBRiW027492
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:09:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CAALojfa9D3YOG9vqJaxSjRtqnXPbgz0Npkm+sxU7tY=; b=Hh+G2pAEmJ3AR9Cu
-	8BgjjVnlB4kFt/846t7FI3dL8WwgOi+z19kkrww5nwl/Cv9bFPNoJefnt7W2xC4A
-	RtSA8MubZwtcpUMzRDfmaUq2hE3cklZK9NytC9le1wCp4kI2+0WNMri/8sBCLsSO
-	EfGHHQ+AriyiIRXbEeGF1VUmmyG0AHROwMIhFWErffa+dRa1ojzroMxGayPKba8m
-	xQDuldSdIDvUVMQppilR0X7IErGcR05QmvwvX05ZQYOwWgdQ+tT0m8PErKznPVJV
-	wx5uUmur9vJryRX5EKuCh1mMgfE1a7z15amNBKIMIhpRb2Yoiy+RsLyZ0hByVoXr
-	NSGKjg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27j28fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 21:09:14 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32eb18b5500so10036559a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:09:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761080953; x=1761685753;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CAALojfa9D3YOG9vqJaxSjRtqnXPbgz0Npkm+sxU7tY=;
-        b=IZIh/XGzoWKPvZ5WxpOwkPUL2p5ua5/g7NTi4Z6qU/OReOIEDiSsxxIJZSJVX8Ykgg
-         kXblgBusqptTUyfTFGEKpGJssKXUkwjXmc1fQT4b1pU5ctgE4klhADk6BMNHsL0VoHiW
-         4rzVnP2smxtNGczK1w+ajt14Bid6b/HdIfiBOIaRZOOVE+3x+nOhm0q9XqGVEGNnhlrh
-         OgbPLQKkW6lKtFiOwNhT7hTBwysYCKXW5LA1vhliFnzBp2zyI1OKjBembKGbnMc62W/e
-         KDCtyC5MJ9nhafZ+38dMKmiTTRXVKv9xufaCJnSICSIru3rirwIczyy178b19FG6cQ9e
-         X+jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPFtsRIC2ZjROo83g2h12spk+3BWgo/F1d3MqLbrHzc5haSUCSLfuCtCjDISzhBEiJAlYLkHRjbs6faLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy4dp5doVn0yDOeVGt0rjmFfEaTRraai3QnBwDUsmSB0CuLBXx
-	Nb+VcfkLe+8TFPWykwAONlDRuccLmZWPEbHJLfH+gHLYdK1P9JYAoiB2oazPL9ntcx7n/pTKNFh
-	qC5Ef79hI2EiOmo5vJgsM5DMYcT9eNheqJHoCYhqv2l2IYo1XCLRZQQh9KpIgx3mlG2Y=
-X-Gm-Gg: ASbGncujxd3iFotxFGwRetRsAPkyUxuXVDI2E46i3bWglvEqE9gXfioIxBHcNek879I
-	SZnSgUYPSrdF99ueeaKAYGF8Bq1M3PxvLByh5vpWh8/vvK2TNXoPtv4GWoOWXUQOrwT0eOtVelO
-	4VN5wbMoATS8crZh95nW8chsINTcnBwakoZJnVnc1h0aTONsPAST1763oWt2ON5QV0uw7QU0GJR
-	HHxRdR1eXNM4i7UIzJ9bQJRLtqxYifG6DzkDijNLg1YCGOrUxXqpH9JE9EpcSjkJTDj+BElCuW2
-	heHms2cOgnO3SHQx8Uw+ZNGcOxf/o7KvOGJ/Isj7o4UjeqKdYRhRccEopFT2V/5syXjVqd7YX1s
-	Kxhs/LaDKxE2q6CNcyToH5YwYHppdC/p0GZSaByEY8ZX4m7kaHANViX4CGQXG
-X-Received: by 2002:a17:90b:35ce:b0:32e:32e4:9789 with SMTP id 98e67ed59e1d1-33bcf84e176mr21316827a91.3.1761080953167;
-        Tue, 21 Oct 2025 14:09:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMpbS44IxkY7rp0ciZyWybKD9zdWqN+g8eCr9evFoO6q8WEg17R5Ttb5DQ0qQyfb8I4IpyEA==
-X-Received: by 2002:a17:90b:35ce:b0:32e:32e4:9789 with SMTP id 98e67ed59e1d1-33bcf84e176mr21316799a91.3.1761080952712;
-        Tue, 21 Oct 2025 14:09:12 -0700 (PDT)
-Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223c813fsm489833a91.4.2025.10.21.14.09.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 14:09:12 -0700 (PDT)
-From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Date: Wed, 22 Oct 2025 02:38:56 +0530
-Subject: [PATCH v2 4/4] regulators: qcom-rpmh-regulator: Fix coding style
- issues
+	s=arc-20240116; t=1761081050; c=relaxed/simple;
+	bh=CyjoCB+nOz0XloI/00jaAfTOPYcrftUYJkwBXkzSnRU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QX6s72R30yKq1f+ESdlspmJGnptU/6xVyVwcL7p+xdBJzvgzp4TDleqj3sDQiPC2N0hRR7VkBUwfJBcmnrU71DSWZy9VNlU0hOs7qpeM8C5lWPZzFG5oxr2hVji/YRGG0kSNX/70NXUmmXFC4NEcFqOtt1dRsxrsC/TJEdmrC9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Sxuh6gdZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F431C4CEF1;
+	Tue, 21 Oct 2025 21:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761081048;
+	bh=CyjoCB+nOz0XloI/00jaAfTOPYcrftUYJkwBXkzSnRU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Sxuh6gdZ8tBwi/FrddVvT6zN/S0xQu3CcZiR4deQfvK2CEmOAWnhlV6otHUg2G+Me
+	 4bVTKWRgfLsUgPo5eBXVGtvk+HYc4988REnbdEPfC5xVCmfjZqiqJnGkjOQsIxYzvi
+	 rLggorjf66h1/4Z5DRmHyf0slgeeXXfNWVFLRAIU=
+Date: Tue, 21 Oct 2025 14:10:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Deepanshu Kartikey <kartikey406@gmail.com>, muchun.song@linux.dev,
+ osalvador@suse.de, david@redhat.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com,
+ Aishwarya.TCV@arm.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH v2] hugetlbfs: skip VMAs without shareable locks in
+ hugetlb_vmdelete_list
+Message-Id: <20251021141047.532542aecdb0dc5fdb95696a@linux-foundation.org>
+In-Reply-To: <9d20e689-c06e-43f8-811f-3e66f3e86d2b@sirena.org.uk>
+References: <20250926033255.10930-1-kartikey406@gmail.com>
+	<7a1d0eb0-ab08-4fa8-bdab-b193b69a8c9d@sirena.org.uk>
+	<9d20e689-c06e-43f8-811f-3e66f3e86d2b@sirena.org.uk>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-add-rpmh-read-support-v2-4-5c7a8e4df601@oss.qualcomm.com>
-References: <20251022-add-rpmh-read-support-v2-0-5c7a8e4df601@oss.qualcomm.com>
-In-Reply-To: <20251022-add-rpmh-read-support-v2-0-5c7a8e4df601@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761080935; l=1302;
- i=kamal.wadhwa@oss.qualcomm.com; s=20241018; h=from:subject:message-id;
- bh=QNvlniIPRRmC+7hzmYy/77uxWdyoOFIOrKIrPOzfp44=;
- b=5UlbwWUZKgBli2eyjUgKM7AA8obLevlo8qUFii1yVNx/DPePcuttzmnMHl5bzY3kc+H7FcJwN
- mkbLakw8LMcCnumNA9UMb7LPP/eEF2cE3ygIqkuW62C0kO8ECmfzyXa
-X-Developer-Key: i=kamal.wadhwa@oss.qualcomm.com; a=ed25519;
- pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX8/kA1xDSpGKF
- u4sy57Q0Y3Ndz10xcv+zGQ8jyHkQEgjDJo/K9loAfb03g9Zvhn9A/MxIpEcVo24k4TqyWMAecSI
- I2pkJ0paVuIJuD8jkPtnH4MWOr+d/mSgUzwHJLCxEUYyY/YCe7UuXPYTBXMx2iqVsRFrr5gXDkH
- SW015d8JTJJJ6U5gfIpfb6e2lHwPXWtXBGvgxyohYRoJfG0cYI8IHIiSScjako0+K9Y3JNoTVfp
- CP6OzreGKYDEebHo29wZucUCBE1dpIHbHPu3Gvx6c6bHXET6gscBE9b6R/BFemf4xN/0sCCM+67
- T8hrHdXJ1+xqhQOnR3hUymLJ/bH2BsGsnMmtXi1ECy2W/AFKYfgweUu224T8+GNpdlZzsvBp/Cp
- t1+5+1JIFCqlPbArZ7blvbJtK6KYqw==
-X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f7f67a cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=TeyyAU4cBfKQF1pE9E4A:9 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: kINHMvT26GlxbAlDiV4lxjUtAiWOn9Et
-X-Proofpoint-ORIG-GUID: kINHMvT26GlxbAlDiV4lxjUtAiWOn9Et
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-21_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510180018
 
-Fix the code style/format issues reported by checkpatch.pl
-script.
+On Mon, 20 Oct 2025 18:52:11 +0100 Mark Brown <broonie@kernel.org> wrote:
 
-Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> > For the past few days I've been seeing failures on Raspberry Pi 4 in
+> > the hugetlbfs-madvise kselftest in -next which bisect to this patch.
+> > The test reports:
+> > 
+> > # # -------------------------
+> > # # running ./hugetlb-madvise
+> > # # -------------------------
+> > # # Unexpected number of free huge pages line 252
+> > # # [FAIL]
+> > # not ok 6 hugetlb-madvise # exit=1
+> 
+> This issue is now present in mainline:
+> 
+> Raspberry Pi 4: https://lava.sirena.org.uk/scheduler/job/1976561#L1798
+> Orion O6:       https://lava.sirena.org.uk/scheduler/job/1977081#L1779
+> 
+> and still bisects to this patch.
+
+Thanks.  Were you able to test the proposed fix?
+
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+Subject: hugetlbfs: move lock assertions after early returns in huge_pmd_unshare()
+Date: Tue, 14 Oct 2025 17:03:44 +0530
+
+When hugetlb_vmdelete_list() processes VMAs during truncate operations, it
+may encounter VMAs where huge_pmd_unshare() is called without the required
+shareable lock.  This triggers an assertion failure in
+hugetlb_vma_assert_locked().
+
+The previous fix in commit dd83609b8898 ("hugetlbfs: skip VMAs without
+shareable locks in hugetlb_vmdelete_list") skipped entire VMAs without
+shareable locks to avoid the assertion.  However, this prevented pages
+from being unmapped and freed, causing a regression in
+fallocate(PUNCH_HOLE) operations where pages were not freed immediately,
+as reported by Mark Brown.
+
+Instead of checking locks in the caller or skipping VMAs, move the lock
+assertions in huge_pmd_unshare() to after the early return checks.  The
+assertions are only needed when actual PMD unsharing work will be
+performed.  If the function returns early because sz != PMD_SIZE or the
+PMD is not shared, no locks are required and assertions should not fire.
+
+This approach reverts the VMA skipping logic from commit dd83609b8898
+("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
+while moving the assertions to avoid the assertion failure, keeping all
+the logic within huge_pmd_unshare() itself and allowing page unmapping and
+freeing to proceed for all VMAs.
+
+Link: https://lkml.kernel.org/r/20251014113344.21194-1-kartikey406@gmail.com
+Fixes: dd83609b8898 ("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+Reported-by: <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+Suggested-by: David Hildenbrand <david@redhat.com>
+Suggested-by: Oscar Salvador <osalvador@suse.de>
+Tested-by: <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/regulator/qcom-rpmh-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-index 9f693043cb87aa77a7a529b5b973323450db80be..6a36ef967d5d9e32c005e79a12099ebef824842f 100644
---- a/drivers/regulator/qcom-rpmh-regulator.c
-+++ b/drivers/regulator/qcom-rpmh-regulator.c
-@@ -109,7 +109,7 @@ static const struct resource_name_formats vreg_rsc_name_lookup[NUM_REGULATOR_TYP
-  *				regulator
-  * @ops:			Pointer to regulator ops callback structure
-  * @voltage_ranges:		The possible ranges of voltages supported by this
-- * 				PMIC regulator type
-+ *				PMIC regulator type
-  * @n_linear_ranges:		Number of entries in voltage_ranges
-  * @n_voltages:			The number of unique voltage set points defined
-  *				by voltage_ranges
-@@ -387,7 +387,7 @@ static int rpmh_regulator_vrm_set_mode_bypass(struct rpmh_vreg *vreg,
- 		return pmic_mode;
+ fs/hugetlbfs/inode.c |    9 ---------
+ mm/hugetlb.c         |    5 ++---
+ 2 files changed, 2 insertions(+), 12 deletions(-)
+
+--- a/fs/hugetlbfs/inode.c~hugetlbfs-move-lock-assertions-after-early-returns-in-huge_pmd_unshare
++++ a/fs/hugetlbfs/inode.c
+@@ -478,14 +478,6 @@ hugetlb_vmdelete_list(struct rb_root_cac
+ 		if (!hugetlb_vma_trylock_write(vma))
+ 			continue;
  
- 	if (bypassed) {
--		if(!vreg->hw_data->bypass_supported)
-+		if (!vreg->hw_data->bypass_supported)
- 			return -EINVAL;
- 		cmd.data = vreg->hw_data->pmic_bypass_mode;
- 	} else {
-
--- 
-2.25.1
+-		/*
+-		 * Skip VMAs without shareable locks. Per the design in commit
+-		 * 40549ba8f8e0, these will be handled by remove_inode_hugepages()
+-		 * called after this function with proper locking.
+-		 */
+-		if (!__vma_shareable_lock(vma))
+-			goto skip;
+-
+ 		v_start = vma_offset_start(vma, start);
+ 		v_end = vma_offset_end(vma, end);
+ 
+@@ -496,7 +488,6 @@ hugetlb_vmdelete_list(struct rb_root_cac
+ 		 * vmas.  Therefore, lock is not held when calling
+ 		 * unmap_hugepage_range for private vmas.
+ 		 */
+-skip:
+ 		hugetlb_vma_unlock_write(vma);
+ 	}
+ }
+--- a/mm/hugetlb.c~hugetlbfs-move-lock-assertions-after-early-returns-in-huge_pmd_unshare
++++ a/mm/hugetlb.c
+@@ -7614,13 +7614,12 @@ int huge_pmd_unshare(struct mm_struct *m
+ 	p4d_t *p4d = p4d_offset(pgd, addr);
+ 	pud_t *pud = pud_offset(p4d, addr);
+ 
+-	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
+-	hugetlb_vma_assert_locked(vma);
+ 	if (sz != PMD_SIZE)
+ 		return 0;
+ 	if (!ptdesc_pmd_is_shared(virt_to_ptdesc(ptep)))
+ 		return 0;
+-
++	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
++	hugetlb_vma_assert_locked(vma);
+ 	pud_clear(pud);
+ 	/*
+ 	 * Once our caller drops the rmap lock, some other process might be
+_
 
 
