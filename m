@@ -1,199 +1,219 @@
-Return-Path: <linux-kernel+bounces-863139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1774ABF71BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B819BF71BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 16:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7B75408DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:35:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96784541352
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9E33DEFD;
-	Tue, 21 Oct 2025 14:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C2336EF6;
+	Tue, 21 Oct 2025 14:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="dbM54z7X"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PEazRWDW"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010046.outbound.protection.outlook.com [52.101.193.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CB833C523
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761057298; cv=none; b=aPs5CQw0FkAMSuEtNwLiXXFVkm4dK61GL/Ct9p/7Ue0zdiVQ7pap4ynxLCR/RZ8Y2LXvveCDM6NKF54Zb8n64PFP4foqqPI0AbKMmkMVlBVTzsIb8zeZA3RGuvG4OWTrpORAIJD8uC1N0H+ld1hBwfj9zFwQPZUSEAg0EzhZAcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761057298; c=relaxed/simple;
-	bh=HtEYm3WbJmCN1KO4SaCrajhVynmFoIbWwbCW53lJb9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQJ6wfhcbtiG8vMAzGaKbONZOLpi0mBWF5ye0strS6RVxnwq3j3EK4g4LP549TgaakYVGCnFAraxpMcDfI3WiYfohVwkFG2CPSBgC8IHaTt3YKYlZ5b3877KPboBIYPI5fiUquJIDkkX33EHg0IX0jOOZCDe/2Hu7ZWyTcbK8WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=dbM54z7X; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781010ff051so4223280b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1761057296; x=1761662096; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sV3KIhc1PNPd/uW7bqfRoDcwumTG1e/maPgTaMLXuW0=;
-        b=dbM54z7X73YK0xvaCLxSrxd7B9cDEkxGaKXjhj2zmoGu16KWr+T0FJK0jdTCmpGsH3
-         o4ZFBsyVFrLggPOL/Tb6YvsfQTfHNlVgGYcqpMvgqE3j8e7S6SI6xyRSgNdyKRk9vffD
-         sG4J8Ir0DyDNcILEwSnSyWufpvhezNY11r2M0ghYMIFt6G5EvBatBtUx8e2wYZJ0ygHZ
-         C9N17nDus6p3E1Up4CMOr7as/cWtYPTBpPBD5RhcB+Cl5nIfnA0qqH4EZ1dT09I29LSO
-         ZEh8Ip1rrYdkvUAX71vHOoUZMNBDX8rajGm7vagcak1T0w/X1gfLdGtEmchGigMrqEWX
-         /mlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761057296; x=1761662096;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sV3KIhc1PNPd/uW7bqfRoDcwumTG1e/maPgTaMLXuW0=;
-        b=ikz4NuUEmhDCr+qN2Q2gzk2UDL20+ccc4pTDQ4kxcbO+/iS0QNggGE7MeObyBgbWtL
-         /G1n4gqu2yQyqBQbkVFztC9B+/lSzvHukEWY8P6wEOLqC+cDqZ47OJ/ufAHXgqNp+vnt
-         xBnmXgB9drUtsEI9Wh8vp8npHZiyG9bS1CQeqO20CVBL3alzYjr4RpcYFhuo+4O1TLK0
-         6hFZEnEULI10wyxiXG71TbyDrEr8PxxFGwZMBqjh/1rikOSL//QFYv4CTAaIUCggLEls
-         Z5MUPJHzSc0KMxo9VrqC8U8myY9juQh54gLEUJh+IakZmFmEcYiFdt3jaSLa7UhemBfa
-         eAoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkFuqHOQzXXvbHmagtpTFdC02U1iN+TJhrAGl6OZyUk9Lz/qYRcSFwiqmsZRti5CzilOQAdM6mlElGXdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUs7jecQAjcr8dTfgFVJZnL48cKRe0XJ8TTryBx+RCmjLuUVlG
-	fa70E5PLM0A7jC2MzfVcPEZXQD1ikp8K8QUUyDmNsYC1AvD1Xxn2gDKqdvOyOuJJoOM=
-X-Gm-Gg: ASbGncuyLb0du+OMWXwGaap8jtlKjR748JhSSTfNczh5Ok/swwsxbZQkbF3ruklHwxL
-	ki4ysKlHbQsKINvkk/zb/4mDwGH2QfizNf75Bxtb8oyYKDKUiCqF0y66qrfALYsUm3dp23migYc
-	XIZNfpj7Z3c2m+7Mv0WYlNPzpIl5flbAxtHcQOBc4MzS6SLmBd9K+qTY8smXbj9ARrq4oUSi4cH
-	aIolcKkIa3vdYHlsuh4kTMyAEFrPPIRFSBt1nmh0NaJSADzIRyxIV8zVy9cx10Zu0Ex5QVS2eCr
-	fwU5JZWbmwWfVMZRA1osmg0jiL7evL44lDrN29BdsOS07WO03ujHmTmgVn4slZZZo0nXnKwgvEP
-	9Ci32bUULebB9w5YwspUPMkDl0BA3YG401MW1x5t3U7iCT6dx2ekv5E2VaHtxcX+bjbxcHEoNt5
-	6YuF3h97No
-X-Google-Smtp-Source: AGHT+IHBX9TIE3IQtEBoV7LOteBO6V2Q79FbArZ4HOehhBp5RxecJgOwYxXXdgG5tSXjdbgoVNEnFA==
-X-Received: by 2002:a05:6a00:4b0f:b0:781:275a:29d9 with SMTP id d2e1a72fcca58-7a220b10725mr23389331b3a.18.1761057296233;
-        Tue, 21 Oct 2025 07:34:56 -0700 (PDT)
-Received: from localhost ([12.197.85.234])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff15829sm11500038b3a.11.2025.10.21.07.34.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 07:34:54 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:34:54 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
-Message-ID: <20251021143454.GA8072@fedora>
-References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4157826E6F4
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 14:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761057326; cv=fail; b=kl4dxQqI7HZ88VdwReaC1fGxcoKKJpxM73ueGpXUZnBNmGtxxiPYmcjN2Oeo9PKj07DDKInDAgNPXqvxIZkho+KX8EOIBNosGDNM/2fqMFiZ86VPVmfYlqfUr6Z268MDAZkOeS4QVeqNFLRzprJK31n+PEWT4YejYwWSs0IscBs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761057326; c=relaxed/simple;
+	bh=1TU0a1J9fYsfXmfZJz6C18x3MizG7c0OyIO3P3MDtY8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JRj7i5EQq8MNkSr8xAMBuUpc3xjQwbuE1e49F8jGQ3fdDXqBW4KTwVKZtmcKvCvIgIyMEJFI+mw5NiXKnLpdueIJsc+ruGICslLEOmMkXkRrEqw0apb/L9LfPd/0gZgGuGPigmXc4AGs3f1f5VY6Z7sOxd4a0lae+gF9O1eSyn0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PEazRWDW; arc=fail smtp.client-ip=52.101.193.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jh2kHgKO+RHxEVOS7go9EDNg+RMYJEzWYQSxz6wggowCWOoscLDWL+UfNJ4H84UK0RlP/aJG++AxGoSLLzFujoH6ZM0J0L/WkIvz4LN4t7RXfBbnubMX+01Ylu4TGv9ktsI3hevMXOVtte6WT9mkiQ0UFA3ySsganjs/vfPd5acyzvUId4ZF+XkFBQdTDi+EVNxBFoVVCUAsEO/s6mxsRza8ufWx8bhN9PzIG6Zx/H40FCpz8909H70+pY0Rv8vdWZmW4d0mMeywaB3g/crrl+xjweawn2uW+dUz2mjslvefZIDgn7LpmRTfm4Zm3/B08nDm1aQ2Vj6ZdjV7EAgf7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HMRcif/MuEe33GkigtJYORBZxlg5emDQ7ciQXcgUwCY=;
+ b=EUKeX3HWEx2mw/cv5X34HaUPlcNsGmC0LvTPQy3zp8mDSA5EGIg3x4s+Lryn2Hl78cn0AE6OT8cBunDrko47MGrfY83MP4UKVn/pnUF/yRWENZcWWF5vpccVwaB31pAqQ//AhNwpohaKyKeQBQo7Up1YzVwmkK4mXMxXHtJdJqPx4r3fUsrcywR++7LgiBBJqhiZJ3NTlwe4JGlMVegmoBJTauEPqO9/M2XinXUOjJjXkrjntl0D1oFSywg1h5gpa5wvQe8dmFtuawvHz2nfwRJiwbevEBJ8PRbQ2Hnm1Hc/8uIXdu4vYBl9O7qsgMAu4BF8oRGo8CVfVW11e5lfXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HMRcif/MuEe33GkigtJYORBZxlg5emDQ7ciQXcgUwCY=;
+ b=PEazRWDWaTjrrCP0HeWsE/xB1zbkggDn/+2UwvmyWG5F3Y800mRtYMuJuxLcYcZfpkuGwJRjIbHgvakESMzAoLwfOUAHZqtK59NNbobfpNh2W1Zd4bkPSKkdwVKvlLbZnySPNU/5yaLhQ2b+uLvK73NFatPUxWhc/Hmsp9DPA6Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ SA1PR12MB5659.namprd12.prod.outlook.com (2603:10b6:806:236::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.12; Tue, 21 Oct 2025 14:35:20 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%6]) with mapi id 15.20.9253.011; Tue, 21 Oct 2025
+ 14:35:20 +0000
+Message-ID: <62bb3eee-588a-40eb-a2c7-739166ac774e@amd.com>
+Date: Tue, 21 Oct 2025 09:35:16 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] iommu/amd: Add support for hw_info for iommu
+ capability query
+To: "Tian, Kevin" <kevin.tian@intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+ "nicolinc@nvidia.com" <nicolinc@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
+ "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
+ "vasant.hegde@amd.com" <vasant.hegde@amd.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "santosh.shukla@amd.com" <santosh.shukla@amd.com>,
+ "sairaj.arunkodilkar@amd.com" <sairaj.arunkodilkar@amd.com>,
+ "jon.grimm@amd.com" <jon.grimm@amd.com>,
+ "Prakash, Prashanth" <prashanthpra@google.com>,
+ "wvw@google.com" <wvw@google.com>, "wnliu@google.com" <wnliu@google.com>,
+ "gptran@google.com" <gptran@google.com>,
+ "kpsingh@google.com" <kpsingh@google.com>
+References: <20250926141901.511313-1-suravee.suthikulpanit@amd.com>
+ <BN9PR11MB5276E624B7CD6E1D6BA1E12B8CE9A@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <BN9PR11MB5276E624B7CD6E1D6BA1E12B8CE9A@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0191.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:110::24) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|SA1PR12MB5659:EE_
+X-MS-Office365-Filtering-Correlation-Id: f89ae50a-20ea-4a2c-70cb-08de10af0f9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SHpxdHNQUi9OQWVuMTZSVkZzOGh4WGFBTTI5S0tzWElPTWlZZnB6U3JWWlUy?=
+ =?utf-8?B?cm1ObDl3RG5GbzQ5RStBQXE3MlR0bmM4Qnc0aU5ja0NNdnl3cEY5UFEvUVFF?=
+ =?utf-8?B?eUhkZDlPSmM5enpOeWt5cEFuWFhZTkR6OFJYQlNqQzhELzB0ZlhBYXkvTVZG?=
+ =?utf-8?B?MDRBcUFFenJYZnE3bnMyTVdGTzZiZDczZnpMaVVNTU5PRkJoMGJ5VVh6ZjV2?=
+ =?utf-8?B?ZUZHMi9Zb1ROZWFOK1Nvai85eHBkZGIwaCtreCtGNld6eHZIK3hlZDVQZEgv?=
+ =?utf-8?B?OVlhc0p0QUx4ZzJFMUJUS0JrNno1SHc3NzZ3ck1DVE5rakV4aWpjMDduVHlF?=
+ =?utf-8?B?SGV4WWhkVml6OGwrZnZOR3I1R0JHemdzNGJCZXMrVE9rRlE0dURIYStpOGtz?=
+ =?utf-8?B?MjU5czdENndzRWxXSEhpc0VHQ21RQmt0aU1BMEtZWm1sWUw3eWtsVVNsdkUv?=
+ =?utf-8?B?aUhoNnhIUDk3NEltbm91bHFSMGpWNEZqS1N6MWNWUDNOSU9BTFhLOFg4NHk4?=
+ =?utf-8?B?MVRiYWNSZ2I5ZGtpMEdtZ1lsZnEwMmVrOWZscE4raFRYMnhHcUhTOE44c0Ur?=
+ =?utf-8?B?WXVXb1NFY3dnRjNteHRRNVVWSjRWNWJieDNCWEZzOUY3QWd4dFBiL2FhWkRu?=
+ =?utf-8?B?alZQRTUvaVFJNVQ5ZGpzbjhPbkRvN0haZ2ZQMHRwSW9MbHZhNUZMcTFaMWcv?=
+ =?utf-8?B?dGxVNUl2WExJNzZ6elFlcUhTTENSZ0FYbHZObU9GVHJYNkRmMnBMd1lBQTA4?=
+ =?utf-8?B?YTFZblhGWWMwT25HenF4VWprakhra0tCZUZrMTQraG9SUmt5U21nWWlNNGtY?=
+ =?utf-8?B?VUd5RC9ZSUEzU2FnWEV6SDN2UDhpQXZBQU1mL3daMFAyQTF0TklZdGVKZkNl?=
+ =?utf-8?B?WmNqM1VGOXRaV0hyODkvSTBDbEduQWErVElWeGVrNW5uVDFNYzdTdUZBUFFo?=
+ =?utf-8?B?V0ZCWmdaMllRczNhU3MxNTBkaGNBdVFKRWZ0eFVmWUo2TCtGdnVwTVcwbTM5?=
+ =?utf-8?B?cW9MQU1LQk53SUdOVi95Qm8yT1NaYW5jY3U3bmk5dnNZMXA5eHllM2R1VS93?=
+ =?utf-8?B?TlZyaDlKWDNISTRSY0NDbjZWeWJVR01JUnNNNjRIbzE3NXlIUlhPQmVGUVow?=
+ =?utf-8?B?QTE2MnhNNVE0ZjJ0UjBqNGNWRzdPeFlTWVpmalFhcU5UeXNudUpBNnBYcXha?=
+ =?utf-8?B?MEdlbTE3ZUxCQ0h0UWRGb0RtTHE3dWVNQ2tNaktvLzNWZ2haZEMxb0w3aE1E?=
+ =?utf-8?B?UVVtT2RGdG1QTitCUHVjQ0trMU1GTVB1ZCs0OU9RSWorMjFZMVovUTN4bDlt?=
+ =?utf-8?B?NkFPNkhVSjVrNzVpam1TVDVEOTJpWVZLVld5ZzFlUDRiMFBDRWh3Zll5Qnp2?=
+ =?utf-8?B?LzNUbWpwVDNLRWExK3RSd2wwMVdtTGErS2xhYWFDWlA3WU5MRXBVK0kxbzll?=
+ =?utf-8?B?cnZzY1dqYmt6aFBJYklJNWtYcmJ3ZEcvWktDU1ZwVXNIZm5zRmJBWkNoanZ6?=
+ =?utf-8?B?MllQanQxNWhLMVpmSWh3YTRUMTVsLzdUY2hjWnpVeDIvTnd6MjZmV3E0d2pv?=
+ =?utf-8?B?a1lKRW4yc2psS2p6Q1AzQWlTdTc2a0VVbHBxck1jT1BJdTdzY09udlJqZFF5?=
+ =?utf-8?B?Rjl6OXVLRnVUMjJLNDAyeEYySWdFSk00amZzTVVDRFl3dGZla2ovc2pmZzhK?=
+ =?utf-8?B?Q3BRZUpuUE83WXNYN09aTHNJeHFPMDI4WGZ1ZHVBaHJsWDdXaVFURGs2Y0xa?=
+ =?utf-8?B?Y2pqREhBVnRQNWpvMDhIbWVVZk5nQlVRcnduVGluUjA1N0lXUmlISUtEQ2g1?=
+ =?utf-8?B?VFNzUm5sUnVqYTVwdXBGa3NDS0NQZFJQRkkzQzlCd0MvMzRyOGxEQzdVSVFY?=
+ =?utf-8?B?ZG9TbENtT3FVaU9xZVpoMXNNL2puMGtjUmdqdnB4cUtJUXZyVlN1Vi9GQ25s?=
+ =?utf-8?B?dFZ4Y3ZZeDk5SVQzWkJFZm5nV05taWMxdUxEeTRxTEU3cUVaWUVtRHU0WGR2?=
+ =?utf-8?B?QUhyUXVWNFN3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cTdSWGRxNnE3MVRrZzVkZTVJd1lrTXBESUNYMEtjVHFLUjRrS3FTdmw3UHhT?=
+ =?utf-8?B?V0hEWDIwcGJtS1B5N21jSEhYMTRmRGtrYVppa3V6Z2hsMzJnMVFUZXdDNnc0?=
+ =?utf-8?B?UlRCaVZmbGNpNVdWVGl6bE9lVEt4L1luTm9UeHZNRFFKeU1mUnFRQ3dVOXEw?=
+ =?utf-8?B?WjR3QmRXazNWWGFkL1FKT3dGeW9nS1NBa3JZenQva0dFWXVHUUNHV1VTaUtZ?=
+ =?utf-8?B?amQyNUZ2aUtuU292WWlPSjMyZHVmREtDYmRKdTlPYzA0T2xXZm1rYkROdXlE?=
+ =?utf-8?B?MU5mdjVzTGF4cWU3cVZTbzBKMDBZUVo3S1E1MjZKVGkzREJjd3hPNEc0cmdK?=
+ =?utf-8?B?ZGVZT3VtajhZd0toRUY0QXZpdi8yMXJiOFdaaURkYUs5cSsrTk1TQzZ5M0pX?=
+ =?utf-8?B?Zjlac2xKeHZyZUFuMCtLZTRBNiszajA3YldzdzFFR09LQ1AvcUJKSzRVbXVp?=
+ =?utf-8?B?TS9BQTZvMU1SV0hHRmdvYU1YQ2VWUmlNa0cySXlJMFdYbnNTb0R3WFRVTFAx?=
+ =?utf-8?B?M3FlenM1Z0hCOFdmOG5RazZxeWpNQ1FWNnVJYTVCcFVhUTdCUUt1SDM4M3Zo?=
+ =?utf-8?B?MklWYlVIem5vYmsxTGttTDRGTDc4VUwwVjNmVWc2dzhpNkdLNWV3QmVyWXha?=
+ =?utf-8?B?dWZlYkRHTStKdDNVZkczNjZVNk9lM05IS2hBV1dlMC9LR1N0UVlwRUdGSUp4?=
+ =?utf-8?B?L1prRnQxT1d0R2ZzcUZJZTRJNTZLd1hnZFdjaXgrQ0VwOW5jU2hzQ2RjeWtr?=
+ =?utf-8?B?Rmg4aEg1ZEc0UDI2dFJ1eVFnOW8zbUJvcWI5NktYV0h5cUxoaUVFZFlObEFV?=
+ =?utf-8?B?am96WmgxT0NvbTRRZ1dXRHZSVlB1ZWxpVStpUEkzMVBpbHk3K29MZUNiSGow?=
+ =?utf-8?B?SHlvZ3VoUU42ZGNiSEwreHRTYnN1RWpsYlJJL3NCVnI0REhOVjdpUVE1Z3g3?=
+ =?utf-8?B?TVRrRzRQdlVVVkwvM3dDWitoUTQ1UVpVUU1UNUw5S2dWOFVZVDVvZ21xVlRE?=
+ =?utf-8?B?Rnl1QTRTUit5bk5nakhUUWlLNm5tU09NV3daL29ITDNQb1IvNjZjTDRTZnEv?=
+ =?utf-8?B?czZaVGV2R2VXeFFMRXB6NWhXRkgvWmZmSVVhUDZ0d0ZXM0FnUHJxRW1RaHZs?=
+ =?utf-8?B?ZUtqbjc4MlU1cWZsY0xpOTg3N2dqZW1rSm9hMVQ1dm42UE5nSm5NOFFlQy9L?=
+ =?utf-8?B?UXBBdTgwV21XRFArbno2Y2JmNlVMbnBLNlNQZVdsZlBnNnFWTnUyOWNybmFI?=
+ =?utf-8?B?eGROb3B6cXNEd2FmZlJ2b0NiTFZFUUp5eFFZRnhOUlRqM3JNaTRHaHVwTUVh?=
+ =?utf-8?B?VzFyVlA1bmZIbnpoOCs0TnNwZ1lIdFhRM0p6amp6R3dJUng5L0hPZ0RVS0gw?=
+ =?utf-8?B?ckIwbVlRZEczejgyQXVwMU1vOFpkZXpnNlprUjVpRXFNVmpmWmZMb3BNN1ZZ?=
+ =?utf-8?B?OVd2Z0wrbkFhVis2dWZpai9ma3E4ODBLWkI5VnJudGNuV1ZLMFo5R0ZHUi8r?=
+ =?utf-8?B?MWRMUW5QeWdOekRvZllwZHIzZlJMZWkrRzgwYkRZMHZINU5nV1A1QzVKSy8x?=
+ =?utf-8?B?RmZmZ2hNVDBVK0ovOTluUzdoOVdadDQzNWI3cm9ucWFxSzRPVE5XL0RZU1RI?=
+ =?utf-8?B?ZFhhMTgzQU1VVlRkNmcvZVpJR2t6emloYUVrU3J5NjdqL2M0TTU4ZlFPMVhL?=
+ =?utf-8?B?STJTdGVmT09sODJpS0crTk5Yb0NRQzBybkJrK1BzRi92ZFZUMWplRWJ5RGVR?=
+ =?utf-8?B?UmFoNzBhMXN6OTFIWTZSeVJMNGUxR0lyTDRIOXV6TUY4RUFUYkJMQklSQ05I?=
+ =?utf-8?B?NzM1ZFNwYzRsZk5VVVQrUCtSWmcvaU5vMkpDRmhva1RQaFJZWldRMjR2bEFM?=
+ =?utf-8?B?S04wSHNuaGV6bnRqSXlzMDZIc01SV05Id0c1c2FSMjZHamVaQThvT25yUzMx?=
+ =?utf-8?B?dXdUSUdXd3BBTi9TWkpkQk5EeTdFQVBkUFJad3Z6ZGNpMnM0MjBZWmtOVHM3?=
+ =?utf-8?B?RUFta3BTZkw4a3lMd0dDenhPcmxTRjdpcGhwVE5JLzNKOG5Bb0pYWHI0UHBD?=
+ =?utf-8?B?SU9sS2F1amphZ3VNQUUyLzRCUXVqenBqOW5GSG9PT2dsek1zWDE5cWtybEpQ?=
+ =?utf-8?Q?4ssXFC0rERfoEoTpTCEscK9Oc?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f89ae50a-20ea-4a2c-70cb-08de10af0f9f
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 14:35:20.2337
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 05doXwv4AhSC2G4AbPZe4GeoMrLVE1+kkAtnMWw22ENfo+AzqGaztj3+xRqItpyahnMqeFZtAhr3KItN3nJG4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5659
 
-On Tue, Oct 21, 2025 at 01:43:06PM +0200, Christian Brauner wrote:
-> Hey,
-> 
-> As announced a while ago this is the next step building on the nstree
-> work from prior cycles. There's a bunch of fixes and semantic cleanups
-> in here and a ton of tests.
-> 
-> I need helper here!: Consider the following current design:
-> 
-> Currently listns() is relying on active namespace reference counts which
-> are introduced alongside this series.
-> 
-> The active reference count of a namespace consists of the live tasks
-> that make use of this namespace and any namespace file descriptors that
-> explicitly pin the namespace.
-> 
-> Once all tasks making use of this namespace have exited or reaped, all
-> namespace file descriptors for that namespace have been closed and all
-> bind-mounts for that namespace unmounted it ceases to appear in the
-> listns() output.
-> 
-> My reason for introducing the active reference count was that namespaces
-> might obviously still be pinned internally for various reasons. For
-> example the user namespace might still be pinned because there are still
-> open files that have stashed the openers credentials in file->f_cred, or
-> the last reference might be put with an rcu delay keeping that namespace
-> active on the namespace lists.
-> 
-> But one particularly strange example is CONFIG_MMU_LAZY_TLB_REFCOUNT=y.
-> Various architectures support the CONFIG_MMU_LAZY_TLB_REFCOUNT option
-> which uses lazy TLB destruction.
-> 
-> When this option is set a userspace task's struct mm_struct may be used
-> for kernel threads such as the idle task and will only be destroyed once
-> the cpu's runqueue switches back to another task. So the kernel thread
-> will take a reference on the struct mm_struct pinning it.
-> 
-> And for ptrace() based access checks struct mm_struct stashes the user
-> namespace of the task that struct mm_struct belonged to originally and
-> thus takes a reference to the users namespace and pins it.
-> 
-> So on an idle system such user namespaces can be persisted for pretty
-> arbitrary amounts of time via struct mm_struct.
-> 
-> Now, without the active reference count regulating visibility all
-> namespace that still are pinned in some way on the system will appear in
-> the listns() output and can be reopened using namespace file handles.
-> 
-> Of course that requires suitable privileges and it's not really a
-> concern per se because a task could've also persist the namespace
-> recorded in struct mm_struct explicitly and then the idle task would
-> still reuse that struct mm_struct and another task could still happily
-> setns() to it afaict and reuse it for something else.
-> 
-> The active reference count though has drawbacks itself. Namely that
-> socket files break the assumption that namespaces can only be opened if
-> there's either live processes pinning the namespace or there are file
-> descriptors open that pin the namespace itself as the socket SIOCGSKNS
-> ioctl() can be used to open a network namespace based on a socket which
-> only indirectly pins a network namespace.
-> 
-> So that punches a whole in the active reference count tracking. So this
-> will have to be handled as right now socket file descriptors that pin a
-> network namespace that don't have an active reference anymore (no live
-> processes, not explicit persistence via namespace fds) can't be used to
-> issue a SIOCGSKNS ioctl() to open the associated network namespace.
-> 
-> So two options I see if the api is based on ids:
-> 
-> (1) We use the active reference count and somehow also make it work with
->     sockets.
-> (2) The active reference count is not needed and we say that listns() is
->     an introspection system call anyway so we just always list
->     namespaces regardless of why they are still pinned: files,
->     mm_struct, network devices, everything is fair game.
-> (3) Throw hands up in the air and just not do it.
->
 
-I think the active reference counts are just nice to have, if I'm not missing
-something we still have to figure out which pid is using the namespace we may
-want to enter, so there's already a "time of check, time of use" issue. I think
-if we want to have the active count we can do it just as an advisory thing, have
-a flag that says "this ns is dying and you can't do anything with it", and then
-for network namespaces we can just never set the flag and let the existing
-SIOCKGSNS ioctl work as is.
 
-The bigger question (and sorry I didn't think about this before now), is how are
-we going to integrate this into the rest of the NS related syscalls? Having
-progromatic introspection is excellent from a usabiility point of view, but we
-also want to be able to have an easy way to get a PID from these namespaces, and
-even eventually do things like setns() based on these IDs. Those are followup
-series of course, but we should at least have a plan for them. Thanks,
+On 10/16/2025 2:40 AM, Tian, Kevin wrote:
+>> From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+>> Sent: Friday, September 26, 2025 10:19 PM
+>>
+>> +/**
+>> + * struct iommu_hw_info_amd - AMD IOMMU device info
+>> + *
+>> + * @efr : Value of AMD IOMMU Extended Feature Register (EFR)
+>> + * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2)
+>> + *
+>> + * Please See description of these registers in the following sections of
+>> + * the AMD I/O Virtualization Technology (IOMMU) Specification.
+>> + * (https://docs.amd.com/v/u/en-US/48882_3.10_PUB)
+>> + *
+>> + * - MMIO Offset 0030h IOMMU Extended Feature Register
+>> + * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
+>> + *
+>> + * Note: The EFR and EFR2 are raw values reported by hardware.
+>> + * VMM is responsible to determine the appropriate flags to be exposed to
+>> + * the VM since cetertain features are not currently supported by the kernel
+>> + * for HW-vIOMMU.
+> 
+> this hw_info api should work even w/o HW-vIOMMU?
 
-Josef
+My understanding is the hw_info API is independent of HW-vIOMMU support. 
+It mainly exposes vendor-specific HW capabilities.
+
+Suravee>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
 
