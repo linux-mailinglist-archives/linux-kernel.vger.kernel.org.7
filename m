@@ -1,152 +1,146 @@
-Return-Path: <linux-kernel+bounces-862237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BF5BF4BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:52:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9CB6BF4D2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907D34047F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 06:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794AC3AD949
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE9425F973;
-	Tue, 21 Oct 2025 06:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398992737F6;
+	Tue, 21 Oct 2025 07:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgObkyJs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MVwuPlHT"
+Received: from mail-m49241.qiye.163.com (mail-m49241.qiye.163.com [45.254.49.241])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EB1223707
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 06:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB4425A2D1;
+	Tue, 21 Oct 2025 07:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.241
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761029524; cv=none; b=tRAjRnFPfx9BMSYe3CrFAB4ECOr2bqpODs/eZ4QFiZaqdVljolip/aA1luILqlq5PBAcxVV6yMbYNsirsJypXJsz9LicIIb0bKoOd5gkCsQwT0qhE7OVQmoiSfMruYn2rZeQ/EJnagCrvy0exNVdai7sTJ1W2WibhupnpzmCg20=
+	t=1761030482; cv=none; b=gR9ULxKVg/7ZiB/KMRajnb6Fiayw9srx81kJKzc9STIZgKFt1dvPpF73ofK6FGAuQPK/FmhnnWRiJU/yXDeK+K8y2/SCmW3Djcz5fbJtNumkGslNDlM0Uvjo1E11hnMpveb8wGT9uYZzl6qIk4GZfSJehnvtJbAFi/VWSyyAJSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761029524; c=relaxed/simple;
-	bh=9aRMxBHEJ8ae6174ZkI8n/5rBXpR8DVeI+noC7rRjBc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LCLNEWF4CvPprgRMxGRG19yYnyt+vLPfXp63YOJWLOKBzSFpmgGP4zm3IXADzq9c4n8pwDcLWnyUv5YT6AreXbaBTSZjNytge5jsU0bkNyN3Ycyqpa3QG0rPLJZJVVmXh9usmUcc6O1/tQwuplfQIusycjxT1mlqFx0i4jH9bvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgObkyJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F42C4CEF1;
-	Tue, 21 Oct 2025 06:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761029522;
-	bh=9aRMxBHEJ8ae6174ZkI8n/5rBXpR8DVeI+noC7rRjBc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=CgObkyJsAreKnTeUArXWl8ovk8KSq2zg+KUrJfWc1FETiqTvgx7lXmjtcSW2qfJ3T
-	 SLq/oG46PpSp38FODmJ4/U8cRg8Yc6fIMOdUxU3Wn8LOOdvs+mAPR4fBeLmL5r1oGJ
-	 f+C0n9O95rji9lDtDN/ReCrCyasCwPoGlIwuSB1RwL9G+02pgS2oIarRrepWYxb6e8
-	 Lh605r0mGWEMKC6fEoew8b+mcIhTAcqOuV5vVmSoeGh+88kAKFy0JN6eEo7HlfJwcS
-	 CUtLQO8VC8cetqNp7gNT4exinW2/saAFTfPCfFQ1g91fWFdA8iBuJNnTk8AVG05ZlI
-	 v4ABmiknzgduw==
-Message-ID: <75d0a52d-1662-45f9-ab67-909b906004b3@kernel.org>
-Date: Tue, 21 Oct 2025 14:51:57 +0800
+	s=arc-20240116; t=1761030482; c=relaxed/simple;
+	bh=AJ2VNE3C/ral2H18ryByPpEHs9xXyE1wotA6RTyZFpg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lSBj8/PsXWlxgFLq4UHnsj9lb62ldgnksV2GcFEJ3Z9C38JepEMX6sYLtkBxrsoF+93k1o5CSC473IQBGdwyrc37rWHaFnnIE3/zoVn4rlItLyaFI++HXLA2RbYH4BxJpIleqamLX8ZQLP9rX/eFFewhcld1+MMl/4/WQ9QJjJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MVwuPlHT; arc=none smtp.client-ip=45.254.49.241
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 269f91a1a;
+	Tue, 21 Oct 2025 14:52:34 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [Resend PATCH v4 0/7] clk: rockchip: Add clock controller for the RV1126B and RK3506
+Date: Tue, 21 Oct 2025 14:52:25 +0800
+Message-Id: <20251021065232.2201500-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, jeuk20.kim@samsung.com,
- d_hyun.kwon@samsung.com, gyusun.lee@samsung.com, hyenc.jeong@samsung.com,
- j-young.choi@samsung.com, jaemyung.lee@samsung.com, jieon.seol@samsung.com,
- keosung.park@samsung.com, wone.jung@samsung.com
-Subject: Re: [PATCH] f2fs: serialize writeback for inline-crypto inodes
-To: Jeuk Kim <jeuk20.kim@gmail.com>, jaegeuk@kernel.org
-References: <20251016051621.7425-1-jeuk20.kim@gmail.com>
- <5257fece-d947-4a33-8f66-4db5e8b73a28@kernel.org>
- <e26ec66d-36db-429f-befb-8baad14779d9@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <e26ec66d-36db-429f-befb-8baad14779d9@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a058a7f0203a3kunm647d21e85ed6bc
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUkfGVZOTB4YTEIdHUhNQkNWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=MVwuPlHTfrTtbJt9oq2ks7LM/RY6S5x56TasIY+JA98931/U6oCFvdpOiiJn0GgbeWTS8Lvb22Eiz4t6/z3FFNySdXuwYtrw7qryanTpklvc4SSc4I1zlf7Ch9kB+Mcrem0SQYRTiV7yv+evZlW28oPpBWVJPViemNwz+MsfvJI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=+RaFaMRd14vArqyAkmb0yjsiqsVcSivnEnRkSyz1WDQ=;
+	h=date:mime-version:subject:message-id:from;
 
-On 10/21/25 11:33, Jeuk Kim wrote:
-> 
-> On 10/16/2025 7:12 PM, Chao Yu wrote:
->> On 10/16/2025 1:16 PM, Jeuk Kim wrote:
->>> From: Jeuk Kim <jeuk20.kim@samsung.com>
->>>
->>> Inline encryption derives DUN from <inode, file offset>,
->>> so bios from different inodes can't merge. With multi-threaded
->>> buffered O_SYNC writes where each thread writes to its own file,
->>> 4KiB-per-page LBA allocation interleaves across inodes and
->>> causes bio split. Serialize writeback for fscrypt inline-crypto
->>> inodes via __should_serialize_io() to keep foreground writeback
->>> focused on one inode and avoid split.
->>>
->>> Test: fio --name=wb_osync --rw=write --bs=1M \
->>>        --time_based=1 --runtime=60s --size=2G \
->>>        --ioengine=psync --direct=0 --sync=1 \
->>>        --numjobs=8 --thread=1 --nrfiles=1 \
->>>        --filename_format='wb_osync.$jobnum'
->>>
->>> device: UFS
->>>
->>> Before -
->>>    write throughput: 675MiB/s
->>>    device I/O size distribution (by count, total 1027414):
->>>      4 KiB:  923139 (89.9%)
->>>      8 KiB:  84798 (8.3%)
->>>      ≥512 KiB: 453 (0.0%)
->>>
->>> After -
->>>    write throughput: 1760MiB/s
->>>    device I/O size distribution (by count, total 231750):
->>>      4 KiB:  16904 (7.3%)
->>>      8 KiB:  72128 (31.1%)
->>>      ≥512 KiB: 118900 (51.3%)
->>>
->>> Signed-off-by: Jeuk Kim <jeuk20.kim@samsung.com>
->>> ---
->>>   fs/f2fs/data.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index ef38e62cda8f..ae6fb435d576 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -3217,6 +3217,8 @@ static inline bool __should_serialize_io(struct inode *inode,
->>>         if (f2fs_need_compress_data(inode))
->>>           return true;
->>> +    if (fscrypt_inode_uses_inline_crypto(inode))
->>> +        return true;
->>>       if (wbc->sync_mode != WB_SYNC_ALL)
->>>           return true;
->>>       if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
->>
->> Jeuk,
->>
->> Can you please try tuning /sys/fs/f2fs/<dev>/min_seq_blocks to see whether it
->> can achive the goal?
->>
->> Thanks,
->>
-> Hi Chao,
-> 
-> Thanks a lot for the suggestion.
-> I tried tuning `/sys/fs/f2fs/<dev>/min_seq_blocks` as you mentioned, and it also achieved similar performance improvement on my setup.
-> 
-> Your approach looks cleaner and better than the one I proposed.
-> 
-> From what I see, even after reducing this value from the default (2MB) to 512 KB on my local system, there doesn’t seem to be any noticeable performance drop or other side effects.
-> Do you see any possible downsides with lowering this value that I might have missed?
+Add yaml and dt-bindings for the RV1126B and RK3506.
+RK3506 depend on patches 1/7 and 5/7, so it is merged and submitted.
 
-Hi Jeuk,
+Change in V4:
+[PATCH v4 1/7]: No change
+[PATCH v4 2/7]: remove label
+[PATCH v4 3/7]: No change
+[PATCH v4 4/7]: remove label,fix order
+[PATCH v4 5/7]: No change
+[PATCH v4 6/7]: Add yaml and dt-bindings for the RK3506
+[PATCH v4 7/7]: Add clock controller for the RK3506
 
-We're using sbi->writepages to serialize large IOs, once you tuned default
-value from 2MB to 512KB, in Android, there are threads issue [512K, 2M)
-sized IOs, they will join into racing on grabbing the .writepages lock,
-I guess that will cause potential performance regression, right?
+Change in V3:
+[PATCH v3 1/5]: No change
+[PATCH v3 2/5]: Fix define error
+[PATCH v3 3/5]: update driver,fix errir
+[PATCH v3 4/5]: fix error
+[PATCH v3 5/5]: No change
 
-Thanks,
+Change in V2:
+[PATCH v2 1/5]: update commit message, rename v2 to multi_pll
+[PATCH v2 2/5]: Modify DT binding headers license
+[PATCH v2 3/5]: update driver
+[PATCH v2 4/5]: fix error
+[PATCH v2 5/5]: update commit message
 
-> 
-> Thanks again for your help.
-> 
+Elaine Zhang (6):
+  clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+  dt-bindings: clock, reset: Add support for rv1126b
+  clk: rockchip: Add clock controller for the RV1126B
+  dt-bindings: clock: Add support for rockchip pvtpll
+  clk: rockchip: add support for pvtpll clk
+  clk: rockchip: Add clock and reset driver for RK3506
+
+Finley Xiao (1):
+  dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
+
+ .../bindings/clock/rockchip,pvtpll.yaml       |  100 ++
+ .../bindings/clock/rockchip,rk3506-cru.yaml   |   45 +
+ .../bindings/clock/rockchip,rv1126b-cru.yaml  |   52 +
+ drivers/clk/rockchip/Kconfig                  |   14 +
+ drivers/clk/rockchip/Makefile                 |    2 +
+ drivers/clk/rockchip/clk-cpu.c                |  165 +++
+ drivers/clk/rockchip/clk-pvtpll.c             |  925 ++++++++++++++
+ drivers/clk/rockchip/clk-rk3506.c             |  871 +++++++++++++
+ drivers/clk/rockchip/clk-rv1126b.c            | 1105 +++++++++++++++++
+ drivers/clk/rockchip/clk.c                    |   24 +
+ drivers/clk/rockchip/clk.h                    |   96 ++
+ drivers/clk/rockchip/rst-rk3506.c             |  226 ++++
+ drivers/clk/rockchip/rst-rv1126b.c            |  444 +++++++
+ .../dt-bindings/clock/rockchip,rk3506-cru.h   |  285 +++++
+ .../dt-bindings/clock/rockchip,rv1126b-cru.h  |  392 ++++++
+ .../dt-bindings/reset/rockchip,rk3506-cru.h   |  211 ++++
+ .../dt-bindings/reset/rockchip,rv1126b-cru.h  |  405 ++++++
+ 17 files changed, 5362 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,pvtpll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-pvtpll.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3506.c
+ create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3506.c
+ create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
+
+
+base-commit: 9893549e592ad22d0a18de97acfb30204109290a
+-- 
+2.34.1
 
 
