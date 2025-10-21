@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-862475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413B5BF563D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:01:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA558BF5643
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 11:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E989F352541
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6574918C6F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D5E32AAD8;
-	Tue, 21 Oct 2025 09:00:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB5D2E1F0A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23339328B6E;
+	Tue, 21 Oct 2025 09:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xx/dlBX4"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF81827AC28
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 09:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037240; cv=none; b=Nbpci/Wpw3HjpA9mBS++BYdP/9GlmqP7iWF0VBcNgJhjQeQLrzMy9WHYfzaBeAILA0hvjgJq8RKlm5GQKycFX8n/WSW20V9l2zRpA/TanaYWZcnGl9FAviaZTsSbdQ5G7IiXNXjjpmfYGmSQcQB3z0w75/G4T1VbHruNqRhGtu0=
+	t=1761037310; cv=none; b=R3CWoBVjqPuDQRwur9/YrwljKugqPaBY2rPrA7celFSDJIO89J7FResiNh/c1sTdC2IU6eZJ223JyBZC7spLcplTDmyPafQgE60G+165VEacRBYhl6hgezvHw2TsP4E2ShEjumlIEGUpnvrcv5NyZUnTcPIDHASIbBiuy0MUNyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037240; c=relaxed/simple;
-	bh=lv9c03O8j0aOw9yokKu2khhzwUjROQHnbJfhnWDKLGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H5Q3A4V7WK2jqyctVxEV77Aqgv6SZ5nWF5YFY4UPxkdYzKhuXOG8IxgirCbWHbwoPk6FiQTsUzgwEar6uBoWpRuhyBZ5EvRa9mnOaDF3d27rm7CJPCfVafg9jUl1ccxeZk6yzuu+Tu1CW7tggEcVJ36/NDsSRujIin/MxjOngUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A5D91063;
-	Tue, 21 Oct 2025 02:00:29 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B89573F66E;
-	Tue, 21 Oct 2025 02:00:36 -0700 (PDT)
-Message-ID: <1148d823-5a89-4f32-911b-f009a8ea5641@arm.com>
-Date: Tue, 21 Oct 2025 10:00:35 +0100
+	s=arc-20240116; t=1761037310; c=relaxed/simple;
+	bh=zo7FMMU21d+H8nlfETeUkJqvTYT9a1KWD14ezWk03WY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bclcPoY+hmRSmaNsiawoCHuan1ifKc9DjaXT0V8l/wPRINR6H5I2nnSFkfyyX6v1xk+EZFYJ7/rOKmYue7P/7KRKW9gn7LjeDrMIQ8VA+8dkQCZIZC7oHlrkRMAUJA+m6evnzzutK7yBLZuO9LNFPzrEApbR4d0VmoRBiGsniEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xx/dlBX4; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47109187c32so25487085e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 02:01:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761037307; x=1761642107; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a7hM7uckFcu+8xOxYahCnfJuF1kzdKDORaIviV98zX4=;
+        b=xx/dlBX4YBy/SLGIC5Nfkyd54TppNFFjzoJQMIzdaShSUZJzBZKLO3RP/l/ksSjUYe
+         tgBsAxJV4EGJ1CcIrvQajhosZ5dlOkX12NBgY10xa2j2dix+SGShc3wnL1473YlRmAVR
+         AaMq+dPqYYautYYSMQIaf/WUwQ7arGpou5moIrjQX2deVIbkdOMyBkIjlFTIelCzgmj7
+         GN0wn8dc2zcymka1fU/lBcGunuJlpOK1p3X65+4iONUdf/DQ3QpCuZvwHvCLN9vxed53
+         ikb+Vh3TBxfJzZooLCuFKXlJGthbGEABcivyXB8MhOhSnVU6WW7EqDztkmgZLO0/r/rX
+         Je7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761037307; x=1761642107;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a7hM7uckFcu+8xOxYahCnfJuF1kzdKDORaIviV98zX4=;
+        b=RIde/vBobF5To9IwreBNHUM5fJMXm8YxB24/B2fbnbibGEPobAk1C0nxzD9zULG+Ax
+         iGCA8pv5fUxHvlsG9s4YYPyI4nvtUXfYd1QlcgIYZC1W8XeCChnEHng+u40z2eRh5sNG
+         hOxxXPbP9xS7jbSbr3wKPLVRmSeU7TMkqFUwBY47byLOAJR4v2xZ6eG0uSuf560k+mhF
+         1S9nnkT+1dPpcBHOkWTHPneMKY9rFMWsOdrz3L0x0TbGRFj0IP1DoP9rqfO0uv4edQtW
+         Oq3MLxi3bCGPCWXGusT/CmT+Go0rdztTx7KHanJrr2/eA61Nfynw5R47m9yuVtSWfzJ/
+         DzTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0nCv3HMi1V5pHkWjoQ+LRhqEhi66EEy8kThCvb+Vmt32uzyXIxUM01lL5f4ewGp3On566qQib/qYvM0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkUJN7Lm8KjPZsQz5tElJygZAaBeQN4rtcRUC/qHJSNZitjGiY
+	ezO69NtX/Qiycs9YifhS051gPO+FzG3P3rWCf4TPAygbI2yHRCqCjO0hgY5MEtlyx0g=
+X-Gm-Gg: ASbGncsvwvQ2ou/mStSt6wrWLNf4JFoDxn/CuMm78FsqWBKQ8b6i3OGVpwmPod5e3fO
+	LlMFJQgfQ8pi+ujPBL9jm5rY5IHVtsmqUNM3AG0FdktwL+MC+DMw9Cd6Tqa6pWg5PB0GTSuL9xf
+	xHD/tD77RJVPiONfisGfKeEF3yFPXe+B7mW3nOO+/y5CFox8M14FnpDHFIxAR4ytScyhxBjp5Rl
+	j+ARa/URs7749urjC8cXmqu3FQtatTrcFxK3FFoaZtGdy+pDsEQI1P6aqI0C8RmBHdczHvOa+hK
+	14lZ3glm2OVxe+tb41050uWyuBBoRhz3pX6Ja+VXCcBpOHDsOPTGLqFE5joX7vhN3y3ePJsYCJS
+	3an0roDEYz9QrDjLZW4EhVVpyhpbZGQksFQ4Y5zja3YPwfLe0OH4W+9nodYyLf85kUWC1Lb5ZSF
+	3jng==
+X-Google-Smtp-Source: AGHT+IFwaSBjtILyooiRtf1Ykxp9UxcePTyTy4SgHykASPLMYxBKsOoz1/6AxkfVyxkle8GOQXe6Qw==
+X-Received: by 2002:a05:600c:3b22:b0:46e:4704:b01e with SMTP id 5b1f17b1804b1-471178767f4mr119724175e9.8.1761037307000;
+        Tue, 21 Oct 2025 02:01:47 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2979:9ff9:6677:97c6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d972sm191369065e9.1.2025.10.21.02.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 02:01:46 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Kent Gibson <warthog618@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] gpio: aspeed: remove the "gpiolib.h" include
+Date: Tue, 21 Oct 2025 11:01:42 +0200
+Message-ID: <176103730245.11215.16894410168920796474.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251016-aspeed-gpiolib-include-v1-0-31201c06d124@linaro.org>
+References: <20251016-aspeed-gpiolib-include-v1-0-31201c06d124@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20251021052022.2898275-1-anshuman.khandual@arm.com>
- <20251021052022.2898275-3-anshuman.khandual@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251021052022.2898275-3-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Anshuman,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On 10/21/25 06:20, Anshuman Khandual wrote:
-> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
-> While here replace hard coded page size based shifts but with derived ones
-> via ilog2() thus adding some required context.
+
+On Thu, 16 Oct 2025 11:09:24 +0200, Bartosz Golaszewski wrote:
+> gpiolib.h is a header internal to the GPIO core. Drivers should not
+> include them. gpio-aspeed only needs to be able to determine the
+> hardware offset of the GPIO given the descriptor. Expose the relevant
+> symbol in the consumer header which allows us to stop pulling in the
+> private one.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 131096094f5b..cf75fc2a06c3 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -57,9 +57,10 @@
->  /* This macro creates a properly formatted VA operand for the TLBI */
->  #define __TLBI_VADDR(addr, asid)				\
->  	({							\
-> -		unsigned long __ta = (addr) >> 12;		\
-> -		__ta &= GENMASK_ULL(43, 0);			\
-> -		__ta |= (unsigned long)(asid) << 48;		\
-> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
-> +		__ta &= TLBI_BADDR_MASK;			\
-> +		__ta &= ~TLBI_ASID_MASK;			\
-> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\
->  		__ta;						\
->  	})
->  
-> @@ -100,8 +101,17 @@ static inline unsigned long get_trans_granule(void)
->   *
->   * For Stage-2 invalidation, use the level values provided to that effect
->   * in asm/stage2_pgtable.h.
-> + *
-> + * +----------+------+-------+--------------------------------------+
-> + * |   ASID   |  TG  |  TTL  |                 BADDR                |
-> + * +-----------------+-------+--------------------------------------+
-> + * |63      48|47  46|45   44|43                                   0|
-> + * +----------+------+-------+--------------------------------------+
->   */
-> -#define TLBI_TTL_MASK		GENMASK_ULL(47, 44)
-> +#define TLBI_ASID_MASK		GENMASK_ULL(63, 48)
-> +#define TLBI_TG_MASK		GENMASK_ULL(47, 46)
-> +#define TLBI_TTL_MASK		GENMASK_ULL(45, 44)
+> [...]
 
-The definition of TLBI_TTL_MASK changes here. This might be the correct
-thing to do but it should be mentioned in the commit message and the
-other user, arch/arm64/kvm/nested.c, needs to be updated in tandem.
+Applied, thanks!
 
-> +#define TLBI_BADDR_MASK		GENMASK_ULL(43, 0)
->  
->  #define TLBI_TTL_UNKNOWN	INT_MAX
->  
+[1/3] gpio: rename gpio_chip_hwgpio() to gpiod_hwgpio()
+      https://git.kernel.org/brgl/linux/c/df900536e85819f6168783d5f6b3908d47811fdd
+[2/3] gpio: export gpiod_hwgpio()
+      https://git.kernel.org/brgl/linux/c/d19f6451c6feefd6537b97efa5f3859681f243cb
+[3/3] gpio: aspeed: remove unneeded include
+      https://git.kernel.org/brgl/linux/c/0efa5b2ca6fa7baab4c523b34cfb9495ec143d61
 
-Thanks,
-
-Ben
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
