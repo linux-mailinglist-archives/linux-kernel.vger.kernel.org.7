@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-862927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B822BF68B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:51:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EF9BF68AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 14:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CB1B503E09
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:49:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67AF64FD9D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 12:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980E233343C;
-	Tue, 21 Oct 2025 12:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA61332EC0;
+	Tue, 21 Oct 2025 12:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjYtMr9F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izAzexJh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6336533343A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 12:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B747D3C465;
+	Tue, 21 Oct 2025 12:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050982; cv=none; b=TmCKa7rKKxToSPEf5/pGDp8/u4AgCII9x54emoILxLCFXW8AY02QgLjL6fOrysTGjrF5mKQzJHY/zWfkwKVX9ZAzS0MuTrhBCHzAQPID/5hJU4hBalkDt633CJi/9Cpt6hQbttfGmdPaehpKdjb+DQDut9rSFf5TThCh7H3phpM=
+	t=1761050953; cv=none; b=fEmbHDaeweMiHs2PzPNhgOBQlHS2DA7693+qK8GZzmL8No4c/QhuXKbiE5WyuHLEACKLQjbJSJkDrrEDIiJdEKCF3HtvBdD2YchOP/hSjPbAZDrSiz4vr+GPlhzd/J1710XLL+InrsQjYaScAKI5vhRQvqCm3ku5ganSbywGsps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050982; c=relaxed/simple;
-	bh=oCl8QhwD4YFXtytp21BeTWFVrtnv/Mx7eG/HPHCv3lU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YzN9bDw8bke2MoRPYVyTo1ueePSlUTOVukkiaSYf6+1+2MGpx1a+BgEaTx/a8aocLZJBOupr3rTocKMFbaOh+Tm0ES+ZqC9XlrB+N2Keh97ViwMs4rcli4/5HT6Mm92Wzbww0gJ4J8WwqgREtSGddeCc3qK8YisiwuJoRzqOHNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjYtMr9F; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761050979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Qn23J7rywZzalZw0oUbpvqLTaeUXqKnHA0ur273KncE=;
-	b=SjYtMr9FZ9ZGwinq5ssvpDd6XtCkOSC+s1EO2dUgBv9kqysMvWoXds4lfoKP2JCXHZjPuD
-	GgtXXuMrH99tQAn8cCeKov4KArPv1bpL2Tscvd6gjhesqvAJ/5de9T2BrmsRetZdAWTJ/c
-	Qlnez9a6zzoSwslE9+F07KX+2OvamLI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-o4EAqQk3M1aD1zQgG9jZ_A-1; Tue,
- 21 Oct 2025 08:49:37 -0400
-X-MC-Unique: o4EAqQk3M1aD1zQgG9jZ_A-1
-X-Mimecast-MFC-AGG-ID: o4EAqQk3M1aD1zQgG9jZ_A_1761050976
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8866E195608D;
-	Tue, 21 Oct 2025 12:49:36 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.45.226.100])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DE9AD180035A;
-	Tue, 21 Oct 2025 12:49:34 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Nam Cao <namcao@linutronix.de>
-Subject: [GIT PULL v2] rv fixes and selftests for v6.18-rc3
-Date: Tue, 21 Oct 2025 14:48:30 +0200
-Message-ID: <20251021124830.501505-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1761050953; c=relaxed/simple;
+	bh=Szcu56TTRNZm1ym9VAcT0s8t5GDHDmrpmE1+1BNZu94=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OTrjLrV7S/St65SzoITHek+c1/DJ5rBSY0//y1sn0afSkI+j2shPqL2mLfDYMbnxP9Atv8SJletlAR8s4PAyQPq8J5Wwpl33DQOsbGTS0LU9xjVTMhdCGoG+gEHMfDlZRu/DV/snVzzyUneQBV4D0UrVB/jrbG6XFCSuu+OIpfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izAzexJh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6184CC4CEF1;
+	Tue, 21 Oct 2025 12:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761050951;
+	bh=Szcu56TTRNZm1ym9VAcT0s8t5GDHDmrpmE1+1BNZu94=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=izAzexJhzqagmLXK5wRcMQWyZRAJf8XSK8aavQnVP25v/QKGRBV10F+i9zze6WJy7
+	 vC9qCFdAVDpHfZA+ZdHaGMzvXB3EVR1Z5y+s/U6SAErS9ayy7zE5qtYj31YNOi+kNz
+	 4BOZaq3thw0ubJhm3s6wR3dXZEPJo2hel4LizT8DOwmJt2fCrRuA6GZ9hv8J8vk4eF
+	 qhKPrKvnGDrqKroN/vFhaMugTk1OfB8nd17ait1WG8vghpDBGnk/FV7zfRon5dZFF6
+	 u8Rz6TNvE4l1qMQsWiQ7E+R1I1fTCHyVE+QcfbBTRwdMRVbcmPYxUZt+wNpb9ut4nW
+	 8hGaFhHltycnA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
+Date: Tue, 21 Oct 2025 14:49:00 +0200
+Message-ID: <20251021-staudamm-letztendlich-2100c3b719ec@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251010221737.1403539-1-mjguzik@gmail.com>
+References: <20251010221737.1403539-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1200; i=brauner@kernel.org; h=from:subject:message-id; bh=Szcu56TTRNZm1ym9VAcT0s8t5GDHDmrpmE1+1BNZu94=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8b7S7xxWTdVWKsekMR8Dz5LKV/adV/1zcPUWvgqVon 5nDgU+bOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay2pvhrwT/St7/wo/Nojb4 cX0+GB25R7K/4pa8Ssje6Jh3GcK2Ugx/eG1DPuTVFMssl5m1fp1WpFvFW+eAECcFp5feff+nKYi yAgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Steve,
+On Sat, 11 Oct 2025 00:17:36 +0200, Mateusz Guzik wrote:
+> In the inode hash code grab the state while ->i_lock is held. If found
+> to be set, synchronize the sleep once more with the lock held.
+> 
+> In the real world the flag is not set most of the time.
+> 
+> Apart from being simpler to reason about, it comes with a minor speed up
+> as now clearing the flag does not require the smp_mb() fence.
+> 
+> [...]
 
-The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-are available in the Git repository at:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gmonaco/linux.git rv-6.18-rc3-2
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-for you to fetch changes up to 3d62f95bd8450cebb4a4741bf83949cd54edd4a3:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
 
-  rv: Make rtapp/pagefault monitor depends on CONFIG_MMU (2025-10-20 12:47:40 +0200)
-
-----------------------------------------------------------------
-
-Summary of changes:
-
-* A bug causing kernel panic when reading enabled_monitors was reported,
-  change callbacks functions to always use list_head iterators and by
-  doing so, fix the wrong pointer that was leading to the panic.
-* The rtapp/pagefault monitor relies on the MMU to be present
-  (pagefaults exist) but that was not enforced via kconfig, leading to
-  potential build errors on systems without an MMU. Add that kconfig
-  dependency.
-
-----------------------------------------------------------------
-Nam Cao (2):
-      rv: Fully convert enabled_monitors to use list_head as iterator
-      rv: Make rtapp/pagefault monitor depends on CONFIG_MMU
-
- kernel/trace/rv/monitors/pagefault/Kconfig |  1 +
- kernel/trace/rv/rv.c                       | 12 ++++++------
- 2 files changed, 7 insertions(+), 6 deletions(-)
-
-Cc: Nam Cao <namcao@linutronix.de>
-
+[1/1] fs: rework I_NEW handling to operate without fences
+      https://git.kernel.org/vfs/vfs/c/f5608fff035a
 
