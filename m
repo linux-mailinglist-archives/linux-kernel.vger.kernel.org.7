@@ -1,107 +1,72 @@
-Return-Path: <linux-kernel+bounces-862326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEF0BF5010
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:40:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A563BF5001
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 09:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A5DA4E73A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:40:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BC44077F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 07:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211DB280024;
-	Tue, 21 Oct 2025 07:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA83280024;
+	Tue, 21 Oct 2025 07:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="IcSZPJAX"
-Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 3683A246762
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 07:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kW/EJQgP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E23264F99;
+	Tue, 21 Oct 2025 07:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761032437; cv=none; b=qb8qW99nXvcruPOC8sXHBKUJ6gauwL2BTA7ka/RhwAZAdHu6TYWtzvezqTS0spUgkjLAkKqq1Q2uz4AXPtI/Ng0Z5XolVDM2JWm/lx4mMWUAqco0V+0D+UXoNV56kZPjWO60WRgKi73zoiyQfqTEk7qEvraDAmCg5BEDMN9vnZ8=
+	t=1761032274; cv=none; b=F93bX6ICBZTCW/rWqDxms1X4ZEvsis7dzQoB4qQRZEQPyYXgdrNu3IQqwpWynBkwS1iTwJWPPNpbilMP4Um8BiX1YW58qMkODlPRCiakvEacFFz/4N5RsXtmpqO0PPgrw9tEx8ZxcZIJjJ3UExZsUSFIAatHY0xyFYfbUazagWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761032437; c=relaxed/simple;
-	bh=1Fae+9kDgarwteFz3rVD4NDlZJfYEw7ZwZwiEpnAcx8=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SQDA8Sq2O+8JsZZ/PrfOL4+x310MG0XB+EUWo0mz7IR5Ug+ZegDSp6OhWk99GEyboCiS/oYnlynWW1lb99wNn7XwGA9m0wqqtAZrx0+h0k1EEUM4Vxr8LILdGJW7tb5HG05mTvZLA1kXQexPCn/SMz5JIWHZ0KHry78zNUyTmRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=IcSZPJAX; arc=none smtp.client-ip=111.202.70.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.71.38])
-	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id F2854181D0F585;
-	Tue, 21 Oct 2025 15:35:09 +0800 (CST)
-Received: from BJ02-ACTMBX-07.didichuxing.com (10.79.65.14) by
- BJ03-ACTMBX-02.didichuxing.com (10.79.71.38) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 21 Oct 2025 15:37:14 +0800
-Received: from pilot-ThinkCentre-M930t-N000 (10.79.71.101) by
- BJ02-ACTMBX-07.didichuxing.com (10.79.65.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.10; Tue, 21 Oct 2025 15:37:14 +0800
-Date: Tue, 21 Oct 2025 15:37:07 +0800
-X-MD-Sfrom: jingsusu@didiglobal.com
-X-MD-SrcIP: 10.79.71.38
-From: Jing Su <jingsusu@didiglobal.com>
-To: <akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<jinnasujing@gmail.com>
-Subject: [PATCH] mm/vmstat: Fix indentation in fold_diff function.
-Message-ID: <aPc4I/8zXCGyiapN@pilot-ThinkCentre-M930t-N000>
-Mail-Followup-To: akpm@linux-foundation.org, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	jinnasujing@gmail.com
+	s=arc-20240116; t=1761032274; c=relaxed/simple;
+	bh=lZKwihMCOd7/pzj0SQjHelSQ5IF7oTaMW+peov8i0ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vFgm9nixEQtIDTtA9HKdmBv/3G3kbbUbnaSgIhe0T/2XeGeEDCjqI30JgixzZMouT/GjJmVDEdpa5jHj/uTdcgQM+87znN5DpOI3D68ko3qv7JbwOmyYskZFeeXhSUT67JOSiaG2zBdkCBqHdfH2UTlv39rcCnWsTra5Zn+Gx4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kW/EJQgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCDB2C4CEF1;
+	Tue, 21 Oct 2025 07:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761032274;
+	bh=lZKwihMCOd7/pzj0SQjHelSQ5IF7oTaMW+peov8i0ro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kW/EJQgPBBI7WcMU1JHnx8XIIwwccqd3W5ijXkwJKyVUOvmJCjlyVBlQTUuHo24nH
+	 0aoCTuNsaanKdzvj8Utef060Q1z5lmWz/x3HoKZmvdmNpQxjmrwAiBMWHDvHiLjhHR
+	 aJtN2r5Q5PNcOMbfQZYWSFcEORE0Kx1b284tQd5g=
+Date: Tue, 21 Oct 2025 09:37:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Olle Lukowski <olle@lukowski.dev>
+Cc: Andy Shevchenko <andy@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: fbtft: fb_ra8875: replace udelay with
+ usleep_range
+Message-ID: <2025102120-ride-repaint-7a22@gregkh>
+References: <20251020-staging-fbtft-ra8875-usleep-v1-1-9592dd390c13@lukowski.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-ClientProxiedBy: BJ02-PUBMBX-01.didichuxing.com (10.79.65.22) To
- BJ02-ACTMBX-07.didichuxing.com (10.79.65.14)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
-	s=2025; t=1761032114;
-	bh=bz2COxVLbbO+0xNIIj1XYl4plzJn4e3cBaijQkcaMjs=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type;
-	b=IcSZPJAXydXPbYEMdNbAAPnOydi0mtyZz3M6Ys8VsX7K8VYicsrB5j/38Ze/L3IsZ
-	 5+NWrgvZQMwBeX6PfBkVm/fjlAsg8XUlACkXuqwsPEfqRL1zp7S3ocMQuB/qRkNfPb
-	 3JmAqo2BWK7vngrURKKfGtKAjs0RbJtdCNQvnHiA=
+In-Reply-To: <20251020-staging-fbtft-ra8875-usleep-v1-1-9592dd390c13@lukowski.dev>
 
-Adjust misaligned braces in the fold_diff function to improve
-code readability and maintain consistent coding style.
+On Mon, Oct 20, 2025 at 10:15:36PM +0300, Olle Lukowski wrote:
+> Replace udelay(100) calls with usleep_range(100, 200) to allow the
+> scheduler to yield instead of busy-waiting. This is the preferred API for
+> sleep durations above 10 microseconds.
 
-Signed-off-by: Jing Su <jingsusu@didiglobal.com>
----
- mm/vmstat.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+As per this type of change, have you tested it on real hardware?
+Without that, we can't accept this change, and such checkpatch.pl
+comments should be ignored.
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index bb09c032eecf..63860c3d22e6 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -782,13 +782,13 @@ static int fold_diff(int *zone_diff, int *node_diff)
- 		if (zone_diff[i]) {
- 			atomic_long_add(zone_diff[i], &vm_zone_stat[i]);
- 			changes++;
--	}
-+		}
- 
- 	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
- 		if (node_diff[i]) {
- 			atomic_long_add(node_diff[i], &vm_node_stat[i]);
- 			changes++;
--	}
-+		}
- 	return changes;
- }
- 
--- 
-2.34.1
+thanks,
 
+greg k-h
 
