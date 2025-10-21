@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-863417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3438CBF7D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:13:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B29BF7D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC5018937D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F0189839A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841B034B18E;
-	Tue, 21 Oct 2025 17:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2Q1SsXK2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE9834B192;
+	Tue, 21 Oct 2025 17:14:19 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C1234B186;
-	Tue, 21 Oct 2025 17:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0E934B186
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066818; cv=none; b=Us3oP8AKZJF3LvfcAYWZwMSPsJuKnBQQcvkVZQqOz8ieQrBkQL6Poy9hMdhT+LTihZMW62U0JHmlQdl7QFz4s939pVL6Ik06VE1i93soFqRAtSLDQSFPsas+wzbk03TVisjJd8sg/l0qPKts3PhBWvq/Y8XKD+WKmJo9eXKMDk0=
+	t=1761066859; cv=none; b=D4ywrDLeNopXQBcSaEsDB+qP++K2J66LYbDDOQVPalvUHiJ87iM8BP9HanePw34VK9yq70Mqj8idMfScbOG1hk9l0t7iLR4W0i6hR0/L9IPvnbQHXPU0F/YuZGJv/WFlZfc4TmMw9BonB7ckUotXBNy1yPUyv/5fCMMA+w8WIsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066818; c=relaxed/simple;
-	bh=R5R2k63XM16jqmqIYLNZB7V1352UBMlgCSWQ7dgTCYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WGkBN+rRFXcrdHZH24SsALAFY90UBY4ywbLmX40YpUTepVI5Iopa4SrLAP8wTOpC+T+Y7aOC+DoweO3lpZfYRuMQNwLS5rT4jONUff2QKjGk3orjBJ/CXGcxOPsyUjWCL/sQECoFHjhF+5/P8D/DExPGgF+i/T68GDptrqz8NUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2Q1SsXK2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=T7OF7YinQtdM6zEwx9mf3VJteIbSNxF5xxDOzyp6kaY=; b=2Q1SsXK2pXUN8mCnQvRcx+QhQn
-	VHutmMR5Rm8NehoV2QJEip/SnFEKMiY64LR/hUPPumhePnybaugYxUzHfGHyOTx0cLGbotoYVCFO+
-	9lyaG/SBzt/6AdyC0IaqifMG/VBu1VMxQL4cnSdmGLEv5ebIL4NZuRX+insIu9cdUJH+b1dnBTRaV
-	g/ngxAKGwaWSaDIqSP52BljzzeAD3aihVqBuTjHlzHYldIZjI+8FkMKoKbeVVwYEWZ5Mboqi23dON
-	0PhF/1OuVgk3SXof8lmqPChWNgxxrLnkYAEP0sqPbIgJb3IRxOhYKRc9Dv4GF2LUgqx3m6edVBpYg
-	uGdt9VGQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBFvS-00000000CZQ-0p2N;
-	Tue, 21 Oct 2025 17:13:34 +0000
-Message-ID: <3ba11b0c-818f-41d5-8885-038c7e0133f5@infradead.org>
-Date: Tue, 21 Oct 2025 10:13:33 -0700
+	s=arc-20240116; t=1761066859; c=relaxed/simple;
+	bh=m9I51bYY1m0WNs/hOiA/JO2dxI3lUIwza6OUCjsL2hU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fCnxgt28FQ9VQnNi2YRM/16dHpMcZf84hMJi7cZ/b+LecNW2gEbooG+fJYusXYDQY/FoI6Qsb+GajSw88tgB3XFCLW915CJT09TXk7r1tnIZnsgsVjZP9/09V+habrcCsqSy5JF99TP7C5X0lfODV8uJlMmrzl7Fep/z/XTJpAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430db6d358bso98113705ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 10:14:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761066856; x=1761671656;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6IzUxC1g+9YHJve3PM4ojm62q86eibiPXknM8z0/u0U=;
+        b=sBzzM8+Toq7ZAyMK7gP3oR429xuH8GAKvlPRcWibmYGLtwLJklbWRQF4yjvP4In5bj
+         Y5LCN+LIhfEtJRnYhkRUW65uB2Arw/n+9cSQyIh65q1frBSR2erjT/nVUYPgQGdHFBoT
+         iMqnU9Hw0Etq4kSwJQoqqJrftb9KQDzZPhD8u/xNfowVY5amZyEnnJF1THiKtCU7qvaN
+         eb+n//+gQnSXVr83Jm2sUL0/zmxc+43Qg5poaC9EFVnTRL3WEFjKbTqudUyMDY7calv5
+         sVT9Gx+6JMKxGzsW+bCW8t+tMAUmteB1OA4yPBUpOrDxFrgrxOMsIkO3pRwql1IpXnoG
+         yIcg==
+X-Gm-Message-State: AOJu0Ywxi12yb+1MzcGwShF7OGW47dw/orgjjZaQc0hkJBMx1n8rpb6o
+	eMcv1HO1h2wRg44NpkApeFriaY+Ivth2MqEYDK0iOWdpCXtgd7a2/l8K6j5FNlC8E9RPZqo0b7N
+	RZoL+K9T1XbY9FwiPh5a7jKNCNj3HL3PPIfG2OXWq96Pk1076x7uUMfrf7b0hog==
+X-Google-Smtp-Source: AGHT+IEbCecws4o5ZNPdTx6Mc2K419p4OBioUSvhE5KlKdV6tVTzu8M0pQ7fqIfcSQm5dqVFMdvQcjniU4ykLceymB95gsneGMJh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 20/23] mm/kconfig: make BALLOON_COMPACTION depend on
- MIGRATION
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-doc@vger.kernel.org,
- virtualization@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
- <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
- "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Zi Yan <ziy@nvidia.com>
-References: <20251021125929.377194-1-david@redhat.com>
- <20251021150040.498160-1-david@redhat.com>
- <20251021150040.498160-4-david@redhat.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251021150040.498160-4-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1445:b0:430:b6a3:53b4 with SMTP id
+ e9e14a558f8ab-430c52343f1mr283815495ab.3.1761066856292; Tue, 21 Oct 2025
+ 10:14:16 -0700 (PDT)
+Date: Tue, 21 Oct 2025 10:14:16 -0700
+In-Reply-To: <68f6a48f.050a0220.91a22.0453.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f7bf68.050a0220.346f24.0022.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
+From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
+***
 
-On 10/21/25 8:00 AM, David Hildenbrand wrote:
-> Migration support for balloon memory depends on MIGRATION not
-> COMPACTION. Compaction is simply another user of page migration.
-> 
-> The last dependency on compaction.c was effectively removed with
-> commit 3d388584d599 ("mm: convert "movable" flag in page->mapping to a
-> page flag"). Ever since, everything for handling movable_ops page
-> migration resides in core migration code.
-> 
-> So let's change the dependency and adjust the description +
-> help text.
-> 
-> We'll rename BALLOON_COMPACTION separately next.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/Kconfig | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index e47321051d765..3aff4d05a2d8c 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -599,17 +599,14 @@ config MEMORY_BALLOON
->  #
->  # support for memory balloon compaction
->  config BALLOON_COMPACTION
-> -	bool "Allow for balloon memory compaction/migration"
-> +	bool "Allow for balloon memory migration"
->  	default y
-> -	depends on COMPACTION && MEMORY_BALLOON
-> -	help
-> -	  Memory fragmentation introduced by ballooning might reduce
-> -	  significantly the number of 2MB contiguous memory blocks that can be
-> -	  used within a guest, thus imposing performance penalties associated
-> -	  with the reduced number of transparent huge pages that could be used
-> -	  by the guest workload. Allowing the compaction & migration for memory
-> -	  pages enlisted as being part of memory balloon devices avoids the
-> -	  scenario aforementioned and helps improving memory defragmentation.
-> +	depends on MIGRATION && MEMORY_BALLOON
-> +	help
-> +	  Allow for migration of pages inflated in a memory balloon such that
-> +	  they can be allocated from memory areas only available for movable
-> +	  allocations (e.g., ZONE_MOVABLE, CMA) and such that they can get
+Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
+Author: listout@listout.xyz
 
-nit:
-s/get/be/
+On 20.10.2025 14:07, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    98ac9cc4b445 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16be6734580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+> dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111e7dcd980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1223a492580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f8ad8459a8da/disk-98ac9cc4.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/28720fa307c1/vmlinux-98ac9cc4.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e4f310acec99/bzImage-98ac9cc4.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com
+> 
+> mac80211_hwsim hwsim5 wlan1: entered allmulticast mode
+> =====================================================
 
-> +	  migrated for memory defragmentation purposes by memory compaction.
->  
->  #
->  # support for memory compaction
+#syz test
+
+diff --git a/net/wireless/util.c b/net/wireless/util.c
+index 56724b33af04..05bb49afd5ef 100644
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -938,9 +938,9 @@ EXPORT_SYMBOL(ieee80211_amsdu_to_8023s);
+ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
+ 				    struct cfg80211_qos_map *qos_map)
+ {
+-	unsigned int dscp;
+-	unsigned char vlan_priority;
+-	unsigned int ret;
++	unsigned int dscp = 0;
++	unsigned char vlan_priority = 0;
++	unsigned int ret = 0;
+ 
+ 	/* skb->priority values from 256->263 are magic values to
+ 	 * directly indicate a specific 802.1d priority.  This is used
+@@ -963,10 +963,18 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
+ 
+ 	switch (skb->protocol) {
+ 	case htons(ETH_P_IP):
+-		dscp = ipv4_get_dsfield(ip_hdr(skb)) & 0xfc;
++		if (skb_network_header_len(skb) >= sizeof(struct iphdr)) {
++			struct iphdr *iph = ip_hdr(skb);
++			if (iph)
++				dscp = ipv4_get_dsfield(iph) & 0xfc;
++		}
+ 		break;
+ 	case htons(ETH_P_IPV6):
+-		dscp = ipv6_get_dsfield(ipv6_hdr(skb)) & 0xfc;
++		if (skb_network_header_len(skb) >= sizeof(struct ipv6hdr)) {
++			struct ipv6hdr *ip6h = ipv6_hdr(skb);
++			if (ip6h)
++				dscp = ipv6_get_dsfield(ip6h) & 0xfc;
++		}
+ 		break;
+ 	case htons(ETH_P_MPLS_UC):
+ 	case htons(ETH_P_MPLS_MC): {
 
 -- 
-~Randy
-
+Regards,
+listout
 
