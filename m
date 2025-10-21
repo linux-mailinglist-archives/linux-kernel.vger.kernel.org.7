@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-863439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-863445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF79BF7DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:22:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B2ABF7DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 19:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14654461E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:21:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 329F850118A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 17:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6C134F26F;
-	Tue, 21 Oct 2025 17:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF45B351FC2;
+	Tue, 21 Oct 2025 17:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AsbCUW7u"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KPYNUwBz"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213E534D4EB;
-	Tue, 21 Oct 2025 17:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C17134F259
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 17:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761067147; cv=none; b=MFwqmIHnt0WLI/lwFqVlGTAPzDXdqJ0hIFIGOxU4L+QXgUZew+gjJ+qh0Hb1XxiQOcdsHf1ttQdz5oVsyWmKuSel4UeLCiYhoVvnbOYQRXbeTT45iAkWbdEuIlz47xTmb4fxaa4049N3c1kroSxbJfXhhpWy87IorVlGEqVEls0=
+	t=1761067150; cv=none; b=BUlIyMLiW0dVDSjTddMkOR5d1bDrdI2+ik071E4nuAAaQa9zNyxVH5L8/7QlmXWvMZB5G0bpQ01G4tyvds+VZ4HbGjWkCMISAakSZIcT4r5Bp3XLMM3REJf4I46wDDhj4gKHiLIM1+MeQgWxKba4lAhqi82Q7wELulfFC63Y77Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761067147; c=relaxed/simple;
-	bh=+bRiLb5dQAvRN4R9gkpLifGt86iHL6GjIh9D2uxZEnk=;
+	s=arc-20240116; t=1761067150; c=relaxed/simple;
+	bh=SFKXNxI2D8DveSb0iuyi3DCP6ARoRIgyPXXEtCvSLy4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfbjDUWbNOY7NdcmqXM3DSovfV6Q4rvbIXpktOzG0j8H9lku2LZHuXzNeQ/RLnk37aVRiZsWu1tNdkqCwaE2lY2Iv4tusDXx/dpDOg6QRQ8lPaMwKykBxvSiKYone3N5Va5xoUMxlAJSXcQy7+UTyAdHPD6OdpsUp5BruMPOqoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AsbCUW7u; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLIR6QLlQj0mjlnv+lm1tD/mmHR0GxN9MrQvRAuV6Wjxk6ZebtdnGbq2c5/lbG80E9SAEb3k8ubOIZW4Ca3DAGupfAYYJw4aJ90qyiocAfuI/sq9Ziyv/YcaB2MIaBPpzycL4Wg8D+i8BZiHrmGpbhc5hpQykUYtDhUt0vMkgDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KPYNUwBz; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=3kQP4yV9UYdKyPruWtgSSnS3+OsO9+ZfKrTdjVj28bU=; b=AsbCUW7uoEw4D6UkYmckrB21EA
-	UwGd31LewtCpEHLg4WsMUXp7Zj3+2yX2ud+RBu8Dr2kHv3qs2XPD2cHi8XKHyzNMYgGR3/7ozRYPW
-	hlBlWgy6HcWaxP9lJgmc9PK9eNYCVuQmZFW9I+SsJFZx6nyNy0jSkVOfXBq9k6q8Dvedi7B+G3uaf
-	dGslZlog/zvcQV9X/Y5c31q5946IzGhYRH3oPNlIvqzvoLIg+gZ3/PT/NN4n6Lx3dZx3vqKFAh/yT
-	IEZApwcrK59mZNVsZz3+J7FC9WH4E2g1bxSpHGih4DNVs+3NA6ef1VqtX/9kNWsWmHEYcRbKWrXxt
-	IWBcvPVg==;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y/StCdBz4tVNkLXlg1ey+eVlWMJElE5BuNhrxIOtBFs=; b=KPYNUwBzuvmAqW1zKeRiHp/RvD
+	TgR6Fc9vXfqaTihmHlQkHM/c5UuRVk89A0r6U3jZe1UfjD/ior4hskysxQjrZZ3MGK0bQeN+grpXH
+	gohlcR61iMpVOcu30OOByO1ArQUAr2hrX5Rb1WymP4ziMHXnyVGVeDFLwBmVFBdRyDsM8GDqOkJrk
+	TjTdXMT61h8wduUGN+RzpCJV31uXBu7nW9dpu8P/HXVnOle852bohjqyprSnx0dDIozWNZGRi6E45
+	co0rdGbXPlj9pFb9EB3OEFmCoHfcYQMJt32aSsu+PBi3x+FnIORnsQxJbo5l1ERVFzNnUxa+6n2E6
+	7iOnDb5w==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBG0a-0000000DsSb-2NOb;
-	Tue, 21 Oct 2025 17:18:54 +0000
+	id 1vBG0d-0000000DsXa-191M;
+	Tue, 21 Oct 2025 17:18:56 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 57FE730315A; Tue, 21 Oct 2025 11:59:36 +0200 (CEST)
-Date: Tue, 21 Oct 2025 11:59:36 +0200
+	id DF92A303164; Tue, 21 Oct 2025 12:10:00 +0200 (CEST)
+Date: Tue, 21 Oct 2025 12:10:00 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: Bill Wendling <morbo@google.com>
-Cc: Kees Cook <kees@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
-	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Shuah Khan <shuah@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	kernel test robot <lkp@intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Marc Herbert <Marc.Herbert@linux.intel.com>,
-	Christopher Ferris <cferris@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Jeff Xu <jeffxu@chromium.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-Message-ID: <20251021095936.GM3245006@noisy.programming.kicks-ass.net>
-References: <20251020220005.work.095-kees@kernel.org>
- <20251020220118.1226740-1-kees@kernel.org>
- <CAGG=3QV7-W5vEPNtABghg=ktn6kKs45_e-PWBT9oCUzURod1bg@mail.gmail.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Aaron Lu <ziqianlu@bytedance.com>, linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2] sched/fair: Start a cfs_rq on throttled hierarchy
+ with PELT clock throttled
+Message-ID: <20251021101000.GN3245006@noisy.programming.kicks-ass.net>
+References: <e2e558b863c929c5019264b2ddefd4c0@codethink.co.uk>
+ <20251021053522.37583-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGG=3QV7-W5vEPNtABghg=ktn6kKs45_e-PWBT9oCUzURod1bg@mail.gmail.com>
+In-Reply-To: <20251021053522.37583-1-kprateek.nayak@amd.com>
 
-On Mon, Oct 20, 2025 at 03:53:55PM -0700, Bill Wendling wrote:
-> On Mon, Oct 20, 2025 at 3:01 PM Kees Cook <kees@kernel.org> wrote:
-> >
-> > Introduce __counted_by_ptr(), which works like __counted_by(), but for
-> > pointer struct members:
-> >
-> > struct foo {
-> >         int a, b, c;
-> >         char *buffer __counted_by_ptr(bytes);
-> >         short nr_bars;
-> >         struct bar *bars __counted_by_ptr(nr_bars);
-> >         size_t bytes;
-> > };
-> >
-> > Since "counted_by" can only be applied to pointer members in very recent
-> > compiler versions, its application ends up needing to be distinct from
-> > flexible array "counted_by" annotations, hence a separate macro.
-> >
-> > Unfortunately, this annotation cannot be used for "void *" members
-> > (since such a member is considered a pointer to an incomplete type,
-> > and neither Clang nor GCC developers could be convinced otherwise[1],
-> > even in the face of the GNU extension that "void *" has size "1 byte"
-> > for pointer arithmetic). For "void *" members, we must use the coming
-> > "sized_by" attribute.
-> >
-> I'm pretty sure that "sized_by" is available in Clang right now.
+On Tue, Oct 21, 2025 at 05:35:22AM +0000, K Prateek Nayak wrote:
+> Matteo reported hitting the assert_list_leaf_cfs_rq() warning from
+> enqueue_task_fair() post commit fe8d238e646e ("sched/fair: Propagate
+> load for throttled cfs_rq") which transitioned to using
+> cfs_rq_pelt_clock_throttled() check for leaf cfs_rq insertions in
+> propagate_entity_cfs_rq().
+> 
+> The "cfs_rq->pelt_clock_throttled" flag is used to indicate if the
+> hierarchy has its PELT frozen. If a cfs_rq's PELT is marked frozen, all
+> its descendants should have their PELT frozen too or weird things can
+> happen as a result of children accumulating PELT signals when the
+> parents have their PELT clock stopped.
+> 
+> Another side effect of this is the loss of integrity of the leaf cfs_rq
+> list. As debugged by Aaron, consider the following hierarchy:
+> 
+>     root(#)
+>    /    \
+>   A(#)   B(*)
+>          |
+>          C <--- new cgroup
+>          |
+>          D <--- new cgroup
+> 
+>   # - Already on leaf cfs_rq list
+>   * - Throttled with PELT frozen
+> 
+> The newly created cgroups don't have their "pelt_clock_throttled" signal
+> synced with cgroup B. Next, the following series of events occur:
+> 
+> 1. online_fair_sched_group() for cgroup D will call
+>    propagate_entity_cfs_rq(). (Same can happen if a throttled task is
+>    moved to cgroup C and enqueue_task_fair() returns early.)
+> 
+>    propagate_entity_cfs_rq() adds the cfs_rq of cgroup C to
+>    "rq->tmp_alone_branch" since its PELT clock is not marked throttled
+>    and cfs_rq of cgroup B is not on the list.
+> 
+>    cfs_rq of cgroup B is skipped since its PELT is throttled.
+> 
+>    root cfs_rq already exists on cfs_rq leading to
+>    list_add_leaf_cfs_rq() returning early.
+> 
+>    The cfs_rq of cgroup C is left dangling on the
+>    "rq->tmp_alone_branch".
+> 
+> 2. A new task wakes up on cgroup A. Since the whole hierarchy is already
+>    on the leaf cfs_rq list, list_add_leaf_cfs_rq() keeps returning early
+>    without any modifications to "rq->tmp_alone_branch".
+> 
+>    The final assert_list_leaf_cfs_rq() in enqueue_task_fair() sees the
+>    dangling reference to cgroup C's cfs_rq in "rq->tmp_alone_branch".
+> 
+>    !!! Splat !!!
+> 
+> Syncing the "pelt_clock_throttled" indicator with parent cfs_rq is not
+> enough since the new cfs_rq is not yet enqueued on the hierarchy. A
+> dequeue on other subtree on the throttled hierarchy can freeze the PELT
+> clock for the parent hierarchy without setting the indicators for this
+> newly added cfs_rq which was never enqueued.
+> 
+> Since there are no tasks on the new hierarchy, start a cfs_rq on a
+> throttled hierarchy with its PELT clock throttled. The first enqueue, or
+> the distribution (whichever happens first) will unfreeze the PELT clock
+> and queue the cfs_rq on the leaf cfs_rq list.
+> 
+> While at it, add an assert_list_leaf_cfs_rq() in
+> propagate_entity_cfs_rq() to catch such cases in the future.
+> 
+> Suggested-by: Aaron Lu <ziqianlu@bytedance.com>
+> Reported-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
+> Closes: https://lore.kernel.org/lkml/58a587d694f33c2ea487c700b0d046fa@codethink.co.uk/
+> Fixes: e1fad12dcb66 ("sched/fair: Switch to task based throttle model")
+> Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
+> Tested-by: Aaron Lu <ziqianlu@bytedance.com>
+> Tested-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+> v1..v2:
+> 
+> o Fixed the commit in "Fixes:" tag. (Aaron)
+> o Collected tags from Aaron and Matteo. (Thanks a ton!)
+> o Rebased on tip:sched/urgent.
 
-My clang-22 build seems to accept it no problem indeed -- although I've
-not verified it actually does anything with it.
+OK, let me queue this for tip:sched/urgent. Thanks!
 
