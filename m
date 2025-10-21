@@ -1,261 +1,212 @@
-Return-Path: <linux-kernel+bounces-862469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-862470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D378BF5616
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:59:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC2BF5619
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 10:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D13189FE21
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E283B41A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Oct 2025 08:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0A82C0279;
-	Tue, 21 Oct 2025 08:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C894D328B68;
+	Tue, 21 Oct 2025 08:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yuGEbhQB"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZA6tcTt"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F801C5F13
-	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA232C0279
+	for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 08:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037147; cv=none; b=sN6VSdb6B1sztyOkiw6SAYPj12E1omVpx4jH+57nYMEh1sbVOqR9S1rF7gvySmTjU1l3cXEJSy4E353LbUi4EUf01yoPHq13zgc+g7ljxenGC2Hxj17lD+9m48z0oNxIRcgufDYdVPOjWYP85XdTo9kHtk61wOzKqxh3/hj46mA=
+	t=1761037192; cv=none; b=T9hM0pJCFJMqOk2vucB8+zxc2MvbCE/UD9+fdm0nVX2gAcBjpsgeTT5gwILezw2L0AWiyvO3tLOZEqy0PWqMG8PsF6/Cjc0Gv4+jDqENOWEG7Un8Qfyw58aiVBIcNrHC5lpiR+331kvs/Al6HzEpUVeFSvWRg0zTYEUcGov3bos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037147; c=relaxed/simple;
-	bh=9fiLN+EEhzVcDY8eLscZxHDGP6JG0wWCA1s6ugOtUJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndmlQdfrCXniEoIsD1mxoYKz1mFKZ2jdvoebCVS2ipMK45SMh0yddVuSU7hUdgcIz5rFC5+NgJ3oXVghqvQqMVUnOaqhQY7KhXJ9aqYiAEbK/24lQU1iKgRZyg/KvHdvghHOZUBCEHw3SavBDHtOT5Adc8wOJlvuNPl3XXeTE4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yuGEbhQB; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4711f156326so39903735e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:59:04 -0700 (PDT)
+	s=arc-20240116; t=1761037192; c=relaxed/simple;
+	bh=1QEUrYYVMgPUVpUr6hSgnMaTqKdSkGKC8eOI3537wng=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cYbjoZUM/ZSU4ljWitGUwQdYoRo1xrWQWCFDF0SH0lRhnko5/lBBWRSqtLlte4zqZead4LAZJzFEGoTv5byY4otrPFt+astezcGkj61aQN3wDShGDvurIvhFhhyhBODjZNH9g8l2N2Ue1l1I4mdBDnQDt931r7QaaGcormMn3Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZA6tcTt; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so7106961f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Oct 2025 01:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761037143; x=1761641943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6IhEXhH0GzZkxVr6xhPi4zF+UYRepWWZmFoVPtiXnCQ=;
-        b=yuGEbhQBlYWgjaUa13hUcYjqSYgX3bSiOh4vD3gwTPCcb+SyQHC+bR5CZ0OgU3jfOy
-         dfTMM8sOssHVSxgTOKZOJbu47lFcFdzMsyUcdUkg/Ncj1whAggbb/WKVfI4Wr0DCB5IM
-         C2FE1QbXhOvmy9qVWGp1rEUb6+B39jNjzh+EcHdTMR6fsuIxUE5VeE+WFwsOESCP3DCx
-         L4tLL1JlV0af37rNOh3/0LKe7cRxklG4OFvgzdpsYys4/K3T2Qjcxam4gIieLi90Mzqn
-         kzKUqw08kuBoffIuWb+TVGUP91a1+MxNDq5ByYhCH77GVCu0QzUGX1PUUTJ6DHMtCOpL
-         OdLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761037143; x=1761641943;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761037188; x=1761641988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6IhEXhH0GzZkxVr6xhPi4zF+UYRepWWZmFoVPtiXnCQ=;
-        b=jpnV0z3U3L4JcyeO7N2KzRns/To+MSx+CLIAP/VBaRmT6LEuc1lpzyI98Re2epG+SR
-         xiAVCFa9Mds7gD7hGpsdhMQJylqcYvQAlzRU8oxJzuYt4N2E1dpbwPI7MWnpWFNhzVXa
-         MJy8PWWbsZUw6bTTCaHeUBFks3OgM0+IIUlzHg4WlKCfL+wT6inuZ7aZ8WwgdElxRMsC
-         gLJiVO/VEADsy82fTzAkHXbiY9+UG9HHFCaTO6z8Z2v5Oo3uQSFgGNF3BCcP9ZxgQ4ua
-         56nArFuw8blNu/xODBJaO12Mt64f7eQoJsyfevD/Ru3DwdKYDRRQvBCFLVJEO3aNdMEv
-         /e3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVHCK+nmUDmP+j0+C4ddW2gaiv4ItVeKoKRUxWvk9E175l40yw4NkmMPBjycbyey5/XEoTls5mqpzX6nxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXAXKT25XkAHw41fjmdy6X2O00AsLSfXd2+vfj1u+5u7xguzhe
-	LtqBNDoskDuKW3dcTa7MOKfPWMVi50XPINKVZdUZwUsWawg1vmjzqjc6c6HRhw8qRrU=
-X-Gm-Gg: ASbGncvy1ukYT60SBBpmeao9NN+JSQ8O9YoPjiH0Aejijk7gZZCAHJB3v3kgJskOido
-	nV/N4G4bteI1S92+rp8QjYzRiDNLh8NBqkiiMWkSTubZKUfB2fRNhndQDVFOxAI4E3KibOO2yjg
-	cUV13aqa/Z67yCfByT/1lBKoSx7XqrpLR0zTjA4tJAiohvhPOFXdwACgT9lFwnygp3+hzVvloWw
-	lrxCCw3eLU/0uwIzSB1JWdCUaJ3Kb76aDtABH2K6ONTMtGBM9xzymCKxlAQWwjWj9ZEiBdeN6+L
-	2aQvMhn2aJdFpXk9ifRrCpCqjikEab+bTLuIoaqYAM1bBGE3ZPl4Vi+9kpRiOCkYVEVRZadAKc7
-	SrRHFCq8j7JjgqyHpMIB94JFaxQzi1FdI6tDSKG4VbyAbU8U9/5eeTOU34dPg5Ow8lIgx4CLJvy
-	Yl1CM6woS+c7Z34Pz85T7pRhdfvl/qZQHbISdLSx0f6pETRRQxxl/w
-X-Google-Smtp-Source: AGHT+IEPcLd9/n5F1+QuIF7nieqqGGUi36BPkr1gfJfsN/uEgAe7OHzy0yVFsDSD/cg47SwqEIucgQ==
-X-Received: by 2002:a05:600c:4e89:b0:46f:b42e:e392 with SMTP id 5b1f17b1804b1-47117931c1dmr109512065e9.39.1761037142883;
-        Tue, 21 Oct 2025 01:59:02 -0700 (PDT)
-Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47496cf3b51sm11749855e9.9.2025.10.21.01.59.02
+        bh=wBXILQ5+6y63oPSvnHmd6OoFeC7Db+e5bwqzatdyD90=;
+        b=fZA6tcTttCMZczW7m7UEpp9nzGQmF9jU1GXHzznOBNqOi9wEIxa8CN3XUm1sbgyBMB
+         twizW7YRH7hr0tvjvAvlv4jWoCZ1hSLMN7q8f21kBB7e5d2G+RXAD8x1RghT1CRPkW05
+         zDR5pNZ9wriX8sLAyTcZix5NHQeGCqfQXrfKjLKf6giW/xP/QxZVIElDWQq3lLKjUso/
+         Kd6DuZmsiqLL8ccoZjVJ27gYg94JIRw7WF79t5FWRFG8e3bmiKKPJhF1MtmWYVxzA5Y/
+         JPiw7IDQWEzu89CivuwBpzdceoX2c50ZhfSvdpx/30J+zm1fdoS72V5ImW4nsvtZKMDX
+         v4eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761037188; x=1761641988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wBXILQ5+6y63oPSvnHmd6OoFeC7Db+e5bwqzatdyD90=;
+        b=q+zCuBwq61iCj3qgK//S386eujHxjyEUys58JLYF7xbAslSSFaH+x9lutpsh+D6GC1
+         Tc2gu2ou/9Kyouikp0sRvoCXm/93dTsjGjNXls5tACrMXIDa0q+b2/rAAOAqF2ZY6q6C
+         Om9Y2hvOx34O5ZiAKYN0cEWScqn5BA5RynqSo4ZVKbrw5Rz4kCnF5uXgdT/zDvC6AKP1
+         zih2tUqGgw4nGwQLNflHBZNZFXWEk8aOxXxAFJw+TJ6i9ubeTpRwWB1rZqdRk960uV/X
+         MqJgyTENWGNn8eNGUsUtVnFNEoSgvjdWlE7Ou1P/qMiDjkjMiJF95Q30ZdB6f24b7AS/
+         FxBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqarFTIY/v0QRHfM2+nSecMpNNMYfGJFVpEPSuIJZ4DgHbU6IUMjbiljlsV74e8d0nLw7gqzXwb1Imbtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtzvf0PKDrnpXGMWD7G5n28vs6C9nJi6fdHEfn1fYHGIQ0YJiB
+	aXKGHVN/gaN3szBiAhH7Q0B4egaH/bRCzop1T41XXWKYkYHIHKmtyJNI
+X-Gm-Gg: ASbGnctfm2xVsDBvl4/1nMZZmBF3Foh7JhymfQQwcTZu4Z87m3awDEehPIykSCfcYge
+	z51XSxnZL8qaCZviep6dm5hPuBfGJFENhmT5C3l90c7y78WutOZAv1cWkhborMA4kyro+EiOkxA
+	fMEBpnuLGdPev1Oo0Pa5z0xvQev36bJcYaZOrQ8iaBzXaL3uSSrLR5QSgB/K5MNJCxiURLWvVPU
+	2xDO4HJzaEtt3Jr+H0xfERboW/z+VgieSwehBCJooi82PL7sXRpsOe7HNBcPAIPNHuGesYwApBG
+	7fFo1gCxxEdKb6OpdheWjUiZ589ovXv38eAB1zHvIUnbyyweNvb1epSi/rDwkSGH/5yd3UiCgzz
+	OGdz50M94rBCIQjMUFLGRiqfj6wdasJ1anbr8r4hNIUKjknySZFMFWR6zwlwaOpSHN9wHthvUnR
+	x/NfHj6pUWHXavfZgl5he0ACyGNaStHgAgZHRnKMDcZw==
+X-Google-Smtp-Source: AGHT+IEUC4eOEYXnyWDtGa4T07dDft0etAi9lHUjpiTZ4nloIXO96U7Basle93bRRFQgv2MxpmdjiA==
+X-Received: by 2002:a05:6000:1a8a:b0:428:3f7c:bd0c with SMTP id ffacd0b85a97d-4283f7cbf4cmr6807885f8f.31.1761037188360;
+        Tue, 21 Oct 2025 01:59:48 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c34sm19212667f8f.17.2025.10.21.01.59.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 01:59:02 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:59:01 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
-Message-ID: <lgse44as4k6fpzarztfnfl7wbxq2bfg5k7m7l6xlsyx23pmem4@khal3tytgwjn>
-References: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
- <cdkpp74ra2ltr7h46psutkwnzyvl4iegcicnhqqj7svm5trltm@w2egfj5nryjm>
- <7d3df04c482e71760ccc941469c99412b608c92b.camel@ew.tq-group.com>
+        Tue, 21 Oct 2025 01:59:47 -0700 (PDT)
+Date: Tue, 21 Oct 2025 09:59:46 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Kevin Locke <kevin@kevinlocke.name>
+Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
+ Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
+Message-ID: <20251021095946.3c4071fd@pumpkin>
+In-Reply-To: <aPaZGKyY_5ybTwda@kevinlocke.name>
+References: <20251016214707.5c3d373b@pumpkin>
+	<a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
+	<20251017151256.111f2669@pumpkin>
+	<aPLC_HdznsRcJbjk@kevinlocke.name>
+	<20251019111748.3d5ac8d9@pumpkin>
+	<aPaZGKyY_5ybTwda@kevinlocke.name>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zf3jpk3mzmqfofqf"
-Content-Disposition: inline
-In-Reply-To: <7d3df04c482e71760ccc941469c99412b608c92b.camel@ew.tq-group.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Mon, 20 Oct 2025 14:18:32 -0600
+Kevin Locke <kevin@kevinlocke.name> wrote:
+
+> On Sun, 2025-10-19 at 11:17 +0100, David Laight wrote:
+> > On Fri, 17 Oct 2025 16:28:12 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:  
+> >> On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:  
+> >>> On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:    
+> >>>> Remove the "x" suffixes which unnecessarily complicate the code.    
+> >>> 
+> >>> The problems arise when $1 is (say) "-x", a simple LR parser will treat
+> >>> [ -x = -x ] as a check for the file "=" being executable and then give
+> >>> a syntax error for the second -x.
+> >>> I can't imagine why shellcheck should warn about a leading x (or any other
+> >>> character) provided field splitting is disabled (eg by "").
+> >>> The leading x has definitely been needed in the past.    
+> >> 
+> >> Yep, it definitely has been.  The rationale on the wiki is that it's
+> >> not necessary for modern shells (and presumably that it unnecessarily
+> >> complicates the code): https://www.shellcheck.net/wiki/SC2268
+> >> However, it notes Zsh had issues as recently as 2015, which is not as
+> >> old as I would have expected.  
+> > 
+> > It doesn't really make much difference to the shell.
+> > I really doubt you'll notice any difference in the time it takes to run.  
+> 
+> I agree.  However, I'm more concerned about readability and
+> understandability for developers less familiar with the quirks of old
+> shells.
+> 
+> >>> POSIX does require the three argument 'test' look for the middle argument
+> >>> being an operator - but there might be historic shells that don't so that.
+> >>> OTOH you are probably looking for code from the early 1980s!
+> >>> But the POSIX spec (last time I read it) does point out the problems
+> >>> with arbitrary strings being treated as operators causing complex expressions
+> >>> be mis-parsed - which a leading x fixes.    
+> >> 
+> >> Good point.  I just reread it and can confirm that the current version
+> >> still notes issues mitigated by the X prefix with "historical shells"
+> >> and with greater than 4 argument cases:
+> >> https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html  
+> > 
+> > The fact that the 'greater than 4 argument case' can still require
+> > a prefix character might be considered enough to make adding one all the
+> > time 'good practise' even though it (probably) isn't actually needed.  
+> 
+> That seems reasonable to me, although I'd prefer omitting x and
+> prohibiting >3 argument cases, which appears to be the route
+> shellcheck takes with SC2268 + SC2166.
+
+Ugg.
+I know the parser is 'problematic' but you need -o (and -a) to get
+moderately efficient expression evaluation.
+If shellcheck objects to those I'd guess it also objects to ( and ).
+
+You really don't want to use [ ... ] && [ ... ] because it goes right
+out to the command pipeline parser.
+Not to mention the lack of grouping for a || b && c
 
 
---zf3jpk3mzmqfofqf
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
-MIME-Version: 1.0
+> > While I wouldn't error not having a prefix, generating an error when
+> > there is one seems wrong.
+> > What does shellcheck do with [ "$a" = "$b" -o "$c" = "$d" ] ?  
+> 
+> It only produces SC2166 (discouraging -o).  However, for 
+> [ "x$a" = "x$b" -o "x$c" = "x$d" ] it also produces SC2268.
+> 
+> > Or even [ "$a" "$b" "$c" "$d" "$e" "$f "$g" ] ??  
+> 
+> This, and [ "$a" "$b" "$c" ] and [ "$a" "$b" ] produce parser error
+> SC1073.  Unfortunately, this appears to be a long-standing shellcheck
+> issue:  https://github.com/koalaman/shellcheck/issues/1645
+> 
+> >> I find && and || more readable, but I'm open to changing it if you
+> >> feel strongly.  
+> > 
+> > They get parsed entirely differently and are likely to be measurably slower.
+> > Just FYI I tend not to use 'if' statements at all, just (eg):
+> > 	[ a = b ] && echo a == b
+> >   
+> >> Do I understand correctly that you are in favor of using the x prefix?
+> >> I have a slight preference for leaving it off, but I'm open to adding
+> >> it if you (or others) feel strongly.  
+> > 
+> > I wouldn't take them out and consider shellcheck wrong, but the suffix
+> > were just stupid.  
+> 
+> Are you opposed to the patch I posted removing the suffixes?  I had
+> tagged you as Suggested-by due to misreading your first post.  If the
+> change is not something you'd suggest, I can repost without it.
 
-Hello Matthias,
+The suffixes are just wrong.
+If the shell treats the first parameter to [ as an operator and $1 is "-"
+it processes [ -x = ... and looks for a file "=".
+Without the suffix the same happens when $1 is "-x".
 
-On Mon, Oct 20, 2025 at 10:09:29AM +0200, Matthias Schiffer wrote:
-> On Fri, 2025-10-17 at 17:01 +0200, Uwe Kleine-K=F6nig wrote:
-> > On Thu, Oct 16, 2025 at 01:37:30PM +0200, Matthias Schiffer wrote:
-> > > The CTS GPIO is only evaluated when the CRTSCTS termios flag is enabl=
-ed;
-> > > it should be possible to enable the flag when only GPIO and no hardwa=
-re-
-> > > controlled RTS/CTS are available. UCR2_IRTS is kept enabled in this c=
-ase,
-> > > so the hardware CTS is ignored.
-> > >=20
-> > > Fixes: 58362d5be352 ("serial: imx: implement handshaking using gpios =
-with the mctrl_gpio helper")
-> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > > ---
-> > >  drivers/tty/serial/imx.c | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> > > index 500dfc009d03e..4a54a689a0603 100644
-> > > --- a/drivers/tty/serial/imx.c
-> > > +++ b/drivers/tty/serial/imx.c
-> > > @@ -1117,8 +1117,8 @@ static void imx_uart_set_mctrl(struct uart_port=
- *port, unsigned int mctrl)
-> > >  			ucr2 |=3D UCR2_CTS;
-> > >  			/*
-> > >  			 * UCR2_IRTS is unset if and only if the port is
-> > > -			 * configured for CRTSCTS, so we use inverted UCR2_IRTS
-> > > -			 * to get the state to restore to.
-> > > +			 * configured for hardware-controlled CRTSCTS, so we use
-> > > +			 * inverted UCR2_IRTS to get the state to restore to.
-> > >  			 */
-> > >  			if (!(ucr2 & UCR2_IRTS))
-> > >  				ucr2 |=3D UCR2_CTSC;
-> > > @@ -1780,7 +1780,7 @@ imx_uart_set_termios(struct uart_port *port, st=
-ruct ktermios *termios,
-> > >  	if ((termios->c_cflag & CSIZE) =3D=3D CS8)
-> > >  		ucr2 |=3D UCR2_WS;
-> > > =20
-> > > -	if (!sport->have_rtscts)
-> > > +	if (!sport->have_rtscts && !sport->have_rtsgpio)
-> > >  		termios->c_cflag &=3D ~CRTSCTS;
-> > > =20
-> > >  	if (port->rs485.flags & SER_RS485_ENABLED) {
-> >=20
-> > This hunk makes sense.
-> >=20
-> > > @@ -1794,7 +1794,7 @@ imx_uart_set_termios(struct uart_port *port, st=
-ruct ktermios *termios,
-> > >  		else
-> > >  			imx_uart_rts_inactive(sport, &ucr2);
-> > > =20
-> > > -	} else if (termios->c_cflag & CRTSCTS) {
-> > > +	} else if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts) {
-> >=20
-> > I agree to add the parens here and consider this more readable than the
-> > alternative
-> >=20
-> > 	} else if (termios->c_cflag & CRTSCTS && sport->have_rtscts) {
-> >=20
-> > . Note there is no real win here. If the port doesn't have RTS/CTS it
-> > doesn't matter if it tries to control the RTS line. While you could
-> > argue it shouldn't set the line, it only makes an externally observable
-> > difference if one of the SoC's pads is muxed to its RTS function.
-> > I claim it's more robust in this case (i.e. no uart-has-rtscts property
-> > but a pinmux for the RTS line) to control the line according to the RTS
-> > setting. This is (at least IMO) better and more expected than driving
-> > this line to a constant level. So I oppose to this hunk.
-> >=20
-> > >  		/*
-> > >  		 * Only let receiver control RTS output if we were not requested
-> > >  		 * to have RTS inactive (which then should take precedence).
-> > > @@ -1803,7 +1803,7 @@ imx_uart_set_termios(struct uart_port *port, st=
-ruct ktermios *termios,
-> > >  			ucr2 |=3D UCR2_CTSC;
-> > >  	}
-> > > =20
-> > > -	if (termios->c_cflag & CRTSCTS)
-> > > +	if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts)
-> > >  		ucr2 &=3D ~UCR2_IRTS;
-> > >  	if (termios->c_cflag & CSTOPB)
-> > >  		ucr2 |=3D UCR2_STPB;
-> >=20
-> > Hmm, not sure. On one hand the same argument applies as above, but on
-> > the other if there are pins that are not explicitly configured but still
-> > in their CTS function this might affect operation in a bad way.
-> > Also this affects the (very usual) configuration where only RX, TX and
-> > RTS are used and CTS is not. In this case have_rtscts is true (right?)
-> > and then if there is an accidental CTS pin this is bad and not fixed by
-> > your change. Hmmm...
->=20
-> I think it makes sense to always keep UCR2_IRTS set when have_rtscts is u=
-nset,
-> as otherwise there might be two separate CTS signals in the accidental CT=
-S pin
-> case - the hardware + the GPIO one, both affecting the UART operation.
+A conformant shell won't do this for a 3-argument [.
+But I also suspect that any conformant shell supports -o and -a.
+The 7-argument [ definitely needs the prefix to protect against unexpected
+operators.
 
-With that change you break setups that have an RTS-GPIO but rely on the
-HW pin for the CTS function. Not sure how common that is, but in this
-case you only want the first code change. You could argue that in that
-case have_rtscts should be set, but that's somewhat fuzzy.
+So I still think shellcheck is just wrong here.
+It ought to be checking FOR a prefix when there are 4 or more arguments.
+It is one of those idioms you have to get used to.
 
-> If we keep this change (the 3rd), the 2nd should also be included for
-> consistency in the code path where I just changed a comment - there, UCR2=
-_CTSC
-> is set only when UCR2_IRTS is unset. The 2nd and 3rd change together keep
-> imx_uart_set_mctrl and imx_uart_set_termios aligned.
->=20
-> >=20
-> > So in sum the 2nd and 3rd code change is controversial. If the first one
-> > already fixes the problem you're facing, I suggest to go for only that.
-> > If you still think that the 3rd (and maybe even the 2nd) change is a
-> > good idea, I'd request to do that in a separate commit as this is a
-> > separate problem. Also the commit log only describes the first change,
-> > doesn't it?
->=20
-> The commit message describes the first and third change; the second is in=
-cluded
-> to keep the setup consistent. I don't think these changes can be separate=
-d well
-> - the second and third change only affect a case that couldn't occur with=
-out the
-> first (as (termios->c_cflag & CRTSCTS) && !sport->have_rtscts would never=
- have
-> been true). My suggestion would be that I extend the commit message to ex=
-plain
-> each change in detail.
+But at the end of the day it is probably your call.
 
-I'd still request to split the patch in at least two patches. The first
-code change is to allow rts-gpios to work at all. The two later patches
-change details about how HW pins are controlled in the presence of
-rts-gpios
+	David
 
-Best regards
-Uwe
+> 
+> Thanks,
+> Kevin
 
---zf3jpk3mzmqfofqf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj3S1IACgkQj4D7WH0S
-/k7Z8Af/cWYKmLfxl83DzxoQYDzAkl5mc0eGGuFSd+935aXR3UXsKCXljIplfmlo
-73v0Jo4EYPsEco0YCWBDGKPINHThAqK3lhrsirCAUr9BakxqQIjdBYMTk4QBmGWT
-M8x1wYdlUr4u0qotAftYkNkQMrcJyGft6Esgw3OcYTdI/mXhvWs1abPlt8C5aUHz
-/pC1rnJcUfjcMpHmiJ1foMw+p4qv4LtoJUveI39CRpVcroqA4pLrsux/9bTkyTvw
-dZDtQ/bWgkC08BU7FXOPF/8oE9vKtKLjMUQfHvxWyaAG9nxnEWhJQ/8JYVuFmqk0
-9PDRESuEIsEEFaFupc+7hBuznu85PA==
-=sWEK
------END PGP SIGNATURE-----
-
---zf3jpk3mzmqfofqf--
 
